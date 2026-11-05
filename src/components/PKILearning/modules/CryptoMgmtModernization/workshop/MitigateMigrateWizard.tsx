@@ -22,7 +22,7 @@ const QUESTIONS: Question[] = [
   {
     text: 'Is the source code available and actively maintained by your team?',
     context:
-      'If the code is lost, in escrow, or with a disbanded vendor — direct modification is impossible.',
+      'Source availability affects direct modification options. Check supported supplier upgrades or replacement paths before ruling out migration.',
     migrateIfYes: true,
   },
   {
@@ -34,7 +34,7 @@ const QUESTIONS: Question[] = [
   {
     text: 'Does the system expose modular cryptographic APIs (PKCS#11, JCE, CNG, OpenSSL EVP)?',
     context:
-      'Modular APIs allow algorithm swap without touching business logic — the hallmark of crypto agility.',
+      'A modular API can help isolate changes, but it does not establish algorithm, provider or protocol support. Check the intended integration.',
     migrateIfYes: true,
   },
   {
@@ -46,7 +46,7 @@ const QUESTIONS: Question[] = [
   {
     text: 'Can the system tolerate a planned maintenance window for migration testing?',
     context:
-      'Mission-critical systems that cannot be taken offline require a live gateway as a bridge strategy.',
+      'Limited downtime motivates evaluating deployment alternatives; it does not establish that a live gateway is applicable or sufficient.',
     migrateIfYes: true,
   },
 ]
@@ -229,7 +229,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
             onClick={handleGetRecommendation}
             className="w-full sm:w-auto flex items-center gap-2"
           >
-            Get Recommendation
+            Show planning suggestion
             <ArrowRight size={14} />
           </Button>
         </div>
@@ -240,23 +240,37 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-sm font-medium text-foreground">
             <GitFork size={16} className="text-primary" />
-            Assessment result for: <span className="text-primary">{selectedAsset}</span>
+            Illustrative planning suggestion for:{' '}
+            <span className="text-primary">{selectedAsset}</span>
           </div>
 
+          <p className="text-sm text-muted-foreground">
+            A missing prerequisite can outweigh the count. Use production tools and supplier
+            documentation to check supported software and algorithms, protocol/key-format
+            interoperability, deployment constraints, testing and rollback before choosing a design.
+            Where a scoped design supports them, the activities below are examples to evaluate.
+          </p>
           {recommendation === 'migrate' ? (
             <div className="bg-status-success/10 rounded-lg p-5 border border-status-success/30 space-y-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={20} className="text-status-success" />
                 <span className="text-lg font-bold text-status-success">
-                  RECOMMENDATION: MIGRATE
+                  PLANNING SUGGESTION: EXPLORE MIGRATION
                 </span>
               </div>
               <p className="text-sm text-foreground/80">
-                This system has sufficient crypto agility for direct algorithm replacement.{' '}
-                {migrateCount} of 5 assessment criteria favour migration.
+                {migrateCount} of 5 answers favour exploring direct algorithm replacement. This
+                majority is a planning prompt, not a finding that the system has sufficient crypto
+                agility or that migration is feasible.
               </p>
               <div className="space-y-2 text-sm">
-                <div className="font-bold text-foreground">Algorithm recommendations</div>
+                <div className="font-bold text-foreground">
+                  Illustrative algorithm examples to evaluate
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  These examples are not an implementation or protocol profile selected for this
+                  asset.
+                </p>
                 <ul className="space-y-1.5 text-sm text-foreground/80">
                   <li>
                     · KEM / key exchange → <strong>ML-KEM-768</strong> (FIPS 203)
@@ -275,7 +289,9 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                 </ul>
               </div>
               <div className="space-y-2">
-                <div className="font-bold text-foreground text-sm">Next steps</div>
+                <div className="font-bold text-foreground text-sm">
+                  Possible planning activities
+                </div>
                 <ol className="space-y-1.5 text-xs text-foreground/80 list-decimal list-inside">
                   <li>Upgrade cryptographic library to a PQC-capable, FIPS-validating version</li>
                   <li>Configure crypto agility layer (PKCS#11 / JCE / OpenSSL EVP abstraction)</li>
@@ -296,16 +312,20 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
               <div className="flex items-center gap-2">
                 <AlertTriangle size={20} className="text-status-warning" />
                 <span className="text-lg font-bold text-status-warning">
-                  RECOMMENDATION: MITIGATE (CRYPTO GATEWAY)
+                  PLANNING SUGGESTION: EXPLORE MITIGATION
                 </span>
               </div>
               <p className="text-sm text-foreground/80">
-                Direct migration is not feasible at this time — only {migrateCount} of 5 criteria
-                favour migration. Deploy a crypto gateway as a compensating control while planning
-                system decommission.
+                {migrateCount} of 5 answers favour direct replacement. Explore mitigation options
+                alongside upgrade, replacement and exit planning. This count does not establish that
+                a gateway is feasible or that it reduces this asset’s risk.
               </p>
               <div className="space-y-2 text-sm">
-                <div className="font-bold text-foreground">Gateway specification</div>
+                <div className="font-bold text-foreground">Gateway capabilities to evaluate</div>
+                <p className="text-xs text-muted-foreground">
+                  Which connections or operations would the gateway cover, and which legacy risks
+                  would remain?
+                </p>
                 <ul className="space-y-1.5 text-sm text-foreground/80">
                   <li>· Deploy a TLS termination proxy in front of the legacy system</li>
                   <li>· Configure approved cipher suites on the gateway (TLS 1.3 minimum)</li>
@@ -316,7 +336,9 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                 </ul>
               </div>
               <div className="space-y-2">
-                <div className="font-bold text-foreground text-sm">Next steps</div>
+                <div className="font-bold text-foreground text-sm">
+                  Possible planning activities
+                </div>
                 <ol className="space-y-1.5 text-xs text-foreground/80 list-decimal list-inside">
                   <li>
                     Select and deploy a crypto gateway product (Nginx, HAProxy, or dedicated
@@ -357,7 +379,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
             className="flex items-center gap-2 text-xs"
           >
             <RefreshCw size={13} />
-            Assess another asset
+            Explore another asset
           </Button>
         </div>
       )}

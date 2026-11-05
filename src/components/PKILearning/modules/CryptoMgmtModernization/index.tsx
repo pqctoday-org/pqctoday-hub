@@ -94,7 +94,7 @@ const PARTS: WorkshopPart[] = [
     id: 'mitigate-migrate',
     title: 'Step 8: Implement — Mitigate or Migrate',
     description:
-      'CSWP.39 §4.6 decision wizard: answer 5 crypto-agility questions about an asset and receive a Gateway (Mitigate) or Algorithm Replacement (Migrate) recommendation.',
+      'Hub planning exercise: answer five questions to compare illustrative migration and mitigation suggestions. The majority count does not establish feasibility; CSWP.39 §4.6 is related reading on legacy-system gateways.',
     icon: GitFork,
     // Was "§5.5 + §4.6". CSWP.39 has no §5.5. The description directly above
     // already names the real anchor, §4.6 (Using a Crypto Gateway for Legacy
