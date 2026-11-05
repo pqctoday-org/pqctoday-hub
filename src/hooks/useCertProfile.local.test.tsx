@@ -17,6 +17,16 @@ const initial: X509Attribute[] = [
   },
 ]
 describe('one shared CSR/certificate profile loader', () => {
+  it('recovers from a failed profile using the actual dropdown clear sentinel', async () => {
+    const { result } = renderHook(() => useCertProfile({ initialAttributes: initial }))
+    await act(() => result.current.handleProfileSelect('missing.csv'))
+    expect(result.current.loadingError).not.toBeNull()
+    await act(() => result.current.handleProfileSelect('All'))
+    expect(result.current.selectedProfile).toBe('')
+    expect(result.current.loadingError).toBeNull()
+    expect(result.current.loadingProfile).toBe(false)
+    expect(result.current.attributes).toEqual(initial)
+  })
   it('preserves all certificate examples and independent criticality', async () => {
     const { result } = renderHook(() => useCertProfile({ initialAttributes: initial }))
     await act(() => result.current.handleProfileSelect('Cert-GeneralIT_CABF_TLSBR_2025.csv'))

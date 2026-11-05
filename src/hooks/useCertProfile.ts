@@ -49,7 +49,9 @@ export const useCertProfile = ({
     setAvailableProfiles(profiles)
   }, [filterProfileName, profileKind, profilesSource])
 
-  const handleProfileSelect = async (filename: string) => {
+  const handleProfileSelect = async (selection: string) => {
+    // FilterDropdown's clear option sends All; the profile API also accepts an empty value.
+    const filename = selection === 'All' ? '' : selection
     const requestId = ++request.current
     setLoadingProfile(Boolean(filename))
     setSelectedProfile(filename)
