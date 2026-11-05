@@ -108,7 +108,7 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   CKO_PROFILE: {
     hex: '0x00000009',
-    def: 'New object class introduced by PKCS#11 Profiles v3.2 §3: a token exposes one CKO_PROFILE object per conformance profile it claims — discoverable by any application via a plain C_FindObjects, no vendor-specific query needed.',
+    def: 'A profile object identifies a PKCS#11 profile the token declares it implements. Profile discovery already appears in Profiles v3.0 and specification v3.1; C_FindObjects can discover these objects.',
   },
   CKA_CLASS: {
     hex: '0x00000000',
@@ -269,13 +269,13 @@ export const TERMS: GlossaryTerm[] = [
     id: 'session-state',
     label: 'Session state',
     cat: 'protocol',
-    def: 'A session is Public or User (authenticated via C_Login) crossed with Read-Only or Read/Write — four states in total, e.g. "R/W User Functions" — visible via C_GetSessionInfo.',
+    def: 'PKCS#11 defines five session states: R/O Public, R/O User, R/W Public, R/W User and R/W Security Officer (SO). C_GetSessionInfo reports the current state; there is no R/O SO state.',
   },
   {
     id: 'object-class',
     label: 'Object class',
     cat: 'protocol',
-    def: 'Every PKCS#11 object (CKA_CLASS) is exactly one of a fixed set: public key, private key, secret key, certificate, data, domain parameters, and (new in v3.2) profile.',
+    def: 'CKA_CLASS identifies an object class, for example public key, private key, secret key, certificate, data, domain parameters or profile. Profile objects predate v3.2.',
   },
   {
     id: 'template',
@@ -293,7 +293,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'baseline-provider',
     label: 'Baseline Provider profile',
     cat: 'protocol',
-    def: "PKCS#11 Profiles v3.2's minimum conformance profile (CKP_BASELINE_PROVIDER) — a fixed, spec-defined list of functions and mechanisms every claiming token must support, discoverable via a CKO_PROFILE object rather than vendor documentation.",
+    def: 'A standard profile describing baseline requirements for a PKCS#11 provider, discoverable through CKO_PROFILE. It already appears in Profiles v3.0; the applicable profile edition defines the requirements.',
   },
   {
     id: 'kem',

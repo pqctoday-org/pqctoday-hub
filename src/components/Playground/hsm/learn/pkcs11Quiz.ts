@@ -66,14 +66,14 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
   ],
   'digest-random': [
     {
-      q: 'Why must two consecutive C_GenerateRandom calls produce different output, while two C_Digest calls on the same input must produce the SAME output?',
+      q: 'How should you interpret the digest and random-byte examples?',
       options: [
-        'They are unrelated coincidences',
-        'Hashing is a deterministic function of its input; randomness generation is explicitly NOT supposed to be a function of anything predictable — they have opposite correctness requirements',
-        'C_GenerateRandom is actually also deterministic internally',
+        'Random-byte generation is correct only if consecutive outputs can never repeat',
+        'SHA-256 is deterministic; a cryptographic generator may also use deterministic internals, but its output should be unpredictable without knowledge of its secret state and seed',
+        'Two different random-byte samples prove that the generator and entropy source are secure',
       ],
       answer: 1,
-      why: 'Confusing these two properties is a real source of cryptographic bugs — e.g. reusing a value from a hash where fresh randomness was required.',
+      why: 'Random outputs can repeat. Two different samples do not establish unpredictability or validate seeding. A deterministic random bit generator is not the same as hashing public inputs and treating the digest as fresh randomness.',
     },
   ],
   'sign-verify': [
@@ -102,26 +102,26 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
   ],
   'agreement-derivation': [
     {
-      q: "Alice derived using Bob's public point and her own private key; Bob derived using Alice's public point and his own private key. Why did they land on the same secret?",
+      q: 'The lesson derived keys on both sides and returned two handles. What does that establish?',
       options: [
-        'Coincidence — it only works for P-256',
-        "That convergence IS Diffie-Hellman's defining mathematical property — each side combines their own private key with the other's public key and the math guarantees the same result",
-        'The engine cached the first result and reused it',
+        'The two key values were compared and proved equal',
+        'Both derivation operations returned handles; this lesson did not compare the derived values or perform key confirmation',
+        'A shared secret was transmitted between the parties',
       ],
       answer: 1,
-      why: 'Two independent C_DeriveKey calls, on two different key pairs, producing provably-linked handles is the entire basis of key agreement — no secret ever crossed the wire.',
+      why: 'Handles identify objects; their existence does not establish that the objects contain equal key material. Production integration testing needs an appropriate agreement or key-confirmation check while preserving required key protections.',
     },
   ],
   'whats-new': [
     {
-      q: "The token's CKO_PROFILE object reported CKA_PROFILE_ID=1 (CKP_BASELINE_PROVIDER). Why does this matter compared to pre-v3.2 PKCS#11?",
+      q: 'What does finding a CKO_PROFILE object with CKA_PROFILE_ID=1 (CKP_BASELINE_PROVIDER) tell a caller?',
       options: [
         "It doesn't — it's cosmetic metadata",
-        'A token can now self-describe its conformance level via a standard object query, instead of requiring out-of-band vendor documentation to know what it supports',
+        "It exposes the token's declared support for that standard profile; profile objects already existed before v3.2",
         'It replaces C_GetMechanismList entirely',
       ],
       answer: 1,
-      why: 'Profiles v3.2 §3 is specifically about discoverability — the same C_FindObjects call used for keys now also answers "what does this token claim to conform to."',
+      why: 'Profiles v3.0 and specification v3.1 already defined this discovery mechanism. A profile declaration does not replace mechanism discovery or independent evidence of implementation conformance.',
     },
   ],
   'signing-goes-lattice': [
@@ -150,14 +150,14 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
   ],
   'hash-based-signatures': [
     {
-      q: 'SLH-DSA has a tiny 32-byte public key but a signature over 17,000 bytes. Why would anyone choose that trade-off over ML-DSA?',
+      q: 'This lesson uses SLH-DSA-SHA2-128s: a 32-byte public key and a 7,856-byte signature. Why consider a hash-based signature alongside ML-DSA?',
       options: [
         'They would never choose it — it is strictly worse',
-        'SLH-DSA rests on nothing but hash-function security — the most conservative assumption available — which some deployments value enough to accept the size cost, typically for a narrow use case like firmware signing',
+        'Its hash-based construction offers a different cryptographic foundation from lattice-based ML-DSA, with a signature-size and performance trade-off to evaluate for the intended application',
         'SLH-DSA is actually faster than ML-DSA in every case',
       ],
       answer: 1,
-      why: 'SLH-DSA is meant as an addition alongside ML-DSA for risk diversification, not a wholesale replacement — exactly the framing this lesson\'s "why it matters" makes explicit.',
+      why: 'Sizes depend on the parameter set: FIPS 205 Table 2 gives 7,856 bytes for SHA2-128s signatures and 17,088 for SHA2-128f; both public keys are 32 bytes. Compare the exact profile and application requirements rather than treating all SLH-DSA signatures as the same size.',
     },
   ],
   'hedged-signing': [
@@ -174,14 +174,14 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
   ],
   'authenticated-wrap': [
     {
-      q: "Tampering one byte of the C_WrapKeyAuthenticated blob caused C_UnwrapKeyAuthenticated to refuse it. What's the real difference from the classic C_WrapKey lesson (A7)?",
+      q: 'Which comparison is accurate after this AES-GCM wrapping example?',
       options: [
-        'There is no real difference — both would behave identically',
-        'C_WrapKeyAuthenticated adds a real IV and an AEAD integrity tag, so tampering is cryptographically detected — classic AES-KW wrap has no equivalent authenticated-tampering check',
+        'AES-KW has no integrity protection and accepts any modified wrapped key',
+        'Both AES-KW and AES-GCM protect wrapped-key integrity; this GCM interface also supports a per-wrap IV and associated data',
         'C_WrapKeyAuthenticated only works on RSA keys',
       ],
       answer: 1,
-      why: "This is the same AEAD-vs-non-AEAD distinction from the symmetric-encryption lesson (A4), applied to key export instead of data encryption — one of PKCS#11 v3.2's 12 new functions closing a real gap.",
+      why: 'AES-KW checks integrity during unwrapping; it is not an unauthenticated alternative. The mechanisms have different formats and interface requirements. This GCM example uses empty associated data, so it does not demonstrate binding additional metadata.',
     },
   ],
   'policy-pinning': [
@@ -213,11 +213,11 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'After generating the ML-DSA successor key, was the legacy RSA key immediately destroyed?',
       options: [
         'Yes — generating a successor automatically retires the predecessor',
-        'No — both keys remained valid simultaneously until the explicit C_DestroyObject step; the successor gets its own identity, the predecessor is retired as a deliberate, separate decision',
+        'No — both local key pairs remained available until the explicit C_DestroyObject step; creating a successor did not automatically delete the predecessor',
         'No — the legacy key becomes read-only automatically',
       ],
       answer: 1,
-      why: "This mirrors the KMIP playground's own migration lessons: provisioning a successor and retiring a predecessor are two distinct, deliberate steps, never an automatic or implicit conversion.",
+      why: 'Provisioning a successor and deleting local predecessor objects are separate actions. This sample does not perform a deployment cutover or revoke trust in verification keys held elsewhere.',
     },
   ],
   'trust-wrapping-policy': [

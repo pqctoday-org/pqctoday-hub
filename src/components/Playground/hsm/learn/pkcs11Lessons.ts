@@ -475,7 +475,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       },
     ],
     notes: [
-      'SHA-256 of the same input is always the same output — hashing is deterministic. C_GenerateRandom is the opposite: every call should differ.',
+      'SHA-256 is deterministic. Cryptographic random-byte generators may also use deterministic internals, seeded with entropy. Random outputs can repeat; this two-draw comparison does not establish unpredictability or entropy quality.',
       "This token's randomness backs its own key generation — the same call this lesson just made directly is what runs internally every time you generate a key.",
     ],
     whyItMatters:
