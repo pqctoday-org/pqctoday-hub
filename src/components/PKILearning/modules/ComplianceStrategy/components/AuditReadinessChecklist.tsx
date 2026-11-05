@@ -246,11 +246,11 @@ const EVIDENCE_ITEMS: ChecklistItem[] = [
 ]
 
 function getMaturityTier(pct: number): { label: string; color: string } {
-  if (pct >= 81) return { label: 'Optimized', color: 'text-status-success' }
-  if (pct >= 61) return { label: 'Established', color: 'text-primary' }
-  if (pct >= 41) return { label: 'Developing', color: 'text-status-warning' }
-  if (pct >= 21) return { label: 'Foundation', color: 'text-status-warning' }
-  return { label: 'Not Started', color: 'text-status-error' }
+  if (pct >= 81) return { label: '81–100% selected', color: 'text-status-success' }
+  if (pct >= 61) return { label: '61–80% selected', color: 'text-primary' }
+  if (pct >= 41) return { label: '41–60% selected', color: 'text-status-warning' }
+  if (pct >= 21) return { label: '21–40% selected', color: 'text-status-warning' }
+  return { label: '0–20% selected', color: 'text-status-error' }
 }
 
 function buildSections(
@@ -264,7 +264,7 @@ function buildSections(
   const toOptions = (items: ChecklistItem[]) =>
     items.map((i) => ({
       value: i.value,
-      label: `${i.label} — ${i.description} [${i.reference}]`,
+      label: `Review topic: ${i.label} — ${i.description} [${i.reference}]`,
     }))
 
   const industryNote = industry ? ` Tailor to ${industry} sector requirements.` : ''
@@ -278,7 +278,7 @@ function buildSections(
       fields: [
         {
           id: 'inventory-checklist',
-          label: 'Cryptographic Inventory Readiness',
+          label: 'Inventory Planning Topics',
           type: 'checklist',
           options: toOptions(INVENTORY_ITEMS),
           defaultValue: isAssessmentComplete ? ['systems-cataloged'] : [],
@@ -292,7 +292,7 @@ function buildSections(
       fields: [
         {
           id: 'policy-checklist',
-          label: 'Policy & Governance Readiness',
+          label: 'Policy & Governance Planning Topics',
           type: 'checklist',
           options: toOptions(POLICY_ITEMS),
           defaultValue: [],
@@ -306,7 +306,7 @@ function buildSections(
       fields: [
         {
           id: 'risk-checklist',
-          label: 'Risk Assessment Readiness',
+          label: 'Risk Planning Topics',
           type: 'checklist',
           options: toOptions(RISK_ITEMS),
           defaultValue: myThreatsCount > 0 ? ['threat-model-updated'] : [],
@@ -320,7 +320,7 @@ function buildSections(
       fields: [
         {
           id: 'technical-checklist',
-          label: 'Technical Controls Readiness',
+          label: 'Technical Control Planning Topics',
           type: 'checklist',
           options: toOptions(TECHNICAL_ITEMS),
           defaultValue: [],
@@ -334,7 +334,7 @@ function buildSections(
       fields: [
         {
           id: 'vendor-checklist',
-          label: 'Vendor Management Readiness',
+          label: 'Vendor Planning Topics',
           type: 'checklist',
           options: toOptions(VENDOR_ITEMS),
           defaultValue: myProductsCount > 0 ? ['vendors-assessed'] : [],
@@ -349,7 +349,7 @@ function buildSections(
       fields: [
         {
           id: 'evidence-checklist',
-          label: 'Evidence & Documentation Readiness',
+          label: 'Evidence Planning Topics',
           type: 'checklist',
           options: toOptions(EVIDENCE_ITEMS),
           defaultValue: [
@@ -388,11 +388,11 @@ export function renderAuditPreview(
   industry?: string,
   country?: string
 ): string {
-  let md = '# PQC Audit Readiness Checklist\n\n'
+  let md = '# PQC Audit Planning Topics\n\n'
   md += `Generated: ${new Date().toLocaleDateString()}\n`
   if (industry) md += `Industry: ${industry}\n`
   if (country) md += `Country: ${country}\n`
-  md += '\n---\n\n'
+  md += '\nChecked boxes mean selected planning topics, including suggestions from saved context; they do not establish completed controls, audited readiness or validation.\n\n---\n\n'
 
   let totalChecked = 0
   let totalItems = 0
@@ -410,7 +410,7 @@ export function renderAuditPreview(
     let sectionChecked = 0
     for (const item of items) {
       const checked = checkedItems.includes(item.value)
-      md += `- [${checked ? 'x' : ' '}] **${item.label}** — ${item.description} _[${item.reference}]_\n`
+      md += `- [${checked ? 'x' : ' '}] **Review topic: ${item.label}** — ${item.description} _[${item.reference}]_\n`
       if (checked) {
         sectionChecked++
         totalChecked++
@@ -424,8 +424,8 @@ export function renderAuditPreview(
   md += '---\n\n'
 
   // Per-section scores
-  md += '## Section Scores\n\n'
-  md += '| Section | Score | % |\n'
+  md += '## Topic Selection Counts\n\n'
+  md += '| Section | Selected / Total | % |\n'
   md += '|---------|-------|---|\n'
   for (const s of sectionScores) {
     const pct = s.total > 0 ? Math.round((s.checked / s.total) * 100) : 0
@@ -436,10 +436,10 @@ export function renderAuditPreview(
   // Overall with maturity tier
   const overallPct = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0
   const tier = getMaturityTier(overallPct)
-  md += `**Overall Readiness: ${totalChecked}/${totalItems} items (${overallPct}%)**\n\n`
-  md += `**Maturity Level: ${tier.label}**\n\n`
+  md += `**Planning topics selected: ${totalChecked}/${totalItems} (${overallPct}%)**\n\n`
+  md += `**Topic-selection band: ${tier.label}**\n\n`
   md +=
-    "_Maturity scale — the checklist's own scoring bands — Not Started (0-20%) → Foundation (21-40%) → Developing (41-60%) → Established (61-80%) → Optimized (81-100%)_\n"
+    "_Selection bands describe topic inclusion only. They do not measure control implementation, audit readiness or organizational maturity._\n"
 
   return md
 }
@@ -504,8 +504,9 @@ function renderAuditCsv(
   evidence: EvidenceRow[]
 ): string {
   const sections: (string | number)[][] = []
-  sections.push(['PQC Audit Readiness Checklist'])
-  sections.push(['Section', 'Item', 'Checked', 'Reference'])
+  sections.push(['PQC Audit Planning Topics'])
+  sections.push(['Selected means included as a planning topic, not a completed or audited control.'])
+  sections.push(['Section', 'Review Topic', 'Selected', 'Reference'])
   for (const [sectionId, title] of Object.entries(SECTION_TITLES)) {
     const sectionData = data[sectionId] ?? {}
     const items = ALL_ITEMS[sectionId] ?? []
@@ -516,7 +517,7 @@ function renderAuditCsv(
     for (const item of items) {
       sections.push([
         title,
-        item.label,
+        `Review topic: ${item.label}`,
         checkedItems.includes(item.value) ? 'Yes' : 'No',
         item.reference,
       ])
@@ -610,7 +611,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
     addExecutiveDocument({
       id: `audit-checklist-${Date.now()}`,
       type: 'audit-checklist',
-      title: 'PQC Audit Readiness Checklist',
+      title: 'PQC Audit Planning Topics',
       data: markdown,
       createdAt: Date.now(),
       moduleId: 'compliance-strategy',
@@ -666,9 +667,9 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
       {isAssessmentComplete && (
         <div className="bg-status-success/10 border border-status-success/30 rounded-lg p-3">
           <p className="text-sm text-foreground/80">
-            Some items have been pre-populated based on your completed assessment
+            Suggested planning topics have been selected from your completed sample assessment
             {industry ? ` (${industry})` : ''}
-            {country ? ` in ${country}` : ''}. Review and update as needed.
+            {country ? ` in ${country}` : ''}. These selections do not establish that the listed controls were performed. Review the topics to include.
           </p>
         </div>
       )}
@@ -680,7 +681,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
             {industry && <span className="text-primary font-medium">{industry}</span>}
             {industry && country && ' in '}
             {country && <span className="text-primary font-medium">{country}</span>}. Complete the
-            Assessment Wizard for pre-populated items and risk-prioritized guidance.
+            Assessment Wizard for sample context and suggested planning topics.
           </p>
         </div>
       )}
@@ -691,9 +692,14 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         />
       )}
 
+      <p className="text-sm text-muted-foreground">
+        Bookmarks and assessment answers can suggest planning topics; they are not evidence that a
+        control is implemented, a test passed or an audit completed. Checked boxes record topic
+        inclusion only, including any preselected suggestions.
+      </p>
       <ArtifactBuilder
-        title="PQC Audit Readiness Checklist"
-        description="Check off each item as your organization completes it. Each item includes a brief description and standards reference. Export the checklist for audit documentation."
+        title="PQC Audit Planning Topics"
+        description="Select topics for a sample audit-planning discussion. A selection records topic inclusion, not completed controls or audit readiness. Use the descriptions and references to identify what to evaluate with your own tools."
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-audit-readiness-checklist"
@@ -778,8 +784,8 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
               Evidence — CMVP / ACVP / ESV / CVE-scan
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Per change, capture validation evidence. Educational template — populate from your
-              real CMVP module IDs and ACVP run records.
+              Use fictional module IDs and sample run-record references in this educational template.
+              In your own tools, check the applicable scope and provenance before relying on a result.
             </p>
           </div>
           <Button type="button" variant="outline" size="sm" onClick={addEvidence}>
