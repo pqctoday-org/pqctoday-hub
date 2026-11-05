@@ -247,7 +247,7 @@ describe('KPITrackerTemplate', () => {
     expect(partial).toContain('Overall Score: not available')
   })
 
-  it('does not let a stored score for an untouched KPI outrank its live auto score', () => {
+  it('preserves a legacy snapshot as unknown until current calculation is explicitly chosen', () => {
     mockPersona = 'executive'
     mockData = { ...baseData(60), isAssessmentComplete: true }
     mockStoreState.artifacts.executiveDocuments = [
@@ -271,10 +271,29 @@ describe('KPITrackerTemplate', () => {
     fireEvent.click(screen.getAllByText('Sample measure notes', { exact: true })[0])
     fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
     const saved = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
-    expect(saved.data).not.toContain('99/100')
+    expect(saved.data).toContain('99/100 — not assessed for current use')
+    expect(saved.data).toContain('Value origin not recorded')
     expect(
       (saved.inputs as { userScores: Record<string, number> }).userScores['risk-posture']
-    ).not.toBe(99)
+    ).toBe(99)
+    expect((saved.inputs as { originalSavedInputs: unknown }).originalSavedInputs).toEqual(
+      mockStoreState.artifacts.executiveDocuments[0].inputs
+    )
+    expect(screen.getByRole('button', { name: 'Saved' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Saved · edited since' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Saved · edited since' }))
+    const updated = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
+    expect(
+      (updated.inputs as { userScores: Record<string, number> }).userScores['risk-posture']
+    ).toBe(40)
+    expect(
+      (updated.inputs as { valueOrigins: Record<string, string> }).valueOrigins['risk-posture']
+    ).toBe('calculated-current')
+    expect((updated.inputs as { originalSavedInputs: unknown }).originalSavedInputs).toEqual(
+      mockStoreState.artifacts.executiveDocuments[0].inputs
+    )
+    expect(screen.getByRole('button', { name: 'Saved' })).toBeInTheDocument()
   })
 
   it('restores a save made before touched ids were stored without throwing', () => {

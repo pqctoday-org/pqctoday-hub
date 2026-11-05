@@ -9,6 +9,9 @@ import {
   currentKpiValueOrigin,
   kpiValueOriginLabel,
   type KpiValueSource,
+  type KpiValueOrigin,
+  restoredKpiValueOrigins,
+  isKpiValueAssessed,
 } from './scorecardValueOrigin'
 
 export interface ScorecardDimension {
@@ -78,6 +81,8 @@ interface DataDrivenScorecardProps {
   /** Restore previously-saved scores / weight overrides on mount (e.g. from a persisted artifact). */
   initialScores?: Record<string, number>
   initialWeights?: Record<string, number>
+  initialValueOrigins?: Record<string, KpiValueOrigin>
+  onValueOriginsChange?: (origins: Record<string, KpiValueOrigin>) => void
   /** Hide the composite until this share of the weight of the KPIs that can be scored has evidence. */
   minimumCoverageForOverall?: number
   /** Structured evidence fields shared by screen, saved artifacts and exports. */
@@ -122,6 +127,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   includeTargetsInExport = false,
   initialScores,
   initialWeights,
+  initialValueOrigins,
+  onValueOriginsChange,
   minimumCoverageForOverall = 0,
   observations = {},
   onObservationChange,
@@ -138,20 +145,42 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     () => initialWeights ?? {}
   )
   const [showWeights, setShowWeights] = useState(false)
-  const [editedThisSession, setEditedThisSession] = useState<Set<string>>(new Set())
+  const [valueOrigins, setValueOrigins] = useState<Record<string, KpiValueOrigin>>(() =>
+    restoredKpiValueOrigins(initialScores, initialValueOrigins)
+  )
+  const valueOrigin = useCallback(
+    (d: ScorecardDimension) => valueOrigins[d.id] ?? currentKpiValueOrigin(d, false),
+    [valueOrigins]
+  )
+  useEffect(() => {
+    const origins = Object.fromEntries(dimensions.map((d) => [d.id, valueOrigin(d)]))
+    onValueOriginsChange?.(origins)
+    // Only source attribution changes notify callers; an inline callback must not loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dimensions, valueOrigin])
 
-  // Track which dimensions the user has manually adjusted. Dimensions restored
-  // from `initialScores` count as already-overridden so the auto-score sync
-  // effect below doesn't immediately clobber the restored value.
+  // Track explicitly recorded learner edits. Restored unknown/calculated values
+  // are protected separately by their origin; mere presence is not an edit.
   //
   // Kept as BOTH a ref and mirrored state: the sync effect below reads the ref
   // (stable identity, safe to omit from deps — reading it inside an effect is
   // fine) so it isn't re-triggered by every override and doesn't chain a second
   // setState off of it; `isPending` reads the state copy instead, since that's
   // evaluated during render and refs can't be read there.
-  const userOverriddenRef = React.useRef<Set<string>>(new Set(Object.keys(initialScores ?? {})))
+  const userOverriddenRef = React.useRef<Set<string>>(
+    new Set(
+      Object.entries(initialValueOrigins ?? {})
+        .filter(([, origin]) => origin === 'learner-entered' || origin === 'learner-override')
+        .map(([id]) => id)
+    )
+  )
   const [userOverridden, setUserOverridden] = useState<Set<string>>(
-    () => new Set(Object.keys(initialScores ?? {}))
+    () =>
+      new Set(
+        Object.entries(initialValueOrigins ?? {})
+          .filter(([, origin]) => origin === 'learner-entered' || origin === 'learner-override')
+          .map(([id]) => id)
+      )
   )
 
   useEffect(() => {
@@ -168,6 +197,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       if (
         d.autoScore !== undefined &&
         !userOverriddenRef.current.has(d.id) &&
+        valueOrigin(d) !== 'unrecorded' &&
+        valueOrigin(d) !== 'calculated-snapshot' &&
         next[d.id] !== d.autoScore
       ) {
         next[d.id] = d.autoScore
@@ -178,19 +209,23 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       setScores(next)
       onScoreChange?.(next)
     }
-  }, [dimensions, onScoreChange, scores])
+  }, [dimensions, onScoreChange, scores, valueOrigin])
 
   const handleScoreChange = useCallback(
     (dimId: string, value: number) => {
       const clamped = Math.max(0, Math.min(100, value))
       userOverriddenRef.current.add(dimId)
-      setEditedThisSession((prev) => new Set(prev).add(dimId))
+      const dimension = dimensions.find((d) => d.id === dimId)
+      setValueOrigins((prev) => ({
+        ...prev,
+        [dimId]: dimension?.valueSource === 'calculated' ? 'learner-override' : 'learner-entered',
+      }))
       setUserOverridden((prev) => (prev.has(dimId) ? prev : new Set(prev).add(dimId)))
       const updated = { ...scores, [dimId]: clamped }
       setScores(updated)
       onScoreChange?.(updated)
     },
-    [onScoreChange, scores]
+    [onScoreChange, scores, dimensions]
   )
 
   const effectiveWeight = useCallback(
@@ -202,8 +237,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   // Still "not yet scored" — no computed baseline AND the user hasn't set a
   // value yet. Stops applying the instant the user touches the slider.
   const isPending = useCallback(
-    (d: ScorecardDimension): boolean => Boolean(d.notYetScored) && !userOverridden.has(d.id),
-    [userOverridden]
+    (d: ScorecardDimension): boolean => !isKpiValueAssessed(valueOrigin(d)),
+    [valueOrigin]
   )
 
   const handleWeightChange = useCallback(
@@ -242,15 +277,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   const overallAvailable = scoredValueCoverage >= minimumCoverageForOverall
   const originLabel = useCallback(
     (dimension: ScorecardDimension) =>
-      kpiValueOriginLabel(
-        currentKpiValueOrigin(
-          dimension,
-          userOverridden.has(dimension.id),
-          initialScores?.[dimension.id] !== undefined && !editedThisSession.has(dimension.id)
-        ),
-        dimension.disabled
-      ),
-    [userOverridden, initialScores, editedThisSession]
+      kpiValueOriginLabel(valueOrigin(dimension), dimension.disabled),
+    [valueOrigin]
   )
 
   const exportMarkdown = useMemo(() => {
@@ -273,7 +301,9 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         continue
       }
       const target = hasTargets ? ` | ${d.target !== undefined ? `${d.target}` : '—'}` : ''
-      const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? 0}/100`
+      const scoreCell = isPending(d)
+        ? `${scores[d.id] ?? 0}/100 — not assessed for current use`
+        : `${scores[d.id] ?? 0}/100`
       md += `| ${d.label} | ${scoreCell} | ${Math.round(effectiveWeight(d) * 100)}%${target}${lineage}\n`
       md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
     }
@@ -320,7 +350,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       return [
         d.id,
         d.label,
-        d.disabled ? '' : isPending(d) ? 'not yet scored' : String(scores[d.id] ?? 0),
+        d.disabled ? '' : String(scores[d.id] ?? 0),
         (effectiveWeight(d) * 100).toFixed(0),
         d.target ?? '',
         d.disabled ? 'true' : 'false',
@@ -433,6 +463,11 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                 <p className="text-xs text-muted-foreground ml-6">
                   {d.disabledReason ?? 'Data unavailable.'}
                 </p>
+                {initialScores?.[d.id] !== undefined && (
+                  <p className="text-xs text-muted-foreground ml-6">
+                    Saved value: {score} — current inputs unavailable; excluded from this score.
+                  </p>
+                )}
                 {d.disabledActionHref && (
                   <a
                     href={d.disabledActionHref}
@@ -460,7 +495,11 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                   {pending ? (
-                    <span className="text-xs italic text-muted-foreground">Not yet scored</span>
+                    <span className="text-xs italic text-muted-foreground">
+                      {initialScores?.[d.id] !== undefined
+                        ? `Saved value: ${score} — current use not assessed`
+                        : 'Not yet scored'}
+                    </span>
                   ) : (
                     <span className={`text-lg font-bold ${getScoreColor(score, colorScale)}`}>
                       {score}
@@ -503,6 +542,39 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                   />
                 )}
               </div>
+              {pending && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {d.userOverride !== false && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleScoreChange(d.id, score)}
+                    >
+                      Use displayed sample value
+                    </Button>
+                  )}
+                  {d.valueSource === 'calculated' && d.autoScore !== undefined && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const updated = { ...scores, [d.id]: d.autoScore! }
+                        setScores(updated)
+                        userOverriddenRef.current.delete(d.id)
+                        setUserOverridden((prev) => {
+                          const next = new Set(prev)
+                          next.delete(d.id)
+                          return next
+                        })
+                        setValueOrigins((prev) => ({ ...prev, [d.id]: 'calculated-current' }))
+                        onScoreChange?.(updated)
+                      }}
+                    >
+                      Use current calculation ({d.autoScore})
+                    </Button>
+                  )}
+                </div>
+              )}
               <details className="mt-3 rounded-md border border-border/70 bg-muted/20 p-3">
                 <summary className="cursor-pointer text-xs font-medium text-foreground">
                   Sample measure notes

@@ -32,3 +32,31 @@ export function kpiValueOriginLabel(origin: KpiValueOrigin, disabled = false): s
   }
   return labels[origin]
 }
+
+/** Restoring a calculation does not establish a match to today's selected inputs. */
+export function restoredKpiValueOrigins(
+  scores: Record<string, number> | undefined,
+  origins: Record<string, KpiValueOrigin> | undefined
+): Record<string, KpiValueOrigin> {
+  return Object.fromEntries(
+    Object.keys(scores ?? {}).map((id) => {
+      const origin = origins?.[id]
+      return [
+        id,
+        origin === 'calculated-current' || origin === 'calculated-snapshot'
+          ? 'calculated-snapshot'
+          : origin === 'learner-entered' ||
+              origin === 'learner-override' ||
+              origin === 'not-entered'
+            ? origin
+            : 'unrecorded',
+      ]
+    })
+  )
+}
+
+export function isKpiValueAssessed(origin: KpiValueOrigin): boolean {
+  return (
+    origin === 'learner-entered' || origin === 'learner-override' || origin === 'calculated-current'
+  )
+}

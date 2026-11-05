@@ -2,6 +2,9 @@
 import {
   currentKpiValueOrigin,
   kpiValueOriginLabel,
+  type KpiValueOrigin,
+  restoredKpiValueOrigins,
+  isKpiValueAssessed,
 } from '@/components/PKILearning/common/executive/scorecardValueOrigin'
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react'
 import { Info } from 'lucide-react'
@@ -59,6 +62,9 @@ interface SavedKpiInputs {
   weights?: Record<string, number>
   activePersona?: KpiPersonaId
   observations?: Record<string, ScorecardObservation>
+  touchedIds?: string[]
+  valueOrigins?: Record<string, KpiValueOrigin>
+  originalSavedInputs?: unknown
 }
 
 interface KpiSnapshot extends SavedKpiInputs {
@@ -78,11 +84,14 @@ export function buildKpiDashboardMarkdown(
   /** The KPIs the person has set. A manual KPI with no baseline stays "not yet
    *  scored" until it is in this set, as on the scorecard. Omit it to treat every
    *  score passed in as entered (the simulation's generated documents do). */
-  touchedIds?: ReadonlySet<string>
+  touchedIds?: ReadonlySet<string>,
+  valueOrigins?: Record<string, KpiValueOrigin>
 ): string {
   const ew = (d: (typeof dimensions)[number]) => (d.id in weights ? (weights[d.id] ?? 0) : d.weight)
   const isPending = (d: (typeof dimensions)[number]) =>
-    touchedIds !== undefined && d.notYetScored === true && !touchedIds.has(d.id)
+    valueOrigins
+      ? !isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
+      : touchedIds !== undefined && d.notYetScored === true && !touchedIds.has(d.id)
 
   let weightedSum = 0
   let totalWeight = 0
@@ -114,13 +123,13 @@ export function buildKpiDashboardMarkdown(
     '|-----|-------|--------|--------|--------------|--------|-------|----------|--------------|\n'
   for (const d of dimensions) {
     const observation = observations[d.id]
-    const lineage = ` | ${kpiValueOriginLabel(touchedIds === undefined ? 'unrecorded' : currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
+    const lineage = ` | ${kpiValueOriginLabel(valueOrigins?.[d.id] ?? (touchedIds === undefined ? 'unrecorded' : currentKpiValueOrigin(d, touchedIds.has(d.id))), d.disabled)} | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
     if (d.disabled) {
       md += `| ${d.label} | _locked_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
       continue
     }
     const value = scores[d.id] ?? d.autoScore
-    md += `| ${d.label} | ${value === undefined || isPending(d) ? '_not yet scored_' : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
+    md += `| ${d.label} | ${value === undefined ? '_not yet scored_' : isPending(d) ? `${value}/100 — not assessed for current use` : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
     md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
   }
 
@@ -151,8 +160,11 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   const scoresRef = useRef<Record<string, number>>(savedInputs?.scores ?? {})
   // The scorecard reports which KPIs the person has set; the saved Markdown reads
   // the same set so it agrees with the screen about what is still "not yet scored".
-  const touchedRef = useRef<ReadonlySet<string>>(new Set(Object.keys(savedInputs?.scores ?? {})))
+  const touchedRef = useRef<ReadonlySet<string>>(new Set(savedInputs?.touchedIds ?? []))
   const weightsRef = useRef<Record<string, number>>(savedInputs?.weights ?? {})
+  const originsRef = useRef(restoredKpiValueOrigins(savedInputs?.scores, savedInputs?.valueOrigins))
+  const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
+
   const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
     () => savedInputs?.observations ?? {}
   )
@@ -198,7 +210,8 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       scoresRef.current,
       weightsRef.current,
       observationsRef.current,
-      touchedRef.current
+      touchedRef.current,
+      originsRef.current
     )
 
     addExecutiveDocument({
@@ -214,10 +227,13 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         weights: weightsRef.current,
         activePersona,
         observations: observationsRef.current,
+        touchedIds: Array.from(touchedRef.current),
+        valueOrigins: originsRef.current,
+        originalSavedInputs,
       },
       createdAt: Date.now(),
     })
-  }, [dimensions, addExecutiveDocument, activePersona])
+  }, [dimensions, addExecutiveDocument, activePersona, originalSavedInputs])
 
   // Persistent done-state for the explicit Save button. The debounced auto-save
   // stays as a convenience, but there's now a visible button + feedback (R3).
@@ -257,6 +273,9 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         weights: { ...weightsRef.current },
         activePersona,
         observations: { ...observationsRef.current },
+        touchedIds: Array.from(touchedRef.current),
+        valueOrigins: { ...originsRef.current },
+        originalSavedInputs,
       })
       localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(history.slice(0, 12)))
       setSnapshotCount(Math.min(12, history.length))
@@ -265,7 +284,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
     }
     setWasSaved(true)
     setDirtySinceSave(false)
-  }, [persistScorecard, activePersona])
+  }, [persistScorecard, activePersona, originalSavedInputs])
 
   const handleScoreChange = useCallback(
     (scores: Record<string, number>) => {
@@ -408,6 +427,10 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         onTouchedChange={handleTouchedChange}
         onWeightChange={handleWeightChange}
         initialScores={savedInputs?.scores}
+        initialValueOrigins={savedInputs?.valueOrigins}
+        onValueOriginsChange={(origins) => {
+          originsRef.current = origins
+        }}
         initialWeights={savedInputs?.weights}
         allowWeightEditing={true}
         showExport={true}

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { fireEvent, render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { DataDrivenScorecard, type ScorecardDimension } from './DataDrivenScorecard'
 import { currentKpiValueOrigin, kpiValueOriginLabel } from './scorecardValueOrigin'
 
@@ -85,5 +85,93 @@ describe('KPI value labels describe the operation actually performed', () => {
     expect(
       within(screen.getByTestId('kpi-dim-manual')).getByText(/Value origin not recorded/)
     ).toBeInTheDocument()
+  })
+  it('keeps restored unknown zeros out of coverage until explicitly chosen, then round trips them', () => {
+    const origins = vi.fn()
+    const scores = vi.fn()
+    const view = render(
+      <DataDrivenScorecard
+        title="Legacy sample"
+        dimensions={dimensions}
+        initialScores={{ manual: 0, calc: 90 }}
+        minimumCoverageForOverall={0.7}
+        showExport={false}
+        onValueOriginsChange={origins}
+        onScoreChange={scores}
+      />
+    )
+    expect(screen.getByText(/Scored-value coverage: 0%/)).toBeInTheDocument()
+    expect(
+      within(screen.getByTestId('kpi-dim-calc')).getByText(/Saved value: 90/)
+    ).toBeInTheDocument()
+    fireEvent.click(
+      within(screen.getByTestId('kpi-dim-manual')).getByRole('button', {
+        name: 'Use displayed sample value',
+      })
+    )
+    expect(screen.getByText(/Scored-value coverage: 50%/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+    expect(screen.getByText(/Scored-value coverage: 100%/)).toBeInTheDocument()
+    expect(screen.getByText('20')).toBeInTheDocument()
+    expect(scores.mock.lastCall?.[0]).toEqual({ manual: 0, calc: 40 })
+    expect(origins.mock.lastCall?.[0]).toEqual({
+      manual: 'learner-entered',
+      calc: 'calculated-current',
+    })
+    const savedOrigins = origins.mock.lastCall![0]
+    view.unmount()
+    render(
+      <DataDrivenScorecard
+        title="Reopened sample"
+        dimensions={dimensions}
+        initialScores={{ manual: 0, calc: 40 }}
+        initialValueOrigins={savedOrigins}
+        minimumCoverageForOverall={0.7}
+        showExport={false}
+      />
+    )
+    expect(screen.getByText(/Scored-value coverage: 50%/)).toBeInTheDocument()
+    expect(screen.getByText(/Saved calculated sample snapshot/)).toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: 'Sample manual score' })).toHaveValue('0')
+    fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+    expect(screen.getByText(/Scored-value coverage: 100%/)).toBeInTheDocument()
+  })
+
+  it('preserves an entered nonzero snapshot but does not infer input matching from equal calculations', () => {
+    render(
+      <DataDrivenScorecard
+        title="Saved calculation"
+        dimensions={dimensions}
+        initialScores={{ manual: 17, calc: 40 }}
+        initialValueOrigins={{ manual: 'learner-entered', calc: 'calculated-current' }}
+        minimumCoverageForOverall={0.7}
+        showExport={false}
+      />
+    )
+    expect(screen.getByText(/Scored-value coverage: 50%/)).toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: 'Sample manual score' })).toHaveValue('17')
+    expect(screen.getByText(/Saved value: 40/)).toBeInTheDocument()
+    fireEvent.change(screen.getByRole('slider', { name: 'Sample calculation score' }), {
+      target: { value: '50' },
+    })
+    expect(screen.getByText(/Learner override of calculated sample value/)).toBeInTheDocument()
+    expect(screen.getByText(/Scored-value coverage: 100%/)).toBeInTheDocument()
+  })
+  it('keeps a saved zero visible when current inputs are unavailable without scoring it', () => {
+    render(
+      <DataDrivenScorecard
+        title="Unavailable sample"
+        dimensions={[{ ...dimensions[1], disabled: true }]}
+        initialScores={{ calc: 0 }}
+        initialValueOrigins={{ calc: 'calculated-current' }}
+        minimumCoverageForOverall={0.7}
+        showExport={false}
+      />
+    )
+    expect(screen.getByText(/Saved value: 0 — current inputs unavailable/)).toBeInTheDocument()
+    expect(screen.getByText(/Scored-value coverage: 0%/)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Use current calculation/ })
+    ).not.toBeInTheDocument()
   })
 })

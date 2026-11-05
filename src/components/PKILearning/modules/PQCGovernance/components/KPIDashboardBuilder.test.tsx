@@ -72,6 +72,7 @@ describe('KPIDashboardBuilder', () => {
     addExecutiveDocument.mockReset()
     mockPersona = 'executive'
     localStorage.clear()
+    mockModuleState.artifacts.executiveDocuments = []
   })
 
   it('renders the executive-weighted KPI set by default', () => {
@@ -155,7 +156,7 @@ describe('KPIDashboardBuilder', () => {
     expect(manual.length).toBeGreaterThan(0)
     const scores = Object.fromEntries(dimensions.map((d) => [d.id, d.autoScore ?? 0]))
     const fresh = buildKpiDashboardMarkdown(dimensions, 'grc', scores, {}, {}, new Set())
-    expect(fresh).toContain('_not yet scored_')
+    expect(fresh).toContain('not assessed for current use')
     expect(fresh).not.toMatch(/Overall Score: \d+\/100/)
     const touchedAll = buildKpiDashboardMarkdown(
       dimensions,
@@ -195,5 +196,43 @@ describe('KPIDashboardBuilder', () => {
 
     expect(markdown).toContain('2026 Q4 | Risk Committee | risk-register-42 | owner-reviewed')
     expect(markdown).toContain('Raw measure: 4 / 10 data stores; as of 2026-10-18.')
+  })
+  it('preserves legacy zero and raw inputs without silently assessing them, then saves an explicit choice', () => {
+    const legacy = {
+      scores: { 'hndl-horizon': 0 },
+      weights: {},
+      activePersona: 'executive',
+      extraLegacyField: 'fictional saved input',
+    }
+    mockModuleState.artifacts.executiveDocuments = [
+      {
+        id: 'legacy-kpi',
+        moduleId: 'pqc-governance',
+        type: 'kpi-dashboard',
+        title: 'Legacy example',
+        data: 'Saved example',
+        createdAt: 1,
+        inputs: legacy,
+      },
+    ]
+    const view = render(<KPIDashboardBuilder />)
+    const row = screen.getByTestId('kpi-dim-hndl-horizon')
+    expect(within(row).getByText(/Value origin not recorded/)).toBeInTheDocument()
+    expect(within(row).getByRole('slider')).toHaveValue('0')
+    expect(row).toHaveAttribute('data-pending', 'true')
+    fireEvent.click(within(row).getByRole('button', { name: 'Use displayed sample value' }))
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const saved = addExecutiveDocument.mock.lastCall![0]
+    expect(saved.inputs.scores['hndl-horizon']).toBe(0)
+    expect(saved.inputs.valueOrigins['hndl-horizon']).toBe('learner-entered')
+    expect(saved.inputs.touchedIds).toContain('hndl-horizon')
+    expect(saved.inputs.originalSavedInputs).toEqual(legacy)
+    view.unmount()
+    mockModuleState.artifacts.executiveDocuments = [saved]
+    render(<KPIDashboardBuilder />)
+    expect(
+      within(screen.getByTestId('kpi-dim-hndl-horizon')).getByText(/Learner-entered sample value/)
+    ).toBeInTheDocument()
+    expect(screen.getByTestId('kpi-dim-hndl-horizon')).not.toHaveAttribute('data-pending')
   })
 })
