@@ -234,15 +234,17 @@ export const TLSBasicsModule: React.FC = () => {
         `[Server] Cert key: C_GetAttributeValue(CKA_VALUE) → ${pubKeyBytes.length} B SubjectPublicKeyInfo`
       )
 
-      // Step 3: Sign TLS CertificateVerify message
+      // Step 3: Sign the existing illustrative message, separate from TLS.
       const handshakeTranscript =
         'TLS-1.3-CertificateVerify:ClientHello+ServerHello+...+CertificateVerify'
       const sigBytes = hsm_sign(M, hSession, privHandle, handshakeTranscript)
       addLine(
-        `[Server] CertificateVerify: C_MessageSignInit(CKM_ML_DSA) + C_SignMessage(transcript) → ${sigBytes.length} B`
+        `[Sample] Sign illustrative message: C_MessageSignInit(CKM_ML_DSA) + C_SignMessage(placeholder) → ${sigBytes.length} B`
       )
       addLine(
-        `[Client] Verify: sig[0..7]=${Array.from(sigBytes.slice(0, 8))
+        `[Sample] Signature prefix (first 8 bytes; not a verification result): ${Array.from(
+          sigBytes.slice(0, 8)
+        )
           .map((b) => b.toString(16).padStart(2, '0'))
           .join('')}…`
       )
@@ -370,20 +372,13 @@ export const TLSBasicsModule: React.FC = () => {
             {/* HSM-Backed Server — Live PKCS#11 Demo */}
             <div className="space-y-3">
               <h3 className="text-base font-semibold text-foreground">
-                HSM-Backed TLS Server (PKCS#11) — Side Demo
+                Sample HSM signing operation — separate from the TLS handshake
               </h3>
               <p className="text-xs text-muted-foreground">
-                Side-by-side demo: this panel runs an ML-DSA-65 sign operation in the SoftHSMv3 WASM
-                module separately from the TLS handshake above. For end-to-end HSM-backed signing
-                during the actual handshake, toggle <strong>Live HSM Mode</strong> at the top of
-                this Workshop tab — that route loads softhsmv3 inside openssl.wasm via
-                pkcs11-provider, so the CertificateVerify sign call routes through{' '}
-                <code className="font-mono">C_SignInit</code> +{' '}
-                <code className="font-mono">C_SignMessage</code> on the same key the cert was minted
-                from. The signed transcript here uses a placeholder string for illustration; real
-                CertificateVerify content is{' '}
-                <code className="font-mono">ContextString || SHA-256(handshake messages)</code> (RFC
-                9846 §4.5.2).
+                This side demonstration signs a fixed illustrative message with the sample HSM. It
+                is separate from the TLS handshake above. It does not build a CertificateVerify
+                input or execute a signature-verification check. Inspect the operation log for the
+                calls actually executed.
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />
@@ -391,7 +386,7 @@ export const TLSBasicsModule: React.FC = () => {
               {hsm.isReady && (
                 <div className="glass-panel p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold">Run HSM Server Key Operations</p>
+                    <p className="text-sm font-semibold">Run sample HSM signing operation</p>
                     <Button
                       variant="gradient"
                       onClick={runHsmServerDemo}
@@ -403,7 +398,7 @@ export const TLSBasicsModule: React.FC = () => {
                           <Loader2 size={11} className="animate-spin" /> Running…
                         </>
                       ) : (
-                        'Execute (Live WASM)'
+                        'Sign illustrative message (live WASM)'
                       )}
                     </Button>
                   </div>
@@ -453,8 +448,8 @@ export const TLSBasicsModule: React.FC = () => {
                 log={hsm.log}
                 onClear={hsm.clearLog}
                 defaultOpen={true}
-                title="PKCS#11 Call Log — TLS Server Operations"
-                emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
+                title="PKCS#11 Call Log — Sample Signing Operations"
+                emptyMessage="Run the sample signing operation to inspect its calls."
                 filterFns={TLS_HSM_OPERATIONS}
               />
               {hsm.keys.length > 0 && (
