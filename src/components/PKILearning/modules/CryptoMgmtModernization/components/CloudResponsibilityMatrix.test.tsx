@@ -206,13 +206,13 @@ describe('buildCloudResponsibilityMatrix - watch-outs', () => {
     expect(rec.watchOuts.join(' ')).toMatch(/Multi-cloud/i)
   })
 
-  it('BYOK + provider lacking PQC wrap emits a wrapping-algorithm warning', () => {
+  it('BYOK scopes import support to the exact operation and wrapping profile', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       customerKeyControl: 'customer-supplied',
     })
     expect(rec.watchOuts.join(' ')).toMatch(/BYOK|HYOK/)
-    expect(rec.watchOuts.join(' ')).toMatch(/wrapping algorithm/i)
+    expect(rec.watchOuts.join(' ')).toMatch(/import operation, key type and wrapping profile/i)
   })
 
   it('FedRAMP High emits the FIPS 140-3 re-validation warning', () => {
@@ -243,14 +243,17 @@ describe('buildCloudResponsibilityMatrix - watch-outs', () => {
     expect(rec.watchOuts.join(' ')).toMatch(/contractual PQC deadline/i)
   })
 
-  it('EU sovereign + non-EU provider emits the 12-18 month delay warning', () => {
+  it('EU sovereign + non-EU provider requires selected-region support verification', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       regulatoryOverlay: ['EU sovereign cloud'],
       cloudProviders: ['AWS'],
     })
-    expect(rec.watchOuts.join(' ')).toMatch(/sovereign-cloud/i)
-    expect(rec.watchOuts.join(' ')).toMatch(/12-18 months/)
+    expect(rec.watchOuts.join(' ')).toMatch(/selected sovereign-region service and version/i)
+    expect(rec.watchOuts.join(' ')).toMatch(
+      /Do not assume that commercial-region availability establishes support/i
+    )
+    expect(rec.watchOuts.join(' ')).not.toMatch(/12-18 months/)
   })
 
   it('multi-cloud + FedRAMP + BYOK triggers all three warnings simultaneously', () => {
