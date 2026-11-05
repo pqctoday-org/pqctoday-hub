@@ -29,6 +29,13 @@ import {
   type DataSensitivityClass,
 } from '@/utils/breachCostModel'
 import { computeMoscaVerdict, costOfWaiting } from '@/utils/moscaTheorem'
+import {
+  anchorOrigin,
+  restoredProbabilityOrigin,
+  probabilityProvenance,
+  BREACH_PROBABILITY_SOURCE_URL,
+  type BreachProbabilityOrigin,
+} from '@/utils/breachProbabilityOrigin'
 
 /** The full set of scenario sliders below, for restore-on-mount and for
  *  reporting the raw inputs back up (not just the computed costs) so a
@@ -38,6 +45,7 @@ export interface BreachScenarioInputs {
   yearsOfData: number
   orgSizeTier: OrgSizeTier
   annualBreachProbPct: number
+  annualBreachProbabilityOrigin?: BreachProbabilityOrigin
   hndlFactorPct: number
   dataSensitivityClass: DataSensitivityClass
   planningHorizonYears: number
@@ -130,8 +138,23 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
     initialValues?.annualBreachProbPct ??
       ANNUAL_BREACH_PROBABILITY_PCT[initialValues?.orgSizeTier ?? 'average']
   )
+  const [annualBreachProbabilityOrigin, setAnnualBreachProbabilityOrigin] =
+    useState<BreachProbabilityOrigin>(() =>
+      restoredProbabilityOrigin(
+        initialValues?.annualBreachProbabilityOrigin,
+        annualBreachProbPct,
+        orgSizeTier,
+        initialValues?.annualBreachProbPct != null
+      )
+    )
+  const probabilityRecord = probabilityProvenance(
+    annualBreachProbPct,
+    orgSizeTier,
+    annualBreachProbabilityOrigin
+  )
   const selectOrgSizeTier = (tier: OrgSizeTier) => {
     setOrgSizeTier(tier)
+    setAnnualBreachProbabilityOrigin(anchorOrigin(tier))
     setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[tier])
   }
   const [hndlFactorPct, setHndlFactorPct] = useState(initialValues?.hndlFactorPct ?? 30)
@@ -230,6 +253,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
       yearsOfData,
       orgSizeTier,
       annualBreachProbPct,
+      annualBreachProbabilityOrigin,
       hndlFactorPct,
       dataSensitivityClass,
       planningHorizonYears,
@@ -243,6 +267,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
     yearsOfData,
     orgSizeTier,
     annualBreachProbPct,
+    annualBreachProbabilityOrigin,
     hndlFactorPct,
     dataSensitivityClass,
     planningHorizonYears,
@@ -384,7 +409,10 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                 // integers the moment the slider was touched.
                 step={0.1}
                 value={annualBreachProbPct}
-                onChange={(e) => setAnnualBreachProbPct(parseFloat(e.target.value))}
+                onChange={(e) => {
+                  setAnnualBreachProbPct(parseFloat(e.target.value))
+                  setAnnualBreachProbabilityOrigin('learner-assumption')
+                }}
                 className="w-full accent-primary"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
@@ -392,6 +420,27 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                 <span className="text-sm font-mono text-primary">{annualBreachProbPct}%</span>
                 <span>50%</span>
               </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Active probability origin: {probabilityRecord.originLabel}. This is a scenario
+                input, not a finding about the fictional organization.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Reference anchor: {probabilityRecord.referenceProbabilityPct}% ({orgSizeTier};{' '}
+                {probabilityRecord.referenceKind === 'source-anchor'
+                  ? 'historical typical-firm source reference'
+                  : 'Hub model-derived tier mapping'}
+                ).{' '}
+                <a
+                  href={BREACH_PROBABILITY_SOURCE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary underline"
+                >
+                  IRIS 2025 {probabilityRecord.referenceFigure}
+                </a>{' '}
+                supports the reference context only; edited and restored inputs are not
+                source-verified.
+              </p>
               {probabilityWasUnrecorded && (
                 <p className="text-xs text-muted-foreground mt-2">
                   Loaded inputs did not record an annual breach probability. This run started from

@@ -19,6 +19,11 @@ import {
   type DataSensitivityClass,
 } from '@/utils/breachCostModel'
 import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
+import {
+  probabilityProvenance,
+  probabilityProvenanceMarkdown,
+  restoredProbabilityOrigin,
+} from '@/utils/breachProbabilityOrigin'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -128,6 +133,19 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     md += `| Probability CRQC exists within horizon | ${Math.round(breachCosts.pCrqc * 100)}% |\n`
     md += `| Probability-weighted expected annual loss | ${fmtCurrency(breachCosts.quantumALE)} |\n`
     md += `| Latest safe migration start year | ${Math.round(breachCosts.latestSafeStartYear)} |\n\n`
+    if (modelInputs)
+      md += probabilityProvenanceMarkdown(
+        probabilityProvenance(
+          modelInputs.annualBreachProbPct,
+          modelInputs.orgSizeTier,
+          restoredProbabilityOrigin(
+            modelInputs.annualBreachProbabilityOrigin,
+            modelInputs.annualBreachProbPct,
+            modelInputs.orgSizeTier,
+            true
+          )
+        )
+      )
     if (findings.length > 0) {
       md += `## Key findings\n\n`
       for (const f of findings) md += `- ${f}\n`
@@ -136,7 +154,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     md += `*Illustrative — IBM Cost of a Data Breach 2025 per-sector baselines (one edition behind; IBM published its 2026 global report) and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
     md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     return md
-  }, [breachCosts, selectedIndustry, findings])
+  }, [breachCosts, selectedIndustry, findings, modelInputs])
 
   // Shared with the export below (`output:`) so Board Pitch Builder can read
   // the same numbers whether it's chained live via props (in the linear
@@ -157,9 +175,21 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
             yearsOfData: breachCosts.yearsOfData,
             hndlFactorPct: breachCosts.hndlFactorPct,
             annualBreachProbPct: breachCosts.annualBreachProbPct,
+            probabilityProvenance: modelInputs
+              ? probabilityProvenance(
+                  modelInputs.annualBreachProbPct,
+                  modelInputs.orgSizeTier,
+                  restoredProbabilityOrigin(
+                    modelInputs.annualBreachProbabilityOrigin,
+                    modelInputs.annualBreachProbPct,
+                    modelInputs.orgSizeTier,
+                    true
+                  )
+                )
+              : undefined,
           }
         : null,
-    [breachCosts, selectedIndustry]
+    [breachCosts, selectedIndustry, modelInputs]
   )
 
   useEffect(() => {

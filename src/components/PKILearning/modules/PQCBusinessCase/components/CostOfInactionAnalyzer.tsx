@@ -40,6 +40,14 @@ import { DATA_SHELF_LIFE_YEARS, DATA_SENSITIVITY_LABELS } from '@/utils/breachCo
 import { computeMoscaVerdict } from '@/utils/moscaTheorem'
 import { deriveIndustryMandate } from '@/utils/inactionDrivers'
 import type { BreachOutput, InactionOutput, InactionScenarioRecord } from '../types'
+import {
+  anchorOrigin,
+  restoredProbabilityOrigin,
+  probabilityProvenance,
+  probabilityProvenanceMarkdown,
+  BREACH_PROBABILITY_SOURCE_URL,
+  type BreachProbabilityOrigin,
+} from '@/utils/breachProbabilityOrigin'
 
 const ORG_SIZE_TIER_OPTIONS: { tier: OrgSizeTier; label: string }[] = [
   { tier: 'smb', label: 'SMB' },
@@ -74,6 +82,8 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     selectedIndustry: string
     delayYears: number
     annualBreachProbPct: number
+    annualBreachProbabilityOrigin?: BreachProbabilityOrigin
+    probabilityAnchorTier?: OrgSizeTier
     migrationDurationYears: number
     migrationCostOverrideUSD?: number | null
     discountRatePct?: number
@@ -96,6 +106,27 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   const [delayYears, setDelayYears] = useState<number>(savedInputs?.delayYears ?? 2)
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState<number>(
     savedInputs?.annualBreachProbPct ?? DELAY_MODEL_DEFAULTS.annualBreachProbPct
+  )
+  const [probabilityAnchorTier, setProbabilityAnchorTier] = useState<OrgSizeTier>(
+    savedInputs?.probabilityAnchorTier ?? 'average'
+  )
+  const [annualBreachProbabilityOrigin, setAnnualBreachProbabilityOrigin] =
+    useState<BreachProbabilityOrigin>(() =>
+      restoredProbabilityOrigin(
+        savedInputs?.annualBreachProbabilityOrigin,
+        annualBreachProbPct,
+        probabilityAnchorTier,
+        savedInputs?.annualBreachProbPct != null
+      )
+    )
+  const probabilityRecord = useMemo(
+    () =>
+      probabilityProvenance(
+        annualBreachProbPct,
+        probabilityAnchorTier,
+        annualBreachProbabilityOrigin
+      ),
+    [annualBreachProbPct, probabilityAnchorTier, annualBreachProbabilityOrigin]
   )
   const [migrationDurationYears, setMigrationDurationYears] = useState<number>(
     savedInputs?.migrationDurationYears ?? DELAY_MODEL_DEFAULTS.migrationDurationYears
@@ -269,6 +300,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       migrationCostUSD,
       delayPremiumPerYearUSD: profile.delayPremiumPerYear,
       annualBreachProbPct,
+      probabilityProvenance: probabilityRecord,
       breachBaselineUSD: inputs.breachBaseline,
       baselineOrigin: chainedFromSimulator ? 'breach-simulator' : 'industry-default',
       baseYearsOfData: inputs.baseYearsOfData,
@@ -284,7 +316,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       sourceStatus: {
         breachBaseline:
           'IBM 2025 sector assumption — one edition behind and not independently verified',
-        breachProbability: 'Cyentia IRIS 2025 primary-verified',
+        breachProbability: probabilityRecord.originLabel,
         crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model',
       },
     }),
@@ -298,6 +330,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       profile.delayPremiumPerYear,
       annualBreachProbPct,
       chainedFromSimulator,
+      probabilityRecord,
       dataSensitivityClass,
       discountRatePct,
       verifiedEffectiveYear,
@@ -338,10 +371,12 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     md += `| Delay ${delayYears}yr (${inputs.horizonYears}-yr NPV) | ${fmt(delayedResult.total)} |\n`
     md += `| **Cost of inaction (delay ${delayYears}yr)** | **${fmt(costOfInaction)}** |\n`
     md += `| Annual breach probability | ${annualBreachProbPct}% |\n`
+    md += `| Probability input origin | ${probabilityRecord.originLabel} |\n`
     md += `| Migration duration | ${migrationDurationYears} yr |\n`
     md += `| Planning date context | ${mandate.deadlineYear} (${mandateLabel} — ${mandate.driverName}; verify applicability and effective date) |\n`
     md += `| Mosca scenario threshold | ${Math.round(moscaVerdict.latestSafeStartYear)} (consensus median CRQC year ${moscaVerdict.crqcYear}; not a safe-date guarantee) |\n`
     md += `| Crossover year | ${crossover ?? `beyond the ${inputs.horizonYears}-year horizon`} |\n\n`
+    md += probabilityProvenanceMarkdown(probabilityRecord)
     md += `## Delay ${delayYears}yr breakdown (NPV)\n\n`
     md += `| Component | Value |\n|-----------|-------|\n`
     md += `| Migration (with delay premium) | ${fmt(delayedResult.totalMigration)} |\n`
@@ -373,6 +408,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     selectedIndustry,
     delayYears,
     annualBreachProbPct,
+    probabilityRecord,
     migrationDurationYears,
     mandate,
     mandateLabel,
@@ -451,7 +487,11 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
                 key={tier}
                 type="button"
                 variant="ghost"
-                onClick={() => setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[tier])}
+                onClick={() => {
+                  setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[tier])
+                  setProbabilityAnchorTier(tier)
+                  setAnnualBreachProbabilityOrigin(anchorOrigin(tier))
+                }}
                 className={`h-auto px-1.5 py-0.5 rounded-full border text-[10px] ${
                   annualBreachProbPct === ANNUAL_BREACH_PROBABILITY_PCT[tier]
                     ? 'bg-primary text-primary-foreground border-primary'
@@ -472,7 +512,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             // as soon as the slider was touched.
             step={0.1}
             value={annualBreachProbPct}
-            onChange={(e) => setAnnualBreachProbPct(Number(e.target.value))}
+            onChange={(e) => {
+              setAnnualBreachProbPct(Number(e.target.value))
+              setAnnualBreachProbabilityOrigin('learner-assumption')
+            }}
             className="w-full accent-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground">
@@ -653,7 +696,27 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           </div>
           <div>
             <dt className="font-semibold text-foreground">Breach probability</dt>
-            <dd>{annualBreachProbPct}% — Cyentia IRIS 2025 primary-verified</dd>
+            <dd>
+              {annualBreachProbPct}% — {probabilityRecord.originLabel}
+            </dd>
+            <dd className="mt-1">
+              Reference anchor: {probabilityRecord.referenceProbabilityPct}% (
+              {probabilityAnchorTier};{' '}
+              {probabilityRecord.referenceKind === 'source-anchor'
+                ? 'historical typical-firm source reference'
+                : 'Hub model-derived tier mapping'}
+              ).{' '}
+              <a
+                href={BREACH_PROBABILITY_SOURCE_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary underline"
+              >
+                IRIS 2025 {probabilityRecord.referenceFigure}
+              </a>{' '}
+              applies only to the reference, not an edited or restored input. Neither establishes
+              the fictional organization's probability.
+            </dd>
           </div>
           <div>
             <dt className="font-semibold text-foreground">CRQC uncertainty</dt>
@@ -1074,6 +1137,8 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               selectedIndustry,
               delayYears,
               annualBreachProbPct,
+              annualBreachProbabilityOrigin,
+              probabilityAnchorTier,
               migrationDurationYears,
               migrationCostOverrideUSD,
               discountRatePct,
