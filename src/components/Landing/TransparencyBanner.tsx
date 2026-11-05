@@ -23,8 +23,9 @@ export function TransparencyBanner() {
           </span>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          PQC Today is built from publicly available information with thorough verification, but is
-          not endorsed by the organizations cited and may contain inaccuracies.{' '}
+          PQC Today is built from publicly available information. Source links and recorded checking
+          dates do not establish independent review of every claim. Content may contain
+          inaccuracies, and inclusion of an organization or source does not imply endorsement.{' '}
           <Link to="/about#about-transparency" className="text-primary hover:underline">
             Learn more &rarr;
           </Link>
