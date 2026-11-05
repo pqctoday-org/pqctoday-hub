@@ -193,10 +193,11 @@ export function MobileAboutView() {
                         inaccuracies. Leaders are featured only with written consent.
                       </Row>
                       <Row title="Trust Engine">
-                        Records carry a trust score, a link to the original source document and, for
-                        every reviewed change, a named reviewer in a signed public audit trail. Each
-                        claim is checked against the source&rsquo;s exact words, and every change
-                        goes through the same maintainer-run flow — not a one-time label.
+                        Source links and any recorded trust or review metadata provide context for
+                        the entries that include them. Coverage varies by dataset; missing source or
+                        reviewer metadata does not establish that a claim was reviewed, and a
+                        computed result is not a guarantee of factual accuracy. Inspect the
+                        available source and its scope before reusing a claim.
                       </Row>
                       <Row title="Security audit">
                         Latest recorded report: {lastAudited}. This dated production npm dependency
