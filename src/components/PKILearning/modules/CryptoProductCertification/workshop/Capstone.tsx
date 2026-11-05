@@ -704,9 +704,8 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
                   onChange={(candidateV) => setRow({ candidate: candidateV })}
                 />
                 <TextField
-                  id="capstone-field-7"
-                  label={<>Planned route and timing (against the deadlines above)</>}
-
+                  id={`capstone-release-route-${r.id}`}
+                  label={<>Planned route and timing — {r.label} (against the deadlines above)</>}
                   rows={2}
                   value={row.route}
                   onChange={(e) => setRow({ route: e.target.value })}
