@@ -157,7 +157,7 @@ describe('LeadersGrid', () => {
     // Per-card content (Alice)
     expect(screen.getByText('Chief Scientist')).toBeInTheDocument()
     expect(screen.getByText('Quantum Corp')).toBeInTheDocument()
-    expect(screen.getByText('"Leading PQC research."')).toBeInTheDocument()
+    expect(screen.getByText('Leading PQC research.')).toBeInTheDocument()
     expect(screen.getByText('Private Sector')).toBeInTheDocument()
 
     // Inline-collapsible toggle exists for each card
