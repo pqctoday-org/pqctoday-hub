@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { matchesAllWords, partialMatchFallback } from '@/utils/searchMatch'
 
 const categoryColors = {
@@ -63,6 +65,8 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeLetter, setActiveLetter] = useState<string | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
+  const dialogRef = useFocusTrap(isOpen)
+  useBodyScrollLock(isOpen && !isEmbedded)
   const [glossaryTerms, setGlossaryTerms] = useState<GlossaryTerm[]>([])
 
   useEffect(() => {
@@ -77,12 +81,13 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   // Focus search on open
   useEffect(() => {
     if (isOpen && searchRef.current) {
-      setTimeout(() => searchRef.current?.focus(), 200)
+      const timer = setTimeout(() => searchRef.current?.focus(), 200)
+      return () => clearTimeout(timer)
     }
   }, [isOpen])
 
   // Esc via the shared overlay stack: closes only the topmost overlay.
-  useOverlayEscape(isOpen, onClose)
+  useOverlayEscape(isOpen, onClose, { rootRef: dialogRef })
 
   const categories = ['all', 'algorithm', 'protocol', 'standard', 'concept', 'organization']
 
@@ -137,7 +142,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-50 bg-black/60 backdrop-blur-sm`}
+              className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 backdrop-blur-sm`}
               onClick={onClose}
             />
 
@@ -147,7 +152,8 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 300 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className={`${isEmbedded ? 'absolute' : 'fixed'} right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden`}
+              className={`${isEmbedded ? 'absolute' : 'fixed'} right-0 top-0 bottom-0 z-dialog w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden`}
+              ref={dialogRef}
               role="dialog"
               aria-label="PQC Glossary"
               aria-modal="true"
