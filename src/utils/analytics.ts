@@ -345,7 +345,9 @@ export const logPatentView = (patentNumber: string) => {
 }
 
 export const logPatentSearch = (query: string) => {
-  logEvent('Patents', 'Search', sanitizeQuery(query))
+  void query // Keep the caller API while deliberately excluding query content.
+  // Record usage without transmitting the learner's search text.
+  logEvent('Patents', 'Search')
 }
 
 export const logPatentFilter = (filterKey: string, value: string) => {
@@ -436,14 +438,11 @@ function sanitizeQuery(q: string): string {
 
 export const logChatFeedback = (
   feedback: 'helpful' | 'unhelpful',
-  query: string,
+  _query: string,
   sourceCount: number
 ) => {
-  logEvent(
-    'Chat',
-    `Feedback ${feedback === 'helpful' ? 'Helpful' : 'Unhelpful'}`,
-    sanitizeQuery(query)
-  )
+  // Feedback records a rating and source count, never the question text.
+  logEvent('Chat', `Feedback ${feedback === 'helpful' ? 'Helpful' : 'Unhelpful'}`)
   logEvent('Chat', 'Feedback Sources', String(sourceCount))
 }
 

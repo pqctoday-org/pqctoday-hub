@@ -338,7 +338,8 @@ export function PatentSearchPanel({
             Searches across{' '}
             <span className="text-foreground font-medium">{patents.length.toLocaleString()}</span>{' '}
             patents — title, assignee, summary, claims, algorithms, protocols, and standards. Index
-            is built locally; no data leaves your browser.
+            is built in your browser from downloaded index and model files. Usage analytics may
+            record that a search occurred, without its query text.
           </p>
         </div>
       )}

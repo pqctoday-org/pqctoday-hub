@@ -644,8 +644,9 @@ export const ProviderSetup: React.FC = () => {
         {/* Privacy note */}
         <div className="text-center space-y-1">
           <p className="text-xs text-muted-foreground">
-            <strong>Local:</strong> Everything stays on your device — questions, answers, and model.
-            No data is ever sent to any server.
+            <strong>Local:</strong> Answer generation runs on your device after model files are
+            downloaded. Optional usage and feedback analytics may send event metadata, but these
+            events do not include your question text.
           </p>
           <p className="text-xs text-muted-foreground">
             <strong>Cloud:</strong> Your API key is stored only in your browser (never sent to our
