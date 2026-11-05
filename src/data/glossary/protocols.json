@@ -305,7 +305,7 @@
   {
     "term": "JOSE",
     "definition": "JSON Object Signing and Encryption, the IETF framework encompassing JWS, JWE, JWK, and JWA specifications. JOSE defines how to sign, encrypt, and represent cryptographic keys in JSON format.",
-    "technicalNote": "The IETF JOSE working group is standardizing PQC algorithm identifiers (ML-DSA, ML-KEM, SLH-DSA) for use in JOSE headers. The framework was designed for algorithm agility — only the \"alg\" header value changes.",
+    "technicalNote": "The IETF JOSE working group is standardizing PQC algorithm identifiers (ML-DSA, ML-KEM, SLH-DSA) for use in JOSE headers. Algorithm agility also requires compatible algorithm implementations, key representations and validation rules on each side; changing the \"alg\" header alone is insufficient.",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
     "category": "protocol"
@@ -322,8 +322,8 @@
   {
     "term": "Demonstrating Proof-of-Possession",
     "acronym": "DPoP",
-    "definition": "An OAuth 2.0 extension (RFC 9449) that binds access tokens to a specific client by requiring a proof-of-possession JWT with each API request, preventing token theft and replay attacks.",
-    "technicalNote": "Each DPoP proof is a JWS signed with the client's key. With PQC, every API request includes a ~4 KB ML-DSA signature in addition to the access token, potentially exceeding HTTP header size limits.",
+    "definition": "An OAuth 2.0 extension (RFC 9449) that binds tokens to a key and requires a signed proof when using a DPoP-bound token. Servers must validate the proof and token binding. This limits misuse of a stolen token without the key; it does not itself authenticate the client or prevent every replay attack.",
+    "technicalNote": "A DPoP proof binds the HTTP method and target URI, and includes freshness and replay-related values; protected-resource requests also bind the access token. Evaluate proof validation, replay handling and header limits with the chosen supported algorithm. DPoP does not replace TLS.",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "advanced",
     "category": "protocol"
@@ -331,8 +331,8 @@
   {
     "term": "JSON Web Key Set",
     "acronym": "JWKS",
-    "definition": "A JSON document (RFC 7517) containing a set of public keys used to verify JWTs. Authorization servers publish JWKS endpoints so resource servers can fetch signing keys.",
-    "technicalNote": "ML-DSA public keys are ~2 KB each (vs 32 bytes for EC). JWKS payloads grow significantly during PQC migration, especially with key rotation maintaining multiple active keys.",
+    "definition": "A JSON document (RFC 7517) containing an array of JSON Web Keys. Public JWKS endpoints commonly publish verification keys, but the format can also represent private or symmetric key material, which must not be disclosed publicly.",
+    "technicalNote": "Key sizes and encodings depend on the algorithm and parameter set. Evaluate supported key formats, authenticated key distribution, rotation and cache behavior; a fetched key or matching key identifier alone does not establish trust.",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
     "category": "protocol"
