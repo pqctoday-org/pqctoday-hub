@@ -30,6 +30,9 @@ interface UseWorkshopManifestResult {
   compatibleEntries: WorkshopFlowManifestEntry[]
   /** Hydrated full flow JSON for the active entry. Null while loading. */
   activeFlow: WorkshopFlow | null
+  flowLoading: boolean
+  flowError: Error | null
+  retryFlow: () => void
   /** Force-refetch the manifest (bypasses the session cache). */
   retry: () => void
 }
@@ -45,7 +48,16 @@ interface UseWorkshopManifestResult {
  */
 export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopManifestResult {
   const [manifest, setManifest] = useState<WorkshopFlowManifest | null>(null)
-  const [activeFlow, setActiveFlow] = useState<WorkshopFlow | null>(null)
+  const [hydrated, setHydrated] = useState<{
+    file: string | null
+    entryId: string | null
+    status: 'idle' | 'ready' | 'error'
+    requestKey: string | null
+    flow: WorkshopFlow | null
+    error: Error | null
+  }>({ file: null, entryId: null, status: 'idle', requestKey: null, flow: null, error: null })
+  const [flowRetryToken, setFlowRetryToken] = useState(0)
+  const retryFlow = useCallback(() => setFlowRetryToken((token) => token + 1), [])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
@@ -117,22 +129,55 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
       })
     : []
 
-  // Hydrate the active flow whenever the file ref changes.
+  // Bind the result to the exact selection, not just the most recent response.
+  // The derived view below suppresses the previous flow in the selection render,
+  // before this effect runs; cancelled requests cannot replace a newer choice.
   const activeFile = activeEntry?.file ?? null
+  const activeId = activeEntry?.id ?? null
+  const requestKey = `${retryToken}:${flowRetryToken}`
   useEffect(() => {
-    if (!activeFile) return
+    if (!activeFile || !activeId) return
     let cancelled = false
-    loadFlow(activeFile)
+    loadFlow(activeFile, flowRetryToken > 0 || retryToken > 0)
       .then((flow) => {
-        if (!cancelled) setActiveFlow(flow)
+        if (!flow || flow.id !== activeId)
+          throw new Error('Selected workshop content does not match its catalogue entry.')
+        if (!cancelled)
+          setHydrated({
+            file: activeFile,
+            entryId: activeId,
+            status: 'ready',
+            requestKey,
+            flow,
+            error: null,
+          })
       })
-      .catch((err: Error) => {
-        if (!cancelled) setError(err)
+      .catch((reason: unknown) => {
+        if (!cancelled)
+          setHydrated({
+            file: activeFile,
+            entryId: activeId,
+            status: 'error',
+            requestKey,
+            flow: null,
+            error:
+              reason instanceof Error ? reason : new Error('Could not load the selected workshop.'),
+          })
       })
     return () => {
       cancelled = true
     }
-  }, [activeFile])
+  }, [activeFile, activeId, flowRetryToken, retryToken, requestKey])
+  const currentHydration =
+    !isLoading &&
+    hydrated.file === activeFile &&
+    hydrated.entryId === activeId &&
+    hydrated.requestKey === requestKey
+      ? hydrated
+      : null
+  const activeFlow = currentHydration?.status === 'ready' ? currentHydration.flow : null
+  const flowLoading = Boolean(activeFile && !currentHydration)
+  const flowError = currentHydration?.error ?? null
 
   return {
     manifest,
@@ -142,6 +187,9 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
     matchedEntry,
     compatibleEntries,
     activeFlow,
+    flowLoading,
+    flowError,
+    retryFlow,
     retry,
   }
 }

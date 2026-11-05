@@ -155,6 +155,9 @@ export const WorkshopPanel: React.FC = () => {
     matchedEntry,
     compatibleEntries,
     activeFlow,
+    flowLoading,
+    flowError,
+    retryFlow,
     isLoading,
     error: manifestError,
     retry: retryManifest,
@@ -186,7 +189,13 @@ export const WorkshopPanel: React.FC = () => {
   // The Start / Record buttons are enabled when prerequisites are met for the
   // active flow (matched OR overridden). Generic flows have wildcard match so
   // they're always available; specific flows require the picked region.
-  const prereqsReady = activeFlow !== null && pickedRegion !== null
+  const prereqsReady =
+    activeFlow !== null &&
+    activeFlow.id === activeEntry?.id &&
+    !flowLoading &&
+    !flowError &&
+    !isLoading &&
+    pickedRegion !== null
 
   const headerTitle = activeEntry?.title ?? 'Workshop'
   const headerSubtitle = activeEntry
@@ -209,6 +218,19 @@ export const WorkshopPanel: React.FC = () => {
           <p className="text-xs text-muted-foreground break-all">{manifestError.message}</p>
           <Button variant="outline" size="sm" onClick={retryManifest}>
             Retry
+          </Button>
+        </section>
+      )}
+
+      {flowError && manifest && (
+        <section
+          role="alert"
+          className="rounded-lg border border-status-warning/40 bg-card p-3 space-y-2"
+        >
+          <p className="text-sm text-foreground">Couldn&apos;t load the selected workshop.</p>
+          <p className="text-xs text-muted-foreground break-all">{flowError.message}</p>
+          <Button variant="outline" size="sm" onClick={retryFlow}>
+            Retry selected workshop
           </Button>
         </section>
       )}
@@ -306,7 +328,14 @@ export const WorkshopPanel: React.FC = () => {
         <section className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
           Loading workshop catalogue…
         </section>
-      ) : activeTab === 'recommended' ? (
+      ) : flowLoading ? (
+        <section
+          role="status"
+          className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground"
+        >
+          Loading selected workshop…
+        </section>
+      ) : flowError ? null : activeTab === 'recommended' ? (
         activeFlow ? (
           <>
             {flowOverrideId && matchedEntry && activeEntry?.id !== matchedEntry.id && (
@@ -352,7 +381,7 @@ export const WorkshopPanel: React.FC = () => {
           className="w-full"
           disabled={!activeFlow || !prereqsReady}
           onClick={() => {
-            if (!activeFlow || !pickedRegion) return
+            if (!prereqsReady || !activeFlow || !pickedRegion) return
             const steps = flattenFlow(
               activeFlow,
               pickedRegion,
@@ -521,7 +550,7 @@ export const WorkshopPanel: React.FC = () => {
           className="w-full"
           disabled={!activeFlow || !prereqsReady}
           onClick={() => {
-            if (!activeFlow || !pickedRegion) return
+            if (!prereqsReady || !activeFlow || !pickedRegion) return
             const steps = flattenFlow(
               activeFlow,
               pickedRegion,

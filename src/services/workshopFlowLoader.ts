@@ -55,10 +55,10 @@ export async function loadManifest(force = false): Promise<WorkshopFlowManifest>
 }
 
 /**
- * Loads a specific flow JSON. Cached by file name.
+ * Loads a specific flow JSON. Cached by file name; explicit retry can bypass it.
  */
-export async function loadFlow(file: string): Promise<WorkshopFlow> {
-  if (flowCache.has(file)) return flowCache.get(file)!
+export async function loadFlow(file: string, force = false): Promise<WorkshopFlow> {
+  if (!force && flowCache.has(file)) return flowCache.get(file)!
   // Bypass HTTP cache for the same reason as the manifest fetch — flow JSONs
   // change frequently during authoring and SW / browser caches mask edits.
   const res = await fetch(`/workshop/${file}`, { cache: 'no-cache' })
