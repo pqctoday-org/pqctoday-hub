@@ -108,8 +108,8 @@
   {
     "term": "AES",
     "acronym": "AES",
-    "definition": "Advanced Encryption Standard, a symmetric encryption algorithm. Relatively safe from quantum attacks (just double the key size: AES-256).",
-    "technicalNote": "Quantum attacks via Grover's algorithm halve the effective security level, so AES-128 becomes ~64-bit. AES-256 remains secure.",
+    "definition": "Advanced Encryption Standard, a symmetric block cipher with 128-, 192- or 256-bit keys. Quantum key-search costs depend on the attack model and implementation resources, not just the key-size label.",
+    "technicalNote": "Grover's idealized search uses quadratically fewer queries, but practical cost also depends on circuit depth, parallelism and hardware. Do not interpret the query exponent as a demonstrated practical AES break or a universal halving of security.",
     "relatedModule": "/learn/pqc-101",
     "complexity": "beginner",
     "category": "algorithm"
@@ -123,7 +123,7 @@
   },
   {
     "term": "Grover's Algorithm",
-    "definition": "A quantum algorithm that speeds up brute-force searches, effectively halving the security level of symmetric ciphers and hash functions.",
+    "definition": "A quantum algorithm offering a quadratic speedup for unstructured search in an idealized query model. Practical cryptanalytic cost depends on implementation resources; hash collision search and preimage search are different goals.",
     "relatedModule": "/learn/quantum-threats",
     "complexity": "intermediate",
     "category": "algorithm"
@@ -175,7 +175,7 @@
   },
   {
     "term": "SHA-256",
-    "definition": "Secure Hash Algorithm producing a 256-bit digest. Used extensively in Bitcoin and TLS. Quantum-safe at current key sizes.",
+    "definition": "A hash function producing a 256-bit digest, used in applications such as Bitcoin and TLS. Collision resistance and preimage resistance are different properties; digest length alone is not a quantum security-strength claim.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "beginner",
     "category": "algorithm"
@@ -476,7 +476,7 @@
     "term": "HMAC",
     "acronym": "HMAC",
     "definition": "Hash-based Message Authentication Code, a keyed construction that combines a secret key with a hash function (e.g. SHA-256) to provide message integrity and authenticity.",
-    "technicalNote": "Used as the basis for HMAC_DRBG and HKDF, both already in this glossary. HMAC's security depends on the underlying hash function, not on hardness assumptions broken by Shor's algorithm — it remains safe at existing key/output sizes against quantum attack, unlike RSA/ECC.",
+    "technicalNote": "Used in HMAC_DRBG and HKDF. Authentication strength depends on the selected hash, secret-key entropy, tag length and usage limits. A hash output size alone does not establish a universal quantum authentication strength.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
     "category": "algorithm"
