@@ -466,8 +466,8 @@
   {
     "term": "FORS",
     "acronym": "Forest of Random Subsets",
-    "definition": "The few-time signature layer inside SLH-DSA (FIPS 205) that actually signs the message digest. Sits between the WOTS+ leaves and the hypertree, signing a k-subset of values using a-level hash trees.",
-    "technicalNote": "FORS parameters (k, a) directly control signature size and resistance to multi-target attacks. FORS is few-time rather than one-time: pseudorandom message-derived indices give a negligible reuse probability across SLH-DSA's lifetime.",
+    "definition": "The few-time signature component of SLH-DSA (FIPS 205). It signs part of the message digest using k hash trees of height a. The hypertree authenticates the resulting FORS public key.",
+    "technicalNote": "A FORS key can sign a small number of messages. SLH-DSA selects FORS keys pseudorandomly, so repeated selection is possible; stateless signing does not mean indices never repeat. Use the standardized parameter sets and their usage limits.",
     "relatedModule": "/learn/slh-dsa",
     "complexity": "advanced",
     "category": "algorithm"
