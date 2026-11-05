@@ -157,8 +157,10 @@ export const TLSInspectionLab: React.FC = () => {
     // Approximate connections/sec based on CPU budget
     const softwareConnsSec =
       inspectionMode === 'inspect' ? Math.round(1000 / (handshakeMs / 1000)) : 5000
-    const tlsInspectionOverheadMbps =
-      inspectionMode === 'inspect' ? (connectionCount * selectedAlgo.chainSizeKB * 2) / 1024 : 0
+    // Illustrative chain volume for one handshake on each of two termination legs.
+    // Chain values are decimal KB; no connection rate/time window is supplied.
+    const inspectionChainVolumeMB =
+      inspectionMode === 'inspect' ? (connectionCount * selectedAlgo.chainSizeKB * 2) / 1000 : 0
 
     return {
       handshakeMs,
@@ -166,7 +168,7 @@ export const TLSInspectionLab: React.FC = () => {
       certOverheadKB: parseFloat(certOverheadKB.toFixed(1)),
       inspectionFeasible,
       softwareConnsSec,
-      tlsInspectionOverheadMbps: parseFloat(tlsInspectionOverheadMbps.toFixed(1)),
+      inspectionChainVolumeMB: parseFloat(inspectionChainVolumeMB.toFixed(1)),
     }
   }, [selectedAlgo, inspectionMode, connectionCount, baseline])
 
@@ -287,12 +289,17 @@ export const TLSInspectionLab: React.FC = () => {
           </div>
           {inspectionMode === 'inspect' && (
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-              <div
-                className={`text-lg font-bold ${stats.tlsInspectionOverheadMbps > 100 ? 'text-status-error' : 'text-status-warning'}`}
-              >
-                {stats.tlsInspectionOverheadMbps} Mbps
+              <div className="text-lg font-bold text-primary">
+                {stats.inspectionChainVolumeMB} MB
               </div>
-              <div className="text-[10px] text-muted-foreground">Inspection Overhead</div>
+              <div className="text-[10px] text-muted-foreground">
+                Illustrative aggregate chain volume
+              </div>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                {connectionCount.toLocaleString()} connections × {selectedAlgo.chainSizeKB} KB × 2
+                legs ÷ 1,000. Decimal KB/MB; assumes one chain per leg, excludes other
+                handshake/application bytes, and does not model a time interval or data rate.
+              </p>
             </div>
           )}
           {inspectionMode === 'passthrough' && (
