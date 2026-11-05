@@ -534,7 +534,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/digital-id',
     title: 'EUDI Wallet Architecture — PQC Crypto Lab | PQC Today',
     description:
-      'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
+      'Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [
