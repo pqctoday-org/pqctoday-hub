@@ -251,7 +251,8 @@ export const DocumentTable = ({
                     row.org,
                     row.title
                   )
-                  const enrichment = timelineEnrichments[enrichmentKey]
+                  const enrichment =
+                    row.type === 'Phase summary' ? undefined : timelineEnrichments[enrichmentKey]
                   const rowIsEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
                   return (
                     <tr

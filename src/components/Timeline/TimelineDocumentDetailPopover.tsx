@@ -102,7 +102,10 @@ export const TimelineDocumentDetailPopover = ({
         ? String(row.startYear)
         : `${row.startYear} – ${row.endYear}`
 
-  const enrichment = getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
+  const enrichment =
+    row.type === 'Phase summary'
+      ? undefined
+      : getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
   // Check if this timeline doc's SourceUrl matches a library record

@@ -41,7 +41,10 @@ export const TimelineDocumentCard = ({
   const { revisions } = useRevisions()
   const [drilldownOpen, setDrilldownOpen] = useState(false)
 
-  const enrichment = getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
+  const isSourceEvent = row.type !== 'Phase summary'
+  const enrichment = isSourceEvent
+    ? getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
+    : undefined
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
   const period = periodLabel(row.startYear, row.endYear, row.openEnded)
@@ -81,11 +84,13 @@ export const TimelineDocumentCard = ({
 
       {/* Phase + Type + Trust + Enriched badges */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <TrustScoreBadge
-          resourceType="timeline"
-          resourceId={getTimelineEnrichmentKey(row.countryName, row.org, row.title)}
-          size="sm"
-        />
+        {isSourceEvent && (
+          <TrustScoreBadge
+            resourceType="timeline"
+            resourceId={getTimelineEnrichmentKey(row.countryName, row.org, row.title)}
+            size="sm"
+          />
+        )}
         <span
           className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-black"
           style={{ backgroundColor: colors.start }}
@@ -105,30 +110,33 @@ export const TimelineDocumentCard = ({
             Enriched
           </span>
         )}
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-        <span onClick={(e) => e.stopPropagation()}>
-          <ReviewedBadge
-            domain="timeline"
-            entityId={row.eventId || row.title}
-            showUnreviewed={false}
-            onOpenDrilldown={() => setDrilldownOpen(true)}
-          />
-        </span>
+        {isSourceEvent && (
+          // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+          <span onClick={(e) => e.stopPropagation()}>
+            <ReviewedBadge
+              domain="timeline"
+              entityId={row.eventId || row.title}
+              showUnreviewed={false}
+              onOpenDrilldown={() => setDrilldownOpen(true)}
+            />
+          </span>
+        )}
       </div>
 
       {/* Evidence badge row — FR-T-03 + C9 freshness */}
-      {(row.confidenceScore !== undefined || row.trustedSourceIdStatus || row.sourceDate) && (
-        <div className="mb-2">
-          <TimelineEvidenceBadge
-            confidenceScore={row.confidenceScore}
-            trustedSourceIdStatus={row.trustedSourceIdStatus}
-            sourceClass={row.sourceClass}
-            sourceUrl={row.sourceUrl}
-            publishedDate={row.sourceDate}
-            compact
-          />
-        </div>
-      )}
+      {isSourceEvent &&
+        (row.confidenceScore !== undefined || row.trustedSourceIdStatus || row.sourceDate) && (
+          <div className="mb-2">
+            <TimelineEvidenceBadge
+              confidenceScore={row.confidenceScore}
+              trustedSourceIdStatus={row.trustedSourceIdStatus}
+              sourceClass={row.sourceClass}
+              sourceUrl={row.sourceUrl}
+              publishedDate={row.sourceDate}
+              compact
+            />
+          </div>
+        )}
 
       {/* Period */}
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
@@ -218,7 +226,7 @@ export const TimelineDocumentCard = ({
           />
         </div>
       </div>
-      {drilldownOpen && (
+      {isSourceEvent && drilldownOpen && (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div onClick={(e) => e.stopPropagation()}>
           <RevisionDrilldownPanel
