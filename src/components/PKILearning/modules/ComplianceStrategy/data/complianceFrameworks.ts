@@ -318,7 +318,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'de-alg-1',
         category: 'Algorithm',
         requirement:
-          'Plan hybrid key agreement as BSI TR-02102-1 (version 2026-01) recommends: a quantum-safe KEM combined with a classical mechanism through a recommended key-combination method. BSI recommends sole classical key agreement only to the end of 2031 (end of 2030 for very high protection needs), and advises in its 29 September 2026 notes that Classic McEliece should no longer be used in new developments. Check TR-02102-2 for TLS groups',
+          'Plan hybrid key agreement as BSI TR-02102-1 (version 2026-01) recommends: a quantum-safe KEM combined with a classical mechanism through a recommended key-combination method. BSI recommends sole classical key agreement only to the end of 2031 (end of 2030 for very high protection needs). BSI advises against Classic McEliece for new developments in its 29 September 2026 notes. Check TR-02102-2 for TLS groups',
         framework: 'BSI TR-02102',
         csvId: 'BSI-TR-02102',
         commonGap: false,

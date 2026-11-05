@@ -115,12 +115,15 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
 // BSI-TR-02102-1.pdf (2026-01 ed.) and ANSSI-PG-083-v3-2026.pdf. They are
 // shown as two separate entries, never merged into one line, because they
 // disagree on more than the "which alternate" question:
-//   - BSI: ML-KEM/ML-DSA are listed as suitable standalone (no hybrid
-//     language in their sections). SLH-DSA is recommended ONLY at NIST
+//   - BSI: TR-02102-1 (2026-01) recommends the quantum-safe KEMs only in
+//     hybrid form (sections 2.1, 2.4) and ML-DSA only combined with a classical
+//     signature (section 5.3.4); only hash-based signatures may in principle be
+//     used alone. SLH-DSA is recommended ONLY at NIST
 //     Category 3/5 (192-/256-bit) — Category 1 (128-bit) is absent from its
 //     recommended-parameters table. Two hybrid-mode conservative KEM
 //     alternates are named: FrodoKEM-976/1344 and Classic McEliece
-//     (460896/6688128/8192128).
+//     (460896/6688128/8192128). BSI's 29 Sep 2026 notes advise against new
+//     Classic McEliece developments (see algorithmAdvisories.ts).
 //   - ANSSI: explicit rule — "used without hybridization, regardless of
 //     parameter set, ML-KEM/ML-DSA do not respect RègleSécuAsym." Standalone
 //     PQC is not compliant for these two mechanisms at all. SLH-DSA is the
@@ -136,7 +139,7 @@ export const EU_EXECUTIVE_INTENTS: Intent[] = [
   {
     label: 'BSI (Germany)',
     description:
-      'ML-KEM-768 and ML-DSA-65 usable standalone; SLH-DSA recommended at 192-bit+, not 128; FrodoKEM-976 or Classic McEliece for hybrid high-assurance',
+      'TR-02102-1 (2026-01) recommends ML-KEM-768 and FrodoKEM-976 only in hybrid with a classical mechanism, ML-DSA-65 only combined with a classical signature, and SLH-DSA at 192-bit+ (not 128), which it allows alone. Classic McEliece is still listed for hybrid use, but BSI advised on 29 Sep 2026 against new developments with it',
     icon: <ArrowRight size={15} />,
     params: {
       tab: 'detailed',
