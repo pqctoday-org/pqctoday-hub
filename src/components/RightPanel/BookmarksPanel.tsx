@@ -20,6 +20,7 @@ import { downloadCsv } from '@/utils/csvExport'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
 import { WORKSHOP_TOOLS } from '../Playground/workshopRegistry'
 import { softwareData } from '@/data/migrateData'
+import { bookmarkExportData, bookmarkExportCsv } from './bookmarkExport'
 
 export const BookmarksPanel = () => {
   const {
@@ -77,16 +78,16 @@ export const BookmarksPanel = () => {
     return product?.softwareName ?? key
   }
 
+  const exportSelection = {
+    libraryBookmarks,
+    migrateProducts: myProducts,
+    myLearnModules,
+    myTimelineCountries,
+    myThreats,
+    myPlaygroundTools,
+  }
   const handleExportJson = () => {
-    const data = {
-      libraryBookmarks,
-      migrateProducts: myProducts.map(getProductName),
-      myLearnModules,
-      myTimelineCountries,
-      myThreats,
-      myPlaygroundTools,
-      exportedAt: new Date().toISOString(),
-    }
+    const data = bookmarkExportData(exportSelection, getProductName)
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -97,16 +98,7 @@ export const BookmarksPanel = () => {
   }
 
   const handleExportCsv = () => {
-    const rows = [
-      'type,id',
-      ...libraryBookmarks.map((id) => `library,${id}`),
-      ...myProducts.map((k) => `migrate,${getProductName(k)}`),
-      ...myLearnModules.map((id) => `learn,${id}`),
-      ...myTimelineCountries.map((name) => `timeline,${name}`),
-      ...myThreats.map((id) => `threats,${id}`),
-      ...myPlaygroundTools.map((id) => `playground,${id}`),
-    ]
-    downloadCsv(rows.join('\n'), 'pqc-bookmarks.csv')
+    downloadCsv(bookmarkExportCsv(exportSelection, getProductName), 'pqc-bookmarks.csv')
   }
 
   if (totalCount === 0) {
