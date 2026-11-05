@@ -71,8 +71,14 @@ export const EscalationFramework: React.FC = () => {
     exceptionOwner: '',
   })
 
+  const missingRatings = EXCEPTION_CRITERIA.filter(
+    (criterion) => !['yes', 'partial', 'no'].includes(exState.ratings[criterion.id])
+  ).length
+  const allRated = missingRatings === 0
   const riskScore = computeRiskScore(exState.ratings)
-  const riskInfo = getRiskLabel(riskScore)
+  const riskInfo = allRated
+    ? getRiskLabel(riskScore)
+    : { label: 'Not assessed', color: 'text-muted-foreground' }
 
   const toggleControl = (id: string) => {
     setExState((prev) => ({
@@ -351,27 +357,35 @@ export const EscalationFramework: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <div
-                className="w-16 h-16 rounded-full border-4 flex items-center justify-center text-xl font-bold shrink-0"
-                style={{
-                  borderColor:
-                    riskScore >= 70
-                      ? 'hsl(var(--status-error))'
-                      : riskScore >= 40
-                        ? 'hsl(var(--status-warning))'
-                        : 'hsl(var(--status-success))',
-                  color:
-                    riskScore >= 70
-                      ? 'hsl(var(--status-error))'
-                      : riskScore >= 40
-                        ? 'hsl(var(--status-warning))'
-                        : 'hsl(var(--status-success))',
-                }}
-              >
-                {riskScore}
-              </div>
+              {allRated && (
+                <div
+                  className="w-16 h-16 rounded-full border-4 flex items-center justify-center text-xl font-bold shrink-0"
+                  style={{
+                    borderColor:
+                      riskScore >= 70
+                        ? 'hsl(var(--status-error))'
+                        : riskScore >= 40
+                          ? 'hsl(var(--status-warning))'
+                          : 'hsl(var(--status-success))',
+                    color:
+                      riskScore >= 70
+                        ? 'hsl(var(--status-error))'
+                        : riskScore >= 40
+                          ? 'hsl(var(--status-warning))'
+                          : 'hsl(var(--status-success))',
+                  }}
+                >
+                  {riskScore}
+                </div>
+              )}
               <div>
                 <p className={`text-sm font-bold ${riskInfo.color}`}>{riskInfo.label}</p>
+                {!allRated && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {missingRatings} unanswered {missingRatings === 1 ? 'criterion' : 'criteria'}.
+                    Rate every criterion before interpreting the sample score.
+                  </p>
+                )}
                 {exState.selectedControls.length > 0 && (
                   <p className="text-xs text-muted-foreground mt-1">
                     {exState.selectedControls.length} compensating control
@@ -394,20 +408,22 @@ export const EscalationFramework: React.FC = () => {
               </div>
             </div>
 
-            <div className="w-full bg-muted rounded-full h-2">
-              <div
-                className="h-2 rounded-full transition-all duration-500"
-                style={{
-                  width: `${riskScore}%`,
-                  backgroundColor:
-                    riskScore >= 70
-                      ? 'hsl(var(--status-error))'
-                      : riskScore >= 40
-                        ? 'hsl(var(--status-warning))'
-                        : 'hsl(var(--status-success))',
-                }}
-              />
-            </div>
+            {allRated && (
+              <div className="w-full bg-muted rounded-full h-2">
+                <div
+                  className="h-2 rounded-full transition-all duration-500"
+                  style={{
+                    width: `${riskScore}%`,
+                    backgroundColor:
+                      riskScore >= 70
+                        ? 'hsl(var(--status-error))'
+                        : riskScore >= 40
+                          ? 'hsl(var(--status-warning))'
+                          : 'hsl(var(--status-success))',
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
