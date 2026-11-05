@@ -308,6 +308,7 @@ export const ChangelogView = () => {
           if (personaOnly && selectedPersona) {
             entries = entries.filter((e) => {
               if (e.meta.personas.includes(selectedPersona)) return true
+              if (e.meta.personas.length > 0) return false
               if (personaKeyword && personaKeyword.test(`${e.title} ${e.body}`)) return true
               return false
             })
