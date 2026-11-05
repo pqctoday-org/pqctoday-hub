@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { BREACH_SCENARIO_READER_METHOD } from '@/utils/breachScenarioReaderMethod'
 import React, { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router'
 import {
@@ -693,7 +694,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
           Present value of the {planningHorizonYears}-year quantum-risk delta at{' '}
-          {Math.round(discountRateAnnual * 100)}% discount:{' '}
+          {formatPct(discountRateAnnual * 100)}% discount:{' '}
           <span className="font-mono text-foreground font-semibold">
             {formatCurrency(costs.pvQuantumDelta)}
           </span>
@@ -787,12 +788,16 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             </span>
           </p>
           <p className="text-xs font-mono text-muted-foreground">
-            Shelf-life decay ({shelfLifeYears}yr {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}):{' '}
-            <span className="text-foreground font-semibold">{costs.decayFactor.toFixed(2)}×</span>
+            Sample corpus {yearsOfData}yr, shelf-life preset {shelfLifeYears}yr, decryption gap 0:
+            freshness-weighted years E ={' '}
+            <span className="text-foreground font-semibold">
+              {costs.range.central.effYears.toFixed(2)}yr
+            </span>
           </p>
           <p className="text-xs font-mono text-muted-foreground">
-            HNDL amplification: 1 + min({HNDL_MULTIPLIER_CAP}, {yearsOfData}yr × {hndlFactorPct}% ×
-            decay) ={' '}
+            HNDL amplification: 1 + {HNDL_MULTIPLIER_CAP} × (1 − exp(−(
+            {costs.range.central.effYears.toFixed(2)} × {formatPct(hndlFactorPct)}%)/
+            {HNDL_MULTIPLIER_CAP})) ={' '}
             <span className="text-foreground font-semibold">
               {costs.hndlMultiplier.toFixed(2)}×
             </span>
@@ -831,16 +836,13 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             a flat per-record cost that would grow without bound.
           </p>
           <p>
-            <strong>HNDL amplification:</strong> 1 + (years × exposure factor × shelf-life decay),
-            capped at {1 + HNDL_MULTIPLIER_CAP}×. Decay is linear to zero at the data class&apos;s
-            shelf life, using the harvested corpus&apos;s average age — a simplification, not an
-            exponential curve.
+            <strong>Freshness weighting:</strong> {BREACH_SCENARIO_READER_METHOD.freshness}
           </p>
           <p>
-            <strong>CRQC probability:</strong> looked up from the Global Risk Institute 2025 expert
-            survey curve for the chosen planning horizon. This is a simple cumulative-probability
-            difference, not conditioned on a CRQC not already existing today — a simplification that
-            is negligible for near-term reference years.
+            <strong>HNDL amplification:</strong> {BREACH_SCENARIO_READER_METHOD.amplification}
+          </p>
+          <p>
+            <strong>CRQC probability:</strong> {BREACH_SCENARIO_READER_METHOD.probability}
           </p>
           <p>
             <strong>Expected annual loss:</strong> blends the classical and CRQC-conditional cases,
@@ -848,9 +850,10 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             exists.
           </p>
           <p>
-            <strong>Present value:</strong> the annual expected-loss delta is discounted as a level
-            annuity over the planning horizon — an approximation, not a year-by-year integration of
-            a growing risk curve.
+            <strong>Present value:</strong> {BREACH_SCENARIO_READER_METHOD.presentValue}
+          </p>
+          <p className="text-xs">
+            Figures are rounded for display; calculations retain the underlying values.
           </p>
           <p>
             <strong>Mosca&apos;s theorem:</strong> compares data shelf life + migration time against
