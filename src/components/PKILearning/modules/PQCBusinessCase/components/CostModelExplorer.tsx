@@ -63,6 +63,8 @@ export const CostModelExplorer: React.FC = () => {
 
   const comparison = useMemo(() => compareCostModels(inputs, { seed: 42 }), [inputs])
 
+  const analogicalExplanation = `${formatCurrency(SIM_CONSTANTS.histPerSystem)}/system illustrative anchor × ${inputs.complexity.toFixed(1)}× complexity × ${inputs.systems} systems + ${formatCurrency(programCostFor(inputs.horizonYears))} standing program cost over ${inputs.horizonYears}yr.`
+
   const exportMarkdown = useMemo(() => {
     let md = `# Cost Model Comparison\n\n`
     md += `**Scenario:** ${inputs.systems} systems · ${formatCurrency(inputs.itBudgetAnnual)} IT budget · ${inputs.complexity.toFixed(1)}× complexity · ${inputs.horizonYears}yr\n\n`
@@ -71,12 +73,13 @@ export const CostModelExplorer: React.FC = () => {
     md += `| Bottom-up (activity-based) | ${formatCurrency(comparison.bottomUp)} |\n`
     md += `| Probabilistic (Monte Carlo P50) | ${formatCurrency(comparison.monteCarlo.p50)} (P10–P90 ${formatCurrency(comparison.monteCarlo.p10)}–${formatCurrency(comparison.monteCarlo.p90)}) |\n`
     md += `| Judgemental (scenario expected) | ${formatCurrency(comparison.scenario.expected)} |\n`
-    md += `| Analogical (historical) | ${formatCurrency(comparison.analogical)} |\n\n`
+    md += `| Analogical (illustrative anchor) | ${formatCurrency(comparison.analogical)} |\n\n`
+    md += `**Analogical illustrative calculation:** ${analogicalExplanation}\n\n`
     md += `**Spread across methods:** ${comparison.spreadRatio.toFixed(1)}×\n\n`
     md += `**Cost of inaction (reference, not a migration cost):** ${formatCurrency(comparison.aleReference)}\n\n`
     md += `*Illustrative — the point is how far the methods diverge on identical inputs; triangulate rather than trust any single one.*\n`
     return md
-  }, [inputs, comparison])
+  }, [inputs, comparison, analogicalExplanation])
 
   const rows: MethodRow[] = useMemo(
     () => [
@@ -118,13 +121,13 @@ export const CostModelExplorer: React.FC = () => {
       },
       {
         key: 'analogical',
-        label: 'Analogical (historical)',
-        why: `${formatCurrency(SIM_CONSTANTS.histPerSystem)}/system from past crypto migrations × ${inputs.systems} + ${formatCurrency(programCostFor(inputs.horizonYears))} standing program cost (illustrative).`,
+        label: 'Analogical (illustrative anchor)',
+        why: analogicalExplanation,
         point: comparison.analogical,
         color: 'hsl(var(--primary))',
       },
     ],
-    [comparison, inputs.systems, inputs.horizonYears]
+    [comparison, inputs.systems, inputs.horizonYears, analogicalExplanation]
   )
 
   // Shared axis scale across every bar (migration methods + ALE reference line).

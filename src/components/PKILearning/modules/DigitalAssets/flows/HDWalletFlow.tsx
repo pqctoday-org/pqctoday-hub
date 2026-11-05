@@ -683,7 +683,8 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         '⚠  Ed25519 (Solana) — VULNERABLE\n' +
         "   Ed25519 is also an elliptic curve — Shor's applies.\n\n" +
         '✓  HMAC-SHA512 (BIP32 derivation) — Quantum-Safe\n' +
-        "   Symmetric primitive. Grover's gives at best 2× speedup.\n\n" +
+        "   Grover's idealized generic search uses quadratically fewer queries, not a twofold speedup.\n" +
+        '   Practical cost depends on circuit resources and parallelization; this is not a proof of seed security.\n\n' +
         '✓  PBKDF2-HMAC-SHA512 (BIP39 seed) — Quantum-Safe\n' +
         '   Your mnemonic and seed are safe; the derived EC keys are not.\n\n' +
         'Migration Path:\n' +

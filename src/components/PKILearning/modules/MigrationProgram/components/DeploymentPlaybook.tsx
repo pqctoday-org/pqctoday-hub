@@ -65,7 +65,8 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
       },
       {
         id: 'hybrid-perf-test',
-        label: 'Benchmark hybrid handshake latency (expect 2-5% increase)',
+        label:
+          'Benchmark full and resumed handshake latency, throughput, message sizes and failure rates against the selected baseline',
       },
       {
         id: 'hybrid-interop',

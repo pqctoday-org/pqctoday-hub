@@ -53,3 +53,24 @@ describe('Retirement planning examples', () => {
     }
   })
 })
+
+describe('Deployment performance planning prompt', () => {
+  it('keeps full and resumed baseline measurements in unchecked and selected Markdown without an invented percentage', () => {
+    const item = DEPLOYMENT_PLAYBOOK_SECTIONS.flatMap((section) => section.items).find(
+      (row) => row.id === 'hybrid-perf-test'
+    )!
+    for (const checked of [new Set<string>(), new Set(['hybrid-perf-test'])]) {
+      const markdown = buildChecklistMarkdown(
+        DEPLOYMENT_PLAYBOOK_TITLE,
+        DEPLOYMENT_PLAYBOOK_DESCRIPTION,
+        DEPLOYMENT_PLAYBOOK_SECTIONS,
+        checked
+      )
+      expect(markdown).toContain(item.label)
+      expect(markdown).toContain(
+        'full and resumed handshake latency, throughput, message sizes and failure rates against the selected baseline'
+      )
+      expect(markdown).not.toContain('expect 2-5% increase')
+    }
+  })
+})
