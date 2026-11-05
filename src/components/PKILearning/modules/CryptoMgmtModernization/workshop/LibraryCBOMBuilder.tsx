@@ -280,7 +280,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       )
       lines.push('')
       if (cbomSlice.length > 0) {
-        lines.push('| Component | Version | FIPS | ESV | PQC | Posture | Notes |')
+        lines.push('| Component | Version | Reported FIPS status | ESV | PQC | Posture | Notes |')
         lines.push('|---|---|---|---|---|---|---|')
         for (const row of cbomSlice) {
           const safeNotes = row.notes.replace(/\|/g, '\\|')
@@ -298,7 +298,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         `## HSM inventory — ${HSM_VENDORS.length} vendor${HSM_VENDORS.length !== 1 ? 's' : ''}`
       )
       lines.push('')
-      lines.push('| Vendor | Product | Firmware | FIPS Level | FIPS Status | PQC support | Notes |')
+      lines.push(
+        '| Vendor | Product | Firmware | Reported FIPS level | Reported FIPS status | PQC support | Notes |'
+      )
       lines.push('|---|---|---|---|---|---|---|')
       for (const v of HSM_VENDORS) {
         const safeNotes = (v.notes ?? '').replace(/\|/g, '\\|')
@@ -336,10 +338,15 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Three linked views over the software and hardware inventory: map an SBOM into a
-        crypto-focused <InlineTooltip term="CBOM">CBOM</InlineTooltip> slice, inspect your library
-        posture, and track <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip> Level 3
-        status for every HSM your keys live in.
+        Use the linked sample inventory views to map an SBOM into a crypto-focused{' '}
+        <InlineTooltip term="CBOM">CBOM</InlineTooltip> slice, inspect library posture, and review
+        reported HSM levels and certificate associations.
+      </p>
+
+      <p className="text-xs text-muted-foreground">
+        CMVP snapshot links cover FIPS 140-3 records only. A missing link does not establish
+        certificate absence or validity; check the original source for its standard, module and
+        configuration scope.
       </p>
 
       <div className="flex flex-wrap gap-2">
@@ -371,7 +378,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           onClick={() => setMode('hsm')}
           className="text-xs"
         >
-          Hardware FIPS 140-3 L3
+          HSM inventory
         </Button>
         <Button
           variant={mode === 'files' ? 'gradient' : 'outline'}
@@ -564,7 +571,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                 <th className="p-2 font-bold">Library</th>
                 <th className="p-2 font-bold">Latest</th>
                 <th className="p-2 font-bold">EoL</th>
-                <th className="p-2 font-bold">FIPS 140-3</th>
+                <th className="p-2 font-bold">Reported FIPS status</th>
                 <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                 <th className="p-2 font-bold">PQC</th>
                 <th className="p-2 font-bold">High CVEs (1y)</th>
@@ -628,7 +635,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
               <tr className="bg-muted/60 text-left">
                 <th className="p-2 font-bold">Vendor / Product</th>
                 <th className="p-2 font-bold">Firmware</th>
-                <th className="p-2 font-bold">FIPS level</th>
+                <th className="p-2 font-bold">Reported FIPS level</th>
                 <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                 <th className="p-2 font-bold">Algorithm evidence and scope</th>
                 <th className="p-2 font-bold">Platform binding</th>

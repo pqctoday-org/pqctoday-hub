@@ -54,7 +54,7 @@ const PARTS: WorkshopPart[] = [
     id: 'library-cbom-builder',
     title: 'Step 3: Library & Hardware CBOM Builder',
     description:
-      'Map SBOMs into crypto-focused CBOMs, track library EoL, and monitor FIPS 140-3 Level 3 validation status for libraries and HSMs. Assets loaded here feed Steps 7 and 8.',
+      'Map SBOMs into crypto-focused CBOMs, track library EoL, and review catalogue status and certificate associations for libraries and HSMs, including reported HSM levels. Assets loaded here feed Steps 7 and 8.',
     icon: Package,
     cswp39Step: 'Inventory · §5.2 — asset-centric CBOM',
   },
