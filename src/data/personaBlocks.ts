@@ -142,7 +142,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/pqc-ssh-sim': {
     developer:
-      'Pick a key exchange such as mlkem768-curve25519-sha256 (marked REAL) and a host key like ssh-mldsa-65, press Run both handshakes, and read the Handshake Log, PKCS#11 Calls and Wire Packets tabs beside the classical baseline.',
+      'Pick a key exchange such as mlkem768-curve25519-sha256 (marked REAL) and a host key like ssh-mldsa-65, press Run comparison, and read the Run Log, PKCS#11 Calls and Wire Packets tabs beside the classical baseline.',
     architect:
       'The side-by-side telemetry compares Classical (ecdsa-nistp256 + curve25519) with PQC (ML-DSA-65 + ML-KEM-768 × X25519) on packet sizes and round trips; the Host Trust & TOFU note covers what changes when host keys change algorithm.',
     researcher:

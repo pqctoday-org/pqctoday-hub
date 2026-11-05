@@ -644,7 +644,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Pick a PQC KEX (hybrid or pure ML-KEM) and an ML-DSA or SLH-DSA host key, press Run both handshakes, then compare the classical curve25519 baseline with the PQC run in the Handshake Log, PKCS#11 Calls and Wire tabs.',
+        'Pick a PQC KEX (hybrid or pure ML-KEM) and an ML-DSA or SLH-DSA host key, press Run comparison, then compare the classical curve25519 baseline with the PQC run in the Run Log, PKCS#11 Calls and Wire tabs.',
       workedExample:
         'With the default mlkem768-curve25519-sha256 + ssh-mldsa-65 a real OpenSSH handshake runs: the log reports host and user C_Sign sizes and auth time, and the comparison bars show host pubkey, signature and KEX share bytes.',
     },

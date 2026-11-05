@@ -108,6 +108,9 @@ function LegCard({
         bar2: 'bg-destructive/60',
       }
   const Icon = isPqc ? ShieldCheck : ShieldAlert
+  // Describe the retained run, never the currently selected controls.
+  const realResult = result?.token_module === 'softhsmv3 (WASM, embedded — real OpenSSH)'
+  const modeledResult = result?.token_module === 'softhsmv3 (WASM)'
 
   if (!result) {
     return (
@@ -144,13 +147,33 @@ function LegCard({
         <Icon className={`w-4 h-4 ${accent.text}`} />
         <h4 className={`text-sm font-bold ${accent.text}`}>{title}</h4>
         <div className="ml-auto flex flex-wrap gap-1">
-          <Pill ok={result.connection_ok} label="connected" />
-          <Pill ok={result.pkcs11_host_backed} label="pkcs11 host" />
-          <Pill ok={result.pkcs11_client_backed} label="pkcs11 client" />
-          <Pill ok={result.quantum_safe} label="quantum-safe" />
+          {realResult ? (
+            <>
+              <Pill ok={result.connection_ok} label="connected" />
+              <Pill ok={result.pkcs11_host_backed} label="pkcs11 host" />
+              <Pill ok={result.pkcs11_client_backed} label="pkcs11 client" />
+              <Pill ok={result.quantum_safe} label="quantum-safe" />
+            </>
+          ) : (
+            <span className="text-[10px] text-muted-foreground">
+              {modeledResult
+                ? 'Modeled operation trace — connection/authentication not assessed'
+                : 'Result origin unclassified — connection/authentication not assessed'}
+            </span>
+          )}
         </div>
       </div>
 
+      {!realResult && (
+        <p className="text-xs text-muted-foreground mb-3">
+          {modeledResult
+            ? 'Modeled packet names, including USERAUTH_SUCCESS, are illustrative sequence labels, not observed authentication results. Individual key and signature operations do not establish a connection.'
+            : 'The origin of this retained result is not recognized. Its flags are not presented as a confirmed connection or authentication result.'}
+          {modeledResult &&
+            isPqc &&
+            ' This modeled PQC run does not decapsulate on the peer, compare both peers’ secrets, or verify the signatures.'}
+        </p>
+      )}
       <dl className="space-y-2 text-xs">
         <div className="flex justify-between gap-4">
           <dt className="text-muted-foreground">KEX</dt>
@@ -161,7 +184,9 @@ function LegCard({
           <dd className="font-mono text-foreground text-right">{result.host_key_algorithm}</dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-muted-foreground">Client auth</dt>
+          <dt className="text-muted-foreground">
+            {realResult ? 'Client auth' : 'Client signing algorithm'}
+          </dt>
           <dd className="font-mono text-foreground text-right">{result.client_auth_algorithm}</dd>
         </div>
       </dl>
@@ -204,7 +229,9 @@ function LegCard({
 
         <div className="pt-2 border-t border-border/30 space-y-1">
           <div className="flex justify-between items-center">
-            <dt className="text-muted-foreground text-xs">Auth wall-time</dt>
+            <dt className="text-muted-foreground text-xs">
+              {realResult ? 'Auth wall-time' : 'Sample operation wall-time'}
+            </dt>
             <dd className="font-mono text-foreground text-xs">{result.auth_ms.toFixed(1)} ms</dd>
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[10px] text-muted-foreground font-mono">
@@ -256,7 +283,7 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
       <div className="flex items-center gap-2">
         <Terminal className="w-4 h-4 text-muted-foreground" />
         <h3 className="text-sm font-semibold text-foreground">
-          SSH authentication — side-by-side telemetry
+          SSH sample operations and handshake telemetry
         </h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
