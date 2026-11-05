@@ -4,15 +4,13 @@
  *
  * Maps PQC migration tasks onto the organization's ALREADY-FUNDED infrastructure
  * refresh programs (data-center hardware, SD-WAN, cloud, PKI, HSM, vendor/license
- * renewals, application modernization) so PQC work rides existing budgets rather
- * than requesting net-new spend — the "cost avoidance" play from Applied Quantum
- * Phase 4 Activity 4.3.
+ * renewals, application modernization) to explore timing opportunities. Dates
+ * alone do not establish funding or avoid net-new spend. This is a planning
+ * exercise associated with Applied Quantum Phase 4 Activity 4.3.
  *
- * The core of the tool is the ALIGNMENT check: a refresh program only avoids
- * net-new spend if its next refresh lands *within* the planning horizon. A
- * program that refreshes after the horizon is MISALIGNED — you can't ride that
- * budget and must either accelerate the refresh or plan separate spend. The tool
- * flags those so the alignment is actionable, not just a list.
+ * The existing check compares the entered year with the horizon end only. It
+ * does not establish whether a date is still in the future, the PQC task is
+ * scoped, or a refresh program has sufficient funded capacity.
  */
 import React, { useMemo, useState } from 'react'
 import { CalendarClock } from 'lucide-react'
@@ -68,8 +66,8 @@ export type RefreshAlignment = 'aligned' | 'misaligned' | 'unknown'
 
 /**
  * Does this program's next refresh land within the planning horizon? `aligned`
- * = refreshes on/before the horizon end (can ride the budget); `misaligned` =
- * after the horizon (can't); `unknown` = no parseable year. Pure + unit-tested.
+ * = entered year on/before the horizon end (including past years); `misaligned` =
+ * after the horizon; `unknown` = no parseable year. Pure + unit-tested.
  */
 export function refreshAlignment(
   nextRefreshYear: string,
@@ -81,9 +79,9 @@ export function refreshAlignment(
 }
 
 const ALIGN_MD_LABEL: Record<RefreshAlignment, string> = {
-  aligned: 'On budget',
+  aligned: 'At/before horizon end',
   misaligned: 'After horizon ⚠',
-  unknown: 'TBD',
+  unknown: 'Timing unknown',
 }
 
 export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
@@ -91,10 +89,10 @@ export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
   lines.push('# Refresh-Cycle Alignment')
   lines.push('')
   lines.push(
-    'Embedding PQC migration tasks into already-funded infrastructure refresh ' +
+    'Sample timing comparison for PQC tasks and infrastructure refresh ' +
       `programs (planning horizon: ${s.planningHorizonYears.trim() || '_(TBD)_'} years, ` +
       `through ${Number.isFinite(horizonEndYear) ? horizonEndYear : '_(TBD)_'}) ` +
-      'so the work rides existing budgets — cost avoidance, not net-new spend.'
+      'for planning only. Dates do not establish funded capacity, cost avoidance or readiness to execute.'
   )
   lines.push('')
   lines.push('| Refresh program | Next refresh | Alignment | PQC task to embed |')
@@ -111,11 +109,11 @@ export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
   lines.push('')
   if (misaligned > 0) {
     lines.push(
-      `> **${misaligned} of ${s.rows.length} program${s.rows.length === 1 ? '' : 's'} refresh after the planning horizon** — those can't ride the existing budget. Accelerate the refresh or plan separate PQC spend.`
+      `> **${misaligned} of ${s.rows.length} program${s.rows.length === 1 ? '' : 's'} refresh after the planning horizon** — review timing options, task scope and funding separately.`
     )
   } else {
     lines.push(
-      '> All dated programs refresh within the planning horizon — PQC work can ride the existing budgets.'
+      '> No entered refresh year is after the horizon end. Blank dates remain unknown; past dates are included in the at/before comparison. This does not establish future timing alignment or funding.'
     )
   }
   lines.push('')
@@ -127,14 +125,14 @@ export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
 
 const ALIGN_BADGE: Record<RefreshAlignment, { label: string; cls: string }> = {
   aligned: {
-    label: 'On budget',
+    label: 'At/before horizon end',
     cls: 'border-status-success/40 bg-status-success/10 text-status-success',
   },
   misaligned: {
     label: 'After horizon',
     cls: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
   },
-  unknown: { label: 'TBD', cls: 'border-border bg-muted text-muted-foreground' },
+  unknown: { label: 'Timing unknown', cls: 'border-border bg-muted text-muted-foreground' },
 }
 
 export const RefreshCycleAlignment: React.FC = () => {
@@ -217,7 +215,8 @@ export const RefreshCycleAlignment: React.FC = () => {
               </>
             )}
             . Map PQC migration tasks onto your already-funded infrastructure refresh programs so
-            the work rides existing budgets.
+            you can explore timing opportunities. Confirm task scope, capacity and funding
+            separately.
           </p>
           {/* The strategy had no citation at all, though the standard states it
               directly. Cycle LENGTHS are deliberately not asserted anywhere in
@@ -250,8 +249,8 @@ export const RefreshCycleAlignment: React.FC = () => {
         <div className="block">
           <label htmlFor="refresh-horizon" className="text-xs font-medium text-muted-foreground">
             Planning horizon (years) — programs refreshing after{' '}
-            <span className="font-semibold text-foreground">{horizonEndYear}</span> can&apos;t ride
-            the budget
+            <span className="font-semibold text-foreground">{horizonEndYear}</span> are after the
+            horizon end (timing comparison only)
           </label>
           <Input
             id="refresh-horizon"
@@ -265,7 +264,7 @@ export const RefreshCycleAlignment: React.FC = () => {
         {misalignedCount > 0 && (
           <p className="text-xs text-status-warning">
             ⚠ {misalignedCount} of {rowCount} program{rowCount === 1 ? '' : 's'} refresh after{' '}
-            {horizonEndYear} — accelerate the refresh or plan separate PQC spend.
+            {horizonEndYear} — review timing options, task scope and funding separately.
           </p>
         )}
       </section>
@@ -275,8 +274,8 @@ export const RefreshCycleAlignment: React.FC = () => {
           Refresh programs · {rowCount} program{rowCount === 1 ? '' : 's'}
         </h3>
         <p className="text-xs text-muted-foreground">
-          For each already-funded refresh program, record the next scheduled refresh and the
-          concrete PQC task to embed into it.
+          For each already-funded refresh program, record the next scheduled refresh and the sample
+          PQC task to explore. At/before includes past years; no funding check is performed.
         </p>
         <div className="space-y-3">
           {state.rows.map((row) => {
