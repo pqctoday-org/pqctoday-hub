@@ -52,12 +52,12 @@ export const PostureKPIDesigner: React.FC = () => {
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Pick the KPIs you want to track. Flip the audience filter to see what a board vs. ops
-        dashboard emphasizes — selected KPIs are combined into a live preview below.
+        Pick the KPIs you want to track. Choose an audience to highlight suggested KPIs. The preview
+        retains every selected KPI, including those suggested for other audiences.
       </p>
 
       <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-xs text-muted-foreground">Audience filter:</span>
+        <span className="text-xs text-muted-foreground">Audience emphasis:</span>
         {(Object.keys(AUDIENCE_LABELS) as KpiAudience[]).map((a) => (
           <Button
             key={a}
@@ -69,7 +69,7 @@ export const PostureKPIDesigner: React.FC = () => {
           </Button>
         ))}
         <span className="text-[11px] text-muted-foreground ml-2">
-          ({filteredByAudience.length} KPIs relevant to {AUDIENCE_LABELS[audience]})
+          ({filteredByAudience.length} KPIs suggested for {AUDIENCE_LABELS[audience]})
         </span>
       </div>
 
@@ -117,7 +117,8 @@ export const PostureKPIDesigner: React.FC = () => {
           <div>
             <div className="font-bold text-foreground">CPM Posture Dashboard — Preview</div>
             <div className="text-[11px] text-muted-foreground">
-              Filtered for {AUDIENCE_LABELS[audience]} · {selectedForPreview.length} KPIs
+              All {selectedForPreview.length} selected KPIs retained · Emphasis:{' '}
+              {AUDIENCE_LABELS[audience]}
             </div>
           </div>
           <Button variant="outline" onClick={() => setSelected([])} className="text-xs">

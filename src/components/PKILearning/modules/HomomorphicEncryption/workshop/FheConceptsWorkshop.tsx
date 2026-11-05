@@ -491,9 +491,9 @@ const EncodeDecodeDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) 
   return (
     <div className="space-y-4">
       <WhatYouSee>
-        How CKKS turns real numbers into integers with a scale Δ, why noise only disturbs the low
-        bits, and how a release rounded to p bits hides them. Then how TFHE keeps a small message in
-        the top bits so decryption can round the noise away.
+        How CKKS turns real numbers into integers with a scale Δ and how rounding affects the
+        released value. Whether a perturbation changes that value depends on its distance to a
+        rounding boundary. Then explore the separate TFHE message-and-noise illustration.
       </WhatYouSee>
       <IllustrationLabel />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -597,9 +597,11 @@ const EncodeDecodeDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) 
         </table>
       </div>
       <p className="text-xs text-muted-foreground">
-        Roughly log₂Δ − log₂e bits survive the noise. When the noise reaches the 2<sup>−p</sup>{' '}
-        rounding step, the released integer changes; below it, the release hides the noise. Our HSM
-        decryption policy v2 releases exactly this rounded integer to the data owner.
+        Roughly log₂Δ − log₂e describes the precision remaining in this illustration. A perturbation
+        smaller than the 2<sup>−p</sup> rounding step can still change the released integer if it
+        crosses a rounding boundary. Stability depends on the distance to that boundary; rounding
+        alone does not establish confidentiality. Our HSM decryption policy v2 releases this rounded
+        integer to the data owner.
       </p>
       <div className="glass-panel p-3 bg-muted/30 text-xs text-muted-foreground">
         <strong className="text-foreground">Measured:</strong> our HSM owner releases at
