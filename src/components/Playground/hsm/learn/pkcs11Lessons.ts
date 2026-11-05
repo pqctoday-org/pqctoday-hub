@@ -469,7 +469,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           if (bytesEqual(r1, r2))
             throw new Error('Two consecutive draws were identical — that would be a real problem.')
           return {
-            detail: `Two independent 32-byte draws, confirmed different: ${toHex(r1).slice(0, 16)}… vs ${toHex(r2).slice(0, 16)}…`,
+            detail: `Two returned 32-byte samples differ: ${toHex(r1).slice(0, 16)}… vs ${toHex(r2).slice(0, 16)}…`,
           }
         },
       },

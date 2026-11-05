@@ -450,7 +450,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       },
       {
         op: 'C_Sign (hedging: preferred) ×2',
-        label: 'Sign the same message twice with hedging',
+        label: 'Sign the same message twice with Preferred',
         spot: {
           rail: 'sign',
           target: '[data-tour="pkcs-op-sign-mldsa-hedging"]',
@@ -471,7 +471,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
             throw new Error('Two hedged signatures were byte-identical — that would be unexpected.')
           return {
             detail:
-              'Two hedged signatures of the SAME message: different bytes each time, as expected.',
+              'Preferred signing returned different bytes for the same message in this sample. This comparison does not establish signature validity or randomness quality.',
           }
         },
       },
