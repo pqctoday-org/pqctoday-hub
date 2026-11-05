@@ -312,6 +312,9 @@ export function generateExtendedActions(
 
   const hasHighSensitivity =
     input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')
+  const sensitivityDriver = input.sensitivityUnknown
+    ? 'dataSensitivity:unknown'
+    : `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`
   if (
     hasHighSensitivity &&
     input.dataRetention?.length &&
@@ -323,10 +326,7 @@ export function generateExtendedActions(
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'high',
-      drivers: [
-        `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`,
-        `dataRetention:${input.dataRetention.join(',')}`,
-      ],
+      drivers: [sensitivityDriver, `dataRetention:${input.dataRetention.join(',')}`],
     })
   } else if (hasHighSensitivity) {
     actions.push({
@@ -335,9 +335,7 @@ export function generateExtendedActions(
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'medium',
-      drivers: [
-        `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`,
-      ],
+      drivers: [sensitivityDriver],
     })
   }
 
@@ -629,7 +627,11 @@ export function generateQuickSummary(
     )
   }
 
-  if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
+  if (input.sensitivityUnknown) {
+    parts.push(
+      'Data sensitivity is not assessed. Any high-sensitivity inputs used in this illustrative planning result are assumptions, not observed classifications.'
+    )
+  } else if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
     parts.push(
       'High data sensitivity makes Harvest-Now-Decrypt-Later an important scenario. Use the full track to model retention against the disclosed CRQC planning anchor.'
     )
@@ -672,7 +674,11 @@ export function generateNarrative(
     )
   }
 
-  if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
+  if (input.sensitivityUnknown) {
+    parts.push(
+      'Data sensitivity is not assessed. Any high-sensitivity inputs used in this illustrative planning result are assumptions, not observed classifications.'
+    )
+  } else if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
     parts.push(
       'High data sensitivity makes Harvest Now, Decrypt Later an important scenario to investigate for long-lived encrypted data.'
     )
