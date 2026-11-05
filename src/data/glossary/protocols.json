@@ -296,8 +296,8 @@
   {
     "term": "JSON Web Encryption",
     "acronym": "JWE",
-    "definition": "A standard (RFC 7516) for encrypting JSON payloads. JWE provides confidentiality for JWT claims using a two-layer encryption model: a Key Encryption Key (KEK) wraps a Content Encryption Key (CEK).",
-    "technicalNote": "PQC migration replaces ECDH-ES key agreement with ML-KEM encapsulation. The KEM ciphertext replaces the encrypted key in JWE compact serialization.",
+    "definition": "A standard (RFC 7516) for authenticated encryption of arbitrary plaintext bytes. Its key-management modes include encrypting or wrapping a content-encryption key (CEK), deriving it by key agreement, or using a shared symmetric CEK directly. Not every mode uses a separate wrapping key.",
+    "technicalNote": "A KEM establishes a shared secret, not an independently chosen CEK. A KEM-based JWE deployment needs a supported algorithm profile specifying derivation, any CEK wrapping and serialization; do not infer the field layout by replacing an existing encrypted-key field.",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
     "category": "protocol"
@@ -363,8 +363,8 @@
   },
   {
     "term": "KEMRecipientInfo",
-    "definition": "A CMS recipient info type defined in RFC 9629 that uses Key Encapsulation Mechanisms (KEMs) instead of RSA key transport for encrypting content-encryption keys.",
-    "technicalNote": "Enables ML-KEM-based encryption in S/MIME and CMS. The sender encapsulates a shared secret to the recipient's KEM public key, then derives the content-encryption key.",
+    "definition": "A CMS recipient information structure defined in RFC 9629. A KEM establishes a pairwise shared secret; a KDF derives a key-encryption key (KEK), which wraps the content-encryption key (CEK) or content-authenticated-encryption key.",
+    "technicalNote": "The structure carries the KEM ciphertext separately from encryptedKey, which contains the wrapped content key. The KDF binds the wrapping algorithm, KEK length and optional context. A concrete KEM algorithm and application profile must also be supported by sender and recipient.",
     "relatedModule": "/learn/email-signing",
     "complexity": "advanced",
     "category": "protocol"
