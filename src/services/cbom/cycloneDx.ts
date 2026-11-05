@@ -80,7 +80,7 @@ export interface CbomAlgorithm {
   hybridRole?: 'classical' | 'post-quantum'
 }
 
-/** A FIPS 140-3 (CMVP) or CAVP algorithm certificate surfaced as component evidence (the catalog's certType "ACVP" is a CAVP record). */
+/** A catalogue-associated certificate reference, not identity or capability evidence. */
 export interface CbomCertification {
   certType: string
   certId: string
@@ -362,6 +362,7 @@ export function buildCbomDocument(
   let cryptoAssetCount = 0
 
   for (const input of inputs) {
+    const properties = [...(input.properties ?? [])]
     const component: Record<string, unknown> = {
       type: input.type,
       'bom-ref': input.bomRef,
@@ -371,21 +372,17 @@ export function buildCbomDocument(
       ...(input.publisher ? { publisher: input.publisher } : {}),
       ...(input.cpe ? { cpe: input.cpe } : {}),
       ...(input.purl ? { purl: input.purl } : {}),
-      properties: input.properties ?? [],
+      properties,
     }
 
     const certs = input.certifications ?? []
     if (certs.length > 0) {
-      component.evidence = {
-        identity: certs.map((c) => ({
-          field: 'cpe',
-          confidence: 1,
-          // CycloneDX requires method-level `confidence` alongside `technique`.
-          methods: [
-            { technique: 'attestation', confidence: 1, value: `${c.certType} ${c.certId}`.trim() },
-          ],
-        })),
-      }
+      // A catalogue certificate association does not establish CPE identity or
+      // attest 100% confidence. Keep even linkless IDs without inventing evidence.
+      properties.push({
+        name: 'pqctoday:certificateReferences',
+        value: JSON.stringify(certs),
+      })
       const certRefs = certs
         .filter((c) => c.certLink)
         .map((c) => ({ type: 'certification-report', url: c.certLink, comment: c.certType }))

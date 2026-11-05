@@ -4,7 +4,7 @@
  *
  * Thin `SoftwareItem` adapter over the shared CycloneDX 1.7 emitter in
  * `services/cbom/cycloneDx.ts`. Maps each product to a `library` component
- * carrying its CPE / PURL / FIPS-cert identity plus a child `cryptographic-asset`
+ * carrying catalogue identifiers and certificate associations plus a child `cryptographic-asset`
  * per exposed algorithm (PQC or classical). The same emitter now backs the
  * Library CBOM Builder and the Supply-Chain Risk Matrix, so all three produce
  * identical schema-valid documents.
@@ -13,9 +13,9 @@
  * the Migrate page behaves exactly as before.
  */
 import type { SoftwareItem, CertificationXref } from '../../types/MigrateTypes'
-import { cpeByProduct } from '../../data/cpeXrefData'
-import { purlByProduct } from '../../data/purlXrefData'
-import { getCertsForProduct } from '../../data/certificationXrefData'
+import { cpeByProduct, cpeXrefMetadata } from '../../data/cpeXrefData'
+import { purlByProduct, purlXrefMetadata } from '../../data/purlXrefData'
+import { getCertsForProduct, certsByProduct, xrefMetadata } from '../../data/certificationXrefData'
 import {
   buildCbomDocument,
   cbomBomRef,
@@ -48,6 +48,19 @@ export function extractPqcAlgorithms(
   return extractAllAlgorithmsFromText(haystack)
 }
 
+/** A filename's date is file metadata, not a review or validation date. */
+function sourceFile(metadata: { filename: string; lastUpdate: Date } | null) {
+  return metadata
+    ? { filename: metadata.filename, fileDate: metadata.lastUpdate.toISOString() }
+    : null
+}
+
+function lookupBasis<T>(map: Map<string, T>, item: SoftwareItem) {
+  if (map.has(item.productId)) return 'product-id'
+  if (map.has(item.softwareName)) return 'legacy-name'
+  return 'none'
+}
+
 /**
  * Map one `SoftwareItem` to a neutral CBOM component input. Exported so other
  * SoftwareItem-backed tools (e.g. the Supply-Chain Risk Matrix) reuse the exact
@@ -70,6 +83,52 @@ export function softwareItemToCbomInput(
   if (item.fipsValidated) {
     properties.push({ name: 'pqctoday:fipsValidated', value: item.fipsValidated })
   }
+  // Preserve the available parsed source records without upgrading an association
+  // to a validated capability, installed-version observation or numeric confidence.
+  properties.push(
+    {
+      name: 'pqctoday:catalogueRecord',
+      value: JSON.stringify({
+        productId: item.productId,
+        softwareName: item.softwareName,
+        latestVersion: item.latestVersion,
+        pqcSupport: item.pqcSupport,
+        pqcCapabilityDescription: item.pqcCapabilityDescription,
+        basis: 'catalogue-record-not-installed-observation',
+      }),
+    },
+    {
+      name: 'pqctoday:cpeAssociation',
+      value: JSON.stringify({
+        recordPresent: cpe !== undefined,
+        lookupBasis: lookupBasis(cpeByProduct, item),
+        record: cpe ?? null,
+        sourceFile: sourceFile(cpeXrefMetadata),
+      }),
+    },
+    {
+      name: 'pqctoday:purlAssociation',
+      value: JSON.stringify({
+        recordPresent: purl !== undefined,
+        lookupBasis: lookupBasis(purlByProduct, item),
+        record: purl ?? null,
+        sourceFile: sourceFile(purlXrefMetadata),
+      }),
+    },
+    {
+      name: 'pqctoday:certificateAssociations',
+      value: JSON.stringify({
+        lookupBasis: lookupBasis(certsByProduct, item),
+        records: certs,
+        sourceFile: sourceFile(xrefMetadata),
+      }),
+    },
+    {
+      name: 'pqctoday:algorithmBasis',
+      value:
+        'Extracted mentions from catalogue support/capability text and associated certificate text; not a product or module validation conclusion or an installed inventory. Certificate algorithm scope remains specific to each associated record.',
+    }
+  )
   properties.push(...extraProperties)
 
   return {
