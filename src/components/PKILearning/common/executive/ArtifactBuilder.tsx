@@ -58,6 +58,9 @@ interface ArtifactBuilderProps {
   /** Restore a previously-saved form snapshot (e.g. from `useSavedArtifactInputs`).
    *  Takes priority over `demoFill` and `field.defaultValue` in the lazy initializer. */
   initialData?: Record<string, Record<string, string | string[]>>
+  /** Optional identity for caller-owned inputs (e.g. editable policy rules).
+   *  Changes participate in Save/autosave without altering the form payload. */
+  saveRevision?: string
 }
 
 export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
@@ -72,6 +75,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   wideTable = false,
   demoFill,
   initialData,
+  saveRevision,
 }) => {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
   // Persistent done-state keyed on the form snapshot (survives edits).
@@ -120,7 +124,13 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
     })
   }, [])
 
-  const currentKey = useMemo(() => JSON.stringify(formData), [formData])
+  const currentKey = useMemo(
+    () =>
+      saveRevision === undefined
+        ? JSON.stringify(formData)
+        : JSON.stringify([formData, saveRevision]),
+    [formData, saveRevision]
+  )
   const editedSince = wasSaved && lastSavedKey !== null && currentKey !== lastSavedKey
 
   const handleSetMode = useCallback((m: 'edit' | 'preview') => setMode(m), [])
