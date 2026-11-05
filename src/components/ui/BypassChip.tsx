@@ -1,25 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * BypassChip — T08 of the Trust Engine implementation plan.
- *
- * Surfaces visibility (NOT blame) when a revision bypassed the standard
- * collaborative PR-review pathway. Two cases today:
- *
- *  - `pr_number === 0`        → direct local commit (no PR)
- *  - reviewer_id === proxy_   → maintainer self-recorded their own approval
- *    github_handle             via the offline-attestation flow
- *
- * Per §16.3 #9 of trust-engine-explainability.md: "Surface in /revisions a
- * maintainer-as-reviewer flag (when the reviewer is a maintainer who could
- * in theory have skipped checks). Not a block, just visibility."
+ * Revision metadata flags. The legacy component/API name is retained, but
+ * absent PR data or matching recorded identities do not establish a review bypass.
  */
 import type { RevisionEntry } from '@/hooks/useRevisions'
 
-export type BypassReason = 'no-pr' | 'self-recorded' | null
+export type BypassReason = 'no-pr' | 'pr-unknown' | 'self-recorded' | null
 
-/** Detect the bypass reason for a revision entry, or null if no bypass. */
+/** Describe recorded metadata only; null does not establish a reviewed change. */
 export function detectBypass(r: RevisionEntry): BypassReason {
   if (r.pr_number === 0) return 'no-pr'
+  if (!Number.isInteger(r.pr_number) || r.pr_number < 0) return 'pr-unknown'
   if (r.proxy_github_handle && r.reviewer_id && r.proxy_github_handle === r.reviewer_id) {
     return 'self-recorded'
   }
@@ -28,14 +19,19 @@ export function detectBypass(r: RevisionEntry): BypassReason {
 
 const LABELS: Record<NonNullable<BypassReason>, { short: string; tooltip: string }> = {
   'no-pr': {
-    short: 'no-PR',
+    short: 'No PR recorded',
     tooltip:
-      'Direct commit to main without a pull request — bypassed the standard collaborative review pathway. Visibility flag, not a block.',
+      'This revision records no pull request number. This does not establish how the change was merged or reviewed.',
+  },
+  'pr-unknown': {
+    short: 'PR metadata missing',
+    tooltip:
+      'Pull request metadata is missing or unusable. The merge and review pathway cannot be inferred.',
   },
   'self-recorded': {
-    short: 'self-recorded',
+    short: 'Matching recorded identities',
     tooltip:
-      'Reviewer also recorded their own offline attestation. Bypassed the maintainer-as-proxy pattern. Visibility flag, not a block.',
+      'The recorded reviewer and proxy identities match. This alone does not establish who performed the review or whether a review pathway was bypassed.',
   },
 }
 
