@@ -199,6 +199,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   // built from exactly what is rendered, so activeIdx never lands on a collapsed row.
   const capped = useMemo(() => capGroups(grouped, expanded), [grouped, expanded])
   const nav = useMemo(() => buildNav(capped), [capped])
+  const hasSelectableResults =
+    Boolean(query.trim()) && !loading && !error && indexReady && nav.length > 0
   const hiddenSummary = useMemo(() => summarizeHidden(hidden), [hidden])
 
   const expandGroup = useCallback((label: string) => {
@@ -235,6 +237,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      // Suggestions and other buttons keep their own native keyboard activation.
+      if ((e.target as HTMLElement).closest('button')) return
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         setActiveIdx((i) => Math.min(i + 1, nav.length - 1))
@@ -294,7 +298,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     ref={inputRef}
                     type="text"
                     role="combobox"
-                    aria-expanded={results.length > 0}
+                    aria-expanded={hasSelectableResults}
                     aria-controls="command-palette-listbox"
                     aria-autocomplete="list"
                     aria-label="Search"
@@ -362,8 +366,14 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 <div
                   id="command-palette-listbox"
                   className="flex-1 overflow-y-auto min-h-0"
-                  role="listbox"
-                  aria-label="Search results"
+                  role={hasSelectableResults ? 'listbox' : 'group'}
+                  aria-label={
+                    hasSelectableResults
+                      ? 'Search results'
+                      : query.trim()
+                        ? 'Search status'
+                        : 'Search suggestions'
+                  }
                 >
                   {!query.trim() ? (
                     /* Recent queries + example queries */
