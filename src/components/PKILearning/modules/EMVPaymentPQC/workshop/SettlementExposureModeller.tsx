@@ -35,19 +35,20 @@ export const SettlementExposureModeller = () => {
   const band = CRQC_BANDS.find((b) => b.id === bandId) ?? CRQC_BANDS[1]
 
   const result = useMemo(() => {
-    const thisYear = 2026
+    const sampleCaptureYear = 2026
     // Mosca's theorem is X + Y > Z: data shelf life (X) plus the time to migrate
     // (Y) against the time until a CRQC (Z). This model sets the migration-time
-    // term Y to zero, which is the form that matters here: data captured today is
+    // term Y to zero, which is the form that matters here: data captured in the sample year is
     // still sensitive when a CRQC arrives if
     //   captureYear + retention > crqcYear.
     // A real migration time only widens the window, so the result is a floor.
-    const stillSensitiveUntil = thisYear + retention
+    const stillSensitiveUntil = sampleCaptureYear + retention
     const exposedYears = stillSensitiveUntil - band.year
     const exposed = exposedYears > 0
-    // Latest year you can still capture traffic and have it matter.
-    const lastRiskyCaptureYear = band.year - retention
-    return { stillSensitiveUntil, exposedYears, exposed, lastRiskyCaptureYear }
+    // Strict captureYear + retention > crqcYear means captures after this boundary
+    // (and before the assumed CRQC year) remain within the selected lifetime.
+    const captureYearBoundary = band.year - retention
+    return { stillSensitiveUntil, exposedYears, exposed, captureYearBoundary }
   }, [retention, band])
 
   return (
@@ -65,8 +66,8 @@ export const SettlementExposureModeller = () => {
               stays sensitive.
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              This applies Mosca&rsquo;s theorem: data shelf life plus the time your migration takes
-              must be shorter than the time until a CRQC, or the data is at risk (as framed in the{' '}
+              This model compares data shelf life plus migration duration with the time until a CRQC
+              (related reading in the{' '}
               <Link
                 to="/library?ref=FRB-FEDS-2025093-Blockchain-PQC"
                 className="text-primary hover:underline"
@@ -137,18 +138,21 @@ export const SettlementExposureModeller = () => {
                 : 'Not exposed under this assumption'}
             </p>
             <p className="text-sm text-muted-foreground">
-              Traffic captured today stays sensitive until{' '}
-              <strong>{result.stillSensitiveUntil}</strong>. A CRQC assumed for{' '}
+              Traffic captured in the sample year 2026 has a selected confidentiality lifetime
+              ending in <strong>{result.stillSensitiveUntil}</strong>. A CRQC assumed for{' '}
               <strong>{band.year}</strong>{' '}
               {result.exposed
-                ? 'arrives while that data still matters — capturing it today is worthwhile to an adversary.'
-                : 'arrives after that data has stopped mattering, so recorded traffic has no residual value.'}
+                ? 'falls within that selected lifetime — potential exposure in this illustrative model.'
+                : 'falls at or after that selected lifetime ends — no overlap under this model’s strict comparison.'}
             </p>
             <p className="text-sm text-muted-foreground">
               <Clock size={13} className="inline mr-1 -mt-0.5" />
-              Under this assumption, traffic captured up to{' '}
-              <strong>{result.lastRiskyCaptureYear}</strong> is still worth harvesting. Migration
-              has to be complete before then, not before the CRQC date itself.
+              The capture-year boundary is <strong>{result.captureYearBoundary}</strong>. Under the
+              strict comparison used here, traffic captured after this boundary and before the
+              assumed CRQC year remains within the selected confidentiality lifetime at that year.
+              Capture at the boundary ends its lifetime in the assumed CRQC year and is not counted
+              as overlap. These coarse year-level assumptions do not establish attacker holdings or
+              a migration deadline.
             </p>
           </div>
         </div>
