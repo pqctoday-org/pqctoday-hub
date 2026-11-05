@@ -3,7 +3,10 @@ export interface X509Attribute {
   id: string
   label: string
   oid: string
-  status: 'mandatory' | 'recommended' | 'optional'
+  status: 'mandatory' | 'recommended' | 'optional' | 'unknown'
+  /** Independent from presence. Undefined on legacy/manual fields means not established. */
+  critical?: boolean
+  presenceBasis?: string
   value: string
   enabled: boolean
   placeholder: string

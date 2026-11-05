@@ -11,12 +11,10 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { getCryptoErrorHint } from '@/utils/cryptoErrorHint'
-
-// Import CSR profiles using Vite's glob import
-const csrProfiles = import.meta.glob('../../../../data/x509_profiles/CSR*.csv', {
-  query: '?raw',
-  import: 'default',
-})
+import { AttributeSemantics, ProfileSemanticsNotice } from '../../common/AttributeSemantics'
+import { serializeProfileExtensions, ProfileSemanticsError } from '../../common/profileSemantics'
+import { useCertProfile } from '@/hooks/useCertProfile'
+import type { X509Attribute } from '../../common/types'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -46,24 +44,6 @@ interface AlgorithmOption {
   group: 'Classic' | 'Quantum-Safe'
   genCommand: string
   keySizeLabel: string
-}
-
-interface X509Attribute {
-  id: string // e.g., 'CN', 'O'
-  label: string
-  oid: string // OpenSSL config name, e.g., 'commonName'
-  status: 'mandatory' | 'recommended' | 'optional'
-  value: string
-  enabled: boolean
-  placeholder: string
-  description: string
-  elementType: string
-}
-
-interface ProfileMetadata {
-  industry: string
-  standard: string
-  date: string
 }
 
 // Parse numeric key size from label; returns 0 for non-numeric labels (e.g. "Category 2")
@@ -178,16 +158,30 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
   const { artifacts, addKey, addCSR } = useModuleStore()
   const { addFile } = useOpenSSLStore()
 
-  const [attributes, setAttributes] = useState<X509Attribute[]>(INITIAL_ATTRIBUTES)
   // const [selectedAlgoId, setSelectedAlgoId] = useState<string>('rsa');
   const [selectedKeyId, setSelectedKeyId] = useState<string>(`new-${ALGORITHMS[0].id}`)
   const [isGenerating, setIsGenerating] = useState(false)
   const [output, setOutput] = useState('')
   const [errorHint, setErrorHint] = useState<string | null>(null)
   const [csr, setCsr] = useState<string | null>(null)
-  const [selectedProfile, setSelectedProfile] = useState<string>('')
-  const [availableProfiles, setAvailableProfiles] = useState<string[]>([])
-  const [profileMetadata, setProfileMetadata] = useState<ProfileMetadata | null>(null)
+  const {
+    attributes,
+    selectedProfile,
+    availableProfiles,
+    profileMetadata,
+    handleProfileSelect,
+    handleAttributeChange,
+    log: profileLog,
+    setLog: setProfileLog,
+    loadingProfile,
+    loadingError,
+  } = useCertProfile({ initialAttributes: INITIAL_ATTRIBUTES, profileKind: 'csr' })
+  useEffect(() => {
+    if (profileLog) {
+      setOutput((prev) => prev + profileLog)
+      setProfileLog('')
+    }
+  }, [profileLog, setProfileLog])
   const [showProfileInfo, setShowProfileInfo] = useState(false)
   const [profileDocContent, setProfileDocContent] = useState<string>('')
   const [isKeyGenerating, setIsKeyGenerating] = useState(false)
@@ -201,155 +195,6 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
 
   // Filter keys based on selected algorithm if not 'new'
   const availableKeys = artifacts.keys
-
-  useEffect(() => {
-    // Extract filenames from the glob import
-    const profiles = Object.keys(csrProfiles)
-      .map((path) => {
-        // Extract filename from path: ../../../../data/x509_profiles/CSR-Financial.csv -> CSR-Financial.csv
-        return path.split('/').pop() || ''
-      })
-      .filter((name) => name.startsWith('CSR') && name.endsWith('.csv'))
-    setAvailableProfiles(profiles)
-  }, [])
-
-  const parseCSVLine = (line: string): string[] => {
-    const result: string[] = []
-    let current = ''
-    let inQuotes = false
-
-    for (let i = 0; i < line.length; i++) {
-      // eslint-disable-next-line security/detect-object-injection
-      const char = line[i]
-
-      if (char === '"') {
-        inQuotes = !inQuotes
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-    result.push(current.trim())
-    return result
-  }
-
-  const handleProfileSelect = async (filename: string) => {
-    setSelectedProfile(filename)
-    setProfileMetadata(null)
-    if (!filename) return
-
-    try {
-      setOutput((prev) => prev + `Loading profile: ${filename}...\n`)
-
-      // Find the path matching the filename
-      const path = Object.keys(csrProfiles).find((p) => p.endsWith(filename))
-      if (!path) throw new Error('Profile path not found')
-
-      // Load content
-      // eslint-disable-next-line security/detect-object-injection
-      const loadProfile = csrProfiles[path] as () => Promise<string>
-      const content = await loadProfile()
-
-      const lines = content.split('\n').filter((line) => line.trim() !== '')
-      if (lines.length < 2) throw new Error('Invalid CSV format')
-
-      // Parse Header to find column indices
-      const headers = parseCSVLine(lines[0])
-      const colMap = new Map<string, number>()
-      headers.forEach((h, i) => colMap.set(h.trim(), i))
-
-      // Helper to get value by column name
-      const getVal = (row: string[], colName: string) => {
-        const idx = colMap.get(colName)
-        // eslint-disable-next-line security/detect-object-injection
-        return idx !== undefined && idx < row.length ? row[idx] : ''
-      }
-
-      // Parse metadata
-      const industry = getVal(parseCSVLine(lines[1]), 'Industry') || 'Unknown'
-      const standard = getVal(parseCSVLine(lines[1]), 'Standard') || 'Unknown'
-      const date = getVal(parseCSVLine(lines[1]), 'StandardDate') || 'Unknown'
-      setProfileMetadata({ industry, standard, date })
-
-      // Parse Attributes
-      const newAttributes: X509Attribute[] = []
-
-      // Skip header
-      for (let i = 1; i < lines.length; i++) {
-        // eslint-disable-next-line security/detect-object-injection
-        const row = parseCSVLine(lines[i])
-        const elementType = getVal(row, 'ElementType')
-
-        // Only process SubjectRDN and Extension for now as editable attributes
-        if (elementType === 'SubjectRDN' || elementType === 'Extension') {
-          const name = getVal(row, 'Name')
-          const example = getVal(row, 'ExampleValue')
-          const description = getVal(row, 'AllowedValuesOrUsage')
-
-          const oid = getVal(row, 'OID') // Using OID column for ID/OID mapping
-          // Some rows might use 'name' as the OID alias (e.g. commonName)
-          const id =
-            name === 'commonName'
-              ? 'CN'
-              : name === 'countryName'
-                ? 'C'
-                : name === 'organizationName'
-                  ? 'O'
-                  : name === 'organizationalUnitName'
-                    ? 'OU'
-                    : name === 'stateOrProvinceName'
-                      ? 'ST'
-                      : name === 'localityName'
-                        ? 'L'
-                        : name === 'emailAddress'
-                          ? 'emailAddress'
-                          : oid
-
-          const label = name // Use Name column as label
-          const criticalVal = getVal(row, 'Critical').toUpperCase()
-          const critical =
-            elementType === 'SubjectRDN'
-              ? criticalVal === '' || criticalVal === 'TRUE'
-              : criticalVal === 'TRUE'
-
-          newAttributes.push({
-            id: id,
-            label: label,
-            oid: oid,
-            status: critical ? 'mandatory' : 'optional',
-            value: example, // Default value from profile
-            enabled: critical,
-            placeholder: `e.g., ${example}`,
-            description: description,
-            elementType: elementType,
-          })
-        }
-      }
-
-      setAttributes(newAttributes)
-      setOutput((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `Error loading profile: ${errorMessage}\n`)
-    }
-  }
-
-  const handleAttributeChange = (
-    id: string,
-    field: keyof X509Attribute,
-    value: string | boolean
-  ) => {
-    setAttributes((prev) =>
-      prev.map((attr) => {
-        if (attr.id === id) {
-          return { ...attr, [field]: value }
-        }
-        return attr
-      })
-    )
-  }
 
   const handleShowProfileInfo = async () => {
     if (!selectedProfile) return
@@ -455,6 +300,7 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
 
     try {
       let keyId = selectedKeyId
+      const requestedExtensions = serializeProfileExtensions(attributes, 'csr')
       let keyContent = ''
       let keyFile: { name: string; data: Uint8Array } | undefined
 
@@ -585,11 +431,7 @@ distinguished_name = dn
 
       if (hasExtensions) {
         configContent += `\n[ req_ext ]\n`
-        attributes
-          .filter((a) => a.enabled && a.elementType === 'Extension')
-          .forEach((a) => {
-            configContent += `${a.label} = ${escapeConfigValue(a.value)}\n`
-          })
+        configContent += requestedExtensions
       }
 
       const configFile = {
@@ -690,7 +532,10 @@ distinguished_name = dn
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      const hint = getCryptoErrorHint(errorMessage)?.summary
+      const hint =
+        error instanceof ProfileSemanticsError
+          ? undefined
+          : getCryptoErrorHint(errorMessage)?.summary
       setErrorHint(hint || null)
       setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
@@ -707,6 +552,11 @@ distinguished_name = dn
 
   return (
     <div className="space-y-8">
+      <ProfileSemanticsNotice
+        selectedProfile={selectedProfile}
+        loading={loadingProfile}
+        error={loadingError}
+      />
       {/* Row 1: Step 1 & Step 2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Step 1: Key Configuration */}
@@ -923,19 +773,17 @@ distinguished_name = dn
                   <td className="p-3 text-foreground font-medium text-sm">
                     <div className="flex flex-col">
                       <span>{attr.label}</span>
-                      <div className="flex gap-1 mt-1">
-                        {attr.status === 'mandatory' && (
-                          <span className="text-[10px] bg-status-error/10 text-status-error px-1.5 py-0.5 rounded w-fit">
-                            Mandatory
-                          </span>
-                        )}
-                      </div>
+                      <AttributeSemantics
+                        attribute={attr}
+                        onAttributeChange={handleAttributeChange}
+                      />
                     </div>
                   </td>
                   <td className="p-3">
                     <Input
                       type="text"
                       value={attr.value}
+                      aria-label={attr.label}
                       onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
                       placeholder={attr.placeholder}
                       disabled={!attr.enabled}
@@ -1003,7 +851,7 @@ distinguished_name = dn
           <Button
             variant="gradient"
             onClick={handleGenerate}
-            disabled={isGenerating}
+            disabled={isGenerating || loadingProfile || Boolean(loadingError)}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 font-bold rounded transition-colors disabled:opacity-50"
           >
             {isGenerating ? <Loader2 className="animate-spin" /> : <FileSignature />}

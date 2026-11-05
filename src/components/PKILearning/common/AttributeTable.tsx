@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import type { X509Attribute } from './types'
+import { AttributeSemantics } from './AttributeSemantics'
 
 interface AttributeTableProps {
   attributes: X509Attribute[]
@@ -66,18 +67,12 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
               <td className="p-3 text-foreground font-medium text-sm">
                 <div className="flex flex-col">
                   <span>{attr.label}</span>
-                  {attr.id === 'CN' && (
+                  {attr.id === 'CN' && attr.status === 'mandatory' && (
                     <span className="ml-1 text-status-error" aria-label="required">
                       *
                     </span>
                   )}
-                  <div className="flex gap-1 mt-1">
-                    {attr.status === 'mandatory' && (
-                      <span className="text-[10px] bg-status-error text-status-error px-1.5 py-0.5 rounded w-fit">
-                        Mandatory
-                      </span>
-                    )}
-                  </div>
+                  <AttributeSemantics attribute={attr} onAttributeChange={onAttributeChange} />
                 </div>
               </td>
               <td className="p-3">
@@ -93,9 +88,12 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   aria-label={attr.label}
                   className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
-                {attr.id === 'CN' && cnTouched && attr.value.trim() === '' && (
-                  <p className="mt-0.5 text-xs text-status-error">Common Name is required</p>
-                )}
+                {attr.id === 'CN' &&
+                  attr.status === 'mandatory' &&
+                  cnTouched &&
+                  attr.value.trim() === '' && (
+                    <p className="mt-0.5 text-xs text-status-error">Common Name is required</p>
+                  )}
               </td>
               <td className="p-3 text-muted-foreground text-xs max-w-[200px]">
                 {attr.description}

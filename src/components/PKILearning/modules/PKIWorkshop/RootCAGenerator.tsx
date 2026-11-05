@@ -1,4 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  serializeProfileExtensions,
+  ProfileSemanticsError,
+  extensionName,
+} from '../../common/profileSemantics'
 import React, { useState, useEffect, useRef } from 'react'
 import { AlertTriangle, Shield, Loader2, Info, X, CheckCircle2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
@@ -9,6 +14,7 @@ import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { KNOWN_OIDS } from '@/services/crypto/oidMapping'
 
 import { useCertProfile } from '@/hooks/useCertProfile'
+import { ProfileSemanticsNotice } from '../../common/AttributeSemantics'
 import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -180,6 +186,8 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
     availableProfiles,
     attributes,
     profileMetadata,
+    loadingProfile,
+    loadingError,
     handleProfileSelect,
     handleAttributeChange,
     log: profileLog,
@@ -375,6 +383,14 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
     setCaCert(null)
 
     try {
+      const explicitExtensions = serializeProfileExtensions(attributes, 'root')
+      const hasBasicConstraints = attributes.some(
+        (a) => a.enabled && a.elementType === 'Extension' && extensionName(a) === 'basicConstraints'
+      )
+      if (selectedProfile && !hasBasicConstraints)
+        throw new ProfileSemanticsError(
+          'The root sample needs explicit CA:TRUE basicConstraints. Include the profile field or use the no-profile sample; it will not be silently replaced.'
+        )
       let keyContent = ''
       let keyFile: { name: string; data: Uint8Array } | undefined
       let algoName = 'RSA'
@@ -527,47 +543,29 @@ x509_extensions = v3_ca
         })
 
       configContent += `\n[ v3_ca ]\n`
-      // Ensure basic constraints for CA are present if not in profile, but usually profile handles it.
-      // If profile is used, we trust the profile's extensions.
-      // However, for a Root CA, we MUST have BasicConstraints=CA:TRUE.
-      // Let's check if it's in the attributes.
-      // Check if basicConstraints is already provided by the profile (checking label or id)
-      const hasBasicConstraints = attributes.some(
-        (a) => a.enabled && (a.id === 'basicConstraints' || a.label === 'basicConstraints')
-      )
-      if (!hasBasicConstraints) {
-        configContent += `basicConstraints = critical,CA:TRUE\n`
-        configContent += `keyUsage = critical, keyCertSign, cRLSign\n`
-        configContent += `subjectKeyIdentifier = hash\n`
-        configContent += `authorityKeyIdentifier = keyid:always\n`
+      if (!selectedProfile) {
+        for (const [name, value] of [
+          ['basicConstraints', 'critical,CA:TRUE'],
+          ['keyUsage', 'critical,keyCertSign,cRLSign'],
+          ['subjectKeyIdentifier', 'hash'],
+          ['authorityKeyIdentifier', 'keyid:always'],
+        ]) {
+          if (
+            !attributes.some(
+              (a) => a.enabled && a.elementType === 'Extension' && extensionName(a) === name
+            )
+          )
+            configContent += `${name} = ${value}\n`
+        }
       }
+      configContent += explicitExtensions
       setOutput(
         (prev) =>
           prev +
-          `  basicConstraints = critical,CA:TRUE  (RFC 5280 §4.2.1.9)\n` +
-          `    CA:TRUE marks this certificate as a Certificate Authority allowed to sign other certs.\n` +
-          `    "critical" means any X.509 implementation that does not understand this extension MUST reject\n` +
-          `    the certificate — it cannot be silently ignored. This prevents a non-CA cert from being\n` +
-          `    misused as a trust anchor by an older or non-compliant implementation.\n` +
-          `    Note: end-entity certificates set basicConstraints CA:FALSE but do NOT mark it critical.\n` +
-          `    Marking CA:FALSE as critical would force all validators to understand the extension,\n` +
-          `    which adds no security benefit and can break interoperability with older clients.\n\n` +
-          (!hasBasicConstraints
-            ? `  keyUsage = critical, keyCertSign, cRLSign\n` +
-              `    keyCertSign: this CA is authorised to sign X.509 certificates.\n` +
-              `    cRLSign: this CA is authorised to sign Certificate Revocation Lists (CRLs).\n\n` +
-              `  subjectKeyIdentifier = hash\n` +
-              `    A hash of this CA's public key, used by issued certs as authorityKeyIdentifier (AKI) to chain back to this CA.\n\n` +
-              `  authorityKeyIdentifier = keyid:always\n` +
-              `    For self-signed roots, AKI points to the root's own SKI; RFC 5280 §4.2.1.1 permits omitting the authority key identifier when a CA distributes its public key using a self-signed certificate.\n\n`
-            : '')
+          '  Extension criticality is separate from profile presence requirements.\n' +
+          '  Selected profile examples do not establish full profile compliance. Inspect the emitted values below.\n' +
+          '  Name constraints in a self-signed root are not, by themselves, evidence of a relying tool enforcing trust-anchor policy.\n\n'
       )
-
-      attributes
-        .filter((a) => a.enabled && a.elementType === 'Extension')
-        .forEach((a) => {
-          configContent += `${a.label} = ${escapeConfigValue(a.value)}\n`
-        })
 
       const configFile = {
         name: 'rootca.conf',
@@ -769,7 +767,10 @@ x509_extensions = v3_ca
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      const hint = getCryptoErrorHint(errorMessage)?.summary
+      const hint =
+        error instanceof ProfileSemanticsError
+          ? undefined
+          : getCryptoErrorHint(errorMessage)?.summary
       setErrorHint(hint || null)
       setOutput(
         (prev) =>
@@ -785,6 +786,11 @@ x509_extensions = v3_ca
 
   return (
     <div className="space-y-8">
+      <ProfileSemanticsNotice
+        selectedProfile={selectedProfile}
+        loading={loadingProfile}
+        error={loadingError}
+      />
       {/* Live HSM Toggle */}
       <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} className="mb-4" />
 
@@ -991,7 +997,7 @@ x509_extensions = v3_ca
           <Button
             variant="gradient"
             onClick={handleGenerate}
-            disabled={isGenerating}
+            disabled={isGenerating || loadingProfile || Boolean(loadingError)}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 font-bold rounded transition-colors disabled:opacity-50"
           >
             {isGenerating ? <Loader2 className="animate-spin" /> : <Shield />}

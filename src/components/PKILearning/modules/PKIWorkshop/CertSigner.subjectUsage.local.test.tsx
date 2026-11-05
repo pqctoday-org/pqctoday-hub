@@ -81,6 +81,7 @@ const keyUsage = (value: string): X509Attribute => ({
   oid: '2.5.29.15',
   label: 'keyUsage',
   value,
+  critical: value.startsWith('critical,'),
   enabled: true,
   status: 'optional',
   elementType: 'Extension',

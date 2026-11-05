@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { serializeProfileExtensions, ProfileSemanticsError } from '../../common/profileSemantics'
 import React, { useState, useEffect } from 'react'
 import { PenTool, Loader2, Info, X, Check } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
@@ -7,6 +8,7 @@ import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { useCertProfile } from '@/hooks/useCertProfile'
+import { ProfileSemanticsNotice } from '../../common/AttributeSemantics'
 import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -95,6 +97,8 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     attributes,
     setAttributes,
     profileMetadata,
+    loadingProfile,
+    loadingError,
     handleProfileSelect,
     handleAttributeChange,
     log: profileLog,
@@ -333,16 +337,18 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
           a.elementType === 'Extension' &&
           [a.id, a.label, a.oid].some((v) => v === 'basicConstraints' || v === '2.5.29.19')
       )
-      if (!basicConstraint) extContent += `basicConstraints = CA:FALSE\n`
-      if (!subjectUsage.explicit) extContent += `keyUsage = ${subjectUsage.value}\n`
+      if (!basicConstraint && !selectedProfile) extContent += `basicConstraints = CA:FALSE\n`
+      const emitDefaultUsage =
+        !subjectUsage.explicit && !(selectedProfile && attributes.some(isKeyUsageAttribute))
+      if (emitDefaultUsage) extContent += `keyUsage = ${subjectUsage.value}\n`
       setOutput(
         (prev) =>
           prev +
           `  CSR subject public key: ${subjectUsage.label} (SPKI ${subjectUsage.oid})\n` +
           `  Saved CSR display metadata: ${artifacts.keys.find((key) => key.id === csr.keyPairId)?.algorithm || 'not supplied'}; parsed CSR controls usage.\n` +
           `  Issuer signing key (separate role): ${caKey.algorithm}\n` +
-          `  basicConstraints = ${basicConstraint?.value ?? 'CA:FALSE'}\n` +
-          `  keyUsage = ${subjectUsage.value} (${subjectUsage.explicit ? 'explicit profile/manual value' : 'TLS-signing sample default'})\n` +
+          `  basicConstraints = ${basicConstraint?.value ?? (selectedProfile ? '(omitted by current selection)' : 'CA:FALSE')}\n` +
+          `  keyUsage = ${!subjectUsage.explicit && !emitDefaultUsage ? '(omitted by current selection)' : subjectUsage.value} (${subjectUsage.explicit ? 'explicit profile/manual value' : emitDefaultUsage ? 'TLS-signing sample default' : 'no extension requested'})\n` +
           `    ${subjectUsage.purpose}\n` +
           `    These checks cover supported subject-key usage, not complete profile or certificate conformance.\n\n`
       )
@@ -354,11 +360,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
       // Add extensions from attributes
       const hasExtensions = attributes.some((a) => a.enabled && a.elementType === 'Extension')
-      attributes
-        .filter((a) => a.enabled && a.elementType === 'Extension')
-        .forEach((a) => {
-          extContent += `${isKeyUsageAttribute(a) ? 'keyUsage' : a.label} = ${escapeConfigValue(a.value)}\n`
-        })
+      extContent += serializeProfileExtensions(attributes, 'leaf')
 
       // Inject default TLS extensions when no profile is loaded
       if (!selectedProfile && !hasExtensions) {
@@ -519,7 +521,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       const hint =
-        error instanceof SubjectKeyUsageError
+        error instanceof SubjectKeyUsageError || error instanceof ProfileSemanticsError
           ? undefined
           : getCryptoErrorHint(errorMessage)?.summary
       setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
@@ -530,6 +532,11 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
   return (
     <div className="space-y-8">
+      <ProfileSemanticsNotice
+        selectedProfile={selectedProfile}
+        loading={loadingProfile}
+        error={loadingError}
+      />
       {/* Row 1: Step 1 & Step 2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Step 1: CSR Selection */}
@@ -717,7 +724,13 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
             <Button
               variant="gradient"
               onClick={handleSign}
-              disabled={isSigning || !selectedCsrId || !selectedKeyId}
+              disabled={
+                isSigning ||
+                loadingProfile ||
+                Boolean(loadingError) ||
+                !selectedCsrId ||
+                !selectedKeyId
+              }
               className="w-full flex items-center justify-center gap-2 px-4 py-3 font-bold rounded transition-colors disabled:opacity-50 mt-4"
             >
               {isSigning ? <Loader2 className="animate-spin" /> : <PenTool />}

@@ -952,7 +952,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-workshop',
     pt_id: 'PT-015',
-    version: '1.0.4',
+    version: '1.0.5',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
