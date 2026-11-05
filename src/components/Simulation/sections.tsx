@@ -303,7 +303,7 @@ export function DecisionSection({
       <div className="mb-4 rounded-lg border border-success bg-success/10 p-3">
         <div className="font-mono text-sim-micro font-extrabold text-success">✓ PHASE CLEARED</div>
         <div className="mt-0.5 text-[12.5px] font-bold text-foreground">
-          Every maturity level earned{gate ? ` — Gate ${gate.id} certified` : ''}.
+          Scenario progress complete{gate ? ` — sample Gate ${gate.id}` : ''}.
         </div>
       </div>
     )

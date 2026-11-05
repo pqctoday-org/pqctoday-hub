@@ -1952,7 +1952,7 @@ export function SimulationView() {
       // in-board "✓ PHASE CLEARED" banner (DecisionSection) and must not
       // gain a NEW toast it never had.
       if (isMobileShell && prev.level < PHASE_WIN_LEVEL && level >= PHASE_WIN_LEVEL) {
-        toast.success(`${phase.name} cleared — Gate ${phaseTree?.gate?.id ?? ''} certified`)
+        toast.success(`${phase.name} scenario cleared — sample Gate ${phaseTree?.gate?.id ?? ''}`)
       }
       pendingWrongPickRef.current = null
     } else if (pendingWrongPickRef.current && prev.sel === sel) {
