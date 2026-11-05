@@ -16,6 +16,12 @@ const CATEGORY_WHY: Record<string, string> = {
     'Find published adoption examples; a profile does not independently validate a deployment.',
   'Algorithm Inventor':
     'Connect algorithm names with cited research and standardization contributions.',
+  'Patent Inventor':
+    'Find cited patent records and inspect their scope; directory inclusion is not a legal opinion.',
+  'Open Source Maintainer':
+    'Follow linked projects and release information; confirm support for your version and configuration.',
+  'Skeptic/Critic':
+    'Explore cited critiques and compare their evidence with the claims they address.',
 }
 
 /**
@@ -73,6 +79,10 @@ export function LeadersExecutivePanel({ leaders }: { leaders: Leader[] }) {
           <Compass size={16} className="text-primary" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-foreground">Why each group matters to you</h2>
         </div>
+        <p className="text-xs text-muted-foreground mb-3">
+          Counts use each profile's primary category. Category filters can also include patent and
+          project cross-references, so their result counts can differ.
+        </p>
         <ul className="space-y-2">
           {LEADER_CATEGORIES.map((cat) => (
             <li key={cat} className="text-sm">
