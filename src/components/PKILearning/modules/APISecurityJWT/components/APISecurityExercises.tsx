@@ -56,11 +56,11 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       id: 'hybrid-jwt',
       title: '3. Create a hybrid JWT with dual signatures',
       description:
-        'Explore the two hybrid approaches: nested JWT (inner + outer signatures) and composite headers. Create a hybrid token and examine the nested structure with both ES256 and ML-DSA-65 signatures.',
+        'Create the nested JWT sample and inspect its ES256 inner token and ML-DSA-65 outer token. Compare with the separate composite-signature mode.',
       badge: 'Hybrid JWT',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The nested JWT approach wraps the entire ES256-signed JWT as the payload of an ML-DSA-65-signed outer JWT. The total size is roughly the sum of both JWTs.',
+        'The nested sample base64url-encodes the complete inner JWT again as the outer payload, so its size is not the simple sum of two token lengths. Inspect the actual character counts displayed by the sample. An unmodified classical-only verifier cannot validate the outer algorithm; an explicitly defined intermediary path would need to handle the nesting, and accepting only the inner classical signature does not provide PQC protection.',
       config: { step: 2 },
     },
     {
