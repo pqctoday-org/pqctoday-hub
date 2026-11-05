@@ -94,13 +94,7 @@ export const TimelineDocumentDetailPopover = ({
     glow: 'hsl(var(--ring))',
   }
 
-  const period = row.openEnded
-    ? `${row.startYear < 2025 ? '< 2024' : row.startYear} onward`
-    : row.startYear < 2025
-      ? `< 2024${row.startYear !== row.endYear ? ` – ${row.endYear}` : ''}`
-      : row.startYear === row.endYear
-        ? String(row.startYear)
-        : `${row.startYear} – ${row.endYear}`
+  const period = periodLabel(row.startYear, row.endYear, row.openEnded)
 
   const enrichment =
     row.type === 'Phase summary'
