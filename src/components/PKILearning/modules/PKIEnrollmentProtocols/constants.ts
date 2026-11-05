@@ -33,15 +33,16 @@ export const WORKSHOP_STEPS: WorkshopStep[] = [
   },
   {
     id: 'cmp-kur',
-    title: 'Step 4: CMP Key Update with ML-KEM',
-    description: 'Rotate to an ML-KEM-768 key using CMP KUR encrCert POP (RFC 9810).',
+    title: 'Step 4: CMP enrollment and ML-KEM round trip',
+    description:
+      'Enroll an ML-KEM certificate with CMP IR, then compare a separate sample KEM round trip.',
     icon: RefreshCw,
   },
   {
     id: 'composite',
-    title: 'Step 5: Composite Enrollment',
+    title: 'Step 5: Parallel certificate issuance',
     description:
-      'Issue a composite ML-DSA-65 + ECDSA-P256 cert (draft-ietf-lamps-pq-composite-sigs).',
+      'Inspect separate ECDSA and ML-DSA certificate outputs under the sample ML-DSA CA.',
     icon: Layers,
   },
   {
