@@ -465,7 +465,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                 </p>
                 {initialScores?.[d.id] !== undefined && (
                   <p className="text-xs text-muted-foreground ml-6">
-                    Saved value: {score} — current inputs unavailable; excluded from this score.
+                    Saved value: {initialScores[d.id]} — current inputs unavailable; excluded from
+                    this score.
                   </p>
                 )}
                 {d.disabledActionHref && (

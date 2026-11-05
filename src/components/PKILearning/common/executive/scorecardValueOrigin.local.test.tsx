@@ -174,4 +174,56 @@ describe('KPI value labels describe the operation actually performed', () => {
       screen.queryByRole('button', { name: /Use current calculation/ })
     ).not.toBeInTheDocument()
   })
+  it('keeps an explicitly refreshed calculation live as scoped inputs change and withdraws unavailable inputs', () => {
+    const origins = vi.fn()
+    const scores = vi.fn()
+    const props = {
+      title: 'Changing sample scope',
+      initialScores: { manual: 0, calc: 90 },
+      initialValueOrigins: {
+        manual: 'learner-entered' as const,
+        calc: 'calculated-current' as const,
+      },
+      minimumCoverageForOverall: 0.7,
+      showExport: false,
+      onScoreChange: scores,
+      onValueOriginsChange: origins,
+    }
+    const view = render(<DataDrivenScorecard {...props} dimensions={dimensions} />)
+    expect(screen.getByText(/Scored-value coverage: 50%/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+    expect(screen.getByRole('slider', { name: 'Sample calculation score' })).toHaveValue('40')
+    const changed = dimensions.map((d) =>
+      d.id === 'calc' ? { ...d, autoScore: 55, description: 'Different selected sample scope' } : d
+    )
+    view.rerender(<DataDrivenScorecard {...props} dimensions={changed} />)
+    expect(screen.getByRole('slider', { name: 'Sample calculation score' })).toHaveValue('55')
+    expect(screen.getByText(/Calculated from current selected sample inputs/)).toBeInTheDocument()
+    expect(origins.mock.lastCall![0].calc).toBe('calculated-current')
+    expect(scores.mock.lastCall![0].calc).toBe(55)
+    // A new current scope with the same result remains current because the calculation
+    // is live, not because equality proves that a saved scope matched.
+    view.rerender(
+      <DataDrivenScorecard
+        {...props}
+        dimensions={changed.map((d) => ({ ...d, description: 'Another current sample scope' }))}
+      />
+    )
+    expect(screen.getByRole('slider', { name: 'Sample calculation score' })).toHaveValue('55')
+    view.rerender(
+      <DataDrivenScorecard
+        {...props}
+        dimensions={changed.map((d) => ({
+          ...d,
+          disabled: true,
+          disabledReason: 'Current inputs unavailable',
+        }))}
+      />
+    )
+    expect(screen.getByText(/Scored-value coverage: 0%/)).toBeInTheDocument()
+    expect(screen.getByText(/Saved value: 90 — current inputs unavailable/)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Use current calculation/ })
+    ).not.toBeInTheDocument()
+  })
 })
