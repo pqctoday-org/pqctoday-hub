@@ -199,10 +199,12 @@ export function MobileAboutView() {
                         goes through the same maintainer-run flow — not a one-time label.
                       </Row>
                       <Row title="Security audit">
-                        <span className="font-semibold text-status-success">0 vulnerabilities</span>{' '}
-                        (production and dev) — last audited {lastAudited}. OWASP Top 10 compliant:
-                        no dangerouslySetInnerHTML/eval/innerHTML, every external link protected
-                        against tabnabbing, no hardcoded secrets, CSP configured.
+                        Latest recorded report: {lastAudited}. This dated production npm dependency
+                        scan and static-code review concerns an earlier application version; it does
+                        not establish current vulnerability status or OWASP Top 10 compliance. HTML
+                        insertion requires controls at each use. User-supplied cloud API keys are
+                        saved in browser storage; public build-time identifiers are distinct from
+                        secret credentials.
                       </Row>
                     </>
                   )}
