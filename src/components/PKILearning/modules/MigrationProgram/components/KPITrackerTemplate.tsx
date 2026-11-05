@@ -243,6 +243,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   const [valueOrigins, setValueOrigins] = useState<Record<string, KpiValueOrigin>>(() =>
     restoredKpiValueOrigins(savedInputs?.userScores, savedInputs?.valueOrigins)
   )
+  const [loadedSavedScores] = useState(() => savedInputs?.userScores)
   const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
   const handleValueOriginsChange = useCallback((next: Record<string, KpiValueOrigin>) => {
     setValueOrigins((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next))
@@ -330,14 +331,14 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       'Owner',
       'Evidence',
       'Verification',
+      'Raw worksheet value (not an assessed score)',
+      'Original saved snapshot value',
+      'Current-use status',
+      'Included in overall calculation',
     ]
     const rows = dimensions.map((d) => {
       const pending = !isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
-      const scoreCell = d.disabled
-        ? `locked — ${d.disabledReason ?? 'no data'}`
-        : pending
-          ? `${userScores[d.id] ?? d.autoScore ?? 0}/100 — not assessed for current use`
-          : `${userScores[d.id] ?? d.autoScore ?? 0}/100`
+      const scoreCell = d.disabled || pending ? '' : String(userScores[d.id] ?? d.autoScore ?? 0)
       return [
         d.label,
         scoreCell,
@@ -355,10 +356,26 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         observations[d.id]?.owner ?? '',
         observations[d.id]?.evidenceReference ?? '',
         observations[d.id]?.verificationState ?? 'not-verified',
+        String(userScores[d.id] ?? d.autoScore ?? 0),
+        loadedSavedScores?.[d.id] ?? '',
+        d.disabled
+          ? 'Required inputs unavailable'
+          : pending
+            ? 'Not assessed for current use'
+            : 'Assessed sample value',
+        d.disabled || pending ? 'false' : 'true',
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, activePersona, userScores, userWeights, touchedIds, observations, valueOrigins])
+  }, [
+    dimensions,
+    activePersona,
+    userScores,
+    userWeights,
+    observations,
+    valueOrigins,
+    loadedSavedScores,
+  ])
 
   // Everything that round-trips through `inputs`. Watched by the autosave
   // below instead of the markdown, because a value can change here without

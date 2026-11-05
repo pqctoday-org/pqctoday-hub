@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import Papa from 'papaparse'
 import { DataDrivenScorecard, type ScorecardDimension } from './DataDrivenScorecard'
 import { currentKpiValueOrigin, kpiValueOriginLabel } from './scorecardValueOrigin'
 
@@ -225,5 +226,91 @@ describe('KPI value labels describe the operation actually performed', () => {
     expect(
       screen.queryByRole('button', { name: /Use current calculation/ })
     ).not.toBeInTheDocument()
+  })
+  it('downloads CSV with active scores separated from unknown snapshots and unassessed raw values', async () => {
+    let exported: Blob | undefined
+    const NativeURL = URL
+    vi.stubGlobal(
+      'URL',
+      class extends NativeURL {
+        static createObjectURL(blob: Blob) {
+          exported = blob
+          return 'blob:sample-kpi'
+        }
+        static revokeObjectURL() {}
+      }
+    )
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    try {
+      const rows: ScorecardDimension[] = [
+        ...dimensions,
+        { ...dimensions[0], id: 'legacy', label: 'Legacy "sample", unknown', weight: 0.2 },
+        { ...dimensions[0], id: 'pending', label: 'Pending sample', weight: 0.2 },
+        {
+          ...dimensions[1],
+          id: 'disabled',
+          label: 'Unavailable sample',
+          weight: 0.2,
+          disabled: true,
+        },
+      ]
+      render(
+        <DataDrivenScorecard
+          title="CSV sample"
+          dimensions={rows}
+          initialScores={{ manual: 0, calc: 40, legacy: 99, pending: 0, disabled: 77 }}
+          initialValueOrigins={{
+            manual: 'learner-entered',
+            calc: 'calculated-current',
+            pending: 'not-entered',
+            disabled: 'calculated-current',
+          }}
+          exportFormats={['csv']}
+        />
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+      fireEvent.click(screen.getByRole('button', { name: '.csv' }))
+      expect(exported?.type).toBe('text/csv')
+      const text = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(String(reader.result))
+        reader.onerror = () => reject(reader.error)
+        reader.readAsText(exported!)
+      })
+      const parsed = Papa.parse<string[]>(text.slice(text.indexOf('Dimension ID,')), {
+        skipEmptyLines: true,
+      })
+      expect(parsed.errors).toEqual([])
+      const headerIndex = parsed.data.findIndex((row) => row[0] === 'Dimension ID')
+      const headers = parsed.data[headerIndex]
+      const records = parsed.data
+        .slice(headerIndex + 1)
+        .map((row) => Object.fromEntries(headers.map((key, i) => [key, row[i]])))
+      const byId = Object.fromEntries(records.map((row) => [row['Dimension ID'], row]))
+      expect(byId.legacy).toMatchObject({
+        Label: 'Legacy "sample", unknown',
+        Score: '',
+        'Raw worksheet value (not an assessed score)': '99',
+        'Original saved snapshot value': '99',
+        'Included in overall calculation': 'false',
+        'Current-use status': 'Not assessed for current use',
+      })
+      expect(byId.manual).toMatchObject({ Score: '0', 'Included in overall calculation': 'true' })
+      expect(byId.calc).toMatchObject({ Score: '40', 'Included in overall calculation': 'true' })
+      expect(byId.pending).toMatchObject({
+        Score: '',
+        'Raw worksheet value (not an assessed score)': '0',
+        'Included in overall calculation': 'false',
+      })
+      expect(byId.disabled).toMatchObject({
+        Score: '',
+        'Raw worksheet value (not an assessed score)': '77',
+        'Included in overall calculation': 'false',
+        'Current-use status': 'Required inputs unavailable',
+      })
+    } finally {
+      click.mockRestore()
+      vi.unstubAllGlobals()
+    }
   })
 })

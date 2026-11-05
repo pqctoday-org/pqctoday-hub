@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import Papa from 'papaparse'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { KPITrackerTemplate, buildKpiTrackerMarkdown } from './KPITrackerTemplate'
@@ -364,5 +365,95 @@ describe('KPITrackerTemplate', () => {
     expect(
       screen.getByText(/Start year set to 2028.*last Roadmap Builder export/i)
     ).toBeInTheDocument()
+  })
+  it('exports actual CSV with unknown saved values outside the active Score column', async () => {
+    mockPersona = 'executive'
+    mockData = { ...baseData(60), isAssessmentComplete: true }
+    mockStoreState.artifacts.executiveDocuments = [
+      {
+        id: 'csv-kpis',
+        moduleId: 'migration-program',
+        type: 'kpi-tracker',
+        title: 'Fictional CSV example',
+        data: '',
+        createdAt: 1,
+        inputs: {
+          personaOverride: 'executive',
+          startYear: null,
+          userScores: {
+            'systems-inventoried': 99,
+            'compliance-gaps': 0,
+            'risk-posture': 40,
+            'threat-exposure': 0,
+            'fips-validated': 77,
+          },
+          userWeights: {},
+          touchedIds: [],
+          valueOrigins: {
+            'compliance-gaps': 'learner-entered',
+            'risk-posture': 'calculated-current',
+            'threat-exposure': 'not-entered',
+            'fips-validated': 'calculated-current',
+          },
+        },
+      },
+    ]
+    let exported: Blob | undefined
+    const NativeURL = URL
+    vi.stubGlobal(
+      'URL',
+      class extends NativeURL {
+        static createObjectURL(blob: Blob) {
+          exported = blob
+          return 'blob:sample-tracker'
+        }
+        static revokeObjectURL() {}
+      }
+    )
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    try {
+      render(<KPITrackerTemplate />)
+      fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+      fireEvent.click(screen.getByRole('button', { name: '.csv' }))
+      expect(exported?.type).toBe('text/csv')
+      const text = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(String(reader.result))
+        reader.onerror = () => reject(reader.error)
+        reader.readAsText(exported!)
+      })
+      const parsed = Papa.parse<string[]>(text.slice(text.indexOf('KPI,')), {
+        skipEmptyLines: true,
+      })
+      expect(parsed.errors).toEqual([])
+      const index = parsed.data.findIndex((row) => row[0] === 'KPI')
+      const headers = parsed.data[index]
+      const records = parsed.data
+        .slice(index + 1)
+        .map((row) => Object.fromEntries(headers.map((key, i) => [key, row[i]])))
+      const byLabel = Object.fromEntries(records.map((row) => [row.KPI, row]))
+      expect(byLabel['Systems Inventoried']).toMatchObject({
+        Score: '',
+        'Raw worksheet value (not an assessed score)': '99',
+        'Original saved snapshot value': '99',
+        'Included in overall calculation': 'false',
+      })
+      const compliance = records.find(
+        (row) => row['Value origin'] === 'Learner-entered sample value'
+      )!
+      expect(compliance).toMatchObject({ Score: '0', 'Included in overall calculation': 'true' })
+      const current = records.find(
+        (row) => row['Value origin'] === 'Calculated from current selected sample inputs'
+      )!
+      expect(current).toMatchObject({ Score: '40', 'Included in overall calculation': 'true' })
+      expect(
+        records
+          .filter((row) => row['Included in overall calculation'] === 'false')
+          .every((row) => row.Score === '')
+      ).toBe(true)
+    } finally {
+      click.mockRestore()
+      vi.unstubAllGlobals()
+    }
   })
 })

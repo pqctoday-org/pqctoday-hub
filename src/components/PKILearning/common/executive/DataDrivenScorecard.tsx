@@ -133,6 +133,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   observations = {},
   onObservationChange,
 }) => {
+  const [loadedSavedScores] = useState(() => initialScores)
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {}
     for (const d of dimensions) {
@@ -344,13 +345,17 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       'Owner',
       'Evidence Reference',
       'Sample review label (learner recorded)',
+      'Raw worksheet value (not an assessed score)',
+      'Original saved snapshot value',
+      'Current-use status',
+      'Included in overall calculation',
     ]
     const rows = dimensions.map((d) => {
       const observation = observations[d.id]
       return [
         d.id,
         d.label,
-        d.disabled ? '' : String(scores[d.id] ?? 0),
+        d.disabled || isPending(d) ? '' : String(scores[d.id] ?? 0),
         (effectiveWeight(d) * 100).toFixed(0),
         d.target ?? '',
         d.disabled ? 'true' : 'false',
@@ -364,10 +369,18 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         observation?.owner ?? '',
         observation?.evidenceReference ?? '',
         observation?.verificationState ?? 'not-verified',
+        String(scores[d.id] ?? 0),
+        loadedSavedScores?.[d.id] ?? '',
+        d.disabled
+          ? 'Required inputs unavailable'
+          : isPending(d)
+            ? 'Not assessed for current use'
+            : 'Assessed sample value',
+        d.disabled || isPending(d) ? 'false' : 'true',
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, scores, effectiveWeight, isPending, observations, originLabel])
+  }, [dimensions, scores, effectiveWeight, isPending, observations, originLabel, loadedSavedScores])
 
   return (
     <div className="space-y-6">
