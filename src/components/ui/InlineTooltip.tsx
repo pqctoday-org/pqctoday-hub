@@ -1,27 +1,38 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useId } from 'react'
 import { createPortal } from 'react-dom'
 import { loadGlossary, type GlossaryTerm } from '../../data/glossary'
 import { Link } from 'react-router'
 import { ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 // Lazily-populated term lookup — filled by the first InlineTooltip mount
 let termLookup = new Map<string, GlossaryTerm>()
 let _lookupLoaded = false
+let lookupPending: Promise<void> | null = null
+const lookupSubscribers = new Set<() => void>()
 
-const ensureLookup = async () => {
-  if (_lookupLoaded) return
-  _lookupLoaded = true
-  const terms = await loadGlossary()
-  termLookup = new Map<string, GlossaryTerm>(
-    terms.flatMap((t) => {
-      const entries: [string, GlossaryTerm][] = [[t.term.toLowerCase(), t]]
-      if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
-      return entries
+const ensureLookup = () => {
+  if (_lookupLoaded) return Promise.resolve()
+  if (lookupPending) return lookupPending
+  lookupPending = loadGlossary()
+    .then((terms) => {
+      termLookup = new Map<string, GlossaryTerm>(
+        terms.flatMap((t) => {
+          const entries: [string, GlossaryTerm][] = [[t.term.toLowerCase(), t]]
+          if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
+          return entries
+        })
+      )
+      _lookupLoaded = true
+      lookupSubscribers.forEach((notify) => notify())
     })
-  )
+    .finally(() => {
+      lookupPending = null
+    })
+  return lookupPending
 }
 
 interface InlineTooltipProps {
@@ -44,17 +55,54 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
   const triggerRef = useRef<HTMLButtonElement>(null)
   const popoverRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!_lookupLoaded) {
-      ensureLookup().then(() => setLookupReady(true))
-    }
+  const dialogId = useId()
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pinned = useRef(false)
+  const suppressFocus = useRef(false)
+  const cancelLeave = useCallback(() => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current)
+    leaveTimer.current = null
   }, [])
+
+  useEffect(() => {
+    const notify = () => setLookupReady(true)
+    lookupSubscribers.add(notify)
+    // A failed optional definition lookup leaves the prose readable; a later mount retries.
+    void ensureLookup().catch(() => {})
+    return () => {
+      lookupSubscribers.delete(notify)
+      cancelLeave()
+    }
+  }, [cancelLeave])
 
   const entry = termLookup.get(term.toLowerCase())
 
-  const close = useCallback(() => setIsOpen(false), [])
+  const close = useCallback(() => {
+    cancelLeave()
+    pinned.current = false
+    setIsOpen(false)
+  }, [cancelLeave])
+  const restoreTrigger = useCallback(() => {
+    close()
+    suppressFocus.current = true
+    triggerRef.current?.focus()
+    suppressFocus.current = false
+  }, [close])
+  const scheduleClose = useCallback(() => {
+    cancelLeave()
+    if (!pinned.current) leaveTimer.current = setTimeout(close, 180)
+  }, [cancelLeave, close])
+  const leaveFocus = useCallback(
+    (event: React.FocusEvent) => {
+      const next = event.relatedTarget as Node | null
+      if (triggerRef.current?.contains(next) || popoverRef.current?.contains(next)) return
+      close()
+    },
+    [close]
+  )
 
   const open = useCallback(() => {
+    cancelLeave()
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
@@ -68,14 +116,13 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
       }
     }
     setIsOpen(true)
-  }, [])
+  }, [cancelLeave])
 
-  // Close on Escape, outside click, or scroll (scroll would misplace the fixed tooltip)
+  useOverlayEscape(isOpen, restoreTrigger, { rootRef: popoverRef })
+
+  // Close on outside click, or reposition a keyboard-focused definition on scroll.
   useEffect(() => {
     if (!isOpen) return
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
-    }
     const handleOutsideTap = (e: MouseEvent) => {
       if (
         triggerRef.current?.contains(e.target as Node) ||
@@ -84,16 +131,22 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
         return
       close()
     }
-    const handleScroll = () => close()
-    document.addEventListener('keydown', handleKey)
+    const handleScroll = (event: Event) => {
+      if (event.target instanceof Node && popoverRef.current?.contains(event.target)) return
+      if (
+        triggerRef.current === document.activeElement ||
+        popoverRef.current?.contains(document.activeElement)
+      ) {
+        open()
+      } else close()
+    }
     document.addEventListener('mousedown', handleOutsideTap)
     window.addEventListener('scroll', handleScroll, { capture: true })
     return () => {
-      document.removeEventListener('keydown', handleKey)
       document.removeEventListener('mousedown', handleOutsideTap)
       window.removeEventListener('scroll', handleScroll, { capture: true })
     }
-  }, [isOpen, close])
+  }, [isOpen, close, open])
 
   if (!entry) return <>{children ?? term}</>
 
@@ -103,10 +156,33 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
         variant="ghost"
         ref={triggerRef}
         onMouseEnter={open}
-        onMouseLeave={close}
-        onFocus={open}
-        onBlur={close}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onMouseLeave={scheduleClose}
+        onFocus={() => {
+          if (!suppressFocus.current) open()
+        }}
+        onBlur={leaveFocus}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.preventDefault()
+            event.stopPropagation()
+            restoreTrigger()
+            return
+          }
+          if (event.key === 'Tab' && !event.shiftKey && isOpen) {
+            const link = popoverRef.current?.querySelector<HTMLAnchorElement>('a[href]')
+            if (link) {
+              event.preventDefault()
+              link.focus()
+            }
+          }
+        }}
+        onClick={() => {
+          if (pinned.current) close()
+          else {
+            pinned.current = true
+            open()
+          }
+        }}
         className={clsx(
           // `whitespace-normal` overrides Button's base `whitespace-nowrap`: an inline
           // glossary trigger must wrap with the prose around it. Without it a long term
@@ -115,6 +191,8 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
           'inline cursor-help whitespace-normal border-b border-dotted border-primary/40 text-inherit font-inherit transition-colors hover:border-primary hover:text-primary',
           'print:border-0 print:cursor-default'
         )}
+        aria-haspopup="dialog"
+        aria-controls={isOpen ? dialogId : undefined}
         aria-expanded={isOpen}
         aria-label={`Definition of ${entry.term}`}
       >
@@ -123,9 +201,44 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
       {isOpen &&
         tooltipStyle &&
         createPortal(
+          // The nonmodal dialog contains an interactive link; these handlers bridge
+          // its portal hover/focus boundary without turning the container into a button.
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <div
             ref={popoverRef}
-            role="tooltip"
+            id={dialogId}
+            role="dialog"
+            tabIndex={-1}
+            aria-label={`Definition of ${entry.term}`}
+            onMouseEnter={cancelLeave}
+            onMouseLeave={scheduleClose}
+            onFocus={cancelLeave}
+            onBlur={leaveFocus}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                event.preventDefault()
+                event.stopPropagation()
+                restoreTrigger()
+                return
+              }
+              if (event.key !== 'Tab') return
+              event.preventDefault()
+              if (event.shiftKey) {
+                restoreTrigger()
+                return
+              }
+              const controls = Array.from(
+                document.querySelectorAll<HTMLElement>(
+                  'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])'
+                )
+              ).filter(
+                (element) =>
+                  !popoverRef.current?.contains(element) && element.getClientRects().length > 0
+              )
+              const index = controls.indexOf(triggerRef.current!)
+              close()
+              controls[index + 1]?.focus()
+            }}
             style={{
               position: 'fixed',
               zIndex: 9999,
