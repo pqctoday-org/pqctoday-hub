@@ -226,7 +226,7 @@
     "term": "CMVP",
     "acronym": "CMVP",
     "definition": "Cryptographic Module Validation Program — a joint NIST and CCCS program that tests cryptographic modules against FIPS 140-3 requirements. Validated modules appear on the NIST CMVP validated-modules list with a certificate number, recording that an accredited laboratory tested that module version against FIPS 140-3 at the stated security level; the Approved algorithms inside it must first complete CAVP algorithm validation.",
-    "technicalNote": "PQC FIPS 140-3 validation for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) modules began in 2024. Validation cycles take 12–18 months; procurement requiring FIPS 140-3 validated PQC must account for this lag. Check: csrc.nist.gov/projects/cmvp.",
+    "technicalNote": "Modules containing FIPS 203, 204 or 205 algorithms appear on the CMVP list only after the algorithm implementations have CAVP validation, and validation queue times vary; check the CMVP Modules In Process list. Procurement requiring FIPS 140-3 validated PQC must read the certificate for the exact module version and algorithms. Check: csrc.nist.gov/projects/cmvp.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
     "category": "organization"
