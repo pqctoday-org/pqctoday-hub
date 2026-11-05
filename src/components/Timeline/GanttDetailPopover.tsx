@@ -86,18 +86,12 @@ export const GanttDetailPopover = ({
   const focusKey = focusEvent ? eventLinkKey(focusEvent) : null
   const primaryEvent =
     (focusKey && phase.events.find((e) => eventLinkKey(e) === focusKey)) || phase.events[0]
-  // Row-level fields describe the row's first event (plus the row's full span);
-  // a focused later event shows its own.
-  const focused = primaryEvent !== undefined && primaryEvent !== phase.events[0]
-  const shown = focused
-    ? {
-        title: primaryEvent.title,
-        description: primaryEvent.description,
-        startYear: primaryEvent.startYear,
-        endYear: primaryEvent.endYear,
-        openEnded: primaryEvent.openEnded,
-      }
-    : phase
+  // Every source event keeps its own fields, including the group's first event.
+  // Only an eventless phase is shown as an aggregate summary.
+  const shown = primaryEvent ?? phase
+  const shownStatus =
+    shown.status === 'New' || shown.status === 'Updated' ? shown.status : undefined
+
   const pageUrl = timelineEventPageUrl(
     primaryEvent?.countryName ?? '',
     primaryEvent ? eventLinkKey(primaryEvent) : null
@@ -173,7 +167,7 @@ export const GanttDetailPopover = ({
                   >
                     {shown.title}
                   </h3>
-                  <StatusBadge status={phase.status} size="sm" />
+                  <StatusBadge status={shownStatus} size="sm" />
                   {deadlineMandate && (
                     <span
                       title={

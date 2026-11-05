@@ -43,6 +43,7 @@ describe('GanttDetailPopover', () => {
   const mockPhaseWithStatus: TimelinePhase = {
     ...mockPhase,
     status: 'New',
+    events: [{ ...mockPhase.events[0], status: 'New' }],
   }
 
   const mockOnClose = vi.fn()
@@ -90,7 +91,7 @@ describe('GanttDetailPopover', () => {
     it('displays description', () => {
       render(<GanttDetailPopover isOpen={true} onClose={mockOnClose} phase={mockPhase} />)
 
-      expect(screen.getByText('Initial assessment of quantum threats')).toBeInTheDocument()
+      expect(screen.getByText('Initial assessment')).toBeInTheDocument()
     })
 
     it('displays source URL when present', () => {
@@ -241,7 +242,7 @@ describe('GanttDetailPopover', () => {
     it('displays correct information for Phase type', () => {
       render(<GanttDetailPopover isOpen={true} onClose={mockOnClose} phase={mockPhase} />)
 
-      expect(screen.getByText('Initial assessment of quantum threats')).toBeInTheDocument()
+      expect(screen.getByText('Initial assessment')).toBeInTheDocument()
     })
 
     it('displays correct information for Milestone type', () => {
@@ -249,6 +250,7 @@ describe('GanttDetailPopover', () => {
         ...mockPhase,
         type: 'Milestone',
         title: 'RSA 2048 Deprecated',
+        events: [{ ...mockPhase.events[0], type: 'Milestone', title: 'RSA 2048 Deprecated' }],
       }
 
       render(<GanttDetailPopover isOpen={true} onClose={mockOnClose} phase={milestonePhase} />)
