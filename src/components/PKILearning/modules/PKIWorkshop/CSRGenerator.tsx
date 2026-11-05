@@ -743,7 +743,7 @@ distinguished_name = dn
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[48rem] text-left border-collapse">
             <thead>
               <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wider">
                 <th className="p-3 w-10 text-center">Use</th>
@@ -784,6 +784,7 @@ distinguished_name = dn
                       type="text"
                       value={attr.value}
                       aria-label={attr.label}
+                      className="min-w-[14rem]"
                       onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
                       placeholder={attr.placeholder}
                       disabled={!attr.enabled}

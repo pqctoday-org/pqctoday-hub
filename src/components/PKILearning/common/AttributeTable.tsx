@@ -17,7 +17,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
   const [cnTouched, setCnTouched] = useState(false)
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse">
+      <table className="w-full min-w-[48rem] text-left border-collapse">
         <thead>
           <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wider">
             <th className="p-3 w-10 text-center">Use</th>
@@ -86,7 +86,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   placeholder={attr.placeholder}
                   disabled={!attr.enabled || (showSource && attr.source === 'CSR')}
                   aria-label={attr.label}
-                  className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full min-w-[14rem] bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 {attr.id === 'CN' &&
                   attr.status === 'mandatory' &&
