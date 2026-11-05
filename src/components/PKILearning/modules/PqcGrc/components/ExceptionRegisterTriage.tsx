@@ -98,11 +98,12 @@ export const ExceptionRegisterTriage: React.FC = () => {
   // navigation, now that ExportableArtifact autosaves them. (WS6 task 6.)
   const savedInputs = useSavedArtifactInputs<SavedTriageInputs>('risk-register', SCOPE)
   const [choices, setChoices] = useState<Record<string, Disposition>>(() => {
-    const blank = Object.fromEntries(ENTRIES.map((e) => [e.id, null])) as Record<
-      string,
-      Disposition
-    >
-    return { ...blank, ...(savedInputs?.choices ?? {}) }
+    return Object.fromEntries(
+      ENTRIES.map((e) => {
+        const saved = savedInputs?.choices?.[e.id]
+        return [e.id, saved === 'suppress' || saved === 'escalate' ? saved : null]
+      })
+    ) as Record<string, Disposition>
   })
   const [revealed, setRevealed] = useState(savedInputs?.revealed ?? false)
 
@@ -110,7 +111,10 @@ export const ExceptionRegisterTriage: React.FC = () => {
     setChoices((prev) => ({ ...prev, [id]: prev[id] === d ? null : d }))
   }, [])
 
-  const allAnswered = useMemo(() => ENTRIES.every((e) => choices[e.id] !== null), [choices])
+  const allAnswered = useMemo(
+    () => ENTRIES.every((e) => choices[e.id] === 'suppress' || choices[e.id] === 'escalate'),
+    [choices]
+  )
 
   const score = useMemo(
     () => ENTRIES.filter((e) => choices[e.id] === recommendedDisposition(e)).length,
@@ -120,27 +124,42 @@ export const ExceptionRegisterTriage: React.FC = () => {
   const exportMarkdown = useMemo(() => {
     let md = '# PQC GRC — Exception Register Triage\n\n'
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += 'Fictional sample exercise; selections are not an operational suppression list.\n\n'
+    md += `Answered: ${ENTRIES.filter((e) => choices[e.id] !== null).length} of ${ENTRIES.length}.\n\n`
     md +=
-      'Rule: an exception is safe to add to the SOC suppression list only while it is ' +
-      '≤ 6 months old AND has a documented remediation plan. Older or plan-less exceptions ' +
-      'escalate instead of suppressing drift alerts.\n\n'
-    md += '| System | Age (mo) | Plan | HNDL | Disposition |\n'
-    md += '|--------|----------|------|------|-------------|\n'
+      'Sample rule: suppress only while an exception is ≤ 6 months old AND has a documented ' +
+      'remediation plan; otherwise escalate. Use your own documented criteria and tools for production decisions.\n\n'
+    md +=
+      '| System | Age (mo) | Plan | HNDL | Learner disposition | Sample rule recommendation | Feedback |\n'
+    md +=
+      '|--------|----------|------|------|---------------------|----------------------------|----------|\n'
     for (const e of ENTRIES) {
-      const d = choices[e.id] ?? recommendedDisposition(e)
-      md += `| ${e.system} | ${e.ageMonths} | ${e.hasRemediationPlan ? 'Yes' : 'No'} | ${e.hndlRelevant ? 'Yes' : 'No'} | ${d === 'suppress' ? 'Suppress (→ SOC list)' : 'Escalate'} |\n`
+      const d = choices[e.id]
+      const selected = d === null ? 'Not answered' : d === 'suppress' ? 'Suppress' : 'Escalate'
+      const recommendation = revealed
+        ? recommendedDisposition(e) === 'suppress'
+          ? 'Suppress'
+          : 'Escalate'
+        : 'Not revealed'
+      const feedback = !revealed
+        ? 'Not checked'
+        : d === null
+          ? 'Not answered'
+          : d === recommendedDisposition(e)
+            ? 'Matches sample rule'
+            : 'Differs from sample rule'
+      md += `| ${e.system} | ${e.ageMonths} | ${e.hasRemediationPlan ? 'Yes' : 'No'} | ${e.hndlRelevant ? 'Yes' : 'No'} | ${selected} | ${recommendation} | ${feedback} |\n`
     }
-    const suppress = ENTRIES.filter(
-      (e) => (choices[e.id] ?? recommendedDisposition(e)) === 'suppress'
-    )
-    md += '\n## SOC Suppression List\n\n'
+    const suppress = ENTRIES.filter((e) => choices[e.id] === 'suppress')
+    md += '\n## Sample SOC suppression selections\n\n'
+    md += 'Only explicit learner selections appear below; unanswered entries are not inferred.\n\n'
     if (suppress.length === 0) {
-      md += '_No entries qualify for suppression — all exceptions escalate._\n'
+      md += '_No suppression selections recorded._\n'
     } else {
       for (const e of suppress) md += `- ${e.system}\n`
     }
     return md
-  }, [choices])
+  }, [choices, revealed])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
@@ -271,8 +290,8 @@ export const ExceptionRegisterTriage: React.FC = () => {
         wideTable
       >
         <p className="text-sm text-muted-foreground">
-          Export the triaged register and its derived SOC suppression list to your learning
-          portfolio.
+          Export your sample selections, unanswered entries and any revealed sample-rule feedback to
+          your learning portfolio.
         </p>
       </ExportableArtifact>
     </div>
