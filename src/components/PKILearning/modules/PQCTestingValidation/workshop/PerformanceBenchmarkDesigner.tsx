@@ -36,7 +36,7 @@ const METRICS = [
     label: 'Certificate Size',
     unit: 'KB',
     maxVal: 20,
-    description: 'Leaf certificate size (affects ClientHello fragmentation)',
+    description: 'Leaf certificate size (affects the Certificate message flight, not ClientHello)',
   },
   {
     key: 'clientHelloBytes',
