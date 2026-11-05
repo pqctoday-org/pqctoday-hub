@@ -24,7 +24,26 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
   it('MODULE_STEP_COUNTS', () =>
     expect(buildStepCounts(MANIFESTS)).toEqual(golden.MODULE_STEP_COUNTS))
   it('LEARN_SECTIONS', () => expect(buildLearnSections(MANIFESTS)).toEqual(golden.LEARN_SECTIONS))
-  it('WORKSHOP_STEPS', () => expect(buildWorkshopSteps(MANIFESTS)).toEqual(golden.WORKSHOP_STEPS))
+  it('WORKSHOP_STEPS', () => {
+    // Keep the historical cut-over snapshot intact. These two reviewed labels
+    // now describe the operations actually demonstrated; IDs/order stay fixed.
+    const enrollment = golden.WORKSHOP_STEPS['pki-enrollment-protocols']
+    expect(enrollment.find((step) => step.id === 'cmp-kur')?.label).toBe(
+      'CMP Key Update with ML-KEM'
+    )
+    expect(enrollment.find((step) => step.id === 'composite')?.label).toBe(
+      'Composite Enrollment (draft)'
+    )
+    const expected = {
+      ...golden.WORKSHOP_STEPS,
+      'pki-enrollment-protocols': enrollment.map((step) => {
+        if (step.id === 'cmp-kur') return { ...step, label: 'CMP enrollment and ML-KEM round trip' }
+        if (step.id === 'composite') return { ...step, label: 'Parallel certificate issuance' }
+        return step
+      }),
+    }
+    expect(buildWorkshopSteps(MANIFESTS)).toEqual(expected)
+  })
   it('MODULE_TRACKS', () => expect(buildModuleTracks(MANIFESTS)).toEqual(golden.MODULE_TRACKS))
   it('MODULE_PLAYGROUND_TOOL', () =>
     expect(buildPlaygroundTools(MANIFESTS)).toEqual(golden.MODULE_PLAYGROUND_TOOL))
