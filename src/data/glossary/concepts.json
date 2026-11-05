@@ -1306,7 +1306,7 @@
     "term": "SEV-SNP",
     "acronym": "SEV-SNP",
     "definition": "AMD Secure Encrypted Virtualization with Secure Nested Paging, providing VM-level memory encryption and integrity protection with a Reverse Map Table to prevent hypervisor-based attacks.",
-    "technicalNote": "Uses ECDSA P-384 VCEK certificates for attestation (quantum-vulnerable to Shor-type attacks). AES-128-XTS memory encryption has a smaller idealized Grover search cost than AES-256, but practical cost depends on circuit depth and parallelism; this is not a demonstrated break or a universal halving of security.",
+    "technicalNote": "Uses ECDSA P-384 VCEK certificates for attestation (quantum-vulnerable to Shor-type attacks). Memory encryption uses AES (AMD documents AES-128 XEX or AES-256 XTS modes); a 128-bit key has a smaller idealized Grover search cost than a 256-bit key, but practical cost depends on circuit depth and parallelism, so this is not a demonstrated break or a universal halving of security.",
     "relatedModule": "/learn/confidential-computing",
     "complexity": "advanced",
     "category": "concept"

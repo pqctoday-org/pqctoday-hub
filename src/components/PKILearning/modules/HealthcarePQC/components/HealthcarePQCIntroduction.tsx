@@ -497,9 +497,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                     outdated operating systems with no crypto agility.
                   </li>
                   <li>
-                    &bull; <strong>Insulin pump vulnerabilities</strong> &mdash; researchers
-                    demonstrated unauthorized wireless commands against insulin pumps that could
-                    alter dosing. The cryptographic details differ by product, so ask a manufacturer
+                    &bull; <strong>Insulin pump vulnerabilities</strong> &mdash; FDA has described a
+                    wireless vulnerability in a marketed insulin pump family in which a nearby
+                    unauthorized person could potentially connect and change settings or insulin
+                    delivery. The cryptographic details differ by product, so ask a manufacturer
                     what authenticates commands and protects firmware updates rather than assuming
                     one algorithm.
                   </li>
