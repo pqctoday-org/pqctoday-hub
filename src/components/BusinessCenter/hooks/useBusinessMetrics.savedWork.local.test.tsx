@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { cleanup, renderHook } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import { useBusinessMetrics } from './useBusinessMetrics'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -19,8 +19,7 @@ function resetSampleWork() {
 
 beforeEach(resetSampleWork)
 afterEach(() => {
-  cleanup()
-  resetSampleWork()
+  act(resetSampleWork)
 })
 
 describe('Command Center saved work without an assessment', () => {

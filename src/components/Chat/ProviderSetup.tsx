@@ -145,6 +145,7 @@ export const ProviderSetup: React.FC = () => {
       className="flex-1 overflow-y-auto p-4 md:p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
       role="region"
       aria-label="AI assistant setup"
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- This named scroll region must receive keyboard focus for PageDown/End; same documented scrollable-region-focusable pattern as ScrollFadeContainer.
       tabIndex={0}
     >
       <div className="max-w-2xl w-full mx-auto space-y-6">

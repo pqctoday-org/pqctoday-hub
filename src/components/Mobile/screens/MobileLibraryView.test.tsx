@@ -8,6 +8,7 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { libraryData } from '@/data/libraryData'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { documentDatesText } from '@/components/Library/redesign/libraryPills'
+import { Button } from '@/components/ui/button'
 
 // Real data throughout — libraryData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived at test time), not
@@ -400,8 +401,8 @@ describe('Mobile Library shareable filter scope', () => {
         <output data-testid="filter-url" data-navigation={navigation}>
           {location.search}
         </output>
-        <button onClick={() => navigate(-1)}>Previous filter route</button>
-        <button onClick={() => navigate(1)}>Next filter route</button>
+        <Button onClick={() => navigate(-1)}>Previous filter route</Button>
+        <Button onClick={() => navigate(1)}>Next filter route</Button>
       </>
     )
   }
