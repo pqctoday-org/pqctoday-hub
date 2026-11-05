@@ -386,7 +386,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/risk-register',
     title: 'Risk Register Builder — PQC Business Tool | PQC Today',
     description:
-      'Build a PQC risk register with current algorithm, threat vector, likelihood, impact and mitigation',
+      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact and proposed mitigation',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
