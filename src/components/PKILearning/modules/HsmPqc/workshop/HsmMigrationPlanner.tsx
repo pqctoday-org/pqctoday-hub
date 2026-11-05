@@ -35,9 +35,9 @@ const PHASES = [
   },
   {
     id: 'validation',
-    label: 'Validation',
+    label: 'Validation Planning',
     icon: Shield,
-    description: 'FIPS 140-3 re-validation checklist and CAVP algorithm testing status.',
+    description: 'Review topics for module validation scope and algorithm-testing evidence.',
   },
 ] as const
 
@@ -205,7 +205,7 @@ export const HsmMigrationPlanner: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">HSM Firmware Migration Planner</h3>
         <p className="text-sm text-muted-foreground">
           Plan your HSM firmware migration from classical to PQC in 4 phases. Select your vendor and
-          fleet size to see upgrade paths, timelines, and validation requirements.
+          fleet size to see example upgrade paths, timelines, and validation-planning topics.
         </p>
       </div>
 
@@ -501,10 +501,10 @@ export const HsmMigrationPlanner: React.FC = () => {
       {/* Phase 4: Validation */}
       {currentPhase === 3 && (
         <div className="glass-panel p-6 space-y-4 animate-fade-in">
-          <h4 className="text-base font-bold text-foreground">Phase 4: Validation</h4>
+          <h4 className="text-base font-bold text-foreground">Phase 4: Validation Planning</h4>
           <p className="text-sm text-muted-foreground">
-            Complete the FIPS 140-3 re-validation checklist. Required items must be verified before
-            the migration is considered complete.
+            Select the topics you have reviewed in this sample plan. These acknowledgments do not
+            perform algorithm tests, verify a module configuration or update a validation certificate.
           </p>
 
           {/* Checklist */}
@@ -527,10 +527,10 @@ export const HsmMigrationPlanner: React.FC = () => {
                   ) : (
                     <Circle size={16} className="text-muted-foreground shrink-0" />
                   )}
-                  <span className="text-xs text-foreground flex-1">{item.label}</span>
+                  <span className="text-xs text-foreground flex-1">Review topic: {item.label}</span>
                   {item.required && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold shrink-0">
-                      REQUIRED
+                      CORE TOPIC
                     </span>
                   )}
                 </Button>
@@ -553,24 +553,24 @@ export const HsmMigrationPlanner: React.FC = () => {
               <span
                 className={`text-sm font-bold ${requiredComplete ? 'text-success' : 'text-foreground'}`}
               >
-                {requiredComplete ? 'Validation Complete' : 'Validation In Progress'}
+                {requiredComplete ? 'Planning review complete' : 'Planning review in progress'}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
               {checkedItems.size} / {VALIDATION_CHECKLIST.length} items checked (
               {requiredChecked.filter((item) => checkedItems.has(item.id)).length} /{' '}
-              {requiredChecked.length} required items complete)
+              {requiredChecked.length} core topics selected)
             </p>
           </div>
 
           {/* CAVP Algorithm Testing */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h5 className="text-sm font-bold text-foreground mb-2">
-              CAVP Algorithm Testing Status
+              Algorithm Test-Planning Topics
             </h5>
             <p className="text-xs text-muted-foreground mb-2">
-              Each PQC algorithm must pass CAVP (Cryptographic Algorithm Validation Program) testing
-              before the FIPS 140-3 module certificate can be updated.
+              For each selected algorithm, investigate the applicable testing and certificate scope.
+              This sample does not establish that an algorithm or module is validated.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {selectedPath.pqcAlgorithmsAdded.map((alg) => (
@@ -579,7 +579,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                   className="text-center p-2 rounded bg-primary/10 border border-primary/20"
                 >
                   <span className="text-[10px] font-mono text-primary block">{alg}</span>
-                  <span className="text-[10px] text-muted-foreground">CAVP Required</span>
+                  <span className="text-[10px] text-muted-foreground">Review applicable testing</span>
                 </div>
               ))}
             </div>
