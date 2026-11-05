@@ -41,6 +41,10 @@ export interface NiceWorkRoleRecommendation {
   workRoleId: NiceWorkRoleId
   /** Official NICE Framework v2.2.0 work-role ID, e.g. 'DD-WRL-001'. */
   niceCode: string
+  /** Existing source activity name; the familiar Hub job title is separate. */
+  officialName: string
+  /** Existing source caveat when this is a nearest-match Hub mapping. */
+  nearestMatchNote?: string
   title: string
   description: string
   /** Why this role is surfaced for this assessment */
@@ -358,6 +362,8 @@ function buildWorkRoleRecommendations(
     return {
       workRoleId: roleId,
       niceCode: role.niceCode,
+      officialName: role.officialName,
+      nearestMatchNote: role.nearestMatchNote,
       title: role.title,
       description: role.description,
       rationale:
@@ -465,6 +471,9 @@ export function generateNiceGapReport(
     workRoles: workRoleRecommendations.map((r) => ({
       niceCode: r.niceCode,
       title: r.title,
+      officialName: r.officialName,
+      nearestMatchNote: r.nearestMatchNote,
+      mappingContext: 'Hub curriculum/job-title mapping to the recorded NICE activity',
       rationale: r.rationale,
     })),
     learningSequence: learningSequence.map((s) => ({

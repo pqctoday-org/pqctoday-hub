@@ -172,6 +172,10 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
             <Briefcase size={16} className="text-primary shrink-0" />
             Work Roles to Hire or Upskill
           </h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Hub job-title and curriculum mappings; the recorded NICE activity name and any
+            nearest-match limitations are shown separately.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {report.workRoleRecommendations.map((role) => (
               <div key={role.workRoleId} className="glass-panel p-4 space-y-1.5">
@@ -179,6 +183,12 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
                   <span className="text-xs font-mono text-muted-foreground">{role.niceCode}</span>
                   <span className="text-sm font-medium text-foreground">{role.title}</span>
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  Recorded NICE activity: {role.officialName}
+                </p>
+                {role.nearestMatchNote && (
+                  <p className="text-xs text-muted-foreground">{role.nearestMatchNote}</p>
+                )}
                 <p className="text-xs text-muted-foreground">{role.rationale}</p>
                 {role.onboardingModules.length > 0 && (
                   <div className="flex flex-wrap gap-1 pt-1">
