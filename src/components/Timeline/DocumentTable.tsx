@@ -86,33 +86,49 @@ export const DocumentTable = ({
   })
 
   const rows: TimelineDocumentRow[] = data.flatMap((countryData) =>
-    countryData.phases.map((phase) => {
-      const ev = phase.events[0]
-      return {
-        countryName: countryData.country.countryName,
-        org: ev?.orgName || countryData.country.bodies.map((b) => b.name).join(', '),
-        phase: phase.phase,
-        type: phase.type,
-        title: phase.title,
-        eventId: ev?.eventId,
-        startYear: phase.startYear,
-        endYear: phase.endYear,
-        openEnded: phase.openEnded,
-        description: phase.description,
-        sourceUrl: ev?.sourceUrl,
-        sourceDate: ev?.sourceDate,
-        status: phase.status,
-        peerReviewed: ev?.peerReviewed,
-        vettingBody: ev?.vettingBody,
-        sourceUrlQuality: ev?.sourceUrlQuality,
-        trustedSourceId: ev?.trustedSourceId,
-        trustedSourceIdStatus: ev?.trustedSourceIdStatus,
-        sourceClass: ev?.sourceClass,
-        localFile: ev?.localFile,
-        confidenceScore: ev?.confidenceScore,
-        dataQualityNotes: ev?.dataQualityNotes,
-        complianceRefs: ev?.complianceRefs,
+    countryData.phases.flatMap<TimelineDocumentRow>((phase) => {
+      // Chart phases aggregate several records; documents retain each event's identity.
+      if (phase.events.length === 0) {
+        return [
+          {
+            countryName: countryData.country.countryName,
+            org: countryData.country.bodies.map((body) => body.name).join(', '),
+            phase: phase.phase,
+            type: 'Phase summary',
+            title: phase.title,
+            startYear: phase.startYear,
+            endYear: phase.endYear,
+            openEnded: phase.openEnded,
+            description: phase.description,
+            status: phase.status,
+          },
+        ]
       }
+      return phase.events.map((event) => ({
+        countryName: countryData.country.countryName,
+        org: event.orgName,
+        phase: event.phase,
+        type: event.type,
+        title: event.title,
+        eventId: event.eventId,
+        startYear: event.startYear,
+        endYear: event.endYear,
+        openEnded: event.openEnded,
+        description: event.description,
+        sourceUrl: event.sourceUrl,
+        sourceDate: event.sourceDate,
+        status: event.status,
+        peerReviewed: event.peerReviewed,
+        vettingBody: event.vettingBody,
+        sourceUrlQuality: event.sourceUrlQuality,
+        trustedSourceId: event.trustedSourceId,
+        trustedSourceIdStatus: event.trustedSourceIdStatus,
+        sourceClass: event.sourceClass,
+        localFile: event.localFile,
+        confidenceScore: event.confidenceScore,
+        dataQualityNotes: event.dataQualityNotes,
+        complianceRefs: event.complianceRefs,
+      }))
     })
   )
 
