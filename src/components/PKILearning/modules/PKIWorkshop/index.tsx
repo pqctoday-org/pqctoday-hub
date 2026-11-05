@@ -198,7 +198,7 @@ const ALL_PARTS = [
     id: 'acme',
     title: 'Step 7: ACME + PQC',
     description:
-      'Walk through the RFC 8555 certificate issuance flow with a real ML-DSA-65 keypair.',
+      'Walk through an illustrative ACME certificate-issuance sequence with placeholder key and CSR text.',
     icon: Globe,
   },
   {
