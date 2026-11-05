@@ -170,7 +170,7 @@ describe('MobileLibraryView', () => {
       expect(row, ref).toBeDefined()
       const expected = documentDatesText(row!.initialPublicationDate, row!.lastUpdateDate)
       // Both rows carry an update date later than the first publication.
-      expect(expected, ref).toMatch(/^First published .+ · updated /)
+      expect(expected, ref).toMatch(/^First published .+ · Catalog record updated /)
       const { unmount } = render(
         <MemoryRouter initialEntries={[`/library?ref=${encodeURIComponent(ref)}`]}>
           <MobileLibraryView />
@@ -449,7 +449,7 @@ describe('Mobile Library shareable filter scope', () => {
       'true'
     )
     expect(screen.getByTestId('filter-url')).toHaveAttribute('data-navigation', 'PUSH')
-    fireEvent.click(screen.getByRole('button', { name: 'New & updated', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: /^New & updated$/ }))
     fireEvent.change(screen.getByRole('textbox', { name: 'Search Library' }), {
       target: { value: 'ML-KEM' },
     })
