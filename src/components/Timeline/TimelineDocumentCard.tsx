@@ -44,13 +44,7 @@ export const TimelineDocumentCard = ({
   const enrichment = getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
-  const period = row.openEnded
-    ? `${row.startYear < 2025 ? '< 2024' : row.startYear} onward`
-    : row.startYear < 2025
-      ? `< 2024${row.startYear !== row.endYear ? ` – ${row.endYear}` : ''}`
-      : row.startYear === row.endYear
-        ? String(row.startYear)
-        : `${row.startYear} – ${row.endYear}`
+  const period = periodLabel(row.startYear, row.endYear, row.openEnded)
 
   return (
     <motion.article

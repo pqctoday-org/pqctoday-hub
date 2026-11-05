@@ -264,7 +264,7 @@ export const MobileTimelineList = ({
                         <span className="text-[10px] text-muted-foreground font-mono">
                           {phase.openEnded
                             ? `${phase.startYear} onward`
-                            : `${phase.startYear}–${phase.endYear === 2035 ? '2035+' : phase.endYear}`}
+                            : `${phase.startYear}–${phase.endYear}`}
                         </span>
                         <span
                           className={`text-[9px] font-semibold uppercase tracking-wide ${
@@ -401,7 +401,7 @@ export const MobileTimelineList = ({
                           <span className="text-[10px] sm:text-xs text-muted-foreground font-mono">
                             {currentPhase.openEnded
                               ? `${currentPhase.startYear} onward`
-                              : `${currentPhase.startYear} - ${currentPhase.endYear === 2035 ? '2035+' : currentPhase.endYear}`}
+                              : `${currentPhase.startYear} - ${currentPhase.endYear}`}
                           </span>
                         </div>
                       </div>
