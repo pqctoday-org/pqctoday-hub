@@ -37,6 +37,8 @@ describe('Wallet generic-search summary', () => {
     expect(generated.output).toContain('not a twofold speedup')
     expect(generated.output).toContain('circuit resources and parallelization')
     expect(generated.output).toContain('not a proof of seed security')
+    expect(generated.output).toContain('does not assess seed entropy or handling')
+    expect(generated.output).not.toContain('Your mnemonic and seed are safe')
     expect(generated.output).not.toContain('2× speedup')
   })
 })
