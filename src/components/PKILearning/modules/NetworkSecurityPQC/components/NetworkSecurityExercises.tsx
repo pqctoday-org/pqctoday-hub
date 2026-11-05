@@ -84,7 +84,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'Zero Trust',
       badgeColor: 'bg-success/20 text-status-success border-success/50',
       observe:
-        'Leaving the Identity Provider on classical crypto produces a high risk score even if all other components are hybrid — the IdP is the trust anchor for all ZTNA access decisions. Setting all components to Hybrid reduces the transition risk score to under 30 while maintaining backwards compatibility with non-PQC clients.',
+        'In this illustrative scoring model, all five components set to Hybrid produce 28 (Low Risk). Leaving the Identity Provider on Classical while the other four remain Hybrid produces 40 (Moderate Risk), so review the IdP dependency even though this model does not label that case High Risk. Selecting Hybrid does not establish compatibility: check matching endpoint, protocol and certificate or token profile support, define the intended fallback policy, and test it with your own tools.',
       config: { step: 4 },
     },
   ]
