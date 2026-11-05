@@ -3,6 +3,17 @@ import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import {
+  computeCampaignMetrics,
+  DEFAULT_CAMPAIGN_TARGETS,
+  SIGNATURE_OVERHEADS,
+} from '../data/otaOrchestrationData'
+
+const defaultOtaMetrics = computeCampaignMetrics(
+  DEFAULT_CAMPAIGN_TARGETS,
+  1,
+  SIGNATURE_OVERHEADS.find((entry) => entry.algorithm === 'ML-DSA-65')!
+)
 
 export interface WorkshopConfig {
   step: number
@@ -82,11 +93,10 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       title:
         '4. Fleet OTA Campaign with PQC Signatures — Assess signature overhead for mass firmware updates',
       description:
-        'Configure a 1M-vehicle fleet in the OTA Orchestration Planner. Compare campaign completion time using ECDSA vs ML-DSA-65 firmware signatures. Evaluate the bandwidth impact of larger PQC signatures across the dependency graph.',
+        'Open the OTA Orchestration Planner and compare its illustrative signature-overhead and campaign calculations. Load & Run opens this step without resetting your current fleet size or signature selection. The observations below describe the default six-target teaching sample with ML-DSA-65, not every current configuration.',
       badge: 'OTA',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
-      observe:
-        'ML-DSA-65 adds ~3.3 KB (3,309 B, FIPS 204) per signed firmware block (vs 72 bytes for ECDSA). For a 6-ECU campaign with 200 MB total firmware, PQC signature overhead adds <0.01% \u2014 negligible. The critical path is the ADAS ECU (45 min update, A/B partition) which gates all downstream ECUs.',
+      observe: `For the default ${DEFAULT_CAMPAIGN_TARGETS.length}-target sample, the model totals ${defaultOtaMetrics.totalFirmwareSizeMB} MB of firmware and ${defaultOtaMetrics.signatureOverheadMB.toFixed(3)} MB of signature overhead per vehicle with ML-DSA-65, in the planner’s displayed units. Its modeled dependency path is ${defaultOtaMetrics.criticalPathMinutes} minutes: the 15-minute gateway update followed by the 45-minute ADAS update. These are illustrative calculations, not measured benchmarks; assess actual update timing and bandwidth with your own production tools.`,
       config: { step: 3 },
     },
     {
