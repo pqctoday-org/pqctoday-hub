@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from '../../types'
@@ -54,23 +54,26 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
 }) => {
   const [step, setStep] = useState<IssuanceStep>('DISCOVERY')
   const [loading, setLoading] = useState(false)
+  const [failure, setFailure] = useState<{ stage: string; message: string } | null>(null)
+  const runningRef = useRef(false)
+  const stageRef = useRef('Authorization')
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
 
   const handleStart = async () => {
+    setFailure(null)
     setStep('AUTH')
     addLog('Starting PID Issuance Flow...')
     addLog('Discovered Issuer: https://pid-provider.gob.es')
   }
 
   const handleAuth = async () => {
-    setLoading(true)
+    stageRef.current = 'Authorization'
     addLog('Requesting Authorization Code (OpenID4VCI)...')
     await new Promise((r) => setTimeout(r, 1000)) // Simulate net
     addLog('Authorization Code received. Exchanging for Access Token...')
     await new Promise((r) => setTimeout(r, 500))
     addLog('Access Token acquired.')
-    setLoading(false)
     setStep('KEY_GEN')
   }
 
@@ -87,11 +90,10 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     return ossl
   }
 
-  const handleKeyGen = async (): Promise<CryptoKey> => {
-    setLoading(true)
+  const handleKeyGen = async (provider: CryptoProvider): Promise<CryptoKey> => {
+    stageRef.current = 'Wallet key generation'
     addLog('Generating secure key pair in Wallet...')
 
-    const provider = getCryptoProvider()
     // Generate Wallet PoP Key
     if (hsm.isReady) {
       hsm.addStepLog("🔑 The Wallet's Proof of Possession (PoP) Key")
@@ -109,16 +111,16 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       cnonce: 'generated-cnonce',
     })
 
+    stageRef.current = 'Wallet proof signing'
     const popSig = await provider.signData(key, popPayload, addOpenSSLLog)
     addLog(`PoP Signed: ${popSig.substring(0, 20)}...`)
 
-    setLoading(false)
     setStep('ISSUANCE')
     return key
   }
 
-  const handleIssuance = async (key: CryptoKey) => {
-    setLoading(true)
+  const handleIssuance = async (key: CryptoKey, provider: CryptoProvider) => {
+    stageRef.current = 'Issuer key generation'
     addLog('Requesting Credential: eu.europa.ec.eudi.pid.1')
 
     await new Promise((r) => setTimeout(r, 1500)) // Simulate server processing
@@ -132,8 +134,6 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       { name: 'issuing_country', value: 'ES' },
     ]
 
-    const provider = getCryptoProvider()
-
     // Mock Issuer Key
     if (hsm.isReady) {
       hsm.addStepLog('🏛️ The PID Issuer Key')
@@ -141,6 +141,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     const issuerKey = await provider.generateKeyPair('ES256', 'P-256', addOpenSSLLog)
 
     // EUDI ARF Document Signer Certificate (DSC) representation
+    stageRef.current = 'Sample certificate construction'
     const issuerCertPem = await generateX509Certificate(
       issuerKey,
       provider,
@@ -152,6 +153,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
 
     // Create mDoc (EU PID format)
     addLog('Issuer generating mdoc (eu.europa.ec.eudi.pid.1)...')
+    stageRef.current = 'Sample credential construction'
     const mDoc = await createMdoc(
       attributes,
       issuerKey,
@@ -175,16 +177,36 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       raw: JSON.stringify(mDoc),
     }
 
-    addLog('Credential received and verified.')
+    stageRef.current = 'Saving sample credential'
+    addLog('Sample credential constructed.')
     onCredentialIssued(credential, key)
-    setLoading(false)
     setStep('COMPLETE')
   }
 
   const runFlow = async () => {
-    await handleAuth()
-    const key = await handleKeyGen()
-    await handleIssuance(key)
+    if (runningRef.current) return
+    runningRef.current = true
+    setLoading(true)
+    setFailure(null)
+    setStep('AUTH')
+    stageRef.current = 'Provider setup'
+    try {
+      // Keep one existing provider for the attempt, rather than changing
+      // providers between asynchronous steps if the mode controls change.
+      const provider = getCryptoProvider()
+      await handleAuth()
+      const key = await handleKeyGen(provider)
+      await handleIssuance(key, provider)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      setFailure({ stage: stageRef.current, message })
+      addLog(`Sample issuance stopped during ${stageRef.current}: ${message}`)
+      // Retry starts authorization again; no failed partial credential is saved.
+      setStep('AUTH')
+    } finally {
+      runningRef.current = false
+      setLoading(false)
+    }
   }
 
   return (
@@ -210,14 +232,57 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
           preventDisable={wallet.keys.some(isHsmBackedKey)}
           preventDisableReason="Disable is locked while your wallet holds HSM-backed keys — Reset the workshop to release them."
         />
+        {failure && (
+          <div
+            role="alert"
+            className="mb-4 rounded-lg border border-destructive/30 bg-status-error/5 p-4 text-sm break-words"
+          >
+            <p className="font-semibold text-status-error">
+              Sample issuance stopped during {failure.stage}.
+            </p>
+            <p className="mt-1 whitespace-pre-wrap break-all">{failure.message}</p>
+            <p className="mt-2">
+              This attempt did not complete. Retry from authorization using the same sample profile.
+            </p>
+          </div>
+        )}
+        {loading && (
+          <p role="status" className="mb-4 text-sm text-muted-foreground">
+            Sample issuance in progress.
+          </p>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* status visualization */}
           <div className="space-y-6 lg:col-span-2">
             <div className="flex flex-col gap-4">
-              <StepIndicator current={step} step="DISCOVERY" label="Discovery" icon={Smartphone} />
-              <StepIndicator current={step} step="AUTH" label="Authorization" icon={Lock} />
-              <StepIndicator current={step} step="KEY_GEN" label="HSM Key Gen" icon={KeyIcon} />
-              <StepIndicator current={step} step="ISSUANCE" label="Issuance" icon={CreditCard} />
+              <StepIndicator
+                busy={loading}
+                current={step}
+                step="DISCOVERY"
+                label="Discovery"
+                icon={Smartphone}
+              />
+              <StepIndicator
+                busy={loading}
+                current={step}
+                step="AUTH"
+                label="Authorization"
+                icon={Lock}
+              />
+              <StepIndicator
+                busy={loading}
+                current={step}
+                step="KEY_GEN"
+                label="HSM Key Gen"
+                icon={KeyIcon}
+              />
+              <StepIndicator
+                busy={loading}
+                current={step}
+                step="ISSUANCE"
+                label="Issuance"
+                icon={CreditCard}
+              />
             </div>
 
             {step === 'DISCOVERY' && (
@@ -265,7 +330,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                 </div>
                 <Button variant="ghost" onClick={runFlow} disabled={loading} className="w-full">
                   {loading ? <Loader2 className="animate-spin mr-2" /> : null}
-                  Proceed with Authentication
+                  {failure ? 'Retry from authorization' : 'Proceed with Authentication'}
                 </Button>
               </div>
             )}
@@ -363,12 +428,13 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
 
 interface StepIndicatorProps {
   current: IssuanceStep
+  busy: boolean
   step: IssuanceStep
   label: string
   icon: React.ElementType
 }
 
-const StepIndicator = ({ current, step, label, icon: Icon }: StepIndicatorProps) => {
+const StepIndicator = ({ current, busy, step, label, icon: Icon }: StepIndicatorProps) => {
   const steps = ['DISCOVERY', 'AUTH', 'KEY_GEN', 'ISSUANCE', 'COMPLETE']
   const idx = steps.indexOf(step)
   const currentIdx = steps.indexOf(current)
@@ -396,7 +462,9 @@ const StepIndicator = ({ current, step, label, icon: Icon }: StepIndicatorProps)
         >
           {label}
         </p>
-        {status === 'active' && <p className="text-xs text-primary animate-pulse">Processing...</p>}
+        {status === 'active' && busy && (
+          <p className="text-xs text-primary animate-pulse">Processing...</p>
+        )}
       </div>
       {status === 'completed' && <CheckCircle className="w-5 h-5 text-success ml-auto" />}
     </div>

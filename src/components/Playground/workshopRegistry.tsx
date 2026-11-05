@@ -1081,7 +1081,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'digital-id',
     pt_id: 'PT-019',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'EUDI Wallet Architecture',
     description:
       'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
