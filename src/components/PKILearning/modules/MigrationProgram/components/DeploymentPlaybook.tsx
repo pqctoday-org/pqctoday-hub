@@ -10,8 +10,11 @@ import type { RoadmapOutput } from '../types'
 // Exported (07192026, Batch 3) for the simulation's real-tool doc generator —
 // the sim's sample playbook is the tool's own real checklist content.
 export const DEPLOYMENT_PLAYBOOK_TITLE = 'PQC Deployment Playbook'
+const RETIREMENT_SAMPLE_SCOPE =
+  'Retirement entries are fictional planning examples; separate sample tests can illustrate rejection of an old path, but do not establish retirement of a deployed system.'
 export const DEPLOYMENT_PLAYBOOK_DESCRIPTION =
-  'Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback.'
+  'Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback. ' +
+  RETIREMENT_SAMPLE_SCOPE
 export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
   {
     title: 'Pre-Deployment Preparation',
@@ -177,7 +180,8 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
       },
       {
         id: 'decom-evidence',
-        label: 'Capture evidence at retirement — CMVP cert # / ACVP run / CVE-scan clean',
+        label:
+          'Record fictional retirement examples: before/after inventory and configuration, removed trust entries, and retired dependency paths',
       },
       {
         id: 'decom-cmdb-cbom',
@@ -284,6 +288,10 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
             review/exit prompt and critical-item labels are teaching choices, not a sunset rule
             prescribed by NIST. A gateway can change the architecture while embedded legacy
             cryptography remains unchanged.
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {RETIREMENT_SAMPLE_SCOPE} Module validation, algorithm tests and vulnerability scans
+            answer different questions; none alone shows that an old deployment path was removed.
           </p>
         </div>
       </div>

@@ -33,3 +33,23 @@ describe('Hub lifecycle checklist attribution', () => {
     expect(empty).not.toContain('Set a mandatory sunset date')
   })
 })
+
+describe('Retirement planning examples', () => {
+  it('keeps both unchecked and fully checked exports scoped to fictional planning artifacts', () => {
+    const items = DEPLOYMENT_PLAYBOOK_SECTIONS.flatMap((section) => section.items)
+    const retirement = items.find((item) => item.id === 'decom-evidence')!
+    expect(retirement.label).toContain('fictional retirement examples')
+    expect(retirement.label).toContain('removed trust entries')
+    for (const checked of [new Set<string>(), new Set(items.map((item) => item.id))]) {
+      const markdown = buildChecklistMarkdown(
+        DEPLOYMENT_PLAYBOOK_TITLE,
+        DEPLOYMENT_PLAYBOOK_DESCRIPTION,
+        DEPLOYMENT_PLAYBOOK_SECTIONS,
+        checked
+      )
+      expect(markdown).toContain('do not establish retirement of a deployed system')
+      expect(markdown).toContain(retirement.label)
+      expect(markdown).not.toContain('CMVP cert # / ACVP run / CVE-scan clean')
+    }
+  })
+})

@@ -1140,15 +1140,15 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
             </div>
           </div>
 
-          {/* ── Mutual Attestation Checklist ──────────────────────── */}
+          {/* ── Attestation architecture considerations ──────────────────────── */}
           <div className="glass-panel p-4">
             <div className="text-sm font-bold text-foreground mb-1">
-              Mutual Attestation Checklist
+              Attestation architecture considerations
             </div>
             <p className="text-[10px] text-muted-foreground mb-3">
-              Mutual attestation means both sides prove their identity cryptographically before any
-              key material is exchanged. Without it, a rogue process could impersonate a TEE or HSM
-              and receive provisioned keys.
+              These markers describe the selected architecture example, not checks executed by this
+              workshop. Evaluate evidence appraisal, device identity and channel binding in the
+              production tools used for the intended deployment.
             </p>
             <div className="space-y-3">
               {/* TEE attests to HSM */}
@@ -1160,13 +1160,14 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                     <XCircle size={14} className="text-status-error shrink-0" />
                   )}
                   <span className="text-foreground font-medium">
-                    TEE attests to HSM (quote verification)
+                    TEE evidence appraisal (architecture example)
                   </span>
                 </div>
                 <p className="text-[10px] text-muted-foreground pl-5">
-                  The TEE generates a hardware-signed attestation quote (e.g., SGX DCAP Quote,
-                  SEV-SNP Report). In this simulation the HSM verifies the quote signature against
-                  the vendor root CA to confirm it is talking to a genuine, unmodified enclave.
+                  Production verification needs an appropriate trust anchor, reference values,
+                  freshness checks and an appraisal policy. This workshop verifies a generated
+                  sample message; it does not validate a vendor hardware quote or establish an
+                  enclave’s state.
                 </p>
               </div>
 
@@ -1179,13 +1180,13 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                     <XCircle size={14} className="text-status-error shrink-0" />
                   )}
                   <span className="text-foreground font-medium">
-                    HSM attests to TEE (certificate chain validation)
+                    HSM identity authentication (architecture example)
                   </span>
                 </div>
                 <p className="text-[10px] text-muted-foreground pl-5">
-                  In this demo, the HSM presents its own certificate chain (for example a vendor
-                  device certificate). The TEE validates this chain to confirm it is provisioning
-                  keys into a genuine, tamper-resistant HSM — not a software mock.
+                  Evaluate authentication of the intended HSM and its allowed provisioning role.
+                  This workshop does not validate a vendor device certificate chain or establish
+                  physical tamper resistance.
                 </p>
               </div>
 
@@ -1197,13 +1198,15 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   ) : (
                     <XCircle size={14} className="text-status-error shrink-0" />
                   )}
-                  <span className="text-foreground font-medium">TLS channel binding</span>
+                  <span className="text-foreground font-medium">
+                    TLS channel binding (architecture example)
+                  </span>
                 </div>
                 <p className="text-[10px] text-muted-foreground pl-5">
-                  The attestation evidence is cryptographically bound to the TLS session (e.g., via
-                  a nonce or public key hash in the attestation payload). This prevents a
-                  man-in-the-middle from replaying a valid quote from a legitimate enclave over a
-                  different TLS session.
+                  Evaluate how the chosen protocol binds attestation evidence to the intended peer
+                  and session and rejects replay. A nonce alone is a freshness mechanism, not proof
+                  of TLS-session binding. This workshop does not execute a TLS channel-binding
+                  check.
                 </p>
               </div>
 

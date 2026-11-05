@@ -123,7 +123,7 @@ export const LeaderCard = ({
       </div>
 
       <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-4 mb-4 line-clamp-3">
-        "{leader.bio}"
+        {leader.bio}
       </p>
 
       <div

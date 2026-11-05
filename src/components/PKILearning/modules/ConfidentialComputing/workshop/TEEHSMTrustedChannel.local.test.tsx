@@ -141,3 +141,28 @@ describe('classical TEE verification gate', () => {
     expect(screen.queryByText(/(?:Protocol|Sample sequence) complete/)).not.toBeInTheDocument()
   })
 })
+
+describe('Architecture properties are not executed checks', () => {
+  it('labels the example panel and its unexecuted vendor-chain and session-binding checks before any run', () => {
+    vi.clearAllMocks()
+    render(
+      <MemoryRouter>
+        <TEEHSMTrustedChannel />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Intel SGX + Thales Luna' }))
+    expect(screen.getByText('Attestation architecture considerations')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /These markers describe the selected architecture example, not checks executed/
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByText(/does not validate a vendor hardware quote/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/does not validate a vendor device certificate chain/)
+    ).toBeInTheDocument()
+    expect(screen.getByText(/does not execute a TLS channel-binding check/)).toBeInTheDocument()
+    expect(hsm_ecdsaVerify).not.toHaveBeenCalled()
+    expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
+  })
+})
