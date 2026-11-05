@@ -258,9 +258,9 @@ export function passIntroFor(level: number, scenario: SimScenario): PassIntro {
   const parts: string[] = []
   if (kinds.has('activity')) parts.push('documents you produce')
   if (kinds.has('learn')) parts.push('comprehension checks')
-  if (kinds.has('workshop')) parts.push('hands-on practice results')
+  if (kinds.has('workshop')) parts.push('workshop resources opened (practice not established)')
   if (kinds.has('recurrence')) parts.push('evidence of the activity operated again over time')
-  if (kinds.has('reference')) parts.push('reviewed source material')
+  if (kinds.has('reference')) parts.push('reference resources opened (reading not established)')
   return {
     level,
     name: `Pass ${level} — ${meta.name}`,
