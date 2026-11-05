@@ -395,7 +395,9 @@ function EditorialPromise() {
             or assessments within <code className="text-accent">/migrate</code>,{' '}
             <code className="text-accent">/compliance</code>, vendor-mapping data, or any other
             editorial content. Sponsors are clearly marked. We publicly disclose any vendor request
-            to modify a listing; we do not act on those requests.
+            to modify a listing. As the editorial-independence policy explains, requests may lead
+            only to primary-source-backed factual corrections or updates reflecting a changed
+            authoritative source; sponsorship does not buy a change to editorial outcomes.
           </p>
           <p className="text-sm text-muted-foreground mb-4">
             This is the entire reason vendors and enterprises trust our data — and the entire reason

@@ -554,7 +554,7 @@ function EvidenceView({
 
   return (
     <div className="space-y-5">
-      {/* Authoritative evidence — the real LLM-extracted governance corpus. */}
+      {/* Extracted candidate mappings need source and applicability review. */}
       <section className="rounded-2xl border border-border bg-card p-5">
         <div className="mb-4 flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -562,28 +562,30 @@ function EvidenceView({
           </span>
           <div>
             <h3 className="text-sm font-bold text-foreground">
-              Authoritative Evidence — {maturityRequirements.length} requirements from{' '}
+              Candidate governance mappings — {maturityRequirements.length} extracted records from{' '}
               {uniqueSources} sources
             </h3>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              LLM-extracted governance obligations mapped to each CSWP.39 pillar and maturity tier.
-              Click any highlighted cell to see sourced requirements.
+              Machine-extracted text mapped into the Hub teaching grid. Check the original source,
+              context and applicability before treating a row as an obligation; extraction and a
+              source link do not establish independent review. Click a highlighted cell to inspect
+              the recorded passage.
             </p>
           </div>
         </div>
         <div className="mb-4 grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/30 p-4 sm:grid-cols-3">
           <KpiCell
-            label="CSWP-39 grid coverage"
+            label="Hub grid population"
             value={`${kpi.coverage}%`}
-            sub={`${kpi.populated}/${kpi.total} cells populated`}
+            sub={`${kpi.populated}/${kpi.total} cells populated; not organizational readiness`}
           />
           <KpiCell
-            label="Mean confidence"
-            value={`${kpi.meanConfidence}/100`}
+            label="Mean extraction-label score"
+            value={kpi.recordCount > 0 ? `${kpi.meanConfidence}/100` : 'Not available'}
             sub={
               kpi.recordCount > 0
-                ? 'across extracted CSWP-39 requirements'
-                : 'no CSWP-39 requirements extracted yet'
+                ? 'Hub display rule: low 25, medium 60, high 95; not a measured probability or assurance score'
+                : 'no CSWP-39 records available for this display rule'
             }
           />
           <KpiCell
