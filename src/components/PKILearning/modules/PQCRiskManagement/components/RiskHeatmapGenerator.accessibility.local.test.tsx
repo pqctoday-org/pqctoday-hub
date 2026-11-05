@@ -43,7 +43,7 @@ describe('Risk heatmap keyboard treatment selection', () => {
     const mitigate = screen.getByRole('button', { name: 'Mitigate' })
     mitigate.focus()
     await user.keyboard(' ')
-    expect(screen.getByRole('button', { name: 'Residual Risk' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Projected Sample' })).toBeEnabled()
     target.focus()
     await user.keyboard(' ')
     expect(target).toHaveAttribute('aria-pressed', 'false')

@@ -35,10 +35,10 @@ describe('catalogue deprecation is not scientific retraction evidence', () => {
       },
     ]
     render(<ResearcherFieldWatchCard />)
-    expect(screen.getByText('Hub catalogue entries marked deprecated')).toBeInTheDocument()
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-1 docs')
+    expect(screen.getByText('Category matches for Hub catalogue rows marked deprecated')).toBeInTheDocument()
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('1 category match')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded Hub catalogue entries marked deprecated in your selected fields: 1.'
+      'Recorded category matches for Hub catalogue rows marked deprecated: 1.'
     )
     expect(
       screen.getByText(/Hub catalogue status is not evidence of a scientific retraction/)
@@ -56,9 +56,9 @@ describe('catalogue deprecation is not scientific retraction evidence', () => {
       },
     ]
     render(<ResearcherFieldWatchCard />)
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('0 docs')
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('0 category matches')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded Hub catalogue entries marked deprecated in your selected fields: 0.'
+      'Recorded category matches for Hub catalogue rows marked deprecated: 0.'
     )
     expect(
       screen.queryByText('Nothing in the fields you follow was retracted.')
