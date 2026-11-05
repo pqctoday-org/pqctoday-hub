@@ -36,6 +36,8 @@ interface RiskRegisterBuilderProps {
 
 const WORKSHEET_SCOPE =
   'Record an asset, algorithm, threat, likelihood, impact and proposed mitigation. These entries support a planning discussion; the worksheet does not capture risk owners, scheduled review dates or treatment status.'
+export const AUTOMATIC_RISK_RATING_SCOPE =
+  'Where automatic starting ratings are used, they are adjustable teaching ratings, not event probabilities or measured risk. Algorithm rows start at likelihood 5 when the assessment HNDL flag is true (including signing rows; this does not measure signature-forgery probability), otherwise 4 for migration not started and 3 otherwise. Product rows start at 4. Threat rows start at 5 for critical, 4 for high and 3 otherwise. Starting impact uses recorded sensitivity text: 5 for critical/classified, otherwise 4 for high/regulated, 3 for medium, 2 for low and 3 when none matches. A starred framework adds 1 to algorithm-row impact only, capped at 5; starring is not proof of applicability. Values may be edited or saved from earlier inputs, so current entries can differ from these initial rules.'
 const PRODUCTION_CAPABILITIES =
   'In production tools, look for named risk and treatment owners, scheduled reviews, treatment status and change history. Check that these remain linked to the risk’s scope and assumptions when records are edited or exported. These capabilities support follow-through; completing a record does not demonstrate risk reduction.'
 
@@ -85,6 +87,7 @@ export function buildRiskRegisterMarkdown(
   let md = '# Quantum Risk Register\n\n'
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
   md += `**Sample risk worksheet.** ${WORKSHEET_SCOPE}\n\n`
+  md += `## Starting-rating scope\n\n${AUTOMATIC_RISK_RATING_SCOPE}\n\n`
   md += '---\n\n'
   md += '| # | Asset | Algorithm | Threat Vector | L | I | Score | Level | Mitigation |\n'
   md += '|---|-------|-----------|---------------|---|---|-------|-------|------------|\n'

@@ -3,7 +3,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { isExecutiveBankOverview } from '@/components/Simulation/autorun/autoRunFill'
 import { bankRiskEntries, BANK_CASE_NOTE } from '@/components/Simulation/autorun/executiveBankCase'
 import { useSimulationStore } from '@/store/useSimulationStore'
-import { RiskRegisterBuilder } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
+import {
+  RiskRegisterBuilder,
+  AUTOMATIC_RISK_RATING_SCOPE,
+} from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
 import {
   useRiskRegisterStore,
   DEFAULT_RISK_ENTRIES,
@@ -12,7 +15,7 @@ import {
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
-import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { Button } from '@/components/ui/button'
 
 /**
  * Map a transition row's classical/key-size pair into a likely threat vector.
@@ -183,7 +186,10 @@ export function RiskRegisterBuilderStandalone() {
     sources.push(`${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`)
   if (myThreats.length > 0)
     sources.push(`${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`)
-  if (hasFrameworkPressure) sources.push(`framework pressure from ${myFrameworks.length} starred`)
+  if (hasFrameworkPressure)
+    sources.push(
+      `${myFrameworks.length} starred framework reference${myFrameworks.length !== 1 ? 's' : ''}`
+    )
 
   return (
     <div className="space-y-3">
@@ -193,10 +199,23 @@ export function RiskRegisterBuilderStandalone() {
         </p>
       )}
       {!sampleBank && seededFromAssessment && fullSeed.length > 0 && (
-        <PreFilledBanner
-          summary={`${fullSeed.length} risk entr${fullSeed.length !== 1 ? 'ies' : 'y'} seeded from ${sources.join(' + ')}.`}
-          onClear={handleClear}
-        />
+        <div
+          className="flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3"
+          role="status"
+        >
+          <p className="flex-1 min-w-0 text-xs text-foreground">
+            <strong>Stored worksheet context.</strong>{' '}
+            {`${riskEntries.length} stored risk entr${riskEntries.length !== 1 ? 'ies' : 'y'}. Current available context: ${sources.join(' + ')}. Stored or edited entries may reflect earlier inputs; this is not a fresh assessment of these rows.`}
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClear}
+            className="shrink-0 h-7 px-2 text-xs"
+          >
+            Restore sample entries
+          </Button>
+        </div>
       )}
       {!sampleBank && showingExamples && (
         <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2 text-xs text-muted-foreground">
@@ -204,6 +223,14 @@ export function RiskRegisterBuilderStandalone() {
           illustrative placeholders, not your data. Edit or replace them to build your own register
           (run an assessment to auto-seed from your reported algorithms).
         </div>
+      )}
+      {!sampleBank && (
+        <details className="rounded-lg border border-border p-3 text-xs text-muted-foreground">
+          <summary className="cursor-pointer font-medium text-foreground">
+            How automatic starting ratings work
+          </summary>
+          <p className="mt-2">{AUTOMATIC_RISK_RATING_SCOPE}</p>
+        </details>
       )}
       <RiskRegisterBuilder
         riskEntries={sampleBank ? sampleEntries : riskEntries}
