@@ -140,10 +140,10 @@ export const RotationPolicyDesigner: React.FC = () => {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left py-3 px-2 text-muted-foreground font-medium min-w-[140px]">
+              <th className="text-left py-3 px-2 text-muted-foreground font-medium min-w-[90px] sm:min-w-[140px]">
                 Secret Type
               </th>
-              <th className="text-left py-3 px-2 text-muted-foreground font-medium min-w-[120px]">
+              <th className="text-left py-3 px-2 text-muted-foreground font-medium min-w-[100px] sm:min-w-[120px]">
                 Your TTL
               </th>
               <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden sm:table-cell">
@@ -169,14 +169,16 @@ export const RotationPolicyDesigner: React.FC = () => {
                 >
                   <td className="py-3 px-2 font-medium text-foreground">{row.secretType}</td>
                   <td className="py-3 px-2">
-                    <FilterDropdown
-                      noContainer
-                      ariaLabel={`TTL for ${row.secretType}`}
-                      selectedId={row.currentTtl}
-                      onSelect={(id) => updateTtl(row.id, id)}
-                      items={TTL_OPTIONS.map((opt) => ({ id: opt, label: opt }))}
-                      className="max-w-[120px]"
-                    />
+                    <div className="w-[100px] sm:w-auto">
+                      <FilterDropdown
+                        noContainer
+                        ariaLabel={`TTL for ${row.secretType}`}
+                        selectedId={row.currentTtl}
+                        onSelect={(id) => updateTtl(row.id, id)}
+                        items={TTL_OPTIONS.map((opt) => ({ id: opt, label: opt }))}
+                        className="max-w-[120px]"
+                      />
+                    </div>
                     <p className="mt-1 text-[10px] text-muted-foreground">
                       Selected: {row.currentTtl}
                     </p>
