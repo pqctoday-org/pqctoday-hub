@@ -7,6 +7,7 @@ import { ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { buildGlossaryLookup } from '@/utils/glossaryLookup'
 
 // Lazily-populated term lookup — filled by the first InlineTooltip mount
 let termLookup = new Map<string, GlossaryTerm>()
@@ -19,13 +20,7 @@ const ensureLookup = () => {
   if (lookupPending) return lookupPending
   lookupPending = loadGlossary()
     .then((terms) => {
-      termLookup = new Map<string, GlossaryTerm>(
-        terms.flatMap((t) => {
-          const entries: [string, GlossaryTerm][] = [[t.term.toLowerCase(), t]]
-          if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
-          return entries
-        })
-      )
+      termLookup = buildGlossaryLookup(terms)
       _lookupLoaded = true
       lookupSubscribers.forEach((notify) => notify())
     })

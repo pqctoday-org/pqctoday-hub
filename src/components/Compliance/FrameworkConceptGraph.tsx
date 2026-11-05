@@ -2,6 +2,7 @@
 import { useMemo } from 'react'
 import {
   ReactFlow,
+  MarkerType,
   Background,
   Controls,
   MiniMap,
@@ -192,6 +193,13 @@ export function FrameworkConceptGraph({
         label: e.isSynthetic
           ? 'implements'
           : `${e.relationshipType}${e.rationaleType ? `\n(${e.rationaleType})` : ''}`,
+        ariaLabel: `${e.isSynthetic ? 'Generated context' : 'Recorded relationship'} from ${e.source} to ${e.target}: ${e.relationshipType}`,
+        markerEnd:
+          e.relationshipType === 'subset_of' ||
+          e.relationshipType === 'superset_of' ||
+          (e.isSynthetic && e.relationshipType === 'implements')
+            ? { type: MarkerType.ArrowClosed }
+            : undefined,
         labelStyle: { fontSize: 10, fill: 'var(--color-muted-foreground, #6b7280)' },
         labelBgStyle: { fill: 'var(--color-card, #ffffff)', fillOpacity: 0.85 },
         style: e.isSynthetic
@@ -213,24 +221,94 @@ export function FrameworkConceptGraph({
   }
 
   return (
-    <div style={{ height }} className="rounded-lg border border-border overflow-hidden">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.18 }}
-        proOptions={{ hideAttribution: true }}
-        nodesDraggable
-        nodesConnectable={false}
-        edgesFocusable={false}
-        minZoom={0.3}
-        maxZoom={2}
+    <div
+      style={{ height }}
+      className="rounded-lg border border-border max-h-full overflow-y-auto"
+      role="region"
+      aria-label="Concept graph and relationship details"
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- This labelled scroll region must let keyboard users reach the relationship details below the canvas.
+      tabIndex={0}
+    >
+      <div style={{ height }} className="relative">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.18 }}
+          proOptions={{ hideAttribution: true }}
+          nodesDraggable
+          nodesConnectable={false}
+          edgesFocusable={false}
+          minZoom={0.3}
+          maxZoom={2}
+        >
+          <Background gap={16} size={1} />
+          <Controls showInteractive={false} />
+          <MiniMap pannable zoomable style={{ height: 80, width: 120 }} />
+        </ReactFlow>
+      </div>
+      <section
+        className="border-t border-border p-4 space-y-3"
+        aria-label="Recorded relationships and generated context"
       >
-        <Background gap={16} size={1} />
-        <Controls showInteractive={false} />
-        <MiniMap pannable zoomable style={{ height: 80, width: 120 }} />
-      </ReactFlow>
+        <h4 className="text-sm font-semibold">Relationships in this view</h4>
+        <p className="text-xs text-muted-foreground">
+          These are recorded Hub mappings and generated context links for learning. A relationship
+          label, reference or model confidence index does not establish legal equivalence,
+          applicability, implementation support, compliance or independent review.
+        </p>
+        <ul className="space-y-3">
+          {graph.edges.map((edge) => {
+            const from = graph.nodes.find((node) => node.id === edge.source)?.label ?? edge.source
+            const to = graph.nodes.find((node) => node.id === edge.target)?.label ?? edge.target
+            return (
+              <li
+                key={edge.id}
+                className="rounded-lg border border-border p-3 space-y-1 text-xs break-words"
+              >
+                <p>
+                  <span className="font-medium">From:</span> {from}
+                </p>
+                <p>
+                  <span className="font-medium">To:</span> {to}
+                </p>
+                <p>
+                  <span className="font-medium">Relationship:</span> {edge.relationshipType}
+                </p>
+                {edge.isSynthetic ? (
+                  <p className="text-muted-foreground">
+                    Generated standard–algorithm context link. No crosswalk evidence or confidence
+                    is recorded on this generated edge.
+                  </p>
+                ) : (
+                  <>
+                    <p>
+                      <span className="font-medium">Recorded rationale:</span>{' '}
+                      {edge.rationaleType || 'Not recorded'}
+                    </p>
+                    <p>
+                      <span className="font-medium">Recorded evidence/reference:</span>{' '}
+                      {edge.evidence?.trim() ? edge.evidence : 'Not recorded'}
+                    </p>
+                    <p>
+                      <span className="font-medium">Derived Hub confidence index:</span>{' '}
+                      {typeof edge.confidenceScore === 'number' &&
+                      Number.isFinite(edge.confidenceScore)
+                        ? `${edge.confidenceScore}/100`
+                        : 'Not assessed'}
+                    </p>
+                    <p className="text-muted-foreground">
+                      This category-derived index may include defaults. It is not a measured
+                      probability or evidence of independent review.
+                    </p>
+                  </>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      </section>
     </div>
   )
 }

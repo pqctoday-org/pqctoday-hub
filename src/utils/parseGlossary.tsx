@@ -2,14 +2,9 @@
 import React, { type ReactNode } from 'react'
 import { glossaryTerms, type GlossaryTerm } from '../data/glossaryData'
 import { InlineTooltip } from '../components/ui/InlineTooltip'
+import { buildGlossaryLookup } from './glossaryLookup'
 
-const termLookup = new Map<string, GlossaryTerm>(
-  glossaryTerms.flatMap((t) => {
-    const entries: [string, GlossaryTerm][] = [[t.term.toLowerCase(), t]]
-    if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
-    return entries
-  })
-)
+const termLookup = buildGlossaryLookup(glossaryTerms)
 
 /**
  * Keys the glossary writes only in capitals ("CAN", "HE", "FAIR", "NIST"). The match is
