@@ -261,12 +261,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'audit-checklist',
     goodAnswer:
-      'You could hand this to an auditor tomorrow. If an item needs a conversation to explain, write the explanation into the item.',
+      'Explain which fictional planning topics you selected, what information is missing and how the related reading applies. Selections and notes do not establish audit readiness.',
     workedExample:
-      "Tick 'CBOM generated' and 'All systems cataloged', then add an evidence row with a CMVP certificate number: the Cryptographic Inventory readiness moves from Not Started toward Established, and an auditor can follow the row to the certificate.",
+      'Select two review topics, leave another unanswered and add a fictional reference note. The saved plan preserves those choices; topic counts describe selections, not an audit finding or validated evidence.',
     name: 'Audit Readiness Checklist',
     description:
-      'Multi-section audit checklist covering inventory, policy, controls, and documentation',
+      'Explore a Hub planning template for inventory, policy, controls and documentation; selections do not assess readiness',
     category: 'Compliance & Audit',
     icon: ClipboardCheck,
     keywords: ['audit', 'checklist', 'readiness', 'compliance', 'inventory', 'controls'],

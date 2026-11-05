@@ -365,8 +365,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/audit-checklist': {
     executive:
-      'The seven readiness areas, from Cryptographic Inventory to Exceptions, each move from Not Started toward Established as items are ticked: the overall picture is what an audit will find today.',
-    grc: "Tick each control, for example 'CBOM generated' or 'RACI defined', and add an evidence row with the reference such as a CMVP certificate number; every item cites its source (EO 14028, SP 800-131A, CSF 2.0) so the auditor can follow the row.",
+      'Read the selected fictional planning topics and information gaps across inventory, policy, controls and documentation. The counts describe topic selections, not what an audit would find or whether evidence is valid.',
+    grc: 'Record fictional planning notes and related references. This Hub-authored template does not establish that every topic is a source requirement; check the primary source and applicability before using a requirement in your production process.',
   },
   '/business/tools/compliance-timeline': {
     executive:

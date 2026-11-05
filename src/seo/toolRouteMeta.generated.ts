@@ -31,7 +31,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/audit-checklist',
     title: 'Audit Readiness Checklist — PQC Business Tool | PQC Today',
     description:
-      'Multi-section audit checklist covering inventory, policy, controls, and documentation',
+      'Explore a Hub planning template for inventory, policy, controls and documentation; selections do not assess readiness',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
