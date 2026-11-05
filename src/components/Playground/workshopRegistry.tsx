@@ -1081,10 +1081,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'digital-id',
     pt_id: 'PT-019',
-    version: '1.0.4',
+    version: '1.0.5',
     name: 'EUDI Wallet Architecture',
     description:
-      'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
+      'Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.',
     category: 'Digital Identity',
     algorithms: ['OpenID4VCI', 'P-256', 'mDoc', 'QES'],
     icon: Shield,
@@ -1105,9 +1105,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Walk five steps: open the EUDI Wallet, get a PID issued, receive a university diploma attestation, present your identity to a bank as relying party, then sign a document with a QTSP.',
+        'Walk five sample steps: inspect the wallet, issue a sample PID, receive a sample diploma attestation, present selected attributes to the relying-party exercise, then explore a modelled QTSP-signing workflow.',
       workedExample:
-        'Start Issuance Flow at the PID Issuer to get a P-256-bound mdoc, then Login with Wallet at the bank, Consent & Share family name, given name, degree and age_over_18, and the bank confirms Account Opened.',
+        'Create a sample PID, inspect its wallet representation, then present selected attributes to the relying-party exercise. The sample result does not validate a deployed identity or trust-service transaction.',
     },
     hasOutput: true,
     outputSpec:
