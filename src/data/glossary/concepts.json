@@ -516,7 +516,7 @@
   },
   {
     "term": "Keyless Signing",
-    "definition": "A code signing approach where no long-term private keys are managed by the developer. Identity-based trust (via OIDC) replaces key-based trust, with ephemeral keys generated per-signing event.",
+    "definition": "A code signing approach where the developer does not keep a long-term signing key. A short-lived key pair is generated per signing event, and a CA (for example Sigstore Fulcio) issues a short-lived certificate binding that key to an OIDC identity; the signing is recorded in a transparency log so it can be verified after the certificate expires. Trust moves to the identity provider, the CA and the log; keys are still used.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
     "category": "concept"
@@ -524,8 +524,8 @@
   {
     "term": "Time Stamping Authority",
     "acronym": "TSA",
-    "definition": "A trusted service (RFC 3161) that proves a digital signature was created at a specific time. Essential for code signing, where signatures must remain valid after certificate expiration.",
-    "technicalNote": "PQC migration requires TSAs to issue timestamps signed with quantum-safe algorithms. A quantum-vulnerable timestamp means an attacker could backdate forged signatures.",
+    "definition": "A trusted service (RFC 3161) that signs a timestamp token binding a submitted hash to a time, showing the data existed by then. When the hash is of a signature, it is commonly used so the signature can still be validated after the signing certificate expires.",
+    "technicalNote": "The token proves a hash existed by that time, not when the signature was originally created. PQC migration requires TSAs to issue timestamps signed with quantum-resistant algorithms; if a TSA signature algorithm later becomes forgeable and no renewed or archive timestamp exists, old tokens lose their value as evidence of backdating resistance.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
     "category": "concept"
@@ -603,7 +603,7 @@
   },
   {
     "term": "Non-Repudiation",
-    "definition": "A property of digital signatures that prevents a signer from denying they signed a message. Essential for legal documents, contracts, and financial transactions.",
+    "definition": "A digital signature gives evidence of origin and integrity. Non-repudiation is a legal and process outcome that also needs control of the signing key, identity binding, trusted time and policy; a valid signature alone cannot stop a signer from claiming key compromise. Relevant for legal documents, contracts, and financial transactions.",
     "relatedModule": "/learn/pki-workshop",
     "complexity": "beginner",
     "category": "concept"
@@ -643,8 +643,8 @@
   {
     "term": "Verifiable Credential",
     "acronym": "VC",
-    "definition": "A tamper-proof digital credential that can be cryptographically verified. Issued by a trusted authority and held in a digital wallet for presentation to verifiers.",
-    "technicalNote": "W3C Verifiable Credentials and ISO mdoc are the two major formats. PQC migration requires updating the signature algorithms used by issuers.",
+    "definition": "A digital credential whose issuer signature, and holder binding where used, lets a verifier detect tampering and check who issued it. It does not prove the claims are true; the verifier must still decide whether it trusts the issuer, and check revocation or status and holder binding.",
+    "technicalNote": "W3C Verifiable Credentials and ISO mdoc are the two major formats. PQC migration requires updating the signature algorithms used by issuers and the verifiers that accept them.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
     "category": "concept"
@@ -1306,7 +1306,7 @@
     "term": "SEV-SNP",
     "acronym": "SEV-SNP",
     "definition": "AMD Secure Encrypted Virtualization with Secure Nested Paging, providing VM-level memory encryption and integrity protection with a Reverse Map Table to prevent hypervisor-based attacks.",
-    "technicalNote": "Uses ECDSA P-384 VCEK certificates for attestation (quantum-vulnerable). AES-XTS-128 memory encryption is subject to Grover halving.",
+    "technicalNote": "Uses ECDSA P-384 VCEK certificates for attestation (quantum-vulnerable to Shor-type attacks). AES-128-XTS memory encryption has a smaller idealized Grover search cost than AES-256, but practical cost depends on circuit depth and parallelism; this is not a demonstrated break or a universal halving of security.",
     "relatedModule": "/learn/confidential-computing",
     "complexity": "advanced",
     "category": "concept"
@@ -1560,7 +1560,7 @@
   {
     "term": "Model Weights",
     "definition": "The learned numerical parameters of a neural network that encode the model's knowledge. For large language models, weights can number in the hundreds of billions and represent millions of dollars in compute investment.",
-    "technicalNote": "Model weights are the crown jewels of AI IP. Protection requires encryption at rest (ML-KEM key wrapping), in transit (hybrid TLS), and potentially in use (TEE inference). ML-DSA model signing provides integrity verification analogous to code signing.",
+    "technicalNote": "Model weights are the crown jewels of AI IP. Protection requires encryption at rest (a symmetric data key protected by a KEK, which may be derived from a KEM shared secret through a KDF), in transit (hybrid TLS), and potentially in use (TEE inference). ML-DSA model signing provides integrity verification analogous to code signing.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1592,7 +1592,7 @@
   {
     "term": "Federated Learning",
     "definition": "A machine learning approach where models are trained across multiple decentralized devices or servers holding local data samples, without exchanging raw data — only encrypted model updates are shared.",
-    "technicalNote": "Federated learning reduces data exposure but model updates (gradients) can leak information. PQC protections: ML-KEM encryption of gradient updates, ML-DSA signing of aggregation results, and lattice-based homomorphic encryption for secure aggregation.",
+    "technicalNote": "Federated learning reduces data exposure but model updates (gradients) can leak information. PQC protections: ML-KEM-based key establishment for the channel or per-update keys (ML-KEM does not encrypt the updates itself), ML-DSA signing of aggregation results, and secure aggregation by homomorphic encryption or secret sharing.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1601,7 +1601,7 @@
     "term": "Homomorphic Encryption",
     "acronym": "HE",
     "definition": "An encryption scheme that allows computations to be performed directly on encrypted data without decrypting it first, producing encrypted results that match what would be obtained from the plaintext.",
-    "technicalNote": "Most practical HE schemes (BGV, CKKS, TFHE) are lattice-based — the same mathematical foundation as ML-KEM and ML-DSA. This makes them inherently quantum-resistant, unlike RSA or ECC-based approaches. HE enables privacy-preserving AI inference on encrypted patient data or financial records.",
+    "technicalNote": "Most practical HE schemes (BGV, CKKS, TFHE) are based on lattice problems (LWE/RLWE), for which no efficient quantum algorithm is known; that is a hardness assumption, not a proof, and security depends on parameters. Not all HE is lattice-based: partially homomorphic schemes such as Paillier rely on factoring-type assumptions and are vulnerable to Shor-type attacks. HE enables privacy-preserving AI inference on encrypted patient data or financial records.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1749,7 +1749,7 @@
   {
     "term": "Transit Encryption Engine",
     "definition": "A secrets manager service that performs encryption/decryption operations on behalf of applications without ever exposing the key material. Acts as an 'encryption as a service' — applications send plaintext in, get ciphertext back.",
-    "technicalNote": "HashiCorp Vault Transit engine supports AES-GCM-256, ChaCha20-Poly1305, RSA-OAEP, and ECDSA. Each named key has a versioned key ring — encrypting uses the latest version, decrypting accepts any version. PQC migration: update the key type to ml-kem-768 (KEM) or ml-dsa-65 (signatures) when Vault adds FIPS 203/204 support. Existing ciphertexts must be re-encrypted (Rewrap operation).",
+    "technicalNote": "HashiCorp Vault Transit engine supports AES-GCM-256, ChaCha20-Poly1305, RSA-OAEP, and ECDSA. Each named key has a versioned key ring — encrypting uses the latest version, decrypting accepts any version. PQC migration depends on the key types the deployed Vault version documents; a KEM key type would establish a shared secret rather than encrypt data directly, and signature types such as ML-DSA only protect integrity. Rewrap re-encrypts existing ciphertext under the latest key version without exposing plaintext.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1782,7 +1782,7 @@
   {
     "term": "Envelope Encryption",
     "definition": "A two-level encryption scheme: a data encryption key (DEK) encrypts the data, and a key encryption key (KEK) encrypts the DEK. The encrypted DEK is stored alongside the ciphertext. Only the KEK needs to be protected in a KMS.",
-    "technicalNote": "Used by every major cloud KMS (AWS, Azure, GCP). PQC migration: only the KEK wrapping operation is quantum-vulnerable (RSA-OAEP or ECDH for DEK wrapping). The DEK itself is AES-256-GCM which is quantum-safe. Hybrid approach: wrap the DEK with both classical KEK and ML-KEM-768 encapsulation — store both wrapped DEK versions until classical deprecation.",
+    "technicalNote": "Used by every major cloud KMS (AWS, Azure, GCP). PQC migration: the quantum-vulnerable step is the KEK wrapping operation when it uses RSA-OAEP or ECDH; the AES-256-GCM DEK is not itself exposed to Shor-type attacks. An ML-KEM-768 encapsulation yields a shared secret; a KDF bound to the algorithm and context derives a KEK that authenticated-wraps the DEK. A hybrid design mixes the classical and KEM secrets in that KDF, or keeps two independently wrapped copies until the classical wrap is retired. Wrapped DEKs already captured under the old wrap stay exposed.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1876,7 +1876,7 @@
     "term": "Column-Level Encryption",
     "acronym": "CLE",
     "definition": "Database encryption applied to individual columns rather than the entire database or table. Allows selective protection of sensitive fields (SSN, credit card, health records) while leaving non-sensitive data unencrypted and queryable.",
-    "technicalNote": "SQL Server Always Encrypted uses two keys: Column Master Key (CMK, stored in Key Vault or certificate store) + Column Encryption Key (CEK, stored in database metadata, encrypted by CMK). Oracle TDE column encryption uses similar hierarchy. PostgreSQL pgcrypto provides column encryption via SQL functions. PQC note: CMK wrapping is the RSA-vulnerable step — migrate CMK to ML-KEM-768 unwrap before quantum threat.",
+    "technicalNote": "SQL Server Always Encrypted uses two keys: Column Master Key (CMK, stored in Key Vault or certificate store) + Column Encryption Key (CEK, stored in database metadata, encrypted by CMK). Oracle TDE column encryption uses similar hierarchy. PostgreSQL pgcrypto provides column encryption via SQL functions. PQC note: an RSA-protected CMK is the quantum-vulnerable step. A KEM alone does not wrap keys; migration needs a key provider and client driver that document a PQC-capable KEM, KDF and key-wrap profile.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1910,7 +1910,7 @@
     "term": "Data Encryption Key",
     "acronym": "DEK",
     "definition": "A symmetric key used to directly encrypt data. In envelope encryption architectures, the DEK is a short-lived, per-object AES key that encrypts actual data, while a Key Encryption Key (KEK) protects the DEK.",
-    "technicalNote": "DEK sizing: AES-256 for data confidentiality (quantum-safe against Grover — 128-bit quantum security). DEK rotation frequency varies by compliance regime: PCI DSS recommends annual rotation; GDPR requires prompt rotation on personnel changes; some HSM policies enforce 90-day DEK rotation. PQC note: DEKs themselves are AES-256 and quantum-safe — the vulnerability is in how the KEK protects the DEK (typically RSA or ECDH wrapping).",
+    "technicalNote": "DEK sizing: AES-256 is the common choice for long-lived data confidentiality; its idealized Grover search cost is far beyond practical reach, though that is a model-dependent estimate rather than a guarantee. Rotation follows the documented cryptoperiod in the key-management policy (see NIST SP 800-57) and any applicable compliance requirement. PQC note: a DEK is only as protected as the key that wraps it. If the KEK or wrapping step uses RSA or ECDH, an adversary who captured the wrapped DEK and ciphertext can target the wrap, not the AES key.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1919,7 +1919,7 @@
     "term": "Column Master Key",
     "acronym": "CMK",
     "definition": "The top-level key in SQL Server Always Encrypted that protects Column Encryption Keys (CEKs). The CMK is typically stored in Azure Key Vault, Windows Certificate Store, or an HSM — never in the database itself.",
-    "technicalNote": "CMK operations: CMK encrypts CEK metadata stored in sys.column_encryption_key_values. CMK rotation requires re-encrypting all CEK metadata with the new CMK (SQL Server 'rotate CMK' wizard or PowerShell New-SqlColumnEncryptionKeyEncryptedValue). PQC migration path: create new ML-KEM-768 CMK → use SQL Server CMK rotation to re-wrap all CEKs → drop old RSA CMK. Client driver must support ML-KEM-768 for new CMK unwrap operations.",
+    "technicalNote": "CMK operations: CMK encrypts CEK metadata stored in sys.column_encryption_key_values. CMK rotation requires re-encrypting all CEK metadata with the new CMK (SQL Server 'rotate CMK' wizard or PowerShell New-SqlColumnEncryptionKeyEncryptedValue). PQC migration path: once the key provider and client driver document a PQC-capable key-protection scheme, create a new CMK of that type, rotate to re-protect every CEK, then retire the RSA CMK. A KEM is key establishment, so this needs a KEM, KDF and key-wrap profile, not just a new key type.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1927,7 +1927,7 @@
   {
     "term": "Key Rotation (Database)",
     "definition": "The process of replacing an active database encryption key with a new one, re-encrypting data (or key metadata) under the new key, and retiring the old key. Critical for limiting cryptographic exposure over time.",
-    "technicalNote": "Three rotation strategies: (1) Master key rotation only — re-encrypt DEKs/CEKs under new master key without touching data. (2) DEK rotation — generate new DEK, re-encrypt all data (expensive). (3) Combined — new master key + new DEKs simultaneously. SQL Server uses strategy 1 for TDE and Always Encrypted. Oracle uses a similar approach. PQC migration is essentially a forced master key rotation from RSA-wrapped to ML-KEM-768-wrapped keys.",
+    "technicalNote": "Three rotation strategies: (1) Master key rotation only — re-encrypt DEKs/CEKs under new master key without touching data. (2) DEK rotation — generate new DEK, re-encrypt all data (expensive). (3) Combined — new master key + new DEKs simultaneously. SQL Server uses strategy 1 for TDE and Always Encrypted. Oracle uses a similar approach. PQC migration usually starts as a master key rotation from an RSA-protected key to a quantum-resistant key-protection scheme where supported. Rewrapping alone does not protect copies of the old wrapped DEK and ciphertext already captured; there, DEK replacement and data re-encryption is needed.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
     "category": "concept"
