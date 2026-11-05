@@ -121,6 +121,10 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
         )}
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        Progress marks page review, not successful tree, proof or signing operations.
+      </p>
+
       {/* Part Progress Steps */}
       <div className="overflow-x-auto px-2 sm:px-0">
         <div className="flex justify-evenly relative min-w-0">
@@ -231,11 +235,14 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
           <div className="mt-4 rounded-lg border border-success/30 bg-success/5 px-4 py-3 flex flex-col gap-2">
             <div className="flex items-center gap-2 text-sm font-medium text-success">
               <CheckCircle2 size={16} />
-              Workshop complete!
+              Workshop review marked complete
             </div>
             <p className="text-xs text-muted-foreground">
-              You have built a Merkle tree, generated and verified inclusion proofs, compared
-              certificate transparency log sizes, and signed a CT log entry with ML-DSA-65.
+              This records your self-marked review of the workshop pages. Navigation and this button
+              do not establish that a tree was built, a proof verified or a signature created.
+              Inspect each exercise&apos;s actual result and selected algorithm separately; use your
+              production tools to evaluate proof validation, signed log updates and tampered
+              samples.
             </p>
             <a
               href="/learn?module=merkle-trees"

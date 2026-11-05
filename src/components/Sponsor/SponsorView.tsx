@@ -122,14 +122,15 @@ const SPONSOR_AUDIENCES: SponsorAudience[] = [
   {
     icon: ShieldCheck,
     title: 'Enterprises',
-    description: 'You sponsor for audit-ready evidence and compliance support.',
+    description: 'You sponsor educational planning resources for stakeholder discussion.',
     bullets: [
-      'Audit-ready PDF of migration-readiness assessments',
+      'Illustrative assessment report with sample planning inputs',
+      'Evaluate assumptions and supporting checks with your own production tools; the sample is not audited evidence',
       'Named in the compliance digest — planned, not yet built',
       'Vendor-mapping data refreshed monthly',
       'Priority support and onboarding calls',
     ],
-    cta: { label: 'See a sample migration-readiness report', to: EXAMPLE_REPORT_URL },
+    cta: { label: 'See a sample assessment report', to: EXAMPLE_REPORT_URL },
   },
   {
     icon: UserRoundCog,

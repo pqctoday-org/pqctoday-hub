@@ -5,11 +5,9 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 /**
- * Closure & Handover Register — a real closure gate. Every standing capability
- * transfers to a permanent owner with a re-evaluation date, and the closure
- * criteria must be met; the gate only goes green when nothing is orphaned and
- * residual risk is accepted by name. Generic governance: ISO/IEC 27001 + NIST
- * RMF (SP 800-37).
+ * Closure & Handover Register — a local educational draft. Every standing capability
+ * is represented by a sample owner/date entry and self-selected acknowledgments.
+ * Completion checks presence only; it does not verify transfer or acceptance.
  */
 
 const OWNERS = [
@@ -54,10 +52,14 @@ export function ClosureHandoverRegister() {
   return (
     <div className="space-y-4">
       <div className="glass-panel p-4">
-        <h3 className="mb-1 font-semibold text-foreground">Closure gate &amp; BAU handover</h3>
+        <h3 className="mb-1 font-semibold text-foreground">
+          Sample closure &amp; BAU handover checklist
+        </h3>
         <p className="text-sm text-muted-foreground">
-          Assign every standing capability an owner and re-eval date, and meet the closure criteria.
-          The gate opens only when nothing is orphaned.
+          Use fictional owners, dates and acknowledgments to explore a closure discussion. This
+          local draft records your entries; it does not evaluate evidence, approve closure or
+          archive a dossier. Production tools must retain the actual supporting records and ongoing
+          ownership.
         </p>
       </div>
 
@@ -127,26 +129,28 @@ export function ClosureHandoverRegister() {
           {ready ? (
             <>
               <Lock size={16} className="text-status-success" />
-              <span className="text-status-success">Closure gate OPEN — program can close</span>
+              <span className="text-status-success">
+                Sample checklist entries complete — closure not assessed
+              </span>
             </>
           ) : (
             <>
               <LockOpen size={16} className="text-status-warning" />
-              <span className="text-status-warning">Not ready to close</span>
+              <span className="text-status-warning">Sample checklist entries incomplete</span>
             </>
           )}
         </div>
         {ready ? (
           <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-            <FileCheck2 size={12} /> Closure record generated; evidence dossier archived; minute the
-            decision at the chartering level.
+            <FileCheck2 size={12} /> Local sample entries complete. No closure record or evidence
+            dossier has been generated or archived.
           </p>
         ) : (
           <p className="mt-1 text-xs text-muted-foreground">
             Outstanding:{' '}
             {!allOwned && `${CAPABILITIES.length - ownedCount} capability(ies) unassigned`}
             {!allOwned && !allCrit && '; '}
-            {!allCrit && `${CRITERIA.length - crit.size} criterion(a) unmet`}.
+            {!allCrit && `${CRITERIA.length - crit.size} acknowledgment(s) unselected`}.
           </p>
         )}
       </div>
