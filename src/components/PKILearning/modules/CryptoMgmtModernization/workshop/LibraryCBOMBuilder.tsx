@@ -108,13 +108,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     savedInputs?.mode && (VALID_MODES as readonly string[]).includes(savedInputs.mode)
       ? (savedInputs.mode as Mode)
       : null
-  const [mode, setMode] = useState<Mode>(
-    savedMode && (savedMode !== 'assessment' || hasAssessmentCrypto)
-      ? savedMode
-      : hasAssessmentCrypto
-        ? 'assessment'
-        : 'libs'
-  )
+  // An explicitly saved scope stays selected even when its current inputs
+  // are empty; do not substitute unrelated catalogue records on restore.
+  const [mode, setMode] = useState<Mode>(savedMode ?? (hasAssessmentCrypto ? 'assessment' : 'libs'))
   const [selectedSbom, setSelectedSbom] = useState<string>(
     savedInputs?.selectedSbom && SAMPLE_SBOMS.some((s) => s.id === savedInputs.selectedSbom)
       ? savedInputs.selectedSbom
@@ -347,7 +343,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       </p>
 
       <div className="flex flex-wrap gap-2">
-        {hasAssessmentCrypto && (
+        {(hasAssessmentCrypto || mode === 'assessment') && (
           <Button
             variant={mode === 'assessment' ? 'gradient' : 'outline'}
             onClick={() => setMode('assessment')}
@@ -390,14 +386,16 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         <div className="space-y-3">
           <PreFilledBanner
             summary={
-              [
+              ([
                 assessmentTransitions.length > 0 &&
                   `${assessmentTransitions.length} algorithm${assessmentTransitions.length !== 1 ? 's' : ''} from your assessment`,
                 myProducts.length > 0 &&
                   `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`,
               ]
                 .filter(Boolean)
-                .join(' + ') + '.'
+                .join(' + ') ||
+                'No assessment algorithm or selected product records are available in this view') +
+              '.'
             }
             onClear={() => setMode('libs')}
           />
