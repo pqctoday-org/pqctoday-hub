@@ -15,6 +15,8 @@
  * Escape closes, and focus moves to the primary action on open.
  */
 import { useEffect, useRef } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Trophy, ArrowRight, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -56,17 +58,14 @@ export function ModuleCompletionCard({
 }: ModuleCompletionCardProps) {
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
+  useOverlayEscape(true, onClose, { rootRef: trapRef })
   const isPath = variant === 'path'
 
   // Escape to dismiss + move focus to the primary action on open (a11y).
   useEffect(() => {
     primaryRef.current?.focus()
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  }, [])
 
   const pct =
     progress && progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0
@@ -81,6 +80,7 @@ export function ModuleCompletionCard({
         onClick={onClose}
       >
         <motion.div
+          ref={trapRef}
           role="dialog"
           aria-modal="true"
           aria-label={isPath ? 'Journey complete' : 'Module complete'}

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import FocusLock from 'react-focus-lock'
 import { ChevronDown, ChevronUp, Lightbulb, X, ImageOff } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -167,6 +169,9 @@ export const CuriousSummaryBanner = ({
   const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
   const [expanded, setExpanded] = useState(true)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  const lightboxRef = useRef<HTMLDivElement>(null)
+  useOverlayEscape(lightboxOpen, () => setLightboxOpen(false), { rootRef: lightboxRef })
 
   const idealImgSrc = `/images/infographics/pqcstd_${moduleId}.png`
 
@@ -345,39 +350,42 @@ export const CuriousSummaryBanner = ({
       )}
 
       {lightboxOpen && (
-        <div
-          className="fixed inset-0 embed-backdrop z-50 bg-card/95 backdrop-blur-sm flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Infographic full view"
-        >
-          {/* Invisible backdrop — clicking outside the image closes the lightbox */}
-          <Button
-            variant="ghost"
-            type="button"
-            className="absolute inset-0 w-full h-full p-0 rounded-none bg-transparent hover:bg-transparent cursor-default"
-            onClick={() => setLightboxOpen(false)}
-            aria-label="Close infographic"
-            tabIndex={-1}
-          />
-          <img
-            src={`${imgSrc}?v=pqcstd_v4`}
-            alt={altText}
-            className="relative z-10 max-w-full max-h-[90vh] object-contain rounded-md select-none"
-            style={{ touchAction: 'pinch-zoom' }}
-          />
-          <Button
-            variant="ghost"
-            className="absolute top-4 right-4 z-10 text-foreground hover:text-foreground/70 hover:bg-muted/30"
-            onClick={() => setLightboxOpen(false)}
-            aria-label="Close infographic"
+        <FocusLock returnFocus className="contents">
+          <div
+            ref={lightboxRef}
+            className="fixed inset-0 embed-backdrop z-50 bg-card/95 backdrop-blur-sm flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Infographic full view"
           >
-            <X size={24} />
-          </Button>
-          <p className="absolute bottom-4 left-0 right-0 z-10 text-center text-xs text-muted-foreground pointer-events-none">
-            Pinch to zoom · Tap outside to close
-          </p>
-        </div>
+            {/* Invisible backdrop — clicking outside the image closes the lightbox */}
+            <Button
+              variant="ghost"
+              type="button"
+              className="absolute inset-0 w-full h-full p-0 rounded-none bg-transparent hover:bg-transparent cursor-default"
+              onClick={() => setLightboxOpen(false)}
+              aria-label="Close infographic"
+              tabIndex={-1}
+            />
+            <img
+              src={`${imgSrc}?v=pqcstd_v4`}
+              alt={altText}
+              className="relative z-10 max-w-full max-h-[90vh] object-contain rounded-md select-none"
+              style={{ touchAction: 'pinch-zoom' }}
+            />
+            <Button
+              variant="ghost"
+              className="absolute top-4 right-4 z-10 text-foreground hover:text-foreground/70 hover:bg-muted/30"
+              onClick={() => setLightboxOpen(false)}
+              aria-label="Close infographic"
+            >
+              <X size={24} />
+            </Button>
+            <p className="absolute bottom-4 left-0 right-0 z-10 text-center text-xs text-muted-foreground pointer-events-none">
+              Pinch to zoom · Tap outside to close
+            </p>
+          </div>
+        </FocusLock>
       )}
     </div>
   )
