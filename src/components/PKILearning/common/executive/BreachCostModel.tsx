@@ -817,6 +817,9 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             <span className="text-status-error font-bold">{formatCurrency(costs.quantumALE)}</span>
           </p>
         </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          Working figures are rounded; calculations use underlying values.
+        </p>
       </details>
 
       {/* ── Methodology ── */}

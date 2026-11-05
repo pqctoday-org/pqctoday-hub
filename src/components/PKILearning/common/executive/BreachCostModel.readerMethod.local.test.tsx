@@ -56,6 +56,9 @@ describe('Reader math matches the existing breach helper', () => {
     expect(
       screen.getByText(/the same freshness-weighted corpus assumption is used in each year/)
     ).toBeInTheDocument()
+    expect(
+      screen.getByText('Working figures are rounded; calculations use underlying values.')
+    ).toBeVisible()
     expect(screen.queryByText(/using the harvested corpus.*average age/)).not.toBeInTheDocument()
   })
   it('uses separate annual probabilities rather than the final horizon ALE as a level annuity', () => {
