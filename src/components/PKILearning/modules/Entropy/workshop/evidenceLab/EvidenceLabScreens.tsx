@@ -834,10 +834,14 @@ export const RunScreen: FC<{
                 {p.track === 'iid' && (
                   <p className="text-sm" data-testid="evl-iid-verdict">
                     IID tests (chi-square, LRS, permutation):{' '}
-                    {p.iidPassed ? (
+                    {p.iidPassed === true ? (
                       <span className="text-status-success">did not reject the IID assumption</span>
-                    ) : (
+                    ) : p.iidPassed === false ? (
                       <span className="text-status-error">rejected the IID assumption</span>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        not assessed — IID result unavailable
+                      </span>
                     )}
                     .
                   </p>
