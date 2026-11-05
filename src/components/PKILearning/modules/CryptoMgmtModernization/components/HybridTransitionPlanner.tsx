@@ -559,14 +559,22 @@ export function renderHybridTransitionMarkdown(
 
   md += `## 4. Migration Plan\n\n`
   const userSummary = (plan.summary as string) || ''
-  if (userSummary) {
-    md += `${userSummary}\n\n`
+  if (userSummary) md += `${userSummary}\n\n`
+  const isHybridTarget =
+    rec.targetState === 'hybrid-traditional+PQC' || rec.targetState === 'hybrid-PQC+PQC'
+  if (isHybridTarget) {
+    if (!userSummary) {
+      md += `Transition pathway for ${inputs.protocol}: ${inputs.currentAlgorithm} -> ${rec.kemPair} / ${rec.sigPair} (target ${rec.hybridTargetDate}) -> Pure PQC (target ${rec.sunsetDate}).\n\n`
+    }
+    md += `Illustrative hybrid sequence — planning prompts, not an approved delivery plan.\n\n`
+    md += `- Phase 1 (now -> ${rec.hybridTargetDate}): deploy hybrid pairing in pilot, then production\n`
+    md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare pure-PQC config\n`
+    md += `- Phase 3 (${rec.sunsetDate} and after): sunset classical half, enable pure PQC\n\n`
   } else {
-    md += `Transition pathway for ${inputs.protocol}: ${inputs.currentAlgorithm} -> ${rec.kemPair} / ${rec.sigPair} (target ${rec.hybridTargetDate}) -> Pure PQC (target ${rec.sunsetDate}).\n\n`
+    md += `This worksheet has not generated a target-specific delivery sequence for the ${rec.targetState} recommendation. The generic hybrid-to-pure sequence is omitted. Define sequencing, feasibility checks and validation using your production planning and testing tools before treating this draft as a delivery plan.\n\n`
   }
-  md += `- Phase 1 (now -> ${rec.hybridTargetDate}): deploy hybrid pairing in pilot, then production\n`
-  md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare pure-PQC config\n`
-  md += `- Phase 3 (${rec.sunsetDate} and after): sunset classical half, enable pure PQC\n\n`
+
+  md += `Risks and validation notes are editable worksheet fields and may retain generic hybrid examples. They are not automatically generated or validated from the recommendation; review them for the target and protocol.\n\n`
 
   md += `### Risks\n\n`
   md += `${(plan.risks as string) || '- (none specified)'}\n\n`
@@ -622,8 +630,10 @@ export const HybridTransitionPlanner: React.FC = () => {
             Hybrid Algorithm Transition Planner
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Architect-facing decision tree from NIST CSWP 39 Section 3.2.4 - Hybrid Cryptographic
-            Algorithms. Recommends a transition pathway and emits an editable migration plan.
+            Hub planning worksheet with references to NIST CSWP 39 Section 3.2.4 — Hybrid
+            Cryptographic Algorithms. It suggests a target and produces an editable planning draft,
+            not a complete delivery plan. Risks and validation fields start with generic hybrid
+            examples; review and replace them for the target and protocol you are considering.
           </p>
         </div>
       </div>
