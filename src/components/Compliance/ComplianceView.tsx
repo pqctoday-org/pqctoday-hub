@@ -297,7 +297,7 @@ export const ComplianceView = ({
   useWorkflowPhaseTracker('comply')
 
   const tierFilter = useTrustTierFilter()
-  const { data, loading, error, refresh, lastUpdated, meta } = useComplianceRefresh()
+  const { data, loading, error, refresh, lastUpdated, meta, hasLoaded } = useComplianceRefresh()
   // Page-wide loading/error state — shared across every tab (Landscape,
   // Product Records, For You, CSWP.39 Agility all read the same `data`), not
   // duplicated per tab. Only the very first load shows the skeleton; a
@@ -799,7 +799,10 @@ export const ComplianceView = ({
     return (
       <MobileComplianceView
         records={data}
-        recordsLoaded={!loading && data.length > 0}
+        recordsLoaded={hasLoaded}
+        recordsLoading={loading}
+        recordsError={error}
+        onRetryRecords={refresh}
         meta={meta}
       />
     )

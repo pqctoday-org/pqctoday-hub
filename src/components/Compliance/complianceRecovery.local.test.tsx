@@ -56,6 +56,7 @@ describe('Certification snapshot unavailable versus successful empty publication
     await waitFor(() => expect(fetched).toHaveBeenCalledTimes(3))
     await waitFor(() => expect(result.current.loading).toBe(false))
     expect(result.current.error).toBeNull()
+    expect(result.current.hasLoaded).toBe(true)
     expect(result.current.data).toEqual([])
   })
   it('preserves optional metadata fallback and existing record filtering', async () => {
@@ -74,6 +75,7 @@ describe('Certification snapshot unavailable versus successful empty publication
     )
     expect(result.current.loading).toBe(false)
     expect(result.current.lastUpdated).toBeNull()
+    expect(result.current.hasLoaded).toBe(false)
     expect(logged).toHaveBeenCalled()
     respond([sample])
     await act(async () => {
@@ -81,6 +83,7 @@ describe('Certification snapshot unavailable versus successful empty publication
     })
     expect(result.current.error).toBeNull()
     expect(result.current.data).toEqual([sample])
+    expect(result.current.hasLoaded).toBe(true)
     expect(result.current.lastUpdated).not.toBeNull()
   })
 })

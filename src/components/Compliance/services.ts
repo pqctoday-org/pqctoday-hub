@@ -100,6 +100,7 @@ export { computeRecordsSnapshotDate }
 export const useComplianceRefresh = () => {
   const [data, setData] = useState<ComplianceRecord[]>([])
   const [loading, setLoading] = useState(false)
+  const [hasLoaded, setHasLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   // Sidecar for the loaded publication (retrieval dates, scope); null until
@@ -112,6 +113,7 @@ export const useComplianceRefresh = () => {
     try {
       const [records, sidecar] = await Promise.all([fetchComplianceData(), fetchComplianceMeta()])
       setData(records)
+      setHasLoaded(true)
       setMeta(sidecar)
       setLastUpdated(computeRecordsSnapshotDate(records))
     } catch (err) {
@@ -127,5 +129,5 @@ export const useComplianceRefresh = () => {
     refresh()
   }, [refresh])
 
-  return { data, loading, error, lastUpdated, meta, refresh }
+  return { data, loading, error, lastUpdated, meta, refresh, hasLoaded }
 }
