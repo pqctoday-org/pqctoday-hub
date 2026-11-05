@@ -287,7 +287,7 @@
   {
     "term": "JSON Web Signature",
     "acronym": "JWS",
-    "definition": "A standard (RFC 7515) for digitally signing JSON payloads. JWS is the mechanism that makes JWTs tamper-proof — the signature covers the JOSE header and payload.",
+    "definition": "A standard (RFC 7515) for protecting arbitrary payload bytes with a digital signature or MAC. The protected JOSE header and payload are authenticated; JSON-serialization unprotected headers are not. A verifier must check the result using an accepted algorithm and trusted key.",
     "technicalNote": "PQC migration requires new JWS algorithm identifiers (e.g., ML-DSA-44, ML-DSA-65) registered via the IETF JOSE PQC draft. Signature sizes grow from 64 bytes (ES256) to ~2,420 bytes (ML-DSA-44).",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",

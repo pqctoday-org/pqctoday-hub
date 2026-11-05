@@ -2386,8 +2386,8 @@
   },
   {
     "term": "CKA_EXTRACTABLE",
-    "definition": "PKCS#11 key attribute controlling whether a key's raw value may leave the token. When CK_FALSE, the private/secret key can be used for operations but never exported in the clear — the basis of HSM key custody.",
-    "technicalNote": "Paired with CKA_SENSITIVE. A non-extractable, sensitive key can still be wrapped for backup only if CKA_WRAP_WITH_TRUSTED / policy allows; otherwise it is bound to the token for life.",
+    "definition": "PKCS#11 attribute controlling whether a private or secret key may be wrapped. CKA_EXTRACTABLE=CK_FALSE prevents C_WrapKey export; CKA_SENSITIVE separately restricts reading protected key material with C_GetAttributeValue.",
+    "technicalNote": "CKA_WRAP_WITH_TRUSTED adds a restriction on which wrapping keys may be used; it does not override CKA_EXTRACTABLE=CK_FALSE. A separate vendor backup interface has its own rules and must not be inferred from C_WrapKey policy.",
     "complexity": "intermediate",
     "category": "concept",
     "relatedModule": "/learn/hybrid-crypto"
