@@ -4,11 +4,12 @@ import { describe, expect, it } from 'vitest'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { Glossary } from './Glossary'
+import { Button } from '@/components/ui/button'
 function Harness() {
   const [open, setOpen] = useState(false)
   return (
     <MemoryRouter>
-      <button onClick={() => setOpen(true)}>Open glossary</button>
+      <Button onClick={() => setOpen(true)}>Open glossary</Button>
       <Glossary isOpen={open} onClose={() => setOpen(false)} />
     </MemoryRouter>
   )
