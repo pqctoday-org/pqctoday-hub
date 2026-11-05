@@ -334,13 +334,13 @@ export const TEMPLATE_NAMES = Object.keys(TEMPLATES)
  */
 export const TEMPLATE_OUTCOMES: Record<string, string> = {
   'Encrypt + sign (PQ)':
-    'You encrypted a payload, hashed the ciphertext, and signed the hash with ML-DSA-65 — every byte produced by real FIPS-validated code paths, not a mock. That chain is the shape most document- and message-signing systems actually use, and the signature you just produced is ~3,309 bytes where an Ed25519 one would have been 64.',
+    'The sample encrypted a payload, hashed the ciphertext and signed that hash with ML-DSA-65. It did not verify the signature or decrypt the ciphertext. These operations do not establish implementation validation or a complete message format.',
   'PQ TLS handshake':
-    'You ran the key-establishment half of a post-quantum TLS handshake end to end. The ML-KEM-768 ciphertext and public key together are what push a real ClientHello past a single network datagram — the constraint that breaks middleboxes before it breaks cryptography.',
+    'The sample ran ML-KEM encapsulation and decapsulation, then signed the input with ML-DSA-65. It did not compare the shared secrets, verify the signature or execute a TLS handshake. Production tools need protocol-level agreement, authentication and interoperability checks.',
   'Hybrid signature':
-    'You produced a signature that is valid under both a classical and a post-quantum algorithm. That is what hybrid buys: it stays verifiable if either algorithm is broken, and you pay for both on every single operation.',
+    'The sample produced separate classical and post-quantum signatures over the same digest. It did not verify either signature or create a combined signature format. Production tools need an explicit profile and verification policy for both signatures.',
   'ML-KEM round trip':
-    'You encapsulated to a public key and decapsulated back to the identical shared secret. The secret never travelled — only the ciphertext did, and that is the whole difference between a KEM and key transport.',
+    'The sample encapsulated to a public key and decapsulated the ciphertext. Shared-secret agreement was not checked. Look for agreement and rejection tests in production tools.',
   'ACVP ML-KEM-768 known-answer test':
     "You imported a real NIST ACVP test vector's own private key (C_CreateObject, not a fresh randomly-generated one via C_GenerateKeyPair), decapsulated the vector's own ciphertext, and the resulting shared secret matched the vector's published expected output byte-for-byte — the same standard the FIPS 203 implementation itself is validated against.",
   'ACVP ML-DSA-44 known-answer test':
