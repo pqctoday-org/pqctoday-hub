@@ -517,7 +517,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                   variant="ghost"
                   key={item.id}
                   onClick={() => toggleCheck(item.id)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
+                  className={`w-full h-auto min-w-0 whitespace-normal flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
                     isChecked
                       ? 'bg-success/5 border-success/20'
                       : 'bg-muted/50 border-border hover:border-primary/30'
@@ -528,7 +528,9 @@ export const HsmMigrationPlanner: React.FC = () => {
                   ) : (
                     <Circle size={16} className="text-muted-foreground shrink-0" />
                   )}
-                  <span className="text-xs text-foreground flex-1">Review topic: {item.label}</span>
+                  <span className="text-xs text-foreground flex-1 min-w-0 break-words">
+                    Review topic: {item.label}
+                  </span>
                   {item.required && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold shrink-0">
                       CORE TOPIC
