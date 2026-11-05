@@ -15,6 +15,7 @@
  * Escape closes, and focus moves to the primary action on open.
  */
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
@@ -70,10 +71,12 @@ export function ModuleCompletionCard({
   const pct =
     progress && progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0
 
-  return (
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-dialog flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -179,6 +182,7 @@ export function ModuleCompletionCard({
           )}
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }

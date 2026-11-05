@@ -9,7 +9,7 @@ import { ModuleCompletionCard } from '../ModuleCompletionCard'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
-function CompletionExample() {
+function CompletionExample({ variant = 'module' }: { variant?: 'module' | 'path' }) {
   const [open, setOpen] = useState(false)
   return (
     <>
@@ -17,6 +17,7 @@ function CompletionExample() {
       <Button>Outside control</Button>
       {open && (
         <ModuleCompletionCard
+          variant={variant}
           title="Sample module"
           belt={{ name: 'White Belt', color: 'white', textColor: 'black' }}
           score={0}
@@ -62,22 +63,27 @@ describe('Learn modal keyboard boundaries', () => {
     }
   )
 
-  it('keeps completion focus inside, then returns it to the completing control', async () => {
-    render(<CompletionExample />)
-    const user = userEvent.setup()
-    const trigger = screen.getByRole('button', { name: 'Complete sample module' })
-    await user.click(trigger)
-    const dialog = screen.getByRole('dialog', { name: 'Module complete' })
-    expect(within(dialog).getByRole('button', { name: 'Keep going' })).toHaveFocus()
-    await user.tab()
-    expect(dialog).toContainElement(document.activeElement as HTMLElement)
-    await user.tab({ shift: true })
-    expect(dialog).toContainElement(document.activeElement as HTMLElement)
-    await user.keyboard('{Escape}')
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
-    await waitFor(() => expect(trigger).toHaveFocus())
-    await user.click(trigger)
-    await user.click(screen.getByRole('button', { name: 'Keep going' }))
-    await waitFor(() => expect(trigger).toHaveFocus())
-  })
+  it.each(['module', 'path'] as const)(
+    'keeps %s completion focus inside and restores its control',
+    async (variant) => {
+      render(<CompletionExample variant={variant} />)
+      const user = userEvent.setup()
+      const trigger = screen.getByRole('button', { name: 'Complete sample module' })
+      await user.click(trigger)
+      const dialog = screen.getByRole('dialog', {
+        name: variant === 'path' ? 'Journey complete' : 'Module complete',
+      })
+      expect(within(dialog).getByRole('button', { name: 'Keep going' })).toHaveFocus()
+      await user.tab()
+      expect(dialog).toContainElement(document.activeElement as HTMLElement)
+      await user.tab({ shift: true })
+      expect(dialog).toContainElement(document.activeElement as HTMLElement)
+      await user.keyboard('{Escape}')
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      await waitFor(() => expect(trigger).toHaveFocus())
+      await user.click(trigger)
+      await user.click(screen.getByRole('button', { name: 'Keep going' }))
+      await waitFor(() => expect(trigger).toHaveFocus())
+    }
+  )
 })
