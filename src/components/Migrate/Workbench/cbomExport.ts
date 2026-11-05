@@ -31,6 +31,9 @@ interface PlanExportInput {
    */
   products?: CbomProductRef[]
   catalogSnapshot?: string
+  /** Name-keyed ID hints saved at selection time, not discovered inventory.
+   * Omit to retain the legacy 1.0 name-lookup contract exactly. */
+  capturedProductIds?: Readonly<Record<string, string>>
   /** ISO timestamp — passed in so the function stays deterministic/testable. */
   timestamp: string
 }
@@ -43,15 +46,55 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
     byName.set(p.softwareName, p)
     for (const n of p.formerNames ?? []) if (!byName.has(n)) byName.set(n, p)
   }
-  // One chosen product → its name, plus id / recorded version / release date
-  // when the catalog knows them, so the draft identifies the recorded example.
+  // Legacy output remains byte-for-byte compatible when no captured map is supplied.
+  const fieldsFor = (ref: CbomProductRef | undefined) => ({
+    ...(ref?.productId ? { productId: ref.productId } : {}),
+    ...(ref?.latestVersion ? { catalogVersion: ref.latestVersion } : {}),
+    ...(ref?.releaseDate ? { catalogReleaseDate: ref.releaseDate } : {}),
+  })
   const productRef = (name: string) => {
-    const ref = byName.get(name)
+    if (input.capturedProductIds === undefined) return { name, ...fieldsFor(byName.get(name)) }
+
+    const hasHint = Object.prototype.hasOwnProperty.call(input.capturedProductIds, name)
+    // eslint-disable-next-line security/detect-object-injection -- Read only an own saved label key; never write through it.
+    const rawHint = hasHint ? input.capturedProductIds[name] : undefined
+    const nameCandidates = (input.products ?? []).filter(
+      (product) => product.softwareName === name || product.formerNames?.includes(name)
+    )
+    const recordedCandidates =
+      typeof rawHint === 'string' && rawHint.trim()
+        ? (input.products ?? []).filter((product) => product.productId === rawHint)
+        : []
+    const candidate = (product: CbomProductRef) => ({
+      name: product.softwareName,
+      ...fieldsFor(product),
+    })
+    let resolutionStatus: string
+    let resolved: CbomProductRef | undefined
+    if (!hasHint) resolutionStatus = 'recorded-id-missing'
+    else if (typeof rawHint !== 'string') resolutionStatus = 'recorded-id-invalid'
+    else if (!rawHint.trim()) resolutionStatus = 'recorded-id-empty'
+    else if (recordedCandidates.length === 0) resolutionStatus = 'recorded-id-unresolved'
+    else if (
+      recordedCandidates.length !== 1 ||
+      nameCandidates.some((product) => product.productId !== rawHint)
+    ) {
+      resolutionStatus = 'identity-conflict'
+    } else {
+      resolutionStatus = 'recorded-id-match'
+      resolved = recordedCandidates[0]
+    }
     return {
       name,
-      ...(ref?.productId ? { productId: ref.productId } : {}),
-      ...(ref?.latestVersion ? { catalogVersion: ref.latestVersion } : {}),
-      ...(ref?.releaseDate ? { catalogReleaseDate: ref.releaseDate } : {}),
+      ...(hasHint ? { recordedProductIdHint: rawHint } : {}),
+      resolutionStatus,
+      currentCatalogueCandidates: {
+        byName: nameCandidates.map(candidate),
+        byRecordedId: recordedCandidates.map(candidate),
+      },
+      catalogueMetadataContext:
+        'Current supplied catalogue snapshot; not installed or selection-time versions. Recorded IDs are name-keyed saved hints, not verified historical identities.',
+      ...fieldsFor(resolved),
     }
   }
   const assets = input.planIds
@@ -99,7 +142,7 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
 
   return {
     format: 'pqctoday-migration-planning-draft',
-    formatVersion: '1.0',
+    formatVersion: input.capturedProductIds === undefined ? '1.0' : '1.1',
     generatedAt: input.timestamp,
     disclaimer:
       'Educational planning draft only. It is not a discovered inventory, CBOM, readiness assessment, product recommendation or compliance determination.',

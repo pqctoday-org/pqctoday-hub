@@ -45,7 +45,7 @@ describe('phone planning draft preserves its selected input scope', () => {
     expect(screen.getByText(product.softwareName)).toBeVisible()
     const doc = await download()
     expect(doc.format).toBe('pqctoday-migration-planning-draft')
-    expect(doc.formatVersion).toBe('1.0')
+    expect(doc.formatVersion).toBe('1.1')
     expect(doc.itemCount).toBe(1)
     expect(doc.items[0]).toMatchObject({
       id: 'foundations',
@@ -77,10 +77,12 @@ describe('phone planning draft preserves its selected input scope', () => {
     expect(screen.getByText('Fictional removed library')).toBeVisible()
     const doc = await download()
     expect(doc.items.map((item: { id: string }) => item.id)).toEqual(['tls', 'foundations'])
-    expect(doc.items[0].selectedCatalogExamples).toEqual([
+    expect(doc.items[0].selectedCatalogExamples).toMatchObject([
       { name: 'Fictional unresolved TLS selection' },
     ])
-    expect(doc.items[1].selectedCatalogExamples[1]).toEqual({ name: 'Fictional removed library' })
+    expect(doc.items[1].selectedCatalogExamples[1]).toMatchObject({
+      name: 'Fictional removed library',
+    })
     expect(JSON.stringify(doc)).not.toContain('Fictional unselected identity choice')
     const desktop = buildPlanCbom({
       planIds: plan,
@@ -88,6 +90,7 @@ describe('phone planning draft preserves its selected input scope', () => {
       products: softwareData,
       catalogSnapshot: softwareMetadata?.filename,
       timestamp: doc.generatedAt,
+      capturedProductIds: useMigrateSelectionStore.getState().nameToProductId,
     })
     expect(doc).toEqual(desktop)
     fireEvent.click(screen.getByRole('button', { name: 'Clear all' }))

@@ -1519,6 +1519,7 @@ function MobilePlanTab({
             timestamp: new Date().toISOString(),
             products: softwareData,
             catalogSnapshot: softwareMetadata?.filename,
+            capturedProductIds: nameToProductId,
           })
         }
         className="h-9 self-end text-[11.5px]"

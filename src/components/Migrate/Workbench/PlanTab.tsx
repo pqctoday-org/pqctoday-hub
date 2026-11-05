@@ -422,6 +422,7 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
               timestamp: new Date().toISOString(),
               products: softwareData,
               catalogSnapshot: softwareMetadata?.filename,
+              capturedProductIds: nameToProductId,
             })
           }
         >
