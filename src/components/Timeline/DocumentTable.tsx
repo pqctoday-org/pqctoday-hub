@@ -140,13 +140,7 @@ export const DocumentTable = ({
   })
 
   const formatPeriod = (row: TimelineDocumentRow) =>
-    row.openEnded
-      ? `${row.startYear < 2025 ? '< 2024' : row.startYear} onward`
-      : row.startYear < 2025
-        ? `< 2024${row.startYear !== row.endYear ? ` – ${row.endYear}` : ''}`
-        : row.startYear === row.endYear
-          ? String(row.startYear)
-          : `${row.startYear} – ${row.endYear}`
+    periodLabel(row.startYear, row.endYear, row.openEnded)
 
   return (
     <div className="glass-panel p-4 space-y-4">
