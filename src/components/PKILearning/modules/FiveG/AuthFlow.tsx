@@ -87,7 +87,8 @@ No dedicated PKCS#11 v3.2 mechanism exists for 5G-AKA.
         <span>
           All keys and identifiers generated here are for <strong>educational use only</strong> —
           not for production systems. PKCS#11 v3.2 has no dedicated 5G-AKA mechanism; this
-          simulation uses software MILENAGE (AES-128).
+          simulation uses software MILENAGE (AES-128). It runs selected home-network computations,
+          not XRES* derivation, subscriber response verification or replay/freshness checks.
         </span>
       </div>
       <StepWizard

@@ -22,7 +22,7 @@ The workshop consists of 4 hands-on steps using real OpenSSL WASM operations in 
 1. **Algorithm Family Explorer** — interactive exploration of why lattice-based, hash-based, and code-based algorithms resist quantum attacks
 2. **Algorithm Comparison Table** — side-by-side comparison of classical (Ed25519, ECDSA P-256) and PQC algorithms (ML-DSA-44/65/87, SLH-DSA) including key sizes and security levels
 3. **Key Generation Workshop** — generate real key pairs using OpenSSL commands (e.g., `openssl genpkey -algorithm ML-DSA-65`) and observe the size differences between classical and PQC keys
-4. **Signature Demo** — sign a message with both classical and PQC algorithms and verify signatures to demonstrate how digital signatures prove authenticity
+4. **Signature Demo** — generate sample classical and PQC signatures and compare their sizes; this step does not run signature verification
 
 The module also includes an Exercises tab with guided problems and a References tab linking to authoritative sources.
 

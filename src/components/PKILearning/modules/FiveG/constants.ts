@@ -762,7 +762,8 @@ const KAUSF = HMAC_SHA256(CK || IK, FC || SNN || len(SNN) || SQN_xor_AK || 0x000
 // KAUSF → KSEAF (anchor key) → KAMF → KNASint, KNASenc and KgNB (each derived from KAMF)`,
       output: `[UDM] Deriving KAUSF...
 [UDM] KAUSF: 0x8a9b... derived successfully.
-[UDM] Authentication Vector Ready: RAND, AUTN, XRES*, KAUSF`,
+[UDM] Selected sample outputs: RAND, AUTN and KAUSF.
+[NOT EXECUTED] XRES* derivation or subscriber response verification.`,
     },
   ],
 

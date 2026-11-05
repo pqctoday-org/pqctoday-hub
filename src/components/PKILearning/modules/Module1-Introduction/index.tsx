@@ -37,7 +37,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'signature-demo',
     title: 'Step 4: Signature Demo',
-    description: 'Sign a message and see how digital signatures prove authenticity.',
+    description:
+      'Generate sample signatures and compare their sizes. This step does not verify them.',
     icon: PenLine,
   },
 ]

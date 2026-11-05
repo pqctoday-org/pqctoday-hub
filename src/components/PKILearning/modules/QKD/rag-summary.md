@@ -10,14 +10,14 @@ This module explores Quantum Key Distribution, a method of distributing encrypti
 - **Satellite QKD**: Two modes -- trusted-node satellite relay (Micius demonstrated China-Austria 7,600 km, 2017) and entanglement-based (no key material on satellite, Micius over 1,120 km, 2020); key initiatives include Micius/QUESS (China), EAGLE-1/EuroQCI (EU), QEYSSat (Canada), SOCRATES (Japan), SpooQy-1 (Singapore), QKDSat (UK)
 - **NSA and BSI/ANSSI positions**: NSA (CNSA 2.0 FAQ v2.2) does not generally consider QKD a practical security solution for protecting NSS and says NSS owners should not use or research QKD without consulting NSA; BSI and ANSSI say QKD can in practice only be considered for some niche use cases, with post-quantum cryptography and symmetric keying as the primary solutions
 - **Limitations**: ~100 km fiber distance without trusted nodes, trusted node compromise risk, high cost (dedicated fiber, cryogenic detectors), side-channel vulnerabilities in real devices, low key rates, no built-in authentication
-- **QKD + PQC hybrid integration**: Combines QKD-derived key and ML-KEM shared secret via HKDF; security holds if either source remains unbroken (defense in depth)
+- **Post-processing illustration**: Copies one sample bit string after parity counting, hashes it with SHA-256, and combines that digest with random placeholder bytes using HKDF. It executes no ML-KEM operation and establishes neither reconciled QKD keys nor hybrid security
 - **QKD + HSM integration**: PKCS#11 key import (C_UnwrapKey/C_CreateObject), HSM manages lifecycle including rotation and destruction; continuous fresh key generation
 - **Global adoption**: 15+ major deployments, 27 EU states in EuroQCI, 2,000 km longest QKD backbone (Beijing-Shanghai, China)
 
 ## Workshop Activities
 
 1. **BB84 Protocol Simulator**: Visual simulation with configurable Eve interception slider and adjustable qubit count; observe basis matching, sifted key generation, and QBER calculation
-2. **Post-Processing**: Error correction, privacy amplification, and hybrid key derivation from raw QKD output
+2. **Post-Processing**: Illustrate parity counting, sample digest calculation and HKDF data flow; no error correction, QKD privacy-amplification proof or ML-KEM execution
 3. **Global Deployments Explorer**: Interactive database of worldwide QKD deployments including satellite and terrestrial networks with adoption trends
 4. **QKD + Classical Protocol Integration**: Integrate QKD keys into TLS 1.3, IKEv2, MACsec, and SSH nonce/PSK fields
 5. **HSM Key Derivation**: Use QKD secret as NIST SP 800-108 key material inside an HSM via PKCS#11

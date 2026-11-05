@@ -129,6 +129,15 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
 
   return (
     <div className="space-y-6">
+      <div
+        role="note"
+        className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground"
+      >
+        This sample generates signatures and displays their bytes and sizes; it does not run
+        verification. For authenticity checks, use a tool that verifies the intended message and
+        signature against a trusted public key, including altered-message and altered-signature
+        tests.
+      </div>
       {/* Shared message input */}
       <div className="space-y-2">
         <label htmlFor="sign-message" className="block text-sm font-medium text-foreground">
@@ -328,10 +337,9 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            <strong className="text-foreground">Key insight:</strong> PQC signatures are larger
-            because lattice and hash-based math requires more data to encode security. The trade-off
-            is intentional — that extra size is what keeps signatures safe even against a
-            cryptographically-relevant quantum computer.
+            <strong className="text-foreground">Key insight:</strong> These samples compare
+            signature sizes. Size alone does not establish signature validity, quantum resistance or
+            implementation conformance.
           </p>
         </div>
       )}

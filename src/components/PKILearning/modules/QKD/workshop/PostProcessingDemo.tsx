@@ -21,9 +21,9 @@ type PostProcessingStep =
 const STEPS: { id: PostProcessingStep; label: string; icon: React.ElementType }[] = [
   { id: 'generate', label: 'Generate Sifted Key', icon: Key },
   { id: 'error-estimation', label: 'Error Estimation', icon: Shield },
-  { id: 'error-correction', label: 'Error Correction', icon: CheckCircle2 },
-  { id: 'privacy-amplification', label: 'Privacy Amplification', icon: Hash },
-  { id: 'hybrid-derivation', label: 'Hybrid Key Derivation', icon: Key },
+  { id: 'error-correction', label: 'Parity Illustration', icon: CheckCircle2 },
+  { id: 'privacy-amplification', label: 'SHA-256 Illustration', icon: Hash },
+  { id: 'hybrid-derivation', label: 'Sample HKDF Derivation', icon: Key },
 ]
 
 function arrayBufferToHex(buffer: ArrayBuffer): string {
@@ -57,12 +57,10 @@ export const PostProcessingDemo: React.FC = () => {
     setCurrentStep(2)
   }, [])
 
-  // Step 3: Simplified error correction (Cascade-inspired)
+  // Step 3: Count odd-parity blocks and copy the sample without changing bits.
   const handleErrorCorrection = useCallback(() => {
     if (finalKey.length === 0) return
-    // In a real system, error correction would use Cascade or LDPC codes.
-    // For this demo, we simulate by "correcting" the key (since we ran without Eve,
-    // the key should be correct already, but we show the concept).
+    // This display does not compare Alice and Bob or locate/correct bit errors.
     const corrected = [...finalKey]
     let corrections = 0
 
@@ -70,10 +68,9 @@ export const PostProcessingDemo: React.FC = () => {
     for (let i = 0; i < corrected.length; i += 4) {
       const block = corrected.slice(i, Math.min(i + 4, corrected.length))
       const parity = block.reduce((acc, bit) => acc ^ bit, 0 as number)
-      // If parity is odd and block has an "error" (simulated), flip a bit
+      // Count odd-parity blocks; do not label them as corrected bit errors.
       if (parity === 1 && block.length === 4) {
-        // In real Cascade, we'd do binary search to find the error
-        // For demo, just show we detected an odd-parity block
+        // No error location or bit flipping is performed.
         corrections++
       }
     }
@@ -83,7 +80,7 @@ export const PostProcessingDemo: React.FC = () => {
     setCurrentStep(3)
   }, [finalKey])
 
-  // Step 4: Privacy amplification using SHA-256
+  // Step 4: Sample SHA-256 digest; not a QKD privacy-amplification proof.
   const handlePrivacyAmplification = useCallback(async () => {
     if (correctedKey.length === 0) return
     setIsProcessing(true)
@@ -96,7 +93,7 @@ export const PostProcessingDemo: React.FC = () => {
       }
     })
 
-    // Hash with SHA-256 to produce a shorter, amplified key
+    // Compute a fixed-size digest; this can be longer than the sample input.
     const hashBuffer = await crypto.subtle.digest('SHA-256', keyBytes)
     const hex = arrayBufferToHex(hashBuffer)
     setAmplifiedKeyHex(hex)
@@ -104,27 +101,27 @@ export const PostProcessingDemo: React.FC = () => {
     setCurrentStep(4)
   }, [correctedKey])
 
-  // Step 5: Hybrid key derivation (QKD + simulated ML-KEM via HKDF)
+  // Step 5: Illustrate HKDF using the digest and random placeholder input.
   const handleHybridDerivation = useCallback(async () => {
     if (!amplifiedKeyHex) return
     setIsProcessing(true)
 
-    // Simulate ML-KEM shared secret (in production, this would come from OpenSSL WASM)
+    // Random placeholder only: no ML-KEM operation is executed.
     const mlkemSecret = new Uint8Array(32)
     crypto.getRandomValues(mlkemSecret)
 
-    // Convert amplified QKD key from hex to bytes
+    // Convert the sample digest from hex to bytes.
     const qkdBytes = new Uint8Array(32)
     for (let i = 0; i < 32; i++) {
       qkdBytes[i] = parseInt(amplifiedKeyHex.slice(i * 2, i * 2 + 2), 16)
     }
 
-    // Combine: QKD secret || ML-KEM secret
+    // Combine: sample digest || random placeholder.
     const combined = new Uint8Array(64)
     combined.set(qkdBytes)
     combined.set(mlkemSecret, 32)
 
-    // HKDF-Extract using HMAC-SHA-256 (Web Crypto)
+    // HKDF with SHA-256 through Web Crypto.
     const keyMaterial = await crypto.subtle.importKey('raw', combined, 'HKDF', false, [
       'deriveBits',
     ])
@@ -155,6 +152,14 @@ export const PostProcessingDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <div
+        role="note"
+        className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground"
+      >
+        This post-processing illustration counts block parities, copies one sample bit string,
+        hashes it and combines the digest with random placeholder bytes using HKDF. It does not
+        reconcile Alice’s and Bob’s keys, execute ML-KEM or establish a secure QKD key.
+      </div>
       {/* Step Progress */}
       <div className="flex flex-wrap gap-2">
         {STEPS.map((step, idx) => {
@@ -212,8 +217,8 @@ export const PostProcessingDemo: React.FC = () => {
                 </div>
               </div>
               <div className="bg-background rounded p-3 border border-border">
-                <div className="text-xs text-muted-foreground">Verdict</div>
-                <div className="text-lg font-bold text-success">Secure (&lt; 11%)</div>
+                <div className="text-xs text-muted-foreground">Interpretation</div>
+                <div className="text-sm font-medium text-foreground">Sample statistic only</div>
               </div>
             </div>
             <div className="bg-background rounded p-3 border border-border">
@@ -227,7 +232,7 @@ export const PostProcessingDemo: React.FC = () => {
               onClick={stepHandlers[1]}
               className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
-              <Play size={14} /> Continue to Error Correction
+              <Play size={14} /> Continue to Parity Illustration
             </Button>
           </div>
         )}
@@ -236,12 +241,12 @@ export const PostProcessingDemo: React.FC = () => {
         {currentStep === 2 && (
           <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
             <h3 className="text-sm font-bold text-foreground">
-              Error Correction (Simplified Cascade)
+              Parity Illustration — No Error Correction
             </h3>
             <p className="text-xs text-muted-foreground">
-              In real QKD, Cascade or LDPC codes correct bit errors introduced by natural channel
-              noise (simulated here at 5%). This demo shows parity-check blocks — each block of 4
-              bits is checked for odd parity, and errors are located via binary search.
+              This sample counts odd-parity blocks of four bits and copies the input unchanged. It
+              does not compare Alice’s and Bob’s bit strings, locate erroneous bits or run a
+              reconciliation protocol. Odd parity alone does not identify a bit error.
             </p>
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs text-muted-foreground mb-2">Parity Check Blocks</div>
@@ -269,7 +274,7 @@ export const PostProcessingDemo: React.FC = () => {
               onClick={stepHandlers[2]}
               className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
-              <Play size={14} /> Correct Errors ({errorsCorrected || 0} blocks flagged)
+              <Play size={14} /> Count Parities and Copy Sample
             </Button>
           </div>
         )}
@@ -278,18 +283,18 @@ export const PostProcessingDemo: React.FC = () => {
         {currentStep === 3 && (
           <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
             <h3 className="text-sm font-bold text-foreground">
-              Privacy Amplification (Universal Hashing)
+              SHA-256 Output Illustration — No Privacy-Amplification Proof
             </h3>
             <p className="text-xs text-muted-foreground">
-              Privacy amplification uses a universal hash function (such as Toeplitz matrix
-              multiplication) to compress the corrected key, mathematically removing any partial
-              information Eve may have gained. For this browser demo, we simulate this compression
-              step using SHA-256.
+              The previous step counted {errorsCorrected} odd-parity blocks and copied the sample
+              unchanged. This step computes a 256-bit SHA-256 digest, even when the input is
+              shorter. It does not calculate a secret-key length or establish that an eavesdropper’s
+              information has been removed.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="bg-background rounded p-3 border border-border">
                 <div className="text-xs text-muted-foreground mb-1">
-                  Input: Corrected Key ({correctedKey.length} bits)
+                  Input: Unchanged Sample ({correctedKey.length} bits)
                 </div>
                 <code className="text-xs font-mono text-foreground break-all">
                   {bitsToHex(correctedKey)}
@@ -298,7 +303,7 @@ export const PostProcessingDemo: React.FC = () => {
               <div className="bg-background rounded p-3 border border-border flex items-center justify-center">
                 <div className="text-center">
                   <Hash size={24} className="text-primary mx-auto mb-1" />
-                  <div className="text-xs text-muted-foreground">Compression (SHA-256 sim)</div>
+                  <div className="text-xs text-muted-foreground">Digest Calculation (SHA-256)</div>
                 </div>
               </div>
             </div>
@@ -308,7 +313,7 @@ export const PostProcessingDemo: React.FC = () => {
               disabled={isProcessing}
               className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
             >
-              <Play size={14} /> {isProcessing ? 'Hashing...' : 'Run Privacy Amplification'}
+              <Play size={14} /> {isProcessing ? 'Hashing...' : 'Calculate Sample Digest'}
             </Button>
           </div>
         )}
@@ -316,19 +321,22 @@ export const PostProcessingDemo: React.FC = () => {
         {/* Step 5: Hybrid Key Derivation */}
         {currentStep === 4 && (
           <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
-            <h3 className="text-sm font-bold text-foreground">Hybrid Key Derivation (QKD + PQC)</h3>
+            <h3 className="text-sm font-bold text-foreground">
+              Sample HKDF Derivation with Placeholder Input
+            </h3>
             <p className="text-xs text-muted-foreground">
-              Combine the QKD-derived key with a PQC KEM shared secret (simulated ML-KEM-768) via
-              HKDF. The resulting hybrid key is secure even if one source is compromised.
+              Combine the sample digest with 32 random placeholder bytes using HKDF. No ML-KEM key
+              pair, encapsulation or decapsulation is executed, and this output does not establish a
+              secure hybrid construction.
             </p>
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs text-muted-foreground mb-1">
-                Amplified QKD Key (SHA-256 output, 256 bits)
+                Sample Digest (SHA-256 output, 256 bits)
               </div>
               <code className="text-xs font-mono text-primary break-all">{amplifiedKeyHex}</code>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <span>QKD Secret</span> + <span>ML-KEM-768 Secret</span> &rarr;{' '}
+              <span>Sample Digest</span> + <span>Random Placeholder</span> &rarr;{' '}
               <span className="text-primary font-bold">HKDF</span>
             </div>
             <Button
@@ -337,7 +345,7 @@ export const PostProcessingDemo: React.FC = () => {
               disabled={isProcessing}
               className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
             >
-              <Key size={14} /> {isProcessing ? 'Deriving...' : 'Derive Hybrid Key'}
+              <Key size={14} /> {isProcessing ? 'Deriving...' : 'Derive Sample HKDF Output'}
             </Button>
           </div>
         )}
@@ -346,12 +354,12 @@ export const PostProcessingDemo: React.FC = () => {
         {currentStep === 5 && (
           <div className="bg-success/5 rounded-lg p-4 border border-success/20 space-y-3">
             <h3 className="text-sm font-bold text-success flex items-center gap-2">
-              <Shield size={16} /> Hybrid Key Derived Successfully
+              <Shield size={16} /> Sample HKDF Output Calculated
             </h3>
             <div className="grid grid-cols-1 gap-3">
               <div className="bg-background rounded p-3 border border-border">
                 <div className="text-xs text-muted-foreground mb-1">
-                  QKD-Derived Key (post-amplification)
+                  Sample Digest (not a verified QKD secret)
                 </div>
                 <code className="text-xs font-mono text-foreground break-all">
                   {amplifiedKeyHex}
@@ -359,14 +367,24 @@ export const PostProcessingDemo: React.FC = () => {
               </div>
               <div className="bg-background rounded p-3 border border-border">
                 <div className="text-xs text-muted-foreground mb-1">
-                  Hybrid Key (HKDF output, 256 bits)
+                  Sample HKDF Output (256 bits)
                 </div>
                 <code className="text-xs font-mono text-success break-all">{hybridKeyHex}</code>
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              This key combines information-theoretic security from QKD with computational security
-              from ML-KEM — defense in depth against both present and future threats.
+              The output demonstrates the data flow only. When evaluating production QKD tools, look
+              for reconciliation and key confirmation, leakage accounting and a documented
+              privacy-amplification security analysis. See{' '}
+              <a
+                href="https://www.etsi.org/deliver/etsi_gs/qkd/001_099/005/01.01.01_60/gs_qkd005v010101p.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary underline"
+              >
+                ETSI GS QKD 005, sections 4.7.3–4.7.5
+              </a>
+              . A sample hash or HKDF result is not evidence that those capabilities worked.
             </p>
           </div>
         )}

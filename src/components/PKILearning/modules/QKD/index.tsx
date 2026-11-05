@@ -21,7 +21,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'post-processing',
     title: 'Part 2: Post-Processing',
-    description: 'Error correction, privacy amplification, and hybrid key derivation.',
+    description: 'Parity counting, sample SHA-256 output and HKDF with placeholder input.',
     icon: Hash,
   },
   {

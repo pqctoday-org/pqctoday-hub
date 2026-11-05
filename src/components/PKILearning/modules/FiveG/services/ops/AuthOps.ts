@@ -215,7 +215,9 @@ Step 4: Result
   > KAUSF: ${kausfHex}
 
 [SUCCESS] KAUSF derived.
-[INFO] Authentication Vector Ready: RAND, AUTN, XRES*, KAUSF`
+[INFO] Selected sample outputs available: RAND, AUTN and KAUSF.
+[NOT EXECUTED] XRES* derivation, subscriber response verification and replay/freshness checks.
+[SCOPE] This sequence does not establish a complete 5G-AKA exchange or mutual authentication.`
 }
 
 export async function runMilenage(ctx: FiveGService) {
