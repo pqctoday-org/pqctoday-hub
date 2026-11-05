@@ -69,7 +69,7 @@ function getNistLevelAssessment(keyWidth: number): {
       label: 'NIST Category 1',
       color: 'text-status-warning',
       description:
-        'AES-128-class strength (NIST Category 1). Grover reduces the effective margin to ~64 bits — prefer AES-256 for long-lived data.',
+        'AES-128-class strength (NIST Category 1). In the idealized Grover model the margin is ~64 bits — prefer AES-256 for long-lived data.',
     }
   return {
     label: 'Insufficient',
@@ -85,7 +85,7 @@ function getRecommendation(keyWidth: number): string {
   if (keyWidth >= 192)
     return 'AES-192 is NIST Category 3. Grover reduces its effective security to ~96 bits, which remains a reasonable margin. Consider upgrading to AES-256 for future-proofing.'
   if (keyWidth >= 128)
-    return 'AES-128 is NIST Category 1, but Grover reduces its effective security to ~64 bits. Upgrade to AES-256 memory encryption is recommended when next-generation CPUs become available.'
+    return 'AES-128 is NIST Category 1; in the idealized Grover model its effective security is ~64 bits, which is not a demonstrated break. Prefer 256-bit memory-encryption keys where your processor generation enumerates and supports them.'
   return 'Key width below 128 bits is critically insufficient even against classical attacks. Immediate upgrade required.'
 }
 

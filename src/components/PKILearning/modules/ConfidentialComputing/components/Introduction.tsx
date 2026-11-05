@@ -509,16 +509,23 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
                 <div>
                   <h3 className="text-sm font-bold text-foreground mb-1">
-                    Grover&apos;s Algorithm Halves AES-128 Security
+                    Grover&apos;s Algorithm and AES-128 Memory Keys
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Intel TME-MK and AMD SME/SEV use <strong>AES-XTS-128</strong> for memory
-                    encryption. AES-128 sits in NIST security Category 1, and Grover&apos;s
-                    algorithm reduces its effective key strength from 128-bit to{' '}
-                    <strong>64-bit</strong>. While real-time brute-forcing of memory encryption keys
-                    remains impractical even with a CRQC, this weakened margin erodes the security
-                    guarantee. Next-generation CPUs are expected to upgrade to AES-XTS-256 (NIST
-                    Category 5; 128-bit effective post-quantum security).
+                    Intel TME-MK and AMD SME/SEV encrypt memory with AES in XTS-family modes. Key
+                    size and mode depend on the processor generation and the selected configuration:
+                    Intel&apos;s multi-key specification describes 128- or 256-bit keys, and
+                    AMD&apos;s SEV-SNP firmware interface documents AES-128 XEX and AES-256 XTS.
+                    This lesson uses a <strong>128-bit key</strong> as its sample. A 128-bit key
+                    sits in NIST security Category 1, and in the idealized Grover model its
+                    key-search cost falls from about 2<sup>128</sup> to about{' '}
+                    <strong>
+                      2<sup>64</sup>
+                    </strong>{' '}
+                    iterations. That is a model margin, not a demonstrated break: Grover&apos;s
+                    circuit depth and poor parallelism make real-time brute-forcing of memory
+                    encryption keys impractical even with a CRQC. Check which key size your
+                    processor generation enumerates and which mode is selected.
                   </p>
                 </div>
               </div>

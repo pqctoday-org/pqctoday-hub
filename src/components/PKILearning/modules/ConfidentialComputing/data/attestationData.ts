@@ -284,14 +284,15 @@ export const MEMORY_ENCRYPTION_ENGINES: MemoryEncryptionEngine[] = [
     id: 'intel-tme-mk',
     name: 'Intel TME-MK',
     vendor: 'Intel',
-    algorithm: 'AES-XTS-128',
+    algorithm:
+      'AES-XTS-128 (sample configuration; the Intel specification also describes 256-bit keys)',
     keyWidth: 128,
     granularity: 'Cache line (64 bytes)',
     integrityProtection: true,
     integrityMechanism: 'Integrity trees with TD partitioning (TDX) or MEE integrity tree (SGX)',
     quantumImpact: 'grover-halved',
     quantumNotes:
-      "AES-128 (NIST Category 1) effective security drops to 64-bit under Grover's algorithm — a much thinner margin than AES-256 (Category 5). Upgrade path: AES-XTS-256 in future CPU generations.",
+      "A 128-bit key (NIST Category 1) has about 2^64 idealized Grover iterations against 2^128 classically, a thinner model margin than AES-256 (Category 5). That is not a demonstrated break. Intel's multi-key specification already describes AES-XTS with 128- or 256-bit keys by availability and selection, so check what your processor generation enumerates.",
     sealingKeyDerivation:
       'Platform root key (fused) → CPU SVN → Enclave identity (MRENCLAVE/MRSIGNER) → Sealing key via EGETKEY',
     protectionScope: [
@@ -304,7 +305,7 @@ export const MEMORY_ENCRYPTION_ENGINES: MemoryEncryptionEngine[] = [
     id: 'amd-sme-sev',
     name: 'AMD SME/SEV Encryption Engine',
     vendor: 'AMD',
-    algorithm: 'AES-XTS-128',
+    algorithm: 'AES-128 XEX (sample configuration; AMD also documents AES-256 XTS)',
     keyWidth: 128,
     granularity: 'Page (4 KB)',
     integrityProtection: true,
@@ -312,7 +313,7 @@ export const MEMORY_ENCRYPTION_ENGINES: MemoryEncryptionEngine[] = [
       'Reverse Map Table (RMP) enforces page ownership; prevents remapping attacks',
     quantumImpact: 'grover-halved',
     quantumNotes:
-      'AES-128 effective security drops to 64-bit under Grover. AMD has not announced AES-256 memory encryption for future EPYC generations. RMP integrity is hash-based (quantum-safe for collision resistance).',
+      "A 128-bit key has about 2^64 idealized Grover iterations against 2^128 classically; this is a model margin, not a demonstrated break. AMD's SEV-SNP firmware interface documents AES-128 XEX and AES-256 XTS modes, so check which your EPYC generation uses. RMP integrity is a page-ownership check, not a quantum-vulnerable signature.",
     sealingKeyDerivation:
       'AMD Secure Processor root key (fused) → TCB version → VM encryption key (VEK) derived per-VM via ASP key derivation',
     protectionScope: ['Full VM memory', 'Register state (VMSA)', 'Interrupt descriptor table'],
@@ -474,13 +475,14 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     id: 'memory-encryption-grover',
     name: 'Memory Encryption Grover Halving',
     component: 'Memory Encryption',
-    currentCrypto: 'AES-XTS-128 (Intel TME-MK, AMD SME/SEV)',
+    currentCrypto:
+      "AES memory encryption, 128-bit key in this lesson's sample (Intel TME-MK, AMD SME/SEV; key size and mode vary by generation)",
     vulnerability:
-      "Grover's algorithm reduces AES-128 (NIST Category 1) effective security to 64-bit. While brute-forcing AES-128 memory encryption keys in real-time is unlikely even with a CRQC (requires sustained high qubit count), it leaves a much thinner margin than AES-256 (Category 5).",
+      'In the idealized Grover model a 128-bit key (NIST Category 1) needs about 2^64 iterations. Brute-forcing memory encryption keys in real time is unlikely even with a CRQC (it requires sustained high qubit count), but a 128-bit key leaves a thinner model margin than AES-256 (Category 5).',
     severity: 'medium',
     migrationPriority: 3,
     pqcSolution:
-      'AES-XTS-256 memory encryption in next-gen CPUs. Alternatively, software-layer encryption with AES-256-GCM inside the enclave for sensitive data.',
+      "Use 256-bit memory-encryption keys where the processor generation enumerates and supports them (Intel's specification already describes them). Alternatively, software-layer encryption with AES-256-GCM inside the enclave for sensitive data.",
     vendorTimeline: 'Intel: TBD, AMD: TBD',
     hndlExposure: false,
     migrationEffort: 5,
