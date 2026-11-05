@@ -324,12 +324,15 @@ export function SshSimulationPanel() {
         <p>
           {realSelected ? (
             <>
-              <strong className="text-foreground">Runs the real OpenSSH binary.</strong> This combo
-              drives the genuine OpenSSH 10.x handshake compiled to WASM — both the host-key and
-              user-key signatures are produced by <span className="font-mono">C_Sign</span> inside
-              the embedded softhsmv3 token. The private keys never leave the HSM. (Client and server
-              run in one WASM process over an in-memory transport; all crypto and wire formats are
-              real.)
+              <strong className="text-foreground">
+                Runs the bundled, modified OpenSSH binary.
+              </strong>{' '}
+              This Hub build adds experimental post-quantum signature names and softhsmv3
+              integration to OpenSSH 10.x; it is not an unmodified stock build. This combo drives
+              its handshake compiled to WASM — both the host-key and user-key signatures are
+              produced by <span className="font-mono">C_Sign</span> inside the embedded softhsmv3
+              token. The private keys never leave the HSM. (Client and server run in one WASM
+              process over an in-memory transport; all crypto and wire formats are real.)
             </>
           ) : (
             <>
