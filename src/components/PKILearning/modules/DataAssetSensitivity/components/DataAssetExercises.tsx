@@ -36,7 +36,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       id: 'healthcare-hndl',
       title: '1. Healthcare HNDL Classification Challenge',
       description:
-        'A regional hospital system stores electronic health records (ePHI) under HIPAA. The regulation requires 6-year minimum retention from last patient encounter — but records are routinely kept 30+ years in practice. Using the Asset Inventory Builder, create an asset entry for this ePHI database: Asset Type = Data Store, Sensitivity = High, Retention = 25+ years, Industry = Healthcare. Then check the HNDL Risk Year column.',
+        'A regional hospital system stores electronic health records (ePHI) under HIPAA. HIPAA’s 6-year rule covers required compliance documentation, not patient records; state law and other requirements set medical-record retention. For this sample, assume a 30-year retention period set by the hospital’s own legal and business requirements. Using the Asset Inventory Builder, create an asset entry for this ePHI database: Asset Type = Data Store, Sensitivity = High, Retention = 25+ years, Industry = Healthcare. Then check the HNDL Risk Year column.',
       badge: 'HNDL',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
