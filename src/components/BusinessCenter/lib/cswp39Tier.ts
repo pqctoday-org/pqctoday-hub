@@ -217,7 +217,8 @@ export function implementTier(metrics: BusinessMetrics): StepTierResult {
   const roadmap = hasArtifact(metrics, 'migration-roadmap')
   const treatment = hasArtifact(metrics, 'risk-treatment-plan')
   const playbook = hasArtifact(metrics, 'deployment-playbook')
-  const migrationStarted = metrics.migrationStatus !== 'Not assessed'
+  // Planning, not-started and unknown answers do not establish implementation.
+  const migrationStarted = metrics.migrationStatus === 'started'
   const completedPhases = metrics.completedPhases.length
 
   const mitigationDocumented = artifactContainsSection(
