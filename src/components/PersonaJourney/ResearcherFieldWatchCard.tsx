@@ -148,14 +148,15 @@ export function ResearcherFieldWatchCard() {
               actually counts. It read "Corpus deprecated" until 2026-08-02,
               which promised a corpus-wide total the value never was. */}
           <div className="flex items-baseline justify-between gap-3 text-sm">
-            <dt className="text-muted-foreground">Hub catalogue entries marked deprecated</dt>
+            <dt className="text-muted-foreground">
+              Category matches for Hub catalogue rows marked deprecated
+            </dt>
             <dd
               className="text-right font-semibold text-foreground"
               data-testid="corpus-deprecated"
             >
-              {summary.totalDeprecatedInWindow > 0
-                ? `-${summary.totalDeprecatedInWindow} docs`
-                : '0 docs'}
+              {summary.totalDeprecatedInWindow} category{' '}
+              {summary.totalDeprecatedInWindow === 1 ? 'match' : 'matches'}
             </dd>
           </div>
         </dl>
@@ -167,8 +168,15 @@ export function ResearcherFieldWatchCard() {
 
       {hasCountedSelection && (
         <p className="mt-1 text-base font-bold text-foreground" data-testid="field-watch-punchline">
-          Recorded Hub catalogue entries marked deprecated in your selected fields:{' '}
+          Recorded category matches for Hub catalogue rows marked deprecated:{' '}
           {summary.totalDeprecatedInWindow}.
+        </p>
+      )}
+
+      {hasCountedSelection && (
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          A catalogue row can count in more than one selected algorithm family or research topic.
+          This total counts those matches, not unique documents.
         </p>
       )}
 

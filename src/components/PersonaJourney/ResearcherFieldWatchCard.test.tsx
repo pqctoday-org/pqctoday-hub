@@ -30,11 +30,7 @@ const FIXTURE_ROWS: FieldWatchRow[] = [
   },
 ]
 
-// A second fixture set with TWO deprecations in the same followed field, used
-// only by the plural-punchline test below (the single-deprecation fixture
-// above can only ever exercise the singular "1 document ... has been
-// retracted" copy, never the plural "N documents ... have been retracted"
-// branch).
+// Two deprecated rows in one followed field exercise the plural category-match label.
 const MULTI_DEPRECATED_ROWS: FieldWatchRow[] = [
   {
     referenceId: 'FIX-DEPRECATED-1',
@@ -163,9 +159,9 @@ describe('ResearcherFieldWatchCard', () => {
     resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-1 docs')
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('1 category match')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded Hub catalogue entries marked deprecated in your selected fields: 1.'
+      'Recorded category matches for Hub catalogue rows marked deprecated: 1.'
     )
     expect(screen.getByTestId('field-watch-punchline')).not.toHaveTextContent(
       'Nothing in the fields you follow was retracted.'
@@ -177,9 +173,9 @@ describe('ResearcherFieldWatchCard', () => {
     resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-2 docs')
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('2 category matches')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded Hub catalogue entries marked deprecated in your selected fields: 2.'
+      'Recorded category matches for Hub catalogue rows marked deprecated: 2.'
     )
   })
 
@@ -187,7 +183,7 @@ describe('ResearcherFieldWatchCard', () => {
     resetStore({ followedFields: ['qkd-quantum'] }) // no fixture row maps here
     render(<ResearcherFieldWatchCard />)
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded Hub catalogue entries marked deprecated in your selected fields: 0.'
+      'Recorded category matches for Hub catalogue rows marked deprecated: 0.'
     )
   })
 

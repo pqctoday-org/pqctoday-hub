@@ -7,6 +7,7 @@ import { PERSONAS } from '@/data/learningPersonas'
 import { essentialsTrackChips } from '@/data/trackChips'
 import {
   PERSONA_JOURNEY_BOARD_VARIANTS,
+  RESEARCHER_FIELD_WATCH_VARIANT_ID,
   resolveRoleBoardVariant,
   type PersonaJourneyBoard,
 } from '@/data/personaConfig'
@@ -80,10 +81,10 @@ export interface MobileHomeBoardProps {
  * production load, for every role.
  *
  * Deferred, not silently dropped: the researcher "Trace every claim" variant
- * has a live ResearcherFieldWatchCard override on desktop (reports real
- * corpus changes); this screen shows that variant's authored static side
- * card instead. A narrow, documented gap — one of forty-two boards (thirty-six
- * before the 2026-09-07 Executive/GRC split added GRC's own six).
+ * has a computed ResearcherFieldWatchCard override on desktop. This phone
+ * summary does not calculate that card's followed-category matches; the
+ * researcher/provenance variant states this limitation rather than printing
+ * its authored zero-result punchline as a finding.
  *
  * Role line region/industry (handoff: "Executive / GRC · EU · Finance &
  * Banking"): reads selectedRegion/selectedIndustries live from
@@ -117,6 +118,8 @@ export function MobileHomeBoard({
   const variants = PERSONA_JOURNEY_BOARD_VARIANTS[persona]
   const active = resolveRoleBoardVariant(persona, variantId)
   const board = active.board
+  const fieldWatchNotAssessed =
+    persona === 'researcher' && active.id === RESEARCHER_FIELD_WATCH_VARIANT_ID
   const relatedLinks = boardRelatedLinks(active)
   const tone = TONE_CLASS[board.sideCard.tone]
   const regionLabel = selectedRegion ? REGION_LABELS[selectedRegion] : null
@@ -256,42 +259,61 @@ export function MobileHomeBoard({
           {PROVENANCE_LABEL[board.sideCard.provenance]}
         </span>
         <h2 className={cn('text-[14px] font-bold', tone.label)}>{board.sideCard.title}</h2>
-        <dl className="flex flex-col gap-1.5">
-          {board.sideCard.rows.map((row) => (
-            <div
-              key={row.label}
-              className="flex items-baseline justify-between gap-3 border-t border-border/50 pt-1.5 text-[11.5px] first:border-t-0 first:pt-0"
+        {fieldWatchNotAssessed ? (
+          <>
+            <p
+              className="text-[12.5px] font-bold text-foreground"
+              data-testid="mobile-field-watch-scope"
             >
-              <dt className="text-muted-foreground">{row.label}</dt>
-              <dd className="text-right font-semibold text-foreground">
-                {row.value}
-                {row.source && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => navigate(row.source!)}
-                    aria-label={`Source for ${row.label}`}
-                    className="ml-1 inline-flex h-auto p-0 align-middle text-primary"
-                  >
-                    <BookOpen size={11} aria-hidden="true" />
-                  </Button>
-                )}
-              </dd>
-            </div>
-          ))}
-        </dl>
-        <p
-          className={cn(
-            'mt-1 border-t border-border/50 pt-2.5 text-[12.5px] font-bold',
-            tone.punchline
-          )}
-        >
-          {board.sideCard.punchline}
-        </p>
-        {board.sideCard.footnote && (
-          <p className="text-[10.5px] leading-relaxed text-muted-foreground">
-            {board.sideCard.footnote}
-          </p>
+              Field-watch counts are not assessed in this phone summary.
+            </p>
+            <p className="text-[10.5px] leading-relaxed text-muted-foreground">
+              This card has not calculated matches for your selected algorithm families or research
+              topics. On a computer, use the field-watch card to inspect the available Hub catalogue
+              data. Catalogue status is not evidence of a scientific retraction; check publication
+              and publisher notices for withdrawal or correction information.
+            </p>
+          </>
+        ) : (
+          <>
+            <dl className="flex flex-col gap-1.5">
+              {board.sideCard.rows.map((row) => (
+                <div
+                  key={row.label}
+                  className="flex items-baseline justify-between gap-3 border-t border-border/50 pt-1.5 text-[11.5px] first:border-t-0 first:pt-0"
+                >
+                  <dt className="text-muted-foreground">{row.label}</dt>
+                  <dd className="text-right font-semibold text-foreground">
+                    {row.value}
+                    {row.source && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => navigate(row.source!)}
+                        aria-label={`Source for ${row.label}`}
+                        className="ml-1 inline-flex h-auto p-0 align-middle text-primary"
+                      >
+                        <BookOpen size={11} aria-hidden="true" />
+                      </Button>
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p
+              className={cn(
+                'mt-1 border-t border-border/50 pt-2.5 text-[12.5px] font-bold',
+                tone.punchline
+              )}
+            >
+              {board.sideCard.punchline}
+            </p>
+            {board.sideCard.footnote && (
+              <p className="text-[10.5px] leading-relaxed text-muted-foreground">
+                {board.sideCard.footnote}
+              </p>
+            )}
+          </>
         )}
       </section>
     </>
