@@ -344,8 +344,8 @@ export const PatientPrivacyMapper: React.FC = () => {
       <p className="text-sm text-muted-foreground">
         The displayed lifetimes are sample planning assumptions, not universal retention or
         confidentiality requirements. In particular, the genomic example uses 100 years to explore a
-        long confidentiality lifetime; establish the applicable requirements and planning assumptions
-        for each use case before using your own tools.
+        long confidentiality lifetime; establish the applicable requirements and planning
+        assumptions for each use case before using your own tools.
       </p>
 
       {/* ── Data Category Selector ──────────────────────────────────────────── */}

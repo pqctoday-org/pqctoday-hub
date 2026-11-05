@@ -103,7 +103,9 @@ function StepRow({
     <li className="rounded-lg border border-border bg-background/40 p-3">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[11px] font-mono text-muted-foreground max-lg:[overflow-wrap:anywhere]">{step.op}</p>
+          <p className="text-[11px] font-mono text-muted-foreground max-lg:[overflow-wrap:anywhere]">
+            {step.op}
+          </p>
           <p className="text-[13px] font-medium text-foreground">
             {index + 1}. {step.label}
           </p>
