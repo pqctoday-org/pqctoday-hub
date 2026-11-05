@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import Papa from 'papaparse'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { KPITrackerTemplate, buildKpiTrackerMarkdown } from './KPITrackerTemplate'
 import { buildDimensions } from '@/data/kpiCatalog'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -456,5 +456,62 @@ describe('KPITrackerTemplate', () => {
       click.mockRestore()
       vi.unstubAllGlobals()
     }
+  })
+  it('saves unavailable placeholders as unrecorded and retains that unknown origin on reload', () => {
+    mockPersona = 'executive'
+    const view = render(<KPITrackerTemplate />)
+    const manual = screen.getByTestId('kpi-dim-systems-inventoried')
+    fireEvent.click(within(manual).getByRole('button', { name: 'Use displayed sample value' }))
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const saved = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    const inputs = saved.inputs as {
+      userScores: Record<string, number>
+      valueOrigins: Record<string, string>
+    }
+    expect(inputs.userScores['risk-posture']).toBe(0)
+    expect(inputs.valueOrigins['risk-posture']).toBe('unrecorded')
+    expect(inputs.valueOrigins['vendor-readiness']).toBe('unrecorded')
+    expect(inputs.valueOrigins['fips-validated']).toBe('unrecorded')
+    view.unmount()
+    mockStoreState.artifacts.executiveDocuments = [saved]
+    render(<KPITrackerTemplate />)
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const reopened = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    expect((reopened.inputs as typeof inputs).valueOrigins['risk-posture']).toBe('unrecorded')
+    expect((reopened.inputs as typeof inputs).userScores['risk-posture']).toBe(0)
+    expect(screen.getByTestId('kpi-dim-risk-posture')).toHaveAttribute('data-disabled', 'true')
+  })
+
+  it('saves a genuine current calculation as a snapshot while inputs are unavailable, then recomputes live', () => {
+    mockPersona = 'executive'
+    mockData = { ...baseData(60), isAssessmentComplete: true }
+    const view = render(<KPITrackerTemplate />)
+    fireEvent.click(
+      within(screen.getByTestId('kpi-dim-systems-inventoried')).getByRole('button', {
+        name: 'Use displayed sample value',
+      })
+    )
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const first = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    type Inputs = { userScores: Record<string, number>; valueOrigins: Record<string, string> }
+    expect((first.inputs as Inputs).userScores['risk-posture']).toBe(40)
+    expect((first.inputs as Inputs).valueOrigins['risk-posture']).toBe('calculated-current')
+    mockData = { ...baseData(null), isAssessmentComplete: false }
+    view.rerender(<KPITrackerTemplate />)
+    expect(screen.getByTestId('kpi-dim-risk-posture')).toHaveAttribute('data-disabled', 'true')
+    fireEvent.click(screen.getByRole('button', { name: /^Saved(?: · edited since)?$/ }))
+    const unavailable = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    expect((unavailable.inputs as Inputs).userScores['risk-posture']).toBe(40)
+    expect((unavailable.inputs as Inputs).valueOrigins['risk-posture']).toBe('calculated-snapshot')
+    expect((unavailable.inputs as Inputs).valueOrigins['systems-inventoried']).toBe(
+      'learner-entered'
+    )
+    mockData = { ...baseData(50), isAssessmentComplete: true }
+    view.rerender(<KPITrackerTemplate />)
+    expect(screen.getByRole('slider', { name: 'Risk Posture score' })).toHaveValue('50')
+    fireEvent.click(screen.getByRole('button', { name: /^Saved(?: · edited since)?$/ }))
+    const current = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    expect((current.inputs as Inputs).userScores['risk-posture']).toBe(50)
+    expect((current.inputs as Inputs).valueOrigins['risk-posture']).toBe('calculated-current')
   })
 })

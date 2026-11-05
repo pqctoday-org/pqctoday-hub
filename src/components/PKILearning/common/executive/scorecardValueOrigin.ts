@@ -9,11 +9,11 @@ export type KpiValueOrigin =
   | 'unrecorded'
 
 export function currentKpiValueOrigin(
-  dimension: { valueSource?: KpiValueSource },
+  dimension: { valueSource?: KpiValueSource; disabled?: boolean },
   touched: boolean,
   restoredWithoutOrigin = false
 ): KpiValueOrigin {
-  if (restoredWithoutOrigin) return 'unrecorded'
+  if (restoredWithoutOrigin || dimension.disabled) return 'unrecorded'
   if (dimension.valueSource === 'manual') return touched ? 'learner-entered' : 'not-entered'
   if (dimension.valueSource === 'calculated')
     return touched ? 'learner-override' : 'calculated-current'

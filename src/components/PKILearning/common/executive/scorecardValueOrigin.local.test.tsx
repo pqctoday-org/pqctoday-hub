@@ -32,6 +32,7 @@ describe('KPI value labels describe the operation actually performed', () => {
     expect(currentKpiValueOrigin(dimensions[1], false)).toBe('calculated-current')
     expect(currentKpiValueOrigin(dimensions[1], true)).toBe('learner-override')
     expect(currentKpiValueOrigin(dimensions[0], true, true)).toBe('unrecorded')
+    expect(currentKpiValueOrigin({ ...dimensions[1], disabled: true }, false)).toBe('unrecorded')
     expect(kpiValueOriginLabel('calculated-current', true)).toBe('Required inputs unavailable')
   })
 
@@ -226,6 +227,11 @@ describe('KPI value labels describe the operation actually performed', () => {
     expect(
       screen.queryByRole('button', { name: /Use current calculation/ })
     ).not.toBeInTheDocument()
+    expect(origins.mock.lastCall![0].calc).toBe('calculated-snapshot')
+    expect(origins.mock.lastCall![0].manual).toBe('learner-entered')
+    view.rerender(<DataDrivenScorecard {...props} dimensions={changed} />)
+    expect(screen.getByRole('slider', { name: 'Sample calculation score' })).toHaveValue('55')
+    expect(origins.mock.lastCall![0].calc).toBe('calculated-current')
   })
   it('downloads CSV with active scores separated from unknown snapshots and unassessed raw values', async () => {
     let exported: Blob | undefined

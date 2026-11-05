@@ -150,7 +150,12 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     restoredKpiValueOrigins(initialScores, initialValueOrigins)
   )
   const valueOrigin = useCallback(
-    (d: ScorecardDimension) => valueOrigins[d.id] ?? currentKpiValueOrigin(d, false),
+    (d: ScorecardDimension) => {
+      const origin = valueOrigins[d.id] ?? currentKpiValueOrigin(d, false)
+      // Keep the genuine last calculation, but unavailable current inputs cannot
+      // support a claim that it is still a current calculation.
+      return d.disabled && origin === 'calculated-current' ? 'calculated-snapshot' : origin
+    },
     [valueOrigins]
   )
   useEffect(() => {
@@ -192,9 +197,19 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   // Sync auto-scored dimensions from props when they change (e.g., data loads after mount)
   useEffect(() => {
     const next = { ...scores }
+    const nextOrigins = { ...valueOrigins }
+    let originsChanged = false
     let changed = false
     for (const d of dimensions) {
       if (d.disabled) continue
+      if (
+        d.valueSource === 'calculated' &&
+        valueOrigins[d.id] === undefined &&
+        loadedSavedScores?.[d.id] === undefined
+      ) {
+        nextOrigins[d.id] = 'calculated-current'
+        originsChanged = true
+      }
       if (
         d.autoScore !== undefined &&
         !userOverriddenRef.current.has(d.id) &&
@@ -206,11 +221,12 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         changed = true
       }
     }
+    if (originsChanged) setValueOrigins(nextOrigins)
     if (changed) {
       setScores(next)
       onScoreChange?.(next)
     }
-  }, [dimensions, onScoreChange, scores, valueOrigin])
+  }, [dimensions, onScoreChange, scores, valueOrigin, valueOrigins, loadedSavedScores])
 
   const handleScoreChange = useCallback(
     (dimId: string, value: number) => {
