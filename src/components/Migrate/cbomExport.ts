@@ -49,10 +49,13 @@ export function extractPqcAlgorithms(
 }
 
 /** A filename's date is file metadata, not a review or validation date. */
-function sourceFile(metadata: { filename: string; lastUpdate: Date } | null) {
-  return metadata
-    ? { filename: metadata.filename, fileDate: metadata.lastUpdate.toISOString() }
-    : null
+function sourceFile(metadata: { filename?: string; lastUpdate?: Date } | null) {
+  if (!metadata?.filename) return null
+  const date = metadata.lastUpdate
+  return {
+    filename: metadata.filename,
+    fileDate: date instanceof Date && Number.isFinite(date.getTime()) ? date.toISOString() : null,
+  }
 }
 
 function lookupBasis<T>(map: Map<string, T>, item: SoftwareItem) {

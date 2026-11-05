@@ -7,10 +7,11 @@ const sources = vi.hoisted(() => ({
   cpe: new Map<string, CpeXref>(),
   purl: new Map<string, PurlXref>(),
   certs: new Map<string, CertificationXref[]>(),
+  cpeMetadata: { filename: 'sample-cpe.csv', lastUpdate: undefined as Date | undefined },
 }))
 vi.mock('@/data/cpeXrefData', () => ({
   cpeByProduct: sources.cpe,
-  cpeXrefMetadata: { filename: 'sample-cpe.csv', lastUpdate: new Date('2026-01-02Z') },
+  cpeXrefMetadata: sources.cpeMetadata,
 }))
 vi.mock('@/data/purlXrefData', () => ({
   purlByProduct: sources.purl,
@@ -74,11 +75,25 @@ const property = (input: ReturnType<typeof softwareItemToCbomInput>, name: strin
   JSON.parse(input.properties!.find((p) => p.name === `pqctoday:${name}`)!.value)
 
 beforeEach(() => {
+  sources.cpeMetadata.filename = 'sample-cpe.csv'
+  sources.cpeMetadata.lastUpdate = new Date('2026-01-02Z')
   sources.cpe.clear()
   sources.purl.clear()
   sources.certs.clear()
 })
 describe('catalogue CBOM source association preservation', () => {
+  it('preserves unknown source dates without crashing or inventing provenance', () => {
+    sources.cpeMetadata.lastUpdate = undefined
+    expect(property(softwareItemToCbomInput(item), 'cpeAssociation').sourceFile).toEqual({
+      filename: 'sample-cpe.csv',
+      fileDate: null,
+    })
+    sources.cpeMetadata.lastUpdate = new Date('invalid')
+    expect(property(softwareItemToCbomInput(item), 'cpeAssociation').sourceFile.fileDate).toBeNull()
+    sources.cpeMetadata.filename = ''
+    expect(property(softwareItemToCbomInput(item), 'cpeAssociation').sourceFile).toBeNull()
+  })
+
   it('retains partial/blank qualifiers and per-certificate scope without source mutation', () => {
     const records = Object.freeze([
       cert({}),
