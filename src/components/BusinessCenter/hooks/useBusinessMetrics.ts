@@ -852,7 +852,9 @@ export function useBusinessMetrics(): BusinessMetrics {
       assessmentStore.assessmentStatus === 'not-started' &&
       trackedFrameworks.length === 0 &&
       resolvedProducts.length === 0 &&
+      allDocs.length === 0 &&
       !execLearningStarted &&
+      !grcLearningStarted &&
       !governanceStarted
 
     return {
