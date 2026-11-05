@@ -18,7 +18,7 @@
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
     "public/data/validation/coverage-matrix.json": "63be82227b370449973e178d4c0c6da139ddb162c4c8215a2a8a87f9ec844e8a",
     "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
-    "src/data/validation/native-conformance.generated.json": "9989ddbe108ebed6ba7a0b4766c92795f3d754f292ea3bd597d5d7ee0ab59425",
+    "src/data/validation/native-conformance.generated.json": "dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700",
     "src/data/validation/open-gaps.json": "623b3aea5f6aa821c7adfb3e4a5ef0e6dde98acb6a1756d2f15762fd368f68b7",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a",
     "src/data/validation/run-results/wasm-node-katRunner.json": "f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb",
@@ -391,8 +391,8 @@
     "source": "src/data/validation/native-conformance.generated.json",
     "executedByHub": false,
     "note": "Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser.",
-    "hsmPinnedCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
-    "hsmPinnedCommitDate": "2026-10-22",
+    "hsmPinnedCommit": "73f8b74a863cd722a734d53ddcf1467c3861159c",
+    "hsmPinnedCommitDate": "2026-11-04",
     "hsmPinnedCommitPublished": true,
     "suites": [
       {
@@ -404,7 +404,7 @@
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
           "The report does not record the build target (platform/ABI) of the engine under test.",
-          "The report was produced at an engine commit 1 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 22 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s C++ WASM bundle was built from, so these results are not results for the engine running in this browser."
         ],
         "report": {
@@ -423,7 +423,7 @@
           "reportDate": "2026-10-22 15:34:25 UTC",
           "target": "not recorded",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 1,
+          "commitsBehindPinnedHsmMain": 22,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
           "wasmBundleHsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
@@ -440,34 +440,34 @@
         "reportFiles": ["rust/RUST_P11_V32_CONFORMANCE_REPORT.md"],
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
-          "The report was produced at an engine commit 1 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 3 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
           "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
           "The harness has no skip status: an unsupported case can only pass or fail."
         ],
         "report": {
           "counts": {
-            "pass": 1098,
+            "pass": 1102,
             "fail": 0,
             "skip": null,
             "xfail": null,
-            "total": 1098
+            "total": 1102
           },
           "groups": 52,
           "caseIdentity": "derived-from-transcript",
-          "engineCommit": "7dee23c2ea403d7b8e8811af1375e1776f8c07de",
-          "engineCommitDate": "2026-10-22",
-          "reportCommit": "f81cfac9b52171daa5fa35045f18af4092350e4d",
-          "reportDate": "2026-10-22T15:29:16.287Z",
+          "engineCommit": "0ed070be2151ae4d5b254f4c22583a3917e2b424",
+          "engineCommitDate": "2026-11-03",
+          "reportCommit": "4febe35d97211c7812c2da47225ef5798a285637",
+          "reportDate": "2026-11-04T05:29:53.364Z",
           "target": "wasm32 build with `--features acvp`",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 1,
+          "commitsBehindPinnedHsmMain": 3,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
           "wasmBundleHsmCommit": "5443f045961e32ced16fdecc48b2700a4a1bc015",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 17,
-          "commitsFromWasmBundleToEngine": 0
+          "commitsFromEngineToWasmBundle": 0,
+          "commitsFromWasmBundleToEngine": 7
         }
       },
       {
