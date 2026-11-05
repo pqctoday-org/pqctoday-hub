@@ -1,0 +1,137 @@
+{
+  "provenance": "Observed existing bundled OpenSSL 3.6.3 verifier outcomes, fixed 2026-11-04T12:00Z sample time, cert.pem/ca.pem/crl.crl inputs. Compatibility diagnostics, not primitive KATs.",
+  "rows": [
+    {
+      "name": "current",
+      "cert": "good",
+      "result": {
+        "stdout": "cert.pem: OK\n",
+        "stderr": "",
+        "error": "",
+        "files": []
+      }
+    },
+    {
+      "name": "current",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 23 at 0 depth lookup: certificate revoked\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "expired",
+      "cert": "good",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 10\nerror 12 at 0 depth lookup: CRL has expired\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "expired",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 12 at 0 depth lookup: CRL has expired\nO=Fictional Teaching Lab, CN=Sample Service 11\nerror 23 at 0 depth lookup: certificate revoked\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "future",
+      "cert": "good",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 10\nerror 11 at 0 depth lookup: CRL is not yet valid\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "future",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 11 at 0 depth lookup: CRL is not yet valid\nO=Fictional Teaching Lab, CN=Sample Service 11\nerror 23 at 0 depth lookup: certificate revoked\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "same-name-wrong-key",
+      "cert": "good",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 10\nerror 3 at 0 depth lookup: unable to get certificate CRL\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "same-name-wrong-key",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 3 at 0 depth lookup: unable to get certificate CRL\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "wrong-issuer",
+      "cert": "good",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 10\nerror 3 at 0 depth lookup: unable to get certificate CRL\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "wrong-issuer",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 3 at 0 depth lookup: unable to get certificate CRL\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "wrong-scope",
+      "cert": "good",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 10\nerror 44 at 0 depth lookup: different CRL scope\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "wrong-scope",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 44 at 0 depth lookup: different CRL scope\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "delta",
+      "cert": "good",
+      "result": {
+        "stdout": "cert.pem: OK\n",
+        "stderr": "",
+        "error": "",
+        "files": []
+      }
+    },
+    {
+      "name": "delta",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 23 at 0 depth lookup: certificate revoked\nerror cert.pem: verification failed\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "bad-signature",
+      "cert": "good",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 10\nerror 8 at 0 depth lookup: CRL signature failure\nerror cert.pem: verification failed\n01000000:error:030000EA:digital envelope routines:EVP_DigestVerifyFinal:provider signature failure:crypto/evp/m_sigver.c:707:ECDSA digest_verify_final:\n01000000:error:06880006:asn1 encoding routines:ASN1_item_verify_ctx:EVP lib:crypto/asn1/a_verify.c:219:\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "bad-signature",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 2: O=Fictional Teaching Lab, CN=Sample Service 11\nerror 8 at 0 depth lookup: CRL signature failure\nerror cert.pem: verification failed\n01000000:error:030000EA:digital envelope routines:EVP_DigestVerifyFinal:provider signature failure:crypto/evp/m_sigver.c:707:ECDSA digest_verify_final:\n01000000:error:06880006:asn1 encoding routines:ASN1_item_verify_ctx:EVP lib:crypto/asn1/a_verify.c:219:\nOpenSSL Execution Error: Error: OpenSSL exited with status 2"
+      }
+    },
+    {
+      "name": "malformed",
+      "cert": "good",
+      "result": {
+        "thrown": "OpenSSL exited with status 1: Could not find other CRLs from crl.crl\n01000000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default\nOpenSSL Execution Error: Error: OpenSSL exited with status 1"
+      }
+    },
+    {
+      "name": "malformed",
+      "cert": "revoked",
+      "result": {
+        "thrown": "OpenSSL exited with status 1: Could not find other CRLs from crl.crl\n01000000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default\nOpenSSL Execution Error: Error: OpenSSL exited with status 1"
+      }
+    }
+  ]
+}
