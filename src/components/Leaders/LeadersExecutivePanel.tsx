@@ -80,8 +80,9 @@ export function LeadersExecutivePanel({ leaders }: { leaders: Leader[] }) {
           <h2 className="text-sm font-semibold text-foreground">Why each group matters to you</h2>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          Counts use each profile's primary category. Category filters can also include patent and
-          project cross-references, so their result counts can differ.
+          Counts use each profile's primary category across the full dataset. The directory can show
+          curated profiles only and apply other filters; category filters can also include patent
+          and project cross-references. Its result counts can therefore differ.
         </p>
         <ul className="space-y-2">
           {LEADER_CATEGORIES.map((cat) => (
