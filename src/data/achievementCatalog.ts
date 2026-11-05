@@ -467,7 +467,7 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'business-strategist',
     title: 'Strategist',
-    description: 'Used 5+ different Command Center tools',
+    description: 'Opened 5 distinct Command Center tool pages',
     category: 'business',
     rarity: 'uncommon',
     icon: 'BarChart3',
@@ -475,8 +475,8 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   },
   {
     id: 'business-complete',
-    title: 'Full Toolkit',
-    description: 'Used all 14 Command Center tools',
+    title: 'Viewed 14 Tools',
+    description: 'Opened 14 distinct Command Center tool pages',
     category: 'business',
     rarity: 'rare',
     icon: 'Building2',
