@@ -563,13 +563,21 @@ export function renderHybridTransitionMarkdown(
   const isHybridTarget =
     rec.targetState === 'hybrid-traditional+PQC' || rec.targetState === 'hybrid-PQC+PQC'
   if (isHybridTarget) {
-    if (!userSummary) {
-      md += `Transition pathway for ${inputs.protocol}: ${inputs.currentAlgorithm} -> ${rec.kemPair} / ${rec.sigPair} (target ${rec.hybridTargetDate}) -> Pure PQC (target ${rec.sunsetDate}).\n\n`
+    // These are this function's internally generated Q4 labels, not parsed user dates.
+    const hybridYear = Number(rec.hybridTargetDate.slice('Q4 '.length))
+    const sunsetYear = Number(rec.sunsetDate.slice('Q4 '.length))
+    if (hybridYear > sunsetYear) {
+      md += `Schedule gap: the suggested hybrid milestone ${rec.hybridTargetDate} is later than the selected sunset ${rec.sunsetDate}. The generated pathway and phases are omitted because their dates would run backwards. The selected endpoint has not been moved. Review sequencing, durations and constraints with your own planning tools before using a delivery plan.\n\n`
+    } else {
+      if (!userSummary) {
+        md += `Transition pathway for ${inputs.protocol}: ${inputs.currentAlgorithm} -> ${rec.kemPair} / ${rec.sigPair} (target ${rec.hybridTargetDate}) -> Pure PQC (target ${rec.sunsetDate}).\n\n`
+      }
+      md += `Illustrative hybrid sequence — planning prompts, not an approved delivery plan.\n\n`
+      md += `Coarse quarter labels do not establish delivery feasibility or enough time for rollout and validation; equal milestone and sunset labels leave those durations unassessed.\n\n`
+      md += `- Phase 1 (now -> ${rec.hybridTargetDate}): deploy hybrid pairing in pilot, then production\n`
+      md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare pure-PQC config\n`
+      md += `- Phase 3 (${rec.sunsetDate} and after): sunset classical half, enable pure PQC\n\n`
     }
-    md += `Illustrative hybrid sequence — planning prompts, not an approved delivery plan.\n\n`
-    md += `- Phase 1 (now -> ${rec.hybridTargetDate}): deploy hybrid pairing in pilot, then production\n`
-    md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare pure-PQC config\n`
-    md += `- Phase 3 (${rec.sunsetDate} and after): sunset classical half, enable pure PQC\n\n`
   } else {
     md += `This worksheet has not generated a target-specific delivery sequence for the ${rec.targetState} recommendation. The generic hybrid-to-pure sequence is omitted. Define sequencing, feasibility checks and validation using your production planning and testing tools before treating this draft as a delivery plan.\n\n`
   }
