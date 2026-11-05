@@ -422,7 +422,8 @@ describe('KPITrackerTemplate', () => {
         reader.onerror = () => reject(reader.error)
         reader.readAsText(exported!)
       })
-      const parsed = Papa.parse<string[]>(text.slice(text.indexOf('KPI,')), {
+      const parsed = Papa.parse<string[]>(text, {
+        delimiter: ',',
         skipEmptyLines: true,
       })
       expect(parsed.errors).toEqual([])

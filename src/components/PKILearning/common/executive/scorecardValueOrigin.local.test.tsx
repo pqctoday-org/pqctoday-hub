@@ -277,7 +277,8 @@ describe('KPI value labels describe the operation actually performed', () => {
         reader.onerror = () => reject(reader.error)
         reader.readAsText(exported!)
       })
-      const parsed = Papa.parse<string[]>(text.slice(text.indexOf('Dimension ID,')), {
+      const parsed = Papa.parse<string[]>(text, {
+        delimiter: ',',
         skipEmptyLines: true,
       })
       expect(parsed.errors).toEqual([])

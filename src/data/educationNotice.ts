@@ -77,10 +77,28 @@ export const withEducationNoticeMarkdown = (markdown: string): string =>
  * comment syntax, so the notice is a single quoted first field on its own row,
  * followed by a blank line — every spreadsheet shows it as the first cell.
  */
-export const withEducationNoticeCsv = (csv: string): string =>
-  csv.includes(EDUCATION_NOTICE)
-    ? csv
-    : `"Notice — ${EDUCATION_NOTICE.replace(/"/g, '""')}"\n\n${csv}`
+function csvRecordDelimiter(csv: string): '\r\n' | '\n' | '\r' {
+  let quoted = false
+  for (let i = 0; i < csv.length; i++) {
+    if (csv[i] === '"') {
+      if (quoted && csv[i + 1] === '"') i++
+      else quoted = !quoted
+    } else if (!quoted && csv[i] === '\r') {
+      return csv[i + 1] === '\n' ? '\r\n' : '\r'
+    } else if (!quoted && csv[i] === '\n') {
+      return '\n'
+    }
+  }
+  // RFC 4180 default for empty or single-record payloads. Embedded field
+  // line breaks do not establish the payload's record delimiter.
+  return '\r\n'
+}
+
+export const withEducationNoticeCsv = (csv: string): string => {
+  if (csv.includes(EDUCATION_NOTICE)) return csv
+  const delimiter = csvRecordDelimiter(csv)
+  return `"Notice — ${EDUCATION_NOTICE.replace(/"/g, '""')}"${delimiter}${delimiter}${csv}`
+}
 
 /**
  * Prefix a plain-text / PEM / config export payload with the status notice as
