@@ -489,13 +489,13 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'hybrid-transition-planner',
     goodAnswer:
-      'A stated exit from hybrid, with a trigger. Hybrid without an end date is permanent, and permanent hybrid is twice the maintenance forever.',
+      'A stated target, its assumptions and review triggers. For a hybrid example, explain when to review continued use or a later transition. Pure-PQC and gateway choices need their own delivery plans; this worksheet does not generate those sequences.',
     workedExample:
       'Leave the defaults — TLS 1.3 on X25519, key exchange only, data lifetime 5 - 15 years, deadline 2030: the preview recommends Hybrid (Traditional + PQC) with X25519MLKEM768, a hybrid target of Q4 2028 and a pure-PQC sunset of Q4 2030.',
     name: 'Hybrid Transition Planner',
     audience: 'architect',
     description:
-      'Architect-facing decision tree from CSWP.39 §3.2.4 - pick traditional+PQC, PQC+PQC, pure PQC, or crypto-gateway pathway with concrete algorithm pairings',
+      'Explore a Hub worksheet with CSWP.39 references and illustrative traditional-plus-PQC, PQC-plus-PQC, pure-PQC or crypto-gateway suggestions',
     category: 'Migration Planning',
     icon: GitBranch,
     keywords: [

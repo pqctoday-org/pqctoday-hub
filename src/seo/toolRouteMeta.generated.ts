@@ -234,7 +234,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/hybrid-transition-planner',
     title: 'Hybrid Transition Planner — PQC Business Tool | PQC Today',
     description:
-      'Architect-facing decision tree from CSWP.39 §3.2.4 - pick traditional+PQC, PQC+PQC, pure PQC, or crypto-gateway pathway with concrete algorithm pairings',
+      'Explore a Hub worksheet with CSWP.39 references and illustrative traditional-plus-PQC, PQC-plus-PQC, pure-PQC or crypto-gateway suggestions',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
