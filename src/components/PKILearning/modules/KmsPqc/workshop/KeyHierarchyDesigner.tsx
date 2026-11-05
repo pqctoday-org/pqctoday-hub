@@ -30,11 +30,51 @@ const KEY_SIZES: Record<string, Record<AlgorithmMode, { pubKey: number; privKey:
   },
 }
 
-/** Typical key count per level in an enterprise */
+/** Existing illustrative logical-profile counts; not enterprise norms or physical object counts. */
 const KEY_COUNTS: Record<string, number> = {
   'root-kek': 2,
   'zone-kek': 10,
   dek: 500,
+}
+
+/** Sample payload accounting, not a serialized-object or wrapping profile. */
+// eslint-disable-next-line react-refresh/only-export-components -- Pure sample accounting exposed for independent arithmetic checks.
+export function hierarchyMaterial(
+  modes: Partial<Record<string, AlgorithmMode>>,
+  counts: Record<string, number> = KEY_COUNTS
+) {
+  let publicBytes = 0
+  let privateBytes = 0
+  let secretBytes = 0
+  let classicalPublicBytes = 0
+  let classicalPrivateBytes = 0
+  let logicalRecords = 0
+  for (const id of Object.keys(KEY_COUNTS)) {
+    const count = counts[id]
+    if (!Number.isFinite(count) || count < 0 || !Number.isInteger(count)) return null
+    if (count === 0) continue
+    const mode = modes[id]
+    if (!mode || !KEY_SIZES[id]?.[mode]) return null
+    logicalRecords += count
+    if (id === 'dek') {
+      // The two legacy DEK fields describe the SAME AES secret, not a keypair.
+      secretBytes += count * KEY_SIZES[id][mode].pubKey
+    } else {
+      publicBytes += count * KEY_SIZES[id][mode].pubKey
+      privateBytes += count * KEY_SIZES[id][mode].privKey
+      classicalPublicBytes += count * KEY_SIZES[id].classical.pubKey
+      classicalPrivateBytes += count * KEY_SIZES[id].classical.privKey
+    }
+  }
+  return {
+    publicBytes,
+    privateBytes,
+    secretBytes,
+    logicalRecords,
+    totalMaterialBytes: publicBytes + privateBytes + secretBytes,
+    classicalMaterialBytes: classicalPublicBytes + classicalPrivateBytes + secretBytes,
+    publicMultiplier: classicalPublicBytes > 0 ? publicBytes / classicalPublicBytes : null,
+  }
 }
 
 const MODE_LABELS: Record<AlgorithmMode, { label: string; color: string }> = {
@@ -66,48 +106,24 @@ export const KeyHierarchyDesigner: React.FC = () => {
     setLevels((prev) => ({ ...prev, [levelId]: { mode } }))
   }
 
-  // Calculate totals
-  const analysis = useMemo(() => {
-    let totalPubKey = 0
-    let totalPrivKey = 0
-    let classicalTotalPubKey = 0
-    let classicalTotalPrivKey = 0
+  const analysis = useMemo(
+    () =>
+      hierarchyMaterial(
+        Object.fromEntries(Object.entries(levels).map(([id, config]) => [id, config.mode]))
+      ),
+    [levels]
+  )
 
-    for (const level of KEY_HIERARCHY_LEVELS) {
-      const count = KEY_COUNTS[level.id]
-      const sizes = KEY_SIZES[level.id]
-      const mode = levels[level.id].mode
-
-      totalPubKey += sizes[mode].pubKey * count
-      totalPrivKey += sizes[mode].privKey * count
-      classicalTotalPubKey += sizes.classical.pubKey * count
-      classicalTotalPrivKey += sizes.classical.privKey * count
-    }
-
-    const pubKeyMultiplier = classicalTotalPubKey > 0 ? totalPubKey / classicalTotalPubKey : 1
-    const totalKeyMaterial = totalPubKey + totalPrivKey
-    const classicalTotal = classicalTotalPubKey + classicalTotalPrivKey
-
-    // Rough bandwidth per rotation: re-distribute all public keys
-    const rotationBandwidth = totalPubKey
-
-    return {
-      totalPubKey,
-      totalPrivKey,
-      totalKeyMaterial,
-      classicalTotal,
-      pubKeyMultiplier,
-      rotationBandwidth,
-    }
-  }, [levels])
+  if (!analysis)
+    return <p>Sample material totals: Not assessed — missing count or profile inputs.</p>
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Key Hierarchy Designer</h3>
         <p className="text-sm text-muted-foreground">
-          Design a 3-level PQC key hierarchy. Select the algorithm mode for each level and observe
-          how key material sizes, storage requirements, and rotation bandwidth change.
+          Compare raw key-material inputs for three sample levels. AES DEKs are symmetric secrets,
+          counted once. These subtotals are not complete encoded storage or rotation traffic.
         </p>
       </div>
 
@@ -151,7 +167,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                           {modeInfo.label}
                         </span>
                         <span className="text-[10px] text-muted-foreground">
-                          &times;{count} keys
+                          &times;{count} logical profiles
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground mb-2">{level.description}</p>
@@ -159,15 +175,24 @@ export const KeyHierarchyDesigner: React.FC = () => {
                       {/* Algorithm details */}
                       <div className="text-xs text-foreground/70">
                         <span className="font-bold">Algorithm: </span>
-                        {config.mode === 'classical'
-                          ? level.classicalAlgorithm
-                          : config.mode === 'hybrid'
-                            ? level.hybridAlgorithm
-                            : level.pqcAlgorithm}
+                        {level.id === 'dek'
+                          ? 'AES-256 secret (unchanged in every mode)'
+                          : level.id === 'root-kek'
+                            ? config.mode === 'classical'
+                              ? 'RSA-4096'
+                              : config.mode === 'hybrid'
+                                ? 'RSA-4096 + ML-KEM-1024 constituent material'
+                                : 'ML-KEM-1024 constituent material'
+                            : config.mode === 'classical'
+                              ? 'RSA-3072'
+                              : config.mode === 'hybrid'
+                                ? 'P-256 + ML-KEM-768 constituent material'
+                                : 'ML-KEM-768 constituent material'}
                       </div>
                       <div className="flex gap-4 text-[10px] text-muted-foreground mt-1">
                         <span>
-                          Public: {sizes[config.mode].pubKey.toLocaleString()} B &times; {count} ={' '}
+                          {level.id === 'dek' ? 'Symmetric secret' : 'Public material'}:{' '}
+                          {sizes[config.mode].pubKey.toLocaleString()} B &times; {count} ={' '}
                           {(sizes[config.mode].pubKey * count).toLocaleString()} B
                         </span>
                         <span>Rotation: {level.rotationInterval}</span>
@@ -207,34 +232,45 @@ export const KeyHierarchyDesigner: React.FC = () => {
       <div className="glass-panel p-6">
         <div className="flex items-center gap-2 mb-4">
           <HardDrive size={16} className="text-primary" />
-          <h4 className="text-sm font-bold text-foreground">Storage Requirements</h4>
+          <h4 className="text-sm font-bold text-foreground">Sample material subtotals</h4>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div className="text-lg font-bold text-foreground">
-              {formatBytes(analysis.totalPubKey)}
+              {formatBytes(analysis.publicBytes)}
             </div>
-            <div className="text-[10px] text-muted-foreground">Total Public Keys</div>
+            <div className="text-[10px] text-muted-foreground">Asymmetric public material</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div className="text-lg font-bold text-foreground">
-              {formatBytes(analysis.totalPrivKey)}
+              {formatBytes(analysis.privateBytes)}
             </div>
-            <div className="text-[10px] text-muted-foreground">Total Private Keys</div>
+            <div className="text-[10px] text-muted-foreground">Asymmetric private material</div>
           </div>
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
             <div className="text-lg font-bold text-primary">
-              {formatBytes(analysis.totalKeyMaterial)}
+              {formatBytes(analysis.totalMaterialBytes)}
             </div>
-            <div className="text-[10px] text-muted-foreground">Total Key Material</div>
+            <div className="text-[10px] text-muted-foreground">All sample material (AES once)</div>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-center">
             <div className="text-lg font-bold text-warning">
-              {analysis.pubKeyMultiplier.toFixed(1)}x
+              {analysis.publicMultiplier === null
+                ? 'Not assessed'
+                : `${analysis.publicMultiplier.toFixed(1)}x`}
             </div>
-            <div className="text-[10px] text-muted-foreground">vs Classical (pub keys)</div>
+            <div className="text-[10px] text-muted-foreground">
+              Public-material ratio vs chosen traditional profiles
+            </div>
           </div>
         </div>
+
+        <p className="text-xs text-muted-foreground mb-3">
+          Symmetric-secret material: <strong>{analysis.secretBytes.toLocaleString()} B</strong>.
+          Public/private values are existing sample inputs; RSA/P-256 encodings and hybrid
+          containers are unspecified. Zone comparison changes RSA-3072 to P-256 plus ML-KEM, so the
+          ratio is not solely a PQC-size effect.
+        </p>
 
         {/* Per-level breakdown */}
         <div className="space-y-2">
@@ -256,10 +292,17 @@ export const KeyHierarchyDesigner: React.FC = () => {
                     <span className="text-xs font-bold text-foreground">
                       {level.name.split('(')[0].trim()}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">({count} keys)</span>
+                    <span className="text-[10px] text-muted-foreground">
+                      ({count} logical profiles)
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-[10px]">
-                    <span className="text-destructive">Classical: {formatBytes(classicalPub)}</span>
+                    <span className="text-destructive">
+                      {level.id === 'dek'
+                        ? 'AES secret (unchanged)'
+                        : 'Traditional public material'}
+                      : {formatBytes(classicalPub)}
+                    </span>
                     <span className="text-muted-foreground">&rarr;</span>
                     <span className={MODE_LABELS[config.mode].color}>
                       {MODE_LABELS[config.mode].label}: {formatBytes(selectedPub)}
@@ -283,44 +326,27 @@ export const KeyHierarchyDesigner: React.FC = () => {
         </div>
       </div>
 
-      {/* Bandwidth estimate */}
-      <div className="glass-panel p-6">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="glass-panel p-6 space-y-3">
+        <div className="flex items-center gap-2">
           <Network size={16} className="text-primary" />
-          <h4 className="text-sm font-bold text-foreground">Rotation Bandwidth Estimate</h4>
+          <h4 className="text-sm font-bold">Object and transfer scope</h4>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-lg font-bold text-foreground">
-              {formatBytes(analysis.rotationBandwidth)}
-            </div>
-            <div className="text-[10px] text-muted-foreground">Per Rotation Cycle (pub keys)</div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-lg font-bold text-foreground">
-              {(
-                KEY_COUNTS['root-kek'] +
-                KEY_COUNTS['zone-kek'] +
-                KEY_COUNTS['dek']
-              ).toLocaleString()}
-            </div>
-            <div className="text-[10px] text-muted-foreground">Total Keys</div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-lg font-bold text-foreground">
-              {formatBytes(
-                Math.round(
-                  analysis.rotationBandwidth /
-                    (KEY_COUNTS['root-kek'] + KEY_COUNTS['zone-kek'] + KEY_COUNTS['dek'])
-                )
-              )}
-            </div>
-            <div className="text-[10px] text-muted-foreground">Avg per Key</div>
-          </div>
-        </div>
-        <p className="text-[10px] text-muted-foreground mt-3">
-          Bandwidth estimate assumes all public keys are re-distributed during rotation. Actual
-          bandwidth is higher when including certificate chain signatures.
+        <p className="text-xs">
+          {analysis.logicalRecords} logical sample records: 12 asymmetric-pair profiles and 500 AES
+          DEKs. Hybrid profiles can contain multiple constituent keys; this is not a physical object
+          count.
+        </p>
+        <p className="text-xs">
+          <strong>Physical object / certificate count: Not assessed.</strong>
+        </p>
+        <p className="text-xs">
+          <strong>Protected transfer / rewrap bytes: Not assessed.</strong> A public-material
+          subtotal or KEM ciphertext is not a complete protected DEK-distribution message.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          With production tools, inspect actual encodings, wrapped-secret objects, recipient/copy
+          counts, certificate/signature metadata and rewrap behavior before estimating stored bytes
+          or transfer traffic. No wrapping profile or operation is executed here.
         </p>
       </div>
 
@@ -328,7 +354,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
       <div className="glass-panel p-6">
         <div className="flex items-center gap-2 mb-3">
           <Info size={14} className="text-primary" />
-          <h4 className="text-sm font-bold text-foreground">Algorithm Reference</h4>
+          <h4 className="text-sm font-bold text-foreground">Constituent key-material reference</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -377,6 +403,6 @@ export const KeyHierarchyDesigner: React.FC = () => {
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`
 }
