@@ -811,10 +811,10 @@ function renderRuleDraft(draft: PolicyRuleDraft): string {
 }
 
 function renderKpiDriftRulesMd(rules: KpiDriftRule[]): string {
-  let md = '\n---\n\n## KPI Drift Rules (CSWP.39 §5.4 -> §5.1 feedback loop)\n\n'
+  let md = '\n---\n\n## Hub sample KPI drift rules\n\n'
   if (rules.length === 0) {
     md +=
-      '_No drift rules defined. Per §5.4 - KPI exceptions should feed back into policy-as-code updates._\n\n'
+      '_No sample drift rules defined. These illustrative rows can link a chosen threshold to a policy-review action; they do not enforce policy._\n\n'
   } else {
     md += '| KPI | Threshold | Policy action when threshold breached |\n|---|---|---|\n'
     for (const r of rules) {
@@ -829,7 +829,7 @@ function renderKpiDriftRulesMd(rules: KpiDriftRule[]): string {
   }
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39 §5.2 - Crypto Security Policy Enforcement, and §5.4 - Measuring Migration Progress. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+    '*Related reading: NIST CSWP 39-upd1 §5.2 - Crypto Security Policy Enforcement, and §6.5 - Maturity Assessment for Crypto Agility. These Hub sample rules are not a NIST-prescribed feedback loop or maturity assessment. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   // N5: sanitise non-ASCII punctuation in the exported markdown string only.
   md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
@@ -1079,17 +1079,16 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
         wideTable
       />
 
-      {/* CSWP.39 §5.4 → §5.1 KPI drift feedback loop */}
+      {/* Hub sample drift rules; related source sections do not prescribe this mechanism. */}
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
-            <h3 className="text-base font-semibold text-foreground">
-              KPI Drift Rules (CSWP.39 §5.4 → §5.1 feedback loop)
-            </h3>
+            <h3 className="text-base font-semibold text-foreground">Hub sample KPI drift rules</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Define which KPI exceptions should trigger updates to this policy template — turning
-              observed drift into policy-as-code feedback. Educational only — these rows export with
-              the policy.
+              Choose illustrative KPI thresholds and policy-review actions. These Hub sample rows
+              export with the policy but do not execute or enforce it. Related NIST CSWP.39 §5.2
+              policy and §6.5 maturity discussions do not prescribe this feedback mechanism or a
+              scoring threshold.
             </p>
           </div>
           {!preservingLegacyRules && (

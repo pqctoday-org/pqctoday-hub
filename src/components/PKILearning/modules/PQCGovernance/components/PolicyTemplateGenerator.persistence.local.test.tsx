@@ -186,7 +186,7 @@ describe('Policy rule draft fidelity', () => {
       kpiDriftRules: [],
       originalPolicySnapshot: { data: original },
     })
-    expect(current().data).toContain('_No drift rules defined.')
+    expect(current().data).toContain('_No sample drift rules defined.')
     expect(current().data).toContain(original)
     expect(current().inputs).toMatchObject({ policyDraftsByType: { 'future-policy': future } })
   })
