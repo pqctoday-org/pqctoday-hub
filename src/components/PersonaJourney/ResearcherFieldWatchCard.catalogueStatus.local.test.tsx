@@ -35,7 +35,9 @@ describe('catalogue deprecation is not scientific retraction evidence', () => {
       },
     ]
     render(<ResearcherFieldWatchCard />)
-    expect(screen.getByText('Category matches for Hub catalogue rows marked deprecated')).toBeInTheDocument()
+    expect(
+      screen.getByText('Category matches for Hub catalogue rows marked deprecated')
+    ).toBeInTheDocument()
     expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('1 category match')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
       'Recorded category matches for Hub catalogue rows marked deprecated: 1.'
