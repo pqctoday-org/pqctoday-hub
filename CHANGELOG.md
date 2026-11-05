@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.197.0] - 2026-11-04
+
+329 more Library documents now have a Document Analysis summary, so their authors, status, main topic and standards bodies show in the Library and come up in search.
+
+### Added
+
+- **329 more Library entries have a Document Analysis summary** [view:/library] [persona:researcher] [persona:grc] [persona:architect] [persona:developer]: each entry now shows who wrote the document, its status, what it is mainly about and which standards bodies and frameworks it names. The same text feeds the site's search. Entries that sit behind a paywall still have none.
+
+### Fixed
+
+- **Seven standards entries now open their saved catalogue page** [view:/library] [persona:researcher] [persona:grc]: the Chinese GM/T 0108-2021 standard, two IEEE standards and four ARINC standards named no saved page; now they link one.
+- **The Go 1.24, 1.26 and 1.27 release notes were saved again** [view:/library] [persona:developer]: the earlier copies held no readable text.
+
 ## [4.196.0] - 2026-11-04
 
 Two Algorithms page rows now cite the current HPKE post-quantum draft, and the revision history links 49 earlier changes to the releases that shipped them.
