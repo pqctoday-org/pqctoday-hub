@@ -980,11 +980,13 @@ function cryptoVulnerabilityWatch(sector: DemoSector): DemoDoc {
   return {
     title: 'Crypto Vulnerability Watch',
     data: md(
-      `# Crypto Vulnerability Watch — ${ORG[sector]}`,
+      `# Crypto Vulnerability Watch — illustrative example for ${ORG[sector]}`,
+      '',
+      '**Authored learning example — not a live vulnerability scan or current NVD snapshot.** Fixed entries and counts illustrate a report layout; they do not establish the vulnerabilities present in a selected estate.',
       '',
       '## openssl',
       '**CPE:** cpe:2.3:a:openssl:openssl:3.1.0:*',
-      '**CVEs:** 3 in scope (top 3 of 8 in NVD)',
+      '**Illustrative CVE counts:** 3 in scope (top 3 of 8 in the example)',
       '',
       '**CVE-2023-5363** · HIGH · CVSS 7.5 · 2023-10-24',
       'Incorrect cipher key and IV length processing. Upgrade to 3.1.4.',
@@ -994,9 +996,9 @@ function cryptoVulnerabilityWatch(sector: DemoSector): DemoDoc {
       '',
       '## libpqcrypto 0.0.20211031',
       '**CPE:** cpe:2.3:a:libpqcrypto:libpqcrypto:0.0.20211031:*',
-      '**CVEs:** 0 critical — no CVEs in NVD at this version',
+      '**Illustrative critical-CVE count:** 0 in this example; this does not establish the absence of vulnerabilities or NVD records for this version',
       '',
-      `*NVD snapshot: current | Filtered to cryptographic libraries in ${ORG[sector]} estate.*`
+      '*For a current assessment, use your vulnerability-management tool with the exact product versions, inventory scope, source timestamps and applicability checks. Consult [NVD](https://nvd.nist.gov/vuln/search); a missing record does not establish that a component is safe.*'
     ),
   }
 }

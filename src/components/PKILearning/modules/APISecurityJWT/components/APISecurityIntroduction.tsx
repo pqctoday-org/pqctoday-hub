@@ -583,8 +583,8 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             A post-quantum signature protects a token only if the verifier checks the right things.
-            Most real-world JWT breaches come from validation mistakes, and PQC fixes none of them.
-            The rules below come from{' '}
+            Validation mistakes are an important JWT failure class; changing the signature algorithm
+            does not replace correct token validation. The rules below come from{' '}
             <a
               href="https://www.rfc-editor.org/rfc/rfc8725.html"
               target="_blank"
