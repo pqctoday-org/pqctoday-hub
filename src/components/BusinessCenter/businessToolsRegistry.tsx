@@ -281,7 +281,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Dates you did not choose, next to dates you did. The gap between the two is the plan.',
     workedExample:
-      "Select your jurisdictions and add a milestone such as 'Complete crypto inventory' with a year: the Gap Analysis says, per framework, whether the plan meets the deadline or how many years remain.",
+      "Select jurisdictions and add a fictional milestone such as 'Complete crypto inventory' with a year. Compare the dates; obligation satisfaction stays not assessed because these milestones do not record requirement-specific scope or supporting checks.",
     name: 'Compliance Timeline Builder',
     description: 'Plot framework milestones, deadlines, and dependencies on a single timeline',
     category: 'Compliance & Audit',
@@ -334,7 +334,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     workedExample:
-      'Choose the Executive lens, enter Systems Inventoried from your estate and select the products your organization uses in Migrate. Vendor Readiness then derives only from that scope; the combined score stays unavailable until at least 70% of the weight of the KPIs that can be scored has evidence; KPIs marked data unavailable are left out of that total.',
+      'Choose the Executive lens and enter a fictional Systems Inventoried value. Catalogue calculations use selected example products; other values are learner inputs. The combined sample score requires 70% scored-value coverage, not verified evidence. Saved values without usable provenance stay unassessed until explicitly used or recalculated; missing inputs must be supplied.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',
@@ -457,7 +457,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     workedExample:
-      'Choose the Executive lens and a reporting baseline. Select your products in Migrate for catalogue-based vendor measures; enter reviewed progress, compliance closure and pace values yourself. Missing values stay unscored, and the combined score is withheld until at least 70% of the weight of the KPIs that can be scored has values; KPIs marked data unavailable are left out of that total.',
+      'Choose the Executive lens and a fictional reporting baseline. Inspect catalogue-derived sample measures and enter hypothetical progress values. Missing or unconfirmed saved values stay unassessed; the combined score requires 70% scored-value coverage. Sample notes and learner-selected review labels do not verify evidence or establish readiness.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',
@@ -796,12 +796,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'infra-modernization-planner',
     goodAnswer:
-      'PQC work rides existing refresh cycles wherever it can. Hardware you were replacing anyway is the cheapest migration you will ever do.',
+      'Explore how proposed cryptographic changes align with refresh plans. Costs, compatibility and readiness need separate assessment.',
     workedExample:
-      'List your HSMs with firmware and PQC capability (for example 4× Luna 7 PQC-capable, 2× nCipher without), the protocols you tested and the per-handshake growth: the export consolidates the PKI plan, the HSM/KMS upgrade schedule, the middlebox report and the capacity plan.',
+      'Enter a fictional HSM/KMS inventory and select protocol planning topics. The export records sample inputs; it does not run handshakes, measure capacity or establish infrastructure readiness.',
     name: 'Infrastructure Modernization Planner',
     description:
-      'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into one infrastructure-readiness artifact',
+      'Sample infrastructure planning worksheet for PKI, HSM/KMS, network compatibility topics and capacity assumptions; not a readiness assessment',
     category: 'Migration Planning',
     icon: Server,
     keywords: [
@@ -915,12 +915,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'migration-verification',
     goodAnswer:
-      'Evidence that the old algorithm is gone, not just that the new one works. Both running is the normal state, and it is not done.',
+      'Define the checks a workload needs, distinguish recorded references from performed tests, and plan trust retirement and continuing review.',
     workedExample:
-      "Fill all five evidence fields for 'Public web TLS (edge)' but three for 'Internal mTLS service mesh', and leave the RSA-4096 root CA key unconfirmed: the badges read Verified and Unverified 3/5, the key row flags TNFL, the header says 1/2.",
+      "Fill five sample reference fields in one fictional record and three in another. The first says 'Evidence recorded — review required'; the second remains incomplete. These counts record filled fields, not successful technical verification.",
     name: 'Migration Verification & Closure',
     description:
-      "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",
+      'Explore sample verification references, retirement planning and closure notes; filling this educational checklist does not verify a migration',
     category: 'Migration Planning',
     icon: ClipboardCheck,
     keywords: [

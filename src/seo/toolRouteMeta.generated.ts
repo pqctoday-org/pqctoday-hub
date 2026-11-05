@@ -247,7 +247,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/infra-modernization-planner',
     title: 'Infrastructure Modernization Planner — PQC Business Tool | PQC Today',
     description:
-      'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into…',
+      'Sample infrastructure planning worksheet for PKI, HSM/KMS, network compatibility topics and capacity assumptions; not a readiness assessment',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
@@ -310,7 +310,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/migration-verification',
     title: 'Migration Verification & Closure — PQC Business Tool | PQC Today',
     description:
-      "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",
+      'Explore sample verification references, retirement planning and closure notes; filling this educational checklist does not verify a migration',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
