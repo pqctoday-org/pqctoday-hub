@@ -13,53 +13,62 @@ const renderWithRouter = () =>
   )
 
 // Mock OpenSSL Service to avoid Web Worker initialization in tests
-vi.mock('../../../../services/crypto/OpenSSLService', () => ({
-  openSSLService: {
-    execute: vi.fn().mockImplementation(async (command: string) => {
-      // Mock responses based on command
-      if (command.includes('genpkey')) {
-        return {
-          stdout: '-----BEGIN PRIVATE KEY-----\nMOCKPRIVATEKEYDATA\n-----END PRIVATE KEY-----',
-          stderr: '',
-          files: [],
-        }
-      }
-      if (command.includes('pkey -in') && command.includes('-pubout')) {
-        return {
-          stdout: '-----BEGIN PUBLIC KEY-----\nMOCKPUBLICKEYDATA\n-----END PUBLIC KEY-----',
-          stderr: '',
-          files: [],
-        }
-      }
-      if (command.includes('dgst')) {
-        const outMatch = command.match(/-out\s+([^\s]+)/)
-        if (outMatch) {
-          const outFile = outMatch[1]
+vi.mock('../../../../services/crypto/OpenSSLService', async () => {
+  // This is a mocked UI-flow test, not a signature-validity test. Use a
+  // well-formed SPKI so the certificate builder can enforce its algorithm
+  // checks; fake PEM payload text no longer meets that input contract.
+  const { generateKeyPairSync } = await import('node:crypto')
+  const pair = generateKeyPairSync('ec', { namedCurve: 'P-256' })
+  const publicPem = pair.publicKey.export({ format: 'pem', type: 'spki' }).toString()
+  const privatePem = pair.privateKey.export({ format: 'pem', type: 'pkcs8' }).toString()
+  return {
+    openSSLService: {
+      execute: vi.fn().mockImplementation(async (command: string) => {
+        // Mock responses based on command
+        if (command.includes('genpkey')) {
           return {
-            stdout: '',
-            stderr: '',
-            files: [{ name: outFile, data: new Uint8Array([1, 2, 3, 4]) }],
-          }
-        }
-        if (command.includes('-verify')) {
-          return {
-            stdout: 'Verified OK',
+            stdout: privatePem,
             stderr: '',
             files: [],
           }
         }
-        // Fallback for stdout output if needed (old hash style) or error
-        return {
-          stdout: 'SHA2-256(file)= abcd1234',
-          stderr: '',
-          files: [],
+        if (command.includes('pkey -in') && command.includes('-pubout')) {
+          return {
+            stdout: publicPem,
+            stderr: '',
+            files: [],
+          }
         }
-      }
-      return { stdout: 'Mock Output', stderr: '', files: [] }
-    }),
-    deleteFile: vi.fn(),
-  },
-}))
+        if (command.includes('dgst')) {
+          const outMatch = command.match(/-out\s+([^\s]+)/)
+          if (outMatch) {
+            const outFile = outMatch[1]
+            return {
+              stdout: '',
+              stderr: '',
+              files: [{ name: outFile, data: new Uint8Array([1, 2, 3, 4]) }],
+            }
+          }
+          if (command.includes('-verify')) {
+            return {
+              stdout: 'Verified OK',
+              stderr: '',
+              files: [],
+            }
+          }
+          // Fallback for stdout output if needed (old hash style) or error
+          return {
+            stdout: 'SHA2-256(file)= abcd1234',
+            stderr: '',
+            files: [],
+          }
+        }
+        return { stdout: 'Mock Output', stderr: '', files: [] }
+      }),
+      deleteFile: vi.fn(),
+    },
+  }
+})
 
 // Prevent LiveHSMToggle from auto-initializing the WASM HSM during unit tests.
 // Without this, PIDIssuerComponent uses the PKCS#11 path for key generation which produces
