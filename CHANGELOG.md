@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.196.0] - 2026-11-04
+
+Two Algorithms page rows now cite the current HPKE post-quantum draft, and the revision history links 49 earlier changes to the releases that shipped them.
+
+### Fixed
+
+- **The revision history links 49 earlier changes to their releases** [view:/changelog] [persona:grc] [persona:researcher]: entries from releases 4.186 to 4.195 showed no release behind them. Each now names the release that shipped it.
+
+### Data
+
+- **The HPKE post-quantum rows cite draft revision 05** [view:/algorithms] [persona:developer] [persona:researcher] [persona:architect]: the algorithm reference and the algorithm transitions list named revision 03 and an expiry of May 2026. Both now name `draft-ietf-hpke-pq-05`, which expires in January 2027.
+
+### Changed
+
+- **The PKCS#11 v3.3 lessons record the committee's newest draft text** [view:/playground] [persona:developer] [persona:researcher]: the draft moved on again on 4 November. The new text adds single-step functions, a creation-timestamp attribute and two IKEv2 mechanisms; none of them changes a mechanism or key type the lessons teach.
+
 ## [4.195.0] - 2026-11-04
 
 The HPKE workshop now puts the PKCS#11 v3.3 draft's one-call composite key agreement beside the standard way and our own single-call proposal, composite certificates can be signed in one call, and the v3.3 lessons say more plainly what is standard, what is only a draft, and what our engines do not do.

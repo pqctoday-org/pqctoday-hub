@@ -117,13 +117,13 @@ Artifacts:
 
 ## Native engine conformance suites (imported, not executed by the Hub)
 
-Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `d1f62a418ce0` (2026-10-22).
+Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `73f8b74a863c` (2026-11-04).
 
-| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                     |
-| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | -------------------------------------------------------------------------------- |
-| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it  |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,098 |    0 | not reported | 1,098 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `5443f045961e`: 17 commit(s) ahead of the engine commit, 0 behind it |
-| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                |
+| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                    |
+| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | ------------------------------------------------------------------------------- |
+| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                          22 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,102 |    0 | not reported | 1,102 | `0ed070be2151` (2026-11-03) |                                           3 | no — bundle `5443f045961e`: 0 commit(s) ahead of the engine commit, 7 behind it |
+| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                               |
 
 ## Cross-target evidence runs
 
@@ -337,7 +337,7 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
 | `public/data/validation/coverage-matrix.json`                           | `63be82227b370449973e178d4c0c6da139ddb162c4c8215a2a8a87f9ec844e8a` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
-| `src/data/validation/native-conformance.generated.json`                 | `9989ddbe108ebed6ba7a0b4766c92795f3d754f292ea3bd597d5d7ee0ab59425` |
+| `src/data/validation/native-conformance.generated.json`                 | `dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700` |
 | `src/data/validation/open-gaps.json`                                    | `623b3aea5f6aa821c7adfb3e4a5ef0e6dde98acb6a1756d2f15762fd368f68b7` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb` |
