@@ -347,7 +347,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'validation-objects',
     label: 'Validation objects (CKO_VALIDATION)',
     cat: 'protocol',
-    def: 'v3.2 §4.15 — describes which third-party validation (e.g. NIST CMVP) a module conforms to. Session-level validation flags (§4.15.3.1, C_GetSessionValidationFlags) ARE implemented here — honestly, always empty, since this build has no such validation. Key-object-level flags (§4.15.3.2, CKA_OBJECT_VALIDATION_FLAGS) and CKO_VALIDATION objects themselves are not implemented at all — a distinct gap from trust objects above.',
+    def: 'v3.2 §4.15 defines validation metadata and operation indicators. C_GetSessionValidationFlags reports last-operation flags under the applicable rules; a flag value alone is not a module-certificate lookup. This lesson reads session flags, not CKO_VALIDATION objects or CKA_OBJECT_VALIDATION_FLAGS. Check an exact module validation claim separately against the CMVP entry and security policy.',
   },
   {
     id: 'composite',
