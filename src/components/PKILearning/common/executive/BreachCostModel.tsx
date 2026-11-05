@@ -37,6 +37,7 @@ export interface BreachScenarioInputs {
   breachScale: number
   yearsOfData: number
   orgSizeTier: OrgSizeTier
+  annualBreachProbPct: number
   hndlFactorPct: number
   dataSensitivityClass: DataSensitivityClass
   planningHorizonYears: number
@@ -123,7 +124,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
     initialValues?.orgSizeTier ?? 'average'
   )
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState(
-    ANNUAL_BREACH_PROBABILITY_PCT[initialValues?.orgSizeTier ?? 'average']
+    initialValues?.annualBreachProbPct ??
+      ANNUAL_BREACH_PROBABILITY_PCT[initialValues?.orgSizeTier ?? 'average']
   )
   const selectOrgSizeTier = (tier: OrgSizeTier) => {
     setOrgSizeTier(tier)
@@ -224,6 +226,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
       breachScale,
       yearsOfData,
       orgSizeTier,
+      annualBreachProbPct,
       hndlFactorPct,
       dataSensitivityClass,
       planningHorizonYears,
@@ -236,6 +239,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
     breachScale,
     yearsOfData,
     orgSizeTier,
+    annualBreachProbPct,
     hndlFactorPct,
     dataSensitivityClass,
     planningHorizonYears,
@@ -370,7 +374,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
               <input
                 id="breach-annual-prob"
                 type="range"
-                min={1}
+                min={0}
                 max={50}
                 // 0.1 steps and parseFloat: the IRIS tier anchors are fractional
                 // (8.7 / 9.3 / 12.8) and parseInt silently truncated them to
@@ -381,7 +385,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                 className="w-full accent-primary"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>1%</span>
+                <span>0%</span>
                 <span className="text-sm font-mono text-primary">{annualBreachProbPct}%</span>
                 <span>50%</span>
               </div>
