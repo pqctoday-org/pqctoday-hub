@@ -446,8 +446,7 @@ function RiskHeatmapGrid({
                     return (
                       <td
                         key={colIdx}
-                        onClick={() => onCellClick(rowIdx, colIdx)}
-                        className={`p-1.5 border border-border/50 cursor-pointer transition-all align-top ${getZoneBg(score)} ${getZoneText(score)} ${
+                        className={`p-0 border border-border/50 transition-all align-top ${getZoneBg(score)} ${getZoneText(score)} ${
                           isSelected ? 'ring-2 ring-primary ring-inset' : 'hover:brightness-90'
                         }`}
                         style={{ minWidth: 90, minHeight: 64 }}
@@ -457,7 +456,14 @@ function RiskHeatmapGrid({
                             : `Score ${score} (${getRiskColor(score)})`
                         }
                       >
-                        <div className="flex flex-col gap-1 min-h-[52px]">
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          onClick={() => onCellClick(rowIdx, colIdx)}
+                          aria-pressed={isSelected}
+                          aria-label={`Likelihood ${likelihood} (${label}), impact ${impact} (${IMPACT_LABELS[colIdx]}), score ${score} (${getRiskColor(score)}); ${cellEntries.length ? cellEntries.map((e) => e.assetName || 'Unnamed asset').join(', ') : 'no assets'}`}
+                          className="w-full h-full min-h-[64px] rounded-none p-1.5 flex flex-col gap-1 items-stretch justify-start text-left font-normal text-inherit focus-visible:ring-inset"
+                        >
                           {/* Score badge */}
                           <span className="text-[10px] font-bold opacity-60 self-end">{score}</span>
                           {/* Entry markers */}
@@ -472,7 +478,7 @@ function RiskHeatmapGrid({
                               </div>
                             )
                           })}
-                        </div>
+                        </Button>
                       </td>
                     )
                   })}
@@ -762,7 +768,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         <div className="text-sm text-muted-foreground">
           <p>
             This workshop guides you through three activities: assign a{' '}
-            <strong>treatment strategy</strong> to each risk (click any cell), compare{' '}
+            <strong>treatment strategy</strong> to each risk (select any cell), compare{' '}
             <strong>inherent vs. residual risk</strong>, and set your{' '}
             <strong>migration priority order</strong>.
           </p>
@@ -803,7 +809,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
           <span className="text-xs text-muted-foreground">
             {hasTreatments
               ? `${treatmentProgress}% treated (${Object.keys(treatmentDecisions).length} of ${riskEntries.length})`
-              : 'No treatments assigned yet — click a cell to start'}
+              : 'No treatments assigned yet — select a cell to start'}
           </span>
         </div>
 
@@ -877,7 +883,8 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         <div className="flex items-center justify-center gap-2 mt-4 px-4 py-2 bg-muted/40 border border-border rounded-lg w-fit mx-auto">
           <MousePointer2 size={14} className="text-primary shrink-0" />
           <span className="text-sm font-medium text-foreground">
-            Click any cell to assign a treatment strategy
+            Select a cell to assign a treatment strategy; use Tab then Enter or Space with a
+            keyboard
           </span>
         </div>
       </div>
