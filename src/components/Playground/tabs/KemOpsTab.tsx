@@ -9,6 +9,7 @@ import { useHsmContext } from '../hsm/HsmContext'
 import { DataInput } from '../DataInput'
 import { logEvent } from '../../../utils/analytics'
 import { Button } from '../../ui/button'
+import { Textarea } from '../../ui/textarea'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { KcvBadge } from '../KcvBadge'
@@ -394,6 +395,7 @@ export const KemOpsTab: React.FC = () => {
 }
 
 const KemOpsTabSoftware: React.FC = () => {
+  const recoveredTextId = React.useId()
   const { loading } = useSettingsContext()
   const { keyStore, selectedEncKeyId, setSelectedEncKeyId, selectedDecKeyId, setSelectedDecKeyId } =
     useKeyStoreContext()
@@ -406,7 +408,6 @@ const KemOpsTabSoftware: React.FC = () => {
     encryptedData,
     setEncryptedData,
     decryptedData,
-    setDecryptedData,
     dataToEncrypt,
     setDataToEncrypt,
     kemDecapsulationResult,
@@ -1115,14 +1116,26 @@ const KemOpsTabSoftware: React.FC = () => {
               >
                 Decrypt
               </Button>
-              <DataInput
-                label="Decrypted Data (Output)"
-                value={decryptedData}
-                onChange={setDecryptedData}
-                inputType="binary"
-                placeholder="Recovered Message"
-                height="h-24"
-              />
+              <div
+                role="group"
+                aria-labelledby={`${recoveredTextId}-label`}
+                className="bg-muted/30 rounded-xl border border-border p-4"
+              >
+                <label
+                  id={`${recoveredTextId}-label`}
+                  htmlFor={recoveredTextId}
+                  className="block text-sm font-bold text-foreground mb-3"
+                >
+                  Recovered text (decoded output)
+                </label>
+                <Textarea
+                  id={recoveredTextId}
+                  value={decryptedData}
+                  readOnly
+                  placeholder="Recovered message text"
+                  className="h-24 font-mono resize-none"
+                />
+              </div>
             </div>
           </div>
         </div>
