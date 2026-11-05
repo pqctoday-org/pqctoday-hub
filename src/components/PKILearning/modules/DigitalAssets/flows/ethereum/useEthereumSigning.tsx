@@ -35,33 +35,26 @@ export function useEthereumSigning({
   const steps: Step[] = [
     {
       id: 'sign',
-      title: '8. Sign Transaction',
+      title: '8. Sign Sample JSON Hash',
       description: (
         <>
-          Sign the transaction hash using OpenSSL's standard ECDSA implementation.
+          Attempt software OpenSSL signing of the JSON sample digest. The JavaScript reference
+          signature is also calculated, and supplies the displayed values if the OpenSSL attempt
+          fails.
           <br />
           <br />
-          <strong>The Challenge:</strong> Standard ECDSA signatures (like those from OpenSSL) only
-          produce <strong>r</strong> and <strong>s</strong>. Ethereum requires a third parameter,{' '}
-          <strong>v</strong> (recovery ID).
-          <br />
-          <br />
-          <strong>The Solution:</strong> We compute <strong>v</strong> as a post-processing step. We
-          test recovery IDs (0 and 1) to find the correct one, then encode it.
+          The step computes sample recovery metadata after parsing the signature. It does not use
+          the optional HSM session or serialize an Ethereum transaction. Signature verification is a
+          separate step; the raw values shown here are not a blockchain acceptance result.
         </>
       ),
-      code: `// 1. SoftHSMv3 Signing (CKM_ECDSA)
-const signature = hsm_ecdsaSign(
-  hsm.module, 
-  hsm.sessionHandle, 
-  privHandle, 
-  sighash, 
-  CKM_ECDSA
-);
-
-// 2. Compute v (Post-processing)`,
+      code: `// Illustrative summary of the existing software path
+// Attempt OpenSSL signing of the saved JSON-payload digest.
+await openSSLService.execute(signCmd, filesToPass);
+// A JavaScript reference signature is also computed.
+// Existing fallback selection and recovery calculations determine the displayed r, s and v.`,
       language: 'javascript',
-      actionLabel: 'Sign Transaction',
+      actionLabel: 'Sign Sample JSON Hash',
     },
   ]
 
@@ -251,7 +244,7 @@ const signature = hsm_ecdsaSign(
       const sHex = final_s.toString(16).padStart(64, '0')
       const vHex = v.toString(16)
 
-      result = `SUCCESS: Transaction Signed & Processed!
+      result = `Software sample signing trace:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. PREPARE (Keccak-256 Hash)
@@ -262,21 +255,25 @@ Keccak-256 Hash to Sign:
 📂 Artifact Saved: ${hashFileName}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2. SIGN (OpenSSL + Computation)
+2. SIGN (software providers and computation)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Message Hash (from Step 7): 0x${hashHex}
 
-Generated Signature Values:
+Produced Sample Signature Values (not verified in this step):
 r: 0x${rHex}
 s: 0x${sHex}
-v: 0x${vHex} (EIP-155 Computed: ${recovery} + 35 + 2*${chainId})
+v: 0x${vHex} (sample calculation: ${recovery} + 35 + 2*${chainId})
 
-Full RLP Signature Component:
+Raw r || s || v hex display — not an encoded Ethereum transaction:
 0x${rHex}${sHex}${vHex}
 
-Status: ${openSSL_error ? `FAILED: ${openSSL_error}` : 'SUCCESS ✅'}
+OpenSSL signing-attempt status: ${openSSL_error ? `FAILED: ${openSSL_error}` : 'SUCCESS ✅'}
 
-📂 Artifact Saved: ${sigFileName}`
+Software value selection: ${openSSL_error ? 'JavaScript fallback values used' : 'Parsed OpenSSL values used; JavaScript reference also computed'}
+Recovery matching: ${recoveryFound ? 'Matching address candidate found' : 'No matching candidate established; existing recovery-0 default used'}
+
+Registered signature target: ${sigFileName}
+When produced, the saved OpenSSL signature contains DER bytes, separate from the raw r || s || v display. This registered target alone does not establish file presence or transaction compatibility.`
     }
 
     return result

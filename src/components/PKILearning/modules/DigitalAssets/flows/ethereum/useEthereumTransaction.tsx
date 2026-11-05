@@ -20,7 +20,7 @@ export function useEthereumTransaction({
   const steps: Step[] = [
     {
       id: 'format_tx',
-      title: '6. Format Transaction',
+      title: '6. Prepare Sample Transaction Fields',
       description: (
         <>
           Define the transaction details including nonce
@@ -39,24 +39,58 @@ export function useEthereumTransaction({
           <br />• Chain ID: Network identifier (1 = mainnet)
         </>
       ),
-      code: `const transaction = {\n  nonce: 0,\n  gasPrice: "20000000000", // 20 Gwei\n  gasLimit: 21000,\n  to: "${state.editableRecipientAddress || state.recipientAddress || '...'}",\n  value: "100000000000000000", // 0.1 ETH\n  data: "0x",\n  chainId: 1\n};`,
+      code: `const transaction = {\n  nonce: 0,\n  gasPrice: "20000000000", // 20 Gwei\n  gasLimit: 21000,\n  to: "${state.editableRecipientAddress || state.recipientAddress || '...'}",\n  value: "100000000000000000", // 0.1 ETH\n  data: "",\n  chainId: 1\n};`,
       language: 'javascript',
-      actionLabel: 'Format Transaction',
+      actionLabel: 'Prepare Sample Fields',
     },
     {
       id: 'visualize_msg',
-      title: '7. Visualize Transaction Fields',
+      title: '7. Encode Sample JSON Payload',
       description: (
         <>
-          View the transaction fields that will be hashed with Keccak-256{' '}
-          <InfoTooltip term="keccak256" /> and signed. In production Ethereum, these fields are
-          serialized using RLP <InfoTooltip term="rlp" /> (Recursive Length Prefix) binary encoding
-          before hashing. This demo uses a simplified JSON representation for readability.
+          This step encodes a teaching object as UTF-8 JSON, saves those exact bytes, hashes them
+          with Keccak-256 <InfoTooltip term="keccak256" /> and uses that sample digest for signing.
+          It does not emit an Ethereum transaction. The legacy EIP-155 RLP{' '}
+          <InfoTooltip term="rlp" /> structure below is related-format guidance, not this artifact;
+          an EIP-1559 type-2 transaction has its own encoding and fields.
+          <br />
+          Related reading:{' '}
+          <a
+            href="https://eips.ethereum.org/EIPS/eip-155"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            EIP-155
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://eips.ethereum.org/EIPS/eip-1559"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            EIP-1559
+          </a>
+          .
         </>
       ),
-      code: `// RLP Structure (Pre-Signature)\nconst rlpStructure = {\n  nonce: 0,\n  gasPrice: "20000000000",\n  gasLimit: 21000,\n  to: "${state.editableRecipientAddress || state.recipientAddress || '0x...'}",\n  value: "..."\n  // ...\n};`,
+      code: `// Illustrative summary of the JSON teaching payload, not an Ethereum wire encoding
+const sampleJson = JSON.stringify({
+  nonce: transactionData.nonce,
+  gasPrice: transactionData.gasPrice,
+  gasLimit: transactionData.gasLimit,
+  to: transactionData.to,
+  value: transactionData.value,
+  data: transactionData.data,
+  v: transactionData.chainId,
+  r: 0,
+  s: 0
+});
+const sampleBytes = new TextEncoder().encode(sampleJson);
+const digest = keccak_256(sampleBytes);`,
       language: 'javascript',
-      actionLabel: 'Visualize Message',
+      actionLabel: 'Encode Sample JSON',
       explanationTable: [
         {
           label: 'Nonce',
@@ -91,13 +125,14 @@ export function useEthereumTransaction({
         {
           label: 'Chain ID',
           value: '1',
-          description: 'EIP-155 Chain ID (1 = Mainnet) to prevent replay across chains.',
+          description:
+            'Fixed sample network identifier (1 = Mainnet). This JSON demonstration does not test replay protection.',
         },
         {
-          label: 'Real RLP Format',
+          label: 'Related legacy EIP-155 RLP structure (not emitted)',
           value: 'RLP([nonce, gasPrice, gasLimit, to, value, data, chainId, 0, 0])',
           description:
-            'Production Ethereum transactions encode these fields using RLP binary serialization, where prefix bytes encode the type and length of each field. The result is compact binary, not JSON. EIP-1559 (Type 2) transactions additionally use maxFeePerGas and maxPriorityFeePerGas instead of gasPrice.',
+            'EIP-155 describes the protected legacy signing fields as an ordered RLP list. This sample emits JSON UTF-8 instead. EIP-1559 type-2 uses a type prefix and its own RLP fields; this exercise does not implement that format.',
         },
       ],
     },
@@ -149,15 +184,15 @@ export function useEthereumTransaction({
       actions.setTxHash(hashHex)
       const hashFilename = artifacts.saveHash('ethereum', hash)
 
-      result = `RLP Encoded Structure (to be hashed):
+      result = `Sample JSON structure (to be hashed):
 ${JSON.stringify(rlpStructure, null, 2)}
 
 ========================================
-RAW TRANSACTION BYTES (Hex)
+JSON TEACHING PAYLOAD BYTES (Hex)
 ========================================
-This is the RLP-encoded data that will be hashed with Keccak-256 and signed in step 8.
+These are the UTF-8 bytes of the JSON teaching object above. Their Keccak-256 digest is signed in step 8; no Ethereum wire transaction is encoded.
 
-Transaction Length: ${rlpBytes.length} bytes
+JSON Payload Length: ${rlpBytes.length} bytes
 
 Hex String:
 ${bytesToHex(rlpBytes)}
@@ -165,9 +200,9 @@ ${bytesToHex(rlpBytes)}
 Keccak-256 Hash (to sign):
 0x${hashHex}
 
-📂 Artifacts Saved: 
-- ${transFilename}
-- ${hashFilename}`
+📂 Sample Artifacts Saved:
+- JSON UTF-8 payload: ${transFilename}
+- Digest of that JSON payload: ${hashFilename}`
     }
 
     return result

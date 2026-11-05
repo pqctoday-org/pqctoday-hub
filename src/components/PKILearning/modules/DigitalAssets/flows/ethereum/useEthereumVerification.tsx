@@ -29,31 +29,23 @@ export function useEthereumVerification({
   const steps: Step[] = [
     {
       id: 'verify',
-      title: '9. Verify Signature',
+      title: '9. Inspect Sample Verification Outputs',
       description: (
         <>
-          Verify the ECDSA
-          <InfoTooltip term="ecdsa" /> signature and recover the public key / address from it using
-          the recovery parameter <InfoTooltip term="recoveryParam" />.
-          <br /> <br />
-          <strong> Public Key Recovery: </strong> Ethereum's unique feature - you can derive the
-          sender's address from just the signature and message, without needing the public key
-          separately.
+          Attempt software ECDSA <InfoTooltip term="ecdsa" /> verification of the sample digest,
+          then compare a separately recovered address with the available expected address using the
+          sample recovery parameter <InfoTooltip term="recoveryParam" />.
+          <br />
+          <br />
+          Read the OpenSSL response and address comparison independently. Neither a matching address
+          nor completion of this activity establishes that an Ethereum transaction is encoded or
+          accepted.
         </>
       ),
-      code: `// SoftHSMv3 Verification (CKM_ECDSA)
-const isValid = hsm_ecdsaVerify(
-  hsm.module, 
-  hsm.sessionHandle, 
-  pubHandle, 
-  hashBytes, 
-  sigBytes, 
-  CKM_ECDSA
-);
-
-// Recover Address
-const recoveredPubKey = sigObj.recoverPublicKey(txHash);
-const recoveredAddress = deriveAddress(recoveredPubKey);`,
+      code: `// Illustrative summary of the executed software checks
+const response = await openSSLService.execute(verifyCmd, filesToPass);
+// The existing JavaScript calculation separately recovers and compares an address.
+// No HSM operation or Ethereum network acceptance check is executed here.`,
       language: 'javascript',
       actionLabel: 'Verify & Recover',
     },
@@ -81,7 +73,7 @@ const recoveredAddress = deriveAddress(recoveredPubKey);`,
       const res = await openSSLService.execute(verifyCmd, filesToPass)
       const openSSLResult = res.error
         ? `OpenSSL Verification Failed: ${res.error}`
-        : res.stdout || 'Signature verified successfully using OpenSSL'
+        : res.stdout || 'No verification output returned; outcome not established'
 
       // JS Recovery Verify
       // Decode EIP-155 v back to recovery ID (0 or 1)
@@ -163,12 +155,12 @@ const recoveredAddress = deriveAddress(recoveredPubKey);`,
         derivedExpectedAddress &&
         recoveredAddress.toLowerCase() === derivedExpectedAddress.toLowerCase()
 
-      result = `Verification Result:
+      result = `Sample verification outputs (independent checks):
 
-      1. OpenSSL Verification:
+      1. Software OpenSSL response:
 ${openSSLResult}
 
-2. Address Recovery(EIP - 155):
+2. Software sample address comparison:
 Recovered Address: ${recoveredAddress}
 Expected Address: ${derivedExpectedAddress}
 Match: ${match ? '✅ MATCH' : '❌ MISMATCH'} `
