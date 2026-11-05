@@ -3,7 +3,7 @@
  * RiskManagementWire — Command Center Fig 3 Risk Management zone data wire.
  *
  * Two sub-blocks:
- *   1. Assessment health tile  — riskLevel + riskScore + complianceGapCount,
+ *   1. Assessment health tile  — riskLevel + riskScore + pqcFrameworkReviewCount,
  *      links to /assess (state-aware: not-started / in-progress / complete).
  *   2. Tracked frameworks list — reuses existing <FrameworkDeadlineList>,
  *      links to /compliance.
@@ -54,6 +54,7 @@ const RISK_LEVEL_STYLES: Record<string, string> = {
 function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
   const status = metrics.assessmentStatus
+  const frameworkReviewText = `${metrics.pqcFrameworkReviewCount} tracked PQC framework review prompt${metrics.pqcFrameworkReviewCount === 1 ? '' : 's'}. Compliance is not assessed.`
 
   if (status === 'not-started') {
     return (
@@ -62,9 +63,9 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
         <div className="flex-1 min-w-0">
           <h4 className="text-sm font-semibold text-foreground">No assessment run yet</h4>
           <p className="text-xs text-muted-foreground mt-0.5">
-            A risk assessment seeds the framework deadlines, risk score, and compliance gap tracker
-            for this zone.
+            A sample risk assessment helps organise risk inputs and framework review prompts.
           </p>
+          <p className="text-xs text-muted-foreground mt-0.5">{frameworkReviewText}</p>
         </div>
         <Button variant="gradient" size="sm" onClick={() => navigate('/assess')} className="gap-1">
           Start <ArrowRight size={12} />
@@ -80,8 +81,9 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
         <div className="flex-1 min-w-0">
           <h4 className="text-sm font-semibold text-foreground">Assessment in progress</h4>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Resume the wizard to finalise your risk score and compliance gaps.
+            Resume the wizard to complete the sample risk inputs and framework review prompts.
           </p>
+          <p className="text-xs text-muted-foreground mt-0.5">{frameworkReviewText}</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => navigate('/assess')} className="gap-1">
           Resume <ArrowRight size={12} />
@@ -136,11 +138,7 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
             </span>
           )}
         </div>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          {metrics.complianceGapCount > 0
-            ? `${metrics.complianceGapCount} compliance gap${metrics.complianceGapCount !== 1 ? 's' : ''} flagged`
-            : 'No compliance gaps flagged'}
-        </p>
+        <p className="text-xs text-muted-foreground mt-0.5">{frameworkReviewText}</p>
         {metrics.categoryScores && metrics.previousCategoryScores && (
           <div className="mt-2 pt-2 border-t border-border/50 space-y-0.5">
             {CATEGORY_TREND_ROWS.map(({ key, label, lowerIsBetter }) => {

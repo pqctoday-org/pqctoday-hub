@@ -34,7 +34,7 @@ function emptyMetrics(): BusinessMetrics {
     previousCategoryScores: null,
     completedAt: null,
     trackedFrameworks: [],
-    complianceGapCount: 0,
+    pqcFrameworkReviewCount: 0,
     governanceModules: [],
     cryptoAgility: 'Not assessed',
     migrationStatus: 'Not assessed',
