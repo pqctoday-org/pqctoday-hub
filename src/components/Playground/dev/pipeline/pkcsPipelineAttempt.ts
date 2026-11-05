@@ -31,7 +31,7 @@ export interface PkcsAttempt {
 export const attemptBinding = (inputs: PkcsAttemptInputs) =>
   JSON.stringify({
     ...inputs,
-    steps: inputs.steps.map(({ status: _status, output: _output, ...step }) => step),
+    steps: inputs.steps.map(({ id, primId, op, params }) => ({ id, primId, op, params })),
   })
 export function stepStructure(steps: PipelineStep[]): string {
   const ids = new Map(steps.map((step, index) => [step.id, String(index)]))

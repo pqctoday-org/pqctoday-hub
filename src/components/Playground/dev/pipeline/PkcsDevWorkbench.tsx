@@ -629,6 +629,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
           <input
             ref={fileInputRef}
             type="file"
+            aria-label="Import pipeline JSON"
             accept="application/json"
             className="hidden"
             onChange={(e) => {

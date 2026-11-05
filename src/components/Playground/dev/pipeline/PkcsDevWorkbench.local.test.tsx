@@ -193,10 +193,10 @@ describe('PKCS developer sample run records', () => {
       steps: TEMPLATES['ML-KEM round trip'],
       input: 'imported sample',
     })
-    const { container } = render(<PkcsDevWorkbench />)
+    render(<PkcsDevWorkbench />)
     const file = new File([json], 'sample.json', { type: 'application/json' })
     Object.defineProperty(file, 'text', { value: async () => json })
-    fireEvent.change(container.querySelector('input[type="file"]')!, { target: { files: [file] } })
+    fireEvent.change(screen.getByLabelText('Import pipeline JSON'), { target: { files: [file] } })
     await screen.findByText('Imported "ML-KEM round trip"')
     run()
     await record().findByText('Required sample steps completed.')
