@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  currentKpiValueOrigin,
+  kpiValueOriginLabel,
+} from '@/components/PKILearning/common/executive/scorecardValueOrigin'
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react'
 import { Info } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -37,7 +41,7 @@ The **Overall Score** is the weighted average of the KPI sliders below, using th
 per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
 measure; the weighted average is rounded to a whole number. A combined score is
 withheld until at least 70% of the weight of the KPIs that can be scored has
-organization-specific evidence; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing.
+entered or calculated sample values; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing.
 
 The KPI set follows the Applied Quantum framework's Board-Level KPI Pack —
 Coverage, Trust, Inventory, Vendors, and Agility, each with year-1/2/3 targets
@@ -100,13 +104,17 @@ export function buildKpiDashboardMarkdown(
   md +=
     coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
-      : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
+      : `**Overall Score: not available — scored-value coverage ${Math.round(coverage * 100)}%**\n\n`
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-  md += '| KPI | Score | Weight | Target | Period | Owner | Evidence | Verification |\n'
-  md += '|-----|-------|--------|--------|--------|-------|----------|--------------|\n'
+  md +=
+    'Scored-value coverage measures available worksheet values, not evidence verification or production readiness. Optional sample notes are learner supplied.\n\n'
+  md +=
+    '| KPI | Score | Weight | Target | Value origin | Period | Sample owner | Sample reference | Learner-recorded review label |\n'
+  md +=
+    '|-----|-------|--------|--------|--------------|--------|-------|----------|--------------|\n'
   for (const d of dimensions) {
     const observation = observations[d.id]
-    const lineage = ` | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
+    const lineage = ` | ${kpiValueOriginLabel(touchedIds === undefined ? 'unrecorded' : currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
     if (d.disabled) {
       md += `| ${d.label} | _locked_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
       continue
@@ -345,7 +353,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground flex-1">
-          Enter evidence-backed KPI values for your organization. Vendor and FIPS rows use only
+          Enter illustrative KPI values for the sample organization. Vendor and FIPS rows use only
           products you selected in Migrate; catalog-wide figures stay in the separate comparison
           above. Weights adapt to the selected persona lens.
         </p>

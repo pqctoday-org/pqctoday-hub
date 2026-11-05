@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  currentKpiValueOrigin,
+  kpiValueOriginLabel,
+} from '@/components/PKILearning/common/executive/scorecardValueOrigin'
 import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -90,6 +94,8 @@ export function buildKpiTrackerMarkdown({
   const scores = userScores
   let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md +=
+    'Scored-value coverage measures available worksheet values, not evidence verification or production readiness. Optional sample notes are learner supplied.\n\n'
 
   const ew = (d: (typeof dimensions)[number]) =>
     d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
@@ -115,22 +121,22 @@ export function buildKpiTrackerMarkdown({
   md +=
     coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
-      : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
+      : `**Overall Score: not available — scored-value coverage ${Math.round(coverage * 100)}%**\n\n`
   md += `Educational planning worksheet; entered values and catalogue status are not verified migration progress.\n\n`
   md += '## KPI Dimensions\n\n'
-  md += '| KPI | Score | Weight | Target | Framework Mappings | Description |\n'
-  md += '|-----|-------|--------|--------|---------------------|-------------|\n'
+  md += '| KPI | Score | Weight | Target | Framework Mappings | Description | Value origin |\n'
+  md += '|-----|-------|--------|--------|---------------------|-------------|--------------|\n'
   for (const d of dimensions) {
     if (d.disabled) {
-      md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
+      md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
       continue
     }
     const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? d.autoScore ?? 0}/100`
-    md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
+    md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
   }
-  md += '\n## Measurement Evidence\n\n'
+  md += '\n## Sample Measurement Notes\n\n'
   md +=
-    '| KPI | Numerator | Denominator | Unit | Period | As of | Owner | Evidence | Verification |\n'
+    '| KPI | Numerator | Denominator | Unit | Period | As of | Sample owner | Sample reference | Learner-recorded review label |\n'
   md +=
     '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|\n'
   const cell = (value: string | undefined) =>

@@ -106,9 +106,7 @@ describe('KPITrackerTemplate', () => {
   it('withholds an empty executive score on screen and in the saved report', () => {
     mockPersona = 'executive'
     render(<KPITrackerTemplate />)
-    expect(
-      screen.getByText(/enter organization-specific evidence before interpreting/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/enter sample values before interpreting/i)).toBeInTheDocument()
     const markdown = buildKpiTrackerMarkdown({
       dimensions: buildDimensions('executive', 'migration', mockData),
       activePersona: 'executive',
@@ -117,7 +115,7 @@ describe('KPITrackerTemplate', () => {
       userWeights: {},
       touchedIds: new Set(),
     })
-    expect(markdown).toContain('Overall Score: not available — evidence coverage 0%')
+    expect(markdown).toContain('Overall Score: not available — scored-value coverage 0%')
     expect(markdown).not.toContain('Overall Migration Progress: 0/100')
     expect(screen.queryByText(/Tracker auto-scored from/)).not.toBeInTheDocument()
   })
@@ -161,7 +159,7 @@ describe('KPITrackerTemplate', () => {
       },
     ]
     render(<KPITrackerTemplate />)
-    expect(screen.getByText(/Evidence coverage: 0%/)).toBeInTheDocument()
+    expect(screen.getByText(/Scored-value coverage: 0%/)).toBeInTheDocument()
     expect(screen.getByText(/Not yet available/)).toBeInTheDocument()
     expect(screen.queryByText(/weights sum to 0%/i)).not.toBeInTheDocument()
   })
@@ -202,7 +200,7 @@ describe('KPITrackerTemplate', () => {
       },
     ]
     const view = render(<KPITrackerTemplate />)
-    fireEvent.click(screen.getAllByText('Evidence details', { exact: true })[0])
+    fireEvent.click(screen.getAllByText('Sample measure notes', { exact: true })[0])
     expect(screen.getByLabelText('Systems Inventoried Denominator')).toHaveValue('250')
     fireEvent.change(screen.getByLabelText('Systems Inventoried Evidence owner'), {
       target: { value: 'Reviewed Inventory Team' },
@@ -270,7 +268,7 @@ describe('KPITrackerTemplate', () => {
       },
     ]
     render(<KPITrackerTemplate />)
-    fireEvent.click(screen.getAllByText('Evidence details', { exact: true })[0])
+    fireEvent.click(screen.getAllByText('Sample measure notes', { exact: true })[0])
     fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
     const saved = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
     expect(saved.data).not.toContain('99/100')

@@ -5,12 +5,19 @@ import { ExportableArtifact } from './ExportableArtifact'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { Button } from '@/components/ui/button'
 import { scoredWeightShare } from './scorecardCoverage'
+import {
+  currentKpiValueOrigin,
+  kpiValueOriginLabel,
+  type KpiValueSource,
+} from './scorecardValueOrigin'
 
 export interface ScorecardDimension {
   id: string
   label: string
   description: string
   autoScore?: number
+  /** How this worksheet obtains the value, not whether evidence was verified. */
+  valueSource?: KpiValueSource
   userOverride?: boolean
   weight: number
   maxScore?: number
@@ -131,6 +138,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     () => initialWeights ?? {}
   )
   const [showWeights, setShowWeights] = useState(false)
+  const [editedThisSession, setEditedThisSession] = useState<Set<string>>(new Set())
 
   // Track which dimensions the user has manually adjusted. Dimensions restored
   // from `initialScores` count as already-overridden so the auto-score sync
@@ -176,6 +184,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     (dimId: string, value: number) => {
       const clamped = Math.max(0, Math.min(100, value))
       userOverriddenRef.current.add(dimId)
+      setEditedThisSession((prev) => new Set(prev).add(dimId))
       setUserOverridden((prev) => (prev.has(dimId) ? prev : new Set(prev).add(dimId)))
       const updated = { ...scores, [dimId]: clamped }
       setScores(updated)
@@ -226,25 +235,39 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     () => dimensions.reduce((sum, dimension) => sum + effectiveWeight(dimension), 0),
     [dimensions, effectiveWeight]
   )
-  const evidenceCoverage = useMemo(
+  const scoredValueCoverage = useMemo(
     () => scoredWeightShare(dimensions, effectiveWeight, (d) => !isPending(d)),
     [dimensions, effectiveWeight, isPending]
   )
-  const overallAvailable = evidenceCoverage >= minimumCoverageForOverall
+  const overallAvailable = scoredValueCoverage >= minimumCoverageForOverall
+  const originLabel = useCallback(
+    (dimension: ScorecardDimension) =>
+      kpiValueOriginLabel(
+        currentKpiValueOrigin(
+          dimension,
+          userOverridden.has(dimension.id),
+          initialScores?.[dimension.id] !== undefined && !editedThisSession.has(dimension.id)
+        ),
+        dimension.disabled
+      ),
+    [userOverridden, initialScores, editedThisSession]
+  )
 
   const exportMarkdown = useMemo(() => {
     let md = `# ${title}\n\n`
     if (description) md += `${description}\n\n`
     md += overallAvailable
       ? `**Overall Score: ${weightedTotal}/100**\n\n`
-      : `**Overall Score: not available — evidence coverage ${Math.round(evidenceCoverage * 100)}%**\n\n`
+      : `**Overall Score: not available — scored-value coverage ${Math.round(scoredValueCoverage * 100)}%**\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md +=
+      'Scored-value coverage is value availability, not evidence verification or production readiness. Sample notes and review labels are learner supplied.\n\n'
     const hasTargets = includeTargetsInExport && dimensions.some((d) => d.target !== undefined)
-    md += `| Dimension | Score | Weight${hasTargets ? ' | Target' : ''} | Period | Owner | Evidence | Verification |\n`
-    md += `|-----------|-------|--------${hasTargets ? '|--------' : ''}|--------|-------|----------|--------------|\n`
+    md += `| Dimension | Score | Weight${hasTargets ? ' | Target' : ''} | Value origin | Period | Sample owner | Sample reference | Learner-recorded review label |\n`
+    md += `|-----------|-------|--------${hasTargets ? '|--------' : ''}|--------------|--------|-------|----------|--------------|\n`
     for (const d of dimensions) {
       const observation = observations[d.id]
-      const lineage = ` | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
+      const lineage = ` | ${originLabel(d)} | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
       if (d.disabled) {
         md += `| ${d.label} | _disabled — ${d.disabledReason ?? 'no data'}_ | ${Math.round(effectiveWeight(d) * 100)}%${hasTargets ? ' | —' : ''}${lineage}\n`
         continue
@@ -265,8 +288,9 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     effectiveWeight,
     isPending,
     overallAvailable,
-    evidenceCoverage,
+    scoredValueCoverage,
     observations,
+    originLabel,
   ])
 
   // Markdown/PDF read the markdown body; `.csv` reads a structured rows export
@@ -289,7 +313,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       'As Of',
       'Owner',
       'Evidence Reference',
-      'Verification State',
+      'Sample review label (learner recorded)',
     ]
     const rows = dimensions.map((d) => {
       const observation = observations[d.id]
@@ -301,11 +325,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         d.target ?? '',
         d.disabled ? 'true' : 'false',
         d.disabledReason ?? '',
-        d.autoScore !== undefined
-          ? userOverridden.has(d.id)
-            ? 'learner override'
-            : 'derived from selected organizational scope'
-          : 'learner entered',
+        originLabel(d),
         observation?.numerator ?? '',
         observation?.denominator ?? '',
         observation?.unit ?? '',
@@ -317,7 +337,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, scores, effectiveWeight, isPending, observations, userOverridden])
+  }, [dimensions, scores, effectiveWeight, isPending, observations, originLabel])
 
   return (
     <div className="space-y-6">
@@ -340,10 +360,10 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
           <p className="text-xl md:text-2xl font-bold text-muted-foreground">Not yet available</p>
         )}
         <p className="text-sm text-muted-foreground mt-2">
-          Evidence coverage: {Math.round(evidenceCoverage * 100)}% of the weight of the KPIs that
-          can be scored
-          {!overallAvailable &&
-            ` — enter organization-specific evidence before interpreting a combined score.`}
+          Scored-value coverage: {Math.round(scoredValueCoverage * 100)}% of the weight of the KPIs
+          that can be scored. This is value availability, not evidence verification or production
+          readiness.
+          {!overallAvailable && ` — enter sample values before interpreting a combined score.`}
         </p>
         {description && <p className="text-sm text-muted-foreground mt-3">{description}</p>}
         {allowWeightEditing && Math.abs(intendedWeight - 1) > 0.01 && (
@@ -436,14 +456,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                 <div>
                   <p className="text-sm font-medium text-foreground">{d.label}</p>
                   <p className="text-xs text-muted-foreground">{d.description}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">
-                    Origin:{' '}
-                    {d.autoScore !== undefined
-                      ? userOverridden.has(d.id)
-                        ? 'learner override of derived value'
-                        : 'derived from selected organizational scope'
-                      : 'learner-entered organizational evidence'}
-                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1">Origin: {originLabel(d)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {pending ? (
@@ -492,7 +505,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
               </div>
               <details className="mt-3 rounded-md border border-border/70 bg-muted/20 p-3">
                 <summary className="cursor-pointer text-xs font-medium text-foreground">
-                  Evidence details
+                  Sample measure notes
                 </summary>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {(
@@ -530,7 +543,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                     </label>
                   ))}
                   <label className="space-y-1 text-xs text-muted-foreground">
-                    <span>Verification state</span>
+                    <span>Sample review label (learner recorded)</span>
                     {/* Native select is intentional: this evidence-state field needs a compact,
                         form-associated control inside each repeated KPI row. */}
                     {/* eslint-disable-next-line no-restricted-syntax */}
@@ -545,15 +558,16 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                       className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-foreground"
                       aria-label={`${d.label} Verification state`}
                     >
-                      <option value="not-verified">Not verified</option>
-                      <option value="owner-reviewed">Reviewed by evidence owner</option>
-                      <option value="independently-checked">Independently checked</option>
+                      <option value="not-verified">Sample: not verified</option>
+                      <option value="owner-reviewed">Sample: reviewed by owner</option>
+                      <option value="independently-checked">Sample: independently checked</option>
                     </select>
                   </label>
                 </div>
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  The slider is the normalized 0–100 score. Record the underlying measure and
-                  lineage here; verification is a learner declaration, not a PQC Today attestation.
+                  The slider is an illustrative 0–100 value. These optional fictional measure notes
+                  and review labels do not affect scored-value coverage. The Hub does not verify
+                  them or assess a deployed system.
                 </p>
               </details>
             </div>

@@ -115,7 +115,7 @@ describe('KPIDashboardBuilder', () => {
   it('stores evidence lineage with the saved dashboard and local snapshot', () => {
     render(<KPIDashboardBuilder />)
     const hndl = screen.getByTestId('kpi-dim-hndl-horizon')
-    fireEvent.click(within(hndl).getByText('Evidence details'))
+    fireEvent.click(within(hndl).getByText('Sample measure notes'))
     fireEvent.change(within(hndl).getByLabelText(/Evidence owner/i), {
       target: { value: 'Risk Committee' },
     })
