@@ -350,8 +350,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/risk-register': {
     executive:
-      'Read the four example entries, RSA-2048, AES-128, ECDSA P-256 and DH-2048, with their likelihood and impact: the Risk Summary is the shape of the register the programme will be held to, and every entry needs a named owner.',
-    grc: 'Add Risk Entry for each asset with its threat, likelihood, impact, owner and mitigation strategy; the How Likelihood × Impact Scoring Works panel is the method to cite, and Copy Markdown or .pdf exports the register for the risk committee.',
+      'Read the example assets, algorithms, threats, likelihood and impact to discuss proposed mitigations. Evaluate ownership and scheduled-review tracking in your production risk-management tools; this sample worksheet does not capture those fields.',
+    grc: 'Use Add Risk Entry to record a sample asset, algorithm, threat, likelihood, impact and proposed mitigation. Copy Markdown or .pdf retains the worksheet and its limits; look for owner, review-date and treatment-status tracking in production tools.',
   },
   '/business/tools/risk-treatment-plan': {
     executive:

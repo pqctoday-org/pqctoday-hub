@@ -206,12 +206,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     // vector, likelihood, impact and mitigation — it has no owner or review-date
     // field, so these lines describe what it renders.
     goodAnswer:
-      'Every entry is scored (likelihood × impact) and carries a written mitigation. A risk with no mitigation is a note, and notes do not get treated.',
+      'Record the scenario and a proposed mitigation alongside its illustrative likelihood × impact score. This worksheet does not track owners or review dates; evaluate those capabilities in production risk-management tools.',
     workedExample:
       "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely and Impact 5 — Catastrophic: the card shows Score: 20 (Critical) and the Risk Summary counts it as Critical.",
     name: 'Risk Register Builder',
     description:
-      'Build a PQC risk register with current algorithm, threat vector, likelihood, impact and mitigation',
+      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact and proposed mitigation',
     category: 'Risk & Strategy',
     icon: ListChecks,
     keywords: ['risk', 'register', 'inventory', 'mitigation', 'likelihood', 'impact'],

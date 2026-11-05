@@ -592,6 +592,8 @@ function riskRegister(sector: DemoSector): DemoDoc {
     data: md(
       `# Cryptographic Risk Register — ${ORG[sector]}`,
       '',
+      '**Fictional planning example — not a reviewed risk assessment.** Use these entries to discuss assumptions and proposed mitigations. In production risk-management tools, evaluate ownership, scheduled reviews, treatment status and change history; this sample report does not demonstrate those capabilities or risk reduction.',
+      '',
       '| Asset | Current algorithm | Threat | Likelihood (1–5) | Impact (1–5) | Mitigation |',
       '| --- | --- | --- | --- | --- | --- |',
       ...assets.map(
