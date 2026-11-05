@@ -47,6 +47,9 @@ import {
   resolveIndustryBreachBaseline,
 } from '@/utils/roiMath'
 
+const REGULATORY_ASSUMPTIONS_NOTE =
+  'The selected framework count, editable penalty amount and fixed incident rate are illustrative scenario assumptions, not an enforcement estimate. The penalty is not a sourced average; this calculation does not establish legal liability or that migration prevents penalties.'
+
 function formatCurrency(amount: number): string {
   const sign = amount < 0 ? '-' : ''
   const abs = Math.abs(amount)
@@ -373,11 +376,12 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       ORG_SIZE_TIER_OPTIONS.find((o) => o.tier === assumptions.orgSizeTier)?.label ?? 'Average org'
     } — Cyentia IRIS 2025)\n`
     md += `- **Annual savings: ${formatCurrency(financials.breachCostSavings)}**\n\n`
-    md += `### Regulatory Exposure\n`
-    md += `- Applicable frameworks: ${assumptions.applicableFrameworks} of ${data.frameworksByIndustry.length}\n`
-    md += `- Penalty per incident: ${formatCurrency(assumptions.penaltyPerIncident)}\n`
+    md += `### Regulatory Exposure — Illustrative Scenario\n`
+    md += `- Framework count selected for scenario: ${assumptions.applicableFrameworks} of ${data.frameworksByIndustry.length}\n`
+    md += `- Illustrative penalty per incident: ${formatCurrency(assumptions.penaltyPerIncident)}\n`
     md += `- Incident rate: ${Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% per framework per year (illustrative assumption)\n`
-    md += `- **Annual savings: ${formatCurrency(financials.complianceSavings)}**\n\n`
+    md += `- **Annual modeled contribution: ${formatCurrency(financials.complianceSavings)}**\n\n`
+    md += `${REGULATORY_ASSUMPTIONS_NOTE}\n\n`
     md += `### Financial Modeling\n`
     md += `- Planning horizon: ${assumptions.horizonYears} years\n`
     md += `- Discount rate (WACC): ${assumptions.discountRatePct}%\n`
@@ -400,7 +404,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     for (const row of tornado) {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
-    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025 per-sector table (one edition behind; IBM published its 2026 global report). Compliance penalties: published regulatory enforcement data.*\n`
+    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025 per-sector table (one edition behind; IBM published its 2026 global report). Regulatory contribution: selected framework count, editable penalty amount and illustrative incident-rate assumptions; not sourced enforcement statistics.*\n`
     md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     md += '\n---\n\n'
     md +=
@@ -900,16 +904,17 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       <details className="glass-panel p-4" open>
         <summary className="text-sm font-semibold text-foreground cursor-pointer flex items-center gap-2">
           <Scale size={16} className="text-primary shrink-0" />
-          Regulatory Exposure
+          Regulatory Exposure — Illustrative Scenario
         </summary>
         <div className="mt-4 space-y-4">
+          <p className="text-xs text-muted-foreground">{REGULATORY_ASSUMPTIONS_NOTE}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="roi-frameworks"
                 className="block text-sm font-medium text-foreground mb-2"
               >
-                Applicable Frameworks
+                Applicable Frameworks (Scenario Count)
               </label>
               <input
                 id="roi-frameworks"
@@ -934,7 +939,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 htmlFor="roi-penalty"
                 className="block text-sm font-medium text-foreground mb-2"
               >
-                Penalty per Incident
+                Penalty per Incident (Illustrative Amount)
               </label>
               <input
                 id="roi-penalty"
@@ -959,7 +964,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <p className="text-xs font-mono text-muted-foreground">
               {assumptions.applicableFrameworks} frameworks ×{' '}
               {formatCurrency(assumptions.penaltyPerIncident)} ×{' '}
-              {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% incident rate ={' '}
+              {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% illustrative incident rate ={' '}
               <span className="text-primary font-bold">
                 {formatCurrency(financials.complianceSavings)}
               </span>
@@ -1114,9 +1119,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             lengthen).
           </p>
           <p>
-            <strong>Regulatory exposure:</strong> Number of applicable regulatory frameworks ×
-            average penalty per incident × a {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}%
-            annual incident probability per framework.
+            <strong>Illustrative regulatory contribution:</strong> Selected framework count ×
+            editable scenario penalty per incident × a fixed{' '}
+            {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% illustrative annual incident rate
+            per framework. This is a model input, not a sourced probability or enforcement forecast.
           </p>
           <p>
             <strong>NPV:</strong> Σ (netAnnualBenefit / (1 + WACC)^t) − capex, where
