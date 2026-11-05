@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { estimateCompactTokenSize } from './tokenSizeModel'
 import React, { useState, useCallback, useRef } from 'react'
 import {
   Play,
@@ -419,14 +420,11 @@ export const TokenMigrationLab: React.FC = () => {
   const rs256Size = SIGNATURE_SIZE_DATA.RS256.bytes
   const sizeRatio = (displayedSigBytes / rs256Size).toFixed(1)
 
-  const tokenSizeEstimate = {
-    header: JWT_HEADERS[selectedAlgorithm].length,
-    payload: JWT_PAYLOAD.length,
-    signature: displayedSigBytes,
-    total:
-      Math.round((JWT_HEADERS[selectedAlgorithm].length + JWT_PAYLOAD.length) * 1.4) +
-      displayedSigBytes,
-  }
+  const tokenSizeEstimate = estimateCompactTokenSize(
+    JWT_HEADERS[selectedAlgorithm],
+    JWT_PAYLOAD,
+    displayedSigBytes
+  )
 
   return (
     <div className="space-y-6">
@@ -587,7 +585,7 @@ export const TokenMigrationLab: React.FC = () => {
             <div className="text-xl font-bold text-foreground">
               {displayedSigBytes.toLocaleString()}
             </div>
-            <div className="text-[10px] text-muted-foreground">Signature bytes</div>
+            <div className="text-[10px] text-muted-foreground">Raw signature bytes</div>
           </div>
           <div
             className={`rounded-lg p-3 border text-center ${parseFloat(sizeRatio) > 1 ? 'bg-warning/5 border-warning/20' : 'bg-status-success/5 border-status-success/20'}`}
@@ -605,11 +603,22 @@ export const TokenMigrationLab: React.FC = () => {
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div className="text-xl font-bold text-foreground">
-              ~{tokenSizeEstimate.total.toLocaleString()}
+              {tokenSizeEstimate?.total.toLocaleString() ?? 'Not assessed'}
             </div>
-            <div className="text-[10px] text-muted-foreground">Total token bytes</div>
+            <div className="text-[10px] text-muted-foreground">
+              Illustrative compact-token bytes
+            </div>
           </div>
         </div>
+
+        <p className="text-xs text-muted-foreground mb-4">
+          {tokenSizeEstimate
+            ? `Encoded header ${tokenSizeEstimate.encodedHeaderBytes} + payload ${tokenSizeEstimate.encodedPayloadBytes} + signature ${tokenSizeEstimate.encodedSignatureBytes} + 2 separators = ${tokenSizeEstimate.total} ASCII bytes. `
+            : 'Signature size is not assessed. '}
+          This sizing calculation uses the displayed signature byte count; it does not establish a
+          valid, interoperable token or validate the signature encoding. HTTP and cookie framing are
+          excluded.
+        </p>
 
         {/* Comparison Bar */}
         <div className="space-y-2">
@@ -651,12 +660,12 @@ export const TokenMigrationLab: React.FC = () => {
           </div>
           <ul className="text-[10px] text-muted-foreground space-y-1">
             <li>
-              &bull; HTTP Authorization header limit (8KB default in Nginx): ML-DSA-87 tokens may
-              require header size increase
+              &bull; Compare the compact token plus Authorization/Bearer framing and other request
+              headers with the limits documented for the selected server and configuration
             </li>
             <li>
-              &bull; Cookie size limit (4KB): Bearer tokens in cookies must use ML-DSA-44 or switch
-              to short-lived opaque tokens
+              &bull; For cookie transport, account for the cookie name, attributes and the selected
+              browser/server limits. Token length alone does not establish fit
             </li>
             <li>
               &bull; Load balancer JWT validation: Envoy, Kong, AWS ALB must update JWT algorithms

@@ -15,7 +15,7 @@ import {
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 
-const HTTP_HEADER_LIMIT = 8192 // 8 KB common default
+const ILLUSTRATIVE_TOKEN_REFERENCE_BYTES = 8192 // Fixed illustrative compact-token reference, not a server limit
 
 interface TokenSizeData {
   name: string
@@ -37,9 +37,9 @@ function getBarColor(total: number): string {
 }
 
 function getSizeLabel(total: number): string {
-  if (total < 4096) return 'OK'
-  if (total < 8192) return 'Large'
-  return 'Exceeds 8 KB'
+  if (total < 4096) return 'Below 4 KiB reference'
+  if (total < 8192) return '4–8 KiB reference band'
+  return 'At or above 8 KiB reference'
 }
 
 function getSizeLabelColor(total: number): string {
@@ -168,7 +168,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
   }, [payloadJson, isPayloadValid, measuredSigBytes])
 
   const maxSize = useMemo(
-    () => Math.max(...sizeData.map((d) => d.totalLength), HTTP_HEADER_LIMIT),
+    () => Math.max(...sizeData.map((d) => d.totalLength), ILLUSTRATIVE_TOKEN_REFERENCE_BYTES),
     [sizeData]
   )
 
@@ -199,6 +199,13 @@ export const TokenSizeAnalyzer: React.FC = () => {
         </div>
       )}
 
+      <p className="text-xs text-muted-foreground">
+        The 4 KiB and 8 KiB bands are illustrative compact-token references, not HTTP or cookie
+        acceptance limits. These lengths exclude Authorization/Bearer framing, other request headers
+        and cookie names/attributes. Check the limits and scope documented for the tools and
+        configuration you select.
+      </p>
+
       {/* Payload Editor */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">JWT Payload (Editable)</h4>
@@ -220,15 +227,15 @@ export const TokenSizeAnalyzer: React.FC = () => {
       <div className="flex flex-wrap gap-4 text-xs">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded bg-success/60" />
-          <span className="text-muted-foreground">&lt; 4 KB (OK)</span>
+          <span className="text-muted-foreground">&lt; 4 KiB reference</span>
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded bg-warning/60" />
-          <span className="text-muted-foreground">4-8 KB (Large)</span>
+          <span className="text-muted-foreground">4–8 KiB reference band</span>
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded bg-destructive/60" />
-          <span className="text-muted-foreground">&gt; 8 KB (Exceeds limit)</span>
+          <span className="text-muted-foreground">≥ 8 KiB reference</span>
         </span>
       </div>
 
@@ -277,7 +284,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
                       <span className="text-xs font-mono text-foreground min-w-[80px] text-right">
                         {item.totalLength < 1024
                           ? `${item.totalLength} B`
-                          : `${(item.totalLength / 1024).toFixed(1)} KB`}
+                          : `${(item.totalLength / 1024).toFixed(1)} KiB`}
                       </span>
                     </div>
                   </div>
@@ -300,11 +307,11 @@ export const TokenSizeAnalyzer: React.FC = () => {
                       title={`Signature: ${item.signatureB64Length} chars`}
                     />
 
-                    {maxSize > HTTP_HEADER_LIMIT && (
+                    {maxSize > ILLUSTRATIVE_TOKEN_REFERENCE_BYTES && (
                       <div
                         className="absolute top-0 bottom-0 w-0.5 bg-destructive z-10"
-                        style={{ left: `${(HTTP_HEADER_LIMIT / maxSize) * 100}%` }}
-                        title="8 KB HTTP header limit"
+                        style={{ left: `${(ILLUSTRATIVE_TOKEN_REFERENCE_BYTES / maxSize) * 100}%` }}
+                        title="8 KiB illustrative compact-token reference"
                       />
                     )}
                   </div>
@@ -323,10 +330,12 @@ export const TokenSizeAnalyzer: React.FC = () => {
           <div className="mt-4 flex items-center gap-2 text-xs">
             <div className="flex items-center gap-1">
               <div className="w-4 h-0.5 bg-destructive" />
-              <span className="text-destructive font-medium">8 KB HTTP header limit</span>
+              <span className="text-destructive font-medium">
+                8 KiB illustrative compact-token reference
+              </span>
             </div>
             <span className="text-muted-foreground">
-              (common default for Nginx, Apache, Node.js)
+              (fixed sample reference; not a server limit)
             </span>
           </div>
         </div>
@@ -391,7 +400,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
                         <span className={getSizeLabelColor(item.totalLength)}>
                           {item.totalLength < 1024
                             ? `${item.totalLength} B`
-                            : `${(item.totalLength / 1024).toFixed(1)} KB`}
+                            : `${(item.totalLength / 1024).toFixed(1)} KiB`}
                         </span>
                       </td>
                       <td className="p-2 text-right font-mono text-xs text-muted-foreground">
