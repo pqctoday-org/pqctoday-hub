@@ -19,8 +19,8 @@ export const ThreatLandscapeSection = ({
   industry: string
   currentCrypto: string[]
   hiddenThreats: string[]
-  hideThreat: (threatId: string) => void
-  restoreAllThreats: () => void
+  hideThreat?: (threatId: string) => void
+  restoreAllThreats?: () => void
   hiddenForIndustryCount: number
   defaultOpen: boolean
 }) => (
@@ -34,7 +34,7 @@ export const ThreatLandscapeSection = ({
       defaultOpen={defaultOpen}
       infoTip="threatLandscape"
       headerExtra={
-        hiddenForIndustryCount > 0 ? (
+        hiddenForIndustryCount > 0 && restoreAllThreats ? (
           <FilteredChip
             context={industry ?? 'industry'}
             hiddenCount={hiddenForIndustryCount}
