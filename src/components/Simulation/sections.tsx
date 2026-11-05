@@ -515,9 +515,14 @@ export function DecisionSection({
           <div className="text-[11px] leading-snug text-muted-foreground">{chosenCard.detail}</div>
           {wrongPickCostQuarters != null && (
             <div className="mt-1 text-[10.5px] font-semibold leading-snug text-destructive">
-              This pick cost you {wrongPickCostQuarters} quarter
-              {wrongPickCostQuarters > 1 ? 's' : ''} of rework
-              {allowRetry ? '' : ' — the pick stands'}.
+              {allowRetry ? (
+                'Easy mode: retry without a score penalty or clock setback.'
+              ) : (
+                <>
+                  This pick cost you {wrongPickCostQuarters} quarter
+                  {wrongPickCostQuarters > 1 ? 's' : ''} of rework — the pick stands.
+                </>
+              )}
             </div>
           )}
           {/* W3 #13: ground the consequence in THIS run's live Mosca state when the

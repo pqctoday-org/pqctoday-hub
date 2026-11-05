@@ -176,8 +176,11 @@ const CKKS_FRESH_LEVELS = 6
 const CKKS_AFTER_BOOT_LEVELS = 4
 const TFHE_FRESH_NOISE = 10
 const TFHE_ADD_NOISE = 22
-const REFUSAL =
+const CKKS_REFUSAL =
   'No multiplication level remains. The current ciphertext may still decrypt, but multiply/rescale needs a refresh or a shallower circuit.'
+
+const TFHE_REFUSAL =
+  'This illustrative addition would exceed the noise margin. Use Bootstrap to refresh the noise before trying more additions.'
 
 const NoiseBudgetDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
   const [levels, setLevels] = useState(CKKS_FRESH_LEVELS)
@@ -291,7 +294,7 @@ const NoiseBudgetDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) =
           </p>
           {ckksRefused && (
             <p role="alert" className="text-sm font-semibold text-destructive">
-              {REFUSAL}
+              {CKKS_REFUSAL}
             </p>
           )}
           <ul className="text-xs text-muted-foreground space-y-0.5" aria-label="CKKS log">
@@ -314,7 +317,7 @@ const NoiseBudgetDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) =
           </p>
           {tfheRefused && (
             <p role="alert" className="text-sm font-semibold text-destructive">
-              {REFUSAL}
+              {TFHE_REFUSAL}
             </p>
           )}
           <ul className="text-xs text-muted-foreground space-y-0.5" aria-label="TFHE log">
