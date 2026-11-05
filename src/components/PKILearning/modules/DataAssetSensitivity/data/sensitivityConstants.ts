@@ -696,7 +696,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'HIPAA / HITECH',
         prescribedTier: 'high',
         reason:
-          'ePHI requires robust protection and 6-year retention; no prescribed cryptographic standard.',
+          "ePHI requires Security Rule safeguards; HIPAA's 6-year rule covers required compliance documentation, not patient records, and no cryptographic standard is prescribed.",
       },
       {
         framework: 'GDPR Art. 9',

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
+import { HEALTHCARE_DATA_PROFILES } from '../data/healthcareConstants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -147,10 +148,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             Applying the Mosca Inequality to pharmaceutical data reveals why the industry must act
-            now. If the <strong>security shelf life</strong> of a compound&apos;s data (typically
-            20+ years until patent expiry) plus the <strong>migration time</strong> to PQC
-            (estimated 5&ndash;10 years for pharmaceutical IT) exceeds the time until a CRQC
-            arrives, then the data is already at risk of HNDL harvesting.
+            now. If the <strong>security shelf life</strong> of a compound&apos;s data (a sample 20
+            years here; the real figure depends on the patent filing date and remaining term,
+            regulatory exclusivities and trade-secret value) plus the{' '}
+            <strong>migration time</strong> to PQC (a sample 5&ndash;10 years for pharmaceutical IT)
+            exceeds the time until a CRQC arrives, then the data is already at risk of HNDL
+            harvesting.
           </p>
 
           {/* Drug pipeline data assets */}
@@ -227,12 +230,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                   Mosca Inequality for Pharma
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  A drug in Phase I trials today will have data requiring protection for 20+ years
-                  (patent life + data exclusivity). If PQC migration takes 7 years and CRQC arrives
-                  in 2035, the Mosca window has already closed: <strong>20 + 7 &gt; 9</strong>.
-                  Competitors or nation-state actors harvesting encrypted trial data today could
-                  decrypt it before the drug&apos;s patent expires, stealing billions in R&amp;D
-                  investment.
+                  Take a sample drug whose trial data needs 20 years of confidentiality (a US patent
+                  term runs 20 years from filing and much of it is used during development, so real
+                  horizons differ by product). If PQC migration takes 7 years and CRQC arrives in
+                  2035, nine years away, the Mosca window has already closed:{' '}
+                  <strong>20 + 7 &gt; 9</strong>. Competitors or nation-state actors harvesting
+                  encrypted trial data today could decrypt it while it still has competitive value.
                 </p>
               </div>
             </div>
@@ -263,9 +266,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <InlineTooltip term="42 CFR Part 2">
               <strong>42 CFR Part 2</strong>
             </InlineTooltip>{' '}
-            imposes even stricter protections than HIPAA on substance use disorder treatment
-            records, requiring patient consent for virtually any disclosure &mdash; including to
-            other treating physicians.
+            imposes stricter protections than HIPAA on substance use disorder treatment records.
+            Under the 2024 final rule, with compliance required from February 2026, one patient
+            consent can cover all future uses and disclosures for treatment, payment and health care
+            operations, so do not assume a separate consent for every disclosure. Confirm the
+            consent scope that applies to a given record flow.
           </p>
 
           {/* Privacy categories */}
@@ -276,53 +281,59 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                 <tr className="border-b border-border">
                   <th className="text-left p-2 text-muted-foreground font-medium">Category</th>
                   <th className="text-left p-2 text-muted-foreground font-medium">Regulation</th>
-                  <th className="text-center p-2 text-muted-foreground font-medium">Retention</th>
+                  <th className="text-center p-2 text-muted-foreground font-medium">
+                    Sample planning horizon
+                  </th>
                   <th className="text-center p-2 text-muted-foreground font-medium">HNDL Risk</th>
                 </tr>
               </thead>
               <tbody>
                 {[
                   {
-                    category: 'General PHI',
-                    regulation: 'HIPAA',
-                    retention: '6-10 years',
+                    category: 'General health records',
+                    regulation: 'HIPAA + State Laws',
+                    profile: 'adult-ehr',
                     risk: 'high',
                   },
                   {
                     category: 'Pediatric Records',
                     regulation: 'HIPAA + State Laws',
-                    retention: '25+ years',
+                    profile: 'pediatric-ehr',
                     risk: 'critical',
                   },
                   {
                     category: 'Genomic Data',
                     regulation: 'GINA + HIPAA',
-                    retention: 'Lifetime + generational',
+                    profile: 'genomic',
                     risk: 'critical',
                   },
                   {
                     category: 'Substance Abuse',
                     regulation: '42 CFR Part 2',
-                    retention: 'Indefinite',
+                    profile: 'substance-abuse',
                     risk: 'critical',
                   },
                   {
                     category: 'Mental Health',
                     regulation: 'HIPAA + State Laws',
-                    retention: '10-25 years',
+                    profile: 'mental-health',
                     risk: 'high',
                   },
                   {
                     category: 'Reproductive Health',
                     regulation: 'HIPAA + State Laws',
-                    retention: '10+ years',
+                    profile: 'reproductive-health',
                     risk: 'high',
                   },
                 ].map((row) => (
                   <tr key={row.category} className="border-b border-border/50">
                     <td className="p-2 text-xs font-bold text-foreground">{row.category}</td>
                     <td className="p-2 text-xs text-muted-foreground">{row.regulation}</td>
-                    <td className="p-2 text-center text-xs text-foreground">{row.retention}</td>
+                    <td className="p-2 text-center text-xs text-foreground">
+                      {HEALTHCARE_DATA_PROFILES.find((p) => p.id === row.profile)
+                        ?.trueRetentionYears ?? '—'}{' '}
+                      years
+                    </td>
                     <td className="p-2 text-center">
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
@@ -339,6 +350,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               </tbody>
             </table>
           </div>
+          <p className="text-xs text-muted-foreground">
+            The horizons above are the same sample planning assumptions the Patient Privacy Mapper
+            uses, not legal retention periods. HIPAA&apos;s 6-year rule covers required compliance
+            documentation; medical-record retention is set mainly by state law and varies by record
+            type.
+          </p>
 
           {/* Stigma amplifier */}
           <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
@@ -481,8 +498,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                   </li>
                   <li>
                     &bull; <strong>Insulin pump vulnerabilities</strong> &mdash; researchers
-                    demonstrated remote command injection on insulin pumps, capable of delivering
-                    lethal doses. Firmware integrity verification relied on RSA-1024 signatures.
+                    demonstrated unauthorized wireless commands against insulin pumps that could
+                    alter dosing. The cryptographic details differ by product, so ask a manufacturer
+                    what authenticates commands and protects firmware updates rather than assuming
+                    one algorithm.
                   </li>
                 </ul>
               </div>
@@ -675,9 +694,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               <strong>Health Information Sharing and Analysis Center (H-ISAC)</strong> are the
               primary coordinating bodies for healthcare cybersecurity in the United States. HSCC
               publishes the Health Industry Cybersecurity Practices (HICP) guidelines, while H-ISAC
-              provides threat intelligence and incident response coordination. Both organizations
-              are actively developing PQC transition guidance for the healthcare sector, including
-              recommended migration timelines and priority frameworks.
+              provides threat intelligence and incident response coordination. This lesson does not
+              assume a published sector migration timeline: check their current publications and
+              your own regulators for any PQC-specific guidance.
             </p>
           </div>
         </div>

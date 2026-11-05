@@ -299,7 +299,6 @@ export interface HealthcareDataProfile {
   name: string
   description: string
   trueRetentionYears: number
-  hipaaMinimumYears: number
   stigmaFactors: string[]
   applicableRegulations: string[]
   hndlExposure: 'critical' | 'high' | 'medium'
@@ -313,7 +312,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Electronic health records for minors. Most states require retention until age of majority plus statute of limitations period.',
     trueRetentionYears: 25,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Developmental disorders', 'Child abuse documentation', 'Behavioral health'],
     applicableRegulations: ['HIPAA', 'COPPA', 'State pediatric record laws'],
     hndlExposure: 'critical',
@@ -325,7 +323,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Standard electronic health records for adult patients. Retained for continuity of care and legal defense.',
     trueRetentionYears: 10,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Chronic conditions', 'Surgery history'],
     applicableRegulations: ['HIPAA', 'HITECH', 'State retention laws'],
     hndlExposure: 'high',
@@ -337,7 +334,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Psychotherapy notes, psychiatric evaluations, and treatment plans. Subject to heightened privacy protections under HIPAA.',
     trueRetentionYears: 50,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Psychiatric diagnosis',
       'Suicidal ideation',
@@ -354,7 +350,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Fertility treatment, pregnancy records, contraceptive history, and family planning data.',
     trueRetentionYears: 30,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Pregnancy termination',
       'Fertility treatment',
@@ -371,7 +366,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'DNA sequencing, SNP arrays, and pharmacogenomic profiles. Immutable data relevant across generations.',
     trueRetentionYears: 100,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Hereditary disease risk',
       'Ancestry/ethnicity',
@@ -388,7 +382,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Multi-decade cohort studies tracking disease progression, drug efficacy, and population health outcomes.',
     trueRetentionYears: 50,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Research subject identity', 'Experimental treatment outcomes'],
     applicableRegulations: ['HIPAA', 'Common Rule (45 CFR 46)', 'IRB requirements'],
     hndlExposure: 'high',
@@ -400,7 +393,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Population-based cancer surveillance data mandated by federal and state law. Used for epidemiology and treatment effectiveness research.',
     trueRetentionYears: 75,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Cancer diagnosis', 'Treatment outcomes', 'Survival data'],
     applicableRegulations: ['HIPAA', 'National Cancer Act', 'State cancer reporting laws'],
     hndlExposure: 'high',
@@ -412,7 +404,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Organ/tissue donor and recipient data, crossmatch results, and long-term follow-up. Critical for donor matching and immunosuppression management.',
     trueRetentionYears: 40,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Donor identity', 'Rejection episodes', 'Compliance data'],
     applicableRegulations: ['HIPAA', 'NOTA (National Organ Transplant Act)', 'UNOS policies'],
     hndlExposure: 'high',
@@ -424,7 +415,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Treatment records for alcohol and drug use disorders. Subject to stricter federal protections than standard health records.',
     trueRetentionYears: 30,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Substance type',
       'Relapse history',
@@ -441,7 +431,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Physical and cognitive disability assessments, accommodations history, and long-term care plans.',
     trueRetentionYears: 40,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Disability type', 'Functional limitations', 'Workplace accommodations'],
     applicableRegulations: ['HIPAA', 'ADA', 'State disability laws'],
     hndlExposure: 'high',
