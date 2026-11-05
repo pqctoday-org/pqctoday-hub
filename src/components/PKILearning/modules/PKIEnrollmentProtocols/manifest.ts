@@ -25,8 +25,8 @@ const manifest: ModuleManifest = {
     { id: 'keygen', label: 'Generate End-Entity Key (ML-DSA / ML-KEM)' },
     { id: 'cmp-ir', label: 'CMP Initial Request' },
     { id: 'est-enroll', label: 'EST simpleenroll' },
-    { id: 'cmp-kur', label: 'CMP Key Update with ML-KEM' },
-    { id: 'composite', label: 'Composite Enrollment (draft)' },
+    { id: 'cmp-kur', label: 'CMP enrollment and ML-KEM round trip' },
+    { id: 'composite', label: 'Parallel certificate issuance' },
     { id: 'cert-viewer', label: 'Inspect Issued Certificate' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
