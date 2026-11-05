@@ -34,9 +34,11 @@ import { formatVerifiedDate } from '@/data/personaBoardLiveMetrics'
  * researcher only.
  *
  * WHAT IS COMPUTED VS WHAT IS MAINTAINED (changed 2026-08-02). Only the
- * NUMBERS are computed here. The title, punchline, footnote and empty-state
- * copy are read from `PERSONA_JOURNEY_BOARD.researcher.sideCard`, i.e. from
- * `role_board_content_*.csv`, like every other board's copy.
+ * NUMBERS are computed here. Title, footnote and empty-state copy remain in
+ * `PERSONA_JOURNEY_BOARD.researcher.sideCard` / `role_board_content_*.csv`.
+ * The derived count line names the actual Hub `deprecated` status, not a
+ * scientific retraction. It must not borrow an authored zero-result claim
+ * that the computation cannot establish.
  *
  * That split is the fix for a real defect, not a preference. Because this
  * component swapped out the whole CSV-driven side card and hardcoded its own
@@ -146,7 +148,7 @@ export function ResearcherFieldWatchCard() {
               actually counts. It read "Corpus deprecated" until 2026-08-02,
               which promised a corpus-wide total the value never was. */}
           <div className="flex items-baseline justify-between gap-3 text-sm">
-            <dt className="text-muted-foreground">Retracted in your fields</dt>
+            <dt className="text-muted-foreground">Hub catalogue entries marked deprecated</dt>
             <dd
               className="text-right font-semibold text-foreground"
               data-testid="corpus-deprecated"
@@ -165,15 +167,16 @@ export function ResearcherFieldWatchCard() {
 
       {hasCountedSelection && (
         <p className="mt-1 text-base font-bold text-foreground" data-testid="field-watch-punchline">
-          {summary.nothingRetracted
-            ? SIDE_CARD.punchline
-            : `${summary.totalDeprecatedInWindow} document${
-                summary.totalDeprecatedInWindow === 1 ? '' : 's'
-              } in the fields you follow ${
-                summary.totalDeprecatedInWindow === 1 ? 'was' : 'were'
-              } retracted.`}
+          Recorded Hub catalogue entries marked deprecated in your selected fields:{' '}
+          {summary.totalDeprecatedInWindow}.
         </p>
       )}
+
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Hub catalogue status is not evidence of a scientific retraction. Deprecation can record
+        editorial replacement or supersession; check the publication and publisher notices for
+        scientific withdrawal or correction information.
+      </p>
 
       {SIDE_CARD.footnote && (
         <p className="text-xs leading-relaxed text-muted-foreground">{SIDE_CARD.footnote}</p>

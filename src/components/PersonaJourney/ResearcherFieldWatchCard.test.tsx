@@ -159,33 +159,35 @@ describe('ResearcherFieldWatchCard', () => {
     )
   })
 
-  it('shows the field-scoped retracted count and the honest punchline when something WAS retracted', () => {
+  it('shows the field-scoped catalogue deprecation count without scientific-retraction inference', () => {
     resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
     expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-1 docs')
-    expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(/retracted/i)
+    expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
+      'Recorded Hub catalogue entries marked deprecated in your selected fields: 1.'
+    )
     expect(screen.getByTestId('field-watch-punchline')).not.toHaveTextContent(
       'Nothing in the fields you follow was retracted.'
     )
   })
 
-  it('uses the plural punchline copy when more than one document was retracted', () => {
+  it('preserves the recorded count when multiple catalogue entries are deprecated', () => {
     activeFixtureRows = MULTI_DEPRECATED_ROWS
     resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
     expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-2 docs')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      '2 documents in the fields you follow were retracted.'
+      'Recorded Hub catalogue entries marked deprecated in your selected fields: 2.'
     )
   })
 
-  it('shows the "nothing retracted" punchline when the followed field has no deprecations in range', () => {
+  it('shows zero recorded catalogue retirements without a no-scientific-retraction claim', () => {
     resetStore({ followedFields: ['qkd-quantum'] }) // no fixture row maps here
     render(<ResearcherFieldWatchCard />)
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Nothing in the fields you follow was retracted.'
+      'Recorded Hub catalogue entries marked deprecated in your selected fields: 0.'
     )
   })
 
