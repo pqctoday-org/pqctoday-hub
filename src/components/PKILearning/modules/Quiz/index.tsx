@@ -24,6 +24,78 @@ const DEFAULT_TIME_MIN = 15
 const MIN_PER_CATEGORY = 2
 /** The Quick pick size: the desktop's default 15-minute run (15 x 60 / 45 s). */
 const QUICK_PICK_QUESTIONS = 20
+const ALL_DIFFICULTIES = ['beginner', 'intermediate', 'advanced']
+
+function categoryLabel(id: QuizCategory): string {
+  return QUIZ_CATEGORIES.find((c) => c.id === id)?.label ?? id
+}
+
+function difficultyLabel(difficulty: string): string {
+  return difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
+}
+
+interface NoMatchingQuestionsProps {
+  /** Topics that have no question under the current filters (empty: the whole selection). */
+  topics: QuizCategory[]
+  difficulties: string[]
+  industry: string | null
+  roleLabel?: string
+  onBroadenDifficulty?: () => void
+  onClearIndustry?: () => void
+  onBack?: () => void
+}
+
+/**
+ * Says why a requested quiz cannot start and offers the ways to widen it, so a topic that the
+ * difficulty, industry or role filters leave empty never opens as a blank quiz.
+ */
+function NoMatchingQuestions({
+  topics,
+  difficulties,
+  industry,
+  roleLabel,
+  onBroadenDifficulty,
+  onClearIndustry,
+  onBack,
+}: NoMatchingQuestionsProps) {
+  const subject = topics.length > 0 ? topics.map(categoryLabel).join(', ') : 'Your selection'
+  const verb = topics.length > 1 ? 'have' : 'has'
+  const filters = [
+    `difficulty: ${difficulties.map(difficultyLabel).join(', ')}`,
+    ...(industry ? [`industry: ${industry}`] : []),
+    ...(roleLabel ? [`role: ${roleLabel}`] : []),
+  ].join('; ')
+  return (
+    <div
+      role="status"
+      data-testid="quiz-no-match"
+      className="flex flex-col gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-4 py-4"
+    >
+      <p className="text-sm font-semibold text-foreground">No matching questions</p>
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        {subject} {verb} no questions for the current filters ({filters}). Widen the filters or
+        choose a different topic.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {onBroadenDifficulty && (
+          <Button variant="outline" onClick={onBroadenDifficulty}>
+            Include all difficulty levels
+          </Button>
+        )}
+        {onClearIndustry && (
+          <Button variant="outline" onClick={onClearIndustry}>
+            Clear the industry filter
+          </Button>
+        )}
+        {onBack && (
+          <Button variant="outline" onClick={onBack}>
+            Choose a different topic
+          </Button>
+        )}
+      </div>
+    </div>
+  )
+}
 
 /** The time a run of `questions` takes at the quiz's pace, to the nearest 5 minutes. */
 function aboutMinutes(questions: number): number {
@@ -150,6 +222,8 @@ export const QuizModule: React.FC = () => {
     if (experienceLevel === 'basics') return ['beginner', 'intermediate']
     return ['beginner', 'intermediate', 'advanced']
   })
+  // The topics of a start that the filters left with no question; null when no start came up empty.
+  const [emptyRunTopics, setEmptyRunTopics] = useState<QuizCategory[] | null>(null)
   const startTimeRef = useRef(0)
 
   const filteredQuestions = useMemo(() => {
@@ -175,6 +249,25 @@ export const QuizModule: React.FC = () => {
       questionCount: counts.get(c.id) || 0,
     })).filter((c) => c.questionCount > 0)
   }, [filteredQuestions])
+
+  // Topics asked for in the link or by a checkpoint that the filters leave with no question. The
+  // topic list hides them, so without this the reader would start a quiz that has nothing in it.
+  const requestedTopics = urlCategories ?? checkpointState?.checkpointCategories
+  const unavailableTopics = useMemo(() => {
+    const available = new Set<string>(filteredCategories.map((c) => c.id))
+    return (requestedTopics ?? []).filter((id) => !available.has(id))
+  }, [requestedTopics, filteredCategories])
+
+  const handleBroadenDifficulty = useCallback(() => {
+    setSelectedDifficulties(ALL_DIFFICULTIES)
+    setEmptyRunTopics(null)
+  }, [])
+
+  const handleClearIndustry = useCallback(() => {
+    userClearedFilter.current = true
+    setIndustryFilter(null)
+    setEmptyRunTopics(null)
+  }, [])
 
   // Time tracking
   useEffect(() => {
@@ -229,6 +322,12 @@ export const QuizModule: React.FC = () => {
           : shuffleArray(filtered)
       }
 
+      // Never open a quiz with nothing in it: stay on the intro and say why.
+      if (selected.length === 0) {
+        setEmptyRunTopics(categories)
+        return
+      }
+      setEmptyRunTopics(null)
       setQuizQuestions(selected)
       setView('quiz')
     },
@@ -303,12 +402,38 @@ export const QuizModule: React.FC = () => {
     [filteredQuestions, initialCategories]
   )
   const offerLengthChoice = !isCheckpointVisit && mobilePoolSize > QUICK_PICK_QUESTIONS
+  // The topics of the link that still have a question under the filters; the rest are left out.
+  const mobileTopicCount = useMemo(() => {
+    const available = new Set<string>(filteredCategories.map((c) => c.id))
+    return (initialCategories ?? []).filter((id) => available.has(id)).length
+  }, [filteredCategories, initialCategories])
+  // The link names topics and the filters leave none of them with a question: say so, do not start.
+  const mobileNoMatch = !!initialCategories?.length && mobilePoolSize === 0
+  const noMatchTopics = useMemo(() => {
+    const available = new Set<string>(filteredCategories.map((c) => c.id))
+    const ids = [
+      ...(requestedTopics ?? []),
+      ...(emptyRunTopics ?? []),
+      ...(isMobileShell && mobileNoMatch ? (initialCategories ?? []) : []),
+    ]
+    return [...new Set(ids)].filter((id) => !available.has(id))
+  }, [
+    filteredCategories,
+    requestedTopics,
+    emptyRunTopics,
+    isMobileShell,
+    mobileNoMatch,
+    initialCategories,
+  ])
+  const showNoMatch =
+    emptyRunTopics !== null || (isMobileShell ? mobileNoMatch : unavailableTopics.length > 0)
   useEffect(() => {
     if (
       isMobileShell &&
       view === 'intro' &&
       !mobileAutoStarted.current &&
       !offerLengthChoice &&
+      !mobileNoMatch &&
       initialCategories &&
       initialCategories.length > 0
     ) {
@@ -316,7 +441,21 @@ export const QuizModule: React.FC = () => {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: the mobile checkpoint quiz has no intro/Start button to click, so this is the one-time auto-start in place of that user action, guarded by the ref above
       handleStart('category', initialCategories)
     }
-  }, [isMobileShell, view, initialCategories, offerLengthChoice, handleStart])
+  }, [isMobileShell, view, initialCategories, offerLengthChoice, mobileNoMatch, handleStart])
+
+  const noMatchNotice = showNoMatch ? (
+    <NoMatchingQuestions
+      topics={noMatchTopics}
+      difficulties={selectedDifficulties}
+      industry={industryFilter}
+      roleLabel={persona?.label}
+      onBroadenDifficulty={
+        selectedDifficulties.length < ALL_DIFFICULTIES.length ? handleBroadenDifficulty : undefined
+      }
+      onClearIndustry={industryFilter ? handleClearIndustry : undefined}
+      onBack={isMobileShell ? () => navigate(-1) : undefined}
+    />
+  ) : null
 
   if (isMobileShell) {
     const title = checkpointState?.checkpointLabel ?? persona?.label ?? 'Quiz'
@@ -343,8 +482,8 @@ export const QuizModule: React.FC = () => {
         // px-4 pb-4 pt-4: the same 16 px side gutter the quiz and its results screen use.
         <div className="flex flex-col gap-3 px-4 pb-4 pt-4" data-testid="quiz-length-choice">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            {mobilePoolSize} questions across {initialCategories.length}{' '}
-            {initialCategories.length === 1 ? 'topic' : 'topics'}.
+            {mobilePoolSize} questions across {mobileTopicCount}{' '}
+            {mobileTopicCount === 1 ? 'topic' : 'topics'}.
           </p>
           <Button
             variant="gradient"
@@ -367,6 +506,8 @@ export const QuizModule: React.FC = () => {
           </Button>
         </div>
       )
+    } else if (view === 'intro' && noMatchNotice) {
+      body = <div className="mx-4 mt-4">{noMatchNotice}</div>
     } else {
       body = (
         <div className="mx-4 mt-4 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-4 py-6 text-center">
@@ -388,6 +529,7 @@ export const QuizModule: React.FC = () => {
 
   return (
     <div className="w-full">
+      {view === 'intro' && noMatchNotice && <div className="mb-6">{noMatchNotice}</div>}
       {view === 'intro' && (
         <QuizIntro
           previousScores={previousScores}
@@ -407,6 +549,7 @@ export const QuizModule: React.FC = () => {
           }}
           selectedDifficulties={selectedDifficulties}
           onToggleDifficulty={(diff: string) => {
+            setEmptyRunTopics(null)
             setSelectedDifficulties((prev) =>
               prev.includes(diff)
                 ? prev.length > 1
