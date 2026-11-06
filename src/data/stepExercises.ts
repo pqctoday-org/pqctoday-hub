@@ -224,14 +224,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // crypto-dev-apis
   'crypto-dev-apis/build-buy-oss': {
     prompt:
-      'Expand the Open Source strategy card. According to its PQC Implications, which libraries are the only ones offering FIPS certification for PQC?',
-    options: [
-      'OpenSSL oqsprovider and Bouncy Castle',
-      'AWS-LC and wolfSSL',
-      'liboqs and cloudflare/circl',
-    ],
+      'Expand the Open Source strategy card. According to its PQC Implications, which of these libraries has ML-KEM listed on an active CMVP certificate?',
+    options: ['wolfSSL', 'AWS-LC', 'Bouncy Castle'],
     answer: 1,
-    why: "Open source leads PQC adoption, but the card points out that FIPS-certified PQC is available only where a commercial entity funds the validation: AWS-LC through Amazon's backing and wolfSSL through its commercial licence.",
+    why: 'AWS-LC 3 certificates #5298 and #5314 list ML-KEM as approved, while wolfCrypt #4718 lists no PQC algorithm and Bouncy Castle #4943 approves only LMS signature verification. Read the certificate for the exact version you ship.',
   },
   'crypto-dev-apis/crypto-agility-patterns': {
     prompt:

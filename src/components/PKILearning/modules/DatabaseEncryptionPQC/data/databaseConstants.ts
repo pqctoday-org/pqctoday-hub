@@ -486,22 +486,22 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     queryTypes: ['equality', 'range'],
     pqcCompatible: false,
     encryptionScheme:
-      'Column Master Key (CMK) wraps Column Encryption Key (CEK) using RSA-OAEP. With secure enclaves (VBS/SGX): deterministic encryption allows equality queries; randomized encryption allows range queries inside enclave (not sourced in the Library).',
+      'Column Master Key (CMK) wraps Column Encryption Key (CEK) using RSA-OAEP. With a secure enclave, randomized encryption supports range comparison and pattern matching inside the enclave (not sourced in the Library).',
     limitations:
-      'Without enclaves: equality queries only, no joins on encrypted columns. With enclaves: range queries supported but SGX deprecation concerns. CMK rotation requires re-encryption of all CEKs.',
+      'Without an enclave: deterministic encryption allows equality comparisons, equality joins, grouping and DISTINCT, and randomized encryption allows no computation on the column. With an enclave (randomized encryption): comparison operators, BETWEEN, IN, LIKE, DISTINCT and joins, plus ORDER BY and GROUP BY in SQL Server 2022 and Azure SQL Database. SQL Server supports VBS enclaves only; Intel SGX enclaves in Azure SQL Database reach end of support on 31 October 2027. CMK rotation requires re-encryption of all CEKs.',
     pqcRoadmap:
       'No Microsoft roadmap is cited in this module. In this module’s reading, enclave-based range queries are unaffected because they use symmetric crypto; the PQC change is in CMK wrapping.',
   },
   {
     id: 'oracle-csqe',
-    name: 'Oracle Client-Side Query Encryption',
+    name: 'Oracle client-side query encryption (unverified)',
     vendor: 'Oracle',
     queryTypes: ['equality'],
     pqcCompatible: false,
     encryptionScheme:
-      'Application-level encryption with deterministic AES (for equality queries) or HMAC-based tokens. Client manages encryption keys; server stores only ciphertext and HMAC tokens.',
+      'Not verified against Oracle documentation: this module could not locate an Oracle product or feature with this name. Read it as a generic client-side pattern (deterministic AES or HMAC-based tokens, client-managed keys), not as a description of an Oracle feature.',
     limitations:
-      'Equality queries only (no range, regex, or aggregation on encrypted columns). No native sorting on encrypted values. Complex key management in client application layer.',
+      'Not verified against Oracle documentation. In the generic pattern, deterministic tokens allow only equality matching, and key management sits in the client application layer.',
     pqcRoadmap:
       'This module’s projection, not an Oracle statement: ML-KEM-based key wrapping for client key material via Oracle Key Vault. The HMAC-SHA-256 token scheme is symmetric. No release date is cited.',
   },
