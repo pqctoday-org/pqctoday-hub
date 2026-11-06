@@ -96,7 +96,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Cloud KMS Key Wrapping',
     emoji: '🔑',
     useCase:
-      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 — the key-wrapping pattern cloud KMS services (AWS, Azure, GCP) use to protect data encryption keys with a quantum-safe KEM — compared against classical RSA-OAEP wrapping.',
+      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 as a fictional KEM+DEM key-wrapping pattern for protecting data encryption keys, compared against classical RSA-OAEP wrapping. It is not a description of how AWS, Azure or Google Cloud KMS wrap keys; for a real service, check the exact service, version, API and key boundary in its own documentation.',
     algorithms: ['ML-KEM-768', 'Encap/Decap'],
     difficulty: 'beginner',
     trackId: 'infrastructure',
