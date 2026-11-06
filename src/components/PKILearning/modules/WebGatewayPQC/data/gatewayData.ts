@@ -752,6 +752,13 @@ export interface TopologyAnalysis {
   recommendations: string[]
 }
 
+/**
+ * Shown when every segment in the sketched topology uses a PQC mode. It describes the modelled
+ * key exchange only; the page marks it with a check icon by matching this exact text.
+ */
+export const ALL_SEGMENTS_PQC_NOTE =
+  'Every segment in this topology uses a PQC hybrid mode, which covers the key exchange. Check each endpoint\u2019s certificates and signatures separately. Consider certificate compression (RFC 8879) to reduce handshake overhead.'
+
 export function analyzeTopology(connections: TopologyConnection[]): TopologyAnalysis {
   const totalSegments = connections.length
   const vulnerableSegments = connections.filter((c) => {
@@ -803,9 +810,7 @@ export function analyzeTopology(connections: TopologyConnection[]): TopologyAnal
   }
 
   if (vulnerableSegments === 0 && unresolvedSegments === 0 && totalSegments > 0) {
-    recommendations.push(
-      'All segments are quantum-safe. Consider implementing certificate compression (RFC 8879) to reduce handshake overhead.'
-    )
+    recommendations.push(ALL_SEGMENTS_PQC_NOTE)
   }
 
   return {

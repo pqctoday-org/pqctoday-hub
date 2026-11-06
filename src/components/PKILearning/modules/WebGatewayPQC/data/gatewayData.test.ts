@@ -5,6 +5,7 @@ import {
   GATEWAY_BENCHMARKS,
   GATEWAY_FIGURES_NOTE,
   HANDSHAKE_MITIGATIONS_NOTE,
+  ALL_SEGMENTS_PQC_NOTE,
   analyzeTopology,
   type TopologyConnection,
 } from './gatewayData'
@@ -64,5 +65,17 @@ describe('illustrative gateway figures', () => {
     expect(GATEWAY_FIGURES_NOTE).toMatch(/no benchmark source or test conditions are supplied/)
     expect(GATEWAY_FIGURES_NOTE).toMatch(/instead of assuming a uniform buffer size or performance/)
     expect(HANDSHAKE_MITIGATIONS_NOTE).toMatch(/illustrative planning inputs/)
+  })
+})
+
+describe('a topology where every segment uses a PQC mode', () => {
+  it('says what the modes cover (the key exchange) and does not claim the whole path is quantum-safe', () => {
+    const a = analyzeTopology(conns('pqc-hybrid', 'mtls-pqc-hybrid'))
+    expect(a.vulnerableSegments).toBe(0)
+    expect(a.unresolvedSegments).toBe(0)
+    expect(a.recommendations).toContain(ALL_SEGMENTS_PQC_NOTE)
+    expect(ALL_SEGMENTS_PQC_NOTE).toMatch(/covers the key exchange/)
+    expect(ALL_SEGMENTS_PQC_NOTE).toMatch(/certificates and signatures separately/)
+    expect(ALL_SEGMENTS_PQC_NOTE).not.toMatch(/quantum-safe/i)
   })
 })

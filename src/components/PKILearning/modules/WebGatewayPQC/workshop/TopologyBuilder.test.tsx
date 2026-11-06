@@ -19,4 +19,16 @@ describe('Topology Builder: TLS passthrough segment', () => {
     expect(text()).toMatch(/1 segment is not counted as vulnerable or safe/)
     expect(text()).toMatch(/Unresolved/)
   })
+
+  it('marks the passthrough advice with a warning icon, not the success check', () => {
+    render(<TopologyBuilder />)
+    fireEvent.click(screen.getByRole('button', { name: /Reverse Proxy/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Classical TLS 1\.3/ }))
+    fireEvent.click(screen.getByText('TLS Passthrough'))
+    fireEvent.click(screen.getByRole('button', { name: /Analyze Topology/ }))
+    const advice = screen.getByText(/TLS passthrough segments prevent WAF\/IDS inspection/)
+    const icon = advice.parentElement?.querySelector('svg')
+    expect(icon?.getAttribute('class')).toContain('text-status-warning')
+    expect(icon?.getAttribute('class')).not.toContain('text-status-success')
+  })
 })

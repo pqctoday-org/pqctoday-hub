@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
+  ALL_SEGMENTS_PQC_NOTE,
   GATEWAY_COMPONENTS,
   TOPOLOGY_PRESETS,
   TLS_MODES,
@@ -307,7 +308,7 @@ export const TopologyBuilder: React.FC = () => {
             <div className="text-xs font-bold text-foreground">Recommendations</div>
             {analysis.recommendations.map((rec, idx) => (
               <div key={idx} className="flex items-start gap-2 text-sm text-foreground/80">
-                {rec.includes('quantum-safe') ? (
+                {rec === ALL_SEGMENTS_PQC_NOTE ? (
                   <CheckCircle2 size={14} className="text-status-success shrink-0 mt-0.5" />
                 ) : (
                   <AlertTriangle size={14} className="text-status-warning shrink-0 mt-0.5" />
