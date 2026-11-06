@@ -3461,11 +3461,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
           <div>
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
-              REAL
+              CAPTURE LIMIT
             </span>
-            RFC 7383 fragmentation: both peers negotiate FRAGMENTATION_SUPPORTED; over-size messages
-            (e.g. ML-DSA IKE_AUTH) are split into real SKF fragments sized by
-            <code className="text-[10px] mx-0.5">fragment_size</code> and reassembled by the peer.
+            Fragmentation settings request RFC 7383 behavior. A retained SKF header alone does not
+            establish peer support negotiation, fragment validity or successful reassembly. Evaluate
+            those capabilities with packet and peer outcome checks in your production tools.
           </div>
           <div>
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
@@ -4643,6 +4643,21 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             fragmentationEnabled={allowFragmentation}
           />
           <VpnPacketInspector />
+        </div>
+        <div
+          className="text-xs text-muted-foreground space-y-1"
+          role="note"
+          aria-label="Current peer authentication requests"
+        >
+          <p>Current initiator authentication request: {initiatorAuthAlg}.</p>
+          <p>Current responder authentication request: {responderAuthAlg}.</p>
+          <p>Authentication outcome for each peer: Not assessed by this capture summary.</p>
+          {tunnelUp && establishedWith !== runSettingsKey && (
+            <p>
+              Current selections differ from the completed run; retained packets are not evidence of
+              these new requests.
+            </p>
+          )}
         </div>
         <VpnScorecard
           tunnelEstablished={tunnelUp}

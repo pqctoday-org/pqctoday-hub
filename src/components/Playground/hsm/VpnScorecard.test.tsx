@@ -52,10 +52,10 @@ describe('VpnScorecard', () => {
   it('renders the scorecard once the tunnel is established', () => {
     render(<VpnScorecard {...defaultProps} />)
     expect(screen.getByTestId('vpn-scorecard')).toBeInTheDocument()
-    expect(screen.getByText('Tunnel Established')).toBeInTheDocument()
+    expect(screen.getByText('Capture and current requests')).toBeInTheDocument()
   })
 
-  it('counts one round trip per distinct (exchangeType, messageId) pair', () => {
+  it('counts distinct captured IDs for each (exchangeType, messageId) pair', () => {
     // IKE_SA_INIT request + response share messageId 0 → one round trip.
     addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0)
     addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0)
@@ -63,26 +63,26 @@ describe('VpnScorecard', () => {
     addPacket(EXCHANGE_TYPE.IKE_AUTH, 1)
     addPacket(EXCHANGE_TYPE.IKE_AUTH, 1)
     render(<VpnScorecard {...defaultProps} />)
-    const label = screen.getByText('Round trips')
+    const label = screen.getByText('Distinct captured exchange IDs')
     expect(label.parentElement?.textContent).toContain('2')
   })
 
-  it('counts multiple IKE_INTERMEDIATE rounds as distinct round trips', () => {
+  it('counts multiple IKE_INTERMEDIATE rounds as distinct captured IDs', () => {
     addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0)
     addPacket(EXCHANGE_TYPE.IKE_INTERMEDIATE, 1)
     addPacket(EXCHANGE_TYPE.IKE_INTERMEDIATE, 2)
     addPacket(EXCHANGE_TYPE.IKE_AUTH, 3)
     render(<VpnScorecard {...defaultProps} keMode="hybrid" />)
-    const label = screen.getByText('Round trips')
+    const label = screen.getByText('Distinct captured exchange IDs')
     expect(label.parentElement?.textContent).toContain('4')
   })
 
-  it('excludes INFORMATIONAL exchanges from the round-trip count', () => {
+  it('excludes INFORMATIONAL exchanges from the captured-ID count', () => {
     addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0)
     addPacket(EXCHANGE_TYPE.INFORMATIONAL, 5)
     addPacket(EXCHANGE_TYPE.INFORMATIONAL, 6)
     render(<VpnScorecard {...defaultProps} />)
-    const label = screen.getByText('Round trips')
+    const label = screen.getByText('Distinct captured exchange IDs')
     // Only the IKE_SA_INIT pair counts; INFORMATIONAL msgIds 5/6 are ignored.
     expect(label.parentElement?.textContent).toContain('1')
     expect(label.parentElement?.textContent).not.toContain('3')
@@ -106,23 +106,24 @@ describe('VpnScorecard', () => {
     expect(screen.getByTestId('vpn-scorecard').textContent).toContain('+0%')
   })
 
-  it('turns the PQC authentication indicator on for ML-DSA-65', () => {
+  it('shows the initiator ML-DSA request without claiming authentication', () => {
     render(<VpnScorecard {...defaultProps} keMode="pure-pqc" authAlg="ML-DSA-65" />)
-    const label = screen.getByText('PQC authentication')
-    expect(label.className).toContain('text-foreground')
+    const label = screen.getByText('Initiator authentication request')
+    expect(label).toBeInTheDocument()
+    expect(screen.queryByText('PQC authentication')).not.toBeInTheDocument()
     // Subtitle echoes the uppercase auth algorithm.
     expect(screen.getByText('ML-DSA-65')).toBeInTheDocument()
   })
 
-  it('keeps the PQC authentication indicator off for RSA auth', () => {
+  it('shows the RSA initiator request without a success verdict', () => {
     render(<VpnScorecard {...defaultProps} authAlg="RSA-2048" />)
-    const label = screen.getByText('PQC authentication')
+    const label = screen.getByText('Initiator authentication request')
     expect(label.className).toContain('text-muted-foreground')
   })
 
-  it('turns the PQC key exchange indicator off in classical mode', () => {
+  it('labels the classical key-exchange request', () => {
     render(<VpnScorecard {...defaultProps} keMode="classical" />)
-    const label = screen.getByText('PQC key exchange')
+    const label = screen.getByText('Current key-exchange request')
     expect(label.className).toContain('text-muted-foreground')
   })
 
