@@ -19,7 +19,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       severity: 'critical',
       timeframe: 'Planning window 2025-2028 (editorial estimate, not a regulatory date)',
       exampleScenario:
-        'Your Kubernetes cluster uses cert-manager to auto-rotate 500 TLS certificates. In this illustration, ML-DSA-65 certificates run about 5.5KB each vs. about 1.4KB for a typical ECDSA certificate, the cert-manager CRD size limits are exceeded, and certificate renewal starts failing silently across the cluster.',
+        'Your Kubernetes cluster uses cert-manager to auto-rotate 500 TLS certificates. In this illustration, ML-DSA-65 certificates run about 5.5KB each vs. about 1.4KB for a typical ECDSA certificate. These sample sizes alone do not establish a cert-manager CRD limit or a renewal failure. Use your own tools to measure Secret, chain, key, API and ingress constraints, then test renewal and visible error handling against the actual configuration.',
     },
     {
       id: 'vpn-ssh-upgrade',
