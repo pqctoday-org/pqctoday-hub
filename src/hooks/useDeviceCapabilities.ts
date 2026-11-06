@@ -37,8 +37,10 @@ export interface DeviceCapabilities {
   sab: boolean
   /** `window.crossOriginIsolated` — what makes SAB usable on GitHub Pages. */
   crossOriginIsolated: boolean
-  /** WebAssembly is available at all. */
+  /** WebAssembly is available at all. Says nothing about SIMD — see `wasmSimd`. */
   wasm: boolean
+  /** The engine validates a module that uses fixed-width SIMD (see `detectWasmSimd`). */
+  wasmSimd: boolean
   /** Chromium-family engine, per utils/browserDetect.ts. */
   chromium: boolean
   /** Full browser-support verdict, including the iOS-specific messaging. */
@@ -60,11 +62,33 @@ export type ToolFitness =
   /** Not browser-runnable at all (`container`) — a different runtime, not a failure. */
   | 'container'
 
+/**
+ * A minimal WebAssembly module whose only function returns a `v128` built with two
+ * fixed-width SIMD instructions (`i32.const 0; i8x16.splat; i8x16.popcnt`). An engine
+ * without SIMD cannot validate it, so `WebAssembly.validate` is a real feature test,
+ * unlike checking that `WebAssembly` exists. These are the bytes used by the
+ * wasm-feature-detect library's `simd()` detector.
+ */
+const WASM_SIMD_PROBE = new Uint8Array([
+  0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15,
+  253, 98, 11,
+])
+
+/** Does this engine validate a module that uses WebAssembly fixed-width SIMD? */
+export function detectWasmSimd(): boolean {
+  try {
+    return typeof WebAssembly !== 'undefined' && WebAssembly.validate(WASM_SIMD_PROBE)
+  } catch {
+    return false
+  }
+}
+
 /** Pure, testable form: resolve capabilities without touching globals. */
 export function resolveCapabilities(env: {
   hasSAB: boolean
   crossOriginIsolated: boolean
   hasWasm: boolean
+  hasWasmSimd: boolean
   browser: BrowserSupport
   deviceMemory?: number
 }): DeviceCapabilities {
@@ -72,6 +96,7 @@ export function resolveCapabilities(env: {
     sab: env.hasSAB,
     crossOriginIsolated: env.crossOriginIsolated,
     wasm: env.hasWasm,
+    wasmSimd: env.hasWasm && env.hasWasmSimd,
     chromium: env.browser.supported,
     browser: env.browser,
     lowMemory: env.deviceMemory !== undefined && env.deviceMemory < 2,
@@ -102,7 +127,8 @@ export function toolFitness(
         if (!caps.sab || !caps.crossOriginIsolated) return 'unmet'
         break
       case 'wasm-simd':
-        if (!caps.wasm) return 'unmet'
+        // WebAssembly existing is not enough: an engine can run WASM and still reject SIMD.
+        if (!caps.wasmSimd) return 'unmet'
         break
       case 'chromium':
         if (!caps.chromium) return 'unmet'
@@ -147,6 +173,7 @@ export function useDeviceCapabilities(): DeviceCapabilities {
             ? window.crossOriginIsolated
             : false,
         hasWasm: typeof WebAssembly !== 'undefined',
+        hasWasmSimd: detectWasmSimd(),
         browser,
         deviceMemory: (navigator as { deviceMemory?: number }).deviceMemory,
       }),
