@@ -90,11 +90,11 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
           <span className="font-semibold text-status-info">Challenge:</span> Each scenario below
           involves a data asset where several frameworks may apply. The four tiers (Low, Medium,
           High, Critical) are this module&apos;s sample organizational policy; none of these laws or
-          standards defines them. The table lists the duties the module draws from each framework
-          and the tier the sample policy assigns to each duty. Before choosing, ask which scope
-          facts you would need to confirm (does each framework apply to this actor, system and
-          place?) and where the duties conflict. Then pick the sample-policy tier using the four
-          resolution rules. Select your answer to reveal the reasoning.
+          standards defines them. The table keeps two things apart: what each framework says, and
+          the tier this module&apos;s sample policy assigns with its reasoning. Before choosing, ask
+          which scope facts you would need to confirm (does each framework apply to this actor,
+          system and place?) and where the duties conflict. Then pick the sample-policy tier using
+          the four resolution rules. Select your answer to reveal the reasoning.
         </p>
       </div>
 
@@ -196,31 +196,47 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
                         <th className="text-left px-3 py-2 text-muted-foreground font-medium">
                           Framework
                         </th>
-                        <th className="text-left px-3 py-2 text-muted-foreground font-medium">
-                          Sample-Policy Tier
-                        </th>
                         <th className="text-left px-3 py-2 text-muted-foreground font-medium hidden sm:table-cell">
-                          Basis and Scope Note
+                          What the framework says
+                        </th>
+                        <th className="text-left px-3 py-2 text-muted-foreground font-medium">
+                          This module&apos;s tier
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {scenario.conflictingRequirements.map((req, i) => {
-                        const reqCfg = SENSITIVITY_TIERS.find((t) => t.id === req.prescribedTier)
+                        const reqCfg = SENSITIVITY_TIERS.find((t) => t.id === req.moduleTier)
                         return (
-                          <tr key={i} className="border-b border-border last:border-0">
-                            <td className="px-3 py-2 font-semibold text-foreground whitespace-nowrap">
+                          <tr key={i} className="border-b border-border last:border-0 align-top">
+                            <td className="px-3 py-2 font-semibold text-foreground sm:whitespace-nowrap">
                               {req.framework}
+                              {/* Small screens: the two columns to the right are hidden or narrow, so stack both texts here. */}
+                              <div className="mt-2 space-y-2 font-normal sm:hidden">
+                                <p className="text-foreground leading-relaxed">
+                                  <span className="font-medium">What the framework says:</span>{' '}
+                                  {req.frameworkSays}
+                                </p>
+                                <p className="border-l-2 border-primary/30 pl-2 text-muted-foreground leading-relaxed">
+                                  <span className="font-medium text-foreground">
+                                    Module reasoning:
+                                  </span>{' '}
+                                  {req.tierRationale}
+                                </p>
+                              </div>
+                            </td>
+                            <td className="px-3 py-2 text-foreground hidden sm:table-cell leading-relaxed">
+                              {req.frameworkSays}
                             </td>
                             <td className="px-3 py-2">
                               <span
                                 className={`font-semibold px-1.5 py-0.5 rounded ${reqCfg?.bgClass ?? ''} ${reqCfg?.colorClass ?? ''}`}
                               >
-                                {reqCfg?.label ?? req.prescribedTier}
+                                {reqCfg?.label ?? req.moduleTier}
                               </span>
-                            </td>
-                            <td className="px-3 py-2 text-muted-foreground hidden sm:table-cell leading-relaxed">
-                              {req.reason}
+                              <p className="mt-1.5 hidden border-l-2 border-primary/30 pl-2 text-muted-foreground leading-relaxed sm:block">
+                                {req.tierRationale}
+                              </p>
                             </td>
                           </tr>
                         )

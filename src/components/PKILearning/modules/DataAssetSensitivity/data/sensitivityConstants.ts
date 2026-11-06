@@ -480,6 +480,10 @@ export const PQC_ALGORITHM_MAP: Record<SensitivityTier, Record<AssetType, PQCRec
   },
 }
 
+/** Shown with every suggested parameter set: the suggestion does not know the learner's stack. */
+export const PROTOCOL_SUPPORT_NOTE =
+  'Check that your protocol, library and HSM support these parameter sets before relying on them.'
+
 /**
  * Educational recommendation for a tier and asset type, filtered by the suites
  * that apply to the asset. An asset flagged CNSA-2.0 is limited to the
@@ -493,14 +497,18 @@ export function getPqcRecommendation(
   complianceFlags: string[] = []
 ): PQCRecommendation {
   const base = PQC_ALGORITHM_MAP[tier][assetType]
-  if (!complianceFlags.includes('CNSA-2.0')) return base
-  return {
+  const withNote = (r: PQCRecommendation): PQCRecommendation => ({
+    ...r,
+    rationale: `${r.rationale} ${PROTOCOL_SUPPORT_NOTE}`,
+  })
+  if (!complianceFlags.includes('CNSA-2.0')) return withNote(base)
+  return withNote({
     kem: base.kem === null ? null : 'ML-KEM-1024 (FIPS 203)',
     signature: base.signature === null ? null : 'ML-DSA-87 (FIPS 204)',
     hybrid: 'Optional: NSA does not require hybrids',
     rationale:
       'CNSA 2.0 scope: the NSA FAQ (v2.2) approves ML-KEM-1024 and ML-DSA-87 for all classification levels and says SLH-DSA is not part of CNSA, so the general sample choice is replaced. For software and firmware signing NSA also lists LMS and XMSS and wants them used whenever possible.',
-  }
+  })
 }
 
 // ── Migration Effort by Asset Type ────────────────────────────────────────────
@@ -695,15 +703,23 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
 export type ConflictResolutionRule =
   'most-restrictive' | 'jurisdiction-priority' | 'data-subject-location' | 'asset-type-override'
 
+/**
+ * One row of a conflict-scenario table. The row keeps two things apart:
+ * - `frameworkSays` is the only field that describes the law or standard. It holds
+ *   wording about the cited text, or a neutral pointer to the document when the
+ *   module does not summarize it.
+ * - `moduleTier` and `tierRationale` belong to this module's own teaching scale
+ *   (Low, Medium, High, Critical). None of the listed laws or standards defines
+ *   those four tiers, so neither field is the law's position.
+ */
 export interface ConflictingRequirement {
   framework: string
-  /**
-   * The tier this module's sample organizational policy assigns for the duty
-   * described in `reason`. None of the listed laws or standards defines the
-   * four tiers.
-   */
-  prescribedTier: SensitivityTier
-  reason: string
+  /** What the cited law or standard says. Never this module's tiering. */
+  frameworkSays: string
+  /** The tier on this module's teaching scale, not a tier set by the framework. */
+  moduleTier: SensitivityTier
+  /** Why this module assigns `moduleTier`, written as the module's own reasoning. */
+  tierRationale: string
 }
 
 export interface ConflictScenario {
@@ -727,21 +743,27 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     conflictingRequirements: [
       {
         framework: 'HIPAA / HITECH',
-        prescribedTier: 'high',
-        reason:
+        frameworkSays:
           "ePHI requires Security Rule safeguards; HIPAA's 6-year rule covers required compliance documentation, not patient records, and no cryptographic standard is prescribed.",
+        moduleTier: 'high',
+        tierRationale:
+          "High in this module's sample policy because the asset is patient health data (ePHI). HIPAA does not define the four tiers.",
       },
       {
         framework: 'GDPR Art. 9',
-        prescribedTier: 'high',
-        reason:
+        frameworkSays:
           'Health data is a "special category" (Art. 9(1)): processing is prohibited unless a condition in Art. 9(2) applies, such as explicit consent (9(2)(a)) or the provision of health care (9(2)(h), with the Art. 9(3) conditions), and an Art. 6 lawful basis is also needed. Art. 32 separately requires security appropriate to the risk, "taking into account the state of the art", and names the encryption of personal data as an example.',
+        moduleTier: 'high',
+        tierRationale:
+          "High in this module's sample policy: health data is a special category (Art. 9(1)) and Art. 32 calls for security appropriate to the risk. GDPR does not define the four tiers.",
       },
       {
         framework: 'NIST SP 800-66',
-        prescribedTier: 'high',
-        reason:
-          "This module's assessment: ePHI warrants NIST security category 3 or higher parameter sets.",
+        frameworkSays:
+          'This document does not define the four sensitivity tiers. Check NIST SP 800-66 for the requirements that apply to the system.',
+        moduleTier: 'high',
+        tierRationale:
+          "This module's assessment: ePHI warrants NIST security category 3 or higher parameter sets, so its sample policy assigns High.",
       },
     ],
     resolutionRule: 'most-restrictive',
@@ -760,15 +782,19 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     conflictingRequirements: [
       {
         framework: 'PCI DSS v4.0',
-        prescribedTier: 'high',
-        reason:
-          "Requirement 3 covers stored account data: a retention and disposal policy (3.2.1), no storage of sensitive authentication data after authorization (3.3.1), and protection of stored data (3.5 to 3.7). The tier is this module's sample policy.",
+        frameworkSays:
+          'Requirement 3 covers stored account data: a retention and disposal policy (3.2.1), no storage of sensitive authentication data after authorization (3.3.1), and protection of stored data (3.5 to 3.7).',
+        moduleTier: 'high',
+        tierRationale:
+          "High is this module's sample policy tier for stored cardholder data. PCI DSS does not define the four tiers.",
       },
       {
         framework: 'DORA (EU)',
-        prescribedTier: 'critical',
-        reason:
+        frameworkSays:
           'ICT systems supporting critical or important functions call for security policies, procedures and tools that aim to keep them resilient, continuous and available.',
+        moduleTier: 'critical',
+        tierRationale:
+          "Critical in this module's reading: the whole gateway is treated as a critical ICT service, not just the cardholder data. DORA does not define the four tiers.",
       },
     ],
     resolutionRule: 'jurisdiction-priority',
@@ -787,21 +813,26 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     conflictingRequirements: [
       {
         framework: 'FedRAMP High',
-        prescribedTier: 'high',
-        reason:
-          'Module assumption (not drawn from FedRAMP documents): High. Check the FedRAMP baseline that applies to the system for its actual control requirements.',
+        frameworkSays:
+          'FedRAMP does not define the four sensitivity tiers. Check the FedRAMP baseline that applies to the system for its actual control requirements.',
+        moduleTier: 'high',
+        tierRationale: 'Module assumption (not drawn from FedRAMP documents): High.',
       },
       {
         framework: 'CMVP / FIPS 140-3',
-        prescribedTier: 'critical',
-        reason:
-          "This module's own tier for a root CA key, not a FIPS 140-3 requirement: FIPS 140-3 applies to cryptographic modules protecting sensitive but unclassified information; classified systems use modules approved for classified use.",
+        frameworkSays:
+          'FIPS 140-3 applies to cryptographic modules protecting sensitive but unclassified information; classified systems use modules approved for classified use.',
+        moduleTier: 'critical',
+        tierRationale:
+          "Critical is this module's own tier for a root CA key, not a FIPS 140-3 requirement.",
       },
       {
         framework: 'CNSA 2.0',
-        prescribedTier: 'critical',
-        reason:
+        frameworkSays:
           "NSA's CNSA 2.0 FAQ (v2.2, October 2026) quotes CNSSP 15 as requiring CNSA 2.0 algorithms in all new NSS acquisitions by 1 January 2027 and says CNSA 2.0 algorithms are mandated for use by 31 December 2031, unless otherwise noted.",
+        moduleTier: 'critical',
+        tierRationale:
+          "Critical is this module's sample tier for a root CA key that signs for classified systems. The CNSA 2.0 dates concern algorithms, and CNSA 2.0 does not define the four tiers.",
       },
     ],
     resolutionRule: 'asset-type-override',
@@ -820,15 +851,19 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     conflictingRequirements: [
       {
         framework: 'NIST SP 800-218 (SSDF)',
-        prescribedTier: 'medium',
-        reason:
-          'Module assumption (not drawn from SP 800-218): Medium for signing public open-source releases. SP 800-218 is a set of secure software development practices; check it for what it says about protecting signing keys and release integrity.',
+        frameworkSays:
+          'SP 800-218 is a set of secure software development practices. Check it for what it says about protecting signing keys and release integrity.',
+        moduleTier: 'medium',
+        tierRationale:
+          'Module assumption (not drawn from SP 800-218): Medium for signing public open-source releases.',
       },
       {
         framework: 'CNSA 2.0 (Supply Chain)',
-        prescribedTier: 'high',
-        reason:
-          "When firmware is used in National Security Systems (NSS), signing keys fall under CNSA 2.0, and NSA's CNSA 2.0 advisory (September 2022) anticipates that software and firmware signing will exclusively use CNSA 2.0 by 2030.",
+        frameworkSays:
+          "When firmware is used in National Security Systems (NSS), signing keys fall under CNSA 2.0, and NSA's CNSA 2.0 advisory (September 2022) anticipates that software and firmware signing will exclusively use CNSA 2.0 by 2030. NSA's October 2026 FAQ (v2.2) gives general dates only (new acquisitions from 1 January 2027, unsupported equipment phased out by 31 December 2030, CNSA 2.0 mandated by 31 December 2031) and says specific deadlines depend on equipment type, so check the current schedule for the equipment class.",
+        moduleTier: 'high',
+        tierRationale:
+          'This module classes this key High because, in this scenario, the firmware is used in National Security Systems. CNSA 2.0 does not define the four tiers.',
       },
     ],
     resolutionRule: 'most-restrictive',
@@ -847,21 +882,27 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     conflictingRequirements: [
       {
         framework: 'ETSI EN 303 645',
-        prescribedTier: 'low',
-        reason:
-          'Module assumption (not drawn from ETSI EN 303 645): Low, because the energy readings themselves are not sensitive. Check that standard and the applicable IoT rules for what they actually require.',
+        frameworkSays:
+          'This standard does not define the four sensitivity tiers. Check ETSI EN 303 645 and the applicable IoT rules for what they actually require.',
+        moduleTier: 'low',
+        tierRationale:
+          'Module assumption (not drawn from ETSI EN 303 645): Low, because the energy readings themselves are not sensitive.',
       },
       {
         framework: 'FIPS 140-3 (Key Material)',
-        prescribedTier: 'high',
-        reason:
-          'Module assumption, not a FIPS 140-3 rule: High, because a key embedded for 10 to 15 years stays in service past the assumed CRQC year and cannot easily be rotated. FIPS 140-3 sets requirements for cryptographic modules; it does not assign this tier.',
+        frameworkSays:
+          'FIPS 140-3 sets requirements for cryptographic modules; it does not define the four sensitivity tiers.',
+        moduleTier: 'high',
+        tierRationale:
+          'Module assumption, not a FIPS 140-3 rule: High, because a key embedded for 10 to 15 years stays in service past the assumed CRQC year and cannot easily be rotated.',
       },
       {
         framework: 'NIST SP 800-82 (ICS/OT)',
-        prescribedTier: 'high',
-        reason:
-          'Module assumption (not drawn from SP 800-82): High for authentication keys in critical-infrastructure devices. Check SP 800-82 for its actual guidance.',
+        frameworkSays:
+          'This document does not define the four sensitivity tiers. Check SP 800-82 for its actual guidance.',
+        moduleTier: 'high',
+        tierRationale:
+          'Module assumption (not drawn from SP 800-82): High for authentication keys in critical-infrastructure devices.',
       },
     ],
     resolutionRule: 'asset-type-override',
@@ -880,21 +921,26 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     conflictingRequirements: [
       {
         framework: 'GDPR (EU)',
-        prescribedTier: 'high',
-        reason:
+        frameworkSays:
           'Personal data including behavioral profiling requires lawful basis, data minimization, and security measures appropriate to the risk, which can include encryption. Violations of the basic processing principles and conditions for consent (Articles 5, 6, 7, and 9) can carry fines up to 20 000 000 EUR or, for an undertaking, up to 4% of total worldwide annual turnover of the preceding financial year, whichever is higher.',
+        moduleTier: 'high',
+        tierRationale:
+          "High in this module's sample policy for personal data that includes behavioral profiling, once the stated GDPR scope facts are met. GDPR does not define the four tiers.",
       },
       {
         framework: 'CCPA / CPRA (California)',
-        prescribedTier: 'medium',
-        reason:
-          'Module assumption: Medium. CCPA/CPRA applies only to businesses that meet its definitions and gives consumers specific rights; check the statute and its regulations for applicability and for what reasonable security requires.',
+        frameworkSays:
+          'CCPA/CPRA applies only to businesses that meet its definitions and gives consumers specific rights. Check the statute and its regulations for applicability and for what reasonable security requires.',
+        moduleTier: 'medium',
+        tierRationale: 'Module assumption: Medium. CCPA/CPRA does not define the four tiers.',
       },
       {
         framework: 'LGPD (Brazil)',
-        prescribedTier: 'high',
-        reason:
-          "Module assumption: High. Check LGPD's own scope rules and security provisions rather than assuming they mirror GDPR.",
+        frameworkSays:
+          "This law does not define the four sensitivity tiers. Check LGPD's own scope rules and security provisions rather than assuming they mirror GDPR.",
+        moduleTier: 'high',
+        tierRationale:
+          "Module assumption: High, once the scenario's stated LGPD scope facts are met.",
       },
     ],
     resolutionRule: 'data-subject-location',

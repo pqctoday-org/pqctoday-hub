@@ -7,6 +7,7 @@ import {
   DEFAULT_SCORING_WEIGHTS,
   PQC_ALGORITHM_MAP,
   getPqcRecommendation,
+  PROTOCOL_SUPPORT_NOTE,
   scoreAsset,
   type AssetType,
   type SensitivityTier,
@@ -46,9 +47,25 @@ describe('algorithm recommendation respects the suite that applies to the asset'
 
   it('keeps the conservative hash-based option for assets with no CNSA scope', () => {
     const rec = getPqcRecommendation('critical', 'key-material', ['FIPS-140-3'])
-    expect(rec).toBe(PQC_ALGORITHM_MAP.critical['key-material'])
+    const base = PQC_ALGORITHM_MAP.critical['key-material']
+    expect(rec.kem).toBe(base.kem)
+    expect(rec.signature).toBe(base.signature)
+    expect(rec.hybrid).toBe(base.hybrid)
     expect(rec.signature).toMatch(/SLH-DSA/)
     expect(rec.rationale).toMatch(/outside CNSA 2\.0/)
+  })
+
+  it('tells the learner to check protocol, library and HSM support for every suggestion', () => {
+    for (const tier of TIERS) {
+      for (const type of TYPES) {
+        for (const flags of [[], ['CNSA-2.0']]) {
+          const rec = getPqcRecommendation(tier, type, flags)
+          expect(rec.rationale).toContain(PROTOCOL_SUPPORT_NOTE)
+          expect(rec.rationale.split(PROTOCOL_SUPPORT_NOTE)).toHaveLength(2)
+        }
+      }
+    }
+    expect(PROTOCOL_SUPPORT_NOTE).toMatch(/protocol, library and HSM support/)
   })
 })
 
@@ -130,8 +147,10 @@ describe('regulatory applicability is stated before obligations are assigned', (
   it('does not credit a law with a tier it does not define', () => {
     for (const s of CONFLICT_SCENARIOS) {
       for (const r of s.conflictingRequirements) {
-        expect(r.reason).not.toMatch(/classifies .* as (low|medium|high) (risk|sensitivity)/i)
-        expect(r.reason).not.toMatch(/\bmust be treated as High\b/)
+        expect(r.frameworkSays).not.toMatch(
+          /classifies .* as (low|medium|high) (risk|sensitivity)/i
+        )
+        expect(r.frameworkSays).not.toMatch(/\bmust be treated as High\b/)
       }
     }
   })
