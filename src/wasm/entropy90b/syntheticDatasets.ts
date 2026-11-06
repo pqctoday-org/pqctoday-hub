@@ -255,7 +255,7 @@ export const D4_DATASETS: readonly D4DatasetSpec[] = [
     seed: seedFor(2),
     parameters: { samples: SEQUENTIAL_SAMPLES, pStay: 0.7 },
     teachingNote:
-      'Balanced bits (mean ≈ 0.5) that repeat the previous bit 70% of the time. Most Common Value alone looks near 1 bit/sample; the Markov and predictor estimators expose the correlation (true per-sample min-entropy −log2(0.7) ≈ 0.515).',
+      'Balanced bits (mean ≈ 0.5) that repeat the previous bit 70% of the time. Most Common Value alone looks near 1 bit/sample; the Markov and predictor estimators expose the correlation. For an ideal stochastic Markov source with this repeat probability the asymptotic min-entropy rate is approximately −log2(0.7) ≈ 0.515 bits/sample. This repeatable fixed-seed demonstration has no fresh entropy, so 0.515 is the model’s rate, not the true entropy of these bytes.',
     build: () => genMarkovBits(SEQUENTIAL_SAMPLES, 0.7, seedFor(2)),
   },
   {

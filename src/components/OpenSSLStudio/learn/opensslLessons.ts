@@ -152,15 +152,15 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         },
       },
       {
-        op: 'req -x509 -new -key learn-l2-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt',
+        op: 'req -x509 -new -key learn-l2-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt',
         label: 'Self-sign a post-quantum ML-DSA-65 certificate',
         run: async (ctx) => {
           await ctx.run(
-            'req -x509 -new -key learn-l2-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt'
+            'req -x509 -new -key learn-l2-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt'
           )
           const size = sizeOf(ctx, 'learn-l2-mldsa.crt')
           return {
-            detail: `${size} B self-signed certificate — the -sha256 here only hashes the TBSCertificate for reference in older parsers; ML-DSA itself hashes internally.`,
+            detail: `${size} B self-signed certificate. The command names no digest: ML-DSA signs the TBSCertificate directly and does its own message encoding and hashing inside the algorithm, so there is no separate SHA-256 digest of it. The certificate's signature algorithm reads ML-DSA-65, not sha256WithRSAEncryption.`,
           }
         },
       },
@@ -172,7 +172,18 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         b: '7529 B (ML-DSA-65)',
         same: false,
       },
-      { label: 'req command used', a: 'req -x509 -new -key ...', b: 'identical', same: true },
+      {
+        label: 'req command used',
+        a: 'req -x509 -new -key ... -sha256',
+        b: 'req -x509 -new -key ... (no digest option)',
+        same: false,
+      },
+      {
+        label: 'Signature algorithm in the certificate',
+        a: 'sha256WithRSAEncryption',
+        b: 'ML-DSA-65',
+        same: false,
+      },
     ],
     notes: [
       '-new alone (without -x509) produces a CSR for an external CA to sign — try it in the Workbench to see the difference.',
@@ -737,11 +748,11 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         },
       },
       {
-        op: 'req -x509 -new -key learn-l11-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt',
+        op: 'req -x509 -new -key learn-l11-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt',
         label: 'Self-sign a certificate you can import into the TLS Simulator by hand',
         run: async (ctx) => {
           await ctx.run(
-            'req -x509 -new -key learn-l11-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt'
+            'req -x509 -new -key learn-l11-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt'
           )
           return {
             detail: `${sizeOf(ctx, 'learn-l11-mldsa.crt')} B certificate ready. The TLS Simulator does not use it on its own: it starts with its own sample certificates, and the notes below say how to import this certificate and its key by hand.`,
