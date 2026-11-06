@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { PenTool, Loader2 } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
@@ -48,6 +48,8 @@ interface SigState {
   sigBytes: number | null
   loading: boolean
   algoLabel: string
+  error: string | null
+  stale: boolean
 }
 
 const emptySigState = (label: string): SigState => ({
@@ -55,6 +57,8 @@ const emptySigState = (label: string): SigState => ({
   sigBytes: null,
   loading: false,
   algoLabel: label,
+  error: null,
+  stale: false,
 })
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -67,57 +71,95 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
     emptySigState(CLASSICAL_SIG_ALGOS[0].label)
   )
   const [pqcSig, setPqcSig] = useState<SigState>(emptySigState(PQC_SIG_ALGOS[1].label))
-  const [everCompleted, setEverCompleted] = useState(false)
+  const completed = useRef(false)
+  const classicalRequest = useRef(0)
+  const pqcRequest = useRef(0)
+  const classicalBusy = useRef(false)
+  const pqcBusy = useRef(false)
+  const mounted = useRef(true)
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      classicalRequest.current += 1
+      pqcRequest.current += 1
+    }
+  }, [])
 
   const runSign = async (
     algoValue: string,
     meta: Record<string, { genCmd: string; rawin: boolean }>,
     algoList: ReadonlyArray<{ value: string; label: string }>,
-    setState: React.Dispatch<React.SetStateAction<SigState>>
+    setState: React.Dispatch<React.SetStateAction<SigState>>,
+    request: React.RefObject<number>,
+    busy: React.RefObject<boolean>
   ) => {
     // eslint-disable-next-line security/detect-object-injection
     const m = meta[algoValue]
     const label = algoList.find((a) => a.value === algoValue)?.label ?? algoValue
-    if (!m) return
-
-    setState({ sigHex: null, sigBytes: null, loading: true, algoLabel: label })
+    if (busy.current) return
+    if (!m) {
+      setState({ ...emptySigState(label), error: 'Choose a supported sample algorithm' })
+      return
+    }
+    busy.current = true
+    const requestId = ++request.current
+    const isCurrent = () => mounted.current && request.current === requestId
+    const runMessage = message
+    setState({ ...emptySigState(label), loading: true })
 
     try {
       // 1. Generate ephemeral signing key
       const keyResult = await openSSLService.execute(m.genCmd)
+      if (!isCurrent()) return
+      if (keyResult.error) throw new Error(keyResult.error)
       const keyFile = keyResult.files.find((f) => f.name === 'sign.key')
-      if (!keyFile) throw new Error('Failed to generate signing key')
+      if (!keyFile?.data.length) throw new Error('Signing key not produced')
 
       // 2. Create message file
-      const msgFile = { name: 'message.txt', data: new TextEncoder().encode(message) }
+      const msgFile = { name: 'message.txt', data: new TextEncoder().encode(runMessage) }
 
       // 3. Sign — ML-DSA/SLH-DSA have internal hash, Ed25519/EC need -rawin
       const rawFlag = m.rawin ? ' -rawin' : ''
       const signCmd = `openssl pkeyutl -sign -inkey sign.key${rawFlag} -in message.txt -out signature.bin`
       const signResult = await openSSLService.execute(signCmd, [keyFile, msgFile])
 
+      if (!isCurrent()) return
+      if (signResult.error) throw new Error(signResult.error)
       const sigFile = signResult.files.find((f) => f.name === 'signature.bin')
-      if (!sigFile) throw new Error('Signature not produced')
+      if (!sigFile?.data.length) throw new Error('Signature not produced')
 
       const hex = Array.from(sigFile.data)
         .map((b) => b.toString(16).padStart(2, '0'))
         .join('')
 
-      setState({ sigHex: hex, sigBytes: sigFile.data.length, loading: false, algoLabel: label })
+      setState({ ...emptySigState(label), sigHex: hex, sigBytes: sigFile.data.length })
 
-      if (!everCompleted) {
-        setEverCompleted(true)
+      if (!completed.current) {
+        completed.current = true
         onComplete()
       }
     } catch (err) {
-      console.error(err)
-      setState((prev) => ({ ...prev, loading: false }))
+      if (!isCurrent()) return
+      const error = err instanceof Error ? err.message : 'Unknown signing error'
+      setState((prev) => ({ ...prev, error }))
+    } finally {
+      busy.current = false
+      if (mounted.current) setState((prev) => ({ ...prev, loading: false }))
     }
   }
 
   const handleSignClassical = () =>
-    runSign(classicalAlgo, CLASSICAL_SIGN_META, CLASSICAL_SIG_ALGOS, setClassicalSig)
-  const handleSignPQC = () => runSign(pqcAlgo, PQC_SIGN_META, PQC_SIG_ALGOS, setPqcSig)
+    runSign(
+      classicalAlgo,
+      CLASSICAL_SIGN_META,
+      CLASSICAL_SIG_ALGOS,
+      setClassicalSig,
+      classicalRequest,
+      classicalBusy
+    )
+  const handleSignPQC = () =>
+    runSign(pqcAlgo, PQC_SIGN_META, PQC_SIG_ALGOS, setPqcSig, pqcRequest, pqcBusy)
 
   const handleSignBoth = () => {
     handleSignClassical()
@@ -136,7 +178,8 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
         This sample generates signatures and displays their bytes and sizes; it does not run
         verification. For authenticity checks, use a tool that verifies the intended message and
         signature against a trusted public key, including altered-message and altered-signature
-        tests.
+        tests. Activity credit records that a current sample signing operation produced signature
+        bytes; it is not a verification result.
       </div>
       {/* Shared message input */}
       <div className="space-y-2">
@@ -146,7 +189,17 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
         <textarea
           id="sign-message"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            classicalRequest.current += 1
+            pqcRequest.current += 1
+            setMessage(e.target.value)
+            setClassicalSig({
+              ...emptySigState(classicalAlgo),
+              loading: classicalBusy.current,
+              stale: true,
+            })
+            setPqcSig({ ...emptySigState(pqcAlgo), loading: pqcBusy.current, stale: true })
+          }}
           className="w-full h-20 bg-muted border border-border rounded p-3 text-foreground resize-none text-sm"
           placeholder="Enter a message to sign…"
         />
@@ -178,7 +231,15 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
               label="Algorithm"
               items={CLASSICAL_SIG_ALGOS.map((a) => ({ id: a.value, label: a.label }))}
               selectedId={classicalAlgo}
-              onSelect={setClassicalAlgo}
+              onSelect={(value) => {
+                classicalRequest.current += 1
+                setClassicalAlgo(value)
+                setClassicalSig({
+                  ...emptySigState(value),
+                  loading: classicalBusy.current,
+                  stale: true,
+                })
+              }}
               noContainer
               className="w-full"
             />
@@ -206,6 +267,17 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
             )}
           </div>
 
+          {classicalSig.error && (
+            <p role="alert" className="text-sm text-status-error">
+              {classicalSig.error}. Try signing again.
+            </p>
+          )}
+          {classicalSig.stale && (
+            <p role="status" className="text-sm text-muted-foreground">
+              Inputs changed—run again. Previous signature cleared.
+            </p>
+          )}
+
           {classicalSig.sigBytes !== null && (
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Signature size</span>
@@ -227,7 +299,11 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
               label="Algorithm"
               items={PQC_SIG_ALGOS.map((a) => ({ id: a.value, label: a.label }))}
               selectedId={pqcAlgo}
-              onSelect={setPqcAlgo}
+              onSelect={(value) => {
+                pqcRequest.current += 1
+                setPqcAlgo(value)
+                setPqcSig({ ...emptySigState(value), loading: pqcBusy.current, stale: true })
+              }}
               noContainer
               className="w-full"
             />
@@ -254,6 +330,17 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
               <p className="text-muted-foreground text-sm italic">Signature will appear here…</p>
             )}
           </div>
+
+          {pqcSig.error && (
+            <p role="alert" className="text-sm text-status-error">
+              {pqcSig.error}. Try signing again.
+            </p>
+          )}
+          {pqcSig.stale && (
+            <p role="status" className="text-sm text-muted-foreground">
+              Inputs changed—run again. Previous signature cleared.
+            </p>
+          )}
 
           {pqcSig.sigBytes !== null && (
             <div className="flex justify-between text-xs text-muted-foreground">
