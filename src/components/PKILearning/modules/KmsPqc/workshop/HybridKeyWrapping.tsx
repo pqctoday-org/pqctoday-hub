@@ -136,9 +136,9 @@ export const HybridKeyWrapping: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">Hybrid Key Wrapping Explorer</h3>
         <p className="text-sm text-muted-foreground">
           Explore hybrid combiner modes that derive a single wrapping key from both a classical and
-          PQC shared secret. Toggle between Classical-only, PQC-only, and Hybrid to compare wire
-          overhead and provider API examples. This explorer compares constructions; it does not
-          execute Cloud KMS calls.
+          PQC shared secret. Toggle between Classical-only, PQC-only, and Hybrid to inspect
+          illustrated byte counts and provider API examples. This explorer compares constructions;
+          it does not execute Cloud KMS calls.
         </p>
       </div>
 
@@ -241,7 +241,8 @@ export const HybridKeyWrapping: React.FC = () => {
           <div className="glass-panel p-6 border-l-4 border-l-warning">
             <h4 className="text-lg font-bold text-foreground mb-2">Hybrid Combiner Modes</h4>
             <p className="text-sm text-muted-foreground mb-4">
-              Select a hybrid mode to see its components, combiner formula, and wire overhead.
+              Select a hybrid mode to see its components, sample combiner formula, and listed
+              component bytes.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
@@ -304,7 +305,9 @@ export const HybridKeyWrapping: React.FC = () => {
                     <div className="text-sm font-bold text-warning">
                       {activeHybrid.totalOverhead}
                     </div>
-                    <div className="text-[10px] text-muted-foreground">Total Wire Overhead</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      Listed Hybrid Component Bytes
+                    </div>
                   </div>
                   <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
                     <div className="text-sm font-bold text-foreground truncate px-1">
@@ -406,13 +409,21 @@ export const HybridKeyWrapping: React.FC = () => {
       {/* Comparison summary */}
       <div className="glass-panel p-6">
         <h4 className="text-sm font-bold text-foreground mb-3">Mode Comparison Summary</h4>
+        <p className="text-xs text-muted-foreground mb-3">
+          These authored byte counts use different component boundaries, not complete wrapping
+          envelopes. The PQC-only count includes a 40-byte wrapped DEK; the listed hybrid counts
+          exclude it. Other envelope and protocol fields are not included consistently, so do not
+          rank these values as complete-message savings. The sample combiner illustration does not
+          demonstrate TLS negotiation or named-group interoperability. In your own tools, compare
+          the same complete envelope boundary and test the intended protocol profile.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-2 px-2 text-muted-foreground font-medium">Mode</th>
                 <th className="text-right py-2 px-2 text-muted-foreground font-medium">
-                  Wire Overhead
+                  Illustrated Byte Count (Scope Varies)
                 </th>
                 <th className="text-center py-2 px-2 text-muted-foreground font-medium">
                   Quantum-Safe
@@ -428,14 +439,21 @@ export const HybridKeyWrapping: React.FC = () => {
             <tbody>
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-bold text-destructive">Classical Only</td>
-                <td className="py-2 px-2 text-right text-foreground">256 B</td>
+                <td className="py-2 px-2 text-right text-foreground">
+                  256 B<span className="block text-muted-foreground">RSA ciphertext only</span>
+                </td>
                 <td className="py-2 px-2 text-center text-destructive">No</td>
                 <td className="py-2 px-2 text-center text-success">Yes</td>
                 <td className="py-2 px-2 text-muted-foreground">Legacy systems only</td>
               </tr>
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-bold text-success">PQC Only</td>
-                <td className="py-2 px-2 text-right text-foreground">1,128 B</td>
+                <td className="py-2 px-2 text-right text-foreground">
+                  1,128 B
+                  <span className="block text-muted-foreground">
+                    KEM ciphertext plus 40-byte wrapped DEK
+                  </span>
+                </td>
                 <td className="py-2 px-2 text-center text-success">Yes</td>
                 <td className="py-2 px-2 text-center text-destructive">No</td>
                 <td className="py-2 px-2 text-muted-foreground">Post-transition</td>
@@ -443,7 +461,12 @@ export const HybridKeyWrapping: React.FC = () => {
               {HYBRID_COMBINER_MODES.map((mode) => (
                 <tr key={mode.id} className="border-b border-border/50">
                   <td className="py-2 px-2 font-bold text-warning">{mode.name}</td>
-                  <td className="py-2 px-2 text-right text-foreground">{mode.totalOverhead}</td>
+                  <td className="py-2 px-2 text-right text-foreground">
+                    {mode.totalOverhead}
+                    <span className="block text-muted-foreground">
+                      Listed hybrid components only; excludes wrapped DEK
+                    </span>
+                  </td>
                   <td className="py-2 px-2 text-center text-success">Yes</td>
                   <td className="py-2 px-2 text-center text-success">Yes</td>
                   <td className="py-2 px-2 text-muted-foreground">
