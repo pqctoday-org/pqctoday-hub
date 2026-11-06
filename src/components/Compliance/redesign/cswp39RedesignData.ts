@@ -93,34 +93,42 @@ export interface HybridStanceRow {
   position: string
 }
 
+// Each row cites the position document it summarises and keeps three things
+// apart: what an authority recommends, what it approves, and what binds
+// anyone. `stance` is a short label; `position` carries the document, its date
+// and the scope it covers.
 export const HYBRID_ROWS: HybridStanceRow[] = [
   {
-    regime: 'BSI (TR-02102)',
-    jurisdiction: 'Germany / EU',
-    stance: 'Hybrid mandated',
-    tone: 'success',
-    position: 'Requires classical + PQC during transition; pure PQC not yet trusted.',
+    regime: 'BSI (TR-02102-1)',
+    jurisdiction: 'Germany',
+    stance: 'Hybrid recommended',
+    tone: 'info',
+    position:
+      'A technical guideline of recommendations, not a law. Version 2026-01 (23 January 2026) recommends quantum-safe key agreement only combined with a classical mechanism, and quantum-safe signatures only together with a classical signature; hash-based signatures may in principle be used alone. Classical-only key agreement is recommended just to the end of 2031.',
   },
   {
     regime: 'ANSSI',
     jurisdiction: 'France',
-    stance: 'Hybrid mandated',
-    tone: 'success',
-    position: 'Defence-in-depth: hybrid required until PQC has longer field exposure.',
+    stance: 'Hybrid recommended; mandatory in regulated scope',
+    tone: 'warning',
+    position:
+      "ANSSI's PQC FAQ on cyber.gouv.fr (undated; it cites the June 2025 EU roadmap) insists on hybridisation wherever PQC protection is needed, except for hash-based signatures (SLH-DSA, XMSS, LMS). Hybridisation is mandatory only in the regulated perimeter: defence-classified and Diffusion Restreinte data, vital-importance systems (SAIV) and ANSSI product certification and qualification. Elsewhere ANSSI states its PQC advice, hybridisation included, is not a regulatory obligation.",
   },
   {
     regime: 'NSA / CNSA 2.0',
-    jurisdiction: 'United States (NSS)',
-    stance: 'Hybrid interim',
-    tone: 'warning',
-    position: 'Tolerated as interim; end-state is pure CNSA-2.0 algorithms.',
+    jurisdiction: 'United States (national security systems only)',
+    stance: 'No hybrid requirement',
+    tone: 'info',
+    position:
+      'CNSA 2.0 FAQ v2.2 (October 2026): NSA has confidence in the CNSA 2.0 algorithms and does not require hybrid products for security. Where it has issued public guidance on a hybrid, such as its IKEv2 profile, only that hybrid counts as CNSA 2.0 compliant. NSA sets requirements for national security systems and mandates nothing outside them.',
   },
   {
     regime: 'NCSC',
     jurisdiction: 'United Kingdom',
-    stance: 'Pure PQC preferred',
+    stance: 'Hybrid optional; interim if used',
     tone: 'info',
-    position: 'Prefers pure standardised PQC; hybrid only where unavoidable.',
+    position:
+      'NCSC guidance "Next steps in preparing for post-quantum cryptography" (published November 2023, updated August 2024): a hybrid can be justified by interoperability, implementation security or protocol constraints. If one is chosen, NCSC recommends it as an interim measure within a framework that allows a straightforward move to PQC-only. For PKI it prefers one migration to a fully post-quantum PKI over an intermediate hybrid PKI. Its TLS guidance of 15 October 2026 recommends both hybrid and pure post-quantum cipher choices.',
   },
 ]
 

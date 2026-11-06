@@ -357,6 +357,6 @@ export function moduleValidationNote(
   return {
     algorithmStandard: fs,
     moduleValidated: false,
-    caveat: `${fs} standardizes the algorithm, not the implementation. For deployment in a regulated environment you still need a FIPS 140-3 validated cryptographic module (CMVP certificate) that implements it — check the CMVP validated-module list, not just the algorithm standard.`,
+    caveat: `${fs} standardizes the algorithm, not the implementation. NIST says FIPS 140-3 applies to US federal agencies that use cryptography to protect sensitive information, and that where an agency specifies cryptographic protection the module must be validated; private and commercial organisations may adopt it voluntarily. Whether a CMVP-validated module is required for your deployment depends on the requirements that apply to you. If a validated module is required, check its CMVP certificate (status, sunset date, tested configuration, approved algorithms) and its security policy against the version and configuration you run, not just the algorithm standard.`,
   }
 }
