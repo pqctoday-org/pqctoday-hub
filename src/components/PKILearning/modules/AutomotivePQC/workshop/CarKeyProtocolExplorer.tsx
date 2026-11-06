@@ -151,6 +151,11 @@ export const CarKeyProtocolExplorer: React.FC = () => {
         challenges for digital car keys.
       </p>
 
+      <p className="text-xs text-muted-foreground">
+        This is a component-size and timing illustration. It does not execute a CCC Digital Key, NFC
+        or BLE exchange, establish interoperability, or include every protocol/header byte.
+      </p>
+
       {/* ── Transport Selector ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {TRANSPORT_PROFILES.map((tp) => {
@@ -175,11 +180,11 @@ export const CarKeyProtocolExplorer: React.FC = () => {
                   Range: <span className="font-mono text-foreground">{tp.rangeMeters} m</span>
                 </div>
                 <div>
-                  Latency:{' '}
+                  Assumed latency:{' '}
                   <span className="font-mono text-foreground">{tp.typicalLatencyMs} ms</span>
                 </div>
                 <div>
-                  Max payload:{' '}
+                  Sample payload bound:{' '}
                   <span className="font-mono text-foreground">{tp.maxPayloadBytes} B</span>
                 </div>
               </div>
@@ -187,7 +192,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
                 <span
                   className={`inline-block px-2 py-0.5 rounded border text-[10px] font-medium ${feasibility.cls}`}
                 >
-                  PQC: {feasibility.label}
+                  Sample fit: {feasibility.label}
                 </span>
               </div>
             </Button>
@@ -248,17 +253,18 @@ export const CarKeyProtocolExplorer: React.FC = () => {
           <div>
             <div className="text-sm font-bold text-foreground">NFC APDU Fragmentation Alert</div>
             <p className="text-xs text-muted-foreground mt-1">
-              NFC ISO 7816 APDUs are limited to ~256 bytes per command. With PQC algorithms, the
-              total protocol requires{' '}
-              <strong className="text-foreground">{nfcTotalApdus} APDUs</strong> across all steps
+              This calculation assumes short NFC commands of about 256 bytes, not a universal ISO
+              7816 APDU limit. Under that sample assumption, the listed cryptographic objects use{' '}
+              <strong className="text-foreground">{nfcTotalApdus} APDUs</strong> across the steps
               (vs{' '}
               {CAR_KEY_PROTOCOL_STEPS.reduce(
                 (sum, s) => sum + computeNFCApduCount(s.classicalSizeBytes),
                 0
               )}{' '}
-              classical). Each APDU round-trip adds ~200 ms latency, making the PQC handshake
-              significantly slower over NFC. Consider BLE as the primary transport for PQC car key
-              protocols.
+              classical). The 200 ms round-trip figure is an illustrative latency assumption, not a
+              protocol requirement or measurement. Actual implementations may support
+              extended-length APDUs or chaining; evaluate the exact profile, framing and device
+              capabilities.
             </p>
           </div>
         </div>
@@ -422,10 +428,10 @@ export const CarKeyProtocolExplorer: React.FC = () => {
             <thead>
               <tr className="text-left text-muted-foreground">
                 <th className="pb-2 pr-3">Transport</th>
-                <th className="pb-2 pr-3">Est. Handshake Time</th>
-                <th className="pb-2 pr-3">PQC Total Bytes</th>
-                <th className="pb-2 pr-3">Max Payload</th>
-                <th className="pb-2">PQC Feasibility</th>
+                <th className="pb-2 pr-3">Sample Exchange Time</th>
+                <th className="pb-2 pr-3">Listed PQC Bytes</th>
+                <th className="pb-2 pr-3">Sample Payload Bound</th>
+                <th className="pb-2">Sample Fit</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -458,8 +464,12 @@ export const CarKeyProtocolExplorer: React.FC = () => {
           </table>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
-          Handshake time estimated as steps ({pqcTotals.totalSteps}) multiplied by transport typical
-          latency. Actual times depend on protocol optimizations and fragmentation.
+          Sample exchange time is steps ({pqcTotals.totalSteps}) multiplied by the selected assumed
+          latency, not a measured or complete wire-level handshake. Payload bounds and feasibility
+          ratings describe this authored scenario, not universal NFC/BLE/UWB limits. BLE
+          segmentation and reassembly depend on negotiated MTU/MPS; the displayed 512-byte
+          assumption is not a general L2CAP ceiling. In your own tools, test the complete encoded
+          exchange, framing, latency and supported transport profile before choosing a design.
         </p>
       </div>
     </div>
