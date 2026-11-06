@@ -38,14 +38,16 @@ export const DIMENSIONS: Dimension[] = [
   {
     id: 'pqc-algorithm-support',
     label: 'PQC Algorithm Support',
-    description: 'Vendor supports NIST-approved PQC algorithms',
+    description:
+      'Catalogue entry says the product supports NIST-standardized PQC algorithms (not a measure of deployment)',
     weight: 0.25,
     autoDetect: (item) => isPqcReady(item.pqcSupport),
   },
   {
     id: 'fips-validation',
     label: 'FIPS 140-3 Validation',
-    description: 'Cryptographic modules have current FIPS validation',
+    description:
+      'Product entry cites a FIPS 140-3 module certificate (the certificate algorithm scope is not checked)',
     weight: 0.2,
     autoDetect: (item) => isFips1403Certified(item),
   },
@@ -70,7 +72,8 @@ export const DIMENSIONS: Dimension[] = [
   {
     id: 'hybrid-mode',
     label: 'Hybrid Mode Support',
-    description: 'Products support hybrid classical+PQC operation',
+    description:
+      'Products support hybrid classical+PQC operation (inferred from catalogue wording; confirm in vendor documentation)',
     weight: 0.15,
     autoDetect: (item) => {
       const desc = (item.pqcCapabilityDescription || '').toLowerCase()
@@ -211,6 +214,8 @@ export function buildScorecardMarkdown(
     md += `Products assessed: ${productCount}\n`
   }
   md += '\n'
+  md +=
+    'Scores count the catalogue entries you select and the values you enter. The weights and the readiness thresholds are Hub teaching choices, and no dimension measures deployment progress. FIPS 140-3 Validation counts a cited module certificate whatever its algorithm scope; Hybrid Mode Support is inferred from catalogue wording.\n\n'
   md += '| Dimension | Score | Weight | Method |\n'
   md += '|-----------|-------|--------|--------|\n'
   for (const d of dimensionRows) {
@@ -542,11 +547,23 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
         )}
         <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50">
           <strong className="text-foreground/80">How this is scored:</strong> each dimension score
-          (0–100) is multiplied by its weight, then the six weighted scores are summed and divided
-          by the total weight — a weighted average, not a plain average. For the two auto-detected
-          dimensions (PQC Algorithm Support, FIPS 140-3 Validation), a product only counts toward
-          the score once its reported readiness reaches the "hybrid or full" tier — roughly 70% of
-          the way to fully deployed; planned, pilot, and narrative-only claims don&apos;t count.
+          (0–100) is the share of your products ticked for it, multiplied by its weight; the
+          weighted scores are summed and divided by the total weight. The weights, the colour bands
+          (75 and 50) and the 50-point low-readiness line are Hub teaching choices, not an industry
+          standard, and no dimension measures how far a product is actually deployed. Three
+          dimensions pre-tick products from the catalogue, each by a different rule.{' '}
+          <em>PQC Algorithm Support</em> ticks products whose catalogue support wording starts with
+          Yes or mentions partial or hybrid support; wording that only says planned, pilot or
+          roadmap is not ticked, though a planned entry that also mentions hybrid can be ticked by
+          mistake, so review the ticks. The wording does not say which operations, versions or
+          settings are in use. <em>FIPS 140-3 Validation</em> follows the certificate stage: it
+          ticks only products whose entry cites a FIPS 140-3 module certificate
+          (algorithm-validation-only, in-process and FIPS 140-2 entries do not count), and the
+          certificate scope is not checked, so it can cover classical algorithms only.{' '}
+          <em>Hybrid Mode Support</em> is a limited inference from the word hybrid in the catalogue
+          text; it can miss a product, or count a mention that says hybrid is not offered, so
+          confirm it in the vendor&apos;s documentation. You tick the other three dimensions
+          yourself.
         </p>
       </div>
 
