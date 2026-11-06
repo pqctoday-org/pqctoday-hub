@@ -630,8 +630,8 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
             )}
             {!parsedSbom.valid ? (
               <p role="alert" className="text-xs text-status-error">
-                {parsedSbom.issue} Save and export are unavailable for this draft. The last valid
-                mapped sample and saved report are retained; fix the draft or explicitly select a
+                {parsedSbom.issue} Save and export are unavailable for this draft. Any existing valid
+                mapping or saved report is left unchanged; fix the draft or explicitly select a
                 bundled sample.
               </p>
             ) : cbomSlice.length === 0 ? (
