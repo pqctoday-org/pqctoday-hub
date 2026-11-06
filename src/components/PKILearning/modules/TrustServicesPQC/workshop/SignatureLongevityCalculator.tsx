@@ -2,14 +2,16 @@
 /**
  * Signature Longevity Calculator.
  *
- * Set how long a signature must remain evaluable and see which degradation
- * stages fall inside that window. The output people find uncomfortable is the
- * re-timestamping deadline: it is driven by the archive you already have, not
- * by new signing volume.
+ * An illustrative scenario: set how long a signature must remain evaluable and
+ * see which degradation stages fall inside that window, against an assumed
+ * signing algorithm and an assumed policy cutoff that are shown on the page.
+ * The output people find uncomfortable is the renewal obligation: it is driven
+ * by the archive you already have, not by new signing volume. Neither a
+ * retention period nor the assumed cutoff proves that a signature survives.
  */
 import { useMemo, useState } from 'react'
 import { Clock, AlertTriangle, CheckCircle2 } from 'lucide-react'
-import { LTV_STAGES } from '../data/trustServicesData'
+import { LTV_STAGES, LTV_SCENARIO, longevityScenario } from '../data/trustServicesData'
 import { Button } from '@/components/ui/button'
 
 const HORIZONS = [
@@ -32,16 +34,15 @@ const STAGE_ONSET: Record<string, number> = {
 export const SignatureLongevityCalculator = () => {
   const [horizon, setHorizon] = useState(30)
 
-  const { inScope, retimestampBy } = useMemo(() => {
+  const { inScope, scenario } = useMemo(() => {
     const inScope = LTV_STAGES.filter((s) => STAGE_ONSET[s.id] <= horizon)
-    // Signatures must be re-timestamped under a quantum-safe algorithm before
-    // the classical one stops being trustworthy. 2035 is the commonly cited
-    // planning anchor; this is a planning figure, not a prediction.
-    const retimestampBy = 2035
-    return { inScope, retimestampBy }
+    // Illustrative scenario: signed this year with the assumed classical algorithm, checked
+    // against one assumed policy cutoff. The dates are shown to the learner, not hidden.
+    const scenario = longevityScenario(horizon, new Date().getFullYear())
+    return { inScope, scenario }
   }, [horizon])
 
-  const spansAlgorithmChange = horizon >= STAGE_ONSET['algorithm-weakens']
+  const spansAlgorithmChange = scenario.endsAfterCutoff
 
   return (
     <div className="space-y-6">
@@ -93,22 +94,32 @@ export const SignatureLongevityCalculator = () => {
           <div className="space-y-2">
             <p className="font-semibold">
               {spansAlgorithmChange
-                ? 'This horizon outlives its signing algorithm'
-                : 'This horizon stays inside one algorithm generation'}
+                ? 'In this scenario the horizon runs past the assumed policy cutoff'
+                : 'In this scenario the horizon ends before the assumed policy cutoff'}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Illustrative scenario, not a prediction. Assumed: signed in{' '}
+              <strong>{scenario.signingYear}</strong> with {LTV_SCENARIO.algorithm}, needed until{' '}
+              <strong>{scenario.endYear}</strong>, checked against one policy cutoff,{' '}
+              <strong>{scenario.cutoffYear}</strong> ({LTV_SCENARIO.policyCutoffBasis}).
             </p>
             <p className="text-sm text-muted-foreground">
               {spansAlgorithmChange ? (
                 <>
-                  A {horizon}-year signature will need re-timestamping under a quantum-safe
-                  algorithm before roughly <strong>{retimestampBy}</strong>. That obligation applies
-                  to every signature already in the archive, so the work scales with what you have
-                  stored — not with how many signatures you make from here.
+                  A {horizon}-year signature would need renewal (for example re-timestamping under a
+                  quantum-safe algorithm) before the earliest of: a weakness in the signing
+                  algorithm, the signing certificate becoming invalid, and a policy cutoff such as{' '}
+                  {scenario.cutoffYear}. That obligation applies to every signature already in the
+                  archive, so the work scales with what you have stored, not with how many
+                  signatures you make from here.
                 </>
               ) : (
                 <>
-                  At {horizon} years the dominant risks are certificate expiry and revocation-data
-                  availability. Capture a timestamp at signing and archive the revocation data, and
-                  the signature survives its window without an algorithm migration.
+                  Ending before {scenario.cutoffYear} does not prove the signature survives its
+                  window. Certificate expiry and revocation-data availability are the nearer risks,
+                  and a weakness in the algorithm, an invalid certificate or an earlier policy
+                  cutoff would still require renewal. Capture a timestamp at signing and archive the
+                  revocation data.
                 </>
               )}
             </p>
@@ -118,6 +129,10 @@ export const SignatureLongevityCalculator = () => {
 
       <section className="space-y-3">
         <h4 className="font-semibold">Stages inside a {horizon}-year window</h4>
+        <p className="text-xs text-muted-foreground">
+          The stage windows are this module&apos;s illustrative ranges, not dates for your algorithm
+          or your certificates.
+        </p>
         {inScope.map((s) => (
           <div key={s.id} className="glass-panel p-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">

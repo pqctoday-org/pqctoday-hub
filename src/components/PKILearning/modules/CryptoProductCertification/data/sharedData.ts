@@ -283,15 +283,16 @@ export const PQC_SCHEME_TABLE: SchemePqcRow[] = [
   {
     scheme: 'eIDAS / QSCD',
     current:
-      'Legal roles are unchanged; algorithms come through ACM and the referenced standards. QSCD certification is valid for at most 5 years, with a vulnerability assessment every 2 years (Reg. 2024/1183, Art 30(3a)).',
+      'Legal roles are unchanged. The regulation text names no algorithm: Annex II asks that the signature be “reliably protected against forgery using currently available technology”, and Art 30(3) bases QSCD certification on a security evaluation under a listed assessment standard or, only where no such standard exists or an evaluation is ongoing, a process with comparable security levels. The algorithm basis therefore follows the assessment route used, not ACM alone; in this module’s scenario the route is EUCC against EN 419221-5, where ACM v2 is guidance. QSCD certification is valid for at most 5 years, with a vulnerability assessment every 2 years (Reg. 2024/1183, Art 30(3a)).',
     currentSources: [SHARED_SOURCES.eidas],
-    planning: 'Further implementing acts and ETSI standards updates.',
+    planning:
+      'Changes to the Commission implementing act that lists the assessment standards, and to the standards it lists. No algorithm or PQC deadline is set by the regulation text read here.',
     planningSources: [],
   },
   {
     scheme: 'PCI',
     current:
-      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. The v5.0 announcement and the listing definitions name no PQC algorithm, parameter set or deadline.',
+      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. The v5.0 announcement and the listing definitions name no PQC algorithm, parameter set or deadline; other PCI documents were not read for this table, so it makes no claim about every PCI standard.',
     currentSources: [SHARED_SOURCES.ptsV5, SHARED_SOURCES.ptsListing],
     planning:
       'KMO v1.0 (14 September 2026) and its evolution. The Cryptography Guidance (August 2025) is non-mandatory; its PQC content is an open question for this v1 (the guidance document is not used here, and the blog announcing it does not mention quantum).',
@@ -595,12 +596,20 @@ export interface MarketDeadlineRow {
 }
 
 export const MANDATE_LABEL: Record<MarketDeadlineRow['mandate'], string> = {
-  HARD: 'Binding mandate',
+  HARD: 'Binding mandate (within its own scope)',
   SOFT: 'Guidance / roadmap target',
   DRAFT: 'Draft — pending',
   NONE: 'Not a mandate',
   UNLABELLED: 'Binding status not yet curated',
 }
+
+/**
+ * What a market-deadline label does not say. The timeline facts carry a year and a binding
+ * status for the instrument behind the date; they do not carry that instrument's perimeter
+ * (who and which systems), function (key establishment, signatures, inventory) or provision.
+ */
+export const MANDATE_SCOPE_NOTE =
+  'A binding label describes the instrument behind the date. It applies only to the organisations, systems and functions that instrument covers (for example key establishment or signatures), under the provision that sets the date. Whether it reaches the fictional anchor customers is an assumption of this scenario, not something the timeline row proves; open the Timeline row for the instrument and its scope.'
 
 /**
  * Market / policy deadlines, read at runtime from the Hub timeline facts —
@@ -1860,6 +1869,8 @@ export function capstoneMarkdown(s: CapstoneState, generatedAt: string): string 
     ...marketDeadlineRows()
       .filter((m) => m.customers.length)
       .map((m) => `- ${m.market}: ${m.year} — ${MANDATE_LABEL[m.mandate]}`),
+    '',
+    `Scope: ${MANDATE_SCOPE_NOTE}`,
   ]
   const ext = EXTENDED_ARTIFACTS.filter((a) => (s.extended[a.key] ?? '').trim())
   if (ext.length) {

@@ -203,15 +203,18 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
             <div className="text-sm font-bold text-primary mb-1">Classical (RSA / ECDSA)</div>
             <p className="text-xs text-muted-foreground">
-              Proven, widely deployed. Small signatures (256-512 bytes). Vulnerable to quantum
-              computers running Shor&apos;s algorithm.
+              Proven, widely deployed. Small signatures and keys: an RSA-2048 signature is 256
+              bytes; an ECDSA P-256 signature is 64 bytes (raw r and s) with a 65-byte uncompressed
+              public key. Vulnerable to quantum computers running Shor&apos;s algorithm.
             </p>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
             <div className="text-sm font-bold text-success mb-1">PQC (ML-DSA / SLH-DSA)</div>
             <p className="text-xs text-muted-foreground">
-              Quantum-resistant. ML-DSA-65 signatures ~3,309 bytes, SLH-DSA-SHA2-128s ~7,856 bytes
-              (FIPS 204, FIPS 205). Larger but quantum-safe.
+              Quantum-resistant. ML-DSA-65: 3,309-byte signature and 1,952-byte public key (FIPS 204
+              Table 2). SLH-DSA-SHA2-128s: 7,856-byte signature and 32-byte public key (FIPS 205
+              Table 2). The rows are not at equal security levels, so compare the signature and the
+              public key together; both are larger than the classical sizes.
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
@@ -242,9 +245,13 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           cryptographically relevant quantum computer could forge signatures and issue rogue
           certificates. <InlineTooltip term="NIST IR 8547">NIST IR 8547</InlineTooltip> recommends
           beginning the transition to post-quantum algorithms immediately, with{' '}
-          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (NSA) requiring exclusive PQC use
-          in national security systems by 2033 for large PKI systems (2030 for software/firmware
-          signing and networking equipment).
+          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (NSA) setting requirements for
+          national security systems only. In NSA&apos;s FAQ (version 2.2, October 2026), CNSA 2.0
+          algorithms are required in new acquisitions from 1 January 2027, equipment and services
+          that cannot support them are phased out by 31 December 2030 absent an exception, and the
+          algorithms are mandated by 31 December 2031 unless otherwise noted. NSA&apos;s earlier
+          2022 advisory anticipated a later 2033 date for niche equipment such as large PKI systems,
+          so check NSA&apos;s current text for the class of system you run.
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Key migration challenges include certificate size growth (ML-DSA-87 public keys are ~2,592

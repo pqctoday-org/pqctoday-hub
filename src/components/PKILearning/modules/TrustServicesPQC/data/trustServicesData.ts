@@ -15,6 +15,8 @@
  *  - eIDAS 1.0 (EU 910/2014) and eIDAS 2.0 (EU 2024/1183).
  */
 
+import { NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+
 /**
  * Version pairs where the newer edition introduces PQC. This is the module's
  * spine: crypto agility argued from documents rather than from principle.
@@ -95,10 +97,14 @@ export const HYBRID_SUITES: HybridSuite[] = [
 ]
 
 /**
- * Why timestamping is the quiet hinge of the whole problem. RFC 3161 is
- * algorithm-agnostic: the signing algorithm comes from the TSA's certificate,
- * not from the protocol. That is what makes a PQC migration of timestamps
- * possible without changing the protocol at all.
+ * Why timestamping is the quiet hinge of the whole problem. RFC 3161 defines
+ * the time-stamp token as a CMS (RFC 5652) SignedData structure. CMS is
+ * algorithm-agile: the signature algorithm identifier is carried in each
+ * SignerInfo and the signer's certificate must carry a matching key. So the
+ * token format does not have to be redesigned for a new signature algorithm,
+ * but a migration still needs TSA key and certificate issuance, TSA and HSM
+ * support, verifier support and interoperability testing, and the trust-list
+ * and validation-policy changes.
  */
 export const TIMESTAMP_FACTS = {
   protocol: 'RFC 3161 (August 2001, Standards Track), updated by RFC 5816 for ESSCertIDv2.',
@@ -107,7 +113,7 @@ export const TIMESTAMP_FACTS = {
   whyItMatters:
     'A timestamp is a proof of existence: a TSA signs a hash of your data plus a time. It is what lets a signature made with a certificate that has since been revoked — or with an algorithm since broken — still be evaluated against the moment it was made.',
   agilityPoint:
-    "In this module's reading, because RFC 3161 carries the algorithm in the TSA certificate rather than in the protocol, a TSA can migrate to ML-DSA without a protocol change. The layer that has to move is the trust list and the validation policy, not the wire format.",
+    'RFC 3161 defines the time-stamp token as a CMS SignedData structure (RFC 3161 Sec. 2.4.2). In CMS the signature algorithm identifier is carried in the SignerInfo (RFC 5652 Sec. 5.3), and the signer’s certificate supplies the public key that has to match it, so the token format does not need redesigning for a new signature algorithm. That is not the whole migration: the TSA needs a certified key and certificate for the new algorithm, and TSA software, HSMs and every verifier must support it and be tested for interoperability, alongside the trust-list and validation-policy changes that make the algorithm acceptable.',
   updateDue:
     'Implementing Regulation (EU) 2025/1929 (September 2025) applies V1.1.1 to qualified time-stamps, and TS 119 312 V2.1.1 (June 2026) still cites that 2016 edition. For qualified time-stamps the Regulation’s version of the profile replaces its algorithm clauses with clauses under which hash and time-stamp signature algorithms shall be compliant with the Agreed Cryptographic Mechanisms endorsed by the European Cybersecurity Certification Group, rather than the TS 119 312 clauses the profile points to.',
 }
@@ -165,4 +171,31 @@ export const LTV_STAGES: LtvStage[] = [
 ]
 
 export const ARCHIVAL_WARNING =
-  'The migration deadline for a 30-year signature is not the CRQC date. It is the date by which every signature you have already made must be re-timestamped under a quantum-safe algorithm — and that work is proportional to the archive, not to the flow of new signatures.'
+  'The migration deadline for a 30-year signature is not the CRQC date. It is the earliest of the dates by which the algorithm weakens, the signing certificate stops being valid or a policy cuts the algorithm off. By then every signature you have already made must have been renewed (for example re-timestamped under a quantum-safe algorithm), and that work is proportional to the archive, not to the flow of new signatures.'
+
+/**
+ * The Signature Longevity Calculator is an illustrative scenario, not a prediction. It assumes a
+ * classical signing algorithm and one policy cutoff, and shows both so the learner can see what
+ * the answer depends on. A retention period alone does not decide whether a signature survives.
+ */
+export const LTV_SCENARIO = {
+  algorithm: 'RSA-2048 or ECDSA P-256',
+  policyCutoffYear: NIST_DEPRECATION.disallowClassical,
+  policyCutoffBasis:
+    'NIST IR 8547 (final, October 2026): quantum-vulnerable public-key algorithms are disallowed under NIST standards and guidelines after 2035',
+} as const
+
+export interface LongevityScenario {
+  signingYear: number
+  /** last year the signature must still be evaluable */
+  endYear: number
+  cutoffYear: number
+  /** true when the required window reaches past the assumed policy cutoff */
+  endsAfterCutoff: boolean
+}
+
+export function longevityScenario(horizonYears: number, signingYear: number): LongevityScenario {
+  const endYear = signingYear + horizonYears
+  const cutoffYear = LTV_SCENARIO.policyCutoffYear
+  return { signingYear, endYear, cutoffYear, endsAfterCutoff: endYear > cutoffYear }
+}
