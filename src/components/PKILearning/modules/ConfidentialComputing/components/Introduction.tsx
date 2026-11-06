@@ -99,10 +99,16 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <InlineTooltip term="TEE">
                 <strong>Trusted Execution Environment (TEE)</strong>
               </InlineTooltip>{' '}
-              is a hardware-isolated region of a processor that guarantees confidentiality and
-              integrity of code and data loaded inside it. Unlike traditional OS-level isolation,
-              TEEs protect workloads even when the operating system, hypervisor, or firmware has
-              been fully compromised.
+              is a hardware-isolated region of a processor designed to protect the confidentiality
+              and integrity of the code and data loaded inside it, within the platform&apos;s stated
+              threat model. Unlike traditional OS-level isolation, a TEE is designed to hold up when
+              the host operating system, hypervisor or host firmware is compromised or malicious. It
+              still relies on a smaller trusted layer: the CPU hardware and microcode, the
+              vendor&apos;s security firmware (for example Intel&apos;s TDX module, AMD&apos;s
+              secure-processor firmware or Arm&apos;s Realm Management Monitor) and, for VM-level
+              TEEs, the guest&apos;s own operating system and application. A flaw in that layer can
+              break the guarantee, which is why relying parties check attestation evidence against a
+              version policy and why patching matters.
             </p>
 
             <p>
@@ -123,11 +129,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   TEEs Protect Against
                 </h3>
                 <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>&bull; Compromised operating system or hypervisor</li>
+                  <li>
+                    &bull; Compromised or malicious host operating system, hypervisor and host
+                    firmware
+                  </li>
                   <li>&bull; Malicious cloud administrator or co-tenant</li>
-                  <li>&bull; Cold boot attacks and DRAM bus snooping</li>
+                  <li>&bull; Cold boot extraction and passive reads of DRAM</li>
                   <li>&bull; DMA attacks from peripheral devices</li>
-                  <li>&bull; Software-level privilege escalation</li>
+                  <li>&bull; Software-level privilege escalation on the host</li>
                 </ul>
               </div>
               <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
@@ -136,11 +145,16 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   TEEs Do NOT Protect Against
                 </h3>
                 <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>
+                    &bull; Flaws in the trusted layer itself (CPU microcode, vendor security
+                    firmware, guest TCB): patch and re-attest
+                  </li>
                   <li>&bull; Microarchitectural side channels (Spectre, Meltdown)</li>
                   <li>&bull; Supply chain attacks on CPU manufacturing</li>
                   <li>&bull; Bugs within the enclave code itself</li>
                   <li>&bull; Denial-of-service (host can starve enclave)</li>
                   <li>&bull; Physical decapping and FIB probing</li>
+                  <li>&bull; Active tampering with the memory bus (varies by platform)</li>
                 </ul>
               </div>
             </div>
@@ -155,8 +169,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 The <strong>TCB</strong> is the set of all hardware, firmware, and software
                 components that must function correctly for the security guarantees to hold. A
                 smaller TCB means fewer components can undermine security. Process-level TEEs (SGX)
-                have the smallest TCB &mdash; just the CPU and enclave code. VM-level TEEs (TDX,
-                SEV-SNP) include the guest OS, resulting in a larger but more practical TCB.
+                have the smallest TCB &mdash; the CPU with its microcode and the vendor-signed
+                architectural enclaves that handle attestation, plus the enclave code. VM-level TEEs
+                (TDX, SEV-SNP) include the guest OS, resulting in a larger but more practical TCB.
+                Because the vendor&apos;s security firmware is in the TCB, a flaw there weakens the
+                TEE&apos;s guarantee until it is patched, and attestation evidence is how a relying
+                party sees which firmware version is running.
               </p>
             </div>
 
@@ -309,9 +327,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <strong>Remote attestation</strong>
               </InlineTooltip>{' '}
               is the process by which a TEE proves its identity and integrity to a remote verifier.
-              The enclave generates a cryptographically signed report of its code measurement,
-              platform state, and configuration &mdash; enabling a relying party to verify that it
-              is communicating with genuine, untampered hardware before releasing sensitive data.
+              The platform produces cryptographically signed evidence of the enclave&apos;s code
+              measurement, platform state, and configuration (the signing key belongs to a platform
+              component, not to the enclave) &mdash; enabling a relying party to verify that it is
+              communicating with genuine, untampered hardware before releasing sensitive data.
             </p>
 
             <p>
@@ -335,7 +354,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <ArrowRight size={14} className="text-muted-foreground sm:rotate-0 rotate-90" />
                 <div className="bg-primary/10 border border-primary/30 rounded px-4 py-2 text-center">
                   Platform
-                  <div className="text-[10px] text-muted-foreground font-sans">Sign with AK</div>
+                  <div className="text-[10px] text-muted-foreground font-sans">Sign evidence</div>
                 </div>
                 <ArrowRight size={14} className="text-muted-foreground sm:rotate-0 rotate-90" />
                 <div className="bg-primary/10 border border-primary/30 rounded px-4 py-2 text-center">
@@ -400,12 +419,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                     All Attestation Chains Are Quantum-Vulnerable
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Every current attestation implementation &mdash; Intel DCAP, ARM CCA, AMD
-                    SEV-SNP, and AWS Nitro &mdash; uses <strong>ECDSA P-256 or P-384</strong> for
-                    signing attestation reports. Shor&apos;s algorithm can break these signatures in
-                    polynomial time on a cryptographically relevant quantum computer (CRQC). An
-                    attacker who can forge attestation quotes can impersonate a legitimate enclave,
-                    completely undermining the trust model of confidential computing.
+                    Intel DCAP, AMD SEV-SNP and AWS Nitro document{' '}
+                    <strong>ECDSA P-256 or P-384</strong> signatures on their attestation evidence,
+                    and Arm&apos;s CCA token profile leaves the signing algorithm open (its examples
+                    use ECDSA P-384). Shor&apos;s algorithm can break ECDSA signatures in polynomial
+                    time on a cryptographically relevant quantum computer (CRQC). An attacker who
+                    can forge attestation evidence can impersonate a legitimate enclave, completely
+                    undermining the trust model of confidential computing.
                   </p>
                 </div>
               </div>
@@ -438,7 +458,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                     <th className="text-left p-2 text-muted-foreground font-medium">Engine</th>
                     <th className="text-left p-2 text-muted-foreground font-medium">Algorithm</th>
                     <th className="text-center p-2 text-muted-foreground font-medium">Key Width</th>
-                    <th className="text-center p-2 text-muted-foreground font-medium">Integrity</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">
+                      Integrity / Ownership Checks
+                    </th>
                     <th className="text-center p-2 text-muted-foreground font-medium">
                       Quantum Impact
                     </th>
@@ -454,13 +476,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                       <td className="p-2 text-center text-xs text-foreground">
                         {engine.keyWidth}-bit
                       </td>
-                      <td className="p-2 text-center">
-                        {engine.integrityProtection ? (
-                          <span className="text-status-success text-xs font-bold">Yes</span>
-                        ) : (
-                          <span className="text-status-warning text-xs font-bold">No</span>
-                        )}
-                      </td>
+                      <td className="p-2 text-xs text-muted-foreground">{engine.integrityKind}</td>
                       <td className="p-2 text-center">
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
@@ -473,7 +489,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                             ? 'GROVER HALVED'
                             : engine.quantumImpact === 'key-expansion-needed'
                               ? 'EXPANSION NEEDED'
-                              : 'NONE'}
+                              : 'NO AES KEY DOCUMENTED'}
                         </span>
                       </td>
                     </tr>
@@ -481,6 +497,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 </tbody>
               </table>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Read the integrity column by kind. A hardware ownership check (AMD&apos;s Reverse Map
+              Table) or hypervisor isolation is access control: it decides who may write a page. It
+              is not a cryptographic integrity check such as a MAC, and AMD scopes out on-line DRAM
+              integrity attacks such as attacking the DDR bus while a VM runs. A memory-encryption
+              key size is a property of the engine your processor enumerates, not of the isolation
+              feature that sits beside it.
+            </p>
 
             {/* Sealing key explanation */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -490,16 +514,25 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </h3>
               <p className="text-xs text-muted-foreground">
                 A <strong>sealing key</strong> is a symmetric key derived from the platform&apos;s
-                hardware root of trust, bound to the enclave&apos;s identity (code measurement
-                and/or signer identity). Enclaves use sealing keys to encrypt data that persists
-                across restarts &mdash; only an enclave with the same identity on the same physical
-                platform can unseal the data. The key derivation chain typically flows:{' '}
+                hardware root of trust and bound to the enclave&apos;s identity (code measurement
+                and/or signer identity) and to security version numbers. Enclaves use sealing keys
+                to encrypt data that persists across restarts, and the sealed data can be unsealed
+                only on the platform that sealed it. In a simplified view of Intel SGX, the
+                derivation combines:{' '}
                 <span className="font-mono text-primary">
                   CPU Root Key &rarr; CPU SVN &rarr; Enclave Identity &rarr; Sealing Key
                 </span>
-                . If any component in the chain changes (firmware update, different enclave
-                version), the derived sealing key changes and previously sealed data becomes
-                inaccessible without a migration protocol.
+                . What an enclave update does to sealed data depends on the sealing policy. A policy
+                bound to the code measurement (MRENCLAVE) ties the key to one exact build: a changed
+                build derives a different key and cannot unseal the old data, so that data must be
+                resealed or migrated before the change. A policy bound to the signer (MRSIGNER plus
+                the product ID) lets a later version from the same signer unseal data sealed by an
+                earlier one. The key request also carries security version numbers (ISVSVN and
+                CPUSVN): a key for a version at or below the current one can be derived, so a
+                security update can unseal older data, while data stamped with a higher version than
+                the enclave or platform has cannot be unsealed. Moving sealed data to a different
+                physical platform is a separate design requirement, because the sealing key is bound
+                to the platform that sealed it.
               </p>
             </div>
 
