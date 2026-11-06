@@ -274,7 +274,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         lines.push('')
       }
     }
-    if (mode === 'sbom' || mode === 'libs') {
+    if (mode === 'sbom') {
       lines.push(
         `## CBOM slice — ${cbomSlice.length} component${cbomSlice.length !== 1 ? 's' : ''}`
       )
@@ -290,6 +290,47 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         }
       } else {
         lines.push('_No components parsed from the active SBOM._')
+      }
+      lines.push('')
+    }
+    if (mode === 'libs') {
+      // These rows follow the displayed catalogue, not the separately selected SBOM.
+      // Entity-escape cell content so pipes/newlines cannot create extra rows or columns.
+      const cell = (value: string | number | null | undefined): string =>
+        value === null || value === undefined || value === ''
+          ? '—'
+          : String(value)
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/\\/g, '&#92;')
+              .replace(/\|/g, '&#124;')
+              .replace(/\r\n|\r|\n/g, '&#10;')
+              .replace(/[*_`[\]]/g, (character) => `&#${character.charCodeAt(0)};`)
+      lines.push(
+        `## Library catalogue — ${CRYPTO_LIBRARIES.length} component${CRYPTO_LIBRARIES.length !== 1 ? 's' : ''}`
+      )
+      lines.push('')
+      lines.push(
+        '| Catalogue ID | Component | Vendor | Version | EoL | Reported FIPS status | CMVP catalogue association | Reported ESV status | PQC support | High CVEs (1y) | Posture | Notes |'
+      )
+      lines.push('|---|---|---|---|---|---|---|---|---|---|---|---|')
+      for (const lib of CRYPTO_LIBRARIES) {
+        const values = [
+          lib.id,
+          lib.name,
+          lib.vendor,
+          lib.latestVersion,
+          lib.eolDate === null ? 'active' : lib.eolDate,
+          FIPS_LABEL[lib.fipsStatus],
+          lib.cmvpCertNumber,
+          ESV_LABEL[lib.esvStatus],
+          lib.pqcSupport,
+          lib.openCveHigh,
+          lib.posture,
+          lib.notes,
+        ]
+        lines.push(`| ${values.map(cell).join(' | ')} |`)
       }
       lines.push('')
     }

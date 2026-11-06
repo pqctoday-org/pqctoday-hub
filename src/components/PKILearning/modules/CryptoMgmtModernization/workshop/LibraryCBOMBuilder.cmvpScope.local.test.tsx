@@ -42,7 +42,7 @@ describe('mixed catalogue certificate scope', () => {
       screen.getByText(/A missing link does not establish certificate absence or validity/)
     ).toBeInTheDocument()
     const md = savedMarkdown()
-    expect(md).toContain('| Component | Version | Reported FIPS status |')
+    expect(md).toContain('| Catalogue ID | Component | Vendor | Version |')
     expect(screen.getAllByRole('row')).toHaveLength(CRYPTO_LIBRARIES.length + 1)
     for (const lib of CRYPTO_LIBRARIES) {
       expect(screen.getAllByText(lib.name, { exact: true }).length).toBeGreaterThan(0)
