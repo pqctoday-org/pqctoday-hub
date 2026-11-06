@@ -2376,14 +2376,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'Hybrid X25519 + ML-KEM-768 mode is illustrative only — no 3GPP specification defines this construction.',
       },
     ],
-    liveDeployments: [
-      {
-        provider: 'SK Telecom + Thales',
-        what: 'Crystals-Kyber (ML-KEM) lab trial on a 5G SA network with 5G SIM cards to protect subscriber identity — a trial, not a commercial deployment',
-        since: '2023-12',
-        referenceUrl: 'https://news.sktelecom.com/en/628',
-      },
-    ],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No commercial deployment of post-quantum subscriber-identity concealment is recorded here. SK Telecom and Thales ran an ML-KEM (Crystals-Kyber) lab trial on a 5G standalone network with 5G SIM cards in December 2023, which is a trial and not a deployment.',
   },
   {
     id: 'openpgp',
@@ -3707,15 +3702,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ossLibraries: [],
     commercialLibraries: [],
     playgrounds: [],
-    liveDeployments: [
-      {
-        provider: 'Turkcell + Juniper + ID Quantique',
-        what: 'Quantum-safe MACsec validated on Juniper SRX/MX/ACX for 5G mobile backhaul (QKD-based key delivery) — a proof-of-concept validation, not a commercial rollout',
-        since: '2025-06',
-        referenceUrl:
-          'https://www.juniper.net/gb/en/company/press-releases/2025/pr-2025-06-26-00-00.html',
-      },
-    ],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No commercial deployment of post-quantum MACsec is recorded here. Turkcell, Juniper and ID Quantique validated quantum-safe MACsec for 5G backhaul in June 2025 using quantum key distribution for key delivery; that is a proof of concept and it does not use post-quantum cryptography.',
     inheritsFromProtocolId: 'tls-1-3',
   },
   {
