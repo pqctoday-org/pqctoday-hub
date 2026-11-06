@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { Play, ExternalLink, CheckCircle2, Lock, Key, Cpu, Zap, RotateCcw } from 'lucide-react'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
@@ -39,7 +39,7 @@ interface StepDef {
 }
 
 const STEPS: StepDef[] = [
-  { id: 'qkd-fetch', label: 'ETSI QKD 014 Key Retrieval', icon: Key },
+  { id: 'qkd-fetch', label: 'Local Sample Key Retrieval', icon: Key },
   { id: 'hsm-import', label: 'Import into HSM', icon: Lock },
   { id: 'kdf', label: 'SP 800-108 Counter-Mode KDF', icon: Cpu },
   { id: 'session-key', label: 'Session Key Output', icon: CheckCircle2 },
@@ -65,32 +65,6 @@ function getRandomUUID(): string {
 import { hsm_importGenericSecret, hsm_kbkdf } from '../../../../../wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
-function sp800108CounterKDF(
-  M: SoftHSMModule,
-  hSession: number,
-  keyMaterialHex: string,
-  label: string,
-  context: string,
-  outputBytes: number
-): { derivedKeyHex: string; baseKeyHandle: number } {
-  const ikm = new Uint8Array(32)
-  for (let i = 0; i < 32; i++) ikm[i] = parseInt(keyMaterialHex.slice(i * 2, i * 2 + 2), 16)
-
-  // NIST SP 800-108 fixed input = Label || 0x00 || Context
-  const fixedInput = new TextEncoder().encode(`${label}\x00${context}`)
-
-  const baseKeyHandle = hsm_importGenericSecret(M, hSession, ikm)
-  // Call HSM C_DeriveKey via CKM_SP800_108_COUNTER_KDF with PRF CKM_SHA256_HMAC (0x251)
-  const derived = hsm_kbkdf(M, hSession, baseKeyHandle, 0x00000251, fixedInput, outputBytes)
-
-  return {
-    derivedKeyHex: Array.from(derived)
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join(''),
-    baseKeyHandle,
-  }
-}
-
 interface DemoState {
   keyId: string
   qkdSecret: string
@@ -98,7 +72,8 @@ interface DemoState {
   sessionId: string
   sessionKey: string
   importedHandle?: number // real PKCS#11 handle from C_CreateObject (step 2)
-  importWasLive?: boolean // true when step 2 used the real HSM
+  importWasLive?: boolean // true only after the current session import succeeds
+  outputOrigin?: 'live-kbkdf' | 'illustrative-random'
 }
 
 export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
@@ -107,109 +82,191 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
   const [processing, setProcessing] = useState(false)
   const hsm = useHSM()
 
+  const [operationError, setOperationError] = useState<string | null>(null)
+  const busy = useRef(false)
+  const mounted = useRef(true)
+  const generation = useRef(0)
+  const currentHsm = useRef(hsm)
+  currentHsm.current = hsm
+  const previousMode = useRef({ ready: hsm.isReady, engine: hsm.engine })
+
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+    }
+  }, [])
+  useEffect(() => {
+    if (previousMode.current.ready !== hsm.isReady || previousMode.current.engine !== hsm.engine) {
+      generation.current++
+      setState((prev) => ({
+        ...prev,
+        importedHandle: undefined,
+        importWasLive: undefined,
+        sessionId: undefined,
+        sessionKey: undefined,
+        outputOrigin: undefined,
+      }))
+      setCurrentStep((step) => (step > 1 ? 1 : step))
+      setOperationError(null)
+      previousMode.current = { ready: hsm.isReady, engine: hsm.engine }
+    }
+  }, [hsm.isReady, hsm.engine])
+
   const handleReset = useCallback(() => {
+    if (busy.current) return
+    generation.current++
     setCurrentStep(0)
     setState({})
-    setProcessing(false)
+    setOperationError(null)
   }, [])
 
-  // Step 1: Simulate ETSI QKD 014 REST key retrieval
-  const handleFetch = useCallback(async () => {
-    setProcessing(true)
-    await new Promise((r) => setTimeout(r, 600)) // simulate network latency
-    const keyId = getRandomUUID()
-    const qkdSecret = getRandomHex(32)
-    const hexArray = qkdSecret.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
-    const base64Key = btoa(String.fromCharCode(...hexArray))
-    const qkdResponseJson = JSON.stringify(
-      {
-        keys: [
-          {
-            key_ID: keyId,
-            key: base64Key,
-          },
-        ],
-      },
-      null,
-      2
-    )
-    setState({ keyId, qkdSecret, qkdResponseJson })
-    setCurrentStep(1)
-    setProcessing(false)
-  }, [])
-
-  // Step 2: Import into HSM — real C_CreateObject when HSM is ready, illustrative otherwise
-  const handleImport = useCallback(async () => {
-    setProcessing(true)
-    await new Promise((r) => setTimeout(r, 300))
-    if (hsm.isReady && hsm.moduleRef.current && state.qkdSecret) {
+  const perform = useCallback(
+    async (
+      operation: (active: () => boolean) => Promise<{
+        next: Partial<DemoState>
+        step: number
+      }>
+    ) => {
+      if (busy.current) return
+      busy.current = true
+      const attempt = ++generation.current
+      const selected = currentHsm.current
+      const selectedModule = selected.moduleRef.current
+      const selectedSession = selected.hSessionRef.current
+      const active = () =>
+        mounted.current &&
+        attempt === generation.current &&
+        selected.isReady === currentHsm.current.isReady &&
+        selected.engine === currentHsm.current.engine &&
+        selectedModule === currentHsm.current.moduleRef.current &&
+        selectedSession === currentHsm.current.hSessionRef.current
+      setProcessing(true)
+      setOperationError(null)
+      setState((prev) => ({
+        ...prev,
+        sessionId: undefined,
+        sessionKey: undefined,
+        outputOrigin: undefined,
+      }))
       try {
-        const M = hsm.moduleRef.current as unknown as SoftHSMModule
-        const hSession = hsm.hSessionRef.current
-        const ikm = new Uint8Array(32)
-        for (let i = 0; i < 32; i++)
-          ikm[i] = parseInt((state.qkdSecret ?? '').slice(i * 2, i * 2 + 2), 16)
-        const handle = hsm_importGenericSecret(M, hSession, ikm)
-        hsm.registerKey(M, hSession, {
-          handle,
-          label: 'QKD Imported Master Secret',
-          family: 'ml-kem',
-          role: 'private',
-          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
-        })
-        setState((s) => ({ ...s, importedHandle: handle, importWasLive: true }))
-      } catch {
-        setState((s) => ({ ...s, importWasLive: false }))
+        const { next, step } = await operation(active)
+        if (active()) {
+          setState((prev) => ({ ...prev, ...next }))
+          setCurrentStep(step)
+        }
+      } catch (cause) {
+        if (active()) setOperationError(cause instanceof Error ? cause.message : String(cause))
+      } finally {
+        // Invalidating an attempt does not permit a conflicting backend operation before it settles.
+        busy.current = false
+        if (mounted.current) setProcessing(false)
       }
-    } else {
-      setState((s) => ({ ...s, importWasLive: false }))
-    }
-    setCurrentStep(2)
-    setProcessing(false)
-  }, [hsm, state.qkdSecret])
+    },
+    []
+  )
 
-  const handleKDF = useCallback(async () => {
-    if (!state.qkdSecret) return
-    setProcessing(true)
-    const sessionId = getRandomHex(16)
-    let sessionKey = ''
-    if (hsm.isReady && hsm.moduleRef.current) {
-      const M = hsm.moduleRef.current as unknown as SoftHSMModule
-      const hSession = hsm.hSessionRef.current
-      if (state.importedHandle !== undefined) {
-        // Reuse the handle already imported in step 2 — run derive-only
-        const fixedInput = new TextEncoder().encode(`session-key-v1\x00${sessionId}`)
-        const derived = hsm_kbkdf(M, hSession, state.importedHandle, 0x00000251, fixedInput, 32)
-        sessionKey = Array.from(derived)
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('')
-      } else {
-        // Step 2 was illustrative — do combined import+derive now
-        const { derivedKeyHex, baseKeyHandle } = sp800108CounterKDF(
-          M,
-          hSession,
-          state.qkdSecret,
-          'session-key-v1',
-          sessionId,
-          32
+  const handleFetch = useCallback(
+    () =>
+      perform(async (active) => {
+        await new Promise((resolve) => setTimeout(resolve, 600))
+        if (!active()) throw new Error('Sample attempt changed; retry the step.')
+        const keyId = getRandomUUID()
+        const qkdSecret = getRandomHex(32)
+        const hexArray = qkdSecret.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
+        const base64Key = btoa(String.fromCharCode(...hexArray))
+        const qkdResponseJson = JSON.stringify(
+          { keys: [{ key_ID: keyId, key: base64Key }] },
+          null,
+          2
         )
-        sessionKey = derivedKeyHex
-        hsm.registerKey(M, hSession, {
-          handle: baseKeyHandle,
-          label: 'QKD Imported Master Secret',
-          family: 'ml-kem',
-          role: 'private',
-          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
-        })
-      }
-    } else {
-      sessionKey = getRandomHex(32)
-    }
-    await new Promise((r) => setTimeout(r, 400))
-    setState((s) => ({ ...s, sessionId, sessionKey }))
-    setCurrentStep(3)
-    setProcessing(false)
-  }, [state.qkdSecret, state.importedHandle, hsm])
+        return {
+          next: {
+            keyId,
+            qkdSecret,
+            qkdResponseJson,
+            importedHandle: undefined,
+            importWasLive: undefined,
+          },
+          step: 1,
+        }
+      }),
+    [perform]
+  )
+
+  const handleImport = useCallback(
+    () =>
+      perform(async (active) => {
+        if (!state.qkdSecret) throw new Error('Generate the local sample key first.')
+        if (hsm.phase === 'error' || hsm.phase === 'loading')
+          throw new Error(
+            'The sample HSM is unavailable or still initializing. Retry, or explicitly disable it for an illustration.'
+          )
+        await new Promise((resolve) => setTimeout(resolve, 300))
+        if (!active()) throw new Error('Sample HSM mode changed; repeat import.')
+        if (hsm.isReady) {
+          if (!hsm.moduleRef.current) throw new Error('The sample HSM session is unavailable.')
+          const M = hsm.moduleRef.current as unknown as SoftHSMModule
+          const hSession = hsm.hSessionRef.current
+          const ikm = new Uint8Array(32)
+          for (let i = 0; i < 32; i++)
+            ikm[i] = parseInt((state.qkdSecret ?? '').slice(i * 2, i * 2 + 2), 16)
+          const handle = hsm_importGenericSecret(M, hSession, ikm)
+          hsm.registerKey(M, hSession, {
+            handle,
+            label: 'QKD Imported Master Secret',
+            family: 'ml-kem',
+            role: 'private',
+            generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+          })
+          return { next: { importedHandle: handle, importWasLive: true }, step: 2 }
+        }
+        return { next: { importedHandle: undefined, importWasLive: false }, step: 2 }
+      }),
+    [perform, hsm, state.qkdSecret]
+  )
+
+  const handleKDF = useCallback(
+    () =>
+      perform(async (active) => {
+        if (!state.qkdSecret) throw new Error('Generate the local sample key first.')
+        if (hsm.phase === 'error' || hsm.phase === 'loading')
+          throw new Error(
+            'The sample HSM is unavailable or still initializing. Retry, or explicitly disable it for an illustration.'
+          )
+        if (!active()) throw new Error('Sample HSM mode changed; repeat import.')
+        const sessionId = getRandomHex(16)
+        let sessionKey = ''
+        let outputOrigin: DemoState['outputOrigin']
+        if (hsm.isReady) {
+          if (
+            !hsm.moduleRef.current ||
+            state.importedHandle === undefined ||
+            state.importWasLive !== true
+          )
+            throw new Error(
+              'A successful import into the current sample HSM session is required before derivation.'
+            )
+          const M = hsm.moduleRef.current as unknown as SoftHSMModule
+          const hSession = hsm.hSessionRef.current
+          const fixedInput = new TextEncoder().encode(`session-key-v1\x00${sessionId}`)
+          // Existing helper expects the SHA-256 hash selector; rejection is an error, never substituted.
+          const derived = hsm_kbkdf(M, hSession, state.importedHandle, 0x00000250, fixedInput, 32)
+          if (derived.length !== 32)
+            throw new Error('The sample derivation did not return the requested 32 bytes.')
+          sessionKey = Array.from(derived)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+          outputOrigin = 'live-kbkdf'
+        } else {
+          sessionKey = getRandomHex(32)
+          outputOrigin = 'illustrative-random'
+        }
+        await new Promise((resolve) => setTimeout(resolve, 400))
+        return { next: { sessionId, sessionKey, outputOrigin }, step: 3 }
+      }),
+    [perform, state.qkdSecret, state.importedHandle, state.importWasLive, hsm]
+  )
 
   // Step 4: Show output (no async needed)
   const handleShowKey = useCallback(() => {
@@ -227,10 +284,20 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
 
   return (
     <div className="space-y-6">
+      {operationError && (
+        <p role="alert" className="text-sm text-status-error">
+          Sample operation failed: {operationError} The step remains incomplete; retry when ready.
+        </p>
+      )}
+      <p className="text-xs text-muted-foreground" role="note">
+        Local sample workflow: key retrieval is simulated. Successful optional PKCS#11 calls are
+        separate from the walkthrough; no QKD network or second peer runs. The sample secret and any
+        returned key bytes are visible in browser memory. This is not a non-exportability test.
+      </p>
       <ScopeTransparencyBanner
         realOps={[
-          'HMAC-SHA-256 PRF via softhsmv3 C_DeriveKey (CKM_SP800_108_COUNTER_KDF)',
-          'C_CreateObject — QKD secret imported as non-extractable CKO_SECRET_KEY',
+          'Optional C_DeriveKey call; a failed call has no derived result and returned bytes are displayed in JavaScript',
+          'Optional C_CreateObject — sample session secret, sensitive=false and extractable=true',
           'KAT validation: HMAC-SHA-256 and HKDF against FIPS 198-1 / RFC 5869 vectors',
         ]}
         simulatedOps={[
@@ -264,8 +331,8 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <span className="font-bold text-foreground block mb-1">Pre-Shared Keys (PSK)</span>
-            TLS 1.3 external PSK or IPsec IKEv2 PSK imported into an HSM, then expanded via KBKDF to
-            produce per-session traffic keys.
+            Protocol-specific PSK processing must follow the agreed profile. A generic KBKDF call is
+            not a replacement for a TLS or IKE key schedule.
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <span className="font-bold text-foreground block mb-1">Password-Based (PBKDF2)</span>
@@ -294,7 +361,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               </div>
               <div>
                 <span className="font-semibold text-foreground">Output:</span> One or more
-                purpose-specific sub-keys, each never leaving the HSM
+                purpose-specific sub-keys; this sample reads returned bytes into JavaScript
               </div>
               <div>
                 <span className="font-semibold text-foreground">Use when:</span> Key hierarchy
@@ -325,9 +392,11 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          This demo uses KBKDF because the QKD secret is imported as a non-extractable HSM key. HKDF
-          would require the raw key bytes to be visible in the software layer — acceptable for
-          KEM-based TLS but undesirable for QKD where the secret must never leave the HSM.
+          Both mechanism support and key attributes depend on the actual tool and configuration.
+          This sample imports an extractable session secret and reads derived bytes back into
+          JavaScript. It does not establish that KBKDF or HKDF keeps keys inside a production HSM.
+          Evaluate supported mechanisms, attributes, output policy and failure behavior in your own
+          tools.
         </p>
       </div>
 
@@ -361,8 +430,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
           >
             NIST SP 800-108
           </a>{' '}
-          counter-mode KDF pipeline. Both Alice and Bob run identical steps independently — the
-          session key is <strong>never transmitted</strong>.
+          related key-derivation concepts. The network retrieval and second peer are not executed.
+          Evaluate mutual authentication, delivered-key correlation, token attributes and actual
+          protocol integration with production tools.
         </p>
       </div>
 
@@ -392,23 +462,23 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {currentStep === 0 && (
         <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
           <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <Key size={15} className="text-primary" /> Step 1: ETSI QKD 014 REST Key Retrieval
+            <Key size={15} className="text-primary" /> Step 1: Local Key-Delivery Illustration
           </h2>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-2">
-              Simulated REST request (ETSI GS QKD 014 §6.3.1)
+              Reference flow — not executed (ETSI GS QKD 014 §§5.1, 5.3–5.4)
             </div>
             <code className="text-xs font-mono text-foreground block">
-              GET /api/v1/keys/&#123;SAE_ID&#125;/1
+              POST /api/v1/keys/&#123;slave_SAE_ID&#125;/enc_keys
             </code>
             <code className="text-xs font-mono text-foreground block">
-              Authorization: Bearer &#123;client_cert&#125;
+              Peer: POST /api/v1/keys/&#123;master_SAE_ID&#125;/dec_keys with delivered key_IDs
             </code>
           </div>
           <p className="text-xs text-muted-foreground">
-            Both Alice and Bob independently call their local QKD key managers. They request the
-            same <code>key_ID</code> — the secret bytes are identical on both sides because they
-            were produced by the QKD hardware.
+            SAE and KME authenticate certificates and identities using mutual TLS before API use. A
+            certificate is not an HTTP bearer token. This button only generates local random sample
+            bytes and JSON; it contacts no key manager or QKD hardware.
           </p>
           <Button
             variant="gradient"
@@ -429,7 +499,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
           </h2>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-2">
-              QKD Manager Response (ETSI GS QKD 014 JSON)
+              Locally Generated Sample Key Container
             </div>
             <pre className="text-xs font-mono text-primary overflow-x-auto">
               {state.qkdResponseJson}
@@ -448,19 +518,20 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
           {/* HSM boundary illustration */}
           <div className="border-2 border-dashed border-primary/40 rounded-lg p-4 relative">
             <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-primary">
-              HSM Secure Boundary
+              Sample Token Call — Browser-Visible Bytes
             </div>
             <div className="bg-background rounded p-3 border border-border text-xs font-mono">
               <div className="text-muted-foreground mb-1">PKCS#11 C_CreateObject()</div>
               <div>CKA_CLASS = CKO_SECRET_KEY</div>
               <div>CKA_KEY_TYPE = CKK_GENERIC_SECRET</div>
               <div>CKA_VALUE = &lt;qkd_secret&gt;</div>
-              <div>CKA_SENSITIVE = TRUE</div>
-              <div>CKA_EXTRACTABLE = FALSE</div>
+              <div>CKA_SENSITIVE = FALSE</div>
+              <div>CKA_EXTRACTABLE = TRUE</div>
             </div>
             <div className="mt-2 text-xs text-muted-foreground">
-              Once imported, <code>CKA_EXTRACTABLE = FALSE</code> ensures the raw QKD secret never
-              leaves the HSM. Only derived keys can be exported.
+              These are the current sample helper attributes, not a non-exportability policy. The
+              original sample is already in JavaScript and derived bytes are read back for display.
+              Evaluate appropriate attributes and export controls with your production HSM.
             </div>
           </div>
           {state.importWasLive === true && (
@@ -497,7 +568,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             </div>
             <div className="bg-background rounded p-3 border border-border text-xs font-mono space-y-1">
               <div className="text-muted-foreground">Mechanism: CKM_SP800_108_COUNTER_KDF</div>
-              <div>PRF: CKM_SHA256_HMAC</div>
+              <div>PRF: HMAC-SHA-256 (helper selector: CKM_SHA256)</div>
               <div>KI: &lt;imported_qkd_key_handle&gt;</div>
               <div>Label: &quot;session-key-v1&quot;</div>
               <div>Context: &lt;session_id (16 bytes)&gt;</div>
@@ -561,7 +632,12 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             disabled={processing}
             className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
           >
-            <Cpu size={14} /> {processing ? 'Deriving…' : 'Run KDF'}
+            <Cpu size={14} />{' '}
+            {processing
+              ? 'Processing…'
+              : hsm.isReady
+                ? 'Attempt Sample HSM Derivation'
+                : 'Show Illustrative Random Output'}
           </Button>
         </div>
       )}
@@ -572,11 +648,16 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
           <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
             <CheckCircle2 size={15} className="text-primary" /> Step 4: Session Key Output
           </h2>
+          <p className="text-xs text-muted-foreground" role="status">
+            {state.outputOrigin === 'live-kbkdf'
+              ? 'Sample C_DeriveKey returned bytes; displayed in JavaScript.'
+              : 'Illustrative random output — no KDF executed.'}
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Alice side */}
             <div className="border-2 border-dashed border-primary/40 rounded-lg p-4 relative">
               <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-primary">
-                Alice's HSM
+                Sample Output — View A
               </div>
               <div className="space-y-2">
                 <div className="bg-background rounded p-2 border border-border">
@@ -586,7 +667,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
                   </code>
                 </div>
                 <div className="bg-status-success/10 rounded p-2 border border-status-success/30">
-                  <div className="text-xs text-muted-foreground mb-1">Derived session key</div>
+                  <div className="text-xs text-muted-foreground mb-1">Local sample output</div>
                   <code className="text-xs font-mono text-status-success break-all">
                     {state.sessionKey}
                   </code>
@@ -596,7 +677,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             {/* Bob side */}
             <div className="border-2 border-dashed border-status-success/40 rounded-lg p-4 relative">
               <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-status-success">
-                Bob's HSM
+                Same Sample Output — View B
               </div>
               <div className="space-y-2">
                 <div className="bg-background rounded p-2 border border-border">
@@ -608,7 +689,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
                   </code>
                 </div>
                 <div className="bg-status-success/10 rounded p-2 border border-status-success/30">
-                  <div className="text-xs text-muted-foreground mb-1">Derived session key</div>
+                  <div className="text-xs text-muted-foreground mb-1">Local sample output</div>
                   <code className="text-xs font-mono text-status-success break-all">
                     {state.sessionKey}
                   </code>
@@ -617,9 +698,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             </div>
           </div>
           <div className="bg-status-success/5 rounded p-3 border border-status-success/20 text-xs text-muted-foreground">
-            Both HSMs derive the <strong>identical key</strong> independently. The session key is
-            never transmitted over any network. The shared secret was established exclusively via
-            the quantum channel.
+            Both views repeat the same locally stored value; they are not two independent HSM
+            derivations. No quantum channel or remote peer is involved. Check actual peer agreement,
+            supported mechanisms and key handling with your own production tools.
           </div>
           <Button
             variant="gradient"
@@ -643,9 +724,10 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               <div className="text-muted-foreground space-y-1">
                 <div>Algorithm: AES-256-GCM</div>
                 <div>Key: &lt;derived session key&gt;</div>
-                <div>Nonce: packet sequence number || IV</div>
+                <div>Nonce construction and packet encryption are not executed here.</div>
                 <div className="mt-2 text-muted-foreground">
-                  Suitable for MACsec link-layer or IPsec ESP payload encryption.
+                  Production tools must implement the exact negotiated profile, key installation,
+                  nonce rules and rotation; no packet encryption is demonstrated here.
                 </div>
               </div>
             </div>
@@ -655,24 +737,16 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               </div>
               <div className="text-muted-foreground space-y-1 text-xs">
                 <div className="font-mono bg-muted/60 rounded p-2 border border-border space-y-0.5">
-                  <div className="text-muted-foreground">
-                    {'// RFC 9258 ImportedIdentity structure'}
+                  <div>RFC 9258 importer and binder derivation are not executed.</div>
+                  <div>
+                    Production tools must bind external identity, context, target protocol and
+                    target KDF.
                   </div>
-                  <div>label = &quot;tls13-&quot; + hash_name</div>
-                  <div>{'context = ImportedIdentity {'}</div>
-                  <div className="pl-3">external_identity = key_id_utf8,</div>
-                  <div className="pl-3">hash = SHA-256</div>
-                  <div>{'}'}</div>
-                  <div>PSK = HKDF-Extract(0x00…, session_key)</div>
-                  <div>binder_key = Derive-Secret(PSK, label, &quot;&quot;)</div>
                 </div>
                 <div className="mt-1.5">
-                  The derived session key becomes the HKDF input keying material. RFC 9258 wraps it
-                  with an <span className="font-mono text-foreground">ImportedIdentity</span>{' '}
-                  context that binds it to a specific hash and TLS version, preventing
-                  cross-protocol reuse. Used in{' '}
-                  <span className="font-mono text-foreground">ClientHello</span> PSK extension — see
-                  Part 4 → TLS 1.3 tab for the live handshake demo.
+                  RFC 9258 requires separate PSK diversification plus identity, context, target
+                  protocol and KDF binding. None of that importer or the TLS handshake is run here;
+                  the related protocol tab is also a local sample, not interoperability evidence.
                 </div>
               </div>
             </div>
@@ -702,8 +776,13 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {currentStep === 5 && (
         <div className="bg-status-success/5 rounded-lg p-4 border border-status-success/20 space-y-3">
           <h2 className="text-sm font-bold text-status-success flex items-center gap-2">
-            <CheckCircle2 size={16} /> HSM Key Derivation Complete
+            <CheckCircle2 size={16} /> Sample Walkthrough Complete — Scope Shown Below
           </h2>
+          <p className="text-xs text-muted-foreground" role="status">
+            {state.outputOrigin === 'live-kbkdf'
+              ? 'Sample C_DeriveKey returned bytes; displayed in JavaScript.'
+              : 'Illustrative random output — no KDF executed.'}
+          </p>
           <div className="grid grid-cols-1 gap-2">
             <div className="bg-background rounded p-3 border border-border text-xs">
               <div className="text-muted-foreground mb-1">key_ID (shared reference)</div>
@@ -715,13 +794,13 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             </div>
             <div className="bg-status-success/10 rounded p-3 border border-status-success/30 text-xs">
               <div className="text-muted-foreground mb-1">
-                Session key (256 bits, never transmitted)
+                Local 32-byte output — see operation origin
               </div>
               <code className="font-mono text-status-success break-all">{state.sessionKey}</code>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Standards used:{' '}
+            Related standards (not protocol conformance):{' '}
             <a href="/library?ref=ETSI-GS-QKD-014" className="text-primary hover:underline">
               ETSI GS QKD 014
             </a>{' '}
@@ -739,7 +818,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             </a>
           </p>
           <div className="text-xs font-bold text-status-success">
-            Simulated — for educational purposes only
+            Educational sample only — no protocol validation
           </div>
           <div className="flex justify-end pt-2">
             <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 text-xs">
