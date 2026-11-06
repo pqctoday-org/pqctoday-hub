@@ -48,11 +48,11 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     label: 'MPC-in-the-Head',
     tagline: 'Prove knowledge by simulating a multi-party computation inside a hash transcript.',
     hardness:
-      'Security reduces to symmetric primitives (AES, hash functions) or well-studied combinatorial problems (syndrome decoding, MQ). No novel number-theoretic assumptions required.',
+      'The proof machinery uses symmetric building blocks (hash functions, PRGs, commitments), but each candidate rests on its own hard problem: FAEST on the AES cipher, MQOM on the multivariate-quadratic (MQ) problem, SDitH on syndrome decoding of random linear codes. Only FAEST is a symmetric-primitive assumption; none of the three needs lattices or number-theoretic problems.',
     whyKept:
-      'Three candidates kept to cover the strongest security foundations: FAEST (AES), SDitH (coding theory, studied since 1970s), MQOM (MQ, best performance of MPCitH category).',
+      'Three of the six second-round MPC-in-the-Head candidates were kept (NIST IR 8610): FAEST (AES; NIST found most confidence in its security), MQOM (MQ problem; strongest performance numbers) and SDitH (syndrome decoding for random linear codes; algorithmic diversity).',
     openConcerns:
-      'Signatures are inherently large (kilobytes) because they encode a simulated-computation transcript. MQOM still needs further QROM proof maturation.',
+      'Signatures are kilobytes (about 3.5 to 6.3 KB at the sizes shown in the comparator). NIST asks for further analysis of these complex designs and their proofs: for MQOM, the ROM and QROM security proofs might not be considered mature or complete, and SDitH typically costs more computation than its peers.',
     candidateIds: ['faest', 'mqom', 'sdith'],
     colorClass: 'text-status-success',
     borderClass: 'border-status-success/40',
@@ -61,7 +61,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
       analogy:
         "Imagine you want to prove you know a secret password without ever saying it out loud. You split the password into four pieces, hand each piece to a different friend, ask each of them to do a calculation, and have them seal their answers in envelopes. A random challenge then picks three of the four envelopes to open. If the opened answers are consistent with each other, I'm convinced you know the real password — and the one envelope I never opened keeps the secret safe.",
       whatsDifferent:
-        'This family is built entirely from cryptographic tools we already trust deeply — AES (the same cipher protecting your Wi-Fi) and hash functions. No exotic new math, just clever use of old reliable bricks. That makes it the most conservative bet of the four families: if these schemes break, a lot of other cryptography breaks first.',
+        'The envelope-and-challenge machinery is built from hash-style building blocks, but what the signer is hiding differs by candidate. FAEST proves it knows an AES key, so its security leans on AES (the cipher already protecting your Wi-Fi). MQOM instead rests on solving systems of quadratic equations (the MQ problem), and SDitH rests on decoding a random error-correcting code (syndrome decoding). None of the three uses lattices or factoring-style math, but only FAEST is an AES assumption; NIST found most confidence in FAEST.',
       catch:
         'Signatures are pretty chunky — kilobytes, not bytes — because you have to send all those envelope contents along. Fine for desktops and servers; awkward for tiny sensors where every byte costs battery.',
     },
@@ -129,7 +129,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     bgClass: 'bg-primary/10',
     layman: {
       analogy:
-        'Picture a five-hundred-dimensional crystal where atoms sit at regular grid points. Find the atom closest to a randomly-pointed laser dot — easy enough if your math handles five-hundred-dimensional rounding. Falcon (selected for standardisation as FN-DSA, FIPS 206 still in development) does this with fractional decimal numbers, which is brittle to implement safely on a phone or a smart card. HAWK is also a lattice hash-and-sign scheme with some similarities to Falcon, but it uses integer arithmetic only, which NIST says facilitates easier implementation; its security rests on newer assumptions that NIST encourages the community to analyse.',
+        'Picture a five-hundred-dimensional crystal where atoms sit at regular grid points. A signer must hand back an atom near a randomly-pointed laser dot, and a real signer does not simply pick the single closest one: it draws a nearby atom at random, weighted like a bell curve around the dot (a deliberately simplified picture). Falcon (selected for standardisation as FN-DSA, FIPS 206 still in development) does this with floating-point numbers, which its specification flags as a limitation on constrained devices without a floating-point unit. HAWK is also a lattice hash-and-sign scheme with some similarities to Falcon, but it uses integer arithmetic only, which NIST says facilitates easier implementation; its security rests on newer assumptions that NIST encourages the community to analyse.',
       whatsDifferent:
         "This is the same broad family of math as ML-DSA — the lattice signer that's already standardised — and HAWK uses the same classes of cyclotomic rings, but its security assumptions are relatively novel and NIST encouraged further analysis of them. What makes HAWK distinctive is a fresh approach that ditches floating-point math entirely. That matters enormously for tiny devices where one rounding bug can leak your key over time.",
       catch:

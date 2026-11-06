@@ -234,7 +234,7 @@ export const ROTATION_STEPS: RotationStep[] = [
     },
     actor: 'Security officer + token',
     title: 'The security officer retires the old secret',
-    body: 'Only after the rotation manifest was signed, and after the server reports every stored ciphertext switched; the token cannot check that itself. The token first commits a signed retirement record, a public object nobody can change or delete, and only then destroys the old seed.',
+    body: 'Only after the rotation manifest was signed, and after the server reports every stored ciphertext switched; the token cannot check that itself. The token first commits a signed retirement record, a public token object that the token API will not modify, copy or destroy, and only then destroys the old seed. That protection covers calls through the token API; durable anti-rollback, retention and backup handling are separate production capabilities this model does not cover.',
     state: {
       oldSecret: 'destroyed',
       newSecret: 'held by the token',
@@ -255,7 +255,7 @@ export const ROTATION_STEPS: RotationStep[] = [
     },
     actor: 'FHE server',
     title: 'The server deletes the rotation key',
-    body: 'Whoever holds the new secret and the rotation key can compute the old secret, so the key is used once and deleted. The new key set (3.94 GB) must still be streamed; the rotation key moves stored data, it does not replace it. Rotation does not repair past exposure: copies of old ciphertexts held by someone who already knows the old secret stay readable.',
+    body: 'Whoever holds the new secret and the rotation key can compute the old secret, so the key is used once and the modeled server deletes its active copy (copies in backups or logs would need their own controls). The new key set (3.94 GB) must still be streamed; the rotation key moves stored data, it does not replace it. Rotation does not repair past exposure: copies of old ciphertexts held by someone who already knows the old secret stay readable.',
     state: {
       oldSecret: 'destroyed',
       newSecret: 'held by the token',

@@ -462,9 +462,9 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       analogy:
         'Same vault, smaller tools. With TFHE the "instruction manual" the cloud needs (the server key) fits on a USB stick instead of a hard-drive shelf, so the vault can write it itself.',
       whatsDifferent:
-        'CKKS packs thousands of numbers per ciphertext and needs GB of rotation keys to move them around. TFHE encrypts small integers one block at a time and refreshes them with a single bootstrapping key, so there are no rotation keys at all.',
+        'CKKS packs thousands of numbers per ciphertext and needs GB of rotation keys to move them around. TFHE encrypts small integers one block at a time and refreshes them with a bootstrapping key and a key-switching key, so there are no rotation keys at all.',
       catch:
-        'Each TFHE operation is a bootstrap, so wide arithmetic (64-bit multiplies, big matrix maths) is slower than CKKS. It suits comparisons, lookups and business logic, not large-scale ML training.',
+        'TFHE has leveled operations, which add noise and use up carry space without a bootstrap, and bootstrapped operations that reset the noise and clear carries. Which operations bootstrap depends on the API and the parameters: an unchecked addition is leveled, but the default flavour of an operation clears the carry afterwards with programmable bootstraps, and comparisons, multiplications and carry propagation use them too. A complex integer operation can use several programmable bootstraps and key switches (the library has a counter that shows how many), so wide arithmetic (64-bit multiplies, big matrix maths) is costly. TFHE suits comparisons, lookups and business logic, not large-scale ML training.',
     },
     actors: [
       { id: 'client', label: 'Data owner', sub: 'app / analyst', kind: 'client', zone: 'owner' },
@@ -555,11 +555,11 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         id: 'compute-with-pbs',
         from: 'cloud',
         to: 'cloud',
-        label: 'PBS on every op',
+        label: 'leveled ops + PBS',
         api: 'set_server_key · FheUint64 arithmetic and comparisons',
         title: 'Compute with programmable bootstrapping',
         detail:
-          'Every gate or integer operation ends in a programmable bootstrap, which refreshes noise and applies any lookup table. Comparisons, branches and table lookups are natural; there is no depth limit.',
+          'Leveled operations only add noise and use up carry space, so they need no bootstrap. When a non-linear step is needed, or the carry has to be cleared, the library runs a programmable bootstrap, usually paired with a key switch, which resets the noise and can apply any lookup table. How many bootstraps an operation uses depends on the API flavour, the operation and the parameter set, and a complex integer operation can use several. Comparisons, branches and table lookups are natural, and because bootstrapping resets the noise there is no fixed depth limit.',
         link: 'fhe',
       },
       {
@@ -1077,16 +1077,17 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'Lattigo v6.2.0 key-set sizes and streamed generation measured in pqctoday-fhe; OpenFHE v1.6.0 CKKS key-set size measured separately (80 keys, 13.26 GB at N = 2¹⁶)',
     },
     label: 'What can run in the HSM?',
-    tagline: 'Keygen and decrypt belong in the HSM. Homomorphic evaluation belongs on GPUs.',
+    tagline:
+      'Keygen and decrypt stay in the HSM. Evaluation needs no secret, so it runs on untrusted CPUs, GPUs or FPGAs, not in this sample HSM profile.',
     tileHint: 'FITS · STREAMS · DOES NOT FIT',
     colorClass: 'text-status-warning',
     borderClass: 'border-warning/40',
     bgClass: 'bg-warning/10',
     layman: {
       analogy:
-        'An HSM is a safe with a small calculator inside. It is perfect for minting and using a key. FHE evaluation is more like a factory floor that needs warehouse-sized key tables and racks of GPUs.',
+        'An HSM is a safe with a small calculator inside. It is perfect for minting and using a key. FHE evaluation is more like a factory floor that needs warehouse-sized key tables and a lot of compute, on CPUs, GPUs or FPGAs.',
       whatsDifferent:
-        'For RSA or ML-DSA the HSM runs the whole operation. FHE splits the work: the secret-key part is tiny, and the heavy part only needs public keys, so it can run anywhere.',
+        'For RSA or ML-DSA the HSM runs the whole operation. FHE splits the work: the secret-key part is tiny, and the heavy part only needs public keys, so it can run on machines you do not trust.',
       catch:
         'Even "public" evaluation-key generation needs the secret, so it has to happen inside the HSM. The output is huge and must be streamed out.',
     },
@@ -1095,15 +1096,15 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       {
         id: 'hsm',
         label: 'HSM',
-        sub: 'small RAM, modest CPU',
+        sub: 'sample profile: small RAM, modest CPU',
         kind: 'hsm',
         holdsSecret: true,
         zone: 'owner',
       },
       {
         id: 'gpu',
-        label: 'GPU / FPGA cluster',
-        sub: 'FHE accelerator',
+        label: 'CPU / GPU / FPGA cluster',
+        sub: 'FHE compute, untrusted',
         kind: 'gpu',
         zone: 'third',
       },
@@ -1145,9 +1146,9 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         label: 'evaluate f( )?',
         api: 'EvalBootstrap',
         deployment: true,
-        title: 'Homomorphic evaluation in the HSM: does not fit',
+        title: 'Homomorphic evaluation in the sample HSM profile: does not fit',
         detail:
-          'Bootstrapping needs GBs of evaluation keys in memory and GPU-class throughput. An HSM has neither. Running it there would also make the HSM the trusted party FHE exists to remove.',
+          'This lesson models the HSM with small RAM and a modest CPU (the sample profile; other HSMs differ). On that profile CKKS bootstrapping does not fit: it works with a bootstrappable evaluation-key set of several GB (3.94 GB as exported for the Lattigo set measured here) and heavy NTT and key-switching arithmetic, and bootstrapping itself was not measured on the token. A larger HSM, a different scheme or API (a TFHE server key is 30 MB) or fewer operations would change the answer. Evaluation uses only public evaluation keys and ciphertexts, so it never needs the secret-key custodian: it can run on CPUs, GPUs or FPGAs outside the trust boundary, and moving it into the HSM would add no confidentiality because the HSM already holds the secret key.',
         verdict: 'no',
       },
       {
@@ -1156,9 +1157,9 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         to: 'gpu',
         label: 'evaluate f( )',
         api: 'EvalAdd · EvalMult · EvalBootstrap',
-        title: 'Evaluation runs on accelerators',
+        title: 'Evaluation runs on untrusted compute',
         detail:
-          'The cluster needs only public evaluation keys and ciphertexts, so it can sit outside the trust boundary.',
+          'The cluster needs only public evaluation keys and ciphertexts, so it can sit outside the trust boundary. It can be CPUs, GPUs or FPGAs: TFHE-rs, for example, documents a default CPU backend, a CUDA GPU backend and an FPGA-based HPU backend, and the speed-up differs by operation. Which is cheaper or faster depends on the scheme, the parameters and the batch size, so measure with your own workload.',
         verdict: 'ok',
         link: 'fhe',
       },

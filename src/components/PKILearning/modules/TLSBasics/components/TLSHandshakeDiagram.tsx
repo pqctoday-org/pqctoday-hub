@@ -59,7 +59,7 @@ const MESSAGES = [
   },
   {
     label: '{CertificateRequest}',
-    sublabel: 'mTLS: server requests client cert',
+    sublabel: 'Optional: server asks for a client certificate',
     rfcRef: 'RFC 9846 §4.4.2',
     direction: 'left' as const,
     encrypted: true,
@@ -92,7 +92,7 @@ const MESSAGES = [
   },
   {
     label: '{Certificate}',
-    sublabel: 'Client identity (mTLS)',
+    sublabel: 'Client identity, sent only if requested',
     rfcRef: 'RFC 9846 §4.5.1',
     direction: 'right' as const,
     encrypted: true,
@@ -100,7 +100,7 @@ const MESSAGES = [
   },
   {
     label: '{CertificateVerify}',
-    sublabel: 'Client signature (mTLS)',
+    sublabel: 'Client signature, only with a non-empty Certificate',
     rfcRef: 'RFC 9846 §4.5.2',
     direction: 'right' as const,
     encrypted: true,
@@ -125,8 +125,10 @@ const MESSAGES = [
 ]
 
 interface TLSHandshakeDiagramProps {
-  /** When provided, mTLS-specific messages are highlighted (true) or dimmed (false).
-   *  When undefined (default), all messages render at full opacity with an mTLS indicator. */
+  /** When provided, the optional client-authentication messages (CertificateRequest, client
+   *  Certificate, client CertificateVerify) are highlighted (true) or dimmed (false).
+   *  When undefined (default), they render at full opacity. Only those three messages carry
+   *  the "(mTLS)" badge; every other handshake message is part of server-only TLS too. */
   mTLSEnabled?: boolean
 }
 
@@ -195,13 +197,10 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
               // Insert encryption boundary before first encrypted message
               const showBoundary = i > 0 && msg.encrypted && !dynamicMessages[i - 1].encrypted
 
-              // Visual state for mTLS messages
-              const isMtlsActive =
-                msg.mtls && mTLSEnabled === true
-                  ? true
-                  : msg.mtls && mTLSEnabled === false
-                    ? false
-                    : null // null = unknown/educational mode
+              // Visual state for the optional client-authentication messages only
+              // (CertificateRequest, client Certificate, client CertificateVerify).
+              // null = unknown/educational mode; every other message is never mTLS-specific.
+              const isMtlsActive = !msg.mtls ? null : mTLSEnabled === undefined ? null : mTLSEnabled
 
               return (
                 <React.Fragment key={i}>
@@ -220,6 +219,7 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
                     rfcRef={msg.rfcRef}
                     direction={msg.direction}
                     encrypted={msg.encrypted}
+                    isMtlsMessage={msg.mtls}
                     mtlsActive={isMtlsActive}
                   />
                 </React.Fragment>
@@ -251,9 +251,12 @@ const MessageArrow: React.FC<{
   rfcRef: string
   direction: 'left' | 'right' | 'both'
   encrypted: boolean
+  /** True only for the optional client-authentication messages: CertificateRequest, client
+   *  Certificate and client CertificateVerify. Only these carry the "(mTLS)" badge. */
+  isMtlsMessage: boolean
   /** null = educational mode (show with indicator), true = active, false = inactive */
   mtlsActive: boolean | null
-}> = ({ label, sublabel, rfcRef, direction, encrypted, mtlsActive }) => {
+}> = ({ label, sublabel, rfcRef, direction, encrypted, isMtlsMessage, mtlsActive }) => {
   // When mTLS is explicitly disabled, dim this message
   const isDimmed = mtlsActive === false
   // When mTLS is active, use warning color to distinguish from standard messages
@@ -305,7 +308,7 @@ const MessageArrow: React.FC<{
             >
               {label}
             </span>
-            {mtlsActive === null && (
+            {isMtlsMessage && (
               <span className="text-[8px] text-warning ml-1 font-sans">(mTLS)</span>
             )}
           </div>

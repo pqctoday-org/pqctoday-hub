@@ -34,9 +34,9 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     region: 'South Korea',
     depth: 'drill-down',
     stage: 'finalists',
-    role: 'National PQC standardisation competition run by KISA + Korean Cryptography Forum.',
+    role: 'National PQC algorithm competition run by the KpqC Research Group (established 2021), which is a selection process rather than a standards body.',
     detail:
-      "Launched in 2022 as Korea's own PQC competition, modelled on the NIST process. The final results were announced on 16 January 2025: NTRU+ and SMAUG-T (KEMs) and AIMer and HAETAE (signatures). KpqC explicitly aims for algorithm independence from US standards in case of cryptopolitical fragmentation. Several KpqC submissions are also NIST on-ramp candidates (e.g., HAETAE), creating a deliberate two-track validation path.",
+      'The KpqC Research Group (established in 2021; its organisation page lists a centre head from the National Security Research Institute, NSR, as director) announced the national competition on 25 November 2021, and Round 1 ran from November 2022 to November 2023. The final results were announced on 16 January 2025, with a pointer to the National Intelligence Service (NIS) website notice: NTRU+ and SMAUG-T (KEMs) and AIMer and HAETAE (signatures). Selection by the competition is not the same as a published national standard: in its 22 April 2026 notice the research group says Korean Standard (KS) proposals have been submitted for the two KEMs, proposals for the two signatures are still being reviewed, and the algorithms may change during standardisation. HAETAE and AIMer were also submissions to the NIST additional-signature process (Round 1).',
     url: 'https://www.kpqc.or.kr/',
     nistRelation: 'parallel',
   },

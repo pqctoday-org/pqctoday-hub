@@ -50,8 +50,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             Healthcare organizations are custodians of the most sensitive category of personal data:
             biometrics. Unlike passwords, API keys, or even Social Security numbers, biometric
             identifiers &mdash; fingerprints, iris scans, facial geometry, and DNA profiles &mdash;
-            are <strong>permanently bound to an individual</strong>. They cannot be rotated,
-            revoked, or reissued after a breach.
+            are <strong>bound to an individual</strong>. The underlying trait cannot be rotated or
+            reissued the way a password can, and a raw sample that leaks cannot be taken back. What
+            a breach costs depends on what was stored and on how the biometric is used to
+            authenticate.
           </p>
 
           <p>
@@ -74,11 +76,16 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                   Case Study: OPM Breach (2015)
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  The U.S. Office of Personnel Management breach exposed{' '}
-                  <strong>5.6 million fingerprint records</strong> alongside 21.5 million background
-                  investigation files. Over a decade later, every affected individual&apos;s
-                  fingerprints remain compromised &mdash; and will remain so for life. Had genomic
-                  or iris data been included, the damage would extend across generations.
+                  The U.S. Office of Personnel Management&apos;s September 2015 update said that the
+                  fingerprints of approximately <strong>5.6 million</strong> of the 21.5 million
+                  people whose Social Security numbers and other sensitive information were impacted
+                  had been stolen. Those fingerprints cannot be changed. OPM said at the time that
+                  federal experts believed the ability to misuse fingerprint data was limited, but
+                  that this could change as technology evolves: the breach was a confidentiality
+                  harm, and how far it enables impersonation depends on whether verifiers detect
+                  presentation attacks and require a second factor. Had genomic data been included,
+                  the exposure would also reach biological relatives, and no one can change their
+                  genome.
                 </p>
               </div>
             </div>
@@ -103,7 +110,7 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
               <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <AlertTriangle size={16} className="text-status-error" />
-                Permanent Biometrics (Irrevocable)
+                Biometric Traits (Hard to Change)
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Fingerprints &mdash; cannot be changed</li>
@@ -122,11 +129,21 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               Key Insight
             </h3>
             <p className="text-xs text-muted-foreground">
-              A quantum computer decrypting a biometric database doesn&apos;t just breach data
-              &mdash; it <strong>permanently compromises every identity in that database</strong>.
-              Unlike a password breach where users can reset credentials, a biometric breach is
-              irreversible. This makes pre-quantum encryption of biometric data stores one of the
-              highest-priority PQC migration targets in healthcare.
+              A quantum computer decrypting a biometric database exposes what was stored; it does
+              not by itself let anyone sign in as those people. Keep four things apart. The{' '}
+              <strong>trait</strong> cannot be changed. A <strong>raw sample</strong> that leaks can
+              be reused, so collect and keep as little as possible and delete what is no longer
+              needed. A stored <strong>template</strong> can be protected, and template-protection
+              schemes can make it revocable, although NIST SP 800-63B-4 notes that the availability
+              of such solutions is limited. An <strong>authentication attack</strong> is a separate
+              question: NIST SP 800-63B-4 says biometric characteristics are not secrets and can
+              often be obtained without consent, so it allows biometrics only as part of
+              multi-factor authentication with a physical authenticator, expects presentation attack
+              detection (PAD) and an alternative non-biometric option, and prefers comparison on the
+              user&apos;s own device over a central store. Pre-quantum encryption of biometric data
+              stores remains a strong candidate for early PQC migration, because the confidentiality
+              harm cannot be undone by the individual, but PAD, a second factor and local comparison
+              are what limit the authentication risk.
             </p>
           </div>
         </div>
@@ -457,14 +474,22 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               processors. For illustration, this module models a pacemaker-class device as an{' '}
               <strong>ARM Cortex-M0+</strong> with only <strong>32 KB of RAM</strong> and a 48 MHz
               clock. This module assumes that ML-DSA-44, the smallest ML-DSA parameter set, needs
-              more RAM than the whole 32 KB (a planning assumption, not a measurement).
+              more RAM than the whole 32 KB in the portable implementation it models (a planning
+              assumption, not a measurement; a published Cortex-M4F measurement of a stack-optimised
+              build is far lower, so the result depends on the implementation chosen).
             </p>
             <p className="text-xs text-muted-foreground">
-              For these constrained devices, <strong>hash-based signatures</strong> like LMS (H5/W8)
-              and XMSS (H10) are assumed here to be the only feasible PQC options, with verification
-              fitting in a few KB of RAM (also a planning assumption). However, they are stateful
-              &mdash; the device must track which one-time keys have been used, adding complexity to
-              firmware update mechanisms.
+              In a firmware update the device only verifies, so the question is the cost of
+              verification. In this module&apos;s model, <strong>hash-based signatures</strong> like
+              LMS (H5/W8) and XMSS (H10) fit, with verification needing a few KB of RAM (also a
+              planning assumption). FN-DSA (Falcon) is modelled as feasible for verification too:
+              its floating-point cost is in signing, which the manufacturer&apos;s signing system
+              bears, while verification is integer-only. The hash-based schemes are stateful, but
+              the state belongs to the signer: its signing system must make sure that no one-time
+              key ever signs two messages (NIST SP 800-208) and must update its stored state before
+              it exports each signature, so that a crash cannot lead to key reuse. The pacemaker
+              holds no such state. A firmware version counter that refuses older images
+              (anti-rollback) is a separate mechanism that a device may keep in addition.
             </p>
           </div>
 
@@ -489,6 +514,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                     be compromised or bypassed, and the devices did not limit &ldquo;RF
                     wake-up&rdquo; commands, which could be sent repeatedly to reduce battery life.
                     Abbott&apos;s mitigation was a firmware update applied by a healthcare provider.
+                    This was an ordinary authentication and rate-limiting weakness that needed no
+                    quantum computer; the quantum scenarios in the device simulator are hypothetical
+                    devices and are kept separate from it.
                   </li>
                   <li>
                     &bull; <strong>MedJack attacks</strong> &mdash; attackers compromise medical
