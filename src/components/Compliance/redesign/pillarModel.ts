@@ -231,6 +231,11 @@ function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: boolean
  * (see `equivalentCanonicals` in conceptXwalkGraph.ts). Real xwalk edges
  * often land on whichever form the extraction pipeline happened to author
  * against, so matching must consider both.
+ *
+ * Only registry-curated equivalents (the same source record, or an explicit
+ * alias) contribute labels. A publisher, a certification scheme, a series or
+ * a companion volume is not the same concept as the framework it relates to,
+ * so its relationships never become this framework's own.
  */
 function equivalentMatchLabels(framework: ComplianceFramework): string[] {
   const canonicalId = conceptIdForFramework(framework)
