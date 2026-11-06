@@ -171,9 +171,10 @@ const TLSPanel: React.FC = () => {
             executed here.
           </li>
           <li>
-            RFC 9258 is an interface for importing external PSKs into TLS 1.3: imported PSKs use the
-            binder label &quot;imp binder&quot;, so a client and server negotiate the PSK if and
-            only if both endpoints import it or neither does
+            RFC 9258 imported PSKs use the binder label &quot;imp binder&quot;. Both endpoints need
+            compatible importer and binder handling; that compatibility alone does not guarantee PSK
+            selection or TLS handshake success. Other negotiation and authentication checks must
+            also succeed.
           </li>
         </ul>
       </div>

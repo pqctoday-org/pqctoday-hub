@@ -27,6 +27,10 @@ describe('Protocol context is separate from local sample operations', () => {
     render(<ProtocolIntegrationDemo />)
     expect(screen.getByText(/does not execute|do not execute/)).toBeInTheDocument()
     expect(screen.getByText(/enc_keys/)).toBeInTheDocument()
+    expect(screen.getByText(/compatibility alone does not/)).toHaveTextContent(
+      /guarantee PSK selection or TLS handshake success/
+    )
+    expect(screen.queryByText(/if and only if/)).not.toBeInTheDocument()
     expect(screen.getByText(/dec_keys/)).toHaveTextContent(/Mutual TLS/)
     fireEvent.click(screen.getByRole('button', { name: 'Show Sample Source Key' }))
     await screen.findByText('Local sample source key — not an imported TLS PSK')

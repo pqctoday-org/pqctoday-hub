@@ -117,7 +117,7 @@ describe('QKD sample HSM step outcomes and origins', () => {
     expect(screen.getAllByText('ab'.repeat(32))).toHaveLength(2)
     const call = fixture.derived.mock.calls.at(-1)!
     expect(call[2]).toBe(7)
-    expect(call[3]).toBe(0x00000250)
+    expect(call[3]).toBe(0x00000251)
     expect(call[5]).toBe(32)
     expect(new TextDecoder().decode(call[4])).toBe(`session-key-v1\x00${'55'.repeat(16)}`)
     expect(fixture.imported).toHaveBeenCalledTimes(1)
@@ -179,6 +179,31 @@ describe('QKD sample HSM step outcomes and origins', () => {
     expect(screen.queryByText('Sample Output — View A')).not.toBeInTheDocument()
     expect(screen.queryByText('ab'.repeat(32))).not.toBeInTheDocument()
   })
+
+  it.each(['module', 'session', 'module-and-session'] as const)(
+    'rejects an imported handle after %s changes without a readiness or engine change',
+    async (change) => {
+      const view = render(<HSMKeyDerivationDemo />)
+      await fetchSample()
+      await click('Import into HSM', 300)
+      if (change.includes('module')) fixture.hsm.moduleRef.current = { replacement: true }
+      if (change.includes('session')) fixture.hsm.hSessionRef.current = 22
+      view.rerender(<HSMKeyDerivationDemo />)
+      expect(fixture.hsm.isReady).toBe(true)
+      expect(fixture.hsm.engine).toBe('rust')
+      await click('Attempt Sample HSM Derivation', 0)
+      expect(screen.getByRole('alert')).toHaveTextContent('different HSM module or session')
+      expect(fixture.derived).not.toHaveBeenCalled()
+      expect(fixture.imported).toHaveBeenCalledTimes(1)
+      expect(screen.getByRole('button', { name: 'Import into HSM' })).toBeEnabled()
+      await click('Import into HSM', 300)
+      await click('Attempt Sample HSM Derivation', 400)
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      expect(fixture.imported).toHaveBeenCalledTimes(2)
+      expect(fixture.derived.mock.calls[0][0]).toBe(fixture.hsm.moduleRef.current)
+      expect(fixture.derived.mock.calls[0][1]).toBe(fixture.hsm.hSessionRef.current)
+    }
+  )
 
   it('unmount during delayed fetch prevents obsolete sample generation', async () => {
     const view = render(<HSMKeyDerivationDemo />)

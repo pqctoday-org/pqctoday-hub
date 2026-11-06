@@ -86,6 +86,12 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
   const busy = useRef(false)
   const mounted = useRef(true)
   const generation = useRef(0)
+  const importOrigin = useRef<{
+    module: SoftHSMModule
+    session: number
+    engine: 'cpp' | 'rust'
+    handle: number
+  } | null>(null)
   const currentHsm = useRef(hsm)
   currentHsm.current = hsm
   const previousMode = useRef({ ready: hsm.isReady, engine: hsm.engine })
@@ -99,6 +105,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
   useEffect(() => {
     if (previousMode.current.ready !== hsm.isReady || previousMode.current.engine !== hsm.engine) {
       generation.current++
+      importOrigin.current = null
       setState((prev) => ({
         ...prev,
         importedHandle: undefined,
@@ -116,6 +123,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
   const handleReset = useCallback(() => {
     if (busy.current) return
     generation.current++
+    importOrigin.current = null
     setCurrentStep(0)
     setState({})
     setOperationError(null)
@@ -219,8 +227,11 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             role: 'private',
             generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
           })
+          if (!active()) throw new Error('Sample HSM session changed; repeat import.')
+          importOrigin.current = { module: M, session: hSession, engine: hsm.engine, handle }
           return { next: { importedHandle: handle, importWasLive: true }, step: 2 }
         }
+        importOrigin.current = null
         return { next: { importedHandle: undefined, importWasLive: false }, step: 2 }
       }),
     [perform, hsm, state.qkdSecret]
@@ -249,9 +260,24 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             )
           const M = hsm.moduleRef.current as unknown as SoftHSMModule
           const hSession = hsm.hSessionRef.current
+          const origin = importOrigin.current
+          if (
+            !origin ||
+            origin.module !== M ||
+            origin.session !== hSession ||
+            origin.engine !== hsm.engine ||
+            origin.handle !== state.importedHandle
+          ) {
+            importOrigin.current = null
+            setState((prev) => ({ ...prev, importedHandle: undefined, importWasLive: undefined }))
+            setCurrentStep(1)
+            throw new Error(
+              'The sample key belongs to a different HSM module or session. Repeat import before derivation.'
+            )
+          }
           const fixedInput = new TextEncoder().encode(`session-key-v1\x00${sessionId}`)
-          // Existing helper expects the SHA-256 hash selector; rejection is an error, never substituted.
-          const derived = hsm_kbkdf(M, hSession, state.importedHandle, 0x00000250, fixedInput, 32)
+          // The bundled engines accept this HMAC-SHA-256 selector; rejection is never substituted.
+          const derived = hsm_kbkdf(M, hSession, state.importedHandle, 0x00000251, fixedInput, 32)
           if (derived.length !== 32)
             throw new Error('The sample derivation did not return the requested 32 bytes.')
           sessionKey = Array.from(derived)
@@ -568,7 +594,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             </div>
             <div className="bg-background rounded p-3 border border-border text-xs font-mono space-y-1">
               <div className="text-muted-foreground">Mechanism: CKM_SP800_108_COUNTER_KDF</div>
-              <div>PRF: HMAC-SHA-256 (helper selector: CKM_SHA256)</div>
+              <div>PRF: CKM_SHA256_HMAC (HMAC-SHA-256)</div>
               <div>KI: &lt;imported_qkd_key_handle&gt;</div>
               <div>Label: &quot;session-key-v1&quot;</div>
               <div>Context: &lt;session_id (16 bytes)&gt;</div>
