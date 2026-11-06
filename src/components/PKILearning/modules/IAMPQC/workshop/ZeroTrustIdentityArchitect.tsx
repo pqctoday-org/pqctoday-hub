@@ -29,20 +29,20 @@ const COMPLEXITY_STYLES = {
 const YEAR_OPTIONS = ZERO_TRUST_MIGRATION_YEARS.map((y) => ({ id: y, label: y }))
 
 const YEAR_COLORS: Record<MigrationYear, string> = {
-  '2025': 'bg-status-error/10 text-status-error border-status-error/30',
-  '2026': 'bg-warning/10 text-warning border-warning/30',
-  '2027': 'bg-primary/10 text-primary border-primary/30',
-  '2028': 'bg-status-success/10 text-status-success border-status-success/30',
+  'Year 1': 'bg-status-error/10 text-status-error border-status-error/30',
+  'Year 2': 'bg-warning/10 text-warning border-warning/30',
+  'Year 3': 'bg-primary/10 text-primary border-primary/30',
+  'Year 4': 'bg-status-success/10 text-status-success border-status-success/30',
 }
 
 type PillarMigrations = Record<string, MigrationYear>
 
 const DEFAULT_MIGRATIONS: PillarMigrations = {
-  'identity-verification': '2026',
-  'device-trust': '2027',
-  'session-management': '2026',
-  authorization: '2026',
-  audit: '2027',
+  'identity-verification': 'Year 2',
+  'device-trust': 'Year 3',
+  'session-management': 'Year 2',
+  authorization: 'Year 2',
+  audit: 'Year 3',
 }
 
 export const ZeroTrustIdentityArchitect: React.FC = () => {
@@ -56,10 +56,10 @@ export const ZeroTrustIdentityArchitect: React.FC = () => {
 
   const roadmap = useMemo(() => {
     const byYear: Record<MigrationYear, typeof ZERO_TRUST_LAYERS> = {
-      '2025': [],
-      '2026': [],
-      '2027': [],
-      '2028': [],
+      'Year 1': [],
+      'Year 2': [],
+      'Year 3': [],
+      'Year 4': [],
     }
     ZERO_TRUST_LAYERS.forEach((layer) => {
       const year = migrations[layer.id]
@@ -69,7 +69,12 @@ export const ZeroTrustIdentityArchitect: React.FC = () => {
   }, [migrations])
 
   const summaryStats = useMemo(() => {
-    const counts: Record<MigrationYear, number> = { '2025': 0, '2026': 0, '2027': 0, '2028': 0 }
+    const counts: Record<MigrationYear, number> = {
+      'Year 1': 0,
+      'Year 2': 0,
+      'Year 3': 0,
+      'Year 4': 0,
+    }
     Object.values(migrations).forEach((year) => {
       counts[year]++
     })

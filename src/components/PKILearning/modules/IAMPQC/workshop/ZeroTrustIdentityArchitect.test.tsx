@@ -29,6 +29,12 @@ describe('ZeroTrustIdentityArchitect', () => {
     expect(text).not.toMatch(/Validate each pillar with Continuous Access Evaluation/)
   })
 
+  it('counts the plan in relative years, not calendar years that have already passed', () => {
+    const text = pageTextWithRoadmap()
+    for (const year of ['Year 1', 'Year 2', 'Year 3', 'Year 4']) expect(text).toContain(year)
+    expect(text).not.toMatch(/\b202[5-8]\b/)
+  })
+
   it('does not present hybrid TLS as needing no application or intermediary changes', () => {
     const text = pageTextWithRoadmap()
     expect(text).not.toMatch(/with no app changes/i)

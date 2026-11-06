@@ -386,5 +386,6 @@ export const SIGNATURE_SIZE_DATA = {
 
 export type SigningAlgorithm = keyof typeof SIGNATURE_SIZE_DATA
 
-export const ZERO_TRUST_MIGRATION_YEARS = ['2025', '2026', '2027', '2028'] as const
+// Relative years counted from when the learner starts, so the sample plan never reads as a published calendar.
+export const ZERO_TRUST_MIGRATION_YEARS = ['Year 1', 'Year 2', 'Year 3', 'Year 4'] as const
 export type MigrationYear = (typeof ZERO_TRUST_MIGRATION_YEARS)[number]
