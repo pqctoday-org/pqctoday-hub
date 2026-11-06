@@ -206,17 +206,19 @@ export const ProviderSetup: React.FC = () => {
               <div className="rounded-lg bg-status-success/10 border border-status-success/30 p-3 space-y-2">
                 <div className="flex items-center gap-2 text-sm font-medium text-status-success">
                   <Shield size={14} className="shrink-0" />
-                  Corpus-only display guardrail
+                  Retrieved-source assistance
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  The selected model drafts the answer entirely in your browser. Every substantive
-                  sentence must map to quoted evidence from the retrieved PQC Today corpus before it
-                  is displayed. Unsupported drafts are withheld rather than shown.
+                  The selected model runs in your browser and receives retrieved Hub material. Live
+                  text is an unverified draft. After generation, automated citation/source checks
+                  may revise it, retain text with source links, or show retrieved excerpts. These
+                  checks do not establish factual correctness; inspect the linked sources.
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  The model receives no web-search tool and cannot fall back to outside knowledge.
-                  If the retrieved corpus is insufficient, the assistant says so. Local mode targets
-                  an 8 GB discrete GPU with about 6.5 GB free VRAM, or 16 GB+ Apple Silicon.
+                  The model receives no web-search tool. When retrieval returns no sources, the
+                  assistant gives an insufficient-information response without a model call. Local
+                  mode targets an 8 GB discrete GPU with about 6.5 GB free VRAM, or 16 GB+ Apple
+                  Silicon.
                 </p>
               </div>
 
@@ -552,9 +554,11 @@ export const ProviderSetup: React.FC = () => {
                 Corpus-based cloud processing
               </div>
               <p className="text-xs text-muted-foreground">
-                Gemini 3.8 Flash answers from the retrieved PQC corpus. Every substantive sentence
-                must map to quoted corpus evidence before the answer is displayed. Web search and
-                external tools are disabled.
+                The cloud model receives your question, conversation context and retrieved Hub
+                material. Live text is an unverified draft. After generation, automated
+                citation/source checks may revise it, retain text with source links, or show
+                retrieved excerpts. These checks do not establish factual correctness. Web search
+                and external tools are not enabled in this request.
               </p>
             </div>
 
