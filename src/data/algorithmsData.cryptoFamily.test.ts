@@ -19,6 +19,15 @@ describe('getCryptoFamilyFromPQCName: compound constructions', () => {
     }
   })
 
+  it('does not read a classical algorithm into an ordinary word that happens to contain its letters', () => {
+    // "universal" and "traversal" contain "rsa"; neither names an algorithm
+    expect(getCryptoFamilyFromPQCName('ML-KEM-768 (universal profile)')).toBe('Lattice')
+    expect(getCryptoFamilyFromPQCName('ML-DSA-65 (tree traversal)')).toBe('Lattice')
+    // the same letters as an algorithm name still make a composite
+    expect(getCryptoFamilyFromPQCName('ML-KEM-768 with RSA')).toBe('Composite')
+    expect(getCryptoFamilyFromPQCName('MLKEM768X25519')).toBe('Composite')
+  })
+
   it('does not let a leading lattice prefix turn a compound name into a plain lattice scheme', () => {
     expect(getCryptoFamilyFromPQCName('ML-DSA-44-RSA2048-PSS')).not.toBe('Lattice')
     expect(getCryptoFamilyFromPQCName('ML-KEM-768-ECDH-P256')).not.toBe('Lattice')

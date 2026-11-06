@@ -237,16 +237,29 @@ export { getDateFromFilename, getRevisionFromFilename }
 // A construction that joins a post-quantum algorithm to a classical one (a hybrid KEM, a
 // composite signature) is classified as a construction, whatever order or punctuation the
 // name uses: "ML-DSA-44-RSA2048-PSS", "MLDSA44-RSA2048-PSS", "ML-KEM-768-ECDH-P256",
-// "X25519MLKEM768" and "ML-KEM (hybrid with ECDHE)" are all Composite. The test runs on the
-// name with punctuation removed and BEFORE the single-primitive prefix rules below, so a
-// leading "ml-kem" or "ml-dsa" cannot turn a compound name into a plain lattice scheme.
+// "X25519MLKEM768" and "ML-KEM (hybrid with ECDHE)" are all Composite. The post-quantum name
+// is read with punctuation removed, and the whole test runs BEFORE the single-primitive prefix
+// rules below, so a leading "ml-kem" or "ml-dsa" cannot turn a compound name into a plain
+// lattice scheme.
 const PQ_NAME_TOKEN =
   /(mlkem|mldsa|slhdsa|fndsa|falcon|dilithium|kyber|frodokem|hqc|mceliece|sphincs)/
-const CLASSICAL_NAME_TOKEN = /(rsa|ecdsa|ecdh|ed25519|ed448|x25519|x448|secp\d|p256|p384|p521)/
+// A classical name made of letters alone is only read when no other letter runs into it from
+// the left ("universal" and "traversal" contain "rsa" but name no algorithm); a name that
+// carries digits cannot be part of an ordinary word and is read from the compact form.
+const CLASSICAL_WORD_TOKEN = /(rsa|ecdsa|ecdh)/
+const CLASSICAL_CODED_TOKEN = /(ed25519|ed448|x25519|x448|secp\d|p256|p384|p521)/
+// eslint-disable-next-line security/detect-non-literal-regexp -- built only from the constants above
+const CLASSICAL_AFTER_BOUNDARY = new RegExp(
+  `(?:(?<![a-z])|(?<=${PQ_NAME_TOKEN.source}))${CLASSICAL_WORD_TOKEN.source}`
+)
 
 function isCompoundConstruction(name: string): boolean {
-  const compact = name.toLowerCase().replace(/[^a-z0-9]/g, '')
-  return PQ_NAME_TOKEN.test(compact) && CLASSICAL_NAME_TOKEN.test(compact)
+  const lower = name.toLowerCase()
+  const compact = lower.replace(/[^a-z0-9]/g, '')
+  return (
+    PQ_NAME_TOKEN.test(compact) &&
+    (CLASSICAL_CODED_TOKEN.test(compact) || CLASSICAL_AFTER_BOUNDARY.test(lower))
+  )
 }
 
 /** Derive cryptographic family from a PQC Replacement name in transitions CSV */

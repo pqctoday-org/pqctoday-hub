@@ -49,7 +49,7 @@ const PARAMETER_RULES: ParameterRule[] = [
   },
   {
     pattern: new RegExp(
-      `${START}(?:slh-?dsa|sphincs\\+?)${SEP}(?:sha2|sha-?256|shake)?${SEP}(128|192|256)(?![0-9])`
+      `${START}(?:slh-?dsa|sphincs\\+?)${SEP}(?:sha2|sha-?256|shake-?(?:256)?)?${SEP}(128|192|256)(?![0-9])`
     ),
     categories: { '128': 1, '192': 3, '256': 5 },
   },

@@ -30,6 +30,13 @@ describe('getSecurityLevel', () => {
     expect(getSecurityLevel('hqc-256.key')).toBe(5)
   })
 
+  it('reads the parameter, not the SHAKE width, from a round-three SPHINCS+ name', () => {
+    expect(getSecurityLevel('sphincs+-shake256-128s-simple.key')).toBe(1)
+    expect(getSecurityLevel('slh-dsa-shake256-192f.pem')).toBe(3)
+    expect(getSecurityLevel('sphincs+-sha256-256s.key')).toBe(5)
+    expect(getSecurityLevel('slh-dsa-shake-256s.key')).toBe(5)
+  })
+
   it('does not let an arbitrary 512, 768 or 1024 in a filename set the category', () => {
     for (const name of [
       'backup-512.pem',
