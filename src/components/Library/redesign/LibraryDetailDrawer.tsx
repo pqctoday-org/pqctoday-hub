@@ -33,6 +33,9 @@ import {
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
+import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
+import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import {
   lifecycleLabel,
@@ -147,8 +150,15 @@ function DrawerPanel({
   const { revisions } = useRevisions()
   // Phone shell: the sticky MobileHeader and bottom nav sit at z-nav (70), so
   // at z-50 they paint over the drawer's top edge — its Share and Close. Use
-  // the sheet layer (z-dialog, 101) there, like MobileSheet; desktop keeps z-50.
+  // the sheet layer (z-dialog, 101) there, like MobileSheet. An explicit
+  // modal also needs that layer above a visible modeless desktop Workshop;
+  // other desktop contexts retain their existing z-50 layer.
   const mobileShell = useIsMobileShell()
+  const belowLg = useIsBelowLgViewport()
+  const workshopPanelOpen = useRightPanelStore((s) => s.isOpen && s.activeTab === 'workshop')
+  const workshopMode = useWorkshopStore((s) => s.mode)
+  // Matches RightPanel's modelessWorkshop condition; isOpen is implicit there.
+  const inModelessWorkshop = !belowLg && workshopPanelOpen && isWorkshopPinning(workshopMode)
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(id)
@@ -193,7 +203,7 @@ function DrawerPanel({
     <FocusLock returnFocus>
       <div
         ref={rootRef}
-        className={`fixed inset-0 print:hidden ${mobileShell ? 'z-dialog' : 'z-50'}`}
+        className={`fixed inset-0 print:hidden ${mobileShell || inModelessWorkshop ? 'z-dialog' : 'z-50'}`}
         role="dialog"
         aria-modal="true"
         aria-label={item.documentTitle}
