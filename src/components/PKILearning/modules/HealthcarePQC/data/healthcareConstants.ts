@@ -166,7 +166,8 @@ export const REVOCABILITY_MATRIX: RevocabilityItem[] = [
     examples: ['Fingerprint', 'Iris', 'DNA', 'Facial geometry', 'Retina'],
     revocability: 'irreplaceable',
     reissueCost: 'Impossible — cannot change biology',
-    quantumImpact: 'Critical — permanent compromise, no remediation',
+    quantumImpact:
+      'Critical — a biometric cannot be reissued, so exposed data stays sensitive; whether it enables impersonation depends on template protection, presentation attack detection and a second factor',
   },
 ]
 

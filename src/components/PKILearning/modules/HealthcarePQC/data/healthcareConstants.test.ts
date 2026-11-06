@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { BIOMETRIC_PROFILES, MEDICAL_DEVICE_CATALOG } from './healthcareConstants'
+import {
+  BIOMETRIC_PROFILES,
+  MEDICAL_DEVICE_CATALOG,
+  REVOCABILITY_MATRIX,
+} from './healthcareConstants'
 
 const PUBLIC_KEY_PRIMITIVE = /RSA|ECDH|ECDSA|ECC|X25519|P-256|Diffie-Hellman|certificate/i
 const SYMMETRIC_PRIMITIVE = /AES/i
@@ -117,5 +121,15 @@ describe('biometric profile rationales', () => {
   it('keeps the genomic family-risk lesson', () => {
     const dna = BIOMETRIC_PROFILES.find((p) => p.id === 'dna-snp')!
     expect(dna.pqcRecommendation.rationale).toMatch(/shared with biological relatives/)
+  })
+})
+
+describe('revocability matrix', () => {
+  it('does not call an exposed biometric a permanent compromise with no remediation', () => {
+    const biometric = REVOCABILITY_MATRIX.find((item) => item.category === 'Biometric Data')
+    expect(biometric?.quantumImpact).toBeDefined()
+    expect(biometric?.quantumImpact).not.toMatch(/permanent compromise|no remediation/i)
+    expect(biometric?.quantumImpact).toMatch(/cannot be reissued/)
+    expect(biometric?.quantumImpact).toMatch(/depends on/)
   })
 })

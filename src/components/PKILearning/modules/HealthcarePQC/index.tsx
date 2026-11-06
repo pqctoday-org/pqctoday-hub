@@ -16,7 +16,7 @@ const PARTS: WorkshopPart[] = [
     id: 'biometric-vault',
     title: 'Step 1: Biometric Vault Assessor',
     description:
-      'Assess the quantum risk of biometric data stores — fingerprints, iris scans, DNA profiles — that are permanently compromised once decrypted.',
+      'Assess the quantum risk of biometric data stores — fingerprints, iris scans, DNA profiles — that cannot be reissued once their data is exposed.',
     icon: Fingerprint,
   },
   {
