@@ -134,7 +134,7 @@ async function signFixture(failure = false) {
     })
   )
   const output = await viewResult.current.execute('sign')
-  const signature = vi.mocked(a.setSignature).mock.calls[0]![0]!
+  const signature = vi.mocked(a.setSignature).mock.calls.at(-1)![0]!
   return { output, signature, artifacts: f }
 }
 
@@ -195,28 +195,16 @@ describe('Ethereum sample payload and signature representations', () => {
     expect(result.output).not.toContain('Full RLP Signature Component')
   })
 
-  it('labels the existing JS fallback without inventing a saved DER file or HSM operation', async () => {
-    const result = await signFixture(true)
-    expect(result.signature.r).toBe(reference.r)
-    expect(result.signature.s).toBe(reference.s)
-    expect(result.output).toContain('JavaScript fallback values used')
-    expect(result.output).toContain('FAILED: sample error')
-    expect(result.output).toContain('does not establish file presence')
-    expect(result.artifacts.saveSignature).not.toHaveBeenCalled()
-    expect(result.artifacts.registerArtifact).toHaveBeenCalledWith(
-      'sig',
-      'ethereum_signdata_20000101000000.sig'
-    )
+  it('rejects a failed OpenSSL attempt instead of publishing JS fallback values', async () => {
+    await expect(signFixture(true)).rejects.toThrow('OpenSSL sample signing failed: sample error')
   })
 
-  it('discloses the existing recovery-zero default when no candidate address is established', async () => {
+  it('rejects missing file-derived recovery instead of using a recovery-zero default', async () => {
     vi.mocked(extractKeyFromOpenSSLOutput).mockRejectedValue(
       new Error('sample extraction unavailable')
     )
-    const result = await signFixture()
-    expect(result.signature.recovery).toBe(37)
-    expect(result.output).toContain(
-      'No matching candidate established; existing recovery-0 default used'
+    await expect(signFixture()).rejects.toThrow(
+      'Could not establish the signer from the private key file'
     )
   })
 
@@ -239,6 +227,12 @@ describe('Ethereum sample payload and signature representations', () => {
           filenames: { SRC_PUBLIC_KEY: 'source.pub.pem' },
         })
       )
+      if (kind === 'error') {
+        await expect(viewResult.current.execute('verify')).rejects.toThrow(
+          'OpenSSL sample verification failed: sample verify error'
+        )
+        return
+      }
       const output = await viewResult.current.execute('verify')
       expect(output).toContain('Sample verification outputs (independent checks)')
       expect(output).toContain('Software sample address comparison')
@@ -246,9 +240,7 @@ describe('Ethereum sample payload and signature representations', () => {
       expect(output).toContain(
         kind === 'stdout'
           ? 'Sample verifier response'
-          : kind === 'error'
-            ? 'OpenSSL Verification Failed: sample verify error'
-            : 'No verification output returned; outcome not established'
+          : 'OpenSSL verification command completed without a service-reported error; no text output.'
       )
       expect(output).not.toContain('Signature verified successfully using OpenSSL')
     }
@@ -272,7 +264,9 @@ describe('Ethereum sample payload and signature representations', () => {
         filenames: { SRC_PUBLIC_KEY: 'source.pub.pem' },
       })
     )
-    expect(await viewResult.current.execute('verify')).toContain('❌ MISMATCH')
+    await expect(viewResult.current.execute('verify')).rejects.toThrow(
+      'does not match the expected signer'
+    )
   })
 
   it('uses software code-preview labels in keygen/sign/verify rather than HSM snippets', () => {

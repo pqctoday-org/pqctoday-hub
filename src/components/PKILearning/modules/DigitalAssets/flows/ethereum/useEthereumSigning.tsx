@@ -39,8 +39,8 @@ export function useEthereumSigning({
       description: (
         <>
           Attempt software OpenSSL signing of the JSON sample digest. The JavaScript reference
-          signature is also calculated, and supplies the displayed values if the OpenSSL attempt
-          fails.
+          signature is also calculated as a separate reference. A failed OpenSSL attempt cannot
+          complete this signing step.
           <br />
           <br />
           The step computes sample recovery metadata after parsing the signature. It does not use
@@ -52,7 +52,7 @@ export function useEthereumSigning({
 // Attempt OpenSSL signing of the saved JSON-payload digest.
 await openSSLService.execute(signCmd, filesToPass);
 // A JavaScript reference signature is also computed.
-// Existing fallback selection and recovery calculations determine the displayed r, s and v.`,
+// Parsed OpenSSL values are published only after the file-derived signer matches recovery.`,
       language: 'javascript',
       actionLabel: 'Sign Sample JSON Hash',
     },
@@ -62,6 +62,7 @@ await openSSLService.execute(signCmd, filesToPass);
     let result = ''
 
     if (stepId === 'sign') {
+      actions.setSignature(null)
       if (!keyGen.privateKeyHex) throw new Error('Private key not found.')
       if (!state.txHash)
         throw new SignatureError('Missing transaction hash. Please generate transaction first.')
@@ -81,7 +82,6 @@ await openSSLService.execute(signCmd, filesToPass);
       // 1. OpenSSL Signing (Raw Signature of Pre-Computed Hash)
       let openSSL_r: bigint = BigInt(0)
       let openSSL_s: bigint = BigInt(0)
-      let openSSL_error: string | null = null
 
       try {
         // Retrieve private key from store
@@ -92,7 +92,7 @@ await openSSLService.execute(signCmd, filesToPass);
         const signCmd = `openssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ${hashFileName} -out ${sigFileName}`
 
         const res = await openSSLService.execute(signCmd, filesToPass)
-        if (res.error && (res.error.includes('error') || res.error.includes('failure'))) {
+        if (res.error) {
           throw new Error(res.error)
         }
 
@@ -136,19 +136,18 @@ await openSSLService.execute(signCmd, filesToPass);
         openSSL_s = BigInt('0x' + bytesToHex(sBytes))
         pos += sLen
       } catch (err: unknown) {
-        openSSL_error = err instanceof Error ? err.message : 'Unknown error'
-        console.error('OpenSSL Signing Failed:', err)
+        const detail = err instanceof Error ? err.message : 'Unknown error'
+        throw new SignatureError(`OpenSSL sample signing failed: ${detail}`)
       }
 
-      // 2. JS Signing (Fallback/Reference)
+      // 2. JS Signing (Separate Reference)
       const privBytes = hexToBytes(keyGen.privateKeyHex)
       const jsSig = secp256k1.sign(hash, privBytes, { prehash: false })
-      const jsSigObj = secp256k1.Signature.fromBytes(jsSig)
+      secp256k1.Signature.fromBytes(jsSig)
 
-      // Use JS values if OpenSSL failed
-      // Use JS values if OpenSSL failed
-      const final_r = openSSL_error ? jsSigObj.r : openSSL_r
-      let final_s = openSSL_error ? jsSigObj.s : openSSL_s
+      // The separate reference never substitutes for a failed OpenSSL operation.
+      const final_r = openSSL_r
+      let final_s = openSSL_s
 
       // Normalize to Low-S (EIP-2)
       // Ethereum requires s <= n/2. OpenSSL might produce s > n/2 (valid in ECDSA but not Eth)
@@ -180,7 +179,10 @@ await openSSLService.execute(signCmd, filesToPass);
         expectedAddress = toChecksumAddress(bytesToHex(addrHash.slice(-20)))
         console.log(`[Sign] Derived Target Address from File: ${expectedAddress}`)
       } catch (err) {
-        console.warn('Could not derive address from private key file:', err)
+        const detail = err instanceof Error ? err.message : 'Unknown error'
+        throw new SignatureError(
+          `Could not establish the signer from the private key file: ${detail}`
+        )
       }
 
       // Helper for Modular Inverse
@@ -232,7 +234,10 @@ await openSSLService.execute(signCmd, filesToPass);
         }
       }
 
-      if (!recoveryFound) recovery = 0
+      if (!recoveryFound)
+        throw new SignatureError(
+          'No recovery candidate matched the signer from the private key file.'
+        )
 
       // EIP-155: v = recovery + 35 + 2 * chainId (chainId = 1)
       const chainId = 1
@@ -267,10 +272,10 @@ v: 0x${vHex} (sample calculation: ${recovery} + 35 + 2*${chainId})
 Raw r || s || v hex display — not an encoded Ethereum transaction:
 0x${rHex}${sHex}${vHex}
 
-OpenSSL signing-attempt status: ${openSSL_error ? `FAILED: ${openSSL_error}` : 'SUCCESS ✅'}
+OpenSSL signing-attempt status: SUCCESS ✅
 
-Software value selection: ${openSSL_error ? 'JavaScript fallback values used' : 'Parsed OpenSSL values used; JavaScript reference also computed'}
-Recovery matching: ${recoveryFound ? 'Matching address candidate found' : 'No matching candidate established; existing recovery-0 default used'}
+Software value selection: Parsed OpenSSL values used; JavaScript reference also computed
+Recovery matching: Matching address candidate found
 
 Registered signature target: ${sigFileName}
 When produced, the saved OpenSSL signature contains DER bytes, separate from the raw r || s || v display. This registered target alone does not establish file presence or transaction compatibility.`

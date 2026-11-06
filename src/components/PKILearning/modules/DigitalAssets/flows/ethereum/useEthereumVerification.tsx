@@ -36,10 +36,10 @@ export function useEthereumVerification({
           then compare a separately recovered address with the available expected address using the
           sample recovery parameter <InfoTooltip term="recoveryParam" />.
           <br />
-          <br />
-          Read the OpenSSL response and address comparison independently. Neither a matching address
-          nor completion of this activity establishes that an Ethereum transaction is encoded or
-          accepted.
+          <br />A service error, missing file-derived signer or address mismatch keeps this step
+          incomplete. Read the OpenSSL response and address comparison independently. Neither a
+          matching address nor completion of this activity establishes that an Ethereum transaction
+          is encoded or accepted.
         </>
       ),
       code: `// Illustrative summary of the executed software checks
@@ -71,9 +71,10 @@ const response = await openSSLService.execute(verifyCmd, filesToPass);
       // OpenSSL Verify
       const verifyCmd = `openssl pkeyutl -verify -inkey ${filenames.SRC_PUBLIC_KEY} -pubin -in ${hashFileName} -sigfile ${sigFileName}`
       const res = await openSSLService.execute(verifyCmd, filesToPass)
-      const openSSLResult = res.error
-        ? `OpenSSL Verification Failed: ${res.error}`
-        : res.stdout || 'No verification output returned; outcome not established'
+      if (res.error) throw new Error(`OpenSSL sample verification failed: ${res.error}`)
+      const openSSLResult =
+        res.stdout ||
+        'OpenSSL verification command completed without a service-reported error; no text output.'
 
       // JS Recovery Verify
       // Decode EIP-155 v back to recovery ID (0 or 1)
@@ -82,8 +83,11 @@ const response = await openSSLService.execute(verifyCmd, filesToPass);
       // recovery = v - 35 - 2 * chainId
       // Simple handling for now (assuming v is EIP-155 compliant)
       const v = state.signature.recovery
-      let recoveryId = v >= 35 ? v - 35 - 2 * chainId : v - 27
-      if (recoveryId < 0) recoveryId = 0 // Fallback or non-EIP-155
+      const recoveryId = v >= 35 ? v - 35 - 2 * chainId : v - 27
+      if (!Number.isInteger(recoveryId) || (recoveryId !== 0 && recoveryId !== 1))
+        throw new Error(
+          'The sample recovery parameter is outside the supported legacy/mainnet range.'
+        )
 
       // Helper for Modular Inverse (Same as in Signing)
       const modInverse = (a: bigint, m: bigint) => {
@@ -115,7 +119,7 @@ const response = await openSSLService.execute(verifyCmd, filesToPass);
 
       // 3. Derive Expected Address from Public Key File
       // This ensures we compare against the uploaded key, not potentially stale state
-      let derivedExpectedAddress = state.sourceAddress || ''
+      let derivedExpectedAddress = ''
       try {
         const rawPubBytes = await extractKeyFromOpenSSLOutput(
           filenames.SRC_PUBLIC_KEY,
@@ -123,6 +127,7 @@ const response = await openSSLService.execute(verifyCmd, filesToPass);
           filesToPass
         )
 
+        if (rawPubBytes.length === 0) throw new Error('No public key bytes were returned.')
         if (rawPubBytes.length > 0) {
           const pubKeyNoPrefix = rawPubBytes.slice(1)
           const addrHash = keccak_256(pubKeyNoPrefix)
@@ -130,7 +135,10 @@ const response = await openSSLService.execute(verifyCmd, filesToPass);
           derivedExpectedAddress = calculatedAddr
         }
       } catch (err) {
-        console.warn('Could not derive address from public key file, falling back to state:', err)
+        const detail = err instanceof Error ? err.message : 'Unknown error'
+        throw new Error(
+          `Could not establish the expected signer from the public key file: ${detail}`
+        )
       }
 
       const rInv = modInverse(state.signature.r, n)
@@ -154,6 +162,11 @@ const response = await openSSLService.execute(verifyCmd, filesToPass);
       const match =
         derivedExpectedAddress &&
         recoveredAddress.toLowerCase() === derivedExpectedAddress.toLowerCase()
+
+      if (!match)
+        throw new Error(
+          `Recovered sample address ${recoveredAddress} does not match the expected signer ${derivedExpectedAddress}.`
+        )
 
       result = `Sample verification outputs (independent checks):
 
