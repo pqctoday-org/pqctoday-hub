@@ -20,13 +20,20 @@ import {
 } from './ruleCatalog'
 
 interface Props {
+  readOnly?: boolean
   guided: boolean
   activePresetFile: string | null
   onSelectPreset: (preset: PolicyPreset) => void
   onAddRule: (type: RuleTypeId) => void
 }
 
-export function RulePalette({ guided, activePresetFile, onSelectPreset, onAddRule }: Props) {
+export function RulePalette({
+  guided,
+  activePresetFile,
+  onSelectPreset,
+  onAddRule,
+  readOnly = false,
+}: Props) {
   const byFamily = FAMILY_ORDER.map((fam) => ({
     fam,
     types: RULE_TYPE_IDS.filter(
@@ -93,7 +100,10 @@ export function RulePalette({ guided, activePresetFile, onSelectPreset, onAddRul
                       key={t}
                       variant="ghost"
                       type="button"
-                      onClick={() => onAddRule(t)}
+                      disabled={readOnly}
+                      onClick={() => {
+                        if (!readOnly) onAddRule(t)
+                      }}
                       title={spec.blurb}
                       className="flex h-auto w-full items-center justify-start gap-2 rounded-lg border border-border bg-background/40 px-2 py-1.5 text-left font-normal transition-colors hover:border-primary/40 hover:bg-primary/5"
                     >

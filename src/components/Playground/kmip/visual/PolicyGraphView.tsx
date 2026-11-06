@@ -9,7 +9,7 @@
 //
 // WP2: the centre column is an ordered rule list (placeholder). WP3 replaces it
 // with the pan/zoom decision-pipeline canvas behind the same props.
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   Code2,
   ChevronRight,
@@ -147,36 +147,39 @@ function engineTraceToSim(policy: EditablePolicy, dr: DryRunResult | null): SimR
   return { verdict, trace, deciderId }
 }
 
-/**
- * WS-5c (2026-08-28 gaps-remediation plan) — for a multi-module preset
- * (`readOnly`), `dr.trace`'s rule index is local to whichever module fired
- * in the engine's own modular evaluation; `engineTraceToSim`'s
- * `enabledIds[step.index - 1]` assumes one flat file's numbering, so reusing
- * it here would silently highlight the wrong node. Show the engine's real
- * verdict (still authoritative) with an inert, clearly-labeled trace instead
- * of a mismapped one.
- */
-function engineVerdictOnlyMultiModule(
-  policy: EditablePolicy,
-  dr: DryRunResult | null
-): SimResult | null {
-  if (!dr) return null
-  const trace: TraceStep[] = policy.rules.map((r) => ({
-    ruleId: r.id,
-    matched: false,
-    effect: r.enabled ? 'skip' : 'off',
-    note: r.enabled ? 'per-rule trace unavailable for multi-module presets' : 'disabled',
-  }))
-  const kind: SimVerdict['kind'] =
-    dr.kind === 'Allow' ? 'allow' : dr.kind === 'Rekey' ? 'rekey' : 'deny'
-  const verdict: SimVerdict = {
-    kind,
-    algorithm: dr.algorithm ?? undefined,
-    from: dr.from,
-    to: dr.to,
-    reason: dr.reason ?? dr.denyReason,
+/** Capture only existing stable engine identity fields; raw status is retained separately. */
+function captureContext(engine: KmipEngine) {
+  const status = engine.policyStatus()
+  const modules = engine.policyModulesStatus()
+  if (
+    typeof status?.active !== 'boolean' ||
+    !Array.isArray(modules?.modules) ||
+    !['allow', 'deny'].includes(modules.uncoveredOps) ||
+    modules.modules.some(
+      (m) =>
+        typeof m.name !== 'string' ||
+        typeof m.fingerprint !== 'string' ||
+        typeof m.enabled !== 'boolean' ||
+        !Array.isArray(m.scopes)
+    )
+  ) {
+    throw new Error('Loaded policy context could not be established')
   }
-  return { verdict, trace, deciderId: null }
+  const raw = JSON.parse(JSON.stringify({ status, modules }))
+  const identity = JSON.stringify({
+    active: status.active,
+    name: status.name,
+    fingerprint: status.fingerprint,
+    source: status.source,
+    modules: modules.modules.map(({ name, fingerprint, scopes, enabled }) => ({
+      name,
+      fingerprint,
+      scopes,
+      enabled,
+    })),
+    uncoveredOps: modules.uncoveredOps,
+  })
+  return { raw, identity }
 }
 
 type RightTab = 'inspect' | 'simulate' | 'check'
@@ -201,6 +204,7 @@ export function PolicyGraphView({
     []
   )
   const [baseline] = useState(() => serialize(seeded))
+  const [originalSource] = useState(initialYaml)
   const [policy, setPolicy] = useState<EditablePolicy>(seeded)
   const [dir, setDir] = useState<Dir>('tb')
   const [layout, setLayout] = useState<Layout>(() => defaultLayout(seeded, 'tb'))
@@ -233,15 +237,20 @@ export function PolicyGraphView({
   const [engineVerdict, setEngineVerdict] = useState<DryRunResult | null>(null)
   const [running, setRunning] = useState(false)
   const [engineWarnings, setEngineWarnings] = useState<string[]>([])
+  const [lintError, setLintError] = useState<string | null>(null)
   const [strictFindings, setStrictFindings] = useState<PolicyLintFinding[]>([])
 
   const yaml = useMemo(() => serialize(policy), [policy])
   const issues = useMemo(() => validate(policy), [policy])
   const modified = yaml !== baseline
+  const contextOnly = readOnly || !modified
   const selectedRule = policy.rules.find((r) => r.id === selectedId) ?? null
   const selectedIndex = policy.rules.findIndex((r) => r.id === selectedId)
 
-  const yamlText = yamlDraft ?? yaml
+  const currentSource = useRef({ yaml, initialYaml, readOnly, engine, presetFile })
+
+  const yamlText =
+    readOnly || (!modified && yamlDraft === null) ? (initialYaml ?? yaml) : (yamlDraft ?? yaml)
   const yamlDirty = yamlDraft !== null && yamlDraft !== yaml
   // "Parsed N of M" (A-grade review A5) — count `- type:` entries in the raw
   // text (M) vs how many `toEditable` actually recognised (N), so a grammar
@@ -254,8 +263,144 @@ export function PolicyGraphView({
     return { raw, parsed }
   }, [yamlText, yamlDirty])
 
+  const rafRef = useRef<number | null>(null)
+  const mounted = useRef(false)
+  const generation = useRef(0)
+  const contextGeneration = useRef(0)
+  const policyGeneration = useRef(0)
+  const latestApply = useRef(onApplyYaml)
+  const editOrigin = useRef({ engine, presetFile, initialYaml, readOnly })
+  const lastApplied = useRef<{
+    engine: KmipEngine
+    presetFile: string | null
+    yaml: string
+  } | null>(null)
+  const hasCurrentOrigin = useCallback(() => {
+    const origin = editOrigin.current
+    const current = currentSource.current
+    return (
+      origin.engine === current.engine &&
+      origin.presetFile === current.presetFile &&
+      !current.readOnly &&
+      (origin.initialYaml === current.initialYaml ||
+        (lastApplied.current?.engine === current.engine &&
+          lastApplied.current?.presetFile === current.presetFile &&
+          lastApplied.current?.yaml === current.initialYaml))
+    )
+  }, [])
+  const inFlightApply = useRef<{
+    engine: KmipEngine
+    presetFile: string | null
+    text: string
+  } | null>(null)
+  const [runError, setRunError] = useState<string | null>(null)
+  const [recordedContext, setRecordedContext] = useState<string | null>(null)
+  const [illustrative, setIllustrative] = useState(false)
+  const [pendingDraft, setPendingDraft] = useState<{
+    context: number
+    policy: number
+    preset: string | null
+    text: string
+  } | null>(null)
+  useLayoutEffect(() => {
+    latestApply.current = onApplyYaml
+  }, [onApplyYaml])
+  useLayoutEffect(() => {
+    mounted.current = true
+    const resultGeneration = generation
+    const lifetimeContext = contextGeneration
+    return () => {
+      mounted.current = false
+      resultGeneration.current++
+      lifetimeContext.current++
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+  const invalidate = useCallback(() => {
+    generation.current++
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    setRunning(false)
+    setEngineVerdict(null)
+    setRecordedContext(null)
+    setSim(null)
+    setToken(null)
+    setRunError(null)
+    setIllustrative(false)
+  }, [])
+  useLayoutEffect(() => {
+    const previous = currentSource.current
+    const sameRuntime =
+      previous.engine === engine &&
+      previous.presetFile === presetFile &&
+      previous.readOnly === readOnly
+    const selfPublication =
+      sameRuntime &&
+      ((initialYaml === inFlightApply.current?.text &&
+        inFlightApply.current?.engine === engine &&
+        inFlightApply.current?.presetFile === presetFile) ||
+        (initialYaml === lastApplied.current?.yaml &&
+          lastApplied.current?.engine === engine &&
+          lastApplied.current?.presetFile === presetFile))
+    if (!sameRuntime || (previous.initialYaml !== initialYaml && !selfPublication)) {
+      contextGeneration.current++
+      invalidate()
+    }
+    currentSource.current = { yaml, initialYaml, readOnly, engine, presetFile }
+  }, [yaml, initialYaml, readOnly, engine, presetFile, invalidate])
+  const invalidatePolicy = () => {
+    policyGeneration.current++
+    editOrigin.current = { engine, presetFile, initialYaml, readOnly }
+    invalidate()
+  }
+  const changeRequest = (next: SimRequest) => {
+    invalidate()
+    setReq(next)
+  }
+  const applyCurrent = useCallback(
+    (text: string) => {
+      const before = currentSource.current
+      const ownerContext = contextGeneration.current
+      const ownerPolicy = policyGeneration.current
+      const applyOperation = { engine, presetFile, text }
+      const stillOwned = () => {
+        const current = currentSource.current
+        return (
+          mounted.current &&
+          contextGeneration.current === ownerContext &&
+          policyGeneration.current === ownerPolicy &&
+          current.engine === before.engine &&
+          current.presetFile === before.presetFile &&
+          current.readOnly === before.readOnly &&
+          (current.initialYaml === before.initialYaml || current.initialYaml === text)
+        )
+      }
+      if (!mounted.current || before.engine !== engine || before.presetFile !== presetFile)
+        return false
+      inFlightApply.current = applyOperation
+      try {
+        const result = latestApply.current(text)
+        if (!stillOwned()) return false
+        if (result?.ok !== true)
+          throw new Error(result?.error ?? 'Policy apply did not confirm success')
+        lastApplied.current = { engine, presetFile, yaml: text }
+        setEngineWarnings(result.warnings ?? [])
+        return true
+      } catch (error) {
+        if (!stillOwned()) return false
+        const message = error instanceof Error ? error.message : 'Policy apply failed'
+        setEngineWarnings([message])
+        setRunError(`Incomplete: ${message}`)
+        return false
+      } finally {
+        if (inFlightApply.current === applyOperation) inFlightApply.current = null
+      }
+    },
+    [engine, presetFile]
+  )
+
   const applyYamlDraft = () => {
-    if (!yamlDraft) return
+    if (readOnly || !yamlDraft) return
+    invalidatePolicy()
     const next = toEditable(yamlDraft)
     setPolicy(next)
     setLayout(relayout(next, dir, null))
@@ -264,7 +409,12 @@ export function PolicyGraphView({
     setToken(null)
     setYamlDraft(null)
   }
-  const discardYamlDraft = () => setYamlDraft(null)
+  const discardYamlDraft = () => {
+    if (!readOnly) {
+      invalidate()
+      setYamlDraft(null)
+    }
+  }
 
   // Debounced apply of the edited policy to the engine (graph = source of truth).
   // Skipped entirely in `readOnly` mode (a multi-file preset) — see the prop's
@@ -281,20 +431,45 @@ export function PolicyGraphView({
     if (!modified) return
     if (applyTimer.current) clearTimeout(applyTimer.current)
     applyTimer.current = setTimeout(() => {
-      const res = onApplyYaml(yaml)
-      if (res && !res.ok) setEngineWarnings([res.error ?? 'engine rejected the edited policy'])
-      else setEngineWarnings(res?.warnings ?? [])
-      setSim(null) // last sim is stale after an edit
-      setToken(null)
+      if (!mounted.current || currentSource.current.yaml !== yaml || !hasCurrentOrigin()) return
+      const beforeContext = contextGeneration.current
+      const beforePolicy = policyGeneration.current
+      applyCurrent(yaml)
+      if (
+        !mounted.current ||
+        contextGeneration.current !== beforeContext ||
+        policyGeneration.current !== beforePolicy ||
+        !hasCurrentOrigin()
+      )
+        return
       // WS-4c — the one global draft slot tracks what's in the EDITOR, not
       // just what the engine accepted, so a syntax error mid-fix is still
       // there to resume on reload.
-      saveCacpDraft(presetFile, yaml)
+      setPendingDraft({
+        context: beforeContext,
+        policy: beforePolicy,
+        preset: presetFile,
+        text: yaml,
+      })
     }, 400)
     return () => {
       if (applyTimer.current) clearTimeout(applyTimer.current)
     }
-  }, [yaml, modified, onApplyYaml, readOnly, presetFile])
+  }, [yaml, modified, readOnly, presetFile, applyCurrent, hasCurrentOrigin])
+
+  // Persist only after React commits any owner/source change requested by apply.
+  useEffect(() => {
+    if (!pendingDraft) return
+    if (
+      mounted.current &&
+      pendingDraft.context === contextGeneration.current &&
+      pendingDraft.policy === policyGeneration.current &&
+      hasCurrentOrigin()
+    ) {
+      saveCacpDraft(pendingDraft.preset, pendingDraft.text)
+    }
+    setPendingDraft(null)
+  }, [pendingDraft, hasCurrentOrigin])
 
   // C3 (2026-08-28 gaps-remediation plan) — every strict-lint finding, not
   // just the first fatal one `onApplyYaml`'s `ok:false` surfaces. Runs
@@ -305,18 +480,43 @@ export function PolicyGraphView({
   const lintTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
     if (lintTimer.current) clearTimeout(lintTimer.current)
+    if (readOnly) {
+      setStrictFindings([])
+      setLintError('Not assessed: single-policy lint is not applied to concatenated module sources')
+      return
+    }
     lintTimer.current = setTimeout(() => {
-      const res = engine.lintPolicyDraft(yaml)
-      setStrictFindings(res.ok ? (res.findings ?? []) : [])
+      if (
+        !mounted.current ||
+        currentSource.current.yaml !== yaml ||
+        currentSource.current.initialYaml !== initialYaml ||
+        currentSource.current.readOnly !== readOnly ||
+        currentSource.current.engine !== engine ||
+        currentSource.current.presetFile !== presetFile
+      )
+        return
+      try {
+        const res = engine.lintPolicyDraft(yaml)
+        setStrictFindings(res?.ok === true ? (res.findings ?? []) : [])
+        setLintError(
+          res?.ok === true ? null : 'Incomplete: policy lint did not confirm successful completion'
+        )
+      } catch {
+        setStrictFindings([])
+        setLintError('Incomplete: policy lint could not be completed')
+      }
     }, 400)
     return () => {
       if (lintTimer.current) clearTimeout(lintTimer.current)
     }
-  }, [engine, yaml])
+  }, [engine, yaml, readOnly, initialYaml, presetFile])
 
   // ── mutations ──
-  const patchRule = (id: string, mutate: (r: EditableRule) => EditableRule) =>
+  const patchRule = (id: string, mutate: (r: EditableRule) => EditableRule) => {
+    if (readOnly) return
+    invalidatePolicy()
     setPolicy((p) => ({ ...p, rules: p.rules.map((r) => (r.id === id ? mutate(r) : r)) }))
+  }
   const patchScalar = (id: string, key: string, value: string) =>
     patchRule(id, (r) => ({ ...r, scalars: { ...r.scalars, [key]: value } }))
   const patchList = (id: string, key: string, value: string[]) =>
@@ -330,7 +530,11 @@ export function PolicyGraphView({
   const patchMetadata = <K extends keyof EditablePolicy['metadata']>(
     key: K,
     value: EditablePolicy['metadata'][K]
-  ) => setPolicy((p) => ({ ...p, metadata: { ...p.metadata, [key]: value } }))
+  ) => {
+    if (readOnly) return
+    invalidatePolicy()
+    setPolicy((p) => ({ ...p, metadata: { ...p.metadata, [key]: value } }))
+  }
 
   // Rebuild layout after a structural change (add/delete/reorder), preserving
   // manual drag positions for surviving nodes. Kept in the event handler (not an
@@ -338,6 +542,8 @@ export function PolicyGraphView({
   const relayoutFor = (next: EditablePolicy) => setLayout((prev) => relayout(next, dir, prev))
 
   const deleteRule = (id: string) => {
+    if (readOnly) return
+    invalidatePolicy()
     setPolicy((p) => {
       const next = { ...p, rules: p.rules.filter((r) => r.id !== id) }
       relayoutFor(next)
@@ -346,6 +552,8 @@ export function PolicyGraphView({
     if (selectedId === id) setSelectedId(null)
   }
   const addRule = (type: RuleTypeId) => {
+    if (readOnly) return
+    invalidatePolicy()
     const made = RULE_CATALOG[type].make()
     const rule: EditableRule = { id: newRuleId(), type, enabled: true, ...made }
     setPolicy((p) => {
@@ -356,7 +564,9 @@ export function PolicyGraphView({
     setSelectedId(rule.id)
     setRightTab('inspect')
   }
-  const moveRule = (id: string, delta: -1 | 1) =>
+  const moveRule = (id: string, delta: -1 | 1) => {
+    if (readOnly) return
+    invalidatePolicy()
     setPolicy((p) => {
       const i = p.rules.findIndex((r) => r.id === id)
       const j = i + delta
@@ -368,28 +578,32 @@ export function PolicyGraphView({
       relayoutFor(next)
       return next
     })
+  }
   const moveNode = (id: string, xy: { x: number; y: number }) =>
     setLayout((l) => ({ ...l, pos: { ...l.pos, [id]: xy } }))
 
   const setOrientation = (next: Dir) => {
     if (next === dir) return
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    setRunning(false)
     setDir(next)
     setLayout(relayout(policy, next, null))
     setToken(null)
-    setSim(null)
   }
 
   const reset = () => {
-    const reseed = toEditable(baseline)
+    if (readOnly) return
+    invalidatePolicy()
+    if (applyTimer.current) clearTimeout(applyTimer.current)
+    const resetSource = originalSource ?? baseline
+    const reseed = toEditable(resetSource)
     setPolicy(reseed)
     setLayout(relayout(reseed, dir, null))
     setSelectedId(null)
     setSim(null)
     setToken(null)
     setYamlDraft(null)
-    onApplyYaml(baseline)
-    setEngineWarnings([])
-    clearCacpDraft() // WS-4c — back to the pristine preset, nothing unsaved left to restore
+    if (applyCurrent(resetSource)) clearCacpDraft() // WS-4c — back to the pristine preset, nothing unsaved left to restore
   }
 
   const select = (id: string | null) => {
@@ -398,146 +612,186 @@ export function PolicyGraphView({
   }
 
   // ── run simulation: engine verdict (authoritative) + illustrative trace ──
-  const rafRef = useRef<number | null>(null)
-  const run = useCallback(
-    (reqOverride?: SimRequest) => {
-      const activeReq = reqOverride ?? req
-      const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(activeReq.op)
-      // Authoritative verdict + per-rule trace from the engine FIRST, so the graph
-      // can be driven by what the engine actually did (WP4b: dry_run sees the full
-      // request dimensions — date/attrs/mask/mechanism).
-      let engineDR: DryRunResult | null = null
-      try {
-        const attrs: Record<string, string> = {}
-        for (const a of activeReq.attrs) {
-          const [name, ...rest] = a.split('=')
-          if (name) attrs[name] = rest.join('=')
-        }
-        const mechanism = {
-          hash: activeReq.hash || undefined,
-          blockMode: activeReq.blockMode || undefined,
-          padding: activeReq.padding || undefined,
-          deterministic:
-            activeReq.deterministic === '' ? undefined : activeReq.deterministic === 'true',
-          mech: activeReq.mechanism || undefined,
-        }
-        engineDR = engine.dryRun({
-          op: activeReq.op,
-          algorithm: activeReq.algorithm || undefined,
-          currentAlgorithm: newObject ? undefined : activeReq.algorithm || undefined,
-          length: activeReq.bits === '' ? undefined : Number(activeReq.bits),
-          state: activeReq.keyState || undefined,
-          name: activeReq.keyName || undefined,
-          date: activeReq.date || undefined,
-          attrs: Object.keys(attrs).length ? attrs : undefined,
-          usageMask: activeReq.usageFlags.length ? activeReq.usageFlags : undefined,
-          activationDate: activeReq.keyActivatedOn || undefined,
-          mechanism: Object.values(mechanism).some((v) => v !== undefined) ? mechanism : undefined,
-        })
-        setEngineVerdict(engineDR)
-      } catch {
-        setEngineVerdict(null)
+  const run = (reqOverride?: SimRequest) => {
+    invalidate()
+    if (yamlDirty) {
+      setRunError('Incomplete: apply or discard the YAML draft before running')
+      return
+    }
+    const activeReq = JSON.parse(JSON.stringify(reqOverride ?? req)) as SimRequest
+    if (applyTimer.current) clearTimeout(applyTimer.current)
+    if (!contextOnly && !hasCurrentOrigin()) {
+      setRunError(
+        'Incomplete: this draft belongs to a previous policy context; reload the selected preset before applying it'
+      )
+      return
+    }
+    const runGeneration = generation.current
+    if (!contextOnly && !applyCurrent(yaml)) return
+    if (!mounted.current || generation.current !== runGeneration) return
+    const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(activeReq.op)
+    // Authoritative verdict + per-rule trace from the engine FIRST, so the graph
+    // can be driven by what the engine actually did (WP4b: dry_run sees the full
+    // request dimensions — date/attrs/mask/mechanism).
+    let engineDR: DryRunResult | null = null
+    try {
+      const attrs: Record<string, string> = {}
+      for (const a of activeReq.attrs) {
+        const [name, ...rest] = a.split('=')
+        if (name) attrs[name] = rest.join('=')
       }
-
-      // Drive the graph from the ENGINE's own trace when available; fall back to
-      // the illustrative evaluatePolicy only if the wasm predates trace support.
-      // Multi-module presets (WS-5c) skip the trace mapping entirely — see
-      // `engineVerdictOnlyMultiModule`'s doc comment — but still prefer the
-      // engine's own verdict over the illustrative one.
-      const result = readOnly
-        ? (engineVerdictOnlyMultiModule(policy, engineDR) ?? evaluatePolicy(policy, activeReq))
-        : (engineTraceToSim(policy, engineDR) ?? evaluatePolicy(policy, activeReq))
-      setSim(result)
-
-      // Build the flow path points (request → matched nodes → terminal) and the
-      // per-hop token labels (morphs across resolve nodes).
-      const flowIds: string[] = []
-      for (const r of policy.rules) {
-        flowIds.push(r.id)
-        if (result.deciderId && r.id === result.deciderId) break
+      const mechanism = {
+        hash: activeReq.hash || undefined,
+        blockMode: activeReq.blockMode || undefined,
+        padding: activeReq.padding || undefined,
+        deterministic:
+          activeReq.deterministic === '' ? undefined : activeReq.deterministic === 'true',
+        mech: activeReq.mechanism || undefined,
       }
-      const nw = nodeW(dir)
-      const reqRect = { x: layout.reqPos.x, y: layout.reqPos.y, w: REQ.w, h: REQ.h }
-      const pts = [portOf(reqRect, 'out', dir)]
-      let label = activeReq.algorithm
-      const labels = [label]
-      for (const id of flowIds) {
-        const p = layout.pos[id]
-        if (!p) continue
-        pts.push({ x: p.x + nw / 2, y: p.y + NODE_H / 2 })
-        const r = policy.rules.find((x) => x.id === id)
-        if (
-          r?.type === 'algorithm_substitution' &&
-          label.toLowerCase() === (r.scalars.from ?? '').toLowerCase()
+      const contextBefore = captureContext(engine)
+      const actualRequest = {
+        op: activeReq.op,
+        algorithm: activeReq.algorithm || undefined,
+        currentAlgorithm: newObject ? undefined : activeReq.algorithm || undefined,
+        length: activeReq.bits === '' ? undefined : Number(activeReq.bits),
+        state: activeReq.keyState || undefined,
+        name: activeReq.keyName || undefined,
+        date: activeReq.date || undefined,
+        attrs: Object.keys(attrs).length ? attrs : undefined,
+        usageMask: activeReq.usageFlags.length ? activeReq.usageFlags : undefined,
+        activationDate: activeReq.keyActivatedOn || undefined,
+        mechanism: Object.values(mechanism).some((v) => v !== undefined) ? mechanism : undefined,
+      }
+      engineDR = engine.dryRun(actualRequest)
+      const contextAfter = captureContext(engine)
+      if (contextBefore.identity !== contextAfter.identity)
+        throw new Error('Loaded policy context changed during the run')
+      if (!engineDR || !['Allow', 'Deny', 'Rekey'].includes(engineDR.kind))
+        throw new Error('Engine returned no recognised result')
+      if (!mounted.current || generation.current !== runGeneration) return
+      engineDR = JSON.parse(JSON.stringify(engineDR)) as DryRunResult
+      setEngineVerdict(engineDR)
+      setRecordedContext(
+        JSON.stringify(
+          {
+            request: activeReq,
+            actualRequest,
+            displayedSource: contextOnly ? initialYaml : yaml,
+            presetFile,
+            sourceCorrespondence: contextOnly ? 'Unconfirmed' : 'Edited graph explicitly applied',
+            context: contextBefore.raw,
+            result: engineDR,
+          },
+          null,
+          2
         )
-          label = r.scalars.to ?? label
-        if (r?.type === 'algorithm_default' && !label) label = r.scalars.default_algorithm ?? label
-        labels.push(label)
+      )
+    } catch (error) {
+      if (mounted.current && generation.current === runGeneration) {
+        setRunError(
+          `Incomplete: ${error instanceof Error ? error.message : 'Engine dry run failed'}`
+        )
       }
-      const sinkKey: TerminalKind = result.verdict.kind
-      const skRect = {
-        x: layout.sinks[sinkKey].x,
-        y: layout.sinks[sinkKey].y,
-        w: SINK.w,
-        h: SINK.h,
-      }
-      pts.push(sinkInPort(sinkKey, skRect, dir))
-      labels.push(result.verdict.kind === 'deny' ? '✕' : label)
-      const color =
-        result.verdict.kind === 'allow'
-          ? 'hsl(var(--success))'
-          : result.verdict.kind === 'rekey'
-            ? 'hsl(var(--warning))'
-            : 'hsl(var(--destructive))'
+      return
+    }
 
-      const reduced =
-        typeof window !== 'undefined' &&
-        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-      if (reduced || pts.length < 2) {
+    // Only an explicitly applied edited graph has a current-source binding.
+    // Unedited original sources and merged modules retain engine-context results
+    // without pretending the reduced parser provides a lossless graph mapping.
+    if (contextOnly) return
+    const engineResult = engineTraceToSim(policy, engineDR)
+    setIllustrative(!engineResult)
+    const result = engineResult ?? evaluatePolicy(policy, activeReq)
+    setSim(result)
+
+    // Build the flow path points (request → matched nodes → terminal) and the
+    // per-hop token labels (morphs across resolve nodes).
+    const flowIds: string[] = []
+    for (const r of policy.rules) {
+      flowIds.push(r.id)
+      if (result.deciderId && r.id === result.deciderId) break
+    }
+    const nw = nodeW(dir)
+    const reqRect = { x: layout.reqPos.x, y: layout.reqPos.y, w: REQ.w, h: REQ.h }
+    const pts = [portOf(reqRect, 'out', dir)]
+    let label = activeReq.algorithm
+    const labels = [label]
+    for (const id of flowIds) {
+      const p = layout.pos[id]
+      if (!p) continue
+      pts.push({ x: p.x + nw / 2, y: p.y + NODE_H / 2 })
+      const r = policy.rules.find((x) => x.id === id)
+      if (
+        r?.type === 'algorithm_substitution' &&
+        label.toLowerCase() === (r.scalars.from ?? '').toLowerCase()
+      )
+        label = r.scalars.to ?? label
+      if (r?.type === 'algorithm_default' && !label) label = r.scalars.default_algorithm ?? label
+      labels.push(label)
+    }
+    const sinkKey: TerminalKind = result.verdict.kind
+    const skRect = {
+      x: layout.sinks[sinkKey].x,
+      y: layout.sinks[sinkKey].y,
+      w: SINK.w,
+      h: SINK.h,
+    }
+    pts.push(sinkInPort(sinkKey, skRect, dir))
+    labels.push(result.verdict.kind === 'deny' ? '✕' : label)
+    const color =
+      result.verdict.kind === 'allow'
+        ? 'hsl(var(--success))'
+        : result.verdict.kind === 'rekey'
+          ? 'hsl(var(--warning))'
+          : 'hsl(var(--destructive))'
+
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduced || pts.length < 2) {
+      const last = pts[pts.length - 1]
+      setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+      return
+    }
+
+    setRunning(true)
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    const segMs = 620
+    const total = (pts.length - 1) * segMs
+    const start = performance.now()
+    const tick = (now: number) => {
+      if (!mounted.current || generation.current !== runGeneration) return
+      const el = now - start
+      const gp = Math.min(el / segMs, pts.length - 1)
+      const seg = Math.max(0, Math.min(Math.floor(gp), pts.length - 2))
+      const f = gp - seg
+      const a = pts[seg]
+      const b = pts[seg + 1]
+      // Defensive: the point pair should always exist (pts is dense, length ≥ 2
+      // is guaranteed above), but never let a stale/edge frame deref undefined —
+      // an uncaught throw here surfaces as a global error. Snap to the terminal.
+      if (!a || !b) {
         const last = pts[pts.length - 1]
-        setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+        if (last) setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+        setRunning(false)
         return
       }
-
-      setRunning(true)
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      const segMs = 620
-      const total = (pts.length - 1) * segMs
-      const start = performance.now()
-      const tick = (now: number) => {
-        const el = now - start
-        const gp = Math.min(el / segMs, pts.length - 1)
-        const seg = Math.max(0, Math.min(Math.floor(gp), pts.length - 2))
-        const f = gp - seg
-        const a = pts[seg]
-        const b = pts[seg + 1]
-        // Defensive: the point pair should always exist (pts is dense, length ≥ 2
-        // is guaranteed above), but never let a stale/edge frame deref undefined —
-        // an uncaught throw here surfaces as a global error. Snap to the terminal.
-        if (!a || !b) {
-          const last = pts[pts.length - 1]
-          if (last) setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
-          setRunning(false)
-          return
-        }
-        const ease = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2
-        setToken({
-          x: a.x + (b.x - a.x) * ease,
-          y: a.y + (b.y - a.y) * ease,
-          label: labels[Math.min(seg + (f > 0.6 ? 1 : 0), labels.length - 1)],
-          color,
-        })
-        if (el < total) rafRef.current = requestAnimationFrame(tick)
-        else {
-          const last = pts[pts.length - 1]
-          setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
-          setRunning(false)
-        }
+      const ease = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2
+      setToken({
+        x: a.x + (b.x - a.x) * ease,
+        y: a.y + (b.y - a.y) * ease,
+        label: labels[Math.min(seg + (f > 0.6 ? 1 : 0), labels.length - 1)],
+        color,
+      })
+      if (el < total) rafRef.current = requestAnimationFrame(tick)
+      else {
+        const last = pts[pts.length - 1]
+        setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+        setRunning(false)
       }
-      rafRef.current = requestAnimationFrame(tick)
-    },
-    [engine, policy, req, dir, layout, readOnly]
-  )
+    }
+    rafRef.current = requestAnimationFrame(tick)
+  }
 
   useEffect(
     () => () => {
@@ -576,11 +830,18 @@ export function PolicyGraphView({
 
   return (
     <div className="flex min-h-0 flex-col">
+      {contextOnly && (
+        <p className="p-3 text-sm text-muted-foreground">
+          Displayed source/graph correspondence: Unconfirmed. Run uses the recorded loaded engine
+          modules and request, not a verified mapping to these graph nodes.
+        </p>
+      )}
       <div className="grid min-h-[540px] grid-cols-1 lg:grid-cols-[248px_1fr_368px]">
         {/* Left: palette */}
         <aside className="min-h-0 overflow-hidden border-b border-border lg:border-b-0 lg:border-r">
           <RulePalette
             guided={guided}
+            readOnly={readOnly}
             activePresetFile={presetFile}
             onSelectPreset={onLoadPreset}
             onAddRule={addRule}
@@ -603,6 +864,7 @@ export function PolicyGraphView({
             </span>
           )}
           <GraphCanvas
+            readOnly={readOnly}
             policy={policy}
             layout={layout}
             sim={sim}
@@ -646,22 +908,24 @@ export function PolicyGraphView({
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
             {rightTab === 'inspect' && (
-              <RuleInspector
-                rule={selectedRule}
-                index={selectedIndex}
-                count={policy.rules.length}
-                onPatchScalar={(k, v) => selectedId && patchScalar(selectedId, k, v)}
-                onPatchList={(k, v) => selectedId && patchList(selectedId, k, v)}
-                onPatchMap={(k, v) => selectedId && patchMap(selectedId, k, v)}
-                onToggle={() => selectedId && toggleRule(selectedId)}
-                onDelete={() => selectedId && deleteRule(selectedId)}
-                onMove={(dir) => selectedId && moveRule(selectedId, dir)}
-              />
+              <fieldset disabled={readOnly} className="min-w-0 border-0 p-0">
+                <RuleInspector
+                  rule={selectedRule}
+                  index={selectedIndex}
+                  count={policy.rules.length}
+                  onPatchScalar={(k, v) => selectedId && patchScalar(selectedId, k, v)}
+                  onPatchList={(k, v) => selectedId && patchList(selectedId, k, v)}
+                  onPatchMap={(k, v) => selectedId && patchMap(selectedId, k, v)}
+                  onToggle={() => selectedId && toggleRule(selectedId)}
+                  onDelete={() => selectedId && deleteRule(selectedId)}
+                  onMove={(dir) => selectedId && moveRule(selectedId, dir)}
+                />
+              </fieldset>
             )}
             {rightTab === 'simulate' && (
               <RequestSimulator
                 req={req}
-                onChange={setReq}
+                onChange={changeRequest}
                 // NOT `onRun={run}` — `run` takes an optional `reqOverride:
                 // SimRequest`, and wiring it straight to a DOM `onClick`
                 // hands it the click's SyntheticEvent as that argument.
@@ -670,6 +934,10 @@ export function PolicyGraphView({
                 // every plain click of "Run through the pipeline".
                 onRun={() => run()}
                 running={running}
+                contextOnly={contextOnly}
+                runError={runError}
+                recordedContext={recordedContext}
+                illustrative={illustrative}
                 guided={guided}
                 engineVerdict={engineVerdict}
                 approximated={approximated}
@@ -681,7 +949,7 @@ export function PolicyGraphView({
             {rightTab === 'check' && (
               <PolicyValidation
                 issues={issues}
-                engineWarnings={engineWarnings}
+                engineWarnings={[...engineWarnings, ...(lintError ? [lintError] : [])]}
                 strictFindings={strictFindings.map((f) => ({
                   ruleId: policy.rules[f.ruleIndex - 1]?.id ?? '',
                   fatal: f.fatal,
@@ -795,7 +1063,9 @@ export function PolicyGraphView({
           <Code2 size={14} className="text-primary" />
           <span className="text-[12px] font-semibold text-foreground">policy source (YAML)</span>
           <span className="text-[10.5px] text-muted-foreground">
-            · edit, or paste a whole policy to import it
+            {readOnly
+              ? '· displayed module sources; editing disabled'
+              : '· edit, or paste a whole policy to import it'}
           </span>
           {yamlDirty && yamlParsedCount && (
             <span
@@ -821,7 +1091,14 @@ export function PolicyGraphView({
           <div className="border-t border-border bg-muted/40 px-4 py-2.5">
             <textarea
               value={yamlText}
-              onChange={(e) => setYamlDraft(e.target.value)}
+              readOnly={readOnly}
+              onChange={(e) => {
+                if (!readOnly) {
+                  invalidatePolicy()
+                  if (applyTimer.current) clearTimeout(applyTimer.current)
+                  setYamlDraft(e.target.value)
+                }
+              }}
               spellCheck={false}
               aria-label="Policy YAML source"
               className="max-h-56 min-h-[10rem] w-full resize-y overflow-auto whitespace-pre rounded border border-transparent bg-transparent font-mono text-[10.5px] leading-relaxed text-foreground outline-none focus:border-primary/40"
