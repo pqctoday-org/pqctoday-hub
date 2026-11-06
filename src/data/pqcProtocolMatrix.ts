@@ -331,6 +331,13 @@ export interface ProtocolMatrixRow {
    * Cloudflare, AWS, Google Chrome). Inheritance rows can leave this empty
    * and rely on the parent's deployments — the modal surfaces them via the
    * inheritance link.
+   *
+   * Each entry must be a deployment of THIS protocol, and the entry counts
+   * toward the row's deployment count. Primitive or platform APIs (a key
+   * store, a signing service, a crypto library's CNG interface), a different
+   * protocol that happens to use the same algorithm, and this site's own
+   * in-browser demonstrations are not deployments of the protocol; leave them
+   * out and say why in `noDeploymentReason` when nothing else remains.
    */
   liveDeployments?: LiveDeployment[]
   /**
@@ -997,13 +1004,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         referenceUrl: 'https://support.apple.com/en-us/122756',
       },
       {
-        provider: 'Microsoft (Windows / Server / .NET)',
-        what: 'SymCrypt ships ML-KEM + ML-DSA GA via CNG/certificate APIs on Windows 11 (24H2/25H2), Windows Server 2025, and .NET 10; Azure service-level PQC (e.g. Key Vault) is rolling out separately through 2026–27, not GA alongside this release',
-        since: '2025-11',
-        referenceUrl:
-          'https://techcommunity.microsoft.com/blog/microsoft-security-blog/post-quantum-cryptography-apis-now-generally-available-on-microsoft-platforms/4469093',
-      },
-      {
         provider: 'OpenSSL 3.5+',
         what: 'Default TLS keyshares offer X25519MLKEM768 (3.5 LTS)',
         since: '2025-04',
@@ -1027,13 +1027,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         what: 'mlkem768x25519 (X25519MLKEM768) default for TLS 1.3 HTTPS since Firefox 132 (via NSS 3.105)',
         since: '2024-10',
         referenceUrl: 'https://bugzilla.mozilla.org/show_bug.cgi?id=1919097',
-      },
-      {
-        provider: 'Google Android',
-        what: 'Android 17 adds ML-DSA to Keystore and Verified Boot; announced/beta Mar 2026, stable rollout (Pixel) 2026-06-16',
-        since: '2026-06',
-        referenceUrl:
-          'https://security.googleblog.com/2026/03/post-quantum-cryptography-in-android.html',
       },
     ],
     inheritedBy: ['DTLS 1.3', 'FIDO 2', 'MACsec', 'QUIC'],
@@ -1313,7 +1306,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'Microsoft AD CS',
-        what: 'ML-DSA certificate issuance GA on Windows Server 2025 Active Directory Certificate Services',
+        what: 'ML-DSA-44/65/87 certificate issuance in Windows Server 2025 Active Directory Certificate Services with the 2026-05 security update (KB5087539) or later',
         since: '2026-05',
         referenceUrl:
           'https://learn.microsoft.com/en-us/windows-server/identity/ad-cs/ml-dsa-overview',
@@ -1962,15 +1955,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           "All seven composite algorithms per draft-ietf-jose-pq-composite-sigs-06, verified against that draft's published Appendix A.1 JOSE examples. Work-in-progress draft.",
       },
     ],
-    liveDeployments: [
-      {
-        provider: 'AWS KMS',
-        what: 'ML-DSA signing GA (June 2025), with an AWS Security Blog walkthrough that signs and verifies a JWT (alg ML-DSA-65) through KMS',
-        since: '2025-06',
-        referenceUrl:
-          'https://aws.amazon.com/blogs/security/how-to-create-post-quantum-signatures-using-aws-kms-and-ml-dsa/',
-      },
-    ],
+    liveDeployments: [],
+    noDeploymentReason:
+      'No reviewed deployment of ML-DSA JOSE/JWS (RFC 9964) or of the JOSE KEM and composite drafts is recorded here. AWS KMS signs with ML-DSA through its own API (generally available June 2025), and an AWS blog walkthrough assembles a JWT with alg ML-DSA-65 by hand and signs it through KMS; that shows a signing service that a JOSE implementation can use, not a JOSE library or service deploying the profile, so it is not counted.',
   },
   {
     id: 'est-cmp',
@@ -2696,7 +2683,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'palo-alto-pan-os', name: 'Palo Alto PAN-OS' },
       { productId: 'fortinet-fortios', name: 'Fortinet FortiOS' },
       { productId: 'check-point-quantum', name: 'Check Point Quantum' },
-      { productId: 'expressvpn-lightway', name: 'ExpressVPN Lightway' },
     ],
     playgrounds: [
       {
@@ -2707,22 +2693,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     liveDeployments: [
       {
-        provider: 'Cloudflare WARP',
-        what: 'WARP client uses post-quantum hybrid key agreement',
-        since: '2024',
-        referenceUrl: 'https://blog.cloudflare.com/post-quantum-warp/',
-      },
-      {
         provider: 'Cloudflare IPsec',
-        what: 'PQ IPsec GA at Cloudflare; interop with Cisco / Fortinet',
-        since: '2026',
+        what: 'Hybrid ML-KEM IKEv2 (draft-ietf-ipsecme-ikev2-mlkem) generally available in Cloudflare IPsec since 2026-04-30; interoperability confirmed with Cisco 8000 Series branch connectors after version 26.1.1 and Fortinet FortiOS 7.6.6 and later',
+        since: '2026-04',
         referenceUrl: 'https://blog.cloudflare.com/post-quantum-ipsec/',
-      },
-      {
-        provider: 'ExpressVPN Lightway',
-        what: 'Lightway upgraded to ML-KEM (Level 5) via wolfSSL',
-        since: '2025-01',
-        referenceUrl: 'https://www.expressvpn.com/blog/ml-kem-lightway-upgrade/',
       },
       {
         provider: 'Cisco Secure Firewall',
@@ -4114,10 +4088,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     liveDeployments: [
       {
-        provider: 'pqctoday SoftHSM v3',
-        what: 'PKCS#11 v3.2 ML-KEM + ML-DSA software HSM (WASM) — runnable in the in-browser HSM playground',
-        since: '2026',
-        referenceUrl: 'https://github.com/pqctoday-org/pqctoday-hsm',
+        provider: 'Entrust nShield (Security World)',
+        what: 'ML-DSA-44/65/87 in the nShield PKCS #11 API since Security World v13.9.0 (needs firmware v13.8 or later and the PostQuantum feature); ML-KEM (v13.9.3, firmware v13.8.3 or later) and SLH-DSA (v13.9.5) reached the PKCS #11 API in later releases',
+        since: '2025-08',
+        referenceUrl:
+          'https://nshielddocs.entrust.com/security-world-docs/v13.9.0/nshield-security-world-v13-9-0-release-notes.pdf',
+      },
+      {
+        provider: 'Thales Luna Network HSM 7',
+        what: "ML-KEM and ML-DSA mechanisms (CKM_ML_KEM, CKM_ML_DSA) from firmware 7.9.0 with Luna HSM Client 10.9.0 or newer; ML-KEM encapsulation and decapsulation use Thales's proprietary CA_EncapsulateKey and CA_DecapsulateKey rather than the standard PKCS #11 v3.2 functions",
+        since: '2025-07',
+        referenceUrl:
+          'https://thalesdocs.com/gphsm/luna/7/docs/network/Content/CRN/Luna/firmware/7-9-0.htm',
       },
     ],
     recommended: true,
@@ -4215,14 +4197,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'na' },
       },
     ],
-    liveDeployments: [
-      {
-        provider: 'pqctoday-kmip (CACP)',
-        what: 'KMIP 3.0 control plane with ML-KEM + ML-DSA and crypto-agility policy — runnable in the in-browser CACP playground',
-        since: '2026',
-        referenceUrl: 'https://github.com/pqctoday-org/pqctoday-hsm',
-      },
-    ],
+    liveDeployments: [],
+    noDeploymentReason:
+      'The OASIS site lists Committee Specification Drafts for KMIP 3.0 (the latest dated 7 May 2026), and no vendor deployment of its ML-KEM and ML-DSA enumerations or Encapsulate/Decapsulate operations is recorded here. The in-browser KMIP demonstration on this site is not a production deployment, so it is not counted; try it in the playground instead.',
   },
   {
     id: 'signal-pqxdh',
