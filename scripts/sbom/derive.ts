@@ -640,7 +640,7 @@ export function derive(root: string, curated: Curated): Derived {
         bad(
           `"${c.name}": built source "${c.built}" is not in wasm-provenance.json or sbomWasmArtifacts.json`
         )
-      if ('native' in c && c.native !== undefined && c.name !== 'Web Crypto API (X25519, P-256)')
+      if ('native' in c && c.native !== undefined && !c.name.startsWith('Web Crypto API ('))
         bad(`"${c.name}": only the browser's own Web Crypto API may use a hand-typed "Native"`)
     }
 
