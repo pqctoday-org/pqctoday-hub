@@ -14,12 +14,13 @@ import {
 import clsx from 'clsx'
 import JSZip from 'jszip'
 import { useOpenSSLStore } from '../store'
-import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
 import { getSecurityLevel } from '../../../utils/security'
 import { Button } from '@/components/ui/button'
 
-export const WorkbenchFileManager: React.FC = () => {
+export const WorkbenchFileManager: React.FC<{
+  executeCommand: (command?: string) => Promise<void>
+}> = ({ executeCommand }) => {
   const {
     addLog,
     addFile,
@@ -30,7 +31,6 @@ export const WorkbenchFileManager: React.FC = () => {
     addStructuredLog,
     setViewingFile,
   } = useOpenSSLStore()
-  const { executeCommand } = useOpenSSL()
   const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name' | 'size'>('timestamp')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [confirmClear, setConfirmClear] = useState(false)
