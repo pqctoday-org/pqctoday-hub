@@ -50,6 +50,24 @@ const baseCfg: VpnConfigExport = {
 }
 
 describe('exportVpnConfigBundle', () => {
+  it.each(['classical', 'pure-pqc', 'hybrid'] as const)(
+    'README describes the selected %s proposal without attesting custom negotiation',
+    async (mode) => {
+      await exportVpnConfigBundle({ ...baseCfg, mode })
+      const readme = zipState.files.get('README.md')!
+      const expected = {
+        classical: 'Normal selector proposal: ECP-256 (IKE_SA_INIT)',
+        'pure-pqc': 'Normal selector proposal: ML-KEM (selected parameter set) (IKE_SA_INIT)',
+        hybrid:
+          'Normal selector proposal: ECP-256 (IKE_SA_INIT) + ML-KEM (selected parameter set) (Additional KE 1, IKE_INTERMEDIATE)',
+      }
+      expect(readme).toContain(Object.entries(expected).find(([key]) => key === mode)?.[1])
+      expect(readme).toContain('not proof of a completed negotiation')
+      expect(readme).toContain('Custom URL proposal overrides')
+      expect(readme).not.toContain('ECP-256 as Additional KE 1')
+    }
+  )
+
   beforeEach(() => {
     zipState.files.clear()
     zipState.generateCalls = 0

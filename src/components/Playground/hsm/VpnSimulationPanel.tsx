@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { vpnDerivationExample, vpnExchangeLabel } from './vpn/exchangeDescription'
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { GateReason } from '@/components/shared/GateReason'
@@ -2424,15 +2425,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   const exchange = useMemo(() => buildIkeV2Exchange(selectedMode, kemSize), [selectedMode, kemSize])
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
-  // modeConfig.dhGroup is shared Learn-module content and always describes the
-  // 768 default; substitute the live kemSize for the "Tunnel Statistics" result
-  // tile so it doesn't misreport the size actually negotiated this session.
-  const keAlgorithmLabel =
-    selectedMode === 'classical'
-      ? (modeConfig?.dhGroup ?? '—')
-      : selectedMode === 'hybrid'
-        ? `ML-KEM-${kemSize} (primary) + ECP-256 (Additional KE 1)`
-        : `ML-KEM-${kemSize}`
+  // Describe the requested selector proposal, qualifying arbitrary raw overrides.
+  const keAlgorithmLabel = vpnExchangeLabel(selectedMode, kemSize, vpnKemProposalOverride)
 
   // Displayed auth algorithm per side. PSK carries no CERT payload; cert
   // ("dual") mode is dominated by the certificate + AUTH signature bytes.
@@ -3404,6 +3398,19 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   return (
     <div className="space-y-6">
       <ChromiumGateBanner feature="PQC VPN simulation" />
+
+      {vpnKemProposalOverride && (
+        <p
+          role="note"
+          aria-label="Custom VPN proposal scope"
+          className="text-xs text-muted-foreground border border-border rounded-lg p-3 break-words"
+        >
+          Custom proposal requested: <code>{vpnKemProposalOverride}</code>. The normal-mode
+          descriptions, exchange diagram and generated configurations below are selector examples,
+          not a record of this custom negotiation. Inspect the actual negotiation trace; no exchange
+          order or secret assignment is inferred from the raw override.
+        </p>
+      )}
 
       {/* Learn section — mirrors SshSimulationPanel's SshLearnSection placement */}
       <VpnLearnSection />
@@ -4659,6 +4666,18 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             testId="vpn-sim-save-to-pack"
           />
         </div>
+        {vpnKemProposalOverride && (
+          <p
+            role="note"
+            aria-label="Custom VPN statistics scope"
+            className="text-xs text-muted-foreground mb-3"
+          >
+            For a custom override, the selector-derived round trips, NIST level and quantum-safe
+            badges below are normal-mode examples, not established outcomes of that custom
+            negotiation. Inspect the actual trace; these labels do not establish its algorithms or
+            protection.
+          </p>
+        )}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div
             className={`p-3 rounded-xl border flex flex-col justify-center items-center ${currentStep === steps.length - 1 && !hasCrashed ? 'bg-success/10 border-success/30' : 'bg-card border-border'}`}
@@ -4707,11 +4726,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             </span>
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-start overflow-hidden">
-            <span className="text-[11px] font-bold font-mono truncate w-full">
+            <span className="text-[11px] font-bold font-mono break-words w-full">
               {keAlgorithmLabel}
             </span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
-              KE Algorithm
+              Requested KE Proposal
             </span>
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-start overflow-hidden">
@@ -4820,12 +4839,22 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </h3>
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <pre className="text-[11px] font-mono bg-muted/40 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
-              {selectedMode === 'pure-pqc'
-                ? `SKEYSEED = prf(Ni ‖ Nr, ss_kem)\n         = PRF-HMAC-SHA-256(Ni ‖ Nr,\n             0x${kemSecrets.responder?.hex ?? '…'})`
-                : `SKEYSEED  = prf(Ni ‖ Nr, ss_kem)\n                              ↑ ML-KEM-${kemSize} secret (IKE_SA_INIT)\nSKEYSEED' = prf(SK_d, g^ir ‖ Ni ‖ Nr)\n                      ↑ ECDH ECP-256 secret (after IKE_INTERMEDIATE)\n            ss_kem = 0x${kemSecrets.responder?.hex ?? '…'}`}
+              {vpnDerivationExample(
+                selectedMode,
+                kemSize,
+                kemSecrets.responder?.hex ?? '…',
+                vpnKemProposalOverride
+              )}
             </pre>
+            <p className="text-[11px] text-muted-foreground">
+              Teaching example for the normal selector proposal, not an independent check of key
+              derivation. Custom proposal overrides require inspection of their actual negotiation
+              trace.
+            </p>
             <div className="text-[11px] text-muted-foreground space-y-1">
-              {selectedMode === 'pure-pqc' ? (
+              {vpnKemProposalOverride ? (
+                <p>The normal selector explanation below does not describe a custom override.</p>
+              ) : selectedMode === 'pure-pqc' ? (
                 <>
                   <p>
                     All session key material (SK_e, SK_a, SK_d) is derived exclusively from the

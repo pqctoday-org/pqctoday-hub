@@ -247,10 +247,10 @@ export function VpnLearnSection() {
             </div>
             <p className="text-[10px] text-muted-foreground mt-3 italic leading-relaxed">
               IKE_INTERMEDIATE (RFC 9242) appears only when an Additional Key Exchange is negotiated
-              (RFC 9370 multiple-KE) — in hybrid mode it carries the ECP-256 round after ML-KEM-768
-              has run in the primary KE slot of IKE_SA_INIT. Classical and pure-PQC modes go
-              straight from IKE_SA_INIT to IKE_AUTH. CREATE_CHILD_SA exchanges follow for rekeying
-              and additional Child SAs.
+              (RFC 9370 multiple-KE) — in the normal hybrid proposal it carries ML-KEM after the
+              initial ECP-256 round has run in the primary KE slot of IKE_SA_INIT. Classical and
+              pure-PQC modes go straight from IKE_SA_INIT to IKE_AUTH. CREATE_CHILD_SA exchanges
+              follow for rekeying and additional Child SAs.
             </p>
           </div>
         )}
