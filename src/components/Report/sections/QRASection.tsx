@@ -274,17 +274,20 @@ function Backlog({ items }: { items: QRABacklogItem[] }) {
   )
 }
 
-/** Optimistic / expected / pessimistic CRQC arrival, plus the conservative planning anchor. */
+/** Hub scenario anchors and a separate planning choice; related survey context is not a quantile forecast. */
 function CrqcWindow() {
   return (
     <>
       <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
-        <span className="font-semibold text-foreground">CRQC arrival window</span> — when a quantum
-        computer could break today&apos;s RSA/ECC: optimistic ~{CRQC_ESTIMATES.lowerBound} ·
-        expected ~{CRQC_ESTIMATES.moderate} · pessimistic ~{CRQC_ESTIMATES.upperBound}. This
-        assessment plans against {QC_FIRST_YEAR}, a conservative anchor that is this site&apos;s own
-        planning figure, not a source figure, for the most sensitive, long-lived data. Source of the
-        window: GRI Quantum Threat Timeline 2025 (expert probability estimates).
+        <span className="font-semibold text-foreground">
+          Hub illustrative CRQC scenario anchors
+        </span>{' '}
+        — earlier ~{CRQC_ESTIMATES.lowerBound} · central ~{CRQC_ESTIMATES.moderate} · later ~
+        {CRQC_ESTIMATES.upperBound}. These selected years are not survey forecast quantiles or a
+        published most-likely arrival year. This assessment plans against {QC_FIRST_YEAR}, this
+        site&apos;s own conservative planning figure for sensitive, long-lived data. Related
+        context: GRI Quantum Threat Timeline 2025 reports expert likelihood estimates at specified
+        horizons; those responses do not establish these scenario anchors.
       </div>
       <UnresolvedEstimatesNotice detail="aRange" />
     </>
