@@ -78,11 +78,14 @@ export const IAM_COMPONENTS: IAMComponent[] = [
     id: 'mfa',
     name: 'Multi-Factor Authentication (MFA)',
     category: 'Authentication',
-    currentAlgorithm: 'HMAC-SHA256 (TOTP/HOTP), ECDSA (FIDO2)',
+    currentAlgorithm:
+      'HMAC (TOTP/HOTP); FIDO2/WebAuthn credential signatures, ES256 (ECDSA P-256) or RS256 by default',
     quantumRisk: 'medium',
     migrationPriority: 'medium',
-    pqcReplacement: 'ML-DSA-44 for FIDO2 attestation; HMAC unchanged',
-    notes: 'TOTP/HOTP (symmetric HMAC) is quantum-safe; FIDO2 WebAuthn attestation needs PQC',
+    pqcReplacement:
+      'Illustrative: ML-DSA-44 as the FIDO2 credential signature once authenticators, browsers and relying parties support it (plus a PQC attestation chain if you use attestation); HMAC-based OTP not part of the signature migration',
+    notes:
+      'TOTP/HOTP use symmetric HMAC, not public-key signatures. FIDO2 has two separate signature uses: the credential key signs every login assertion (the algorithm is agreed at registration, so moving to a PQC algorithm means re-enrolling credentials), and attestation proves the authenticator model at registration and can be skipped by the relying party. WebAuthn Level 3 names no post-quantum algorithm; ML-DSA identifiers exist for JOSE and COSE (RFC 9964), but that is not authenticator or browser support',
   },
   {
     id: 'jwt-issuance',
@@ -130,11 +133,13 @@ export const IAM_COMPONENTS: IAMComponent[] = [
     id: 'kerberos-kdc',
     name: 'Kerberos Key Distribution Center',
     category: 'Authentication',
-    currentAlgorithm: 'AES-256-CTS + RSA (PKINIT)',
+    currentAlgorithm:
+      'AES-256 ticket encryption (symmetric) + PKINIT (RSA signatures; RSA or DH key delivery)',
     quantumRisk: 'critical',
     migrationPriority: 'immediate',
-    pqcReplacement: 'AES-256 (retain) + ML-KEM for PKINIT key exchange',
-    notes: 'Service tickets encrypted with session keys; PKINIT RSA is the critical HNDL vector',
+    pqcReplacement: 'AES-256 (retain) + ML-KEM for PKINIT key delivery (illustrative target)',
+    notes:
+      'Tickets and session keys are symmetric. PKINIT (RFC 4556) is the public-key step: it authenticates the client with a certificate and delivers the AS reply key by Diffie-Hellman or by RSA encryption, so it is the quantum-exposed part. Recovering a reply key exposes that one client reply, not the KRBTGT long-term key',
   },
   {
     id: 'cert-auth',
@@ -193,11 +198,12 @@ export const IAM_PROTOCOLS: IAMProtocol[] = [
     id: 'kerberos-ticket',
     name: 'Kerberos Service Ticket',
     tokenType: 'Kerberos',
-    signingAlgorithm: 'AES-256-CTS-HMAC-SHA384 (session key wrapped via RSA PKINIT)',
-    pqcReplacement: 'AES-256 retained; ML-KEM-768 for PKINIT encapsulation',
+    signingAlgorithm: 'AES-256 symmetric ticket encryption (PKINIT delivers only the AS reply key)',
+    pqcReplacement: 'AES-256 retained; ML-KEM-768 for PKINIT key delivery (illustrative target)',
     signatureSize: { classical: 256, pqc: 1088 },
     quantumRisk: 'critical',
-    notes: 'Long-lived tickets (10h default) present HNDL attack surface; PKINIT is the RSA vector',
+    notes:
+      'The quantum-exposed step is PKINIT key delivery, not the tickets. A recovered key is useful only while the tickets it protects are valid (10 hours is the default Maximum lifetime for user ticket)',
   },
   {
     id: 'oauth2-at',
@@ -217,15 +223,17 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     id: 'active-directory',
     name: 'Microsoft Active Directory',
     protocols: ['Kerberos v5', 'LDAP', 'NTLM', 'LDAPS', 'PKINIT'],
-    keyExchangeAlgorithm: 'RSA-2048 (PKINIT), DH (Kerberos pre-auth)',
-    authAlgorithm: 'AES-256-CTS-HMAC-SHA384, RC4-HMAC (legacy)',
+    keyExchangeAlgorithm:
+      'PKINIT (RFC 4556): certificate signature plus Diffie-Hellman or RSA key delivery; password pre-authentication uses a password-derived symmetric key',
+    authAlgorithm: 'AES256/AES128 with HMAC-SHA1, RC4-HMAC (legacy)',
     quantumScore: 9,
     vulnerabilities: [
-      'PKINIT uses RSA-2048 — quantum-vulnerable key exchange',
-      'Kerberos TGTs (10h) and service tickets (10h) are long-lived HNDL targets',
+      "PKINIT delivers the AS reply key by Diffie-Hellman or RSA encryption (RFC 4556); both are quantum-vulnerable. Recovering the reply key of one exchange exposes that client's TGT session key, not other users or the KRBTGT key",
+      'Kerberos TGTs and service tickets are protected by symmetric keys; a recovered session key is useful only while its ticket is valid (10 hours is the default Maximum lifetime for user ticket and for service ticket)',
       'NTLM uses MD4 hashing and has no forward secrecy; captured challenge-responses are a classical weakness, not a quantum one',
       'LDAP bind over plaintext leaks credentials; LDAPS needs PQC TLS update',
-      'AS-REP roasting targets pre-authentication bypasses, exposing RSA-encrypted tickets',
+      'AS-REP roasting is a classical password attack, not a PKINIT or quantum one: for an account with Kerberos pre-authentication disabled, anyone can request an AS-REP whose encrypted part is protected by a key derived from the account password, then guess passwords offline (RFC 4120)',
+      'A Golden Ticket needs the KRBTGT long-term key, which attackers obtain by classical means such as credential dumping on a domain controller (MITRE ATT&CK T1558.001); a quantum computer adds no step to a key already stolen, and post-quantum PKINIT would not stop it',
     ],
     migrationPath:
       "This module's target design: hybrid Kerberos with ML-KEM PKINIT once Microsoft ships it (we found no published Microsoft date for PKINIT PQC); disable NTLM; enforce LDAPS with hybrid TLS 1.3",
@@ -287,10 +295,10 @@ export const ZERO_TRUST_LAYERS: ZeroTrustLayer[] = [
     currentCrypto: 'TPM 2.0 RSA-2048 / ECDSA P-256 endorsement keys',
     quantumRisk: 'high',
     pqcApproach:
-      'Future TPM with PQC-capable firmware (TCG PQC profile, forthcoming); interim: hybrid RSA+ML-DSA device certificates',
+      'TPM firmware with PQC support once your TPM vendor offers it (not verified here; check the vendor and the TCG specifications); interim: hybrid RSA+ML-DSA device certificates',
     migrationComplexity: 'high',
     description:
-      'Device attestation certificates must migrate to PQC. TPM hardware replacement cycle (5-7 years) makes this a long-lead item. Prioritize high-value endpoint fleet.',
+      'Device attestation certificates must migrate to PQC. A hardware replacement cycle (this sample plan assumes 5-7 years; use your own fleet data) makes this a long-lead item. Prioritize high-value endpoint fleet.',
   },
   {
     id: 'session-management',
@@ -302,7 +310,7 @@ export const ZERO_TRUST_LAYERS: ZeroTrustLayer[] = [
       'Hybrid TLS 1.3 with ML-KEM-768 + X25519; enforce PFS; update session token signing to ML-DSA',
     migrationComplexity: 'medium',
     description:
-      'TLS sessions carrying identity tokens must use quantum-safe key exchange. Hybrid TLS is available in Chrome, OpenSSL 3.x, and major load balancers now.',
+      'TLS sessions carrying identity tokens need a quantum-resistant key exchange. Hybrid key exchange protects the confidentiality of the session only when the client, the server and every TLS-terminating proxy or load balancer on the path support and negotiate a hybrid group (OpenSSL 3.5 offers X25519MLKEM768 by default; test each hop). It does not change authentication: certificates and signatures stay classical until PQC certificates are deployed.',
   },
   {
     id: 'authorization',
@@ -335,7 +343,7 @@ export const CRYPTO_RISKS: CryptoRisk[] = [
     tokenType: 'Kerberos',
     quantumRisk: 'critical',
     rationale:
-      'Kerberos TGTs (10h) and service tickets (10h) encrypted with RSA PKINIT session keys. A quantum computer decrypting captured traffic could forge arbitrary tickets, breaking the entire domain.',
+      "Tickets are encrypted with symmetric keys. The quantum-exposed step is PKINIT (RFC 4556), which delivers the AS reply key by Diffie-Hellman or RSA encryption. Breaking it for a captured exchange yields that client's reply key and TGT session key, which let an attacker act as that one client until the ticket expires. Forging tickets for any account, a Golden Ticket, additionally needs the KRBTGT long-term key, which a PKINIT break does not give.",
     typicalLifetime: '10 hours (AD default)',
   },
   {

@@ -109,7 +109,9 @@ export const ZeroTrustIdentityArchitect: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">Zero Trust Identity Architect</h3>
         <p className="text-sm text-muted-foreground">
           Design a PQC migration roadmap across the five zero trust identity pillars. Assign a
-          migration year to each pillar, then generate a phased roadmap summary.
+          migration year to each pillar, then generate a phased roadmap summary. The years are
+          sample planning assumptions for practising the exercise, not deadlines set by a regulator
+          or vendor; replace them with your own dates.
         </p>
       </div>
 
@@ -275,19 +277,27 @@ export const ZeroTrustIdentityArchitect: React.FC = () => {
                 &bull; Prioritize pillars with Critical/High risk and long migration lead times
               </li>
               <li>
-                &bull; Device Trust has the longest hardware replacement cycle (5-7 years) — plan
-                before 2026
+                &bull; Device Trust is often the longest lead-time pillar because it depends on
+                hardware replacement; this sample plan assumes 5-7 years, so use your own fleet data
               </li>
               <li>
-                &bull; Session Management (hybrid TLS) can begin immediately with no app changes
+                &bull; Session Management (hybrid TLS) protects session confidentiality only where
+                the client, server and every TLS-terminating proxy or load balancer support and
+                negotiate a hybrid group, so test each hop; authentication stays classical until PQC
+                certificates are deployed
               </li>
               <li>
-                &bull; Use hybrid (classical + PQC) for all pillars during transition; pure PQC
-                after 2028
+                &bull; Use hybrid (classical + PQC) for all pillars during transition; when to drop
+                the classical half is a policy decision for your regulator and vendors, not a date
+                this sample plan sets
               </li>
               <li>
-                &bull; Validate each pillar with Continuous Access Evaluation (CAE) before moving to
-                next phase
+                &bull; For each pillar, run separate checks before the next phase: interoperability
+                (do all peers accept the new algorithm), signature and certificate-chain validation,
+                key custody (where private keys live and who can use them), and integrity of stored
+                or logged artefacts. Continuous Access Evaluation (CAE) is a separate session
+                control that lets an identity provider revoke or re-check access after events such
+                as account disablement; it does not validate any of these cryptographic properties
               </li>
             </ul>
           </div>

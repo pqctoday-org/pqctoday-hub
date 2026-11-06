@@ -60,7 +60,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Directory',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The Active Directory HNDL vector is PKINIT RSA decryption (Kerberos TGT traffic); NTLM credential exposure is a classical weakness, not a quantum threat. Microsoft Entra ID issues long-lived refresh tokens; unlike access-token JWTs these are opaque, encrypted artifacts (not RSA-signed), so the main quantum exposure is the TLS transport and the RSA/ECDSA-signed access tokens (JWTs) minted from them.',
+        "The Active Directory quantum exposure is PKINIT key delivery (Diffie-Hellman or RSA, RFC 4556): breaking a captured exchange yields that client's reply key and TGT session key, not the KRBTGT key a Golden Ticket needs. AS-REP roasting, Golden Ticket key theft and NTLM credential exposure are classical weaknesses, not quantum threats. Microsoft Entra ID issues long-lived refresh tokens; unlike access-token JWTs these are opaque, encrypted artifacts (not RSA-signed), so the main quantum exposure is the TLS transport and the RSA/ECDSA-signed access tokens (JWTs) minted from them.",
       config: { step: 2 },
     },
     {
@@ -82,7 +82,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Zero Trust',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Session Management (hybrid TLS) can be migrated now with zero application changes — start here for immediate quantum-safe coverage. Device Trust is the longest lead-time item (hardware replacement cycle); begin planning before 2026 even if deployment is 2027-2028.',
+        'Session Management is a sensible first pillar to pilot: hybrid TLS key exchange protects the confidentiality of a session against later decryption, but only where the client, the server and every TLS-terminating proxy or load balancer support and negotiate a hybrid group, so test each hop first. It does not make authentication quantum-safe: certificates and signatures stay classical until PQC certificates are deployed. Device Trust is the longest lead-time item in this sample plan because it depends on hardware replacement. The years in the exercise are sample planning assumptions, not current deadlines; use your own dates.',
       config: { step: 4 },
     },
   ]
