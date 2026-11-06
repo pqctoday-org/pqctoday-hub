@@ -74,13 +74,18 @@ export function buildQuantumUrgencyDefault(data: Data): string {
 
   if (hndl) {
     const est = hndl.isEstimated ? ' (estimated - retention unknown)' : ''
+    const crqcYear = hndl.crqcEstimateYear ?? hndl.estimatedQuantumThreatYear
+    const regulatory =
+      hndl.regulatoryHorizonYear !== undefined
+        ? ` A regulatory milestone in ${hndl.regulatoryHorizonYear} is a planning date, not the arrival of a threat.`
+        : ''
     if (hndl.isAtRisk) {
       parts.push(
-        `HNDL (harvest-now-decrypt-later): data with a ${hndl.dataRetentionYears}-year retention is being captured today for future decryption. Exposure window = ${hndl.riskWindowYears} years beyond your ${hndl.estimatedQuantumThreatYear} migration deadline (the earlier of the CRQC estimate and any regulatory mandate)${est}.`
+        `HNDL (harvest-now-decrypt-later): data with a ${hndl.dataRetentionYears}-year retention could be recorded now and decrypted later if it is protected by a quantum-vulnerable key exchange and an adversary captures it. In the scenario where a cryptographically relevant quantum computer exists in ${crqcYear} (an assumption, not a forecast), the retention runs ${hndl.riskWindowYears} years past the ${hndl.estimatedQuantumThreatYear} act-by year (the earlier of the scenario year and any regulatory milestone). Retention is only a proxy for how long the data must stay secret; confirm the real secrecy lifetime${est}.${regulatory}`
       )
     } else {
       parts.push(
-        `HNDL risk: retention (${hndl.dataRetentionYears}y) currently sits inside the pre-quantum window - monitor annually${est}.`
+        `HNDL risk: in the scenario where a cryptographically relevant quantum computer exists in ${crqcYear}, the ${hndl.dataRetentionYears}-year retention ends before the ${hndl.estimatedQuantumThreatYear} act-by year; confirm the real secrecy lifetime and review annually${est}.${regulatory}`
       )
     }
   }
@@ -88,20 +93,20 @@ export function buildQuantumUrgencyDefault(data: Data): string {
     const est = hnfl.isEstimated ? ' (estimated - credential lifetime unknown)' : ''
     if (hnfl.isAtRisk) {
       parts.push(
-        `TNFL (trust-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
+        `TNFL (trust-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the ${hnfl.estimatedQuantumThreatYear} act-by year. If a cryptographically relevant quantum computer exists by then, a forged signature could still be accepted until the credential expires or trust in it is withdrawn, so the exposure depends on how long relying parties keep trusting the credential and how much lead time upgrading verifiers and trust anchors needs${est}.`
       )
       if (hnfl.tnflRelevantUseCases.length > 0) {
         parts.push(`High-relevance use cases: ${hnfl.tnflRelevantUseCases.join(', ')}.`)
       }
     } else if (hnfl.hasSigningAlgorithms) {
       parts.push(
-        `TNFL: signing present but credential lifetimes do not extend past the quantum threat window - rotation cadence is adequate for now${est}.`
+        `TNFL: signing present but credential lifetimes do not extend past the ${hnfl.estimatedQuantumThreatYear} act-by year in this scenario. That does not show that rotation is adequate: how long relying parties keep trusting a signature (verification lifetime) and the lead time to upgrade verifiers and trust anchors matter as well${est}.`
       )
     }
   }
 
   if (parts.length === 0) {
-    return 'Harvest-now-decrypt-later (HNDL) and trust-now-forge-later (TNFL) are the two time-bound quantum risks. HNDL targets long-retention encrypted data captured today. TNFL targets signing credentials whose trust extends past the quantum threat horizon. Complete the assessment to quantify your exposure window.'
+    return 'Harvest-now-decrypt-later (HNDL) and trust-now-forge-later (TNFL) are the two time-bound quantum risks. HNDL concerns long-retention encrypted data that could be captured today. TNFL concerns signing credentials whose trust extends past the date a cryptographically relevant quantum computer might exist, which is a scenario assumption. Complete the assessment to quantify your exposure window.'
   }
   return parts.join('\n\n')
 }

@@ -173,6 +173,72 @@ describe('buildQuantumUrgencyDefault', () => {
     const data = makeData()
     expect(buildQuantumUrgencyDefault(data)).toMatch(/HNDL.*TNFL|TNFL.*HNDL/s)
   })
+
+  const atRisk = () =>
+    makeData({
+      hndlRiskWindow: {
+        dataRetentionYears: 25,
+        estimatedQuantumThreatYear: 2030,
+        crqcEstimateYear: 2035,
+        regulatoryHorizonYear: 2030,
+        currentYear: 2026,
+        isAtRisk: true,
+        riskWindowYears: 21,
+      },
+      tnflRiskWindow: {
+        credentialLifetimeYears: 10,
+        estimatedQuantumThreatYear: 2030,
+        currentYear: 2026,
+        isAtRisk: false,
+        riskWindowYears: 0,
+        hasSigningAlgorithms: true,
+        tnflRelevantUseCases: [],
+      },
+    })
+
+  it('describes capture as a possibility under a stated scenario, not as something happening', () => {
+    const out = buildQuantumUrgencyDefault(atRisk())
+    expect(out).not.toMatch(/is being captured today/)
+    expect(out).toMatch(/could be recorded now and decrypted later/)
+    expect(out).toMatch(
+      /scenario where a cryptographically relevant quantum computer exists in 2035/
+    )
+    expect(out).toMatch(/an assumption, not a forecast/)
+  })
+
+  it('separates secrecy lifetime from retention and a regulatory milestone from threat arrival', () => {
+    const out = buildQuantumUrgencyDefault(atRisk())
+    expect(out).toMatch(/Retention is only a proxy for how long the data must stay secret/)
+    expect(out).toMatch(
+      /regulatory milestone in 2030 is a planning date, not the arrival of a threat/
+    )
+    expect(out).not.toMatch(
+      /migration deadline \(the earlier of the CRQC estimate and any regulatory mandate\)/
+    )
+  })
+
+  it('does not declare the rotation cadence adequate and teaches verification lifetime and lead time', () => {
+    const out = buildQuantumUrgencyDefault(atRisk())
+    expect(out).not.toMatch(/rotation cadence is adequate/)
+    expect(out).toMatch(/does not show that rotation is adequate/)
+    expect(out).toMatch(/verification lifetime/)
+    expect(out).toMatch(/lead time to upgrade verifiers and trust anchors/)
+    const risky = buildQuantumUrgencyDefault(
+      makeData({
+        tnflRiskWindow: {
+          credentialLifetimeYears: 12,
+          estimatedQuantumThreatYear: 2030,
+          currentYear: 2026,
+          isAtRisk: true,
+          riskWindowYears: 8,
+          hasSigningAlgorithms: true,
+          tnflRelevantUseCases: [],
+        },
+      })
+    )
+    expect(risky).not.toMatch(/Forgery liability grows with every unrotated certificate/)
+    expect(risky).toMatch(/how long relying parties keep trusting the credential/)
+  })
 })
 
 describe('buildCryptoInventoryDefault', () => {

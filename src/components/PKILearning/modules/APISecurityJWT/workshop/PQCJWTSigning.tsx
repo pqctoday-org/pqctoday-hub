@@ -640,9 +640,12 @@ export const PQCJWTSigning: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <strong>Educational use only.</strong> The signing input is{' '}
           <code className="text-foreground/80">b64u(JOSE header).b64u(payload)</code> per RFC 7515
-          §5.1. Both noble and SoftHSM3 produce byte-identical signatures over the same input — a
-          token signed via one backend verifies under the other, demonstrating that RFC 9964
-          interoperates across implementations.
+          §5.1. A token signed via noble or SoftHSM3 can be verified by the other implementation
+          when it is given the matching public key and parameters, which shows that RFC 9964
+          interoperates across implementations. Signing the same input twice with the same key can
+          produce different signatures (hedged ML-DSA signing uses fresh randomness) and each one
+          verifies; byte-for-byte equality is reserved for known-answer tests with a fixed key,
+          input and randomness, or for deterministic signing.
         </p>
       </div>
 
