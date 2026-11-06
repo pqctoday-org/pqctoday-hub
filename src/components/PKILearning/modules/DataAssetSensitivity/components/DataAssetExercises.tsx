@@ -73,7 +73,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Workshop',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        "Compare the assets’ displayed scores, urgency bands and contributing factors under your selected weights and framework flags. Changing those assumptions can change the order; an illustrative Low result does not establish that migration can safely wait. For US Government & Defense organizations, This module's reading is that CNSA 2.0's 2030 deadline for transitioning deployed software and firmware to CNSA 2.0-compliant signatures is most constraining; for EU financial institutions, DORA's January 2025 enforcement date drives immediate crypto risk management documentation. Export your Priority Map as Markdown to share with your security team.",
+        'Compare the assets’ displayed scores, urgency bands and contributing factors under your selected weights and framework flags. Changing those assumptions can change the order; an illustrative Low result does not establish that migration can safely wait. Check the applicable system scope and dated source guidance before using a framework or date to prioritise work. An industry label or an illustrative score does not establish which requirements apply or that they have been met. Export your Priority Map as Markdown to discuss its assumptions with your security team.',
       config: { step: 0 },
     },
   ]

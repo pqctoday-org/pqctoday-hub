@@ -28,6 +28,18 @@ describe('illustrative asset observations', () => {
     ).toBeVisible()
     expect(screen.getByText(/an illustrative Low result does not establish/)).toBeVisible()
     expect(
+      screen.getByText(/Check the applicable system scope and dated source guidance/)
+    ).toBeVisible()
+    expect(
+      screen.getByText(/An industry label or an illustrative score does not establish/)
+    ).toBeVisible()
+    expect(screen.getByText(/discuss its assumptions with your security team/)).toBeVisible()
+    expect(
+      screen.queryByText(
+        /For US Government & Defense organizations|January 2025 enforcement date drives immediate/
+      )
+    ).toBeNull()
+    expect(
       screen.queryByText(/already in adversary archives|composite score ≥ 85|below 33/)
     ).toBeNull()
     const buttons = screen.getAllByRole('button', { name: 'Load & Run' })
