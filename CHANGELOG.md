@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.198.0] - 2026-11-05
+
+Two data-at-rest use cases join the Industry Landscape, thirty-six quiz questions and one Library description now follow the documents they cite, and the HIPAA retention option in the risk assessment is a labelled sample.
+
+### Added
+
+- **Two new use cases in the Industry Landscape** [view:/algorithms] [persona:architect] [persona:ops] [persona:grc] [persona:developer]: "Data-at-rest and full-disk encryption" and "Database and storage-network encryption (TDE, SAN)" now appear under Cross-Industry. Each quotes what the U.S. cybersecurity agency's January 2026 list of post-quantum product categories says about it. The list names product categories, not algorithms, so no algorithms or protocols are listed for them yet.
+
+### Changed
+
+- **The BSI TR-02102-1 Library entry says what the German guideline recommends** [view:/library] [persona:grc] [persona:architect] [persona:researcher]: post-quantum key exchange and ML-DSA only in hybrid form, SLH-DSA and stateful hash-based signatures also recommended, classic key agreement alone only until the end of 2031, and BSI's 29 September 2026 advice against new developments with Classic McEliece. The old text read as if every listed algorithm were recommended on its own.
+- **The risk assessment's HIPAA retention option is now a sample assumption** [view:/assess] [persona:grc] [persona:executive]: "6 years (HIPAA minimum)" became "6 years (sample assumption)", and its description now says the HIPAA Privacy Rule sets no medical-record retention period, so state law and your own requirements decide. The option still gives the same estimate, and saved answers keep working.
+- **Source labels on 15 Industry Landscape rows were checked against the cited documents** [view:/algorithms] [persona:researcher] [persona:architect]: twelve rows changed label because the cited document does or does not name the row's algorithms, and three rows that list no algorithms now show no label.
+
+### Fixed
+
+- **Thirty-six quiz questions now follow the documents they cite** [view:/learn/quiz] [persona:researcher] [persona:architect] [persona:developer] [persona:grc]: re-encryption no longer claims to protect copies an attacker already holds; the questions on 5G identity concealment, the TLS hybrid key exchange, CMS and S/MIME, X.509 and composite signatures match the RFCs and 3GPP text; the Falcon and ML-KEM-1024 questions match the standards' own text; database, identity and Azure SQL questions that stated vendor behaviour nobody documented are product-neutral or follow the vendor's documentation; the government question cites the June 2026 executive order and OMB memorandum dates; and the Merkle tree certificate and Sigstore questions follow the current draft and documentation. 34 of the 36 now name a source, and question ids and the position of each correct answer are unchanged.
+
 ## [4.197.0] - 2026-11-04
 
 329 more Library documents now have a Document Analysis summary, so their authors, status, main topic and standards bodies show in the Library and come up in search.
