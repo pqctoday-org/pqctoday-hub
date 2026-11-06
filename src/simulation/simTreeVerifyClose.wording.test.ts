@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import TREE from './simTree.verify-close.09072026'
+import TREE from './trees/simTree.verify-close.09072026'
 
 type Activity = { id: string; title: string; decision: string; do: string }
 

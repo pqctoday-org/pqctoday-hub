@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import TREE from './simTree.foundations.09072026'
+import TREE from './trees/simTree.foundations.09072026'
 
 describe('foundations tree — evidence-dossier pitfall', () => {
   const pitfall = TREE.pitfalls.find((p) => /evidence dossier/i.test(p.title))
