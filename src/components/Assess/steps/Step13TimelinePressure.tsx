@@ -51,8 +51,8 @@ const Step13TimelinePressure = ({
     },
     {
       value: 'internal-deadline' as const,
-      label: 'Internal Deadline Set',
-      description: 'Our organization has set its own PQC migration target date.',
+      label: 'Own Target or Distant Deadline',
+      description: 'Our own target date, or a published deadline more than 3 years away.',
     },
     {
       value: 'no-deadline' as const,

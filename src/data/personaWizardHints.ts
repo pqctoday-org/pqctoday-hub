@@ -715,7 +715,7 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
     timeline: {
       hint: 'Timeline pressure is a multiplier (1.0-1.3) applied to the regulatory pressure score. Country-specific deadlines from the timeline CSV are shown.',
       hintExpert:
-        'Pressure multipliers: within-1y=1.3, within-2-3y=1.15, internal-deadline=1.05, no-deadline=1.0, unknown=1.1. Applied after regulatory_pressure_score calculation.',
+        'Pressure multipliers: within-1y=1.3, within-2-3y=1.15, internal-deadline (your own target, or a published deadline more than 3 years away)=1.05, no-deadline=1.0, unknown=1.1. Applied after regulatory_pressure_score calculation.',
     },
   },
   'cert-engineer': {
