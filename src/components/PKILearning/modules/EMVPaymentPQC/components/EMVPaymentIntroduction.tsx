@@ -630,11 +630,25 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               for every open-banking API in the EU.
             </li>
             <li>
-              <strong className="text-foreground">Mandatory fallback (Art. 33).</strong> If a
-              bank&rsquo;s dedicated interface is unavailable or under-performing, third-party
-              providers must be able to fall back to the interface the bank&rsquo;s own customers
-              use — unless the bank&rsquo;s interface has passed three months of problem-free
-              operation under independent testing.
+              <strong className="text-foreground">
+                Contingency measures and fallback (Art. 33).
+              </strong>{' '}
+              A bank that chose a dedicated interface must plan contingency measures for when that
+              interface does not perform as Art. 32 requires (the same availability and performance
+              as the interfaces its own customers use) or is unexpectedly unavailable; Art. 33(1)
+              allows unplanned unavailability to be presumed once five consecutive requests go
+              unanswered for 30 seconds. As part of that mechanism, third-party providers are
+              allowed to use the interfaces the bank offers its own customers until the dedicated
+              interface is restored (Art. 33(4)). A bank is released from setting up that fallback
+              only where its national competent authority, after consulting the EBA, exempts it, and
+              only if the dedicated interface meets all four conditions of Art. 33(6): it complies
+              with the Art. 32 obligations; it was designed and tested to the satisfaction of the
+              providers that use it; it has been widely used by providers for at least three months;
+              and any problem with it has been resolved without undue delay. Three months of use is
+              one condition, not an exemption by itself, and the authority must revoke the exemption
+              if conditions (a) and (d) are not met for more than two consecutive calendar weeks
+              (Art. 33(7)). This describes the regulation as published on 13 March 2018; check the
+              current text.
             </li>
             <li>
               <strong className="text-foreground">eIDAS qualified certificates (Art. 34).</strong>{' '}

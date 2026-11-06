@@ -584,7 +584,8 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         role: 'certification',
         label: 'Common Criteria Evaluation',
         body: 'CCRA / BSI / ANSSI',
-        description: '',
+        description:
+          'Common Criteria (CC) splits the work across three roles. Evaluation: a facility that is independent of the developer assesses a specific product against the CC, using the Common Evaluation Methodology, and reports its findings to a certification body. Certification: the certification body runs the national scheme and issues the certificate together with a public certification report; BSI (Germany) and ANSSI (France) are listed on the Common Criteria Portal as certificate-authorising members of the Common Criteria Recognition Arrangement (CCRA). Recognition: CCRA participants plan to recognise certificates authorised by other authorising participants, but the arrangement covers only certificates that claim a collaborative Protection Profile or Evaluation Assurance Levels 1 to 2 with ALC_FLR (Art. 2), and it has no binding effect in national, international or European law (Art. 18). A certificate confirms that a specific product completed evaluation; it is not an endorsement, warranty or guarantee of the product (Art. 18). What was evaluated is set by the product’s Security Target or Protection Profile, so a certificate does not by itself show that the product implements a post-quantum standard such as ISO/IEC 14888-4.',
       },
       {
         id: 'eu-procurement',
