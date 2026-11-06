@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
@@ -12,28 +12,69 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 
 /**
  * Subscribes to existing app stores and auto-marks workshop steps complete
- * when their `completionSignal` fires. Manual "Mark step complete" remains
+ * for newly observed current-step participation, not technical verification.
+ * Existing completion IDs do not record how participation was established. Manual "Mark step complete" remains
  * available; this hook just removes the friction for steps that map cleanly
  * to existing state changes.
  */
 export function useWorkshopAutoComplete(): void {
-  const { mode, currentFlowId, completedStepIds, selectedRegion, markStepComplete } =
-    useWorkshopStore()
+  const {
+    mode,
+    currentFlowId,
+    currentStepId,
+    startedAt,
+    completedStepIds,
+    selectedRegion,
+    markStepComplete,
+  } = useWorkshopStore()
   const location = useLocation()
 
   const assessmentStatus = useAssessmentFormStore((s) => s.assessmentStatus)
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
-  const myThreats = useBookmarkStore((s) => s.myThreats)
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
-  // Leaders: there is no dedicated bookmark surface yet; we treat /leaders route visit as a soft signal.
   const moduleProgress = useModuleStore((s) => s.modules)
   const role = usePersonaStore((s) => s.selectedPersona)
   const proficiency = usePersonaStore((s) => s.experienceLevel)
   const industry = usePersonaStore((s) => s.selectedIndustry)
 
-  // Hydrate the active flow from the JSON manifest whenever the running flow id
-  // changes. Cached by workshopFlowLoader so this is a no-op after the first hit.
-  const [activeFlow, setActiveFlow] = useState<WorkshopFlow | null>(null)
+  const sources: SignalSources = {
+    assessmentStatus,
+    libraryBookmarks,
+    myTimelineCountries,
+    moduleProgress,
+  }
+  const runKey = JSON.stringify([currentFlowId, startedAt])
+  const observationKey = JSON.stringify([
+    runKey,
+    currentStepId,
+    selectedRegion,
+    industry,
+    role,
+    proficiency,
+  ])
+  const baseline = useRef<{
+    key: string
+    sources: SignalSources
+    flowObserved: boolean
+    onResource: boolean
+  } | null>(null)
+
+  // Capture before asynchronous flow hydration. Remount/resume conservatively
+  // starts a new observation window; earlier participation remains manual.
+  useLayoutEffect(() => {
+    if (mode !== 'running' || !currentFlowId || !currentStepId) {
+      baseline.current = null
+    } else if (baseline.current?.key !== observationKey) {
+      baseline.current = {
+        key: observationKey,
+        sources: snapshot(sources),
+        flowObserved: false,
+        onResource: false,
+      }
+    }
+  })
+
+  const [loaded, setLoaded] = useState<{ runKey: string; flow: WorkshopFlow } | null>(null)
   useEffect(() => {
     if (mode !== 'running' || !currentFlowId) return
     let cancelled = false
@@ -43,48 +84,59 @@ export function useWorkshopAutoComplete(): void {
       const entry = findEntry(manifest, currentFlowId)
       if (!entry) return
       const flow = await loadFlow(entry.file).catch(() => null)
-      if (!cancelled && flow) setActiveFlow(flow)
+      if (!cancelled && flow) setLoaded({ runKey, flow })
     })()
     return () => {
       cancelled = true
     }
-  }, [mode, currentFlowId])
+  }, [mode, currentFlowId, runKey])
 
   useEffect(() => {
-    if (mode !== 'running' || !currentFlowId || !selectedRegion) return
-    if (!activeFlow || activeFlow.id !== currentFlowId) return
-
-    const steps = flattenFlow(
-      activeFlow,
+    if (mode !== 'running' || !currentFlowId || !currentStepId || !selectedRegion) return
+    if (!loaded || loaded.runKey !== runKey || loaded.flow.id !== currentFlowId) return
+    const step = flattenFlow(
+      loaded.flow,
       selectedRegion,
       industry ?? undefined,
       role ?? undefined,
       proficiency ?? undefined
-    )
-    for (const step of steps) {
-      if (completedStepIds.includes(step.id)) continue
-      if (
-        matchesSignal(step, location.pathname, {
-          assessmentStatus,
-          libraryBookmarks,
-          myThreats,
-          myTimelineCountries,
-          moduleProgress,
-        })
-      ) {
-        markStepComplete(step.id)
-      }
+    ).find((candidate) => candidate.id === currentStepId)
+    const observed = baseline.current
+    if (!step || !observed || observed.key !== observationKey) return
+    const sources = { assessmentStatus, libraryBookmarks, myTimelineCountries, moduleProgress }
+    // Events while the flow was unobserved/loading are not reliable attribution.
+    if (!observed.flowObserved) {
+      observed.sources = snapshot(sources)
+      observed.flowObserved = true
+    }
+    // Work performed on another resource must not be imported on return.
+    if (!onResource(step.page.route, step.page.query, location.pathname, location.search)) {
+      observed.sources = snapshot(sources)
+      observed.onResource = false
+      return
+    }
+    if (!observed.onResource) {
+      observed.sources = snapshot(sources)
+      observed.onResource = true
+    }
+    if (assessmentStatus !== 'complete') observed.sources.assessmentStatus = assessmentStatus
+    if (completedStepIds.includes(step.id)) return
+    if (matchesSignal(step, location.pathname, location.search, sources, observed.sources)) {
+      markStepComplete(step.id)
     }
   }, [
     mode,
     currentFlowId,
+    currentStepId,
     selectedRegion,
-    activeFlow,
+    loaded,
+    runKey,
+    observationKey,
     completedStepIds,
     location.pathname,
+    location.search,
     assessmentStatus,
     libraryBookmarks,
-    myThreats,
     myTimelineCountries,
     moduleProgress,
     role,
@@ -97,40 +149,79 @@ export function useWorkshopAutoComplete(): void {
 interface SignalSources {
   assessmentStatus: string
   libraryBookmarks: string[]
-  myThreats: string[]
   myTimelineCountries: string[]
   moduleProgress: Record<string, { completedSteps?: string[] }>
 }
 
-function matchesSignal(step: WorkshopStep, currentPath: string, src: SignalSources): boolean {
+function snapshot(src: SignalSources): SignalSources {
+  return {
+    assessmentStatus: src.assessmentStatus,
+    libraryBookmarks: [...src.libraryBookmarks],
+    myTimelineCountries: [...src.myTimelineCountries],
+    moduleProgress: Object.fromEntries(
+      Object.entries(src.moduleProgress).map(([id, mod]) => [
+        id,
+        { completedSteps: [...(mod.completedSteps ?? [])] },
+      ])
+    ),
+  }
+}
+
+function onResource(
+  route: string,
+  query: Record<string, string> | undefined,
+  pathname: string,
+  search: string
+): boolean {
+  const target = new URL(route, 'https://workshop.invalid')
+  if (pathname !== target.pathname && !pathname.startsWith(target.pathname + '/')) return false
+  const actual = new URLSearchParams(search)
+  const expected = new URLSearchParams(target.search)
+  for (const [key, value] of Object.entries(query ?? {})) expected.set(key, value)
+  return [...expected].every(([key, value]) => actual.get(key) === value)
+}
+
+function newIds(current: string[], previous: string[]): number {
+  const old = new Set(previous)
+  return new Set(current.filter((id) => !old.has(id))).size
+}
+
+function matchesSignal(
+  step: WorkshopStep,
+  pathname: string,
+  search: string,
+  src: SignalSources,
+  previous: SignalSources
+): boolean {
   const sig = step.completionSignal
   if (!sig) return false
   switch (sig.kind) {
     case 'route-visited':
-      return currentPath === sig.route || currentPath.startsWith(sig.route + '/')
+      return onResource(sig.route, undefined, pathname, search)
     case 'assessment-complete':
-      return src.assessmentStatus === 'complete'
+      return previous.assessmentStatus !== 'complete' && src.assessmentStatus === 'complete'
     case 'bookmark-added':
-      switch (sig.surface) {
-        case 'library':
-          return src.libraryBookmarks.length > 0
-        case 'timeline':
-          return src.myTimelineCountries.length > 0
-        // Threats and compliance share the threats bookmark surface here for the executive flow.
-        case 'compliance':
-        case 'leaders':
-          return src.myThreats.length > 0
-      }
+      if (sig.surface === 'library')
+        return (
+          pathname === '/library' && newIds(src.libraryBookmarks, previous.libraryBookmarks) > 0
+        )
+      if (sig.surface === 'timeline')
+        return (
+          pathname === '/timeline' &&
+          newIds(src.myTimelineCountries, previous.myTimelineCountries) > 0
+        )
+      // There is no observable leaders/compliance bookmark event in these stores.
       return false
-    case 'module-progress': {
-      const mod = src.moduleProgress[sig.moduleId]
-      const count = mod?.completedSteps?.length ?? 0
-      return count >= sig.minSteps
-    }
-    case 'filter-applied':
-      // Filter detection is route-based; treated as a route-visited soft signal.
+    case 'module-progress':
       return (
-        currentPath === '/threats' || currentPath === '/leaders' || currentPath === '/compliance'
+        (pathname === `/learn/${sig.moduleId}` || pathname.startsWith(`/learn/${sig.moduleId}/`)) &&
+        newIds(
+          src.moduleProgress[sig.moduleId]?.completedSteps ?? [],
+          previous.moduleProgress[sig.moduleId]?.completedSteps ?? []
+        ) >= sig.minSteps
       )
+    case 'filter-applied':
+      // A page visit does not establish that a filter was applied.
+      return false
   }
 }

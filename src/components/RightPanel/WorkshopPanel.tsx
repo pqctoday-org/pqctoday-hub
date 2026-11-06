@@ -30,6 +30,7 @@ import type { WorkshopChapter, WorkshopFlow, WorkshopRegion, WorkshopStep } from
 import { WorkshopPrereqList } from './WorkshopPrereqList'
 import { labelForRegion } from '@/utils/workshopRegion'
 import { WorkshopStepCard } from './WorkshopStepCard'
+import { describeWorkshopParticipation } from '@/utils/workshopParticipation'
 import { useWorkshopAutoComplete } from '@/hooks/useWorkshopAutoComplete'
 import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
 import { buildStepUrl, personaRegionToWorkshop } from '@/utils/workshopDeepLink'
@@ -837,6 +838,16 @@ const RunningView: React.FC<RunningViewProps> = ({
         </div>
       </div>
 
+      <div
+        className="px-4 md:px-6 py-2 text-xs text-muted-foreground border-b border-border"
+        role="status"
+      >
+        {completedStepIds.includes(step.id)
+          ? 'Activity marked complete. Its completion origin is not recorded. '
+          : ''}
+        {describeWorkshopParticipation(step.completionSignal)} Task lists are guides; participation
+        credit does not verify each task.
+      </div>
       <WorkshopStepCard
         step={step}
         flow={flow}
