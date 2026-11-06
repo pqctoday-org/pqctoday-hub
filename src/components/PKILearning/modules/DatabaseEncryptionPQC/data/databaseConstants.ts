@@ -73,12 +73,6 @@ export interface BYOKArchitecture {
   diagram: string[]
   pros: string[]
   cons: string[]
-  /**
-   * Illustrative teaching estimate for the pattern's stated conditions, not a measured,
-   * vendor-supplied or universal rating. Read it together with the trade-offs in the
-   * description, pros, cons and pqcUpgrade text.
-   */
-  pqcReadinessScore: number
 }
 
 export interface QueryableEncryptionScheme {
@@ -391,7 +385,7 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
     dataKey:
       'AES-based DEK, generated per database/tablespace; algorithm and key size vary by service and configuration',
     pqcUpgrade:
-      'The percentage above is an illustrative teaching estimate, not a measured rating. The provider must upgrade its internal KMS. No customer action is required, but there is no customer control either; the timeline depends on AWS/Azure/GCP.',
+      'The provider must upgrade its internal KMS. No customer action is required, but there is no customer control either; the timeline depends on AWS/Azure/GCP.',
     diagram: [
       'Customer Application',
       '         ↓ SQL / API',
@@ -408,7 +402,6 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
       'Key custody sits with the provider, so the entity relies on provider controls for key-lifecycle requirements such as DORA RTS 2024/1774 Article 7',
       'Key escrow risk for regulated industries',
     ],
-    pqcReadinessScore: 30,
   },
   {
     id: 'byok',
@@ -420,7 +413,7 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
     wrappingAlgorithm: 'RSA-OAEP import wrapping (customer wraps key before upload)',
     dataKey: '256-bit AES-GCM DEK, wrapped by imported CMK in cloud KMS',
     pqcUpgrade:
-      'The percentage above is an illustrative teaching estimate, not a measured rating. Design target (AWS KMS import wrapping keys are RSA only, and AWS KMS cannot import key material into ML-KEM or ML-DSA KMS keys): download an ML-KEM-1024 public wrapping key from the Cloud KMS, generate the new CMK on-prem, run ML-KEM.Encaps to derive a shared secret and ciphertext, wrap the CMK with the shared secret (AES-KWP), and upload the ciphertext and wrapped CMK.',
+      'Design target (AWS KMS import wrapping keys are RSA only, and AWS KMS cannot import key material into ML-KEM or ML-DSA KMS keys): download an ML-KEM-1024 public wrapping key from the Cloud KMS, generate the new CMK on-prem, run ML-KEM.Encaps to derive a shared secret and ciphertext, wrap the CMK with the shared secret (AES-KWP), and upload the ciphertext and wrapped CMK.',
     diagram: [
       'Cloud KMS (provides ML-KEM public key)',
       '         ↓ download ek',
@@ -442,7 +435,6 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
       'Requires on-prem HSM infrastructure',
       'The imported copy stays under the provider’s operational controls while it exists',
     ],
-    pqcReadinessScore: 65,
   },
   {
     id: 'hyok',
@@ -454,7 +446,7 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
     wrappingAlgorithm: 'ML-KEM-1024 (key encapsulation) + AES-256-KW (DEK wrap)',
     dataKey: 'AES-256 DEK wrapped by ML-KEM-derived wrapping key; stored in cloud DB metadata',
     pqcUpgrade:
-      'The percentage above is an illustrative teaching estimate, not a measured rating. Design target: whether HYOK can use ML-KEM depends on the on-premises HSM supporting it and on the database or KMS integration accepting a KEM-based unwrap; PKCS#11 v3.2 defines ML-KEM mechanisms, but support in each HSM and integration is vendor-specific and not verified here.',
+      'Design target: whether HYOK can use ML-KEM depends on the on-premises HSM supporting it and on the database or KMS integration accepting a KEM-based unwrap; PKCS#11 v3.2 defines ML-KEM mechanisms, but support in each HSM and integration is vendor-specific and not verified here.',
     diagram: [
       'On-Prem HSM (Customer)',
       '    ML-KEM-1024 Master Key',
@@ -480,7 +472,6 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
       'Higher cost (FIPS 140-3 HSM hardware + maintenance)',
       'Requires 24/7 on-prem KMS availability',
     ],
-    pqcReadinessScore: 90,
   },
 ]
 

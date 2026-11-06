@@ -77,9 +77,10 @@ describe('key-custody patterns separate custody, plaintext DEK exposure and revo
     expect(hyok.pros.join(' ')).not.toMatch(/never leaves customer infrastructure/i)
   })
 
-  it('labels the readiness percentage as an illustrative estimate and does not call HYOK ready outright', () => {
+  it('carries no invented readiness percentage and does not call HYOK ready outright', () => {
     for (const a of BYOK_ARCHITECTURES) {
-      expect(a.pqcUpgrade, a.id).toMatch(/illustrative teaching estimate, not a measured rating/)
+      expect(a, a.id).not.toHaveProperty('pqcReadinessScore')
+      expect(a.pqcUpgrade, a.id).not.toMatch(/\d+%/)
     }
     expect(architecture('hyok').pqcUpgrade).not.toMatch(/already PQC-ready/i)
   })
