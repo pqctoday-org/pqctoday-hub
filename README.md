@@ -110,7 +110,7 @@ None of those labels turns a local demonstration into an ACVP, CAVP, CMVP, Commo
 
 ### Current committed snapshot
 
-Release **4.197.0** · source-data snapshot through **2026-11-04**. These figures are derived from the committed registries and current CSV lineages; they are not live counts.
+Release **4.197.0** · source-data snapshot through **2026-11-05**. These figures are derived from the committed registries and current CSV lineages; they are not live counts.
 
 - **Learn:** 75 instructional modules and 1,151 quiz questions.
 - **Core references:** 130 algorithm records, 194 timeline events and 1,429 active Library records.
