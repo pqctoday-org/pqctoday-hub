@@ -50,7 +50,8 @@ const SAMPLE_ASSETS: CbomExportItem[] = [
     type: 'library',
     fipsStatus: 'historical',
     esvStatus: 'not-validated',
-    pqcSupport: 'ML-KEM, ML-DSA available in BC-FIPS 2.x',
+    pqcSupport:
+      'Current BC-FJA certificate #4943 lists LMS signature verification as its only PQC-family algorithm',
     posture: 'red',
     notes:
       'Example: the certificate for this deployed version has reached its sunset date, so CMVP lists it as Historical. (The current BC-FJA certificate, #4943, is Active.)',
@@ -87,14 +88,15 @@ const SAMPLE_ASSETS: CbomExportItem[] = [
     notes: 'In MIP queue; use 3.5.x FIPS provider when validated.',
   },
   {
-    name: 'BoringSSL / AWS-LC',
-    version: '2024-02-20',
+    name: 'AWS-LC 3 Cryptographic Module (dynamic)',
+    version: '3.1.0',
     type: 'library',
     fipsStatus: 'active',
-    esvStatus: 'active',
-    pqcSupport: 'ML-KEM-768, partial ML-DSA',
-    posture: 'green',
-    notes: 'AWS-LC CMVP cert #5244 active. ESV active.',
+    esvStatus: 'not-validated',
+    pqcSupport: 'ML-KEM approved on CMVP #5298; ML-DSA not listed on it',
+    posture: 'yellow',
+    notes:
+      'CMVP #5298 (static variant #5314) is Active, FIPS 140-3 Level 1, and lists ML-KEM KeyGen and EncapDecap as approved but no ML-DSA. The module takes its entropy from the calling application, outside its boundary. Posture is a scenario judgement. (#5244 is the BoringCrypto module, a different certificate.)',
   },
   {
     name: 'Thales Luna Network HSM 7',
@@ -235,7 +237,7 @@ export const RiskAnalysisEngine: React.FC<RiskAnalysisEngineProps> = ({ cbomAsse
         <p className={usingLive ? 'text-status-success' : 'text-muted-foreground'}>
           {usingLive
             ? `Using CBOM loaded from Step 3 — ${source.length} assets.`
-            : `No CBOM loaded from Step 3 yet. Showing ${SAMPLE_ASSETS.length} educational sample assets. Complete Step 3 to analyse your own CBOM.`}
+            : `No CBOM loaded from Step 3 yet. Showing ${SAMPLE_ASSETS.length} educational sample assets; their statuses and postures are practice scenarios, not live records, so check the CMVP certificate for any real module. Complete Step 3 to analyse your own CBOM.`}
         </p>
       </div>
 
