@@ -124,7 +124,9 @@ export const KeyTable: React.FC<KeyTableProps> = ({
   const emptyState = (
     <div className="flex flex-col items-center gap-3 p-8 text-muted-foreground">
       <KeyIcon size={32} className="opacity-20" />
-      <p className="text-sm italic">No keys generated yet. Go to Settings to generate keys.</p>
+      <p className="text-sm italic">
+        No keys generated yet. Use Generate New Keys above to create keys.
+      </p>
     </div>
   )
 

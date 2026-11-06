@@ -17,7 +17,7 @@ import type { XwalkRelationshipType } from '../data/conceptXwalkData'
 import type { LibraryItem } from '../data/libraryData'
 import type { ThreatData } from '../data/threatsData'
 import type { AllApplicable, ApplicabilityResult, ApplicabilityTier } from './applicabilityEngine'
-import { TIER_ORDER } from './applicabilityEngine'
+import { TIER_ORDER, TIER_META } from './applicabilityEngine'
 
 export type SectionId = 'frameworks' | 'threats' | 'library' | 'timeline'
 
@@ -62,7 +62,7 @@ const ALL_NON_RELATED: XwalkRelationshipType[] = [
   'intersects_with',
 ]
 
-const DEFAULT_LENS: PersonaLens = {
+const DEFAULT_LENS_SOURCE: PersonaLens = {
   sections: ['frameworks', 'threats', 'library', 'timeline'],
   tierCaps: { mandatory: 10, recognized: 8, 'cross-border': 5, advisory: 5 },
   framing: 'Items that apply to your industry and country.',
@@ -78,14 +78,13 @@ const DEFAULT_LENS: PersonaLens = {
  * Per-persona lenses. Captures the user's directive that an executive needs
  * actionable mandates while an architect needs protocols/algorithms.
  */
-const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
+const PERSONA_LENS_SOURCE: Record<PersonaId, PersonaLens> = {
   executive: {
     sections: ['frameworks', 'threats', 'timeline', 'library'],
     tierCaps: { mandatory: 8, recognized: 5, 'cross-border': 3, advisory: 3 },
     flatCaps: { libraryMax: 3, threatsMax: 5, industryEventsMax: 5 },
     libraryCategories: ['Government & Policy', 'Migration Guidance', 'International Frameworks'],
-    framing:
-      'Compliance obligations, sector threats, and deadlines that require action. Technical detail is downsampled — switch persona for full library coverage.',
+    framing: 'Compliance obligations, sector threats, and deadlines that require action.',
     trustPathConfig: {
       allowedRelationships: ['subset_of', 'superset_of', 'equivalent'],
       confidenceThreshold: 60,
@@ -106,8 +105,7 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
       'Migration Guidance',
       'International Frameworks',
     ],
-    framing:
-      'Every applicable obligation and its supporting evidence, ordered by tier — nothing downsampled for brevity.',
+    framing: 'Applicable obligations and their supporting evidence, ordered by tier.',
     trustPathConfig: {
       allowedRelationships: ALL_NON_RELATED,
       confidenceThreshold: 55,
@@ -157,7 +155,7 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
   researcher: {
     sections: ['library', 'timeline', 'frameworks', 'threats'],
     tierCaps: { mandatory: 20, recognized: 20, 'cross-border': 15, advisory: 20 },
-    framing: 'Standards, drafts, and timeline events without persona-driven downsampling.',
+    framing: 'Standards, drafts, and timeline events across all library categories.',
     trustPathConfig: {
       allowedRelationships: ALL_NON_RELATED,
       confidenceThreshold: 35,
@@ -201,7 +199,7 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
     sections: ['frameworks', 'threats', 'timeline', 'library'],
     tierCaps: { mandatory: 5, recognized: 3, 'cross-border': 3, advisory: 3 },
     flatCaps: { libraryMax: 3, threatsMax: 3, industryEventsMax: 3 },
-    framing: 'A quick read on what applies to you — top items only.',
+    framing: 'A quick read on what applies to you — the top items only.',
     trustPathConfig: {
       allowedRelationships: ['equivalent', 'subset_of'],
       confidenceThreshold: 65,
@@ -210,6 +208,71 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
     },
   },
 }
+
+const SECTION_NOUN: Record<SectionId, string> = {
+  frameworks: 'frameworks',
+  threats: 'threats',
+  library: 'library documents',
+  timeline: 'timeline milestones',
+}
+
+function joinWords(words: string[]): string {
+  if (words.length <= 1) return words.join('')
+  return `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}`
+}
+
+/**
+ * States, in plain words, how a lens shortens what the engine found, written from the
+ * lens's own limits so the sentence cannot drift from the caps it describes. A lens that
+ * shortens its lists must never be framed as complete.
+ */
+function limitsNote(lens: PersonaLens): string {
+  const flat = lens.flatCaps ?? {}
+  /* eslint-disable security/detect-object-injection -- t and id are closed unions */
+  const tierLimits = TIER_ORDER.filter((t) => lens.tierCaps[t] !== undefined).map(
+    (t) => `${TIER_META[t].label} ${lens.tierCaps[t]}`
+  )
+  const sentences: string[] = []
+  if (tierLimits.length > 0) {
+    const capped = lens.sections.filter(
+      (id) =>
+        !(id === 'library' && flat.libraryMax !== undefined) &&
+        !(id === 'threats' && flat.threatsMax !== undefined)
+    )
+    sentences.push(
+      `Each tier is capped for ${joinWords(capped.map((id) => SECTION_NOUN[id]))} (${tierLimits.join(', ')}).`
+    )
+  }
+  if (flat.libraryMax !== undefined) {
+    sentences.push(
+      `Library documents are cut to ${flat.libraryMax} (highest tier first, then most recently updated).`
+    )
+  }
+  if (flat.threatsMax !== undefined) {
+    sentences.push(
+      `Threats are cut to ${flat.threatsMax} (highest tier first, then most critical).`
+    )
+  }
+  if (lens.libraryCategories && lens.libraryCategories.length > 0) {
+    sentences.push(`Library documents outside ${joinWords(lens.libraryCategories)} are left out.`)
+  }
+  /* eslint-enable security/detect-object-injection */
+  if (sentences.length === 0) return ''
+  sentences.push(
+    'Each section header counts the items this hides; the full lists are on the Compliance, Library, Threats and Timeline pages.'
+  )
+  return sentences.join(' ')
+}
+
+function withLimitsNote(lens: PersonaLens): PersonaLens {
+  const note = limitsNote(lens)
+  return note ? { ...lens, framing: `${lens.framing} ${note}` } : lens
+}
+
+const DEFAULT_LENS: PersonaLens = withLimitsNote(DEFAULT_LENS_SOURCE)
+const PERSONA_LENSES = Object.fromEntries(
+  Object.entries(PERSONA_LENS_SOURCE).map(([id, lens]) => [id, withLimitsNote(lens)])
+) as Record<PersonaId, PersonaLens>
 
 export function getLens(personaId: PersonaId | null): PersonaLens {
   if (!personaId) return DEFAULT_LENS
@@ -329,7 +392,7 @@ export function filterLibraryByCategories(
 }
 
 export interface LensedApplicable extends AllApplicable {
-  /** Number of items dropped per domain per tier — surfaced as "+N more" hints in the panel. */
+  /** Number of items hidden per domain per tier (capped or filtered out) — surfaced as "+N more" hints in the panel. */
   droppedCounts: {
     frameworks: Record<ApplicabilityTier, number>
     library: Record<ApplicabilityTier, number>
@@ -350,6 +413,12 @@ export function applyLens(data: AllApplicable, personaId: PersonaId | null): Len
     lens.flatCaps?.libraryMax !== undefined
       ? flatCap(sortLibrary(filteredLibrary), lens.flatCaps.libraryMax)
       : capByTier(filteredLibrary, lens.tierCaps)
+  // Documents the category filter left out are hidden too: count them with the capped ones, so the
+  // panel's "hidden" total is every library item the role does not see.
+  const keptByFilter = new Set(filteredLibrary)
+  for (const r of data.library) {
+    if (!keptByFilter.has(r)) lib.droppedByTier[r.tier] += 1
+  }
   // Threats: when flatCaps.threatsMax is set, sort by tier+criticality then top-N.
   const thr =
     lens.flatCaps?.threatsMax !== undefined
