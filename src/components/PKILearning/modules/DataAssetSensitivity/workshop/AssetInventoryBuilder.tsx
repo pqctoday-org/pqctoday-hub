@@ -18,6 +18,7 @@ import {
   type AssetType,
   type RetentionPeriod,
 } from '../data/sensitivityConstants'
+import { COMPLIANCE_MANDATES } from '../data/industryComplianceData'
 
 interface AssetInventoryBuilderProps {
   assets: DataAsset[]
@@ -84,7 +85,12 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
   const [currentEncryption, setCurrentEncryption] = useState('')
   const [businessOwner, setBusinessOwner] = useState('')
   const [industry, setIndustry] = useState(AVAILABLE_INDUSTRIES[0])
+  const [complianceFlags, setComplianceFlags] = useState<string[]>([])
   const [error, setError] = useState('')
+
+  const toggleFlag = (id: string) => {
+    setComplianceFlags((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]))
+  }
 
   const handleAdd = () => {
     if (!name.trim()) {
@@ -101,12 +107,17 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
       currentEncryption: currentEncryption.trim() || 'Not specified',
       businessOwner: businessOwner.trim() || 'Unassigned',
       industry,
-      complianceFlags: [],
+      // Only the laws and standards the learner ticked, in the module's list order.
+      complianceFlags: COMPLIANCE_MANDATES.filter((m) => complianceFlags.includes(m.id)).map(
+        (m) => m.id
+      ),
     }
     onAssetsChange([...assets, newAsset])
     setName('')
     setCurrentEncryption('')
     setBusinessOwner('')
+    // Applicability belongs to one asset: do not carry the ticks over to the next one.
+    setComplianceFlags([])
   }
 
   const handleRemove = (id: string) => {
@@ -253,6 +264,37 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
               noContainer
             />
           </div>
+
+          <fieldset
+            className="md:col-span-2 min-w-0 border-0 p-0 m-0"
+            aria-describedby="asset-flags-help"
+          >
+            <legend className="text-xs text-muted-foreground mb-1">
+              Applicable laws and standards
+            </legend>
+            <p id="asset-flags-help" className="text-[10px] text-muted-foreground mb-2">
+              Tick the laws and standards you have confirmed apply to this asset. An asset with none
+              ticked is scored without a legal mandate.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1">
+              {COMPLIANCE_MANDATES.map((m) => (
+                <label
+                  key={m.id}
+                  className="flex items-start gap-2 rounded px-1 py-1.5 cursor-pointer hover:bg-muted/30 max-md:min-h-[44px] max-md:items-center"
+                >
+                  <input
+                    type="checkbox"
+                    checked={complianceFlags.includes(m.id)}
+                    onChange={() => toggleFlag(m.id)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-primary max-md:mt-0 max-md:h-5 max-md:w-5"
+                  />
+                  <span className="text-xs text-foreground">
+                    {m.name} <span className="text-muted-foreground">{m.fullName}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
         </div>
 
         <Button onClick={handleAdd} variant="outline" className="flex items-center gap-2">
@@ -287,6 +329,7 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                   <th className="text-left py-2 pr-4 font-medium">HNDL Risk Year</th>
                   <th className="text-left py-2 pr-4 font-medium">Industry</th>
                   <th className="text-left py-2 pr-4 font-medium">Encryption</th>
+                  <th className="text-left py-2 pr-4 font-medium">Laws and standards</th>
                   <th className="py-2 font-medium" />
                 </tr>
               </thead>
@@ -318,6 +361,13 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                       <td className="py-3 pr-4 text-muted-foreground text-xs">{asset.industry}</td>
                       <td className="py-3 pr-4 text-muted-foreground text-xs font-mono">
                         {asset.currentEncryption}
+                      </td>
+                      <td className="py-3 pr-4 text-muted-foreground text-xs">
+                        {asset.complianceFlags.length > 0
+                          ? asset.complianceFlags
+                              .map((f) => COMPLIANCE_MANDATES.find((m) => m.id === f)?.name ?? f)
+                              .join(', ')
+                          : 'Not stated'}
                       </td>
                       <td className="py-3">
                         <Button
