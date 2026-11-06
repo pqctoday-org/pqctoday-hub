@@ -31,7 +31,7 @@ const PHASES = [
     id: 'key-migration',
     label: 'Key Migration',
     icon: HardDrive,
-    description: 'Plan backup, dual-partition strategy, and migration duration.',
+    description: 'Review sample backup, continuity assumptions, and migration duration.',
   },
   {
     id: 'validation',
@@ -338,7 +338,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">Estimated downtime per HSM:</span>{' '}
+                <span className="text-muted-foreground">Authored downtime scenario per HSM:</span>{' '}
                 <span className="text-foreground">{selectedPath.estimatedDowntime}</span>
               </div>
               <div>
@@ -367,12 +367,13 @@ export const HsmMigrationPlanner: React.FC = () => {
           {/* Estimated Total Time */}
           <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
             <h5 className="text-sm font-bold text-foreground mb-1">
-              Rolling Upgrade Estimate ({hsmCount} HSMs)
+              Illustrative Upgrade Timing ({hsmCount} HSMs)
             </h5>
             <p className="text-lg font-bold text-primary">{estimateTotalTime}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Using rolling upgrade strategy (one HSM at a time, classical operations continue on
-              remaining HSMs during each upgrade window).
+              This arithmetic assumes one-at-a-time upgrades; it does not establish that other
+              devices can carry the workload or that a one-device fleet remains available. Check
+              supported redundancy and measure continuity in the intended configuration.
             </p>
           </div>
 
@@ -401,23 +402,29 @@ export const HsmMigrationPlanner: React.FC = () => {
                 <span className="text-foreground font-bold">{hsmCount}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Estimated Total Backup:</span>{' '}
+                <span className="text-muted-foreground">Illustrative Total Backup:</span>{' '}
                 <span className="text-primary font-bold">{estimateBackupSize}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">Per HSM:</span>{' '}
-                <span className="text-foreground">~250 MB (keys + config + state)</span>
+                <span className="text-foreground">
+                  ~250 MB (sample keys + config + state assumption)
+                </span>
               </div>
             </div>
           </div>
 
           {/* Dual-Partition Strategy */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h5 className="text-sm font-bold text-foreground mb-2">Dual-Partition Strategy</h5>
+            <h5 className="text-sm font-bold text-foreground mb-2">
+              Illustrative parallel-service scenario
+            </h5>
             <p className="text-xs text-muted-foreground mb-3">
-              During migration, each HSM runs two logical partitions in parallel. The classical
-              partition handles existing operations while the PQC partition is being configured and
-              tested.
+              The diagram illustrates parallel workloads; two logical partitions alone do not
+              establish independent firmware or restart isolation. This sample does not test
+              uninterrupted service during an upgrade, including with one HSM. In your own tools,
+              check the supported rolling-upgrade configuration, independent redundancy and
+              capacity, and test service continuity before relying on it.
             </p>
 
             {/* Visual Timeline */}
@@ -428,7 +435,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                 </span>
                 <div className="flex-1 h-6 rounded bg-success/20 border border-success/30 flex items-center px-2">
                   <span className="text-[10px] text-success font-medium">
-                    Active &mdash; RSA, ECDSA, AES (continues during migration)
+                    Illustrated RSA, ECDSA, AES workload (continuity not tested)
                   </span>
                 </div>
               </div>
@@ -456,7 +463,9 @@ export const HsmMigrationPlanner: React.FC = () => {
 
           {/* Migration Duration Estimate */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h5 className="text-sm font-bold text-foreground mb-2">Migration Duration</h5>
+            <h5 className="text-sm font-bold text-foreground mb-2">
+              Illustrative Migration Duration
+            </h5>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
                 <span className="text-muted-foreground">Firmware Upgrade:</span>{' '}
@@ -481,8 +490,12 @@ export const HsmMigrationPlanner: React.FC = () => {
             <div className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
-                <strong>Critical:</strong> Always take a full backup of each HSM before starting
-                firmware upgrade. Verify backup integrity by restoring to a test HSM if available.
+                <strong>Backup and recovery limits:</strong> Check which keys, configuration and
+                current state the vendor-supported backup actually preserves, and test the
+                documented recovery path with sample keys. Non-exportable and stateful signing keys
+                need their specific supported recovery controls; a backup file alone does not
+                establish safe restoration. Downgrade or rollback may be restricted. This planner
+                neither tests nor guarantees recovery, rollback or continued service.
               </p>
             </div>
           </div>
@@ -601,10 +614,11 @@ export const HsmMigrationPlanner: React.FC = () => {
       {/* Educational Disclaimer */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong> Migration timelines and backup estimates are approximate and based
-          on vendor documentation. Actual times depend on HSM utilization, key count, network
-          bandwidth, and organizational change management processes. Always consult your HSM
-          vendor&apos;s official migration guide before proceeding.
+          <strong>Illustrative planning assumptions:</strong> The timings, backup sizes and fixed
+          key-generation/testing allowances are authored sample inputs, not measurements of a
+          selected product or verified vendor guarantees. Use the exact vendor/version documentation
+          and your own measured configuration to evaluate firmware, backup, service continuity and
+          permitted rollback capabilities. No firmware or backup operation runs in this planner.
         </p>
       </div>
     </div>
