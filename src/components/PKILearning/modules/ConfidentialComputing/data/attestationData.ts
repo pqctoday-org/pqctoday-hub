@@ -238,11 +238,11 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
       {
         id: 'nitro-2',
         order: 2,
-        label: 'Nitro Hypervisor Signs Document',
+        label: 'Hypervisor Returns Signed Document',
         type: 'sign',
         actor: 'platform',
         description:
-          'AWS documents that the Nitro Hypervisor generates the attestation document. It is signed with ECDSA P-384 and carries a certificate and CA bundle that chain to the AWS Nitro Attestation PKI root. It includes the PCR values (PCR0: enclave image file, PCR1: Linux kernel and boot ramfs, PCR2: application).',
+          'AWS documents that the Nitro Hypervisor generates the attestation document, which is signed under the AWS Nitro Attestation PKI (COSE_Sign1 with ECDSA P-384) and carries a certificate and CA bundle that chain to the AWS Nitro Attestation PKI root. It includes the PCR values (PCR0: enclave image file, PCR1: Linux kernel and boot ramfs, PCR2: application).',
         cryptoUsed: ['ECDSA P-384 (document signing)'],
         quantumVulnerable: true,
         pqcReplacement: 'ML-DSA-87',
