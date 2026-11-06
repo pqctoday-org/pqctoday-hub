@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { OPENSSL_LESSONS } from './opensslLessons'
+import { OPENSSL_QUIZZES } from './opensslQuiz'
 import type { OpenSslLearnContext } from './opensslLearnContext'
 
 /** A context that records the commands a lesson runs, without an engine. */
@@ -55,5 +56,24 @@ describe('OpenSSL lessons: ML-DSA certificates', () => {
     expect(command?.b).toMatch(/no digest option/)
     const algo = lesson!.compare?.find((c) => c.label === 'Signature algorithm in the certificate')
     expect(algo).toMatchObject({ a: 'sha256WithRSAEncryption', b: 'ML-DSA-65', same: false })
+  })
+
+  it('does not tell learners the RSA and ML-DSA req commands differ only in the key file', () => {
+    const quiz = OPENSSL_QUIZZES['cert-issuance'] ?? []
+    const q = quiz.find((item) => /stayed the same between the two req commands/.test(item.q))
+    expect(q).toBeDefined()
+    const answer = q?.options[q.answer] ?? ''
+    expect(answer).toMatch(/ML-DSA command names no digest/)
+    expect(answer).not.toMatch(/only the key file differed/)
+    expect(q?.q).not.toMatch(/\b\d{4} B\b/)
+  })
+
+  it('does not hard-code certificate byte counts in the comparison table', () => {
+    const lesson = OPENSSL_LESSONS.find((l) =>
+      l.steps.some((st) => /^req -x509/.test(st.op) && /mldsa/i.test(st.op))
+    )
+    const sizeRow = lesson?.compare?.find((row) => /certificate/i.test(row.label))
+    expect(sizeRow).toBeDefined()
+    expect(`${sizeRow?.a} ${sizeRow?.b}`).not.toMatch(/\b\d{3,5} B\b/)
   })
 })

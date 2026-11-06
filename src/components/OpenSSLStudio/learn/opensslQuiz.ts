@@ -42,14 +42,14 @@ export const OPENSSL_QUIZZES: Record<string, QuizQuestion[]> = {
       why: 'req has two personalities: -new alone builds a PKCS#10 CSR; adding -x509 makes it self-sign a certificate directly. Try req -new alone in the Workbench to see the CSR-only path.',
     },
     {
-      q: 'The RSA-2048 cert measured 1127 B; the ML-DSA-65 cert measured 7529 B. What stayed identical between the two req commands?',
+      q: 'The RSA-2048 certificate was about 1.1 KB and the ML-DSA-65 certificate about 7.5 KB. What stayed the same between the two req commands?',
       options: [
         'Nothing — the commands were completely different',
-        'The command shape itself: req -x509 -new -key <file> -days 365 -sha256 -subj "..." -out <file> — only the key file differed',
+        'The command shape: req -x509 -new -key <file> -days 365 -subj "..." -out <file>. The RSA command also names -sha256; the ML-DSA command names no digest because ML-DSA signs the certificate body directly',
         'The certificate size — they were actually the same',
       ],
       answer: 1,
-      why: "Migration doesn't change the CA-facing workflow — only the key algorithm inside it. That's exactly what this lesson's two identical-shaped req commands demonstrated.",
+      why: "Migration doesn't change the CA-facing workflow — only the key algorithm inside it. The two req commands have the same shape; the one difference is that the RSA command picks a digest (-sha256) and the ML-DSA command does not, because ML-DSA does its own hashing inside the algorithm.",
     },
   ],
   'sign-verify': [

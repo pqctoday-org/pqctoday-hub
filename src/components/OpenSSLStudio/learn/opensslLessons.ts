@@ -168,8 +168,8 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     compare: [
       {
         label: 'Self-signed certificate',
-        a: '1127 B (RSA-2048)',
-        b: '7529 B (ML-DSA-65)',
+        a: 'about 1.1 KB (RSA-2048; exact size in the step output)',
+        b: 'about 7.5 KB (ML-DSA-65; exact size in the step output)',
         same: false,
       },
       {
