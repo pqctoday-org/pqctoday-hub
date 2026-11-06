@@ -232,9 +232,11 @@ export const HospitalMigrationPlanner: React.FC = () => {
   return (
     <div className="space-y-6">
       <p className="text-sm text-foreground/80">
-        Configure the 7 layers of a hospital network architecture to generate a prioritized PQC
-        migration roadmap with compliance milestones and budget estimates. Adjust crypto posture and
-        endpoint counts to see how migration priority and costs change.
+        Explore a seven-layer hospital planning example with sample priority scores, phase groups
+        and illustrative cost estimates. Priority and phase use each layer’s fixed sensitivity,
+        internet exposure and vendor-readiness assumptions. Crypto posture and endpoint selections
+        affect the cost calculation; they do not recalculate priority or phase, demonstrate reduced
+        risk, or confirm vendor support.
       </p>
 
       {/* ── Section 1: Hospital Architecture Configurator ────────────── */}
