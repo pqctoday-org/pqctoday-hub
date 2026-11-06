@@ -187,6 +187,9 @@ function kebab(s: string): string {
  * them into one concept made one framework inherit the cross-walk edges of
  * dozens of unrelated publications. Where two rows really are the same
  * document or a versioned alias of it, the registry row carries an alias.
+ * Scheme-under-umbrella and part-of-series links are recorded as cross-walk
+ * rows of type `scheme_under` and `part_of_series`; they show as edges and
+ * never as identity.
  */
 export function equivalentCanonicals(center: ConceptRegistryRow): string[] {
   const out = new Set<string>()

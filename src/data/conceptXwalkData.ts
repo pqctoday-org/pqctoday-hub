@@ -1,8 +1,24 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { loadLatestCSV } from './csvUtils'
 
+/**
+ * `scheme_under` and `part_of_series` are structural links between two
+ * different documents or schemes, never sameness:
+ * - `scheme_under`: from = a national certification scheme, to = the umbrella
+ *   scheme it operates under (e.g. a national Common Criteria scheme under the
+ *   Common Criteria umbrella).
+ * - `part_of_series`: from = a volume, amendment or companion, to = the main
+ *   document or series it belongs to.
+ * Neither makes two concepts equivalent, and neither carries applicability.
+ */
 export type XwalkRelationshipType =
-  'subset_of' | 'superset_of' | 'equivalent' | 'intersects_with' | 'not_related'
+  | 'subset_of'
+  | 'superset_of'
+  | 'equivalent'
+  | 'intersects_with'
+  | 'scheme_under'
+  | 'part_of_series'
+  | 'not_related'
 
 /**
  * Closed set per NIST IR 8477 §3.2 (trust-engine-explainability.md).
@@ -44,7 +60,7 @@ export interface ConceptXwalkRecord {
   confidenceScore: number
 }
 
-interface RawXwalkRow {
+export interface RawXwalkRow {
   xwalk_id: string
   from_concept: string
   to_concept: string
@@ -70,7 +86,19 @@ const VALID_RELATIONSHIP_TYPES = new Set<string>([
   'superset_of',
   'equivalent',
   'intersects_with',
+  'scheme_under',
+  'part_of_series',
   'not_related',
+])
+
+/**
+ * Relationship types that only say how two different documents or schemes
+ * belong together. They are shown as relationships, but they never merge two
+ * concepts into one and never make one document apply because the other does.
+ */
+export const STRUCTURAL_RELATIONSHIP_TYPES: ReadonlySet<XwalkRelationshipType> = new Set([
+  'scheme_under',
+  'part_of_series',
 ])
 
 const VALID_RATIONALE_TYPES = new Set<string>([
@@ -91,7 +119,7 @@ const modules = import.meta.glob('./concept_xwalks_*.csv', {
   eager: true,
 })
 
-function transformRow(row: RawXwalkRow): ConceptXwalkRecord | null {
+export function transformRow(row: RawXwalkRow): ConceptXwalkRecord | null {
   if (!row.xwalk_id || !row.from_concept || !row.to_concept) return null
   const rowStatus = row.status?.trim().toLowerCase()
   if (rowStatus === 'deprecated' || rowStatus === 'obsolete') return null

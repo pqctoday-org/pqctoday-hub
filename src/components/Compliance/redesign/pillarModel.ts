@@ -212,8 +212,12 @@ function rationaleLabel(rationaleType: string): string {
   return RATIONALE_LABEL[rationaleType] ?? rationaleType.replace(/_/g, ' ')
 }
 
-/** Verb from `framework`'s perspective — subset/superset flip when framework is the `to` side. */
-function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: boolean): string {
+/**
+ * Verb from `framework`'s perspective — subset/superset, scheme/umbrella and
+ * series/member flip when framework is the `to` side. A type this table does
+ * not know reads as the neutral "Relates to".
+ */
+export function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: boolean): string {
   switch (edge.relationshipType) {
     case 'subset_of':
       return frameworkIsFromSide ? 'Subset of' : 'Superset of'
@@ -221,6 +225,10 @@ function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: boolean
       return frameworkIsFromSide ? 'Superset of' : 'Subset of'
     case 'equivalent':
       return 'Equivalent to'
+    case 'scheme_under':
+      return frameworkIsFromSide ? 'National scheme under' : 'Umbrella of'
+    case 'part_of_series':
+      return frameworkIsFromSide ? 'Part of series with' : 'Includes'
     case 'intersects_with':
     default:
       return 'Relates to'

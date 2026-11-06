@@ -38,7 +38,16 @@ function ownCounterparts(frameworkId: string, label: string): Set<string> {
 }
 
 const PILLARS: PillarId[] = ['standardize', 'certify', 'comply']
-const RELATION_VERBS = new Set(['Relates to', 'Subset of', 'Superset of', 'Equivalent to'])
+const RELATION_VERBS = new Set([
+  'Relates to',
+  'Subset of',
+  'Superset of',
+  'Equivalent to',
+  'National scheme under',
+  'Umbrella of',
+  'Part of series with',
+  'Includes',
+])
 
 describe('buildDrawerDetail — publishers and umbrella schemes do not inherit their members relationships', () => {
   for (const id of ['NIST', 'ETSI', 'IETF', 'ANSSI', 'COMMON-CRITERIA']) {

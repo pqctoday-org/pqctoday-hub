@@ -116,6 +116,8 @@ const REL_HEADING: Record<string, { outgoing: string; incoming: string }> = {
   related: { outgoing: 'Related to', incoming: 'Related to' },
   intersects_with: { outgoing: 'Intersects with', incoming: 'Intersects with' },
   equivalent: { outgoing: 'Equivalent to', incoming: 'Equivalent to' },
+  scheme_under: { outgoing: 'National scheme under', incoming: 'Umbrella of' },
+  part_of_series: { outgoing: 'Part of series with', incoming: 'Includes' },
 }
 
 /** The detail-panel heading for a group of connections; an unknown relation is shown as plain words. */
