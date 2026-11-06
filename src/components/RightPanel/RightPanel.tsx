@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
@@ -31,6 +32,10 @@ export const RightPanel: React.FC = () => {
     useRightPanelStore()
   const workshopMode = useWorkshopStore((s) => s.mode)
   const workshopActive = isWorkshopPinning(workshopMode)
+  const belowLg = useIsBelowLgViewport()
+  // Guided desktop tasks use the resource beside this persistent panel.
+  // Other tabs and narrow/full-width panels retain their existing focus lock.
+  const modelessWorkshop = activeTab === 'workshop' && workshopActive && !belowLg
 
   // Close on Escape — disabled while workshop is pinned (running or video).
   // Esc via the shared overlay stack (the panel opens over drawers / pop-ups
@@ -85,7 +90,7 @@ export const RightPanel: React.FC = () => {
       {isOpen && (
         <>
           {/* Right-side panel — slides in from right, no backdrop, 40% width */}
-          <FocusLock returnFocus>
+          <FocusLock disabled={modelessWorkshop} returnFocus>
             <motion.div
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
@@ -95,6 +100,7 @@ export const RightPanel: React.FC = () => {
                 isExpanded ? 'sm:w-[85vw]' : 'sm:w-[40vw]'
               }`}
               role="dialog"
+              aria-modal={modelessWorkshop ? false : undefined}
               aria-label={panelLabel}
               onClick={(e) => e.stopPropagation()}
             >

@@ -753,7 +753,7 @@ export function LibraryViewRedesign({
           />
         </div>
 
-        <div className="min-w-0 flex-1 space-y-4">
+        <div className="@container min-w-0 flex-1 space-y-4">
           <LibraryControlDeck
             search={filterText}
             onSearch={(q) => setParam('q', q, { replace: true })}
@@ -878,7 +878,7 @@ export function LibraryViewRedesign({
               </div>
             </>
           ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 @[32.75rem]:grid-cols-2 @[49.5rem]:grid-cols-3">
               {displayedItems.map((item) => (
                 <LibraryDocumentCard
                   key={item.referenceId}
