@@ -464,7 +464,8 @@ export const EC_OID_SECP256K1 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x
 
 // ── PKCS#11 v3.3 working draft identifiers ──────────────────────────────────
 // v3.3 is an UNPUBLISHED OASIS working draft. These codepoints are marked
-// approved in the TC header (github.com/oasis-tcs/pkcs11, commit 9ef73f9,
+// approved in the committee's identifier database (github.com/oasis-tcs/pkcs11,
+// working/identifier_db/raw_ids.db) and present in its header (commit 9ef73f9,
 // working/headers/pkcs11t.h — line numbers below), but the header still
 // declares Cryptoki 3.2.0 and the chapter text may change. Engines that
 // implement them still report version 3.2.0.

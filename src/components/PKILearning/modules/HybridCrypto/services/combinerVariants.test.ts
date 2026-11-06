@@ -2,8 +2,12 @@
 import { describe, it, expect } from 'vitest'
 import { XWING_LABEL, concatenationOnly, xwingCombiner, xwingPreimage } from './combinerVariants'
 import { compositeKemSet } from '@/wasm/softhsm/compositeParams'
-import { CKP_COMP_KEM_MLKEM768_X25519 } from '@/wasm/softhsm/constants'
-import { HPKE_KEM, kemInfo } from './hpkeService'
+import {
+  CKP_COMP_KEM_MLKEM1024_ECDH_P384,
+  CKP_COMP_KEM_MLKEM768_ECDH_P256,
+  CKP_COMP_KEM_MLKEM768_X25519,
+} from '@/wasm/softhsm/constants'
+import { HPKE_KEM, compositeKemCkp, kemInfo } from './hpkeService'
 
 const hex = (b: Uint8Array) => Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
 const seq = (start: number) => Uint8Array.from({ length: 32 }, (_, i) => start + i)
@@ -19,6 +23,29 @@ describe('combinerVariants', () => {
     expect(compositeKemSet(CKP_COMP_KEM_MLKEM768_X25519)?.labelHex).toBe(hex(XWING_LABEL))
     const hpke = kemInfo(HPKE_KEM.MLKEM768_X25519)
     expect('label' in hpke ? hex(hpke.label) : '').toBe(hex(XWING_LABEL))
+  })
+
+  // The same holds for the P-256 and P-384 hybrids: draft-ietf-lamps-pq-composite-kem-23
+  // section 6 and draft-irtf-cfrg-concrete-hybrid-kems-04 section 4 give the same label
+  // bytes, and the engine's tests show the two compute the same secret
+  // (pqctoday-hsm rust/kat/hpke/COMPOSITE-KEM-EQUIVALENCE.md).
+  it.each([
+    ['MLKEM768-P256', CKP_COMP_KEM_MLKEM768_ECDH_P256, HPKE_KEM.MLKEM768_P256],
+    ['MLKEM1024-P384', CKP_COMP_KEM_MLKEM1024_ECDH_P384, HPKE_KEM.MLKEM1024_P384],
+  ])(
+    'composite %s and the HPKE-PQ KEM share one label, and the workshop maps one to the other',
+    (name, ckp, kem) => {
+      const label = new TextEncoder().encode(name)
+      expect(compositeKemSet(ckp)?.labelHex).toBe(hex(label))
+      const hpke = kemInfo(kem)
+      expect('label' in hpke ? hex(hpke.label) : '').toBe(hex(label))
+      expect(compositeKemCkp(kem)).toBe(ckp)
+    }
+  )
+
+  it('maps no other KEM to a composite set (classical DHKEM and pure ML-KEM have none)', () => {
+    expect(compositeKemCkp(HPKE_KEM.DHKEM_X25519_HKDF_SHA256)).toBeUndefined()
+    expect(compositeKemCkp(HPKE_KEM.MLKEM768)).toBeUndefined()
   })
 
   it('builds the preimage in the draft order: ss_M, ss_X, ct_X, pk_X, label', () => {

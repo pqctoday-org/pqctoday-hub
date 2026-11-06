@@ -331,8 +331,11 @@ export const HybridInCryptoApis: React.FC = () => (
           CKM_COMP_SIG_KEY_PAIR_GEN, CKM_COMP_SIG and CKM_COMP_SIG_EXTERNAL_HASH (one C_Sign call
           for one composite signature from one key object holding both halves). The combiner then
           runs inside the token, as the composite ML-KEM and ML-DSA drafts define it. The OASIS PKCS
-          11 TC approved these identifiers in October 2026; no v3.3 specification has been
-          published, and an X-Wing or HPKE mechanism is still an open discussion.{' '}
+          11 TC approved these identifiers in October 2026, together with identifiers for KMAC and
+          the SHAKE functions; no v3.3 specification has been published. The draft has no HPKE
+          mechanism, only an open request for one. For three combinations (MLKEM768-X25519, which is
+          X-Wing, MLKEM768-P256 and MLKEM1024-P384) the composite KEM computes the same secret as
+          the matching HPKE hybrid KEM, so it can do the key-agreement step of HPKE.{' '}
           <Sources
             sources={[
               { label: 'TC header', refId: 'OASIS-PKCS11-TC-v33-Working-Header' },

@@ -85,7 +85,12 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
             <span className="text-muted-foreground">{label}:</span>
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <code className="text-warning font-mono text-sm break-all">{trimmedValue}</code>
-              <CopyButton text={trimmedValue} label="" className="shrink-0" />
+              <CopyButton
+                text={trimmedValue}
+                label=""
+                ariaLabel={`Copy ${label}`}
+                className="shrink-0"
+              />
             </div>
           </div>
         )
@@ -97,7 +102,12 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
             <span className="text-muted-foreground">{label}:</span>
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <code className="text-primary font-mono text-sm break-all">{trimmedValue}</code>
-              <CopyButton text={trimmedValue} label="" className="shrink-0" />
+              <CopyButton
+                text={trimmedValue}
+                label=""
+                ariaLabel={`Copy ${label}`}
+                className="shrink-0"
+              />
             </div>
           </div>
         )
@@ -109,7 +119,12 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
             <span className="text-muted-foreground">{label}:</span>
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <code className="text-secondary font-mono text-sm break-all">{trimmedValue}</code>
-              <CopyButton text={trimmedValue} label="" className="shrink-0" />
+              <CopyButton
+                text={trimmedValue}
+                label=""
+                ariaLabel={`Copy ${label}`}
+                className="shrink-0"
+              />
             </div>
           </div>
         )
@@ -121,7 +136,12 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
             <span className="text-muted-foreground shrink-0">{label}:</span>
             <div className="flex items-start gap-2 flex-1 min-w-0">
               <code className="text-accent font-mono text-sm break-all">{trimmedValue}</code>
-              <CopyButton text={trimmedValue} label="" className="shrink-0" />
+              <CopyButton
+                text={trimmedValue}
+                label=""
+                ariaLabel={`Copy ${label}`}
+                className="shrink-0"
+              />
             </div>
           </div>
         )

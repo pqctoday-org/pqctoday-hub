@@ -696,7 +696,7 @@ export const CKP_HPKE_KEM_DHKEM_X448_HKDF_SHA512 = 0x0021
 export const CKP_HPKE_KEM_MLKEM768_P256 = 0x0050
 export const CKP_HPKE_KEM_MLKEM1024_P384 = 0x0051
 export const CKP_HPKE_KEM_MLKEM768_X25519 = 0x647a
-// Pure ML-KEM HPKE KEMs (draft-ietf-hpke-pq-04 §3). Private key = the 64-byte
+// Pure ML-KEM HPKE KEMs (draft-ietf-hpke-pq-05 §3). Private key = the 64-byte
 // FIPS 203 seed d ‖ z. Engine support since hsm #310 (eda62b31).
 export const CKP_HPKE_KEM_ML_KEM_512 = 0x0040
 export const CKP_HPKE_KEM_ML_KEM_768 = 0x0041
@@ -705,8 +705,8 @@ export const CKP_HPKE_KEM_ML_KEM_1024 = 0x0042
 export const CKD_HPKE_HKDF_SHA256 = 0x0001
 export const CKD_HPKE_HKDF_SHA384 = 0x0002
 export const CKD_HPKE_HKDF_SHA512 = 0x0003
-// One-stage SHAKE256 KDF (draft-ietf-hpke-pq-04 §5; key schedule per
-// draft-ietf-hpke-hpke-03 LabeledDerive / CombineSecrets_OneStage). Base and
+// One-stage SHAKE256 KDF (draft-ietf-hpke-pq-05 §5; key schedule per
+// draft-ietf-hpke-hpke-06 LabeledDerive / CombineSecrets_OneStage). Base and
 // PSK modes only. Engine support since hsm #310 (eda62b31).
 export const CKD_HPKE_SHAKE256 = 0x0011
 // CK_HPKE_AEAD_TYPE — equal to RFC 9180 §7.3 aead_id.
@@ -1798,9 +1798,14 @@ export const hsm_extractKeyValue = (
 ): Uint8Array => {
   // First call: get length
   const lenTpl = buildTemplate(M, [{ type: CKA_VALUE }])
-  checkRV(M._C_GetAttributeValue(hSession, keyHandle, lenTpl.ptr, 1), 'C_GetAttributeValue(len)')
-  const len = readUlong(M, lenTpl.ptr + 8)
-  freeTemplate(M, lenTpl, 1)
+  let len: number
+  try {
+    checkRV(M._C_GetAttributeValue(hSession, keyHandle, lenTpl.ptr, 1), 'C_GetAttributeValue(len)')
+    len = readUlong(M, lenTpl.ptr + 8)
+  } finally {
+    // freed on the refusal path too: a protected key refuses here by design
+    freeTemplate(M, lenTpl, 1)
+  }
 
   // Second call: get value
   const valPtr = M._malloc(len)
@@ -4149,7 +4154,7 @@ function buildHpkeParams(
  *
  * `seed` imports a seed-format private key instead of generating a random
  * one: CKA_SEED in the private template, 64 bytes (d ‖ z) for the pure ML-KEM
- * suites and 32 bytes for the PQ/T hybrids (draft-ietf-hpke-pq-04 §3/§4). The
+ * suites and 32 bytes for the PQ/T hybrids (draft-ietf-hpke-pq-05 §3/§4). The
  * public key is derived inside the token. This is how a JOSE "AKP" JWK's
  * "priv" value (the seed) enters the HSM. */
 export const hsm_generateHpkeKeyPair = (

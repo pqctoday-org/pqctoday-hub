@@ -29,6 +29,74 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.198.0] - 2026-11-05
+
+Two data-at-rest use cases join the Industry Landscape, thirty-six quiz questions and one Library description now follow the documents they cite, and the HIPAA retention option in the risk assessment is a labelled sample.
+
+### Added
+
+- **Two new use cases in the Industry Landscape** [view:/algorithms] [persona:architect] [persona:ops] [persona:grc] [persona:developer]: "Data-at-rest and full-disk encryption" and "Database and storage-network encryption (TDE, SAN)" now appear under Cross-Industry. Each quotes what the U.S. cybersecurity agency's January 2026 list of post-quantum product categories says about it. The list names product categories, not algorithms, so no algorithms or protocols are listed for them yet.
+
+### Changed
+
+- **The BSI TR-02102-1 Library entry says what the German guideline recommends** [view:/library] [persona:grc] [persona:architect] [persona:researcher]: post-quantum key exchange and ML-DSA only in hybrid form, SLH-DSA and stateful hash-based signatures also recommended, classic key agreement alone only until the end of 2031, and BSI's 29 September 2026 advice against new developments with Classic McEliece. The old text read as if every listed algorithm were recommended on its own.
+- **The risk assessment's HIPAA retention option is now a sample assumption** [view:/assess] [persona:grc] [persona:executive]: "6 years (HIPAA minimum)" became "6 years (sample assumption)", and its description now says the HIPAA Privacy Rule sets no medical-record retention period, so state law and your own requirements decide. The option still gives the same estimate, and saved answers keep working.
+- **Source labels on 15 Industry Landscape rows were checked against the cited documents** [view:/algorithms] [persona:researcher] [persona:architect]: twelve rows changed label because the cited document does or does not name the row's algorithms, and three rows that list no algorithms now show no label.
+
+### Fixed
+
+- **Thirty-six quiz questions now follow the documents they cite** [view:/learn/quiz] [persona:researcher] [persona:architect] [persona:developer] [persona:grc]: re-encryption no longer claims to protect copies an attacker already holds; the questions on 5G identity concealment, the TLS hybrid key exchange, CMS and S/MIME, X.509 and composite signatures match the RFCs and 3GPP text; the Falcon and ML-KEM-1024 questions match the standards' own text; database, identity and Azure SQL questions that stated vendor behaviour nobody documented are product-neutral or follow the vendor's documentation; the government question cites the June 2026 executive order and OMB memorandum dates; and the Merkle tree certificate and Sigstore questions follow the current draft and documentation. 34 of the 36 now name a source, and question ids and the position of each correct answer are unchanged.
+
+## [4.197.0] - 2026-11-04
+
+329 more Library documents now have a Document Analysis summary, so their authors, status, main topic and standards bodies show in the Library and come up in search.
+
+### Added
+
+- **329 more Library entries have a Document Analysis summary** [view:/library] [persona:researcher] [persona:grc] [persona:architect] [persona:developer]: each entry now shows who wrote the document, its status, what it is mainly about and which standards bodies and frameworks it names. The same text feeds the site's search. Entries that sit behind a paywall still have none.
+
+### Fixed
+
+- **Seven standards entries now open their saved catalogue page** [view:/library] [persona:researcher] [persona:grc]: the Chinese GM/T 0108-2021 standard, two IEEE standards and four ARINC standards named no saved page; now they link one.
+- **The Go 1.24, 1.26 and 1.27 release notes were saved again** [view:/library] [persona:developer]: the earlier copies held no readable text.
+
+## [4.196.0] - 2026-11-04
+
+Two Algorithms page rows now cite the current HPKE post-quantum draft, and the revision history links 49 earlier changes to the releases that shipped them.
+
+### Fixed
+
+- **The revision history links 49 earlier changes to their releases** [view:/changelog] [persona:grc] [persona:researcher]: entries from releases 4.186 to 4.195 showed no release behind them. Each now names the release that shipped it.
+
+### Data
+
+- **The HPKE post-quantum rows cite draft revision 05** [view:/algorithms] [persona:developer] [persona:researcher] [persona:architect]: the algorithm reference and the algorithm transitions list named revision 03 and an expiry of May 2026. Both now name `draft-ietf-hpke-pq-05`, which expires in January 2027.
+
+### Changed
+
+- **The PKCS#11 v3.3 lessons record the committee's newest draft text** [view:/playground] [persona:developer] [persona:researcher]: the draft moved on again on 4 November. The new text adds single-step functions, a creation-timestamp attribute and two IKEv2 mechanisms; none of them changes a mechanism or key type the lessons teach.
+
+## [4.195.0] - 2026-11-04
+
+The HPKE workshop now puts the PKCS#11 v3.3 draft's one-call composite key agreement beside the standard way and our own single-call proposal, composite certificates can be signed in one call, and the v3.3 lessons say more plainly what is standard, what is only a draft, and what our engines do not do.
+
+### Added
+
+- **The HPKE workshop shows three ways to agree a key, side by side** [view:/learn] [persona:developer] [persona:architect] [persona:researcher] [persona:ops]: the standard PKCS#11 v3.2 way built from ordinary pieces, our single-call proposal (labelled as part of no standard, with a link to the open request for one), and the PKCS#11 v3.3 draft's one-call composite KEM for the three hybrid suites. Pure ML-KEM in three sizes joins the standard way, and every sequence now runs through to a decrypted message in the browser.
+- **Composite certificates can be signed in one call** [view:/playground] [persona:developer] [persona:architect] [persona:ops]: the certificate demo offers "Before 3.3" (the browser builds the signed message and the HSM signs twice) and "After 3.3" (one combined key and one signing call from the v3.3 draft). Both make a certificate that verifies, and an engine without the draft's mechanism says "Not in this engine yet" instead of failing.
+- **The KMAC test section can run the draft's own KMAC numbers** [view:/playground] [persona:developer] [persona:researcher]: when an engine offers them, the same NIST vectors also run under the PKCS#11 v3.3 draft's numbers; when it does not, one log line says why no draft rows appear.
+
+### Changed
+
+- **The PKCS#11 v3.3 lessons name the older way beside the draft's** [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: the composite signing and composite KEM lessons show what a program does before 3.3 next to the draft's single call. They say plainly that the draft has no HPKE mechanism, why our engines do not implement the draft's SHAKE mechanisms or KMAC's extendable-output mode, and that the external-µ mechanism refuses a context instead of ignoring it.
+- **The workshop's protected-key check counts only what it measured** [view:/learn] [persona:developer] [persona:ops] [persona:researcher]: a closed session or a bad handle no longer shows up as "key protected". One refused read is now described as a sample, and the page explains what one refused read does and does not show.
+- **The published HPKE test vectors carry the right draft revision** [view:/learn] [persona:researcher] [persona:developer]: they belong to draft -05, not -04, and the labels now say so.
+
+### Fixed
+
+- **The HPKE workshop fits phone and narrow screens** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: the three sequence buttons wrap, and the KEM, KDF, AEAD and mode controls no longer run off the screen or clip their labels. Choosing a different KEM now starts the run again instead of leaving it on a later step.
+- **Copy buttons in workshop output have names for screen readers** [view:/learn] [persona:developer] [persona:ops]: each says what it copies, for example "Copy enc", and the PKCS#11 call log's step headers are easier to read.
+
 ## [4.194.0] - 2026-11-01
 
 Four new products and three new vendor announcements join the Migrate pages, twenty catalogue products are re-read against their vendors' pages, five more lesson statements and three data rows follow their documents, and the Hybrid Certificates workshop explains why OpenSSL cannot read composite certificates.

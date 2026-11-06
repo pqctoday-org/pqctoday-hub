@@ -10,7 +10,8 @@
  *  - CKP_* names, values and header lines: OASIS PKCS 11 TC working tree,
  *    github.com/oasis-tcs/pkcs11 commit 9ef73f9, working/headers/pkcs11t.h
  *    (sha256 765a28ac…f70e). PKCS#11 v3.3 is an unpublished working draft;
- *    these codepoints are marked approved there.
+ *    these codepoints are present there, and marked `approved` in
+ *    working/identifier_db/raw_ids.db (the header itself carries no marker).
  *  - OIDs, labels, components, pre-hash and sizes:
  *    draft-ietf-lamps-pq-composite-sigs-19 (§6, Appendix A; sha256
  *    b4ee0441…ec83) and draft-ietf-lamps-pq-composite-kem-23 (§6, Appendix A

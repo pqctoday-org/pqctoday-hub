@@ -834,8 +834,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <p className="text-xs text-muted-foreground">
               <strong className="text-foreground">PKCS#11 v3.2 has no CKM_HPKE mechanism</strong> —
-              checked against the canonical v3.2 header, no HPKE entry exists at all. A real HSM
-              deployment composes it from mechanisms the spec does define:{' '}
+              checked against the canonical v3.2 header, no HPKE entry exists at all, and the v3.3
+              working draft has none either (the standards committee has only an open request). A
+              real HSM deployment composes it from mechanisms the spec does define:{' '}
               <InlineTooltip term="CKM_ECDH1_DERIVE">CKM_ECDH1_DERIVE</InlineTooltip> /{' '}
               <InlineTooltip term="CKM_ML_KEM">CKM_ML_KEM</InlineTooltip> for the KEM leg,{' '}
               <InlineTooltip term="HKDF">CKM_HKDF_DERIVE</InlineTooltip> plus HMAC signing for

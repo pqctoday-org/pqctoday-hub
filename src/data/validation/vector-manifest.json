@@ -18810,19 +18810,19 @@
     {
       "id": "hpke-pq-04-test-vectors",
       "path": "src/data/acvp/hpke-pq-04-test-vectors.json",
-      "sha256": "a14a415f3730b60c08686f1e7c337089af6649b1baac8e2b9d5be324cdd82823",
+      "sha256": "350ab20b43d6175da607ca0735a70e98bb73da5798d789c5b6d86dc2f72e31bc",
       "status": "quarantined",
       "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active.",
       "evidenceClass": "published-standard-kat",
       "source": {
         "kind": "published-document",
         "documentStatus": "internet-draft",
-        "citation": "draft-ietf-hpke-pq-04 Appendix A test vectors (the hpkewg/hpke-pq repository's test-vectors.json) — an Internet-Draft (work in progress), not an RFC",
+        "citation": "draft-ietf-hpke-pq-05 Appendix A test vectors (the hpkewg/hpke-pq repository's test-vectors.json) — an Internet-Draft (work in progress), not an RFC",
         "url": "https://raw.githubusercontent.com/hpkewg/hpke-pq/6433c8fce0b8b749dfc86c1095081a88698ccfab/test-vectors.json",
-        "revision": "draft-ietf-hpke-pq-04",
+        "revision": "draft-ietf-hpke-pq-05",
         "verification": {
           "date": "2026-10-01",
-          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py from the hpkewg/hpke-pq repository at commit 6433c8fce0b8b749dfc86c1095081a88698ccfab (the generator behind draft-ietf-hpke-pq-04 Appendix A). Byte-identical to pqctoday-hsm rust/kat/hpke/hpke-pq-test-vectors.json (rust/kat/hpke/PROVENANCE.md). Before any engine code existed, an independent Node reference model (noble ML-KEM, hybrids and SHAKE256; not the hsm engine, not the `hpke` package) reproduced every in-scope value.",
+          "method": "Fetched 2026-10-01 from the hpkewg/hpke-pq repository at commit 6433c8fce0b8b749dfc86c1095081a88698ccfab (the generator behind draft-ietf-hpke-pq-05 Appendix A). Byte-identical to pqctoday-hsm rust/kat/hpke/hpke-pq-test-vectors.json (rust/kat/hpke/PROVENANCE.md). Before any engine code existed, an independent Node reference model (noble ML-KEM, hybrids and SHAKE256; not the hsm engine, not the `hpke` package) reproduced every in-scope value.",
           "result": "match",
           "evidence": [
             {
@@ -18849,7 +18849,7 @@
           "pointer": "/vectors/0",
           "algorithm": {
             "name": "HPKE ML-KEM-512 / HKDF-SHA256 / AES-128-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "encapsulation",
           "parameters": {
@@ -18861,7 +18861,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 0 (kem 0x0040, kdf 0x0001, aead 0x0001)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 0 (kem 0x0040, kdf 0x0001, aead 0x0001)"
           },
           "lineage": ["hpke-pq-04-test-vectors-1"]
         },
@@ -18870,7 +18870,7 @@
           "pointer": "/vectors/1",
           "algorithm": {
             "name": "HPKE ML-KEM-768 / HKDF-SHA256 / AES-128-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "encapsulation",
           "parameters": {
@@ -18882,7 +18882,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 1 (kem 0x0041, kdf 0x0001, aead 0x0001)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 1 (kem 0x0041, kdf 0x0001, aead 0x0001)"
           },
           "lineage": ["hpke-pq-04-test-vectors-1"]
         },
@@ -18891,7 +18891,7 @@
           "pointer": "/vectors/2",
           "algorithm": {
             "name": "HPKE ML-KEM-1024 / HKDF-SHA384 / AES-256-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "encapsulation",
           "parameters": {
@@ -18903,7 +18903,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 2 (kem 0x0042, kdf 0x0002, aead 0x0002)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 2 (kem 0x0042, kdf 0x0002, aead 0x0002)"
           },
           "lineage": ["hpke-pq-04-test-vectors-1"]
         },
@@ -18912,7 +18912,7 @@
           "pointer": "/vectors/3",
           "algorithm": {
             "name": "HPKE MLKEM768-P256 / HKDF-SHA256 / AES-128-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "encapsulation",
           "parameters": {
@@ -18924,7 +18924,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 3 (kem 0x0050, kdf 0x0001, aead 0x0001)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 3 (kem 0x0050, kdf 0x0001, aead 0x0001)"
           },
           "lineage": ["hpke-pq-04-test-vectors-1"]
         },
@@ -18933,7 +18933,7 @@
           "pointer": "/vectors/4",
           "algorithm": {
             "name": "HPKE MLKEM768-X25519 / HKDF-SHA256 / ChaCha20Poly1305",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "encapsulation",
           "parameters": {
@@ -18945,7 +18945,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 4 (kem 0x647a, kdf 0x0001, aead 0x0003)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 4 (kem 0x647a, kdf 0x0001, aead 0x0003)"
           },
           "lineage": ["hpke-pq-04-test-vectors-1"]
         },
@@ -18954,7 +18954,7 @@
           "pointer": "/vectors/5",
           "algorithm": {
             "name": "HPKE MLKEM1024-P384 / HKDF-SHA384 / AES-256-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "encapsulation",
           "parameters": {
@@ -18966,7 +18966,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 5 (kem 0x0051, kdf 0x0002, aead 0x0002)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 5 (kem 0x0051, kdf 0x0002, aead 0x0002)"
           },
           "lineage": ["hpke-pq-04-test-vectors-1"]
         },
@@ -18975,7 +18975,7 @@
           "pointer": "/vectors/6",
           "algorithm": {
             "name": "HPKE DHKEM(P-256, HKDF-SHA256) / SHAKE128 / AES-128-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "not-executed",
           "parameters": {
@@ -18987,7 +18987,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 6 (kem 0x0010, kdf 0x0010, aead 0x0001)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 6 (kem 0x0010, kdf 0x0010, aead 0x0001)"
           },
           "lineage": ["hpke-pq-04-test-vectors-2"]
         },
@@ -18996,7 +18996,7 @@
           "pointer": "/vectors/7",
           "algorithm": {
             "name": "HPKE DHKEM(P-384, HKDF-SHA384) / SHAKE256 / AES-256-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "not-executed",
           "parameters": {
@@ -19008,7 +19008,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 7 (kem 0x0011, kdf 0x0011, aead 0x0002)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 7 (kem 0x0011, kdf 0x0011, aead 0x0002)"
           },
           "lineage": ["hpke-pq-04-test-vectors-2"]
         },
@@ -19017,7 +19017,7 @@
           "pointer": "/vectors/8",
           "algorithm": {
             "name": "HPKE DHKEM(X25519, HKDF-SHA256) / TurboSHAKE128 / ChaCha20Poly1305",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "not-executed",
           "parameters": {
@@ -19029,7 +19029,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 8 (kem 0x0020, kdf 0x0012, aead 0x0003)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 8 (kem 0x0020, kdf 0x0012, aead 0x0003)"
           },
           "lineage": ["hpke-pq-04-test-vectors-2"]
         },
@@ -19038,7 +19038,7 @@
           "pointer": "/vectors/9",
           "algorithm": {
             "name": "HPKE DHKEM(X448, HKDF-SHA512) / TurboSHAKE256 / ChaCha20Poly1305",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "not-executed",
           "parameters": {
@@ -19050,7 +19050,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 9 (kem 0x0021, kdf 0x0013, aead 0x0003)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 9 (kem 0x0021, kdf 0x0013, aead 0x0003)"
           },
           "lineage": ["hpke-pq-04-test-vectors-2"]
         },
@@ -19059,7 +19059,7 @@
           "pointer": "/vectors/10",
           "algorithm": {
             "name": "HPKE MLKEM768-P256 / SHAKE128 / AES-256-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "not-executed",
           "parameters": {
@@ -19071,7 +19071,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 10 (kem 0x0050, kdf 0x0010, aead 0x0002)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 10 (kem 0x0050, kdf 0x0010, aead 0x0002)"
           },
           "lineage": ["hpke-pq-04-test-vectors-2"]
         },
@@ -19080,7 +19080,7 @@
           "pointer": "/vectors/11",
           "algorithm": {
             "name": "HPKE MLKEM768-X25519 / SHAKE256 / ChaCha20Poly1305",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "encapsulation",
           "parameters": {
@@ -19092,7 +19092,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 11 (kem 0x647a, kdf 0x0011, aead 0x0003)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 11 (kem 0x647a, kdf 0x0011, aead 0x0003)"
           },
           "lineage": ["hpke-pq-04-test-vectors-1"]
         },
@@ -19101,7 +19101,7 @@
           "pointer": "/vectors/12",
           "algorithm": {
             "name": "HPKE ML-KEM-1024 / TurboSHAKE256 / AES-128-GCM",
-            "revision": "draft-ietf-hpke-pq-04"
+            "revision": "draft-ietf-hpke-pq-05"
           },
           "operation": "not-executed",
           "parameters": {
@@ -19113,7 +19113,7 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 12 (kem 0x0042, kdf 0x0013, aead 0x0001)"
+            "label": "draft-ietf-hpke-pq-05 Appendix A test vector 12 (kem 0x0042, kdf 0x0013, aead 0x0001)"
           },
           "lineage": ["hpke-pq-04-test-vectors-2"]
         }
@@ -19169,7 +19169,7 @@
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "Added 2026-10-01 with the CKM_HPKE SHAKE256 / pure ML-KEM / seed-key engine work (pqctoday-hsm #310) and the in-token JWE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard."
+      "notes": "Added 2026-10-01 with the CKM_HPKE SHAKE256 / pure ML-KEM / seed-key engine work (pqctoday-hsm #310) and the in-token JWE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard. The id and file name still read 04 because they were chosen before the revision label was corrected; the vectors are those of draft-ietf-hpke-pq-05 (all 13 appear in its text, none in -04)."
     },
     {
       "id": "cfrg-concrete-hybrid-kems-test-vectors",

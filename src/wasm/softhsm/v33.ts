@@ -5,8 +5,9 @@
  * external mu, and CKA_KEYS_REMAINING.
  *
  * v3.3 is an UNPUBLISHED OASIS working draft. Its codepoints are approved in
- * the TC header, the chapter text may still change, and an engine that
- * implements them still reports Cryptoki 3.2.0. Nothing here assumes the
+ * the committee's identifier database (working/identifier_db/raw_ids.db, status
+ * `approved`) and present in its draft header; the chapter text may still change,
+ * and an engine that implements them still reports Cryptoki 3.2.0. Nothing here assumes the
  * loaded engine has them: every caller asks `hsm_detectV33Support` first
  * (C_GetMechanismList / C_GetMechanismInfo) and shows "not in this engine
  * yet" when a mechanism is missing.
@@ -32,6 +33,7 @@ import {
   CKA_CLASS,
   CKA_DECAPSULATE,
   CKA_ENCAPSULATE,
+  CKA_DERIVE,
   CKA_EXTRACTABLE,
   CKA_KEY_TYPE,
   CKA_PARAMETER_SET,
@@ -60,6 +62,7 @@ import {
   CKM_ML_DSA_EXTERNAL_MU_GEN,
   CKO_PRIVATE_KEY,
   CKO_PUBLIC_KEY,
+  CKK_GENERIC_SECRET,
   CKO_SECRET_KEY,
 } from './constants'
 import { allocUlong, buildTemplate, checkRV, freeTemplate, readUlong, writeUlong } from './helpers'
@@ -81,7 +84,7 @@ export {
 
 /** The one sentence every v3.3 surface shows next to its results. */
 export const V33_DRAFT_NOTE =
-  'PKCS#11 v3.3 is an unpublished OASIS working draft. Its composite, external-mu and CKA_KEYS_REMAINING codepoints are approved in the TC header, but the text may still change, and an engine that implements them still reports Cryptoki 3.2.0.'
+  'PKCS#11 v3.3 is an unpublished OASIS working draft. The committee has approved the composite, external-mu, KMAC and SHAKE identifiers in its identifier database (they are also in its draft header); CKA_KEYS_REMAINING is a rename of the v3.2 attribute. The text may still change, and an engine that implements them still reports Cryptoki 3.2.0.'
 
 /** Shown when the loaded engine does not advertise a v3.3 mechanism. */
 export const NOT_IN_ENGINE_YET = 'not in this engine yet'
@@ -525,12 +528,26 @@ export const splitCompositePublic = (
 
 // ── Composite ML-KEM ─────────────────────────────────────────────────────────
 
-const secretTemplate = (): AttrDef[] => [
-  { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
-  { type: CKA_VALUE_LEN, ulongVal: 32 },
-  { type: CKA_SENSITIVE, boolVal: false },
-  { type: CKA_EXTRACTABLE, boolVal: true },
-]
+const secretTemplate = (protectedSecret = false): AttrDef[] =>
+  protectedSecret
+    ? // A secret that never leaves the token and can feed further derivation
+      // (the HPKE workshop passes it on as an HKDF salt key). The lessons keep
+      // the readable default because they show the bytes.
+      [
+        { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+        { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+        { type: CKA_TOKEN, boolVal: false },
+        { type: CKA_VALUE_LEN, ulongVal: 32 },
+        { type: CKA_SENSITIVE, boolVal: true },
+        { type: CKA_EXTRACTABLE, boolVal: false },
+        { type: CKA_DERIVE, boolVal: true },
+      ]
+    : [
+        { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+        { type: CKA_VALUE_LEN, ulongVal: 32 },
+        { type: CKA_SENSITIVE, boolVal: false },
+        { type: CKA_EXTRACTABLE, boolVal: true },
+      ]
 
 /** C_EncapsulateKey(CKM_COMP_KEM) — size query, then encapsulate. `param`
  * exists only so the checks can show that a parameter is refused. */
@@ -538,10 +555,10 @@ export const hsm_compositeEncapsulateRv = (
   M: SoftHSMModule,
   hSession: number,
   pubHandle: number,
-  opts: { param?: Uint8Array } = {}
+  opts: { param?: Uint8Array; protectedSecret?: boolean } = {}
 ): { rv: number; ciphertext: Uint8Array | null; secretHandle: number } => {
   const { mech, frees } = mechWith(M, CKM_COMP_KEM, opts.param ?? null)
-  const st = secretTemplate()
+  const st = secretTemplate(opts.protectedSecret)
   const tpl = buildTemplate(M, st)
   const lenP = allocUlong(M)
   const hP = allocUlong(M)
@@ -571,9 +588,10 @@ export const hsm_compositeEncapsulateRv = (
 export const hsm_compositeEncapsulate = (
   M: SoftHSMModule,
   hSession: number,
-  pubHandle: number
+  pubHandle: number,
+  opts: { protectedSecret?: boolean } = {}
 ): { ciphertext: Uint8Array; secretHandle: number } => {
-  const r = hsm_compositeEncapsulateRv(M, hSession, pubHandle)
+  const r = hsm_compositeEncapsulateRv(M, hSession, pubHandle, opts)
   checkRV(r.rv, 'C_EncapsulateKey(COMP_KEM)')
   return { ciphertext: r.ciphertext!, secretHandle: r.secretHandle }
 }
@@ -583,10 +601,10 @@ export const hsm_compositeDecapsulateRv = (
   hSession: number,
   privHandle: number,
   ciphertext: Uint8Array,
-  opts: { param?: Uint8Array; mechanism?: number } = {}
+  opts: { param?: Uint8Array; mechanism?: number; protectedSecret?: boolean } = {}
 ): { rv: number; secretHandle: number } => {
   const { mech, frees } = mechWith(M, opts.mechanism ?? CKM_COMP_KEM, opts.param ?? null)
-  const st = secretTemplate()
+  const st = secretTemplate(opts.protectedSecret)
   const tpl = buildTemplate(M, st)
   const ctP = putBytes(M, ciphertext)
   const hP = allocUlong(M)
@@ -615,9 +633,10 @@ export const hsm_compositeDecapsulate = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  ciphertext: Uint8Array
+  ciphertext: Uint8Array,
+  opts: { protectedSecret?: boolean } = {}
 ): number => {
-  const r = hsm_compositeDecapsulateRv(M, hSession, privHandle, ciphertext)
+  const r = hsm_compositeDecapsulateRv(M, hSession, privHandle, ciphertext, opts)
   checkRV(r.rv, 'C_DecapsulateKey(COMP_KEM)')
   return r.secretHandle
 }

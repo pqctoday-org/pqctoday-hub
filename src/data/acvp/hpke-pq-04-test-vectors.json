@@ -1,6 +1,6 @@
 {
-  "$schema": "Published HPKE test vectors of draft-ietf-hpke-pq-04 Appendix A, as generated in the hpkewg/hpke-pq repository at the pinned commit. The upstream file is a bare JSON array; it is carried here unchanged under /vectors (every vector object and value identical), with these descriptive fields added so the file can be registered in the vector manifest. Base mode only; encryption is replayed deterministically through the test-only forced-randomness hook.",
-  "spec": "draft-ietf-hpke-pq-04",
+  "$schema": "Published HPKE test vectors of draft-ietf-hpke-pq-05 Appendix A, as generated in the hpkewg/hpke-pq repository at the pinned commit. The upstream file is a bare JSON array; it is carried here unchanged under /vectors (every vector object and value identical), with these descriptive fields added so the file can be registered in the vector manifest. Base mode only; encryption is replayed deterministically through the test-only forced-randomness hook. The file name and the manifest id still read 04: they were chosen before the revision label was corrected and are kept as stable keys. The vectors are those of draft-ietf-hpke-pq-05 (published 6 July 2026): all 13 appear in its text and none appear in -04.",
+  "spec": "draft-ietf-hpke-pq-05",
   "upstream_vectors_url": "https://raw.githubusercontent.com/hpkewg/hpke-pq/6433c8fce0b8b749dfc86c1095081a88698ccfab/test-vectors.json",
   "upstream_vectors_sha256": "35c59f4a0132e5631e50ac039d8ca3a72e99f5e92dfd94d45338d6ae243f613c",
   "retrieved_at": "2026-10-01",

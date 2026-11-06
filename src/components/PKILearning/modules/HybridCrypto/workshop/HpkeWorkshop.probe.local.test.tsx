@@ -17,7 +17,11 @@ vi.mock('@/hooks/useHSM', () => ({
     isReady: true,
     moduleRef: { current: {} },
     hSessionRef: { current: 1 },
+    engine: 'rust',
+    slotRef: { current: 0 },
     addStepLog: vi.fn(),
+    registerKey: vi.fn(),
+    removeKey: vi.fn(),
     clearLog: vi.fn(),
     clearKeys: vi.fn(),
     keys: [],
@@ -45,7 +49,7 @@ vi.mock('@/components/shared/HsmKeyInspector', () => ({ HsmKeyInspector: () => n
 beforeEach(() => {
   vi.clearAllMocks()
 })
-describe('HPKE probe controls dependent wizard steps', () => {
+describe('HPKE probe controls dependent wizard steps (composed hybrid sequence)', () => {
   it('allows Next for the measured expected refusal', async () => {
     sample.read.mockImplementation(() => {
       throw new Pkcs11Error(0x11, 'C_GetAttributeValue(len)')
