@@ -754,13 +754,13 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               model: 'BYOK',
               root: 'You generate, provider stores',
               migration:
-                'You control generation and can move to ML-KEM wrapping early, but the provider still controls the HSM boundary and its FIPS posture.',
+                'You control generation and keep the original key material, but the import path is whatever the service supports: AWS KMS documents RSA wrapping key specs for import and does not import ML-KEM or ML-DSA key material. The provider still controls the HSM boundary and its FIPS posture.',
             },
             {
               model: 'HYOK / external key store',
-              root: 'You, entirely',
+              root: 'You hold the external key-encryption key (KEK)',
               migration:
-                'Full control of the migration and full operational burden. The provider never holds usable key material.',
+                'You control where that KEK lives and how it migrates, and you carry the operational burden. External custody does not take the provider out of the data path: a plaintext data key still reaches whoever encrypts your data, your application or the cloud service, and some AWS services briefly cache data keys, so revoking the external key does not stop every operation at once. In AWS KMS an external key store supports only symmetric encryption keys and the service adds its own encryption layer under yours, so it offers no ML-KEM path. Other services differ in import, wrapping and caching, so check each service\u2019s boundary before assuming a PQC option.',
             },
           ].map((m) => (
             <div key={m.model} className="p-4 rounded-lg bg-muted/50 border border-border">

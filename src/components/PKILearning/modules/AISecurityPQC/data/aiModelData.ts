@@ -50,10 +50,22 @@ export const MODEL_SIZE_PROFILES: ModelSizeProfile[] = [
 
 // ── Key Wrapping Overhead ─────────────────────────────────────────────────
 
+/**
+ * Bytes stored per wrapped data-encryption key (DEK), by design. The sizes model one explicit
+ * choice: an independent 32-byte DEK wrapped for the recipient.
+ * - RSA-OAEP: the RSA ciphertext is the wrapped DEK (256 B for RSA-2048).
+ * - ML-KEM: a KEM transports no DEK by itself. The model stores the KEM ciphertext (FIPS 203
+ *   Table 3: 1,088 B for ML-KEM-768, 1,568 B for ML-KEM-1024) plus the DEK wrapped with AES-KW
+ *   under a key derived from the KEM shared secret (RFC 3394: 32 B + 8 B = 40 B).
+ * - Hybrid: adds the 32 B X25519 public value the recipient needs.
+ * Deriving the DEK directly from the KEM shared secret would store only the KEM ciphertext, but
+ * the DEK would then be that shared secret rather than a key chosen independently.
+ * Operation times are illustrative.
+ */
 export const KEY_WRAPPING_OVERHEADS: ProtectionOverhead[] = [
   {
     algorithmId: 'rsa-2048',
-    algorithmLabel: 'RSA-2048 OAEP',
+    algorithmLabel: 'RSA-2048 OAEP (wrapped DEK)',
     keyOrSignatureSize: 256,
     operationTimeMs: 0.5,
     quantumSafe: false,
@@ -61,24 +73,24 @@ export const KEY_WRAPPING_OVERHEADS: ProtectionOverhead[] = [
   },
   {
     algorithmId: 'ml-kem-768',
-    algorithmLabel: 'ML-KEM-768',
-    keyOrSignatureSize: 1088,
+    algorithmLabel: 'ML-KEM-768 (KEM ciphertext 1,088 B + AES-KW wrapped DEK 40 B)',
+    keyOrSignatureSize: 1128,
     operationTimeMs: 0.1,
     quantumSafe: true,
     nistLevel: 3,
   },
   {
     algorithmId: 'ml-kem-1024',
-    algorithmLabel: 'ML-KEM-1024',
-    keyOrSignatureSize: 1568,
+    algorithmLabel: 'ML-KEM-1024 (KEM ciphertext 1,568 B + AES-KW wrapped DEK 40 B)',
+    keyOrSignatureSize: 1608,
     operationTimeMs: 0.15,
     quantumSafe: true,
     nistLevel: 5,
   },
   {
     algorithmId: 'hybrid-ml-kem-x25519',
-    algorithmLabel: 'Hybrid ML-KEM-768 + X25519',
-    keyOrSignatureSize: 1120,
+    algorithmLabel: 'Hybrid ML-KEM-768 + X25519 (1,088 B + 32 B + AES-KW wrapped DEK 40 B)',
+    keyOrSignatureSize: 1160,
     operationTimeMs: 0.12,
     quantumSafe: true,
     nistLevel: 3,

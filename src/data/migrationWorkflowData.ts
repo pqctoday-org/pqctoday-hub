@@ -44,7 +44,16 @@ export const MIGRATION_REFERENCES: MigrationReference[] = [
     name: 'CNSA 2.0',
     organization: 'NSA',
     url: 'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF',
-    description: 'Commercial National Security Algorithm Suite 2.0 with migration timelines',
+    description:
+      'Commercial National Security Algorithm Suite 2.0 (September 2022 advisory; the equipment-by-equipment dates in it are earlier planning context, see the CNSA 2.0 FAQ for the CNSSP 15 dates)',
+    type: 'Government',
+  },
+  {
+    name: 'CNSA 2.0 FAQ',
+    organization: 'NSA',
+    url: 'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF',
+    description:
+      'CNSSP 15 dates for national security systems: new acquisitions from 1 January 2027, unsupported equipment phased out by 31 December 2030, CNSA 2.0 mandated by 31 December 2031 (version 2.2, October 2026)',
     type: 'Government',
   },
   {
@@ -142,7 +151,7 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
       {
         title: 'Map regulatory compliance deadlines',
         description:
-          'Align migration with NSA CNSA 2.0 (2027-2035), PCI DSS v4.0, GDPR, and sector-specific mandates.',
+          'Align migration with the mandates that apply to you, for example NSA CNSA 2.0 for national security systems only (CNSSP 15 dates of 2027, 2030 and 2031), PCI DSS v4.0, GDPR, and sector-specific mandates.',
       },
       {
         title: 'Create migration priority matrix',
@@ -207,11 +216,14 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
     frameworks: [
       { source: 'NIST IR 8547', mapping: 'Preparation' },
       { source: 'CISA', mapping: 'Vendor Engagement' },
-      { source: 'NSA CNSA 2.0', mapping: '2025 code signing acquisitions' },
+      {
+        source: 'NSA CNSA 2.0',
+        mapping: 'NSS only: CNSA 2.0 required in new acquisitions from 1 Jan 2027 (CNSSP 15)',
+      },
     ],
     relevantSoftwareCategories: ['CSC-001', 'CSC-016', 'CSC-002'],
     nsaTimeline:
-      '2025: Prefer CNSA 2.0 for firmware signing & web servers; 2026: Prefer for networking (VPN/routers)',
+      'National security systems only (CNSSP 15, per NSA CNSA 2.0 FAQ v2.2): CNSA 2.0 algorithms are required in all new NSS acquisitions from 1 January 2027',
     estimatedDuration: '2-4 months',
   },
   {
@@ -296,12 +308,15 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
     ],
     frameworks: [
       { source: 'NIST IR 8547', mapping: 'Hybrid deployment' },
-      { source: 'NSA CNSA 2.0', mapping: '2027-2030 prefer/exclusive window (by equipment type)' },
+      {
+        source: 'NSA CNSA 2.0',
+        mapping: 'NSS only: new deployments expected to comply from 1 Jan 2027 (CNSSP 15)',
+      },
       { source: 'ETSI TR 103 619', mapping: 'Implementation (deployment)' },
     ],
     relevantSoftwareCategories: ['CSC-004', 'CSC-009', 'CSC-017', 'CSC-003'],
     nsaTimeline:
-      '2027: Prefer CNSA 2.0 for operating systems; 2030: Exclusive for networking & firmware signing',
+      'National security systems only: from 1 January 2027 NSA expects new deployments to comply with CNSA 2.0. If no compliant product exists, an updateable product may be accepted on a vendor commitment and a deployment plan that meets the 2030 deadline',
     estimatedDuration: '6-12 months',
   },
   {
@@ -342,12 +357,15 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
     ],
     frameworks: [
       { source: 'NIST IR 8547', mapping: 'Full migration' },
-      { source: 'NSA CNSA 2.0', mapping: '2030 networking/firmware exclusive; niche prefer' },
+      {
+        source: 'NSA CNSA 2.0',
+        mapping: 'NSS only: unsupported equipment phased out by 31 Dec 2030 unless excepted',
+      },
       { source: 'CISA', mapping: 'Full PQC deployment' },
     ],
     relevantSoftwareCategories: ['CSC-026', 'CSC-006', 'CSC-007', 'CSC-008'],
     nsaTimeline:
-      '2030: Prefer CNSA 2.0 for niche/legacy equipment; NSA expects most equipment transitions completed by end of 2030',
+      'National security systems only: by 31 December 2030, NSS equipment and services that cannot support CNSA 2.0 must be phased out unless an exception is granted (CNSSP 15)',
     estimatedDuration: '6-12 months',
   },
   {
@@ -390,13 +408,13 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
       { source: 'NIST IR 8547', mapping: 'Ongoing monitoring' },
       {
         source: 'NSA CNSA 2.0',
-        mapping: 'Exclusive use 2030 (signing, networking) / 2033 (web/cloud, OS, niche)',
+        mapping: 'NSS only: CNSA 2.0 algorithms mandated by 31 Dec 2031 unless otherwise noted',
       },
       { source: 'ETSI TR 103 619', mapping: 'Continuous improvement' },
     ],
     relevantSoftwareCategories: ['CSC-028', 'CSC-023', 'CSC-030', 'CSC-025'],
     nsaTimeline:
-      '2033: CNSA 2.0 exclusive for web/cloud, OS, and niche/legacy equipment (signing/networking already exclusive from 2030; NSM-10 targets all NSS by 2035); 2035: Quantum-vulnerable algorithms disallowed (per NIST IR 8547)',
+      'National security systems only: by 31 December 2031 CNSA 2.0 algorithms are mandated unless otherwise noted (CNSSP 15); NSM-10 sets a 2035 goal for quantum resistance across NSS. The equipment-by-equipment dates in NSA\u2019s September 2022 advisory (2030 and 2033) are earlier planning context, not the current schedule',
     estimatedDuration: 'Ongoing',
   },
 ]

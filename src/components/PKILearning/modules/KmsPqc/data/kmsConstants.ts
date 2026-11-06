@@ -284,52 +284,59 @@ export const ROTATION_POLICIES: RotationPolicy[] = [
     id: 'tls-server',
     name: 'TLS Server Certificates',
     description:
-      'Server certificates for web services and APIs. Short-lived to limit compromise impact.',
+      'Server certificates for web services and APIs. A shorter validity limits how long a compromised key stays useful.',
     rotationInterval:
-      '90 days (recommended); max 398 days until March 2026, then 200 days per CA/B Forum SC-081v3, reducing to 47 days by 2029',
+      'Publicly trusted TLS certificates: maximum validity 200 days from 15 March 2026, 100 days from 15 March 2027 and 47 days from 15 March 2029. Certificates from a private CA follow that CA\u2019s own policy, and renewing well inside the limit with automation is a practice, not a rule',
     applicableTo: ['RSA-2048', 'ECDSA P-256', 'ML-DSA-65', 'Hybrid'],
-    complianceFramework: 'CA/B Forum Baseline Requirements',
+    complianceFramework:
+      'CA/B Forum Baseline Requirements (publicly trusted TLS certificates only)',
   },
   {
     id: 'code-signing',
     name: 'Code Signing Keys',
     description: 'Keys used to sign software releases, firmware updates, and container images.',
-    rotationInterval: '2-3 years',
+    rotationInterval:
+      'Illustrative range of 2-3 years for a private signature key. NIST SP 800-57 Part 1 Rev. 5 suggests about 1 to 3 years and calls such figures rough order-of-magnitude guidelines; the right period depends on how the key is protected, how often it signs and what a compromise would cost',
     applicableTo: ['RSA-3072', 'ECDSA P-384', 'ML-DSA-65', 'SLH-DSA-128f'],
-    complianceFramework: 'NIST SP 800-57',
+    complianceFramework: 'NIST SP 800-57 Part 1 Rev. 5 (guidance, not a mandate)',
   },
   {
     id: 'ca-intermediate',
     name: 'Intermediate CA Keys',
     description:
       'CA keys used to issue end-entity certificates. Long-lived with strict HSM protection.',
-    rotationInterval: '5-10 years',
+    rotationInterval:
+      'Illustrative range of 5-10 years, set by the CA\u2019s own policy, the validity of its certificate and how its key is protected. Not a figure from NIST SP 800-57',
     applicableTo: ['RSA-4096', 'ECDSA P-384', 'ML-DSA-87', 'Composite'],
-    complianceFramework: 'CA/B Forum, NIST SP 800-57',
+    complianceFramework: 'CA policy (CP/CPS); not a fixed standard maximum',
   },
   {
     id: 'root-ca',
     name: 'Root CA Keys',
     description: 'Trust anchors. Longest-lived keys with highest security requirements.',
-    rotationInterval: '15-25 years',
+    rotationInterval:
+      'Illustrative range of 15-25 years, set by the CA\u2019s own policy, any root program it joins and how its key is protected. Not a figure from NIST SP 800-57',
     applicableTo: ['RSA-4096', 'ECDSA P-384', 'ML-DSA-87', 'SLH-DSA-256s'],
-    complianceFramework: 'CA/B Forum, NIST SP 800-57, WebTrust',
+    complianceFramework:
+      'CA policy (CP/CPS) and root program requirements; not a fixed standard maximum',
   },
   {
     id: 'data-encryption',
     name: 'Data Encryption Keys (DEK)',
     description: 'Symmetric keys used for encrypting data at rest or in transit.',
-    rotationInterval: '1-2 years',
+    rotationInterval:
+      'Illustrative range of 1-2 years of encryption use. NIST SP 800-57 Part 1 Rev. 5 Table 1 suggests under 2 years for encrypting and under that plus 3 years for decrypting, and the amount of data one key protects can set a shorter limit',
     applicableTo: ['AES-256-GCM', 'AES-256-CBC'],
-    complianceFramework: 'PCI DSS, HIPAA, NIST SP 800-57',
+    complianceFramework: 'NIST SP 800-57 Part 1 Rev. 5 (guidance, not a mandate)',
   },
   {
     id: 'kek',
     name: 'Key Encryption Keys (KEK)',
     description: 'Keys used to wrap/unwrap other keys. Critical for key hierarchy security.',
-    rotationInterval: '2-5 years',
+    rotationInterval:
+      'Illustrative. NIST SP 800-57 Part 1 Rev. 5 Table 1 suggests under 2 years of wrapping use and under that plus 3 years of unwrapping for a symmetric key-wrapping key; for asymmetric key-transport keys, under 2 years for the private key and 1 to 2 years for the public key',
     applicableTo: ['RSA-3072', 'ML-KEM-768', 'AES-256-KW'],
-    complianceFramework: 'NIST SP 800-57, FIPS 140-3',
+    complianceFramework: 'NIST SP 800-57 Part 1 Rev. 5 (guidance, not a mandate)',
   },
 ]
 

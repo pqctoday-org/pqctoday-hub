@@ -267,8 +267,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             <InlineTooltip term="Single-Event Upset">
               <strong>Single-Event Upsets (SEUs)</strong>
             </InlineTooltip>{' '}
-            &mdash; cosmic ray bit flips that can corrupt cryptographic key material in memory. This
-            is a threat unique to aerospace with no parallel in terrestrial IT.
+            &mdash; radiation-induced bit flips that can corrupt data held in memory, including
+            cryptographic keys and state. Spacecraft designers handle them with error correction,
+            integrity checks, redundancy and recovery procedures.
           </p>
 
           <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
@@ -276,41 +277,52 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
               <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
               <div>
                 <h3 className="text-sm font-bold text-foreground mb-1">
-                  Lattice-Based PQC Is Especially Vulnerable
+                  What a Bit Flip Does Depends on the Field and the Protection
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  A bit flip in an <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> private key
-                  corrupts <strong>all subsequent signatures</strong>. A corrupted{' '}
-                  <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> decapsulation key produces
-                  garbage shared secrets. Unlike classical ECDSA (where a bad signature simply fails
-                  verification), lattice-based algorithms can produce{' '}
-                  <strong>subtly wrong outputs</strong> that may pass basic checks.
+                  No algorithm family is immune, and none is uniformly fragile. The effect of one
+                  flipped bit depends on <strong>which field it hits</strong>,{' '}
+                  <strong>which operation</strong> uses that field, and{' '}
+                  <strong>what protects it</strong>. In{' '}
+                  <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> signing, for example, the
+                  private-key seed K only feeds the signature&apos;s masking randomness (FIPS 204,
+                  Algorithm 7), so a flip there need not invalidate signatures, whereas a flip in
+                  the other private-key components would be expected to make signatures fail
+                  verification (FIPS 204, Algorithm 8). A signer can catch the second case by
+                  verifying its own output before releasing it.
                 </p>
               </div>
             </div>
           </div>
 
-          <h3 className="text-sm font-bold text-foreground">Algorithm Resilience Comparison</h3>
+          <h3 className="text-sm font-bold text-foreground">Signer and Verifier Fault Models</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
               <h3 className="text-sm font-bold text-foreground mb-2">
-                Hash-Based (LMS/XMSS) &mdash; More Resilient
+                Verifier &mdash; Public Key and Code
               </h3>
               <p className="text-xs text-muted-foreground">
-                Verification relies on SHA-256 hashes computed from <strong>public data</strong>,
-                not stored private key material. If a signing key buffer is corrupted, the satellite
-                switches to a backup key. Verification of past signatures is unaffected.
+                A verifier holds <strong>public data</strong> and code, whatever the algorithm. A
+                corrupted public key or trust anchor would be expected to make valid signatures
+                fail, which is an availability problem, and the verifier can restore it by comparing
+                it with a trusted digest or fetching it again. The case to protect with redundancy
+                is a fault in the comparison logic itself.
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
               <h3 className="text-sm font-bold text-foreground mb-2">
-                Lattice-Based (ML-DSA/ML-KEM) &mdash; Vulnerable
+                Signer &mdash; Private Key and State
               </h3>
               <p className="text-xs text-muted-foreground">
-                Keys are large structured matrices (public keys 1,312&ndash;2,592 bytes; private
-                keys 2,560&ndash;4,896 bytes). A single bit flip changes the algebraic structure,
-                producing valid-looking but <strong>cryptographically incorrect</strong> outputs.
-                ECC memory helps but adds 12&ndash;25% overhead.
+                A signer holds long-lived secret material: an ML-DSA private key is
+                2,560&ndash;4,896 bytes (FIPS 204), and an LMS/XMSS signer also keeps a state
+                counter that must never let a one-time key sign twice, because two signatures from
+                one key could let an attacker forge (NIST SP 800-208). A corrupted or rolled-back
+                counter is therefore a serious fault. Protect signer state with ECC memory,
+                integrity checks, redundant copies and a defined recovery path such as a
+                pre-provisioned backup key. A Hamming code that corrects one flipped bit and detects
+                two stores extra check bits: 8 per 64 data bits (12.5%) on NASA&apos;s TOMS
+                recorder, 8 per 32 (25%) on SAMPEX.
               </p>
             </div>
           </div>
@@ -419,7 +431,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                 <tr className="border-b border-border/50">
                   <td className="py-2 px-3 font-bold text-status-error">A</td>
                   <td className="py-2 px-3">Catastrophic</td>
-                  <td className="py-2 px-3">MC/DC + 100% structural</td>
+                  <td className="py-2 px-3">MC/DC + decision + statement</td>
                   <td className="py-2 px-3">$5&ndash;20M, 18&ndash;36 mo</td>
                 </tr>
                 <tr className="border-b border-border/50">
