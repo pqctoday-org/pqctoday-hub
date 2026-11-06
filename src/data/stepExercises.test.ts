@@ -62,3 +62,21 @@ describe('STEP_EXERCISES: SLH-DSA answers follow FIPS 205', () => {
     expect(ex.why).toContain('category 1')
   })
 })
+
+describe('STEP_EXERCISES: key rotation is not inferred from a fixed algorithm', () => {
+  const ex = STEP_EXERCISES['pqc-governance/policy-generator']
+  const all = `${ex.prompt} ${ex.options.join(' ')} ${ex.why}`
+
+  it('keeps the tool pre-selection as the answer but attributes it to the tool', () => {
+    expect(ex.options[ex.answer]).toMatch(/^2 years — the tool pre-selects its longest interval/)
+    expect(all).not.toMatch(/can.t be rotated/i)
+    expect(all).not.toMatch(/cannot absorb frequent rotations/i)
+  })
+
+  it('separates the cryptoperiod from crypto agility and names the factors that set a period', () => {
+    expect(ex.why).toMatch(/separate capabilities/)
+    expect(ex.why).toMatch(/does not by itself mean keys cannot be rotated/)
+    expect(ex.why).toMatch(/volume of data/)
+    expect(ex.why).toMatch(/SP 800-57 Part 1 Rev\. 5, Sec\. 5\.3\.1/)
+  })
+})

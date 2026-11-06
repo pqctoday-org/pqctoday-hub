@@ -12,6 +12,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useThreatsData } from '@/hooks/useThreatsData'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import { CNSA_2_0_BY_CLASS, EO_14412, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 
 interface AlgorithmImpact {
   name: string
@@ -97,30 +98,96 @@ const ALGORITHMS: AlgorithmImpact[] = [
   },
 ]
 
-const COMPLIANCE_DEADLINES = [
+/** One dated overlay. A date applies to a system only if the system is in its `scope`. */
+interface ComplianceDeadline {
+  framework: string
+  year: number
+  /** true for guidance and proposals, which are not a requirement on their own */
+  advisory: boolean
+  /** who and what the date covers */
+  scope: string
+  /** document and version the date comes from */
+  source: string
+}
+
+const NSS_SCOPE =
+  'National Security Systems only; NSA states it mandates nothing outside NSS. Whether a system is an NSS is an input to settle first.'
+const CNSA_SOURCE =
+  'NSA CNSA 2.0 FAQ, version 2.2 (October 2026), citing CNSSP 15; equipment phase-out allows an exception and the algorithm mandate reads \u201cunless otherwise noted\u201d'
+const EO_SOURCE = 'Executive Order 14412 (22 June 2026) Sec. 4; OMB M-26-15 (24 June 2026)'
+
+const COMPLIANCE_DEADLINES: ComplianceDeadline[] = [
+  ...CNSA_2_0_BY_CLASS.map((c) => ({
+    framework: `CNSA 2.0 \u2014 ${c.class}`,
+    year: c.year,
+    advisory: false,
+    scope: NSS_SCOPE,
+    source: CNSA_SOURCE,
+  })),
+  ...(EO_14412.keyEstablishment === undefined
+    ? []
+    : [
+        {
+          framework:
+            'EO 14412 \u2014 federal civilian High Value Assets and high-impact systems: PQC key establishment',
+          year: EO_14412.keyEstablishment,
+          advisory: false,
+          scope:
+            'Federal agencies, excluding National Security Systems; the order does not apply this date to contractors or other organisations.',
+          source: EO_SOURCE,
+        },
+      ]),
   {
-    framework: 'CNSA 2.0 \u2014 Software/Firmware Signing (exclusive use)',
+    framework: 'EO 14412 \u2014 same federal civilian systems: PQC digital signatures',
+    year: EO_14412.digitalSignatures,
+    advisory: false,
+    scope: 'Federal agencies, excluding National Security Systems.',
+    source: EO_SOURCE,
+  },
+  {
+    // EO 14412 Sec. 6(c): the FAR Council is directed to publish a proposed rule (due 19 December
+    // 2026) that would require covered contractors to comply with NIST FIPS by 31 December 2030.
+    framework: 'EO 14412 \u2014 proposed FAR rule: covered contractors comply with NIST FIPS',
     year: 2030,
-    advisory: false,
-  },
-  { framework: 'CNSA 2.0 \u2014 Traditional networking (TLS/IPsec)', year: 2030, advisory: false },
-  {
-    framework: 'CNSA 2.0 \u2014 Web / cloud / servers / OS exclusive',
-    year: 2033,
-    advisory: false,
+    advisory: true,
+    scope:
+      'Draft proposed transition for covered federal contractors; the order does not define the term, and nothing binds a contractor until a rule is final and in a contract.',
+    source: 'Executive Order 14412 Sec. 6(c)',
   },
   {
-    framework: 'NIST \u2014 RSA/ECC Deprecation (NIST IR 8547; SP 800-131A Rev.3, draft)',
+    framework: 'NIST \u2014 quantum-vulnerable public-key algorithms deprecated after this year',
+    year: NIST_DEPRECATION.deprecateClassical,
+    advisory: false,
+    scope:
+      'Status under NIST standards and guidelines; deprecated algorithms may still be used while migrating, and the earlier EO 14412 dates constrain federal high-value and high-impact systems.',
+    source: 'NIST IR 8547 (final, October 2026)',
+  },
+  {
+    framework: 'NIST \u2014 quantum-vulnerable public-key algorithms disallowed after this year',
+    year: NIST_DEPRECATION.disallowClassical,
+    advisory: false,
+    scope: 'Status under NIST standards and guidelines; not a global sunset of RSA and ECC.',
+    source: 'NIST IR 8547 (final, October 2026)',
+  },
+  {
+    framework: 'EU \u2014 high-risk use cases transitioned to PQC (coordinated roadmap)',
     year: 2030,
-    advisory: false,
+    advisory: true,
+    scope:
+      'Guidance for Member States\u2019 national programmes; it is a recommended milestone, not a regulation that binds an organisation directly.',
+    source:
+      'NIS Cooperation Group Coordinated Implementation Roadmap, Part 1, version 1.1 (11 June 2025)',
   },
-  {
-    framework: 'NIST \u2014 RSA/ECC Disallowed (NIST IR 8547; SP 800-131A Rev.3, draft)',
-    year: 2035,
-    advisory: false,
-  },
-  { framework: 'EU/ANSSI \u2014 PQC Guidance (advisory)', year: 2030, advisory: true },
 ]
+
+/** Status wording for one overlay at a given scenario. */
+function deadlineStatus(d: ComplianceDeadline, crqcYear: number, currentYear: number): string {
+  if (d.advisory) return 'Guidance or proposal \u2014 not a requirement on its own'
+  if (d.year <= currentYear) return 'Date reached \u2014 applies only to systems in the scope above'
+  return d.year <= crqcYear
+    ? `Falls ${crqcYear - d.year} yr before the assumed CRQC year, for systems in the scope above`
+    : `Falls ${d.year - crqcYear} yr after the assumed CRQC year, for systems in the scope above`
+}
 
 interface CRQCScenarioPlannerProps {
   onCrqcYearChange?: (year: number) => void
@@ -170,19 +237,12 @@ export function buildCrqcScenarioMarkdown({
   md += '\n'
 
   md += '## Compliance Deadlines\n\n'
-  md += '| Framework | Year | Status |\n'
-  md += '|-----------|------|--------|\n'
+  md +=
+    'Each date applies only to systems in its scope. The CRQC year is a scenario assumption, not a forecast.\n\n'
+  md += '| Framework | Year | Scope | Source | Status |\n'
+  md += '|-----------|------|-------|--------|--------|\n'
   for (const d of COMPLIANCE_DEADLINES) {
-    const isPast = d.year <= currentYear
-    const isBefore = d.year <= crqcYear
-    const status = d.advisory
-      ? 'Advisory'
-      : isPast
-        ? 'Already in effect'
-        : isBefore
-          ? `Before CRQC (${crqcYear - d.year}yr before)`
-          : `After CRQC (${d.year - crqcYear}yr after)`
-    md += `| ${d.framework} | ${d.year} | ${status} |\n`
+    md += `| ${d.framework} | ${d.year} | ${d.scope} | ${d.source} | ${deadlineStatus(d, crqcYear, currentYear)} |\n`
   }
   md += '\n'
 
@@ -479,7 +539,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           </div>
           <div className="text-2xl font-bold text-foreground">{missedDeadlines.length}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            compliance deadlines before CRQC arrives
+            dated milestones before the assumed CRQC year, each with its own scope
           </p>
         </div>
         <div className="glass-panel p-4">
@@ -537,6 +597,12 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
             <Calendar size={18} className="text-status-warning" />
             <h2 className="text-base font-semibold text-foreground">Compliance Deadlines</h2>
           </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            Each date applies only to systems in its own scope, and each is shown with its source
+            version. National Security System requirements, federal civilian directives, NIST
+            standards status, proposals and guidance are different things; the CRQC year is your
+            scenario assumption, not a forecast.
+          </p>
           <div
             className="space-y-2 max-h-[300px] overflow-y-auto"
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx / BB84Simulator.tsx).
@@ -579,13 +645,13 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {deadline.advisory
-                      ? 'Non-binding guidance \u2014 no legislative mandate'
-                      : isPast
-                        ? 'Already in effect \u2014 non-compliance risk is active'
-                        : isMissed
-                          ? `Due before CRQC arrival (${crqcYear - deadline.year} years before)`
-                          : `Due after estimated CRQC (${deadline.year - crqcYear} years after)`}
+                    {deadlineStatus(deadline, crqcYear, currentYear)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    <span className="font-medium">Scope:</span> {deadline.scope}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    <span className="font-medium">Source:</span> {deadline.source}
                   </p>
                 </div>
               )

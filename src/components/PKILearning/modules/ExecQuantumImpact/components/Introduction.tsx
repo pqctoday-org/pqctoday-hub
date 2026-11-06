@@ -100,36 +100,43 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
           <p>
             Two separate US clocks run in parallel, and boards routinely conflate them. CNSA 2.0
             governs <em>National Security Systems</em>. Executive Order 14412, &ldquo;Securing the
-            Nation Against Advanced Cryptographic Attacks&rdquo; (signed 22 June 2026), governs
-            federal <em>civilian</em> systems and the contractors that serve them — with OMB
-            Memorandum M-26-15 (24 June 2026) as its implementing guidance. If you sell to the US
-            government, the second clock is the one that reaches you.
+            Nation Against Advanced Cryptographic Attacks&rdquo; (signed 22 June 2026), sets
+            deadlines for federal <em>civilian</em> systems — with OMB Memorandum M-26-15 (24 June
+            2026) as its implementing guidance — and separately directs a proposed FAR rule for
+            covered contractors, which is not itself a contractor requirement. If you sell to the US
+            government, the second clock is the one that can reach you, once a contract clause
+            adopts it.
           </p>
           <ul className="space-y-2 list-none">
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
                 <strong>Dec 2026 (180 days after EO 14412):</strong> the order directs the FAR
-                Council to publish a proposed rule requiring covered federal contractors to meet
-                NIST FIPS standards—including all applicable FIPS that incorporate PQC-compliant
-                algorithms—by December 31, 2030. M-26-15 required agency PQC migration plans at OMB
-                within 120 days of issue
+                Council to publish a <em>proposed</em> rule that would require covered federal
+                contractors to comply by 31 December 2030 with NIST FIPS, including all applicable
+                FIPS that incorporate PQC-compliant algorithms. The order does not define
+                &ldquo;covered contractors&rdquo;, and a proposed rule binds no contractor until it
+                is finalized and appears in a contract. M-26-15 required agency PQC migration plans
+                at OMB within 120 days of issue
               </span>
             </li>
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
-                <strong>2030:</strong> EO 14412 — federal High Value Assets and high-impact systems,
-                and covered contractors, on PQC for <em>key establishment</em> (ML-KEM, FIPS 203) by
-                31 December 2030
+                <strong>2030 (federal agencies):</strong> EO 14412 Sec. 4 — OMB guidance requires
+                agencies to move their High Value Assets and high-impact systems (National Security
+                Systems excluded) to PQC for <em>key establishment</em> (ML-KEM, FIPS 203) by 31
+                December 2030
               </span>
             </li>
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
-                <strong>2031:</strong> EO 14412 — the same systems on PQC for{' '}
-                <em>digital signatures</em> by 31 December 2031. The split is deliberate: key
-                establishment carries the harvest-now-decrypt-later risk, so it moves first
+                <strong>2031 (federal agencies):</strong> EO 14412 Sec. 4 — the same agency systems
+                on PQC for <em>digital signatures</em> by 31 December 2031. The split is deliberate:
+                key establishment carries the harvest-now-decrypt-later risk, so it moves first. The
+                2031 date is for agency systems; the contractor direction above carries only the
+                2030 date
               </span>
             </li>
             <li className="flex items-start gap-2">
