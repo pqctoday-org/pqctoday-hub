@@ -214,11 +214,11 @@ export const QueryableEncryptionLab: React.FC = () => {
               {scheme.id === 'pg-tde' && (
                 <div className="space-y-2 text-center font-mono">
                   <div className="p-2 rounded bg-muted text-foreground text-xs">
-                    Master Key in KMIP Provider
+                    Principal Key in an external key provider
                   </div>
-                  <div className="text-muted-foreground text-xs">&darr; AES-256 wrap</div>
+                  <div className="text-muted-foreground text-xs">&darr; protects</div>
                   <div className="p-2 rounded bg-primary/10 text-primary text-xs">
-                    Tablespace Key (AES-256-XTS)
+                    Internal keys (files: AES-CBC, WAL: AES-CTR)
                   </div>
                   <div className="text-muted-foreground text-xs">
                     &darr; Block-level decrypt on read

@@ -135,7 +135,8 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     vendor: 'PostgreSQL / Percona',
     dbType: 'relational',
     encryptionLayers: ['tde', 'field', 'application'],
-    tdeMechanism: 'pg_tde extension (Percona) — AES-256-XTS at tablespace level',
+    tdeMechanism:
+      'pg_tde extension (Percona) — AES-128/256-CBC for table files, AES-128/256-CTR for WAL; a principal key held in an external key provider protects the internal keys',
     columnEncryption: 'pgcrypto extension — pgp_sym_encrypt / pgp_pub_encrypt (no native CLE)',
     catalogName: 'PostgreSQL',
     pqcTimeline:
@@ -145,7 +146,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     fipsValidated: false,
     migrationComplexity: 'medium',
     notes:
-      'Open-source: native TDE not in upstream PostgreSQL; pg_tde adds it. pgcrypto uses OpenPGP — no native HSM integration. KMIP provider for external KMS is planned.',
+      'Open-source: native TDE not in upstream PostgreSQL; pg_tde adds it. pgcrypto uses OpenPGP — no native HSM integration. pg_tde supports a local keyring file and external key providers including KMIP, Vault and OpenBao; Percona’s FAQ says post-quantum encryption is not yet supported because it relies on OpenSSL.',
   },
   {
     id: 'mongodb',
@@ -364,8 +365,10 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
       'The cloud provider generates, stores, and manages encryption keys entirely. Customer has no control over key material. Simplest operational model but weakest security posture.',
     kmsProvider: 'AWS KMS default / Azure KV default / Google Cloud KMS default',
     keyType: 'AES-256 symmetric (provider-generated)',
-    wrappingAlgorithm: 'Provider-internal RSA-OAEP (opaque to customer)',
-    dataKey: '256-bit AES-GCM DEK, generated per database/tablespace',
+    wrappingAlgorithm:
+      'Service-specific and opaque to the customer. AWS KMS documents an AES-GCM key hierarchy and Google Cloud wraps DEKs with AES KEKs; RSA-OAEP appears in key import and transport, not as a general default envelope',
+    dataKey:
+      'AES-based DEK, generated per database/tablespace; algorithm and key size vary by service and configuration',
     pqcUpgrade:
       'Provider must upgrade internal KMS. No customer action required, but no customer control either. Timeline depends entirely on AWS/Azure/GCP.',
     diagram: [
@@ -509,9 +512,9 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     queryTypes: [],
     pqcCompatible: false,
     encryptionScheme:
-      'TDE-only — AES-256-XTS at tablespace level. pg_tde does NOT support queryable encryption; all queries run on plaintext data after decryption by the TDE layer at storage I/O.',
+      'TDE-only — AES-CBC for table files and AES-CTR for WAL. pg_tde does NOT support queryable encryption; all queries run on plaintext data after decryption by the TDE layer at storage I/O.',
     limitations:
-      'No queryable encryption. Not in upstream PostgreSQL (requires Percona or custom build). No HSM integration yet. Key provider API supports custom providers (KMIP planned).',
+      'No queryable encryption. Not in upstream PostgreSQL (requires Percona or custom build). No native HSM integration; an HSM is reachable only through an external key provider such as a KMIP server. KMIP is already a supported key provider.',
     pqcRoadmap:
       'This module’s projection, not a Percona statement: a KMIP 3.0 key provider with ML-KEM support via Thales or AWS. In this module’s reading, the TDE layer is unchanged by it. No date is cited.',
   },

@@ -86,7 +86,7 @@ const LAYER_INFO: LayerInfo[] = [
     whatItEncrypts:
       'Entire database files (data pages, log files, backups) at the storage I/O layer. Protects against physical theft.',
     classicalAlgorithm:
-      'AES-256-CBC or AES-256-XTS for data files. DEK (256-bit AES) wrapped by master key using RSA-2048/4096 OAEP.',
+      'AES-based encryption of data files (cipher and mode vary by product; for example AES-CBC in pg_tde). In the products this module models, the DEK is wrapped by a master key; where that wrap uses RSA-OAEP, it is the part that needs a post-quantum replacement.',
     pqcUpgradePath:
       'AES-256 data encryption is already quantum-safe. Only the DEK wrapping (RSA-OAEP) needs upgrade to ML-KEM-1024 via external KMS/HSM. Online re-encryption supported (Oracle/SQL Server).',
     depth: 'Innermost (storage)',

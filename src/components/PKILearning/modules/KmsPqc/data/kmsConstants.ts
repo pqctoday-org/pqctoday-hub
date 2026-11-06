@@ -1104,7 +1104,7 @@ export const KMIP_SYNC_SCENARIO: KmipSyncStep[] = [
     action: 'create',
     title: 'Create ML-KEM-768 KEK',
     description:
-      'KMIP orchestrator creates a new ML-KEM-768 key in the primary HSM, then registers the key ID across all connected backends.',
+      'KMIP orchestrator creates a new ML-KEM-768 key in the primary HSM, then registers the key ID across all connected backends. This is an illustrative flow: the cloud backends are reached through a KMIP adapter or proxy, because the provider table lists no native KMIP endpoint for AWS KMS or Google Cloud KMS.',
     orchestrator: 'Thales CipherTrust',
     targets: ['Primary HSM', 'AWS KMS', 'Google Cloud KMS'],
     kmipSnippet:
@@ -1114,9 +1114,9 @@ export const KMIP_SYNC_SCENARIO: KmipSyncStep[] = [
   {
     id: 2,
     action: 'replicate',
-    title: 'Replicate to Cloud KMS',
+    title: 'Provision in Cloud KMS',
     description:
-      'The orchestrator exports the wrapped key material from the primary HSM and imports it into each cloud KMS backend using provider-specific BYOK APIs.',
+      'The orchestrator exports the wrapped key material from the primary HSM and imports it into each backend that documents import of this key type. AWS documents that key material for ML-KEM KMS keys cannot be imported, so for AWS KMS the orchestrator would instead create a native ML-KEM key through the provider API. Whether Google Cloud KMS accepts an imported ML-KEM key is not established here.',
     orchestrator: 'Thales CipherTrust',
     targets: ['Primary HSM', 'AWS KMS', 'Google Cloud KMS'],
     kmipSnippet:
