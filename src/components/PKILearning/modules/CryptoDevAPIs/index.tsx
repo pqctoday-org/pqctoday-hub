@@ -49,7 +49,7 @@ const PARTS: WorkshopPart[] = [
     id: 'build-buy-oss',
     title: 'Step 4: Build vs Buy vs Open Source',
     description:
-      'Interactive scoring wizard to recommend a sourcing strategy based on your regulatory requirements, team expertise, and PQC timeline. Real-world case studies included.',
+      'Compare sourcing options using Hub-authored teaching weights, named reference examples and fictional planning scenarios. The comparison does not validate suitability or costs.',
     icon: ShoppingCart,
   },
   {
