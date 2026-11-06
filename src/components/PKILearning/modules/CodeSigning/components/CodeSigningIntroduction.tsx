@@ -85,10 +85,12 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
           </div>
           <p className="text-xs text-muted-foreground">
             These attacks exploited trust in code signing infrastructure. Post-quantum code signing
-            must protect not only against today&apos;s threats but also against{' '}
-            <InlineTooltip term="HNDL">harvest-now-decrypt-later</InlineTooltip> attacks where
-            adversaries collect signed artifacts to forge signatures once quantum computers become
-            available.
+            must protect not only against today&apos;s threats but also against future signature
+            forgery: once a quantum computer can derive private keys from public keys, an attacker
+            could sign code that verifiers still accept. Unlike{' '}
+            <InlineTooltip term="HNDL">harvest-now-decrypt-later</InlineTooltip>, which concerns
+            encrypted data recorded today, this risk needs nothing to be collected in advance,
+            because public keys and certificates are already public.
           </p>
         </div>
       </section>
@@ -154,55 +156,66 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
           </div>
 
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;Today, a supply chain attacker must steal a signing key. Tomorrow, a
-              quantum-capable adversary can forge any signature without stealing anything.&rdquo;
-            </blockquote>
+            <p className="text-sm text-foreground/90">
+              Today, supply chain attackers get malicious code signed or distributed by compromising
+              a build system, an identity or a signing key. A quantum-capable adversary would add
+              another route: deriving a private key from its public key, without breaking into the
+              key holder.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">
-                Key Theft &rarr; Key Forgery
+                Another Route: Key Derivation
               </div>
               <p className="text-xs text-muted-foreground">
-                Today&apos;s supply chain attacks require compromising a specific publisher&apos;s
-                signing key. A quantum attacker running{' '}
+                Today&apos;s attacks work through build-system or identity compromise as well as key
+                theft (the SolarWinds and 3CX cases above). A quantum attacker running{' '}
                 <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip> could
-                derive <em>any</em> publisher&apos;s private key from their public certificate
-                &mdash; no infiltration, no social engineering, no insider threat required.
+                add a further route for any key whose algorithm it can break (RSA, ECDSA): deriving
+                the private key from the public key, with no infiltration of the key holder. It
+                would not remove the other routes.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-primary mb-1">
-                HNDL Applied to Signed Artifacts
-              </div>
+              <div className="text-xs font-bold text-primary mb-1">Long-Lived Trust, Not HNDL</div>
               <p className="text-xs text-muted-foreground">
-                Adversaries can harvest signed binaries and code signing certificates today. Once
-                quantum computers arrive, they could forge new signatures that chain to existing
-                certificates, or create fake artifacts that appear legitimately signed by any
-                publisher. This is the{' '}
-                <InlineTooltip term="HNDL">harvest-now-decrypt-later</InlineTooltip> threat applied
-                to code integrity.
+                Signed binaries and certificates carry only public keys, so nothing secret has to be
+                harvested. The risk is future forgery: once a quantum computer can derive private
+                keys, an attacker could create new signatures that chain to certificates verifiers
+                still trust, or artifacts that appear signed by a publisher whose old key is still
+                accepted. <InlineTooltip term="HNDL">Harvest-now-decrypt-later</InlineTooltip> is
+                reserved for encrypted data. For signatures the controls are to stop trusting
+                vulnerable keys in time, and to validate old signatures with timestamps and archive
+                evidence that remain trustworthy.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-warning mb-1">Cascading Trust Breakdown</div>
               <p className="text-xs text-muted-foreground">
-                A quantum-compromised <InlineTooltip term="Root CA">Root CA</InlineTooltip> key
-                would let an attacker sign software as <em>any</em> publisher in that CA&apos;s
-                trust hierarchy. Unlike a stolen intermediate key (scoped to one publisher),
-                breaking the Root CA&apos;s algorithm affects the entire ecosystem simultaneously.
+                An attacker holding the private key of a{' '}
+                <InlineTooltip term="Root CA">Root CA</InlineTooltip> or of an issuing CA could
+                issue certificates for any subject that CA vouches for, and so sign software as{' '}
+                <em>any</em> publisher under it. A publisher&apos;s own leaf key is scoped to that
+                publisher, while an issuing CA key is scoped to everything the CA issues (limited
+                only by constraints in the chain). If a quantum computer can break the CA&apos;s
+                algorithm, that CA private key can be derived from its public key.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-warning mb-1">Scale: One Key vs All Keys</div>
+              <div className="text-xs font-bold text-warning mb-1">
+                Scale: One Key vs a Shared Weakness
+              </div>
               <p className="text-xs text-muted-foreground">
-                A stolen signing key compromises one publisher. A quantum break of{' '}
+                A stolen leaf signing key compromises one publisher, and a stolen issuing CA key
+                compromises everything that CA vouches for. A quantum break of{' '}
                 <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> or{' '}
-                <InlineTooltip term="RSA">RSA</InlineTooltip> compromises{' '}
-                <em>every publisher simultaneously</em> &mdash; every code signing certificate using
-                that algorithm becomes forgeable. This is a systemic, not isolated, risk.
+                <InlineTooltip term="RSA">RSA</InlineTooltip> is a <em>shared weakness</em>: every
+                key of that algorithm becomes derivable from its public key once a capable computer
+                exists. That does not mean one event recovers all private keys &mdash; each key must
+                still be attacked separately, at the attacker&apos;s cost &mdash; but migration
+                cannot be limited to one publisher.
               </p>
             </div>
           </div>
@@ -214,10 +227,10 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             </div>
             <p className="text-xs text-muted-foreground">
               SCADA controllers, medical devices, avionics, and industrial infrastructure deployed
-              today with classical signatures will still be operating 15&ndash;25 years from now.
-              These systems cannot be easily patched and will be running in a post-quantum threat
-              environment. Their classical signatures will offer zero protection against firmware
-              forgery.
+              today with classical signatures may stay in service for many years. Their signature
+              verification is often hard to update, so they may still be running when a quantum
+              computer can forge classical signatures. Until the verifier is updated, those
+              signatures offer no protection against firmware forgery.
             </p>
           </div>
 
@@ -351,17 +364,17 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             {[
               {
                 level: 'Root CA',
-                desc: 'Self-signed trust anchor. Installed in OS/browser trust stores. Uses strongest algorithm (ML-DSA-87).',
+                desc: 'Self-signed trust anchor, installed in a trust store (OS, browser or enterprise). This sample uses ML-DSA-87.',
                 color: 'border-primary/50 bg-primary/5',
               },
               {
                 level: 'Intermediate CA',
-                desc: 'Signed by Root. Issues end-entity certificates. Uses ML-DSA-65 for balance of security and size.',
+                desc: 'Signed by Root. Issues end-entity certificates. This sample uses ML-DSA-65.',
                 color: 'border-secondary/50 bg-secondary/5',
               },
               {
                 level: 'Code Signing Certificate',
-                desc: 'End-entity cert with Extended Key Usage: Code Signing (OID 1.3.6.1.5.5.7.3.3). Short validity (1 year). Uses ML-DSA-44.',
+                desc: 'End-entity cert with Extended Key Usage: Code Signing (OID 1.3.6.1.5.5.7.3.3). Sample validity: 1 year. This sample uses ML-DSA-44.',
                 color: 'border-success/50 bg-success/5',
               },
             ].map((item, idx) => (
@@ -465,10 +478,11 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             <strong>
               <InlineTooltip term="Sigstore">Sigstore</InlineTooltip>
             </strong>{' '}
-            is an open-source project that eliminates the need for long-term signing key management.
-            Instead of distributing and protecting private keys, developers authenticate with their
-            existing identity (GitHub, Google) and receive short-lived certificates. All signatures
-            are recorded in a public transparency log.
+            is an open-source project that removes the need for developers to manage long-term
+            artifact-signing keys. Instead of distributing and protecting such keys, developers
+            authenticate with an existing identity (for example GitHub or Google) and receive a
+            short-lived certificate for an ephemeral key. Signing events are recorded in a
+            transparency log.
           </p>
 
           {/* Sigstore Flow Steps */}
@@ -490,19 +504,25 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Key Advantage</div>
               <p className="text-xs text-muted-foreground">
-                No long-term private keys to manage, rotate, or protect. Identity-based trust
-                replaces key-based trust. This dramatically simplifies PQC migration &mdash; only
-                the Sigstore infrastructure needs to upgrade, not every individual developer.
+                No long-term artifact-signing private keys to manage, rotate, or protect: each
+                signature uses an ephemeral key. Identity-based trust replaces key-based trust for
+                the signer, but verifiers still need a trust root and an expected-identity policy.
+                This removes one part of the migration burden (no developer-held long-lived keys to
+                replace); it does not make the migration automatic.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">PQC Migration Path</div>
               <p className="text-xs text-muted-foreground">
-                Sigstore&apos;s architecture centralizes cryptographic operations in{' '}
-                <InlineTooltip term="Fulcio">Fulcio</InlineTooltip> (CA) and{' '}
-                <InlineTooltip term="Rekor">Rekor</InlineTooltip> (transparency log). Upgrading
-                these two services to ML-DSA automatically provides PQC protection to all downstream
-                consumers (npm, PyPI, etc.).
+                Sigstore centralizes the CA and the log in{' '}
+                <InlineTooltip term="Fulcio">Fulcio</InlineTooltip> and{' '}
+                <InlineTooltip term="Rekor">Rekor</InlineTooltip>, but migration still needs
+                coordinated change in the signing clients (key generation, signature algorithm,
+                certificate requests), the artifact signatures themselves, the CA chain, the
+                transparency log, and verifiers (algorithm support, trust-root distribution and
+                identity policy). Upgrading Fulcio and Rekor does not change signatures already
+                made, and a client or verifier that does not support the new algorithm cannot use
+                the new ones.
               </p>
             </div>
           </div>
@@ -526,10 +546,12 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             fails, the boot process halts.
           </p>
           <p>
-            Firmware signing is a critical PQC migration target because firmware keys have
-            10&ndash;20 year lifetimes, and devices deployed today will still be in the field when
-            cryptographically relevant quantum computers arrive. An attacker who harvests firmware
-            update signatures today could forge malicious firmware updates in the future.
+            Firmware signing is a critical PQC migration target because the verification algorithm
+            in deployed devices is often hard to update, and devices deployed today may still be in
+            the field when cryptographically relevant quantum computers arrive. Once a quantum
+            computer can derive the signing key from its public key, an attacker could forge
+            firmware updates that a device with a classical-only root of trust would still accept;
+            nothing needs to be harvested in advance, because the public key is on the device.
           </p>
 
           {/* Boot Chain Visualization */}
@@ -583,10 +605,12 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               {[
                 {
                   year: '2025',
-                  text: 'New software/firmware should support and prefer CNSA 2.0 algorithms',
+                  text: 'Software and firmware signing: support and prefer CNSA 2.0 (NSA advisory, September 2022; this date has passed)',
                 },
-                { year: '2030', text: 'All deployed NSS must use CNSA 2.0 signatures' },
-                { year: '2033\u201335', text: 'Full quantum-resistant enforcement' },
+                {
+                  year: '2030',
+                  text: 'Software and firmware signing: exclusively use CNSA 2.0 (same advisory; its other equipment categories carry different dates)',
+                },
               ].map((m) => (
                 <div key={m.year} className="flex items-start gap-2">
                   <span className="text-[10px] font-bold text-primary bg-primary/10 rounded px-1.5 py-0.5 shrink-0">
@@ -596,6 +620,14 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
                 </div>
               ))}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-2">
+              Separate general dates, not specific to signing (NSA CNSA 2.0 FAQ v2.2, October 2026):
+              CNSA 2.0 required in new NSS acquisitions from 1 January 2027; NSS equipment and
+              services that cannot support CNSA 2.0 phased out by 31 December 2030 unless excepted;
+              CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted; NSM-10 sets a
+              2035 goal for quantum-resistant NSS. Check NSA&apos;s current documents for the date
+              that applies to your equipment type.
+            </p>
           </div>
 
           {/* LMS vs ML-DSA Tradeoff */}
@@ -608,18 +640,19 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
                 Compact signatures (2,512 B, about 2.5 KB) and tiny public keys (56 bytes), per RFC
                 8554 &mdash; ideal for hardware-constrained boot ROM. Fast verification (~0.1 ms).
                 CNSA 2.0 compliant. Security derives solely from hash functions (minimal
-                cryptographic assumptions). Trade-off: requires a monotonic state counter managed in
-                an HSM or TPM.
+                cryptographic assumptions). Trade-off: the signer must manage a monotonic state
+                counter, typically in an HSM; verification keeps no state.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-success/20">
               <div className="text-xs font-bold text-success mb-1">ML-DSA Alternative</div>
               <p className="text-xs text-muted-foreground">
-                Fully stateless &mdash; no counter, no state management burden. Simpler operations
-                for environments where maintaining state is impractical (distributed build systems,
-                CI/CD pipelines). Trade-off: larger signatures (3,309 B, about 3.3 KB) and public
-                keys (1,952 B, about 1.9 KB) per FIPS 204. Not mandated by CNSA 2.0 for firmware
-                signing.
+                No signing state &mdash; the signer needs no counter, which suits environments where
+                maintaining state is impractical (distributed build systems, CI/CD pipelines).
+                Verifiers of LMS and XMSS keep no state either; the state burden sits with the
+                signer. Trade-off: larger signatures (ML-DSA-65: 3,309 B) and public keys (1,952 B)
+                per FIPS 204. CNSA 2.0 approves only the ML-DSA-87 parameter set (4,627 B signature,
+                2,592 B public key) and approves it for all signing use cases, including firmware.
               </p>
             </div>
           </div>
