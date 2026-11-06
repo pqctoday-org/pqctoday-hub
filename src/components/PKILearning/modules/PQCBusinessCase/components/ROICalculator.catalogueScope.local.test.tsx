@@ -142,3 +142,24 @@ it('describes close and divergent numerical results without implying matched sco
   expect(screen.getByLabelText('ROI export')).not.toHaveTextContent('independent second estimate')
   expect(screen.getByText(/Agreement is not calibration/)).toBeInTheDocument()
 })
+
+it('describes an actual returned floor without diagnosing profile completeness or universal model reliability', () => {
+  const assessment = { algorithmMigrations: [], assessmentProfile: {} } as unknown as NonNullable<
+    ExecutiveModuleData['assessmentResult']
+  >
+  mockData = { ...baseMockData, isAssessmentComplete: true, assessmentResult: assessment }
+  render(
+    <MemoryRouter>
+      <ROICalculator />
+    </MemoryRouter>
+  )
+  expect(
+    screen.getByText(/The assessment-derived calculation returned the sample cost floor/, {
+      selector: 'p',
+    })
+  ).toHaveTextContent('does not establish whether the profile is incomplete')
+  expect(screen.getByLabelText('ROI export')).toHaveTextContent('returned the sample cost floor')
+  expect(screen.getByLabelText('ROI export')).not.toHaveTextContent('profile too thin')
+  expect(screen.queryByText(/No single method is reliable/)).not.toBeInTheDocument()
+  expect(screen.getByText(/Results depend on scope and assumptions/)).toBeInTheDocument()
+})

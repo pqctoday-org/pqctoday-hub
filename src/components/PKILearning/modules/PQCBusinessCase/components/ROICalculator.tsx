@@ -53,6 +53,9 @@ const REGULATORY_ASSUMPTIONS_NOTE =
 const CATALOGUE_SCOPE_NOTE =
   'Product counts use the filtered Hub catalogue, not an inventory of your organisation. The catalogue-count scenario and profile-based calculation may use different scopes and shared assumptions; agreement or spread does not establish calibration, accuracy or confidence.'
 
+const PROFILE_FLOOR_NOTE =
+  'The assessment-derived calculation returned the sample cost floor. That value alone does not establish whether the profile is incomplete or the estimate is reliable; review the selected scope and assumptions before using it.'
+
 function formatCurrency(amount: number): string {
   const sign = amount < 0 ? '-' : ''
   const abs = Math.abs(amount)
@@ -393,7 +396,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     if (crossCheck) {
       md += `## Scenario comparison (scope not reconciled)\n\n`
       if (crossCheck.lowConfidence) {
-        md += `Assessment profile too thin for a reliable second estimate (fell back to the floor).\n\n`
+        md += `${PROFILE_FLOOR_NOTE}\n\n`
       } else {
         md += `| Method | Estimate |\n|--------|----------|\n`
         md += `| Per-product model (catalogue-count scenario) | ${formatCurrency(crossCheck.methodAFullEstate)} |\n`
@@ -689,12 +692,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 <div className="bg-status-warning/10 rounded-lg p-3 border border-status-warning/30 flex items-start gap-2">
                   <Info size={14} className="text-status-warning shrink-0 mt-0.5" />
                   <p className="text-xs text-foreground/90">
-                    Your assessment profile is too thin for a reliable second estimate (it fell back
-                    to the floor). Fill in more of the{' '}
+                    {PROFILE_FLOOR_NOTE}{' '}
                     <Link to="/assess" className="text-primary hover:underline">
-                      assessment
-                    </Link>{' '}
-                    to sharpen this cross-check.
+                      Review assessment inputs
+                    </Link>
                   </p>
                 </div>
               ) : (
@@ -1152,11 +1153,11 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <strong>Which costing model this is:</strong> a bottom-up parametric estimate (assets ×
             unit cost) with deterministic ±30% sensitivity. It is one of several model families —
             top-down budget-percentage anchoring, probabilistic Monte-Carlo bands, and
-            expert-elicited scenario ranges are the others. No single method is reliable for PQC
-            under deep uncertainty. Compare methods only after checking their scope, horizon and
-            assumptions; methods can share errors, so agreement is not calibrated confidence.
-            Divergence is a prompt to examine those assumptions. See the Learn tab&apos;s
-            &ldquo;Choosing a Costing Model&rdquo; section for the full comparison.
+            expert-elicited scenario ranges are the others. Results depend on scope and assumptions.
+            Compare methods only after checking their scope, horizon and assumptions; methods can
+            share errors, so agreement is not calibrated confidence. Divergence is a prompt to
+            examine those assumptions. See the Learn tab&apos;s &ldquo;Choosing a Costing
+            Model&rdquo; section for the full comparison.
           </p>
           <p className="text-xs italic mt-2">
             Educational estimates for planning. Pair with your finance function&apos;s discounted
