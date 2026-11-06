@@ -142,13 +142,14 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
             <div className="font-bold text-foreground text-sm">Select an asset to assess</div>
             {!usingLive && (
               <p className="text-xs text-muted-foreground">
-                No CBOM loaded from Step 3 — using sample assets. Complete Step 3 to assess your own
-                inventory.
+                No mapped Step 3 rows are available — using illustrative sample assets, not findings
+                from an empty or invalid draft.
               </p>
             )}
             {usingLive && (
               <p className="text-xs text-status-success">
-                Using CBOM from Step 3 ({cbomAssets.length} assets available).
+                Using the last valid Step 3 components sample ({cbomAssets.length} rows available),
+                not necessarily the current draft.
               </p>
             )}
             <div className="space-y-2">

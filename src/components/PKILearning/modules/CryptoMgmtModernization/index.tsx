@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 export type { MaturityOutput } from './types'
 import type { MaturityOutput } from './types'
 import {
@@ -24,7 +24,7 @@ import { CLMVendorEvaluator } from './components/CLMVendorEvaluator'
 import { CryptoAgilityProcessDiagram } from './visuals/CryptoAgilityProcessDiagram'
 import { MaturityAssessment } from './workshop/MaturityAssessment'
 import { InventoryLifecycleSimulator } from './workshop/InventoryLifecycleSimulator'
-import { LibraryCBOMBuilder } from './workshop/LibraryCBOMBuilder'
+import { LibraryCBOMBuilder, type SbomDraftState } from './workshop/LibraryCBOMBuilder'
 import { NoRegretROIBuilder } from './workshop/NoRegretROIBuilder'
 import { PostureKPIDesigner } from './workshop/PostureKPIDesigner'
 import { ManagementToolsAudit } from './workshop/ManagementToolsAudit'
@@ -116,6 +116,27 @@ export const CryptoMgmtModernizationModule: FC = () => {
   // assets that Steps 4, 7 and 8 consume. Held in the module FC so it survives
   // step changes; the original Reset does NOT clear it, so no onReset slot.
   const [cbomAssets, setCbomAssets] = useState<CbomExportItem[]>([])
+  const [sbomDraft, setSbomDraft] = useState<SbomDraftState | null>(null)
+  const [lastValidSbom, setLastValidSbom] = useState<SbomDraftState | null>(null)
+  const rememberSbomDraft = useCallback((state: SbomDraftState) => {
+    setSbomDraft(state)
+    if (state.valid) setLastValidSbom(state)
+  }, [])
+  const sbomSourceNotice = (
+    <aside
+      aria-label="Step 3 mapping source"
+      className="rounded-lg border border-border p-3 text-xs text-muted-foreground"
+    >
+      {!sbomDraft
+        ? 'No Step 3 components mapping has been made in this module session. The tool below uses its own illustrative defaults or edited inputs.'
+        : !sbomDraft.valid
+          ? `The current Step 3 draft is invalid or unsupported: ${sbomDraft.issue} ${lastValidSbom ? `Retained last valid mapping: ${lastValidSbom.source}, ${lastValidSbom.count} rows.` : 'No earlier valid mapping is available.'} Results below do not assess the invalid draft; zero available rows can lead to illustrative defaults.`
+          : sbomDraft.count === 0
+            ? 'The current Step 3 components sample is valid but empty. The tool below can use its own illustrative defaults or edited inputs; these are not findings from that empty sample.'
+            : `Most recent valid Step 3 components mapping: ${sbomDraft.source}, ${sbomDraft.count} rows, ${sbomDraft.unmatched} without a catalogue match. These sample rows are not a checked estate. Tool inputs may also be defaults or learner edits.`}
+    </aside>
+  )
+
   const [maturityOutput, setMaturityOutput] = useState<MaturityOutput | null>(null)
   // Anchors the in-page ToC (custom two-column Learn layout, hence learnRaw).
   const learnContentRef = useRef<HTMLDivElement>(null)
@@ -165,17 +186,38 @@ export const CryptoMgmtModernizationModule: FC = () => {
               />
             )
           case 2:
-            return <LibraryCBOMBuilder onCbomExport={setCbomAssets} />
+            return (
+              <LibraryCBOMBuilder
+                onCbomExport={setCbomAssets}
+                initialSbomDraft={sbomDraft ?? undefined}
+                onSbomDraftChange={rememberSbomDraft}
+              />
+            )
           case 3:
-            return <NoRegretROIBuilder cbomAssets={cbomAssets} />
+            return (
+              <>
+                {sbomSourceNotice}
+                <NoRegretROIBuilder cbomAssets={cbomAssets} />
+              </>
+            )
           case 4:
             return <PostureKPIDesigner />
           case 5:
             return <ManagementToolsAudit />
           case 6:
-            return <RiskAnalysisEngine cbomAssets={cbomAssets} />
+            return (
+              <>
+                {sbomSourceNotice}
+                <RiskAnalysisEngine cbomAssets={cbomAssets} />
+              </>
+            )
           case 7:
-            return <MitigateMigrateWizard cbomAssets={cbomAssets} />
+            return (
+              <>
+                {sbomSourceNotice}
+                <MitigateMigrateWizard cbomAssets={cbomAssets} />
+              </>
+            )
           case 8:
             return <CLMVendorEvaluator />
           default:

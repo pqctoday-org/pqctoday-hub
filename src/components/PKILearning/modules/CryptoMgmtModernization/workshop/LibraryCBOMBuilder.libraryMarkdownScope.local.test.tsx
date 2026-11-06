@@ -155,14 +155,11 @@ describe('library Markdown follows the displayed catalogue', () => {
   it('keeps the active SBOM Markdown and selection unchanged across library mode, save and reopen', () => {
     const view = render(<LibraryCBOMBuilder />)
     fireEvent.click(screen.getByRole('button', { name: 'SBOM → CBOM' }))
-    fireEvent.change(
-      screen.getByRole('textbox', { name: 'Or paste your own CycloneDX / SPDX JSON' }),
-      {
-        target: {
-          value: JSON.stringify({ components: [{ name: 'SBOM-only row', version: '9' }] }),
-        },
-      }
-    )
+    fireEvent.change(screen.getByRole('textbox', { name: 'Paste components-shaped JSON' }), {
+      target: {
+        value: JSON.stringify({ components: [{ name: 'SBOM-only row', version: '9' }] }),
+      },
+    })
     const sbom = markdown()
     expect(sbom).toContain(
       '| SBOM-only row | 9 | not-validated | not-validated | — | yellow | No posture record — add to inventory and research. |'

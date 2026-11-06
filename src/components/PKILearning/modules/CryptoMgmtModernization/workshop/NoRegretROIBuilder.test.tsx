@@ -57,7 +57,9 @@ describe('NoRegretROIBuilder', () => {
 
   it('does not show the "Pull from CBOM" button when no CBOM assets are provided', () => {
     render(<NoRegretROIBuilder />)
-    expect(screen.queryByRole('button', { name: /Pull from Step 3 CBOM/ })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Pull last valid Step 3 sample/ })
+    ).not.toBeInTheDocument()
   })
 
   it('shows "Pull from CBOM" with HSM and library counts when assets are provided', () => {
@@ -95,7 +97,7 @@ describe('NoRegretROIBuilder', () => {
     ]
     render(<NoRegretROIBuilder cbomAssets={cbomAssets} />)
     expect(
-      screen.getByRole('button', { name: /Pull from Step 3 CBOM \(1 HSM \/ 2 lib\)/ })
+      screen.getByRole('button', { name: /Pull last valid Step 3 sample \(1 HSM \/ 2 lib\)/ })
     ).toBeInTheDocument()
   })
 
@@ -129,7 +131,7 @@ describe('NoRegretROIBuilder', () => {
       },
     ]
     render(<NoRegretROIBuilder cbomAssets={cbomAssets} />)
-    fireEvent.click(screen.getByRole('button', { name: /Pull from Step 3 CBOM/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Pull last valid Step 3 sample/ }))
     fireEvent.click(screen.getAllByRole('button', { name: 'Show math' })[3])
     expect(screen.getByRole('slider', { name: 'HSM count' })).toHaveValue('0')
     expect(screen.getByRole('slider', { name: 'Library count' })).toHaveValue('1')
