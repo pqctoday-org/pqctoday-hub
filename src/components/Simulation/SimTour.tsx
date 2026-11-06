@@ -56,7 +56,7 @@ export const GUIDED_DEFS: TourStep[] = [
   },
   {
     title: 'Plain English: hybrid vs pure',
-    body: 'Hybrid = classical + post-quantum together, so you stay safe even if one is broken (reversible — required during the transition by regulators like ANSSI and BSI). Pure = post-quantum only, the eventual end state some jurisdictions already prefer. Which is correct depends on your jurisdiction’s stance.',
+    body: 'Hybrid = a classical and a post-quantum algorithm used together for the same job, so an attacker has to break both. In TLS 1.3 the two shared secrets are concatenated and fed to a key-derivation function (RFC 10024, building on RFC 9954); the connection stays secure as long as at least one component remains secure and the combiner is sound. Pure = post-quantum only. Authorities differ: the BSI guideline TR-02102-1 (version 2026-01) recommends hybrid use, while the NSA will not require hybrid products for national security systems and, where it has given public guidance on a hybrid, counts only that identified hybrid as CNSA 2.0 compliant (CNSA 2.0 FAQ, version 2.2). Check your own jurisdiction’s current document, date and scope.',
   },
   {
     title: 'Plain English: TNFL',

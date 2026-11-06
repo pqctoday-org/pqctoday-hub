@@ -14,12 +14,24 @@
  * without PQC so readiness is never 100%.
  *
  * Representative topologies (not exhaustive) — see SIMULATION-DESIGN.md §3.
+ *
+ * Every edge value here is a teaching-scenario assumption, not a measurement of
+ * a real estate. `vulnerable` assumes the link relies on quantum-vulnerable key
+ * establishment or authentication; for some protocols (for example MACsec with
+ * pre-shared keys, Kerberos, TR-31 key blocks) that depends on how the link is
+ * configured and is not established by the protocol name alone, and an input the
+ * scenario does not state is unknown rather than vulnerable or safe. Likewise a
+ * `none` PQC path or a `monitorOnly` flag records a blocker the scenario assumes
+ * today (a standard, vendor or deployment constraint that can change), not an
+ * irreducible fact about the protocol.
  */
 import type { SimSize } from './moscaClock'
 import { getCatalogStatus, type CatalogAvailability } from './catalogStatus'
 
 export type PqcStatus = CatalogAvailability
-/** From the protocol matrix: does this protocol have a standard PQC path? */
+/** Scenario input drawn from the protocol matrix: is a standard PQC path assumed for this
+ *  protocol today? 'none' means none is assumed in this scenario; check the Protocol
+ *  Matrix and the standards for the current position. */
 export type PqcPath = 'available' | 'vendor' | 'none'
 
 export interface SystemNode {
@@ -48,7 +60,9 @@ export interface ProtocolEdge {
   protocol: string
   pqcPath: PqcPath
   vulnerable: boolean
-  /** Irreducible: no PQC path → compensate (defense-in-depth), never migrate. */
+  /** Scenario assumption: no PQC path is available to this link in the exercise (a
+   *  constraint that can change), so it is handled with compensating controls and
+   *  monitoring rather than migration. */
   monitorOnly?: boolean
 }
 
@@ -337,7 +351,7 @@ export type EdgeState = 'migratable' | 'blocked' | 'vendor' | 'monitor' | 'safe'
 /** Per-edge migration state under the one readiness rule. */
 export function edgeState(arch: Architecture, e: ProtocolEdge): EdgeState {
   if (!e.vulnerable) return 'safe'
-  if (e.pqcPath === 'none' || e.monitorOnly) return 'monitor' // irreducible → defense-in-depth
+  if (e.pqcPath === 'none' || e.monitorOnly) return 'monitor' // assumed blocker → compensating controls
   if (e.pqcPath === 'vendor') return 'vendor' // waiting on a vendor PQC path
   const byId = new Map(arch.nodes.map((n) => [n.id, n]))
   const blocked = byId.get(e.from)?.pqcStatus === 'none' || byId.get(e.to)?.pqcStatus === 'none'

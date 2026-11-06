@@ -50,4 +50,18 @@ describe('SimTour (WS-12)', () => {
     }
     expect(screen.getByText(GUIDED_DEFS[GUIDED_DEFS.length - 1].title)).toBeInTheDocument()
   })
+  it('states hybrid positions as scoped recommendations with a source, not a blanket regulatory requirement', () => {
+    const hybrid = GUIDED_DEFS.find((d) => /hybrid vs pure/i.test(d.title))
+    expect(hybrid).toBeDefined()
+    const body = hybrid!.body
+    // The old card said regulators such as ANSSI and BSI require hybrid, and called hybrid "reversible".
+    expect(body).not.toMatch(/required during the transition by regulators/i)
+    expect(body).not.toMatch(/reversible/i)
+    expect(body).not.toMatch(/eventual end state/i)
+    // Secure-combiner condition and a named, dated, scoped source for each position.
+    expect(body).toMatch(/at least one component remains secure and the combiner is sound/i)
+    expect(body).toMatch(/BSI guideline TR-02102-1 \(version 2026-01\) recommends hybrid/i)
+    expect(body).toMatch(/will not require hybrid products for national security systems/i)
+    expect(body).toMatch(/your own jurisdiction/i)
+  })
 })

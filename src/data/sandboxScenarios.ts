@@ -299,7 +299,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Code Signing (osslsigncode)',
     emoji: '🔏',
     useCase:
-      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65, demonstrating the supply-chain implications of harvest-now-decrypt-later on software distribution.',
+      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65. WHY IT MATTERS: a code signature protects authenticity, not confidentiality. The long-term risk is signature forgery: once a cryptanalytically relevant quantum computer can break the classical signature algorithm, an attacker could forge a signature that verifiers still trust, for as long as installed software and trust anchors rely on that key. Harvest-now-decrypt-later applies to the encrypted channel that delivers an update, which is assessed separately from the signature.',
     algorithms: ['ML-DSA-65', 'PE/Authenticode'],
     difficulty: 'intermediate',
     trackId: 'applications',

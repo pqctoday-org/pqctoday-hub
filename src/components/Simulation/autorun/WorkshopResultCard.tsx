@@ -64,12 +64,21 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
       return (
         <div className="space-y-2">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            Envelope encryption wraps a per-object AES-256 data-encryption-key (DEK) with a
-            key-encryption-key (KEK) held in the KMS/HSM. Migrating the WRAP step from RSA-OAEP to
-            ML-KEM-768 replaces a public-key encryption with a key-encapsulation — the DEK is
-            derived from the encapsulated shared secret instead of decrypted directly, so callers
-            that assume "decrypt the wrapped key" need a small API-level, not just algorithm-level,
-            change.
+            Envelope encryption protects each payload with an AES-256 data-encryption-key (DEK) and
+            stores that DEK wrapped under a key-encryption-key (KEK) held in the KMS/HSM. Migrating
+            the WRAP step from RSA-OAEP to ML-KEM-768 replaces a public-key encryption with a
+            key-encapsulation. Encapsulating to the KMS/HSM public key yields a KEM shared secret
+            and a ciphertext; the shared secret goes through an approved key-derivation function (as
+            required) to give a symmetric wrapping key, which wraps the existing DEK with an
+            authenticated mode. What is stored is the KEM ciphertext plus the wrapped DEK — not the
+            shared secret, and not the DEK in the clear — so callers that assume "decrypt the
+            wrapped key" need an API-level, not just algorithm-level, change. The AES-256 payload
+            encryption itself does not change.
+          </p>
+          <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+            Rewrapping replaces only the wrapped DEK, so the stored payload ciphertext is untouched.
+            Moving a payload to a new DEK needs full data re-encryption. Neither changes copies of
+            the old ciphertext or old wrapped key that were already taken.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Stat
@@ -80,7 +89,7 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
             <Stat
               label="ML-KEM-768 wrap"
               value={`${MLKEM768.signatureOrCiphertextBytes} bytes`}
-              note="ciphertext + KDF, not a direct decrypt"
+              note="KEM ciphertext only; the wrapped DEK is stored as well"
             />
           </div>
           <p className="text-[10.5px] text-muted-foreground">Sizes: NIST FIPS 203 (ML-KEM-768).</p>

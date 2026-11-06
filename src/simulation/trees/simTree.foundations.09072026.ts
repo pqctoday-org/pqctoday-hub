@@ -202,7 +202,7 @@ const TREE: PhaseTree = {
   pitfalls: [
     {
       title: 'Let the evidence dossier lapse',
-      why: "A documented decision to defer is defensible; undocumented inaction is not. Without a maintained record of risk-acceptance decisions, denied budget requests, and annual threat reassessments, there's no negligence defense if a known, unaddressed quantum risk turns into an incident.",
+      why: 'Contemporaneous records of risk-acceptance decisions, denied budget requests, and annual threat reassessments help explain why a decision was made and support later review. Without them, that reasoning is hard to show. Keeping records does not guarantee a legal defense: how they are treated depends on the jurisdiction and the facts, so ask legal counsel.',
     },
     {
       title: 'Skip the maturity baseline (run no assessment)',

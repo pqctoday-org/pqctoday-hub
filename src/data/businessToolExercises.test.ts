@@ -27,4 +27,18 @@ describe('BUSINESS_TOOL_EXERCISES (round 9, wave 2, business sittings)', () => {
     expect(prompt).toMatch(/10-year horizon/i)
     expect(prompt).not.toMatch(/from 0/i)
   })
+  it('CBOM exercise teaches repeatability and its limits, not an accuracy guarantee', () => {
+    const [ex] = BUSINESS_TOOL_EXERCISES['crypto-cbom-builder']
+    const text = `${ex.prompt} ${ex.options.join(' ')} ${ex.why}`
+    // No fixed one-week lifetime for a hand-built CBOM, and no promise of accuracy for a generated one.
+    expect(text).not.toMatch(/accurate for a week/i)
+    expect(text).not.toMatch(/for as long as you keep generating/i)
+    expect(ex.options[ex.answer]).not.toMatch(/always accurate/i)
+    // Coverage, staleness and unsupported-stack limits are stated for both kinds.
+    expect(ex.why).toMatch(/only the sources you feed it/)
+    expect(ex.why).toMatch(/stack the scanner does not support/)
+    expect(ex.why).toMatch(/stale input/)
+    expect(ex.why).toMatch(/hand-built entries drift/)
+    expect(ex.why).toMatch(/dated snapshot/)
+  })
 })

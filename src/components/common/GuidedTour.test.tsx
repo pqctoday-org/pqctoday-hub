@@ -284,4 +284,60 @@ describe('GuidedTour', () => {
     expect(screen.queryByText('Glossary')).not.toBeInTheDocument()
     expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBe('true')
   })
+  it('separates public-key, signature and symmetric roles in the intro and scopes the milestones', () => {
+    renderTour()
+
+    act(() => {
+      vi.advanceTimersByTime(2500)
+    })
+
+    const seen: string[] = []
+    for (let i = 0; i < 3; i++) {
+      seen.push(document.body.textContent ?? '')
+      const nextBtns = screen.getAllByRole('button', { name: /Next/i })
+      fireEvent.click(nextBtns[0])
+    }
+    const intro = seen.join(' ')
+
+    // Not every system depends on RSA/ECC, and the timing is not "hours".
+    expect(intro).not.toMatch(/Every bank transfer/i)
+    expect(intro).not.toMatch(/in hours/i)
+    // Key establishment, signatures and bulk encryption are named as different jobs.
+    expect(intro).toMatch(/agree on keys and prove authenticity/i)
+    expect(intro).toMatch(/forge signatures/i)
+    expect(intro).toMatch(/symmetric ciphers such as AES/i)
+    expect(intro).toMatch(/ML-KEM \(FIPS 203\) for key establishment/)
+    expect(intro).toMatch(/ML-DSA and SLH-DSA \(FIPS 204 and 205\) for digital signatures/)
+    // Milestones are scoped, not a blanket government mandate.
+    expect(intro).not.toMatch(/Governments are mandating/i)
+    expect(intro).toMatch(/differ in scope and force/i)
+  })
+
+  it('describes the feature cards as curated and source-checked, not complete or always current', () => {
+    renderTour()
+
+    act(() => {
+      vi.advanceTimersByTime(2500)
+    })
+
+    advancePastIntro('learning')
+
+    const cards: string[] = []
+    for (let i = 0; i < 14; i++) {
+      cards.push(document.body.textContent ?? '')
+      const nextBtns = screen.queryAllByRole('button', { name: /Next/i })
+      if (nextBtns.length > 0) fireEvent.click(nextBtns[0])
+    }
+    const features = cards.join(' ')
+
+    expect(features).not.toMatch(/every government deadline/i)
+    expect(features).not.toMatch(/exactly when your country mandates/i)
+    expect(features).not.toMatch(/always up to date/i)
+    expect(features).not.toMatch(/Every NIST, IETF, and ETSI document/i)
+    expect(features).not.toMatch(/already at risk of future exposure/i)
+    expect(features).not.toMatch(/grounded in NIST standards/i)
+    expect(features).toMatch(/coverage is curated/i)
+    expect(features).toMatch(/binding mandate, guidance or a target/i)
+    expect(features).toMatch(/key-establishment and signature algorithms/i)
+  })
 })
