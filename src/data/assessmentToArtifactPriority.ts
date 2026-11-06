@@ -50,20 +50,22 @@ const HIGH_BOARD_VISIBILITY_INDUSTRIES = new Set([
   'Aerospace',
 ])
 
-/** Country → most-relevant compliance framework. Used to nudge the user
- *  toward the right gap artifact in their jurisdiction. Matches values
- *  emitted by the Country wizard step. */
+/** Country → framework or guidance often cited for that country. Used to nudge the
+ *  user toward a gap artifact. A country selection alone never makes a framework
+ *  apply: whether it binds depends on the organization, sector and systems in
+ *  scope, so every reason built from this map is worded as "check whether it applies".
+ *  Matches values emitted by the Country wizard step. */
 const JURISDICTION_FRAMEWORK_HINT: Record<string, string> = {
   'United States': 'OMB M-23-02 / NSM-10',
   Canada: 'Canadian Centre for Cyber Security guidance',
   'European Union': 'DORA + NIS2',
   'United Kingdom': 'NCSC PQC migration guidance',
-  France: 'ANSSI PQC roadmap',
+  France: 'ANSSI position papers on the post-quantum transition',
   Germany: 'BSI TR-02102',
   Japan: 'CRYPTREC PQC list',
-  'South Korea': 'KISA PQC guidance',
+  'South Korea': 'KpqC standardization (KISA)',
   Australia: 'ACSC ISM',
-  Singapore: 'CSA Singapore PQC roadmap',
+  Singapore: 'CSA Quantum-Safe Handbook',
   China: 'GM/T cryptographic requirements',
 }
 
@@ -104,7 +106,7 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
       return { reason: 'Compliance impacts were identified in the assessment.' }
     if (input?.country && JURISDICTION_FRAMEWORK_HINT[input.country])
       return {
-        reason: `${input.country} sits under ${JURISDICTION_FRAMEWORK_HINT[input.country]} — track its deadlines.`,
+        reason: `${JURISDICTION_FRAMEWORK_HINT[input.country]} is often cited for ${input.country}. Check whether it applies to your organization before tracking its dates.`,
       }
     return null
   },
@@ -117,10 +119,13 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
 
   'audit-checklist': ({ input }) => {
     if ((input?.complianceRequirements?.length ?? 0) > 0)
-      return { reason: 'Compliance frameworks usually require periodic audits.' }
+      return {
+        reason:
+          'The frameworks you selected may call for audit evidence — check each one’s own requirements.',
+      }
     if (input?.country && JURISDICTION_FRAMEWORK_HINT[input.country])
       return {
-        reason: `Audits expected under ${JURISDICTION_FRAMEWORK_HINT[input.country]} (${input.country}).`,
+        reason: `If ${JURISDICTION_FRAMEWORK_HINT[input.country]} applies to your organization (${input.country}), a checklist can track the audit evidence it asks for. Your country alone does not show that it applies.`,
       }
     return null
   },
@@ -129,7 +134,10 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
     if (input?.cryptoAgility === 'hardcoded' || input?.cryptoAgility === 'partially-abstracted')
       return { reason: 'Limited crypto agility — a policy draft formalizes the upgrade path.' }
     if ((input?.complianceRequirements?.length ?? 0) > 0)
-      return { reason: 'Compliance frameworks expect a written crypto policy.' }
+      return {
+        reason:
+          'The frameworks you selected may expect a written crypto policy — check their requirements.',
+      }
     return null
   },
 
@@ -210,7 +218,9 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
     if (isHighRisk({ ...({} as AssessmentSnapshot), result } as AssessmentSnapshot))
       return { reason: `Risk level is ${result?.riskLevel} — surface to the board.` }
     if (input?.industry && HIGH_BOARD_VISIBILITY_INDUSTRIES.has(input.industry))
-      return { reason: `${input.industry} typically requires board-level crypto attestation.` }
+      return {
+        reason: `A board deck is one way to give ${input.industry} leadership visibility of cryptographic risk (an example choice, not a requirement).`,
+      }
     return null
   },
 

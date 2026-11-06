@@ -566,9 +566,9 @@ export const SimpleGanttChart = ({
                   className="relative flex items-center justify-center"
                   title={
                     milestoneElapsed
-                      ? `In effect since ${phaseData.startYear}`
+                      ? `Recorded for ${phaseData.startYear}`
                       : milestoneActive
-                        ? 'In effect this year'
+                        ? 'Recorded for this year'
                         : `Upcoming (${phaseData.startYear})`
                   }
                 >
@@ -584,7 +584,7 @@ export const SimpleGanttChart = ({
                     {phaseData.phase}
                     {(milestoneElapsed || milestoneActive) && (
                       <span className="ml-1 font-normal text-[9px] uppercase tracking-wide text-primary">
-                        {milestoneActive ? 'now' : 'in effect'}
+                        {milestoneActive ? 'this year' : 'recorded'}
                       </span>
                     )}
                   </span>

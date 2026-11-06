@@ -17,9 +17,58 @@ function makeResult(overrides: Partial<AssessmentResult> = {}): AssessmentResult
 }
 
 describe('reportVerdict — persona-aware, score-specific text (no static duplicate copy)', () => {
-  it('no persona: returns the generic NO_PERSONA_VERDICT regardless of result', () => {
-    expect(reportVerdict(null, makeResult())).toEqual(NO_PERSONA_VERDICT)
+  it('no persona and no result: returns the generic NO_PERSONA_VERDICT', () => {
     expect(reportVerdict(null, null)).toEqual(NO_PERSONA_VERDICT)
+  })
+
+  it('no persona, with a result: a Summary built from the reported facts, not a copy of the Risk Score text', () => {
+    const verdict = reportVerdict(null, makeResult())
+    expect(verdict.tag).toBe(NO_PERSONA_VERDICT.tag)
+    expect(verdict.narrative).not.toBe('neutral narrative')
+    expect(verdict.narrative).not.toBe(NO_PERSONA_VERDICT.narrative)
+  })
+
+  it('no persona: the generic summary states no exposure and no deadline', () => {
+    const t = NO_PERSONA_VERDICT.narrative
+    expect(t).not.toMatch(/Your data faces/i)
+    expect(t).not.toMatch(/2030/)
+    expect(t).not.toMatch(/clustering/i)
+    expect(t).toMatch(/depend on your answers/i)
+  })
+
+  it('no persona: reports with and without HNDL exposure and dated-framework facts differ', () => {
+    const exposed = reportVerdict(
+      null,
+      makeResult({
+        hndlRiskWindow: { isAtRisk: true } as AssessmentResult['hndlRiskWindow'],
+        complianceImpacts: [
+          { framework: 'F1', requiresPQC: true, deadline: '2030', notes: '' },
+          { framework: 'F2', requiresPQC: true, deadline: '2031', notes: '' },
+        ],
+      })
+    )
+    const calm = reportVerdict(
+      null,
+      makeResult({
+        hndlRiskWindow: { isAtRisk: false } as AssessmentResult['hndlRiskWindow'],
+        complianceImpacts: [{ framework: 'F3', requiresPQC: false, deadline: 'None', notes: '' }],
+      })
+    )
+    expect(exposed.narrative).not.toBe(calm.narrative)
+    expect(exposed.narrative).toMatch(/Harvest-Now-Decrypt-Later is an exposure to investigate/)
+    expect(exposed.narrative).toMatch(/2 of your selected frameworks state a PQC expectation/)
+    expect(calm.narrative).toMatch(/Harvest-Now-Decrypt-Later is not flagged/)
+    expect(calm.narrative).not.toMatch(/state[s]? a PQC expectation/)
+    // Neither asserts a deadline cluster or year the answers do not support.
+    for (const v of [exposed, calm]) {
+      expect(v.narrative).not.toMatch(/2030|clustering/i)
+    }
+  })
+
+  it('no persona: with no HNDL window and no framework facts, nothing about exposure or dates is asserted', () => {
+    const v = reportVerdict(null, makeResult())
+    expect(v.narrative).not.toMatch(/Harvest-Now-Decrypt-Later/)
+    expect(v.narrative).not.toMatch(/framework/)
   })
 
   it('persona selected: narrative is the real result.personaNarrative, not a static string', () => {

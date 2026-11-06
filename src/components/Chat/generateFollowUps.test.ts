@@ -121,4 +121,48 @@ describe('generateFollowUps — edge cases', () => {
     expect(result.length).toBeGreaterThan(0)
     expect(result.some((q) => q.includes('implementation'))).toBe(true)
   })
+  describe('standards are asked about according to what kind of document they are', () => {
+    const ask = (text: string) => generateFollowUps(text).join(' | ')
+
+    it('asks about CAVP algorithm validation for an algorithm standard, not a certificate', () => {
+      const q = ask('FIPS 203 defines the ML-KEM standard.')
+      expect(q).toMatch(/CAVP algorithm validation for FIPS 203/)
+      expect(q).not.toMatch(/have FIPS 203 certification/i)
+    })
+
+    it('asks about a CMVP module certificate for FIPS 140-3', () => {
+      expect(ask('Modules are validated under FIPS 140-3.')).toMatch(
+        /CMVP module certificate under FIPS 140-3/
+      )
+    })
+
+    it('asks whether CNSA 2.0, an SP 800 document or ANSSI applies, instead of asking who is certified to it', () => {
+      for (const text of [
+        'CNSA 2.0 sets the NSA algorithm suite.',
+        'SP 800-227 describes key encapsulation recommendations.',
+        'ANSSI publishes guidance on hybrid use.',
+      ]) {
+        const q = ask(text)
+        expect(q).not.toMatch(/Which products have .* certification/i)
+        expect(q).toMatch(/apply to/i)
+      }
+    })
+
+    it('never asks for a universal certification issued for every named standard or authority', () => {
+      for (const std of [
+        'FIPS 203',
+        'FIPS 204',
+        'FIPS 205',
+        'FIPS 140-2',
+        'CNSA 2.0',
+        'SP 800-208',
+        'NIST IR 8547',
+        'ETSI',
+        'ANSSI',
+      ]) {
+        const q = ask(`${std} is mentioned in this answer.`)
+        expect(q).not.toMatch(/Which products have .* certification\?/i)
+      }
+    })
+  })
 })

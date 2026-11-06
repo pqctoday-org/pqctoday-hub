@@ -293,6 +293,40 @@ describe('SimpleGanttChart', () => {
     expect(within(milestones[0]).getByTestId('milestone-flag')).toBeInTheDocument()
   })
 
+  it('does not call a milestone "in effect" just because its year has passed', () => {
+    const year = new Date().getFullYear()
+    const milestone = (title: string, startYear: number) => ({
+      phase: 'Policy' as const,
+      type: 'Milestone' as const,
+      title,
+      startYear,
+      endYear: startYear,
+      description: 'A recorded milestone',
+      events: [],
+    })
+    const data = [
+      {
+        ...mockData[0],
+        phases: [
+          milestone('Past recorded milestone', year - 3),
+          milestone('This-year milestone', year),
+          milestone('Future milestone', year + 2),
+        ],
+      },
+    ]
+    const { container } = renderG(<SimpleGanttChart {...defaultProps} data={data} />)
+    // Neither the visible chips nor the flag titles claim force from the year alone.
+    expect(container.textContent ?? '').not.toMatch(/in effect/i)
+    expect(screen.queryByTitle(/^In effect/)).toBeNull()
+    // A passed milestone is labelled by its recorded year, this year's by the current year,
+    // and a future one stays "Upcoming".
+    expect(screen.getByTitle(`Recorded for ${year - 3}`)).toBeInTheDocument()
+    expect(screen.getByTitle('Recorded for this year')).toBeInTheDocument()
+    expect(screen.getByTitle(`Upcoming (${year + 2})`)).toBeInTheDocument()
+    expect(screen.getByText('recorded')).toBeInTheDocument()
+    expect(screen.getByText('this year')).toBeInTheDocument()
+  })
+
   it('filters data by search text', () => {
     renderG(<SimpleGanttChart {...defaultProps} />)
 

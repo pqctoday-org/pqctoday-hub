@@ -186,7 +186,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'Where do you use cryptography?',
     subtitle:
       'Select all cryptographic use cases in your organization to prioritize which migrations are most urgent.',
-    why: 'Each use case has its own migration path and priority — TLS and VPN move first, niche use cases later. This shapes the ordering in your roadmap.',
+    why: 'Each use case has its own service consequences, dependencies and risk, so the order in your roadmap follows your answers rather than a fixed sequence. One plan may start with TLS or VPN; another may start with long-lived confidential storage or with signing that other services depend on.',
     changesInReport:
       'Adjusts exposure drivers and helps order the discovery and migration actions by cryptographic use case.',
     freelyOptional: true,

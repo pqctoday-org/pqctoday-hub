@@ -6,7 +6,8 @@
  * the 4 content domains (compliance frameworks, library docs, threats, timeline
  * events) into one of 4 tiers:
  *
- *   - 'mandatory'     — country + industry both match (or item is industry-universal)
+ *   - 'mandatory'     — country + industry both match (or the record carries an explicit
+ *                       reviewed all-sector flag) and the record is reviewed as binding
  *   - 'cross-border'  — country matches; item targets other industries
  *   - 'advisory'      — industry matches; item is global/region-relevant
  *   - 'informational' — only region or weak signal matches
@@ -52,6 +53,11 @@ export interface UserProfile {
   industry: string | null
   country: string | null
   region?: Region | null
+}
+
+/** Reviewed all-sector scope flag a catalogue row may carry; absent means not reviewed as all-sector. */
+export interface ReviewedSectorScope {
+  allSectorsReviewed?: boolean
 }
 
 export type ApplicabilityTier =
@@ -101,8 +107,18 @@ export interface SourceContext {
 interface ItemFields {
   countries: string[]
   industries: string[]
-  /** True when item applies regardless of industry (universal scope). */
+  /**
+   * Display relevance only: the item carries 0 or 3+ sector tags, so it is worth showing to
+   * readers in other sectors. This is a filter heuristic. It is not the item's legal scope and
+   * never makes an item binding by itself.
+   */
   industryUniversal: boolean
+  /**
+   * Explicit, reviewed statement that the instrument covers every sector. Only this flag (or a
+   * direct sector-tag match) lets a binding item reach the 'mandatory' tier; sector tags stay
+   * as narrower filter tags.
+   */
+  allSectorsReviewed?: boolean
   /** True when item is global/country-universal. */
   countryUniversal: boolean
   /**
@@ -475,9 +491,20 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
       (fields.bindingStatus === 'binding' || fields.bindingStatus === 'mandatory_for_scope') &&
       Boolean(fields.bindingBasis?.trim())
     if (domesticBody && reviewedBinding) {
+      // Relevance is not legal coverage: three or more sector tags make a record worth showing,
+      // but only a matching sector tag or an explicit reviewed all-sector flag lets it reach the
+      // mandatory tier. Otherwise the reader is pointed to the stated scope.
+      const sectorCoversReader = directIndustryMatch || fields.allSectorsReviewed === true
+      if (sectorCoversReader) {
+        return {
+          tier: 'mandatory',
+          reason: `${fields.bindingStatus === 'mandatory_for_scope' ? 'Binding for its stated scope' : 'Binding instrument'} — ${fields.bindingBasis}`,
+          sourceContext,
+        }
+      }
       return {
-        tier: 'mandatory',
-        reason: `${fields.bindingStatus === 'mandatory_for_scope' ? 'Binding for its stated scope' : 'Binding instrument'} — ${fields.bindingBasis}`,
+        tier: 'cross-border',
+        reason: `${country} match, shown as relevant — ${hasIndustry ? `its sector tags do not include ${industry}` : 'your sector is not set'}, so check its stated scope before treating it as binding on you (${fields.bindingBasis})`,
         sourceContext,
       }
     }
@@ -531,7 +558,9 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
 
 /**
  * Step5's industry-universal heuristic: items targeting 0 or 3+ industries are
- * treated as universal. Preserved for backwards-compat with the wizard.
+ * treated as relevant to readers in any sector. Preserved for backwards-compat
+ * with the wizard. It decides display relevance only; legal coverage needs a
+ * matching sector tag or an explicit reviewed all-sector flag.
  */
 function isIndustryUniversal(industries: string[]): boolean {
   return industries.length === 0 || industries.length >= 3
@@ -540,6 +569,15 @@ function isIndustryUniversal(industries: string[]): boolean {
 function isCountryUniversal(countries: string[]): boolean {
   return countries.length === 0 || countries.includes('Global')
 }
+
+/**
+ * Records reviewed as covering every sector by their own scope clause, kept here until the
+ * compliance catalogue carries a reviewed all-sector column (the engine reads that column
+ * first, through `allSectorsReviewed`). GDPR: Regulation (EU) 2016/679, Article 2(1), defines
+ * its material scope by the processing of personal data, not by sector. Add a record only
+ * after reading its scope clause.
+ */
+const REVIEWED_ALL_SECTOR_IDS: ReadonlySet<string> = new Set(['GDPR'])
 
 export function applicableFrameworks(
   profile: UserProfile,
@@ -552,6 +590,9 @@ export function applicableFrameworks(
       countries: fw.countries,
       industries: expandIndustriesForMatching(fw.industries),
       industryUniversal: isIndustryUniversal(fw.industries),
+      allSectorsReviewed:
+        (fw as ComplianceFramework & ReviewedSectorScope).allSectorsReviewed === true ||
+        REVIEWED_ALL_SECTOR_IDS.has(fw.id),
       countryUniversal: isCountryUniversal(fw.countries),
       enforcementBody: fw.enforcementBody,
       bodyType: fw.bodyType,

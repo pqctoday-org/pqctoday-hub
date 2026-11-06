@@ -120,19 +120,74 @@ describe('getArtifactSuggestion', () => {
   it('suggests board-deck for high-board-visibility industries', () => {
     expect(
       getArtifactSuggestion('board-deck', snap({ industry: 'Government & Defense' }))?.reason
-    ).toMatch(/board-level crypto attestation/i)
+    ).toMatch(/visibility of cryptographic risk/i)
   })
 
-  it('suggests audit-checklist when country has a known jurisdiction', () => {
-    expect(getArtifactSuggestion('audit-checklist', snap({ country: 'Germany' }))?.reason).toMatch(
-      /BSI TR-02102/i
-    )
+  it('suggests audit-checklist when country has a known jurisdiction, as a conditional pointer', () => {
+    const reason = getArtifactSuggestion('audit-checklist', snap({ country: 'Germany' }))?.reason
+    expect(reason).toMatch(/BSI TR-02102/i)
+    expect(reason).toMatch(/if .* applies to your organization/i)
   })
 
   it('suggests compliance-timeline from country jurisdiction when frameworks empty', () => {
     expect(
       getArtifactSuggestion('compliance-timeline', snap({ country: 'United States' }))?.reason
     ).toMatch(/OMB M-23-02/i)
+  })
+
+  describe('country selection alone does not create a legal duty', () => {
+    const countries = [
+      'United States',
+      'Canada',
+      'European Union',
+      'United Kingdom',
+      'France',
+      'Germany',
+      'Japan',
+      'South Korea',
+      'Australia',
+      'Singapore',
+      'China',
+    ]
+    // Phrases that present a framework as a duty simply because of the country.
+    const dutyWording =
+      /(sits under|audits expected|usually require|typically requires?|expect a written|requires? board)/i
+
+    it.each(countries)(
+      '%s: out-of-scope reader (no frameworks selected) gets a check-applicability prompt',
+      (country) => {
+        for (const type of ['compliance-timeline', 'audit-checklist'] as const) {
+          const reason = getArtifactSuggestion(type, snap({ country }))?.reason ?? ''
+          expect(reason).not.toBe('')
+          expect(reason).not.toMatch(dutyWording)
+          expect(reason).toMatch(/applies to your organization|not show that it applies/i)
+        }
+      }
+    )
+
+    it('in-scope reader who selected a framework is pointed to that framework, not the country', () => {
+      const snapshot = snap({ country: 'United States', complianceRequirements: ['OMB M-23-02'] })
+      expect(getArtifactSuggestion('compliance-timeline', snapshot)?.reason).toMatch(
+        /you selected compliance frameworks/i
+      )
+      expect(getArtifactSuggestion('audit-checklist', snapshot)?.reason).toMatch(
+        /frameworks you selected may call for audit evidence/i
+      )
+      expect(getArtifactSuggestion('policy-draft', snapshot)?.reason).toMatch(/you selected/i)
+    })
+
+    it('does not state a board attestation requirement for any listed industry', () => {
+      for (const industry of [
+        'Finance & Banking',
+        'Government & Defense',
+        'Healthcare',
+        'Aerospace',
+      ]) {
+        const reason = getArtifactSuggestion('board-deck', snap({ industry }))?.reason ?? ''
+        expect(reason).not.toMatch(/attestation/i)
+        expect(reason).toMatch(/not a requirement/i)
+      }
+    })
   })
 
   it('suggests risk-register for high-sensitivity data', () => {
