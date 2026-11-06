@@ -98,3 +98,22 @@ it('preserves an actual thrown sample-operation error instead of reporting a lis
   expect(sample.list).not.toHaveBeenCalled()
   expect(screen.queryByText(/C_GetMechanismList helper\(slot/)).not.toBeInTheDocument()
 })
+
+it('distinguishes shared business intent from API-specific migration requirements', () => {
+  render(<ProviderPatternWorkshop />)
+  const heading = screen.getByRole('heading', {
+    name: 'Key Insight: Separate Business Intent from Algorithm Details',
+  })
+  const footer = heading.parentElement!
+  expect(footer).toHaveTextContent('others instantiate algorithm classes directly')
+  expect(footer).toHaveTextContent('parameters, key types and storage, signatures and wire formats')
+  expect(footer).toHaveTextContent('identifiers, and peer support')
+  expect(footer).toHaveTextContent('do not establish a drop-in migration')
+  expect(footer).not.toHaveTextContent('only thing that changes')
+  expect(
+    screen.getByText('Direct class instantiation — no provider registration needed')
+  ).toBeVisible()
+  expect(screen.getByRole('button', { name: 'Execute (Live WASM)' })).toBeEnabled()
+  expect(sample.keygen).not.toHaveBeenCalled()
+  expect(sample.list).not.toHaveBeenCalled()
+})

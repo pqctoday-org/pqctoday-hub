@@ -281,13 +281,16 @@ export const ProviderPatternWorkshop: React.FC = () => {
       {/* Key Insight */}
       <div className="glass-panel p-4 border-l-4 border-primary">
         <h4 className="font-semibold text-primary mb-2">
-          Key Insight: Algorithm-Agnostic Business Logic
+          Key Insight: Separate Business Intent from Algorithm Details
         </h4>
         <p className="text-sm text-muted-foreground">
-          Notice how all examples follow the same structure: configure the provider once at startup,
-          then use the API&apos;s high-level objects (Signature, EVP_PKEY, CK_MECHANISM) for the
-          actual operation. The algorithm name is the only thing that changes between RSA-2048 and
-          ML-DSA-65. This is the foundation of crypto agility.
+          These examples illustrate separating a business operation, such as signing a buffer, from
+          API-specific setup and algorithm details. Some APIs use registered providers; others
+          instantiate algorithm classes directly. Moving from RSA to ML-DSA may require changes to
+          parameters, key types and storage, signatures and wire formats, identifiers, and peer
+          support — not just an algorithm-name substitution. In your own tools, check the exact
+          API/provider version and test the intended configuration and interoperability. This
+          separation supports crypto agility; these examples do not establish a drop-in migration.
         </p>
       </div>
 
