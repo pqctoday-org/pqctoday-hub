@@ -181,7 +181,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     catalogName: 'Crypto4A QxHSM',
     fips140Level: 'FIPS 140-3 Level 3 (cert #5497, lists ML-KEM, ML-DSA, SLH-DSA, LMS as approved)',
     formFactor: 'network',
-    firmwareVersion: 'v4.4+ (production PQC)',
+    firmwareVersion: 'Not published',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
     sideChannelCountermeasures: [
