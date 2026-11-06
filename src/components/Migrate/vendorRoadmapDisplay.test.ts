@@ -54,6 +54,19 @@ describe('getGaStatusInfo', () => {
     expect(getGaStatusInfo('')).toBeNull()
   })
 
+  it('reads the leading state with the same words and spacing as the later segments', () => {
+    expect(getGaStatusInfo('General availability')).toEqual({ kind: 'ga', label: 'GA' })
+    expect(getGaStatusInfo('  GA')).toEqual({ kind: 'ga', label: 'GA' })
+    expect(getGaStatusInfo('Early access')).toEqual({ kind: 'preview', label: 'Preview' })
+    expect(getGaStatusInfo('Early availability; GA (cloud)')).toMatchObject({
+      kind: 'preview',
+      label: 'Preview + GA',
+      mixedKinds: ['preview', 'ga'],
+    })
+    // a word that merely starts with "ga" is not a state
+    expect(getGaStatusInfo('Gated rollout')).toBeNull()
+  })
+
   // A vendor sentence can report different states for different capabilities.
   // Windows: the algorithms and ADCS certificates are GA, while hybrid TLS key
   // exchange and composite algorithms are still Preview.

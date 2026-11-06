@@ -44,12 +44,8 @@ function gaStatusLabel(kind: GaStatusKind): string {
 const GA_STATUS_MATURITY: GaStatusKind[] = ['planned', 'preview', 'beta', 'ga']
 
 function leadingStatusKind(status: string): GaStatusKind | null {
-  const s = status.toLowerCase()
-  if (s.startsWith('ga')) return 'ga'
-  if (s.startsWith('beta')) return 'beta'
-  if (s.startsWith('preview')) return 'preview'
-  if (s.startsWith('planned')) return 'planned'
-  return null
+  const m = SEGMENT_STATUS_RE.exec(status)
+  return m ? segmentKind(m[1]) : null
 }
 
 /** Drops parenthetical detail and quoted text, which describe a status rather
