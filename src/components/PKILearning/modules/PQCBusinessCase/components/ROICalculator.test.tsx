@@ -240,7 +240,9 @@ describe('ROICalculator', () => {
     expect(screen.getByText(/Cross-check vs your assessment/i)).toBeInTheDocument()
     expect(screen.getByText(/Assessment-derived estimate/i)).toBeInTheDocument()
     // The reconciliation renders exactly one verdict (aligned or divergent).
-    expect(screen.getByText(/Aligned\.|Divergent\./)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Within sample comparison band\.|Outside sample comparison band\./)
+    ).toBeInTheDocument()
   })
 
   it('shows the selected-scope cost in the cross-check panel once Products to Migrate is below the full estate', () => {
@@ -279,6 +281,8 @@ describe('ROICalculator', () => {
     // baseMockData has isAssessmentComplete=false and assessmentResult=null.
     renderCalc()
     expect(screen.getByText(/Cross-check vs your assessment/i)).toBeInTheDocument()
-    expect(screen.getByText(/generate a second, independent cost estimate/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/generate a separate assessment-derived scenario estimate/i)
+    ).toBeInTheDocument()
   })
 })
