@@ -137,6 +137,12 @@ export interface ComplianceFramework {
    * See utils/bindingSplit.ts.
    */
   bindingStatus?: BindingStatus
+  /**
+   * True when the instrument's own scope clause has been read and covers every sector, from the
+   * optional `all_sectors_reviewed` column (`yes`). Absent means not reviewed as all-sector; the
+   * number of sector tags never stands in for it. See utils/applicabilityEngine.ts.
+   */
+  allSectorsReviewed?: boolean
   /** Short public citation of the instrument that makes it binding, from `binding_basis` (for example "Regulation (EU) 2022/2554, Article 6"). */
   bindingBasis?: string
   /**
@@ -189,6 +195,7 @@ interface RawComplianceRow {
   related_standards?: string
   last_verified?: string
   binding_status?: string
+  all_sectors_reviewed?: string
   binding_basis?: string
   binding_scope?: string
   binding_scope_en?: string
@@ -399,6 +406,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
     lastVerified: row.last_verified?.trim() || undefined,
     bindingStatus: parseBindingStatus(row.binding_status),
+    allSectorsReviewed: row.all_sectors_reviewed?.trim().toLowerCase() === 'yes' ? true : undefined,
     bindingBasis: row.binding_basis?.trim() || undefined,
     bindingScope: row.binding_scope?.trim() || undefined,
     bindingScopeEn: row.binding_scope_en?.trim() || undefined,

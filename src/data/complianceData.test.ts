@@ -256,6 +256,15 @@ describe('compliance binding_status column', () => {
     }
   })
 
+  it("reads the optional all_sectors_reviewed column: only 'yes' marks a framework as reviewed for every sector", () => {
+    const hasSectorColumn = rows.length > 0 && 'all_sectors_reviewed' in rows[0]
+    for (const r of rows.filter((x) => x.status === 'active')) {
+      const fw = complianceFrameworks.find((f) => f.id === r.id)
+      const cell = hasSectorColumn ? (r.all_sectors_reviewed ?? '').trim().toLowerCase() : ''
+      expect(fw?.allSectorsReviewed, r.id).toBe(cell === 'yes' ? true : undefined)
+    }
+  })
+
   it('reports data as present exactly when some framework carries a status', () => {
     expect(bindingDataPresent()).toBe(
       complianceFrameworks.some((f) => f.bindingStatus !== undefined)

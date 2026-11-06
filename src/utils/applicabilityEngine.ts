@@ -55,11 +55,6 @@ export interface UserProfile {
   region?: Region | null
 }
 
-/** Reviewed all-sector scope flag a catalogue row may carry; absent means not reviewed as all-sector. */
-export interface ReviewedSectorScope {
-  allSectorsReviewed?: boolean
-}
-
 export type ApplicabilityTier =
   'mandatory' | 'recognized' | 'cross-border' | 'advisory' | 'derived' | 'informational'
 
@@ -590,9 +585,7 @@ export function applicableFrameworks(
       countries: fw.countries,
       industries: expandIndustriesForMatching(fw.industries),
       industryUniversal: isIndustryUniversal(fw.industries),
-      allSectorsReviewed:
-        (fw as ComplianceFramework & ReviewedSectorScope).allSectorsReviewed === true ||
-        REVIEWED_ALL_SECTOR_IDS.has(fw.id),
+      allSectorsReviewed: fw.allSectorsReviewed === true || REVIEWED_ALL_SECTOR_IDS.has(fw.id),
       countryUniversal: isCountryUniversal(fw.countries),
       enforcementBody: fw.enforcementBody,
       bodyType: fw.bodyType,
