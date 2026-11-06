@@ -254,7 +254,8 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     region: 'eu',
     year: 2022,
     quarter: 'Q3',
-    description: 'Software Update Management System mandatory — secure OTA process required.',
+    description:
+      "UN Regulation No. 156 sets requirements for a Software Update Management System, including secure over-the-air updates, for vehicle type approval. The 2022 Q3 EU application date shown is this module's assumption and has not been checked against the regulation text.",
     pqcRelevance: 'indirect',
     confidence: 'published',
     affectedSystems: ['OTA gateway', 'Firmware signing', 'Update verification'],
