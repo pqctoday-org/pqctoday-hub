@@ -25,6 +25,8 @@ import {
   hsm_aesWrapKey,
   hsm_aesGcmWrapKey,
   hsm_aesGcmUnwrapKey,
+  hsm_wrapKeyMech,
+  hsm_unwrapKeyMech,
   hsm_generateAESKeyPinnedTo,
   hsm_generateAESKeyWrapWithTrusted,
   hsm_importTrustedWrapKey,
@@ -36,6 +38,8 @@ import {
   buildTemplate,
   freeTemplate,
   CKM_AES_GCM,
+  CKM_AES_KEY_WRAP,
+  Pkcs11Error,
   CKA_ALLOWED_MECHANISMS,
   CKA_TRUSTED,
   CKA_CLASS,
@@ -79,6 +83,12 @@ const sizeRow = (
 }
 
 const CKM_AES_ECB = 0x1081
+
+/** Scope statement for the AES-KW tamper step: shown in the step's refusal
+ * detail and as a lesson note, so the demonstration is read as a check of the
+ * integrity value only. */
+export const AES_KW_INTEGRITY_NOTE =
+  'AES key wrap carries an integrity check value; the unwrap is refused when the wrapped bytes were altered. This shows the check, not that the wrapped key is secret or authentic to a given sender.'
 
 export const V32_LESSONS: Pkcs11LessonV32[] = [
   {
@@ -624,14 +634,52 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           return { detail: 'Unexpectedly unwrapped a tampered blob — this should not happen.' }
         },
       },
+      {
+        op: 'C_WrapKey + C_UnwrapKey (CKM_AES_KEY_WRAP, one byte altered)',
+        label: 'Wrap with classic AES-KW, alter one byte of the wrapped blob, and try to unwrap it',
+        expect: 'refusal',
+        expectedRefusal: {
+          operations: ['C_UnwrapKey'],
+          // Measured on the C++ and Rust engines (all 18 single-byte flips,
+          // 9 positions x 2 masks, on each): CKR_WRAPPED_KEY_INVALID only.
+          returnCodes: [0x110],
+        },
+        run: (hsm, results) => {
+          const M = requireModule(hsm)
+          const session = hsm.hSessionRef.current
+          const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
+          const targetHandle = Number((results[0]?.detail.match(/target=(\d+)/) ?? [])[1])
+          const wrapped = hsm_wrapKeyMech(M, session, CKM_AES_KEY_WRAP, wrapHandle, targetHandle)
+          const template: AttrDef[] = [
+            { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+            { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+            { type: CKA_TOKEN, boolVal: false },
+            { type: CKA_EXTRACTABLE, boolVal: true },
+          ]
+          // Control: the unaltered blob unwraps under the same key and template,
+          // so the refusal below can only come from the altered byte.
+          hsm_unwrapKeyMech(M, session, CKM_AES_KEY_WRAP, wrapHandle, wrapped, template)
+          const altered = wrapped.slice()
+          altered[0] ^= 0xff
+          try {
+            hsm_unwrapKeyMech(M, session, CKM_AES_KEY_WRAP, wrapHandle, altered, template)
+          } catch (error) {
+            if (error instanceof Pkcs11Error)
+              throw new Error(`${error.message} — ${AES_KW_INTEGRITY_NOTE}`)
+            throw error
+          }
+          return { detail: 'Unexpectedly unwrapped an altered blob — this should not happen.' }
+        },
+      },
     ],
     notes: [
       "AES-KW already protects wrapped-key integrity using its built-in unwrap check. Its format differs from GCM's separate IV and authentication tag; this is not an authenticated-versus-unauthenticated comparison.",
       'The same AEAD principle from lesson A4 (symmetric encryption) applies here: authenticated constructions turn tampering into a loud, detectable failure instead of silent corruption.',
-      'AES-KW is deterministic: wrapping the same key under the same wrapping key gives the same blob (NIST SP 800-38F). AES-GCM needs an IV that never repeats under one key (NIST SP 800-38D, Sec. 8); here the token generates it and returns it. GCM also authenticates associated data without encrypting it, which AES-KW through C_WrapKey has no input for. Both reject a modified blob on unwrap, but this sample runs the tamper step only on the GCM path.',
+      'AES-KW is deterministic: wrapping the same key under the same wrapping key gives the same blob (NIST SP 800-38F). AES-GCM needs an IV that never repeats under one key (NIST SP 800-38D, Sec. 8); here the token generates it and returns it. GCM also authenticates associated data without encrypting it, which AES-KW through C_WrapKey has no input for. Both reject a modified blob on unwrap (for AES-KW, see RFC 3394, section 2.2.3), and this sample runs a tamper step on each path.',
+      AES_KW_INTEGRITY_NOTE,
     ],
     whyItMatters:
-      'Choose the wrapping mechanism required by the key-management profile, including its metadata and IV requirements. Check that the production tool rejects invalid wrapped inputs without returning a key; this sample demonstrates only the selected GCM path.',
+      'Choose the wrapping mechanism required by the key-management profile, including its metadata and IV requirements. Check that the production tool rejects invalid wrapped inputs without returning a key; this sample shows one altered byte refused on each of the AES-GCM and AES-KW paths.',
     tryRef: ['key_wrap'],
   },
   {

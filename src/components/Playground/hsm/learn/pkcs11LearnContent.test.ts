@@ -12,7 +12,7 @@
 //    says read-only SO sessions do not exist.
 //  - SLH-DSA-SHA2-128s / 128f sizes: NIST FIPS 205, Table 2.
 import { describe, it, expect } from 'vitest'
-import { V32_LESSONS } from './pkcs11LessonsV32'
+import { V32_LESSONS, AES_KW_INTEGRITY_NOTE } from './pkcs11LessonsV32'
 import { QUIZZES } from './pkcs11Quiz'
 import { TAG_GLOSSARY, TERM_BY_ID } from './pkcs11Glossary'
 import { SLH_DSA_SIG_BYTES, SLH_DSA_PUB_BYTES } from '@/wasm/softhsm/constants'
@@ -64,6 +64,45 @@ describe('authenticated wrap (AES-KW and AES-GCM)', () => {
       /strongest|always better|more secure than/i
     )
     expect(right(q)).not.toMatch(/strongest|always better|more secure than/i)
+  })
+
+  describe('AES-KW altered-blob step', () => {
+    const steps = lesson('authenticated-wrap').steps
+    const kwIdx = steps.findIndex((s) => /CKM_AES_KEY_WRAP/.test(s.op))
+    const gcmWrapIdx = steps.findIndex((s) => /C_WrapKeyAuthenticated \(AES-GCM\)/.test(s.op))
+    const gcmTamperIdx = steps.findIndex((s) => /tampered blob/.test(s.op))
+
+    it('comes after the AES-GCM wrap, unwrap and tamper steps and wraps with AES-KW itself', () => {
+      expect(gcmWrapIdx).toBeGreaterThanOrEqual(0)
+      expect(gcmTamperIdx).toBeGreaterThan(gcmWrapIdx)
+      expect(kwIdx).toBeGreaterThan(gcmTamperIdx)
+      expect(steps[kwIdx].op).toMatch(/C_WrapKey \+ C_UnwrapKey/)
+      expect(steps[kwIdx].label).toMatch(/AES-KW/)
+      expect(steps[kwIdx].label).toMatch(/alter one byte/i)
+    })
+
+    it('expects a refusal of C_UnwrapKey with the return code measured on both engines', () => {
+      const step = steps[kwIdx]
+      expect(step.expect).toBe('refusal')
+      expect(step.expectedRefusal?.operations).toEqual(['C_UnwrapKey'])
+      // CKR_WRAPPED_KEY_INVALID, measured on the C++ and Rust engines.
+      expect(step.expectedRefusal?.returnCodes).toEqual([0x110])
+    })
+
+    it('says the wrap carries an integrity check and that this shows the check only', () => {
+      expect(AES_KW_INTEGRITY_NOTE).toMatch(/integrity check value/)
+      expect(AES_KW_INTEGRITY_NOTE).toMatch(/unwrap is refused when the wrapped bytes were altered/)
+      expect(AES_KW_INTEGRITY_NOTE).toMatch(
+        /shows the check, not that the wrapped key is secret or authentic to a given sender/
+      )
+      expect(lessonText('authenticated-wrap')).toContain(AES_KW_INTEGRITY_NOTE)
+    })
+
+    it('no longer says the tamper demonstration is limited to the GCM path', () => {
+      const text = lessonText('authenticated-wrap')
+      expect(text).not.toMatch(/only on the GCM path|only the selected GCM path/i)
+      expect(text).toMatch(/RFC 3394, section 2\.2\.3/)
+    })
   })
 })
 
