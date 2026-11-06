@@ -167,7 +167,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
               variant="ghost"
               key={tp.id}
               onClick={() => setSelectedTransport(tp.id)}
-              className={`glass-panel p-4 text-left transition-all ${
+              className={`glass-panel h-auto min-w-0 w-full flex-col items-stretch whitespace-normal p-4 text-left transition-all ${
                 isSelected ? 'ring-2 ring-primary shadow-glow' : 'hover:border-primary/30'
               }`}
             >
