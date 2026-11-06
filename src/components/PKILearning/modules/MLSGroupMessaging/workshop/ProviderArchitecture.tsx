@@ -34,8 +34,8 @@ export const ProviderArchitecture: React.FC = () => {
           <strong className="text-foreground">What this table describes:</strong> the real{' '}
           <code>openmls_pqctoday_crypto</code> Rust crate, which runs server-side. The workshop in
           this module is a JavaScript reimplementation of the same PKCS#11 calls against the same
-          softhsmv3 engine — the crypto is genuinely HSM-backed either way, but the steps you run
-          here are not literally this crate executing.
+          softhsmv3 software token — the crypto runs in that same token either way, but the steps
+          you run here are not literally this crate executing.
         </p>
 
         <div className="mt-5 overflow-x-auto">
@@ -101,8 +101,14 @@ export const ProviderArchitecture: React.FC = () => {
         <p className="mt-4 text-sm text-muted-foreground">
           On every <code>sign()</code> call, the provider decodes the handle, looks up the token
           object via <code>C_FindObjects&#123; CKA_CLASS=PRIVATE_KEY, CKA_ID=… &#125;</code>, and
-          runs <code>C_SignInit</code> + <code>C_Sign</code> inside the HSM. Real key bytes never
-          exist in process memory.
+          runs <code>C_SignInit</code> + <code>C_Sign</code> inside the token. The provider never
+          receives the raw private-key bytes: with <code>CKA_SENSITIVE=TRUE</code> and{' '}
+          <code>CKA_EXTRACTABLE=FALSE</code> the PKCS#11 interface does not reveal them outside the
+          token. In this sample the token is a software module (softhsmv3) loaded as a library into
+          the same process, so the key bytes still exist in that process&apos;s memory and the
+          attributes only limit what the interface returns. A production HSM has to demonstrate
+          separately its tamper resistance, isolation of key material from the host and assurance
+          evidence for the module and its configuration.
         </p>
       </div>
 

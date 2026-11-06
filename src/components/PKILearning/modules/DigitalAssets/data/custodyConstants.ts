@@ -154,14 +154,14 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
           threatLevel: 'high',
           vulnerableAlgorithms: ['RSA-2048 JWT (RS256)', 'ECDSA JWT (ES256)'],
           quantumAttack:
-            "Shor's algorithm can forge JWT signatures, allowing unauthorized API access. HMAC-SHA256 remains quantum-resistant at 256-bit security.",
+            "Shor's algorithm can forge RS256 and ES256 JWT signatures, allowing unauthorized API access. HMAC-SHA256 is a shared-secret MAC with no public key for Shor's algorithm to attack. The relevant quantum model is Grover key search: in the idealized model it needs about the square root of the classical work (about 2^128 steps for a random 256-bit key), and its steps parallelize poorly. The security you get still depends on the key's length and randomness, the tag length and how the secret is stored; it is not a blanket 256-bit quantum guarantee.",
           pqcCountermeasures: [
-            'ML-DSA-65 JWT signing (IETF draft-ietf-jose-dilithium)',
+            'ML-DSA-65 JWT signing (JOSE algorithm ML-DSA-65, RFC 9964)',
             'SLH-DSA-SHA2-128s for long-lived API tokens',
           ],
           migrationReadiness: 'in-progress',
           migrationNotes:
-            'JOSE PQC drafts exist but are not yet finalized. HMAC-based auth is already quantum-safe.',
+            'ML-DSA for JOSE and COSE is published as RFC 9964 (May 2026); gateway and library support still has to be checked product by product. HMAC-signed requests are outside the signature migration only if the shared secret is random, at least as long as the hash output (32 bytes for SHA-256, per RFC 2104) and protected at both ends.',
         },
       },
       {
@@ -170,22 +170,26 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         description:
           'Privileged management interface for configuring policies, managing signers, and auditing operations. Requires multi-factor authentication and role-based access.',
         cryptoPrimitives: [
-          'WebAuthn / FIDO2 (ECDSA attestation)',
-          'TOTP (HMAC-SHA1, quantum-safe)',
+          'WebAuthn / FIDO2 (assertion signatures at login, attestation at registration)',
+          'TOTP (HMAC-SHA1 shared secret)',
           'Signed role tokens (ECDSA)',
         ],
         pqcThreat: {
           threatLevel: 'medium',
-          vulnerableAlgorithms: ['WebAuthn ECDSA attestation', 'ECDSA role tokens'],
+          vulnerableAlgorithms: [
+            'WebAuthn credential keys signing login assertions (for example ES256)',
+            'WebAuthn attestation signatures (registration)',
+            'ECDSA role tokens',
+          ],
           quantumAttack:
-            'WebAuthn attestation keys use ECDSA — vulnerable to forgery. TOTP (HMAC-based) is inherently quantum-resistant.',
+            "WebAuthn uses two different keys. The credential key signs every login assertion, and an attacker who can derive it from the stored public key (Shor's algorithm) could forge logins. The attestation key signs only at registration, and the default attestation conveyance preference is 'none'; forging it would mislead an enrolment check about the authenticator, not sign anyone in. TOTP is a different mechanism: an HMAC over a shared secret, with no public-key signature for Shor's algorithm to attack.",
           pqcCountermeasures: [
-            'PQC-backed WebAuthn attestation (pending FIDO Alliance work)',
+            'Migrate the credential key and the Relying Party verifier together; plan attestation separately, and only if you verify it',
             'ML-DSA signed role tokens',
           ],
           migrationReadiness: 'not-ready',
           migrationNotes:
-            'FIDO Alliance has not yet standardized PQC attestation. TOTP provides a quantum-safe MFA fallback.',
+            'Whether and when WebAuthn authenticators, browsers and Relying Party libraries support a post-quantum credential or attestation algorithm is not verified here; check the FIDO Alliance and the W3C WebAuthn working group. TOTP is not an equivalent substitute: the server must store the shared secret (RFC 4226 requires at least 128 bits and recommends 160), and a TOTP code is not bound to a site, unlike a WebAuthn credential scoped to an RP ID. If kept as a contingency factor, record it as a risk-accepted, lower-assurance fallback.',
         },
       },
     ],
@@ -258,10 +262,10 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
           threatLevel: 'medium',
           vulnerableAlgorithms: ['ECDSA approval tokens'],
           quantumAttack:
-            'Approval tokens signed with ECDSA can be forged. Time-locks and HMAC callbacks are hash-based and quantum-resistant.',
+            "Approval tokens signed with ECDSA can be forged. Time-lock commitments and HMAC callbacks are hash-based, so Shor's algorithm does not apply to them; their strength rests on the length and randomness of the secrets and on how they are protected.",
           pqcCountermeasures: [
             'ML-DSA-44 signed approval tokens',
-            'Hash-based commitments (already quantum-safe)',
+            'Hash-based commitments (no public-key signature to replace)',
           ],
           migrationReadiness: 'in-progress',
           migrationNotes:
@@ -282,10 +286,11 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
           threatLevel: 'low',
           vulnerableAlgorithms: [],
           quantumAttack:
-            "HMAC-SHA256 and SHA-256 provide 128-bit quantum security via Grover's algorithm. Sufficient for audit integrity.",
+            "HMAC-SHA256 chaining and SHA-256 hashing use no public-key signature. In the idealized Grover model, searching a random 256-bit HMAC key takes about 2^128 steps; the strength you get depends on the key's length and randomness, the tag length and who can read the key.",
           pqcCountermeasures: ['Optional upgrade to HMAC-SHA3-256 for long-term assurance'],
           migrationReadiness: 'ready',
-          migrationNotes: 'Already quantum-resistant. No migration required.',
+          migrationNotes:
+            'No public-key signature to migrate. Review HMAC key length and key protection in the normal key-management cycle.',
         },
       },
     ],
@@ -361,17 +366,20 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         ],
         pqcThreat: {
           threatLevel: 'critical',
-          vulnerableAlgorithms: ['ECDSA root signing keys', 'EC-based Shamir shares'],
+          vulnerableAlgorithms: [
+            'ECDSA root signing keys',
+            'RSA or ECDH wrapping, and ECDSA authentication, of shares in transit or storage (if used)',
+          ],
           quantumAttack:
-            'Cold wallet keys are the highest-value targets and have the longest lifetimes (years). HNDL risk: if public keys are ever exposed, a future quantum computer can derive the private key at leisure.',
+            'Cold wallet keys are the highest-value targets and have the longest lifetimes (years). HNDL risk: if public keys are ever exposed, a future quantum computer can derive the private key at leisure. Shamir shares are a separate question: any set of shares below the threshold leaves the secret completely undetermined (Shamir, 1979), so splitting a backup does not itself need a lattice scheme. What a quantum attacker can break is the ECDSA key once it is used or rebuilt, and any share that is wrapped, transported or authenticated with RSA, ECDH or ECDSA.',
           pqcCountermeasures: [
             'Dual-algorithm key ceremonies (generate both ECDSA + ML-DSA)',
-            'PQC-aware Shamir splitting (lattice-based threshold schemes)',
+            'Keep Shamir splitting for backing up a secret; protect and authenticate the shares with post-quantum-capable wrapping and custodian authentication',
             'Pre-emptive migration before Q-day (re-key to PQC addresses)',
           ],
           migrationReadiness: 'not-ready',
           migrationNotes:
-            'Cold wallet migration requires new key ceremonies, updated disaster recovery, and blockchain-level PQC address support.',
+            'Cold wallet migration requires new key ceremonies, updated disaster recovery, and blockchain-level PQC address support. Shamir shares rebuild the key in one place when enough of them are combined, so they serve backup; signing without ever rebuilding the key is a different goal, handled by the distributed-signing (MPC) component.',
         },
       },
     ],
@@ -485,7 +493,7 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
           pqcCountermeasures: [
             'Dual-algorithm ceremonies: generate both classical + PQC key pairs',
             'PQC-native root key generation (ML-DSA-87 for signing, ML-KEM-1024 for wrapping)',
-            'Updated disaster recovery with PQC Shamir shards',
+            'Updated disaster recovery: split the new PQC key with Shamir and protect the shares with post-quantum-capable wrapping',
           ],
           migrationReadiness: 'in-progress',
           migrationNotes:
@@ -595,12 +603,12 @@ export const TRANSACTION_FLOW_STEPS: TransactionFlowStep[] = [
       'The platform verifies the operator identity via multi-factor authentication (WebAuthn + TOTP), checks role permissions, and validates the session token signature.',
     activeLayerId: 'client-interfaces',
     cryptoOperations: [
-      'WebAuthn ECDSA attestation verification',
+      'WebAuthn assertion verification (credential public key; attestation only at registration)',
       'TOTP HMAC-SHA1 validation',
       'Role token ECDSA signature check',
     ],
     pqcConsiderations:
-      'WebAuthn and role tokens use ECDSA — quantum-vulnerable. TOTP (HMAC-based) provides a quantum-safe authentication factor. Dual-factor strategy: keep TOTP as quantum-safe fallback.',
+      "WebAuthn assertions (for example ES256) and role tokens use public-key signatures that Shor's algorithm breaks. TOTP uses a shared secret instead of a public-key signature, but it is not an equivalent substitute: it is not bound to a site and the server must protect the stored secret. If kept as a fallback, treat it as a risk-accepted, lower-assurance factor, and plan the WebAuthn credential and verifier migration separately from attestation.",
   },
   {
     id: 'policy-evaluation',
@@ -615,7 +623,7 @@ export const TRANSACTION_FLOW_STEPS: TransactionFlowStep[] = [
       'Signed audit log entry',
     ],
     pqcConsiderations:
-      'Policy verification is primarily hash-based (Merkle proofs, HMAC) — already quantum-resistant. Signed policy rules should migrate to ML-DSA.',
+      'Policy verification is primarily hash-based (Merkle proofs, HMAC), which needs no public-key signature migration. Signed policy rules should migrate to ML-DSA.',
   },
   {
     id: 'approval-routing',
@@ -675,6 +683,6 @@ export const TRANSACTION_FLOW_STEPS: TransactionFlowStep[] = [
       'HMAC-SHA256 audit log chaining',
     ],
     pqcConsiderations:
-      'RPC TLS should use hybrid key exchange. Audit logging (HMAC-SHA256) is already quantum-safe. Block confirmation depends on the chain mining/consensus mechanism.',
+      'RPC TLS should use hybrid key exchange. HMAC-SHA256 log chaining has no public-key signature to migrate. Block confirmation depends on the chain mining/consensus mechanism.',
   },
 ]

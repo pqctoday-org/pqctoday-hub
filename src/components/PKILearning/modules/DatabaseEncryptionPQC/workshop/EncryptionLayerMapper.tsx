@@ -273,13 +273,11 @@ export const EncryptionLayerMapper: React.FC = () => {
                       {selectedDb.hsmIntegration ? 'Yes' : 'No'}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">FIPS Validated</span>
-                    <span
-                      className={`font-bold ${selectedDb.fipsValidated ? 'text-status-success' : 'text-muted-foreground'}`}
-                    >
-                      {selectedDb.fipsValidated ? 'Yes' : 'No'}
-                    </span>
+                  <div className="pt-1">
+                    <div className="text-[10px] text-muted-foreground">
+                      FIPS 140 scope (module, certificate, configuration)
+                    </div>
+                    <div className="text-[10px] text-foreground">{selectedDb.fipsScope}</div>
                   </div>
                   {selectedDb.pqcTimeline && (
                     <div className="pt-1">

@@ -96,9 +96,9 @@ export const SECRET_CATEGORIES: SecretCategory[] = [
     transitRisk:
       'Tokens transmitted over TLS channels are at risk if the session is recorded and later decrypted by a CRQC. Long-lived tokens amplify this risk since they may still be valid years later.',
     atRestRisk:
-      'API keys stored in vault are protected by envelope encryption. The KEK wrapping the DEK must be ML-KEM protected to prevent offline decryption of harvested vault backups.',
+      "API keys stored in vault are protected by envelope encryption. If a harvested vault backup holds a DEK protected by an asymmetric step (RSA-OAEP, ECDH-ES), that step must be replaced to prevent offline decryption; a symmetric (AES) KEK is not broken by Shor's algorithm and needs no ML-KEM.",
     mitigationStrategy:
-      'Store all API keys in a PQC-protected vault (ML-KEM-768 envelope encryption). Implement short TTLs (90 days max). Use ML-DSA-signed webhook payloads to authenticate requests.',
+      'Store API keys in a vault whose key-protection steps you have checked: replace asymmetric steps with a post-quantum or hybrid option the product supports, and keep symmetric KEKs. Implement short TTLs (90 days max). Use ML-DSA-signed webhook payloads to authenticate requests.',
     exampleProducts: ['HashiCorp Vault', 'AWS Secrets Manager', 'Azure Key Vault', 'Doppler'],
   },
   {
@@ -110,11 +110,11 @@ export const SECRET_CATEGORIES: SecretCategory[] = [
     pqcRisk: 'critical',
     hndlExposure: 'immediate',
     transitRisk:
-      'Database connections over TLS 1.2 using RSA or ECDSA key exchange are vulnerable to harvest-now-decrypt-later attacks. A CRQC can decrypt the entire connection including credentials and query results.',
+      "A CRQC can decrypt a recorded database connection, including credentials and query results, only if it can break that connection's key exchange: static RSA key transport (TLS 1.2 and earlier) or the (EC)DH values of an ephemeral exchange. An ECDSA or RSA certificate key only authenticates the server; recovering it later does not decrypt recorded traffic.",
     atRestRisk:
-      'Static DB credentials stored in vault represent a high-value target. Compromise of the vault master key (if RSA/ECDSA wrapped) exposes all credentials simultaneously.',
+      'Static DB credentials stored in vault represent a high-value target. If the vault root key is protected by an asymmetric key-transport step such as RSA-OAEP, its compromise exposes all credentials simultaneously; with a symmetric seal the exposure depends on how the seal is protected.',
     mitigationStrategy:
-      'Replace static credentials with dynamic secrets (Vault database engine: TTL 1h, max 24h). Upgrade DB connection TLS to hybrid ML-KEM. Rotate master keys with ML-KEM-1024 wrapping.',
+      'Replace static credentials with dynamic secrets (Vault database engine: TTL 1h, max 24h). Upgrade DB connection TLS to hybrid ML-KEM key exchange. Review how the vault root key is protected and move any asymmetric step to a post-quantum or hybrid option the platform supports.',
     exampleProducts: ['Vault Dynamic Secrets', 'AWS IAM Database Auth', 'Azure Managed Identity'],
   },
   {
@@ -124,13 +124,13 @@ export const SECRET_CATEGORIES: SecretCategory[] = [
     description:
       'X.509 certificates and their corresponding private keys used for TLS/mTLS authentication. The private key material is the most sensitive component — compromise enables identity spoofing.',
     pqcRisk: 'critical',
-    hndlExposure: 'immediate',
+    hndlExposure: 'none',
     transitRisk:
-      'TLS private keys used in RSA/ECDSA handshakes are retroactively compromisable. Recorded TLS sessions can be decrypted once the server private key is recovered by a CRQC.',
+      "Judge confidentiality and authentication separately. A recorded session is decrypted by breaking its key exchange (static RSA key transport in TLS 1.2 and earlier, or the (EC)DH values of an ephemeral exchange), not by recovering the certificate's signing key. The ECDSA or RSA key signs the handshake: if a CRQC recovers it, an attacker can impersonate the server while the certificate is still accepted, but past session keys stay out of reach. Harvested-traffic risk is handled by hybrid post-quantum key exchange.",
     atRestRisk:
-      'Private keys stored in vault or HSM must be protected with ML-KEM-based key wrapping. PKCS#12 bundles encrypted with legacy algorithms (3DES, RC4) are immediately vulnerable.',
+      'Private keys stored in vault or HSM need a key-protection mechanism the product actually supports; a post-quantum wrapping option applies only where the vault or HSM documents one. PKCS#12 bundles encrypted with legacy algorithms (3DES, RC4) are immediately vulnerable.',
     mitigationStrategy:
-      'Issue hybrid ML-DSA-65 + ECDSA P-256 certificates for all TLS endpoints. Store private keys in FIPS 140-3 Level 3 HSMs with ML-KEM firmware. Automate rotation via ACME/cert-manager.',
+      "Issue hybrid ML-DSA-65 + ECDSA P-256 certificates for all TLS endpoints. Store private keys in HSMs (confirm the module's validated configuration and its post-quantum mechanism support). Automate rotation via ACME/cert-manager.",
     exampleProducts: ['cert-manager', 'Vault PKI Engine', 'AWS ACM', 'Sectigo'],
   },
   {
@@ -158,11 +158,11 @@ export const SECRET_CATEGORIES: SecretCategory[] = [
     pqcRisk: 'critical',
     hndlExposure: 'immediate',
     transitRisk:
-      'DEKs transmitted for key distribution (e.g., cloud KMS APIs over TLS) are vulnerable if the TLS session uses RSA/ECDSA. A harvested key distribution session exposes all data encrypted with that DEK.',
+      "DEKs transmitted for key distribution (e.g., cloud KMS APIs over TLS) are exposed if the TLS key exchange can be broken later (static RSA key transport, or non-hybrid (EC)DH); the certificate's ECDSA signing key does not decrypt a recorded session. A harvested key distribution session then exposes all data encrypted with that DEK.",
     atRestRisk:
-      'DEKs wrapped with RSA-OAEP or ECDH-ES are directly vulnerable to CRQC. Envelope encryption using ML-KEM-1024 as the KEK wrapping algorithm eliminates this risk for new data.',
+      "DEKs wrapped with RSA-OAEP or ECDH-ES are directly vulnerable to a CRQC. DEKs wrapped under a symmetric AES KEK are not broken by Shor's algorithm. A KEM-derived wrapping key (for example from ML-KEM) can replace the asymmetric step where the product supports it.",
     mitigationStrategy:
-      'Re-key all DEKs under ML-KEM-1024 envelope encryption. AES-256-GCM for the data layer is already quantum-safe (Grover halves security to 128 bits, still acceptable). Prioritize longest-lived data first.',
+      "Find which DEK-protection steps are asymmetric (RSA-OAEP, ECDH-ES, or the TLS channel to the KMS) and migrate those; leave symmetric KEKs as they are. AES-256-GCM for the data layer is not broken by Shor's algorithm (Grover halves the effective strength in the idealized model, still 128 bits for AES-256). Prioritize longest-lived data first.",
     exampleProducts: ['AWS KMS', 'Google Cloud KMS', 'Azure Key Vault', 'HashiCorp Vault'],
   },
   {
@@ -314,7 +314,7 @@ export const ROTATION_POLICIES: RotationPolicy[] = [
     maxTTL: '180 days',
     renewalWindow: '14 days before expiry',
     pqcConsideration:
-      "This module's advice: API keys with TTL > 10 years have high HNDL risk. Post-2026, reduce to 30 days as CRQC timelines compress. Ensure vault KEK uses ML-KEM-768.",
+      "This module's advice: API keys with TTL > 10 years have high HNDL risk. Post-2026, reduce to 30 days as CRQC timelines compress. Check whether the vault's key-protection steps are asymmetric; a symmetric KEK needs no ML-KEM.",
     complianceFramework: 'PCI DSS v4.0.1 Req. 8.6.3',
     automationTool: 'Vault Dynamic Secrets + Vault Agent',
   },
@@ -358,7 +358,7 @@ export const ROTATION_POLICIES: RotationPolicy[] = [
     maxTTL: '90 days',
     renewalWindow: '7 days before expiry',
     pqcConsideration:
-      'AES-256-GCM DEKs are quantum-safe but their KEK wrappers need ML-KEM. Rotation is a re-wrap operation (decrypt with old KEK, re-encrypt with new ML-KEM KEK). No data re-encryption needed if using envelope encryption.',
+      "AES-256-GCM DEKs are not broken by Shor's algorithm; only an asymmetric wrapping step needs a post-quantum replacement. Rotating the KEK is a re-wrap operation (decrypt the DEK with the old KEK, wrap it with the new one) and needs no data re-encryption, whereas rotating the DEK itself means re-encrypting the data. Use the rotation operations your KMS or vault documents.",
     complianceFramework: 'NIST SP 800-57 Part 1, FIPS 140-3',
     automationTool: 'AWS KMS Key Rotation / Google Cloud KMS / Azure Key Vault',
   },
@@ -496,7 +496,7 @@ export const PIPELINE_INTEGRATION_PATTERNS: PipelineIntegrationPattern[] = [
       'Vault Agent runs as a sidecar container, authenticates via Kubernetes Service Account JWT, and writes secrets to a shared in-memory tmpfs volume at /vault/secrets/',
     pqcReady: false,
     recommendation:
-      'Enable Kubernetes encryption-at-rest for etcd using a KMS provider with ML-KEM support. Use External Secrets Operator for GitOps-friendly secret sync. Vault Agent sidecar pattern isolates secret exposure to pod lifetime.',
+      'Enable Kubernetes encryption-at-rest for etcd using a KMS v2 provider, and check which key types its plugin supports (a post-quantum key type only if the plugin documents it). External Secrets Operator is GitOps-friendly, but it creates Kubernetes Secrets that are stored in etcd; the Vault Agent sidecar instead renders secrets to a shared memory volume that lives with the pod.',
     codeSnippet: `# vault-agent-config.hcl
 auto_auth {
   method "kubernetes" {
