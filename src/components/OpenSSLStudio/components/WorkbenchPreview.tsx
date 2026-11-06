@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 
 interface WorkbenchPreviewProps {
   category: string
+  commandOverride?: string
+  validationError?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   skeyParams?: Record<string, any>
   // Sourced once from useOpenSSL() at the OpenSSLStudioView level (not
@@ -21,14 +23,18 @@ interface WorkbenchPreviewProps {
 
 export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
   category,
+  commandOverride,
+  validationError,
   skeyParams,
   executeCommand,
   executeSkey,
   retryLoad,
 }) => {
-  const { isProcessing, command, isReady, loadError } = useOpenSSLStore()
+  const { isProcessing, command: storedCommand, isReady, loadError } = useOpenSSLStore()
+  const command = commandOverride ?? storedCommand
 
   const handleRun = () => {
+    if (category === 'kdf' && (validationError || !command.trim())) return
     if (category === 'skey' && skeyParams) {
       executeSkey(skeyParams.opType, skeyParams)
     } else {
@@ -80,7 +86,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
               <Button
                 variant="ghost"
                 onClick={handleRun}
-                disabled={isProcessing || !isReady || !command.trim()}
+                disabled={isProcessing || !isReady || !!validationError || !command.trim()}
                 className="btn-primary flex items-center gap-2 px-4 py-1.5 text-xs font-bold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
               >
                 {isProcessing ? (
@@ -95,6 +101,15 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
             )}
           </div>
         </div>
+
+        {validationError && (
+          <div
+            role="alert"
+            className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 text-xs text-destructive"
+          >
+            {validationError}
+          </div>
+        )}
 
         {category === 'pkcs11' && !command && !loadError && (
           <div className="px-3 py-2 bg-muted/40 border-b border-border text-xs text-muted-foreground">
