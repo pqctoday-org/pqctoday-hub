@@ -195,10 +195,18 @@ export const TopologyBuilder: React.FC = () => {
                         <div className="flex items-center gap-2 text-xs">
                           <span
                             className={
-                              modeInfo.quantumSafe ? 'text-status-success' : 'text-status-warning'
+                              modeInfo.quantumSafe === null
+                                ? 'text-muted-foreground'
+                                : modeInfo.quantumSafe
+                                  ? 'text-status-success'
+                                  : 'text-status-warning'
                             }
                           >
-                            {modeInfo.quantumSafe ? 'Quantum-safe' : 'Quantum-vulnerable'}
+                            {modeInfo.quantumSafe === null
+                              ? 'Depends on the endpoints (unresolved)'
+                              : modeInfo.quantumSafe
+                                ? 'Quantum-safe'
+                                : 'Quantum-vulnerable'}
                           </span>
                         </div>
                       )}
@@ -275,7 +283,9 @@ export const TopologyBuilder: React.FC = () => {
                     ? 'text-status-error'
                     : analysis.hndlExposure === 'medium'
                       ? 'text-status-warning'
-                      : 'text-status-success'
+                      : analysis.hndlExposure === 'unresolved'
+                        ? 'text-muted-foreground'
+                        : 'text-status-success'
                 }`}
               >
                 {analysis.hndlExposure.charAt(0).toUpperCase() + analysis.hndlExposure.slice(1)}
@@ -283,6 +293,15 @@ export const TopologyBuilder: React.FC = () => {
               <div className="text-xs text-muted-foreground">HNDL Exposure</div>
             </div>
           </div>
+
+          {analysis.unresolvedSegments > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {analysis.unresolvedSegments} segment
+              {analysis.unresolvedSegments > 1 ? 's are' : ' is'} not counted as vulnerable or safe:
+              the algorithms of a passthrough session are set by the two endpoints, not by the
+              gateway, and this topology does not say what they negotiate.
+            </p>
+          )}
 
           <div className="space-y-2">
             <div className="text-xs font-bold text-foreground">Recommendations</div>

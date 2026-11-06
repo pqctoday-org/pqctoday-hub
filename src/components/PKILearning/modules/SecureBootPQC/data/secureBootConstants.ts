@@ -96,7 +96,7 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     name: 'KEK',
     fullName: 'Key Exchange Key',
     description:
-      'Authorized to update the Signature Database (db) and Forbidden Signatures Database (dbx). Typically owned by the OS vendor and OEM. Multiple KEKs may be enrolled. Compromise allows unauthorized db updates.',
+      'Authorizes updates to the Signature Database (db) and Forbidden Signatures Database (dbx): an update must be signed by an enrolled KEK (or by the PK). It is not what boot images are checked against; that is db. Each operating system (and some third-party applications) can enroll a KEK, and multiple KEKs may be enrolled. Compromise allows unauthorized db updates.',
     currentAlgorithm: 'RSA-2048',
     typicalSize: '256 bytes public key',
     pqcAlgorithm: 'ML-DSA-65 (FIPS 204)',
@@ -270,10 +270,11 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
     name: 'UEFI Secure Boot Validation',
     order: 1,
     description:
-      'UEFI checks the bootloader signature against the Authorized Signature Database (db). The trust chain: PK authorizes KEK, KEK authorizes db updates, db contains bootloader certificate. This is the primary PQC migration surface.',
+      'UEFI checks the bootloader against the Authorized Signature Database (db): db must hold the image hash or a certificate that verifies the image signature, and dbx must not forbid it (UEFI Specification 2.10, Sec. 32.5). Who may change db is a separate question: updates to db and dbx must be signed by an enrolled KEK (or the PK), and updates to the KEK list by the PK. The image-signing trust in db and the update-authorizing PK and KEK are two different PQC migration surfaces.',
     signingKey: 'Bootloader Code Signing Certificate (in db)',
     currentAlgorithm: 'RSA-2048 or RSA-4096 EFI signature list',
-    pqcStatus: 'Requires PK/KEK/db migration to ML-DSA-65 and UEFI spec update',
+    pqcStatus:
+      'Image checks need firmware that supports the algorithm and db entries that use it; PK and KEK (update authorization) are migrated as a separate step. The UEFI Specification 2.10 Secure Boot section read here names no post-quantum signature type, so check the current specification and your firmware vendor.',
     forgeryUrgency: 'critical',
   },
   {
@@ -281,10 +282,11 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
     name: 'Bootloader (GRUB2 / systemd-boot / shim)',
     order: 2,
     description:
-      'The bootloader is loaded and executed after UEFI signature verification. Shim (on RHEL/Ubuntu) is signed by Microsoft KEK. GRUB2 or systemd-boot is then signature-checked by shim. Each layer must independently verify PQC signatures.',
+      'The bootloader is loaded and executed after UEFI signature verification. Shim (on RHEL/Ubuntu) is verified against db like any other image, so the certificate that signed it must be in db; a KEK does not sign images, it authorizes updates to db and dbx. GRUB2 or systemd-boot is then signature-checked by shim. Each layer must independently verify PQC signatures.',
     signingKey: 'Microsoft UEFI CA (for shim) / Distro signing key (for GRUB2)',
     currentAlgorithm: 'RSA-2048 (shim) + ECDSA P-384 (GRUB2 signing)',
-    pqcStatus: 'GRUB2 PQC support planned; shim PQC requires Microsoft KEK migration',
+    pqcStatus:
+      'GRUB2 PQC support planned. Shim: no release note up to 16.1 (13 August 2025) mentions post-quantum signatures; check the shim project for current status',
     forgeryUrgency: 'high',
   },
   {
@@ -335,7 +337,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     currentCrypto: 'RSA-2048 or ECDSA P-256 (AIK signing key)',
     forgeryUrgency: 'high',
     pqcMigrationPath:
-      'TPM 2.0 Library v185 (TCG, March 2026) introduces support for ML-DSA, HashML-DSA, and ML-KEM. A TPM built to an earlier library version needs the hybrid approach: TPM RSA quote + software ML-DSA binding. Product availability depends on the TPM vendor.',
+      'TPM 2.0 Library v185 (TCG, March 2026) introduces support for ML-DSA, HashML-DSA, and ML-KEM. A TPM built to an earlier library version can only add a software ML-DSA signature next to the TPM’s RSA quote; that sketch has limits (the signature must cover the quote and PCR claims and the nonce, and a software key has no hardware root of trust), so it is not by itself quantum-safe attestation. Product availability depends on the TPM vendor.',
     tpmNative: true,
     standardsBody: 'TCG (Trusted Computing Group)',
   },

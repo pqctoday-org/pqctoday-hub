@@ -385,10 +385,27 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
           <p>
             Zero Trust architecture assumes no implicit trust based on network location. Every
             connection is authenticated, authorized, and encrypted.{' '}
-            <InlineTooltip term="ZTNA">ZTNA</InlineTooltip> components that rely on classical PKI
-            for authentication are vulnerable to harvest-now-decrypt-later (HNDL) attacks — making
-            quantum-safe migration a priority for zero trust frameworks.
+            <InlineTooltip term="ZTNA">ZTNA</InlineTooltip> components face two different quantum
+            risks, and each needs its own evidence.
           </p>
+          <ul className="list-disc pl-5 space-y-1 text-xs text-muted-foreground">
+            <li>
+              <strong className="text-foreground">Confidentiality (HNDL).</strong> Traffic protected
+              by a classical key exchange can be recorded now and decrypted later, so the key
+              exchange on tunnels and TLS sessions migrates first. Evidence: which sessions carry
+              data that must stay secret for how long, and whether the negotiated key exchange is
+              hybrid or post-quantum.
+            </li>
+            <li>
+              <strong className="text-foreground">Authentication (forgery).</strong> NIST IR 8547
+              (final) notes that signatures are not vulnerable to HNDL: an authentication system
+              stays secure as long as its algorithms and keys are secure when the authentication is
+              performed, and must move to quantum-resistant algorithms once quantum computers able
+              to break them become available. Evidence: which signature algorithms, certificates and
+              trust anchors the IdP, policy engine and gateways use, and when each must be replaced.
+              The migration still needs lead time because both parties and the PKI must be upgraded.
+            </li>
+          </ul>
 
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-sm font-bold text-foreground mb-3">
