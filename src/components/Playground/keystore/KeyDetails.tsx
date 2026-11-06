@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Key as KeyIcon, FileText, Code, Copy, Check } from 'lucide-react'
 import clsx from 'clsx'
 import type { Key } from '../../../types'
-import { bytesToHex } from '../../../utils/dataInputUtils'
+import { bytesToHex, hexToBytes, isHex } from '../../../utils/dataInputUtils'
 import { Button } from '@/components/ui/button'
 import { withEducationNoticeComment } from '@/data/educationNotice'
 
@@ -47,78 +47,31 @@ const formatValue = (key: Key, mode: 'hex' | 'ascii') => {
   }
 }
 
-// Helper to simulate PKCS8 (wrapping in PEM)
-const formatPkcs8 = (key: Key, mode: 'hex' | 'ascii') => {
-  if (!key.data) return 'PKCS#8 not available in Mock mode'
+// A reversible view of already-stored bytes, not a key-format encoder/parser.
+const formatStoredBytes = (key: Key, mode: 'hex' | 'base64') => {
+  if (!key.data) return 'Stored-byte view unavailable in mock mode'
+  const bytes = key.data instanceof Uint8Array ? key.data : null
+  if (mode === 'hex') return bytes ? bytesToHex(bytes) : key.value
+  if (!bytes && (!key.value || !isHex(key.value)))
+    return 'Stored byte export unavailable: no complete hexadecimal byte representation'
+  const stored = bytes ?? hexToBytes(key.value)
+  return window.btoa(Array.from(stored, (byte) => String.fromCharCode(byte)).join(''))
+}
 
-  // If data is CryptoKey, we can't easily convert to PKCS8 synchronously here
-  // So we'll return a placeholder or the raw value
-  if (key.dataType === 'cryptokey' || !(key.data instanceof Uint8Array)) {
-    if (mode === 'hex') return key.value
-
-    // Convert Hex to Base64 (PEM body)
-    try {
-      // key.value is Hex string
-      const hex = key.value
-      // Convert hex to bytes
-      const match = hex.match(/.{1,2}/g)
-      if (!match) return 'Invalid Hex'
-      const bytes = new Uint8Array(match.map((byte) => parseInt(byte, 16)))
-
-      // Convert bytes to binary string
-      let binary = ''
-      const len = bytes.byteLength
-      for (let i = 0; i < len; i++) {
-        // eslint-disable-next-line security/detect-object-injection
-        binary += String.fromCharCode(bytes[i])
-      }
-
-      // Convert to Base64
-      const b64 = window.btoa(binary)
-      const label = key.type === 'private' ? 'PRIVATE KEY' : 'PUBLIC KEY'
-      const header = `-----BEGIN ${label}-----`
-      const footer = `-----END ${label}-----`
-
-      // Split into lines of 64 chars
-      const lines = b64.match(/.{1,64}/g) || []
-      return `${header}\n${lines.join('\n')}\n${footer}`
-    } catch {
-      return 'Error converting to PEM'
-    }
-  }
-
-  const label = key.type === 'private' ? 'PRIVATE KEY' : 'PUBLIC KEY'
-  const header = `-----BEGIN ${label}-----`
-  const footer = `-----END ${label}-----`
-
-  // In a real app, we would wrap the raw key in ASN.1 structure here.
-  // For this demo, we'll just base64 encode the raw bytes for "ASCII" (PEM-like)
-  // or show Hex for "HEX".
-
-  if (mode === 'ascii') {
-    // Convert to Base64 (PEM body)
-    let binary = ''
-    const len = key.data.byteLength
-    for (let i = 0; i < len; i++) {
-      // eslint-disable-next-line security/detect-object-injection
-      binary += String.fromCharCode(key.data[i])
-    }
-    const b64 = window.btoa(binary)
-    // Split into lines of 64 chars
-    const lines = b64.match(/.{1,64}/g) || []
-    return `${header}\n${lines.join('\n')}\n${footer}`
-  } else {
-    // Just show hex with header/footer for structure visualization
-    return `${header}\n(ASN.1 Structure Omitted)\n${bytesToHex(key.data)}\n${footer}`
-  }
+interface DisplayEdit {
+  keyId: string
+  sourceValue: string
+  sourceData: Key['data']
+  mode: string
+  text: string
 }
 
 export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
   // View Modes
   const [rawValueMode, setRawValueMode] = useState<'hex' | 'ascii'>('hex')
-  const [pkcs8ValueMode, setPkcs8ValueMode] = useState<'hex' | 'ascii'>('hex')
+  const [previewValueMode, setPreviewValueMode] = useState<'hex' | 'base64'>('hex')
   const [copiedRaw, setCopiedRaw] = useState(false)
-  const [copiedPkcs8, setCopiedPkcs8] = useState(false)
+  const [copiedPreview, setCopiedPreview] = useState(false)
 
   const ruler = '0123456789'.repeat(13).substring(0, 128)
 
@@ -127,30 +80,66 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
     () => formatValue(selectedKey, rawValueMode),
     [selectedKey, rawValueMode]
   )
-  const formattedPkcs8 = React.useMemo(
-    () => formatPkcs8(selectedKey, pkcs8ValueMode),
-    [selectedKey, pkcs8ValueMode]
+  const formattedPreview = React.useMemo(
+    () => formatStoredBytes(selectedKey, previewValueMode),
+    [selectedKey, previewValueMode]
   )
 
-  // Local overrides (reset when key or mode changes)
-  const [rawOverride, setRawOverride] = useState<string | null>(null)
-  const [pkcs8Override, setPkcs8Override] = useState<string | null>(null)
+  // Edits are display-only and belong to this exact stored source and view.
+  const [rawOverride, setRawOverride] = useState<DisplayEdit | null>(null)
+  const [previewOverride, setPreviewOverride] = useState<DisplayEdit | null>(null)
+  const isCurrentEdit = (edit: DisplayEdit | null, mode: string) =>
+    edit?.keyId === selectedKey.id &&
+    edit.sourceValue === selectedKey.value &&
+    edit.sourceData === selectedKey.data &&
+    edit.mode === mode
+  const displayRaw = isCurrentEdit(rawOverride, rawValueMode) ? rawOverride!.text : formattedRaw
+  const displayPreview = isCurrentEdit(previewOverride, previewValueMode)
+    ? previewOverride!.text
+    : formattedPreview
+  const edited =
+    isCurrentEdit(rawOverride, rawValueMode) || isCurrentEdit(previewOverride, previewValueMode)
+  const edit = (mode: string, text: string): DisplayEdit => ({
+    keyId: selectedKey.id,
+    sourceValue: selectedKey.value,
+    sourceData: selectedKey.data,
+    mode,
+    text,
+  })
+  const [editSource, setEditSource] = useState({
+    id: selectedKey.id,
+    value: selectedKey.value,
+    data: selectedKey.data,
+  })
+  if (
+    editSource.id !== selectedKey.id ||
+    editSource.value !== selectedKey.value ||
+    editSource.data !== selectedKey.data
+  ) {
+    setEditSource({ id: selectedKey.id, value: selectedKey.value, data: selectedKey.data })
+    setRawOverride(null)
+    setPreviewOverride(null)
+    setCopiedRaw(false)
+    setCopiedPreview(false)
+  }
 
-  const displayRaw = rawOverride ?? formattedRaw
-  const displayPkcs8 = pkcs8Override ?? formattedPkcs8
-
-  const copyToClipboard = async (text: string, type: 'raw' | 'pkcs8') => {
+  const copyToClipboard = async (text: string, type: 'raw' | 'preview') => {
     try {
       // The notice travels with the key material: once these bytes are on a
       // clipboard they are indistinguishable from a real key
       // (education-notice remediation 2026-09-26).
-      await navigator.clipboard.writeText(withEducationNoticeComment(text, '#'))
+      const qualified =
+        type === 'preview'
+          ? '# Stored-byte illustration; no PKCS#8/SPKI encoding or format validation performed.\n' +
+            text
+          : text
+      await navigator.clipboard.writeText(withEducationNoticeComment(qualified, '#'))
       if (type === 'raw') {
         setCopiedRaw(true)
         setTimeout(() => setCopiedRaw(false), 2000)
       } else {
-        setCopiedPkcs8(true)
-        setTimeout(() => setCopiedPkcs8(false), 2000)
+        setCopiedPreview(true)
+        setTimeout(() => setCopiedPreview(false), 2000)
       }
     } catch {
       // Silent failure - clipboard API may not be available
@@ -193,6 +182,17 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
         </div>
       </div>
 
+      <p role="note" className="text-sm text-muted-foreground">
+        These are stored-byte views, not a PKCS#8/SPKI encoder or format check. Depending on its
+        origin, the source may contain raw key bytes, serialized container bytes or existing file
+        text. Use an appropriate encoder and compatible inspection tool for production
+        import/export.
+      </p>
+      {edited && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Edited display only; the stored key is unchanged.
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-6">
         {/* Raw Value */}
         <div className="space-y-2">
@@ -207,7 +207,10 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
               <div className="flex bg-muted rounded-lg p-0.5 border border-border">
                 <Button
                   variant="ghost"
-                  onClick={() => setRawValueMode('hex')}
+                  onClick={() => {
+                    setRawValueMode('hex')
+                    setRawOverride(null)
+                  }}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     rawValueMode === 'hex'
@@ -219,7 +222,10 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => setRawValueMode('ascii')}
+                  onClick={() => {
+                    setRawValueMode('ascii')
+                    setRawOverride(null)
+                  }}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     rawValueMode === 'ascii'
@@ -258,30 +264,33 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 id="raw-value-input"
                 rows={8}
                 value={displayRaw}
-                onChange={(e) => setRawOverride(e.target.value)}
+                onChange={(e) => setRawOverride(edit(rawValueMode, e.target.value))}
                 className="w-full bg-muted/20 border border-border rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block font-mono leading-relaxed"
               />
             </div>
           </div>
         </div>
 
-        {/* PKCS8 Preview */}
+        {/* Stored-byte representation */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <label
-              htmlFor="pkcs8-preview-input"
+              htmlFor="stored-bytes-preview-input"
               className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2"
             >
-              <Code size={14} /> PKCS#8 Preview
+              <Code size={14} /> Stored-byte representation
             </label>
             <div className="flex gap-2">
               <div className="flex bg-muted rounded-lg p-0.5 border border-border">
                 <Button
                   variant="ghost"
-                  onClick={() => setPkcs8ValueMode('hex')}
+                  onClick={() => {
+                    setPreviewValueMode('hex')
+                    setPreviewOverride(null)
+                  }}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
-                    pkcs8ValueMode === 'hex'
+                    previewValueMode === 'hex'
                       ? 'bg-muted text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
@@ -290,25 +299,28 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => setPkcs8ValueMode('ascii')}
+                  onClick={() => {
+                    setPreviewValueMode('base64')
+                    setPreviewOverride(null)
+                  }}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
-                    pkcs8ValueMode === 'ascii'
+                    previewValueMode === 'base64'
                       ? 'bg-muted text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  PEM
+                  Base64
                 </Button>
               </div>
               <Button
                 variant="ghost"
-                onClick={() => copyToClipboard(displayPkcs8, 'pkcs8')}
+                onClick={() => copyToClipboard(displayPreview, 'preview')}
                 className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"
               >
                 {' '}
-                {copiedPkcs8 ? (
+                {copiedPreview ? (
                   <Check size={14} className="text-status-success" />
                 ) : (
                   <Copy size={14} />
@@ -327,10 +339,10 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
             </div>
             <div className="w-full">
               <textarea
-                id="pkcs8-preview-input"
+                id="stored-bytes-preview-input"
                 rows={8}
-                value={displayPkcs8}
-                onChange={(e) => setPkcs8Override(e.target.value)}
+                value={displayPreview}
+                onChange={(e) => setPreviewOverride(edit(previewValueMode, e.target.value))}
                 className="w-full bg-muted/20 border border-border rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block font-mono leading-relaxed"
               />
             </div>

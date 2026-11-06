@@ -138,22 +138,6 @@ const toHex = (bytes: Uint8Array): string =>
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')
 
-function renderColoredHex(hex: string, sections: { bytes: number; hexBg: string }[]) {
-  const spans: React.ReactNode[] = []
-  let offset = 0
-  sections.forEach((s, i) => {
-    const charLen = s.bytes * 2
-    spans.push(
-      <span key={i} className={s.hexBg}>
-        {hex.slice(offset, offset + charLen)}
-      </span>
-    )
-    offset += charLen
-  })
-  if (offset < hex.length) spans.push(<span key="rest">{hex.slice(offset)}</span>)
-  return spans
-}
-
 interface XMSSLogEntry {
   index: number
   message: string
@@ -162,7 +146,16 @@ interface XMSSLogEntry {
   computeTimeMs: number
   sigHex: string
   remainingAfter: number
-  height: XMSSHeight
+  height: number
+  context: {
+    structure: XMSSStructure
+    parameterId: string
+    parameterName: string
+    totalHeight: number
+    layers: number
+    hash: string
+    mechanism: 'CKM_XMSS' | 'CKM_XMSSMT'
+  }
 }
 
 interface XMSSKeyGenDemoProps {
@@ -209,6 +202,26 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
   // which the single-tree height selector knows nothing about.
   const maxSigs = isMulti ? selected.maxSignatures : Math.pow(2, xmssHeight)
   const isH20 = !isMulti && xmssHeight === 20
+  const selectedContext = useMemo<XMSSLogEntry['context']>(
+    () => ({
+      structure,
+      parameterId: selected.id,
+      parameterName: selected.name,
+      totalHeight: selected.treeHeight,
+      layers: isMulti ? mtSet.layers : 1,
+      hash: selected.hashFunction,
+      mechanism: isMulti ? 'CKM_XMSSMT' : 'CKM_XMSS',
+    }),
+    [
+      structure,
+      selected.id,
+      selected.name,
+      selected.treeHeight,
+      selected.hashFunction,
+      isMulti,
+      mtSet.layers,
+    ]
+  )
 
   // Find comparable LMS parameter set (same tree height, W=4 as default comparison)
   const comparableLMS = useMemo(() => {
@@ -271,7 +284,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
     setIsGenerating(true)
     setKeygenPhase('building')
     setOpError(null)
-    const opLabel = `Generating XMSS keypair (${selected.name}, tree height ${xmssHeight})…`
+    const opLabel = `Generating selected sample keypair (${selectedContext.parameterName}, total height ${selectedContext.totalHeight}, ${selectedContext.layers} layer(s))…`
     const startedAt = performance.now()
     setOpLogEntries([{ status: 'pending', message: opLabel }])
     try {
@@ -335,7 +348,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
     } finally {
       setIsGenerating(false)
     }
-  }, [hsm, ckpParam, selected.name, xmssHeight])
+  }, [hsm, ckpParam, selected.name, xmssHeight, isMulti, xmssHash, selectedContext])
 
   const handleSign = useCallback(async () => {
     if (
@@ -347,6 +360,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
     )
       return
     setOpError(null)
+    const requestedContext = selectedContext
     try {
       let msgBytes = new TextEncoder().encode(messageToSign)
       if (preHash) {
@@ -387,7 +401,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         computeTimeMs,
         sigHex: toHex(sig),
         remainingAfter,
-        height: xmssHeight,
+        height: requestedContext.totalHeight,
+        context: requestedContext,
       }
 
       const newCounter = sigCounter + 1
@@ -402,7 +417,17 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         setOpError(msg)
       }
     }
-  }, [hsm, activeKeyHandle, messageToSign, preHash, sigCounter, isExhausted, xmssHeight, maxSigs])
+  }, [
+    hsm,
+    activeKeyHandle,
+    messageToSign,
+    preHash,
+    sigCounter,
+    isExhausted,
+    isMulti,
+    maxSigs,
+    selectedContext,
+  ])
 
   return (
     <div className="space-y-6">
@@ -572,7 +597,9 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         >
           <span className="flex items-center gap-2">
             <Info size={14} className="text-secondary" />
-            Algorithm details — XMSS (RFC 8391 / SP 800-208)
+            {isMulti
+              ? 'Selected multi-tree context'
+              : 'Algorithm details — XMSS (RFC 8391 / SP 800-208)'}
           </span>
           {showAlgoInfo ? (
             <ChevronUp size={14} className="text-muted-foreground" />
@@ -580,7 +607,15 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
             <ChevronDown size={14} className="text-muted-foreground" />
           )}
         </Button>
-        {showAlgoInfo && (
+        {showAlgoInfo && isMulti && (
+          <p role="note" className="p-4 text-xs text-muted-foreground">
+            Selected {selectedContext.parameterName}: {selectedContext.hash}, total height{' '}
+            {selectedContext.totalHeight}, {selectedContext.layers} layers. This is selected sample
+            metadata; multi-tree structure is not decoded or visualized here. The single-tree
+            explanation is not applied to this mode.
+          </p>
+        )}
+        {showAlgoInfo && !isMulti && (
           <div className="px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-3 bg-muted/10">
             {[
               {
@@ -625,69 +660,83 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Tree visualization */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
-          <h4 className="text-sm font-bold text-foreground mb-3">Single Tree Structure</h4>
+          {isMulti ? (
+            <p role="note" className="text-xs text-muted-foreground">
+              Multi-tree layout not visualized. The current selection is{' '}
+              {selectedContext.parameterName}, total height {selectedContext.totalHeight} across{' '}
+              {selectedContext.layers} layers. No single-tree diagram is used to describe this
+              sample.
+            </p>
+          ) : (
+            <>
+              <h4 className="text-sm font-bold text-foreground mb-3">
+                Single-tree schematic (selected context)
+              </h4>
 
-          <div className="space-y-2 overflow-x-auto">
-            {/* Root */}
-            <div className="flex justify-center">
-              <div className="px-3 py-1.5 rounded bg-secondary/20 text-secondary text-[10px] font-bold border border-secondary/30">
-                Root (PK)
-              </div>
-            </div>
+              <div className="space-y-2 overflow-x-auto">
+                {/* Root */}
+                <div className="flex justify-center">
+                  <div className="px-3 py-1.5 rounded bg-secondary/20 text-secondary text-[10px] font-bold border border-secondary/30">
+                    Root (PK)
+                  </div>
+                </div>
 
-            {/* Intermediate levels */}
-            {Array.from({ length: treeDepth - 1 }, (_, level) => {
-              const nodesAtLevel = Math.pow(2, level + 1)
-              const maxDisplay = Math.min(nodesAtLevel, 8)
-              const truncated = nodesAtLevel > maxDisplay
-              return (
-                <div key={level} className="flex justify-center gap-1 flex-wrap">
-                  {Array.from({ length: maxDisplay }, (__, i) => (
+                {/* Intermediate levels */}
+                {Array.from({ length: treeDepth - 1 }, (_, level) => {
+                  const nodesAtLevel = Math.pow(2, level + 1)
+                  const maxDisplay = Math.min(nodesAtLevel, 8)
+                  const truncated = nodesAtLevel > maxDisplay
+                  return (
+                    <div key={level} className="flex justify-center gap-1 flex-wrap">
+                      {Array.from({ length: maxDisplay }, (__, i) => (
+                        <div
+                          key={i}
+                          className="px-1.5 py-1 rounded bg-muted text-muted-foreground text-[9px] font-medium border border-border"
+                        >
+                          L{level + 1}:{i}
+                        </div>
+                      ))}
+                      {truncated && (
+                        <div className="px-1.5 py-1 text-muted-foreground text-[9px]">
+                          ...+{nodesAtLevel - maxDisplay}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+
+                {/* Leaves */}
+                <div className="flex justify-center gap-1 flex-wrap">
+                  {Array.from({ length: Math.min(totalLeaves, 8) }, (_, i) => (
                     <div
                       key={i}
-                      className="px-1.5 py-1 rounded bg-muted text-muted-foreground text-[9px] font-medium border border-border"
+                      className={`px-1.5 py-1 rounded text-[9px] font-bold border ${
+                        i === 0
+                          ? 'bg-success/10 text-success border-success/30'
+                          : 'bg-muted/50 text-muted-foreground border-border'
+                      }`}
                     >
-                      L{level + 1}:{i}
+                      WOTS+-{i}
                     </div>
                   ))}
-                  {truncated && (
+                  {totalLeaves > 8 && (
                     <div className="px-1.5 py-1 text-muted-foreground text-[9px]">
-                      ...+{nodesAtLevel - maxDisplay}
+                      ...+{totalLeaves - 8}
                     </div>
                   )}
                 </div>
-              )
-            })}
+              </div>
 
-            {/* Leaves */}
-            <div className="flex justify-center gap-1 flex-wrap">
-              {Array.from({ length: Math.min(totalLeaves, 8) }, (_, i) => (
-                <div
-                  key={i}
-                  className={`px-1.5 py-1 rounded text-[9px] font-bold border ${
-                    i === 0
-                      ? 'bg-success/10 text-success border-success/30'
-                      : 'bg-muted/50 text-muted-foreground border-border'
-                  }`}
-                >
-                  WOTS+-{i}
-                </div>
-              ))}
-              {totalLeaves > 8 && (
-                <div className="px-1.5 py-1 text-muted-foreground text-[9px]">
-                  ...+{totalLeaves - 8}
+              {xmssHeight > 5 && (
+                <div className="mt-3 flex items-start gap-2 bg-secondary/5 rounded p-2 border border-secondary/10">
+                  <Info size={12} className="text-secondary shrink-0 mt-0.5" />
+                  <p className="text-[10px] text-muted-foreground">
+                    Full tree has {xmssHeight} levels with {formatSignatureCount(maxSigs)} leaf
+                    nodes.
+                  </p>
                 </div>
               )}
-            </div>
-          </div>
-
-          {xmssHeight > 5 && (
-            <div className="mt-3 flex items-start gap-2 bg-secondary/5 rounded p-2 border border-secondary/10">
-              <Info size={12} className="text-secondary shrink-0 mt-0.5" />
-              <p className="text-[10px] text-muted-foreground">
-                Full tree has {xmssHeight} levels with {formatSignatureCount(maxSigs)} leaf nodes.
-              </p>
-            </div>
+            </>
           )}
 
           <div className="mt-6 pt-4 border-t border-border space-y-3">
@@ -713,9 +762,17 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               </Button>
             )}
 
+            {isMulti && keygenPhase !== 'idle' && (
+              <p className="text-xs text-muted-foreground">
+                {keygenPhase === 'done'
+                  ? 'Sample key-generation operation completed.'
+                  : 'Generating the selected multi-tree sample; no timing estimate is shown.'}
+              </p>
+            )}
+
             {/* Keygen progress bar — CSS animation runs on compositor thread,
                 continues while WASM blocks the JS main thread */}
-            {keygenPhase !== 'idle' && (
+            {keygenPhase !== 'idle' && !isMulti && (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-[10px]">
                   <span className={keygenPhase === 'done' ? 'text-success' : 'text-secondary'}>
@@ -749,13 +806,24 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
 
         {/* Right: Parameter details */}
         <div className="space-y-3">
-          <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-3">Key Parameters</h4>
+          <div
+            role="region"
+            aria-label="Selected parameter context"
+            className="bg-muted/50 rounded-lg p-4 border border-border"
+          >
+            <h4 className="text-sm font-bold text-foreground mb-3">Selected parameter context</h4>
+            <p className="text-xs text-muted-foreground mb-2">
+              Selection metadata, not a parsed key or signature.
+            </p>
             <div className="space-y-2">
               {[
                 { label: 'Parameter Set', value: selected.name },
-                { label: 'Hash Function', value: xmssHash },
-                { label: 'Tree Height', value: String(xmssHeight) },
+                { label: 'Hash Function', value: selectedContext.hash },
+                {
+                  label: isMulti ? 'Total Tree Height' : 'Tree Height',
+                  value: String(selectedContext.totalHeight),
+                },
+                ...(isMulti ? [{ label: 'Layers', value: String(selectedContext.layers) }] : []),
                 {
                   label: 'n (output length)',
                   value: '32 bytes (the sets in this demo; SP 800-208 also approves n = 24)',
@@ -791,8 +859,13 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
             </div>
           </div>
 
+          {isMulti && (
+            <p role="note" className="text-xs text-muted-foreground">
+              The single-tree LMS comparison is not applied to this multi-tree selection.
+            </p>
+          )}
           {/* LMS comparison */}
-          {comparableLMS && (
+          {!isMulti && comparableLMS && (
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-bold text-foreground">
@@ -956,7 +1029,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 disabled={isExhausted}
                 className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
               >
-                <PenLine className="mr-2 h-4 w-4" /> Sign with CKM_XMSS
+                <PenLine className="mr-2 h-4 w-4" /> Sign with {selectedContext.mechanism}
               </Button>
             </div>
 
@@ -966,7 +1039,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               <div className="space-y-1 max-h-64 overflow-y-auto">
                 {signatureLog.length === 0 ? (
                   <p className="text-xs text-muted-foreground italic">
-                    No signatures yet. Click &quot;Sign with CKM_XMSS&quot; to begin.
+                    No signatures yet. Use the signing control to produce sample output.
                   </p>
                 ) : (
                   signatureLog.map((entry) => {
@@ -976,32 +1049,35 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                       inspectedEntry?.timestamp === entry.timestamp
                     // XMSS sig layout: idx(4) + r(32) + WOTS+σ(67×32=2144) + auth(H×32)
                     const authBytes = entry.height * 32
-                    const sections = [
-                      {
-                        label: 'idx',
-                        bytes: 4,
-                        color: 'bg-secondary/20 text-secondary border-secondary/30',
-                        hexBg: 'bg-secondary/20',
-                      },
-                      {
-                        label: 'r',
-                        bytes: 32,
-                        color: 'bg-muted text-muted-foreground border-border',
-                        hexBg: 'bg-muted/40',
-                      },
-                      {
-                        label: 'WOTS+σ',
-                        bytes: 2144,
-                        color: 'bg-primary/20 text-primary border-primary/30',
-                        hexBg: 'bg-primary/20',
-                      },
-                      {
-                        label: `auth (H${entry.height})`,
-                        bytes: authBytes,
-                        color: 'bg-success/20 text-success border-success/30',
-                        hexBg: 'bg-success/20',
-                      },
-                    ]
+                    const sections =
+                      entry.context.structure === 'single'
+                        ? [
+                            {
+                              label: 'idx',
+                              bytes: 4,
+                              color: 'bg-secondary/20 text-secondary border-secondary/30',
+                              hexBg: 'bg-secondary/20',
+                            },
+                            {
+                              label: 'r',
+                              bytes: 32,
+                              color: 'bg-muted text-muted-foreground border-border',
+                              hexBg: 'bg-muted/40',
+                            },
+                            {
+                              label: 'WOTS+σ',
+                              bytes: 2144,
+                              color: 'bg-primary/20 text-primary border-primary/30',
+                              hexBg: 'bg-primary/20',
+                            },
+                            {
+                              label: `auth (H${entry.height})`,
+                              bytes: authBytes,
+                              color: 'bg-success/20 text-success border-success/30',
+                              hexBg: 'bg-success/20',
+                            },
+                          ]
+                        : []
                     return (
                       <div key={entryKey}>
                         <div
@@ -1022,7 +1098,9 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                           <span className="font-bold w-12 shrink-0 text-secondary">
                             #{String(entry.index).padStart(4, '0')}
                           </span>
-                          <span className="truncate flex-1">{entry.message}</span>
+                          <span className="truncate flex-1">
+                            {entry.context.parameterName}: {entry.message}
+                          </span>
                           <span className="text-muted-foreground shrink-0">{entry.sigSize} B</span>
                           <span className="text-muted-foreground shrink-0">
                             {entry.computeTimeMs.toFixed(1)} ms
@@ -1054,7 +1132,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                                 </span>
                               </span>
                               <span>
-                                <span className="text-muted-foreground">Leaf:</span>{' '}
+                                <span className="text-muted-foreground">Activity counter:</span>{' '}
                                 <span className="text-foreground font-bold">#{entry.index}</span>
                               </span>
                               <span>
@@ -1066,22 +1144,36 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                                 </span>
                               </span>
                             </div>
-                            <div>
-                              <div className="text-muted-foreground mb-1">
-                                XMSS signature layout (RFC 8391 §4.1.12)
+                            <p className="text-muted-foreground">
+                              Requested context: {entry.context.parameterName}, {entry.context.hash}
+                              , total height {entry.context.totalHeight}, {entry.context.layers}{' '}
+                              layer(s), {entry.context.mechanism}. This metadata is retained from
+                              the request, not decoded from returned bytes.
+                            </p>
+                            {entry.context.structure === 'multi' ? (
+                              <p role="note" className="text-muted-foreground">
+                                Multi-tree signature layout not decoded or visualized here. The raw
+                                returned hex is preserved below.
+                              </p>
+                            ) : (
+                              <div>
+                                <div className="text-muted-foreground mb-1">
+                                  Single-tree layout schematic for the requested set — not decoded
+                                  or validated from this output
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {sections.map((s, i) => (
+                                    <div
+                                      key={i}
+                                      className={`px-1.5 py-0.5 rounded border text-center ${s.color}`}
+                                    >
+                                      <div className="font-bold">{s.label}</div>
+                                      <div className="text-[8px] opacity-70">{s.bytes} B</div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                              <div className="flex flex-wrap gap-1">
-                                {sections.map((s, i) => (
-                                  <div
-                                    key={i}
-                                    className={`px-1.5 py-0.5 rounded border text-center ${s.color}`}
-                                  >
-                                    <div className="font-bold">{s.label}</div>
-                                    <div className="text-[8px] opacity-70">{s.bytes} B</div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
+                            )}
                             <div>
                               <div className="flex items-center justify-between mb-1">
                                 <span className="text-muted-foreground">
@@ -1107,7 +1199,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                                 </Button>
                               </div>
                               <pre className="break-all whitespace-pre-wrap text-foreground/80 leading-relaxed max-h-32 overflow-y-auto bg-muted/30 p-2 rounded border border-border/50">
-                                {renderColoredHex(entry.sigHex, sections)}
+                                {entry.sigHex}
                               </pre>
                             </div>
                           </div>

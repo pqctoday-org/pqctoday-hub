@@ -19,8 +19,15 @@ export interface BenchmarkResult {
   keyGenMs: number
   signEncapsMs: number
   verifyDecapsMs: number
-  publicKeyBytes: number
-  privateKeyBytes: number
+  /** Runner key-size fields. RSA serialized measurements are unavailable;
+   * other legacy branches may retain raw/reference-derived sizes. */
+  publicKeyBytes: number | null
+  privateKeyBytes: number | null
+  /** RSA parameter-derived values are not measurements of an encoded key. */
+  keySizeEstimates?: {
+    rsaModulusBytes: number
+    rsaPrivateHeuristicBytes: number
+  }
   sigCiphertextBytes: number | null
   sharedSecretBytes: number | null
 }
@@ -187,8 +194,9 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
   const softhsm = await import('../../wasm/softhsm')
   const mod = M as Parameters<typeof softhsm.hsm_generateMLKEMKeyPair>[0]
 
-  let publicKeyBytes = 0
-  let privateKeyBytes = 0
+  let publicKeyBytes: number | null = 0
+  let privateKeyBytes: number | null = 0
+  let keySizeEstimates: BenchmarkResult['keySizeEstimates']
   let sigCiphertextBytes: number | null = null
   let sharedSecretBytes: number | null = null
   let keyGenMs = 0
@@ -309,8 +317,13 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     keyGenMs = timeMs(() => {
       rsaResult = softhsm.hsm_generateRSAKeyPair(mod, hSession, bits, true)
     })
-    publicKeyBytes = bits / 8 // modulus size
-    privateKeyBytes = (bits / 8) * 2 // approximate DER CRT size
+    // No serialized public/private artifact is extracted by this benchmark.
+    publicKeyBytes = null
+    privateKeyBytes = null
+    keySizeEstimates = {
+      rsaModulusBytes: bits / 8,
+      rsaPrivateHeuristicBytes: (bits / 8) * 2,
+    }
     const rsaMsg = 'bench'
     let rsaSig: Uint8Array
     signEncapsMs = timeMs(() => {
@@ -409,6 +422,7 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     verifyDecapsMs,
     publicKeyBytes,
     privateKeyBytes,
+    ...(keySizeEstimates ? { keySizeEstimates } : {}),
     sigCiphertextBytes,
     sharedSecretBytes,
   }
