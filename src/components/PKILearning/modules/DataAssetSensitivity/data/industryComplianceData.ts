@@ -65,9 +65,10 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     name: 'GDPR',
     fullName: 'General Data Protection Regulation',
     region: 'EU',
-    scope: 'Personal data of EU residents processed by any organization globally',
+    scope:
+      'Processing in the context of an establishment of a controller or processor in the EU, wherever the processing takes place; and processing by a controller or processor outside the EU that relates to offering goods or services to, or monitoring the behaviour of, people who are in the EU (Art. 3(1) and 3(2)); Art. 3(3) adds controllers outside the EU in places where Member State law applies under public international law. Residence alone is not the test: check which trigger is met.',
     pqcRequirement:
-      'Article 32 requires "appropriate technical measures" including encryption. As best practice evolves, PQC will become expected. No explicit PQC mandate yet.',
+      'Article 32 requires security appropriate to the risk, taking into account the state of the art, and names the encryption of personal data as one example measure "as appropriate". It names no PQC algorithm or deadline.',
     hardDeadline: null,
     deadlineYear: null,
     pqcMandatoryNow: false,
@@ -185,6 +186,9 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
 ]
 
 // ── Industry → Compliance Mandate Mapping ────────────────────────────────────
+// Candidate mandates to check for each sector, not a finding that each one
+// applies: whether a law applies still depends on its scope facts (actor,
+// system, place).
 
 export const INDUSTRY_COMPLIANCE_MAP: IndustryComplianceMap = {
   'Finance & Banking': ['DORA', 'GDPR', 'PCI-DSS', 'NIST-IR-8547', 'ISO-27001', 'FIPS-140-3'],

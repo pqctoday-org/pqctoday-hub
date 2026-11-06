@@ -284,7 +284,8 @@ export const DEFAULT_ASSETS: DataAsset[] = [
     businessOwner: 'Data Engineering',
     industry: 'Finance & Banking',
     complianceFlags: ['GDPR', 'PCI-DSS'],
-    notes: 'EU and US customers',
+    notes:
+      'EU and US customers. Sample fact for this exercise: the bank offers its services to people in the EU, so GDPR Art. 3(2)(a) is met; it also handles cardholder data, so PCI DSS is in scope.',
   },
   {
     id: 'asset-2',
@@ -320,7 +321,8 @@ export const DEFAULT_ASSETS: DataAsset[] = [
     businessOwner: 'Marketing',
     industry: 'Retail & E-Commerce',
     complianceFlags: ['GDPR'],
-    notes: '',
+    notes:
+      'Sample fact for this exercise: the retailer offers goods to people in the EU, so GDPR Art. 3(2)(a) is met.',
   },
 ]
 
@@ -358,7 +360,7 @@ export const PQC_ALGORITHM_MAP: Record<SensitivityTier, Record<AssetType, PQCRec
       signature: 'SLH-DSA-256s (FIPS 205)',
       hybrid: 'X25519+ML-KEM-1024',
       rationale:
-        'Long-lived key material requires stateless hash signatures for maximum longevity assurance',
+        'SLH-DSA relies only on hash-function security, a conservative option for a long-lived key that signs rarely (its large signatures and slow signing matter less there). ML-DSA-87 is the alternative, and the choice depends on what the protocol and tools support. SLH-DSA is outside CNSA 2.0, so assets flagged CNSA-2.0 get ML-DSA-87 instead.',
     },
     communication: {
       kem: 'ML-KEM-1024 (FIPS 203)',
@@ -376,7 +378,8 @@ export const PQC_ALGORITHM_MAP: Record<SensitivityTier, Record<AssetType, PQCRec
       kem: null,
       signature: 'SLH-DSA-256s (FIPS 205)',
       hybrid: 'ML-DSA-87 + ECDSA P-384',
-      rationale: 'Long-lived firmware signatures benefit from hash-based stateless signatures',
+      rationale:
+        'SLH-DSA is stateless and relies only on hash-function security, at the cost of large signatures and slow signing; stateful LMS/XMSS (SP 800-208) are the other hash-based options for firmware. SLH-DSA is outside CNSA 2.0, so assets flagged CNSA-2.0 get ML-DSA-87 instead.',
     },
   },
   high: {
@@ -477,6 +480,29 @@ export const PQC_ALGORITHM_MAP: Record<SensitivityTier, Record<AssetType, PQCRec
   },
 }
 
+/**
+ * Educational recommendation for a tier and asset type, filtered by the suites
+ * that apply to the asset. An asset flagged CNSA-2.0 is limited to the
+ * parameter sets NSA's CNSA 2.0 FAQ (v2.2) approves for all classification
+ * levels (ML-KEM-1024, ML-DSA-87); SLH-DSA is not part of CNSA, so the general
+ * sample choice is replaced rather than shown as a CNSA recommendation.
+ */
+export function getPqcRecommendation(
+  tier: SensitivityTier,
+  assetType: AssetType,
+  complianceFlags: string[] = []
+): PQCRecommendation {
+  const base = PQC_ALGORITHM_MAP[tier][assetType]
+  if (!complianceFlags.includes('CNSA-2.0')) return base
+  return {
+    kem: base.kem === null ? null : 'ML-KEM-1024 (FIPS 203)',
+    signature: base.signature === null ? null : 'ML-DSA-87 (FIPS 204)',
+    hybrid: 'Optional: NSA does not require hybrids',
+    rationale:
+      'CNSA 2.0 scope: the NSA FAQ (v2.2) approves ML-KEM-1024 and ML-DSA-87 for all classification levels and says SLH-DSA is not part of CNSA, so the general sample choice is replaced. For software and firmware signing NSA also lists LMS and XMSS and wants them used whenever possible.',
+  }
+}
+
 // ── Migration Effort by Asset Type ────────────────────────────────────────────
 
 export const MIGRATION_EFFORT_MAP: Record<AssetType, MigrationEffort> = {
@@ -506,15 +532,16 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     id: 'cls-01',
     title: 'Hospital Electronic Health Records',
     description:
-      'A regional hospital stores patient electronic health records (EHR) including diagnoses, medications, lab results, and treatment history. Records are retained for a minimum of 10 years per regulatory requirements.',
+      'A regional hospital stores patient electronic health records (EHR) including diagnoses, medications, lab results, and treatment history. Records are retained for 10 years in this sample, a planning horizon chosen for the exercise rather than a figure taken from a regulation.',
     context:
       'Healthcare sector; accessed by clinical staff and billing; stored in an on-premises database encrypted with RSA-2048 envelope keys.',
     correctTier: 'critical',
     explanation:
-      'EHR data combines ePHI (HIPAA), long retention (10+ years), and irreplaceable personal health details. HNDL risk is immediate: data intercepted today may be decrypted after CRQC arrival (est. 2034) well within the retention window. The HIPAA Security Rule requires ePHI to be protected from reasonably anticipated threats and impermissible uses or disclosures, while allowing flexible, scalable compliance approaches.',
-    hndlImplication: 'Data already in the HNDL window.',
+      'EHR data combines ePHI (HIPAA), a long sample retention horizon (10 years), and irreplaceable personal health details. The HNDL concern is high: if ciphertext or traffic is recorded today and protected only by quantum-vulnerable key establishment, it could be decrypted after a CRQC arrives (assumed 2034) while the records are still held and still sensitive. The HIPAA Security Rule requires ePHI to be protected from reasonably anticipated threats and impermissible uses or disclosures, while allowing flexible, scalable compliance approaches.',
+    hndlImplication:
+      'Sample threshold year: 2034 − 10 = 2024, already past. Records captured now that must stay confidential for 10 years would still be sensitive when a CRQC arrives, so they would be exposed if recorded while protected only by RSA envelope keys. This is a date calculation on sample inputs; it does not show that any data has been recorded.',
     commonMistake:
-      'Many classify as High (HIPAA ePHI default). The 10-year retention pushes this into Critical because the HNDL window has already opened.',
+      'Many classify as High (HIPAA ePHI default). The 10-year sample horizon pushes this into Critical because newly captured records would still need confidentiality when a CRQC arrives; that is a statement about future exposure, not evidence that any data has been taken.',
     relevantFrameworks: ['HIPAA', 'HITECH', 'NIST-SP-800-66'],
   },
   {
@@ -526,11 +553,11 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Technology sector; transmitted over TLS 1.3; no persistence beyond the active session.',
     correctTier: 'low',
     explanation:
-      'JWTs with a 15-minute TTL have near-zero HNDL risk. By the time a CRQC could decrypt intercepted traffic, the token is long expired and has no value. No PII is stored beyond the transient session, and there is no meaningful retention period.',
+      'A 15-minute token validity means a recorded token cannot be replayed once a CRQC exists. That is a statement about credential validity, not about how long the claims it carries must stay confidential: a recorded TLS session could still reveal the user ID and role claims if its key establishment is quantum-vulnerable. Here the claims are low-sensitivity, nothing is stored beyond the session, and the need for confidentiality is short, so the module classes this Low. A token carrying sensitive claims would need its confidentiality lifetime assessed separately.',
     hndlImplication:
-      'HNDL risk year ≈ 2034 (less than 1 year retention). Token is worthless before CRQC arrives — effectively no HNDL threat.',
+      'Sample threshold year: 2034 − 0.5 ≈ 2034 (the claims need confidentiality for under a year). Replay value ends at expiry, but the confidentiality of the claims depends on the key-establishment mode of any recorded session. With a short confidentiality need, the HNDL concern is low.',
     commonMistake:
-      'Classifying as Medium because tokens carry authentication claims. The key factor is lifetime: ephemeral credentials with no storage have minimal exposure.',
+      'Classifying as Medium because tokens carry authentication claims. The deciding facts are a short confidentiality need, low-sensitivity claims and no storage; token expiry alone does not end the confidentiality need for what was transmitted.',
     relevantFrameworks: ['NIST-IR-8547'],
   },
   {
@@ -542,25 +569,25 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Finance sector; stored offline in an air-gapped HSM; access requires dual-control ceremony.',
     correctTier: 'critical',
     explanation:
-      'Root CA keys are irreplaceable cryptographic anchors. If compromised, all certificates in the trust chain must be revoked and reissued. With a 25-year expected lifetime, the HNDL window is deep into the past — any captured ceremony traffic is at risk once CRQC arrives. Under CNSA 2.0, NSA expects the QR-algorithm transition for NSS to finish by 2035, consistent with NSM-10.',
+      'Root CA keys are irreplaceable cryptographic anchors. If compromised, all certificates in the trust chain must be revoked and reissued. The quantum risk is future forgery over the period the root public key stays trusted: with a 25-year expected lifetime, a CRQC that can derive the private key from the public key could sign certificates that verifiers still accept. That is a signature-forgery risk, not harvest-now-decrypt-later; recording a key ceremony does not give an adversary a secret to decrypt later. A backup of the key, or a ceremony exchange that wraps the key under a quantum-vulnerable algorithm, would be assessed separately, and only once the scenario states which secret crosses which cryptographic boundary. If this PKI served National Security Systems, NSA expects the transition to QR algorithms to be complete by 2035, in line with NSM-10.',
     hndlImplication:
-      'HNDL risk year ≈ 2009 (2034 − 25 years). Any recorded key-generation or signing ceremony from the past 15 years is exposed.',
+      'Not a harvest-now-decrypt-later case: the exposure is signature forgery for as long as the root is trusted. A 25-year root created now stays trusted until about 2051, past the assumed 2034 CRQC year, so its algorithm must still be sound then or the root must be replaced before that.',
     commonMistake:
-      'Classifying as High because it is "already in an HSM." HSM protection guards against direct theft, but HNDL captures network-transmitted usage and ceremonial data.',
+      'Classifying as High because it is "already in an HSM." HSM protection guards against theft of the key, not against a future computer that derives the private key from the public key; the 25-year trust period and the impact of forgery drive the Critical tier.',
     relevantFrameworks: ['CNSA-2.0', 'FIPS-140-3', 'NIST-SP-800-57'],
   },
   {
     id: 'cls-04',
     title: 'Internal Engineering Slack Messages',
     description:
-      'Day-to-day text messages in a company-internal Slack workspace between software engineering team members. Messages cover sprint planning, code reviews, and deployment discussions. Retention is 90 days (Slack free tier).',
+      'Day-to-day text messages in a company-internal Slack workspace between software engineering team members. Messages cover sprint planning, code reviews, and deployment discussions. Retention is set to 90 days.',
     context:
       'Technology sector; SaaS platform; no PII, trade secrets, or classified information in scope.',
     correctTier: 'medium',
     explanation:
-      'Internal communications between employees with no PII, trade secrets, or regulated data fall in the Medium tier. They are not public (some breach consequence exists if leaked), but 90-day retention means HNDL risk is negligible. The primary risk is operational confidentiality, not regulatory exposure.',
+      'Internal communications between employees with no PII, trade secrets, or regulated data fall in the Medium tier. They are not public (some breach consequence exists if leaked). The 90-day setting is a storage retention period: it limits how long the organization keeps the messages, not how long a copy an adversary recorded stays readable or how long the content stays useful. In this sample the content has a short useful life, so the HNDL concern is low. The primary risk is operational confidentiality, not regulatory exposure.',
     hndlImplication:
-      'HNDL risk year ≈ 2034 (under 1 year retention). Essentially zero HNDL threat — messages expire long before CRQC arrival.',
+      'Storage retention is under 1 year, so the sample threshold year is about 2034. Deleting messages from the platform does not remove copies recorded elsewhere; the HNDL concern is low only because the content stops being sensitive within a short time.',
     commonMistake:
       'Classifying as Low because "it is just chat." Internal communications can reveal system architecture, vulnerabilities, and credentials if captured — Medium is appropriate.',
     relevantFrameworks: [],
@@ -569,16 +596,16 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     id: 'cls-05',
     title: 'Credit Card Transaction Records',
     description:
-      'Encrypted records of credit card transactions including masked PAN (last 4 digits), transaction amount, merchant, and timestamp. CVV is never stored post-authorization. Records retained for 7 years for chargeback and audit purposes.',
+      'Encrypted records of credit card transactions including masked PAN (last 4 digits), transaction amount, merchant, and timestamp. CVV is never stored post-authorization. Records are retained for 7 years in this sample, a business and legal-hold assumption chosen for the exercise (PCI DSS sets no retention period).',
     context:
-      'Retail/E-commerce sector; PCI DSS Level 1 merchant; stored in a tokenized database with AES-256 encryption.',
+      'Retail/E-commerce sector; merchant in scope for PCI DSS; stored in a tokenized database with AES-256 encryption.',
     correctTier: 'high',
     explanation:
-      'Payment records fall under PCI DSS with a 7-year retention requirement. While CVV is not stored and PAN is masked, the combination of transaction history, timing, and merchant data can still be used for fraud or identity inference. With 7-year retention, the HNDL window opens around 2027 — moderate urgency.',
+      'Payment records fall under PCI DSS, which does not set a retention period: Requirement 3.2.1 requires a retention and disposal policy that limits storage to what is necessary for legal, regulatory and business purposes, and sensitive authentication data such as the card verification code must not be stored after authorization (Requirement 3.3.1). The 7 years here is a sample business assumption, not a PCI DSS figure. While CVV is not stored and PAN is masked, the combination of transaction history, timing, and merchant data can still be used for fraud or identity inference. With this sample horizon the threshold year is about 2027 — moderate urgency.',
     hndlImplication:
-      'HNDL risk year ≈ 2027 (2034 − 7 years). Records encrypted today will be at risk from CRQC within 8 years.',
+      'Sample threshold year: 2034 − 7 = 2027. Records captured in or after 2027 and kept for 7 years would still be held at the assumed CRQC year; records captured today (2026) would be deleted in 2033, before it. Exposure also depends on whether any copy was recorded under quantum-vulnerable protection.',
     commonMistake:
-      'Classifying as Critical because "financial data." No full PAN or CVV stored reduces impact. The 7-year retention lands this firmly at High (not sourced in the Library).',
+      'Classifying as Critical because "financial data." No full PAN or CVV stored reduces impact. The sample 7-year horizon lands this at High; the tier is this module\'s policy, not a PCI DSS classification.',
     relevantFrameworks: ['PCI-DSS', 'GDPR'],
   },
   {
@@ -590,8 +617,9 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Government/Defense sector; encrypted with AES-256 and RSA-4096; indefinite retention; NSA-classified.',
     correctTier: 'critical',
     explanation:
-      'Classified national security data with indefinite retention is the canonical Critical case. Even if encrypted today, adversaries recording this traffic will decrypt it post-CRQC. Operational intelligence from decades ago can still compromise ongoing missions, personnel, and national security. NSA anticipates that NSS will finish moving to QR algorithms by 2035, consistent with NSM-10, and it calls on vendors as well as NSS owners and operators to spare no effort in meeting that target.',
-    hndlImplication: 'All historical intercepts are at risk the moment CRQC arrives.',
+      'Classified national security data with indefinite retention is the canonical Critical case. If this traffic is recorded and its keys were established with a quantum-vulnerable algorithm (the context lists RSA-4096), it could be decrypted once a CRQC exists. Operational intelligence from decades ago can still compromise ongoing missions, personnel, and national security. NSA anticipates that NSS will finish moving to QR algorithms by 2035, consistent with NSM-10, and it calls on vendors as well as NSS owners and operators to spare no effort in meeting that target.',
+    hndlImplication:
+      'With an indefinite confidentiality need there is no threshold year: any recorded traffic protected only by quantum-vulnerable key establishment becomes readable once a CRQC exists. The scenario does not say what has been recorded.',
     commonMistake:
       'No common mistake — this is unambiguously Critical. The exercise point is understanding why indefinite retention triggers the worst HNDL exposure.',
     relevantFrameworks: ['CNSA-2.0', 'NIST-SP-800-53', 'FIPS-140-3'],
@@ -605,9 +633,9 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Retail sector; stored in Redis; no PII; publicly derived from aggregate behavior patterns.',
     correctTier: 'low',
     explanation:
-      'Anonymous aggregate recommendation data with no PII and a 30-day TTL has minimal sensitivity. There is no compliance burden, no HNDL risk (data is stale before CRQC arrives), and no individual harm if exposed. Public products with public pricing need no special protection.',
+      'Anonymous aggregate recommendation data with no PII has minimal sensitivity. The scenario states that no regulated data is involved, and there is no individual harm if it is exposed. The 30-day cache expiry is a storage setting, not a measure of how long the values stay confidential; the HNDL concern is low because the content has little value even if a recorded copy is decrypted later. Public products with public pricing need no special protection.',
     hndlImplication:
-      'HNDL risk year ≈ 2034 (under 1 year). Data is replaced faster than any adversary could use it.',
+      'Storage retention is under 1 year, so the sample threshold year is about 2034. Replacing cache entries does not remove copies recorded elsewhere; the concern is low because the content is non-identifying and of little value.',
     commonMistake:
       'Classifying as Medium citing "business value." Competitive sensitivity applies to the algorithm, not the cached scores which are ephemeral and non-identifying.',
     relevantFrameworks: [],
@@ -621,9 +649,9 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Technology/Finance sector; stored in an HSM; used for physical and logical access; retained for employee tenure + 5 years.',
     correctTier: 'critical',
     explanation:
-      'Biometric templates are irreplaceable — unlike passwords, you cannot issue new fingerprints. Even with long employment tenures (e.g., 20+ years), permanent retention means HNDL exposure is severe. Compromise enables permanent impersonation. GDPR Art. 9 classifies biometrics as "special category" data requiring maximum protection.',
+      'Biometric templates are irreplaceable — unlike passwords, you cannot issue new fingerprints. A template stays tied to the person even after the employment record ends, so the confidentiality need can outlast the sample retention period of tenure + 5 years. Compromise enables permanent impersonation. Where GDPR applies, Art. 9(1) lists biometric data processed to uniquely identify a person as a special category, and processing is prohibited unless an Art. 9(2) condition applies.',
     hndlImplication:
-      "HNDL risk year ≈ 2014 (2034 − 20 years typical tenure). Long-serving employees' templates are already at HNDL risk.",
+      'Sample threshold year: 2034 − 20 = 2014, already past, so templates captured now would still need confidentiality when a CRQC arrives. That is a calculation on sample inputs; the scenario says the templates are held in an HSM and describes no transmission, so it does not show that any template has been recorded.',
     commonMistake:
       'Classifying as High because "it is just access control." The irreplaceability and lifetime binding to a person — not the operational function — drives the Critical classification.',
     relevantFrameworks: ['GDPR', 'FIPS-140-3', 'NIST-SP-800-76'],
@@ -637,27 +665,27 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       "Technology sector; publicly trusted CA; ECDSA P-256; private key never leaves the server's HSM partition.",
     correctTier: 'medium',
     explanation:
-      'Short-lived TLS certificates (90-day cycle with fresh key generation) have near-zero HNDL risk since the key protecting any intercepted session is rotated before CRQC arrives. However, the certificate does identify the service, and the private key controls session establishment — enough to warrant Medium rather than Low.',
+      'The certificate key authenticates the server; it does not encrypt the traffic. A 90-day certificate with a fresh key on each renewal limits how long a key that a CRQC could derive from its public key would stay useful for impersonation. Confidentiality of recorded sessions is a separate question that depends on the key-establishment mode: ECDHE gives forward secrecy against later theft of the certificate key, but ECDHE is itself quantum-vulnerable, so recorded handshakes could be decrypted by a CRQC unless key establishment is hybrid or post-quantum. The certificate does identify the service, and the private key controls session establishment — enough to warrant Medium rather than Low.',
     hndlImplication:
-      'HNDL risk year ≈ 2034 (under 1 year retention). Each key lives only 90 days — essentially immune to HNDL attacks.',
+      'Rotating the key every 90 days shortens the exposure of the certificate key to forgery. It says nothing about recorded sessions: their confidentiality depends on the key-establishment mode and on how long the transmitted data must stay secret.',
     commonMistake:
-      'Classifying as High because "it protects all API traffic." Traffic confidentiality depends on ephemeral key exchange (ECDHE), not the certificate lifetime. The certificate itself is publicly distributed.',
+      'Classifying as High because "it protects all API traffic." The certificate authenticates the server and is publicly distributed; traffic confidentiality depends on the key-establishment mode, not on the certificate lifetime.',
     relevantFrameworks: ['NIST-IR-8547', 'CA-B-Forum'],
   },
   {
     id: 'cls-10',
     title: 'Employee Payroll Records',
     description:
-      'Payroll records including full legal name, national ID (SSN/SIN), bank account numbers, salary history, and tax withholding data for all employees. Records retained for 7 years per employment law.',
+      'Payroll records including full legal name, national ID (SSN/SIN), bank account numbers, salary history, and tax withholding data for all employees. Records are retained for 7 years in this sample, a planning horizon chosen for the exercise (actual periods vary by jurisdiction).',
     context:
       'Any industry; HR system; encrypted with AES-256 at rest; accessible to HR, payroll service, and auditors.',
     correctTier: 'high',
     explanation:
-      'Payroll records include SSNs and bank account numbers — two of the most impactful categories in identity theft. With a 7-year retention requirement, the HNDL window opens around 2027. Regulatory exposure spans GDPR (for EU employees), US state privacy laws, and employment regulations. This is squarely High.',
+      'Payroll records include SSNs and bank account numbers — two of the most impactful categories in identity theft. With the 7-year sample horizon the threshold year is about 2027. Regulatory exposure could include GDPR (if its territorial scope is met, for example through an establishment in the EU), US state privacy laws, and employment regulations; which of them apply depends on facts the scenario does not state. This is squarely High.',
     hndlImplication:
-      'HNDL risk year ≈ 2027 (2034 − 7 years). Records created now will still be held when CRQC arrives.',
+      'Sample threshold year: 2034 − 7 = 2027. Records created in or after 2027 would still be held at the assumed CRQC year; records created today (2026) would be deleted in 2033, before it.',
     commonMistake:
-      'Classifying as Critical because it contains SSNs. While SSNs are highly sensitive, payroll records are bounded by employment tenure and 7-year retention — enough for High but not the indefinite/irreplaceable threshold of Critical.',
+      'Classifying as Critical because it contains SSNs. While SSNs are highly sensitive, payroll records are bounded by employment tenure and the sample 7-year horizon — enough for High but not the indefinite/irreplaceable threshold of Critical.',
     relevantFrameworks: ['GDPR', 'CCPA', 'NIST-SP-800-122'],
   },
 ]
@@ -669,6 +697,11 @@ export type ConflictResolutionRule =
 
 export interface ConflictingRequirement {
   framework: string
+  /**
+   * The tier this module's sample organizational policy assigns for the duty
+   * described in `reason`. None of the listed laws or standards defines the
+   * four tiers.
+   */
   prescribedTier: SensitivityTier
   reason: string
 }
@@ -690,7 +723,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     id: 'con-01',
     title: 'US Hospital Serving EU Patients — Patient EHR Database',
     assetDescription:
-      'A US hospital stores EHR data for patients that include both US and EU residents. The same database is subject to HIPAA (US healthcare law) and GDPR (EU personal data regulation).',
+      'A US hospital stores EHR data for US patients and for patients in the EU, whom it serves through a telehealth service offered to people in the EU. The hospital is assumed to be a HIPAA covered entity. Sample fact for this exercise: it is not established in the EU but offers its services to people who are in the EU, so GDPR Art. 3(2)(a) is met for that processing. Without such an offering, or for EU residents who are only in the US, that trigger would not be met.',
     conflictingRequirements: [
       {
         framework: 'HIPAA / HITECH',
@@ -702,7 +735,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'GDPR Art. 9',
         prescribedTier: 'high',
         reason:
-          'Health data is a "special category" (Art. 9): processing is prohibited unless an exception such as explicit consent applies. Art. 32 separately requires security appropriate to the risk, "taking into account the state of the art", and names the encryption of personal data as an example.',
+          'Health data is a "special category" (Art. 9(1)): processing is prohibited unless a condition in Art. 9(2) applies, such as explicit consent (9(2)(a)) or the provision of health care (9(2)(h), with the Art. 9(3) conditions), and an Art. 6 lawful basis is also needed. Art. 32 separately requires security appropriate to the risk, "taking into account the state of the art", and names the encryption of personal data as an example.',
       },
       {
         framework: 'NIST SP 800-66',
@@ -715,7 +748,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     correctTier: 'high',
     governingFramework: 'GDPR + HIPAA (equal; GDPR adds data subject rights)',
     explanation:
-      "Both HIPAA and GDPR land this at High. The resolution rule here is not about escalating the tier — both agree. However, GDPR adds additional obligations: right to erasure, data portability, and explicit consent for each use. The governing classification is High, but operational requirements follow GDPR's stricter obligations. When frameworks agree on tier but disagree on operational requirements, apply the most restrictive operational requirements from each.",
+      "Both HIPAA and GDPR land this at High in this module's sample policy, so the resolution rule is not about escalating the tier. They differ in operational duties. For health data, GDPR needs an Art. 6 lawful basis and a separate Art. 9(2) condition for each stated purpose, and it adds purpose-limitation (Art. 5(1)(b)), transparency and data-subject-rights duties. Consent is one possible basis and condition, not a requirement for every use: identify the purpose first, then the basis and condition that fit it (for example Art. 9(2)(h) for the provision of health care, subject to Art. 9(3)). Rights such as erasure and portability apply with conditions and exceptions (Art. 17(3), Art. 20(1)). When frameworks agree on tier but differ on operational requirements, the sample policy applies the most restrictive operational requirement from each, after checking that each framework applies. This is a teaching summary, not legal advice.",
     pqcImplication:
       'ML-KEM-768 (FIPS 203) for key encapsulation and ML-DSA-65 (FIPS 204) for signatures are the NIST security category 3 parameter sets. That they fit HIPAA, GDPR "state of the art" and NIST SP 800-66 guidance is this module\'s assessment, not a determination by those frameworks.',
   },
@@ -729,7 +762,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'PCI DSS v4.0',
         prescribedTier: 'high',
         reason:
-          'Cardholder data requires encryption, access controls, and annual assessments. PQC not yet mandated but recommended.',
+          "Requirement 3 covers stored account data: a retention and disposal policy (3.2.1), no storage of sensitive authentication data after authorization (3.3.1), and protection of stored data (3.5 to 3.7). The tier is this module's sample policy.",
       },
       {
         framework: 'DORA (EU)',
@@ -756,7 +789,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'FedRAMP High',
         prescribedTier: 'high',
         reason:
-          'FedRAMP High impact systems require FIPS 140-2+ validated cryptography and NIST SP 800-53 High controls (not sourced in the Library).',
+          'Module assumption (not drawn from FedRAMP documents): High. Check the FedRAMP baseline that applies to the system for its actual control requirements.',
       },
       {
         framework: 'CMVP / FIPS 140-3',
@@ -775,7 +808,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     correctTier: 'critical',
     governingFramework: 'CNSA 2.0 + FIPS 140-3 validation',
     explanation:
-      'Key material (cryptographic keys) always escalates to the highest applicable tier. The asset-type-override rule recognizes that root CA keys are the trust anchor for all downstream certificates — their compromise is catastrophic and irreversible. Even if the data the PKI protects is only High sensitivity, the key material itself must be classified Critical. FedRAMP High (which prescribes High) applies to the data, not the key material protecting it.',
+      "Key material (cryptographic keys) always escalates to the highest applicable tier. The asset-type-override rule recognizes that root CA keys are the trust anchor for all downstream certificates — their compromise is catastrophic and irreversible. Even if the data the PKI protects is only High sensitivity, the key material itself must be classified Critical. This module's sample policy does not use the FedRAMP High baseline to set the tier of the key itself.",
     pqcImplication:
       'ML-DSA-87 (FIPS 204) for root CA signing: the CNSA 2.0 FAQ (v2.2) approves validated ML-DSA for all signing use cases, and SLH-DSA (FIPS 205) is not part of CNSA, so it does not fit a root that signs for classified systems. ML-KEM-1024 for key transport ceremonies.',
   },
@@ -783,13 +816,13 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     id: 'con-04',
     title: 'Open-Source Firmware Signing Key (Supply Chain)',
     assetDescription:
-      'A technology company produces open-source firmware for network equipment. The code-signing key is used to sign publicly released firmware images. The project has recently been designated as critical to US federal supply chains under NIST SP 800-218.',
+      'A technology company produces open-source firmware for network equipment. The code-signing key is used to sign publicly released firmware images. Sample fact for this exercise: US federal suppliers have started deploying this firmware in National Security Systems.',
     conflictingRequirements: [
       {
         framework: 'NIST SP 800-218 (SSDF)',
         prescribedTier: 'medium',
         reason:
-          'Secure Software Development Framework classifies open-source code signing as medium risk; key material should use FIPS-validated HSMs.',
+          'Module assumption (not drawn from SP 800-218): Medium for signing public open-source releases. SP 800-218 is a set of secure software development practices; check it for what it says about protecting signing keys and release integrity.',
       },
       {
         framework: 'CNSA 2.0 (Supply Chain)',
@@ -816,19 +849,19 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'ETSI EN 303 645',
         prescribedTier: 'low',
         reason:
-          'Consumer IoT standard classifies energy reading data as low sensitivity — basic encryption sufficient; no PQC mandate.',
+          'Module assumption (not drawn from ETSI EN 303 645): Low, because the energy readings themselves are not sensitive. Check that standard and the applicable IoT rules for what they actually require.',
       },
       {
         framework: 'FIPS 140-3 (Key Material)',
         prescribedTier: 'high',
         reason:
-          'Embedded cryptographic keys with 10–15 year operational lifetimes must be treated as High — they will be active past estimated CRQC arrival and cannot be easily rotated.',
+          'Module assumption, not a FIPS 140-3 rule: High, because a key embedded for 10 to 15 years stays in service past the assumed CRQC year and cannot easily be rotated. FIPS 140-3 sets requirements for cryptographic modules; it does not assign this tier.',
       },
       {
         framework: 'NIST SP 800-82 (ICS/OT)',
         prescribedTier: 'high',
         reason:
-          'Critical infrastructure IoT devices require robust cryptographic protection for authentication keys.',
+          'Module assumption (not drawn from SP 800-82): High for authentication keys in critical-infrastructure devices. Check SP 800-82 for its actual guidance.',
       },
     ],
     resolutionRule: 'asset-type-override',
@@ -837,13 +870,13 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     explanation:
       'The asset-type-override rule elevates key material above the data it protects. The energy readings are Low, but the embedded private key is High because: (1) it is key material, (2) it has a 10–15 year lifetime extending past CRQC arrival, and (3) it cannot be rotated without physical device access. The classification of the key is independent of the sensitivity of the data it encrypts.',
     pqcImplication:
-      'ML-KEM-512 (FIPS 203) for key exchange — minimum PQC for device-constrained environments. Consider hardware support requirements before specifying; some constrained devices may require Kyber-512 interim implementations.',
+      'ML-KEM-512 (FIPS 203) for key exchange — minimum PQC for device-constrained environments. Consider hardware support requirements (memory, code size and the update path) before specifying.',
   },
   {
     id: 'con-06',
     title: 'Global AI Training Dataset with PII',
     assetDescription:
-      'A technology company trains an AI model on a dataset containing user-generated content that includes names, email addresses, and behavioral patterns from users in the EU (GDPR), California (CCPA), and Brazil (LGPD). The same dataset is used across all jurisdictions.',
+      'A technology company trains an AI model on a dataset containing user-generated content that includes names, email addresses, and behavioral patterns from users in the EU (GDPR), California (CCPA), and Brazil (LGPD). The same dataset is used across all jurisdictions. Sample facts for this exercise: the company offers its service to people in the EU and Brazil and meets the scope tests of each law; for GDPR the trigger is Art. 3(2), offering services to, or monitoring the behaviour of, people who are in the EU.',
     conflictingRequirements: [
       {
         framework: 'GDPR (EU)',
@@ -855,20 +888,20 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'CCPA / CPRA (California)',
         prescribedTier: 'medium',
         reason:
-          "Covers California residents' personal information; requires opt-out of sale and reasonable security. Less prescriptive than GDPR on cryptographic requirements.",
+          'Module assumption: Medium. CCPA/CPRA applies only to businesses that meet its definitions and gives consumers specific rights; check the statute and its regulations for applicability and for what reasonable security requires.',
       },
       {
         framework: 'LGPD (Brazil)',
         prescribedTier: 'high',
         reason:
-          'Brazil\'s data protection law mirrors GDPR in scope and requirements, including "appropriate technical measures" for protection.',
+          "Module assumption: High. Check LGPD's own scope rules and security provisions rather than assuming they mirror GDPR.",
       },
     ],
     resolutionRule: 'data-subject-location',
     correctTier: 'high',
     governingFramework: 'GDPR + LGPD (most restrictive applicable laws)',
     explanation:
-      "The data-subject-location rule applies: you must comply with the requirements applicable to each data subject based on where they are located — even if you process data in a single jurisdiction. Since the dataset contains EU and Brazilian residents, both GDPR and LGPD apply (both prescribe High). CCPA prescribes Medium but doesn't override the stricter obligations for EU/BR data subjects in the same dataset. The entire dataset must meet the High standard to protect all subjects.",
+      "The data-subject-location rule is a sample-policy rule: where a law's territorial scope turns on where the data subject is, check that law's scope facts for each group of data subjects. In this scenario the scope facts are stated (for GDPR, Art. 3(2): offering services to people in the EU), so GDPR and LGPD are treated as applying, and the sample policy assigns High to both. The CCPA row is Medium but does not lower the tier for the EU and Brazilian data in the same dataset. Because one dataset serves all groups, the sample policy applies the High standard to the whole dataset instead of splitting it. Without such scope facts, location alone would not settle which law applies.",
     pqcImplication:
       'ML-KEM-768 (FIPS 203) + ML-DSA-65 (FIPS 204) are NIST security category 3 parameter sets; this module assesses them as fitting the GDPR and LGPD "state of the art" wording, which is not a determination by those laws. Encryption at rest and in transit must cover all copies of the training dataset.',
   },
@@ -933,7 +966,11 @@ export function scoreAsset(
     sensitivityScore * wS + retentionScore * wR + complianceScore * wC + hndlScore * wH
   )
 
-  const pqcRecommendation = PQC_ALGORITHM_MAP[asset.sensitivityTier][asset.assetType]
+  const pqcRecommendation = getPqcRecommendation(
+    asset.sensitivityTier,
+    asset.assetType,
+    asset.complianceFlags
+  )
   const migrationEffort = MIGRATION_EFFORT_MAP[asset.assetType]
 
   return {
