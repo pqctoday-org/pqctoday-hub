@@ -10,8 +10,11 @@ software, and keys.
 
 - Public website (TLS) certificates will last only **47 days** by March 2029. Manually tracking thousands of
   them stops working.
-- Every crypto library and HSM has a FIPS 140-3 "driver's license" (a CMVP certificate) that
-  can **expire or be revoked**. You have to watch for those notices monthly.
+- Some crypto libraries and HSMs hold a FIPS 140-3 "driver's license" (a CMVP certificate), and
+  many products hold none. A certificate covers one named module: its version, its approved
+  algorithms and its caveats, and it counts for new systems only while its status is Active.
+  Certificates can move to the Historical list or be revoked, so check the certificate for the
+  exact build you run and watch for status changes (this module suggests a monthly check).
 - A **single expired certificate** can cause an outage. This module's cost model uses an
   illustrative assumption of about **$11M** per outage and 86% annual incidence; these are the
   module's own assumptions, not sourced figures.
