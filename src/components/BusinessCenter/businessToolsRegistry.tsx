@@ -674,7 +674,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'crypto-cbom-builder',
     goodAnswer:
-      'A CBOM you can regenerate. A hand-built one is accurate for a week; a generated one is accurate for as long as you keep generating it.',
+      'A CBOM you can regenerate repeatably. Its accuracy depends on source coverage, input freshness and reconciliation with the scoped inventory; generation alone does not establish completeness.',
     workedExample:
       'Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get a FIPS, ESV, PQC and posture reading, and one click downloads a CycloneDX 1.7 CBOM.',
     name: 'Crypto BOM (CBOM) Builder',

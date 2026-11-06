@@ -6,7 +6,6 @@ import { DECISIONS, type DomainId } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData, softwareMetadata } from '@/data/migrateData'
 import { Button } from '../../ui/button'
-import { InlineTooltip } from '../../ui/InlineTooltip'
 import { Pill, DECISION_ICON, TONE_DOT, ConfirmButton } from './workbenchUi'
 import type { MigrationPosture } from './useMigrationPlan'
 import { downloadPlanCbom } from './cbomExport'
@@ -266,16 +265,7 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold text-foreground">{meta.title}</span>
-                <span className="block text-[11px] text-muted-foreground">
-                  {group.wave === 1 ? (
-                    <>
-                      Public TLS &amp; VPN — highest exposure,{' '}
-                      <InlineTooltip term="HNDL">HNDL</InlineTooltip> risk
-                    </>
-                  ) : (
-                    meta.subtitle
-                  )}
-                </span>
+                <span className="block text-[11px] text-muted-foreground">{meta.subtitle}</span>
               </span>
               <span className="font-mono text-[11px] text-muted-foreground">
                 {group.assets.length} in plan
