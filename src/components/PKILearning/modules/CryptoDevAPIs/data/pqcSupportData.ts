@@ -758,19 +758,22 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
   {
     apiId: 'bouncy-castle',
     date: '2022-Q3',
-    event: 'CRYSTALS-Kyber/Dilithium support added',
+    event:
+      'Release 1.72 (25 Sep 2022) adds CRYSTALS-Kyber and CRYSTALS-Dilithium as NIST finalist candidates in the BCPQC provider, before the standards existed',
     algorithms: ['ml-kem', 'ml-dsa'],
   },
   {
     apiId: 'openssl',
-    date: '2023-Q1',
-    event: 'oqsprovider 0.5 for OpenSSL 3.x',
+    date: '2023-Q2',
+    event:
+      'oqsprovider 0.5.0 (9 Jun 2023) for OpenSSL 3.x: pre-standard Kyber, Dilithium and SPHINCS+ names, not the final FIPS 203/204/205 algorithms',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
     apiId: 'bouncy-castle',
-    date: '2024-Q2',
-    event: 'Updated to FIPS 203/204/205 final names',
+    date: '2024-Q4',
+    event:
+      'Release 1.79 (30 Oct 2024) adds ML-KEM, ML-DSA and SLH-DSA under the final FIPS 203/204/205 names; NIST published the final standards on 13 Aug 2024',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
@@ -807,7 +810,13 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
     apiId: 'pkcs11',
     date: '2025-Q4',
     event:
-      'PKCS#11 v3.2 ratified as an OASIS Standard (3 June 2026) with PQC mechanisms; CS01 was approved Nov 2025',
+      'PKCS#11 v3.2 Committee Specification 01 (14 Nov 2025) with ML-KEM, ML-DSA and SLH-DSA mechanisms; a committee specification, not yet an OASIS Standard',
+    algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
+  },
+  {
+    apiId: 'pkcs11',
+    date: '2026-Q2',
+    event: 'PKCS#11 v3.2 published as an OASIS Standard (3 Jun 2026)',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {

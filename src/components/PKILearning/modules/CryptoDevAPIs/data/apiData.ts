@@ -69,7 +69,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'Java checked exceptions: NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException. Provider-not-found errors are compile-time catchable.',
     providerPattern:
       'KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA"); // JDK 24+ built-in\n// or a third-party provider: Security.addProvider(new BouncyCastleProvider()); KeyPairGenerator.getInstance("ML-DSA-65", "BC");',
-    pqcStatus: `Built-in JDK support — ${describeRuntimeSupport('java')}. JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026 (JDK 11 and 8 planned for the second half of 2027). The javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds SLH-DSA (and Falcon) on any JDK and ML-KEM/ML-DSA on older JDKs. JCProv (Thales) adds PKCS#11-backed PQC when HSM firmware supports it.`,
+    pqcStatus: `Built-in JDK support — ${describeRuntimeSupport('java')}. JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026 (JDK 11 and 8 planned for the second half of 2027). The javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds SLH-DSA (and Falcon) on any JDK and ML-KEM/ML-DSA on older JDKs. For a Thales Luna HSM, the JCA/JCE provider (Luna JSP) and the separate JCPROV PKCS#11 wrapper are different Java routes to the same HSM; see the JCProv / Luna entry.`,
     strengths: [
       'Mature provider architecture — swap algorithms without code changes',
       'Extensive ecosystem — hundreds of providers available',
@@ -91,42 +91,55 @@ export const CRYPTO_APIS: CryptoAPI[] = [
   {
     id: 'jcprov',
     name: 'JCProv',
-    fullName: 'SafeNet/Thales Java Cryptoki Provider',
+    fullName: 'Thales Luna JCPROV (Java PKCS#11 wrapper) and Luna JSP (JCA/JCE provider)',
     origin: 'Thales (formerly SafeNet/Gemalto)',
     yearIntroduced: 2005,
     platform: 'java',
     keyStorage: 'hardware',
     abstractionLevel: 'medium',
     description:
-      'A commercial Java wrapper around the PKCS#11 C API, providing Java-native access to HSM operations. Bridges the JCA provider model with hardware security modules through the Cryptoki interface.',
+      'Thales Luna HSMs have two separate Java integration routes. JCPROV (jcprov.jar, package com.safenetinc.jcprov) is a Java wrapper for the PKCS#11 API, designed to be as similar to PKCS#11 as Java allows. Luna JSP (LunaProvider.jar, package com.safenetinc.luna) is a single JCA/JCE provider that applications reach through standard java.security classes. Thales documents them as separate components: its JSP provider-registration steps apply to JSP, not to JCPROV.',
     architectureSummary:
-      'Wraps PKCS#11 C_* functions in Java classes. Can register as a JCA provider (transparent to application code) or be used directly via its own API for fine-grained HSM control. Sessions map to PKCS#11 sessions.',
+      'JCPROV: you write PKCS#11-style code against the wrapper classes; a native library (jcprov.dll or libjcprov.so) reaches the PKCS#11 library, and your application initialises Cryptoki (choosing a locking model for multi-threaded use), opens sessions on a slot and logs in. Luna JSP: you register LunaProvider with the JRE (statically in java.security, or dynamically after a LunaSlotManager login), then use KeyPairGenerator, Signature and the other engine classes; keys are reached through a KeyStore of type "Luna".',
     keyObjects: [
       {
-        name: 'CryptokiEx',
-        description: 'Main entry point — wraps C_Initialize and session management',
+        name: 'com.safenetinc.jcprov (jcprov.jar)',
+        description:
+          'JCPROV package: the Java wrapper for the PKCS#11 API. Class names are in the JCPROV javadocs shipped with the Luna HSM Client',
       },
-      { name: 'CK_SESSION_HANDLE', description: 'Opaque handle to an HSM session' },
-      { name: 'CK_OBJECT_HANDLE', description: 'Handle to keys/certs stored on the HSM' },
-      { name: 'LunaProvider', description: 'JCA provider implementation for Luna HSMs' },
+      {
+        name: 'Slot, session and object handles (PKCS#11 model)',
+        description:
+          'The concepts JCPROV exposes, as in PKCS#11: a slot or partition, a session opened on it, and handles to the key objects stored on the HSM',
+      },
+      {
+        name: 'com.safenetinc.luna.provider.LunaProvider',
+        description:
+          'Luna JSP: the JCA/JCE provider class (LunaProvider.jar plus a native library)',
+      },
+      {
+        name: 'LunaSlotManager and KeyStore "Luna"',
+        description:
+          'Luna JSP: LunaSlotManager logs in and reports HSM-specific information; the preferred login is the Luna KeyStore, whose password is the partition challenge',
+      },
     ],
     sessionModel:
-      'Maps directly to PKCS#11 session model: C_OpenSession → operations → C_CloseSession. Read-only vs read-write sessions. Login required for private key operations.',
+      'JCPROV follows the PKCS#11 model: initialise the library, open a session on a slot, log in with the slot password, operate, close. Luna JSP hides sessions behind the JCA/JCE classes: you log in through the Luna KeyStore or LunaSlotManager, and session-only (ephemeral) keys are destroyed when you log out while persisted keys stay on the HSM.',
     errorHandling:
-      'CKR_* return codes wrapped in Java exceptions. CryptokiException hierarchy mirrors PKCS#11 error codes. Session timeouts and token-not-present errors require reconnection logic.',
+      'JCPROV reports PKCS#11 conditions to the application (check the JCPROV javadocs for the exact exception types). Luna JSP follows the JCA/JCE exceptions, and sensitive key attributes cannot be read back, so methods such as getPrivateExponent() on an HSM-held key throw. Thales documents how to re-establish a connection and how to recover from the loss of all HA members.',
     providerPattern:
-      'Security.addProvider(new LunaProvider()); // or: CryptokiEx cryptoki = new CryptokiEx(); long session = cryptoki.C_OpenSession(slot, flags);',
+      '// Route 1 - Luna JSP (JCA/JCE provider): register, then use standard classes\nLunaSlotManager.getInstance().login(partitionPassword);\nSecurity.insertProviderAt(new com.safenetinc.luna.provider.LunaProvider(), 2);\nKeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "LunaProvider");\n// Route 2 - JCPROV (PKCS#11 wrapper, com.safenetinc.jcprov): no provider registration; call the PKCS#11-style API directly (see the JCPROV samples)',
     pqcStatus:
-      'PQC support depends on HSM firmware and client versions. Luna HSM Firmware 7.9.0+ (with Luna HSM Client 10.9.0+) supports ML-KEM and ML-DSA via PKCS#11 v3.2 mechanisms. JCProv passes through to firmware capabilities.',
+      'PQC depends on HSM firmware and Luna HSM Client versions. Thales documents ML-KEM and ML-DSA on Luna HSM Firmware 7.9.0 or newer (the ML-DSA guide also names Client 10.9.0 or newer), exposed through the Cryptoki interface. For the Luna JSP route, Thales says Java support for ML-KEM and ML-DSA needs OpenJDK or Oracle JDK 24/25 LTS onward and gives samples from Client 10.9.1. Which PQC mechanisms the JCPROV classes expose is not stated on those pages; check the JCPROV javadocs and the release notes for your client version.',
     strengths: [
-      'Hardware-backed key protection — keys never leave the HSM',
-      'FIPS 140-2/3 Level 3 validated (hardware)',
-      'Dual API: JCA transparent mode + direct PKCS#11 access',
-      'Commercial support with SLA',
-      'Audit logging built into HSM firmware',
+      'Key protection follows HSM policy: Luna JSP creates private and secret keys with CKA_EXTRACTABLE=0 by default, so they cannot be extracted (they can be cloned to a partition on another HSM) unless you create them extractable',
+      'FIPS 140 validation applies to a specific HSM model, firmware version and configuration — check its CMVP certificate and Security Policy',
+      'Two Java routes: JCA/JCE provider (Luna JSP) or PKCS#11-style wrapper (JCPROV)',
+      'Commercial support (terms depend on your Thales support agreement)',
+      'HSM logging features: not verified here; see the Thales documentation for your HSM model',
     ],
     limitations: [
-      'Commercial license required — significant cost',
+      'Commercial product — Thales Luna HSM and client licensing; pricing is not covered here',
       'Vendor lock-in to Thales/SafeNet HSM ecosystem',
       'PQC availability tied to firmware release cycles',
       'Performance limited by HSM throughput and network latency',
@@ -135,8 +148,8 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     radar: { maturity: 7, pqcReadiness: 5, platformReach: 3, hsmIntegration: 10, communitySize: 3 },
     languages: ['Java'],
     standards: [
-      'PKCS#11 v2.40/v3.0',
-      'FIPS 140-2/3 Level 3',
+      'PKCS#11 (JCPROV mirrors the PKCS#11 API)',
+      'FIPS 140 validation is per HSM model and firmware (see the CMVP certificate)',
       'Common Criteria EAL4 + ALC_FLR.2 + AVA_VAN.5 (Luna K7 module, NSCIB-CC-2400054, 2025)',
     ],
   },
@@ -229,11 +242,11 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     providerPattern:
       'C_Initialize(NULL); C_GetSlotList(CK_TRUE, slots, &count); C_OpenSession(slots[0], flags, NULL, NULL, &session); C_Login(session, CKU_USER, pin, pinLen);',
     pqcStatus:
-      'PKCS#11 v3.2 (ratified OASIS Standard, 3 June 2026 — content-identical to the Nov 2025 CS01 draft, so implementations tracking CS01 need no change) defines CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_DSA_*, CKM_SLH_DSA_*, CKM_HASH_ML_DSA_*, C_EncapsulateKey/C_DecapsulateKey. Hardware support depends on HSM vendor firmware.',
+      'PKCS#11 v3.2 is an OASIS Standard dated 3 June 2026; its Committee Specification 01 is dated 14 November 2025, and the three C header files (pkcs11.h, pkcs11f.h, pkcs11t.h) are byte-identical in the two. It defines CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_DSA_*, CKM_SLH_DSA_*, CKM_HASH_ML_DSA_*, C_EncapsulateKey/C_DecapsulateKey. Hardware support depends on HSM vendor firmware.',
     strengths: [
       'Hardware-agnostic — same API works with any HSM/smart card',
-      'Keys never leave hardware boundary',
-      'FIPS 140-3 Level 3/4 when backed by certified hardware',
+      'Keys can be created sensitive and non-extractable (CKA_SENSITIVE, CKA_EXTRACTABLE); whether a key can leave the token, for example wrapped, depends on its attributes and the token policy',
+      'A token may hold a FIPS 140 validation — check its certificate and Security Policy for the level, version and approved services; the level alone does not set a key policy',
       'PQC mechanisms standardized in v3.2',
       'Decades of real-world deployment in banking, government, PKI',
     ],

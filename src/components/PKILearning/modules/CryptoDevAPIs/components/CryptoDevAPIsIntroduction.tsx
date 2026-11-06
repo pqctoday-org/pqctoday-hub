@@ -96,7 +96,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               },
               {
                 title: 'Opaque Handles vs Raw Material',
-                desc: 'Hardware-backed keys (HSM/TPM) are never extractable. Software keys may be. Design for opaque handles throughout.',
+                desc: 'Whether a key can be extracted is a property of the key and the module policy, not of the word "hardware". PKCS#11 expresses it with CKA_SENSITIVE and CKA_EXTRACTABLE; a Luna HSM, for example, creates keys non-extractable by default (they can be cloned to another HSM partition) unless you create them extractable. A FIPS 140 level does not set that policy: FIPS 140-2 allows keys to leave a Level 3 module in encrypted form. Design for opaque handles throughout and check the actual module policy.',
               },
               {
                 title: 'Session / Context Management',
@@ -142,9 +142,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             2024).
           </p>
           <p className="text-muted-foreground">
-            <InlineTooltip term="JCProv">SafeNet/Thales Java PKCS#11 wrapper</InlineTooltip> bridges
-            JCA and PKCS#11 — once registered, standard JCA calls transparently hit the HSM. This is
-            the recommended pattern for enterprise Java apps that need HSM-backed keys.
+            Thales Luna HSMs have two separate Java routes. The Luna JSP is a JCA/JCE provider (
+            <code className="text-primary font-mono text-sm">LunaProvider</code>): once registered,
+            standard JCA calls reach the HSM. <InlineTooltip term="JCProv">JCPROV</InlineTooltip> is
+            a different library, a Java wrapper for the PKCS#11 API (package{' '}
+            <code className="text-primary font-mono text-sm">com.safenetinc.jcprov</code>): you
+            write PKCS#11-style code, not JCA calls. Choose by whether you want JCA portability or
+            direct control of PKCS#11 objects.
           </p>
         </LearnSection>
       </div>
@@ -414,19 +418,19 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                 lang: 'C / C++',
                 libs: ['OpenSSL (EVP)', 'Botan 3.x', 'Crypto++', 'wolfSSL'],
                 pqc: 'Native in OpenSSL 3.5+ (oqsprovider before 3.5); liboqs directly',
-                note: 'Maximum performance; requires careful memory management',
+                note: 'Close to the hardware and the C libraries; requires careful memory management',
               },
               {
                 lang: 'Rust',
                 libs: ['RustCrypto', 'ring', 'pqcrypto', 'aws-lc-rs'],
                 pqc: 'pqcrypto crate (compile-time algorithm selection)',
-                note: 'Type system prevents key misuse; borrow checker eliminates use-after-free on key material',
+                note: 'Safe Rust enforces memory-safety guarantees at compile time; unsafe blocks and C bindings do not get them, and constant-time behaviour still needs review and testing',
               },
               {
                 lang: 'Java / Kotlin',
                 libs: ['JCA/JCE', 'Bouncy Castle', 'JCProv'],
                 pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13 / 17.0.21); BC 1.79+ adds SLH-DSA and more',
-                note: 'Oracle backported ML-KEM/ML-DSA to JDK 21 and 17 in October 2026; JCProv bridges to HSM',
+                note: 'Oracle backported ML-KEM/ML-DSA to JDK 21 and 17 in October 2026; Thales Luna HSMs have separate JCA (Luna JSP) and PKCS#11-wrapper (JCPROV) routes',
               },
               {
                 lang: 'Python',
@@ -450,7 +454,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                 lang: 'Zig',
                 libs: ['std.crypto', 'C interop via translate-c'],
                 pqc: 'Consume C libraries via Zig build system',
-                note: 'comptime enables constant-time implementations with no runtime overhead',
+                note: 'comptime runs code at compile time; it does not check that code is constant-time, so side channels still need review and testing',
               },
             ].map((item) => (
               <div key={item.lang} className="border border-border rounded-lg p-3">
