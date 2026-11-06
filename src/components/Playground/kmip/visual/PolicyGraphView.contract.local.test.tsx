@@ -498,4 +498,64 @@ describe('policy graph current-source and loaded-module result contracts', () =>
     expect(f.dryRun).toHaveBeenCalledOnce()
     expect(screen.getByText('engine verdict')).toBeVisible()
   })
+  it('retains Incomplete for exact attempted-source publication and requires successful retry before dryRun', async () => {
+    const f = mount()
+    let rejected = true
+    f.apply.mockImplementation((text) => {
+      f.rerender(
+        <PolicyGraphView
+          engine={f.engine}
+          initialYaml={text}
+          presetFile={null}
+          guided={false}
+          onLoadPreset={vi.fn()}
+          onApplyYaml={f.apply}
+        />
+      )
+      return rejected ? { ok: false, error: 'invalid effective sample' } : { ok: true }
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'disable rule' }))
+    await run()
+    expect(screen.getByRole('alert')).toHaveTextContent('Incomplete: invalid effective sample')
+    expect(f.dryRun).not.toHaveBeenCalled()
+    expect(screen.queryByText('engine verdict')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Edited graph explicitly applied/)).not.toBeInTheDocument()
+    rejected = false
+    await run()
+    expect(f.apply).toHaveBeenCalledTimes(2)
+    expect(f.dryRun).toHaveBeenCalledOnce()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByText('engine verdict')).toBeVisible()
+  })
+  it('does not reuse obsolete A publication identity after a genuine B context was recorded', async () => {
+    const f = mount()
+    fireEvent.click(screen.getByRole('button', { name: 'disable rule' }))
+    fireEvent.click(screen.getByRole('button', { name: 'reset' }))
+    expect(f.apply).toHaveBeenLastCalledWith(yaml)
+    const foreign = yaml + '\n# genuine B source'
+    f.rerender(
+      <PolicyGraphView
+        engine={f.engine}
+        initialYaml={foreign}
+        presetFile={null}
+        guided={false}
+        onLoadPreset={vi.fn()}
+        onApplyYaml={f.apply}
+      />
+    )
+    await run()
+    expect(screen.getByText('recorded engine-context result')).toBeVisible()
+    expect(screen.getByText(/genuine B source/)).toBeInTheDocument()
+    f.rerender(
+      <PolicyGraphView
+        engine={f.engine}
+        initialYaml={yaml}
+        presetFile={null}
+        guided={false}
+        onLoadPreset={vi.fn()}
+        onApplyYaml={f.apply}
+      />
+    )
+    expect(screen.queryByText('recorded engine-context result')).not.toBeInTheDocument()
+  })
 })

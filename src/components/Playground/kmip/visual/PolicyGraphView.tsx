@@ -270,6 +270,13 @@ export function PolicyGraphView({
   const policyGeneration = useRef(0)
   const latestApply = useRef(onApplyYaml)
   const editOrigin = useRef({ engine, presetFile, initialYaml, readOnly })
+  // An attempted callback may publish its draft even when the engine rejects it.
+  // This binds local source/error ownership only, never accepted engine policy.
+  const attemptedPublication = useRef<{
+    engine: KmipEngine
+    presetFile: string | null
+    yaml: string
+  } | null>(null)
   const lastApplied = useRef<{
     engine: KmipEngine
     presetFile: string | null
@@ -283,6 +290,9 @@ export function PolicyGraphView({
       origin.presetFile === current.presetFile &&
       !current.readOnly &&
       (origin.initialYaml === current.initialYaml ||
+        (attemptedPublication.current?.engine === current.engine &&
+          attemptedPublication.current?.presetFile === current.presetFile &&
+          attemptedPublication.current?.yaml === current.initialYaml) ||
         (lastApplied.current?.engine === current.engine &&
           lastApplied.current?.presetFile === current.presetFile &&
           lastApplied.current?.yaml === current.initialYaml))
@@ -338,10 +348,15 @@ export function PolicyGraphView({
       ((initialYaml === inFlightApply.current?.text &&
         inFlightApply.current?.engine === engine &&
         inFlightApply.current?.presetFile === presetFile) ||
+        (initialYaml === attemptedPublication.current?.yaml &&
+          attemptedPublication.current?.engine === engine &&
+          attemptedPublication.current?.presetFile === presetFile) ||
         (initialYaml === lastApplied.current?.yaml &&
           lastApplied.current?.engine === engine &&
           lastApplied.current?.presetFile === presetFile))
     if (!sameRuntime || (previous.initialYaml !== initialYaml && !selfPublication)) {
+      attemptedPublication.current = null
+      lastApplied.current = null
       contextGeneration.current++
       invalidate()
     }
@@ -377,6 +392,7 @@ export function PolicyGraphView({
       if (!mounted.current || before.engine !== engine || before.presetFile !== presetFile)
         return false
       inFlightApply.current = applyOperation
+      attemptedPublication.current = { engine, presetFile, yaml: text }
       try {
         const result = latestApply.current(text)
         if (!stillOwned()) return false
