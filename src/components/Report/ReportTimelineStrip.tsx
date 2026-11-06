@@ -6,11 +6,18 @@ import type { Phase } from '../../data/timelineData'
 const START_YEAR = 2024
 const END_YEAR = 2035
 const SPAN = END_YEAR - START_YEAR
+/** Narrowest bar drawn, so a single-year milestone is still visible. */
+const MIN_BAR_PCT = 1
 
 const TICK_YEARS = [2024, 2026, 2028, 2030, 2032, 2034, 2035]
 
 function yearToPercent(year: number): number {
   return ((year - START_YEAR) / SPAN) * 100
+}
+
+/** "2035" for a single-year milestone, "2028–2035" for a span. */
+function yearsLabel(startYear: number, endYear: number): string {
+  return startYear === endYear ? `${startYear}` : `${startYear}–${endYear}`
 }
 
 interface ReportTimelineStripProps {
@@ -68,10 +75,14 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
         {phases.map((phase, idx) => {
           const clampedStart = Math.max(START_YEAR, phase.startYear)
           const clampedEnd = Math.min(END_YEAR, phase.endYear)
-          if (clampedStart >= END_YEAR || clampedEnd <= START_YEAR) return null
+          // The axis is inclusive at both ends: a milestone dated exactly START_YEAR
+          // or END_YEAR sits on the edge of the scale and must still be drawn.
+          if (clampedStart > END_YEAR || clampedEnd < START_YEAR) return null
 
-          const leftPct = yearToPercent(clampedStart)
-          const widthPct = Math.max(1, yearToPercent(clampedEnd) - leftPct)
+          const startPct = yearToPercent(clampedStart)
+          const widthPct = Math.max(MIN_BAR_PCT, yearToPercent(clampedEnd) - startPct)
+          // Keep the bar inside the track when it sits on the right-hand edge.
+          const leftPct = Math.min(startPct, 100 - widthPct)
           const phaseColor =
             phaseColors[phase.phase as Phase]?.start ?? 'hsl(var(--phase-guidance))'
 
@@ -95,14 +106,14 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
                     backgroundColor: phaseColor,
                     opacity: 0.85,
                   }}
-                  title={`${phase.phase}: ${phase.startYear}–${phase.endYear}`}
+                  title={`${phase.phase}: ${yearsLabel(phase.startYear, phase.endYear)}`}
                 />
               </div>
 
               {/* Year range label */}
               <div className="w-20 shrink-0">
                 <span className="text-[10px] text-muted-foreground font-mono">
-                  {phase.startYear}–{phase.endYear}
+                  {yearsLabel(phase.startYear, phase.endYear)}
                 </span>
               </div>
             </div>

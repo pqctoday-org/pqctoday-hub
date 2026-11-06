@@ -43,6 +43,10 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
 }) => {
   const { activeKey, stepIdx, total, attempted, canProceed } = flow
   const reset = useAssessmentStore((s) => s.reset)
+  // The track-relative store index of the question on screen. The `?step=` link is
+  // read back through this same index space, so it must not be the render position
+  // (which differs from it on the full track).
+  const storeStep = useAssessmentStore((s) => s.currentStep)
   const [infoOpen, setInfoOpen] = useState(false)
 
   const meta = STEP_META[activeKey]
@@ -54,7 +58,7 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
 
   const saveLink = () => {
     const url = new URL(window.location.href)
-    url.searchParams.set('step', String(stepIdx))
+    url.searchParams.set('step', String(storeStep))
     navigator.clipboard.writeText(url.toString())
     toast.success('Resume link copied — your answers are saved on this device')
   }
