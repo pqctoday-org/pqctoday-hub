@@ -48,7 +48,7 @@ const ATTACK_SCENARIOS: Record<
       description:
         'A CRQC decrypts captured Kerberos PKINIT handshakes from network recordings. The RSA-encrypted pre-authentication data reveals the session key, enabling ticket forgery and full domain compromise without any credentials.',
       mitigation:
-        'Deploy Windows Server 2025 with PQC PKINIT support (not sourced in the Library). Configure clients to use ML-KEM for PKINIT key exchange. Enforce PQC ciphers via Group Policy.',
+        'Illustrative future target, not a current setting: Microsoft lists Kerberos on its Windows post-quantum roadmap but gives no version or date for PQC in PKINIT, and we found no documented client or Group Policy setting for it. Windows Server 2025 offers ML-KEM and ML-DSA through its cryptography APIs; that is not PKINIT support. Before planning a rollout, check Microsoft documentation for the supported algorithms, how clients and domain controllers negotiate them, and validation evidence for the cryptographic module. Meanwhile, inventory PKINIT and smart-card logon dependencies.',
     },
     {
       title: 'NTLM Credential Exposure',
