@@ -468,11 +468,10 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
             hedging: 'preferred',
           })
           const identical = toHex(s1) === toHex(s2)
-          if (identical)
-            throw new Error('Two hedged signatures were byte-identical — that would be unexpected.')
           return {
-            detail:
-              'Preferred signing returned different bytes for the same message in this sample. This comparison does not establish signature validity or randomness quality.',
+            detail: identical
+              ? 'Preferred signing returned identical bytes for the same message in this sample, which the specification permits (Preferred may produce a deterministic signature). This comparison does not establish signature validity or randomness quality.'
+              : 'Preferred signing returned different bytes for the same message in this sample, which the specification permits (Preferred may produce a hedged signature). This comparison does not establish signature validity or randomness quality.',
           }
         },
       },
