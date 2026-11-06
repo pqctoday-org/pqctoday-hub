@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { buildProgress, groupProgress, nextMilestone } from './progressModel'
-import { buildObligations } from '../obligations/obligationsModel'
+import { buildObligations, type ObligationRow } from '../obligations/obligationsModel'
+import type { ComplianceFramework } from '@/data/complianceData'
 
 const EU_FINANCE = { country: 'France', industry: 'Finance & Insurance', region: 'eu' as const }
 const ROWS = buildObligations(EU_FINANCE)
@@ -15,7 +16,7 @@ describe('buildProgress', () => {
   })
 
   it('keeps undated obligations instead of dropping them', () => {
-    // GDPR, ENISA and ETSI bind continuously and state no date. Only 62 of 197
+    // GDPR, ENISA and ETSI record no structured date. Only 62 of 197
     // catalogue rows carry dates at all — a purely dated view would silently
     // omit the majority and read as an omission rather than a fact.
     const entries = buildProgress(ROWS, 2026)
@@ -93,5 +94,41 @@ describe('nextMilestone', () => {
   it('returns null when nothing is dated', () => {
     const gdpr = ROWS.filter((r) => r.framework.id === 'GDPR')
     expect(nextMilestone(buildProgress(gdpr, 2026), 2026)).toBeNull()
+  })
+})
+
+describe('sources with no structured date', () => {
+  const undated = (
+    bindingStatus: ComplianceFramework['bindingStatus'],
+    id: string
+  ): ObligationRow =>
+    ({
+      framework: { id, label: id, deadline: 'Ongoing', bindingStatus } as ComplianceFramework,
+      milestones: [],
+    }) as unknown as ObligationRow
+
+  it('says no structured date is recorded, not that the source binds continuously', () => {
+    const group = groupProgress(buildProgress([undated('recommendation', 'ADVICE')], 2026))[0]
+    expect(group.bucket).toBe('ongoing')
+    const copy = `${group.title} ${group.note}`
+    expect(copy).toMatch(/No structured date/)
+    expect(group.title).not.toMatch(/ongoing/i)
+    // The only mention of binding continuously is the denial of it.
+    expect(copy).toMatch(/does not mean a source binds continuously/)
+    expect(copy.replace(/does not mean a source binds continuously/, '')).not.toMatch(
+      /bind(s)? continuously/
+    )
+  })
+
+  it('keeps each source its own binding status whether or not it has a date', () => {
+    const rows = [
+      undated('recommendation', 'ADVICE'),
+      undated('binding', 'LAW'),
+      undated(undefined, 'UNREVIEWED'),
+    ]
+    const status = Object.fromEntries(
+      buildProgress(rows, 2026).map((e) => [e.framework.id, e.framework.bindingStatus])
+    )
+    expect(status).toEqual({ ADVICE: 'recommendation', LAW: 'binding', UNREVIEWED: undefined })
   })
 })

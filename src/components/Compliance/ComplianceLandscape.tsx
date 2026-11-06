@@ -86,10 +86,18 @@ const FIPS_ROW_TO_PQC_ALGORITHM: Record<string, string> = {
   'FIPS-205': 'SLH-DSA',
 }
 
+// A date that has passed is a fact about the calendar. This page does not know
+// whether the rule binds the reader or whether anything is still outstanding,
+// so a passed date is shown as "Date passed" in a neutral colour, never as
+// "Overdue" in the error colour.
+function urgencyTextColor(urgency: DeadlineUrgency) {
+  return urgency === 'overdue' ? 'text-status-info' : urgencyColor(urgency)
+}
+
 function urgencyBgColor(urgency: DeadlineUrgency) {
   switch (urgency) {
     case 'overdue':
-      return 'bg-status-error'
+      return 'bg-status-info'
     case 'imminent':
       return 'bg-status-warning'
     case 'near':
@@ -203,14 +211,19 @@ const DEADLINE_FILTER_OPTIONS: { id: 'All' | DeadlinePhase; label: string }[] = 
   { id: 'ongoing', label: 'Ongoing / no year' },
 ]
 
-/** Priority: yes/partial/expected (real mandate) → guidance → no */
+/** Priority: yes/partial/expected (a PQC requirement, current or anticipated) → guidance → no */
 function pqcSortPriority(r: PQCRequirement): number {
   if (r === 'yes' || r === 'partial' || r === 'expected') return 0
   if (r === 'guidance') return 1
   return 2
 }
 
-/** True when the framework has any form of PQC mandate (including partial/expected). */
+/**
+ * True when the record carries a PQC requirement signal: required (yes), required
+ * for part of its scope (partial), or anticipated (expected, not yet codified).
+ * Only `yes` is a current requirement; the aggregate must be labelled as
+ * including the other two wherever it is shown.
+ */
 function hasPQCMandate(r: PQCRequirement): boolean {
   return r === 'yes' || r === 'partial' || r === 'expected'
 }
@@ -345,7 +358,9 @@ export function DeadlineTimeline({
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 whitespace-nowrap">
                             <div className="bg-popover border border-border text-xs text-foreground px-2 py-1 rounded shadow-lg">
                               <span className="font-semibold">{fw.label}</span>
-                              <span className={`ml-1 ${urgencyColor(urgency)}`}>{fw.deadline}</span>
+                              <span className={`ml-1 ${urgencyTextColor(urgency)}`}>
+                                {fw.deadline}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -358,7 +373,7 @@ export function DeadlineTimeline({
           </div>
           <div className="flex gap-4 text-xs text-muted-foreground mt-1 px-1">
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-status-error inline-block" /> Overdue
+              <span className="w-2 h-2 rounded-full bg-status-info inline-block" /> Date passed
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-status-warning inline-block" /> Imminent
@@ -636,10 +651,10 @@ function FrameworkCard({
         />
       )}
 
-      <div className={`flex items-center gap-1.5 text-xs ${urgencyColor(urgency)}`}>
+      <div className={`flex items-center gap-1.5 text-xs ${urgencyTextColor(urgency)}`}>
         <Clock size={12} />
         <span className="font-medium">
-          {urgency === 'overdue' ? `${fw.deadline} — Overdue` : fw.deadline}
+          {urgency === 'overdue' ? `${fw.deadline} — date passed` : fw.deadline}
         </span>
       </div>
 
@@ -1018,7 +1033,9 @@ function FrameworkTableRow({
       <td className="py-2.5 px-3 text-xs text-muted-foreground whitespace-nowrap">
         {fw.enforcementBody}
       </td>
-      <td className={`py-2.5 px-3 text-xs font-medium whitespace-nowrap ${urgencyColor(urgency)}`}>
+      <td
+        className={`py-2.5 px-3 text-xs font-medium whitespace-nowrap ${urgencyTextColor(urgency)}`}
+      >
         {fw.deadline}
       </td>
       <td className="py-2.5 px-3">
@@ -1576,13 +1593,13 @@ export function ComplianceLandscape({
           title={
             pqcRequiredOnly
               ? 'Clear PQC filter'
-              : 'Show only frameworks with a PQC mandate (yes / partial / expected)'
+              : 'Show only entries that require PQC (yes), require it for part of their scope (partial), or are expected to require it (expected, not yet codified)'
           }
           aria-pressed={pqcRequiredOnly}
         >
           <ShieldCheck size={16} className="text-status-success" />
           <span className="text-2xl font-bold text-foreground">{pqcCount}</span>
-          <span className="text-muted-foreground">Mandate PQC</span>
+          <span className="text-muted-foreground">Requires or expects PQC</span>
         </Button>
         <Button
           type="button"

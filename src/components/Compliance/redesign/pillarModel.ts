@@ -148,7 +148,11 @@ export interface ChainNode {
 export interface PhaseStep {
   year: string
   label: string
-  state: 'done' | 'active' | 'future'
+  /**
+   * `recorded` is a date or note the record itself carries. It says nothing
+   * about whether the step has been completed or is in force.
+   */
+  state: 'done' | 'active' | 'future' | 'recorded'
 }
 
 export interface CrosswalkItem {
@@ -323,20 +327,21 @@ function pqcStanceForFramework(
   }
 }
 
+/**
+ * The steps shown under "Deadline phases". Only what the record states:
+ * each structured milestone with its own label (`deadline_dates`), or a single
+ * step saying no structured date is recorded. A record with no date is not
+ * given an invented "Adopted" or "In force" phase, and a dated draft, advisory
+ * target or scheme is not turned into a published-then-active sequence ending
+ * in a "PQC deadline": the label is whatever the source called that date.
+ */
+export const NO_STRUCTURED_DATE_LABEL = 'No structured date recorded'
+const UNLABELLED_DATE_LABEL = 'Date recorded; no milestone label'
+
 function generatedPhases(framework: ComplianceFramework): PhaseStep[] {
-  const year = framework.deadlineYear
-  if (!year) {
-    return [
-      p('—', 'Adopted', 'done'),
-      p('Now', 'In force', 'active'),
-      p('Ongoing', 'Maintained', 'future'),
-    ]
-  }
-  return [
-    p('Now', 'Published', 'done'),
-    p('In force', 'Active', 'active'),
-    p(String(year), 'PQC deadline', 'future'),
-  ]
+  const dates = framework.deadlineDates ?? []
+  if (dates.length === 0) return [p('—', NO_STRUCTURED_DATE_LABEL, 'recorded')]
+  return dates.map((d) => p(String(d.year), d.label || UNLABELLED_DATE_LABEL, 'recorded'))
 }
 
 /**

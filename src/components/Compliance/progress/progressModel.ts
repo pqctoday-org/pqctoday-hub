@@ -29,7 +29,7 @@ export type ProgressBucket = 'passed' | 'thisYear' | 'ahead' | 'ongoing'
 
 export interface ProgressEntry {
   framework: ComplianceFramework
-  /** Undefined only for the `ongoing` bucket. */
+  /** Undefined only for the `ongoing` bucket (no structured date recorded). */
   year?: number
   /** The milestone's own label, verbatim from `deadline_dates`. */
   label?: string
@@ -57,15 +57,19 @@ const GROUP_COPY: Record<ProgressBucket, { title: string; note: string }> = {
     note: 'Earliest first.',
   },
   ongoing: {
-    title: 'Ongoing — no dated milestone',
-    note: 'These bind continuously and state no date. They are listed so the absence is visible rather than looking like an omission.',
+    title: 'No structured date recorded',
+    note: 'No structured date is recorded for these sources. A missing date does not mean a source binds continuously, or at all: whether it binds you depends on its binding status and scope, which the detail view shows. They are listed so the absence is visible rather than looking like an omission.',
   },
 }
 
 const BUCKET_ORDER: ProgressBucket[] = ['passed', 'thisYear', 'ahead', 'ongoing']
 
 /**
- * Flattens the register into dated entries, one per stated milestone.
+ * Flattens the register into dated entries, one per stated milestone. A source
+ * with no structured date keeps its place in the `ongoing` bucket (the bucket
+ * id is internal; it is shown as "No structured date recorded"). The missing
+ * date is never read as a continuing obligation: every entry carries its
+ * framework, so its own binding status stays attached with or without a date.
  *
  * `currentYear` is injected rather than read from the clock so the grouping is
  * testable and so a build cannot produce a different page than its tests.

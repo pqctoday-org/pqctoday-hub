@@ -16,7 +16,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Layers, GlobeLock, ArrowRight } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
+import { groupByTier, TIER_META, type UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { LibraryDocItem } from '../../applicability/parts/items'
@@ -52,15 +52,24 @@ export function ArchitectStandardsView({
   // collapsed into a single jurisdiction-rolled list (the regional map IS
   // the primary filter affordance here).
   const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
-  const applicable: ComplianceFramework[] = useMemo(
-    () =>
-      [
-        ...grouped.mandatory,
-        ...grouped.recognized,
-        ...grouped['cross-border'],
-        ...grouped.advisory,
-      ].map((r) => r.item),
+  const applicableResults = useMemo(
+    () => [
+      ...grouped.mandatory,
+      ...grouped.recognized,
+      ...grouped['cross-border'],
+      ...grouped.advisory,
+    ],
     [grouped]
+  )
+  const applicable: ComplianceFramework[] = useMemo(
+    () => applicableResults.map((r) => r.item),
+    [applicableResults]
+  )
+  // Each framework keeps the tier the applicability engine gave it, so the list
+  // below never reads as if every entry were binding on the reader's system.
+  const tierById = useMemo(
+    () => new Map(applicableResults.map((r) => [r.item.id, r.tier])),
+    [applicableResults]
   )
 
   // Group applicable frameworks by region bloc
@@ -114,7 +123,7 @@ export function ArchitectStandardsView({
       <div className="space-y-3">
         <ProfileEditor
           profile={profile}
-          message="Set your stack first — pick an industry and country so the maturity dashboard and jurisdiction map can show the standards that actually constrain your system."
+          message="Set your stack first — pick an industry and country so the maturity dashboard and jurisdiction map can show the standards that may be relevant to your system."
         />
         <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
@@ -152,7 +161,7 @@ export function ArchitectStandardsView({
           <Layers size={16} className="text-secondary" />
           <h3 className="text-base font-semibold text-foreground">Crypto-Agility Maturity</h3>
           <span className="text-xs text-muted-foreground">
-            Where your applicable standards land on the CSWP-39 5-pillar × 4-tier grid
+            Where the standards matched to your profile land on the CSWP-39 5-pillar × 4-tier grid
           </span>
         </header>
         {filteredMaturity.length > 0 ? (
@@ -172,7 +181,9 @@ export function ArchitectStandardsView({
           <GlobeLock size={16} className="text-primary" />
           <h3 className="text-base font-semibold text-foreground">Jurisdiction map</h3>
           <span className="text-xs text-muted-foreground">
-            Frameworks that bind your stack, grouped by regulatory bloc
+            Frameworks that may be relevant to your stack, grouped by regulatory bloc. A match on
+            country and sector is not a legal finding: each entry shows its tier, so check its scope
+            and binding status before relying on it.
           </span>
         </header>
         {orderedRegions.length === 0 ? (
@@ -190,32 +201,48 @@ export function ArchitectStandardsView({
                     </span>
                   </div>
                   <ul className="space-y-1 min-w-0">
-                    {fws.slice(0, 8).map((fw) => (
-                      <li key={fw.id} className="min-w-0">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => onSelectFramework?.(fw)}
-                          className="h-auto px-1.5 py-0.5 text-left text-xs text-foreground hover:text-primary w-full justify-start gap-1.5 truncate"
-                          title={fw.label}
-                        >
-                          <span
-                            className={`inline-block w-1.5 h-1.5 rounded-full shrink-0 ${
-                              fw.pqcRequirement === 'yes'
-                                ? 'bg-status-success'
-                                : fw.pqcRequirement === 'partial' ||
-                                    fw.pqcRequirement === 'expected'
-                                  ? 'bg-status-warning'
-                                  : fw.pqcRequirement === 'guidance'
-                                    ? 'bg-status-info'
-                                    : 'bg-muted-foreground'
-                            }`}
-                            aria-hidden="true"
-                          />
-                          <span className="truncate">{fw.label}</span>
-                        </Button>
-                      </li>
-                    ))}
+                    {fws.slice(0, 8).map((fw) => {
+                      const tier = tierById.get(fw.id)
+                      const tierMeta = tier ? TIER_META[tier] : undefined
+                      return (
+                        <li key={fw.id} className="min-w-0">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => onSelectFramework?.(fw)}
+                            className="h-auto px-1.5 py-0.5 text-left text-xs text-foreground hover:text-primary w-full justify-start gap-1.5 truncate"
+                            title={
+                              tierMeta
+                                ? `${fw.label} — ${tierMeta.label}: ${tierMeta.description}`
+                                : fw.label
+                            }
+                          >
+                            <span
+                              className={`inline-block w-1.5 h-1.5 rounded-full shrink-0 ${
+                                fw.pqcRequirement === 'yes'
+                                  ? 'bg-status-success'
+                                  : fw.pqcRequirement === 'partial' ||
+                                      fw.pqcRequirement === 'expected'
+                                    ? 'bg-status-warning'
+                                    : fw.pqcRequirement === 'guidance'
+                                      ? 'bg-status-info'
+                                      : 'bg-muted-foreground'
+                              }`}
+                              aria-hidden="true"
+                            />
+                            <span className="truncate">{fw.label}</span>
+                            {tierMeta && (
+                              <span
+                                data-testid="framework-tier"
+                                className="shrink-0 text-[10px] text-muted-foreground"
+                              >
+                                {tierMeta.label}
+                              </span>
+                            )}
+                          </Button>
+                        </li>
+                      )
+                    })}
                     {fws.length > 8 && (
                       <li className="text-[11px] text-muted-foreground italic">
                         + {fws.length - 8} more — switch to Landscape tab for the full grid

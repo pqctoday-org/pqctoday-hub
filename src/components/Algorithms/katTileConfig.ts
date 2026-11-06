@@ -29,8 +29,19 @@ export interface KATTileConfig {
   name: string
   standard: string
   fipsUrl: string
-  /** NIST level (1-5) for PQC, or bit strength (128/192/256) for classical */
+  /**
+   * NIST level (1-5) for PQC, or the nominal bit-strength category of the
+   * primitive (128/192/256) for classical. For a key-derivation tile this is
+   * the category of the underlying hash only; it is not the strength of any
+   * key the operation derives (see `strengthNote`).
+   */
   securityLevel: number
+  /**
+   * Input-strength condition for tiles whose badge number alone would
+   * overstate what the operation delivers (key derivation): the strength of a
+   * derived key depends on the secret fed in, not on the badge.
+   */
+  strengthNote?: string
   /**
    * Operation label per spec, index-aligned with `specs` (operation only —
    * the evidence class shown next to it is derived by katEvidence.ts from the
@@ -611,7 +622,9 @@ export const KDF_TILES: KATTileConfig[] = [
     standard: 'RFC 8018',
     fipsUrl: RFC_8018_URL,
     securityLevel: 128,
-    operations: ['Key derivation'],
+    strengthNote:
+      "The 128-bit badge is a category of the underlying hash (SHA-256 is at 128 bits for collision resistance in SP 800-57 Part 1 Rev. 5, Table 3), not the strength of a derived key. Against offline password guessing, strength comes from the password's entropy plus roughly log2(iteration count) bits (RFC 8018 section 4.2); the output length does not add to it.",
+    operations: ['Key derivation (strength depends on the password and the iteration count)'],
     specs: [
       {
         id: 'kat-algo-pbkdf2',
@@ -628,7 +641,9 @@ export const KDF_TILES: KATTileConfig[] = [
     standard: 'RFC 5869',
     fipsUrl: RFC_5869_URL,
     securityLevel: 128,
-    operations: ['Key derivation'],
+    strengthNote:
+      'The 128-bit badge is a category of the underlying hash (SHA-256 is at 128 bits for collision resistance in SP 800-57 Part 1 Rev. 5, Table 3), not the strength of derived keys. Derived keys are only as strong as the input keying material: HKDF can concentrate entropy but cannot amplify it, and it has no work factor for low-entropy secrets such as passwords (RFC 5869 section 4).',
+    operations: ['Key derivation (strength depends on the input keying material)'],
     specs: [
       {
         id: 'kat-algo-hkdf',
