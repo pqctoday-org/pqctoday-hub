@@ -772,7 +772,7 @@ export function KmipPlaygroundView() {
       steps: [
         {
           title: 'Why crypto-agility?',
-          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, so clients that look keys up by name need no code change. Watch that happen live.',
+          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, so a key-management caller that looks keys up by a stable name can keep making the same calls. Anyone who verifies signatures or holds public keys still needs the new public keys, reissued certificates and algorithm support, rolled out together. Watch the policy change live.',
         },
         {
           title: 'Start on the "before"',
@@ -878,13 +878,13 @@ export function KmipPlaygroundView() {
         {
           title: 'Switch to Auto-migrate',
           act: () => loadPolicyByFile('auto-migrate-on-use.yaml'),
-          body: "This policy lets an EXISTING classical key keep working, but rekeys it to PQC the moment it's used — no flag day, no re-issue.",
+          body: "This policy lets an EXISTING classical key keep working, but rekeys it to PQC the moment it's used, so the caller's handle needs no change. The new ML-DSA key is a different key with its own public key: certificates must be reissued and every verifier must be given the new public key and support the algorithm.",
         },
         {
           title: 'Sign — and watch it migrate',
           target: '[data-tour="sign-btn"]',
           act: () => onSign(),
-          body: 'The moment you Sign, the policy rekeys ECDSA-P256 → ML-DSA-65 and signs with the new key — a new key is minted and the old one is deactivated and superseded. The handle keeps working because the engine follows the supersedes link.',
+          body: 'The moment you Sign, the policy rekeys ECDSA-P256 → ML-DSA-65 and signs with the new key — a new key is minted and the old one is deactivated and superseded. The handle keeps working because the engine follows the supersedes link; signatures made with the old key stay verifiable only with the old public key.',
         },
       ],
     },
@@ -1255,10 +1255,11 @@ export function KmipPlaygroundView() {
                     The fix isn&apos;t swapping in a PQC algorithm once; it&apos;s a control plane
                     that can migrate keys again whenever the roadmap changes,{' '}
                     <span className="font-medium text-foreground">
-                      with no flag day and no application code change
+                      so a key-management caller that uses stable key names can keep its calls
                     </span>
-                    . Everything below is that idea made hands-on — flip the policy strip and watch
-                    the same request behave differently.
+                    . Public keys, certificates, verifier support and the rollout order still have
+                    to be planned. Everything below is that idea made hands-on — flip the policy
+                    strip and watch the same request behave differently.
                   </p>
                 </div>
                 <Button

@@ -129,11 +129,11 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   CKA_PROFILE_ID: {
     hex: '0x00000601',
-    def: 'The single attribute on a CKO_PROFILE object — which conformance profile it names (e.g. CKP_BASELINE_PROVIDER). Read-only, fixed at creation.',
+    def: 'The attribute a CKO_PROFILE object adds to the common object attributes — which profile it names (e.g. CKP_BASELINE_PROVIDER). Defined in Profiles v3.0 and specification v3.1, before v3.2.',
   },
   CKA_ALLOWED_MECHANISMS: {
     hex: '0x40000600',
-    def: 'v3.2 §4.8 Table 13 — an array attribute pinning a key to a specific allow-list of mechanisms. Any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID, even if the mechanism itself is otherwise valid for that key type — the enforcement happens per-key, not just per-token.',
+    def: 'An array attribute pinning a key to a specific allow-list of mechanisms (v3.2 §4.8, Table 26; the attribute already exists in the v2.40 specification). Any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID, even if the mechanism itself is otherwise valid for that key type — the enforcement happens per-key, not just per-token.',
   },
   CKA_PARAMETER_SET: {
     def: "Which named parameter set a PQC key uses — e.g. one of SLH-DSA's 12 CKP_SLH_DSA_* sets, distinct from the generic CKA_KEY_TYPE/CKA_KEY_TYPE algorithm family.",
@@ -146,11 +146,11 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   CKA_TRUSTED: {
     hex: '0x00000086',
-    def: 'v3.2 §4.2 Table 13 footnote 10 — "Can only be set to CK_TRUE by the SO user." This engine enforces that more strictly than the footnote alone implies: silently dropped from C_GenerateKey templates (no error — the key is created, just without the flag), and permanently read-only via C_SetAttributeValue for every caller, SO included, once an object exists. The only live path to CKA_TRUSTED=TRUE is C_CreateObject (raw key import) on an SO session.',
+    def: 'Present since the v2.40 specification. v3.2 §4.2 Table 13 footnote 10 — "Can only be set to CK_TRUE by the SO user." This engine enforces that more strictly than the footnote alone implies: silently dropped from C_GenerateKey templates (no error — the key is created, just without the flag), and permanently read-only via C_SetAttributeValue for every caller, SO included, once an object exists. The only live path to CKA_TRUSTED=TRUE is C_CreateObject (raw key import) on an SO session.',
   },
   CKA_WRAP_WITH_TRUSTED: {
     hex: '0x00000210',
-    def: 'v3.2 §4.8/§4.10 — pins a key so it can only be wrapped by a wrapping key whose own CKA_TRUSTED=TRUE. Unlike CKA_TRUSTED itself, this one is ordinary client-settable — no SO gate.',
+    def: 'Present since the v2.40 specification (v3.2 §4.10 and §4.11) — pins a key so it can only be wrapped by a wrapping key whose own CKA_TRUSTED=TRUE. Unlike CKA_TRUSTED itself, this one is ordinary client-settable — no SO gate.',
   },
   CKR_ATTRIBUTE_READ_ONLY: {
     hex: '0x00000010',
@@ -269,7 +269,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'session-state',
     label: 'Session state',
     cat: 'protocol',
-    def: 'PKCS#11 defines five session states: R/O Public, R/O User, R/W Public, R/W User and R/W Security Officer (SO). C_GetSessionInfo reports the current state; there is no R/O SO state.',
+    def: 'PKCS#11 defines five session states: R/O Public Session, R/O User Functions, R/W Public Session, R/W User Functions and R/W SO Functions. The Security Officer state exists only for read/write sessions: read-only SO sessions do not exist, and a read-only session open while the SO is logged in behaves like R/O Public Session. C_GetSessionInfo reports the current state. Session state is separate from per-operation authentication: a private key with CKA_ALWAYS_AUTHENTICATE needs a C_Login with the context-specific user type right after each operation on it is initialised, which authenticates that key for that operation rather than the session.',
   },
   {
     id: 'object-class',

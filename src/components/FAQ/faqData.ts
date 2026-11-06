@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { PersonaId } from '@/data/learningPersonas'
 
+/**
+ * The one status record for FIPS 206 (FN-DSA), used by every answer that mentions it and
+ * mirrored by the About page's data-foundation label. Source: NIST's post-quantum
+ * standardization page (updated 27 October 2026: Falcon "will be published in FIPS 206
+ * (in development)") and NIST's list of FIPS publications and drafts, checked 5 November
+ * 2026, which has no FIPS 206 entry. Update the date and wording here when that changes.
+ */
+export const FIPS_206_STATUS =
+  "FIPS 206 is planned, not published: NIST's post-quantum standardization page (updated 27 October 2026) lists it as in development, and NIST's FIPS list (checked 5 November 2026) shows no draft or final text."
+
 export interface FAQItem {
   question: string
   answer: string
@@ -52,7 +62,9 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is FN-DSA (Falcon)?',
         answer:
-          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm) is the name NIST plans to use for a standard based on Falcon. FIPS 206 remains in development; NIST has not published an Initial Public Draft or final standard. Falcon produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares the Falcon-512 and Falcon-1024 candidate parameters.',
+          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm) is the name NIST plans to use for a standard based on Falcon. ' +
+          FIPS_206_STATUS +
+          ' Falcon produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares the Falcon-512 and Falcon-1024 candidate parameters.',
         deepLink: '/algorithms?highlight=fn-dsa',
       },
       {
@@ -88,7 +100,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'When should I use ML-KEM vs ML-DSA vs SLH-DSA?',
         answer:
-          'Choose the algorithm based on operation type: ML-KEM (FIPS 203) is the right choice for key exchange and establishing shared secrets — it replaces ECDH and RSA key encapsulation. ML-DSA (FIPS 204) is the primary choice for digital signatures, offering the best balance of signature speed, key size, and security; prefer it for general-purpose authentication, code signing, and certificate issuance. SLH-DSA (FIPS 205) is a conservative hash-based fallback when algorithm diversity matters more than performance — its security relies only on hash function properties, providing a hedge if lattice assumptions are weakened. FN-DSA (FIPS 206, pending) is preferred when compact signatures are critical, such as for smart cards or bandwidth-constrained IoT devices. The Algorithms page provides a side-by-side comparison of all parameter sets.',
+          'Choose the algorithm based on operation type: ML-KEM (FIPS 203) is the right choice for key exchange and establishing shared secrets — it replaces ECDH and RSA key encapsulation. ML-DSA (FIPS 204) is the primary choice for digital signatures, offering the best balance of signature speed, key size, and security; prefer it for general-purpose authentication, code signing, and certificate issuance. SLH-DSA (FIPS 205) is a conservative hash-based fallback when algorithm diversity matters more than performance — its security relies only on hash function properties, providing a hedge if lattice assumptions are weakened. FN-DSA (planned FIPS 206, not yet published) is the option being standardized for cases where compact signatures are critical, such as smart cards or bandwidth-constrained IoT devices. The Algorithms page provides a side-by-side comparison of all parameter sets.',
         deepLink: '/algorithms?highlight=ML-KEM,ML-DSA,SLH-DSA',
       },
       {
@@ -174,7 +186,9 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What are the four FIPS standards for PQC?',
         answer:
-          'NIST has published three PQC FIPS standards: FIPS 203 (ML-KEM, lattice-based key encapsulation), FIPS 204 (ML-DSA, lattice-based digital signatures), and FIPS 205 (SLH-DSA, stateless hash-based signatures). All three were published in August 2024. A fourth, planned FIPS 206 for FN-DSA, remains in development with no published Initial Public Draft or final text. The Reference Library has the published standards and related source material.',
+          'NIST has published three PQC FIPS standards: FIPS 203 (ML-KEM, lattice-based key encapsulation), FIPS 204 (ML-DSA, lattice-based digital signatures), and FIPS 205 (SLH-DSA, stateless hash-based signatures). All three were published in August 2024. A fourth standard, for FN-DSA, is planned. ' +
+          FIPS_206_STATUS +
+          ' The Reference Library has the published standards and related source material.',
         deepLink: '/library',
       },
       {
