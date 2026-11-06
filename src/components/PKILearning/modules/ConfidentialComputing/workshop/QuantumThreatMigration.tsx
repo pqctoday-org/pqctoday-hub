@@ -410,7 +410,12 @@ export const QuantumThreatMigration: React.FC = () => {
 
       {/* ── Vendor PQC Timeline ───────────────────────────────────── */}
       <div className="glass-panel p-4">
-        <div className="text-sm font-bold text-foreground mb-3">Vendor PQC Timeline</div>
+        <div className="text-sm font-bold text-foreground">Vendor PQC Timeline (assumed)</div>
+        <p className="text-[11px] text-muted-foreground mb-3">
+          The years below are this module&apos;s own planning assumptions for the exercise. They are
+          not vendor commitments; no Intel, Arm, AMD or AWS date is published in the sources this
+          module holds.
+        </p>
         <div className="space-y-3">
           {/* Year axis */}
           <div className="flex items-center pl-20 pr-2">
@@ -460,7 +465,7 @@ export const QuantumThreatMigration: React.FC = () => {
                   {/* Label */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-[9px] font-medium text-foreground">
-                      {readyYear ? `PQC ready ~${readyYear}` : 'TBD'}
+                      {readyYear ? `Assumed ~${readyYear}` : 'TBD'}
                     </span>
                   </div>
                 </div>
@@ -472,11 +477,11 @@ export const QuantumThreatMigration: React.FC = () => {
           <div className="flex items-center gap-4 pl-20 mt-1">
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded bg-status-warning/30 border border-status-warning/50" />
-              <span className="text-[10px] text-muted-foreground">Planned</span>
+              <span className="text-[10px] text-muted-foreground">Planning window</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded bg-status-success/30 border border-status-success/50" />
-              <span className="text-[10px] text-muted-foreground">Ready</span>
+              <span className="text-[10px] text-muted-foreground">Assumed ready year</span>
             </div>
           </div>
         </div>

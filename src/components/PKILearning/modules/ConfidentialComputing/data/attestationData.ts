@@ -230,7 +230,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
         type: 'generate',
         actor: 'enclave',
         description:
-          'Nitro Enclave calls nsm_get_attestation_document() with optional user_data, nonce, and public_key fields. The Nitro Security Module (NSM) creates a CBOR-encoded attestation document.',
+          'The enclave asks for an attestation document through the Nitro Security Module (NSM) device, optionally supplying user_data, nonce and public_key fields. The document is CBOR-encoded.',
         cryptoUsed: ['SHA-384 (PCR measurements)'],
         quantumVulnerable: false,
         dataExchanged: 'Attestation document request (user_data + nonce)',
@@ -238,11 +238,11 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
       {
         id: 'nitro-2',
         order: 2,
-        label: 'NSM Signs Document',
+        label: 'Nitro Hypervisor Signs Document',
         type: 'sign',
         actor: 'platform',
         description:
-          'The Nitro Security Module signs the attestation document using an enclave-specific ECDSA P-384 key, including PCR values (PCR0: enclave image, PCR1: OS, PCR2: application).',
+          'AWS documents that the Nitro Hypervisor generates the attestation document. It is signed with ECDSA P-384 and carries a certificate and CA bundle that chain to the AWS Nitro Attestation PKI root. It includes the PCR values (PCR0: enclave image file, PCR1: Linux kernel and boot ramfs, PCR2: application).',
         cryptoUsed: ['ECDSA P-384 (document signing)'],
         quantumVulnerable: true,
         pqcReplacement: 'ML-DSA-87',
@@ -255,8 +255,8 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
         type: 'provision',
         actor: 'enclave',
         description:
-          'The signed attestation document is sent to AWS KMS via the vsock proxy. KMS validates the document before releasing decryption keys to the enclave.',
-        cryptoUsed: ['TLS 1.3 (vsock → KMS)'],
+          'The enclave sends the attestation document to AWS KMS in the Recipient parameter of a KMS request such as Decrypt or GenerateDataKey. The parent instance forwards the traffic through a vsock proxy; the TLS connection is between the enclave and the KMS endpoint.',
+        cryptoUsed: ['TLS (enclave ↔ KMS endpoint, forwarded by the parent instance vsock proxy)'],
         quantumVulnerable: false,
         dataExchanged: 'KMS Decrypt/GenerateDataKey request + attestation document',
       },
@@ -267,11 +267,15 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
         type: 'verify',
         actor: 'attestation-service',
         description:
-          'AWS KMS verifies the ECDSA P-384 signature, validates the certificate chain to the Nitro Root CA, checks PCR values against the KMS key policy conditions, and releases the key material.',
-        cryptoUsed: ['ECDSA P-384 (signature + chain verification)', 'SHA-384'],
+          'AWS KMS validates the attestation document and applies the attestation condition keys in the KMS key policy. If they are met, KMS does not return the result in plaintext: it encrypts it to the public key in the attestation document and returns it as CiphertextForRecipient.',
+        cryptoUsed: [
+          'ECDSA P-384 (signature + chain verification)',
+          'SHA-384',
+          'RSAES_OAEP_SHA_256 (result encrypted to the enclave public key)',
+        ],
         quantumVulnerable: true,
         pqcReplacement: 'ML-DSA-87 + ML-KEM-1024',
-        dataExchanged: 'Decrypted key material (wrapped with enclave public key)',
+        dataExchanged: 'CiphertextForRecipient (result encrypted to the enclave public key)',
       },
     ],
   },
@@ -341,17 +345,18 @@ export const MEMORY_ENCRYPTION_ENGINES: MemoryEncryptionEngine[] = [
     id: 'aws-nitro-kms',
     name: 'AWS Nitro Platform Encryption',
     vendor: 'AWS',
-    algorithm: 'Hardware-managed (Nitro Security Chip)',
+    algorithm:
+      'No enclave memory-encryption cipher documented; AES-256-GCM is documented for in-transit encryption by compatible Nitro Cards (the 256-bit value shown is that figure)',
     keyWidth: 256,
     granularity: 'Instance-level (hypervisor-enforced memory isolation)',
     integrityProtection: true,
     integrityMechanism:
-      'Nitro Hypervisor enforces memory isolation; Nitro Security Chip manages platform integrity',
+      'Nitro Hypervisor enforces memory isolation; the Nitro Security Chip mediates and validates firmware updates',
     quantumImpact: 'none',
     quantumNotes:
-      'AWS Nitro uses a hardware security chip for platform-level encryption with 256-bit keys (Grover-resilient). The primary protection mechanism is hypervisor-enforced isolation rather than memory encryption.',
+      'AWS describes enclave protection as isolation enforced by the Nitro Hypervisor, not memory encryption. AWS documents AES-256-GCM for in-transit encryption by compatible Nitro Cards; in the idealized Grover model a 256-bit key leaves a large margin. Attestation documents are signed with ECDSA P-384, which Shor-class attacks break (see the attestation flow).',
     sealingKeyDerivation:
-      'Nitro Security Chip root key → Instance-specific key via Nitro attestation → Enclave key via KMS attestation policy',
+      'No key hierarchy is documented here. Enclave key release is governed by AWS KMS attestation policy (attestation document in the Recipient parameter).',
     protectionScope: [
       'Enclave memory (hypervisor-isolated)',
       'Vsock channel data',
@@ -412,10 +417,10 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
     pqcSigningAlgo: undefined,
     pqcKEM: undefined,
     keyProvisioningFlow:
-      'Nitro Enclave connects to CloudHSM via vsock proxy → KMS attestation policy gates access → CloudHSM provisions key via PKCS#11 → Key material decrypted inside enclave',
+      'Two separate paths. Attestation-gated release is documented for AWS KMS: enclave sends its attestation document in the Recipient parameter → KMS key policy conditions are checked → result returned encrypted to the enclave public key. A PKCS#11 client of CloudHSM logs in as a crypto user with a user name and password, not with an attestation document. A broker that checks attestation before using a CloudHSM key would be a custom design that AWS does not document.',
     migrationComplexity: 'medium',
     notes:
-      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS offers ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
+      'CloudHSM Client SDK 5 documents ML-DSA-44/65/87 over PKCS#11, in FIPS mode on hsm2m.medium clusters from 1 September 2026; this module has not checked CloudHSM for ML-KEM. Attestation applies to KMS requests, not to the CloudHSM PKCS#11 login; a KMS custom key store backed by CloudHSM is reached through KMS. AWS KMS offers ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints — this is distinct from attestation document signing, which still uses ECDSA P-384.',
   },
   {
     id: 'tdx-marvell-pkcs11',
@@ -451,7 +456,8 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     migrationPriority: 1,
     pqcSolution:
       'ML-DSA-65/87 for attestation key signing. Hybrid ECDSA+ML-DSA during transition period. Certificate chain re-issuance from vendor root CAs.',
-    vendorTimeline: 'Intel: 2027, ARM: 2028, AMD: 2028, AWS: TBD',
+    vendorTimeline:
+      'Intel: 2027 (assumed), ARM: 2028 (assumed), AMD: 2028 (assumed), AWS: none announced',
     hndlExposure: false,
     migrationEffort: 4,
   },
