@@ -31,11 +31,11 @@ describe('LearnRedesignView — mobile UX layer wiring', () => {
     expect(screen.getAllByText(/Browse all \d+/).length).toBeGreaterThan(0)
   })
 
-  it('flag on: renders MobileLearnScreen instead — its own compact mode tabs', () => {
+  it('flag on: renders MobileLearnScreen instead — My Path only, no Browse all tab', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderLearn()
     expect(screen.getByRole('tab', { name: 'My Path' })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: 'Browse all' })).toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: 'Browse all' })).not.toBeInTheDocument()
     expect(screen.queryByText(/Browse all \d+/)).not.toBeInTheDocument()
   })
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileLearnScreen } from './MobileLearnScreen'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -47,17 +47,27 @@ describe('MobileLearnScreen', () => {
     ).toBeInTheDocument()
   })
 
-  it('Browse all and Guided routing state plainly that they are not built for mobile yet', () => {
+  it('offers only the My Path tab on a phone, not Browse all or Guided routing', () => {
     renderScreen()
-    fireEvent.click(screen.getByRole('tab', { name: 'Browse all' }))
-    expect(screen.getByText("Browse all isn't built for mobile yet")).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('tab', { name: /Guided routing/ }))
-    expect(screen.getByText("Guided routing isn't built for mobile yet")).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'My Path' })).toBeInTheDocument()
+    expect(screen.getAllByRole('tab')).toHaveLength(1)
+    expect(screen.queryByRole('tab', { name: 'Browse all' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: /Guided routing/ })).not.toBeInTheDocument()
   })
 
-  it('honors a real ?mode= deep link, mirroring desktop’s convention', () => {
-    renderScreen('/learn?mode=browse')
-    expect(screen.getByRole('tab', { name: 'Browse all', selected: true })).toBeInTheDocument()
+  it('says the full catalogue and guided routing are on the desktop site', () => {
+    renderScreen()
+    expect(
+      screen.getByText('The full module catalogue and guided routing are on the desktop site.')
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/isn't built for mobile yet/)).not.toBeInTheDocument()
+  })
+
+  it.each(['browse', 'guided'])('opens My Path for a shared desktop ?mode=%s link', (mode) => {
+    renderScreen(`/learn?mode=${mode}`)
+    expect(screen.getByRole('tab', { name: 'My Path', selected: true })).toBeInTheDocument()
+    expect(screen.getByText('Pick a role for a guided path tuned to you.')).toBeInTheDocument()
+    expect(screen.getAllByRole('tab')).toHaveLength(1)
   })
 
   // 2026-08-24 audit R4.5: the guided workshop was reachable only from Home
@@ -73,13 +83,6 @@ describe('MobileLearnScreen', () => {
     usePersonaStore.getState().setPersona('executive')
     renderScreen()
     expect(screen.getByTestId('workshop-entry-marker')).toBeInTheDocument()
-  })
-
-  it('does not render the workshop entry on Browse all or Guided routing', () => {
-    usePersonaStore.getState().setPersona('executive')
-    renderScreen()
-    fireEvent.click(screen.getByRole('tab', { name: 'Browse all' }))
-    expect(screen.queryByTestId('workshop-entry-marker')).not.toBeInTheDocument()
   })
 })
 

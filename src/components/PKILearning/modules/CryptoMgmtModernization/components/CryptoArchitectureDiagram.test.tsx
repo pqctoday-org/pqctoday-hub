@@ -6,6 +6,7 @@ const seed = vi.hoisted(() => ({
   useCases: [] as string[],
   transitions: [] as Array<Record<string, string | undefined>>,
   products: [] as Array<Record<string, string>>,
+  saved: undefined as Array<Record<string, string>> | undefined,
 }))
 
 vi.mock('@/store/useModuleStore', () => ({
@@ -20,7 +21,7 @@ vi.mock('@/hooks/useAlgorithmTransitionsForAssessment', () => ({
 vi.mock('@/hooks/useExecutiveModuleData', () => ({
   useExecutiveModuleData: () => ({ myProducts: seed.products }),
 }))
-vi.mock('@/hooks/useSavedArtifactInputs', () => ({ useSavedArtifactInputs: () => undefined }))
+vi.mock('@/hooks/useSavedArtifactInputs', () => ({ useSavedArtifactInputs: () => seed.saved }))
 vi.mock('@/components/Simulation/MermaidDiagram', () => ({
   MermaidDiagram: ({ source }: { source: string }) => (
     <pre data-testid="mermaid-source">{source}</pre>
@@ -55,6 +56,7 @@ async function copiedMarkdown(): Promise<string> {
 
 describe('CryptoArchitectureDiagram assessment seeding', () => {
   beforeEach(() => {
+    seed.saved = undefined
     seed.useCases = ['TLS/HTTPS', 'Code signing']
     seed.transitions = [
       {
@@ -118,5 +120,72 @@ describe('CryptoArchitectureDiagram assessment seeding', () => {
     render(<CryptoArchitectureDiagram />)
     expect(screen.getByText(/no dependencies assumed/i)).toBeInTheDocument()
     expect(screen.getByText(/implementing library still to identify/i)).toBeInTheDocument()
+  })
+})
+
+describe('CryptoArchitectureDiagram generic starter sample', () => {
+  const EXAMPLE_NOTE = 'Example architecture — replace with your own components.'
+
+  beforeEach(() => {
+    seed.useCases = []
+    seed.transitions = []
+    seed.products = []
+    seed.saved = undefined
+  })
+
+  it('labels the starter rows as an example when nothing is saved or reported', () => {
+    render(<CryptoArchitectureDiagram />)
+    // The generic sample is on screen: web app, OpenSSL, HSM and CA.
+    expect(nameOf('app-1')).toBe('Customer-facing web app')
+    expect(screen.getByText(EXAMPLE_NOTE)).toBeInTheDocument()
+  })
+
+  it('drops the label once the learner edits a row', () => {
+    render(<CryptoArchitectureDiagram />)
+    fireEvent.change(screen.getByLabelText('Name of app-1'), {
+      target: { value: 'My payments API' },
+    })
+    expect(screen.queryByText(EXAMPLE_NOTE)).not.toBeInTheDocument()
+  })
+
+  it('drops the label once the learner adds or removes a component', () => {
+    const { unmount } = render(<CryptoArchitectureDiagram />)
+    fireEvent.click(screen.getByRole('button', { name: /^Protocol$/ }))
+    expect(screen.queryByText(EXAMPLE_NOTE)).not.toBeInTheDocument()
+    unmount()
+
+    render(<CryptoArchitectureDiagram />)
+    expect(screen.getByText(EXAMPLE_NOTE)).toBeInTheDocument()
+    fireEvent.click(screen.getAllByRole('button', { name: 'Remove component' })[0])
+    expect(screen.queryByText(EXAMPLE_NOTE)).not.toBeInTheDocument()
+  })
+
+  it('drops the label once the learner saves', () => {
+    render(<CryptoArchitectureDiagram />)
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    expect(screen.queryByText(EXAMPLE_NOTE)).not.toBeInTheDocument()
+  })
+
+  it('does not label a restored saved diagram as an example', () => {
+    seed.saved = [
+      { id: 'app-1', kind: 'application', name: 'Payments API', detail: '', dependsOn: '' },
+    ]
+    render(<CryptoArchitectureDiagram />)
+    expect(nameOf('app-1')).toBe('Payments API')
+    expect(screen.queryByText(EXAMPLE_NOTE)).not.toBeInTheDocument()
+  })
+
+  it('does not label an assessment-seeded diagram as an example', () => {
+    seed.useCases = ['TLS/HTTPS']
+    render(<CryptoArchitectureDiagram />)
+    expect(screen.queryByText(EXAMPLE_NOTE)).not.toBeInTheDocument()
+  })
+
+  it('labels the sample again after the assessment rows are cleared', () => {
+    seed.useCases = ['TLS/HTTPS']
+    render(<CryptoArchitectureDiagram />)
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all' }))
+    expect(nameOf('app-1')).toBe('Customer-facing web app')
+    expect(screen.getByText(EXAMPLE_NOTE)).toBeInTheDocument()
   })
 })

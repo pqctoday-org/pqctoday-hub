@@ -292,6 +292,11 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   const [seededFromAssessment, setSeededFromAssessment] = useState<boolean>(
     !hasSavedComponents && hasAssessmentSeed
   )
+  // True while the rows on screen are still the generic starter sample (no saved diagram and
+  // no assessment seed) and the learner has neither edited nor saved anything.
+  const [showingSample, setShowingSample] = useState<boolean>(
+    !hasSavedComponents && !hasAssessmentSeed
+  )
   const [savedAt, setSavedAt] = useState<number | null>(null)
   const [lastSavedMarkdown, setLastSavedMarkdown] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -307,14 +312,17 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   )
 
   const updateRow = useCallback((id: string, patch: Partial<ArchComponent>) => {
+    setShowingSample(false)
     setComponents((rows) => rows.map((r) => (r.id === id ? { ...r, ...patch } : r)))
   }, [])
 
   const addRow = useCallback((kind: ComponentKind) => {
+    setShowingSample(false)
     setComponents((rows) => [...rows, { id: newId(), kind, name: '', detail: '', dependsOn: '' }])
   }, [])
 
   const removeRow = useCallback((id: string) => {
+    setShowingSample(false)
     setComponents((rows) => rows.filter((r) => r.id !== id))
   }, [])
 
@@ -331,6 +339,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
     })
     setSavedAt(Date.now())
     setLastSavedMarkdown(markdown)
+    setShowingSample(false)
   }, [markdown, addExecutiveDocument, components])
 
   // Debounced autosave + flush-on-unmount. This tool's save was previously
@@ -448,8 +457,18 @@ export const CryptoArchitectureDiagram: React.FC = () => {
           onClear={() => {
             setComponents(seedComponents())
             setSeededFromAssessment(false)
+            setShowingSample(true)
           }}
         />
+      )}
+
+      {showingSample && (
+        <p
+          role="note"
+          className="rounded-md border border-dashed border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground"
+        >
+          Example architecture — replace with your own components.
+        </p>
       )}
 
       <div className="space-y-2">

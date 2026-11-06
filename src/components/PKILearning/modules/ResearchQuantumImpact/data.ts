@@ -205,7 +205,8 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
   knowledgeDomains: [
     {
       name: 'Mathematical Foundations',
-      description: 'Deep dive into the mathematical problems underlying PQC algorithm security.',
+      description:
+        "Introduces the lattice, hash and code problem families behind PQC and how Shor's and Grover's algorithms attack today's cryptography; Entropy covers the randomness keys depend on.",
       modules: [
         { id: 'pqc-101', label: 'PQC 101' },
         { id: 'quantum-threats', label: 'Quantum Threats' },
@@ -214,7 +215,8 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
     },
     {
       name: 'Algorithm Design & Analysis',
-      description: 'Study signature schemes, key encapsulation, and their security proofs.',
+      description:
+        'How stateful hash signatures, hybrid classical and PQC schemes and Merkle tree certificates are built and deployed; security claims come from the specifications, not worked proofs.',
       modules: [
         { id: 'stateful-signatures', label: 'Stateful Signatures' },
         { id: 'hybrid-crypto', label: 'Hybrid Crypto' },
@@ -223,12 +225,14 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
     },
     {
       name: 'Quantum Communications',
-      description: 'Understand QKD protocols, deployments, and their relationship to PQC.',
+      description:
+        'Work through BB84 in a simulator, QKD deployments worldwide, how QKD keys feed TLS, IKEv2 and HSMs, and how QKD compares with PQC.',
       modules: [{ id: 'qkd', label: 'Quantum Key Distribution' }],
     },
     {
       name: 'Standards & Applications',
-      description: 'Navigate the standardization landscape and apply PQC across domains.',
+      description:
+        'Learn who writes, certifies and mandates PQC standards, then see PQC applied in two sectors, blockchains and constrained IoT devices.',
       modules: [
         { id: 'standards-bodies', label: 'Standards Bodies' },
         { id: 'digital-assets', label: 'Digital Assets' },

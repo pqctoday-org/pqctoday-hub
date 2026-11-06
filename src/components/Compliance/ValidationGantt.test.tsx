@@ -169,4 +169,67 @@ describe('ValidationGantt', () => {
     expect(screen.queryByText(/not plotted/)).not.toBeInTheDocument()
     expect(screen.getByText(/1 framework with a concrete year/)).toBeInTheDocument()
   })
+
+  describe('show all / show fewer toggle', () => {
+    // 15 dated frameworks, default cap of 12.
+    const fifteen = () =>
+      Array.from({ length: 15 }, (_, i) =>
+        fwStub({ id: `fw-${i}`, label: `FW ${i}`, deadlineYear: 2027 + i })
+      )
+
+    it('starts collapsed: 12 rows, the omission note and a "Show all 15" toggle', () => {
+      render(<ValidationGantt frameworks={fifteen()} />)
+      expect(screen.getAllByTitle(/FW \d+ —/)).toHaveLength(12)
+      expect(
+        screen.getByText(/3 more dated frameworks \(2039–2041\) not plotted/)
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(/Showing 12 of 15 frameworks with a concrete year/)
+      ).toBeInTheDocument()
+      const toggle = screen.getByRole('button', { name: 'Show all 15 dated frameworks' })
+      expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('expands to every dated framework, drops the note and flips the label', () => {
+      render(<ValidationGantt frameworks={fifteen()} />)
+      fireEvent.click(screen.getByRole('button', { name: 'Show all 15 dated frameworks' }))
+      expect(screen.getAllByTitle(/FW \d+ —/)).toHaveLength(15)
+      expect(screen.getByTitle('FW 14 — deadline 2041')).toBeInTheDocument()
+      expect(screen.queryByText(/not plotted/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Showing 12 of 15/)).not.toBeInTheDocument()
+      expect(screen.getByText(/15 frameworks with a concrete year/)).toBeInTheDocument()
+      const toggle = screen.getByRole('button', { name: 'Show fewer' })
+      expect(toggle).toHaveAttribute('aria-expanded', 'true')
+      expect(
+        screen.queryByRole('button', { name: /Show all 15 dated frameworks/ })
+      ).not.toBeInTheDocument()
+    })
+
+    it('collapses again on "Show fewer"', () => {
+      render(<ValidationGantt frameworks={fifteen()} />)
+      fireEvent.click(screen.getByRole('button', { name: 'Show all 15 dated frameworks' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Show fewer' }))
+      expect(screen.getAllByTitle(/FW \d+ —/)).toHaveLength(12)
+      expect(screen.getByText(/3 more dated frameworks/)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Show all 15 dated frameworks' })).toHaveAttribute(
+        'aria-expanded',
+        'false'
+      )
+    })
+
+    it('honours a custom maxRows when counting the toggle', () => {
+      render(<ValidationGantt frameworks={fifteen()} maxRows={5} />)
+      expect(screen.getAllByTitle(/FW \d+ —/)).toHaveLength(5)
+      fireEvent.click(screen.getByRole('button', { name: 'Show all 15 dated frameworks' }))
+      expect(screen.getAllByTitle(/FW \d+ —/)).toHaveLength(15)
+    })
+
+    it('has no toggle when every dated framework already fits', () => {
+      const frameworks = Array.from({ length: 12 }, (_, i) =>
+        fwStub({ id: `fw-${i}`, label: `FW ${i}`, deadlineYear: 2027 + i })
+      )
+      render(<ValidationGantt frameworks={frameworks} />)
+      expect(screen.queryByRole('button', { name: /Show all|Show fewer/ })).not.toBeInTheDocument()
+    })
+  })
 })

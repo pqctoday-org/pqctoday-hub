@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { CalendarDays } from 'lucide-react'
 import type { ComplianceFramework, DeadlinePhase } from '@/data/complianceData'
 import { Button } from '@/components/ui/button'
@@ -50,6 +50,8 @@ const yearRangeLabel = (first: number, last: number) =>
  * being pulled forward to today. Bars are color-coded by `deadlinePhase`; rows
  * without a concrete year fall through to a "no firm deadline" tally under the
  * chart, and rows beyond `maxRows` are counted in a note instead of vanishing.
+ * A "Show all" toggle under the chart lifts the cap and plots every dated
+ * framework; "Show fewer" returns to the capped view.
  *
  * Pure data-vis: no DOM measurement, no resize observer. Renders inside the
  * parent's flex/grid box.
@@ -59,26 +61,31 @@ export const ValidationGantt: React.FC<Props> = ({
   onSelectFramework,
   maxRows = 12,
 }) => {
+  // Collapsed by default: the chart stays scannable. The toggle below lifts the row cap.
+  const [expanded, setExpanded] = useState(false)
   const { rows, undated, omitted, datedTotal, yearMin, yearMax } = useMemo(() => {
     const currentYear = new Date().getFullYear()
     const dated = frameworks
       .filter((f) => typeof f.deadlineYear === 'number')
       .map((f) => plotRowFor(f, currentYear))
       .sort((a, b) => a.year - b.year)
-    const sliced = dated.slice(0, maxRows)
-    const omitted = dated.slice(maxRows)
+    const limit = expanded ? dated.length : maxRows
+    const sliced = dated.slice(0, limit)
+    const omitted = dated.slice(limit)
     const undated = frameworks.filter((f) => typeof f.deadlineYear !== 'number')
     const years = sliced.map((r) => r.year)
     const yearMin = Math.min(currentYear, ...years)
     // Cap the right edge at the furthest deadline + 1 so even ongoing rows show progress.
     const yearMax = Math.max(currentYear + 1, ...years)
     return { rows: sliced, undated, omitted, datedTotal: dated.length, yearMin, yearMax }
-  }, [frameworks, maxRows])
+  }, [frameworks, maxRows, expanded])
 
   if (rows.length === 0 && undated.length === 0) {
     return null
   }
 
+  // The toggle shows whenever the cap would hide something, and stays while expanded so it can be undone.
+  const canExpand = datedTotal > maxRows
   const span = yearMax - yearMin || 1
   const currentYear = new Date().getFullYear()
   const nowPct = ((currentYear - yearMin) / span) * 100
@@ -219,6 +226,19 @@ export const ValidationGantt: React.FC<Props> = ({
           chart shows the {rows.length} earliest of {datedTotal} dated frameworks, so it is not a
           complete deadline list.
         </p>
+      )}
+
+      {canExpand && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((open) => !open)}
+          className="text-xs"
+        >
+          {expanded ? 'Show fewer' : `Show all ${datedTotal} dated frameworks`}
+        </Button>
       )}
 
       {/* Legend */}
