@@ -16,8 +16,18 @@ import type { PersonaId } from '../data/learningPersonas'
 import type { XwalkRelationshipType } from '../data/conceptXwalkData'
 import type { LibraryItem } from '../data/libraryData'
 import type { ThreatData } from '../data/threatsData'
-import type { AllApplicable, ApplicabilityResult, ApplicabilityTier } from './applicabilityEngine'
+import type {
+  AllApplicable,
+  ApplicabilityResult,
+  ApplicabilityTier,
+  UserProfile,
+} from './applicabilityEngine'
 import { TIER_ORDER, TIER_META } from './applicabilityEngine'
+import { INDUSTRY_TO_THREATS_MAP } from '../data/personaConfig'
+import { resolveToNaicsSet } from '../data/sectorVocabularyData'
+import { threatsData } from '../data/threatsData'
+import { threatsIndustryHref } from '../components/Threats/threatsUrlParams'
+import { resolveCountryParam, timelineData, timelineEventPageUrl } from '../data/timelineData'
 
 export type SectionId = 'frameworks' | 'threats' | 'library' | 'timeline'
 
@@ -437,5 +447,87 @@ export function applyLens(data: AllApplicable, personaId: PersonaId | null): Len
       timeline: tl.droppedByTier,
     },
     lens,
+  }
+}
+
+// ── Derived (IR 8477) results ───────────────────────────────────────────────
+
+/**
+ * The lens with its derived-result cap lifted, so the traversal can return every derived
+ * result and the ones the cap leaves out can be counted. Apply the cap afterwards with
+ * `capDerivedResults`.
+ */
+export function withoutDerivedCap(lens: PersonaLens): PersonaLens {
+  return {
+    ...lens,
+    trustPathConfig: { ...lens.trustPathConfig, maxDerivedResults: Number.POSITIVE_INFINITY },
+  }
+}
+
+/**
+ * Cap derived results (already ordered best first) to the lens's `maxDerivedResults` and count
+ * what the cap leaves out, so shown + omitted always equals the number found.
+ */
+export function capDerivedResults<T>(
+  found: readonly T[],
+  lens: PersonaLens
+): { kept: T[]; omitted: number } {
+  const kept = found.slice(0, Math.max(0, lens.trustPathConfig.maxDerivedResults))
+  return { kept, omitted: found.length - kept.length }
+}
+
+// ── "See all" links ─────────────────────────────────────────────────────────
+
+export interface SeeAllLink {
+  href: string
+  label: string
+}
+
+/**
+ * Where the full list for a section lives, and what the reader's profile can carry there.
+ * Only parameters the destination page reads are used:
+ *  - Compliance: `?tab=compliance` (the Landscape) and `?industry=`, when it names a known sector.
+ *    `?country=` is left off: the page matches it against the framework's literal country tags,
+ *    which would hide most of the frameworks the panel counts.
+ *  - Timeline: `?country=`, when the page knows the country.
+ *  - Threats: `?industry=`, as the Threats-page labels the reader's industry maps to, when at
+ *    least one published threat carries them.
+ *  - Library: `?prefs=off`, so the page's own role narrowing does not hide the documents this
+ *    role's category filter already left out. Its sector filter is left off: it drops documents
+ *    with no industry tag, which the panel counts as applicable.
+ */
+export function seeAllLink(section: SectionId, profile: UserProfile): SeeAllLink {
+  const label = `See all ${SECTION_NOUN[section]}` // eslint-disable-line security/detect-object-injection
+  const industry = profile.industry && profile.industry !== 'Other' ? profile.industry : null
+  const country = profile.country && profile.country !== 'Global' ? profile.country : null
+  switch (section) {
+    case 'frameworks': {
+      const sectors = industry ? resolveToNaicsSet(industry) : []
+      const known = sectors.length > 0 && !(sectors.length === 1 && sectors[0] === industry)
+      return {
+        href: `/compliance?tab=compliance${known && industry ? `&industry=${encodeURIComponent(industry)}` : ''}`,
+        label,
+      }
+    }
+    case 'timeline': {
+      const known =
+        country !== null &&
+        resolveCountryParam(
+          country,
+          timelineData.map((d) => d.countryName)
+        ).resolved !== 'All'
+      return { href: known && country ? timelineEventPageUrl(country) : '/timeline', label }
+    }
+    case 'threats': {
+      const labels = !industry
+        ? []
+        : Object.prototype.hasOwnProperty.call(INDUSTRY_TO_THREATS_MAP, industry)
+          ? (INDUSTRY_TO_THREATS_MAP[industry] ?? []) // eslint-disable-line security/detect-object-injection
+          : [industry]
+      // The page's own helper: null when the filter would land on no published threat.
+      return { href: threatsIndustryHref(labels.join(','), threatsData) ?? '/threats', label }
+    }
+    case 'library':
+      return { href: '/library?prefs=off', label }
   }
 }

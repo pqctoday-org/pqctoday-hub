@@ -1,11 +1,25 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { applyLens, getLens } from './applicabilityLens'
+import {
+  applyLens,
+  getLens,
+  seeAllLink,
+  capDerivedResults,
+  withoutDerivedCap,
+} from './applicabilityLens'
 import { PERSONA_IDS } from '../data/personaIds'
 import type { PersonaId } from '../data/personaIds'
 import type { AllApplicable, ApplicabilityResult, ApplicabilityTier } from './applicabilityEngine'
 import { TIER_META, TIER_ORDER } from './applicabilityEngine'
 import type { LibraryItem } from '../data/libraryData'
+import type { ComplianceFramework } from '../data/complianceData'
+import { complianceFrameworks } from '../data/complianceData'
+import type { ConceptXwalkRecord, XwalkRelationshipType } from '../data/conceptXwalkData'
+import { traverseXwalkPaths } from './trustPathTraversal'
+import { resolveIndustryParam } from '../components/Threats/threatsUrlParams'
+import { threatsData } from '../data/threatsData'
+import { resolveToNaicsSet } from '../data/sectorVocabularyData'
+import { AVAILABLE_INDUSTRIES } from '../hooks/assessmentData'
 
 const ALL_LENSES: Array<[string, PersonaId | null]> = [
   ['no role', null],
@@ -105,4 +119,124 @@ describe('what a role does not see is counted as omitted', () => {
     expect(out.library).toHaveLength(30)
     expect(sum(out.droppedCounts.library)).toBe(0)
   })
+})
+
+// ── Derived (IR 8477) results ───────────────────────────────────────────────
+
+describe('derived results the cap leaves out are counted', () => {
+  const source: ApplicabilityResult<ComplianceFramework> = {
+    item: { id: 'SRC-A', label: 'Source A' } as ComplianceFramework,
+    tier: 'mandatory',
+    reason: 'test',
+  }
+  // Thirty standards one reviewed edge away from the source: more than any lens's cap.
+  const edgesFor = (relationship: XwalkRelationshipType): ConceptXwalkRecord[] =>
+    Array.from({ length: 30 }, (_, i) => ({
+      xwalkId: `X-${i}`,
+      fromConcept: 'SRC-A',
+      toConcept: `TARGET-${i}`,
+      fromConceptId: '',
+      toConceptId: '',
+      relationshipType: relationship,
+      rationaleType: 'semantic',
+      evidence: 'test',
+      verifiedDate: '2026-01-01',
+      verifiedBy: 'test',
+      confidence: 'high',
+      confidenceScore: 100,
+    }))
+
+  it.each(ALL_LENSES)(
+    '%s: derived results shown plus omitted equal the results found',
+    (_n, id) => {
+      const lens = getLens(id)
+      const edges = edgesFor(lens.trustPathConfig.allowedRelationships[0])
+      const found = traverseXwalkPaths([source], edges, withoutDerivedCap(lens))
+      expect(found).toHaveLength(30)
+      const { kept, omitted } = capDerivedResults(found, lens)
+      expect(kept.length + omitted).toBe(found.length)
+      expect(kept).toHaveLength(Math.min(30, lens.trustPathConfig.maxDerivedResults))
+      expect(omitted).toBe(30 - kept.length)
+      // What is shown is exactly what the capped traversal always returned.
+      expect(kept).toEqual(traverseXwalkPaths([source], edges, lens))
+    }
+  )
+
+  it('counts every result when the cap is zero and none when the cap is not reached', () => {
+    const lens = getLens('researcher')
+    const found = [1, 2, 3]
+    expect(
+      capDerivedResults(found, {
+        ...lens,
+        trustPathConfig: { ...lens.trustPathConfig, maxDerivedResults: 0 },
+      })
+    ).toEqual({ kept: [], omitted: 3 })
+    expect(capDerivedResults(found, lens)).toEqual({ kept: [1, 2, 3], omitted: 0 })
+  })
+})
+
+// ── "See all" links ─────────────────────────────────────────────────────────
+
+describe('each section links to the page that holds its full list', () => {
+  const profile = { country: 'United States', industry: 'Finance & Banking' }
+
+  it('routes frameworks to the Compliance Landscape, carrying the reader sector', () => {
+    expect(seeAllLink('frameworks', profile)).toEqual({
+      href: '/compliance?tab=compliance&industry=Finance%20%26%20Banking',
+      label: 'See all frameworks',
+    })
+  })
+
+  it('routes timeline milestones to the Timeline page, carrying the reader country', () => {
+    expect(seeAllLink('timeline', profile)).toEqual({
+      href: '/timeline?country=United%20States',
+      label: 'See all timeline milestones',
+    })
+  })
+
+  it('routes threats to the Threats page, carrying the Threats-page labels for the sector', () => {
+    expect(seeAllLink('threats', profile)).toEqual({
+      href: `/threats?industry=${encodeURIComponent('Finance & Banking,Insurance,Payment Card Industry,Cryptocurrency / Blockchain')}`,
+      label: 'See all threats',
+    })
+  })
+
+  it('routes library documents to the Library page with role narrowing off', () => {
+    expect(seeAllLink('library', profile)).toEqual({
+      href: '/library?prefs=off',
+      label: 'See all library documents',
+    })
+  })
+
+  it('leaves out a filter it cannot state for the reader', () => {
+    for (const p of [
+      { country: null, industry: null },
+      { country: 'Global', industry: 'Other' },
+      { country: 'Atlantis', industry: 'Other' },
+    ]) {
+      expect(seeAllLink('frameworks', p).href).toBe('/compliance?tab=compliance')
+      expect(seeAllLink('timeline', p).href).toBe('/timeline')
+      expect(seeAllLink('threats', p).href).toBe('/threats')
+    }
+  })
+
+  it.each(AVAILABLE_INDUSTRIES)(
+    'never links an assessment industry (%s) to a filter that opens an empty list',
+    (industry) => {
+      const frameworks = new URL(
+        seeAllLink('frameworks', { industry, country: null }).href,
+        'https://x'
+      )
+      const sector = frameworks.searchParams.get('industry')
+      if (sector) {
+        const codes = resolveToNaicsSet(sector)
+        expect(
+          complianceFrameworks.some((f) => (f.naicsCodes ?? []).some((c) => codes.includes(c)))
+        ).toBe(true)
+      }
+      const threats = new URL(seeAllLink('threats', { industry, country: null }).href, 'https://x')
+      const labels = threats.searchParams.get('industry')
+      if (labels) expect(resolveIndustryParam(labels, threatsData).length).toBeGreaterThan(0)
+    }
+  )
 })

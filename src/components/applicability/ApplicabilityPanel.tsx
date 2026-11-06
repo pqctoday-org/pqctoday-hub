@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo } from 'react'
-import { ShieldAlert, Calendar, BookOpen, Scale, Link2 } from 'lucide-react'
+import { Link } from 'react-router'
+import { ShieldAlert, Calendar, BookOpen, Scale, Link2, ArrowRight } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../hooks/useApplicabilityWithPaths'
 import {
   TIER_META,
@@ -10,6 +11,7 @@ import {
   type ApplicabilityTier,
   type UserProfile,
 } from '../../utils/applicabilityEngine'
+import { seeAllLink, type SeeAllLink } from '../../utils/applicabilityLens'
 import { ProfileEditor } from './parts/ProfileEditor'
 import { ProfileSummary } from './parts/ProfileSummary'
 import { TIER_STYLES } from './parts/tierStyles'
@@ -68,6 +70,7 @@ export function ApplicabilityPanel({
     droppedCounts,
     lens,
     derivedFrameworks,
+    derivedOmitted,
   } = useApplicabilityWithPaths(profileOverride)
 
   const isCompact = variant !== 'tab'
@@ -92,6 +95,7 @@ export function ApplicabilityPanel({
         title="Compliance Frameworks"
         results={frameworks}
         dropped={droppedCounts.frameworks}
+        seeAll={seeAllLink('frameworks', profile)}
         renderItem={(r) => (
           <FrameworkItem result={r} compact={isCompact} onSelect={onSelectFramework} />
         )}
@@ -116,6 +120,7 @@ export function ApplicabilityPanel({
         title="Threats"
         results={threats}
         dropped={droppedCounts.threats}
+        seeAll={seeAllLink('threats', profile)}
         renderItem={(r) => <ThreatItem result={r} onSelect={onSelectThreat} />}
         compact={isCompact}
       />
@@ -127,6 +132,7 @@ export function ApplicabilityPanel({
         title="Library — Standards & Specifications"
         results={library}
         dropped={droppedCounts.library}
+        seeAll={seeAllLink('library', profile)}
         renderItem={(r) => <LibraryDocItem result={r} onSelect={onSelectLibrary} />}
         compact={isCompact}
       />
@@ -138,6 +144,7 @@ export function ApplicabilityPanel({
         title="Timeline Milestones"
         results={timeline}
         dropped={droppedCounts.timeline}
+        seeAll={seeAllLink('timeline', profile)}
         renderItem={(r) => <TimelineItem result={r} onSelect={onSelectTimeline} />}
         compact={isCompact}
       />
@@ -158,7 +165,7 @@ export function ApplicabilityPanel({
         sectionRenderers[id] ? sectionRenderers[id]() : null
       )}
       {variant === 'tab' && derivedFrameworks.length > 0 && (
-        <DerivedSection results={derivedFrameworks} />
+        <DerivedSection results={derivedFrameworks} omitted={derivedOmitted} />
       )}
     </div>
   )
@@ -172,6 +179,8 @@ interface SectionProps<T> {
   results: ApplicabilityResult<T>[]
   /** Per-tier counts of items hidden by the persona lens cap — surfaced as "+N more" hints. */
   dropped?: Record<ApplicabilityTier, number>
+  /** Where the full list lives; shown only when the lens hides something from this section. */
+  seeAll?: SeeAllLink
   renderItem: (r: ApplicabilityResult<T>) => React.ReactNode
   compact: boolean
   /** Replaces applicability tiers with reviewed binding groups (Report, frameworks only). */
@@ -185,6 +194,7 @@ function Section<T>({
   title,
   results,
   dropped,
+  seeAll,
   renderItem,
   compact,
   bindingGroups,
@@ -208,7 +218,11 @@ function Section<T>({
       </header>
 
       {total === 0 ? (
-        <div className="px-3 py-3 text-xs text-muted-foreground">No items match this profile.</div>
+        <div className="px-3 py-3 text-xs text-muted-foreground">
+          {totalDropped > 0
+            ? 'Nothing is shown here for your role.'
+            : 'No items match this profile.'}
+        </div>
       ) : (
         <div className="divide-y divide-border">
           {reviewedGroups
@@ -269,13 +283,26 @@ function Section<T>({
               })}
         </div>
       )}
+
+      {seeAll && totalDropped > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-x-3 px-3 border-t border-border text-xs text-muted-foreground">
+          <span>{totalDropped} more not shown here.</span>
+          <Link
+            to={seeAll.href}
+            className="inline-flex items-center gap-1 min-h-[44px] md:min-h-0 md:py-1.5 font-medium text-primary hover:underline"
+          >
+            {seeAll.label}
+            <ArrowRight size={12} aria-hidden="true" />
+          </Link>
+        </div>
+      )}
     </section>
   )
 }
 
 // ── Derived section ──────────────────────────────────────────────────────────
 
-function DerivedSection({ results }: { results: DerivedResult[] }) {
+function DerivedSection({ results, omitted }: { results: DerivedResult[]; omitted: number }) {
   return (
     <section className="rounded-lg border border-border bg-card overflow-hidden">
       <header className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-muted/30">
@@ -284,7 +311,8 @@ function DerivedSection({ results }: { results: DerivedResult[] }) {
           Related via IR 8477
         </div>
         <span className="text-xs text-muted-foreground">
-          {results.length} standard{results.length !== 1 ? 's' : ''} — trust path derivations
+          {results.length} standard{results.length !== 1 ? 's' : ''} shown
+          {omitted > 0 ? ` (+${omitted} hidden by persona lens)` : ''} — trust path derivations
         </span>
       </header>
       <div className="divide-y divide-border">
