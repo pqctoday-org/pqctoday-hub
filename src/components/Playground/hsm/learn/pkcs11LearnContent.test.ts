@@ -179,6 +179,16 @@ describe('signing migration capstone', () => {
     expect(text).toMatch(/different migration consideration/i)
   })
 
+  it('retires the legacy private key but keeps the legacy public key', () => {
+    const steps = lesson('migration-capstone').steps
+    const retire = steps.find((st) => st.op.startsWith('C_DestroyObject'))
+    expect(retire?.op).toMatch(/legacy private key/i)
+    expect(retire?.label).toMatch(/keep its public key/i)
+    expect(text).toMatch(/retires only the legacy private key/i)
+    expect(text).toMatch(/keeps the legacy public-key object/i)
+    expect(text).not.toMatch(/deletes the legacy public-key object too/i)
+  })
+
   it('keeps verification public keys and trust or time evidence for historical signatures', () => {
     expect(text).toMatch(/verification public key/i)
     expect(text).toMatch(/trust and time evidence/i)

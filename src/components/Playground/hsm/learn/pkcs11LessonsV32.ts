@@ -807,7 +807,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     tone: 'primary',
     title: 'Migration capstone',
     blurb:
-      'Inventory the sample token, create a PQC signing key alongside a classical signing key, then delete the local legacy key objects.',
+      'Inventory the sample token, create a PQC signing key alongside a classical signing key, then delete the local legacy private key and keep its public key.',
     setup:
       'This is a local key-lifecycle sample, not a complete deployment cutover. Production signing migration also needs a trust-transition plan and retention of verification material where historical signatures must remain verifiable.',
     steps: [
@@ -853,16 +853,17 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         },
       },
       {
-        op: 'C_DestroyObject (legacy key)',
-        label: 'Delete the local sample legacy key objects',
+        op: 'C_DestroyObject (legacy private key)',
+        label: 'Delete the local sample legacy private key and keep its public key',
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const d = results[1]?.detail ?? ''
           const legacyPriv = Number((d.match(/legacyPriv=(\d+)/) ?? [])[1])
           const legacyPub = Number((d.match(/legacyPub=(\d+)/) ?? [])[1])
           hsm_destroyObject(M, hsm.hSessionRef.current, legacyPriv)
-          hsm_destroyObject(M, hsm.hSessionRef.current, legacyPub)
-          return { detail: `Destroyed handles ${legacyPriv} and ${legacyPub}.` }
+          return {
+            detail: `Destroyed private handle ${legacyPriv}; kept public handle ${legacyPub} for verifying signatures already made.`,
+          }
         },
       },
       {
@@ -885,7 +886,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       "The successor key has its own identity (its own handle) — this is never an in-place conversion. That is true in PKCS#11 exactly as it was true in the KMIP playground's own migration lessons.",
       'The final refusal demonstrates that this local signing handle can no longer be used. Deleting local objects does not revoke trust in public keys held elsewhere or establish that every copy has been erased.',
       'This scenario concerns signing and future forgery risk. Harvest-now-decrypt-later concerns collected ciphertext and confidentiality; it is a different migration consideration.',
-      "This sample deletes the legacy public-key object too, only to leave the local token tidy. In a signing migration the private key is retired so no new legacy signatures are made, while the verification public key, and the certificate or other trust and time evidence that shows when it was valid, are kept for as long as signatures made with it must still be verified (NIST SP 800-57 Part 1 Rev. 5, Sec. 5.3.4: the recipient-usage period of a public signature-verification key can extend beyond the private key's originator-usage period).",
+      "This sample retires only the legacy private key, so no new legacy signatures are made, and keeps the legacy public-key object. In a signing migration the verification public key, and the certificate or other trust and time evidence that shows when it was valid, are kept for as long as signatures made with it must still be verified (NIST SP 800-57 Part 1 Rev. 5, Sec. 5.3.4: the recipient-usage period of a public signature-verification key can extend beyond the private key's originator-usage period).",
     ],
     whyItMatters:
       'Use the sample to understand local key lifecycle. Evaluate production tools for signing cutover, verifier trust updates, historical verification evidence and controlled private-key retirement; this sequence does not execute those wider activities.',
