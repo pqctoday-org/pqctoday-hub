@@ -190,7 +190,8 @@ export const SAMPLE_INVENTORY: InventoryAsset[] = [
     quantumVulnerable: false,
     tags: ['internal'],
     riskScore: 2,
-    remediation: 'Keep behind FIPS shim for production; track CVE feed; re-pin weekly',
+    remediation:
+      'Research pilot only. A FIPS-validated provider or shim in front of liboqs does not validate liboqs: CMVP validates a named module, in a tested configuration, with a defined boundary. Where policy requires validated cryptography for a service, use a documented validated implementation of the needed algorithm and record its certificate and boundary; otherwise keep liboqs out of that service. Track the CVE feed and re-pin versions.',
     initialStage: 'attest',
     layer: 'binary',
     discoverableBy: ['sbom'],

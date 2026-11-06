@@ -169,10 +169,11 @@ const CertTypePopover: React.FC<{
       className="w-64 space-y-1 rounded-lg border border-border bg-background p-2 shadow-lg"
     >
       {certs.map((cert) => {
-        const hasPqc = cert.pqcAlgorithms && !cert.pqcAlgorithms.startsWith('No ')
+        const hasPqc =
+          !cert.classicalOnly && cert.pqcAlgorithms && !cert.pqcAlgorithms.startsWith('No ')
         return (
           <a
-            key={cert.certId}
+            key={`${cert.certId}|${cert.certDate}|${cert.certLink}`}
             href={cert.certLink}
             target="_blank"
             rel="noopener noreferrer"
@@ -218,8 +219,19 @@ const CertTypeBadge: React.FC<{
   const triggerRef = useRef<HTMLButtonElement>(null)
   const newest = certsOfType[0]
   const count = certsOfType.length
-  const hasPqc = newest.pqcAlgorithms && !newest.pqcAlgorithms.startsWith('No ')
+  // Scope is a property of each certificate, so the badge reports it per certificate: a
+  // certificate that covers no PQC algorithm says so whether it stands alone or sits in a
+  // group, and a PQC-covering newest certificate does not speak for the others.
+  const classicalCount = certsOfType.filter((c) => c.classicalOnly).length
+  const allClassical = classicalCount === count
+  const hasPqc =
+    !newest.classicalOnly && newest.pqcAlgorithms && !newest.pqcAlgorithms.startsWith('No ')
   const badgeClass = `inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border font-semibold hover:opacity-80 transition-opacity ${config.className}`
+  const classicalChip = allClassical ? (
+    <span data-testid="cert-badge-classical-only" className="font-normal opacity-80">
+      classical only
+    </span>
+  ) : null
 
   if (count <= 1) {
     return (
@@ -228,14 +240,22 @@ const CertTypeBadge: React.FC<{
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        title={`${config.noun}${hasPqc ? ` — PQC: ${newest.pqcAlgorithms}` : ''}`}
+        title={`${config.noun}${hasPqc ? ` — PQC: ${newest.pqcAlgorithms}` : ''}${newest.classicalOnly ? ' — classical only: covers no PQC algorithm' : ''}`}
         className={badgeClass}
       >
         {config.label}
+        {classicalChip}
         <ExternalLink size={8} className="opacity-50" />
       </a>
     )
   }
+
+  const scopeNote =
+    classicalCount === 0
+      ? ''
+      : allClassical
+        ? ' — all classical only: none covers a PQC algorithm'
+        : ` — ${classicalCount} of ${count} cover no PQC algorithm`
 
   return (
     <>
@@ -254,11 +274,12 @@ const CertTypeBadge: React.FC<{
             return rect ? computePopoverPosition(rect) : null
           })
         }}
-        title={`${count} ${config.plural}${hasPqc ? ` — PQC: ${newest.pqcAlgorithms}` : ''}`}
+        title={`${count} ${config.plural}${scopeNote}${hasPqc ? ` — newest covers PQC: ${newest.pqcAlgorithms}` : ''}`}
         className={`h-auto ${badgeClass}`}
       >
         {config.label}
         <span className="font-normal opacity-70">({count})</span>
+        {classicalChip}
         <ExternalLink size={8} className="opacity-50" />
       </Button>
       {popoverPosition && (
@@ -280,9 +301,16 @@ const CertTypeBadge: React.FC<{
 export const CertBadges: React.FC<{ certs: CertificationXref[] }> = ({ certs }) => {
   if (!certs || certs.length === 0) return null
 
-  // Group by cert type, newest first within each type
+  // Group by cert type, newest first within each type. A certificate (scheme + number)
+  // that arrives twice is counted once; different certificates are never merged.
   const byType = new Map<string, CertificationXref[]>()
+  const seenCerts = new Set<string>()
   for (const cert of certs) {
+    const identity = cert.certId
+      ? `${cert.certType}|${cert.certId}`
+      : `${cert.certType}|${cert.certProduct}|${cert.certDate}|${cert.certLink}`
+    if (seenCerts.has(identity)) continue
+    seenCerts.add(identity)
     const list = byType.get(cert.certType)
     if (list) list.push(cert)
     else byType.set(cert.certType, [cert])

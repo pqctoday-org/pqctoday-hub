@@ -48,4 +48,37 @@ describe('MobileAlgorithmsView — ?algo', () => {
     fireEvent.click(screen.getByRole('button', { name: /dismiss notice/i }))
     expect(urlSearch()).toBe('')
   })
+  it('carries the catalogue status, its source and the advisory into the phone sheet, and does not call non-FIPS metadata a FIPS standard', async () => {
+    renderAt('/algorithms?algo=classic-mceliece-460896')
+    const sheet = await screen.findByTestId('algorithm-detail-sheet')
+    // Classic McEliece's catalogue status says BSI advises against new use.
+    await waitFor(() =>
+      expect(
+        within(sheet).getByText('ISO 18033-2 Amd2; BSI advises against new use')
+      ).toBeInTheDocument()
+    )
+    expect(within(sheet).getByRole('link', { name: 'Status source' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('bsi.bund.de')
+    )
+    // The advisory badge shown on desktop is shown here too.
+    expect(within(sheet).getAllByText(/BSI: not for new use/i).length).toBeGreaterThan(0)
+    // ISO / advisory metadata sits under "Standard", never under a "FIPS standard" label.
+    expect(within(sheet).queryByText('FIPS standard')).not.toBeInTheDocument()
+    expect(within(sheet).getByText('Standard')).toBeInTheDocument()
+    expect(within(sheet).getAllByText(/ISO\/IEC 18033-2/).length).toBeGreaterThan(0)
+  })
+
+  it('shows a real FIPS standard for ML-KEM-768 with its own status, as a contrasting case', async () => {
+    renderAt('/algorithms?algo=ml-kem-768')
+    const sheet = await screen.findByTestId('algorithm-detail-sheet')
+    await waitFor(() =>
+      expect(within(sheet).getByRole('link', { name: 'Status source' })).toBeInTheDocument()
+    )
+    expect(within(sheet).getByRole('link', { name: 'Status source' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('csrc.nist.gov')
+    )
+    expect(within(sheet).queryByText(/BSI: not for new use/i)).not.toBeInTheDocument()
+  })
 })

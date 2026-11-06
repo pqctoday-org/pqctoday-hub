@@ -156,7 +156,7 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
       {
         title: 'Create migration priority matrix',
         description:
-          'Rank systems by risk = (data value x exposure window x regulatory pressure). External-facing TLS/VPN first.',
+          'Rank systems by risk = (data value x exposure window x regulatory pressure). Externally exposed TLS/VPN often ranks high, but a long-lived data store or a signing key that other services depend on can come first.',
       },
       {
         title: 'Define crypto-agility requirements',
@@ -242,9 +242,14 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
           'Deploy ML-KEM + X25519 hybrid key exchange on non-critical endpoints to measure performance and compatibility.',
       },
       {
-        title: 'Test VPN PQC tunnels',
+        title: 'Test IPsec VPN PQC tunnels',
         description:
-          'Validate IKEv2 with ML-KEM for IPsec VPN connections across WireGuard, strongSwan, or vendor solutions.',
+          'Validate IKEv2 with ML-KEM as an additional key exchange (the RFC 9370 mechanism) between strongSwan or vendor gateways. The ML-KEM-in-IKEv2 specification is still an IETF draft (draft-ietf-ipsecme-ikev2-mlkem-09, in the RFC Editor queue), so record the exact versions and algorithm identifiers each side supports and test interoperability pair by pair.',
+      },
+      {
+        title: 'Test WireGuard PQC options separately',
+        description:
+          'WireGuard’s handshake is not IKEv2. Its protocol supports an optional pre-shared key mixed into the handshake, which the WireGuard protocol page names as a way to add post-quantum resistance. An add-on such as Rosenpass can derive that key with Classic McEliece and Kyber, so it is an addition to WireGuard rather than part of the WireGuard protocol itself. Test the approach you plan, including how the key is distributed and rotated, and run both peers with the same setup.',
       },
       {
         title: 'Measure performance impact',

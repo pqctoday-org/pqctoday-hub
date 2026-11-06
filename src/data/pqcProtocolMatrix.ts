@@ -3466,13 +3466,24 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 — composite via X.509.',
+        stage: 'wg-document',
+        stageNote:
+          'Capped at the TLS 1.3 row. The TLS 1.3 binding, draft-ietf-tls-composite-mldsa-00 (October 2026), is a WG document whose abstract covers TLS 1.3; no DTLS-specific composite binding is recorded here. The X.509-layer draft-ietf-lamps-pq-composite-sigs has IESG state "RFC Ed Queue", but reusing its OIDs is not DTLS support by itself.',
+        note: 'Inherits TLS 1.3 — composite ML-DSA is specified for TLS 1.3 only (WG document); reusing the X.509 composite OIDs in DTLS is not a specified DTLS profile.',
         refs: [
           {
             kind: 'draft',
+            id: 'draft-ietf-tls-composite-mldsa',
+            title:
+              'Use of Composite ML-DSA in TLS 1.3 (the TLS 1.3 binding, a WG document; inherited, not a DTLS profile)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-composite-mldsa/',
+            publishedOn: '2026-10-23',
+          },
+          {
+            kind: 'draft',
             id: 'draft-ietf-lamps-pq-composite-sigs',
-            title: 'Composite ML-DSA in X.509 (inherited via TLS 1.3 / X.509 row)',
+            title:
+              'Composite ML-DSA in X.509 (dependency: X.509-layer composite signatures; not a DTLS binding)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
           },
@@ -3678,13 +3689,24 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 — composite via X.509.',
+        stage: 'wg-document',
+        stageNote:
+          'Capped at the TLS 1.3 row. The TLS 1.3 binding, draft-ietf-tls-composite-mldsa-00 (October 2026), is a WG document whose abstract covers TLS 1.3; no MACsec-specific composite binding is recorded here. The X.509-layer draft-ietf-lamps-pq-composite-sigs has IESG state "RFC Ed Queue", but reusing its OIDs is not MACsec support by itself.',
+        note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — composite ML-DSA is specified for TLS 1.3 only (WG document); MACsec/MKA has no composite-signature profile of its own.',
         refs: [
           {
             kind: 'draft',
+            id: 'draft-ietf-tls-composite-mldsa',
+            title:
+              'Use of Composite ML-DSA in TLS 1.3 (the TLS 1.3 binding, a WG document; inherited, not a MACsec profile)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-composite-mldsa/',
+            publishedOn: '2026-10-23',
+          },
+          {
+            kind: 'draft',
             id: 'draft-ietf-lamps-pq-composite-sigs',
-            title: 'Composite ML-DSA in X.509 (inherited via TLS 1.3)',
+            title:
+              'Composite ML-DSA in X.509 (dependency: X.509-layer composite signatures; not a MACsec binding)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
           },

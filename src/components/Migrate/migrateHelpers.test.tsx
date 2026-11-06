@@ -120,4 +120,82 @@ describe('CertBadges', () => {
     expect(cavp).toBeDefined()
     expect(cavp).toHaveAttribute('title', expect.stringMatching(/prerequisite, not a certificate/))
   })
+  it('counts a repeated certificate once', () => {
+    render(
+      <CertBadges
+        certs={[
+          makeCert({ certId: 'F1' }),
+          makeCert({ certId: 'F1' }),
+          makeCert({ certId: 'F2', certDate: '2027-01-01' }),
+        ]}
+      />
+    )
+    expect(screen.getByRole('button', { name: /2 FIPS 140-3 certificates/i })).toHaveTextContent(
+      '(2)'
+    )
+  })
+
+  describe('per-certificate classical-only scope', () => {
+    it('a single classical-only certificate with blank algorithms carries the same qualification as the grouped popover', () => {
+      render(
+        <CertBadges certs={[makeCert({ certId: 'F1', pqcAlgorithms: '', classicalOnly: true })]} />
+      )
+      const link = screen.getByRole('link')
+      expect(link).toHaveAttribute('title', expect.stringMatching(/classical only/i))
+      expect(screen.getByTestId('cert-badge-classical-only')).toHaveTextContent(/classical only/i)
+    })
+
+    it('a single certificate that covers PQC shows no classical-only qualification', () => {
+      render(
+        <CertBadges
+          certs={[makeCert({ certId: 'F1', pqcAlgorithms: 'ML-KEM-768', classicalOnly: false })]}
+        />
+      )
+      expect(screen.queryByTestId('cert-badge-classical-only')).not.toBeInTheDocument()
+      expect(screen.getByRole('link')).toHaveAttribute(
+        'title',
+        expect.stringMatching(/PQC: ML-KEM-768/)
+      )
+      expect(screen.getByRole('link')).not.toHaveAttribute(
+        'title',
+        expect.stringMatching(/classical only/i)
+      )
+    })
+
+    it('a mixed CAVP/CMVP product: a PQC newest certificate does not hide a classical-only one', () => {
+      render(
+        <CertBadges
+          certs={[
+            // CMVP module certificate: PQC covered, newest
+            makeCert({ certId: 'F-NEW', certDate: '2027-01-01', pqcAlgorithms: 'ML-KEM-768' }),
+            // CMVP module certificate: classical only, older
+            makeCert({
+              certId: 'F-OLD',
+              certDate: '2024-01-01',
+              pqcAlgorithms: '',
+              classicalOnly: true,
+            }),
+            // CAVP algorithm validation: classical only (single record)
+            makeCert({ certId: 'A-1', certType: 'ACVP', pqcAlgorithms: '', classicalOnly: true }),
+          ]}
+        />
+      )
+      // The grouped FIPS badge states how many of its certificates cover no PQC algorithm.
+      const group = screen.getByRole('button', { name: /2 FIPS 140-3 certificates/i })
+      expect(group).toHaveAttribute('title', expect.stringMatching(/1 of 2 cover no PQC algorithm/))
+      expect(group).toHaveAttribute('title', expect.stringMatching(/newest covers PQC: ML-KEM-768/))
+      // It is not labelled classical-only as a whole, because one certificate covers PQC.
+      expect(within(group).queryByTestId('cert-badge-classical-only')).not.toBeInTheDocument()
+      // The popover still marks the classical-only certificate individually.
+      fireEvent.click(group)
+      const menu = screen.getByRole('menu')
+      expect(within(menu).getAllByTestId('cert-classical-only')).toHaveLength(1)
+      // The lone CAVP record carries its own qualification.
+      const cavp = screen.getAllByRole('link').find((l) => l.textContent?.includes('CAVP'))
+      expect(cavp).toBeDefined()
+      expect(
+        within(cavp as HTMLElement).getByTestId('cert-badge-classical-only')
+      ).toBeInTheDocument()
+    })
+  })
 })
