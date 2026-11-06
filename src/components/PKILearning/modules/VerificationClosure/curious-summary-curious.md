@@ -11,3 +11,5 @@ The riskiest moment is thinking you're done when you're not. Adding a post-quant
 ## The Key Takeaway
 
 Two honest habits separate a finished program from a stalled one: verify by observation (and sample sensibly across a big estate so it's feasible), and close with named owners for everything that continues — the inventory, the monitoring, the vendor follow-ups — plus a written acceptance of any residual risk. That way nothing important is left orphaned.
+
+The module's Decommission Checklist is a stage walkthrough using fictional assets. Its status review reads your own Remove selection; it does not scan or independently establish deletion. Use it to learn which stages to plan, then look for production tools that can independently discover remaining cryptographic use and dependent copies.

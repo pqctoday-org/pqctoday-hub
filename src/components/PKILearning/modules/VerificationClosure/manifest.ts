@@ -32,7 +32,7 @@ const manifest: ModuleManifest = {
   ],
   startHere: {
     step: 'decommission-checklist',
-    text: 'Retire one classical asset in the Decommission Checklist: deprecate, remove, verify removed, log — the four gates a closure claim has to show.',
+    text: 'Explore one fictional asset in the Decommission Checklist: deprecate, mark removed, review the worksheet status and log. Then identify the independent observations needed to establish actual retirement with production tools.',
   },
   embeddable: true,
   taxonomy: {
