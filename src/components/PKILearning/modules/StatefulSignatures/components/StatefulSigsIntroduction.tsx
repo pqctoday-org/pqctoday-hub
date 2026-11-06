@@ -190,8 +190,8 @@ const Step1WhyAndMerkle: React.FC = () => (
             <p className="text-xs text-muted-foreground">
               Each OTS key pair (e.g.,{' '}
               <InlineTooltip term="Winternitz One-Time Signature">Winternitz OTS+</InlineTooltip>)
-              can sign exactly one message. Reusing an OTS key leaks the private key, enabling
-              forgeries.
+              can sign exactly one message. Reusing an OTS key breaks that guarantee: each extra
+              signature reveals more of the hash chains, which can enable forgeries.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -230,10 +230,15 @@ const Step1WhyAndMerkle: React.FC = () => (
             </div>
             <p className="text-muted-foreground mt-2">
               Signing message A reveals H&sup3;(sk); signing message B (different digit) reveals
-              H&sup5;(sk). An attacker who sees both can compute the full chain and forge arbitrary
-              messages &mdash; this is why OTS reuse is a <strong>complete break</strong>, not a
-              partial leak. The checksum field prevents attackers from simply
-              &ldquo;advancing&rdquo; the chain to forge messages with higher digit values.
+              H&sup5;(sk). An attacker who sees both knows this chain from H&sup3;(sk) onward and
+              can hash forward from there, but cannot go backward to sk or to H&sup1;(sk) and
+              H&sup2;(sk). The same holds for every chain, so the attacker can forge messages whose
+              digits sit at or beyond the lowest revealed position in every chain, a set that grows
+              with each further reuse. Two signatures do not guarantee that the whole private key or
+              the seed is recovered, or that any chosen message can be forged, but nothing bounds
+              the damage once a key has signed twice, so treat reuse as a{' '}
+              <strong>compromise of the key</strong>. The checksum field prevents attackers from
+              simply &ldquo;advancing&rdquo; the chain to forge messages with higher digit values.
             </p>
           </div>
         </div>
@@ -471,10 +476,10 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
           </div>
           <p className="text-xs text-foreground/80">
             If a one-time signature key is reused (signing two different messages with the same
-            leaf), an attacker can compute enough of the OTS private key to forge arbitrary
-            signatures. This is not a theoretical weakness &mdash; it is a{' '}
-            <strong>complete break</strong> of the scheme. There is no recovery; the entire key must
-            be revoked.
+            leaf), the signatures reveal chain values that let an attacker forge some signatures,
+            and more with every further reuse. This is not a theoretical weakness &mdash; the
+            one-time guarantee is gone and the key must be treated as <strong>compromised</strong>.
+            There is no recovery; the entire key must be revoked.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -200,7 +200,9 @@ export const ThresholdSigningDemo: React.FC = () => {
                       +
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Range: 2–5 (practical limit)</p>
+                  <p className="text-xs text-muted-foreground">
+                    Range: 2–5 (this demo&apos;s limit)
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -574,15 +576,24 @@ export const ThresholdSigningDemo: React.FC = () => {
               <h4 className="font-semibold text-foreground text-sm">Research Basis</h4>
             </div>
             <p className="text-xs text-muted-foreground">
-              <strong className="text-foreground">Haystack / Coalition Construction</strong>
+              <strong className="text-foreground">Haystack (Kelsey, Lucks &amp; Lang)</strong>
               <br />
-              Kelsey, Lang &amp; Lucks — threshold stateful hash-based signatures via trusted dealer
-              + Common Reference Value. Practical only for small thresholds (n ≤ 5–6) on
-              single-level trees.
+              Threshold stateful hash-based signatures (published in Communications in Cryptology,
+              2025) via a trusted dealer and a common reference value of roughly 0.1 to 10 GiB for
+              typical parameters. Each signing coalition receives only a share of the key&apos;s
+              one-time keys, so the number of coalitions has to stay small (the authors&apos;
+              example: fewer than about 100): a 5-of-10 threshold on a 2<sup>20</sup>-key LMS tree
+              leaves about 4,161 signatures per coalition, a 10-of-20 threshold only five. The
+              authors say applying it to hypertrees or to stateless hash-based signatures would
+              generally need an impractically large setup and reference string.
             </p>
             <p className="text-xs text-muted-foreground">
-              For larger thresholds, lattice-based threshold schemes (e.g., threshold Dilithium /
-              FROST variants) are currently more practical.
+              FROST (RFC 9591) is a different kind of scheme: a threshold Schnorr signature that
+              depends on the discrete logarithm problem, and RFC 9591 lists post-quantum security
+              among the goals it does not aim for, so it is not a post-quantum alternative to this
+              construction. Threshold versions of lattice-based signatures are research: one example
+              is the arXiv preprint 2601.20917 on FIPS 204-compatible threshold ML-DSA. Neither a
+              standard nor a ranking of practicality for larger thresholds is established here.
             </p>
           </div>
         </div>

@@ -145,16 +145,17 @@ export const MODELS: AccelModel[] = [
   {
     id: 'asic',
     label: 'ASIC / secure element',
-    tagline: 'A circuit cast in silicon — the fastest and most efficient, and frozen forever.',
+    tagline:
+      'A circuit cast in silicon — typically the fastest and most efficient option, with fixed circuits.',
     examples:
       'Crypto engines in secure elements, TPMs, HSM chips and root-of-trust blocks (e.g. Caliptra’s Adams Bridge)',
     layman: {
       analogy:
-        'A factory cast in concrete. Once it is poured it runs flat-out on very little power for twenty years — but you cannot move a wall. If the recipe changes, you build a new factory.',
+        'A factory cast in concrete. Once it is poured it runs flat-out on very little power — but you cannot move a wall. If the recipe is hard-wired or burned into ROM and it changes, you build a new factory; if the recipe sits in writable, authenticated microcode, you can change the steps but still not the walls.',
       whatsDifferent:
         'Dedicated silicon has no wasted wiring, so it runs at much higher clocks and lower power than an FPGA doing the same job. It is the right answer for a chip that ships in millions of units.',
       catch:
-        'Years of design and a large up-front cost, and the parameter sets are fixed at tape-out. It still sits on a bus shared by every core, so the same transfer and sharing limits as an FPGA apply.',
+        'Years of design and a large up-front cost, and the circuits are fixed at tape-out, so what can change later depends on whether the sequencing is hard-wired or in ROM, or in writable microcode or firmware. It still sits on a bus shared by every core, so the same transfer and sharing limits as an FPGA apply. Dedicated silicon says nothing by itself about resistance to physical or side-channel attacks; that depends on the countermeasures designed in and tested.',
     },
     fit: { mldsa: 'strong', slhdsa: 'strong', singleOp: 'strong', batch: 'partial' },
     ourEvidence: null,
