@@ -138,11 +138,11 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'JCProv over Luna HSM (PKCS#11 v3.2 ML-KEM / ML-DSA mechanisms)',
     effort: 'medium',
     description:
-      'JCProv is a Java wrapper over the PKCS#11 C API, so PQC arrives when the HSM firmware exposes the ML-KEM and ML-DSA mechanisms. Keys stay in hardware; your JCA calls change only in the algorithm names.',
+      'JCPROV is a Java wrapper for the PKCS#11 API and is separate from the Luna JSP, the JCA/JCE provider. PQC arrives when the HSM firmware exposes the ML-KEM and ML-DSA mechanisms (firmware 7.9.0 or newer per Thales). Which of those the JCPROV classes expose is not stated here; check the JCPROV javadocs. Through the Luna JSP, JCA calls change only in the algorithm names and need JDK 24/25 or later for ML-KEM and ML-DSA.',
     steps: [
       'Confirm the Luna firmware and client versions that expose ML-KEM and ML-DSA mechanisms',
-      'Upgrade JCProv to the release that maps those mechanisms into the JCA provider',
-      'Generate ML-DSA signing keys inside the HSM and sign through the same JCA Signature calls',
+      'Upgrade the Luna client; for the JSP route confirm JDK 24/25 or later, for the JCPROV route check the javadocs for the new mechanisms',
+      "Generate ML-DSA signing keys inside the HSM and sign through the JSP's JCA Signature calls, or through PKCS#11-style calls with JCPROV",
       'Keep classical keys in place for the transition; plan hybrid signatures where relying parties need them',
       'Re-run your FIPS Level 3 evidence with the new firmware version',
     ],
@@ -306,7 +306,7 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'HSM-backed keys via PKCS#11 v3.2 (ML-KEM, ML-DSA mechanisms)',
     effort: 'high',
     description:
-      'FIPS Level 3 means keys never leave the HSM, so PQC arrives with the firmware that exposes the PKCS#11 v3.2 mechanisms. Expect a firmware upgrade, a client library update and a re-validation of your evidence.',
+      'A FIPS level does not set key policy: FIPS 140-2 Level 3 and 4 allow keys to leave a module in encrypted form, so check the key attributes and the module Security Policy. PQC arrives with the firmware that exposes the PKCS#11 v3.2 mechanisms. Expect a firmware upgrade, a client library update and a re-validation of your evidence.',
     steps: [
       'Ask your HSM vendor which firmware exposes the ML-KEM and ML-DSA mechanisms and its FIPS status',
       'Upgrade the PKCS#11 client library to a v3.2-aware release',
@@ -535,9 +535,9 @@ export const INTEROP_PATTERNS: InteropPattern[] = [
     title: 'JCProv ↔ PKCS#11',
     apis: ['JCProv', 'PKCS#11'],
     description:
-      'JCProv IS a PKCS#11 wrapper — it translates JCA calls to PKCS#11 C_* functions. Use JCProv for Java applications, raw PKCS#11 for C/C++.',
+      'JCPROV is a Java wrapper for the PKCS#11 API; it is not a JCA provider. The JCA/JCE route to a Luna HSM is the separate Luna JSP (LunaProvider). Use a Java route for Java applications, raw PKCS#11 for C/C++.',
     example:
-      'Java app uses JCProv → calls C_Sign on Luna HSM → same HSM accessible from C code via PKCS#11 directly.',
+      'Java app uses JCPROV → PKCS#11-style calls on the Luna HSM → the same HSM is reachable from C code via PKCS#11 directly.',
   },
   {
     id: 'bc-jca',

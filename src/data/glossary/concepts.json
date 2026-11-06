@@ -1675,8 +1675,8 @@
   },
   {
     "term": "JCProv",
-    "definition": "A Java PKCS#11 wrapper library from Thales/SafeNet that bridges JCA/JCE and PKCS#11 hardware security modules. Enables standard Java crypto calls to transparently use HSM-backed keys.",
-    "technicalNote": "JCProv registers as a JCA provider. Once registered, Signature.getInstance(\"ML-DSA-65\", \"JCProv\") routes the operation through PKCS#11 to the Luna HSM. Key handles remain opaque — private key material never enters JVM memory.",
+    "definition": "A Java wrapper for the PKCS#11 API from Thales (Luna), in jcprov.jar under the package com.safenetinc.jcprov. It is separate from the Luna JSP, which is the JCA/JCE provider.",
+    "technicalNote": "JCPROV is used through PKCS#11-style calls and has no provider registration. The JCA route is the Luna JSP: register LunaProvider, then use the standard classes; Thales says its ML-KEM and ML-DSA samples need JDK 24 or 25 and later. Whether a key can leave the module depends on its CKA_EXTRACTABLE and CKA_SENSITIVE attributes and the module policy.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "advanced",
     "category": "concept"
