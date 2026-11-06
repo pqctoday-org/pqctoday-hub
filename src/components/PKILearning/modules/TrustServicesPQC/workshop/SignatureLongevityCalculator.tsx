@@ -95,7 +95,7 @@ export const SignatureLongevityCalculator = () => {
             <p className="font-semibold">
               {spansAlgorithmChange
                 ? 'In this scenario the horizon runs past the assumed policy cutoff'
-                : 'In this scenario the horizon ends before the assumed policy cutoff'}
+                : 'In this scenario the horizon ends no later than the assumed policy cutoff'}
             </p>
             <p className="text-xs text-muted-foreground">
               Illustrative scenario, not a prediction. Assumed: signed in{' '}
@@ -115,10 +115,10 @@ export const SignatureLongevityCalculator = () => {
                 </>
               ) : (
                 <>
-                  Ending before {scenario.cutoffYear} does not prove the signature survives its
-                  window. Certificate expiry and revocation-data availability are the nearer risks,
-                  and a weakness in the algorithm, an invalid certificate or an earlier policy
-                  cutoff would still require renewal. Capture a timestamp at signing and archive the
+                  Ending by {scenario.cutoffYear} does not prove the signature survives its window.
+                  Certificate expiry and revocation-data availability are the nearer risks, and a
+                  weakness in the algorithm, an invalid certificate or an earlier policy cutoff
+                  would still require renewal. Capture a timestamp at signing and archive the
                   revocation data.
                 </>
               )}

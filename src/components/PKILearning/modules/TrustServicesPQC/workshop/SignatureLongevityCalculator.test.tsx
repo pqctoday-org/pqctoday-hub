@@ -35,11 +35,12 @@ describe('Signature Longevity Calculator', () => {
     expect(text()).not.toMatch(/before roughly 2035/)
   })
 
-  it('does not promise survival when the horizon ends before the assumed cutoff', () => {
+  it('does not promise survival when the horizon ends no later than the assumed cutoff', () => {
     render(<SignatureLongevityCalculator />)
     fireEvent.click(screen.getByRole('button', { name: /7y/ }))
     const t = text()
-    expect(t).toMatch(/ends before the assumed policy cutoff/)
+    expect(t).toMatch(/ends no later than the assumed policy cutoff/)
+    expect(t).not.toMatch(/runs past the assumed policy cutoff/)
     expect(t).toMatch(/does not prove the signature survives its window/)
     expect(t).not.toMatch(/survives its window without an algorithm migration/)
   })
@@ -51,5 +52,18 @@ describe('Signature Longevity Calculator', () => {
     fireEvent.click(screen.getByRole('button', { name: /7y/ }))
     expect(text()).toMatch(/needed until 2037/)
     expect(text()).toMatch(/runs past the assumed policy cutoff/)
+  })
+
+  it('does not say the horizon ends before the cutoff when it ends in the cutoff year itself', () => {
+    // 7 years from 2028 ends in 2035, the assumed cutoff year: not past it, but not before it either
+    vi.setSystemTime(new Date('2028-03-01T12:00:00Z'))
+    render(<SignatureLongevityCalculator />)
+    fireEvent.click(screen.getByRole('button', { name: /7y/ }))
+    const t = text()
+    expect(t).toMatch(/needed until 2035/)
+    expect(t).toMatch(/ends no later than the assumed policy cutoff/)
+    expect(t).toMatch(/Ending by 2035 does not prove/)
+    expect(t).not.toMatch(/ends before the assumed policy cutoff/)
+    expect(t).not.toMatch(/Ending before 2035/)
   })
 })
