@@ -589,7 +589,6 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
             { type: CKA_ENCRYPT, boolVal: true },
             { type: CKA_DECRYPT, boolVal: true },
             { type: CKA_EXTRACTABLE, boolVal: true },
-            { type: CKA_VALUE_LEN, ulongVal: 32 },
           ]
           const unwrapped = hsm_aesGcmUnwrapKey(
             M,
