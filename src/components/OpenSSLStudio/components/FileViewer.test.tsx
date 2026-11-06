@@ -171,6 +171,71 @@ describe('FileViewer', () => {
     })
   })
 
+  // The real service REJECTS when OpenSSL exits non-zero (openssl x509 exits 1 on a
+  // private key), so these tests reject the way it does.
+  it('shows a generated private key by falling back to pkey after x509 rejects', async () => {
+    mockStoreWithFile({
+      name: 'server.key',
+      type: 'key',
+      content: '-----BEGIN PRIVATE KEY-----\nMIG...\n-----END PRIVATE KEY-----\n',
+      size: 60,
+    })
+
+    vi.mocked(openSSLService.execute)
+      .mockRejectedValueOnce(new Error('OpenSSL exited with status 1: Could not find certificate'))
+      .mockResolvedValueOnce({ stdout: 'Private-Key: (256 bit)', stderr: '', files: [] })
+
+    render(<FileViewer />)
+    await waitFor(() => {
+      expect(screen.getByText('Private-Key:')).toBeInTheDocument()
+    })
+    expect(screen.getByText('(256 bit)')).toBeInTheDocument()
+    expect(screen.queryByText(/Could not find certificate/)).not.toBeInTheDocument()
+    expect(openSSLService.execute).toHaveBeenNthCalledWith(
+      1,
+      'openssl x509 -in server.key -text -noout',
+      expect.any(Array)
+    )
+    expect(openSSLService.execute).toHaveBeenNthCalledWith(
+      2,
+      'openssl pkey -in server.key -text -noout',
+      expect.any(Array)
+    )
+  })
+
+  it('keeps both reasons when neither the certificate nor the key parser accepts the file', async () => {
+    mockStoreWithFile({ name: 'broken.pem', type: 'text', content: 'garbage', size: 7 })
+
+    vi.mocked(openSSLService.execute)
+      .mockRejectedValueOnce(new Error('OpenSSL exited with status 1: Could not find certificate'))
+      .mockRejectedValueOnce(
+        new Error('OpenSSL exited with status 1: Could not find private key of key')
+      )
+
+    render(<FileViewer />)
+    await waitFor(() => {
+      expect(screen.getByText(/Not readable as a certificate/)).toBeInTheDocument()
+    })
+    expect(screen.getByText(/Could not find certificate/)).toBeInTheDocument()
+    expect(screen.getByText(/Not readable as a private key/)).toBeInTheDocument()
+    expect(screen.getByText(/Could not find private key of key/)).toBeInTheDocument()
+    expect(openSSLService.execute).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not try the key parser on a .crt file that fails to parse', async () => {
+    mockStoreWithFile({ name: 'bad.crt', type: 'text', content: 'garbage', size: 7 })
+
+    vi.mocked(openSSLService.execute).mockRejectedValueOnce(
+      new Error('OpenSSL exited with status 1: Could not find certificate')
+    )
+
+    render(<FileViewer />)
+    await waitFor(() => {
+      expect(screen.getByText(/Could not find certificate/)).toBeInTheDocument()
+    })
+    expect(openSSLService.execute).toHaveBeenCalledTimes(1)
+  })
+
   it('can cycle views for certs (tree -> hex -> text -> tree)', async () => {
     mockStoreWithFile({
       name: 'cert.crt',
