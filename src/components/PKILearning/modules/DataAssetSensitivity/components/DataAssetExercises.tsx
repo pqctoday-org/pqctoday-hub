@@ -40,7 +40,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'HNDL',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'With a 30-year retention period and High sensitivity, the HNDL risk year is 2034 − 30 = 2004. In effect, data collected as far back as 2004 (the CRQC year minus the retention period) is already in adversary archives. When you run this asset through the Sensitivity Scoring Engine (Step 4), the composite score will be ≥ 85 — placing it in the Critical urgency band. HIPAA + NIST IR 8547 compliance flags add further urgency.',
+        'Compare the selected hypothetical CRQC year with the sample retention period to inspect the calculated HNDL planning threshold. This does not establish when records were collected or that an adversary captured them. In Step 4, inspect the score, urgency band and drivers produced by the current weights and selected framework flags. These are illustrative prioritization results, not a guaranteed Critical result or a compliance finding.',
       config: { step: 0 },
     },
     {
@@ -73,7 +73,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Workshop',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        "The highest-urgency asset will typically be a Critical-sensitivity, 25+ year retention asset under CNSA 2.0 or NIS2 scope (composite score ≥ 85). Assets scoring below 33 (Low urgency) are typically short-lived communication channels with no active compliance mandate. For US Government & Defense organizations, This module's reading is that CNSA 2.0's 2030 deadline for transitioning deployed software and firmware to CNSA 2.0-compliant signatures is most constraining; for EU financial institutions, DORA's January 2025 enforcement date drives immediate crypto risk management documentation. Export your Priority Map as Markdown to share with your security team.",
+        "Compare the assets’ displayed scores, urgency bands and contributing factors under your selected weights and framework flags. Changing those assumptions can change the order; an illustrative Low result does not establish that migration can safely wait. For US Government & Defense organizations, This module's reading is that CNSA 2.0's 2030 deadline for transitioning deployed software and firmware to CNSA 2.0-compliant signatures is most constraining; for EU financial institutions, DORA's January 2025 enforcement date drives immediate crypto risk management documentation. Export your Priority Map as Markdown to share with your security team.",
       config: { step: 0 },
     },
   ]
