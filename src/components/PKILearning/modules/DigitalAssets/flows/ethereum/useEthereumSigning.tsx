@@ -112,29 +112,50 @@ await openSSLService.execute(signCmd, filesToPass);
         if (derSig[pos] !== 0x30) throw new Error(`Invalid DER Header`)
         pos++ // 0x30
 
+        if (pos >= derSig.length) throw new Error('Missing DER sequence length')
         const seqLenByte = derSig[pos]
         pos++
+        let sequenceLength = seqLenByte
         if (seqLenByte & 0x80) {
-          pos += seqLenByte & 0x7f
+          const lengthBytes = seqLenByte & 0x7f
+          if (lengthBytes === 0 || pos + lengthBytes > derSig.length)
+            throw new Error('Invalid DER sequence length encoding')
+          sequenceLength = 0
+          for (let i = 0; i < lengthBytes; i++) {
+            sequenceLength = sequenceLength * 256 + derSig[pos++]
+            // A content length larger than the whole input cannot describe it.
+            if (sequenceLength > derSig.length)
+              throw new Error('DER sequence length exceeds the input')
+          }
         }
+        if (sequenceLength !== derSig.length - pos)
+          throw new Error('DER sequence length does not match the input')
+        const sequenceEnd = pos + sequenceLength
 
         // Parse R
+        if (pos + 2 > sequenceEnd) throw new Error('Missing DER integer R header')
         if (derSig[pos] !== 0x02) throw new Error('Invalid Integer Tag for R')
         pos++
         const rLen = derSig[pos]
         pos++
+        if (rLen === 0 || pos + rLen > sequenceEnd)
+          throw new Error('DER integer R length exceeds the sequence or is empty')
         const rBytes = derSig.slice(pos, pos + rLen)
         openSSL_r = BigInt('0x' + bytesToHex(rBytes))
         pos += rLen
 
         // Parse S
+        if (pos + 2 > sequenceEnd) throw new Error('Missing DER integer S header')
         if (derSig[pos] !== 0x02) throw new Error('Invalid Integer Tag for S')
         pos++
         const sLen = derSig[pos]
         pos++
+        if (sLen === 0 || pos + sLen > sequenceEnd)
+          throw new Error('DER integer S length exceeds the sequence or is empty')
         const sBytes = derSig.slice(pos, pos + sLen)
         openSSL_s = BigInt('0x' + bytesToHex(sBytes))
         pos += sLen
+        if (pos !== sequenceEnd) throw new Error('Unexpected bytes after DER signature integers')
       } catch (err: unknown) {
         const detail = err instanceof Error ? err.message : 'Unknown error'
         throw new SignatureError(`OpenSSL sample signing failed: ${detail}`)

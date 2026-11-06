@@ -150,6 +150,118 @@ describe('Ethereum sample signing required outcomes', () => {
     expect(props.actions.setSignature).toHaveBeenCalledExactlyOnceWith(null)
     view.unmount()
   })
+  it.each([
+    {
+      name: 'sequence length smaller than input',
+      change: (bytes: Uint8Array) => {
+        bytes[1] -= 1
+        return bytes
+      },
+      detail: 'sequence length does not match',
+    },
+    {
+      name: 'trailing bytes outside sequence',
+      change: (bytes: Uint8Array) => new Uint8Array([...bytes, 0]),
+      detail: 'sequence length does not match',
+    },
+    {
+      name: 'S declared beyond input',
+      change: (bytes: Uint8Array) => {
+        bytes[3 + rb.length] += 1
+        return bytes
+      },
+      detail: 'integer S length exceeds',
+    },
+    {
+      name: 'R declared beyond sequence',
+      change: (bytes: Uint8Array) => {
+        bytes[3] = bytes.length
+        return bytes
+      },
+      detail: 'integer R length exceeds',
+    },
+    {
+      name: 'trailing bytes inside sequence',
+      change: (bytes: Uint8Array) => {
+        const out = new Uint8Array([...bytes, 0])
+        out[1] += 1
+        return out
+      },
+      detail: 'Unexpected bytes after DER signature integers',
+    },
+    {
+      name: 'empty R integer',
+      change: (bytes: Uint8Array) => {
+        bytes[3] = 0
+        return bytes
+      },
+      detail: 'integer R length exceeds the sequence or is empty',
+    },
+    {
+      name: 'empty S integer',
+      change: (bytes: Uint8Array) => {
+        bytes[3 + rb.length] = 0
+        return bytes
+      },
+      detail: 'integer S length exceeds the sequence or is empty',
+    },
+    {
+      name: 'missing S header',
+      change: (bytes: Uint8Array) => {
+        const out = bytes.slice(0, 2 + rb.length)
+        out[1] = rb.length
+        return out
+      },
+      detail: 'Missing DER integer S header',
+    },
+    {
+      name: 'missing R length',
+      change: () => new Uint8Array([0x30, 1, 2]),
+      detail: 'Missing DER integer R header',
+    },
+    {
+      name: 'missing sequence length',
+      change: () => new Uint8Array([0x30]),
+      detail: 'Missing DER sequence length',
+    },
+    {
+      name: 'indefinite sequence length',
+      change: (bytes: Uint8Array) => {
+        bytes[1] = 0x80
+        return bytes
+      },
+      detail: 'Invalid DER sequence length encoding',
+    },
+    {
+      name: 'truncated long length',
+      change: () => new Uint8Array([0x30, 0x82, 1]),
+      detail: 'Invalid DER sequence length encoding',
+    },
+    {
+      name: 'oversized long length',
+      change: () => new Uint8Array([0x30, 0x82, 255, 255]),
+      detail: 'sequence length exceeds the input',
+    },
+  ])(
+    'rejects $name before reference/recovery/current signature publication',
+    async ({ change, detail }) => {
+      const bytes = change(new Uint8Array(derFixture))
+      vi.mocked(openSSLService.execute).mockResolvedValue({
+        stdout: 'Signature generated',
+        stderr: '',
+        files: [{ name: 'ethereum_signdata_20000101000000.sig', data: bytes }],
+      })
+      const props = setup(),
+        view = renderHook(() => useEthereumSigning(props))
+      await expect(view.result.current.execute('sign')).rejects.toThrow(detail)
+      expect(props.actions.setSignature).toHaveBeenCalledExactlyOnceWith(null)
+      expect(extractKeyFromOpenSSLOutput).not.toHaveBeenCalled()
+      // Existing raw attempted artifact history is retained, not a validity result.
+      expect(props.artifacts.saveSignature).toHaveBeenCalledWith('ethereum', bytes)
+      expect(props.artifacts.resetArtifacts).not.toHaveBeenCalled()
+      view.unmount()
+    }
+  )
   it.each(['failed', 'empty', 'different'] as const)(
     'does not invent recovery0 for %s file-derived signer',
     async (kind) => {
