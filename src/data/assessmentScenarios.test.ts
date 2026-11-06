@@ -11,11 +11,11 @@ import {
   AVAILABLE_INDUSTRIES,
   AVAILABLE_COMPLIANCE,
   AVAILABLE_USE_CASES,
-  AVAILABLE_INFRASTRUCTURE,
   AVAILABLE_DATA_RETENTION,
   AVAILABLE_CREDENTIAL_LIFETIME,
   DATA_SENSITIVITY_SCORES,
 } from '@/hooks/assessmentData'
+import { LAYERS } from './infrastructureLayers'
 
 describe('REFERENCE_ESTATES', () => {
   it('has at least two, with unique ids', () => {
@@ -30,7 +30,7 @@ describe('REFERENCE_ESTATES', () => {
       expect(AVAILABLE_INDUSTRIES).toContain(a.industry)
       for (const c of a.complianceRequirements) expect(AVAILABLE_COMPLIANCE).toContain(c)
       for (const u of a.cryptoUseCases) expect(AVAILABLE_USE_CASES).toContain(u)
-      for (const i of a.infrastructure) expect(AVAILABLE_INFRASTRUCTURE).toContain(i)
+      for (const i of a.infrastructure) expect(LAYERS.map((layer) => layer.id)).toContain(i)
       for (const r of a.dataRetention) expect(AVAILABLE_DATA_RETENTION).toContain(r)
       for (const l of a.credentialLifetime) expect(AVAILABLE_CREDENTIAL_LIFETIME).toContain(l)
       for (const s of a.dataSensitivity) expect(Object.keys(DATA_SENSITIVITY_SCORES)).toContain(s)
