@@ -847,14 +847,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'healthcare-pqc/device-safety-simulator': {
     prompt:
-      'With the default Cardiac Pacemaker (32 KB RAM) selected, the feasibility panel says 2 of 4 evaluated algorithms are feasible. Which two, and why those?',
+      'With the default Cardiac Pacemaker (32 KB RAM) selected, the feasibility panel says 3 of 4 evaluated algorithms are feasible. Which three, and why those?',
     options: [
-      'LMS (H5/W8) and XMSS (H10) — hash-based verification needs only about 4-5 KB of RAM, whereas ML-DSA-44 verification exceeds the RAM and FN-DSA needs floating point the core lacks',
-      'ML-DSA-44 and FN-DSA — lattice schemes have the smallest verification footprint',
-      'ML-DSA-44 and LMS (H5/W8) — one lattice and one hash-based option for hybrid mode',
+      "LMS (H5/W8), XMSS (H10) and FN-DSA — in a firmware update the device only verifies; the signer-side state of hash-based schemes and the floating-point cost of FN-DSA signing fall on the manufacturer's signing system, while this module's model assumes ML-DSA-44 needs more RAM than the device has",
+      'ML-DSA-44, FN-DSA and LMS (H5/W8) — lattice schemes have the smallest verification footprint',
+      'LMS (H5/W8) and XMSS (H10) only — the device must track which one-time keys have been used and FN-DSA needs floating point on the device',
     ],
     answer: 0,
-    why: 'On a tiny Cortex-M0+ class implant the binding constraint is verification memory: hash-based signature verification fits in a few kilobytes, while ML-DSA-44 needs more RAM than the device has and its 1.3 KB public key strains flash, and FN-DSA relies on double-precision floating point that must be emulated without an FPU.',
+    why: "The pacemaker only verifies, so the question is verification cost. In this module's model, hash-based verification fits in a few kilobytes, and FN-DSA verification is integer-only (its floating-point cost is in signing, which the signer bears; modelled from Cortex-M4F measurements, not measured on a Cortex-M0+). The module assumes ML-DSA-44 verification needs more RAM than the 32 KB, which depends on the implementation chosen. Hash-based signature state is the signer's concern (NIST SP 800-208), not the device's.",
   },
   'healthcare-pqc/hospital-migration-planner': {
     prompt:
@@ -1090,14 +1090,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'confidential-computing/encryption-mechanisms': {
     prompt:
-      'You drag the AES Key Width slider in the Grover Impact Calculator to 192-bit. What do the Post-Quantum Security cell and the assessment box show?',
+      'You move the AES Key Size slider in the Grover Impact Calculator to 192-bit. What does the calculator show?',
     options: [
-      '96-bit, and the box turns red — 96 is below the 128-bit post-quantum floor the calculator treats as safe, even though the NIST cell still reads Category 3',
-      '96-bit with a green box — NIST Category 3 counts as safe',
+      '2^192 for classical key search, 2^96 for the idealized Grover iteration count, and NIST Category 3 as a definition — as three separate readouts, with no safe or unsafe verdict, because concrete cost depends on circuit depth, error correction, parallelism and hardware and whether a key size is acceptable is a policy choice',
+      '96-bit, and the box turns red because 96 is below a 128-bit post-quantum floor',
       "192-bit — Grover's algorithm does not affect AES-192",
     ],
     answer: 0,
-    why: "Grover's quadratic speedup halves the effective key strength, so the calculator reports half the classical bits and only marks a width safe when that halved figure still reaches 128 bits — which only the 256-bit setting does.",
+    why: "The calculator shows the idealized sequential iteration count (about 2^(n/2)) next to the classical count and NIST's category definition, and says plainly that these are not a measured attack cost. NIST notes that Grover's algorithm needs a long serial computation, so a realistic attack runs many smaller instances in parallel and the speedup is less dramatic; which key size to require is a policy choice.",
   },
   'confidential-computing/tee-hsm-channel': {
     prompt:
@@ -1209,11 +1209,11 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'You pick Key Management Policy. Your assessment recorded hardcoded crypto (no runtime algorithm swap) and critical data sensitivity. Which Maximum Key Rotation Period is pre-selected?',
     options: [
       '90 days — critical data sensitivity always wins',
-      "2 years — hardcoded crypto can't be rotated often, so the longest safe interval is suggested",
+      '2 years — the tool pre-selects its longest interval when the assessment records hardcoded crypto',
       '1 year — the middle option when the two signals conflict',
     ],
     answer: 1,
-    why: 'The rotation suggestion checks crypto agility before data sensitivity: an estate that cannot swap algorithms at runtime cannot absorb frequent rotations, so it is pushed to the longest interval even when the data would otherwise justify a 90-day cycle.',
+    why: 'The tool checks crypto agility before data sensitivity and pre-selects its longest interval for hardcoded crypto, even where the data would otherwise justify a 90-day cycle. Treat that as the tool’s starting point, not as a finding about your keys: replacing a key on a schedule (the cryptoperiod) and swapping the algorithm (crypto agility) are separate capabilities, so a fixed algorithm does not by itself mean keys cannot be rotated. The right period comes from risk and implementation factors such as the volume of data, the security life of the data, the key-distribution method and the cost of replacement (NIST SP 800-57 Part 1 Rev. 5, Sec. 5.3.1), and whether your systems can replace keys is something to confirm system by system.',
   },
   // pqc-risk-management
   'pqc-risk-management/crqc-scenario-planner': {

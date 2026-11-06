@@ -538,7 +538,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
           label: 'Z source',
           value: 'Hybrid: SHA256(Z_ecdh ‖ Z_kem) | Pure: Z_kem directly',
           description:
-            'Hybrid combiner follows the concatenation approach per NIST SP 800-227 (final, Sept 2025): SHA-256 over the ordered concatenation of the classical and PQC shared secrets. A combined secret stays secret while either component is unbroken only if the combiner is a sound one (for example the TLS hybrid design or X-Wing); this simplified combiner hashes the shared secrets alone and has not been analysed for that property.',
+            "This combiner is the playground's own construction: a hash over the two shared secrets alone. NIST SP 800-227 section 4.6.3 says a combiner that uses only the two shared secrets does not preserve IND-CCA security whatever the KDF, and gives one that also binds the ciphertexts and public keys; a sound combiner (for example the TLS hybrid design or X-Wing) is what keeps a combined secret safe while either component holds, and this simplified one has not been analysed for that property.",
         },
         {
           label: 'block1',
