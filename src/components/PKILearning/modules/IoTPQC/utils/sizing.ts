@@ -238,12 +238,12 @@ export function deliveredChainBytes(
       return {
         bytes: leaf.publicKeyBytes + SPKI_FRAMING_BYTES,
         caveat:
-          'RFC 7250 raw public key: no chain at all, but trust comes from a key pinned at provisioning — no CA, no revocation, no rotation without re-provisioning.',
+          'RFC 7250 raw public key: no chain at all. The key has to be bound to its owner out of band (RFC 7250 names DANE, pre-configured keys, and keys provisioned in firmware and updated by software updates), and the status of that binding has to be checked. This workshop assumes the simplest binding, a key pinned at provisioning: then there is no CA or revocation service, and changing the key means updating the device. Other bindings change those limits; they are not limits of the protocol itself.',
       }
     case 'mtc':
       return {
         bytes: CERT_OVERHEAD_BYTES.x509 + leaf.publicKeyBytes + MTC_HASH_BYTES * mtcTreeDepth,
-        caveat: `Merkle Tree Certificate: no intermediate and no CA signature; a ${mtcTreeDepth}-level inclusion proof instead. Works only if the device already holds current trusted tree heads, distributed out of band — a device offline for months needs a fallback chain.`,
+        caveat: `Merkle Tree Certificate (draft-ietf-plants-merkle-tree-certs, an Internet-Draft, not yet an RFC). This size models the landmark-relative form: a ${mtcTreeDepth}-level inclusion proof and no signatures, with no intermediate in this model. It works only for a device that holds up-to-date trusted landmark subtrees for that CA; those are predistributed periodically, separately from the handshake, and a sender should not use the form without a signal that the device trusts the landmark. The standalone form carries cosignatures, including the CA's, and works for a device that trusts the CA and its cosigners; the draft says senders SHOULD deploy it alongside. A device that has missed landmark updates needs the standalone form, and how soon that happens depends on how often the CA allocates landmarks and how long they stay active.`,
       }
     case 'resumption':
       return {

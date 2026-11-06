@@ -60,7 +60,7 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badge: 'Encryption',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'RSA directly encrypts the CEK (one step). ML-KEM requires three steps: encapsulation, key derivation (HKDF), and key wrapping (AES-WRAP). Despite the extra complexity, KEM is quantum-safe.',
+        "RSA directly encrypts the CEK (one step). ML-KEM requires three steps: encapsulation, key derivation (HKDF), and key wrapping (AES-WRAP). The ML-KEM shared secret does not rest on RSA or elliptic curves, which Shor's algorithm breaks. A KEM alone is not the point: RSA-KEM (RFC 9690) uses the same KEM interface but still rests on RSA.",
       config: { step: 2 },
     },
     {
@@ -71,7 +71,7 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badge: 'RFC 9629',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'KEMRecipientInfo adds three new concepts: kemct (KEM ciphertext), kdf (key derivation function), and wrap (key wrap algorithm). These replace the single encryptedKey field in KeyTransRecipientInfo.',
+        'KEMRecipientInfo adds fields for the KEM: kem (algorithm), kemct (KEM ciphertext), kdf (key derivation function), kekLength, an optional ukm, and wrap (key wrap algorithm). It keeps an encryptedKey field, so kemct and encryptedKey are two separate ciphertexts: kemct lets the recipient recompute the key-encryption key with their private key, and encryptedKey is the CEK wrapped under that key. In the CMS structure it sits in the ori choice of RecipientInfo: oriType is the id-ori-kem object identifier (1.2.840.113549.1.9.16.13.3) and oriValue is the KEMRecipientInfo.',
       config: { step: 2 },
     },
     {
@@ -82,7 +82,7 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'During migration, senders include both KeyTransRecipientInfo (RSA) and KEMRecipientInfo (ML-KEM) for the same recipient. The smimeCapabilities attribute signals which algorithms each party supports.',
+        'A sender can put both a KeyTransRecipientInfo (RSA) and a KEMRecipientInfo (ML-KEM) in one message for the same recipient, but both entries wrap the same CEK, so anyone who can break the RSA entry can read the message: the weakest permitted decryption path sets the confidentiality. That is multiple-recipient fallback, not a hybrid KEM, which combines the shared secrets of two algorithms into one key-encryption key. The smimeCapabilities attribute signals which algorithms each party supports.',
       config: { step: 0 },
     },
   ]

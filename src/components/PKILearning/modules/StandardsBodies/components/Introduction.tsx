@@ -227,10 +227,39 @@ const Step2GovVsNonGov: React.FC = () => (
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          Whether an organization is governmental or non-governmental determines whether its outputs
-          can be legally mandatory or only advisory. This distinction matters enormously for
-          compliance.
+          Whether a document is legally binding is not decided by who issued it. Ask four separate
+          questions: <strong>who is the issuer</strong>, <strong>what type of document</strong> is
+          it, <strong>which binding instrument</strong> (if any) gives it legal force, and{' '}
+          <strong>whose systems fall inside its perimeter</strong>. Governmental and
+          non-governmental issuers can each publish advice, and each can publish something that
+          binds, once an instrument makes it so.
         </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="text-xs font-bold text-foreground mb-1">
+              A government guideline that is voluntary
+            </div>
+            <p className="text-xs text-muted-foreground">
+              BSI TR-02102-1 is issued by a government agency, yet BSI presents its content as
+              recommendations; it notes that other BSI documents are binding for certain
+              applications. Same issuer, different documents, different force. NSA says the same of
+              CNSA 2.0 outside its perimeter: adoption is encouraged, but it is not an NSA
+              requirement beyond national security systems.
+            </p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="text-xs font-bold text-foreground mb-1">
+              A private standard that an instrument incorporates
+            </div>
+            <p className="text-xs text-muted-foreground">
+              ISO/IEC 19790 is an international standard. FIPS 140-3 lists it, with ISO/IEC 24759,
+              as the technical requirements and test basis, and FIPS 140-3 applies to federal
+              agencies that use cryptography to protect sensitive information. The standard gains
+              force for that group through the FIPS; private and commercial organizations may adopt
+              it voluntarily.
+            </p>
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="flex items-center gap-2 mb-2">
@@ -238,9 +267,10 @@ const Step2GovVsNonGov: React.FC = () => (
               <span className="font-semibold text-foreground">Governmental Bodies</span>
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Government agencies with regulatory authority. Their technical guidelines and mandates
-              can be legally binding. Authority derives from government statute, not membership
-              consensus.
+              Government agencies. Some of what they issue is binding on defined parties (for
+              example FIPS for federal agencies, or CNSA 2.0 for national security systems); much is
+              guidance (for example BSI TR-02102-1 recommendations). The force comes from the
+              instrument and its stated perimeter, not from the issuer being a government.
             </p>
             <div className="space-y-2 text-xs">
               {[
@@ -280,9 +310,10 @@ const Step2GovVsNonGov: React.FC = () => (
               </span>
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Industry consortia and open membership bodies. Their standards gain authority through
-              broad adoption, not government mandate. Anyone can contribute; consensus drives
-              output.
+              Industry consortia and open membership bodies. Their standards are voluntary by
+              default and gain authority through broad adoption, contracts, or a law or regulation
+              that incorporates them (for example FIPS 140-3 incorporating ISO/IEC 19790). Anyone
+              can contribute; consensus drives output.
             </p>
             <div className="space-y-2 text-xs">
               {[
@@ -383,7 +414,7 @@ const Step3GlobalRegional: React.FC = () => (
         <p>
           Global bodies gain authority through broad adoption and multi-country consensus, not
           government mandate. Their standards are recognized worldwide but not legally binding in
-          themselves.
+          themselves; they bind only where a law, regulation, or contract incorporates them.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
@@ -471,7 +502,7 @@ const Step3GlobalRegional: React.FC = () => (
             flag: '🇬🇧',
             region: 'United Kingdom',
             bodies: [
-              'NCSC — three-phase roadmap (2025–2035), CAPS product assurance',
+              'NCSC — three-phase roadmap (2025–2035), CAPS assurance of High Grade products (the NCSC no longer runs CPA)',
               'BSI UK — post-Brexit standards alignment',
             ],
           },

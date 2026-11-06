@@ -124,7 +124,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     keyPqcOutputs: [
       'ISO/IEC 14888-4:2024 (Digital signatures with appendix – Part 4: Stateful hash-based mechanisms)',
       "ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers amendment; covers Classic McEliece and FrodoKEM, as Bouncy Castle's release notes state; ML-KEM not confirmed against the amendment's scope text)",
-      'ISO/IEC 20085 (KEM reference, in development)',
+      'ISO/IEC 20085-1:2019 and 20085-2:2020 (test tools and calibration methods for non-invasive, side-channel attack testing of cryptographic modules; not a KEM standard)',
     ],
     libraryRefs: [
       'ISO/IEC 14888-4:2024',
@@ -707,8 +707,8 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       note: 'Post-Brexit, UK maintains its own standards track aligned with ISO and ETSI (not sourced in the Library)',
     },
     'certification-body': {
-      orgs: ['NCSC (CAPS — Commercial Product Assurance)', 'UKAS-accredited labs'],
-      note: 'UK CC certificates no longer automatically recognized in EU post-Brexit',
+      orgs: ['NCSC (CAPS, the assisted-products service for High Grade products used by HMG)'],
+      note: 'CAPS is a different scheme from Commercial Product Assurance (CPA), which assessed commodity products from 2014 to 2019, was closed in 2020 except for Smart Meters, and is no longer run by the NCSC. Common Criteria recognition is a third thing: the NCSC stopped producing Common Criteria certificates on 1 October 2019 but, as a certificate-consuming participant of the CCRA, still recognises CCRA-compliant certificates.',
     },
     'compliance-framework': {
       orgs: ['UK Gov PQC Roadmap (2025)', 'NCSC Cyber Essentials'],

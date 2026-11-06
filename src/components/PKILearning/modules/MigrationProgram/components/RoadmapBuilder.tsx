@@ -17,7 +17,6 @@ import { ExportableArtifact } from '../../../common/executive'
 import type { ExternalDeadline } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import type { SimRoadmapInput } from '@/simulation/simRoadmap'
-import { useBookmarkStore } from '@/store/useBookmarkStore'
 import {
   FRAMEWORK_PHASES,
   FRAMEWORK_AUTHOR,
@@ -38,6 +37,57 @@ import {
 } from './roadmapTracks'
 import type { RoadmapOutput } from '../types'
 
+/** How the timeline data classifies a milestone's force. */
+export type MilestoneStatus =
+  | 'binding'
+  | 'mandatory_for_scope'
+  | 'official_target'
+  | 'recommendation'
+  | 'draft'
+  | 'informational'
+  | 'unclassified'
+
+export const MILESTONE_STATUS_LABEL: Record<MilestoneStatus, string> = {
+  binding: 'Binding',
+  mandatory_for_scope: 'Mandatory for its stated scope',
+  official_target: 'Official target (planning)',
+  recommendation: 'Recommendation / guidance',
+  draft: 'Draft',
+  informational: 'Informational',
+  unclassified: 'Not classified',
+}
+
+/**
+ * A timeline milestone a planner can pull into a roadmap. It keeps its own
+ * issuer, document type and binding status, so a policy publication, an
+ * advisory target and a binding scoped deadline stay distinct. `source` is the
+ * jurisdiction the timeline files it under (it is not an applicability test).
+ */
+export interface ExternalMilestone extends ExternalDeadline {
+  issuer?: string
+  kind?: string
+  status?: MilestoneStatus
+  sourceUrl?: string
+}
+
+/** Binding status of a timeline event: the reviewed force when present, else the curated mandate type. */
+export function milestoneStatus(ev: {
+  bindingForce?: MilestoneStatus
+  mandateType?: 'HARD' | 'SOFT' | 'DRAFT'
+}): MilestoneStatus {
+  if (ev.bindingForce) return ev.bindingForce
+  if (ev.mandateType === 'HARD') return 'binding'
+  if (ev.mandateType === 'SOFT') return 'recommendation'
+  if (ev.mandateType === 'DRAFT') return 'draft'
+  return 'unclassified'
+}
+
+const KIND_LABEL: Record<string, string> = {
+  Deadline: 'Deadline',
+  Regulation: 'Regulation',
+  Policy: 'Policy publication',
+}
+
 export interface MitigationGatewayRow {
   asset: string
   gatewayProductId: string
@@ -48,7 +98,7 @@ export interface MitigationGatewayRow {
 /** Extracted (07192026, Batch 2) so the simulation's real-tool doc generator
  *  renders THIS logic — the component's export memo delegates here. */
 export function buildRoadmapMarkdown(
-  selectedDeadlines: ExternalDeadline[],
+  selectedDeadlines: ExternalMilestone[],
   currentMilestones: RoadmapMilestone[],
   mitigations: MitigationGatewayRow[]
 ): string {
@@ -58,12 +108,15 @@ export function buildRoadmapMarkdown(
   md += `_Built on the ${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE}). ${FRAMEWORK_URL}_\n\n`
 
   if (selectedDeadlines.length > 0) {
-    md += '## External Regulatory Deadlines\n\n'
-    md += '| Year | Deadline | Source |\n|------|----------|--------|\n'
+    md += '## External Milestones Selected For This Plan\n\n'
+    md +=
+      '| Year | Milestone | Jurisdiction | Issuer | Type | Status | Link |\n|------|-----------|--------------|--------|------|--------|------|\n'
     for (const d of [...selectedDeadlines].sort((a, b) => a.year - b.year)) {
-      md += `| ${d.year} | ${d.label} | ${d.source} |\n`
+      const status = MILESTONE_STATUS_LABEL[d.status ?? 'unclassified']
+      md += `| ${d.year} | ${d.label} | ${d.source} | ${d.issuer || '—'} | ${d.kind || '—'} | ${status} | ${d.sourceUrl || '—'} |\n`
     }
-    md += '\n'
+    md +=
+      "\n_These are the planner's own selections. A milestone applies only to the parties and systems in its stated scope, and a policy publication or advisory target is a planning input, not a legal deadline. Status is as classified in the timeline data; confirm applicability against the source document._\n\n"
   }
 
   // Per-track milestones — the framework's parallel-workstream structure.
@@ -223,7 +276,7 @@ function isValidMilestone(m: unknown): m is RoadmapMilestone {
 
 interface SavedRoadmapInputs {
   milestones?: unknown
-  selectedDeadlines?: ExternalDeadline[]
+  selectedDeadlines?: ExternalMilestone[]
   mitigations?: MitigationGatewayRow[]
 }
 
@@ -243,7 +296,6 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   const { addExecutiveDocument } = useModuleStore()
   const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
   const transitions = useAlgorithmTransitionsForAssessment()
-  const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
   // Effective selection = legacy `myProducts` ∪ workbench `choice` picks (see
   // useSelectedProductIds' docstring). Reading `myProducts` alone here missed
   // every product a user actually picked via the Migration Workbench's Replace
@@ -251,9 +303,10 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   const myProductIdsBookmarked = useSelectedProductIds()
   const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)
 
-  // Map country deadlines to ExternalDeadline[] format
-  const externalDeadlines: ExternalDeadline[] = useMemo(() => {
-    const deadlines: ExternalDeadline[] = []
+  // Map timeline milestones to ExternalMilestone[] format, keeping each one's
+  // issuer, document type, binding status and source link.
+  const externalDeadlines: ExternalMilestone[] = useMemo(() => {
+    const deadlines: ExternalMilestone[] = []
     for (const country of countryDeadlines) {
       for (const body of country.bodies) {
         for (const event of body.events) {
@@ -262,7 +315,16 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
             event.phase === 'Regulation' ||
             event.phase === 'Policy'
           ) {
-            deadlines.push({ label: event.title, year: event.endYear, source: country.countryName })
+            const milestone: ExternalMilestone = {
+              label: event.title,
+              year: event.endYear,
+              source: country.countryName,
+              issuer: event.orgName || body.name,
+              kind: KIND_LABEL[event.phase] ?? event.phase,
+              status: milestoneStatus(event),
+            }
+            if (event.sourceUrl) milestone.sourceUrl = event.sourceUrl
+            deadlines.push(milestone)
           }
         }
       }
@@ -386,19 +448,19 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
     if (onOutput && roadmapOutputPayload) onOutput(roadmapOutputPayload)
   }, [onOutput, roadmapOutputPayload])
 
-  // Deadlines: restore from a saved roadmap, else pre-select from bookmarked countries.
-  const initialSelectedDeadlines = useMemo<ExternalDeadline[]>(() => {
+  // Milestones: restore from a saved roadmap. Nothing is pre-selected from a
+  // country: whether a milestone applies depends on its issuer's scope and on
+  // your systems, so the planner selects each one explicitly.
+  const initialSelectedDeadlines = useMemo<ExternalMilestone[]>(() => {
     if (sampleBank) return []
     if (Array.isArray(savedRoadmap?.selectedDeadlines)) return savedRoadmap.selectedDeadlines
-    if (myTimelineCountries.length === 0) return []
-    const set = new Set(myTimelineCountries.map((c) => c.toLowerCase()))
-    return externalDeadlines.filter((d) => set.has(d.source.toLowerCase()))
-  }, [sampleBank, savedRoadmap, myTimelineCountries, externalDeadlines])
+    return []
+  }, [sampleBank, savedRoadmap])
   const [selectedDeadlines, setSelectedDeadlines] =
-    React.useState<ExternalDeadline[]>(initialSelectedDeadlines)
+    React.useState<ExternalMilestone[]>(initialSelectedDeadlines)
 
-  const deadlineKey = (d: ExternalDeadline) => `${d.label}-${d.year}-${d.source}`
-  const toggleDeadline = (d: ExternalDeadline) =>
+  const deadlineKey = (d: ExternalMilestone) => `${d.label}-${d.year}-${d.source}`
+  const toggleDeadline = (d: ExternalMilestone) =>
     setSelectedDeadlines((prev) =>
       prev.some((x) => deadlineKey(x) === deadlineKey(d))
         ? prev.filter((x) => deadlineKey(x) !== deadlineKey(d))
@@ -424,7 +486,7 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         String(d.year).includes(query)
       )
     })
-    const bySource = new Map<string, ExternalDeadline[]>()
+    const bySource = new Map<string, ExternalMilestone[]>()
     for (const d of filtered) {
       const group = bySource.get(d.source)
       if (group) group.push(d)
@@ -526,32 +588,37 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
 
       <div className="glass-panel p-4">
         <p className="text-sm text-foreground mb-1">
-          A PQC migration runs as <span className="font-semibold">two parallel tracks</span> on the
-          framework&apos;s phase spine, not one linear list:
+          A PQC migration is easier to plan through{' '}
+          <span className="font-semibold">two lenses</span> on the framework&apos;s shared phase
+          spine, not one linear list:
         </p>
         <ul className="text-xs text-muted-foreground list-disc pl-5 space-y-0.5">
           <li>
             <span className="font-medium text-foreground">Track A (Confidentiality / KEM)</span> —
-            urgent now because of Harvest-Now-Decrypt-Later (HNDL).
+            data that must stay secret over its lifetime. Harvest-Now-Decrypt-Later (HNDL) means
+            ciphertext captured today can be exposed later, so exposure builds up now.
           </li>
           <li>
             <span className="font-medium text-foreground">
               Track B (Integrity / Signatures &amp; PKI)
             </span>{' '}
-            — not urgent today but the longest lead time, so it must start early because of
-            Trust-Now-Forge-Later (TNFL): forged signatures only matter once a quantum computer can
-            forge them, but replacing signing keys and trust anchors takes years.
+            — signatures have no equivalent passive harvest step, since a forgery needs a quantum
+            computer to exist first. But replacing signing keys, trust anchors and verifiers has the
+            longest lead time, so the work should start now, and any signature deadline or
+            dependency you already have keeps its own date.
           </li>
         </ul>
         <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
           Gates G0→G3 (mandate → inventory → CBOM → risk scoring) are a shared governance spine both
           tracks pass through together, producing the prioritized backlog and approved roadmap (G4)
-          they then execute against. From there the same phase/gate structure runs independently and
-          in parallel per track, because the two tracks don&apos;t share deadlines or dependencies
-          once execution begins. The illustrative milestones below show one example: Track A
-          piloting hybrid key exchange (G5) while Track B first migrates code-signing algorithms
-          (also G5) before later re-issuing PKI root/intermediate CAs (G6) — infrastructure work
-          that only shows up once a roadmap actually reaches that stage.
+          they then execute against. In the sample below the two lenses are drawn as separate tasks
+          after G4, but a real estate shares components, people and test environments across them.
+          Map the shared components, resources and dependencies for each service, and add
+          cross-track dependencies where they exist (for example, a hybrid key-exchange pilot that
+          needs a re-issued intermediate CA). The sample shows Track A piloting hybrid key exchange
+          (G5) while Track B first migrates code-signing algorithms (also G5) before later
+          re-issuing PKI root/intermediate CAs (G6); it does not mean the tracks are independent in
+          every estate.
         </p>
       </div>
 
@@ -565,7 +632,10 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         <div className="glass-panel p-4 space-y-3">
           <div className="bg-muted/50 rounded-lg p-3">
             <p className="text-xs text-muted-foreground">
-              US federal deadlines below derive from{' '}
+              This list mixes policy publications, advisory targets, and binding deadlines, each
+              with its own issuer and scope. A country listing does not tell you which apply to you:
+              select only the milestones whose issuer and scope cover your systems. For example, US
+              federal items derive from{' '}
               <a
                 href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks"
                 target="_blank"
@@ -578,14 +648,15 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
                 Executive Order 14412, &ldquo;Securing the Nation Against Advanced Cryptographic
                 Attacks&rdquo;
               </a>{' '}
-              (June 22, 2026): High Value Assets and high-impact federal systems transition to PQC
-              for key establishment by December 31, 2030, and digital signatures by December 31,
-              2031.
+              (June 22, 2026), which directs federal agencies to transition their High Value Assets
+              and high impact systems (excluding National Security Systems) to PQC for key
+              establishment by December 31, 2030, and for digital signatures by December 31, 2031.
+              It directs those agencies; it is not a deadline for other organizations.
             </p>
           </div>
           <div className="flex items-center justify-between flex-wrap gap-2">
             <p className="text-sm font-medium text-foreground">
-              Regulatory deadlines ({selectedDeadlines.length}/{externalDeadlines.length} selected)
+              External milestones ({selectedDeadlines.length}/{externalDeadlines.length} selected)
             </p>
             <div className="flex items-center gap-2 flex-wrap">
               <input
@@ -625,13 +696,24 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
                           variant="ghost"
                           size="sm"
                           onClick={() => toggleDeadline(d)}
+                          title={[
+                            d.issuer,
+                            d.kind,
+                            MILESTONE_STATUS_LABEL[d.status ?? 'unclassified'],
+                            d.sourceUrl,
+                          ]
+                            .filter(Boolean)
+                            .join(' · ')}
                           className={`h-auto rounded px-2 py-0.5 text-[11px] border font-normal ${
                             on
-                              ? 'bg-status-error/15 border-status-error/40 text-status-error'
+                              ? 'bg-primary/15 border-primary/40 text-primary'
                               : 'bg-background border-border text-muted-foreground'
                           }`}
                         >
-                          {d.year} · {d.label}
+                          {d.year} · {d.label} ·{' '}
+                          <span className="italic">
+                            {MILESTONE_STATUS_LABEL[d.status ?? 'unclassified']}
+                          </span>
                         </Button>
                       )
                     })}
@@ -761,7 +843,8 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
       >
         <p className="text-sm text-muted-foreground">
           Export your two-track migration roadmap with per-track milestones, gates, dependencies,
-          regulatory deadlines, and mitigation gateways.
+          the external milestones you selected (with issuer, type, and status), and mitigation
+          gateways.
         </p>
       </ExportableArtifact>
     </div>

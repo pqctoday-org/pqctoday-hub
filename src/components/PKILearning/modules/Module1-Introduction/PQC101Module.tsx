@@ -111,7 +111,7 @@ const Step1WhyPQC: React.FC = () => {
           <div className="glass-panel p-5">
             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
               <Lightbulb className="text-secondary" size={18} />
-              Key concept: HNFL
+              Key concept: signatures and the quantum threat (HNFL)
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
               <strong>
@@ -121,18 +121,29 @@ const Step1WhyPQC: React.FC = () => {
                 </InlineTooltip>
                 &rdquo;
               </strong>{' '}
-              (HNFL) is the signature counterpart to HNDL. Adversaries capture{' '}
-              <strong>signed artifacts today</strong> — firmware images, certificate chains,
-              code-signing blobs — and store them. Once a quantum computer exists, they can forge or
-              repudiate those signatures retroactively.
+              (HNFL) is a name for the signature side of the quantum threat. It differs from HNDL:
+              HNDL only works if the attacker already holds your ciphertext, but a signature attack
+              needs nothing captured. Public keys are public, so once a quantum computer can derive
+              a private key from its public key, the attacker can sign <strong>new</strong> firmware
+              images, certificates, or documents as that signer, with or without ever holding
+              anything the signer produced.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              Two questions are separate. <strong>Future impersonation:</strong> any signing key
+              still trusted when such a computer exists can be used to forge new artifacts, so
+              long-lived keys — PKI hierarchies, firmware signing keys, code-signing certificates —
+              must move to PQC signing algorithms (
+              <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>,{' '}
+              <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>) before then.{' '}
+              <strong>Verification lifetime of old signatures:</strong> trusting an archived
+              signature later requires evidence that it existed before its algorithm became
+              forgeable, such as trusted timestamps renewed over time (RFC 3161, RFC 4998). What
+              that evidence proves depends on what was preserved and on the relying party&apos;s
+              policy, so old signatures do not all become forgeable or repudiable automatically.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Unlike HNDL (which targets <em>confidentiality</em>), HNFL targets{' '}
-              <em>authenticity and integrity</em>. Long-lived credentials — PKI hierarchies,
-              firmware signing keys, code-signing certificates — must migrate to PQC signing
-              algorithms (<InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>,{' '}
-              <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>) before quantum computers
-              mature.
+              HNDL targets <em>confidentiality</em>; signature attacks target{' '}
+              <em>authenticity and integrity</em>.
             </p>
           </div>
         </div>
@@ -345,7 +356,8 @@ const Step4WhoNeedsToAct: React.FC = () => {
     {
       name: 'Healthcare',
       urgency: 'High',
-      reason: 'Patient records must be protected for 50+ years. HIPAA compliance will require PQC.',
+      reason:
+        'Some health data stays sensitive for decades; this lesson assumes a long-lived sensitivity as an illustration, not a retention rule. HIPAA sets no medical-record retention period (state law generally does) and its encryption specification names no algorithm, so use your own risk assessment and the retention rules that apply to you.',
       color: 'text-status-warning',
     },
     {
@@ -373,7 +385,8 @@ const Step4WhoNeedsToAct: React.FC = () => {
     <div className="space-y-6">
       <p className="text-muted-foreground leading-relaxed">
         Every industry that uses public-key cryptography is affected. The urgency depends on data
-        sensitivity and system lifecycle:
+        sensitivity and system lifecycle; the labels below are this lesson&apos;s illustrative
+        ranking, not a regulatory classification:
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

@@ -75,13 +75,13 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 ## Regional Coverage Map
 
-| Region       | Standards                 | Certification             | Compliance                           | Regulatory                   |
-| ------------ | ------------------------- | ------------------------- | ------------------------------------ | ---------------------------- |
-| Global       | ISO/IEC JTC 1/SC 27, IETF | CCRA                      | No global binding framework          | ITU-T (recommendations only) |
-| US           | NIST                      | CMVP, CAVP, NIAP          | FIPS 140-3, CNSA 2.0, FedRAMP, CMMC  | NSA, CISA                    |
-| EU           | ETSI TC CYBER             | EUCC certification bodies | NIS2, eIDAS 2.0, DORA, CRA           | Commission, ENISA            |
-| UK           | BSI (British Standards)   | NCSC (CAPS)               | UK PQC Roadmap (3 phases)            | NCSC, DSIT                   |
-| Asia-Pacific | KpqC group, AIST, CAS     | OSCCA/NGCC, NISC          | K-PQC master plan (2035), SM mandate | NIS/MSIT, OSCCA, NISC, MAS   |
+| Region       | Standards                 | Certification                                             | Compliance                           | Regulatory                   |
+| ------------ | ------------------------- | --------------------------------------------------------- | ------------------------------------ | ---------------------------- |
+| Global       | ISO/IEC JTC 1/SC 27, IETF | CCRA                                                      | No global binding framework          | ITU-T (recommendations only) |
+| US           | NIST                      | CMVP, CAVP, NIAP                                          | FIPS 140-3, CNSA 2.0, FedRAMP, CMMC  | NSA, CISA                    |
+| EU           | ETSI TC CYBER             | EUCC certification bodies                                 | NIS2, eIDAS 2.0, DORA, CRA           | Commission, ENISA            |
+| UK           | BSI (British Standards)   | NCSC (CAPS, High Grade products; NCSC no longer runs CPA) | UK PQC Roadmap (3 phases)            | NCSC, DSIT                   |
+| Asia-Pacific | KpqC group, AIST, CAS     | OSCCA/NGCC, NISC                                          | K-PQC master plan (2035), SM mandate | NIS/MSIT, OSCCA, NISC, MAS   |
 
 ---
 

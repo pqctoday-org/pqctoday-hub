@@ -132,17 +132,24 @@ export const ConstrainedHandshakeVisualizer: React.FC<{ initial?: HandshakeConfi
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-muted-foreground">
                 Over a 6LoWPAN mesh this DTLS handshake needs {fmt(dtls.radioFrames)} radio frames.
-                Losing any one fragment of a datagram loses the whole datagram, and DTLS retransmits
-                whole flights. EDHOC with credentials by reference avoids the chain entirely; with
-                PQC keys it still has to move the KEM key, ciphertext and two signatures.
+                Losing any one fragment of a datagram loses that whole datagram (RFC 4944 discards a
+                packet that is not fully reassembled). What gets re-sent depends on the DTLS
+                version: DTLS 1.2 retransmits everything in the flight on a timeout, while DTLS 1.3
+                lets the peer acknowledge the records it received (RFC 9147, ACK message) so the
+                sender can omit what was acknowledged; if no ACK arrives, the timer expiry
+                retransmits the flight. This model counts one clean pass of the full flights and
+                does not simulate loss or retransmission, so the cost of a lossy link is higher than
+                shown by an amount that depends on the loss rate and the stack. EDHOC with
+                credentials by reference avoids the chain entirely; with PQC keys it still has to
+                move the KEM key, ciphertext and two signatures.
               </p>
             </div>
           )}
           <p className="text-[10px] text-muted-foreground">
-            Model estimate (±10–20%), not a packet capture. Datagrams use the IPv6 minimum MTU
-            (1,280 B); radio frames assume 6LoWPAN header compression and ~{IEEE802154_PAYLOAD} B of
-            payload per IEEE 802.15.4 frame. PQ EDHOC follows draft-ietf-lake-pqsuites (KEM key in
-            message_1, ciphertext in message_2).
+            Model estimate with no stated error band, not a packet capture. Datagrams use the IPv6
+            minimum MTU (1,280 B); radio frames assume 6LoWPAN header compression and ~
+            {IEEE802154_PAYLOAD} B of payload per IEEE 802.15.4 frame. PQ EDHOC follows
+            draft-ietf-lake-pqsuites (KEM key in message_1, ciphertext in message_2).
           </p>
         </>
       ) : (

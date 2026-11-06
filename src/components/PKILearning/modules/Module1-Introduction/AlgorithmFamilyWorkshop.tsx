@@ -375,7 +375,7 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
           classicalProblem="RSA: Factor N = p × q"
           classicalResult="Shor's Algorithm finds factors in polynomial time — BROKEN"
           pqcProblem="Lattice: Find closest vector in noisy high-dimensional space"
-          pqcResult="No known quantum algorithm provides speedup — SAFE"
+          pqcResult="No efficient quantum algorithm is known (generic quantum search still applies, so parameters allow for it) — RESISTANT"
         />
       </div>
     </MotionConfig>
@@ -602,7 +602,7 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
           classicalProblem="RSA: Exploit algebraic structure of modular exponentiation"
           classicalResult="Shor's provides exponential speedup — BROKEN"
           pqcProblem="Hash: Reverse a one-way function (find preimage)"
-          pqcResult="Grover's provides only quadratic speedup — doubling hash size is a complete fix"
+          pqcResult="Grover's provides only a quadratic speedup on preimage search — a longer hash output restores the margin"
         />
       </div>
     </MotionConfig>
@@ -836,10 +836,11 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
               <div className="glass-panel p-3 bg-muted/30">
                 <p className="text-xs text-muted-foreground">
                   <strong>Real systems:</strong> Classic McEliece uses n=3,488 and t=64 errors. The
-                  attacker faces C(3488, 64) &gt; 2<sup>400</sup> combinations. No quantum algorithm
-                  provides meaningful speedup &mdash; this problem has resisted cryptanalysis since
-                  McEliece&apos;s 1978 paper, A Public-Key Cryptosystem Based On Algebraic Coding
-                  Theory.
+                  attacker faces C(3488, 64) &gt; 2<sup>400</sup> combinations. No efficient quantum
+                  break is known, though generic quantum search can still speed up brute-force-style
+                  attacks and the parameters are chosen with that in mind. The decoding problem goes
+                  back to McEliece&apos;s 1978 paper, A Public-Key Cryptosystem Based On Algebraic
+                  Coding Theory.
                 </p>
               </div>
             </motion.div>
@@ -850,7 +851,7 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
           classicalProblem="RSA: Find hidden period in modular exponentiation"
           classicalResult="Shor's exploits algebraic structure — BROKEN in polynomial time"
           pqcProblem="Codes: Decode random linear code with unknown error pattern"
-          pqcResult="No exploitable structure — resisted all attacks since 1978"
+          pqcResult="No efficient quantum break is known (generic quantum search still applies) — RESISTANT"
         />
       </div>
     </MotionConfig>

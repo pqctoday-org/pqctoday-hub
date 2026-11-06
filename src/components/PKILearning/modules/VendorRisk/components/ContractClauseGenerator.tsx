@@ -12,7 +12,7 @@ import type { ScorecardOutput } from './VendorScorecardBuilder'
 
 const MODULE_ID = 'vendor-risk'
 
-const CONTRACT_SECTIONS: ArtifactSection[] = [
+export const CONTRACT_SECTIONS: ArtifactSection[] = [
   {
     id: 'pqc-timeline',
     title: 'PQC Timeline Requirements',
@@ -109,7 +109,7 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
     id: 'cbom-delivery',
     title: 'CBOM Delivery',
     description:
-      'Mandate delivery of Cryptographic Bill of Materials for supply chain visibility. A CBOM is the only way to verify vendor cryptographic claims without relying on self-attestation (NIST CSWP 39 §5.3).',
+      'Mandate delivery of a Cryptographic Bill of Materials for supply chain visibility. A CBOM supports component visibility (NIST CSWP 39-upd1 §5.3 describes a comprehensive list of cryptographic components as input to decisions about updating or replacing them), but a supplier-produced CBOM is still self-attestation: check it against scoped independent testing, validation records and change evidence.',
     fields: [
       {
         id: 'delivery-frequency',
@@ -314,6 +314,9 @@ export function renderContractPreview(
     }
     md += '\n'
   }
+
+  md +=
+    "**3.3 Verification:** The CBOM is the Vendor's own inventory of cryptographic components and is not, by itself, independent verification. Buyer may check it against scoped independent testing, validation records (for example CMVP certificates and CAVP algorithm validations), and change and delivery evidence for the same release.\n\n"
 
   // Change Notification
   const change = data['change-notification'] || {}

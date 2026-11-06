@@ -61,10 +61,29 @@ const DEADLINE_OPTIONS: {
   id: ComplianceDeadline
   label: string
   urgency: 'high' | 'medium' | 'low'
+  scope: string
 }[] = [
-  { id: 'eu-2026', label: 'EU 2026 Crypto Inventory (NIS2)', urgency: 'high' },
-  { id: 'nist-2030', label: 'NIST 2030 Deprecation (RSA/ECDH)', urgency: 'medium' },
-  { id: 'nist-2035', label: 'NIST 2035 Prohibition', urgency: 'low' },
+  {
+    id: 'eu-2026',
+    label: 'EU roadmap milestone, end of 2026',
+    urgency: 'high',
+    scope:
+      'A recommended timeline addressed to EU Member States (NIS Cooperation Group roadmap v1.1, 11 June 2025): its first milestone is 31 December 2026, and it includes supporting mature cryptographic asset management. Entities in NIS2 scope should refer to it, but it is guidance, not a legal deadline for a company.',
+  },
+  {
+    id: 'nist-2030',
+    label: 'NIST IR 8547: deprecated after 2030',
+    urgency: 'medium',
+    scope:
+      'NIST IR 8547 plans to deprecate quantum-vulnerable public-key algorithms (such as RSA, ECDSA and ECDH) after 2030 under NIST standards and guidelines. Whether it binds you depends on the policy that adopts it.',
+  },
+  {
+    id: 'nist-2035',
+    label: 'NIST IR 8547: disallowed after 2035',
+    urgency: 'low',
+    scope:
+      'NIST IR 8547 plans to disallow those algorithms under NIST standards and guidelines after 2035. Whether it binds you depends on the policy that adopts it.',
+  },
 ]
 
 const URGENCY_COLORS: Record<string, string> = {
@@ -122,10 +141,11 @@ export const TestStrategyBuilder: React.FC = () => {
         <ClipboardList size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">Strategy Builder:</span> Configure your
-          migration phase, environment type, and compliance deadline. The builder generates a
-          prioritized test sequence with example tools and go/no-go gates. The durations, tool
-          choices and gates are an illustration from this module, not sourced figures or
-          recommendations.
+          migration phase and environment type. The builder generates a prioritized test sequence
+          with example tools and go/no-go gates. The durations, tool choices and gates are an
+          illustration from this module, not sourced figures or recommendations. The milestone
+          selector is a planning tag: it labels your scenario and does not change the generated
+          sequence.
         </p>
       </div>
 
@@ -176,7 +196,9 @@ export const TestStrategyBuilder: React.FC = () => {
 
       {/* Deadline selector */}
       <div className="space-y-2">
-        <span className="text-sm font-medium text-foreground">Compliance Deadline:</span>
+        <span className="text-sm font-medium text-foreground">
+          Milestone to plan against (planning tag):
+        </span>
         <div className="flex flex-wrap gap-2">
           {DEADLINE_OPTIONS.map((d) => (
             <Button
@@ -197,8 +219,10 @@ export const TestStrategyBuilder: React.FC = () => {
           className={`inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded border ${URGENCY_COLORS[selectedDeadline.urgency]}`}
         >
           <Flag size={11} />
-          {selectedDeadline.urgency.toUpperCase()} urgency — {selectedDeadline.label}
+          {selectedDeadline.urgency.toUpperCase()} planning priority (illustrative) —{' '}
+          {selectedDeadline.label}
         </div>
+        <p className="text-xs text-muted-foreground">{selectedDeadline.scope}</p>
       </div>
 
       {/* Generated test sequence */}

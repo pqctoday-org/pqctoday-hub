@@ -35,7 +35,7 @@ it('uses the bank sample plan without inheriting a saved deadline as a bank obli
   try {
     render(<RoadmapBuilder />)
     expect(screen.getByText(/No private-bank regulatory obligation is inferred/)).toBeVisible()
-    expect(screen.getByText(/Regulatory deadlines \(0\//)).toBeVisible()
+    expect(screen.getByText(/External milestones \(0\//)).toBeVisible()
     expect(screen.queryByText('Other exercise deadline')).toBeNull()
   } finally {
     setAutoRunFill(false)

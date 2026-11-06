@@ -32,7 +32,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Inverting a hash function',
     ],
     answer: 0,
-    why: 'That is why RSA and ECC are marked broken. Lattice and hash problems have no known quantum speedup, which is what makes ML-KEM, ML-DSA and SLH-DSA candidates.',
+    why: "That is why RSA and ECC are marked broken. No efficient quantum algorithm is known for the lattice problems behind ML-KEM and ML-DSA, and hash-based signatures rest on hash-function security. Quantum-resistant does not mean no quantum speedup at all: generic quantum search (Grover's algorithm) still gives a quadratic speedup against brute-force key or preimage search, so parameters are chosen with it in mind.",
   },
   'pqc-101/algorithm-comparison': {
     prompt: 'ML-KEM is quantum-resistant because its security rests on which problem?',
