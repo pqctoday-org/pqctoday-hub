@@ -2926,7 +2926,13 @@
       "filename": "data-at-rest-and-full-disk-encryption.html",
       "sizeBytes": 72747,
       "contentType": "text/html",
-      "sha256": "bf080ea764d93fdd2043751f76bc1e4915c2ab0c3467ca99d797b941b1036654"
+      "sha256": "bf080ea764d93fdd2043751f76bc1e4915c2ab0c3467ca99d797b941b1036654",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-11-06T05:07:22.805714+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-11-05T05:58:25.240691+00:00"
     },
     {
       "refId": "cross-database-storage",
@@ -2936,7 +2942,13 @@
       "filename": "database-and-storage-network-encryption-tde-san.html",
       "sizeBytes": 72747,
       "contentType": "text/html",
-      "sha256": "bf080ea764d93fdd2043751f76bc1e4915c2ab0c3467ca99d797b941b1036654"
+      "sha256": "bf080ea764d93fdd2043751f76bc1e4915c2ab0c3467ca99d797b941b1036654",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-11-06T05:07:22.860469+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-11-05T05:59:05.414001+00:00"
     }
   ],
   "archivedEntries": [
