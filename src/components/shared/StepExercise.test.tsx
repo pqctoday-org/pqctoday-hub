@@ -9,7 +9,10 @@ describe('StepExercise (round 9, wave 2)', () => {
     expect(screen.getByTestId('step-exercise')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Inverting a hash function/ }))
     expect(screen.getByTestId('step-feedback')).toHaveTextContent(/Not quite/)
-    expect(screen.getByTestId('step-feedback')).toHaveTextContent(/Lattice and hash problems/)
+    expect(screen.getByTestId('step-feedback')).toHaveTextContent(
+      /No efficient quantum algorithm is known for the lattice problems behind ML-KEM and ML-DSA/
+    )
+    expect(screen.getByTestId('step-feedback')).toHaveTextContent(/Grover/)
     fireEvent.click(screen.getByRole('button', { name: /Integer factorisation/ }))
     expect(screen.getByTestId('step-feedback')).toHaveTextContent(/^Right\./)
   })
