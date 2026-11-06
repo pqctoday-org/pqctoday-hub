@@ -7,7 +7,7 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
     name: 'Visa Token Service (VTS)',
     tsp: 'visa-vts',
     description:
-      'Visa\u2019s Token Service Provider replaces the real PAN with a Visa token for use in mobile wallets, e-commerce, and IoT payments. Token lifecycle managed by Visa\u2019s token vault.',
+      'Visa\u2019s Token Service Provider replaces the real PAN with a Visa token for use in mobile wallets, e-commerce, and IoT payments. Token lifecycle managed by Visa\u2019s token vault. Illustrative sequence: the six steps below are this module\u2019s simplification, not Visa\u2019s published protocol.',
     steps: [
       {
         id: 'vts-1',
@@ -16,7 +16,7 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         actor: 'Mobile Wallet App',
         description:
           'Cardholder enters card details or scans card. Wallet app collects PAN, expiry, and device information, then sends enrollment request to Visa.',
-        cryptoUsed: ['TLS 1.2/1.3 (ECDSA/RSA key exchange)'],
+        cryptoUsed: ['TLS 1.2/1.3 ((EC)DHE key exchange, ECDSA/RSA certificate signatures)'],
         quantumVulnerable: true,
         pqcReplacement: 'Hybrid ML-KEM + X25519 TLS 1.3',
       },
@@ -40,7 +40,8 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
           'Visa generates a payment token (16-digit surrogate PAN) and creates a mapping entry in the token vault. Token is assigned a domain restriction (e.g., mobile NFC only).',
         cryptoUsed: ['HSM-secured token generation (AES-256)', 'RSA-2048 HSM key wrapping'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-KEM-768 HSM key wrapping',
+        pqcReplacement:
+          'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
       {
         id: 'vts-4',
@@ -59,7 +60,7 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         label: 'Secure Element Provisioning',
         actor: 'Device Secure Element',
         description:
-          'Token and LUK are installed into the device Secure Element (Apple SEP, Android StrongBox, Samsung Knox). Device attestation confirms the SE integrity.',
+          'Token and LUK are installed in the wallet\u2019s protected store. Wallet architectures differ: a payment applet in an embedded Secure Element (as in Apple Pay), a TEE- or hardware-backed store, or cloud credentials used through host card emulation (HCE). Device attestation confirms the integrity of the protected store.',
         cryptoUsed: ['ECDSA device attestation certificate', 'AES-256 secure channel'],
         quantumVulnerable: true,
         pqcReplacement: 'ML-DSA device attestation',
@@ -81,7 +82,7 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
     name: 'Mastercard Digital Enablement Service (MDES)',
     tsp: 'mc-mdes',
     description:
-      'Mastercard\u2019s tokenization platform provides lifecycle management for digitized credentials. Supports cloud-based payments (HCE) and Secure Element-based wallets.',
+      'Mastercard\u2019s tokenization platform provides lifecycle management for digitized credentials. Supports cloud-based payments (HCE) and Secure Element-based wallets. Illustrative sequence: the six steps below are this module\u2019s simplification, not Mastercard\u2019s published protocol.',
     steps: [
       {
         id: 'mdes-1',
@@ -92,7 +93,8 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
           'Wallet provider submits a digitization request with encrypted card data. MDES validates the request format and routes to the issuer.',
         cryptoUsed: ['TLS 1.2/1.3', 'JWE (JSON Web Encryption) with RSA-OAEP'],
         quantumVulnerable: true,
-        pqcReplacement: 'JWE with ML-KEM key wrapping',
+        pqcReplacement:
+          'JWE with ML-KEM key establishment, KDF and authenticated key wrap (conceptual)',
       },
       {
         id: 'mdes-2',
@@ -113,7 +115,8 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
           'MDES generates the token PAN and associated credentials. For HCE (cloud), generates cloud-based payment credentials. For SE, generates SE-targeted credentials.',
         cryptoUsed: ['HSM token generation (AES-256)', 'RSA-2048 HSM key wrapping'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-KEM-768 HSM key wrapping',
+        pqcReplacement:
+          'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
       {
         id: 'mdes-4',
@@ -124,7 +127,8 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
           'Encrypted credentials delivered to the wallet provider for installation on the device. Uses Mastercard\u2019s secure credential delivery protocol.',
         cryptoUsed: ['RSA-2048 key transport', 'AES-256-GCM payload encryption'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-KEM-768 key transport',
+        pqcReplacement:
+          'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
       {
         id: 'mdes-5',
@@ -154,7 +158,7 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
     name: 'American Express Token Service (EST)',
     tsp: 'amex-est',
     description:
-      'Amex\u2019s three-domain model tokenization service. Amex is unique as both the network and issuer for most cards, simplifying the token lifecycle.',
+      'Amex\u2019s three-domain model tokenization service. Amex is unique as both the network and issuer for most cards, simplifying the token lifecycle. Illustrative sequence: the six steps below are this module\u2019s simplification, not American Express\u2019s published protocol.',
     steps: [
       {
         id: 'est-1',
@@ -165,7 +169,8 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
           'Wallet sends a token request with encrypted card data to Amex. As both network and issuer, Amex handles the full lifecycle internally.',
         cryptoUsed: ['TLS 1.2/1.3', 'RSA-OAEP payload encryption'],
         quantumVulnerable: true,
-        pqcReplacement: 'Hybrid ML-KEM TLS + ML-KEM payload encryption',
+        pqcReplacement:
+          'Hybrid ML-KEM TLS + ML-KEM key establishment with a KDF and AEAD for the payload (conceptual)',
       },
       {
         id: 'est-2',
@@ -186,7 +191,8 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
           'Token and associated cryptographic material generated in Amex HSMs. Token mapped to the card account in the internal vault.',
         cryptoUsed: ['HSM token generation (AES-256)', 'RSA-2048 key wrapping'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-KEM-768 HSM key wrapping',
+        pqcReplacement:
+          'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
       {
         id: 'est-4',
@@ -197,7 +203,8 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
           'Encrypted token and LUK delivered to wallet provider for device provisioning.',
         cryptoUsed: ['RSA-2048 key transport', 'AES-256-GCM encryption'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-KEM-768 key transport',
+        pqcReplacement:
+          'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
       {
         id: 'est-5',
@@ -227,10 +234,13 @@ export const MOBILE_WALLETS: MobileWallet[] = [
   {
     id: 'apple-pay',
     name: 'Apple Pay',
-    secureElement: 'Apple Secure Enclave Processor (SEP)',
-    tokenProtocol: 'Hardware SE-based (NFC via eSE chip)',
+    secureElement:
+      'Secure Element (certified chip running the Java Card platform) holds the payment applets; the Secure Enclave handles user authorization',
+    tokenProtocol:
+      'Hardware Secure Element-based (the NFC controller routes between the Secure Element and the terminal)',
     biometricAuth: ['Face ID', 'Touch ID', 'Device Passcode'],
     cryptoCapabilities: [
+      'Illustrative model: the algorithms below are this module\u2019s assumptions, not Apple\u2019s published breakdown',
       'ECDSA P-256 (device attestation)',
       'AES-256 (credential storage)',
       'AES-256 (per-transaction cryptogram)',

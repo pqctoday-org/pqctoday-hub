@@ -162,11 +162,26 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         icon={<Shield size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
-          EMV defines three offline authentication methods, all based on{' '}
-          <strong className="text-foreground">RSA signatures</strong>. The card carries the issuer
-          certificate and its own ICC certificate; the terminal holds the payment-system (scheme) CA
-          public key and verifies the chain up to it, so it can authenticate the card without
-          contacting the issuer.
+          This section models the three offline data authentication methods of EMV Book 2 v4.3 (SDA,
+          DDA and CDA), which that book specifies with{' '}
+          <strong className="text-foreground">RSA signatures</strong>: its only defined signature
+          algorithm indicator is the one for RSA. The card carries the issuer certificate and its
+          own ICC certificate; the terminal holds the payment-system (scheme) CA public key and
+          verifies the chain up to it, so it can authenticate the card without contacting the
+          issuer. In SDA the card presents Signed Static Application Data, signed once by the issuer
+          and identical on every transaction; in DDA and CDA the card signs fresh data with its own
+          key, and in CDA that signed data is the Signed Dynamic Application Data (SDAD).
+        </p>
+        <p className="text-sm text-muted-foreground border-l-2 border-border pl-3">
+          <strong className="text-foreground">Scope of this model.</strong> The workshops use an RSA
+          profile as a modelling simplification (the RSA-2048 sizes shown are round figures: Book 2
+          v4.3 limits the CA public key modulus to 248 bytes). EMVCo&rsquo;s public pages show that
+          EMV is not RSA-only everywhere: its quantum position statement discusses ephemeral keys in
+          C-8 contactless, and its EMV Contact Chip page lists a specification bulletin titled
+          &ldquo;ECC ODE Key Derivation&rdquo;. So &ldquo;all offline authentication is RSA&rdquo;
+          is not a safe general statement, and the prevalence figures on the cards below are this
+          module&rsquo;s illustrative numbers, not deployment statistics. Check the current EMVCo
+          specifications for the ECC alternatives.
         </p>
 
         <div className="grid gap-4">
@@ -202,9 +217,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
 
         <div className="p-3 rounded-lg bg-status-warning/10 border border-status-warning/20">
           <p className="text-sm text-status-warning">
-            <strong>Key insight:</strong> All three EMV authentication methods rely on RSA. A
-            quantum computer capable of running Shor&apos;s algorithm could forge ICC certificates,
-            enabling counterfeit cards to pass offline terminal verification.
+            <strong>Key insight:</strong> In the RSA profile modelled here, all three methods rely
+            on RSA. A quantum computer capable of running Shor&apos;s algorithm could forge ICC
+            certificates, enabling counterfeit cards to pass offline terminal verification.
           </p>
         </div>
       </LearnSection>
@@ -234,14 +249,15 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <div className="flex items-start gap-3">
               <span className="shrink-0 w-28 font-medium text-foreground">Card → Terminal</span>
               <span className="text-muted-foreground">
-                RSA-2048 certificate chain verification (offline auth) + 3DES/AES ARQC generation
-                (symmetric)
+                RSA certificate chain verification (offline auth, in the modelled RSA profile) +
+                3DES/AES ARQC generation (symmetric)
               </span>
             </div>
             <div className="flex items-start gap-3">
               <span className="shrink-0 w-28 font-medium text-foreground">Terminal → Acquirer</span>
               <span className="text-muted-foreground">
-                TLS 1.2/1.3 with RSA/ECDSA key exchange + AES-GCM payload encryption
+                TLS 1.2/1.3: (EC)DHE key exchange (RSA key transport only in legacy TLS 1.2), RSA or
+                ECDSA certificate signatures for authentication, AES-GCM record protection
               </span>
             </div>
             <div className="flex items-start gap-3">
@@ -261,8 +277,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
 
         <p className="text-sm text-muted-foreground">
           <strong className="text-foreground">Online vs Offline:</strong> Online transactions get
-          real-time issuer authorization, providing a second layer of defense. Offline transactions
-          rely entirely on the RSA certificate chain — the quantum attack surface is larger.
+          real-time issuer authorization, providing a second layer of defense. In the RSA profile
+          modelled here, offline transactions rely entirely on the RSA certificate chain — the
+          quantum attack surface is larger.
         </p>
       </LearnSection>
 
@@ -323,21 +340,37 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           <InlineTooltip term="3-D Secure">
             <strong className="text-foreground">3-D Secure 2.0</strong>
           </InlineTooltip>{' '}
-          (Visa Secure, Mastercard Identity Check) adds cardholder authentication using ECDSA
-          challenge signing and device binding. PCI SSC lists a separate PCI 3DS Core standard among
-          its standards; this module does not state what it covers or requires.
+          (Visa Secure, Mastercard Identity Check) adds cardholder authentication: the merchant
+          sends the issuer data about the transaction, payment method and device, and the issuer may
+          require a challenge such as a one-time passcode, knowledge-based questions or biometrics
+          (EMVCo&rsquo;s public EMV 3DS overview). That overview names no cryptographic algorithm,
+          and browser-based and app-based flows use different mechanisms (the browser or SDK
+          channel, TLS between the parties, any issuer-side signing, and any SDK key agreement), so
+          the ECDSA challenge-signing and device-binding details this module shows for 3DS are
+          illustrative assumptions, not statements from the EMV 3DS specification; check its current
+          version before relying on them. PCI SSC lists a separate PCI 3DS Core standard among its
+          standards; this module does not state what it covers or requires.
         </p>
 
         <div className="glass-panel p-4 space-y-2">
           <h3 className="text-sm font-semibold text-foreground">Quantum Attack Surface</h3>
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
             <li>
-              <strong className="text-foreground">TLS key exchange:</strong> RSA/ECDSA vulnerable to
-              Shor&apos;s algorithm — HNDL risk on payment data in transit
+              <strong className="text-foreground">TLS key exchange:</strong> (EC)DHE, and RSA key
+              transport in legacy TLS 1.2, are vulnerable to Shor&apos;s algorithm — this is the
+              harvest-now-decrypt-later exposure for payment data in transit
             </li>
             <li>
-              <strong className="text-foreground">3DS challenge signing:</strong> ECDSA P-256
-              signatures can be forged, enabling unauthorized authentication
+              <strong className="text-foreground">TLS and certificate authentication:</strong>{' '}
+              RSA/ECDSA signatures prove identity, not secrecy. Forging them needs a quantum
+              computer at connection time and allows impersonation from then on; it does not decrypt
+              traffic recorded earlier
+            </li>
+            <li>
+              <strong className="text-foreground">3DS authentication (illustrative):</strong> if a
+              deployment signs 3DS messages with ECDSA, those signatures could be forged; which 3DS
+              messages are signed, and how, depends on the specification version and the
+              implementation
             </li>
             <li>
               <strong className="text-foreground">Payment gateway certificates:</strong> X.509
@@ -389,12 +422,16 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
 
         <div className="p-3 rounded-lg bg-status-error/10 border border-status-error/20">
           <p className="text-sm text-status-error">
-            <strong>Critical vulnerability:</strong> The DUKPT symmetric derivation chain is
-            quantum-safe. The quantum attack point is RSA-2048 key transport at{' '}
+            <strong>Illustrative vulnerability:</strong> The DUKPT symmetric derivation chain is
+            quantum-safe. In the fictional RSA-based remote key loading case this module models at{' '}
             <InlineTooltip term="KIF">
               <strong>Key Injection Facilities</strong>
             </InlineTooltip>
-            . Compromising the BDK allows deriving ALL past and future transaction keys.
+            , the quantum attack point is the RSA key transport of the terminal&rsquo;s derived
+            initial key. The BDK is meant to stay inside the authorised HSM: PCI PIN Security
+            Requirements v3.1 (requirement 20-3) say base derivation keys must never be loaded onto
+            POI devices, only the derived key. Compromising the BDK would allow deriving the
+            transaction keys of every terminal that shares it, which is why it is kept in the HSM.
           </p>
         </div>
 
@@ -602,17 +639,30 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           Open banking gives account information service providers (AISPs) and payment initiation
           service providers (PISPs) — often fintechs, not banks — programmatic access to a
           customer&rsquo;s account at their bank. In the EU this is not a voluntary API program; it
-          is a legal right created by{' '}
+          rests on rights in{' '}
           <Link
             to="/library?ref=PSD2-Directive-EU-2015-2366"
             className="text-primary hover:underline"
           >
             PSD2
-          </Link>{' '}
-          Article 97, which requires two-factor strong customer authentication (knowledge,
-          possession, and inherence — at least two of the three) for online account access, remote
-          payment initiation, and any action carrying fraud risk, with the authentication code
-          dynamically linked to the exact amount and payee of the transaction.
+          </Link>
+          : Article 66 gives a payer the right to use a payment initiation service, and Article 67
+          gives a payment service user the right to use account information services, in each case
+          where the payment account is accessible online. Separately, Article 97 requires strong
+          customer authentication (SCA) when the payer accesses its payment account online,
+          initiates an electronic payment transaction, or carries out an action through a remote
+          channel that may imply a risk of payment fraud; the RTS requires two or more elements from
+          knowledge, possession and inherence. Only for electronic remote payment transactions does
+          Article 97(2) add elements that dynamically link the transaction to a specific amount and
+          payee. Article 97(4) applies that dynamic-linking paragraph to payments initiated through
+          a payment initiation service provider, but applies only paragraphs 1 and 3 to information
+          requested through an account information service provider, so reading account data does
+          not carry a dynamic-linking obligation. The RTS also sets exemptions from SCA (for example
+          for limited access to balances and recent transactions, and for low-value contactless
+          payments), so SCA is not applied in every case. This describes the texts as adopted; the
+          RTS has since been amended (for example by Delegated Regulation (EU) 2022/2360 on
+          account-information access) and EU payment-services legislation is under revision, so
+          check the current consolidated text.
         </p>
         <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
           <h4 className="font-semibold text-foreground">
@@ -624,10 +674,14 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           </p>
           <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
             <li>
-              <strong className="text-foreground">Dedicated interface (Art. 30).</strong> Every bank
-              offering online-accessible accounts must expose an interface AISPs and PISPs can use
-              to identify themselves, request account data, and initiate payments — the legal basis
-              for every open-banking API in the EU.
+              <strong className="text-foreground">Access interface (Art. 30&ndash;31).</strong> A
+              bank (an account servicing payment service provider) that offers a payment account
+              accessible online must have in place at least one interface through which AISPs, PISPs
+              and card-based payment instrument issuers can identify themselves and communicate
+              securely, to request account information and to initiate payment orders (Art. 30(1)).
+              Art. 31 lets the bank meet this with a dedicated interface or by allowing those
+              providers to use the interfaces its own customers use for authentication and
+              communication. A dedicated API is the common implementation, not the only legal form.
             </li>
             <li>
               <strong className="text-foreground">
@@ -674,23 +728,21 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               to="/library?ref=PSD2-Directive-EU-2015-2366"
               className="text-primary hover:underline"
             >
-              Directive (EU) 2015/2366, Art. 97
+              Directive (EU) 2015/2366, Art. 66, 67, 97
             </Link>
             ;{' '}
             <Link to="/library?ref=EBA-RTS-SCA-2018-389" className="text-primary hover:underline">
-              Commission Delegated Regulation (EU) 2018/389, Art. 4, 5, 30, 33, 34, 35
+              Commission Delegated Regulation (EU) 2018/389, Art. 4, 5, 10, 11, 30, 31, 33, 34, 35
             </Link>
             .
           </p>
         </div>
         <p className="text-sm text-muted-foreground border-l-2 border-border pl-3">
-          <strong className="text-foreground">
-            Continental Europe&rsquo;s dominant technical implementation
-          </strong>{' '}
-          of the Article 30 dedicated interface is the Berlin Group&rsquo;s NextGenPSD2 Framework,
-          adopted by most large EU banking groups. Its site was unreachable while researching this
-          section, so this module names it without citing specifics from its own spec — the same
-          discipline applied everywhere else here.
+          <strong className="text-foreground">One published technical specification</strong> for the
+          dedicated-interface option is the Berlin Group&rsquo;s NextGenPSD2 Framework, which its
+          own site describes as &ldquo;a detailed Access to Account Open Banking Framework with
+          conceptual, logical and physical data models&rdquo;. This module does not cite the
+          specification&rsquo;s content or say how widely it is used.
         </p>
       </LearnSection>
 
