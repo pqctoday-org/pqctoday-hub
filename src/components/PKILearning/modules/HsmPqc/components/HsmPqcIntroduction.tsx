@@ -252,7 +252,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <span className="font-mono text-primary">CKK_ML_DSA</span>
                   <p className="text-muted-foreground mt-1">
                     Key type for ML-DSA (FIPS 204) digital signatures. Signatures are 3,309 bytes
-                    (ML-DSA-65) &mdash; existing buffers sized for 64-byte ECDSA will overflow.
+                    (ML-DSA-65), so a 64-byte buffer is insufficient. For functions using
+                    PKCS#11&apos;s variable-output convention, first query the required length with
+                    a null output buffer, then allocate accordingly. Handle CKR_BUFFER_TOO_SMALL
+                    using the returned required length; insufficient capacity does not itself
+                    establish a memory overflow.
                   </p>
                 </div>
               </div>
