@@ -433,9 +433,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                                 : a.category === 'short-term'
                                   ? 'Short-term · this quarter'
                                   : 'Long-term · plan it',
-                            href: a.relatedModule
-                              ? `/learn/${a.relatedModule}`
-                              : '#report-section-recommendedActions',
+                            href: a.relatedModule || '#report-section-recommendedActions',
                           }))}
                         />
                       </div>

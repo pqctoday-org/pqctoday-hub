@@ -331,6 +331,24 @@ describe('ReportContent', () => {
       const links = screen.getAllByText('Explore')
       expect(links).toHaveLength(3)
     })
+
+    it('links each top action straight to its own route', () => {
+      renderReport()
+      const hero = screen.getByTestId('top-three-actions')
+      const hrefs = Array.from(hero.querySelectorAll('a')).map((a) => a.getAttribute('href'))
+      expect(hrefs).toEqual(['/algorithms', '/threats', '/learn'])
+    })
+
+    it('falls back to the recommended actions section when an action names no route', () => {
+      renderReport({
+        ...baseResult,
+        recommendedActions: [{ ...baseResult.recommendedActions[0], relatedModule: '' }],
+      })
+      const hero = screen.getByTestId('top-three-actions')
+      expect(hero.querySelector('a')?.getAttribute('href')).toBe(
+        '/#report-section-recommendedActions'
+      )
+    })
   })
 
   describe('action buttons', () => {
