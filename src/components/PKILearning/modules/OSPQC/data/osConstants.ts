@@ -265,10 +265,10 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
     os: 'RHEL / CentOS Stream',
     policyMechanism: 'crypto-policies',
     defaultPolicy: 'DEFAULT (TLS 1.2+, RSA-2048+, AES-128+)',
-    pqcPolicy: 'FUTURE:PQCONLY (draft) — experimental in RHEL 10',
-    command: 'update-crypto-policies --set FUTURE',
+    pqcPolicy: 'DEFAULT:PQ on RHEL 9.7; the DEFAULT policy on RHEL 10.1 and later',
+    command: 'update-crypto-policies --set DEFAULT:PQ',
     notes:
-      'RHEL crypto-policies controls system-wide TLS, SSH, IPsec, and Kerberos settings. The FUTURE policy enables TLS 1.3-only and post-quantum groups. A PQCONLY subpolicy is in development for RHEL 10.',
+      'RHEL crypto-policies controls system-wide TLS, SSH, IPsec, and Kerberos settings. On RHEL 10.1 and later the DEFAULT policy enables and prefers post-quantum key exchange for TLS and SSH; on RHEL 9.7, applications based on OpenSSL or NSS can use PQC in TLS once update-crypto-policies --set DEFAULT:PQ is run.',
   },
   {
     id: 'ubuntu-openssl',

@@ -684,11 +684,11 @@ export const SecureBootChain: React.FC = () => {
           {[
             {
               year: '2025',
-              text: 'Software and firmware signing: support and prefer CNSA 2.0 (NSA advisory, September 2022; this date has passed)',
+              text: "Software and firmware signing: support and prefer CNSA 2.0 (NSA's 2022 category guidance; superseded for planning by the dates in NSA's CNSA 2.0 FAQ, version 2.2; this date has passed)",
             },
             {
               year: '2030',
-              text: 'Software and firmware signing: exclusively use CNSA 2.0 (same advisory; its other equipment categories carry different dates)',
+              text: "Software and firmware signing: exclusively use CNSA 2.0 (NSA's 2022 category guidance; superseded for planning by the dates in NSA's CNSA 2.0 FAQ, version 2.2; its other equipment categories carry different dates)",
             },
           ].map((milestone) => (
             <div key={milestone.year} className="flex items-start gap-3">

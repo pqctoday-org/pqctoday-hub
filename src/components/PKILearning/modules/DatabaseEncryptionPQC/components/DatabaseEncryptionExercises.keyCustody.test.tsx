@@ -23,6 +23,12 @@ describe('database encryption key ownership exercise', () => {
     expect(text).not.toMatch(/BYOK \(65%\)/)
   })
 
+  it('titles the exercise by key custody, not PQC readiness', () => {
+    const text = exerciseText()
+    expect(text).toContain('3. HYOK vs BYOK key custody')
+    expect(text).not.toContain('PQC Readiness')
+  })
+
   it('states that HYOK still hands the cloud engine the plaintext DEK', () => {
     const text = exerciseText()
     expect(text).toContain(

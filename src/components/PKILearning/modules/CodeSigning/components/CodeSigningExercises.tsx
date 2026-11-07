@@ -71,7 +71,7 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       badge: 'Sigstore',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The key advantage of Sigstore is that no long-term private keys exist. The ephemeral keypair — ECDSA P-256 in Fulcio today, with ML-DSA-65 as the post-quantum upgrade — lives for ~20 minutes, and the transparency log (Rekor) serves as the permanent verification anchor.',
+        'The key advantage of Sigstore is that developers have no long-term artifact-signing private keys to manage, rotate, or protect. The ephemeral keypair — ECDSA P-256 in Fulcio today, with ML-DSA-65 as the post-quantum upgrade — lives for ~20 minutes, and the transparency log (Rekor) serves as the permanent verification anchor.',
       config: { step: 3 },
     },
     {

@@ -33,7 +33,7 @@ const OS_CONFIGS: Record<OSSelection, OSConfig> = {
     id: 'rhel',
     label: 'RHEL / CentOS Stream',
     currentPolicy: 'DEFAULT',
-    pqcPolicy: 'FUTURE',
+    pqcPolicy: 'DEFAULT:PQ on RHEL 9.7; the DEFAULT policy on RHEL 10.1 and later',
     configFile: '/etc/crypto-policies/config',
     currentCiphers: [
       { name: 'TLS_AES_256_GCM_SHA384', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
@@ -52,26 +52,8 @@ const OS_CONFIGS: Record<OSSelection, OSConfig> = {
       },
       { name: 'TLS_AES_256_GCM_SHA384', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
       { name: 'TLS_AES_128_GCM_SHA256', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
-      {
-        name: 'ECDHE-RSA-AES256-GCM-SHA384',
-        quantumSafe: false,
-        enabled: false,
-        note: 'Disabled in FUTURE policy',
-      },
-      {
-        name: 'ECDHE-RSA-AES128-GCM-SHA256',
-        quantumSafe: false,
-        enabled: false,
-        note: 'Disabled in FUTURE policy',
-      },
-      {
-        name: 'DHE-RSA-AES256-GCM-SHA384',
-        quantumSafe: false,
-        enabled: false,
-        note: 'Disabled in FUTURE policy',
-      },
     ],
-    beforeConfig: `# Current: /etc/crypto-policies/config
+    beforeConfig: `# RHEL 9.7 before enabling the PQ policy: /etc/crypto-policies/config
 DEFAULT
 
 # Active profile (check with):
@@ -81,28 +63,29 @@ DEFAULT
 # TLS groups active (OpenSSL):
 $ openssl s_client -connect example.com:443 2>&1 | grep "Server Temp Key"
 Server Temp Key: X25519, 253 bits
-# (no ML-KEM hybrid — classical only)`,
-    afterConfig: `# After: Enable FUTURE policy
-$ update-crypto-policies --set FUTURE
-Setting system policy to FUTURE
-Note: System restart required for kernel settings
+# (no ML-KEM hybrid — classical only)
+
+# On RHEL 10.1 and later the DEFAULT policy already enables and prefers
+# post-quantum key exchange, so this "before" state applies to RHEL 9.7.`,
+    afterConfig: `# After, on RHEL 9.7: enable the PQ policy
+$ update-crypto-policies --set DEFAULT:PQ
 
 # Verify:
 $ update-crypto-policies --show
-FUTURE
+DEFAULT:PQ
 
 # TLS groups active after change:
 $ openssl s_client -connect pqc-enabled-server.com:443 \\
   -groups x25519mlkem768:x25519:P-256 2>&1 | grep "Server Temp Key"
 Server Temp Key: X25519MLKEM768, 1152 bits
-# (hybrid ML-KEM-768 + X25519 — quantum-safe!)
+# (hybrid key exchange: ML-KEM-768 + X25519)
 
-# For PQC-only subpolicy (RHEL 10 experimental):
-$ update-crypto-policies --set FUTURE:PQCONLY`,
+# On RHEL 10.1 and later no change is needed: the DEFAULT policy
+# enables and prefers the hybrid group for TLS and SSH.`,
     impactNote:
-      'FUTURE policy enables TLS 1.3-only, disables TLS 1.2, SHA-1, and weak DH. Applications using TLS 1.2-only connections will fail — test before deploying.',
+      'On RHEL 10.1 and later the DEFAULT policy applies to applications that use OpenSSL, GnuTLS, NSS or Go; on RHEL 9.7, DEFAULT:PQ applies to applications based on OpenSSL or NSS. The mechanism is hybrid key-exchange groups in TLS 1.3, not new cipher suites.',
     compatNote:
-      'Legacy applications compiled against OpenSSL < 3.x may not support TLS 1.3 or ML-KEM groups. Use the DEFAULT:HARDEN-LEGACY subpolicy for gradual migration.',
+      'Each application also has to use the library setting that offers the hybrid group, so check applications one by one and confirm with a test connection that the negotiated group is hybrid. Legacy applications compiled against OpenSSL < 3.x may not support TLS 1.3 or ML-KEM groups.',
   },
   ubuntu: {
     id: 'ubuntu',

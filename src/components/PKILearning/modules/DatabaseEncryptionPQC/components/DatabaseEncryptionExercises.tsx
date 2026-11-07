@@ -54,7 +54,7 @@ export const DatabaseEncryptionExercises: React.FC<DatabaseEncryptionExercisesPr
     },
     {
       id: 'byok-architecture',
-      title: '3. HYOK vs BYOK PQC Readiness',
+      title: '3. HYOK vs BYOK key custody',
       description:
         'Compare the three key ownership patterns in the BYOK Architecture Designer: Provider-Managed, BYOK and HYOK. For each, ask who holds the master key, whether the cloud database engine receives the plaintext DEK after the on-premises unwrap, and how access is revoked.',
       badge: 'Architecture',

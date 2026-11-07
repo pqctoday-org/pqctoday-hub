@@ -6,7 +6,10 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
-import { CNSA_PHASE_OUT_LABEL } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
+import {
+  CNSA_ACQUISITION_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -45,7 +48,7 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0 new NSS acquisitions / OS must support PQC',
+      label: CNSA_ACQUISITION_LABEL,
       year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0',
     },

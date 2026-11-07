@@ -80,3 +80,15 @@ describe('STEP_EXERCISES: key rotation is not inferred from a fixed algorithm', 
     expect(ex.why).toMatch(/SP 800-57 Part 1 Rev\. 5, Sec\. 5\.3\.1/)
   })
 })
+
+describe('STEP_EXERCISES: CNSA 2.0 dates follow the FAQ', () => {
+  const ex = STEP_EXERCISES['iot-pqc/firmware-signing']
+  it('gives the three FAQ dates for national security systems', () => {
+    expect(ex.why).toContain('1 January 2027')
+    expect(ex.why).toContain('31 December 2030')
+    expect(ex.why).toContain('31 December 2031')
+  })
+  it('does not state the 2022 category schedule as the requirement', () => {
+    expect(ex.why).not.toMatch(/preferred from 2025|exclusive by 2030/)
+  })
+})

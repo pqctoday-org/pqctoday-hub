@@ -984,7 +984,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     prompt: 'Which algorithms does the step mark as accepted for CNSA 2.0 firmware signing?',
     options: ['LMS, XMSS and ML-DSA-87', 'Every ML-DSA parameter set', 'FN-DSA-512 and ML-DSA-44'],
     answer: 0,
-    why: 'CNSA 2.0 accepts ML-DSA-87, or LMS/XMSS per NIST SP 800-208, for software and firmware signing: preferred from 2025, exclusive by 2030.',
+    why: "CNSA 2.0 accepts ML-DSA-87, or LMS/XMSS per NIST SP 800-208, for software and firmware signing. NSA's CNSA 2.0 FAQ (version 2.2) sets three dates for national security systems: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted.",
   },
   'iot-pqc/constrained-handshake': {
     prompt: 'Why is the EDHOC exchange so much smaller than DTLS 1.3 with certificates?',

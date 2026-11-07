@@ -251,6 +251,26 @@ const cases: Case[] = [
 
 cases.push(
   {
+    file: 'DataAssetSensitivity/components/DataAssetExercises.tsx',
+    gone: [
+      'software and firmware signing should transition to exclusive CNSA 2.0 use by 2030',
+      'moving to exclusive use by 2033',
+    ],
+    present: [
+      'CNSA 2.0 FAQ (version 2.2) sets three dates for national security systems: new acquisitions from 1 January 2027',
+    ],
+  },
+  {
+    file: 'OTPQC/data/regulationsData.ts',
+    gone: ["{ category: 'All National Security Systems'"],
+    present: ['exclusive: 2033'],
+  },
+  {
+    file: 'SocImplementationPqc/content.ts',
+    gone: ['OS must support PQC'],
+    present: ['label: CNSA_ACQUISITION_LABEL'],
+  },
+  {
     file: 'PKIWorkshop/content.ts',
     gone: ['CNSA 2.0 large PKI systems exclusive'],
     present: ['label: CNSA_MANDATE_LABEL'],

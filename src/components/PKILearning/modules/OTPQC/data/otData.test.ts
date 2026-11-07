@@ -332,8 +332,14 @@ describe('Regulations (E2/E3/E7/E13–E16)', () => {
     const c = (s: string) => CNSA_2_0_CATEGORIES.find((x) => x.category.startsWith(s))!
     expect([c('Software').prefer, c('Software').exclusive]).toEqual([2025, 2030])
     expect([c('Traditional').prefer, c('Traditional').exclusive]).toEqual([2026, 2030])
-    expect([c('Operating').prefer, c('Operating').exclusive]).toEqual([2027, 2031])
-    expect(c('All').exclusive).toBe(2031)
+    // 2022 chart: operating systems exclusive 2033 (not the FAQ's 2031 mandate year)
+    expect([c('Operating').prefer, c('Operating').exclusive]).toEqual([2027, 2033])
+  })
+  it('the 2022 table has no all-systems row (the FAQ mandate year is not a 2022 value)', () => {
+    expect(CNSA_2_0_CATEGORIES.map((x) => x.category)).not.toContain(
+      'All National Security Systems'
+    )
+    expect(CNSA_2_0_CATEGORIES.some((x) => x.exclusive === 2031)).toBe(false)
   })
   it('the per-category CNSA 2.0 table is marked as the 2022 guidance, superseded by the FAQ dates', () => {
     const src = fs.readFileSync(path.resolve(__dirname, 'regulationsData.ts'), 'utf8')

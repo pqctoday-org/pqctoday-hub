@@ -141,7 +141,9 @@ export interface CnsaCategory {
 /**
  * CNSA 2.0 per-category dates as NSA's 2022 category guidance gave them (NSA's 2022 category
  * guidance; superseded for planning by the dates in NSA's CNSA 2.0 FAQ, version 2.2). Kept as
- * history. Networking "prefer" (2026) has no shared constant.
+ * history. Networking "prefer" (2026) and operating-system "exclusive" (2033) have no shared
+ * constant. The 2022 chart has no all-systems row; the 2035 NSM-10 goal and the FAQ's mandate
+ * date are not part of it.
  */
 export const CNSA_2_0_CATEGORIES: CnsaCategory[] = [
   {
@@ -157,7 +159,6 @@ export const CNSA_2_0_CATEGORIES: CnsaCategory[] = [
   {
     category: 'Operating systems',
     prefer: CNSA_2_0.networkingRequired,
-    exclusive: CNSA_2_0.networkingExclusive,
+    exclusive: 2033,
   },
-  { category: 'All National Security Systems', prefer: null, exclusive: CNSA_2_0.fullEnforcement },
 ]
