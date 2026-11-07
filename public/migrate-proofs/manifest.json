@@ -29245,6 +29245,51 @@
       "admittedBy": "evidence admission",
       "identity": "SKIPPED",
       "tier": "curl_cffi:chrome"
+    },
+    {
+      "product_id": "pqctoday-kmip",
+      "refId": "pqctoday-kmip",
+      "file": "pqctoday-kmip-9fc2b7c8.html",
+      "sizeBytes": 294210,
+      "content_type": "text/html",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.32.0",
+      "sha256": "ad80d54c557c7354d6032205c422f57df43c3bc3c139cc699aa815863700d70f",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T20:05:32.875143+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pqctoday-kmip",
+      "refId": "pqctoday-kmip",
+      "file": "pqctoday-kmip-f8bbea14.json",
+      "sizeBytes": 15749,
+      "content_type": "application/json",
+      "url": "https://raw.githubusercontent.com/pqctoday-org/pqctoday-hsm/main/kmip/Cargo.toml",
+      "sha256": "a9b5f0e9cb33b4fe45b959da414c8c09c43b14a793ceab278d5f3a4325d499ce",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T20:05:33.307878+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pqctoday-kmip",
+      "refId": "pqctoday-kmip",
+      "file": "pqctoday-kmip-9d92b90c.json",
+      "sizeBytes": 115048,
+      "content_type": "application/json",
+      "url": "https://api.github.com/repos/pqctoday-org/pqctoday-hsm/releases/tags/v0.32.0",
+      "sha256": "4467cfcbc20cba8f5117e728920cd7fae329b5da4068f28292c42acef82fa217",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T20:05:34.424041+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
