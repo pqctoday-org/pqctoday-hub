@@ -10,6 +10,11 @@ export interface IndustryComplianceConfig {
   countries: string[]
   complianceDeadline: string
   complianceNotes: string
+  /**
+   * The reviewed all-sector answer from the compliance catalogue (`true` yes, `false` no, absent
+   * not yet reviewed). Readers decide through `coversEverySector` in utils/applicabilityEngine.
+   */
+  allSectorsReviewed?: boolean
 }
 
 export interface IndustryUseCaseConfig {

@@ -213,7 +213,7 @@ export interface ApplicableFrameworksView {
 /** Build a short human reason for why a framework is hidden, by checking which
  *  applicability dimension (country, industry, or both) failed for the user's
  *  profile. Designed for the small expander panel — keep terse, no jargon. */
-function describeHiddenReason(
+export function describeHiddenReason(
   framework: TrackedFramework,
   industry: string,
   country: string

@@ -4,6 +4,7 @@ import { filterComplianceRequirements, splitComplianceRequirements } from './com
 import { computeAssessment, computeAssessmentAsync } from './orchestrator'
 import { industryComplianceConfigs } from '../../data/industryAssessConfig'
 import { AVAILABLE_INDUSTRIES } from '../assessmentData'
+import { coversEverySector } from '../../utils/applicabilityEngine'
 import { EXAMPLE_REPORT_SHARE_PAYLOAD } from '../../data/exampleReport'
 import type { AssessmentInput } from '../assessmentTypes'
 
@@ -53,7 +54,13 @@ describe('filterComplianceRequirements — reference estates', () => {
   })
 
   it('only ever adds: whatever an exact-name match kept is still kept', () => {
-    type Cfg = { label: string; industries: string[]; countries: string[] }
+    type Cfg = {
+      id: string
+      label: string
+      industries: string[]
+      countries: string[]
+      allSectorsReviewed?: boolean
+    }
     const configs = industryComplianceConfigs as unknown as Cfg[]
     const labels = configs.map((c) => c.label)
     const exactCountry = (c: Cfg, country: string) =>
@@ -66,8 +73,7 @@ describe('filterComplianceRequirements — reference estates', () => {
         const exactMatch = configs
           .filter(
             (c) =>
-              (c.industries.includes(industry) || c.industries.length >= 3) &&
-              exactCountry(c, country)
+              (c.industries.includes(industry) || coversEverySector(c)) && exactCountry(c, country)
           )
           .map((c) => c.label)
         const now = new Set(filterComplianceRequirements(labels, industry, country))

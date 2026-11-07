@@ -19,6 +19,7 @@ import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import type { ExperienceLevel, Region } from '../../store/usePersonaStore'
 import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'
+import { coversEverySector } from '../../utils/applicabilityEngine'
 
 // ── Output type ──────────────────────────────────────────────────────────
 
@@ -402,10 +403,10 @@ function getComplianceDefaults(
       : null
 
   const filtered = complianceFrameworks.filter((fw) => {
-    // Industry filter (same logic as Step5Compliance)
+    // Industry filter (same logic as Step5Compliance): a framework is kept for every industry
+    // when its reviewed all-sector answer is yes (or, until reviewed, it has 0 or 3+ tags)
     if (industry && industry !== 'Other') {
-      const isUniversal = fw.industries.length === 0 || fw.industries.length >= 3
-      if (!isUniversal && !fw.industries.includes(industry)) return false
+      if (!coversEverySector(fw) && !fw.industries.includes(industry)) return false
     }
     // Country filter: exact match takes priority; region fallback when country is blank
     if (country && country !== 'Global') {

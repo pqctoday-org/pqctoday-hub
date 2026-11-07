@@ -6,6 +6,9 @@ import Papa from 'papaparse'
 import {
   complianceFrameworks,
   allComplianceFrameworks,
+  mapComplianceRow,
+  toIndustryComplianceConfig,
+  type RawComplianceRow,
   complianceDB,
   bindingDataPresent,
   conceptIdForFramework,
@@ -272,6 +275,24 @@ describe('compliance binding_status column', () => {
     }
   })
 
+  it('holds only yes, no or a blank in the all_sectors_reviewed column (case and spaces ignored)', () => {
+    const bad = rows
+      .map((r) => ({ id: r.id, cell: (r.all_sectors_reviewed ?? '').trim().toLowerCase() }))
+      .filter((r) => r.cell !== '' && r.cell !== 'yes' && r.cell !== 'no')
+    // A "Y", "true", "yess" or "unclear" would silently read as "not reviewed".
+    expect(bad).toEqual([])
+  })
+
+  it('gives every active "no" at least one sector tag, so the record can still reach its own sector', () => {
+    const stranded = rows
+      .filter((r) => r.status !== 'deprecated' && r.status !== 'obsolete')
+      .filter((r) => (r.all_sectors_reviewed ?? '').trim().toLowerCase() === 'no')
+      .filter((r) => (r.industries ?? '').split(';').filter((t) => t.trim()).length === 0)
+      .map((r) => r.id)
+    // A "no" with no tags covers no sector at all and would vanish for every reader.
+    expect(stranded).toEqual([])
+  })
+
   it('maps yes, no and anything else to true, false and not reviewed', () => {
     expect(parseAllSectorsReviewed('yes')).toBe(true)
     expect(parseAllSectorsReviewed(' Yes ')).toBe(true)
@@ -324,5 +345,61 @@ describe('the FIPS 140-3 record links to the CMVP documents', () => {
     const ids = new Set(libraryData.map((d) => d.referenceId))
     const missing = (record?.libraryRefs ?? []).filter((ref) => !ids.has(ref))
     expect(missing).toEqual([])
+  })
+})
+
+// The loader's row mapper, on small rows, so the column is tested whatever the real file holds.
+describe('compliance all_sectors_reviewed through the row mapper', () => {
+  const baseRow: RawComplianceRow = {
+    id: 'FIXTURE-1',
+    label: 'Fixture framework',
+    description: '',
+    industries: 'Finance & Insurance;Healthcare & Life Sciences;Information Technology',
+    countries: 'Global',
+    requires_pqc: 'yes',
+    deadline: '2030',
+    notes: '',
+    enforcement_body: '',
+    library_refs: '',
+    learn_modules: '',
+    timeline_refs: '',
+    body_type: '',
+    website: '',
+    trusted_source_id: '',
+    peer_reviewed: '',
+    vetting_body: '',
+    website_url_quality: '',
+  }
+  const cell = (all_sectors_reviewed: string | undefined) =>
+    mapComplianceRow({ ...baseRow, all_sectors_reviewed })
+
+  it('reads yes as reviewed for every sector and no as reviewed as not, whatever the tag count', () => {
+    expect(cell('yes')?.allSectorsReviewed).toBe(true)
+    expect(cell('no')?.allSectorsReviewed).toBe(false)
+    expect(cell('no')?.industries).toHaveLength(3)
+  })
+
+  it('reads a blank cell and a missing column as not yet reviewed', () => {
+    expect(cell('')?.allSectorsReviewed).toBeUndefined()
+    expect(cell('   ')?.allSectorsReviewed).toBeUndefined()
+    expect(mapComplianceRow(baseRow)?.allSectorsReviewed).toBeUndefined()
+  })
+
+  it('ignores case and surrounding spaces', () => {
+    expect(cell(' YES ')?.allSectorsReviewed).toBe(true)
+    expect(cell('No')?.allSectorsReviewed).toBe(false)
+    expect(cell('\u00a0yes\u00a0')?.allSectorsReviewed).toBe(true)
+  })
+
+  it('reads any other word as not yet reviewed, never as yes', () => {
+    for (const word of ['y', 'true', '1', 'yess', 'unclear', 'maybe', 'n']) {
+      expect(cell(word)?.allSectorsReviewed, word).toBeUndefined()
+    }
+  })
+
+  it('carries the answer into the assessment wizard configuration', () => {
+    expect(toIndustryComplianceConfig(cell('yes')!).allSectorsReviewed).toBe(true)
+    expect(toIndustryComplianceConfig(cell('no')!).allSectorsReviewed).toBe(false)
+    expect(toIndustryComplianceConfig(cell('')!).allSectorsReviewed).toBeUndefined()
   })
 })

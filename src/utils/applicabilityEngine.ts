@@ -561,18 +561,6 @@ function isIndustryUniversal(industries: string[]): boolean {
   return industries.length === 0 || industries.length >= 3
 }
 
-/**
- * Whether a framework is shown to readers in every sector. A reviewed answer decides: `yes`
- * covers every sector, `no` covers only the sectors it names, however many tags it carries.
- * A blank (not yet reviewed) answer falls back to the older sector-tag count.
- */
-export function coversEverySector(
-  fw: Pick<ComplianceFramework, 'industries' | 'allSectorsReviewed'>
-): boolean {
-  if (fw.allSectorsReviewed !== undefined) return fw.allSectorsReviewed
-  return isIndustryUniversal(fw.industries)
-}
-
 function isCountryUniversal(countries: string[]): boolean {
   return countries.length === 0 || countries.includes('Global')
 }
@@ -585,6 +573,34 @@ function isCountryUniversal(countries: string[]): boolean {
  */
 const REVIEWED_ALL_SECTOR_IDS: ReadonlySet<string> = new Set(['GDPR'])
 
+/**
+ * The reviewed all-sector answer for a framework: the catalogue cell when it is filled in
+ * (`true` for yes, `false` for no), else `true` for a record on the reviewed list above, else
+ * `undefined` (not reviewed). Every reader of the rule goes through this, so the list and the
+ * sector-tag fallback can never disagree.
+ */
+export function reviewedAllSectorAnswer(
+  fw: Pick<ComplianceFramework, 'id' | 'allSectorsReviewed'>
+): boolean | undefined {
+  if (fw.allSectorsReviewed !== undefined) return fw.allSectorsReviewed
+  return REVIEWED_ALL_SECTOR_IDS.has(fw.id) ? true : undefined
+}
+
+/**
+ * Whether a framework is shown to readers in every sector. A reviewed answer decides: `yes`
+ * covers every sector, `no` covers only the sectors it names, however many tags it carries.
+ * A blank (not yet reviewed) answer falls back to the older sector-tag count, unless the
+ * record is on the reviewed list above. The Assess wizard, the report filter, the Business
+ * Center and the applicability engine all read this one function.
+ */
+export function coversEverySector(
+  fw: Pick<ComplianceFramework, 'id' | 'industries' | 'allSectorsReviewed'>
+): boolean {
+  const reviewed = reviewedAllSectorAnswer(fw)
+  if (reviewed !== undefined) return reviewed
+  return isIndustryUniversal(fw.industries)
+}
+
 export function applicableFrameworks(
   profile: UserProfile,
   frameworks: ComplianceFramework[] = complianceFrameworks
@@ -596,7 +612,7 @@ export function applicableFrameworks(
       countries: fw.countries,
       industries: expandIndustriesForMatching(fw.industries),
       industryUniversal: coversEverySector(fw),
-      allSectorsReviewed: fw.allSectorsReviewed ?? REVIEWED_ALL_SECTOR_IDS.has(fw.id),
+      allSectorsReviewed: reviewedAllSectorAnswer(fw),
       countryUniversal: isCountryUniversal(fw.countries),
       enforcementBody: fw.enforcementBody,
       bodyType: fw.bodyType,

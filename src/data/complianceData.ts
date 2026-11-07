@@ -166,7 +166,7 @@ export interface ComplianceFramework {
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
 
-interface RawComplianceRow {
+export interface RawComplianceRow {
   id: string
   label: string
   description: string
@@ -296,10 +296,11 @@ function classifyDeadline(deadline: string, year: number | undefined): DeadlineP
   return 'long'
 }
 
-const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
-  RawComplianceRow,
-  ComplianceFramework
->(modules, /compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/, (row) => {
+/**
+ * Turns one row of the compliance CSV into a framework, or null for a row without an id or a
+ * label. Exported so the column readers can be tested on small fixture rows.
+ */
+export function mapComplianceRow(row: RawComplianceRow): ComplianceFramework | null {
   if (!row.id || !row.label) return null
 
   if (row.body_type && !validBodyTypes.includes(row.body_type as BodyType)) {
@@ -412,7 +413,12 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     bindingScope: row.binding_scope?.trim() || undefined,
     bindingScopeEn: row.binding_scope_en?.trim() || undefined,
   }
-})
+}
+
+const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
+  RawComplianceRow,
+  ComplianceFramework
+>(modules, /compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/, mapComplianceRow)
 
 /**
  * All ACTIVE compliance frameworks from the latest compliance CSV. Deprecated /
@@ -530,16 +536,23 @@ export const availableRegions: RegionBloc[] = REGION_BLOC_ORDER.filter((region) 
  * Maps compliance frameworks to IndustryComplianceConfig shape
  * for backward compatibility with the assessment wizard (Step 5).
  */
-export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = frameworks.map((fw) => ({
-  category: 'compliance' as const,
-  id: fw.id,
-  label: fw.label,
-  description: fw.description,
-  industries: fw.industries,
-  countries: fw.countries,
-  complianceDeadline: fw.deadline,
-  complianceNotes: fw.notes,
-}))
+export function toIndustryComplianceConfig(fw: ComplianceFramework): IndustryComplianceConfig {
+  return {
+    category: 'compliance' as const,
+    id: fw.id,
+    label: fw.label,
+    description: fw.description,
+    industries: fw.industries,
+    countries: fw.countries,
+    complianceDeadline: fw.deadline,
+    complianceNotes: fw.notes,
+    allSectorsReviewed: fw.allSectorsReviewed,
+  }
+}
+
+export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = frameworks.map(
+  toIndustryComplianceConfig
+)
 
 /**
  * Maps compliance frameworks to the COMPLIANCE_DB shape

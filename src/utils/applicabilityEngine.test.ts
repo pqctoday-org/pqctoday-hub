@@ -8,6 +8,7 @@ import {
   coversEverySector,
   groupByTier,
   isProfileEmpty,
+  reviewedAllSectorAnswer,
   type UserProfile,
 } from './applicabilityEngine'
 
@@ -573,8 +574,23 @@ describe('applicableFrameworks — the reviewed all-sector answer decides when i
       bindingBasis: 'Agency rule',
     })
     expect(coversEverySector(fw)).toBe(false)
+    // Dropped for a sector outside its tags. The three-tag count used to keep it as
+    // 'cross-border', so asserting the record is gone is what separates the two rules.
+    expect(applicableFrameworks(bank, [fw])).toEqual([])
+  })
+
+  it('no still shows the record to a sector inside its tags', () => {
+    const fw = makeFramework({
+      id: 'ALL-NO-INSIDE',
+      countries: ['United States'],
+      industries: [...threeTags, 'Healthcare & Life Sciences'],
+      allSectorsReviewed: false,
+      enforcementBody: 'NIST',
+      bindingStatus: 'binding',
+      bindingBasis: 'Agency rule',
+    })
     const [result] = applicableFrameworks(bank, [fw])
-    expect(result?.tier).not.toBe('mandatory')
+    expect(result?.tier).toBe('mandatory')
   })
 
   it('blank keeps the sector-tag count: three tags cover every sector, one tag does not', () => {
@@ -587,6 +603,42 @@ describe('applicableFrameworks — the reviewed all-sector answer decides when i
 
   it('blank with no sector tags still covers every sector, as before', () => {
     expect(coversEverySector(makeFramework({ industries: [] }))).toBe(true)
+  })
+
+  it('a record on the reviewed list covers every sector while its cell is blank, whatever its tag count', () => {
+    // The list and the tag fallback are one decision: trimming GDPR to a single tag must not
+    // make it a one-sector framework while the engine still lists it as reviewed.
+    const trimmed = makeFramework({ id: 'GDPR', industries: ['Finance & Insurance'] })
+    expect(reviewedAllSectorAnswer(trimmed)).toBe(true)
+    expect(coversEverySector(trimmed)).toBe(true)
+    const government: UserProfile = {
+      industry: 'Government & Defense',
+      country: 'France',
+      region: 'eu',
+    }
+    const gdpr = makeFramework({
+      id: 'GDPR',
+      countries: ['European Union'],
+      industries: ['Finance & Insurance'],
+      enforcementBody: 'European Commission',
+      bindingStatus: 'binding',
+      bindingBasis: 'Regulation (EU) 2016/679',
+    })
+    const [result] = applicableFrameworks(government, [gdpr])
+    expect(result?.tier).toBe('mandatory')
+  })
+
+  it('a filled cell overrides the reviewed list, and other ids have no list entry', () => {
+    expect(reviewedAllSectorAnswer(makeFramework({ id: 'GDPR', allSectorsReviewed: false }))).toBe(
+      false
+    )
+    expect(reviewedAllSectorAnswer(makeFramework({ id: 'X-1', allSectorsReviewed: true }))).toBe(
+      true
+    )
+    expect(reviewedAllSectorAnswer(makeFramework({ id: 'X-1' }))).toBeUndefined()
+    expect(
+      coversEverySector(makeFramework({ id: 'GDPR', industries: ['A'], allSectorsReviewed: false }))
+    ).toBe(false)
   })
 
   it('GDPR keeps the mandatory tier while its cell is blank, and loses it when the cell says no', () => {
