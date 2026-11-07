@@ -35,11 +35,12 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
             </h2>
             <p className="mt-2 text-muted-foreground">
               The Messaging Layer Security protocol (RFC 9420) provides asynchronous group key
-              establishment with forward secrecy and post-compromise security for groups from two to
+              establishment with forward secrecy and, conditionally, post-compromise security (once
+              a committed fresh leaf key replaces the compromised one) for groups from two to
               thousands. Our
               <span className="text-primary"> openmls_pqctoday_crypto</span> Rust provider wires the
-              OpenMLS reference implementation to PKCS#11 v3.2 so signature keys live in an HSM and
-              HPKE runs end-to-end inside the token.
+              OpenMLS reference implementation to PKCS#11 v3.2 so signature keys are held as token
+              objects of a PKCS#11 module (a software token in this sample).
             </p>
           </div>
         </div>
@@ -50,7 +51,8 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
           <MessageSquare size={20} className="text-primary mb-2" />
           <h3 className="font-semibold">RFC 9420 baseline</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Asynchronous group key agreement via TreeKEM. Forward secrecy + post-compromise security
+            Asynchronous group key agreement via TreeKEM. Forward secrecy + conditional
+            post-compromise security (once a committed fresh leaf key replaces the compromised one)
             with O(log N) Commit cost.
           </p>
         </div>
@@ -70,7 +72,8 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
           <p className="text-sm text-muted-foreground mt-1">
             Our PKCS#11 provider holds signature keys as token objects with{' '}
             <span className="text-foreground">CKA_SENSITIVE=TRUE</span>. OpenMLS sees opaque
-            handles, never raw bytes.
+            handles; raw private-key bytes are not returned through this interface (the sample token
+            is software in the same process).
           </p>
         </div>
       </div>
