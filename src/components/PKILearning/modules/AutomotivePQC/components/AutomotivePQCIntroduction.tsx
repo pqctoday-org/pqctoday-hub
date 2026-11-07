@@ -87,8 +87,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             Modern vehicles are among the most complex distributed computing systems in production
-            today. A premium vehicle contains 100&ndash;150 Electronic Control Units (
-            <InlineTooltip term="ECU">ECUs</InlineTooltip>) communicating over multiple bus
+            today. Example figures: a premium vehicle contains 100&ndash;150 Electronic Control
+            Units (<InlineTooltip term="ECU">ECUs</InlineTooltip>) communicating over multiple bus
             technologies; of these, 24&ndash;30 are security-relevant &mdash; the focus of PQC
             migration planning. The cryptographic requirements span from real-time safety-critical
             signing (brake-by-wire commands in &lt;1 ms) to bulk data protection (

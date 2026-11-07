@@ -2,15 +2,15 @@
 
 ## What This Is About
 
-Modern vehicles are essentially massive, high-speed computers on wheels. They have a 15+ year lifespan on the road. The digital cryptography and certificates embedded in the hardware today to secure firmware updates will face catastrophic quantum threats long before the vehicle retires.
+Modern vehicles are essentially massive, high-speed computers on wheels. They have a 15+ year lifespan on the road. The digital cryptography and certificates embedded in the hardware today to secure firmware updates could outlive their security if a quantum computer arrives during the car's life.
 
 ## Why It Matters
 
-An attacker equipped with a quantum computer could mathematically forge over-the-air (OTA) update signatures. This would allow them to bypass security checks and push highly malicious, weaponized firmware directly into the engine, brakes, and steering modules of thousands of vehicles simultaneously.
+An attacker equipped with a quantum computer could mathematically forge over-the-air (OTA) update signatures. This would allow them to bypass security checks and push highly malicious, weaponized firmware directly into the engine, brakes, and steering modules of many vehicles simultaneously.
 
 ## The Key Takeaway
 
-Automotive manufacturers must engineer their secure boot systems today to embed massive, quantum-safe root certificates (like LMS/HSS or ML-DSA) deeply into the vehicle's engine control units, long before the car ever rolls off the assembly line.
+Automotive manufacturers should plan for post-quantum signatures (like LMS/HSS or ML-DSA) when designing secure boot, because the root key often cannot be changed later.
 
 ## What's Happening
 
