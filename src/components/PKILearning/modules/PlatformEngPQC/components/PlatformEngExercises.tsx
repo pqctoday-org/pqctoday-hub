@@ -90,7 +90,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-accent/20 text-accent border-accent/50',
       observe:
-        'The decision path leads to: "Revert ssl-ecdh-curve to X25519:P-256. The X25519MLKEM768 group is additive — removing it is non-breaking. File bug with client vendor for ML-KEM support." This is the correct approach because X25519MLKEM768 (ML-KEM-768 + X25519) is a hybrid — removing the ML-KEM component is safe for compatibility and does not break existing sessions. The classical X25519 continues to provide forward secrecy.',
+        'The decision path leads to: revert ssl-ecdh-curve to X25519:P-256 and file a bug with the client vendor for ML-KEM support. Treat the revert as a temporary policy trade-off back to classical-only key exchange. Test client compatibility.',
       config: { step: 5 },
     },
   ]

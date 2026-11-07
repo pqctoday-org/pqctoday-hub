@@ -26,3 +26,16 @@ describe('sample capacity interpretation', () => {
     expect(navigate).toHaveBeenCalledOnce()
   })
 })
+
+describe('rollback exercise wording', () => {
+  it('presents the revert as a temporary trade-off to classical-only key exchange', () => {
+    render(<PlatformEngExercises onNavigateToWorkshop={vi.fn()} />)
+    const observation = screen.getByText(/revert ssl-ecdh-curve to X25519:P-256/)
+    expect(observation).toHaveTextContent('temporary policy trade-off')
+    expect(observation).toHaveTextContent('classical-only key exchange')
+    expect(observation).toHaveTextContent('Test client compatibility')
+    expect(observation).not.toHaveTextContent('non-breaking')
+    expect(observation).not.toHaveTextContent('additive')
+    expect(observation).not.toHaveTextContent('safe for compatibility')
+  })
+})
