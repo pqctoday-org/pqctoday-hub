@@ -107,10 +107,13 @@ describe('OT protocol facts', () => {
     })
   })
 
-  it('every public-key size delta comes from the algorithm registry', () => {
+  it('public-key sizes use algorithm components or RFC 10024 group shares', () => {
     const allowed = new Set([
       32,
       33,
+      65, // TLS uncompressed P-256 point, RFC 10024 section 4.2
+      1120, // X25519MLKEM768 server share
+      1153, // SecP256r1MLKEM768 server share
       getAlgorithm('ML-KEM-768').signatureOrCiphertextBytes,
       getAlgorithm('ML-DSA-44').signatureOrCiphertextBytes,
       getAlgorithm('ML-DSA-65').signatureOrCiphertextBytes,

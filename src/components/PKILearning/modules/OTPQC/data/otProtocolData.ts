@@ -36,9 +36,10 @@ export interface ProtocolCryptoLayer {
   threat: LayerThreat
   /** What to migrate to, or null when nothing needs to change. */
   pqcPath: string | null
-  /** Bytes on the wire for the public-key element today / after migration
-   *  (FIPS 203/204 sizes from the algorithm registry). Omitted for symmetric
-   *  or absent layers. */
+  /** Bytes for the stated component or directional group-share example.
+   *  Algorithm lengths come from the registry; combined TLS shares follow
+   *  RFC 10024 as named in sizeBasis. Not complete handshake sizes.
+   *  Omitted for symmetric or absent layers. */
   classicalBytes?: number
   pqcBytes?: number
   /** What the byte figures measure, e.g. "key share" or "one signature". */
@@ -153,10 +154,11 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         threat: 'hndl',
         pqcPath: 'Hybrid ML-KEM-768 key exchange in TLS 1.3',
         classicalBytes: X25519_SHARE,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'server key share (X25519 → ML-KEM-768 ciphertext)',
+        pqcBytes: ML_KEM_768_CT + X25519_SHARE,
+        sizeBasis:
+          'Illustrative X25519 32 B → X25519MLKEM768 server key_exchange 1,120 B; client 1,216 B (RFC 10024)',
         notes:
-          'TCP carries the larger handshake without trouble; the IED firmware must support TLS 1.3.',
+          'Larger handshakes require endpoint and network testing; the IED firmware must support TLS 1.3. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
       },
       {
         layerName: 'Certificate authentication',
@@ -238,9 +240,11 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         threat: 'both',
         pqcPath: 'Hybrid ML-KEM TLS 1.3; ML-DSA certificates when profiled',
         classicalBytes: X25519_SHARE,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'server key share',
-        notes: 'Same migration as MMS — one TLS stack update can cover both.',
+        pqcBytes: ML_KEM_768_CT + X25519_SHARE,
+        sizeBasis:
+          'Illustrative X25519 32 B → X25519MLKEM768 server key_exchange 1,120 B; client 1,216 B (RFC 10024)',
+        notes:
+          'Same migration as MMS — one TLS stack update can cover both. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
       },
       {
         layerName: 'Application-layer authentication (IEC 62351-5)',
@@ -269,10 +273,11 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         threat: 'hndl',
         pqcPath: 'Hybrid ML-KEM TLS 1.3 or IKEv2 with ML-KEM (RFC 9370 additional key exchanges)',
         classicalBytes: X25519_SHARE,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'key share',
+        pqcBytes: ML_KEM_768_CT + X25519_SHARE,
+        sizeBasis:
+          'Illustrative X25519 32 B → X25519MLKEM768 server key_exchange 1,120 B; client 1,216 B (RFC 10024)',
         notes:
-          'WAN traffic is the easiest to record, so this is the clearest HNDL target in a utility.',
+          'WAN traffic is the easiest to record, so this is the clearest HNDL target in a utility. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools. This size example is for TLS only, not IKEv2.',
       },
       {
         layerName: 'Peer authentication',
@@ -422,9 +427,11 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         threat: 'both',
         pqcPath: 'Hybrid ML-KEM TLS 1.3 and ML-DSA certificates',
         classicalBytes: X25519_SHARE,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'key share',
-        notes: 'Only where the Security variant is deployed — most installed Modbus is not.',
+        pqcBytes: ML_KEM_768_CT + X25519_SHARE,
+        sizeBasis:
+          'Illustrative X25519 32 B → X25519MLKEM768 server key_exchange 1,120 B; client 1,216 B (RFC 10024)',
+        notes:
+          'Only where the Security variant is deployed — most installed Modbus is not. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
       },
       {
         layerName: 'Legacy Modbus (port 502)',
@@ -454,10 +461,11 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         threat: 'hndl',
         pqcPath: 'Hybrid ML-KEM key exchange (X25519MLKEM768-style group)',
         classicalBytes: X25519_SHARE,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'key share',
+        pqcBytes: ML_KEM_768_CT + X25519_SHARE,
+        sizeBasis:
+          'Illustrative X25519 32 B → X25519MLKEM768 server key_exchange 1,120 B; client 1,216 B (RFC 10024)',
         notes:
-          'BACnet/SC already runs TLS 1.3, so a hybrid group is a stack update, not a protocol redesign.',
+          'BACnet/SC already runs TLS 1.3, so a hybrid group is a stack update, not a protocol redesign. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
       },
       {
         layerName: 'Operational certificates',
@@ -528,11 +536,12 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         mechanism: 'ECDHE P-256',
         threat: 'hndl',
         pqcPath: 'Hybrid ML-KEM TLS 1.3',
-        classicalBytes: X25519_SHARE,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'key share',
+        classicalBytes: 65,
+        pqcBytes: ML_KEM_768_CT + 65,
+        sizeBasis:
+          'Illustrative uncompressed P-256 65 B → SecP256r1MLKEM768 server key_exchange 1,153 B; client 1,249 B (RFC 10024)',
         notes:
-          'Needs TLS 1.3 support first; the SunSpec/Sandia DER workgroup already recommends TLS 1.3 for all DER communications (SAND2022-1118).',
+          'Needs TLS 1.3 support first; the SunSpec/Sandia DER workgroup already recommends TLS 1.3 for all DER communications (SAND2022-1118). Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
       },
       {
         layerName: 'Device certificates (SERCA → manufacturer CA → device)',
