@@ -21,7 +21,10 @@ import { getVendorPqcStatus as getNetworkStatus } from './NetworkSecurityPQC/dat
 import { getHsmPqcPosture } from './CryptoMgmtModernization/data/hsmVendors'
 import { getOsPqcStatus } from './OSPQC/data/osProviderData'
 import { getVendorPqcSupportStatus } from './HsmPqc/data/hsmVendorData'
-import { getVendorPqcStatus as getIamStatus } from './IAMPQC/data/iamProviderData'
+import {
+  getVendorPqcStatus as getIamStatus,
+  PQC_STATUS_LABELS,
+} from './IAMPQC/data/iamProviderData'
 
 // Each getter reads only `catalogName`, so a bare object stands in for a provider.
 const entry = { catalogName: 'Example Product' } as never
@@ -48,8 +51,15 @@ describe('learning modules and the pre-shared-key-only catalogue status', () => 
       const psk = statusFor(getter, 'psk')
       expect(psk).toBeDefined()
       expect(psk).not.toBe(statusFor(getter, 'available'))
-      // Not credited as PQC support: the same display as a roadmap product.
-      expect(psk).toBe(statusFor(getter, 'roadmap'))
+      if (name === 'IAM') {
+        // IAM preserves catalogue availability rather than inferring a release stage.
+        expect(psk).toBe('psk')
+        expect(PQC_STATUS_LABELS.psk.label).toBe('PSK-only (not PQC)')
+        expect(statusFor(getter, 'roadmap')).toBe('roadmap')
+      } else {
+        // These modules retain their existing roadmap-level support presentation.
+        expect(psk).toBe(statusFor(getter, 'roadmap'))
+      }
     })
   }
 })
