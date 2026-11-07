@@ -435,6 +435,19 @@ describe('MobileAssessView', () => {
       expect(screen.getByText('No Specific Deadline')).toBeInTheDocument()
       expect(screen.queryByText('Regulatory Deadline Within 1 Year')).not.toBeInTheDocument()
     })
+
+    it('timeline: a country with published milestones still offers the own-target option', () => {
+      goToComprehensiveStep('timeline')
+      // A later published deadline and an organisation's own target map to the
+      // same stored value, so the option is named for both and stays selectable.
+      const own = screen.getByText('Own Target or Distant Deadline')
+      expect(
+        screen.getByText('Our own target date, or a published deadline more than 3 years away.')
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Internal Deadline Set')).not.toBeInTheDocument()
+      fireEvent.click(own.closest('button')!)
+      expect(useAssessmentFormStore.getState().timelinePressure).toBe('internal-deadline')
+    })
   })
 
   describe('unknown-toggle explanation (audit R4.6)', () => {

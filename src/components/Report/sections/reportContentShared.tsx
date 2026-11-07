@@ -132,7 +132,7 @@ export const MIGRATION_STATUS_LABELS: Record<string, string> = {
 export const TIMELINE_LABELS: Record<string, string> = {
   'within-1y': 'Within 1 year',
   'within-2-3y': 'Within 2-3 years',
-  'internal-deadline': 'Internal deadline',
+  'internal-deadline': 'Own target or a published deadline more than 3 years away',
   'no-deadline': 'No deadline',
   unknown: 'Unknown',
 }

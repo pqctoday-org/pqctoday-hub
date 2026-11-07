@@ -175,8 +175,8 @@ const TIMELINE_STATIC_OPTIONS: { value: TimelineValue; label: string; descriptio
   },
   {
     value: 'internal-deadline',
-    label: 'Internal Deadline Set',
-    description: 'Our organization has set its own PQC migration target date.',
+    label: 'Own Target or Distant Deadline',
+    description: 'Our own target date, or a published deadline more than 3 years away.',
   },
   {
     value: 'no-deadline',
@@ -903,7 +903,9 @@ export function MobileAssessView() {
                       </Button>
                     )
                   })}
-                  {TIMELINE_STATIC_OPTIONS.filter((o) => o.value === 'no-deadline').map((opt) => {
+                  {TIMELINE_STATIC_OPTIONS.filter(
+                    (o) => o.value === 'internal-deadline' || o.value === 'no-deadline'
+                  ).map((opt) => {
                     const selected = store.timelinePressure === opt.value
                     return (
                       <Button
