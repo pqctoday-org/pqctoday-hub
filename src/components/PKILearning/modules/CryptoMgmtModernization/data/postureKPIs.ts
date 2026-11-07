@@ -183,12 +183,12 @@ export const POSTURE_KPIS: PostureKPI[] = [
   {
     id: 'fips-coverage',
     pillar: 'assurance',
-    name: '% inventory backed by current FIPS 140-3',
+    name: '% scoped deployments using validated FIPS 140-3 modules',
     description:
-      'Libraries + HSMs in production whose CMVP certificate is currently active (not historical or revoked).',
+      'Percentage of the defined in-scope deployments matched to a current CMVP module/version/configuration and the approved mode specified by its Security Policy. Define applicability and denominator; a library or HSM name alone does not establish coverage.',
     unit: '%',
     audience: ['board', 'cio', 'ciso'],
-    example: '81% (target 100%)',
+    example: 'Illustrative: 81% (target 100% of defined scope)',
   },
   {
     id: 'cmvp-freshness',
@@ -221,21 +221,21 @@ export const POSTURE_KPIS: PostureKPI[] = [
   {
     id: 'esv-coverage-libs',
     pillar: 'assurance',
-    name: '% libraries with active SP 800-90B ESV',
+    name: '% scoped library deployments with applicable ESV evidence',
     description:
-      '% of crypto libraries in the CBOM whose entropy source holds a currently active SP 800-90B Entropy Source Validation certificate.',
+      'Percentage of in-scope library deployments with applicable ESV evidence matched to their entropy source and evaluated configuration. Identify OS or external dependencies; a library need not own the source. Keep unresolved dependencies unknown instead of assuming missing validation.',
     unit: '%',
     audience: ['ciso', 'architect'],
-    example: "12% (gap: most software libraries rely on OS entropy not separately ESV'd)",
+    example: 'Illustrative: 12% of defined scope; unresolved dependencies remain unknown',
   },
   {
     id: 'esv-coverage-hsm',
     pillar: 'assurance',
-    name: '% HSMs with active SP 800-90B ESV',
+    name: '% scoped HSM deployments with applicable ESV evidence',
     description:
-      '% of HSMs in the hardware CBOM whose hardware RNG entropy source holds a currently active SP 800-90B ESV certificate.',
+      'Percentage of in-scope HSM deployments whose applicable entropy-source validation evidence matches the evaluated source and configuration. Define the population and check its dependencies; a product name or certificate association alone does not establish coverage.',
     unit: '%',
     audience: ['board', 'ciso'],
-    example: '40% (target 100% for FIPS-scoped HSMs)',
+    example: 'Illustrative: 40% (target 100% of defined applicable scope)',
   },
 ]
