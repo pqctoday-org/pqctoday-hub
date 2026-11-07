@@ -19,7 +19,9 @@ describe('braking exercise: fail-operational behaviour is an example assumption'
     expect(text).toContain(
       'comes from the function’s hazard analysis and safety goals, not from the ASIL letter'
     )
-    expect(text).toContain('the module cites no standard that makes a classical backup mandatory')
+    // a statement about the lesson's sources, not about the module's own citations
+    expect(text).toContain('no standard cited here requires a classical backup')
+    expect(text).not.toContain('the module cites')
     expect(text).not.toMatch(/ASIL-D requires/)
     expect(text).not.toMatch(/mandatory for safety certification/)
     expect(text).not.toMatch(/classical ECDSA backup must maintain braking/)

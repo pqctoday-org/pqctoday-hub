@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import ragSummary from './rag-summary.md?raw'
+import moduleSource from './index.tsx?raw'
 
 describe('CryptoDevAPIs summary separates the two Luna Java integrations', () => {
   it('describes JCPROV as the PKCS#11 wrapper and the Luna JSP as the JCA/JCE provider', () => {
@@ -14,5 +15,12 @@ describe('CryptoDevAPIs summary separates the two Luna Java integrations', () =>
     expect(ragSummary).not.toContain('PKCS#11 JCA bridge')
     expect(ragSummary).not.toContain('JCA provider bridging PKCS#11')
     expect(ragSummary).not.toMatch(/JCProv[^\n]*FIPS 140-3 Level 3 hardware-backed JCA provider/)
+  })
+})
+
+describe('CryptoDevAPIs no longer describes rating bars the explorer does not show', () => {
+  it('has no radar scores in the summary and no readiness radar in the step description', () => {
+    expect(ragSummary).not.toMatch(/radar scores|highest HSM integration score/i)
+    expect(moduleSource).not.toMatch(/readiness radar/i)
   })
 })

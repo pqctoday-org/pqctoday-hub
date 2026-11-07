@@ -28,7 +28,7 @@ const PARTS: WorkshopPart[] = [
     id: 'api-architecture-explorer',
     title: 'Step 1: API Architecture Explorer',
     description:
-      'Compare JCA/JCE, OpenSSL, PKCS#11, CNG, Bouncy Castle, and JCProv — architecture diagrams, key objects, session models, and PQC readiness radar.',
+      'Compare JCA/JCE, OpenSSL, PKCS#11, CNG, Bouncy Castle, and JCProv — architecture diagrams, key objects, session models, and PQC status.',
     icon: Network,
   },
   {

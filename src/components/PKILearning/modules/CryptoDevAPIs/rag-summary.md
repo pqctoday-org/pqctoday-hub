@@ -25,11 +25,6 @@ Intermediate-level module (80 min, 8 workshop steps) covering post-quantum crypt
   - BouncyCastle — Java/.NET, full FIPS 203/204/205 implementation, BCFIPS module for FIPS 140-3 compliance, best production choice for JVM/CLR ecosystems
   - pqcrypto (Rust) — bindings to PQClean C implementations and unmaintained per their README; the published crate names `pqcrypto-kyber` / `pqcrypto-dilithium` are pre-standardisation names, and `pqcrypto-mlkem` / `pqcrypto-mldsa` also exist
   - PQClean — C reference implementations, clean code (no platform-specific optimizations, no side-channel protection claims), intended as readable reference not production backend
-- **API radar scores (maturity / PQC readiness / ecosystem reach / HSM integration / compliance path)**:
-  - JCA/JCE: 9 / 7 / 7 / 7 / 8 (mature API, built-in ML-KEM/ML-DSA from JDK 24, BouncyCastle for SLH-DSA, strong compliance via BCFIPS)
-  - OpenSSL EVP: 8 / 8 / 9 / 6 / 8 (widest deployment, native PQC since 3.5, HSM via engine/provider gap)
-  - PKCS#11 v3.2: 7 / 9 / 7 / 9 / 7 (highest HSM integration score, PQC mechanisms natively defined, lower reach due to C-only interface)
-  - CNG: 8 / 7 / 8 / 8 / 9 (Windows ecosystem, ML-KEM and ML-DSA GA on Win 11 24H2+ / Server 2025, no SLH-DSA in the default provider)
 - **Key design patterns**: Crypto Agility Pattern (algorithm abstraction layer — `CryptoProvider` interface with `generateKeyPair(algorithm)`, `sign(key, data)`, `encapsulate(publicKey)` — swappable without changing call sites); Provider Pattern (pluggable crypto backends registered at startup — same pattern as JCA Security.addProvider); Build vs Buy vs Open Source decision matrix (FIPS requirement → AWS-LC or BCFIPS; HSM requirement → PKCS#11 v3.2; maximum algorithm coverage → liboqs)
 
 ## Workshop Steps
