@@ -75,6 +75,14 @@ export const buildResponse = (ir: AcvpPromptIR, results: CaseResult[]): BuiltRes
   }
 }
 
+/** The answer fields (besides tcId) each ML-KEM function must carry, and nothing else (R4). */
+export const ML_KEM_FUNCTION_OUTPUTS: Readonly<Record<string, readonly string[]>> = {
+  encapsulation: ['c', 'k'],
+  decapsulation: ['k'],
+  encapsulationKeyCheck: ['testPassed'],
+  decapsulationKeyCheck: ['testPassed'],
+}
+
 /**
  * Validate a vector-set response against the pinned response schema, plus the
  * per-function field rule the schema alone cannot express (R4): every test in
@@ -88,12 +96,12 @@ export const validateResponse = (
   const out = validateAgainstSchema(schema.responseSchema, vectorSetResponse)
   if (out.length > 0 || ir.schemaId !== 'ML-KEM/encapDecap/FIPS203') return out
   const fnByTg = new Map(ir.testGroups.map((g) => [g.tgId, g.properties.function as string]))
-  const expectedField: Record<string, string> = {
-    encapsulation: 'c+k',
-    decapsulation: 'k',
-    encapsulationKeyCheck: 'testPassed',
-    decapsulationKeyCheck: 'testPassed',
-  }
+  const expectedField: Record<string, string> = Object.fromEntries(
+    Object.entries(ML_KEM_FUNCTION_OUTPUTS).map(([fn, fields]) => [
+      fn,
+      [...fields].sort().join('+'),
+    ])
+  )
   ;(vectorSetResponse.testGroups as JsonObject[]).forEach((g, gi) => {
     const fn = fnByTg.get(g.tgId as number)
     const want = fn ? expectedField[fn] : undefined

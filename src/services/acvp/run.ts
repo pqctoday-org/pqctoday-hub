@@ -81,7 +81,7 @@ export const executePrepared = async (
   const response = buildResponse(prepared.ir, results)
   const responseSha256 = await sha256Hex(response.text)
   const golden = opts.expectedText
-    ? compareToExpected(response.document, JSON.parse(opts.expectedText))
+    ? compareToExpected(response.document, JSON.parse(opts.expectedText), { prompt: prepared.ir })
     : null
   const evidence = buildEvidence({
     ir: prepared.ir,
