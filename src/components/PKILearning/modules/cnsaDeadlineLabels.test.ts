@@ -2,7 +2,10 @@
 import { describe, expect, it } from 'vitest'
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
-import { CNSA_PHASE_OUT_LABEL } from './PQCRiskManagement/data/cnsaLabels'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from './PQCRiskManagement/data/cnsaLabels'
 
 // Every lesson's deadline list, keyed by lesson folder.
 const lessons = import.meta.glob<{ content: ModuleContent }>('./*/content.ts', { eager: true })
@@ -32,5 +35,21 @@ describe('lesson deadline lists describe the 2030 CNSA 2.0 date as the FAQ does'
       )
     )
     expect(old.map((d) => `${d.folder}: ${d.label}`)).toEqual([])
+  })
+
+  it('keeps the 2025 "preferred" step as history under the shared older-schedule label', () => {
+    const preferred = entries.filter(
+      (d) => /CNSA 2\.0/.test(d.source) && d.year === CNSA_2_0.softwarePreferred
+    )
+    expect(preferred.length).toBeGreaterThan(25)
+    expect(
+      preferred
+        .filter((d) => d.label !== CNSA_2022_PREFERRED_LABEL)
+        .map((d) => `${d.folder}: ${d.label}`)
+    ).toEqual([])
+    const stray = entries.filter(
+      (d) => d.label !== CNSA_2022_PREFERRED_LABEL && /signing preferred/i.test(d.label)
+    )
+    expect(stray.map((d) => `${d.folder}: ${d.label}`)).toEqual([])
   })
 })

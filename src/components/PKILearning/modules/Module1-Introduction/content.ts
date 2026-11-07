@@ -7,6 +7,7 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, NIST_DEPRECATION, FIPS_STANDARDS } from '@/data/regulatoryTimelines'
+import { CNSA_2022_PREFERRED_LABEL } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -62,7 +63,7 @@ export const content: ModuleContent = {
       source: 'NIST',
     },
     {
-      label: 'CNSA 2.0 begins phased PQC mandates for U.S. national security systems',
+      label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },

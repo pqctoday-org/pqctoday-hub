@@ -12,3 +12,10 @@ export const CNSA_PHASE_OUT_LABEL =
 
 export const CNSA_MANDATE_LABEL =
   'CNSA 2.0 algorithms mandated for national security systems (31 December 2031, unless otherwise noted)'
+
+/**
+ * The 2025 "preferred" step comes from NSA's 2022 category guidance, which the FAQ's three dates
+ * replace for planning. Lessons that keep it as history say so in the label.
+ */
+export const CNSA_2022_PREFERRED_LABEL =
+  'NSA 2022 category guidance (older schedule): prefer CNSA 2.0 for new software and firmware signing'
