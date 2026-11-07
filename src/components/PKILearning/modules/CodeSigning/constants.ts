@@ -93,7 +93,7 @@ export const SIGSTORE_STEPS: SigstoreStep[] = [
     step: 2,
     title: 'Ephemeral Key Generation',
     description:
-      'Ephemeral ECDSA P-256 keypair created (valid ~20 minutes); ML-DSA is a proposed future upgrade',
+      'Ephemeral ECDSA P-256 keypair created in memory; ML-DSA is a proposed future upgrade',
     icon: 'Key',
   },
   {
@@ -124,7 +124,7 @@ export const SIGSTORE_STEPS: SigstoreStep[] = [
     step: 7,
     title: 'Verification',
     description:
-      'Verifier checks Rekor log entry, cert chain, and signature — no keys to distribute',
+      'Verifier checks the signature, the expected identity and issuer, the certificate chain to the Sigstore trust root, and the Rekor inclusion proof',
     icon: 'CheckCircle',
   },
 ]
@@ -349,7 +349,8 @@ export const FIRMWARE_SIGNING_ALGORITHMS: FirmwareSigningAlgorithm[] = [
     signatureSize: 3309,
     publicKeySize: 1952,
     stateful: false,
-    stateRequirement: 'None — fully stateless. No counter, no state management overhead.',
+    stateRequirement:
+      'No signing state: the signer needs no counter. Verification keeps no state for any of these algorithms.',
     cnsa2Status:
       'Not a CNSA 2.0 parameter set — CNSA 2.0 approves only ML-DSA-87 (and prefers LMS/XMSS for firmware)',
     bestFor: 'General code signing, environments where state management is impractical',
