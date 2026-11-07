@@ -67,7 +67,7 @@
   },
   {
     "term": "Hybrid Cryptography",
-    "definition": "Using both classical and post-quantum algorithms together during the transition period, providing security even if one algorithm is broken.",
+    "definition": "Using classical and post-quantum algorithms together during the transition period. A well-designed hybrid stays secure as long as at least one algorithm remains secure; the guarantee depends on how the algorithms are combined and implemented.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "beginner",
     "category": "concept"
@@ -88,7 +88,7 @@
   },
   {
     "term": "Superposition",
-    "definition": "A quantum property where a qubit can represent both 0 and 1 at the same time, enabling quantum computers to explore many solutions simultaneously.",
+    "definition": "A quantum property in which a qubit is in a combination of 0 and 1 until it is measured, when it gives a single result. Superposition is one ingredient of quantum speedups, but it does not let a quantum computer simply try every solution at once.",
     "relatedModule": "/learn/pqc-101",
     "complexity": "beginner",
     "category": "concept"
@@ -156,7 +156,7 @@
   },
   {
     "term": "Entanglement",
-    "definition": "A quantum phenomenon where two qubits become correlated so measuring one instantly determines the state of the other, regardless of distance.",
+    "definition": "A quantum phenomenon in which two or more qubits share a joint state, so their measurement results are correlated more strongly than any pre-agreed classical rule could explain, even when the qubits are far apart.",
     "relatedModule": "/learn/pqc-101",
     "complexity": "beginner",
     "category": "concept"
@@ -225,8 +225,8 @@
   },
   {
     "term": "Hybrid Key Exchange",
-    "definition": "Combining a classical key exchange (e.g., X25519) with a PQC KEM (e.g., ML-KEM-768) in a single handshake, ensuring security even if one algorithm is broken.",
-    "technicalNote": "Deployed today as X25519MLKEM768 in Chrome, Firefox, and major cloud providers. IETF draft-ietf-tls-ecdhe-mlkem defines the TLS 1.3 integration.",
+    "definition": "Combining a classical key exchange (e.g., X25519) with a PQC KEM (e.g., ML-KEM-768) in a single handshake, so the derived secret stays secure as long as at least one of the two components remains unbroken and the combination is well designed.",
+    "technicalNote": "Deployed today as X25519MLKEM768 in Chrome, Firefox, and major cloud providers. RFC 10024 defines the TLS 1.3 integration. This makes key agreement hybrid only; authentication stays single-algorithm unless the certificates are changed separately.",
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
     "category": "concept"
@@ -282,7 +282,7 @@
   },
   {
     "term": "Hybrid Certificate",
-    "definition": "An X.509 certificate using both classical and PQC algorithms during the transition period, maintaining interoperability with legacy systems.",
+    "definition": "An X.509 certificate that carries both classical and post-quantum public keys during the transition period. Legacy interoperability depends on the design: a composite certificate is understood only by upgraded systems, while other designs let a verifier that has not migrated rely on the classical part.",
     "relatedModule": "/migrate?domain=certs",
     "complexity": "intermediate",
     "category": "concept"
@@ -338,8 +338,8 @@
   {
     "term": "Endorsement Key",
     "acronym": "EK",
-    "definition": "A TPM 2.0 primary key in the Endorsement Hierarchy (TPM_RH_ENDORSEMENT = 0x4000000B), provisioned by the manufacturer and used to establish trust in the TPM. Per TCG V1.85, EK migrates from RSA-2048/ECC-P256 to ML-KEM-768 (TPM_ALG_MLKEM = 0x00A0) and is used for KEM-based Credential Activation.",
-    "technicalNote": "Non-migratable, non-duplicable, factory-provisioned. ML-KEM-768 public key = 1184 B; ciphertext = 1088 B (FIPS 203).",
+    "definition": "A TPM 2.0 primary key in the Endorsement hierarchy (handle TPM_RH_ENDORSEMENT = 0x4000000B), derived from the Endorsement Primary Seed and certified by the manufacturer to establish trust in the TPM. TPM 2.0 library version 185 (March 2026) adds ML-KEM keys (TPM_ALG_MLKEM = 0x00A0), and the TCG EK Credential Profile 2.7 defines ML-KEM EK templates alongside the RSA and ECC ones, so a TPM can have EKs of several algorithms. A storage-type EK is used for credential activation.",
+    "technicalNote": "Non-duplicable. ML-KEM-768 public key = 1184 B; ciphertext = 1088 B (FIPS 203). Which EK algorithms a TPM provides depends on the manufacturer and the platform profile (for example PC Client Platform TPM Profile 1.07).",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -347,8 +347,8 @@
   {
     "term": "Attestation Identity Key",
     "acronym": "AIK",
-    "definition": "A restricted TPM 2.0 signing key used for TPM2_Quote — signing PCR values to prove system state to a remote verifier. Per TCG V1.85, AIK migrates from RSA-2048/ECC-P256 to ML-DSA-65 (TPM_ALG_MLDSA = 0x00A1, FIPS 204 Cat III).",
-    "technicalNote": "ML-DSA-65 public key = 1952 B; signature = 3309 B. AIK certificates are issued by a Privacy CA or by TPM vendor direct attestation.",
+    "definition": "A restricted TPM 2.0 signing key used for TPM2_Quote — signing PCR values to prove system state to a remote verifier. The TPM 2.0 specification also calls such a key an Attestation Key (AK). TPM 2.0 library version 185 (March 2026) adds ML-DSA keys (TPM_ALG_MLDSA = 0x00A1) alongside RSA and ECC; it defines the ML-DSA-44, -65 and -87 parameter sets, and a TPM reports which of them it supports.",
+    "technicalNote": "ML-DSA-65 public key = 1952 B; signature = 3309 B (FIPS 204). A credential provider (often called a Privacy CA) typically issues the AK certificate after the TPM proves, through credential activation, that the AK resides in a TPM with a certified EK.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -356,8 +356,8 @@
   {
     "term": "Storage Root Key",
     "acronym": "SRK",
-    "definition": "The primary key of the TPM 2.0 Storage Hierarchy (TPM_RH_OWNER = 0x40000001). All user-created keys are wrapped under the SRK. Per TCG V1.85, the SRK migrates to ML-KEM-768 for child-key wrapping, which drove the TPM_BUFFER_MAX increase from 4096 B to 8192 B.",
-    "technicalNote": "Not exportable. ML-KEM wraps child TPM2B_PRIVATE blobs via KEM-derive.",
+    "definition": "A primary key in the TPM 2.0 Storage hierarchy (handle TPM_RH_OWNER = 0x40000001), generated from the Storage Primary Seed; keys created under it are protected by it. TPM 2.0 library version 185 (March 2026) adds ML-KEM keys, which can be used in the restricted-decryption protocols (credential protection, salted sessions, and object duplication and import).",
+    "technicalNote": "Not exportable. Child keys are protected with symmetric keys derived from a seed held in the storage parent's sensitive area; ML-KEM applies to duplication and the other restricted-decryption protocols.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -365,7 +365,7 @@
   {
     "term": "Device Identity Key",
     "acronym": "IDevID",
-    "definition": "IEEE 802.1AR Initial Device Identity — a long-lived, factory-provisioned key used to prove device identity in network onboarding. PQC migration is tracked in an IEEE 802.1AR PQC amendment and requires hardware refresh (ML-DSA-65 per TCG V1.85 Part 2 Table 206).",
+    "definition": "IEEE 802.1AR Initial Device Identity — a long-lived, factory-provisioned key used to prove device identity in network onboarding. The IEEE 802.1 amendment project P802.1AReg adds ML-DSA (the ML-DSA-44, ML-DSA-65 and ML-DSA-87 parameter sets) to 802.1AR; whether an existing device can hold an ML-DSA identity depends on what its hardware supports.",
     "technicalNote": "Used in 802.1X network access, FIDO Device Onboard, and supply-chain provenance attestation.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
@@ -406,8 +406,8 @@
   {
     "term": "QBER",
     "acronym": "QBER",
-    "definition": "Quantum Bit Error Rate, the fraction of sifted key bits where Alice and Bob disagree despite using the same measurement basis. A QBER above ~11% indicates eavesdropping.",
-    "technicalNote": "In BB84, an eavesdropper measuring in the wrong basis introduces a 25% error rate on intercepted qubits. The theoretical QBER threshold for secure key generation is approximately 11%.",
+    "definition": "Quantum Bit Error Rate, the fraction of sifted key bits where Alice and Bob disagree despite using the same measurement basis. Eavesdropping raises it, but so do noise and device imperfections, so a high value is an alarm, not proof of an adversary.",
+    "technicalNote": "In BB84, an intercept-resend attack on every qubit introduces about a 25% error rate in the sifted key. In the idealized analysis (perfect single-photon source, very long keys, one-way post-processing) a secret key can be distilled while the QBER stays below about 11% (Shor and Preskill). In practice, source imperfections, finite key length and error-correction efficiency reduce the tolerable QBER, and systems abort when the measured QBER exceeds their limit.",
     "relatedModule": "/learn/qkd",
     "complexity": "advanced",
     "category": "concept"
@@ -421,8 +421,8 @@
   },
   {
     "term": "Privacy Amplification",
-    "definition": "A post-processing step in QKD that uses universal hash functions to distill a shorter, provably secret key from a partially compromised key by removing any information an eavesdropper may have obtained.",
-    "technicalNote": "The output key length depends on the estimated information leakage. Uses hash functions (e.g., SHA-256) to compress the corrected key, reducing Eve's knowledge to negligible levels.",
+    "definition": "A post-processing step in QKD that applies a randomly chosen two-universal hash function to the corrected key, shortening it so that an eavesdropper's remaining information is negligible, given an estimate of how much she could have learned.",
+    "technicalNote": "The output key length depends on the estimated information leakage. Standard security proofs use two-universal hash families (for example, multiplication by a random binary matrix), not a fixed hash such as SHA-256.",
     "relatedModule": "/learn/qkd",
     "complexity": "advanced",
     "category": "concept"
@@ -484,8 +484,8 @@
   {
     "term": "DUKPT",
     "acronym": "DUKPT",
-    "definition": "Derived Unique Key Per Transaction, a key management scheme for payment terminals that derives a unique symmetric encryption key for each transaction from a Base Derivation Key.",
-    "technicalNote": "The symmetric DUKPT derivation chain is quantum-safe. The quantum vulnerability is at the Key Injection Facility where RSA-2048 key transport wraps the BDK. Compromising the BDK exposes all past and future transaction keys.",
+    "definition": "Derived Unique Key Per Transaction, a key management scheme for payment terminals in which each terminal receives an initial key derived from a Base Derivation Key and uses it to derive a unique symmetric encryption key for each transaction.",
+    "technicalNote": "DUKPT exists in TDES and AES variants; per-transaction derivation is symmetric. The public-key-dependent part is key delivery: initial keys are loaded at a physically secured Key Injection Facility or by remote key loading using public-key cryptography (for example ANSI TR-34, which is factoring-based). The BDK stays in the HSM, and compromising it exposes every device derived from it.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -493,15 +493,15 @@
   {
     "term": "Root CA",
     "definition": "The top-level Certificate Authority in a PKI trust hierarchy. A Root CA issues a self-signed certificate that serves as the trust anchor — all certificates in the chain ultimately derive their trust from it.",
-    "technicalNote": "Root CAs are installed in OS and browser trust stores. PQC migration for Root CAs is highest priority since a compromised root breaks the entire chain. CNSA 2.0 requires Root CAs to use ML-DSA-87 by 2030.",
+    "technicalNote": "Root CAs are installed in OS and browser trust stores. PQC migration for Root CAs is highest priority since a compromised root breaks the entire chain. For US national security systems, CNSA 2.0 specifies ML-DSA-87 for digital signatures, and NSA's FAQ describes moving a PKI by standing up a parallel PKI with the new algorithms rather than putting several algorithms in one certificate.",
     "relatedModule": "/learn/code-signing",
     "complexity": "beginner",
     "category": "concept"
   },
   {
     "term": "Fulcio",
-    "definition": "The Certificate Authority component of Sigstore. Fulcio issues short-lived (~20 minute) X.509 certificates that bind an OIDC identity to an ephemeral signing key.",
-    "technicalNote": "Fulcio is the primary PQC upgrade point in the Sigstore ecosystem. Migrating Fulcio to ML-DSA certificates automatically protects all downstream consumers without developer intervention.",
+    "definition": "The Certificate Authority component of Sigstore. Fulcio issues short-lived X.509 certificates, valid for 10 minutes, that bind an OIDC identity to an ephemeral signing key.",
+    "technicalNote": "Fulcio is one of several places where a post-quantum algorithm would have to be introduced in Sigstore. Verifiers also check the certificate's signature against Sigstore's root of trust and the proof of inclusion in Rekor, so ML-DSA certificates from Fulcio would not protect a consumer until its own verification path supports that algorithm. Sigstore's algorithm registry marks ML-DSA as experimental and not yet operational, and clients need not support every registered algorithm.",
     "relatedModule": "/learn/code-signing",
     "complexity": "advanced",
     "category": "concept"
@@ -547,8 +547,8 @@
   },
   {
     "term": "Build Provenance",
-    "definition": "A cryptographically signed attestation documenting how a software artifact was built — including the source repository, build system, entry point, and build parameters. Answers the question \"who built this and how?\"",
-    "technicalNote": "Build provenance is a core requirement of SLSA Level 1+. Without quantum-safe signatures on provenance attestations, an adversary with a quantum computer could forge provenance for malicious artifacts.",
+    "definition": "A record documenting how a software artifact was built — including the source repository, build system, entry point, and build parameters — often distributed as a signed attestation. Answers the question \"who built this and how?\"",
+    "technicalNote": "In the SLSA Build track (v1.2), Build L1 requires provenance to exist but sets no authenticity requirement, so it may be unsigned; Build L2 requires that consumers can validate its authenticity, which SHOULD be a digital signature from a key only the build platform can use; Build L3 adds strong resistance to forgery by build tenants. SLSA names no signature algorithm, so resistance to a quantum adversary depends on the scheme used and on verifiers accepting a post-quantum one.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
     "category": "concept"
@@ -677,7 +677,7 @@
     "term": "SUPI",
     "acronym": "SUPI",
     "definition": "Subscription Permanent Identifier, a 5G subscriber's permanent identity (usually based on IMSI). Protected by encrypting it as SUCI before transmission.",
-    "technicalNote": "SUCI conceals the SUPI using ECIES (Profile A/B) or ML-KEM (Profile C) to prevent IMSI-catching attacks.",
+    "technicalNote": "SUCI conceals the SUPI using an ECIES profile (Profile A or B in TS 33.501 Annex C) to prevent IMSI-catching attacks. A post-quantum ML-KEM \"Profile C\" is an experimental proposal, not a 3GPP profile.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
     "category": "concept"
@@ -712,7 +712,7 @@
     "term": "DER (Distributed Energy Resource)",
     "acronym": "DER",
     "definition": "Distributed Energy Resource. Solar inverters, battery storage systems, and EV chargers connected to the distribution grid. Not to be confused with DER the ASN.1 encoding (Distinguished Encoding Rules).",
-    "technicalNote": "DERs authenticate via IEEE 2030.5 certificates (ECDSA P-256). PQC migration requires fleet-wide certificate reissuance to ML-DSA-65.",
+    "technicalNote": "A DER that uses IEEE 2030.5 authenticates with X.509 device certificates over TLS 1.2 (cipher suite TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8, ECDSA with P-256), as profiled by the California Smart Inverter Profile; IEEE 1547 also allows SunSpec Modbus and IEEE 1815 (DNP3) interfaces. Because such devices can stay in service for 25 or more years and the profile fixes its algorithms, moving to post-quantum certificates would need an updated profile and reissued device certificates; the algorithm would follow whatever the updated profile specifies.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "beginner",
     "category": "concept"
@@ -749,8 +749,8 @@
   },
   {
     "term": "Hybrid Mode",
-    "definition": "An operational mode where both classical and post-quantum cryptographic algorithms run in parallel, ensuring security even if one algorithm is broken.",
-    "technicalNote": "Recommended by NIST, BSI, and ANSSI as the preferred transition strategy. Applied to key exchange, signatures, and certificates.",
+    "definition": "An operational mode where classical and post-quantum cryptographic algorithms run together, intended to keep security if one of them is broken when the combination is well designed.",
+    "technicalNote": "Recommended by BSI and ANSSI for the transition; NIST leaves the choice to each application, and the UK NCSC treats it as an interim option. Applied to key exchange, signatures, and certificates, with different constructions for each, so properties such as legacy compatibility differ between designs.",
     "relatedModule": "/migrate",
     "complexity": "beginner",
     "category": "concept"
@@ -837,8 +837,8 @@
   },
   {
     "term": "Key Lifecycle",
-    "definition": "The complete management process for cryptographic keys from creation to destruction, typically comprising 7 stages: generation, storage, activation, rotation, deactivation, compromise response, and destruction.",
-    "technicalNote": "Defined by NIST SP 800-57. PQC migration adds complexity — organizations must plan parallel classical and PQC key lifecycles during the transition period.",
+    "definition": "The complete management process for cryptographic keys from creation to destruction. NIST SP 800-57 Part 1 divides it into four phases (pre-operational, operational, post-operational and destroyed); this site teaches it as seven practical stages: generation, storage, activation, rotation, deactivation, compromise response, and destruction.",
+    "technicalNote": "The four phases and the key states within them are defined in NIST SP 800-57 Part 1 Rev. 5 (May 2020); the seven-stage breakdown used here is a teaching framework, not NIST terminology. Revision 6 is an initial public draft (December 2025). PQC migration adds complexity — organizations must plan parallel classical and PQC key lifecycles during the transition period.",
     "relatedModule": "/learn/kms-pqc",
     "complexity": "beginner",
     "category": "concept"
@@ -880,7 +880,7 @@
     "term": "SIDF",
     "acronym": "SIDF",
     "definition": "Subscription Identifier De-concealing Function, the 5G core component that decrypts the SUCI (concealed subscriber ID) back to the SUPI (permanent ID) using the home network private key.",
-    "technicalNote": "SIDF uses ECIES (Profile A/B) or ML-KEM (Profile C) decapsulation to recover the subscriber identity. A key target for PQC migration in 5G networks.",
+    "technicalNote": "SIDF uses ECIES (Profile A or B of TS 33.501 Annex C) to recover the subscriber identity. TS 33.501 defines no post-quantum profile, so ML-KEM-based concealment is a proposal, not a standardized option. A key target for PQC migration in 5G networks.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
     "category": "concept"
@@ -913,8 +913,8 @@
   {
     "term": "Wallet Instance Attestation",
     "acronym": "WIA",
-    "definition": "A cryptographic proof that a digital identity wallet app is a genuine, certified instance running on a secure device. Required by issuers before they will provision credentials.",
-    "technicalNote": "Attests to the wallet's integrity, certification status, and device security. Prevents credential issuance to compromised or counterfeit wallet applications.",
+    "definition": "An attestation issued by the Wallet Provider about one installed copy of a digital identity wallet app. It attests the instance's integrity and authenticity, carries a revocation reference, and describes the wallet solution (name, version, certification). In the EU wallet architecture, issuers verify it, and check that it is not revoked, during issuance.",
+    "technicalNote": "It reflects the Wallet Provider's integrity check at issue time (technical validity under 24 hours in the architecture); the instance can later be revoked. It does not prove the wallet cannot be compromised afterwards. Keystore properties are attested separately, by a Key Attestation.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
     "category": "concept"
@@ -1037,8 +1037,8 @@
   },
   {
     "term": "Information-Theoretic Security",
-    "definition": "A security guarantee that holds regardless of the adversary's computational power, including quantum computers. QKD achieves this for key distribution because its security is derived from the laws of quantum physics rather than mathematical hardness assumptions.",
-    "technicalNote": "Distinguished from computational security (used by PQC), which assumes the adversary has bounded computational resources. Information-theoretic security means that even with unlimited computing power, an attacker cannot break the scheme.",
+    "definition": "A security guarantee that holds regardless of the adversary's computational power, including quantum computers, because it does not rest on a hardness assumption. QKD protocols are proven to offer this kind of security in a theoretical model, under conditions such as an authenticated classical channel.",
+    "technicalNote": "Distinguished from computational security (used by PQC), which assumes the adversary has bounded computational resources. For QKD the guarantee holds only in a theoretical model: real devices have imperfections, the classical channel must be authenticated (for example with pre-shared keys), and claims of unconditional security do not carry over to actual implementations.",
     "relatedModule": "/learn/qkd",
     "complexity": "advanced",
     "category": "concept"
@@ -1216,15 +1216,15 @@
   {
     "term": "Provider Model",
     "definition": "A software architecture pattern that abstracts cryptographic operations behind an interchangeable provider interface, enabling algorithm substitution without changing application code. Examples: Java JCA/JCE providers, OpenSSL provider API (3.x), PKCS#11 as an HSM provider.",
-    "technicalNote": "The provider model is the primary enabler of crypto agility at the implementation layer. Migrating to PQC in a provider-model architecture requires only a provider swap; migrating in a hard-coded crypto stack requires touching every call site.",
+    "technicalNote": "The provider model is one way to achieve crypto agility at the implementation layer. Where applications call algorithms only through the provider interface and the provider supports the new algorithm, migrating to PQC can mean changing the provider rather than every call site; keys are tied to the provider that holds them (in AUTOSAR Adaptive, a key belonging to one CryptoProvider cannot be used in another), so keys and certificates may still need to be regenerated or reissued. A hard-coded crypto stack requires touching every call site.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "Hybrid Migration",
-    "definition": "A PQC transition strategy in which both a classical algorithm and a post-quantum algorithm operate together in the same protocol, providing security even if one algorithm is broken. Hybrid mode is recommended by NIST, ANSSI, BSI, and NCSC for the transition period.",
-    "technicalNote": "In TLS 1.3, hybrid key exchange combines X25519 (classical ECDH) with ML-KEM-768 into the X25519MLKEM768 key share. Security is the stronger of the two algorithms — neither alone can break the session.",
+    "definition": "A PQC transition strategy in which a classical algorithm and a post-quantum algorithm are used together in the same protocol, so that a well-designed combination stays secure if one of them is broken. Agency guidance differs: BSI and ANSSI recommend hybrid schemes for the transition, NIST leaves the decision to each application, and the UK NCSC advises treating hybrid as an interim measure if it is chosen.",
+    "technicalNote": "In TLS 1.3, hybrid key exchange combines X25519 (classical ECDH) with ML-KEM-768 into the X25519MLKEM768 key share. The resulting secret stays secure as long as at least one component is unbroken and the combiner is sound; implementation flaws can still weaken a connection, and TLS certificate authentication is not made hybrid by the key share.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
     "category": "concept"
@@ -1263,8 +1263,8 @@
   },
   {
     "term": "Tamper Resistance",
-    "definition": "A hardware security property where a device actively detects and responds to physical intrusion attempts by zeroising sensitive key material. Defined at FIPS 140-3 Security Levels 3 and 4. An HSM with tamper resistance destroys keys if the enclosure is breached.",
-    "technicalNote": "Level 3: tamper-evident seals plus voltage/temperature attack response. Level 4: full environmental attack protection including X-ray and focused ion beam. PQC keys in Level 3+ HSMs are protected even under sophisticated laboratory attacks.",
+    "definition": "A hardware security property where a device detects physical intrusion attempts and responds, typically by zeroising sensitive key material. FIPS 140 describes tamper detection and response at Security Levels 3 and 4. An HSM with tamper response is designed to erase its plaintext keys when it detects an attempted breach.",
+    "technicalNote": "In FIPS 140-2 wording: Level 2 adds tamper evidence such as seals; Level 3 adds tamper detection and response that zeroizes plaintext keys when covers or doors are opened; Level 4 adds a complete protective envelope and covers voltage and temperature excursions. Level 3 mechanisms are described as intended to have a high probability of detecting and responding to physical access, and tamper detection and response are not substitutes for tamper evidence.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1321,21 +1321,21 @@
   },
   {
     "term": "Enclave",
-    "definition": "An isolated execution environment within a TEE where code and data are protected from the operating system, hypervisor, and other processes. Memory is encrypted and inaccessible to external entities.",
+    "definition": "An isolated execution environment inside a trusted execution environment (TEE) in which code and data are protected from the other software on the host. What lies outside the protection boundary, such as the operating system or hypervisor, and how memory is protected differ between platforms, so check the platform's documented threat model.",
     "relatedModule": "/learn/confidential-computing",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "Remote Attestation",
-    "definition": "A cryptographic protocol that proves to a remote verifier that software is running inside a genuine TEE with specific measurements (code identity, configuration). All current implementations use ECDSA, which is quantum-vulnerable.",
+    "definition": "A protocol in which a platform (the attester) sends signed evidence about its measured state to a remote verifier, which appraises it against reference values and a policy and produces a result for a relying party to act on. It supports a trust decision; it does not prove the software is free of flaws. The signature scheme on the evidence depends on the platform; where it is ECDSA, it is quantum-vulnerable.",
     "relatedModule": "/learn/confidential-computing",
     "complexity": "advanced",
     "category": "concept"
   },
   {
     "term": "Sealing Key",
-    "definition": "A TEE-derived encryption key used to persist data outside the enclave boundary. Derived from platform root keys and enclave identity measurements, ensuring only the same enclave on the same platform can unseal the data.",
+    "definition": "A TEE-derived encryption key used to persist data outside the enclave boundary. In Intel SGX the key is bound to the platform and to enclave identity values chosen by a key policy: with the MRENCLAVE policy only that particular enclave can re-derive it, while with the MRSIGNER policy another enclave with the same signer and security version can derive it as well.",
     "relatedModule": "/learn/confidential-computing",
     "complexity": "advanced",
     "category": "concept"
@@ -1385,7 +1385,7 @@
   {
     "term": "TLS Termination",
     "definition": "The process of decrypting TLS-encrypted traffic at a gateway device (load balancer, reverse proxy, WAF, or CDN edge) rather than at the origin server. The gateway handles certificate management, handshake processing, and re-encryption for backend connections.",
-    "technicalNote": "PQC migration at the TLS termination point is the highest-impact upgrade path because it protects the most exposed network segment (client-to-edge) without requiring changes to backend infrastructure.",
+    "technicalNote": "A termination point secures only the connection it terminates. With a CDN or gateway, the client-to-edge and gateway-to-origin connections are separate TLS connections, each negotiating its own key exchange: a hybrid post-quantum exchange is used on the first only if the client supports it, and on the second only if the origin does.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1393,7 +1393,7 @@
   {
     "term": "Reverse Proxy",
     "definition": "A server that sits between clients and origin servers, forwarding client requests and returning responses on behalf of the origin. It provides TLS termination, load balancing, caching, and security filtering.",
-    "technicalNote": "Common reverse proxies include NGINX, HAProxy, Envoy, and Traefik. PQC readiness varies by product, build and configuration. NGINX documents ML-KEM hybrid TLS groups when built against OpenSSL 3.5 or later and configured for them; check each other proxy's own documentation for its supported TLS libraries, groups and settings.",
+    "technicalNote": "Common reverse proxies include NGINX, HAProxy, Envoy, and Traefik. PQC readiness varies by product, build and configuration; check each proxy's own documentation for its supported TLS libraries, groups and settings.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "beginner",
     "category": "concept"
@@ -1402,15 +1402,15 @@
     "term": "Edge PoP",
     "acronym": "PoP",
     "definition": "A Point of Presence — a physical data center location at the network edge where CDN or cloud providers deploy servers to cache content and terminate TLS connections close to end users.",
-    "technicalNote": "PQC deployment at edge PoPs requires coordinated key material distribution and certificate rotation across all locations simultaneously.",
+    "technicalNote": "Whether a PoP supports post-quantum key exchange is decided by the CDN or cloud provider, and support can differ between a provider's products. Check the provider's current documentation for what is enabled and what origin connections require.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "Origin Shielding",
-    "definition": "A CDN architecture pattern where a designated intermediate cache layer sits between edge PoPs and the origin server, reducing direct origin requests and providing a single point for TLS termination upgrades.",
-    "technicalNote": "Origin shielding simplifies PQC migration by limiting the number of connections to the origin that need PQC upgrade — only the shield-to-origin link requires immediate attention.",
+    "definition": "A CDN architecture pattern where a designated intermediate cache layer sits between edge PoPs and the origin server, reducing direct origin requests by concentrating them at that layer.",
+    "technicalNote": "Origin shielding means fewer CDN servers connect to the origin. Each connection in the path still negotiates its own TLS key exchange, and a hybrid post-quantum exchange between the shield and the origin is used only if the origin supports it.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1426,7 +1426,7 @@
   {
     "term": "TLS Interception",
     "definition": "A security technique where a middlebox (WAF, DLP, IDS) terminates, inspects, and re-establishes TLS connections to examine encrypted traffic for threats. Also called TLS inspection or SSL inspection.",
-    "technicalNote": "TLS interception devices must support the same cipher suites as both client and server. PQC hybrid handshakes require all inspection boxes in the path to be upgraded simultaneously.",
+    "technicalNote": "An interception device holds two separate TLS sessions, one with the client and one with the server, so each side negotiates its own parameters. Middleboxes may handle the larger ClientHello of a post-quantum key exchange poorly, so test post-quantum-capable clients through the device and check the vendor's documentation for supported key-exchange groups before changing client or server settings.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1492,7 +1492,7 @@
     "term": "Key Injection Facility",
     "acronym": "KIF",
     "definition": "A physically secured facility where cryptographic keys are loaded into payment terminals under dual-control, split-knowledge procedures.",
-    "technicalNote": "The KIF is the primary quantum-vulnerable point in the DUKPT chain. RSA-2048 key transport wraps the BDK for transfer to injection stations. PQC migration replaces this with ML-KEM-768 key encapsulation.",
+    "technicalNote": "A KIF loads each terminal with its own initial key, derived from a BDK held in an HSM; the BDK itself is not loaded onto terminals (PCI PIN Security requirements). Local injection happens in the secured facility; remote key loading uses public-key cryptography (for example ANSI TR-34) to deliver keys to deployed devices without physical transport. Check the HSM and terminal vendors' documentation for post-quantum key-loading support.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1501,7 +1501,7 @@
     "term": "Base Derivation Key",
     "acronym": "BDK",
     "definition": "The master symmetric key in the DUKPT key management scheme, stored in a payment HSM. All per-terminal and per-transaction keys are derived from it.",
-    "technicalNote": "The BDK never leaves the HSM in cleartext. Compromising the RSA-wrapped BDK at the Key Injection Facility would allow derivation of all past and future transaction keys for terminals sharing that BDK.",
+    "technicalNote": "The BDK is held in payment HSMs and must not exist in clear text outside them. Terminals never receive the BDK: only the initial key derived from it for that terminal is loaded (PCI PIN Security requirements). Compromise of a BDK exposes every device whose keys derive from it, so entities that inject or process DUKPT keys must segment BDKs, for example by acquirer, injection vendor, terminal model or region.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1649,7 +1649,7 @@
   },
   {
     "term": "Bouncy Castle",
-    "definition": "Open-source cryptography library available for Java and .NET. Plays a dual role: as a JCA provider and as a standalone lightweight API. Has the widest PQC algorithm coverage of any open-source library.",
+    "definition": "Open-source cryptography library for Java and .NET. The Java edition works both as a JCA/JCE provider and as a standalone lightweight API.",
     "technicalNote": "Since BC 1.79 (October 2024), Bouncy Castle supports the finalized NIST PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Also supports LMS/XMSS (SP 800-208), HQC, and Classic McEliece. Bouncy Castle announced on 9 June 2025 that its C# .NET edition (2.6.1) supports the finalized PKCS#8 private key formats for these NIST PQC algorithms, ML-DSA and SLH-DSA signatures in CMS SignedData, and ML-KEM-only TLS; check the C# release notes for the version you use.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
@@ -1659,7 +1659,7 @@
     "term": "KSP",
     "acronym": "KSP",
     "definition": "Key Storage Provider — a Windows CNG component that manages private key isolation and storage. KSPs abstract over software (MS_KEY_STORAGE_PROVIDER), TPM (MS_PLATFORM_KEY_STORAGE_PROVIDER), and HSM-backed storage.",
-    "technicalNote": "Applications use NCryptOpenStorageProvider() to select a KSP at initialization time. The key isolation architecture means private key material never leaves the KSP boundary, even in software mode. Check Microsoft's current CNG documentation for which providers and Windows versions support post-quantum keys; this entry asserts no release.",
+    "technicalNote": "Applications use NCryptOpenStorageProvider() to select a KSP at initialization time. With the Microsoft software KSP, key isolation keeps long-lived private keys out of the application process, but a key can still be exported if its export policy allows it. Microsoft documents ML-KEM and ML-DSA in CNG for Windows Server 2025 and Windows 11 (24H2, 25H2); this entry does not say which KSPs (software, TPM, smart card or a vendor HSM) can store post-quantum keys, so check Microsoft's and the provider's documentation.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
     "category": "concept"
@@ -1683,8 +1683,8 @@
   },
   {
     "term": "oqsprovider",
-    "definition": "An OpenSSL 3.x provider plugin that adds post-quantum cryptography algorithm support via the liboqs library, so OpenSSL applications can use those algorithms once the provider is loaded and configured.",
-    "technicalNote": "Loaded via OSSL_PROVIDER_load(NULL, \"oqsprovider\") or configuration. Check the project's README for the OpenSSL and liboqs versions it requires and for the algorithms and hybrid names it supports in that release. The Open Quantum Safe project describes its libraries as for prototyping and evaluation, so read its current guidance before any production or FIPS use.",
+    "definition": "An OpenSSL 3.x provider plugin from the Open Quantum Safe project that adds post-quantum and hybrid algorithms from the liboqs library, mainly for testing and experimentation. OpenSSL applications can use them once the provider is loaded and the application or OpenSSL configuration asks for the algorithm.",
+    "technicalNote": "Loaded with OSSL_PROVIDER_load, the -provider option or openssl.cnf; TLS groups are then chosen with the usual OpenSSL group settings. On OpenSSL 3.5 and later, an algorithm that OpenSSL's own default provider already implements (ML-KEM, ML-DSA, SLH-DSA and the hybrids it ships) is not offered through oqsprovider, and the README strongly discourages using the standardized algorithm families through it. The project says the provider is meant for research and prototyping and does not recommend relying on it in production or to protect sensitive data; check its README for the OpenSSL and liboqs versions and algorithm names of the release you use.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "advanced",
     "category": "concept"
@@ -1699,8 +1699,8 @@
   },
   {
     "term": "Crypto Agility Pattern",
-    "definition": "A software design pattern that decouples cryptographic algorithm selection from application business logic, enabling algorithms to be swapped without code changes. Essential for PQC migration.",
-    "technicalNote": "Five main patterns: (1) Provider Abstraction — use JCA/OpenSSL provider swap. (2) Config-Driven Selection — algorithm name from YAML/env var. (3) Hybrid/Composite — run classical + PQC in parallel. (4) Algorithm Negotiation — TLS-style capability advertisement. (5) Feature Flags — gradual PQC rollout per service.",
+    "definition": "A software design pattern that decouples cryptographic algorithm selection from application business logic, so that algorithms can be changed with little or no change to application code. Supports PQC migration.",
+    "technicalNote": "Five common patterns: (1) Provider Abstraction — use a provider interface such as JCA or OpenSSL providers. (2) Config-Driven Selection — algorithm name from YAML/env var. (3) Hybrid/Composite — run classical + PQC in parallel. (4) Algorithm Negotiation — TLS-style capability advertisement. (5) Feature Flags — gradual PQC rollout per service.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
     "category": "concept"
@@ -1715,8 +1715,8 @@
   },
   {
     "term": "PQClean",
-    "definition": "A collection of audited, clean-room post-quantum cryptographic reference implementations in C. Provides the source implementations that feed into liboqs, pqcrypto (Rust), and other libraries.",
-    "technicalNote": "PQClean implementations are written for readability and auditability rather than performance. The project aims to avoid platform-specific code and dynamic allocation. It feeds liboqs and other libraries; treat it as a reference source, not a validated module.",
+    "definition": "A collection of clean, standalone C implementations of the post-quantum schemes in the NIST post-quantum project, written to be easy to integrate into libraries such as liboqs and the Rust pqcrypto crate. The project is retired and archived as read-only.",
+    "technicalNote": "PQClean's automatically checked requirements include valid C99, no dynamic memory allocation and no preprocessor conditionals other than header guards; its checks for branching on secret data and for access to secret memory locations are listed as not yet done. The README says the project is retired and archived, and points to the PQ Code Package projects (mlkem-native, mldsa-native, slhdsa-c) for maintained ML-KEM, ML-DSA and SLH-DSA code. liboqs still carries code that originated in PQClean. Treat it as a reference source, not a validated module.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "advanced",
     "category": "concept"
@@ -1749,7 +1749,7 @@
   {
     "term": "Transit Encryption Engine",
     "definition": "A secrets manager service that performs encryption/decryption operations on behalf of applications without ever exposing the key material. Acts as an 'encryption as a service' — applications send plaintext in, get ciphertext back.",
-    "technicalNote": "HashiCorp Vault Transit engine supports AES-GCM-256, ChaCha20-Poly1305, RSA-OAEP, and ECDSA. Each named key has a versioned key ring — encrypting uses the latest version, decrypting accepts any version. PQC migration depends on the key types the deployed Vault version documents; a KEM key type would establish a shared secret rather than encrypt data directly, and signature types such as ML-DSA only protect integrity. Rewrap re-encrypts existing ciphertext under the latest key version without exposing plaintext.",
+    "technicalNote": "HashiCorp Vault Transit engine supports AES-GCM-256, ChaCha20-Poly1305, RSA-OAEP, and ECDSA. Each named key has a versioned key ring — encrypting uses the latest version, decrypting accepts any version not older than the key's min_decryption_version setting. PQC migration depends on the key types the deployed Vault version documents; a KEM key type would establish a shared secret rather than encrypt data directly, and signature types such as ML-DSA only protect integrity. Rewrap re-encrypts existing ciphertext under the latest key version without exposing plaintext.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1782,7 +1782,7 @@
   {
     "term": "Envelope Encryption",
     "definition": "A two-level encryption scheme: a data encryption key (DEK) encrypts the data, and a key encryption key (KEK) encrypts the DEK. The encrypted DEK is stored alongside the ciphertext. Only the KEK needs to be protected in a KMS.",
-    "technicalNote": "Used by every major cloud KMS (AWS, Azure, GCP). PQC migration: the quantum-vulnerable step is the KEK wrapping operation when it uses RSA-OAEP or ECDH; the AES-256-GCM DEK is not itself exposed to Shor-type attacks. An ML-KEM-768 encapsulation yields a shared secret; a KDF bound to the algorithm and context derives a KEK that authenticated-wraps the DEK. A hybrid design mixes the classical and KEM secrets in that KDF, or keeps two independently wrapped copies until the classical wrap is retired. Wrapped DEKs already captured under the old wrap stay exposed.",
+    "technicalNote": "Used by AWS KMS, Azure Key Vault and Google Cloud KMS, each of which documents this pattern. PQC migration: the quantum-vulnerable step is the KEK wrapping operation when it uses RSA-OAEP or ECDH; the AES-256-GCM DEK is not itself exposed to Shor-type attacks. An ML-KEM-768 encapsulation yields a shared secret; a KDF bound to the algorithm and context derives a KEK that authenticated-wraps the DEK. A hybrid design mixes the classical and KEM secrets in that KDF, so the KEK stays secret as long as at least one of the two secrets does, provided the combiner is sound. Wrapping the same DEK separately under a classical KEK and a post-quantum KEK keeps classical-only readers working, but the DEK is then only as protected as the weaker wrap, because opening either copy recovers it. Wrapped DEKs already captured under the old wrap stay exposed.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1790,7 +1790,7 @@
   {
     "term": "Secrets Manager",
     "definition": "A dedicated service for storing, rotating, and auditing application secrets such as database passwords, API keys, TLS certificates, and SSH keys. Provides centralized access control, automatic rotation, and audit logging.",
-    "technicalNote": "Key products: HashiCorp Vault (open source + enterprise), AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server, CyberArk Conjur. Core capabilities: versioning, rotation triggers (AWS Lambda), access policies (IAM or Vault policies), audit logs, replication. PQC requirements: TLS channel to the API must use hybrid KEM; signing tokens (Vault JWT) must use ML-DSA.",
+    "technicalNote": "Key products: HashiCorp Vault (open source + enterprise), AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server, CyberArk Conjur. Core capabilities: versioning, rotation triggers (AWS Lambda), access policies (IAM or Vault policies), audit logs, replication. PQC considerations: hybrid key exchange on the TLS connection to a secrets API needs both the service endpoint and the client to support it (AWS documents ML-KEM hybrid key agreement on Secrets Manager's non-FIPS endpoints, which clients must be updated to offer). Signing algorithms are product-specific; Vault's documented identity-token algorithms are RS256/384/512, ES256/384/512 and EdDSA, with no post-quantum option listed.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "beginner",
     "category": "concept"
@@ -1834,7 +1834,7 @@
     "term": "Zero Trust Network Access",
     "acronym": "ZTNA",
     "definition": "A security model that grants access to specific applications based on verified identity, device posture, and context — rather than network location. Replaces implicit trust based on being inside the corporate network perimeter.",
-    "technicalNote": "ZTNA PQC design points to check, not universal requirements: (1) mutual TLS device authentication with post-quantum or hybrid certificates once your PKI and clients support them; (2) hybrid ML-KEM key exchange in the secure tunnel; (3) device attestation via TPM Quote or DICE (see attestation PQC migration); (4) identity tokens signed with a post-quantum algorithm once the JOSE identifiers are final. Support varies by vendor and product; confirm each point in the vendor's own documentation.",
+    "technicalNote": "ZTNA PQC design points to check, not universal requirements: (1) mutual TLS device authentication with post-quantum or hybrid certificates once your PKI and clients support them; (2) hybrid ML-KEM key exchange in the secure tunnel; (3) device attestation via TPM Quote or DICE (see attestation PQC migration); (4) identity tokens signed with a post-quantum algorithm such as ML-DSA, whose JOSE identifiers are registered in RFC 9964, once your identity provider and relying parties support it. Support varies by vendor and product; confirm each point in the vendor's own documentation.",
     "relatedModule": "/learn/network-security-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1850,7 +1850,7 @@
   {
     "term": "East-West Traffic",
     "definition": "Network traffic that flows laterally between servers, containers, or services within a data centre or cloud environment — as opposed to north-south traffic which flows between users and services across the network perimeter.",
-    "technicalNote": "East-west PQC urgency: service mesh mTLS (Istio, Linkerd) uses short-lived certificates with ECDSA — high rotation frequency partially mitigates HNDL, but long-lived session keys are still vulnerable. Migrate service mesh CA to ML-DSA-65 certificates and tunnel KEM to ML-KEM-768. Container workloads use SPIFFE/SPIRE for certificate provisioning — update SPIRE server signing key to ML-DSA.",
+    "technicalNote": "East-west PQC considerations: service meshes such as Istio and Linkerd issue short-lived workload certificates, 24 hours by default in their documentation, and rotate them automatically. A short lifetime limits how long a stolen private key can be used to impersonate a workload; it does not protect the confidentiality of recorded traffic, which depends on the key exchange negotiated in each TLS handshake (Istio lets operators set the ECDH curves). Authentication moves to post-quantum certificates only when the mesh CA, proxies and any SPIFFE/SPIRE components support them; check each project's current documentation.",
     "relatedModule": "/learn/network-security-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1867,7 +1867,7 @@
     "term": "Transparent Data Encryption",
     "acronym": "TDE",
     "definition": "A database encryption feature that automatically encrypts data files at rest without requiring application changes. The database engine handles encryption and decryption transparently on read/write operations.",
-    "technicalNote": "TDE implementations: SQL Server (AES with a certificate or EKM-protected key), Oracle (Oracle Wallet or external KMS), and PostgreSQL through extensions such as Percona's pg_tde (core PostgreSQL has no TDE; pgcrypto provides column-level functions, not transparent encryption). The master key is protected by whatever the product's key provider supports, so inspect that provider. PQC note: a KEM such as ML-KEM establishes a shared secret; protecting the master key with it needs a KDF and key-wrap profile that the product and key provider document.",
+    "technicalNote": "TDE implementations: SQL Server encrypts data and log files with a symmetric database encryption key (AES or 3DES) protected by a certificate or an EKM-held asymmetric key; Oracle protects its table and tablespace keys with a master encryption key kept in a TDE wallet or an external keystore such as Oracle Key Vault; core PostgreSQL has no TDE (its documentation points to pgcrypto for columns and to file-system or block-level encryption), and Percona's pg_tde adds it but ships with Percona Server for PostgreSQL and requires that distribution's patches. Which key protects the data-encryption key depends on the product's key provider, so inspect that provider. PQC note: a KEM such as ML-KEM establishes a shared secret; protecting a master key with it needs a KDF and key-wrap profile that the product and key provider document.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1883,8 +1883,8 @@
   },
   {
     "term": "Always Encrypted",
-    "definition": "Microsoft SQL Server's client-side encryption feature that ensures sensitive data is never exposed in plaintext to the database engine — only the client application holds the Column Master Key. The server stores and queries only ciphertext.",
-    "technicalNote": "Always Encrypted uses a two-tier key hierarchy: the Column Master Key (CMK, held in an external key store) protects Column Encryption Keys (AES-256). Microsoft's CMK store providers encrypt CEKs with RSA-OAEP; a custom provider may differ. Deterministic encryption supports equality queries; randomised encryption is more secure but only supports retrieval. A PQC migration is hypothetical until Microsoft and the key store provider document a supported scheme; do not assume a rotation wizard or client driver supports it.",
+    "definition": "Microsoft SQL Server's client-side encryption feature: a client driver encrypts sensitive columns before they reach the database engine, and the encryption keys stay in an external key store rather than in the database. Without secure enclaves the engine handles only ciphertext. With secure enclaves, the client driver passes keys to a protected memory region inside the engine process, which decrypts there to allow richer queries.",
+    "technicalNote": "Always Encrypted uses a two-tier key hierarchy: the Column Master Key (CMK, held in an external key store) protects Column Encryption Keys (AES-256). Microsoft's CMK store providers encrypt CEKs with RSA-OAEP; a custom provider may differ. Without enclaves, deterministic encryption supports equality lookups and randomised encryption supports only storing and retrieving values. With secure enclaves, randomised columns also support comparisons, pattern matching and in-place encryption; this needs enclave-enabled keys, with the CMK held in the Windows Certificate Store or Azure Key Vault, and Microsoft notes that such columns can leak the order of the data. A PQC migration is hypothetical until Microsoft and the key store provider document a supported scheme; do not assume a rotation wizard or client driver supports it.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1919,7 +1919,7 @@
     "term": "Column Master Key",
     "acronym": "CMK",
     "definition": "The top-level key in SQL Server Always Encrypted that protects Column Encryption Keys (CEKs). The CMK is typically stored in Azure Key Vault, Windows Certificate Store, or an HSM — never in the database itself.",
-    "technicalNote": "CMK operations: CMK encrypts CEK metadata stored in sys.column_encryption_key_values. CMK rotation requires re-encrypting all CEK metadata with the new CMK (SQL Server 'rotate CMK' wizard or PowerShell New-SqlColumnEncryptionKeyEncryptedValue). PQC migration path: once the key provider and client driver document a PQC-capable key-protection scheme, create a new CMK of that type, rotate to re-protect every CEK, then retire the RSA CMK. A KEM is key establishment, so this needs a KEM, KDF and key-wrap profile, not just a new key type.",
+    "technicalNote": "The CMK encrypts each CEK; the encrypted CEK values are stored as metadata in sys.column_encryption_key_values, while the CMK stays in the external key store. Rotating the CMK (the SSMS Rotate dialog, or the PowerShell cmdlets Invoke-SqlColumnMasterKeyRotation and Complete-SqlColumnMasterKeyRotation) re-encrypts every CEK under the new CMK without touching column data, and Microsoft advises keeping the old CMK because earlier backups still need it. Because the CEK itself is unchanged, an old wrapped copy stays tied to the old RSA key; replacing the CEK means re-encrypting the column data. A PQC migration is hypothetical until the key provider and client driver document a PQC-capable scheme; a KEM only establishes a shared secret, so such a scheme would also need a KDF to derive a key-encryption key and an authenticated wrap of the CEK, with algorithm and context bound in and the key version recorded.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1927,7 +1927,7 @@
   {
     "term": "Key Rotation (Database)",
     "definition": "The process of replacing an active database encryption key with a new one, re-encrypting data (or key metadata) under the new key, and retiring the old key. Critical for limiting cryptographic exposure over time.",
-    "technicalNote": "Three rotation strategies: (1) Master key rotation only — re-encrypt DEKs/CEKs under new master key without touching data. (2) DEK rotation — generate new DEK, re-encrypt all data (expensive). (3) Combined — new master key + new DEKs simultaneously. SQL Server uses strategy 1 for TDE and Always Encrypted. Oracle uses a similar approach. PQC migration usually starts as a master key rotation from an RSA-protected key to a quantum-resistant key-protection scheme where supported. Rewrapping alone does not protect copies of the old wrapped DEK and ciphertext already captured; there, DEK replacement and data re-encryption is needed.",
+    "technicalNote": "Three rotation strategies: (1) Master key rotation only — re-encrypt DEKs/CEKs under a new master key without touching data. (2) DEK rotation — generate a new DEK and re-encrypt all data (expensive). (3) Combined — a new master key and new DEKs. SQL Server and Oracle each offer both kinds of rotation, and earlier master key versions are kept so older backups can be restored. A PQC migration of the master-key layer would be strategy (1) where the product and key provider document a supported scheme: the KEM shared secret goes through a KDF to a key-encryption key that authenticated-wraps the DEK, with context bound in and the key version stored with it. Rewrapping does not protect copies of the old wrapped DEK and ciphertext already captured, including backups; that needs DEK replacement and data re-encryption.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1936,7 +1936,7 @@
     "term": "Identity Provider",
     "acronym": "IdP",
     "definition": "A system that creates, maintains, and manages digital identities and their authentication. The IdP authenticates users and issues tokens (SAML assertions, JWT, OIDC ID tokens) that allow access to service providers.",
-    "technicalNote": "PQC impact on IdPs: (1) SAML assertion signatures — migrate from RSA-SHA256 to a post-quantum signature once supported. (2) OIDC/JWT signing — migrate from RS256/ES256 to ML-DSA-65 once the JOSE identifiers are final. (3) TLS channel to IdP — hybrid ML-KEM. (4) PKI certificates for IdP servers — ML-DSA-65 or hybrid. Examples of IdPs: Okta, Microsoft Entra, PingFederate, ForgeRock, Shibboleth. Ask each vendor for its documented PQC support; this entry asserts no roadmap.",
+    "technicalNote": "PQC impact on IdPs: (1) SAML assertion signatures — migrate from RSA-SHA256 to a post-quantum signature once supported. (2) OIDC/JWT signing — migrate from RS256/ES256 to ML-DSA-65, whose JOSE identifier is registered in RFC 9964, once your libraries and relying parties support it. (3) TLS channel to IdP — hybrid ML-KEM. (4) PKI certificates for IdP servers — ML-DSA-65 or hybrid. Examples of IdPs: Okta, Microsoft Entra, PingFederate, Shibboleth. Ask each vendor for its documented PQC support; this entry asserts no roadmap.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1954,7 +1954,7 @@
     "term": "SAML 2.0",
     "acronym": "SAML",
     "definition": "Security Assertion Markup Language 2.0 — an XML-based open standard for exchanging authentication and authorization data between identity providers and service providers. The dominant enterprise SSO federation protocol.",
-    "technicalNote": "SAML assertions are XML documents signed with RSA-SHA256 (xmldsig). The PQC migration challenge: check whether the XML Signature specification and your SAML libraries define identifiers for post-quantum signatures. One design discussed is wrapping the assertion in a JWS signed with a post-quantum algorithm; that is not a SAML interoperability standard and needs final JOSE identifiers and library support first. This entry assumes no SAML 3.0 specification.",
+    "technicalNote": "SAML assertions are XML documents that can be signed with XML Signature (xmldsig), for example with RSA-SHA256. The PQC migration challenge: check whether the XML Signature specification and your SAML libraries define identifiers for post-quantum signatures. One design discussed is wrapping the assertion in a JWS signed with a post-quantum algorithm; that is not a SAML interoperability standard and would need library support on both sides, although ML-DSA identifiers for JOSE are now registered (RFC 9964). This entry assumes no SAML 3.0 specification.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1971,7 +1971,7 @@
   {
     "term": "Kerberos",
     "definition": "A network authentication protocol that uses symmetric key cryptography and a trusted third party (Key Distribution Center) to authenticate service requests. The dominant authentication protocol in Microsoft Active Directory environments.",
-    "technicalNote": "Kerberos PQC challenges: (1) Ticket Granting Tickets (TGTs) and Service Tickets are encrypted with AES-256 (a 256-bit symmetric key; its quantum resistance depends on the attack model, not the label). (2) Pre-authentication uses AS-REQ with the client long-term key; certificate-based PKINIT (RFC 4556) is the existing option, and whether a given KDC supports post-quantum certificates must be confirmed with the vendor. (3) Cross-realm trust uses shared symmetric keys. This entry asserts no vendor release date.",
+    "technicalNote": "Kerberos PQC challenges: (1) Ticket Granting Tickets (TGTs) and Service Tickets are encrypted with symmetric keys whose encryption type depends on what the client, KDC and service have enabled; AES-256 types are defined (RFC 3962, RFC 8009), and a 256-bit key's quantum resistance depends on the attack model, not the label. (2) Pre-authentication uses AS-REQ with the client long-term key; certificate-based PKINIT (RFC 4556) is the existing option, and whether a given KDC supports post-quantum certificates must be confirmed with the vendor. (3) Cross-realm trust uses shared symmetric keys. This entry asserts no vendor release date.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1987,7 +1987,7 @@
   {
     "term": "Device Attestation",
     "definition": "The process of cryptographically proving a device's identity and integrity to a remote verifier. Allows a server to verify that a device is what it claims to be and that its firmware/software has not been tampered with.",
-    "technicalNote": "Attestation mechanisms: TPM 2.0 Quote (RSA/ECDSA AIK signs PCR measurements — quantum-vulnerable), DICE, FIDO Device Onboarding, Intel TDX/AMD SEV-SNP hardware attestation (ECDSA P-384 today). Post-quantum support in these ecosystems varies; check each specification and vendor for what is published. IAM systems increasingly require device attestation for Zero Trust.",
+    "technicalNote": "Attestation mechanisms: TPM 2.0 Quote (RSA/ECDSA AIK signs PCR measurements — quantum-vulnerable), DICE, FIDO Device Onboarding, Intel TDX quotes (ECDSA P-256 in Intel's DCAP quote format) and AMD SEV-SNP attestation reports (ECDSA P-384 with SHA-384). Post-quantum support in these ecosystems varies; check each specification and vendor for what is published. IAM systems increasingly require device attestation for Zero Trust.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2004,7 +2004,7 @@
     "term": "UEFI",
     "acronym": "UEFI",
     "definition": "Unified Extensible Firmware Interface — the modern replacement for BIOS that defines a software interface between an operating system and platform firmware. UEFI Secure Boot uses a cryptographic chain of trust to verify firmware and bootloader integrity.",
-    "technicalNote": "UEFI Secure Boot key hierarchy: Platform Key (PK, RSA-2048 or RSA-4096) → Key Exchange Keys (KEK) → Signature Databases (db/dbx). All keys are X.509 certificates. PQC migration: UEFI Forum is standardising ML-DSA-65 support in UEFI 2.11. Interim approach: dual-sign binaries with both ECDSA and ML-DSA until hardware supports PQC verification. SBAT (Secure Boot Advanced Targeting) metadata must also be updated.",
+    "technicalNote": "UEFI Secure Boot key hierarchy: Platform Key (PK) → Key Exchange Keys (KEK) → Signature Databases (db/dbx). Entries can be X.509 certificates, RSA-2048 public keys or image hashes. PQC migration: the UEFI Forum's April 2026 whitepaper describes post-quantum changes for the next UEFI specification release, including support for images that carry more than one signature, and states that these proposals are not yet approved. Check the published specification and the firmware vendor for what a given platform supports.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2012,8 +2012,8 @@
   {
     "term": "Platform Key",
     "acronym": "PK",
-    "definition": "The root of trust in UEFI Secure Boot — a single owner certificate that signs the Key Exchange Key (KEK) database. The Platform Key is typically set by the OEM at manufacturing time and establishes the chain of trust for all Secure Boot keys.",
-    "technicalNote": "PK characteristics: only one PK at a time; updating PK requires physical presence or existing PK signature; loss of PK requires physical presence to reset. Current algorithm: RSA-2048 or RSA-4096. PQC migration: replace PK with ML-DSA-65 certificate — requires OEM/BIOS vendor support (UEFI 2.11+). Microsoft Shim and MOK (Machine Owner Key) system for Linux adds another trust layer.",
+    "definition": "The root of trust in UEFI Secure Boot: a single key whose private half the platform owner uses to change platform ownership and to authorise changes to the Key Exchange Key (KEK) list. The platform vendor can supply a default Platform Key, and the platform owner enrolls their own.",
+    "technicalNote": "PK characteristics: only one PK at a time (the PK variable holds exactly one entry); in user mode a new PK must be signed with the current PK, and the PK can also be cleared by a secure platform-specific method. RSA-2048 is widely used today. PQC: the UEFI Forum's April 2026 whitepaper proposes changes for the next UEFI release and states that they are not yet approved, so no migration path is published. Microsoft Shim and MOK (Machine Owner Key) system for Linux adds another trust layer.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2021,8 +2021,8 @@
   {
     "term": "Key Exchange Key",
     "acronym": "KEK",
-    "definition": "A UEFI Secure Boot key that is trusted to update the Signature Database (db) and Revocation Database (dbx). The KEK is signed by the Platform Key (PK) and allows OS vendors to add their own signing certificates to the Secure Boot databases.",
-    "technicalNote": "KEK signers: Microsoft holds a KEK that allows updating the Windows db; OEM holds another KEK. Multiple KEKs can coexist. KEK updates require a valid PK signature. PQC migration path: add ML-DSA-65 KEK alongside existing RSA KEK during transition; deprecate RSA KEK after all db certs are PQC-signed.",
+    "definition": "A UEFI Secure Boot key that is trusted to update the Signature Database (db) and Revocation Database (dbx). Updates to the KEK list itself must be signed by the Platform Key (PK), and the KEK lets OS vendors add their own signing certificates to the Secure Boot databases.",
+    "technicalNote": "KEK signers: Microsoft holds a KEK that allows updating the Windows db; OEM holds another KEK. Multiple KEKs can coexist. KEK updates require a valid PK signature. PQC: the UEFI Forum's April 2026 whitepaper describes planned post-quantum changes for the next UEFI release, including an algorithm check when PK, KEK, db or dbx entries are enrolled, and states that its proposals are not yet approved; check the published specification and the firmware vendor before planning a migration.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2031,7 +2031,7 @@
     "term": "DICE",
     "acronym": "DICE",
     "definition": "Device Identifier Composition Engine — a hardware security architecture that uses a secret Unique Device Secret (UDS) and firmware measurement to derive a Compound Device Identifier (CDI), creating a hardware root of trust that is unique per device and firmware state.",
-    "technicalNote": "DICE layers: DICE layer 0 (hardware) derives CDI = HKDF(UDS, H(firmware)). Each subsequent layer generates a key pair from its CDI and issues a certificate binding the key to a firmware measurement. PQC migration: DICE specification update in 2025 adds ML-DSA-44 for constrained devices. Key derivation uses HKDF-SHA-256 which is already quantum-safe.",
+    "technicalNote": "DICE layers: DICE layer 0 (hardware) derives the CDI from the UDS and a measurement of the first mutable code; the TCG specification allows a hash or an HMAC, HMAC(UDS, H(First Mutable Code)), and leaves the method to the manufacturer. Each subsequent layer generates a key pair from its CDI and issues a certificate binding the key to a firmware measurement. Algorithms are chosen by profiles: the Open Profile for DICE v2.6 lists ML-DSA-65 and ML-DSA-87 as acceptable post-quantum signatures, and the Android profile for DICE accepts the same two.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2039,7 +2039,7 @@
   {
     "term": "TPM PCR",
     "definition": "Platform Configuration Register — a hash accumulator inside a TPM that holds extended measurements of system components. PCRs cannot be written directly; they can only be extended (PCR_new = SHA-256(PCR_old || new_value)), creating a tamper-evident log of the boot process.",
-    "technicalNote": "Standard PCR assignments (UEFI): PCR[0]=Core firmware, PCR[4]=bootloader, PCR[7]=Secure Boot state, PCR[11]=BitLocker/LUKS keys. PCR extend uses SHA-256 (quantum-safe). The quantum-vulnerable operation is the TPM Quote — the AIK signs PCR values using RSA or ECDSA for remote attestation. PQC migration: software ML-DSA co-sign of TPM Quotes until TPM hardware supports PQC AIKs.",
+    "technicalNote": "Typical PC firmware assignments (TCG PC Client Platform Firmware Profile): PCR[0] = SRTM, BIOS and embedded drivers, PCR[4] = UEFI boot manager code, PCR[7] = Secure Boot policy; PCRs 8-15 are left to the operating system. A PCR holds a digest, never a key. Extend uses the PCR bank's hash (for example SHA-256); the quantum-vulnerable operation is the TPM Quote, where an attestation key signs PCR values with RSA or ECDSA. TPM 2.0 library version 185 defines ML-DSA attestation keys; check the manufacturer's documentation for whether a given TPM implements them.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -2055,15 +2055,15 @@
   {
     "term": "Firmware Signing",
     "definition": "The process of cryptographically signing firmware images before distribution and verifying the signature before execution. Ensures that firmware has not been tampered with since it was signed by the vendor.",
-    "technicalNote": "Firmware signing formats: UEFI Authenticated Variable (X.509 + RSA-2048/ECDSA), PKCS#7 SignedData, FIT (Flat Image Tree for embedded/ARM). PQC migration: ML-DSA-65 signature is 3,309 bytes — larger than BIOS flash partitions in some legacy designs. Dual-signing (ECDSA + ML-DSA) allows transition without breaking compatibility. UEFI capsule updates are the primary firmware update mechanism.",
+    "technicalNote": "Firmware signing formats: UEFI authenticated variables and images (PKCS#7 SignedData with X.509 certificates, commonly RSA-2048 or ECDSA), FIT (Flat Image Tree for embedded/ARM). PQC migration: an ML-DSA-65 signature is 3,309 bytes (an RSA-2048 signature is 256 bytes), so check size limits in firmware variables and update formats. Images that carry both a classical and an ML-DSA signature are a transition approach discussed in a UEFI Forum whitepaper, not a published UEFI requirement. UEFI capsule updates are one common firmware update mechanism.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "Boot Guard",
-    "definition": "Intel's hardware root of trust technology that verifies the authenticity of initial UEFI firmware using RSA-2048 keys fused into the CPU during manufacturing. Provides hardware-enforced protection against firmware tampering before the OS loads.",
-    "technicalNote": "Boot Guard key structure: Key Manifest contains RSA-2048 public key hash, fused into ME Flash at manufacture. Boot Policy Manifest signed by Key Manifest key, contains hash of Initial Boot Block. PQC migration: Intel has not published a Boot Guard v3 PQC roadmap as of 2026 — supply chain risk. AMD has AMD-SP (AMD Secure Processor) with similar RSA-2048 dependency.",
+    "definition": "Intel's boot integrity technology: hardware-based verification of the initial BIOS startup code before it runs, according to a boot policy defined by the platform manufacturer. It is intended to help prevent the execution of unauthorized boot blocks.",
+    "technicalNote": "The platform manufacturer chooses the boot policy: an enforcement policy (what happens if the BIOS cannot be verified) and a measurement policy (whether the BIOS startup code is measured into the TPM). Intel's datasheet pages for this technology do not state the signature algorithms or key sizes used, and this entry makes no claim about them or about post-quantum support; check the platform documentation for your processor. Availability varies between processor SKUs.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2087,15 +2087,15 @@
   {
     "term": "SSH Host Key",
     "definition": "A long-term asymmetric key pair used to authenticate an SSH server to connecting clients. When a client connects for the first time, it receives and stores the server's host key fingerprint in known_hosts. Future connections verify against this stored fingerprint.",
-    "technicalNote": "SSH host key algorithms: RSA (rsa-sha2-512), ECDSA P-256 (ecdsa-sha2-nistp256), Ed25519. OpenSSH's post-quantum work so far is in key exchange (sntrup761x25519-sha512 from 9.0; mlkem768x25519-sha256 from 9.9), which protects session keys, not host-key authentication. This entry asserts no ML-DSA host-key support in OpenSSH. Post-quantum signatures are typically much larger than Ed25519's 64-byte signature, depending on the algorithm and parameter set.",
+    "technicalNote": "SSH host key algorithms: RSA (rsa-sha2-512), ECDSA P-256 (ecdsa-sha2-nistp256), Ed25519. OpenSSH's post-quantum key exchange came first (sntrup761x25519-sha512 default from 9.0; mlkem768x25519-sha256 added in 9.9 and default from 10.0); it protects session keys, not host-key authentication. For host keys, OpenSSH 10.4 added an experimental composite of ML-DSA-44 and Ed25519 (ssh-mldsa44-ed25519, not enabled by default), specified in an individual Internet-Draft, and 10.6 enables it: its sshd_config(5) lists ssh-mldsa44-ed25519 among the default host key algorithms. Both client and server need a version that supports it. Post-quantum signatures are typically much larger than Ed25519's 64-byte signature, depending on the algorithm and parameter set.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "FIPS 140-3 Mode",
-    "definition": "An OS operating mode that restricts the cryptographic algorithms to only those validated under FIPS 140-3. Required for US federal systems and many regulated industries. In FIPS mode, all cryptographic operations must use FIPS-approved algorithms and validated implementations.",
-    "technicalNote": "FIPS 140-3 and PQC: ML-KEM, ML-DSA, and SLH-DSA are FIPS 203/204/205 approved — but only implementations with a CMVP certificate are FIPS-validated. AWS-LC and OpenSSL FIPS Provider 3.0.9 (CMVP #4282) include ML-KEM-768/1024. Enable on Linux: dracut-fips kernel parameter + update-crypto-policies --set FIPS. Test applications before enforcing — FIPS mode disables TLS < 1.2, SHA-1, and MD5.",
+    "definition": "An operating-system setting that restricts cryptographic operations to the algorithms and settings permitted under FIPS 140. FIPS 140-3 validates cryptographic modules, not settings, so a system uses validated cryptography only if the modules it relies on hold a current validation certificate. U.S. federal agencies that require cryptographic protection must use validated modules.",
+    "technicalNote": "FIPS 140-3 and PQC: ML-KEM, ML-DSA, and SLH-DSA are specified in FIPS 203/204/205, but a module's validation covers only the algorithms on its own certificate. For example, certificate #4282 (OpenSSL FIPS Provider 3.0.8 and 3.0.9) is a FIPS 140-2 certificate on the historical list with no ML-KEM, ML-DSA or SLH-DSA, while AWS-LC 3 certificates #5298 and #5314 are FIPS 140-3 and list ML-KEM. In the Linux crypto-policies framework the FIPS policy aids conformance but does not provide it by itself: validated modules must be installed and the kernel booted with fips=1. Test applications before enforcing: the policy allows only TLS 1.2 and later.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2103,7 +2103,7 @@
   {
     "term": "GnuTLS Priority String",
     "definition": "A configuration syntax used in GnuTLS to specify which TLS protocol versions, cipher suites, and key exchange algorithms are acceptable. Used in Linux systems as the TLS policy configuration for applications using the GnuTLS library.",
-    "technicalNote": "GnuTLS priority examples: NORMAL enables system defaults; SECURE256 enforces AES-256 and ECDHE. Post-quantum hybrid groups depend on the GnuTLS release and its build; check the GnuTLS documentation for the exact priority keywords before use. GnuTLS is used by curl, wget, Dovecot, Postfix, and many system daemons on Linux.",
+    "technicalNote": "GnuTLS priority examples: NORMAL means all the known-to-be-secure ciphersuites, and SECURE256 is currently an alias for SECURE192 (ciphersuites offering a 192-bit security level or more); a leading @ expands a keyword from the system-wide configuration. Post-quantum support depends on the GnuTLS release and its build: 3.8.8 (November 2024) added experimental X25519MLKEM768 and SecP256r1MLKEM768 key exchange, and from 3.8.10 (July 2025) post-quantum algorithms are provided only through a build with leancrypto. Check the GnuTLS documentation for the exact priority keywords before use. GnuTLS is one of several TLS libraries a program can be built with (curl, for example, can use GnuTLS, OpenSSL and others), so check which library a given program uses.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2335,8 +2335,8 @@
   },
   {
     "term": "PQC On-Ramp",
-    "definition": "NIST's ongoing standardization process for additional post-quantum signature algorithms beyond the August 2024 winners (ML-DSA, SLH-DSA, FN-DSA). Documented in NIST IR 8528 (Oct 2024); aims to provide algorithmic diversity beyond the lattice family.",
-    "technicalNote": "Nine third-round candidates remain across four families: MPC-in-the-Head (FAEST, MQOM, SDitH), multivariate (UOV, MAYO, QR-UOV, SNOVA), isogeny (SQIsign), and lattice (HAWK). Earliest projected standardization window is 2027.",
+    "definition": "NIST's ongoing process for additional post-quantum signature algorithms beyond the schemes it selected earlier (ML-DSA, SLH-DSA, FN-DSA). Progress is documented in NIST IR 8528 (first round, October 2024) and NIST IR 8610 (second round, May 2026); the aim is to diversify the signature portfolio, with particular interest in schemes that do not use structured lattices.",
+    "technicalNote": "NIST advanced nine candidates to the third round in May 2026: MPC-in-the-Head (FAEST, MQOM, SDitH), multivariate (UOV, MAYO, QR-UOV, SNOVA), isogeny (SQIsign) and lattice (HAWK). The HAWK team withdrew it on 29 July 2026, leaving eight candidates and none that is lattice-based. NIST expects the third round to last about two years.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "intermediate",
     "category": "concept"
@@ -2477,7 +2477,7 @@
   },
   {
     "term": "Wallet Unit Attestation",
-    "definition": "A credential issued by the Wallet Provider that attests to the authenticity and security properties of a wallet instance. Without a valid WUA, no PID Provider will issue credentials.",
+    "definition": "In the EU Digital Identity Wallet architecture, the general term for an attestation from the Wallet Provider that describes the components of a wallet unit. Its two subtypes are the Wallet Instance Attestation (the wallet app instance) and the Key Attestation (the secure keystore). A PID Provider is required to verify the wallet's WIA and KA, and check that neither is revoked, before issuing a PID.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
     "category": "concept",
@@ -2648,8 +2648,8 @@
   },
   {
     "term": "Composite Signature",
-    "definition": "A signature format that concatenates a post-quantum signature (e.g. ML-DSA) with a traditional signature (e.g. ECDSA or Ed25519) into one value that verifies as a unit, remaining secure as long as either underlying algorithm holds.",
-    "technicalNote": "Distinct from a Composite Certificate, which is the X.509 container that can carry a composite signature. Standardized by the IETF LAMPS working group's composite ML-DSA drafts.",
+    "definition": "A signature format that combines a post-quantum signature (e.g. ML-DSA) with a traditional signature (e.g. ECDSA or Ed25519) into one value that verifies as a unit. A well-constructed composite stays unforgeable as long as at least one component does, but what that protects against depends on which component is broken and on the attacker (classical or quantum).",
+    "technicalNote": "Distinct from a Composite Certificate, which is the X.509 container that can carry a composite signature. Specified in the IETF LAMPS working group's composite ML-DSA Internet-Draft. It gives no backward compatibility: only upgraded verifiers understand its algorithm identifiers.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"

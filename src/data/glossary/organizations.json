@@ -2,8 +2,8 @@
   {
     "term": "CCRA",
     "acronym": "CCRA",
-    "definition": "Common Criteria Recognition Arrangement — a 31-nation mutual recognition agreement under which national Certification Bodies issue and accept IT product security certificates based on ISO/IEC 15408 (Common Criteria).",
-    "technicalNote": "CCRA member nations include the US (NIAP), UK (NCSC), Germany (BSI), France (ANSSI), Japan, South Korea, Australia, and Canada. A CC certificate issued by any national CA is valid across all member states. The EU operates the EUCC as a stricter harmonized adaptation managed by ENISA.",
+    "definition": "Common Criteria Recognition Arrangement — an arrangement under which participating countries plan to recognise Common Criteria (ISO/IEC 15408) certificates authorised by any Certificate Authorising Participant. Only Certificate Authorising Participants authorise certificates issued by their certification bodies; Certificate Consuming Participants recognise them without issuing their own. Recognition covers certificates for evaluations against a collaborative Protection Profile or at EAL 1 to 2 with ALC_FLR.",
+    "technicalNote": "On the Common Criteria Portal, Certificate Authorising Participants include Australia, Canada, France (ANSSI), Germany (BSI), Japan, the Republic of Korea and the United States (NIAP); the United Kingdom is listed as a Certificate Consuming Participant. Participants plan to recognise certificates only within the arrangement's scope, and a participant may decline to recognise a certificate where recognising it would conflict with its law or, for an application involving classified information, for that application only (Articles 2 and 3). The EU's EUCC is a separate scheme set out in Implementing Regulation (EU) 2024/482 and applicable from 27 February 2025: certification bodies issue EUCC certificates at assurance level 'substantial' or 'high', and certification from a third country is recognised within the Union only through a mutual recognition agreement with the Union (Article 44).",
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
     "category": "organization"
@@ -129,7 +129,7 @@
   {
     "term": "Sigstore",
     "definition": "An open-source project (Linux Foundation) for keyless code signing. Developers authenticate with their existing identity (GitHub, Google) and receive short-lived certificates, eliminating long-term key management.",
-    "technicalNote": "Sigstore centralizes crypto in two services: Fulcio (CA) and Rekor (transparency log). Upgrading these to ML-DSA automatically provides PQC protection to all downstream ecosystems (npm, PyPI, Kubernetes).",
+    "technicalNote": "Sigstore uses cryptography in several places: the signing client creates an ephemeral key pair, Fulcio (the certificate authority) issues a short-lived certificate bound to an OpenID Connect identity, Rekor (the transparency log) records the signing event, and a timestamp authority is a further service that uses cryptography. Moving Fulcio and Rekor to ML-DSA would not by itself make downstream consumers post-quantum safe: each signing client, each verifier, the trusted-root and bundle formats, and the verification policy also have to support the new algorithm. The Sigstore project's 2025 plan was to let clients experiment with ML-DSA keys first and to adopt post-quantum algorithms in its public-good services once vetted implementations are available in Go; it lists open questions such as how verification material is signed and how users set verification policy.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
     "category": "organization"
@@ -234,7 +234,7 @@
   {
     "term": "CC",
     "acronym": "Common Criteria",
-    "definition": "International standard (ISO/IEC 15408) for security-product evaluation. Country-specific schemes (BSI Germany, ANSSI France, NIAP US, CCS Canada, etc.) run evaluations; results mutually recognised through the CCRA. EUCC succeeds the SOG-IS MRA in the EU.",
+    "definition": "International standard (ISO/IEC 15408) for security-product evaluation. National schemes (BSI Germany, ANSSI France, NIAP US, the Canadian Common Criteria Scheme, etc.) oversee evaluation and certification; the CCRA lets participants recognise certificates authorised by Certificate Authorising Participants, within its scope (collaborative Protection Profiles, or EAL 1 to 2 with ALC_FLR). In the EU, the EUCC (Implementing Regulation (EU) 2024/482, applicable from 27 February 2025) builds on the SOG-IS mutual recognition agreement.",
     "complexity": "intermediate",
     "category": "organization",
     "relatedModule": "/learn/standards-bodies"

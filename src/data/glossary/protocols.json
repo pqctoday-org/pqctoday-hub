@@ -160,7 +160,7 @@
   },
   {
     "term": "Credential Activation",
-    "definition": "A TPM 2.0 protocol (TPM2_MakeCredential / TPM2_ActivateCredential) for securely delivering a credential to a specific TPM, proven by the TPM demonstrating possession of the corresponding EK private key. PQC migration uses ML-KEM-768 encapsulation against the EK per TCG V1.85.",
+    "definition": "A TPM 2.0 protocol (TPM2_MakeCredential / TPM2_ActivateCredential) for delivering a credential to a specific TPM: the credential is protected so that only a TPM holding the matching EK private key, and the named attestation key, can release it. TPM 2.0 library version 185 (March 2026) extends the key encapsulation used in this protocol to ML-KEM keys, alongside RSA and ECC.",
     "technicalNote": "The Privacy CA encapsulates a secret against the EK public key; only a TPM holding the matching EK private key can decapsulate and release the credential.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
@@ -201,7 +201,7 @@
   {
     "term": "mTLS",
     "definition": "Mutual TLS, a TLS mode where both client and server present certificates for authentication. Common in microservices, zero-trust architectures, and API security.",
-    "technicalNote": "PQC migration for mTLS requires updating both client and server certificates to PQC or hybrid algorithms.",
+    "technicalNote": "mTLS raises two separate post-quantum questions: the key exchange (hybrid ML-KEM groups for TLS 1.3 are defined in RFC 10024) and the authentication of both peers (certificate signatures, which depend on what the CA and the client and server libraries support). They can be migrated independently, so test each client and server pairing.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
     "category": "protocol"
@@ -288,7 +288,7 @@
     "term": "JSON Web Signature",
     "acronym": "JWS",
     "definition": "A standard (RFC 7515) for protecting arbitrary payload bytes with a digital signature or MAC. The protected JOSE header and payload are authenticated; JSON-serialization unprotected headers are not. A verifier must check the result using an accepted algorithm and trusted key.",
-    "technicalNote": "PQC migration requires new JWS algorithm identifiers (e.g., ML-DSA-44, ML-DSA-65) registered via the IETF JOSE PQC draft. Signature sizes grow from 64 bytes (ES256) to ~2,420 bytes (ML-DSA-44).",
+    "technicalNote": "PQC migration requires new JWS algorithm identifiers (e.g., ML-DSA-44, ML-DSA-65), which RFC 9964 registers for JOSE and COSE. Signature sizes grow from 64 bytes (ES256) to ~2,420 bytes (ML-DSA-44).",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
     "category": "protocol"
@@ -305,7 +305,7 @@
   {
     "term": "JOSE",
     "definition": "JSON Object Signing and Encryption, the IETF framework encompassing JWS, JWE, JWK, and JWA specifications. JOSE defines how to sign, encrypt, and represent cryptographic keys in JSON format.",
-    "technicalNote": "The IETF JOSE working group is standardizing PQC algorithm identifiers (ML-DSA, ML-KEM, SLH-DSA) for use in JOSE headers. Algorithm agility also requires compatible algorithm implementations, key representations and validation rules on each side; changing the \"alg\" header alone is insufficient.",
+    "technicalNote": "ML-DSA identifiers for JOSE are published as RFC 9964; identifiers for other post-quantum algorithms (for example SLH-DSA) are specified in separate IETF documents whose status should be checked. Algorithm agility also requires compatible algorithm implementations, key representations and validation rules on each side; changing the \"alg\" header alone is insufficient.",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
     "category": "protocol"
@@ -445,8 +445,8 @@
   {
     "term": "GOOSE",
     "acronym": "GOOSE",
-    "definition": "Generic Object Oriented Substation Event. A high-speed multicast protocol in IEC 61850 for protection relay tripping with 4ms delivery requirements.",
-    "technicalNote": "GOOSE uses HMAC-SHA256 for per-message authentication (quantum-safe). The quantum vulnerability lies in the RSA-based key distribution channel that seeds the HMAC keys.",
+    "definition": "Generic Object Oriented Substation Event. A high-speed multicast protocol in the IEC 61850 series, used for time-critical messages such as protection relay tripping.",
+    "technicalNote": "IEC 62351-6:2020 secures Layer 2 GOOSE and Sampled Values with a message authentication code, and does not recommend encryption for applications requiring 3 ms response times. Group keys are managed under IEC 62351-9, which also covers long-term asymmetric keys and certificates; that public-key side is where post-quantum questions arise, and IEC 62351-9:2023 says it will consider post-quantum cryptography to a certain extent but provides no specific measures at present.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -454,8 +454,8 @@
   {
     "term": "DNP3-SA",
     "acronym": "DNP3-SA",
-    "definition": "DNP3 Secure Authentication (IEEE 1815.1). Challenge-response authentication for SCADA using HMAC-SHA256 with pre-shared Update Keys.",
-    "technicalNote": "Session authentication uses HMAC (quantum-safe). PQC impacts the RSA-based Update Key distribution. ML-KEM-768 ciphertext (1088 bytes) fits within DNP3 2048-byte fragment limit — a clean single-fragment migration.",
+    "definition": "DNP3 Secure Authentication, the authentication mechanism for the DNP3 protocol (IEEE Std 1815), based on IEC 62351-5. Challenge-response authentication for SCADA using a message authentication code, with session keys protected by an Update Key that is pre-shared by default. IEEE 1815.1 is a different standard: the DNP3 to IEC 61850 mapping.",
+    "technicalNote": "In the version 5 specification (2011), authentication uses a MAC (HMAC-SHA-1, HMAC-SHA-256 or AES-GMAC variants) with symmetric session keys and provides authentication only, not encryption. The default remote Update Key change is symmetric (AES-256 Key Wrap with HMAC-SHA-256); the optional asymmetric methods use RSAES-OAEP and DSA, which are quantum-vulnerable public-key algorithms. IEC 62351-5:2023 removed the symmetric Update Key change method and added authenticated encryption, so check which version a product implements.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -472,8 +472,8 @@
   {
     "term": "ICCP/TASE.2",
     "acronym": "ICCP",
-    "definition": "Inter-Control Center Communications Protocol. Used for real-time data exchange between utility control centers, secured via TLS.",
-    "technicalNote": "ICCP links are internet-facing and carry real-time grid state data — the highest-priority PQC migration target under NERC CIP-012.",
+    "definition": "Inter-Control Center Communications Protocol (IEC 60870-6 TASE.2). Used for real-time data exchange between utility control centers; the IEC 62351 series defines TLS-based protection for it.",
+    "technicalNote": "IEC 62351-4 carries over the IEC TS 62351-4:2007 T-profile and A-security-profile on which ICCP implementations depend, and IEC 62351-3 profiles TLS for protocols running over TCP/IP. NERC CIP-012 asks applicable Control Centers for a documented plan to mitigate disclosure and modification of real-time data sent between them; it does not name ICCP or post-quantum cryptography. Which links to migrate first is a risk decision for each operator, not a CIP-012 requirement.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -634,7 +634,7 @@
   {
     "term": "Header",
     "acronym": "HDR",
-    "definition": "The encrypted exchange header found at the start of an IKEv2 packet. Contains the SPIs, version, exchange type, and flags.",
+    "definition": "The fixed header at the start of every IKEv2 message (HDR). It is not encrypted: it carries the SPIs, version numbers, exchange type, message ID and flags in the clear. When a message includes an Encrypted payload, the header is covered by that message's integrity protection.",
     "complexity": "beginner",
     "category": "protocol",
     "relatedModule": "/learn/vpn-ssh-pqc"
@@ -651,7 +651,7 @@
     "term": "Messaging Layer Security",
     "acronym": "MLS",
     "definition": "IETF group-messaging protocol (RFC 9420, July 2023) that scales end-to-end encryption to large groups using TreeKEM. Products implement it in different versions and modes; confirm support and scope in each vendor's own documentation before relying on it.",
-    "technicalNote": "Post-quantum ciphersuites are defined in draft-ietf-mls-pq-ciphersuites (ML-KEM + ML-DSA). Hybrid combiners are specified in draft-ietf-mls-combiner.",
+    "technicalNote": "Post-quantum cipher suites are proposed in draft-ietf-mls-pq-ciphersuites (revision 07, November 2026; an Internet-Draft submitted to the IESG for publication, not yet an RFC): ML-KEM, alone or combined with a traditional elliptic-curve KEM, with either traditional or ML-DSA signatures. A separate draft, draft-ietf-mls-combiner (an amortized post-quantum combiner), has expired.",
     "relatedModule": "/learn/mls-group-messaging",
     "complexity": "intermediate",
     "category": "protocol"
