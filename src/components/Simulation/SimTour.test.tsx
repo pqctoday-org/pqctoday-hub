@@ -64,4 +64,14 @@ describe('SimTour (WS-12)', () => {
     expect(body).toMatch(/will not require hybrid products for national security systems/i)
     expect(body).toMatch(/your own jurisdiction/i)
   })
+
+  it('fills the guide card with the solid card colour, not a see-through tint', () => {
+    renderTour()
+    // eslint-disable-next-line testing-library/no-node-access -- the card is an unlabelled wrapper inside the dialog
+    const card = screen.getByRole('dialog', { name: 'Simulation guide' }).firstElementChild
+    expect(card).not.toBeNull()
+    const classes = [...(card as Element).classList]
+    expect(classes).toContain('bg-card')
+    expect(classes.filter((c) => /^bg-.+\/\d+$/.test(c))).toEqual([])
+  })
 })

@@ -44,6 +44,8 @@ interface Slide {
   icon: React.FC<{ size?: number; className?: string }>
   title: string
   description: string
+  /** Wording that quotes the live catalogue size; `description` is shown until it is known. */
+  describe?: (counts: { productCount: number }) => string
   route?: string // displayed as a chip (feature cards only)
   essential?: boolean // show in the shortened "I know the basics" tour
   path?: string // used for persona filtering
@@ -107,7 +109,10 @@ const featureSlides: Slide[] = [
     icon: ArrowRightLeft,
     title: 'Migrate Catalog',
     description:
-      '880+ products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
+      'Products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
+    // The Migrate page counts softwareData.length; quote that, not a fixed figure.
+    describe: ({ productCount }) =>
+      `${productCount} products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.`,
     route: '/migrate',
     path: '/migrate',
   },
@@ -231,7 +236,7 @@ const TourCard: React.FC<{
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.2 }}
-      className="glass-panel p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto cursor-grab active:cursor-grabbing"
+      className="glass-panel bg-card p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto cursor-grab active:cursor-grabbing"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
@@ -317,6 +322,9 @@ export const GuidedTour: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [essentialOnly, setEssentialOnly] = useState(false)
   const [roleStep, setRoleStep] = useState(0)
+  // Same count the Migrate page shows (softwareData.length). Loaded only once the
+  // tour opens, so readers who have finished it never fetch the catalogue chunk.
+  const [productCount, setProductCount] = useState<number | null>(null)
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isDisclaimerDone = useDisclaimerStore(
@@ -333,12 +341,33 @@ export const GuidedTour: React.FC = () => {
     const allVisible =
       personaPaths === null ? null : new Set([...ALWAYS_VISIBLE_PATHS, ...personaPaths])
 
-    return featureSlides.filter((slide) => {
-      if (allVisible && slide.path && !allVisible.has(slide.path)) return false
-      if (essentialOnly && !slide.essential) return false
-      return true
-    })
-  }, [selectedPersona, essentialOnly])
+    return featureSlides
+      .filter((slide) => {
+        if (allVisible && slide.path && !allVisible.has(slide.path)) return false
+        if (essentialOnly && !slide.essential) return false
+        return true
+      })
+      .map((slide) =>
+        slide.describe && productCount !== null
+          ? { ...slide, description: slide.describe({ productCount }) }
+          : slide
+      )
+  }, [selectedPersona, essentialOnly, productCount])
+
+  useEffect(() => {
+    if (!isActive) return
+    let live = true
+    import('../../data/migrateData')
+      .then(({ softwareData }) => {
+        if (live) setProductCount(softwareData.length)
+      })
+      .catch(() => {
+        // Catalogue chunk did not load: the slide keeps its number-free wording.
+      })
+    return () => {
+      live = false
+    }
+  }, [isActive])
 
   useEffect(() => {
     // Don't start the tour until the disclaimer has been acknowledged
@@ -492,7 +521,7 @@ export const GuidedTour: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="glass-panel p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto"
+            className="glass-panel bg-card p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto"
           >
             <h3 className="font-bold text-foreground text-base mb-1">
               How familiar are you with quantum computing and cryptography?
@@ -556,7 +585,7 @@ export const GuidedTour: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="glass-panel pointer-events-auto w-full max-w-md border-primary/30 p-6 shadow-2xl"
+            className="glass-panel bg-card pointer-events-auto w-full max-w-md border-primary/30 p-6 shadow-2xl"
           >
             <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
               Step {roleStep + 1} of {roleTour.steps.length} · your role
