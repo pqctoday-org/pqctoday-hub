@@ -38,7 +38,7 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       badge: 'Protocol',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'ML-DSA-65 signatures (3,309 bytes) require 16 ACARS blocks per signed message, increasing VHF channel occupancy by 16x. ML-DSA-44 (2,420 bytes) requires 11 blocks. LMS (H10/W4) signatures (2,512 B per RFC 8554) require 12 blocks — still heavy but the most practical option.',
+        'At 220 bytes per block, the analyzer gives signature-byte lower bounds of 16 blocks for ML-DSA-65, 11 for ML-DSA-44 and 12 for LMS (H10/W4). These counts exclude message content and framing; they do not establish a 16x increase in channel occupancy. ML-DSA-44 is smaller than LMS in this comparison, but size alone does not establish operational suitability. Evaluate full-message fragmentation, transport overhead and verification requirements with production tools.',
       config: { step: 0 },
     },
     {
@@ -46,11 +46,11 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       title:
         '2. GEO Satellite PQC Link Budget — Calculate handshake overhead for geostationary orbit',
       description:
-        'Configure a GEO satellite with Ka-band, 10 Mbps data rate. Compare ML-KEM-768 hybrid handshake latency against classical X25519 at 600 ms RTT. Set solar activity to maximum and observe SEU impact on key material.',
+        'Configure the illustrative GEO model with Ka-band and a 10 Mbps data rate. Compare its classical and ML-KEM byte estimates and its 600 ms RTT assumption. Change solar activity and inspect the modelled refresh upper bound and handshake count.',
       badge: 'Satellite',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'This tool sets the GEO round trip to 600 ms (GSMA PQ.07 gives about 500 ms for GEO round-trip latency), so a 3-round PQC handshake takes 1.8 seconds minimum. The tool assumes the SEU rate increases 10x at solar maximum, requiring key refresh every 4-8 hours instead of every 24 hours, which means 3-6x more handshakes per day, not a doubling.',
+        'Both classical and PQC exchanges use the same three-round assumption: 3 x 600 ms gives a 1.8-second modelled propagation term. This term does not include transmission or processing time. Solar maximum multiplies the assumed SEU rate by 10; inspect the current refresh upper bound and handshakes per day rather than substituting fixed 4-8-hour intervals. These are model assumptions, not a measured TLS handshake or an operational key-rotation prescription.',
       config: { step: 1 },
     },
     {
