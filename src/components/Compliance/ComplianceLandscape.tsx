@@ -71,7 +71,7 @@ function timelineRefHref(resolved: ResolvedTimelineRef): string {
 import {
   extractYear,
   deadlineUrgency,
-  urgencyColor,
+  urgencyTextColor,
   type DeadlineUrgency,
 } from '@/utils/deadlineUrgency'
 
@@ -84,14 +84,6 @@ const FIPS_ROW_TO_PQC_ALGORITHM: Record<string, string> = {
   'FIPS-203': 'ML-KEM',
   'FIPS-204': 'ML-DSA',
   'FIPS-205': 'SLH-DSA',
-}
-
-// A date that has passed is a fact about the calendar. This page does not know
-// whether the rule binds the reader or whether anything is still outstanding,
-// so a passed date is shown as "Date passed" in a neutral colour, never as
-// "Overdue" in the error colour.
-function urgencyTextColor(urgency: DeadlineUrgency) {
-  return urgency === 'overdue' ? 'text-status-info' : urgencyColor(urgency)
 }
 
 function urgencyBgColor(urgency: DeadlineUrgency) {

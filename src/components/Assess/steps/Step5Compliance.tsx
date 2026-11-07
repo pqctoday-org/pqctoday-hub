@@ -19,7 +19,7 @@ import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { useComplianceSelectionStore } from '../../../store/useComplianceSelectionStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { complianceFrameworks, type ComplianceFramework } from '../../../data/complianceData'
-import { deadlineUrgency, urgencyColor } from '../../../utils/deadlineUrgency'
+import { deadlineUrgency, urgencyTextColor } from '../../../utils/deadlineUrgency'
 import {
   applicableFrameworks,
   isProfileEmpty,
@@ -302,11 +302,13 @@ const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedSte
                         <div
                           className={clsx(
                             'flex items-center gap-1 text-[10px] mt-1',
-                            urgencyColor(urgency)
+                            urgencyTextColor(urgency)
                           )}
                         >
                           <Clock size={10} />
-                          <span>{fw.deadline}</span>
+                          <span>
+                            {urgency === 'overdue' ? `${fw.deadline} — date passed` : fw.deadline}
+                          </span>
                         </div>
                       )}
                       {fw.description && (

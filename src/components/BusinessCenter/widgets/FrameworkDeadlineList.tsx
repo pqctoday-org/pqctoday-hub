@@ -42,7 +42,12 @@ const TIER_STYLE: Record<ApplicabilityTier, string> = {
 }
 
 function FrameworkRow({ framework }: { framework: TrackedFramework }) {
-  const style = URGENCY_STYLES[framework.urgency] ?? URGENCY_STYLES.unknown
+  // A date that has passed is shown neutrally: the list does not know whether
+  // anything is still outstanding for this reader.
+  const datePassed = framework.daysUntilDeadline !== null && framework.daysUntilDeadline <= 0
+  const style = datePassed
+    ? URGENCY_STYLES.unknown
+    : (URGENCY_STYLES[framework.urgency] ?? URGENCY_STYLES.unknown)
   const tier = framework.applicability?.tier
   const reason = framework.applicability?.reason
 
@@ -50,7 +55,7 @@ function FrameworkRow({ framework }: { framework: TrackedFramework }) {
     framework.daysUntilDeadline !== null
       ? framework.daysUntilDeadline > 0
         ? `${Math.floor(framework.daysUntilDeadline / 365)}y ${Math.floor((framework.daysUntilDeadline % 365) / 30)}m`
-        : 'Overdue'
+        : 'Date passed'
       : framework.deadline || 'TBD'
 
   return (
