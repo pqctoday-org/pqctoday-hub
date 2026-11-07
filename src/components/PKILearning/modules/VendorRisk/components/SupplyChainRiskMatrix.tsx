@@ -144,10 +144,44 @@ function renderPqcBadge(support: string) {
   )
 }
 
-function isHybridProduct(item: SoftwareItem): boolean {
-  const desc = (item.pqcCapabilityDescription || '').toLowerCase()
-  const support = (item.pqcSupport || '').toLowerCase()
-  return desc.includes('hybrid') || support.includes('hybrid')
+/** What the catalogue's structured hybrid fields say about one product. */
+export type HybridSupportLevel = 'yes' | 'partial' | 'no' | 'not-assessed'
+
+/**
+ * Hybrid support from the catalogue's structured fields only, never the free-text
+ * description (which can say hybrid is not offered). A hybrid TLS group or a hybrid
+ * KEM / composite signature API reads 'yes'; support that is only experimental reads
+ * 'partial'; a structured entry that lists no hybrid support reads 'no'; a product
+ * with no structured entry reads 'not-assessed'.
+ */
+export function hybridSupportLevel(item: SoftwareItem): HybridSupportLevel {
+  const kem = item.hybridKemSupport ?? []
+  const sig = item.hybridSigSupport
+  if (kem.length === 0 && !sig) return 'not-assessed'
+  if (kem.some((t) => t === 'tls-default' || t === 'tls-optin' || t === 'api') || sig === 'api') {
+    return 'yes'
+  }
+  if (kem.includes('api-experimental') || sig === 'api-experimental') return 'partial'
+  return 'no'
+}
+
+/** The per-product badge: only a structured hybrid entry earns one. */
+function hybridBadge(item: SoftwareItem): React.ReactNode {
+  const level = hybridSupportLevel(item)
+  if (level !== 'yes' && level !== 'partial') return undefined
+  return (
+    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+      <GitMerge size={9} /> {level === 'yes' ? 'Hybrid' : 'Hybrid (experimental)'}
+    </span>
+  )
+}
+
+/** The badge note for a group of products: the experimental-only and not-assessed counts. */
+function hybridNote(partial: number, notAssessed: number): string | undefined {
+  const parts: string[] = []
+  if (partial > 0) parts.push(`${partial} experimental only`)
+  if (notAssessed > 0) parts.push(`${notAssessed} not assessed`)
+  return parts.length > 0 ? parts.join(', ') : undefined
 }
 
 function getStatColor(count: number, total: number): string {
@@ -171,9 +205,13 @@ interface StatBadgeProps {
   count: number
   total: number
   isGap?: boolean
+  /** Replaces the count text, e.g. "Not assessed" when the catalogue has no entry to count. */
+  valueText?: string
+  /** Small line under the bar, e.g. how many products the count leaves out and why. */
+  note?: string
 }
 
-const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => {
+const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap, valueText, note }) => {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0
   const colorClass = isGap
     ? count === 0
@@ -194,7 +232,7 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
       <div className="flex items-baseline justify-between">
         <span className="text-xs text-muted-foreground">{label}</span>
         <span className={`text-sm font-semibold tabular-nums ${colorClass}`}>
-          {isGap ? (count > 0 ? count : 'None') : `${count}/${total}`}
+          {valueText ?? (isGap ? (count > 0 ? count : 'None') : `${count}/${total}`)}
         </span>
       </div>
       <div className="h-1 bg-muted rounded-full overflow-hidden">
@@ -203,6 +241,7 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
           style={{ width: `${barWidth}%` }}
         />
       </div>
+      {note && <p className="text-[10px] text-muted-foreground">{note}</p>}
     </div>
   )
 }
@@ -486,7 +525,12 @@ export interface DomainStat {
   total: number
   pqcReady: number
   fipsValidated: number
+  /** Products whose structured hybrid fields list hybrid TLS or a hybrid API. */
   hybridSupport: number
+  /** Products whose structured hybrid fields list experimental support only. */
+  hybridPartial: number
+  /** Products with no structured hybrid entry: not counted for or against. */
+  hybridNotAssessed: number
   /** Count of products flagged Critical/High `pqcMigrationPriority` by
    *  the catalog curator. Real data, surfaced as its own "Priority"
    *  badge — no longer used as the Impact axis input (see below). */
@@ -544,11 +588,10 @@ export function computeDomainStats(
     const total = products.length
     const pqcReady = products.filter((p) => isPqcReady(p.pqcSupport)).length
     const fipsValid = products.filter((p) => isFips1403Certified(p)).length
-    const hybrid = products.filter((p) => {
-      const desc = (p.pqcCapabilityDescription || '').toLowerCase()
-      const support = (p.pqcSupport || '').toLowerCase()
-      return desc.includes('hybrid') || support.includes('hybrid')
-    }).length
+    const hybridLevels = products.map(hybridSupportLevel)
+    const hybrid = hybridLevels.filter((l) => l === 'yes').length
+    const hybridPartial = hybridLevels.filter((l) => l === 'partial').length
+    const hybridNotAssessed = hybridLevels.filter((l) => l === 'not-assessed').length
     const criticalHigh = products.filter((p) =>
       isCriticalOrHighPriority(p.pqcMigrationPriority)
     ).length
@@ -563,6 +606,8 @@ export function computeDomainStats(
       pqcReady,
       fipsValidated: fipsValid,
       hybridSupport: hybrid,
+      hybridPartial,
+      hybridNotAssessed,
       criticalHigh,
       likelihood,
       threatMatches: domainThreatMatchCounts.get(domainId) ?? 0,
@@ -759,7 +804,9 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
     md += `| Metric | Count | % |\n|--------|-------|---|\n`
     md += `| PQC Ready | ${stat.pqcReady} | ${stat.total > 0 ? Math.round((stat.pqcReady / stat.total) * 100) : 0}% |\n`
     md += `| FIPS Validated | ${stat.fipsValidated} | ${stat.total > 0 ? Math.round((stat.fipsValidated / stat.total) * 100) : 0}% |\n`
-    md += `| Hybrid Support | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
+    md += `| Hybrid Support (catalogue structured fields) | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
+    md += `| Hybrid Support, experimental only | ${stat.hybridPartial} | ${stat.total > 0 ? Math.round((stat.hybridPartial / stat.total) * 100) : 0}% |\n`
+    md += `| Hybrid Support, not assessed (no structured entry) | ${stat.hybridNotAssessed} | ${stat.total > 0 ? Math.round((stat.hybridNotAssessed / stat.total) * 100) : 0}% |\n`
     md += `| Migration Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n`
     md += `| Priority (Critical/High, catalog-curated) | ${stat.criticalHigh} | ${stat.total > 0 ? Math.round((stat.criticalHigh / stat.total) * 100) : 0}% |\n`
     if (stat.impact === null) {
@@ -1488,7 +1535,13 @@ export const SupplyChainRiskMatrix: React.FC<{
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <StatBadge label="PQC Ready" count={stat.pqcReady} total={stat.total} />
                 <StatBadge label="FIPS Validated" count={stat.fipsValidated} total={stat.total} />
-                <StatBadge label="Hybrid Support" count={stat.hybridSupport} total={stat.total} />
+                <StatBadge
+                  label="Hybrid Support"
+                  count={stat.hybridSupport}
+                  total={stat.total}
+                  valueText={stat.hybridNotAssessed === stat.total ? 'Not assessed' : undefined}
+                  note={hybridNote(stat.hybridPartial, stat.hybridNotAssessed)}
+                />
                 <StatBadge label="Known CVEs" count={stat.cveCount} total={stat.total} isGap />
               </div>
 
@@ -1523,13 +1576,7 @@ export const SupplyChainRiskMatrix: React.FC<{
                       key={item.productId}
                       product={item}
                       compact
-                      extraBadges={
-                        isHybridProduct(item) ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                            <GitMerge size={9} /> Hybrid
-                          </span>
-                        ) : undefined
-                      }
+                      extraBadges={hybridBadge(item)}
                     />
                   ))
                 )}

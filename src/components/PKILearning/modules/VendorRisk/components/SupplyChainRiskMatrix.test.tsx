@@ -4,6 +4,7 @@ import { render, screen, fireEvent, within, waitFor } from '@testing-library/rea
 import '@testing-library/jest-dom'
 import {
   SupplyChainRiskMatrix,
+  hybridSupportLevel,
   computeDomainStats,
   matrixRiskLevel,
   threatImpactLevel,
@@ -121,6 +122,7 @@ const cloudGap = makeProduct({
   pqcSupport: 'No',
   pqcMigrationPriority: 'Critical',
   pqcCapabilityDescription: 'Hybrid ML-KEM + X25519 key exchange',
+  hybridKemSupport: ['api'],
 })
 
 // platform: fully PQC-ready, no Critical priority, zero matching threats —
@@ -248,6 +250,99 @@ describe('SupplyChainRiskMatrix', () => {
   it('still renders a Hybrid badge for a hybrid-flagged product after the ProductRow swap', () => {
     render(<SupplyChainRiskMatrix variant="flat" />)
     expect(screen.getByText('Hybrid')).toBeInTheDocument()
+  })
+
+  describe('hybrid support reads only the catalogue structured fields', () => {
+    const describedOnly = makeProduct({
+      productId: 'h-1',
+      softwareName: 'DescribedOnly',
+      pqcSupport: 'Planned (hybrid mode)',
+      pqcCapabilityDescription: 'Hybrid mode is not offered; planned for a later release',
+    })
+    const tlsHybrid = makeProduct({
+      productId: 'h-2',
+      softwareName: 'TlsHybrid',
+      hybridKemSupport: ['tls-default'],
+    })
+    const experimental = makeProduct({
+      productId: 'h-3',
+      softwareName: 'ExperimentalHybrid',
+      hybridKemSupport: ['api-experimental'],
+    })
+    const noHybrid = makeProduct({
+      productId: 'h-4',
+      softwareName: 'NoHybrid',
+      hybridKemSupport: ['none'],
+    })
+    const compositeSig = makeProduct({
+      productId: 'h-5',
+      softwareName: 'CompositeSig',
+      hybridSigSupport: 'api',
+    })
+    const group = new Map<DomainId, SoftwareItem[]>([
+      ['kms', [describedOnly, tlsHybrid, experimental, noHybrid, compositeSig]],
+    ])
+
+    it('classifies each product from its structured fields, never its description', () => {
+      expect(hybridSupportLevel(describedOnly)).toBe('not-assessed')
+      expect(hybridSupportLevel(tlsHybrid)).toBe('yes')
+      expect(hybridSupportLevel(compositeSig)).toBe('yes')
+      expect(hybridSupportLevel(experimental)).toBe('partial')
+      expect(hybridSupportLevel(noHybrid)).toBe('no')
+    })
+
+    it('counts full, experimental-only and not-assessed products separately', () => {
+      const [stat] = computeDomainStats(group, threats, false, null)
+      expect(stat.hybridSupport).toBe(2)
+      expect(stat.hybridPartial).toBe(1)
+      expect(stat.hybridNotAssessed).toBe(1)
+      expect(stat.total).toBe(5)
+    })
+
+    it('shows a Hybrid badge only for products with a structured entry', () => {
+      mockData = baseData({ vendorsByDomain: group, totalProducts: 5 })
+      render(<SupplyChainRiskMatrix variant="flat" />)
+      expect(screen.getAllByText('Hybrid')).toHaveLength(2)
+      expect(screen.getAllByText('Hybrid (experimental)')).toHaveLength(1)
+      expect(screen.getByText('1 experimental only, 1 not assessed')).toBeInTheDocument()
+    })
+
+    it('says Not assessed when no product in the group has a structured entry', () => {
+      mockData = baseData({
+        vendorsByDomain: new Map<DomainId, SoftwareItem[]>([['kms', [describedOnly]]]),
+        totalProducts: 1,
+      })
+      render(<SupplyChainRiskMatrix variant="flat" />)
+      expect(screen.queryByText('Hybrid')).not.toBeInTheDocument()
+      const card = screen.getByTestId('layer-card-kms')
+      expect(within(card).getByText('Not assessed')).toBeInTheDocument()
+    })
+
+    it('exports the three counts without folding unassessed products into the total', () => {
+      const [stat] = computeDomainStats(group, threats, false, null)
+      const md = buildSupplyChainMarkdown({
+        industry: '',
+        country: '',
+        totalProducts: 5,
+        overallPqcPct: 0,
+        pqcReadyCount: 0,
+        overallFipsPct: 0,
+        fipsValidatedCount: 0,
+        domainStats: [stat],
+        matrixEntries: computeMatrixEntries([stat]),
+        noRiskDomains: computeNoRiskDomains([stat]),
+        hasIndustryContext: false,
+        industryContextHint: 'sample settings',
+        dependencyRelations: [],
+        cbomBuckets: { Code: [], Library: [], Application: [], File: [], Protocol: [], System: [] },
+        pipelineSources: '',
+        refreshCadence: '',
+        cmdbMapping: '',
+      })
+      expect(md).toContain('| Hybrid Support (catalogue structured fields) | 2 | 40% |')
+      expect(md).toContain('| Hybrid Support, experimental only | 1 | 20% |')
+      expect(md).toContain('| Hybrid Support, not assessed (no structured entry) | 1 | 20% |')
+    })
   })
 
   it('expands ProductDetail when a dependency provider or dependent chip is clicked', () => {

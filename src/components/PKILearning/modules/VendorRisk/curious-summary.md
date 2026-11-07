@@ -8,7 +8,7 @@ A commercial product that does not use CNSA 2.0 algorithms cannot be used to pro
 
 ### The Key Takeaway
 
-Organizations can choose to require a Crypto Bill of Materials (CBOM), such as CycloneDX 1.6+, from their vendors — a procurement control, not an external mandate. This standardized inventory reveals all algorithms, allowing automatic scoring of vendor readiness and enabling strict contractual deadlines.
+Organizations can choose to require a Crypto Bill of Materials (CBOM), such as CycloneDX 1.6+, from their vendors — a procurement control, not an external mandate. This standardized inventory supports component visibility and lists the algorithms the supplier records, allowing scoring of vendor readiness and enabling strict contractual deadlines.
 
 ### What's Happening
 
