@@ -11,33 +11,11 @@ import {
   complianceFrameworks,
   type ComplianceFramework,
 } from '../../../data/complianceData'
-import {
-  BINDING_ELSEWHERE_META,
-  BINDING_GROUP_META,
-  BINDING_SCOPED_META,
-  bindingChipFor,
-  type BindingChip,
-} from '../../../utils/bindingSplit'
+import { BINDING_CHIP_CLASS, bindingChipFor, bindingChipMeta } from '../../../utils/bindingSplit'
 import { applicableFrameworks } from '../../../utils/applicabilityEngine'
 import { ApplicabilityPanel } from '../../applicability/ApplicabilityPanel'
 import { AskAssistantButton } from '../../ui/AskAssistantButton'
 import { CollapsibleSection } from './reportContentShared'
-
-/** The chip beside a framework's PQC chip: is it binding on organisations like yours? */
-const BINDING_CHIP_CLASS: Record<BindingChip, string> = {
-  binding: 'bg-status-error/10 text-status-error',
-  scoped: 'bg-status-error/10 text-status-error',
-  elsewhere: 'bg-muted text-muted-foreground',
-  guidance: 'bg-muted text-muted-foreground',
-  unclassified: 'bg-muted/20 text-muted-foreground',
-}
-
-/** Chip label and tooltip text for one framework, given whether it is in the reader's scope. */
-function chipMeta(chip: BindingChip): { chip: string; description: string } {
-  if (chip === 'elsewhere') return BINDING_ELSEWHERE_META
-  if (chip === 'scoped') return BINDING_SCOPED_META
-  return BINDING_GROUP_META[chip]
-}
 
 /** True when the engine puts this framework in the reader's mandatory tier. */
 function inReaderScope(fw: ComplianceFramework, industry: string, country: string): boolean {
@@ -111,7 +89,7 @@ export const ComplianceImpactSection = ({
                     fw.bindingStatus,
                     inReaderScope(fw, industry, country)
                   )
-                  const meta = chipMeta(chip)
+                  const meta = bindingChipMeta(chip)
                   return (
                     <span
                       data-testid="binding-chip"

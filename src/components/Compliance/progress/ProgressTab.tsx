@@ -13,30 +13,9 @@ import { Link } from 'react-router'
 import clsx from 'clsx'
 import { bindingDataPresent, type ComplianceFramework } from '@/data/complianceData'
 import type { UserProfile } from '@/utils/applicabilityEngine'
-import {
-  BINDING_ELSEWHERE_META,
-  BINDING_GROUP_META,
-  BINDING_SCOPED_META,
-  bindingChipFor,
-  type BindingChip,
-} from '@/utils/bindingSplit'
+import { BINDING_CHIP_CLASS, bindingChipFor, bindingChipMeta } from '@/utils/bindingSplit'
 import { buildObligations } from '../obligations/obligationsModel'
 import { buildProgress, groupProgress, nextMilestone } from './progressModel'
-
-/** Same chip words and tints as the Report's per-framework binding chip. */
-const BINDING_CHIP_CLASS: Record<BindingChip, string> = {
-  binding: 'bg-status-error/10 text-status-error',
-  scoped: 'bg-status-error/10 text-status-error',
-  elsewhere: 'bg-muted text-muted-foreground',
-  guidance: 'bg-muted text-muted-foreground',
-  unclassified: 'bg-muted/20 text-muted-foreground',
-}
-
-function chipMeta(chip: BindingChip): { chip: string; description: string } {
-  if (chip === 'elsewhere') return BINDING_ELSEWHERE_META
-  if (chip === 'scoped') return BINDING_SCOPED_META
-  return BINDING_GROUP_META[chip]
-}
 
 interface ProgressTabProps {
   profile: UserProfile
@@ -148,7 +127,7 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
                         entry.framework.bindingStatus,
                         inScopeIds.has(entry.framework.id)
                       )
-                      const meta = chipMeta(chip)
+                      const meta = bindingChipMeta(chip)
                       return (
                         <span
                           data-testid="progress-binding-chip"
