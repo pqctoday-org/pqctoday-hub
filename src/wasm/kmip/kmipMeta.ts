@@ -540,7 +540,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     name: 'auto-migrate-on-use',
     label: 'Auto-migrate on use',
     blurb:
-      'Lazy, transparent migration: each legacy key rekeys to its PQC equivalent the first time it is used.',
+      'Lazy migration: each legacy key rekeys to its PQC equivalent the first time it is used; certificates and verifiers still need the new public keys.',
     tone: 'migration',
     category: 'Post-quantum',
     illustrates:

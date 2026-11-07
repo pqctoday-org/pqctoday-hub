@@ -189,7 +189,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           const M = requireModule(hsm)
           const info = hsm_getSessionInfo(M, hsm.hSessionRef.current)
           return {
-            detail: `slotID=${info.slotID} state=${info.state} flags=0x${info.flags.toString(16)} — state reflects the R/W + User Functions login you just performed.`,
+            detail: `slotID=${info.slotID} state=${info.state} flags=0x${info.flags.toString(16)} — state reflects the R/W User Functions state you entered by logging in.`,
           }
         },
       },
