@@ -50,7 +50,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Authentication',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Online mode has 2 quantum-vulnerable steps: the ICC certificate-chain verification during card authentication, and the TLS key exchange from terminal to acquirer. Issuer ARQC verification is NOT one of them — it is symmetric end to end. Offline CDA has 3 (ICC certificate verification, the combined AC+SSAD signature, and the combined-signature verification). Offline CDA is more dangerous because forged certificates enable counterfeit acceptance at any terminal without network connectivity. Online mode mitigates risk through real-time issuer authorization.',
+        'Online mode has 2 quantum-vulnerable steps: the ICC certificate-chain verification during card authentication, and the TLS key exchange from terminal to acquirer. Issuer ARQC verification is NOT one of them — it is symmetric end to end. Offline CDA has 3 (ICC certificate verification, the combined AC+SDAD signature (Signed Dynamic Application Data), and the SDAD verification). Offline CDA is more dangerous because forged certificates enable counterfeit acceptance at any terminal without network connectivity. Online mode mitigates risk through real-time issuer authorization.',
       config: { step: 1 },
     },
     {
@@ -83,7 +83,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Key Management',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'DUKPT per-transaction key derivation uses symmetric crypto (quantum-safe). The quantum exposure spans TWO steps, not one: Step 2 wraps the BDK under an RSA-2048 key transport key, and Step 3 transports it — RSA-2048 decryption at the injection station plus TLS. Compromising either exposes the BDK, which can derive ALL past and future transaction keys. ML-KEM-768 key encapsulation replaces RSA at both. Steps 1 (BDK generation) and 4 (terminal derivation) are symmetric and need no change.',
+        "DUKPT per-transaction key derivation uses symmetric crypto (quantum-safe). In this module's fictional RSA remote key loading case the exposure spans TWO steps: Step 2 wraps the terminal's derived initial key (not the BDK) under an RSA-2048 key-transport key, and Step 3 transports and unwraps it (RSA-2048 decryption at the terminal plus TLS). Compromising either exposes that terminal's initial key and the keys derived from it; the BDK stays inside the HSM (PCI PIN 20-3). ML-KEM-768 can be the key-establishment step at both, followed by a KDF and an authenticated key wrap (conceptual). Steps 1 (BDK generation and initial-key derivation inside the HSM) and 4 (terminal derivation) are symmetric and need no change.",
       config: { step: 4 },
     },
     {

@@ -343,12 +343,11 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           (Visa Secure, Mastercard Identity Check) adds cardholder authentication: the merchant
           sends the issuer data about the transaction, payment method and device, and the issuer may
           require a challenge such as a one-time passcode, knowledge-based questions or biometrics
-          (EMVCo&rsquo;s public EMV 3DS overview). That overview names no cryptographic algorithm,
-          and browser-based and app-based flows use different mechanisms (the browser or SDK
-          channel, TLS between the parties, any issuer-side signing, and any SDK key agreement), so
-          the ECDSA challenge-signing and device-binding details this module shows for 3DS are
-          illustrative assumptions, not statements from the EMV 3DS specification; check its current
-          version before relying on them. PCI SSC lists a separate PCI 3DS Core standard among its
+          (EMVCo&rsquo;s public EMV 3DS overview). That overview names no cryptographic algorithm.
+          This module does not verify the signing details; open sources describe an issuer-signed
+          token that may use ES256 (ECDSA P-256) or PS256 (RSA-PSS), a P-256 Diffie-Hellman key
+          agreement for the challenge channel, and device information encrypted to the directory
+          server&apos;s public key. PCI SSC lists a separate PCI 3DS Core standard among its
           standards; this module does not state what it covers or requires.
         </p>
 
@@ -367,10 +366,10 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               traffic recorded earlier
             </li>
             <li>
-              <strong className="text-foreground">3DS authentication (illustrative):</strong> if a
-              deployment signs 3DS messages with ECDSA, those signatures could be forged; which 3DS
-              messages are signed, and how, depends on the specification version and the
-              implementation
+              <strong className="text-foreground">3DS signed token and key agreement:</strong> where
+              the issuer&apos;s signed token uses ES256 (ECDSA P-256) or PS256 (RSA-PSS), or the
+              challenge channel uses a P-256 Diffie-Hellman key agreement, Shor&apos;s algorithm
+              breaks those primitives
             </li>
             <li>
               <strong className="text-foreground">Payment gateway certificates:</strong> X.509

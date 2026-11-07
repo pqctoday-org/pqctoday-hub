@@ -196,12 +196,13 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     component: '3ds-authentication',
     componentLabel: '3-D Secure Authentication',
     currentCrypto: [
-      'ECDSA P-256 signing (illustrative assumption, not verified against the EMV 3DS specification)',
+      'ES256 (ECDSA P-256) or PS256 (RSA-PSS) issuer-signed token',
+      'P-256 Diffie-Hellman key agreement (challenge channel)',
       'TLS (server-to-server)',
       'X.509 certificates',
     ],
     vulnerability:
-      'Illustrative and unverified against the EMV 3DS specification: this module assumes some 3DS message authentication uses ECDSA. If a deployment signs 3DS messages that way, a quantum computer could forge them and enable unauthorized card-not-present transactions. Browser-based and app-based flows, TLS between the parties, issuer-side signing and any SDK key agreement are different mechanisms, and EMVCo\u2019s public overview names no algorithm: check the current EMV 3DS specification.',
+      "3DS 2.x signing details are not verified here. Open sources describe an issuer-signed token that may use ES256 (ECDSA P-256) or PS256 (RSA-PSS); where it does, Shor's algorithm breaks those signatures. The same sources describe a P-256 Diffie-Hellman key agreement for the challenge channel and device information encrypted to the directory server's public key.",
     severity: 'medium',
     hndlExposure: false,
     affectedScale: 'All 3DS-enabled merchants and issuers globally',
