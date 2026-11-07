@@ -1,8 +1,8 @@
 {
-  "generated": "2026-10-22",
+  "generated": "2026-11-07",
   "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_10272026.csv",
+  "csv": "timeline_11072026.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -2217,17 +2217,13 @@
       "sizeBytes": 738711,
       "contentType": "application/pdf",
       "sha256": "1cd010673502d04f21f9d27609489ca621b09c752809ba036d66277c33b90f7f",
-      "verifiedAt": "2026-10-22",
+      "verifiedAt": "2026-11-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
       "admittedAt": "2026-10-28T03:44:01.134177+00:00",
       "admittedBy": "evidence admission",
-      "stampedAt": "2026-10-01T03:06:23.053964+00:00",
-      "superseded_file": "_superseded-10272026/timeline/US_NIST_IR_8547_IPD.pdf",
-      "replacedAt": "2026-10-28T03:43:59.949471+00:00",
-      "replacedBy": "evidence replacement",
-      "replaceReason": "NIST published the final IR 8547 on 2026-10-27; the row now cites the final PDF (sha256 1cd01067..., same bytes the library lane confirmed as MATCH); the cached file is the 2024 initial public draft"
+      "stampedAt": "2026-10-01T03:06:23.053964+00:00"
     },
     {
       "refId": "united-states-nist-112-bit-security-algorithms-fully-disallowed",
@@ -2239,17 +2235,13 @@
       "sizeBytes": 738711,
       "contentType": "application/pdf",
       "sha256": "1cd010673502d04f21f9d27609489ca621b09c752809ba036d66277c33b90f7f",
-      "verifiedAt": "2026-10-22",
+      "verifiedAt": "2026-11-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
       "admittedAt": "2026-10-28T03:44:01.134177+00:00",
       "admittedBy": "evidence admission",
-      "stampedAt": "2026-10-01T03:06:23.053964+00:00",
-      "superseded_file": "_superseded-10272026/timeline/US_NIST_IR_8547_IPD.pdf",
-      "replacedAt": "2026-10-28T03:43:59.949471+00:00",
-      "replacedBy": "evidence replacement",
-      "replaceReason": "NIST published the final IR 8547 on 2026-10-27; the row now cites the final PDF (sha256 1cd01067..., same bytes the library lane confirmed as MATCH); the cached file is the 2024 initial public draft"
+      "stampedAt": "2026-10-01T03:06:23.053964+00:00"
     },
     {
       "refId": "united-kingdom-ncsc-pqc-whitepaper-published",
@@ -2644,19 +2636,19 @@
     {
       "refId": "international-ietf-draft-ietf-lamps-kyber-certificates",
       "label": "RFC 9935 ML-KEM Algorithm Identifiers for X.509 Certificates",
-      "url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-kyber-certificates/",
+      "url": "https://www.rfc-editor.org/info/rfc9935",
       "status": "downloaded",
       "file": "timeline/International_IETF_draft_ietf_lamps_kyber_certificates.html",
       "filename": "International_IETF_draft_ietf_lamps_kyber_certificates.html",
       "sizeBytes": 205290,
       "contentType": "text/html",
       "sha256": "8859e1c5ae7551d3b7d91d60a61b7f10d4d717bee1b767f15575bd1cbadcc4cc",
-      "verifiedAt": "2026-10-22",
+      "verifiedAt": "2026-11-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-27",
-      "admittedBy": "admit.py --stamp-existing",
+      "admittedBy": "evidence admission",
       "stampedAt": "2026-10-01T03:06:30.975924+00:00"
     },
     {
@@ -3514,10 +3506,12 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-28T03:43:20.744738+00:00",
+      "filename": "NIST-IR-8547-Final-Published.html",
+      "verifiedAt": "2026-11-07",
       "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-10-23T00:51:33.974599+00:00"
+  "rebuiltAt": "2026-11-07T15:56:11.897208+00:00"
 }
