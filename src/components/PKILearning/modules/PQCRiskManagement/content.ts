@@ -6,6 +6,7 @@ import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
+import { CNSA_ACQUISITION_LABEL, CNSA_MANDATE_LABEL, CNSA_PHASE_OUT_LABEL } from './data/cnsaLabels'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
@@ -52,18 +53,17 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0: new national security system acquisitions (from 1 January 2027)',
+      label: CNSA_ACQUISITION_LABEL,
       year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0',
     },
     {
-      label:
-        'CNSA 2.0: unsupported national security system equipment phased out (31 December 2030)',
+      label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
     },
     {
-      label: 'CNSA 2.0 mandated for national security systems (31 December 2031)',
+      label: CNSA_MANDATE_LABEL,
       year: CNSA_2_0.networkingExclusive,
       source: 'CNSA 2.0',
     },

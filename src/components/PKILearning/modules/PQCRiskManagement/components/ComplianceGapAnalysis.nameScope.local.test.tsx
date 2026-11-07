@@ -31,7 +31,7 @@ describe('algorithm names do not establish framework compliance', () => {
         name: new RegExp('Fictional ' + algorithm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
       })
     )
-    expect(screen.getAllByText('Applicability not assessed', { exact: true })).toHaveLength(4)
+    expect(screen.getAllByText('Applicability not assessed', { exact: true })).toHaveLength(5)
     expect(screen.queryByText('Recommended action:', { exact: true })).not.toBeInTheDocument()
     expect(screen.getByLabelText('Name exercise scope')).toHaveTextContent(
       'does not establish the operation, parameters, hybrid composition'

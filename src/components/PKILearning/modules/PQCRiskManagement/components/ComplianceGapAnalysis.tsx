@@ -3,6 +3,11 @@ import React, { useState } from 'react'
 import { Info, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+import {
+  CNSA_ACQUISITION_LABEL,
+  CNSA_MANDATE_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '../data/cnsaLabels'
 interface RiskEntry {
   id: string
   assetName: string
@@ -43,10 +48,13 @@ function classifyAlgorithm(algo: string): 'classical' | 'pqc' | 'unknown' {
   return 'unknown'
 }
 
+// Oldest first. The CNSA 2.0 rows are the three dates of NSA's FAQ version 2.2 and apply to
+// national security systems only; NIST IR 8547 is the separate NIST clock.
 const MILESTONES = [
-  { id: 'cnsa-preferred', label: 'CNSA 2.0 Preferred', year: CNSA_2_0.softwarePreferred },
+  { id: 'cnsa-acquisitions', label: CNSA_ACQUISITION_LABEL, year: CNSA_2_0.networkingRequired },
   { id: 'nist-deprecate', label: 'NIST Deprecation', year: NIST_DEPRECATION.deprecateClassical },
-  { id: 'cnsa-exclusive', label: 'CNSA 2.0 Exclusive', year: CNSA_2_0.softwareExclusive },
+  { id: 'cnsa-phase-out', label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive },
+  { id: 'cnsa-mandate', label: CNSA_MANDATE_LABEL, year: CNSA_2_0.networkingExclusive },
   { id: 'nist-disallow', label: 'NIST Disallowance', year: NIST_DEPRECATION.disallowClassical },
 ]
 const NAME_LABELS = {
@@ -152,7 +160,7 @@ export const ComplianceGapAnalysis: React.FC<ComplianceGapAnalysisProps> = ({ ri
             </Button>
             {expandedRow === entry.id && (
               <div className="p-4 border-t border-border space-y-3">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {MILESTONES.map((m) => (
                     <div key={m.id} className="rounded-lg p-3 border border-border text-xs">
                       <p>{m.label}</p>
