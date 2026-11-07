@@ -440,14 +440,14 @@ export const CMS_AUTH_ENVELOPED_DATA_STRUCTURE: ASN1Node = {
             },
             {
               label: 'encryptedContent',
-              value: '[AEAD-encrypted email bytes + auth tag]',
+              value: '[Encrypted email bytes (ciphertext); authentication tag is in mac]',
               highlight: 'common',
             },
           ],
         },
         {
           label: 'mac',
-          value: '[implicit in GCM auth tag]',
+          value: '[Explicit AES-GCM authentication tag, separate from encryptedContent]',
           highlight: 'common',
         },
       ],
