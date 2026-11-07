@@ -15824,7 +15824,7 @@
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "The document explicitly states an obligation to integrate PQC will be imposed starting in 2027, marking a regulatory deadline for product qualification.",
-  "mandateLevel": "Mandatory (legally required, directive/mandate language)",
+  "mandateLevel": "Mandatory for product qualification entry (ANSSI aims to require PQC from 2027)",
   "sectorApplicability": [
    "Technology",
    "Government"
@@ -17630,7 +17630,7 @@
    "governance prerequisites (NSA mandates for NSS)"
   ],
   "phaseClassification": "Begin transitioning immediately; support and prefer CNSA 2.0 by 2025 for software and firmware signing. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.",
-  "mandateLevel": "Mandatory",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
    "National Security Systems (NSS)"
   ],
@@ -17708,7 +17708,7 @@
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2025 for web browsers/servers and cloud services. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.",
-  "mandateLevel": "Mandatory",
+  "mandateLevel": "Informational",
   "sectorApplicability": [
    "National Security Systems (NSS)"
   ],
@@ -17786,7 +17786,7 @@
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2026 for traditional networking equipment (VPNs, routers). Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.",
-  "mandateLevel": "Mandatory",
+  "mandateLevel": "Informational",
   "sectorApplicability": [
    "National Security Systems (NSS)"
   ],
@@ -17864,7 +17864,7 @@
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2027 for operating systems. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.",
-  "mandateLevel": "Mandatory",
+  "mandateLevel": "Informational",
   "sectorApplicability": [
    "National Security Systems (NSS)"
   ],
@@ -21656,7 +21656,7 @@
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
-    "CII"
+    "Department of Science and Technology National Quantum Mission"
    ]
   },
   "leadersContributions": [],
@@ -27474,7 +27474,7 @@
    "cross-agency coordination"
   ],
   "phaseClassification": "The document outlines a specific regulatory directive with a fixed compliance deadline of December 31, 2030, for federal contractors to adopt PQC-compliant algorithms.",
-  "mandateLevel": "Mandatory",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
    "Government",
    "Defense",
@@ -27638,7 +27638,7 @@
    "cross-agency coordination"
   ],
   "phaseClassification": "The document outlines specific statutory deadlines imposed by Executive Order 14412 for the release of CISA guidance and FAR Council rules, marking a critical regulatory milestone.",
-  "mandateLevel": "Mandatory",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
    "Government",
    "Technology",

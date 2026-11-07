@@ -1,0 +1,536 @@
+---
+generated: 2026-11-07
+collection: timeline
+documents_processed: 8
+enrichment_method: manual-extraction, human-reviewed corrections to existing entries; every field not listed in a section below is unchanged from the generation the entry was carried forward from
+---
+
+## United States:FAR Council — FAR Council Proposed Rule — Contractor PQC/FIPS Compliance (EO 14412)
+
+- **Reference ID**: United States:FAR Council — FAR Council Proposed Rule — Contractor PQC/FIPS Compliance (EO 14412)
+- **Title**: FAR Council Proposed Rule — Contractor PQC/FIPS Compliance (EO 14412)
+- **Authors**: Federal Acquisition Regulatory Council
+- **Publication Date**: 2026-06-22
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Executive Order 14412 mandates the migration of U.S. federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030 for key establishment and 2031 for digital signatures.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: large-scale quantum computers; Harvest Now Decrypt Later
+- **Migration Timeline Info**: PQC migration lead identified within 30 days; OMB guidance issued within 90 days; NIST pilot completed by December 31, 2027; HVAs and high-impact systems transition to PQC for key establishment by December 31, 2030; HVAs and high-impact systems transition to PQC for digital signatures by December 31, 2031; covered contractors comply by December 31, 2030
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Office of Management and Budget (OMB); National Institute of Standards and Technology (NIST); National Security Agency (NSA); Cybersecurity and Infrastructure Security Agency (CISA); Federal Acquisition Regulatory Council (FAR Council); Department of Commerce; Department of Homeland Security; Department of State; Office of the National Cyber Director; Committee on National Security Systems
+- **Leaders Contributions Mentioned**: Donald J. Trump (President, signed order); Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead); National Cyber Director (lead strategic coordination); Secretary of Commerce (provide technical guidance via NIST); Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes); Director of NSA (submit migration status report for National Security Systems); Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA); Director of CISA (assist critical infrastructure, release CBOM guidance); Secretary of State (engage foreign governments); Director of National Intelligence (coordinate procurement and foreign engagement); Administrator of General Services (coordinate procurement); Administrator of National Aeronautics and Space Administration (coordinate procurement); Secretary of War (coordinate procurement and foreign engagement)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Cryptographic Module Validation Program; High Value Assets; High Impact Systems; National Security Systems; Critical Infrastructure
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 199; FIPS 140-3; FIPS 186-5; Federal Acquisition Regulation (FAR); OMB Memorandum M-19-03
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Within 30 days of the order each agency head identifies its PQC migration lead; Within 90 days the Director of OMB issues guidance requiring each agency to review its inventory of high value assets and high impact systems (excluding national security systems), to transition them to PQC for key establishment by December 31, 2030 and for digital signatures by December 31, 2031, and to submit a plan; Within 180 days NIST starts a PQC migration pilot on a subset of its own systems, to be completed no later than December 31, 2027; Within 180 days the FAR Council publishes a proposed rule that would require covered contractors to comply by December 31, 2030 with NIST FIPS, including those incorporating PQC algorithms; Within 270 days the FAR Council proposes a rule on contractor vulnerability disclosure programs and CISA releases public guidance on minimum elements for a cryptographic bill of materials
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Policy Maker; Security Architect
+- **Implementation Prerequisites**: Cryptographic inventory of HVAs and high impact systems; PQC migration lead appointment; NIST-approved FIPS for PQC; Cryptographic Module Validation Program compliance; Federal Acquisition Regulation updates
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; pqc-governance; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: cryptographic inventory management; inventory of HVAs and high impact systems; cryptographic bill of materials (CBOM); automated assessment of cryptographic assets
+- **Testing & Validation Methods**: Cryptographic Module Validation Program; vulnerability disclosure programs (VDPs); testing for lack of encryption; testing for use of non-FIPS approved algorithms
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: covered contractors compliance; shared procurement of PQC tools; vendor vulnerability disclosure policies; cryptographic bill of materials (CBOM)
+- **Deployment & Migration Complexity**: phased migration (key establishment by 2030, signatures by 2031); NIST pilot project; cross-agency coordination; critical infrastructure assistance
+- **Financial & Business Impact**: cost-saving opportunities in implementing national PQC migration policy; shared procurement; centralized technical support
+- **Organizational Readiness**: PQC migration lead appointment; agency-wide cryptographic inventory management; prioritized PQC migration plan development; cross-agency coordination
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document outlines a specific regulatory directive with a fixed compliance deadline of December 31, 2030, for federal contractors to adopt PQC-compliant algorithms.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: Government; Defense; Technology
+- **Migration Urgency & Priority**: Long-Term (3-5yr)
+- **Phase Transition Narrative**: Moves from the executive order to rulemaking: the FAR Council is directed to publish a proposed rule within 180 days of the order.
+- **Historical Significance**: This milestone establishes a concrete federal deadline for PQC adoption in the supply chain, driven by Executive Order 14412.
+- **Implementation Timeline Dates**: June 22 2026: Executive Order 14412 issued; December 19 2026: FAR Council proposed rule publication deadline; December 31 2030: Contractor compliance deadline
+- **Successor Events & Dependencies**: Publication of FAR Council proposed rule; Contractor implementation of NIST FIPS standards
+- **Source Document Title**: FAR Council Proposed Rule — Contractor PQC/FIPS Compliance (EO 14412)
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: United States: 2026 — FAR Council proposed rule publication deadline; United States: 2030 — Contractor compliance with NIST FIPS standards
+- **Timeline Cross-Reference**: United States 2026: CONSISTENT (FAR Council Proposed Rule — Contractor PQC/FIPS Co); United States 2030: CONSISTENT (Key-Establishment Migration Deadline (EO June 22 2)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Extraction Timestamp**: 2026-07-12T11:25:13
+
+---
+
+## United States:CISA — CISA CBOM Guidance & FAR Contractor VDP Rule Due (EO 14412)
+
+- **Reference ID**: United States:CISA — CISA CBOM Guidance & FAR Contractor VDP Rule Due (EO 14412)
+- **Title**: CISA CBOM Guidance & FAR Contractor VDP Rule Due (EO 14412)
+- **Authors**: Cybersecurity and Infrastructure Security Agency
+- **Publication Date**: 2026-06-22
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Executive Order 14412 mandates the migration of U.S. federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030 for key establishment and 2031 for digital signatures.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: large-scale quantum computers; Harvest Now Decrypt Later
+- **Migration Timeline Info**: PQC migration lead identified within 30 days; OMB guidance issued within 90 days; NIST pilot completed by December 31, 2027; HVAs and high-impact systems transition to PQC for key establishment by December 31, 2030; HVAs and high-impact systems transition to PQC for digital signatures by December 31, 2031; covered contractors comply by December 31, 2030
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Office of Management and Budget (OMB); National Institute of Standards and Technology (NIST); National Security Agency (NSA); Cybersecurity and Infrastructure Security Agency (CISA); Federal Acquisition Regulatory Council (FAR Council); Department of Commerce; Department of Homeland Security; Department of State; Office of the National Cyber Director; Committee on National Security Systems
+- **Leaders Contributions Mentioned**: Donald J. Trump (President, signed order); Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead); National Cyber Director (lead strategic coordination); Secretary of Commerce (provide technical guidance via NIST); Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes); Director of NSA (submit migration status report for National Security Systems); Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA); Director of CISA (assist critical infrastructure, release CBOM guidance); Secretary of State (engage foreign governments); Director of National Intelligence (coordinate procurement and foreign engagement); Administrator of General Services (coordinate procurement); Administrator of National Aeronautics and Space Administration (coordinate procurement); Secretary of War (coordinate procurement and foreign engagement)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Cryptographic Module Validation Program; High Value Assets; High Impact Systems; National Security Systems; Critical Infrastructure
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 199; FIPS 140-3; FIPS 186-5; Federal Acquisition Regulation (FAR); OMB Memorandum M-19-03
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Within 30 days of the order each agency head identifies its PQC migration lead; Within 90 days the Director of OMB issues guidance requiring each agency to review its inventory of high value assets and high impact systems (excluding national security systems), to transition them to PQC for key establishment by December 31, 2030 and for digital signatures by December 31, 2031, and to submit a plan; Within 180 days NIST starts a PQC migration pilot on a subset of its own systems, to be completed no later than December 31, 2027; Within 180 days the FAR Council publishes a proposed rule that would require covered contractors to comply by December 31, 2030 with NIST FIPS, including those incorporating PQC algorithms; Within 270 days the FAR Council proposes a rule on contractor vulnerability disclosure programs and CISA releases public guidance on minimum elements for a cryptographic bill of materials
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Policy Maker; Security Architect
+- **Implementation Prerequisites**: Cryptographic inventory of HVAs and high impact systems; PQC migration lead appointment; NIST-approved FIPS for PQC; Cryptographic Module Validation Program compliance; Federal Acquisition Regulation updates
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; pqc-governance; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: cryptographic inventory management; inventory of HVAs and high impact systems; cryptographic bill of materials (CBOM); automated assessment of cryptographic assets
+- **Testing & Validation Methods**: Cryptographic Module Validation Program; vulnerability disclosure programs (VDPs); testing for lack of encryption; testing for use of non-FIPS approved algorithms
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: covered contractors compliance; shared procurement of PQC tools; vendor vulnerability disclosure policies; cryptographic bill of materials (CBOM)
+- **Deployment & Migration Complexity**: phased migration (key establishment by 2030, signatures by 2031); NIST pilot project; cross-agency coordination; critical infrastructure assistance
+- **Financial & Business Impact**: cost-saving opportunities in implementing national PQC migration policy; shared procurement; centralized technical support
+- **Organizational Readiness**: PQC migration lead appointment; agency-wide cryptographic inventory management; prioritized PQC migration plan development; cross-agency coordination
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document outlines specific statutory deadlines imposed by Executive Order 14412 for the release of CISA guidance and FAR Council rules, marking a critical regulatory milestone.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: Government; Technology; Defense; Critical Infrastructure
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Moves from the order to guidance and rulemaking: CISA is directed to release CBOM minimum-element guidance, and the FAR Council to propose a vulnerability-disclosure rule, within 270 days.
+- **Historical Significance**: This milestone formalizes the US government's requirement for cryptographic asset visibility and vulnerability disclosure, accelerating the operationalization of PQC readiness through mandated CBOM adoption.
+- **Implementation Timeline Dates**: June 22 2026: Executive Order 14412 issued; March 19 2027: CISA CBOM guidance and FAR Council proposed rule due
+- **Successor Events & Dependencies**: CISA release of CBOM minimum elements guidance; FAR Council publication of proposed rule for contractor vulnerability-disclosure policies
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: United States: 2026 — Executive Order 14412 issued; United States: 2027 — CISA CBOM guidance and FAR Council proposed rule due
+- **Timeline Cross-Reference**: United States 2026: CONSISTENT (OMB Memorandum M-26-15 Published | also: Executive Order 14413 Issued — Quantum I); United States 2027: CONSISTENT (CISA CBOM Guidance & FAR Contractor VDP Rule Due ()
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Extraction Timestamp**: 2026-07-12T11:25:36
+
+---
+
+## United States:NSA — Web/Cloud Services Transition
+
+- **Reference ID**: United States:NSA — Web/Cloud Services Transition
+- **Title**: Web/Cloud Services Transition
+- **Authors**: National Security Agency
+- **Publication Date**: 2022-09-07
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: 2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2025 for web browsers/servers and cloud services.
+- **PQC Algorithms Covered**: ML-KEM-1024; ML-DSA-87; LMS; XMSS
+- **Quantum Threats Addressed**: cryptanalytically-relevant quantum computer (CRQC)
+- **Migration Timeline Info**: Milestones: January 1, 2027: CNSA 2.0 required in new NSS acquisitions | December 31, 2030: NSS equipment and services that cannot support CNSA 2.0 phased out unless an exception is granted | December 31, 2031: CNSA 2.0 algorithms mandated for use, unless otherwise noted
+- **Applicable Regions / Bodies**: United States; National Security Agency (NSA); National Security Systems (NSS)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Commercial National Security Algorithm Suite 2.0 (CNSA 2.0)
+- **Classical Algorithms Referenced**: public-key systems; asymmetric cryptography
+- **Key Takeaways**: NSA's CNSA 2.0 FAQ (v2.2) sets the dates for national security systems: new acquisitions from January 1, 2027, phase-out of unsupported equipment by December 31, 2030, and mandated use by December 31, 2031; SLH-DSA is not part of CNSA and is not approved for any use in NSS
+- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: 2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2025 for web browsers/servers and cloud services. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: National Security Systems (NSS)
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Transitions web browsers, servers, and cloud services from classical cryptography to CNSA 2.0 compliant Post-Quantum Cryptography standards.
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: January 1, 2027: CNSA 2.0 required in new NSS acquisitions; December 31, 2030: unsupported NSS equipment and services phased out; December 31, 2031: CNSA 2.0 algorithms mandated for use
+- **Successor Events & Dependencies**: Full compliance with CNSA 2.0 standards; None detected
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## United States:NSA — Traditional Networking Transition
+
+- **Reference ID**: United States:NSA — Traditional Networking Transition
+- **Title**: Traditional Networking Transition
+- **Authors**: National Security Agency
+- **Publication Date**: 2022-09-07
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: 2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2026 for traditional networking equipment (VPNs, routers).
+- **PQC Algorithms Covered**: ML-KEM-1024; ML-DSA-87; LMS; XMSS
+- **Quantum Threats Addressed**: cryptanalytically-relevant quantum computer (CRQC)
+- **Migration Timeline Info**: Milestones: January 1, 2027: CNSA 2.0 required in new NSS acquisitions | December 31, 2030: NSS equipment and services that cannot support CNSA 2.0 phased out unless an exception is granted | December 31, 2031: CNSA 2.0 algorithms mandated for use, unless otherwise noted
+- **Applicable Regions / Bodies**: United States; National Security Agency (NSA); National Security Systems (NSS)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Commercial National Security Algorithm Suite 2.0 (CNSA 2.0)
+- **Classical Algorithms Referenced**: public-key systems; asymmetric cryptography
+- **Key Takeaways**: NSA's CNSA 2.0 FAQ (v2.2) sets the dates for national security systems: new acquisitions from January 1, 2027, phase-out of unsupported equipment by December 31, 2030, and mandated use by December 31, 2031; SLH-DSA is not part of CNSA and is not approved for any use in NSS
+- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: 2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2026 for traditional networking equipment (VPNs, routers). Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: National Security Systems (NSS)
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Transitions from classical cryptographic suites to CNSA 2.0 compliant algorithms for VPNs and routers.
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: January 1, 2027: CNSA 2.0 required in new NSS acquisitions; December 31, 2030: unsupported NSS equipment and services phased out; December 31, 2031: CNSA 2.0 algorithms mandated for use
+- **Successor Events & Dependencies**: Adoption of CNSA 2.0 algorithms; None detected
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: United States: 2026 — Support and prefer CNSA 2.0 for traditional networking equipment
+- **Timeline Cross-Reference**: United States 2026: CONSISTENT (Traditional Networking Transition)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## United States:NSA — Operating Systems Transition
+
+- **Reference ID**: United States:NSA — Operating Systems Transition
+- **Title**: Operating Systems Transition
+- **Authors**: National Security Agency
+- **Publication Date**: 2022-09-07
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: 2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2027 for operating systems.
+- **PQC Algorithms Covered**: ML-KEM-1024; ML-DSA-87; LMS; XMSS
+- **Quantum Threats Addressed**: cryptanalytically-relevant quantum computer (CRQC)
+- **Migration Timeline Info**: Milestones: January 1, 2027: CNSA 2.0 required in new NSS acquisitions | December 31, 2030: NSS equipment and services that cannot support CNSA 2.0 phased out unless an exception is granted | December 31, 2031: CNSA 2.0 algorithms mandated for use, unless otherwise noted
+- **Applicable Regions / Bodies**: United States; National Security Agency (NSA); National Security Systems (NSS)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Commercial National Security Algorithm Suite 2.0 (CNSA 2.0)
+- **Classical Algorithms Referenced**: public-key systems; asymmetric cryptography
+- **Key Takeaways**: NSA's CNSA 2.0 FAQ (v2.2) sets the dates for national security systems: new acquisitions from January 1, 2027, phase-out of unsupported equipment by December 31, 2030, and mandated use by December 31, 2031; SLH-DSA is not part of CNSA and is not approved for any use in NSS
+- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: 2022 advisory planning milestone, kept as history; it is superseded for planning by the dates in NSA's CNSA 2.0 FAQ (v2.2): CNSA 2.0 required in new NSS acquisitions from January 1, 2027, unsupported equipment phased out by December 31, 2030, CNSA 2.0 algorithms mandated by December 31, 2031. Support and prefer CNSA 2.0 by 2027 for operating systems. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: National Security Systems (NSS)
+- **Migration Urgency & Priority**: Long-Term (3-5yr)
+- **Phase Transition Narrative**: Transitions operating systems from legacy cryptographic support to mandatory CNSA 2.0 compliance, enabling full post-quantum readiness by the specified deadline.
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: January 1, 2027: CNSA 2.0 required in new NSS acquisitions; December 31, 2030: unsupported NSS equipment and services phased out; December 31, 2031: CNSA 2.0 algorithms mandated for use
+- **Successor Events & Dependencies**: Full CNSA 2.0 compliance; None detected
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: United States: 2027 — Support and prefer CNSA 2.0 for operating systems
+- **Timeline Cross-Reference**: United States 2027: CONSISTENT (Operating Systems Transition)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## United States:NSA — Software/Firmware Signing Transition
+
+- **Reference ID**: United States:NSA — Software/Firmware Signing Transition
+- **Title**: Software/Firmware Signing Transition
+- **Authors**: National Security Agency
+- **Publication Date**: 2022-09-07
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Begin transitioning immediately; support and prefer CNSA 2.0 by 2025 for software and firmware signing.
+- **PQC Algorithms Covered**: ML-KEM-1024; ML-DSA-87; LMS; XMSS
+- **Quantum Threats Addressed**: cryptanalytically-relevant quantum computer (CRQC)
+- **Migration Timeline Info**: Milestones: January 1, 2027: CNSA 2.0 required in new NSS acquisitions | December 31, 2030: NSS equipment and services that cannot support CNSA 2.0 phased out unless an exception is granted | December 31, 2031: CNSA 2.0 algorithms mandated for use, unless otherwise noted
+- **Applicable Regions / Bodies**: United States; National Security Agency (NSA); National Security Systems (NSS)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: HTTPS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Commercial National Security Algorithm Suite 2.0 (CNSA 2.0)
+- **Classical Algorithms Referenced**: public-key systems; asymmetric cryptography
+- **Key Takeaways**: NSA's CNSA 2.0 FAQ (v2.2) sets the dates for national security systems: new acquisitions from January 1, 2027, phase-out of unsupported equipment by December 31, 2030, and mandated use by December 31, 2031; SLH-DSA is not part of CNSA and is not approved for any use in NSS
+- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: plan, prepare and budget for a transition
+- **Financial & Business Impact**: budget requirements
+- **Organizational Readiness**: National Security Systems (NSS) owners, operators and vendors; planning horizon (2030-2033); governance prerequisites (NSA mandates for NSS)
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: Begin transitioning immediately; support and prefer CNSA 2.0 by 2025 for software and firmware signing. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: National Security Systems (NSS)
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Transitions from current cryptographic standards to CNSA 2.0 compliance for software and firmware signing.
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: January 1, 2027: CNSA 2.0 required in new NSS acquisitions; December 31, 2030: unsupported NSS equipment and services phased out; December 31, 2031: CNSA 2.0 algorithms mandated for use
+- **Successor Events & Dependencies**: Adoption of CNSA 2.0 standards; None detected
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## France:ANSSI — PQC Qualification Requirement
+
+- **Reference ID**: France:ANSSI — PQC Qualification Requirement
+- **Title**: PQC Qualification Requirement
+- **Authors**: Agence nationale de la sécurité des systèmes d'information
+- **Publication Date**: 2025-10-16
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: ANSSI announces the first PQC security certifications in France and mandates PQC integration for cryptographic solutions entering qualification starting in 2027.
+- **PQC Algorithms Covered**: Lattice-based algorithms
+- **Quantum Threats Addressed**: menace quantique; ordinateur quantique
+- **Migration Timeline Info**: Starting 2027: PQC integration mandatory for cryptographic solutions entering ANSSI qualification process for certain product types.
+- **Applicable Regions / Bodies**: Regions: France; Bodies: ANSSI, CEA-Leti, CCN, CESTI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Smartcard MultiApp 5.2 Premium PQC; Microcontrôleur S3SSE2A
+- **Protocols Covered**: IPsec
+- **Infrastructure Layers**: PKI; HSM (implied by smartcard/microcontroller context)
+- **Standardization Bodies**: ANSSI; ECCG
+- **Compliance Frameworks Referenced**: Critères Communs (CC); Visa de sécurité ANSSI; PG-083; RGS; IPsecDR
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: First PQC certifications in France issued for Thales and Samsung products; PQC integration becomes mandatory for qualifying cryptographic solutions starting 2027; ANSSI updated cryptographic approval doctrine in March 2025 to support PQC evaluation; CESTI centers are being accredited to evaluate hybrid mechanisms and side-channel attacks on PQC algorithms.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: évaluation des mécanismes hybrides
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Policy Maker; Developer
+- **Implementation Prerequisites**: Evaluation by accredited CESTI centers; adherence to updated ANSSI cryptographic approval doctrine (March 2025); integration of PQC algorithms for qualification entry from 2027.
+- **Relevant PQC Today Features**: Compliance; Timeline; Migrate; Algorithms; hsm-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: The document explicitly states an obligation to integrate PQC will be imposed starting in 2027, marking a regulatory deadline for product qualification.
+- **Regulatory Mandate Level**: Mandatory for product qualification entry (ANSSI aims to require PQC from 2027)
+- **Sector / Industry Applicability**: Technology; Government
+- **Migration Urgency & Priority**: Critical Deadline (specific compliance deadline with year)
+- **Phase Transition Narrative**: Moves from initial certification issuance to mandatory regulatory integration for new product qualifications.
+- **Historical Significance**: ANSSI aims to require PQC for entry into product qualification from 2027. Separately, in September and October 2025 ANSSI issued its first security certifications for products with post-quantum cryptography.
+- **Implementation Timeline Dates**: 29 septembre 2025: Certification CC for Thales Smartcard MultiApp 5.2 Premium PQC; 1er octobre 2025: Certification CC for Samsung Microcontrôleur S3SSE2A; mars 2025: ANSSI updated cryptographic approval doctrine; 2027: PQC integration mandatory for qualification entry.
+- **Successor Events & Dependencies**: Requires accreditation of additional CESTI centers; enables market availability of trusted PQC products; contingent on updates to guides PG-083 and IPsecDR.
+- **Source Document Title**: Premiers visas de sécurité incluant de la cryptographie post-quantique
+- **Source Document Publication Date**: jeudi 16 octobre 2025
+- **Country Migration Dates**: France: 2027 — PQC integration mandatory for cryptographic solutions entering ANSSI qualification process
+- **Timeline Cross-Reference**: France 2027: CONSISTENT (PQC Qualification Requirement)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## India:DST/NQM — India National PQC Migration
+
+- **Reference ID**: India:DST/NQM — India National PQC Migration
+- **Title**: India National PQC Migration
+- **Authors**: Department of Science and Technology National Quantum Mission
+- **Publication Date**: 2026-05-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Migration milestones recommended by the DST National Quantum Mission roadmap (May 2026): Critical Information Infrastructure sectors migrate high-priority systems by 31 Dec 2028 and reach full PQC adoption by 31 Dec 2029; other enterprises follow by 31 Dec 2030 and 31 Dec 2033.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Milestone 2 (migrate high-priority systems): CII by 31 Dec 2028, other enterprises by 31 Dec 2030; Milestone 3 (full PQC adoption): CII by 31 Dec 2029, other enterprises by 31 Dec 2033; These are target dates recommended by the Task Force
+- **Applicable Regions / Bodies**: Regions: India; Bodies: Department of Science and Technology National Quantum Mission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; HSM; KMS; libraries
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Milestone 2 actions recommended: enforce "no new classical-only deployments", upgrade PKI, HSMs, KMS and libraries to PQC-ready versions, and mandate PQC-capable digital signatures; Milestone 3 actions recommended: complete enterprise-wide PQC or hybrid adoption and operate PQC-only trust chains; The roadmap sees QKD as suited to limited high-assurance use cases, combined with PQC
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: hybrid PQC+QKD
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: upgrades PKI/HSM/KMS/libraries to PQC
+- **Relevant PQC Today Features**: Timeline; Migrate; Compliance; qkd
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: QKD
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Phased migration; hard deadlines
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document outlines phased migration milestones with recommended dates for CII sectors and other enterprises; it presents them as time-bound recommendations.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: All Sectors; Critical Information Infrastructure (CII)
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from planning to migration of high-priority systems, with recommended dates of 2028 and 2029 for CII sectors.
+- **Historical Significance**: Milestones 2 and 3 of the DST/NQM roadmap: recommended dates for CII sectors to migrate high-priority systems and complete full PQC adoption, with later dates for other enterprises.
+- **Implementation Timeline Dates**: 31 Dec 2028: recommended date for CII to migrate high-priority systems; 31 Dec 2029: recommended date for CII full PQC adoption; 31 Dec 2030: recommended date for other enterprises to migrate high-priority systems; 31 Dec 2033: recommended date for other enterprises' full PQC adoption
+- **Successor Events & Dependencies**: Requires upgrades to PKI/HSM/KMS/libraries; Enables full PQC adoption and hybrid PQC+QKD deployment.
+- **Source Document Title**: India National PQC Migration
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: India: 2028 — CII Migrate High-Priority Systems; India: 2029 — Full PQC Adoption; India: 2030 — Enterprise baseline; India: 2033 — Enterprise baseline
+- **Timeline Cross-Reference**: India: DATE CHANGE — CSV=2027 (CII PQC Foundations Deadline), doc=2028 (2028 — CII Migrate High-Priority Systems) → REVIEW; India: NEW MILESTONE — 2029: 2029 — Full PQC Adoption; India: NEW MILESTONE — 2030: 2030 — Enterprise baseline; India 2033: CONSISTENT (India National PQC Migration)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
