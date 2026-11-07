@@ -1957,7 +1957,7 @@ function MobileVendorRoadmapPanel({
 }) {
   const display = deriveVendorRoadmapDisplay(roadmap, enrichment)
   if (!display) return null
-  const { title, roadmapUrl, gaStatus, dateLine, isEmpty } = display
+  const { title, roadmapUrl, gaStatus, gaStatusDetail, dateLine, isEmpty } = display
 
   if (isEmpty) {
     return <p className="text-[12.5px] text-muted-foreground">No roadmap published.</p>
@@ -1968,7 +1968,11 @@ function MobileVendorRoadmapPanel({
       <div>
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-[13px] font-bold text-foreground">{title}</span>
-          {gaStatus && <Badge tone={GA_STATUS_TONE[gaStatus.kind]}>{gaStatus.label}</Badge>}
+          {gaStatus && (
+            <Badge tone={GA_STATUS_TONE[gaStatus.kind]} title={gaStatusDetail ?? undefined}>
+              {gaStatus.label}
+            </Badge>
+          )}
         </div>
         {dateLine && (
           <p className="mt-0.5 flex items-center gap-1 text-[10.5px] text-muted-foreground">
