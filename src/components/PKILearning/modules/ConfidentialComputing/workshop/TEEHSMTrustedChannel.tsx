@@ -245,8 +245,8 @@ function buildProvisioningSteps(
       title: 'Enclave unseals with sealing key',
       description: `The enclave uses its hardware-derived sealing key to decrypt the wrapping layer and load the private key into protected memory.`,
       whyItMatters:
-        'The sealing key is derived from the enclave identity (MRENCLAVE/MRSIGNER) and CPU secrets — it only exists inside the enclave and cannot be extracted. This ensures only the exact, unmodified enclave code can access the provisioned key. AES-128 sealing is Grover-halved to 64-bit post-quantum security; next-gen CPUs will require AES-256.',
-      crypto: 'AES-256-GCM sealing (hardware-derived key via EGETKEY/ASP/RMM)',
+        "The sealing key is derived from the enclave identity (MRENCLAVE/MRSIGNER) and CPU secrets — it only exists inside the enclave and cannot be extracted. This ensures only the exact, unmodified enclave code can access the provisioned key. The key size depends on the platform (SGX's sgx_get_key returns a 128-bit key); a 128-bit key (NIST Category 1) is about 2^64 iterations in the idealized Grover model, a thinner model margin than AES-256 (Category 5) and not a demonstrated break.",
+      crypto: 'AES-GCM sealing (hardware-derived key; key size per platform)',
       dataSize: pqcMode
         ? `${mlDsaBytes.privateKey.toLocaleString()}-byte ${mlDsaSet} private key (FIPS 204)`
         : '~32 bytes (unsealed ECDSA private key)',
@@ -1301,9 +1301,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
               Memory Encryption Engines — Quantum Impact
             </div>
             <p className="text-xs text-muted-foreground">
-              Enclave sealing keys and memory encryption are often AES-128 (NIST Category 1), which
-              Grover&apos;s algorithm halves to 64-bit effective post-quantum security — a much
-              thinner margin than AES-256 (Category 5).
+              This lesson&apos;s sample uses a 128-bit key (NIST Category 1); in the idealized
+              Grover model that is about 2^64 iterations, a thinner model margin than AES-256
+              (Category 5) and not a demonstrated break.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {MEMORY_ENCRYPTION_ENGINES.map((eng) => (
@@ -1317,14 +1317,23 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                       className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                         eng.quantumImpact === 'grover-halved'
                           ? 'bg-status-warning/20 text-status-warning'
-                          : 'bg-status-success/20 text-status-success'
+                          : eng.quantumImpact === 'none'
+                            ? 'bg-muted text-muted-foreground'
+                            : 'bg-status-success/20 text-status-success'
                       }`}
                     >
-                      {eng.quantumImpact === 'grover-halved' ? 'Grover Halved' : 'Quantum Safe'}
+                      {eng.quantumImpact === 'grover-halved'
+                        ? 'Grover Halved'
+                        : eng.quantumImpact === 'none'
+                          ? 'No AES key documented'
+                          : 'Quantum Safe'}
                     </span>
                   </div>
                   <div className="text-[10px] font-mono text-muted-foreground">
-                    {eng.algorithm} · {eng.keyWidth}-bit key
+                    {eng.algorithm} ·{' '}
+                    {eng.quantumImpact === 'none'
+                      ? 'key size not documented'
+                      : `${eng.keyWidth}-bit key`}
                   </div>
                   <p className="text-[10px] text-muted-foreground">{eng.quantumNotes}</p>
                   <div className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">

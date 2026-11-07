@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { TEEHSMTrustedChannel } from './TEEHSMTrustedChannel'
+import { MEMORY_ENCRYPTION_ENGINES } from '../data/attestationData'
 import {
   hsm_verify,
   hsm_decapsulate,
@@ -164,5 +165,49 @@ describe('Architecture properties are not executed checks', () => {
     expect(screen.getByText(/does not execute a TLS channel-binding check/)).toBeInTheDocument()
     expect(hsm_ecdsaVerify).not.toHaveBeenCalled()
     expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
+  })
+})
+
+describe('sealing key size and memory engine wording', () => {
+  it('does not state a sealing key size the platform does not fix', () => {
+    render(
+      <MemoryRouter>
+        <TEEHSMTrustedChannel />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Intel SGX + Thales Luna' }))
+    const next = screen.getByRole('button', { name: /Next/ })
+    while (!(next as HTMLButtonElement).disabled) fireEvent.click(next)
+    expect(
+      screen.getByText('AES-GCM sealing (hardware-derived key; key size per platform)')
+    ).toBeVisible()
+    expect(screen.queryByText(/AES-256-GCM sealing/)).toBeNull()
+    expect(screen.getByText(/sgx_get_key returns a 128-bit key/)).toBeVisible()
+    expect(screen.queryByText(/next-gen CPUs will require AES-256/)).toBeNull()
+  })
+
+  it('frames the 128-bit key as a model margin, not a demonstrated break', () => {
+    render(
+      <MemoryRouter>
+        <TEEHSMTrustedChannel />
+      </MemoryRouter>
+    )
+    expect(
+      screen.getByText(/This lesson.s sample uses a 128-bit key \(NIST Category 1\)/)
+    ).toHaveTextContent('about 2^64 iterations, a thinner model margin than AES-256')
+    expect(screen.queryByText(/halves to 64-bit effective post-quantum security/)).toBeNull()
+  })
+
+  it('does not call an engine with no documented AES key quantum safe', () => {
+    render(
+      <MemoryRouter>
+        <TEEHSMTrustedChannel />
+      </MemoryRouter>
+    )
+    const noneEngines = MEMORY_ENCRYPTION_ENGINES.filter((e) => e.quantumImpact === 'none')
+    expect(noneEngines.length).toBeGreaterThan(0)
+    expect(screen.getAllByText('No AES key documented')).toHaveLength(noneEngines.length)
+    expect(screen.getAllByText(/key size not documented/)).toHaveLength(noneEngines.length)
+    expect(screen.queryByText('Quantum Safe')).toBeNull()
   })
 })
