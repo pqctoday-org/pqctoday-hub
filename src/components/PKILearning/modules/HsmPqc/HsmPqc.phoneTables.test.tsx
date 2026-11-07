@@ -15,6 +15,7 @@ import { HsmPqcIntroduction } from './components/HsmPqcIntroduction'
 import {
   FIRMWARE_UPGRADE_PATHS,
   KEY_SIZE_COMPARISONS,
+  certificateNoteSummary,
   PKCS11_MECHANISMS,
 } from './data/hsmConstants'
 
@@ -83,12 +84,19 @@ describe('HSM lesson tables on a phone', () => {
     }
   )
 
-  it('shows the FIPS Recert value of every vendor in the stacked firmware blocks', () => {
+  it('shows the certificate note of every vendor in the stacked firmware blocks', () => {
     openSections()
     const stacked = within(screen.getByTestId('hsm-firmware-migration-stacked'))
     const labels = stacked.getAllByText('FIPS Recert')
     expect(labels).toHaveLength(FIRMWARE_UPGRADE_PATHS.length)
-    expect(stacked.getAllByText('Required')).toHaveLength(FIRMWARE_UPGRADE_PATHS.length)
+    // one certificate note per path, and no single word standing in for all of them
+    expect(stacked.queryByText('Required')).not.toBeInTheDocument()
+    const summaries = FIRMWARE_UPGRADE_PATHS.map((p) => certificateNoteSummary(p.certificateNote))
+    for (const summary of new Set(summaries)) {
+      expect(stacked.getAllByText(summary)).toHaveLength(
+        summaries.filter((s) => s === summary).length
+      )
+    }
     for (const path of FIRMWARE_UPGRADE_PATHS) {
       expect(stacked.getByText(path.vendorName)).toBeInTheDocument()
       expect(stacked.getAllByText(path.upgradeComplexity.toUpperCase()).length).toBeGreaterThan(0)

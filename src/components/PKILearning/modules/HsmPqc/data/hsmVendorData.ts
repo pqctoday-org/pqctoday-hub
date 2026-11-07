@@ -73,7 +73,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'network',
     firmwareVersion: '13.8+ (ML-KEM: 13.8.3+)',
     pkcs11Version: 'Not stated in the release notes (PQC mechanisms are listed per release)',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Hardware PQC acceleration',
       'Constant-time lattice operations',
@@ -92,7 +91,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'pcie',
     firmwareVersion: 'Quantum Protect firmware module (version not stated by Utimaco)',
     pkcs11Version: '3.0',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Level 4 physical tamper protection',
       'Environmental failure protection',

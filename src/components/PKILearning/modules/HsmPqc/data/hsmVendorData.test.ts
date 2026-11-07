@@ -61,3 +61,18 @@ describe('HSM key-pair step for a classical plus PQC pairing', () => {
     expect(notes).toMatch(/not verified here/i)
   })
 })
+
+describe('HSM vendor hybrid flags', () => {
+  const flag = (id: string) => HSM_VENDORS.find((v) => v.id === id)?.hybridSupport
+
+  it('leaves the flag unset where the vendor pages state no hybrid support', () => {
+    expect(HSM_VENDORS.find((v) => v.id === 'entrust-nshield')).toBeDefined()
+    expect(HSM_VENDORS.find((v) => v.id === 'utimaco')).toBeDefined()
+    expect(flag('entrust-nshield')).toBeUndefined()
+    expect(flag('utimaco')).toBeUndefined()
+  })
+
+  it('keeps the flag where the vendor page states hybrid KEM support', () => {
+    expect(flag('thales-luna')).toBe(true)
+  })
+})

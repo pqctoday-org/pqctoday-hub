@@ -342,8 +342,8 @@ export const HsmMigrationPlanner: React.FC = () => {
                 <span className="text-foreground">{selectedPath.estimatedDowntime}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">FIPS Recertification:</span>{' '}
-                <span className="text-warning font-bold">Required (CMVP resubmission)</span>
+                <span className="text-muted-foreground">FIPS certificate:</span>{' '}
+                <span className="text-foreground">{selectedPath.certificateNote}</span>
               </div>
             </div>
 
