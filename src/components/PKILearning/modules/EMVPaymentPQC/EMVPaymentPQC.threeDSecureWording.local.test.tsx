@@ -15,7 +15,7 @@ describe('3-D Secure wording does not say ECDSA signs the cardholder challenge',
       </MemoryRouter>
     )
     const text = flat(document.body.textContent ?? '')
-    expect(text).toMatch(/This module does not verify its signing details/)
+    expect(text).toMatch(/This module does not verify the signing details/)
     expect(text).toMatch(/ES256 \(ECDSA P-256\) or PS256 \(RSA-PSS\)/)
     expect(text).toMatch(/P-256 Diffie-Hellman key agreement for the challenge channel/)
     expect(text).not.toMatch(/adds cardholder authentication using ECDSA challenge signing/)

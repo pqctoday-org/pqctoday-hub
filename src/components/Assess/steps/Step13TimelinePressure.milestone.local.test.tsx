@@ -88,6 +88,10 @@ describe('timeline step keeps the milestone that was picked', () => {
     const chosen = screen
       .getAllByRole('radio')
       .filter((el) => el.getAttribute('aria-checked') === 'true')
-    expect(chosen).toHaveLength(distantCount)
+    // Every distant published card, plus the own-target card whose label covers both.
+    expect(chosen).toHaveLength(distantCount + 1)
+    expect(chosen.some((el) => /Own target or distant deadline/i.test(el.textContent ?? ''))).toBe(
+      true
+    )
   })
 })

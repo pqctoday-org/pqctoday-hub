@@ -191,24 +191,31 @@ const Step13TimelinePressure = ({
               <p className="text-xs text-muted-foreground font-medium">Other options</p>
               {staticOptions
                 .filter((o) => o.value === 'internal-deadline' || o.value === 'no-deadline')
-                .map((opt) => (
-                  <Button
-                    key={opt.value}
-                    variant="ghost"
-                    role="radio"
-                    aria-checked={timelinePressure === opt.value}
-                    onClick={() => setTimelinePressure(opt.value)}
-                    className={clsx(
-                      'w-full h-auto p-4 flex-col items-start whitespace-normal border',
-                      timelinePressure === opt.value
-                        ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
-                        : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
-                    )}
-                  >
-                    <span className="font-bold text-sm">{opt.label}</span>
-                    <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-                  </Button>
-                ))}
+                .map((opt) => {
+                  // "Own target" shares its stored value with a distant published milestone;
+                  // while a milestone is the saved choice, that card is the chosen one.
+                  const chosen =
+                    timelinePressure === opt.value &&
+                    !(opt.value === 'internal-deadline' && timelineMilestone)
+                  return (
+                    <Button
+                      key={opt.value}
+                      variant="ghost"
+                      role="radio"
+                      aria-checked={chosen}
+                      onClick={() => setTimelinePressure(opt.value)}
+                      className={clsx(
+                        'w-full h-auto p-4 flex-col items-start whitespace-normal border',
+                        chosen
+                          ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                          : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
+                      )}
+                    >
+                      <span className="font-bold text-sm">{opt.label}</span>
+                      <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+                    </Button>
+                  )
+                })}
             </div>
           </div>
         </>

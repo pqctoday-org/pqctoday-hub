@@ -19,6 +19,7 @@ vi.mock('../../../data/timelineData', () => ({
           startYear: NEAR_YEAR,
           endYear: NEAR_YEAR,
           description: 'A published milestone close to today.',
+          events: [{ orgName: 'Test Authority' }],
         },
         {
           phase: 'Deadline',
@@ -26,6 +27,7 @@ vi.mock('../../../data/timelineData', () => ({
           startYear: FAR_YEAR,
           endYear: FAR_YEAR,
           description: 'A published milestone more than three years away.',
+          events: [{ orgName: 'Test Authority' }],
         },
       ],
     },
@@ -81,9 +83,14 @@ describe('Step13TimelinePressure', () => {
     // One stored value covers a published deadline more than 3 years away and an own target,
     // so the reader sees a label that is true of both, not "Internal deadline".
     expect(useAssessmentStore.getState().timelinePressure).toBe('internal-deadline')
-    expect(screen.getByRole('radio', { name: /Own target or distant deadline/i })).toHaveAttribute(
+    // The reader's pick is the published deadline, so only that card is the chosen one.
+    expect(screen.getByRole('radio', { name: /Far published deadline/i })).toHaveAttribute(
       'aria-checked',
       'true'
+    )
+    expect(screen.getByRole('radio', { name: /Own target or distant deadline/i })).toHaveAttribute(
+      'aria-checked',
+      'false'
     )
     expect(
       screen.getByText(/our own target date, or a published deadline more than 3 years away/i)
