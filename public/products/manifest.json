@@ -7954,7 +7954,11 @@
       "refId": "Microsoft Symcrypt Manual",
       "sha256": "995db859aabcc4363cbbab95f0872d62d64837fa97db7ce6b898a9672457e1d3",
       "sizeBytes": 4756,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T18:21:13.895078+00:00",
+      "admittedBy": "evidence admission"
     },
     {
       "softwareName": "Mikrotik Routeros",
@@ -15479,7 +15483,11 @@
       "previousSha256": "de80b46fb09c4327cdf95d7c9babd80f7f0d9f5e0da586c0f16f86229ddd08d8",
       "previousSizeBytes": 345818,
       "hashCorrectedAt": "2026-09-17T17:51:50.233689+00:00",
-      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)"
+      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T18:21:13.895078+00:00",
+      "admittedBy": "evidence admission"
     },
     {
       "softwareName": "citadel-pqcrypto",
