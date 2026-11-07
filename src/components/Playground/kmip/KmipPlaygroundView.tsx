@@ -653,8 +653,22 @@ export function KmipPlaygroundView() {
     setEncIvHex(null)
   }
 
+  // Counts policy loads so a slow, older load that settles after a newer one
+  // cannot overwrite the policy the reader chose last.
+  const policyLoadSeq = useRef(0)
+
+  // A policy file is read as YAML only when the server really returned it: a
+  // missing file answers with an HTML page (or an error body), which must not
+  // reach the engine or the YAML view.
+  const fetchPolicyText = async (file: string): Promise<string> => {
+    const r = await fetch(`/kmip-policies/${file}`)
+    if (!r.ok) throw new Error(`Policy file ${file} could not be loaded (HTTP ${r.status})`)
+    return r.text()
+  }
+
   const onLoadPolicy = async (preset: PolicyPreset) => {
     if (!engine) return
+    const seq = ++policyLoadSeq.current
     setBusy(true)
     try {
       if (preset.files && preset.files.length > 0) {
@@ -664,13 +678,12 @@ export function KmipPlaygroundView() {
         // the concatenation, purely for the List/YAML/Visual tabs' display —
         // `parsePolicyModel` just scans for `- type:` lines, so it merges
         // every file's rules into one model regardless of the boundary.
-        const yamls = await Promise.all(
-          preset.files.map((f) => fetch(`/kmip-policies/${f}`).then((r) => r.text()))
-        )
-        setPolicyYaml(yamls.join('\n\n# ── next module ──\n\n'))
+        const yamls = await Promise.all(preset.files.map((f) => fetchPolicyText(f)))
+        if (seq !== policyLoadSeq.current) return
         const res = engine.activateModulePreset(preset.name, yamls)
         if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
         else {
+          setPolicyYaml(yamls.join('\n\n# ── next module ──\n\n'))
           const modStatus = engine.policyModulesStatus()
           saveCacpPresetSession({
             presetFile: preset.file,
@@ -680,34 +693,38 @@ export function KmipPlaygroundView() {
           })
         }
       } else {
-        const yaml = await fetch(`/kmip-policies/${preset.file}`).then((r) => r.text())
-        setPolicyYaml(yaml)
+        const yaml = await fetchPolicyText(preset.file)
+        if (seq !== policyLoadSeq.current) return
         const res = engine.loadPolicy(yaml)
         if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
-        else
+        else {
+          setPolicyYaml(yaml)
           saveCacpPresetSession({
             presetFile: preset.file,
             moduleFiles: null,
             uncoveredOps: 'deny',
             fingerprints: [engine.policyStatus().fingerprint ?? ''],
           })
+        }
       }
       refresh(engine)
     } catch (err) {
       // fetch failure (missing/!ok policy file) or a wasm panic loading it.
-      setResult(engineError('LoadPolicy', err))
+      if (seq === policyLoadSeq.current) setResult(engineError('LoadPolicy', err))
     } finally {
-      setBusy(false)
+      if (seq === policyLoadSeq.current) setBusy(false)
     }
   }
 
   // Apply an edited policy (from the visual editor) to the engine and surface it
   // site-wide — the graph is the source of truth, so List/Timeline/YAML + every
   // plane reflect the edit. Returns the loader result (warnings feed the editor).
+  // The YAML is published only when the engine accepted it, so the views never
+  // show a policy the engine refused.
   const onApplyYaml = (yaml: string) => {
     if (!engine) return undefined
     const res = engine.loadPolicy(yaml)
-    setPolicyYaml(yaml)
+    if (res.ok) setPolicyYaml(yaml)
     refresh(engine)
     return res
   }

@@ -8,7 +8,7 @@
 // engine). Right: a visual breakdown of the active policy — resolved defaults
 // (authoritative, from the engine's dry-run), an algorithm-disposition matrix,
 // every rule colour-coded by family, a temporal timeline, and the raw YAML.
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Library,
   ShieldCheck,
@@ -374,6 +374,13 @@ export function PolicyView({
     a: Record<string, Disposition>
     b: Record<string, Disposition>
   } | null>(null)
+  // The preset the reader has active right now. The compare run below captures
+  // its own copy when it starts; if the reader picks another preset while it
+  // runs, putting the captured one back would undo that choice.
+  const activePresetFileRef = useRef(activePreset?.file)
+  useEffect(() => {
+    activePresetFileRef.current = activePreset?.file
+  }, [activePreset?.file])
   useEffect(() => {
     if (detailTab !== 'compare') return
     const presetA = POLICY_PRESETS.find((p) => p.file === compareAFile)
@@ -385,32 +392,41 @@ export function PolicyView({
       return
     }
     let cancelled = false
+    const startedWith = activePreset?.file
     // Modular-policy plan (2026-08-28) — a split preset's `rawYaml` entry is
     // the CONCATENATION of its module files (fine for display, but not valid
     // single-document YAML), so comparing it must go through the real
     // multi-file activation path, not `engine.loadPolicy`. Async because that
-    // path re-fetches each module file.
+    // path re-fetches each module file. Once this run is cancelled it must not
+    // touch the engine again: a newer run (or the reader) owns it by then.
     const activateSide = async (preset: PolicyPreset, mergedYaml: string) => {
       if (preset.files && preset.files.length > 0) {
         const yamls = await Promise.all(
           preset.files.map((f) => fetch(`/kmip-policies/${f}`).then((r) => r.text()))
         )
+        if (cancelled) return
         engine.activateModulePreset(preset.name, yamls)
       } else {
+        if (cancelled) return
         engine.loadPolicy(mergedYaml)
       }
     }
     void (async () => {
       await activateSide(presetA, yamlA)
+      if (cancelled) return
       const a = sweepDispositions(engine, asOfDate)
       await activateSide(presetB, yamlB)
+      if (cancelled) return
       const b = sweepDispositions(engine, asOfDate)
-      // Restore whatever was actually active before Compare ran.
-      if (activePreset?.files && activePreset.files.length > 0) {
-        await activateSide(activePreset, '')
-      } else {
-        const restoreTo = policyYaml ?? rawYaml['training-permissive.yaml']
-        if (restoreTo) onApplyYaml(restoreTo)
+      // Restore whatever was actually active before Compare ran — unless the
+      // reader has chosen another preset in the meantime.
+      if (!cancelled && activePresetFileRef.current === startedWith) {
+        if (activePreset?.files && activePreset.files.length > 0) {
+          await activateSide(activePreset, '')
+        } else {
+          const restoreTo = policyYaml ?? rawYaml['training-permissive.yaml']
+          if (restoreTo) onApplyYaml(restoreTo)
+        }
       }
       if (!cancelled) setCompareResult({ a, b })
     })()
