@@ -29,7 +29,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       severity: 'critical',
       timeframe: 'Immediate design impact',
       exampleScenario:
-        'Your JWT tokens use ECDSA signatures (64 bytes). Switching to ML-DSA-65 produces 3309-byte signatures. Your API gateway rejects them because the Authorization header exceeds the 8KB limit. URL-encoded tokens break browser URL length limits.',
+        'Fictional sizing example: a gateway has a configured 8 KiB Authorization-header limit. An illustrative token design uses a 3,309-byte ML-DSA-65 signature instead of a 64-byte ECDSA signature. The new signature alone occupies 4,412 base64url characters; rejection also depends on encoded headers, claims and transport overhead. Verify the intended JOSE profile and library support, serialize representative tokens and test the configured gateway, cookie or URL limits instead of assuming every larger token fails.',
     },
     {
       id: 'tls-handshake',
