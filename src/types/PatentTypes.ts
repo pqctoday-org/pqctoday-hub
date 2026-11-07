@@ -20,6 +20,7 @@ export type NistStatusValue =
   | 'fips_204'
   | 'fips_205'
   | 'round4_candidate'
+  | 'selected_for_standardization'
   | 'withdrawn'
   | 'stateful_hash_standard'
   | 'proprietary'

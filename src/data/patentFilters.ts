@@ -68,6 +68,7 @@ export const NIST_STATUS_LABELS: Record<string, string> = {
   fips_204: 'FIPS 204 (ML-DSA)',
   fips_205: 'FIPS 205 (SLH-DSA)',
   round4_candidate: 'Round 4 Candidate',
+  selected_for_standardization: 'Selected for standardization',
   withdrawn: 'Withdrawn',
   stateful_hash_standard: 'Stateful Hash Standard',
   proprietary: 'Proprietary',
