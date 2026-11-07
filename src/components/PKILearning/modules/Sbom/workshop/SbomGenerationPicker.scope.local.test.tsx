@@ -4,6 +4,24 @@ import { describe, expect, it } from 'vitest'
 import { SbomGenerationPicker } from './SbomGenerationPicker'
 
 describe('authored SBOM comparison scope', () => {
+  it('selects the npm output format explicitly without changing the authored scores', () => {
+    render(<SbomGenerationPicker />)
+    fireEvent.click(screen.getByRole('button', { name: 'npm / Node package' }))
+    const guidance = screen.getByText(/Choose the output format explicitly/)
+    expect(guidance).toHaveTextContent('npm sbom --sbom-format=cyclonedx')
+    expect(guidance).toHaveTextContent('your installed npm version')
+    expect(screen.queryByText(/ships CycloneDX output by default/)).toBeNull()
+    expect(screen.getByText(/CycloneDX mode: 9\/10/)).toHaveTextContent('SPDX mode: 7/10')
+    expect(screen.getByText(/8\/10 — missing Author Signature/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Container image' }))
+    expect(screen.queryByText(/npm sbom --sbom-format=cyclonedx/)).toBeNull()
+    expect(screen.getByText('Syft')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'npm / Node package' }))
+    expect(screen.getByText(/Choose the output format explicitly/)).toHaveTextContent(
+      'npm sbom --sbom-format=cyclonedx'
+    )
+  })
+
   it('keeps the npm comparison while avoiding a contradictory universal gap claim', () => {
     render(<SbomGenerationPicker />)
     fireEvent.click(screen.getByRole('button', { name: 'npm / Node package' }))

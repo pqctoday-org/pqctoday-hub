@@ -53,7 +53,7 @@ const SCENARIOS: Scenario[] = [
       },
     ],
     format: 'CycloneDX',
-    note: 'npm’s own `npm sbom` command ships CycloneDX output by default; use it before reaching for a third-party generator.',
+    note: 'Choose the output format explicitly—for example, `npm sbom --sbom-format=cyclonedx`—and inspect the output from your installed npm version against the requirements of your next tool.',
   },
   {
     id: 'python',
