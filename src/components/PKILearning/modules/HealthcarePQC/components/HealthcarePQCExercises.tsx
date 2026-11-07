@@ -38,7 +38,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Biometric',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'DNA SNP profiles are 5 MB vs 512 bytes for fingerprints, but both are permanently compromised. DNA data additionally affects biological relatives, making it the highest-priority biometric type for PQC migration.',
+        'DNA SNP profiles are 5 MB vs 512 bytes for fingerprints, but neither can be reissued; whether exposure enables impersonation depends on template protection, presentation attack detection and a second factor. DNA data additionally affects biological relatives, making it the highest-priority biometric type for PQC migration.',
       config: { step: 0 },
     },
     {
