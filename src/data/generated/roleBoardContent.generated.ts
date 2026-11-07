@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11012026.csv
+ * Source: src/data/role_board_content_11072026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -914,7 +914,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The construction, not the diagram',
-            body: 'This is the primitive underneath every hybrid key exchange you will ship. Getting it right here is what makes the protocol-level work uneventful.',
+            body: 'This shows one way to combine ML-KEM and X25519 through a key-derivation step. Each protocol defines its own combiner: in TLS 1.3 (RFC 10024) the order of the two shared secrets differs between X25519MLKEM768 and SecP256r1MLKEM768, so check the protocol specification for what you ship.',
             href: '/learn/hybrid-crypto',
           },
         ] as [
@@ -1136,8 +1136,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Numbers you can put in a ticket',
         gridCards: [
           {
-            title: "What's patented in the sizes you're choosing",
-            body: "Picking ML-DSA-87 over -65 is also a choice about whose patents you might touch — worth knowing before it's a legal question, not just a byte one.",
+            title: 'Patent filings that mention post-quantum algorithms',
+            body: 'ML-DSA-65 and ML-DSA-87 are two parameter sets of the same standard (FIPS 204), so the choice changes sizes and security strength, not the algorithm. The Patents page lists patent filings with summaries; whether any patent affects your use is a question for qualified counsel.',
             href: '/patents',
           },
           {
@@ -1650,7 +1650,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Security Architect · order of operations · dependencies first',
 
         headline: 'The order is the architecture.',
-        sub: 'Two tracks, not one queue. Key exchange first where the traffic is exposed, signatures and PKI on their own track, and data at rest last and longest. Sequence against real refresh windows, not the calendar year.',
+        sub: 'Two tracks, not one queue. In this example, key exchange comes first where the traffic is exposed, signatures and PKI run on their own track, and data at rest follows on a track set by how long it must stay confidential. Your own order depends on exposure, confidentiality lifetime, who can update each system and what depends on it. Sequence against real refresh windows, not the calendar year.',
         ctaPrimary: 'Sequence the catalogue',
         ctaPrimaryHref: '/migrate?tab=plan',
         ctaSecondary: 'Decide the data-at-rest strategy',
@@ -1661,17 +1661,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
-          title: 'What has to move first',
+          title: 'One example order',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Track A — key exchange', value: 'external-facing traffic first' },
             { label: 'Track B — signatures & PKI', value: 'runs in parallel, gated on your CA' },
-            { label: 'Data at rest', value: 'last, and longest' },
+            { label: 'Data at rest', value: 'its own track, set by retention' },
           ],
           punchline: 'Sequencing errors are the expensive kind — you pay twice.',
           footnote:
-            'Sequences the catalogued products this site holds evidence for; it does not import an inventory of your own.',
+            'Sequences the catalogued products this site holds evidence for; it does not import an inventory of your own. The order shown is an example; a risk-based order for your estate can differ.',
         },
         gridTitle: 'Where the sequence is evidenced',
         gridSub: 'A sequence with dependencies named',
@@ -1846,8 +1846,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business?zone=management-tools',
           },
           {
-            title: 'Sizing that lands in a plan',
-            body: 'A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds — sizing against a funded refresh window, not a wish.',
+            title: 'The references a dated plan has to cite',
+            body: "A capacity number only matters once it has a date attached. The Library's reference shelf holds the standards, specifications and frameworks that set those dates and requirements; the Refresh-Cycle Alignment tool above turns sizing into a schedule against a funded refresh window.",
             href: '/library?purpose=reference',
           },
         ] as [
@@ -2579,7 +2579,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Researcher · a real prompt · keep the log',
 
         headline: 'Do not stop at our buttons.',
-        sub: 'Everything the in-tab labs do is also reachable from a real OpenSSL command line — the same primitives, on a real prompt, your own invocation. Nothing to install.',
+        sub: 'OpenSSL Studio runs the OpenSSL command line in your browser, so you can reproduce many of the primitives in the in-tab labs — key generation, certificates, digests, KEM, LMS and KDF commands — with your own invocation. Labs for KMIP and other application-specific flows are separate tools. Nothing to install.',
         ctaPrimary: 'Open OpenSSL Studio',
         ctaPrimaryHref: '/playground/openssl-studio',
         ctaSecondary: 'See what a generated report contains',
@@ -2694,7 +2694,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The gap between selected and deployed is the research',
-            body: 'Standardisation is settled. Which sectors have actually shipped it, and which cannot, is the open question worth your time.',
+            body: 'The first NIST post-quantum standards (FIPS 203, 204 and 205) are final; other algorithms and protocol profiles are still being standardised. Which sectors have actually shipped them, and which cannot, is the open question worth your time.',
             href: '/business?zone=migration',
           },
         ] as [
@@ -3169,7 +3169,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
 
         headline: 'What actually breaks, and when.',
-        sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
+        sub: 'The padlock in your browser relies on maths a large enough quantum computer could undo. Watch a real handshake run in this tab and a modelled attack scenario, then decide how much further you want to go. The quantum break itself is explained here, not carried out by your browser.',
         ctaPrimary: 'Watch a real handshake',
         ctaPrimaryHref: '/playground/tls-simulator',
         ctaSecondary: 'See what a breach costs',
@@ -3193,7 +3193,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'A real connection, in this tab',
-            body: 'The TLS 1.3 simulator runs an actual handshake — the same negotiation your browser does for the padlock — so you can see which part the quantum threat lands on.',
+            body: 'The TLS 1.3 simulator runs an actual handshake — the same negotiation your browser does for the padlock — so you can see which part a quantum attack would target. The attack itself is explained, not run.',
             href: '/playground/tls-simulator',
           },
           {
@@ -3202,8 +3202,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/openssl-studio',
           },
           {
-            title: 'Watch it actually fail, not just succeed',
-            body: 'The simulator above shows a handshake succeeding. This is the other half — an attacker forcing a downgrade to classical crypto, and what your connection does about it.',
+            title: 'Watch a modelled failure, not just a success',
+            body: 'The simulator above shows a handshake succeeding. This is the other half — a modelled downgrade attack that pushes a connection back to classical crypto, and what your connection does about it.',
             href: '/learn/tls-basics?tab=visual',
           },
         ] as [
@@ -3380,11 +3380,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Finding the crypto', value: 'the longest phase' },
-            { label: 'Changing it', value: 'the easy part' },
+            { label: 'Finding the crypto', value: 'often the longest phase' },
+            { label: 'Changing it', value: 'can be the quicker part' },
             { label: 'Proving it changed', value: 'the part people skip' },
           ],
-          punchline: 'The hard problem is inventory, not cryptography.',
+          punchline: 'For many organisations the hard problem is inventory, not cryptography.',
           footnote:
             "The run follows an illustrative organisation — the phases are the published framework's, the numbers are not yours.",
         },
@@ -3402,8 +3402,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business/tools',
           },
           {
-            title: 'The hard problem is inventory, not cryptography',
-            body: 'Swapping an algorithm in one place can be quick. Finding every place your organisation uses one is the part that takes years.',
+            title: 'For many organisations the hard problem is inventory, not cryptography',
+            body: 'Swapping an algorithm in one place can be quick. Finding every place your organisation uses one is often the part that takes years, and what dominates the effort differs from one organisation to the next.',
             href: '/report?example=1',
           },
         ] as [
