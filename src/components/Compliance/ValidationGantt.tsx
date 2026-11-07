@@ -262,10 +262,14 @@ export const ValidationGantt: React.FC<Props> = ({
 /** Width of the marker drawn for a milestone that has already passed. */
 const PAST_MARKER_PCT = 2
 
+// Fills use the colour tokens themselves (`bg-destructive/70`), which accept an
+// opacity step. The `bg-status-*` names are fixed tint classes with no opacity
+// step: `bg-status-error/70` generates no CSS, so the bar and its legend swatch
+// were drawn with no colour at all.
 const PHASE_BAR_CLASS: Record<DeadlinePhase, string> = {
-  active: 'bg-status-error/70',
-  imminent: 'bg-status-warning/80',
-  near: 'bg-status-warning/60',
+  active: 'bg-destructive/70',
+  imminent: 'bg-warning/80',
+  near: 'bg-warning/60',
   mid: 'bg-primary/60',
   long: 'bg-primary/40',
   ongoing: 'bg-muted',

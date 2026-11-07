@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ValidationGantt } from './ValidationGantt'
-import type { ComplianceFramework } from '@/data/complianceData'
+import type { ComplianceFramework, DeadlinePhase } from '@/data/complianceData'
 
 const fwStub = (overrides: Partial<ComplianceFramework>): ComplianceFramework => ({
   id: 'test',
@@ -230,6 +232,95 @@ describe('ValidationGantt', () => {
       )
       render(<ValidationGantt frameworks={frameworks} />)
       expect(screen.queryByRole('button', { name: /Show all|Show fewer/ })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('phase colours', () => {
+    // Tailwind builds an opacity step such as `bg-warning/60` only for a colour
+    // declared as a `--color-*` token in the stylesheet's @theme block. The
+    // `bg-status-*` names are plain classes with no opacity step, so
+    // `bg-status-error/70` produces no CSS and the swatch or bar is drawn empty.
+    // Read from disk: the test runner replaces a stylesheet import with an empty string.
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed path to the app's own stylesheet
+    const themeCss = readFileSync(join(process.cwd(), 'src/styles/index.css'), 'utf8')
+    const themeStart = themeCss.indexOf('@theme {')
+    const themeBlock = themeCss.slice(themeStart, themeCss.indexOf('\n}', themeStart))
+    const colourTokens = new Set(
+      [...themeBlock.matchAll(/--color-([a-z0-9-]+)\s*:/g)].map((m) => m[1])
+    )
+    const fillOf = (el: Element) =>
+      [...el.classList].find((c) => /^bg-/.test(c) && c !== 'bg-muted/30') ?? ''
+    const stepOf = (cls: string) => /^bg-([a-z0-9-]+)\/(\d{1,3})$/.exec(cls)
+
+    const phases: DeadlinePhase[] = ['active', 'imminent', 'near', 'mid', 'long']
+    const renderAllPhases = () =>
+      render(
+        <ValidationGantt
+          frameworks={phases.map((phase, i) =>
+            fwStub({
+              id: `p-${phase}`,
+              label: `${phase} FW`,
+              deadlineYear: 2027 + i,
+              deadlinePhase: phase,
+            })
+          )}
+        />
+      )
+    // Legend swatches are decorative (aria-hidden, no role or text), so each is
+    // reached through its label.
+    const swatches = () =>
+      ['Active', 'Imminent', 'Near', 'Mid', 'Long'].map(
+        // eslint-disable-next-line testing-library/no-node-access -- decorative swatch has no role or text
+        (label) => screen.getByText(label).firstElementChild as Element
+      )
+
+    it('reads the opacity-step test against the real stylesheet', () => {
+      expect(colourTokens.has('destructive')).toBe(true)
+      expect(colourTokens.has('warning')).toBe(true)
+      expect(colourTokens.has('primary')).toBe(true)
+      // The tint-class names have no token, so an opacity step on them draws nothing.
+      expect(colourTokens.has('status-error')).toBe(false)
+      expect(colourTokens.has('status-warning')).toBe(false)
+    })
+
+    it('draws every legend swatch with a fill the stylesheet can generate', () => {
+      renderAllPhases()
+      const found = swatches()
+      expect(found).toHaveLength(phases.length)
+      for (const swatch of found) {
+        const fill = fillOf(swatch)
+        const step = stepOf(fill)
+        expect(step, `swatch fill "${fill}" must be bg-<colour token>/<step>`).not.toBeNull()
+        const [, token, pct] = step as RegExpExecArray
+        expect(
+          colourTokens.has(token),
+          `"${token}" is not a theme colour, so ${fill} draws nothing`
+        ).toBe(true)
+        expect(Number(pct)).toBeGreaterThan(0)
+        expect(Number(pct)).toBeLessThanOrEqual(100)
+      }
+    })
+
+    it('draws each phase bar in the same fill as its legend swatch', () => {
+      renderAllPhases()
+      swatches().forEach((swatch, i) => {
+        const phase = phases.at(i)
+        const bar = screen.getByTitle((title) => title.startsWith(`${phase} FW: ${phase} (`))
+        expect(fillOf(bar)).toBe(fillOf(swatch))
+      })
+    })
+
+    it('keeps the stronger shade for the more urgent of two phases that share a colour', () => {
+      renderAllPhases()
+      const [active, imminent, near, mid, long] = swatches().map((el) => {
+        const step = stepOf(fillOf(el)) as RegExpExecArray
+        return { token: step[1], pct: Number(step[2]) }
+      })
+      expect(active.token).toBe('destructive')
+      expect(imminent.token).toBe(near.token)
+      expect(imminent.pct).toBeGreaterThan(near.pct)
+      expect(mid.token).toBe(long.token)
+      expect(mid.pct).toBeGreaterThan(long.pct)
     })
   })
 })
