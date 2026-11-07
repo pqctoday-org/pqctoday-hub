@@ -56,11 +56,11 @@ export const DatabaseEncryptionExercises: React.FC<DatabaseEncryptionExercisesPr
       id: 'byok-architecture',
       title: '3. HYOK vs BYOK PQC Readiness',
       description:
-        'Compare all three key ownership patterns in the BYOK Architecture Designer. Start with Provider-Managed (30% score), then compare to BYOK (65%), and finally HYOK (90%). Study the architecture diagram for each — especially how ML-KEM-1024 is used differently in BYOK vs HYOK.',
+        'Compare the three key ownership patterns in the BYOK Architecture Designer: Provider-Managed, BYOK and HYOK. For each, ask who holds the master key, whether the cloud database engine receives the plaintext DEK after the on-premises unwrap, and how access is revoked.',
       badge: 'Architecture',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'HYOK achieves 90% PQC readiness because the ML-KEM key pair lives in the customer HSM — the cloud provider never has access to the plaintext master key. BYOK scores 65% because the cloud KMS temporarily holds the unwrapped CMK in HSM memory during operations, creating a brief exposure window.',
+        "The patterns differ in key custody and revocation, not in a measured readiness score; any percentages are illustrative. With HYOK the master key stays in the customer HSM, but the cloud database engine still receives the plaintext DEK after the on-premises unwrap. With BYOK the customer's key material is imported into the cloud KMS.",
       config: { step: 2 },
     },
     {

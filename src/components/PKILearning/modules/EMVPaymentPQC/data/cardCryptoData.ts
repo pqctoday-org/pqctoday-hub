@@ -88,7 +88,6 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
       'Strongest offline authentication \u2014 binds card identity to transaction',
       'Prevents both cloning AND transaction modification attacks',
       'Single signature covers authentication + authorization (efficiency)',
-      'Recommended by EMVCo for all new card deployments',
     ],
     weaknesses: [
       'Most computationally expensive \u2014 requires both symmetric and asymmetric crypto on-card',
@@ -165,7 +164,7 @@ export const PROVISIONING_STEPS: ProvisioningStep[] = [
     ],
     quantumVulnerable: true,
     pqcReplacement:
-      'FN-DSA-512 ICC key pair + ML-DSA-44 Issuer CA signature + ML-KEM-768 key transport',
+      'FN-DSA-512 ICC key pair + ML-DSA-44 Issuer CA signature + ML-KEM-768 key establishment (conceptual)',
     dataElements: [
       'ICC RSA key pair (public + private)',
       'ICC public key certificate (signed by Issuer CA)',

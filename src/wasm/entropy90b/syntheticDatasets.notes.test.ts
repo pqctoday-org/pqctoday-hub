@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // @vitest-environment node
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { D4_DATASETS } from './syntheticDatasets'
 
@@ -18,5 +19,14 @@ describe('D4 synthetic datasets — teaching notes', () => {
 
   it('keeps the contrasting ideal-source scope on the biased-bit note', () => {
     expect(note('d4-biased-1bit')).toMatch(/For an ideal independent source/)
+  })
+
+  it('publishes the same Markov note in the downloadable manifest as the app shows', () => {
+    const manifest = JSON.parse(
+      readFileSync('public/data/entropy/d4-synthetic-manifest.json', 'utf-8')
+    ) as { datasets: { id: string; teachingNote: string }[] }
+    const entry = manifest.datasets.find((d) => d.id === 'd4-markov-1bit')
+    expect(entry?.teachingNote).toBe(note('d4-markov-1bit'))
+    expect(entry?.teachingNote).not.toMatch(/true per-sample min-entropy/i)
   })
 })

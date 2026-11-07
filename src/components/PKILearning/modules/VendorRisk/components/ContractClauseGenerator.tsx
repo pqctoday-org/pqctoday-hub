@@ -9,6 +9,11 @@ import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import type { ScorecardOutput } from './VendorScorecardBuilder'
+import {
+  CNSA_ACQUISITION_LABEL,
+  CNSA_MANDATE_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '../../PQCRiskManagement/data/cnsaLabels'
 
 const MODULE_ID = 'vendor-risk'
 
@@ -27,20 +32,20 @@ export const CONTRACT_SECTIONS: ArtifactSection[] = [
         options: [
           {
             value: '2025',
-            label: '2025 — CNSA 2.0 software/firmware preferred (NSS)',
+            label:
+              '2025 — NSA 2022 category guidance (older schedule): prefer CNSA 2.0 for new software and firmware signing',
           },
           {
             value: '2027',
-            label: '2027 — CNSA 2.0 new NSS acquisitions / operating systems must support PQC',
+            label: `2027 — ${CNSA_ACQUISITION_LABEL}`,
           },
           {
             value: '2030',
-            label: '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive',
+            label: `2030 — ${CNSA_PHASE_OUT_LABEL}`,
           },
           {
             value: '2031',
-            label:
-              '2031 — CNSA 2.0 algorithms mandated for NSS unless otherwise noted (FAQ version 2.2)',
+            label: `2031 — ${CNSA_MANDATE_LABEL}`,
           },
           {
             value: '2035',

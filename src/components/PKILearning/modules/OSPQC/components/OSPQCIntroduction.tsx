@@ -142,8 +142,9 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             {
               os: 'RHEL / CentOS Stream',
               mechanism: 'crypto-policies',
-              command: 'update-crypto-policies --set FUTURE',
-              effect: 'TLS 1.3-only + X25519MLKEM768 hybrid group systemwide',
+              command: 'update-crypto-policies --set DEFAULT:PQ',
+              effect:
+                'Red Hat documents the DEFAULT:PQ policy for RHEL 9.7; on RHEL 10.1 the DEFAULT policy is the documented route',
               status: 'experimental',
             },
             {
