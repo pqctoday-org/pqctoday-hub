@@ -172,7 +172,9 @@ describe('SandboxScenarioEmbed', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(res))
     renderAt(`/playground/sbx-${firstScenario.id}`)
     await waitFor(() => expect(document.querySelector('iframe')).not.toBeNull())
-    expect(cancel).toHaveBeenCalled()
+    // The body is released when the status fetch resolves, which can happen after the frame
+    // first renders, so wait for it instead of reading it at the instant the frame appears.
+    await waitFor(() => expect(cancel).toHaveBeenCalled())
   })
 
   it('renders an EmptyState for an unknown scenario id', async () => {
