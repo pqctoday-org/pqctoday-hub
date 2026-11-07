@@ -138,7 +138,11 @@ export interface CnsaCategory {
   exclusive: number
 }
 
-/** CNSA 2.0 per-category dates. Networking "prefer" (2026) has no shared constant. */
+/**
+ * CNSA 2.0 per-category dates as NSA's 2022 category guidance gave them (NSA's 2022 category
+ * guidance; superseded for planning by the dates in NSA's CNSA 2.0 FAQ, version 2.2). Kept as
+ * history. Networking "prefer" (2026) has no shared constant.
+ */
 export const CNSA_2_0_CATEGORIES: CnsaCategory[] = [
   {
     category: 'Software and firmware signing',

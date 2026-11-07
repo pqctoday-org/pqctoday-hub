@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { CNSA_PHASE_OUT_LABEL } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import type {
   VehicleLifecyclePhase,
   RegulationRegion,
@@ -302,7 +303,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
   {
     id: 'cnsa-2-firmware',
     csvId: 'CNSA-2',
-    name: 'CNSA 2.0 — Firmware Signing Deadline (National Security Systems)',
+    name: CNSA_PHASE_OUT_LABEL,
     authority: 'NSA',
     region: 'us',
     year: 2030,

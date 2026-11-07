@@ -179,14 +179,15 @@ describe('JurisdictionMapper — CNSA 2.0 applies to national security systems',
     expect(text).not.toMatch(/if the system is a national security system/)
   })
 
-  it('attaches the U.S. 2033-2035 target to national security systems in the early-deadline conflict', () => {
+  it('names the NSM-10 goal of 2035 as the U.S. full-transition target in the early-deadline conflict', () => {
     renderWith(['us', 'au'])
     expect(screen.getByText(/have deadlines significantly earlier than/)).toHaveTextContent(
-      'earlier than US full transition (2033-2035, if the system is a national security system).'
+      'earlier than US full transition (by 2035, NSM-10).'
     )
     fireEvent.click(screen.getByRole('checkbox', { name: NSS_LABEL }))
-    const ticked = screen.getByText(/have deadlines significantly earlier than/)
-    expect(ticked).toHaveTextContent('earlier than US full transition (2033-2035).')
-    expect(ticked).not.toHaveTextContent('national security system')
+    expect(screen.getByText(/have deadlines significantly earlier than/)).toHaveTextContent(
+      'earlier than US full transition (by 2035, NSM-10).'
+    )
+    expect(screen.queryByText(/2033/)).toBeNull()
   })
 })

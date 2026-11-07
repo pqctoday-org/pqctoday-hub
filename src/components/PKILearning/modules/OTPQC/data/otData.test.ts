@@ -335,6 +335,12 @@ describe('Regulations (E2/E3/E7/E13–E16)', () => {
     expect([c('Operating').prefer, c('Operating').exclusive]).toEqual([2027, 2031])
     expect(c('All').exclusive).toBe(2031)
   })
+  it('the per-category CNSA 2.0 table is marked as the 2022 guidance, superseded by the FAQ dates', () => {
+    const src = fs.readFileSync(path.resolve(__dirname, 'regulationsData.ts'), 'utf8')
+    expect(src).toMatch(
+      /NSA's 2022 category\s+\*?\s*guidance; superseded for planning by the dates in NSA's CNSA 2\.0 FAQ, version 2\.2/
+    )
+  })
 })
 
 describe('Module text does not regress to the old wrong claims', () => {

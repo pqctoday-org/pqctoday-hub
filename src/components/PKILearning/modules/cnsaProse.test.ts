@@ -256,6 +256,16 @@ cases.push(
     present: ['label: CNSA_MANDATE_LABEL'],
   },
   {
+    file: 'AutomotivePQC/data/lifecycleComplianceData.ts',
+    gone: ['CNSA 2.0 — Firmware Signing Deadline (National Security Systems)'],
+    present: ['name: CNSA_PHASE_OUT_LABEL'],
+  },
+  {
+    file: 'ComplianceStrategy/components/JurisdictionMapper.tsx',
+    gone: ['US full transition (2033-2035'],
+    present: ['US full transition (by 2035, NSM-10)'],
+  },
+  {
     file: 'Module1-Introduction/content.ts',
     gone: ['CNSA 2.0 begins phased PQC mandates for U.S. national security systems'],
     present: ['event: CNSA_ACQUISITION_LABEL'],

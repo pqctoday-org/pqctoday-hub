@@ -157,10 +157,9 @@ function detectConflicts(
   ].filter(Boolean)
 
   if (earlyDeadlineCountries.length > 0 && (hasUS || hasEU)) {
+    // NSM-10's goal is 2035 (NSA's CNSA 2.0 FAQ, version 2.2, cites it as "the 2035 goal outlined in NSM-10").
     const latestTarget = hasUS
-      ? nationalSecuritySystem
-        ? 'US full transition (2033-2035)'
-        : 'US full transition (2033-2035, if the system is a national security system)'
+      ? 'US full transition (by 2035, NSM-10)'
       : 'EU full transition (2035)'
     conflicts.push({
       description: `${earlyDeadlineCountries.join(', ')} have deadlines significantly earlier than ${latestTarget}. Your migration plan must meet the earliest deadline across all jurisdictions.`,
