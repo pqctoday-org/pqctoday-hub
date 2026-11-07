@@ -69,33 +69,37 @@ export const MONITORING_TOOLS: MonitoringTool[] = [
   },
   {
     id: 'istio-metrics',
-    name: 'Istio / Envoy TLS Metrics',
+    exampleKind: 'capability-requirements',
+    name: 'Istio / Envoy TLS Observability Requirements',
     source: 'istio',
     description:
-      'Istio exposes per-connection TLS cipher suite and certificate algorithm information via Envoy stats. Enables monitoring for non-PQC mTLS connections in the service mesh.',
+      'These are observation requirements, not claims that a particular Istio/Envoy version exports every field. A TLS 1.3 cipher-suite name does not identify the negotiated key-exchange group or authentication algorithm. Verify the exporter, collector version and field mappings before designing an alert.',
     metricExamples: [
-      'envoy_ssl_handshake{listener_address, alpn, tls_version}',
-      'envoy_ssl_connection_error{listener_address}',
-      'istio_requests_total{connection_security_policy, source_workload, destination_workload}',
-      'pilot_xds_cds_reject{node, error}',
+      'Observed TLS version and negotiated key-exchange group as separate fields.',
+      'Peer authentication signature algorithm and certificate-validation outcome.',
+      'Connection or workload identity, timestamp and observation coverage.',
+      'Exporter/collector versions and documented field mappings.',
     ],
     alertExamples: [
       {
-        name: 'NonPQCServiceMeshConnections',
+        name: 'Negotiated-group policy check (conceptual)',
         expression:
-          'sum(envoy_ssl_handshake{cipher_suite!~"TLS_AES_256_GCM_SHA384.*X25519MLKEM768.*"}) by (listener_address) > 0',
-        threshold: 'Any non-PQC cipher suite active in mesh',
+          'Observe the negotiated key-exchange group separately from the TLS 1.3 cipher suite. Map an available, version-checked telemetry source before comparing a known group with the chosen policy.',
+        threshold:
+          'Only a known observed group can be compared with policy. If required group data is missing, report Unknown instead of non-PQC.',
         severity: 'warning',
       },
       {
-        name: 'SVIDRotationAnomalyDetection',
-        expression: 'increase(spire_agent_svid_rotation_total[1h]) > 10',
+        name: 'Credential rotation pattern (conceptual)',
+        expression:
+          'Use a documented source to count credential rotations over a defined window and compare them with an explicitly chosen baseline.',
         threshold:
-          'Excessive SVID rotations (may indicate config instability during PQC migration)',
+          'Investigate unexpected rotations in context; a rotation count alone does not establish PQC posture or an incident.',
         severity: 'warning',
       },
     ],
-    pqcSignal: 'Monitors PQC cipher suite adoption across all service-to-service connections',
+    pqcSignal:
+      'Evaluate negotiated TLS facts and collection coverage; no verified exporter mapping supplied.',
     integrations: ['Prometheus', 'Grafana', 'Kiali', 'Jaeger'],
   },
   {

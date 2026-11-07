@@ -44,13 +44,14 @@ const MetricsTab: React.FC = () => {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Four Prometheus-compatible exporters cover the entire platform crypto surface. Each tool
-        exposes key algorithm labels — enabling alert rules that fire when classical crypto is still
-        active after your migration deadline.
+        Explore monitoring examples and capability requirements for platform crypto observability.
+        Check source versions, field availability and collection coverage before relying on a rule.
+        A labelled capability checklist is not executable telemetry.
       </p>
 
       {MONITORING_TOOLS.map((tool) => {
         const isExpanded = expandedId === tool.id
+        const isConceptual = tool.exampleKind === 'capability-requirements'
         return (
           <div key={tool.id} className="glass-panel overflow-hidden">
             <Button
@@ -78,16 +79,27 @@ const MetricsTab: React.FC = () => {
 
             {isExpanded && (
               <div className="px-4 pb-4 border-t border-border pt-4 space-y-4 animate-fade-in">
+                {isConceptual && (
+                  <p className="text-sm font-semibold text-foreground border border-primary/30 rounded p-3">
+                    Capability requirements — not runnable alert rules
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground">{tool.description}</p>
 
                 {/* Metric examples */}
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground">Key Metrics</span>
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {isConceptual ? 'Required observations' : 'Key Metrics'}
+                  </span>
                   <div className="mt-2 space-y-1">
                     {tool.metricExamples.map((m) => (
                       <div
                         key={m}
-                        className="font-mono text-[10px] text-foreground bg-muted rounded px-2 py-1 border border-border truncate"
+                        className={
+                          isConceptual
+                            ? 'text-xs text-foreground bg-muted rounded px-2 py-1 border border-border whitespace-normal break-words'
+                            : 'font-mono text-[10px] text-foreground bg-muted rounded px-2 py-1 border border-border truncate'
+                        }
                       >
                         {m}
                       </div>
@@ -97,7 +109,9 @@ const MetricsTab: React.FC = () => {
 
                 {/* Alert rules */}
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground">PQC Alert Rules</span>
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {isConceptual ? 'Non-executable decision examples' : 'PQC Alert Rules'}
+                  </span>
                   <div className="mt-2 space-y-2">
                     {tool.alertExamples.map((alert) => (
                       <div
@@ -120,11 +134,18 @@ const MetricsTab: React.FC = () => {
                           </span>
                           <span className="text-xs font-bold text-foreground">{alert.name}</span>
                         </div>
-                        <pre className="font-mono text-[10px] text-muted-foreground whitespace-pre-wrap break-all">
-                          {alert.expression}
-                        </pre>
+                        {isConceptual ? (
+                          <p className="text-xs text-foreground whitespace-normal break-words">
+                            {alert.expression}
+                          </p>
+                        ) : (
+                          <pre className="font-mono text-[10px] text-muted-foreground whitespace-pre-wrap break-all">
+                            {alert.expression}
+                          </pre>
+                        )}
                         <p className="text-[10px] text-muted-foreground mt-1 italic">
-                          Fires when: {alert.threshold}
+                          {isConceptual ? 'Interpretation: ' : 'Fires when: '}
+                          {alert.threshold}
                         </p>
                       </div>
                     ))}
@@ -134,7 +155,9 @@ const MetricsTab: React.FC = () => {
                 {/* Integrations */}
                 <div className="flex flex-wrap gap-1">
                   <span className="text-xs text-muted-foreground font-medium">
-                    Integrates with:
+                    {isConceptual
+                      ? 'Potential destinations — verify integration:'
+                      : 'Integrates with:'}
                   </span>
                   {tool.integrations.map((i) => (
                     <span

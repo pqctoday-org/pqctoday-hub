@@ -95,6 +95,8 @@ export interface AlertRule {
 }
 
 export interface MonitoringTool {
+  /** Capability requirements are not executable telemetry/query examples. */
+  exampleKind?: 'capability-requirements'
   id: string
   name: string
   source: MonitoringSource
