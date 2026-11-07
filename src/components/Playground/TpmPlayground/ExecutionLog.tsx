@@ -184,6 +184,26 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
   const respRows =
     isSuccess && resp && cmdDef
       ? cmdDef.respFields(log.algorithm).map((field) => {
+          // Some payload definitions retain zero as an unresolved offset.
+          // Only the response tag actually begins at byte zero; do not decode
+          // header bytes as payload data or treat an explanatory note as bytes.
+          const isHeaderTag =
+            field.name === 'tag' &&
+            field.tpmType === 'TPM_ST' &&
+            field.byteOffset === 0 &&
+            field.byteSize === 2
+          if (field.byteOffset === 0 && !isHeaderTag) {
+            return {
+              name: field.name,
+              type: field.tpmType,
+              value:
+                field.name === 'note' && field.tpmType === '—'
+                  ? 'Informational note — no decoded value'
+                  : 'Not parsed — payload offset is not resolved in this view.',
+              description: field.description,
+            }
+          }
+
           let value: string
           if (field.byteSize === 0) {
             value = readVariablePreview(resp, field.byteOffset)
