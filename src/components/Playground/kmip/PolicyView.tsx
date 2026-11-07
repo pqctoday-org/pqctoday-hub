@@ -381,6 +381,10 @@ export function PolicyView({
   useEffect(() => {
     activePresetFileRef.current = activePreset?.file
   }, [activePreset?.file])
+  // Counts compare runs, so a run can tell that a newer one has started and will
+  // do the put-back itself; and whether the engine still holds a compare side.
+  const compareRunRef = useRef(0)
+  const engineHoldsCompareRef = useRef(false)
   useEffect(() => {
     if (detailTab !== 'compare') return
     const presetA = POLICY_PRESETS.find((p) => p.file === compareAFile)
@@ -392,43 +396,75 @@ export function PolicyView({
       return
     }
     let cancelled = false
+    const runId = ++compareRunRef.current
     const startedWith = activePreset?.file
+    // The reader's own policy is put back even when this run was cancelled by
+    // leaving the Compare tab or unmounting; it is skipped only when a newer run
+    // has started (that run restores) or the reader chose another preset.
+    const superseded = () =>
+      compareRunRef.current !== runId || activePresetFileRef.current !== startedWith
+    // Fetch every module file of a split preset; null when any file is missing,
+    // not served, or the request fails (an error page must never reach the engine).
+    const fetchModules = async (preset: PolicyPreset): Promise<string[] | null> => {
+      try {
+        return await Promise.all(
+          (preset.files ?? []).map((f) =>
+            fetch(`/kmip-policies/${f}`).then((r) => {
+              if (!r.ok) throw new Error(`HTTP ${r.status}`)
+              return r.text()
+            })
+          )
+        )
+      } catch {
+        return null
+      }
+    }
     // Modular-policy plan (2026-08-28) — a split preset's `rawYaml` entry is
     // the CONCATENATION of its module files (fine for display, but not valid
     // single-document YAML), so comparing it must go through the real
     // multi-file activation path, not `engine.loadPolicy`. Async because that
     // path re-fetches each module file. Once this run is cancelled it must not
-    // touch the engine again: a newer run (or the reader) owns it by then.
-    const activateSide = async (preset: PolicyPreset, mergedYaml: string) => {
+    // load a compare side again: a newer run (or the reader) owns the engine by
+    // then. Returns whether the side was loaded.
+    const activateSide = async (preset: PolicyPreset, mergedYaml: string): Promise<boolean> => {
       if (preset.files && preset.files.length > 0) {
-        const yamls = await Promise.all(
-          preset.files.map((f) => fetch(`/kmip-policies/${f}`).then((r) => r.text()))
-        )
-        if (cancelled) return
+        const yamls = await fetchModules(preset)
+        if (cancelled || !yamls) return false
         engine.activateModulePreset(preset.name, yamls)
       } else {
-        if (cancelled) return
+        if (cancelled) return false
         engine.loadPolicy(mergedYaml)
       }
+      engineHoldsCompareRef.current = true
+      return true
+    }
+    // Put the reader's own policy back on the engine (not gated on `cancelled`).
+    const putBack = async () => {
+      if (!engineHoldsCompareRef.current || superseded()) return
+      if (activePreset?.files && activePreset.files.length > 0) {
+        const yamls = await fetchModules(activePreset)
+        if (!yamls || superseded()) return
+        engine.activateModulePreset(activePreset.name, yamls)
+      } else {
+        const restoreTo = policyYaml ?? rawYaml['training-permissive.yaml']
+        if (restoreTo) onApplyYaml(restoreTo)
+      }
+      engineHoldsCompareRef.current = false
     }
     void (async () => {
-      await activateSide(presetA, yamlA)
-      if (cancelled) return
-      const a = sweepDispositions(engine, asOfDate)
-      await activateSide(presetB, yamlB)
-      if (cancelled) return
-      const b = sweepDispositions(engine, asOfDate)
-      // Restore whatever was actually active before Compare ran — unless the
-      // reader has chosen another preset in the meantime.
-      if (!cancelled && activePresetFileRef.current === startedWith) {
-        if (activePreset?.files && activePreset.files.length > 0) {
-          await activateSide(activePreset, '')
-        } else {
-          const restoreTo = policyYaml ?? rawYaml['training-permissive.yaml']
-          if (restoreTo) onApplyYaml(restoreTo)
+      let a: Record<string, Disposition> | undefined
+      let b: Record<string, Disposition> | undefined
+      if (await activateSide(presetA, yamlA)) {
+        if (!cancelled) {
+          a = sweepDispositions(engine, asOfDate)
+          if ((await activateSide(presetB, yamlB)) && !cancelled) {
+            b = sweepDispositions(engine, asOfDate)
+          }
         }
       }
-      if (!cancelled) setCompareResult({ a, b })
+      await putBack()
+      if (cancelled) return
+      setCompareResult(a && b ? { a, b } : null)
     })()
     return () => {
       cancelled = true
