@@ -16,7 +16,8 @@ const inputFor = (level: string[], unknown: boolean, retention?: string[]): Asse
   sensitivityUnknown: unknown,
   dataRetention: retention,
 })
-const hndlAction = 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.'
+const hndlAction =
+  'Evaluate post-quantum protection for data-at-rest in your highest-sensitivity stores. It cannot undo exposure of data that was already captured, so establish whether that has happened.'
 
 describe('unknown sensitivity reader attribution', () => {
   it.each([{ levels: ['high'] }, { levels: ['critical'] }, { levels: [] }])(

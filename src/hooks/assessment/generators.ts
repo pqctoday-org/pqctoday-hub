@@ -322,7 +322,8 @@ export function generateExtendedActions(
   ) {
     actions.push({
       priority: priority++,
-      action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
+      action:
+        'Evaluate post-quantum protection for data-at-rest in your highest-sensitivity stores. It cannot undo exposure of data that was already captured, so establish whether that has happened.',
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'high',
@@ -331,7 +332,8 @@ export function generateExtendedActions(
   } else if (hasHighSensitivity) {
     actions.push({
       priority: priority++,
-      action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
+      action:
+        'Evaluate post-quantum protection for data-at-rest in your highest-sensitivity stores. It cannot undo exposure of data that was already captured, so establish whether that has happened.',
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'medium',

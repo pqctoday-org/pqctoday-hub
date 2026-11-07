@@ -150,18 +150,18 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
     },
   },
   {
-    pattern: 'Implement hybrid PQC encryption for data-at-rest',
+    pattern: 'Evaluate post-quantum protection for data-at-rest',
     reframings: {
       executive:
         'Evaluate quantum-safe protection for your most sensitive stored data: ask which stores hold data that must stay confidential for years, and test a post-quantum key-protection change against them. It cannot undo exposure of ciphertext or wrapped keys that were already copied, so establish whether that has happened.',
-      grc: 'Verify hybrid encryption coverage for the highest-sensitivity stores, and record the evidence — this is what a data-protection audit asks to see.',
+      grc: 'Evaluate post-quantum protection for data-at-rest in the highest-sensitivity stores and record what was tested and what stays unprotected; this is what a data-protection audit asks to see.',
       developer:
         'Evaluate and test post-quantum protection for data-at-rest in your highest-sensitivity stores. A KEM-plus-AEAD envelope (ML-KEM shared secret, key derivation, symmetric key wrap, AES-256 data encryption) is a different design from a classical/PQC hybrid key establishment, which combines both secrets; choose the one your key-management system supports and verify it.',
       architect:
         'Evaluate a post-quantum key-protection design for data-at-rest that fits your KMS topology and key rotation policies: decide between a KEM-plus-AEAD envelope and a classical/PQC hybrid key establishment, and plan how already-captured ciphertext is treated, since neither changes it.',
       curious:
-        'Begin double-locking your stored sensitive files using both traditional and new quantum-safe methods.',
-      ops: 'Roll out encryption-at-rest using hybrid key hierarchies across databases and block storage.',
+        'Begin protecting your most sensitive stored files with quantum-safe methods, and find out whether copies of the encrypted files were already taken; protection added now does not undo that.',
+      ops: 'Plan the roll-out of post-quantum key protection for data-at-rest across databases and block storage, testing it against your key-management system and rotation policy first.',
       researcher:
         'Investigate the feasibility and overhead of KEM combiners for static data archives.',
     },
