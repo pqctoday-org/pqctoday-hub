@@ -9,63 +9,50 @@ export const MONITORING_TOOLS: MonitoringTool[] = [
     name: 'cert-manager Prometheus Exporter',
     source: 'cert-manager',
     description:
-      'cert-manager exposes Prometheus metrics on port 9402. Standard metrics track certificate expiry and readiness. Pair with x509-certificate-exporter to add key algorithm visibility for PQC posture monitoring.',
+      'Compare issuance readiness, expiry and observed certificate identity separately. Readiness and remaining lifetime do not establish the key algorithm or PQC posture. Verify the installed controller/exporter version and representative sample output.',
     metricExamples: [
-      'certmanager_certificate_expiration_timestamp_seconds{name, namespace, issuer_name}',
-      'certmanager_certificate_ready_status{name, namespace, condition}',
-      'certmanager_controller_sync_call_count{controller}',
+      'Certificate identity, readiness state and observed validity period.',
+      'A separately verified certificate key and signature algorithm source.',
+      'Namespace/resource coverage, collection errors and last observation time.',
     ],
     alertExamples: [
       {
-        name: 'LongLivedCertExpiresAfterCRQCWindow',
-        expression: '(certmanager_certificate_expiration_timestamp_seconds - time()) / 86400 > 730',
-        threshold: '> 730 days remaining (long forgery window)',
-        severity: 'warning',
-      },
-      {
-        name: 'CertNotReady',
-        expression: 'certmanager_certificate_ready_status{condition="Ready"} == 0',
-        threshold: 'Certificate not in Ready state',
-        severity: 'warning',
-      },
-      {
-        name: 'CertRotationLag',
-        expression: '(certmanager_certificate_expiration_timestamp_seconds - time()) / 86400 < 30',
-        threshold: '< 30 days until expiry',
+        name: 'Certificate policy and coverage check (conceptual)',
+        expression:
+          'Join observed certificate facts to inventory using stable identifiers, then compare known algorithms and expiry with the applicable policy.',
+        threshold:
+          'Missing algorithm or incomplete inventory is Unknown; expiry alone does not establish quantum exposure.',
         severity: 'warning',
       },
     ],
-    pqcSignal: 'Identifies certs with quantum-vulnerable key algorithms still active in cluster',
+    pqcSignal: 'Certificate readiness and inventory requirements — verify sources and coverage',
     integrations: ['Prometheus', 'Grafana', 'AlertManager', 'PagerDuty'],
+    exampleKind: 'capability-requirements',
   },
   {
     id: 'vault-audit',
     name: 'HashiCorp Vault Audit Log',
     source: 'vault',
     description:
-      'Vault audit logs every cryptographic operation including key type, algorithm, and path. Shipping Vault audit logs to a SIEM enables detection of RSA/ECDSA key usage and algorithm-downgrade attempts.',
+      'Evaluate the configured audit devices, their schema and the services covered. Do not assume every record exposes plaintext key type or algorithm; check field availability, redaction and correlation to key metadata.',
     metricExamples: [
-      'vault_transit_encrypt_requests_total{key_type, mount}',
-      'vault_transit_sign_requests_total{key_type, mount, algorithm}',
-      'vault_pki_issue_requests_total{role, key_type, mount}',
-      'vault_pki_sign_requests_total{role, key_type}',
+      'Operation, result, key identity/version and relevant service or mount.',
+      'Verified key metadata needed to interpret the operation.',
+      'Audit-device configuration, record schema, redaction and collection gaps.',
     ],
     alertExamples: [
       {
-        name: 'VaultECDSASigningKeyUsed',
-        expression: 'increase(vault_transit_sign_requests_total{key_type="ecdsa-p256"}[5m]) > 0',
-        threshold: 'Any ECDSA transit signing in last 5 min',
+        name: 'Key-operation policy check (conceptual)',
+        expression:
+          'Use documented sample audit records and matching key metadata to distinguish actual algorithm use from an unsupported inference about a path or operation name.',
+        threshold:
+          'An observed classical operation is a fact to compare with policy, not proof of an attack. Missing required metadata is Unknown.',
         severity: 'warning',
       },
-      {
-        name: 'VaultRSAPKIIssuance',
-        expression: 'increase(vault_pki_issue_requests_total{key_type=~"rsa.*"}[1h]) > 0',
-        threshold: 'Any RSA certificate issued in last hour',
-        severity: 'critical',
-      },
     ],
-    pqcSignal: 'Detects quantum-vulnerable signing and encryption operations in Vault',
+    pqcSignal: 'Key-operation audit requirements — verify sources and coverage',
     integrations: ['Splunk', 'Elastic SIEM', 'Datadog', 'Prometheus'],
+    exampleKind: 'capability-requirements',
   },
   {
     id: 'istio-metrics',
@@ -107,28 +94,25 @@ export const MONITORING_TOOLS: MonitoringTool[] = [
     name: 'x509-certificate-exporter',
     source: 'prometheus',
     description:
-      'Kubernetes-native Prometheus exporter that scans TLS secrets and certificates cluster-wide. Exposes certificate expiry, issuer, and serial number. Pair with custom recording rules or a PQC-aware fork to add key algorithm labels for crypto posture baseline.',
+      'Evaluate which certificate sources the configured exporter watches and which fields its version emits. Expiry metrics do not identify the key algorithm; recording rules cannot create facts absent from their inputs.',
     metricExamples: [
-      'x509_cert_expired{secret_namespace, secret_name, issuer_cn}',
-      'x509_cert_not_after{secret_namespace, secret_name, issuer_cn, serial_number}',
-      'x509_cert_not_before{secret_namespace, secret_name}',
+      'Certificate validity, identity and collection health.',
+      'A documented observation of public-key and certificate-signature algorithms.',
+      'Configured sources, inaccessible certificates and freshness of each observation.',
     ],
     alertExamples: [
       {
-        name: 'LongLivedCertInCluster',
-        expression: '(x509_cert_not_after - time()) / 86400 > 730',
-        threshold: 'Certificate with > 2 years validity (forgery window)',
+        name: 'Certificate inventory completeness check (conceptual)',
+        expression:
+          'Inspect sample exported records and reconcile observed sources with the intended inventory before evaluating known algorithms against policy.',
+        threshold:
+          'Unknown algorithms or unobserved sources remain Unknown; do not describe a partial scan as full cluster coverage.',
         severity: 'warning',
       },
-      {
-        name: 'ExpiredCertInCluster',
-        expression: 'x509_cert_expired == 1',
-        threshold: 'Expired certificate found in cluster',
-        severity: 'critical',
-      },
     ],
-    pqcSignal: 'Full cluster inventory of TLS certificate key algorithms — baseline for migration',
+    pqcSignal: 'Certificate observation and coverage requirements — verify sources and coverage',
     integrations: ['Prometheus', 'Grafana', 'AlertManager'],
+    exampleKind: 'capability-requirements',
   },
 ]
 
@@ -139,7 +123,8 @@ export interface SIEMEventSchema {
   name: string
   description: string
   platform: 'Splunk' | 'Elastic' | 'Datadog' | 'Microsoft Sentinel'
-  query: string
+  query: string // Non-executable observation and decision guidance
+  exampleKind: 'capability-requirements'
   mitreTactic: string
   severity: 'critical' | 'high' | 'medium' | 'low'
 }
@@ -147,65 +132,51 @@ export interface SIEMEventSchema {
 export const SIEM_QUERIES: SIEMEventSchema[] = [
   {
     id: 'splunk-ecdsa-signing',
-    name: 'ECDSA Signing Key Usage (Vault)',
+    name: 'Signing-operation policy check',
     description:
-      'Detects Vault transit signing operations using quantum-vulnerable ECDSA keys. Indicates pipeline artifacts being signed with keys that will be breakable post-CRQC.',
+      'Conceptual capability checklist for this destination; no verified query or input-field mapping is supplied.',
     platform: 'Splunk',
-    query: `index=vault_audit sourcetype=vault:audit
-  operation=sign
-  key_type IN ("ecdsa-p256", "ecdsa-p384")
-| stats count by user, mount, path, key_type, _time
-| where count > 0
-| eval risk="QUANTUM-VULNERABLE SIGNING"
-| table _time, user, mount, path, key_type, risk`,
+    query:
+      'Correlate a documented operation record with the exact key identity/version and algorithm. Verify the input schema and retention/redaction limits with sample records.\n\nDecision and limits: A known signing algorithm may be compared with the chosen policy. An absent algorithm or failed correlation is Unknown; use alone does not establish an incident.',
     mitreTactic: 'T1553.002 — Code Signing',
     severity: 'high',
+    exampleKind: 'capability-requirements',
   },
   {
     id: 'elastic-rsa-cert-issue',
-    name: 'RSA Certificate Issuance (cert-manager)',
+    name: 'Certificate-issuance policy check',
     description:
-      'Alerts when cert-manager issues RSA certificates. Helps track compliance with PQC migration policy — each issuance should be using ML-DSA during the transition window.',
+      'Conceptual capability checklist for this destination; no verified query or input-field mapping is supplied.',
     platform: 'Elastic',
-    query: `event.kind: "event"
-  AND kubernetes.labels.app: "cert-manager"
-  AND message: "certificate issued"
-  AND NOT message: "ml-dsa" AND NOT message: "MLDSA"
-| stats count by kubernetes.namespace, cert_name, key_algorithm
-| sort -count`,
+    query:
+      'Parse a sample issued certificate and correlate it with the issuance event. Observe its public-key and issuer-signature algorithms separately.\n\nDecision and limits: Missing ML-DSA text in a log does not establish RSA issuance. Unknown certificate facts remain Unknown; apply only a supported, scoped policy.',
     mitreTactic: 'T1587.003 — Digital Certificates',
     severity: 'medium',
+    exampleKind: 'capability-requirements',
   },
   {
     id: 'datadog-pipeline-oidc',
-    name: 'CI/CD OIDC Token Algorithm Downgrade',
+    name: 'OIDC signing capability check',
     description:
-      'Detects GitHub Actions OIDC tokens signed with ES256 (ECDSA P-256) instead of ML-DSA. Indicates pipeline identity not yet migrated to PQC signing.',
+      'Conceptual capability checklist for this destination; no verified query or input-field mapping is supplied.',
     platform: 'Datadog',
-    query: `source:github-actions
-  @evt.name:workflow_job
-  @oidc.key_algorithm:(ES256 OR RS256)
-  -@oidc.key_algorithm:ML-DSA-65
-| groupby @repository, @workflow
-| alert when count > 0`,
+    query:
+      'Observe the actual token signing algorithm and validate its issuer/key context using the supported JOSE profile. Check the exact provider version and available algorithms.\n\nDecision and limits: An observed ES256 or RS256 token is not by itself a downgrade. Do not assume the provider supports PQC signing; absent or unverified context is Unknown.',
     mitreTactic: 'T1552.004 — Private Keys',
     severity: 'high',
+    exampleKind: 'capability-requirements',
   },
   {
     id: 'sentinel-tls-downgrade',
-    name: 'TLS Non-PQC Cipher Suite Detection',
+    name: 'Negotiated TLS group policy check',
     description:
-      'Detects ingress TLS sessions that completed without an ML-KEM hybrid key exchange. Indicates traffic exposed to harvest-now-decrypt-later attack.',
+      'Conceptual capability checklist for this destination; no verified query or input-field mapping is supplied.',
     platform: 'Microsoft Sentinel',
-    query: `ContainerLog
-  | where ContainerID contains "nginx-ingress"
-  | where LogEntry contains "TLSv1.3"
-  | where LogEntry !contains "X25519MLKEM768"
-  | project TimeGenerated, LogEntry, Computer, Namespace
-  | extend risk = "NO_PQC_KEY_EXCHANGE"
-  | summarize count() by Computer, risk, bin(TimeGenerated, 1h)`,
+    query:
+      'Obtain the negotiated group separately from the TLS version and cipher suite. Validate the source/version field mapping with known-group and missing-group sample observations.\n\nDecision and limits: Absence of a group name in log text does not prove non-PQC negotiation. Compare known observations with policy and report Unknown when the required group was not observed.',
     mitreTactic: 'T1040 — Network Sniffing',
     severity: 'medium',
+    exampleKind: 'capability-requirements',
   },
 ]
 
@@ -367,7 +338,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'cert-manager generates a private key for the Certificate resource. Key type is specified in spec.privateKey.algorithm.',
     pqcNote:
-      'The cert-manager Certificate privateKey.algorithm field accepts RSA, ECDSA or Ed25519 only and has no hybridAlgorithm field, so ML-DSA keys come from an issuer that supports them, for example Vault PKI or EJBCA.',
+      'Check that the selected client, key generator, CSR flow and issuer support the same documented algorithm/profile. Issuer support alone does not add a new key type to the client configuration.',
     status: 'pqc',
   },
   {
@@ -377,7 +348,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'A PKCS#10 CSR is generated from the private key. The CSR includes the Subject, SANs, and key usage extensions.',
     pqcNote:
-      'ML-DSA CSRs use OID 2.16.840.1.101.3.4.3.17 (ML-DSA-44) in the SubjectPublicKeyInfo. CSR format is identical to classical — only the algorithm OID changes.',
+      'Verify the algorithm identifiers, parameter rules, public-key and signature encodings in the chosen CSR profile with representative samples and an independent parser. Changing an identifier alone does not establish compatibility.',
     status: 'pqc',
   },
   {
@@ -387,7 +358,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       "cert-manager places an ACME order with the CA (e.g., Let's Encrypt). The CA returns authorization challenges (HTTP-01 or DNS-01).",
     pqcNote:
-      "Let's Encrypt is targeting late 2026 for a staging environment that issues Merkle Tree Certificates (MTCs) and 2027 for a production-ready environment; its post says it is tracking the standards for ML-DSA signatures in X.509 and gives no ML-DSA issuance dates. In the interim, use internal CAs (Vault PKI, EJBCA) for ML-DSA certificates.",
+      'Check the selected CA service and version for documented issuance support, supported client profiles and limitations. A roadmap or staging service does not establish production availability or client interoperability.',
     status: 'classical',
   },
   {
@@ -395,9 +366,9 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     step: 4,
     title: 'ACME Challenge Completion',
     description:
-      'cert-manager completes the HTTP-01 or DNS-01 challenge to prove domain ownership.',
+      'The configured client completes the selected challenge to demonstrate domain control under the applicable ACME validation method.',
     pqcNote:
-      'Challenge protocol is algorithm-agnostic — the challenge verifies domain control, not the key type. HTTP-01 and DNS-01 both work with ML-DSA keys once the CA supports them.',
+      'A challenge demonstrates the specified domain-control check. Success does not establish support for the requested certificate key, signature algorithm or trust chain.',
     status: 'agnostic',
   },
   {
@@ -405,9 +376,9 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     step: 5,
     title: 'Certificate Issuance',
     description:
-      'The CA signs the CSR with its own signing key and returns the DER-encoded X.509 certificate.',
+      'The CA validates the CSR and issues a certificate binding the requested public key; it signs the certificate with its issuing key.',
     pqcNote:
-      "For end-to-end PQC, this module's reading is that both the subscriber cert (ML-DSA leaf) AND the CA signing key must be ML-DSA. Let's Encrypt's announced plan is a staging environment that issues Merkle Tree Certificates (late 2026); its post does not give a date for ML-DSA-signed X.509 certificates.",
+      'Evaluate the subscriber key, issuing chain and relying-party algorithm policy separately. Inspect a sample certificate and verify the intended chain with supported clients; an algorithm selection alone does not establish end-to-end protection.',
     status: 'hybrid',
   },
   {
@@ -416,7 +387,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     title: 'Automatic Rotation',
     description: 'cert-manager renews certificates.',
     pqcNote:
-      "ML-DSA certificates have the same rotation logic. In this module's reading, shorter TTLs (30 days) are recommended for PQC transition to shorten the window in which a forged certificate would be accepted. cert-manager renewBefore: 20d achieves this.",
+      'Inspect issued lifetime, renewal scheduling, successful replacement and stale-certificate coverage separately. A renewal lead time does not set certificate lifetime; shorter validity alone does not eliminate future forgery risk.',
     status: 'pqc',
   },
   {
@@ -424,9 +395,9 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     step: 7,
     title: 'Algorithm Drift Detection',
     description:
-      'Automated monitoring checks that all issued certs use approved PQC algorithms. Alerts fire on classical algorithm drift.',
+      'Plan and evaluate certificate observations needed to identify policy drift; this walkthrough does not collect certificate or telemetry evidence.',
     pqcNote:
-      "Use x509-certificate-exporter + the cert algorithm Prometheus metric to detect if cert-manager rolled back to ECDSA (e.g., after CA fallback). Alert: x509_cert_key_algorithm{algorithm!~'id-ML-DSA.*'} == 1",
+      'Capability requirement — not an alert rule: obtain certificate identities and algorithms from a documented source and verify collection coverage. Compare known facts with the applicable policy; missing algorithms or inaccessible certificates remain Unknown.',
     status: 'pqc',
   },
 ]
@@ -439,8 +410,8 @@ export const ACME_STATUS_COLORS: Record<ACMEStep['status'], string> = {
 }
 
 export const ACME_STATUS_LABELS: Record<ACMEStep['status'], string> = {
-  classical: 'Classical only',
-  hybrid: 'Hybrid transition',
-  pqc: 'PQC ready',
-  agnostic: 'Algorithm-agnostic',
+  classical: 'Existing-flow topic',
+  hybrid: 'Transition topic',
+  pqc: 'PQC capability topic',
+  agnostic: 'Shared-process topic',
 }

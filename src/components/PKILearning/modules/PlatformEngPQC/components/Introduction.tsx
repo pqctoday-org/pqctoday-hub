@@ -437,18 +437,24 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             {[
               {
                 tool: 'cert-manager Prometheus Exporter',
-                signal: 'Detects ECDSA/RSA certs still in Ready state after migration deadline',
-                metric: 'certmanager_certificate_ready_status{key_algorithm=~"ECDSA.*"}',
+                conceptual: true,
+                signal: 'Observe readiness and expiry separately from certificate algorithms.',
+                metric:
+                  'Verify certificate identity, algorithm source and collection coverage. Readiness alone does not establish the algorithm; missing facts are Unknown.',
               },
               {
                 tool: 'x509-certificate-exporter',
-                signal: 'Cluster-wide scan of all TLS Secrets; identifies non-PQC key algorithms',
-                metric: 'x509_cert_key_algorithm{algorithm!~"id-ML-DSA.*"}',
+                conceptual: true,
+                signal: 'Reconcile observed certificates with the intended inventory.',
+                metric:
+                  'Check configured sources, collection health and documented fields. An expiry metric or recording rule cannot supply an unobserved algorithm; incomplete coverage stays Unknown.',
               },
               {
                 tool: 'HashiCorp Vault Audit Log',
-                signal: 'Detects ECDSA transit signing operations in Vault',
-                metric: 'vault_transit_sign_requests_total{key_type="ecdsa-p256"}',
+                conceptual: true,
+                signal: 'Correlate documented operation records with key metadata.',
+                metric:
+                  'Inspect the audit schema, key identity/version, redaction and collection gaps using sample records. Missing algorithm context is Unknown, not a proven downgrade.',
               },
               {
                 tool: 'Istio / Envoy TLS Observability Requirements',
@@ -484,10 +490,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </div>
 
           <p className="text-sm text-muted-foreground">
-            SIEM integration (Splunk, Elastic, Datadog, Microsoft Sentinel) extends monitoring to
-            cross-platform detection — catching algorithm-downgrade events, CI/CD OIDC token
-            algorithm drift, and negotiated TLS groups where the required observations are collected
-            and mapped.
+            For SIEM integration, evaluate the input schema and representative known, missing and
+            malformed sample records before designing a rule. Compare observed facts with an
+            applicable policy; these capability examples are not executable queries or proof of
+            production coverage.
           </p>
         </CollapsibleSection>
       </div>

@@ -186,9 +186,9 @@ const SIEMTab: React.FC = () => {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Pre-built SIEM queries for detecting quantum-vulnerable cryptographic operations in your
-        pipeline. Covers Vault signing key usage, cert-manager RSA issuance, CI/CD OIDC token
-        algorithm, and TLS cipher negotiation.
+        Non-executable SIEM capability checklists. Verify the destination version, input schema,
+        field mappings and observation coverage with sample records before designing an alert.
+        Missing observations remain Unknown; these examples do not detect incidents.
       </p>
 
       {SIEM_QUERIES.map((query) => {
@@ -211,7 +211,7 @@ const SIEMTab: React.FC = () => {
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${SIEM_SEVERITY_COLORS[query.severity]}`}
                   >
-                    {query.severity.toUpperCase()}
+                    Illustrative priority: {query.severity.toUpperCase()}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground truncate">{query.description}</p>
@@ -230,14 +230,16 @@ const SIEMTab: React.FC = () => {
                 <p className="text-xs text-muted-foreground">{query.description}</p>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-1 rounded border border-border">
-                    MITRE: {query.mitreTactic}
+                    Discussion context: {query.mitreTactic}
                   </span>
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground mb-2 block">Query</span>
-                  <pre className="bg-muted rounded-lg p-3 text-[11px] font-mono text-foreground overflow-x-auto border border-border whitespace-pre-wrap leading-relaxed">
+                  <span className="text-xs font-bold text-muted-foreground mb-2 block">
+                    Capability checklist — not a runnable query
+                  </span>
+                  <p className="bg-muted rounded-lg p-3 text-xs text-foreground border border-border whitespace-pre-wrap break-words leading-relaxed">
                     {query.query}
-                  </pre>
+                  </p>
                 </div>
               </div>
             )}
@@ -247,11 +249,11 @@ const SIEMTab: React.FC = () => {
 
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Integration workflow:</strong> Enable these queries in Audit mode first to
-          baseline volumes. Tune thresholds over 2 weeks before enabling alerting. Map alerts to
-          your on-call rotation with 48-hour SLA for CRITICAL findings. Weekly SIEM digest reports
-          should track percentage of operations using PQC algorithms — target 100% by your mandated
-          migration deadline.
+          <strong>Evaluate the capability:</strong> Check the documented source/version and field
+          mappings with known policy-matching, policy-mismatching, missing and malformed sample
+          observations. Choose the applicable policy, observation window and escalation criteria.
+          Retain sample results and coverage limits; Unknown is not evidence of compliance or an
+          incident.
         </p>
       </div>
     </div>
@@ -492,9 +494,9 @@ const ACMETab: React.FC = () => {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        The ACME certificate lifecycle with PQC overlay. Each step shows the current state
-        (classical / hybrid / PQC-ready / algorithm-agnostic) and what changes are needed for a
-        quantum-safe issuance pipeline via cert-manager with an ML-DSA-capable issuer.
+        Educational ACME lifecycle walkthrough — not a readiness assessment or an automated issuance
+        run. Each stage highlights capabilities to evaluate in the selected client, issuer and
+        relying parties; the topic labels do not certify product support.
       </p>
 
       {/* Step rail */}
@@ -571,7 +573,7 @@ const ACMETab: React.FC = () => {
 
       {/* Summary legend */}
       <div className="glass-panel p-4">
-        <h4 className="text-xs font-bold text-foreground mb-3">Step Status Legend</h4>
+        <h4 className="text-xs font-bold text-foreground mb-3">Learning Topic Legend</h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {(Object.keys(ACME_STATUS_LABELS) as ACMEStep['status'][]).map((status) => (
             <div key={status} className="flex items-center gap-2">
@@ -584,12 +586,9 @@ const ACMETab: React.FC = () => {
           ))}
         </div>
         <p className="text-[10px] text-muted-foreground mt-3">
-          Let&apos;s Encrypt is targeting late 2026 for a staging environment that issues Merkle
-          Tree Certificates (MTCs) and 2027 for a production-ready environment, and it is tracking
-          ML-DSA in X.509 (RFC 9881) and TLS. Its post says the transition will take time. This
-          module&apos;s advice: until post-quantum certificates are available from Let&apos;s
-          Encrypt, use internal CAs (Vault PKI, EJBCA) for ML-DSA certificate issuance in production
-          environments.
+          Evaluate the exact issuer, client version and profile with sample keys, CSRs, certificates
+          and chain-validation results. A product name, roadmap or successful challenge alone does
+          not establish PQC issuance or relying-party interoperability.
         </p>
       </div>
     </div>
@@ -609,9 +608,9 @@ export const CryptoPostureMonitor: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Crypto Posture Monitor</h3>
         <p className="text-sm text-muted-foreground">
-          Four-panel monitoring dashboard covering Prometheus metrics, SIEM integration, capacity
-          planning for PQC size overhead, and ACME certificate lifecycle automation with
-          cert-manager.
+          Explore non-executable monitoring and SIEM capability checklists, illustrative capacity
+          planning, and an educational ACME lifecycle. Use the examples to evaluate production
+          tools; this resource does not collect telemetry or automate certificate issuance.
         </p>
       </div>
 
