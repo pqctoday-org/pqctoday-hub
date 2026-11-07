@@ -38,6 +38,21 @@ describe('directional TLS hybrid teaching sizes', () => {
     }
   )
 
+  it.each([
+    ['dnp3-sav5', 'Update key change — asymmetric (optional)'],
+    ['opc-ua', 'SecureChannel key establishment'],
+    ['dlms-cosem', 'Key agreement (suites 1/2)'],
+  ])('does not present an unselected future profile as a measured exchange: %s', (id, name) => {
+    const layer = OT_PROTOCOLS.find((p) => p.id === id)!.cryptoLayers.find(
+      (l) => l.layerName === name
+    )!
+    expect(layer.classicalBytes).toBeUndefined()
+    expect(layer.pqcBytes).toBeUndefined()
+    expect(layer.sizeBasis).toBeUndefined()
+    expect(layer.notes).toContain('Migration message size not specified')
+    expect(layer.notes).toContain('direction-specific serialized sample messages')
+  })
+
   it('does not apply the TLS example to the ICCP IKEv2 option', () => {
     expect(OT_PROTOCOLS.find((p) => p.id === 'iccp-tase2')!.cryptoLayers[0].notes).toContain(
       'for TLS only, not IKEv2'

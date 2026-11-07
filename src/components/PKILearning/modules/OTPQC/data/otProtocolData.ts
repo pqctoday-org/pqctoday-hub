@@ -214,11 +214,8 @@ export const OT_PROTOCOLS: OTProtocol[] = [
           'Update Key encrypted to the outstation with RSAES-OAEP; user credentials signed with DSA',
         threat: 'both',
         pqcPath: 'Switch to the symmetric method, or wait for a revised standard with PQC options',
-        classicalBytes: RSA_2048_SIG,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'key transport (RSA-2048 → ML-KEM-768 ciphertext)',
         notes:
-          'Only deployments that chose the optional asymmetric method are exposed. We found no post-quantum option for DNP3 in the documents we hold.',
+          'Only deployments that chose the optional asymmetric method are exposed. We found no post-quantum option for DNP3 in the documents we hold. Migration message size not specified—protocol profile and encoding required. An ML-KEM ciphertext is one algorithm component, not a complete exchange. Evaluate documented supported profiles and direction-specific serialized sample messages, including framing and transport limits, with production tools.',
       },
     ],
   },
@@ -309,11 +306,8 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         mechanism: 'RSA-OAEP encrypted nonces (RSA policies) or ECDH (ECC policies)',
         threat: 'hndl',
         pqcPath: 'A future ML-KEM SecurityPolicy',
-        classicalBytes: X25519_SHARE,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'ephemeral key (ECC policy → ML-KEM-768 ciphertext)',
         notes:
-          'Client and server must both support the new policy; keep the old one only as long as needed.',
+          'Client and server must both support the new policy; keep the old one only as long as needed. Migration message size not specified—protocol profile and encoding required. An ML-KEM ciphertext is one algorithm component, not a complete exchange. Evaluate documented supported profiles and direction-specific serialized sample messages, including framing and transport limits, with production tools.',
       },
       {
         layerName: 'Application instance certificates',
@@ -502,10 +496,8 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         mechanism: 'ECDH P-256 (suite 1) or P-384 (suite 2); suite 0 has none',
         threat: 'hndl',
         pqcPath: 'ML-KEM once a suite defines it',
-        classicalBytes: 33,
-        pqcBytes: ML_KEM_768_CT,
-        sizeBasis: 'compressed P-256 point → ML-KEM-768 ciphertext',
-        notes: 'Suite 0 deployments have no public-key exposure at all.',
+        notes:
+          'Suite 0 deployments have no public-key exposure at all. Migration message size not specified—protocol profile and encoding required. An ML-KEM ciphertext is one algorithm component, not a complete exchange. Evaluate documented supported profiles and direction-specific serialized sample messages, including framing and transport limits, with production tools.',
       },
       {
         layerName: 'Signatures (suites 1/2)',
