@@ -448,6 +448,20 @@ describe('MobileAssessView', () => {
       fireEvent.click(own.closest('button')!)
       expect(useAssessmentFormStore.getState().timelinePressure).toBe('internal-deadline')
     })
+
+    it('timeline: choosing a published milestone saves which one, and not the own-target option', () => {
+      goToComprehensiveStep('timeline')
+      const card = screen.getAllByText(/Key-Establishment Migration Deadline/)[0].closest('button')!
+      fireEvent.click(card)
+      const saved = useAssessmentFormStore.getState().timelineMilestone
+      expect(saved?.id).toMatch(/Key-Establishment Migration Deadline/)
+      expect(saved?.authority).toBeTruthy()
+      expect(typeof saved?.year).toBe('number')
+      expect(card).toHaveAttribute('aria-pressed', 'true')
+      // The same stored value also means "own target", but that option is not the chosen one here.
+      const own = screen.getByText('Own Target or Distant Deadline').closest('button')!
+      expect(own).toHaveAttribute('aria-pressed', 'false')
+    })
   })
 
   describe('unknown-toggle explanation (audit R4.6)', () => {

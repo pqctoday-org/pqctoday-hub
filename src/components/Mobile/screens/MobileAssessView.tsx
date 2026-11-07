@@ -872,13 +872,22 @@ export function MobileAssessView() {
                 <div className="flex flex-col gap-1.5">
                   {countryDeadlines.map((phase) => {
                     const derived = deriveTimelinePressure(phase.endYear)
-                    const selected = store.timelinePressure === derived
+                    // A saved choice names its milestone, so only that card reads as chosen.
+                    const selected =
+                      store.timelinePressure === derived &&
+                      (!store.timelineMilestone || store.timelineMilestone.id === phase.title)
                     return (
                       <Button
                         key={phase.title}
                         type="button"
                         variant="ghost"
-                        onClick={() => store.setTimelinePressure(derived)}
+                        onClick={() =>
+                          store.setTimelinePressure(derived, {
+                            id: phase.title,
+                            authority: phase.events[0]?.orgName ?? '',
+                            year: phase.endYear,
+                          })
+                        }
                         aria-pressed={selected}
                         className={cn(
                           'h-auto flex-col items-start gap-0.5 whitespace-normal rounded-lg border p-2.5 text-left',
@@ -906,7 +915,10 @@ export function MobileAssessView() {
                   {TIMELINE_STATIC_OPTIONS.filter(
                     (o) => o.value === 'internal-deadline' || o.value === 'no-deadline'
                   ).map((opt) => {
-                    const selected = store.timelinePressure === opt.value
+                    // "Own target" stays unselected while a published milestone is the saved choice.
+                    const selected =
+                      store.timelinePressure === opt.value &&
+                      !(opt.value === 'internal-deadline' && store.timelineMilestone)
                     return (
                       <Button
                         key={opt.value}
