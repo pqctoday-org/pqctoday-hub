@@ -29,7 +29,7 @@ const PARTS: WorkshopPart[] = [
     id: 'risk-heatmap',
     title: 'Step 3: Risk Heatmap',
     description:
-      'Assign risk treatments, model residual risk, and prioritize your PQC migration order.',
+      'Assign draft risk treatments, compare baseline and projected sample scores, and set your PQC migration priority order.',
     icon: Grid3X3,
   },
   {

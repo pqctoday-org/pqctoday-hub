@@ -52,11 +52,21 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0 software signing preferred',
-      year: CNSA_2_0.softwarePreferred,
+      label: 'CNSA 2.0: new national security system acquisitions (from 1 January 2027)',
+      year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0',
     },
-    { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    {
+      label:
+        'CNSA 2.0: unsupported national security system equipment phased out (31 December 2030)',
+      year: CNSA_2_0.softwareExclusive,
+      source: 'CNSA 2.0',
+    },
+    {
+      label: 'CNSA 2.0 mandated for national security systems (31 December 2031)',
+      year: CNSA_2_0.networkingExclusive,
+      source: 'CNSA 2.0',
+    },
     {
       label: 'NIST: deprecate RSA, ECC and DH (all key sizes, 112-bit security and up)',
       year: NIST_DEPRECATION.deprecateClassical,
