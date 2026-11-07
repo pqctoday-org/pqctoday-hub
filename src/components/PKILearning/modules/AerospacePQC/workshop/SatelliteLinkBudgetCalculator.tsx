@@ -58,6 +58,15 @@ const X25519_PUBKEY = 32
 const X25519_CIPHERTEXT = 32
 const HANDSHAKE_ROUNDS = 3
 
+function formatRefreshBound(hours: number): string {
+  if (hours >= 24) return `${(hours / 24).toFixed(2)} days`
+  if (hours >= 1) return `${hours.toFixed(2)} hours`
+  const tenthsOfSeconds = Math.round(hours * 36000)
+  const minutes = Math.floor(tenthsOfSeconds / 600)
+  const seconds = ((tenthsOfSeconds % 600) / 10).toFixed(1)
+  return minutes > 0 ? `${minutes} min ${seconds} s` : `${seconds} s`
+}
+
 export const SatelliteLinkBudgetCalculator: React.FC = () => {
   const [selectedOrbit, setSelectedOrbit] = useState('geo')
   const [selectedBand, setSelectedBand] = useState('ka-band')
@@ -256,11 +265,9 @@ export const SatelliteLinkBudgetCalculator: React.FC = () => {
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Key refresh interval:</span>
+              <span className="text-muted-foreground">Illustrative refresh upper bound:</span>
               <span className="font-bold text-foreground">
-                {analysis.refreshHours >= 24
-                  ? `${(analysis.refreshHours / 24).toFixed(1)} days`
-                  : `${analysis.refreshHours} hours`}
+                ≈{formatRefreshBound(analysis.refreshHours)}
               </span>
             </div>
             <div className="flex justify-between text-xs">
@@ -274,6 +281,11 @@ export const SatelliteLinkBudgetCalculator: React.FC = () => {
               </span>
             </div>
           </div>
+          <p className="text-xs text-muted-foreground">
+            An illustrative upper bound under this sample&apos;s linear SEU assumptions, not a
+            flight-system key-rotation recommendation. The display is rounded for readability;
+            handshakes per day use the unrounded bound.
+          </p>
         </div>
       </div>
 
