@@ -191,8 +191,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   nShield 5s module)
                 </li>
                 <li>
-                  &bull; Utimaco u.trust GP HSM Se-Series (PCIe, FIPS 140-2 L3, certificate now
-                  Historical)
+                  &bull; Utimaco u.trust GP HSM Se-Series (PCIe; see its FIPS status in the vendor
+                  deep dive below)
                 </li>
               </ul>
               <p className="text-xs text-success mt-2 font-medium">
@@ -442,8 +442,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     <strong>Upgrade Path:</strong> Through PKCS#11 the PostQuantum feature must be
                     enabled and the firmware must be v13.8 or later (v13.8.3 or later for ML-KEM).
                     The 1&ndash;2 hours per HSM figure is this module&apos;s own planning estimate;
-                    the Entrust release notes and product pages we hold give no duration. An nShield
-                    5s module is on the CMVP Modules in Process list &mdash; a queue position, not
+                    Entrust&apos;s release notes and product pages give no duration. An nShield 5s
+                    module is on the CMVP Modules in Process list &mdash; a queue position, not
                     evidence of the outcome.
                   </p>
                   <p>
@@ -480,7 +480,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
                     <span className="text-status-warning font-medium">
-                      FIPS 140-2 Level 3 (cert #3925, Historical)
+                      Unconfirmed for this product (see Certification below)
                     </span>
                   </div>
                   <div>
@@ -498,13 +498,21 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <p>
                     <strong>Upgrade Path:</strong> Quantum Protect is delivered as a firmware
                     module. The 1&ndash;3 hours per HSM figure is this module&apos;s own planning
-                    estimate; the Utimaco product pages we hold give no duration.
+                    estimate; Utimaco&apos;s product pages give no duration.
                   </p>
                   <p>
-                    <strong>Unique Features:</strong> Cert #3925 is a FIPS 140-2 certificate, moved
-                    to the CMVP Historical list at sunset (checked 24 Sep 2026). PQC simulator
-                    available for API testing. SLH-DSA on roadmap. PCIe form factor for data center
-                    deployment.
+                    <strong>Unique Features:</strong> PQC simulator available for API testing.
+                    SLH-DSA on roadmap. PCIe form factor for data center deployment.
+                  </p>
+                  <p>
+                    <strong>Certification:</strong> The CMVP lists certificate #3925, a FIPS 140-2
+                    Level 3 certificate moved to the Historical list at sunset (checked 24 Sep
+                    2026), under the product name CryptoServer Se-Series Gen2. Utimaco&apos;s pages
+                    list the u.trust GP HSM Se-Series and the CryptoServer GP HSM as separate
+                    product lines, and this module has not established that the certificate covers
+                    the u.trust GP HSM Se-Series. Utimaco&apos;s site also headlines a FIPS 140-3
+                    Level 3 certification for the u.trust GP HSM Se-Series; its CMVP entry was not
+                    checked here.
                   </p>
                 </div>
               </div>

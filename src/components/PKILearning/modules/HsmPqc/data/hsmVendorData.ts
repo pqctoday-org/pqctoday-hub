@@ -84,12 +84,13 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
   {
     id: 'utimaco',
     name: 'Utimaco',
-    product: 'SecurityServer Se Gen2 (Quantum Protect)',
+    product: 'u.trust GP HSM Se-Series (Quantum Protect)',
     type: 'on-prem',
     catalogName: 'Utimaco uTrust HSM',
-    fips140Level: 'FIPS 140-2 Level 3 (cert #3925, Historical since sunset)',
+    fips140Level:
+      'Unconfirmed: FIPS 140-2 Level 3 certificate #3925 (Historical) is listed under CryptoServer Se-Series Gen2, not under this product name',
     formFactor: 'pcie',
-    firmwareVersion: '5.0+ (Q-safe)',
+    firmwareVersion: 'Quantum Protect firmware module (version not stated by Utimaco)',
     pkcs11Version: '3.0',
     hybridSupport: true,
     sideChannelCountermeasures: [
@@ -226,7 +227,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_KEY_PAIR_GEN → RSA-2048 (256-byte public key)',
     vendorNotes: {
       onPrem:
-        'Thales Luna 7.9.0 or newer, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Q-safe: PQC support in firmware',
+        'Thales Luna 7.9.0 or newer, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Quantum Protect: PQC support through a firmware module',
       cloud:
         'AWS CloudHSM: ML-DSA only, through vendor-defined PKCS#11 mechanisms; no ML-KEM. Azure Dedicated HSM (Thales Luna 7) can take the Luna firmware upgrade for existing customers, but the service is being retired and accepts no new customers (Microsoft supports existing customers until July 31, 2028). Google Cloud HSM: no PQC at the HSM level',
     },
@@ -281,7 +282,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP → 256-byte ciphertext (direct encryption)',
     vendorNotes: {
       onPrem:
-        'Thales Luna: CKM_ML_KEM through the vendor-defined CA_EncapsulateKey and CA_DecapsulateKey (the standard C_EncapsulateKey is not yet implemented; Luna ML-KEM programming guide, updated 2025-12-16). Entrust nShield: ML-KEM reached the PKCS#11 API in Security World v13.9.3 (firmware v13.8.3 or later, PostQuantum feature enabled); in v13.9.0 it was nCore-only. Utimaco: via Q-safe extension',
+        'Thales Luna: CKM_ML_KEM through the vendor-defined CA_EncapsulateKey and CA_DecapsulateKey (the standard C_EncapsulateKey is not yet implemented; Luna ML-KEM programming guide, updated 2025-12-16). Entrust nShield: ML-KEM reached the PKCS#11 API in Security World v13.9.3 (firmware v13.8.3 or later, PostQuantum feature enabled); in v13.9.0 it was nCore-only. Utimaco: through PKCS#11 vendor-defined mechanisms in the Quantum Protect package',
       cloud: 'No cloud HSM supports native PKCS#11 KEM encapsulation yet',
     },
   },
