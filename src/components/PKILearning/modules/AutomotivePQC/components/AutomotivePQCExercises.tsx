@@ -3,17 +3,6 @@ import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
-import {
-  computeCampaignMetrics,
-  DEFAULT_CAMPAIGN_TARGETS,
-  SIGNATURE_OVERHEADS,
-} from '../data/otaOrchestrationData'
-
-const defaultOtaMetrics = computeCampaignMetrics(
-  DEFAULT_CAMPAIGN_TARGETS,
-  1,
-  SIGNATURE_OVERHEADS.find((entry) => entry.algorithm === 'ML-DSA-65')!
-)
 
 export interface WorkshopConfig {
   step: number
@@ -96,7 +85,8 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
         'Open the OTA Orchestration Planner and compare its illustrative signature-overhead and campaign calculations. Load & Run opens this step without resetting your current fleet size or signature selection. The observations below describe the default six-target teaching sample with ML-DSA-65, not every current configuration.',
       badge: 'OTA',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
-      observe: `For the default ${DEFAULT_CAMPAIGN_TARGETS.length}-target sample, the model totals ${defaultOtaMetrics.totalFirmwareSizeMB} MB of firmware and ${defaultOtaMetrics.signatureOverheadMB.toFixed(3)} MB of signature overhead per vehicle with ML-DSA-65, in the planner’s displayed units. Its modeled dependency path is ${defaultOtaMetrics.criticalPathMinutes} minutes: the 15-minute gateway update followed by the 45-minute ADAS update. These are illustrative calculations, not measured benchmarks; assess actual update timing and bandwidth with your own production tools.`,
+      observe:
+        'For the planner’s default target set with ML-DSA-65, read Total Firmware, Sig Overhead, and Critical Path from its metrics. Compare the dependency path shown by the gateway and ADAS updates. Those values are illustrative calculations in the planner’s displayed units, not measured benchmarks; assess actual update timing and bandwidth with your own production tools.',
       config: { step: 3 },
     },
     {
