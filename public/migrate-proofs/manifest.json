@@ -29530,6 +29530,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "envoy-proxy",
+      "refId": "envoy-proxy",
+      "file": "envoy-proxy-d6c6a4e3-c7319a0c.html",
+      "sizeBytes": 319976,
+      "content_type": "text/html",
+      "url": "https://www.envoyproxy.io/docs/envoy/latest/version_history/v1.40/v1.40.0",
+      "sha256": "c7319a0cdcd76fe93ca3c1295f02771a5c323d12c3ae4293cadb362e8b8c5211",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T22:56:14.324766+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
