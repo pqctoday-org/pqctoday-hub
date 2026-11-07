@@ -302,7 +302,7 @@ const TourCard: React.FC<{
           <Button
             variant="ghost"
             onClick={onNext}
-            className="flex items-center gap-1 px-4 min-h-[44px] text-black font-bold"
+            className="flex items-center gap-1 px-4 min-h-[44px] text-primary font-bold"
           >
             {isLastSlide ? lastLabel : 'Next'}
             {!isLastSlide && <ChevronRight size={14} />}
