@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import { productPqcStatus, productVerificationBadge } from './productStatus'
+import { PQC_STATUS_RANK, productPqcStatus, productVerificationBadge } from './productStatus'
 
 function item(overrides: Partial<SoftwareItem>): SoftwareItem {
   return {
@@ -51,6 +51,37 @@ describe('productPqcStatus', () => {
 
   it('treats "Pending Verification" pqcSupport as unknown, not none', () => {
     expect(productPqcStatus(item({ pqcSupport: 'Pending Verification' })).status).toBe('unknown')
+  })
+
+  it('badges a pre-shared-key-only canonical status as PSK, not Partial or Unknown', () => {
+    expect(productPqcStatus(item({ pqcStatusCanonical: 'psk' }))).toEqual({
+      status: 'psk',
+      label: 'PSK',
+      tone: 'info',
+    })
+    expect(
+      productPqcStatus(item({ pqcStatusCanonical: 'psk', pqcSupport: 'Partial (ML-KEM)' })).status
+    ).toBe('psk')
+    expect(productPqcStatus(item({ pqcStatusCanonical: 'PSK' })).label).toBe('PSK')
+  })
+
+  it('badges a PSK pqcSupport text as PSK when no canonical status is set', () => {
+    expect(productPqcStatus(item({ pqcSupport: 'PSK (pre-shared key)' })).status).toBe('psk')
+  })
+})
+
+describe('PQC_STATUS_RANK', () => {
+  it('sorts PSK after Partial and before Roadmap, None and Unknown', () => {
+    expect(PQC_STATUS_RANK.ga).toBeLessThan(PQC_STATUS_RANK.partial)
+    expect(PQC_STATUS_RANK.partial).toBeLessThan(PQC_STATUS_RANK.psk)
+    expect(PQC_STATUS_RANK.psk).toBeLessThan(PQC_STATUS_RANK.roadmap)
+    expect(PQC_STATUS_RANK.roadmap).toBeLessThan(PQC_STATUS_RANK.none)
+    expect(PQC_STATUS_RANK.none).toBeLessThan(PQC_STATUS_RANK.unknown)
+  })
+
+  it('gives every status a distinct rank', () => {
+    const ranks = Object.values(PQC_STATUS_RANK)
+    expect(new Set(ranks).size).toBe(ranks.length)
   })
 })
 

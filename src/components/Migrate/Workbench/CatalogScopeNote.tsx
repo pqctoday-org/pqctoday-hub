@@ -11,13 +11,17 @@ export interface CatalogScopeCounts {
   baseline: number
   available: number
   partial: number
+  /** Only quantum protection is a pre-shared key; not PQC-ready and not part of `baselineWithPqc`. */
+  psk: number
   planned: number
   none: number
   unknown: number
   /** The same status buckets, counted inside the PQC-relevant population only. */
   relevant: StatusBuckets
-  /** Migration-baseline rows whose status is available or partial. */
+  /** Migration-baseline rows whose status is available or partial (never psk). */
   baselineWithPqc: number
+  /** Migration-baseline rows whose only quantum protection is a pre-shared key. */
+  baselinePsk: number
   /** Rows in neither population (blank catalogue_population). */
   unassigned: number
 }
@@ -25,6 +29,7 @@ export interface CatalogScopeCounts {
 export interface StatusBuckets {
   available: number
   partial: number
+  psk: number
   planned: number
   none: number
   unknown: number
@@ -34,6 +39,7 @@ function bucketOf(status: string | undefined): keyof StatusBuckets {
   const s = (status || '').toLowerCase()
   if (s === 'available') return 'available'
   if (s === 'partial') return 'partial'
+  if (s === 'psk') return 'psk'
   if (s === 'roadmap' || s === 'planned') return 'planned'
   if (s === 'none') return 'none'
   return 'unknown'
@@ -41,8 +47,10 @@ function bucketOf(status: string | undefined): keyof StatusBuckets {
 
 /**
  * Bucket the live catalogue by pqc_status_canonical. "planned" folds the
- * catalogue's `roadmap` and `planned` values; everything that is not a
- * decided status (unknown, pending, na, blank) is "unknown".
+ * catalogue's `roadmap` and `planned` values; "psk" is a pre-shared key as the
+ * only quantum protection (counted apart from partial, and not as PQC support);
+ * everything that is not a decided status (unknown, pending, na, blank) is
+ * "unknown".
  */
 export function catalogScopeCounts(items: SoftwareItem[]): CatalogScopeCounts {
   const counts: CatalogScopeCounts = {
@@ -51,11 +59,13 @@ export function catalogScopeCounts(items: SoftwareItem[]): CatalogScopeCounts {
     baseline: 0,
     available: 0,
     partial: 0,
+    psk: 0,
     planned: 0,
     none: 0,
     unknown: 0,
-    relevant: { available: 0, partial: 0, planned: 0, none: 0, unknown: 0 },
+    relevant: { available: 0, partial: 0, psk: 0, planned: 0, none: 0, unknown: 0 },
     baselineWithPqc: 0,
+    baselinePsk: 0,
     unassigned: 0,
   }
   for (const item of items) {
@@ -67,6 +77,7 @@ export function catalogScopeCounts(items: SoftwareItem[]): CatalogScopeCounts {
     } else if (item.cataloguePopulation === 'migration_baseline') {
       counts.baseline += 1
       if (bucket === 'available' || bucket === 'partial') counts.baselineWithPqc += 1
+      if (bucket === 'psk') counts.baselinePsk += 1
     } else {
       counts.unassigned += 1
     }
@@ -91,18 +102,28 @@ export function CatalogScopeNote({ items }: { items: SoftwareItem[] }) {
           {c.pqcRelevant} PQC-relevant products ({c.relevant.available} available ·{' '}
           {c.relevant.partial} partial · {c.relevant.planned} planned or on a roadmap ·{' '}
           {c.relevant.unknown} not yet determined
+          {c.relevant.psk > 0 ? ` · ${c.relevant.psk} pre-shared key (PSK) only` : ''}
           {c.relevant.none > 0 ? ` · ${c.relevant.none} none` : ''}), and {c.baseline}{' '}
           migration-baseline products tracked because they matter to a PQC migration
           {c.baselineWithPqc > 0
             ? ` (${c.baselineWithPqc} of them already have some PQC support)`
             : ', with no confirmed PQC support yet'}
-          .{c.unassigned > 0 ? ` ${c.unassigned} more are not yet assigned to either group.` : ''}{' '}
+          {c.baselinePsk > 0
+            ? `; ${c.baselinePsk} of them rely on a pre-shared key (PSK) only`
+            : ''}
+          .{c.unassigned > 0 ? ` ${c.unassigned} more are not yet assigned to either group.` : ''}
+          {c.relevant.psk + c.baselinePsk > 0
+            ? ' A pre-shared key (PSK) alone is not counted as PQC support.'
+            : ''}{' '}
           The groups are counted separately.
         </>
       ) : (
         <>
-          PQC support in this catalogue: {c.available} available · {c.partial} partial · {c.planned}{' '}
-          planned or on a roadmap · {c.none} none · {c.unknown} not yet determined.
+          PQC support in this catalogue: {c.available} available · {c.partial} partial
+          {c.psk > 0
+            ? ` · ${c.psk} pre-shared key (PSK) only, not counted as PQC support`
+            : ''} · {c.planned} planned or on a roadmap · {c.none} none · {c.unknown} not yet
+          determined.
         </>
       )}
     </p>

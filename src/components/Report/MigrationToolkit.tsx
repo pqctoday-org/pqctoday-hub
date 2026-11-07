@@ -280,6 +280,8 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                 {items.slice(0, 5).map((item) => {
                   const priority =
                     priorityConfig[item.pqcMigrationPriority as keyof typeof priorityConfig]
+                  // Only quantum protection is a pre-shared key: its own label, not a PQC tier.
+                  const isPsk = item.pqcSupport.toLowerCase().startsWith('psk')
 
                   return (
                     <tr key={item.productId} className="border-b border-border/50 last:border-b-0">
@@ -309,15 +311,22 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                             'text-xs',
                             item.pqcSupport.toLowerCase().startsWith('yes')
                               ? 'text-success'
-                              : item.pqcSupport.toLowerCase().startsWith('partial') ||
-                                  item.pqcSupport.toLowerCase().startsWith('limited') ||
-                                  item.pqcSupport.toLowerCase().startsWith('planned') ||
-                                  item.pqcSupport.toLowerCase().startsWith('in progress')
-                                ? 'text-warning'
-                                : 'text-muted-foreground'
+                              : isPsk
+                                ? 'text-info'
+                                : item.pqcSupport.toLowerCase().startsWith('partial') ||
+                                    item.pqcSupport.toLowerCase().startsWith('limited') ||
+                                    item.pqcSupport.toLowerCase().startsWith('planned') ||
+                                    item.pqcSupport.toLowerCase().startsWith('in progress')
+                                  ? 'text-warning'
+                                  : 'text-muted-foreground'
                           )}
+                          title={
+                            isPsk
+                              ? 'Protected only by a pre-shared key; not post-quantum algorithm support'
+                              : undefined
+                          }
                         >
-                          {item.pqcSupport.split('(')[0].trim()}
+                          {isPsk ? 'PSK' : item.pqcSupport.split('(')[0].trim()}
                         </span>
                       </td>
                       <td className="py-2 pr-3 hidden md:table-cell">

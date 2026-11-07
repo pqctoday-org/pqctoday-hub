@@ -118,6 +118,7 @@ const FACET_LABELS: Record<keyof ProductFacets, FacetLabel> = {
     values: {
       available: 'Available',
       partial: 'Partial',
+      psk: 'PSK',
       planned: 'Planned / roadmap',
       none: 'None',
       unknown: 'Not yet determined',
@@ -1048,7 +1049,7 @@ function MobileProductDetailSheet({
   }, [product])
 
   const supportDetail = (product?.pqcSupport || '')
-    .replace(/^\s*(yes|no|partial)\b[\s:,-]*/i, '')
+    .replace(/^\s*(yes|no|partial|psk)\b[\s:,-]*/i, '')
     .replace(/^\(|\)$/g, '')
     .trim()
 

@@ -139,6 +139,7 @@ describe('applyProductFacets', () => {
     { productId: 'b', pqcStatusCanonical: 'roadmap', cataloguePopulation: 'pqc_relevant' },
     { productId: 'c', pqcStatusCanonical: 'none', cataloguePopulation: 'migration_baseline' },
     { productId: 'd', pqcStatusCanonical: 'pending', cataloguePopulation: 'migration_baseline' },
+    { productId: 'e', pqcStatusCanonical: 'psk', cataloguePopulation: 'pqc_relevant' },
   ] as SoftwareItem[]
   const certified = new Set(['a', 'c'])
   const ids = (xs: SoftwareItem[]) => xs.map((x) => x.productId)
@@ -146,14 +147,20 @@ describe('applyProductFacets', () => {
     ids(applyProductFacets(items, { ...NO_FACETS, ...f }, (p) => certified.has(p.productId)))
 
   it('returns everything with no facet set', () => {
-    expect(run({})).toEqual(['a', 'b', 'c', 'd'])
+    expect(run({})).toEqual(['a', 'b', 'c', 'd', 'e'])
   })
   it('filters by population, folded PQC status and certification link', () => {
     expect(run({ population: 'migration_baseline' })).toEqual(['c', 'd'])
     expect(run({ pqc: 'planned' })).toEqual(['b'])
     expect(run({ pqc: 'unknown' })).toEqual(['d'])
-    expect(run({ certified: 'none' })).toEqual(['b', 'd'])
+    expect(run({ certified: 'none' })).toEqual(['b', 'd', 'e'])
     expect(run({ population: 'pqc_relevant', certified: 'linked' })).toEqual(['a'])
+  })
+
+  it('filters a pre-shared-key-only product under its own PSK facet, not Partial or unknown', () => {
+    expect(run({ pqc: 'psk' })).toEqual(['e'])
+    expect(run({ pqc: 'partial' })).toEqual([])
+    expect(run({ pqc: 'unknown' })).toEqual(['d'])
   })
 
   describe('hybrid support facet', () => {

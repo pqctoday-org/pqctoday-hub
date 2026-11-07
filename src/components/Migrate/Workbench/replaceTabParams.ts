@@ -19,7 +19,7 @@ export const REPLACE_FACET_PARAM = 'facet'
 
 const FACET_VALUES: { [K in keyof ProductFacets]: ReadonlyArray<ProductFacets[K]> } = {
   population: ['pqc_relevant', 'migration_baseline'],
-  pqc: ['available', 'partial', 'planned', 'none', 'unknown'],
+  pqc: ['available', 'partial', 'psk', 'planned', 'none', 'unknown'],
   certified: ['linked', 'none'],
   hybrid: ['tls-default', 'kem-api', 'sig-api'],
 }

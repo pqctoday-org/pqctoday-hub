@@ -6,6 +6,7 @@ import {
   currentStage,
   fipsTrackLine,
   FIPS_STAGE_LABEL,
+  shipsPqc,
   type InProcessMatch,
   type StagePoint,
 } from './fipsStageProgressModel'
@@ -119,6 +120,20 @@ describe('buildProductStageTimeline', () => {
         product({ pqcStatusCanonical: 'none' }),
         product({ productId: 'q', pqcStatusCanonical: 'partial' }),
       ],
+      new Map(),
+      [],
+      REF
+    )
+    expect(universe).toBe(1)
+  })
+
+  it('does not count a pre-shared-key-only product as shipping PQC', () => {
+    const psk = product({ productId: 'psk', pqcStatusCanonical: 'psk' })
+    expect(shipsPqc(psk)).toBe(false)
+    expect(shipsPqc(product({ pqcStatusCanonical: 'available' }))).toBe(true)
+    expect(shipsPqc(product({ pqcStatusCanonical: 'partial' }))).toBe(true)
+    const { universe } = buildProductStageTimeline(
+      [product({ productId: 'a', pqcStatusCanonical: 'available' }), psk],
       new Map(),
       [],
       REF

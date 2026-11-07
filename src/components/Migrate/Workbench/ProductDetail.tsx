@@ -75,7 +75,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   // The pqcSupport string carries the concise capability detail
   // (e.g. "Yes (ACVP: ML-DSA, ML-KEM, SLH-DSA)"). Strip the leading Yes/No.
   const supportDetail = (product.pqcSupport || '')
-    .replace(/^\s*(yes|no|partial)\b[\s:,-]*/i, '')
+    .replace(/^\s*(yes|no|partial|psk)\b[\s:,-]*/i, '')
     .replace(/^\(|\)$/g, '')
     .trim()
 

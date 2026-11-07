@@ -40,12 +40,15 @@ export function WhoHasMovedPanel() {
       (p) => p.verificationStatus === 'Verified' && p.proofUrl?.trim()
     )
     const partial = softwareData.filter((p) => statusOf(p) === 'partial').length
+    // A pre-shared key as the only quantum protection is its own bucket: not
+    // moved, not partial, and not "not yet determined" either.
+    const psk = softwareData.filter((p) => statusOf(p) === 'psk').length
     const planned = softwareData.filter((p) => {
       const s = statusOf(p)
       return s === 'roadmap' || s === 'planned'
     }).length
     const none = softwareData.filter((p) => statusOf(p) === 'none').length
-    const undetermined = softwareData.length - available.length - partial - planned - none
+    const undetermined = softwareData.length - available.length - partial - psk - planned - none
 
     const byCategory = new Map<string, number>()
     for (const p of proven) {
@@ -65,6 +68,7 @@ export function WhoHasMovedPanel() {
       available: available.length,
       proven: proven.length,
       partial,
+      psk,
       planned,
       undetermined,
       topCategories,
@@ -85,9 +89,12 @@ export function WhoHasMovedPanel() {
         Of the <span className="font-semibold text-foreground">{summary.total}</span> products we
         track, <span className="font-semibold text-foreground">{summary.proven}</span> are recorded
         as having post-quantum support available, with reviewed evidence behind that status.{' '}
-        {summary.partial} more have partial support, {summary.planned} are planned or on a roadmap,
-        and {summary.undetermined} are not yet determined; these are counted separately and not as
-        moved.
+        {summary.partial} more have partial support,{' '}
+        {summary.psk > 0
+          ? `${summary.psk} rely on a pre-shared key (PSK) only, which is not post-quantum support, `
+          : ''}
+        {summary.planned} are planned or on a roadmap, and {summary.undetermined} are not yet
+        determined; these are counted separately and not as moved.
         {summary.available > summary.proven
           ? ` Another ${summary.available - summary.proven} are marked available but their evidence review is not finished, so they are not counted here.`
           : ''}

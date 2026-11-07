@@ -132,3 +132,39 @@ describe('MigrationToolkit selection basis', () => {
     expect(screen.queryByText(/nothing narrows this list/i)).not.toBeInTheDocument()
   })
 })
+
+describe('MigrationToolkit support label', () => {
+  beforeEach(() => {
+    state.hiddenProducts = []
+    state.myProducts = []
+    state.importProductSelection = false
+  })
+
+  const withSupport = (id: string, pqcSupport: string) => ({
+    ...product(id, 'Hardware', 'HSM', ''),
+    pqcSupport,
+  })
+
+  it('labels a pre-shared-key-only product "PSK" in its own colour, not as a PQC tier', () => {
+    state.software = [
+      withSupport('psk-1', 'PSK (pre-shared key mixed in; ML-KEM planned)'),
+      withSupport('partial-1', 'Partial (ML-KEM planned)'),
+      withSupport('yes-1', 'Yes (ML-KEM)'),
+    ]
+    renderToolkit({ infrastructure: ['Hardware'], industry: '' })
+    const label = screen.getByText('PSK')
+    expect(label).toHaveClass('text-info')
+    expect(label).not.toHaveClass('text-warning')
+    expect(label).toHaveAttribute('title', expect.stringMatching(/pre-shared key/))
+    // The other tiers keep their colours and labels.
+    expect(screen.getByText('Partial')).toHaveClass('text-warning')
+    expect(screen.getByText('Yes')).toHaveClass('text-success')
+  })
+
+  it('shows the label "PSK" even when the support text carries more after the prefix', () => {
+    state.software = [withSupport('psk-2', 'PSK only - no post-quantum algorithm')]
+    renderToolkit({ infrastructure: ['Hardware'], industry: '' })
+    expect(screen.getByText('PSK')).toHaveClass('text-info')
+    expect(screen.queryByText(/no post-quantum algorithm/)).not.toBeInTheDocument()
+  })
+})
