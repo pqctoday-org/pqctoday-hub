@@ -133,6 +133,16 @@ describe('HsmPqc: what the lab tests and the vendor statements', () => {
     }
   })
 
+  it("names the Utimaco product and its post-quantum package as Utimaco's own pages do", () => {
+    const page = openIntroText()
+    expect(page).toContain('utimaco u.trust gp hsm se-series (pcie, fips 140-2 l3')
+    expect(page).toContain('utimaco u.trust gp hsm se-series (quantum protect)')
+    expect(page).toContain('quantum protect firmware module')
+    for (const gone of ['utimaco securityserver', 'q-safe']) {
+      expect(page).not.toContain(gone)
+    }
+  })
+
   it('the exercises say the same about hedged signing, nShield, AWS CloudHSM and the submission route', () => {
     render(
       <EmbedProvider>

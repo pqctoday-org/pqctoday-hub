@@ -191,7 +191,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   nShield 5s module)
                 </li>
                 <li>
-                  &bull; Utimaco SecurityServer (PCIe, FIPS 140-2 L3, certificate now Historical)
+                  &bull; Utimaco u.trust GP HSM Se-Series (PCIe, FIPS 140-2 L3, certificate now
+                  Historical)
                 </li>
               </ul>
               <p className="text-xs text-success mt-2 font-medium">
@@ -465,14 +466,16 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-bold text-foreground">
-                    Utimaco SecurityServer Se Gen2 (Quantum Protect)
+                    Utimaco u.trust GP HSM Se-Series (Quantum Protect)
                   </h3>
                   <VendorStatusBadge vendorId="utimaco" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">Q-safe extension</span>
+                    <span className="font-mono text-foreground">
+                      Quantum Protect firmware module
+                    </span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
@@ -493,8 +496,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div className="mt-3 space-y-1 text-xs text-muted-foreground">
                   <p>
-                    <strong>Upgrade Path:</strong> Q-safe is a firmware extension (not a full
-                    replacement). 1&ndash;3 hours per HSM. Existing keys preserved.
+                    <strong>Upgrade Path:</strong> Quantum Protect is delivered as a firmware
+                    module. The 1&ndash;3 hours per HSM figure is this module&apos;s own planning
+                    estimate; the Utimaco product pages we hold give no duration.
                   </p>
                   <p>
                     <strong>Unique Features:</strong> Cert #3925 is a FIPS 140-2 certificate, moved

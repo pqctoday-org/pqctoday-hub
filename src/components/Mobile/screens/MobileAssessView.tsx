@@ -96,9 +96,15 @@ const CREDENTIAL_LIFETIME_OPTIONS: { id: string; label: string; description: str
   {
     id: 'under-1y',
     label: 'Under 1 year',
-    description: 'Short-lived tokens, ACME auto-renewed certificates',
+    description:
+      'Short-lived tokens, ACME auto-renewed certificates, and publicly trusted TLS server certificates (the CA/Browser Forum Baseline Requirements cap these at 200 days for certificates issued from 15 March 2026)',
   },
-  { id: '1-3y', label: '1–3 years', description: 'Standard TLS / end-entity certificates' },
+  {
+    id: '1-3y',
+    label: '1–3 years',
+    description:
+      'Private-PKI end-entity certificates, where your own policy sets the lifetime (publicly trusted TLS certificates are shorter than this)',
+  },
   {
     id: '3-10y',
     label: '3–10 years',

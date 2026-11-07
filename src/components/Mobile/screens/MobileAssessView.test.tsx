@@ -394,6 +394,16 @@ describe('MobileAssessView', () => {
       }
     })
 
+    it('credential-lifetime: puts publicly trusted TLS in the under-1-year answer, not the 1–3 year one', () => {
+      goToComprehensiveStep('credential-lifetime')
+      const underOneYear = screen.getByText('Under 1 year').closest('button')!
+      expect(underOneYear).toHaveTextContent(/publicly trusted TLS/i)
+      expect(underOneYear).toHaveTextContent(/200 days/)
+      const oneToThree = screen.getByText('1–3 years').closest('button')!
+      expect(oneToThree).toHaveTextContent(/private-PKI/i)
+      expect(oneToThree).not.toHaveTextContent(/standard TLS/i)
+    })
+
     it('scale: two independent radiogroups, both must be set to satisfy the validator', () => {
       goToComprehensiveStep('scale')
       expect(screen.getByText(STEP_META.scale.question)).toBeInTheDocument()
