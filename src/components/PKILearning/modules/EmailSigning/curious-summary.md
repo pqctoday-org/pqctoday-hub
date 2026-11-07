@@ -6,7 +6,7 @@ Enterprise email security is powered by Cryptographic Message Syntax (CMS) and S
 
 ## Why It Matters
 
-Classical S/MIME relies on RSA "key transport", which directly encrypts the central message key and is totally vulnerable to Shor's algorithm. To survive quantum threats, PQC replaces this entirely by utilizing a Key Encapsulation Mechanism (KEM) to securely derive a shared secret instead.
+Classical S/MIME relies on RSA "key transport", which directly encrypts the central message key and is totally vulnerable to Shor's algorithm. To survive quantum threats, PQC adds a KEM-based alternative that utilizes a Key Encapsulation Mechanism (KEM) to securely derive a shared secret instead.
 
 ## The Key Takeaway
 
