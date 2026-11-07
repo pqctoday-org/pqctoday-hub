@@ -9,6 +9,7 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { CNSA_PHASE_OUT_LABEL } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -97,7 +98,7 @@ export const content: ModuleContent = {
       source: 'NSA CNSA 2.0',
     },
     {
-      label: 'CNSA 2.0: software/firmware signing and networking equipment exclusive',
+      label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
       source: 'NSA CNSA 2.0',
     },

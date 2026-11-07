@@ -9,7 +9,7 @@ describe('IoT module states the CNSA 2.0 FAQ v2.2 dates', () => {
     expect(cnsa.map((d) => [d.label, d.year])).toEqual([
       ['CNSA 2.0: new national security system acquisitions (from 1 January 2027)', 2027],
       [
-        'CNSA 2.0: unsupported national security system equipment phased out (31 December 2030)',
+        'CNSA 2.0: equipment that cannot support CNSA 2.0 phased out (31 December 2030, exceptions possible)',
         2030,
       ],
       ['CNSA 2.0 mandated for national security systems (31 December 2031)', 2031],
