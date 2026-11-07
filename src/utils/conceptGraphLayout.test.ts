@@ -54,7 +54,7 @@ describe('edgeLabelLines', () => {
         relationshipType: 'intersects_with',
         rationaleType: 'policy_reference',
       })
-    ).toEqual(['intersects with', '(policy reference)'])
+    ).toEqual(['Relates to', '(policy reference)'])
   })
 
   it('shows a single line for an implements link and for a link with no basis', () => {
@@ -71,7 +71,7 @@ describe('edgeLabelLines', () => {
         relationshipType: 'equivalent',
         rationaleType: undefined,
       })
-    ).toEqual(['equivalent'])
+    ).toEqual(['Equivalent to'])
   })
 })
 

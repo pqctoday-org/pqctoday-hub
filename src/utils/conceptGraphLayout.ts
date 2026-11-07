@@ -29,10 +29,32 @@ function words(s: string): string {
   return s.replace(/_/g, ' ')
 }
 
+/**
+ * Plain-words label for a recorded relationship, read from the edge's source
+ * end (the arrow runs source -> target). An unknown type is shown as plain
+ * words rather than its stored identifier.
+ */
+const EDGE_LABELS: Record<string, string> = {
+  subset_of: 'Subset of',
+  superset_of: 'Superset of',
+  equivalent: 'Equivalent to',
+  intersects_with: 'Relates to',
+  scheme_under: 'National scheme under',
+  part_of_series: 'Part of series with',
+}
+
+function edgeLabelFor(relationshipType: string): string {
+  // eslint-disable-next-line security/detect-object-injection -- relationshipType is an edge type from the cross-walk data, not user input
+  const known = EDGE_LABELS[relationshipType]
+  if (known) return known
+  const words = relationshipType.replace(/[_-]+/g, ' ').trim()
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
 /** The lines of text shown on an edge: the relationship, then its basis in brackets. */
 export function edgeLabelLines(edge: LabelledEdge): string[] {
   if (edge.isSynthetic) return ['implements']
-  const lines = [words(edge.relationshipType)]
+  const lines = [edgeLabelFor(edge.relationshipType)]
   if (edge.rationaleType) lines.push(`(${words(edge.rationaleType)})`)
   return lines
 }

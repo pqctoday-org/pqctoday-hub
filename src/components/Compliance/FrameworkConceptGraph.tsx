@@ -6,7 +6,6 @@ import {
   Background,
   BaseEdge,
   Controls,
-  MiniMap,
   EdgeLabelRenderer,
   type Edge,
   type EdgeProps,
@@ -236,6 +235,8 @@ export function FrameworkConceptGraph({
           markerEnd:
             e.relationshipType === 'subset_of' ||
             e.relationshipType === 'superset_of' ||
+            e.relationshipType === 'scheme_under' ||
+            e.relationshipType === 'part_of_series' ||
             (e.isSynthetic && e.relationshipType === 'implements')
               ? { type: MarkerType.ArrowClosed }
               : undefined,
@@ -286,7 +287,6 @@ export function FrameworkConceptGraph({
         >
           <Background gap={16} size={1} />
           <Controls showInteractive={false} />
-          <MiniMap pannable zoomable style={{ height: 80, width: 120 }} />
         </ReactFlow>
       </div>
       <section
