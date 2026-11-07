@@ -66,6 +66,43 @@ describe('summarizeAnswer', () => {
     // freely-optional with nothing chosen → "Skipped"
     expect(summarizeAnswer('compliance', blank()).text).toBe('Skipped')
   })
+
+  it('shows the question label for industry retention periods, not the stripped id', () => {
+    const text = summarizeAnswer('retention', {
+      ...blank(),
+      dataRetention: ['2y-pci', '6y-ferpa'],
+    }).text
+    expect(text).toContain('2 years (PCI DSS cardholder data)')
+    expect(text).toContain('6 years (FERPA / financial aid)')
+    expect(text).not.toMatch(/2y Pci|6y Ferpa/)
+    expect(summarizeAnswer('retention', { ...blank(), dataRetention: ['1-5y'] }).text).toBe(
+      '1-5 years'
+    )
+  })
+
+  it('keeps a readable fallback for a retention id that has no data row', () => {
+    expect(
+      summarizeAnswer('retention', { ...blank(), dataRetention: ['custom-period'] }).text
+    ).toBe('Custom Period')
+  })
+
+  it('reads credential lifetime, scale and timeline answers as the questions word them', () => {
+    expect(
+      summarizeAnswer('credential-lifetime', {
+        ...blank(),
+        credentialLifetime: ['1-3y', '25-plus'],
+      }).text
+    ).toBe('1–3 years, 25+ years')
+    expect(
+      summarizeAnswer('scale', { ...blank(), systemCount: '11-50', teamSize: '200-plus' }).text
+    ).toBe('11-50 systems · 200+ engineers')
+    expect(summarizeAnswer('timeline', { ...blank(), timelinePressure: 'within-2-3y' }).text).toBe(
+      'Regulatory Deadline Within 2-3 Years'
+    )
+    expect(
+      summarizeAnswer('timeline', { ...blank(), timelinePressure: 'internal-deadline' }).text
+    ).toBe('Own Target or Distant Deadline')
+  })
 })
 
 describe('AssessReview', () => {

@@ -3,6 +3,7 @@
 // Answer summaries for the Review screen — one short value string per step, plus
 // a flag for answers that came from the "I'm not sure" smart default.
 import type { AssessStepKey } from './assessFlowModel'
+import { industryRetentionConfigs, universalRetentionConfigs } from '@/data/industryAssessConfig'
 
 /** The store fields the review reads (the real store satisfies it structurally). */
 export interface AssessReviewState {
@@ -44,6 +45,48 @@ function prettify(v: string): string {
   return v.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
+/** Retention options are rows of the assessment data; show the label the question shows. */
+const RETENTION_LABELS: ReadonlyMap<string, string> = new Map(
+  [...universalRetentionConfigs, ...industryRetentionConfigs].map((c) => [c.id, c.label])
+)
+
+/** Range-style option ids that read as nonsense once the hyphens are stripped ("1 3y"). */
+const CREDENTIAL_LIFETIME_LABELS: ReadonlyMap<string, string> = new Map([
+  ['under-1y', 'Under 1 year'],
+  ['1-3y', '1–3 years'],
+  ['3-10y', '3–10 years'],
+  ['10-25y', '10–25 years'],
+  ['25-plus', '25+ years'],
+  ['indefinite', 'Indefinite / permanent'],
+])
+const SCALE_SYSTEM_LABELS: ReadonlyMap<string, string> = new Map([
+  ['1-10', '1-10 systems'],
+  ['11-50', '11-50 systems'],
+  ['51-200', '51-200 systems'],
+  ['200-plus', '200+ systems'],
+])
+const SCALE_TEAM_LABELS: ReadonlyMap<string, string> = new Map([
+  ['1-10', '1-10 engineers'],
+  ['11-50', '11-50 engineers'],
+  ['51-200', '51-200 engineers'],
+  ['200-plus', '200+ engineers'],
+])
+const TIMELINE_LABELS: ReadonlyMap<string, string> = new Map([
+  ['within-1y', 'Regulatory Deadline Within 1 Year'],
+  ['within-2-3y', 'Regulatory Deadline Within 2-3 Years'],
+  ['internal-deadline', 'Own Target or Distant Deadline'],
+  ['no-deadline', 'No Specific Deadline'],
+])
+
+function labelFrom(labels: ReadonlyMap<string, string>): (v: string) => string {
+  return (v) => labels.get(v) ?? prettify(v)
+}
+const retentionLabel = labelFrom(RETENTION_LABELS)
+const credentialLifetimeLabel = labelFrom(CREDENTIAL_LIFETIME_LABELS)
+const systemCountLabel = labelFrom(SCALE_SYSTEM_LABELS)
+const teamSizeLabel = labelFrom(SCALE_TEAM_LABELS)
+const timelineLabel = labelFrom(TIMELINE_LABELS)
+
 function listText(values: string[]): string {
   if (values.length === 0) return ''
   if (values.length <= 2) return values.join(', ')
@@ -78,11 +121,11 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
     case 'retention':
       return s.retentionUnknown
         ? def(recommended)
-        : val(listText(s.dataRetention.map(prettify)) || 'Not answered')
+        : val(listText(s.dataRetention.map(retentionLabel)) || 'Not answered')
     case 'credential-lifetime':
       return s.credentialLifetimeUnknown
         ? def(recommended)
-        : val(listText(s.credentialLifetime.map(prettify)) || 'Not answered')
+        : val(listText(s.credentialLifetime.map(credentialLifetimeLabel)) || 'Not answered')
     case 'migration':
       return s.migrationUnknown
         ? def(recommended)
@@ -92,7 +135,7 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
         ? def(recommended)
         : val(
             s.systemCount || s.teamSize
-              ? `${prettify(s.systemCount) || '—'} · ${prettify(s.teamSize) || '—'}`
+              ? `${systemCountLabel(s.systemCount) || '—'} · ${teamSizeLabel(s.teamSize) || '—'}`
               : 'Not answered'
           )
     case 'agility':
@@ -104,7 +147,7 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
     case 'timeline':
       return s.timelineUnknown
         ? def(recommended)
-        : val(prettify(s.timelinePressure) || 'Not answered')
+        : val(timelineLabel(s.timelinePressure) || 'Not answered')
     default:
       return val('—')
   }
