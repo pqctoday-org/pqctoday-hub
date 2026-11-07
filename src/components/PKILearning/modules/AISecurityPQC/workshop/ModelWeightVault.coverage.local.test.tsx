@@ -23,7 +23,7 @@ describe('model algorithm selections do not establish deployment protection', ()
   it('preserves the classical-selection branch and its unassessed-deployment qualification', () => {
     render(<ModelWeightVault />)
     fireEvent.click(screen.getByRole('button', { name: 'Key Wrapping:' }))
-    fireEvent.click(screen.getByRole('option', { name: 'RSA-2048 OAEP' }))
+    fireEvent.click(screen.getByRole('option', { name: 'RSA-2048 OAEP (wrapped DEK)' }))
     expect(
       screen.getByText('Classical primitive selected — deployment not assessed')
     ).toBeInTheDocument()

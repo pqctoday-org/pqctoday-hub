@@ -31,7 +31,11 @@ describe('Sourcing example teaching scope', () => {
     fireEvent.click(screen.getByRole('button', { name: /Build Your Own/ }))
     expect(screen.getByText('Illustrative TCO bands')).toBeInTheDocument()
     expect(screen.getByText(/Authored planning ranges/)).toHaveTextContent('not supplier quotes')
-    fireEvent.click(screen.getByRole('button', { name: 'FIPS 140-3 Level 2+ mandatory' }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'A FIPS 140-3 validated module is required (FIPS 140-2 only for existing systems)',
+      })
+    )
     expect(screen.getByText(/Illustrative weighted scores/)).toHaveTextContent('1/8 answered')
     expect(screen.queryByText(/Leading option in this teaching model/)).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Dedicated crypto engineering team' }))
