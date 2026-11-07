@@ -266,7 +266,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   migrate: {
     title: 'Migration Workbench',
     summary:
-      'Browse 880+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
+      'Browse the catalogue of software products, each with its own PQC status, organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
     sections: [
       {
         heading: 'Infrastructure Layer Stack',

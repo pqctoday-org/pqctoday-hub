@@ -139,3 +139,13 @@ describe('the FAQ guide describes search as the page does', () => {
     expect(text).not.toMatch(/match any word/i)
   })
 })
+
+describe('the Migration Workbench guide describes the catalogue without a product count', () => {
+  const text = guideText('migrate')
+
+  it('does not call the whole catalogue PQC-ready or quote a fixed product count', () => {
+    expect(text).not.toMatch(/\d+\+\s*PQC-ready/)
+    expect(text).not.toMatch(/PQC-ready software products/)
+    expect(text).toContain('each with its own PQC status')
+  })
+})
