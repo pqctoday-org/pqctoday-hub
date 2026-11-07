@@ -74,7 +74,7 @@ export const PILLARS: PillarDef[] = [
     id: 'assurance',
     label: 'Assurance / FIPS',
     question:
-      'Can you prove, today, that every library and HSM in production is backed by a current FIPS 140-3 certificate?',
+      'For each library and HSM you rely on for FIPS 140-3 compliance, can you show an Active certificate that names the exact version and operating environment you run?',
     indicators: {
       1: 'Unknown whether modules are validated. No tracking.',
       2: 'Annual audit checks CMVP status for production modules.',

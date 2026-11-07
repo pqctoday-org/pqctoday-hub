@@ -105,7 +105,7 @@ const PARTS: WorkshopPart[] = [
     id: 'clm-vendor-evaluator',
     title: 'Step 9: CLM Vendor Evaluator',
     description:
-      'Interactive scorecard for evaluating Venafi, AppViewX, and Keyfactor based on PQC readiness criteria.',
+      'Interactive scorecard for practising how to evaluate fictional CLM platform profiles on PQC readiness criteria.',
     icon: CheckCircle2,
     cswp39Step: 'Govern · §5.1 — Vendor readiness',
   },
