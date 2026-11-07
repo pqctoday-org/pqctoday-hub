@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'quiz',
-  contentVersion: 3,
+  contentVersion: 4,
   title: 'PQC Quiz',
   description:
     'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
