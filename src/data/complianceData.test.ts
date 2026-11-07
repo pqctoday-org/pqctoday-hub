@@ -63,9 +63,12 @@ describe('complianceData', () => {
   const byId = (id: string) => complianceFrameworks.find((f) => f.id === id)
 
   it('treats an in-force phased range as active, not a distant deadline', () => {
-    // CNSA 2.0 "2025-2033" straddles the current year and is in force now — the
-    // parser must not bucket it by the far endpoint (mid/long).
-    expect(byId('CNSA-2')?.deadlinePhase).toBe('active')
+    // The Malaysia NACSA "2025-2030 (phased)" range straddles the current year and
+    // is in force now — the parser must not bucket it by the far endpoint (mid).
+    // CNSA 2.0 used to carry this pin as "2025-2033"; its deadline is now the
+    // NSA's own dated steps (2027, 2030, 2031), so it is correctly 'imminent'.
+    expect(byId('MALAYSIA-NACSA-PQC')?.deadlinePhase).toBe('active')
+    expect(byId('CNSA-2')?.deadlinePhase).toBe('imminent')
   })
 
   it('does not present ANSSI as a dated mandate', () => {
@@ -82,8 +85,11 @@ describe('complianceData', () => {
   })
 
   it('classifies anticipated/advisory frameworks correctly', () => {
-    // OSFI B-13 signals forthcoming (not current) PQC requirements.
-    expect(byId('OSFI-B13-PQC')?.pqcRequirement).toBe('expected')
+    // FedRAMP signals forthcoming (not current) PQC requirements.
+    expect(byId('FEDRAMP')?.pqcRequirement).toBe('expected')
+    // OSFI B-13 has no PQC text of its own; the "PQC alignment expected by 2030"
+    // note in its deadline column is not a requirement, so it is guidance.
+    expect(byId('OSFI-B13-PQC')?.pqcRequirement).toBe('guidance')
     // CISA's PQC Initiative is advisory guidance, not a partial mandate.
     expect(byId('cisa-pqc-initiative')?.pqcRequirement).toBe('guidance')
   })
