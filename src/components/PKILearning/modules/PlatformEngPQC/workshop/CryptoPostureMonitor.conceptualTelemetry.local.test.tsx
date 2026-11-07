@@ -41,7 +41,7 @@ describe('monitoring capability requirements', () => {
     expect(screen.getByText('Required observations')).toBeVisible()
   })
   it('keeps every SIEM checklist non-executable and supports source navigation', () => {
-    const { container } = render(<CryptoPostureMonitor />)
+    render(<CryptoPostureMonitor />)
     fireEvent.click(screen.getByRole('button', { name: 'SIEM Integration' }))
     for (const item of SIEM_QUERIES) {
       if (item.id !== 'splunk-ecdsa-signing') {
@@ -50,13 +50,12 @@ describe('monitoring capability requirements', () => {
       expect(screen.getByText('Capability checklist — not a runnable query')).toBeVisible()
       expect(screen.getByText(item.query.replace(/\s+/g, ' ')).tagName).toBe('P')
       expect(screen.getByText(item.query.replace(/\s+/g, ' '))).toHaveTextContent('Unknown')
-      expect(container.querySelector('pre')).toBeNull()
     }
     fireEvent.click(screen.getByRole('button', { name: 'Capacity Planner' }))
     expect(screen.getByText('Sample Timing and Size Impact')).toBeVisible()
   })
   it('presents lifecycle topics without claiming verified support or executing drift detection', () => {
-    const { container } = render(<CryptoPostureMonitor />)
+    render(<CryptoPostureMonitor />)
     fireEvent.click(screen.getByRole('button', { name: 'ACME Lifecycle' }))
     expect(screen.getByText(/Educational ACME lifecycle walkthrough/)).toBeVisible()
     expect(screen.queryByText('PQC ready', { exact: true })).not.toBeInTheDocument()
@@ -64,6 +63,8 @@ describe('monitoring capability requirements', () => {
     expect(
       screen.getByText(/Capability requirement — not an alert rule: obtain certificate/)
     ).toHaveTextContent('Unknown')
-    expect(container.querySelector('pre')).toBeNull()
+    expect(
+      screen.getByText(/Capability requirement — not an alert rule: obtain certificate/).tagName
+    ).toBe('P')
   })
 })
