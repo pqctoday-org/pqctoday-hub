@@ -2,7 +2,7 @@
   "generated": "2026-11-07",
   "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_11072026_r1.csv",
+  "csv": "timeline_11072026_r4.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -3509,9 +3509,43 @@
       "filename": "NIST-IR-8547-Final-Published.html",
       "verifiedAt": "2026-11-07",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "denmark-samsik-quantum-safe-transition-guidance-revised",
+      "label": "Quantum-Safe Transition Guidance Revised",
+      "url": "https://samsik.dk/cybersikkerhed/temaer/overgangen-til-kvantesikker-kryptografi/",
+      "status": "downloaded",
+      "file": "timeline/Quantum-Safe-Transition-Guidance-Revised.html",
+      "sizeBytes": 69692,
+      "contentType": "text/html",
+      "sha256": "55daea4d93ce812e374eeb4894e21f73d0f27a961908f39a7acee3778b3ae493",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T16:25:03.044142+00:00",
+      "filename": "Quantum-Safe-Transition-Guidance-Revised.html",
+      "verifiedAt": "2026-11-07",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "singapore-csa-govtech-imda-quantum-safe-handbook-v1-released",
+      "label": "Quantum-Safe Handbook V1 Released",
+      "url": "https://isomer-user-content.by.gov.sg/36/350e4bd5-fa25-4609-8e78-5e159d9da245/CSA's%20Quantum-Safe%20Handbook%20V1%20Dtd%2016%20Jul%2026.pdf",
+      "status": "downloaded",
+      "file": "timeline/Quantum-Safe-Handbook-V1-Released.pdf",
+      "sizeBytes": 1665432,
+      "contentType": "application/pdf",
+      "sha256": "496d39ceadedfba82ca99e2a7001cc358f382b081557b0de6b617f0154db9775",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T16:26:44.470347+00:00",
+      "filename": "Quantum-Safe-Handbook-V1-Released.pdf",
+      "verifiedAt": "2026-11-07",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-11-07T16:11:44.100840+00:00"
+  "rebuiltAt": "2026-11-07T16:30:00.570582+00:00"
 }
