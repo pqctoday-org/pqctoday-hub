@@ -57,7 +57,7 @@ const MetricsTab: React.FC = () => {
             <Button
               variant="ghost"
               onClick={() => toggle(tool.id)}
-              className="w-full text-left p-4 flex items-center gap-3"
+              className="w-full h-auto whitespace-normal text-left p-4 flex items-start gap-3"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -198,7 +198,7 @@ const SIEMTab: React.FC = () => {
             <Button
               variant="ghost"
               onClick={() => toggle(query.id)}
-              className="w-full text-left p-4 flex items-center gap-3"
+              className="w-full h-auto whitespace-normal text-left p-4 flex items-start gap-3"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -507,7 +507,7 @@ const ACMETab: React.FC = () => {
               variant="ghost"
               key={step.id}
               onClick={() => setSelectedStep((prev) => (prev === step.id ? null : step.id))}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg border transition-colors text-center ${
+              className={`flex h-auto min-h-[88px] min-w-[140px] max-w-[180px] whitespace-normal flex-col items-center gap-1 px-3 py-2 rounded-lg border transition-colors text-center ${
                 selectedStep === step.id
                   ? 'border-primary bg-primary/10'
                   : 'border-border bg-muted/30 hover:border-primary/50'
