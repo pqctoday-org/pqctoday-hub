@@ -71,6 +71,17 @@ const SCALE_TEAM_LABELS: ReadonlyMap<string, string> = new Map([
   ['51-200', '51-200 engineers'],
   ['200-plus', '200+ engineers'],
 ])
+/** Migration status and crypto agility: the wording of the options on their questions. */
+const MIGRATION_LABELS: ReadonlyMap<string, string> = new Map([
+  ['started', 'Already Started'],
+  ['planning', 'Planning to Start'],
+  ['not-started', 'Not Started'],
+])
+const AGILITY_LABELS: ReadonlyMap<string, string> = new Map([
+  ['fully-abstracted', 'Fully Abstracted'],
+  ['partially-abstracted', 'Partially Abstracted'],
+  ['hardcoded', 'Hardcoded Throughout'],
+])
 const TIMELINE_LABELS: ReadonlyMap<string, string> = new Map([
   ['within-1y', 'Regulatory Deadline Within 1 Year'],
   ['within-2-3y', 'Regulatory Deadline Within 2-3 Years'],
@@ -86,6 +97,8 @@ const credentialLifetimeLabel = labelFrom(CREDENTIAL_LIFETIME_LABELS)
 const systemCountLabel = labelFrom(SCALE_SYSTEM_LABELS)
 const teamSizeLabel = labelFrom(SCALE_TEAM_LABELS)
 const timelineLabel = labelFrom(TIMELINE_LABELS)
+const migrationLabel = labelFrom(MIGRATION_LABELS)
+const agilityLabel = labelFrom(AGILITY_LABELS)
 
 function listText(values: string[]): string {
   if (values.length === 0) return ''
@@ -129,7 +142,7 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
     case 'migration':
       return s.migrationUnknown
         ? def(recommended)
-        : val(prettify(s.migrationStatus) || 'Not answered')
+        : val(migrationLabel(s.migrationStatus) || 'Not answered')
     case 'scale':
       return s.scaleUnknown
         ? def(recommended)
@@ -139,7 +152,9 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
               : 'Not answered'
           )
     case 'agility':
-      return s.agilityUnknown ? def(recommended) : val(prettify(s.cryptoAgility) || 'Not answered')
+      return s.agilityUnknown
+        ? def(recommended)
+        : val(agilityLabel(s.cryptoAgility) || 'Not answered')
     case 'infra':
       return s.infrastructureUnknown
         ? def(recommended)
