@@ -186,7 +186,7 @@ describe('3-D Secure', () => {
   it('qualifies the signing assumption until the specification is checked', () => {
     const v = MIGRATION_VECTORS.find((x) => x.component === '3ds-authentication')!
     expect(`${v.vulnerability} ${v.currentCrypto.join(' ')}`).toMatch(
-      /illustrative|unverified|assum/i
+      /illustrative|unverified|not verified|assum/i
     )
     expect(text).not.toMatch(/adds cardholder authentication using ECDSA/i)
   })
