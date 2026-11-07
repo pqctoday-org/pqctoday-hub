@@ -19,8 +19,8 @@
   {
     "term": "DSA",
     "acronym": "DSA",
-    "definition": "Digital Signature Algorithm, a classical FIPS 186 signature scheme based on discrete logarithms. Deprecated by NIST IR 8547 alongside RSA and ECDSA due to quantum vulnerability.",
-    "technicalNote": "Broken by Shor's algorithm. Common key sizes: 1024–3072 bits. No longer approved for new systems after 2030 per NIST IR 8547.",
+    "definition": "Digital Signature Algorithm, a classical signature scheme based on discrete logarithms, specified in FIPS 186-4. FIPS 186-5 (February 2023) no longer approves DSA for generating digital signatures; DSA may only be used to verify signatures generated before that standard's implementation date. FIPS 186-4 was withdrawn on 3 February 2024.",
+    "technicalNote": "Vulnerable to Shor's algorithm on a large quantum computer. FIPS 186-4 specified prime lengths (L) of 1024, 2048 and 3072 bits. The 2030/2035 transition table for digital signatures in NIST IR 8547 lists ECDSA, EdDSA and RSA, not DSA; OMB M-26-15 lists DSA among quantum-vulnerable algorithms.",
     "relatedModule": "/algorithms",
     "complexity": "beginner",
     "category": "algorithm"
@@ -91,7 +91,7 @@
     "term": "XMSS",
     "acronym": "XMSS",
     "definition": "eXtended Merkle Signature Scheme, a stateful hash-based digital signature algorithm standardized in RFC 8391 and NIST SP 800-208.",
-    "technicalNote": "Like LMS, XMSS is stateful and each key can only sign a limited number of messages. Required by CNSA 2.0 for firmware and software signing.",
+    "technicalNote": "Like LMS, XMSS is stateful and each key can only sign a limited number of messages. CNSA 2.0 allows XMSS and LMS for signing firmware and software; NSA does not allow the multi-tree variants HSS and XMSS^MT.",
     "relatedModule": "/learn/stateful-signatures",
     "complexity": "advanced",
     "category": "algorithm"
@@ -286,7 +286,7 @@
   {
     "term": "P-256",
     "definition": "A NIST standard elliptic curve (also called secp256r1 or prime256v1) widely used in TLS, FIDO2, and government systems. Quantum-vulnerable.",
-    "technicalNote": "Part of the Suite B / CNSA 1.0 algorithms. Combined with ML-KEM-768 in the SecP256r1MLKEM768 hybrid key exchange.",
+    "technicalNote": "Suite B (RFC 6460) allowed P-256 as well as P-384, but CNSA 1.0 uses P-384 only (RFC 9151), and NSA's CNSA 2.0 FAQ names P-384, not P-256, as the curve compliant devices should currently use. Combined with ML-KEM-768 in the SecP256r1MLKEM768 hybrid key exchange (RFC 10024).",
     "relatedModule": "/algorithms?highlight=ECDH%20P-256,ECDSA%20P-256",
     "complexity": "intermediate",
     "category": "algorithm"
@@ -348,7 +348,7 @@
   {
     "term": "Winternitz One-Time Signature",
     "acronym": "WOTS+",
-    "definition": "A hash-based one-time signature scheme used as the building block for LMS and XMSS. Each key pair can only sign one message safely.",
+    "definition": "A family of hash-based one-time signature schemes that sign a message digest with hash chains. XMSS (RFC 8391) uses the WOTS+ variant, and LMS (RFC 8554) uses LM-OTS, a related Winternitz-style scheme. Each key pair can only sign one message safely.",
     "technicalNote": "The Winternitz parameter (w) controls the trade-off between signature size and computation time. Larger w = smaller signatures but more hash operations.",
     "relatedModule": "/learn/stateful-signatures",
     "complexity": "advanced",
@@ -358,7 +358,7 @@
     "term": "ECIES",
     "acronym": "ECIES",
     "definition": "Elliptic Curve Integrated Encryption Scheme, used in 5G networks to conceal subscriber identity (SUCI). Combines ECDH key agreement with symmetric encryption.",
-    "technicalNote": "5G defines three SUCI protection profiles: Profile A (ECIES with Curve25519), Profile B (ECIES with P-256), and Profile C (ML-KEM for post-quantum protection).",
+    "technicalNote": "TS 33.501 Annex C defines two ECIES profiles for SUCI protection, Profile A (Curve25519, X25519) and Profile B (P-256, secp256r1), plus a null scheme that gives no concealment. A post-quantum \"Profile C\" using ML-KEM is not defined there; it is an experimental proposal that appears in this site's 5G workshop, not a 3GPP profile.",
     "relatedModule": "/learn/5g-security",
     "complexity": "intermediate",
     "category": "algorithm"
@@ -376,7 +376,7 @@
     "term": "ECC",
     "acronym": "ECC",
     "definition": "Elliptic Curve Cryptography — a public-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. Offers smaller key sizes than RSA for equivalent classical security, but like RSA it is fully broken by Shor's algorithm on a CRQC.",
-    "technicalNote": "Common curves: P-256, P-384, P-521 (NIST), Curve25519 (X25519/Ed25519). ECC is used extensively in TLS, SSH, code signing, and PKI. NIST SP 800-186 and CNSA 2.0 mandate migration away from ECC to ML-KEM and ML-DSA before 2030.",
+    "technicalNote": "Common curves: P-256, P-384, P-521 (NIST), Curve25519 (X25519/Ed25519). ECC is used extensively in TLS, SSH, code signing, and PKI. NIST SP 800-186 specifies the approved curves. NIST IR 8547 plans to deprecate ECC-based signatures and key establishment after 2030 and disallow them after 2035 under NIST standards. For US national security systems, CNSA 2.0 specifies ML-KEM-1024 and ML-DSA-87, and NSA expects their cryptography to be quantum resistant by 31 December 2031.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
     "category": "algorithm"
@@ -384,15 +384,15 @@
   {
     "term": "LMS",
     "acronym": "LMS",
-    "definition": "Leighton-Micali Signature — a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Based on one-time Lamport signatures aggregated via a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.",
-    "technicalNote": "LMS is stateful: each leaf in the Merkle tree can only be used once. An HSM must persist the current leaf index in NVRAM and never reuse it — failure leads to catastrophic key compromise. LMS key sizes: ~1,616 bytes (pub) to 64 bytes (priv). PKCS#11 v3.2 mechanism: CKM_LMS.",
+    "definition": "Leighton-Micali Signature — a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Built from LM-OTS one-time signatures, a Winternitz-style scheme, combined in a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.",
+    "technicalNote": "LMS is stateful: each leaf holds one LM-OTS key that must sign at most one message, and the signer must record the used key in non-volatile memory before exporting the signature (SP 800-208). Signing two different messages with one one-time key makes forgery feasible. An LMS public key is 24 + m bytes, where m is the hash output length in bytes (56 bytes for SHA-256); private keys can be made very small (RFC 8554). PKCS#11 v3.2 has no LMS mechanism: it defines CKM_HSS_KEY_PAIR_GEN and CKM_HSS, and an HSS key with one level has essentially LMS formats.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
     "category": "algorithm"
   },
   {
     "term": "HAWK",
-    "definition": "A lattice-based PQC signature candidate in the NIST signature on-ramp, designed as an integer-only alternative to FN-DSA (Falcon). Eliminates floating-point side-channel hazards that complicate Falcon implementations.",
+    "definition": "A lattice-based signature scheme that NIST advanced to the third round of its additional-signature process in May 2026; its team withdrew it on 29 July 2026, so it is no longer a candidate. It was designed as an integer-only alternative to FN-DSA (Falcon) and avoids the floating-point operations that complicate Falcon implementations.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
     "category": "algorithm"
@@ -457,8 +457,8 @@
   {
     "term": "WOTS+",
     "acronym": "Winternitz One-Time Signature Plus",
-    "definition": "A hash-based one-time signature primitive that signs a message digest by walking chains of n-byte hash values. Used as the leaf-signing component inside SLH-DSA (FIPS 205) and the hypertree layers of LMS / XMSS.",
-    "technicalNote": "FIPS 205 fixes the Winternitz parameter lg_w=4. Chain lengths trade signature size against hash-round cost. A WOTS+ key signs exactly one message — reuse leaks the private key.",
+    "definition": "A hash-based one-time signature primitive that signs a message digest by walking chains of n-byte hash values. Used as the one-time signing component inside the XMSS trees of the SLH-DSA hypertree (FIPS 205). XMSS (RFC 8391) uses a related WOTS+ variant, and LMS uses LM-OTS instead.",
+    "technicalNote": "FIPS 205 fixes the Winternitz parameter lg_w=4. Chain lengths trade signature size against hash-round cost. A WOTS+ key must sign at most one message: signing two different messages with the same key can make forgeries feasible.",
     "relatedModule": "/learn/slh-dsa",
     "complexity": "advanced",
     "category": "algorithm"

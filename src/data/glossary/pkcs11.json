@@ -61,7 +61,7 @@
   },
   {
     "term": "HMAC-SHA3-256",
-    "definition": "HMAC using SHA3-256; PQ-robust MAC used in Profile C.",
+    "definition": "HMAC using SHA3-256. This site's 5G SUCI workshop uses it as the MAC of its experimental ML-KEM \"Profile C\", which is not a 3GPP profile (3GPP Profiles A and B use HMAC-SHA-256).",
     "relatedModule": "/learn/5g-security"
   },
   {

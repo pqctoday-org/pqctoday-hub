@@ -2,8 +2,8 @@
   {
     "term": "CCRA",
     "acronym": "CCRA",
-    "definition": "Common Criteria Recognition Arrangement — a 31-nation mutual recognition agreement under which national Certification Bodies issue and accept IT product security certificates based on ISO/IEC 15408 (Common Criteria).",
-    "technicalNote": "CCRA member nations include the US (NIAP), UK (NCSC), Germany (BSI), France (ANSSI), Japan, South Korea, Australia, and Canada. A CC certificate issued by any national CA is valid across all member states. The EU operates the EUCC as a stricter harmonized adaptation managed by ENISA.",
+    "definition": "Common Criteria Recognition Arrangement — an arrangement between government participants in which Certificate Authorising Participants sponsor national Certification Bodies that authorise Common Criteria (ISO/IEC 15408) certificates, and participants plan to recognise those certificates within the arrangement's scope.",
+    "technicalNote": "The 2014 text covers certificates against a collaborative Protection Profile (assurance activities up to EAL 4 and ALC_FLR) or against EAL 1 to 2 and ALC_FLR. Some participants authorise certificates and others only consume them; the UK (NCSC) is listed as a consuming participant. Recognition follows each participant's laws and is not an endorsement, warranty or guarantee of a product. The EU's EUCC is a separate scheme under the Cybersecurity Act; CCRA procedure CCMC-011 (March 2025) lets EUCC certificates optionally seek CCRA recognition through additional government oversight.",
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
     "category": "organization"
@@ -129,7 +129,7 @@
   {
     "term": "Sigstore",
     "definition": "An open-source project (Linux Foundation) for keyless code signing. Developers authenticate with their existing identity (GitHub, Google) and receive short-lived certificates, eliminating long-term key management.",
-    "technicalNote": "Sigstore centralizes crypto in two services: Fulcio (CA) and Rekor (transparency log). Upgrading these to ML-DSA automatically provides PQC protection to all downstream ecosystems (npm, PyPI, Kubernetes).",
+    "technicalNote": "Sigstore's public-good service combines a certificate authority (Fulcio), a transparency log (Rekor) and a root of trust, with a client such as Cosign creating the ephemeral key pair and signing. A signature path is post-quantum only when the client, certificate, log, trust root and each ecosystem's verifier all support the algorithm; Sigstore's algorithm registry currently marks ML-DSA as experimental and not yet operational.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
     "category": "organization"
@@ -234,7 +234,7 @@
   {
     "term": "CC",
     "acronym": "Common Criteria",
-    "definition": "International standard (ISO/IEC 15408) for security-product evaluation. Country-specific schemes (BSI Germany, ANSSI France, NIAP US, CCS Canada, etc.) run evaluations; results mutually recognised through the CCRA. EUCC succeeds the SOG-IS MRA in the EU.",
+    "definition": "International standard (ISO/IEC 15408) for security-product evaluation. National schemes (for example BSI in Germany, ANSSI in France, NIAP in the US, the Canadian Common Criteria Scheme) oversee evaluations by licensed laboratories and authorise certificates. Under the CCRA, participants plan to recognise certificates authorised by other participants, within the arrangement's scope. EUCC is the EU scheme that builds on the SOG-IS mutual recognition agreement.",
     "complexity": "intermediate",
     "category": "organization",
     "relatedModule": "/learn/standards-bodies"
