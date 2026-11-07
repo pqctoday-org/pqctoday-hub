@@ -88,7 +88,7 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
 
   return (
     <div className="space-y-4">
-      {/* Year ruler + selected regulatory deadlines */}
+      {/* Year ruler + the external milestones the reader selected */}
       <div className="glass-panel p-3">
         <div className="flex justify-between text-[10px] text-muted-foreground">
           {years
@@ -98,15 +98,20 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
             ))}
         </div>
         {deadlines.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1">
-            {deadlines.map((d, i) => (
-              <span
-                key={`${d.label}-${d.year}-${i}`}
-                className="text-[10px] rounded bg-status-error/10 text-status-error px-1.5 py-0.5 border border-status-error/30"
-              >
-                {d.year} · {d.label}
-              </span>
-            ))}
+          <div className="mt-2">
+            <p className="text-[10px] font-medium text-muted-foreground">
+              External milestones you selected
+            </p>
+            <div className="mt-1 flex flex-wrap gap-1">
+              {deadlines.map((d, i) => (
+                <span
+                  key={`${d.label}-${d.year}-${i}`}
+                  className="text-[10px] rounded bg-muted/50 text-muted-foreground px-1.5 py-0.5 border border-border"
+                >
+                  {d.year} · {d.label}
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>
