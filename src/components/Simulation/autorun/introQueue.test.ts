@@ -42,6 +42,11 @@ describe('the introductory journey (W7.1)', () => {
     }
   })
 
+  it('draws only from Executive Mandate (p0) and Discovery (p1)', () => {
+    const phases = new Set(autoRunIntroQueue().map((i) => i.phase))
+    expect([...phases].every((p) => p === 'p0' || p === 'p1')).toBe(true)
+  })
+
   it('does not repeat the same resource twice', () => {
     const tos = autoRunIntroQueue().map((i) => i.step.to)
     expect(new Set(tos).size).toBe(tos.length)

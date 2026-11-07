@@ -14,3 +14,14 @@ describe('generated sample CBOM scope', () => {
     })
   }
 })
+
+describe('generated sample migration roadmap', () => {
+  for (const [sector, docs] of Object.entries(DEMO_DOCS_BY_SECTOR)) {
+    const doc = docs['migration-roadmap']
+    if (!doc || doc.data.includes('No private-bank regulatory obligation is inferred')) continue
+    it(`names the ${sector} external dates as milestones selected for the plan, not regulatory deadlines`, () => {
+      expect(doc.data).toContain('## External Milestones Selected For This Plan')
+      expect(doc.data).not.toContain('## External Regulatory Deadlines')
+    })
+  }
+})

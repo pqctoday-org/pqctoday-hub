@@ -695,9 +695,10 @@ export function estimatedMinutes(steps: TreeStep[]): number {
  *
  * The shortest existing way in was the ~45-minute overview, which the audit
  * found is too much to ask before a learner knows whether any of this concerns
- * them. This is the five-beat version the plan asks for: explain the threat,
- * inspect one asset, choose a next step, see the consequence, and hear what it
- * meant.
+ * them. This queue holds only learn and reference steps from Executive
+ * Mandate and Discovery: it explains the threat and shows what is exposed, and
+ * leaves inspecting an asset, choosing a next step and seeing the consequence
+ * to the longer modes.
  *
  * It is CURATED from real tree steps (never invented content) and, per W7.3,
  * BOUNDED BY MEASURED effort rather than by a promised duration: steps are

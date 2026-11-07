@@ -636,7 +636,7 @@ function migrationRoadmap(sector: DemoSector): DemoDoc {
     data: md(
       `# PQC Migration Roadmap (Two-Track) — ${ORG[sector]}`,
       '',
-      '## External Regulatory Deadlines',
+      '## External Milestones Selected For This Plan',
       `- ${REG[sector]}: regulators increasingly expect demonstrable PQC progress; binding US deadlines come from the June 2026 Executive Order (key establishment ${US_EO_KEM_YEAR}, signatures ${US_EO_SIG_YEAR})`,
       '',
       '## Track A — Confidentiality (KEM)',
