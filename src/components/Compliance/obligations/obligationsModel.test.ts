@@ -61,8 +61,9 @@ describe('resolveRequirements', () => {
 
 describe('milestonesFor', () => {
   it('reads the structured column and sorts ascending', () => {
-    const eidas = frameworkById('EIDAS')
-    const years = milestonesFor(eidas).map((m) => m.year)
+    // CNSA 2.0 carries three dated steps (2027, 2030, 2031) in its structured column.
+    const cnsa = frameworkById('CNSA-2')
+    const years = milestonesFor(cnsa).map((m) => m.year)
     expect(years.length).toBeGreaterThan(1)
     expect([...years].sort((a, b) => a - b)).toEqual(years)
   })
