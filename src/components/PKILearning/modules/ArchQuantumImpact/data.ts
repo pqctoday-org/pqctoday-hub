@@ -59,7 +59,7 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
       severity: 'medium',
       timeframe: '2025-2028',
       exampleScenario:
-        'Your API gateway handles 50,000 TLS terminations per second with ECC. ML-KEM key generation is 3x slower. At peak load, you need 3x the compute capacity for the same throughput \u2014 requiring infrastructure scaling decisions.',
+        'Fictional planning example: an API gateway must handle 50,000 full TLS handshakes per second. Suppose an isolated benchmark finds that the selected ML-KEM key-generation operation takes 3x as long as its classical comparison. This alone does not establish a threefold increase in gateway compute capacity. Establish which operations the gateway actually performs, profile their share of the full TLS workload, and measure CPU use, handshake throughput and latency on the chosen hardware and software under representative load, including session resumption, before sizing capacity.',
     },
     {
       id: 'crypto-agility-gap',
