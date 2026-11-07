@@ -12,6 +12,7 @@ import {
   mergeFrameworksByLabel,
 } from './complianceData'
 import { BINDING_STATUSES } from '../utils/bindingSplit'
+import { parseAllSectorsReviewed } from './complianceData'
 import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
 import { maturityByRefId, maturityRequirements } from './maturityGovernanceData'
 import { libraryData } from './libraryData'
@@ -262,13 +263,22 @@ describe('compliance binding_status column', () => {
     }
   })
 
-  it("reads the optional all_sectors_reviewed column: only 'yes' marks a framework as reviewed for every sector", () => {
+  it('reads the all_sectors_reviewed column: yes is reviewed for every sector, no is reviewed as not, blank is not reviewed', () => {
     const hasSectorColumn = rows.length > 0 && 'all_sectors_reviewed' in rows[0]
     for (const r of rows.filter((x) => x.status === 'active')) {
       const fw = complianceFrameworks.find((f) => f.id === r.id)
-      const cell = hasSectorColumn ? (r.all_sectors_reviewed ?? '').trim().toLowerCase() : ''
-      expect(fw?.allSectorsReviewed, r.id).toBe(cell === 'yes' ? true : undefined)
+      const cell = hasSectorColumn ? (r.all_sectors_reviewed ?? '') : ''
+      expect(fw?.allSectorsReviewed, r.id).toBe(parseAllSectorsReviewed(cell))
     }
+  })
+
+  it('maps yes, no and anything else to true, false and not reviewed', () => {
+    expect(parseAllSectorsReviewed('yes')).toBe(true)
+    expect(parseAllSectorsReviewed(' Yes ')).toBe(true)
+    expect(parseAllSectorsReviewed('no')).toBe(false)
+    expect(parseAllSectorsReviewed('')).toBeUndefined()
+    expect(parseAllSectorsReviewed(undefined)).toBeUndefined()
+    expect(parseAllSectorsReviewed('unclear')).toBeUndefined()
   })
 
   it('reports data as present exactly when some framework carries a status', () => {

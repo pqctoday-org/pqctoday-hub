@@ -5,6 +5,7 @@ import type { ThreatData } from '../data/threatsData'
 import {
   applicableFrameworks,
   applicableThreats,
+  coversEverySector,
   groupByTier,
   isProfileEmpty,
   type UserProfile,
@@ -534,5 +535,77 @@ describe('applicableFrameworks — sector tags are relevance, not legal scope', 
     // The same record under another id is not covered by that review.
     const [other] = applicableFrameworks(government, [{ ...gdpr, id: 'OTHER-3-SECTOR-LAW' }])
     expect(other?.tier).not.toBe('mandatory')
+  })
+})
+
+describe('applicableFrameworks — the reviewed all-sector answer decides when it is filled in', () => {
+  const bank: UserProfile = {
+    industry: 'Healthcare & Life Sciences',
+    country: 'United States',
+    region: 'americas',
+  }
+  const threeTags = ['Government & Defense', 'Information Technology', 'Finance & Insurance']
+
+  it('yes covers every sector even with a single sector tag', () => {
+    const fw = makeFramework({
+      id: 'ALL-YES',
+      countries: ['United States'],
+      industries: ['Finance & Insurance'],
+      allSectorsReviewed: true,
+      enforcementBody: 'NIST',
+      bindingStatus: 'mandatory_for_scope',
+      bindingBasis: 'Agency rule, federal agencies only',
+    })
+    expect(coversEverySector(fw)).toBe(true)
+    const [result] = applicableFrameworks(bank, [fw])
+    expect(result?.item.id).toBe('ALL-YES')
+    expect(result?.tier).toBe('mandatory')
+  })
+
+  it('no does not cover a sector outside its tags, even with three tags', () => {
+    const fw = makeFramework({
+      id: 'ALL-NO',
+      countries: ['United States'],
+      industries: threeTags,
+      allSectorsReviewed: false,
+      enforcementBody: 'NIST',
+      bindingStatus: 'binding',
+      bindingBasis: 'Agency rule',
+    })
+    expect(coversEverySector(fw)).toBe(false)
+    const [result] = applicableFrameworks(bank, [fw])
+    expect(result?.tier).not.toBe('mandatory')
+  })
+
+  it('blank keeps the sector-tag count: three tags cover every sector, one tag does not', () => {
+    const three = makeFramework({ id: 'BLANK-3', industries: threeTags })
+    const one = makeFramework({ id: 'BLANK-1', industries: ['Finance & Insurance'] })
+    expect(three.allSectorsReviewed).toBeUndefined()
+    expect(coversEverySector(three)).toBe(true)
+    expect(coversEverySector(one)).toBe(false)
+  })
+
+  it('blank with no sector tags still covers every sector, as before', () => {
+    expect(coversEverySector(makeFramework({ industries: [] }))).toBe(true)
+  })
+
+  it('GDPR keeps the mandatory tier while its cell is blank, and loses it when the cell says no', () => {
+    const gdpr = makeFramework({
+      id: 'GDPR',
+      countries: ['European Union'],
+      industries: ['Healthcare & Life Sciences', 'Information Technology', 'Finance & Insurance'],
+      enforcementBody: 'European Commission',
+      bindingStatus: 'binding',
+      bindingBasis: 'Regulation (EU) 2016/679',
+    })
+    const government: UserProfile = {
+      industry: 'Government & Defense',
+      country: 'France',
+      region: 'eu',
+    }
+    const [blank] = applicableFrameworks(government, [gdpr])
+    expect(blank?.tier).toBe('mandatory')
+    const [no] = applicableFrameworks(government, [{ ...gdpr, allSectorsReviewed: false }])
+    expect(no?.tier).not.toBe('mandatory')
   })
 })

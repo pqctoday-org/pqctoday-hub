@@ -17,6 +17,7 @@ import type {
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 import {
   applicableFrameworks,
+  coversEverySector,
   expandIndustriesForMatching,
   type ApplicabilityTier,
   type UserProfile,
@@ -223,9 +224,9 @@ function describeHiddenReason(
   const fwIndustries = framework.industries ?? []
 
   const countryUniversal = fwCountries.length === 0 || fwCountries.includes('Global')
-  // Mirror the engine's industry-universal heuristic so the reason stays
-  // consistent with what `applicableFrameworks` actually evaluates.
-  const industryUniversal = fwIndustries.length === 0 || fwIndustries.length >= 3
+  // Same rule the engine applies (reviewed all-sector answer, else the tag count), so the
+  // reason stays consistent with what `applicableFrameworks` actually evaluates.
+  const industryUniversal = coversEverySector(framework)
   const expandedFwIndustries = expandIndustriesForMatching(fwIndustries)
 
   const countryMismatch = !!userCountry && !countryUniversal && !fwCountries.includes(userCountry)

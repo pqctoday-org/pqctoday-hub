@@ -138,9 +138,10 @@ export interface ComplianceFramework {
    */
   bindingStatus?: BindingStatus
   /**
-   * True when the instrument's own scope clause has been read and covers every sector, from the
-   * optional `all_sectors_reviewed` column (`yes`). Absent means not reviewed as all-sector; the
-   * number of sector tags never stands in for it. See utils/applicabilityEngine.ts.
+   * The reviewed all-sector answer from the `all_sectors_reviewed` column, after its scope
+   * clause was read: `true` (yes, covers every sector), `false` (no), or absent (blank, not yet
+   * reviewed). The number of sector tags never stands in for a reviewed answer. See
+   * utils/applicabilityEngine.ts.
    */
   allSectorsReviewed?: boolean
   /** Short public citation of the instrument that makes it binding, from `binding_basis` (for example "Regulation (EU) 2022/2554, Article 6"). */
@@ -406,7 +407,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
     lastVerified: row.last_verified?.trim() || undefined,
     bindingStatus: parseBindingStatus(row.binding_status),
-    allSectorsReviewed: row.all_sectors_reviewed?.trim().toLowerCase() === 'yes' ? true : undefined,
+    allSectorsReviewed: parseAllSectorsReviewed(row.all_sectors_reviewed),
     bindingBasis: row.binding_basis?.trim() || undefined,
     bindingScope: row.binding_scope?.trim() || undefined,
     bindingScopeEn: row.binding_scope_en?.trim() || undefined,
@@ -422,6 +423,14 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
 export const complianceFrameworks: ComplianceFramework[] = filterActive(
   frameworks as Array<ComplianceFramework & { status?: string }>
 ) as ComplianceFramework[]
+
+/** `yes` → true, `no` → false, anything else (blank, unknown) → undefined (not reviewed). */
+export function parseAllSectorsReviewed(raw: string | undefined): boolean | undefined {
+  const v = raw?.trim().toLowerCase()
+  if (v === 'yes') return true
+  if (v === 'no') return false
+  return undefined
+}
 
 /**
  * True once at least one framework carries a reviewed `binding_status`. The

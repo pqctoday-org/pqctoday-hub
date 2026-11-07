@@ -109,9 +109,9 @@ interface ItemFields {
    */
   industryUniversal: boolean
   /**
-   * Explicit, reviewed statement that the instrument covers every sector. Only this flag (or a
-   * direct sector-tag match) lets a binding item reach the 'mandatory' tier; sector tags stay
-   * as narrower filter tags.
+   * Reviewed all-sector answer: `true` covers every sector, `false` covers only the sectors
+   * named, absent means not reviewed. Only `true` (or a direct sector-tag match) lets a binding
+   * item reach the 'mandatory' tier; sector tags stay as narrower filter tags.
    */
   allSectorsReviewed?: boolean
   /** True when item is global/country-universal. */
@@ -561,16 +561,27 @@ function isIndustryUniversal(industries: string[]): boolean {
   return industries.length === 0 || industries.length >= 3
 }
 
+/**
+ * Whether a framework is shown to readers in every sector. A reviewed answer decides: `yes`
+ * covers every sector, `no` covers only the sectors it names, however many tags it carries.
+ * A blank (not yet reviewed) answer falls back to the older sector-tag count.
+ */
+export function coversEverySector(
+  fw: Pick<ComplianceFramework, 'industries' | 'allSectorsReviewed'>
+): boolean {
+  if (fw.allSectorsReviewed !== undefined) return fw.allSectorsReviewed
+  return isIndustryUniversal(fw.industries)
+}
+
 function isCountryUniversal(countries: string[]): boolean {
   return countries.length === 0 || countries.includes('Global')
 }
 
 /**
- * Records reviewed as covering every sector by their own scope clause, kept here until the
- * compliance catalogue carries a reviewed all-sector column (the engine reads that column
- * first, through `allSectorsReviewed`). GDPR: Regulation (EU) 2016/679, Article 2(1), defines
- * its material scope by the processing of personal data, not by sector. Add a record only
- * after reading its scope clause.
+ * Records reviewed as covering every sector by their own scope clause, used only while the
+ * compliance catalogue's reviewed all-sector cell is blank (a filled cell, yes or no, decides
+ * on its own). GDPR: Regulation (EU) 2016/679, Article 2(1), defines its material scope by the
+ * processing of personal data, not by sector. Add a record only after reading its scope clause.
  */
 const REVIEWED_ALL_SECTOR_IDS: ReadonlySet<string> = new Set(['GDPR'])
 
@@ -584,8 +595,8 @@ export function applicableFrameworks(
     const match = classifyMatch(profile, {
       countries: fw.countries,
       industries: expandIndustriesForMatching(fw.industries),
-      industryUniversal: isIndustryUniversal(fw.industries),
-      allSectorsReviewed: fw.allSectorsReviewed === true || REVIEWED_ALL_SECTOR_IDS.has(fw.id),
+      industryUniversal: coversEverySector(fw),
+      allSectorsReviewed: fw.allSectorsReviewed ?? REVIEWED_ALL_SECTOR_IDS.has(fw.id),
       countryUniversal: isCountryUniversal(fw.countries),
       enforcementBody: fw.enforcementBody,
       bodyType: fw.bodyType,
