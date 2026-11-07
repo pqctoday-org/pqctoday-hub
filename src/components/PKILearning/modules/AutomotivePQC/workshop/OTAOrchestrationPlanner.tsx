@@ -22,6 +22,9 @@ import {
 import type { OTACampaignTarget } from '../data/otaOrchestrationData'
 import { Button } from '@/components/ui/button'
 
+const PACKAGE_ASSUMPTIONS =
+  'Illustrative component model: 32 signatures + one raw public-key component per ECU package. KiB = (32 × signature bytes + key bytes) / 1024. Excludes certificates, chains, packaging headers and transport/retry overhead; measure the chosen production format. This is not a serialized OTA package.'
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -182,6 +185,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
           <Radio size={16} className="text-primary" />
           <span className="text-sm font-bold text-foreground">Signature Algorithm</span>
         </div>
+        <p className="text-xs text-muted-foreground mb-3">{PACKAGE_ASSUMPTIONS}</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {SIGNATURE_OVERHEADS.map((overhead) => {
             const isSelected = overhead.algorithm === selectedAlgorithm
@@ -191,7 +195,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
                 variant="ghost"
                 key={overhead.algorithm}
                 onClick={() => setSelectedAlgorithm(overhead.algorithm)}
-                className={`rounded-lg p-3 border text-left transition-colors ${
+                className={`h-auto min-w-0 flex-col items-stretch whitespace-normal rounded-lg p-3 border text-left transition-colors ${
                   isSelected
                     ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
                     : 'border-border bg-muted/20 hover:border-primary/30'
@@ -216,7 +220,9 @@ export const OTAOrchestrationPlanner: React.FC = () => {
                   </div>
                   <div>
                     Overhead:{' '}
-                    <span className="font-mono text-foreground">{overhead.totalOverheadKB} KB</span>
+                    <span className="font-mono text-foreground">
+                      {overhead.totalOverheadKB.toFixed(2)} KiB
+                    </span>
                     /pkg
                   </div>
                 </div>
@@ -466,8 +472,8 @@ export const OTAOrchestrationPlanner: React.FC = () => {
             </div>
             <div className="text-lg font-mono font-bold text-foreground mt-1">
               {metrics.signatureOverheadMB < 1
-                ? `${(metrics.signatureOverheadMB * 1024).toFixed(1)} KB`
-                : `${metrics.signatureOverheadMB.toFixed(2)} MB`}
+                ? `${(metrics.signatureOverheadMB * 1024).toFixed(1)} KiB`
+                : `${metrics.signatureOverheadMB.toFixed(2)} MiB`}
             </div>
             <div className="text-[10px] text-muted-foreground">
               {((metrics.signatureOverheadMB / metrics.totalFirmwareSizeMB) * 100).toFixed(3)}% of
@@ -514,6 +520,10 @@ export const OTAOrchestrationPlanner: React.FC = () => {
                   : `${(metrics.maxDurationHours / 24).toFixed(1)} days`}
             </div>
             <div className="text-[10px] text-muted-foreground">@ 10 Gbps CDN, 60% util</div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Illustrative ideal transfer estimate; excludes rollout scheduling, retries and
+              production bottlenecks.
+            </p>
           </div>
 
           {/* Critical path time */}
@@ -533,6 +543,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
           <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">
             Signature Overhead Comparison (per ECU package)
           </div>
+          <p className="text-xs text-muted-foreground mb-3">{PACKAGE_ASSUMPTIONS}</p>
           <div className="space-y-1.5">
             {SIGNATURE_OVERHEADS.map((overhead) => {
               const maxOverhead = Math.max(...SIGNATURE_OVERHEADS.map((o) => o.totalOverheadKB))
@@ -557,7 +568,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
                       style={{ width: `${widthPct}%` }}
                     />
                     <span className="absolute inset-0 flex items-center justify-center text-[9px] font-mono text-foreground">
-                      {overhead.totalOverheadKB} KB
+                      {overhead.totalOverheadKB.toFixed(2)} KiB
                     </span>
                   </div>
                 </div>

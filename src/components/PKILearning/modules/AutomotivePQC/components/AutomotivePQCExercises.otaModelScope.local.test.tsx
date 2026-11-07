@@ -18,8 +18,8 @@ describe('OTA exercise default-model scope', () => {
     const metrics = computeCampaignMetrics(DEFAULT_CAMPAIGN_TARGETS, 1, mlDsa)
     expect(DEFAULT_CAMPAIGN_TARGETS).toHaveLength(6)
     expect(metrics.totalFirmwareSizeMB).toBe(32 + 64 + 256 + 512 + 16 + 8)
-    expect(metrics.signatureOverheadMB).toBe((107.8 * 6) / 1024)
-    expect(metrics.signatureOverheadMB).toBe(0.631640625)
+    expect(metrics.signatureOverheadMB).toBe((107840 * 6) / (1024 * 1024))
+    expect(metrics.signatureOverheadMB).toBe(0.6170654296875)
     expect(metrics.criticalPathMinutes).toBe(15 + 45)
   })
   it('describes only the default fixture while preserving the step-only callback', () => {
@@ -61,7 +61,7 @@ describe('OTA exercise default-model scope', () => {
     const mlDsa = SIGNATURE_OVERHEADS.find((entry) => entry.algorithm === 'ML-DSA-65')!
     const actual = computeCampaignMetrics(DEFAULT_CAMPAIGN_TARGETS, 100_000, mlDsa)
     expect(screen.getByText(String(actual.totalFirmwareSizeMB))).toBeVisible()
-    expect(screen.getByText(`${(actual.signatureOverheadMB * 1024).toFixed(1)} KB`)).toBeVisible()
+    expect(screen.getByText(`${(actual.signatureOverheadMB * 1024).toFixed(1)} KiB`)).toBeVisible()
     expect(screen.getByText(String(actual.criticalPathMinutes))).toBeVisible()
   })
 })
