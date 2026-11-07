@@ -130,5 +130,5 @@ export const CNSA_HYBRID_OBJECTIONS = [
 export const CNSA_NAMING_DRIFT = {
   advisory2022: ['CRYSTALS-Kyber', 'CRYSTALS-Dilithium'],
   faq2024: ['ML-KEM-1024', 'ML-DSA-87'],
-  note: 'The advisory predates FIPS 203/204 final. The two documents name the same algorithms differently.',
+  note: 'The advisory predates FIPS 203/204 final. The two documents name related but not interchangeable algorithms; only ML-KEM and ML-DSA are in CNSA 2.0.',
 }
