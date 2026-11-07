@@ -17,7 +17,7 @@ export const SMIMECertViewer: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">S/MIME Certificate Structure</h3>
         <p className="text-sm text-muted-foreground">
           Compare classical RSA-2048 and post-quantum ML-DSA-65 S/MIME certificates. Examine the key
-          extensions required for email signing and encryption.
+          extension examples used for email signing and encryption.
         </p>
       </div>
 
@@ -137,9 +137,13 @@ export const SMIMECertViewer: React.FC = () => {
       {/* S/MIME Extensions */}
       {viewMode === 'extensions' && (
         <div className="space-y-4">
-          <h4 className="text-sm font-bold text-foreground">
-            Required S/MIME Certificate Extensions
-          </h4>
+          <h4 className="text-sm font-bold text-foreground">Certificate Extension Examples</h4>
+          <p className="text-sm text-muted-foreground">
+            These examples are not a universal list of required extensions. The applicable
+            certificate profile and intended use determine which extensions and values are needed.
+            The critical flags shown are example settings; critical does not mean required to be
+            present. This view does not validate a certificate against a profile.
+          </p>
           <div className="space-y-3">
             {SMIME_CERT_EXTENSIONS.map((ext) => (
               <div key={ext.name} className="glass-panel p-4">
@@ -171,17 +175,41 @@ export const SMIMECertViewer: React.FC = () => {
               </div>
             ))}
           </div>
+          <div className="glass-panel p-4 space-y-2">
+            <h4 className="text-sm font-bold text-foreground">Two capability contexts</h4>
+            <p className="text-sm text-muted-foreground">
+              <code>smimeCapabilities</code> can be an optional, noncritical certificate extension
+              under{' '}
+              <a
+                href="https://www.rfc-editor.org/rfc/rfc4262.html#section-2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                RFC 4262
+              </a>
+              . It can also appear in an S/MIME message as a CMS signed attribute under{' '}
+              <a
+                href="https://www.rfc-editor.org/rfc/rfc8551.html#section-2.5.2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                RFC 8551
+              </a>
+              . These are different containing structures; the certificate extension complements the
+              message attribute rather than replacing it.
+            </p>
+          </div>
         </div>
       )}
 
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Key takeaway:</strong> S/MIME certificates for PQC use the same X.509 extensions
-          as classical certificates. The primary differences are the algorithm OIDs, key sizes, and
-          signature sizes. The <code className="text-foreground/70">smimeCapabilities</code>{' '}
-          attribute becomes especially important during migration to advertise PQC algorithm support
-          to peers.
+          <strong>Key takeaway:</strong> Inspect the applicable certificate profile, message
+          attributes and peer capabilities with your production tools. A capabilities advertisement
+          alone does not establish usable algorithm support or successful interoperability.
         </p>
       </div>
     </div>

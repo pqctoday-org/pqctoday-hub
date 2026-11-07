@@ -148,7 +148,7 @@ export const ALGORITHM_OIDS: AlgorithmOID[] = [
   },
 ]
 
-// ── S/MIME Certificate Extension Requirements ──────────────────────────────
+// ── S/MIME Certificate Extension Examples ──────────────────────────────
 export interface CertExtension {
   name: string
   oid: string
@@ -207,7 +207,8 @@ export const SMIME_CERT_EXTENSIONS: CertExtension[] = [
     critical: false,
     signingValue: 'Advertised signing algorithms',
     encryptionValue: 'Advertised encryption algorithms',
-    description: 'Announces supported S/MIME algorithms to peers',
+    description:
+      'Optional certificate extension for advertising S/MIME capabilities (RFC 4262); it must be noncritical.',
   },
 ]
 
