@@ -528,7 +528,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     tone: 'ok',
     title: 'Authenticated wrap',
     blurb:
-      'C_WrapKeyAuthenticated is one of the 12 new v3.2 functions — AEAD-wrapped key export with a real IV and integrity tag, alongside the classic AES-KW wrap from lesson A7.',
+      'C_WrapKeyAuthenticated is one of the 12 new v3.2 functions — AEAD key wrapping with a per-wrap IV and an authentication tag. The lesson alters one byte of an AES-GCM blob and of an AES-KW blob (RFC 3394, which also checks integrity on unwrap) and shows both unwraps refused.',
     setup:
       'AES-KW (RFC 3394) is deterministic and protects key integrity through an unwrap check. This AES-GCM wrapping interface uses a per-wrap IV and an authentication tag and supports associated data; this example supplies empty associated data.',
     steps: [
