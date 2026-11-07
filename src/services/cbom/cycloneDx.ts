@@ -236,7 +236,11 @@ export function extractClassicalAlgorithmsFromText(text: string): CbomAlgorithm[
     const keyLengths = new Set(
       Array.from(haystack.matchAll(/\bRSA[-\s]?(1024|2048|3072|4096)\b/g), (m) => Number(m[1]))
     )
-    const sizeList = /\bRSA[-\s]?(?:1024|2048|3072|4096)\s*[/,]\s*(?=\d)/.test(haystack)
+    const sizeList =
+      /\bRSA[-\s]?(?:1024|2048|3072|4096)\s*[/,]\s*(?=\d)/.test(haystack) ||
+      /\bRSA[-\s]?(?:1024|2048|3072|4096)\s+(?:AND\/OR|AND|OR)\s+(?:1024|2048|3072|4096)\b/.test(
+        haystack
+      )
     const keyLength = keyLengths.size === 1 && !sizeList ? [...keyLengths][0] : undefined
     const signing = /\b(?:SIGN|SIGNATURE|SIGNATURES|SIGNING|VERIFY|RSASSA|PSS)\b/.test(haystack)
     const encryption =

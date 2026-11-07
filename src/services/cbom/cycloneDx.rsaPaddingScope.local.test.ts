@@ -41,6 +41,10 @@ const cases: [string, string, string, number | undefined][] = [
   ['RSA-2048 PSS; RSA-4096 PSS', 'RSA', 'unknown', undefined],
   ['RSA-2048 PSSLIKE OAEPISH', 'RSA', 'unknown', 2048],
   ['RSA-2048/4096 PSS', 'RSA', 'unknown', undefined],
+  ['RSA-2048 and 4096 PSS', 'RSA', 'unknown', undefined],
+  ['RSA-2048 or 4096 PSS', 'RSA', 'unknown', undefined],
+  ['RSA-2048 and/or 4096 PSS', 'RSA', 'unknown', undefined],
+  ['RSA-2048 and 256-bit AES, PSS', 'RSASSA-PSS', 'signature', 2048],
   ['RSA-2048, 3072, 4096 encryption', 'RSA', 'unknown', undefined],
 ]
 
