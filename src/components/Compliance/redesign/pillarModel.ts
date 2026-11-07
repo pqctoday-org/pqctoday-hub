@@ -7,7 +7,8 @@
 // the live `complianceData` layer; no placeholder data.
 
 import type { BodyType, ComplianceFramework } from '@/data/complianceData'
-import { conceptIdForFramework, regionForCountry } from '@/data/complianceData'
+import { conceptIdForFramework, getFrameworkById, regionForCountry } from '@/data/complianceData'
+import { findLibraryItemByRef } from '@/data/libraryData'
 import { conceptXwalkData, type ConceptXwalkRecord } from '@/data/conceptXwalkData'
 import { conceptByCanonicalId } from '@/data/conceptRegistry'
 import { equivalentCanonicals } from '@/utils/conceptXwalkGraph'
@@ -141,6 +142,8 @@ export function pillarLabel(pillar: PillarId): string {
 export interface ChainNode {
   kind: string
   value: string
+  /** Reader-facing name to show in place of `value` when `value` is a record id. */
+  label?: string
   sub: string
   tone: Tone
 }
@@ -156,7 +159,10 @@ export interface PhaseStep {
 }
 
 export interface CrosswalkItem {
+  /** The record as the cross-walk data names it. Used to open the related record; not shown as text. */
   name: string
+  /** Reader-facing name to show for the record. */
+  label: string
   note: string
   tone: Tone
 }
@@ -185,7 +191,12 @@ const p = (year: string, label: string, state: PhaseStep['state']): PhaseStep =>
   label,
   state,
 })
-const xw = (name: string, note: string, tone: Tone): CrosswalkItem => ({ name, note, tone })
+const xw = (name: string, label: string, note: string, tone: Tone): CrosswalkItem => ({
+  name,
+  label,
+  note,
+  tone,
+})
 
 // ── Real relationship data (NIST IR 8477 crosswalk) ─────────────────────────
 //
@@ -282,6 +293,44 @@ function otherSide(edge: ConceptXwalkRecord, framework: ComplianceFramework): st
   return idsToMatch.has(edge.fromConcept) ? edge.toConcept : edge.fromConcept
 }
 
+/** A bare record id such as `NIST-SP800-208`: one token joined by hyphens or underscores. */
+function looksLikeRecordId(s: string): boolean {
+  return !/\s/.test(s) && /[-_]/.test(s)
+}
+
+/**
+ * Reader-facing name for one end of a cross-walk edge. The cross-walk stores
+ * some records as their id (`NIST-SP800-208`, `CCCS-ITSAP40018`); the registry
+ * row for that concept usually carries a proper name, and where the registry
+ * too holds only the id, the record's own title is looked up in the framework
+ * list or the library. Text that already reads as a name (`FIPS 203`,
+ * `CNSSP 15`) is left exactly as stored, and so is an id nothing better is
+ * known for.
+ */
+export function readableEndpointName(conceptId: string, storedName: string): string {
+  if (!looksLikeRecordId(storedName)) return storedName
+  const row = conceptId ? conceptByCanonicalId.get(conceptId) : undefined
+  if (row) {
+    if (!looksLikeRecordId(row.displayLabel)) return row.displayLabel
+    if (row.sourceTable === 'compliance') {
+      const label = getFrameworkById(row.sourceRowId)?.label
+      if (label) return label
+    }
+    if (row.sourceTable === 'library') {
+      const title = findLibraryItemByRef(row.sourceRowId)?.documentTitle
+      if (title) return title
+    }
+  }
+  return findLibraryItemByRef(storedName)?.documentTitle ?? storedName
+}
+
+function otherSideLabel(edge: ConceptXwalkRecord, framework: ComplianceFramework): string {
+  const idsToMatch = frameworkMatchIds(framework)
+  return idsToMatch.has(edge.fromConcept)
+    ? readableEndpointName(edge.toConceptId, edge.toConcept)
+    : readableEndpointName(edge.fromConceptId, edge.fromConcept)
+}
+
 function xwalkChainNodes(
   framework: ComplianceFramework,
   edges: ConceptXwalkRecord[],
@@ -290,12 +339,13 @@ function xwalkChainNodes(
   const idsToMatch = frameworkMatchIds(framework)
   return edges.slice(0, max).map((edge) => {
     const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
-    return n(
+    const node = n(
       relationshipVerb(edge, frameworkIsFromSide),
       otherSide(edge, framework),
       rationaleLabel(edge.rationaleType),
       'info'
     )
+    return { ...node, label: otherSideLabel(edge, framework) }
   })
 }
 
@@ -309,6 +359,7 @@ function xwalkCrosswalkItems(
     const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
     return xw(
       otherSide(edge, framework),
+      otherSideLabel(edge, framework),
       `${relationshipVerb(edge, frameworkIsFromSide).toLowerCase()} · ${rationaleLabel(edge.rationaleType)}`,
       'info'
     )
