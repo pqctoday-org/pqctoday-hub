@@ -204,4 +204,29 @@ describe('PolicyView compare run', () => {
     expect(loaded()).toEqual([])
     expect(engine.loadPolicy).not.toHaveBeenCalled()
   })
+
+  it('still puts the active policy back when the engine throws while loading a side', async () => {
+    engine.activateModulePreset.mockImplementationOnce(() => {
+      throw new Error('engine failure')
+    })
+    await openCompare('cnsa-2.0')
+    await release('classical-')
+    await flush()
+    await release('cnsa-2.0-')
+    await flush()
+    // the first call threw; the second call is the put-back of the reader's own policy
+    expect(loaded()).toEqual(['classical', 'cnsa-2.0'])
+  })
+
+  it('does not sweep or load the second side when the engine refuses the first, and puts the active policy back', async () => {
+    engine.activateModulePreset.mockImplementationOnce(() => ({ ok: false }))
+    await openCompare('cnsa-2.0')
+    const sweptBefore = engine.dryRun.mock.calls.length
+    await release('classical-')
+    await flush()
+    await release('cnsa-2.0-')
+    await flush()
+    expect(loaded()).toEqual(['classical', 'cnsa-2.0'])
+    expect(engine.dryRun.mock.calls.length).toBe(sweptBefore)
+  })
 })

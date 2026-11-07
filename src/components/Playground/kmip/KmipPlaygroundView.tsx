@@ -657,9 +657,10 @@ export function KmipPlaygroundView() {
   // cannot overwrite the policy the reader chose last.
   const policyLoadSeq = useRef(0)
 
-  // A policy file is read as YAML only when the server really returned it: a
-  // missing file answers with an HTML page (or an error body), which must not
-  // reach the engine or the YAML view.
+  // A policy file is read as YAML only when the server answered without an HTTP
+  // error: an error response (for example a 404 page) must not reach the engine
+  // or the YAML view. A server that answers 200 with other content is caught by
+  // the engine, which refuses text that is not a policy.
   const fetchPolicyText = async (file: string): Promise<string> => {
     const r = await fetch(`/kmip-policies/${file}`)
     if (!r.ok) throw new Error(`Policy file ${file} could not be loaded (HTTP ${r.status})`)

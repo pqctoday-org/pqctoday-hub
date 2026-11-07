@@ -430,13 +430,14 @@ export function PolicyView({
       if (preset.files && preset.files.length > 0) {
         const yamls = await fetchModules(preset)
         if (cancelled || !yamls) return false
-        engine.activateModulePreset(preset.name, yamls)
-      } else {
-        if (cancelled) return false
-        engine.loadPolicy(mergedYaml)
+        // A refused module set clears the modules the engine held, so the engine no
+        // longer holds the reader's policy whether or not the load was accepted.
+        engineHoldsCompareRef.current = true
+        return engine.activateModulePreset(preset.name, yamls).ok
       }
+      if (cancelled) return false
       engineHoldsCompareRef.current = true
-      return true
+      return engine.loadPolicy(mergedYaml).ok
     }
     // Put the reader's own policy back on the engine (not gated on `cancelled`).
     const putBack = async () => {
@@ -454,15 +455,25 @@ export function PolicyView({
     void (async () => {
       let a: Record<string, Disposition> | undefined
       let b: Record<string, Disposition> | undefined
-      if (await activateSide(presetA, yamlA)) {
-        if (!cancelled) {
-          a = sweepDispositions(engine, asOfDate)
-          if ((await activateSide(presetB, yamlB)) && !cancelled) {
-            b = sweepDispositions(engine, asOfDate)
+      try {
+        if (await activateSide(presetA, yamlA)) {
+          if (!cancelled) {
+            a = sweepDispositions(engine, asOfDate)
+            if ((await activateSide(presetB, yamlB)) && !cancelled) {
+              b = sweepDispositions(engine, asOfDate)
+            }
           }
         }
+      } catch {
+        // An engine error ends the comparison; the reader's policy is still put back below.
+        a = undefined
+        b = undefined
       }
-      await putBack()
+      try {
+        await putBack()
+      } catch {
+        // Nothing more can be done here; the next refresh shows the engine's real policy.
+      }
       if (cancelled) return
       setCompareResult(a && b ? { a, b } : null)
     })()
