@@ -471,23 +471,35 @@ const AsicVisual: React.FC = () => {
         <line x1={310} y1={100} x2={350} y2={100} className="stroke-warning" strokeWidth={2} />
         <rect
           x={350}
-          y={55}
+          y={45}
           width={130}
-          height={90}
+          height={110}
           rx={6}
           className="fill-warning/25 stroke-warning"
           strokeWidth={2}
         />
-        <text x={415} y={85} textAnchor="middle" className="fill-foreground text-[10px] font-bold">
+        <text x={415} y={72} textAnchor="middle" className="fill-foreground text-[10px] font-bold">
           PQC engine
         </text>
-        <text x={415} y={102} textAnchor="middle" className="fill-muted-foreground text-[9px]">
-          fixed algorithms
+        <text x={415} y={88} textAnchor="middle" className="fill-muted-foreground text-[9px]">
+          fixed circuits
         </text>
-        <text x={415} y={116} textAnchor="middle" className="fill-muted-foreground text-[9px]">
-          fixed parameter sets
+        <text
+          x={415}
+          y={101}
+          textAnchor="middle"
+          className="fill-muted-foreground text-[9px]"
+          data-testid="asic-parameters-label"
+        >
+          <tspan x={415}>parameters fixed unless </tspan>
+          <tspan x={415} dy={11}>
+            microcode/firmware{' '}
+          </tspan>
+          <tspan x={415} dy={11}>
+            is writable
+          </tspan>
         </text>
-        <text x={415} y={130} textAnchor="middle" className="fill-muted-foreground text-[9px]">
+        <text x={415} y={139} textAnchor="middle" className="fill-muted-foreground text-[9px]">
           fixed clock
         </text>
         <text x={500} y={80} className="fill-foreground text-[9px]">

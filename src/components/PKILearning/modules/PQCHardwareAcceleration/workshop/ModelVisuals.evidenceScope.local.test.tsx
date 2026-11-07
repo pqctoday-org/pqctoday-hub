@@ -28,4 +28,16 @@ describe('Authored acceleration diagrams preserve their evidence limits', () => 
     expect(screen.queryByText(/NPU quantisation rounds by design/)).not.toBeInTheDocument()
     expect(screen.queryByText(/fixed-function NPU has no such neighbour/)).not.toBeInTheDocument()
   })
+
+  it('labels the hard-wired engine by circuits, with parameters fixed only unless microcode or firmware is writable', () => {
+    render(<ModelVisual id="asic" />)
+    expect(screen.getByRole('img', { name: 'ASIC engine' })).toBeInTheDocument()
+    expect(screen.getByText('fixed circuits')).toBeInTheDocument()
+    const label = screen.getByTestId('asic-parameters-label')
+    expect((label.textContent ?? '').replace(/\s+/g, ' ').trim()).toBe(
+      'parameters fixed unless microcode/firmware is writable'
+    )
+    expect(screen.queryByText('fixed algorithms')).not.toBeInTheDocument()
+    expect(screen.queryByText('fixed parameter sets')).not.toBeInTheDocument()
+  })
 })
