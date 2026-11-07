@@ -534,8 +534,8 @@
   {
     "term": "3-D Secure",
     "acronym": "3DS",
-    "definition": "A payment authentication protocol for card-not-present (e-commerce) transactions. Version 2.0 uses ECDSA challenge signing and risk-based authentication.",
-    "technicalNote": "3DS 2.0 challenge signatures use ECDSA P-256, which is quantum-vulnerable. The frictionless flow relies on device fingerprinting and behavioral analysis (quantum-safe). PQC migration targets the challenge signing component.",
+    "definition": "A payment authentication protocol for card-not-present transactions. Version 2.x combines risk-based analysis with an optional cardholder challenge.",
+    "technicalNote": "Open sources describe the issuer's signed authentication token using ES256 (ECDSA P-256) or PS256 (RSA-PSS), a P-256 Diffie-Hellman key agreement between the SDK and the issuer for the challenge channel, and device information encrypted to the directory server's public key. These public-key mechanisms are quantum-vulnerable. The EMV specification itself was not read, so this entry does not say which component signs the challenge.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
     "category": "protocol"
