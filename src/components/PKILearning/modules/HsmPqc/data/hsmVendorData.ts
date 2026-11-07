@@ -26,10 +26,10 @@ export interface HSMVendor {
   firmwareVersion: string
   pkcs11Version: string
   /**
-   * Omitted (the card reads "Not stated") unless a source held in this repository states it. Only
-   * Thales Luna carries a flag: the product catalog row for Thales Luna HSM says software v7.9.1
-   * adds hybrid KEM (ML-KEM) for NTLS SSH and REST APIs. No held source states hybrid support, or
-   * its absence, for the other vendors.
+   * Omitted (the card reads "Not stated") unless a source held in this repository states hybrid
+   * support for the same firmware and objects the card describes. No held source does for any
+   * vendor: the catalogue row for Thales Luna HSM names hybrid KEM only for software v7.9.1 and
+   * its NTLS SSH and REST APIs, which is narrower than a card flag can say.
    */
   hybridSupport?: boolean
   sideChannelCountermeasures: string[]
@@ -59,7 +59,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'network',
     firmwareVersion: '7.9.0 or newer',
     pkcs11Version: '3.0 (PQC extensions)',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Constant-time NTT',
       'Power analysis shielding',

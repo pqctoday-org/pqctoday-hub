@@ -67,6 +67,7 @@ describe('HSM vendor hybrid flags', () => {
 
   it('leaves the flag unset (the card reads "Not stated") wherever no held source states it', () => {
     const unsourced = [
+      'thales-luna',
       'entrust-nshield',
       'utimaco',
       'marvell-ls2',
@@ -85,12 +86,7 @@ describe('HSM vendor hybrid flags', () => {
     }
   })
 
-  it('keeps the flag for Thales Luna only, which the product catalog row sources', () => {
-    // The catalog row for Thales Luna HSM says software v7.9.1 adds hybrid KEM (ML-KEM) for NTLS
-    // SSH and REST APIs. No held source says anything about hybrid support for the other vendors.
-    expect(flag('thales-luna')).toBe(true)
-    expect(HSM_VENDORS.filter((v) => v.hybridSupport !== undefined).map((v) => v.id)).toEqual([
-      'thales-luna',
-    ])
+  it('sets no flag for any vendor, because no held source covers the firmware and objects a flag states', () => {
+    expect(HSM_VENDORS.filter((v) => v.hybridSupport !== undefined)).toEqual([])
   })
 })
