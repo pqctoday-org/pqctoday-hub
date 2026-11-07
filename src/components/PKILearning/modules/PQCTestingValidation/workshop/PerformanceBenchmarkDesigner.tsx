@@ -36,7 +36,7 @@ const METRICS = [
     label: 'Certificate Size',
     unit: 'KB',
     maxVal: 20,
-    description: 'Leaf certificate size (affects ClientHello fragmentation)',
+    description: 'Leaf certificate size (affects the Certificate message flight, not ClientHello)',
   },
   {
     key: 'clientHelloBytes',
@@ -88,9 +88,9 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
       <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
         <BarChart2 size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">Simulating:</span> VIAVI TeraVM + PQC-LEO
-          benchmark data. Configure a network profile and metric to compare Classical vs Hybrid PQC
-          vs Pure PQC performance overhead.
+          <span className="font-semibold text-foreground">Illustrative comparison:</span> Explore
+          stored performance examples for Classical, Hybrid PQC and Pure PQC. This activity does not
+          execute benchmarks; selected profiles and adjustments are planning assumptions.
         </p>
       </div>
 
@@ -262,13 +262,19 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
         <div className="flex items-start gap-3 p-3 rounded-lg bg-status-warning/5 border border-status-warning/20">
           <Activity size={16} className="text-status-warning mt-0.5 shrink-0" />
           <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">Production-Scale KPIs:</span> Real-world
-            benchmarks reported in VIAVI&apos;s Testing, Measuring and Managing PQC Migration white
-            paper (TeraVM on Dell R6625 hardware — over a million emulated users, HAProxy TLS +
-            Strongswan IKEv2). Adjust environment and traffic pattern to model enterprise
-            conditions.
+            <span className="font-semibold text-foreground">Illustrative KPI adjustments:</span>{' '}
+            Stored reference values are attributed to VIAVI&apos;s Testing, Measuring and Managing
+            PQC Migration white paper; those source figures are not independently verified here. The
+            controls apply the arithmetic below, not a reproduced benchmark or a validated capacity,
+            queue or offered-load model.
           </p>
         </div>
+        <p className="text-xs text-muted-foreground">
+          TLS latency is multiplied by the selected environment factor. TLS rates are divided by
+          both environment and traffic factors. VPN latency is multiplied by the environment factor
+          and VPN rates divided by it; the traffic control does not change VPN values. These
+          authored adjustments do not measure how a deployment responds to load.
+        </p>
 
         {/* Environment scenario selector */}
         <div className="space-y-2">
@@ -346,7 +352,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
         {/* TLS KPI table */}
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-foreground">
-            HTTP + TLS KPIs — {ENVIRONMENT_SCENARIOS[envScenario].label}
+            HTTP + TLS arithmetic illustration — {ENVIRONMENT_SCENARIOS[envScenario].label}
             {trafficPattern !== 'steady-state' && ` × ${TRAFFIC_PATTERNS[trafficPattern].label}`}
           </h3>
           <div className="space-y-2">
@@ -417,7 +423,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
         {/* VPN KPI table */}
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-foreground">
-            IKEv2 IPSec VPN KPIs — {ENVIRONMENT_SCENARIOS[envScenario].label}
+            IKEv2 IPSec VPN arithmetic illustration — {ENVIRONMENT_SCENARIOS[envScenario].label}
           </h3>
           <div className="space-y-2">
             {PRODUCTION_VPN_KPIS.map((kpi) => {

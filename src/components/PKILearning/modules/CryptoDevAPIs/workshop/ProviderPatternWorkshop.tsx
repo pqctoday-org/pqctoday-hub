@@ -18,7 +18,6 @@ const PKCS11_LIVE_OPERATIONS = [
   'C_Login',
   'C_GenerateKeyPair',
   'C_GetMechanismList',
-  'C_GetMechanismInfo',
 ]
 
 const OPERATION_ITEMS: { id: string; label: string }[] = [
@@ -122,13 +121,15 @@ export const ProviderPatternWorkshop: React.FC = () => {
 
       // Get mechanism list
       const mechList = hsm_getMechanismList(M, slotId)
-      addLine(`C_GetMechanismList(slot=${slotId}) → ${mechList.length} mechanisms registered`)
+      addLine(
+        `C_GetMechanismList helper(slot=${slotId}) returned ${mechList.length} IDs; an empty result does not establish no support.`
+      )
 
       // Show a few PQC mechanism hex values
       const PQC_MECHS = [0x0f, 0x17, 0x1c, 0x1d, 0x2d, 0x2e]
       const pqcFound = mechList.filter((m) => PQC_MECHS.includes(m))
       addLine(
-        `PQC mechanisms: ${pqcFound.map((m) => `0x${m.toString(16).padStart(4, '0')}`).join(', ')}`
+        `Selected example mechanism IDs present (six-ID subset, not complete capability): ${pqcFound.map((m) => `0x${m.toString(16).padStart(4, '0')}`).join(', ') || '(none returned from this subset)'}`
       )
     } catch (e) {
       setLiveError(e instanceof Error ? e.message : String(e))
@@ -212,6 +213,16 @@ export const ProviderPatternWorkshop: React.FC = () => {
             </Button>
           </div>
 
+          <p className="text-xs text-muted-foreground">
+            This run generates an ML-DSA-65 sample key pair and queries C_GetMechanismList. The
+            printed IDs are a selected example subset, not the provider&apos;s complete PQC
+            capabilities. It does not execute C_GetMechanismInfo or inspect key-size limits or
+            operation flags. An empty helper result may mean no returned IDs, an unavailable query
+            or a query failure; it does not establish that the provider has no support. In your own
+            tools, query both list and mechanism information and test the intended algorithm,
+            parameters and key permissions; list presence alone does not establish that an operation
+            will succeed.
+          </p>
           {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
 
           {liveLines.length > 0 && (
@@ -270,13 +281,16 @@ export const ProviderPatternWorkshop: React.FC = () => {
       {/* Key Insight */}
       <div className="glass-panel p-4 border-l-4 border-primary">
         <h4 className="font-semibold text-primary mb-2">
-          Key Insight: Algorithm-Agnostic Business Logic
+          Key Insight: Separate Business Intent from Algorithm Details
         </h4>
         <p className="text-sm text-muted-foreground">
-          Notice how all examples follow the same structure: configure the provider once at startup,
-          then use the API&apos;s high-level objects (Signature, EVP_PKEY, CK_MECHANISM) for the
-          actual operation. The algorithm name is the only thing that changes between RSA-2048 and
-          ML-DSA-65. This is the foundation of crypto agility.
+          These examples illustrate separating a business operation, such as signing a buffer, from
+          API-specific setup and algorithm details. Some APIs use registered providers; others
+          instantiate algorithm classes directly. Moving from RSA to ML-DSA may require changes to
+          parameters, key types and storage, signatures and wire formats, identifiers, and peer
+          support — not just an algorithm-name substitution. In your own tools, check the exact
+          API/provider version and test the intended configuration and interoperability. This
+          separation supports crypto agility; these examples do not establish a drop-in migration.
         </p>
       </div>
 

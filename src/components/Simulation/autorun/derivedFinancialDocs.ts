@@ -23,7 +23,7 @@ import {
 import { compareCostModels } from '@/utils/costModelSim'
 import { costingInputsForSector } from './financialScenario'
 import { DELAY_COST_PROFILES } from '@/components/PKILearning/modules/PQCBusinessCase/data/businessCaseScenarios'
-import { ORG, CUR, type DemoDoc, type DemoSector } from './demoDocs'
+import { ORG, type DemoDoc, type DemoSector } from './demoDocs'
 import { EO_DEADLINE_CLAUSE, PROGRAM_START_YEAR } from '@/data/narrationFacts'
 
 interface DemoScenario {
@@ -126,7 +126,8 @@ interface SectorFinancials {
 /** One shared per-sector computation so every derived doc agrees. */
 function sectorFinancials(sector: DemoSector): SectorFinancials {
   const s = SCENARIO[sector]
-  const cur = CUR[sector]
+  // The shared specialist models use USD; sector location is not an FX conversion.
+  const cur = 'USD '
   const baseline = resolveIndustryBreachBaseline(s.industry)
   const breach = computeBreachCosts({
     baseline,
@@ -213,6 +214,8 @@ export function deriveBreachDoc(sector: DemoSector): DemoDoc {
     data: joinMd(
       `# Breach Scenario — ${ORG[sector]}`,
       '',
+      'Currency: USD. Shared-model amounts are shown without currency conversion.',
+      '',
       `Industry baseline (${s.industry}), IBM Cost of a Data Breach 2025.`,
       '',
       '| Metric | Value |',
@@ -238,6 +241,8 @@ export function deriveRoiDoc(sector: DemoSector): DemoDoc {
     data: joinMd(
       `# Migration Budget & ROI — ${ORG[sector]}`,
       '',
+      'Currency: USD. Shared-model amounts are shown without currency conversion.',
+      '',
       '| Metric | Value |',
       '|--------|-------|',
       `| Capital expenditure (${s.systems} systems) | ${fmt(cur, f.migrationCost)} |`,
@@ -261,6 +266,8 @@ export function deriveInactionDoc(sector: DemoSector): DemoDoc {
     title: 'Cost of Inaction',
     data: joinMd(
       `# Cost of Inaction — ${ORG[sector]}`,
+      '',
+      'Currency: USD. Shared-model amounts are shown without currency conversion.',
       '',
       '| Metric | Value |',
       '|--------|-------|',

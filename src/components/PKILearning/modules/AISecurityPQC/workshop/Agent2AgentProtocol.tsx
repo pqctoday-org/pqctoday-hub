@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Network, ShieldCheck, AlertTriangle } from 'lucide-react'
+import { Network } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import type {
   TransportProtocol,
@@ -157,8 +157,9 @@ export const Agent2AgentProtocol: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-1">Agent-to-Agent Protocol</h3>
         <p className="text-sm text-muted-foreground">
-          Design a PQC-secured communication protocol for autonomous agent-to-agent interactions.
-          Compare bandwidth, latency, and security against classical baselines.
+          Explore a hypothetical agent-to-agent configuration. Bandwidth and latency are
+          illustrative model estimates, not measured protocol results. No handshake, authentication,
+          signature or interoperability check is executed by these selections.
         </p>
       </div>
 
@@ -229,14 +230,16 @@ export const Agent2AgentProtocol: React.FC = () => {
 
       {/* Readiness matrix */}
       <div>
-        <h4 className="text-sm font-bold text-foreground mb-3">Readiness Matrix</h4>
+        <h4 className="text-sm font-bold text-foreground mb-3">
+          Illustrative configuration estimates
+        </h4>
         <div className="glass-panel overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left p-3 text-muted-foreground font-medium">Metric</th>
                 <th className="text-center p-3 text-status-error font-medium">Classical</th>
-                <th className="text-center p-3 text-primary font-medium">Your Config</th>
+                <th className="text-center p-3 text-primary font-medium">Selected example</th>
               </tr>
             </thead>
             <tbody>
@@ -257,7 +260,7 @@ export const Agent2AgentProtocol: React.FC = () => {
                 <td className="text-center p-3 font-mono">{metrics.perMessageOverheadBytes} B</td>
               </tr>
               <tr className="border-b border-border/50">
-                <td className="p-3 text-foreground">Handshake Latency</td>
+                <td className="p-3 text-foreground">Illustrative handshake latency</td>
                 <td className="text-center p-3 font-mono">
                   {CLASSICAL_METRICS.handshakeLatencyMs}ms
                 </td>
@@ -266,22 +269,12 @@ export const Agent2AgentProtocol: React.FC = () => {
                 </td>
               </tr>
               <tr className="border-b border-border/50">
-                <td className="p-3 text-foreground">Security Level</td>
-                <td className="text-center p-3">
-                  <AlertTriangle size={14} className="text-status-error inline" /> None
-                </td>
-                <td className="text-center p-3">
-                  {metrics.quantumSafe ? (
-                    <span className="inline-flex items-center gap-1 text-status-success">
-                      <ShieldCheck size={14} /> NIST {metrics.securityLevel}
-                    </span>
-                  ) : (
-                    <span className="text-status-warning">Partial</span>
-                  )}
-                </td>
+                <td className="p-3 text-foreground">Selected PQC KEM category only</td>
+                <td className="text-center p-3">No PQC KEM in this baseline</td>
+                <td className="text-center p-3">Category {metrics.securityLevel}</td>
               </tr>
               <tr className="border-b border-border/50">
-                <td className="p-3 text-foreground">Interoperability</td>
+                <td className="p-3 text-foreground">Illustrative transport rubric (not tested)</td>
                 <td className="text-center p-3">
                   {'★'.repeat(CLASSICAL_METRICS.interoperabilityScore)}
                 </td>
@@ -295,9 +288,17 @@ export const Agent2AgentProtocol: React.FC = () => {
         </div>
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        The category describes the selected PQC KEM constituent only, not the signing algorithm,
+        authentication method or complete protocol. The stars are a fixed teaching rubric, not
+        interoperability evidence. PSK strength and channel authentication are not evaluated here.
+      </p>
+
       {/* Throughput analysis */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">Throughput Analysis</h4>
+        <h4 className="text-sm font-bold text-foreground mb-3">
+          Illustrative bandwidth at assumed message rates
+        </h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {THROUGHPUT_LEVELS.map((rate) => {
             const classicalBW = (rate * CLASSICAL_METRICS.perMessageOverheadBytes) / 1024

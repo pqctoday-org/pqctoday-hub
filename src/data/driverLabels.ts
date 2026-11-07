@@ -53,6 +53,7 @@ export function formatDriver(tag: string): string {
       return `Credentials live for ${joined}`
     }
     case 'dataSensitivity':
+      if (value === 'unknown') return 'Data sensitivity not assessed'
       return `Data classified as ${value}`
     case 'currentCrypto':
       if (value === 'signing') return 'Signing algorithms in use (RSA / ECDSA / Ed25519)'

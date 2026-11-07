@@ -244,7 +244,7 @@ const riskPostureAuto: KpiAutoScoreFn = (data) => {
   return clamp(100 - data.riskScore)
 }
 
-// Hybrid deployment coverage — only explicitly selected organizational products.
+// Hybrid mentions — a text-based measure of the selected catalogue entries.
 const hybridCoverageAuto: KpiAutoScoreFn = (data) => {
   const products = data.myProducts
   if (products.length === 0) return null
@@ -253,7 +253,7 @@ const hybridCoverageAuto: KpiAutoScoreFn = (data) => {
     const s = (p.pqcSupport || '').toLowerCase()
     if (s.includes('hybrid')) hybridCount++
   }
-  return Math.round((hybridCount / data.totalProducts) * 100)
+  return Math.round((hybridCount / products.length) * 100)
 }
 
 // ── Catalog ──────────────────────────────────────────────────────────────
@@ -319,9 +319,9 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
   },
   {
     id: 'hybrid-deployment',
-    label: 'Hybrid Deployment Coverage',
+    label: 'Hybrid Mentions in Selected Catalogue Entries',
     description:
-      'Percentage of products your organization explicitly selected in Migrate that report hybrid PQC (for example, X25519 + ML-KEM).',
+      'Percentage of selected catalogue entries whose PQC support text contains “hybrid”. This text-based sample measure does not establish availability, deployment coverage or validated capability.',
     category: 'progress',
     surfaces: ['governance', 'migration'],
     weights: { architect: 0.1, researcher: 0.1, developer: 0.15 },
@@ -329,7 +329,8 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     userOverride: true,
     mappings: { csf2: 'PR.DS-2' },
     defaultTarget: 40,
-    disabledReason: 'Select the products your organization uses in Migrate to calculate this KPI.',
+    disabledReason:
+      'Select sample catalogue products in Migrate to calculate this text-based measure.',
   },
 
   // ── Vendor / Layer Readiness ──────────────────────────────────────────
@@ -633,6 +634,7 @@ export function buildDimensions(
           description: k.description,
           weight,
           autoScore: 0,
+          valueSource: 'calculated',
           userOverride: false,
           disabled: true,
           disabledReason: k.disabledReason,
@@ -652,6 +654,7 @@ export function buildDimensions(
           description: `Tiered PQC-ready share of ${stats.count} ${stats.count === 1 ? 'product' : 'products'} in the ${domainLabel} domain.`,
           weight: perDomainWeight,
           autoScore: score,
+          valueSource: 'calculated',
           userOverride: true,
           target,
           targetLabel: target !== undefined ? `Example target: ${target}` : undefined,
@@ -673,6 +676,7 @@ export function buildDimensions(
       description: k.description,
       weight,
       autoScore: auto ?? 0,
+      valueSource: k.autoScore === undefined ? 'manual' : 'calculated',
       userOverride: k.userOverride ?? true,
       disabled,
       disabledReason: disabled ? k.disabledReason : undefined,

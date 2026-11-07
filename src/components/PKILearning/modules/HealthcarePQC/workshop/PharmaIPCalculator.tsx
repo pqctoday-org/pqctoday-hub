@@ -55,7 +55,7 @@ function getUrgencyClassification(totalExposureM: number): {
       level: 'critical',
       label: 'Critical',
       description:
-        'Portfolio has massive HNDL exposure. Competitors capturing encrypted trial data now could skip years of R&D once CRQC arrives.',
+        'This fictional amount is in the sample’s critical range. It does not assess the selected encryption or its key-management and transport dependencies.',
     }
   }
   if (totalExposureM >= 1000) {
@@ -63,14 +63,14 @@ function getUrgencyClassification(totalExposureM: number): {
       level: 'high',
       label: 'High',
       description:
-        'Significant financial exposure from harvest-now-decrypt-later attacks. PQC migration for high-value compounds should begin immediately.',
+        'This fictional amount is in the sample’s high range. It does not assess the selected encryption or its key-management and transport dependencies.',
     }
   }
   return {
     level: 'medium',
     label: 'Medium',
     description:
-      'Moderate exposure. Consider PQC migration planning for early-phase compounds with long patent runways.',
+      'This fictional amount is in the sample’s medium range. It does not assess the selected encryption or its key-management and transport dependencies.',
   }
 }
 
@@ -152,9 +152,13 @@ export const PharmaIPCalculator: React.FC = () => {
     <div className="space-y-6">
       <UnresolvedEstimatesNotice detail="workshopExample" />
       <p className="text-sm text-foreground/80">
-        Model the financial exposure of your pharmaceutical IP portfolio to
-        harvest-now-decrypt-later (HNDL) attacks. Add compounds, set their development phase and
-        commercial value, then adjust the estimated CRQC arrival year to see how exposure changes.
+        Explore a fictional pharmaceutical planning scenario based on commercial value,
+        development-phase lifetime assumptions and a selected CRQC planning year. The timing/value
+        calculation does not use the selected encryption scheme; changing that selection updates its
+        label, not the scenario score. These outputs do not establish cryptographic exposure,
+        reduced risk or expected financial loss. In your own tools, assess data retention, key
+        establishment, key wrapping and transport dependencies, and test the supplier capabilities
+        you intend to use.
       </p>
 
       {/* ── Pipeline Builder ──────────────────────────────────────────── */}
@@ -297,11 +301,11 @@ export const PharmaIPCalculator: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Financial Exposure Dashboard ──────────────────────────────── */}
+      {/* ── Illustrative Timing/Value Dashboard ──────────────────────────────── */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <DollarSign size={16} className="text-primary" />
-          Financial Exposure Dashboard
+          Illustrative Timing/Value Dashboard
         </h4>
 
         <div className="space-y-2">
@@ -327,7 +331,7 @@ export const PharmaIPCalculator: React.FC = () => {
                     {entry.atRisk && (
                       <span className="inline-flex items-center gap-0.5 text-[10px] font-bold rounded px-1.5 py-0.5 bg-status-error/20 text-status-error">
                         <AlertTriangle size={10} />
-                        At Risk
+                        Timing Overlap
                       </span>
                     )}
                     {entry.isQuantumVulnerable && (
@@ -349,7 +353,7 @@ export const PharmaIPCalculator: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] text-muted-foreground">Exposure</div>
+                      <div className="text-[10px] text-muted-foreground">Scenario Amount</div>
                       <div
                         className={`font-mono font-bold ${
                           entry.atRisk ? 'text-status-error' : 'text-foreground'
@@ -373,7 +377,9 @@ export const PharmaIPCalculator: React.FC = () => {
 
         {/* Total row */}
         <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
-          <span className="text-sm font-bold text-foreground">Total Portfolio Exposure</span>
+          <span className="text-sm font-bold text-foreground">
+            Total Illustrative Scenario Amount
+          </span>
           <span
             className={`text-lg font-bold font-mono ${
               totalExposure > 0 ? 'text-status-error' : 'text-foreground'
@@ -389,11 +395,12 @@ export const PharmaIPCalculator: React.FC = () => {
         <div className="glass-panel p-4">
           <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
             <TrendingUp size={16} className="text-status-warning" />
-            Competitor R&amp;D Advantage Window
+            Illustrative R&amp;D Timing Window
           </h4>
           <p className="text-xs text-muted-foreground mb-3">
-            If a competitor harvests encrypted trial data now and decrypts it after CRQC arrives,
-            they could skip years of independent R&amp;D for each at-risk compound.
+            These phase/lifetime-based values illustrate a timing scenario. They do not predict
+            whether a competitor could decrypt the data or how much independent R&amp;D it could
+            save.
           </p>
 
           <div className="space-y-3">
@@ -413,7 +420,7 @@ export const PharmaIPCalculator: React.FC = () => {
                         {entry.compoundName}
                       </span>
                       <span className="text-xs font-mono text-status-warning">
-                        {entry.rdYearsSkipped} years skipped
+                        {entry.rdYearsSkipped} illustrative years
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2.5">
@@ -451,7 +458,7 @@ export const PharmaIPCalculator: React.FC = () => {
           </div>
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              HNDL Exposure
+              Scenario Amount
             </div>
             <div
               className={`text-lg font-bold font-mono mt-1 ${
@@ -463,7 +470,7 @@ export const PharmaIPCalculator: React.FC = () => {
           </div>
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              % at Risk
+              Scenario Amount / Value
             </div>
             <div
               className={`text-lg font-bold font-mono mt-1 ${
@@ -479,7 +486,7 @@ export const PharmaIPCalculator: React.FC = () => {
           </div>
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Compounds at Risk
+              Compounds with Timing Overlap
             </div>
             <div
               className={`text-lg font-bold font-mono mt-1 ${
@@ -499,7 +506,7 @@ export const PharmaIPCalculator: React.FC = () => {
         >
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle size={14} />
-            <span className="text-sm font-bold">Migration Urgency: {urgency.label}</span>
+            <span className="text-sm font-bold">Scenario Urgency: {urgency.label}</span>
           </div>
           <p className="text-xs opacity-90">{urgency.description}</p>
         </div>

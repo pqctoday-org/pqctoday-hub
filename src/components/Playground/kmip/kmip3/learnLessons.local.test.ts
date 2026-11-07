@@ -20,6 +20,8 @@ import { runOp as runRawOp } from '@/wasm/kmip/ttlv/runner'
 import { find } from '@/wasm/kmip/ttlv/nodes'
 import { LESSONS, type LessonSide, type LessonStep } from './learnLessons'
 
+import { lessonStepAchieved } from './lessonStepOutcome'
+
 const SPEC_JSON = JSON.parse(
   readFileSync(join(__dirname, '../../../../../public/kmip-corpus/tags-enums.json'), 'utf8')
 ) as Parameters<typeof CodepointTable.fromSpec>[0]
@@ -65,12 +67,7 @@ describe('Learn walkthrough step specs (real wasm engine)', () => {
       const stored = runStep(step, results)
       results.push(stored)
       const want = step.expect ?? 'success'
-      const achieved =
-        want === 'success'
-          ? stored.ok
-          : want === 'pending'
-            ? stored.status === 'OperationPending'
-            : !stored.ok && stored.status !== 'Error'
+      const achieved = lessonStepAchieved(step, stored)
       expect(
         achieved,
         `${lessonId}/${sideName} step ${i} (${step.label}) wanted ${want}, got ` +

@@ -47,9 +47,8 @@ import {
 } from './pipelineCodegen'
 import { StepInspectPanel } from './StepInspectPanel'
 import { optionsFor, validate, type Finding } from './pipelineBindings'
-import { TEMPLATES, TEMPLATE_NAMES, TEMPLATE_OUTCOMES } from './pipelineTemplates'
+import { TEMPLATES, TEMPLATE_NAMES } from './pipelineTemplates'
 import {
-  parseRun,
   loadStore,
   saveStore,
   exportPipelineJson,
@@ -59,6 +58,14 @@ import {
 } from './pipelineRun'
 import { PALETTE_ENTRIES, type PaletteEntry, type PrimitiveFamily } from './pipelineCatalogMeta'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
+import {
+  beginAttempt,
+  completeAttempt,
+  failAttempt,
+  attemptBinding,
+  type PkcsAttempt,
+  type PkcsAttemptInputs,
+} from './pkcsPipelineAttempt'
 import { createP11Bridge } from '../../../../services/python/pyodide/p11Bridge'
 
 // W1.3: name the real engine — this used to just say "softhsmv3 (browser)"
@@ -178,7 +185,11 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const [notice, setNotice] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
-  const [elapsedMs, setElapsedMs] = useState<number | null>(null)
+  const [attempt, setAttempt] = useState<PkcsAttempt | null>(null)
+  const [templateName, setTemplateName] = useState<string | null>('Encrypt + sign (PQ)')
+  const runningRef = useRef(false)
+  const attemptModule = useRef<unknown>(null)
+  const elapsedMs = attempt?.elapsedMs ?? null
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
   // D1: detach state. `detached` holds the learner's hand-edited script;
@@ -213,6 +224,23 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
     [pipeline, pipelineInput, devSlot]
   )
   const activeCode = detached ?? generatedPy
+  const currentAttemptInputs: PkcsAttemptInputs = {
+    name: pipelineName,
+    code: activeCode,
+    steps: pipeline,
+    input: pipelineInput,
+    slot: devSlot ?? -1,
+    engine: engineMode,
+    detached: detached !== null,
+    templateName,
+  }
+  const currentBinding = useRef('')
+  currentBinding.current = attemptBinding(currentAttemptInputs)
+  const attemptIsCurrent = Boolean(
+    attempt &&
+    attemptBinding(attempt.inputs) === currentBinding.current &&
+    attemptModule.current === moduleRef.current
+  )
   const findings = useMemo(() => validate(pipeline), [pipeline])
   const blocking = useMemo(() => findings.filter((f) => f.severity === 'error'), [findings])
 
@@ -367,109 +395,118 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   }, [detached, pipeline])
 
   const applyTemplate = (name: string) => {
+    setTemplateName(name)
     setPipelineName(name === 'Empty' ? 'Custom pipeline' : name)
     setPipeline(instantiate(TEMPLATES[name] ?? []))
     setRunError(null)
-    setElapsedMs(null)
     resyncToGenerated()
   }
 
   /* ── run — the P1-proven Pyodide seam replaces /api/run ── */
   const runAll = useCallback(async () => {
-    if (!detached && blocking.length) {
+    if (runningRef.current) return
+    if (detached === null && blocking.length) {
       flash(`${blocking.length} problem(s) to fix before running`)
       return
     }
-    if (!moduleRef.current) {
-      setRunError('softhsmv3 engine not ready yet — try again in a moment.')
-      return
-    }
-    if (devSlot === null) {
+    const runModule = moduleRef.current
+    const runRawModule = rawModuleRef.current
+    if (!runModule || devSlot === null) {
+      setAttempt(null)
       setRunError('Your Developer token is still initializing — try again in a moment.')
       return
     }
+    const inputs: PkcsAttemptInputs = {
+      name: pipelineName,
+      code: detached ?? emitPipeline(pipeline, { input: pipelineInput, slot: devSlot }),
+      steps: pipeline,
+      input: pipelineInput,
+      slot: devSlot,
+      engine: engineMode,
+      detached: detached !== null,
+      templateName,
+    }
+    const started = beginAttempt(inputs)
+    attemptModule.current = runModule
+    setAttempt(started)
+    runningRef.current = true
     setRunning(true)
     setRunError(null)
-    if (!detached) {
-      setPipeline((prev) =>
-        prev.map((s) => ({ ...s, status: 'running' as StepStatus, output: null }))
-      )
-    }
-    const code = detached ?? emitPipeline(pipeline, { input: pipelineInput, slot: devSlot })
+    if (!inputs.detached)
+      setPipeline((prev) => prev.map((step) => ({ ...step, status: 'running', output: null })))
     const t0 = performance.now()
     try {
       const py = await bootPyRuntime()
-      const bridge = createP11Bridge(moduleRef.current)
-      py.registerJsModule('p11_bridge', bridge)
-      const result = await runPython(code)
-      const elapsed = performance.now() - t0
-      if (!detached) {
-        const outcome = parseRun(
-          result.stdout + (result.error ? `\n${result.error}` : ''),
-          pipeline,
-          result.ok ? 0 : 1
-        )
-        setPipeline((prev) =>
-          prev.map((s) => ({
-            ...s,
-            status: outcome.status[s.id] ?? 'skipped',
-            output: outcome.text[s.id]
-              ? {
-                  text: outcome.text[s.id],
-                  status: outcome.status[s.id] === 'error' ? 'error' : 'ok',
-                  detail: outcome.detail[s.id],
-                }
-              : null,
-          }))
-        )
-        setRunError(outcome.error)
-
-        // Register any keys this run generated into the shared key
-        // registry — a real scan on a long-lived session against the SAME
-        // slot the script used (not the script's own, which is already
-        // closed by the time we're back in JS). pipelineCodegen.ts now
-        // generates keys token=True specifically so this scan finds real,
-        // still-existing objects; discoverHsmObjectsOnSession stamps each
-        // with the real CKA_UNIQUE_ID (identity) and this session's handle
-        // (a same-session convenience, never treated as identity
-        // downstream — see HsmKey.uniqueId's doc comment for why that
-        // distinction matters here specifically).
-        //
-        // reloginDevSlotSession runs EVERY time, not just on first open —
-        // real bug found live: the script's own s.logout() (the last line
-        // of every run) deauthenticates the whole TOKEN, including this
-        // kept-open session, so private objects silently stop appearing in
-        // the scan (C_FindObjects doesn't error, it just sees less) unless
-        // re-authenticated first. Doing this here also covers the Key
-        // inspector's later live queries for free — login stays valid
-        // until the NEXT run's script logs out again.
-        if (rawModuleRef.current && devSlot !== null) {
-          try {
-            // ensureDevSlotSession opens on first use and re-logs-in on every
-            // later call, so the open/relogin branch this used to spell out by
-            // hand now lives with the session's owner.
-            const devSession = ensureDevSlotSession(rawModuleRef.current, devSlot)
-            discoverHsmObjectsOnSession(rawModuleRef.current, devSession, hsmCtx)
-          } catch {
-            // best-effort — a registration failure isn't a run failure
-          }
+      py.registerJsModule('p11_bridge', createP11Bridge(runModule))
+      const result = await runPython(started.inputs.code)
+      const finished = completeAttempt(started.inputs, result, Math.round(performance.now() - t0))
+      setAttempt(finished)
+      if (
+        currentBinding.current === attemptBinding(started.inputs) &&
+        moduleRef.current === runModule
+      ) {
+        setRunError(finished.error)
+        if (!inputs.detached && finished.parsed) {
+          const outcome = finished.parsed
+          setPipeline((prev) =>
+            prev.map((step) => ({
+              ...step,
+              status: outcome.status[step.id] ?? 'skipped',
+              output:
+                outcome.detail[step.id] || outcome.text[step.id]
+                  ? {
+                      text: outcome.text[step.id] ?? '',
+                      status: outcome.status[step.id] === 'error' ? 'error' : 'ok',
+                      detail: outcome.detail[step.id],
+                    }
+                  : null,
+            }))
+          )
         }
-      } else {
-        setRunError(result.ok ? null : (result.error ?? 'run failed'))
       }
-      setElapsedMs(Math.round(elapsed))
-    } catch (e) {
-      if (!detached) {
-        setPipeline((prev) =>
-          prev.map((s) => ({ ...s, status: 'idle' as StepStatus, output: null }))
-        )
+      // Preserve the existing Developer-slot session and discovery interface.
+      // Never attach an old engine's objects to a newly selected engine.
+      if (
+        !inputs.detached &&
+        runRawModule &&
+        rawModuleRef.current === runRawModule &&
+        moduleRef.current === runModule
+      ) {
+        try {
+          const devSession = ensureDevSlotSession(runRawModule, inputs.slot)
+          discoverHsmObjectsOnSession(runRawModule, devSession, hsmCtx)
+        } catch {
+          // Discovery is best-effort; it does not establish a crypto outcome.
+        }
       }
-      setRunError(`Could not run: ${(e as Error).message}`)
-      setElapsedMs(null)
+    } catch (error) {
+      const failed = failAttempt(started.inputs, error, Math.round(performance.now() - t0))
+      setAttempt(failed)
+      if (
+        currentBinding.current === attemptBinding(started.inputs) &&
+        moduleRef.current === runModule
+      ) {
+        setRunError(failed.error)
+        if (!inputs.detached)
+          setPipeline((prev) => prev.map((step) => ({ ...step, status: 'idle', output: null })))
+      }
     } finally {
+      runningRef.current = false
       setRunning(false)
     }
-  }, [pipeline, pipelineInput, blocking.length, detached, moduleRef, rawModuleRef, devSlot, hsmCtx])
+  }, [
+    pipeline,
+    pipelineName,
+    pipelineInput,
+    templateName,
+    engineMode,
+    blocking.length,
+    detached,
+    moduleRef,
+    rawModuleRef,
+    devSlot,
+    hsmCtx,
+  ])
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -512,12 +549,12 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
       flash('Not a valid pipeline export file')
       return
     }
+    setTemplateName(null)
     setPipelineName(parsed.name)
     setPipeline(instantiate(parsed.pipeline.steps))
     setPipelineInput(parsed.pipeline.input)
     resyncToGenerated()
     setRunError(null)
-    setElapsedMs(null)
     flash(`Imported "${parsed.name}"`)
   }
 
@@ -531,12 +568,12 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const loadPipeline = (name: string) => {
     const saved = store[name]
     if (!saved) return
+    setTemplateName(null)
     setPipelineName(name)
     setPipeline(saved.steps)
     setPipelineInput(saved.input)
     resyncToGenerated()
     setRunError(null)
-    setElapsedMs(null)
   }
   const deleteSaved = (name: string) => {
     const next = { ...store }
@@ -558,7 +595,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const lastStep = pipeline[pipeline.length - 1]
   const lastSpec = lastStep ? PRIMITIVES[lastStep.primId] : undefined
 
-  const readOnly = !detached && !editUnlocked
+  const readOnly = detached === null && !editUnlocked
   // @monaco-editor/react (v4.7.0) only suppresses its onChange callback around
   // the CONTROLLED-value-update path it takes while the editor is EDITABLE
   // (`executeEdits`, guarded by an internal ref); while `readOnly` it instead
@@ -582,7 +619,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
     <Tabs
       value={activeView}
       onValueChange={(v) => setActiveView(v as 'builder' | 'code')}
-      className="flex flex-col h-[70vh] border rounded-lg overflow-hidden bg-background text-sm"
+      className="flex flex-col min-h-[70vh] lg:h-[70vh] border rounded-lg overflow-hidden bg-background text-sm"
     >
       <div className="p-4 border-b flex justify-between items-center gap-4 flex-wrap">
         <div className="min-w-0 flex-1">
@@ -593,10 +630,11 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
             className="text-lg font-semibold bg-transparent border border-transparent focus:border-input rounded px-1.5 py-0.5 w-full max-w-md outline-none"
           />
         </div>
-        <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+        <div className="flex w-full min-w-0 max-w-full items-center gap-2 flex-wrap sm:w-auto sm:shrink-0">
           <input
             ref={fileInputRef}
             type="file"
+            aria-label="Import pipeline JSON"
             accept="application/json"
             className="hidden"
             onChange={(e) => {
@@ -625,7 +663,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
               void runAll()
             }}
             title={
-              !detached && blocking.length
+              detached === null && blocking.length
                 ? `${blocking.length} problem(s) to fix first`
                 : 'Run (⌘/Ctrl+Enter)'
             }
@@ -637,7 +675,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
             )}
             {running ? 'Running…' : 'Run'}
           </Button>
-          <SyncStatusChip detached={!!detached} />
+          <SyncStatusChip detached={detached !== null} />
           {/* data-tour scopes a guided-lesson `clickByText` to THIS tablist,
               distinct from HsmPlayground.tsx's own top-level `role="tab"` bar. */}
           <TabsList data-tour="pkcs-dev-view-tabs">
@@ -659,7 +697,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
       {notice && (
         <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
       )}
-      {runError && (
+      {runError && (!attempt || attemptIsCurrent) && (
         <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
           ✗ {runError}
         </div>
@@ -670,9 +708,66 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
         </div>
       )}
 
+      {attempt && (
+        <section
+          aria-label="Recorded sample attempt"
+          className="border-b p-4 text-xs space-y-2 break-words"
+        >
+          <p
+            className={attempt.state === 'passed' ? 'text-status-success' : 'text-muted-foreground'}
+          >
+            {attempt.state === 'passed'
+              ? 'Required sample steps completed.'
+              : attempt.state === 'script-finished'
+                ? 'Custom script finished without a reported runtime error; generated-step outcomes were not checked.'
+                : attempt.state === 'running'
+                  ? 'Sample attempt running.'
+                  : attempt.state === 'incomplete'
+                    ? 'Sample attempt incomplete.'
+                    : 'Sample attempt failed.'}
+          </p>
+          <p>
+            Attempt: {attempt.inputs.name} · {attempt.inputs.engine} · slot {attempt.inputs.slot} ·{' '}
+            {attempt.inputs.detached
+              ? 'custom script'
+              : `${attempt.inputs.steps.length} generated steps`}
+          </p>
+          {!attemptIsCurrent && (
+            <p className="text-status-warning">
+              Inputs changed—run again. This retained attempt belongs to its original code, inputs
+              and engine.
+            </p>
+          )}
+          {attempt.error && (
+            <p className="text-status-error whitespace-pre-wrap break-all">{attempt.error}</p>
+          )}
+          {attempt.state === 'passed' && attempt.explanation && (
+            <p>
+              <strong>What this sample demonstrated: </strong>
+              {attempt.explanation}
+            </p>
+          )}
+          {attempt.elapsedMs !== null && (
+            <p>Original attempt ran in {(attempt.elapsedMs / 1000).toFixed(2)}s.</p>
+          )}
+          <details>
+            <summary>Original inputs, submitted code and output</summary>
+            <p>
+              Template origin: {attempt.inputs.templateName ?? 'not established'}; template
+              explanations require unchanged generated steps.
+            </p>
+            <pre className="whitespace-pre-wrap break-all">{attempt.inputs.input}</pre>
+            <pre className="whitespace-pre-wrap break-all">{attempt.inputs.code}</pre>
+            <pre className="whitespace-pre-wrap break-all">
+              {[attempt.stdout, attempt.stderr].filter(Boolean).join('\n')}
+            </pre>
+          </details>
+        </section>
+      )}
+
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
       <TabsContent value="builder" className="mt-0 flex-1 min-h-0">
-        <div className="grid grid-cols-[280px_1fr_320px] gap-0 h-full overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)_320px] gap-0 h-full overflow-auto">
           {/* LEFT PALETTE */}
           <aside
             className="border-r p-3 overflow-auto flex flex-col gap-4"
@@ -763,7 +858,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
             />
 
             <div
-              className={`p-6 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`}
+              className={`p-6 flex-1 overflow-auto ${detached !== null ? 'opacity-40 pointer-events-none' : ''}`}
               data-tour="pkcs-dev-canvas"
             >
               <div className="max-w-3xl mx-auto flex flex-col items-center">
@@ -802,7 +897,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
                     >
                       {dragOverIndex === i && <InsertBar />}
                       <StepCard
-                        step={step}
+                        step={attemptIsCurrent ? step : { ...step, status: 'idle', output: null }}
                         index={i}
                         steps={pipeline}
                         findings={findings.filter((f) => f.stepIndex === i)}
@@ -837,7 +932,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
                   data-tour="pkcs-dev-output"
                 >
                   <div className="text-xs font-semibold uppercase text-status-success">
-                    Output bundle
+                    Planned output
                   </div>
                   <div className="font-mono text-xs mt-1">
                     {pipeline.length
@@ -846,14 +941,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
                   </div>
                   <div className="font-mono text-[11px] text-muted-foreground mt-0.5">
                     {pipeline.length} step{pipeline.length === 1 ? '' : 's'}
-                    {elapsedMs != null && ` · ran in ${(elapsedMs / 1000).toFixed(2)}s`}
                   </div>
-                  {elapsedMs != null && TEMPLATE_OUTCOMES[pipelineName] && (
-                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                      <span className="text-status-success">What this proved: </span>
-                      {TEMPLATE_OUTCOMES[pipelineName]}
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -915,11 +1003,14 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
                 Validation
               </div>
               <div className="flex flex-col gap-1.5 text-xs">
-                {!detached && findings.length === 0 && (
+                {detached === null && findings.length === 0 && (
                   <ValRow ok text="Every step input is bound" />
                 )}
-                {!detached && findings.map((f, i) => <ValRow key={i} ok={false} text={f.text} />)}
-                {detached && <ValRow ok text="Custom script — builder validation skipped" />}
+                {detached === null &&
+                  findings.map((f, i) => <ValRow key={i} ok={false} text={f.text} />)}
+                {detached !== null && (
+                  <ValRow ok text="Custom script — builder validation skipped" />
+                )}
               </div>
             </Card>
           </aside>
@@ -944,7 +1035,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
         )}
 
         {/* Change 2 (banner) + Change 3 (the "Try to apply" action) */}
-        {detached && (
+        {detached !== null && (
           <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex flex-col gap-2">
             <span className="text-status-warning">
               ⚠ Custom script — edits won't appear in the Builder until resolved.

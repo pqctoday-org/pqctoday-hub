@@ -126,7 +126,8 @@ describe('Learn lessons run from a fresh, unbooted page (B10 regression)', () =>
             detail = e instanceof Error ? e.message : String(e)
             outcome = classifyStepOutcome(
               step.expect,
-              logRef.current.slice(0, logRef.current.length - logCountBefore)
+              logRef.current.slice(0, logRef.current.length - logCountBefore),
+              step.expectedRefusal
             )
           }
           expect(detail, `${lesson.id} step ${i}: the reported error must be gone`).not.toContain(

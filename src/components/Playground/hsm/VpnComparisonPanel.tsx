@@ -38,6 +38,7 @@ const KEX_QUANTUM_SAFE: Record<IKEv2Mode, boolean> = {
 
 const SPEC_CITATIONS = [
   { label: 'RFC 7296 (IKEv2)', href: 'https://www.rfc-editor.org/rfc/rfc7296' },
+  { label: 'RFC 8784 (Additional PSK mixing)', href: 'https://www.rfc-editor.org/rfc/rfc8784' },
   { label: 'RFC 9242 (IKE_INTERMEDIATE)', href: 'https://www.rfc-editor.org/rfc/rfc9242' },
   { label: 'RFC 9370 (Multiple KE)', href: 'https://www.rfc-editor.org/rfc/rfc9370' },
   { label: 'RFC 7383 (IKE Fragmentation)', href: 'https://www.rfc-editor.org/rfc/rfc7383' },
@@ -192,8 +193,11 @@ function ModeCard({ mode, selected }: { mode: IKEv2Mode; selected: boolean }) {
 
         <div className="pt-2 border-t border-border/30">
           <p className="text-[10px] text-muted-foreground leading-relaxed">
-            Authentication is a separate axis: PSK or RSA certificates remain classical in every
-            mode — only ML-DSA certificates make IKE_AUTH quantum-safe (see table below).
+            Authentication and key establishment are separate choices. PSK authentication relies on
+            a securely shared secret with sufficient entropy; RSA signatures are vulnerable to a
+            cryptographically relevant quantum computer, while ML-DSA is a post-quantum signature
+            option. Authentication alone does not establish post-quantum confidentiality. Ordinary
+            IKEv2 PSK authentication is not the additional key-mixing extension in RFC 8784.
           </p>
         </div>
       </div>

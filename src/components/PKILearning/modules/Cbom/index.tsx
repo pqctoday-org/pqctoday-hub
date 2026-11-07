@@ -26,7 +26,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'cbom-verify',
     title: 'Step 3: Policy-as-Code Verify',
-    description: 'Evaluate the inventory against a quantum-safe policy.',
+    description:
+      'Explore algorithm-name heuristics and identify the checks needed to assess an applicable policy.',
     icon: ShieldCheck,
   },
   {

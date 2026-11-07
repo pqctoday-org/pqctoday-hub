@@ -131,6 +131,8 @@ export interface ExecutiveDocument {
   title: string
   data: string
   createdAt: number
+  /** Only present when a Simulation run explicitly owns this generated document. */
+  simulationRunId?: string
   /** Last edit time. Defaults to `createdAt` when omitted. The store
    *  populates this on `addExecutiveDocument` if the caller didn't set it. */
   updatedAt?: number

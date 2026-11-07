@@ -207,6 +207,66 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
   const { files, addFile, addLog } = useOpenSSLStore()
   const [lmsType, setLmsType] = React.useState<number>(0x06) // Default H10
   const [lmotsType, setLmotsType] = React.useState<number>(0x04) // Default W8
+  const [isSigning, setIsSigning] = React.useState(false)
+  const [signError, setSignError] = React.useState<string | null>(null)
+  const signingRef = React.useRef(false)
+
+  const handleSign = async () => {
+    if (signingRef.current || !lmsKeyFile || !lmsDataFile) return
+    signingRef.current = true
+    setIsSigning(true)
+    setSignError(null)
+    const keyName = lmsKeyFile
+    const dataName = lmsDataFile
+    try {
+      addLog('info', 'Signing sample message...')
+      const { lmsService } = await import('../../../../wasm/LmsService')
+      // Read the current store at execution time, not the file array captured by
+      // an earlier render. The next operation must consume the updated key file.
+      const currentFiles = useOpenSSLStore.getState().files
+      const privateFile = currentFiles.find((file) => file.name === keyName)
+      const dataFile = currentFiles.find((file) => file.name === dataName)
+      if (!privateFile) throw new Error(`Private key file ${keyName} not found.`)
+      if (!dataFile) throw new Error('Selected data file not found.')
+      const privateBytes = new Uint8Array(fromPEM(privateFile.content))
+      const messageBytes =
+        typeof dataFile.content === 'string'
+          ? new TextEncoder().encode(dataFile.content)
+          : new Uint8Array(dataFile.content)
+      const { signature, updatedPrivateKey } = await lmsService.sign(privateBytes, messageBytes)
+      // Update the browser-session key file before publishing the signature.
+      // This does not establish durable or rollback-safe storage.
+      const updatedPem = toPKCS8(updatedPrivateKey)
+      addFile({
+        name: keyName,
+        type: 'text',
+        content: updatedPem,
+        size: updatedPem.length,
+        timestamp: Date.now(),
+      })
+      const signatureName = `${keyName.replace('.key', '')}_${Date.now()}.sig`
+      addFile({
+        name: signatureName,
+        type: 'binary',
+        content: signature,
+        size: signature.length,
+        timestamp: Date.now(),
+      })
+      setLmsSigFile(signatureName)
+      addLog('info', `Message signed! Saved ${signatureName}`)
+      addLog(
+        'info',
+        `WARNING: LMS private key state updated in this browser session (${keyName}). Do not revert to old key state!`
+      )
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error)
+      setSignError(detail)
+      addLog('error', `LMS signing did not complete: ${detail}`)
+    } finally {
+      signingRef.current = false
+      setIsSigning(false)
+    }
+  }
 
   // Auto-select files if only one option exists and nothing selected
   useEffect(() => {
@@ -345,6 +405,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
         <Button
           variant="ghost"
           data-testid="lms-mode-generate"
+          disabled={isSigning}
           onClick={() => setMode('generate')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
             mode === 'generate'
@@ -357,6 +418,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
         <Button
           variant="ghost"
           data-testid="lms-mode-sign"
+          disabled={isSigning}
           onClick={() => setMode('sign')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
             mode === 'sign'
@@ -369,6 +431,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
         <Button
           variant="ghost"
           data-testid="lms-mode-verify"
+          disabled={isSigning}
           onClick={() => setMode('verify')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
             mode === 'verify'
@@ -545,6 +608,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           <div className="space-y-3">
             <span className="text-xs text-muted-foreground block">Signing Key (Private Key)</span>
             <FilterDropdown
+              disabled={isSigning}
               selectedId={lmsKeyFile}
               onSelect={(id) => setLmsKeyFile(id)}
               items={files
@@ -565,80 +629,32 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
           <Button
             variant="ghost"
-            disabled={!lmsDataFile || !lmsKeyFile}
-            onClick={async () => {
-              try {
-                addLog('info', 'Signing message... (This may take a moment)')
-                const { lmsService } = await import('../../../../wasm/LmsService')
-
-                // Find private key
-                const privKeyFile = files.find((f) => f.name === lmsKeyFile)
-
-                if (!privKeyFile) {
-                  throw new Error(`Private key file ${lmsKeyFile} not found.`)
-                }
-
-                const dataFile = files.find((f) => f.name === lmsDataFile)
-                if (!dataFile) {
-                  throw new Error('Selected data file not found.')
-                }
-                // Helper to ensure Uint8Array
-                const toUint8 = (content: string | Uint8Array) => {
-                  if (typeof content === 'string') {
-                    return new TextEncoder().encode(content)
-                  }
-                  return content
-                }
-
-                // Decode Private Key from PEM
-                const privRaw = fromPEM(privKeyFile.content)
-
-                const { signature, updatedPrivateKey } = await lmsService.sign(
-                  privRaw,
-                  toUint8(dataFile.content)
-                )
-
-                const sigName = `${lmsKeyFile.replace('.key', '')}_${Date.now()}.sig`
-                addFile({
-                  name: sigName,
-                  type: 'binary',
-                  content: signature,
-                  size: signature.length,
-                  timestamp: Date.now(),
-                })
-
-                // Update Private Key State (Wrap in PEM)
-                const updatedPrivPem = toPKCS8(updatedPrivateKey)
-                addFile({
-                  name: privKeyFile.name, // Overwrite existing
-                  type: 'text',
-                  content: updatedPrivPem,
-                  size: updatedPrivPem.length,
-                  timestamp: Date.now(),
-                })
-
-                setLmsSigFile(sigName)
-                addLog('info', `Message signed! Saved ${sigName}`)
-                addLog(
-                  'info',
-                  `WARNING: LMS Private Key State Updated (${privKeyFile.name}). Do not revert to old key state!`
-                )
-              } catch (e: unknown) {
-                console.error(e)
-                addLog(
-                  'error',
-                  'LMS Signing failed: ' + (e instanceof Error ? e.message : String(e))
-                )
-              }
-            }}
+            disabled={isSigning || !lmsDataFile || !lmsKeyFile}
+            onClick={handleSign}
             className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${
               lmsDataFile && lmsKeyFile
                 ? 'bg-primary/10 hover:bg-primary/20 text-primary border-primary/30'
                 : 'bg-muted text-muted-foreground border-border cursor-not-allowed'
             }`}
           >
-            Sign Selected Data File
+            {isSigning ? 'Signing sample…' : 'Sign Selected Data File'}
           </Button>
+          {signError && (
+            <div
+              role="alert"
+              className="rounded border border-destructive/30 bg-destructive/10 p-3 text-xs"
+            >
+              <p className="font-semibold">Sample signing did not complete</p>
+              <p>{signError}</p>
+              <p>
+                Do not assume an earlier saved key state is safe to retry after a signing failure.
+              </p>
+            </div>
+          )}
+          <p className="text-[10px] text-muted-foreground">
+            Signing is serialized in this form. Updating a browser-session file does not establish
+            durable, rollback-safe storage of a stateful signing key.
+          </p>
           {!lmsDataFile && (
             <p className="text-[10px] text-status-warning text-center">
               Select a Data File below to sign.
@@ -767,6 +783,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           Data File to {mode === 'sign' ? 'Sign' : 'Verify'}
         </label>
         <FilterDropdown
+          disabled={isSigning}
           selectedId={lmsDataFile}
           onSelect={(id) => setLmsDataFile(id)}
           items={files

@@ -323,7 +323,7 @@ const CELL_TEMPLATES: Record<string, CellTemplate | typeof NOT_APPLICABLE> = {
     ],
     providerActions: ['Provider exposes the BYOK / HYOK import interface and wrapping algorithm'],
     notes:
-      'BYOK import depends on provider supporting the wrapping algorithm — typically lags algorithm GA by 1-2 quarters.',
+      'For BYOK import, verify the exact operation, key type, wrapping profile, region and version against provider documentation. Algorithm availability alone does not establish import support.',
   },
   'Customer-managed keys__SaaS': {
     owner: 'shared',
@@ -533,7 +533,7 @@ function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
   ) {
     const providerLabel = providers.length === 1 ? providers[0] : 'your selected provider(s)'
     out.push(
-      `BYOK / HYOK: customer-supplied ML-KEM-768 keys cannot be imported until ${providerLabel} adds the PQC wrapping algorithm — typically lags algorithm GA by 1-2 quarters. Confirm the wrap algorithm in writing before generating customer-side keys.`
+      `BYOK / HYOK: verify the exact import operation, key type and wrapping profile for ${providerLabel}, including the selected region and version, against provider documentation before generating customer-side keys. This worksheet does not establish that the combination is supported.`
     )
   }
 
@@ -560,7 +560,7 @@ function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
   )
   if (isEuSovereign && hasNonEuProvider) {
     out.push(
-      'EU sovereign cloud + non-EU provider: sovereign-cloud overlay constrains region selection and historically delays PQC rollout 12-18 months behind general availability. Verify your sovereign-region SKU has the same PQC roadmap as commercial.'
+      'EU sovereign cloud + non-EU provider: check the selected sovereign-region service and version in provider documentation, including the required operation, key type and wrapping profile. Do not assume that commercial-region availability establishes support for that combination.'
     )
   }
 

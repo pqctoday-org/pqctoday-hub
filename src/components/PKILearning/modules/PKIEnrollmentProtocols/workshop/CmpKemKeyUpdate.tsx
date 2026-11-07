@@ -29,31 +29,9 @@ interface KurResult {
 }
 
 /**
- * RFC 9810 — Internet X.509 PKI: Certificate Management Protocol (CMP), July 2025.
- *
- * NOT an "updates" document, despite what this comment said until 2026-08-23: RFC 9810
- * IS the CMP specification. Its own header reads "Obsoletes: 4210, 9480", and its
- * abstract says it "adds support for management of certificates containing a Key
- * Encapsulation Mechanism (KEM) public key and uses EnvelopedData instead of
- * EncryptedValue". Calling it a KEM update implied RFC 4210 was still the base spec.
- *
- * KEM keys can't sign, so signature-based POP isn't an option. RFC 9810
- * introduces "encrCert POP": the CA encapsulates the new EE cert under the
- * new EE's ML-KEM public key; the EE proves possession by decapsulating.
- *
- * What this step does end-to-end (all real crypto in the browser):
- *   1. Generate ML-KEM-768 keypair (genpkey, EVP backend).
- *   2. Run CMP IR through the in-process server (`execute_cmp_simulation`) to
- *      enroll the ML-KEM public key — the CA signs the cert with its own
- *      ML-DSA-65 key, so the chain is: ML-KEM EE → ML-DSA CA root.
- *   3. Encapsulate a 256-bit shared secret under the EE's ML-KEM pubkey
- *      (`pkeyutl -encap`) — this is the encrCert payload the CA returns.
- *   4. Decapsulate with the EE's ML-KEM private key (`pkeyutl -decap`) —
- *      this is the proof-of-possession round trip.
- *   5. Compare the two shared secrets byte-for-byte.
- *
- * Steps 1-2 mirror the IP message; steps 3-5 mirror the POP exchange the
- * client and CA actually run for RFC 9810 KUR.
+ * Sample CMP IR enrollment followed by a separate ML-KEM encapsulation /
+ * decapsulation round trip. No KUR, encrypted-certificate recovery or complete
+ * certificate-confirmation exchange is executed by this component.
  */
 export const CmpKemKeyUpdate: React.FC = () => {
   const [busy, setBusy] = useState(false)
@@ -71,7 +49,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
     setLogEntries([
       {
         status: 'pending',
-        message: 'Running RFC 9810 KUR pipeline (keygen → IR → encap → decap)…',
+        message: 'Running sample enrollment and KEM round trip (keygen → IR → encap → decap)…',
       },
     ])
     try {
@@ -132,7 +110,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
       )
 
       // 4. CA side: encapsulate a fresh shared secret under the EE's ML-KEM pubkey.
-      //    This is the encrCert payload that wraps the issued cert in RFC 9810.
+      //    This primitive round trip does not encrypt the issued certificate.
       setPhase('CA encapsulates shared secret under ML-KEM pubkey')
       const encapResult = await openSSLService.execute(
         `openssl pkeyutl -encap -inkey ${newPubPath} -pubin -out ${ctPath} -secret ${ssAPath}`,
@@ -143,8 +121,8 @@ export const CmpKemKeyUpdate: React.FC = () => {
       const ssAFile = encapResult.files.find((f) => '/' + f.name === ssAPath)
       if (!ctFile || !ssAFile) throw new Error('encap produced no ciphertext or shared secret')
 
-      // 5. EE side: decapsulate with the ML-KEM private key (proof-of-possession).
-      setPhase('EE decapsulates with ML-KEM private key (proof-of-possession)')
+      // 5. EE side: decapsulate the sample KEM ciphertext.
+      setPhase('EE decapsulates the sample shared secret with ML-KEM private key')
       const decapResult = await openSSLService.execute(
         `openssl pkeyutl -decap -inkey ${newKeyPath} -in ${ctPath} -out ${ssBPath}`,
         [
@@ -176,7 +154,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
       setLogEntries([
         {
           status: 'success',
-          message: `KUR complete — shared secrets ${match ? 'match' : 'DIFFER'}`,
+          message: `Sample KEM round trip — shared secrets ${match ? 'match' : 'DIFFER'}`,
           durationMs: Math.round(performance.now() - startedAt),
         },
       ])
@@ -186,7 +164,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
       setLogEntries([
         {
           status: 'error',
-          message: `KUR pipeline failed — ${msg}`,
+          message: `Sample enrollment / KEM round trip failed — ${msg}`,
           durationMs: Math.round(performance.now() - startedAt),
         },
       ])
@@ -200,29 +178,25 @@ export const CmpKemKeyUpdate: React.FC = () => {
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 flex items-start gap-3 text-sm">
         <Info size={16} className="mt-0.5 shrink-0 text-primary" />
         <div>
-          <div className="font-medium text-foreground">
-            RFC 9810 — Certificate Management Protocol (adds support for KEM keys, including
-            encrCert proof-of-possession)
-          </div>
+          <div className="font-medium text-foreground">CMP enrollment and ML-KEM round trip</div>
           <p className="mt-1 text-muted-foreground">
-            ML-KEM keys can't sign, so signature-POP doesn't apply. The CA{' '}
-            <strong>encapsulates</strong> the issued cert under the new ML-KEM public key; the EE
-            proves possession by <strong>decapsulating</strong>. This step runs the full flow: CMP
-            IR enrolls an ML-KEM-768 cert (CA signs with its ML-DSA-65 key), then encap → decap
-            proves the EE holds the matching private key. If the two derived shared secrets match,
-            POP succeeded.
+            This sample enrolls an ML-KEM certificate using the existing CMP IR simulation, then
+            separately encapsulates and decapsulates a sample shared secret. It does not send a KUR
+            request, encrypt and recover the issued certificate, or demonstrate the complete
+            certificate-confirmation exchange. Matching secrets establish agreement for this sample
+            KEM operation, not completed CMP proof of possession.
           </p>
         </div>
       </div>
 
       <details className="rounded-md border border-border bg-muted/30 p-3 text-sm">
         <summary className="cursor-pointer font-medium text-foreground flex items-center gap-2">
-          <BookOpen size={14} /> Standards backing this exchange (4 RFCs + 2 FIPS)
+          <BookOpen size={14} /> Related standards and further reading
         </summary>
         <div className="mt-3 space-y-2 text-xs text-muted-foreground">
           <p>
-            The cert this step issues is fully spec-conformant — every byte traces to a published
-            standard:
+            These references describe related formats and operations. A reference link does not
+            establish conformance or show that this sample executes every protocol step.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -291,7 +265,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
                   <td className="py-1">ML-DSA signing (CA side)</td>
                 </tr>
                 <tr className="border-b border-border/50">
-                  <td className="py-1 pr-2">CMP IR/IP envelope + encrCert POP</td>
+                  <td className="py-1 pr-2">CMP protocol and certificate confirmation</td>
                   <td className="py-1 pr-2">
                     <a
                       href="https://www.rfc-editor.org/rfc/rfc9810"
@@ -331,7 +305,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
         className="h-auto whitespace-normal flex items-center gap-2"
       >
         {busy ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}
-        {busy ? `Working: ${phase}` : 'Run ML-KEM-768 KUR (CMP IR + encrCert POP)'}
+        {busy ? `Working: ${phase}` : 'Run sample enrollment and KEM round trip'}
       </Button>
 
       {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
@@ -347,14 +321,16 @@ export const CmpKemKeyUpdate: React.FC = () => {
               <>
                 <CheckCircle2 size={16} />
                 <span>
-                  <strong>encrCert POP successful.</strong> CA-encapsulated secret matches
-                  EE-decapsulated secret byte-for-byte — the EE possesses the ML-KEM private key.
+                  <strong>Sample shared secrets match.</strong> The encapsulated and decapsulated
+                  secrets agree byte-for-byte for this sample KEM operation.
                 </span>
               </>
             ) : (
               <>
                 <AlertTriangle size={16} />
-                <span>Shared secrets DO NOT match — POP would be rejected.</span>
+                <span>
+                  Sample shared secrets differ — this KEM round trip did not establish agreement.
+                </span>
               </>
             )}
           </div>

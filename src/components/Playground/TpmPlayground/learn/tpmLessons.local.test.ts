@@ -3,8 +3,8 @@
 // Curriculum guarantee for the TPM Learn tab (Phase 1 WS6 of the 2026-07-23
 // remediation plan). Replays every lesson step against the REAL pqctpm WASM
 // engine — the same loader WS0(b) pinned — asserting each step reaches its
-// declared outcome (expect:'refusal' steps must throw; all others must
-// return). This is what stops the curriculum from silently drifting out of
+// declared outcome (refusal steps must throw a typed wire observation matching
+// their exact command and response code; other steps must return). This is what stops the curriculum from silently drifting out of
 // sync with the serializer / engine, mirroring
 // hsm/learn/pkcs11Lessons.local.test.ts and kmip3/learnLessons.local.test.ts.
 //
@@ -20,7 +20,12 @@ import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { describe, it, expect, beforeAll } from 'vitest'
-import { TPM_LESSONS, type TpmLearnContext, type TpmStepResult } from './tpmLessons'
+import {
+  TPM_LESSONS,
+  TpmObservedRefusal,
+  type TpmLearnContext,
+  type TpmStepResult,
+} from './tpmLessons'
 import { TPM_QUIZZES } from './tpmQuiz'
 import { TAG_GLOSSARY, TERMS } from './tpmGlossary'
 import { CC_NAMES } from '../tpmWireDecode'
@@ -52,6 +57,61 @@ function loadFactory(): Factory {
 
 // ── Structural curriculum invariants (no engine needed) ────────────────────
 describe('TPM curriculum structure', () => {
+  it('every expected-refusal step declares a command and exact nonzero response codes', () => {
+    const refusals = TPM_LESSONS.flatMap((l) => l.steps.filter((s) => s.expect === 'refusal'))
+    expect(refusals).toHaveLength(2)
+    for (const step of refusals) {
+      expect(step.expectedRefusal?.commandCode).toBeGreaterThan(0)
+      expect(step.expectedRefusal?.responseCodes.length).toBeGreaterThan(0)
+      expect(step.expectedRefusal?.responseCodes.every((rc) => rc > 0)).toBe(true)
+    }
+  })
+
+  it.each([false, true])(
+    'OAEP tamper changes one byte without crossing the modulus (trailing zeros: %s)',
+    async (trailingZeros) => {
+      const step = TPM_LESSONS.find((l) => l.id === 'key-establishment')!.steps.find(
+        (s) => s.expect === 'refusal'
+      )!
+      const original = new Uint8Array(256).fill(0xff)
+      if (trailingZeros) original.fill(0, 254)
+      const before = original.slice()
+      let sent: Uint8Array | undefined
+      const ctx = {
+        chain: { handles: { rsaDec: 0x80000000 }, rsaCiphertext: original },
+        exec: async (cmd: Uint8Array) => {
+          sent = cmd
+          return new Uint8Array([0x80, 1, 0, 0, 0, 10, 0, 0, 0, 0x84])
+        },
+      } as unknown as TpmLearnContext
+      await expect(step.run(ctx, [])).rejects.toBeInstanceOf(TpmObservedRefusal)
+      const ciphertext = sent!.slice(29, 285)
+      expect(SER.getU16(sent!, 27)).toBe(256)
+      expect(ciphertext.filter((b, i) => b !== before[i])).toHaveLength(1)
+      const integer = (bytes: Uint8Array) => BigInt('0x' + Buffer.from(bytes).toString('hex'))
+      expect(integer(ciphertext)).toBeLessThan(integer(before))
+      expect(original).toEqual(before)
+    }
+  )
+
+  it('does not send a refusal command for a missing or zero-filled ciphertext', async () => {
+    const step = TPM_LESSONS.find((l) => l.id === 'key-establishment')!.steps.find(
+      (s) => s.expect === 'refusal'
+    )!
+    let calls = 0
+    const ctx = {
+      chain: { handles: {}, rsaCiphertext: new Uint8Array(256) },
+      exec: async () => {
+        calls++
+        return new Uint8Array()
+      },
+    } as unknown as TpmLearnContext
+    await expect(step.run(ctx, [])).rejects.toThrow('nonzero')
+    ctx.chain.rsaCiphertext = undefined
+    await expect(step.run(ctx, [])).rejects.toThrow('Generate the 256-byte')
+    expect(calls).toBe(0)
+  })
+
   it('every lesson has a quiz bank and vice versa', () => {
     const lessonIds = TPM_LESSONS.map((l) => l.id).sort()
     const quizIds = Object.keys(TPM_QUIZZES).sort()
@@ -360,7 +420,17 @@ describe('TPM lessons replay against the real WASM engine', () => {
         const step = lesson.steps[i]
         const where = `${lesson.id} step ${i + 1} (${step.op})`
         if (step.expect === 'refusal') {
-          await expect(step.run(ctx, results), `${where} must be refused`).rejects.toThrow()
+          let observed: unknown
+          try {
+            await step.run(ctx, results)
+          } catch (e) {
+            observed = e
+          }
+          expect(observed, where).toBeInstanceOf(TpmObservedRefusal)
+          const refusal = observed as TpmObservedRefusal
+          expect(refusal.commandCode, where).toBe(step.expectedRefusal!.commandCode)
+          expect(step.expectedRefusal!.responseCodes, where).toContain(refusal.responseCode)
+          expect(refusal.response.length, where).toBe(10)
           continue
         }
         const r = await step.run(ctx, results)

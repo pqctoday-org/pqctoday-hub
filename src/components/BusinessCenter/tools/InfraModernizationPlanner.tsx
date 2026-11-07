@@ -41,7 +41,7 @@ export interface InfraModernizationState {
   certStorageMultiplier: string
 }
 
-/** Protocols exercised with PQC handshakes during Phase 6 compatibility testing. */
+/** Protocol topics selected for sample compatibility planning; no handshake is executed here. */
 export const PROTOCOL_OPTIONS = [
   'TLS 1.3',
   'IKEv2/IPsec',
@@ -113,15 +113,19 @@ export function buildMarkdown(s: InfraModernizationState): string {
   lines.push(`- **Cloud KMS configured for PQC:** ${yesNo(s.cloudKmsConfigured)}`)
   lines.push('')
 
-  lines.push('## Network Compatibility')
+  lines.push('## Network Compatibility Planning')
   lines.push('')
-  const tested = PROTOCOL_OPTIONS.filter((id) => s.protocols[id])
-  if (tested.length === 0) {
-    lines.push('_No protocols tested with PQC handshakes yet._')
+  lines.push(
+    'Selected planning topics only, including any defaults. This tool executes no handshakes or middlebox checks; protocol compatibility is not assessed. Use production tools to test the exact client/server versions and network path, and inspect negotiated parameters and failures.'
+  )
+  lines.push('')
+  const selected = PROTOCOL_OPTIONS.filter((id) => s.protocols[id])
+  if (selected.length === 0) {
+    lines.push('_No protocol topics selected._')
   } else {
-    lines.push('Protocols verified with PQC handshakes:')
+    lines.push('Selected protocol planning topics:')
     lines.push('')
-    for (const id of tested) {
+    for (const id of selected) {
       lines.push(`- ${id}`)
     }
   }
@@ -385,11 +389,13 @@ export const InfraModernizationPlanner: React.FC = () => {
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">
           Network &amp; Middleboxes · {protocolCount} protocol{protocolCount === 1 ? '' : 's'}{' '}
-          tested
+          selected
         </h3>
         <p className="text-xs text-muted-foreground">
-          Mark each protocol verified to complete a PQC handshake through your production network
-          and middleboxes. Grounded in NIST CSWP 39 §3.2.1 (Preserving Protocol Interoperability).
+          Select topics for sample compatibility planning; TLS 1.3 is preselected as an example. No
+          handshake or middlebox test runs here. With your production tools, test the exact
+          client/server versions and network path; inspect negotiated parameters and failure cases.
+          Protocol compatibility remains unassessed.
         </p>
         <div className="flex flex-wrap gap-2">
           {PROTOCOL_OPTIONS.map((id) => {

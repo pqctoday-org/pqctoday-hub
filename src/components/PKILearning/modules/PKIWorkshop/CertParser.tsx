@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
   FileText,
   Search,
@@ -19,7 +19,23 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import {
+  inspectSampleIssuer,
+  inspectSampleCrl,
+  classifySampleVerify,
+  sampleVerifyFailure,
+  sampleInputId,
+  type SampleCheckStatus,
+} from './crlOutcomes'
 import { getCryptoErrorHint } from '@/utils/cryptoErrorHint'
+
+interface VerificationRecord {
+  success: boolean
+  status: SampleCheckStatus
+  message: string
+  diagnostic: string
+  binding: string
+}
 
 interface CertParserProps {
   onComplete: () => void
@@ -48,10 +64,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
   } | null>(null)
   const [viewMode, setViewMode] = useState<'tree' | 'raw'>('tree')
   const [isVerifying, setIsVerifying] = useState(false)
-  const [verifyResult, setVerifyResult] = useState<{
-    success: boolean
-    message: string
-  } | null>(null)
+  const [verifyResult, setVerifyResult] = useState<VerificationRecord | null>(null)
   const [fingerprint, setFingerprint] = useState<string | null>(null)
   const [isFingerprintLoading, setIsFingerprintLoading] = useState(false)
   const [isVerifyingCsr, setIsVerifyingCsr] = useState(false)
@@ -60,14 +73,39 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     message: string
   } | null>(null)
   const [isVerifyingCrl, setIsVerifyingCrl] = useState(false)
-  const [crlVerifyResult, setCrlVerifyResult] = useState<{
-    success: boolean
-    message: string
-  } | null>(null)
+  const [crlVerifyResult, setCrlVerifyResult] = useState<VerificationRecord | null>(null)
+  const [selectedCaKey, setSelectedCaKey] = useState('')
+  const [selectedCrlKey, setSelectedCrlKey] = useState('')
+  const verificationRunning = useRef(false)
 
   // CRL files from OpenSSL Studio virtual filesystem
   const openSSLFiles = useOpenSSLStore((state) => state.files)
-  const crlFiles = openSSLFiles.filter((f) => f.name.endsWith('.crl'))
+  const crlFiles = openSSLFiles.filter((f) => f.name.toLowerCase().endsWith('.crl'))
+  // Choice keys bind names to exact bytes; array order and filename fragments
+  // never select trust inputs. Identical duplicates represent the same input.
+  const caChoices = [
+    ...new Map(
+      rootCAs.map((ca) => {
+        const key = `${ca.id}:${sampleInputId(ca.pem)}`
+        return [key, { ...ca, choiceKey: key }]
+      })
+    ).values(),
+  ]
+  const crlChoices = [
+    ...new Map(
+      crlFiles.map((crl) => {
+        const key = `${crl.name}:${sampleInputId(crl.content)}`
+        return [key, { ...crl, choiceKey: key }]
+      })
+    ).values(),
+  ]
+  const selectedCA = caChoices.find((c) => c.choiceKey === selectedCaKey)
+  const selectedCRL = crlChoices.find((c) => c.choiceKey === selectedCrlKey)
+  const chainBinding = sampleInputId(JSON.stringify([certInput, selectedCA?.choiceKey ?? '']))
+  const crlBinding = sampleInputId(JSON.stringify([chainBinding, selectedCRL?.choiceKey ?? '']))
+  const visibleVerifyResult = verifyResult?.binding === chainBinding ? verifyResult : null
+  const visibleCrlResult = crlVerifyResult?.binding === crlBinding ? crlVerifyResult : null
+  const verificationBusy = isVerifying || isVerifyingCrl
 
   // Hybrid cert files pushed by HybridCertFormats workshop
   const hybridCertFiles = openSSLFiles.filter(
@@ -79,73 +117,81 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
   const selectedIsEndEntity = Boolean(
     selectedArtifactId && certificates.find((c) => c.id === selectedArtifactId)
   )
-  const canVerifyChain = selectedIsEndEntity && rootCAs.length > 0
-  const canVerifyCrl = selectedIsEndEntity && rootCAs.length > 0 && crlFiles.length > 0
+  const canVerifyChain = selectedIsEndEntity && Boolean(selectedCA)
+  const canVerifyCrl = canVerifyChain && Boolean(selectedCRL)
   const isCrlInput = certInput.includes('BEGIN X509 CRL')
   const isCsrInput = certInput.includes('BEGIN CERTIFICATE REQUEST')
   const isCertInput = certInput.includes('BEGIN CERTIFICATE') && !isCrlInput
 
-  const handleVerifyChain = async () => {
-    if (!canVerifyChain) return
-
-    setIsVerifying(true)
-    setVerifyResult(null)
+  const performVerification = async (withCrl: boolean) => {
+    if (!(withCrl ? canVerifyCrl : canVerifyChain) || !selectedCA || verificationRunning.current)
+      return
+    const ca = selectedCA
+    const crl = selectedCRL
+    const input = certInput
+    const binding = withCrl ? crlBinding : chainBinding
+    const checkedAt = Math.floor(Date.now() / 1000)
+    const setResult = withCrl ? setCrlVerifyResult : setVerifyResult
+    verificationRunning.current = true
+    if (withCrl) setIsVerifyingCrl(true)
+    else setIsVerifying(true)
+    setResult(null)
     setError(null)
-
+    let status: SampleCheckStatus = 'incomplete'
+    let diagnostic = ''
+    let operationStarted = false
+    let interval = ''
     try {
-      const cert = certificates.find((c) => c.id === selectedArtifactId)
-      if (!cert) return
-
-      // Best-match root CA: find one whose subject matches the cert's issuer (S4-C: run for any count)
-      let rootCA = rootCAs[0]
-      if (parsedOutput) {
-        const issuerMatch = parsedOutput.match(/Issuer:\s*(.+)/i)
-        if (issuerMatch) {
-          const issuerStr = issuerMatch[1].trim()
-          const match = rootCAs.find((ca) => {
-            const caSubject = ca.metadata?.subject || ca.name
-            return (
-              caSubject.includes(issuerStr) ||
-              issuerStr.includes(caSubject) ||
-              issuerStr.split(',').some((part) => caSubject.includes(part.trim()))
-            )
-          })
-          if (match) rootCA = match
-        }
+      inspectSampleIssuer(input, ca.pem)
+      if (withCrl) {
+        if (!crl) throw new Error('Select a sample CRL explicitly')
+        const inspected = inspectSampleCrl(input, ca.pem, crl.content)
+        interval = `\nCRL interval: ${inspected.thisUpdate} to ${inspected.nextUpdate}`
       }
-
-      if (!rootCA) return
-
-      const certFile = { name: 'cert.pem', data: new TextEncoder().encode(cert.pem) }
-      const caFile = { name: 'ca.pem', data: new TextEncoder().encode(rootCA.pem) }
-
-      const result = await openSSLService.execute('openssl verify -CAfile ca.pem cert.pem', [
-        certFile,
-        caFile,
-      ])
-
-      if (result.error || result.stdout.includes('error')) {
-        setVerifyResult({
-          success: false,
-          message: `Chain verification failed: ${result.stderr || result.stdout}`,
+      const files = [
+        { name: 'cert.pem', data: new TextEncoder().encode(input) },
+        { name: 'ca.pem', data: new TextEncoder().encode(ca.pem) },
+      ]
+      if (withCrl && crl)
+        files.push({
+          name: 'crl.crl',
+          data:
+            typeof crl.content === 'string'
+              ? new TextEncoder().encode(crl.content)
+              : crl.content.slice(),
         })
-      } else {
-        setVerifyResult({
-          success: true,
-          message:
-            `Chain verified: ${cert.name} is signed by ${rootCA.name}.\n` +
-            `Note: openssl verify checks the certificate chain and signature only — it does NOT check CRL or OCSP revocation status.`,
-        })
-      }
+      operationStarted = true
+      const result = await openSSLService.execute(
+        `openssl verify -attime ${checkedAt} -no-CApath -no-CAstore -CAfile ca.pem ${withCrl ? '-CRLfile crl.crl -crl_check ' : ''}cert.pem`,
+        files
+      )
+      status = classifySampleVerify(result, withCrl)
+      diagnostic = [result.stdout, result.stderr, result.error].filter(Boolean).join('\n')
     } catch (err) {
-      setVerifyResult({
-        success: false,
-        message: err instanceof Error ? err.message : 'Verification failed',
-      })
+      const failure = sampleVerifyFailure(err)
+      status = operationStarted ? classifySampleVerify(failure, withCrl) : 'incomplete'
+      diagnostic = err instanceof Error ? err.message : String(err)
     } finally {
+      const outcome =
+        status === 'passed'
+          ? `Configured sample ${withCrl ? 'chain and CRL' : 'chain'} check passed.`
+          : status === 'revoked'
+            ? 'Sample certificate revoked: OpenSSL reported leaf revocation (error 23).'
+            : `Sample ${withCrl ? 'CRL' : 'chain'} check ${status === 'error' ? 'could not run' : 'incomplete'}${withCrl ? '—revocation status not established' : ''}.`
+      setResult({
+        success: status === 'passed',
+        status,
+        binding,
+        diagnostic,
+        message: `${outcome}\nCertificate: ${selectedArtifactName || 'selected PEM sample'}\nIssuer CA: ${ca.name} (input SHA-256 ${sampleInputId(ca.pem).slice(0, 12)})${withCrl && crl ? `\nCRL: ${crl.name} (input SHA-256 ${sampleInputId(crl.content).slice(0, 12)})` : ''}\nChecked at: ${new Date(checkedAt * 1000).toISOString()}${interval}\n${withCrl ? 'Only the configured direct full-CRL sample check is covered; OCSP and ongoing status are not established.' : 'No CRL or OCSP revocation check was requested.'}`,
+      })
+      verificationRunning.current = false
       setIsVerifying(false)
+      setIsVerifyingCrl(false)
     }
   }
+  const handleVerifyChain = () => performVerification(false)
+  const handleVerifyCrl = () => performVerification(true)
 
   const handleGetFingerprint = async () => {
     if (!certInput.trim() || !isCertInput) return
@@ -198,84 +244,6 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
       })
     } finally {
       setIsVerifyingCsr(false)
-    }
-  }
-
-  const handleVerifyCrl = async () => {
-    if (!canVerifyCrl) return
-
-    setIsVerifyingCrl(true)
-    setCrlVerifyResult(null)
-    setError(null)
-
-    try {
-      const cert = certificates.find((c) => c.id === selectedArtifactId)
-      if (!cert) return
-
-      // Best-match root CA (same logic as chain verify — S4-C: run for any count)
-      let rootCA = rootCAs[0]
-      if (parsedOutput) {
-        const issuerMatch = parsedOutput.match(/Issuer:\s*(.+)/i)
-        if (issuerMatch) {
-          const issuerStr = issuerMatch[1].trim()
-          const match = rootCAs.find((ca) => {
-            const caSubject = ca.metadata?.subject || ca.name
-            return (
-              caSubject.includes(issuerStr) ||
-              issuerStr.includes(caSubject) ||
-              issuerStr.split(',').some((part) => caSubject.includes(part.trim()))
-            )
-          })
-          if (match) rootCA = match
-        }
-      }
-
-      // Select the best-matching CRL: prefer the one whose name contains the CA name, else use latest.
-      // In a real PKI the correct CRL is identified by the issuer DN in the CRL matching the cert's issuer.
-      const caName = rootCA.name.toLowerCase().replace(/\s+/g, '')
-      const matchedCrl =
-        crlFiles.find((f) => f.name.toLowerCase().replace(/\s+/g, '').includes(caName)) ??
-        crlFiles[crlFiles.length - 1]
-      const latestCrl = matchedCrl
-      // S4-B: content can be string or Uint8Array — normalise to Uint8Array
-      const crlData: Uint8Array =
-        latestCrl.content instanceof Uint8Array
-          ? latestCrl.content
-          : typeof latestCrl.content === 'string'
-            ? new TextEncoder().encode(latestCrl.content)
-            : new Uint8Array(latestCrl.content as ArrayBuffer)
-
-      const certFile = { name: 'cert.pem', data: new TextEncoder().encode(cert.pem) }
-      const caFile = { name: 'ca.pem', data: new TextEncoder().encode(rootCA.pem) }
-      const crlFile = { name: 'crl.crl', data: crlData }
-
-      const result = await openSSLService.execute(
-        'openssl verify -CAfile ca.pem -CRLfile crl.crl -crl_check cert.pem',
-        [certFile, caFile, crlFile]
-      )
-
-      if (result.error || result.stdout.includes('error') || result.stderr.includes('error')) {
-        const msg = result.stderr || result.stdout
-        const isRevoked = msg.includes('revoked') || msg.includes('CRL')
-        setCrlVerifyResult({
-          success: false,
-          message: isRevoked
-            ? `Certificate is REVOKED per CRL (${latestCrl.name}).`
-            : `CRL check failed: ${msg}`,
-        })
-      } else {
-        setCrlVerifyResult({
-          success: true,
-          message: `Certificate is NOT listed in the CRL (${latestCrl.name}) — not revoked as of this CRL's thisUpdate.`,
-        })
-      }
-    } catch (err) {
-      setCrlVerifyResult({
-        success: false,
-        message: err instanceof Error ? err.message : 'CRL verification failed',
-      })
-    } finally {
-      setIsVerifyingCrl(false)
     }
   }
 
@@ -435,6 +403,8 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     return <div className="space-y-1">{nodes.map((node, idx) => renderNode(node, idx, 0))}</div>
   }
   const handleArtifactSelect = (id: string) => {
+    if (verificationRunning.current) return
+    if (id === 'All') id = ''
     setSelectedArtifactId(id)
     setParsedOutput(null)
     setConversionResult(null)
@@ -471,6 +441,8 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
   }
 
   const handleHybridSelect = (fileName: string) => {
+    if (verificationRunning.current) return
+    if (fileName === 'All') fileName = ''
     setSelectedHybridFile(fileName)
     setSelectedArtifactId('')
     setParsedOutput(null)
@@ -776,6 +748,8 @@ S8Y=
           </div>
 
           <textarea
+            aria-label="Certificate, CSR or CRL PEM"
+            disabled={verificationBusy}
             value={certInput}
             onChange={(e) => {
               setCertInput(e.target.value)
@@ -888,11 +862,55 @@ S8Y=
             </div>
           )}
 
+          {selectedIsEndEntity && rootCAs.length > 0 && (
+            <fieldset
+              disabled={verificationBusy}
+              className="min-w-0 space-y-3 rounded border border-border p-3"
+            >
+              <p className="text-xs text-muted-foreground">
+                Choose the sample issuer explicitly. Menu suffixes hash input bytes; they are not
+                certificate fingerprints. This bounded checker compares encoded issuer names and
+                available key identifiers, then relies on OpenSSL for signatures, dates and
+                configured validation. Equivalent names with different encodings may require a
+                different tool. Delta, indirect and scoped CRLs are not supported here.
+              </p>
+              <FilterDropdown
+                label="Sample issuer CA (explicit trust anchor)"
+                items={caChoices.map((c) => ({
+                  id: c.choiceKey,
+                  label: `${c.name} · ${sampleInputId(c.pem).slice(0, 8)}`,
+                }))}
+                selectedId={selectedCaKey}
+                onSelect={(id) => {
+                  if (!verificationRunning.current) setSelectedCaKey(id === 'All' ? '' : id)
+                }}
+                defaultLabel="-- Select sample issuer --"
+                noContainer
+                className="w-full"
+              />
+              <FilterDropdown
+                label="Sample CRL"
+                items={crlChoices.map((c) => ({
+                  id: c.choiceKey,
+                  label: `${c.name} · ${sampleInputId(c.content).slice(0, 8)}`,
+                }))}
+                selectedId={selectedCrlKey}
+                onSelect={(id) => {
+                  if (!verificationRunning.current) setSelectedCrlKey(id === 'All' ? '' : id)
+                }}
+                defaultLabel="-- Select sample CRL --"
+                noContainer
+                className="w-full"
+              />
+            </fieldset>
+          )}
           {!canVerifyChain && selectedArtifactId && (
             <p className="text-xs text-muted-foreground">
               {rootCAs.length === 0
                 ? 'Chain verification requires a Root CA. Generate one in Step 2, then return here.'
-                : 'Select an end-entity certificate (not a Root CA or CSR) to enable chain verification.'}
+                : selectedIsEndEntity
+                  ? 'Select the sample issuer CA explicitly before checking.'
+                  : 'Select an end-entity certificate (not a Root CA or CSR) to enable chain verification.'}
             </p>
           )}
 
@@ -900,7 +918,7 @@ S8Y=
             <Button
               variant="ghost"
               onClick={handleVerifyChain}
-              disabled={isVerifying}
+              disabled={verificationBusy}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Verify this certificate's trust chain against the Root CA"
             >
@@ -913,26 +931,35 @@ S8Y=
             </Button>
           )}
 
-          {verifyResult && (
+          {visibleVerifyResult && (
             <div
               className={`rounded p-3 flex items-start gap-2 text-sm ${
-                verifyResult.success
+                visibleVerifyResult.success
                   ? 'bg-status-success/10 border border-status-success/30 text-status-success'
                   : 'bg-status-error/10 border border-status-error/30 text-status-error'
               }`}
             >
-              {verifyResult.success ? (
+              {visibleVerifyResult.success ? (
                 <Check size={16} className="shrink-0 mt-0.5" />
               ) : (
                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
               )}
-              <span className="whitespace-pre-line">{verifyResult.message}</span>
+              <div className="min-w-0">
+                <p className="whitespace-pre-line break-words">{visibleVerifyResult.message}</p>
+                <details className="mt-2">
+                  <summary>Original verification diagnostic</summary>
+                  <pre className="whitespace-pre-wrap break-all text-xs">
+                    {visibleVerifyResult.diagnostic}
+                  </pre>
+                </details>
+              </div>
             </div>
           )}
 
           {!canVerifyCrl && selectedIsEndEntity && rootCAs.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              CRL revocation check requires a CRL. Generate one in Step 5, then return here.
+              CRL status is not assessed. Select the sample issuer and CRL explicitly; generate a
+              CRL in Step 5 if none is available.
             </p>
           )}
 
@@ -940,9 +967,9 @@ S8Y=
             <Button
               variant="ghost"
               onClick={handleVerifyCrl}
-              disabled={isVerifyingCrl}
+              disabled={verificationBusy}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
-              title={`Check this certificate against the CRL in the OpenSSL Studio (${crlFiles.length} CRL${crlFiles.length > 1 ? 's' : ''} available)`}
+              title="Run the configured check with the explicitly selected sample issuer and CRL"
             >
               {isVerifyingCrl ? (
                 <Loader2 className="animate-spin" size={16} />
@@ -953,20 +980,28 @@ S8Y=
             </Button>
           )}
 
-          {crlVerifyResult && (
+          {visibleCrlResult && (
             <div
               className={`rounded p-3 flex items-start gap-2 text-sm ${
-                crlVerifyResult.success
+                visibleCrlResult.success
                   ? 'bg-status-success/10 border border-status-success/30 text-status-success'
                   : 'bg-status-error/10 border border-status-error/30 text-status-error'
               }`}
             >
-              {crlVerifyResult.success ? (
+              {visibleCrlResult.success ? (
                 <Check size={16} className="shrink-0 mt-0.5" />
               ) : (
                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
               )}
-              <span>{crlVerifyResult.message}</span>
+              <div className="min-w-0">
+                <p className="whitespace-pre-line break-words">{visibleCrlResult.message}</p>
+                <details className="mt-2">
+                  <summary>Original verification diagnostic</summary>
+                  <pre className="whitespace-pre-wrap break-all text-xs">
+                    {visibleCrlResult.diagnostic}
+                  </pre>
+                </details>
+              </div>
             </div>
           )}
 

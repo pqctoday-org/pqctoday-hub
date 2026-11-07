@@ -257,12 +257,26 @@ export function completeStepGenuine(
     case 'workshop':
       if (!step.workshopId) return false
       sim.markWorkshopVisited(step.workshopId)
-      recordStepEvidence(step, 'workshop', step.workshopId, phase, origin, 'practiced')
+      recordStepEvidence(
+        step,
+        'workshop',
+        step.workshopId,
+        phase,
+        origin,
+        origin === 'learner' ? 'practiced' : 'viewed'
+      )
       return true
     case 'catalog':
       if (!step.catalogId) return false
       sim.markCatalogStepDone(step.catalogId)
-      recordStepEvidence(step, 'catalog', step.catalogId, phase, origin, 'practiced')
+      recordStepEvidence(
+        step,
+        'catalog',
+        step.catalogId,
+        phase,
+        origin,
+        origin === 'learner' ? 'practiced' : 'viewed'
+      )
       return true
     case 'activity': {
       if (!step.artifactType) return false
@@ -282,12 +296,13 @@ export function completeStepGenuine(
       mod.addExecutiveDocument({
         id: `sim-autorun-${step.artifactType}`,
         moduleId: 'sim-autorun',
+        simulationRunId: `run-${useSimulationStore.getState().seed}`,
         type: step.artifactType,
         title: `${doc.title} (worked example)`,
         data: doc.data,
         createdAt: Date.now(),
       })
-      recordStepEvidence(step, 'artifact', step.artifactType, phase, origin, 'practiced')
+      recordStepEvidence(step, 'artifact', step.artifactType, phase, origin, 'viewed')
       return true
     }
     case 'recurrence': {

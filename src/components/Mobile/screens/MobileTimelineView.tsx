@@ -254,13 +254,13 @@ export function MobileTimelineView() {
     )
   const showSearch = !!searchText && !(targetEvent && eventSwitchCountry)
 
-  const readerCountry = storeSelectedRegion
-    ? (REGION_COUNTRY_MAP[storeSelectedRegion] ?? null)
-    : null
+  const readerCountry =
+    displayCountry ??
+    (storeSelectedRegion ? (REGION_COUNTRY_MAP[storeSelectedRegion] ?? null) : null)
 
   const nextUp = useMemo(
-    () => nextTwoPhases(ganttData.find((d) => d.country.countryName === readerCountry)),
-    [ganttData, readerCountry]
+    () => nextTwoPhases(listData.find((d) => d.country.countryName === readerCountry)),
+    [listData, readerCountry]
   )
 
   const migrationPlusCount = listData.filter((d) =>
@@ -354,7 +354,7 @@ export function MobileTimelineView() {
         </section>
       )}
 
-      <WhenDoesThisReachMe data={ganttData} countryName={readerCountry} />
+      <WhenDoesThisReachMe data={listData} countryName={readerCountry} />
 
       {listData.length === 0 ? (
         <p className="text-[12.5px] text-muted-foreground">

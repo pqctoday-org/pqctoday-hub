@@ -72,6 +72,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                   ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
+              aria-label={tab.label}
               aria-selected={activeTab === tab.id}
               role="tab"
             >

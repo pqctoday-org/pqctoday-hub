@@ -104,7 +104,8 @@ const PHASES = [
 
 // ── Operator cheat sheet snippet ──────────────────────────────────────────────
 
-const CHEAT_SHEET = `# ~/.ssh/config — PQC-first OpenSSH 9.9+ configuration
+const CHEAT_SHEET = `# ~/.ssh/config — custom patched OpenSSH build example
+# Experimental PQ signatures; not an unmodified stock OpenSSH configuration
 Host *.example.com
   PKCS11Provider /usr/lib/softhsm/libsofthsm2.so
   KexAlgorithms ^mlkem768x25519-sha256,sntrup761x25519-sha512
@@ -376,8 +377,23 @@ export function SshLearnSection() {
         {cheatOpen && (
           <div className="px-4 pb-4 mt-2">
             <p className="text-xs text-muted-foreground mb-2">
-              Example <span className="font-mono text-foreground">~/.ssh/config</span> that prefers
-              PQC algorithms via softhsmv3 PKCS#11 provider (OpenSSH 9.9+).
+              Example <span className="font-mono text-foreground">~/.ssh/config</span> for this
+              Hub’s modified OpenSSH build with experimental post-quantum signatures and a
+              compatible PKCS#11 provider. The peer must support the same signature names; verify
+              the provider path for your build. This is not a stock OpenSSH configuration.
+            </p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Stock OpenSSH 9.9 added the hybrid key exchange{' '}
+              <span className="font-mono">mlkem768x25519-sha256</span>. That key-exchange support
+              does not add the experimental post-quantum host or user signatures shown here.
+              <a
+                href="https://www.openssh.org/pq.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-1 text-primary underline"
+              >
+                OpenSSH’s post-quantum support
+              </a>
             </p>
             <CodeBlock language="text" code={CHEAT_SHEET} />
           </div>

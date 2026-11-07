@@ -25,6 +25,7 @@ function renderWorkshop() {
 describe('MerkleTreeCerts workshop — Step 1 tree reaches Step 2', () => {
   it('Step 2 uses the tree the learner built in Step 1', async () => {
     renderWorkshop()
+    fireEvent.click(screen.getByRole('button', { name: /^Step 1: Build Tree/ }))
     fireEvent.click(screen.getByRole('button', { name: 'Instant' }))
     fireEvent.click(screen.getByRole('button', { name: 'Load 8 sample certs' }))
     fireEvent.click(screen.getByRole('button', { name: /Build Merkle Tree/ }))
@@ -45,5 +46,20 @@ describe('MerkleTreeCerts workshop — Step 1 tree reaches Step 2', () => {
     expect(
       await screen.findByText(/Build your own tree in Step 1 first/, undefined, { timeout: 5000 })
     ).toBeInTheDocument()
+  })
+  it('requires a rebuild after editing a previously built batch', async () => {
+    renderWorkshop()
+    fireEvent.click(screen.getByRole('button', { name: /^Step 1: Build Tree/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Instant' }))
+    fireEvent.click(screen.getByRole('button', { name: /Build Merkle Tree/ }))
+    await screen.findByText(/Merkle Tree \(height \d+, 4 leaves\)/)
+    expect(screen.getByText('Computed Root Hash — Unsigned')).toBeInTheDocument()
+    fireEvent.click(screen.getAllByRole('button', { name: /Next Step/ })[0])
+    await screen.findByText(/Your tree from Step 1 is loaded/)
+    fireEvent.click(screen.getAllByRole('button', { name: /Previous Step/ })[0])
+    fireEvent.click(screen.getByRole('button', { name: 'Load 8 sample certs' }))
+    fireEvent.click(screen.getAllByRole('button', { name: /Next Step/ })[0])
+    expect(await screen.findByText(/Certificate entries changed—rebuild/)).toBeInTheDocument()
+    expect(screen.queryByText(/Your tree from Step 1 is loaded/)).not.toBeInTheDocument()
   })
 })

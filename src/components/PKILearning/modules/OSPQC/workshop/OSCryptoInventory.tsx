@@ -4,6 +4,9 @@ import { AlertTriangle, CheckCircle, Clock, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { EDUCATION_NOTICE } from '@/data/educationNotice'
+import { migrateLayerHref } from '@/utils/migrateLinks'
+import manifest from '../manifest'
 
 interface CryptoComponent {
   id: string
@@ -142,7 +145,7 @@ const RISK_FILTER_ITEMS = [
 export const OSCryptoInventory: React.FC = () => {
   const [riskFilter, setRiskFilter] = useState('All')
   const [effortFilter, setEffortFilter] = useState('All')
-  const [exported, setExported] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     return CRYPTO_COMPONENTS.filter((c) => {
@@ -156,8 +159,59 @@ export const OSCryptoInventory: React.FC = () => {
   const highCount = CRYPTO_COMPONENTS.filter((c) => c.quantumRisk === 'high').length
 
   const handleExport = () => {
-    setExported(true)
-    setTimeout(() => setExported(false), 2500)
+    setExportError(null)
+    let url: string | null = null
+    try {
+      const summary = {
+        schemaVersion: 1,
+        kind: 'educational-os-crypto-inventory-summary',
+        notice: EDUCATION_NOTICE,
+        module: { id: manifest.id, title: manifest.title, contentVersion: manifest.contentVersion },
+        scope: {
+          riskFilter,
+          effortFilter,
+          displayedCount: filtered.length,
+          totalSampleCount: CRYPTO_COMPONENTS.length,
+        },
+        sampleAssumptions: {
+          inventory: 'Static educational sample; no OS discovery or inspection was executed.',
+          versionStrings: 'Original sample row text, not detected installed software versions.',
+          riskAndEffort:
+            'Illustrative teaching categories, not measured risk or migration estimates.',
+        },
+        catalogueSummary: {
+          scope: 'Whole sample catalogue, independent of the selected table filters.',
+          components: CRYPTO_COMPONENTS.length,
+          criticalRisk: criticalCount,
+          highRisk: highCount,
+          lowEffort: CRYPTO_COMPONENTS.filter((component) => component.migrationEffort === 'low')
+            .length,
+        },
+        components: filtered,
+        references: {
+          learningResource: `/learn/${manifest.id}`,
+          relatedCatalogue: migrateLayerHref('OS'),
+          rowSourceStatus:
+            'Row-level external source references are not recorded in this sample inventory.',
+        },
+        limitations: [
+          'Exporting this sample does not discover software or verify installed versions, product support, configuration or readiness.',
+          'Use your own inventory and discovery tools to inspect versions, dependencies and configuration, then check current supplier documentation and applicable sources.',
+        ],
+      }
+      const blob = new Blob([JSON.stringify(summary, null, 2)], {
+        type: 'application/json;charset=utf-8',
+      })
+      url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = 'os-crypto-inventory-summary.json'
+      anchor.click()
+    } catch {
+      setExportError('Summary download could not be started. Try Export Summary again.')
+    } finally {
+      if (url) URL.revokeObjectURL(url)
+    }
   }
 
   return (
@@ -214,9 +268,15 @@ export const OSCryptoInventory: React.FC = () => {
           className="ml-auto flex items-center gap-2"
         >
           <Download size={14} />
-          {exported ? 'Exported!' : 'Export Summary'}
+          Export Summary (.json)
         </Button>
       </div>
+
+      {exportError && (
+        <p role="alert" className="text-sm text-status-error">
+          {exportError}
+        </p>
+      )}
 
       {/* Component table */}
       <div className="overflow-x-auto rounded-lg border border-border">

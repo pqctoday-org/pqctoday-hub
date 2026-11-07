@@ -29,7 +29,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'hybrid-jwt',
     title: 'Step 3: Hybrid JWT',
-    description: 'Create backwards-compatible JWTs with dual classical + PQC signatures.',
+    description:
+      'Explore nested and composite JWT samples and their verifier-compatibility limits.',
     icon: Layers,
   },
   {

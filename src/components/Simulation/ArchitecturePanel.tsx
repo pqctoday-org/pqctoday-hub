@@ -2,7 +2,7 @@
 /**
  * ArchitecturePanel — the Simulation's per-size migration board. Systems show
  * their product PQC status; each vulnerable protocol link is migratable now,
- * blocked (product/vendor has no PQC), or monitor-only (irreducible).
+ * blocked (product/vendor has no PQC), or monitor-only (no PQC path assumed in this scenario).
  *
  * Migrating a link needs BOTH gates (WS-04): the player must have completed
  * enough P5 activities to UNLOCK a link (effort) AND pick a sound strategy
@@ -189,7 +189,8 @@ export function ArchitecturePanel({
           <p className="mt-2 text-xs text-muted-foreground">
             Nodes — green: available · yellow: partial · blue: roadmap · red: none · grey: not in
             catalog. Edges — ✓ migrated/migratable · ⚡ blocked (product) · ⏳ vendor path · ⚠
-            dashed: irreducible (monitor-only). Switch to List to migrate links.
+            dashed: monitor-only (no PQC path assumed in this scenario). Switch to List to migrate
+            links.
           </p>
         </div>
       ) : (
@@ -341,7 +342,8 @@ export function ArchitecturePanel({
           <p className="mt-2 text-xs text-muted-foreground">
             Migrate the eligible links (hybrid or pure). A non-compliant strategy still migrates but
             lowers your compliance score. Blocked links wait on a product/vendor PQC release;
-            monitor-only links are irreducible (defense-in-depth).
+            monitor-only links have no PQC path assumed in this scenario. This does not establish an
+            inherent protocol limitation.
           </p>
         </>
       )}

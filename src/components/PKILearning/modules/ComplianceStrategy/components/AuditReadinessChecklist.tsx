@@ -9,6 +9,8 @@ import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { rowsToCsv } from '@/services/export/csvExport'
+import type { ArtifactFieldEdit, ArtifactFormData } from '../../../common/executive/ArtifactBuilder'
+import { clearAuditPrefill, editAuditDraft, initializeAuditPrefill } from './auditPrefillOwnership'
 
 interface ChecklistItem {
   value: string
@@ -136,14 +138,14 @@ const TECHNICAL_ITEMS: ChecklistItem[] = [
     value: 'hybrid-deployed',
     label: 'Hybrid mode deployed',
     description:
-      'Hybrid classical+PQC configurations (e.g., X25519MLKEM768) deployed to maintain backward compatibility during transition.',
+      'Review a selected hybrid classical+PQC profile (e.g., X25519MLKEM768), peer support and fallback policy. Compatibility depends on the negotiated profile and participating implementations.',
     reference: 'NIST SP 800-227; CNSA 2.0',
   },
   {
     value: 'pqc-tested',
     label: 'PQC algorithms tested',
     description:
-      'ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) tested in representative environments.',
+      'Plan representative testing for the algorithms selected for the sample scope. FIPS 203/204/205 define ML-KEM, ML-DSA and SLH-DSA; citing them does not require every listed algorithm in every system.',
     reference: 'FIPS 203/204/205',
   },
   {
@@ -246,11 +248,11 @@ const EVIDENCE_ITEMS: ChecklistItem[] = [
 ]
 
 function getMaturityTier(pct: number): { label: string; color: string } {
-  if (pct >= 81) return { label: 'Optimized', color: 'text-status-success' }
-  if (pct >= 61) return { label: 'Established', color: 'text-primary' }
-  if (pct >= 41) return { label: 'Developing', color: 'text-status-warning' }
-  if (pct >= 21) return { label: 'Foundation', color: 'text-status-warning' }
-  return { label: 'Not Started', color: 'text-status-error' }
+  if (pct >= 81) return { label: '81–100% selected', color: 'text-status-success' }
+  if (pct >= 61) return { label: '61–80% selected', color: 'text-primary' }
+  if (pct >= 41) return { label: '41–60% selected', color: 'text-status-warning' }
+  if (pct >= 21) return { label: '21–40% selected', color: 'text-status-warning' }
+  return { label: '0–20% selected', color: 'text-status-error' }
 }
 
 function buildSections(
@@ -264,7 +266,7 @@ function buildSections(
   const toOptions = (items: ChecklistItem[]) =>
     items.map((i) => ({
       value: i.value,
-      label: `${i.label} — ${i.description} [${i.reference}]`,
+      label: `Review topic: ${i.label} — ${i.description} [Related reading: ${i.reference}]`,
     }))
 
   const industryNote = industry ? ` Tailor to ${industry} sector requirements.` : ''
@@ -278,7 +280,7 @@ function buildSections(
       fields: [
         {
           id: 'inventory-checklist',
-          label: 'Cryptographic Inventory Readiness',
+          label: 'Inventory Planning Topics',
           type: 'checklist',
           options: toOptions(INVENTORY_ITEMS),
           defaultValue: isAssessmentComplete ? ['systems-cataloged'] : [],
@@ -292,7 +294,7 @@ function buildSections(
       fields: [
         {
           id: 'policy-checklist',
-          label: 'Policy & Governance Readiness',
+          label: 'Policy & Governance Planning Topics',
           type: 'checklist',
           options: toOptions(POLICY_ITEMS),
           defaultValue: [],
@@ -306,7 +308,7 @@ function buildSections(
       fields: [
         {
           id: 'risk-checklist',
-          label: 'Risk Assessment Readiness',
+          label: 'Risk Planning Topics',
           type: 'checklist',
           options: toOptions(RISK_ITEMS),
           defaultValue: myThreatsCount > 0 ? ['threat-model-updated'] : [],
@@ -320,7 +322,7 @@ function buildSections(
       fields: [
         {
           id: 'technical-checklist',
-          label: 'Technical Controls Readiness',
+          label: 'Technical Control Planning Topics',
           type: 'checklist',
           options: toOptions(TECHNICAL_ITEMS),
           defaultValue: [],
@@ -334,7 +336,7 @@ function buildSections(
       fields: [
         {
           id: 'vendor-checklist',
-          label: 'Vendor Management Readiness',
+          label: 'Vendor Planning Topics',
           type: 'checklist',
           options: toOptions(VENDOR_ITEMS),
           defaultValue: myProductsCount > 0 ? ['vendors-assessed'] : [],
@@ -349,7 +351,7 @@ function buildSections(
       fields: [
         {
           id: 'evidence-checklist',
-          label: 'Evidence & Documentation Readiness',
+          label: 'Evidence Planning Topics',
           type: 'checklist',
           options: toOptions(EVIDENCE_ITEMS),
           defaultValue: [
@@ -388,11 +390,14 @@ export function renderAuditPreview(
   industry?: string,
   country?: string
 ): string {
-  let md = '# PQC Audit Readiness Checklist\n\n'
+  let md = '# PQC Audit Planning Topics\n\n'
+  md +=
+    'Hub-authored educational template. References are related reading, not proof that every field is a source-mandated control.\n\n'
   md += `Generated: ${new Date().toLocaleDateString()}\n`
   if (industry) md += `Industry: ${industry}\n`
   if (country) md += `Country: ${country}\n`
-  md += '\n---\n\n'
+  md +=
+    '\nChecked boxes mean selected planning topics, including suggestions from saved context; they do not establish completed controls, audited readiness or validation.\n\n---\n\n'
 
   let totalChecked = 0
   let totalItems = 0
@@ -410,7 +415,7 @@ export function renderAuditPreview(
     let sectionChecked = 0
     for (const item of items) {
       const checked = checkedItems.includes(item.value)
-      md += `- [${checked ? 'x' : ' '}] **${item.label}** — ${item.description} _[${item.reference}]_\n`
+      md += `- [${checked ? 'x' : ' '}] **Review topic: ${item.label}** — ${item.description} _[Related reading: ${item.reference}]_\n`
       if (checked) {
         sectionChecked++
         totalChecked++
@@ -424,8 +429,8 @@ export function renderAuditPreview(
   md += '---\n\n'
 
   // Per-section scores
-  md += '## Section Scores\n\n'
-  md += '| Section | Score | % |\n'
+  md += '## Topic Selection Counts\n\n'
+  md += '| Section | Selected / Total | % |\n'
   md += '|---------|-------|---|\n'
   for (const s of sectionScores) {
     const pct = s.total > 0 ? Math.round((s.checked / s.total) * 100) : 0
@@ -436,10 +441,10 @@ export function renderAuditPreview(
   // Overall with maturity tier
   const overallPct = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0
   const tier = getMaturityTier(overallPct)
-  md += `**Overall Readiness: ${totalChecked}/${totalItems} items (${overallPct}%)**\n\n`
-  md += `**Maturity Level: ${tier.label}**\n\n`
+  md += `**Planning topics selected: ${totalChecked}/${totalItems} (${overallPct}%)**\n\n`
+  md += `**Topic-selection band: ${tier.label}**\n\n`
   md +=
-    "_Maturity scale — the checklist's own scoring bands — Not Started (0-20%) → Foundation (21-40%) → Developing (41-60%) → Established (61-80%) → Optimized (81-100%)_\n"
+    '_Selection bands describe topic inclusion only. They do not measure control implementation, audit readiness or organizational maturity._\n'
 
   return md
 }
@@ -481,7 +486,7 @@ export function renderExceptionsAndEvidenceMd(
   }
 
   md +=
-    '## Evidence (CSWP.39 §5.1 — CAVP/CMVP as a validation prerequisite; ACVP / ESV / CVE-scan)\n\n'
+    '## Fictional reference examples\n\nThese prompts illustrate different evidence sources and their scope; recording a reference does not validate a deployment. Keep Hub sample-test results separate from this checklist.\n\n'
   if (evidence.length === 0) {
     md += '_No evidence rows documented._\n\n'
   } else {
@@ -504,8 +509,11 @@ function renderAuditCsv(
   evidence: EvidenceRow[]
 ): string {
   const sections: (string | number)[][] = []
-  sections.push(['PQC Audit Readiness Checklist'])
-  sections.push(['Section', 'Item', 'Checked', 'Reference'])
+  sections.push(['PQC Audit Planning Topics'])
+  sections.push([
+    'Selected means included as a planning topic, not a completed or audited control.',
+  ])
+  sections.push(['Section', 'Review Topic', 'Selected', 'Reference'])
   for (const [sectionId, title] of Object.entries(SECTION_TITLES)) {
     const sectionData = data[sectionId] ?? {}
     const items = ALL_ITEMS[sectionId] ?? []
@@ -516,7 +524,7 @@ function renderAuditCsv(
     for (const item of items) {
       sections.push([
         title,
-        item.label,
+        `Review topic: ${item.label}`,
         checkedItems.includes(item.value) ? 'Yes' : 'No',
         item.reference,
       ])
@@ -547,6 +555,8 @@ interface SavedAuditInputs {
   checklistData?: Record<string, Record<string, string | string[]>>
   exceptions?: ExceptionRow[]
   evidence?: EvidenceRow[]
+  prefillOwnership?: unknown
+  originalSavedInputs?: unknown
 }
 
 interface AuditReadinessChecklistProps {
@@ -562,27 +572,6 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
   const savedInputs = useSavedArtifactInputs<SavedAuditInputs>('audit-checklist')
   const [exceptions, setExceptions] = React.useState<ExceptionRow[]>(savedInputs?.exceptions ?? [])
   const [evidence, setEvidence] = React.useState<EvidenceRow[]>(savedInputs?.evidence ?? [])
-  const [seedCleared, setSeedCleared] = useState(false)
-
-  const seedSources: string[] = []
-  if (!seedCleared) {
-    if (industry) seedSources.push(`industry (${industry})`)
-    if (country) seedSources.push(`country (${country})`)
-    if (isAssessmentComplete) seedSources.push('completed assessment')
-    if (myFrameworks.length > 0)
-      seedSources.push(
-        `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
-      )
-    if (myProducts.length > 0)
-      seedSources.push(
-        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
-      )
-    if (myThreats.length > 0)
-      seedSources.push(
-        `${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`
-      )
-  }
-
   const sections = useMemo(
     () =>
       buildSections(
@@ -603,6 +592,48 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
     ]
   )
 
+  const [draft, setDraft] = useState(() => initializeAuditPrefill(sections, savedInputs))
+  const handleDataChange = React.useCallback(
+    (update: (data: ArtifactFormData) => ArtifactFormData, edit: ArtifactFieldEdit) => {
+      setDraft((previous) => editAuditDraft(previous, update, edit))
+    },
+    []
+  )
+  const handleClearPrefill = React.useCallback(
+    () => setDraft((previous) => clearAuditPrefill(previous)),
+    []
+  )
+  const hasAssessmentPrefill = draft.prefillOwnership.untouchedInserted.some(
+    (token) =>
+      (token.sectionId === 'crypto-inventory' && token.optionValue === 'systems-cataloged') ||
+      (token.sectionId === 'evidence-documentation' && token.optionValue === 'migration-plan')
+  )
+  const prefillHelpId = React.useId()
+  const saveRevision = JSON.stringify({
+    prefillOwnership: draft.prefillOwnership,
+    exceptions,
+    evidence,
+  })
+
+  const seedSources: string[] = []
+  if (!draft.prefillOwnership.cleared) {
+    if (industry) seedSources.push(`industry (${industry})`)
+    if (country) seedSources.push(`country (${country})`)
+    if (isAssessmentComplete) seedSources.push('completed assessment')
+    if (myFrameworks.length > 0)
+      seedSources.push(
+        `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+      )
+    if (myProducts.length > 0)
+      seedSources.push(
+        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+      )
+    if (myThreats.length > 0)
+      seedSources.push(
+        `${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`
+      )
+  }
+
   const handleExport = (data: Record<string, Record<string, string | string[]>>) => {
     const markdown =
       renderAuditPreview(data, industry, country) +
@@ -610,11 +641,17 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
     addExecutiveDocument({
       id: `audit-checklist-${Date.now()}`,
       type: 'audit-checklist',
-      title: 'PQC Audit Readiness Checklist',
+      title: 'PQC Audit Planning Topics',
       data: markdown,
       createdAt: Date.now(),
       moduleId: 'compliance-strategy',
-      inputs: { checklistData: data, exceptions, evidence },
+      inputs: {
+        checklistData: data,
+        exceptions,
+        evidence,
+        prefillOwnership: draft.prefillOwnership,
+        originalSavedInputs: draft.originalSavedInputs,
+      },
     })
   }
 
@@ -657,18 +694,50 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
 
   return (
     <div className="space-y-6">
-      {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Seeded from ${seedSources.join(' + ')}.`}
-          onClear={() => setSeedCleared(true)}
-        />
+      {(seedSources.length > 0 ||
+        draft.prefillOwnership.untouchedInserted.length > 0 ||
+        draft.prefillOwnership.inheritedOriginUnknown ||
+        draft.prefillOwnership.cleared) && (
+        <div className="space-y-2">
+          {seedSources.length > 0 && draft.prefillOwnership.untouchedInserted.length > 0 && (
+            <PreFilledBanner summary={`Planning context: ${seedSources.join(' + ')}.`} />
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleClearPrefill}
+            aria-describedby={prefillHelpId}
+          >
+            Clear untouched topic suggestions
+          </Button>
+          <p id={prefillHelpId} className="text-xs text-muted-foreground">
+            Removes only untouched topic selections recorded as inserted by prefill. Learner edits,
+            notes and source context are kept.
+          </p>
+          {draft.prefillOwnership.inheritedOriginUnknown && (
+            <p className="text-xs text-muted-foreground">
+              Loaded draft did not record supported prefill ownership. Origin-uncertain entries are
+              kept; edit selections individually.
+            </p>
+          )}
+          {draft.prefillOwnership.cleared && (
+            <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
+              {draft.lastClearCount === null
+                ? 'Untouched topic suggestions were previously cleared.'
+                : `${draft.lastClearCount} untouched topic suggestion${draft.lastClearCount === 1 ? '' : 's'} cleared.`}{' '}
+              Learner work and origin-uncertain entries were kept.
+            </p>
+          )}
+        </div>
       )}
-      {isAssessmentComplete && (
+      {isAssessmentComplete && hasAssessmentPrefill && !draft.prefillOwnership.cleared && (
         <div className="bg-status-success/10 border border-status-success/30 rounded-lg p-3">
           <p className="text-sm text-foreground/80">
-            Some items have been pre-populated based on your completed assessment
+            Suggested planning topics have been selected from your completed sample assessment
             {industry ? ` (${industry})` : ''}
-            {country ? ` in ${country}` : ''}. Review and update as needed.
+            {country ? ` in ${country}` : ''}. These selections do not establish that the listed
+            controls were performed. Review the topics to include.
           </p>
         </div>
       )}
@@ -680,7 +749,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
             {industry && <span className="text-primary font-medium">{industry}</span>}
             {industry && country && ' in '}
             {country && <span className="text-primary font-medium">{country}</span>}. Complete the
-            Assessment Wizard for pre-populated items and risk-prioritized guidance.
+            Assessment Wizard for sample context and suggested planning topics.
           </p>
         </div>
       )}
@@ -691,16 +760,24 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         />
       )}
 
+      <p className="text-sm text-muted-foreground">
+        Bookmarks and assessment answers can suggest planning topics; they are not evidence that a
+        control is implemented, a test passed or an audit completed. Checked boxes record topic
+        inclusion only, including any preselected suggestions. This is a Hub-authored educational
+        template. References are related reading, not proof that every field is a source-mandated
+        control.
+      </p>
       <ArtifactBuilder
-        title="PQC Audit Readiness Checklist"
-        description="Check off each item as your organization completes it. Each item includes a brief description and standards reference. Export the checklist for audit documentation."
+        title="PQC Audit Planning Topics"
+        description="Use this Hub-authored educational template to select sample planning topics. A selection records inclusion, not completed controls or audit readiness. References are related reading, not proof that every field is a source-mandated control. Identify what to evaluate with your own tools."
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-audit-readiness-checklist"
         exportFormats={['markdown', 'csv', 'pdf']}
         renderPreview={previewRenderer}
         renderCsv={csvRenderer}
-        initialData={savedInputs?.checklistData}
+        controlledForm={{ value: draft.checklistData, onChange: handleDataChange }}
+        saveRevision={saveRevision}
       />
 
       {/* Exceptions — no CSWP citation: §5.1 is standards/mandates, and the
@@ -775,11 +852,12 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h3 className="text-base font-semibold text-foreground">
-              Evidence — CMVP / ACVP / ESV / CVE-scan
+              Fictional reference examples — CMVP / ACVP / ESV / CVE-scan
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Per change, capture validation evidence. Educational template — populate from your
-              real CMVP module IDs and ACVP run records.
+              Use fictional identifiers to explore the scope and provenance of different evidence
+              sources. Recording a reference does not validate a deployment. Keep Hub sample-test
+              results separate from this checklist.
             </p>
           </div>
           <Button type="button" variant="outline" size="sm" onClick={addEvidence}>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo } from 'react'
-import { AlertTriangle, CheckCircle2, Globe, Info, ChevronRight } from 'lucide-react'
+import { AlertTriangle, Globe, Info, ChevronRight } from 'lucide-react'
 import {
   JURISDICTION_FRAMEWORKS,
   getJurisdictionFramework,
@@ -25,7 +25,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 const EFFORT_BADGE: Record<string, string> = {
   High: 'bg-status-error/10 text-status-error border-status-error/20',
   Medium: 'bg-status-warning/10 text-status-warning border-status-warning/20',
-  Low: 'bg-status-success/10 text-status-success border-status-success/20',
+  Low: 'bg-muted text-muted-foreground border-border',
 }
 
 export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = ({
@@ -66,7 +66,7 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
         <p className="text-foreground font-semibold">No jurisdictions selected</p>
         <p className="text-sm text-muted-foreground">
           Go to Step 1 — Jurisdiction Mapper and select your operating jurisdictions, then return
-          here to see your regulatory gap analysis.
+          here to explore the catalogue review topics.
         </p>
       </div>
     )
@@ -74,6 +74,14 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
 
   return (
     <div className="space-y-6">
+      <div className="glass-panel p-4 space-y-2">
+        <p className="text-sm font-semibold text-foreground">Implementation status: Not assessed</p>
+        <p className="text-sm text-muted-foreground">
+          Selecting a jurisdiction chooses catalogue topics; it does not establish that requirements
+          are met or that a control gap exists. Catalogue flags suggest topics to review, not
+          findings about the sample organization.
+        </p>
+      </div>
       {/* Summary banner */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="glass-panel p-4 text-center border bg-primary/5 border-primary/20">
@@ -82,7 +90,7 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
         </div>
         <div className="glass-panel p-4 text-center border bg-status-error/5 border-status-error/20">
           <div className="text-3xl font-bold text-status-error">{consolidatedGaps.length}</div>
-          <div className="text-xs text-muted-foreground mt-1">Common Gaps</div>
+          <div className="text-xs text-muted-foreground mt-1">Flagged Review Topics</div>
         </div>
         <div className="glass-panel p-4 text-center border bg-status-error/5 border-status-error/20">
           <div className="text-3xl font-bold text-status-error">
@@ -90,20 +98,20 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
           </div>
           <div className="text-xs text-muted-foreground mt-1">High Effort</div>
         </div>
-        <div className="glass-panel p-4 text-center border bg-status-success/5 border-status-success/20">
-          <div className="text-3xl font-bold text-status-success">
+        <div className="glass-panel p-4 text-center border bg-muted/30 border-border">
+          <div className="text-3xl font-bold text-foreground">
             {coveredJurisdictions.reduce(
               (sum, jf) => sum + jf.requirements.filter((r) => !r.commonGap).length,
               0
             )}
           </div>
-          <div className="text-xs text-muted-foreground mt-1">Met Requirements</div>
+          <div className="text-xs text-muted-foreground mt-1">Other Review Topics</div>
         </div>
       </div>
 
       {/* Per-jurisdiction breakdown */}
       <div className="space-y-4">
-        <h4 className="text-sm font-semibold text-foreground">Per-Jurisdiction Requirements</h4>
+        <h4 className="text-sm font-semibold text-foreground">Per-Jurisdiction Review Topics</h4>
         {coveredJurisdictions.map((jf) => {
           const gaps = jf.requirements.filter((r) => r.commonGap)
           const met = jf.requirements.filter((r) => !r.commonGap)
@@ -117,12 +125,12 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
                 <div className="flex items-center gap-2 shrink-0">
                   {gaps.length > 0 && (
                     <span className="text-xs font-semibold px-2 py-1 rounded-full bg-status-error/10 text-status-error border border-status-error/20">
-                      {gaps.length} gap{gaps.length !== 1 ? 's' : ''}
+                      {gaps.length} flagged topic{gaps.length !== 1 ? 's' : ''}
                     </span>
                   )}
                   {met.length > 0 && (
                     <span className="text-xs font-semibold px-2 py-1 rounded-full bg-status-success/10 text-status-success border border-status-success/20">
-                      {met.length} met
+                      {met.length} other topics
                     </span>
                   )}
                 </div>
@@ -148,13 +156,13 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
                     className={`rounded-lg p-3 border flex items-start gap-3 ${
                       req.commonGap
                         ? 'bg-status-error/5 border-status-error/20'
-                        : 'bg-status-success/5 border-status-success/20'
+                        : 'bg-muted/30 border-border'
                     }`}
                   >
                     {req.commonGap ? (
                       <AlertTriangle size={14} className="text-status-error shrink-0 mt-0.5" />
                     ) : (
-                      <CheckCircle2 size={14} className="text-status-success shrink-0 mt-0.5" />
+                      <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
                     )}
                     <div className="min-w-0 flex-1 space-y-1">
                       <p className="text-xs text-foreground leading-relaxed">{req.requirement}</p>
@@ -202,11 +210,15 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
       {consolidatedGaps.length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-foreground">
-            Consolidated Remediation Plan
+            Consolidated Planning Topics
             <span className="ml-2 text-xs font-normal text-muted-foreground">
-              sorted by effort (highest first)
+              effort-first review order, not a risk priority
             </span>
           </h4>
+          <p className="text-xs text-muted-foreground">
+            Set priorities using applicability, risk, dependencies and timing; effort alone does not
+            establish migration priority.
+          </p>
           <div className="glass-panel p-4 space-y-2">
             {consolidatedGaps.map((gap, idx) => (
               <div

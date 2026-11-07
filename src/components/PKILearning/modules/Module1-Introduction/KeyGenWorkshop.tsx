@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Play, Loader2, ArrowLeftRight } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
@@ -51,7 +51,8 @@ const PQC_KEM_ALGOS = [
 
 function pemToBytes(pem: string): number {
   const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s/g, '')
-  return Math.floor((b64.length * 3) / 4)
+  if (!b64) throw new Error('PEM payload not produced')
+  return atob(b64).length
 }
 
 function findCmd(value: string): string | undefined {
@@ -67,6 +68,8 @@ interface KeyState {
   privBytes: number | null
   pubBytes: number | null
   loading: boolean
+  error: string | null
+  stale: boolean
 }
 
 const emptyKeyState = (): KeyState => ({
@@ -74,6 +77,8 @@ const emptyKeyState = (): KeyState => ({
   privBytes: null,
   pubBytes: null,
   loading: false,
+  error: null,
+  stale: false,
 })
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -83,69 +88,74 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
   const [pqcAlgo, setPqcAlgo] = useState('ML-DSA-65')
   const [classicalKey, setClassicalKey] = useState<KeyState>(emptyKeyState())
   const [pqcKey, setPqcKey] = useState<KeyState>(emptyKeyState())
-  const [everCompleted, setEverCompleted] = useState(false)
+  const completed = useRef(false)
+  const classicalRequest = useRef(0)
+  const pqcRequest = useRef(0)
+  const classicalBusy = useRef(false)
+  const pqcBusy = useRef(false)
+  const mounted = useRef(true)
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      classicalRequest.current += 1
+      pqcRequest.current += 1
+    }
+  }, [])
 
   const runGenerate = async (
     algoValue: string,
-    setState: React.Dispatch<React.SetStateAction<KeyState>>
+    setState: React.Dispatch<React.SetStateAction<KeyState>>,
+    request: React.RefObject<number>,
+    busy: React.RefObject<boolean>
   ) => {
     const cmd = findCmd(algoValue)
-    if (!cmd) return
-
-    setState({ output: `$ ${cmd}\n`, privBytes: null, pubBytes: null, loading: true })
-
+    if (busy.current) return
+    if (!cmd) {
+      setState({ ...emptyKeyState(), error: 'Choose a supported sample algorithm' })
+      return
+    }
+    busy.current = true
+    const requestId = ++request.current
+    const isCurrent = () => mounted.current && request.current === requestId
+    setState({ ...emptyKeyState(), output: `$ ${cmd}\n`, loading: true })
     try {
       const result = await openSSLService.execute(cmd)
-      if (result.error) {
-        setState((prev) => ({
-          ...prev,
-          loading: false,
-          output: prev.output + `Error: ${result.error}\n`,
-        }))
-        return
-      }
-
+      if (!isCurrent()) return
+      if (result.error) throw new Error(result.error)
       const privFile = result.files.find((f) => f.name === 'private.key')
-      if (!privFile) {
-        setState((prev) => ({
-          ...prev,
-          loading: false,
-          output: prev.output + 'Error: key file not produced\n',
-        }))
-        return
-      }
-
+      if (!privFile?.data.length) throw new Error('Private key file not produced')
       const privPem = new TextDecoder().decode(privFile.data)
       const privBytes = pemToBytes(privPem)
-      let log = result.stdout + result.stderr + '\nKey generated successfully!\n'
-
-      // Extract public key
+      let log = result.stdout + result.stderr + '\nPrivate-key output produced.\n'
       const pubCmd = 'openssl pkey -in private.key -pubout -out public.key'
       log += `\n$ ${pubCmd}\n`
       const pubResult = await openSSLService.execute(pubCmd, [privFile])
+      if (!isCurrent()) return
+      if (pubResult.error) throw new Error(pubResult.error)
       const pubFile = pubResult.files.find((f) => f.name === 'public.key')
-      const pubPem = pubFile ? new TextDecoder().decode(pubFile.data) : ''
-      const pubBytes = pubPem ? pemToBytes(pubPem) : null
-      if (pubPem) log += pubPem
-
-      setState({ output: `$ ${cmd}\n` + log, privBytes, pubBytes, loading: false })
-
-      if (!everCompleted) {
-        setEverCompleted(true)
+      if (!pubFile?.data.length) throw new Error('Public key file not produced')
+      const pubPem = new TextDecoder().decode(pubFile.data)
+      const pubBytes = pemToBytes(pubPem)
+      log += pubPem + '\nSample key generation and public-key extraction completed.\n'
+      setState({ ...emptyKeyState(), output: `$ ${cmd}\n` + log, privBytes, pubBytes })
+      if (!completed.current) {
+        completed.current = true
         onComplete()
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error'
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        output: prev.output + `System Error: ${msg}\n`,
-      }))
+      if (!isCurrent()) return
+      const error = err instanceof Error ? err.message : 'Unknown error'
+      setState((prev) => ({ ...prev, error, output: prev.output + `Error: ${error}\n` }))
+    } finally {
+      busy.current = false
+      if (mounted.current) setState((prev) => ({ ...prev, loading: false }))
     }
   }
 
-  const handleGenerateClassical = () => runGenerate(classicalAlgo, setClassicalKey)
-  const handleGeneratePQC = () => runGenerate(pqcAlgo, setPqcKey)
+  const handleGenerateClassical = () =>
+    runGenerate(classicalAlgo, setClassicalKey, classicalRequest, classicalBusy)
+  const handleGeneratePQC = () => runGenerate(pqcAlgo, setPqcKey, pqcRequest, pqcBusy)
 
   const handleGenerateBoth = () => {
     handleGenerateClassical()
@@ -163,6 +173,12 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
 
   return (
     <div className="space-y-6">
+      <p role="note" className="text-sm text-muted-foreground">
+        Sizes count the exact decoded PEM payload/container bytes, including container overhead, not
+        raw algorithm key-size references or proof of an interoperable encoding. Activity credit
+        records a successful sample key-generation and public-key extraction, not deployed-system
+        validation.
+      </p>
       {/* Generate Both CTA */}
       <div className="flex justify-center">
         <Button
@@ -192,7 +208,11 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
                 ...CLASSICAL_KEM_ALGOS.map((a) => ({ id: a.value, label: a.label })),
               ]}
               selectedId={classicalAlgo}
-              onSelect={setClassicalAlgo}
+              onSelect={(value) => {
+                classicalRequest.current += 1
+                setClassicalAlgo(value)
+                setClassicalKey({ ...emptyKeyState(), loading: classicalBusy.current, stale: true })
+              }}
               noContainer
               className="w-full"
             />
@@ -220,17 +240,28 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
             </pre>
           </div>
 
+          {classicalKey.error && (
+            <p role="alert" className="text-sm text-status-error">
+              {classicalKey.error}. Try generating again.
+            </p>
+          )}
+          {classicalKey.stale && (
+            <p role="status" className="text-sm text-muted-foreground">
+              Selection changed—run again. Previous outputs cleared.
+            </p>
+          )}
+
           {classicalKey.privBytes !== null && (
             <div className="text-xs text-muted-foreground space-y-1">
               <div className="flex justify-between">
-                <span>Private key</span>
+                <span>Decoded private-key container</span>
                 <span className="font-mono text-foreground">
                   {classicalKey.privBytes.toLocaleString()} bytes
                 </span>
               </div>
               {classicalKey.pubBytes !== null && (
                 <div className="flex justify-between">
-                  <span>Public key</span>
+                  <span>Decoded public-key container</span>
                   <span className="font-mono text-foreground">
                     {classicalKey.pubBytes.toLocaleString()} bytes
                   </span>
@@ -254,7 +285,11 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
                 ...PQC_KEM_ALGOS.map((a) => ({ id: a.value, label: a.label })),
               ]}
               selectedId={pqcAlgo}
-              onSelect={setPqcAlgo}
+              onSelect={(value) => {
+                pqcRequest.current += 1
+                setPqcAlgo(value)
+                setPqcKey({ ...emptyKeyState(), loading: pqcBusy.current, stale: true })
+              }}
               noContainer
               className="w-full"
             />
@@ -278,17 +313,28 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
             </pre>
           </div>
 
+          {pqcKey.error && (
+            <p role="alert" className="text-sm text-status-error">
+              {pqcKey.error}. Try generating again.
+            </p>
+          )}
+          {pqcKey.stale && (
+            <p role="status" className="text-sm text-muted-foreground">
+              Selection changed—run again. Previous outputs cleared.
+            </p>
+          )}
+
           {pqcKey.privBytes !== null && (
             <div className="text-xs text-muted-foreground space-y-1">
               <div className="flex justify-between">
-                <span>Private key</span>
+                <span>Decoded private-key container</span>
                 <span className="font-mono text-foreground">
                   {pqcKey.privBytes.toLocaleString()} bytes
                 </span>
               </div>
               {pqcKey.pubBytes !== null && (
                 <div className="flex justify-between">
-                  <span>Public key</span>
+                  <span>Decoded public-key container</span>
                   <span className="font-mono text-foreground">
                     {pqcKey.pubBytes.toLocaleString()} bytes
                   </span>
@@ -302,12 +348,12 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
       {/* ── Key Size Comparison ── */}
       {bothReady && (
         <div className="glass-panel p-5 space-y-4">
-          <h4 className="font-semibold text-foreground">Key Size Comparison</h4>
+          <h4 className="font-semibold text-foreground">Decoded Key Container Size Comparison</h4>
 
           {/* Private key bars */}
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Private Key
+              Private-key container
             </p>
             <div className="space-y-1.5">
               <div className="flex items-center gap-3">
@@ -343,7 +389,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
           {classicalKey.pubBytes !== null && pqcKey.pubBytes !== null && (
             <div className="space-y-2">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                Public Key
+                Public-key container
               </p>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-3">

@@ -18,6 +18,7 @@ import { TrendingUp, Info } from 'lucide-react'
 import { CollapsibleSection } from './sections/reportContentShared'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { AssessmentSnapshot } from '../../store/useAssessmentStore'
+import { URGENCY_TIERS } from '../../hooks/assessment/urgencyTiers'
 
 interface KPITrendingSectionProps {
   history: AssessmentSnapshot[]
@@ -70,8 +71,6 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
   const style = getComputedStyle(document.documentElement)
   const primaryColor = `hsl(${style.getPropertyValue('--primary').trim()})`
   const mutedColor = `hsl(${style.getPropertyValue('--muted-foreground').trim()})`
-  const destructiveColor = `hsl(${style.getPropertyValue('--destructive').trim()})`
-  const warningColor = `hsl(${style.getPropertyValue('--warning') || '38 92% 50%'})`
 
   const lineData = useMemo(
     () =>
@@ -214,18 +213,24 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
                   tickLine={false}
                   width={28}
                 />
-                <ReferenceLine
-                  y={70}
-                  stroke={destructiveColor}
-                  strokeDasharray="4 3"
-                  label={{ value: 'High', fill: destructiveColor, fontSize: 10, position: 'right' }}
-                />
-                <ReferenceLine
-                  y={40}
-                  stroke={warningColor}
-                  strokeDasharray="4 3"
-                  label={{ value: 'Med', fill: warningColor, fontSize: 10, position: 'right' }}
-                />
+                {[
+                  { label: 'Low', upperBound: URGENCY_TIERS[4].scoreRange[1] },
+                  { label: 'Medium', upperBound: URGENCY_TIERS[3].scoreRange[1] },
+                  { label: 'High', upperBound: URGENCY_TIERS[2].scoreRange[1] },
+                ].map(({ label, upperBound }) => (
+                  <ReferenceLine
+                    key={label}
+                    y={upperBound}
+                    stroke={mutedColor}
+                    strokeDasharray="4 3"
+                    label={{
+                      value: `${label} ≤${upperBound}`,
+                      fill: mutedColor,
+                      fontSize: 10,
+                      position: 'insideTopRight',
+                    }}
+                  />
+                ))}
                 <Tooltip content={<LineTooltip />} />
                 <Line
                   type="monotone"
@@ -237,6 +242,13 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
                 />
               </LineChart>
             </ResponsiveContainer>
+            <p className="text-xs text-muted-foreground mt-2">
+              Reference lines show the current Hub model bands: Low up to{' '}
+              {URGENCY_TIERS[4].scoreRange[1]}, Medium up to {URGENCY_TIERS[3].scoreRange[1]}, High
+              up to {URGENCY_TIERS[2].scoreRange[1]}, and Critical above{' '}
+              {URGENCY_TIERS[2].scoreRange[1]}. Saved scores and labels remain as recorded; they
+              have not been recalculated against current bands.
+            </p>
           </div>
         )}
 

@@ -5,6 +5,8 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { useHistoryStore } from './useHistoryStore'
 
 export interface TLSConfig {
+  /** Missing provenance on saved configurations preserves learner choices. */
+  trustSelection?: 'sample-default' | 'learner-selected'
   cipherSuites: string[]
   groups: string[]
   signatureAlgorithms: string[]
@@ -33,10 +35,18 @@ export interface SimulationResult {
   error?: string
 }
 
+export interface TLSRunInputs {
+  clientConfig: TLSConfig
+  serverConfig: TLSConfig
+  clientMessage: string
+  serverMessage: string
+}
+
 // Run history for comparison table
 export interface TLSRunRecord {
   id: number
   timestamp: Date
+  inputs?: TLSRunInputs
   cipher: string
   keyExchange: string
   signature: string
@@ -56,6 +66,7 @@ interface TLSStore {
   clientConfig: TLSConfig
   serverConfig: TLSConfig
   results: SimulationResult | null
+  runInputs: TLSRunInputs | null
   isSimulating: boolean
 
   // Session State
@@ -107,6 +118,7 @@ SignatureAlgorithms = mldsa44:mldsa65:mldsa87:ecdsa_secp256r1_sha256:rsa_pss_rsa
 const V1_LEGACY_GROUPS = ['X25519', 'P-256', 'P-384']
 
 const DEFAULT_CONFIG: TLSConfig = {
+  trustSelection: 'sample-default',
   cipherSuites: [
     'TLS_AES_256_GCM_SHA384',
     'TLS_AES_128_GCM_SHA256',
@@ -188,6 +200,7 @@ export const useTLSStore = create<TLSStore>()(
         rawConfig: '# --- Server Configuration ---\n' + DEFAULT_RAW_CONFIG,
       },
       results: null,
+      runInputs: null,
       clientMessage: 'Hello Server (Encrypted)',
       serverMessage: 'Hello Client (Encrypted)',
       setClientMessage: (msg) => set({ clientMessage: msg }),
@@ -297,16 +310,31 @@ system_default = system_default_sect
         // So session status should always be 'idle' after simulation completes
         set({ results, sessionStatus: 'idle' })
       },
-      setIsSimulating: (isSimulating) => set({ isSimulating }),
+      setIsSimulating: (isSimulating) =>
+        set((state) =>
+          isSimulating
+            ? {
+                isSimulating,
+                runInputs: structuredClone({
+                  clientConfig: state.clientConfig,
+                  serverConfig: state.serverConfig,
+                  clientMessage: state.clientMessage,
+                  serverMessage: state.serverMessage,
+                }),
+              }
+            : { isSimulating }
+        ),
 
       addCommand: (cmd) => set((state) => ({ commands: [...state.commands, cmd] })),
-      clearSession: () => set({ commands: [], sessionStatus: 'idle', results: null }),
+      clearSession: () =>
+        set({ commands: [], sessionStatus: 'idle', results: null, runInputs: null }),
 
       reset: () =>
         set({
           clientConfig: { ...DEFAULT_CONFIG },
           serverConfig: { ...DEFAULT_CONFIG },
           results: null,
+          runInputs: null,
           isSimulating: false,
           commands: [],
           sessionStatus: 'idle',
@@ -319,6 +347,7 @@ system_default = system_default_sect
             ...state.runHistory,
             {
               ...record,
+              inputs: state.runInputs ? structuredClone(state.runInputs) : undefined,
               id: state.runHistory.length + 1,
               timestamp: new Date(),
             },

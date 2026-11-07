@@ -106,7 +106,7 @@ describe('SshSimulationPanel', () => {
 
   it('renders the run button in idle state', () => {
     renderPanel()
-    expect(screen.getByRole('button', { name: /run.*handshake/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /run.*comparison/i })).toBeInTheDocument()
   })
 
   it('renders the reset button', () => {
@@ -122,7 +122,7 @@ describe('SshSimulationPanel', () => {
 
   it('renders the handshake log tab with idle message', () => {
     renderPanel()
-    expect(screen.getByText(/Click.*Run both handshakes/i)).toBeInTheDocument()
+    expect(screen.getByText(/Click.*Run comparison/i)).toBeInTheDocument()
   })
 
   it('calls sshEngine.terminate on reset', () => {
@@ -147,8 +147,8 @@ describe('SshSimulationPanel', () => {
     expect(screen.getByRole('tab', { name: /wire packets/i })).toBeInTheDocument()
   })
 
-  it('description advertises real softhsmv3 PKCS#11', () => {
+  it('description distinguishes genuine and modeled samples', () => {
     renderPanel()
-    expect(screen.getByText(/softhsmv3 PKCS#11/i)).toBeInTheDocument()
+    expect(screen.getByText(/Compare a genuine OpenSSH classical baseline/i)).toBeInTheDocument()
   })
 })

@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { PlaygroundWorkshop, playgroundCountsLine } from './PlaygroundWorkshop'
+import { evidenceForTool } from './toolEvidence'
 import { WORKSHOP_TOOLS } from './workshopRegistry'
 import { isEnvironmentTool } from './cryptoLabTaxonomy'
 import { FEATURE_PLAYGROUNDS, featurePlaygroundsFor } from './cryptoLabMeta'
@@ -52,7 +53,7 @@ describe('Crypto Lab Workbench', () => {
       )
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { name: /Run real cryptography in your browser/i })
+      screen.getByRole('heading', { name: /Explore cryptographic operations and models/i })
     ).toBeInTheDocument()
     expect(screen.getByText('Interactive Playground')).toBeInTheDocument()
     expect(screen.getByText('PKCS#11 HSM')).toBeInTheDocument()
@@ -179,8 +180,8 @@ describe('Crypto Lab Workbench', () => {
     const dialog = screen.getByRole('dialog', { name: 'Bitcoin Transaction' })
     expect(within(dialog).getByRole('button', { name: /Open tool/i })).toBeInTheDocument()
     expect(within(dialog).getByText('Algorithms')).toBeInTheDocument()
-    // Browser tool → explains it runs instantly in-browser via WASM.
-    expect(within(dialog).getByText(/Runs instantly in your browser/i)).toBeInTheDocument()
+    // Execution scope comes from the existing per-tool evidence profile.
+    expect(within(dialog).getByText(evidenceForTool('bitcoin-flow')!.summary)).toBeInTheDocument()
   })
 
   describe('card interactions', () => {

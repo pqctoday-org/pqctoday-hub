@@ -303,7 +303,7 @@ export function DecisionSection({
       <div className="mb-4 rounded-lg border border-success bg-success/10 p-3">
         <div className="font-mono text-sim-micro font-extrabold text-success">✓ PHASE CLEARED</div>
         <div className="mt-0.5 text-[12.5px] font-bold text-foreground">
-          Every maturity level earned{gate ? ` — Gate ${gate.id} certified` : ''}.
+          Scenario progress complete{gate ? ` — sample Gate ${gate.id}` : ''}.
         </div>
       </div>
     )
@@ -515,9 +515,14 @@ export function DecisionSection({
           <div className="text-[11px] leading-snug text-muted-foreground">{chosenCard.detail}</div>
           {wrongPickCostQuarters != null && (
             <div className="mt-1 text-[10.5px] font-semibold leading-snug text-destructive">
-              This pick cost you {wrongPickCostQuarters} quarter
-              {wrongPickCostQuarters > 1 ? 's' : ''} of rework
-              {allowRetry ? '' : ' — the pick stands'}.
+              {allowRetry ? (
+                'Easy mode: retry without a score penalty or clock setback.'
+              ) : (
+                <>
+                  This pick cost you {wrongPickCostQuarters} quarter
+                  {wrongPickCostQuarters > 1 ? 's' : ''} of rework — the pick stands.
+                </>
+              )}
             </div>
           )}
           {/* W3 #13: ground the consequence in THIS run's live Mosca state when the
@@ -714,9 +719,11 @@ export function QuarterReport({
                     {report.effects.setbackQuarters > 1 ? 's' : ''} of rework lost
                   </div>
                 )}
-                {report.effects.budgetCostM && <div>💸 −€{report.effects.budgetCostM}M budget</div>}
+                {report.effects.budgetCostM && (
+                  <div>💸 −{report.effects.budgetCostM} game units</div>
+                )}
                 {report.effects.budgetCreditM && (
-                  <div>💰 +€{report.effects.budgetCreditM}M budget</div>
+                  <div>💰 +{report.effects.budgetCreditM} game units</div>
                 )}
               </div>
             </div>

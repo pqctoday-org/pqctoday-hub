@@ -109,19 +109,21 @@ export const InventoryLifecycleSimulator: React.FC<InventoryLifecycleSimulatorPr
     <div className="space-y-6">
       {focusAssetClass && VALID_ASSET_CLASSES.includes(focusAssetClass as AssetClass) && (
         <PreFilledBanner
-          summary={`Focused on ${ASSET_CLASS_LABELS[focusAssetClass as AssetClass]} — your lowest maturity area from Step 1. Switch the filter to view other asset classes.`}
+          summary={`Focused on ${ASSET_CLASS_LABELS[focusAssetClass as AssetClass]} — your lowest self-rated area from Step 1. Switch the filter to view other asset classes.`}
         />
       )}
       <p className="text-sm text-muted-foreground">
-        Walk a sample enterprise inventory through the six-stage operational loop. Every iteration
-        reduces cert MTTR as discovery, remediation, and attestation automation compound.
+        Walk a sample enterprise inventory through the six-stage operational loop. The illustrative
+        MTTR curve depends only on the iteration count, not on completed asset actions: max(0.25,
+        9.5 / iteration) hours. It is not measured performance or a forecast of automation benefits;
+        an actual improvement loop can stall or regress.
       </p>
 
       <div className="flex flex-wrap items-center gap-3 bg-muted/40 rounded-lg p-3 border border-border">
         <div className="text-sm">
           <span className="font-bold text-primary">Iteration {iteration}</span>{' '}
           <span className="text-muted-foreground">
-            · Simulated Cert MTTR{' '}
+            · Illustrative iteration-only MTTR{' '}
             <span className="font-bold text-foreground">{simulatedMTTR} h</span>
           </span>
         </div>

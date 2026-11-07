@@ -579,8 +579,9 @@ export const MigrationVerification: React.FC = () => {
         }}
       >
         <p className="text-sm text-muted-foreground">
-          Export the verification records, decommissioning log, closure decision and BAU handover —
-          the evidence that migration actually happened.
+          Export the sample reference entries, retirement-planning notes, closure decision and BAU
+          handover as educational drafts. Recording these fields does not establish that a migration
+          or retirement was performed.
         </p>
       </ExportableArtifact>
     </div>

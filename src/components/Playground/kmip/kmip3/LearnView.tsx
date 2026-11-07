@@ -12,7 +12,7 @@
 // runs a brand-new CreateKeyPair and shows the result as a parallel
 // comparison; in-place algorithm conversion isn't how KMIP or real crypto
 // works, and the whole lesson would be wrong if it implied otherwise.
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CheckCircle2, ChevronDown, ChevronRight, Sparkles, Wand2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -32,6 +32,8 @@ import {
   type LessonSide,
   type LessonStep,
 } from './learnLessons'
+
+import { certificateValidity, lessonStepAchieved } from './lessonStepOutcome'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -60,6 +62,8 @@ function narrateStep(r: OpResult): string {
     return `Accepted as a background job — correlation value ${str(s.cv) || '(see wire)'}. Nothing computed yet.`
   if (!r.ok) return r.message ? `Refused: ${r.message}` : 'Operation failed.'
   switch (r.operation) {
+    case 'Validate':
+      return `Request status: ${r.status}. Certificate validity: ${certificateValidity(r)}.`
     case 'CreateSplitKey': {
       const n = str(s.uidsCsv) ? str(s.uidsCsv).split(',').length : 0
       return `Split into ${n} share objects — none of them is the key.`
@@ -133,6 +137,12 @@ function StepList({
                 <span className="text-[10px] text-muted-foreground">running…</span>
               )}
             </div>
+            {step.expectValidity && (
+              <p className="ml-5 mt-1 text-[11.5px] text-muted-foreground">
+                Expected sample validity: {step.expectValidity}. Completing this step means
+                observing that answer, not that every sample certificate is valid.
+              </p>
+            )}
             {run.result && (
               <div className="ml-5 mt-1">
                 <p className="text-[11.5px] text-muted-foreground">{narrateStep(run.result)}</p>
@@ -255,18 +265,20 @@ function CompareTable({ lesson }: { lesson: Lesson }) {
   )
 }
 
-function LessonPanel({
+export function LessonPanel({
   lesson,
   engine,
   onChanged,
   onTryInReference,
   onDone,
+  onIncomplete,
 }: {
   lesson: Lesson
   engine: KmipEngine
   onChanged: () => void
   onTryInReference: (op: string) => void
   onDone: () => void
+  onIncomplete: () => void
 }) {
   const [classicalRuns, setClassicalRuns] = useState<StepRun[]>(
     idleSteps(lesson.classical.steps.length)
@@ -277,6 +289,25 @@ function LessonPanel({
   const [classicalBusy, setClassicalBusy] = useState(false)
   const [modernizeBusy, setModernizeBusy] = useState(false)
   const [modernizeStarted, setModernizeStarted] = useState(false)
+
+  const [modernizeDone, setModernizeDone] = useState(false)
+  const [attemptError, setAttemptError] = useState<string | null>(null)
+  const busy = useRef(false)
+  const generation = useRef(0)
+  useEffect(() => {
+    generation.current += 1
+    busy.current = false
+    setClassicalBusy(false)
+    setModernizeBusy(false)
+    setClassicalRuns(idleSteps(lesson.classical.steps.length))
+    setModernizeRuns(idleSteps(lesson.modernize.steps.length))
+    setModernizeDone(false)
+    setModernizeStarted(false)
+    setAttemptError(null)
+    return () => {
+      generation.current += 1
+    }
+  }, [engine, lesson])
 
   const classicalDone =
     classicalRuns.length > 0 && classicalRuns.every((r) => r.status === 'success')
@@ -347,59 +378,101 @@ function LessonPanel({
 
   const runSide = async (
     side: LessonSide,
-    setRuns: (fn: (prev: StepRun[]) => StepRun[]) => void
+    setRuns: (fn: (prev: StepRun[]) => StepRun[]) => void,
+    token: number
   ) => {
     const results: (OpResult | null)[] = []
+    if (side.steps.length === 0) {
+      setAttemptError('No runnable steps configured. Activity incomplete.')
+      return { completed: false, executed: 0, stoppedAt: null }
+    }
+    setRuns(() => idleSteps(side.steps.length))
     for (let i = 0; i < side.steps.length; i++) {
       setRuns((prev) => prev.map((r, idx) => (idx === i ? { ...r, status: 'running' } : r)))
       // Yield so the "running…" state paints before the (synchronous) wasm call.
       await new Promise((r) => setTimeout(r, 0))
+      if (token !== generation.current)
+        return { completed: false, executed: results.length, stoppedAt: i }
       // eslint-disable-next-line security/detect-object-injection -- `i` is this loop's own bounded counter (0..side.steps.length), never user input.
       const step = side.steps[i]
-      const stored = await runStep(step, results)
+      let stored: OpResult
+      try {
+        stored = await runStep(step, results)
+      } catch (error) {
+        stored = {
+          ok: false,
+          operation: step.op,
+          status: 'Error',
+          resultReason: null,
+          message: error instanceof Error ? error.message : String(error),
+          summary: {},
+          responseWireHex: '',
+          responseWireLen: 0,
+          responseTree: { tag: '', type: 'Structure' },
+          audit: [],
+        }
+      }
+      if (token !== generation.current)
+        return { completed: false, executed: results.length, stoppedAt: i }
       results.push(stored)
       // What outcome is this step SUPPOSED to have? A 'refusal' step (the
       // below-threshold join, reading a destroyed key) succeeds AS A LESSON
       // exactly when the engine honestly refuses; 'pending' when the async
       // accept comes back OperationPending.
-      const want = step.expect ?? 'success'
-      const achieved =
-        want === 'success'
-          ? stored.ok
-          : want === 'pending'
-            ? stored.status === 'OperationPending'
-            : !stored.ok && stored.status !== 'Error'
+      const achieved = lessonStepAchieved(step, stored)
       setRuns((prev) =>
         prev.map((r, idx) =>
           idx === i ? { ...r, status: achieved ? 'success' : 'error', result: stored } : r
         )
       )
       onChanged()
-      if (!achieved) break
+      if (!achieved) {
+        setAttemptError(
+          `Activity incomplete at step ${i + 1}: ${step.expectValidity ? `Expected certificate validity ${step.expectValidity}; received ${certificateValidity(stored)} (request ${stored.status}).` : (stored.message ?? 'Expected outcome not met.')}`
+        )
+        return { completed: false, executed: results.length, stoppedAt: i }
+      }
     }
-    return results
+    return { completed: true, executed: results.length, stoppedAt: null }
   }
 
-  const onRunClassical = async () => {
-    setClassicalBusy(true)
+  const runAttempt = async (modernize: boolean) => {
+    if (busy.current || (modernize && !canModernize)) return
+    busy.current = true
+    const token = generation.current
+    setAttemptError(null)
+    setModernizeDone(false)
+    onIncomplete()
+    const setBusy = modernize ? setModernizeBusy : setClassicalBusy
+    setBusy(true)
+    if (modernize) setModernizeStarted(true)
+    else {
+      setModernizeStarted(false)
+      setModernizeRuns(idleSteps(lesson.modernize.steps.length))
+    }
     try {
-      await runSide(lesson.classical, setClassicalRuns)
+      const outcome =
+        modernize && lesson.modernize.skipReplay
+          ? { completed: true, executed: 0, stoppedAt: null }
+          : await runSide(
+              modernize ? lesson.modernize : lesson.classical,
+              modernize ? setModernizeRuns : setClassicalRuns,
+              token
+            )
+      if (token === generation.current && modernize && outcome.completed) {
+        setModernizeDone(true)
+        onDone()
+      }
     } finally {
-      setClassicalBusy(false)
+      if (token === generation.current) {
+        busy.current = false
+        setBusy(false)
+      }
     }
   }
 
-  const onRunModernize = async () => {
-    setModernizeStarted(true)
-    if (lesson.modernize.skipReplay) return
-    setModernizeBusy(true)
-    try {
-      await runSide(lesson.modernize, setModernizeRuns)
-      onDone()
-    } finally {
-      setModernizeBusy(false)
-    }
-  }
+  const onRunClassical = () => runAttempt(false)
+  const onRunModernize = () => runAttempt(true)
 
   return (
     <div className="space-y-4">
@@ -432,11 +505,17 @@ function LessonPanel({
             <Button
               variant="gradient"
               size="sm"
-              disabled={classicalBusy || classicalDone}
+              disabled={classicalBusy || modernizeBusy || classicalDone}
               onClick={onRunClassical}
               className="mt-3"
             >
-              {classicalDone ? 'Done' : classicalBusy ? 'Running…' : 'Run these steps'}
+              {classicalBusy
+                ? 'Running…'
+                : classicalDone
+                  ? 'Sample sequence completed'
+                  : classicalRuns.some((run) => run.status === 'error')
+                    ? 'Retry sequence'
+                    : 'Run these steps'}
             </Button>
           </>
         )}
@@ -458,16 +537,28 @@ function LessonPanel({
         <Button
           variant="gradient"
           size="sm"
-          disabled={!canModernize || modernizeBusy || modernizeStarted}
+          disabled={!canModernize || classicalBusy || modernizeBusy || modernizeDone}
           onClick={onRunModernize}
           className="mt-2"
         >
-          {modernizeStarted
-            ? 'Done'
-            : modernizeBusy
-              ? 'Running…'
-              : (lesson.modernize.cta ?? 'Modernize')}
+          {modernizeBusy
+            ? 'Running…'
+            : modernizeDone
+              ? lesson.modernize.skipReplay
+                ? 'Comparison viewed — no additional operations run'
+                : 'Sample sequence completed'
+              : modernizeStarted
+                ? 'Retry sequence'
+                : lesson.modernize.skipReplay
+                  ? 'View comparison'
+                  : (lesson.modernize.cta ?? 'Modernize')}
         </Button>
+        {attemptError && (
+          <p role="alert" className="text-status-error">
+            {attemptError} Retry starts from step one; previously created sample objects are not
+            deleted.
+          </p>
+        )}
       </section>
 
       {/* Post-quantum card */}
@@ -540,6 +631,21 @@ function LessonPanel({
         analyticsCategory="KMIP Quiz"
       />
 
+      {lesson.id === 'honesty' && (
+        <p className="text-[12px] text-muted-foreground">
+          For storage sanitization assurance, see{' '}
+          <a
+            className="text-primary underline"
+            href="https://csrc.nist.gov/pubs/sp/800/88/r2/final"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            NIST SP 800-88 Rev. 2, section 4.5
+          </a>
+          . This reference does not validate the sample engine or test memory zeroization.
+        </p>
+      )}
+
       {/* Try it in Reference */}
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-[11px] text-muted-foreground">Try it yourself in Reference:</span>
@@ -569,7 +675,8 @@ export function LearnView({
   onTryInReference: (op: string) => void
 }) {
   const [activeId, setActiveId] = useState(LESSONS[0].id)
-  const [done, setDone] = useState<Set<string>>(new Set())
+  const [completion, setCompletion] = useState({ engine, ids: new Set<string>() })
+  const done = completion.engine === engine ? completion.ids : new Set<string>()
   const activeLesson = LESSONS.find((l) => l.id === activeId) ?? LESSONS[0]
 
   return (
@@ -619,7 +726,19 @@ export function LearnView({
         engine={engine}
         onChanged={onChanged}
         onTryInReference={onTryInReference}
-        onDone={() => setDone((prev) => new Set(prev).add(activeLesson.id))}
+        onDone={() =>
+          setCompletion((prev) => ({
+            engine,
+            ids: new Set(prev.engine === engine ? prev.ids : []).add(activeLesson.id),
+          }))
+        }
+        onIncomplete={() =>
+          setCompletion((prev) => {
+            const next = new Set(prev.engine === engine ? prev.ids : [])
+            next.delete(activeLesson.id)
+            return { engine, ids: next }
+          })
+        }
       />
     </div>
   )

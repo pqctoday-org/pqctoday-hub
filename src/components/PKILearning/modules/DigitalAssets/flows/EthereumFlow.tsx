@@ -105,12 +105,32 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
 
   return (
     <div className="flex flex-col h-full relative">
-      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
-        <LiveHSMToggle
-          hsm={hsm}
-          operations={['C_GenerateKeyPair', 'C_Sign', 'C_Verify', 'C_GetAttributeValue']}
-        />
-      </div>
+      <aside
+        aria-label="Ethereum sample execution scope"
+        className="mb-4 rounded-lg border border-border p-3 text-sm text-muted-foreground space-y-2"
+      >
+        <p>
+          <strong className="text-foreground">Software JSON-signing demonstration.</strong> The
+          steps use OpenSSL software and JavaScript helpers with accessible sample key files. The
+          optional HSM session below is separate; enabling it does not move these keys or
+          signing/verification operations into that session.
+        </p>
+        <p>
+          The signed payload is UTF-8 JSON, not an encoded Ethereum transaction. In production
+          tools, evaluate protocol serialization, key custody through the intended provider, and
+          independently checked per-operation results. Completing these sample steps does not
+          establish blockchain acceptance.
+        </p>
+      </aside>
+      <section
+        aria-label="Separate HSM session inspection"
+        className="px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl"
+      >
+        <p className="mb-2 text-xs text-muted-foreground">
+          Optional session inspection; the Ethereum sample steps do not use this session.
+        </p>
+        <LiveHSMToggle hsm={hsm} operations={[]} />
+      </section>
 
       <StepWizard
         steps={steps}
@@ -129,19 +149,34 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
         <Pkcs11LogPanel
           log={hsm.log}
           onClear={hsm.clearLog}
-          title="PKCS#11 Call Log — Ethereum Flow"
-          emptyMessage="Execute a step to see live PKCS#11 operations."
-          filterFns={['C_GenerateKeyPair', 'C_Sign', 'C_Verify', 'C_GetAttributeValue']}
+          title="Separate HSM session trace"
+          emptyMessage="No retained calls in this optional HSM session. Ethereum software steps do not feed this trace."
         />
       )}
 
       {hsm.isReady && (
-        <HsmKeyInspector
-          keys={hsm.keys}
-          moduleRef={hsm.moduleRef}
-          hSessionRef={hsm.hSessionRef}
-          onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
-        />
+        <section aria-label="Separate HSM session keys">
+          <p className="mb-2 text-xs text-muted-foreground">
+            Separate session keys — these are not the Ethereum software key files.
+          </p>
+          {hsm.keys.length === 0 ? (
+            <div
+              className="glass-panel p-5 text-sm text-muted-foreground"
+              data-testid="hsm-key-inspector"
+              data-hsm-key-count={0}
+            >
+              No keys are registered in this optional HSM session. Ethereum software steps do not
+              provision keys here.
+            </div>
+          ) : (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
+            />
+          )}
+        </section>
       )}
     </div>
   )

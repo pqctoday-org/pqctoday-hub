@@ -22,7 +22,7 @@ const QUESTIONS: Question[] = [
   {
     text: 'Is the source code available and actively maintained by your team?',
     context:
-      'If the code is lost, in escrow, or with a disbanded vendor — direct modification is impossible.',
+      'Source availability affects direct modification options. Check supported supplier upgrades or replacement paths before ruling out migration.',
     migrateIfYes: true,
   },
   {
@@ -34,7 +34,7 @@ const QUESTIONS: Question[] = [
   {
     text: 'Does the system expose modular cryptographic APIs (PKCS#11, JCE, CNG, OpenSSL EVP)?',
     context:
-      'Modular APIs allow algorithm swap without touching business logic — the hallmark of crypto agility.',
+      'A modular API can help isolate changes, but it does not establish algorithm, provider or protocol support. Check the intended integration.',
     migrateIfYes: true,
   },
   {
@@ -46,7 +46,7 @@ const QUESTIONS: Question[] = [
   {
     text: 'Can the system tolerate a planned maintenance window for migration testing?',
     context:
-      'Mission-critical systems that cannot be taken offline require a live gateway as a bridge strategy.',
+      'Limited downtime motivates evaluating deployment alternatives; it does not establish that a live gateway is applicable or sufficient.',
     migrateIfYes: true,
   },
 ]
@@ -129,10 +129,10 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        CSWP.39 §5 step 5 + §4.6 — the Implement step requires deciding between{' '}
-        <strong>Migration</strong> (algorithm replacement) and <strong>Mitigation</strong> (crypto
-        gateway / bump-in-the-wire). Answer 5 crypto-agility questions about a specific asset to get
-        a CSWP.39-grounded recommendation.
+        Use this Hub teaching decision tree to discuss <strong>Migration</strong> (algorithm
+        replacement) and <strong>Mitigation</strong> (crypto gateway / bump-in-the-wire). These five
+        questions are Hub guidance, not a NIST assessment. NIST CSWP.39 §4.6 is related reading on
+        gateway architecture for legacy systems.
       </p>
 
       {/* Phase 1: Asset selection */}
@@ -142,13 +142,14 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
             <div className="font-bold text-foreground text-sm">Select an asset to assess</div>
             {!usingLive && (
               <p className="text-xs text-muted-foreground">
-                No CBOM loaded from Step 3 — using sample assets. Complete Step 3 to assess your own
-                inventory.
+                No mapped Step 3 rows are available — using illustrative sample assets, not findings
+                from an empty or invalid draft.
               </p>
             )}
             {usingLive && (
               <p className="text-xs text-status-success">
-                Using CBOM from Step 3 ({cbomAssets.length} assets available).
+                Using the last valid Step 3 components sample ({cbomAssets.length} rows available),
+                not necessarily the current draft.
               </p>
             )}
             <div className="space-y-2">
@@ -229,7 +230,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
             onClick={handleGetRecommendation}
             className="w-full sm:w-auto flex items-center gap-2"
           >
-            Get Recommendation
+            Show planning suggestion
             <ArrowRight size={14} />
           </Button>
         </div>
@@ -240,23 +241,37 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-sm font-medium text-foreground">
             <GitFork size={16} className="text-primary" />
-            Assessment result for: <span className="text-primary">{selectedAsset}</span>
+            Illustrative planning suggestion for:{' '}
+            <span className="text-primary">{selectedAsset}</span>
           </div>
 
+          <p className="text-sm text-muted-foreground">
+            A missing prerequisite can outweigh the count. Use production tools and supplier
+            documentation to check supported software and algorithms, protocol/key-format
+            interoperability, deployment constraints, testing and rollback before choosing a design.
+            Where a scoped design supports them, the activities below are examples to evaluate.
+          </p>
           {recommendation === 'migrate' ? (
             <div className="bg-status-success/10 rounded-lg p-5 border border-status-success/30 space-y-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={20} className="text-status-success" />
                 <span className="text-lg font-bold text-status-success">
-                  RECOMMENDATION: MIGRATE
+                  PLANNING SUGGESTION: EXPLORE MIGRATION
                 </span>
               </div>
               <p className="text-sm text-foreground/80">
-                This system has sufficient crypto agility for direct algorithm replacement.{' '}
-                {migrateCount} of 5 assessment criteria favour migration.
+                {migrateCount} of 5 answers favour exploring direct algorithm replacement. This
+                majority is a planning prompt, not a finding that the system has sufficient crypto
+                agility or that migration is feasible.
               </p>
               <div className="space-y-2 text-sm">
-                <div className="font-bold text-foreground">Algorithm recommendations</div>
+                <div className="font-bold text-foreground">
+                  Illustrative algorithm examples to evaluate
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  These examples are not an implementation or protocol profile selected for this
+                  asset.
+                </p>
                 <ul className="space-y-1.5 text-sm text-foreground/80">
                   <li>
                     · KEM / key exchange → <strong>ML-KEM-768</strong> (FIPS 203)
@@ -275,7 +290,9 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                 </ul>
               </div>
               <div className="space-y-2">
-                <div className="font-bold text-foreground text-sm">Next steps</div>
+                <div className="font-bold text-foreground text-sm">
+                  Possible planning activities
+                </div>
                 <ol className="space-y-1.5 text-xs text-foreground/80 list-decimal list-inside">
                   <li>Upgrade cryptographic library to a PQC-capable, FIPS-validating version</li>
                   <li>Configure crypto agility layer (PKCS#11 / JCE / OpenSSL EVP abstraction)</li>
@@ -296,16 +313,20 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
               <div className="flex items-center gap-2">
                 <AlertTriangle size={20} className="text-status-warning" />
                 <span className="text-lg font-bold text-status-warning">
-                  RECOMMENDATION: MITIGATE (CRYPTO GATEWAY)
+                  PLANNING SUGGESTION: EXPLORE MITIGATION
                 </span>
               </div>
               <p className="text-sm text-foreground/80">
-                Direct migration is not feasible at this time — only {migrateCount} of 5 criteria
-                favour migration. Deploy a crypto gateway as a compensating control while planning
-                system decommission.
+                {migrateCount} of 5 answers favour direct replacement. Explore mitigation options
+                alongside upgrade, replacement and exit planning. This count does not establish that
+                a gateway is feasible or that it reduces this asset’s risk.
               </p>
               <div className="space-y-2 text-sm">
-                <div className="font-bold text-foreground">Gateway specification</div>
+                <div className="font-bold text-foreground">Gateway capabilities to evaluate</div>
+                <p className="text-xs text-muted-foreground">
+                  Which connections or operations would the gateway cover, and which legacy risks
+                  would remain?
+                </p>
                 <ul className="space-y-1.5 text-sm text-foreground/80">
                   <li>· Deploy a TLS termination proxy in front of the legacy system</li>
                   <li>· Configure approved cipher suites on the gateway (TLS 1.3 minimum)</li>
@@ -316,7 +337,9 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                 </ul>
               </div>
               <div className="space-y-2">
-                <div className="font-bold text-foreground text-sm">Next steps</div>
+                <div className="font-bold text-foreground text-sm">
+                  Possible planning activities
+                </div>
                 <ol className="space-y-1.5 text-xs text-foreground/80 list-decimal list-inside">
                   <li>
                     Select and deploy a crypto gateway product (Nginx, HAProxy, or dedicated
@@ -325,7 +348,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                   <li>Configure approved cipher suites and TLS 1.3; validate with testssl.sh</li>
                   <li>Add the legacy system + gateway to CBOM under "mitigated" status</li>
                   <li>
-                    Create a decommission ticket for the legacy system — target sunset {sunsetYear}
+                    Discuss a legacy-system exit plan — illustrative Hub sunset year {sunsetYear}
                   </li>
                   <li>
                     Schedule annual review: if the system becomes modifiable, run this wizard again
@@ -335,16 +358,18 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
               <div className="bg-status-warning/20 rounded p-3 border border-status-warning/40 flex items-start gap-2">
                 <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
                 <p className="text-xs text-foreground/80">
-                  <strong>This is not a permanent solution.</strong> The gateway buys time — it does
-                  not confer crypto agility on the legacy system. CSWP.39 §4.6 requires a sunset
-                  date paired with every mitigate decision. Suggested sunset:{' '}
-                  <strong>{sunsetYear}</strong>. The gateway itself must also be planned for
-                  algorithm migration.
+                  <strong>Plan for continued cryptographic change.</strong> A gateway can help
+                  provide system-level crypto agility while leaving embedded legacy cryptography
+                  unchanged. Review/exit planning is Hub guidance; §4.6 does not prescribe a sunset
+                  date. Existing illustrative Hub sunset year: <strong>{sunsetYear}</strong>. This
+                  is a planning example, not a NIST deadline or a feasibility assessment. The
+                  gateway also needs an update strategy.
                 </p>
               </div>
               <p className="text-xs text-muted-foreground border-t border-border pt-3">
-                Reference: NIST CSWP.39 §4.6 — &ldquo;Crypto gateway / bump-in-the-wire for systems
-                where direct modification is infeasible.&rdquo;
+                Related reading: NIST CSWP.39 §4.6 describes performing cryptographic functions
+                externally when direct legacy-code changes are not feasible. This is a paraphrase,
+                not a quotation or a source requirement for a sunset date.
               </p>
             </div>
           )}
@@ -355,7 +380,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
             className="flex items-center gap-2 text-xs"
           >
             <RefreshCw size={13} />
-            Assess another asset
+            Explore another asset
           </Button>
         </div>
       )}

@@ -6,6 +6,7 @@ import {
   logEvent,
   logPatentView,
   logPatentSearch,
+  logChatFeedback,
   logPatentFilter,
   logPatentFilterClear,
   logPatentSort,
@@ -314,7 +315,7 @@ describe('analytics', () => {
       })
     })
 
-    it('logPatentSearch scrubs PII from query', () => {
+    it('logPatentSearch excludes the entire query from telemetry', () => {
       logPatentSearch('user@example.com lattice https://x.com/foo')
       const calls = (
         ReactGA.event as unknown as {
@@ -324,7 +325,28 @@ describe('analytics', () => {
       const lastLabel = calls[calls.length - 1][0].label ?? ''
       expect(lastLabel).not.toContain('user@example.com')
       expect(lastLabel).not.toContain('https://')
-      expect(lastLabel).toContain('lattice')
+      expect(lastLabel).toBe('')
+      expect(
+        JSON.stringify([vi.mocked(ReactGA.event).mock.calls, vi.mocked(ReactGA.send).mock.calls])
+      ).not.toContain('lattice')
+    })
+
+    it('feedback keeps ratings and counts without sending prompt text', () => {
+      const question = 'fictional-bank-private-planning-question'
+      logChatFeedback('helpful', question, 3)
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Chat',
+        action: 'Feedback Helpful',
+        label: undefined,
+      })
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Chat',
+        action: 'Feedback Sources',
+        label: '3',
+      })
+      expect(
+        JSON.stringify([vi.mocked(ReactGA.event).mock.calls, vi.mocked(ReactGA.send).mock.calls])
+      ).not.toContain(question)
     })
 
     it('logPatentFilter encodes key:value', () => {
@@ -565,7 +587,6 @@ describe('analytics', () => {
       ['logLeadersSearch', logLeadersSearch, 'Leaders', 'Search'],
       ['logTimelineFilterText', logTimelineFilterText, 'Timeline', 'Filter Text'],
       ['logMigrateAssetSearch', logMigrateAssetSearch, 'Migrate', 'Search Assets'],
-      ['logPatentSearch', logPatentSearch, 'Patents', 'Search'],
       ['logFaqSearch', logFaqSearch, 'FAQ', 'Search'],
       ['logBusinessToolsSearch', logBusinessToolsSearch, 'Business', 'Tools Search'],
     ])('%s scrubs email, URL, IP and token', (_name, logger, category, action) => {
@@ -574,6 +595,15 @@ describe('analytics', () => {
       expect(call.category).toBe(category)
       expect(call.action).toBe(action)
       expectScrubbed(call.label)
+    })
+
+    it('patent search omits every typed field instead of retaining scrubbed text', () => {
+      logPatentSearch(RAW)
+      expect(lastCall()).toMatchObject({ category: 'Patents', action: 'Search' })
+      expect(lastCall().label).toBeUndefined()
+      expect(
+        JSON.stringify([vi.mocked(ReactGA.event).mock.calls, vi.mocked(ReactGA.send).mock.calls])
+      ).not.toContain('lattice')
     })
 
     it('caps the label at 80 characters before any persona suffix', () => {

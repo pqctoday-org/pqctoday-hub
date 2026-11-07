@@ -69,7 +69,7 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
       </div>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
-          <span className="w-3 h-2 rounded-sm bg-success/40" /> Safe zone
+          <span className="w-3 h-2 rounded-sm bg-success/40" /> Before planning anchor
         </span>
         {hndl.isAtRisk && (
           <span className="flex items-center gap-1">
@@ -116,6 +116,8 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
   const threatOffset = ((hnfl.estimatedQuantumThreatYear - hnfl.currentYear) / totalSpan) * 100
   const credEndOffset = (hnfl.credentialLifetimeYears / totalSpan) * 100
   const crqcYear = hnfl.crqcEstimateYear ?? hnfl.estimatedQuantumThreatYear
+  const credentialExpiryYear = hnfl.currentYear + hnfl.credentialLifetimeYears
+  const extendsBeyondAnchor = credentialExpiryYear > hnfl.estimatedQuantumThreatYear
 
   return (
     <div>
@@ -123,9 +125,11 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
         className="relative h-12 mb-6"
         role="img"
         aria-label={
-          hnfl.isAtRisk
-            ? `Your credentials remain trusted ${hnfl.riskWindowYears} years beyond the ${hnfl.estimatedQuantumThreatYear} CRQC planning anchor.`
-            : `Your credential lifetimes expire before the ${hnfl.estimatedQuantumThreatYear} CRQC planning anchor.`
+          !hnfl.hasSigningAlgorithms
+            ? `Entered credential lifetime ends in ${credentialExpiryYear}; CRQC planning anchor ${hnfl.estimatedQuantumThreatYear}. No Shor-vulnerable signing algorithm is recorded in this model.`
+            : hnfl.isAtRisk
+              ? `Your credentials remain trusted ${hnfl.riskWindowYears} years beyond the ${hnfl.estimatedQuantumThreatYear} CRQC planning anchor.`
+              : `The entered credential lifetime does not extend beyond the ${hnfl.estimatedQuantumThreatYear} CRQC planning anchor.`
         }
       >
         <div className="absolute top-5 left-0 right-0 h-2 rounded-full bg-border" />
@@ -172,7 +176,7 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
       </div>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
-          <span className="w-3 h-2 rounded-sm bg-success/40" /> Safe zone
+          <span className="w-3 h-2 rounded-sm bg-success/40" /> Before planning anchor
         </span>
         {hnfl.isAtRisk && (
           <span className="flex items-center gap-1">
@@ -205,9 +209,10 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
           )}
         </div>
       ) : (
-        <p className="text-sm text-success mt-3 font-medium">
-          Credential lifetimes expire before the quantum threat horizon. Monitor and reassess as the
-          threat timeline evolves.
+        <p className="text-sm text-muted-foreground mt-3 font-medium">
+          {extendsBeyondAnchor
+            ? `The entered credential lifetime extends beyond the ~${hnfl.estimatedQuantumThreatYear} CRQC planning anchor. No Shor-vulnerable signing algorithm is recorded in this model, so these inputs did not trigger its HNFL risk rule. Review the algorithm selections and signing use cases; this outcome does not establish early credential expiry.`
+            : `The entered credential lifetime does not extend beyond the ~${hnfl.estimatedQuantumThreatYear} CRQC planning anchor. This is a model comparison, not assurance of future security.`}
           {hnfl.isEstimated && (
             <span className="text-xs text-muted-foreground font-normal block mt-1">
               Based on a conservative 10-year credential lifetime estimate.
@@ -217,8 +222,8 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
       )}
       {!hnfl.hasSigningAlgorithms && (
         <p className="text-xs text-muted-foreground mt-2">
-          No signature algorithms detected — HNFL risk is reduced, but verify all signing use cases
-          are accounted for.
+          The model checks only the recorded algorithm selections. Review the full signing inventory
+          and trust lifetimes with your own tools.
         </p>
       )}
     </div>
@@ -294,7 +299,7 @@ export function HNDLHNFLSection({
         ? 'Data at risk until (HNDL, estimated)'
         : 'Data at risk until (HNDL)',
       type: hndl.isAtRisk ? 'risk' : 'safe',
-      badge: hndl.isAtRisk ? `+${yearsBeyond}yr beyond threat` : 'within safe window',
+      badge: hndl.isAtRisk ? `+${yearsBeyond}yr beyond anchor` : 'not beyond planning anchor',
     })
   }
   if (hnfl) {
@@ -305,8 +310,11 @@ export function HNDLHNFLSection({
       label: hnfl.isEstimated
         ? 'Credentials trusted until (HNFL, estimated)'
         : 'Credentials trusted until (HNFL)',
-      type: hnfl.isAtRisk ? 'risk' : 'safe',
-      badge: hnfl.isAtRisk ? `+${yearsBeyond}yr beyond threat` : 'within safe window',
+      type: !hnfl.hasSigningAlgorithms ? 'baseline' : hnfl.isAtRisk ? 'risk' : 'safe',
+      badge:
+        yearsBeyond > 0
+          ? `+${yearsBeyond}yr beyond anchor${hnfl.hasSigningAlgorithms ? '' : '; no vulnerable signing selection'}`
+          : 'not beyond planning anchor',
     })
   }
   milestones.sort((a, b) => a.year - b.year)

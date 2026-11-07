@@ -274,14 +274,14 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       why: 'The audit found a group of attributes answering Success while persisting nothing. A server that cannot honor a write must say so — silence indistinguishable from success is the bug.',
     },
     {
-      q: 'What does "Destroy genuinely scrubs" mean beyond flipping the lifecycle state?',
+      q: 'After Destroy, Get is refused. What does this sample establish?',
       options: [
-        'The key bytes are zeroized in memory and securely deleted from storage',
-        "The object's UID is recycled for the next key",
-        'The key is re-encrypted under a destruction key',
+        'The API refused retrieval; byte erasure is not established by this check',
+        'Every copy in memory, storage and backups was erased',
+        'No separate storage assurance is needed',
       ],
       answer: 0,
-      why: '"The key material SHALL be destroyed" is a claim about bytes. Before 0.13.0 only a flag flipped while the plaintext sat in the database; now memory is zeroized and SQLite\'s secure_delete is on.',
+      why: 'An API refusal is an observed lifecycle/access outcome. It can occur even when stored bytes remain. Evaluating destruction needs evidence about the implementation, covered copies and storage sanitization; this browser sample does not inspect those properties.',
     },
     {
       q: "Why does the engine's Query response now list exactly 62 operations?",

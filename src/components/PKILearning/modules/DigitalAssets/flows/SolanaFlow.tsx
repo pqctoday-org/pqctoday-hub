@@ -501,32 +501,45 @@ const isValid = hsm_eddsaVerify(
 );`,
         language: 'javascript',
         actionLabel: 'Verify Signature',
-        customControls: (
-          <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
-            <Switch
-              checked={simulateError}
-              onCheckedChange={setSimulateError}
-              aria-label="Simulate invalid signature"
-              className="mt-0.5 shrink-0"
-            />
-            <div>
-              <p className="text-sm font-medium text-foreground">Simulate Invalid Signature</p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                When enabled, a byte of the signature is flipped before verification — Step 9 will
-                show <span className="font-mono text-status-error font-bold">❌ INVALID</span>.
-              </p>
-            </div>
-          </div>
-        ),
       },
     ],
-    [sourceAddress, editableRecipientAddress, recipientAddress, transactionData, simulateError]
+    [sourceAddress, editableRecipientAddress, recipientAddress, transactionData]
   )
 
   const wizard = useStepWizard({
     steps,
     onBack,
   })
+
+  // Bind interactive controls to current attempt state, separate from lesson metadata.
+  const displaySteps = steps.map((step) =>
+    step.id === 'verify'
+      ? {
+          ...step,
+          customControls: (
+            <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
+              <Switch
+                checked={simulateError}
+                onCheckedChange={(checked) => {
+                  setSimulateError(checked)
+                  wizard.setIsStepComplete(false)
+                  wizard.setOutput(null)
+                }}
+                aria-label="Simulate invalid signature"
+                className="mt-0.5 shrink-0"
+              />
+              <div>
+                <p className="text-sm font-medium text-foreground">Simulate Invalid Signature</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Flip a signature byte and check that the selected verifier rejects it. Unexpected
+                  acceptance fails the exercise; operation errors are incomplete checks.
+                </p>
+              </div>
+            </div>
+          ),
+        }
+      : step
+  )
 
   const gatedHandleNext = React.useCallback(() => {
     if (!wizard.isStepComplete) {
@@ -809,9 +822,18 @@ Note: Address derived from the HSM Ed25519 public key.`
           const pubHandle = hsmHandlesRef.current.srcPubHandle
           if (!pubHandle) throw new Error('SoftHSM Source Public Key not found.')
 
-          const isValid = hsm_eddsaVerify(M, hSession, pubHandle, transBytes, signatureToVerify)
+          const isValid = hsm_eddsaVerify(
+            M,
+            hSession,
+            pubHandle,
+            transBytes,
+            signatureToVerify,
+            true
+          )
           if (simulateError) {
-            result.SoftHSMv3 = `Signature Verification FAILED locally within SoftHSM environment.\nNative execution intercepted corrupt signature bit.\nTrace in PKCS#11 Log.`
+            if (isValid)
+              throw new Error('Sample check failed: verifier accepted the altered signature.')
+            result.SoftHSMv3 = `Altered sample signature rejected as expected.\nC_Verify returned a signature-invalid outcome; this checks this sample only.\nTrace in PKCS#11 Log.`
           } else if (isValid) {
             result.SoftHSMv3 = `Signature Evaluation: ✅ VALID\nVerified inside WebAssembly SoftHSM via C_Verify.\nTrace in PKCS#11 Log.`
           } else {
@@ -827,12 +849,14 @@ Note: Address derived from the HSM Ed25519 public key.`
       } else {
         // JS fallback
         if (!keyGen.publicKey) throw new Error('Public key not found')
+        const isValid = ed25519.verify(signatureToVerify, transBytes, keyGen.publicKey)
         let verifyResult: string
         if (simulateError) {
+          if (isValid)
+            throw new Error('Sample check failed: verifier accepted the altered signature.')
           verifyResult =
-            '✅ Verification FAILED as expected (Proof of Validation)\nError: Signature Verification Failure'
+            'Altered sample signature rejected as expected. This checks this sample only.'
         } else {
-          const isValid = ed25519.verify(signatureToVerify, transBytes, keyGen.publicKey)
           if (isValid) verifyResult = 'Signature Verified Successfully'
           else throw new Error('Verification Failed — signature does not match')
         }
@@ -850,9 +874,12 @@ Note: Address derived from the HSM Ed25519 public key.`
       </div>
 
       <StepWizard
-        steps={steps}
+        steps={displaySteps}
         currentStepIndex={wizard.currentStep}
-        onExecute={() => wizard.execute(executeStep)}
+        onExecute={() => {
+          wizard.setIsStepComplete(false)
+          return wizard.execute(executeStep)
+        }}
         output={wizard.output}
         isExecuting={wizard.isExecuting}
         error={wizard.error}

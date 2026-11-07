@@ -242,25 +242,22 @@ const CapacityTab: React.FC = () => {
   const [signsPerDay, setSignsPerDay] = useState(500)
 
   const etcdEntry = useMemo(() => SIZE_COMPARISONS.find((s) => s.id === 'etcd-secret'), [])
-  const tlsHandshake = useMemo(
-    () => CAPACITY_METRICS.find((m) => m.id === 'tls-handshake-latency'),
-    []
-  )
+  const tlsHandshake = useMemo(() => SIZE_COMPARISONS.find((s) => s.id === 'tls-handshake'), [])
 
-  const etcdClassical = etcdEntry ? (certCount * etcdEntry.classicalSize) / 1024 / 1024 : 0
-  const etcdPQC = etcdEntry ? (certCount * etcdEntry.pqcSize) / 1024 / 1024 : 0
+  const etcdClassical = etcdEntry ? (certCount * etcdEntry.classicalSize) / 1024 / 1024 : null
+  const etcdPQC = etcdEntry ? (certCount * etcdEntry.pqcSize) / 1024 / 1024 : null
 
-  const bandwidthClassicalKB = tlsHandshake
-    ? (signsPerDay * tlsHandshake.baselinePerUnit) / 1024
-    : 0
-  const bandwidthPQCKB = tlsHandshake ? (signsPerDay * tlsHandshake.pqcPerUnit) / 1024 : 0
+  const trafficClassicalKiB = tlsHandshake
+    ? (signsPerDay * tlsHandshake.classicalSize) / 1024
+    : null
+  const trafficPQCKiB = tlsHandshake ? (signsPerDay * tlsHandshake.pqcSize) / 1024 : null
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Quantify the infrastructure impact of migrating from ECDSA to ML-DSA and from X25519 to
-        ML-KEM. Calculate storage growth, bandwidth increase, and latency overhead before your
-        migration window.
+        Explore illustrative infrastructure impact using the sample sizes and timing assumptions
+        below. These calculations are planning examples, not measured performance or a guarantee of
+        total traffic for your TLS configuration.
       </p>
 
       {/* Size Comparison Table */}
@@ -321,8 +318,9 @@ const CapacityTab: React.FC = () => {
       <div className="glass-panel p-4 space-y-4">
         <h4 className="text-sm font-bold text-foreground">Infrastructure Impact Calculator</h4>
         <p className="text-xs text-muted-foreground">
-          Adjust your deployment parameters to estimate the storage and bandwidth impact of PQC
-          migration.
+          Adjust the sample counts to estimate stored key/certificate material and daily handshake
+          traffic volume. Traffic uses the sample bytes per handshake, not the latency in
+          milliseconds; it does not determine the link capacity needed during traffic peaks.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -343,11 +341,15 @@ const CapacityTab: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div className="bg-muted/50 rounded p-2 border border-border">
                 <div className="text-muted-foreground">etcd (Classical)</div>
-                <div className="font-bold text-foreground">{etcdClassical.toFixed(2)} MB</div>
+                <div className="font-bold text-foreground">
+                  {etcdClassical === null ? 'Not assessed' : `${etcdClassical.toFixed(2)} MiB`}
+                </div>
               </div>
               <div className="bg-status-warning/10 rounded p-2 border border-status-warning/20">
                 <div className="text-muted-foreground">etcd (PQC)</div>
-                <div className="font-bold text-status-warning">{etcdPQC.toFixed(2)} MB</div>
+                <div className="font-bold text-status-warning">
+                  {etcdPQC === null ? 'Not assessed' : `${etcdPQC.toFixed(2)} MiB`}
+                </div>
               </div>
             </div>
           </div>
@@ -368,33 +370,42 @@ const CapacityTab: React.FC = () => {
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div className="bg-muted/50 rounded p-2 border border-border">
-                <div className="text-muted-foreground">Bandwidth (Classical)</div>
+                <div className="text-muted-foreground">Sample Traffic Volume (Classical)</div>
                 <div className="font-bold text-foreground">
-                  {bandwidthClassicalKB.toFixed(1)} KB/day
+                  {trafficClassicalKiB === null
+                    ? 'Not assessed'
+                    : `${trafficClassicalKiB.toFixed(1)} KiB/day`}
                 </div>
               </div>
               <div className="bg-status-warning/10 rounded p-2 border border-status-warning/20">
-                <div className="text-muted-foreground">Bandwidth (PQC)</div>
+                <div className="text-muted-foreground">Sample Traffic Volume (PQC)</div>
                 <div className="font-bold text-status-warning">
-                  {bandwidthPQCKB.toFixed(1)} KB/day
+                  {trafficPQCKiB === null ? 'Not assessed' : `${trafficPQCKiB.toFixed(1)} KiB/day`}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Latency metrics */}
+        {/* Sample impact metrics */}
         <div>
-          <span className="text-xs font-bold text-muted-foreground">Latency Impact</span>
+          <span className="text-xs font-bold text-muted-foreground">
+            Sample Timing and Size Impact
+          </span>
           <div className="mt-2 space-y-2">
             {CAPACITY_METRICS.map((m) => {
-              const ratio = m.pqcPerUnit / m.baselinePerUnit
-              const pct = Math.round((ratio - 1) * 100)
+              const ratio = m.baselinePerUnit > 0 ? m.pqcPerUnit / m.baselinePerUnit : null
+              const pct = ratio === null ? null : Math.round((ratio - 1) * 100)
+              const pairMax = Math.max(m.baselinePerUnit, m.pqcPerUnit, 0)
+              const classicalWidth = pairMax > 0 ? (m.baselinePerUnit / pairMax) * 100 : 0
+              const pqcWidth = pairMax > 0 ? (m.pqcPerUnit / pairMax) * 100 : 0
               return (
                 <div key={m.id} className="bg-muted/30 rounded-lg p-3 border border-border">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-medium text-foreground">{m.label}</span>
-                    <span className="text-xs font-bold text-status-warning">+{pct}%</span>
+                    <span className="text-xs font-bold text-status-warning">
+                      {pct === null ? 'Percentage not assessed' : `${pct >= 0 ? '+' : ''}${pct}%`}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-[10px] text-muted-foreground mb-2">
                     <span>
@@ -405,7 +416,7 @@ const CapacityTab: React.FC = () => {
                       PQC: {m.pqcPerUnit.toLocaleString()} {m.unit}
                     </span>
                   </div>
-                  {/* Bar comparison */}
+                  {/* Each pair shares its own maximum, preserving the displayed unit. */}
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <div className="text-[9px] text-muted-foreground w-16 text-right shrink-0">
@@ -413,8 +424,10 @@ const CapacityTab: React.FC = () => {
                       </div>
                       <div className="flex-1 bg-muted rounded-full h-2">
                         <div
+                          role="img"
+                          aria-label={`${m.label}: Classical ${m.baselinePerUnit} ${m.unit}`}
                           className="bg-muted-foreground h-2 rounded-full"
-                          style={{ width: '100%' }}
+                          style={{ width: `${classicalWidth}%` }}
                         />
                       </div>
                     </div>
@@ -424,8 +437,10 @@ const CapacityTab: React.FC = () => {
                       </div>
                       <div className="flex-1 bg-muted rounded-full h-2">
                         <div
+                          role="img"
+                          aria-label={`${m.label}: PQC ${m.pqcPerUnit} ${m.unit}`}
                           className="bg-status-warning h-2 rounded-full"
-                          style={{ width: `${Math.min(100, (ratio / 8) * 100)}%` }}
+                          style={{ width: `${pqcWidth}%` }}
                         />
                       </div>
                     </div>

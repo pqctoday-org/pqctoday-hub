@@ -109,6 +109,18 @@ function ExactAlgorithmCheck({ algorithm }: AlgorithmCheckButtonProps) {
           </span>
           {/* Size validation badges */}
           {(() => {
+            // Legacy RSA results without origin information also cannot establish
+            // a serialized-container measurement or a like-for-like catalogue check.
+            if (algorithm.name.startsWith('RSA-')) {
+              return (
+                <span className="text-muted-foreground">
+                  Serialized RSA key sizes not measured
+                  {result.keySizeEstimates
+                    ? `; modulus-derived ${result.keySizeEstimates.rsaModulusBytes} B, private heuristic ${result.keySizeEstimates.rsaPrivateHeuristicBytes} B (not encoded-key measurements)`
+                    : '; size provenance not recorded'}
+                </span>
+              )
+            }
             const pubMatch = sizeMatch(result.publicKeyBytes, algorithm.publicKeySize)
             return pubMatch !== 'na' ? (
               <span

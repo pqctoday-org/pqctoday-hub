@@ -57,11 +57,11 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       id: 'grover-impact',
       title: '3. Memory Encryption Grover Impact — Calculate post-quantum security of AES-128',
       description:
-        'In the Encryption Mechanisms workshop, examine the Intel TME-MK and AMD SME/SEV engines. Both use AES-XTS-128. Use the Grover impact calculator to determine the effective post-quantum security level.',
+        'In the Encryption Mechanisms workshop, examine the Intel TME-MK and AMD SME/SEV engines. This lesson uses a 128-bit key as its sample; key size and mode vary by processor generation (Intel’s multi-key specification describes 128- or 256-bit keys; AMD documents AES-128 XEX and AES-256 XTS). Use the Grover impact calculator to determine the effective post-quantum security level.',
       badge: 'Encryption',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'The Grover calculator shows AES-128 brute-force search dropping from 2^128 to ~2^64 operations — the theoretical quadratic speedup. In practice that speedup is far less useful (Grover has enormous circuit depth and barely parallelizes), which is why NIST still rates AES-128 at security category 1. AES-256, used by ARM TrustZone and AWS Nitro, keeps a large margin and is the recommended choice for long-term (HNDL) confidentiality. Upgrade path: AES-XTS-256 in next-gen Intel/AMD CPUs.',
+        'The Grover calculator shows AES-128 brute-force search dropping from 2^128 to ~2^64 operations in the idealized Grover model. In practice that speedup is far less useful (Grover has enormous circuit depth and barely parallelizes), which is why NIST still rates AES-128 at security category 1. AES-256, used by ARM TrustZone and AWS Nitro, keeps a large margin and is the recommended choice for long-term (HNDL) confidentiality. Prefer 256-bit memory-encryption keys where your processor generation enumerates and supports them.',
       config: { step: 2 },
     },
     {

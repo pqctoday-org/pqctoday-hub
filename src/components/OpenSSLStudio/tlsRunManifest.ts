@@ -26,17 +26,27 @@ export interface TlsRunManifestInput {
 /** One run of the TLS simulator as a run manifest (real OpenSSL WASM handshake in the browser). */
 export function tlsRunManifest(i: TlsRunManifestInput, site?: RunManifest['site']): RunManifest {
   const { run } = i
+  const clientConfig = run.inputs?.clientConfig ?? i.clientConfig
+  const serverConfig = run.inputs?.serverConfig ?? i.serverConfig
   const hybridOrPqKex = /MLKEM|ML-KEM|Kyber/i.test(run.keyExchange)
   return buildRunManifest(
     {
       tool: { id: 'tls-simulator', title: 'TLS 1.3 Simulator', version: i.toolVersion },
       executionMode: 'in-browser-implementation',
       inputs: {
-        clientGroups: i.clientConfig.groups,
-        serverGroups: i.serverConfig.groups,
-        clientCipherSuites: i.clientConfig.cipherSuites,
-        clientSignatureAlgorithms: i.clientConfig.signatureAlgorithms,
-        mutualTls: i.serverConfig.verifyClient ?? false,
+        clientGroups: clientConfig.groups,
+        serverGroups: serverConfig.groups,
+        clientCipherSuites: clientConfig.cipherSuites,
+        clientSignatureAlgorithms: clientConfig.signatureAlgorithms,
+        serverCipherSuites: serverConfig.cipherSuites,
+        serverSignatureAlgorithms: serverConfig.signatureAlgorithms,
+        clientMode: clientConfig.mode,
+        serverMode: serverConfig.mode,
+        clientRawConfig: clientConfig.rawConfig,
+        serverRawConfig: serverConfig.rawConfig,
+        clientMessage: run.inputs?.clientMessage,
+        serverMessage: run.inputs?.serverMessage,
+        mutualTls: serverConfig.verifyClient ?? false,
         serverCertificate: run.serverIdentity,
         serverCaKeyType: run.serverCaKeyType,
       },

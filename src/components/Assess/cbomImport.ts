@@ -141,7 +141,7 @@ export function parseCbom(text: string, wizardOptions: string[]): CbomImportResu
 
   return {
     recognised: [...recognised].sort(),
-    unrecognised: [...unrecognised].sort().slice(0, 12),
+    unrecognised: [...unrecognised].sort(),
     assetsSeen: assets,
     format: specVersion ? `CycloneDX ${specVersion}` : 'CycloneDX',
   }

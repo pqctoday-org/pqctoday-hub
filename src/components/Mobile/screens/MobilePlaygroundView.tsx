@@ -25,6 +25,11 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { playgroundJourneyFor } from '@/data/playgroundRoleJourneys'
+import {
+  ToolEvidenceBadges,
+  ToolEvidenceNotice,
+  ToolEvidenceSummary,
+} from '@/components/ui/ToolEvidenceNotice'
 import { MobileSheet } from '../primitives/Sheet'
 
 // Tools whose own real UI does not distill to a phone screen — dropped from
@@ -386,6 +391,13 @@ function ToolCardMobile({
           {tool.description}
         </p>
       </Button>
+      <div className="mt-2 space-y-1.5">
+        <ToolEvidenceBadges toolId={tool.id} compact />
+        <ToolEvidenceSummary
+          toolId={tool.id}
+          className="text-[11px] leading-snug text-muted-foreground"
+        />
+      </div>
     </article>
   )
 }
@@ -415,6 +427,8 @@ function ToolDetailSheetBody({
         </p>
         <p className="mt-1 text-[13px] leading-relaxed text-foreground">{tool.description}</p>
       </div>
+
+      <ToolEvidenceNotice toolId={tool.id} />
 
       <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
         Algorithms

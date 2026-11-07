@@ -307,11 +307,14 @@ const FeasibilityTable: React.FC<{ device: MedicalDeviceProfile }> = ({ device }
     <div className="glass-panel p-5">
       <div className="flex items-center gap-2 mb-1">
         <Shield size={18} className="text-primary" />
-        <h3 className="text-base font-bold text-foreground">PQC Algorithm Feasibility</h3>
+        <h3 className="text-base font-bold text-foreground">
+          Sample Algorithm Feasibility Assumptions
+        </h3>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        {feasibleCount} of {totalCount} evaluated algorithms are feasible for this device&apos;s
-        hardware constraints.
+        {feasibleCount} of {totalCount} algorithms are labelled feasible under the sample&apos;s
+        declared assumptions. No device benchmark or safety evaluation is executed here. Use your
+        production tools to evaluate the exact hardware, firmware, timing and memory constraints.
       </p>
 
       <div className="space-y-3">
@@ -322,22 +325,29 @@ const FeasibilityTable: React.FC<{ device: MedicalDeviceProfile }> = ({ device }
               {entry.feasible ? (
                 <span className="flex items-center gap-1 text-xs font-medium text-status-success">
                   <Check size={14} />
-                  Feasible
+                  Declared feasible in sample
                 </span>
               ) : (
                 <span className="flex items-center gap-1 text-xs font-medium text-status-error">
                   <X size={14} />
-                  Not Feasible
+                  Not shown feasible in sample
                 </span>
               )}
             </div>
             <p className="text-sm text-muted-foreground">{entry.rationale}</p>
 
+            <p className="text-xs text-muted-foreground mt-2">
+              The RAM bar is an illustrative indicator, not measured algorithm memory use.
+            </p>
             {/* RAM usage bar */}
             <div className="mt-3">
               <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                 <span>Device RAM: {formatRam(device.ramKB)}</span>
-                <span>{entry.feasible ? 'Within capacity' : 'Exceeds capacity'}</span>
+                <span>
+                  {entry.feasible
+                    ? 'Sample within-capacity assumption'
+                    : 'Sample exceeds-capacity assumption'}
+                </span>
               </div>
               <div className="h-2 rounded-full bg-muted overflow-hidden">
                 <div
@@ -357,12 +367,12 @@ const FeasibilityTable: React.FC<{ device: MedicalDeviceProfile }> = ({ device }
       {/* Recommendation */}
       <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20">
         <p className="text-sm text-foreground">
-          <span className="font-bold">Recommendation:</span>{' '}
+          <span className="font-bold">Planning questions:</span>{' '}
           {feasibleCount === 0
-            ? 'No standard PQC algorithms fit this device. Consider hash-based signatures (LMS/XMSS) for firmware verification and rely on gateway-level PQC for communications.'
+            ? 'No listed algorithm is labelled feasible in this sample. Evaluate product-specific tests and alternatives; a gateway does not establish on-device capability or protect every segment.'
             : feasibleCount === totalCount
-              ? 'All evaluated PQC algorithms are feasible. Prioritize ML-KEM for key exchange and ML-DSA for firmware signing at the highest supported security level.'
-              : 'Use feasible algorithms for on-device operations. For infeasible algorithms, offload cryptographic processing to a gateway or backend server.'}
+              ? 'The sample labels every listed algorithm feasible. Evaluate the required key-establishment and signing capabilities with representative workloads; these declarations do not establish device suitability.'
+              : 'The sample has mixed feasibility labels. Evaluate each operation and endpoint boundary; offloading must not leave the protected function or communication segment uncovered.'}
         </p>
       </div>
     </div>
@@ -382,9 +392,7 @@ const FDAChecklistSection: React.FC<{
       <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <AlertTriangle size={18} className="text-status-warning" />
-          <h3 className="text-base font-bold text-foreground">
-            PQC Readiness Checklist for Premarket Submissions
-          </h3>
+          <h3 className="text-base font-bold text-foreground">Sample Premarket Checklist Review</h3>
         </div>
         <span className="text-xs text-muted-foreground">
           {completedCount}/{totalCount} reviewed
@@ -395,7 +403,9 @@ const FDAChecklistSection: React.FC<{
         this module&apos;s own, derived from FDA&apos;s recommendation to use cryptography that
         stays strong throughout the device&apos;s service life; FDA&apos;s guidance itself does not
         mention quantum computers or PQC algorithms. Check each item as you review it for your
-        device submission.
+        sample. Selections record reviewed topics, not submission coverage or technical checks.
+        Review selections are shared across these sample devices. Evaluate documentation, test
+        evidence and tool capabilities for each intended device and use with your production tools.
       </p>
 
       {/* Progress bar */}
@@ -448,8 +458,8 @@ const FDAChecklistSection: React.FC<{
         <div className="mt-4 p-3 rounded-lg bg-status-success/10 border border-status-success/30 flex items-center gap-2">
           <Check size={16} className="text-status-success shrink-0" />
           <p className="text-sm text-status-success font-medium">
-            All checklist items reviewed. This device submission addresses quantum-resistant
-            cryptography across every item on this checklist.
+            Sample checklist reviewed — device submission coverage and technical readiness not
+            assessed.
           </p>
         </div>
       )}
@@ -508,8 +518,8 @@ export const DeviceSafetySimulator: React.FC = () => {
     <div className="space-y-6">
       <p className="text-sm text-foreground/80">
         Browse a catalog of connected medical devices, explore quantum attack scenarios with patient
-        impact ratings, and evaluate PQC algorithm feasibility against constrained hardware. Use the
-        PQC readiness checklist to check quantum readiness before a premarket submission.
+        impact ratings, and inspect declared algorithm-feasibility assumptions for constrained
+        hardware. Review sample premarket considerations; this does not assess a device submission.
       </p>
 
       {/* Device Selector */}
@@ -541,7 +551,7 @@ export const DeviceSafetySimulator: React.FC = () => {
             )}
             <span className="text-xs text-muted-foreground">
               {selectedDevice.pqcFeasibility.filter((f) => f.feasible).length}/
-              {selectedDevice.pqcFeasibility.length} PQC algorithms feasible
+              {selectedDevice.pqcFeasibility.length} algorithms labelled feasible in sample
             </span>
           </div>
         )}

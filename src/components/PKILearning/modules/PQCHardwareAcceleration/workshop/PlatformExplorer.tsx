@@ -35,7 +35,7 @@ const BAR_CLASS: Record<PlatformId, string> = {
 const fmt = (v: number) =>
   v >= 100 ? Math.round(v).toLocaleString() : v >= 10 ? v.toFixed(1) : v.toFixed(2)
 
-const perOp = (opsPerSec: number) => {
+const completionInterval = (opsPerSec: number) => {
   const s = 1 / opsPerSec
   if (s >= 1) return `${s.toFixed(1)} s`
   if (s >= 0.001) return `${(s * 1000).toFixed(1)} ms`
@@ -157,6 +157,10 @@ export const PlatformExplorer: React.FC = () => {
           </div>
         </div>
 
+        <p className="text-xs text-muted-foreground">
+          Completion interval is 1 divided by the reported signatures per second. It is not a
+          measured single-signature latency or a latency percentile.
+        </p>
         {view === 'chart' ? (
           <div className="space-y-3">
             {PLATFORM_ORDER.map((p) => {
@@ -165,7 +169,7 @@ export const PlatformExplorer: React.FC = () => {
                 <div
                   key={p}
                   className="space-y-1"
-                  title={`${PLATFORMS[p].label}: ${fmt(v)} signatures/s (${perOp(v)} each)`}
+                  title={`${PLATFORMS[p].label}: ${fmt(v)} signatures/s (${completionInterval(v)} completion interval)`}
                 >
                   <div className="flex justify-between text-xs">
                     <span className="font-bold text-foreground">
@@ -177,7 +181,7 @@ export const PlatformExplorer: React.FC = () => {
                       )}
                     </span>
                     <span className="text-foreground">
-                      <strong>{fmt(v)}</strong>/s · {perOp(v)} per signature ·{' '}
+                      <strong>{fmt(v)}</strong>/s · {completionInterval(v)} completion interval ·{' '}
                       <span className="text-muted-foreground">
                         {p === 'm4pro'
                           ? 'reference'

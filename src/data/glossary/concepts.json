@@ -2111,7 +2111,7 @@
   {
     "term": "OpenSSL Provider",
     "definition": "A dynamically loadable module that extends OpenSSL with additional cryptographic algorithm implementations. In OpenSSL 3.x, all algorithm implementations are providers — the default provider supplies standard algorithms, and third-party providers (like oqsprovider) add PQC algorithms.",
-    "technicalNote": "PQC via oqsprovider: install liboqs + oqs-openssl-provider, configure in /etc/ssl/openssl.cnf: [provider_sect] oqsprovider = oqsprovider_sect. OpenSSL 3.5+ includes ML-KEM and ML-DSA in the default provider without needing oqsprovider. TLS PQC: openssl s_server -groups x25519:mlkem768 starts a hybrid TLS 1.3 server. Applications using OpenSSL 3.x via libssl inherit PQC support automatically.",
+    "technicalNote": "OpenSSL 3.5+ supplies ML-KEM and ML-DSA in its default provider; additional implementations may use third-party providers. Native OpenSSL 3.6 example, with sample-cert.pem and its matching sample-key.pem already prepared: openssl s_server -tls1_3 -groups X25519MLKEM768 -cert sample-cert.pem -key sample-key.pem. X25519MLKEM768 is one combined key-establishment group; a colon-separated list such as X25519:P-256 offers alternatives rather than combining them. Available groups depend on the build and providers. Check the negotiated group and cipher suite: library support alone does not establish that an application and its peer can negotiate a hybrid connection. Hybrid key establishment does not make the certificate PQC-signed. This native CLI example does not establish browser WASM command support. References: https://docs.openssl.org/3.6/man3/SSL_CTX_set1_curves/ and https://docs.openssl.org/3.6/man1/openssl-s_server/.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -2378,16 +2378,16 @@
   },
   {
     "term": "Hypertree",
-    "definition": "The multi-layer Merkle structure at the core of SLH-DSA. d layers of trees each of height h/d: the bottom layer authenticates a FORS public key; higher layers each authenticate a WOTS+ public key; the root of the topmost tree is the SLH-DSA public key.",
-    "technicalNote": "Increasing d makes signing faster (-f variants) but enlarges the signature. Decreasing d (-s variants) yields smaller signatures at the cost of more hash work per layer. Same security level at any choice of d within a parameter set.",
+    "definition": "The SLH-DSA hypertree has d layers of XMSS trees, each of height h/d. The lowest layer signs FORS public keys; higher layers sign the roots of XMSS trees below them. The SLH-DSA public key contains both the public seed PK.seed and the top root PK.root.",
+    "technicalNote": "FIPS 205 specifies complete parameter sets: -f variants favor signing speed and -s variants favor smaller signatures. The layer count is one parameter in that trade-off; changing it alone does not establish the security of a new parameter set.",
     "relatedModule": "/learn/slh-dsa",
     "complexity": "advanced",
     "category": "concept"
   },
   {
     "term": "CKA_EXTRACTABLE",
-    "definition": "PKCS#11 key attribute controlling whether a key's raw value may leave the token. When CK_FALSE, the private/secret key can be used for operations but never exported in the clear — the basis of HSM key custody.",
-    "technicalNote": "Paired with CKA_SENSITIVE. A non-extractable, sensitive key can still be wrapped for backup only if CKA_WRAP_WITH_TRUSTED / policy allows; otherwise it is bound to the token for life.",
+    "definition": "PKCS#11 attribute controlling whether a private or secret key may be wrapped. CKA_EXTRACTABLE=CK_FALSE prevents C_WrapKey export; CKA_SENSITIVE separately restricts reading protected key material with C_GetAttributeValue.",
+    "technicalNote": "CKA_WRAP_WITH_TRUSTED adds a restriction on which wrapping keys may be used; it does not override CKA_EXTRACTABLE=CK_FALSE. A separate vendor backup interface has its own rules and must not be inferred from C_WrapKey policy.",
     "complexity": "intermediate",
     "category": "concept",
     "relatedModule": "/learn/hybrid-crypto"

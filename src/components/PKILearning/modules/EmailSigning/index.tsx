@@ -38,7 +38,7 @@ const PARTS: WorkshopPart[] = [
     id: 'live-hsm',
     title: 'Step 4: Live HSM Provider',
     description:
-      'Phase 1 foundation — load openssl.wasm with pkcs11-provider + softhsmv3 statically linked and register the provider in-process.',
+      'Check CMS worker/provider initialization, then inspect the separate sample-operation outputs.',
     icon: FlaskConical,
   },
 ]

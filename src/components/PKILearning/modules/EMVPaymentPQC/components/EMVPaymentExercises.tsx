@@ -88,13 +88,13 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
     },
     {
       id: 'migration-priority',
-      title: '6. End-to-End Migration Priority \u2014 Identify the critical-path dependency chain',
+      title: '6. End-to-End Migration Priority \u2014 Explore illustrative dependency chains',
       description:
-        'In the Migration Risk Matrix, examine the dependency graph. Identify the critical-path migration sequence. Which 3 components must migrate first? What is the dependency chain that sets the order of the migration?',
+        'In the Migration Risk Matrix, inspect the dependency graph. Identify a recorded dependency chain and components with no prerequisites recorded in this sample. What additional durations and constraints would you need before calculating a schedule critical path?',
       badge: 'Migration',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Critical path: (1) Payment HSM key wrapping must migrate to ML-KEM first (enables all downstream changes), (2) Key injection ceremonies at KIFs must switch to ML-KEM key transport (unblocks terminal re-keying), (3) Card personalization must generate PQC certificates (unblocks offline auth). Dependency chain: HSM \u2192 KIF \u2192 Card Personalization \u2192 Offline Auth. The chain sets the order of work; how long it takes depends on card and terminal replacement cycles, and this module\u2019s assumed 3-5 year card cycle is an estimate, not a sourced figure.',
+        'This sample includes a chain from HSM key wrapping through key injection and card personalization to offline authentication. Other components, including e-commerce TLS, have no prerequisites recorded here. These assumed relationships help frame readiness questions; they do not require every preparation or pilot to wait for HSM migration, or establish a duration-based critical path. A real schedule needs scoped activity durations, constraints and validated dependencies. The module\u2019s assumed 3-5 year card cycle is an estimate, not a sourced duration for every activity.',
       config: { step: 5 },
     },
   ]

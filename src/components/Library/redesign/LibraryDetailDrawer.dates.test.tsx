@@ -43,7 +43,7 @@ describe('Library drawer: document dates', () => {
       })
     )
     expect(line).toHaveTextContent(
-      'First published Sep 21, 2020 · updated Aug 19, 2026 · catalog checked Sep 24, 2026'
+      'First published Sep 21, 2020 · Catalog record updated Aug 19, 2026 · catalog checked Sep 24, 2026'
     )
     // The check date is never presented as a bare "verified" date.
     expect(line).not.toHaveTextContent(/\bverified\b/i)
@@ -59,7 +59,7 @@ describe('Library drawer: document dates', () => {
       })
     )
     expect(line).toHaveTextContent(
-      'First published Sep 2020 · updated Apr 9, 2026 · catalog checked Sep 24, 2026'
+      'First published Sep 2020 · Catalog record updated Apr 9, 2026 · catalog checked Sep 24, 2026'
     )
     expect(line).not.toHaveTextContent('Sep 1, 2020')
   })

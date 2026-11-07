@@ -75,11 +75,13 @@ export function RagAiSection() {
                 discussed.
               </p>
               <p className="text-muted-foreground mt-3">
-                Before an answer is shown, every substantive sentence must map to a verbatim
-                evidence excerpt in one of those retrieved chunks. Unsupported drafts are retried
-                once, then replaced with a source-verification notice. Neither mode has a web-search
-                tool, so explanations can rephrase the corpus but cannot add facts from the
-                model&apos;s general training knowledge.
+                The model is instructed to ground its answer in retrieved passages. Automated
+                citation, fact and entity checks help identify unsupported content; the response can
+                be filtered, retained with source links, or replaced with retrieved excerpts. These
+                checks reduce risk but do not guarantee that every statement is supported or
+                semantically correct. Neither mode has a web-search tool, but a model can still draw
+                on its training knowledge. Check the cited passages before relying on an answer for
+                a decision.
               </p>
               <p className="text-muted-foreground mt-3">
                 You choose where the model runs:{' '}

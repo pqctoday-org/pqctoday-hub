@@ -1134,6 +1134,23 @@ export const HpkeWorkshop: React.FC = () => {
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
         <LiveHSMToggle hsm={hsm} operations={HPKE_LIVE_OPERATIONS} />
       </div>
+      <p className="px-6 mb-4 text-xs text-muted-foreground">
+        The protected-key probe observes one attempted plaintext read. CKA_SENSITIVE and
+        CKA_EXTRACTABLE are distinct attributes: for secret keys, sensitive status or
+        non-extractable status restricts plaintext disclosure; CKA_EXTRACTABLE also controls whether
+        a key can be wrapped. One refused read does not establish both attribute values or test
+        wrapping. Inspect the attributes and test the relevant operations in your production tools.
+        See{' '}
+        <a
+          href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary underline"
+        >
+          PKCS #11 v3.2, section 4.11
+        </a>
+        .
+      </p>
 
       <div className="px-6 mb-4">
         <h2 className="text-lg font-semibold text-gradient">HPKE (RFC 9180) over PKCS#11</h2>

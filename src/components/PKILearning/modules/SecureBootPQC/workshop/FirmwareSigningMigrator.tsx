@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { buildFirmwareUploadManifest } from './firmwareManifest'
 import {
   FileCode,
   Key,
@@ -64,6 +65,14 @@ import { translateCryptoError } from '@/utils/cryptoErrorHint'
 type PqcAlgo = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87' | 'SLH-DSA-SHA2-128S'
 type ClassicalAlgo = 'RSA-2048' | 'RSA-3072' | 'ECDSA-P256' | 'ECDSA-P384'
 type HashAlgo = 'SHA-256' | 'SHA-384' | 'SHA-512'
+
+// NIST SP 800-57 Part 1 Rev. 5, Table 2 (pp. 54–55): key-strength estimates.
+const CLASSICAL_KEY_STRENGTH_BITS: Record<ClassicalAlgo, number> = {
+  'RSA-2048': 112,
+  'RSA-3072': 128,
+  'ECDSA-P256': 128,
+  'ECDSA-P384': 192,
+}
 
 // ---------------------------------------------------------------------------
 // Algorithm config lookup tables
@@ -466,9 +475,7 @@ const truncateHex = (hex: string, maxChars = 80): string => {
 
 const buildManifestString = (fileBytes: Uint8Array | null): string => {
   if (fileBytes) {
-    // Use a prefix + length + last-8-bytes fingerprint of the uploaded file
-    const tail = fileBytes.slice(-8)
-    return `file-upload:${fileBytes.length}:${toHex(tail)}`
+    return buildFirmwareUploadManifest(fileBytes)
   }
   return MOCK_MANIFEST.components.map((c) => `${c.name}:${c.size}:${c.hash}`).join('|')
 }
@@ -621,6 +628,9 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
 
   const handleFileSelect = useCallback(
     async (file: File) => {
+      setPqcVerified(null)
+      setClassicalVerified(null)
+      setFileDigestHex('')
       setUploadedFile(file)
       const buf = await file.arrayBuffer()
       const bytes = new Uint8Array(buf)
@@ -982,7 +992,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
   const sigRatio = (displayPqcSig / Math.max(displayClassicalSig, 1)).toFixed(1)
 
   // Content string being signed (computed inline for display)
-  const contentToSign = buildManifestString(fileBytes)
+  const contentToSign = useMemo(() => buildManifestString(fileBytes), [fileBytes])
 
   // PKCS#11 mechanism name for display
   const classicalMechName = classicalAlgo.startsWith('RSA')
@@ -1934,13 +1944,13 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                       change: '✓',
                     },
                     {
-                      metric: 'NIST level',
-                      classical: '~112-bit classical',
+                      metric: 'Classical key estimate / PQC category',
+                      classical: `~${CLASSICAL_KEY_STRENGTH_BITS[classicalAlgo]}-bit key estimate`,
                       pqc:
                         pqcAlgo === 'SLH-DSA-SHA2-128S'
                           ? 'NIST Level 1'
                           : MLDSA_NIST_LEVEL[pqcAlgo],
-                      change: '↑',
+                      change: 'Different measures',
                     },
                     {
                       metric: 'Standard',
@@ -1968,6 +1978,20 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                   ))}
                 </tbody>
               </table>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Classical key estimates follow{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://doi.org/10.6028/NIST.SP.800-57pt1r5"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  NIST SP 800-57 Part 1 Rev. 5, Table 2
+                </a>
+                . The complete signature scheme also depends on the selected hash and
+                implementation. PQC categories are a different comparison measure, not bit-for-bit
+                equivalents to these classical estimates.
+              </p>
             </div>
           </div>
 
@@ -2068,24 +2092,38 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             {/* Step B: UEFI NVRAM enrollment */}
             <div className="space-y-1 border-t border-border/50 pt-2">
               <p className="font-medium text-foreground">
-                Step B — Enroll cert.pem into UEFI NVRAM
+                Step B — Illustrative certificate-to-authenticated-update workflow
+              </p>
+              <p className="text-muted-foreground">
+                The certificate, EFI signature list and authenticated update are different file
+                types. The following efitools example prepares and applies an append update with
+                matching attributes. It is not executed by the Hub and does not establish PQC
+                support in a firmware or tool build.
               </p>
               <ol className="text-muted-foreground list-decimal list-inside space-y-0.5">
                 <li>
-                  Build EFI signature list:{' '}
+                  Convert the certificate to an EFI signature list:{' '}
                   <span className="font-mono">cert-to-efi-sig-list cert.pem db.esl</span>
                 </li>
                 <li>
-                  Sign the update with KEK:{' '}
+                  Sign an append update with the KEK:{' '}
                   <span className="font-mono">
-                    sbvarsign --key kek.key --cert kek.crt db.esl db.auth
+                    sign-efi-sig-list -a -k kek.key -c kek.crt db db.esl db.auth
                   </span>
                 </li>
                 <li>
                   Write <span className="font-mono">db</span> variable:{' '}
-                  <span className="font-mono">efi-updatevar -a -c db.auth db</span>
+                  <span className="font-mono">efi-updatevar -a -f db.auth db</span>
                 </li>
-                <li>Keep the legacy RSA db entry until all boot paths are re-signed</li>
+                <li>
+                  Match the variable name and append attributes when signing and applying the
+                  update; changing attributes after signing invalidates that binding.
+                </li>
+                <li>
+                  In a supported sample firmware lab, preserve required existing entries while
+                  evaluating the migration. Firmware acceptance, algorithm support and all boot
+                  paths need separate compatibility checks.
+                </li>
               </ol>
             </div>
           </div>

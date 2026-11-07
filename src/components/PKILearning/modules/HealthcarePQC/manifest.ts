@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'healthcare-pqc',
-  contentVersion: 15,
+  contentVersion: 16,
   lm_id: 'LM-041',
   title: 'Healthcare PQC',
   description:
@@ -31,7 +31,7 @@ const manifest: ModuleManifest = {
   ],
   startHere: {
     step: 'patient-privacy-mapper',
-    text: 'Map a data category in the Patient Privacy Mapper: pediatric, genomic and mental-health records get their true lifecycle and an HNDL window calculated from it.',
+    text: 'Map a data category in the Patient Privacy Mapper: pediatric, genomic and mental-health records use illustrative planning lifetimes to explore HNDL exposure.',
   },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to

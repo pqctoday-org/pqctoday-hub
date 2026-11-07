@@ -1,4 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  BREACH_SCENARIO_READER_METHOD,
+  BREACH_SCENARIO_EARLY_ACTION,
+  breachScenarioMethodMarkdown,
+} from '@/utils/breachScenarioReaderMethod'
 import React, { useState, useMemo, useEffect } from 'react'
 import { AlertTriangle, Info, TrendingUp, Shield } from 'lucide-react'
 import {
@@ -15,10 +20,14 @@ import type { BreachOutput } from '../types'
 import {
   DATA_SENSITIVITY_LABELS,
   DATA_SHELF_LIFE_YEARS,
-  HNDL_MULTIPLIER_CAP,
   type DataSensitivityClass,
 } from '@/utils/breachCostModel'
 import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
+import {
+  probabilityProvenance,
+  probabilityProvenanceMarkdown,
+  restoredProbabilityOrigin,
+} from '@/utils/breachProbabilityOrigin'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -128,6 +137,27 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     md += `| Probability CRQC exists within horizon | ${Math.round(breachCosts.pCrqc * 100)}% |\n`
     md += `| Probability-weighted expected annual loss | ${fmtCurrency(breachCosts.quantumALE)} |\n`
     md += `| Latest safe migration start year | ${Math.round(breachCosts.latestSafeStartYear)} |\n\n`
+    if (modelInputs)
+      md += probabilityProvenanceMarkdown(
+        probabilityProvenance(
+          modelInputs.annualBreachProbPct,
+          modelInputs.orgSizeTier,
+          restoredProbabilityOrigin(
+            modelInputs.annualBreachProbabilityOrigin,
+            modelInputs.annualBreachProbPct,
+            modelInputs.orgSizeTier,
+            true
+          )
+        )
+      )
+    if (modelInputs) {
+      md += `## Selected model inputs\n\n`
+      md += `- Breach severity multiplier: ${modelInputs.breachScale}; region preset: ${modelInputs.region}; migration-duration assumption: ${modelInputs.migrationDurationYears} years.\n`
+      md += `- Corpus: ${modelInputs.yearsOfData} years; HNDL exposure: ${modelInputs.hndlFactorPct}%.\n`
+      md += `- Data class: ${DATA_SENSITIVITY_LABELS[modelInputs.dataSensitivityClass]}; sample shelf-life preset: ${DATA_SHELF_LIFE_YEARS[modelInputs.dataSensitivityClass]} years; decryption gap: 0 (newest data assumed fresh).\n`
+      md += `- Planning horizon: ${modelInputs.planningHorizonYears} years; annual discount rate: ${(modelInputs.discountRateAnnual * 100).toFixed(2)}%.\n\n`
+    }
+    md += breachScenarioMethodMarkdown()
     if (findings.length > 0) {
       md += `## Key findings\n\n`
       for (const f of findings) md += `- ${f}\n`
@@ -136,7 +166,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     md += `*Illustrative — IBM Cost of a Data Breach 2025 per-sector baselines (one edition behind; IBM published its 2026 global report) and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
     md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     return md
-  }, [breachCosts, selectedIndustry, findings])
+  }, [breachCosts, selectedIndustry, findings, modelInputs])
 
   // Shared with the export below (`output:`) so Board Pitch Builder can read
   // the same numbers whether it's chained live via props (in the linear
@@ -157,9 +187,21 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
             yearsOfData: breachCosts.yearsOfData,
             hndlFactorPct: breachCosts.hndlFactorPct,
             annualBreachProbPct: breachCosts.annualBreachProbPct,
+            probabilityProvenance: modelInputs
+              ? probabilityProvenance(
+                  modelInputs.annualBreachProbPct,
+                  modelInputs.orgSizeTier,
+                  restoredProbabilityOrigin(
+                    modelInputs.annualBreachProbabilityOrigin,
+                    modelInputs.annualBreachProbPct,
+                    modelInputs.orgSizeTier,
+                    true
+                  )
+                )
+              : undefined,
           }
         : null,
-    [breachCosts, selectedIndustry]
+    [breachCosts, selectedIndustry, modelInputs]
   )
 
   useEffect(() => {
@@ -248,12 +290,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
                 <Shield size={16} className="text-status-success" />
                 <p className="text-sm font-medium text-foreground">Value of Early Action</p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Organizations that adopt PQC early benefit from reduced breach risk, compliance
-                readiness, and crypto agility. The migration cost is a one-time investment; the
-                breach cost savings compound annually. Early movers also gain competitive trust
-                signals and avoid the rush when quantum deadlines approach.
-              </p>
+              <p className="text-xs text-muted-foreground">{BREACH_SCENARIO_EARLY_ACTION}</p>
             </div>
           </div>
           {data.frameworksByIndustry.length > 0 && (
@@ -329,37 +366,28 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
               <strong className="text-foreground/80">
                 2. How much of the harvested corpus still matters.
               </strong>{' '}
-              Freshness is integrated across data aged 0 to {breachCosts.yearsOfData} years against
-              the {DATA_SENSITIVITY_LABELS[breachCosts.dataSensitivityClass].toLowerCase()} shelf
-              life of {DATA_SHELF_LIFE_YEARS[breachCosts.dataSensitivityClass]} years. Old data
-              contributes less; a corpus older than its shelf life saturates rather than dropping to
-              zero, because its freshest layer always still counts.
+              {BREACH_SCENARIO_READER_METHOD.freshness} Selected corpus: {breachCosts.yearsOfData}{' '}
+              years; selected shelf-life preset:{' '}
+              {DATA_SHELF_LIFE_YEARS[breachCosts.dataSensitivityClass]} years.
             </p>
             <p>
-              <strong className="text-foreground/80">3. Quantum amplification.</strong> Those
-              freshness-weighted years times your HNDL exposure setting, damped so it approaches but
-              never reaches {1 + HNDL_MULTIPLIER_CAP}× the classical breach. The damping is smooth,
-              not a hard ceiling — a hard one erased all difference between high-exposure profiles.
+              <strong className="text-foreground/80">3. Quantum amplification.</strong>{' '}
+              {BREACH_SCENARIO_READER_METHOD.amplification}
             </p>
             <p>
               <strong className="text-foreground/80">
                 4. Weighting by whether a CRQC exists at all.
               </strong>{' '}
-              Steps 1–3 give the cost <em>if</em> a machine capable of breaking today&apos;s keys
-              exists. The expected annual loss blends that against the no-CRQC case using the GRI
-              2025 survey&apos;s arrival curve — currently a {Math.round(breachCosts.pCrqc * 100)}%
-              chance within your planning horizon.
+              {BREACH_SCENARIO_READER_METHOD.probability} Current modeled horizon value:{' '}
+              {Math.round(breachCosts.pCrqc * 100)}%.
             </p>
             <p>
-              <strong className="text-foreground/80">5. Present value.</strong> Summed year by year,
-              each year carrying its own cumulative arrival probability, then discounted. Not one
-              horizon-wide probability applied flatly to every year — that charges year one for a
-              risk it does not yet carry.
+              <strong className="text-foreground/80">5. Present value.</strong>{' '}
+              {BREACH_SCENARIO_READER_METHOD.presentValue}
             </p>
             <p className="pt-1 border-t border-border/50">
-              Shelf-life figures are labelled assumptions rather than cited standards for four of
-              the five data classes. The arrival curve is one expert survey, not a forecast. Treat
-              the output as a structured argument, not a measurement.
+              Shelf-life presets, exposure settings and scenario curves are planning inputs. Treat
+              the output as a structured argument, not a measurement or programme approval.
             </p>
           </div>
         </details>

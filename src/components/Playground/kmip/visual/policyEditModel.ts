@@ -282,8 +282,10 @@ export function serialize(policy: EditablePolicy): string {
   if (policy.metadata.description) {
     L.push('  description: |')
     for (const line of policy.metadata.description.split('\n')) L.push(line ? `    ${line}` : '')
+  } else {
+    L.push('  description: ""')
   }
-  if (policy.metadata.authority) L.push(`  authority: ${q(policy.metadata.authority)}`)
+  L.push(`  authority: ${q(policy.metadata.authority)}`)
   if (policy.metadata.effective) L.push(`  effective: "${policy.metadata.effective}"`)
   if (policy.metadata.expires) L.push(`  expires: "${policy.metadata.expires}"`)
   if (policy.metadata.scopes.length) L.push(`  scopes: [${policy.metadata.scopes.join(', ')}]`)

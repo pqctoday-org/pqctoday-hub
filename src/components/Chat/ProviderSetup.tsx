@@ -64,6 +64,7 @@ export const ProviderSetup: React.FC = () => {
   const [ackQualityRisk, setAckQualityRisk] = useState(false)
 
   const selectedModelData = WEBLLM_MODELS.find((m) => m.id === selectedModel)
+  const defaultModelData = WEBLLM_MODELS.find((m) => m.id === DEFAULT_LOCAL_MODEL)
   const modelMaxContext = selectedModelData?.maxContextLength ?? MIN_CONTEXT_WINDOW
 
   // Check WebGPU support, then the device's real GPU buffer limits, on mount
@@ -133,67 +134,20 @@ export const ProviderSetup: React.FC = () => {
 
   const modelItems = WEBLLM_MODELS.map((m) => ({ id: m.id, label: m.label }))
 
-  /**
-   * Context window presets with user-facing descriptions.
-   * RAG budget scales at ~45% of context × 4 chars/token.
-   * Chunk estimates assume ~400 chars/chunk average.
-   * vramMB = model base VRAM + estimated KV cache for this context length.
-   * KV cache ≈ num_layers × 2 × kv_heads × head_dim × 2 bytes × tokens.
-   * Filtered to only show presets the selected model supports.
-   */
-  const contextPresets = [
-    {
-      tokens: 4_096,
-      label: '4K',
-      chunks: 9,
-      coverage: '60%',
-      hw: 'Any GPU',
-      note: 'Safe default',
-      highVram: false,
-    },
-    {
-      tokens: 6_144,
-      label: '6K',
-      chunks: 15,
-      coverage: '100%',
-      hw: '4 GB+ GPU',
-      note: 'Full coverage',
-      highVram: false,
-    },
-    {
-      tokens: 8_192,
-      label: '8K',
-      chunks: 21,
-      coverage: '100%',
-      hw: '8 GB GPU / Apple Silicon',
-      note: 'Best quality',
-      highVram: (selectedModelData?.vramMB ?? 0) > 3_000,
-    },
-    {
-      tokens: 12_288,
-      label: '12K',
-      chunks: 30,
-      coverage: '100%',
-      hw: '12 GB+ GPU / Apple Silicon',
-      note: 'Deep context',
-      highVram: true,
-    },
-    {
-      tokens: 16_384,
-      label: '16K',
-      chunks: 40,
-      coverage: '100%',
-      hw: '16 GB+ GPU',
-      note: 'Maximum context',
-      highVram: true,
-    },
-  ].filter((p) => p.tokens <= modelMaxContext)
-
-  // Chunk count for the currently selected local context window, used in Gemini comparison
-  const localChunks = contextPresets.find((p) => p.tokens === contextWindow)?.chunks ?? 9
+  // Offer only budgets supported by the selected compiled model artifact.
+  // A context budget is not a measurement of retrieved or whole-corpus coverage.
+  const contextPresets = [4_096, 6_144, 8_192, 12_288, 16_384]
+    .filter((tokens) => tokens <= modelMaxContext)
+    .map((tokens) => ({ tokens, label: `${tokens / 1024}K` }))
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6">
+    <div
+      className="flex-1 overflow-y-auto p-4 md:p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+      role="region"
+      aria-label="AI assistant setup"
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- This named scroll region must receive keyboard focus for PageDown/End; same documented scrollable-region-focusable pattern as ScrollFadeContainer.
+      tabIndex={0}
+    >
       <div className="max-w-2xl w-full mx-auto space-y-6">
         {/* Title */}
         <div className="text-center space-y-2">
@@ -226,11 +180,12 @@ export const ProviderSetup: React.FC = () => {
               </p>
               <p className="text-sm text-muted-foreground">
                 On this device, use <strong className="text-foreground">Cloud (Gemini)</strong> — no
-                download, no GPU requirement, and more accurate answers than any local model.
+                download or local GPU requirement. Check the cited sources rather than assuming a
+                provider guarantees accuracy.
               </p>
             </div>
           ) : (
-            <div className="glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto">
+            <div className="glass-panel rounded-xl p-5 space-y-4 border border-border">
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 rounded-full bg-status-success/20 flex items-center justify-center">
                   <Shield size={18} className="text-status-success" />
@@ -251,23 +206,25 @@ export const ProviderSetup: React.FC = () => {
               <div className="rounded-lg bg-status-success/10 border border-status-success/30 p-3 space-y-2">
                 <div className="flex items-center gap-2 text-sm font-medium text-status-success">
                   <Shield size={14} className="shrink-0" />
-                  Corpus-only display guardrail
+                  Retrieved-source assistance
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  The selected model drafts the answer entirely in your browser. Every substantive
-                  sentence must map to quoted evidence from the retrieved PQC Today corpus before it
-                  is displayed. Unsupported drafts are withheld rather than shown.
+                  The selected model runs in your browser and receives retrieved Hub material. Live
+                  text is an unverified draft. After generation, automated citation/source checks
+                  may revise it, retain text with source links, or show retrieved excerpts. These
+                  checks do not establish factual correctness; inspect the linked sources.
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  The model receives no web-search tool and cannot fall back to outside knowledge.
-                  If the retrieved corpus is insufficient, the assistant says so. Local mode targets
-                  an 8 GB discrete GPU with about 6.5 GB free VRAM, or 16 GB+ Apple Silicon.
+                  The model receives no web-search tool. When retrieval returns no sources, the
+                  assistant gives an insufficient-information response without a model call. Local
+                  mode targets an 8 GB discrete GPU with about 6.5 GB free VRAM, or 16 GB+ Apple
+                  Silicon.
                 </p>
               </div>
 
               <p className="text-sm text-muted-foreground">
-                Everything stays on your device — zero network requests during inference. Answers
-                are shorter and less detailed than cloud, but your data never leaves your browser.
+                Everything stays on your device — zero network requests during inference. Your data
+                never leaves your browser.
               </p>
 
               {webgpuCheck === 'checking' && (
@@ -333,6 +290,8 @@ export const ProviderSetup: React.FC = () => {
                         items={modelItems}
                         selectedId={selectedModel}
                         onSelect={handleModelChange}
+                        ariaLabel="Local AI model"
+                        hideDefaultOption
                         noContainer
                       />
                     ) : (
@@ -345,23 +304,11 @@ export const ProviderSetup: React.FC = () => {
                     {selectedModelData && (
                       <div className="rounded-lg border border-border bg-muted/10 p-2.5 space-y-1.5">
                         <p className="text-[11px] text-muted-foreground">{selectedModelData.tip}</p>
-                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-                          <span>
-                            Speed{' '}
-                            <span className="text-foreground font-medium">
-                              {'●'.repeat(selectedModelData.speed)}
-                              {'○'.repeat(5 - selectedModelData.speed)}
-                            </span>
-                          </span>
-                          <span>
-                            Accuracy{' '}
-                            <span className="text-foreground font-medium">
-                              {'●'.repeat(selectedModelData.accuracy)}
-                              {'○'.repeat(5 - selectedModelData.accuracy)}
-                            </span>
-                          </span>
-                          <span>VRAM ~{(selectedModelData.vramMB / 1024).toFixed(1)} GB</span>
-                        </div>
+                        <p className="text-[10px] text-muted-foreground">
+                          Configured GPU-memory estimate: ~
+                          {(selectedModelData.vramMB / 1024).toFixed(1)} GB. This is not a measured
+                          speed or accuracy rating for your device or question.
+                        </p>
                       </div>
                     )}
                   </div>
@@ -389,27 +336,13 @@ export const ProviderSetup: React.FC = () => {
                             <span className="text-xs font-semibold text-foreground">
                               {p.label} tokens
                             </span>
-                            <div className="flex items-center gap-1.5">
-                              {p.highVram && (
-                                <span className="text-[9px] font-medium px-1 py-0.5 rounded bg-status-warning/15 text-status-warning">
-                                  High VRAM
-                                </span>
-                              )}
-                              <span className="text-[10px] text-muted-foreground">{p.note}</span>
-                            </div>
+                            {p.tokens === DEFAULT_CONTEXT_WINDOW && (
+                              <span className="text-[10px] text-muted-foreground">App default</span>
+                            )}
                           </div>
-                          <div className="flex items-center justify-between w-full mt-0.5">
-                            <span className="text-[10px] text-muted-foreground">
-                              {p.chunks} chunks &middot; {p.coverage} coverage
-                            </span>
-                            <span className="text-[10px] text-muted-foreground">{p.hw}</span>
-                          </div>
-                          {p.highVram && contextWindow === p.tokens && (
-                            <p className="text-[10px] text-status-warning mt-1 w-full">
-                              If loading fails with an out-of-memory error, switch to a lower
-                              context window or a smaller model.
-                            </p>
-                          )}
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            Configured token budget; not corpus coverage
+                          </p>
                         </Button>
                       ))}
                     </div>
@@ -446,23 +379,24 @@ export const ProviderSetup: React.FC = () => {
                         happens, use Cloud (Gemini) instead — no download or GPU memory required.
                       </p>
                       <p>
-                        <strong className="text-foreground">Context Window</strong> controls how
-                        much reference data (RAG chunks) the model sees alongside your question. A
-                        larger window means more relevant facts are included, improving answer
-                        quality. The 4K default works on any GPU — increase if your hardware allows.
+                        <strong className="text-foreground">Context Window</strong> is the token
+                        budget shared by the question, conversation, retrieved reference material
+                        and response. Chunk lengths and prompt selection affect what fits. A larger
+                        budget does not guarantee coverage or accuracy. Only budgets supported by
+                        the selected model artifact are offered; loading can still fail on a device
+                        with insufficient memory.
                       </p>
                       <p>
-                        <strong className="text-foreground">Why these two models</strong>: Qwen 3.5
-                        9B is the accuracy-first default and Qwen 3 8B provides more GPU-memory
-                        headroom. Smaller 1.7–4B models follow the detailed corpus citation contract
-                        less reliably. You can switch between the two and the same verification gate
-                        applies to every displayed answer.
+                        <strong className="text-foreground">Current default</strong>:{' '}
+                        {defaultModelData?.label ?? DEFAULT_LOCAL_MODEL}. The other listed options
+                        are available for comparison. Their configured context limits and memory
+                        estimates are shown above; a default or model choice does not establish that
+                        an answer is accurate or supported.
                       </p>
                       <p>
-                        <strong className="text-foreground">Limitations vs Cloud</strong>: Both
-                        local models are much smaller than Gemini, so they can fail the
-                        corpus-evidence gate more often or produce shorter explanations. Failed
-                        drafts are withheld; use the linked corpus sources for authoritative detail.
+                        <strong className="text-foreground">Limitations</strong>: Model output can
+                        be incomplete or unsupported. Failed drafts are withheld; use the linked
+                        corpus sources for authoritative detail.
                       </p>
                     </div>
                   )}
@@ -488,8 +422,8 @@ export const ProviderSetup: React.FC = () => {
                         </span>
                       </label>
                       <p className="text-xs text-muted-foreground">
-                        One-time download ({selectedModelData?.sizeGB ?? '?'} GB). Cached in your
-                        browser for instant startup.
+                        Model download ({selectedModelData?.sizeGB ?? '?'} GB). A retained browser
+                        cache can avoid another download; startup time still depends on the device.
                       </p>
                       <Button
                         variant="gradient"
@@ -583,7 +517,7 @@ export const ProviderSetup: React.FC = () => {
 
           {/* Gemini (Cloud) Card */}
           <div
-            className={`glass-panel rounded-xl p-5 space-y-4 border-2 border-primary/40 max-h-[80vh] overflow-y-auto ${
+            className={`glass-panel rounded-xl p-5 space-y-4 border-2 border-primary/40 ${
               airplaneMode ? 'opacity-50 pointer-events-none' : ''
             }`}
             aria-disabled={airplaneMode}
@@ -609,21 +543,22 @@ export const ProviderSetup: React.FC = () => {
                     Recommended
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground">1M token context · 40+ languages</p>
+                <p className="text-xs text-muted-foreground">Configured cloud provider</p>
               </div>
             </div>
 
-            {/* Recommended-quality banner — mirrors the warning on Local. Sets the
-                expectation that Cloud is the path that meets this app's bar. */}
+            {/* Describe the cloud processing path without a comparative quality score. */}
             <div className="rounded-lg bg-primary/10 border border-primary/30 p-3 space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-primary">
                 <CheckCircle size={14} className="shrink-0" />
-                Meets this app&apos;s accuracy bar
+                Corpus-based cloud processing
               </div>
               <p className="text-xs text-muted-foreground">
-                Gemini 3.8 Flash answers from the retrieved PQC corpus. Every substantive sentence
-                must map to quoted corpus evidence before the answer is displayed. Web search and
-                external tools are disabled.
+                The cloud model receives your question, conversation context and retrieved Hub
+                material. Live text is an unverified draft. After generation, automated
+                citation/source checks may revise it, retain text with source links, or show
+                retrieved excerpts. These checks do not establish factual correctness. Web search
+                and external tools are not enabled in this request.
               </p>
             </div>
 
@@ -632,54 +567,32 @@ export const ProviderSetup: React.FC = () => {
               are processed on Google&apos;s servers, but the model receives no web-search tool.
             </p>
 
-            {/* Feature comparison */}
             <div className="rounded-lg border border-border bg-muted/10 p-3 space-y-2">
               <p className="text-[11px] font-medium text-foreground">
-                Why Gemini outperforms local models
+                Cloud processing considerations
               </p>
-              <ul className="space-y-1.5 text-[11px] text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="text-status-success mt-0.5 shrink-0">●</span>
-                  <span>
-                    <strong className="text-foreground">
-                      All retrieved chunks per query (~15–20)
-                    </strong>{' '}
-                    — vs ~{localChunks} chunks with your current local setting. More context = more
-                    accurate, detailed answers
-                  </span>
+              <ul className="space-y-1.5 text-[11px] text-muted-foreground list-disc pl-4">
+                <li>
+                  Your question and retrieved passages are sent to the configured provider. The app
+                  bounds the supplied reference material; this is not whole-corpus coverage.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-status-success mt-0.5 shrink-0">●</span>
-                  <span>
-                    <strong className="text-foreground">40+ languages</strong> — ask questions in
-                    French, German, Japanese, Arabic, Chinese, Spanish, and more
-                  </span>
+                <li>
+                  Local and cloud prompts can include different amounts of material. More context
+                  does not guarantee a correct answer; inspect the cited sources and their limits.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-status-success mt-0.5 shrink-0">●</span>
-                  <span>
-                    <strong className="text-foreground">Instant first token</strong> — no model
-                    download, no GPU warm-up, no memory constraints
-                  </span>
+                <li>
+                  No local model download is needed. Response time depends on the service and
+                  connection; immediate responses are not guaranteed.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-status-success mt-0.5 shrink-0">●</span>
-                  <span>
-                    <strong className="text-foreground">Richer answers</strong> — more deep links,
-                    better reasoning across multi-step PQC migration questions
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-status-success mt-0.5 shrink-0">●</span>
-                  <span>
-                    <strong className="text-foreground">Free tier</strong> — Google AI Studio
-                    provides a free API key with generous daily limits
-                  </span>
+                <li>
+                  Check the provider&apos;s current eligibility, usage limits and pricing before
+                  connecting.
                 </li>
               </ul>
               <p className="text-[10px] text-muted-foreground pt-1 border-t border-border">
-                PQC Today has no affiliation with Google and receives no referral fees. We recommend
-                Gemini because it gives users the best experience with this tool.
+                PQC Today has no affiliation with Google and receives no referral fees. These
+                controls describe this app&apos;s processing choices, not a comparative quality
+                benchmark.
               </p>
             </div>
 
@@ -689,7 +602,7 @@ export const ProviderSetup: React.FC = () => {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-primary hover:underline"
             >
-              Get your free API key
+              Get an API key
               <ExternalLink size={14} />
             </a>
 
@@ -741,8 +654,9 @@ export const ProviderSetup: React.FC = () => {
         {/* Privacy note */}
         <div className="text-center space-y-1">
           <p className="text-xs text-muted-foreground">
-            <strong>Local:</strong> Everything stays on your device — questions, answers, and model.
-            No data is ever sent to any server.
+            <strong>Local:</strong> Answer generation runs on your device after model files are
+            downloaded. Choosing local inference does not disable site analytics. Assistant usage
+            and feedback events may send metadata, excluding your question text.
           </p>
           <p className="text-xs text-muted-foreground">
             <strong>Cloud:</strong> Your API key is stored only in your browser (never sent to our

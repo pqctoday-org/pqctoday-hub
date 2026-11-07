@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'ai-security-pqc',
-  contentVersion: 10,
+  contentVersion: 11,
   lm_id: 'LM-033',
   title: 'AI Security & PQC',
   description:

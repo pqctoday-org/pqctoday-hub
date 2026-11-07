@@ -76,12 +76,10 @@ export const CertRotationPlanner: React.FC = () => {
     const targetCtSize = CT_LOG_ENTRY_SIZES[targetAlgo] || 5700
     const ctImpactMultiplier = targetCtSize / currentCtSize
 
-    // Migration timeline
-    const nodesPerDay = Math.max(1, Math.ceil(nodes / paceDays))
-    const migrationDays = Math.ceil(nodes / nodesPerDay)
-
-    // Risk window: during migration, some certs are still classical
-    const riskWindowDays = migrationDays
+    // Discrete batches conserve the selected node count, including small estates.
+    const pilotNodes = Math.min(nodes, Math.max(1, Math.ceil(nodes * 0.05)))
+    const nextNodes = Math.min(nodes - pilotNodes, Math.ceil(nodes * 0.5))
+    const finalNodes = nodes - pilotNodes - nextNodes
 
     // ACME compatibility
     const acmeSupported =
@@ -90,46 +88,69 @@ export const CertRotationPlanner: React.FC = () => {
       targetAlgo === 'hybrid-ecdsa-ml-dsa-44'
     const pqcAcmeExperimental = targetAlgo === 'ml-dsa-44' || targetAlgo === 'ml-dsa-65'
 
-    // Gantt-like phases
-    const phases = [
+    // Existing teaching durations define one sequential sample schedule.
+    const phaseTemplates = [
       {
         label: 'Preparation',
         days: Math.min(14, paceDays),
         description: 'Verify CA PQC support, test in staging',
       },
       {
-        label: 'Pilot (5% of nodes)',
+        label: 'Pilot',
         days: Math.ceil(paceDays * 0.1),
-        description: `Migrate ${Math.max(1, Math.ceil(nodes * 0.05))} nodes, monitor errors`,
+        description: `Planned batch: ${pilotNodes} ${pilotNodes === 1 ? 'node' : 'nodes'}; monitor sample rollout outcomes.`,
       },
       {
-        label: 'Ramp-up (50%)',
+        label: 'Next batch',
         days: Math.ceil(paceDays * 0.4),
-        description: `Migrate ${Math.ceil(nodes * 0.5)} nodes at ${nodesPerDay} nodes/day`,
+        description:
+          nextNodes > 0
+            ? `Planned batch: ${nextNodes} ${nextNodes === 1 ? 'node' : 'nodes'}.`
+            : 'No nodes assigned to this batch; adapt its template duration.',
       },
       {
-        label: 'Full rollout (100%)',
+        label: 'Final batch',
         days: Math.ceil(paceDays * 0.5),
-        description: `Complete remaining ${Math.ceil(nodes * 0.45)} nodes`,
+        description:
+          finalNodes > 0
+            ? `Planned batch: ${finalNodes} remaining ${finalNodes === 1 ? 'node' : 'nodes'}.`
+            : 'No nodes assigned to this batch; adapt its template duration.',
       },
     ]
+    let elapsedDays = 0
+    const phases = phaseTemplates.map((phase) => {
+      const startDay = elapsedDays
+      elapsedDays += phase.days
+      return { ...phase, startDay, endDay: elapsedDays }
+    })
+    const preparationDays = phases[0].days
+    const rolloutDays = phases.slice(1).reduce((sum, phase) => sum + phase.days, 0)
 
     return {
+      nodeCount: nodes,
+      pilotNodes,
+      nextNodes,
+      finalNodes,
+      preparationDays,
+      rolloutDays,
+      totalPlanDays: elapsedDays,
       totalCerts,
       dailyRenewalRate,
       peakDailyRenewals,
       ctImpactMultiplier,
-      migrationDays,
-      riskWindowDays,
       acmeSupported,
       pqcAcmeExperimental,
-      nodesPerDay,
       phases,
     }
   }, [edgeNodes, certsPerNode, validity, currentAlgo, targetAlgo, rolloutPace])
 
   return (
     <div className="space-y-6">
+      <p className="text-xs text-muted-foreground">
+        This sequential sample schedule is a teaching template, not a measurement of security
+        exposure or proof of completed deployment. Preparation is additional to the selected rollout
+        duration. Empty batches retain template time and must be adapted for an actual plan.
+      </p>
       {/* Configuration */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
@@ -212,8 +233,8 @@ export const CertRotationPlanner: React.FC = () => {
           <div className="text-xs text-muted-foreground">Daily Renewals</div>
         </div>
         <div className="bg-muted/50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-status-warning">{plan.riskWindowDays}d</div>
-          <div className="text-xs text-muted-foreground">Risk Window</div>
+          <div className="text-2xl font-bold text-status-warning">{plan.rolloutDays}d</div>
+          <div className="text-xs text-muted-foreground">Sample Rollout Duration</div>
         </div>
         <div className="bg-muted/50 rounded-lg p-3 text-center">
           <div className="text-2xl font-bold text-foreground">
@@ -227,13 +248,21 @@ export const CertRotationPlanner: React.FC = () => {
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-center gap-2">
           <CalendarDays size={16} className="text-primary" />
-          <h3 className="text-sm font-bold text-foreground">Migration Timeline</h3>
+          <h3 className="text-sm font-bold text-foreground">Illustrative Rollout Schedule</h3>
         </div>
 
+        <p className="text-xs text-muted-foreground">
+          {plan.preparationDays} preparation days + {plan.rolloutDays} rollout days ={' '}
+          {plan.totalPlanDays} total planned days. The final planned milestone is day{' '}
+          {plan.totalPlanDays}; this does not establish when a deployed estate is protected.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Node allocation: {plan.pilotNodes} pilot + {plan.nextNodes} next + {plan.finalNodes} final
+          = {plan.nodeCount} {plan.nodeCount === 1 ? 'node' : 'nodes'}.
+        </p>
         <div className="space-y-2">
           {plan.phases.map((phase, idx) => {
-            const totalDays = plan.phases.reduce((sum, p) => sum + p.days, 0)
-            const widthPercent = totalDays > 0 ? (phase.days / totalDays) * 100 : 25
+            const widthPercent = (phase.days / plan.totalPlanDays) * 100
             const colors = [
               'bg-status-info',
               'bg-status-warning',
@@ -244,12 +273,14 @@ export const CertRotationPlanner: React.FC = () => {
               <div key={phase.label} className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-foreground">{phase.label}</span>
-                  <span className="text-muted-foreground">{phase.days} days</span>
+                  <span className="text-muted-foreground">
+                    {phase.days} days · planned day {phase.startDay}–{phase.endDay}
+                  </span>
                 </div>
                 <div className="relative h-6 bg-muted/30 rounded-full overflow-hidden">
                   <div
                     className={`absolute inset-y-0 left-0 ${colors[idx]} rounded-full flex items-center px-2`}
-                    style={{ width: `${Math.max(widthPercent, 10)}%` }}
+                    style={{ width: `${widthPercent}%` }}
                   >
                     <span className="text-[10px] text-primary-foreground font-medium truncate">
                       {phase.days}d

@@ -81,6 +81,10 @@ export function matchLibrary(name: string, version: string): CryptoLibrary | und
 
 // ── Adapters: each catalog shape → a neutral CBOM component input ────────────
 
+const CMVP_ASSOCIATION_TYPE = 'CMVP catalogue association'
+const CMVP_EDITION_SCOPE =
+  'FIPS standard edition not established by this record; inspect the referenced certificate and configuration.'
+
 export function libraryToCbomInput(lib: CryptoLibrary): CbomComponentInput {
   const properties: CbomProperty[] = [
     { name: 'pqctoday:fipsStatus', value: lib.fipsStatus },
@@ -88,6 +92,9 @@ export function libraryToCbomInput(lib: CryptoLibrary): CbomComponentInput {
     { name: 'pqctoday:posture', value: lib.posture },
   ]
   if (lib.eolDate) properties.push({ name: 'pqctoday:eolDate', value: lib.eolDate })
+  if (lib.cmvpCertNumber) {
+    properties.push({ name: 'pqctoday:cmvpEditionScope', value: CMVP_EDITION_SCOPE })
+  }
   return {
     type: 'library',
     name: lib.name,
@@ -97,7 +104,7 @@ export function libraryToCbomInput(lib: CryptoLibrary): CbomComponentInput {
     publisher: lib.vendor,
     properties,
     certifications: lib.cmvpCertNumber
-      ? [{ certType: 'FIPS 140-3 CMVP', certId: lib.cmvpCertNumber }]
+      ? [{ certType: CMVP_ASSOCIATION_TYPE, certId: lib.cmvpCertNumber }]
       : [],
     algorithms: extractAllAlgorithmsFromText(lib.pqcSupport),
   }
@@ -112,13 +119,16 @@ export function hsmToCbomInput(h: HsmVendorRecord): CbomComponentInput {
     description: h.notes,
     publisher: h.vendor,
     properties: [
-      { name: 'pqctoday:fipsLevel', value: `FIPS 140-3 Level ${h.fipsLevel}` },
+      { name: 'pqctoday:fipsLevel', value: `Reported level ${h.fipsLevel}` },
       { name: 'pqctoday:fipsStatus', value: h.fipsStatus },
       { name: 'pqctoday:platformBinding', value: h.platformBinding },
       { name: 'pqctoday:posture', value: h.posture },
+      ...(h.cmvpCertNumber
+        ? [{ name: 'pqctoday:cmvpEditionScope', value: CMVP_EDITION_SCOPE }]
+        : []),
     ],
     certifications: h.cmvpCertNumber
-      ? [{ certType: 'FIPS 140-3 CMVP', certId: h.cmvpCertNumber }]
+      ? [{ certType: CMVP_ASSOCIATION_TYPE, certId: h.cmvpCertNumber }]
       : [],
     algorithms: extractAllAlgorithmsFromText(h.pqcSupport),
   }

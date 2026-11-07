@@ -450,6 +450,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
             key={v.value}
             type="button"
             variant="ghost"
+            disabled={running}
             onClick={() => {
               setVariant(v.value)
               setResults([])

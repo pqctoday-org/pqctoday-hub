@@ -144,8 +144,12 @@ export const BuildBuyAnalyzer: React.FC = () => {
                     </div>
                     <div className="border-t border-border pt-3">
                       <div className="font-semibold text-xs text-foreground mb-1 flex items-center gap-1">
-                        <BarChart3 size={12} className="text-primary" /> TCO Estimate
+                        <BarChart3 size={12} className="text-primary" /> Illustrative TCO bands
                       </div>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Authored planning ranges, not supplier quotes or a cost calculation from
+                        your answers.
+                      </p>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 text-xs">
                         {(['year1', 'year3', 'year5'] as const).map((yr) => (
                           <div key={yr} className="text-center">
@@ -204,8 +208,12 @@ export const BuildBuyAnalyzer: React.FC = () => {
         {totalAnswered > 0 && (
           <div className="mt-4 border-t border-border pt-4">
             <div className="font-semibold text-sm text-foreground mb-3">
-              Score ({totalAnswered}/{totalQuestions} answered)
+              Illustrative weighted scores ({totalAnswered}/{totalQuestions} answered)
             </div>
+            <p className="text-xs text-muted-foreground mb-3">
+              Hub-authored answer weights compare options for discussion; these scores do not verify
+              requirements, suitability or cost.
+            </p>
             <div className="space-y-2">
               {(Object.entries(scores) as [SourcingStrategy, number][]).map(([strategy, score]) => {
                 const s = SOURCING_STRATEGIES.find((s) => s.id === strategy)
@@ -237,7 +245,8 @@ export const BuildBuyAnalyzer: React.FC = () => {
                 className={`mt-3 p-3 rounded-lg border ${STRATEGY_COLORS[recommendation].border} ${STRATEGY_COLORS[recommendation].bg}`}
               >
                 <div className="font-bold text-sm text-foreground">
-                  Recommendation: {SOURCING_STRATEGIES.find((s) => s.id === recommendation)?.name}
+                  Leading option in this teaching model:{' '}
+                  {SOURCING_STRATEGIES.find((s) => s.id === recommendation)?.name}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   {SOURCING_STRATEGIES.find((s) => s.id === recommendation)?.description}
@@ -251,8 +260,12 @@ export const BuildBuyAnalyzer: React.FC = () => {
       {/* Case Studies */}
       <div>
         <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
-          <BookOpen size={18} className="text-primary" /> Real-World Case Studies
+          <BookOpen size={18} className="text-primary" /> Named examples and fictional scenarios
         </h3>
+        <p className="text-xs text-muted-foreground mb-3">
+          The two typical-organization scenarios are fictional. Named company descriptions are
+          supplied reference examples, not outcomes verified by this activity.
+        </p>
         <div className="space-y-3">
           {CASE_STUDIES.map((cs) => {
             const colors = STRATEGY_COLORS[cs.strategy]
@@ -276,6 +289,11 @@ export const BuildBuyAnalyzer: React.FC = () => {
                         <span className="text-xs text-muted-foreground">{cs.industry}</span>
                       </div>
                       <div className="text-sm text-muted-foreground">{cs.title}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {cs.id === 'enterprise-openssl' || cs.id === 'startup-bc'
+                          ? 'Fictional planning scenario — illustrative outcome'
+                          : 'Named reference example'}
+                      </div>
                     </div>
                     {isExpanded ? (
                       <ChevronUp size={16} className="text-muted-foreground shrink-0" />

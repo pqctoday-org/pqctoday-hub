@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { GateReason } from '@/components/shared/GateReason'
 import {
   Play,
@@ -73,7 +73,7 @@ const HSMPQC_KAT_SPECS: KatTestSpec[] = [
 
 // ── Per-step live state ───────────────────────────────────────────────────────
 
-interface LiveState {
+export interface LiveState {
   mlKemPubHandle: number
   mlKemPrivHandle: number
   mlKemCiphertext: Uint8Array | null
@@ -89,7 +89,7 @@ interface LiveState {
 
 // ── Live step executors ───────────────────────────────────────────────────────
 
-const runStep = async (
+export const runStep = async (
   stepIdx: number,
   M: SoftHSMModule,
   hSession: number,
@@ -160,7 +160,12 @@ const runStep = async (
       // Verify both secrets match by extracting values
       const secret1 = hsm_extractKeyValue(M, hSession, liveState.mlKemSecretHandle)
       const secret2 = hsm_extractKeyValue(M, hSession, recovered)
-      const match = secret1.length === secret2.length && secret1.every((b, i) => b === secret2[i])
+      const match =
+        secret1.length === 32 && secret2.length === 32 && secret1.every((b, i) => b === secret2[i])
+      if (!match)
+        throw new Error(
+          'Sample ML-KEM check failed: the recovered 32-byte secret does not match the sender secret.'
+        )
       return [
         'CKR_OK',
         `  Recovered Key Handle: 0x${recovered.toString(16).padStart(8, '0')}`,
@@ -198,6 +203,10 @@ const runStep = async (
       const sig = liveState.mlDsaSigBytes
       if (!sig) throw new Error('Run step 5 (Sign) first to generate a signature')
       const valid = hsm_verify(M, hSession, liveState.mlDsaPubHandle, liveState.mlDsaMessage, sig)
+      if (!valid)
+        throw new Error(
+          'Sample ML-DSA verification did not pass. Inspect the PKCS#11 log for the returned failure code.'
+        )
       return [
         valid ? 'CKR_OK' : 'CKR_SIGNATURE_INVALID',
         `  Verification:    ${valid ? 'VALID ✓' : 'INVALID ✗'}`,
@@ -315,11 +324,21 @@ export const Pkcs11Simulator: React.FC = () => {
   const [liveOutput, setLiveOutput] = useState<Record<number, string>>({})
   const [liveError, setLiveError] = useState<Record<number, string>>({})
   const [stepRunning, setStepRunning] = useState<number | null>(null)
+  const runningRef = useRef(false)
 
   const operations = HSM_PKCS11_OPERATIONS
   const currentOp = operations[currentStep]
 
   const handleExecuteStep = useCallback(async () => {
+    if (runningRef.current) return
+    runningRef.current = true
+    setCompletedSteps((previous) => new Set([...previous].filter((step) => step < currentStep)))
+    setLiveOutput((previous) =>
+      Object.fromEntries(Object.entries(previous).filter(([step]) => Number(step) < currentStep))
+    )
+    setLiveError((previous) =>
+      Object.fromEntries(Object.entries(previous).filter(([step]) => Number(step) < currentStep))
+    )
     if (hsm.isReady && hsm.moduleRef.current) {
       // Live mode: run real WASM operation
       setStepRunning(currentStep)
@@ -343,14 +362,17 @@ export const Pkcs11Simulator: React.FC = () => {
         setLiveError((prev) => ({ ...prev, [currentStep]: msg }))
       } finally {
         setStepRunning(null)
+        runningRef.current = false
       }
     } else {
-      // Simulation mode: mark complete immediately (fake output from data file)
+      // Participation in an illustrative trace; no sample check was executed.
       setCompletedSteps((prev) => new Set([...prev, currentStep]))
+      runningRef.current = false
     }
   }, [currentStep, hsm, operations])
 
   const handleNext = useCallback(() => {
+    if (runningRef.current) return
     if (currentStep < operations.length - 1) {
       setCurrentStep(currentStep + 1)
       setExpandedClassical(null)
@@ -359,6 +381,7 @@ export const Pkcs11Simulator: React.FC = () => {
   }, [currentStep, operations.length])
 
   const handlePrevious = useCallback(() => {
+    if (runningRef.current) return
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
       setExpandedClassical(null)
@@ -367,6 +390,7 @@ export const Pkcs11Simulator: React.FC = () => {
   }, [currentStep])
 
   const handleReset = useCallback(() => {
+    if (runningRef.current) return
     setCurrentStep(0)
     setCompletedSteps(new Set())
     setExpandedClassical(null)
@@ -389,6 +413,27 @@ export const Pkcs11Simulator: React.FC = () => {
     hsm.clearKeys()
   }, [hsm])
 
+  const priorMode = useRef(hsm.isReady)
+  useEffect(() => {
+    if (priorMode.current === hsm.isReady) return
+    priorMode.current = hsm.isReady
+    setCompletedSteps(new Set())
+    setLiveOutput({})
+    setLiveError({})
+    setCurrentStep(0)
+    liveStateRef.current = {
+      mlKemPubHandle: 0,
+      mlKemPrivHandle: 0,
+      mlKemCiphertext: null,
+      mlKemSecretHandle: 0,
+      mlDsaPubHandle: 0,
+      mlDsaPrivHandle: 0,
+      mlDsaSigBytes: null,
+      mlDsaMessage: '',
+      aesWrapHandle: 0,
+    }
+  }, [hsm.isReady])
+
   const isStepRunning = stepRunning === currentStep
   const stepCompleted = completedSteps.has(currentStep)
   const stepOutput = liveOutput[currentStep]
@@ -400,7 +445,7 @@ export const Pkcs11Simulator: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">PKCS#11 PQC Operation Simulator</h3>
         <p className="text-sm text-muted-foreground">
           Step through 8 PKCS#11 operations demonstrating PQC key generation, encapsulation,
-          signing, and stateful signature management. Each step shows the API call, expected output,
+          signing, wrapping and mechanism discovery. Each step shows the API call, expected output,
           and vendor support comparison.
         </p>
       </div>
@@ -439,7 +484,7 @@ export const Pkcs11Simulator: React.FC = () => {
               <Button
                 variant="ghost"
                 key={op.id}
-                disabled={locked}
+                disabled={locked || stepRunning !== null}
                 title={locked ? 'Run the previous steps first' : undefined}
                 onClick={() => {
                   setCurrentStep(idx)
@@ -482,7 +527,12 @@ export const Pkcs11Simulator: React.FC = () => {
             <p className="text-sm text-muted-foreground mt-1">{currentOp.description}</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={handleReset} className="text-xs">
+            <Button
+              variant="ghost"
+              onClick={handleReset}
+              disabled={stepRunning !== null}
+              className="text-xs"
+            >
               <RotateCcw size={12} className="mr-1" />
               Reset
             </Button>
@@ -506,6 +556,24 @@ export const Pkcs11Simulator: React.FC = () => {
         </div>
 
         {/* Execute Button */}
+        {/* Error */}
+        {stepError && (
+          <div
+            role="alert"
+            className="mb-3 bg-status-error/5 rounded-lg p-4 border border-status-error/20"
+          >
+            <p className="text-xs font-mono text-status-error">{stepError}</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-2 h-6 px-2 text-xs"
+              onClick={handleExecuteStep}
+            >
+              Retry
+            </Button>
+          </div>
+        )}
+
         {!stepCompleted ? (
           <Button
             variant="gradient"
@@ -522,30 +590,11 @@ export const Pkcs11Simulator: React.FC = () => {
           </Button>
         ) : (
           <div className="mb-4">
-            {/* Error */}
-            {stepError && (
-              <div className="mb-3 bg-status-error/5 rounded-lg p-4 border border-status-error/20">
-                <p className="text-xs font-mono text-status-error">{stepError}</p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 h-6 px-2 text-xs"
-                  onClick={() => {
-                    setCompletedSteps((prev) => {
-                      const next = new Set(prev)
-                      next.delete(currentStep)
-                      return next
-                    })
-                  }}
-                >
-                  Retry
-                </Button>
-              </div>
-            )}
-
             {/* Output */}
             <h5 className="text-xs font-bold text-muted-foreground mb-2">
-              {stepOutput ? 'Live Output (SoftHSM3 WASM)' : 'Expected Output'}
+              {stepOutput
+                ? 'Live Output (SoftHSM3 WASM)'
+                : 'Illustrative trace — no engine operation or sample test executed'}
             </h5>
             <div
               className={`rounded-lg p-4 border animate-fade-in ${
@@ -633,14 +682,18 @@ export const Pkcs11Simulator: React.FC = () => {
         Run this step to unlock Next.
       </GateReason>
       <div className="flex justify-between gap-3">
-        <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0}>
+        <Button
+          variant="outline"
+          onClick={handlePrevious}
+          disabled={currentStep === 0 || stepRunning !== null}
+        >
           &larr; Previous
         </Button>
         {currentStep < operations.length - 1 ? (
           <Button
             variant="outline"
             onClick={handleNext}
-            disabled={!stepCompleted}
+            disabled={!stepCompleted || stepRunning !== null}
             title={!stepCompleted ? 'Run this step first' : undefined}
           >
             Next &rarr;

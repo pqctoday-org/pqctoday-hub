@@ -31,7 +31,7 @@ export const CATEGORY_META: Record<WorkshopCategory, CategoryMeta> = {
   'OpenSSL Studio': {
     icon: Terminal,
     description:
-      'A full OpenSSL 3.6 environment plus PKI enrollment, S/MIME and JWT workshops, compiled to WebAssembly.',
+      'OpenSSL 3.6 WebAssembly tools and educational PKI enrollment, S/MIME and JWT workflows.',
   },
   'HSM / PKCS#11': {
     icon: Cpu,
@@ -56,7 +56,8 @@ export const CATEGORY_META: Record<WorkshopCategory, CategoryMeta> = {
   },
   'Protocol Simulations': {
     icon: Network,
-    description: 'Live TLS, SSH, VPN, 5G, MLS and TPM protocol handshakes in WebAssembly.',
+    description:
+      'Browser-local TLS, SSH, VPN, 5G and MLS models, plus TPM emulation; execution scope varies by tool.',
   },
 }
 
@@ -119,7 +120,8 @@ export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
     to: '/playground/interactive',
     icon: Play,
     title: 'Interactive Playground',
-    description: 'Keygen, KEM, signing and hashing — live via WebAssembly.',
+    description:
+      'Sample keygen, KEM, signing and hashing; the workbench shows its selected execution mode.',
     tag: 'ML-KEM · ML-DSA · AES',
     accent: 'primary',
   },

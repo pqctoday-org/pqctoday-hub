@@ -48,29 +48,32 @@ export function useEthereumKeyGeneration({
           and performance. It's battle-tested across Bitcoin and Ethereum ecosystems.
         </>
       ),
-      code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
-, false, 'sign');`,
+      code: `// Illustrative summary of the executed software path
+await keyGen.generateKeyPair(
+  filenames.SRC_PRIVATE_KEY,
+  filenames.SRC_PUBLIC_KEY
+);
+// Software PEM files and raw sample key bytes are retained in the browser.`,
       language: 'javascript',
       actionLabel: 'Generate Source Key',
       diagram: <EthereumFlowDiagram />,
     },
     {
       id: 'pubkey',
-      title: '2. Derive Source Public Key',
+      title: '2. Inspect Software-derived Public Key',
       description: (
         <>
-          Derive the uncompressed public key(65 bytes) from the private key using elliptic curve
-          point multiplication.This is a <strong>one - way trapdoor function</strong> - you cannot
-          reverse it to get the private key.
+          Inspect the software public key already derived during key generation. This step reads its
+          saved PEM file and displays the stored public-key bytes; it does not extract a key from
+          the optional HSM session.
           <br /> <br />
           <strong> ECDSA Public Key: </strong> The public key is a point (x, y) on the secp256k1
           curve. Uncompressed format: 0x04 || x || y (65 bytes total).
         </>
       ),
-      code: `// SoftHSMv3 Key Extraction
-// The public key handle is used to retrieve CKA_VALUE
-const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, CKA_VALUE);`,
+      code: `// Inspect the software public key already derived during key generation.
+const publicKeyHex = keyGen.publicKeyHex;
+// This step also reads its saved PEM file through the OpenSSL service.`,
       language: 'javascript',
       actionLabel: 'Extract Public Key',
     },
@@ -106,9 +109,11 @@ const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, C
           only shares the address. Never share private keys!
         </>
       ),
-      code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
-, false, 'sign');`,
+      code: `// Illustrative summary of the executed software path
+await recipientKeyGen.generateKeyPair(
+  filenames.DST_PRIVATE_KEY,
+  filenames.DST_PUBLIC_KEY
+);`,
       language: 'javascript',
       actionLabel: 'Generate Recipient Key',
     },
@@ -148,15 +153,15 @@ const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionH
       )
       const keyContent = atob(readRes.stdout.replace(/\\n/g, ''))
 
-      result = `SUCCESS: Key Generated!
+      result = `Sample software key generation output:
       
 Command: ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(filenames.SRC_PRIVATE_KEY)}
 
 Generated File: ${filenames.SRC_PRIVATE_KEY}
 
-[VERIFICATION TAG]
+[SAMPLE KEY PREFIX — not a verification result]
 Hex Start: ${keyPair.privateKeyHex.slice(0, 64)}...
-(Compare this with Step 8 verification)
+(Inspection aid; the separate HSM session does not protect this software key.)
 
 Generated Source Private Key (Hex): ${keyPair.privateKeyHex}
 
@@ -179,7 +184,7 @@ ${keyContent}`
         actions.setRawPubKey(keyGen.publicKey.slice(1))
       }
 
-      result = `Derived Source Public Key (Hex): ${keyGen.publicKeyHex}\n\nPEM Format:\n${pubKeyPem}`
+      result = `Stored software-derived Source Public Key (Hex): ${keyGen.publicKeyHex}\n\nPEM Format:\n${pubKeyPem}`
     } else if (stepId === 'address') {
       if (!keyGen.publicKey) throw new Error('Public key not found.')
 

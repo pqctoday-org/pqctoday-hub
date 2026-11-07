@@ -269,10 +269,16 @@ describe('buildCbomDocument', () => {
     }
   })
 
-  it('surfaces certifications as component evidence + external references', () => {
+  it('preserves certificate associations and references without invented identity evidence', () => {
     const doc = JSON.parse(buildCbomDocument([libWithAlgos]).json)
     const lib = doc.components.find((c: { type: string }) => c.type === 'library')
-    expect(lib.evidence.identity[0].methods[0].technique).toBe('attestation')
+    expect(lib.evidence).toBeUndefined()
+    expect(
+      JSON.parse(
+        lib.properties.find((p: { name: string }) => p.name === 'pqctoday:certificateReferences')
+          .value
+      )
+    ).toEqual(libWithAlgos.certifications)
     expect(lib.externalReferences[0].type).toBe('certification-report')
   })
 

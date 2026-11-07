@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import { ChevronDown, Globe, Check, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 export interface FilterDropdownItem {
   id: string
@@ -75,6 +76,17 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const menuPortalRef = useRef<HTMLDivElement>(null)
+
+  // A portalled listbox must own Escape above an underlying overlay. Register
+  // only while open; pointer/scroll dismissal keeps its existing focus behavior.
+  useOverlayEscape(
+    isOpen,
+    () => {
+      setIsOpen(false)
+      buttonRef.current?.focus()
+    },
+    { rootRef: menuPortalRef }
+  )
 
   const isMulti = multiSelectedIds !== undefined && onMultiSelect !== undefined
 

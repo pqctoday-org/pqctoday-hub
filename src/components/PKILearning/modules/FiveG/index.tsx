@@ -30,7 +30,7 @@ const PARTS = [
   {
     id: 'auth',
     title: 'Part 2: 5G-AKA Authentication',
-    description: 'Mutual Authentication & MILENAGE Algorithm.',
+    description: 'Selected home-network computations; no subscriber response verification.',
     icon: Lock,
   },
   {

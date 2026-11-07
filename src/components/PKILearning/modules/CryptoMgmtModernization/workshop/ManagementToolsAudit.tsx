@@ -226,12 +226,14 @@ export const ManagementToolsAudit: React.FC = () => {
     const lines: string[] = []
     lines.push('# Management Tools Audit')
     lines.push('')
-    lines.push(`**Tool-chain completeness:** ${completeness}%`)
+    lines.push(`**Hub tool-category rating:** ${completeness}%`)
     lines.push('')
     lines.push(
-      'Per NIST CSWP.39 §5 — auditing the discovery, assessment, configuration, and enforcement'
+      'Reference reading: NIST CSWP.39 §5. The weights and display bands are Hub teaching heuristics, not NIST completeness thresholds.'
     )
-    lines.push('tooling that keeps your crypto asset inventory and risk data current.')
+    lines.push(
+      'Selected category ratings, including seeded assumptions, are not tested capabilities. Systems-coverage percentages are recorded separately and do not contribute to this rating; even 100% does not establish inventory coverage or implemented controls.'
+    )
     lines.push('')
     lines.push('## Coverage by tool category')
     lines.push('')
@@ -244,7 +246,7 @@ export const ManagementToolsAudit: React.FC = () => {
     }
     lines.push('')
     if (gaps.length > 0) {
-      lines.push(`## Priority gaps (${gaps.length})`)
+      lines.push(`## Topics below Partial — Hub importance order (${gaps.length})`)
       lines.push('')
       for (const t of gaps) {
         const lvl = levels[t.id]
@@ -254,9 +256,11 @@ export const ManagementToolsAudit: React.FC = () => {
         lines.push('')
       }
     } else {
-      lines.push('## No priority gaps')
+      lines.push('## No selected ratings below Partial')
       lines.push('')
-      lines.push('All tool categories at Partial or Automated coverage.')
+      lines.push(
+        'All selected category ratings are Partial or Automated; this does not establish implemented capability or systems coverage.'
+      )
     }
     return lines.join('\n')
   }, [levels, sysPct, completeness, gaps])
@@ -277,7 +281,7 @@ export const ManagementToolsAudit: React.FC = () => {
       )}
       {seedSources.length > 0 && (
         <PreFilledBanner
-          summary={`Coverage seeded from ${seedSources.join(' + ')}.`}
+          summary={`Illustrative category ratings seeded from ${seedSources.join(' + ')}.`}
           onClear={() => {
             setSysPct(Object.fromEntries(TOOLS.map((t) => [t.id, 0])))
             setLevels(Object.fromEntries(TOOLS.map((t) => [t.id, 0 as CoverageLevel])))
@@ -286,11 +290,11 @@ export const ManagementToolsAudit: React.FC = () => {
         />
       )}
       <p className="text-sm text-muted-foreground">
-        CSWP.39 §5 step 3 (Identify Gaps) requires auditing the Management Tools layer — the
-        discovery, assessment, configuration, and enforcement tooling that keeps your crypto
-        inventory and risk data current. Without these tools, your Risk Analysis Engine operates on
-        incomplete, manually maintained data. Rate your current coverage for each tool category,
-        then review the gap recommendations.
+        Explore discovery, assessment, configuration and enforcement tool capabilities using sample
+        ratings. A matched catalogue management product preselects Manual for every category as an
+        illustrative starting assumption, not evidence of those capabilities. Review each category
+        independently. Evaluate actual coverage, integration and test results with your production
+        tools; this exercise does not assess implemented controls or data completeness.
       </p>
 
       {/* Tool coverage cards */}
@@ -321,7 +325,7 @@ export const ManagementToolsAudit: React.FC = () => {
                   {/* Level selector */}
                   <div>
                     <div className="text-[10px] text-muted-foreground mb-1 font-medium">
-                      Coverage level
+                      Selected category rating
                     </div>
                     <div className="flex gap-1">
                       {([0, 1, 2, 3] as CoverageLevel[]).map((l) => (
@@ -370,7 +374,7 @@ export const ManagementToolsAudit: React.FC = () => {
       {/* Gap Summary */}
       <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 space-y-4">
         <div className="flex justify-between items-center">
-          <div className="font-bold text-foreground">Tool-chain Completeness</div>
+          <div className="font-bold text-foreground">Hub Tool-Category Rating</div>
           <div className="text-xl font-bold text-primary">{completeness}%</div>
         </div>
 
@@ -393,10 +397,11 @@ export const ManagementToolsAudit: React.FC = () => {
           asset management, configuration management) each count three times as much as data
           classification. Systems-coverage percentages are yours to enter; nothing seeds them,
           because a count of detected products says nothing about how much of your estate they
-          reach.
+          reach. These percentages do not contribute to the headline rating: all categories set to
+          Automated still score 100% with 0% systems coverage. Neither number verifies a capability.
         </p>
 
-        {/* Coverage level heatmap */}
+        {/* Selected category rating heatmap */}
         <div>
           <div className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">
             Coverage heatmap
@@ -423,7 +428,7 @@ export const ManagementToolsAudit: React.FC = () => {
         {gaps.length > 0 ? (
           <div>
             <div className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">
-              Priority gaps ({gaps.length})
+              Topics below Partial ({gaps.length})
             </div>
             <div className="space-y-2">
               {gaps.map((t) => (
@@ -443,21 +448,21 @@ export const ManagementToolsAudit: React.FC = () => {
         ) : completeness >= 75 ? (
           <div className="flex items-center gap-2 text-status-success text-sm font-medium">
             <CheckCircle2 size={16} />
-            All tool categories at Partial or Automated coverage — proceed to Step 7.
+            Selected ratings reach the Hub display band — implemented capabilities and inventory
+            coverage are not assessed.
           </div>
         ) : (
           <div className="flex items-center gap-2 text-status-warning text-sm font-medium">
             <AlertCircle size={16} />
-            No category is below Partial, but tool-chain completeness is only {completeness}% —
-            raise categories to Automated before relying on Step 7&apos;s Risk Analysis Engine.
+            Selected category ratings total {completeness}%. This display band is a teaching
+            heuristic, not a criterion for relying on a risk assessment.
           </div>
         )}
 
         <div className="text-xs text-muted-foreground border-t border-border pt-3 mt-1">
-          <strong className="text-foreground">CSWP.39 §5:</strong> Discovery, assessment,
-          configuration, and enforcement tooling must be automated — not manual surveys. Tool-chain
-          completeness score below 75% means the Risk Analysis Engine (Step 7) is operating on
-          incomplete data.
+          <strong className="text-foreground">Teaching-model limit:</strong> the 75% display cutoff
+          and category weights are Hub assumptions, not NIST requirements or a data-completeness
+          test. Investigate coverage, quality and uncertainty separately.
         </div>
       </div>
 

@@ -666,8 +666,15 @@ export function MobileAssessView() {
             <UnknownToggle
               checked={store.complianceUnknown}
               onChange={store.setComplianceUnknown}
-              label="Skip — won't change my score much"
+              label="I’m not sure — use profile assumptions"
             />
+            {store.complianceUnknown && (
+              <p className="text-[10.5px] italic text-muted-foreground">
+                The framework selections above use assumptions from your current profile. These
+                assumptions can affect the modelled score and recommendations; they do not establish
+                which obligations apply to an organization. Review the selections and their sources.
+              </p>
+            )}
           </>
         )}
 

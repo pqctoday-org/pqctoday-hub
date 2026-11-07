@@ -3,7 +3,7 @@
   "Post-Quantum Cryptography": "New math algorithms that quantum computers can't easily break.",
   "Shor's Algorithm": "A mathematical shortcut that allows a quantum computer to break modern encryption extremely fast.",
   "Lattice-based": "A type of math puzzle based on plotting points in a massive grid, used to build safe encryption.",
-  "Hash-based": "A type of encryption that signs data securely by scrambling it multiple times.",
+  "Hash-based": "Digital signatures built from hash functions. They help check who signed data and whether it changed; they do not hide the data.",
   "Harvest Now, Decrypt Later": "When hackers steal encrypted data today and store it until they have a quantum computer to crack it.",
   "HNDL": "Harvest Now, Decrypt Later — attackers steal encrypted data today to crack it when quantum computers arrive.",
   "NIST": "The US government agency responsible for writing and choosing the global standards for new algorithms.",

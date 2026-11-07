@@ -15,6 +15,9 @@
  * Escape closes, and focus moves to the primary action on open.
  */
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Trophy, ArrowRight, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -56,31 +59,31 @@ export function ModuleCompletionCard({
 }: ModuleCompletionCardProps) {
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
+  const trapRef = useFocusTrap(true)
+  useOverlayEscape(true, onClose, { rootRef: trapRef })
   const isPath = variant === 'path'
 
   // Escape to dismiss + move focus to the primary action on open (a11y).
   useEffect(() => {
     primaryRef.current?.focus()
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  }, [])
 
   const pct =
     progress && progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0
 
-  return (
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-dialog flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
         <motion.div
+          ref={trapRef}
           role="dialog"
           aria-modal="true"
           aria-label={isPath ? 'Journey complete' : 'Module complete'}
@@ -161,10 +164,10 @@ export function ModuleCompletionCard({
               type="button"
               variant="gradient"
               onClick={onNext}
-              className="flex w-full items-center justify-center gap-1.5"
+              className="flex h-auto min-h-11 w-full min-w-0 items-center justify-center gap-1.5 whitespace-normal"
             >
-              Next: {nextLabel}
-              <ArrowRight size={15} />
+              <span className="min-w-0 break-words">Next: {nextLabel}</span>
+              <ArrowRight size={15} className="shrink-0" />
             </Button>
           ) : (
             <Button
@@ -179,6 +182,7 @@ export function ModuleCompletionCard({
           )}
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }

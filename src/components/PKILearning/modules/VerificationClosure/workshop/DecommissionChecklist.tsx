@@ -8,17 +8,15 @@ import { SAMPLE_INVENTORY } from '@/data/cryptoEstate'
  * Decommission Tracker — work the classical estate (the shared
  * @/data/cryptoEstate, quantum-vulnerable assets, worst-risk first) through
  * deprecate → remove → verify-removed → log. "Remove" is gated on clearing
- * dependents; "verify removed" runs a re-scan that fails if the asset was not
- * actually removed — the step teams skip. Schedule: NIST IR 8547 (final,
- * Oct 2026) — quantum-vulnerable public-key deprecated after 2030 at every key
- * size of 112-bit security and up, disallowed after 2035.
+ * dependents. The removal review reads this worksheet's own Remove flag;
+ * it does not run an independent scan or establish that anything was deleted.
  */
 
 type StageId = 'deprecate' | 'remove' | 'verify' | 'log'
 const STAGES: { id: StageId; label: string }[] = [
   { id: 'deprecate', label: 'Deprecate' },
   { id: 'remove', label: 'Remove' },
-  { id: 'verify', label: 'Verify removed' },
+  { id: 'verify', label: 'Review sample status' },
   { id: 'log', label: 'Log' },
 ]
 
@@ -62,11 +60,16 @@ export function DecommissionChecklist() {
   return (
     <div className="space-y-4">
       <div className="glass-panel p-4">
-        <h3 className="mb-1 font-semibold text-foreground">Decommission the classical estate</h3>
+        <h3 className="mb-1 font-semibold text-foreground">Decommissioning stage walkthrough</h3>
         <p className="text-sm text-muted-foreground">
-          {ASSETS.length} quantum-vulnerable assets, worst-risk first. Each must reach{' '}
-          <strong>verify removed</strong> — the old key gone, not just PQC added. You can&apos;t{' '}
-          <em>remove</em> until dependents are migrated.
+          Explore the retirement stages for {ASSETS.length} fictional assets, ordered by their
+          sample risk scores. Mark sample dependents migrated before selecting <em>Remove</em>.
+        </p>
+        <p role="note" className="mt-2 text-sm text-muted-foreground">
+          Review sample status reads only your Remove selection. This walkthrough does not scan,
+          delete keys or independently verify removal. In production, use discovery and monitoring
+          tools to check for remaining keys, trusted public keys and dependent copies; record what
+          was checked and any remaining exceptions before claiming retirement.
         </p>
         <div className="mt-3 h-2 w-full overflow-hidden rounded bg-muted">
           <div
@@ -75,7 +78,7 @@ export function DecommissionChecklist() {
           />
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          {doneCount}/{ASSETS.length} retired & verified
+          {doneCount}/{ASSETS.length} sample stage walkthroughs completed
         </p>
       </div>
 
@@ -130,16 +133,16 @@ export function DecommissionChecklist() {
                     patch(asset.id, (st) => ({ ...st, depsCleared: e.target.checked }))
                   }
                 />
-                Dependents migrated
+                Sample dependents marked migrated
               </label>
               {s.scan === 'present' && (
                 <span className="flex items-center gap-1 text-status-error">
-                  <ScanLine size={12} /> re-scan: STILL present — not removed
+                  <ScanLine size={12} /> Worksheet: Remove not selected
                 </span>
               )}
               {s.scan === 'gone' && (
                 <span className="flex items-center gap-1 text-status-success">
-                  <ScanLine size={12} /> re-scan: confirmed gone
+                  <ScanLine size={12} /> Worksheet: Remove selected — no independent scan
                 </span>
               )}
             </div>

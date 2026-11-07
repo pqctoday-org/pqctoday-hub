@@ -50,7 +50,7 @@ export const WorkflowBanner: React.FC = () => {
       <div className="flex items-center justify-between gap-4">
         {/* Progress indicator */}
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="flex items-center gap-1.5" aria-hidden="true">
+          <div className="flex items-center gap-1.5">
             {WORKFLOW_PHASES.map((phase) => {
               const isCompleted = completedPhases.includes(phase.id)
               const isCurrent = phase.id === currentPhase && !isComplete

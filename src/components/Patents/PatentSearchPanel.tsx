@@ -338,7 +338,8 @@ export function PatentSearchPanel({
             Searches across{' '}
             <span className="text-foreground font-medium">{patents.length.toLocaleString()}</span>{' '}
             patents — title, assignee, summary, claims, algorithms, protocols, and standards. Index
-            is built locally; no data leaves your browser.
+            is built in your browser from downloaded index and model files. Usage analytics may
+            record that a search occurred, without its query text.
           </p>
         </div>
       )}
@@ -456,7 +457,7 @@ function PatentResultCard({
           {/* Number + assignee */}
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <span className="text-[10px] font-mono text-muted-foreground shrink-0">
-              US {patent.patentNumber}
+              {patent.patentNumber}
             </span>
             {patent.assignee && (
               <span className="text-[10px] font-medium text-secondary truncate max-w-[200px]">
@@ -530,7 +531,7 @@ function PatentResultCard({
 
         <div className="flex items-center gap-1 shrink-0">
           <a
-            href={`https://patents.google.com/patent/US${patent.patentNumber}`}
+            href={`https://patents.google.com/patent/${patent.patentNumber}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

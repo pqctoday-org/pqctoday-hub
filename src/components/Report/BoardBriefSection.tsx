@@ -17,6 +17,7 @@ interface BoardBriefProps {
   generatedAt: string
   visible: boolean
   ownership?: BoardBriefOwnership
+  shared?: boolean
 }
 
 const RISK_LEVEL_LABEL: Record<string, string> = {
@@ -77,18 +78,24 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   result,
   industry,
   country,
-  roiSummary,
+  roiSummary: providedRoiSummary,
   generatedAt,
   visible,
   ownership,
+  shared = false,
 }) => {
   if (!visible) return null
 
-  const ownershipRows = [
-    ['Program Owner', ownership?.programOwner],
-    ['Budget Owner', ownership?.budgetOwner],
-    ['Accountable Executive', ownership?.accountableExecutive],
-  ].filter(([, v]) => !!v) as [string, string][]
+  const roiSummary = shared ? null : providedRoiSummary
+  const ownershipRows = (
+    shared
+      ? []
+      : [
+          ['Program Owner', ownership?.programOwner],
+          ['Budget Owner', ownership?.budgetOwner],
+          ['Accountable Executive', ownership?.accountableExecutive],
+        ]
+  ).filter(([, v]) => !!v) as [string, string][]
 
   const riskLevel = result.riskLevel
   const riskColor = RISK_LEVEL_BG[riskLevel] ?? '#f59e0b'
@@ -149,6 +156,13 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
           compliance determination, certification result, measured loss probability, quote, or
           finance-approved forecast.
         </div>
+
+        {shared && (
+          <p style={{ marginBottom: '14pt', fontSize: '9pt', color: '#374151' }}>
+            Shared assessment: programme ownership and interactive ROI scenarios are not included.
+            Saved work from this browser has not been added to this brief.
+          </p>
+        )}
 
         {/* Program ownership — only shown once at least one field is filled in */}
         {ownershipRows.length > 0 && (

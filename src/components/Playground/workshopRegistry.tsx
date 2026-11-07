@@ -151,7 +151,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cacp-kmip',
     pt_id: 'PT-033',
-    version: '1.0.2',
+    version: '1.0.8',
     name: 'KMIP Control Plane',
     description:
       'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey a classical ECDSA-P256 key to ML-DSA-65 on the same Sign call — no server, no Docker.',
@@ -402,7 +402,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'lms-hss',
     pt_id: 'PT-002',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'Stateful Hash Signatures',
     description: 'LMS and XMSS stateful signature trees using SoftHSMv3',
     category: 'HSM / PKCS#11',
@@ -504,9 +504,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tee-channel',
     pt_id: 'PT-006',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'TEE-HSM Secure Channel',
-    description: 'Build a TEE-to-HSM trusted channel with ML-DSA + ML-KEM + AES wrap',
+    description:
+      'Explore sample TEE-HSM provisioning with signature verification, ML-KEM and AES key wrap',
     category: 'HSM / PKCS#11',
     algorithms: ['ML-DSA', 'ML-KEM-768', 'AES Key Wrap'],
     icon: Cpu,
@@ -517,13 +518,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['architect', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Open a trusted channel from an enclave to the HSM: an ML-DSA-65 attestation key, ML-KEM key agreement, and an AES key wrapped across the channel.',
+        'Inspect generated sample attestation messages and signature-gated key unwrap. PQC mode uses ML-DSA-65 and ML-KEM; classical mode uses ECDSA and an independently generated AES wrapping key.',
       workedExample:
         'Run the flow end to end; the PKCS#11 call log shows which call each algorithm makes, and the generated-keys panel shows what ended up where.',
     },
     hasOutput: true,
     outputSpec:
-      'ML-DSA attestation signature (hex) over TEE measurement digest; ML-KEM-768 encapsulated session key (1088 bytes); AES-256 wrapped channel secret verifiable by recipient HSM.',
+      'Sample signature-verification results; ML-KEM-768 encapsulation ciphertext (1,088 bytes) in PQC mode; AES-wrapped provisioning key. Production quote trust, freshness and measurement-policy checks are outside this sample.',
   },
   {
     id: 'tls-simulator',
@@ -568,7 +569,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.6',
+    version: '1.0.7',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -618,7 +619,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.6',
     name: 'PQC SSH Simulator',
     description:
-      'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
+      'Compare byte sizes and timings from bundled modified OpenSSH handshake samples and modeled token-operation traces. Experimental PQC authentication requires matching peer and build support.',
     category: 'Protocol Simulations',
     algorithms: ['ML-KEM-768', 'X25519', 'ML-DSA-65', 'ssh-mldsa-65', 'PKCS#11'],
     icon: Terminal,
@@ -643,20 +644,20 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Pick a PQC KEX (hybrid or pure ML-KEM) and an ML-DSA or SLH-DSA host key, press Run both handshakes, then compare the classical curve25519 baseline with the PQC run in the Handshake Log, PKCS#11 Calls and Wire tabs.',
+        'Pick a PQC KEX (hybrid or pure ML-KEM) and an ML-DSA or SLH-DSA host key, press Run comparison, then compare the classical curve25519 baseline with the PQC run in the Run Log, PKCS#11 Calls and Wire tabs.',
       workedExample:
         'With the default mlkem768-curve25519-sha256 + ssh-mldsa-65 a real OpenSSH handshake runs: the log reports host and user C_Sign sizes and auth time, and the comparison bars show host pubkey, signature and KEX share bytes.',
     },
     hasOutput: true,
     outputSpec:
-      'SSH session ID (SHA-256, 32 bytes hex); ML-DSA-65 host key signature (3309 bytes hex); mlkem768x25519-sha256 shared secret (32 bytes hex); latency and wire-size comparison vs classical.',
+      'Algorithm identifiers, key/signature/share byte counts, operation timing and logs. Bundled OpenSSH handshake results and modeled protocol-sequence illustrations are identified separately.',
   },
 
   // ── Entropy & Random ──────────────────────────────────────────────────────
   {
     id: 'suci-flow',
     pt_id: 'PT-018',
-    version: '1.0.4',
+    version: '1.0.6',
     name: '5G SUCI Construction',
     // Profiles A/B are the ratified 3GPP TS 33.501 §C.3.3 constructions; Profile C
     // is the post-quantum profile the tool also implements (ML-KEM, hybrid with
@@ -742,7 +743,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.6',
+    version: '1.0.9',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -765,7 +766,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'Attestation tab produces a downloadable JSON bundle: TPM2_Quote output, PCR digest, and the AK signature — independently verifiable outside the browser session.',
+      'Attestation exports sample report bytes and an AK signature for separate inspection. Format and signature checks do not by themselves establish trusted hardware origin, freshness or an acceptable PCR policy.',
   },
   {
     id: 'rng-demo',
@@ -951,7 +952,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-workshop',
     pt_id: 'PT-015',
-    version: '1.0.3',
+    version: '1.0.6',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
@@ -1080,10 +1081,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'digital-id',
     pt_id: 'PT-019',
-    version: '1.0.1',
+    version: '1.0.5',
     name: 'EUDI Wallet Architecture',
     description:
-      'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
+      'Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.',
     category: 'Digital Identity',
     algorithms: ['OpenID4VCI', 'P-256', 'mDoc', 'QES'],
     icon: Shield,
@@ -1104,9 +1105,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Walk five steps: open the EUDI Wallet, get a PID issued, receive a university diploma attestation, present your identity to a bank as relying party, then sign a document with a QTSP.',
+        'Walk five sample steps: inspect the wallet, issue a sample PID, receive a sample diploma attestation, present selected attributes to the relying-party exercise, then explore a modelled QTSP-signing workflow.',
       workedExample:
-        'Start Issuance Flow at the PID Issuer to get a P-256-bound mdoc, then Login with Wallet at the bank, Consent & Share family name, given name, degree and age_over_18, and the bank confirms Account Opened.',
+        'Create a sample PID, inspect its wallet representation, then present selected attributes to the relying-party exercise. The sample result does not validate a deployed identity or trust-service transaction.',
     },
     hasOutput: true,
     outputSpec:
@@ -1167,7 +1168,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'solana-flow',
     pt_id: 'PT-021',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Solana Transaction',
     description: 'Ed25519 keypair generation and transaction signing',
     category: 'Blockchain & Digital Assets',
@@ -1191,7 +1192,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'openssl-studio',
     pt_id: 'PT-023',
-    version: '1.0.4',
+    version: '1.0.5',
     name: 'OpenSSL Studio',
     description:
       'Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
@@ -1341,7 +1342,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'email-signing',
     pt_id: 'PT-031',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'S/MIME & CMS Workshop',
     description:
       'Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt. Toggle routes signing key through softhsmv3 PKCS#11.',

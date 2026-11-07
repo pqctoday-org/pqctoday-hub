@@ -103,8 +103,8 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
         <div className="space-y-4">
           <p className="text-sm leading-relaxed text-muted-foreground">
             Play the Migration Simulation and commit your run to the Command Center to see your
-            pilot/wave progress, readiness and compliance, and (once verified) a closure record
-            here.
+            pilot/wave progress, illustrative scenario measures and an educational closure record
+            here when it is recorded in the exercise.
           </p>
           <Link
             to="/simulation"
@@ -214,9 +214,10 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
                 Closure record
               </h4>
               <p className="text-xs text-muted-foreground">
-                Verification &amp; Closure cleared in this run — classical key material logged
-                decommissioned against the 5-point evidence standard. Full evidence dossier lives in
-                the Migration Verification business tool.
+                This fictional simulation recorded closure activity. Completing scenario steps or
+                sample worksheet fields does not establish that deployed keys have been retired. In
+                production tools, look for scoped key-lifecycle records and traceable test results,
+                and check their limitations.
               </p>
             </section>
           )}

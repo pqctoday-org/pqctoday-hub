@@ -514,14 +514,14 @@ describe('Workbench', () => {
     // HKDF
     act(() => {
       capturedProps.setKdfAlgo('HKDF')
-      capturedProps.setKdfSecret('sec')
-      capturedProps.setKdfInfo('inf')
-      capturedProps.setKdfSalt('slt')
+      capturedProps.setKdfSecret('736563')
+      capturedProps.setKdfInfo('696e66')
+      capturedProps.setKdfSalt('736c74')
     })
     await waitFor(() =>
       expect(mockSetCommand).toHaveBeenCalledWith(
         expect.stringContaining(
-          'kdf -keylen 32 -out out.bin -binary -kdfopt digest:SHA256 -kdfopt salt:slt -kdfopt key:sec -kdfopt info:inf HKDF'
+          'kdf -keylen 32 -out out.bin -binary -kdfopt digest:SHA256 -kdfopt hexsalt:736c74 -kdfopt hexkey:736563 -kdfopt hexinfo:696e66 HKDF'
         )
       )
     )
@@ -547,7 +547,7 @@ describe('Workbench', () => {
     })
     await waitFor(() =>
       expect(mockSetCommand).toHaveBeenCalledWith(
-        expect.stringContaining('-kdfopt N:2048 -kdfopt r:16 -kdfopt p:2 SCRYPT')
+        expect.stringContaining('-kdfopt n:2048 -kdfopt r:16 -kdfopt p:2 SCRYPT')
       )
     )
 

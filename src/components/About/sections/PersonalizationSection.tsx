@@ -169,12 +169,11 @@ export function PersonalizationSection() {
       <div className="mt-5 border-t border-border pt-4">
         <h3 className="text-sm font-semibold text-foreground">How a claim earns its place here</h3>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-          Every record on this site carries a source, a trust tier scored from that source's
-          credibility, its peer-review status, its vetting body and whether we hold a copy of the
-          document itself. Conclusions are computed from the premises above them rather than typed
-          beside them — the risk score, the Mosca window and the signature sizes are all derived, so
-          they cannot quietly disagree with their own inputs. Where evidence is missing we mark the
-          claim rather than dropping it, and where a source contradicts another we keep both.
+          Where recorded, source links and provenance metadata help you inspect a claim. Coverage
+          varies by dataset, and missing source or review metadata does not establish that a claim
+          was checked. Calculated results follow the model&apos;s inputs and assumptions; this alone
+          does not establish that the premises, calculation or interpretation are correct. Inspect
+          the available source, scope and limitations before reusing a conclusion.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Link

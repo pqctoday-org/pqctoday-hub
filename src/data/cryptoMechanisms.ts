@@ -440,7 +440,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     cycloneDxFamilies: ['SHA-1', 'SHA-2', 'SHA-3'],
     oids: [],
     quantumSafeNote:
-      'Not replaced — re-sized. Use SHA-384 or SHA3-384+ where 192-bit post-quantum collision strength is required; SHA-1 is broken classically.',
+      'Select hash output length for the required security goal and application profile. Classical collision bounds are not quantum resource estimates; SHA-384 alone does not establish 192-bit quantum collision strength. SHA-1 is broken classically.',
   },
 ]
 

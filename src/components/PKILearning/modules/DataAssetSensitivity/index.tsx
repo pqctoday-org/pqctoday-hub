@@ -12,7 +12,8 @@ import {
   DEFAULT_ASSETS,
   ESTIMATED_CRQC_YEAR,
   type DataAsset,
-  type ScoredAsset,
+  DEFAULT_SCORING_WEIGHTS,
+  type ScoringWeights,
 } from './data/sensitivityConstants'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
@@ -73,7 +74,7 @@ const DataAssetWorkshop: FC<{
   configKey: number
 }> = ({ index, configKey }) => {
   const [assets, setAssets] = useState<DataAsset[]>([...DEFAULT_ASSETS])
-  const [scoredAssets, setScoredAssets] = useState<ScoredAsset[]>([])
+  const [weights, setWeights] = useState<ScoringWeights>(DEFAULT_SCORING_WEIGHTS)
   const [crqcYear, setCrqcYear] = useState(ESTIMATED_CRQC_YEAR)
 
   // Derive mandates from assets' compliance flags (replaces ComplianceMatrix
@@ -106,7 +107,8 @@ const DataAssetWorkshop: FC<{
           key={`scoring-${configKey}`}
           assets={assets}
           selectedMandates={derivedMandates}
-          onScoredAssetsChange={setScoredAssets}
+          weights={weights}
+          onWeightsChange={setWeights}
           crqcYear={crqcYear}
         />
       )
@@ -116,7 +118,8 @@ const DataAssetWorkshop: FC<{
           key={`priority-${configKey}`}
           assets={assets}
           selectedMandates={derivedMandates}
-          scoredAssets={scoredAssets}
+          weights={weights}
+          crqcYear={crqcYear}
         />
       )
     default:

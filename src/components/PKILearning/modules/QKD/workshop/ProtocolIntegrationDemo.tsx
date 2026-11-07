@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { Play, ExternalLink, ShieldCheck, Wifi, Server, Terminal } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -38,6 +38,41 @@ async function hkdfDerive(ikm: Uint8Array, info: string, length: number): Promis
     .join('')
 }
 
+// Local UI attempt tracking; it does not change the sample cryptographic operations.
+function useSampleOperation<T>() {
+  const [result, setResult] = useState<T | null>(null)
+  const [running, setRunning] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const mounted = useRef(true)
+  const generation = useRef(0)
+  const busy = useRef(false)
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+    }
+  }, [])
+  const run = useCallback(async (operation: () => T | Promise<T>) => {
+    if (busy.current) return
+    busy.current = true
+    const attempt = ++generation.current
+    setRunning(true)
+    setResult(null)
+    setError(null)
+    try {
+      const next = await operation()
+      if (mounted.current && generation.current === attempt) setResult(next)
+    } catch (cause) {
+      if (mounted.current && generation.current === attempt)
+        setError(cause instanceof Error ? cause.message : String(cause))
+    } finally {
+      busy.current = false
+      if (mounted.current) setRunning(false)
+    }
+  }, [])
+  return { result, running, error, run }
+}
+
 interface SimResult {
   qkdSecret: string
   qkdResponseJson: string
@@ -48,30 +83,32 @@ interface SimResult {
 // ─── TLS 1.3 Panel ──────────────────────────────────────────────────────────
 
 const TLSPanel: React.FC = () => {
-  const [result, setResult] = useState<SimResult | null>(null)
-  const [running, setRunning] = useState(false)
-
-  const run = useCallback(async () => {
-    setRunning(true)
-    const qkdSecret = getRandomHex(32)
-    const pskBytes = new Uint8Array(32)
-    for (let i = 0; i < 32; i++) pskBytes[i] = parseInt(qkdSecret.slice(i * 2, i * 2 + 2), 16)
-    // RFC 9258: the imported PSK is used directly — no further derivation step shown here
-    setResult({
-      qkdSecret,
-      qkdResponseJson: getQkdJson(qkdSecret),
-      derivedField: qkdSecret,
-      label: 'TLS 1.3 external_psk (RFC 9258)',
-    })
-    setRunning(false)
-  }, [])
+  const { result, running, error, run: runSample } = useSampleOperation<SimResult>()
+  const run = useCallback(
+    () =>
+      runSample(async () => {
+        const qkdSecret = getRandomHex(32)
+        const pskBytes = new Uint8Array(32)
+        for (let i = 0; i < 32; i++) pskBytes[i] = parseInt(qkdSecret.slice(i * 2, i * 2 + 2), 16)
+        // Source bytes are displayed unchanged; RFC 9258 diversification is not executed.
+        return {
+          qkdSecret,
+          qkdResponseJson: getQkdJson(qkdSecret),
+          derivedField: qkdSecret,
+          label: 'Local sample source key — not an imported TLS PSK',
+        }
+      }),
+    [runSample]
+  )
 
   return (
     <div className="space-y-5">
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-2">
           <ShieldCheck size={16} className="text-primary" />
-          <h3 className="font-bold text-foreground">TLS 1.3 — External PSK Import (RFC 9258)</h3>
+          <h3 className="font-bold text-foreground">
+            TLS 1.3 — Sample Source Key (Importer Not Executed)
+          </h3>
           <a
             href="https://datatracker.ietf.org/doc/html/rfc9258"
             target="_blank"
@@ -82,34 +119,38 @@ const TLSPanel: React.FC = () => {
           </a>
         </div>
         <p className="text-xs text-muted-foreground">
-          RFC 9846 (TLS 1.3) derives session keys from a shared secret produced by the key exchange
-          (e.g., ECDH or ML-KEM). RFC 9258 adds an <strong>external PSK importer</strong>: a QKD key
-          delivered via the ETSI GS QKD 014 REST API can be bound to a specific KDF hash and
-          imported as a pre-shared key, replacing or augmenting the key-exchange-derived secret (not
-          sourced in the Library).
+          This panel generates and displays one local sample key. RFC 9258 describes a separate
+          external PSK importer that binds identity, context, target protocol and KDF before TLS
+          uses the imported key. That diversification, TLS negotiation, peer authentication and key
+          confirmation are not executed here.
         </p>
       </div>
 
       {/* Flow diagram */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-primary/5 border border-primary/20 rounded p-3">
-          <div className="font-bold text-primary mb-1">① ETSI QKD 014</div>
-          <code className="text-muted-foreground block">GET /api/v1/keys/&#123;SAE_ID&#125;/1</code>
-          <div className="mt-1 text-muted-foreground">Both sides retrieve the same key_ID</div>
+          <div className="font-bold text-primary mb-1">① Key Delivery Reference — Not Executed</div>
+          <code className="text-muted-foreground block">
+            POST /api/v1/keys/&#123;slave_SAE_ID&#125;/enc_keys
+          </code>
+          <div className="mt-1 text-muted-foreground">
+            Peer: POST /api/v1/keys/&#123;master_SAE_ID&#125;/dec_keys with delivered key_IDs.
+            Mutual TLS authenticates SAE and KME before API use.
+          </div>
         </div>
         <div className="bg-muted/40 border border-border rounded p-3">
-          <div className="font-bold text-foreground mb-1">② RFC 9258 Importer</div>
-          <code className="text-muted-foreground block">ImportedIdentity &#123;</code>
-          <code className="text-muted-foreground block ml-2">external_identity: key_ID,</code>
-          <code className="text-muted-foreground block ml-2">hash: SHA-256</code>
-          <code className="text-muted-foreground block">&#125;</code>
+          <div className="font-bold text-foreground mb-1">② RFC 9258 Importer — Omitted</div>
+          <div className="text-muted-foreground">
+            Production implementations bind external identity, context, target protocol and target
+            KDF and perform the RFC 9258 diversification. The displayed source bytes are not an
+            imported PSK.
+          </div>
         </div>
         <div className="bg-success/5 border border-success/20 rounded p-3">
-          <div className="font-bold text-success mb-1">③ TLS 1.3 Handshake</div>
+          <div className="font-bold text-success mb-1">③ TLS 1.3 Handshake — Omitted</div>
           <div className="text-muted-foreground">
-            The QKD key is the PSK: it is the input of the Early Secret; an (EC)DHE shared secret,
-            if used as well, is the input of the Handshake Secret, and binder_key is derived from
-            the Early Secret (RFC 9846 §7.1)
+            Use production tools to inspect the negotiated PSK mode, imported identity and binder,
+            peer authentication and derived-key agreement. No handshake or peer runs in this panel.
           </div>
         </div>
       </div>
@@ -124,14 +165,16 @@ const TLSPanel: React.FC = () => {
             secret enters at the Handshake Secret
           </li>
           <li>
-            <strong>With the QKD key as PSK (RFC 9258)</strong>: Early Secret = HKDF-Extract(PSK=QKD
-            key, 0); with psk_ke no (EC)DHE secret is used, with psk_dhe_ke it still enters at the
-            Handshake Secret
+            <strong>With a PSK in the actual TLS key schedule</strong>: Early Secret =
+            HKDF-Extract(0, PSK). Zero is the salt; PSK is the input keying material. RFC 9258
+            diversification must happen separately when using its importer; neither operation is
+            executed here.
           </li>
           <li>
-            RFC 9258 is an interface for importing external PSKs into TLS 1.3: imported PSKs use the
-            binder label &quot;imp binder&quot;, so a client and server negotiate the PSK if and
-            only if both endpoints import it or neither does
+            RFC 9258 imported PSKs use the binder label &quot;imp binder&quot;. Both endpoints need
+            compatible importer and binder handling; that compatibility alone does not guarantee PSK
+            selection or TLS handshake success. Other negotiation and authentication checks must
+            also succeed.
           </li>
         </ul>
       </div>
@@ -142,17 +185,22 @@ const TLSPanel: React.FC = () => {
         disabled={running}
         className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
-        <Play size={14} /> {running ? 'Simulating…' : 'Simulate PSK Import'}
+        <Play size={14} /> {running ? 'Generating…' : 'Show Sample Source Key'}
       </Button>
 
+      {error && (
+        <p role="alert" className="text-sm text-status-error">
+          Sample operation failed: {error}. Retry when ready.
+        </p>
+      )}
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
           <div className="text-xs font-bold text-success">
-            Simulated — for educational purposes only
+            Local sample operation only — no protocol validation
           </div>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-1">
-              QKD Manager Response (ETSI GS QKD 014 JSON)
+              Locally Generated Sample Key Container
             </div>
             <pre className="text-xs font-mono text-primary overflow-x-auto">
               {result.qkdResponseJson}
@@ -163,8 +211,8 @@ const TLSPanel: React.FC = () => {
             <code className="text-xs font-mono text-success break-all">{result.derivedField}</code>
           </div>
           <div className="text-xs text-muted-foreground">
-            This 32-byte secret becomes the TLS 1.3 PSK. It is never transmitted — both endpoints
-            independently retrieved the same key_ID from their local QKD key manager.
+            These are locally generated source bytes, not the output of an RFC 9258 importer. No QKD
+            hardware, key manager, remote peer or network transmission is involved.
           </div>
         </div>
       )}
@@ -175,33 +223,39 @@ const TLSPanel: React.FC = () => {
 // ─── IKEv2 Panel ─────────────────────────────────────────────────────────────
 
 const IKEv2Panel: React.FC = () => {
-  const [result, setResult] = useState<{
+  const {
+    result,
+    running,
+    error,
+    run: runSample,
+  } = useSampleOperation<{
     qkdSecret: string
     qkdResponseJson: string
     ni: string
     nr: string
     skeyseed: string
-  } | null>(null)
-  const [running, setRunning] = useState(false)
+  }>()
 
-  const run = useCallback(async () => {
-    setRunning(true)
-    const qkdHex = getRandomHex(32)
-    const ni = getRandomHex(32) // Initiator nonce
-    const nr = getRandomHex(32) // Responder nonce
+  const run = useCallback(
+    () =>
+      runSample(async () => {
+        const qkdHex = getRandomHex(32)
+        const ni = getRandomHex(32) // Initiator nonce
+        const nr = getRandomHex(32) // Responder nonce
 
-    // SKEYSEED = prf(Ni | Nr, g^ir) — with QKD, g^ir is replaced/seeded by qkdSecret
-    // We simulate: HKDF(IKM = qkdSecret || Ni || Nr, info = "SKEYSEED")
-    const combined = new Uint8Array(96)
-    for (let i = 0; i < 32; i++) {
-      combined[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
-      combined[32 + i] = parseInt(ni.slice(i * 2, i * 2 + 2), 16)
-      combined[64 + i] = parseInt(nr.slice(i * 2, i * 2 + 2), 16)
-    }
-    const skeyseed = await hkdfDerive(combined, 'SKEYSEED', 32)
-    setResult({ qkdSecret: qkdHex, qkdResponseJson: getQkdJson(qkdHex), ni, nr, skeyseed })
-    setRunning(false)
-  }, [])
+        // Authored HKDF illustration, not RFC 7296 SKEYSEED or a QKD integration profile.
+        // We simulate: HKDF(IKM = qkdSecret || Ni || Nr, info = "SKEYSEED")
+        const combined = new Uint8Array(96)
+        for (let i = 0; i < 32; i++) {
+          combined[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
+          combined[32 + i] = parseInt(ni.slice(i * 2, i * 2 + 2), 16)
+          combined[64 + i] = parseInt(nr.slice(i * 2, i * 2 + 2), 16)
+        }
+        const skeyseed = await hkdfDerive(combined, 'SKEYSEED', 32)
+        return { qkdSecret: qkdHex, qkdResponseJson: getQkdJson(qkdHex), ni, nr, skeyseed }
+      }),
+    [runSample]
+  )
 
   return (
     <div className="space-y-5">
@@ -209,7 +263,7 @@ const IKEv2Panel: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <Wifi size={16} className="text-primary" />
           <h3 className="font-bold text-foreground">
-            IKEv2 / IPsec — QKD-seeded Nonces (RFC 7296)
+            IKEv2 / IPsec Context — Local HKDF Illustration
           </h3>
           <a
             href="https://datatracker.ietf.org/doc/html/rfc7296"
@@ -221,39 +275,44 @@ const IKEv2Panel: React.FC = () => {
           </a>
         </div>
         <p className="text-xs text-muted-foreground">
-          IKEv2 uses nonces Ni (initiator) and Nr (responder) in the IKE_SA_INIT exchange to derive
-          SKEYSEED: <code>prf(Ni | Nr, g^ir)</code>. When QKD is deployed on the same fiber backbone
-          as an IPsec link, the QKD-shared secret can replace or be mixed into <code>g^ir</code>,
-          making SKEYSEED information-theoretically secure even against a quantum adversary.
+          RFC 7296 defines SKEYSEED = prf(Ni | Nr, g^ir), using the negotiated PRF and DH shared
+          secret. This panel instead runs an authored HKDF-SHA256 example over local sample bytes.
+          It is not IKEv2 SKEYSEED, an authenticated exchange or a standardized QKD integration.
         </p>
       </div>
 
       {/* Flow diagram */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-primary/5 border border-primary/20 rounded p-3">
-          <div className="font-bold text-primary mb-1">① IKE_SA_INIT</div>
+          <div className="font-bold text-primary mb-1">① Local Sample Inputs</div>
           <div className="text-muted-foreground">
-            Initiator sends Ni (random nonce, 32 bytes) alongside DH proposal
+            Generate local 32-byte samples labelled Ni and Nr; no IKE_SA_INIT message is sent.
           </div>
         </div>
         <div className="bg-muted/40 border border-border rounded p-3">
-          <div className="font-bold text-foreground mb-1">② QKD Augmentation</div>
-          <code className="text-muted-foreground block">g^ir_hybrid = g^ir XOR qkd_secret</code>
-          <div className="mt-1 text-muted-foreground">Or: concat then HKDF before PRF step</div>
+          <div className="font-bold text-foreground mb-1">② Actual Demonstration</div>
+          <code className="text-muted-foreground block">HKDF-SHA256(sample || Ni || Nr)</code>
+          <div className="mt-1 text-muted-foreground">
+            Salt: 32 zero bytes; info: "SKEYSEED"; output: 32 bytes. This is not a protocol
+            combiner.
+          </div>
         </div>
         <div className="bg-success/5 border border-success/20 rounded p-3">
-          <div className="font-bold text-success mb-1">③ SKEYSEED</div>
-          <code className="text-muted-foreground block">prf(Ni | Nr, g^ir_hybrid)</code>
-          <div className="mt-1 text-muted-foreground">All child SA keys derive from this root</div>
+          <div className="font-bold text-success mb-1">③ Local HKDF Output</div>
+          <code className="text-muted-foreground block">Not the RFC 7296 SKEYSEED</code>
+          <div className="mt-1 text-muted-foreground">
+            No negotiation, peer authentication, child SA or packet encryption is executed.
+          </div>
         </div>
       </div>
 
       <div className="bg-muted/30 rounded p-3 border border-border">
         <div className="text-xs font-bold text-muted-foreground mb-1">RFC 7296 §2.14 — Nonces</div>
         <p className="text-xs text-muted-foreground">
-          &ldquo;Nonces used in IKEv2 MUST be randomly chosen, MUST be at least 128 bits in size,
-          and MUST be at least half the key size of the negotiated PRF.&rdquo; A QKD-sourced random
-          value meets this requirement while providing information-theoretic quality.
+          Treat the RFC as protocol background, not a claim that this local example meets it.
+          Production tools must support the agreed integration profile, negotiated PRF, peer
+          authentication and interoperability tests. A local HKDF output is not evidence of those
+          capabilities.
         </p>
       </div>
 
@@ -263,17 +322,24 @@ const IKEv2Panel: React.FC = () => {
         disabled={running}
         className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
-        <Play size={14} /> {running ? 'Simulating…' : 'Simulate IKEv2 Key Derivation'}
+        <Play size={14} /> {running ? 'Simulating…' : 'Run Local IKE-Context HKDF Example'}
       </Button>
 
+      {error && (
+        <p role="alert" className="text-sm text-status-error">
+          Sample operation failed: {error}. Retry when ready.
+        </p>
+      )}
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
           <div className="text-xs font-bold text-success">
-            Simulated — for educational purposes only
+            Local sample operation only — no protocol validation
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">QKD Manager Response</div>
+              <div className="text-xs text-muted-foreground mb-1">
+                Locally Generated Sample Key Container
+              </div>
               <pre className="text-xs font-mono text-primary overflow-x-auto">
                 {result.qkdResponseJson}
               </pre>
@@ -289,7 +355,7 @@ const IKEv2Panel: React.FC = () => {
           </div>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-1">
-              SKEYSEED = prf(Ni | Nr | QKD_secret)
+              Local HKDF output — not IKEv2 SKEYSEED
             </div>
             <code className="text-xs font-mono text-success break-all">{result.skeyseed}</code>
           </div>
@@ -302,34 +368,38 @@ const IKEv2Panel: React.FC = () => {
 // ─── MACsec Panel ────────────────────────────────────────────────────────────
 
 const MACsecPanel: React.FC = () => {
-  const [result, setResult] = useState<{
+  const {
+    result,
+    running,
+    error,
+    run: runSample,
+  } = useSampleOperation<{
     qkdSecret: string
     qkdResponseJson: string
     sak: string
     sci: string
-  } | null>(null)
-  const [running, setRunning] = useState(false)
+  }>()
 
-  const run = useCallback(async () => {
-    setRunning(true)
-    const qkdHex = getRandomHex(32)
-    const sci = getRandomHex(8) // Secure Channel Identifier (8 bytes)
-    const qkdBytes = new Uint8Array(32)
-    for (let i = 0; i < 32; i++) qkdBytes[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
-    // SAK derived: HKDF(IKM=qkd_secret, info="MACsec SAK v1 " + SCI)
-    const sak = await hkdfDerive(qkdBytes, `MACsec SAK v1 ${sci}`, 32)
-    setResult({ qkdSecret: qkdHex, qkdResponseJson: getQkdJson(qkdHex), sak, sci })
-    setRunning(false)
-  }, [])
+  const run = useCallback(
+    () =>
+      runSample(async () => {
+        const qkdHex = getRandomHex(32)
+        const sci = getRandomHex(8) // Secure Channel Identifier (8 bytes)
+        const qkdBytes = new Uint8Array(32)
+        for (let i = 0; i < 32; i++) qkdBytes[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
+        // SAK derived: HKDF(IKM=qkd_secret, info="MACsec SAK v1 " + SCI)
+        const sak = await hkdfDerive(qkdBytes, `MACsec SAK v1 ${sci}`, 32)
+        return { qkdSecret: qkdHex, qkdResponseJson: getQkdJson(qkdHex), sak, sci }
+      }),
+    [runSample]
+  )
 
   return (
     <div className="space-y-5">
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-2">
           <Server size={16} className="text-primary" />
-          <h3 className="font-bold text-foreground">
-            MACsec — QKD-derived SAK (IEEE 802.1AE + ETSI QKD 014)
-          </h3>
+          <h3 className="font-bold text-foreground">MACsec Context — Local HKDF Illustration</h3>
           <a
             href="https://1.ieee802.org/security/802-1ae-2018/"
             target="_blank"
@@ -344,33 +414,39 @@ const MACsecPanel: React.FC = () => {
           <strong>Secure Association Key (SAK)</strong>. Normally the SAK is negotiated via MACsec
           Key Agreement (MKA). ETSI GS QKD 002 says QKD &quot;may also be used to provide keys for
           the IEEE 802.1 MACsec layer 2 protocol&quot;; this workshop&apos;s design derives the SAK
-          from key material delivered through ETSI GS QKD 014. The same document says the overall
-          security level of a QKD link encryptor &quot;is determined by both the QKD component, and
-          the link encryptor component&quot;, so the link is not information-theoretically secure
-          end to end.
+          from sample bytes shaped like key-delivery output; this does not install a SAK or run MKA.
+          The same document says the overall security level of a QKD link encryptor &quot;is
+          determined by both the QKD component, and the link encryptor component&quot;, so the link
+          is not information-theoretically secure end to end.
         </p>
       </div>
 
       {/* Flow diagram */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-primary/5 border border-primary/20 rounded p-3">
-          <div className="font-bold text-primary mb-1">① ETSI QKD 014 Key Fetch</div>
-          <code className="text-muted-foreground block">GET /api/v1/keys/&#123;SAE_ID&#125;/1</code>
+          <div className="font-bold text-primary mb-1">① Key Delivery Reference — Not Executed</div>
+          <code className="text-muted-foreground block">
+            POST /api/v1/keys/&#123;slave_SAE_ID&#125;/enc_keys
+          </code>
           <div className="mt-1 text-muted-foreground">
-            Both link endpoints fetch matching key by key_ID
+            Master enc_keys and peer dec_keys correlate key_IDs over mutually authenticated TLS; no
+            request is sent here.
           </div>
         </div>
         <div className="bg-muted/40 border border-border rounded p-3">
-          <div className="font-bold text-foreground mb-1">② SAK Derivation</div>
+          <div className="font-bold text-foreground mb-1">② Authored HKDF Example</div>
           <code className="text-muted-foreground block">HKDF(</code>
           <code className="text-muted-foreground block ml-2">IKM = qkd_secret,</code>
-          <code className="text-muted-foreground block ml-2">info = &quot;SAK&quot; || SCI</code>
+          <code className="text-muted-foreground block ml-2">
+            info = &quot;MACsec SAK v1 &quot; + SCI
+          </code>
           <code className="text-muted-foreground block">)</code>
         </div>
         <div className="bg-success/5 border border-success/20 rounded p-3">
-          <div className="font-bold text-success mb-1">③ MACsec GCM-AES-256</div>
+          <div className="font-bold text-success mb-1">③ Production Operations — Omitted</div>
           <div className="text-muted-foreground">
-            SAK injected; GCM nonce = Packet Number (PN) || IV. Frames encrypted at wire speed.
+            No MKA, SAK installation, packet number/nonce construction, frame encryption or
+            throughput test is executed.
           </div>
         </div>
       </div>
@@ -382,8 +458,9 @@ const MACsecPanel: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           MACsec supports GCM-AES-128, GCM-AES-256, and XPN variants for high-speed links. The SAK
           is a 128- or 256-bit AES key — exactly the output size produced by HKDF from a 256-bit QKD
-          secret. In this workshop&apos;s design, the QKD-derived key stands in for the
-          MKA-negotiated SAK.
+          secret. This local output is not evidence of a negotiated or installed SAK. Check the
+          exact cipher profile, nonce rules, key installation and rotation behavior in production
+          tools.
         </p>
       </div>
 
@@ -393,17 +470,24 @@ const MACsecPanel: React.FC = () => {
         disabled={running}
         className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
-        <Play size={14} /> {running ? 'Simulating…' : 'Simulate SAK Derivation'}
+        <Play size={14} /> {running ? 'Simulating…' : 'Run Local MACsec-Context HKDF Example'}
       </Button>
 
+      {error && (
+        <p role="alert" className="text-sm text-status-error">
+          Sample operation failed: {error}. Retry when ready.
+        </p>
+      )}
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
           <div className="text-xs font-bold text-success">
-            Simulated — for educational purposes only
+            Local sample operation only — no protocol validation
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">QKD Manager Response</div>
+              <div className="text-xs text-muted-foreground mb-1">
+                Locally Generated Sample Key Container
+              </div>
               <pre className="text-xs font-mono text-primary overflow-x-auto">
                 {result.qkdResponseJson}
               </pre>
@@ -417,12 +501,13 @@ const MACsecPanel: React.FC = () => {
           </div>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-1">
-              SAK = HKDF(qkd_secret, &quot;MACsec SAK v1&quot; || SCI)
+              Local HKDF-SHA256 output; info = &quot;MACsec SAK v1 &quot; + SCI
             </div>
             <code className="text-xs font-mono text-success break-all">{result.sak}</code>
           </div>
           <div className="text-xs text-muted-foreground">
-            Both link endpoints independently derive the same SAK. It is never sent over the wire.
+            Only one local derivation runs. No second endpoint, key installation or MACsec
+            interoperability is checked.
           </div>
         </div>
       )}
@@ -433,50 +518,54 @@ const MACsecPanel: React.FC = () => {
 // ─── SSH Panel ───────────────────────────────────────────────────────────────
 
 const SSHPanel: React.FC = () => {
-  const [result, setResult] = useState<{
+  const {
+    result,
+    running,
+    error,
+    run: runSample,
+  } = useSampleOperation<{
     qkdSecret: string
     qkdResponseJson: string
     clientCookie: string
     serverCookie: string
     sessionId: string
-  } | null>(null)
-  const [running, setRunning] = useState(false)
+  }>()
 
-  const run = useCallback(async () => {
-    setRunning(true)
-    const qkdHex = getRandomHex(32)
-    const clientCookie = getRandomHex(16)
-    const serverCookie = getRandomHex(16)
+  const run = useCallback(
+    () =>
+      runSample(async () => {
+        const qkdHex = getRandomHex(32)
+        const clientCookie = getRandomHex(16)
+        const serverCookie = getRandomHex(16)
 
-    // SSH session ID: H = hash(V_C || V_S || I_C || I_S || K_S || e || f || K)
-    // With QKD, K (shared DH secret) is replaced/augmented by qkd_secret
-    // We simulate: HKDF(IKM = qkd || client_cookie || server_cookie, info = "SSH session-id")
-    const combined = new Uint8Array(64)
-    for (let i = 0; i < 32; i++) combined[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
-    for (let i = 0; i < 16; i++)
-      combined[32 + i] = parseInt(clientCookie.slice(i * 2, i * 2 + 2), 16)
-    for (let i = 0; i < 16; i++)
-      combined[48 + i] = parseInt(serverCookie.slice(i * 2, i * 2 + 2), 16)
+        // SSH session ID: H = hash(V_C || V_S || I_C || I_S || K_S || e || f || K)
+        // This illustration does not compute that exchange hash or replace a negotiated SSH method.
+        // We simulate: HKDF(IKM = qkd || client_cookie || server_cookie, info = "SSH session-id")
+        const combined = new Uint8Array(64)
+        for (let i = 0; i < 32; i++) combined[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
+        for (let i = 0; i < 16; i++)
+          combined[32 + i] = parseInt(clientCookie.slice(i * 2, i * 2 + 2), 16)
+        for (let i = 0; i < 16; i++)
+          combined[48 + i] = parseInt(serverCookie.slice(i * 2, i * 2 + 2), 16)
 
-    const sessionId = await hkdfDerive(combined, 'SSH session-id', 32)
-    setResult({
-      qkdSecret: qkdHex,
-      qkdResponseJson: getQkdJson(qkdHex),
-      clientCookie,
-      serverCookie,
-      sessionId,
-    })
-    setRunning(false)
-  }, [])
+        const sessionId = await hkdfDerive(combined, 'SSH session-id', 32)
+        return {
+          qkdSecret: qkdHex,
+          qkdResponseJson: getQkdJson(qkdHex),
+          clientCookie,
+          serverCookie,
+          sessionId,
+        }
+      }),
+    [runSample]
+  )
 
   return (
     <div className="space-y-5">
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-2">
           <Terminal size={16} className="text-primary" />
-          <h3 className="font-bold text-foreground">
-            SSH — QKD-seeded Cookie / Session ID (RFC 4253)
-          </h3>
+          <h3 className="font-bold text-foreground">SSH Context — Local HKDF Illustration</h3>
           <a
             href="https://datatracker.ietf.org/doc/html/rfc4253"
             target="_blank"
@@ -487,35 +576,35 @@ const SSHPanel: React.FC = () => {
           </a>
         </div>
         <p className="text-xs text-muted-foreground">
-          SSH (RFC 4253) generates a 16-byte random <strong>cookie</strong> in both the client and
-          server&apos;s KEXINIT messages to ensure neither party fully controls the session keys.
-          The session ID <code>H</code> is computed as{' '}
-          <code>hash(V_C || V_S || I_C || I_S || K_S || e || f || K)</code> where <code>K</code> is
-          the DH shared secret. A QKD-sourced entropy value can replace or be mixed into{' '}
-          <code>K</code>, making the session ID and all derived keys information-theoretically
-          secure.
+          RFC 4253 defines negotiated key exchange, a transcript-bound exchange hash and host
+          authentication. This panel only applies HKDF-SHA256 to local sample bytes and two
+          cookie-labelled values. Its output is not an SSH exchange hash or session identifier.
         </p>
       </div>
 
       {/* Flow diagram */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-primary/5 border border-primary/20 rounded p-3">
-          <div className="font-bold text-primary mb-1">① SSH KEXINIT</div>
+          <div className="font-bold text-primary mb-1">① Local Cookie-Labelled Samples</div>
           <div className="text-muted-foreground">
-            Client cookie (16 bytes) + Server cookie (16 bytes) — both randomly generated per RFC
-            4253 §7.1
+            Generate two local 16-byte values. No KEXINIT message or peer is executed.
           </div>
         </div>
         <div className="bg-muted/40 border border-border rounded p-3">
-          <div className="font-bold text-foreground mb-1">② QKD K injection</div>
-          <code className="text-muted-foreground block">K_hybrid = K_DH XOR qkd_secret</code>
-          <div className="mt-1 text-muted-foreground">Or: K_hybrid = HKDF(K_DH || qkd_secret)</div>
+          <div className="font-bold text-foreground mb-1">② Actual Demonstration</div>
+          <code className="text-muted-foreground block">
+            HKDF-SHA256(sample || client_cookie || server_cookie)
+          </code>
+          <div className="mt-1 text-muted-foreground">
+            Salt: 32 zero bytes; info: "SSH session-id"; output: 32 bytes. No standard key exchange
+            is implemented.
+          </div>
         </div>
         <div className="bg-success/5 border border-success/20 rounded p-3">
-          <div className="font-bold text-success mb-1">③ Session ID H</div>
-          <code className="text-muted-foreground block">H = SHA-256(... || K_hybrid)</code>
+          <div className="font-bold text-success mb-1">③ Local HKDF Output</div>
+          <code className="text-muted-foreground block">Not the RFC 4253 exchange hash H</code>
           <div className="mt-1 text-muted-foreground">
-            All enc/mac/iv keys derived from H via RFC 4253 §7.2
+            No transcript encoding, host-signature check or SSH traffic-key derivation is executed.
           </div>
         </div>
       </div>
@@ -523,9 +612,10 @@ const SSHPanel: React.FC = () => {
       <div className="bg-muted/30 rounded p-3 border border-border">
         <div className="text-xs font-bold text-muted-foreground mb-1">RFC 4253 §7.1 — Cookie</div>
         <p className="text-xs text-muted-foreground">
-          &ldquo;The cookie MUST be a random value generated by the sender. Its purpose is to make
-          it impossible for either side to fully determine the keys.&rdquo; QKD-sourced randomness
-          provides information-theoretic quality for this role, exceeding CSPRNG guarantees.
+          The RFC cookie requirement is background. This local example does not establish a
+          standards-defined QKD exchange or stronger end-to-end security. Evaluate negotiated method
+          support, transcript/host authentication and negative interoperability tests with your
+          production tools.
         </p>
       </div>
 
@@ -535,17 +625,24 @@ const SSHPanel: React.FC = () => {
         disabled={running}
         className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
-        <Play size={14} /> {running ? 'Simulating…' : 'Simulate SSH Session ID'}
+        <Play size={14} /> {running ? 'Simulating…' : 'Run Local SSH-Context HKDF Example'}
       </Button>
 
+      {error && (
+        <p role="alert" className="text-sm text-status-error">
+          Sample operation failed: {error}. Retry when ready.
+        </p>
+      )}
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
           <div className="text-xs font-bold text-success">
-            Simulated — for educational purposes only
+            Local sample operation only — no protocol validation
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">QKD Manager Response</div>
+              <div className="text-xs text-muted-foreground mb-1">
+                Locally Generated Sample Key Container
+              </div>
               <pre className="text-xs font-mono text-primary overflow-x-auto">
                 {result.qkdResponseJson}
               </pre>
@@ -565,7 +662,7 @@ const SSHPanel: React.FC = () => {
           </div>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-1">
-              Session ID H = SHA-256(cookies || QKD_secret)
+              Local HKDF output — not SSH session ID H
             </div>
             <code className="text-xs font-mono text-success break-all">{result.sessionId}</code>
           </div>
@@ -586,10 +683,10 @@ export const ProtocolIntegrationDemo: React.FC<{ initialProtocol?: string }> = (
     <div className="space-y-4">
       <div className="bg-primary/5 border border-primary/20 rounded p-4">
         <p className="text-xs text-muted-foreground">
-          Protocols that accept <strong>nonces</strong> or <strong>pre-shared keys</strong> can
-          integrate QKD without protocol changes. Select a protocol to see the exact injection
-          point, the relevant RFC clause, and a live simulation using a randomly generated mock QKD
-          secret.
+          Explore local sample-key and HKDF demonstrations beside related protocol references. These
+          demonstrations do not execute QKD key delivery, a protocol handshake, peer authentication
+          or interoperability checks. Production tools must implement and test the supported profile
+          on both endpoints.
         </p>
       </div>
 

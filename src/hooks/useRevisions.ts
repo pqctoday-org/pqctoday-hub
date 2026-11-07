@@ -2,10 +2,10 @@
 /**
  * useRevisions — loads and parses /data/revisions.jsonl at app startup.
  * Returns RevisionEntry[] sorted by merge_timestamp descending.
- * Cached in module scope (one fetch per app session).
+ * Successful loads are cached in module scope; failed loads can be retried.
  */
 
-import { useState, useEffect } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { reviewerDisplay } from '@/data/reviewerDisplay'
 
 /**
@@ -46,46 +46,67 @@ export interface RevisionEntry {
   sample_size?: number
 }
 
-// Module-scope cache — shared across all hook consumers in the same session
+// Share successful records and loading/retry transitions across mounted consumers.
 let cachedRevisions: RevisionEntry[] | null = null
 let fetchPromise: Promise<RevisionEntry[]> | null = null
+interface RevisionLoadState {
+  revisions: RevisionEntry[]
+  isLoading: boolean
+  error: string | null
+}
+let loadState: RevisionLoadState = { revisions: [], isLoading: true, error: null }
+const listeners = new Set<() => void>()
+const getLoadState = () => loadState
+const subscribe = (listener: () => void) => {
+  listeners.add(listener)
+  return () => {
+    listeners.delete(listener)
+  }
+}
+function publish(next: RevisionLoadState) {
+  loadState = next
+  for (const listener of listeners) listener()
+}
 
-async function loadRevisions(): Promise<RevisionEntry[]> {
-  if (cachedRevisions !== null) return cachedRevisions
+function loadRevisions(): Promise<RevisionEntry[]> {
+  if (cachedRevisions !== null) return Promise.resolve(cachedRevisions)
   if (fetchPromise) return fetchPromise
+  publish({ ...loadState, isLoading: true, error: null })
+  // Defer the request so even a synchronous fetch failure releases the same
+  // shared in-flight promise; no failed request becomes a successful empty cache.
+  fetchPromise = Promise.resolve()
+    .then(async () => {
+      try {
+        const res = await fetch('/data/revisions.jsonl')
+        if (!res.ok) throw new Error('Revision request failed')
+        const text = await res.text()
+        const entries: RevisionEntry[] = text
+          .split('\n')
+          .filter((line) => line.trim().length > 0)
+          .map((line) => {
+            try {
+              return JSON.parse(line) as RevisionEntry
+            } catch {
+              return null
+            }
+          })
+          .filter((e): e is RevisionEntry => e !== null)
+          .map((e) => ({ ...e, reviewer_display: reviewerDisplay(e.reviewer_display) }))
 
-  fetchPromise = (async () => {
-    try {
-      const res = await fetch('/data/revisions.jsonl')
-      if (!res.ok) {
-        cachedRevisions = []
+        // Sort descending by merge_timestamp
+        entries.sort((a, b) => b.merge_timestamp.localeCompare(a.merge_timestamp))
+
+        cachedRevisions = entries
+        publish({ revisions: entries, isLoading: false, error: null })
+        return entries
+      } catch {
+        publish({ revisions: [], isLoading: false, error: 'Revision history could not be loaded.' })
         return []
       }
-      const text = await res.text()
-      const entries: RevisionEntry[] = text
-        .split('\n')
-        .filter((line) => line.trim().length > 0)
-        .map((line) => {
-          try {
-            return JSON.parse(line) as RevisionEntry
-          } catch {
-            return null
-          }
-        })
-        .filter((e): e is RevisionEntry => e !== null)
-        .map((e) => ({ ...e, reviewer_display: reviewerDisplay(e.reviewer_display) }))
-
-      // Sort descending by merge_timestamp
-      entries.sort((a, b) => b.merge_timestamp.localeCompare(a.merge_timestamp))
-
-      cachedRevisions = entries
-      return entries
-    } catch {
-      cachedRevisions = []
-      return []
-    }
-  })()
-
+    })
+    .finally(() => {
+      fetchPromise = null
+    })
   return fetchPromise
 }
 
@@ -123,6 +144,8 @@ export function byRecord(
 interface UseRevisionsResult {
   revisions: RevisionEntry[]
   isLoading: boolean
+  error: string | null
+  retry: () => void
   /** Convenience: filter by domain */
   byDomain: (domain: string) => RevisionEntry[]
   /** Convenience: filter by domain + record ID */
@@ -130,30 +153,18 @@ interface UseRevisionsResult {
 }
 
 export function useRevisions(): UseRevisionsResult {
-  const [revisions, setRevisions] = useState<RevisionEntry[]>(cachedRevisions ?? [])
-  const [isLoading, setIsLoading] = useState(cachedRevisions === null)
-
+  const state = useSyncExternalStore(subscribe, getLoadState, getLoadState)
   useEffect(() => {
-    // Cache hit: initial state already holds the data — no setState needed
-    if (cachedRevisions !== null) return
-
-    let cancelled = false
-    loadRevisions().then((entries) => {
-      if (!cancelled) {
-        setRevisions(entries)
-        setIsLoading(false)
-      }
-    })
-
-    return () => {
-      cancelled = true
-    }
+    if (cachedRevisions === null && !getLoadState().error) void loadRevisions()
   }, [])
-
   return {
-    revisions,
-    isLoading,
-    byDomain: (domain: string) => byDomain(revisions, domain),
-    byRecord: (domain: string, recordId: string) => byRecord(revisions, domain, recordId),
+    revisions: state.revisions,
+    isLoading: state.isLoading,
+    error: state.error,
+    retry: () => {
+      void loadRevisions()
+    },
+    byDomain: (domain: string) => byDomain(state.revisions, domain),
+    byRecord: (domain: string, recordId: string) => byRecord(state.revisions, domain, recordId),
   }
 }

@@ -156,7 +156,9 @@ export function identifyGapsTier(metrics: BusinessMetrics): StepTierResult {
   if (register) reasons.push('Risk register on file')
   if (scorecard) reasons.push('Vendor scorecard on file')
   if (result) reasons.push('Assessment result available')
-  if (tracked) reasons.push(`${metrics.complianceGapCount} compliance gap(s) tracked`)
+  reasons.push(
+    `${metrics.pqcFrameworkReviewCount} tracked PQC framework review prompt(s); compliance not assessed`
+  )
   if (history >= 2) reasons.push(`${history} assessments completed`)
   if (observabilityDocumented)
     reasons.push('Observability tooling notes documented (vendor-scorecard §5.3)')
@@ -217,7 +219,8 @@ export function implementTier(metrics: BusinessMetrics): StepTierResult {
   const roadmap = hasArtifact(metrics, 'migration-roadmap')
   const treatment = hasArtifact(metrics, 'risk-treatment-plan')
   const playbook = hasArtifact(metrics, 'deployment-playbook')
-  const migrationStarted = metrics.migrationStatus !== 'Not assessed'
+  // Planning, not-started and unknown answers do not establish implementation.
+  const migrationStarted = metrics.migrationStatus === 'started'
   const completedPhases = metrics.completedPhases.length
 
   const mitigationDocumented = artifactContainsSection(

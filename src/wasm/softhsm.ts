@@ -4294,14 +4294,15 @@ export const hsm_hpkeDecapsulate = (
  * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §6.42).
  *
  * Builds a minimal CK_SP800_108_KDF_PARAMS with:
- *   - prfType: hash mechanism (CKM_SHA256 | CKM_SHA384 | CKM_SHA512) or CKM_AES_CMAC.
- *     NOTE: SoftHSM3 ckmToDigestName() maps hash IDs only — do NOT pass CKM_SHA256_HMAC etc.
+ *   - prfType: a PRF mechanism supported by the selected engine, e.g. CKM_SHA256_HMAC.
+ *     A digest mechanism is not interchangeable with its HMAC mechanism. This
+ *     helper passes the selector through; it does not translate a digest ID to a PRF ID.
  *   - Data params: [ITERATION_VARIABLE(32-bit counter)] + optional [BYTE_ARRAY(fixedInput)]
  *
  * @param M             SoftHSM WASM module
  * @param hSession      Session handle
  * @param baseKeyHandle Key handle for the base key (Ki)
- * @param prfType       PRF hash mechanism (CKM_SHA256, CKM_SHA384, CKM_SHA512, or CKM_AES_CMAC)
+ * @param prfType       Supported PRF mechanism selector (e.g. CKM_SHA256_HMAC)
  * @param fixedInput    Optional label/context bytes concatenated as fixed input
  * @param keyLen        Output key length in bytes (must match CKA_VALUE_LEN in template)
  * @returns             Derived key bytes as Uint8Array

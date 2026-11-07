@@ -338,9 +338,14 @@ export class CMSSigningService {
         // MLDSA44+RSA2048-PSS-SHA256
         return this.primitiveSign(classicalLabel, 'rsa-pss-sha256', mprime)
       }
-      // ECDSA-SHA512 (P-256 / P-384): hash externally then CKM_ECDSA → raw
+      // Use the profile's traditional hash, distinct from its composite prehash.
+      // Hash externally then CKM_ECDSA → raw
       // r||s → DER per draft-19 §4.3 traditional-sig wire format.
-      const digest = new Uint8Array(await crypto.subtle.digest('SHA-512', mprime as BufferSource))
+      if (profile.classical.kind !== 'ecdsa')
+        throw new Error('Unsupported classical signature profile')
+      const digest = new Uint8Array(
+        await crypto.subtle.digest(profile.classical.tradHash, mprime as BufferSource)
+      )
       const rawRs = await this.primitiveSign(classicalLabel, 'ecdsa-digest', digest)
       return ecdsaRawRsToDer(rawRs)
     }
@@ -401,6 +406,8 @@ export class CMSSigningService {
     recipientCertId: string
     payload: Uint8Array
     cipher?: CmsCipher
+    /** Explicit SHA-256/MGF1-SHA-256 OAEP sample profile; empty label. */
+    rsaOaep?: boolean
   }): Promise<EncryptResult> {
     await this.readyPromise
     return this.request('CMS_ENCRYPT_RESULT', { type: 'CMS_ENCRYPT', ...opts }, (msg) => ({

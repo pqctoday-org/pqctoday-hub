@@ -368,12 +368,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               Genomic Data: A Generational Risk
             </h3>
             <p className="text-xs text-muted-foreground">
-              Genomic data is unique because it is both <strong>lifetime-persistent</strong> (your
-              genome never changes) and <strong>generational</strong> (it reveals information about
-              parents, children, and siblings). A pediatric patient&apos;s genomic sequence
-              collected today must remain confidential for 100+ years &mdash; well beyond any
-              reasonable CRQC timeline. This data is an immediate HNDL target and requires PQC
-              protection now, not after a regulatory mandate.
+              Genomic information can remain sensitive across a person's lifetime and can reveal
+              information about relatives. Choose confidentiality-lifetime assumptions for the
+              particular use case, then compare them with migration time and quantum-threat
+              assumptions. A century-long example is an illustrative planning input, not a universal
+              confidentiality or retention requirement.
             </p>
           </div>
         </div>
@@ -630,14 +629,22 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Clock size={14} className="text-primary" />
-                FDA 510(k) Approval Delays
+                Planning Medical-Device Changes
               </h3>
               <p className="text-xs text-muted-foreground">
-                Any change to a medical device&apos;s cryptographic subsystem may require a new{' '}
-                <strong>510(k) premarket notification</strong> or even a full PMA (Premarket
-                Approval). The FDA review process takes <strong>3&ndash;12 months</strong>, during
-                which the device cannot ship with the update. For Class III devices (pacemakers,
-                defibrillators), the approval timeline can extend to 18+ months.
+                Assess the particular device change, its applicable submission pathway and the
+                supplier's documented plan. Do not assume that every cryptographic change requires
+                the same submission or a fixed review delay. Use the{' '}
+                <a
+                  href="https://www.fda.gov/medical-devices/premarket-notification-510k/new-510k-required-modification-device"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline"
+                >
+                  FDA guidance on device modifications
+                </a>{' '}
+                to frame the questions for the manufacturer; this sample does not determine the
+                regulatory outcome or review duration for a device.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">

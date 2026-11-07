@@ -10,7 +10,7 @@
 // rail. The GlossaryProvider lives in OpenSSLStudioView so the Workbench's
 // own command preview could (in a later pass) share the same glossary
 // session; for now this view is its own consumer.
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import {
   AlertTriangle,
@@ -117,7 +117,7 @@ function StepRow({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          {state.status === 'pending' && (
+          {(state.status === 'pending' || state.status === 'failed') && (
             <Button
               size="sm"
               variant="ghost"
@@ -125,7 +125,7 @@ function StepRow({
               disabled={disabled}
               className="h-7 gap-1 px-2 text-[11px]"
             >
-              <PlayCircle size={13} /> Run
+              <PlayCircle size={13} /> {state.status === 'failed' ? 'Retry' : 'Run'}
             </Button>
           )}
           {state.status === 'running' && (
@@ -171,102 +171,164 @@ export function OpenSslLearnView({
   onTryInWorkbench: (category: OpenSSLCategory) => void
 }) {
   const [lessonIdx, setLessonIdx] = useState(0)
-  const lesson = OPENSSL_LESSONS[lessonIdx]
+  const lesson = OPENSSL_LESSONS.at(lessonIdx)!
   const [stepStates, setStepStates] = useState<StepRunState[]>(() =>
     lesson.steps.map(() => ({ status: 'pending' }))
   )
 
-  // Which step index ctx.run() calls should be attributed to, and the real
-  // command+output captured for each — set by runStep before invoking a
-  // step's run(ctx), read back after it settles. This is what gives EVERY
-  // step a real inline log automatically, without lesson content having to
-  // opt in per step (see the stale-closure/garbled-log bugs this Learn tab
-  // shipped with — both came from log capture being ad hoc per step).
-  const currentStepIndexRef = useRef(-1)
-  const stepLogsRef = useRef<Map<number, LogEntry[]>>(new Map())
-
-  const ctx: OpenSslLearnContext = {
-    run: async (cmd: string) => {
-      const idx = currentStepIndexRef.current
-      try {
-        const r = await runCommand(cmd)
-        if (idx >= 0) {
-          const arr = stepLogsRef.current.get(idx) ?? []
-          arr.push({ cmd, output: r.stdout, failed: false })
-          stepLogsRef.current.set(idx, arr)
-        }
-        return r
-      } catch (e) {
-        if (idx >= 0) {
-          const arr = stepLogsRef.current.get(idx) ?? []
-          arr.push({ cmd, output: e instanceof Error ? e.message : String(e), failed: true })
-          stepLogsRef.current.set(idx, arr)
-        }
-        throw e
-      }
-    },
-    readFile: (name) => {
-      const f = useOpenSSLStore.getState().getFile(name)
-      if (!f) return undefined
-      return f.content instanceof Uint8Array ? f.content : new TextEncoder().encode(f.content)
-    },
-    writeFile: (name, content) => {
-      const bytes = typeof content === 'string' ? new TextEncoder().encode(content) : content
-      useOpenSSLStore.getState().addFile({
-        name,
-        type: 'text',
-        content: bytes,
-        size: bytes.length,
-        timestamp: Date.now(),
-      })
-    },
-  }
+  const [busy, setBusy] = useState(false)
+  const busyRef = useRef(false)
+  const generation = useRef(0)
+  const mounted = useRef(true)
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+    }
+  }, [])
 
   const selectLesson = (idx: number) => {
+    generation.current++
     setLessonIdx(idx)
-    setStepStates(OPENSSL_LESSONS[idx].steps.map(() => ({ status: 'pending' })))
-    stepLogsRef.current = new Map()
+    setStepStates(OPENSSL_LESSONS.at(idx)!.steps.map(() => ({ status: 'pending' })))
   }
 
-  const runStep = async (i: number) => {
+  const executeStep = async (i: number, token: number): Promise<boolean> => {
+    const current = () => mounted.current && generation.current === token
+    const requireCurrent = () => {
+      if (!current()) throw new Error('Lesson changed; this attempt is no longer current.')
+    }
+    const logs: LogEntry[] = []
+    let commandError: unknown
+    const step = lesson.steps.at(i)!
+    const ctx: OpenSslLearnContext = {
+      run: async (cmd) => {
+        requireCurrent()
+        try {
+          const result = await runCommand(cmd)
+          requireCurrent()
+          logs.push({ cmd, output: result.stdout, failed: false })
+          return result
+        } catch (error) {
+          requireCurrent()
+          commandError = error
+          logs.push({
+            cmd,
+            output: error instanceof Error ? error.message : String(error),
+            failed: true,
+          })
+          throw error
+        }
+      },
+      readFile: (name) => {
+        requireCurrent()
+        const f = useOpenSSLStore.getState().getFile(name)
+        if (!f) return undefined
+        return f.content instanceof Uint8Array ? f.content : new TextEncoder().encode(f.content)
+      },
+      writeFile: (name, content) => {
+        requireCurrent()
+        const bytes = typeof content === 'string' ? new TextEncoder().encode(content) : content
+        useOpenSSLStore.getState().addFile({
+          name,
+          type: 'text',
+          content: bytes,
+          size: bytes.length,
+          timestamp: Date.now(),
+        })
+      },
+    }
+    if (!current()) return false
     setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
-    stepLogsRef.current.set(i, [])
-    currentStepIndexRef.current = i
     try {
-      const result = await lesson.steps[i].run(ctx)
-      currentStepIndexRef.current = -1
-      setStepStates((prev) =>
-        prev.map((s, j) =>
-          j === i ? { status: 'ok', detail: result.detail, log: stepLogsRef.current.get(i) } : s
-        )
-      )
-    } catch {
-      currentStepIndexRef.current = -1
-      const expectedRefusal = lesson.steps[i].expect === 'refusal'
-      logEvent(
-        'Playground',
-        'OpenSSL Learn Step',
-        `${lesson.id}:${i}:${expectedRefusal ? 'refused-ok' : 'failed'}`
-      )
-      // The real error text now lives in the log block below (with the
-      // command that produced it) — no need to repeat it in `detail` too.
+      const result = await step.run(ctx)
+      if (!current()) return false
+      const met = step.expect !== 'refusal' && step.expect !== 'pending'
       setStepStates((prev) =>
         prev.map((s, j) =>
           j === i
-            ? { status: expectedRefusal ? 'refused-ok' : 'failed', log: stepLogsRef.current.get(i) }
+            ? {
+                status: met ? 'ok' : 'failed',
+                detail: met
+                  ? result.detail
+                  : step.expect === 'refusal'
+                    ? 'The expected refusal was not observed. This step remains incomplete.'
+                    : 'The expected outcome was not established. This step remains incomplete.',
+                log: logs,
+              }
             : s
         )
       )
+      return met
+    } catch (error) {
+      if (!current()) return false
+      // These exact CLI boundaries were observed in the bundled OpenSSL 3.6.3.
+      // A generic exit/error, another command, or a throw outside ctx.run is not evidence.
+      const log = logs.length === 1 ? logs[0] : undefined
+      const observed =
+        step.expect === 'refusal' &&
+        error === commandError &&
+        !!log?.failed &&
+        log.cmd === step.op &&
+        ((lesson.id === 'honest-lms' &&
+          step.op === 'genpkey -algorithm LMS -out learn-l5-lms.key' &&
+          /Error initializing LMS context/.test(log.output) &&
+          /inner_evp_generic_fetch:unsupported/.test(log.output) &&
+          /Algorithm \(LMS : 0\)/.test(log.output)) ||
+          (lesson.id === 'honest-lms' &&
+            step.op === 'genpkey -algorithm HSS -out learn-l5-hss.key' &&
+            /genpkey: Error generating HSS key/.test(log.output) &&
+            /pkcs11:p11prov_hss_gen:The token was not present in its slot when the function was invoked/.test(
+              log.output
+            ) &&
+            /hss Key generation failed/.test(log.output)) ||
+          (lesson.id === 'symmetric-myth' &&
+            step.op ===
+              'enc -aes-256-gcm -in learn-l6-data.txt -out learn-l6-data-gcm.enc -pass pass:learnkit -pbkdf2' &&
+            /(?:^|\n)enc: AEAD ciphers not supported(?:\n|$)/.test(log.output)))
+      const status = observed ? 'refused-ok' : 'failed'
+      logEvent('Playground', 'OpenSSL Learn Step', `${lesson.id}:${i}:${status}`)
+      setStepStates((prev) =>
+        prev.map((s, j) =>
+          j === i
+            ? {
+                status,
+                detail: observed
+                  ? step.op === 'genpkey -algorithm HSS -out learn-l5-hss.key'
+                    ? 'The observed provider/token setup limitation was reproduced; this does not establish that HSS is unsupported.'
+                    : 'The expected command-specific boundary was observed; this is a sample check of this build only.'
+                  : `Step incomplete: ${error instanceof Error ? error.message : String(error)}`,
+                log: logs,
+              }
+            : s
+        )
+      )
+      return observed
     }
   }
 
-  const runAll = async () => {
-    for (let i = 0; i < lesson.steps.length; i++) {
-      if (stepStates[i].status === 'ok' || stepStates[i].status === 'refused-ok') continue
-      // Deliberately sequential — later steps read files earlier ones wrote.
-      await runStep(i)
+  const runSteps = async (indices: number[]) => {
+    if (!isReady || busyRef.current) return
+    busyRef.current = true
+    setBusy(true)
+    const token = generation.current
+    try {
+      for (const i of indices) {
+        if (!(await executeStep(i, token))) break
+      }
+    } finally {
+      // Keep the local lock until the outstanding backend call actually settles.
+      busyRef.current = false
+      if (mounted.current) setBusy(false)
     }
   }
+
+  const runAll = () =>
+    runSteps(
+      lesson.steps.flatMap((_, i) =>
+        stepStates.at(i)!.status === 'ok' || stepStates.at(i)!.status === 'refused-ok' ? [] : [i]
+      )
+    )
 
   const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
 
@@ -344,7 +406,7 @@ export function OpenSslLearnView({
                 size="sm"
                 variant="outline"
                 onClick={runAll}
-                disabled={allDone || !isReady}
+                disabled={allDone || !isReady || busy}
                 className="h-7 text-[11px]"
               >
                 Run all
@@ -356,9 +418,9 @@ export function OpenSslLearnView({
                   key={i}
                   step={step}
                   index={i}
-                  state={stepStates[i]}
-                  onRun={() => runStep(i)}
-                  disabled={stepStates[i].status === 'running' || !isReady}
+                  state={stepStates.at(i)!}
+                  onRun={() => void runSteps([i])}
+                  disabled={busy || !isReady}
                 />
               ))}
             </ol>

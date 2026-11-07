@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useLayoutEffect } from 'react'
 import { useChatStore } from '@/store/useChatStore'
 import { usePageContext } from '@/hooks/usePageContext'
 import {
@@ -71,6 +71,30 @@ function nextMsgId(prefix: string): string {
   return `${prefix}-${Date.now()}-${++msgCounter}`
 }
 
+type ChatRequestConfig = Pick<
+  ReturnType<typeof useChatStore.getState>,
+  'provider' | 'apiKey' | 'model' | 'localModel' | 'localContextWindow'
+>
+
+function sameRequestConfig(request: ChatRequestConfig, current: ChatRequestConfig): boolean {
+  return (
+    request.provider === current.provider &&
+    (request.provider === 'gemini'
+      ? request.apiKey === current.apiKey && request.model === current.model
+      : request.localModel === current.localModel &&
+        request.localContextWindow === current.localContextWindow)
+  )
+}
+
+interface ChatRun {
+  controller: AbortController
+  config: ChatRequestConfig
+  conversationId: string | null
+  userMessageId: string
+  invalidated: boolean
+  configInvalidated: boolean
+}
+
 /**
  * Shared hook encapsulating RAG retrieval → LLM streaming → follow-up parsing.
  * Dispatches to Gemini (cloud) or WebLLM (local) based on the provider field
@@ -79,28 +103,38 @@ function nextMsgId(prefix: string): string {
 export function useChatSend() {
   const {
     apiKey,
-    setApiKey,
     provider,
     localModel,
     localContextWindow,
     messages,
     addMessage,
-    isLoading,
     setLoading,
-    isStreaming,
     setStreaming,
     setStreamingContent,
     setError,
     model,
     deleteMessagesFrom,
-    webllmStatus,
     setWebLLMStatus,
     setWebLLMProgress,
     setWebLLMError,
   } = useChatStore()
 
   const pageContext = usePageContext()
-  const abortRef = useRef<AbortController | null>(null)
+  const activeRun = useRef<ChatRun | null>(null)
+  const retryPreparation = useRef<ChatRun | null>(null)
+  const mounted = useRef(true)
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      const run = activeRun.current
+      if (run) {
+        run.invalidated = true
+        run.controller.abort()
+        setStreamingContent('')
+      }
+    }
+  }, [setStreamingContent])
 
   const sendQuery = useCallback(
     async (
@@ -109,17 +143,25 @@ export function useChatSend() {
       isDisconnectRetry = false
     ) => {
       const trimmed = queryText.trim().slice(0, MAX_INPUT_LENGTH)
-      if (!trimmed || isLoading || isStreaming) return
+      const currentState = useChatStore.getState()
+      const requestConfig = { provider, apiKey, model, localModel, localContextWindow }
+      if (
+        !trimmed ||
+        !mounted.current ||
+        activeRun.current ||
+        currentState.isLoading ||
+        currentState.isStreaming ||
+        !sameRequestConfig(requestConfig, currentState)
+      )
+        return
       // Provider-specific guards
       if (provider === 'gemini' && !apiKey) {
         onInputRestore?.(trimmed)
         setError('API key is missing. Use the key icon to reconnect.')
         return
       }
-      if (provider === 'local' && webllmStatus === 'unsupported') return
+      if (provider === 'local' && currentState.webllmStatus === 'unsupported') return
       if (!provider) return
-
-      logChatQuery(pageContext.page)
 
       const userMessage: ChatMessage = {
         id: nextMsgId('user'),
@@ -127,12 +169,71 @@ export function useChatSend() {
         content: trimmed,
         timestamp: Date.now(),
       }
-
-      addMessage(userMessage)
-      setLoading(true)
-      setError(null)
-
-      // Check response cache before RAG retrieval
+      const controller = new AbortController()
+      // Fix the requested origin before any busy/message notification can run
+      // subscribers. An automatic new conversation is resolved from our unique
+      // message below, never adopted from whichever conversation is then active.
+      const initialConversation = currentState.conversations.find(
+        (conversation) => conversation.id === currentState.activeConversationId
+      )
+      const startupConversationId = currentState.activeConversationId
+      let startupMessages = currentState.messages
+      const run: ChatRun = {
+        controller,
+        config: requestConfig,
+        conversationId: initialConversation?.id ?? null,
+        userMessageId: userMessage.id,
+        invalidated: false,
+        configInvalidated: false,
+      }
+      activeRun.current = run
+      let historyBeforeQuery = [...currentState.messages]
+      let requestMessages: ChatMessage[] = []
+      const ensureStartupScope = () => {
+        const state = useChatStore.getState()
+        if (
+          activeRun.current !== run ||
+          !mounted.current ||
+          run.invalidated ||
+          controller.signal.aborted ||
+          !sameRequestConfig(run.config, state) ||
+          state.activeConversationId !== startupConversationId ||
+          state.messages !== startupMessages
+        ) {
+          run.invalidated = true
+          controller.abort()
+          const error = new Error('Request stopped or its starting context changed.')
+          error.name = 'AbortError'
+          throw error
+        }
+      }
+      const contextMatches = () => {
+        const state = useChatStore.getState()
+        return (
+          sameRequestConfig(run.config, state) &&
+          state.activeConversationId === run.conversationId &&
+          state.messages.some((message) => message.id === run.userMessageId)
+        )
+      }
+      const ownsRun = () =>
+        activeRun.current === run && mounted.current && !run.invalidated && contextMatches()
+      const isCurrent = () => ownsRun() && !controller.signal.aborted
+      const ensureCurrent = () => {
+        if (!isCurrent()) {
+          const error = new Error('Request stopped or its context changed.')
+          error.name = 'AbortError'
+          throw error
+        }
+      }
+      let unsubscribe: (() => void) | undefined
+      let retryAfterCleanup = false
+      let timeoutId: ReturnType<typeof setTimeout> | undefined
+      let timedOut = false
+      let fullContent = ''
+      let sourceIds: string[] = []
+      let retrievedChunks: RAGChunk[] = []
+      const sourceRefs: ChatSourceRef[] = []
+      const timeoutMs = provider === 'local' ? LOCAL_STREAM_TIMEOUT_MS : STREAM_TIMEOUT_MS
       const personaDims = {
         persona: pageContext.persona,
         experienceLevel: pageContext.experienceLevel,
@@ -141,69 +242,145 @@ export function useChatSend() {
       }
       const cacheProvider =
         provider === 'gemini' ? `gemini:${model}` : `local:${localModel}:${localContextWindow}`
-      const cached = getCached(trimmed, pageContext.page, personaDims, cacheProvider)
-      if (cached) {
-        logChatCacheHit(pageContext.page)
-        const cachedMessage: ChatMessage = {
-          id: nextMsgId('assistant'),
-          role: 'assistant',
-          content: cached.content,
-          timestamp: Date.now(),
-          sources: cached.sourceIds,
-          sourceRefs: cached.sourceRefs,
-          followUps: cached.followUps,
-        }
-        addMessage(cachedMessage)
-        setLoading(false)
-        return
-      }
-
-      let timeoutId: ReturnType<typeof setTimeout> | undefined
-      let timedOut = false
-      let fullContent = ''
-      let sourceIds: string[] = []
-      let retrievedChunks: RAGChunk[] = []
-      const sourceRefs: ChatSourceRef[] = []
-      const timeoutMs = provider === 'local' ? LOCAL_STREAM_TIMEOUT_MS : STREAM_TIMEOUT_MS
-
-      // Create abort controller early so Stop button works during model download
-      const controller = new AbortController()
-      abortRef.current = controller
 
       try {
+        // Acquire the shared existing busy flag before retry preparation or
+        // other actions can notify a subscriber that starts a different hook.
+        setLoading(true)
+        ensureStartupScope()
+        if (isDisconnectRetry && retryPreparation.current) {
+          const previous = retryPreparation.current
+          retryPreparation.current = null
+          const current = useChatStore.getState()
+          if (
+            previous.invalidated ||
+            previous.controller.signal.aborted ||
+            !sameRequestConfig(previous.config, current) ||
+            current.activeConversationId !== previous.conversationId ||
+            !current.messages.some((message) => message.id === previous.userMessageId)
+          )
+            return
+          const previousIndex = current.messages.findIndex(
+            (message) => message.id === previous.userMessageId
+          )
+          const expectedHistory = current.messages.slice(0, previousIndex)
+          deleteMessagesFrom(previous.userMessageId)
+          const afterDelete = useChatStore.getState()
+          if (
+            !sameRequestConfig(run.config, afterDelete) ||
+            afterDelete.activeConversationId !== startupConversationId ||
+            afterDelete.messages.length !== expectedHistory.length ||
+            !afterDelete.messages.every((message, index) => message === expectedHistory.at(index))
+          ) {
+            run.invalidated = true
+            controller.abort()
+            return
+          }
+          startupMessages = afterDelete.messages
+          ensureStartupScope()
+          setWebLLMStatus('idle')
+          ensureStartupScope()
+          setWebLLMError(null)
+          ensureStartupScope()
+          historyBeforeQuery = [...startupMessages]
+        }
+        logChatQuery(pageContext.page)
+        ensureStartupScope()
+        addMessage(userMessage)
+        const originConversations = useChatStore
+          .getState()
+          .conversations.filter((conversation) =>
+            conversation.messages.some((message) => message.id === userMessage.id)
+          )
+        if (
+          originConversations.length !== 1 ||
+          (initialConversation && originConversations[0].id !== initialConversation.id)
+        ) {
+          run.invalidated = true
+          controller.abort()
+          return
+        }
+        run.conversationId = originConversations[0].id
+        ensureCurrent()
+        requestMessages = [...originConversations[0].messages]
+        setError(null)
+        unsubscribe = useChatStore.subscribe(() => {
+          if (!sameRequestConfig(run.config, useChatStore.getState())) run.configInvalidated = true
+          if (!contextMatches()) {
+            const newlyInvalidated = !run.invalidated
+            run.invalidated = true
+            controller.abort()
+            if (
+              newlyInvalidated &&
+              activeRun.current === run &&
+              useChatStore.getState().streamingContent
+            )
+              setStreamingContent('')
+          }
+        })
+        ensureCurrent()
+        const cached = getCached(trimmed, pageContext.page, personaDims, cacheProvider)
+        if (cached) {
+          logChatCacheHit(pageContext.page)
+          addMessage({
+            id: nextMsgId('assistant'),
+            role: 'assistant',
+            content: cached.content,
+            timestamp: Date.now(),
+            sources: cached.sourceIds,
+            sourceRefs: cached.sourceRefs,
+            followUps: cached.followUps,
+          })
+          return
+        }
+
         // For local provider: ensure engine is loaded (lazy initialization)
         if (provider === 'local' && !isEngineReady()) {
           setWebLLMStatus('downloading')
+          ensureCurrent()
           setWebLLMError(null)
+          ensureCurrent()
           try {
             await initializeEngine(
               localModel,
               (progress) => {
-                setWebLLMProgress(progress)
-                setWebLLMStatus(progress.status)
+                // Download state belongs to this configuration, even if only
+                // the query was stopped. No SDK cancellation is implied.
+                if (
+                  !run.configInvalidated &&
+                  sameRequestConfig(run.config, useChatStore.getState())
+                ) {
+                  setWebLLMProgress(progress)
+                  if (
+                    !run.configInvalidated &&
+                    sameRequestConfig(run.config, useChatStore.getState())
+                  )
+                    setWebLLMStatus(progress.status)
+                }
               },
               localContextWindow
             )
-            setWebLLMStatus('ready')
-            // Bail if user clicked Stop during download
-            if (controller.signal.aborted) {
-              setLoading(false)
-              return
-            }
           } catch (err) {
             const msg = err instanceof Error ? err.message : 'Failed to load local model.'
-            setWebLLMError(msg)
-            setWebLLMStatus('error')
+            if (!run.configInvalidated && sameRequestConfig(run.config, useChatStore.getState())) {
+              setWebLLMError(msg)
+              if (!run.configInvalidated && sameRequestConfig(run.config, useChatStore.getState()))
+                setWebLLMStatus('error')
+            }
+            ensureCurrent()
             setError(msg)
-            setLoading(false)
-            onInputRestore?.(trimmed)
+            if (isCurrent()) onInputRestore?.(trimmed)
             return
           }
+          if (!run.configInvalidated && sameRequestConfig(run.config, useChatStore.getState()))
+            setWebLLMStatus('ready')
+          ensureCurrent()
         }
 
         // Retrieve relevant context with page awareness + conversation history
         await retrievalService.initialize()
-        const recentQueries = messages
+        ensureCurrent()
+        const recentQueries = historyBeforeQuery
           .filter((m) => m.role === 'user')
           .slice(-5)
           .map((m) => m.content)
@@ -216,6 +393,7 @@ export function useChatSend() {
           industry: pageContext.industry,
           region: pageContext.region,
         })
+        ensureCurrent()
         retrievedChunks = chunks
 
         // Dynamically inject persona-curated "What's New" chunk for changelog queries
@@ -247,7 +425,6 @@ export function useChatSend() {
             sourceRefs: [],
             followUps: [],
           })
-          setLoading(false)
           return
         }
 
@@ -266,14 +443,13 @@ export function useChatSend() {
             followUps: [],
           }
           addMessage(refusalMessage)
-          setLoading(false)
           return
         }
 
-        // Read latest messages from store (not closure) so that prior
-        // deleteMessagesFrom calls in retryLastQuery/editAndResend are reflected.
-        // addMessage above already added userMessage synchronously.
-        const allMessages = useChatStore.getState().messages
+        // The request snapshot was captured after its own message was added and
+        // after any deliberate retry deletion; later conversation changes cannot
+        // replace the history supplied to this provider invocation.
+        const allMessages = requestMessages
 
         // Stream response with safety timeout
         timeoutId = setTimeout(() => {
@@ -284,6 +460,7 @@ export function useChatSend() {
         setStreaming(true)
         setStreamingContent('')
         setLoading(false)
+        ensureCurrent()
 
         sourceIds = chunks.map((c) => c.id)
         logChatChunksUsed(
@@ -297,6 +474,7 @@ export function useChatSend() {
         const tierResolverPromise = loadTierResolver()
 
         const runGeneration = async (attemptMessages: ChatMessage[]): Promise<string> => {
+          ensureCurrent()
           const streamGen =
             provider === 'local'
               ? localStreamResponse(
@@ -316,12 +494,14 @@ export function useChatSend() {
                 )
           let raw = ''
           for await (const chunk of streamGen) {
+            ensureCurrent()
             raw += chunk
             // Restore the original immediate-feedback UX while keeping hidden
             // citation/follow-up metadata out of the visible draft.
             const metadataStart = raw.search(/```[ \t]*(?:citations|followups)\b/i)
             setStreamingContent(metadataStart === -1 ? raw : raw.slice(0, metadataStart).trimEnd())
           }
+          ensureCurrent()
           fullContent = raw
           return raw
         }
@@ -353,6 +533,7 @@ export function useChatSend() {
         // Build deduplicated source references after generation, reusing the
         // trust-data import that ran in parallel with the model.
         const tierForChunk = await tierResolverPromise
+        ensureCurrent()
         const seenTitles = new Map<string, number>()
         for (const c of chunks) {
           const existingIdx = seenTitles.get(c.title)
@@ -402,6 +583,7 @@ export function useChatSend() {
         }
         addMessage(assistantMessage)
 
+        ensureCurrent()
         // Cache successful response for deduplication
         setCache(
           trimmed,
@@ -411,44 +593,31 @@ export function useChatSend() {
           cacheProvider
         )
       } catch (err) {
-        // Local model's GPU session died mid-request (commonly: the tab was
-        // backgrounded and the browser reclaimed WebGPU memory). The engine
-        // has already been reset — silently reload and retry once instead of
-        // leaving the user with a dead end. Remove the just-added user
-        // message first so the retry doesn't duplicate it.
+        // Clear/provider changes, Stop and unmount cannot publish an old result,
+        // restore input or mutate a newly selected configuration.
+        if (!ownsRun() || (controller.signal.aborted && !timedOut)) return
+        if (timedOut) {
+          if (fullContent.trim()) {
+            addMessage({
+              id: nextMsgId('assistant'),
+              role: 'assistant',
+              content: buildRetrievedEvidenceResponse(retrievedChunks),
+              timestamp: Date.now(),
+              sources: sourceIds,
+              sourceRefs,
+              followUps: [],
+            })
+          } else setError('Request timed out. Please try again.')
+          return
+        }
         if (err instanceof EngineDisconnectedError && !isDisconnectRetry) {
-          deleteMessagesFrom(userMessage.id)
-          setWebLLMStatus('idle')
-          setWebLLMError(null)
-          void sendQuery(trimmed, onInputRestore, true)
+          // Keep the existing one-retry policy, but start it only after this
+          // controller/subscription and transient state have been released.
+          retryAfterCleanup = true
+        } else if (err instanceof Error && err.name === 'AbortError') {
           return
-        }
-
-        if (err instanceof Error && err.name === 'AbortError') {
-          if (timedOut) {
-            if (fullContent.trim()) {
-              // A partial draft has not passed grounding verification. Never
-              // display it; return the deterministic corpus-only fallback.
-              const assistantMessage: ChatMessage = {
-                id: nextMsgId('assistant'),
-                role: 'assistant',
-                content: buildRetrievedEvidenceResponse(retrievedChunks),
-                timestamp: Date.now(),
-                sources: sourceIds,
-                sourceRefs,
-                followUps: [],
-              }
-              addMessage(assistantMessage)
-            } else {
-              setError('Request timed out. Please try again.')
-            }
-          }
-          return
-        }
-
-        // Never display an interrupted draft: it did not reach the grounding gate.
-        if (fullContent.trim()) {
-          const assistantMessage: ChatMessage = {
+        } else if (fullContent.trim()) {
+          addMessage({
             id: nextMsgId('assistant'),
             role: 'assistant',
             content: buildRetrievedEvidenceResponse(retrievedChunks),
@@ -456,28 +625,46 @@ export function useChatSend() {
             sources: sourceIds,
             sourceRefs,
             followUps: [],
+          })
+        } else {
+          const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred.'
+          setError(errorMsg)
+          if (isCurrent()) onInputRestore?.(trimmed)
+          if (provider === 'gemini' && errorMsg.includes('Invalid API key')) {
+            if (!isCurrent()) return
+            // The existing key setter also clears error. Commit the same own-key
+            // removal and its message atomically, before a subscriber can replace
+            // the configuration; never perform a second write into that replacement.
+            useChatStore.setState({
+              apiKey: null,
+              error: 'API key is invalid. Please update your key in the provider settings.',
+            })
           }
-          addMessage(assistantMessage)
-          return
-        }
-
-        const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred.'
-        setError(errorMsg)
-
-        // Restore the query so the user can retry by clicking Send
-        onInputRestore?.(trimmed)
-
-        // If API key is invalid, clear it and surface a clear message
-        if (provider === 'gemini' && errorMsg.includes('Invalid API key')) {
-          setApiKey(null)
-          setError('API key is invalid. Please update your key in the provider settings.')
         }
       } finally {
         if (timeoutId) clearTimeout(timeoutId)
-        setStreaming(false)
-        setStreamingContent('')
-        setLoading(false)
-        abortRef.current = null
+        unsubscribe?.()
+        if (activeRun.current === run) {
+          // Finish all old cleanup before a synchronous subscriber can start a
+          // new hook/run. Existing transient fields change atomically; no new
+          // persisted state, store action or cancellation contract is needed.
+          activeRun.current = null
+          useChatStore.setState({ isLoading: false, isStreaming: false, streamingContent: '' })
+        }
+      }
+      if (
+        retryAfterCleanup &&
+        mounted.current &&
+        !run.invalidated &&
+        !controller.signal.aborted &&
+        !activeRun.current &&
+        !useChatStore.getState().isLoading &&
+        !useChatStore.getState().isStreaming &&
+        contextMatches()
+      ) {
+        retryPreparation.current = run
+        await sendQuery(trimmed, onInputRestore, true)
+        if (retryPreparation.current === run) retryPreparation.current = null
       }
     },
     [
@@ -485,19 +672,14 @@ export function useChatSend() {
       provider,
       localModel,
       localContextWindow,
-      messages,
-      isLoading,
-      isStreaming,
       model,
       pageContext,
-      webllmStatus,
       addMessage,
       deleteMessagesFrom,
       setLoading,
       setError,
       setStreaming,
       setStreamingContent,
-      setApiKey,
       setWebLLMStatus,
       setWebLLMProgress,
       setWebLLMError,
@@ -505,10 +687,20 @@ export function useChatSend() {
   )
 
   const abort = useCallback(() => {
-    abortRef.current?.abort()
-  }, [])
+    const run = activeRun.current
+    if (run) {
+      run.controller.abort()
+      setStreamingContent('')
+    }
+  }, [setStreamingContent])
 
   const retryLastQuery = useCallback(() => {
+    if (
+      activeRun.current ||
+      useChatStore.getState().isLoading ||
+      useChatStore.getState().isStreaming
+    )
+      return
     logChatRetry('retry')
     // Find the last user message, delete the assistant response after it, and re-send
     const lastUserIdx = [...messages].reverse().findIndex((m) => m.role === 'user')
@@ -527,6 +719,12 @@ export function useChatSend() {
 
   const editAndResend = useCallback(
     (messageId: string, newContent: string) => {
+      if (
+        activeRun.current ||
+        useChatStore.getState().isLoading ||
+        useChatStore.getState().isStreaming
+      )
+        return
       logChatRetry('edit')
       deleteMessagesFrom(messageId)
       sendQuery(newContent)

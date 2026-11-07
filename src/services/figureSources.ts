@@ -234,12 +234,13 @@ export function buildFigureSourcesIndex(input: FigureSourcesInput): FigureSource
       value: `~${horizon}`,
       kind: 'scenario',
       source: {
-        label: 'Public CRQC arrival estimates, 2030–2040 range',
+        label: 'Hub quantum-threat planning scenario; related context',
         url: Q_DAY_FRESHNESS.recheck,
       },
-      method: 'A planning year inside the published research range, used to measure exposure',
+      method: 'A scenario planning year used to explore exposure, not a predicted arrival date',
       asOf: Q_DAY_FRESHNESS.asOf,
-      caveat: 'nobody knows when such a machine will exist; treat as a planning assumption',
+      caveat:
+        'The default 2029 anchor is an authored Hub scenario, not a year established by the linked reading. Other saved planning years are also assumptions; nobody knows when such a machine will exist.',
     })
   }
 

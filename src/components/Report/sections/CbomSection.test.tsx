@@ -3,6 +3,7 @@ import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
+import { buildAssessmentCbom } from '@/services/cbom/assessmentCbom'
 import { CbomSection } from './CbomSection'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ExecutiveDocument } from '@/services/storage/types'
@@ -149,5 +150,32 @@ describe('CbomSection', () => {
       'https://doi.org/10.6028/NIST.FIPS.203'
     )
     expect(screen.getByText(/no published standard yet/i)).toBeInTheDocument()
+  })
+
+  it('shows assessment declarations without labelling them detected, quantum-safe or migrated', () => {
+    const { summary } = buildAssessmentCbom([
+      { storedKey: 'RSA-2048', classical: 'RSA', keySize: '2048-bit' },
+      { storedKey: 'ECDH P-256', classical: 'ECDH (P-256)', keySize: '256-bit' },
+      { storedKey: 'AES-256', classical: 'AES-256', keySize: '256-bit' },
+    ])
+    seedDocs([
+      {
+        id: 'assessment-cbom',
+        moduleId: 'crypto-management-modernization',
+        type: 'crypto-cbom',
+        title: 'Assessment declarations',
+        data: '# CBOM',
+        createdAt: Date.now(),
+        inputs: { mode: 'assessment', reportSummary: summary },
+      },
+    ])
+    renderSection()
+    expect(screen.getByText(/3 self-reported algorithm declarations/)).toBeInTheDocument()
+    expect(screen.queryByText('Quantum-safe (PQC)')).not.toBeInTheDocument()
+    expect(screen.queryByText('Quantum-vulnerable (classical)')).not.toBeInTheDocument()
+    expect(screen.getAllByText('Self-reported')).toHaveLength(3)
+    expect(screen.queryByText('no published standard yet')).not.toBeInTheDocument()
+    expect(screen.getByText('Standard reference not recorded')).toBeInTheDocument()
+    expect(screen.getByText(/crypto-assets declared/)).toBeInTheDocument()
   })
 })

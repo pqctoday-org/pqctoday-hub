@@ -22,16 +22,16 @@ describe('formatLibDate — precision of the recorded date', () => {
   })
 })
 
-describe('documentDatesText — the document’s own dates', () => {
+describe('documentDatesText — the publication and catalog-record dates', () => {
   it('shows first published and updated for two full dates', () => {
     expect(documentDatesText('2020-09-21', '2026-08-19')).toBe(
-      'First published Sep 21, 2020 · updated Aug 19, 2026'
+      'First published Sep 21, 2020 · Catalog record updated Aug 19, 2026'
     )
   })
 
   it('keeps month-only first publication at month precision', () => {
     expect(documentDatesText('2020-09', '2026-04-09')).toBe(
-      'First published Sep 2020 · updated Apr 9, 2026'
+      'First published Sep 2020 · Catalog record updated Apr 9, 2026'
     )
   })
 
@@ -40,7 +40,7 @@ describe('documentDatesText — the document’s own dates', () => {
   })
 
   it('shows only the update when there is no first-publication date', () => {
-    expect(documentDatesText('', '2026-08-19')).toBe('Updated Aug 19, 2026')
+    expect(documentDatesText('', '2026-08-19')).toBe('Catalog record updated Aug 19, 2026')
   })
 
   it('omits the update when it is earlier than the first publication', () => {
@@ -51,7 +51,7 @@ describe('documentDatesText — the document’s own dates', () => {
   it('compares at the coarser precision, so a later day in the same month still counts as an update', () => {
     expect(documentDatesText('2025-10', '2025-10-15')).toBe('First published Oct 2025')
     expect(documentDatesText('2025-09', '2025-10-15')).toBe(
-      'First published Sep 2025 · updated Oct 15, 2025'
+      'First published Sep 2025 · Catalog record updated Oct 15, 2025'
     )
   })
 

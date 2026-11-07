@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
-export type PQCStatus = 'ga' | 'preview' | 'roadmap' | 'planned' | 'none'
+export type PQCStatus = CatalogAvailability
 
 export interface IAMVendorStatus {
   id: string
@@ -26,40 +26,31 @@ export interface IAMVendorStatus {
 }
 
 // ── Catalog-derived headline status ───────────────────────────────────────────
-const AVAIL_TO_PQC: Record<CatalogAvailability, PQCStatus> = {
-  available: 'ga',
-  partial: 'preview',
-  roadmap: 'roadmap',
-  none: 'none',
-  unverified: 'roadmap',
-}
-
-/** Headline PQC status for an IAM vendor, derived live from the central catalog. */
+/** Catalogue availability does not establish a vendor's GA or preview release stage. */
 export function getVendorPqcStatus(v: IAMVendorStatus): PQCStatus {
-  const status = getCatalogStatus(v.catalogName)
-  return status ? AVAIL_TO_PQC[status.availability] : 'roadmap'
+  return getCatalogStatus(v.catalogName)?.availability ?? 'unverified'
 }
 
 export const PQC_STATUS_LABELS: Record<PQCStatus, { label: string; className: string }> = {
-  ga: {
-    label: 'GA',
-    className: 'bg-status-success/10 text-status-success border-status-success/30',
-  },
-  preview: {
-    label: 'Preview',
+  available: {
+    label: 'Available (catalogue)',
     className: 'bg-primary/10 text-primary border-primary/30',
   },
-  roadmap: {
-    label: 'Roadmap',
+  partial: {
+    label: 'Partial support',
     className: 'bg-warning/10 text-warning border-warning/30',
   },
-  planned: {
-    label: 'Planned',
+  roadmap: {
+    label: 'Roadmap (catalogue)',
+    className: 'bg-warning/10 text-warning border-warning/30',
+  },
+  unverified: {
+    label: 'Unverified',
     className: 'bg-muted/50 text-muted-foreground border-border',
   },
   none: {
-    label: 'No PQC',
-    className: 'bg-status-error/10 text-status-error border-status-error/30',
+    label: 'No PQC listed',
+    className: 'bg-muted/50 text-muted-foreground border-border',
   },
 }
 

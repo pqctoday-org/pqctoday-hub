@@ -121,6 +121,9 @@ export interface OperationsContextType {
 
   // Data State
   dataToSign: string
+  /** Canonical bytes; optional for older consumers of this context. */
+  dataToSignBytes?: Uint8Array
+  setDataToSignBytes?: (val: Uint8Array) => void
   setDataToSign: (val: string) => void
   dataToEncrypt: string
   setDataToEncrypt: (val: string) => void

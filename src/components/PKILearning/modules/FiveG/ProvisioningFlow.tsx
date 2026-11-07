@@ -23,7 +23,9 @@ export const ProvisioningFlow: React.FC<ProvisioningFlowProps> = ({ onBack }) =>
     description: step.description,
     code: step.code,
     language: 'javascript',
-    actionLabel: 'Execute Step',
+    actionLabel: ['personalize_sim', 'import_udm'].includes(step.id)
+      ? 'Show process walkthrough'
+      : 'Run sample calculation',
     diagram: <ProvisioningDiagram step={index} />, // Use ProvisioningDiagram
   }))
 
@@ -33,14 +35,14 @@ export const ProvisioningFlow: React.FC<ProvisioningFlowProps> = ({ onBack }) =>
     if (stepId === 'gen_k') {
       const k = await fiveGService.generateSubKey()
       setKeys((p) => ({ ...p, k }))
-      return `[Factory] Generated Subscriber Key (K):
+      return `[SAMPLE CALCULATION] Browser-generated subscriber key K:
 ${k}
-(Inside factory HSM)`
+Generated with Web Crypto getRandomValues; no factory HSM or hardware entropy source is inspected.`
     } else if (stepId === 'compute_opc_sim') {
       if (!keys.k) throw new Error('K not generated')
       const opc = await fiveGService.computeOPc(keys.k)
       setKeys((p) => ({ ...p, opc }))
-      return `[Factory] Computed OPc (Operator Key variant):
+      return `[SAMPLE CALCULATION] Computed OPc (Operator Key variant):
 ${opc}
 (Bound to K and Operator OP)`
     } else if (stepId === 'personalize_sim') {
@@ -55,13 +57,10 @@ ${opc}
       return result
     } else if (stepId === 'import_udm') {
       if (!keys.opc) throw new Error('Keys missing')
-      return await fiveGService.importAtUDM(keys.eK || keys.k || '', keys.opc)
+      return await fiveGService.importAtUDM(keys.eK || '(no encrypted sample supplied)', keys.opc)
     }
 
-    // Fallback static (should not reach here)
-    const stepData = FIVE_G_CONSTANTS.PROVISIONING_STEPS[wizard.currentStep]
-    await new Promise((resolve) => setTimeout(resolve, 600))
-    return stepData.output
+    throw new Error('Unknown provisioning activity')
   }
 
   const wizard = useStepWizard({
@@ -75,7 +74,10 @@ ${opc}
         <Info size={13} className="shrink-0" />
         <span>
           All keys and identifiers generated here are for <strong>educational use only</strong> —
-          not for production systems.
+          not for production systems. Key generation, OPc computation and transport encryption run
+          sample calculations in the browser. Card personalization and operator import are process
+          walkthroughs: no card, operator HSM or subscriber database is accessed. Activity
+          completion records viewing or running the sample, not successful subscriber provisioning.
         </span>
       </div>
       <StepWizard
@@ -89,6 +91,7 @@ ${opc}
         onNext={wizard.handleNext}
         onBack={wizard.handleBack}
         onComplete={onBack}
+        completeLabel="Finish provisioning walkthrough"
       />
       {wizard.logEntries.length > 0 && (
         <WorkshopOperationLog entries={wizard.logEntries} className="mt-4 max-h-40" />

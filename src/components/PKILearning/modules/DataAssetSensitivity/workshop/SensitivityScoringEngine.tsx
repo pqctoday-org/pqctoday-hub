@@ -45,6 +45,8 @@ interface SensitivityScoringEngineProps {
   selectedMandates: string[]
   onScoredAssetsChange?: (scored: ScoredAsset[]) => void
   crqcYear?: number
+  weights?: ScoringWeights
+  onWeightsChange?: (weights: ScoringWeights) => void
 }
 
 function clampWeights(
@@ -226,8 +228,11 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
   selectedMandates,
   onScoredAssetsChange,
   crqcYear,
+  weights: providedWeights,
+  onWeightsChange,
 }) => {
-  const [weights, setWeights] = useState<ScoringWeights>(DEFAULT_SCORING_WEIGHTS)
+  const [localWeights, setLocalWeights] = useState<ScoringWeights>(DEFAULT_SCORING_WEIGHTS)
+  const weights = providedWeights ?? localWeights
   const [sortDescending, setSortDescending] = useState(true)
 
   const assetsWithFlags = useMemo(
@@ -255,9 +260,14 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
   const weightTotal = Object.values(weights).reduce((sum, v) => sum + v, 0)
   const isBalanced = weightTotal === 100
 
-  const handleWeightChange = useCallback((key: keyof ScoringWeights, value: number) => {
-    setWeights((prev) => clampWeights(prev, key, value))
-  }, [])
+  const handleWeightChange = useCallback(
+    (key: keyof ScoringWeights, value: number) => {
+      const next = clampWeights(weights, key, value)
+      if (onWeightsChange) onWeightsChange(next)
+      else setLocalWeights(next)
+    },
+    [weights, onWeightsChange]
+  )
 
   const bandCounts = useMemo(() => {
     const counts = { Critical: 0, High: 0, Medium: 0, Low: 0 }

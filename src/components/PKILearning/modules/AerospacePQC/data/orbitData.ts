@@ -173,20 +173,20 @@ export const RAD_HARD_PROCESSORS: RadHardProcessor[] = [
 ]
 
 /**
- * Calculate SEU-adjusted key refresh interval.
- * Returns recommended hours between key rotations to keep
- * probability of key corruption below a threshold.
+ * Illustrative refresh upper bound in hours for the positive UI inputs,
+ * using this sample's unchanged linear SEU approximation, not a physical recommendation.
  */
 export function calculateKeyRefreshInterval(
   seuRate: number,
   keySizeBits: number,
   targetCorruptionProb: number = 0.001
 ): number {
-  // P(corruption) = 1 - (1 - seuRate)^(keySizeBits * hours * 24)
-  // Approximation for small rates: P ≈ seuRate * keySizeBits * days
+  // Linear approximation: P ≈ seuRate * keySizeBits * (hours / 24).
   // Solve for days: days = targetProb / (seuRate * keySizeBits)
   const days = targetCorruptionProb / (seuRate * keySizeBits)
-  return Math.max(1, Math.round(days * 24)) // Return hours, minimum 1 hour
+  const hours = days * 24
+  // Preserve legacy out-of-domain results; only positive UI inputs define the bound.
+  return hours > 0 ? hours : Math.max(1, Math.round(hours))
 }
 
 /** Solar activity multiplier for SEU rates */

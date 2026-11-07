@@ -68,8 +68,10 @@ export function FrameworkConceptGraphModal({
                   {title}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  1-hop neighbourhood; dashed edges = synthetic <code>implements</code> edges to
-                  algorithm leaves.
+                  One-hop view of recorded relationships; dashed links add generated algorithm
+                  context. Scroll below the graph for direction, evidence and the derived Hub
+                  confidence index. These mappings are learning aids, not legal or conformance
+                  determinations.
                 </p>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
@@ -88,7 +90,7 @@ export function FrameworkConceptGraphModal({
                 </Button>
               </div>
             </div>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 min-h-0 overflow-y-auto">
               <FrameworkConceptGraph
                 centerConceptId={centerConceptId}
                 height={Math.min(700, window.innerHeight - 200)}

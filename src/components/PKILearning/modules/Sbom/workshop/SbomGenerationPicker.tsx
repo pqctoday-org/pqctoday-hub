@@ -142,18 +142,16 @@ export function SbomGenerationPicker() {
         <div className="flex items-center gap-2">
           <AlertTriangle size={14} className="text-status-warning shrink-0" />
           <h4 className="text-sm font-semibold text-foreground">
-            No tool here is fully 2026-compliant out of the box
+            Inspect each generator’s output against your requirements
           </h4>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Two gaps are universal across every tool surveyed above: none of them sign the SBOM
-          automatically — <strong>SBOM Author Signature</strong> needs a separate step (e.g.
-          Cosign/Sigstore attestation) regardless of which generator you pick — and{' '}
-          <strong>SBOM Generation Context</strong> has no clean 1:1 mapping in any of them; the
-          closest analog (CycloneDX&apos;s <code>lifecycles</code> field) is inconsistently
-          supported. Component hash and license fields are frequently present but not guaranteed —
-          coverage depends on the package ecosystem and, for compiled languages, on whether a lock
-          file was available to the generator.
+          This authored comparison is an educational snapshot, not a universal compliance finding.
+          The rows differ: the npm CycloneDX example lists only Author Signature as missing, while
+          other examples also list Generation Context. Treat signing as a separate step in these
+          examples and inspect how your selected generator and version record generation context.
+          Check the actual output, package ecosystem and available lock files before relying on
+          hash, license or other metadata coverage.
         </p>
         <p className="text-[11px] text-muted-foreground/80">
           Verified against each tool&apos;s own source, docs, and changelog as of August 2026 — SBOM

@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
-import { MemoryRouter, useLocation, useNavigationType } from 'react-router'
+import { MemoryRouter, useLocation, useNavigationType, useNavigate } from 'react-router'
 import { MobileLibraryView } from './MobileLibraryView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { libraryData } from '@/data/libraryData'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { documentDatesText } from '@/components/Library/redesign/libraryPills'
+import { Button } from '@/components/ui/button'
 
 // Real data throughout — libraryData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived at test time), not
@@ -170,7 +171,7 @@ describe('MobileLibraryView', () => {
       expect(row, ref).toBeDefined()
       const expected = documentDatesText(row!.initialPublicationDate, row!.lastUpdateDate)
       // Both rows carry an update date later than the first publication.
-      expect(expected, ref).toMatch(/^First published .+ · updated /)
+      expect(expected, ref).toMatch(/^First published .+ · Catalog record updated /)
       const { unmount } = render(
         <MemoryRouter initialEntries={[`/library?ref=${encodeURIComponent(ref)}`]}>
           <MobileLibraryView />
@@ -385,5 +386,85 @@ describe('MobileLibraryView', () => {
       )
       expect(shown()).toBe(libraryData.length)
     })
+  })
+})
+
+describe('Mobile Library shareable filter scope', () => {
+  afterEach(() => usePersonaStore.getState().setPersona(null))
+
+  function FilterLocation() {
+    const location = useLocation()
+    const navigation = useNavigationType()
+    const navigate = useNavigate()
+    return (
+      <>
+        <output data-testid="filter-url" data-navigation={navigation}>
+          {location.search}
+        </output>
+        <Button onClick={() => navigate(-1)}>Previous filter route</Button>
+        <Button onClick={() => navigate(1)}>Next filter route</Button>
+      </>
+    )
+  }
+  function renderFilters() {
+    return render(
+      <MemoryRouter initialEntries={['/library?sort=name&lifecycle=Published']}>
+        <MobileLibraryView />
+        <FilterLocation />
+      </MemoryRouter>
+    )
+  }
+  function currentParams() {
+    return new URLSearchParams(screen.getByTestId('filter-url').textContent ?? '')
+  }
+
+  it('does not claim role narrowing for a role with no preferred categories', () => {
+    usePersonaStore.getState().setPersona('researcher')
+    renderFilters()
+    expect(screen.getByTestId('library-count')).not.toHaveTextContent('narrowed')
+    expect(screen.queryByTestId('library-mobile-role-scope')).not.toBeInTheDocument()
+  })
+
+  it('withdraws a role-narrowing claim during any nonempty search', () => {
+    usePersonaStore.getState().setPersona('architect')
+    renderFilters()
+    expect(screen.getByTestId('library-count')).toHaveTextContent('narrowed')
+    const search = screen.getByRole('textbox', { name: 'Search Library' })
+    for (const query of ['ML-KEM', ' ']) {
+      fireEvent.change(search, { target: { value: query } })
+      expect(screen.getByTestId('library-count')).not.toHaveTextContent('narrowed')
+      expect(screen.queryByTestId('library-mobile-role-scope')).not.toBeInTheDocument()
+      expect(currentParams().get('q')).toBe(query)
+    }
+    fireEvent.change(search, { target: { value: '' } })
+    expect(screen.getByTestId('library-count')).toHaveTextContent('narrowed')
+    expect(currentParams().has('q')).toBe(false)
+  })
+
+  it('restores purpose, quick view and query with Back and Forward, preserving other filters', () => {
+    renderFilters()
+    fireEvent.click(screen.getByText('Reference', { exact: true }))
+    expect(currentParams().get('purpose')).toBe('reference')
+    expect(screen.getByText('Reference', { exact: true }).closest('button')).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(screen.getByTestId('filter-url')).toHaveAttribute('data-navigation', 'PUSH')
+    fireEvent.click(screen.getByRole('button', { name: /^New & updated$/ }))
+    fireEvent.change(screen.getByRole('textbox', { name: 'Search Library' }), {
+      target: { value: 'ML-KEM' },
+    })
+    expect(currentParams().get('qv')).toBe('new')
+    expect(currentParams().get('q')).toBe('ML-KEM')
+    expect(screen.getByTestId('filter-url')).toHaveAttribute('data-navigation', 'REPLACE')
+    fireEvent.click(screen.getByRole('button', { name: 'Previous filter route' }))
+    expect(currentParams().get('purpose')).toBe('reference')
+    expect(currentParams().has('qv')).toBe(false)
+    expect(screen.getByRole('textbox', { name: 'Search Library' })).toHaveValue('')
+    fireEvent.click(screen.getByRole('button', { name: 'Next filter route' }))
+    expect(currentParams().get('qv')).toBe('new')
+    expect(screen.getByRole('textbox', { name: 'Search Library' })).toHaveValue('ML-KEM')
+    expect(currentParams().get('sort')).toBe('name')
+    expect(currentParams().get('lifecycle')).toBe('Published')
   })
 })

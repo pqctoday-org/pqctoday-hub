@@ -188,6 +188,7 @@ type WorkerInbound =
       recipientCertId: string
       payload: Uint8Array
       cipher?: CmsCipher
+      rsaOaep?: boolean
       requestId?: string
     }
   | {
@@ -3598,6 +3599,7 @@ async function cmsEncrypt(
   recipientCertId: string,
   payload: Uint8Array,
   cipher: CmsCipher | undefined,
+  rsaOaep: boolean | undefined,
   requestId?: string
 ): Promise<void> {
   // Encrypt uses the recipient's public key from the cert — no signing
@@ -3615,12 +3617,8 @@ async function cmsEncrypt(
   vfs.set(payloadPath, payload)
   vfs.delete(outPath)
   safeUnlink(M, outPath)
-  // `openssl cms -encrypt` builds AuthEnvelopedData. The recipient cert's
-  // public key drives RecipientInfo selection:
-  //   - ML-KEM cert → KEMRecipientInfo (RFC 9629 + RFC 9936 ML-KEM profile)
-  //   - RSA cert    → KeyTransRecipientInfo (OAEP)
-  //   - EC/X25519   → KeyAgreeRecipientInfo (ECDH)
-  // The user-selected `cipher` is the content-encryption (CEK) algorithm.
+  // GCM produces AuthEnvelopedData; CBC produces EnvelopedData.
+  // Explicit OAEP options apply only to the selected RSA sample recipient.
   const cipherFlag = `-${cipher ?? 'aes-256-gcm'}`
   const { rc, stderr } = runOpenssl(M, [
     'cms',
@@ -3633,7 +3631,18 @@ async function cmsEncrypt(
     'DER',
     '-out',
     outPath,
+    '-recip',
     certPath,
+    ...(rsaOaep
+      ? [
+          '-keyopt',
+          'rsa_padding_mode:oaep',
+          '-keyopt',
+          'rsa_oaep_md:sha256',
+          '-keyopt',
+          'rsa_mgf1_md:sha256',
+        ]
+      : []),
   ])
   if (rc !== 0 || !fileExists(M, outPath)) {
     post({
@@ -3967,7 +3976,7 @@ self.addEventListener('message', (e: MessageEvent<WorkerInbound>) => {
       void cmsVerify(msg.signedP7m, msg.certId, msg.useHsm, msg.alg, msg.requestId)
       break
     case 'CMS_ENCRYPT':
-      void cmsEncrypt(msg.recipientCertId, msg.payload, msg.cipher, msg.requestId)
+      void cmsEncrypt(msg.recipientCertId, msg.payload, msg.cipher, msg.rsaOaep, msg.requestId)
       break
     case 'CMS_DECRYPT':
       void cmsDecrypt(

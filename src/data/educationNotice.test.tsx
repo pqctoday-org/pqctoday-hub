@@ -6,6 +6,8 @@
  * and not behind a persona condition.
  */
 import { describe, expect, it } from 'vitest'
+import Papa from 'papaparse'
+import { rowsToCsv } from '@/services/export/csvExport'
 import { render, screen } from '@testing-library/react'
 import {
   EDUCATION_NOTICE,
@@ -109,5 +111,84 @@ describe('education notice — export payload helpers', () => {
     // it happens to start with comment lines of its own.
     const foreign = '# someone else’s comment\nbody\n'
     expect(stripEducationNoticeComment(foreign, '#')).toBe(foreign)
+  })
+})
+
+describe('CSV notice preserves payload record delimiters and field bytes', () => {
+  const noticeRow = [`Notice — ${EDUCATION_NOTICE}`]
+  it.each([
+    {
+      name: 'LF',
+      delimiter: '\n',
+      payload: 'name,value\n"sample, A","say ""hello"""\nnext,0',
+      expected: [
+        ['name', 'value'],
+        ['sample, A', 'say "hello"'],
+        ['next', '0'],
+      ],
+    },
+    {
+      name: 'CRLF with embedded LF before first record delimiter',
+      delimiter: '\r\n',
+      payload: '"heading\nline",value\r\n"sample, A","say ""hello""\nand goodbye"\r\nnext,0',
+      expected: [
+        ['heading\nline', 'value'],
+        ['sample, A', 'say "hello"\nand goodbye'],
+        ['next', '0'],
+      ],
+    },
+    {
+      name: 'LF with embedded CRLF before first record delimiter',
+      delimiter: '\n',
+      payload: '"heading\r\nline",value\n"quote ""test""",0',
+      expected: [
+        ['heading\r\nline', 'value'],
+        ['quote "test"', '0'],
+      ],
+    },
+    {
+      name: 'single record defaults to CRLF',
+      delimiter: '\r\n',
+      payload: '"sample, A","say ""hello"""',
+      expected: [['sample, A', 'say "hello"']],
+    },
+    {
+      name: 'only embedded LF defaults to CRLF',
+      delimiter: '\r\n',
+      payload: '"sample\nline",0',
+      expected: [['sample\nline', '0']],
+    },
+    { name: 'empty defaults to CRLF', delimiter: '\r\n', payload: '', expected: [] },
+  ])(
+    '$name parses the complete notice and payload with automatic newline detection',
+    ({ delimiter, payload, expected }) => {
+      const full = withEducationNoticeCsv(payload)
+      expect(full).toBe(
+        `"Notice — ${EDUCATION_NOTICE.replace(/"/g, '""')}"${delimiter}${delimiter}${payload}`
+      )
+      expect(full.endsWith(payload)).toBe(true)
+      expect(full.slice(full.indexOf(delimiter + delimiter) + delimiter.length * 2)).toBe(payload)
+      const parsed = Papa.parse<string[]>(full, { delimiter: ',', skipEmptyLines: true })
+      expect(parsed.errors).toEqual([])
+      expect(parsed.data).toEqual([noticeRow, ...expected])
+      expect(withEducationNoticeCsv(full)).toBe(full)
+    }
+  )
+
+  it('parses real RFC-4180 export output without stripping the notice or normalizing line breaks', () => {
+    const rows = [
+      ['Dimension ID', 'Score', 'Raw worksheet value', 'Included'],
+      ['legacy', '', '99', 'false'],
+      ['chosen-zero', '0', '0', 'true'],
+      ['quoted, "sample"\nline', '40', '40', 'true'],
+    ]
+    const original = rowsToCsv(rows)
+    const full = withEducationNoticeCsv(original)
+    expect(full.endsWith(original)).toBe(true)
+    const parsed = Papa.parse<string[]>(full, { delimiter: ',', skipEmptyLines: true })
+    expect(parsed.errors).toEqual([])
+    expect(parsed.data).toEqual([noticeRow, ...rows])
+    // The notice remains its own metadata row, followed by an actual blank row.
+    expect(full.startsWith(`"Notice — ${EDUCATION_NOTICE}"\r\n\r\n`)).toBe(true)
   })
 })

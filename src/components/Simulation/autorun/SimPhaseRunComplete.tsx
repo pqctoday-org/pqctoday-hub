@@ -61,9 +61,11 @@ export function SimPhaseRunComplete({
               id="sim-phase-run-complete-heading"
               className="text-lg font-semibold text-foreground"
             >
-              {phaseFocus?.name ?? 'Phase'} complete
+              {phaseFocus?.name ?? 'Phase'} tour complete
             </h2>
-            <p className="text-xs text-muted-foreground">You’ve seen this phase end to end.</p>
+            <p className="text-xs text-muted-foreground">
+              You’ve reached the end of this phase’s guided tour.
+            </p>
           </div>
         </div>
         {phaseFocus?.summary && (
@@ -71,7 +73,8 @@ export function SimPhaseRunComplete({
         )}
         {phaseFocus?.gate && (
           <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
-            <span className="font-semibold text-foreground">Exit gate met:</span> {phaseFocus.gate}
+            <span className="font-semibold text-foreground">Phase exit criterion:</span>{' '}
+            {phaseFocus.gate}
           </p>
         )}
         <div className="flex flex-wrap gap-2">

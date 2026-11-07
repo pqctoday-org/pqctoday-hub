@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useOpenSSLStore } from './store'
 import { WorkbenchToolbar } from './components/WorkbenchToolbar'
 import { WorkbenchHeader } from './components/WorkbenchHeader'
@@ -121,6 +121,57 @@ export const Workbench = ({
   const [kdfScryptN, setKdfScryptN] = useState('1024')
   const [kdfScryptR, setKdfScryptR] = useState('8')
   const [kdfScryptP, setKdfScryptP] = useState('1')
+
+  // The current KDF draft is authoritative for preview and Run, even before
+  // the passive store-publication effect has caught up with an input change.
+  const kdfDraft = useMemo(() => {
+    const byteFields: [string, string][] = [['Salt', kdfSalt]]
+    if (['HKDF', 'SSKDF'].includes(kdfAlgo)) {
+      byteFields.push(['Secret / Key', kdfSecret], ['Info', kdfInfo])
+    }
+    for (const [label, value] of byteFields) {
+      if (value !== '' && (value.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(value))) {
+        return {
+          command: '',
+          error: `${label} must contain complete hex byte pairs (0–9, A–F), without spaces or a 0x prefix. Leave it empty to omit the option.`,
+        }
+      }
+    }
+    let command = `openssl kdf -keylen ${kdfKeyLen}`
+    if (kdfOutFile) command += ` -out ${kdfOutFile}`
+    if (kdfBinary) command += ' -binary'
+    if (['HKDF', 'PBKDF2', 'SSKDF'].includes(kdfAlgo)) {
+      command += ` -kdfopt digest:${kdfDigest}`
+    }
+    if (kdfSalt) command += ` -kdfopt hexsalt:${kdfSalt}`
+    if (['HKDF', 'SSKDF'].includes(kdfAlgo)) {
+      if (kdfSecret) command += ` -kdfopt hexkey:${kdfSecret}`
+      if (kdfInfo) command += ` -kdfopt hexinfo:${kdfInfo}`
+    } else if (kdfAlgo === 'PBKDF2') {
+      if (kdfPass) command += ` -kdfopt pass:${kdfPass}`
+      if (kdfIter) command += ` -kdfopt iter:${kdfIter}`
+    } else if (kdfAlgo === 'SCRYPT') {
+      if (kdfPass) command += ` -kdfopt pass:${kdfPass}`
+      if (kdfScryptN) command += ` -kdfopt n:${kdfScryptN}`
+      if (kdfScryptR) command += ` -kdfopt r:${kdfScryptR}`
+      if (kdfScryptP) command += ` -kdfopt p:${kdfScryptP}`
+    }
+    return { command: `${command} ${kdfAlgo}`, error: undefined }
+  }, [
+    kdfAlgo,
+    kdfKeyLen,
+    kdfOutFile,
+    kdfBinary,
+    kdfDigest,
+    kdfPass,
+    kdfSalt,
+    kdfIter,
+    kdfInfo,
+    kdfSecret,
+    kdfScryptN,
+    kdfScryptR,
+    kdfScryptP,
+  ])
 
   // PKCS#11 State — token keys are addressed by pkcs11: URI, not a file, so
   // they're tracked here rather than in the shared `files` store (see
@@ -388,34 +439,7 @@ export const Workbench = ({
         cmd += ` -out ${configUtlOutFile}`
       }
     } else if (category === 'kdf') {
-      cmd += ` kdf -keylen ${kdfKeyLen}`
-      if (kdfOutFile) cmd += ` -out ${kdfOutFile}`
-      if (kdfBinary) cmd += ` -binary`
-
-      // Common Options
-      if (['HKDF', 'PBKDF2', 'SSKDF'].includes(kdfAlgo)) {
-        cmd += ` -kdfopt digest:${kdfDigest}`
-      }
-      if (kdfSalt) cmd += ` -kdfopt salt:${kdfSalt}`
-
-      // Algorithm Specific
-      if (kdfAlgo === 'HKDF') {
-        if (kdfSecret) cmd += ` -kdfopt key:${kdfSecret}`
-        if (kdfInfo) cmd += ` -kdfopt info:${kdfInfo}`
-      } else if (kdfAlgo === 'PBKDF2') {
-        if (kdfPass) cmd += ` -kdfopt pass:${kdfPass}`
-        if (kdfIter) cmd += ` -kdfopt iter:${kdfIter}`
-      } else if (kdfAlgo === 'SCRYPT') {
-        if (kdfPass) cmd += ` -kdfopt pass:${kdfPass}`
-        if (kdfScryptN) cmd += ` -kdfopt N:${kdfScryptN}`
-        if (kdfScryptR) cmd += ` -kdfopt r:${kdfScryptR}`
-        if (kdfScryptP) cmd += ` -kdfopt p:${kdfScryptP}`
-      } else if (kdfAlgo === 'SSKDF') {
-        if (kdfSecret) cmd += ` -kdfopt key:${kdfSecret}`
-        if (kdfInfo) cmd += ` -kdfopt info:${kdfInfo}`
-      }
-
-      cmd += ` ${kdfAlgo}`
+      cmd = kdfDraft.command
     } else if (category === 'pkcs11') {
       const selectedKey = pkcs11Keys.find((k) => k.id === pkcs11SelectedKeyId)
       if (!selectedKey) {
@@ -510,19 +534,7 @@ export const Workbench = ({
     lmsDataFile,
     configUtlInFile,
     configUtlOutFile,
-    kdfAlgo,
-    kdfKeyLen,
-    kdfOutFile,
-    kdfBinary,
-    kdfDigest,
-    kdfPass,
-    kdfSalt,
-    kdfIter,
-    kdfInfo,
-    kdfSecret,
-    kdfScryptN,
-    kdfScryptR,
-    kdfScryptP,
+    kdfDraft.command,
     lmsMode,
     pkcs11Keys,
     pkcs11SelectedKeyId,
@@ -669,6 +681,8 @@ export const Workbench = ({
           />
           <WorkbenchPreview
             category={category}
+            commandOverride={category === 'kdf' ? kdfDraft.command : undefined}
+            validationError={category === 'kdf' ? kdfDraft.error : undefined}
             executeCommand={executeCommand}
             executeSkey={executeSkey}
             retryLoad={retryLoad}

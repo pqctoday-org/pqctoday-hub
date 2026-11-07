@@ -105,7 +105,8 @@ describe('PKCS#11 v3.3 (working draft) Learn track (real Rust engine)', () => {
             ? 'not-in-engine'
             : classifyStepOutcome(
                 step.expect,
-                logRef.current.slice(0, logRef.current.length - before)
+                logRef.current.slice(0, logRef.current.length - before),
+                step.expectedRefusal
               )
         }
         if (outcome === 'not-in-engine') {

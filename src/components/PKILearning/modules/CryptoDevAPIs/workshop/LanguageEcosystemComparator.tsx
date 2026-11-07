@@ -10,12 +10,12 @@ type MemFilter = 'All' | MemorySafety
 
 const MEM_ITEMS = [
   { id: 'All', label: 'All Memory Models' },
-  { id: 'manual', label: 'Manual (C/C++)' },
-  { id: 'ownership', label: 'Ownership (Rust)' },
-  { id: 'gc', label: 'GC (Java/Go/.NET)' },
-  { id: 'refcount', label: 'RefCount (Python)' },
-  { id: 'comptime', label: 'Comptime (Zig)' },
-]
+  { id: 'manual', label: 'Manual' },
+  { id: 'ownership', label: 'Ownership' },
+  { id: 'gc', label: 'Garbage collected' },
+  { id: 'refcount', label: 'Reference counted' },
+  { id: 'comptime', label: 'Compile-time' },
+].filter((item) => item.id === 'All' || DEV_LANGUAGES.some((lang) => lang.memorySafety === item.id))
 
 const RADAR_KEYS: { key: keyof DevLanguage['radar']; label: string }[] = [
   { key: 'memorySafety', label: 'Memory Safety' },
@@ -315,6 +315,9 @@ export const LanguageEcosystemComparator: React.FC = () => {
           {compareMode ? `Compare (${selectedIds.size}/3)` : 'Compare Mode'}
         </Button>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Filter by the memory-model category recorded for each catalogue entry.
+      </p>
 
       <VendorCoverageNotice migrateLayer="Libraries" className="mb-2" />
 

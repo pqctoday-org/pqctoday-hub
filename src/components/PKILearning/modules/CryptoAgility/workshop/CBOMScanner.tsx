@@ -149,13 +149,16 @@ export const CBOMScanner: React.FC = () => {
 
       {/* Infrastructure Layer Coverage */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">Infrastructure Layer Coverage</h4>
+        <h4 className="text-sm font-bold text-foreground mb-3">
+          Sample Infrastructure Layer Coverage
+        </h4>
         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2">
           {LAYERS.map((layer) => {
             const layerEntries = SAMPLE_CBOM.filter((e) => e.infrastructureLayer === layer.id)
             const vulnerableCount = layerEntries.filter(
               (e) => e.quantumStatus === 'vulnerable'
             ).length
+            const weakenedCount = layerEntries.filter((e) => e.quantumStatus === 'weakened').length
             const isActive = activeLayer === layer.id
             const IconComponent = layer.icon
 
@@ -164,7 +167,7 @@ export const CBOMScanner: React.FC = () => {
                 variant="ghost"
                 key={layer.id}
                 onClick={() => setActiveLayer(isActive ? 'all' : (layer.id as LayerFilter))}
-                className={`flex flex-col items-center gap-1.5 p-2.5 rounded-lg border text-center transition-all ${
+                className={`flex h-auto flex-col items-center gap-1.5 p-2.5 rounded-lg border text-center transition-all ${
                   isActive
                     ? 'bg-card border-primary/60 shadow-sm'
                     : 'bg-muted/30 border-border hover:border-primary/30'
@@ -180,9 +183,23 @@ export const CBOMScanner: React.FC = () => {
                   {layer.id}
                 </span>
                 <span
-                  className={`text-[10px] font-bold ${vulnerableCount > 0 ? 'text-destructive' : 'text-success'}`}
+                  className={`text-[10px] font-bold ${
+                    vulnerableCount > 0
+                      ? 'text-destructive'
+                      : weakenedCount > 0
+                        ? 'text-warning'
+                        : layerEntries.length > 0
+                          ? 'text-success'
+                          : 'text-muted-foreground'
+                  }`}
                 >
-                  {vulnerableCount > 0 ? `${vulnerableCount} vuln` : 'Safe'}
+                  {vulnerableCount > 0
+                    ? `${vulnerableCount} vuln`
+                    : weakenedCount > 0
+                      ? `${weakenedCount} weakened`
+                      : layerEntries.length > 0
+                        ? 'Marked safe'
+                        : 'No entries'}
                 </span>
                 <span className="text-[10px] text-muted-foreground">
                   {layerEntries.length} asset{layerEntries.length !== 1 ? 's' : ''}
@@ -302,6 +319,8 @@ export const CBOMScanner: React.FC = () => {
             if (layerEntries.length === 0) return null
             const IconComponent = layer.icon
             const vulnCount = layerEntries.filter((e) => e.quantumStatus === 'vulnerable').length
+            const weakenedCount = layerEntries.filter((e) => e.quantumStatus === 'weakened').length
+            const safeCount = layerEntries.filter((e) => e.quantumStatus === 'safe').length
 
             return (
               <div key={layer.id}>
@@ -311,13 +330,11 @@ export const CBOMScanner: React.FC = () => {
                     {layer.label}
                   </span>
                   <span className="ml-auto text-[10px] text-muted-foreground">
-                    {vulnCount > 0 ? (
-                      <span className="text-destructive font-medium">{vulnCount} vulnerable</span>
-                    ) : (
-                      <span className="text-success font-medium">All safe</span>
-                    )}
+                    <span className="font-medium">
+                      {vulnCount} vulnerable, {weakenedCount} weakened, {safeCount} marked safe
+                    </span>
                     {' / '}
-                    {layerEntries.length} asset{layerEntries.length !== 1 ? 's' : ''}
+                    {layerEntries.length} shown sample asset{layerEntries.length !== 1 ? 's' : ''}
                   </span>
                   {(pqcCountsByLayer.get(layer.id) ?? 0) > 0 && (
                     <Link

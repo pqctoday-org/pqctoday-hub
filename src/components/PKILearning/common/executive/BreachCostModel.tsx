@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { BREACH_SCENARIO_READER_METHOD } from '@/utils/breachScenarioReaderMethod'
 import React, { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router'
 import {
@@ -29,6 +30,13 @@ import {
   type DataSensitivityClass,
 } from '@/utils/breachCostModel'
 import { computeMoscaVerdict, costOfWaiting } from '@/utils/moscaTheorem'
+import {
+  anchorOrigin,
+  restoredProbabilityOrigin,
+  probabilityProvenance,
+  BREACH_PROBABILITY_SOURCE_URL,
+  type BreachProbabilityOrigin,
+} from '@/utils/breachProbabilityOrigin'
 
 /** The full set of scenario sliders below, for restore-on-mount and for
  *  reporting the raw inputs back up (not just the computed costs) so a
@@ -37,6 +45,8 @@ export interface BreachScenarioInputs {
   breachScale: number
   yearsOfData: number
   orgSizeTier: OrgSizeTier
+  annualBreachProbPct: number
+  annualBreachProbabilityOrigin?: BreachProbabilityOrigin
   hndlFactorPct: number
   dataSensitivityClass: DataSensitivityClass
   planningHorizonYears: number
@@ -122,11 +132,30 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   const [orgSizeTier, setOrgSizeTier] = useState<OrgSizeTier>(
     initialValues?.orgSizeTier ?? 'average'
   )
+  const [probabilityWasUnrecorded] = useState(
+    initialValues !== undefined && initialValues.annualBreachProbPct == null
+  )
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState(
-    ANNUAL_BREACH_PROBABILITY_PCT[initialValues?.orgSizeTier ?? 'average']
+    initialValues?.annualBreachProbPct ??
+      ANNUAL_BREACH_PROBABILITY_PCT[initialValues?.orgSizeTier ?? 'average']
+  )
+  const [annualBreachProbabilityOrigin, setAnnualBreachProbabilityOrigin] =
+    useState<BreachProbabilityOrigin>(() =>
+      restoredProbabilityOrigin(
+        initialValues?.annualBreachProbabilityOrigin,
+        annualBreachProbPct,
+        orgSizeTier,
+        initialValues?.annualBreachProbPct != null
+      )
+    )
+  const probabilityRecord = probabilityProvenance(
+    annualBreachProbPct,
+    orgSizeTier,
+    annualBreachProbabilityOrigin
   )
   const selectOrgSizeTier = (tier: OrgSizeTier) => {
     setOrgSizeTier(tier)
+    setAnnualBreachProbabilityOrigin(anchorOrigin(tier))
     setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[tier])
   }
   const [hndlFactorPct, setHndlFactorPct] = useState(initialValues?.hndlFactorPct ?? 30)
@@ -224,6 +253,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
       breachScale,
       yearsOfData,
       orgSizeTier,
+      annualBreachProbPct,
+      annualBreachProbabilityOrigin,
       hndlFactorPct,
       dataSensitivityClass,
       planningHorizonYears,
@@ -236,6 +267,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
     breachScale,
     yearsOfData,
     orgSizeTier,
+    annualBreachProbPct,
+    annualBreachProbabilityOrigin,
     hndlFactorPct,
     dataSensitivityClass,
     planningHorizonYears,
@@ -370,21 +403,51 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
               <input
                 id="breach-annual-prob"
                 type="range"
-                min={1}
+                min={0}
                 max={50}
                 // 0.1 steps and parseFloat: the IRIS tier anchors are fractional
                 // (8.7 / 9.3 / 12.8) and parseInt silently truncated them to
                 // integers the moment the slider was touched.
                 step={0.1}
                 value={annualBreachProbPct}
-                onChange={(e) => setAnnualBreachProbPct(parseFloat(e.target.value))}
+                onChange={(e) => {
+                  setAnnualBreachProbPct(parseFloat(e.target.value))
+                  setAnnualBreachProbabilityOrigin('learner-assumption')
+                }}
                 className="w-full accent-primary"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>1%</span>
+                <span>0%</span>
                 <span className="text-sm font-mono text-primary">{annualBreachProbPct}%</span>
                 <span>50%</span>
               </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Active probability origin: {probabilityRecord.originLabel}. This is a scenario
+                input, not a finding about the fictional organization.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Reference anchor: {probabilityRecord.referenceProbabilityPct}% ({orgSizeTier};{' '}
+                {probabilityRecord.referenceKind === 'source-anchor'
+                  ? 'historical typical-firm source reference'
+                  : 'Hub model-derived tier mapping'}
+                ).{' '}
+                <a
+                  href={BREACH_PROBABILITY_SOURCE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary underline"
+                >
+                  IRIS 2025 {probabilityRecord.referenceFigure}
+                </a>{' '}
+                supports the reference context only; edited and restored inputs are not
+                source-verified.
+              </p>
+              {probabilityWasUnrecorded && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Loaded inputs did not record an annual breach probability. This run started from
+                  the organization-tier default; the original value was not recovered.
+                </p>
+              )}
               <p className="text-[10px] text-muted-foreground mt-1">
                 Default reflects the selected organization size — Cyentia IRIS 2025 anchors per
                 organization size (Figures 6 and 7 of the report). The tiers sit close together
@@ -631,7 +694,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
           Present value of the {planningHorizonYears}-year quantum-risk delta at{' '}
-          {Math.round(discountRateAnnual * 100)}% discount:{' '}
+          {formatPct(discountRateAnnual * 100)}% discount:{' '}
           <span className="font-mono text-foreground font-semibold">
             {formatCurrency(costs.pvQuantumDelta)}
           </span>
@@ -725,12 +788,16 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             </span>
           </p>
           <p className="text-xs font-mono text-muted-foreground">
-            Shelf-life decay ({shelfLifeYears}yr {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}):{' '}
-            <span className="text-foreground font-semibold">{costs.decayFactor.toFixed(2)}×</span>
+            Sample corpus {yearsOfData}yr, shelf-life preset {shelfLifeYears}yr, decryption gap 0:
+            freshness-weighted years E ={' '}
+            <span className="text-foreground font-semibold">
+              {costs.range.central.effYears.toFixed(2)}yr
+            </span>
           </p>
           <p className="text-xs font-mono text-muted-foreground">
-            HNDL amplification: 1 + min({HNDL_MULTIPLIER_CAP}, {yearsOfData}yr × {hndlFactorPct}% ×
-            decay) ={' '}
+            HNDL amplification: 1 + {HNDL_MULTIPLIER_CAP} × (1 − exp(−(
+            {costs.range.central.effYears.toFixed(2)} × {formatPct(hndlFactorPct)}%)/
+            {HNDL_MULTIPLIER_CAP})) ={' '}
             <span className="text-foreground font-semibold">
               {costs.hndlMultiplier.toFixed(2)}×
             </span>
@@ -750,6 +817,9 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             <span className="text-status-error font-bold">{formatCurrency(costs.quantumALE)}</span>
           </p>
         </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          Working figures are rounded; calculations use underlying values.
+        </p>
       </details>
 
       {/* ── Methodology ── */}
@@ -769,16 +839,13 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             a flat per-record cost that would grow without bound.
           </p>
           <p>
-            <strong>HNDL amplification:</strong> 1 + (years × exposure factor × shelf-life decay),
-            capped at {1 + HNDL_MULTIPLIER_CAP}×. Decay is linear to zero at the data class&apos;s
-            shelf life, using the harvested corpus&apos;s average age — a simplification, not an
-            exponential curve.
+            <strong>Freshness weighting:</strong> {BREACH_SCENARIO_READER_METHOD.freshness}
           </p>
           <p>
-            <strong>CRQC probability:</strong> looked up from the Global Risk Institute 2025 expert
-            survey curve for the chosen planning horizon. This is a simple cumulative-probability
-            difference, not conditioned on a CRQC not already existing today — a simplification that
-            is negligible for near-term reference years.
+            <strong>HNDL amplification:</strong> {BREACH_SCENARIO_READER_METHOD.amplification}
+          </p>
+          <p>
+            <strong>CRQC probability:</strong> {BREACH_SCENARIO_READER_METHOD.probability}
           </p>
           <p>
             <strong>Expected annual loss:</strong> blends the classical and CRQC-conditional cases,
@@ -786,9 +853,10 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             exists.
           </p>
           <p>
-            <strong>Present value:</strong> the annual expected-loss delta is discounted as a level
-            annuity over the planning horizon — an approximation, not a year-by-year integration of
-            a growing risk curve.
+            <strong>Present value:</strong> {BREACH_SCENARIO_READER_METHOD.presentValue}
+          </p>
+          <p className="text-xs">
+            Figures are rounded for display; calculations retain the underlying values.
           </p>
           <p>
             <strong>Mosca&apos;s theorem:</strong> compares data shelf life + migration time against

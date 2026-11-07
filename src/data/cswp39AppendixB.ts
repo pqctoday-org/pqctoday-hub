@@ -66,12 +66,23 @@ export const CSWP39_APPENDIX_B_DEFINITIONS: CryptoAgilityDefinition[] = [
       'Crypto agility is a property that permits changing or upgrading cryptographic algorithms or parameters.',
     url: 'https://www.etsi.org/deliver/etsi_tr/103600_103699/103619/01.01.01_60/tr_103619v010101p.pdf',
   },
-  {
-    source: 'CARAF (Hohm et al.)',
-    citation:
-      'Hohm J, Heinemann A, Wiesmaier A (2022), Towards a Maturity Model for Crypto-Agility Assessment; CARAF: Crypto Agility Risk Assessment Framework, NIST CSWP 39 refs [38] and [44]',
-    definition:
-      'CARAF (Cryptographic Agility Risk Assessment Framework) frames crypto-agility as a risk-management capability: the organisational and technical readiness to identify cryptographic assets at risk, assess the impact and likelihood of cryptographic compromise, and execute timely migration to alternative algorithms or parameters as part of an ongoing maturity programme.',
-    url: 'https://doi.org/10.1093/cybsec/tyab013',
-  },
 ]
+
+/** Hub-authored teaching guidance, distinct from the definitions quoted above. */
+export const CSWP39_RELATED_TEACHING_SYNTHESIS = {
+  id: 'risk-and-maturity-teaching-note',
+  title: 'Hub teaching synthesis: risk and maturity',
+  text: 'Use an inventory of cryptographic dependencies, risk assessment and an ongoing migration programme to consider crypto agility in your role. Risk-assessment frameworks and maturity models can inform this work, but they are not interchangeable definitions of crypto agility.',
+  citation:
+    'Hub-authored guidance, not a quotation or a definition from NIST Appendix B. Related works are listed separately in CSWP 39 references [38] and [45]; Section 6.5 discusses adapting risk-management and maturity approaches.',
+  relatedResources: [
+    {
+      label: 'CARAF: Crypto Agility Risk Assessment Framework (reference [38])',
+      url: 'https://doi.org/10.1093/cybsec/tyab013',
+    },
+    {
+      label: 'Towards a Maturity Model for Crypto-Agility Assessment (reference [45])',
+      url: 'https://arxiv.org/abs/2202.07645',
+    },
+  ],
+}

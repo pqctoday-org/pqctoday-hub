@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach, vi } from 'vitest'
+import { act } from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PERSONAS } from '../../data/learningPersonas'
@@ -32,18 +33,25 @@ vi.mock('../ui/WhatsNewModal', () => ({
   getUnseenChangelogSections: () => [],
 }))
 
-function renderLayout(initialEntry = '/') {
-  return render(
-    <MemoryRouter initialEntries={[initialEntry]}>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<div>Home Page</div>} />
-          <Route path="/timeline" element={<div>Timeline Page</div>} />
-          <Route path="/threats" element={<div>Threats Page</div>} />
-        </Route>
-      </Routes>
-    </MemoryRouter>
-  )
+async function renderLayout(initialEntry = '/') {
+  let view!: ReturnType<typeof render>
+  // RTL render uses synchronous act; await the real lazy shell's React work
+  // before starting independent findBy assertions on its Suspense siblings.
+  // eslint-disable-next-line testing-library/no-unnecessary-act -- RTL render wraps sync act; this awaited scope drains the real React.lazy shell boundaries.
+  await act(async () => {
+    view = render(
+      <MemoryRouter initialEntries={[initialEntry]}>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<div>Home Page</div>} />
+            <Route path="/timeline" element={<div>Timeline Page</div>} />
+            <Route path="/threats" element={<div>Threats Page</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+  })
+  return view
 }
 
 describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
@@ -56,7 +64,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
   it('flag off: renders the legacy mobile nav row, not the new mobile header/bottom bar', async () => {
     mockUseIsMobileShell.mockReturnValue(false)
     usePersonaStore.getState().setPersona('executive')
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     expect(await screen.findByRole('navigation', { name: /main navigation/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Search' })).not.toBeInTheDocument()
   })
@@ -69,7 +77,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
   it('flag on, persona already chosen: renders the new mobile header and bottom bar, not the legacy chrome', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().setPersona('executive')
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Home/ })).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Learn/ })).toBeInTheDocument()
@@ -78,7 +86,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
   it('flag on, first run: the disclaimer sits in flow below the role picker, not fixed over it (UX-17)', async () => {
     useDisclaimerStore.getState().resetForTesting()
     mockUseIsMobileShell.mockReturnValue(true)
-    renderLayout('/')
+    await renderLayout('/')
     const picker = await screen.findByText("Who's asking?")
     const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
     expect(banner.className).not.toMatch(/\bfixed\b/)
@@ -91,7 +99,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     useDisclaimerStore.getState().resetForTesting()
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().setPersona('executive')
-    renderLayout('/')
+    await renderLayout('/')
     const board = await screen.findByText('Home Page')
     const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
     expect(banner.className).not.toMatch(/\bfixed\b/)
@@ -103,7 +111,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     useDisclaimerStore.getState().resetForTesting()
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().setPersona('executive')
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     const page = await screen.findByText('Timeline Page')
     const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
     expect(banner.className).not.toMatch(/\b(fixed|absolute)\b/)
@@ -119,7 +127,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     // full-viewport overlay and suppressed the header/nav entirely during
     // first run. Fixed to match the target design, which shows both.
     mockUseIsMobileShell.mockReturnValue(true)
-    renderLayout('/')
+    await renderLayout('/')
     expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
     // findBy*, not getBy*: the header and bottom bar are React.lazy() (see the
     // comment above the previous test), and they resolve as SEPARATE chunks
@@ -142,14 +150,14 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
   // role picker instead of the threat they were sent.
   it('flag on, no persona chosen: a /threats deep link shows the page, not the first-run picker', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
-    renderLayout('/threats?id=FIN-001')
+    await renderLayout('/threats?id=FIN-001')
     expect(await screen.findByText('Threats Page')).toBeInTheDocument()
     expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
   })
 
   it('flag on, no persona chosen: plain /threats shows the page too, with a prompt instead of the picker', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
-    renderLayout('/threats')
+    await renderLayout('/threats')
     expect(await screen.findByText('Threats Page')).toBeInTheDocument()
     expect(await screen.findByTestId('mobile-role-prompt')).toBeInTheDocument()
     expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
@@ -158,7 +166,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
   it('flag on, personalization explicitly skipped: shows the normal mobile chrome, not the picker again', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().skipPersonalization()
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
     expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
   })
@@ -171,7 +179,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
   it('flag off: <main> keeps its container/padding classes (desktop untouched)', async () => {
     mockUseIsMobileShell.mockReturnValue(false)
     usePersonaStore.getState().setPersona('executive')
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     const main = await screen.findByRole('main')
     expect(main.className).toContain('container')
     expect(main.className).toContain('px-4')
@@ -181,7 +189,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
   it('flag on: <main> contributes no container/padding classes — screens own their own spacing', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().skipPersonalization()
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     const main = await screen.findByRole('main')
     expect(main.className).not.toContain('container')
     expect(main.className).not.toContain('px-4')
@@ -203,7 +211,7 @@ describe('MainLayout, phone: the role picker is for the home page; every other p
     'first run on %s: the page and its text, the header, a one-line prompt, no picker',
     async (path) => {
       mockUseIsMobileShell.mockReturnValue(true)
-      renderLayout(path)
+      await renderLayout(path)
       expect(
         await screen.findByText(path === '/timeline' ? 'Timeline Page' : 'Threats Page')
       ).toBeInTheDocument()
@@ -215,7 +223,7 @@ describe('MainLayout, phone: the role picker is for the home page; every other p
 
   it('first run on the home page: the picker, and no prompt', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
-    renderLayout('/')
+    await renderLayout('/')
     expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
     expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
     expect(screen.queryByText('Home Page')).not.toBeInTheDocument()
@@ -223,7 +231,7 @@ describe('MainLayout, phone: the role picker is for the home page; every other p
 
   it('"Pick your role" opens the role sheet, and choosing a role keeps the page and is remembered', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     await userEvent.click(await screen.findByRole('button', { name: 'Pick your role' }))
     expect(await screen.findByText('Change role')).toBeInTheDocument()
     await userEvent.click(
@@ -240,7 +248,7 @@ describe('MainLayout, phone: the role picker is for the home page; every other p
 
   it('dismissing the prompt is remembered: the page stays and the prompt does not come back', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
-    const { unmount } = renderLayout('/timeline')
+    const { unmount } = await renderLayout('/timeline')
     await userEvent.click(await screen.findByRole('button', { name: 'Dismiss' }))
     expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
     expect(usePersonaStore.getState().hasSkippedPersonalization).toBe(true)
@@ -248,7 +256,7 @@ describe('MainLayout, phone: the role picker is for the home page; every other p
       '"hasSkippedPersonalization":true'
     )
     unmount()
-    renderLayout('/threats')
+    await renderLayout('/threats')
     expect(await screen.findByText('Threats Page')).toBeInTheDocument()
     expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
   })
@@ -256,13 +264,13 @@ describe('MainLayout, phone: the role picker is for the home page; every other p
   it('a visitor who has chosen a role, and the desktop layout, never see the prompt', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().setPersona('executive')
-    const { unmount } = renderLayout('/timeline')
+    const { unmount } = await renderLayout('/timeline')
     expect(await screen.findByText('Timeline Page')).toBeInTheDocument()
     expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
     unmount()
     usePersonaStore.getState().setPersona(null)
     mockUseIsMobileShell.mockReturnValue(false)
-    renderLayout('/timeline')
+    await renderLayout('/timeline')
     expect(await screen.findByText('Timeline Page')).toBeInTheDocument()
     expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
   })

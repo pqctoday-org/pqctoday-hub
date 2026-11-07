@@ -39,6 +39,10 @@ import type { SimRequest } from './policySim'
 import type { EditablePolicy, EditableRule } from './policyEditModel'
 
 interface Props {
+  contextOnly?: boolean
+  runError?: string | null
+  recordedContext?: string | null
+  illustrative?: boolean
   req: SimRequest
   onChange: (next: SimRequest) => void
   onRun: () => void
@@ -134,6 +138,10 @@ function remedyFor(rule: EditableRule | null): string | null {
 }
 
 export function RequestSimulator({
+  contextOnly = false,
+  runError,
+  recordedContext,
+  illustrative = false,
   req,
   onChange,
   onRun,
@@ -148,11 +156,11 @@ export function RequestSimulator({
   const patch = <K extends keyof SimRequest>(key: K, value: SimRequest[K]) =>
     onChange({ ...req, [key]: value })
   const denyStep =
-    engineVerdict?.kind === 'Deny'
+    !contextOnly && engineVerdict?.kind === 'Deny'
       ? engineVerdict.trace?.find((s) => s.effect === 'deny')
       : undefined
   const remedy =
-    engineVerdict?.kind === 'Deny'
+    !contextOnly && engineVerdict?.kind === 'Deny'
       ? remedyFor(denyStep ? ruleForTraceStep(policy, denyStep) : null)
       : null
 
@@ -325,9 +333,33 @@ export function RequestSimulator({
         disabled={running}
         data-tour="run-simulate-btn"
       >
-        <Play size={14} /> {running ? 'Running…' : 'Run through the pipeline'}
+        <Play size={14} />{' '}
+        {running
+          ? 'Running…'
+          : contextOnly
+            ? 'Run with loaded engine modules'
+            : 'Run through the pipeline'}
       </Button>
 
+      {runError && (
+        <p role="alert" className="text-sm text-destructive">
+          {runError}
+        </p>
+      )}
+      {illustrative && (
+        <p className="text-sm text-muted-foreground">
+          Illustrative graph path — per-rule engine trace unavailable. The engine result below is
+          separate.
+        </p>
+      )}
+      {recordedContext && (
+        <details className="text-xs text-muted-foreground">
+          <summary>Recorded request and engine context</summary>
+          <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-all">
+            {recordedContext}
+          </pre>
+        </details>
+      )}
       {engineVerdict && (
         <div
           className={cn(
@@ -356,7 +388,7 @@ export function RequestSimulator({
               {engineVerdict.kind}
             </span>
             <span className="ml-auto text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">
-              engine verdict
+              {contextOnly ? 'recorded engine-context result' : 'engine verdict'}
             </span>
           </div>
           <div className="mt-1.5 font-mono text-[12px] text-foreground">
@@ -390,7 +422,7 @@ export function RequestSimulator({
       )}
 
       {/* ── Precedence explainer + pass-grouped trace (A-grade review E1/E4) ── */}
-      {engineVerdict?.trace && engineVerdict.trace.length > 0 && (
+      {!contextOnly && engineVerdict?.trace && engineVerdict.trace.length > 0 && (
         <div className="space-y-2">
           <div
             data-tour="precedence-explainer"

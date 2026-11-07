@@ -46,6 +46,7 @@ export interface FlowToken {
 }
 
 interface Props {
+  readOnly?: boolean
   policy: EditablePolicy
   layout: Layout
   sim: SimResult | null
@@ -76,6 +77,7 @@ type DragState =
   | null
 
 export function GraphCanvas({
+  readOnly = false,
   policy,
   layout,
   sim,
@@ -416,11 +418,12 @@ export function GraphCanvas({
                   </span>
                   <Button
                     variant="ghost"
+                    disabled={readOnly}
                     aria-label={r.enabled ? 'disable rule' : 'enable rule'}
                     title={r.enabled ? 'disable rule' : 'enable rule'}
                     onClick={(e) => {
                       e.stopPropagation()
-                      onToggle(r.id)
+                      if (!readOnly) onToggle(r.id)
                     }}
                     onPointerDown={(e) => e.stopPropagation()}
                     className="flex h-[15px] w-[26px] items-center rounded-full p-0.5 hover:bg-transparent"

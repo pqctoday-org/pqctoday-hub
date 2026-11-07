@@ -19,38 +19,49 @@ describe('getDeadlineYear — binding (final) compliance year (RM-03)', () => {
   })
 })
 
-describe('computeGapAnalysis — "met" requires a real completion signal (RM-03)', () => {
-  const pastDeadline = [{ key: 'k', label: 'FW', year: 2020, source: 's' }]
-  const ms = (partial: Partial<UserMilestone>): UserMilestone => ({
+describe('computeGapAnalysis — planning history does not establish obligation satisfaction', () => {
+  const deadlines = [{ key: 'k', label: 'FW', year: 2020, source: 's' }]
+  const milestone: UserMilestone = {
     id: 'm',
-    label: 'Cert',
+    label: 'Unrelated certificate',
     year: 2019,
     category: 'Certification',
-    ...partial,
+    completed: true,
+  }
+  it.each([
+    { milestones: [] },
+    { milestones: [milestone] },
+    { milestones: [{ ...milestone, completed: false }] },
+    { milestones: [{ ...milestone, year: 2099, category: 'Assessment' }] },
+  ])('keeps satisfaction unknown without an explicit scope association', ({ milestones }) => {
+    const original = JSON.stringify(milestones)
+    const [gap] = computeGapAnalysis(deadlines, milestones)
+    expect(gap.status).toBe('unknown')
+    expect(gap.gap).toContain('no milestone-to-obligation scope or supporting checks')
+    expect(gap.deadlineYear).toBe(2020)
+    expect(JSON.stringify(milestones)).toBe(original)
   })
-
-  it('does NOT mark a passed deadline "completed" from a merely planned certification', () => {
-    const [g] = computeGapAnalysis(pastDeadline, [ms({ completed: false })])
-    expect(g.status).toBe('at-risk')
-    expect(g.gap).toMatch(/planned but not marked complete/)
-  })
-
-  it('marks "completed" only when the certification milestone is done', () => {
-    const [g] = computeGapAnalysis(pastDeadline, [ms({ completed: true })])
-    expect(g.status).toBe('completed')
-    expect(g.gap).toBe('Deadline met')
-  })
-
-  it('a passed deadline with no certification at all is at-risk', () => {
-    const [g] = computeGapAnalysis(pastDeadline, [])
-    expect(g.status).toBe('at-risk')
-    expect(g.gap).toMatch(/Deadline passed/)
-  })
-
-  it('a completed certification ahead of a future deadline reads as met early', () => {
-    const future = [{ key: 'k', label: 'FW', year: 2099, source: 's' }]
-    const [g] = computeGapAnalysis(future, [ms({ year: 2026, completed: true })])
-    expect(g.status).toBe('completed')
-    expect(g.gap).toMatch(/ahead of deadline/)
+  it('does not let one completed certificate satisfy two unrelated obligations', () => {
+    const original = { ...milestone, completed: true }
+    const gaps = computeGapAnalysis(
+      [
+        {
+          key: 'archive',
+          label: 'Sample archive obligation',
+          year: 2030,
+          source: 'Fictional source',
+        },
+        {
+          key: 'signing',
+          label: 'Sample signing obligation',
+          year: 2031,
+          source: 'Fictional source',
+        },
+      ],
+      [original]
+    )
+    expect(gaps.map((gap) => gap.status)).toEqual(['unknown', 'unknown'])
+    expect(gaps.map((gap) => gap.deadlineYear)).toEqual([2030, 2031])
+    expect(original.completed).toBe(true)
   })
 })

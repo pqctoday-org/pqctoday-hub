@@ -22,130 +22,181 @@ import { migrateDomainHref } from '@/utils/migrateLinks'
 
 type MigrationPhase = 'inventory' | 'hybrid' | 'full-pqc'
 
+type MaterialCategory = 'tlsCerts' | 'codeSigning' | 'caKeys' | 'dataEncryption' | 'apiAuth'
+type MaterialInput = Partial<
+  Record<MaterialCategory, { count: number; algorithm: string; keySize: number }>
+>
+type MaterialTarget = Partial<Record<MaterialCategory, { algorithm: string; keySize: number }>>
+const MATERIAL_CATEGORIES: { id: MaterialCategory; label: string; secret: boolean }[] = [
+  { id: 'tlsCerts', label: 'TLS-associated public material', secret: false },
+  { id: 'codeSigning', label: 'Code-signing public material', secret: false },
+  { id: 'caKeys', label: 'CA public material', secret: false },
+  { id: 'dataEncryption', label: 'AES symmetric-secret material', secret: true },
+  { id: 'apiAuth', label: 'API-auth public material', secret: false },
+]
+// eslint-disable-next-line react-refresh/only-export-components -- Pure sample accounting exposed for independent arithmetic checks.
+export function rotationMaterial(current: MaterialInput, target: MaterialTarget) {
+  const rows: {
+    id: MaterialCategory
+    label: string
+    secret: boolean
+    count: number
+    currentAlgorithm: string
+    targetAlgorithm: string
+    currentSize: number
+    targetSize: number
+    currentBytes: number
+    targetBytes: number
+  }[] = []
+  for (const category of MATERIAL_CATEGORIES) {
+    const before = current[category.id]
+    if (!before || !Number.isInteger(before.count) || before.count < 0) return null
+    const after = target[category.id]
+    if (
+      before.count > 0 &&
+      (!after ||
+        !Number.isFinite(before.keySize) ||
+        !Number.isFinite(after.keySize) ||
+        before.keySize < 0 ||
+        after.keySize < 0)
+    )
+      return null
+    rows.push({
+      ...category,
+      count: before.count,
+      currentAlgorithm: before.algorithm,
+      targetAlgorithm: after?.algorithm ?? 'Not assessed (zero entries)',
+      currentSize: before.keySize,
+      targetSize: after?.keySize ?? 0,
+      currentBytes: before.count ? before.count * before.keySize : 0,
+      targetBytes: before.count ? before.count * after!.keySize : 0,
+    })
+  }
+  const sum = (secret: boolean, field: 'currentBytes' | 'targetBytes') =>
+    rows.filter((row) => row.secret === secret).reduce((n, row) => n + row[field], 0)
+  const currentPublic = sum(false, 'currentBytes'),
+    targetPublic = sum(false, 'targetBytes')
+  const currentSecret = sum(true, 'currentBytes'),
+    targetSecret = sum(true, 'targetBytes')
+  return {
+    rows,
+    currentPublic,
+    targetPublic,
+    currentSecret,
+    targetSecret,
+    publicDelta: targetPublic - currentPublic,
+    publicCount: rows.filter((row) => !row.secret).reduce((n, row) => n + row.count, 0),
+    secretCount: rows.filter((row) => row.secret).reduce((n, row) => n + row.count, 0),
+    currentBytes: currentPublic + currentSecret,
+    targetBytes: targetPublic + targetSecret,
+    multiplier:
+      currentPublic + currentSecret > 0
+        ? (targetPublic + targetSecret) / (currentPublic + currentSecret)
+        : null,
+  }
+}
+
 export const KmsRotationPlanner: React.FC = () => {
   const [migrationPhase, setMigrationPhase] = useState<MigrationPhase>('inventory')
 
   const scenario = ENTERPRISE_SCENARIO
 
-  // Calculate storage impact
-  const storageAnalysis = useMemo(() => {
-    const current = Object.values(scenario.currentAlgorithms)
-
-    const currentTotalPublicKeyStorage = current.reduce(
-      (sum, cat) => sum + cat.count * cat.keySize,
-      0
-    )
-
-    const targetKeys = Object.keys(scenario.targetAlgorithms) as Array<
-      keyof typeof scenario.targetAlgorithms
-    >
-    const targetTotalPublicKeyStorage = targetKeys.reduce((sum, key) => {
-      const targetCat = scenario.targetAlgorithms[key]
-      const currentCatCount = scenario.currentAlgorithms[key].count
-      return sum + currentCatCount * targetCat.keySize
-    }, 0)
-
-    const storageIncrease = targetTotalPublicKeyStorage - currentTotalPublicKeyStorage
-    const storageMultiplier = targetTotalPublicKeyStorage / currentTotalPublicKeyStorage
-
-    return {
-      currentBytes: currentTotalPublicKeyStorage,
-      targetBytes: targetTotalPublicKeyStorage,
-      increaseBytes: storageIncrease,
-      multiplier: storageMultiplier,
+  const storageAnalysis = useMemo(
+    () => rotationMaterial(scenario.currentAlgorithms, scenario.targetAlgorithms),
+    [scenario]
+  )
+  const phaseContent = useMemo<Record<
+    MigrationPhase,
+    {
+      title: string
+      description: string
+      tasks: { name: string; status: 'done' | 'in-progress' | 'pending' }[]
     }
-  }, [scenario])
-
-  // Calculate bandwidth impact per rotation cycle
-  const bandwidthAnalysis = useMemo(() => {
-    const certDistributionOverhead = 300 * (1952 + 65 - 256) // TLS certs: hybrid pub key size delta
-    const codeSigningOverhead = 50 * (1952 - 65) // code signing: ML-DSA-65 vs ECDSA
-    const caKeyOverhead = 15 * (2592 - 512) // CA keys: ML-DSA-87 vs RSA-4096
-
-    const totalBandwidthIncrease = certDistributionOverhead + codeSigningOverhead + caKeyOverhead
-
-    return {
-      totalIncrease: totalBandwidthIncrease,
-      perCertIncrease: 1952 + 65 - 256,
-      totalCertsToRotate: 500,
-    }
-  }, [])
-
-  const phaseContent = useMemo<
-    Record<
-      MigrationPhase,
-      {
-        title: string
-        description: string
-        tasks: { name: string; status: 'done' | 'in-progress' | 'pending' }[]
-      }
-    >
-  >(
-    () => ({
-      inventory: {
-        title: 'Phase 1: Inventory & Assessment',
-        description:
-          'Catalog all 500 certificates and 10 HSMs. Identify quantum-vulnerable keys and establish baseline storage/bandwidth metrics. Map KMS provider capabilities.',
-        tasks: [
-          { name: 'Enumerate all 500 certificates by algorithm type', status: 'done' },
-          { name: 'Audit 10 HSM firmware versions for PQC readiness', status: 'done' },
-          {
-            name: 'Measure current key storage: ' + formatBytes(storageAnalysis.currentBytes),
-            status: 'done',
-          },
-          { name: 'Identify 400 quantum-vulnerable certificates (RSA + ECDSA)', status: 'done' },
-          {
-            name: 'Map KMS provider PQC capabilities (AWS: ML-DSA GA; GCP: signing GA, KEMs at the software level; Azure: planned)',
-            status: 'in-progress',
-          },
-          { name: 'Map compliance deadlines (CNSA 2.0: 2027, NIST: 2030)', status: 'in-progress' },
-        ],
-      },
-      hybrid: {
-        title: 'Phase 2: Hybrid Deployment',
-        description:
-          'Deploy hybrid (classical + PQC) certificates for TLS, upgrade HSM firmware, configure multi-cloud KMS for dual-key management.',
-        tasks: [
-          { name: 'Upgrade HSM firmware to PQC-capable version (10 HSMs)', status: 'in-progress' },
-          { name: 'Configure AWS KMS ML-DSA signing keys', status: 'in-progress' },
-          { name: 'Issue hybrid TLS certificates (300 servers)', status: 'pending' },
-          { name: 'Enable ML-KEM hybrid TLS for AWS KMS API transit', status: 'pending' },
-          {
-            name: 'Configure GCP Cloud KMS X-Wing key-encapsulation keys (software level)',
-            status: 'pending',
-          },
-          { name: 'Generate ML-DSA-65 code signing keys (50 keys)', status: 'pending' },
-          { name: 'Configure KMIP cross-provider key sync', status: 'pending' },
-          {
-            name:
-              'Projected storage: ' +
-              formatBytes(storageAnalysis.targetBytes) +
-              ' (' +
-              storageAnalysis.multiplier.toFixed(1) +
-              'x increase)',
-            status: 'pending',
-          },
-        ],
-      },
-      'full-pqc': {
-        title: 'Phase 3: Full PQC Migration',
-        description:
-          'Remove classical algorithm dependencies. All certificates use PQC or hybrid algorithms. KMS providers operate with PQC key types natively.',
-        tasks: [
-          { name: 'Revoke all pure-classical TLS certificates', status: 'pending' },
-          { name: 'Migrate CA intermediate keys to ML-DSA-87', status: 'pending' },
-          { name: 'Migrate Azure Key Vault to native PQC (target 2029)', status: 'pending' },
-          { name: 'Update API authentication to ML-DSA-44 (35 services)', status: 'pending' },
-          { name: 'Enable PQC-only wrapping across all KMS providers', status: 'pending' },
-          { name: 'Verify compliance: CNSA 2.0 + ANSSI/BSI requirements met', status: 'pending' },
-          { name: 'Decommission classical-only HSM partitions', status: 'pending' },
-        ],
-      },
-    }),
+  > | null>(
+    () =>
+      storageAnalysis
+        ? {
+            inventory: {
+              title: 'Phase 1: Inventory & Assessment',
+              description:
+                'Review the 500 sample material records and 10 fictional HSMs. Distinguish public keys, symmetric secrets and missing object/encoding inputs before estimating storage or transfer.',
+              tasks: [
+                {
+                  name: 'Enumerate 500 sample material records by algorithm and kind',
+                  status: 'done',
+                },
+                { name: 'Audit 10 HSM firmware versions for PQC readiness', status: 'done' },
+                {
+                  name:
+                    'Sum current sample material inputs: ' +
+                    formatBytes(storageAnalysis.currentBytes),
+                  status: 'done',
+                },
+                { name: 'Identify 400 asymmetric-public entries (RSA + ECDSA)', status: 'done' },
+                {
+                  name: 'Map KMS provider PQC capabilities (AWS: ML-DSA GA; GCP: signing GA, KEMs at the software level; Azure: planned)',
+                  status: 'in-progress',
+                },
+                {
+                  name: 'Map compliance deadlines (CNSA 2.0: 2027, NIST: 2030)',
+                  status: 'in-progress',
+                },
+              ],
+            },
+            hybrid: {
+              title: 'Phase 2: Hybrid Deployment',
+              description:
+                'Deploy hybrid (classical + PQC) certificates for TLS, upgrade HSM firmware, configure multi-cloud KMS for dual-key management.',
+              tasks: [
+                {
+                  name: 'Upgrade HSM firmware to PQC-capable version (10 HSMs)',
+                  status: 'in-progress',
+                },
+                { name: 'Configure AWS KMS ML-DSA signing keys', status: 'in-progress' },
+                { name: 'Issue hybrid TLS certificates (300 servers)', status: 'pending' },
+                { name: 'Enable ML-KEM hybrid TLS for AWS KMS API transit', status: 'pending' },
+                {
+                  name: 'Configure GCP Cloud KMS X-Wing key-encapsulation keys (software level)',
+                  status: 'pending',
+                },
+                { name: 'Generate ML-DSA-65 code signing keys (50 keys)', status: 'pending' },
+                { name: 'Configure KMIP cross-provider key sync', status: 'pending' },
+                {
+                  name:
+                    'Target sample material subtotal: ' +
+                    formatBytes(storageAnalysis.targetBytes) +
+                    ' (' +
+                    (storageAnalysis.multiplier?.toFixed(1) ?? 'Not assessed') +
+                    'x increase)',
+                  status: 'pending',
+                },
+              ],
+            },
+            'full-pqc': {
+              title: 'Phase 3: Full PQC Migration',
+              description:
+                'Remove classical algorithm dependencies. All certificates use PQC or hybrid algorithms. KMS providers operate with PQC key types natively.',
+              tasks: [
+                { name: 'Revoke all pure-classical TLS certificates', status: 'pending' },
+                { name: 'Migrate CA intermediate keys to ML-DSA-87', status: 'pending' },
+                { name: 'Migrate Azure Key Vault to native PQC (target 2029)', status: 'pending' },
+                { name: 'Update API authentication to ML-DSA-44 (35 services)', status: 'pending' },
+                { name: 'Enable PQC-only wrapping across all KMS providers', status: 'pending' },
+                {
+                  name: 'Verify compliance: CNSA 2.0 + ANSSI/BSI requirements met',
+                  status: 'pending',
+                },
+                { name: 'Decommission classical-only HSM partitions', status: 'pending' },
+              ],
+            },
+          }
+        : null,
     [storageAnalysis]
   )
 
-  const currentPhase = phaseContent[migrationPhase]
+  const currentPhase = phaseContent?.[migrationPhase]
+  if (!storageAnalysis || !currentPhase)
+    return <p>Sample material totals: Not assessed — missing category or profile inputs.</p>
 
   return (
     <div className="space-y-6">
@@ -153,30 +204,40 @@ export const KmsRotationPlanner: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">KMS Rotation Planner</h3>
         <p className="text-sm text-muted-foreground">
           Plan PQC key rotation for <strong>{scenario.name}</strong> &mdash; a fictional financial
-          services enterprise with {scenario.totalCertificates} certificates across{' '}
-          {scenario.hsmCount} HSMs and multiple cloud KMS providers.
+          services scenario with {storageAnalysis.publicCount + storageAnalysis.secretCount} sample
+          material records across {scenario.hsmCount} HSMs and multiple cloud KMS providers.
         </p>
       </div>
 
       {/* Enterprise overview */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="glass-panel p-3 text-center">
-          <div className="text-2xl font-bold text-foreground">{scenario.totalCertificates}</div>
-          <div className="text-xs text-muted-foreground">Certificates</div>
+          <div className="text-2xl font-bold text-foreground">
+            {storageAnalysis.publicCount + storageAnalysis.secretCount}
+          </div>
+          <div className="text-xs text-muted-foreground">Sample material records</div>
         </div>
         <div className="glass-panel p-3 text-center">
           <div className="text-2xl font-bold text-foreground">{scenario.hsmCount}</div>
           <div className="text-xs text-muted-foreground">HSMs</div>
         </div>
         <div className="glass-panel p-3 text-center border-destructive/20">
-          <div className="text-2xl font-bold text-destructive">400</div>
-          <div className="text-xs text-muted-foreground">Quantum-Vulnerable</div>
+          <div className="text-2xl font-bold text-destructive">{storageAnalysis.publicCount}</div>
+          <div className="text-xs text-muted-foreground">Asymmetric public entries</div>
         </div>
         <div className="glass-panel p-3 text-center border-success/20">
-          <div className="text-2xl font-bold text-success">100</div>
-          <div className="text-xs text-muted-foreground">Already Safe (AES)</div>
+          <div className="text-2xl font-bold text-success">{storageAnalysis.secretCount}</div>
+          <div className="text-xs text-muted-foreground">AES secret entries (not certificates)</div>
         </div>
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        The counts mix {storageAnalysis.publicCount} asymmetric-public entries and{' '}
+        {storageAnalysis.secretCount} symmetric secrets. Actual certificate counts, private-key
+        objects and protected encodings are not specified. Phase cards below are fictional narrative
+        statuses, not operations or checks performed by this planner; the size comparison is the
+        same selected scenario in every phase.
+      </p>
 
       {/* Phase selector */}
       <div className="flex flex-wrap gap-2">
@@ -239,70 +300,32 @@ export const KmsRotationPlanner: React.FC = () => {
       <div className="glass-panel p-6">
         <div className="flex items-center gap-2 mb-4">
           <HardDrive size={16} className="text-primary" />
-          <h4 className="text-sm font-bold text-foreground">Storage Impact Analysis</h4>
+          <h4 className="text-sm font-bold text-foreground">Sample material-size comparison</h4>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-xs text-muted-foreground mb-1">Current (Classical)</div>
+            <div className="text-xs text-muted-foreground mb-1">Current material inputs</div>
             <div className="text-lg font-bold text-foreground">
               {formatBytes(storageAnalysis.currentBytes)}
             </div>
           </div>
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
-            <div className="text-xs text-muted-foreground mb-1">After PQC Migration</div>
+            <div className="text-xs text-muted-foreground mb-1">Target material inputs</div>
             <div className="text-lg font-bold text-primary">
               {formatBytes(storageAnalysis.targetBytes)}
             </div>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-center">
-            <div className="text-xs text-muted-foreground mb-1">Increase</div>
+            <div className="text-xs text-muted-foreground mb-1">Material-size ratio</div>
             <div className="text-lg font-bold text-warning">
-              {storageAnalysis.multiplier.toFixed(1)}x
+              {storageAnalysis.multiplier?.toFixed(1) ?? 'Not assessed'}x
             </div>
           </div>
         </div>
 
         {/* Per-category breakdown */}
         <div className="space-y-2">
-          {(
-            [
-              {
-                label: 'TLS Certificates',
-                count: 300,
-                current: 'RSA-2048 (256 B)',
-                target: 'Hybrid (2,017 B)',
-                increase: '7.9x',
-              },
-              {
-                label: 'Code Signing',
-                count: 50,
-                current: 'ECDSA P-256 (65 B)',
-                target: 'ML-DSA-65 (1,952 B)',
-                increase: '30.0x',
-              },
-              {
-                label: 'CA Keys',
-                count: 15,
-                current: 'RSA-4096 (512 B)',
-                target: 'ML-DSA-87 (2,592 B)',
-                increase: '5.1x',
-              },
-              {
-                label: 'Data Encryption',
-                count: 100,
-                current: 'AES-256 (32 B)',
-                target: 'AES-256 (32 B)',
-                increase: '1.0x',
-              },
-              {
-                label: 'API Auth',
-                count: 35,
-                current: 'ECDSA P-256 (65 B)',
-                target: 'ML-DSA-44 (1,312 B)',
-                increase: '20.2x',
-              },
-            ] as const
-          ).map((cat) => (
+          {storageAnalysis.rows.map((cat) => (
             <div
               key={cat.label}
               className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 border border-border"
@@ -310,55 +333,66 @@ export const KmsRotationPlanner: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-xs font-bold text-foreground">{cat.label}</span>
-                  <span className="text-[10px] text-muted-foreground">({cat.count} keys)</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    ({cat.count} sample entries)
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-[10px]">
-                  <span className="text-destructive">{cat.current}</span>
+                  <span className="text-destructive">
+                    {cat.currentAlgorithm}: {cat.currentSize.toLocaleString()} B each
+                  </span>
                   <span className="text-muted-foreground">&rarr;</span>
-                  <span className="text-primary">{cat.target}</span>
+                  <span className="text-primary">
+                    {cat.targetAlgorithm}: {cat.targetSize.toLocaleString()} B each
+                  </span>
                 </div>
               </div>
               <span
                 className={`text-xs font-bold shrink-0 ${
-                  cat.increase === '1.0x' ? 'text-success' : 'text-warning'
+                  cat.currentBytes === cat.targetBytes ? 'text-success' : 'text-warning'
                 }`}
               >
-                {cat.increase}
+                {cat.currentBytes > 0
+                  ? `${(cat.targetBytes / cat.currentBytes).toFixed(1)}x`
+                  : 'Not assessed'}
               </span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Bandwidth Impact */}
-      <div className="glass-panel p-6">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="glass-panel p-6 space-y-3">
+        <div className="flex items-center gap-2">
           <Network size={16} className="text-primary" />
-          <h4 className="text-sm font-bold text-foreground">Bandwidth Impact per Rotation Cycle</h4>
+          <h4 className="text-sm font-bold">Material categories and unassessed transfer scope</h4>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-xs text-muted-foreground mb-1">Per-Cert Increase</div>
-            <div className="text-lg font-bold text-foreground">
-              +{bandwidthAnalysis.perCertIncrease.toLocaleString()} B
-            </div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-xs text-muted-foreground mb-1">Total Certs</div>
-            <div className="text-lg font-bold text-foreground">
-              {bandwidthAnalysis.totalCertsToRotate}
-            </div>
-          </div>
-          <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-center">
-            <div className="text-xs text-muted-foreground mb-1">Total BW Increase</div>
-            <div className="text-lg font-bold text-warning">
-              {formatBytes(bandwidthAnalysis.totalIncrease)}
-            </div>
-          </div>
-        </div>
-        <p className="text-[10px] text-muted-foreground">
-          Bandwidth increase calculated from public key size deltas during certificate distribution.
-          Actual TLS handshake overhead is higher due to signature sizes in certificate chains.
+        <p className="text-xs">
+          Current public material:{' '}
+          <strong>{storageAnalysis.currentPublic.toLocaleString()} B</strong>; target public
+          material: <strong>{storageAnalysis.targetPublic.toLocaleString()} B</strong>.
+        </p>
+        <p className="text-xs">
+          Current AES secrets: <strong>{storageAnalysis.currentSecret.toLocaleString()} B</strong>;
+          target AES secrets: <strong>{storageAnalysis.targetSecret.toLocaleString()} B</strong>.
+          Counted once, not as public keys.
+        </p>
+        <p className="text-xs">
+          Public-material delta across all {storageAnalysis.publicCount} public entries (including
+          API authentication): <strong>{storageAnalysis.publicDelta.toLocaleString()} B</strong>.
+        </p>
+        <p className="text-xs">
+          <strong>
+            Complete certificates / private-key storage / protected transfer bytes: Not assessed.
+          </strong>{' '}
+          These inputs omit key encodings, certificate/signature metadata, wrapped-secret objects,
+          recipients and copies. A KEM ciphertext alone is not protected distribution of an existing
+          DEK.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          This comparison changes traditional profiles as well as PQC constituents (for example
+          RSA-2048 to P-256 plus ML-DSA-65); its ratios are not solely PQC overhead. Use production
+          tools to inspect actual object layouts and rewrap/distribution behavior before estimating
+          storage or network traffic.
         </p>
       </div>
 
@@ -534,6 +568,6 @@ export const KmsRotationPlanner: React.FC = () => {
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`
 }

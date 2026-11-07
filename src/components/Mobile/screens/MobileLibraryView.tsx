@@ -108,21 +108,30 @@ export function MobileLibraryView() {
 
   // The open document lives in ?ref — the same param desktop reads — so a
   // shared /library?ref= link opens its sheet on a phone too, and Back closes it.
-  // ?q, ?purpose and ?qv seed the search box, door and quick view once, on arrival.
+  // Shareable filters are URL state, so reload and Back/Forward restore the list.
   const [params, setParams] = useSearchParams()
   const prefsOff = params.get('prefs') === 'off'
   const personaLabel = LIBRARY_PERSONAS.find((persona) => persona.id === selectedPersona)?.label
-  const [purpose, setPurpose] = useState<PurposeSelection>(() => {
-    const p = params.get('purpose')
-    return DOORS.some((d) => d.id === p) ? (p as PurposeSelection) : 'all'
-  })
-  // ?qv seeds the quick view once, as on desktop, so a link to the recent
-  // changes (/library?qv=new) opens filtered on a phone too.
-  const [quickView, setQuickView] = useState<QuickView>(() => {
-    const qv = params.get('qv')
-    return QUICK_VIEWS.some((v) => v.id === qv) ? (qv as QuickView) : 'all'
-  })
-  const [searchText, setSearchText] = useState(() => params.get('q') ?? '')
+  const purposeParam = params.get('purpose')
+  const purpose: PurposeSelection = DOORS.some((door) => door.id === purposeParam)
+    ? (purposeParam as PurposeSelection)
+    : 'all'
+  const quickViewParam = params.get('qv')
+  const quickView: QuickView = QUICK_VIEWS.some((view) => view.id === quickViewParam)
+    ? (quickViewParam as QuickView)
+    : 'all'
+  const searchText = params.get('q') ?? ''
+  const updateFilter = useCallback(
+    (key: 'purpose' | 'qv' | 'q', value: string) => {
+      const next = new URLSearchParams(params)
+      if (value === '' || (key !== 'q' && value === 'all')) next.delete(key)
+      else next.set(key, value)
+      if (next.toString() === params.toString()) return
+      // Discrete filters are revisitable; typing does not create one history entry per key.
+      setParams(next, { replace: key === 'q' })
+    },
+    [params, setParams]
+  )
   const detailRef = params.get('ref')
   const sortParam = params.get('sort')
   const sortBy = SORT_OPTIONS.find((o) => o === sortParam)
@@ -227,7 +236,7 @@ export function MobileLibraryView() {
   // The Certification starter set is a fixed list that role narrowing leaves alone
   // (see useLibraryPipeline), so while it is open the page does not claim the list
   // is narrowed for the role.
-  const roleNarrowingApplies = !prefsOff && quickView !== 'cert'
+  const roleNarrowingApplies = pipeline.personaPreferredActive && !searchText
 
   const displayedItems =
     quickView === 'new'
@@ -298,7 +307,8 @@ export function MobileLibraryView() {
               key={door.id}
               type="button"
               variant="ghost"
-              onClick={() => setPurpose(door.id)}
+              onClick={() => updateFilter('purpose', door.id)}
+              aria-pressed={active}
               className={cn(
                 'h-auto shrink-0 snap-start flex-col items-start gap-0.5 rounded-[11px] border px-3 py-2 text-left',
                 active
@@ -328,7 +338,8 @@ export function MobileLibraryView() {
         <input
           type="text"
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => updateFilter('q', e.target.value)}
+          aria-label="Search Library"
           placeholder='Search — try "ML-KEM", "FIPS 203", or "hybrid TLS"'
           className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
@@ -340,7 +351,7 @@ export function MobileLibraryView() {
             key={qv.id}
             type="button"
             variant="ghost"
-            onClick={() => setQuickView(qv.id)}
+            onClick={() => updateFilter('qv', qv.id)}
             aria-pressed={quickView === qv.id}
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',

@@ -1,4 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  currentKpiValueOrigin,
+  kpiValueOriginLabel,
+  type KpiValueOrigin,
+  restoredKpiValueOrigins,
+  isKpiValueAssessed,
+} from '@/components/PKILearning/common/executive/scorecardValueOrigin'
 import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -76,6 +83,8 @@ export interface KpiTrackerMarkdownInput {
   userWeights: Record<string, number>
   touchedIds: Set<string>
   observations?: Record<string, ScorecardObservation>
+  valueOrigins?: Record<string, KpiValueOrigin>
+  originalSavedInputs?: unknown
 }
 
 export function buildKpiTrackerMarkdown({
@@ -86,10 +95,13 @@ export function buildKpiTrackerMarkdown({
   userWeights,
   touchedIds,
   observations = {},
+  valueOrigins,
 }: KpiTrackerMarkdownInput): string {
   const scores = userScores
   let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md +=
+    'Scored-value coverage measures available worksheet values, not evidence verification or production readiness. Optional sample notes are learner supplied.\n\n'
 
   const ew = (d: (typeof dimensions)[number]) =>
     d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
@@ -99,7 +111,9 @@ export function buildKpiTrackerMarkdown({
   // Stops applying the instant the user touches the slider (even to 0),
   // per the scorecard's own touched-set — not a value-based `=== 0` guess.
   const isPending = (d: (typeof dimensions)[number]) =>
-    d.notYetScored === true && !touchedIds.has(d.id)
+    valueOrigins
+      ? !isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
+      : d.notYetScored === true && !touchedIds.has(d.id)
   let totalWeight = 0
   let weightedSum = 0
   for (const d of dimensions) {
@@ -115,22 +129,24 @@ export function buildKpiTrackerMarkdown({
   md +=
     coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
-      : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
+      : `**Overall Score: not available — scored-value coverage ${Math.round(coverage * 100)}%**\n\n`
   md += `Educational planning worksheet; entered values and catalogue status are not verified migration progress.\n\n`
   md += '## KPI Dimensions\n\n'
-  md += '| KPI | Score | Weight | Target | Framework Mappings | Description |\n'
-  md += '|-----|-------|--------|--------|---------------------|-------------|\n'
+  md += '| KPI | Score | Weight | Target | Framework Mappings | Description | Value origin |\n'
+  md += '|-----|-------|--------|--------|---------------------|-------------|--------------|\n'
   for (const d of dimensions) {
     if (d.disabled) {
-      md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
+      md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(valueOrigins?.[d.id] ?? currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
       continue
     }
-    const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? d.autoScore ?? 0}/100`
-    md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
+    const scoreCell = isPending(d)
+      ? `${scores[d.id] ?? d.autoScore ?? 0}/100 — not assessed for current use`
+      : `${scores[d.id] ?? d.autoScore ?? 0}/100`
+    md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(valueOrigins?.[d.id] ?? currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
   }
-  md += '\n## Measurement Evidence\n\n'
+  md += '\n## Sample Measurement Notes\n\n'
   md +=
-    '| KPI | Numerator | Denominator | Unit | Period | As of | Owner | Evidence | Verification |\n'
+    '| KPI | Numerator | Denominator | Unit | Period | As of | Sample owner | Sample reference | Learner-recorded review label |\n'
   md +=
     '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|\n'
   const cell = (value: string | undefined) =>
@@ -147,7 +163,7 @@ export function buildKpiTrackerMarkdown({
 
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+    '*Related reading: NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). This worksheet uses Hub teaching weights and coverage rules; that section does not prescribe its scoring method. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   return md
 }
@@ -163,17 +179,8 @@ interface SavedKpiTrackerInputs {
   userWeights: Record<string, number>
   touchedIds: string[]
   observations?: Record<string, ScorecardObservation>
-}
-
-/**
- * Scores the person actually set. An untouched KPI follows its live auto score,
- * so a value saved for it earlier must not outrank the one on screen.
- */
-function touchedScoresOf(saved: SavedKpiTrackerInputs | null | undefined): Record<string, number> {
-  const touched = new Set(saved?.touchedIds ?? [])
-  return Object.fromEntries(
-    Object.entries(saved?.userScores ?? {}).filter(([id]) => touched.has(id))
-  )
+  valueOrigins?: Record<string, KpiValueOrigin>
+  originalSavedInputs?: unknown
 }
 
 export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapOutput }) => {
@@ -230,9 +237,17 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   // The scorecard manages its own internal scores. We mirror them into local
   // state ONLY when they actually differ — blindly forwarding every sync feeds
   // back into the scorecard's auto-sync effect and causes an update storm.
-  const [userScores, setUserScores] = useState<Record<string, number>>(() =>
-    touchedScoresOf(savedInputs)
+  const [userScores, setUserScores] = useState<Record<string, number>>(
+    () => savedInputs?.userScores ?? {}
   )
+  const [valueOrigins, setValueOrigins] = useState<Record<string, KpiValueOrigin>>(() =>
+    restoredKpiValueOrigins(savedInputs?.userScores, savedInputs?.valueOrigins)
+  )
+  const [loadedSavedScores] = useState(() => savedInputs?.userScores)
+  const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
+  const handleValueOriginsChange = useCallback((next: Record<string, KpiValueOrigin>) => {
+    setValueOrigins((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next))
+  }, [])
   const lastSyncedRef = useRef<string>('')
   const handleScoreSnapshot = useCallback((scores: Record<string, number>) => {
     const signature = JSON.stringify(scores)
@@ -241,9 +256,8 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     setUserScores(scores)
   }, [])
 
-  // The scorecard's own touched-set is the authoritative "has the user really
-  // set this" signal — a manual KPI dragged to a deliberate 0 is touched, so
-  // it must not read as "not yet scored" here just because its value is 0.
+  // Persist actual learner edits independently of numeric values and origins.
+  // Deliberately choosing 0 is an edit; restoring a cached 0 is not.
   const [touchedIds, setTouchedIds] = useState<Set<string>>(
     () => new Set(savedInputs?.touchedIds ?? [])
   )
@@ -252,9 +266,11 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
    *  rule the score itself uses (locked, or not-yet-scored and untouched). */
   const scoredCount = useMemo(
     () =>
-      dimensions.filter((d) => !d.disabled && !(d.notYetScored === true && !touchedIds.has(d.id)))
-        .length,
-    [dimensions, touchedIds]
+      dimensions.filter(
+        (d) =>
+          !d.disabled && isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
+      ).length,
+    [dimensions, valueOrigins]
   )
   const handleTouchedChange = useCallback((ids: Set<string>) => {
     setTouchedIds(ids)
@@ -279,8 +295,18 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         userWeights,
         touchedIds,
         observations,
+        valueOrigins,
       }),
-    [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds, observations]
+    [
+      dimensions,
+      activePersona,
+      riskHistory,
+      userScores,
+      userWeights,
+      touchedIds,
+      observations,
+      valueOrigins,
+    ]
   )
 
   // Structured CSV (one row per KPI) built from the live dimensions — not the
@@ -291,6 +317,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     const header = [
       'KPI',
       'Score',
+      'Value origin',
       'Weight %',
       'Target',
       'Framework Mappings',
@@ -304,17 +331,18 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       'Owner',
       'Evidence',
       'Verification',
+      'Raw worksheet value (not an assessed score)',
+      'Original saved snapshot value',
+      'Current-use status',
+      'Included in overall calculation',
     ]
     const rows = dimensions.map((d) => {
-      const pending = d.notYetScored === true && !touchedIds.has(d.id)
-      const scoreCell = d.disabled
-        ? `locked — ${d.disabledReason ?? 'no data'}`
-        : pending
-          ? 'not yet scored'
-          : `${userScores[d.id] ?? d.autoScore ?? 0}/100`
+      const pending = !isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
+      const scoreCell = d.disabled || pending ? '' : String(userScores[d.id] ?? d.autoScore ?? 0)
       return [
         d.label,
         scoreCell,
+        kpiValueOriginLabel(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false), d.disabled),
         `${Math.round(ew(d) * 100)}%`,
         d.target ?? '',
         formatMappings(mappingsFor(d.id)),
@@ -328,10 +356,26 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         observations[d.id]?.owner ?? '',
         observations[d.id]?.evidenceReference ?? '',
         observations[d.id]?.verificationState ?? 'not-verified',
+        String(userScores[d.id] ?? d.autoScore ?? 0),
+        loadedSavedScores?.[d.id] ?? '',
+        d.disabled
+          ? 'Required inputs unavailable'
+          : pending
+            ? 'Not assessed for current use'
+            : 'Assessed sample value',
+        d.disabled || pending ? 'false' : 'true',
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, activePersona, userScores, userWeights, touchedIds, observations])
+  }, [
+    dimensions,
+    activePersona,
+    userScores,
+    userWeights,
+    observations,
+    valueOrigins,
+    loadedSavedScores,
+  ])
 
   // Everything that round-trips through `inputs`. Watched by the autosave
   // below instead of the markdown, because a value can change here without
@@ -347,8 +391,19 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         userWeights,
         touchedIds: Array.from(touchedIds),
         observations,
+        valueOrigins,
+        originalSavedInputs,
       }) satisfies SavedKpiTrackerInputs,
-    [personaOverride, startYear, userScores, userWeights, touchedIds, observations]
+    [
+      personaOverride,
+      startYear,
+      userScores,
+      userWeights,
+      touchedIds,
+      observations,
+      valueOrigins,
+      originalSavedInputs,
+    ]
   )
   const inputsSignature = useMemo(() => JSON.stringify(savedInputsSnapshot), [savedInputsSnapshot])
 
@@ -516,7 +571,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         // nothing read them back into the scorecard itself — it initialized
         // every slider from d.autoScore regardless of a restored save, so a
         // saved score looked reset on reload even though the write succeeded.
-        initialScores={savedInputs ? touchedScoresOf(savedInputs) : undefined}
+        initialScores={savedInputs?.userScores}
+        initialValueOrigins={savedInputs?.valueOrigins}
+        onValueOriginsChange={handleValueOriginsChange}
         initialWeights={savedInputs?.userWeights}
       />
 
@@ -536,8 +593,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
           {scoredCount} of {dimensions.length}
         </strong>{' '}
         here. The combined score is withheld until at least 70% of the weight of the KPIs that can
-        be scored has values. That coverage threshold is a display rule, not proof of readiness.
-        Weights are the per-persona defaults unless you have edited them.
+        be scored has values. That 70% coverage threshold is a Hub worksheet display rule, not a
+        NIST-prescribed maturity criterion or proof of readiness. Weights are the per-persona
+        defaults unless you have edited them.
       </p>
 
       <ExportableArtifact

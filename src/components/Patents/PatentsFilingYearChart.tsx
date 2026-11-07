@@ -20,8 +20,8 @@ interface YearRow {
 
 /**
  * Patents by filing year, stacked classical (bottom) + PQC (top) in the SAME
- * bar. Filing year (earliest application year) is 100% populated, so it shows
- * the real timeline. Stacking the two crypto classes makes the PQC-vs-classical
+ * bar. Only selected catalogue records with a usable filing year are plotted;
+ * missing years remain explicitly excluded. Stacking the two crypto classes makes the PQC-vs-classical
  * ratio — and how it shifts toward PQC over time — readable at a glance.
  *
  * Operates on the already-filtered `patents` (respects the PQC-only toggle): on
@@ -44,26 +44,28 @@ export function PatentsFilingYearChart({
   selectedYear = null,
   onYearClick,
 }: PatentsFilingYearChartProps) {
-  const { data, total } = useMemo(() => {
+  const { data, total, excluded } = useMemo(() => {
     const pqcByYear = new Map<number, number>()
     const classicalByYear = new Map<number, number>()
+    let total = 0
     for (const p of patents) {
-      if (p.filingYear <= 0) continue
+      if (!Number.isInteger(p.filingYear) || p.filingYear <= 0) continue
+      total += 1
       const map = isPqc(p) ? pqcByYear : classicalByYear
       map.set(p.filingYear, (map.get(p.filingYear) ?? 0) + 1)
     }
     const years = [...new Set([...pqcByYear.keys(), ...classicalByYear.keys()])]
-    if (years.length === 0) return { data: [] as YearRow[], total: 0 }
+    if (years.length === 0) return { data: [] as YearRow[], total: 0, excluded: patents.length }
     const min = Math.min(...years)
     const max = Math.max(...years)
     const data: YearRow[] = []
     for (let y = min; y <= max; y++) {
       data.push({ year: y, pqc: pqcByYear.get(y) ?? 0, classical: classicalByYear.get(y) ?? 0 })
     }
-    return { data, total: patents.length }
+    return { data, total, excluded: patents.length - total }
   }, [patents])
 
-  if (data.length === 0) return null
+  if (patents.length === 0) return null
 
   const hasClassical = data.some((d) => d.classical > 0)
 
@@ -91,88 +93,109 @@ export function PatentsFilingYearChart({
             </span>
           )}
           <span>
-            {total.toLocaleString()} patents · {data[0].year}–{data[data.length - 1].year}
+            {total.toLocaleString()} catalogue record{total === 1 ? '' : 's'} with filing year
+            {data.length > 0 && (
+              <>
+                {' '}
+                · {data[0].year}–{data[data.length - 1].year}
+              </>
+            )}
           </span>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={140}>
-        <BarChart data={data} margin={{ top: 6, right: 4, bottom: 0, left: -18 }}>
-          <XAxis
-            dataKey="year"
-            tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }}
-            axisLine={{ stroke: 'var(--color-border)' }}
-            tickLine={false}
-            interval={0}
-          />
-          <YAxis
-            tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }}
-            axisLine={false}
-            tickLine={false}
-            allowDecimals={false}
-            width={32}
-          />
-          <Tooltip
-            cursor={{ fill: 'var(--color-muted)', opacity: 0.3 }}
-            contentStyle={{
-              background: 'var(--color-popover)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            labelStyle={{ color: 'var(--color-foreground)', fontWeight: 600 }}
-            labelFormatter={(year) => `Filed ${year}`}
-            formatter={(value, name) => [`${value}`, name === 'pqc' ? 'PQC' : 'Classical']}
-          />
-          {/* Classical on the bottom, PQC stacked on top (rounded cap). Cells
+      {excluded > 0 && (
+        <p className="mb-2 text-xs text-muted-foreground">
+          {excluded.toLocaleString()} selected catalogue record{excluded === 1 ? ' has' : 's have'}{' '}
+          no usable filing year and {excluded === 1 ? 'is' : 'are'} excluded from the chart.
+        </p>
+      )}
+      <p className="mb-2 text-xs text-muted-foreground">
+        Selected catalogue records only; not a census of patent filings.
+      </p>
+      {data.length > 0 ? (
+        <ResponsiveContainer width="100%" height={140}>
+          <BarChart data={data} margin={{ top: 6, right: 4, bottom: 0, left: 0 }}>
+            <XAxis
+              dataKey="year"
+              tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }}
+              axisLine={{ stroke: 'var(--color-border)' }}
+              tickLine={false}
+              interval={0}
+            />
+            <YAxis
+              tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }}
+              axisLine={false}
+              tickLine={false}
+              allowDecimals={false}
+              width={32}
+            />
+            <Tooltip
+              cursor={{ fill: 'var(--color-muted)', opacity: 0.3 }}
+              contentStyle={{
+                background: 'var(--color-popover)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 8,
+                fontSize: 12,
+              }}
+              labelStyle={{ color: 'var(--color-foreground)', fontWeight: 600 }}
+              labelFormatter={(year) => `Filed ${year}`}
+              formatter={(value, name) => [`${value}`, name === 'pqc' ? 'PQC' : 'Classical']}
+            />
+            {/* Classical on the bottom, PQC stacked on top (rounded cap). Cells
               dim every bar except the selected year so the active filter is
               visible at a glance; clicking the selected year again clears it. */}
-          <Bar
-            dataKey="classical"
-            stackId="a"
-            fill="var(--color-muted-foreground)"
-            onClick={
-              onYearClick
-                ? (data: { payload?: YearRow }) => {
-                    if (data.payload)
-                      onYearClick(data.payload.year === selectedYear ? null : data.payload.year)
-                  }
-                : undefined
-            }
-            cursor={onYearClick ? 'pointer' : undefined}
-          >
-            {data.map((entry) => (
-              <Cell
-                key={entry.year}
-                fillOpacity={selectedYear != null && entry.year !== selectedYear ? 0.35 : 1}
-              />
-            ))}
-          </Bar>
-          <Bar
-            dataKey="pqc"
-            stackId="a"
-            fill="var(--color-primary)"
-            radius={[3, 3, 0, 0]}
-            onClick={
-              onYearClick
-                ? (data: { payload?: YearRow }) => {
-                    if (data.payload)
-                      onYearClick(data.payload.year === selectedYear ? null : data.payload.year)
-                  }
-                : undefined
-            }
-            cursor={onYearClick ? 'pointer' : undefined}
-          >
-            {data.map((entry) => (
-              <Cell
-                key={entry.year}
-                fillOpacity={selectedYear != null && entry.year !== selectedYear ? 0.35 : 1}
-                stroke={entry.year === selectedYear ? 'var(--color-foreground)' : undefined}
-                strokeWidth={entry.year === selectedYear ? 1 : 0}
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+            <Bar
+              dataKey="classical"
+              stackId="a"
+              fill="var(--color-muted-foreground)"
+              onClick={
+                onYearClick
+                  ? (data: { payload?: YearRow }) => {
+                      if (data.payload)
+                        onYearClick(data.payload.year === selectedYear ? null : data.payload.year)
+                    }
+                  : undefined
+              }
+              cursor={onYearClick ? 'pointer' : undefined}
+            >
+              {data.map((entry) => (
+                <Cell
+                  key={entry.year}
+                  fillOpacity={selectedYear != null && entry.year !== selectedYear ? 0.35 : 1}
+                />
+              ))}
+            </Bar>
+            <Bar
+              dataKey="pqc"
+              stackId="a"
+              fill="var(--color-primary)"
+              radius={[3, 3, 0, 0]}
+              onClick={
+                onYearClick
+                  ? (data: { payload?: YearRow }) => {
+                      if (data.payload)
+                        onYearClick(data.payload.year === selectedYear ? null : data.payload.year)
+                    }
+                  : undefined
+              }
+              cursor={onYearClick ? 'pointer' : undefined}
+            >
+              {data.map((entry) => (
+                <Cell
+                  key={entry.year}
+                  fillOpacity={selectedYear != null && entry.year !== selectedYear ? 0.35 : 1}
+                  stroke={entry.year === selectedYear ? 'var(--color-foreground)' : undefined}
+                  strokeWidth={entry.year === selectedYear ? 1 : 0}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          No usable filing years in the selected catalogue records.
+        </p>
+      )}
     </div>
   )
 }

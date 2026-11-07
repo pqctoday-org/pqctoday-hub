@@ -87,6 +87,11 @@ export const AccelerationModelExplainer: React.FC<AccelerationModelExplainerProp
           <ModelVisual id={model.id} />
         </div>
 
+        <p className="text-xs text-muted-foreground">
+          Authored fit guidance for the illustrated model and workload; not a universal
+          hardware-capability verdict or a benchmark of every implementation. A “No” rating does not
+          establish mathematical impossibility.
+        </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {FIT_LABELS.map((f) => {
             const style = FIT_STYLE[model.fit[f.key]]

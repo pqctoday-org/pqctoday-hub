@@ -62,13 +62,13 @@ describe('CSWP39AgilityExplorer URL state', () => {
     const spy = mountExplorer({})
     fireEvent.click(screen.getByRole('button', { name: /Identify Gaps/ }))
     expect(spy).toHaveBeenLastCalledWith({ step: 'identify-gaps' }, undefined)
-    fireEvent.click(screen.getByRole('tab', { name: 'Maturity self-check' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Explore maturity tiers' }))
     expect(spy).toHaveBeenLastCalledWith({ cswpview: 'maturity' }, undefined)
   })
 
   it('opens the maturity tier from ?mtier= and writes a tier pick', () => {
     const spy = mountExplorer({ cswpview: 'maturity', mtier: '4' })
-    expect(screen.getByText('Top tier reached')).toBeInTheDocument()
+    expect(screen.getByText('Highest tier in this overview')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Tier 1/ }))
     expect(spy).toHaveBeenLastCalledWith({ mtier: '1' }, undefined)
   })
@@ -97,8 +97,8 @@ describe('CSWP39AgilityExplorer URL state', () => {
         <CSWP39AgilityExplorer />
       </MemoryRouter>
     )
-    fireEvent.click(screen.getByRole('tab', { name: 'Maturity self-check' }))
-    expect(screen.getByRole('tab', { name: 'Maturity self-check' })).toHaveAttribute(
+    fireEvent.click(screen.getByRole('tab', { name: 'Explore maturity tiers' }))
+    expect(screen.getByRole('tab', { name: 'Explore maturity tiers' })).toHaveAttribute(
       'aria-selected',
       'true'
     )

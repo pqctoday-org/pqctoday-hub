@@ -14,9 +14,11 @@ import { useFocusTrap } from '@/hooks/useFocusTrap'
 export function SimExecWalkthroughComplete({
   onClose,
   brief = false,
+  intro = false,
 }: {
   onClose: () => void
   brief?: boolean
+  intro?: boolean
 }) {
   // 09-28 nav remediation (WP3.5): same modal contract as the rest of the sim —
   // dialog semantics, focus trapped and returned, Escape closes.
@@ -59,22 +61,29 @@ export function SimExecWalkthroughComplete({
               id="sim-exec-walkthrough-complete-heading"
               className="text-lg font-semibold text-foreground"
             >
-              {brief ? 'Executive phone brief complete' : 'You’ve seen the full program'}
+              {intro
+                ? 'Short introduction complete'
+                : brief
+                  ? 'Executive phone brief complete'
+                  : 'You’ve seen the full program'}
             </h2>
             <p className="text-xs text-muted-foreground">
-              {brief
-                ? 'Chapter summaries and sample-document notices.'
-                : 'Executive overview complete — end to end, from mandate to closure.'}
+              {intro
+                ? 'You have viewed selected resources on the threat and early planning.'
+                : brief
+                  ? 'Chapter summaries and sample-document notices.'
+                  : 'Executive overview complete — end to end, from mandate to closure.'}
             </p>
           </div>
         </div>
         <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
-          {brief && (
+          {!intro && brief && (
             <>You followed the phone brief. Use the desktop overview for full resource pages. </>
           )}
-          You’ve explored the migration decisions, from the initial mandate to future verification
-          and handover.{' '}
-          {!brief && (
+          {intro
+            ? 'Continue with the Executive Overview or use the board to practise sample decisions. '
+            : 'You’ve explored the migration decisions, from the initial mandate to future verification and handover. '}
+          {!intro && !brief && (
             <>
               The worked-example documents are available in your Command Center for further
               practice.{' '}

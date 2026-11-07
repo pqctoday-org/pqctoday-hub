@@ -5,6 +5,7 @@ import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils'
 import type { ExecutionMode } from '../PlaygroundContext'
 import { hkdfExtract } from '../../../utils/webCrypto'
+import { kemSelectionUnavailableReason } from '../kemSelectionSupport'
 
 /**
  * Key-pair identity shared by `pk-<base>` and `sk-<base>` (see useKeyGeneration).
@@ -118,6 +119,22 @@ export const useKemOperations = ({
     const start = performance.now()
 
     try {
+      const unavailable = kemSelectionUnavailableReason({
+        keyStore,
+        primaryId: type === 'encapsulate' ? selectedEncKeyId : selectedDecKeyId,
+        secondaryId: type === 'encapsulate' ? secondaryEncKeyId : secondaryDecKeyId,
+        operation: type,
+        isHybridMode,
+        executionMode,
+        wasmLoaded,
+      })
+      if (unavailable) {
+        setKemDecapsulationResult(null)
+        setDecapsulatedSecret('')
+        setPqcRecoveredSecret('')
+        setClassicalRecoveredSecret('')
+        throw new Error(unavailable)
+      }
       // 1. Identify the key involved
       let selectedKey: Key | undefined
       if (type === 'encapsulate') selectedKey = keyStore.find((k) => k.id === selectedEncKeyId)

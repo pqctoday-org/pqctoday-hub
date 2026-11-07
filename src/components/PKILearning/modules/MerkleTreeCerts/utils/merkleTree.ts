@@ -98,7 +98,7 @@ export function serializeCert(cert: CertLeaf): string {
  * Build a complete binary Merkle tree from certificate leaves.
  *
  * If the number of leaves is not a power of two, the last leaf is duplicated
- * to fill the tree (standard Merkle tree padding).
+ * to fill the tree (visualization-specific padding, not RFC 9162 log construction).
  *
  * Returns the root node (with full tree linked via left/right) and a flat
  * array of all levels (levels[0] = leaves, levels[last] = [root]).
@@ -358,7 +358,7 @@ export function getConsistencyProof(
 }
 
 // ---------------------------------------------------------------------------
-// RFC 9162 §2.1.3 compressed consistency proof
+// RFC 9162 §2.1.4.1 compressed consistency proof
 // ---------------------------------------------------------------------------
 
 export interface Rfc9162ConsistencyProof {
@@ -367,7 +367,7 @@ export interface Rfc9162ConsistencyProof {
   oldRoot: string
   newRoot: string
   /**
-   * Minimal sibling-hash list per RFC 9162 §2.1.3 SubProof(m, n, b).
+   * Minimal sibling-hash list per RFC 9162 §2.1.4.1 SubProof(m, n, b).
    * Each entry is a 32-byte hash (hex-encoded) from the new tree that an
    * auditor needs — together with the old root — to recompute the new root.
    */
@@ -404,7 +404,7 @@ async function mth(leaves: string[]): Promise<string> {
 }
 
 /**
- * RFC 9162 §2.1.3 SubProof(m, D[n], b):
+ * RFC 9162 §2.1.4.1 SubProof(m, D[n], b):
  *   The minimal list of node hashes that, together with the old root (when b=true)
  *   or the current running hash (when b=false), allow reconstructing the new root.
  *
@@ -433,13 +433,12 @@ async function subProof(m: number, leaves: string[], b: boolean): Promise<string
     // Old tree spans both subtrees
     const leftRoot = await mth(leaves.slice(0, k))
     const rightProof = await subProof(m - k, leaves.slice(k), false)
-    if (b) return [...rightProof] // left root is the known old sub-root; omit
-    return [leftRoot, ...rightProof]
+    return [...rightProof, leftRoot]
   }
 }
 
 /**
- * Compute the RFC 9162 §2.1.3 consistency proof between two trees.
+ * Compute the RFC 9162 §2.1.4.1 consistency proof between two trees.
  *
  * Returns the minimal set of hashes (typically O(log n)) an auditor needs
  * to verify that levels1 (old tree) is a prefix of levels2 (new tree).
@@ -453,17 +452,20 @@ export async function getConsistencyProofRFC9162(
   const oldRoot = levels1[levels1.length - 1][0].hash
   const newRoot = levels2[levels2.length - 1][0].hash
 
+  if (!oldLeaves.length || oldLeaves.length > newLeaves.length) {
+    throw new Error('Consistency requires nonempty trees in nondecreasing size order')
+  }
   const proof = await subProof(oldLeaves.length, newLeaves, true)
 
-  // Verify: T1's root must equal MTH(newLeaves[0..oldSize-1]).
-  // This confirms the old tree is a prefix of the new tree.
-  let valid = false
-  try {
-    const embeddedOldRoot = await mth(newLeaves.slice(0, oldLeaves.length))
-    valid = embeddedOldRoot === oldRoot
-  } catch {
-    valid = false
-  }
+  // Reconstruct both advertised roots from the transmitted proof. A matching
+  // old subtree alone does not authenticate the advertised new root.
+  const valid = await verifyConsistencyProofRFC9162({
+    oldSize: oldLeaves.length,
+    newSize: newLeaves.length,
+    oldRoot,
+    newRoot,
+    proof,
+  })
 
   return {
     oldSize: oldLeaves.length,
@@ -473,6 +475,58 @@ export async function getConsistencyProofRFC9162(
     proof,
     valid,
   }
+}
+
+/** Verify RFC 9162 §2.1.4.2 against caller-supplied tree heads.
+ * Tree-head signature/trust checking is separate. Equal sizes require equal
+ * roots and an empty path. Empty-old-tree policy is outside this demo.
+ */
+export async function verifyConsistencyProofRFC9162(
+  input: Omit<Rfc9162ConsistencyProof, 'valid'>
+): Promise<boolean> {
+  const { oldSize, newSize, oldRoot, newRoot, proof } = input
+  const isHash = (value: string) => /^[0-9a-f]{64}$/.test(value)
+  if (
+    !Number.isSafeInteger(oldSize) ||
+    !Number.isSafeInteger(newSize) ||
+    oldSize < 1 ||
+    oldSize > newSize ||
+    !isHash(oldRoot) ||
+    !isHash(newRoot) ||
+    !proof.every(isHash)
+  )
+    return false
+  if (oldSize === newSize) return proof.length === 0 && oldRoot === newRoot
+  if (!proof.length) return false
+  // Arithmetic division avoids 32-bit truncation of valid tree sizes.
+  let fn = oldSize - 1
+  let sn = newSize - 1
+  const path = [...proof]
+  let power = 1
+  while (power < oldSize) power *= 2
+  if (power === oldSize) path.unshift(oldRoot)
+  while (fn % 2 === 1) {
+    fn = Math.floor(fn / 2)
+    sn = Math.floor(sn / 2)
+  }
+  let fr = path[0]
+  let sr = path[0]
+  for (const hash of path.slice(1)) {
+    if (sn === 0) return false
+    if (fn % 2 === 1 || fn === sn) {
+      fr = await hashPair(hash, fr)
+      sr = await hashPair(hash, sr)
+      while (fn !== 0 && fn % 2 === 0) {
+        fn = Math.floor(fn / 2)
+        sn = Math.floor(sn / 2)
+      }
+    } else {
+      sr = await hashPair(sr, hash)
+    }
+    fn = Math.floor(fn / 2)
+    sn = Math.floor(sn / 2)
+  }
+  return sn === 0 && fr === oldRoot && sr === newRoot
 }
 
 // ---------------------------------------------------------------------------

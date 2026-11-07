@@ -60,7 +60,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Privacy',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'Pediatric records have 25-year true retention. Genomic data is effectively lifetime (100+ years). Both exceed the CRQC timeline, making them immediate HNDL targets.',
+        'This fictional scenario uses 25 years for pediatric records and a century-long confidentiality assumption for genomic data. These are sample planning inputs, not universal requirements. Compare those assumptions with migration time and the scenario’s quantum-threat horizon.',
       config: { step: 2 },
     },
     {

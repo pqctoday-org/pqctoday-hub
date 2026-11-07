@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { revisionAuthorshipLabel, revisionReviewLabel } from './revisionProvenance'
 import { useMemo } from 'react'
 import { GitMerge, Bot, ChevronRight, History } from 'lucide-react'
 import { useRevisions, byDomain, type RevisionEntry } from '@/hooks/useRevisions'
@@ -31,11 +32,14 @@ function UpdateRow({ r }: { r: RevisionEntry }) {
   return (
     <div className="flex items-start gap-2 py-1.5">
       {r.authored_by_llm ? (
-        <Bot className="w-3.5 h-3.5 mt-0.5 shrink-0 text-accent" aria-label="LLM-authored" />
+        <Bot
+          className="w-3.5 h-3.5 mt-0.5 shrink-0 text-accent"
+          aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
+        />
       ) : (
         <GitMerge
-          className="w-3.5 h-3.5 mt-0.5 shrink-0 text-status-success"
-          aria-label="Human-reviewed"
+          className="w-3.5 h-3.5 mt-0.5 shrink-0 text-muted-foreground"
+          aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
         />
       )}
       <div className="min-w-0 flex-1">
@@ -43,7 +47,7 @@ function UpdateRow({ r }: { r: RevisionEntry }) {
           {r.scope_summary || r.change_type.replace(/_/g, ' ')}
         </p>
         <p className="text-xs text-muted-foreground">
-          {r.reviewer_display} · {formatDate(r.merge_timestamp)}
+          {revisionReviewLabel(r)} · {formatDate(r.merge_timestamp)}
         </p>
       </div>
     </div>

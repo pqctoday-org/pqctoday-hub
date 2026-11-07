@@ -150,7 +150,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         const hex = toHex(sig)
         setSignatureHex(hex)
 
-        // Mocked breakdown parsing for structural exploration
+        // Raw excerpts only: no signature fields are parsed here.
         setSignatureBreakdown({
           totalSize: sig.length,
           // Real level count from the parameter set's own hierarchy — this
@@ -539,17 +539,24 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   </pre>
                 </div>
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-muted-foreground">Decoded Format</span>
+                  <span className="text-xs font-bold text-muted-foreground">
+                    Raw signature excerpts (not decoded)
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    These are arbitrary slices of the signature bytes, not parsed LMOTS fields or
+                    authentication-path nodes. The level count comes from the selected parameter
+                    set, not a decoded signature prefix.
+                  </p>
                   <div className="bg-background border border-border rounded p-3 text-[10px] space-y-1 font-mono">
                     <div className="text-primary font-bold">
-                      » Nspk (Levels): {signatureBreakdown.levels}
+                      Selected hierarchy levels (parameter set): {signatureBreakdown.levels}
                     </div>
                     <div className="text-muted-foreground mt-2 border-t border-border pt-1">
-                      LMOTS Payload Signature
+                      First up to 50 signature bytes (hex excerpt)
                     </div>
                     <div className="break-all opacity-70 mb-2">{signatureBreakdown.lmsPayload}</div>
                     <div className="text-muted-foreground border-t border-border pt-1">
-                      HSS Authentication Path (Nodes)
+                      Next up to 50 signature bytes (hex excerpt)
                     </div>
                     <div className="break-all opacity-70">{signatureBreakdown.authPath}</div>
                   </div>

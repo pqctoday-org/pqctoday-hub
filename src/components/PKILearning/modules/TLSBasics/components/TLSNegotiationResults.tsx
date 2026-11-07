@@ -38,7 +38,19 @@ const getCaTypeFromPem = (caPem: string | undefined): string => {
 }
 
 export const TLSNegotiationResults: React.FC = () => {
-  const { results, clientConfig, serverConfig, addRunToHistory } = useTLSStore()
+  const {
+    results,
+    clientConfig: draftClientConfig,
+    serverConfig: draftServerConfig,
+    runInputs,
+    addRunToHistory,
+  } = useTLSStore()
+  const clientConfig = runInputs?.clientConfig ?? draftClientConfig
+  const serverConfig = runInputs?.serverConfig ?? draftServerConfig
+  const inputsChanged =
+    !!runInputs &&
+    (JSON.stringify(draftClientConfig) !== JSON.stringify(runInputs.clientConfig) ||
+      JSON.stringify(draftServerConfig) !== JSON.stringify(runInputs.serverConfig))
   const lastRecordedRef = useRef<string | null>(null)
 
   // Record run to history when simulation completes - MUST be before early return
@@ -209,6 +221,12 @@ export const TLSNegotiationResults: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full">
+      {inputsChanged && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Settings changed—run again to test them. These results retain the settings used by the
+          previous run.
+        </p>
+      )}
       {/* Status Banner */}
       <div
         className={clsx(

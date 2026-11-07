@@ -122,7 +122,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'File integrity verification',
     quantumStatus: 'safe',
     recommendation:
-      'No action required — SHA-256 provides 128-bit post-quantum collision resistance',
+      'Assess collision resistance separately from preimage resistance. The classical birthday bound is not a universal quantum strength estimate; compare the attack model, memory and circuit resources for this integrity use case.',
     infrastructureLayer: 'SecSoftware',
   },
   {

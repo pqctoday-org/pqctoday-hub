@@ -89,6 +89,11 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
   const [stage, setStage] = useState<Stage>('idle')
   const [error, setError] = useState<string>('')
   const [result, setResult] = useState<StageResult>({})
+  const [resultInputs, setResultInputs] = useState<{
+    alg: CmsAlg
+    useHsm: boolean
+    payload: string
+  } | null>(null)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // Append a pending entry and return a closer that records duration on
@@ -134,6 +139,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
 
   const reset = () => {
     setStage('idle')
+    setResultInputs(null)
     setError('')
     setResult({})
     setLogEntries([])
@@ -142,6 +148,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
   const run = async () => {
     const svc = serviceRef.current
     if (!svc) return
+    setResultInputs({ alg, useHsm, payload })
     setError('')
     setResult({})
     setLogEntries([])
@@ -218,7 +225,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
   // of the composite signature's two halves (ML-DSA + classical) when the
   // user selects a composite OID. Sizes per FIPS 204 Table 1 + draft-19 §6.
   const compositeProfile = useMemo(() => {
-    switch (alg) {
+    switch (resultInputs?.alg ?? alg) {
       case 'id-MLDSA44-RSA2048-PSS-SHA256':
         return {
           mldsaSize: 2420,
@@ -246,7 +253,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
       default:
         return null
     }
-  }, [alg])
+  }, [alg, resultInputs])
 
   const busy = stage !== 'idle' && stage !== 'done' && stage !== 'error'
 
@@ -350,6 +357,15 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
 
         {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
 
+        {resultInputs &&
+          (resultInputs.alg !== alg ||
+            resultInputs.useHsm !== useHsm ||
+            resultInputs.payload !== payload) && (
+            <p role="status" className="text-sm text-status-warning">
+              Selection changed—run again. Displayed results belong to {resultInputs.alg} in{' '}
+              {resultInputs.useHsm ? 'HSM' : 'software'} mode with the previous payload.
+            </p>
+          )}
         {error && <ErrorAlert message={error} onRetry={run} />}
       </div>
 
@@ -361,14 +377,21 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
             done={Boolean(result.keyPem)}
             running={stage === 'genkey'}
           >
-            {result.keyPem ? <KVRow label="Algorithm" value={alg} /> : null}
+            {result.keyPem ? <KVRow label="Algorithm" value={resultInputs?.alg ?? alg} /> : null}
             {result.keyPem ? (
-              <KVRow label="Mode" value={useHsm ? 'HSM (pkcs11:)' : 'Software (PEM)'} />
+              <KVRow
+                label="Mode"
+                value={(resultInputs?.useHsm ?? useHsm) ? 'HSM (pkcs11:)' : 'Software (PEM)'}
+              />
             ) : null}
             {result.keyPem ? (
               <KVRow
                 label="Private key"
-                value={useHsm ? 'resident in softhsmv3' : `${sizes.keyBytes} chars (PEM)`}
+                value={
+                  (resultInputs?.useHsm ?? useHsm)
+                    ? 'resident in softhsmv3'
+                    : `${sizes.keyBytes} chars (PEM)`
+                }
               />
             ) : null}
             {result.pubPem ? (

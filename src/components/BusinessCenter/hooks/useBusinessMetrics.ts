@@ -306,7 +306,7 @@ export interface BusinessMetrics {
 
   // Compliance
   trackedFrameworks: TrackedFramework[]
-  complianceGapCount: number
+  pqcFrameworkReviewCount: number
 
   // Governance
   governanceModules: ModuleProgressInfo[]
@@ -744,9 +744,9 @@ export function useBusinessMetrics(): BusinessMetrics {
       })
       .sort((a, b) => (a.daysUntilDeadline ?? Infinity) - (b.daysUntilDeadline ?? Infinity))
 
-    const complianceGapCount = trackedFrameworks.filter(
-      (f) => f.requiresPQC && assessmentStore.migrationStatus !== 'started'
-    ).length
+    // Tracked catalogue flags identify review prompts, not assessed compliance gaps.
+    // A migration-status selection cannot establish that a framework is satisfied.
+    const pqcFrameworkReviewCount = trackedFrameworks.filter((f) => f.requiresPQC).length
 
     // ── Governance modules ──────────────────────────────────────
     const governanceModules = GOVERNANCE_MODULES.map((id) => getModuleProgress(moduleStore, id))
@@ -852,7 +852,9 @@ export function useBusinessMetrics(): BusinessMetrics {
       assessmentStore.assessmentStatus === 'not-started' &&
       trackedFrameworks.length === 0 &&
       resolvedProducts.length === 0 &&
+      allDocs.length === 0 &&
       !execLearningStarted &&
+      !grcLearningStarted &&
       !governanceStarted
 
     return {
@@ -866,7 +868,7 @@ export function useBusinessMetrics(): BusinessMetrics {
       completedAt: assessmentStore.completedAt,
 
       trackedFrameworks,
-      complianceGapCount,
+      pqcFrameworkReviewCount,
 
       governanceModules,
       cryptoAgility: assessmentStore.cryptoAgility || 'Not assessed',

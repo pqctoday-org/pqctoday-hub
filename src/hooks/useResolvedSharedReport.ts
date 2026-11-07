@@ -166,10 +166,16 @@ export function sampleReportView(livePersona: PersonaId | null): SharedReportVie
  * same-route query change (e.g. tapping a second shared link without
  * navigating away first, which React Router does not remount for).
  */
-export function useResolvedSharedReport(livePersona: PersonaId | null): SharedReportView | null {
+export function useResolvedSharedReportState(livePersona: PersonaId | null): {
+  view: SharedReportView | null
+  pending: boolean
+} {
   const [searchParams] = useSearchParams()
   const paramsKey = searchParams.toString()
-  const [sharedView, setSharedView] = useState<SharedReportView | null>(null)
+  const [resolution, setResolution] = useState<{
+    key: string
+    view: SharedReportView | null
+  } | null>(null)
   const resolvedKeyRef = useRef<string | null>(null)
   const livePersonaRef = useRef(livePersona)
   // Refs are for effects/handlers, never render (React rule) — keep this one
@@ -181,6 +187,7 @@ export function useResolvedSharedReport(livePersona: PersonaId | null): SharedRe
   useEffect(() => {
     if (resolvedKeyRef.current === paramsKey) return
     resolvedKeyRef.current = paramsKey
+    const setSharedView = (view: SharedReportView | null) => setResolution({ key: paramsKey, view })
 
     // Stable, human-readable entry point for the worked example:
     // `/report?example=1`, equivalent to opening `EXAMPLE_REPORT_URL`. Why a
@@ -275,5 +282,13 @@ export function useResolvedSharedReport(livePersona: PersonaId | null): SharedRe
     setSharedView({ result: computeAssessment(input), persona: null, approximate: true })
   }, [paramsKey, searchParams])
 
-  return sharedView
+  return {
+    view: resolution?.key === paramsKey ? resolution.view : null,
+    pending: resolution?.key !== paramsKey,
+  }
+}
+
+/** Compatibility view-only reader; callers needing first-paint isolation use the keyed state. */
+export function useResolvedSharedReport(livePersona: PersonaId | null): SharedReportView | null {
+  return useResolvedSharedReportState(livePersona).view
 }

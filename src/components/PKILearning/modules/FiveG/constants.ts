@@ -44,7 +44,7 @@ USIM.write('EF_SUCI_Calc_Info', {
       id: 'gen_ephemeral_key',
       title: '4. Generate Ephemeral Key Pair',
       description:
-        'Generate a fresh ephemeral key pair using the selected curve (X25519 for Profile A, P-256 for Profile B). This key pair is unique to this connection attempt and provides forward secrecy.',
+        'Generate a fresh ephemeral key pair using the selected curve (X25519 for Profile A, P-256 for Profile B). The UE key is fresh for this attempt. This does not provide forward secrecy against later compromise of the home network private key, which can be used with a captured SUCI to recover its shared secret.',
       code: `// SoftHSMv3 WASM: Generate Ephemeral Key
 // Profile A uses X25519; Profile B uses P-256
 const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
@@ -266,7 +266,7 @@ USIM.write('EF_SUCI_Calc_Info', {
       id: 'gen_ephemeral_key',
       title: '4. Generate Ephemeral Key Pair',
       description:
-        'Generate a fresh ephemeral key pair using P-256 for Profile B (NIST secp256r1). This key pair is unique to this connection attempt and provides forward secrecy.',
+        'Generate a fresh ephemeral key pair using P-256 for Profile B (NIST secp256r1). The UE key is fresh for this attempt. This does not provide forward secrecy against later compromise of the home network private key, which can be used with a captured SUCI to recover its shared secret.',
       code: `// SoftHSMv3 WASM: Generate Ephemeral Key
 // Profile B uses P-256
 const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
@@ -762,7 +762,8 @@ const KAUSF = HMAC_SHA256(CK || IK, FC || SNN || len(SNN) || SQN_xor_AK || 0x000
 // KAUSF → KSEAF (anchor key) → KAMF → KNASint, KNASenc and KgNB (each derived from KAMF)`,
       output: `[UDM] Deriving KAUSF...
 [UDM] KAUSF: 0x8a9b... derived successfully.
-[UDM] Authentication Vector Ready: RAND, AUTN, XRES*, KAUSF`,
+[UDM] Selected sample outputs: RAND, AUTN and KAUSF.
+[NOT EXECUTED] XRES* derivation or subscriber response verification.`,
     },
   ],
 
@@ -771,70 +772,61 @@ const KAUSF = HMAC_SHA256(CK || IK, FC || SNN || len(SNN) || SQN_xor_AK || 0x000
       id: 'gen_k',
       title: '1. Generate K (SIM Manufacturer)',
       description:
-        'In a secure facility, the SIM manufacturer generates a unique subscriber key (K) for the new SIM card using a high-quality TRNG inside an HSM.',
-      code: `// Inside Manufacturer HSM
-const K = crypto.generateRandom(128); // 128-bit Key`,
-      output: `[Factory HSM] Generating Subscriber Key...
-[Factory HSM] K Generated: [PROTECTED]
-[Factory HSM] ID: IMSI 310260123456789`,
+        'This sample generates a 128-bit K with the browser random generator. The production diagram illustrates protected key generation at a manufacturer; the Hub does not access a factory HSM or establish its entropy quality.',
+      code: `// Executed browser sample — not a factory HSM operation
+const K = crypto.getRandomValues(new Uint8Array(16));`,
+      output: `[SAMPLE] Browser random-key calculation; no factory HSM operation.
+[SAMPLE] Fictional subscriber identity used in the diagram.`,
     },
     {
       id: 'compute_opc_sim',
       title: '2. Compute OPc',
       description:
-        "The manufacturer computes the OPc (derived operator key) using the Operator's OP key and the unique K. Only OPc is written to the SIM, never the global OP.",
+        "Compute a sample OPc from K and the Hub's example OP value. The illustrated personalization process uses OPc; this calculation does not write either value to a card.",
       code: `// Compute OPc per SIM
 const OPc = AES_Encrypt(K, OP) XOR OP;`,
-      output: `[Factory HSM] Computing OPc...
-[Factory HSM] OPc: 0xCD63CB71...
-[Factory HSM] OPc is unique to this SIM (bound to K).`,
+      output: `[SAMPLE] OPc calculation from the sample K and OP; no card write.`,
     },
     {
       id: 'personalize_sim',
       title: '3. Personalize USIM',
       description:
-        "K, OPc, and other data are written into the USIM's secure tamper-resistant memory during the personalization phase.",
-      code: `// Write to USIM Files
-USIM.write('EF_K', K);
-USIM.write('EF_OPc', OPc);
-USIM.write('EF_IMSI', '310260123456789');`,
-      output: `[Factory] Personalizing USIM...
-[Factory] Keys written to secure element.
-[Factory] Transport lock enabled.`,
+        'View an illustrative plan for writing subscriber keys and identity data to a USIM using its supported personalization interface. No card writing or protection check is executed here.',
+      code: `// Production-process pseudocode — not executed
+// Exact interfaces and protected storage depend on the card profile.
+personalizeCard(sampleIdentity, K, OPc);`,
+      output: `[WALKTHROUGH] Personalization process reviewed.
+[NOT EXECUTED] No card write or protection test.`,
     },
     {
       id: 'encrypt_transport',
       title: '4. Encrypt for Transport',
       description:
-        'To send the keys to the Mobile Network Operator (MNO), K is encrypted with a pre-agreed Transport Key (TK). This ensures K is never exposed during transit.',
-      code: `// Encrypt K for output file
-const eK = AES_Encrypt(TransportKey, K);
-
-// Generate Output Record
-const record = {
-  IMSI: '310260123456789',
-  eK: eK,
-  OPc: OPc
-};`,
-      output: `[Factory HSM] Encrypting export batch...
-[Factory HSM] eK generated.
-[Factory HSM] Output file 'out_batch_2025.enc' created.`,
+        'Run sample AES-CBC encryption in the browser with a fresh sample key and IV. The displayed key is educational data, not protected HSM storage. This step creates no MAC and does not establish batch authenticity or successful operator import.',
+      code: `// Browser sample: encrypt the sample record using AES-CBC.
+// A fresh key and IV are generated; no MAC is created by this step.
+const ciphertext = await crypto.subtle.encrypt(
+  { name: 'AES-CBC', iv }, sampleKey, encodedSampleRecord
+);`,
+      output: `[SAMPLE] AES-CBC ciphertext displayed in the browser.
+[NOT EXECUTED] No export file, MAC or operator import created.`,
     },
     {
       id: 'import_udm',
       title: '5. Import at Operator',
       description:
-        "The MNO receives the encrypted key file and decrypts K inside the HSM using the Transport Key. K is then re-encrypted and stored in the subscriber database — not in the HSM itself. Operators manage millions of subscribers, so K is loaded into the ARPF's HSM only when authentication vectors need to be computed.",
-      code: `// MNO Import Process
+        "Review the operator import process: controlled decryption, batch integrity/origin checks, record validation and protected subscriber-key storage. This walkthrough performs none of those operations. Production designs and key placement depend on the operator's supported tools and architecture.",
+      code: `// Illustrated operator process — not executed
 const record = file.readRecord();
+checkBatchIntegrityAndOrigin(record);
 const K = HSM.decrypt(TransportKey, record.eK);
+validateSubscriberRecord(record, K);
 
-// Re-encrypt K for database storage (K never persists in HSM)
+// Illustrative protected-storage step; exact design is deployment-specific
 subscriberDB.store(record.IMSI, HSM.reEncrypt(K));`,
-      output: `[MNO] Importing key batch...
-[MNO HSM] Decrypting eK... Success.
-[MNO] K re-encrypted and stored in subscriber database.
-[MNO] Subscriber provisioning complete.`,
+      output: `[WALKTHROUGH] Operator import process reviewed.
+[NOT EXECUTED] Decryption, MAC/key validation and database write.
+[NOT EXECUTED] No subscriber provisioning or readiness established.`,
     },
   ],
 }

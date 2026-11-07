@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-risk-management',
-  contentVersion: 14,
+  contentVersion: 15,
   lm_id: 'LM-034',
   title: 'PQC Risk Management',
   description:

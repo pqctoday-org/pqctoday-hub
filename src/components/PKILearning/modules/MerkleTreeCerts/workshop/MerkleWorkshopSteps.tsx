@@ -67,6 +67,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
   // Shared tree built in Step 1 — passed to Step 2 so the user proves their own certificates.
   const [sharedLevels, setSharedLevels] = useState<MerkleNode[][] | null>(null)
   const [sharedCerts, setSharedCerts] = useState<CertLeaf[] | null>(null)
+  const [treeInvalidated, setTreeInvalidated] = useState(false)
   const [confirmingReset, setConfirmingReset] = useState(false)
 
   const handlePartChange = useCallback(
@@ -85,6 +86,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
     setCompletedSteps(new Set())
     setSharedLevels(null)
     setSharedCerts(null)
+    setTreeInvalidated(false)
     setConfirmingReset(false)
   }
 
@@ -118,6 +120,10 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
           </Button>
         )}
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        Progress marks page review, not successful tree, proof or signing operations.
+      </p>
 
       {/* Part Progress Steps */}
       <div className="overflow-x-auto px-2 sm:px-0">
@@ -186,23 +192,37 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
             </span>
           </div>
         )}
+        {(currentPart === 1 || currentPart === 2) && treeInvalidated && (
+          <p role="status">
+            Certificate entries changed—rebuild the tree in Step 1 before generating or verifying
+            another proof.
+          </p>
+        )}
         {currentPart === 0 && (
           <MerkleTreeBuilder
             key={`build-${configKey}`}
+            initialCerts={sharedCerts}
+            onTreeInvalidated={() => {
+              setSharedLevels(null)
+              setSharedCerts(null)
+              setTreeInvalidated(true)
+              setCompletedSteps((prev) => new Set([...prev].filter((step) => step > 2)))
+            }}
             onTreeBuilt={(levels, certs) => {
+              setTreeInvalidated(false)
               setSharedLevels(levels)
               setSharedCerts(certs)
             }}
           />
         )}
-        {currentPart === 1 && (
+        {currentPart === 1 && !treeInvalidated && (
           <InclusionProofGenerator
             key={`proof-${configKey}`}
             sharedLevels={sharedLevels}
             sharedCerts={sharedCerts}
           />
         )}
-        {currentPart === 2 && (
+        {currentPart === 2 && !treeInvalidated && (
           <ProofVerifier
             key={`verify-${configKey}`}
             sharedLevels={sharedLevels}
@@ -215,11 +235,14 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
           <div className="mt-4 rounded-lg border border-success/30 bg-success/5 px-4 py-3 flex flex-col gap-2">
             <div className="flex items-center gap-2 text-sm font-medium text-success">
               <CheckCircle2 size={16} />
-              Workshop complete!
+              Workshop review marked complete
             </div>
             <p className="text-xs text-muted-foreground">
-              You have built a Merkle tree, generated and verified inclusion proofs, compared
-              certificate transparency log sizes, and signed a CT log entry with ML-DSA-65.
+              This records your self-marked review of the workshop pages. Navigation and this button
+              do not establish that a tree was built, a proof verified or a signature created.
+              Inspect each exercise&apos;s actual result and selected algorithm separately; use your
+              production tools to evaluate proof validation, signed log updates and tampered
+              samples.
             </p>
             <a
               href="/learn?module=merkle-trees"

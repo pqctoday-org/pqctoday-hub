@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { parseX509Profile } from '../components/PKILearning/common/profileSemantics'
 import type { X509Attribute, ProfileMetadata } from '../components/PKILearning/common/types'
 
 // Import Cert profiles
@@ -8,151 +9,79 @@ const certProfiles = import.meta.glob('../data/x509_profiles/Cert*.csv', {
   import: 'default',
 })
 
+const csrProfiles = import.meta.glob('../data/x509_profiles/CSR*.csv', {
+  query: '?raw',
+  import: 'default',
+})
+
 interface UseCertProfileProps {
+  profileKind?: 'certificate' | 'csr'
   initialAttributes: X509Attribute[]
   filterProfileName?: (name: string) => boolean
 }
 
-export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCertProfileProps) => {
+export const useCertProfile = ({
+  initialAttributes,
+  filterProfileName,
+  profileKind = 'certificate',
+}: UseCertProfileProps) => {
   const [selectedProfile, setSelectedProfile] = useState<string>('')
   const [availableProfiles, setAvailableProfiles] = useState<string[]>([])
   const [attributes, setAttributes] = useState<X509Attribute[]>(initialAttributes)
   const [profileMetadata, setProfileMetadata] = useState<ProfileMetadata | null>(null)
   const [loadingError, setLoadingError] = useState<string | null>(null)
   const [log, setLog] = useState<string>('')
+  const [loadingProfile, setLoadingProfile] = useState(false)
+  const request = useRef(0)
+  const profilesSource = profileKind === 'csr' ? csrProfiles : certProfiles
 
   useEffect(() => {
-    const profiles = Object.keys(certProfiles)
+    const profiles = Object.keys(profilesSource)
       .map((path) => {
         return path.split('/').pop() || ''
       })
       .filter((name) => {
-        const isCertCsv = name.startsWith('Cert') && name.endsWith('.csv')
+        const isCertCsv =
+          name.startsWith(profileKind === 'csr' ? 'CSR' : 'Cert') && name.endsWith('.csv')
         if (!isCertCsv) return false
         return filterProfileName ? filterProfileName(name) : true
       })
     setAvailableProfiles(profiles)
-  }, [filterProfileName])
+  }, [filterProfileName, profileKind, profilesSource])
 
-  const parseCSVLine = (line: string): string[] => {
-    const result: string[] = []
-    let current = ''
-    let inQuotes = false
-
-    for (let i = 0; i < line.length; i++) {
-      // eslint-disable-next-line security/detect-object-injection
-      const char = line[i]
-
-      if (char === '"') {
-        inQuotes = !inQuotes
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-    result.push(current.trim())
-    return result
-  }
-
-  const handleProfileSelect = async (filename: string) => {
+  const handleProfileSelect = async (selection: string) => {
+    // FilterDropdown's clear option sends All; the profile API also accepts an empty value.
+    const filename = selection === 'All' ? '' : selection
+    const requestId = ++request.current
+    setLoadingProfile(Boolean(filename))
     setSelectedProfile(filename)
     setProfileMetadata(null)
     setLoadingError(null)
-    if (!filename) return
+    if (!filename) {
+      setAttributes((previous) =>
+        initialAttributes.map((initial) => {
+          const current = previous.find((a) => a.id === initial.id)
+          return current && initial.elementType === 'SubjectRDN'
+            ? { ...initial, value: current.value, source: current.source }
+            : { ...initial }
+        })
+      )
+      return
+    }
 
     try {
       setLog((prev) => prev + `Loading profile: ${filename}...\n`)
 
-      const path = Object.keys(certProfiles).find((p) => p.endsWith(filename))
+      const path = Object.keys(profilesSource).find((p) => p.endsWith(filename))
       if (!path) throw new Error('Profile path not found')
 
       // eslint-disable-next-line security/detect-object-injection
-      const loadProfile = certProfiles[path] as () => Promise<string>
+      const loadProfile = profilesSource[path] as () => Promise<string>
       const content = await loadProfile()
+      if (request.current !== requestId) return
 
-      const lines = content.split('\n').filter((line) => line.trim() !== '')
-      if (lines.length < 2) throw new Error('Invalid CSV format')
-
-      // Parse Header
-      const headers = parseCSVLine(lines[0])
-      const colMap = new Map<string, number>()
-      headers.forEach((h, i) => colMap.set(h.trim(), i))
-
-      const getVal = (row: string[], colName: string) => {
-        const idx = colMap.get(colName)
-        // eslint-disable-next-line security/detect-object-injection
-        return idx !== undefined && idx < row.length ? row[idx] : ''
-      }
-
-      // Parse Metadata
-      const firstRow = parseCSVLine(lines[1])
-      const industry = getVal(firstRow, 'Industry')
-      const standard = getVal(firstRow, 'Standard')
-      const date = getVal(firstRow, 'StandardDate')
-
-      setProfileMetadata({ industry, standard, date })
-
-      // Parse Attributes
-      const newAttributes: X509Attribute[] = []
-
-      for (let i = 1; i < lines.length; i++) {
-        // eslint-disable-next-line security/detect-object-injection
-        const row = parseCSVLine(lines[i])
-        const elementType = getVal(row, 'ElementType')
-
-        if (elementType === 'SubjectRDN' || elementType === 'Extension') {
-          const name = getVal(row, 'Name')
-          const example = getVal(row, 'ExampleValue')
-          const description = getVal(row, 'AllowedValuesOrUsage')
-
-          // Skip constraint fields (like basicConstraints) as they're handled separately in the generation logic
-          if (name.toLowerCase().includes('constraints')) {
-            continue
-          }
-
-          const oid = getVal(row, 'OID')
-
-          const id =
-            name === 'commonName'
-              ? 'CN'
-              : name === 'countryName'
-                ? 'C'
-                : name === 'organizationName'
-                  ? 'O'
-                  : name === 'organizationalUnitName'
-                    ? 'OU'
-                    : name === 'stateOrProvinceName'
-                      ? 'ST'
-                      : name === 'localityName'
-                        ? 'L'
-                        : name === 'emailAddress'
-                          ? 'emailAddress'
-                          : oid
-
-          const label = name
-          const criticalVal = getVal(row, 'Critical').toUpperCase()
-          const critical =
-            elementType === 'SubjectRDN'
-              ? criticalVal === '' || criticalVal === 'TRUE'
-              : criticalVal === 'TRUE'
-
-          newAttributes.push({
-            id: id,
-            label: label,
-            oid: oid,
-            status: critical ? 'mandatory' : 'optional',
-            value: example, // Default value from profile
-            enabled: critical,
-            placeholder: `e.g., ${example}`,
-            description: description,
-            elementType: elementType,
-            source: 'CA',
-          })
-        }
-      }
-
+      const { attributes: newAttributes, metadata } = parseX509Profile(content)
+      setProfileMetadata(metadata)
       // Merge with existing attributes, preserving CSR source and values
       setAttributes((prevAttributes) => {
         return newAttributes.map((newAttr) => {
@@ -175,11 +104,18 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
           return newAttr
         })
       })
-      setLog((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
+      setLog(
+        (prev) =>
+          prev +
+          `Profile loaded: ${metadata.industry} - ${metadata.standard} (${metadata.date}). Populated examples are selected for review; presence requirements are not established.\n`
+      )
     } catch (error) {
+      if (request.current !== requestId) return
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setLoadingError(errorMessage)
       setLog((prev) => prev + `Error loading profile: ${errorMessage}\n`)
+    } finally {
+      if (request.current === requestId) setLoadingProfile(false)
     }
   }
 
@@ -209,5 +145,6 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
     log,
     setLog,
     loadingError,
+    loadingProfile,
   }
 }

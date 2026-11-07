@@ -53,6 +53,18 @@ vi.mock('../../components/StepWizard', () => ({
 vi.mock('../../components/InfoTooltip', () => ({ InfoTooltip: () => null }))
 vi.mock('../../components/CryptoFlowDiagram', () => ({ EthereumFlowDiagram: () => null }))
 
+// Public fictional fixture: exact raw bytes, separate from the mocked PEM reads.
+vi.mock('@/utils/cryptoUtils', async () => {
+  const { secp256k1 } = await import('@noble/curves/secp256k1.js')
+  return {
+    extractKeyFromOpenSSLOutput: vi.fn(async (_file, kind) =>
+      kind === 'private'
+        ? new Uint8Array(32).fill(1)
+        : secp256k1.getPublicKey(new Uint8Array(32).fill(1), false)
+    ),
+  }
+})
+
 // Mock OpenSSL Service
 vi.mock('../../../../../../services/crypto/OpenSSLService', () => {
   return {
@@ -73,7 +85,7 @@ vi.mock('../../../../../../services/crypto/OpenSSLService', () => {
           const privKey = new Uint8Array(32).fill(1)
 
           const hash = hashFile.data
-          const sig = secp256k1.sign(hash, privKey)
+          const sig = secp256k1.sign(hash, privKey, { prehash: false })
           const sigObj = secp256k1.Signature.fromBytes(sig)
 
           // Manual DER construction to be robust

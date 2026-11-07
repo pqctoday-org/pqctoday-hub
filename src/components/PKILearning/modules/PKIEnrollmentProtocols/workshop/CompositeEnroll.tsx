@@ -33,21 +33,8 @@ interface ParallelResult {
   mlDsaVerifyOut?: string
 }
 
-/**
- * Parallel-certs hybrid PKI demo.
- *
- * True composite signatures (single cert containing both ML-DSA + ECDSA public
- * keys + a length-prefixed concatenated signature, draft-ietf-lamps-pq-composite-sigs-19)
- * need composite OIDs registered in an OpenSSL provider — oqs-provider, our
- * pkcs11-provider with composite-sig extensions, or Bouncy Castle. OpenSSL
- * 3.6.2 doesn't ship them, so a "real" composite cert would be an opaque blob
- * no other tool could parse.
- *
- * What this step demonstrates instead is the DEPLOYMENT PATTERN actually used
- * in production hybrid PKI today: two parallel cert chains for the same
- * end-entity, one PQC (ML-DSA-65) + one classical (ECDSA-P256), both anchored
- * at the same CA. That's what Cloudflare, AWS KMS, and other 2026 hybrid
- * rollouts ship.
+/** Separate ECDSA and ML-DSA certificate outputs under the sample ML-DSA CA.
+ * This component creates no composite certificate or binding between the leaves.
  */
 export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem }) => {
   const [busy, setBusy] = useState(false)
@@ -61,7 +48,10 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
     setResult(null)
     const startedAt = performance.now()
     setLogEntries([
-      { status: 'pending', message: 'Building parallel ECDSA + ML-DSA hybrid PKI chain…' },
+      {
+        status: 'pending',
+        message: 'Issuing a separate ECDSA certificate under the sample ML-DSA CA…',
+      },
     ])
     try {
       const ca = await ensureMockCA()
@@ -150,7 +140,7 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
       setLogEntries([
         {
           status: 'success',
-          message: 'Hybrid chain ready — ECDSA + ML-DSA EE certs both anchored at the mock CA.',
+          message: 'Separate certificate output ready under the sample ML-DSA CA.',
           durationMs: Math.round(performance.now() - startedAt),
         },
       ])
@@ -160,7 +150,7 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
       setLogEntries([
         {
           status: 'error',
-          message: `Hybrid enroll failed — ${msg}`,
+          message: `Parallel certificate issuance failed — ${msg}`,
           durationMs: Math.round(performance.now() - startedAt),
         },
       ])
@@ -174,25 +164,13 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 flex items-start gap-3 text-sm">
         <Info size={16} className="mt-0.5 shrink-0 text-primary" />
         <div>
-          <div className="font-medium text-foreground">
-            Parallel-certs hybrid PKI (the pattern actually shipping in 2026)
-          </div>
+          <div className="font-medium text-foreground">Parallel certificate issuance</div>
           <p className="mt-1 text-muted-foreground">
-            True composite signatures (one cert, one OID, one signature blob containing both ML-DSA
-            + ECDSA outputs per{' '}
-            <a
-              href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              draft-ietf-lamps-pq-composite-sigs-19
-            </a>
-            ) need composite OIDs in an OpenSSL provider that OpenSSL 3.6 doesn't ship. Until those
-            land, the production hybrid pattern is <strong>parallel certs</strong>: two EE
-            certificates for the same identity, one PQC, one classical, both anchored at the same
-            CA. This step issues both through the same CMP server you used in Step 2 — same
-            protocol, same trust anchor, different leaf algorithms.
+            This sample issues separate ECDSA and ML-DSA leaf certificates under the sample ML-DSA
+            CA. It does not create a composite certificate, bind the two certificates together, or
+            demonstrate a policy requiring both paths to validate. A classical subject key does not
+            make a chain signed by a PQC CA compatible with a classical-only validator. Run Step 2
+            first to make its ML-DSA certificate available alongside the ECDSA output here.
           </p>
         </div>
       </div>
@@ -226,7 +204,7 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
           <div className="flex items-center gap-2 text-status-success text-sm">
             <CheckCircle2 size={16} />
             <span>
-              <strong>Hybrid pair issued.</strong> Both legs share the same{' '}
+              <strong>Separate certificate output.</strong> The sample issuer is{' '}
               <code>/CN=PQC_Workshop_Mock_CA</code> trust anchor.
             </span>
           </div>
@@ -235,7 +213,8 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
             {/* PQC leg */}
             <div className="rounded border border-primary/30 bg-primary/5 p-3">
               <h4 className="text-sm font-bold text-foreground flex items-center gap-2 mb-2">
-                <FileText size={14} className="text-primary" /> PQC leg — ML-DSA-65
+                <FileText size={14} className="text-primary" /> ML-DSA-65 subject — sample ML-DSA
+                issuer
               </h4>
               {result.mlDsaCertText ? (
                 <>
@@ -259,7 +238,8 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
             {/* Classical leg */}
             <div className="rounded border border-secondary/30 bg-secondary/5 p-3">
               <h4 className="text-sm font-bold text-foreground flex items-center gap-2 mb-2">
-                <FileText size={14} className="text-secondary" /> Classical leg — ECDSA-P256
+                <FileText size={14} className="text-secondary" /> ECDSA-P256 subject — sample ML-DSA
+                issuer
               </h4>
               <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-all font-mono text-[10px] text-muted-foreground">
                 {result.ecdsaCertText}
@@ -296,10 +276,12 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
       )}
 
       <div className="pt-3 border-t border-border">
-        <p className="text-xs text-muted-foreground mb-2">When true composite ships in our WASM:</p>
+        <p className="text-xs text-muted-foreground mb-2">
+          Further reading — these formats are not implemented by this sample:
+        </p>
         <div className="flex flex-wrap gap-2">
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/"
+            href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/19/"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -322,7 +304,7 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
             rel="noopener noreferrer"
           >
             <Button variant="outline" size="sm" className="gap-1">
-              pqctoday-hsm composite-sig branch <ExternalLink size={12} />
+              pqctoday-hsm source repository <ExternalLink size={12} />
             </Button>
           </a>
         </div>

@@ -5,12 +5,22 @@ import { ExportableArtifact } from './ExportableArtifact'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { Button } from '@/components/ui/button'
 import { scoredWeightShare } from './scorecardCoverage'
+import {
+  currentKpiValueOrigin,
+  kpiValueOriginLabel,
+  type KpiValueSource,
+  type KpiValueOrigin,
+  restoredKpiValueOrigins,
+  isKpiValueAssessed,
+} from './scorecardValueOrigin'
 
 export interface ScorecardDimension {
   id: string
   label: string
   description: string
   autoScore?: number
+  /** How this worksheet obtains the value, not whether evidence was verified. */
+  valueSource?: KpiValueSource
   userOverride?: boolean
   weight: number
   maxScore?: number
@@ -71,6 +81,8 @@ interface DataDrivenScorecardProps {
   /** Restore previously-saved scores / weight overrides on mount (e.g. from a persisted artifact). */
   initialScores?: Record<string, number>
   initialWeights?: Record<string, number>
+  initialValueOrigins?: Record<string, KpiValueOrigin>
+  onValueOriginsChange?: (origins: Record<string, KpiValueOrigin>) => void
   /** Hide the composite until this share of the weight of the KPIs that can be scored has evidence. */
   minimumCoverageForOverall?: number
   /** Structured evidence fields shared by screen, saved artifacts and exports. */
@@ -115,10 +127,13 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   includeTargetsInExport = false,
   initialScores,
   initialWeights,
+  initialValueOrigins,
+  onValueOriginsChange,
   minimumCoverageForOverall = 0,
   observations = {},
   onObservationChange,
 }) => {
+  const [loadedSavedScores] = useState(() => initialScores)
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {}
     for (const d of dimensions) {
@@ -131,19 +146,47 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     () => initialWeights ?? {}
   )
   const [showWeights, setShowWeights] = useState(false)
+  const [valueOrigins, setValueOrigins] = useState<Record<string, KpiValueOrigin>>(() =>
+    restoredKpiValueOrigins(initialScores, initialValueOrigins)
+  )
+  const valueOrigin = useCallback(
+    (d: ScorecardDimension) => {
+      const origin = valueOrigins[d.id] ?? currentKpiValueOrigin(d, false)
+      // Keep the genuine last calculation, but unavailable current inputs cannot
+      // support a claim that it is still a current calculation.
+      return d.disabled && origin === 'calculated-current' ? 'calculated-snapshot' : origin
+    },
+    [valueOrigins]
+  )
+  useEffect(() => {
+    const origins = Object.fromEntries(dimensions.map((d) => [d.id, valueOrigin(d)]))
+    onValueOriginsChange?.(origins)
+    // Only source attribution changes notify callers; an inline callback must not loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dimensions, valueOrigin])
 
-  // Track which dimensions the user has manually adjusted. Dimensions restored
-  // from `initialScores` count as already-overridden so the auto-score sync
-  // effect below doesn't immediately clobber the restored value.
+  // Track explicitly recorded learner edits. Restored unknown/calculated values
+  // are protected separately by their origin; mere presence is not an edit.
   //
   // Kept as BOTH a ref and mirrored state: the sync effect below reads the ref
   // (stable identity, safe to omit from deps — reading it inside an effect is
   // fine) so it isn't re-triggered by every override and doesn't chain a second
   // setState off of it; `isPending` reads the state copy instead, since that's
   // evaluated during render and refs can't be read there.
-  const userOverriddenRef = React.useRef<Set<string>>(new Set(Object.keys(initialScores ?? {})))
+  const userOverriddenRef = React.useRef<Set<string>>(
+    new Set(
+      Object.entries(initialValueOrigins ?? {})
+        .filter(([, origin]) => origin === 'learner-entered' || origin === 'learner-override')
+        .map(([id]) => id)
+    )
+  )
   const [userOverridden, setUserOverridden] = useState<Set<string>>(
-    () => new Set(Object.keys(initialScores ?? {}))
+    () =>
+      new Set(
+        Object.entries(initialValueOrigins ?? {})
+          .filter(([, origin]) => origin === 'learner-entered' || origin === 'learner-override')
+          .map(([id]) => id)
+      )
   )
 
   useEffect(() => {
@@ -154,34 +197,52 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   // Sync auto-scored dimensions from props when they change (e.g., data loads after mount)
   useEffect(() => {
     const next = { ...scores }
+    const nextOrigins = { ...valueOrigins }
+    let originsChanged = false
     let changed = false
     for (const d of dimensions) {
       if (d.disabled) continue
       if (
+        d.valueSource === 'calculated' &&
+        valueOrigins[d.id] === undefined &&
+        loadedSavedScores?.[d.id] === undefined
+      ) {
+        nextOrigins[d.id] = 'calculated-current'
+        originsChanged = true
+      }
+      if (
         d.autoScore !== undefined &&
         !userOverriddenRef.current.has(d.id) &&
+        valueOrigin(d) !== 'unrecorded' &&
+        valueOrigin(d) !== 'calculated-snapshot' &&
         next[d.id] !== d.autoScore
       ) {
         next[d.id] = d.autoScore
         changed = true
       }
     }
+    if (originsChanged) setValueOrigins(nextOrigins)
     if (changed) {
       setScores(next)
       onScoreChange?.(next)
     }
-  }, [dimensions, onScoreChange, scores])
+  }, [dimensions, onScoreChange, scores, valueOrigin, valueOrigins, loadedSavedScores])
 
   const handleScoreChange = useCallback(
     (dimId: string, value: number) => {
       const clamped = Math.max(0, Math.min(100, value))
       userOverriddenRef.current.add(dimId)
+      const dimension = dimensions.find((d) => d.id === dimId)
+      setValueOrigins((prev) => ({
+        ...prev,
+        [dimId]: dimension?.valueSource === 'calculated' ? 'learner-override' : 'learner-entered',
+      }))
       setUserOverridden((prev) => (prev.has(dimId) ? prev : new Set(prev).add(dimId)))
       const updated = { ...scores, [dimId]: clamped }
       setScores(updated)
       onScoreChange?.(updated)
     },
-    [onScoreChange, scores]
+    [onScoreChange, scores, dimensions]
   )
 
   const effectiveWeight = useCallback(
@@ -193,8 +254,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   // Still "not yet scored" — no computed baseline AND the user hasn't set a
   // value yet. Stops applying the instant the user touches the slider.
   const isPending = useCallback(
-    (d: ScorecardDimension): boolean => Boolean(d.notYetScored) && !userOverridden.has(d.id),
-    [userOverridden]
+    (d: ScorecardDimension): boolean => !isKpiValueAssessed(valueOrigin(d)),
+    [valueOrigin]
   )
 
   const handleWeightChange = useCallback(
@@ -226,31 +287,40 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     () => dimensions.reduce((sum, dimension) => sum + effectiveWeight(dimension), 0),
     [dimensions, effectiveWeight]
   )
-  const evidenceCoverage = useMemo(
+  const scoredValueCoverage = useMemo(
     () => scoredWeightShare(dimensions, effectiveWeight, (d) => !isPending(d)),
     [dimensions, effectiveWeight, isPending]
   )
-  const overallAvailable = evidenceCoverage >= minimumCoverageForOverall
+  const overallAvailable = scoredValueCoverage >= minimumCoverageForOverall
+  const originLabel = useCallback(
+    (dimension: ScorecardDimension) =>
+      kpiValueOriginLabel(valueOrigin(dimension), dimension.disabled),
+    [valueOrigin]
+  )
 
   const exportMarkdown = useMemo(() => {
     let md = `# ${title}\n\n`
     if (description) md += `${description}\n\n`
     md += overallAvailable
       ? `**Overall Score: ${weightedTotal}/100**\n\n`
-      : `**Overall Score: not available — evidence coverage ${Math.round(evidenceCoverage * 100)}%**\n\n`
+      : `**Overall Score: not available — scored-value coverage ${Math.round(scoredValueCoverage * 100)}%**\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md +=
+      'Scored-value coverage is value availability, not evidence verification or production readiness. Sample notes and review labels are learner supplied.\n\n'
     const hasTargets = includeTargetsInExport && dimensions.some((d) => d.target !== undefined)
-    md += `| Dimension | Score | Weight${hasTargets ? ' | Target' : ''} | Period | Owner | Evidence | Verification |\n`
-    md += `|-----------|-------|--------${hasTargets ? '|--------' : ''}|--------|-------|----------|--------------|\n`
+    md += `| Dimension | Score | Weight${hasTargets ? ' | Target' : ''} | Value origin | Period | Sample owner | Sample reference | Learner-recorded review label |\n`
+    md += `|-----------|-------|--------${hasTargets ? '|--------' : ''}|--------------|--------|-------|----------|--------------|\n`
     for (const d of dimensions) {
       const observation = observations[d.id]
-      const lineage = ` | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
+      const lineage = ` | ${originLabel(d)} | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
       if (d.disabled) {
         md += `| ${d.label} | _disabled — ${d.disabledReason ?? 'no data'}_ | ${Math.round(effectiveWeight(d) * 100)}%${hasTargets ? ' | —' : ''}${lineage}\n`
         continue
       }
       const target = hasTargets ? ` | ${d.target !== undefined ? `${d.target}` : '—'}` : ''
-      const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? 0}/100`
+      const scoreCell = isPending(d)
+        ? `${scores[d.id] ?? 0}/100 — not assessed for current use`
+        : `${scores[d.id] ?? 0}/100`
       md += `| ${d.label} | ${scoreCell} | ${Math.round(effectiveWeight(d) * 100)}%${target}${lineage}\n`
       md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
     }
@@ -265,8 +335,9 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     effectiveWeight,
     isPending,
     overallAvailable,
-    evidenceCoverage,
+    scoredValueCoverage,
     observations,
+    originLabel,
   ])
 
   // Markdown/PDF read the markdown body; `.csv` reads a structured rows export
@@ -289,23 +360,23 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       'As Of',
       'Owner',
       'Evidence Reference',
-      'Verification State',
+      'Sample review label (learner recorded)',
+      'Raw worksheet value (not an assessed score)',
+      'Original saved snapshot value',
+      'Current-use status',
+      'Included in overall calculation',
     ]
     const rows = dimensions.map((d) => {
       const observation = observations[d.id]
       return [
         d.id,
         d.label,
-        d.disabled ? '' : isPending(d) ? 'not yet scored' : String(scores[d.id] ?? 0),
+        d.disabled || isPending(d) ? '' : String(scores[d.id] ?? 0),
         (effectiveWeight(d) * 100).toFixed(0),
         d.target ?? '',
         d.disabled ? 'true' : 'false',
         d.disabledReason ?? '',
-        d.autoScore !== undefined
-          ? userOverridden.has(d.id)
-            ? 'learner override'
-            : 'derived from selected organizational scope'
-          : 'learner entered',
+        originLabel(d),
         observation?.numerator ?? '',
         observation?.denominator ?? '',
         observation?.unit ?? '',
@@ -314,10 +385,18 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         observation?.owner ?? '',
         observation?.evidenceReference ?? '',
         observation?.verificationState ?? 'not-verified',
+        String(scores[d.id] ?? 0),
+        loadedSavedScores?.[d.id] ?? '',
+        d.disabled
+          ? 'Required inputs unavailable'
+          : isPending(d)
+            ? 'Not assessed for current use'
+            : 'Assessed sample value',
+        d.disabled || isPending(d) ? 'false' : 'true',
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, scores, effectiveWeight, isPending, observations, userOverridden])
+  }, [dimensions, scores, effectiveWeight, isPending, observations, originLabel, loadedSavedScores])
 
   return (
     <div className="space-y-6">
@@ -340,10 +419,10 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
           <p className="text-xl md:text-2xl font-bold text-muted-foreground">Not yet available</p>
         )}
         <p className="text-sm text-muted-foreground mt-2">
-          Evidence coverage: {Math.round(evidenceCoverage * 100)}% of the weight of the KPIs that
-          can be scored
-          {!overallAvailable &&
-            ` — enter organization-specific evidence before interpreting a combined score.`}
+          Scored-value coverage: {Math.round(scoredValueCoverage * 100)}% of the weight of the KPIs
+          that can be scored. This is value availability, not evidence verification or production
+          readiness.
+          {!overallAvailable && ` — enter sample values before interpreting a combined score.`}
         </p>
         {description && <p className="text-sm text-muted-foreground mt-3">{description}</p>}
         {allowWeightEditing && Math.abs(intendedWeight - 1) > 0.01 && (
@@ -413,6 +492,12 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                 <p className="text-xs text-muted-foreground ml-6">
                   {d.disabledReason ?? 'Data unavailable.'}
                 </p>
+                {initialScores?.[d.id] !== undefined && (
+                  <p className="text-xs text-muted-foreground ml-6">
+                    Saved value: {initialScores[d.id]} — current inputs unavailable; excluded from
+                    this score.
+                  </p>
+                )}
                 {d.disabledActionHref && (
                   <a
                     href={d.disabledActionHref}
@@ -436,18 +521,15 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                 <div>
                   <p className="text-sm font-medium text-foreground">{d.label}</p>
                   <p className="text-xs text-muted-foreground">{d.description}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">
-                    Origin:{' '}
-                    {d.autoScore !== undefined
-                      ? userOverridden.has(d.id)
-                        ? 'learner override of derived value'
-                        : 'derived from selected organizational scope'
-                      : 'learner-entered organizational evidence'}
-                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1">Origin: {originLabel(d)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {pending ? (
-                    <span className="text-xs italic text-muted-foreground">Not yet scored</span>
+                    <span className="text-xs italic text-muted-foreground">
+                      {initialScores?.[d.id] !== undefined
+                        ? `Saved value: ${score} — current use not assessed`
+                        : 'Not yet scored'}
+                    </span>
                   ) : (
                     <span className={`text-lg font-bold ${getScoreColor(score, colorScale)}`}>
                       {score}
@@ -490,9 +572,42 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                   />
                 )}
               </div>
+              {pending && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {d.userOverride !== false && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleScoreChange(d.id, score)}
+                    >
+                      Use displayed sample value
+                    </Button>
+                  )}
+                  {d.valueSource === 'calculated' && d.autoScore !== undefined && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const updated = { ...scores, [d.id]: d.autoScore! }
+                        setScores(updated)
+                        userOverriddenRef.current.delete(d.id)
+                        setUserOverridden((prev) => {
+                          const next = new Set(prev)
+                          next.delete(d.id)
+                          return next
+                        })
+                        setValueOrigins((prev) => ({ ...prev, [d.id]: 'calculated-current' }))
+                        onScoreChange?.(updated)
+                      }}
+                    >
+                      Use current calculation ({d.autoScore})
+                    </Button>
+                  )}
+                </div>
+              )}
               <details className="mt-3 rounded-md border border-border/70 bg-muted/20 p-3">
                 <summary className="cursor-pointer text-xs font-medium text-foreground">
-                  Evidence details
+                  Sample measure notes
                 </summary>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {(
@@ -530,7 +645,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                     </label>
                   ))}
                   <label className="space-y-1 text-xs text-muted-foreground">
-                    <span>Verification state</span>
+                    <span>Sample review label (learner recorded)</span>
                     {/* Native select is intentional: this evidence-state field needs a compact,
                         form-associated control inside each repeated KPI row. */}
                     {/* eslint-disable-next-line no-restricted-syntax */}
@@ -545,15 +660,16 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                       className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-foreground"
                       aria-label={`${d.label} Verification state`}
                     >
-                      <option value="not-verified">Not verified</option>
-                      <option value="owner-reviewed">Reviewed by evidence owner</option>
-                      <option value="independently-checked">Independently checked</option>
+                      <option value="not-verified">Sample: not verified</option>
+                      <option value="owner-reviewed">Sample: reviewed by owner</option>
+                      <option value="independently-checked">Sample: independently checked</option>
                     </select>
                   </label>
                 </div>
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  The slider is the normalized 0–100 score. Record the underlying measure and
-                  lineage here; verification is a learner declaration, not a PQC Today attestation.
+                  The slider is an illustrative 0–100 value. These optional fictional measure notes
+                  and review labels do not affect scored-value coverage. The Hub does not verify
+                  them or assess a deployed system.
                 </p>
               </details>
             </div>

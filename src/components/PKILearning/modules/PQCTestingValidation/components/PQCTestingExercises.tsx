@@ -61,11 +61,11 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       id: 'satellite-perf',
       title: 'Satellite Link Performance Impact',
       description:
-        'Your organization has remote sites connected via VSAT satellite links with 600ms RTT. Before mandating pure PQC for all VPN tunnels, benchmark the performance impact. Test classical, hybrid, and pure-PQC configurations to determine which meets your latency SLA (<2 second VPN setup time).',
+        'This illustrative scenario uses remote sites connected via VSAT satellite links with 600ms RTT and a VPN setup target below 2 seconds. Compare the sample classical, hybrid, and pure-PQC results against that same target before recommending a configuration.',
       badge: 'Benchmarking',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Satellite link results are stark: classical IKEv2 SA setup is 4.8 seconds (already at SLA limit). In this scenario, hybrid PQC increases this to 7.2 seconds (+50%). Pure PQC with ML-KEM-768 reaches 95 seconds — completely unusable for interactive applications. Recommendation: satellite sites require hybrid PQC only; pure PQC mandate must include WAN latency exemptions.',
+        'The illustrative VPN setup times are 4.8 seconds for classical, 7.2 seconds for hybrid (+50%), and 95 seconds for pure PQC with ML-KEM-768. None meets the stated target below 2 seconds. Hybrid is faster than the pure-PQC sample but still misses this target; that comparison alone does not justify recommending it. Review the scenario assumptions, configurations and service requirements, evaluate alternatives, and retest with your own tools before deciding.',
       config: { step: 2 },
       paths: [NETWORK_PATH],
     },

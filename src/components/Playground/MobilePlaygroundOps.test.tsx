@@ -15,6 +15,9 @@ vi.mock('@/hooks/useDeviceCapabilities', () => ({ useDeviceCapabilities: () => c
 vi.mock('./PlaygroundProvider', () => ({
   PlaygroundProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
+vi.mock('./contexts/SettingsContext', () => ({
+  useSettingsContext: () => ({ executionMode: 'mock', wasmLoaded: false }),
+}))
 vi.mock('./hsm/HsmContext', () => ({
   useHsmContext: () => ({ hsmLog: [], clearHsmLog: () => {} }),
 }))
@@ -55,6 +58,9 @@ describe('MobilePlaygroundOps: exact algorithm launches on a phone', () => {
     at('/playground/interactive')
     expect(screen.queryByRole('alert')).toBeNull()
     expect(screen.getByText('KEM screen')).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Selected execution mode' })).toHaveTextContent(
+      'Software mode: Mock'
+    )
   })
 
   it('leaves an unknown launch to the page-level reason (no second message here)', () => {

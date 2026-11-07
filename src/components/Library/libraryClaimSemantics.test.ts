@@ -24,13 +24,44 @@ describe('library catalog claim semantics', () => {
     )
   })
 
-  it('does not warn for recently verified, high-confidence summaries', () => {
+  it.each(['requires', 'requirement', 'requirements', 'required'])(
+    'recognizes the existing requirement concept in its %s form',
+    (word) => {
+      expect(
+        needsScopeVerification(item({ shortDescription: `This ${word} needs scope review.` }))
+      ).toBe(true)
+    }
+  )
+
+  it('retains applicability reminders for dated high-confidence obligation summaries', () => {
     expect(
       needsScopeVerification(
         item({
           shortDescription: 'The standard requires an approved mechanism.',
           confidenceScore: 90,
           lastVerified: '2026-10-17',
+        })
+      )
+    ).toBe(true)
+  })
+
+  it("does not infer the learner's applicability from recorded source-review notes", () => {
+    expect(
+      needsScopeVerification(
+        item({
+          shortDescription: 'The requirement applies to certified systems.',
+          confidenceScore: 100,
+          lastVerified: '2026-11-05',
+          dataQualityNotes: 'Fetched and read directly; quoted requirement text verified verbatim.',
+        })
+      )
+    ).toBe(true)
+    expect(
+      needsScopeVerification(
+        item({
+          shortDescription: 'An overview of cryptographic inventories.',
+          confidenceScore: 20,
+          lastVerified: '',
         })
       )
     ).toBe(false)

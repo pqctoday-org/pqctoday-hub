@@ -153,7 +153,7 @@ function watchOutsForTarget(targetState: TargetState, bandwidthBudget: string): 
       'Hash-based signatures (SLH-DSA, LMS, XMSS) are an option for the most conservative deployments.',
     ],
     'crypto-gateway': [
-      'Gateway is a mitigation, not a migration — set a mandatory sunset date (CSWP-39 §4.6).',
+      'Hub planning prompt: review the gateway lifecycle and choose any exit/sunset criteria appropriate to the example. CSWP-39 §4.6 does not prescribe a sunset date.',
       'Gateway becomes a single point of failure and a high-value target; harden accordingly.',
       'Plaintext or re-encrypted traffic between gateway and legacy peer must stay inside trusted boundary.',
     ],
@@ -176,7 +176,7 @@ function rationaleForTarget(targetState: TargetState): string {
     case 'pure-PQC':
       return 'Pure-PQC is the preferred long-term target — CSWP-39 §3.2.4 names this end-state directly in Fig.1; choose it when the system has the crypto-agility to swap algorithms again later if needed.'
     case 'crypto-gateway':
-      return 'Where crypto-agility is absent and the protocol cannot be upgraded in place, CSWP-39 §4.6 recommends a crypto gateway as a time-limited mitigation with a mandatory sunset.'
+      return 'CSWP-39 §4.6 describes an external crypto gateway that can help provide system-level crypto agility when direct legacy modifications are not feasible. Review/exit planning here is Hub guidance, not a sunset requirement from that section.'
   }
 }
 
@@ -559,14 +559,30 @@ export function renderHybridTransitionMarkdown(
 
   md += `## 4. Migration Plan\n\n`
   const userSummary = (plan.summary as string) || ''
-  if (userSummary) {
-    md += `${userSummary}\n\n`
+  if (userSummary) md += `${userSummary}\n\n`
+  const isHybridTarget =
+    rec.targetState === 'hybrid-traditional+PQC' || rec.targetState === 'hybrid-PQC+PQC'
+  if (isHybridTarget) {
+    // These are this function's internally generated Q4 labels, not parsed user dates.
+    const hybridYear = Number(rec.hybridTargetDate.slice('Q4 '.length))
+    const sunsetYear = Number(rec.sunsetDate.slice('Q4 '.length))
+    if (hybridYear > sunsetYear) {
+      md += `Schedule gap: the suggested hybrid milestone ${rec.hybridTargetDate} is later than the selected sunset ${rec.sunsetDate}. The generated pathway and phases are omitted because their dates would run backwards. The selected endpoint has not been moved. Review sequencing, durations and constraints with your own planning tools before using a delivery plan.\n\n`
+    } else {
+      if (!userSummary) {
+        md += `Transition pathway for ${inputs.protocol}: ${inputs.currentAlgorithm} -> ${rec.kemPair} / ${rec.sigPair} (target ${rec.hybridTargetDate}) -> Pure PQC (target ${rec.sunsetDate}).\n\n`
+      }
+      md += `Illustrative hybrid sequence — planning prompts, not an approved delivery plan.\n\n`
+      md += `Coarse quarter labels do not establish delivery feasibility or enough time for rollout and validation; equal milestone and sunset labels leave those durations unassessed.\n\n`
+      md += `- Phase 1 (now -> ${rec.hybridTargetDate}): deploy hybrid pairing in pilot, then production\n`
+      md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare pure-PQC config\n`
+      md += `- Phase 3 (${rec.sunsetDate} and after): sunset classical half, enable pure PQC\n\n`
+    }
   } else {
-    md += `Transition pathway for ${inputs.protocol}: ${inputs.currentAlgorithm} -> ${rec.kemPair} / ${rec.sigPair} (target ${rec.hybridTargetDate}) -> Pure PQC (target ${rec.sunsetDate}).\n\n`
+    md += `This worksheet has not generated a target-specific delivery sequence for the ${rec.targetState} recommendation. The generic hybrid-to-pure sequence is omitted. Define sequencing, feasibility checks and validation using your production planning and testing tools before treating this draft as a delivery plan.\n\n`
   }
-  md += `- Phase 1 (now -> ${rec.hybridTargetDate}): deploy hybrid pairing in pilot, then production\n`
-  md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare pure-PQC config\n`
-  md += `- Phase 3 (${rec.sunsetDate} and after): sunset classical half, enable pure PQC\n\n`
+
+  md += `Risks and validation notes are editable worksheet fields and may retain generic hybrid examples. They are not automatically generated or validated from the recommendation; review them for the target and protocol.\n\n`
 
   md += `### Risks\n\n`
   md += `${(plan.risks as string) || '- (none specified)'}\n\n`
@@ -622,8 +638,10 @@ export const HybridTransitionPlanner: React.FC = () => {
             Hybrid Algorithm Transition Planner
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Architect-facing decision tree from NIST CSWP 39 Section 3.2.4 - Hybrid Cryptographic
-            Algorithms. Recommends a transition pathway and emits an editable migration plan.
+            Hub planning worksheet with references to NIST CSWP 39 Section 3.2.4 — Hybrid
+            Cryptographic Algorithms. It suggests a target and produces an editable planning draft,
+            not a complete delivery plan. Risks and validation fields start with generic hybrid
+            examples; review and replace them for the target and protocol you are considering.
           </p>
         </div>
       </div>

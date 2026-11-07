@@ -6,7 +6,11 @@
 // quickly see how the wider literature frames it. Uses semantic <details> /
 // <summary> so the accordion works without JS.
 import { ChevronDown, BookOpen, ExternalLink } from 'lucide-react'
-import { CSWP39_PRIMARY_DEFINITION, CSWP39_APPENDIX_B_DEFINITIONS } from '@/data/cswp39AppendixB'
+import {
+  CSWP39_PRIMARY_DEFINITION,
+  CSWP39_APPENDIX_B_DEFINITIONS,
+  CSWP39_RELATED_TEACHING_SYNTHESIS,
+} from '@/data/cswp39AppendixB'
 
 function ExternalSourceLink({ url, label }: { url: string; label: string }) {
   return (
@@ -32,8 +36,8 @@ export function CryptoAgilityDefinitions() {
             How does NIST CSWP 39 define crypto agility? How do other frameworks define it?
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Primary-source definitions from NIST CSWP 39 and the alternative frameworks it cites in
-            Appendix B (FS-ISAC, ATIS, ETSI, CARAF, and a 2016 NIST workshop).
+            NIST CSWP 39’s definition and four alternatives reproduced in Appendix B, followed by a
+            separately labelled Hub teaching synthesis.
           </p>
         </div>
         <ChevronDown
@@ -80,6 +84,28 @@ export function CryptoAgilityDefinitions() {
                 </div>
                 <p className="text-sm text-foreground leading-relaxed">{entry.definition}</p>
                 <p className="text-[11px] text-muted-foreground">{entry.citation}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section
+          className="space-y-2 rounded-md border border-border bg-muted/40 p-3"
+          aria-label="Hub teaching synthesis"
+        >
+          <h3 className="text-xs font-semibold text-foreground">
+            {CSWP39_RELATED_TEACHING_SYNTHESIS.title}
+          </h3>
+          <p className="text-sm text-foreground leading-relaxed">
+            {CSWP39_RELATED_TEACHING_SYNTHESIS.text}
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            {CSWP39_RELATED_TEACHING_SYNTHESIS.citation}
+          </p>
+          <ul className="space-y-1">
+            {CSWP39_RELATED_TEACHING_SYNTHESIS.relatedResources.map((resource) => (
+              <li key={resource.url}>
+                <ExternalSourceLink url={resource.url} label={resource.label} />
               </li>
             ))}
           </ul>

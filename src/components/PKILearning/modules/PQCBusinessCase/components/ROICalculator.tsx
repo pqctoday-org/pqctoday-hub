@@ -47,6 +47,15 @@ import {
   resolveIndustryBreachBaseline,
 } from '@/utils/roiMath'
 
+const REGULATORY_ASSUMPTIONS_NOTE =
+  'The selected framework count, editable penalty amount and fixed incident rate are illustrative scenario assumptions, not an enforcement estimate. The penalty is not a sourced average; this calculation does not establish legal liability or that migration prevents penalties.'
+
+const CATALOGUE_SCOPE_NOTE =
+  'Product counts use the filtered Hub catalogue, not an inventory of your organisation. The catalogue-count scenario and profile-based calculation may use different scopes and shared assumptions; agreement or spread does not establish calibration, accuracy or confidence.'
+
+const PROFILE_FLOOR_NOTE =
+  'The assessment-derived calculation returned the sample cost floor. That value alone does not establish whether the profile is incomplete or the estimate is reliable; review the selected scope and assumptions before using it.'
+
 function formatCurrency(amount: number): string {
   const sign = amount < 0 ? '-' : ''
   const abs = Math.abs(amount)
@@ -360,7 +369,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     }
     md += `\n## Assumptions\n\n`
     md += `### Investment\n`
-    md += `- Products to migrate: ${assumptions.productsToMigrate} of ${data.totalProducts}\n`
+    md += `- Catalogue products in selected scenario: ${assumptions.productsToMigrate} of ${data.totalProducts}\n`
     md += `- Capex per product: ${formatCurrency(assumptions.costPerProduct)}\n`
     md += `- **Total capex: ${formatCurrency(financials.totalMigrationCost)}**\n`
     md += `- Annual opex: ${assumptions.annualOpexPct}% of capex = ${formatCurrency(financials.annualOpex)}/year\n\n`
@@ -373,24 +382,26 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       ORG_SIZE_TIER_OPTIONS.find((o) => o.tier === assumptions.orgSizeTier)?.label ?? 'Average org'
     } — Cyentia IRIS 2025)\n`
     md += `- **Annual savings: ${formatCurrency(financials.breachCostSavings)}**\n\n`
-    md += `### Regulatory Exposure\n`
-    md += `- Applicable frameworks: ${assumptions.applicableFrameworks} of ${data.frameworksByIndustry.length}\n`
-    md += `- Penalty per incident: ${formatCurrency(assumptions.penaltyPerIncident)}\n`
+    md += `### Regulatory Exposure — Illustrative Scenario\n`
+    md += `- Framework count selected for scenario: ${assumptions.applicableFrameworks} of ${data.frameworksByIndustry.length}\n`
+    md += `- Illustrative penalty per incident: ${formatCurrency(assumptions.penaltyPerIncident)}\n`
     md += `- Incident rate: ${Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% per framework per year (illustrative assumption)\n`
-    md += `- **Annual savings: ${formatCurrency(financials.complianceSavings)}**\n\n`
+    md += `- **Annual modeled contribution: ${formatCurrency(financials.complianceSavings)}**\n\n`
+    md += `${REGULATORY_ASSUMPTIONS_NOTE}\n\n`
+    md += `${CATALOGUE_SCOPE_NOTE}\n\n`
     md += `### Financial Modeling\n`
     md += `- Planning horizon: ${assumptions.horizonYears} years\n`
     md += `- Discount rate (WACC): ${assumptions.discountRatePct}%\n`
     md += `- Total gross benefit: ${formatCurrency(financials.totalBenefit)}\n\n`
     if (crossCheck) {
-      md += `## Cross-Check (independent second estimate)\n\n`
+      md += `## Scenario comparison (scope not reconciled)\n\n`
       if (crossCheck.lowConfidence) {
-        md += `Assessment profile too thin for a reliable second estimate (fell back to the floor).\n\n`
+        md += `${PROFILE_FLOOR_NOTE}\n\n`
       } else {
         md += `| Method | Estimate |\n|--------|----------|\n`
-        md += `| Per-product model (full estate) | ${formatCurrency(crossCheck.methodAFullEstate)} |\n`
+        md += `| Per-product model (catalogue-count scenario) | ${formatCurrency(crossCheck.methodAFullEstate)} |\n`
         md += `| Assessment-derived | ${formatCurrency(crossCheck.assessmentCost)} |\n`
-        md += `| Verdict | ${crossCheck.recon.verdict} (${
+        md += `| Numerical comparison | ${crossCheck.recon.verdict === 'aligned' ? 'Within sample comparison band' : 'Outside sample comparison band'} (${
           crossCheck.recon.ratio === Infinity ? '∞' : `${crossCheck.recon.ratio.toFixed(1)}×`
         }, ${Math.round(crossCheck.recon.spreadPct)}% spread) |\n\n`
       }
@@ -400,7 +411,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     for (const row of tornado) {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
-    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025 per-sector table (one edition behind; IBM published its 2026 global report). Compliance penalties: published regulatory enforcement data.*\n`
+    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025 per-sector table (one edition behind; IBM published its 2026 global report). Regulatory contribution: selected framework count, editable penalty amount and illustrative incident-rate assumptions; not sourced enforcement statistics.*\n`
     md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     md += '\n---\n\n'
     md +=
@@ -525,6 +536,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </div>
       </div>
 
+      <p className="text-xs text-muted-foreground">{CATALOGUE_SCOPE_NOTE}</p>
+
       {/* ── Investment (Capex + Opex) ── */}
       <details className="glass-panel p-4" open>
         <summary className="text-sm font-semibold text-foreground cursor-pointer flex items-center gap-2">
@@ -634,23 +647,24 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           {crossCheck ? (
             <>
               <p className="text-xs text-muted-foreground">
-                A single number is easy to challenge. Below, your per-product model (scaled to your
-                full estate, so it&apos;s comparable to the assessment side) sits next to the cost
-                your assessment implies from your infrastructure, vendors, and crypto-agility. These
-                are two <em>independent</em> methods &mdash; expect a ballpark match, not an exact
-                one. The full-estate number intentionally doesn&apos;t move with the Products to
-                Migrate slider above &mdash; your current slider scope is shown separately below it.
+                The per-product scenario below uses the full filtered Hub catalogue count, not your
+                organisation&apos;s estate. It is shown beside a separate profile-based calculation;
+                their scope and planning horizons have not been reconciled. They may share
+                assumptions. The catalogue-count comparison does not move with the Products to
+                Migrate slider; the selected catalogue subset is shown separately. Agreement is not
+                calibration.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-muted/50 rounded-lg p-3 border border-border">
                   <div className="text-xs text-muted-foreground mb-1">
-                    Your per-product model (full estate)
+                    Per-product model (catalogue-count scenario)
                   </div>
                   <div className="text-lg font-bold text-foreground">
                     {formatCurrency(crossCheck.methodAFullEstate)}
                   </div>
                   <div className="text-[11px] text-muted-foreground mt-1 font-mono">
-                    {formatCurrency(assumptions.costPerProduct)} × {data.totalProducts} products
+                    {formatCurrency(assumptions.costPerProduct)} × {data.totalProducts} catalogue
+                    products
                   </div>
                   {assumptions.productsToMigrate !== data.totalProducts && (
                     <div className="text-[11px] text-muted-foreground mt-2 pt-2 border-t border-border font-mono">
@@ -678,12 +692,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 <div className="bg-status-warning/10 rounded-lg p-3 border border-status-warning/30 flex items-start gap-2">
                   <Info size={14} className="text-status-warning shrink-0 mt-0.5" />
                   <p className="text-xs text-foreground/90">
-                    Your assessment profile is too thin for a reliable second estimate (it fell back
-                    to the floor). Fill in more of the{' '}
+                    {PROFILE_FLOOR_NOTE}{' '}
                     <Link to="/assess" className="text-primary hover:underline">
-                      assessment
-                    </Link>{' '}
-                    to sharpen this cross-check.
+                      Review assessment inputs
+                    </Link>
                   </p>
                 </div>
               ) : (
@@ -702,20 +714,20 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                   <p className="text-xs text-foreground/90">
                     {crossCheck.recon.verdict === 'aligned' ? (
                       <>
-                        <strong>Aligned.</strong> The two methods agree within{' '}
+                        <strong>Within sample comparison band.</strong> The two methods agree within{' '}
                         {crossCheck.recon.ratio.toFixed(1)}× (
-                        {Math.round(crossCheck.recon.spreadPct)}% spread) &mdash; a reassuring sign
-                        your headline number is in the right ballpark.
+                        {Math.round(crossCheck.recon.spreadPct)}% spread). This describes numerical
+                        proximity, not confidence in the assumptions, scope or estimate.
                       </>
                     ) : (
                       <>
-                        <strong>Divergent.</strong> The two methods differ by{' '}
+                        <strong>Outside sample comparison band.</strong> The two methods differ by{' '}
                         {crossCheck.recon.ratio === Infinity
                           ? '∞'
                           : `${crossCheck.recon.ratio.toFixed(1)}×`}{' '}
-                        ({Math.round(crossCheck.recon.spreadPct)}% spread). Before you present this,
-                        close the gap &mdash; revisit your capex-per-product, your product count, or
-                        the assessment inputs.
+                        ({Math.round(crossCheck.recon.spreadPct)}% spread). Review scope, horizon
+                        and shared assumptions before comparing these outputs; a gap alone does not
+                        establish which estimate is accurate.
                       </>
                     )}
                   </p>
@@ -730,8 +742,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 <Link to="/assess" className="text-primary hover:underline">
                   assessment
                 </Link>{' '}
-                to generate a second, independent cost estimate &mdash; then this panel cross-checks
-                it against your per-product model so you never present a single unverified number.
+                to generate a separate assessment-derived scenario estimate. This panel compares
+                numbers; it does not establish independent validation or matching scope.
               </p>
             </div>
           )}
@@ -900,16 +912,17 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       <details className="glass-panel p-4" open>
         <summary className="text-sm font-semibold text-foreground cursor-pointer flex items-center gap-2">
           <Scale size={16} className="text-primary shrink-0" />
-          Regulatory Exposure
+          Regulatory Exposure — Illustrative Scenario
         </summary>
         <div className="mt-4 space-y-4">
+          <p className="text-xs text-muted-foreground">{REGULATORY_ASSUMPTIONS_NOTE}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="roi-frameworks"
                 className="block text-sm font-medium text-foreground mb-2"
               >
-                Applicable Frameworks
+                Applicable Frameworks (Scenario Count)
               </label>
               <input
                 id="roi-frameworks"
@@ -934,7 +947,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 htmlFor="roi-penalty"
                 className="block text-sm font-medium text-foreground mb-2"
               >
-                Penalty per Incident
+                Penalty per Incident (Illustrative Amount)
               </label>
               <input
                 id="roi-penalty"
@@ -959,7 +972,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <p className="text-xs font-mono text-muted-foreground">
               {assumptions.applicableFrameworks} frameworks ×{' '}
               {formatCurrency(assumptions.penaltyPerIncident)} ×{' '}
-              {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% incident rate ={' '}
+              {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% illustrative incident rate ={' '}
               <span className="text-primary font-bold">
                 {formatCurrency(financials.complianceSavings)}
               </span>
@@ -1114,9 +1127,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             lengthen).
           </p>
           <p>
-            <strong>Regulatory exposure:</strong> Number of applicable regulatory frameworks ×
-            average penalty per incident × a {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}%
-            annual incident probability per framework.
+            <strong>Illustrative regulatory contribution:</strong> Selected framework count ×
+            editable scenario penalty per incident × a fixed{' '}
+            {Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% illustrative annual incident rate
+            per framework. This is a model input, not a sourced probability or enforcement forecast.
           </p>
           <p>
             <strong>NPV:</strong> Σ (netAnnualBenefit / (1 + WACC)^t) − capex, where
@@ -1139,10 +1153,11 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <strong>Which costing model this is:</strong> a bottom-up parametric estimate (assets ×
             unit cost) with deterministic ±30% sensitivity. It is one of several model families —
             top-down budget-percentage anchoring, probabilistic Monte-Carlo bands, and
-            expert-elicited scenario ranges are the others. No single method is reliable for PQC
-            under deep uncertainty, so triangulate: treat agreement across two or three independent
-            estimates as confidence, and divergence as a prompt to revisit assumptions. See the
-            Learn tab&apos;s &ldquo;Choosing a Costing Model&rdquo; section for the full comparison.
+            expert-elicited scenario ranges are the others. Results depend on scope and assumptions.
+            Compare methods only after checking their scope, horizon and assumptions; methods can
+            share errors, so agreement is not calibrated confidence. Divergence is a prompt to
+            examine those assumptions. See the Learn tab&apos;s &ldquo;Choosing a Costing
+            Model&rdquo; section for the full comparison.
           </p>
           <p className="text-xs italic mt-2">
             Educational estimates for planning. Pair with your finance function&apos;s discounted
