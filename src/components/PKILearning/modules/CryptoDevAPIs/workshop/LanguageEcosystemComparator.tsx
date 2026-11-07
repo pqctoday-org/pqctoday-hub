@@ -17,25 +17,6 @@ const MEM_ITEMS = [
   { id: 'comptime', label: 'Compile-time' },
 ].filter((item) => item.id === 'All' || DEV_LANGUAGES.some((lang) => lang.memorySafety === item.id))
 
-const RADAR_KEYS: { key: keyof DevLanguage['radar']; label: string }[] = [
-  { key: 'memorySafety', label: 'Memory Safety' },
-  { key: 'cryptoEcosystem', label: 'Crypto Ecosystem' },
-  { key: 'ffiCapability', label: 'FFI Capability' },
-  { key: 'buildTooling', label: 'Build Tooling' },
-  { key: 'compileTimeGuarantees', label: 'Compile-Time' },
-  { key: 'auditCertHistory', label: 'Audit History' },
-]
-
-const RadarBar: React.FC<{ label: string; value: number }> = ({ label, value }) => (
-  <div className="flex items-center gap-2 text-sm">
-    <span className="w-28 text-muted-foreground shrink-0">{label}</span>
-    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-      <div className="h-full bg-primary rounded-full" style={{ width: `${(value / 10) * 100}%` }} />
-    </div>
-    <span className="w-6 text-right text-muted-foreground">{value}</span>
-  </div>
-)
-
 const MEM_COLORS: Record<MemorySafety, string> = {
   manual: 'bg-status-error/20 text-status-error border-status-error/50',
   ownership: 'bg-status-success/20 text-status-success border-status-success/50',
@@ -109,12 +90,6 @@ const LangCard: React.FC<LangCardProps> = ({
             )}
           </Button>
         </div>
-      </div>
-
-      <div className="mt-3 space-y-1">
-        {RADAR_KEYS.map(({ key, label }) => (
-          <RadarBar key={key} label={label} value={lang.radar[key]} />
-        ))}
       </div>
     </div>
 
@@ -225,24 +200,6 @@ const CompareTable: React.FC<{ langs: DevLanguage[] }> = ({ langs }) => (
             {langs.map((l) => (
               <td key={l.id} className="p-3 text-foreground">
                 {fn(l)}
-              </td>
-            ))}
-          </tr>
-        ))}
-        {RADAR_KEYS.map(({ key, label }) => (
-          <tr key={key} className="border-b border-border hover:bg-muted/30">
-            <td className="p-3 text-muted-foreground">{label}</td>
-            {langs.map((l) => (
-              <td key={l.id} className="p-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${(l.radar[key] / 10) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-muted-foreground">{l.radar[key]}/10</span>
-                </div>
               </td>
             ))}
           </tr>

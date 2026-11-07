@@ -47,7 +47,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Languages',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        "Rust's ownership model and borrow checker prevent use-after-free on key buffers at compile time; the pqcrypto and aws-lc-rs crates provide PQC support. In Java, the JVM's garbage collector means key material may persist in memory longer before collection, though Bouncy Castle's zero-copy APIs reduce exposure. Go's garbage collector is non-deterministic for key cleanup, and compile-time memory guarantees are not provided by the language.",
+        "Rust's ownership model and borrow checker prevent use-after-free on key buffers at compile time; the aws-lc-rs crate provides PQC support. The pqcrypto crates also provide it, but their own README says they are unmaintained and should not be used in new projects, and PQClean is archived. In Java, the JVM's garbage collector means key material may persist in memory longer before collection, though Bouncy Castle's zero-copy APIs reduce exposure. Go's garbage collector is non-deterministic for key cleanup, and compile-time memory guarantees are not provided by the language.",
       config: { step: 1 },
     },
     {

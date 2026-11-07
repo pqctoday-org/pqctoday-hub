@@ -186,7 +186,8 @@ CK_ULONG sigLen;
 C_Sign(session, msg, msgLen, NULL, &sigLen);
 CK_BYTE_PTR sig = malloc(sigLen);
 C_Sign(session, msg, msgLen, sig, &sigLen);`,
-    notes: 'HSM performs the signing operation internally. Private key never leaves hardware.',
+    notes:
+      'HSM performs the signing operation internally. Whether the key can leave the token depends on its CKA_EXTRACTABLE/CKA_SENSITIVE attributes and token policy.',
   },
 
   // KEM Encapsulate — ML-KEM-768

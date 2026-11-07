@@ -59,9 +59,10 @@ const PROVIDER_PATTERNS: Record<string, { pattern: string; description: string }
     description: 'Bouncy Castle standalone API uses concrete classes directly. No provider system.',
   },
   jcprov: {
-    pattern: 'JCProv.initialize(config) → Security.addProvider(jcprovProvider)',
+    pattern:
+      'Luna JSP (JCA): login (LunaSlotManager / Luna KeyStore) → Security.insertProviderAt(new LunaProvider(), n); JCPROV (PKCS#11 wrapper) has no provider registration',
     description:
-      'JCProv wraps PKCS#11 as a JCA provider. Once registered, standard JCA calls hit the HSM.',
+      'Luna JSP is the JCA/JCE provider; JCPROV is a separate PKCS#11 wrapper and is not registered as a provider.',
   },
 }
 

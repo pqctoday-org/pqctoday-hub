@@ -37,31 +37,6 @@ const LEVEL_ITEMS = [
   { id: 'low', label: 'Low-Level' },
 ]
 
-const RADAR_KEYS: { key: keyof CryptoAPI['radar']; label: string }[] = [
-  { key: 'maturity', label: 'Maturity' },
-  { key: 'pqcReadiness', label: 'PQC Ready' },
-  { key: 'platformReach', label: 'Platform' },
-  { key: 'hsmIntegration', label: 'HSM' },
-  { key: 'communitySize', label: 'Community' },
-]
-
-const RadarBar: React.FC<{ label: string; value: number; max?: number }> = ({
-  label,
-  value,
-  max = 10,
-}) => (
-  <div className="flex items-center gap-2 text-sm">
-    <span className="w-20 text-muted-foreground shrink-0">{label}</span>
-    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-      <div
-        className="h-full bg-primary rounded-full transition-all"
-        style={{ width: `${(value / max) * 100}%` }}
-      />
-    </div>
-    <span className="w-6 text-right text-muted-foreground">{value}</span>
-  </div>
-)
-
 interface APICardProps {
   api: CryptoAPI
   isExpanded: boolean
@@ -132,13 +107,6 @@ const APICard: React.FC<APICardProps> = ({
               )}
             </Button>
           </div>
-        </div>
-
-        {/* Radar scores */}
-        <div className="mt-3 space-y-1">
-          {RADAR_KEYS.map(({ key, label }) => (
-            <RadarBar key={key} label={label} value={api.radar[key]} />
-          ))}
         </div>
       </div>
 
@@ -238,24 +206,6 @@ const CompareView: React.FC<CompareViewProps> = ({ apis }) => (
             {apis.map((a) => (
               <td key={a.id} className="p-3 text-foreground">
                 {key(a)}
-              </td>
-            ))}
-          </tr>
-        ))}
-        {RADAR_KEYS.map(({ key, label }) => (
-          <tr key={key} className="border-b border-border hover:bg-muted/30 transition-colors">
-            <td className="p-3 text-muted-foreground font-medium">{label}</td>
-            {apis.map((a) => (
-              <td key={a.id} className="p-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${(a.radar[key] / 10) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-muted-foreground">{a.radar[key]}/10</span>
-                </div>
               </td>
             ))}
           </tr>
