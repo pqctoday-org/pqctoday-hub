@@ -172,6 +172,95 @@ describe('LearnSection read tracking requires dwell', () => {
   })
 })
 
+describe('LearnSection read tracking for a section taller than twice the screen', () => {
+  let fire: ((entries: Partial<IntersectionObserverEntry>[]) => void) | undefined
+  let observed: Element | undefined
+
+  beforeEach(() => {
+    useModuleStore.getState().resetProgress()
+    vi.useFakeTimers()
+    fire = undefined
+    observed = undefined
+    Element.prototype.scrollIntoView = vi.fn()
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(cb: (e: Partial<IntersectionObserverEntry>[]) => void) {
+          fire = cb
+        }
+        observe(el: Element) {
+          observed = el
+        }
+        disconnect() {}
+        unobserve() {}
+      }
+    )
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
+
+  const checked = () =>
+    Object.keys(useModuleStore.getState().modules['emv-payment-pqc']?.learnSectionChecks ?? {})
+
+  const renderSection = () =>
+    render(
+      <MemoryRouter initialEntries={['/learn/emv-payment-pqc?section=interbank-rails']}>
+        <LearnSection sectionId="interbank-rails" title="Interbank Rails" icon={null}>
+          <p>settlement body copy</p>
+        </LearnSection>
+      </MemoryRouter>
+    )
+
+  /** A 3,900 px section on an 800 px screen: at most 20% of it can ever be visible. */
+  const tallEntry = (visibleHeight: number): Partial<IntersectionObserverEntry> => ({
+    target: observed,
+    isIntersecting: true,
+    intersectionRatio: visibleHeight / 3900,
+    boundingClientRect: { height: 3900 } as DOMRectReadOnly,
+    intersectionRect: { height: visibleHeight } as DOMRectReadOnly,
+    rootBounds: { height: 800 } as DOMRectReadOnly,
+  })
+
+  it('marks it read once it fills half the screen for the dwell', () => {
+    renderSection()
+    act(() => {
+      fire?.([tallEntry(800)])
+      vi.advanceTimersByTime(SECTION_READ_DWELL_MS + 50)
+    })
+    expect(checked()).toContain('interbank-rails')
+  })
+
+  it('does not mark it while less than half the screen shows it', () => {
+    renderSection()
+    act(() => {
+      fire?.([tallEntry(300)])
+      vi.advanceTimersByTime(SECTION_READ_DWELL_MS + 50)
+    })
+    expect(checked()).not.toContain('interbank-rails')
+  })
+
+  it('still needs half of an ordinary section, not half the screen', () => {
+    renderSection()
+    act(() => {
+      fire?.([
+        {
+          target: observed,
+          isIntersecting: true,
+          intersectionRatio: 0.3,
+          boundingClientRect: { height: 900 } as DOMRectReadOnly,
+          intersectionRect: { height: 270 } as DOMRectReadOnly,
+          rootBounds: { height: 800 } as DOMRectReadOnly,
+        },
+      ])
+      vi.advanceTimersByTime(SECTION_READ_DWELL_MS + 50)
+    })
+    expect(checked()).not.toContain('interbank-rails')
+  })
+})
+
 describe('EMV learn paths', () => {
   const paths = manifest.learnPaths ?? []
 
