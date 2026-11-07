@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+/**
+ * Each description starts with what kind of body it is (industry initiative, standards-body
+ * working group, government agency, guidance document, project, competition), because a
+ * guidance document or a joint statement is not a standing group. Facts were read from the
+ * organization's own pages on 5 November 2026; an entry says "not verified here" where the
+ * page could not be read or did not state the fact. `founded` holds a year only when the
+ * source states it, otherwise "date not verified" or "n/a" with the dated publication.
+ * Individual names and member lists are not recorded unless the source lists them, because
+ * membership changes.
+ */
 export interface Workgroup {
   name: string
   shortName: string
@@ -33,11 +43,11 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'United States',
     regionFlag: '\u{1F1FA}\u{1F1F8}',
     description:
-      'Open, collaborative initiative under the Linux Foundation driving advancement and adoption of PQC through high-assurance open-source software implementations of standardized algorithms.',
+      'Industry open-source initiative hosted by the Linux Foundation. Its stated aim is producing high-assurance software implementations of standardized algorithms and supporting the development and standardization of new post-quantum algorithms with software for evaluation and prototyping. Projects listed on its site: CBOMkit, Longfellow, Open Quantum Safe and PQ Code Package.',
     url: 'https://pqca.org',
-    focusAreas: ['Open Source', 'Algorithm Implementation', 'Standards Harmonization'],
-    founded: '2024',
-    keyMembers: 'AWS, Cisco, Google, IBM, NVIDIA, SandboxAQ, University of Waterloo',
+    focusAreas: ['Open Source', 'Algorithm Implementation', 'Evaluation and Prototyping'],
+    founded: 'date not verified',
+    keyMembers: 'Premier, General and Associate members; see the member list on pqca.org',
   },
   {
     name: 'Post-Quantum Cryptography Coalition (PQCC)',
@@ -45,63 +55,76 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'United States',
     regionFlag: '\u{1F1FA}\u{1F1F8}',
     description:
-      'Volunteer, fee-free community of technologists, researchers, and practitioners driving broader understanding and public adoption of NIST PQC algorithms, including published migration roadmaps.',
+      'Coalition. Not verified here (its site could not be read when checked); see pqcc.org for its own description, founding date and members.',
     url: 'https://pqcc.org',
-    focusAreas: ['Migration Roadmaps', 'Cryptographic Inventory', 'Public Adoption'],
-    founded: '2023',
-    keyMembers: 'IBM Quantum, Microsoft, MITRE, PQShield, SandboxAQ, University of Waterloo',
-  },
-
-  // European Union
-  {
-    name: 'ETSI TC CYBER Quantum Safe Cryptography Working Group',
-    shortName: 'ETSI QSC WG',
-    region: 'European Union',
-    regionFlag: '\u{1F1EA}\u{1F1FA}',
-    description:
-      'ETSI working group assessing and recommending quantum-safe cryptographic primitives, protocols, and implementation considerations for EU telecommunications and industry.',
-    url: 'https://www.etsi.org/technologies/quantum-safe-cryptography',
-    focusAreas: ['Hybrid Cryptography', 'Migration Frameworks', 'QKD Standards'],
-    founded: '2013',
-    keyMembers: '30+ industry/government/academic participants, chaired by Matt Campagna (Amazon)',
-  },
-  {
-    name: 'ENISA Cryptography Expert Group',
-    shortName: 'ENISA Crypto',
-    region: 'European Union',
-    regionFlag: '\u{1F1EA}\u{1F1FA}',
-    description:
-      'EU Agency for Cybersecurity expert group promoting good cryptographic practices, coordinating PQC guidance across the European Commission, Member States, and EU bodies.',
-    url: 'https://www.enisa.europa.eu/topics/cryptography',
-    focusAreas: ['EU-wide Readiness', 'Policy Recommendations', 'EUCC Integration'],
-    founded: '2021',
-    keyMembers: 'European Commission, ECCG, Germany (BSI), France (ANSSI), Netherlands (NCSC-NL)',
-  },
-
-  // United Kingdom
-  {
-    name: 'NCSC Post-Quantum Cryptography Migration Program',
-    shortName: 'NCSC PQC',
-    region: 'United Kingdom',
-    regionFlag: '\u{1F1EC}\u{1F1E7}',
-    description:
-      'UK National Cyber Security Centre program providing authoritative PQC migration guidance with a three-phase timeline: Discover by 2028, Prioritize & Pilot 2028\u201331, Complete by 2035.',
-    url: 'https://www.ncsc.gov.uk/guidance/pqc-migration-timelines',
-    focusAreas: ['Migration Timelines', 'Algorithm Recommendations', 'Industry Pilots'],
-    founded: '2023',
-    keyMembers: 'NCSC, Five Eyes partners, Arqit (pilot participant)',
+    focusAreas: ['Post-Quantum Cryptography'],
+    founded: 'date not verified',
+    keyMembers: 'not verified here; see pqcc.org',
   },
   {
     name: 'PKI Consortium PQC Working Group',
     shortName: 'PKI Consortium',
+    region: 'United States',
+    regionFlag: '\u{1F1FA}\u{1F1F8}',
+    description:
+      'Industry consortium working group. The PKI Consortium, a 501(c)(6) non-profit registered in Utah, runs a Post-Quantum Cryptography Working Group that publishes a PQC Capabilities Matrix and a PQC Maturity Model with levels 0 (None) to 5 (Optimized).',
+    url: 'https://pkic.org/wg/pqc/',
+    focusAreas: ['PQC Capabilities Matrix', 'Maturity Model', 'Playbooks'],
+    founded: 'consortium 2013 (as the CA Security Council); working-group date not verified',
+    keyMembers: 'PKI Consortium member organizations; see its members page',
+  },
+
+  // European Union
+  {
+    name: 'ETSI Quantum-Safe Cryptography work',
+    shortName: 'ETSI QSC',
+    region: 'European Union',
+    regionFlag: '\u{1F1EA}\u{1F1FA}',
+    description:
+      'Standards-body work area. ETSI states that it develops practical guidance for deployments of quantum-safe cryptography. The responsible working group, its chair and its participants change and were not verified here; see ETSI.',
+    url: 'https://www.etsi.org/technologies/quantum-safe-cryptography',
+    focusAreas: ['Quantum-Safe Cryptography', 'Deployment Guidance'],
+    founded: 'date not verified',
+    keyMembers: 'ETSI members; participants change, see ETSI',
+  },
+  {
+    name: 'ENISA cryptography work',
+    shortName: 'ENISA Crypto',
+    region: 'European Union',
+    regionFlag: '\u{1F1EA}\u{1F1FA}',
+    description:
+      'EU agency topic area, not a standing group. ENISA states that, in cooperation with the European Commission, Member States and other EU bodies, it engages with expert groups to promote good practices in cryptography, mainly for the advent of post-quantum cryptography, and that it has delivered reports on the state of the art and on mitigation techniques.',
+    url: 'https://www.enisa.europa.eu/topics/cryptography',
+    focusAreas: ['Post-Quantum Cryptography', 'Good Practices', 'Reports'],
+    founded: 'n/a (agency topic area; no start date stated)',
+    keyMembers:
+      'ENISA with the European Commission, Member States and other EU bodies (as named on ENISA’s page)',
+  },
+  {
+    name: 'EU NIS Cooperation Group PQC Workstream',
+    shortName: 'NIS PQC',
+    region: 'European Union',
+    regionFlag: '\u{1F1EA}\u{1F1FA}',
+    description:
+      'Cooperation-group work stream. The European Commission’s Recommendation of 11 April 2024 proposed a work stream on post-quantum cryptography with the NIS Cooperation Group. EU Member States, supported by the Commission, published a Coordinated Implementation Roadmap for the transition on 23 June 2025.',
+    url: 'https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography',
+    focusAreas: ['Coordinated Roadmap', 'Member State Recommendations', 'Stakeholder Information'],
+    founded: 'n/a (Recommendation 11 April 2024; roadmap 23 June 2025)',
+    keyMembers: 'EU Member States, supported by the European Commission',
+  },
+
+  // United Kingdom
+  {
+    name: 'NCSC PQC migration timelines',
+    shortName: 'NCSC PQC',
     region: 'United Kingdom',
     regionFlag: '\u{1F1EC}\u{1F1E7}',
     description:
-      'Open platform for PKI practitioners, researchers, and algorithm experts discussing PQC implications, migration strategies, and ecosystem readiness through the PQC Capabilities Matrix and Maturity Model.',
-    url: 'https://pkic.org/wg/pqc/',
-    focusAreas: ['PQC Capabilities Matrix', 'Maturity Model', 'Best Practices'],
-    founded: '2023',
-    keyMembers: 'Global membership including Qrypt, Keyfactor, Entrust, DigiCert',
+      'Government guidance document, not a standing group. The UK National Cyber Security Centre guidance dated 20 March 2025 sets milestones: by 2028 define migration goals, complete a full discovery exercise and build an initial plan; by 2031 carry out the highest-priority migration activities; by 2035 complete migration. It follows an NCSC white paper of November 2023.',
+    url: 'https://www.ncsc.gov.uk/guidance/pqc-migration-timelines',
+    focusAreas: ['Migration Timelines', 'Discovery and Assessment', 'Prioritised Migration'],
+    founded: 'n/a (guidance dated 20 March 2025)',
+    keyMembers: 'Issued by the UK National Cyber Security Centre; no member organizations',
   },
 
   // Germany
@@ -111,38 +134,26 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'Germany',
     regionFlag: '\u{1F1E9}\u{1F1EA}',
     description:
-      'Germany\u2019s Federal Office for Information Security (BSI) publishes algorithm recommendations and leads the joint EU statement advocating mandatory PQC migration across 20 European partner states.',
+      'Government agency topic area. Germany’s Federal Office for Information Security (BSI) publishes algorithm recommendations in technical guideline TR-02102-1. Together with partners from 17 other European states, BSI published a joint statement in November 2024 urging industry, critical infrastructure providers and public administration to start the transition to post-quantum cryptography; partners from three more European states have since signed.',
     url: 'https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie_node.html',
-    focusAreas: ['Algorithm Recommendations', 'Hybrid PQC', 'EU Joint Statements'],
-    founded: '2024',
-    keyMembers: 'BSI, co-signed by France (ANSSI) and Netherlands + 17 EU member states',
-  },
-  {
-    name: 'EU NIS Cooperation Group PQC Workstream',
-    shortName: 'NIS PQC',
-    region: 'Germany',
-    regionFlag: '\u{1F1E9}\u{1F1EA}',
-    description:
-      'Cross-border EU workstream coordinating PQC pilot projects and migration roadmaps across Network and Information Systems member states, with Germany as a leading driver.',
-    url: 'https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography',
-    focusAreas: ['Cross-border Interoperability', 'National Roadmaps', 'Critical Sector Pilots'],
-    founded: '2024',
-    keyMembers: 'Germany (BSI), France (ANSSI), Netherlands (NCSC-NL), all 27 EU member states',
+    focusAreas: ['Algorithm Recommendations', 'Joint Statements'],
+    founded: 'n/a (joint statement November 2024)',
+    keyMembers:
+      'BSI and partners from 17 other European states (November 2024), plus three more that signed later',
   },
 
   // France
   {
-    name: 'RESQUE Consortium (R\u00C9Silience QUantiquE)',
+    name: 'RESQUE Consortium (RÉSilience QUantiquE)',
     shortName: 'RESQUE',
     region: 'France',
     regionFlag: '\u{1F1EB}\u{1F1F7}',
     description:
-      'French government-backed consortium developing post-quantum cryptography solutions to protect communications, infrastructure, and networks of businesses and local governments over a three-year program.',
+      'Industry consortium. Not verified here (the linked press release could not be read when checked); see the linked page for its description, start date and partners.',
     url: 'https://www.thalesgroup.com/en/worldwide/security/press_release/post-quantum-cryptography-six-french-cyber-players-join-forces',
-    focusAreas: ['Secure Communications', 'VPN Protection', 'ANSSI Compliance'],
-    founded: '2024',
-    keyMembers:
-      'Thales (coordinator), TheGreenBow, CryptoExperts, CryptoNext Security, ANSSI, Inria',
+    focusAreas: ['Post-Quantum Cryptography'],
+    founded: 'date not verified',
+    keyMembers: 'not verified here; see the linked press release',
   },
   {
     name: 'ANSSI PQC Transition Program',
@@ -150,11 +161,11 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'France',
     regionFlag: '\u{1F1EB}\u{1F1F7}',
     description:
-      'France\u2019s national cybersecurity agency defining official PQC policy, recommending algorithms (ML-KEM, FrodoKEM), and issuing security visas for hybrid PQC products.',
+      'Government agency. ANSSI is France’s national cybersecurity agency. Its post-quantum recommendations and any related certification schemes were not verified here (the site could not be read when checked); see cyber.gouv.fr.',
     url: 'https://cyber.gouv.fr',
-    focusAreas: ['Algorithm Recommendations', 'Security Visas', 'EU Joint Leadership'],
-    founded: '2022',
-    keyMembers: 'ANSSI, BSI (joint recommendations), Inria, RESQUE consortium',
+    focusAreas: ['Post-Quantum Cryptography'],
+    founded: 'date not verified',
+    keyMembers: 'ANSSI',
   },
 
   // Japan
@@ -164,11 +175,12 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'Japan',
     regionFlag: '\u{1F1EF}\u{1F1F5}',
     description:
-      'Japan\u2019s official cryptographic evaluation body publishing transition guidelines, endorsing NIST PQC selections, and planning government system migration by 2035.',
+      'Government evaluation project. CRYPTREC began in fiscal year 2000 to evaluate and monitor the security of e-Government recommended ciphers; MIC and METI published the e-Government Recommended Ciphers List on 20 February 2003. It is run by an Advisory Board for Cryptographic Technology with an evaluation committee and a promotion committee. Its post-quantum activities were not verified here.',
     url: 'https://www.cryptrec.go.jp/en/',
-    focusAreas: ['Algorithm Evaluation', 'Government Migration', 'Transition Guidelines'],
+    focusAreas: ['Algorithm Evaluation', 'Recommended Ciphers List', 'Cryptographic Modules'],
     founded: '2000',
-    keyMembers: 'METI, MIC, NICT, National Cyber Security Bureau (NCSB)',
+    keyMembers:
+      'Digital Agency, MIC and METI (Advisory Board); NICT and IPA (evaluation and promotion committees)',
   },
   {
     name: 'NEDO Cyber Research Consortium PQC Program',
@@ -176,11 +188,11 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'Japan',
     regionFlag: '\u{1F1EF}\u{1F1F5}',
     description:
-      'Japan\u2019s premier R&D funding body implementing post-quantum cryptography across the national technology supply chain through industry-academic consortium research.',
+      'Government research-funding program. Not verified here (the site could not be read when checked); see nedo.go.jp for the program, its start date and participants.',
     url: 'https://www.nedo.go.jp/',
-    focusAreas: ['Supply Chain PQC', 'Hardware IP', 'Quantum-safe Transport'],
-    founded: '2024',
-    keyMembers: 'PQShield, NTT Corporation, NTT Communications',
+    focusAreas: ['Post-Quantum Cryptography R&D'],
+    founded: 'date not verified',
+    keyMembers: 'not verified here; see nedo.go.jp',
   },
 
   // South Korea
@@ -190,11 +202,11 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'South Korea',
     regionFlag: '\u{1F1F0}\u{1F1F7}',
     description:
-      'Multi-year national competition selecting homegrown PQC algorithms (NTRU+, SMAUG-T, HAETAE, AIMer) for Korean government standards, complementing NIST selections.',
-    url: 'https://kpqc.cryptolab.co.kr/',
-    focusAreas: ['Algorithm Selection', 'National Standards', 'Domestic Capability'],
-    founded: '2021',
-    keyMembers: 'NSR, NIS, Ministry of Science & ICT, Samsung SDS, CryptoLab, KAIST',
+      'Competition. The KpqC team ran Round 1 from November 2022 to November 2023 and Round 2 from April 2024 to November 2024, and announced the final algorithms on 16 January 2025: the signature schemes AIMer and HAETAE and the public-key encryption/KEM schemes NTRU+ and SMAUG-T.',
+    url: 'https://kpqc.or.kr/competition_02.html',
+    focusAreas: ['Algorithm Selection', 'Digital Signatures', 'PKE/KEM'],
+    founded: 'n/a (Round 1 began November 2022)',
+    keyMembers: 'KpqC team; organizers and supporters are named on the competition site',
   },
   {
     name: 'KISA PQC Initiative',
@@ -202,37 +214,37 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'South Korea',
     regionFlag: '\u{1F1F0}\u{1F1F7}',
     description:
-      'Korea Internet & Security Agency coordinating national PQC standardization, working with NIS on KpqC competition outcomes, and guiding industry migration to quantum-safe algorithms.',
+      'Government agency. The Korea Internet & Security Agency’s role in post-quantum standardization was not verified here (its English site did not state it); see kisa.or.kr.',
     url: 'https://www.kisa.or.kr/eng/',
-    focusAreas: ['National Standards', 'Industry Certification', 'Migration Guidance'],
-    founded: '2021',
-    keyMembers: 'NIS, NSR, Ministry of Science & ICT, KAIST',
+    focusAreas: ['Post-Quantum Cryptography'],
+    founded: 'date not verified',
+    keyMembers: 'not verified here; see kisa.or.kr',
   },
 
   // Australia
   {
-    name: 'ASD/ACSC PQC Migration Program',
+    name: 'ASD/ACSC post-quantum planning guidance',
     shortName: 'ASD ACSC',
     region: 'Australia',
     regionFlag: '\u{1F1E6}\u{1F1FA}',
     description:
-      'Australian Signals Directorate\u2019s Cyber Security Centre providing authoritative PQC transition guidance via the LATICE framework (Locate, Assess, Triage, Implement, Communicate, Educate).',
+      'Government agency guidance. The Australian Signals Directorate’s Australian Cyber Security Centre publishes planning guidance for post-quantum cryptography at the linked page. The page could not be read when checked, so its framework, steps and dates were not verified here.',
     url: 'https://www.cyber.gov.au/resources-business-and-government/governance-and-user-education/governance/planning-post-quantum-cryptography',
-    focusAreas: ['LATICE Framework', 'Phased Transition', 'Five Eyes Alignment'],
-    founded: '2022',
-    keyMembers: 'ASD, Department of Home Affairs, Five Eyes partners',
+    focusAreas: ['Post-Quantum Planning'],
+    founded: 'date not verified',
+    keyMembers: 'Australian Signals Directorate (Australian Cyber Security Centre)',
   },
   {
-    name: 'OCSC/Monash PQCiP (Post-Quantum Crypto in the Indo-Pacific)',
+    name: 'OCSC PQCiP (Post-Quantum Crypto in the Indo-Pacific)',
     shortName: 'PQCiP',
     region: 'Australia',
     regionFlag: '\u{1F1E6}\u{1F1FA}',
     description:
-      'US-funded capacity-building program delivering PQC education and deployment training across 11 Indo-Pacific nations, run by Monash University and the Oceania Cyber Security Centre.',
+      'Capacity-building program. Not verified here (its page could not be read when checked); see ocsc.com.au/pqcip for the program, its funders, partner countries and dates.',
     url: 'https://ocsc.com.au/pqcip/',
-    focusAreas: ['Regional Capacity Building', 'NIST PQC Training', 'Government Readiness'],
-    founded: '2023',
-    keyMembers: 'Monash University, OCSC, US Department of State, 11 partner countries',
+    focusAreas: ['Post-Quantum Cryptography Training'],
+    founded: 'date not verified',
+    keyMembers: 'not verified here; see ocsc.com.au/pqcip',
   },
 
   // Canada
@@ -242,15 +254,11 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'Canada',
     regionFlag: '\u{1F1E8}\u{1F1E6}',
     description:
-      'Business-led consortium uniting Canadian quantum technology companies to accelerate innovation and build a resilient quantum economy spanning computing, sensing, communications, and quantum-safe cryptography.',
+      'Industry consortium. QIC describes itself as the country’s business-led consortium for quantum technologies, covering computing, secure communications, sensing and post-quantum cryptography. It works to support industry growth, build commercial pathways and champion Canadian innovation.',
     url: 'https://www.quantumindustrycanada.ca/',
-    focusAreas: [
-      'Industry Commercialization',
-      'National Quantum Strategy',
-      'Year of Quantum Security',
-    ],
-    founded: '2020',
-    keyMembers: 'D-Wave, Xanadu, evolutionQ, BTQ Technologies, 20+ quantum companies',
+    focusAreas: ['Industry Growth', 'Commercial Pathways', 'Advocacy'],
+    founded: 'date not verified',
+    keyMembers: 'QIC members and affiliates; see the list on its site',
   },
   {
     name: 'CCCS PQC Migration Roadmap (ITSM.40.001)',
@@ -258,11 +266,12 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'Canada',
     regionFlag: '\u{1F1E8}\u{1F1E6}',
     description:
-      'Canadian Centre for Cyber Security\u2019s official plan to transition all federal non-classified IT systems to PQC by 2035, mandating alignment with NIST standards.',
+      'Government guidance document, not a standing group. The Canadian Centre for Cyber Security’s recommended roadmap for Government of Canada departments to migrate non-classified IT systems to post-quantum cryptography (first release 23 June 2025): an initial departmental plan from April 2026, high-priority systems by the end of 2031 and remaining systems by the end of 2035.',
     url: 'https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001',
-    focusAreas: ['Federal Mandate', 'NIST Alignment', 'Interagency Coordination'],
-    founded: '2025',
-    keyMembers: 'Shared Services Canada, Treasury Board, all federal departments',
+    focusAreas: ['Government Roadmap', 'Milestones', 'Departmental Planning'],
+    founded: 'n/a (first release 23 June 2025)',
+    keyMembers:
+      'Cyber Centre, working with the Treasury Board of Canada Secretariat and Shared Services Canada; Government of Canada departments carry out the plan',
   },
 
   // Singapore
@@ -272,11 +281,11 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'Singapore',
     regionFlag: '\u{1F1F8}\u{1F1EC}',
     description:
-      'Cyber Security Agency of Singapore\u2019s program helping organizations build quantum-safe readiness through the Quantum Readiness Index (QRI), migration handbook, and CII owner guidance.',
+      'Government agency program. Not verified here: the linked Cyber Security Agency of Singapore page was not available when checked on 5 November 2026. See csa.gov.sg for current quantum-safe guidance.',
     url: 'https://www.csa.gov.sg/Tips-Resource/publications/2024/quantum-safe-transition',
-    focusAreas: ['Quantum Readiness Index', 'CII Migration', 'Risk-based Prioritization'],
-    founded: '2024',
-    keyMembers: 'CSA, GovTech, IMDA, technology companies',
+    focusAreas: ['Quantum-Safe Readiness'],
+    founded: 'date not verified',
+    keyMembers: 'Cyber Security Agency of Singapore',
   },
   {
     name: 'IMDA Quantum-Safe Network Initiative',
@@ -284,10 +293,10 @@ export const PQC_WORKGROUPS: Workgroup[] = [
     region: 'Singapore',
     regionFlag: '\u{1F1F8}\u{1F1EC}',
     description:
-      'Infocomm Media Development Authority partnering with telcos and technology vendors to test and deploy QKD and PQC hybrid solutions across Singapore\u2019s national network infrastructure.',
+      'Government agency program. The Infocomm Media Development Authority’s quantum-safe technologies page describes the National Quantum Safe Network Plus (NQSN+), announced at ATxSG 2023, which aims to deliver islandwide quantum-safe communications, alongside work on standardisation of quantum security technologies.',
     url: 'https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies',
-    focusAreas: ['Network Trials', 'QKD/PQC Hybrid', 'Telco Partnerships'],
-    founded: '2022',
-    keyMembers: 'Singtel, StarHub, M1, government agencies',
+    focusAreas: ['National Quantum Safe Network Plus', 'Standardisation'],
+    founded: 'n/a (NQSN+ announced 2023)',
+    keyMembers: 'Infocomm Media Development Authority; participants not verified here',
   },
 ]

@@ -36,19 +36,50 @@ const PERSONA_TAG: Record<PersonaId, string> = {
   curious: 'Getting started',
 }
 
-/** Shown when no persona is selected — generic first-time-visitor framing,
- *  not tied to any specific result. */
+/** Shown only when there is no result to describe — a neutral, conditional first-time-visitor
+ *  framing. It asserts no exposure and no deadline: both depend on the assessment answers. */
 export const NO_PERSONA_VERDICT: ReportVerdict = {
   tag: 'Summary',
   narrative:
-    'Your data faces a Harvest-Now-Decrypt-Later risk: encrypted today, it can be stored and broken once a quantum computer arrives, with regulatory deadlines clustering around 2030. The standards (NIST FIPS 203/204/205) are final — the gap is migration. The prioritised actions below are where to start.',
+    'Harvest-Now-Decrypt-Later is a risk for data that must stay confidential for years and can be recorded today; whether it applies to you, and which regulatory dates matter, depend on your answers. The NIST post-quantum standards (FIPS 203/204/205) are published, so the next step is migration planning. Complete the assessment to see your own exposure and the dates that apply to your situation.',
+}
+
+/**
+ * Role-free summary built from the reported facts. Exposure and dates are stated only where
+ * the result supports them, so a report with no exposed data and no dated framework never
+ * reads as if it had both. It is written separately from `result.narrative` (the Risk Score
+ * section shows that one), so the two never repeat each other.
+ */
+function neutralSummary(result: AssessmentResult | null): string {
+  if (!result) return NO_PERSONA_VERDICT.narrative
+  const parts: string[] = []
+  const hndl = result.hndlRiskWindow
+  if (hndl) {
+    parts.push(
+      hndl.isAtRisk
+        ? 'Your answers describe data that must stay confidential beyond the planning anchor this site uses for a first quantum computer, so Harvest-Now-Decrypt-Later is an exposure to investigate.'
+        : 'Your answers do not describe data that outlives the planning anchor this site uses for a first quantum computer, so Harvest-Now-Decrypt-Later is not flagged for the data you described.'
+    )
+  }
+  const expecting = (result.complianceImpacts ?? []).filter((c) => c.requiresPQC === true).length
+  if (expecting > 0) {
+    parts.push(
+      `${expecting} of your selected framework${expecting > 1 ? 's' : ''} state${expecting === 1 ? 's' : ''} a PQC expectation; read each source for its own dates and scope.`
+    )
+  }
+  parts.push(
+    'The NIST post-quantum standards (FIPS 203/204/205) are published; the prioritised actions below are where to start.'
+  )
+  return parts.join(' ')
 }
 
 export function reportVerdict(
   persona: PersonaId | null,
   result: AssessmentResult | null
 ): ReportVerdict {
-  if (!persona) return NO_PERSONA_VERDICT
+  if (!persona) {
+    return { tag: NO_PERSONA_VERDICT.tag, narrative: neutralSummary(result) }
+  }
   return {
     // eslint-disable-next-line security/detect-object-injection -- persona is a typed enum key
     tag: PERSONA_TAG[persona] ?? NO_PERSONA_VERDICT.tag,

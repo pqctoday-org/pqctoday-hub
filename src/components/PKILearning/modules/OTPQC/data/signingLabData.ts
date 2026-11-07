@@ -77,12 +77,14 @@ function lmsScheme(h: number, levels: 1 | 2): SigningScheme {
     signatureBytes: hssSignatureBytes(levels, h, 8),
     publicKeyBytes: HSS_PUBLIC_KEY_BYTES,
     capacity: 2 ** (h * levels),
-    cnsa2: 'firmware-signing',
+    // NSA's CNSA 2.0 FAQ (version 2.2) approves only LMS and XMSS from NIST SP 800-208 for
+    // National Security Systems; the multi-tree HSS and XMSSMT are not allowed there.
+    cnsa2: levels === 1 ? 'firmware-signing' : 'not-cnsa',
     validation: 'rfc8554-kat',
     note:
       levels === 1
         ? 'One tree: every signature consumes one one-time key, tracked by a counter that must never repeat.'
-        : 'Two levels: the top tree signs bottom trees, so new bottom trees can be made without a new root of trust.',
+        : 'Two levels: the top tree signs bottom trees, so new bottom trees can be made without a new root of trust. NIST SP 800-208 approves HSS, but NSA allows only LMS and XMSS from SP 800-208 in National Security Systems and says the multi-tree HSS is not allowed, so SP 800-208 approval does not imply CNSA 2.0 approval.',
   }
 }
 
@@ -200,7 +202,9 @@ export function planSigning(inputs: SigningPlanInputs): SigningPlanResult {
     )
   if (scheme.cnsa2 === 'not-cnsa')
     warnings.push(
-      'Not a CNSA 2.0 parameter set — fine for commercial OT, not for National Security Systems.'
+      scheme.family === 'LMS/HSS'
+        ? 'Multi-tree HSS is approved by NIST SP 800-208 but is not allowed in National Security Systems under NSA’s CNSA 2.0 FAQ, which approves only single-tree LMS and XMSS. A single LMS tree is the CNSA 2.0 choice there; outside National Security Systems, HSS is a design choice for you to justify.'
+        : 'Not a CNSA 2.0 parameter set — fine for commercial OT, not for National Security Systems.'
     )
 
   return {

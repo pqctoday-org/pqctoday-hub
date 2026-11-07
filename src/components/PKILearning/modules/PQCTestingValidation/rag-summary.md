@@ -31,11 +31,11 @@ PQC testing introduces challenges absent from classical cryptography assessments
 **Passive discovery** inspects network traffic on SPAN ports or network taps without injecting packets. Tools observe:
 
 - TLS ClientHello cipher suite extensions (hybrid KEM identifiers)
-- Server certificate algorithm (RSA, ECDSA, or ML-DSA)
+- Server certificate algorithm (RSA, ECDSA, or ML-DSA), only where the certificate crosses the wire in the clear (TLS 1.2 and earlier, SSH host keys); TLS 1.3 encrypts the Certificate message (RFC 8446), so a passive tap without endpoint secrets or endpoint telemetry cannot see the chain
 - SSH key exchange algorithm negotiation
 - IKEv2 Key Exchange payload algorithm identifiers
 
-Key limitation: passive tools can only detect algorithms in _current_ flows. If no ML-KEM-capable connection is being made, ML-KEM support cannot be detected passively.
+Key limitation: passive tools can only detect algorithms in _current_ flows. If no ML-KEM-capable connection is being made, ML-KEM support cannot be detected passively: report "hybrid not observed" and "support unknown", not "not supported". Confirming endpoint support needs an active probe, endpoint telemetry, or vendor documentation.
 
 **Tools**: CryptoNext COMPASS (commercial, NCCoE PQC migration project collaborator, NIST CAVP certified for all 3 PQC standards), pqc-flow (open source, CipherIQ), VIAVI Observer Analyzer (commercial, PQC detection in development) (not sourced in the Library).
 

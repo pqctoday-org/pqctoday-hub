@@ -113,11 +113,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ profile, selected, onToggle
             {formatRetention(profile.trueRetentionYears)}
           </span>
 
-          {/* HIPAA minimum badge */}
-          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border border-border bg-muted text-muted-foreground font-medium">
-            HIPAA: {profile.hipaaMinimumYears} years
-          </span>
-
           {/* Severity badge */}
           <span
             className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border font-bold uppercase ${severityClasses}`}
@@ -212,7 +207,6 @@ interface TimelineBarProps {
 }
 
 const TimelineBar: React.FC<TimelineBarProps> = ({ profile, maxRetention, crqcYear }) => {
-  const hipaaWidth = (profile.hipaaMinimumYears / maxRetention) * 100
   const retentionWidth = (profile.trueRetentionYears / maxRetention) * 100
   const yearsUntilCrqc = crqcYear - CURRENT_YEAR
   const crqcPosition = Math.min((yearsUntilCrqc / maxRetention) * 100, 100)
@@ -237,12 +231,6 @@ const TimelineBar: React.FC<TimelineBarProps> = ({ profile, maxRetention, crqcYe
           />
         )}
 
-        {/* HIPAA minimum bar */}
-        <div
-          className="absolute inset-y-0 left-0 bg-muted border-r-2 border-muted-foreground/30"
-          style={{ width: `${hipaaWidth}%` }}
-        />
-
         {/* True retention bar */}
         <div
           className="absolute inset-y-0 left-0 bg-primary/30 border-r-2 border-primary"
@@ -260,13 +248,6 @@ const TimelineBar: React.FC<TimelineBarProps> = ({ profile, maxRetention, crqcYe
             </div>
           </div>
         )}
-
-        {/* Labels inside bar */}
-        <div className="absolute inset-0 flex items-center px-2">
-          <span className="text-[9px] text-muted-foreground font-medium">
-            HIPAA {profile.hipaaMinimumYears}y
-          </span>
-        </div>
       </div>
     </div>
   )
@@ -335,9 +316,11 @@ export const PatientPrivacyMapper: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">Patient Privacy Mapper</h3>
         <p className="text-sm text-muted-foreground">
           Select healthcare data categories to visualize true retention periods, privacy stigma
-          amplifiers, and HNDL exposure windows. HIPAA mandates a 6-year minimum &mdash; but real
-          retention periods are far longer, dramatically expanding the harvest-now-decrypt-later
-          attack surface.
+          amplifiers, and HNDL exposure windows. HIPAA&apos;s 6-year rule (45 CFR 164.316(b)(2))
+          covers required compliance documentation, not patient records; medical-record retention
+          comes mainly from state law and other rules and varies by record type. Confidentiality can
+          need to hold far longer than any retention period, which expands the
+          harvest-now-decrypt-later attack surface.
         </p>
       </div>
 
@@ -443,10 +426,6 @@ export const PatientPrivacyMapper: React.FC = () => {
 
           {/* Legend */}
           <div className="flex flex-wrap gap-4 text-[10px]">
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded bg-muted border border-muted-foreground/30" />
-              <span className="text-muted-foreground">HIPAA Minimum (6y)</span>
-            </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-primary/30 border border-primary" />
               <span className="text-muted-foreground">Sample Planning Lifetime</span>

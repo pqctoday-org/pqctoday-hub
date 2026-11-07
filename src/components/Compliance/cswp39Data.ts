@@ -334,7 +334,7 @@ export const CSWP39_CROSS_WALK: CSWP39CrossWalkRow[] = [
       },
       {
         label: 'CNSA 2.0 deadlines',
-        hint: 'NSS PQC deadlines 2030 / 2033',
+        hint: 'NSS only (CNSSP 15; NSA CNSA 2.0 FAQ v2.2, Timeframe): new acquisitions 1 Jan 2027; unsupported equipment phased out 31 Dec 2030 unless excepted; CNSA 2.0 mandated 31 Dec 2031 unless noted',
         searchQuery: 'CNSA',
         targetTab: 'compliance',
       },

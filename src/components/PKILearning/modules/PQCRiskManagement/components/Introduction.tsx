@@ -321,11 +321,15 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <div className="text-xs font-bold text-foreground mb-2">Regulatory Pressure</div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>
-                  &bull; NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip>: PQC required
-                  for NSS by 2030&ndash;2035
+                  &bull; NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (National
+                  Security Systems only; FAQ version 2.2, October 2026): new acquisitions from 1
+                  January 2027, equipment and services that cannot support it phased out by 31
+                  December 2030 absent an exception, and CNSA 2.0 algorithms mandated by 31 December
+                  2031 unless otherwise noted. NSM-10&apos;s 2035 goal is separate; the CRQC
+                  Scenario Planner shows each date with its scope and source
                 </li>
                 <li>
-                  &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable digital signature
+                  &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable public-key
                   algorithms deprecated after 2030, disallowed under NIST standards and guidelines
                   after 2035
                 </li>

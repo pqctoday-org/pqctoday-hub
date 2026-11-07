@@ -23,7 +23,11 @@ implements OpenMLS's `OpenMlsProvider` trait by routing the
 
 Generated as token objects with `CKA_SENSITIVE=TRUE` /
 `CKA_EXTRACTABLE=FALSE`. What OpenMLS persists as the &quot;private key&quot; is
-an opaque `HsmKeyHandle` blob (PQTH magic + CKA_ID), never raw bytes.
+an opaque `HsmKeyHandle` blob (PQTH magic + CKA_ID); raw private-key bytes are
+not returned to OpenMLS through this interface. In this sample the token is a
+software module (softhsmv3) loaded into the same process, so the key bytes still
+exist in that process's memory. A production HSM has to demonstrate tamper
+resistance, isolation from the host and assurance evidence separately.
 
 ## Library cross-references
 

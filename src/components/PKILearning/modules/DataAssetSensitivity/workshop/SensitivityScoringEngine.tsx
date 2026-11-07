@@ -42,7 +42,11 @@ const DATASENS_KAT_SPECS: KatTestSpec[] = [
 
 interface SensitivityScoringEngineProps {
   assets: DataAsset[]
-  selectedMandates: string[]
+  /**
+   * Estate-wide mandate list kept for the caller's other views. It is not copied
+   * onto assets whose applicability is unstated: unknown stays unknown.
+   */
+  selectedMandates?: string[]
   onScoredAssetsChange?: (scored: ScoredAsset[]) => void
   crqcYear?: number
   weights?: ScoringWeights
@@ -192,7 +196,9 @@ function AssetScoreRow({
               <p className="text-[10px] text-muted-foreground">Compliance</p>
               <p className="text-lg font-bold text-foreground">{scored.complianceScore}</p>
               <p className="text-[9px] text-muted-foreground">
-                {scored.complianceFlags.length} framework(s)
+                {scored.complianceFlags.length > 0
+                  ? `${scored.complianceFlags.length} framework(s)`
+                  : 'Applicability not stated (scored 0)'}
               </p>
               <p className="text-[9px] text-primary font-semibold">
                 +{Math.round(scored.complianceScore * (weights.compliance / 100))} pts (
@@ -225,7 +231,6 @@ function AssetScoreRow({
 
 export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> = ({
   assets,
-  selectedMandates,
   onScoredAssetsChange,
   crqcYear,
   weights: providedWeights,
@@ -235,21 +240,15 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
   const weights = providedWeights ?? localWeights
   const [sortDescending, setSortDescending] = useState(true)
 
-  const assetsWithFlags = useMemo(
-    () =>
-      assets.map((a) => ({
-        ...a,
-        complianceFlags: a.complianceFlags.length > 0 ? a.complianceFlags : selectedMandates,
-      })),
-    [assets, selectedMandates]
-  )
-
+  // An asset with no stated compliance applicability is scored with none: the
+  // estate-wide union of mandates is not copied onto it, because that would
+  // claim every sample mandate applies to every unclassified asset.
   const scored = useMemo(() => {
-    const results = assetsWithFlags.map((a) => scoreAsset(a, weights, crqcYear))
+    const results = assets.map((a) => scoreAsset(a, weights, crqcYear))
     return [...results].sort((a, b) =>
       sortDescending ? b.compositeScore - a.compositeScore : a.compositeScore - b.compositeScore
     )
-  }, [assetsWithFlags, weights, sortDescending, crqcYear])
+  }, [assets, weights, sortDescending, crqcYear])
 
   // Notify parent of scored results — must be in useEffect, not useMemo,
   // to avoid calling setState during another component's render phase.

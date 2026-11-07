@@ -89,4 +89,15 @@ describe('sandbox scenario data invariants', () => {
       expect(visible.length, `persona '${persona}' sees no sandbox scenarios`).toBeGreaterThan(0)
     }
   })
+  it('describes code signing as a signature-forgery and trust-lifetime risk, with encrypted update channels assessed separately', () => {
+    const signing = SANDBOX_SCENARIOS.find((s) => s.id === 'osslsigncode')
+    expect(signing).toBeDefined()
+    const text = signing!.useCase
+    // A signature protects authenticity; harvest-now-decrypt-later is a confidentiality risk.
+    expect(text).not.toMatch(/implications of harvest-now-decrypt-later on software distribution/i)
+    expect(text).toMatch(/authenticity, not confidentiality/i)
+    expect(text).toMatch(/signature forgery/i)
+    expect(text).toMatch(/for as long as installed software and trust anchors rely on that key/i)
+    expect(text).toMatch(/encrypted channel that delivers an update, which is assessed separately/i)
+  })
 })

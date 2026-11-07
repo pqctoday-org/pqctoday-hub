@@ -104,10 +104,12 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
               Harvest Now, Decrypt Later
             </div>
             <p className="text-xs text-muted-foreground">
-              System TLS traffic (HTTPS, API calls, database connections) and SSH sessions are being
-              recorded today for future decryption. Every TLS 1.3 session using only classical key
-              exchange is a potential HNDL target. Hybrid X25519MLKEM768 eliminates this risk with a
-              single config change.
+              System TLS traffic (HTTPS, API calls, database connections) and SSH sessions can be
+              recorded today and decrypted later if their key exchange is classical-only. Every TLS
+              1.3 session using only classical key exchange is a potential HNDL target. A hybrid
+              group such as X25519MLKEM768 protects the sessions that actually negotiate it, so both
+              ends must support it and a capture must show the group that was selected. Server and
+              signer authentication is a separate, later concern (see the SSH section).
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -215,11 +217,19 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
         title="SSH Host Key Migration to ML-DSA-65"
       >
         <p>
-          SSH host keys are a prime target for{' '}
-          <InlineTooltip term="HNDL">Harvest Now, Decrypt Later</InlineTooltip> attacks. An attacker
-          recording SSH sessions today could authenticate as your server in the future once they
-          break the host key with a quantum computer. Migrating to <strong>ssh-mldsa65</strong>{' '}
-          eliminates this risk.
+          SSH has two separate quantum exposures that call for two separate fixes. Session
+          confidentiality depends on the key exchange: a session recorded today with a
+          classical-only key exchange is the{' '}
+          <InlineTooltip term="HNDL">Harvest Now, Decrypt Later</InlineTooltip> case, and a
+          post-quantum key exchange is the control for it. Server authentication depends on the
+          host-key signature: a quantum computer able to forge classical signatures could let an
+          attacker impersonate your server to clients that still trust the old host key, but only in
+          connections made once such a computer exists. A host key does not decrypt anything that
+          was recorded earlier, so replacing it is not an HNDL control. OpenSSH&apos;s own
+          post-quantum page makes the same distinction: signature algorithms have no analogue of
+          store now, decrypt later, and the only urgency is retiring classical signature keys before
+          cryptographically relevant quantum computers arrive. Migrating to{' '}
+          <strong>ssh-mldsa65</strong> addresses that second exposure only.
         </p>
 
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -287,15 +297,18 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
                 <code className="text-[10px] bg-muted px-1 rounded">sntrup761x25519-sha512</code>{' '}
                 hybrid KEX (the default from 9.0). OpenSSH 9.9 adds{' '}
                 <code className="text-[10px] bg-muted px-1 rounded">mlkem768x25519-sha256</code>,
-                enabled by default, and OpenSSH 10.0 makes it the default KEX. Addresses HNDL for
-                session contents.
+                enabled by default, and OpenSSH 10.0 makes it the default KEX. This is the control
+                for HNDL against session contents; it works only if both client and server offer it.
               </p>
             </div>
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs font-bold text-secondary mb-1">2. Host Authentication</div>
               <p className="text-xs text-muted-foreground">
-                Verifies server identity via host key signature. ML-DSA host key types are described
-                in the Internet-Draft draft-sfluhrer-ssh-mldsa-06, which writes the names as{' '}
+                Verifies server identity via host key signature. It has no store now, decrypt later
+                exposure: forging a host-key signature only helps an attacker in connections made
+                after a capable quantum computer exists, so the aim is to retire classical host keys
+                ahead of that point. ML-DSA host key types are described in the Internet-Draft
+                draft-sfluhrer-ssh-mldsa (revision 08 when checked), which writes the names as{' '}
                 <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa-44</code>,{' '}
                 <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa-65</code> and{' '}
                 <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa-87</code>; this lesson
@@ -319,8 +332,9 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
         <p>
           Package signing is a supply chain integrity mechanism — it proves that the package you
           install came from the expected vendor and has not been tampered with. Today, RPM and DEB
-          packages use GPG signatures (RSA-4096 or Ed25519). PQC migration requires coordinating
-          upgrades across the signing server, repository metadata, and all client package managers.
+          packages use OpenPGP signatures (the key type depends on the distribution). PQC migration
+          requires coordinating upgrades across the signing server, repository metadata, and all
+          client package managers.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -329,9 +343,12 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
               RPM Ecosystem (RHEL / Fedora)
             </div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; rpm-sign: embeds GPG sig in RPM header</li>
-              <li>&bull; dnf: verifies sig using imported GPG keys</li>
-              <li>&bull; PQC path: pluggable backend in RPM v4.19+</li>
+              <li>&bull; rpmsign: adds OpenPGP signatures to the RPM header</li>
+              <li>&bull; rpm/dnf: verify against the OpenPGP keys in the keyring</li>
+              <li>
+                &bull; PQC path: RPM 6.0.0 lists OpenPGP v6 and PQC signatures, and Red Hat signs
+                RHEL 10.1 packages with a hybrid ML-DSA-87 + Ed448 key beside its RSA key
+              </li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -340,9 +357,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             </div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>&bull; InRelease: signed repo metadata (APT)</li>
-              <li>&bull; apt: verifies InRelease GPG sig on update</li>
-              <li>&bull; PQC path: DEP-18 (Debian Enhancement Proposal)</li>
-              <li>&bull; Timeline: Ubuntu 26.04 LTS (2026) target</li>
+              <li>&bull; apt: verifies the InRelease OpenPGP signature on update</li>
+              <li>
+                &bull; PQC path: this lesson cites no Debian or Ubuntu ML-DSA plan or date (DEP-18
+                covers CI and merge-request workflow, not signatures)
+              </li>
             </ul>
           </div>
         </div>
@@ -355,8 +374,10 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             Package signing requires <strong>coordinated ecosystem upgrades</strong>. The signing
             infrastructure, repository metadata format, package manager client, and end-user systems
             must ALL support the new algorithm before migration. This is significantly harder than a
-            server-side TLS config change. Sigstore-style transparency logs with ML-DSA detached
-            signatures are a promising intermediate solution.
+            server-side TLS config change. Red Hat&apos;s approach shows one way to stage it: add a
+            post-quantum signature beside the existing RSA one, so systems that cannot verify the
+            new signature still verify the old one and newer clients check both. A client without
+            RPM 6 signature support does not check the post-quantum signature at all.
           </p>
         </div>
       </LearnSection>

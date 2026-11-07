@@ -134,7 +134,7 @@ export const COMPENSATING_CONTROLS: CompensatingControl[] = [
     id: 'key-rotation',
     label: 'Accelerated Key Rotation',
     description:
-      'Reduce key lifetime to minimize HNDL exposure window. Rotate monthly instead of annually.',
+      'Shorten the cryptoperiod of the keys involved so that each key protects less data and one compromised key exposes less. It does not change what an adversary can decrypt later from traffic already recorded under a quantum-vulnerable key exchange, so it complements PQC or hybrid protection rather than replacing it. Choose the period from risk and from what your systems and key-distribution methods can support (NIST SP 800-57 Part 1 Rev. 5, Sec. 5.3.1), not from a fixed monthly rule.',
     applicableTo: ['data-sensitivity', 'vendor-dependency'],
   },
   {

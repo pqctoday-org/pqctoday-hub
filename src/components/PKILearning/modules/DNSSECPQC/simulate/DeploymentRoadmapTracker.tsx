@@ -71,15 +71,30 @@ export const DeploymentRoadmapTracker: React.FC = () => {
         ))}
       </div>
 
-      <div className="bg-warning/5 rounded-lg p-4 border border-warning/20">
-        <h4 className="font-bold text-warning text-sm mb-1">A separate, broader estimate</h4>
+      <div className="bg-warning/5 rounded-lg p-4 border border-warning/20 space-y-2">
+        <h4 className="font-bold text-warning text-sm mb-1">
+          A separate, broader scenario: the root zone&apos;s own algorithm rollovers
+        </h4>
         <p className="text-xs text-muted-foreground">
-          The DNS root zone&apos;s own algorithm rollover is a different, larger-scope migration
-          than Cloudflare&apos;s roadmap above &mdash; Verisign estimates the{' '}
-          <strong>mid-2030s</strong> as the realistic window for that step, since every delegation
-          up to the root needs PQ support (the order in which levels migrate isn&apos;t fixed).
-          Don&apos;t read Cloudflare&apos;s ~2029 target as a prediction for the whole DNS
-          ecosystem.
+          The DNS root zone&apos;s own algorithm change is a different, larger-scope migration than
+          Cloudflare&apos;s roadmap above, and it has two distinct steps that should not be
+          confused.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          <strong>First rollover (ICANN/IANA plan, classical).</strong> IANA&apos;s proposal of 3
+          February 2026 sets a multi-year plan that starts with generating a new ECDSA Root KSK in
+          2027 and ends with retiring the RSA Root KSK in 2029. After the comment period closed on 6
+          April 2026, ICANN org said it will proceed with the rollover as proposed. ECDSA is a
+          classical algorithm, so this plan does not make the root post-quantum.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          <strong>Second rollover (a dated, conditional scenario).</strong> In its December 2023
+          comments on ICANN&apos;s draft study, Verisign reasoned that, with root KSK rollovers
+          planned about five years apart and US government migration dates as early as 2035, the
+          second root zone algorithm rollover &ldquo;in the mid-2030s may well involve the
+          incorporation of post-quantum cryptography&rdquo;. That is a planning scenario from 2023,
+          not an ICANN/IANA plan and not a forecast of when the root will move. Don&apos;t read
+          Cloudflare&apos;s ~2029 target as a prediction for the whole DNS ecosystem either.
         </p>
       </div>
 

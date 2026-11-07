@@ -115,7 +115,7 @@ const ATTESTATION_FLOWS: AttestationFlow[] = [
       },
     ],
     currentMigrationPath:
-      'Hybrid path for a TPM built to a library version earlier than 185: (1) TPM RSA AIK signs quote as normal, (2) software ML-DSA-65 key co-signs the same nonce, (3) verifier validates both. In TPM 2.0 Library v185 (March 2026), TPMU_SIGNATURE is a union of the signature types that a given TPM implementation supports.',
+      'Interim sketch for a TPM built to a library version earlier than 185 (illustrative, with limits): (1) TPM RSA AIK signs quote as normal, (2) a software ML-DSA-65 key signs the same nonce together with the quote and the reported PCR values, (3) verifier validates both. A software key has no hardware root of trust and how the verifier trusts its public key is unresolved, so this is not by itself quantum-safe attestation. In TPM 2.0 Library v185 (March 2026), TPMU_SIGNATURE is a union of the signature types that a given TPM implementation supports.',
     fieldLifeYears: 10,
   },
   {

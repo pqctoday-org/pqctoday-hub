@@ -106,12 +106,12 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     cmvpCertNumber: null,
     esvStatus: 'not-validated',
     pqcSupport:
-      'All NIST PQC families (ML-KEM, ML-DSA, SLH-DSA, Falcon, FrodoKEM, HQC, Classic McEliece)',
+      'ML-KEM, ML-DSA, SLH-DSA (NIST standards); Falcon and HQC (selected by NIST, standards not final); FrodoKEM and Classic McEliece (under ISO consideration). The project says names other than the three NIST standards may change.',
     openCveHigh: 0,
     lastVerified: '2026-04-19',
     posture: 'yellow',
     notes:
-      'No FIPS validation (intentional — research/reference library). Use behind a FIPS-validated provider shim for regulated workloads.',
+      'No FIPS validation. The project describes liboqs as meant for research and prototyping and does not recommend relying on it in production or to protect sensitive data. A provider or wrapper that loads liboqs does not bring its algorithms inside a validated boundary: a CMVP certificate covers only the named module, its approved algorithms and its tested configuration. Treat liboqs-backed algorithms as outside any certificate and as experimental, for evaluation and interoperability testing.',
   },
   {
     id: 'wolfcrypt-fips',
@@ -177,7 +177,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-04-16',
     posture: 'yellow',
     notes:
-      'Pure-Rust; no CMVP validation. Good for greenfield Rust stacks; combine with aws-lc-rs if FIPS boundary needed.',
+      'Pure-Rust; no CMVP validation. Good for greenfield Rust stacks. A FIPS boundary exists only inside a module that holds a certificate (see the AWS-LC row); using such a module next to RustCrypto does not bring RustCrypto code inside that boundary.',
   },
   {
     id: 'aws-lc',

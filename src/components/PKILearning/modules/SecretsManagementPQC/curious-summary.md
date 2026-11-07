@@ -4,12 +4,12 @@ Organizations manage two distinct sets of sensitive materials: functional secret
 
 ### Why It Matters
 
-Long-lived API keys harvested from a TLS session today could be extracted and exploited by a CRQC years from now. By contrast, migrating the Key Encryption Key (KEK) of a secrets vault to ML-KEM via envelope encryption protects all stored secrets at rest instantly.
+Long-lived API keys harvested from a TLS session today could be extracted and exploited by a CRQC years from now. By contrast, how stored secrets are protected at rest depends on how their data keys are wrapped. A symmetric (AES) Key Encryption Key (KEK) is not broken by quantum computers, so only an asymmetric wrapping step, such as RSA key transport, needs replacing, with a post-quantum key-encapsulation method where the product supports one.
 
 ### The Key Takeaway
 
-Dynamic secrets (like 8-hour TTL database credentials) eliminate HNDL risk automatically by expiring long before they can be decrypted. For remaining static secrets, modernize your vault's transit engine to support ML-KEM envelope encryption.
+Dynamic secrets (like 8-hour TTL database credentials) eliminate HNDL risk automatically by expiring long before they can be decrypted. For remaining static secrets, find which step in your vault or key service is asymmetric and ask the vendor which post-quantum options its service supports.
 
 ### What's Happening
 
-Secrets management platforms are evaluating ML-KEM integration for their transit encryption engines, while organizations are accelerating the shift from long-lived static API keys to short-lived dynamic secrets that naturally resist Harvest Now, Decrypt Later attacks.
+Support differs by platform. AWS KMS documents ML-KEM keys with Encapsulate and Decapsulate operations (documentation entry dated 23 October 2026), while AWS Secrets Manager still protects secrets with AES-256 data keys under symmetric KMS keys. HashiCorp's Vault transit documentation lists ML-DSA, SLH-DSA and hybrid signing key types but no ML-KEM type. Organizations are also shifting from long-lived static API keys to short-lived dynamic secrets that expire before they can be misused.

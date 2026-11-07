@@ -30,4 +30,19 @@ describe('simMoves', () => {
     const wait = SIM_MOVES.p3!.find((m) => m.label.startsWith('Wait'))!
     expect(wait.evaluate(ctx(7, 'required', 'hybrid')).outcome).toContain('7y over the line')
   })
+  it('P2 spreadsheet move: explains why the gate needs a structured CBOM while accepting spreadsheets and phased inventories', () => {
+    const sheet = SIM_MOVES.p2!.find((m) => m.label.includes('shared spreadsheet'))!
+    const verdict = sheet.evaluate(ctx(5, 'required', 'hybrid'))
+    expect(verdict.kind).toBe('trap')
+    // The old text called any spreadsheet un-queryable and "stuck at Level 1" without qualification.
+    expect(verdict.outcome).not.toMatch(/can't be queried, diffed, or fed to compliance automation/)
+    expect(verdict.outcome).toMatch(/Fails in this scenario/)
+    expect(verdict.outcome).toMatch(/structured, validated records/)
+    expect(verdict.outcome).toMatch(/spreadsheet or CSV is a reasonable place to start collecting/)
+    expect(verdict.outcome).toMatch(/phased inventory/)
+    expect(verdict.outcome).toMatch(/CycloneDX CBOM generated or imported from that data/)
+    // The structured option stays the sound one.
+    const cbom = SIM_MOVES.p2!.find((m) => m.label.startsWith('Build a CycloneDX CBOM'))!
+    expect(cbom.evaluate(ctx(5, 'required', 'hybrid')).kind).toBe('sound')
+  })
 })

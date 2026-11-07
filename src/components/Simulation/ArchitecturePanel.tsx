@@ -36,6 +36,7 @@ const STATUS_CHIP: Record<PqcStatus, string> = {
   available: 'bg-status-success/15 text-status-success',
   partial: 'bg-status-warning/15 text-status-warning',
   roadmap: 'bg-status-info/15 text-status-info',
+  psk: 'bg-status-info/15 text-status-info',
   none: 'bg-status-error/15 text-status-error',
   unverified: 'bg-muted text-muted-foreground',
 }
@@ -151,7 +152,7 @@ export function ArchitecturePanel({
               <span
                 key={p.name}
                 className={`rounded px-2 py-0.5 text-xs ${STATUS_CHIP[p.status]}`}
-                title={`PQC ${p.status}`}
+                title={p.status === 'psk' ? 'Pre-shared key only' : `PQC ${p.status}`}
               >
                 {p.name}
               </span>

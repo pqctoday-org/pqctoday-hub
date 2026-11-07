@@ -138,11 +138,11 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'JCProv over Luna HSM (PKCS#11 v3.2 ML-KEM / ML-DSA mechanisms)',
     effort: 'medium',
     description:
-      'JCProv is a Java wrapper over the PKCS#11 C API, so PQC arrives when the HSM firmware exposes the ML-KEM and ML-DSA mechanisms. Keys stay in hardware; your JCA calls change only in the algorithm names.',
+      'JCPROV is a Java wrapper for the PKCS#11 API and is separate from the Luna JSP, the JCA/JCE provider. PQC arrives when the HSM firmware exposes the ML-KEM and ML-DSA mechanisms (firmware 7.9.0 or newer per Thales). Which of those the JCPROV classes expose is not stated here; check the JCPROV javadocs. Through the Luna JSP, JCA calls change only in the algorithm names and need JDK 24/25 or later for ML-KEM and ML-DSA.',
     steps: [
       'Confirm the Luna firmware and client versions that expose ML-KEM and ML-DSA mechanisms',
-      'Upgrade JCProv to the release that maps those mechanisms into the JCA provider',
-      'Generate ML-DSA signing keys inside the HSM and sign through the same JCA Signature calls',
+      'Upgrade the Luna client; for the JSP route confirm JDK 24/25 or later, for the JCPROV route check the javadocs for the new mechanisms',
+      "Generate ML-DSA signing keys inside the HSM and sign through the JSP's JCA Signature calls, or through PKCS#11-style calls with JCPROV",
       'Keep classical keys in place for the transition; plan hybrid signatures where relying parties need them',
       'Re-run your FIPS Level 3 evidence with the new firmware version',
     ],
@@ -169,19 +169,19 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'wolfSSL with ML-KEM and ML-DSA enabled',
     effort: 'low',
     description:
-      'wolfSSL supports PQC and is FIPS validated, which makes it one of the two libraries this module lists with FIPS-certified PQC. The work is a rebuild with the PQC options on, then enabling the hybrid TLS groups.',
+      'wolfSSL supports PQC, and its wolfCrypt module holds FIPS 140-3 certificate #4718 (Level 1), but that certificate lists no PQC algorithm as approved. The ML-KEM and ML-DSA operations are therefore not covered by that validation. The work is a rebuild with the PQC options on, then enabling the hybrid TLS groups.',
     steps: [
       'Rebuild wolfSSL with its ML-KEM and ML-DSA options enabled',
       'Enable the hybrid X25519 + ML-KEM key-share groups on your TLS endpoints',
       'Add ML-DSA certificates to a test chain and verify the peers you must interoperate with',
-      'Under the commercial licence, confirm which PQC builds sit inside the FIPS boundary',
+      'If you need FIPS, read the CMVP certificate for the exact wolfCrypt version you ship and treat any PQC algorithm it does not list as not validated',
     ],
   },
   {
     id: 'ring-to-awslc',
     title: 'Rust: Move from ring to aws-lc-rs',
     from: 'ring (classical, no PQC)',
-    to: 'aws-lc-rs (classical + ML-KEM, FIPS-validated backend)',
+    to: 'aws-lc-rs (classical + ML-KEM, optional FIPS module build)',
     effort: 'medium',
     description:
       'ring has a deliberately small algorithm set and no PQC. aws-lc-rs mirrors the ring API on top of AWS-LC, so most call sites move with a crate swap, and ML-KEM becomes available.',
@@ -189,7 +189,7 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
       'Swap the ring dependency for aws-lc-rs and fix the API differences the compiler reports',
       'Switch rustls (if used) to its aws-lc-rs crypto provider',
       'Add ML-KEM key encapsulation where you do key agreement today',
-      'Use the FIPS feature of aws-lc-rs if you need a validated module',
+      'If you need FIPS, enable the fips feature and check which AWS-LC-FIPS module version your aws-lc-rs release binds to: the crate documents that the newest module version may be submitted to NIST but not yet certified',
     ],
   },
   {
@@ -199,7 +199,7 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'aws-lc-rs (classical + ML-KEM)',
     effort: 'low',
     description:
-      'You are already on the library this module lists as the Rust route to FIPS-validated PQC. ML-KEM is available now; track the crate for ML-DSA as AWS-LC exposes it.',
+      'You are already on the library this module lists as the Rust route to a FIPS-validated ML-KEM. The AWS-LC 3 module certificates (#5298 and #5314) list ML-KEM as approved and do not list ML-DSA, so confirm which AWS-LC-FIPS module version your aws-lc-rs release binds to. ML-KEM is available now; track the crate for ML-DSA as AWS-LC exposes it.',
     steps: [
       'Update to a current aws-lc-rs release',
       'Add ML-KEM key encapsulation next to your existing key agreement',
@@ -306,7 +306,7 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'HSM-backed keys via PKCS#11 v3.2 (ML-KEM, ML-DSA mechanisms)',
     effort: 'high',
     description:
-      'FIPS Level 3 means keys never leave the HSM, so PQC arrives with the firmware that exposes the PKCS#11 v3.2 mechanisms. Expect a firmware upgrade, a client library update and a re-validation of your evidence.',
+      'A FIPS level does not set key policy: FIPS 140-2 Level 3 and 4 allow keys to leave a module in encrypted form, so check the key attributes and the module Security Policy. PQC arrives with the firmware that exposes the PKCS#11 v3.2 mechanisms. Expect a firmware upgrade, a client library update and a re-validation of your evidence.',
     steps: [
       'Ask your HSM vendor which firmware exposes the ML-KEM and ML-DSA mechanisms and its FIPS status',
       'Upgrade the PKCS#11 client library to a v3.2-aware release',
@@ -319,14 +319,14 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     id: 'fips-software',
     title: 'Software FIPS: Pick a validated module with PQC',
     from: 'Homegrown or unvalidated crypto',
-    to: 'A FIPS-validated software module (AWS-LC, BC-FIPS, wolfSSL)',
+    to: 'A FIPS-validated software module whose certificate lists the PQC algorithms you need',
     effort: 'medium',
     description:
-      'Software FIPS with PQC narrows the choice: this module lists AWS-LC and wolfSSL as the libraries with FIPS-certified PQC, and BC-FIPS for Java. Pick the one that matches your language, then move the regulated paths onto it.',
+      'A CMVP certificate validates one module version and lists the algorithms approved in it; PQC code in the same library can sit outside that list. On the certificates this module cites, AWS-LC 3 (#5298, #5314) lists ML-KEM as approved and not ML-DSA, wolfCrypt (#4718) lists no PQC algorithm, and BC-FJA (#4943) lists only LMS signature verification. Pick the module whose certificate lists what you need, then move the regulated paths onto it.',
     steps: [
-      'Choose the validated module for your language: AWS-LC (C, Rust via aws-lc-rs), BC-FIPS (Java), wolfSSL (C, commercial)',
+      'Shortlist the validated modules for your language: AWS-LC (C, Rust via aws-lc-rs), BC-FIPS (Java), wolfSSL (C)',
       'Route the regulated operations through that module behind an abstraction layer',
-      'Check the certificate scope: which PQC algorithms sit inside the validated boundary',
+      'Read the CMVP certificate for the exact module version you will ship and list the PQC algorithms it approves; treat any PQC algorithm it does not list as not validated',
       'Keep the abstraction so you can move to a hardware module later without rewriting callers',
     ],
   },
@@ -507,7 +507,7 @@ byte[] signature = key.SignData(message);`,
       'Generate ML-DSA keys with KeyPairGenerator "ML-DSA" and a NamedParameterSpec',
       'Use javax.crypto.KEM with "ML-KEM" where you do key agreement today',
       'Resize key stores, database columns and wire formats for the larger keys and signatures',
-      'Consider BC-FIPS if FIPS validation is required',
+      'Consider BC-FIPS if FIPS validation is required for the classical algorithms; its certificate (#4943) lists no ML-KEM or ML-DSA',
     ],
     beforeCode: {
       language: 'Java',
@@ -535,9 +535,9 @@ export const INTEROP_PATTERNS: InteropPattern[] = [
     title: 'JCProv ↔ PKCS#11',
     apis: ['JCProv', 'PKCS#11'],
     description:
-      'JCProv IS a PKCS#11 wrapper — it translates JCA calls to PKCS#11 C_* functions. Use JCProv for Java applications, raw PKCS#11 for C/C++.',
+      'JCPROV is a Java wrapper for the PKCS#11 API; it is not a JCA provider. The JCA/JCE route to a Luna HSM is the separate Luna JSP (LunaProvider). Use a Java route for Java applications, raw PKCS#11 for C/C++.',
     example:
-      'Java app uses JCProv → calls C_Sign on Luna HSM → same HSM accessible from C code via PKCS#11 directly.',
+      'Java app uses JCPROV → PKCS#11-style calls on the Luna HSM → the same HSM is reachable from C code via PKCS#11 directly.',
   },
   {
     id: 'bc-jca',

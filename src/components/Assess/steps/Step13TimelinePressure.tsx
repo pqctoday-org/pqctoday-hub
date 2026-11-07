@@ -51,8 +51,8 @@ const Step13TimelinePressure = ({
     },
     {
       value: 'internal-deadline' as const,
-      label: 'Internal Deadline Set',
-      description: 'Our organization has set its own PQC migration target date.',
+      label: 'Own Target or Distant Deadline',
+      description: 'Our own target date, or a published deadline more than 3 years away.',
     },
     {
       value: 'no-deadline' as const,
@@ -169,11 +169,12 @@ const Step13TimelinePressure = ({
               )
             })}
 
-            {/* Always show fallback options */}
+            {/* Always show the options that do not depend on a published milestone:
+                an organisation can set its own target date whatever its country publishes. */}
             <div className="border-t border-border pt-3 mt-2 space-y-2">
               <p className="text-xs text-muted-foreground font-medium">Other options</p>
               {staticOptions
-                .filter((o) => o.value === 'no-deadline')
+                .filter((o) => o.value === 'internal-deadline' || o.value === 'no-deadline')
                 .map((opt) => (
                   <Button
                     key={opt.value}

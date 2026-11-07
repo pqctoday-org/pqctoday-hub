@@ -191,31 +191,54 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <Lock size={20} /> Privacy by Design
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          The EUDI Wallet enforces strong privacy guarantees aligned with GDPR.
+          Regulation (EU) 2024/1183 sets privacy goals for the EUDI Wallet. Selective disclosure is
+          meant to be a basic design feature that reinforces data minimisation. A relying party
+          registers the data it intends to request and may not request other data (Article 5b). The
+          wallet&apos;s technical framework must not let attestation providers or other parties
+          track, link or correlate a user&apos;s transactions without the user&apos;s explicit
+          authorisation, and must enable privacy-preserving techniques that ensure unlinkability
+          where the attestation does not require identifying the user (Article 5a(16)). A credential
+          format supplies only part of this: whether a request meets GDPR Art. 5(1)(c) (data
+          adequate, relevant and limited to what is necessary for the purpose) also depends on what
+          the verifier asks for and why.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-primary mb-1">Selective Disclosure</div>
             <p className="text-xs text-muted-foreground">
-              Only requested attributes are revealed. All other claims remain cryptographically
-              hidden from the verifier.
+              The holder reveals only chosen attributes; SD-JWT conceals the value of claims that
+              are not revealed. Disclosed claims can still identify or link the holder (a tax number
+              does), and the format does not decide what a verifier should ask for.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-success mb-1">Unlinkability</div>
             <p className="text-xs text-muted-foreground">
-              Different presentations to different Relying Parties should not be correlatable. The
-              ARF addresses this through batch-issued credentials and pseudonymous identifiers.
+              A goal with limits, not an automatic property. Presenting one credential to several
+              verifiers lets colluding verifiers recognise it. Batch issuance (a separate
+              credential, with new key-binding keys and salts, for each verifier or session) can
+              address verifier/verifier and presentation linkability; issuer/verifier collusion
+              cannot be prevented in salted-hash formats such as SD-JWT and mDL/mDoc (RFC 9901,
+              section 10.1). This workshop does not implement batch issuance or unlinkability.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-warning mb-1">Data Minimization</div>
             <p className="text-xs text-muted-foreground">
-              GDPR Art. 5(1)(c) compliance. The wallet enforces sharing only the minimum data
-              necessary for a specific purpose.
+              The wallet can show what is requested; the relying party decides what to request and
+              must keep to its registered purpose. In a production wallet, look for a stated purpose
+              for each request, a warning when a request exceeds what was registered, and an easy
+              way to decline. Whether a request is lawful is a legal assessment this module does not
+              make.
             </p>
           </div>
         </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          Threat model for these limits: verifiers that ask for more than they need, verifiers that
+          collude with each other or with the issuer, and observers who correlate fixed identifiers
+          such as the issuer signature, the key-binding key and timestamps. The workshop uses sample
+          credentials, so repeated presentations of the same credential are linkable by design.
+        </p>
       </section>
 
       {/* PQC Readiness */}
@@ -235,13 +258,28 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-3">
           <div className="text-xs font-bold text-foreground mb-1">
-            NIS Cooperation Group Coordinated Implementation Roadmap (June 2025)
+            NIS Cooperation Group Coordinated Implementation Roadmap, Part 1, version 1.1 (11 June
+            2025): a recommended timeline for Member States
           </div>
           <ul className="text-xs text-muted-foreground space-y-1">
-            <li>Dec 2026: National PQC transition roadmaps due</li>
-            <li>End of 2030: High-risk use cases migrated</li>
-            <li>2035: Full transition to PQC</li>
+            <li>
+              By 31 Dec 2026: First Steps implemented and initial national PQC transition roadmaps
+              established; planning and pilots for high- and medium-risk use cases started
+            </li>
+            <li>
+              By 31 Dec 2030: Next Steps implemented; PQC transition for high-risk use cases
+              completed; quantum-safe software and firmware upgrades enabled by default
+            </li>
+            <li>
+              By 31 Dec 2035: transition for medium-risk use cases completed; low-risk use cases as
+              far as feasible
+            </li>
           </ul>
+          <p className="text-xs text-muted-foreground mt-2">
+            The roadmap does not mention the EUDI Wallet by name; placing wallet components in a
+            risk class is this module&apos;s planning judgement. Where the dates cannot be met, the
+            roadmap says the individual risk has to be evaluated.
+          </p>
         </div>
         <p className="text-xs text-muted-foreground">
           This simulation uses classical algorithms such as ECDSA. ETSI says its cryptographic

@@ -63,7 +63,9 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         toActor: 'acquirer',
         description:
           'Terminal sends authorization request with ARQC to acquirer processor over TLS-encrypted connection.',
-        cryptoUsed: ['TLS 1.2/1.3 (RSA/ECDSA key exchange + AES-GCM)'],
+        cryptoUsed: [
+          'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures, AES-GCM)',
+        ],
         quantumVulnerable: true,
         pqcReplacement: 'Hybrid ML-KEM + X25519 TLS 1.3',
         dataSize: '~512 bytes',
@@ -242,15 +244,15 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
       {
         id: 'cda-3',
         order: 3,
-        label: 'AC + SSAD Generation (Combined Signature)',
+        label: 'AC + SDAD Generation (Combined Signature)',
         type: 'crypto',
         fromActor: 'card',
         toActor: 'terminal',
         description:
-          'Card generates Application Cryptogram (AC) using symmetric key AND signs it together with dynamic data using its ICC private key to produce the Signed Static Application Data (SSAD). This binds card authentication to the specific transaction.',
+          'Card generates the Application Cryptogram (TC or ARQC) with a symmetric key, then signs dynamic data with its ICC private key to produce the Signed Dynamic Application Data (SDAD). In EMV Book 2 v4.3 the signed data includes the cryptogram, the Cryptogram Information Data, an ICC dynamic number and a hash of the transaction data, and the terminal\u2019s Unpredictable Number is hashed in too. This binds card authentication to the specific transaction. SDA is different: its Signed Static Application Data is signed once by the issuer and is the same on every transaction.',
         cryptoUsed: [
           '3DES/AES-CMAC (AC generation, symmetric)',
-          'RSA-2048 signature (SSAD, asymmetric)',
+          'RSA-2048 signature (SDAD, asymmetric)',
         ],
         quantumVulnerable: true,
         pqcReplacement: 'FN-DSA-512 combined signature',
@@ -260,12 +262,12 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
       {
         id: 'cda-4',
         order: 4,
-        label: 'Combined Signature Verification',
+        label: 'SDAD Verification (CDA)',
         type: 'authenticate',
         fromActor: 'terminal',
         toActor: 'terminal',
         description:
-          'Terminal verifies the combined RSA signature, recovering the AC and verifying both card authenticity and transaction integrity simultaneously.',
+          'Terminal recovers the Signed Dynamic Application Data with the ICC public key, then checks the hash, the Cryptogram Information Data and the transaction data hash, verifying both card authenticity and transaction integrity in one step.',
         cryptoUsed: ['RSA-2048 signature verification'],
         quantumVulnerable: true,
         pqcReplacement: 'FN-DSA-512 verification',
@@ -349,7 +351,10 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         toActor: 'issuer',
         description:
           'For transactions above the contactless floor limit, standard online authorization via TLS to acquirer, network switch, and issuer.',
-        cryptoUsed: ['TLS 1.2/1.3 (RSA/ECDSA + AES-GCM)', 'ARQC (symmetric)'],
+        cryptoUsed: [
+          'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures, AES-GCM)',
+          'ARQC (symmetric)',
+        ],
         quantumVulnerable: true,
         pqcReplacement: 'Hybrid ML-KEM TLS 1.3',
         dataSize: '~512 bytes',
@@ -417,7 +422,7 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         toActor: 'network',
         description:
           'Authorization request with token sent through acquirer to network via TLS. Same path as card-present transactions.',
-        cryptoUsed: ['TLS 1.2/1.3 (RSA/ECDSA key exchange)'],
+        cryptoUsed: ['TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures)'],
         quantumVulnerable: true,
         pqcReplacement: 'Hybrid ML-KEM + X25519 TLS 1.3',
         dataSize: '~512 bytes',
@@ -434,7 +439,8 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
           'Network sends token to TSP (Token Service Provider) which maps it back to the real PAN in the token vault. Uses TLS + HSM-secured vault.',
         cryptoUsed: ['TLS (TSP API)', 'HSM key wrapping (RSA-2048)'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-KEM HSM key wrapping + PQC TLS',
+        pqcReplacement:
+          'ML-KEM-768 key establishment + KDF + authenticated key wrap in the HSM (conceptual) + PQC TLS',
         dataSize: '~256 bytes',
         latencyMs: 80,
       },

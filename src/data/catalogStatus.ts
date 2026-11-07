@@ -8,13 +8,20 @@
  */
 import { softwareData } from './migrateData'
 
-export type CatalogAvailability = 'available' | 'partial' | 'roadmap' | 'none' | 'unverified'
+/**
+ * `psk` is a product whose only quantum protection is a pre-shared key mixed
+ * into the key exchange. It is not post-quantum algorithm support, so it is a
+ * status of its own: never `partial`, and never counted as PQC-ready.
+ */
+export type CatalogAvailability =
+  'available' | 'partial' | 'psk' | 'roadmap' | 'none' | 'unverified'
 
 /** Map the catalog's canonical PQC status string to a normalized availability. */
 export function canonicalToAvailability(canonical: string | undefined): CatalogAvailability {
   const c = (canonical || '').trim().toLowerCase()
   if (c.startsWith('available') || c === 'yes' || c === 'production') return 'available'
   if (c.startsWith('partial') || c === 'in-development') return 'partial'
+  if (c === 'psk' || c.startsWith('psk ')) return 'psk'
   if (c.startsWith('roadmap') || c.startsWith('planned')) return 'roadmap'
   if (c === 'none') return 'none'
   return 'unverified'

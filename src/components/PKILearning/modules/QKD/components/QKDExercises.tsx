@@ -101,11 +101,11 @@ const scenarios: Scenario[] = [
     id: 'hsm-derivation',
     title: '6. HSM Key Derivation from QKD Secret',
     description:
-      'Follow the workshop’s pipeline: ETSI GS QKD 014 key delivery, PKCS#11 and a NIST SP 800-108 key derivation. Both Alice and Bob derive the same 256-bit session key inside their HSMs without transmitting the secret.',
+      'Follow the workshop’s pipeline, a classical mock of an ETSI GS QKD 014 key delivery followed by a PKCS#11 key derivation using NIST SP 800-108. Each side gets key material from its own local key manager, then derives the same 256-bit session key inside its HSM.',
     badge: 'Infrastructure',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:
-      'The session key is identical on both sides even though it was never sent over any network. Only the key_ID reference is shared; the secret bytes were established by quantum physics.',
+      'This workshop is a classical mock: it draws one random value locally in place of the network call, so nothing here is quantum-generated. In ETSI GS QKD 014 each application (SAE) fetches the key from its own local key manager (KME) over HTTPS with mutual authentication (TLS 1.2 or higher), so the key material travels over a protected local transport, not between the two remote applications. The two remote applications exchange only the key_ID reference (how the master SAE notifies the slave SAE is outside GS QKD 014), not the secret bytes, because in a real deployment the two key managers already share those bytes from the QKD link. Both sides then derive the same session key in their HSMs.',
     config: { part: 4 },
     icon: Server,
   },

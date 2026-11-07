@@ -17,7 +17,13 @@ import {
   Building2,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import { TERMINATION_PATTERNS, GATEWAY_VENDORS, HANDSHAKE_MITIGATIONS } from '../data/gatewayData'
+import {
+  TERMINATION_PATTERNS,
+  GATEWAY_VENDORS,
+  HANDSHAKE_MITIGATIONS,
+  HANDSHAKE_MITIGATIONS_NOTE,
+  GATEWAY_FIGURES_NOTE,
+} from '../data/gatewayData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -144,7 +150,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               },
               {
                 t: 'Edge Memory Consumption',
-                d: 'Caching larger PQC certificates and expanded session state at millions-of-connections scale significantly impacts edge nodes. Large-scale deployments have observed up to a 38% increase in CDN edge memory consumption just for cert caching.',
+                d: 'Caching larger PQC certificates and expanded session state can raise edge memory use at millions-of-connections scale. No published figure is used here, so measure it on your own traffic mix.',
               },
               {
                 t: 'SAN Consolidation vs Isolation',
@@ -192,15 +198,19 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             PQC algorithms produce larger keys and signatures, directly increasing TLS handshake
-            size. At gateway scale (thousands of handshakes per second), this bandwidth cost is the
-            primary operational concern &mdash; not CPU, which remains manageable with modern
-            hardware.
+            size. At gateway scale (thousands of handshakes per second), bandwidth, CPU, memory and
+            inspection behavior can all be affected; which one limits you depends on your gateway
+            and traffic, so measure rather than assume.
           </p>
 
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-foreground mb-3">
               Handshake Size Comparison (Full TLS 1.3, 2-cert chain)
             </div>
+            <p className="text-[10px] text-muted-foreground mb-2">
+              Approximate figures from this module&apos;s size model; real handshakes vary with
+              extensions, names, chain length and compression.
+            </p>
             <div className="space-y-2">
               {[
                 { label: 'Classical (X25519 + ECDSA)', size: '~1 KB', color: 'bg-status-success' },
@@ -225,6 +235,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           </div>
 
           <div className="text-xs font-bold text-foreground mb-2">Key Mitigations</div>
+          <p className="text-xs text-muted-foreground mb-2">{HANDSHAKE_MITIGATIONS_NOTE}</p>
           <div className="space-y-2">
             {HANDSHAKE_MITIGATIONS.map((m) => (
               <div key={m.id} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
@@ -249,7 +260,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             >
               Handshake Budget Calculator (Workshop Step 3)
             </Button>{' '}
-            to model your specific gateway scenario.
+            to model your specific gateway scenario. {GATEWAY_FIGURES_NOTE}
           </p>
         </div>
       </section>
@@ -277,19 +288,19 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             {[
               {
                 t: 'NGFW Hardware Buffer Limits',
-                d: 'Next-Gen Firewalls (NGFWs) often have hardcoded ~4 KB inspection buffer limits for deep packet TLS inspection. A PQC hybrid handshake (~15+ KB) exceeds these limits, causing the firewall to drop the connection entirely.',
+                d: 'A firewall or other inspection device may limit how much of a TLS handshake it buffers or parses, and a larger post-quantum ClientHello or certificate flight can run into that limit. The limits and the failure behavior (drop, bypass or fail open) differ by product and software version and no figure is assumed here, so test your own inspection path with a post-quantum handshake before enabling post-quantum key exchange in front of it.',
                 icon: Server,
                 iconColor: 'text-status-error',
               },
               {
                 t: 'Passthrough Breaks Inspection',
-                d: 'If an upstream CDN negotiates PQC with the client and passes through to a WAF that only supports classical TLS, the WAF cannot decrypt or inspect the traffic. This creates a security blind spot.',
+                d: 'With TLS passthrough the gateway does not terminate the session, so a WAF or IDS behind it sees only encrypted traffic and cannot inspect the content. The client and the backend negotiate the key exchange and authentication end to end, so whether the session is post-quantum depends on what those two endpoints support, not on the passthrough hop. This creates an inspection blind spot, which is a separate matter from the quantum risk.',
                 icon: AlertTriangle,
                 iconColor: 'text-status-error',
               },
               {
                 t: 'TLS Interception Boxes Must Upgrade',
-                d: 'Dedicated TLS inspection appliances (Zscaler, Bluecoat, McAfee Web Gateway) must support PQC on both the client-facing and server-facing TLS sessions. If they cannot negotiate PQC, they become a quantum-vulnerable chokepoint.',
+                d: 'A device that terminates and re-establishes TLS for inspection runs two sessions, a client-facing one and a server-facing one, and each has to be migrated and checked separately. If the inspection device cannot negotiate post-quantum key exchange on a session, that session stays classical even when the other side is not, so verify each side.',
                 icon: AlertTriangle,
                 iconColor: 'text-status-warning',
               },

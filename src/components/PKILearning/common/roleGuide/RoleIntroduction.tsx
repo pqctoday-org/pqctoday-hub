@@ -4,6 +4,8 @@ import { AlertTriangle, BookOpen, Rocket, ArrowRight, Shield, Clock, Target } fr
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
+import { useLearnModuleId } from '@/components/PKILearning/common/useLearnPath'
+import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 import type { RoleGuideData } from './types'
 
 const SEVERITY_BADGE: Record<string, string> = {
@@ -12,6 +14,10 @@ const SEVERITY_BADGE: Record<string, string> = {
   medium: 'bg-primary/15 text-primary',
   low: 'bg-muted text-muted-foreground',
 }
+
+// The three workshop steps every Role Guide shares; a module's manifest may add
+// further steps of its own after them.
+const SHARED_GUIDE_STEP_IDS = ['why-it-matters', 'what-to-learn', 'how-to-act']
 
 interface Props {
   data: RoleGuideData
@@ -23,6 +29,13 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
   // now, so deep links landed at the top and no section was marked read.
   // One call here anchors all four Role Guide modules.
   useSectionAnchors()
+
+  // The workshop's real steps come from the module's manifest, not from this component.
+  const moduleId = useLearnModuleId()
+  const workshopSteps = MANIFEST_BY_ID[moduleId]?.workshopSteps
+  const moduleOnlySteps = (workshopSteps ?? []).filter(
+    (step) => !SHARED_GUIDE_STEP_IDS.includes(step.id)
+  )
 
   const criticalCount = data.threatImpacts.filter((t) => t.severity === 'critical').length
   const highCount = data.threatImpacts.filter((t) => t.severity === 'high').length
@@ -127,7 +140,7 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
       <div data-section-id="how-to-act" className="glass-panel p-6 scroll-mt-20">
         <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
           <Target className="w-5 h-5 text-primary" />
-          Workshop: 3-Step Action Plan
+          {workshopSteps ? `Workshop: ${workshopSteps.length} Steps` : 'Workshop'}
         </h3>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 rounded-lg border border-border bg-muted/20">
@@ -136,8 +149,8 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
               <span className="font-semibold text-foreground">Step 1: Why It Matters</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Assess your personal exposure with an interactive self-assessment. See how each
-              quantum threat impacts your specific responsibilities.
+              See how each quantum threat affects your role, with its severity and timeframe, and
+              open an example scenario for each.
             </p>
           </div>
           <div className="p-4 rounded-lg border border-border bg-muted/20">
@@ -146,8 +159,8 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
               <span className="font-semibold text-foreground">Step 2: What to Learn</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Identify skill gaps with a guided self-rating tool. Get a personalized learning path
-              with direct links to relevant modules.
+              Rate your current knowledge of each skill to see your readiness score and priority
+              gaps, with links to the modules that cover each skill.
             </p>
           </div>
           <div className="p-4 rounded-lg border border-border bg-muted/20">
@@ -156,11 +169,17 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
               <span className="font-semibold text-foreground">Step 3: How to Act</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Build a phased action plan with immediate quick wins, 30-day milestones, and long-term
-              KPIs tailored to your role.
+              Work through a phased action plan (this week, 30 days, 90 days and 6 months) with
+              quick wins and success metrics for your role, and export it.
             </p>
           </div>
         </div>
+
+        {moduleOnlySteps.length > 0 && (
+          <p className="mt-4 text-sm text-muted-foreground">
+            This workshop also includes: {moduleOnlySteps.map((step) => step.label).join(', ')}.
+          </p>
+        )}
 
         <div className="mt-6 flex justify-center">
           <Button variant="gradient" onClick={onNavigateToWorkshop}>

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ReactNode } from 'react'
+import type { EdgeProps } from '@xyflow/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import type { XwalkGraph } from '@/utils/conceptXwalkGraph'
@@ -12,16 +13,33 @@ const captured = vi.hoisted(() => ({
     target: string
     markerEnd?: unknown
     ariaLabel?: string
+    data?: Record<string, unknown>
   }>,
+  edgeRenderer: null as ((props: EdgeProps) => ReactNode) | null,
+  renderedMarkerEnd: undefined as string | undefined,
   graph: null as XwalkGraph | null,
 }))
 vi.mock('@/utils/conceptXwalkGraph', () => ({ buildConceptGraph: () => captured.graph }))
 vi.mock('@xyflow/react', () => ({
   MarkerType: { ArrowClosed: 'arrowclosed' },
-  ReactFlow: ({ edges, children }: { edges: typeof captured.edges; children: ReactNode }) => {
+  ReactFlow: ({
+    edges,
+    edgeTypes,
+    children,
+  }: {
+    edges: typeof captured.edges
+    edgeTypes: { concept: (props: EdgeProps) => ReactNode }
+    children: ReactNode
+  }) => {
     captured.edges = edges
+    captured.edgeRenderer = edgeTypes.concept
     return <div data-testid="existing-graph-canvas">{children}</div>
   },
+  BaseEdge: ({ markerEnd }: { markerEnd?: string }) => {
+    captured.renderedMarkerEnd = markerEnd
+    return null
+  },
+  EdgeLabelRenderer: ({ children }: { children: ReactNode }) => <>{children}</>,
   Background: () => null,
   Controls: () => null,
   MiniMap: () => null,
@@ -30,6 +48,8 @@ vi.mock('@xyflow/react', () => ({
 }))
 
 beforeEach(() => {
+  captured.edgeRenderer = null
+  captured.renderedMarkerEnd = undefined
   captured.graph = {
     nodes: [
       { id: 'a', label: 'Framework A', sourceType: 'framework', isCenter: true },
@@ -94,6 +114,23 @@ beforeEach(() => {
 })
 
 describe('existing graph assertions and derived confidence are inspectable', () => {
+  it('forwards the directional SVG marker through the shared-layout edge renderer', () => {
+    render(<FrameworkConceptGraph centerConceptId="sample-a" />)
+    const edge = captured.edges.find((item) => item.id === 'subset')!
+    const EdgeRenderer = captured.edgeRenderer!
+    const props = {
+      id: edge.id,
+      sourceX: 0,
+      sourceY: 0,
+      targetX: 400,
+      targetY: 100,
+      data: edge.data,
+      markerEnd: 'url(#sample-direction-arrow)',
+    } as EdgeProps
+    render(<EdgeRenderer {...props} />)
+    expect(captured.renderedMarkerEnd).toBe('url(#sample-direction-arrow)')
+  })
+
   it('keeps exact edge direction and only adds direction markers for asymmetric/context relations', () => {
     const { rerender } = render(<FrameworkConceptGraph centerConceptId="sample-a" />)
     expect(captured.edges.find((edge) => edge.id === 'subset')).toMatchObject({

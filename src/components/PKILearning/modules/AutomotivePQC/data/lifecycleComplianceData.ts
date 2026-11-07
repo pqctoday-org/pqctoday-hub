@@ -100,9 +100,9 @@ export const LIFECYCLE_PHASES: LifecyclePhaseConfig[] = [
       'Vehicle gateway HSM confirms key destruction before releasing chassis for recycling',
     ],
     pqcRequirements: [
-      'Ensure PQC key material is included in zeroization procedures',
-      'Verify all ML-KEM decapsulation keys are destroyed (prevents future decryption of HNDL data)',
-      'Revoke hybrid certificates from both classical and PQC CRLs/OCSP',
+      'Ensure PQC key material is included in zeroization procedures, including keys held in secure elements, backups and backend escrow; destruction cannot reach copies that were exported or already compromised, and cannot recover anything retroactively',
+      'Destroy ML-KEM decapsulation keys wherever they exist (device, backup, escrow). This limits what a scrapped or resold vehicle exposes about recorded sessions; it is key hygiene, not a defence against harvest-now-decrypt-later, which targets classical key exchange and is addressed by using PQC key exchange when the data is sent',
+      'Revoke hybrid certificates from both classical and PQC CRLs/OCSP. Signature keys protect authenticity, so their risk is future forgery, not harvest-now-decrypt-later; revocation limits later misuse but does not undo forgeries already accepted',
     ],
   },
 ]
@@ -136,7 +136,8 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     typicalVendors: ['Thales Luna', 'Entrust nShield', 'Utimaco CryptoServer', 'AWS CloudHSM'],
     keyTypes: ['OEM root CA keys', 'Code signing keys', 'V2X CA keys', 'Fleet management keys'],
     operationsPerSecond: '10,000+ RSA/ECDSA signs/sec',
-    quantumThreat: 'Root CA keys are long-lived (10-20 years) — highest HNDL exposure',
+    quantumThreat:
+      'Root CA keys are long-lived (10-20 years): signing keys, so the exposure is future forgery of everything chained to them, not harvest-now-decrypt-later',
   },
   {
     id: 'v2x-hsm',
@@ -160,7 +161,10 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     id: 'gateway-hsm',
     name: 'Vehicle Gateway ECU HSM',
     location: 'Central gateway ECU in vehicle',
-    standard: 'EVITA Full / SHE 2.0 / ISO 11452',
+    // ISO 11452 is the road-vehicle EMC immunity test series (ISO 11452-1: "Component test methods for
+    // electrical disturbances from narrowband radiated electromagnetic energy"), not a security profile.
+    standard:
+      'Vendor hardware security profile (SHE-class module): the profile, scope and version come from the SoC vendor, so check its datasheet and certificates',
     fipsLevel: 'N/A (automotive-grade, not FIPS)',
     pqcSupport: 'Limited — depends on SoC vendor (NXP S32G, Infineon AURIX TC4x)',
     typicalVendors: ['NXP S32G (HSE)', 'Infineon AURIX TC4x (HSM)', 'Renesas R-Car (ICUMHA)'],
@@ -202,7 +206,8 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
       'TLS client cert key',
     ],
     operationsPerSecond: '50-200 RSA-2048 signs/sec',
-    quantumThreat: 'Platform attestation keys are long-lived; HNDL risk for telemetry sessions',
+    quantumThreat:
+      'Platform attestation keys are long-lived signing keys: the exposure is forged attestation. Telemetry sessions carry a separate harvest-now-decrypt-later risk if they use classical key exchange',
   },
 ]
 
@@ -249,19 +254,21 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     region: 'eu',
     year: 2022,
     quarter: 'Q3',
-    description: 'Software Update Management System mandatory — secure OTA process required.',
+    description:
+      "UN Regulation No. 156 sets requirements for a Software Update Management System, including secure over-the-air updates, for vehicle type approval. The 2022 Q3 EU application date shown is this module's assumption and has not been checked against the regulation text.",
     pqcRelevance: 'indirect',
     confidence: 'published',
     affectedSystems: ['OTA gateway', 'Firmware signing', 'Update verification'],
   },
   {
     id: 'wp29-all-vehicles',
-    name: 'WP.29 R155/R156 Extended to All New Vehicles',
-    authority: 'UNECE',
+    name: 'EU: Cyberattack Protection Applies to All New Vehicles',
+    authority: 'EU (Regulation 2019/2144)',
     region: 'eu',
     year: 2024,
     quarter: 'Q3',
-    description: 'All new vehicles sold in EU must comply, not just new type approvals.',
+    description:
+      'Regulation (EU) 2019/2144, Annex II item D4 (protection of the vehicle against cyberattacks), lets authorities refuse EU type-approval of new vehicle types from 6 July 2022 and prohibit registration of non-compliant new vehicles from 7 July 2024, for the vehicle categories marked in that table. This is the EU rule only: other markets apply UN Regulations R155 and R156 through their own type-approval rules and dates.',
     pqcRelevance: 'indirect',
     confidence: 'published',
     affectedSystems: ['All vehicles in production'],
@@ -356,15 +363,15 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
   },
   {
     id: 'tisax-v7',
-    name: 'TISAX v7 (Projected PQC Criteria)',
+    name: 'VDA ISA2027 (TISAX catalogue)',
     authority: 'VDA / ENX',
     region: 'eu',
     year: 2027,
     quarter: 'Q1',
     description:
-      'VDA published the next ISA catalogue, ISA2027, on 1 July 2026; it applies to TISAX assessments ordered from 1 January 2027, and ISA 6 (2023) remains current until then. PQC readiness criteria are not part of the announcement.',
-    pqcRelevance: 'direct',
-    confidence: 'projected',
+      'VDA published the next ISA catalogue, ISA2027, on 1 July 2026; it applies to TISAX assessments ordered from 1 January 2027, and ISA 6 (2023) remains current until then. Its cryptography control (5.1.1 in ISA2027.1) asks how the use of cryptographic procedures is managed; the catalogue contains no post-quantum criteria, so any PQC expectation from a customer is that customer\u2019s own requirement.',
+    pqcRelevance: 'indirect',
+    confidence: 'published',
     affectedSystems: ['Tier-1/Tier-2 supplier crypto', 'Key management', 'Code signing'],
   },
 ]

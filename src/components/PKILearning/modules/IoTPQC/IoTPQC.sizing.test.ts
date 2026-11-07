@@ -57,10 +57,27 @@ describe('certificate model', () => {
     expect(full - comp).toBeLessThan(2 * CERT_OVERHEAD_BYTES.x509)
   })
 
-  it('I17: an MTC proof is 32 bytes per tree level and carries no CA signature', () => {
+  it('I17: a landmark-relative MTC proof is 32 bytes per tree level and carries no signatures', () => {
     const r = deliveredChainBytes('mtc', mldsa44, mldsa44, mldsa44, 20)
     expect(r.bytes).toBe(CERT_OVERHEAD_BYTES.x509 + mldsa44.publicKeyBytes + MTC_HASH_BYTES * 20)
-    expect(r.caveat).toMatch(/tree heads/)
+    expect(r.caveat).toMatch(/landmark-relative/)
+  })
+
+  it('MTC caveat names the freshness requirement and the standalone form that carries cosignatures', () => {
+    const { caveat } = deliveredChainBytes('mtc', mldsa44, mldsa44, mldsa44, 20)
+    expect(caveat).toMatch(/up-to-date trusted landmark subtrees/)
+    expect(caveat).toMatch(/standalone form carries cosignatures, including the CA's/)
+    expect(caveat).toMatch(/Internet-Draft/)
+    // the old text said the CA signature disappears in every case
+    expect(caveat).not.toMatch(/no CA signature/)
+  })
+
+  it('raw-key caveat separates the workshop pin assumption from the protocol, which binds keys out of band', () => {
+    const { caveat } = deliveredChainBytes('raw-key', mldsa44, mldsa44, mldsa44)
+    expect(caveat).toMatch(/out of band/)
+    expect(caveat).toMatch(/DANE/)
+    expect(caveat).toMatch(/This workshop assumes the simplest binding/)
+    expect(caveat).not.toMatch(/no rotation without re-provisioning/)
   })
 })
 

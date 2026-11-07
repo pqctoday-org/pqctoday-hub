@@ -2052,7 +2052,9 @@ function MobileFrameworkDetailSheet({
                     >
                       {node.kind}
                     </p>
-                    <p className="text-[12px] font-bold text-foreground">{node.value}</p>
+                    <p className="text-[12px] font-bold text-foreground">
+                      {node.label ?? node.value}
+                    </p>
                     {node.sub && <p className="text-[10px] text-muted-foreground">{node.sub}</p>}
                   </div>
                 ))}

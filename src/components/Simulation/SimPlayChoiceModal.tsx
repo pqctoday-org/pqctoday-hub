@@ -252,8 +252,11 @@ export function SimPlayChoiceModal({
 
           {/* W7.1 — the shortest way in. The previous minimum was the ~45-minute
               overview, which is a lot to ask before a learner knows whether any
-              of this concerns them. Five beats: what the threat is, one asset,
-              one choice, its consequence, and what it meant. */}
+              of this concerns them. It is a short tour of selected learning and
+              reference resources from the Executive Mandate and Discovery
+              phases (the queue holds only learn and reference steps). It has no
+              asset decision or consequence of its own, so the card sends
+              learners who want to decide to the interactive board. */}
           <div className="mb-3">
             <PlayCard
               title="Start here — short introduction"

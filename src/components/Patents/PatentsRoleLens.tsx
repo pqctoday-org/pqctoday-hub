@@ -26,6 +26,7 @@ import { Scale, ArrowRight } from 'lucide-react'
 import type { PatentItem } from '@/types/PatentTypes'
 import { ALGORITHM_PERSONA_DEFAULTS } from '@/data/personaConfig'
 import type { PersonaId } from '@/data/learningPersonas'
+import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
 
 /** The NIST-standardised algorithms every role's migration actually depends on.
  *  Used as the fallback when a persona has no `highlight` set of its own. */
@@ -42,10 +43,35 @@ export function relevantAlgorithmFamilies(persona: PersonaId | null): string[] {
   return Array.from(new Set(source.map((name) => name.split('-').slice(0, 2).join('-'))))
 }
 
+/** Lower-case a catalogue algorithm name and drop the "CRYSTALS-" prefix some filings use. */
+function normalizeAlgorithmName(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/^crystals[-\s]+/, '')
+}
+
+/**
+ * True when one catalogue algorithm name belongs to a family. The family's filing-era
+ * aliases come from the shared alias table (Kyber for ML-KEM, Dilithium for ML-DSA,
+ * SPHINCS+ for SLH-DSA, Falcon for FN-DSA), so a patent filed before the FIPS names existed
+ * still counts. The name must equal the family or continue it with a parameter ("-768",
+ * "768", " Level 3"); a longer word that merely contains it does not count.
+ */
+export function algorithmNameMatchesFamily(algorithm: string, family: string): boolean {
+  const name = normalizeAlgorithmName(algorithm)
+  const accepted = [family, ...expandAlgorithmAliases([family])].map(normalizeAlgorithmName)
+  return accepted.some((alias) => {
+    if (!alias || !name.startsWith(alias)) return false
+    const next = name.charAt(alias.length)
+    return next === '' || next === '-' || next === ' ' || /\d/.test(next)
+  })
+}
+
 /** True when any of the patent's PQC algorithms is in the persona's own set. */
 export function patentTouchesPersonaAlgorithms(patent: PatentItem, families: string[]): boolean {
   return (patent.pqcAlgorithms ?? []).some((algo: string) =>
-    families.some((family) => algo.toUpperCase().includes(family.toUpperCase()))
+    families.some((family) => algorithmNameMatchesFamily(algo, family))
   )
 }
 
@@ -57,6 +83,8 @@ export function PatentsRoleLens({
   persona: PersonaId | null
 }) {
   const families = useMemo(() => relevantAlgorithmFamilies(persona), [persona])
+  // Filing-era names that are counted alongside the families, taken from the shared alias table.
+  const filingEraNames = useMemo(() => expandAlgorithmAliases(families), [families])
 
   const summary = useMemo(() => {
     const relevant = patents.filter((p) => patentTouchesPersonaAlgorithms(p, families))
@@ -84,9 +112,14 @@ export function PatentsRoleLens({
 
       <p className="text-sm leading-relaxed text-muted-foreground">
         <span className="font-semibold text-foreground">{summary.relevantCount}</span> of the
-        patents below touch {families.join(', ')} — the algorithms your own path uses — and they are
-        held by <span className="font-semibold text-foreground">{summary.holderCount}</span>{' '}
-        organisations.
+        patents below name {families.join(', ')}
+        {filingEraNames.length > 0 && <> (or the filing-era names {filingEraNames.join(', ')})</>} —
+        the algorithms your own path uses — and they are held by{' '}
+        <span className="font-semibold text-foreground">{summary.holderCount}</span> organisations.
+        This counts catalogue records only: a record that names just a general class such as
+        &ldquo;lattice-based&rdquo;, or that lists no algorithm, is not counted, and the catalogue
+        is not a complete search of patent offices, so read the figure as a lower bound for this
+        catalogue.
       </p>
 
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

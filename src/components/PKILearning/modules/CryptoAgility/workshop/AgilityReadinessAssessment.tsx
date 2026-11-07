@@ -47,8 +47,8 @@ const DIMENSIONS: DimensionDef[] = [
     questions: [
       {
         id: 'proto-tls',
-        text: 'TLS endpoints are configured to offer both classical and hybrid cipher suites (e.g., X25519MLKEM768 alongside X25519), letting clients negotiate based on capability.',
-        hint: 'Check your TLS library version and cipher suite list. OpenSSL 3.x + OQS provider, BoringSSL, or AWS-LC enable hybrid suites.',
+        text: 'TLS endpoints are configured to offer both classical and hybrid key-exchange groups (e.g., X25519MLKEM768 alongside X25519), letting clients negotiate based on capability. The symmetric cipher suite (e.g., TLS_AES_256_GCM_SHA384) is a separate setting.',
+        hint: 'Hybrid key exchange is negotiated through the supported_groups and key_share extensions, not the cipher suite list (in TLS 1.3 a cipher suite names only the AEAD algorithm and the HKDF hash). Inspect the groups your server and library list and prefer, which groups the peers offer in their ClientHello, and which group the handshake actually selects.',
       },
       {
         id: 'proto-zero-downtime',

@@ -4,18 +4,26 @@ import {
   ReactFlow,
   MarkerType,
   Background,
+  BaseEdge,
   Controls,
   MiniMap,
+  EdgeLabelRenderer,
   type Edge,
+  type EdgeProps,
   type Node,
   type NodeProps,
   Handle,
   Position,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import dagre from 'dagre'
 import { ExternalLink } from 'lucide-react'
-import { buildConceptGraph, type XwalkGraphNode } from '@/utils/conceptXwalkGraph'
+import { buildConceptGraph } from '@/utils/conceptXwalkGraph'
+import {
+  NODE_WIDTH,
+  edgePathThroughLabel,
+  layoutConceptGraph,
+  type PlacedEdge,
+} from '@/utils/conceptGraphLayout'
 import type { ConceptSourceType } from '@/data/conceptRegistry'
 
 interface FrameworkConceptGraphProps {
@@ -25,8 +33,7 @@ interface FrameworkConceptGraphProps {
   height?: number
 }
 
-const NODE_WIDTH = 180
-const NODE_HEIGHT = 56
+const NODE_MIN_HEIGHT = 56
 
 /**
  * Maps each source_type to a semantic-token colour pair. Avoids raw palette
@@ -98,7 +105,7 @@ function ConceptNode({ data }: NodeProps) {
     <div
       style={{
         width: NODE_WIDTH,
-        minHeight: NODE_HEIGHT,
+        minHeight: NODE_MIN_HEIGHT,
         background: colors.fill,
         border: `2px solid ${colors.border}`,
         borderRadius: 6,
@@ -141,36 +148,52 @@ function ConceptNode({ data }: NodeProps) {
 
 const nodeTypes = { concept: ConceptNode }
 
-function layoutGraph(
-  nodes: XwalkGraphNode[],
-  edges: Array<{ id: string; source: string; target: string }>
-): { nodes: Node<ConceptNodeData>[]; edges: Edge[] } {
-  const g = new dagre.graphlib.Graph()
-  g.setGraph({ rankdir: 'LR', nodesep: 30, ranksep: 90, marginx: 16, marginy: 16 })
-  g.setDefaultEdgeLabel(() => ({}))
-
-  for (const n of nodes) g.setNode(n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
-  for (const e of edges) g.setEdge(e.source, e.target)
-  dagre.layout(g)
-
-  return {
-    nodes: nodes.map((n) => {
-      const pos = g.node(n.id)
-      return {
-        id: n.id,
-        type: 'concept',
-        position: { x: pos.x - NODE_WIDTH / 2, y: pos.y - NODE_HEIGHT / 2 },
-        data: {
-          label: n.label,
-          sourceType: n.sourceType,
-          isCenter: n.isCenter,
-          primaryUrl: n.primaryUrl,
-        },
-      }
-    }),
-    edges: [],
-  }
+interface ConceptEdgeData extends Record<string, unknown> {
+  label: PlacedEdge
 }
+
+/**
+ * An edge drawn through its own label slot. The label is a pill on the line
+ * with an opaque background, in the gap the layout reserved for it, so it never
+ * covers a node or another label.
+ */
+function ConceptEdge({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  data,
+  style,
+  markerEnd,
+}: EdgeProps) {
+  const { label } = data as ConceptEdgeData
+  const path = edgePathThroughLabel(sourceX, sourceY, label.labelX, label.labelY, targetX, targetY)
+  return (
+    <>
+      <BaseEdge id={id} path={path} style={style} markerEnd={markerEnd} />
+      <EdgeLabelRenderer>
+        <div
+          className="nodrag nopan pointer-events-none absolute flex flex-col items-center justify-center rounded-md border border-border bg-card text-[10px] leading-[13px] text-muted-foreground"
+          style={{
+            width: label.labelWidth,
+            height: label.labelHeight,
+            transform: `translate(-50%, -50%) translate(${label.labelX}px, ${label.labelY}px)`,
+          }}
+          data-testid="concept-edge-label"
+        >
+          {label.lines.map((line) => (
+            <span key={line} className="whitespace-nowrap">
+              {line}
+            </span>
+          ))}
+        </div>
+      </EdgeLabelRenderer>
+    </>
+  )
+}
+
+const edgeTypes = { concept: ConceptEdge }
 
 /**
  * Compliance-tile xwalk graph: 1-hop neighbourhood of the framework, plus
@@ -182,32 +205,49 @@ export function FrameworkConceptGraph({
 }: FrameworkConceptGraphProps) {
   const graph = useMemo(() => buildConceptGraph(centerConceptId), [centerConceptId])
 
-  const { nodes } = useMemo(() => layoutGraph(graph.nodes, graph.edges), [graph])
-
-  const edges: Edge[] = useMemo(
-    () =>
-      graph.edges.map((e) => ({
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        label: e.isSynthetic
-          ? 'implements'
-          : `${e.relationshipType}${e.rationaleType ? `\n(${e.rationaleType})` : ''}`,
-        ariaLabel: `${e.isSynthetic ? 'Generated context' : 'Recorded relationship'} from ${e.source} to ${e.target}: ${e.relationshipType}`,
-        markerEnd:
-          e.relationshipType === 'subset_of' ||
-          e.relationshipType === 'superset_of' ||
-          (e.isSynthetic && e.relationshipType === 'implements')
-            ? { type: MarkerType.ArrowClosed }
-            : undefined,
-        labelStyle: { fontSize: 10, fill: 'var(--color-muted-foreground, #6b7280)' },
-        labelBgStyle: { fill: 'var(--color-card, #ffffff)', fillOpacity: 0.85 },
-        style: e.isSynthetic
-          ? { stroke: 'var(--color-muted-foreground, #6b7280)', strokeDasharray: '4 4' }
-          : { stroke: 'var(--color-muted-foreground, #6b7280)' },
-      })),
-    [graph]
-  )
+  const { nodes, edges } = useMemo(() => {
+    const layout = layoutConceptGraph(graph.nodes, graph.edges)
+    const positions = new Map(layout.nodes.map((p) => [p.id, p]))
+    const labels = new Map(layout.edges.map((p) => [p.id, p]))
+    const flowNodes: Node<ConceptNodeData>[] = graph.nodes.map((n) => {
+      const pos = positions.get(n.id)
+      return {
+        id: n.id,
+        type: 'concept',
+        position: { x: pos?.x ?? 0, y: pos?.y ?? 0 },
+        data: {
+          label: n.label,
+          sourceType: n.sourceType,
+          isCenter: n.isCenter,
+          primaryUrl: n.primaryUrl,
+        },
+      }
+    })
+    const flowEdges: Edge[] = graph.edges.flatMap((e) => {
+      const label = labels.get(e.id)
+      if (!label) return []
+      return [
+        {
+          id: e.id,
+          type: 'concept',
+          source: e.source,
+          target: e.target,
+          ariaLabel: `${e.isSynthetic ? 'Generated context' : 'Recorded relationship'} from ${e.source} to ${e.target}: ${e.relationshipType}`,
+          markerEnd:
+            e.relationshipType === 'subset_of' ||
+            e.relationshipType === 'superset_of' ||
+            (e.isSynthetic && e.relationshipType === 'implements')
+              ? { type: MarkerType.ArrowClosed }
+              : undefined,
+          data: { label } satisfies ConceptEdgeData,
+          style: e.isSynthetic
+            ? { stroke: 'var(--color-muted-foreground, #6b7280)', strokeDasharray: '4 4' }
+            : { stroke: 'var(--color-muted-foreground, #6b7280)' },
+        },
+      ]
+    })
+    return { nodes: flowNodes, edges: flowEdges }
+  }, [graph])
 
   if (graph.nodes.length === 0) {
     return (
@@ -234,6 +274,7 @@ export function FrameworkConceptGraph({
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
           fitViewOptions={{ padding: 0.18 }}
           proOptions={{ hideAttribution: true }}

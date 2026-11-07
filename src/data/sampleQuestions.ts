@@ -2,17 +2,26 @@
 /**
  * Sample questions for the PQC Assistant chatbot, organized by app section.
  * Sourced from the Q&A test harness (QandA_pqctoday.md).
+ *
+ * Question rules: a count in a question is derived from the registry it counts (or left out),
+ * never typed; a question about a requirement asks whether and where one exists instead of
+ * assuming it; confidentiality exposure (harvest-now-decrypt-later) and signature forgery are
+ * asked about separately; and a maturity or status question names the document it concerns.
  */
+import { LEGACY_ORDER } from '../components/Assess/redesign/assessFlowModel'
+import { PERSONAS } from './learningPersonas'
+import { ALWAYS_VISIBLE_PATHS } from './personaConfig'
+
 export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   'Landing Page': [
-    'What are the seven journey steps shown on the PQC Today landing page?',
-    'What five persona types does PQC Today support, and how do they affect the experience?',
+    'What journey steps does the PQC Today landing page show?',
+    `What ${Object.keys(PERSONAS).length} persona types does PQC Today support, and how do they affect the experience?`,
     'How many learning modules does PQC Today offer?',
     'How many PQC-ready software products does the platform track?',
     'What is the compliance deadline range covered by PQC Today?',
     'Is PQC Today open source, and under what license?',
     'What does the ScoreCard on the landing page track?',
-    'Which three navigation paths are always visible regardless of persona selection?',
+    `Which ${ALWAYS_VISIBLE_PATHS.length} navigation paths are always visible regardless of persona selection?`,
     'What cryptographic technologies power the in-browser demonstrations?',
     'How does PQC Today differ from a simulation-only platform?',
   ],
@@ -51,12 +60,12 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How does FrodoKEM differ from ML-KEM?',
     'What is the performance trade-off between SLH-DSA-128f and SLH-DSA-128s?',
     'What classical algorithms are quantum-vulnerable?',
-    'What is the CNSA 2.0 exclusive phase deadline for all classical algorithms?',
+    'Which dates does the NSA CNSA 2.0 FAQ give for national security systems, and which systems do they apply to?',
     'What algorithm would you recommend for signing IoT firmware on a Cortex-M4 microcontroller?',
     'What is the difference between a KEM and traditional key exchange?',
   ],
   Library: [
-    'What are the four FIPS standards published for PQC, and what do they cover?',
+    'Which FIPS standards cover PQC, which of them are published, and which are still in development?',
     'What is RFC 9629 about?',
     'What does RFC 10024 (hybrid ECDHE-MLKEM key agreement for TLS 1.3) define?',
     'What is ETSI TS 103 744?',
@@ -100,14 +109,14 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   Compliance: [
     'What is CNSA 2.0 and what are its key deadlines?',
     'What is the FIPS 140-3 validation backlog and why does it matter?',
-    'What is eIDAS 2.0 and its PQC requirement?',
+    'Does eIDAS 2.0 set a PQC requirement, and where is it stated?',
     'What is DORA and when did enforcement begin?',
-    'What does the EU Recommendation 2024/1101 require?',
-    'When must ANSSI-qualified French products support PQC?',
+    'What does the EU Recommendation 2024/1101 recommend, and what is its legal force?',
+    'Does ANSSI qualification require PQC support, and from when, according to its current documents?',
     'What is the Korean PQC standardization timeline?',
     'How does ACVP relate to CAVP algorithm certificates for PQC?',
     'What is a CBOM and why is it important for PQC compliance?',
-    'What industry regulation covers payment card PQC requirements?',
+    'Does any payment-card rule set a PQC requirement today, and what do PCI DSS and the card networks say?',
     'What is NERC-CIP and its relevance to PQC?',
     'What does Executive Order 14306 require?',
     'How does NIS2 relate to PQC?',
@@ -120,7 +129,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How does HIPAA relate to PQC?',
   ],
   Migrate: [
-    'What are the seven phases of the PQC migration framework?',
+    'What are the phases of the PQC migration framework?',
     'What infrastructure layers does the Migrate catalog organize products by?',
     'What do the FIPS badges in the Migrate catalog mean?',
     "What phase should you start if you haven't begun PQC migration?",
@@ -139,9 +148,9 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'Can you export data from the Migrate catalog?',
   ],
   Assess: [
-    'What are the 14 steps of the comprehensive assessment wizard?',
+    `What are the ${LEGACY_ORDER.length} steps of the comprehensive assessment wizard?`,
     'How does the quick assessment mode differ from comprehensive?',
-    'What four risk categories does the assessment report generate?',
+    'What risk categories does the assessment report generate?',
     'How does the HNDL window calculation work?',
     'How does country selection affect the assessment?',
     'What does the Data Sensitivity step assess?',
@@ -197,7 +206,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How many PQC leaders does the platform profile?',
   ],
   Learn: [
-    'How are the 73 learning modules organized?',
+    'How are the learning modules organized?',
     'What tabs does each learning module have?',
     'How many quiz questions are available and how are they organized?',
     "What does the QKD module's BB84 simulator demonstrate?",
@@ -234,7 +243,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What does the 5G-AKA authentication flow demonstrate?',
     'What is the 5G key hierarchy derived from KAUSF?',
     'What does the SIM provisioning supply chain flow cover?',
-    'What six guided exercises does the 5G module provide?',
+    'What guided exercises does the 5G module provide?',
     'What is the "harvest now, decrypt later" threat to 5G subscriber privacy?',
     'What is the standardization status of SUCI Profile C?',
   ],
@@ -288,10 +297,10 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   ],
   'Hybrid Crypto': [
     'What is a hybrid KEM and how does the key combiner formula work?',
-    'What are the four IETF Hackathon reference certificate types (Pure PQC, Composite, RFC 9763, Chameleon)?',
+    'What are the IETF Hackathon reference certificate types (Pure PQC, Composite, RFC 9763, Chameleon)?',
     'What is a composite certificate and how does X.509 encode dual algorithms?',
     'What is the hybrid TLS 1.3 handshake size compared to classical and pure PQC?',
-    'Why does ANSSI require hybrid classical+PQC for lattice-based algorithms?',
+    'What does ANSSI recommend about hybrid classical+PQC for lattice-based algorithms, and is that a legal requirement?',
     'What is a chameleon certificate and how does it differ from a composite?',
     'How do you read a DER-encoded hybrid X.509 certificate structure?',
   ],
@@ -308,7 +317,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is the X25519MLKEM768 hybrid key exchange and which browsers support it?',
     'How does ML-KEM change the TLS 1.3 handshake flow compared to classical ECDHE?',
     'What are the TLS handshake size overheads for classical, hybrid, and pure PQC modes?',
-    'What IETF draft defines hybrid key exchange for TLS 1.3?',
+    'What does RFC 10024 specify for hybrid key exchange in TLS 1.3, and when was it published?',
     'Why does ML-DSA certificate authentication increase TLS certificate chain size?',
     'What does the PQC TLS Configuration Generator produce?',
     'How should organizations prioritize TLS migration across web, API, and internal services?',
@@ -355,16 +364,16 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is a quantum-resistant UTXO migration and how does it work?',
     'What NIST algorithm is recommended for blockchain wallet signing?',
     'How do DeFi smart contracts need to change for PQC key management?',
-    'What is the HNDL risk for cryptocurrency transactions signed today?',
+    'Is a cryptocurrency transaction signed today exposed to harvest-now-decrypt-later (confidentiality) or to signature forgery, and when?',
     "What is Vitalik Buterin's PQC defense roadmap for Ethereum?",
   ],
   'Digital Identity': [
     'How does ISO/IEC 18013-5 (mDL) migrate to PQC for mobile driver licenses?',
-    'What is the EUDI Wallet and what PQC algorithms does it require?',
+    'What is the EUDI Wallet, and do its specifications name any PQC algorithms?',
     'How do hardware security keys (FIDO2/WebAuthn) need to change for PQC?',
-    'What biometric systems require PQC protection and why are they highest-risk?',
+    'Which parts of a biometric identity system rely on public-key cryptography that PQC would replace?',
     'What is selective disclosure and how does PQC affect SD-JWT?',
-    'How does eIDAS 2.0 mandate PQC for EU digital identity wallets?',
+    'Does eIDAS 2.0 require PQC for EU digital identity wallets, and what does it actually state?',
     'What is the quantum threat to national ID card PKI infrastructure?',
   ],
   'Entropy & Randomness': [
@@ -405,7 +414,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   ],
   'Compliance Strategy': [
     'What interactive compliance planning tool does the module provide?',
-    'How do you map CNSA 2.0, DORA, NIS2, and HIPAA PQC requirements onto a single timeline?',
+    'How do you map CNSA 2.0, DORA, NIS2 and HIPAA onto one timeline, marking which set a PQC requirement and which only bear on it?',
     'What is the difference between a compliance mandate and a best-practice recommendation for PQC?',
     'How does the Compliance Strategy module help prioritize regulation-specific remediation?',
     'What is a compliance gap analysis and how does the module structure one?',
@@ -413,7 +422,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is the FIPS 140-3 validation backlog and how does it affect compliance timelines?',
   ],
   'Migration Program': [
-    'What are the seven phases of the PQC migration program?',
+    'What are the phases of the PQC migration program?',
     'How do you build a PQC program charter and what stakeholders should sign off?',
     'What is a cryptographic inventory and how is it different from an asset inventory?',
     "How does the Migration Program module's Gantt chart organize migration phases?",
@@ -435,9 +444,9 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How do you quantify the cost of a quantum breach for board presentations?',
     'What is the NPV calculation for early PQC migration investment?',
     'How does the module address the "quantum threat is not real yet" objection?',
-    'What cost avoidance metrics justify the PQC migration budget?',
+    'Which cost metrics can support a PQC migration budget, and what are their limits?',
     "How do you build a PQC board briefing from the module's outputs?",
-    'What insurance premium reduction can PQC migration justify?',
+    'Is there evidence that PQC migration affects cyber-insurance terms, and how would you find out?',
   ],
   'PQC Governance': [
     'What is a PQC governance framework and what does it include?',
@@ -453,7 +462,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is the FN-DSA (Falcon) signature size advantage for firmware signing?',
     'How does sigstore/cosign migrate to PQC for container image signing?',
     'What is the Notation signing plugin for container registries and how does PQC affect it?',
-    'What is the HNDL risk for software signed today with RSA or ECDSA?',
+    'What is the signature-forgery risk for software signed today with RSA or ECDSA, and how does it differ from harvest-now-decrypt-later?',
     'How does SLSA (Supply-chain Levels for Software Artifacts) relate to PQC code signing?',
     'What package signing standards (RPM, Debian, npm) need PQC updates?',
   ],
@@ -499,14 +508,14 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What are the five major payment networks and their PQC timelines?',
     'What is the EMV CDA (Combined Dynamic Data Authentication) PQC migration path?',
     'How does tokenization (VTS/MDES) interact with PQC key management?',
-    'What PCI DSS revision is expected to mandate PQC for payment systems?',
+    'Has the PCI Security Standards Council announced any PQC requirement for a future PCI DSS revision?',
     'What is the HNDL risk for EMV transaction data captured today?',
   ],
   'Crypto Dev APIs': [
     'Which cryptographic APIs support PQC today: JCA/JCE, OpenSSL, PKCS#11, or CNG?',
     'How do you add ML-KEM-768 key exchange to a Java application using Bouncy Castle?',
     'What is the oqsprovider and how does it add PQC support to OpenSSL?',
-    'Which programming languages have mature PQC library support in 2025?',
+    'Which programming languages have PQC library support, and how mature is it for each?',
     'What is the Crypto Agility Pattern and how does it future-proof your codebase?',
     'How does PKCS#11 v3.2 add C_EncapsulateKey and C_DecapsulateKey for KEM operations?',
     'What is the Build vs Buy vs Open Source decision framework for PQC libraries?',
@@ -553,7 +562,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is CCC Digital Key 3.0 and how does ML-KEM apply to phone-as-key?',
     'How do in-vehicle buses (CAN, CAN-FD, Automotive Ethernet) differ in PQC capability?',
     'What is the 15-year vehicle lifetime challenge for PQC migration planning?',
-    'How does ISO/SAE 21434 require cryptographic agility in automotive systems?',
+    'What does ISO/SAE 21434 say about cryptography, and does it require cryptographic agility?',
     'What sensor data types (LiDAR, Camera, Radar) require what signing algorithms?',
   ],
   'AI Security & PQC': [
@@ -617,7 +626,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How does TPM 2.0 support PQC and what firmware update is required?',
     'What is Measured Boot and how does it interact with PQC attestation?',
     'What firmware vendors have announced UEFI PQC Secure Boot timelines?',
-    'What is the HNDL risk for firmware update packages signed today with classical algorithms?',
+    'What is the signature-forgery risk for firmware update packages signed today with classical algorithms, and how does it differ from harvest-now-decrypt-later?',
   ],
   'OS & Platform Crypto': [
     'What is the OpenSSL Provider architecture and how does it enable PQC algorithm plugins?',

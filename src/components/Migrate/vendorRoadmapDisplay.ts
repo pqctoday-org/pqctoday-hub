@@ -17,20 +17,100 @@ const NONE_DETECTED = 'None detected'
 export type GaStatusKind = 'ga' | 'preview' | 'beta' | 'planned'
 
 export interface GaStatusInfo {
+  /** The badge colour. For a mixed status this is the least mature part, so
+   * a record that is only partly generally available never reads as all GA. */
   kind: GaStatusKind
   label: string
+  /** Present only when the status text reports more than one availability
+   * state (for example GA for some capabilities and Preview for others),
+   * in the order the vendor lists them. */
+  mixedKinds?: GaStatusKind[]
+}
+
+function gaStatusLabel(kind: GaStatusKind): string {
+  switch (kind) {
+    case 'ga':
+      return 'GA'
+    case 'beta':
+      return 'Beta'
+    case 'preview':
+      return 'Preview'
+    case 'planned':
+      return 'Planned'
+  }
+}
+
+// Least to most mature; decides the colour of a mixed badge.
+const GA_STATUS_MATURITY: GaStatusKind[] = ['planned', 'preview', 'beta', 'ga']
+
+function leadingStatusKind(status: string): GaStatusKind | null {
+  const m = SEGMENT_STATUS_RE.exec(status)
+  return m ? segmentKind(m[1]) : null
+}
+
+/** Drops parenthetical detail and quoted text, which describe a status rather
+ * than state one ("Planned (JDK 27 GA in September 2026)" is planned, not GA;
+ * 'GA; "...world's first certification"' is GA with a quotation). */
+function topLevelStatusText(status: string): string {
+  let depth = 0
+  let inQuote = false
+  let out = ''
+  for (const ch of status) {
+    if (ch === '"' || ch === '\u201c' || ch === '\u201d') {
+      inQuote = !inQuote
+      continue
+    }
+    if (inQuote) continue
+    if (ch === '(') depth += 1
+    else if (ch === ')') depth = Math.max(0, depth - 1)
+    else if (depth === 0) out += ch
+  }
+  return out
+}
+
+const SEGMENT_STATUS_RE =
+  /^\s*(ga|general availability|beta|preview|planned|early (?:availability|access))\b/i
+const QUALIFIER_STATUS_RE = /\bin\s+(preview|beta)\b/gi
+
+function segmentKind(word: string): GaStatusKind {
+  const w = word.toLowerCase()
+  if (w === 'ga' || w === 'general availability') return 'ga'
+  if (w === 'beta') return 'beta'
+  if (w === 'planned') return 'planned'
+  return 'preview' // preview, early availability, early access: available to some, not generally
+}
+
+/** The distinct availability states a status sentence reports, in order. A
+ * vendor sentence such as "GA (X, Y); Preview (Z)" or "GA, with W in preview"
+ * reports two; the first state alone would drop the second. */
+function statusKinds(status: string): GaStatusKind[] {
+  const lead = leadingStatusKind(status)
+  if (!lead) return []
+  const top = topLevelStatusText(status)
+  const kinds: GaStatusKind[] = [lead]
+  for (const segment of top.split(';').slice(1)) {
+    const m = SEGMENT_STATUS_RE.exec(segment)
+    if (m) kinds.push(segmentKind(m[1]))
+  }
+  for (const m of top.matchAll(QUALIFIER_STATUS_RE)) kinds.push(segmentKind(m[1]))
+  return kinds.filter((k, i) => kinds.indexOf(k) === i)
 }
 
 /** "ga...", "preview...", "beta...", "planned..." (case-insensitive prefix
  * match, same as VendorRoadmapPanel.tsx always used) -> a category + display
- * label, or null for any other/unrecognized status string. */
+ * label, or null for any other/unrecognized status string. When the status
+ * text reports more than one state, the label names all of them ("GA +
+ * Preview") instead of reducing the sentence to its first word. */
 export function getGaStatusInfo(status: string): GaStatusInfo | null {
-  const s = status.toLowerCase()
-  if (s.startsWith('ga')) return { kind: 'ga', label: 'GA' }
-  if (s.startsWith('beta')) return { kind: 'beta', label: 'Beta' }
-  if (s.startsWith('preview')) return { kind: 'preview', label: 'Preview' }
-  if (s.startsWith('planned')) return { kind: 'planned', label: 'Planned' }
-  return null
+  const kinds = statusKinds(status)
+  if (kinds.length === 0) return null
+  if (kinds.length === 1) return { kind: kinds[0], label: gaStatusLabel(kinds[0]) }
+  const leastMature = GA_STATUS_MATURITY.find((k) => kinds.includes(k))!
+  return {
+    kind: leastMature,
+    label: kinds.map(gaStatusLabel).join(' + '),
+    mixedKinds: kinds,
+  }
 }
 
 export type ScopeChipKind = 'portfolio' | 'multi' | 'single' | 'standard'
@@ -72,6 +152,10 @@ export interface VendorRoadmapDisplay {
   vendorName: string
   roadmapStatus: VendorRoadmap['status'] | null
   gaStatus: GaStatusInfo | null
+  /** The vendor's own status wording, when it says more than the badge does
+   * (which capabilities are GA, which are in preview). Null when the badge
+   * already says it all. */
+  gaStatusDetail: string | null
   scopeChip: ScopeChipInfo | null
   dateLine: VendorRoadmapDateLine | null
   pqcAlgorithms: string[]
@@ -111,12 +195,20 @@ export function deriveVendorRoadmapDisplay(
       ? cleanHybridModeText(enrichment.hybridModeSupport)
       : null
 
+  const gaStatus = enrichment ? getGaStatusInfo(enrichment.currentGaStatus) : null
+  const statusText = enrichment?.currentGaStatus.trim() ?? ''
+  const gaStatusDetail =
+    gaStatus && statusText && statusText.toLowerCase() !== gaStatus.label.toLowerCase()
+      ? statusText
+      : null
+
   return {
     title: roadmap?.roadmapTitle || 'Vendor PQC Roadmap',
     roadmapUrl: hasUrl ? roadmap!.roadmapUrl : null,
     vendorName: roadmap?.vendorName ?? '',
     roadmapStatus: roadmap?.status ?? null,
-    gaStatus: enrichment ? getGaStatusInfo(enrichment.currentGaStatus) : null,
+    gaStatus,
+    gaStatusDetail,
     scopeChip: getScopeChipInfo(enrichment?.roadmapScope),
     dateLine,
     pqcAlgorithms: enrichment?.pqcAlgorithms ?? [],

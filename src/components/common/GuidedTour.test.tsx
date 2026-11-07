@@ -15,6 +15,8 @@ const renderTour = () =>
     </MemoryRouter>
   )
 import { useDisclaimerStore, getAppMajorVersion } from '../../store/useDisclaimerStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { softwareData } from '../../data/migrateData'
 
 // Mock framer-motion so AnimatePresence transitions are synchronous in tests.
 // Without this, AnimatePresence mode="wait" holds exiting elements in the DOM
@@ -43,6 +45,19 @@ vi.mock('framer-motion', () => ({
 }))
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
+
+/**
+ * Fire the open timer, then let the catalogue-size import (started when the tour
+ * opens) settle inside act so its state update is not reported as stray.
+ */
+async function openTour(ms = 2500) {
+  await act(async () => {
+    vi.advanceTimersByTime(ms)
+  })
+  await act(async () => {
+    await import('../../data/migrateData')
+  })
+}
 
 /** Advance past the intro slides (3) and click through the knowledge gate */
 function advancePastIntro(gateChoice: 'learning' | 'basics' | 'expert' = 'learning') {
@@ -113,48 +128,40 @@ describe('GuidedTour', () => {
     useDisclaimerStore.setState({ acknowledgedMajorVersion: null })
   })
 
-  it('does not show if already completed', () => {
+  it('does not show if already completed', async () => {
     localStorage.setItem(TOUR_STORAGE_KEY, 'true')
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(3000)
-    })
+    await openTour(3000)
 
     expect(screen.queryByText('Everything runs on encryption')).not.toBeInTheDocument()
   })
 
-  it('shows intro slides automatically if not completed', () => {
+  it('shows intro slides automatically if not completed', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     // First intro slide should be visible
     expect(screen.queryAllByText('Everything runs on encryption').length).toBeGreaterThan(0)
   })
 
-  it('forces show if ?tour query param is present', () => {
+  it('forces show if ?tour query param is present', async () => {
     localStorage.setItem(TOUR_STORAGE_KEY, 'true')
     window.location.search = '?tour=1'
 
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     expect(screen.queryAllByText('Everything runs on encryption').length).toBeGreaterThan(0)
     expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBeNull()
   })
 
-  it('navigates through intro slides to knowledge gate', () => {
+  it('navigates through intro slides to knowledge gate', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     // Intro slide 1
     expect(screen.queryAllByText('Everything runs on encryption').length).toBeGreaterThan(0)
@@ -175,12 +182,10 @@ describe('GuidedTour', () => {
     expect(screen.queryAllByText(/How familiar are you/).length).toBeGreaterThan(0)
   })
 
-  it('shows full feature tour after "I\'m just learning" gate choice', () => {
+  it('shows full feature tour after "I\'m just learning" gate choice', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     advancePastIntro('learning')
 
@@ -188,12 +193,10 @@ describe('GuidedTour', () => {
     expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
   })
 
-  it('shows shortened tour after "I know the basics" gate choice', () => {
+  it('shows shortened tour after "I know the basics" gate choice', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     advancePastIntro('basics')
 
@@ -206,12 +209,10 @@ describe('GuidedTour', () => {
     expect(screen.queryAllByText('Migration Timeline').length).toBeGreaterThan(0)
   })
 
-  it('dismisses tour when "I\'m an expert" is chosen', () => {
+  it('dismisses tour when "I\'m an expert" is chosen', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     advancePastIntro('expert')
 
@@ -219,12 +220,10 @@ describe('GuidedTour', () => {
     expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBe('true')
   })
 
-  it('can navigate through feature steps using next/prev buttons', () => {
+  it('can navigate through feature steps using next/prev buttons', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     advancePastIntro('learning')
 
@@ -246,12 +245,10 @@ describe('GuidedTour', () => {
     expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
   })
 
-  it('dismisses the tour and sets localStorage item', () => {
+  it('dismisses the tour and sets localStorage item', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     const dismissBtns = screen.getAllByRole('button', { name: /Dismiss tour/i })
     fireEvent.click(dismissBtns[0])
@@ -260,12 +257,10 @@ describe('GuidedTour', () => {
     expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBe('true')
   })
 
-  it('finishes the full feature tour on the last step', () => {
+  it('finishes the full feature tour on the last step', async () => {
     renderTour()
 
-    act(() => {
-      vi.advanceTimersByTime(2500)
-    })
+    await openTour()
 
     advancePastIntro('learning')
 
@@ -283,5 +278,126 @@ describe('GuidedTour', () => {
 
     expect(screen.queryByText('Glossary')).not.toBeInTheDocument()
     expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBe('true')
+  })
+  it('separates public-key, signature and symmetric roles in the intro and scopes the milestones', async () => {
+    renderTour()
+
+    await openTour()
+
+    const seen: string[] = []
+    for (let i = 0; i < 3; i++) {
+      seen.push(document.body.textContent ?? '')
+      const nextBtns = screen.getAllByRole('button', { name: /Next/i })
+      fireEvent.click(nextBtns[0])
+    }
+    const intro = seen.join(' ')
+
+    // Not every system depends on RSA/ECC, and the timing is not "hours".
+    expect(intro).not.toMatch(/Every bank transfer/i)
+    expect(intro).not.toMatch(/in hours/i)
+    // Key establishment, signatures and bulk encryption are named as different jobs.
+    expect(intro).toMatch(/agree on keys and prove authenticity/i)
+    expect(intro).toMatch(/forge signatures/i)
+    expect(intro).toMatch(/symmetric ciphers such as AES/i)
+    expect(intro).toMatch(/ML-KEM \(FIPS 203\) for key establishment/)
+    expect(intro).toMatch(/ML-DSA and SLH-DSA \(FIPS 204 and 205\) for digital signatures/)
+    // Milestones are scoped, not a blanket government mandate.
+    expect(intro).not.toMatch(/Governments are mandating/i)
+    expect(intro).toMatch(/differ in scope and force/i)
+  })
+
+  it('describes the feature cards as curated and source-checked, not complete or always current', async () => {
+    renderTour()
+
+    await openTour()
+
+    advancePastIntro('learning')
+
+    const cards: string[] = []
+    for (let i = 0; i < 14; i++) {
+      cards.push(document.body.textContent ?? '')
+      const nextBtns = screen.queryAllByRole('button', { name: /Next/i })
+      if (nextBtns.length > 0) fireEvent.click(nextBtns[0])
+    }
+    const features = cards.join(' ')
+
+    expect(features).not.toMatch(/every government deadline/i)
+    expect(features).not.toMatch(/exactly when your country mandates/i)
+    expect(features).not.toMatch(/always up to date/i)
+    expect(features).not.toMatch(/Every NIST, IETF, and ETSI document/i)
+    expect(features).not.toMatch(/already at risk of future exposure/i)
+    expect(features).not.toMatch(/grounded in NIST standards/i)
+    expect(features).toMatch(/coverage is curated/i)
+    expect(features).toMatch(/binding mandate, guidance or a target/i)
+    expect(features).toMatch(/key-establishment and signature algorithms/i)
+  })
+
+  describe('card background', () => {
+    // `.glass-panel` fills at 80% (`bg-card/80`), so the page behind the tour showed
+    // through the card. A plain `bg-card` on the same element overrides it.
+    // eslint-disable-next-line testing-library/no-node-access -- the card panel has no role or label
+    const cardPanel = () => document.querySelector('.glass-panel') as HTMLElement
+    const expectOpaque = (panel: HTMLElement | null) => {
+      expect(panel).not.toBeNull()
+      const classes = [...(panel as HTMLElement).classList]
+      expect(classes).toContain('bg-card')
+      expect(classes.filter((c) => /^bg-.+\/\d+$/.test(c))).toEqual([])
+    }
+
+    it('fills the intro, gate and feature cards with the solid card colour', async () => {
+      renderTour()
+      await openTour()
+      expect(screen.queryAllByText('Everything runs on encryption').length).toBeGreaterThan(0)
+      expectOpaque(cardPanel())
+
+      for (let i = 0; i < 3; i++) {
+        fireEvent.click(screen.getAllByRole('button', { name: /Next/i })[0])
+      }
+      expect(screen.queryAllByText(/How familiar are you/).length).toBeGreaterThan(0)
+      expectOpaque(cardPanel())
+
+      fireEvent.click(screen.getByText(/I'm just learning/i))
+      expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
+      expectOpaque(cardPanel())
+    })
+
+    it('fills the role-tour card with the solid card colour', async () => {
+      usePersonaStore.setState({ selectedPersona: 'developer' })
+      try {
+        renderTour()
+        await openTour()
+        advancePastIntro('basics')
+        for (let i = 0; i < 20 && !screen.queryByText(/your role/); i++) {
+          const next = screen.queryAllByRole('button', { name: /Next|Get Started/i })
+          if (next.length === 0) break
+          fireEvent.click(next[0])
+        }
+        expect(screen.getByText(/your role/)).toBeInTheDocument()
+        expectOpaque(cardPanel())
+      } finally {
+        usePersonaStore.setState({ selectedPersona: null })
+      }
+    })
+  })
+
+  it('quotes the same product count the Migrate page shows', async () => {
+    renderTour()
+    await openTour()
+    // The count loads when the tour opens; let that import settle.
+    await act(async () => {
+      await import('../../data/migrateData')
+    })
+    advancePastIntro('learning')
+    // Learning Modules -> Migration Timeline -> Algorithm Explorer -> Migrate Catalog
+    for (let i = 0; i < 3; i++) {
+      fireEvent.click(screen.getAllByRole('button', { name: /Next/i })[0])
+    }
+    expect(screen.getByText('Migrate Catalog')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        `${softwareData.length} products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.`
+      )
+    ).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/880/)
   })
 })

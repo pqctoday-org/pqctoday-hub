@@ -25,6 +25,9 @@ import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'vendor-risk'
 
+/** What the catalogue says about one product for a dimension that only structured fields can settle. */
+export type CatalogueLevel = 'yes' | 'partial' | 'no' | 'not-assessed'
+
 export interface Dimension {
   id: string
   label: string
@@ -32,20 +35,46 @@ export interface Dimension {
   weight: number
   /** Auto-detect which products meet this criterion */
   autoDetect?: (item: SoftwareItem) => boolean
+  /**
+   * Three-level reading from structured catalogue fields. A product that reads
+   * 'not-assessed' is left out of the dimension's score; a 'partial' product that
+   * stays ticked counts half. When no product in a group is assessed the dimension
+   * has no score (null) and is left out of the weighted total, weight included.
+   */
+  catalogueLevel?: (item: SoftwareItem) => CatalogueLevel
+}
+
+/**
+ * Hybrid support from the catalogue's structured fields only (never the free-text
+ * description). A hybrid TLS group or a hybrid KEM / composite signature API reads
+ * 'yes'; support that is only experimental reads 'partial'; a structured entry that
+ * lists no hybrid support reads 'no'; no structured entry at all reads 'not-assessed'.
+ */
+export function hybridSupportLevel(item: SoftwareItem): CatalogueLevel {
+  const kem = item.hybridKemSupport ?? []
+  const sig = item.hybridSigSupport
+  if (kem.length === 0 && !sig) return 'not-assessed'
+  if (kem.some((t) => t === 'tls-default' || t === 'tls-optin' || t === 'api') || sig === 'api') {
+    return 'yes'
+  }
+  if (kem.includes('api-experimental') || sig === 'api-experimental') return 'partial'
+  return 'no'
 }
 
 export const DIMENSIONS: Dimension[] = [
   {
     id: 'pqc-algorithm-support',
     label: 'PQC Algorithm Support',
-    description: 'Vendor supports NIST-approved PQC algorithms',
+    description:
+      'Catalogue entry says the product supports NIST-standardized PQC algorithms (not a measure of deployment)',
     weight: 0.25,
     autoDetect: (item) => isPqcReady(item.pqcSupport),
   },
   {
     id: 'fips-validation',
     label: 'FIPS 140-3 Validation',
-    description: 'Cryptographic modules have current FIPS validation',
+    description:
+      'Product entry cites a FIPS 140-3 module certificate (the certificate algorithm scope is not checked)',
     weight: 0.2,
     autoDetect: (item) => isFips1403Certified(item),
   },
@@ -70,13 +99,14 @@ export const DIMENSIONS: Dimension[] = [
   {
     id: 'hybrid-mode',
     label: 'Hybrid Mode Support',
-    description: 'Products support hybrid classical+PQC operation',
+    description:
+      "Scored only from the catalogue's structured hybrid key-exchange and composite-signature fields. Experimental-only support counts half; products with no structured entry are not assessed and left out. Confirm in vendor documentation.",
     weight: 0.15,
     autoDetect: (item) => {
-      const desc = (item.pqcCapabilityDescription || '').toLowerCase()
-      const support = (item.pqcSupport || '').toLowerCase()
-      return desc.includes('hybrid') || support.includes('hybrid')
+      const level = hybridSupportLevel(item)
+      return level === 'yes' || level === 'partial'
     },
+    catalogueLevel: hybridSupportLevel,
   },
 ]
 
@@ -99,6 +129,12 @@ function getBarColor(value: number): string {
 
 const productKey = (item: SoftwareItem) => item.productId
 
+/** Products a catalogue-level dimension can assess (those with a structured entry). */
+const assessedCount = (dim: Dimension, items: SoftwareItem[]): number => {
+  const levelOf = dim.catalogueLevel
+  return levelOf ? items.filter((i) => levelOf(i) !== 'not-assessed').length : 0
+}
+
 interface SavedScorecardInputs {
   checkedProducts?: Record<string, string[]>
   useSlider?: Record<string, boolean>
@@ -113,8 +149,36 @@ interface SavedScorecardInputs {
 export interface VendorScorecardRow {
   vendor: string
   productCount: number
-  dimScores: Record<string, number>
+  /** null = not assessed: left out of this vendor's overall score, weight included. */
+  dimScores: Record<string, number | null>
   overall: number
+}
+
+/**
+ * Share (0-100) of a group of products that meet a dimension, or null when the
+ * dimension cannot be assessed for them. Dimensions without a catalogue level count
+ * the ticked share of all products. Dimensions with one count only assessed products:
+ * a ticked 'yes' is a full hit, a ticked 'partial' half a hit, and products with no
+ * structured entry are neither hits nor misses. Pure for tests.
+ */
+export function scoreDimension(
+  dim: Dimension,
+  group: SoftwareItem[],
+  checked: Set<string> | undefined
+): number | null {
+  if (!dim.catalogueLevel) {
+    const hits = checked ? group.filter((i) => checked.has(productKey(i))).length : 0
+    return group.length > 0 ? Math.round((hits / group.length) * 100) : 0
+  }
+  let assessed = 0
+  let credit = 0
+  for (const item of group) {
+    const level = dim.catalogueLevel(item)
+    if (level === 'not-assessed') continue
+    assessed += 1
+    if (checked?.has(productKey(item))) credit += level === 'partial' ? 0.5 : 1
+  }
+  return assessed > 0 ? Math.round((credit / assessed) * 100) : null
 }
 
 /**
@@ -142,20 +206,15 @@ export function computeVendorScorecards(
   }
   const rows: VendorScorecardRow[] = []
   for (const [vendor, group] of groups) {
-    const keys = new Set(group.map(productKey))
-    const dimScores: Record<string, number> = {}
+    const dimScores: Record<string, number | null> = {}
     let weightedSum = 0
     let totalWeight = 0
     for (const d of DIMENSIONS) {
-      let score: number
-      if (opts.useSlider[d.id]) {
-        score = opts.sliderScores[d.id] ?? 0
-      } else {
-        const checked = checkedProducts[d.id]
-        const hits = checked ? [...keys].filter((k) => checked.has(k)).length : 0
-        score = group.length > 0 ? Math.round((hits / group.length) * 100) : 0
-      }
+      const score = opts.useSlider[d.id]
+        ? (opts.sliderScores[d.id] ?? 0)
+        : scoreDimension(d, group, checkedProducts[d.id])
       dimScores[d.id] = score
+      if (score === null) continue // not assessed: no score, and its weight is not in the total
       const w = weightOf(d.id)
       weightedSum += score * w
       totalWeight += w
@@ -178,7 +237,8 @@ export interface ScorecardOutput {
 export interface ScorecardDimensionRow {
   id: string
   label: string
-  score: number
+  /** null = not assessed (no structured catalogue entry for any selected product). */
+  score: number | null
   weightPct: number
   method: string
 }
@@ -211,10 +271,15 @@ export function buildScorecardMarkdown(
     md += `Products assessed: ${productCount}\n`
   }
   md += '\n'
+  md +=
+    "Scores count the catalogue entries you select and the values you enter. The weights and the readiness thresholds are Hub teaching choices, and no dimension measures deployment progress. FIPS 140-3 Validation counts a cited module certificate whatever its algorithm scope; Hybrid Mode Support is scored only from the catalogue's structured hybrid fields, and Not assessed means the catalogue has no structured hybrid entry, so that dimension is left out of the weighted total.\n\n"
   md += '| Dimension | Score | Weight | Method |\n'
   md += '|-----------|-------|--------|--------|\n'
   for (const d of dimensionRows) {
-    md += `| ${d.label} | ${d.score}/100 | ${d.weightPct}% | ${d.method} |\n`
+    md +=
+      d.score === null
+        ? `| ${d.label} | Not assessed | ${d.weightPct}% (not counted) | ${d.method} |\n`
+        : `| ${d.label} | ${d.score}/100 | ${d.weightPct}% | ${d.method} |\n`
   }
 
   if (vendorRows.length > 0) {
@@ -222,7 +287,7 @@ export function buildScorecardMarkdown(
     md += `| Vendor | Products | Overall | ${dimensionRows.map((d) => d.label).join(' | ')} |\n`
     md += `|${'---|'.repeat(3 + dimensionRows.length)}\n`
     for (const v of vendorRows) {
-      const scores = dimensionRows.map((d) => v.dimScores[d.id] ?? 0)
+      const scores = dimensionRows.map((d) => v.dimScores[d.id] ?? 'Not assessed')
       md += `| ${v.vendor} | ${v.productCount} | ${v.overall}/100 | ${scores.join(' | ')} |\n`
     }
   }
@@ -343,15 +408,14 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [selectedItems, myProducts])
 
-  // Compute score for a dimension
+  // Compute score for a dimension; null = not assessed (left out of the weighted total)
   const getScore = useCallback(
-    (dimId: string): number => {
+    (dimId: string): number | null => {
       if (useSlider[dimId] || !hasProducts) {
         return sliderScores[dimId] ?? 0
       }
-      const checked = checkedProducts[dimId]
-      if (!checked || selectedItems.length === 0) return 0
-      return Math.round((checked.size / selectedItems.length) * 100)
+      const dim = DIMENSIONS.find((d) => d.id === dimId)
+      return dim ? scoreDimension(dim, selectedItems, checkedProducts[dimId]) : 0
     },
     [useSlider, sliderScores, checkedProducts, selectedItems, hasProducts]
   )
@@ -362,6 +426,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
     let weightedSum = 0
     for (const d of DIMENSIONS) {
       const score = getScore(d.id)
+      if (score === null) continue // not assessed: no score, and its weight is not in the total
       const w = effectiveWeight(d.id)
       weightedSum += score * w
       totalWeight += w
@@ -420,7 +485,11 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       method:
         useSlider[d.id] || !hasProducts
           ? 'Manual'
-          : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`,
+          : d.catalogueLevel
+            ? getScore(d.id) === null
+              ? 'No structured catalogue entry for the selected products'
+              : `${assessedCount(d, selectedItems)}/${selectedItems.length} products assessed`
+            : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`,
     }))
     return buildScorecardMarkdown(
       weightedTotal,
@@ -542,11 +611,28 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
         )}
         <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50">
           <strong className="text-foreground/80">How this is scored:</strong> each dimension score
-          (0–100) is multiplied by its weight, then the six weighted scores are summed and divided
-          by the total weight — a weighted average, not a plain average. For the two auto-detected
-          dimensions (PQC Algorithm Support, FIPS 140-3 Validation), a product only counts toward
-          the score once its reported readiness reaches the "hybrid or full" tier — roughly 70% of
-          the way to fully deployed; planned, pilot, and narrative-only claims don&apos;t count.
+          (0–100) is the share of your products ticked for it, multiplied by its weight; the
+          weighted scores are summed and divided by the total weight. The weights, the colour bands
+          (75 and 50) and the 50-point low-readiness line are Hub teaching choices, not an industry
+          standard, and no dimension measures how far a product is actually deployed. Three
+          dimensions pre-tick products from the catalogue, each by a different rule.{' '}
+          <em>PQC Algorithm Support</em> ticks products whose catalogue support wording starts with
+          Yes or mentions partial or hybrid support; wording that only says planned, pilot or
+          roadmap is not ticked, though a planned entry that also mentions hybrid can be ticked by
+          mistake, so review the ticks. The wording does not say which operations, versions or
+          settings are in use. <em>FIPS 140-3 Validation</em> follows the certificate stage: it
+          ticks only products whose entry cites a FIPS 140-3 module certificate
+          (algorithm-validation-only, in-process and FIPS 140-2 entries do not count), and the
+          certificate scope is not checked, so it can cover classical algorithms only.{' '}
+          <em>Hybrid Mode Support</em> reads only the catalogue&apos;s structured hybrid
+          key-exchange and composite-signature fields, never the description text. Hybrid TLS or a
+          hybrid API counts in full, support that is only experimental counts half, and a product
+          with no structured entry is shown as Not assessed. Not assessed means the catalogue has no
+          structured hybrid entry for it, which says nothing about the product itself: it is left
+          out of that dimension&apos;s score, and if none of your products has an entry the
+          dimension is left out of the total and the remaining weights are divided among themselves.
+          Confirm hybrid support in the vendor&apos;s documentation. You tick the other three
+          dimensions yourself.
         </p>
       </div>
 
@@ -593,14 +679,19 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                     <td className={`py-1.5 px-2 text-center font-bold ${getScoreColor(v.overall)}`}>
                       {v.overall}
                     </td>
-                    {DIMENSIONS.map((d) => (
-                      <td
-                        key={d.id}
-                        className={`py-1.5 px-2 text-center ${getScoreColor(v.dimScores[d.id] ?? 0)}`}
-                      >
-                        {v.dimScores[d.id] ?? 0}
-                      </td>
-                    ))}
+                    {DIMENSIONS.map((d) => {
+                      const dimScore = v.dimScores[d.id] ?? null
+                      return (
+                        <td
+                          key={d.id}
+                          className={`py-1.5 px-2 text-center ${
+                            dimScore === null ? 'text-muted-foreground' : getScoreColor(dimScore)
+                          }`}
+                        >
+                          {dimScore ?? 'Not assessed'}
+                        </td>
+                      )
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -612,10 +703,13 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       {/* Dimension cards */}
       <div className="space-y-3">
         {DIMENSIONS.map((d) => {
-          const score = getScore(d.id)
+          const rawScore = getScore(d.id)
+          const score = rawScore ?? 0
+          const notAssessed = rawScore === null
           const isExpanded = expandedDim === d.id
           const isSliderMode = useSlider[d.id] || !hasProducts
           const checked = checkedProducts[d.id] ?? new Set()
+          const assessedN = assessedCount(d, selectedItems)
 
           return (
             <div key={d.id} className="glass-panel overflow-hidden">
@@ -642,14 +736,20 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                 <div className="flex items-center gap-3 shrink-0 ml-3">
                   {!isSliderMode && hasProducts && (
                     <span className="text-xs text-muted-foreground">
-                      {checked.size}/{selectedItems.length}
+                      {d.catalogueLevel
+                        ? `${assessedN}/${selectedItems.length} assessed`
+                        : `${checked.size}/${selectedItems.length}`}
                     </span>
                   )}
-                  <span className={`text-lg font-bold tabular-nums ${getScoreColor(score)}`}>
-                    {score}
-                  </span>
+                  {notAssessed ? (
+                    <span className="text-sm font-medium text-muted-foreground">Not assessed</span>
+                  ) : (
+                    <span className={`text-lg font-bold tabular-nums ${getScoreColor(score)}`}>
+                      {score}
+                    </span>
+                  )}
                   <span className="text-xs text-muted-foreground">
-                    ({Math.round(effectiveWeight(d.id) * 100)}%)
+                    ({Math.round(effectiveWeight(d.id) * 100)}%{notAssessed ? ', not counted' : ''})
                   </span>
                 </div>
               </Button>
@@ -719,14 +819,23 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                   ) : (
                     /* Product picking mode */
                     <div className="space-y-1 max-h-60 overflow-y-auto">
+                      {d.catalogueLevel && assessedN < selectedItems.length && (
+                        <p className="text-xs text-muted-foreground pb-1">
+                          {selectedItems.length - assessedN} of {selectedItems.length} selected
+                          products have no structured entry in the catalogue. They are not assessed
+                          and are left out of this score; use the slider to enter your own view.
+                        </p>
+                      )}
                       {selectedItems.map((item) => {
                         const key = productKey(item)
                         const isChecked = checked.has(key)
+                        const level = d.catalogueLevel?.(item)
                         return (
                           <Button
                             variant="ghost"
                             key={key}
                             type="button"
+                            disabled={level === 'not-assessed'}
                             onClick={() => toggleProductForDimension(d.id, key)}
                             className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-colors ${
                               isChecked ? 'bg-primary/5 hover:bg-primary/10' : 'hover:bg-muted/30'
@@ -747,10 +856,18 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                                 className={`text-[10px] ml-auto shrink-0 ${
                                   d.autoDetect(item)
                                     ? 'text-status-success'
-                                    : 'text-muted-foreground/50'
+                                    : level === 'not-assessed'
+                                      ? 'text-muted-foreground'
+                                      : 'text-muted-foreground/50'
                                 }`}
                               >
-                                {d.autoDetect(item) ? 'detected' : ''}
+                                {level === 'not-assessed'
+                                  ? 'Not assessed'
+                                  : level === 'partial'
+                                    ? 'partial (experimental)'
+                                    : d.autoDetect(item)
+                                      ? 'detected'
+                                      : ''}
                               </span>
                             )}
                           </Button>

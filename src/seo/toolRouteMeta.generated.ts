@@ -902,7 +902,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/sbx-cloud-kms',
     title: 'Cloud KMS Key Wrapping — PQC Crypto Lab | PQC Today',
     description:
-      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 — the key-wrapping pattern cloud KMS services (AWS, Azure, ...',
+      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 as a fictional KEM+DEM key-wrapping pattern for protecting ...',
     kind: 'sandbox-tool',
     index: false,
     sourceGlobs: [
@@ -1000,7 +1000,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/sbx-osslsigncode',
     title: 'Code Signing (osslsigncode) — PQC Crypto Lab | PQC Today',
     description:
-      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65, demonstrating the supply-ch...',
+      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65. WHY IT MATTERS: a code sign...',
     kind: 'sandbox-tool',
     index: false,
     sourceGlobs: [

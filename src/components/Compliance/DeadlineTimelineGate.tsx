@@ -4,6 +4,7 @@ import { ChevronDown, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DeadlineTimeline } from './ComplianceLandscape'
 import { extractYear } from '@/utils/deadlineUrgency'
+import { bindingGroupOf } from '@/utils/bindingSplit'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { PersonaId } from '@/data/learningPersonas'
 
@@ -23,27 +24,55 @@ interface DeadlineTimelineGateProps {
 }
 
 interface NarrativeData {
+  datedCount: number
   earliestYear: number
   latestYear: number
-  nextDeadlineLabel: string | null
+  /** Next dated milestone of a record classified as binding, when one is ahead. */
+  nextBindingLabel: string | null
+}
+
+/** Years a record states: its structured milestones, else the year in its deadline text. */
+function yearsOf(fw: ComplianceFramework): number[] {
+  const dated = fw.deadlineDates ?? []
+  if (dated.length > 0) return dated.map((d) => d.year)
+  const year = extractYear(fw.deadline)
+  return year === null ? [] : [year]
 }
 
 function buildNarrative(frameworks: ComplianceFramework[]): NarrativeData | null {
-  const withYears = frameworks
-    .map((f) => ({ fw: f, year: extractYear(f.deadline) }))
-    .filter((x): x is { fw: ComplianceFramework; year: number } => x.year !== null)
-  if (withYears.length === 0) return null
-  const years = withYears.map((x) => x.year)
-  const earliestYear = Math.min(...years)
-  const latestYear = Math.max(...years)
+  const dated = frameworks
+    .map((fw) => ({ fw, years: yearsOf(fw) }))
+    .filter((x) => x.years.length > 0)
+  if (dated.length === 0) return null
+  const all = dated.flatMap((x) => x.years)
   const today = new Date().getFullYear()
-  const future = withYears.filter((x) => x.year >= today).sort((a, b) => a.year - b.year)
-  const next = future[0] ?? withYears.sort((a, b) => b.year - a.year)[0]
+  // A hard deadline is named only from a record classified as binding (a law, or
+  // binding for its stated scope). Advisory targets, drafts, recommendations and
+  // records not yet classified carry dates too, but those dates are not deadlines.
+  const ahead = dated
+    .filter((x) => bindingGroupOf(x.fw.bindingStatus) === 'binding')
+    .flatMap((x) => x.years.filter((y) => y >= today).map((year) => ({ fw: x.fw, year })))
+    .sort((a, b) => a.year - b.year)[0]
   return {
-    earliestYear,
-    latestYear,
-    nextDeadlineLabel: next ? `${next.fw.label} (${next.year})` : null,
+    datedCount: dated.length,
+    earliestYear: Math.min(...all),
+    latestYear: Math.max(...all),
+    nextBindingLabel: ahead ? `${ahead.fw.label} (${ahead.year})` : null,
   }
+}
+
+/** Describes the dated entries in the current selection, with no claim beyond it. */
+function narrativeText(frameworks: ComplianceFramework[]): string {
+  const n = buildNarrative(frameworks)
+  if (!n) return 'No dated entries in the current selection.'
+  const span =
+    n.earliestYear === n.latestYear
+      ? `dated ${n.earliestYear}`
+      : `with dates from ${n.earliestYear} to ${n.latestYear}`
+  const head = `${n.datedCount} ${n.datedCount === 1 ? 'entry' : 'entries'} in the current selection ${span}. A date can be an advisory target or a draft rather than a deadline, so check each entry's status.`
+  return n.nextBindingLabel
+    ? `${head} The next dated milestone in a record classified as binding is ${n.nextBindingLabel}; it applies only within its stated scope.`
+    : head
 }
 
 /**
@@ -64,7 +93,7 @@ export function DeadlineTimelineGate({
   returningVisitor = false,
 }: DeadlineTimelineGateProps) {
   const [open, setOpen] = useState(false)
-  const narrative = useMemo(() => buildNarrative(frameworks), [frameworks])
+  const narrative = useMemo(() => narrativeText(frameworks), [frameworks])
 
   if (
     (persona === 'executive' || persona === 'grc' || persona === 'ops' || persona === null) &&
@@ -78,11 +107,7 @@ export function DeadlineTimelineGate({
       <div className="flex items-start gap-2 p-3 rounded-lg border border-border bg-card text-sm">
         <Clock size={14} className="text-muted-foreground mt-0.5 shrink-0" aria-hidden="true" />
         <p className="text-muted-foreground" data-testid="deadline-timeline-narrative">
-          {narrative
-            ? narrative.nextDeadlineLabel
-              ? `PQC mandates land between ${narrative.earliestYear} and ${narrative.latestYear}; the next hard deadline is ${narrative.nextDeadlineLabel}.`
-              : `PQC mandates land between ${narrative.earliestYear} and ${narrative.latestYear}.`
-            : 'No dated PQC mandates have been published yet — check back as new regulations land.'}
+          {narrative}
         </p>
       </div>
     )

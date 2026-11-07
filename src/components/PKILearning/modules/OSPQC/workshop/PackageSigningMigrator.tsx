@@ -101,37 +101,45 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
       ],
     },
     pqcFlow: {
-      keyAlgorithm: 'ML-DSA-65 (FIPS 204)',
-      sigSize: 3309,
-      method: 'sigstore-style detached ML-DSA signature OR libgcrypt PQC patch',
+      keyAlgorithm: 'ML-DSA-87 + Ed448 hybrid OpenPGP v6 key (ML-DSA-87 signature part, FIPS 204)',
+      sigSize: 4627,
+      method:
+        'additional OpenPGP v6 signature next to the RSA one (RPM 6, Sequoia; Red Hat technology preview). Step 5 is a detached lab example only.',
       steps: [
         {
           id: 'p1',
-          step: '1. Generate ML-DSA-65 signing key',
+          step: '1. Generate a hybrid ML-DSA signing key (Sequoia)',
           command:
-            '# Option A: OpenSSL 3.5+ with ML-DSA support\nopenssl genpkey -algorithm mldsa65 -out signing-key.pem\nopenssl pkey -in signing-key.pem -pubout -out signing-key-pub.pem\n\n# Option B: libgcrypt PQC patch (experimental)\ngpg --expert --gen-key\n# Select: ML-DSA-65 (if patched libgcrypt)',
-          artifact: 'ML-DSA-65 key pair (PEM files, 4,032 B private / 1,952 B public)',
+            '# Based on Red Hat\'s technology-preview procedure for RHEL 10.1:\nsq key generate --own-key --email vendor@example.com --name "Vendor Inc." \\\n  --cipher-suite mldsa87-ed448 --profile rfc9580 --cannot-authenticate \\\n  --cannot-encrypt --expiration=never\nsq key list\n\n# Red Hat\'s article writes the suite as mldsa87 and states that generating\n# primary keys with signing capabilities requires patching sequoia-sq.\n# Upstream sq documents mldsa87-ed448 and mldsa65-ed25519: run\n# sq key generate --help to see what your build accepts.',
+          artifact: 'Hybrid ML-DSA-87 + Ed448 OpenPGP v6 key in the Sequoia key store',
         },
         {
           id: 'p2',
-          step: '2. Create detached signature per RPM',
-          command:
-            '# Compute SHA-256 of RPM, sign with ML-DSA-65:\nopenssl pkeyutl -sign \\\n  -inkey signing-key.pem \\\n  -in <(sha256sum mypackage-1.0-1.x86_64.rpm | awk \'{print $1}\') \\\n  -out mypackage-1.0-1.x86_64.rpm.mldsa65.sig\n\n# Bundle signature + public key fingerprint:\njq -n --arg sig $(base64 -w0 *.sig) \\\n   --arg pub $(openssl pkey -in signing-key.pem -pubout -outform DER | base64 -w0) \\\n   \'{"algorithm":"ml-dsa-65","signature":$sig,"pubkey":$pub}\' \\\n   > mypackage-1.0-1.x86_64.rpm.pqcsig',
-          artifact: 'Detached .mldsa65.sig file (3,309 bytes) alongside RPM',
+          step: '2. Export the public certificate',
+          command: 'sq cert export --cert-email vendor@example.com > RPM-PGP-KEY-VENDOR',
+          artifact: 'Public certificate (RPM-PGP-KEY-VENDOR) to publish to clients',
         },
         {
           id: 'p3',
-          step: '3. Publish public key to repo',
+          step: '3. Add the signature without removing the RSA one',
           command:
-            '# Publish to distribution server:\ncp signing-key-pub.pem /var/www/html/repo/ML-DSA-KEY-MyOrg.pem\n\n# Update repo metadata (createrepo_c):\ncreaterepo_c --pqc-key ML-DSA-KEY-MyOrg.pem /var/www/html/repo/',
-          artifact: 'ML-DSA-65 public key published to repository',
+            '# RHEL: copy the macro template and name the key\ncp /usr/share/doc/rpm/macros.rpmsign-sequoia /etc/rpm/\necho "%_gpg_name <key fingerprint>" > ~/.rpmmacros\n\n# Fedora / upstream RPM: use the Sequoia signer instead\n#   %_openpgp_sign sq\n#   %_openpgp_sign_id <key fingerprint>\n\nrpmsign --addsign --rpmv6 mypackage-1.0-1.x86_64.rpm',
+          artifact:
+            'RPM 6 package carrying the new OpenPGP v6 signature next to its existing signature',
         },
         {
           id: 'p4',
-          step: '4. Client verification (custom plugin)',
+          step: '4. Client verification (RPM 6 required)',
           command:
-            "# DNF PQC verification plugin (future dnf 5.x target):\ndnf install mypackage  # Will verify ML-DSA sig via dnf plugin\n\n# Manual verification until dnf plugin is available:\nopenssl pkeyutl -verify \\\n  -pubin -inkey signing-key-pub.pem \\\n  -sigfile mypackage-1.0-1.x86_64.rpm.mldsa65.sig \\\n  -in <(sha256sum mypackage-1.0-1.x86_64.rpm | awk '{print $1}')",
-          artifact: 'ML-DSA signature verified; package installed',
+            "# The client must import the public certificate first:\nrpmkeys --import RPM-PGP-KEY-VENDOR\nrpmkeys -Kv mypackage-1.0-1.x86_64.rpm\n# On an RPM 6-capable system Red Hat's sample output includes a line like:\n#   Header OpenPGP V6 ML-DSA-87+Ed448/SHA512 signature, key fingerprint: ...: OK\n# Systems whose rpm does not understand RPM 6 signatures check only the\n# classical RSA signature, so the PQC signature is not checked there.",
+          artifact: 'PQC signature verified only where the client supports it',
+        },
+        {
+          id: 'p5',
+          step: '5. Lab only: detached ML-DSA-65 signature',
+          command:
+            '# No package manager checks this. It shows the signature size and the\n# verification step only; trust depends on how the verifier obtains the\n# public key (use a channel independent of the download) and on the\n# verifier being run by hand or by your own tooling.\nopenssl genpkey -algorithm ML-DSA-65 -out signing-key.pem\nopenssl pkey -in signing-key.pem -pubout -out signing-key-pub.pem\nopenssl pkeyutl -sign -inkey signing-key.pem -rawin \\\n  -in mypackage-1.0-1.x86_64.rpm \\\n  -out mypackage-1.0-1.x86_64.rpm.mldsa65.sig\n\nopenssl pkeyutl -verify -pubin -inkey signing-key-pub.pem -rawin \\\n  -in mypackage-1.0-1.x86_64.rpm \\\n  -sigfile mypackage-1.0-1.x86_64.rpm.mldsa65.sig',
+          artifact: 'Detached 3,309-byte ML-DSA-65 signature; verified by hand, not by rpm or dnf',
         },
       ],
     },
@@ -139,37 +147,49 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
       {
         level: 'Root CA',
         component: 'OS Vendor Root Key',
-        algorithm: 'RSA-4096 (current) → ML-DSA-87 (future)',
-        notes: 'Red Hat signs intermediate signing keys with root.',
+        algorithm: 'RSA (current) → hybrid ML-DSA-87 + Ed448 added beside it (Red Hat, RHEL 10.1)',
+        notes:
+          'Sample model. rpm checks packages against the OpenPGP keys imported into its keyring; this lesson does not describe any vendor’s internal key hierarchy.',
       },
       {
         level: 'Package Signing Key',
         component: 'Repository Signing Certificate',
-        algorithm: 'GPG RSA-4096 (current) → ML-DSA-65',
-        notes: 'Signs all packages in the repository. Monthly rotation recommended.',
+        algorithm: 'OpenPGP RSA (current) → hybrid ML-DSA + classical key (RPM 6)',
+        notes:
+          'Signs the packages in the repository. Rotation interval is the operator’s decision; this lesson recommends none.',
       },
       {
         level: 'Package',
         component: 'RPM Signature Header',
-        algorithm: 'GPG RSA-4096 detached sig embedded in RPM header',
-        notes: 'Each RPM contains the detached signature in its header section.',
+        algorithm: 'OpenPGP signature(s) in the RPM header',
+        notes:
+          'RPM 6 can hold several OpenPGP signatures in one package; a client that understands RPM 6 signatures verifies the PQC signature as well as the RSA one.',
       },
       {
         level: 'User',
         component: 'dnf / rpm verification',
-        algorithm: 'GPG keyring verification on install',
-        notes: 'rpm --checksig verifies embedded signature against imported public keys.',
+        algorithm: 'OpenPGP keyring verification on install',
+        notes:
+          'rpmkeys -K (also rpm --checksig) verifies the embedded signatures against the imported public keys.',
       },
     ],
     compatibility: [
-      { tool: 'dnf (RHEL 9)', currentSupport: true, pqcStatus: 'No native PQC; plugin needed' },
       {
-        tool: 'rpm v4.19+',
+        tool: 'RPM 6.0.0 and later (released 22 September 2025)',
         currentSupport: true,
-        pqcStatus: 'Pluggable backend — ML-DSA experimental',
+        pqcStatus:
+          'Release notes list OpenPGP v6 and PQC keys and signatures and several signatures per package; Sequoia back end (rpm-sequoia 1.9.0 or later to build)',
       },
-      { tool: 'rpm v4.18', currentSupport: true, pqcStatus: 'GPG only — no PQC' },
-      { tool: 'createrepo_c 1.x', currentSupport: true, pqcStatus: 'PQC metadata planned for 2.x' },
+      {
+        tool: 'RHEL 10.1 (RPM 6 backports)',
+        currentSupport: true,
+        pqcStatus: 'Verifies RPM 6 signatures; signing your own RPMs is a technology preview',
+      },
+      {
+        tool: 'RPM without RPM 6 signature support',
+        currentSupport: true,
+        pqcStatus: 'Verifies only the classical RSA signature; PQC signature not checked',
+      },
     ],
   },
   deb: {
@@ -213,35 +233,37 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
     pqcFlow: {
       keyAlgorithm: 'ML-DSA-65 (FIPS 204)',
       sigSize: 3309,
-      method: 'InRelease ML-DSA signature via GnuPG PQC extension (DEP-18)',
+      method:
+        'lab sketch only: detached ML-DSA signature over Release, checked by a separate tool; no apt release is cited as verifying it',
       steps: [
         {
           id: 'p1',
-          step: '1. Generate ML-DSA-65 archive key',
+          step: '1. Generate an ML-DSA-65 key (lab)',
           command:
-            '# Using OpenSSL 3.5+ ML-DSA support:\nopenssl genpkey -algorithm mldsa65 -out archive-signing-key.pem\n\n# Or via future GnuPG PQC extension:\ngpg --expert --gen-key\n# Select: ML-DSA-65 (requires libgcrypt 2.0+ with PQC support)',
-          artifact: 'ML-DSA-65 key pair for InRelease signing',
+            '# Requires an OpenSSL with ML-DSA support (OpenSSL 3.5 or later):\nopenssl genpkey -algorithm ML-DSA-65 -out archive-signing-key.pem\nopenssl pkey -in archive-signing-key.pem -pubout -out archive-signing-key-pub.pem',
+          artifact:
+            'ML-DSA-65 key pair for the lab (FIPS 204: 4,032 B secret key, 1,952 B public key)',
         },
         {
           id: 'p2',
-          step: '2. Sign InRelease with ML-DSA',
+          step: '2. Sign Release with a detached signature (lab)',
           command:
-            '# Future apt-ftparchive with PQC support:\napt-ftparchive --pqc-sign=mldsa65 release . > InRelease\n\n# Current workaround — append ML-DSA detached sig:\ncat Release | openssl pkeyutl -sign \\\n  -inkey archive-signing-key.pem \\\n  > Release.mldsa65.sig\n\n# Bundle:\ncat InRelease Release.mldsa65.sig > InRelease.pqc',
-          artifact: 'InRelease with appended ML-DSA-65 signature block',
+            '# This lesson cites no apt release that reads this file. It sits beside\n# the OpenPGP-signed InRelease, which is what apt checks today.\nopenssl pkeyutl -sign -inkey archive-signing-key.pem -rawin \\\n  -in Release -out Release.mldsa65.sig',
+          artifact: 'Detached Release.mldsa65.sig (3,309 bytes) next to the unchanged InRelease',
         },
         {
           id: 'p3',
-          step: '3. Distribute ML-DSA public key',
+          step: '3. Distribute the public key independently',
           command:
-            'openssl pkey -in archive-signing-key.pem -pubout \\\n  -out ML-DSA-KEY-MyOrg.pem\n\n# apt sources configuration (future):\necho "deb [signed-by=/etc/apt/keyrings/myrepo-mldsa65.pem \\\n  arch=amd64] https://repo.example.com stable main" \\\n  | sudo tee /etc/apt/sources.list.d/myrepo-pqc.list',
-          artifact: 'ML-DSA-65 public key published and configured in apt sources',
+            '# The verifier must get this key over a channel that does not depend on\n# the repository being checked (for example a pinned copy shipped with the\n# OS image). A key fetched from the same mirror proves nothing.\ncp archive-signing-key-pub.pem /secure/channel/ML-DSA-KEY-MyOrg.pem',
+          artifact: 'ML-DSA-65 public key distributed outside the repository',
         },
         {
           id: 'p4',
-          step: '4. Client verification (apt PQC plugin)',
+          step: '4. Verify by hand (no apt support cited)',
           command:
-            '# apt 3.x target (Ubuntu 26.04 LTS planned):\nsudo apt update  # Verifies InRelease ML-DSA signature via apt PQC plugin\n\n# Manual verification (until apt native support):\nopenssl pkeyutl -verify \\\n  -pubin -inkey ML-DSA-KEY-MyOrg.pem \\\n  -sigfile Release.mldsa65.sig \\\n  -in Release',
-          artifact: 'ML-DSA signature verified; repository trusted; packages installed',
+            'openssl pkeyutl -verify -pubin -inkey ML-DSA-KEY-MyOrg.pem -rawin \\\n  -in Release -sigfile Release.mldsa65.sig\n\n# apt itself would keep trusting only what its OpenPGP verifier accepts.\n# Switching an archive to ML-DSA needs apt-side verification support;\n# this lesson cites no Debian or Ubuntu release that provides it.',
+          artifact: 'Signature checked by the lab command only; apt behaviour unchanged',
         },
       ],
     },
@@ -249,8 +271,9 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
       {
         level: 'Root Signing Key',
         component: 'Debian/Ubuntu Archive Key',
-        algorithm: 'GPG RSA-4096 (current) → ML-DSA-87 (Ubuntu 28.04 LTS target)',
-        notes: 'Distro root key signs repository. Debian has 5-year key rotation cycle.',
+        algorithm: 'OpenPGP key (sample: RSA-4096); no post-quantum plan cited in this lesson',
+        notes:
+          'Sample model. The distribution’s archive key signs the repository metadata; this lesson cites no key rotation cycle or post-quantum target.',
       },
       {
         level: 'Repository InRelease',
@@ -274,20 +297,24 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
     ],
     compatibility: [
       {
-        tool: 'apt 2.x (Ubuntu 24.04)',
+        tool: 'apt (InRelease verification)',
         currentSupport: true,
-        pqcStatus: 'GPG only; PQC planned in apt 3.x',
+        pqcStatus: 'No ML-DSA verification cited in this lesson; check release notes',
       },
-      { tool: 'dpkg 1.22+', currentSupport: true, pqcStatus: 'No native PQC sig verification' },
       {
-        tool: 'reprepro 5.x',
+        tool: 'dpkg',
         currentSupport: true,
-        pqcStatus: 'GPG only; PQC upstream proposal open',
+        pqcStatus: 'No ML-DSA signature verification cited in this lesson',
+      },
+      {
+        tool: 'reprepro',
+        currentSupport: true,
+        pqcStatus: 'No ML-DSA signing cited in this lesson',
       },
       {
         tool: 'apt-ftparchive',
         currentSupport: true,
-        pqcStatus: 'GPG only',
+        pqcStatus: 'No ML-DSA signing cited in this lesson',
       },
     ],
   },

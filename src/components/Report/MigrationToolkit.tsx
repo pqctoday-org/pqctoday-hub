@@ -26,7 +26,7 @@ interface MigrationToolkitProps {
   assessmentInfrastructure: string[]
   /** Per-layer sub-category selections; empty array = all sub-cats in that layer. */
   assessmentSubCategories: Record<string, string[]>
-  /** Industry from the assessment (used as fallback label only). */
+  /** Industry from the assessment. Accepted for callers' convenience; the list is not filtered by it. */
   assessmentIndustry: string
   /** Whether section starts expanded (default true). */
   defaultOpen?: boolean
@@ -46,6 +46,9 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
 
   // "Selected" mode: user has explicitly bookmarked products AND the import toggle is ON
   const useSelectedMode = importProductSelection && myProducts.length > 0
+  // The product list follows the assessed infrastructure layers (and sub-categories) only.
+  // With no layer chosen nothing narrows it, so the whole catalogue is listed — say so.
+  const noInfraSelected = !useSelectedMode && assessmentInfrastructure.length === 0
   // One assessed infrastructure layer → land on its Migrate domain; otherwise
   // there is no single domain to pick, so the catalog opens as-is.
   const profileHref =
@@ -149,7 +152,6 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
 
   // Recommended mode: no infra selected, or no matches
   if (!useSelectedMode && selectedProducts.length === 0) {
-    const noInfraSelected = assessmentInfrastructure.length === 0
     return (
       <div className="glass-panel p-6">
         {titleRow}
@@ -227,10 +229,22 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
               </Link>
               . Select or remove products in the Migrate view or in Step 12 of the assessment.
             </>
+          ) : noInfraSelected ? (
+            <>
+              No infrastructure layers were selected in the assessment, so nothing narrows this
+              list: it shows the whole Migrate catalog, ordered by migration priority. Your industry
+              does not change it. Choose infrastructure layers in the assessment, or pick products
+              in the{' '}
+              <Link to={profileHref} className="text-primary hover:underline">
+                Migrate view
+              </Link>
+              , for a shorter list.
+            </>
           ) : (
             <>
-              Products from the Migrate catalog matching your infrastructure profile. Manage
-              selections in the{' '}
+              Products from the Migrate catalog in the infrastructure layers and sub-categories you
+              selected in the assessment, ordered by migration priority. Your industry does not
+              change this list. Manage selections in the{' '}
               <Link to={profileHref} className="text-primary hover:underline">
                 Migrate view
               </Link>
@@ -266,6 +280,8 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                 {items.slice(0, 5).map((item) => {
                   const priority =
                     priorityConfig[item.pqcMigrationPriority as keyof typeof priorityConfig]
+                  // Only quantum protection is a pre-shared key: its own label, not a PQC tier.
+                  const isPsk = item.pqcSupport.toLowerCase().startsWith('psk')
 
                   return (
                     <tr key={item.productId} className="border-b border-border/50 last:border-b-0">
@@ -295,15 +311,22 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                             'text-xs',
                             item.pqcSupport.toLowerCase().startsWith('yes')
                               ? 'text-success'
-                              : item.pqcSupport.toLowerCase().startsWith('partial') ||
-                                  item.pqcSupport.toLowerCase().startsWith('limited') ||
-                                  item.pqcSupport.toLowerCase().startsWith('planned') ||
-                                  item.pqcSupport.toLowerCase().startsWith('in progress')
-                                ? 'text-warning'
-                                : 'text-muted-foreground'
+                              : isPsk
+                                ? 'text-info'
+                                : item.pqcSupport.toLowerCase().startsWith('partial') ||
+                                    item.pqcSupport.toLowerCase().startsWith('limited') ||
+                                    item.pqcSupport.toLowerCase().startsWith('planned') ||
+                                    item.pqcSupport.toLowerCase().startsWith('in progress')
+                                  ? 'text-warning'
+                                  : 'text-muted-foreground'
                           )}
+                          title={
+                            isPsk
+                              ? 'Protected only by a pre-shared key; not post-quantum algorithm support'
+                              : undefined
+                          }
                         >
-                          {item.pqcSupport.split('(')[0].trim()}
+                          {isPsk ? 'PSK' : item.pqcSupport.split('(')[0].trim()}
                         </span>
                       </td>
                       <td className="py-2 pr-3 hidden md:table-cell">

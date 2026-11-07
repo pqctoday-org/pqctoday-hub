@@ -160,6 +160,46 @@ const fmtKcv = (kcv: Uint8Array | null | undefined): string =>
 
 const ts = () => new Date().toLocaleTimeString()
 
+/** Outcome of comparing the DEK before wrapping with the DEK recovered after unwrapping. */
+export interface DekComparison {
+  kcvBefore: string
+  kcvAfter: string
+  /** Same 3-byte key check value? null when a check value was not returned for either key. */
+  kcvMatch: boolean | null
+  /** Byte-for-byte equality of the two key values: the check the success label depends on. */
+  fullMatch: boolean
+}
+
+/**
+ * Compare the original and the recovered DEK. A 3-byte check value is a diagnostic fingerprint
+ * (PKCS#11 notes that two different keys can share one), so only the full key comparison decides
+ * whether the keys are identical.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function compareRecoveredDek(
+  kcvBefore: string,
+  kcvAfter: string,
+  bytesBefore: Uint8Array,
+  bytesAfter: Uint8Array
+): DekComparison {
+  const fullMatch =
+    bytesBefore.length === bytesAfter.length && bytesBefore.every((b, i) => b === bytesAfter[i])
+  const haveKcv = kcvBefore !== '—' && kcvAfter !== '—'
+  return { kcvBefore, kcvAfter, kcvMatch: haveKcv ? kcvBefore === kcvAfter : null, fullMatch }
+}
+
+/** One-line log text; the success wording is used only when the full comparison matched. */
+// eslint-disable-next-line react-refresh/only-export-components
+export function describeDekComparison(c: DekComparison): string {
+  const kcv =
+    c.kcvMatch === null
+      ? 'KCV not returned'
+      : `KCV ${c.kcvBefore} / ${c.kcvAfter} ${c.kcvMatch ? 'same' : 'different'} (3-byte diagnostic only)`
+  return c.fullMatch
+    ? `DEK round-trip: ✓ recovered DEK is byte-identical to the original; ${kcv}`
+    : `DEK round-trip: ✗ recovered DEK differs from the original; ${kcv}`
+}
+
 /** Collapsible hex panel for a raw cryptographic blob. */
 const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, bytes }) => {
   const [copied, setCopied] = React.useState(false)
@@ -257,10 +297,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
   const [liveError, setLiveError] = useState<string | null>(null)
   const [progressLabel, setProgressLabel] = useState<string | null>(null)
   const [kcvResult, setKcvResult] = useState<{
-    before: string
-    after: string
-    match: boolean
-    method: 'kcv' | 'raw'
+    comparison: DekComparison
+    path: 'ml-kem' | 'rsa'
   } | null>(null)
   const [envelopeBlob, setEnvelopeBlob] = useState<{
     path: 'ml-kem' | 'rsa'
@@ -372,27 +410,14 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           generatedAt: ts(),
         })
 
-        // KCV comparison — fall back to direct byte comparison if CKA_CHECK_VALUE not populated
+        // Full-key comparison decides the result; the 3-byte KCV is shown separately as a diagnostic
         const kcvAfter = fmtKcv(hsm_getKeyCheckValue(M, hSession, recoveredDekHandle))
         const dekBytesRecov = hsm_extractKeyValue(M, hSession, recoveredDekHandle)
-        const useRaw = kcvBefore === '—' || kcvAfter === '—'
-        const kcvMatch = useRaw
-          ? dekBytesOrig.length === dekBytesRecov.length &&
-            dekBytesOrig.every((b, i) => b === dekBytesRecov[i])
-          : kcvBefore === kcvAfter
-        const displayBefore = kcvBefore !== '—' ? kcvBefore : fmtKcv(dekBytesOrig)
-        const displayAfter = kcvAfter !== '—' ? kcvAfter : fmtKcv(dekBytesRecov)
-        setKcvResult({
-          before: displayBefore,
-          after: displayAfter,
-          match: kcvMatch,
-          method: useRaw ? 'raw' : 'kcv',
-        })
+        const comparison = compareRecoveredDek(kcvBefore, kcvAfter, dekBytesOrig, dekBytesRecov)
+        setKcvResult({ comparison, path: 'rsa' })
 
-        addLine(
-          `DEK round-trip: ${kcvMatch ? '✓ Integrity verified' : '✗ Keys differ — check above'}`
-        )
-        hsm.addStepLog('── Step 4: Unwrap DEK (CKM_RSA_PKCS_OAEP) · KCV Verified ────────────')
+        addLine(describeDekComparison(comparison))
+        hsm.addStepLog('── Step 4: Unwrap DEK (CKM_RSA_PKCS_OAEP) · DEK compared ────────────')
 
         addLine(
           `Storage overhead: RSA-${bits} ciphertext = ${wrappedDek.length} B total (1 wrapped blob)`
@@ -660,28 +685,14 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           generatedAt: ts(),
         })
 
-        // KCV comparison — fall back to direct byte comparison if CKA_CHECK_VALUE not populated
-        // (used when the engine returns no CKA_CHECK_VALUE for the unwrapped key)
+        // Full-key comparison decides the result; the 3-byte KCV is shown separately as a diagnostic
         const kcvAfter = fmtKcv(hsm_getKeyCheckValue(M, hSession, recoveredDekHandle))
         const dekBytesRecov = hsm_extractKeyValue(M, hSession, recoveredDekHandle)
-        const useRaw = kcvBefore === '—' || kcvAfter === '—'
-        const kcvMatch = useRaw
-          ? dekBytesOrig.length === dekBytesRecov.length &&
-            dekBytesOrig.every((b, i) => b === dekBytesRecov[i])
-          : kcvBefore === kcvAfter
-        const displayBefore = kcvBefore !== '—' ? kcvBefore : fmtKcv(dekBytesOrig)
-        const displayAfter = kcvAfter !== '—' ? kcvAfter : fmtKcv(dekBytesRecov)
-        setKcvResult({
-          before: displayBefore,
-          after: displayAfter,
-          match: kcvMatch,
-          method: useRaw ? 'raw' : 'kcv',
-        })
+        const comparison = compareRecoveredDek(kcvBefore, kcvAfter, dekBytesOrig, dekBytesRecov)
+        setKcvResult({ comparison, path: 'ml-kem' })
 
-        addLine(
-          `DEK round-trip: ${kcvMatch ? '✓ Integrity verified' : '✗ Keys differ — check above'}`
-        )
-        hsm.addStepLog('── Step 6: Decapsulate + Unwrap DEK · KCV Verified ─────────────────')
+        addLine(describeDekComparison(comparison))
+        hsm.addStepLog('── Step 6: Decapsulate + Unwrap DEK · DEK compared ─────────────────')
 
         const totalBytes = ciphertextBytes.length + wrappedDek.length + (gcmIv?.length ?? 0)
         addLine(
@@ -945,38 +956,52 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
             </div>
           )}
 
-          {/* ── KCV Verification panel ─────────────────────────────────────────── */}
+          {/* ── Recovered DEK check panel ───────────────────────────────────────── */}
           {kcvResult && (
             <div
               className={`rounded-lg p-3 border text-xs ${
-                kcvResult.match
+                kcvResult.comparison.fullMatch
                   ? 'bg-status-success/5 border-status-success/30'
                   : 'bg-status-error/5 border-status-error/30'
               }`}
             >
-              <p className="font-semibold mb-2 text-foreground">
-                Key Integrity Verification (
-                {kcvResult.method === 'kcv' ? 'CKA_CHECK_VALUE' : 'CKA_VALUE byte comparison'})
-              </p>
+              <p className="font-semibold mb-2 text-foreground">Recovered DEK check</p>
               <div className="font-mono space-y-0.5">
                 <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-32 shrink-0">DEK before wrap:</span>
-                  <span className="text-foreground tracking-widest">{kcvResult.before}</span>
+                  <span className="text-muted-foreground w-52 shrink-0">
+                    Full key comparison (32 B):
+                  </span>
+                  {kcvResult.comparison.fullMatch ? (
+                    <span className="text-status-success font-bold">✓ Byte-identical</span>
+                  ) : (
+                    <span className="text-status-error font-bold">✗ Keys differ</span>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-32 shrink-0">DEK after unwrap:</span>
-                  <span className="text-foreground tracking-widest">{kcvResult.after}</span>
-                  {kcvResult.match ? (
-                    <span className="text-status-success font-bold ml-1">✓ Keys match</span>
+                  <span className="text-muted-foreground w-52 shrink-0">
+                    3-byte KCV, before / after:
+                  </span>
+                  <span className="text-foreground tracking-widest">
+                    {kcvResult.comparison.kcvBefore} / {kcvResult.comparison.kcvAfter}
+                  </span>
+                  {kcvResult.comparison.kcvMatch === null ? (
+                    <span className="text-muted-foreground ml-1">not returned</span>
+                  ) : kcvResult.comparison.kcvMatch ? (
+                    <span className="text-foreground font-bold ml-1">Same KCV</span>
                   ) : (
-                    <span className="text-status-error font-bold ml-1">✗ Keys differ</span>
+                    <span className="text-status-error font-bold ml-1">Different KCV</span>
                   )}
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground mt-1.5">
-                {kcvResult.method === 'kcv'
-                  ? 'CKA_CHECK_VALUE = first 3 bytes of AES-ECB(key, 0x00…) — PKCS#11 §9'
-                  : 'The unwrapped key object did not return CKA_CHECK_VALUE in this build, so the demo compares the first 3 bytes of CKA_VALUE instead. PKCS#11 v3.2 makes the attribute optional but, where it is supported, always supplied, however the key object is created.'}
+                CKA_CHECK_VALUE for an AES key is the first 3 bytes of AES-ECB(key, 0x00…) (PKCS#11
+                v3.2, AES secret key objects). It is a short fingerprint for cross-checking a key
+                between systems, and PKCS#11 notes that two different keys can have the same value,
+                so a matching KCV is a diagnostic, not proof of identical keys. The full comparison
+                is possible here only because this demo&apos;s DEK is extractable; a production DEK
+                would not be.
+                {kcvResult.path === 'ml-kem' &&
+                  ' A successful AES-KW, AES-KWP or AES-GCM unwrap has already passed that algorithm’s own integrity check (the key-wrap integrity value or the GCM tag); the comparisons above are separate cross-checks.'}
               </p>
             </div>
           )}
@@ -1152,9 +1177,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                     `IV uniqueness is a requirement in GCM (SP 800-38D §8): if even one IV is ever repeated under a key, the implementation may be vulnerable to forgery attacks. Prefer AES-KW when nonce management is operationally risky. ` +
                     `Store the KEM ciphertext alongside the wrapped DEK.`}
                 {displayStep.step === 5 &&
-                  'Both paths recover the same 32-byte DEK. The KCV (CKA_CHECK_VALUE) confirms key integrity across the wrap/unwrap cycle. ' +
-                    'Envelope encryption enables DEK rotation without re-encrypting any data — just generate a new DEK and re-wrap it with the same or new KEK. ' +
-                    "To rotate the KEK, re-wrap the existing DEK with the new KEK; data blocks remain untouched. This is envelope encryption's primary operational advantage at scale."}
+                  'Both paths recover the same 32-byte DEK. The byte-for-byte comparison of the DEK before wrapping and after unwrapping is the check that decides this result; the 3-byte KCV (CKA_CHECK_VALUE) is a separate diagnostic fingerprint, and two different keys can share one. ' +
+                    'What rotation costs depends on what changes. Rotating the KEK means re-wrapping each existing DEK under the new KEK; the encrypted data blocks stay untouched. A new DEK protects only data written from then on: ciphertext already encrypted under the old DEK can be decrypted only with that DEK, so replacing the DEK that protects existing ciphertext means decrypting and re-encrypting that data. ' +
+                    "That is envelope encryption's operational advantage at scale: KEK rotation touches small wrapped keys, not the data."}
               </p>
             </div>
           </div>
@@ -1195,7 +1220,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                     },
                     { label: '3. (no KDF step)', active: currentStep === 2 },
                     { label: '4. (DEK already wrapped)', active: currentStep === 3 },
-                    { label: '5. RSA-OAEP unwrap → DEK · KCV ✓', active: currentStep === 4 },
+                    { label: '5. RSA-OAEP unwrap → DEK · compare', active: currentStep === 4 },
                   ].map((item, idx) => (
                     <div
                       key={idx}
@@ -1228,7 +1253,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                         },
                         { label: '2. Generate AES-256 DEK', active: currentStep === 1 },
                         { label: '3. RSA-OAEP wrap DEK', active: currentStep === 2 },
-                        { label: '4. RSA-OAEP unwrap → DEK · KCV ✓', active: currentStep === 3 },
+                        { label: '4. RSA-OAEP unwrap → DEK · compare', active: currentStep === 3 },
                         { label: '—', active: currentStep === 4 },
                       ]
                     : [
@@ -1246,7 +1271,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                           active: currentStep === 3,
                         },
                         {
-                          label: '5. Decaps → HKDF → unwrap → DEK · KCV ✓',
+                          label: '5. Decaps → HKDF → unwrap → DEK · compare',
                           active: currentStep === 4,
                         },
                       ]

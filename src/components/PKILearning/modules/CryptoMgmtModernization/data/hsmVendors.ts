@@ -191,6 +191,8 @@ const AVAIL_TO_POSTURE: Record<CatalogAvailability, RiskColor> = {
   available: 'green',
   partial: 'yellow',
   roadmap: 'yellow',
+  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
+  psk: 'yellow',
   none: 'red',
   unverified: 'yellow',
 }

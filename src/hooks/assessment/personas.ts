@@ -121,7 +121,7 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
     pattern: 'Migrate TLS endpoints to hybrid PQC key exchange',
     reframings: {
       executive:
-        'Prioritize TLS migration to hybrid quantum-safe encryption — this protects data in transit immediately and demonstrates compliance progress.',
+        'Evaluate moving TLS to hybrid quantum-safe key exchange: ask engineering which endpoints and clients can negotiate it, test them, and track how many sessions actually use it. It reduces recorded-traffic exposure only for sessions that negotiate it, and it does not by itself show compliance.',
       grc: "Verify TLS migration progress against the compliance checklist, and record the evidence — 'in progress' needs a source, not just a status.",
       developer:
         'Configure hybrid ML-KEM + X25519 key exchange on your TLS endpoints — start with non-critical services to validate performance.',
@@ -153,12 +153,12 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
     pattern: 'Implement hybrid PQC encryption for data-at-rest',
     reframings: {
       executive:
-        'Prioritize hybrid quantum-safe encryption for your most sensitive stored data — this mitigates the Harvest-Now-Decrypt-Later threat immediately.',
+        'Evaluate quantum-safe protection for your most sensitive stored data: ask which stores hold data that must stay confidential for years, and test a post-quantum key-protection change against them. It cannot undo exposure of ciphertext or wrapped keys that were already copied, so establish whether that has happened.',
       grc: 'Verify hybrid encryption coverage for the highest-sensitivity stores, and record the evidence — this is what a data-protection audit asks to see.',
       developer:
-        'Implement hybrid PQC encryption (ML-KEM + AES) for data-at-rest in your highest-sensitivity data stores.',
+        'Evaluate and test post-quantum protection for data-at-rest in your highest-sensitivity stores. A KEM-plus-AEAD envelope (ML-KEM shared secret, key derivation, symmetric key wrap, AES-256 data encryption) is a different design from a classical/PQC hybrid key establishment, which combines both secrets; choose the one your key-management system supports and verify it.',
       architect:
-        'Design a hybrid PQC encryption layer for data-at-rest that integrates with your KMS topology and key rotation policies.',
+        'Evaluate a post-quantum key-protection design for data-at-rest that fits your KMS topology and key rotation policies: decide between a KEM-plus-AEAD envelope and a classical/PQC hybrid key establishment, and plan how already-captured ciphertext is treated, since neither changes it.',
       curious:
         'Begin double-locking your stored sensitive files using both traditional and new quantum-safe methods.',
       ops: 'Roll out encryption-at-rest using hybrid key hierarchies across databases and block storage.',

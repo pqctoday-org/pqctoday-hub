@@ -133,12 +133,16 @@ export const ChatPanelContent: React.FC = () => {
     if (!isOpen) abort()
   }, [isOpen, abort])
 
-  // Auto-send pending question from Ask Assistant buttons
+  // Auto-send pending question from Ask Assistant buttons. The request is cleared when the timer
+  // runs, not before: clearing it first re-runs this effect, and its cleanup would cancel the timer
+  // so the question was never sent.
   useEffect(() => {
     if (pendingQuestion && provider && isOpen && !isLoading && !isStreaming) {
       const question = pendingQuestion
-      setPendingQuestion(null)
-      const timer = setTimeout(() => sendQuery(question), 300)
+      const timer = setTimeout(() => {
+        setPendingQuestion(null)
+        sendQuery(question)
+      }, 300)
       return () => clearTimeout(timer)
     }
   }, [pendingQuestion, provider, isOpen, isLoading, isStreaming, setPendingQuestion, sendQuery])

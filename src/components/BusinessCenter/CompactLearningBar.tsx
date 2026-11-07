@@ -4,6 +4,7 @@ import { GraduationCap, ExternalLink, Bookmark, ChevronDown } from 'lucide-react
 import { Button } from '@/components/ui/button'
 import type { ModuleProgressInfo } from './hooks/useBusinessMetrics'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
 interface CompactLearningBarProps {
@@ -18,6 +19,13 @@ interface CompactLearningBarProps {
 export function CompactLearningBar({ modules, defaultCollapsed = false }: CompactLearningBarProps) {
   const navigate = useNavigate()
   const myLearnModules = useBookmarkStore((s) => s.myLearnModules)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  // The modules below are the Executive path. A reader in another role sees it named as optional
+  // context, so it is not taken for their own path; with no role picked it stays the default.
+  const title =
+    selectedPersona !== null && selectedPersona !== 'executive'
+      ? 'Executive Learning Path (optional context for your role)'
+      : 'Executive Learning Path'
   const completedCount = modules.filter((m) => m.status === 'completed').length
   const totalCount = modules.length
   const allNotStarted = modules.every((m) => m.status === 'not-started')
@@ -28,7 +36,7 @@ export function CompactLearningBar({ modules, defaultCollapsed = false }: Compac
   const header = (
     <div className="flex items-center gap-2 flex-1 min-w-0">
       <GraduationCap size={20} className="text-primary shrink-0" />
-      <span className="text-sm font-semibold text-foreground">Executive Learning Path</span>
+      <span className="text-sm font-semibold text-foreground">{title}</span>
       <span className="text-xs text-muted-foreground">
         {completedCount}/{totalCount} modules
       </span>
@@ -122,7 +130,7 @@ export function CompactLearningBar({ modules, defaultCollapsed = false }: Compac
         <GraduationCap size={20} className="text-primary shrink-0" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-sm font-semibold text-foreground">Executive Learning Path</span>
+            <span className="text-sm font-semibold text-foreground">{title}</span>
             <span className="text-xs text-muted-foreground">
               {completedCount}/{totalCount} modules
             </span>

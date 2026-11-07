@@ -2,13 +2,13 @@
 //
 // Normalize a catalog product's PQC + FIPS status into badge-ready shapes for
 // the workbench product rows. Reads the clean `pqcStatusCanonical` field
-// (available | partial | roadmap | none) rather than parsing the free-text
-// `pqcSupport`.
+// (available | partial | psk | roadmap | none) rather than parsing the
+// free-text `pqcSupport`.
 
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { fips1403Stage } from '@/data/kpiCatalog'
 
-export type ProductPqcStatus = 'ga' | 'partial' | 'roadmap' | 'none' | 'unknown'
+export type ProductPqcStatus = 'ga' | 'partial' | 'psk' | 'roadmap' | 'none' | 'unknown'
 
 export interface ProductStatusBadge {
   status: ProductPqcStatus
@@ -19,6 +19,9 @@ export interface ProductStatusBadge {
 const PQC_BADGE: Record<ProductPqcStatus, ProductStatusBadge> = {
   ga: { status: 'ga', label: 'Available', tone: 'success' },
   partial: { status: 'partial', label: 'Partial', tone: 'info' },
+  // Only quantum protection is a pre-shared key mixed into the key exchange:
+  // not post-quantum algorithm support, so it is neither Partial nor ready.
+  psk: { status: 'psk', label: 'PSK', tone: 'info' },
   roadmap: { status: 'roadmap', label: 'Roadmap', tone: 'warning' },
   none: { status: 'none', label: 'No PQC', tone: 'muted' },
   // ADDED 2026-07-16 (migrate-process remediation Phase 5, U2): the fallback
@@ -30,13 +33,14 @@ const PQC_BADGE: Record<ProductPqcStatus, ProductStatusBadge> = {
   unknown: { status: 'unknown', label: 'Unknown', tone: 'muted' },
 }
 
-/** Rank for sorting: available first, then Partial, Roadmap, None, Unknown. */
+/** Rank for sorting: available first, then Partial, PSK, Roadmap, None, Unknown. */
 export const PQC_STATUS_RANK: Record<ProductPqcStatus, number> = {
   ga: 0,
   partial: 1,
-  roadmap: 2,
-  none: 3,
-  unknown: 4,
+  psk: 2,
+  roadmap: 3,
+  none: 4,
+  unknown: 5,
 }
 
 export function productPqcStatus(item: SoftwareItem): ProductStatusBadge {
@@ -45,6 +49,8 @@ export function productPqcStatus(item: SoftwareItem): ProductStatusBadge {
       return PQC_BADGE.ga
     case 'partial':
       return PQC_BADGE.partial
+    case 'psk':
+      return PQC_BADGE.psk
     case 'roadmap':
       return PQC_BADGE.roadmap
     case 'none':
@@ -55,6 +61,7 @@ export function productPqcStatus(item: SoftwareItem): ProductStatusBadge {
       // blank, "Unknown", or "Pending Verification" value is an honest gap.
       const support = (item.pqcSupport || '').toLowerCase().trim()
       if (support.startsWith('yes')) return PQC_BADGE.ga
+      if (support.startsWith('psk')) return PQC_BADGE.psk
       if (support.startsWith('no')) return PQC_BADGE.none
       return PQC_BADGE.unknown
     }

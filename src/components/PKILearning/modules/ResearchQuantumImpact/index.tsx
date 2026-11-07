@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState, type FC } from 'react'
+import { Link } from 'react-router'
 import { AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { RESEARCH_GUIDE_DATA } from './data'
@@ -131,19 +132,57 @@ function ExercisesTab() {
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Researcher Exercises</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these research-focused scenarios.
+          Apply what you learned to these research-focused scenarios. Each one gives fictional
+          inputs and the Hub pages to work with. Attempt it first, then open the check to compare
+          your answer with the criteria and the worked reasoning.
         </p>
         <div className="space-y-4">
-          {RESEARCH_QUANTUM_EXERCISES.map((exercise, idx) => (
-            <div key={idx} className="glass-panel p-5 space-y-3">
+          {RESEARCH_QUANTUM_EXERCISES.map((exercise) => (
+            <div key={exercise.title} className="glass-panel p-5 space-y-3">
               <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
+              <p className="text-xs text-muted-foreground italic">{exercise.audience}</p>
               <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Use the Why It Matters (Step 1), What to Learn (Step 2), and How to Act (Step 3)
-                  tools in the Workshop tab to model your response.
-                </p>
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-foreground">Fictional inputs</p>
+                <ul className="list-disc pl-5 text-sm text-foreground/80 space-y-0.5">
+                  {exercise.inputs.map((input) => (
+                    <li key={input}>{input}</li>
+                  ))}
+                </ul>
               </div>
+              <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-1">
+                <p className="text-xs font-semibold text-foreground">Work with</p>
+                <ul className="list-disc pl-5 text-xs space-y-0.5">
+                  {exercise.resources.map((resource) => (
+                    <li key={resource.to}>
+                      <Link to={resource.to} className="text-primary hover:underline">
+                        {resource.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <details className="group">
+                <summary className="cursor-pointer text-sm font-medium text-primary">
+                  Check your answer
+                </summary>
+                <div className="mt-3 space-y-3">
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold text-foreground">
+                      A correct answer contains
+                    </p>
+                    <ul className="list-disc pl-5 text-sm text-foreground/80 space-y-0.5">
+                      {exercise.checks.map((check) => (
+                        <li key={check}>{check}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold text-foreground">Worked reasoning</p>
+                    <p className="text-sm text-foreground/80">{exercise.workedCheck}</p>
+                  </div>
+                </div>
+              </details>
             </div>
           ))}
         </div>

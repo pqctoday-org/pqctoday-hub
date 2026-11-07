@@ -44,6 +44,8 @@ interface Slide {
   icon: React.FC<{ size?: number; className?: string }>
   title: string
   description: string
+  /** Wording that quotes the live catalogue size; `description` is shown until it is known. */
+  describe?: (counts: { productCount: number }) => string
   route?: string // displayed as a chip (feature cards only)
   essential?: boolean // show in the shortened "I know the basics" tour
   path?: string // used for persona filtering
@@ -56,19 +58,19 @@ const introSlides: Slide[] = [
     icon: Lock,
     title: 'Everything runs on encryption',
     description:
-      'Every bank transfer, medical record, government secret, and software update depends on encryption algorithms (RSA, ECC) designed decades ago.',
+      'Secure connections, digital signatures, and software updates rely on public-key algorithms (RSA, ECC) designed decades ago to agree on keys and prove authenticity. Bulk data is then protected with symmetric ciphers such as AES.',
   },
   {
     icon: Cpu,
     title: 'Quantum computers change everything',
     description:
-      'A powerful enough quantum computer could break these algorithms in hours. Some adversaries are already collecting encrypted data today to decrypt later \u2014 a strategy called \u201CHarvest Now, Decrypt Later.\u201D',
+      'A sufficiently capable quantum computer could break the public-key algorithms RSA and ECC, which would let an attacker forge signatures and recover the keys exchanged with them. Adversaries can also collect encrypted data now to decrypt once quantum technology matures \u2014 \u201CHarvest Now, Decrypt Later.\u201D Symmetric standards such as AES are not expected to need replacing.',
   },
   {
     icon: ShieldCheck,
     title: 'The solution exists \u2014 the race is on',
     description:
-      'NIST published new quantum-resistant encryption standards in 2024. Governments are mandating migration by 2030\u20132035. This platform helps you understand the threat, assess your readiness, and plan your transition.',
+      'NIST published its first three post-quantum standards in August 2024: ML-KEM (FIPS 203) for key establishment, and ML-DSA and SLH-DSA (FIPS 204 and 205) for digital signatures. Governments are setting dated milestones that differ in scope and force; for example, NIST IR 8547 says NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow it after 2035. This platform helps you understand the threat, assess your readiness, and plan your transition.',
   },
 ]
 
@@ -89,7 +91,7 @@ const featureSlides: Slide[] = [
     icon: Globe,
     title: 'Migration Timeline',
     description:
-      'See exactly when your country mandates quantum-resistant encryption, with every government deadline on one chart.',
+      'See selected government milestones on one chart. Each is labelled by its source and by whether it is a binding mandate, guidance or a target; coverage is curated, so check the source for your country and sector.',
     route: '/timeline',
     path: '/timeline',
     essential: true,
@@ -98,7 +100,7 @@ const featureSlides: Slide[] = [
     icon: Shield,
     title: 'Algorithm Explorer',
     description:
-      'Compare the new encryption algorithms replacing RSA and ECC by performance, security level, and adoption status.',
+      'Compare the new key-establishment and signature algorithms that replace RSA and ECC by performance, security level, and adoption status.',
     route: '/algorithms',
     path: '/algorithms',
   },
@@ -107,7 +109,10 @@ const featureSlides: Slide[] = [
     icon: ArrowRightLeft,
     title: 'Migrate Catalog',
     description:
-      '880+ products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
+      'Products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
+    // The Migrate page counts softwareData.length; quote that, not a fixed figure.
+    describe: ({ productCount }) =>
+      `${productCount} products tracked for PQC support, organized by the infrastructure layer you\u2019re upgrading.`,
     route: '/migrate',
     path: '/migrate',
   },
@@ -115,7 +120,7 @@ const featureSlides: Slide[] = [
     icon: ShieldCheck,
     title: 'Compliance Tracker',
     description:
-      'Track deadlines and requirements from FIPS, CNSA 2.0, ETSI, and 10+ frameworks in one filterable view.',
+      'Browse deadlines, requirements and guidance from FIPS, CNSA 2.0, ETSI, and 10+ frameworks in one filterable view, with each one\u2019s binding status where it has been reviewed.',
     route: '/compliance',
     path: '/compliance',
   },
@@ -159,7 +164,7 @@ const featureSlides: Slide[] = [
     icon: AlertTriangle,
     title: 'Threat Landscape',
     description:
-      'Understand which attacks are real now \u2014 including why data encrypted today is already at risk of future exposure.',
+      'Understand which attacks are real now and which are future risks \u2014 including why data that must stay confidential for years may be exposed later.',
     route: '/threats',
     path: '/threats',
   },
@@ -167,7 +172,7 @@ const featureSlides: Slide[] = [
     icon: BookOpen,
     title: 'Standards Library',
     description:
-      'Every NIST, IETF, and ETSI document driving the transition \u2014 searchable, filterable, always up to date.',
+      'A curated library of the NIST, IETF, ETSI and other documents behind the transition \u2014 searchable and filterable. Check each entry\u2019s date and source for the current version.',
     route: '/library',
     path: '/library',
   },
@@ -175,7 +180,7 @@ const featureSlides: Slide[] = [
     icon: Users,
     title: 'Industry Leaders',
     description:
-      'See which organizations are already deploying PQC \u2014 and what they\u2019ve shipped.',
+      'See the organizations and people publicly working on PQC, with their stated contributions and sources.',
     route: '/leaders',
     path: '/leaders',
   },
@@ -184,7 +189,7 @@ const featureSlides: Slide[] = [
     icon: MessageCircle,
     title: 'PQC Assistant',
     description:
-      'Ask any question about quantum risk, algorithms, or migration — and get answers grounded in NIST standards and real-world guidance. Available on every page.',
+      'Ask a question about quantum risk, algorithms, or migration. Answers are drawn from this site’s indexed content and can be incomplete, so check them against the sources they cite. Available on every page.',
     essential: true,
   },
   {
@@ -231,7 +236,7 @@ const TourCard: React.FC<{
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.2 }}
-      className="glass-panel p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto cursor-grab active:cursor-grabbing"
+      className="glass-panel bg-card p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto cursor-grab active:cursor-grabbing"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
@@ -317,6 +322,9 @@ export const GuidedTour: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [essentialOnly, setEssentialOnly] = useState(false)
   const [roleStep, setRoleStep] = useState(0)
+  // Same count the Migrate page shows (softwareData.length). Loaded only once the
+  // tour opens, so readers who have finished it never fetch the catalogue chunk.
+  const [productCount, setProductCount] = useState<number | null>(null)
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isDisclaimerDone = useDisclaimerStore(
@@ -333,12 +341,33 @@ export const GuidedTour: React.FC = () => {
     const allVisible =
       personaPaths === null ? null : new Set([...ALWAYS_VISIBLE_PATHS, ...personaPaths])
 
-    return featureSlides.filter((slide) => {
-      if (allVisible && slide.path && !allVisible.has(slide.path)) return false
-      if (essentialOnly && !slide.essential) return false
-      return true
-    })
-  }, [selectedPersona, essentialOnly])
+    return featureSlides
+      .filter((slide) => {
+        if (allVisible && slide.path && !allVisible.has(slide.path)) return false
+        if (essentialOnly && !slide.essential) return false
+        return true
+      })
+      .map((slide) =>
+        slide.describe && productCount !== null
+          ? { ...slide, description: slide.describe({ productCount }) }
+          : slide
+      )
+  }, [selectedPersona, essentialOnly, productCount])
+
+  useEffect(() => {
+    if (!isActive) return
+    let live = true
+    import('../../data/migrateData')
+      .then(({ softwareData }) => {
+        if (live) setProductCount(softwareData.length)
+      })
+      .catch(() => {
+        // Catalogue chunk did not load: the slide keeps its number-free wording.
+      })
+    return () => {
+      live = false
+    }
+  }, [isActive])
 
   useEffect(() => {
     // Don't start the tour until the disclaimer has been acknowledged
@@ -492,7 +521,7 @@ export const GuidedTour: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="glass-panel p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto"
+            className="glass-panel bg-card p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto"
           >
             <h3 className="font-bold text-foreground text-base mb-1">
               How familiar are you with quantum computing and cryptography?
@@ -556,7 +585,7 @@ export const GuidedTour: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="glass-panel pointer-events-auto w-full max-w-md border-primary/30 p-6 shadow-2xl"
+            className="glass-panel bg-card pointer-events-auto w-full max-w-md border-primary/30 p-6 shadow-2xl"
           >
             <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
               Step {roleStep + 1} of {roleTour.steps.length} · your role

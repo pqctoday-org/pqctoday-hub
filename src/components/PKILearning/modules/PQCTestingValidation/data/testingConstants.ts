@@ -134,7 +134,8 @@ export const PASSIVE_OBSERVATIONS: Record<string, TrafficObservation[]> = {
       keySize: 255,
       quantumSafe: 'no',
       risk: 'high',
-      details: 'Modern TLS but X25519 is not quantum-safe. Upgrade to hybrid required.',
+      details:
+        'Modern TLS, but X25519 is not quantum-safe and no hybrid exchange was observed in this flow. Plan a hybrid key exchange where both ends support it.',
     },
   ],
   'cloud-egress': [
@@ -147,7 +148,8 @@ export const PASSIVE_OBSERVATIONS: Record<string, TrafficObservation[]> = {
       keySize: 768,
       quantumSafe: 'hybrid',
       risk: 'low',
-      details: 'Google/Cloudflare endpoint. Hybrid PQC negotiated — both endpoints support it.',
+      details:
+        'Google/Cloudflare endpoint. Hybrid PQC was negotiated in this flow, which shows both endpoints supported it for this connection.',
     },
     {
       id: 'obs-cloud-2',
@@ -158,7 +160,8 @@ export const PASSIVE_OBSERVATIONS: Record<string, TrafficObservation[]> = {
       keySize: 255,
       quantumSafe: 'no',
       risk: 'medium',
-      details: 'QUIC to CDN. PQC not yet negotiated — CDN does not support hybrid KEM.',
+      details:
+        'QUIC to CDN. A hybrid key exchange was not observed in this flow. That does not show the CDN lacks support: whether it supports hybrid KEM is unknown from this capture (an active probe or the CDN documentation would show it).',
     },
     {
       id: 'obs-cloud-3',
@@ -169,7 +172,8 @@ export const PASSIVE_OBSERVATIONS: Record<string, TrafficObservation[]> = {
       keySize: 0,
       quantumSafe: 'unknown',
       risk: 'medium',
-      details: 'Cipher negotiation not visible — possible TLS inspection bypass at perimeter.',
+      details:
+        'The negotiated algorithms are not recorded in this capture, so hybrid was not observed and support is unknown. TLS 1.3 encrypts the Certificate message, so a passive tap without endpoint secrets cannot see the certificate chain; endpoint telemetry, decryption at an endpoint you control, or an active probe is needed.',
     },
   ],
   'ot-network': [
@@ -334,14 +338,13 @@ export const SCAN_RESULTS: Record<string, ScanResult> = {
     certKeySize: 2048,
     pqcSupport: 'none',
     vulnerabilities: [
-      'TLS 1.2 (deprecated)',
-      'RSA key exchange (quantum-vulnerable)',
-      'CBC mode (BEAST-class risk)',
+      'Static RSA key exchange: quantum-vulnerable and no forward secrecy (RFC 9325: SHOULD NOT negotiate)',
+      'CBC cipher suite: padding-oracle (Lucky Thirteen class) risk depends on the implementation and on whether encrypt-then-MAC is negotiated (RFC 9325: SHOULD NOT use CBC without it)',
       'RSA cert quantum-vulnerable',
     ],
     riskScore: 95,
     recommendation:
-      'Critical: Upgrade to TLS 1.3 immediately. Migrate from RSA to ECDSA/ML-DSA. Enable hybrid PQC key exchange.',
+      'High priority: TLS 1.2 itself is not deprecated (RFC 8996 deprecates TLS 1.0 and 1.1), but this configuration is weak. Move to TLS 1.3, or at least to TLS 1.2 with an ephemeral key exchange and an AEAD cipher suite. Migrate from RSA to ECDSA/ML-DSA and enable hybrid PQC key exchange.',
   },
   t4: {
     targetId: 't4',

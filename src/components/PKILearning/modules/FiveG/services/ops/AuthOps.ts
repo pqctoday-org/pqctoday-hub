@@ -33,25 +33,36 @@ export async function retrieveCredentials(ctx: FiveGService): Promise<string> {
   ctx.authState.SQN = SQN
   ctx.authState.AMF = AMF
 
+  const credentialSource = ctx.testVectors?.milenage
+    ? 'taken from the injected GSMA test vector'
+    : 'fixed sample constants (K is 0x33 repeated, OP is 0x55 repeated)'
+
   return `═══════════════════════════════════════════════════════════════
-            CREDENTIAL RETRIEVAL (UDM/HSM)
+            CREDENTIAL RETRIEVAL (sample run)
 ═══════════════════════════════════════════════════════════════
 
-Step 1: Retrieving Encrypted Credentials from Subscriber Database...
-  > Subscriber: IMSI 310260123456789
+[MODELED] In a production home network the UDM/ARPF reads the subscriber's encrypted
+credentials from a protected subscriber database, and an HSM uses K without exposing it.
+K reaches the HSM only through a protected import (for example wrapped under a transport
+key), which this sample does not perform.
+[EXECUTED HERE] No database is read and no HSM is used. K and OP are ${credentialSource},
+held in browser memory and printed so that you can follow the arithmetic.
 
-Step 2: Injecting Keys into HSM for Computation
+Step 1 [MODELED]: Retrieve Encrypted Credentials from Subscriber Database
+  > Subscriber: IMSI 310260123456789 (fictional sample)
+
+Step 2 [EXECUTED]: Load the sample K and OP into browser memory (no HSM)
   > K (128-bit):   ${bytesToHex(K)}
   > OP (128-bit):  ${bytesToHex(OP)}
 
-Step 3: Computing OPc = AES(K, OP) ⊕ OP
+Step 3 [EXECUTED]: Computing OPc = AES(K, OP) ⊕ OP in the browser
   > OPc (128-bit): ${bytesToHex(OPc)}
 
-Step 4: Loading Sequence State
+Step 4 [EXECUTED]: Load the sample sequence state
   > SQN: ${bytesToHex(SQN)}
   > AMF: ${bytesToHex(AMF)}
 
-[SUCCESS] Credentials retrieved. Ready for challenge generation.`
+[SUCCESS] Sample credentials loaded. Ready for challenge generation.`
 }
 
 export async function generateRAND(ctx: FiveGService): Promise<string> {
@@ -66,14 +77,24 @@ export async function generateRAND(ctx: FiveGService): Promise<string> {
 
   ctx.authState.RAND = RAND
 
+  const randSource = ctx.testVectors?.milenage
+    ? 'a fixed RAND from the injected test vector (not random)'
+    : "window.crypto.getRandomValues(), the browser's cryptographically secure pseudo-random generator (CSPRNG)"
+
   return `═══════════════════════════════════════════════════════════════
-            RANDOM CHALLENGE GENERATION
+            RANDOM CHALLENGE GENERATION (sample run)
 ═══════════════════════════════════════════════════════════════
 
-Step 1: Accessing True Random Number Generator (TRNG)...
-  > Source: Hardware RNG (crypto.getRandomValues)
+Step 1 [EXECUTED]: RAND comes from ${randSource}
+  > The Web Crypto specification describes getRandomValues as a pseudo-random generator
+    seeded with entropy, for example from the operating system, and sets no lower bound on
+    that entropy. It is not a hardware true random number generator, and this page cannot
+    see what seeded it.
+  > [MODELED] A production ARPF would draw RAND from an HSM or other module. To judge it,
+    ask for the module's entropy-source and DRBG evidence (NIST SP 800-90B and 800-90A)
+    instead of assuming that "hardware random" is in use.
 
-Step 2: Generating 128-bit Challenge
+Step 2 [EXECUTED]: Generating 128-bit Challenge
   > RAND: ${bytesToHex(RAND)}
   > Length: ${RAND.length * 8} bits
 
@@ -118,6 +139,7 @@ Step 2: Assembling AUTN = (SQN⊕AK) || AMF || MAC-A
 Step 3: Final AUTN (16 bytes)
   > AUTN: ${bytesToHex(AUTN)}
 
+[EXECUTED] Assembled in this browser from the MILENAGE sample outputs.
 [SUCCESS] AUTN assembled. Network can prove its identity to the UE.`
 }
 

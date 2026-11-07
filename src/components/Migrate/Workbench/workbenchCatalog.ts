@@ -97,7 +97,7 @@ export function filterProducts(
 /** Facet filters on the product list (migrate remediation r2 J2). 'all' = no filter. */
 export interface ProductFacets {
   population: 'all' | 'pqc_relevant' | 'migration_baseline'
-  pqc: 'all' | 'available' | 'partial' | 'planned' | 'none' | 'unknown'
+  pqc: 'all' | 'available' | 'partial' | 'psk' | 'planned' | 'none' | 'unknown'
   certified: 'all' | 'linked' | 'none'
   /** Hybrid KEM / composite-signature support; products not yet assessed never match. */
   hybrid: 'all' | HybridFacet
@@ -125,7 +125,7 @@ export function applyProductFacets(
     if (facets.pqc !== 'all') {
       const s = (p.pqcStatusCanonical || '').toLowerCase()
       const bucket =
-        s === 'available' || s === 'partial' || s === 'none'
+        s === 'available' || s === 'partial' || s === 'psk' || s === 'none'
           ? s
           : s === 'roadmap' || s === 'planned'
             ? 'planned'

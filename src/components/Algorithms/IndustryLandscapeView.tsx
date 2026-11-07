@@ -904,13 +904,14 @@ function IndustryCrossRefs({
             to={regulatory.href}
             className="inline-flex items-center gap-1 text-xs text-foreground hover:text-primary"
           >
-            <span className="font-medium">{regulatory.count}</span> PQC-relevant mandate
-            {regulatory.count === 1 ? '' : 's'} for this sector
+            <span className="font-medium">{regulatory.count}</span> PQC-relevant register record
+            {regulatory.count === 1 ? '' : 's'} for this sector (binding status and scope vary; see
+            each record)
             <ArrowRight size={11} className="opacity-60" />
           </Link>
         ) : (
           <span className="text-xs text-muted-foreground">
-            No PQC-specific mandates on record for this sector.
+            No PQC-relevant register records for this sector.
           </span>
         )}
       </RollupRow>

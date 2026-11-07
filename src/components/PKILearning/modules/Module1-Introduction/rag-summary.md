@@ -8,12 +8,12 @@ PQC 101 is the foundational learning module that introduces post-quantum cryptog
 
 - **Shor's Algorithm** breaks RSA and ECC by solving integer factorization and discrete logarithm problems in polynomial time on a quantum computer
 - **Harvest Now, Decrypt Later (HNDL)** is an attack where adversaries capture encrypted data today and store it for future quantum decryption
-- **Harvest Now, Forge Later (HNFL)** targets digital signatures — adversaries capture signed artifacts and forge them once a CRQC can recover private keys
+- **Harvest Now, Forge Later (HNFL)** is a name for the signature side of the quantum threat. Unlike HNDL it needs no captured data: once a CRQC can derive a private key from a public key, the attacker can sign new artifacts as that signer. Future impersonation (new forgeries by any still-trusted key) is separate from the verification lifetime of old signatures, which depends on preserved evidence such as renewed trusted timestamps (RFC 3161, RFC 4998); old signatures do not all become forgeable or repudiable automatically
 - **Three PQC algorithm families**: lattice-based (ML-KEM, ML-DSA, FN-DSA), hash-based (SLH-DSA, LMS/HSS), and code-based (Classic McEliece, HQC)
 - **NIST PQC standards**: FIPS 203 (ML-KEM for key establishment), FIPS 204 (ML-DSA for digital signatures), FIPS 205 (SLH-DSA for conservative signatures), published August 2024
 - **Migration timeline**: NIST IR 8547 (final, October 2026) deprecates quantum-vulnerable public-key algorithms (RSA, ECC, DH) at 112 bits of security and up after 2030 and disallows them under NIST standards and guidelines after 2035
 - **CNSA 2.0** mandates phased PQC adoption for U.S. national security systems starting 2025
-- **Industry urgency**: Finance and government are critical priority; healthcare, telecom, blockchain are high; IoT and automotive are medium
+- **Industry urgency**: Finance and government are critical priority; healthcare, telecom, blockchain are high; IoT and automotive are medium (this lesson's illustrative ranking)
 
 ## Workshop / Interactive Activities
 

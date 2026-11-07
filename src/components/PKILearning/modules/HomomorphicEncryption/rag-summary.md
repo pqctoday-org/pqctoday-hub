@@ -2,9 +2,9 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-076) was split out of LM-019 _Confidential Computing & TEEs_. It covers fully homomorphic encryption (FHE) as the way to protect data in use by trusting mathematics instead of hardware, and how an HSM can hold the FHE secret key, and what its decryption policy can and cannot protect. TEEs, remote attestation and the TEE-HSM channel stay in LM-019.
+This Hardware Infrastructure module (LM-076) was split out of LM-019 _Confidential Computing & TEEs_. It covers fully homomorphic encryption (FHE) as the way to protect data in use by trusting mathematics instead of hardware and, on an optional advanced route, how an HSM can hold the FHE secret key and what its decryption policy can and cannot protect. TEEs, remote attestation and the TEE-HSM channel stay in LM-019.
 
-One ~45-minute route: nine learn sections in learning order (what FHE is and promises; schemes, data types and noisy results; where FHE is used; the cost and how it is being reduced; keys, operations and AES data; the quantum threat; standards and compliance; the HSM as key custodian; open-source implementations), eight exercises and two workshop steps (eight flow scenarios and six hands-on concept views).
+Two routes. The FHE foundations route (about 60 minutes; for anyone evaluating, designing, implementing or operating an FHE workload) has eight learn sections in learning order (what FHE is and promises; schemes, data types and noisy results; where FHE is used; the cost and how it is being reduced; keys, operations and AES data; the quantum threat; standards and compliance; open-source implementations), three exercises (read a noisy CKKS result, pick a scheme, check a compliance claim) and one workshop step, the FHE concepts lab with three views (noise budget and bootstrapping, encoding and rounding, programs as FHE circuits). The Advanced HSM custody route (about 105 minutes; offered to the developer, architect, researcher, certification-engineer and operations roles, and the default for certification engineers) adds a ninth learn section after the open-source implementations, the HSM as key custodian, plus five custody exercises (eight in all) and a second workshop step, the HSM custody lab with eight flow scenarios; its concepts lab adds three more views (key streaming and chunk size, key rotation without decrypting, shared 2-of-2 decryption).
 
 ## Key Concepts
 
@@ -27,9 +27,9 @@ One ~45-minute route: nine learn sections in learning order (what FHE is and pro
 
 ## Workshop / Interactive Activities
 
-_FHE + HSM Flows_: step through eight scenarios (CKKS and TFHE single-HSM custody, OpenFHE and Lattigo threshold FHE, what fits in the HSM, Kreyvium transciphering, CKKS key rotation, and CKKS shared 2-of-2 decryption). Each step shows who holds which key and which data state, and a quantum overlay marks the links a quantum computer breaks.
+_FHE + HSM Flows_ (the Advanced HSM custody route only): step through eight scenarios (CKKS and TFHE single-HSM custody, OpenFHE and Lattigo threshold FHE, what fits in the HSM, Kreyvium transciphering, CKKS key rotation, and CKKS shared 2-of-2 decryption). Each step shows who holds which key and which data state, and a quantum overlay marks the links a quantum computer breaks.
 
-_FHE concepts, hands-on_: six interactive views (noise budget and bootstrapping, encoding and rounding, programs as FHE circuits, key streaming and chunk size, key rotation without decrypting, shared 2-of-2 decryption). In the key-rotation view the user picks who starts a rotation and what the new secret is and sees what the token refuses; in the shared-decryption view the user toggles independent approvals and flooding and sees the measured outcome.
+_FHE concepts, hands-on_: six interactive views, the first three on both routes (noise budget and bootstrapping, encoding and rounding, programs as FHE circuits) and the last three on the Advanced HSM custody route only (key streaming and chunk size, key rotation without decrypting, shared 2-of-2 decryption). In the key-rotation view the user picks who starts a rotation and what the new secret is and sees what the token refuses; in the shared-decryption view the user toggles independent approvals and flooding and sees the measured outcome.
 
 ## Related Standards
 

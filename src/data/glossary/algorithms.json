@@ -37,7 +37,7 @@
   {
     "term": "ML-KEM",
     "definition": "Module-Lattice-Based Key Encapsulation Mechanism, the NIST-standardized PQC algorithm for key exchange (formerly Kyber). Defined in FIPS 203.",
-    "technicalNote": "Variants: ML-KEM-512 (128-bit security), ML-KEM-768 (192-bit), ML-KEM-1024 (256-bit).",
+    "technicalNote": "Variants: ML-KEM-512, ML-KEM-768 and ML-KEM-1024 target NIST security categories 1, 3 and 5 (FIPS 203). Categories are reference attack-cost levels, not exact proven bit strengths; \"128/192/256-bit\" is informal shorthand for comparable AES key-search cost. ML-KEM establishes a shared secret; it does not encrypt data or wrap a chosen key by itself.",
     "relatedModule": "/playground",
     "complexity": "intermediate",
     "category": "algorithm"
@@ -308,7 +308,7 @@
   },
   {
     "term": "RIPEMD-160",
-    "definition": "A 160-bit cryptographic hash function used in Bitcoin address generation (combined with SHA-256). Quantum-safe at current output sizes.",
+    "definition": "A 160-bit cryptographic hash function used in Bitcoin address derivation (applied to the SHA-256 digest of a public key). Its 160-bit output gives about 80 bits of generic classical collision resistance, and an ideal Grover preimage search is about 2^80 queries before circuit costs; it is not a NIST-approved hash, and no blanket \"quantum-safe\" verdict follows from its output size.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
     "category": "algorithm"
@@ -367,7 +367,7 @@
     "term": "DRBG",
     "acronym": "DRBG",
     "definition": "Deterministic Random Bit Generator. An algorithm that produces a sequence of pseudorandom bits from a secret seed value. NIST SP 800-90A defines three approved mechanisms: CTR_DRBG, Hash_DRBG, and HMAC_DRBG.",
-    "technicalNote": "CTR_DRBG (AES-based) is the most widely deployed, used by OpenSSL and the Linux kernel. All three mechanisms use symmetric primitives and are quantum-safe.",
+    "technicalNote": "CTR_DRBG (AES-based) is the most widely deployed, used by OpenSSL and the Linux kernel. All three mechanisms are built on approved hash or block-cipher primitives (SP 800-90A Rev. 1 also permits three-key TDEA in CTR_DRBG). Their strength depends on the underlying primitive and key or output size, the entropy of the seed and reseeding; this is not a blanket quantum-safety label, and output is only as unpredictable as its seed.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
     "category": "algorithm"

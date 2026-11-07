@@ -96,7 +96,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Cloud KMS Key Wrapping',
     emoji: '🔑',
     useCase:
-      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 — the key-wrapping pattern cloud KMS services (AWS, Azure, GCP) use to protect data encryption keys with a quantum-safe KEM — compared against classical RSA-OAEP wrapping.',
+      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 as a fictional KEM+DEM key-wrapping pattern for protecting data encryption keys, compared against classical RSA-OAEP wrapping. It is not a description of how AWS, Azure or Google Cloud KMS wrap keys; for a real service, check the exact service, version, API and key boundary in its own documentation.',
     algorithms: ['ML-KEM-768', 'Encap/Decap'],
     difficulty: 'beginner',
     trackId: 'infrastructure',
@@ -299,7 +299,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Code Signing (osslsigncode)',
     emoji: '🔏',
     useCase:
-      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65, demonstrating the supply-chain implications of harvest-now-decrypt-later on software distribution.',
+      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65. WHY IT MATTERS: a code signature protects authenticity, not confidentiality. The long-term risk is signature forgery: once a cryptanalytically relevant quantum computer can break the classical signature algorithm, an attacker could forge a signature that verifiers still trust, for as long as installed software and trust anchors rely on that key. Harvest-now-decrypt-later applies to the encrypted channel that delivers an update, which is assessed separately from the signature.',
     algorithms: ['ML-DSA-65', 'PE/Authenticode'],
     difficulty: 'intermediate',
     trackId: 'applications',

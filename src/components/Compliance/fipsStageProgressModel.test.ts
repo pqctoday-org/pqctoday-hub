@@ -6,6 +6,7 @@ import {
   currentStage,
   fipsTrackLine,
   FIPS_STAGE_LABEL,
+  shipsPqc,
   type InProcessMatch,
   type StagePoint,
 } from './fipsStageProgressModel'
@@ -119,6 +120,20 @@ describe('buildProductStageTimeline', () => {
         product({ pqcStatusCanonical: 'none' }),
         product({ productId: 'q', pqcStatusCanonical: 'partial' }),
       ],
+      new Map(),
+      [],
+      REF
+    )
+    expect(universe).toBe(1)
+  })
+
+  it('does not count a pre-shared-key-only product as shipping PQC', () => {
+    const psk = product({ productId: 'psk', pqcStatusCanonical: 'psk' })
+    expect(shipsPqc(psk)).toBe(false)
+    expect(shipsPqc(product({ pqcStatusCanonical: 'available' }))).toBe(true)
+    expect(shipsPqc(product({ pqcStatusCanonical: 'partial' }))).toBe(true)
+    const { universe } = buildProductStageTimeline(
+      [product({ productId: 'a', pqcStatusCanonical: 'available' }), psk],
       new Map(),
       [],
       REF
@@ -250,5 +265,65 @@ describe('buildListingStageTrend', () => {
       in_progress: 0,
       certified: 0,
     })
+  })
+
+  it('keeps unread, pending, name-match, flag-only and unrecognised-name certificates out of both FIPS bands', () => {
+    // Only a read algorithm list that names no PQC may count as "no PQC", and
+    // only a named algorithm in the validated scope may count as "with PQC".
+    const { points, unestablished } = buildListingStageTrend(
+      [
+        rec({ type: 'FIPS 140-3', pqcCoverage: 'No PQC Mechanisms Detected' }), // reviewed, no PQC
+        rec({ type: 'FIPS 140-3', pqcCoverage: 'ML-KEM' }), // reviewed, PQC named
+        rec({ type: 'FIPS 140-3', pqcCoverage: '' }), // not read
+        rec({ type: 'FIPS 140-3', pqcCoverage: 'Not Yet Analyzed' }), // not read
+        rec({ type: 'FIPS 140-3', pqcCoverage: 'Pending Check...' }), // pending
+        rec({ type: 'FIPS 140-3', pqcCoverage: 'Potentially PQC (Name Match)' }), // heuristic
+        rec({ type: 'FIPS 140-3', pqcCoverage: true }), // flag, no names
+        rec({ type: 'FIPS 140-3', pqcCoverage: 'HQC' }), // named, not a recognised PQC name
+      ],
+      null,
+      REF,
+      '2026-01'
+    )
+    expect(at(points, '2026-03')).toMatchObject({ none: 1, certified: 1 })
+    expect(unestablished).toEqual({
+      'not-read': 2,
+      pending: 1,
+      heuristic: 1,
+      flag: 1,
+      'unlisted-name': 1,
+    })
+  })
+
+  it('does not count a keyword inside a name-match string as confirmed PQC', () => {
+    const { points, unestablished } = buildListingStageTrend(
+      [
+        rec({ type: 'FIPS 140-3', pqcCoverage: 'Potentially PQC (Name Match: ML-KEM)' }),
+        rec({ type: 'ACVP', pqcCoverage: 'Potentially PQC (Name Match: ML-DSA)' }),
+      ],
+      null,
+      REF,
+      '2026-01'
+    )
+    expect(at(points, '2026-03')).toMatchObject({ none: 0, cavp: 0, certified: 0 })
+    expect(unestablished.heuristic).toBe(1)
+  })
+
+  it('only counts unestablished certificates that fall inside the charted months', () => {
+    const { unestablished } = buildListingStageTrend(
+      [
+        rec({ type: 'FIPS 140-3', pqcCoverage: '', date: '2020-05-01' }),
+        rec({ type: 'FIPS 140-3', pqcCoverage: '', date: undefined }),
+        rec({ type: 'FIPS 140-3', pqcCoverage: '' }),
+      ],
+      null,
+      REF,
+      '2026-01'
+    )
+    expect(unestablished['not-read']).toBe(1)
+  })
+
+  it('labels the no-PQC band as a read algorithm list that names none', () => {
+    expect(FIPS_STAGE_LABEL.listings.none).toMatch(/no PQC algorithm listed/)
   })
 })

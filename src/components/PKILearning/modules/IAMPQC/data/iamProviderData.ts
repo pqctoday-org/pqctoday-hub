@@ -48,6 +48,10 @@ export const PQC_STATUS_LABELS: Record<PQCStatus, { label: string; className: st
     label: 'Unverified',
     className: 'bg-muted/50 text-muted-foreground border-border',
   },
+  psk: {
+    label: 'PSK-only (not PQC)',
+    className: 'bg-muted/50 text-muted-foreground border-border',
+  },
   none: {
     label: 'No PQC listed',
     className: 'bg-muted/50 text-muted-foreground border-border',

@@ -78,16 +78,28 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
         </div>
 
         <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30 space-y-2">
-          <h3 className="font-semibold text-foreground">Same algorithms, two vocabularies</h3>
+          <h3 className="font-semibold text-foreground">
+            Same lineage, different names and versions
+          </h3>
           <p className="text-sm text-muted-foreground">
-            The 2022 advisory names {CNSA_NAMING_DRIFT.advisory2022.join(' and ')}. The October 2026
-            FAQ (Ver. 2.2) names {CNSA_NAMING_DRIFT.faq2024.join(' and ')} for the same algorithms.{' '}
-            {CNSA_NAMING_DRIFT.note}
+            The 2022 advisory names {CNSA_NAMING_DRIFT.advisory2022.join(' and ')}, the proposals
+            submitted to NIST. The October 2026 FAQ (Ver. 2.2) names{' '}
+            {CNSA_NAMING_DRIFT.faq2024.join(' and ')}, the standardized algorithms those proposals
+            became. They are related, not interchangeable labels: the CRYSTALS algorithms went
+            through small tweaks by their designers and NIST before FIPS 203 and 204 were published,
+            and the FAQ says only ML-KEM and ML-DSA are in CNSA 2.0, so anything called
+            CRYSTALS-Kyber or CRYSTALS-Dilithium that does not adhere to FIPS 203 or 204 is not CNSA
+            2.0 compliant.
           </p>
           <p className="text-sm text-muted-foreground">
-            This matters operationally: an estate search for &ldquo;Kyber&rdquo; will not find
-            anything written after standardisation, and a search for &ldquo;ML-KEM&rdquo; will not
-            find anything written before it. Inventory tooling has to know both.
+            This matters operationally. When you search an estate for older material, look for both
+            the old and the new name: a search for &ldquo;Kyber&rdquo; will not find anything
+            written after standardisation, and a search for &ldquo;ML-KEM&rdquo; will not find
+            anything written before it. Then record the exact standardized identifier (for example
+            ML-KEM-1024 per FIPS 203 or ML-DSA-87 per FIPS 204) and the implementation version
+            actually deployed. FIPS 203 Appendix C lists differences between CRYSTALS-Kyber and
+            ML-KEM that change the input-output behavior, so a pre-standard Kyber build is a
+            different version: test interoperability instead of assuming it.
           </p>
         </div>
 

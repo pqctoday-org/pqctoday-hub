@@ -5,9 +5,12 @@
  * Captures the per-data-store data-at-rest decision the framework's Phase 5
  * expects: for every store holding harvest-now-decrypt-later-exposed data,
  * pick one of five remediation strategies — re-encrypt with a fresh AES-256 key
- * wrapped by a PQC KEK, re-wrap the existing data key under a PQC KEK (KEK/DEK),
- * crypto-shred, delete, or accept & monitor. Bulk data stays AES-256 (quantum-
- * resistant); PQC enters only at the key-wrapping layer. Backups and archives
+ * wrapped by a PQC-derived KEK, re-wrap the existing data key under a PQC-derived
+ * KEK (KEK/DEK), crypto-shred, delete, or accept & monitor. "PQC KEK" is shorthand
+ * for a symmetric KEK derived from an ML-KEM shared secret (ML-KEM shared secret →
+ * approved KDF as required → symmetric KEK → authenticated DEK wrap); ML-KEM itself
+ * is not a KEK. Bulk data stays AES-256; PQC enters only at the key-protection
+ * layer. Backups and archives
  * are called out as their own line so cold copies are not silently inherited
  * from the live store decision.
  *
@@ -110,11 +113,29 @@ export function buildMarkdown(s: DataAtRestState): string {
   )
   lines.push('')
   lines.push(
-    '> **Why most data-at-rest is lower-urgency:** bulk encryption stays AES-256, which ' +
-      "Grover's algorithm only weakens to a ~128-bit effective level (still safe per NIST IR 8547, " +
-      'final October 2026). Post-quantum risk concentrates at ' +
-      'the *key-wrapping* layer, so these strategies swap the KEK to ML-KEM rather than replacing ' +
-      'the AES-256 data cipher.'
+    '> **What changes and what does not:** bulk encryption stays AES-256. NIST IR 8547 ' +
+      '(final, October 2026) places AES-256 in security category 5 and does not expect the ' +
+      'symmetric standards to need replacing. The post-quantum exposure sits in how the data ' +
+      'keys are protected (the key-wrapping layer) and in key history, so storage can still be ' +
+      'urgent: where data must stay confidential for decades, or where wrapped keys or ' +
+      'ciphertext may already have been captured, a rewrap alone is not sufficient.'
+  )
+  lines.push('')
+  lines.push(
+    '> **The envelope with ML-KEM:** ML-KEM shared secret → approved key-derivation function ' +
+      '(as required) → symmetric key-encryption key (KEK) → authenticated wrap of the ' +
+      'data-encryption key (DEK). The ML-KEM shared secret is not itself the KEK, and the DEK ' +
+      'remains an AES-256 key that still encrypts the data. The KEM ciphertext is stored with ' +
+      'the wrapped DEK.'
+  )
+  lines.push('')
+  lines.push(
+    '> **Re-wrap versus re-encrypt:** re-wrapping replaces only the wrapped DEK. The DEK and ' +
+      'the stored ciphertext are unchanged, so anyone who captured the old wrapped DEK can ' +
+      'still recover that DEK later and read every copy of the data encrypted under it. ' +
+      'Re-encrypting under a fresh DEK limits that to copies made before the change. Neither ' +
+      'affects ciphertext or wrapped keys that were already taken, and each key (old KEK, ' +
+      'old DEK) needs its own retirement or destruction step.'
   )
   lines.push('')
   lines.push('| Data store | Sensitivity | Strategy | Notes |')
@@ -187,11 +208,13 @@ export const DataAtRestStrategy: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Data-at-Rest Strategy</h2>
           <p className="text-sm text-muted-foreground">
-            Phase 5 — Activity 5.6. Decide a per-data-store strategy: re-wrap the AES-256 key under
-            an ML-KEM (PQC) KEK, write a fresh AES-256 DEK with a PQC-wrapped KEK, crypto-shred,
-            delete, or accept &amp; monitor. Bulk data stays AES-256 (Grover only halves it to
-            ~128-bit — still quantum-safe per <StandardRef cite="NIST IR 8547" />, final October
-            2026); PQC protects the key, not the cipher.
+            Phase 5 — Activity 5.6. Decide a per-data-store strategy: re-wrap the existing AES-256
+            data key (DEK) under a new wrapping key, re-encrypt with a fresh AES-256 DEK,
+            crypto-shred, delete, or accept &amp; monitor. With ML-KEM the wrapping key is derived:
+            ML-KEM shared secret → approved KDF as required → symmetric KEK → authenticated DEK
+            wrap. Bulk data stays AES-256, which <StandardRef cite="NIST IR 8547" /> (final October
+            2026) places in security category 5; PQC changes how the key is protected, not the data
+            cipher.
           </p>
         </div>
       </header>
@@ -203,6 +226,12 @@ export const DataAtRestStrategy: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           Give backups &amp; archives their own line — cold copies are not covered by the live-store
           decision and often outlive it.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Re-wrap replaces only the wrapped DEK; the DEK and the stored ciphertext stay the same, so
+          anyone who captured the old wrapped DEK can still recover it later. Re-encrypt writes the
+          data again under a fresh DEK. Neither changes copies that were already taken, so follow
+          either with retirement of the old keys.
         </p>
 
         <div className="space-y-4">

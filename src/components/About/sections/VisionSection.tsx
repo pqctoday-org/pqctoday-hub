@@ -59,10 +59,11 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
           Preparing the world for the quantum cryptographic transition
         </h3>
         <p className="text-sm text-muted-foreground leading-relaxed border-l-2 border-primary/40 pl-4 mb-4">
-          The algorithms that protect your data today &mdash; RSA, ECC, the cryptography behind TLS,
-          SSH, and every digital signature you have ever trusted &mdash; will be broken by quantum
-          computers. The question is not whether. The question is when, and whether the world will
-          be ready.
+          The public-key cryptography that protects your data today &mdash; RSA and elliptic-curve
+          algorithms, behind the key exchange and the RSA and ECDSA signatures in TLS and SSH
+          &mdash; can be broken by a sufficiently capable quantum computer. When such a machine
+          could exist is uncertain, but moving to new algorithms has historically taken years, so
+          the question is whether the world will be ready.
         </p>
         <p className="text-sm text-muted-foreground leading-relaxed mb-2">
           We are not ready. Most organisations do not know which systems are vulnerable. Most

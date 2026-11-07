@@ -119,7 +119,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'grover',
     estimatedQubits: 2953,
     status: 'weakened',
-    notes: "Grover's provides quadratic speedup: 128-bit → 64-bit. Below security threshold.",
+    notes:
+      "Idealised Grover query bound: about 2^64 sequential AES evaluations instead of 2^128. That is a query count, not a gate, time or cost estimate: NIST's 2016 call for proposals puts AES-128 key recovery at 2^170/MAXDEPTH quantum gates under a circuit-depth limit, and NIST's PQC FAQ says applications can keep using AES-128, AES-192 or AES-256. Authority policy differs: NSA CNSA 2.0 asks national security systems to use 256-bit AES keys.",
   },
   {
     name: 'AES-192',
@@ -131,7 +132,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 4449,
     status: 'weakened',
     notes:
-      "Grover's reduces to 96-bit — considered adequate for some legacy systems but below the 128-bit post-quantum threshold.",
+      'Idealised Grover query bound of 96 bits, a query count rather than a cost estimate. NIST uses AES-192 key search as its Category 3 reference; whether 192-bit keys are acceptable depends on the authority (NSA CNSA 2.0 asks national security systems to use 256-bit AES keys).',
   },
   {
     name: 'AES-256',
@@ -142,7 +143,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'grover',
     estimatedQubits: 6681,
     status: 'safe',
-    notes: "Grover's reduces to 128-bit. Remains fully secure post-quantum.",
+    notes:
+      'Idealised Grover query bound of 128 bits. NIST uses AES-256 key search as its Category 5 reference, and NSA CNSA 2.0 asks national security systems to use 256-bit AES keys. The bound is a query count, not a proof that no better attack exists.',
   },
   // Hash functions (weakened by Grover's for preimage, BHT for collision)
   {
@@ -211,7 +213,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'none',
     estimatedQubits: null,
     status: 'safe',
-    notes: 'NIST Level 3. Recommended general-purpose parameter set.',
+    notes:
+      'NIST security category 3: FIPS 203 claims at least the difficulty of AES-192 key search, a category label rather than a measured classical or quantum attack cost. The same bit figure is shown for classical and quantum because no efficient quantum attack on the underlying problem is known, which is not a proof of identical work. NIST recommends it as the default parameter set.',
   },
   {
     name: 'ML-KEM-1024',
@@ -244,7 +247,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'none',
     estimatedQubits: null,
     status: 'safe',
-    notes: 'NIST Level 3. Recommended general-purpose signature parameter set.',
+    notes:
+      'NIST security category 3: FIPS 204 claims at least the difficulty of AES-192 key search, a category label rather than a measured classical or quantum attack cost. The same bit figure is shown for classical and quantum because no efficient quantum attack on the underlying problem is known, which is not a proof of identical work.',
   },
   {
     name: 'ML-DSA-87',
@@ -956,13 +960,13 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
   {
     technology: 'Photonic',
     vendors: 'PsiQuantum, Xanadu',
-    bestLogical: 12,
+    bestLogical: 0,
     bestPhysical: 12,
-    note: 'Room-temperature operation and chips manufacturable in a standard fab.',
+    note: 'Xanadu’s Aurora paper (Nature, 22 January 2025) cites chip integration for mass-manufacturable modules, fibre-optic networking and room-temperature operation of most components as the attraction of photonics; PsiQuantum’s Nature paper (26 February 2025) lists high-power cryogenic cooling for superconducting detectors among the system requirements. The 12 recorded for Aurora are physical qubit modes per clock cycle, not logical qubits.',
     recentProgress:
-      'Xanadu ran 12 error-corrected “logical” qubits on a small modular chip designed to be networked into bigger machines; PsiQuantum, on a different architecture, is still making its light-based chips in an ordinary semiconductor factory, betting on mass production.',
+      'Xanadu’s Aurora, which its authors call a sub-performant scale model, used 35 photonic chips (84 squeezers, 36 photon-number-resolving detectors) to give 12 physical qubit modes per clock cycle, a cluster state with 86.4 billion modes, and a foliated distance-2 repetition code with real-time decoding, run as an error-detection experiment on low-quality GKP states. That is a physical-mode and error-detection demonstration, not twelve error-corrected logical qubits. PsiQuantum’s Nature paper reports a manufacturable silicon-photonics platform with 99.98% state-preparation-and-measurement fidelity and 99.22% two-qubit fusion fidelity, conditional on photon detection and not accounting for loss, and reports no logical-qubit demonstration.',
     scaleChallenge:
-      'Particles of light are easily lost; Xanadu has to scale its module count by orders of magnitude, and PsiQuantum still has to show its first working error-corrected qubit at all.',
+      'Optical loss: the Aurora paper calls it the dominant hurdle to crossing the fault-tolerant threshold, saying the best-known fault-tolerant configurations need loss budgets of about 1% whereas Aurora shows about 56% for its heralding paths and slightly over 95% for its heralded optical paths.',
   },
   {
     technology: 'Topological',

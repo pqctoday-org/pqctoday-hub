@@ -104,6 +104,17 @@ describe('moduleValidationNote', () => {
     expect(note?.caveat).toMatch(/FIPS 140-3/)
   })
 
+  it('scopes the validated-module requirement to the policy that applies, not every regulated environment', () => {
+    const caveat = moduleValidationNote({ fipsStandard: 'FIPS 203' })?.caveat ?? ''
+    expect(caveat).not.toMatch(/regulated environment you still need/i)
+    expect(caveat).toMatch(/depends on the requirements that apply to you/)
+    expect(caveat).toMatch(/may adopt it voluntarily/)
+    expect(caveat).toMatch(/federal agencies/)
+    expect(caveat).toMatch(/certificate/)
+    expect(caveat).toMatch(/security policy/)
+    expect(caveat).toMatch(/configuration/)
+  })
+
   it('returns null for non-FIPS rows', () => {
     expect(moduleValidationNote({ fipsStandard: '' })).toBeNull()
     expect(moduleValidationNote({ fipsStandard: 'ISO 18033-2 Amd2' })).toBeNull()

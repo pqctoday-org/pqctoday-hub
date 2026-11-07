@@ -490,3 +490,51 @@ describe('traverseXwalkPaths', () => {
     })
   })
 })
+
+describe('traverseXwalkPaths — structural relationships carry no applicability', () => {
+  const architect = getLens('architect')
+  // A lens that explicitly allows the structural types, to prove the guard is in the
+  // traversal itself and not only in the persona lists.
+  const permissive = {
+    ...architect,
+    trustPathConfig: {
+      ...architect.trustPathConfig,
+      allowedRelationships: [
+        'intersects_with',
+        'scheme_under',
+        'part_of_series',
+      ] as ConceptXwalkRecord['relationshipType'][],
+    },
+  }
+
+  it('a scheme under an umbrella is not derived from the umbrella being matched', () => {
+    const results = traverseXwalkPaths(
+      [direct('COMMON-CRITERIA', 'Common Criteria', 'mandatory')],
+      [edge('ANSSI-CC', 'COMMON-CRITERIA', 'scheme_under', 'high', 'policy_reference')],
+      permissive
+    )
+    expect(results).toHaveLength(0)
+  })
+
+  it('a volume in a series is not derived from the series being matched, either way round', () => {
+    const edges = [
+      edge('SP-1800-38B', 'SP-1800-38A', 'part_of_series', 'high', 'technical_dependency'),
+    ]
+    for (const matched of ['SP-1800-38A', 'SP-1800-38B']) {
+      expect(
+        traverseXwalkPaths([direct(matched, matched, 'mandatory')], edges, permissive),
+        matched
+      ).toHaveLength(0)
+    }
+  })
+
+  it('a structural edge does not use up the neighbour before a real edge to it is considered', () => {
+    const results = traverseXwalkPaths(
+      [direct('A', 'A', 'mandatory')],
+      [edge('A', 'B', 'scheme_under', 'high'), edge('A', 'B', 'intersects_with', 'high')],
+      permissive
+    )
+    expect(results).toHaveLength(1)
+    expect(results[0].bestPath.relationshipType).toBe('intersects_with')
+  })
+})

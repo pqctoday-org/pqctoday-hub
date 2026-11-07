@@ -42,6 +42,12 @@ describe('pqcReadinessTier', () => {
     expect(pqcReadinessTier(undefined)).toBe(0)
   })
 
+  it('puts a pre-shared-key-only value at 0.4, even when its text mentions partial or planned algorithms', () => {
+    expect(pqcReadinessTier('PSK (pre-shared key mixed in)')).toBe(0.4)
+    expect(pqcReadinessTier('psk (ML-KEM planned)')).toBe(0.4)
+    expect(pqcReadinessTier('PSK (partial hybrid support planned)')).toBe(0.4)
+  })
+
   it('returns a conservative middle (0.3) for narrative non-match', () => {
     expect(pqcReadinessTier('Credential')).toBe(0.3)
     expect(pqcReadinessTier('Identity')).toBe(0.3)
@@ -448,6 +454,11 @@ describe('isPqcReady — one shared definition (RM-11)', () => {
   it('counts deployed/full and hybrid as ready', () => {
     expect(isPqcReady('Yes (ML-KEM production)')).toBe(true)
     expect(isPqcReady('Partial (ML-KEM, hybrid)')).toBe(true)
+    expect(isPqcReady('Partial (ML-KEM planned)')).toBe(true)
+  })
+  it('does NOT count a pre-shared-key-only product as ready', () => {
+    expect(isPqcReady('PSK (pre-shared key mixed in)')).toBe(false)
+    expect(isPqcReady('PSK (ML-KEM planned, partial hybrid)')).toBe(false)
   })
   it('does NOT count planned, pilot, narrative or none as ready (the old over-count)', () => {
     expect(isPqcReady('Planned (ML-DSA 2026)')).toBe(false)

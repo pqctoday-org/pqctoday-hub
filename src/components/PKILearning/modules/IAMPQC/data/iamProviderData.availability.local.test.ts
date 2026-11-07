@@ -40,4 +40,15 @@ describe('IAM availability does not manufacture vendor release evidence', () => 
     expect(getVendorPqcStatus({ ...IAM_VENDORS[0], roadmapYear: 2020 })).toBe('roadmap')
     expect(PQC_STATUS_LABELS[getVendorPqcStatus(IAM_VENDORS[0])].label).toBe('Roadmap (catalogue)')
   })
+
+  it.each([
+    { availability: 'psk', label: 'PSK-only (not PQC)' },
+    { availability: 'unverified', label: 'Unverified' },
+    { availability: 'available', label: 'Available (catalogue)' },
+  ] as const)('retains $availability without promoting its evidence', ({ availability, label }) => {
+    lookup.mockReturnValue({ canonical: 'Sample catalogue record', availability })
+    const status = getVendorPqcStatus(IAM_VENDORS[0])
+    expect(status).toBe(availability)
+    expect(PQC_STATUS_LABELS[getVendorPqcStatus(IAM_VENDORS[0])].label).toBe(label)
+  })
 })

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  CSWP39_CROSS_WALK,
   CSWP39_SOURCE_METADATA,
   CSWP39_STEPS,
   PILLAR_TO_STEP,
@@ -92,5 +93,23 @@ describe('frameworksForStep', () => {
     const implement = frameworksForStep('implement', complianceFrameworks)
     expect(implement.length).toBe(withLifecycleTag.length)
     expect(implement.map((f) => f.id).sort()).toEqual(withLifecycleTag.map((f) => f.id).sort())
+  })
+})
+
+describe('CNSA 2.0 deadlines cross-walk hint', () => {
+  const hint =
+    CSWP39_CROSS_WALK.flatMap((row) => row.frameworks).find((f) => f.label === 'CNSA 2.0 deadlines')
+      ?.hint ?? ''
+
+  it('is limited to national security systems and keeps the separate NSS dates', () => {
+    expect(hint).toMatch(/^NSS only/)
+    expect(hint).toMatch(/new acquisitions 1 Jan 2027/)
+    expect(hint).toMatch(/phased out 31 Dec 2030 unless excepted/)
+    expect(hint).toMatch(/mandated 31 Dec 2031 unless noted/)
+  })
+
+  it('does not fall back to the stale 2030 / 2033 shorthand', () => {
+    expect(hint).not.toMatch(/2033/)
+    expect(hint).not.toMatch(/2030 \/ /)
   })
 })

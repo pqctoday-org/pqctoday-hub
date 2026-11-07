@@ -518,30 +518,55 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <ShieldCheck size={18} className="text-status-info mt-0.5" />
               <div>
                 <div className="font-bold text-foreground text-sm mb-1">
-                  SP 800-90B ESV — the parallel CMVP track most programs miss
+                  Three separate records: algorithm validation, module certificate and entropy
+                  validation
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  A FIPS 140-3 algorithm certificate and an SP 800-90B Entropy Source Validation
-                  (ESV) certificate are two separate CMVP submissions. A library or HSM can hold a
-                  valid FIPS 140-3 certificate while its entropy source has never been independently
-                  validated. In this module's reading, PQC migration is the natural moment to close
-                  this gap: PQC algorithms (ML-KEM, ML-DSA) require higher-quality randomness and
-                  demand an auditable chain from validated entropy source through conditioning to
-                  the approved DRBG. Infrastructure migrations &mdash; cloud lift-and-shift,
-                  containerization, VM consolidation &mdash; are also ESV re-evaluation triggers,
-                  since they alter the entropy pool available to the OS and can silently degrade
-                  seed quality. The Assurance pillar CBOM should carry an ESV status field alongside
-                  the FIPS 140-3 validation field, and the remediation workflow must distinguish
-                  algorithm re-validation from entropy source re-validation, as timelines and
-                  responsible vendors differ.
+                  An algorithm validation (CAVP, certificate numbers such as A3548) tests one
+                  algorithm implementation; NIST describes it as a prerequisite of module
+                  validation, not a substitute. A FIPS 140-3 module certificate (CMVP, for example
+                  #4985) covers one named module with its status, level, approved algorithms and
+                  caveats. An SP 800-90B Entropy Source Validation certificate (ESV, numbers such as
+                  E321) covers one entropy source and lists the operating environments it was tested
+                  on. None of the three stands in for another, so the CBOM should carry a status
+                  field for each.
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Since 7 November 2020 CMVP has required module submissions to include
+                  documentation of SP 800-90B conformance where it applies, but a module certificate
+                  can still say little about key strength: certificate #4985 (OpenSSL FIPS Provider)
+                  carries the caveat &ldquo;No assurance of the minimum strength of generated SSPs
+                  (e.g., keys).&rdquo; Read the caveat and the Security Policy to see which entropy
+                  source the module uses and whether that source holds an ESV certificate; do not
+                  infer entropy quality from the module certificate alone.
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  How much randomness an operation needs is set per algorithm, not by a general rule
+                  that PQC needs better randomness. FIPS 203 requires fresh bytes from an approved
+                  RBG whose security strength is at least 128, 192 or 256 bits for ML-KEM-512, -768
+                  and -1024 (key generation draws two 32-byte strings, encapsulation one). FIPS 204
+                  draws a 32-byte seed for ML-DSA key generation from an RBG of at least 192 bits
+                  for ML-DSA-65 and 256 bits for ML-DSA-87. For ML-DSA-44 the minimum is 128 bits
+                  and 192 bits is advised; with less than 192 bits the claimed strength drops from
+                  Category 2 to Category 1. The random value used in hedged signing should ideally
+                  come from an approved RBG, but FIPS 204 allows other methods because its purpose
+                  is to harden against side-channel and fault attacks.
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  An ESV certificate names the operating environments it was tested on (certificate
+                  E321, for example, lists specific Linux images on specific processors). When the
+                  environment changes, such as a different processor, hypervisor or container image,
+                  check the certificate&apos;s operating environments and the module&apos;s Security
+                  Policy to see whether the claim still covers the new platform. This lesson does
+                  not assume that every migration triggers a new entropy assessment; the certificate
+                  and Security Policy decide.
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
                   The same CMVP change-notice subscription that tracks FIPS 140-3 Implementation
-                  Guidance updates must also track SP 800-90A/B/C revision publications and their
-                  effective dates. When a revision is issued, the CBOM workflow should trigger an
-                  impact assessment: which validated entropy sources are bound to the superseded
-                  revision, which require re-testing under the new thresholds, and which vendor
-                  roadmaps commit to updated ESV submissions.
+                  Guidance updates should also track SP 800-90A/B/C revisions. When one is issued,
+                  the CBOM workflow should list which entropy sources and modules cite the
+                  superseded revision, whether the revision changes what must be re-tested, and
+                  which vendor roadmaps commit to updated ESV submissions.
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
                   {' '}
@@ -949,9 +974,15 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <div className="font-bold text-foreground text-sm mb-2">Hardware requirements</div>
                 <ul className="text-xs space-y-1.5 text-muted-foreground list-disc list-inside">
                   <li>
-                    <strong>1× FIPS 140-3 L3 network-attached HSM</strong> — Thales Luna Network HSM
-                    7 or Entrust nShield 5c recommended for PQC boundary coverage. Used for key
-                    generation, signing, and firmware-upgrade testing under lab conditions.
+                    <strong>1× network-attached HSM with a named FIPS 140-3 certificate</strong> —
+                    choose a unit whose CMVP certificate names the exact module, firmware version,
+                    level and approved algorithms you plan to test, and read its status (Active,
+                    Historical or Revoked) and Security Policy. For PQC lab work, check whether the
+                    certificate lists the PQC algorithm you intend to use; if it does not, treat
+                    those operations as non-validated lab use, not as covered by the certificate.
+                    Used for key generation, signing, and firmware-upgrade testing under lab
+                    conditions; the HSM view of this module&apos;s Library CBOM Builder step shows
+                    how certificate scope is recorded.
                   </li>
                   <li>
                     <strong>1× TLS termination appliance or isolated VM</strong> (nginx / HAProxy) —
@@ -959,14 +990,22 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                     validation.
                   </li>
                   <li>
-                    <strong>1× network tap / span port</strong> — passive TLS handshake capture for
-                    cipher-suite enumeration (nmap, sslyze, testssl.sh). Verifies what the stack
-                    actually negotiates vs. what was configured.
+                    <strong>1× network tap / span port</strong> — passive capture shows what the
+                    clients and servers in the captured handshakes offer and choose. In TLS 1.3 the
+                    ClientHello lists the groups and signature algorithms a client offers and the
+                    ServerHello shows what was selected, but later handshake messages, including the
+                    certificate, are encrypted (RFC 9846). Passive capture does not enumerate every
+                    suite a server supports and cannot show configured policy. Use active
+                    enumeration against the lab stack (nmap ssl-enum-ciphers, sslyze, testssl.sh
+                    connect to the server and test what it accepts; check that your version reports
+                    the key-exchange groups you need, including any hybrid group), then compare all
+                    three views (capture, scan, configuration files).
                   </li>
                   <li>
-                    <strong>Optional:</strong> smart card / USB token (FIPS L4 boundary testing),
-                    representative IoT/embedded device sample for constrained-env library
-                    validation.
+                    <strong>Optional:</strong> a smart card or USB token and a representative
+                    IoT/embedded device sample for constrained-environment library validation. For
+                    any token, record the certificate number, level and mode from its CMVP entry
+                    rather than assuming a level.
                   </li>
                 </ul>
               </div>

@@ -11,6 +11,10 @@ interface GeneratedCert extends CertTemplate {
   publicKeyHex: string
   signatureHex: string
   fingerprint: string
+  /** Algorithm of the issuer's key: the key that made this certificate's signature. */
+  signatureAlgorithm: string
+  /** Size of that signature, set by the issuer's algorithm and not by the subject's key. */
+  signatureSize: number
 }
 
 /** Generate realistic-looking hex string */
@@ -27,10 +31,16 @@ function formatDate(date: Date): string {
   return date.toISOString().split('T')[0]
 }
 
+/** The template whose subject is this certificate's issuer (a root issues itself). */
+function issuerOf(template: CertTemplate): CertTemplate {
+  return CERT_CHAIN_TEMPLATE.find((t) => t.subject === template.issuer) ?? template
+}
+
 function generateCertificates(): GeneratedCert[] {
   const now = new Date()
 
   return CERT_CHAIN_TEMPLATE.map((template) => {
+    const issuer = issuerOf(template)
     const notBefore = now
     const notAfter = new Date(now)
 
@@ -48,7 +58,9 @@ function generateCertificates(): GeneratedCert[] {
       notBefore: formatDate(notBefore),
       notAfter: formatDate(notAfter),
       publicKeyHex: generateHex(template.keySize),
-      signatureHex: generateHex(template.sigSize),
+      signatureAlgorithm: issuer.algorithm,
+      signatureSize: issuer.sigSize,
+      signatureHex: generateHex(issuer.sigSize),
       fingerprint: generateHex(32),
     }
   })
@@ -101,9 +113,11 @@ export const CertChainBuilder: React.FC = () => {
           PQC Code Signing Certificate Chain
         </h3>
         <p className="text-sm text-muted-foreground">
-          Build a 3-level certificate chain using ML-DSA at each level. Root CA uses ML-DSA-87 for
-          maximum security, Intermediate uses ML-DSA-65, and the end-entity Code Signing certificate
-          uses ML-DSA-44.
+          Build a 3-level certificate chain using ML-DSA at each level. In this sample the Root CA
+          key is ML-DSA-87, the Intermediate key is ML-DSA-65 and the end-entity Code Signing key is
+          ML-DSA-44. A certificate carries its subject&apos;s public key but is signed by its
+          issuer, so each certificate&apos;s signature algorithm and size come from the
+          issuer&apos;s key.
         </p>
       </div>
 
@@ -163,7 +177,8 @@ export const CertChainBuilder: React.FC = () => {
                       <strong>Key Size:</strong> {template.keySize.toLocaleString()} bytes
                     </div>
                     <div>
-                      <strong>Sig Size:</strong> {template.sigSize.toLocaleString()} bytes
+                      <strong>Signed with:</strong> {issuerOf(template).algorithm} (
+                      {issuerOf(template).sigSize.toLocaleString()}-byte signature)
                     </div>
                     <div>
                       <strong>Validity:</strong> {template.validity}
@@ -255,7 +270,7 @@ export const CertChainBuilder: React.FC = () => {
                         </div>
                         <div>
                           <span className="text-muted-foreground">Signature Algorithm:</span>{' '}
-                          {cert.algorithm}
+                          {cert.signatureAlgorithm} (issuer&apos;s key)
                         </div>
                         <div>
                           <span className="text-muted-foreground">Issuer:</span> {cert.issuer}
@@ -288,7 +303,7 @@ export const CertChainBuilder: React.FC = () => {
                         <div className="ml-4">
                           <span className="text-muted-foreground">Basic Constraints:</span>{' '}
                           {cert.level === 'Code Signing' ? 'CA:FALSE' : 'CA:TRUE'}
-                          {cert.level === 'Root CA' ? '' : ', pathlen:0'}
+                          {cert.level === 'Intermediate CA' ? ', pathlen:0' : ''}
                         </div>
                         <div className="ml-4">
                           <span className="text-muted-foreground">Key Usage:</span>{' '}
@@ -308,7 +323,7 @@ export const CertChainBuilder: React.FC = () => {
                         </div>
                         <div className="mt-2">
                           <span className="text-muted-foreground">Signature:</span>{' '}
-                          {cert.sigSize.toLocaleString()} bytes
+                          {cert.signatureSize.toLocaleString()} bytes ({cert.signatureAlgorithm})
                         </div>
                         <div className="ml-4 text-[10px] text-muted-foreground break-all">
                           {truncateHex(cert.signatureHex, 80)}
@@ -338,8 +353,9 @@ export const CertChainBuilder: React.FC = () => {
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left p-2 text-muted-foreground font-medium">Level</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Algorithm</th>
+                  <th className="text-left p-2 text-muted-foreground font-medium">Subject Key</th>
                   <th className="text-right p-2 text-muted-foreground font-medium">Key Size</th>
+                  <th className="text-left p-2 text-muted-foreground font-medium">Signed With</th>
                   <th className="text-right p-2 text-muted-foreground font-medium">Sig Size</th>
                   <th className="text-left p-2 text-muted-foreground font-medium">Validity</th>
                 </tr>
@@ -352,8 +368,11 @@ export const CertChainBuilder: React.FC = () => {
                     <td className="p-2 text-right font-mono text-xs text-foreground">
                       {cert.keySize.toLocaleString()} B
                     </td>
+                    <td className="p-2 font-mono text-xs text-foreground">
+                      {cert.signatureAlgorithm}
+                    </td>
                     <td className="p-2 text-right font-mono text-xs text-foreground">
-                      {cert.sigSize.toLocaleString()} B
+                      {cert.signatureSize.toLocaleString()} B
                     </td>
                     <td className="p-2 text-xs text-muted-foreground">{cert.validity}</td>
                   </tr>
@@ -363,8 +382,8 @@ export const CertChainBuilder: React.FC = () => {
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
             Total chain overhead: ~
-            {certificates.reduce((sum, c) => sum + c.keySize + c.sigSize, 0).toLocaleString()} bytes
-            (keys + signatures). A classical RSA-2048 chain would be ~1,536 bytes total.
+            {certificates.reduce((sum, c) => sum + c.keySize + c.signatureSize, 0).toLocaleString()}{' '}
+            bytes (keys + signatures). A classical RSA-2048 chain would be ~1,536 bytes total.
           </p>
         </div>
       )}
@@ -372,10 +391,12 @@ export const CertChainBuilder: React.FC = () => {
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong> All certificates are simulated with realistic field structures
-          matching X.509v3 format. In production, code signing certificates are issued by publicly
-          trusted CAs (e.g., DigiCert, GlobalSign) and must include the Code Signing Extended Key
-          Usage OID (1.3.6.1.5.5.7.3.3). Generated certificates are for educational purposes only.
+          <strong>Note:</strong> All certificates are simulated with field structures that follow
+          X.509v3 (RFC 5280). The Code Signing Extended Key Usage OID is 1.3.6.1.5.5.7.3.3
+          (id-kp-codeSigning in RFC 5280). Profile, validity and key-protection rules for real
+          certificates come from the issuing CA&apos;s policy; for publicly trusted code signing,
+          the CA/Browser Forum Code Signing Baseline Requirements set requirements a CA must meet.
+          Generated certificates are for educational purposes only.
         </p>
       </div>
     </div>

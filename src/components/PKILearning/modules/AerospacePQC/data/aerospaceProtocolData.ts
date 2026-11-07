@@ -136,7 +136,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
     maxPayloadBytes: 75,
     dataRateKbps: 238,
     linkType: 'UHF (960-1215 MHz, frequency-hopping)',
-    currentCrypto: 'KGV-127 / TACLANE (Type 1)',
+    currentCrypto: 'Classified message and transmission security (details not public)',
     bidirectional: true,
     standardRef: 'MIL-STD-6016 / STANAG 5516',
     pqcOverhead: {
@@ -146,7 +146,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       lmsBytes: 2512,
       feasibility: 'infeasible',
       notes:
-        '75-byte J-series message cannot fit PQC signatures. Link 16 relies on TRANSEC (transmission security) rather than COMSEC for over-the-air protection. PQC migration targets the key distribution infrastructure, not the data link itself.',
+        'Public descriptions of Link 16 separate two security functions: message security (MSEC), which encrypts the message data at the link layer, and transmission security (TSEC), which shapes the transmitted waveform with frequency hopping, jitter, interleaving and scrambling. TSEC protects the waveform; it does not replace message encryption. Link 16 messages are small fixed-format words (STANAG 5516), far smaller than a PQC signature, so signatures do not fit inside them. The keys, devices and any migration path are classified, so this lesson does not describe them.',
     },
   },
 ]

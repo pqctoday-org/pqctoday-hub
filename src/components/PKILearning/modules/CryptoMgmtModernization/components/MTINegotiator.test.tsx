@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MTINegotiator, recommendMTI, renderMTIMarkdown, type MTIInputs } from './MTINegotiator'
+import {
+  MTINegotiator,
+  isOutsidePosture,
+  recommendMTI,
+  renderMTIMarkdown,
+  type MTIInputs,
+} from './MTINegotiator'
 
 // Mock the module store so the component renders without persistence setup.
 vi.mock('@/store/useModuleStore', () => ({
@@ -139,6 +145,116 @@ describe('recommendMTI — decision tree', () => {
     expect(recommendMTI({ ...baseInputs, protocol: 'SSH' }).watchOuts.join(' ')).toMatch(
       /sntrup761x25519/
     )
+  })
+})
+
+describe('recommendMTI — standards posture applies to every recommendation', () => {
+  const fipsOnly: MTIInputs = { ...baseInputs, standardsPosture: 'fips-validated-only' }
+
+  it('marks the HQC KEM alternate as outside a FIPS-validated-only posture and says why', () => {
+    const rec = recommendMTI(fipsOnly)
+    const hqc = rec.kemAlternates.find((a) => /HQC/.test(a))
+    expect(hqc).toBeDefined()
+    expect(hqc).toMatch(/outside the chosen standards posture/)
+    expect(rec.watchOuts.join(' ')).toMatch(/Marked as outside[^.]*HQC-128/)
+    expect(rec.watchOuts.join(' ')).toMatch(/no final FIPS covers them/)
+  })
+
+  it('applies the same check under the NIST-PQC-only posture', () => {
+    const rec = recommendMTI({ ...baseInputs, standardsPosture: 'nist-pqc-only' })
+    expect(rec.kemAlternates.join(' ')).toMatch(/HQC-128[^;]*outside the chosen standards posture/)
+  })
+
+  it('does not mark HQC when the posture permits NIST alternates', () => {
+    const rec = recommendMTI({ ...baseInputs, standardsPosture: 'nist-alternates-permitted' })
+    expect(rec.kemAlternates.join(' ')).toMatch(/HQC-128/)
+    expect(rec.kemAlternates.join(' ')).not.toMatch(/outside the chosen standards posture/)
+    expect(rec.watchOuts.join(' ')).not.toMatch(/Marked as outside/)
+  })
+
+  it('separates the FIPS algorithm standards from a module certificate that covers them', () => {
+    const text = recommendMTI(fipsOnly).watchOuts.join(' ')
+    expect(text).toMatch(/standardize algorithms; they are not module certificates/)
+    expect(text).toMatch(/Active CMVP certificate that lists the algorithm and parameter set/)
+    expect(text).toMatch(/version and operating environment you deploy/)
+  })
+
+  it('applies the same check to signature and KEM algorithms', () => {
+    // No recommendation path offers Falcon today, so test the check itself: a signature that no
+    // final FIPS covers is outside the posture exactly like a KEM that no final FIPS covers.
+    expect(isOutsidePosture(fipsOnly, 'Falcon-512 (selected by NIST, standard not final)')).toBe(
+      true
+    )
+    expect(isOutsidePosture(fipsOnly, 'HQC-128 (code-based, NIST alternate)')).toBe(true)
+    expect(isOutsidePosture(fipsOnly, 'ML-DSA-65 (FIPS 204, NIST Cat 3)')).toBe(false)
+    expect(isOutsidePosture(fipsOnly, 'SLH-DSA-SHA2-128s (defence-in-depth)')).toBe(false)
+    expect(isOutsidePosture(fipsOnly, 'ML-KEM-768 (FIPS 203, NIST Cat 3)')).toBe(false)
+    expect(
+      isOutsidePosture(
+        { ...baseInputs, standardsPosture: 'nist-alternates-permitted' },
+        'Falcon-512 (selected by NIST, standard not final)'
+      )
+    ).toBe(false)
+  })
+
+  it('keeps FIPS signature standards unmarked for a federal profile', () => {
+    const rec = recommendMTI({ ...fipsOnly, audience: 'us-federal', complianceDeadline: '2030' })
+    expect(rec.sigMTI).toMatch(/ML-DSA-87/)
+    for (const alt of [rec.sigMTI, ...rec.sigAlternates]) {
+      expect(alt).not.toMatch(/outside the chosen standards posture/)
+    }
+  })
+
+  it('flags an SSH key exchange built on sntrup761 under a FIPS posture', () => {
+    const text = recommendMTI({ ...fipsOnly, protocol: 'SSH' }).watchOuts.join(' ')
+    expect(text).toMatch(/sntrup761, which no FIPS covers/)
+    expect(text).not.toMatch(/use a hybrid KEX such as sntrup761x25519-sha512 today/)
+    // without a FIPS posture the original carriage note stays
+    const plain = recommendMTI({
+      ...baseInputs,
+      standardsPosture: 'ietf-drafts-permitted',
+      protocol: 'SSH',
+    })
+    expect(plain.watchOuts.join(' ')).toMatch(/sntrup761x25519-sha512 today/)
+  })
+
+  it('keeps FIPS hash standards in every posture', () => {
+    for (const standardsPosture of ['fips-validated-only', 'nist-pqc-only', 'all-of-the-above']) {
+      const rec = recommendMTI({ ...baseInputs, standardsPosture })
+      expect(rec.hashMTI).toMatch(/FIPS 180-4|FIPS 202/)
+    }
+  })
+})
+
+describe('recommendMTI — hybrid group needs hybrid-capable peers', () => {
+  const classicalPeers: MTIInputs = { ...baseInputs, interopProfile: ['non-pqc-peers'] }
+
+  it('explains that the hybrid group works only when both peers support it', () => {
+    const rec = recommendMTI(classicalPeers)
+    expect(rec.kemMTI).toMatch(/X25519MLKEM768/)
+    expect(rec.rationaleKem).toMatch(/both peers support the named group/)
+    expect(rec.rationaleKem).toMatch(/classical-only peer cannot negotiate it/)
+  })
+
+  it('separates a negotiated classical fallback from running part of the hybrid group', () => {
+    const rec = recommendMTI(classicalPeers)
+    expect(rec.rationaleKem).toMatch(/separately negotiated classical group/)
+    expect(rec.rationaleKem).toMatch(/no post-quantum protection/)
+    expect(rec.rationaleKem).toMatch(/handshake fails/)
+  })
+
+  it('keeps the compatibility warning as a watch-out, naming the fallback policy to decide', () => {
+    const text = recommendMTI(classicalPeers).watchOuts.join(' ')
+    expect(text).toMatch(/Classical-only peers cannot negotiate "X25519MLKEM768 \(RFC 10024\)"/)
+    expect(text).toMatch(/no post-quantum protection/)
+    expect(text).toMatch(/State which classical groups stay allowed/)
+  })
+
+  it('does not emit the classical-peer warning when no classical peer is expected', () => {
+    const text = recommendMTI({ ...baseInputs, interopProfile: ['hybrid-peers'] }).watchOuts.join(
+      ' '
+    )
+    expect(text).not.toMatch(/Classical-only peers cannot negotiate/)
   })
 })
 

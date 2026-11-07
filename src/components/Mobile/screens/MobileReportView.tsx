@@ -187,7 +187,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
 
       {!isComprehensive && (
         <div className="mt-3">
-          <ReportUpgradeNudge />
+          <ReportUpgradeNudge shared={Boolean(sharedView)} />
         </div>
       )}
 
@@ -219,7 +219,9 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
                   : a.category === 'short-term'
                     ? 'Short-term · this quarter'
                     : 'Long-term · plan it',
-              href: a.relatedModule ? `/learn/${a.relatedModule}` : '#mobile-recommended-actions',
+              // relatedModule is already an in-app route ('/migrate', '/threats?industry=…',
+              // '/learn'), so it is the destination as it stands.
+              href: a.relatedModule || '#mobile-recommended-actions',
             }))}
           />
         </div>

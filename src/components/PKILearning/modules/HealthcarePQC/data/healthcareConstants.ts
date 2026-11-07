@@ -34,7 +34,7 @@ export const BIOMETRIC_PROFILES: BiometricDataProfile[] = [
       kem: 'ML-KEM-768',
       signature: 'ML-DSA-65',
       rationale:
-        'Fingerprint templates are permanently compromised once decrypted. Immediate migration to ML-KEM-768 for storage encryption and ML-DSA-65 for enrollment authentication.',
+        'A fingerprint cannot be reissued like a password, so a decrypted template stays sensitive for as long as it is kept. Whether it lets anyone authenticate depends on template protection, presentation attack detection (PAD) and a second factor. Early migration to ML-KEM-768 for storage encryption and ML-DSA-65 for enrollment authentication protects the confidentiality side.',
     },
   },
   {
@@ -51,7 +51,7 @@ export const BIOMETRIC_PROFILES: BiometricDataProfile[] = [
       kem: 'ML-KEM-768',
       signature: 'ML-DSA-65',
       rationale:
-        'Iris patterns are stable from age 2 through death. Once decrypted, an iris code enables identity theft for the lifetime of the individual and cannot be reissued.',
+        'An iris cannot be reissued, so a decrypted iris code stays sensitive for as long as it can be matched. Whether it enables impersonation depends on PAD and a second factor; NIST SP 800-63B-4 expects PAD for iris and fingerprint systems.',
     },
   },
   {
@@ -68,7 +68,7 @@ export const BIOMETRIC_PROFILES: BiometricDataProfile[] = [
       kem: 'ML-KEM-768',
       signature: 'ML-DSA-65',
       rationale:
-        'Facial geometry changes slowly over decades. A quantum-decrypted embedding can be used for deepfake generation and identity impersonation long after the breach.',
+        'A face cannot be reissued, so a decrypted embedding stays sensitive for years. Whether it can be used to impersonate someone depends on PAD, which NIST SP 800-63B-4 requires for facial recognition, and on a second factor.',
     },
   },
   {
@@ -85,7 +85,7 @@ export const BIOMETRIC_PROFILES: BiometricDataProfile[] = [
       kem: 'ML-KEM-768',
       signature: 'ML-DSA-44',
       rationale:
-        'Voice patterns change gradually with age but remain matchable for 20+ years. Compromised voiceprints enable spoofing of voice-authenticated medical commands.',
+        'A voice cannot be reissued. A decrypted voiceprint can be used in attempts to spoof voice-authenticated commands; NIST SP 800-63B-4 does not allow voice comparison for authentication, so a voiceprint should not be the only control over a medical command.',
     },
   },
   {
@@ -124,7 +124,7 @@ export const BIOMETRIC_PROFILES: BiometricDataProfile[] = [
       kem: 'ML-KEM-768',
       signature: 'ML-DSA-65',
       rationale:
-        'Retinal vessel patterns are unique, stable from birth, and cannot be surgically altered. Any compromise is permanent.',
+        'A retinal pattern cannot be reissued, so a decrypted template stays sensitive for as long as it can be matched. Whether it enables impersonation depends on PAD and a second factor.',
     },
   },
 ]
@@ -166,7 +166,8 @@ export const REVOCABILITY_MATRIX: RevocabilityItem[] = [
     examples: ['Fingerprint', 'Iris', 'DNA', 'Facial geometry', 'Retina'],
     revocability: 'irreplaceable',
     reissueCost: 'Impossible — cannot change biology',
-    quantumImpact: 'Critical — permanent compromise, no remediation',
+    quantumImpact:
+      'Critical — a biometric cannot be reissued, so exposed data stays sensitive; whether it enables impersonation depends on template protection, presentation attack detection and a second factor',
   },
 ]
 
@@ -299,7 +300,6 @@ export interface HealthcareDataProfile {
   name: string
   description: string
   trueRetentionYears: number
-  hipaaMinimumYears: number
   stigmaFactors: string[]
   applicableRegulations: string[]
   hndlExposure: 'critical' | 'high' | 'medium'
@@ -313,7 +313,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Electronic health records for minors. Most states require retention until age of majority plus statute of limitations period.',
     trueRetentionYears: 25,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Developmental disorders', 'Child abuse documentation', 'Behavioral health'],
     applicableRegulations: ['HIPAA', 'COPPA', 'State pediatric record laws'],
     hndlExposure: 'critical',
@@ -325,7 +324,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Standard electronic health records for adult patients. Retained for continuity of care and legal defense.',
     trueRetentionYears: 10,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Chronic conditions', 'Surgery history'],
     applicableRegulations: ['HIPAA', 'HITECH', 'State retention laws'],
     hndlExposure: 'high',
@@ -337,7 +335,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Psychotherapy notes, psychiatric evaluations, and treatment plans. Subject to heightened privacy protections under HIPAA.',
     trueRetentionYears: 50,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Psychiatric diagnosis',
       'Suicidal ideation',
@@ -354,7 +351,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Fertility treatment, pregnancy records, contraceptive history, and family planning data.',
     trueRetentionYears: 30,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Pregnancy termination',
       'Fertility treatment',
@@ -371,7 +367,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'DNA sequencing, SNP arrays, and pharmacogenomic profiles. Immutable data relevant across generations.',
     trueRetentionYears: 100,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Hereditary disease risk',
       'Ancestry/ethnicity',
@@ -388,7 +383,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Multi-decade cohort studies tracking disease progression, drug efficacy, and population health outcomes.',
     trueRetentionYears: 50,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Research subject identity', 'Experimental treatment outcomes'],
     applicableRegulations: ['HIPAA', 'Common Rule (45 CFR 46)', 'IRB requirements'],
     hndlExposure: 'high',
@@ -400,7 +394,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Population-based cancer surveillance data mandated by federal and state law. Used for epidemiology and treatment effectiveness research.',
     trueRetentionYears: 75,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Cancer diagnosis', 'Treatment outcomes', 'Survival data'],
     applicableRegulations: ['HIPAA', 'National Cancer Act', 'State cancer reporting laws'],
     hndlExposure: 'high',
@@ -412,7 +405,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Organ/tissue donor and recipient data, crossmatch results, and long-term follow-up. Critical for donor matching and immunosuppression management.',
     trueRetentionYears: 40,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Donor identity', 'Rejection episodes', 'Compliance data'],
     applicableRegulations: ['HIPAA', 'NOTA (National Organ Transplant Act)', 'UNOS policies'],
     hndlExposure: 'high',
@@ -424,7 +416,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Treatment records for alcohol and drug use disorders. Subject to stricter federal protections than standard health records.',
     trueRetentionYears: 30,
-    hipaaMinimumYears: 6,
     stigmaFactors: [
       'Substance type',
       'Relapse history',
@@ -441,7 +432,6 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
     description:
       'Physical and cognitive disability assessments, accommodations history, and long-term care plans.',
     trueRetentionYears: 40,
-    hipaaMinimumYears: 6,
     stigmaFactors: ['Disability type', 'Functional limitations', 'Workplace accommodations'],
     applicableRegulations: ['HIPAA', 'ADA', 'State disability laws'],
     hndlExposure: 'high',
@@ -465,6 +455,15 @@ export type AttackVector =
 
 export type PatientImpact = 'nuisance' | 'injury' | 'life-threatening' | 'fatal'
 
+/**
+ * Each scenario describes a hypothetical device and names the cryptographic
+ * primitive a quantum algorithm would have to break, plus the prerequisites.
+ * Ordinary failures that need no broken primitive (replay or denial of service
+ * against a protocol that is otherwise intact, a weak proprietary
+ * authentication scheme) are not listed here, because neither Shor's nor
+ * Grover's algorithm causes them. The real pacemaker advisory is described
+ * separately in the lesson text.
+ */
 export interface DeviceAttackScenario {
   vector: AttackVector
   vectorLabel: string
@@ -513,31 +512,22 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
     deviceLifetimeYears: 12,
     attackScenarios: [
       {
-        vector: 'command-injection',
-        vectorLabel: 'Command Injection',
-        patientImpact: 'fatal',
-        quantumMechanism: 'Shor',
-        currentDefense: 'Proprietary challenge-response (weak)',
-        attackDescription:
-          'Forged authentication allows malicious pacing commands — altering heart rate or disabling therapy.',
-      },
-      {
         vector: 'firmware-forgery',
-        vectorLabel: 'Firmware Forgery',
+        vectorLabel: 'Firmware Forgery (hypothetical device)',
         patientImpact: 'fatal',
         quantumMechanism: 'Shor',
-        currentDefense: 'ECDSA P-256 firmware signature',
+        currentDefense: 'ECDSA P-256 firmware signature (assumed for this hypothetical device)',
         attackDescription:
-          'A quantum computer forges the firmware signature, enabling installation of malicious firmware during a clinic visit.',
+          "Hypothetical device that installs any firmware image carrying a valid ECDSA P-256 signature. Primitive: ECDSA over P-256. Prerequisites: a quantum computer able to run Shor's algorithm recovers the signing private key from the public key, and the attacker can present the forged image during a clinic programming session. A device that also requires a post-quantum signature does not have this dependency.",
       },
       {
         vector: 'data-exfiltration',
-        vectorLabel: 'Data Exfiltration',
+        vectorLabel: 'Data Exfiltration (hypothetical device)',
         patientImpact: 'nuisance',
         quantumMechanism: 'Grover',
-        currentDefense: 'AES-CCM-128 encrypted telemetry',
+        currentDefense: 'AES-CCM-128 encrypted telemetry (assumed for this hypothetical device)',
         attackDescription:
-          'Patient cardiac data intercepted during device interrogation. Privacy breach but no immediate physical harm.',
+          "Hypothetical device whose interrogation telemetry is protected by AES-CCM-128. Primitive: AES-128 key search. Prerequisites: the attacker recorded the telemetry and has a quantum computer able to run Grover's algorithm at very large scale. Grover's algorithm gives only a quadratic speed-up and is hard to parallelise; NIST's PQC FAQ judges it quite likely to give little or no advantage against AES-128. This is the weakest quantum path listed here. The harm is a privacy breach with no immediate physical harm.",
       },
     ],
     pqcFeasibility: [
@@ -545,25 +535,25 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-DSA-44',
         feasible: false,
         rationale:
-          "This module's model assumes ML-DSA-44 signature verification needs more RAM than the 32 KB available on this Cortex-M0+ (a planning assumption, not a measurement).",
+          "This module's model assumes a portable ML-DSA-44 verifier whose working memory exceeds the 32 KB available on this hypothetical Cortex-M0+ build (a planning assumption, not a measurement). The outcome depends on the implementation chosen: pqm4 measured 36,308 B of verify stack for its portable ('clean') ML-DSA-44 and 2,712 B for its stack-optimised build, both on a Cortex-M4F (stack only; key and signature buffers excluded; not measured on a Cortex-M0+).",
       },
       {
         algorithm: 'LMS (H5/W8)',
         feasible: true,
         rationale:
-          "This module's model assumes hash-based signature verification needs only a few KB of RAM (a planning assumption, not a measurement). Suitable for firmware signing with limited update count.",
+          "This module's model assumes hash-based signature verification needs only a few KB of RAM (a planning assumption, not a measurement). The device only verifies. The signer's state is a separate matter: an LMS tree of height 5 holds 2^5 = 32 one-time keys (RFC 8554), so the signing system can issue at most 32 signatures per key pair, and NIST SP 800-208 states that the signer needs to ensure that no individual one-time key is ever used to sign more than one message.",
       },
       {
         algorithm: 'XMSS (H10)',
         feasible: true,
         rationale:
-          "This module's model assumes verification needs a few KB of RAM, similar to LMS (a planning assumption, not a measurement). State management is handled by the signing server, not the device.",
+          "This module's model assumes verification needs a few KB of RAM, similar to LMS (a planning assumption, not a measurement). The device only verifies. State management is handled by the signing system, not the device: the signer must update its stored state before it exports each signature, so that a crash or power loss cannot lead to a one-time key being used twice (NIST SP 800-208). A firmware version counter that refuses older images (anti-rollback) is a different mechanism that a device may keep in addition.",
       },
       {
         algorithm: 'FN-DSA',
-        feasible: false,
+        feasible: true,
         rationale:
-          'FN-DSA (Falcon) signing relies on double-precision floating-point; the Cortex-M0+ has no FPU, so FP must be emulated — widely considered impractical on this class of device. Prefer stateful hash-based signatures (LMS/XMSS) on-device.',
+          "In a firmware update the pacemaker only verifies; the manufacturer's signing system signs. FN-DSA (Falcon) signing needs floating-point arithmetic, which the Falcon specification names as a limitation for devices without an FPU, but that cost falls on the signer. Verification uses integer arithmetic modulo q = 12289, with a 897 B public key and a 666 B signature for Falcon-512. Modelled from pqm4 measurements of its provisional FN-DSA-512 code on a Cortex-M4F (not measured on this Cortex-M0+, so the device-side time is unknown here): about 0.4 million cycles and 2,976 B of stack to verify, against about 22.5 million cycles and 41,952 B of stack to sign. The feasible flag is a modelled outcome for this hypothetical build; confirm it with a measurement on the target core.",
       },
     ],
   },
@@ -583,21 +573,12 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
     attackScenarios: [
       {
         vector: 'command-injection',
-        vectorLabel: 'Command Injection',
+        vectorLabel: 'Command Injection (hypothetical device)',
         patientImpact: 'fatal',
         quantumMechanism: 'Shor',
-        currentDefense: 'BLE pairing with ECDH P-256',
+        currentDefense: 'BLE pairing with ECDH P-256 (assumed LE Secure Connections)',
         attackDescription:
-          'Quantum-broken BLE pairing allows injection of lethal insulin bolus commands.',
-      },
-      {
-        vector: 'replay-attack',
-        vectorLabel: 'Replay Attack',
-        patientImpact: 'life-threatening',
-        quantumMechanism: 'Grover',
-        currentDefense: 'Nonce-based AES-CCM',
-        attackDescription:
-          'Captured and replayed dose delivery commands could cause dangerous insulin stacking.',
+          "Hypothetical pump whose link key comes from a BLE LE Secure Connections pairing (ECDH on P-256). Primitive: elliptic-curve Diffie-Hellman. Prerequisites: the attacker recorded the pairing exchange, later has a quantum computer able to run Shor's algorithm on P-256 to recover the key agreed during pairing, and is within radio range while the pump still uses that bond; only then could forged commands such as a lethal insulin bolus be sent. Pairing without man-in-the-middle protection (Just Works) is a separate, classical weakness that needs no quantum computer.",
       },
     ],
     pqcFeasibility: [
@@ -631,21 +612,12 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
     attackScenarios: [
       {
         vector: 'command-injection',
-        vectorLabel: 'Drug Library Manipulation',
+        vectorLabel: 'Drug Library Manipulation (hypothetical device)',
         patientImpact: 'life-threatening',
         quantumMechanism: 'Shor',
-        currentDefense: 'TLS 1.2 with RSA-2048',
+        currentDefense: 'TLS 1.2 with RSA-2048 (assumed for this hypothetical device)',
         attackDescription:
-          'Man-in-the-middle attack modifies drug concentration limits in the infusion library, allowing dangerous over- or under-dosing.',
-      },
-      {
-        vector: 'denial-of-service',
-        vectorLabel: 'Denial of Service',
-        patientImpact: 'injury',
-        quantumMechanism: 'Shor',
-        currentDefense: 'TLS session management',
-        attackDescription:
-          'Disrupting the TLS handshake prevents the pump from receiving updated drug libraries or reporting alarms to the nurse station.',
+          "Hypothetical pump that accepts a drug library from any server presenting a valid RSA-2048 certificate over TLS 1.2, with no pinned server key and no separate signature on the library. Primitive: RSA-2048. Prerequisites: the attacker is on the network path and has a quantum computer able to run Shor's algorithm to recover the server's private key, so it can impersonate the server and change drug concentration limits, allowing dangerous over- or under-dosing.",
       },
     ],
     pqcFeasibility: [
@@ -678,21 +650,21 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
     attackScenarios: [
       {
         vector: 'firmware-forgery',
-        vectorLabel: 'Firmware Forgery',
+        vectorLabel: 'Firmware Forgery (hypothetical device)',
         patientImpact: 'fatal',
         quantumMechanism: 'Shor',
-        currentDefense: 'ECDSA P-256 code signing',
+        currentDefense: 'ECDSA P-256 code signing (assumed for this hypothetical device)',
         attackDescription:
-          'Forged firmware could alter ventilator pressure/volume settings, causing barotrauma or oxygen deprivation.',
+          "Hypothetical ventilator that accepts firmware carrying a valid ECDSA P-256 code-signing signature. Primitive: ECDSA over P-256. Prerequisites: a quantum computer able to run Shor's algorithm recovers the signing private key, and the forged image reaches the device through the manufacturer's update path. Forged firmware could alter ventilator pressure/volume settings, causing barotrauma or oxygen deprivation.",
       },
       {
         vector: 'data-exfiltration',
-        vectorLabel: 'Patient Data Exfiltration',
+        vectorLabel: 'Patient Data Exfiltration (hypothetical device)',
         patientImpact: 'nuisance',
         quantumMechanism: 'Shor',
-        currentDefense: 'TLS 1.2 channel encryption',
+        currentDefense: 'TLS 1.2 channel encryption with ECDH P-256 (assumed)',
         attackDescription:
-          'Intercepted HL7 messages reveal patient vitals, ventilator mode, and treatment parameters.',
+          "Hypothetical ventilator that sends HL7 messages over TLS 1.2 with an ECDH P-256 key exchange. Primitive: elliptic-curve Diffie-Hellman. Prerequisites: the attacker recorded the traffic and later has a quantum computer able to run Shor's algorithm to recover the session keys from the recorded handshakes. The recovered HL7 messages reveal patient vitals, ventilator mode, and treatment parameters.",
       },
     ],
     pqcFeasibility: [
@@ -726,21 +698,13 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
     attackScenarios: [
       {
         vector: 'command-injection',
-        vectorLabel: 'Instrument Command Hijack',
+        vectorLabel: 'Instrument Command Hijack (hypothetical device)',
         patientImpact: 'fatal',
         quantumMechanism: 'Shor',
-        currentDefense: 'TLS 1.3 + mutual authentication',
+        currentDefense:
+          'TLS 1.3 + mutual authentication with classical certificates (assumed for this hypothetical device)',
         attackDescription:
-          'Compromised TLS session allows injection of instrument movement commands during active surgery.',
-      },
-      {
-        vector: 'denial-of-service',
-        vectorLabel: 'Teleoperation Disruption',
-        patientImpact: 'life-threatening',
-        quantumMechanism: 'Shor',
-        currentDefense: 'Dedicated network segment',
-        attackDescription:
-          'Disrupting the encrypted link between surgeon console and robot arms during a procedure.',
+          'Hypothetical robot whose console-to-arm link uses TLS 1.3 with mutual authentication by classical certificates. Primitive: the certificate signature algorithm (for example RSA or ECDSA). Prerequisites: the attacker is on the link and has a quantum computer fast enough to recover a certificate private key during the procedure, so that it is accepted as the console and can inject instrument movement commands. A quantum attack that only decrypts recorded traffic would reveal data after the fact but would not by itself inject commands into a live procedure.',
       },
     ],
     pqcFeasibility: [
@@ -774,21 +738,21 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
     attackScenarios: [
       {
         vector: 'data-exfiltration',
-        vectorLabel: 'DICOM Image Interception',
+        vectorLabel: 'DICOM Image Interception (hypothetical device)',
         patientImpact: 'nuisance',
         quantumMechanism: 'Shor',
-        currentDefense: 'DICOM TLS (RSA-2048)',
+        currentDefense: 'DICOM TLS (RSA-2048) (assumed for this hypothetical device)',
         attackDescription:
-          'Intercepted medical images reveal diagnoses (tumors, fractures) and patient identity embedded in DICOM metadata.',
+          "Hypothetical imaging system that sends DICOM over TLS 1.2 with RSA-2048. Primitive: the RSA or Diffie-Hellman key exchange that protects the session keys. Prerequisites: the attacker recorded the sessions and later has a quantum computer able to run Shor's algorithm to recover those keys. The images then reveal diagnoses (tumors, fractures) and patient identity embedded in DICOM metadata.",
       },
       {
         vector: 'firmware-forgery',
-        vectorLabel: 'Calibration Manipulation',
+        vectorLabel: 'Calibration Manipulation (hypothetical device)',
         patientImpact: 'injury',
         quantumMechanism: 'Shor',
-        currentDefense: 'Vendor code signing',
+        currentDefense: 'Vendor code signing (RSA or ECDSA assumed for this hypothetical device)',
         attackDescription:
-          'Forged calibration firmware could cause incorrect imaging parameters, leading to misdiagnosis or excessive radiation (CT).',
+          "Hypothetical imaging system whose calibration firmware is accepted on a classical vendor signature (RSA or ECDSA). Primitive: that signature algorithm. Prerequisites: a quantum computer able to run Shor's algorithm recovers the vendor's signing key, and the forged package reaches the system through the vendor's update path. Forged calibration firmware could cause incorrect imaging parameters, leading to misdiagnosis or excessive radiation (CT).",
       },
     ],
     pqcFeasibility: [

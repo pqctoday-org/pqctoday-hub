@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type {
-  ConceptXwalkRecord,
-  XwalkRationaleType,
-  XwalkRelationshipType,
+import {
+  STRUCTURAL_RELATIONSHIP_TYPES,
+  type ConceptXwalkRecord,
+  type XwalkRationaleType,
+  type XwalkRelationshipType,
 } from '../data/conceptXwalkData'
 import type { ApplicabilityResult, ApplicabilityTier, TrustPath } from './applicabilityEngine'
 import type { PersonaLens } from './applicabilityLens'
@@ -38,6 +39,10 @@ const RELATIONSHIP_MULTIPLIER: Record<XwalkRelationshipType, number> = {
   subset_of: 0.92,
   superset_of: 0.88,
   intersects_with: 0.8,
+  // Structural links (a scheme under its umbrella, a volume in its series) say
+  // how documents belong together, not that one applies because the other does.
+  scheme_under: 0,
+  part_of_series: 0,
   not_related: 0,
 }
 
@@ -102,6 +107,7 @@ function edgesFor(
   for (const edge of xwalkEdges) {
     if (!allowed.has(edge.relationshipType)) continue
     if (edge.relationshipType === 'not_related') continue
+    if (STRUCTURAL_RELATIONSHIP_TYPES.has(edge.relationshipType)) continue
     if (labels.has(edge.fromConcept)) {
       out.push({ edge, neighborId: edge.toConcept })
     } else if (labels.has(edge.toConcept)) {

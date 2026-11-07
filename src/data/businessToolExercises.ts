@@ -335,12 +335,12 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
     {
       prompt: 'Why does the tool prefer a CBOM you can regenerate over a hand-built one?',
       options: [
-        'A hand-built CBOM is accurate for a week; a generated one for as long as you keep generating it',
-        'Generated files are smaller',
+        'It is repeatable, so you can rerun it as the estate changes, but it is only as complete and current as the sources it reads',
+        'A generated CBOM is always accurate',
         'Hand-built CBOMs cannot be exported',
       ],
       answer: 0,
-      why: 'The three views map an SBOM, library posture and HSM inventory into CycloneDX 1.7; the value is in the pipeline, not the file.',
+      why: 'The three views map an SBOM, library posture and HSM inventory into CycloneDX 1.7. Regenerating makes the result repeatable and easy to refresh, but it covers only the sources you feed it: a stack the scanner does not support, an asset with no source or a stale input leaves a gap, and hand-built entries drift as soon as the estate changes unless someone re-checks them. Treat either kind as a dated snapshot and reconcile it against the sources.',
     },
   ],
   'crypto-vulnerability-watch': [

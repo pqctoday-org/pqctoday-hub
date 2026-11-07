@@ -20,7 +20,9 @@
  *
  * Inclusion filter: products whose pqc_support is 'No' (including annotated
  * variants like 'No (classical RSA/EC only)') are EXCLUDED — a CBOM of PQC
- * capability has nothing to assert for them. All other values in the
+ * capability has nothing to assert for them. The same goes for 'PSK (…)': a
+ * pre-shared key is the only quantum protection there, which is not a
+ * post-quantum algorithm capability. All other values in the
  * catalog's real vocabulary ('Yes …', 'Partial …', 'Planned …', 'Unknown',
  * 'Pending Verification', …) are INCLUDED; in particular 'Pending
  * Verification' stays in because verification status is separate from the
@@ -239,11 +241,13 @@ async function main() {
   // 'No' / 'No (…)' / 'Unknown' / 'Pending Verification', never 'None' — so
   // every row (including 221 'No' rows) shipped in the CBOM. Exclude rows
   // whose base value (text before any parenthetical annotation) is 'No',
-  // case-insensitively. 'Pending Verification' is deliberately kept:
-  // verification status is separate from the capability claim.
+  // case-insensitively. A value that starts with 'PSK' (pre-shared key as the
+  // only quantum protection) is excluded the same way. 'Pending Verification'
+  // is deliberately kept: verification status is separate from the capability
+  // claim.
   const pqcProducts = products.rows.filter((p) => {
     const base = (p.pqc_support || '').split('(')[0].trim().toLowerCase()
-    return base !== '' && base !== 'no'
+    return base !== '' && base !== 'no' && !base.startsWith('psk')
   })
 
   const components = pqcProducts.map((p) => {

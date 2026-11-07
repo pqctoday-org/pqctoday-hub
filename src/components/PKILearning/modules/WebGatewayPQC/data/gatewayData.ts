@@ -91,7 +91,12 @@ export type TLSMode =
 export interface TLSModeInfo {
   id: TLSMode
   label: string
-  quantumSafe: boolean
+  /**
+   * true / false when the mode itself fixes the algorithms. null when the mode only forwards a
+   * session whose algorithms the two endpoints negotiate end to end (TLS passthrough): the
+   * answer is unknown from the topology alone and is left unresolved.
+   */
+  quantumSafe: boolean | null
   inspectionCapable: boolean
   color: string
   description: string
@@ -133,10 +138,11 @@ export const TLS_MODES: TLSModeInfo[] = [
   {
     id: 'passthrough',
     label: 'TLS Passthrough',
-    quantumSafe: false,
+    quantumSafe: null,
     inspectionCapable: false,
     color: 'text-muted-foreground',
-    description: 'Gateway forwards encrypted traffic without termination',
+    description:
+      'Gateway forwards the encrypted session without terminating it. The client and the backend negotiate the key exchange and authentication end to end, so whether the session is post-quantum depends on what those two endpoints negotiate, which this topology does not show. The gateway cannot inspect the content.',
   },
   {
     id: 'plaintext',
@@ -413,6 +419,10 @@ export interface HandshakeMitigation {
   applicability: string
 }
 
+/** The reduction percentages below are illustrative planning inputs, not measured effects. */
+export const HANDSHAKE_MITIGATIONS_NOTE =
+  'The percentages are illustrative planning inputs for the calculator, not measurements: the real effect depends on your client population, resumption rate, certificate chain and gateway, so measure it on your own traffic.'
+
 export const HANDSHAKE_MITIGATIONS: HandshakeMitigation[] = [
   {
     id: 'psk',
@@ -645,36 +655,44 @@ export interface GatewayBenchmark {
   notes: string
 }
 
+/**
+ * The numbers in the termination patterns, the handshake mitigations and the capacity table below
+ * are illustrative scenario inputs for the workshop tools. They are not measurements, vendor
+ * specifications or published benchmarks, and no source or test conditions are given for them.
+ */
+export const GATEWAY_FIGURES_NOTE =
+  'Illustrative scenario figures, not measurements or vendor specifications: no benchmark source or test conditions are supplied for them. Real handshake rates, latency, memory use and TLS-inspection limits depend on the gateway model and software version, the cipher and certificate mix, session resumption and the traffic profile, so measure your own gateway and inspection path with a post-quantum handshake instead of assuming a uniform buffer size or performance.'
+
 export const GATEWAY_BENCHMARKS: GatewayBenchmark[] = [
   {
-    name: 'F5 BIG-IP i10800',
+    name: 'Hardware-accelerated appliance (illustrative)',
     classicalHandshakesPerSec: 140000,
     pqcHybridHandshakesPerSec: 90000,
-    notes: 'Hardware-accelerated SSL offload',
+    notes: 'Illustrative figure; hardware SSL offload scenario',
   },
   {
-    name: 'NGINX (32-core Xeon)',
+    name: 'Software proxy, 32 cores (illustrative)',
     classicalHandshakesPerSec: 50000,
     pqcHybridHandshakesPerSec: 28000,
-    notes: 'Software-only; OpenSSL 3.5',
+    notes: 'Illustrative figure; software-only scenario',
   },
   {
-    name: 'HAProxy (16-core)',
+    name: 'Software load balancer, 16 cores (illustrative)',
     classicalHandshakesPerSec: 30000,
     pqcHybridHandshakesPerSec: 18000,
-    notes: 'Software LB; OpenSSL 3.5',
+    notes: 'Illustrative figure; software load balancer scenario',
   },
   {
-    name: 'Envoy (8-core, BoringSSL)',
+    name: 'Sidecar proxy, 8 cores (illustrative)',
     classicalHandshakesPerSec: 25000,
     pqcHybridHandshakesPerSec: 16000,
-    notes: 'Kubernetes sidecar proxy',
+    notes: 'Illustrative figure; sidecar proxy scenario',
   },
   {
-    name: 'AWS ALB (managed)',
+    name: 'Managed cloud load balancer (illustrative)',
     classicalHandshakesPerSec: 100000,
     pqcHybridHandshakesPerSec: 100000,
-    notes: 'Auto-scaling; no customer-visible capacity limit',
+    notes: 'Illustrative figure; managed service whose capacity the provider sets',
   },
 ]
 
@@ -725,17 +743,31 @@ export function applyMitigations(
 
 export interface TopologyAnalysis {
   vulnerableSegments: number
+  /** segments whose algorithms the topology does not fix (for example TLS passthrough) */
+  unresolvedSegments: number
   totalSegments: number
   certsNeeded: number
-  hndlExposure: 'high' | 'medium' | 'low'
+  /** 'unresolved' when no segment is known to be vulnerable but some are not determined */
+  hndlExposure: 'high' | 'medium' | 'low' | 'unresolved'
   recommendations: string[]
 }
+
+/**
+ * Shown when every segment in the sketched topology uses a PQC mode. It describes the modelled
+ * key exchange only; the page marks it with a check icon by matching this exact text.
+ */
+export const ALL_SEGMENTS_PQC_NOTE =
+  'Every segment in this topology uses a PQC hybrid mode, which covers the key exchange. Check each endpoint\u2019s certificates and signatures separately. Consider certificate compression (RFC 8879) to reduce handshake overhead.'
 
 export function analyzeTopology(connections: TopologyConnection[]): TopologyAnalysis {
   const totalSegments = connections.length
   const vulnerableSegments = connections.filter((c) => {
     const mode = TLS_MODES.find((m) => m.id === c.mode)
-    return mode && !mode.quantumSafe
+    return mode?.quantumSafe === false
+  }).length
+  const unresolvedSegments = connections.filter((c) => {
+    const mode = TLS_MODES.find((m) => m.id === c.mode)
+    return mode?.quantumSafe === null
   }).length
 
   const certsNeeded = connections.filter(
@@ -743,14 +775,20 @@ export function analyzeTopology(connections: TopologyConnection[]): TopologyAnal
   ).length
 
   const vulnerableRatio = totalSegments > 0 ? vulnerableSegments / totalSegments : 0
-  const hndlExposure: 'high' | 'medium' | 'low' =
-    vulnerableRatio > 0.5 ? 'high' : vulnerableRatio > 0 ? 'medium' : 'low'
+  const hndlExposure: 'high' | 'medium' | 'low' | 'unresolved' =
+    vulnerableRatio > 0.5
+      ? 'high'
+      : vulnerableRatio > 0
+        ? 'medium'
+        : unresolvedSegments > 0
+          ? 'unresolved'
+          : 'low'
 
   const recommendations: string[] = []
   const internetFacing = connections[0]
   if (internetFacing) {
     const mode = TLS_MODES.find((m) => m.id === internetFacing.mode)
-    if (mode && !mode.quantumSafe) {
+    if (mode?.quantumSafe === false) {
       recommendations.push(
         'Upgrade the client-facing connection to PQC Hybrid first \u2014 this is your highest HNDL exposure point.'
       )
@@ -760,7 +798,7 @@ export function analyzeTopology(connections: TopologyConnection[]): TopologyAnal
   const passthroughConns = connections.filter((c) => c.mode === 'passthrough')
   if (passthroughConns.length > 0) {
     recommendations.push(
-      'TLS passthrough segments prevent WAF/IDS inspection. Consider terminate-and-re-encrypt for security visibility.'
+      'TLS passthrough segments prevent WAF/IDS inspection, and they do not by themselves make the session quantum-vulnerable or quantum-safe: the client and backend negotiate the key exchange and authentication end to end, so check what they actually negotiate. Terminating at the gateway would add inspection but also puts plaintext at the gateway, and the client-facing and backend-facing sessions then have to be migrated separately.'
     )
   }
 
@@ -771,11 +809,16 @@ export function analyzeTopology(connections: TopologyConnection[]): TopologyAnal
     )
   }
 
-  if (vulnerableSegments === 0 && totalSegments > 0) {
-    recommendations.push(
-      'All segments are quantum-safe. Consider implementing certificate compression (RFC 8879) to reduce handshake overhead.'
-    )
+  if (vulnerableSegments === 0 && unresolvedSegments === 0 && totalSegments > 0) {
+    recommendations.push(ALL_SEGMENTS_PQC_NOTE)
   }
 
-  return { vulnerableSegments, totalSegments, certsNeeded, hndlExposure, recommendations }
+  return {
+    vulnerableSegments,
+    unresolvedSegments,
+    totalSegments,
+    certsNeeded,
+    hndlExposure,
+    recommendations,
+  }
 }

@@ -142,15 +142,26 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         icon={<FileCheck size={20} className="text-primary" />}
       >
         <p className="text-foreground/80 leading-relaxed">
-          As AI-generated content floods the internet, a new threat emerges:{' '}
-          <InlineTooltip term="Model Collapse">model collapse</InlineTooltip>. When models are
-          trained on data produced by other AI models, quality degrades with each generation —
-          outputs become repetitive, lose diversity, and drift from reality. Distinguishing
-          authentic human-created data from AI-generated content is now a critical challenge.
+          As AI-generated content spreads across the internet, researchers have asked what happens
+          when models are trained on data produced by other models. The result known as{' '}
+          <InlineTooltip term="Model Collapse">model collapse</InlineTooltip> is conditional, not
+          universal. Shumailov et al. found that training on model-generated content caused
+          irreversible defects, where the tails of the original data distribution disappear, in the
+          settings they studied (variational autoencoders, Gaussian mixture models and language
+          models). Gerstgrasser et al. found that replacing real data with each generation&apos;s
+          synthetic data tends toward collapse, while accumulating synthetic data alongside the
+          original real data avoided it in their experiments. Synthetic data can also help: the
+          phi-1 code model was trained on filtered web data together with synthetically generated
+          textbooks and exercises. The risk therefore depends on how real and synthetic data are
+          mixed, not on synthetic data as such. Provenance records help you know what you are
+          training on and let you select and review it; they do not by themselves determine training
+          quality.
         </p>
 
         <div className="glass-panel p-4 border-l-4 border-status-error">
-          <h4 className="font-bold text-foreground">The Model Collapse Cycle</h4>
+          <h4 className="font-bold text-foreground">
+            One Illustrative Collapse Scenario (fictional numbers)
+          </h4>
           <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-foreground/70">
             <span className="px-2 py-1 rounded bg-status-success/20 text-status-success">
               Gen 0: 100% Human Data
@@ -161,7 +172,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </span>
             <ArrowRight size={14} className="text-muted-foreground" />
             <span className="px-2 py-1 rounded bg-status-error/20 text-status-error">
-              Gen 5: 83% Synthetic — Quality Collapse
+              Gen 5: 83% Synthetic — quality falls in this scenario
             </span>
           </div>
         </div>
@@ -172,8 +183,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <strong>
               <InlineTooltip term="Content Credentials">Content Credentials (C2PA)</InlineTooltip>
             </strong>
-            : Signed metadata embedded in content files — creator identity, creation tool, edit
-            history. Creates a verifiable chain of custody from origin to consumption.
+            : Signed metadata embedded in content files — signer identity, creation tool, edit
+            assertions. A consumer can check who signed the claims and whether the signed content
+            was altered; a valid signature does not show that content is accurate or human-made.
           </li>
           <li>
             <strong>Cryptographic provenance chains</strong>: Hash-chain-based data lineage tracking
@@ -181,7 +193,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </li>
           <li>
             <strong>AI watermark detection</strong>: Identifying invisible watermarks embedded by AI
-            generators (SynthID, statistical LLM watermarks) to flag synthetic content.
+            generators (SynthID, statistical LLM watermarks) to flag content that carries one;
+            finding no watermark proves nothing.
           </li>
         </ul>
 
@@ -194,8 +207,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             Provenance signatures must outlive the data they protect — potentially decades.
             Provenance records signed with ECDSA, RSA-PSS or Ed25519 (the signature algorithms C2PA
             2.4 allows) become forgeable post-CRQC, allowing retroactive injection of synthetic data
-            into verified datasets. Migration to <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>{' '}
-            signatures ensures long-term provenance trust.
+            into verified datasets. Migrating to <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>{' '}
+            signatures removes that quantum forgery risk for the signature algorithm. Trust in the
+            signer, its key management and what its claims say remains a separate question.
           </p>
         </div>
         <ReadingCompleteButton />
@@ -324,7 +338,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </span>
           </div>
           <p className="text-xs text-foreground/60 mt-2">
-            Each hop in the chain requires a signed{' '}
+            In a delegation design like this one, each hop carries a signed{' '}
             <InlineTooltip term="Delegation Token">delegation token</InlineTooltip> — a
             cryptographic credential granting limited authority with scope, expiration, and a
             signature chain back to the original delegating human.
@@ -334,10 +348,16 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         <h3 className="text-lg font-bold text-foreground mt-4">Agentic Commerce</h3>
         <p className="text-sm text-foreground/70">
           When agents transact on behalf of users — purchasing goods, negotiating contracts,
-          managing subscriptions — every message exchange must be{' '}
-          <strong>signed for non-repudiation</strong> and{' '}
-          <strong>encrypted for confidentiality</strong>. Purchase orders signed with ML-DSA,
-          payment details encrypted with ML-KEM, and delegation chains verified at each hop.
+          managing subscriptions — a signature alone is not enough. One sample architecture, not a
+          requirement of any standard: sign each order so it can be attributed, protect payment
+          details in transit, and check every delegation hop. A signature shows which key signed;
+          the system must also establish <strong>identity</strong> (which agent this is),{' '}
+          <strong>authorization</strong> (what it may do, within what scope and until when),{' '}
+          <strong>replay protection</strong> (nonces or timestamps) and{' '}
+          <strong>key governance</strong> (issuance, rotation and revocation). In a post-quantum
+          design ML-DSA can supply the signatures and ML-KEM the key establishment, with a symmetric
+          cipher encrypting the data: a KEM generates a shared secret key and a symmetric scheme
+          encrypts under it (NIST SP 800-227).
         </p>
 
         <div className="glass-panel p-4 border-l-4 border-status-warning mt-3">
@@ -373,8 +393,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         <p className="text-foreground/80 leading-relaxed">
           AI systems operate at a scale that challenges conventional cryptographic approaches —
           training datasets measured in petabytes, billions of inference requests per day, thousands
-          of models across global deployments. Each data object needs its own encryption key, each
-          API call needs a secure channel, and each model needs integrity verification.
+          of models across global deployments. That scale turns key scope (per object, per dataset
+          or per tenant), channel protection and model-integrity checks into design decisions rather
+          than fixed rules.
         </p>
 
         <h3 className="text-lg font-bold text-foreground mt-4">
@@ -384,32 +405,30 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           {[
             {
               tech: 'Homomorphic Encryption',
-              desc: 'Compute on encrypted data without decrypting. Lattice-based schemes are believed to resist quantum attacks (FIPS 203 says this of ML-KEM).',
-              safe: true,
+              desc: 'Compute on encrypted data without decrypting. Common libraries use ring learning-with-errors schemes, and the Homomorphic Encryption Standard gives separate parameter tables for classical and quantum attack-cost estimates. Quantum resistance therefore depends on the scheme and the parameters chosen, and is an estimate rather than a proof. Channels and key management still need their own protection.',
+              badge: 'Scheme- and parameter-dependent',
             },
             {
               tech: 'Federated Learning',
-              desc: 'Train across distributed data — only encrypted gradients shared. Channels need PQC migration.',
-              safe: false,
+              desc: 'Participants share model updates (gradients) instead of raw data. Shared gradients can leak training data (Zhu et al., Deep Leakage from Gradients), so deployments add protection such as secure aggregation, homomorphic encryption or differential privacy. Whether the channels and key agreement inside those protections are quantum-vulnerable has to be checked for each deployment.',
+              badge: 'Depends on the protection used',
             },
             {
               tech: 'Secure MPC',
-              desc: 'Joint computation without revealing inputs. Oblivious transfer protocols need PQC upgrade.',
-              safe: false,
+              desc: 'Joint computation without revealing inputs. Protocols differ: the Chou-Orlandi oblivious transfer is a tweak of Diffie-Hellman key exchange, so a quantum computer would break it, while other constructions rest on different assumptions. Check the assumptions of the protocol you actually use.',
+              badge: 'Depends on the construction',
             },
             {
               tech: 'Differential Privacy',
-              desc: 'Information-theoretic noise addition. Quantum-safe by design, but often combined with crypto channels.',
-              safe: true,
+              desc: 'Calibrated noise limits what any observer of the output can learn about one individual (NIST SP 800-226). It is not an encryption scheme, so it does not protect data in transit or at rest, and it depends on a trust model: in the central model the data curator must be trusted, and in the local model each individual adds noise before sending.',
+              badge: 'Not a cryptographic scheme',
             },
           ].map((item) => (
             <div key={item.tech} className="glass-panel p-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-bold text-foreground">{item.tech}</p>
-                <span
-                  className={`text-[10px] px-2 py-0.5 rounded border font-bold ${item.safe ? 'bg-status-success/20 text-status-success border-status-success/50' : 'bg-status-warning/20 text-status-warning border-status-warning/50'}`}
-                >
-                  {item.safe ? 'Quantum-Safe' : 'Needs PQC Migration'}
+                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-status-warning/20 text-status-warning border-status-warning/50">
+                  {item.badge}
                 </span>
               </div>
               <p className="text-xs text-foreground/70 mt-1">{item.desc}</p>
@@ -419,10 +438,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
         <h3 className="text-lg font-bold text-foreground mt-4">Key Management at Scale</h3>
         <p className="text-sm text-foreground/70">
-          A hierarchical KMS with <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> envelope
-          encryption is essential — root keys wrap intermediate keys, which wrap data encryption
-          keys (DEKs). At enterprise scale, this means managing millions of DEKs with PQC-wrapped
-          key hierarchies.
+          One common design is a hierarchical KMS with envelope encryption: root keys wrap
+          intermediate keys, which wrap data encryption keys (DEKs), and{' '}
+          <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> can be the KEM used to establish the
+          wrapping keys higher in the hierarchy. This is a sample architecture, not a requirement:
+          how many keys you manage, what each key covers and how it is wrapped follow your threat
+          model and the volume of data each key protects.
         </p>
         <ReadingCompleteButton />
       </LearnSection>

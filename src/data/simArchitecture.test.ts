@@ -39,6 +39,13 @@ describe('simArchitecture', () => {
     expect(mid).toMatch(/app1 -\.->\|"Kerberos ⚠"\| ad/)
   })
 
+  it('defines a node class for the pre-shared-key status in both themes', () => {
+    const light = mermaidFromArchitecture(ARCHITECTURES.small)
+    const dark = mermaidFromArchitecture(ARCHITECTURES.small, {}, 'dark')
+    expect(light).toMatch(/classDef psk fill:/)
+    expect(dark).toMatch(/classDef psk fill:/)
+  })
+
   it('renders the dark palette when asked, light by default', () => {
     const light = mermaidFromArchitecture(ARCHITECTURES.small)
     const dark = mermaidFromArchitecture(ARCHITECTURES.small, {}, 'dark')

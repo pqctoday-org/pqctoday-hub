@@ -3,11 +3,13 @@ import React, { useState } from 'react'
 import { CheckCircle2, XCircle, ShieldCheck, Server, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
+// Fictional profiles for practice. None describes a real product: a real vendor's support for each
+// criterion has to come from that product's own release documentation, per version.
 const VENDORS = [
-  { name: 'Venafi', api: true, hsm: true, hybrid: true },
-  { name: 'AppViewX', api: true, hsm: true, hybrid: false },
-  { name: 'Keyfactor', api: true, hsm: true, hybrid: true },
-  { name: 'Legacy In-House', api: false, hsm: false, hybrid: false },
+  { name: 'Platform A (fictional)', api: true, hsm: true, hybrid: true },
+  { name: 'Platform B (fictional)', api: true, hsm: true, hybrid: false },
+  { name: 'Platform C (fictional)', api: true, hsm: true, hybrid: true },
+  { name: 'Legacy In-House (fictional)', api: false, hsm: false, hybrid: false },
 ]
 
 export const CLMVendorEvaluator: React.FC = () => {
@@ -20,8 +22,10 @@ export const CLMVendorEvaluator: React.FC = () => {
       <div className="text-center max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold text-foreground">CLM Vendor Evaluator</h2>
         <p className="text-muted-foreground mt-2">
-          Evaluate Certificate Lifecycle Management (CLM) vendors on their readiness to support PQC
-          certificate orchestration, Hybrid X.509 issuance, and HSM integration.
+          Practice scoring Certificate Lifecycle Management (CLM) platforms on their readiness to
+          support PQC certificate orchestration, Hybrid X.509 issuance, and HSM integration. The
+          four profiles below are fictional and describe no real product; check a real vendor&apos;s
+          release documentation for each criterion before relying on it.
         </p>
       </div>
 
@@ -95,8 +99,9 @@ export const CLMVendorEvaluator: React.FC = () => {
               <h3 className="font-bold">Hybrid / Composite Certificates</h3>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Can the vendor issue and parse draft-ounsworth-pq-composite-sigs where both an RSA and
-              ML-DSA signature reside in the same X.509 structure?
+              Can the vendor issue and parse composite signatures (the IETF LAMPS composite ML-DSA
+              specification; check its current status) where a traditional signature and an ML-DSA
+              signature reside in the same X.509 structure?
             </p>
             {vendor.hybrid ? (
               <div className="flex items-center gap-2 text-success font-medium text-sm">

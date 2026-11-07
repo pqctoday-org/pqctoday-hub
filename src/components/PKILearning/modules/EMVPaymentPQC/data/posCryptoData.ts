@@ -14,7 +14,7 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
     cryptoChips: ['NXP JCOP4', 'Infineon SLE78', 'Microchip ATECC608B'],
     quantumVulnerabilities: [
       'RSA-2048 key transport at Key Injection Facility',
-      'TLS RSA/ECDSA key exchange with acquirer',
+      'TLS key exchange with acquirer ((EC)DHE; RSA key transport in legacy TLS 1.2)',
       'EMV offline authentication (RSA certificate chain verification)',
     ],
     pqcConstraints: [
@@ -78,7 +78,7 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
     cryptoChips: ['Integrated ATM HSM (e.g., Diebold Nixdorf)', 'EPP (Encrypting PIN Pad)'],
     quantumVulnerabilities: [
       'RSA-2048 key transport for PIN encryption keys',
-      'TLS to host/switch (RSA/ECDSA key exchange)',
+      'TLS to host/switch (key exchange; RSA/ECDSA certificate signatures separately authenticate)',
       'Remote key loading (RSA key transport)',
     ],
     pqcConstraints: [
@@ -114,42 +114,45 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
 
 export const KEY_INJECTION_CEREMONY: KeyInjectionCeremony = {
   id: 'standard-kif',
-  name: 'Standard Key Injection Facility (KIF) Ceremony',
+  name: 'Illustrative Key Injection Facility (KIF) Scenario: Fictional RSA Remote Key Loading',
   description:
-    'A secure, audited process where cryptographic keys are loaded into payment terminals. The KIF is a physically secured room with dual-control, split-knowledge procedures. This is the primary quantum-vulnerable point in the DUKPT key management chain.',
+    'One fictional teaching scenario, not a universal procedure: a secured, audited facility with dual-control, split-knowledge procedures derives a unique initial key for a terminal and delivers it with RSA key transport. Real deployments differ (manual loading, symmetric transport under key blocks, other asymmetric profiles); PCI PIN Security Requirements v3.1 requirement 12-7 allows asymmetric or manual techniques for the initial key and requirement 18-3 requires encrypted symmetric keys to be managed as key blocks (for example TR-31 or TR-34, or AES key wrap per ANSI X9.102), so check the current requirements. In this scenario the RSA key transport of the derived initial key is the quantum-vulnerable point; the BDK stays inside the authorised HSM.',
   steps: [
     {
       order: 1,
-      label: 'BDK Generation in Payment HSM',
+      label: 'BDK Generation and Initial Key Derivation in Payment HSM',
       description:
-        'The Base Derivation Key (BDK) is generated inside a payment HSM (for example a PCI-approved PTS HSM). The BDK never leaves the HSM in cleartext. Dual custody is required (two key custodians each contribute key components).',
-      cryptoUsed: 'AES-256 key generation (HSM internal)',
+        'The Base Derivation Key (BDK) is generated inside a payment HSM (for example a PCI-approved PTS HSM) and never leaves it in cleartext. Dual custody is required (two key custodians each contribute key components). Inside the HSM boundary, the terminal\u2019s unique Key Serial Number (KSN) is used to derive that terminal\u2019s Initial PIN Encryption Key (IPEK). Only the derived initial key is ever sent toward the terminal: PCI PIN requirement 20-3 says base derivation keys must never be loaded onto POI devices.',
+      cryptoUsed: 'AES-256 key generation and 3DES/AES DUKPT derivation (HSM internal, symmetric)',
       quantumVulnerable: false,
-      pqcReplacement: 'No change needed \u2014 symmetric key generation is quantum-safe',
+      pqcReplacement:
+        'No change needed \u2014 symmetric key generation and derivation are quantum-safe',
     },
     {
       order: 2,
-      label: 'BDK Wrapping for Transport',
+      label: 'Initial Key Wrapping for Transport (Fictional RSA Case)',
       description:
-        'The BDK is encrypted (wrapped) using an RSA-2048 key transport key for secure transfer to the terminal injection station. THIS IS THE PRIMARY QUANTUM VULNERABILITY: a quantum computer could recover the BDK from the RSA-wrapped ciphertext.',
+        'In this fictional remote key loading case, the HSM encrypts (wraps) the derived initial key \u2014 not the BDK \u2014 under an RSA-2048 key-transport key tied to the terminal. THIS IS THE QUANTUM VULNERABILITY IN THIS CASE: an attacker who recorded the wrapped initial key and later breaks RSA could recover that one terminal\u2019s initial key and the keys derived from it, but not the BDK.',
       cryptoUsed: 'RSA-2048 key transport (PKCS#1 v1.5 or OAEP)',
       quantumVulnerable: true,
-      pqcReplacement: 'ML-KEM-768 key encapsulation mechanism',
+      pqcReplacement:
+        'ML-KEM-768 key encapsulation as the key-establishment step: its shared secret goes through a key-derivation function and an authenticated key wrap that carries the initial key, with the terminal authenticated and its identity and the key purpose bound in. ML-KEM does not encrypt the initial key by itself. This toggle is conceptual, not a complete implementation.',
     },
     {
       order: 3,
       label: 'Secure Transport to Terminal',
       description:
-        'The RSA-wrapped BDK is transferred to the injection station via secure channel (TLS or dedicated HSM-to-HSM link). The injection station decrypts using its RSA private key.',
+        'The wrapped initial key is transferred to the terminal over a secure channel (TLS or a dedicated link). The terminal\u2019s security module unwraps it with its RSA private key.',
       cryptoUsed: 'RSA-2048 key decryption + TLS 1.2/1.3',
       quantumVulnerable: true,
-      pqcReplacement: 'ML-KEM-768 decapsulation + Hybrid ML-KEM TLS',
+      pqcReplacement:
+        'ML-KEM-768 decapsulation in the terminal, then the same KDF and authenticated unwrap, plus hybrid ML-KEM TLS for the channel',
     },
     {
       order: 4,
-      label: 'Terminal Key Injection & Derivation',
+      label: 'Terminal Key Loading & Per-Transaction Derivation',
       description:
-        'The injection facility derives the Initial PIN Encryption Key (IPEK) from the BDK using the terminal\u2019s unique Key Serial Number (KSN), and only the derived key is loaded into the terminal\u2019s tamper-resistant security module; the BDK itself stays with the injection facility. All subsequent per-transaction keys are derived from the IPEK using symmetric DUKPT derivation.',
+        'The initial key is stored in the terminal\u2019s tamper-resistant security module, and the BDK is not present on the terminal. All subsequent per-transaction keys are derived on the terminal from the initial key using symmetric DUKPT derivation.',
       cryptoUsed: '3DES/AES DUKPT key derivation (symmetric)',
       quantumVulnerable: false,
       pqcReplacement: 'No change needed \u2014 symmetric DUKPT derivation is quantum-safe',
@@ -159,7 +162,7 @@ export const KEY_INJECTION_CEREMONY: KeyInjectionCeremony = {
 
 export const DUKPT_DERIVATION_TREE = {
   description:
-    'DUKPT (Derived Unique Key Per Transaction) generates a unique symmetric key for every transaction from a Base Derivation Key. The symmetric derivation chain is quantum-safe; only the initial key injection uses RSA (quantum-vulnerable).',
+    'DUKPT (Derived Unique Key Per Transaction) generates a unique symmetric key for every transaction from a Base Derivation Key. The symmetric derivation chain is quantum-safe; in the fictional remote key loading case this module models, only the RSA transport of the terminal\u2019s derived initial key is quantum-vulnerable.',
   levels: [
     {
       level: 0,
@@ -193,5 +196,5 @@ export const DUKPT_DERIVATION_TREE = {
     },
   ],
   vulnerablePoint:
-    'RSA-2048 key transport of BDK at Key Injection Facility (KIF). Compromising the BDK allows derivation of ALL past and future transaction keys for terminals sharing that BDK.',
+    'In the fictional RSA remote key loading case, the RSA-2048 transport of a terminal\u2019s derived initial key. The BDK itself is meant to stay inside the authorised HSM; compromising it would allow derivation of the transaction keys of every terminal that shares it.',
 }

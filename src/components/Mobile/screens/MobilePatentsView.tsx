@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { Search, X } from 'lucide-react'
+import { ExternalLink, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { patentsData } from '@/data/patentsData'
 import { findPatentByNumber, readPqcOnly, readScopeParam } from '@/data/patentsScope'
@@ -14,6 +14,7 @@ import { MobileSheet } from '../primitives/Sheet'
 import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
 import { filterPatents, NIST_STATUS_LABELS } from '@/data/patentFilters'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
+import { logExternalLink } from '@/utils/analytics'
 
 const AGILITY_ORDER: CryptoAgilityMode[] = [
   'classical_only',
@@ -474,9 +475,24 @@ export function MobilePatentsView() {
                 <dd className="mt-0.5 text-[11.5px] text-foreground">{selected.inventors}</dd>
               </div>
             </dl>
+            {/* The patent's own record, so the claims behind this summary can be read on the phone. */}
+            <a
+              href={`https://patents.google.com/patent/${selected.patentNumber}/en`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() =>
+                logExternalLink(
+                  'Patents',
+                  `https://patents.google.com/patent/${selected.patentNumber}/en`
+                )
+              }
+              className="inline-flex min-h-[44px] items-center gap-1.5 text-[12px] font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              <ExternalLink size={13} aria-hidden="true" />
+              Read the original claims on Google Patents
+            </a>
             <p className="text-[10px] leading-relaxed text-muted-foreground">
-              The full independent claim text, CPC codes and remaining 20+ extraction dimensions are
-              on a laptop.
+              CPC codes and the remaining 20+ extraction dimensions are on a laptop.
             </p>
           </div>
         )}

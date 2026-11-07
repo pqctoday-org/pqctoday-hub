@@ -70,15 +70,46 @@ export const certificationXrefs: CertificationXref[] = activeXrefs
 // legacy row lacking product_id (a carried-forward historical entry
 // pre-dating the fix) is still findable. Callers should look up by
 // productId first, falling back to softwareName.
-export const certsByProduct: Map<string, CertificationXref[]> = activeXrefs.reduce((map, xref) => {
-  for (const key of [xref.productId, xref.softwareName]) {
-    if (!key) continue
-    const existing = map.get(key) || []
-    existing.push(xref)
-    map.set(key, existing)
+/**
+ * One certificate's identity within a product: its scheme and number. Two rows with the
+ * same identity are the same certificate; different numbers (or the same number in a
+ * different scheme) are different certificates. A row with no number cannot be told apart
+ * from another by id, so it is identified by its other fields and never merged away.
+ */
+export function certificateIdentity(x: CertificationXref): string {
+  return x.certId
+    ? `${x.certType}|${x.certId}`
+    : `${x.certType}|${x.certProduct}|${x.certDate}|${x.certLink}`
+}
+
+/**
+ * Index certificates by product id and by software name (see the note above).
+ *
+ * Each row is indexed once per distinct key: when a product's id and display name are the
+ * same string, the row must not be added to that key twice. Within one key, a certificate
+ * that appears in more than one row is listed once, so counts and badges show each
+ * distinct certificate once and never merge different certificates.
+ */
+export function indexCertsByProduct(xrefs: CertificationXref[]): Map<string, CertificationXref[]> {
+  const index = new Map<string, CertificationXref[]>()
+  const seen = new Map<string, Set<string>>()
+  for (const xref of xrefs) {
+    for (const key of new Set([xref.productId, xref.softwareName])) {
+      if (!key) continue
+      const identities = seen.get(key) ?? new Set<string>()
+      const identity = certificateIdentity(xref)
+      if (identities.has(identity)) continue
+      identities.add(identity)
+      seen.set(key, identities)
+      const existing = index.get(key)
+      if (existing) existing.push(xref)
+      else index.set(key, [xref])
+    }
   }
-  return map
-}, new Map<string, CertificationXref[]>())
+  return index
+}
+
+export const certsByProduct: Map<string, CertificationXref[]> = indexCertsByProduct(activeXrefs)
 
 /** Look up certifications for a product by productId first, falling back to
  *  softwareName for legacy rows that predate the product_id fix. */

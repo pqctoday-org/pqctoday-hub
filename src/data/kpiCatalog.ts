@@ -100,6 +100,7 @@ export interface KpiDefinition {
  *   "Yes (ML-KEM production)" → Full
  *   "Partial (ML-KEM planned)" → Hybrid
  *   "Planned (ML-DSA 2026)" → Roadmap
+ *   "PSK (pre-shared key only)" → Pilot-level, below the ready line
  *   "None" / "No" → None
  * Keyword heuristics below keep the mapping resilient to narrative drift.
  */
@@ -108,6 +109,10 @@ export function pqcReadinessTier(pqcSupport: string | undefined | null): number 
   const s = pqcSupport.toLowerCase().trim()
   if (s === 'none' || s === 'no' || s.startsWith('no ')) return 0
   if (s.startsWith('yes')) return 1.0
+  // Pre-shared-key-only protection is not post-quantum algorithm support. This
+  // test comes before the keyword tests below because the PSK text can also
+  // mention algorithms as "planned" or "partial", which must not move it.
+  if (s.startsWith('psk')) return 0.4
   if (s.includes('partial') || s.includes('hybrid')) return 0.7
   if (s.includes('pilot') || s.includes('beta')) return 0.4
   if (s.includes('planned') || s.includes('roadmap') || s.includes('announce')) return 0.2

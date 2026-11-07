@@ -2190,8 +2190,15 @@ export function SimulationView() {
             ← HUB
           </Link>
         </header>
-        <main className="flex min-h-0 flex-1 items-center justify-center p-6">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+        {/* The card is centred with auto margins, not items-center: when it is
+            taller than the screen (a phone) auto margins collapse to zero, so it
+            starts below the header and the page scrolls, instead of the card
+            growing upward under the header and past the bottom edge. */}
+        <main className="flex min-h-0 flex-1 overflow-y-auto p-6" data-testid="sim-start-main">
+          <div
+            className="m-auto w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm"
+            data-testid="sim-start-card"
+          >
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
               Choose how to start
             </span>

@@ -55,7 +55,7 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       badge: "Grover's",
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        "The tool shows AES-128 at a ~64-bit Grover bound and AES-256 at ~128-bit. In practice Grover's enormous circuit depth makes even AES-128 far stronger than 64 bits, so NIST still rates AES-128 at security category 1 — but AES-256 (category 5) is the safer choice for long-term data.",
+        "The tool shows AES-128 at a ~64-bit Grover bound and AES-256 at ~128-bit. That bound counts idealised sequential queries; it is not a gate, time or cost estimate. Grover's long serial circuit makes the real attack far costlier than 64 bits suggests: NIST defines security category 1 by AES-128 key search, and its PQC FAQ says AES-128 will remain secure for decades. Authorities still differ (NSA CNSA 2.0 asks national security systems to use 256-bit AES keys), so AES-256 (category 5) is a policy or safety-margin choice for long-term data rather than an automatic rejection of AES-128.",
       config: { step: 0, algorithmA: 'AES-128', algorithmB: 'AES-256' },
     },
     {
@@ -66,7 +66,7 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       badge: 'Analysis',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'All asymmetric algorithms based on factoring or discrete logs are marked "broken." Symmetric algorithms are "weakened" but survivable with larger keys. PQC algorithms are fully safe.',
+        'All asymmetric algorithms based on factoring or discrete logs are marked "broken" (by Shor\'s algorithm, on a large fault-tolerant quantum computer). Symmetric algorithms are "weakened" in the idealised query bound but survivable with larger keys or the policy your authority sets. The PQC algorithms are marked "safe" because no efficient quantum attack on their underlying problems is known: that is an assumption under continued cryptanalysis, not a proof, and it says nothing about implementation or protocol flaws.',
       config: { step: 1 },
     },
     {
@@ -103,11 +103,11 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       id: 'pqc-safe',
       title: '6. PQC Algorithms: Built for Quantum',
       description:
-        'Compare ML-KEM-768 and ML-DSA-65 in the Key Size Analyzer. Verify that their classical and quantum security levels are identical — no degradation under quantum attack.',
+        'Compare ML-KEM-768 and ML-DSA-65 in the Key Size Analyzer. Both are NIST security category 3 parameter sets: check what the tool shows for their classical and quantum security levels, and what a category label does and does not tell you.',
       badge: 'PQC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        "PQC algorithms maintain identical classical and quantum security bits. Their security is based on lattice problems, not factoring or discrete logs, so Shor's algorithm provides no advantage.",
+        "The tool shows the same bit figure for classical and quantum because no efficient quantum attack on their lattice problems is known (FIPS 203 says ML-KEM is believed to be secure even against adversaries who possess a quantum computer, and FIPS 204 says the same of ML-DSA). That is a belief under continued analysis, not a proof of identical work: the figure comes from the NIST category, which claims the parameter set is at least as hard to break as AES-192 key search and is not a measured attack cost. Shor's algorithm targets factoring and discrete logs, which these schemes do not use, but 'resistant' does not mean 'completely safe': implementation, protocol and key-management failures are separate risks.",
       config: { step: 2, algorithmA: 'ML-KEM-768', algorithmB: 'ML-DSA-65' },
     },
   ]

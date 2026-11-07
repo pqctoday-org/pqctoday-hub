@@ -57,4 +57,20 @@ describe('PAGE_EXERCISES', () => {
     ])
       expect(Object.hasOwn(PAGE_EXERCISES, route), route).toBe(false)
   })
+  it('the FAQ evidence question keeps module validation, algorithm validation, authorization, audit and vendor claims apart', () => {
+    const [ex] = PAGE_EXERCISES['/faq']
+    expect(ex.options[ex.answer]).toMatch(/^Nothing by itself/)
+    // A generic validated claim never answers the question as "validated".
+    expect(ex.options[ex.answer]).toMatch(/must still list the PQC algorithms/)
+    for (const term of ['CMVP', 'CAVP', 'FedRAMP', 'WebTrust', 'FIPS mode']) {
+      expect(ex.why, term).toContain(term)
+    }
+    expect(ex.why).toMatch(/cloud service offering/)
+    expect(ex.why).toMatch(/certification authority/)
+    expect(ex.why).toMatch(/exact module and algorithm scope/)
+    // The old three-tier wording (Validated / Partial / No) is gone.
+    const all = `${ex.concept} ${ex.prompt} ${ex.options.join(' ')} ${ex.why}`
+    expect(all).not.toMatch(/\bPartial\b/)
+    expect(all).not.toMatch(/encode the certainty/i)
+  })
 })

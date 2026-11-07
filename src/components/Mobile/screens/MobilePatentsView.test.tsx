@@ -110,6 +110,28 @@ describe('MobilePatentsView', () => {
     expect(screen.queryByTestId('patent-detail-sheet')).not.toBeInTheDocument()
   })
 
+  it("the detail sheet links to the patent's own record, so the original claims can be read on the phone", () => {
+    const first = patentsData.filter(isPqcPatent)[0]
+    renderView()
+    fireEvent.click(screen.getByText(first.title).closest('button')!)
+    const link = screen.getByRole('link', { name: /Read the original claims on Google Patents/ })
+    // patentNumber already carries its US prefix, so the address is not doubled.
+    expect(link).toHaveAttribute(
+      'href',
+      `https://patents.google.com/patent/${first.patentNumber}/en`
+    )
+    expect(first.patentNumber).toMatch(/^US\d+$/)
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'))
+  })
+
+  it('the detail sheet no longer sends the reader to a laptop for the claim text', () => {
+    const first = patentsData.filter(isPqcPatent)[0]
+    renderView()
+    fireEvent.click(screen.getByText(first.title).closest('button')!)
+    expect(screen.queryByText(/full independent claim text/i)).not.toBeInTheDocument()
+  })
+
   it('opens the detail sheet from ?patent in the US-prefixed form', () => {
     const p = patentsData.filter(isPqcPatent)[0]
     renderView(`/patents?patent=${p.patentNumber}`)

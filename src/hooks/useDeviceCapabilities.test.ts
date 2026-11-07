@@ -8,9 +8,12 @@
  * usable (cross-origin isolation is the other half), and a container scenario is
  * not a capability *failure* — it runs somewhere else.
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { renderHook } from '@testing-library/react'
 import {
   resolveCapabilities,
+  detectWasmSimd,
+  useDeviceCapabilities,
   toolFitness,
   unmetRequirements,
   REQUIREMENT_LABELS,
@@ -32,6 +35,7 @@ const caps = (over: Partial<Parameters<typeof resolveCapabilities>[0]> = {}) =>
     hasSAB: true,
     crossOriginIsolated: true,
     hasWasm: true,
+    hasWasmSimd: true,
     browser: chromium,
     ...over,
   })
@@ -121,5 +125,56 @@ describe('unmetRequirements', () => {
     for (const req of ['sab', 'threads', 'wasm-simd', 'wide-viewport', 'chromium', 'container']) {
       expect(REQUIREMENT_LABELS[req as keyof typeof REQUIREMENT_LABELS]).toBeTruthy()
     }
+  })
+})
+
+describe('WebAssembly SIMD is tested, not inferred from WebAssembly existing', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('does not badge a SIMD-requiring tool as runnable on WASM without SIMD', () => {
+    const wasmNoSimd = caps({ hasWasm: true, hasWasmSimd: false })
+    expect(wasmNoSimd.wasm).toBe(true)
+    expect(wasmNoSimd.wasmSimd).toBe(false)
+    expect(toolFitness(['wasm-simd'], wasmNoSimd)).toBe('unmet')
+    expect(unmetRequirements(['wasm-simd'], wasmNoSimd)).toEqual(['wasm-simd'])
+  })
+
+  it('runs a SIMD-requiring tool where the SIMD probe succeeds, and not without WASM at all', () => {
+    expect(toolFitness(['wasm-simd'], caps({ hasWasm: true, hasWasmSimd: true }))).toBe('runs')
+    expect(toolFitness(['wasm-simd'], caps({ hasWasm: false, hasWasmSimd: true }))).toBe('unmet')
+  })
+
+  it('leaves a tool that needs only basic WASM runnable when SIMD is missing', () => {
+    // A device without SIMD is still a fine WASM host; only SIMD-declaring tools are affected.
+    expect(toolFitness([], caps({ hasWasmSimd: false }))).toBe('runs')
+    expect(toolFitness(['sab'], caps({ hasWasmSimd: false }))).toBe('runs')
+  })
+
+  it('the probe module is a valid fixed-width SIMD module on an engine that supports SIMD', () => {
+    // Guards the probe bytes themselves: a typo would make every device look SIMD-less.
+    expect(detectWasmSimd()).toBe(true)
+  })
+
+  it('reports no SIMD when the engine has WebAssembly but rejects the SIMD probe', () => {
+    vi.spyOn(WebAssembly, 'validate').mockReturnValue(false)
+    expect(typeof WebAssembly).toBe('object')
+    expect(detectWasmSimd()).toBe(false)
+  })
+
+  it('reports no SIMD when validation throws instead of answering', () => {
+    vi.spyOn(WebAssembly, 'validate').mockImplementation(() => {
+      throw new TypeError('unsupported')
+    })
+    expect(detectWasmSimd()).toBe(false)
+  })
+
+  it('the hook exposes WASM and SIMD separately on a WASM-without-SIMD device', () => {
+    vi.spyOn(WebAssembly, 'validate').mockReturnValue(false)
+    const { result } = renderHook(() => useDeviceCapabilities())
+    expect(result.current.wasm).toBe(true)
+    expect(result.current.wasmSimd).toBe(false)
+    expect(toolFitness(['wasm-simd'], result.current)).toBe('unmet')
   })
 })

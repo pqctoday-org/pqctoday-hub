@@ -25,6 +25,8 @@ import {
   hsm_aesWrapKey,
   hsm_aesGcmWrapKey,
   hsm_aesGcmUnwrapKey,
+  hsm_wrapKeyMech,
+  hsm_unwrapKeyMech,
   hsm_generateAESKeyPinnedTo,
   hsm_generateAESKeyWrapWithTrusted,
   hsm_importTrustedWrapKey,
@@ -36,6 +38,8 @@ import {
   buildTemplate,
   freeTemplate,
   CKM_AES_GCM,
+  CKM_AES_KEY_WRAP,
+  Pkcs11Error,
   CKA_ALLOWED_MECHANISMS,
   CKA_TRUSTED,
   CKA_CLASS,
@@ -80,11 +84,17 @@ const sizeRow = (
 
 const CKM_AES_ECB = 0x1081
 
+/** Scope statement for the AES-KW tamper step: shown in the step's refusal
+ * detail and as a lesson note, so the demonstration is read as a check of the
+ * integrity value only. */
+export const AES_KW_INTEGRITY_NOTE =
+  'AES key wrap carries an integrity check value; the unwrap is refused when the wrapped bytes were altered. This shows the check, not that the wrapped key is secret or authentic to a given sender.'
+
 export const V32_LESSONS: Pkcs11LessonV32[] = [
   {
     id: 'whats-new',
     n: 1,
-    tag: 'New in v3.2',
+    tag: 'Profiles + v3.2',
     tone: 'primary',
     title: 'Profiles and v3.2 validation indicators',
     blurb:
@@ -138,10 +148,11 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     ],
     notes: [
       'CKO_PROFILE is a real object, findable with the exact same C_FindObjects call used for keys — no special-case API.',
-      'Session validation flags describe the last completed operation under the applicable validation rules. Zero does not establish the absence of a module certificate; a set flag does not establish product certification.',
+      'Session validation flags describe the last completed operation under the validation rules that apply to the module (PKCS#11 v3.2 §4.15.3.1). Zero does not establish the absence of a module certificate; a set flag does not establish product certification.',
+      'This sample build performs no validation-authority checks, so the value it returns is sample behaviour, not a CMVP record.',
     ],
     whyItMatters:
-      'Use profile and mechanism discovery for API capabilities. For a FIPS validation claim, separately check the exact module, version and operational environment against its CMVP entry and security policy.',
+      'Use profile and mechanism discovery for API capabilities. For a FIPS validation claim, separately check the exact module, version, operational environment and approved configuration against its CMVP certificate and security policy.',
     tryRef: ['mechanisms'],
   },
   {
@@ -416,7 +427,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       },
     ],
     notes: [
-      'SLH-DSA has 12 parameter sets trading signature size against speed (this lesson uses SHA2-128s, the smallest/slowest). All 12 are implemented in this engine.',
+      'SLH-DSA has 12 parameter sets; each is designed for relatively small signatures (names ending in s) or relatively fast signing (names ending in f). This lesson uses SLH-DSA-SHA2-128s: a 32-byte public key and a 7,856-byte signature. SLH-DSA-SHA2-128f also has a 32-byte public key, but its signature is 17,088 bytes (FIPS 205, Table 2).',
       'Because it rests only on hash-function security, SLH-DSA is the fallback of choice if a future attack ever weakens confidence in lattice assumptions.',
     ],
     whyItMatters:
@@ -467,11 +478,10 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
             hedging: 'preferred',
           })
           const identical = toHex(s1) === toHex(s2)
-          if (identical)
-            throw new Error('Two hedged signatures were byte-identical — that would be unexpected.')
           return {
-            detail:
-              'Preferred signing returned different bytes for the same message in this sample. This comparison does not establish signature validity or randomness quality.',
+            detail: identical
+              ? 'Preferred signing returned identical bytes for the same message in this sample, which the specification permits (Preferred may produce a deterministic signature). This comparison does not establish signature validity or randomness quality.'
+              : 'Preferred signing returned different bytes for the same message in this sample, which the specification permits (Preferred may produce a hedged signature). This comparison does not establish signature validity or randomness quality.',
           }
         },
       },
@@ -579,7 +589,6 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
             { type: CKA_ENCRYPT, boolVal: true },
             { type: CKA_DECRYPT, boolVal: true },
             { type: CKA_EXTRACTABLE, boolVal: true },
-            { type: CKA_VALUE_LEN, ulongVal: 32 },
           ]
           const unwrapped = hsm_aesGcmUnwrapKey(
             M,
@@ -624,13 +633,52 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           return { detail: 'Unexpectedly unwrapped a tampered blob — this should not happen.' }
         },
       },
+      {
+        op: 'C_WrapKey + C_UnwrapKey (CKM_AES_KEY_WRAP, one byte altered)',
+        label: 'Wrap with classic AES-KW, alter one byte of the wrapped blob, and try to unwrap it',
+        expect: 'refusal',
+        expectedRefusal: {
+          operations: ['C_UnwrapKey'],
+          // Measured on the C++ and Rust engines (all 18 single-byte flips,
+          // 9 positions x 2 masks, on each): CKR_WRAPPED_KEY_INVALID only.
+          returnCodes: [0x110],
+        },
+        run: (hsm, results) => {
+          const M = requireModule(hsm)
+          const session = hsm.hSessionRef.current
+          const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
+          const targetHandle = Number((results[0]?.detail.match(/target=(\d+)/) ?? [])[1])
+          const wrapped = hsm_wrapKeyMech(M, session, CKM_AES_KEY_WRAP, wrapHandle, targetHandle)
+          const template: AttrDef[] = [
+            { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+            { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+            { type: CKA_TOKEN, boolVal: false },
+            { type: CKA_EXTRACTABLE, boolVal: true },
+          ]
+          // Control: the unaltered blob unwraps under the same key and template,
+          // so the refusal below can only come from the altered byte.
+          hsm_unwrapKeyMech(M, session, CKM_AES_KEY_WRAP, wrapHandle, wrapped, template)
+          const altered = wrapped.slice()
+          altered[0] ^= 0xff
+          try {
+            hsm_unwrapKeyMech(M, session, CKM_AES_KEY_WRAP, wrapHandle, altered, template)
+          } catch (error) {
+            if (error instanceof Pkcs11Error)
+              throw new Error(`${error.message} — ${AES_KW_INTEGRITY_NOTE}`)
+            throw error
+          }
+          return { detail: 'Unexpectedly unwrapped an altered blob — this should not happen.' }
+        },
+      },
     ],
     notes: [
       "AES-KW already protects wrapped-key integrity using its built-in unwrap check. Its format differs from GCM's separate IV and authentication tag; this is not an authenticated-versus-unauthenticated comparison.",
       'The same AEAD principle from lesson A4 (symmetric encryption) applies here: authenticated constructions turn tampering into a loud, detectable failure instead of silent corruption.',
+      'AES-KW is deterministic: wrapping the same key under the same wrapping key gives the same blob (NIST SP 800-38F). AES-GCM needs an IV that never repeats under one key (NIST SP 800-38D, Sec. 8); here the token generates it and returns it. GCM also authenticates associated data without encrypting it, which AES-KW through C_WrapKey has no input for. Both reject a modified blob on unwrap (for AES-KW, see RFC 3394, section 2.2.3), and this sample runs a tamper step on each path.',
+      AES_KW_INTEGRITY_NOTE,
     ],
     whyItMatters:
-      'Choose the wrapping mechanism required by the key-management profile, including its metadata and IV requirements. Check that the production tool rejects invalid wrapped inputs without returning a key; this sample demonstrates only the selected GCM path.',
+      'Choose the wrapping mechanism required by the key-management profile, including its metadata and IV requirements. Check that the production tool rejects invalid wrapped inputs without returning a key; this sample shows one altered byte refused on each of the AES-GCM and AES-KW paths.',
     tryRef: ['key_wrap'],
   },
   {
@@ -806,7 +854,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     tone: 'primary',
     title: 'Migration capstone',
     blurb:
-      'Inventory the sample token, create a PQC signing key alongside a classical signing key, then delete the local legacy key objects.',
+      'Inventory the sample token, create a PQC signing key alongside a classical signing key, then delete the local legacy private key and keep its public key.',
     setup:
       'This is a local key-lifecycle sample, not a complete deployment cutover. Production signing migration also needs a trust-transition plan and retention of verification material where historical signatures must remain verifiable.',
     steps: [
@@ -852,16 +900,17 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         },
       },
       {
-        op: 'C_DestroyObject (legacy key)',
-        label: 'Delete the local sample legacy key objects',
+        op: 'C_DestroyObject (legacy private key)',
+        label: 'Delete the local sample legacy private key and keep its public key',
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const d = results[1]?.detail ?? ''
           const legacyPriv = Number((d.match(/legacyPriv=(\d+)/) ?? [])[1])
           const legacyPub = Number((d.match(/legacyPub=(\d+)/) ?? [])[1])
           hsm_destroyObject(M, hsm.hSessionRef.current, legacyPriv)
-          hsm_destroyObject(M, hsm.hSessionRef.current, legacyPub)
-          return { detail: `Destroyed handles ${legacyPriv} and ${legacyPub}.` }
+          return {
+            detail: `Destroyed private handle ${legacyPriv}; kept public handle ${legacyPub} for verifying signatures already made.`,
+          }
         },
       },
       {
@@ -884,6 +933,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       "The successor key has its own identity (its own handle) — this is never an in-place conversion. That is true in PKCS#11 exactly as it was true in the KMIP playground's own migration lessons.",
       'The final refusal demonstrates that this local signing handle can no longer be used. Deleting local objects does not revoke trust in public keys held elsewhere or establish that every copy has been erased.',
       'This scenario concerns signing and future forgery risk. Harvest-now-decrypt-later concerns collected ciphertext and confidentiality; it is a different migration consideration.',
+      "This sample retires only the legacy private key, so no new legacy signatures are made, and keeps the legacy public-key object. In a signing migration the verification public key, and the certificate or other trust and time evidence that shows when it was valid, are kept for as long as signatures made with it must still be verified (NIST SP 800-57 Part 1 Rev. 5, Sec. 5.3.4: the recipient-usage period of a public signature-verification key can extend beyond the private key's originator-usage period).",
     ],
     whyItMatters:
       'Use the sample to understand local key lifecycle. Evaluate production tools for signing cutover, verifier trust updates, historical verification evidence and controlled private-key retirement; this sequence does not execute those wider activities.',
@@ -892,7 +942,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
   {
     id: 'trust-wrapping-policy',
     n: 10,
-    tag: 'New in v3.2',
+    tag: 'Existing policy',
     tone: 'warn',
     title: 'Trust & wrapping policy',
     blurb:
@@ -1007,7 +1057,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     notes: [
       'CKA_TRUSTED has exactly one live door in this engine: C_CreateObject (raw key import) on an SO session. C_GenerateKey silently drops the attribute instead of erroring — the generated key is created fine, just never actually trusted — and C_SetAttributeValue refuses it unconditionally, for every caller, forever, once an object exists.',
       "CKA_WRAP_WITH_TRUSTED is the ordinary, symmetric half of this policy — any caller can set it, at generation or afterward. The asymmetry is entirely on CKA_TRUSTED's side.",
-      'PKCS#11 v3.2 §4.7 defines a completely different trust mechanism (CKO_TRUST objects, CKT_TRUST_ANCHOR) for certificate chain validation — unrelated to CKA_TRUSTED/CKA_WRAP_WITH_TRUSTED (§4.2/§4.8) here, and not implemented in this engine at all. Lessons B1 and B8 already cover the session-level validation flags this build honestly reports as empty (§4.15.3.1); the equivalent key-level flags (§4.15.3.2, CKA_OBJECT_VALIDATION_FLAGS) are a separate, also-unimplemented gap.',
+      'CKA_TRUSTED and CKA_WRAP_WITH_TRUSTED were already defined in the PKCS#11 v2.40 specification; they are not new in v3.2. PKCS#11 v3.2 §4.7 defines a completely different trust mechanism (CKO_TRUST objects, CKT_TRUST_ANCHOR) for certificate chain validation — unrelated to CKA_TRUSTED/CKA_WRAP_WITH_TRUSTED (§4.2 Table 13 footnote 10 and the key-object attribute tables in §4.9 to §4.11) here, and not implemented in this engine at all. Lessons B1 and B8 already cover the session-level validation flags this build honestly reports as empty (§4.15.3.1); the equivalent key-level flags (§4.15.3.2, CKA_OBJECT_VALIDATION_FLAGS) are a separate, also-unimplemented gap.',
     ],
     whyItMatters:
       "Wrap-with-trusted is how a real deployment stops a compromised or rogue wrapping key from ever moving your most sensitive material — and this lesson's closing refusal is the point: a policy that even its own administrator can silently loosen isn't a policy. CKA_TRUSTED's one-way, creation-time-only door is what makes the guarantee real.",

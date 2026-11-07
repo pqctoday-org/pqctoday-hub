@@ -164,7 +164,7 @@ export const KEY_LIFECYCLE_FLOWS: FheFlow[] = [
         title: 'The security officer retires the old secret',
         engineNote: ROTATION_ENGINE,
         detail:
-          'Only after the rotation manifest was signed, and after the server reports that every stored ciphertext was switched; the token cannot check that itself. The token first commits a signed retirement record to its retirement ledger, a public object that cannot be modified, copied or destroyed and that names both lineages, the parameter hash and the time, and links to the rotation manifest by its descriptor hash. Only then does it destroy the old seed.',
+          'Only after the rotation manifest was signed, and after the server reports that every stored ciphertext was switched; the token cannot check that itself. The token first commits a signed retirement record to its retirement ledger, a public token object marked not modifiable, not copyable and not destroyable (the PKCS#11 attributes CKA_MODIFIABLE, CKA_COPYABLE and CKA_DESTROYABLE) that names both lineages, the parameter hash and the time, and links to the rotation manifest by its descriptor hash. Only then does it destroy the old seed. Those attributes stop calls through the token API; keeping the record through a restored backup or snapshot, a replaced token or a storage-level change, and retaining it for as long as policy requires, are separate production capabilities that this model does not demonstrate.',
         link: 'sig',
       },
       {
@@ -644,13 +644,13 @@ export const KEY_LIFECYCLE_IO: Record<LifecycleFlowId, StepIO[]> = {
       'A signed rotation manifest, and the report of the server that every stored ciphertext was switched.',
       'sign',
       'The security officer calls the retirement. The token acts only on a seed whose rotation manifest was signed. It commits a signed retirement record (both lineages, the parameter hash, the token time and the hash of the rotation descriptor), then destroys the old seed and clears every cache and session ledger that names it.',
-      'A public, immutable retirement record linked to the rotation manifest, and no old seed.'
+      'A public retirement record, linked to the rotation manifest, that the token API will not modify, copy or destroy, and no old seed on the token. Backups and snapshots are outside this model.'
     ),
     io(
       'The rotation key held at the server.',
       'transfer',
       'Delete the key. With the new secret it would reveal the old one.',
-      'No rotation key anywhere.'
+      'In this model the server’s active copy of the rotation key is gone. Copies in backups, logs or snapshots would need their own controls.'
     ),
   ],
   'ckks-shared-decrypt': [

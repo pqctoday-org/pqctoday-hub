@@ -1,4 +1,29 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+/**
+ * A follow-up question that fits the kind of document the name refers to. A standard,
+ * a policy, a validation program and a certification scheme answer different questions, so
+ * no name is asked about as if every one issued a certificate: FIPS 203/204/205 define
+ * algorithms (validated through CAVP), FIPS 140 defines module requirements (validated
+ * through CMVP), and the rest are policy, guidance or scheme documents whose scope needs
+ * checking first.
+ */
+function standardFollowUp(std: string): string {
+  if (/^FIPS\s*140-[23]$/i.test(std)) {
+    return `Which products have a CMVP module certificate under ${std}, and which algorithms does each cover?`
+  }
+  if (/^FIPS\s*20[345]$/i.test(std)) {
+    return `Which implementations have CAVP algorithm validation for ${std}, and is the algorithm inside a validated module?`
+  }
+  if (/^CNSA/i.test(std)) {
+    return `Does ${std} apply to my organization, and how is a product shown to meet it?`
+  }
+  if (/^(SP\s*800-|NIST\s*IR)/i.test(std)) {
+    return `What does ${std} require or recommend, and does it apply to my systems?`
+  }
+  // ETSI (standards body), ANSSI (authority that also runs evaluation schemes)
+  return `Is ${std} a standard, guidance or an evaluation scheme here, and does it apply to me?`
+}
+
 /** Extract entity names from assistant response and generate follow-up questions (fallback). */
 export function generateFollowUps(
   content: string,
@@ -30,7 +55,7 @@ export function generateFollowUps(
     const key = `std-${std.toLowerCase()}`
     if (!seen.has(key)) {
       seen.add(key)
-      followUps.push(`Which products have ${std} certification?`)
+      followUps.push(standardFollowUp(std))
     }
   }
 

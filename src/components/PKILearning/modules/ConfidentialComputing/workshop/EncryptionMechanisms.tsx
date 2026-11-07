@@ -9,6 +9,7 @@ import {
   XCircle,
   ArrowDown,
   Lock,
+  Info,
 } from 'lucide-react'
 import { MEMORY_ENCRYPTION_ENGINES } from '../data/attestationData'
 import type { QuantumImpact } from '../data/ccConstants'
@@ -16,8 +17,8 @@ import { Button } from '@/components/ui/button'
 
 const QUANTUM_IMPACT_BADGES: Record<QuantumImpact, { label: string; className: string }> = {
   none: {
-    label: 'Quantum Safe',
-    className: 'bg-status-success/20 text-status-success border-status-success/50',
+    label: 'No AES Key Documented',
+    className: 'bg-muted text-muted-foreground border-border',
   },
   'grover-halved': {
     label: 'Grover Halved',
@@ -32,61 +33,48 @@ const QUANTUM_IMPACT_BADGES: Record<QuantumImpact, { label: string; className: s
 /** Protection scopes across all engines for the comparison table. */
 const ALL_PROTECTION_SCOPES = [
   'DRAM contents',
-  'Cache lines (encrypted at LLC boundary)',
-  'Page table entries',
   'Full VM memory',
   'Register state (VMSA)',
-  'Interrupt descriptor table',
   'Secure World memory regions',
   'Secure peripherals',
-  'Crypto accelerator key slots',
   'Enclave memory (hypervisor-isolated)',
   'Vsock channel data',
   'KMS key material in-transit',
 ]
 
-function getNistLevelAssessment(keyWidth: number): {
+/**
+ * NIST defines security Categories 1, 3 and 5 by key search on AES-128, AES-192 and AES-256. The gate
+ * counts are NIST's 2016 estimates for key recovery with the attack circuit depth limited to
+ * MAXDEPTH. They are a published estimate, not a prediction of any real attack.
+ */
+function getNistCategory(keyWidth: number): {
   label: string
-  color: string
   description: string
+  gateEstimate: string
 } {
   if (keyWidth >= 256)
     return {
-      label: 'NIST Category 5',
-      color: 'text-status-success',
+      label: 'Category 5',
       description:
-        'AES-256-class strength — the highest NIST post-quantum security category. Retains a 128-bit effective margin even under Grover.',
+        'NIST Category 5 is defined as at least as hard to break as key search on AES-256. Categories 1 and 3 use AES-128 and AES-192.',
+      gateEstimate:
+        "NIST's 2016 estimate for AES-256 key recovery is about 2^298/MAXDEPTH quantum gates, or 2^272 classical gates.",
     }
   if (keyWidth >= 192)
     return {
-      label: 'NIST Category 3',
-      color: 'text-status-success',
+      label: 'Category 3',
       description:
-        'AES-192-class strength (NIST Category 3). Grover reduces the effective margin to ~96 bits.',
-    }
-  if (keyWidth >= 128)
-    return {
-      label: 'NIST Category 1',
-      color: 'text-status-warning',
-      description:
-        'AES-128-class strength (NIST Category 1). Grover reduces the effective margin to ~64 bits — prefer AES-256 for long-lived data.',
+        'NIST Category 3 is defined as at least as hard to break as key search on AES-192. Categories 1 and 5 use AES-128 and AES-256.',
+      gateEstimate:
+        "NIST's 2016 estimate for AES-192 key recovery is about 2^233/MAXDEPTH quantum gates, or 2^207 classical gates.",
     }
   return {
-    label: 'Insufficient',
-    color: 'text-status-error',
+    label: 'Category 1',
     description:
-      'Below all NIST post-quantum security categories. Immediate upgrade to AES-256 or larger keys required.',
+      'NIST Category 1 is defined as at least as hard to break as key search on AES-128. Categories 3 and 5 use AES-192 and AES-256.',
+    gateEstimate:
+      "NIST's 2016 estimate for AES-128 key recovery is about 2^170/MAXDEPTH quantum gates, or 2^143 classical gates.",
   }
-}
-
-function getRecommendation(keyWidth: number): string {
-  if (keyWidth >= 256)
-    return 'AES-256 is NIST Category 5 — the highest post-quantum security category — and retains 128-bit effective security under Grover. No immediate action needed for memory encryption key width.'
-  if (keyWidth >= 192)
-    return 'AES-192 is NIST Category 3. Grover reduces its effective security to ~96 bits, which remains a reasonable margin. Consider upgrading to AES-256 for future-proofing.'
-  if (keyWidth >= 128)
-    return 'AES-128 is NIST Category 1, but Grover reduces its effective security to ~64 bits. Upgrade to AES-256 memory encryption is recommended when next-generation CPUs become available.'
-  return 'Key width below 128 bits is critically insufficient even against classical attacks. Immediate upgrade required.'
 }
 
 export const EncryptionMechanisms: React.FC = () => {
@@ -99,11 +87,10 @@ export const EncryptionMechanisms: React.FC = () => {
 
   const groverCalc = useMemo(() => {
     const classicalBits = groverKeyWidth
-    const postQuantumBits = Math.floor(groverKeyWidth / 2)
-    const nist = getNistLevelAssessment(groverKeyWidth)
-    const recommendation = getRecommendation(groverKeyWidth)
-    const isSafe = postQuantumBits >= 128
-    return { classicalBits, postQuantumBits, nist, recommendation, isSafe }
+    // Exponent of the idealized sequential Grover iteration count, about 2^(n/2) for an n-bit key.
+    const idealGroverBits = groverKeyWidth / 2
+    const nist = getNistCategory(groverKeyWidth)
+    return { classicalBits, idealGroverBits, nist }
   }, [groverKeyWidth])
 
   /** Parse the sealing key derivation chain into arrow steps. */
@@ -176,16 +163,12 @@ export const EncryptionMechanisms: React.FC = () => {
                         <span className="text-foreground">{engine.granularity}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Integrity Protection:</span>{' '}
-                        {engine.integrityProtection ? (
-                          <span className="text-status-success font-bold">Yes</span>
-                        ) : (
-                          <span className="text-status-error font-bold">No</span>
-                        )}
+                        <span className="text-muted-foreground">Integrity / ownership checks:</span>{' '}
+                        <span className="text-foreground font-bold">{engine.integrityKind}</span>
                       </div>
                       {engine.integrityMechanism && (
                         <div>
-                          <span className="text-muted-foreground">Integrity Mechanism:</span>{' '}
+                          <span className="text-muted-foreground">Mechanism:</span>{' '}
                           <span className="text-foreground">{engine.integrityMechanism}</span>
                         </div>
                       )}
@@ -243,19 +226,21 @@ export const EncryptionMechanisms: React.FC = () => {
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <AlertTriangle size={16} className="text-status-warning" />
-          Grover Impact Calculator
+          Grover Impact Calculator (idealized illustration)
         </h4>
         <p className="text-xs text-muted-foreground mb-4">
-          Grover's algorithm provides a quadratic speedup for brute-force key search, effectively
-          halving the security level of symmetric ciphers. Adjust the AES key width to see the
-          post-quantum impact.
+          Grover&apos;s algorithm gives a quadratic speedup for exhaustive key search. This
+          calculator shows the idealized count, about 2<sup>n/2</sup> sequential iterations for an
+          n-bit key, as an illustration only. NIST notes that Grover&apos;s algorithm needs a long
+          serial computation, so a realistic attack runs many smaller instances in parallel, which
+          makes the speedup less dramatic. Pick one of the three AES key sizes to compare.
         </p>
 
         {/* Slider */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <label htmlFor="grover-key-width" className="text-xs text-muted-foreground">
-              AES Key Width
+              AES Key Size
             </label>
             <span className="text-sm font-bold font-mono text-foreground">
               {groverKeyWidth}-bit
@@ -264,7 +249,7 @@ export const EncryptionMechanisms: React.FC = () => {
           <input
             id="grover-key-width"
             type="range"
-            min={64}
+            min={128}
             max={256}
             step={64}
             value={groverKeyWidth}
@@ -272,54 +257,49 @@ export const EncryptionMechanisms: React.FC = () => {
             className="w-full accent-primary"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-            <span>64-bit</span>
-            <span>128-bit</span>
-            <span>192-bit</span>
-            <span>256-bit</span>
+            <span>AES-128</span>
+            <span>AES-192</span>
+            <span>AES-256</span>
           </div>
         </div>
 
         {/* Results */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-[10px] text-muted-foreground mb-1">Classical Security</div>
+            <div className="text-[10px] text-muted-foreground mb-1">Classical key search</div>
             <div className="text-lg font-bold font-mono text-foreground">
-              {groverCalc.classicalBits}-bit
+              2<sup>{groverCalc.classicalBits}</sup>
             </div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-[10px] text-muted-foreground mb-1">Post-Quantum Security</div>
-            <div
-              className={`text-lg font-bold font-mono ${groverCalc.isSafe ? 'text-status-success' : 'text-status-error'}`}
-            >
-              {groverCalc.postQuantumBits}-bit
+            <div className="text-[10px] text-muted-foreground mb-1">
+              Idealized Grover iterations
+            </div>
+            <div className="text-lg font-bold font-mono text-foreground">
+              2<sup>{groverCalc.idealGroverBits}</sup>
             </div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-[10px] text-muted-foreground mb-1">NIST Assessment</div>
-            <div className={`text-sm font-bold ${groverCalc.nist.color}`}>
-              {groverCalc.nist.label}
-            </div>
+            <div className="text-[10px] text-muted-foreground mb-1">NIST category (definition)</div>
+            <div className="text-sm font-bold text-foreground">{groverCalc.nist.label}</div>
           </div>
         </div>
 
-        {/* Assessment Box */}
-        <div
-          className={`rounded-lg p-3 border ${
-            groverCalc.isSafe
-              ? 'bg-status-success/10 border-status-success/30'
-              : 'bg-status-error/10 border-status-error/30'
-          }`}
-        >
+        {/* Reading guide: three separate things, no verdict */}
+        <div className="rounded-lg p-3 border border-border bg-muted/30">
           <div className="flex items-start gap-2">
-            {groverCalc.isSafe ? (
-              <CheckCircle size={14} className="text-status-success shrink-0 mt-0.5" />
-            ) : (
-              <XCircle size={14} className="text-status-error shrink-0 mt-0.5" />
-            )}
-            <div>
-              <p className="text-xs text-foreground mb-1">{groverCalc.nist.description}</p>
-              <p className="text-xs text-muted-foreground">{groverCalc.recommendation}</p>
+            <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="text-xs text-foreground">{groverCalc.nist.description}</p>
+              <p className="text-xs text-muted-foreground">{groverCalc.nist.gateEstimate}</p>
+              <p className="text-xs text-muted-foreground">
+                These are three separate things: the idealized iteration count above, NIST&apos;s
+                category definition, and the concrete runtime and cost of an attack, which depend on
+                circuit depth, error correction, parallelism and hardware and are not modelled here.
+                Whether a key size is acceptable is a policy choice about how long the data must
+                stay protected and what risk you accept; this calculator does not give a safe or
+                unsafe verdict.
+              </p>
             </div>
           </div>
         </div>
@@ -380,20 +360,22 @@ export const EncryptionMechanisms: React.FC = () => {
               ))}
               {/* Integrity row */}
               <tr className="border-b border-border">
-                <td className="p-3 text-muted-foreground font-bold">Integrity Protection</td>
+                <td className="p-3 text-muted-foreground font-bold">
+                  Cryptographic integrity (MAC)
+                </td>
                 {MEMORY_ENCRYPTION_ENGINES.map((engine) => (
                   <td key={engine.id} className="p-3 text-center">
                     {engine.integrityProtection ? (
                       <CheckCircle
                         size={14}
                         className="text-status-success mx-auto"
-                        aria-label="Has integrity protection"
+                        aria-label="Cryptographic integrity documented"
                       />
                     ) : (
                       <XCircle
                         size={14}
                         className="text-muted-foreground/40 mx-auto"
-                        aria-label="No integrity protection"
+                        aria-label="No cryptographic integrity documented"
                       />
                     )}
                   </td>

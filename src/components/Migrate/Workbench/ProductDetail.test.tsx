@@ -66,6 +66,21 @@ describe('ProductDetail', () => {
     expect(proof).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
+  it('strips the leading PSK label from the support detail, like Yes, No and Partial', () => {
+    render(
+      <ProductDetail
+        product={makeItem({
+          pqcStatusCanonical: 'psk',
+          pqcSupport: 'PSK (an optional pre-shared key can be mixed into the key exchange)',
+        })}
+      />
+    )
+    expect(
+      screen.getByText('an optional pre-shared key can be mixed into the key exchange')
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/^PSK/)).not.toBeInTheDocument()
+  })
+
   describe('Product Brief / User Manual links', () => {
     it('renders both links when both URLs are present', () => {
       render(

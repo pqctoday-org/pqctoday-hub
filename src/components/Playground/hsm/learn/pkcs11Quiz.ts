@@ -73,7 +73,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Two different random-byte samples prove that the generator and entropy source are secure',
       ],
       answer: 1,
-      why: 'Random outputs can repeat. Two different samples do not establish unpredictability or validate seeding. A deterministic random bit generator is not the same as hashing public inputs and treating the digest as fresh randomness.',
+      why: 'Random outputs can repeat. Two different samples are an illustration, not a conformance test: they do not establish unpredictability or validate seeding. A deterministic random bit generator (NIST SP 800-90A) computes its output from a seed; if the seed is kept secret and the algorithm is well designed, the output is unpredictable up to the instantiated security strength, and the generator is reseeded when its reseed interval is reached. The quality of the entropy source behind it is judged from its design and health tests (NIST SP 800-90B), not from comparing outputs. It is also not the same as hashing public inputs and treating the digest as fresh randomness.',
     },
   ],
   'sign-verify': [
@@ -181,7 +181,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'C_WrapKeyAuthenticated only works on RSA keys',
       ],
       answer: 1,
-      why: 'AES-KW checks integrity during unwrapping; it is not an unauthenticated alternative. The mechanisms have different formats and interface requirements. This GCM example uses empty associated data, so it does not demonstrate binding additional metadata.',
+      why: 'AES-KW checks integrity during unwrapping (RFC 3394 rejects a blob whose integrity value does not match); it is not an unauthenticated alternative. The mechanisms differ: AES-KW is deterministic, while AES-GCM needs an IV that never repeats under one key and can also authenticate associated data. This GCM example uses empty associated data, so it does not demonstrate binding additional metadata.',
     },
   ],
   'policy-pinning': [

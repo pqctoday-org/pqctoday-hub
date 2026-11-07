@@ -7,6 +7,7 @@ import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/assessment/orchestrator'
+import type { SharedReportView } from '@/hooks/useResolvedSharedReport'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 
 // Real data throughout. The target screenshot is a pastiche — real elements
@@ -36,12 +37,28 @@ function completeQuick(overrides: Partial<typeof QUICK_INPUT> = {}) {
   })
 }
 
-function renderView() {
+function renderView(sharedView?: SharedReportView) {
   return render(
     <MemoryRouter>
-      <MobileReportView />
+      <MobileReportView sharedView={sharedView} />
     </MemoryRouter>
   )
+}
+
+function quickSharedView(overrides: Partial<SharedReportView> = {}): SharedReportView {
+  return {
+    result: computeAssessment({
+      industry: QUICK_INPUT.industry,
+      currentCrypto: [],
+      dataSensitivity: QUICK_INPUT.dataSensitivity,
+      complianceRequirements: [],
+      migrationStatus: QUICK_INPUT.migrationStatus,
+      country: QUICK_INPUT.country,
+    }),
+    persona: null,
+    approximate: false,
+    ...overrides,
+  }
 }
 
 describe('MobileReportView', () => {
@@ -132,5 +149,35 @@ describe('MobileReportView', () => {
     completeQuick()
     renderView()
     expect(screen.getByText(/country timeline, risk breakdown, CBOM/i)).toBeInTheDocument()
+  })
+
+  it('does not invite the recipient of a shared quick report to finish the sender’s assessment', () => {
+    renderView(quickSharedView())
+    // The shared snapshot itself still renders...
+    expect(screen.getByText('Do this first')).toBeInTheDocument()
+    // ...but neither the upgrade prompt nor any link into the full-track flow does.
+    expect(screen.queryByText("You're viewing the fast report.")).not.toBeInTheDocument()
+    expect(screen.queryByText(/Unlock full report/i)).not.toBeInTheDocument()
+    const intoFullTrack = screen
+      .queryAllByRole('link')
+      .filter((a) => (a.getAttribute('href') ?? '').includes('mode=comprehensive'))
+    expect(intoFullTrack).toHaveLength(0)
+  })
+
+  it('also withholds the upgrade prompt from the shared sample report', () => {
+    renderView(quickSharedView({ sample: true }))
+    expect(screen.queryByText("You're viewing the fast report.")).not.toBeInTheDocument()
+    // The sample banner's own call to action is about the visitor’s own assessment.
+    expect(screen.getByText(/Run your own assessment to see yours/i)).toBeInTheDocument()
+  })
+
+  it('still offers the upgrade prompt on the viewer’s own quick report', () => {
+    completeQuick()
+    renderView()
+    expect(screen.getByText("You're viewing the fast report.")).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Unlock full report/i })).toHaveAttribute(
+      'href',
+      '/assess?mode=comprehensive'
+    )
   })
 })

@@ -25,10 +25,13 @@ export function LicenseSection() {
           <strong>GNU Affero General Public License v3.0 (AGPL-3.0-only)</strong>.
         </p>
         <p className="text-muted-foreground mt-2">
-          You are free to copy, distribute, and modify this software, provided that any
-          modifications are also released under the same license terms, including when you run a
-          changed version as a service for others. For use without these terms, PQC Today, LLC
-          offers a commercial licence on request (pqctoday@proton.me).
+          You may run this software and modify it for your own use. If you give copies to others,
+          modified or not, you must pass them on under the same license with their source. If you
+          modify it and let other people use your version over a network, the license requires you
+          to offer those users the source of your version. Changes you keep private are not covered
+          by these obligations. This is a summary only; the full license text governs. For use
+          without these terms, PQC Today, LLC offers a commercial licence on request
+          (pqctoday@proton.me).
         </p>
         <div className="mt-4 flex flex-col gap-2">
           <a

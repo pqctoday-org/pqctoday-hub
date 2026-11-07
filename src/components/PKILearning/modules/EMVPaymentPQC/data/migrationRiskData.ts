@@ -28,18 +28,20 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     id: 'mv-2',
     component: 'key-injection',
     componentLabel: 'Key Injection Facilities (KIF)',
-    currentCrypto: ['RSA-2048 key transport (BDK wrapping)'],
+    currentCrypto: [
+      'RSA-2048 key transport (terminal initial-key wrapping, fictional remote key loading case)',
+    ],
     vulnerability:
-      'DUKPT Base Derivation Keys are wrapped with RSA-2048 for transport to terminals. Recovering the BDK compromises all past and future transactions for terminals sharing that BDK.',
+      'In this module\u2019s fictional remote key loading case, the initial DUKPT key derived for a terminal is wrapped with RSA-2048 for transport to it; the Base Derivation Key stays inside the authorised HSM and is never loaded onto the terminal (PCI PIN Security Requirements v3.1, requirement 20-3). Recovering a wrapped initial key exposes that terminal\u2019s keys; recovering the BDK itself would compromise the keys of every terminal that shares it, which is why it is kept in the HSM.',
     severity: 'critical',
     hndlExposure: true,
     affectedScale: 'Millions of terminals worldwide',
     migrationEffort: 4,
     migrationTimeline: '2027-2030',
     pqcSolution: [
-      'ML-KEM-768 key encapsulation for BDK transport',
+      'ML-KEM-768 key encapsulation for terminal initial-key transport: the shared secret goes through a key-derivation function into an authenticated key wrap, with the peer authenticated and the device and key purpose bound in',
       'Requires HSM PQC migration first',
-      'Re-keying all terminals with PQC-wrapped BDKs',
+      'Re-keying terminals with new initial keys delivered under the new transport (the BDK is not sent to terminals)',
     ],
     dependencies: ['hsm-key-wrapping'],
     networkSpecific: [],
@@ -96,9 +98,12 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     id: 'mv-5',
     component: 'online-authorization',
     componentLabel: 'Online Authorization (TLS)',
-    currentCrypto: ['TLS 1.2/1.3 with RSA/ECDSA', 'ISO 8583 MAC (3DES/AES)'],
+    currentCrypto: [
+      'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures)',
+      'ISO 8583 MAC (3DES/AES)',
+    ],
     vulnerability:
-      'TLS connections between terminals, acquirers, networks, and issuers use RSA/ECDSA key exchange. Quantum computers can break these key exchanges, enabling man-in-the-middle attacks on authorization messages.',
+      'TLS connections between terminals, acquirers, networks, and issuers use (EC)DHE key exchange (RSA key transport in legacy TLS 1.2) and RSA/ECDSA certificate signatures. Quantum computers can break the key exchange, so recorded traffic can be decrypted later (harvest now, decrypt later); breaking the signatures separately allows impersonation, such as a man-in-the-middle on authorization messages, but only at the time the attacker can forge them.',
     severity: 'high',
     hndlExposure: true,
     // Scope stated rather than totalled: the per-network annual volumes in
@@ -124,7 +129,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     componentLabel: 'PIN Block Encryption',
     currentCrypto: ['3DES DUKPT (legacy)', 'AES DUKPT (migration underway)'],
     vulnerability:
-      'Moving PIN encryption from 3DES to AES is classical modernisation, not a quantum fix: EMVCo states that the choice of symmetric algorithm and key size is driven by classical attack feasibility rather than by Grover\u2019s algorithm, and that even 2-key Triple DES keeps a significant security margin against a Grover attack. Millions of terminals still use 3DES DUKPT. The quantum-exposed link is the RSA wrapping of the BDK at key injection.',
+      'Moving PIN encryption from 3DES to AES is classical modernisation, not a quantum fix: EMVCo states that the choice of symmetric algorithm and key size is driven by classical attack feasibility rather than by Grover\u2019s algorithm, and that even 2-key Triple DES keeps a significant security margin against a Grover attack. Millions of terminals still use 3DES DUKPT. In the fictional remote key loading case this module models, the quantum-exposed link is the RSA wrapping of the terminal\u2019s initial key at key injection.',
     severity: 'high',
     hndlExposure: true,
     affectedScale: 'Millions of terminals with 3DES DUKPT',
@@ -133,7 +138,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     pqcSolution: [
       'Classical modernisation alongside the PQC work: complete 3DES \u2192 AES DUKPT migration (industry direction; the PCI PIN Security v3.1 announcement (March 2021) says the effective dates for ISO Format 4 PIN blocks are suspended and are being reevaluated for the TDEA-to-AES migration, and the PTS listing definitions say POI v5 and higher devices supporting online PIN and HSM v4 and higher devices supporting PIN processing are required to support ISO PIN Block Format 4)',
       'AES-256 is allowed for contingency, but EMVCo sees no need for it on quantum grounds',
-      'ML-KEM-768 for BDK key transport at KIFs',
+      'ML-KEM-768 as the key-establishment step for terminal initial-key transport at KIFs, followed by a KDF and an authenticated key wrap (not direct encryption of the key)',
     ],
     dependencies: ['hsm-key-wrapping', 'key-injection'],
     networkSpecific: [],
@@ -166,7 +171,10 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     id: 'mv-8',
     component: 'ecommerce-tls',
     componentLabel: 'E-Commerce Payment Gateway TLS',
-    currentCrypto: ['TLS 1.2/1.3 RSA/ECDSA', 'Payment gateway certificates'],
+    currentCrypto: [
+      'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures)',
+      'Payment gateway certificates',
+    ],
     vulnerability:
       'Card-not-present transactions transmit PAN + CVV over TLS. HNDL attacks can harvest encrypted payment data for future decryption.',
     severity: 'high',
@@ -188,21 +196,21 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     component: '3ds-authentication',
     componentLabel: '3-D Secure Authentication',
     currentCrypto: [
-      'ECDSA P-256 (challenge signing)',
+      'ECDSA P-256 signing (illustrative assumption, not verified against the EMV 3DS specification)',
       'TLS (server-to-server)',
       'X.509 certificates',
     ],
     vulnerability:
-      '3DS 2.x uses ECDSA for challenge-response signing and device binding. Quantum computers can forge 3DS authentication, enabling unauthorized card-not-present transactions.',
+      'Illustrative and unverified against the EMV 3DS specification: this module assumes some 3DS message authentication uses ECDSA. If a deployment signs 3DS messages that way, a quantum computer could forge them and enable unauthorized card-not-present transactions. Browser-based and app-based flows, TLS between the parties, issuer-side signing and any SDK key agreement are different mechanisms, and EMVCo\u2019s public overview names no algorithm: check the current EMV 3DS specification.',
     severity: 'medium',
     hndlExposure: false,
     affectedScale: 'All 3DS-enabled merchants and issuers globally',
     migrationEffort: 3,
     migrationTimeline: '2027-2030',
     pqcSolution: [
-      'ML-DSA-44 for 3DS challenge signing',
-      'Hybrid ML-KEM TLS for 3DS server-to-server',
-      'Requires EMVCo 3DS spec update',
+      'If a signing step exists: a PQC signature such as ML-DSA-44, once the specification allows it',
+      'Hybrid ML-KEM TLS for 3DS server-to-server links',
+      'Requires an EMV 3DS specification update, which EMVCo controls',
     ],
     dependencies: ['ecommerce-tls'],
     networkSpecific: [],

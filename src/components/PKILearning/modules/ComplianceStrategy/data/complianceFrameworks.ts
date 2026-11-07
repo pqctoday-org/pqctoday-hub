@@ -152,7 +152,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'eu-cert-1',
         category: 'Certification',
         requirement:
-          'Cloud services using PQC should pursue EU Cybersecurity Act (EUCS) certification alignment',
+          'Check whether any European cybersecurity certification scheme, such as the proposed EUCS, applies to your cloud service and what it says about cryptography; using PQC does not by itself create a certification duty',
         framework: 'EU Cybersecurity Act',
         commonGap: false,
         effort: 'High',
@@ -222,11 +222,10 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'ca-pol-1',
         category: 'Policy',
         requirement:
-          'Update Protected B and Protected C data handling to include PQC for key establishment',
+          'Ask the Canadian Centre for Cyber Security which Protected B and Protected C guidance and dates apply to your systems before planning key-establishment changes; this lesson does not assert a Protected B or C PQC deadline',
         framework: 'ITSP.40.111',
         commonGap: true,
         effort: 'Medium',
-        deadline: 2030,
       },
     ],
   },
@@ -258,7 +257,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'sg-pol-1',
         category: 'Policy',
         requirement:
-          'Financial institutions must brief MAS on quantum risk exposure and provide migration timeline',
+          'Ask MAS, or check its current notices, whether your institution is expected to report quantum risk exposure or a migration timeline; this lesson does not assert such a duty',
         framework: 'MAS TRM Guidelines',
         commonGap: true,
         effort: 'Low',
@@ -319,7 +318,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'de-alg-1',
         category: 'Algorithm',
         requirement:
-          'Implement BSI TR-02102 recommended hybrid PQC transition: ML-KEM + X25519 for key agreement',
+          'Plan hybrid key agreement as BSI TR-02102-1 (version 2026-01) recommends: a quantum-safe KEM combined with a classical mechanism through a recommended key-combination method. BSI recommends sole classical key agreement only to the end of 2031 (end of 2030 for very high protection needs). BSI advises against Classic McEliece for new developments in its 29 September 2026 notes. Check TR-02102-2 for TLS groups',
         framework: 'BSI TR-02102',
         csvId: 'BSI-TR-02102',
         commonGap: false,
@@ -367,7 +366,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'fr-cert-1',
         category: 'Certification',
         requirement:
-          'OIV/OSE critical infrastructure entities must apply ANSSI PQC guidance under LPM requirements',
+          'If you are an OIV or OSE, confirm with ANSSI and your sector rules whether ANSSI PQC guidance binds you; the guidance itself is a recommendation, not an LPM provision',
         framework: 'ANSSI / LPM',
         csvId: 'ANSSI-CERT',
         commonGap: true,

@@ -435,8 +435,12 @@ const MpcithVisual: React.FC = () => {
         <p className="text-xs text-muted-foreground italic leading-relaxed">
           Signing simulates all N parties locally and commits to each computation. The Fiat-Shamir
           challenge then chooses which N−1 to open; the unopened party hides the secret. Verifier
-          replays the opened parties and checks every commitment. Security reduces to the symmetric
-          primitives that drive the simulated parties (AES for FAEST, hash-based for SDitH).
+          replays the opened parties and checks every commitment. This is the classic picture; the
+          round-two candidates use refinements of it (FAEST uses VOLE-in-the-Head, MQOM uses
+          Threshold-Computation-in-the-Head). The commitments are built from symmetric primitives,
+          but the hard problem differs by candidate: AES for FAEST, the multivariate-quadratic (MQ)
+          problem for MQOM and syndrome decoding for SDitH. MQOM’s ROM and QROM security proofs
+          might not yet be considered mature or complete (NIST IR 8610).
         </p>
       </div>
     </MotionConfig>
@@ -851,10 +855,12 @@ const IsogenyVisual: React.FC = () => {
 
 // ── Lattice visual (HAWK-specific split) ────────────────────────────────────
 /**
- * Visualises the actual implementation contrast between Falcon and HAWK:
- *   - Left half: lattice intuition — short vector in a coset of an integer lattice.
- *   - Right half: top sub-panel shows Falcon's float Gaussian sampler;
- *                 bottom sub-panel shows HAWK's integer Babai-style rounding.
+ * Visualises the implementation contrast between Falcon and HAWK:
+ *   - Left half: geometric intuition only — a short vector in a coset of a lattice.
+ *   - Right half: both signers draw the short vector at random from a discrete
+ *                 Gaussian. Top sub-panel: Falcon, whose sampler uses floating point.
+ *                 Bottom sub-panel: HAWK, which samples from a coset of the integers
+ *                 using precomputed integer tables and no floating point.
  */
 const LatticeVisual: React.FC = () => {
   const cols = 5
@@ -863,7 +869,8 @@ const LatticeVisual: React.FC = () => {
     <MotionConfig reducedMotion="user">
       <div className="space-y-3">
         <div className="text-sm font-semibold text-primary mb-1">
-          Both schemes sample a short vector — Falcon needs floats, HAWK uses integers only
+          Both schemes draw a random short vector from a discrete Gaussian — Falcon with floating
+          point, HAWK with integer tables only
         </div>
         <svg viewBox="0 0 600 240" className="w-full h-56">
           <defs>
@@ -874,7 +881,7 @@ const LatticeVisual: React.FC = () => {
 
           {/* LEFT half — lattice intuition */}
           <text x={150} y={18} textAnchor="middle" className="fill-primary text-[10px] font-bold">
-            Lattice intuition
+            Geometric intuition (not the algorithm)
           </text>
           {Array.from({ length: cols * rows }).map((_, i) => {
             const cx = 50 + (i % cols) * 50
@@ -967,7 +974,7 @@ const LatticeVisual: React.FC = () => {
 
           {/* RIGHT half — top sub-panel: Falcon (Gaussian / float) */}
           <text x={440} y={42} textAnchor="middle" className="fill-warning text-[10px] font-bold">
-            Falcon — float Gaussian sampling
+            Falcon — random discrete Gaussian draw
           </text>
           <motion.path
             d="M 310 110 Q 350 110, 380 70 T 450 70 Q 510 70, 530 110 L 560 110"
@@ -988,15 +995,15 @@ const LatticeVisual: React.FC = () => {
           {/* Float sample tick */}
           <line x1={435} y1={70} x2={435} y2={110} className="stroke-warning" strokeWidth={1.5} />
           <text x={435} y={62} textAnchor="middle" className="fill-warning text-[8px] font-mono">
-            3.14159…
+            z ∈ ℤ
           </text>
           <text x={435} y={128} textAnchor="middle" className="fill-muted-foreground text-[8px]">
-            float — constant-time hard
+            integer z, drawn with 53-bit floating-point arithmetic
           </text>
 
           {/* RIGHT half — bottom sub-panel: HAWK (integer / discrete) */}
           <text x={440} y={158} textAnchor="middle" className="fill-primary text-[10px] font-bold">
-            HAWK — integer Babai rounding
+            HAWK — random discrete Gaussian, integers only
           </text>
           {/* Integer lattice tick row */}
           <line x1={310} y1={195} x2={560} y2={195} className="stroke-border" strokeWidth={1} />
@@ -1009,8 +1016,8 @@ const LatticeVisual: React.FC = () => {
                   y1={190}
                   x2={x}
                   y2={200}
-                  className="stroke-foreground/40"
-                  strokeWidth={1}
+                  className={(i - 3) % 2 !== 0 ? 'stroke-primary' : 'stroke-foreground/40'}
+                  strokeWidth={(i - 3) % 2 !== 0 ? 2 : 1}
                 />
                 <text
                   x={x}
@@ -1023,20 +1030,10 @@ const LatticeVisual: React.FC = () => {
               </g>
             )
           })}
-          {/* Continuous target above ticks */}
-          <motion.circle
-            cx={444}
-            cy={183}
-            r={3}
-            className="fill-warning"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4, duration: 0.3 }}
-          />
-          <text x={444} y={178} textAnchor="middle" className="fill-warning text-[8px] font-mono">
-            t
+          <text x={435} y={178} textAnchor="middle" className="fill-muted-foreground text-[8px]">
+            coset 2ℤ+1 (odd integers) · weights fall off around 0
           </text>
-          {/* Rounded integer choice */}
+          {/* Randomly drawn integer from the coset */}
           <motion.circle
             cx={448}
             cy={195}
@@ -1047,30 +1044,26 @@ const LatticeVisual: React.FC = () => {
             animate={{ scale: 1 }}
             transition={{ delay: 1.7, duration: 0.3 }}
           />
-          <motion.path
-            d="M 444 184 L 448 192"
-            className="stroke-primary"
-            strokeWidth={1.5}
-            markerEnd="url(#arrow-lat)"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 1.5, duration: 0.3 }}
-          />
           <text x={502} y={195} textAnchor="middle" className="fill-primary text-[8px] font-mono">
-            round → 1
+            x = 1 (random draw)
           </text>
           <text x={435} y={233} textAnchor="middle" className="fill-muted-foreground text-[8px]">
-            all integer arithmetic — constant-time easy
+            precomputed integer tables, no floating point
           </text>
         </svg>
         <p className="text-xs text-muted-foreground italic leading-relaxed">
-          Both schemes solve the same problem — produce a short vector in a coset defined by a hash
-          of the message. Falcon (FN-DSA) samples from a continuous Gaussian distribution and rounds
-          to the lattice, which needs floating-point arithmetic that's notoriously hard to make
-          constant-time. HAWK reformulates the problem on a rank-2 module lattice with a Gram matrix
-          as the public key, and uses integer-only Babai-style rounding — 555 B signatures at
-          security category 1, and, per NIST IR 8610, a primary advantage over Falcon in its
-          reliance on integer-only arithmetic.
+          The left panel is geometric intuition only. Both schemes are hash-and-sign: the message
+          hash fixes a coset of a lattice, and the signer must output a short vector in it. That
+          vector is drawn at random from a discrete Gaussian, not found by deterministic rounding.
+          Falcon (FN-DSA) uses a fast Fourier sampler whose core is a randomised rounding according
+          to a discrete Gaussian over the integers, computed with 53-bit floating-point arithmetic.
+          HAWK draws its vector from a discrete Gaussian over a coset of the integers using
+          precomputed integer tables, then derives the signature with its secret basis; signatures
+          are 555 B at security category 1, and, per NIST IR 8610, a primary advantage over Falcon
+          is its reliance on integer-only arithmetic. Historical example: HAWK was withdrawn from
+          the NIST process on 29 July 2026 after a new attack roughly halved the lattice-reduction
+          block size needed to recover an equivalent private key, and its authors say it is insecure
+          and should not be used.
         </p>
       </div>
     </MotionConfig>
