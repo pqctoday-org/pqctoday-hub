@@ -42,6 +42,7 @@ import {
   EIDAS_SCENARIO_SCOPE,
   EXTENDED_ARTIFACTS,
   MANDATE_LABEL,
+  MANDATE_SCOPE_NOTE,
   MATRIX_SCHEMES,
   PASS_CONDITIONS,
   PATH_ARTIFACT,
@@ -681,6 +682,9 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
               </li>
             ))}
           </ul>
+          <p className="mt-1 text-muted-foreground" data-testid="mandate-scope-note">
+            {MANDATE_SCOPE_NOTE}
+          </p>
           <p className="mt-1 text-muted-foreground">
             {ANCHOR_CUSTOMER_PROFILES['payment-processor'].deadlineNote}
           </p>

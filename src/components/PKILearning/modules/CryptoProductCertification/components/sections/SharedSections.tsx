@@ -22,6 +22,7 @@ import {
   LIFECYCLE_STEPS,
   MAINTAIN_VALID,
   MANDATE_LABEL,
+  MANDATE_SCOPE_NOTE,
   NO_SHORTCUT,
   PQC_CENTRAL_ANSWER,
   PQC_HARDWARE_CHANGES,
@@ -1062,6 +1063,9 @@ export const TransitionDeadlines = () => {
           </tbody>
         </table>
       </div>
+      <p className="text-xs text-muted-foreground" data-testid="mandate-scope-note">
+        {MANDATE_SCOPE_NOTE}
+      </p>
       <p className="text-xs text-muted-foreground">
         The payment processor and the secure-element manufacturer have no row of their own: payment
         requirements come from PCI SSC and the brands (the v5.0 announcement and the listing

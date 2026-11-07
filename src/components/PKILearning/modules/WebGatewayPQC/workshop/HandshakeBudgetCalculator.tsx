@@ -7,6 +7,8 @@ import {
   GATEWAY_SIG_OPTIONS,
   HANDSHAKE_MITIGATIONS,
   GATEWAY_BENCHMARKS,
+  GATEWAY_FIGURES_NOTE,
+  HANDSHAKE_MITIGATIONS_NOTE,
   calculateHandshakeSize,
   applyMitigations,
 } from '../data/gatewayData'
@@ -197,6 +199,9 @@ export const HandshakeBudgetCalculator: React.FC = () => {
       {/* Mitigations */}
       <div className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-bold text-foreground">Apply Mitigations</h3>
+        <p className="text-xs text-muted-foreground" data-testid="handshake-mitigations-note">
+          {HANDSHAKE_MITIGATIONS_NOTE}
+        </p>
         <div className="space-y-2">
           {HANDSHAKE_MITIGATIONS.map((m) => (
             <label
@@ -269,6 +274,9 @@ export const HandshakeBudgetCalculator: React.FC = () => {
       {/* Gateway Capacity Benchmarks */}
       <div className="bg-muted/30 rounded-lg p-4 border border-border">
         <div className="text-xs font-bold text-foreground mb-3">Gateway Capacity Benchmarks</div>
+        <p className="text-xs text-muted-foreground mb-3" data-testid="gateway-figures-note">
+          {GATEWAY_FIGURES_NOTE}
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>

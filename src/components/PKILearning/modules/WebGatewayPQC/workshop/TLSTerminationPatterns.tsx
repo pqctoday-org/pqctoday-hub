@@ -3,7 +3,11 @@
 import React, { useState, useMemo } from 'react'
 import { Eye, EyeOff, Lock, Unlock, ArrowRight, ToggleLeft, ToggleRight } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { TERMINATION_PATTERNS, type TerminationPattern } from '../data/gatewayData'
+import {
+  GATEWAY_FIGURES_NOTE,
+  TERMINATION_PATTERNS,
+  type TerminationPattern,
+} from '../data/gatewayData'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
@@ -249,6 +253,10 @@ export const TLSTerminationPatterns: React.FC = () => {
           </div>
         </div>
       )}
+
+      <p className="text-xs text-muted-foreground" data-testid="gateway-figures-note">
+        {GATEWAY_FIGURES_NOTE}
+      </p>
 
       {/* Comparison Table */}
       <div className="bg-muted/30 rounded-lg p-4 border border-border">
