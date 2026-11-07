@@ -29500,6 +29500,36 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "aws-secrets-manager",
+      "refId": "aws-secrets-manager",
+      "file": "aws-secrets-manager-1b73f7aa-fbd6a77c.html",
+      "sizeBytes": 16564,
+      "content_type": "text/html",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/pqtls.html",
+      "sha256": "fbd6a77cf818f04e5761d00e7e9715065d7232021431e4d142364300c214f2cb",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T22:44:37.009971+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pure-storage-purity-fa-6-6",
+      "refId": "pure-storage-purity-fa-6-6",
+      "file": "pure-storage-purity-fa-6-6-55f4dd45-f4fa7a84.html",
+      "sizeBytes": 202793,
+      "content_type": "text/html",
+      "url": "https://www.storagereview.com/review/q-day-is-coming-is-your-storage-quantum-safe",
+      "sha256": "f4fa7a845d4d11724119c0999eddf9d1c9506f94fc36f8a6ab6739f51d37afdd",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T22:44:37.451662+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
