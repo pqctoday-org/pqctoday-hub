@@ -4,9 +4,9 @@ import {
   DIMENSIONS,
   buildScorecardMarkdown,
   computeVendorScorecards,
-  hybridSupportLevel,
   scoreDimension,
 } from './VendorScorecardBuilder'
+import { hybridSupportLevel } from '@/data/hybridSupport'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 
 const hybrid = DIMENSIONS.find((d) => d.id === 'hybrid-mode')!

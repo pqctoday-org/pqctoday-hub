@@ -4,7 +4,6 @@ import { render, screen, fireEvent, within, waitFor } from '@testing-library/rea
 import '@testing-library/jest-dom'
 import {
   SupplyChainRiskMatrix,
-  hybridSupportLevel,
   computeDomainStats,
   matrixRiskLevel,
   threatImpactLevel,
@@ -14,6 +13,7 @@ import {
   computeNoRiskDomains,
   computeMatrixEntries,
 } from './SupplyChainRiskMatrix'
+import { hybridSupportLevel } from '@/data/hybridSupport'
 import { DOMAINS, type DomainId } from '@/data/migrationAssets'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { SoftwareItem } from '@/types/MigrateTypes'

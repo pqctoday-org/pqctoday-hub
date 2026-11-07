@@ -12,6 +12,7 @@ import { migrateDomainHref } from '@/utils/migrateLinks'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
+import { hybridSupportLevel } from '@/data/hybridSupport'
 import { cpeByProduct } from '@/data/cpeXrefData'
 import { loadCveSnapshot } from '@/data/cveSnapshotData'
 import { threatsData, type ThreatData } from '@/data/threatsData'
@@ -142,27 +143,6 @@ function renderPqcBadge(support: string) {
       {support || 'Unknown'}
     </span>
   )
-}
-
-/** What the catalogue's structured hybrid fields say about one product. */
-export type HybridSupportLevel = 'yes' | 'partial' | 'no' | 'not-assessed'
-
-/**
- * Hybrid support from the catalogue's structured fields only, never the free-text
- * description (which can say hybrid is not offered). A hybrid TLS group or a hybrid
- * KEM / composite signature API reads 'yes'; support that is only experimental reads
- * 'partial'; a structured entry that lists no hybrid support reads 'no'; a product
- * with no structured entry reads 'not-assessed'.
- */
-export function hybridSupportLevel(item: SoftwareItem): HybridSupportLevel {
-  const kem = item.hybridKemSupport ?? []
-  const sig = item.hybridSigSupport
-  if (kem.length === 0 && !sig) return 'not-assessed'
-  if (kem.some((t) => t === 'tls-default' || t === 'tls-optin' || t === 'api') || sig === 'api') {
-    return 'yes'
-  }
-  if (kem.includes('api-experimental') || sig === 'api-experimental') return 'partial'
-  return 'no'
 }
 
 /** The per-product badge: only a structured hybrid entry earns one. */
@@ -586,7 +566,7 @@ export function computeDomainStats(
     if (!products || products.length === 0) continue
 
     const total = products.length
-    const pqcReady = products.filter((p) => isPqcReady(p.pqcSupport)).length
+    const pqcReady = products.filter((p) => isPqcReady(p)).length
     const fipsValid = products.filter((p) => isFips1403Certified(p)).length
     const hybridLevels = products.map(hybridSupportLevel)
     const hybrid = hybridLevels.filter((l) => l === 'yes').length

@@ -470,7 +470,7 @@ function supplyChainMatrixSample() {
   for (const item of items) cbomBuckets[mapToAssetClass(item)].push(item)
 
   const totalProducts = items.length
-  const pqcReadyCount = items.filter((i) => isPqcReady(i.pqcSupport)).length
+  const pqcReadyCount = items.filter((i) => isPqcReady(i)).length
   const fipsValidatedCount = items.filter((i) => isFips1403Certified(i)).length
 
   return buildSupplyChainMarkdown({
@@ -569,7 +569,7 @@ function migrationVerificationState(sector: DemoSector): VerifyState {
 function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
   const industry = sector === 'financial' ? 'Finance & Banking' : 'Healthcare'
   const industryThreats = threatsData.filter((t) => t.industry === industry)
-  const pqcReadyCount = softwareData.filter((i) => isPqcReady(i.pqcSupport)).length
+  const pqcReadyCount = softwareData.filter((i) => isPqcReady(i)).length
   const fipsValidatedCount = softwareData.filter((i) => isFips1403Certified(i)).length
   return {
     threatsByIndustry: new Map(),

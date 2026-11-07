@@ -11,6 +11,7 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import { softwareData } from '@/data/migrateData'
 import { vendorMap } from '@/data/vendorData'
 import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
+import { hybridSupportLevel } from '@/data/hybridSupport'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   Info,
@@ -44,23 +45,6 @@ export interface Dimension {
   catalogueLevel?: (item: SoftwareItem) => CatalogueLevel
 }
 
-/**
- * Hybrid support from the catalogue's structured fields only (never the free-text
- * description). A hybrid TLS group or a hybrid KEM / composite signature API reads
- * 'yes'; support that is only experimental reads 'partial'; a structured entry that
- * lists no hybrid support reads 'no'; no structured entry at all reads 'not-assessed'.
- */
-export function hybridSupportLevel(item: SoftwareItem): CatalogueLevel {
-  const kem = item.hybridKemSupport ?? []
-  const sig = item.hybridSigSupport
-  if (kem.length === 0 && !sig) return 'not-assessed'
-  if (kem.some((t) => t === 'tls-default' || t === 'tls-optin' || t === 'api') || sig === 'api') {
-    return 'yes'
-  }
-  if (kem.includes('api-experimental') || sig === 'api-experimental') return 'partial'
-  return 'no'
-}
-
 export const DIMENSIONS: Dimension[] = [
   {
     id: 'pqc-algorithm-support',
@@ -68,7 +52,7 @@ export const DIMENSIONS: Dimension[] = [
     description:
       'Catalogue entry says the product supports NIST-standardized PQC algorithms (not a measure of deployment)',
     weight: 0.25,
-    autoDetect: (item) => isPqcReady(item.pqcSupport),
+    autoDetect: (item) => isPqcReady(item),
   },
   {
     id: 'fips-validation',

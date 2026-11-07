@@ -19,6 +19,8 @@ import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { ScorecardDimension } from '@/components/PKILearning/common/executive'
 import { getKpiTarget } from './kpiTargets'
 import { classifyProductDomain, DOMAINS } from './migrationAssets'
+import { canonicalToAvailability, type CatalogAvailability } from './catalogStatus'
+import { hybridSupportLevel } from './hybridSupport'
 
 // ── Persona scope ────────────────────────────────────────────────────────
 // Only personas who can reach the Business Center get a KPI variant.
@@ -94,17 +96,44 @@ export interface KpiDefinition {
 }
 
 // ── PQC readiness tiers (for weighted vendor readiness) ──────────────────
+/** The two catalogue fields that decide a product's PQC readiness. */
+export interface PqcReadinessInput {
+  pqcSupport?: string | null
+  /** Normalised status: available | partial | psk | roadmap | none | unknown. */
+  pqcStatusCanonical?: string | null
+}
+
+/** Readiness weight per canonical status. `unverified` has no entry: it falls back to the text. */
+const CANONICAL_READINESS: Record<Exclude<CatalogAvailability, 'unverified'>, number> = {
+  available: 1.0,
+  partial: 0.7,
+  psk: 0.4,
+  roadmap: 0.2,
+  none: 0,
+}
+
 /**
- * Maps free-form `pqcSupport` strings in the product catalog to a readiness
- * weight in [0,1]. The catalog CSV uses narrative values like
+ * Maps a catalogue product to a readiness weight in [0,1].
+ *
+ * The normalised status (`pqcStatusCanonical`) decides when the catalogue
+ * records one: available 1.0, partial 0.7, psk 0.4, roadmap 0.2, none 0. A
+ * blank or unrecognised status (`unverified`) falls back to the free-text
+ * `pqcSupport` rule, whose narrative values look like
  *   "Yes (ML-KEM production)" → Full
  *   "Partial (ML-KEM planned)" → Hybrid
  *   "Planned (ML-DSA 2026)" → Roadmap
  *   "PSK (pre-shared key only)" → Pilot-level, below the ready line
  *   "None" / "No" → None
- * Keyword heuristics below keep the mapping resilient to narrative drift.
+ * The keyword heuristics keep that fallback resilient to narrative drift.
  */
-export function pqcReadinessTier(pqcSupport: string | undefined | null): number {
+export function pqcReadinessTier(item: PqcReadinessInput): number {
+  const availability = canonicalToAvailability(item.pqcStatusCanonical ?? undefined)
+  // eslint-disable-next-line security/detect-object-injection
+  if (availability !== 'unverified') return CANONICAL_READINESS[availability]
+  return pqcReadinessTierFromText(item.pqcSupport)
+}
+
+function pqcReadinessTierFromText(pqcSupport: string | undefined | null): number {
   if (!pqcSupport) return 0
   const s = pqcSupport.toLowerCase().trim()
   if (s === 'none' || s === 'no' || s.startsWith('no ')) return 0
@@ -128,8 +157,8 @@ export function pqcReadinessTier(pqcSupport: string | undefined | null): number 
  * (tier ≥ 0.7); planned, pilot and narrative-only values do NOT count (they used
  * to, which over-stated readiness).
  */
-export function isPqcReady(pqcSupport: string | undefined | null): boolean {
-  return pqcReadinessTier(pqcSupport) >= 0.7
+export function isPqcReady(item: PqcReadinessInput): boolean {
+  return pqcReadinessTier(item) >= 0.7
 }
 
 /**
@@ -201,10 +230,7 @@ function clamp(v: number, lo = 0, hi = 100): number {
 // Vendor readiness (tiered, industry-aware).
 const vendorReadinessAuto: KpiAutoScoreFn = (data) => {
   if (data.myProducts.length === 0) return null
-  const total = data.myProducts.reduce(
-    (sum, product) => sum + pqcReadinessTier(product.pqcSupport),
-    0
-  )
+  const total = data.myProducts.reduce((sum, product) => sum + pqcReadinessTier(product), 0)
   return Math.round((total / data.myProducts.length) * 100)
 }
 
@@ -249,16 +275,22 @@ const riskPostureAuto: KpiAutoScoreFn = (data) => {
   return clamp(100 - data.riskScore)
 }
 
-// Hybrid mentions — a text-based measure of the selected catalogue entries.
+// Hybrid support in the selected catalogue entries, from the structured hybrid
+// fields only. Products with no structured entry are not assessed and are left
+// out of the count (null when none is assessed); experimental-only counts half.
 const hybridCoverageAuto: KpiAutoScoreFn = (data) => {
-  const products = data.myProducts
-  if (products.length === 0) return null
-  let hybridCount = 0
-  for (const p of products) {
-    const s = (p.pqcSupport || '').toLowerCase()
-    if (s.includes('hybrid')) hybridCount++
+  let assessed = 0
+  let yes = 0
+  let partial = 0
+  for (const p of data.myProducts) {
+    const level = hybridSupportLevel(p)
+    if (level === 'not-assessed') continue
+    assessed++
+    if (level === 'yes') yes++
+    else if (level === 'partial') partial++
   }
-  return Math.round((hybridCount / products.length) * 100)
+  if (assessed === 0) return null
+  return Math.round((100 * (yes + 0.5 * partial)) / assessed)
 }
 
 // ── Catalog ──────────────────────────────────────────────────────────────
@@ -324,9 +356,9 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
   },
   {
     id: 'hybrid-deployment',
-    label: 'Hybrid Mentions in Selected Catalogue Entries',
+    label: 'Hybrid support in selected catalogue entries (structured fields)',
     description:
-      'Percentage of selected catalogue entries whose PQC support text contains “hybrid”. This text-based sample measure does not establish availability, deployment coverage or validated capability.',
+      'Percentage of selected catalogue entries whose structured hybrid key-exchange and composite-signature fields show hybrid support; experimental-only support counts half. Entries with no structured entry are not assessed and left out. This sample measure does not establish deployment coverage or validated capability.',
     category: 'progress',
     surfaces: ['governance', 'migration'],
     weights: { architect: 0.1, researcher: 0.1, developer: 0.15 },
@@ -335,7 +367,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     mappings: { csf2: 'PR.DS-2' },
     defaultTarget: 40,
     disabledReason:
-      'Select sample catalogue products in Migrate to calculate this text-based measure.',
+      'Select sample catalogue products in Migrate that have structured hybrid fields to calculate this measure.',
   },
 
   // ── Vendor / Layer Readiness ──────────────────────────────────────────
@@ -623,7 +655,7 @@ export function buildDimensions(
         const domain = classifyProductDomain(product.categoryName, product.infrastructureLayer)
         if (!domain) continue
         const current = selectedByDomain.get(domain) ?? { readinessTotal: 0, count: 0 }
-        current.readinessTotal += pqcReadinessTier(product.pqcSupport)
+        current.readinessTotal += pqcReadinessTier(product)
         current.count += 1
         selectedByDomain.set(domain, current)
       }
