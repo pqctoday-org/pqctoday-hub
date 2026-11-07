@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { TrackedFramework } from '../hooks/useBusinessMetrics'
 import type { ApplicabilityTier } from '@/utils/applicabilityEngine'
+import { deadlineUrgency } from '@/utils/deadlineUrgency'
 
 const URGENCY_STYLES: Record<string, string> = {
   critical: 'bg-status-error/15 text-status-error border-status-error/30',
@@ -43,19 +44,21 @@ const TIER_STYLE: Record<ApplicabilityTier, string> = {
 
 function FrameworkRow({ framework }: { framework: TrackedFramework }) {
   // A date that has passed is shown neutrally: the list does not know whether
-  // anything is still outstanding for this reader.
-  const datePassed = framework.daysUntilDeadline !== null && framework.daysUntilDeadline <= 0
+  // anything is still outstanding for this reader. "Passed" follows the same
+  // rule as the Compliance and Assess pages (the deadline's year is before the
+  // current year), so a deadline in the current year, a range that starts now,
+  // or an "Ongoing" entry is never called passed.
+  const datePassed = deadlineUrgency(framework.deadline) === 'overdue'
   const style = datePassed
     ? URGENCY_STYLES.unknown
     : (URGENCY_STYLES[framework.urgency] ?? URGENCY_STYLES.unknown)
   const tier = framework.applicability?.tier
   const reason = framework.applicability?.reason
 
-  const deadlineLabel =
-    framework.daysUntilDeadline !== null
-      ? framework.daysUntilDeadline > 0
-        ? `${Math.floor(framework.daysUntilDeadline / 365)}y ${Math.floor((framework.daysUntilDeadline % 365) / 30)}m`
-        : 'Date passed'
+  const deadlineLabel = datePassed
+    ? 'Date passed'
+    : framework.daysUntilDeadline !== null && framework.daysUntilDeadline > 0
+      ? `${Math.floor(framework.daysUntilDeadline / 365)}y ${Math.floor((framework.daysUntilDeadline % 365) / 30)}m`
       : framework.deadline || 'TBD'
 
   return (
