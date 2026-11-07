@@ -503,7 +503,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             {[
               {
                 t: 'HTTP Header Limits',
-                d: 'Many servers default to 8 KB header limits. A single ML-DSA-65 JWT in an Authorization header uses ~60% of that budget (4.7 ÷ 8 = 0.59). With DPoP, two PQC JWTs could exceed the limit.',
+                d: 'Configured HTTP header limits vary. DPoP adds a separately signed proof containing an embedded public JWK as well as a signature; measure its complete serialized size separately from the access token, and budget both with the other request headers.',
               },
               {
                 t: 'Cookie Storage',
@@ -541,9 +541,26 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             (RFC 9068) or opaque strings; refresh tokens are usually opaque handles the
             authorization server looks up, so a quantum computer cannot forge them unless they are
             themselves signed tokens. <InlineTooltip term="DPoP">DPoP</InlineTooltip> proofs (RFC
-            9449) are JWTs signed by the client, so PQC changes their key binding and verifier
-            support as well as their size. Migrating requires coordinated changes across
-            authorization servers, resource servers, and client applications.
+            9449) are separately signed JWTs created by the client. Their headers must contain the
+            client&rsquo;s public JWK and must not include its private key. An ordinary signed JWT
+            need not embed its verification key, so the illustrative token size above is not a DPoP
+            proof-size estimate.
+          </p>
+          <p>
+            Measure the complete serialized proof, access token and other HTTP headers together.
+            Evaluate whether clients, gateways and servers support the chosen algorithm and key
+            binding and accept representative sample requests at their configured limits. A PQC
+            migration also needs a supported JOSE profile and compatible key representation; no such
+            format is selected by this size illustration. See the{' '}
+            <a
+              href="https://www.rfc-editor.org/rfc/rfc9449.html#section-4.2"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              DPoP proof header requirements
+            </a>
+            .
           </p>
           <div className="space-y-3">
             {OAUTH_MIGRATION_ITEMS.map((item) => (
