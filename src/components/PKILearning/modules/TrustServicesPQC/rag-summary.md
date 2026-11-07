@@ -7,7 +7,7 @@ The Trust Services module covers the part of the eIDAS world that has to plan in
 ## Key Concepts
 
 - **A qualified electronic signature carries legal equivalence to a handwritten one**, so the operative question is not "is this signature valid now" but "can a court establish that it was valid when it was made" — potentially decades later. That reframes migration from an algorithm-swap problem into an evidence-preservation problem
-- **RFC 3161 is algorithm-agnostic, and that is the quiet hinge of the whole area.** The signing algorithm comes from the TSA's certificate, not from the protocol. A Time Stamping Authority can therefore migrate to ML-DSA without any protocol change at all. The layer that has to move is the trust list and the validation policy, not the wire format
+- **RFC 3161 time-stamp tokens are CMS SignedData, which is algorithm-agile, and that is the quiet hinge of the whole area.** The signature algorithm identifier is carried in the CMS signer information and the TSA certificate must carry a matching key, so the token format does not need redesigning for ML-DSA. A migration still needs a certified TSA key, TSA and HSM support, verifier support and interoperability testing, as well as trust-list and validation-policy changes
 - **A timestamp is a proof of existence**: a TSA signs a hash of the data plus a time. That is what allows a signature made with a certificate since revoked — or with an algorithm since broken — to still be evaluated against the moment it was made
 - **Long-term validation degrades in five stages**, each with a remedy that must be in place _before_ the stage arrives:
   - **Day 0 — signature creation.** No risk yet. Sign, and capture a qualified timestamp at the moment of signing
