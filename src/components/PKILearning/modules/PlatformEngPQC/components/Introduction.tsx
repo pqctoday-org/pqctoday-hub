@@ -428,9 +428,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           icon={<Activity size={20} className="text-primary" />}
         >
           <p className="text-muted-foreground">
-            Continuous monitoring detects algorithm drift — when classical certs re-enter the
-            cluster through CA fallback, manual issuance, or operator error. Four Prometheus-based
-            exporters cover the full platform crypto surface.
+            Continuous monitoring can help detect algorithm drift when the required observations are
+            collected. Verify source versions, field mappings and collection coverage; these
+            examples do not establish complete platform coverage.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -451,9 +451,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 metric: 'vault_transit_sign_requests_total{key_type="ecdsa-p256"}',
               },
               {
-                tool: 'Istio / Envoy TLS Metrics',
-                signal: 'Monitors PQC cipher suite adoption in service mesh connections',
-                metric: 'envoy_ssl_handshake{cipher_suite!~".*X25519MLKEM768.*"}',
+                tool: 'Istio / Envoy TLS Observability Requirements',
+                conceptual: true,
+                signal:
+                  'Observe cipher suite, negotiated key-exchange group and peer authentication separately.',
+                metric:
+                  'Verify the exporter version, field mappings and collection coverage before evaluating a known group against policy. Missing group data is Unknown, not evidence of non-PQC negotiation.',
               },
             ].map((item) => (
               <div
@@ -462,7 +465,18 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               >
                 <div className="font-bold text-foreground">{item.tool}</div>
                 <div className="text-muted-foreground">{item.signal}</div>
-                <div className="font-mono text-[10px] text-primary bg-muted rounded px-1.5 py-0.5 break-all">
+                {item.conceptual && (
+                  <p className="font-semibold text-foreground">
+                    Capability requirement — not an alert rule
+                  </p>
+                )}
+                <div
+                  className={
+                    item.conceptual
+                      ? 'text-xs text-primary bg-muted rounded px-1.5 py-0.5 break-words'
+                      : 'font-mono text-[10px] text-primary bg-muted rounded px-1.5 py-0.5 break-all'
+                  }
+                >
                   {item.metric}
                 </div>
               </div>
@@ -472,7 +486,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <p className="text-sm text-muted-foreground">
             SIEM integration (Splunk, Elastic, Datadog, Microsoft Sentinel) extends monitoring to
             cross-platform detection — catching algorithm-downgrade events, CI/CD OIDC token
-            algorithm drift, and TLS cipher negotiation without ML-KEM.
+            algorithm drift, and negotiated TLS groups where the required observations are collected
+            and mapped.
           </p>
         </CollapsibleSection>
       </div>
