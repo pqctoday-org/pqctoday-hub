@@ -19,6 +19,11 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_MANDATE_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { SchemeForUseSection } from './SchemeForUseSection'
 
 interface StatefulSigsIntroductionProps {
@@ -88,16 +93,13 @@ const Step1WhyAndMerkle: React.FC = () => (
             </p>
             <ul className="text-xs text-muted-foreground space-y-0.5">
               <li>
-                &bull; <strong>{CNSA_2_0.softwarePreferred}:</strong> New software/firmware should
-                support &amp; prefer CNSA 2.0
+                &bull; <strong>{CNSA_2_0.softwarePreferred}:</strong> {CNSA_2022_PREFERRED_LABEL}
               </li>
               <li>
-                &bull; <strong>{CNSA_2_0.softwareExclusive}:</strong> Software and firmware signing
-                is anticipated by NSA to use CNSA 2.0 exclusively
+                &bull; <strong>{CNSA_2_0.softwareExclusive}:</strong> {CNSA_PHASE_OUT_LABEL}
               </li>
               <li>
-                &bull; <strong>{CNSA_2_0.fullEnforcement}:</strong> CNSA 2.0 algorithms mandated for
-                all NSS unless otherwise noted (CNSA 2.0 FAQ)
+                &bull; <strong>{CNSA_2_0.fullEnforcement}:</strong> {CNSA_MANDATE_LABEL}
               </li>
             </ul>
           </div>

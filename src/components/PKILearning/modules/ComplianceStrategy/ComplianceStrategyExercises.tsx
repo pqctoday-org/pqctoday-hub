@@ -11,7 +11,7 @@ const EXERCISES = [
     id: 'ex-1',
     title: 'Scenario: Multi-Jurisdiction Financial Institution',
     prompt:
-      'Your bank operates in the US, EU, and Singapore. CNSA 2.0 requires PQC for NSS by 2030, ETSI has hybrid recommendations, and MAS (Singapore) is monitoring NIST standards. Map the overlapping requirements and identify the earliest binding deadline. What compliance conflicts exist between jurisdictions?',
+      'Your bank operates in the US, EU, and Singapore. The NSA CNSA 2.0 FAQ (version 2.2) sets national security system dates of 1 January 2027 for new acquisitions, 31 December 2030 for phasing out equipment that cannot support CNSA 2.0, and 31 December 2031 for mandated use of its algorithms; ETSI has hybrid recommendations, and MAS (Singapore) is monitoring NIST standards. Map the overlapping requirements and identify the earliest binding deadline. What compliance conflicts exist between jurisdictions?',
     workshopHint:
       'Use the Jurisdiction Mapper (Step 1) to select US, EU, and Singapore. Compare the framework requirements side-by-side in the Regulatory Gap Assessment (Step 4).',
   },

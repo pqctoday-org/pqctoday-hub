@@ -612,8 +612,11 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             <li>
               <strong>CNSA 2.0</strong> (<LibLink id="NSA CNSA 2.0">NSA</LibLink>) lists LMS and
               XMSS (per <LibLink id="NIST SP 800-208">SP 800-208</LibLink>) for software and
-              firmware signing, with ML-DSA-87 as its general signature. Software and firmware
-              signing should prefer CNSA 2.0 from 2025 and use it exclusively by 2030.
+              firmware signing, with ML-DSA-87 as its general signature. NSA&apos;s CNSA 2.0 FAQ
+              (version 2.2) sets three dates for national security systems: new acquisitions from 1
+              January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030
+              (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless
+              otherwise noted.
             </li>
           </ul>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -12,4 +12,4 @@ Many jurisdictions follow a two-phase arc — hybrid first, pure PQC later — b
 
 ### What's Happening
 
-Compliance dates are arriving in overlapping waves: CNSA 2.0 sets exclusive-PQC dates for U.S. National Security Systems, ANSSI requires hybrid inside France's regulated perimeter and recommends it elsewhere, and the CMVP certification backlog means vendors must begin validation years in advance.
+Compliance dates are arriving in overlapping waves: CNSA 2.0 sets dates for U.S. National Security Systems (new acquisitions from 1 January 2027, unsupported equipment phased out by 31 December 2030, its algorithms mandated by 31 December 2031 unless otherwise noted), ANSSI requires hybrid inside France's regulated perimeter and recommends it elsewhere, and the CMVP certification backlog means vendors must begin validation years in advance.

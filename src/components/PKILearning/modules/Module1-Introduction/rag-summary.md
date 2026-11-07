@@ -12,7 +12,7 @@ PQC 101 is the foundational learning module that introduces post-quantum cryptog
 - **Three PQC algorithm families**: lattice-based (ML-KEM, ML-DSA, FN-DSA), hash-based (SLH-DSA, LMS/HSS), and code-based (Classic McEliece, HQC)
 - **NIST PQC standards**: FIPS 203 (ML-KEM for key establishment), FIPS 204 (ML-DSA for digital signatures), FIPS 205 (SLH-DSA for conservative signatures), published August 2024
 - **Migration timeline**: NIST IR 8547 (final, October 2026) deprecates quantum-vulnerable public-key algorithms (RSA, ECC, DH) at 112 bits of security and up after 2030 and disallows them under NIST standards and guidelines after 2035
-- **CNSA 2.0** mandates phased PQC adoption for U.S. national security systems starting 2025
+- **CNSA 2.0** sets dates for U.S. national security systems: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030, CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted
 - **Industry urgency**: Finance and government are critical priority; healthcare, telecom, blockchain are high; IoT and automotive are medium (this lesson's illustrative ranking)
 
 ## Workshop / Interactive Activities

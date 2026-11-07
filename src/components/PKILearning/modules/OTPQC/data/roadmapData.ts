@@ -17,6 +17,10 @@
  * Everything here is a teaching model ("Model estimate").
  */
 import type { OTSector } from './otProtocolData'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 
 export type OrgSize = 'small' | 'medium' | 'large'
 export type BudgetLevel = 'constrained' | 'normal' | 'accelerated'
@@ -249,12 +253,12 @@ export function milestonesFor(inputs: RoadmapInputs): Milestone[] {
   if (us) {
     m.push({
       year: 2025,
-      label: 'CNSA 2.0: prefer PQC for software/firmware signing (NSS suppliers)',
+      label: CNSA_2022_PREFERRED_LABEL,
       regime: 'NSA CNSA 2.0',
     })
     m.push({
       year: 2030,
-      label: 'CNSA 2.0: PQC-only firmware signing and networking equipment (NSS)',
+      label: CNSA_PHASE_OUT_LABEL,
       regime: 'NSA CNSA 2.0',
     })
     if (inputs.sector === 'energy') {

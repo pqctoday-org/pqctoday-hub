@@ -142,9 +142,8 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
-                <strong>2030:</strong> CNSA 2.0 (NSS): NSA&apos;s timetable anticipates exclusive
-                use of CNSA 2.0 for software/firmware signing and networking equipment (VPNs,
-                routers) by 2030
+                <strong>2030:</strong> CNSA 2.0 (NSS): equipment that cannot support CNSA 2.0 is
+                phased out by 31 December 2030, exceptions possible (NSA CNSA 2.0 FAQ, version 2.2)
               </span>
             </li>
             <li className="flex items-start gap-2">

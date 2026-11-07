@@ -3,8 +3,8 @@
  * Static framework requirement data for the Regulatory Gap Assessment workshop step.
  * Keyed by jurisdiction ID matching JurisdictionMapper's JURISDICTIONS list.
  *
- * MAINTENANCE: deadline values here are PHASE-SPECIFIC (e.g. CNSA 2.0's 2030
- * key-establishment deadline). They are more granular than the top-level CSV
+ * MAINTENANCE: deadline values here are PHASE-SPECIFIC (e.g. a framework's separate
+ * acquisition, phase-out and mandate dates). They are more granular than the top-level CSV
  * deadline range and must be updated manually when the underlying regulation changes.
  * The csvId field links each requirement to its canonical row in compliance_*.csv
  * for cross-reference. Display labels (framework, primaryFramework, secondaryFrameworks)
@@ -85,7 +85,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'us-pol-1',
         category: 'Policy',
         requirement:
-          'Document PQC migration plan with timeline aligned to CNSA 2.0 preferred and exclusive deadlines',
+          'Document PQC migration plan with timeline aligned to the CNSA 2.0 FAQ dates: new acquisitions from 1 January 2027, unsupported equipment phased out by 31 December 2030, algorithms mandated by 31 December 2031',
         framework: 'CNSA 2.0',
         csvId: 'CNSA-2',
         commonGap: true,

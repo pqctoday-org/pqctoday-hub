@@ -19,6 +19,11 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_ACQUISITION_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -258,18 +263,17 @@ const Step2ApproachAndDeadlines: React.FC = () => (
             },
             {
               year: '2025',
-              event: 'CNSA 2.0 software/firmware signing preferred for NSS',
+              event: CNSA_2022_PREFERRED_LABEL,
               source: 'NSA',
             },
             {
-              year: '2026',
-              event: 'CNSA 2.0 new networking equipment must support PQC',
+              year: '2027',
+              event: CNSA_ACQUISITION_LABEL,
               source: 'NSA',
             },
             {
               year: '2030',
-              event:
-                'CNSA 2.0 software/firmware signing exclusive; legacy networking replaced; NIST RSA/ECC deprecated',
+              event: `${CNSA_PHASE_OUT_LABEL}; NIST RSA/ECC deprecated`,
               source: 'NSA/NIST',
             },
             {

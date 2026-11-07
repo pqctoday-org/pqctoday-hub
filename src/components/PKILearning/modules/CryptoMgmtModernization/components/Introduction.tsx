@@ -124,10 +124,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               the entire application portfolio &mdash; not just the TLS edge.
             </li>
             <li>
-              <strong>Key Material</strong> &mdash; CNSA 2.0 forces HSM and KMS roadmaps now (2030
-              for software/firmware signing); NIST SP 800-57 Pt 1 Rev 5 key-validity periods drive
-              rekey cadence (Rev 6 is an initial public draft, not yet final); and orphaned keys,
-              secrets-in-repo, and unrotated service credentials remain a top breach vector.
+              <strong>Key Material</strong> &mdash; CNSA 2.0 forces HSM and KMS roadmaps now (new
+              NSS acquisitions from 1 January 2027, unsupported equipment phased out by 31 December
+              2030); NIST SP 800-57 Pt 1 Rev 5 key-validity periods drive rekey cadence (Rev 6 is an
+              initial public draft, not yet final); and orphaned keys, secrets-in-repo, and
+              unrotated service credentials remain a top breach vector.
             </li>
           </ul>
         </div>

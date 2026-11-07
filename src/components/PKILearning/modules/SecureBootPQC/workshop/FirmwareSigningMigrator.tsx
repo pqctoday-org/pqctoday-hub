@@ -2001,9 +2001,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             <p className="text-muted-foreground">
               <strong className="text-foreground">NSA CNSA 2.0</strong> prefers LMS/XMSS (SP
               800-208, stateful hash-based signatures) to start software/firmware signing now, with
-              CNSA 2.0 required exclusively by 2030. Validated ML-DSA-87 is also approved for
-              software/firmware signing and may suit cases that need many signatures or distributed
-              signing.{' '}
+              CNSA 2.0 algorithms mandated for national security systems by 31 December 2031 unless
+              otherwise noted (NSA CNSA 2.0 FAQ, version 2.2). Validated ML-DSA-87 is also approved
+              for software/firmware signing and may suit cases that need many signatures or
+              distributed signing.{' '}
               <a
                 href="/library?ref=NSA CNSA 2.0"
                 target="_blank"

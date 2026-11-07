@@ -308,7 +308,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     year: 2030,
     quarter: 'Q4',
     description:
-      'For National Security Systems (NSS), NSA’s CNSA 2.0 advisory anticipates 2025 to support and prefer CNSA 2.0 for software and firmware signing and 2030 to use it exclusively. LMS and XMSS from NIST SP 800-208 are approved for firmware signing (not HSS or XMSS^MT), and validated ML-DSA is approved for all signing use cases. CNSA 2.0 algorithms are required in all new NSS acquisitions from 1 January 2027. For vehicles outside NSS this is a reference timeline.',
+      'For National Security Systems (NSS), NSA’s CNSA 2.0 advisory anticipated 2025 to support and prefer CNSA 2.0 for software and firmware signing and 2030 to use it exclusively (NSA’s 2022 category guidance; superseded for planning by the dates in NSA’s CNSA 2.0 FAQ, version 2.2). LMS and XMSS from NIST SP 800-208 are approved for firmware signing (not HSS or XMSS^MT), and validated ML-DSA is approved for all signing use cases. CNSA 2.0 algorithms are required in all new NSS acquisitions from 1 January 2027. For vehicles outside NSS this is a reference timeline.',
     pqcRelevance: 'direct',
     confidence: 'published',
     affectedSystems: [

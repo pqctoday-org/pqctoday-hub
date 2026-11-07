@@ -1254,7 +1254,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   &bull; LMS or XMSS (single-tree only; HSS and XMSS^MT are not allowed in NSS)
                   preferred to start firmware signing now; validated ML-DSA-87 is also approved
                 </li>
-                <li>&bull; Software and firmware signing: CNSA 2.0 exclusively by 2030</li>
+                <li>&bull; New NSS acquisitions must be CNSA 2.0-compliant from 1 Jan 2027</li>
+                <li>
+                  &bull; Equipment that cannot support CNSA 2.0 phased out by 31 Dec 2030
+                  (exceptions possible)
+                </li>
                 <li>&bull; CNSA 2.0 mandated for National Security Systems by 31 Dec 2031</li>
                 <li>&bull; NSM-10 goal: quantum-resistant NSS by 2035</li>
                 <li>&bull; Tree height H=20 provides ~1M signatures per key</li>

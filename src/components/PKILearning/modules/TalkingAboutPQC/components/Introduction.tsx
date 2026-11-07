@@ -53,7 +53,7 @@ const DATES: { what: string; who: string; status: string }[] = [
     status: 'In force',
   },
   {
-    what: `Software signing and traditional networking use only CNSA 2.0 algorithms by ${CNSA_2_0.softwareExclusive}; all systems by ${CNSA_2_0.fullEnforcement}`,
+    what: `New acquisitions use CNSA 2.0 algorithms from 1 January ${CNSA_2_0.networkingRequired}; equipment that cannot support them is phased out by 31 December ${CNSA_2_0.softwareExclusive}, exceptions possible; the algorithms are mandated by 31 December ${CNSA_2_0.fullEnforcement}, unless otherwise noted`,
     who: 'US national security systems (NSA CNSA 2.0)',
     status: 'In force',
   },

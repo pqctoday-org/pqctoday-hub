@@ -6,6 +6,7 @@ import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
 import {
   CNSA_2022_PREFERRED_LABEL,
+  CNSA_MANDATE_LABEL,
   CNSA_PHASE_OUT_LABEL,
 } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -85,7 +86,7 @@ export const content: ModuleContent = {
     },
     { label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
     {
-      label: 'CNSA 2.0 large PKI systems exclusive',
+      label: CNSA_MANDATE_LABEL,
       year: CNSA_2_0.networkingExclusive,
       source: 'CNSA 2.0',
     },

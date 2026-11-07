@@ -156,7 +156,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
   {
     id: 'dod-cnsa',
     situation:
-      "Your company won a DoD contract requiring PQC for data at rest. The contract references 'CNSA 2.0 compliance' with a 2030 deadline for exclusive PQC use. You need to identify who authored CNSA 2.0 and what underlying algorithm standard it mandates.",
+      "Your company won a DoD contract requiring PQC for data at rest. The contract references 'CNSA 2.0 compliance', and NSA's CNSA 2.0 FAQ (version 2.2) phases out equipment that cannot support CNSA 2.0 by 31 December 2030. You need to identify who authored CNSA 2.0 and what underlying algorithm standard it mandates.",
     question:
       'Who authored CNSA 2.0, and which NIST standard defines the required ML-KEM algorithm?',
     bodyTypeOptions: [
