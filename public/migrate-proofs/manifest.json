@@ -29545,6 +29545,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "bitcoin-core",
+      "refId": "bitcoin-core",
+      "file": "bitcoin-core-448eb5f2.json",
+      "sizeBytes": 2593,
+      "content_type": "application/json",
+      "url": "https://api.github.com/repos/bitcoin/bitcoin/releases/tags/v32.1",
+      "sha256": "09ad8b2b059e89ffb3ef917190d07d866376d62e8d8ffaef0028c60f1a9e3dd7",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-07T23:01:12.078404+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
