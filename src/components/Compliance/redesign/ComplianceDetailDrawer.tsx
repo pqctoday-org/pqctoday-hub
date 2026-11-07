@@ -29,7 +29,7 @@ import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { getTrustedSource } from '@/data/trustedSourcesData'
 import { getAuthoritativeSource } from '@/data/authoritativeSourcesData'
-import { buildDrawerDetail, type PillarId } from './pillarModel'
+import { buildDrawerDetail, NO_STRUCTURED_DATE_LABEL, type PillarId } from './pillarModel'
 import { pillClasses, TONES } from './tones'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
@@ -369,11 +369,13 @@ export function ComplianceDetailDrawer({
               </div>
             </section>
 
-            {/* Deadline phases */}
+            {/* Dates the record states; an undated record shows one "no structured date" step */}
             {d.phases.length > 0 && (
               <section>
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Deadline phases
+                  {d.phases.every((ph) => ph.label === NO_STRUCTURED_DATE_LABEL)
+                    ? 'Dates this record states'
+                    : 'Deadline phases'}
                 </h3>
                 <ol className="flex items-start justify-between gap-1">
                   {d.phases.map((ph, i) => {

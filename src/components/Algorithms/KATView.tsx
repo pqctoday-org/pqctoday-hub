@@ -198,10 +198,20 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
     <div className="border border-border rounded-lg p-5 bg-muted/30 hover:border-primary/50 transition-colors space-y-4">
       <div className="flex items-start justify-between">
         <h5 className="font-semibold text-foreground text-lg">{config.name}</h5>
-        <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
-          {levelLabel(config.securityLevel)}
+        <span
+          className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30"
+          title={config.strengthNote}
+        >
+          {config.strengthNote
+            ? `${levelLabel(config.securityLevel)} hash category`
+            : levelLabel(config.securityLevel)}
         </span>
       </div>
+      {config.strengthNote && (
+        <p className="-mt-2 text-xs text-muted-foreground" data-testid="kat-strength-note">
+          {config.strengthNote}
+        </p>
+      )}
 
       <div className="space-y-1.5 text-sm">
         <div className="flex justify-between">
