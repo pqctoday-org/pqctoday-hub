@@ -71,17 +71,17 @@ describe('standardsFor (Cryptography Registry lookup)', () => {
 })
 
 describe('extractClassicalAlgorithmsFromText', () => {
-  it('detects RSA with key length, defaulting to signing unless encryption is named', () => {
+  it('preserves RSA key length without inventing an unstated padding scheme', () => {
     const signing = extractClassicalAlgorithmsFromText('RSA-2048 certificate')
     expect(signing[0]).toMatchObject({
-      canonical: 'RSASSA-PKCS1',
-      primitive: 'signature',
+      canonical: 'RSA',
+      primitive: 'unknown',
       keyLength: 2048,
       classical: true,
     })
 
     const enc = extractClassicalAlgorithmsFromText('RSA-2048 key exchange')
-    expect(enc[0]).toMatchObject({ canonical: 'RSAES-PKCS1', primitive: 'pke' })
+    expect(enc[0]).toMatchObject({ canonical: 'RSA', primitive: 'pke' })
   })
 
   it('detects ECDSA with a namespaced curve identifier', () => {
