@@ -38,8 +38,9 @@ export const content: ModuleContent = {
   deadlines: [
     // No regulatory deadlines discussed in this module — confirmed via review.
     // Cloudflare's own ~2029 full-PQ-DNSSEC target and the separate,
-    // broader DNS-root-zone algorithm rollover estimate (mid-2030s, per
-    // Verisign, cited in pqcProtocolMatrix.ts) are vendor/ecosystem roadmap
+    // broader DNS-root-zone algorithm rollovers (the classical ICANN/IANA
+    // first rollover, and Verisign's dated 2023 conditional scenario for a
+    // second rollover in the mid-2030s) are vendor/ecosystem roadmap
     // narratives, not regulatory deadlines, and are kept explicitly distinct
     // in the prose rather than modeled here.
   ],
@@ -56,6 +57,7 @@ export const content: ModuleContent = {
     testZone: 'dnstest.dev',
     cloudflareTarget:
       '~2029 (Cloudflare’s company-wide post-quantum security target, not a DNSSEC-specific completion date)',
-    rootZoneRollover: 'mid-2030s (Verisign estimate, separate from Cloudflare’s roadmap)',
+    rootZoneRollover:
+      'Separate from Cloudflare’s roadmap: the ICANN/IANA first rollover is classical (new ECDSA Root KSK in 2027, RSA Root KSK retired in 2029); Verisign’s December 2023 comments describe a second rollover in the mid-2030s that “may well involve” post-quantum cryptography, a conditional scenario rather than an ICANN/IANA plan or a forecast',
   },
 }

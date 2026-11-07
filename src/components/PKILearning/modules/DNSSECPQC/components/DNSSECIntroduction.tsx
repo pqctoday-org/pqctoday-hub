@@ -220,11 +220,15 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
             DNSSEC-specific completion date, and delivering Cloudflare&apos;s own two features above
             is not the same as full end-to-end PQ DNSSEC: that also needs the root to become a
             trusted PQ anchor and other registries/registrars to adopt algorithm 18. Keep that
-            distinct from the DNS root zone&apos;s own algorithm rollover, which Verisign estimates
-            at the <strong>mid-2030s</strong> &mdash; every level of the chain needs PQ support
-            before the downgrade-safety design above is fully post-quantum-secure, though the order
-            in which levels migrate isn&apos;t prescribed. Keep the two numbers separate: one
-            vendor&apos;s roadmap, one global infrastructure migration.
+            distinct from the DNS root zone&apos;s own algorithm rollovers. The first is a classical
+            ICANN/IANA plan: a new ECDSA Root KSK in <strong>2027</strong> and the RSA Root KSK
+            retired in <strong>2029</strong>. For a possible second rollover, Verisign&apos;s
+            December 2023 comments say it &ldquo;in the mid-2030s may well involve the incorporation
+            of post-quantum cryptography&rdquo;, a dated, conditional scenario rather than an
+            ICANN/IANA plan or a forecast. Every level of the chain needs PQ support before the
+            downgrade-safety design above is fully post-quantum-secure, though the order in which
+            levels migrate isn&apos;t prescribed. Keep the dates separate: one vendor&apos;s
+            roadmap, one global infrastructure migration.
           </p>
           <p className="text-xs text-muted-foreground">
             Two parallel efforts attack the same signature-size problem differently:{' '}

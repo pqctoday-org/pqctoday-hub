@@ -12,4 +12,4 @@ Cloudflare's milestone proves a production resolver CAN validate ML-DSA-44 at sc
 
 ### What's Happening
 
-Cloudflare's own next steps are authoritative-side signing support and registrar DS-record support. Cloudflare's company-wide post-quantum security target is ~2029, but full end-to-end PQ DNSSEC also needs the root and other registries to adopt it — the DNS root zone's own algorithm rollover is a separate, broader estimate of the mid-2030s.
+Cloudflare's own next steps are authoritative-side signing support and registrar DS-record support. Cloudflare's company-wide post-quantum security target is ~2029, but full end-to-end PQ DNSSEC also needs the root and other registries to adopt it — the DNS root zone's own algorithm rollovers are separate and broader: the first (ICANN/IANA) is classical, and Verisign's 2023 comments describe a possible second one in the mid-2030s that "may well involve" post-quantum cryptography, a conditional scenario rather than a plan or a forecast.

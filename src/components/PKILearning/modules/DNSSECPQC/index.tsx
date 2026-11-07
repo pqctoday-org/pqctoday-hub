@@ -27,7 +27,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'deployment-roadmap-tracker',
     title: 'Step 3: Deployment Roadmap Tracker',
-    description: "Cloudflare's own roadmap vs. the DNS root's separate rollover estimate.",
+    description: "Cloudflare's own roadmap vs. the DNS root's separate rollovers.",
     icon: ListChecks,
   },
 ]
