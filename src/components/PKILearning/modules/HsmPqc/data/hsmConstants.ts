@@ -56,13 +56,14 @@ export interface FirmwareUpgradePath {
   pqcAlgorithmsAdded: string[]
   upgradeComplexity: 'low' | 'medium' | 'high'
   estimatedDowntime: string
-  /** What the module's own FIPS 140 certificate lists for post-quantum algorithms, in one or two clauses. */
+  /**
+   * What the module's own FIPS 140 certificate lists for post-quantum algorithms, in one or two
+   * clauses. The lesson table and the planner both show the whole note, so a second clause (for
+   * example a separate certificate that does list algorithms) is never dropped.
+   */
   certificateNote: string
   notes: string
 }
-
-/** The first clause of a certificate note: the part before the first semicolon. */
-export const certificateNoteSummary = (note: string): string => note.split(';')[0].trim()
 
 export interface KeySizeComparison {
   algorithm: string
@@ -922,7 +923,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM (same planning assumption as Thales Luna 7)',
     certificateNote:
-      'Certificate 4684 (Luna K7) lists no post-quantum algorithm; separate certificate 5450 (Luna T7) lists ML-KEM, ML-DSA and LMS.',
+      "Azure lists no post-quantum algorithm in the documents this lesson cites; Azure's own documentation was not matched to a certificate here.",
     notes:
       'Azure Dedicated HSM is the Thales Luna 7 HSM (model A790). The algorithms listed are those Thales documents for the Luna firmware named in each entry; they are not an Azure support statement. Azure lists no PQC algorithm. Azure says the customer has full administrative control, including upgrading firmware, and should consult Thales Support first; Azure does not say whether the service offers firmware 7.9. Backup/restore recommended before upgrade. The service is retiring: no new customer onboardings, and existing customers are supported until 31 July 2028 (Azure Dedicated HSM overview and FAQ, checked 5 Nov 2026).',
   },

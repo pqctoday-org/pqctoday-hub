@@ -65,14 +65,32 @@ describe('HSM key-pair step for a classical plus PQC pairing', () => {
 describe('HSM vendor hybrid flags', () => {
   const flag = (id: string) => HSM_VENDORS.find((v) => v.id === id)?.hybridSupport
 
-  it('leaves the flag unset where the vendor pages state no hybrid support', () => {
-    expect(HSM_VENDORS.find((v) => v.id === 'entrust-nshield')).toBeDefined()
-    expect(HSM_VENDORS.find((v) => v.id === 'utimaco')).toBeDefined()
-    expect(flag('entrust-nshield')).toBeUndefined()
-    expect(flag('utimaco')).toBeUndefined()
+  it('leaves the flag unset (the card reads "Not stated") wherever no held source states it', () => {
+    const unsourced = [
+      'entrust-nshield',
+      'utimaco',
+      'marvell-ls2',
+      'futurex-cryptohub',
+      'aws-cloudhsm',
+      'azure-dhsm',
+      'gcp-cloudhsm',
+      'crypto4a-qxhsm',
+    ]
+    for (const id of unsourced) {
+      expect(
+        HSM_VENDORS.find((v) => v.id === id),
+        id
+      ).toBeDefined()
+      expect(flag(id), id).toBeUndefined()
+    }
   })
 
-  it('keeps the flag where the vendor page states hybrid KEM support', () => {
+  it('keeps the flag for Thales Luna only, which the product catalog row sources', () => {
+    // The catalog row for Thales Luna HSM says software v7.9.1 adds hybrid KEM (ML-KEM) for NTLS
+    // SSH and REST APIs. No held source says anything about hybrid support for the other vendors.
     expect(flag('thales-luna')).toBe(true)
+    expect(HSM_VENDORS.filter((v) => v.hybridSupport !== undefined).map((v) => v.id)).toEqual([
+      'thales-luna',
+    ])
   })
 })

@@ -25,7 +25,12 @@ export interface HSMVendor {
   notes: string
   firmwareVersion: string
   pkcs11Version: string
-  /** Omitted when the vendor's own pages do not say. */
+  /**
+   * Omitted (the card reads "Not stated") unless a source held in this repository states it. Only
+   * Thales Luna carries a flag: the product catalog row for Thales Luna HSM says software v7.9.1
+   * adds hybrid KEM (ML-KEM) for NTLS SSH and REST APIs. No held source states hybrid support, or
+   * its absence, for the other vendors.
+   */
   hybridSupport?: boolean
   sideChannelCountermeasures: string[]
 }
@@ -109,7 +114,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'pcie',
     firmwareVersion: 'Beta firmware',
     pkcs11Version: '2.40',
-    hybridSupport: false,
     sideChannelCountermeasures: ['Hardware crypto acceleration', 'Isolated execution environment'],
   },
   {
@@ -122,7 +126,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'network',
     firmwareVersion: 'PQC beta',
     pkcs11Version: '2.40',
-    hybridSupport: false,
     sideChannelCountermeasures: ['Tamper-responsive enclosure', 'PCI HSM physical protections'],
   },
   // Cloud HSM vendors
@@ -137,7 +140,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'cloud',
     firmwareVersion: 'Provider-managed',
     pkcs11Version: '2.40 (ML-DSA via vendor-defined mechanisms)',
-    hybridSupport: false,
     sideChannelCountermeasures: ['Single-tenant access to the HSM (AWS CloudHSM FAQ)'],
   },
   {
@@ -166,7 +168,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'cloud',
     firmwareVersion: 'N/A',
     pkcs11Version: 'N/A (Cloud KMS API)',
-    hybridSupport: false,
     sideChannelCountermeasures: [
       'Marvell LiquidSecurity HSMs (Google Cloud HSM architecture page)',
     ],
@@ -182,7 +183,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'network',
     firmwareVersion: 'Not published',
     pkcs11Version: '3.0 (PQC extensions)',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Electromagnetic isolation enclosure',
       'Multi-event tamper-evidence sensors',

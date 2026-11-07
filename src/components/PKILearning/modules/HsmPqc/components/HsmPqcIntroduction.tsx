@@ -26,7 +26,6 @@ import {
   SIDE_CHANNEL_VECTORS,
   FIRMWARE_UPGRADE_PATHS,
   KEY_SIZE_COMPARISONS,
-  certificateNoteSummary,
 } from '../data/hsmConstants'
 import { HSM_VENDORS, STATUS_LABELS, getVendorPqcSupportStatus } from '../data/hsmVendorData'
 import { Button } from '@/components/ui/button'
@@ -881,7 +880,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 'Algorithms Added',
                 'Complexity',
                 'Downtime (est.)',
-                'FIPS Recert',
+                'FIPS certificate',
               ]}
               rows={FIRMWARE_UPGRADE_PATHS.map((path) => [
                 path.vendorName,
@@ -909,7 +908,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   {path.estimatedDowntime}
                 </span>,
                 <span key="r" className="text-foreground">
-                  {certificateNoteSummary(path.certificateNote)}
+                  {path.certificateNote}
                 </span>,
               ])}
             />
@@ -926,17 +925,18 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <h3 className="text-sm font-bold text-foreground">What the lab tests</h3>
               <p className="text-xs text-muted-foreground">
                 A PQC-capable HSM is checked in four separate places, and the entry in the FIPS
-                Recert column above speaks only to the module certificate. <strong>CAVP</strong> is
-                NIST&apos;s algorithm validation program (its tests are specified in ACVP
-                documents). <strong>CMVP</strong> is NIST&apos;s cryptographic module validation
-                program; a module&apos;s certificate lists its approved algorithms, and the Security
-                Policy published with it lists its services. A <strong>CAST</strong> is a
-                cryptographic algorithm self-test that a validated module runs on its own
-                algorithms, and a <strong>PCT</strong> is a pairwise consistency test on a generated
-                key pair. A <strong>CSTL</strong> is an accredited testing laboratory. In the
-                quotations, IUT means implementation under test, OTS means one-time signature, and
-                FS means full submission. Every quotation below is verbatim from the document named
-                after it, with footnote and reference-number markers left out.
+                certificate column above speaks only to the module certificate.{' '}
+                <strong>CAVP</strong> is NIST&apos;s algorithm validation program (its tests are
+                specified in ACVP documents). <strong>CMVP</strong> is NIST&apos;s cryptographic
+                module validation program; a module&apos;s certificate lists its approved
+                algorithms, and the Security Policy published with it lists its services. A{' '}
+                <strong>CAST</strong> is a cryptographic algorithm self-test that a validated module
+                runs on its own algorithms, and a <strong>PCT</strong> is a pairwise consistency
+                test on a generated key pair. A <strong>CSTL</strong> is an accredited testing
+                laboratory. In the quotations, IUT means implementation under test, OTS means
+                one-time signature, and FS means full submission. Every quotation below is verbatim
+                from the document named after it, with footnote and reference-number markers left
+                out.
               </p>
 
               <div className="bg-background rounded-lg p-3 border border-border space-y-2">
