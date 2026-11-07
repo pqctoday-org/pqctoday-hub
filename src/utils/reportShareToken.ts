@@ -16,6 +16,7 @@
  */
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import type { PersonaId } from '@/data/learningPersonas'
+import { milestoneForPressure } from '@/utils/timelineMilestone'
 
 /** Legacy (pre-ACCURACY-0708-2) token: partial quick-track inputs + a score
  *  that was never actually honored on decode. Kept only for backward
@@ -74,6 +75,25 @@ export function encodeShareToken(payload: {
   return toBase64url(JSON.stringify(full))
 }
 
+/**
+ * The chosen-milestone pair travels inside the result's profile. A link is
+ * untrusted input, so the pair is checked on the way in: a clean copy is kept,
+ * anything else is dropped, and the rest of the report still opens.
+ */
+function withCleanTimelineMilestone(schema: ReportShareSchemaV2): ReportShareSchemaV2 {
+  const profile = schema.result.assessmentProfile
+  if (!profile || typeof profile !== 'object' || !('timelineMilestone' in profile)) return schema
+  const { timelineMilestone, ...rest } = profile
+  const clean = milestoneForPressure(rest.timelinePressure, timelineMilestone)
+  return {
+    ...schema,
+    result: {
+      ...schema.result,
+      assessmentProfile: clean ? { ...rest, timelineMilestone: clean } : rest,
+    },
+  }
+}
+
 export function decodeShareToken(token: string): ReportShareSchema | null {
   try {
     const raw = fromBase64url(token)
@@ -96,7 +116,7 @@ export function decodeShareToken(token: string): ReportShareSchema | null {
           Math.max(0, Math.min(100, additive.total)) !== v2.result.riskScore)
       )
         return null
-      return v2
+      return withCleanTimelineMilestone(v2)
     }
     return null
   } catch {

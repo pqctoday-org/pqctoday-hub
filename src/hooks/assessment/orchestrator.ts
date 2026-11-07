@@ -10,6 +10,7 @@ import {
 } from '../assessmentData'
 
 import { splitComplianceRequirements } from './complianceFilter'
+import { milestoneForPressure } from '../../utils/timelineMilestone'
 
 import type {
   AssessmentInput,
@@ -658,6 +659,7 @@ export function buildAssessmentProfile(
   input: AssessmentInput,
   hasExtended: boolean
 ): AssessmentProfile {
+  const milestone = milestoneForPressure(input.timelinePressure, input.timelineMilestone)
   return {
     industry: input.industry,
     country: input.country,
@@ -686,6 +688,7 @@ export function buildAssessmentProfile(
     teamSize: input.teamSize,
     scaleUnknown: !!input.scaleUnknown,
     timelinePressure: input.timelinePressure,
+    ...(milestone ? { timelineMilestone: milestone } : {}),
     migrationUnknown: !!input.migrationUnknown,
     agilityUnknown: !!input.agilityUnknown,
     timelineUnknown: !!input.timelineUnknown,

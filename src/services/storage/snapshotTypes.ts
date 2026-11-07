@@ -10,7 +10,7 @@ import type {
   AssessmentSnapshot,
   AssessmentStatus,
 } from '@/store/useAssessmentStore'
-import type { AssessmentInput, AssessmentResult } from '@/hooks/assessmentTypes'
+import type { AssessmentInput, AssessmentResult, TimelineMilestone } from '@/hooks/assessmentTypes'
 import type { ChatProvider, Conversation } from '@/types/ChatTypes'
 import type { MigrateTab, MigrateViewMode } from '@/store/useMigrateSelectionStore'
 
@@ -59,6 +59,8 @@ export interface AssessmentData {
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
+  /** Optional so a snapshot saved before the field existed still restores. */
+  timelineMilestone?: TimelineMilestone | null
   timelineUnknown: boolean
   importComplianceSelection: boolean
   importProductSelection: boolean

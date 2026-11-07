@@ -115,7 +115,12 @@ const QUESTIONS: Question[] = [
     question: 'Timeline pressure',
     answered: (i) => !!i.timelinePressure && i.timelinePressure !== 'unknown',
     unknown: (i) => !!i.timelineUnknown || i.timelinePressure === 'unknown',
-    clear: (i) => ({ ...i, timelinePressure: 'unknown', timelineUnknown: true }),
+    clear: (i) => ({
+      ...i,
+      timelinePressure: 'unknown',
+      timelineMilestone: undefined,
+      timelineUnknown: true,
+    }),
   },
   {
     question: 'Country',

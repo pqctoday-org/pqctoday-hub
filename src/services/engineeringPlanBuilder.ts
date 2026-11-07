@@ -19,6 +19,7 @@ import { withEducationNoticeCsv, withEducationNoticeMarkdown } from '@/data/educ
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { generateCsv } from '@/utils/csvExport'
+import { timelineAnswerLabel } from '@/utils/timelineMilestone'
 import {
   classifyFips,
   pqcBoundary,
@@ -173,6 +174,12 @@ function buildPlan(input: EngineeringPlanInput, date: string): string {
     item('Crypto agility', p.cryptoAgility)
     item('Data retention', p.retentionPeriods)
     item('Migration status', p.migrationStatus)
+    item(
+      'Timeline',
+      p.timelineMilestone
+        ? timelineAnswerLabel(p.timelinePressure, p.timelineMilestone, undefined)
+        : undefined
+    )
     out.push('')
   }
 

@@ -20,8 +20,14 @@ const Step13TimelinePressure = ({
   hideHeading = false,
   hideHints = false,
 }: EmbeddedStepProps = {}) => {
-  const { country, timelinePressure, setTimelinePressure, timelineUnknown, setTimelineUnknown } =
-    useAssessmentStore()
+  const {
+    country,
+    timelinePressure,
+    timelineMilestone,
+    setTimelinePressure,
+    timelineUnknown,
+    setTimelineUnknown,
+  } = useAssessmentStore()
 
   // Build country-specific deadline options from the timeline
   const countryDeadlines = useMemo(() => {
@@ -139,14 +145,24 @@ const Step13TimelinePressure = ({
           >
             {countryDeadlines.map((phase) => {
               const derived = deriveTimelinePressure(phase.endYear)
-              const isSelected = timelinePressure === derived
+              // A saved choice names its milestone, so only that card reads as chosen;
+              // an answer saved before milestones were kept has none and matches by summary.
+              const isSelected =
+                timelinePressure === derived &&
+                (!timelineMilestone || timelineMilestone.id === phase.title)
               return (
                 <Button
                   key={phase.title}
                   variant="ghost"
                   role="radio"
                   aria-checked={isSelected}
-                  onClick={() => setTimelinePressure(derived)}
+                  onClick={() =>
+                    setTimelinePressure(derived, {
+                      id: phase.title,
+                      authority: phase.events[0]?.orgName ?? '',
+                      year: phase.endYear,
+                    })
+                  }
                   className={clsx(
                     'w-full h-auto p-4 flex-col items-start whitespace-normal border',
                     isSelected
