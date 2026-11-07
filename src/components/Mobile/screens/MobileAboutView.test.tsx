@@ -40,6 +40,32 @@ describe('MobileAboutView', () => {
     mockSetTheme.mockClear()
   })
 
+  it('states the vision, privacy and licence points with their conditions', () => {
+    renderView()
+    fireEvent.click(screen.getByText('Vision & how it adapts').closest('button')!)
+    const vision = screen.getByText(/The algorithms protecting your data today/)
+    expect(vision).toHaveTextContent(
+      'RSA and elliptic-curve algorithms, and the RSA and ECDSA signatures in TLS and SSH — would be broken by a sufficiently capable quantum computer'
+    )
+    expect(vision).not.toHaveTextContent('will be broken by quantum computers')
+    fireEvent.click(screen.getByText('Data & privacy').closest('button')!)
+    expect(
+      screen.getByText(/Cryptographic operations run entirely in your browser/)
+    ).toHaveTextContent('using WebAssembly modules, the Web Crypto API and JavaScript libraries')
+    fireEvent.click(screen.getByText('Open source & enterprise').closest('button')!)
+    const licence = screen.getByText(/Released under/)
+    expect(licence).toHaveTextContent('run and modify it for your own use')
+    expect(licence).toHaveTextContent(
+      'If you pass copies on, they stay under the same license with their source'
+    )
+    expect(licence).toHaveTextContent(
+      'offer a modified version to people over a network, you must offer them its source'
+    )
+    expect(licence).toHaveTextContent('Private changes you never share are not covered')
+    expect(licence).toHaveTextContent('The full license text governs')
+    expect(licence).not.toHaveTextContent('Free to copy, distribute and modify')
+  })
+
   it('renders all 5 real groups (README §23\'s "five-section accordion")', () => {
     renderView()
     expect(screen.getByText('Vision & how it adapts')).toBeInTheDocument()

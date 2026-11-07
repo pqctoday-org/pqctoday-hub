@@ -147,10 +147,11 @@ export function MobileAboutView() {
                   {group.id === 'vision' && (
                     <>
                       <Row title="Our vision">
-                        The algorithms protecting your data today — RSA, ECC, the cryptography
-                        behind TLS, SSH and every digital signature — will be broken by quantum
-                        computers. Most organisations do not know which systems are vulnerable, and
-                        most practitioners have never practiced post-quantum cryptography hands-on.
+                        The algorithms protecting your data today — RSA and elliptic-curve
+                        algorithms, and the RSA and ECDSA signatures in TLS and SSH — would be
+                        broken by a sufficiently capable quantum computer. Most organisations do not
+                        know which systems are vulnerable, and most practitioners have never
+                        practiced post-quantum cryptography hands-on.
                       </Row>
                       <Row title="How this hub adapts to you">
                         Telling the hub your role changes which pages lead your navigation, which
@@ -228,7 +229,8 @@ export function MobileAboutView() {
                         PQC Today is a fully static website — no backend server, no database, no
                         user accounts. Preferences, assessment results and learning progress are
                         stored in your browser's localStorage. {LOCAL_DATA_LEAVES_STATEMENT}{' '}
-                        Cryptographic operations run entirely client-side via WebAssembly.
+                        Cryptographic operations run entirely in your browser, using WebAssembly
+                        modules, the Web Crypto API and JavaScript libraries.
                       </Row>
                       <Row title="Analytics">
                         <span className="font-semibold text-foreground">Google Analytics 4</span>{' '}
@@ -259,9 +261,12 @@ export function MobileAboutView() {
                     <>
                       <Row title="Open source license">
                         Released under{' '}
-                        <span className="font-semibold text-foreground">GNU AGPL-3.0</span>. Free to
-                        copy, distribute and modify, provided modifications stay under the same
-                        license.
+                        <span className="font-semibold text-foreground">GNU AGPL-3.0</span>. You can
+                        run and modify it for your own use. If you pass copies on, they stay under
+                        the same license with their source; if you offer a modified version to
+                        people over a network, you must offer them its source. Private changes you
+                        never share are not covered by those obligations. The full license text
+                        governs.
                         <div className="mt-2 flex flex-col gap-1.5">
                           <ExternalLinkRow
                             href="https://github.com/pqctoday-org/pqctoday-hub/blob/main/LICENSE"

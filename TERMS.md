@@ -15,7 +15,7 @@ The Platform's source code is licensed under the **GNU Affero General Public Lic
 
 ## 3. Educational Purpose and Cryptographic Disclaimer
 
-The Platform is an **educational and research tool** for post-quantum cryptography (PQC). All cryptographic operations — including key generation, signing, verification, encryption, decryption, and key encapsulation — are performed **client-side in your browser** using WebAssembly (WASM) and are intended **for educational and demonstration purposes only**.
+The Platform is an **educational and research tool** for post-quantum cryptography (PQC). All cryptographic operations — including key generation, signing, verification, encryption, decryption, and key encapsulation — are performed **client-side in your browser** using WebAssembly (WASM) modules, the Web Crypto API and JavaScript libraries, and are intended **for educational and demonstration purposes only**.
 
 In short: this is a demo, not a certified crypto library — never use keys it generates to protect anything real.
 
@@ -84,7 +84,7 @@ The Platform is not affiliated with, endorsed by, or sponsored by any of these o
 
 ## 10. Privacy and Analytics
 
-The Platform has no user accounts and no login credentials, and no server of its own that processes your data. All cryptographic operations and assessments run entirely in your browser using client-side WebAssembly.
+The Platform has no user accounts and no login credentials, and no server of its own that processes your data. All cryptographic operations and assessments run entirely in your browser, using client-side WebAssembly modules, the Web Crypto API and JavaScript libraries.
 
 We use **Google Analytics 4 (GA4)** on every visit. It starts when a page loads, and the Platform has no consent prompt or on/off switch yet. GA4 collects anonymous usage data: page views, aggregated interaction events (e.g., which learning modules are started or completed, and searches, with the text you type scrubbed of email addresses, web addresses, IP addresses and long key-like strings), and basic browser details such as language and screen size. GA4 sets cookies that give your browser a random identifier so repeat visits can be counted. The page address we send has nothing after a "?" or "#". Two automatic GA4 features (site search and navigation tracking) read the browser's own address instead, and can record text after a "?", such as a search term or the data in a shared-report link. Google also receives your IP address when your browser sends these events. We do not send names, email addresses or account details. Analytics are disabled entirely when the Platform is accessed on localhost.
 
