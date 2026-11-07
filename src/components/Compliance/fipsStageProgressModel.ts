@@ -223,6 +223,28 @@ export function fipsTrackLine(timeline: ProductStageTimeline | null): string | n
 export type UnestablishedKind = 'not-read' | 'pending' | 'heuristic' | 'flag' | 'unlisted-name'
 export type UnestablishedCounts = Record<UnestablishedKind, number>
 
+const UNESTABLISHED_LABEL: Record<UnestablishedKind, string> = {
+  'not-read': 'its algorithm list is not read',
+  pending: 'its check is pending',
+  heuristic: 'it is matched by name only',
+  flag: 'it carries a bare flag',
+  'unlisted-name': 'its algorithm name is not recognised',
+}
+
+/**
+ * FIPS 140-3 certificates in the chart's months that fall in neither the "PQC" nor the
+ * "no PQC" band, with the reason for each kind, so the bands are not read as a full count.
+ */
+export function unestablishedCaption(counts: UnestablishedCounts): string {
+  const kinds = (Object.keys(UNESTABLISHED_LABEL) as UnestablishedKind[]).filter(
+    (k) => counts[k] > 0
+  )
+  const total = kinds.reduce((n, k) => n + counts[k], 0)
+  if (total === 0) return ''
+  const parts = kinds.map((k) => `${counts[k]} where ${UNESTABLISHED_LABEL[k]}`).join('; ')
+  return ` ${total} FIPS 140-3 certificate${total === 1 ? '' : 's'} in these months ${total === 1 ? 'is' : 'are'} in neither band (${parts}).`
+}
+
 export interface ListingStageTrend {
   points: StagePoint[]
   /** NIST withholds some Modules In Process entries by vendor request. */

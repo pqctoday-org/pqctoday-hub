@@ -9,6 +9,7 @@ import {
   shipsPqc,
   type InProcessMatch,
   type StagePoint,
+  unestablishedCaption,
 } from './fipsStageProgressModel'
 import type { CertificationXref, SoftwareItem } from '@/types/MigrateTypes'
 import type { ComplianceRecord } from './types'
@@ -325,5 +326,27 @@ describe('buildListingStageTrend', () => {
 
   it('labels the no-PQC band as a read algorithm list that names none', () => {
     expect(FIPS_STAGE_LABEL.listings.none).toMatch(/no PQC algorithm listed/)
+  })
+})
+
+describe('unestablishedCaption', () => {
+  const none = { 'not-read': 0, pending: 0, heuristic: 0, flag: 0, 'unlisted-name': 0 }
+
+  it('is empty when every certificate falls in a band', () => {
+    expect(unestablishedCaption(none)).toBe('')
+  })
+
+  it('names the count and the reason of each kind that is present, and skips the rest', () => {
+    const text = unestablishedCaption({ ...none, 'not-read': 3, pending: 1 })
+    expect(text).toContain('4 FIPS 140-3 certificates in these months are in neither band')
+    expect(text).toContain('3 where its algorithm list is not read')
+    expect(text).toContain('1 where its check is pending')
+    expect(text).not.toContain('matched by name only')
+  })
+
+  it('uses the singular for one certificate', () => {
+    expect(unestablishedCaption({ ...none, flag: 1 })).toContain(
+      '1 FIPS 140-3 certificate in these months is in neither band'
+    )
   })
 })

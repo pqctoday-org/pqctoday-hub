@@ -13,6 +13,7 @@ import {
   type InProcessData,
   type InProcessMatch,
   type StagePoint,
+  unestablishedCaption,
 } from './fipsStageProgressModel'
 import { formatIsoDate } from './recordSemantics'
 
@@ -302,6 +303,7 @@ export function PqcCertificationTrendChart({
               ? `; NIST withholds ${listingTrend.inProcessNotDisplayed} in-process modules by vendor request`
               : ''}
             . Counts listings, not distinct modules — one module can appear at several stages.
+            {unestablishedCaption(listingTrend.unestablished)}
           </>
         )}
         {asOf && ` Newest record dated ${formatIsoDate(asOf.toISOString())}.`}

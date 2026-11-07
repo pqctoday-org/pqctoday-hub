@@ -76,6 +76,21 @@ describe('PqcCertificationTrendChart — FIPS 140-3 track stages', () => {
     )
   })
 
+  it('says how many certificates fall in neither band, and why', async () => {
+    const withUnread = [
+      ...records,
+      { id: '6001', type: 'FIPS 140-3', date: '2026-04-10', pqcCoverage: 'Pending Check...' },
+      { id: '6002', type: 'FIPS 140-3', date: '2026-04-11', pqcCoverage: 'Not Yet Analyzed' },
+    ] as ComplianceRecord[]
+    render(<PqcCertificationTrendChart data={withUnread} asOf={new Date(2026, 8, 26)} />)
+    fireEvent.click(screen.getByRole('button', { name: 'NIST listings' }))
+    await waitFor(() =>
+      expect(screen.getByTestId('fips-stage-note')).toHaveTextContent(
+        /2 FIPS 140-3 certificates in these months are in neither band \(1 where its algorithm list is not read; 1 where its check is pending\)/
+      )
+    )
+  })
+
   it('still renders when the NIST files are missing', async () => {
     vi.stubGlobal(
       'fetch',
