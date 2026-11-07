@@ -90,7 +90,17 @@ describe('buildDrawerDetail with a scheme_under row', () => {
     if (!umbrella) return
     const d = buildDrawerDetail(umbrella, 'certify')
     const node = d.chain.find((c) => c.kind === 'Umbrella of')
-    expect(node?.value).toBe('ANSSI-COMMON-CRITERIA-CERTIFIC')
+    expect(node, 'the umbrella row should list a national scheme').toBeDefined()
+    // The umbrella has many national schemes; the drawer shows the first, so the
+    // test follows the link instead of naming a scheme: the scheme it names is a
+    // compliance row whose own drawer reads "National scheme under" the umbrella.
+    const named = complianceFrameworks.find((f) => f.id === node?.value)
+    expect(named, `"${node?.value}" should be a compliance row`).toBeDefined()
+    if (!named) return
+    const back = buildDrawerDetail(named, 'certify').chain.find(
+      (c) => c.kind === 'National scheme under'
+    )
+    expect(back?.value).toBe('COMMON-CRITERIA')
     expect(d.chain.some((c) => c.kind === 'Equivalent to')).toBe(false)
   })
 })

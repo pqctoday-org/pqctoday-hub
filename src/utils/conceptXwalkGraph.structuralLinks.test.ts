@@ -39,19 +39,9 @@ const injected: ConceptXwalkRecord[] = vi.hoisted(() => {
     relationshipType,
   })
   return [
-    row(
-      'xw-test-anssi',
-      'guidance:anssi-common-criteria-certific',
-      'guidance:common-criteria',
-      'scheme_under'
-    ),
-    row(
-      'xw-test-bsi',
-      'guidance:bsi-common-criteria-certificat',
-      'guidance:common-criteria',
-      'scheme_under'
-    ),
-    row('xw-test-1363a', 'standard:ieee-1363a', 'standard:ieee-1363', 'part_of_series'),
+    // The scheme_under and part_of_series rows these tests need now ship in the
+    // registry (xw-scu-*, xw-pos-*); injecting them again would draw every such
+    // edge twice. Only the ordinary edge below is not in the shipped data.
     // An ordinary edge that belongs to the ANSSI scheme alone.
     row(
       'xw-test-anssi-203',
@@ -68,6 +58,7 @@ vi.mock('@/data/conceptXwalkData', async (importOriginal) => {
 })
 
 import { conceptByCanonicalId } from '@/data/conceptRegistry'
+import { conceptXwalkData } from '@/data/conceptXwalkData'
 import { buildConceptGraph, equivalentCanonicals, hasGraphEdges } from './conceptXwalkGraph'
 
 function ids(conceptId: string) {
@@ -87,7 +78,14 @@ describe('scheme_under and part_of_series on the shipped registry', () => {
     expect(nodes.has(ANSSI)).toBe(true)
     expect(nodes.has(BSI)).toBe(true)
     const links = edges.filter((e) => e.relationshipType === 'scheme_under')
-    expect(links.map((e) => e.source).sort()).toEqual([ANSSI, BSI].sort())
+    // Every shipped scheme_under row that points at the umbrella is drawn once,
+    // scheme to umbrella; no scheme is drawn twice.
+    const shipped = conceptXwalkData
+      .filter((r) => r.relationshipType === 'scheme_under' && r.toConceptId === UMBRELLA)
+      .map((r) => r.fromConceptId)
+    expect(shipped).toEqual(expect.arrayContaining([ANSSI, BSI]))
+    expect(links.map((e) => e.source).sort()).toEqual([...new Set(shipped)].sort())
+    for (const id of [ANSSI, BSI]) expect(links.filter((e) => e.source === id)).toHaveLength(1)
     for (const e of links) expect(e.target).toBe(UMBRELLA)
   })
 

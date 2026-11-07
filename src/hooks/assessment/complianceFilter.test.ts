@@ -61,7 +61,12 @@ describe('filterComplianceRequirements — reference estates', () => {
       countries: string[]
       allSectorsReviewed?: boolean
     }
-    const configs = industryComplianceConfigs as unknown as Cfg[]
+    // The filter looks a label up and takes the first record with that name (a retired duplicate
+    // of an active framework can share its label), so the expectation does the same.
+    const allConfigs = industryComplianceConfigs as unknown as Cfg[]
+    const configs = allConfigs.filter(
+      (c, i) => allConfigs.findIndex((d) => d.label === c.label) === i
+    )
     const labels = configs.map((c) => c.label)
     const exactCountry = (c: Cfg, country: string) =>
       country === 'Global' ||

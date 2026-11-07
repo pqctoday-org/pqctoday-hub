@@ -99,14 +99,10 @@ describe('buildObligations', () => {
 describe('groupObligations', () => {
   it('orders bands by tier and drops empty ones', () => {
     const groups = groupObligations(buildObligations(EU_FINANCE))
-    // A binding record whose sector tags do not include the reader's sector (here the Cyber
-    // Resilience Act for a finance profile) is shown as relevant by country, not as binding on them.
-    expect(groups.map((g) => g.tier)).toEqual([
-      'mandatory',
-      'recognized',
-      'cross-border',
-      'advisory',
-    ])
+    // The Cyber Resilience Act is reviewed as covering only the sectors it names, and a finance
+    // profile is not one of them, so it is left out of the list altogether (it used to appear
+    // here as a cross-border band). The bands that remain keep their tier order.
+    expect(groups.map((g) => g.tier)).toEqual(['mandatory', 'recognized', 'advisory'])
     for (const g of groups) expect(g.rows.length).toBeGreaterThan(0)
   })
 

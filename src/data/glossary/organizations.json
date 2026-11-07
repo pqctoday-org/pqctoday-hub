@@ -129,7 +129,7 @@
   {
     "term": "Sigstore",
     "definition": "An open-source project (Linux Foundation) for keyless code signing. Developers authenticate with their existing identity (GitHub, Google) and receive short-lived certificates, eliminating long-term key management.",
-    "technicalNote": "Sigstore uses cryptography in several places: the signing client creates an ephemeral key pair, Fulcio (the certificate authority) issues a short-lived certificate bound to an OpenID Connect identity, Rekor (the transparency log) records the signing event, and a timestamp authority is a further service that uses cryptography. Moving Fulcio and Rekor to ML-DSA would not by itself make downstream consumers post-quantum safe: each signing client, each verifier, the trusted-root and bundle formats, and the verification policy also have to support the new algorithm. The Sigstore project's 2025 plan was to let clients experiment with ML-DSA keys first and to adopt post-quantum algorithms in its public-good services once vetted implementations are available in Go; it lists open questions such as how verification material is signed and how users set verification policy.",
+    "technicalNote": "Sigstore's public-good service combines a certificate authority (Fulcio), a transparency log (Rekor) and a root of trust, with a client such as Cosign creating the ephemeral key pair and signing. A signature path is post-quantum only when the client, certificate, log, trust root and each ecosystem's verifier all support the algorithm; Sigstore's algorithm registry currently marks ML-DSA as experimental and not yet operational.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
     "category": "organization"
