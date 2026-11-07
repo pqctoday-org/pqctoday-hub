@@ -465,7 +465,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         sizeBasis:
           'Illustrative X25519 32 B → X25519MLKEM768 server key_exchange 1,120 B; client 1,216 B (RFC 10024)',
         notes:
-          'BACnet/SC already runs TLS 1.3, so a hybrid group is a stack update, not a protocol redesign. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
+          'BACnet/SC uses TLS 1.3; assess the applicable BACnet/SC profile, TLS stack and both peers before choosing a hybrid group. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
       },
       {
         layerName: 'Operational certificates',
