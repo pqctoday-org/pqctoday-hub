@@ -77,13 +77,14 @@ function suggestRotationPeriod(
   dataSensitivity: string[],
   cryptoAgility: string
 ): RotationSuggestion {
-  // Hardcoded crypto can't rotate often → push to longer rotation; agile orgs
-  // can run aggressive 90-day rotation safely.
+  // Starting point only: the longest interval is pre-selected when the assessment
+  // records hardcoded crypto (key replacement and algorithm agility are separate,
+  // so each system needs its own decision); agile orgs with critical data get 90 days.
   if (cryptoAgility === 'hardcoded')
     return {
       value: '2-years',
       rationale:
-        'Suggested from your assessment: hardcoded crypto (no runtime algorithm swap) can’t be rotated often, so this defaults to the longest safe interval.',
+        'Starting point only: this tool pre-selects its longest interval when the assessment records hardcoded crypto; key replacement and algorithm agility are separate, so confirm per system (SP 800-57 Pt 1 Rev 5 Sec 5.3.1).',
     }
   if (cryptoAgility === 'agile' && dataSensitivity.includes('critical'))
     return {
