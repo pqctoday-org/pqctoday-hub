@@ -36,6 +36,8 @@ const AVAIL_TO_DB: Record<CatalogAvailability, DatabasePqcSupport> = {
   available: 'ga',
   partial: 'planned',
   roadmap: 'planned',
+  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
+  psk: 'planned',
   none: 'none',
   unverified: 'planned',
 }

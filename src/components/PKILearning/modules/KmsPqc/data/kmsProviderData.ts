@@ -255,6 +255,8 @@ const AVAIL_TO_KMS: Record<CatalogAvailability, KmsPqcStatus> = {
   available: 'ga',
   partial: 'preview',
   roadmap: 'planned',
+  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
+  psk: 'planned',
   none: 'planned',
   unverified: 'planned',
 }

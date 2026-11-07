@@ -30,6 +30,8 @@ const AVAIL_TO_PQC: Record<CatalogAvailability, PQCStatus> = {
   available: 'ga',
   partial: 'preview',
   roadmap: 'roadmap',
+  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
+  psk: 'roadmap',
   none: 'none',
   unverified: 'roadmap',
 }

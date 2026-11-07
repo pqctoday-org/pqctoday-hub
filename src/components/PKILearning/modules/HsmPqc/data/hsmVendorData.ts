@@ -455,6 +455,8 @@ const AVAIL_TO_SUPPORT: Record<CatalogAvailability, PqcSupportStatusKey> = {
   available: 'production',
   partial: 'limited',
   roadmap: 'roadmap',
+  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
+  psk: 'roadmap',
   none: 'roadmap',
   unverified: 'roadmap',
 }
