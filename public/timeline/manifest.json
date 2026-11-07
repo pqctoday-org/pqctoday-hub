@@ -2,7 +2,7 @@
   "generated": "2026-11-07",
   "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_11072026_r4.csv",
+  "csv": "timeline_11072026_r5.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -2131,27 +2131,15 @@
     },
     {
       "refId": "european-union-ec-cryptographic-inventory-mandate",
-      "label": "Cryptographic Inventory Mandate",
-      "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-coordinated-implementation-roadmap-transition-post-quantum-cryptography",
+      "label": "Cryptographic Inventory Recommended as a First Step",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
       "status": "downloaded",
       "file": "timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html",
       "filename": "European_Union_EC_Cryptographic_Inventory_Mandate.html",
       "sizeBytes": 67568,
       "contentType": "text/html",
       "sha256": "c8a89eb15941b1f8cd6899607fdf20758056da16ffc8ad6e446b6b6730b57bb7",
-      "verifiedAt": "2026-10-22"
-    },
-    {
-      "refId": "european-union-ec-high-priority-system-migration-begins",
-      "label": "High-Priority System Migration Begins",
-      "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-coordinated-implementation-roadmap-transition-post-quantum-cryptography",
-      "status": "downloaded",
-      "file": "timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html",
-      "filename": "European_Union_EC_Cryptographic_Inventory_Mandate.html",
-      "sizeBytes": 67568,
-      "contentType": "text/html",
-      "sha256": "c8a89eb15941b1f8cd6899607fdf20758056da16ffc8ad6e446b6b6730b57bb7",
-      "verifiedAt": "2026-10-22"
+      "verifiedAt": "2026-11-07"
     },
     {
       "refId": "singapore-mas-financial-sector-pqc-migration-plans-due",
@@ -3547,5 +3535,5 @@
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-11-07T16:30:00.570582+00:00"
+  "rebuiltAt": "2026-11-07T16:45:18.060466+00:00"
 }
