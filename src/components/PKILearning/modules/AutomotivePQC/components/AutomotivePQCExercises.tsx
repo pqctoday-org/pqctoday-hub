@@ -74,7 +74,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Safety',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'ML-DSA-44 verification (~0.3ms on automotive SoC) easily fits the 10ms budget. However, ASIL-D requires fail-operational mode: if the PQC path stalls, a classical ECDSA backup must maintain braking. This dual-path architecture adds complexity but is mandatory for safety certification.',
+        'ML-DSA-44 verification (~0.3ms on automotive SoC) easily fits the 10ms budget. However, in this module’s example, braking is assumed to need fail-operational behaviour: if the PQC path stalls, a second verification path that does not depend on the PQC code could keep braking while the failure is logged. Whether a design needs this, and what the second path is, comes from the function’s hazard analysis and safety goals, not from the ASIL letter; the module cites no standard that makes a classical backup mandatory.',
       config: { step: 2 },
     },
     {

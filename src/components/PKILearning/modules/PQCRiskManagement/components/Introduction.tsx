@@ -7,6 +7,7 @@ import {
   Clock,
   ClipboardList,
   Grid3X3,
+  GitCompareArrows,
   ArrowRight,
   BarChart3,
   AlertTriangle,
@@ -260,7 +261,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            This workshop walks you through a structured three-step quantum risk management process:
+            This workshop walks you through a structured four-step quantum risk management process:
           </p>
           <div className="space-y-2">
             {[
@@ -281,6 +282,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 t: 'Risk Heatmap Visualization',
                 d: 'Plot your risks on a 5x5 likelihood-impact grid to identify critical migration priorities.',
                 icon: Grid3X3,
+              },
+              {
+                n: 4,
+                t: 'Compliance Gap Analysis',
+                d: 'Map your risk register against CNSA 2.0 and NIST IR 8547 deadlines to identify compliance gaps.',
+                icon: GitCompareArrows,
               },
             ].map((step) => {
               const Icon = step.icon

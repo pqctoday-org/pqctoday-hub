@@ -15,11 +15,12 @@ The PQC Risk Management module teaches CISOs and security leaders how to identif
 
 ## Workshop / Interactive Activities
 
-The workshop has 3 interactive steps:
+The workshop has 4 interactive steps:
 
 1. **CRQC Scenario Planner** — adjust a year slider (2028-2045) to model when a quantum computer could break current algorithms; see cascading impacts on 10 algorithms, 6 compliance deadlines, and HNDL exposure windows across 7 data retention periods
 2. **Risk Register Builder** — create a multi-row risk register with pre-populated examples (TLS certificates, database encryption, code signing, VPN tunnels); export as Markdown and save to learning portfolio
-3. **Risk Heatmap Generator** — automatically plots risk register entries on a 5×5 heatmap grid; click any cell to see detailed entries; view risk distribution summary across severity bands
+3. **Risk Heatmap** — plots risk register entries on a 5×5 heatmap grid; click any cell to see detailed entries and assign a draft treatment strategy; compare baseline and projected sample scores and set your migration priority order
+4. **Compliance Gap Analysis** — map your risk register against CNSA 2.0 and NIST IR 8547 deadlines to identify compliance gaps
 
 ## Related Standards
 
