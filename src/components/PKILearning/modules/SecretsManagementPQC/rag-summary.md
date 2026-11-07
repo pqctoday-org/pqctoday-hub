@@ -8,14 +8,14 @@ Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secr
 
 - Secret types vs encryption keys: what PQC protects
 - Harvest-now-decrypt-later (HNDL) risk for long-lived credentials
-- HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65)
+- HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65) as a proposed design: Vault documents no ML-KEM transit key type
 - Dynamic secrets and TTL-based rotation with PQC
 - AWS Secrets Manager / Azure Key Vault / GCP Secret Manager PQC timelines
-- Kubernetes secrets encryption-at-rest with ML-KEM (via KMS plugin)
+- Kubernetes secrets encryption-at-rest (via KMS plugin)
 - External Secrets Operator and SPIFFE/SPIRE integration
 - CI/CD OIDC + ML-DSA short-lived certificate patterns
-- Secret Zero problem and ML-KEM vault seal key migration
-- Envelope encryption: DEK (AES-256-GCM) + KEK (ML-KEM-768/1024) pattern
+- Secret Zero problem and vault seal key migration
+- Envelope encryption: DEK (AES-256-GCM) + KEK pattern
 
 ## Standards Referenced
 
@@ -33,11 +33,11 @@ Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secr
 
 ## Secret Categories Covered
 
-1. API Keys & Access Tokens — critical, delayed HNDL, ML-KEM vault KEK
+1. API Keys & Access Tokens — critical, delayed HNDL
 2. Database Credentials — critical, immediate HNDL, dynamic secrets (TTL 8h)
-3. TLS Certificates & Private Keys — critical, immediate HNDL, ML-DSA certs
+3. TLS Certificates & Private Keys — critical, no HNDL (authentication risk), ML-DSA certs
 4. Code/Document Signing Keys — critical, immediate HNDL, ML-DSA-87
-5. Data Encryption Keys (DEKs) — critical, immediate HNDL, ML-KEM-1024 KEK
+5. Data Encryption Keys (DEKs) — critical, immediate HNDL
 6. OAuth Tokens & JWTs — high, delayed HNDL, short TTL + ML-DSA signing
 7. Service Account Credentials — high, delayed, Workload Identity + ML-DSA
 8. Crypto Seed Phrases — critical, immediate HNDL, ML-KEM + HSM
@@ -45,3 +45,4 @@ Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secr
 ## Cloud Provider PQC Status (March 2026)
 
 - AWS Secrets Manager: hybrid ML-KEM TLS on its non-FIPS endpoints (data in transit)
+- AWS KMS ML-KEM keys (Encapsulate/Decapsulate); Secrets Manager stays AES-256 under symmetric KMS keys
