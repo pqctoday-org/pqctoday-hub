@@ -143,12 +143,10 @@ function detectConflicts(
 
   // Check for aggressive early deadlines
   const hasAU = selectedIds.includes('au')
-  const hasTW = selectedIds.includes('tw')
   const hasCZ = selectedIds.includes('cz')
   const earlyDeadlineCountries = [
     hasAU && 'Australia (2030)',
-    hasTW && 'Taiwan (2027)',
-    hasCZ && 'Czech Republic (2027)',
+    hasCZ && 'Czech Republic (end of 2030, NUKIB annex estimate)',
   ].filter(Boolean)
 
   if (earlyDeadlineCountries.length > 0 && (hasUS || hasEU)) {

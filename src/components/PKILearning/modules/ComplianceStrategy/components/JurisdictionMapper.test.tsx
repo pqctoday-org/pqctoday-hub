@@ -85,3 +85,39 @@ describe('JurisdictionMapper — Migrate links', () => {
     expect(screen.getByTestId('loc').textContent).toBe('/migrate?product=alpha-lib')
   })
 })
+
+describe('JurisdictionMapper — early-deadline conflict', () => {
+  it('lists Australia and the Czech annex estimate, and leaves Taiwan out of the list', () => {
+    mocks.software = []
+    render(
+      <MemoryRouter initialEntries={['/learn/compliance-strategy']}>
+        <JurisdictionMapper
+          selectedJurisdictions={['us', 'au', 'cz', 'tw']}
+          onJurisdictionsChange={() => {}}
+          dismissedFrameworks={new Set()}
+          onDismissedFrameworksChange={() => {}}
+        />
+      </MemoryRouter>
+    )
+    const early = screen.getByText(/have deadlines significantly earlier than/)
+    expect(early).toHaveTextContent('Australia (2030)')
+    expect(early).toHaveTextContent('Czech Republic (end of 2030, NUKIB annex estimate)')
+    expect(early).not.toHaveTextContent('Taiwan')
+    expect(early).not.toHaveTextContent('2027')
+  })
+
+  it('does not raise the early-deadline conflict for Taiwan alone', () => {
+    mocks.software = []
+    render(
+      <MemoryRouter initialEntries={['/learn/compliance-strategy']}>
+        <JurisdictionMapper
+          selectedJurisdictions={['us', 'tw']}
+          onJurisdictionsChange={() => {}}
+          dismissedFrameworks={new Set()}
+          onDismissedFrameworksChange={() => {}}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(/have deadlines significantly earlier than/)).not.toBeInTheDocument()
+  })
+})
