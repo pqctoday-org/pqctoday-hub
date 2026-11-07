@@ -135,6 +135,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'european-union-ec-cryptographic-inventory-mandate': [
     'European Union:EC — Cryptographic Inventory Mandate',
+    'European Union:EC — Cryptographic Inventory Recommended as a First Step',
   ],
   'european-union-ec-eu-cyber-resilience-act-in-force': [
     'European Union:EC — EU Cyber Resilience Act In Force',
