@@ -3,6 +3,8 @@ import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { bytesToHex } from '@/services/crypto/FileUtils'
 import type { FiveGService } from '../FiveGService'
 
+let sharedSecretRunSequence = 0
+
 export async function generateEphemeralKey(
   ctx: FiveGService,
   profile: 'A' | 'B' | 'C',
@@ -433,7 +435,10 @@ ${finalSharedHex} `
       sharedSecretHex =
         profile === 'A' ? ctx.testVectors!.profileA!.zEcdh! : ctx.testVectors!.profileB!.zEcdh!
     } else {
-      const secretFile = `5g_shared_secret_${ctx.getTimestamp()}.bin`
+      // The worker omits inherited outputs with unchanged bytes. A fresh name
+      // keeps repeated derivations in the same timestamp bucket attributable to this run.
+      const secretFile = `5g_shared_secret_${ctx.getTimestamp()}_${++sharedSecretRunSequence}.bin`
+      ctx.trackFile(secretFile)
       // JIT Injection for Stateless CI
       const ephPrivHex = ctx.state.ephPrivHex
       const hnPubHex = ctx.state.hnPubHex
@@ -467,7 +472,6 @@ ${finalSharedHex} `
         }
       } else {
         // Fallback to old behavior if state missing (shouldn't happen in flow)
-        ctx.trackFile(secretFile)
         cmd = `openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnPub} -out ${secretFile} `
         const response = await openSSLService.execute(cmd)
         if (response.error) throw new Error(response.error)
