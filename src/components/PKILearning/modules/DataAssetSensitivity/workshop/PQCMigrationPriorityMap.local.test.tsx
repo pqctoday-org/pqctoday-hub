@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { PQCMigrationPriorityMap } from './PQCMigrationPriorityMap'
-import { DEFAULT_ASSETS, DEFAULT_SCORING_WEIGHTS } from '../data/sensitivityConstants'
+import { DEFAULT_ASSETS, DEFAULT_SCORING_WEIGHTS, scoreAsset } from '../data/sensitivityConstants'
 
 afterEach(() => vi.restoreAllMocks())
 describe('priority-map current inputs', () => {
@@ -43,5 +43,21 @@ describe('priority-map current inputs', () => {
     expect(current).toContain('assumption: 2045')
     expect(current).toContain('confidentiality window 100')
     expect(current).not.toBe(old)
+  })
+})
+
+describe('priority-map applicability', () => {
+  it('does not copy the estate-wide mandate list onto an asset with no stated applicability', () => {
+    const asset = { ...DEFAULT_ASSETS[0], complianceFlags: [] as string[] }
+    render(
+      <MemoryRouter>
+        <PQCMigrationPriorityMap assets={[asset]} selectedMandates={['CNSA-2.0', 'GDPR']} />
+      </MemoryRouter>
+    )
+    const scored = scoreAsset(asset, DEFAULT_SCORING_WEIGHTS)
+    expect(scored.complianceScore).toBe(0)
+    expect(screen.getByText(String(scored.compositeScore))).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Expand details' }))
+    expect(screen.getByText(/No specific mandate/)).toBeInTheDocument()
   })
 })

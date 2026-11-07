@@ -20,7 +20,11 @@ import { COMPLIANCE_MANDATES, getEarliestDeadline } from '../data/industryCompli
 
 interface PQCMigrationPriorityMapProps {
   assets: DataAsset[]
-  selectedMandates: string[]
+  /**
+   * Estate-wide mandate list kept for the caller's other views. It is not copied
+   * onto assets whose applicability is unstated: unknown stays unknown.
+   */
+  selectedMandates?: string[]
   weights?: ScoringWeights
   crqcYear?: number
 }
@@ -208,24 +212,14 @@ function AssetPriorityRow({ scored, rank }: { scored: ScoredAsset; rank: number 
 
 export const PQCMigrationPriorityMap: React.FC<PQCMigrationPriorityMapProps> = ({
   assets,
-  selectedMandates,
   weights = DEFAULT_SCORING_WEIGHTS,
   crqcYear = ESTIMATED_CRQC_YEAR,
 }) => {
   const scored = useMemo(() => {
     return [...assets]
-      .map((a) =>
-        scoreAsset(
-          {
-            ...a,
-            complianceFlags: a.complianceFlags.length > 0 ? a.complianceFlags : selectedMandates,
-          },
-          weights,
-          crqcYear
-        )
-      )
+      .map((a) => scoreAsset(a, weights, crqcYear))
       .sort((a, b) => b.compositeScore - a.compositeScore)
-  }, [assets, selectedMandates, weights, crqcYear])
+  }, [assets, weights, crqcYear])
 
   const bandCounts = useMemo(() => {
     const counts = { Critical: 0, High: 0, Medium: 0, Low: 0 }

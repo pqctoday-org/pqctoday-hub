@@ -42,6 +42,9 @@ describe('illustrative asset observations', () => {
     expect(
       screen.queryByText(/already in adversary archives|composite score ≥ 85|below 33/)
     ).toBeNull()
+    // The root-CA observation names the signature algorithm by its FIPS name.
+    expect(screen.getByText(/CNSA 2\.0 specifies ML-DSA-87 \(FIPS 204\) for signing/)).toBeVisible()
+    expect(screen.queryByText(/CRYSTALS-Dilithium with Level V/)).toBeNull()
     const buttons = screen.getAllByRole('button', { name: 'Load & Run' })
     fireEvent.click(buttons[0])
     fireEvent.click(buttons[3])
