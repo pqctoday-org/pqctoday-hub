@@ -462,16 +462,17 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   migrationToolkit: {
     title: 'Migration Toolkit',
     summary:
-      'Shows products from the Migrate catalog that match your infrastructure and industry, helping you identify tools for your PQC migration.',
+      'Shows products from the Migrate catalog in the infrastructure layers and sub-categories you selected, ordered by migration priority, helping you identify tools for your PQC migration. Your industry does not change the list; if no layer is selected, the whole catalog is listed.',
     wizardInputs: [
       {
         label: 'Infrastructure (Step 12)',
         detail:
-          'Products are filtered to match your selected infrastructure layers and sub-categories (e.g., TLS libraries, PKI platforms, HSM vendors).',
+          'Products are filtered to match your selected infrastructure layers and sub-categories (e.g., TLS libraries, PKI platforms, HSM vendors). With no layer selected, nothing is filtered and the whole catalog is listed.',
       },
       {
         label: 'Industry (Step 1)',
-        detail: 'Products are further filtered by industry relevance.',
+        detail:
+          'Does not filter this list; products are chosen by infrastructure layer and sub-category only.',
       },
     ],
     personaEffects: [
