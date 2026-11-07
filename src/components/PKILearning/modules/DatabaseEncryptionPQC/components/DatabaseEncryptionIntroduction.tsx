@@ -337,11 +337,12 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               <InlineTooltip term="HYOK">HYOK</InlineTooltip> (Hold Your Own Key)
             </div>
             <p className="text-xs text-muted-foreground">
-              Customer key never leaves on-prem infrastructure. Cloud receives only encrypted{' '}
-              <InlineTooltip term="DEK">DEKs</InlineTooltip>. HYOK with a Thales Luna HSM (firmware
-              7.9 or later) or a Utimaco u.trust Se-Series HSM with the Quantum Protect package can
-              host ML-KEM keys after a firmware or package upgrade; confirm the parameter set
-              (ML-KEM-1024), PKCS#11 v3.2 support and FIPS 140-3 validation status with the vendor.
+              Customer key never leaves on-prem infrastructure. Cloud receives the plaintext{' '}
+              <InlineTooltip term="DEK">DEK</InlineTooltip> after the on-premises unwrap. HYOK with
+              a Thales Luna HSM (firmware 7.9 or later) or a Utimaco u.trust Se-Series HSM with the
+              Quantum Protect package can host ML-KEM keys after a firmware or package upgrade;
+              confirm the parameter set (ML-KEM-1024), PKCS#11 v3.2 support and FIPS 140-3
+              validation status with the vendor.
             </p>
           </div>
         </div>
@@ -400,7 +401,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <ul className="space-y-1 text-xs text-muted-foreground">
               <li>
                 &bull; Oracle:{' '}
-                <code className="bg-muted px-1 rounded">ALTER TABLESPACE ... REKEY</code>
+                <code className="bg-muted px-1 rounded">
+                  ALTER TABLESPACE ... ENCRYPTION ONLINE REKEY
+                </code>
               </li>
               <li>
                 &bull; SQL Server:{' '}
@@ -409,18 +412,31 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
                 </code>
               </li>
               <li>
-                &bull; MongoDB: <code className="bg-muted px-1 rounded">rotateMasterKey</code>
+                &bull; MongoDB: <code className="bg-muted px-1 rounded">rotateMasterKey</code>;
+                client-side encrypted fields:{' '}
+                <code className="bg-muted px-1 rounded">KeyVault.rewrapManyDataKey</code>
               </li>
-              <li>&bull; No application downtime; runs in background</li>
-              <li>&bull; CPU overhead: 5&ndash;15% during re-encryption window</li>
+              <li>
+                &bull; No application downtime is expected for these commands; Oracle's ONLINE
+                conversion builds new datafiles and needs free space
+              </li>
+              <li>
+                &bull; Sample assumption: CPU overhead of 5&ndash;15% during the re-encryption
+                window
+              </li>
             </ul>
           </div>
           <div className="bg-status-warning/5 rounded-lg p-4 border border-status-warning/20">
             <div className="text-xs font-bold text-status-warning mb-2">Offline Migration</div>
             <ul className="space-y-1 text-xs text-muted-foreground">
-              <li>&bull; Required for PostgreSQL pg_tde (no online rekey yet)</li>
+              <li>
+                &bull; PostgreSQL pg_tde: converting existing tables rewrites them under an
+                exclusive lock
+              </li>
               <li>&bull; MySQL InnoDB: requires ALTER TABLE for each encrypted table</li>
-              <li>&bull; Typical maintenance window: 2&ndash;8 hours for 1TB database</li>
+              <li>
+                &bull; Sample assumption: a maintenance window of 2&ndash;8 hours for a 1TB database
+              </li>
               <li>&bull; Rollback by restoring old backup if failure occurs</li>
             </ul>
           </div>

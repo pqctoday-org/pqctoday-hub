@@ -20,19 +20,19 @@ const RISK_STYLES: Record<string, string> = {
 
 const DB_NOTES: Record<string, { commandNote: string; reencrNote: string }> = {
   oracle: {
-    commandNote: 'ALTER TABLESPACE <name> REKEY',
+    commandNote: 'ALTER TABLESPACE <name> ENCRYPTION ONLINE REKEY',
     reencrNote:
-      'Oracle supports online re-encryption via ALTER TABLESPACE REKEY. No application downtime required. Keystore must be open during migration.',
+      'Oracle supports online re-encryption via ALTER TABLESPACE ... ENCRYPTION ONLINE REKEY. ONLINE conversion builds new datafiles and needs free space. Keystore must be open during migration.',
   },
   sqlserver: {
     commandNote: 'ALTER DATABASE ENCRYPTION KEY REGENERATE WITH ALGORITHM = AES_256',
     reencrNote:
-      'SQL Server TDE re-encryption runs in background. Monitor progress via sys.dm_database_encryption_keys. EKM provider must support ML-KEM-1024 import.',
+      'SQL Server TDE re-encryption runs in background. Monitor progress via sys.dm_database_encryption_keys.',
   },
   postgresql: {
-    commandNote: 'pg_tde REKEY',
+    commandNote: 'pg_tde principal-key rotation function',
     reencrNote:
-      'This module’s projection, not a Percona statement: a KMIP key provider for ML-KEM master keys. Upstream PostgreSQL does not have native TDE — requires Percona build.',
+      'This module’s projection, not a Percona statement: a KMIP key provider for ML-KEM master keys. Upstream PostgreSQL does not have native TDE — requires Percona build. Converting existing tables rewrites them.',
   },
   mongodb: {
     commandNote: 'db.adminCommand({ rotateMasterKey: 1 })',
