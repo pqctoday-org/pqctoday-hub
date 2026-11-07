@@ -86,7 +86,10 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
             <br />
             <strong>Why Ed25519?</strong> Unlike Bitcoin's secp256k1 (ECDSA), Ed25519 uses EdDSA{' '}
             <InfoTooltip term="eddsa" /> which is faster, more secure against side-channel attacks,
-            and produces deterministic signatures (no random k value needed).
+            and derives its nonce from the key and message (RFC 8032), so a weak RNG at signing
+            cannot repeat a nonce, though implementations still need side-channel defences. ECDSA
+            needs a unique, unpredictable nonce per signature (random, or derived per RFC 6979;
+            reuse leaks the key).
             <br />
             <br />
             <strong>Demo vs Production Key Generation:</strong> This demo generates a{' '}
@@ -404,9 +407,10 @@ const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(
         description: (
           <>
             Sign the serialized message using the source private key with{' '}
-            <InfoTooltip term="eddsa" /> (EdDSA). Unlike ECDSA, no random nonce is needed — the
-            nonce is deterministically derived from the key and message, eliminating nonce-reuse
-            vulnerabilities.
+            <InfoTooltip term="eddsa" /> (EdDSA). EdDSA derives the nonce from the key and message
+            (RFC 8032), so a weak RNG at signing cannot repeat a nonce, though implementations still
+            need side-channel defences. ECDSA needs a unique, unpredictable nonce per signature
+            (random, or derived per RFC 6979; reuse leaks the key).
             <br />
             <br />
             <strong>Demo vs Production — What Gets Signed:</strong>{' '}

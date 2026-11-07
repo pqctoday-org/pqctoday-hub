@@ -96,7 +96,7 @@ export const CRYPTO_TOOLTIPS = {
   eddsa: {
     title: 'EdDSA',
     description:
-      'Edwards-curve Digital Signature Algorithm. Used by Solana. Faster than ECDSA with stronger resistance to implementation errors (deterministic nonces, side-channel resistance).',
+      'Edwards-curve Digital Signature Algorithm. Used by Solana. Faster than ECDSA. It derives the nonce from the key and message (RFC 8032), so a weak RNG at signing cannot repeat a nonce, though implementations still need side-channel defences.',
   },
 
   // Ethereum Specific

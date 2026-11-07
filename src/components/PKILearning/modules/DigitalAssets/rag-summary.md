@@ -4,7 +4,7 @@ The Blockchain Cryptography module teaches the cryptographic primitives underpin
 
 ## Key Concepts
 
-- Elliptic curve cryptography: secp256k1 (Bitcoin, Ethereum) uses ECDSA with random nonces (nonce reuse leaks the private key); Ed25519 (Solana) uses EdDSA with deterministic nonces, eliminating nonce-reuse vulnerabilities
+- Elliptic curve cryptography: secp256k1 (Bitcoin, Ethereum) uses ECDSA, which needs a unique, unpredictable nonce per signature (random, or derived per RFC 6979; reuse leaks the key); Ed25519 (Solana) uses EdDSA, which derives the nonce from the key and message (RFC 8032), so a weak RNG at signing cannot repeat a nonce, though implementations still need side-channel defences
 - Address derivation pipelines: Bitcoin applies SHA-256 then RIPEMD-160 then Base58Check encoding; Ethereum applies Keccak-256 and takes the last 20 bytes with EIP-55 checksum; Solana directly Base58-encodes the 32-byte Ed25519 public key
 - Digital signatures: ECDSA produces (r, s) signatures; EdDSA produces (R, s) signatures; Ethereum ECDSA includes a recovery parameter (v) per EIP-155 allowing public key recovery from signatures alone
 - Hierarchical Deterministic (HD) wallets: BIP-39 converts entropy to a 24-word mnemonic; BIP-32 defines tree derivation; BIP-44 standardizes derivation paths (Bitcoin m/44'/0'/0'/0/0, Ethereum m/44'/60'/0'/0/0); Solana uses SLIP-0010 with all-hardened segments because Ed25519 does not support non-hardened derivation
