@@ -38,8 +38,20 @@ describe('OTPQC introduction: CNSA 2.0 per-category table', () => {
     expect(screen.queryByText('All National Security Systems')).not.toBeInTheDocument()
   })
 
-  it('keeps the FAQ dates as the current schedule', () => {
-    renderIntro('firmware-project-signing')
-    expect(screen.getAllByText(/31 December 2031/).length).toBeGreaterThan(0)
+  it('gives the three FAQ dates as the current schedule in the signing section', () => {
+    const { container } = renderIntro('firmware-project-signing')
+    const text = (container.textContent ?? '').replace(/\s+/g, ' ')
+    expect(text).toMatch(/sets three dates for national security systems/)
+    expect(text).toContain('1 January 2027')
+    expect(text).toContain('31 December 2030')
+    expect(text).toContain('31 December 2031')
+  })
+
+  it('calls the table history and does not say each category has its own date as a present fact', () => {
+    const { container } = renderIntro()
+    const text = (container.textContent ?? '').replace(/\s+/g, ' ')
+    expect(text).toMatch(/This table is history: it shows three categories from NSA's 2022 chart/)
+    expect(text).toMatch(/each category had its own dates/)
+    expect(text).not.toMatch(/each category has its own\./)
   })
 })

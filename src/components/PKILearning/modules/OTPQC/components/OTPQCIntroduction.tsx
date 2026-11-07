@@ -883,11 +883,11 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             planning by the dates in NSA&apos;s CNSA 2.0 FAQ, version 2.2)
           </h3>
           <p className="text-xs text-muted-foreground">
-            This table is history: it shows the 2022 chart for US National Security Systems and
-            their suppliers. Plan against the FAQ&apos;s three dates (1 January 2027, 31 December
-            2030 and 31 December 2031). There is no universal &ldquo;hybrid by&rdquo; or
-            &ldquo;PQC-only by&rdquo; date and no hybrid mandate — each category has its own.
-            AES-256 is a CNSA 2.0 algorithm with no sunset.
+            This table is history: it shows three categories from NSA&apos;s 2022 chart for US
+            National Security Systems and their suppliers. Plan against the FAQ&apos;s three dates
+            (1 January 2027, 31 December 2030 and 31 December 2031). The 2022 chart set no universal
+            &ldquo;hybrid by&rdquo; or &ldquo;PQC-only by&rdquo; date and no hybrid mandate: each
+            category had its own dates. AES-256 is a CNSA 2.0 algorithm with no sunset.
           </p>
           <div
             className="overflow-x-auto"

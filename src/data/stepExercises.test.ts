@@ -92,3 +92,12 @@ describe('STEP_EXERCISES: CNSA 2.0 dates follow the FAQ', () => {
     expect(ex.why).not.toMatch(/preferred from 2025|exclusive by 2030/)
   })
 })
+
+describe('STEP_EXERCISES: contract-clause deadline question follows the dropdown', () => {
+  const ex = STEP_EXERCISES['vendor-risk/contract-clauses']
+  it('asks for the NSM-10 objective year and does not teach the 2022 schedule', () => {
+    expect(ex.prompt).toMatch(/NSM-10 quantum-risk objective/)
+    expect(ex.options[ex.answer]).toBe('2035')
+    expect(ex.why).not.toMatch(/2033|full enforcement|browsers, servers, cloud/)
+  })
+})

@@ -52,6 +52,10 @@ const OS_CONFIGS: Record<OSSelection, OSConfig> = {
       },
       { name: 'TLS_AES_256_GCM_SHA384', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
       { name: 'TLS_AES_128_GCM_SHA256', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
+      { name: 'ECDHE-RSA-AES256-GCM-SHA384', quantumSafe: false, enabled: true, note: 'TLS 1.2' },
+      { name: 'ECDHE-RSA-AES128-GCM-SHA256', quantumSafe: false, enabled: true, note: 'TLS 1.2' },
+      { name: 'ECDHE-ECDSA-AES256-GCM-SHA384', quantumSafe: false, enabled: true, note: 'TLS 1.2' },
+      { name: 'DHE-RSA-AES256-GCM-SHA384', quantumSafe: false, enabled: true, note: 'TLS 1.2' },
     ],
     beforeConfig: `# RHEL 9.7 before enabling the PQ policy: /etc/crypto-policies/config
 DEFAULT
@@ -80,8 +84,9 @@ $ openssl s_client -connect pqc-enabled-server.com:443 \\
 Server Temp Key: X25519MLKEM768, 1152 bits
 # (hybrid key exchange: ML-KEM-768 + X25519)
 
-# On RHEL 10.1 and later no change is needed: the DEFAULT policy
-# enables and prefers the hybrid group for TLS and SSH.`,
+# On RHEL 10.1 and later no change is needed for applications that use
+# OpenSSL, GnuTLS, NSS or Go: the DEFAULT policy enables and prefers the
+# hybrid group for them.`,
     impactNote:
       'On RHEL 10.1 and later the DEFAULT policy applies to applications that use OpenSSL, GnuTLS, NSS or Go; on RHEL 9.7, DEFAULT:PQ applies to applications based on OpenSSL or NSS. The mechanism is hybrid key-exchange groups in TLS 1.3, not new cipher suites.',
     compatNote:

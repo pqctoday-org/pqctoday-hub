@@ -1179,10 +1179,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // vendor-risk
   'vendor-risk/contract-clauses': {
     prompt:
-      'In the PQC Compliance Deadline Year dropdown, which year is labelled as CNSA 2.0 full enforcement for all NSS and the year NIST IR 8547 disallows RSA/ECC under NIST standards?',
-    options: ['2030', '2033', '2035'],
+      'In the PQC Compliance Deadline Year dropdown, which year is labelled as the NSM-10 quantum-risk objective?',
+    options: ['2030', '2031', '2035'],
     answer: 2,
-    why: 'The dropdown stacks the milestones: 2030 is CNSA 2.0 exclusivity for signing and networking plus the NIST deprecation target, 2033 covers browsers, servers, cloud and operating systems, and 2035 is the point where CNSA 2.0 applies to every NSS and NIST IR 8547 disallows quantum-vulnerable public-key algorithms.',
+    why: "The dropdown lists the three dates of NSA's CNSA 2.0 FAQ (2027 for new acquisitions, 2030 for the phase-out of equipment that cannot support CNSA 2.0, 2031 for the mandate), the 2025 step of NSA's 2022 category guidance marked as the older schedule, and 2035, which it labels the NSM-10 quantum-risk objective.",
   },
   // research-quantum-impact
   'research-quantum-impact/how-to-act': {
