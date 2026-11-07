@@ -26,7 +26,6 @@ function cycloneDX(a: (typeof SAMPLE_INVENTORY)[number]) {
         nistQuantumSecurityLevel: a.quantumVulnerable ? 0 : 3,
       },
       certificateProperties: a.class === 'certificates' ? { subjectName: a.name } : undefined,
-      oid: '1.2.840.10045.4.3.2',
     },
     properties: [
       { name: 'spkiFingerprint', value: a.spki },
@@ -70,6 +69,12 @@ export function FormatChooser() {
         <p className="text-sm text-muted-foreground">
           Render a real asset in both formats. SPDX 3.0.1 has no cryptography model — the crypto
           fields have nowhere to go.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          These partial format examples use fictional inventory fields. Exact cryptographic
+          identifiers have not been parsed here; an identifier that the sample does not supply is
+          omitted. Use your discovery and export tools to inspect the observed identifiers and
+          parameters before relying on a CBOM.
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {SAMPLES.map((a) => (
