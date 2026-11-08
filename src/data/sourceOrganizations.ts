@@ -279,3 +279,10 @@ export function sourceOrganizationFor(value: string | null | undefined): SourceO
   const key = normalizeOrganizationName(value ?? '')
   return key ? (BY_ALIAS.get(key) ?? null) : null
 }
+
+const BY_ID = new Map<string, SourceOrganization>(SOURCE_ORGANIZATIONS.map((o) => [o.id, o]))
+
+/** The curated organization with this `id`, or null. An id is not a display name; use `sourceOrganizationFor` for names. */
+export function sourceOrganizationById(id: string | null | undefined): SourceOrganization | null {
+  return id ? (BY_ID.get(id) ?? null) : null
+}

@@ -118,6 +118,8 @@ const REL_HEADING: Record<string, { outgoing: string; incoming: string }> = {
   equivalent: { outgoing: 'Equivalent to', incoming: 'Equivalent to' },
   scheme_under: { outgoing: 'National scheme under', incoming: 'Umbrella of' },
   part_of_series: { outgoing: 'Part of series with', incoming: 'Includes' },
+  // `published_by` is not drawn here (a publisher has no node, and would be a hub), so it has no heading.
+  supersedes: { outgoing: 'Replaces', incoming: 'Replaced by' },
 }
 
 /** The detail-panel heading for a group of connections; an unknown relation is shown as plain words. */
@@ -620,8 +622,17 @@ function buildEdges(
     const cid = conceptIdForRow('compliance', fw.id)
     if (cid) conceptIdToNodeId.set(cid, `comp-${slug(fw.id)}`)
   }
-  for (const xwalk of conceptXwalkData) {
+  // Replacement links go first: one pair gets one link here, and "replaces" is the
+  // more specific fact than the "intersects" row that usually exists for the same pair.
+  const xwalkRows = [
+    ...conceptXwalkData.filter((x) => x.relationshipType === 'supersedes'),
+    ...conceptXwalkData.filter((x) => x.relationshipType !== 'supersedes'),
+  ]
+  for (const xwalk of xwalkRows) {
     if (xwalk.relationshipType === 'not_related') continue
+    // Who published a document is shown on the document's own page; as a link here
+    // every publisher would become a hub joined to hundreds of documents.
+    if (xwalk.relationshipType === 'published_by') continue
     const fromId = conceptIdToNodeId.get(xwalk.fromConceptId)
     const toId = conceptIdToNodeId.get(xwalk.toConceptId)
     if (fromId && toId) add(fromId, toId, xwalk.relationshipType)

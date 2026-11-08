@@ -75,6 +75,43 @@ describe('edgeLabelLines', () => {
   })
 })
 
+describe('edgeLabelLines for published by and replaces', () => {
+  it('reads each in plain words from the end the arrow leaves, with no basis line', () => {
+    expect(
+      edgeLabelLines({
+        isSynthetic: false,
+        relationshipType: 'published_by',
+        rationaleType: 'policy_reference',
+      })
+    ).toEqual(['Published by'])
+    expect(
+      edgeLabelLines({
+        isSynthetic: false,
+        relationshipType: 'supersedes',
+        rationaleType: 'policy_reference',
+      })
+    ).toEqual(['Replaces an older edition'])
+  })
+
+  it('the longest of the two still fits inside one node column', () => {
+    const size = estimateLabelSize(['Replaces an older edition'])
+    expect(size.width).toBeLessThanOrEqual(NODE_WIDTH)
+  })
+
+  it('lays out a replacement edge without a label colliding with the nodes', () => {
+    const nodes = [node('new'), node('old')]
+    const edges = [edge({ id: 'e1', source: 'new', target: 'old', relationshipType: 'supersedes' })]
+    const layout = layoutConceptGraph(nodes, edges)
+    expect(layout.edges).toHaveLength(1)
+    expect(layout.edges[0].lines).toEqual(['Replaces an older edition'])
+    const box = labelBox(layout.edges[0])
+    for (const n of layout.nodes) {
+      const nb = { l: n.x, t: n.y, r: n.x + NODE_WIDTH, b: n.y + NODE_HEIGHT }
+      expect(overlaps(box, nb), `label overlaps node ${n.id}`).toBe(false)
+    }
+  })
+})
+
 describe('estimateLabelSize', () => {
   it('grows with the longest line and with the number of lines', () => {
     const short = estimateLabelSize(['implements'])

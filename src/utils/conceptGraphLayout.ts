@@ -8,6 +8,7 @@
 // the label being drawn at the middle of an edge that was routed without it.
 import dagre from 'dagre'
 import type { XwalkGraphEdge, XwalkGraphNode } from './conceptXwalkGraph'
+import { LIFECYCLE_LINK_WORDS, isLifecycleLinkType } from './conceptLinkWords'
 
 export const NODE_WIDTH = 180
 export const NODE_HEIGHT = 56
@@ -41,9 +42,12 @@ const EDGE_LABELS: Record<string, string> = {
   intersects_with: 'Relates to',
   scheme_under: 'National scheme under',
   part_of_series: 'Part of series with',
+  published_by: LIFECYCLE_LINK_WORDS.published_by.fromSource,
+  supersedes: LIFECYCLE_LINK_WORDS.supersedes.fromSource,
 }
 
-function edgeLabelFor(relationshipType: string): string {
+/** The plain-words name of a link type, read from the end the arrow leaves. */
+export function edgeLabelFor(relationshipType: string): string {
   // eslint-disable-next-line security/detect-object-injection -- relationshipType is an edge type from the cross-walk data, not user input
   const known = EDGE_LABELS[relationshipType]
   if (known) return known
@@ -51,11 +55,17 @@ function edgeLabelFor(relationshipType: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1)
 }
 
-/** The lines of text shown on an edge: the relationship, then its basis in brackets. */
+/**
+ * The lines of text shown on an edge: the relationship, then its basis in
+ * brackets. "Published by" and "Replaces an older edition" are facts about a
+ * document, not a judgement of overlap, so they carry no basis line.
+ */
 export function edgeLabelLines(edge: LabelledEdge): string[] {
   if (edge.isSynthetic) return ['implements']
   const lines = [edgeLabelFor(edge.relationshipType)]
-  if (edge.rationaleType) lines.push(`(${words(edge.rationaleType)})`)
+  if (edge.rationaleType && !isLifecycleLinkType(edge.relationshipType)) {
+    lines.push(`(${words(edge.rationaleType)})`)
+  }
   return lines
 }
 

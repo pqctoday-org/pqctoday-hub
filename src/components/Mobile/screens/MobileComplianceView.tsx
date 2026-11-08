@@ -1961,6 +1961,14 @@ function MobileFrameworkDetailSheet({
             <Globe size={12} className="shrink-0" aria-hidden="true" />
             {detail.juris}
           </p>
+          {detail.publishedByLine && (
+            <p
+              className="-mt-1.5 break-words text-[11px] text-muted-foreground"
+              data-testid="compliance-sheet-published-by"
+            >
+              {detail.publishedByLine}
+            </p>
+          )}
 
           {applicability && (
             <div className="rounded-lg border border-border bg-muted/20 p-2.5">

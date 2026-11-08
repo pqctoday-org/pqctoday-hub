@@ -224,7 +224,7 @@ function rawRow(overrides: Partial<RawXwalkRow>): RawXwalkRow {
   }
 }
 
-describe('structural relationship types (scheme_under, part_of_series)', () => {
+describe('structural relationship types (scheme_under, part_of_series, published_by, supersedes)', () => {
   it('a scheme_under row loads with its direction and ids intact', () => {
     const rec = transformRow(rawRow({ relationship_type: 'scheme_under' }))
     expect(rec).not.toBeNull()
@@ -251,7 +251,7 @@ describe('structural relationship types (scheme_under, part_of_series)', () => {
   })
 
   it('a relationship type outside the closed set is still dropped, not guessed', () => {
-    for (const bad of ['published_by', 'scheme-under', 'Scheme_Under', '']) {
+    for (const bad of ['published-by', 'scheme-under', 'Scheme_Under', 'replaces', '']) {
       expect(transformRow(rawRow({ relationship_type: bad })), bad).toBeNull()
     }
   })
@@ -262,9 +262,46 @@ describe('structural relationship types (scheme_under, part_of_series)', () => {
     }
   })
 
-  it('exactly these two types are structural, and equivalent is not one of them', () => {
-    expect([...STRUCTURAL_RELATIONSHIP_TYPES].sort()).toEqual(['part_of_series', 'scheme_under'])
+  it('exactly these four types are structural, and equivalent is not one of them', () => {
+    expect([...STRUCTURAL_RELATIONSHIP_TYPES].sort()).toEqual([
+      'part_of_series',
+      'published_by',
+      'scheme_under',
+      'supersedes',
+    ])
     expect(STRUCTURAL_RELATIONSHIP_TYPES.has('equivalent')).toBe(false)
+  })
+
+  it('a published_by row loads: document to publishing organisation', () => {
+    const rec = transformRow(
+      rawRow({
+        relationship_type: 'published_by',
+        from_concept: 'NIST-SP-800-57-Pt1-R5',
+        to_concept: 'NIST',
+        from_concept_id: 'standard:nist-sp-800-57-pt1-r5',
+        to_concept_id: 'concept_only:org-us-nist',
+      })
+    )
+    expect(rec).not.toBeNull()
+    expect(rec?.relationshipType).toBe('published_by')
+    expect(rec?.fromConceptId).toBe('standard:nist-sp-800-57-pt1-r5')
+    expect(rec?.toConceptId).toBe('concept_only:org-us-nist')
+  })
+
+  it('a supersedes row loads: newer edition to the older edition it replaces', () => {
+    const rec = transformRow(
+      rawRow({
+        relationship_type: 'supersedes',
+        from_concept: 'NIST-SP-800-57-Pt1-R5',
+        to_concept: 'NIST-SP-800-57-Pt1-R4',
+        from_concept_id: 'standard:nist-sp-800-57-pt1-r5',
+        to_concept_id: 'standard:nist-sp-800-57-pt1-r4',
+      })
+    )
+    expect(rec).not.toBeNull()
+    expect(rec?.relationshipType).toBe('supersedes')
+    expect(rec?.fromConceptId).toBe('standard:nist-sp-800-57-pt1-r5')
+    expect(rec?.toConceptId).toBe('standard:nist-sp-800-57-pt1-r4')
   })
 
   it('every shipped structural row names two different, resolved concepts', () => {
