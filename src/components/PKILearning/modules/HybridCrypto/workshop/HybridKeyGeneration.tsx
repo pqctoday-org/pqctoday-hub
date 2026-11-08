@@ -210,7 +210,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
               `Public Key  (raw, ${pair.mlPk.length} B): ${toHexDisplay(pair.mlPk)}`,
               '',
               '# Backend: @noble/curves/secp256k1 + @noble/post-quantum/ml-dsa',
-              '# No PEM encoding exists for the fused Silithium construction yet.',
+              '# No PEM encoding exists for this local shared-binding model.',
             ].join('\n'),
             keyInfo: [
               '--- secp256k1 EC-Schnorr ---',

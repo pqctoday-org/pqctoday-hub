@@ -470,7 +470,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.2',
     name: 'Hybrid Signature Spectrums',
     description:
-      'Execute concatenation, nesting and a local shared-binding model; compare actual component checks and a public-only ML replacement experiment, not a published-scheme security proof',
+      'Execute concatenation, nesting and a local shared-binding model; compare component checks and a replacement experiment. Not a security proof.',
     category: 'HSM / PKCS#11',
     algorithms: ['EC-Schnorr', 'secp256k1', 'ML-DSA-65', 'SHA-256'],
     icon: Fingerprint,
