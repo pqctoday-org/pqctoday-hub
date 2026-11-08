@@ -455,7 +455,7 @@ export const TRANSPORT_ISSUES: TransportIssue[] = [
     name: 'Merkle Tree Certs',
     affectedProtocolIds: ['tls-1-3', 'x509'],
     description:
-      'PLANTS WG draft (draft-ietf-plants-merkle-tree-certs) defines a new X.509 cert form with integrated Certificate-Transparency-style logging, designed to reduce overhead for short-lived certs and large PQ signatures. Optional signatureless mode avoids signatures entirely when relying parties have current transparency state.',
+      'PLANTS WG draft (draft-ietf-plants-merkle-tree-certs) defines a new X.509 cert form with integrated Certificate-Transparency-style logging, designed to reduce overhead for short-lived certs and large PQ signatures. Optional signatureless mode avoids signatures entirely when relying parties have current transparency state. Chrome Canary 152 and later offers flag-based MTC testing (verify-mtcs and test-root-store) against a test root store, and Let’s Encrypt has said it is targeting an MTC staging environment in late 2026 and a production-ready one in 2027.',
     referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/',
   },
   {
@@ -857,6 +857,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-editor-queue',
         stageNote:
           'Re-checked 2026-10-17: draft-ietf-tls-mldsa-06 is in the RFC Editor queue (approved by the IESG at the 2026-07-02 telechat).',
+        deploymentPosture: 'pilot',
+        deploymentNote:
+          "Chrome's testing page says Chrome 150 and later support ML-DSA in private PKI hierarchies: enabled by default with no flag, but only against a root the user or administrator configures explicitly (chrome://certificate-manager or enterprise policy). No publicly trusted ML-DSA certificate can be issued and the Chrome Root Store is unchanged; the feature's Chrome Platform Status record still reads Proposed (snapshot 2026-10-20). No public-web deployment.",
         refs: [
           {
             kind: 'draft',
