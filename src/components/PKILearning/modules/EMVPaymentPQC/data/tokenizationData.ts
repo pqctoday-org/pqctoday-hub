@@ -194,10 +194,11 @@ const TOKENIZATION_FLOW_INPUTS: Array<
             description: 'Sample TLS: RSA/ECDSA certificate authentication.',
           },
           {
-            boundary: 'payload-protection',
+            boundary: 'key-delivery',
             assessment: 'classical-public-key',
             provenance: 'authored-sample',
-            description: 'The authored JWE request uses RSA-OAEP payload protection.',
+            description:
+              'The authored JWE uses RSA-OAEP to protect delivery of its content-encryption key.',
           },
         ],
         pqcReplacement:

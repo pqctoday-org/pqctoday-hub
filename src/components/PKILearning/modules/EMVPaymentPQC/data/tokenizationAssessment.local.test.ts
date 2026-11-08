@@ -76,6 +76,24 @@ describe('explicit tokenization protection assessment', () => {
       expect(result.cryptoUsed).toEqual(before.cryptoUsed)
     }
   )
+  it('keeps JWE content-encryption-key delivery separate from TLS key establishment and payload encryption', () => {
+    const step = TOKENIZATION_FLOWS.find((flow) => flow.id === 'mc-mdes')!.steps.find(
+      (step) => step.id === 'mdes-1'
+    )!
+    const jwe = step.protectionComponents.find(
+      (component) => component.provenance === 'authored-sample'
+    )!
+    expect(jwe.boundary).toBe('key-delivery')
+    expect(jwe.assessment).toBe('classical-public-key')
+    expect(jwe.description).toContain('RSA-OAEP')
+    expect(jwe.description).toContain('content-encryption key')
+    expect(
+      step.protectionComponents
+        .filter((component) => component.provenance === 'approved-shared-tls-assumption')
+        .map((component) => component.boundary)
+    ).toEqual(['transport-key-establishment', 'transport-authentication'])
+    expect(step.quantumVulnerable).toBe(true)
+  })
   it('preserves all eighteen IDs and records the shared TLS assumption separately from authored algorithms', () => {
     const steps = TOKENIZATION_FLOWS.flatMap((flow) => flow.steps)
     expect(steps.map((s) => s.id)).toEqual([
