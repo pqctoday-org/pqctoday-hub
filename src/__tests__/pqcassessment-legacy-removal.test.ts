@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * The assessment CSV's legacy block (83 rows with no category column, written before the
- * category column existed) was removed on 8 Nov 2026. Each removed row's id has a live twin in
- * the current block (category use_case, retention or sensitivity), so no assessment question or
- * option is lost. The loader never read the legacy rows (it keys on category), so the removal
- * changes no value the site shows. This test pins the removed ids and checks that each one still
- * exists as a live row, and that the latest file holds no uncategorised rows.
+ * The assessment CSV carried 83 extra rows that were a column-shifted copy: the category column
+ * held ids such as TLS instead of a category. They were removed on 8 Nov 2026. The site never
+ * read them, because industryAssessConfig.ts keeps only rows whose category is compliance,
+ * use_case, retention or sensitivity, so none of the 83 rows reached the site.
+ *
+ * This test checks that every removed id keeps a live row in the latest file, that the latest
+ * file holds no uncategorised rows, and that none of the removed rows (read from the archived
+ * copy) has a category the site reads. It checks ids and categories only; it does not compare
+ * the other column values of the removed rows.
  *
  * Run locally: `npx vitest run src/__tests__/pqcassessment-legacy-removal.test.ts`
  */
@@ -16,6 +19,10 @@ import Papa from 'papaparse'
 
 const DATA_DIR = path.join(process.cwd(), 'src/data')
 const LIVE_CATEGORIES = new Set(['use_case', 'retention', 'sensitivity'])
+// The categories industryAssessConfig.ts reads; every other row is dropped by the loader.
+const READ_CATEGORIES = new Set(['compliance', 'use_case', 'retention', 'sensitivity'])
+// The archived copy that still holds the removed rows.
+const ARCHIVED_FILE = path.join(DATA_DIR, 'archive', 'pqcassessment_11082026.csv')
 
 /** Latest dated file for a prefix, by the MMDDYYYY date and then the _rN suffix. */
 function latestDated(dir: string, prefix: string): string {
@@ -138,5 +145,18 @@ describe('pqcassessment legacy block removal', () => {
   it('keeps a live row for every removed legacy id', () => {
     const missing = REMOVED_LEGACY_IDS.filter((id) => !liveIds.has(id))
     expect(missing).toEqual([])
+  })
+
+  it('removed rows never had a category the site reads', () => {
+    const archived = Papa.parse<string[]>(fs.readFileSync(ARCHIVED_FILE, 'utf-8'), {
+      skipEmptyLines: true,
+    })
+    // The removed rows are the archived rows that the latest file no longer holds.
+    const latestKeys = new Set(rows.map((r) => `${r[0]}|${r[1]}`))
+    const removedRows = archived.data.slice(1).filter((r) => !latestKeys.has(`${r[0]}|${r[1]}`))
+    expect(removedRows.map((r) => r[0]).sort()).toEqual([...REMOVED_LEGACY_IDS].sort())
+    // The loader keys on the first column; none of the removed rows has a category it reads.
+    const readByTheSite = removedRows.filter((r) => READ_CATEGORIES.has(r[0]))
+    expect(readByTheSite.map((r) => r[0])).toEqual([])
   })
 })
