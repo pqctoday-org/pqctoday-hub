@@ -1774,7 +1774,7 @@
     "term": "BYOK",
     "acronym": "BYOK",
     "definition": "Bring Your Own Key — a cloud encryption model where the customer provides and manages the root encryption key rather than using a key generated and managed by the cloud provider. Gives customers control over key lifecycle and access.",
-    "technicalNote": "BYOK implementations: AWS KMS Customer Managed Keys (CMK) imported via WrappingKey; Azure Key Vault BYOK via HSM-protected key transfer; GCP Cloud KMS BYOK via key import API. All use an RSA-3072 or ECDH wrapping key for key import — this is the PQC-vulnerable step (must migrate to ML-KEM-768 wrapping). Post-import, the customer key wraps DEKs using AES-256 which is quantum-safe.",
+    "technicalNote": "BYOK implementations differ by provider. AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys. Azure Key Vault BYOK transfers a key wrapped with CKM_RSA_AES_KEY_WRAP under an RSA-HSM key exchange key of 2048, 3072 or 4096 bits. Google Cloud KMS key import wraps key material for transfer, with RSA-based import methods alongside the quantum-safe HPKE methods. Where the wrap is RSA, it is the PQC-vulnerable step of BYOK; ML-KEM is not an import wrapping option for AWS KMS or Azure Key Vault. Post-import, the customer key wraps DEKs using AES-256 which is quantum-safe.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1790,7 +1790,7 @@
   {
     "term": "Secrets Manager",
     "definition": "A dedicated service for storing, rotating, and auditing application secrets such as database passwords, API keys, TLS certificates, and SSH keys. Provides centralized access control, automatic rotation, and audit logging.",
-    "technicalNote": "Key products: HashiCorp Vault (open source + enterprise), AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server, CyberArk Conjur. Core capabilities: versioning, rotation triggers (AWS Lambda), access policies (IAM or Vault policies), audit logs, replication. PQC considerations: hybrid key exchange on the TLS connection to a secrets API needs both the service endpoint and the client to support it (AWS documents ML-KEM hybrid key agreement on Secrets Manager's non-FIPS endpoints, which clients must be updated to offer). Signing algorithms are product-specific; Vault's documented identity-token algorithms are RS256/384/512, ES256/384/512 and EdDSA, with no post-quantum option listed.",
+    "technicalNote": "Key products: HashiCorp Vault (open source + enterprise), AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server, CyberArk Conjur. Core capabilities: versioning, rotation triggers (AWS Lambda), access policies (IAM or Vault policies), audit logs, replication. PQC considerations: hybrid key exchange on the TLS connection to a secrets API needs both the service endpoint and the client to support it (AWS lists hybrid post-quantum key exchange as launched on Secrets Manager's FIPS and non-FIPS endpoints in commercial and US GovCloud Regions, which clients must be updated to offer). Signing algorithms are product-specific; Vault's documented identity-token algorithms are RS256/384/512, ES256/384/512 and EdDSA, with no post-quantum option listed.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "beginner",
     "category": "concept"
