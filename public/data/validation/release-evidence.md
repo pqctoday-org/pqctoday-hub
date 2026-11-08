@@ -335,12 +335,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `63be82227b370449973e178d4c0c6da139ddb162c4c8215a2a8a87f9ec844e8a` |
+| `public/data/validation/coverage-matrix.json`                           | `2a0f420de04b8d468cbc511e8185810ff1ff81cedf9b37db5f09cfe5fb5388b4` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700` |
 | `src/data/validation/open-gaps.json`                                    | `623b3aea5f6aa821c7adfb3e4a5ef0e6dde98acb6a1756d2f15762fd368f68b7` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `88a03cd5ad6306be37e63ba523e56add1cb71dad2a1a837d0d42772de3eb768d` |
-| `src/data/validation/validation-counts.generated.json`                  | `e6d9dd65951b75c94abb8eac7a67187e4c579d5122ff686fca06d16ccd0bc979` |
-| `src/data/validation/vector-manifest.json`                              | `d7d11cd28e039ff788f8f41ac9a56f352615ad56faf43bfe01ce43ac9a0399d6` |
+| `src/data/validation/validation-counts.generated.json`                  | `f496b5c40f27bf4a94ce4a09c731dd4c74ef1f942b3fbd135f890e61e6efe5e8` |
+| `src/data/validation/vector-manifest.json`                              | `6e35d06cd2d73992354c744810cc354787a0f1636239dd95e4bf084b6ae0dd0f` |
