@@ -29,6 +29,18 @@ const SOLUTION = `    ,{
           "kms:KeyUsage": "SIGN_VERIFY"
         }
       }
+    },
+    {
+      "Sid": "CreateMlKemKeyEstablishmentKeysOnly",
+      "Effect": "Allow",
+      "Action": "kms:CreateKey",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "kms:KeySpec": ["ML_KEM_768", "ML_KEM_1024"],
+          "kms:KeyUsage": "ENCAPSULATE_DECAPSULATE"
+        }
+      }
     }`
 
 export const AwsKmsPolicyLab: React.FC = () => {
@@ -56,7 +68,12 @@ export const AwsKmsPolicyLab: React.FC = () => {
         <p className="text-sm text-muted-foreground mt-2">
           Your task: add an <code>Allow</code> statement for <code>kms:CreateKey</code> whose
           condition limits <code>kms:KeySpec</code> to ML-DSA specs and requires{' '}
-          <code>kms:KeyUsage</code> to be <code>SIGN_VERIFY</code>.
+          <code>kms:KeyUsage</code> to be <code>SIGN_VERIFY</code>. The sample solution allows{' '}
+          <code>ML_DSA_65</code> and <code>ML_DSA_87</code> and leaves out <code>ML_DSA_44</code>;
+          that is a policy choice, so add <code>ML_DSA_44</code> if your policy needs the smallest
+          parameter set. Optional extra: the solution also allows ML-KEM key-establishment keys (
+          <code>ML_KEM_768</code>, <code>ML_KEM_1024</code>) with key usage{' '}
+          <code>ENCAPSULATE_DECAPSULATE</code>.
         </p>
       </div>
 
@@ -116,6 +133,10 @@ export const AwsKmsPolicyLab: React.FC = () => {
                 label="No TLS-like condition names detected (limited check)"
                 isSuccess={validation.usesOnlyRealConditionKeys}
               />
+              <ValidationRow
+                label="Optional: ML-KEM KeySpec with ENCAPSULATE_DECAPSULATE usage found"
+                isSuccess={validation.allowsMlKemKeyEstablishment}
+              />
             </div>
           </div>
 
@@ -162,7 +183,10 @@ export const AwsKmsPolicyLab: React.FC = () => {
         <p>
           AWS KMS offers ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid
           post-quantum TLS on its endpoints; data encrypted under KMS symmetric keys uses
-          AES-256-GCM.
+          AES-256-GCM. ML-KEM keys are for key establishment, not signing, and use the key usage{' '}
+          <code>ENCAPSULATE_DECAPSULATE</code>. Using one needs the <code>kms:Encapsulate</code> and{' '}
+          <code>kms:Decapsulate</code> permissions; <code>kms:Decapsulate</code> hands the shared
+          secret to the caller in plaintext, so grant it narrowly.
         </p>
       </div>
     </div>

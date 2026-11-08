@@ -117,7 +117,7 @@ export const ENVELOPE_ENCRYPTION_STEPS: EnvelopeEncryptionStep[] = [
     classicalDescription:
       'Not needed — RSA-OAEP directly encrypts the DEK. The decrypted output IS the DEK.',
     pqcDescription:
-      'The shared secret key from ML-KEM Encaps does not require further key derivation; this demo runs HKDF-SHA-256(shared_secret, info="kms-envelope-v1") → 256-bit wrapping key to bind it to this protocol and version.',
+      'The shared secret key from ML-KEM Encaps does not require further key derivation; this demo runs HKDF-SHA-256(shared_secret, salt="kms-envelope-salt-v1", info="kms-envelope-v1") → 256-bit wrapping key to bind it to this protocol and version.',
     classicalArtifact: '(skipped)',
     pqcArtifact: '256-bit AES Wrapping Key',
     classicalSize: 'N/A',
@@ -156,11 +156,13 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     name: 'X25519 + ML-KEM-768',
     classical: 'X25519 (32-byte shared secret)',
     pqc: 'ML-KEM-768 (32-byte shared secret)',
-    combiner: 'HKDF-SHA-256(x25519_ss || mlkem_ss, info="hybrid-kek")',
+    // ML-KEM secret first, the order RFC 10024 uses for X25519MLKEM768. This module's combiner is
+    // its own HKDF call; the secret order is a design choice of this module.
+    combiner: 'HKDF-SHA-256(mlkem_ss || x25519_ss, info="hybrid-kek")',
     outputKeySize: 32,
     totalOverhead: '32 + 1,088 = 1,120 bytes ciphertext',
     useCase:
-      'TLS 1.3, general purpose — X25519MLKEM768 as defined in RFC 10024, which follows the principles of NIST SP 800-227 Section 4.6',
+      "KMS key wrap, general purpose — this module's own combiner, one of the choices SP 800-227 Section 4.6 allows. The TLS group X25519MLKEM768 (RFC 10024) is a different construction: it concatenates the same two secrets, ML-KEM first, and feeds them to the TLS 1.3 key schedule, not to this HKDF call",
   },
   {
     id: 'p256-mlkem768',
@@ -170,17 +172,19 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     combiner: 'HKDF-SHA-256(ecdh_ss || mlkem_ss, info="hybrid-kek")',
     outputKeySize: 32,
     totalOverhead: '65 + 1,088 = 1,153 bytes ciphertext',
-    useCase: 'FIPS-compliant environments (P-256 is FIPS-approved curve)',
+    useCase:
+      'FIPS-oriented — P-256 is a FIPS-approved curve, and RFC 10024 puts its secret first in SecP256r1MLKEM768. Whether a hybrid counts as FIPS-approved depends on the module\u2019s validated algorithms and the current CMVP implementation guidance; check both and the module\u2019s Security Policy',
   },
   {
-    id: 'x25519-mlkem1024',
-    name: 'X25519 + ML-KEM-1024',
-    classical: 'X25519 (32-byte shared secret)',
+    id: 'p384-mlkem1024',
+    name: 'ECDH P-384 + ML-KEM-1024',
+    classical: 'ECDH P-384 (48-byte shared secret)',
     pqc: 'ML-KEM-1024 (32-byte shared secret)',
-    combiner: 'HKDF-SHA-256(x25519_ss || mlkem_ss, info="hybrid-kek")',
+    combiner: 'HKDF-SHA-256(ecdh_ss || mlkem_ss, info="hybrid-kek")',
     outputKeySize: 32,
-    totalOverhead: '32 + 1,568 = 1,600 bytes ciphertext',
-    useCase: 'High-security environments — NIST Level 5',
+    totalOverhead: '97 + 1,568 = 1,665 bytes ciphertext',
+    useCase:
+      'High-security environments, NIST Level 5 — the pairing standardised as the TLS group SecP384r1MLKEM1024 (RFC 10024) and registered as MLKEM1024-P384 in the HPKE post-quantum draft. RFC 10024 defines no X25519 + ML-KEM-1024 group',
   },
   {
     id: 'xwing',
@@ -202,7 +206,7 @@ export const KEY_SIZE_COMPARISONS: KeySizeComparison[] = [
     publicKeyBytes: 256,
     privateKeyBytes: 1192,
     signatureOrCiphertextBytes: 256,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: 'About 112-bit classical',
     quantumSafe: false,
   },
   {
@@ -211,7 +215,19 @@ export const KEY_SIZE_COMPARISONS: KeySizeComparison[] = [
     publicKeyBytes: 384,
     privateKeyBytes: 1766,
     signatureOrCiphertextBytes: 384,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: 'About 128-bit classical',
+    quantumSafe: false,
+  },
+  {
+    // RSA-4096 is the root KEK's classical option. Private size is a typical PKCS#1 DER
+    // length (it varies by a few bytes between keys). SP 800-57 Part 1 Rev. 5 Table 2 has no
+    // 4096-bit row; it puts RSA-3072 at 128-bit and RSA-7680 at 192-bit.
+    algorithm: 'RSA-4096',
+    type: 'classical',
+    publicKeyBytes: 512,
+    privateKeyBytes: 2348,
+    signatureOrCiphertextBytes: 512,
+    nistLevel: 'Between 128-bit and 192-bit classical',
     quantumSafe: false,
   },
   {
@@ -220,7 +236,7 @@ export const KEY_SIZE_COMPARISONS: KeySizeComparison[] = [
     publicKeyBytes: 65,
     privateKeyBytes: 32,
     signatureOrCiphertextBytes: 64,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: 'About 128-bit classical',
     quantumSafe: false,
   },
   {
@@ -370,7 +386,7 @@ export const ENTERPRISE_SCENARIO = {
       framework: 'NIST IR 8547',
       deadline: '2030 / 2035',
       requirement:
-        'Deprecate quantum-vulnerable digital signature algorithms (RSA, ECDSA, EdDSA) after 2030. Disallow them under NIST standards and guidelines after 2035.',
+        'NIST IR 8547 (final, October 2026) covers both signatures and key establishment: the quantum-vulnerable schemes it lists (RSA, ECDSA, EdDSA, finite-field and elliptic-curve DH and MQV) are deprecated after 2030 and disallowed under NIST standards and guidelines after 2035. Separately, as NIST IR 8547 describes them, Executive Order 14412 and OMB Memorandum M-26-15 require the Government\u2019s most sensitive systems to adopt PQC for key establishment by 31 December 2030 and for digital signatures by 31 December 2031.',
     },
     {
       framework: 'ANSSI & BSI (EU)',
@@ -395,13 +411,16 @@ export const ENTERPRISE_SCENARIO = {
     {
       id: 'aws-kms',
       name: 'AWS KMS',
-      rotationFeature: 'Automatic annual rotation with CreateKey API',
-      pqcCapability: 'ML-DSA signing GA, ML-KEM key specs, ML-KEM hybrid TLS for API transit',
+      rotationFeature:
+        'Automatic rotation covers symmetric encryption KMS keys only (yearly by default, custom period allowed, plus on-demand rotation). ML-DSA and ML-KEM keys are rotated by creating a new key and moving the alias',
+      pqcCapability:
+        'ML-DSA signing GA; ML-KEM key specs since 26 Oct 2026 (not in the China, Middle East (UAE) and Middle East (Bahrain) Regions); hybrid TLS for API transit',
     },
     {
       id: 'gcp-kms',
       name: 'Google Cloud KMS',
-      rotationFeature: 'Key versioning with scheduled rotation',
+      rotationFeature:
+        'Key versioning with scheduled rotation; imported keys have automatic rotation disabled by default',
       pqcCapability:
         "ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing offered; software protection level only (launch stage: Google's 28 Jul 2026 post announces general availability of ML-KEM key encapsulation and does not name X-Wing; Google's release notes list the KEMs, X-Wing included, as Preview from 23 Sep 2025; checked 30 Oct 2026)",
     },
@@ -463,7 +482,7 @@ export const KMIP_OPERATIONS: KmipOperation[] = [
     id: 'create',
     name: 'Create',
     description:
-      'Create a new PQC key pair. ML-KEM is asymmetric — KMIP 3.0 uses CreateKeyPair with separate public/private key templates. ML-DSA likewise uses CreateKeyPair.',
+      'Create a new PQC key pair. ML-KEM is asymmetric — KMIP 3.0 (draft) uses CreateKeyPair with separate public/private key templates. ML-DSA likewise uses CreateKeyPair.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -540,30 +559,21 @@ aws kms create-key \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — Create ML-DSA transit key
-vault write transit/keys/pqc-root-kek \\
-  type="ml-dsa-65"
+        code: `# HashiCorp Vault Enterprise — Create ML-DSA transit key (signing only)
+vault write transit/keys/pqc-root-sig \\
+  type="ml-dsa" \\
+  parameter_set="65"
 
+# Vault transit offers no KEM key type: key encapsulation is not available here.
 # Response:
-# Success! Data written to: transit/keys/pqc-root-kek
-# Key Version: 1
-# Type: ml-dsa-65`,
+# Success! Data written to: transit/keys/pqc-root-sig`,
         language: 'bash',
       },
       'thales-ciphertrust': {
-        code: `# Thales CipherTrust — Create PQC key (not sourced in the Library)
-curl -X POST https://ciphertrust/api/v1/vault/keys2 \\
-  -H "Authorization: Bearer $TOKEN" \\
-  -d '{
-    "name": "pqc-root-kek-001",
-    "algorithm": "ML-KEM-768",
-    "source": "hsm",
-    "usageMask": ["encrypt", "decrypt"]
-  }'
-
-# Response: { "id": "a3b2c1d4-...",
-#   "algorithm": "ML-KEM-768",
-#   "state": "Pre-Active" }`,
+        code: `# Thales CipherTrust — create a key
+# The CipherTrust Manager REST request shapes are not reproduced here:
+# they are not in the sources this module cites. See the REST API
+# reference for your CipherTrust Manager version.`,
         language: 'bash',
       },
     },
@@ -571,7 +581,8 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2 \\
   {
     id: 'get',
     name: 'Get',
-    description: 'Retrieve key metadata and attributes.',
+    description:
+      'Retrieve a managed object (KMIP Get Attributes returns an object\u2019s attributes).',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -624,26 +635,22 @@ aws kms describe-key \\
       },
       'hashicorp-vault': {
         code: `# HashiCorp Vault — Read transit key
-vault read transit/keys/pqc-root-kek
+vault read transit/keys/pqc-root-sig
 
 # Response:
 # Key          Value
 # ---          -----
-# type         ml-dsa-65
+# type         ml-dsa
 # keys         map[1:1709312400]
 # latest_version  1
 # min_available_version  0`,
         language: 'bash',
       },
       'thales-ciphertrust': {
-        code: `# Thales CipherTrust — Get key metadata
-curl -X GET https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
-  -H "Authorization: Bearer $TOKEN"
-
-# Response: { "id": "a3b2c1d4-...",
-#   "name": "pqc-root-kek-001",
-#   "algorithm": "ML-KEM-768",
-#   "size": 768, "state": "Active" }`,
+        code: `# Thales CipherTrust — read key metadata
+# The CipherTrust Manager REST request shapes are not reproduced here:
+# they are not in the sources this module cites. See the REST API
+# reference for your CipherTrust Manager version.`,
         language: 'bash',
       },
     },
@@ -652,7 +659,7 @@ curl -X GET https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
     id: 'activate',
     name: 'Activate',
     description:
-      'Transition a key from Pre-Active to Active state. AWS auto-activates; others require explicit activation.',
+      'Transition a key from Pre-Active to Active state. KMS-generated AWS KMS keys and Vault transit keys have no separate activation step in their APIs; a KMIP server moves a Pre-Active object to Active with Activate.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -690,22 +697,18 @@ aws kms enable-key \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — Keys are active on creation
-# To re-enable after deactivation:
-vault write transit/keys/pqc-root-kek/config \\
+        code: `# HashiCorp Vault — transit keys are usable on creation
+# (no separate activation step). To restrict old versions instead:
+vault write transit/keys/pqc-root-sig/config \\
   min_decryption_version=1 \\
   deletion_allowed=false`,
         language: 'bash',
       },
       'thales-ciphertrust': {
-        code: `# Thales CipherTrust — Activate a pre-active key
-curl -X PATCH https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
-  -H "Authorization: Bearer $TOKEN" \\
-  -d '{ "state": "Active" }'
-
-# Response: { "id": "a3b2c1d4-...",
-#   "state": "Active",
-#   "activationDate": "2026-03-01T..." }`,
+        code: `# Thales CipherTrust — activate a Pre-Active key
+# The CipherTrust Manager REST request shapes are not reproduced here:
+# they are not in the sources this module cites. See the REST API
+# reference for your CipherTrust Manager version.`,
         language: 'bash',
       },
     },
@@ -714,7 +717,7 @@ curl -X PATCH https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
     id: 'wrap',
     name: 'Wrap (Encrypt DEK)',
     description:
-      'Use the KEK to wrap a data encryption key. With ML-KEM, this uses encapsulation to produce a shared secret, then AES-KW to wrap the DEK.',
+      'Use a symmetric wrapping key to wrap a data encryption key: KMIP does this with Get plus a Key Wrapping Specification (NISTKeyWrap is one of the KMIP block cipher modes), not with a Wrap operation. An ML-KEM key is not used this way. A KEM produces a shared secret rather than encrypting a key, so the KEM flow is encapsulate, derive a wrapping key with a KDF, then AES-KW; KMIP 3.0 (draft) adds Encapsulate and Decapsulate operations for the first step.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -729,8 +732,9 @@ curl -X PATCH https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
       <KeyWrappingSpecification>
         <WrappingMethod>Encrypt</WrappingMethod>
         <EncryptionKeyInformation>
+          <!-- a symmetric AES wrapping key, not the ML-KEM key from Create -->
           <UniqueIdentifier>
-            a3b2c1d4-e5f6-7890-abcd-ef1234567890
+            c5d4e3f6-a7b8-9012-cdef-123456789012
           </UniqueIdentifier>
           <CryptographicParameters>
             <BlockCipherMode>NISTKeyWrap</BlockCipherMode>
@@ -776,8 +780,9 @@ aws kms encrypt \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — Encrypt (wrap) data
-vault write transit/encrypt/pqc-root-kek \\
+        code: `# HashiCorp Vault — Encrypt (wrap) data with a symmetric transit key
+# (ML-DSA keys sign only; they cannot encrypt)
+vault write transit/encrypt/aes-kek \\
   plaintext=$(base64 < dek.bin)
 
 # Response:
@@ -788,24 +793,19 @@ vault write transit/encrypt/pqc-root-kek \\
         language: 'bash',
       },
       'thales-ciphertrust': {
-        code: `# Thales CipherTrust — Encrypt (wrap DEK)
-curl -X POST https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-.../encrypt \\
-  -H "Authorization: Bearer $TOKEN" \\
-  -d '{
-    "plaintext": "BASE64_DEK_BYTES",
-    "mode": "NISTKeyWrap"
-  }'
-
-# Response: { "ciphertext": "BASE64_WRAPPED..." }`,
+        code: `# Thales CipherTrust — wrap a DEK
+# The CipherTrust Manager REST request shapes are not reproduced here:
+# they are not in the sources this module cites. See the REST API
+# reference for your CipherTrust Manager version.`,
         language: 'bash',
       },
     },
   },
   {
     id: 'rotate',
-    name: 'Rotate',
+    name: 'Rotate (Re-key Key Pair)',
     description:
-      'Generate a new version of the key. Existing wrapped data can still be decrypted with the old version; new wraps use the latest version.',
+      'KMIP has no Rotate operation. Re-key creates a replacement for a symmetric key, and Re-key Key Pair creates a replacement key pair, which is what an ML-KEM or ML-DSA key needs. Providers expose rotation in their own ways, so existing wrapped data keeps working only while the old key or version is kept.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -814,33 +814,36 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-.../encrypt \\
     <BatchCount>1</BatchCount>
   </RequestHeader>
   <BatchItem>
-    <Operation>ReKey</Operation>
+    <Operation>ReKeyKeyPair</Operation>
     <RequestPayload>
-      <UniqueIdentifier>
+      <PrivateKeyUniqueIdentifier>
         a3b2c1d4-e5f6-7890-abcd-ef1234567890
-      </UniqueIdentifier>
+      </PrivateKeyUniqueIdentifier>
     </RequestPayload>
   </BatchItem>
 </RequestMessage>`,
     kmipResponse: `<ResponseMessage>
   <BatchItem>
-    <Operation>ReKey</Operation>
+    <Operation>ReKeyKeyPair</Operation>
     <ResultStatus>Success</ResultStatus>
     <ResponsePayload>
-      <UniqueIdentifier>
+      <PrivateKeyUniqueIdentifier>
         b4c3d2e5-f6a7-8901-bcde-f12345678901
-      </UniqueIdentifier>
+      </PrivateKeyUniqueIdentifier>
+      <PublicKeyUniqueIdentifier>
+        c5d4e3f6-a7b8-9012-cdef-123456789012
+      </PublicKeyUniqueIdentifier>
     </ResponsePayload>
   </BatchItem>
 </ResponseMessage>`,
     providerApis: {
       'aws-kms': {
-        code: `# AWS KMS — Automatic rotation (annual)
+        code: `# AWS KMS — Automatic rotation covers symmetric encryption keys only
 aws kms enable-key-rotation \\
-  --key-id a3b2c1d4-...
+  --key-id <symmetric-key-id>
 
-# Or manual: create new key + update alias
-aws kms create-key --key-spec ML_DSA_65
+# ML-DSA and ML-KEM keys: create a new key, then move the alias
+aws kms create-key --key-spec ML_DSA_65 --key-usage SIGN_VERIFY
 aws kms update-alias \\
   --alias-name alias/pqc-root \\
   --target-key-id NEW_KEY_ID`,
@@ -848,23 +851,19 @@ aws kms update-alias \\
       },
       'hashicorp-vault': {
         code: `# HashiCorp Vault — Rotate transit key
-vault write -f transit/keys/pqc-root-kek/rotate
+vault write -f transit/keys/pqc-root-sig/rotate
 
 # Response:
-# Success! Data written to: transit/keys/pqc-root-kek/rotate
+# Success! Data written to: transit/keys/pqc-root-sig/rotate
 # New version: 2
 # Old versions still available for decrypt`,
         language: 'bash',
       },
       'thales-ciphertrust': {
-        code: `# Thales CipherTrust — Rotate key version
-curl -X POST https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-.../rekey \\
-  -H "Authorization: Bearer $TOKEN" \\
-  -d '{ "source": "hsm" }'
-
-# Response: { "id": "b4c3d2e5-...",
-#   "version": 2, "algorithm": "ML-KEM-768",
-#   "state": "Active" }`,
+        code: `# Thales CipherTrust — rotate a key
+# The CipherTrust Manager REST request shapes are not reproduced here:
+# they are not in the sources this module cites. See the REST API
+# reference for your CipherTrust Manager version.`,
         language: 'bash',
       },
     },
@@ -873,7 +872,7 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-.../rekey \\
     id: 'destroy',
     name: 'Destroy',
     description:
-      'Schedule key destruction. Most providers enforce a waiting period (7-30 days) to prevent accidental data loss.',
+      'Destroy key material. The KMIP Destroy operation itself defines no waiting period and applies only to Pre-Active or Deactivated objects, so an Active key is first moved to Deactivated with Revoke. AWS KMS enforces a 7-30 day waiting period; other providers define their own soft-delete or scheduled-destruction windows, and Vault transit deletes once deletion_allowed is set. Check each provider before planning a destruction.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -881,6 +880,7 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-.../rekey \\
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </RequestHeader>
+  <!-- First Revoke the Active object (reason other than Compromised) so it is Deactivated. -->
   <BatchItem>
     <Operation>Destroy</Operation>
     <RequestPayload>
@@ -916,24 +916,20 @@ aws kms schedule-key-deletion \\
       },
       'hashicorp-vault': {
         code: `# HashiCorp Vault — Enable deletion then destroy
-vault write transit/keys/pqc-root-kek/config \\
+vault write transit/keys/pqc-root-sig/config \\
   deletion_allowed=true
 
-vault delete transit/keys/pqc-root-kek
+vault delete transit/keys/pqc-root-sig
 
 # Response:
-# Success! Data deleted at: transit/keys/pqc-root-kek`,
+# Success! Data deleted at: transit/keys/pqc-root-sig`,
         language: 'bash',
       },
       'thales-ciphertrust': {
-        code: `# Thales CipherTrust — Destroy key
-# First deactivate:
-curl -X PATCH https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
-  -d '{ "state": "Deactivated" }'
-
-# Then destroy:
-curl -X DELETE https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
-  -H "Authorization: Bearer $TOKEN"`,
+        code: `# Thales CipherTrust — destroy a key (deactivate first)
+# The CipherTrust Manager REST request shapes are not reproduced here:
+# they are not in the sources this module cites. See the REST API
+# reference for your CipherTrust Manager version.`,
         language: 'bash',
       },
     },
@@ -955,8 +951,8 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
       'aws-kms': 'KMS key spec (ML_KEM_512)',
       'gcp-kms': 'N/A',
       'hashicorp-vault': 'N/A',
-      'thales-ciphertrust': 'Via Luna HSM',
-      'fortanix-dsm': 'Available',
+      'thales-ciphertrust': 'Luna HSM backend; TLS technical preview',
+      'fortanix-dsm': 'Listed in DSM documentation',
     },
   },
   {
@@ -973,8 +969,8 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
       'aws-kms': 'KMS key spec (ML_KEM_768)',
       'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
-      'thales-ciphertrust': 'TLS Preview',
-      'fortanix-dsm': 'Available',
+      'thales-ciphertrust': 'Luna HSM backend; TLS technical preview',
+      'fortanix-dsm': 'Listed in DSM documentation',
     },
   },
   {
@@ -991,8 +987,8 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
       'aws-kms': 'KMS key spec (ML_KEM_1024)',
       'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
-      'thales-ciphertrust': 'Via Luna HSM',
-      'fortanix-dsm': 'Available',
+      'thales-ciphertrust': 'Luna HSM backend; TLS technical preview',
+      'fortanix-dsm': 'Listed in DSM documentation',
     },
   },
   {
@@ -1008,9 +1004,9 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'GA',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental',
+      'hashicorp-vault': 'Experimental (Enterprise)',
       'thales-ciphertrust': 'Via Luna HSM',
-      'fortanix-dsm': 'Planned',
+      'fortanix-dsm': 'Listed in DSM documentation',
     },
   },
   {
@@ -1026,9 +1022,9 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'GA',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental',
+      'hashicorp-vault': 'Experimental (Enterprise)',
       'thales-ciphertrust': 'Via Luna HSM',
-      'fortanix-dsm': 'Planned',
+      'fortanix-dsm': 'Listed in DSM documentation',
     },
   },
   {
@@ -1044,9 +1040,9 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'GA',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental',
+      'hashicorp-vault': 'Experimental (Enterprise)',
       'thales-ciphertrust': 'Via Luna HSM',
-      'fortanix-dsm': 'Planned',
+      'fortanix-dsm': 'Listed in DSM documentation',
     },
   },
   {
@@ -1062,9 +1058,9 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'N/A',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental',
+      'hashicorp-vault': 'Experimental (Enterprise)',
       'thales-ciphertrust': 'N/A',
-      'fortanix-dsm': 'Planned',
+      'fortanix-dsm': 'Not listed',
     },
   },
   {
@@ -1080,9 +1076,9 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'N/A',
       'gcp-kms': 'N/A',
-      'hashicorp-vault': 'Experimental',
+      'hashicorp-vault': 'Experimental (Enterprise)',
       'thales-ciphertrust': 'N/A',
-      'fortanix-dsm': 'Planned',
+      'fortanix-dsm': 'Not listed',
     },
   },
   {
@@ -1098,9 +1094,9 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'N/A',
       'gcp-kms': 'N/A',
-      'hashicorp-vault': 'Experimental',
+      'hashicorp-vault': 'Experimental (Enterprise)',
       'thales-ciphertrust': 'N/A',
-      'fortanix-dsm': 'Planned',
+      'fortanix-dsm': 'Not listed',
     },
   },
 ]
@@ -1154,7 +1150,8 @@ export const KMIP_SYNC_SCENARIO: KmipSyncStep[] = [
       'Orchestrator generates a new key version in the primary HSM, then propagates the rotation to all cloud backends while maintaining access to previous versions for decryption.',
     orchestrator: 'Thales CipherTrust',
     targets: ['Primary HSM', 'AWS KMS', 'Google Cloud KMS'],
-    kmipSnippet: '<Operation>ReKey</Operation>\n<UniqueIdentifier>a3b2c1d4-...</UniqueIdentifier>',
+    kmipSnippet:
+      '<Operation>ReKeyKeyPair</Operation>\n<PrivateKeyUniqueIdentifier>a3b2c1d4-...</PrivateKeyUniqueIdentifier>',
     statuses: {
       'Primary HSM': 'success',
       'AWS KMS': 'in-progress',
@@ -1179,9 +1176,9 @@ export const KMIP_READINESS_CHECKLIST: KmipReadinessItem[] = [
   {
     id: 'server-version',
     category: 'Infrastructure',
-    title: 'KMIP Server v3.0+',
+    title: 'KMIP Server v3.0 (draft) or later',
     description:
-      'Verify your KMIP server supports protocol version 3.0 or later, which includes PQC CryptographicAlgorithm enums for ML-KEM and ML-DSA.',
+      'KMIP 3.0 is a Committee Specification Draft (CSD 02, 7 May 2026); KMIP 2.1 is the OASIS Standard. Verify your KMIP server supports the draft 3.0 protocol version, which includes PQC CryptographicAlgorithm enums for ML-KEM and ML-DSA. A server that supports only 2.1 cannot negotiate 3.0.',
     critical: true,
   },
   {
@@ -1213,7 +1210,7 @@ export const KMIP_READINESS_CHECKLIST: KmipReadinessItem[] = [
     category: 'Operations',
     title: 'Cross-Provider Rotation Test',
     description:
-      'Trigger a KMIP ReKey operation and verify the new key version propagates to all connected backends within acceptable latency.',
+      'Trigger a KMIP Re-key Key Pair operation (Re-key is for symmetric keys) and verify the replacement propagates to all connected backends within acceptable latency.',
     critical: false,
   },
   {
@@ -1229,7 +1226,7 @@ export const KMIP_READINESS_CHECKLIST: KmipReadinessItem[] = [
     category: 'Compliance',
     title: 'KMIP Operation Audit Trail',
     description:
-      'Confirm all KMIP operations (Create, Activate, Wrap, Rotate, Destroy) are logged with timestamps, operator IDs, and key identifiers for compliance auditing.',
+      'Confirm all KMIP operations (Create Key Pair, Activate, Get with wrapping, Re-key Key Pair, Revoke, Destroy) are logged with timestamps, operator IDs, and key identifiers for compliance auditing.',
     critical: false,
   },
   {

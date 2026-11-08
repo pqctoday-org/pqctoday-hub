@@ -6,12 +6,19 @@
 // patterns below does not prove ML-DSA-only key creation or validate all keys.
 
 export const ML_DSA_KEY_SPECS = ['ML_DSA_44', 'ML_DSA_65', 'ML_DSA_87'] as const
+/** AWS KMS ML-KEM key specs (key usage ENCAPSULATE_DECAPSULATE), available since 26 October 2026. */
+export const ML_KEM_KEY_SPECS = ['ML_KEM_512', 'ML_KEM_768', 'ML_KEM_1024'] as const
 
 export interface PolicyValidationResult {
   isValidJson: boolean
   allowsCreateKey: boolean
   restrictsKeySpecToMlDsa: boolean
   requiresSignVerify: boolean
+  /**
+   * Optional extra pattern, not part of the lab's required task: one Allow statement on
+   * kms:CreateKey limits kms:KeySpec to ML-KEM specs and kms:KeyUsage to ENCAPSULATE_DECAPSULATE.
+   */
+  allowsMlKemKeyEstablishment: boolean
   /** Legacy field name: only means no TLS-like key names were detected. */
   usesOnlyRealConditionKeys: boolean
   /** Condition keys that look like TLS / cipher-suite controls AWS does not have. */
@@ -55,6 +62,7 @@ export function validateKmsPqcPolicy(jsonString: string): PolicyValidationResult
     allowsCreateKey: false,
     restrictsKeySpecToMlDsa: false,
     requiresSignVerify: false,
+    allowsMlKemKeyEstablishment: false,
     usesOnlyRealConditionKeys: true,
     inventedKeys: [],
     isComplete: false,
@@ -100,6 +108,16 @@ export function validateKmsPqcPolicy(jsonString: string): PolicyValidationResult
     }
     const usage = equalsValues(s, 'kms:KeyUsage')
     if (usage && usage.length === 1 && usage[0] === 'SIGN_VERIFY') result.requiresSignVerify = true
+    if (
+      specs &&
+      specs.length > 0 &&
+      specs.every((v) => (ML_KEM_KEY_SPECS as readonly string[]).includes(v)) &&
+      usage &&
+      usage.length === 1 &&
+      usage[0] === 'ENCAPSULATE_DECAPSULATE'
+    ) {
+      result.allowsMlKemKeyEstablishment = true
+    }
   }
 
   result.usesOnlyRealConditionKeys = result.inventedKeys.length === 0

@@ -58,11 +58,11 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       id: 'hybrid-pqc-wrapping',
       title: '3. Hybrid vs PQC-Only Wrapping',
       description:
-        'Compare four hybrid combiner modes: X25519+ML-KEM-768, P-256+ML-KEM-768, X25519+ML-KEM-1024, and X-Wing. Examine the combiner formula, wire overhead, and recommended use case for each.',
+        'Compare four hybrid combiner modes: X25519+ML-KEM-768, ECDH P-256+ML-KEM-768, ECDH P-384+ML-KEM-1024, and X-Wing. Examine the combiner formula, wire overhead, and recommended use case for each, and note how a KMS key-wrap combiner differs from a TLS hybrid group.',
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'X-Wing (used by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides the single-construction hybrid KEM defined in draft-connolly-cfrg-xwing-kem-11. FIPS-compliant environments should prefer P-256+ML-KEM-768.',
+        "X-Wing (offered by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides the single-construction hybrid KEM defined in draft-connolly-cfrg-xwing-kem-11. Whether a hybrid counts as FIPS-approved depends on the module's validated algorithms and the current CMVP implementation guidance; check both and the module's Security Policy.",
       config: { step: 2 },
     },
     {
@@ -73,19 +73,30 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Multi-Cloud',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        "As of mid-2026: AWS KMS supports ML-DSA signing (ML-DSA-44/65/87) with keys and signature operations in FIPS 140-3 Level 3 validated HSMs (AWS KMS Developer Guide); Google Cloud KMS has made ML-DSA, SLH-DSA and ML-KEM generally available (Google's 28 July 2026 announcement). Check each provider's current documentation, Azure Key Vault included, for the latest.",
+        "As of November 2026: AWS KMS supports ML-DSA signing (ML-DSA-44/65/87) and, since 26 October 2026, ML-KEM key-establishment keys, with keys and signature operations in FIPS 140-3 Level 3 validated HSMs (AWS KMS Developer Guide). Google Cloud KMS signing has been generally available since 16 July 2026. For key encapsulation the sources differ: Google's 28 July 2026 announcement says ML-KEM is generally available, while the Cloud KMS release notes list ML-KEM and X-Wing as Preview since 23 September 2025. Check each provider's current documentation, Azure Key Vault included, for the latest.",
       config: { step: 2 },
     },
     {
       id: 'compliance-rotation',
       title: '5. Compliance-Driven Rotation',
       description:
-        'Plan a key rotation schedule for 500 certificates against CNSA 2.0 FAQ version 2.2 (2027/2030/2031), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
+        'Plan a key rotation schedule for 500 keys and certificates (400 quantum-vulnerable RSA and ECDSA ones plus 100 AES-256 data keys) against CNSA 2.0 FAQ version 2.2 (2027/2030/2031), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
         'CNSA 2.0 category guidance puts software/firmware signing and traditional networking at 2030; current FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 2031 unless otherwise noted. The storage impact multiplier ranges from 1.0x (AES-256 DEKs) to 30.0x (ECDSA → ML-DSA-65 code signing keys).',
       config: { step: 3 },
+    },
+    {
+      id: 'partner-hsm-to-aws-kms',
+      title: '6. Partner HSM to AWS KMS: Which Path Is Quantum-Safe?',
+      description:
+        'A partner HSM must deliver an AES key to AWS KMS. Compare the import path, an ML-KEM exchange with Decapsulate, and a hybrid secret combined in the application, then ask what stays classical on each path. Compare Google Cloud KMS quantum-safe import, which uses HPKE.',
+      badge: 'Key exchange',
+      badgeColor: 'bg-primary/20 text-primary border-primary/50',
+      observe:
+        'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys. The import wrap therefore stays classical even though the API call can ride hybrid post-quantum TLS. An ML-KEM exchange is quantum-safe, but AWS KMS Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application, so deriving a wrapping key and wrapping the AES key happen outside the HSM. Google Cloud KMS quantum-safe key import is in Preview and covers software-protected keys only.',
+      config: { step: 6 },
     },
   ]
 
