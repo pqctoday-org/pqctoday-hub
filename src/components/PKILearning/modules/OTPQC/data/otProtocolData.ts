@@ -241,7 +241,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         sizeBasis:
           'Illustrative X25519 32 B → X25519MLKEM768 server key_exchange 1,120 B; client 1,216 B (RFC 10024)',
         notes:
-          'Same migration as MMS — one TLS stack update can cover both. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
+          'Same migration as MMS — where a device runs both on one TLS stack, one stack update can cover both. Illustrative group choice, not a sector-standard requirement or a claim of endpoint support. Sizes exclude TLS framing, certificates and the rest of the handshake; check the negotiated group, direction and actual serialized traffic with production tools.',
       },
       {
         layerName: 'Application-layer authentication (IEC 62351-5)',

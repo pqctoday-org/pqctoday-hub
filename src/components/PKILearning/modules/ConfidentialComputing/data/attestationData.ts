@@ -263,7 +263,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-384',
     pqcMigrationStatus: 'preview',
     pqcMigrationNotes:
-      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints. Nitro attestation documents still use ECDSA P-384, and the attestation document PQC migration timeline is not yet public.',
+      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange). AWS pages differ on the edges: the AWS KMS hybrid post-quantum TLS page says all endpoints, including FIPS 140-3 validated endpoints, in the Regions where AWS KMS is available; the AWS PQ readiness page lists FIPS and non-FIPS endpoints in commercial and US GovCloud Regions as launched; and the Infrastructure security in AWS KMS page says hybrid post-quantum TLS is supported in all Regions except the China Regions and is not supported on AWS GovCloud (US) FIPS endpoints, so check the endpoint and Region you use. Nitro attestation documents still use ECDSA P-384, and the attestation document PQC migration timeline is not yet public.',
     steps: [
       {
         id: 'nitro-1',
@@ -460,7 +460,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'Two separate paths. Attestation-gated release is documented for AWS KMS: enclave sends its attestation document in the Recipient parameter → KMS key policy conditions are checked → result returned encrypted to the enclave public key. A PKCS#11 client of CloudHSM logs in as a crypto user with a user name and password, not with an attestation document. A broker that checks attestation before using a CloudHSM key would be a custom design that AWS does not document.',
     migrationComplexity: 'medium',
     notes:
-      'CloudHSM Client SDK 5 documents ML-DSA-44/65/87 over PKCS#11, in FIPS mode on hsm2m.medium clusters from 1 September 2026; this module has not checked CloudHSM for ML-KEM. Attestation applies to KMS requests, not to the CloudHSM PKCS#11 login; a KMS custom key store backed by CloudHSM is reached through KMS. AWS KMS offers ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints — this is distinct from attestation document signing, which still uses ECDSA P-384.',
+      'CloudHSM Client SDK 5 documents ML-DSA-44/65/87 over PKCS#11, in FIPS mode on hsm2m.medium clusters from 1 September 2026; this module has not checked CloudHSM for ML-KEM. Attestation applies to KMS requests, not to the CloudHSM PKCS#11 login; a KMS custom key store backed by CloudHSM is reached through KMS. AWS KMS offers ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS (the AWS KMS TLS page says all endpoints, including FIPS 140-3 validated ones; the Infrastructure security in AWS KMS page excludes the China Regions and FIPS endpoints in AWS GovCloud (US)) — this is distinct from attestation document signing, which still uses ECDSA P-384.',
   },
   {
     id: 'tdx-marvell-pkcs11',

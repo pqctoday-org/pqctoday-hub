@@ -114,8 +114,10 @@ export const OS_VENDORS: OSVendorStatus[] = [
     sshPqcStatus: 'No production PQC SSH; tracking OpenSSH experimental branch',
     pkgSigningPqc: 'ML-DSA for APT package signing targeted for Ubuntu 26.04 LTS (DEP-18)',
     roadmapYear: '2026-04 (26.04 LTS release)',
-    mlKemSupport: 'ML-KEM hybrid TLS in OpenSSL 3.0.x via oqsprovider or OpenSSL 3.5 native',
-    mlDsaSupport: 'ML-DSA available via oqsprovider; native OpenSSL 3.5+ in Ubuntu 25.10+',
+    mlKemSupport:
+      'ML-KEM hybrid TLS: OpenSSL 3.5 native (Ubuntu 26.04 LTS). No oqsprovider package in the Ubuntu archive for 24.04 or 26.04.',
+    mlDsaSupport:
+      'ML-DSA: native OpenSSL 3.5+ only; no oqsprovider package in the Ubuntu archive for 24.04 or 26.04.',
     notes:
       'Verified 2026-06-19: Canonical ships GA PQC in current releases (catalog tracks Ubuntu 26.04 LTS = available).',
   },

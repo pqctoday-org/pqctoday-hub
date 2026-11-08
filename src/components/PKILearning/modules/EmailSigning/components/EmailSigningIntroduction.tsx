@@ -283,8 +283,8 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           encryption keys (ML-KEM) use fundamentally different algorithms. The{' '}
           <code className="text-foreground/70">smimeCapabilities</code> attribute in signed messages
           lists, in order of preference, algorithms the sender says it can handle (RFC 8551 section
-          2.5.2). It is a partial list, so it helps a correspondent choose algorithms during a
-          gradual PQC rollout but does not carry out the rollout.
+          2.5.2). It is a partial list, so a correspondent can use it to choose among the algorithms
+          the sender lists, but the attribute does not carry out any migration.
         </p>
       </div>
     </section>

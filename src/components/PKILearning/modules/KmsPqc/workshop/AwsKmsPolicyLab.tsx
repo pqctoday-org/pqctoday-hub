@@ -182,11 +182,17 @@ export const AwsKmsPolicyLab: React.FC = () => {
         </p>
         <p>
           AWS KMS offers ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid
-          post-quantum TLS on its endpoints; data encrypted under KMS symmetric keys uses
-          AES-256-GCM. ML-KEM keys are for key establishment, not signing, and use the key usage{' '}
-          <code>ENCAPSULATE_DECAPSULATE</code>. Using one needs the <code>kms:Encapsulate</code> and{' '}
-          <code>kms:Decapsulate</code> permissions; <code>kms:Decapsulate</code> hands the shared
-          secret to the caller in plaintext, so grant it narrowly.
+          post-quantum TLS. AWS pages differ on the edges: the AWS KMS hybrid post-quantum TLS page
+          says all endpoints, including FIPS 140-3 validated endpoints, in the Regions where AWS KMS
+          is available; the AWS PQ readiness page lists FIPS and non-FIPS endpoints in commercial
+          and US GovCloud Regions as launched; and the Infrastructure security in AWS KMS page says
+          hybrid post-quantum TLS is supported in all Regions except the China Regions and is not
+          supported on AWS GovCloud (US) FIPS endpoints, so check the endpoint and Region you use.
+          Data encrypted under KMS symmetric keys uses AES-256-GCM. ML-KEM keys are for key
+          establishment, not signing, and use the key usage <code>ENCAPSULATE_DECAPSULATE</code>.
+          Using one needs the <code>kms:Encapsulate</code> and <code>kms:Decapsulate</code>{' '}
+          permissions; <code>kms:Decapsulate</code> hands the shared secret to the caller in
+          plaintext, so grant it narrowly.
         </p>
       </div>
     </div>
