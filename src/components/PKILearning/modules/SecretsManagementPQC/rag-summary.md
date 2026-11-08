@@ -42,7 +42,7 @@ Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secr
 7. Service Account Credentials — high, delayed, Workload Identity + ML-DSA
 8. Crypto Seed Phrases — critical, immediate HNDL, ML-KEM + HSM
 
-## Cloud Provider PQC Status (March 2026)
+## Cloud Provider PQC Status (November 2026)
 
 - AWS Secrets Manager: AWS lists hybrid post-quantum key exchange as launched on its FIPS and non-FIPS endpoints in commercial and US GovCloud Regions (data in transit)
 - AWS KMS ML-KEM keys (Encapsulate/Decapsulate); Secrets Manager stays AES-256 under symmetric KMS keys
