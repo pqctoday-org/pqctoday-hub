@@ -1457,7 +1457,7 @@
       "previousSha256": "0f1c3943541a3a7a4cecb2906c84ccbfbac3abe8a6176d5602691c20c5991a73",
       "replacedAt": "2026-10-16T15:23:54.073982+00:00",
       "replacedBy": "evidence replacement",
-      "replaceReason": "owner decision 'Reword from NIST' and 'check FIPS ESV certificate for this product' (16 Oct): the row now cites NIST ESV certificate E214 instead of the vendor press release"
+      "replaceReason": "Reworded from NIST and checked against the FIPS ESV certificate for this product (16 Oct): the row now cites NIST ESV certificate E214 instead of the vendor press release"
     },
     {
       "threatId": "RAIL-003",
