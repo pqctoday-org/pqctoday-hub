@@ -135,10 +135,21 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           title="The Four-Tier Data Classification Model"
         >
           <p>
-            The app uses a four-tier sensitivity model aligned with{' '}
-            <InlineTooltip term="NIST">NIST</InlineTooltip> FIPS 199 impact levels and common
-            enterprise data governance frameworks. Each tier carries a distinct{' '}
-            <strong>HNDL risk level</strong> and <strong>PQC migration urgency</strong>.
+            The Hub uses four sensitivity tiers as an educational example. They are not the security
+            categories defined by{' '}
+            <a
+              href="https://csrc.nist.gov/files/pubs/fips/199/final/docs/fips-pub-199-final.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              NIST FIPS 199
+            </a>
+            , which assesses low, moderate or high potential impact for confidentiality, integrity
+            and availability. A sensitivity label alone does not establish HNDL exposure, migration
+            priority or which compliance requirements apply. Investigate the service, data and trust
+            lifetimes, cryptographic dependencies, exposure and applicable obligations. The
+            questions below are examples to consider across all tiers.
           </p>
 
           <div className="overflow-x-auto">
@@ -147,9 +158,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                 <tr className="border-b border-border text-muted-foreground">
                   <th className="text-left py-2 pr-4 font-medium">Tier</th>
                   <th className="text-left py-2 pr-4 font-medium">Examples</th>
-                  <th className="text-left py-2 pr-4 font-medium">HNDL Risk</th>
-                  <th className="text-left py-2 pr-4 font-medium">PQC Urgency</th>
-                  <th className="text-left py-2 font-medium">Compliance</th>
+                  <th className="text-left py-2 font-medium">Questions to investigate</th>
                 </tr>
               </thead>
               <tbody>
@@ -161,24 +170,14 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     <td className="py-2 pr-4 text-muted-foreground">
                       {tier.examples.slice(0, 2).join(', ')}
                     </td>
-                    <td className="py-2 pr-4">
-                      <span
-                        className={`text-[10px] px-2 py-0.5 rounded border font-bold ${tier.colorClass} ${tier.bgClass} ${tier.borderClass}`}
-                      >
-                        {tier.hndlRisk}
-                      </span>
-                    </td>
-                    <td className="py-2 pr-4">
-                      <span className={`font-medium ${tier.colorClass}`}>{tier.pqcUrgency}</span>
-                    </td>
                     <td className="py-2 text-muted-foreground">
                       {tier.id === 'critical'
-                        ? 'CNSA 2.0, FIPS 140-3'
+                        ? 'Who depends on it, and what would loss of confidentiality, integrity or availability affect?'
                         : tier.id === 'high'
-                          ? 'HIPAA, GDPR Art. 32'
+                          ? 'How long must confidentiality or authenticity last, and which keys and suppliers support it?'
                           : tier.id === 'medium'
-                            ? 'NIST IR 8547'
-                            : 'Best practice'}
+                            ? 'Which service, owner and cryptographic dependencies need discovery?'
+                            : 'Could public data still require trusted signatures or availability?'}
                     </td>
                   </tr>
                 ))}
@@ -188,11 +187,11 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
 
           <div className="bg-muted/30 rounded-lg p-4 border border-border">
             <p className="text-xs text-muted-foreground">
-              <strong className="text-foreground">Asset type also matters:</strong> Key material
-              (root CA keys, HSM-protected secrets) should always be classified{' '}
-              <span className="text-status-error font-bold">Critical</span> regardless of
-              sensitivity tier — even if the data it protects is Medium. Keys are the root of trust
-              for everything above them.
+              <strong className="text-foreground">Asset type also matters:</strong> Assess key
+              material and signing credentials as assets in their own right. Consider what a
+              compromise would expose or allow an attacker to impersonate, which services rely on
+              that trust, and how keys can be replaced. Classification requires this context rather
+              than an automatic tier based only on asset type.
             </p>
           </div>
         </CollapsibleSection>
