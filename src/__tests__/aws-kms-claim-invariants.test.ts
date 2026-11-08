@@ -122,17 +122,17 @@ const VERBATIM: Array<[string, string, string]> = [
   ],
   [
     'AWS-KMS-Import-Wrapping-Keys',
-    'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+    'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
     'src/components/PKILearning/modules/SecretsManagementPQC/components/SecretsManagementIntroduction.tsx',
   ],
   [
     'AWS-KMS-Import-Wrapping-Keys',
-    'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+    'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
     'src/data/glossary/concepts.json',
   ],
   [
     'AWS-KMS-Import-Wrapping-Keys',
-    'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+    'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
     'src/components/PKILearning/modules/DatabaseEncryptionPQC/data/databaseConstants.ts',
   ],
   [
@@ -152,12 +152,12 @@ const VERBATIM: Array<[string, string, string]> = [
   ],
   [
     'Google-Cloud-KMS-Quantum-Safe-Key-Import',
-    'Google Cloud KMS quantum-safe key import, in Preview since 6 August 2026, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.',
+    'Google Cloud KMS quantum-safe key import, in Preview, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.',
     'src/data/glossary/concepts.json',
   ],
   [
     'Google-Cloud-KMS-Key-Import',
-    'Google Cloud KMS key import wraps key material for transfer, with RSA-based import methods alongside the quantum-safe HPKE methods.',
+    'Google Cloud KMS key import wraps key material for transfer using RSA-based import methods.',
     'src/data/glossary/concepts.json',
   ],
 ]

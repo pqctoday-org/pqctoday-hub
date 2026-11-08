@@ -71,7 +71,7 @@ describe('SecretsManagementIntroduction AWS provider row', () => {
     expect(text).toMatch(
       /not available in the China, Middle East \(UAE\) and Middle East \(Bahrain\) Regions/i
     )
-    expect(text).toMatch(/imports key material only under an RSA wrapping key/)
+    expect(text).toMatch(/imports key material under an RSA wrapping key/)
     expect(text).toMatch(/supports only symmetric encryption KMS keys/i)
     expect(text).toMatch(/not ML-KEM-encrypted at rest/i)
   })

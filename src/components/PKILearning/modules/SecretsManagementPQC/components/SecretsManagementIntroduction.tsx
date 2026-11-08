@@ -456,7 +456,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
                 'No secrets-manager-native PQC: Secrets Manager encrypts each secret value with an AES-256 data key that AWS KMS generates and encrypts under a symmetric encryption KMS key, and it supports only symmetric encryption KMS keys, so it cannot use an ML-KEM or ML-DSA KMS key',
                 'AWS KMS itself has ML-DSA-44/65/87 signing key specs (documented June 2025) and ML-KEM key specs ML_KEM_512/768/1024 with Encapsulate and Decapsulate operations',
                 'AWS added ML-KEM keys to AWS KMS on 26 October 2026; they are not available in the China, Middle East (UAE) and Middle East (Bahrain) Regions.',
-                'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+                'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
                 'AWS SDK for Java 2.x can enable hybrid post-quantum key agreement by calling .postQuantumTlsEnabled(true) when building the AWS Common Runtime HTTP client',
                 'No native dynamic secrets — use Lambda rotation or Vault AWS auth',
               ],
