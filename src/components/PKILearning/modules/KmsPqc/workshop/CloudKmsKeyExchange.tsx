@@ -48,6 +48,8 @@ const LIVE_OPERATIONS = [
   'C_GenerateKey',
   'C_WrapKey',
   'C_UnwrapKey',
+  'C_WrapKeyAuthenticated',
+  'C_UnwrapKeyAuthenticated',
   'C_EncapsulateKey',
   'C_DecapsulateKey',
   'C_DeriveKey',
@@ -308,7 +310,7 @@ export const CloudKmsKeyExchange: React.FC = () => {
           {run && !error && (
             <p>
               {run.verified
-                ? 'Run finished: the recovered key matches the original.'
+                ? 'Run finished: the imported key matches the original, compared without reading either key.'
                 : 'Run finished, but a check failed. See the measured lines below.'}
             </p>
           )}

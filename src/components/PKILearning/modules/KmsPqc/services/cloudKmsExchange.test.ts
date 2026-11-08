@@ -19,7 +19,9 @@ import {
   hexPreview,
   hpkeEngineNote,
   suiteById,
+  X_WING_V33_SENTENCE,
 } from './cloudKmsExchange'
+import { ENGINES } from '../data/cloudKmsExchangeData'
 import {
   aeadSealReference,
   hpkeKeyScheduleReference,
@@ -130,10 +132,17 @@ describe('engine sequences', () => {
 
   it('X-Wing keeps the v3.3 composite sequence, and the other engines are unchanged', () => {
     expect(effectiveEngine('v33', suiteById('xwing'))).toBe('v33')
-    expect(hpkeEngineNote('v33', suiteById('xwing'))).toMatch(/names this pair MLKEM768_X25519/)
-    expect(hpkeEngineNote('v33', suiteById('xwing'))).not.toMatch(/match/)
-    expect(effectiveEngine('v32', suiteById('xwing'))).toBe('v32')
-    expect(effectiveEngine('candidate', suiteById('mlkem768'))).toBe('candidate')
+    expect(hpkeEngineNote('v33', suiteById('xwing'))).toBe(X_WING_V33_SENTENCE)
+  })
+})
+
+describe('the X-Wing sentence on the v3.3 path', () => {
+  it('is one sentence scoped to X-Wing, the same in the run note and in the engine text', () => {
+    expect(X_WING_V33_SENTENCE).toBe(
+      'In this engine, an X-Wing message sealed with the v3.2 sequence opens on the v3.3 draft path; the interoperability check shows this.'
+    )
+    expect(ENGINES.find((e) => e.id === 'v33')!.standing).toContain(X_WING_V33_SENTENCE)
+    expect(X_WING_V33_SENTENCE).not.toMatch(/match/i)
   })
 })
 

@@ -26,7 +26,7 @@
  * the sequences is shown instead by cross-engine interoperability.
  */
 import { describe, it, expect, beforeAll } from 'vitest'
-import { generateKeyPairSync, verify as nodeVerify } from 'node:crypto'
+import { createCipheriv, generateKeyPairSync, verify as nodeVerify } from 'node:crypto'
 import { shake256 } from '@noble/hashes/sha3.js'
 import { ml_kem768, ml_kem1024 } from '@noble/post-quantum/ml-kem.js'
 import { ml_kem768_x25519 } from '@noble/post-quantum/hybrid.js'
@@ -36,17 +36,33 @@ import { hsm_importCompositeKeyRv } from '@/wasm/softhsm/v33'
 import hpkePqFile from '@/data/acvp/hpke-pq-04-test-vectors.json'
 import aesKwAcvp from '@/data/acvp/aeskw_acvp_test.json'
 import wycheproofKwp from '@/data/acvp/wycheproof_aes_kwp_test.json'
-import { HPKE_KEM, compositeKemCkp } from '../../HybridCrypto/services/hpkeService'
+import {
+  HPKE_AEAD,
+  HPKE_KDF,
+  HPKE_KEM,
+  HPKE_MODE,
+  compositeKemCkp,
+  computeNonce,
+  keyScheduleSecure,
+  pqEncap,
+  sealHandle,
+} from '../../HybridCrypto/services/hpkeService'
 import {
   CLASSICAL_PROFILES,
   HKDF_INFO_HYBRID,
   HKDF_INFO_MLKEM,
   HPKE_IMPORT_SUITES,
+  aeadWrapKey,
   aesKwWrap,
   aesKwpWrap,
+  allowAeadKeyWrap,
+  ecPrivateImportTemplate,
+  generateExportKey,
+  keyCheck,
   concat,
   createHpkeRecipient,
   generateWrappingKeyPair,
+  hpkeOpenMessage,
   hpkeOpenWith,
   hpkeSealKey,
   rsaAesKeyUnwrap,
@@ -75,6 +91,34 @@ const unhex = (s: string): Uint8Array =>
 const hex = (b: Uint8Array): string =>
   Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
 const same = (a: Uint8Array, b: Uint8Array): boolean => hex(a) === hex(b)
+/** AES-256 check block computed by Node: AES-ECB of one zero block. */
+const nodeCheckBlock = (key: Uint8Array): string =>
+  hex(
+    Uint8Array.from(
+      Buffer.concat([createCipheriv('aes-256-ecb', key, null).update(Buffer.alloc(16))])
+    )
+  )
+/** Run a function with the module wrapped so that every PKCS#11 call is recorded. */
+function withCallSpy<T>(
+  M: SoftHSMModule,
+  hSession: number,
+  fn: (spyCtx: Hctx, calls: Array<{ fn: string; args: unknown[] }>) => T
+): T {
+  const calls: Array<{ fn: string; args: unknown[] }> = []
+  const proxy = new Proxy(M as object, {
+    get(target, prop) {
+      const value = Reflect.get(target, prop, target)
+      if (typeof value === 'function' && typeof prop === 'string' && prop.startsWith('_C_')) {
+        return (...args: unknown[]) => {
+          calls.push({ fn: prop, args })
+          return (value as (...a: unknown[]) => unknown).apply(target, args)
+        }
+      }
+      return value
+    },
+  }) as SoftHSMModule
+  return fn({ M: proxy, hSession }, calls)
+}
 
 describe('cloud KMS key exchange simulation (real engine)', () => {
   let M: SoftHSMModule
@@ -102,8 +146,6 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
         expect(r.kwpPartBytes % 8).toBe(0)
         expect(r.kwpPartBytes).toBeGreaterThanOrEqual(80)
         expect(r.kwpPartBytes).toBeLessThanOrEqual(200)
-        expect(r.sourceKey.length).toBe(32)
-        expect(same(r.sourceKey, r.importedKey)).toBe(true)
         expect(r.signatureVerified).toBe(true)
         expect(r.matches).toBe(true)
         expect(r.structureVerified).toBe(true)
@@ -122,7 +164,14 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
         const blob = rsaAesKeyWrapReference(kp.publicKeyDer, pkcs8, oaepHash)
         // RFC 5649: padded length plus an 8-byte header, after the 384-byte RSA part.
         expect(blob.length).toBe(384 + 8 * (Math.ceil(pkcs8.length / 8) + 1))
-        const handle = rsaAesKeyUnwrap(ctx, kp.privHandle, blob, { aesKeyBits: 256, oaepHash })
+        // A readable copy is requested here only so the scalar can be compared with Node's.
+        const handle = rsaAesKeyUnwrap(
+          ctx,
+          kp.privHandle,
+          blob,
+          { aesKeyBits: 256, oaepHash },
+          ecPrivateImportTemplate(true)
+        )
         // Same private scalar as Node holds, and a signature from the imported key verifies under Node's public key.
         expect(same(S.hsm_extractKeyValue(M, hSession, handle), scalar)).toBe(true)
         const message = 'independent check'
@@ -223,8 +272,7 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
 
       it('a tampered ciphertext is refused (control)', () => {
         const recipient = createHpkeRecipient(ctx, 'v32', suite)
-        const key = S.hsm_generateRandom(M, hSession, 32)
-        const sealed = hpkeSealKey(ctx, 'v32', recipient, key)
+        const sealed = hpkeSealKey(ctx, 'v32', recipient, generateExportKey(ctx))
         const bad = Uint8Array.from(sealed.ct)
         bad[0] ^= 1
         expect(() => recipient.open(sealed.enc, bad)).toThrow()
@@ -280,8 +328,9 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
             throw new Error('not used')
           },
         }
+        // Known bytes, imported only so that the independent side has something to compare against.
         const key = S.hsm_generateRandom(M, hSession, 32)
-        const sealed = hpkeSealKey(ctx, 'v32', recipient, key)
+        const sealed = hpkeSealKey(ctx, 'v32', recipient, S.hsm_importAESKey(M, hSession, key))
         const ss = kem.decapsulate(sealed.enc, kp.secretKey)
         const ks = hpkeKeyScheduleReference({
           kemId: suite.kemId,
@@ -327,9 +376,121 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
         const key = S.hsm_generateRandom(M, hSession, 32)
         const ct = aeadSealReference(suite.aeadId, ks.key, ks.baseNonce, 0, new Uint8Array(0), key)
         const opened = recipient.open(e.cipherText, ct)
-        expect(same(opened.plaintext, key)).toBe(true)
+        // The unwrapped key is a key object; it matches the independent sender's key without being read.
+        expect(keyCheck(ctx, opened.keyHandle).block).toBe(nodeCheckBlock(key))
       }
     )
+  })
+
+  // ── HPKE Seal and Open as key wrap and key unwrap ──────────────────────────
+  describe('HPKE Seal as C_WrapKeyAuthenticated and Open as C_UnwrapKeyAuthenticated (CKM_AES_GCM)', () => {
+    const EMPTY = new Uint8Array(0)
+    const scheduleKey = () => {
+      const kem = S.hsm_generateMLKEMKeyPair(M, hSession, 768, true, 'equivalence')
+      const ek = S.hsm_extractKeyValue(M, hSession, kem.pubHandle)
+      const { sharedSecretHandle } = pqEncap(ctx, HPKE_KEM.MLKEM768, ek)
+      return keyScheduleSecure(
+        ctx,
+        HPKE_MODE.BASE,
+        HPKE_KEM.MLKEM768,
+        HPKE_KDF.HKDF_SHA256,
+        HPKE_AEAD.AES_256_GCM,
+        sharedSecretHandle,
+        EMPTY
+      )
+    }
+
+    it('the wrap output is byte-identical to the RFC 9180 Seal output for the same AEAD key, nonce and value', () => {
+      const ks = scheduleKey()
+      const value = S.hsm_generateRandom(M, hSession, 32)
+      const target = S.hsm_importAESKey(M, hSession, value)
+      const sealed = sealHandle(
+        ctx,
+        ks.keyHandle!,
+        HPKE_AEAD.AES_256_GCM,
+        ks.baseNonce!,
+        0,
+        EMPTY,
+        value
+      )
+      allowAeadKeyWrap(ctx, ks.keyHandle!)
+      const wrapped = aeadWrapKey(ctx, ks.keyHandle!, computeNonce(ks.baseNonce!, 0), target)
+      expect(wrapped.length).toBe(32 + 16)
+      expect(hex(wrapped)).toBe(hex(sealed.ct))
+    })
+
+    it('the same holds with associated data and a later sequence number', () => {
+      const ks = scheduleKey()
+      const value = S.hsm_generateRandom(M, hSession, 32)
+      const target = S.hsm_importAESKey(M, hSession, value)
+      const aad = new TextEncoder().encode('Count-5')
+      const sealed = sealHandle(
+        ctx,
+        ks.keyHandle!,
+        HPKE_AEAD.AES_256_GCM,
+        ks.baseNonce!,
+        5,
+        aad,
+        value
+      )
+      allowAeadKeyWrap(ctx, ks.keyHandle!)
+      const wrapped = aeadWrapKey(ctx, ks.keyHandle!, computeNonce(ks.baseNonce!, 5), target, aad)
+      expect(hex(wrapped)).toBe(hex(sealed.ct))
+    })
+
+    it('two different keys do not share a check block (control for the comparison)', () => {
+      expect(keyCheck(ctx, generateExportKey(ctx)).block).not.toBe(
+        keyCheck(ctx, generateExportKey(ctx)).block
+      )
+    })
+
+    it.each(['v32', 'v33', 'candidate'] as const)(
+      'engine %s: the seal wraps a key object and the open unwraps one; no C_Decrypt, no read of either key value',
+      (engine) => {
+        withCallSpy(M, hSession, (spy, calls) => {
+          const suite = suiteById('xwing')
+          const recipient = createHpkeRecipient(spy, engine, suite)
+          const target = generateExportKey(spy)
+
+          const sealFrom = calls.length
+          const sealed = hpkeSealKey(spy, engine, recipient, target)
+          const sealCalls = calls.slice(sealFrom)
+          // HPKE Seal is a wrap, not an encryption of bytes.
+          expect(sealCalls.map((c) => c.fn)).not.toContain('_C_EncryptInit')
+          expect(sealCalls.map((c) => c.fn)).not.toContain('_C_Encrypt')
+          const wraps = sealCalls.filter((c) => c.fn === '_C_WrapKeyAuthenticated')
+          expect(wraps).toHaveLength(2) // the length query and the call that fills the buffer
+          for (const w of wraps) expect(w.args[3]).toBe(target)
+
+          const openFrom = calls.length
+          const opened = recipient.open(sealed.enc, sealed.ct)
+          const openCalls = calls.slice(openFrom)
+          // HPKE Open is an unwrap, not a decryption to bytes.
+          expect(openCalls.map((c) => c.fn).filter((f) => f.startsWith('_C_Decrypt'))).toEqual([])
+          expect(openCalls.filter((c) => c.fn === '_C_UnwrapKeyAuthenticated')).toHaveLength(1)
+
+          // The value of neither key is ever read: no C_GetAttributeValue names either handle.
+          const readHandles = calls
+            .filter((c) => c.fn === '_C_GetAttributeValue')
+            .map((c) => c.args[1])
+          expect(readHandles).not.toContain(target)
+          expect(readHandles).not.toContain(opened.keyHandle)
+
+          // Proof of the match without a read: the same check block under both keys.
+          expect(keyCheck(spy, opened.keyHandle).block).toBe(keyCheck(spy, target).block)
+          // The only encryptions are those two check blocks (one C_EncryptInit each).
+          expect(calls.filter((c) => c.fn === '_C_EncryptInit')).toHaveLength(2)
+        })
+      }
+    )
+
+    it('the unwrapped key is sensitive and refuses to be read', () => {
+      const suite = suiteById('mlkem768')
+      const recipient = createHpkeRecipient(ctx, 'v32', suite)
+      const sealed = hpkeSealKey(ctx, 'v32', recipient, generateExportKey(ctx))
+      const opened = recipient.open(sealed.enc, sealed.ct)
+      expect(() => S.hsm_extractKeyValue(M, hSession, opened.keyHandle)).toThrow()
+    })
   })
 
   // ── 4. Open path on published draft-ietf-hpke-pq vectors ───────────────────
@@ -350,12 +511,32 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
       keys: Parameters<typeof hpkeOpenWith>[3]
     ) => {
       v.encryptions.forEach((e, seq) => {
-        const r = hpkeOpenWith(ctx, engine, suiteOf(v), keys, unhex(v.enc), unhex(e.ct), {
-          info: unhex(v.info),
-          aad: unhex(e.aad),
-          seq,
-        })
+        const opts = { info: unhex(v.info), aad: unhex(e.aad), seq }
+        // Open through C_Decrypt: the published plaintext, byte for byte.
+        const r = hpkeOpenMessage(ctx, engine, suiteOf(v), keys, unhex(v.enc), unhex(e.ct), opts)
         expect(hex(r.plaintext)).toBe(e.pt.toLowerCase())
+        // Open through C_UnwrapKeyAuthenticated, the product path: the same published plaintext, here
+        // unwrapped into a readable generic secret so that it can be compared. This is the equivalence
+        // of HPKE Open with the AES-GCM key unwrap, on a published vector, with aad and a sequence number.
+        // It applies to the AES-GCM suites; the published X-Wing vector uses ChaCha20-Poly1305, which the
+        // AES-GCM unwrap does not (and must not) open.
+        if (v.aead_id === HPKE_AEAD.AES_128_GCM || v.aead_id === HPKE_AEAD.AES_256_GCM) {
+          const u = hpkeOpenWith(ctx, engine, suiteOf(v), keys, unhex(v.enc), unhex(e.ct), {
+            ...opts,
+            template: [
+              { type: S.CKA_CLASS, ulongVal: S.CKO_SECRET_KEY },
+              { type: S.CKA_KEY_TYPE, ulongVal: S.CKK_GENERIC_SECRET },
+              { type: S.CKA_TOKEN, boolVal: false },
+              { type: S.CKA_SENSITIVE, boolVal: false },
+              { type: S.CKA_EXTRACTABLE, boolVal: true },
+            ],
+          })
+          expect(hex(S.hsm_extractKeyValue(M, hSession, u.keyHandle))).toBe(e.pt.toLowerCase())
+        } else {
+          expect(() =>
+            hpkeOpenWith(ctx, engine, suiteOf(v), keys, unhex(v.enc), unhex(e.ct), opts)
+          ).toThrow()
+        }
       })
     }
 
@@ -436,9 +617,11 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
         expect(r.secretsMatch).toBe(true)
         expect(r.wrappedBytes).toBe(40)
         expect(r.matches).toBe(true)
-        // The KEK and the AES-KW output recomputed by Node's crypto.
+        // The KEK and the AES-KW output recomputed by Node's crypto: it opens to a key with the same check block.
         const kek = hkdfSha256Reference(r.secretReturnedToCaller, HKDF_INFO_MLKEM)
-        expect(same(aesKwReference(kek, r.wrapped, 'unwrap'), r.sourceKey)).toBe(true)
+        const unwrapped = aesKwReference(kek, r.wrapped, 'unwrap')
+        expect(nodeCheckBlock(unwrapped).slice(0, 6)).toBe(r.sourceKcv)
+        expect(r.importedKcv).toBe(r.sourceKcv)
       }
     )
 
@@ -467,7 +650,9 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
       expect(r.combinerInputOrder[0]).toMatch(/^ML-KEM/)
       expect(r.matches).toBe(true)
       const kek = hkdfSha256Reference(concat(r.mlkemSecret, r.ecdhSecret), HKDF_INFO_HYBRID)
-      expect(same(aesKwReference(kek, r.wrapped, 'unwrap'), r.sourceKey)).toBe(true)
+      const unwrapped = aesKwReference(kek, r.wrapped, 'unwrap')
+      expect(nodeCheckBlock(unwrapped).slice(0, 6)).toBe(r.sourceKcv)
+      expect(r.importedKcv).toBe(r.sourceKcv)
       // Order matters: the other order does not open the wrap (control).
       const wrongKek = hkdfSha256Reference(concat(r.ecdhSecret, r.mlkemSecret), HKDF_INFO_HYBRID)
       expect(() => aesKwReference(wrongKek, r.wrapped, 'unwrap')).toThrow()

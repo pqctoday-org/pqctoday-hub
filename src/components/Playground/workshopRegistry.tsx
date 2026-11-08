@@ -344,7 +344,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'Wrapped key blob (RSA-OAEP part plus AES-KWP part) or HPKE enc || ciphertext; the key recovered on the provider side must be byte-identical to the key the third-party HSM exported.',
+      'Wrapped key blob (RSA-OAEP part plus AES-KWP part) or HPKE enc || ciphertext; the key imported on the provider side must be the same key the third-party HSM exported, shown by a signature or a key check value and never by reading the key out.',
   },
   {
     id: 'token-migration',

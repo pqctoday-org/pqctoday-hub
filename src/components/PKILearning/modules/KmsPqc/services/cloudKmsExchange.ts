@@ -28,9 +28,9 @@
  * Byte sizes are measured from the objects the engine returns, never typed in.
  */
 import {
-  hsm_generateRandom,
   hsm_importAESKey,
   hsm_importGenericSecret,
+  hsm_aesEncrypt,
   hsm_extractKeyValue,
   hsm_extractECPoint,
   hsm_extractRSAPublicKeyDer,
@@ -62,9 +62,12 @@ import {
   CKA_EXTRACTABLE,
   CKA_ENCRYPT,
   CKA_DECRYPT,
+  CKA_MODULUS,
+  CKA_WRAP,
   CKA_PRIVATE,
   CKA_SIGN,
   CKA_UNWRAP,
+  CKA_VALUE,
   CKA_VALUE_LEN,
   CKK_AES,
   CKK_EC,
@@ -72,6 +75,8 @@ import {
   CKO_SECRET_KEY,
   CKM_SHA256,
   CKM_SHA_1,
+  CKM_AES_GCM,
+  CKM_AES_KEY_GEN,
   CKM_AES_KEY_WRAP,
   CKM_AES_KEY_WRAP_KWP,
   CKZ_HPKE_MODE_BASE,
@@ -93,10 +98,10 @@ import {
   hybridEncap,
   kemInfo,
   keyScheduleSecure,
+  computeNonce,
   openHandle,
   pqDecap,
   pqEncap,
-  sealHandle,
   stripEcPointDer,
   ecPointRawLen,
   type Hctx,
@@ -220,13 +225,15 @@ const importedAesTemplate = (keyBits: 128 | 192 | 256, canUnwrap = false): AttrD
  * flows export an EC P-256 private key because CKM_RSA_AES_KEY_WRAP is defined for asymmetric
  * target keys (PKCS#11 v3.2, 6.1.19).
  */
-export const ecPrivateImportTemplate = (): AttrDef[] => [
+export const ecPrivateImportTemplate = (extractableForTests = false): AttrDef[] => [
   { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
   { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
   { type: CKA_TOKEN, boolVal: false },
   { type: CKA_PRIVATE, boolVal: true },
-  { type: CKA_SENSITIVE, boolVal: false },
-  { type: CKA_EXTRACTABLE, boolVal: true },
+  // The provider keeps the imported key sensitive and non-extractable. Only a known-answer test asks
+  // for a readable copy, so that it can compare the private scalar with an independent implementation.
+  { type: CKA_SENSITIVE, boolVal: !extractableForTests },
+  { type: CKA_EXTRACTABLE, boolVal: extractableForTests },
   { type: CKA_SIGN, boolVal: true },
 ]
 
@@ -289,9 +296,25 @@ export const CLASSICAL_PROFILES: Record<'aws' | 'gcp' | 'azure', ClassicalImport
 export function generateWrappingKeyPair(
   ctx: Hctx,
   bits: 2048 | 3072 | 4096
-): { pubHandle: number; privHandle: number; publicKeyDer: Uint8Array } {
+): { pubHandle: number; privHandle: number; publicKeyDer: Uint8Array; modulusBytes: number } {
   const kp = hsm_generateRSAWrapKeyPair(ctx.M, ctx.hSession, bits)
-  return { ...kp, publicKeyDer: hsm_extractRSAPublicKeyDer(ctx.M, ctx.hSession, kp.pubHandle) }
+  return {
+    ...kp,
+    publicKeyDer: hsm_extractRSAPublicKeyDer(ctx.M, ctx.hSession, kp.pubHandle),
+    modulusBytes: attributeLength(ctx, kp.pubHandle, CKA_MODULUS),
+  }
+}
+
+/** Length in bytes of one attribute of an object, from the length query of C_GetAttributeValue. */
+function attributeLength(ctx: Hctx, handle: number, type: number): number {
+  const { M, hSession } = ctx
+  const tpl = buildTemplate(M, [{ type }])
+  try {
+    checkRV(M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1), 'C_GetAttributeValue(len)')
+    return readUlong(M, tpl.ptr + 8)
+  } finally {
+    freeTemplate(M, tpl, 1)
+  }
 }
 
 type WrappingKeyPair = ReturnType<typeof generateWrappingKeyPair>
@@ -328,19 +351,15 @@ export interface ClassicalImportResult {
   profile: ClassicalImportProfile
   /** True when the RSA wrapping key pair came from an earlier run in this HSM session. */
   rsaKeyReused: boolean
-  /** Length of the wrapping public modulus in bytes (the RSA-OAEP part of the blob). */
+  /** Length of the RSA-OAEP part of the blob, read from the wrapping key's CKA_MODULUS. */
   rsaPartBytes: number
   /** Length of the AES-KWP part of the blob, measured (RFC 5649 pads the wrapped encoding and adds an 8-byte header). */
   kwpPartBytes: number
   wrappedBytes: number
   wrapped: Uint8Array
-  /** The private scalar of the EC P-256 key the third party exports. */
-  sourceKey: Uint8Array
-  /** The private scalar the provider's HSM holds after unwrap. */
-  importedKey: Uint8Array
-  /** A signature made with the imported key verifies under the original public key. */
+  /** A signature made with the imported key verifies under the original public key. This is the proof of the match. */
   signatureVerified: boolean
-  /** The scalars are equal and the signature check passed. */
+  /** Same as signatureVerified: the private scalar is never read out, so the signature is the evidence. */
   matches: boolean
   /** Whether the blob splits as expected: RSA-OAEP(temp AES key) followed by AES-KWP(target key). */
   structureVerified: boolean
@@ -363,24 +382,19 @@ export function runClassicalImport(
   const { M, hSession } = ctx
   // Provider side: wrapping key pair (public half is what GetParametersForImport / the KEK download / the import job returns).
   const rsa = getWrappingKeyPair(ctx, profile.rsaBits)
-  // Third-party HSM: the key to be exported. The private key is extractable only because the wrap mechanism has to read it.
+  // Third-party HSM: the key to be exported. It stays extractable so that the wrap mechanism can read it, and
+  // sensitive so that nobody else can: its value is never read out.
   const source = hsm_generateECKeyPair(M, hSession, 'P-256', true, 'exported EC key')
-  const sourceKey = hsm_extractKeyValue(M, hSession, source.privHandle)
+  setBooleanAttribute(ctx, source.privHandle, CKA_SENSITIVE, true)
 
   const opts: RsaAesWrapOptions = { aesKeyBits: profile.aesKeyBits, oaepHash: profile.oaepHash }
   const wrapped = rsaAesKeyWrap(ctx, rsa.pubHandle, source.privHandle, opts)
-  const rsaPartBytes = profile.rsaBits / 8
+  const rsaPartBytes = rsa.modulusBytes
   const kwpPartBytes = wrapped.length - rsaPartBytes
 
+  // Provider side: the key is recovered as a sensitive, non-extractable object, and proven by signing with it.
   const imported = rsaAesKeyUnwrap(ctx, rsa.privHandle, wrapped, opts)
-  const importedKey = hsm_extractKeyValue(M, hSession, imported)
-  let signatureVerified = false
-  try {
-    const sig = hsm_ecdsaSign(M, hSession, imported, PROOF_MESSAGE)
-    signatureVerified = hsm_ecdsaVerify(M, hSession, source.pubHandle, PROOF_MESSAGE, sig)
-  } catch {
-    signatureVerified = false
-  }
+  const signatureVerified = proveEcKey(ctx, imported, source.pubHandle)
 
   // Independent structure check: split the blob, undo the RSA part with RSA-OAEP, then AES-KWP the rest.
   let structureVerified = false
@@ -397,8 +411,8 @@ export function runClassicalImport(
       ecPrivateImportTemplate()
     )
     structureVerified =
-      equalBytes(hsm_extractKeyValue(M, hSession, inner), sourceKey) &&
-      hsm_extractKeyValue(M, hSession, tempAes).length === profile.aesKeyBits / 8
+      proveEcKey(ctx, inner, source.pubHandle) &&
+      attributeLength(ctx, tempAes, CKA_VALUE) === profile.aesKeyBits / 8
   } catch {
     structureVerified = false
   }
@@ -410,11 +424,30 @@ export function runClassicalImport(
     kwpPartBytes,
     wrappedBytes: wrapped.length,
     wrapped,
-    sourceKey,
-    importedKey,
     signatureVerified,
-    matches: equalBytes(sourceKey, importedKey) && signatureVerified,
+    matches: signatureVerified,
     structureVerified,
+  }
+}
+
+/** Sign with `privHandle` and verify under `pubHandle`: proves both halves are the same key without reading either. */
+function proveEcKey(ctx: Hctx, privHandle: number, pubHandle: number): boolean {
+  try {
+    const sig = hsm_ecdsaSign(ctx.M, ctx.hSession, privHandle, PROOF_MESSAGE)
+    return hsm_ecdsaVerify(ctx.M, ctx.hSession, pubHandle, PROOF_MESSAGE, sig)
+  } catch {
+    return false
+  }
+}
+
+/** C_SetAttributeValue for one boolean attribute. */
+function setBooleanAttribute(ctx: Hctx, handle: number, type: number, value: boolean): void {
+  const { M, hSession } = ctx
+  const tpl = buildTemplate(M, [{ type, boolVal: value }])
+  try {
+    checkRV(M._C_SetAttributeValue(hSession, handle, tpl.ptr, 1), 'C_SetAttributeValue')
+  } finally {
+    freeTemplate(M, tpl, 1)
   }
 }
 
@@ -460,6 +493,220 @@ function rsaOaepDecryptToKey(
     freeTemplate(M, tpl, template.length)
     M._free(phKey)
   }
+}
+
+// ── Key objects, wrap and unwrap: how the exported key moves ─────────────────
+//
+// The key being exported is a key OBJECT in the sending HSM. It is wrapped under the
+// key the HPKE key schedule derives, and the receiving HSM unwraps it into a new key
+// object. Neither side reads the key value: the application only ever holds the
+// wrapped bytes and handles.
+
+/** Size of the AES key the HPKE and AWS flows export. */
+export const EXPORT_KEY_BYTES = 32
+
+/**
+ * The AES-256 key the third-party HSM exports. It is extractable, so that a wrap
+ * mechanism may read it, and sensitive, so that nobody else may. Its value is never
+ * read out by this code. It can encrypt, so that a check block can prove a match.
+ */
+export function generateExportKey(ctx: Hctx): number {
+  const { M, hSession } = ctx
+  const attrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VALUE_LEN, ulongVal: EXPORT_KEY_BYTES },
+    { type: CKA_SENSITIVE, boolVal: true },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: true },
+  ]
+  const mech = buildMech(M, CKM_AES_KEY_GEN)
+  const tpl = buildTemplate(M, attrs)
+  const phKey = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKey(hSession, mech, tpl.ptr, attrs.length, phKey),
+      'C_GenerateKey(AES export key)'
+    )
+    return readUlong(M, phKey)
+  } finally {
+    M._free(mech)
+    freeTemplate(M, tpl, attrs.length)
+    M._free(phKey)
+  }
+}
+
+/** What the receiving HSM creates when it unwraps the exported key: sensitive and not extractable. */
+export const importedAesProtectedTemplate = (): AttrDef[] => [
+  { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+  { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+  { type: CKA_TOKEN, boolVal: false },
+  { type: CKA_VALUE_LEN, ulongVal: EXPORT_KEY_BYTES },
+  { type: CKA_SENSITIVE, boolVal: true },
+  { type: CKA_EXTRACTABLE, boolVal: false },
+  { type: CKA_ENCRYPT, boolVal: true },
+  { type: CKA_DECRYPT, boolVal: true },
+]
+
+/**
+ * The AEAD key from a key schedule is created for encrypt and decrypt only. To wrap or
+ * unwrap with it, the HSM must also be told that it may (CKA_WRAP, CKA_UNWRAP). This
+ * changes permissions on the handle; it does not read the key.
+ */
+export function allowAeadKeyWrap(ctx: Hctx, keyHandle: number): void {
+  setBooleanAttribute(ctx, keyHandle, CKA_WRAP, true)
+  setBooleanAttribute(ctx, keyHandle, CKA_UNWRAP, true)
+}
+
+/** CK_GCM_PARAMS in the 32-bit WASM heap: pIv, ulIvLen, ulIvBits, pAAD (empty), ulAADLen, ulTagBits = 128. */
+function buildGcmParams(
+  M: Hctx['M'],
+  nonce: Uint8Array
+): { ptr: number; len: number; free: () => void } {
+  const ivPtr = writeBytes(M, nonce)
+  const ptr = M._malloc(24)
+  M.setValue(ptr, ivPtr, 'i32')
+  M.setValue(ptr + 4, nonce.length, 'i32')
+  M.setValue(ptr + 8, nonce.length * 8, 'i32')
+  M.setValue(ptr + 12, 0, 'i32')
+  M.setValue(ptr + 16, 0, 'i32')
+  M.setValue(ptr + 20, 128, 'i32')
+  return {
+    ptr,
+    len: 24,
+    free: () => {
+      M._free(ivPtr)
+      M._free(ptr)
+    },
+  }
+}
+
+/**
+ * HPKE Seal as a key wrap: C_WrapKeyAuthenticated(CKM_AES_GCM) with the HPKE nonce as the
+ * IV and a 128-bit tag. The output is byte-identical to RFC 9180 Seal of the key's value, so
+ * the HPKE ciphertext is unchanged. This engine exposes AES-GCM key wrapping through the
+ * authenticated wrap call (plain C_WrapKey refuses CKM_AES_GCM). The wrapping key needs
+ * CKA_WRAP (see allowAeadKeyWrap).
+ */
+export function aeadWrapKey(
+  ctx: Hctx,
+  aeadKeyHandle: number,
+  nonce: Uint8Array,
+  targetHandle: number,
+  aad: Uint8Array = EMPTY
+): Uint8Array {
+  const { M, hSession } = ctx
+  const gcm = buildGcmParams(M, nonce)
+  const mech = buildMech(M, CKM_AES_GCM, gcm.ptr, gcm.len)
+  const aadPtr = aad.length ? writeBytes(M, aad) : 0
+  const lenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(
+      M._C_WrapKeyAuthenticated(
+        hSession,
+        mech,
+        aeadKeyHandle,
+        targetHandle,
+        aadPtr,
+        aad.length,
+        0,
+        lenPtr
+      ),
+      'C_WrapKeyAuthenticated(CKM_AES_GCM,len)'
+    )
+    const len = readUlong(M, lenPtr)
+    outPtr = M._malloc(len)
+    M.setValue(lenPtr, len, 'i32')
+    checkRV(
+      M._C_WrapKeyAuthenticated(
+        hSession,
+        mech,
+        aeadKeyHandle,
+        targetHandle,
+        aadPtr,
+        aad.length,
+        outPtr,
+        lenPtr
+      ),
+      'C_WrapKeyAuthenticated(CKM_AES_GCM)'
+    )
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, lenPtr))
+  } finally {
+    gcm.free()
+    M._free(mech)
+    if (aadPtr) M._free(aadPtr)
+    M._free(lenPtr)
+    if (outPtr) M._free(outPtr)
+  }
+}
+
+/**
+ * HPKE Open as a key unwrap: C_UnwrapKeyAuthenticated(CKM_AES_GCM). The tag is checked
+ * inside the HSM and the key value becomes a new key object that is never read out.
+ * The wrapping key needs CKA_UNWRAP (see allowAeadKeyWrap).
+ */
+export function aeadUnwrapKey(
+  ctx: Hctx,
+  aeadKeyHandle: number,
+  nonce: Uint8Array,
+  wrapped: Uint8Array,
+  template: AttrDef[] = importedAesProtectedTemplate(),
+  aad: Uint8Array = EMPTY
+): number {
+  const { M, hSession } = ctx
+  const gcm = buildGcmParams(M, nonce)
+  const mech = buildMech(M, CKM_AES_GCM, gcm.ptr, gcm.len)
+  const aadPtr = aad.length ? writeBytes(M, aad) : 0
+  const wrappedPtr = writeBytes(M, wrapped)
+  const tpl = buildTemplate(M, template)
+  const phKey = allocUlong(M)
+  try {
+    checkRV(
+      M._C_UnwrapKeyAuthenticated(
+        hSession,
+        mech,
+        aeadKeyHandle,
+        wrappedPtr,
+        wrapped.length,
+        tpl.ptr,
+        template.length,
+        aadPtr,
+        aad.length,
+        phKey
+      ),
+      'C_UnwrapKeyAuthenticated(CKM_AES_GCM)'
+    )
+    return readUlong(M, phKey)
+  } finally {
+    gcm.free()
+    M._free(mech)
+    if (aadPtr) M._free(aadPtr)
+    M._free(wrappedPtr)
+    freeTemplate(M, tpl, template.length)
+    M._free(phKey)
+  }
+}
+
+/**
+ * Proof that two AES keys are the same without reading either: one known block (16 zero
+ * bytes) is encrypted under the key (AES-CBC with a zero IV, i.e. AES-ECB of the zero
+ * block). `kcv` is the usual 3-byte key check value; `block` is the whole 16 bytes, which
+ * is what the comparison uses. Neither value reveals the key.
+ */
+export function keyCheck(ctx: Hctx, handle: number): { kcv: string; block: string } {
+  const { ciphertext } = hsm_aesEncrypt(
+    ctx.M,
+    ctx.hSession,
+    handle,
+    new Uint8Array(16),
+    'cbc',
+    new Uint8Array(16)
+  )
+  const block = bytesToHex(ciphertext.slice(0, 16))
+  return { kcv: block.slice(0, 6), block }
 }
 
 // ── 2. HPKE import (RFC 9180 base mode) with three engines ───────────────────
@@ -526,8 +773,8 @@ export interface HpkeRecipient {
   publicKey: Uint8Array
   /** Handle to the public key object when the engine keeps one (v3.3 composite key, CKM_HPKE key). */
   publicHandle?: number
-  /** Open `enc || ct` into the key material, returning the PKCS#11 mechanisms used. */
-  open: (enc: Uint8Array, ct: Uint8Array) => { plaintext: Uint8Array; mechanisms: string[] }
+  /** Open `enc || ct`: unwrap the exported key into a new key object, returning its handle and the PKCS#11 mechanisms used. */
+  open: (enc: Uint8Array, ct: Uint8Array) => { keyHandle: number; mechanisms: string[] }
   /** Mechanisms used to generate the key pair. */
   keygenMechanisms: string[]
 }
@@ -557,8 +804,12 @@ export function hpkeEngineNote(engine: HpkeEngine, suite: HpkeImportSuite): stri
   if (isPure(suite)) {
     return 'Pure ML-KEM uses the same CKM_ML_KEM mechanism in the v3.3 draft as in v3.2, so this run is identical to the v3.2 run. CKM_COMP_KEM in the v3.3 draft covers composite KEMs only.'
   }
-  return 'The v3.3 draft names this pair MLKEM768_X25519 and defines its own composition. This run uses CKM_COMP_KEM for the X-Wing suite; the interoperability check shows whether it agrees with the v3.2 sequence in this engine.'
+  return X_WING_V33_SENTENCE
 }
+
+/** One sentence, scoped to X-Wing, shown beside the v3.3 engine and in its run notes. */
+export const X_WING_V33_SENTENCE =
+  'In this engine, an X-Wing message sealed with the v3.2 sequence opens on the v3.3 draft path; the interoperability check shows this.'
 
 /** The provider-side key objects an Open needs, whichever engine made them. */
 export interface HpkeRecipientKeys {
@@ -577,6 +828,8 @@ export interface HpkeOpenOptions {
   aad?: Uint8Array
   /** Message sequence number; the first message is 0. */
   seq?: number
+  /** What the unwrapped key object looks like. Defaults to a sensitive, non-extractable AES-256 key. */
+  template?: AttrDef[]
 }
 
 const need = (v: number | undefined, what: string): number => {
@@ -584,24 +837,16 @@ const need = (v: number | undefined, what: string): number => {
   return v
 }
 
-/**
- * Provider side of HPKE Open (RFC 9180 base mode): decapsulate `enc`, run the key
- * schedule and open `ct`. The engine decides which PKCS#11 mechanisms do the work.
- * Info and aad default to empty, which is what the key-import message uses.
- */
-export function hpkeOpenWith(
+/** What the provider side holds after decapsulating `enc` and running the key schedule. */
+function hpkeRecipientAeadKey(
   ctx: Hctx,
   engine: HpkeEngine,
   suite: HpkeImportSuite,
   keys: HpkeRecipientKeys,
   enc: Uint8Array,
-  ct: Uint8Array,
-  opts: HpkeOpenOptions = {}
-): { plaintext: Uint8Array; mechanisms: string[] } {
+  info: Uint8Array
+): { keyHandle: number; baseNonce: Uint8Array; mechanisms: string[] } {
   const { M, hSession } = ctx
-  const info = opts.info ?? EMPTY
-  const aad = opts.aad ?? EMPTY
-  const seq = opts.seq ?? 0
   const eff = effectiveEngine(engine, suite)
   const kem = kemInfo(suite.kemId)
 
@@ -617,8 +862,9 @@ export function hpkeOpenWith(
       throw new Error('CKM_HPKE Decap returned no AEAD key handle.')
     }
     return {
-      plaintext: openHandle(ctx, r.keyHandle, suite.aeadId, r.baseNonce, seq, aad, ct),
-      mechanisms: ['C_DecapsulateKey(CKM_HPKE) incl. KeySchedule', 'CKM_AES_GCM (Open)'],
+      keyHandle: r.keyHandle,
+      baseNonce: r.baseNonce,
+      mechanisms: ['C_DecapsulateKey(CKM_HPKE) incl. KeySchedule'],
     }
   }
 
@@ -656,8 +902,69 @@ export function hpkeOpenWith(
     info
   )
   return {
-    plaintext: openHandle(ctx, ks.keyHandle!, suite.aeadId, ks.baseNonce!, seq, aad, ct),
-    mechanisms: [...kemMechanisms, 'CKM_HKDF_DERIVE (KeySchedule)', 'CKM_AES_GCM (Open)'],
+    keyHandle: ks.keyHandle!,
+    baseNonce: ks.baseNonce!,
+    mechanisms: [...kemMechanisms, 'CKM_HKDF_DERIVE (KeySchedule)'],
+  }
+}
+
+/**
+ * Provider side of HPKE Open (RFC 9180 base mode) as a key unwrap: decapsulate `enc`, run
+ * the key schedule, then C_UnwrapKeyAuthenticated(CKM_AES_GCM) turns `ct` into a new key
+ * object. The key value is never read out. Info and aad default to empty, which is what the
+ * key-import message uses.
+ */
+export function hpkeOpenWith(
+  ctx: Hctx,
+  engine: HpkeEngine,
+  suite: HpkeImportSuite,
+  keys: HpkeRecipientKeys,
+  enc: Uint8Array,
+  ct: Uint8Array,
+  opts: HpkeOpenOptions = {}
+): { keyHandle: number; mechanisms: string[] } {
+  const k = hpkeRecipientAeadKey(ctx, engine, suite, keys, enc, opts.info ?? EMPTY)
+  allowAeadKeyWrap(ctx, k.keyHandle)
+  const keyHandle = aeadUnwrapKey(
+    ctx,
+    k.keyHandle,
+    computeNonce(k.baseNonce, opts.seq ?? 0),
+    ct,
+    opts.template ?? importedAesProtectedTemplate(),
+    opts.aad ?? EMPTY
+  )
+  return {
+    keyHandle,
+    mechanisms: [...k.mechanisms, 'C_UnwrapKeyAuthenticated(CKM_AES_GCM) = HPKE Open'],
+  }
+}
+
+/**
+ * Known-answer tests only: the same Open, but through C_Decrypt, so a published vector's
+ * plaintext (an arbitrary message, not a key) can be compared byte for byte. The product
+ * path is hpkeOpenWith, which never decrypts to bytes.
+ */
+export function hpkeOpenMessage(
+  ctx: Hctx,
+  engine: HpkeEngine,
+  suite: HpkeImportSuite,
+  keys: HpkeRecipientKeys,
+  enc: Uint8Array,
+  ct: Uint8Array,
+  opts: HpkeOpenOptions = {}
+): { plaintext: Uint8Array; mechanisms: string[] } {
+  const k = hpkeRecipientAeadKey(ctx, engine, suite, keys, enc, opts.info ?? EMPTY)
+  return {
+    plaintext: openHandle(
+      ctx,
+      k.keyHandle,
+      suite.aeadId,
+      k.baseNonce,
+      opts.seq ?? 0,
+      opts.aad ?? EMPTY,
+      ct
+    ),
+    mechanisms: [...k.mechanisms, 'CKM_AES_GCM (Open, message bytes)'],
   }
 }
 
@@ -739,8 +1046,24 @@ export interface HpkeSealed {
 }
 
 /**
- * Third-party HSM side: HPKE Seal (RFC 9180 base mode, empty info, empty aad)
- * of the key material toward the provider's public key.
+ * Wrap the exported key under the AEAD key of a key schedule: this is HPKE Seal at sequence
+ * number 0 with empty aad. The key value is never read.
+ */
+function sealByWrapping(
+  ctx: Hctx,
+  aeadKeyHandle: number,
+  baseNonce: Uint8Array,
+  targetHandle: number
+): Uint8Array {
+  allowAeadKeyWrap(ctx, aeadKeyHandle)
+  return aeadWrapKey(ctx, aeadKeyHandle, computeNonce(baseNonce, 0), targetHandle)
+}
+
+const SEAL_STEP = 'C_WrapKeyAuthenticated(CKM_AES_GCM) = HPKE Seal'
+
+/**
+ * Third-party HSM side: HPKE Seal (RFC 9180 base mode, empty info, empty aad) of the exported
+ * key object toward the provider's public key, done as a key wrap.
  * A sender engine can only seal toward a recipient it can address: 'v32' works
  * from the public key bytes alone; 'v33' and 'candidate' need the recipient's
  * key object, so they pair with a recipient from the same engine.
@@ -749,7 +1072,7 @@ export function hpkeSealKey(
   ctx: Hctx,
   senderEngine: HpkeEngine,
   recipient: HpkeRecipient,
-  keyMaterial: Uint8Array
+  targetHandle: number
 ): HpkeSealed {
   const { M, hSession } = ctx
   const suite = recipient.suite
@@ -770,11 +1093,10 @@ export function hpkeSealKey(
     if (r.keyHandle == null || r.baseNonce == null) {
       throw new Error('CKM_HPKE Encap returned no AEAD key handle.')
     }
-    const { ct } = sealHandle(ctx, r.keyHandle, suite.aeadId, r.baseNonce, 0, EMPTY, keyMaterial)
     return {
       enc: r.enc,
-      ct,
-      mechanisms: ['C_EncapsulateKey(CKM_HPKE) incl. KeySchedule', 'CKM_AES_GCM (Seal)'],
+      ct: sealByWrapping(ctx, r.keyHandle, r.baseNonce, targetHandle),
+      mechanisms: ['C_EncapsulateKey(CKM_HPKE) incl. KeySchedule', SEAL_STEP],
     }
   }
 
@@ -792,23 +1114,10 @@ export function hpkeSealKey(
       sharedSecretHandle,
       EMPTY
     )
-    const { ct } = sealHandle(
-      ctx,
-      ks.keyHandle!,
-      suite.aeadId,
-      ks.baseNonce!,
-      0,
-      EMPTY,
-      keyMaterial
-    )
     return {
       enc,
-      ct,
-      mechanisms: [
-        'C_EncapsulateKey(CKM_COMP_KEM)',
-        'CKM_HKDF_DERIVE (KeySchedule)',
-        'CKM_AES_GCM (Seal)',
-      ],
+      ct: sealByWrapping(ctx, ks.keyHandle!, ks.baseNonce!, targetHandle),
+      mechanisms: ['C_EncapsulateKey(CKM_COMP_KEM)', 'CKM_HKDF_DERIVE (KeySchedule)', SEAL_STEP],
     }
   }
 
@@ -825,19 +1134,10 @@ export function hpkeSealKey(
       sharedSecretHandle,
       EMPTY
     )
-    const { ct } = sealHandle(
-      ctx,
-      ks.keyHandle!,
-      suite.aeadId,
-      ks.baseNonce!,
-      0,
-      EMPTY,
-      keyMaterial
-    )
     return {
       enc,
-      ct,
-      mechanisms: ['C_EncapsulateKey(CKM_ML_KEM)', 'CKM_HKDF_DERIVE', 'CKM_AES_GCM (Seal)'],
+      ct: sealByWrapping(ctx, ks.keyHandle!, ks.baseNonce!, targetHandle),
+      mechanisms: ['C_EncapsulateKey(CKM_ML_KEM)', 'CKM_HKDF_DERIVE (KeySchedule)', SEAL_STEP],
     }
   }
   const { sharedSecretHandle, enc } = hybridEncap(ctx, suite.kemId, recipient.publicKey)
@@ -850,16 +1150,15 @@ export function hpkeSealKey(
     sharedSecretHandle,
     EMPTY
   )
-  const { ct } = sealHandle(ctx, ks.keyHandle!, suite.aeadId, ks.baseNonce!, 0, EMPTY, keyMaterial)
   return {
     enc,
-    ct,
+    ct: sealByWrapping(ctx, ks.keyHandle!, ks.baseNonce!, targetHandle),
     mechanisms: [
       'C_EncapsulateKey(CKM_ML_KEM)',
       'C_DeriveKey(CKM_ECDH1_DERIVE)',
       'CKM_CONCATENATE_BASE_AND_KEY/_DATA + CKM_SHA3_256_KEY_DERIVATION',
-      'CKM_HKDF_DERIVE',
-      'CKM_AES_GCM (Seal)',
+      'CKM_HKDF_DERIVE (KeySchedule)',
+      SEAL_STEP,
     ],
   }
 }
@@ -876,20 +1175,22 @@ export interface HpkeImportResult {
   ctBytes: number
   /** Length of `enc || ct`, the value sent to the provider. */
   wireBytes: number
-  /** The AEAD tag adds this many bytes to the key material. */
+  /** The AEAD tag adds this many bytes to the key. */
   overheadBytes: number
   enc: Uint8Array
   ct: Uint8Array
   wire: Uint8Array
-  keyMaterial: Uint8Array
-  recovered: Uint8Array
+  /** Key check value (first 3 bytes of the encrypted check block) of the exported key and of the imported key. */
+  sourceKcv: string
+  importedKcv: string
+  /** The two keys encrypt the check block to the same 16 bytes. The key value is never read out of either HSM. */
   matches: boolean
   keygenMechanisms: string[]
   sealMechanisms: string[]
   openMechanisms: string[]
 }
 
-/** One whole HPKE import: provider key pair, third-party Seal, provider Open. */
+/** One whole HPKE import: provider key pair, third-party Seal (key wrap), provider Open (key unwrap). */
 export function runHpkeImport(
   ctx: Hctx,
   opts: {
@@ -897,15 +1198,15 @@ export function runHpkeImport(
     /** Defaults to `engine`. A v3.2 sender can seal toward a recipient of any engine; other pairs must match. */
     senderEngine?: HpkeEngine
     suite: HpkeImportSuite
-    keyMaterial?: Uint8Array
   }
 ): HpkeImportResult {
-  const { M, hSession } = ctx
   const senderEngine = opts.senderEngine ?? opts.engine
-  const keyMaterial = opts.keyMaterial ?? hsm_generateRandom(M, hSession, 32)
+  const target = generateExportKey(ctx)
+  const source = keyCheck(ctx, target)
   const recipient = createHpkeRecipient(ctx, opts.engine, opts.suite)
-  const sealed = hpkeSealKey(ctx, senderEngine, recipient, keyMaterial)
+  const sealed = hpkeSealKey(ctx, senderEngine, recipient, target)
   const opened = recipient.open(sealed.enc, sealed.ct)
+  const imported = keyCheck(ctx, opened.keyHandle)
   const wire = concat(sealed.enc, sealed.ct)
   return {
     suite: opts.suite,
@@ -916,13 +1217,13 @@ export function runHpkeImport(
     encBytes: sealed.enc.length,
     ctBytes: sealed.ct.length,
     wireBytes: wire.length,
-    overheadBytes: sealed.ct.length - keyMaterial.length,
+    overheadBytes: sealed.ct.length - EXPORT_KEY_BYTES,
     enc: sealed.enc,
     ct: sealed.ct,
     wire,
-    keyMaterial,
-    recovered: opened.plaintext,
-    matches: equalBytes(keyMaterial, opened.plaintext),
+    sourceKcv: source.kcv,
+    importedKcv: imported.kcv,
+    matches: source.block === imported.block,
     keygenMechanisms: recipient.keygenMechanisms,
     sealMechanisms: sealed.mechanisms,
     openMechanisms: opened.mechanisms,
@@ -950,18 +1251,23 @@ export function aesKwWrap(ctx: Hctx, kek: Uint8Array, target: Uint8Array): Uint8
   return hsm_wrapKeyMech(ctx.M, ctx.hSession, CKM_AES_KEY_WRAP, wrapKey, targetKey)
 }
 
-/** AES-KW (RFC 3394) unwrap, returning the key bytes. */
-export function aesKwUnwrap(ctx: Hctx, kek: Uint8Array, wrapped: Uint8Array): Uint8Array {
+/** AES-KW (RFC 3394) wrap of a key OBJECT under a key-encryption key: C_WrapKey(CKM_AES_KEY_WRAP). The key value is never read. */
+export function aesKwWrapKey(ctx: Hctx, kek: Uint8Array, targetHandle: number): Uint8Array {
   const wrapKey = hsm_importAESKey(ctx.M, ctx.hSession, kek)
-  const h = hsm_unwrapKeyMech(
+  return hsm_wrapKeyMech(ctx.M, ctx.hSession, CKM_AES_KEY_WRAP, wrapKey, targetHandle)
+}
+
+/** AES-KW (RFC 3394) unwrap into a sensitive, non-extractable key object: C_UnwrapKey(CKM_AES_KEY_WRAP). */
+export function aesKwUnwrapKey(ctx: Hctx, kek: Uint8Array, wrapped: Uint8Array): number {
+  const wrapKey = hsm_importAESKey(ctx.M, ctx.hSession, kek)
+  return hsm_unwrapKeyMech(
     ctx.M,
     ctx.hSession,
     CKM_AES_KEY_WRAP,
     wrapKey,
     wrapped,
-    importedAesTemplate(256)
+    importedAesProtectedTemplate()
   )
-  return hsm_extractKeyValue(ctx.M, ctx.hSession, h)
 }
 
 /**
@@ -993,8 +1299,9 @@ export interface AwsMlKemResult {
   kekDerivationInfo: string
   wrapped: Uint8Array
   wrappedBytes: number
-  sourceKey: Uint8Array
-  unwrappedAtApplication: Uint8Array
+  /** Key check values of the exported key and of the key the application unwrapped; the values themselves are never read. */
+  sourceKcv: string
+  importedKcv: string
   matches: boolean
 }
 
@@ -1022,11 +1329,13 @@ export function runAwsMlKemEstablishment(ctx: Hctx, variant: MlKemVariant = 768)
   const dec = hsm_decapsulate(M, hSession, kms.privHandle, enc.ciphertextBytes, variant, true)
   const secretReturnedToCaller = hsm_extractKeyValue(M, hSession, dec)
 
-  const sourceKey = hsm_generateRandom(M, hSession, 32)
+  // The key to export is a key object in the partner HSM; it is wrapped under the KEK, never read out.
+  const target = generateExportKey(ctx)
+  const source = keyCheck(ctx, target)
   const kekPartner = deriveKek(ctx, partnerSecret, HKDF_INFO_MLKEM)
-  const wrapped = aesKwWrap(ctx, kekPartner, sourceKey)
+  const wrapped = aesKwWrapKey(ctx, kekPartner, target)
   const kekApp = deriveKek(ctx, secretReturnedToCaller, HKDF_INFO_MLKEM)
-  const unwrappedAtApplication = aesKwUnwrap(ctx, kekApp, wrapped)
+  const imported = keyCheck(ctx, aesKwUnwrapKey(ctx, kekApp, wrapped))
 
   return {
     variant,
@@ -1040,9 +1349,9 @@ export function runAwsMlKemEstablishment(ctx: Hctx, variant: MlKemVariant = 768)
     kekDerivationInfo: 'HKDF-SHA-256(secret, info = "cloud-kms-exchange ML-KEM KEK") -> 32 bytes',
     wrapped,
     wrappedBytes: wrapped.length,
-    sourceKey,
-    unwrappedAtApplication,
-    matches: equalBytes(sourceKey, unwrappedAtApplication),
+    sourceKcv: source.kcv,
+    importedKcv: imported.kcv,
+    matches: source.block === imported.block,
   }
 }
 
@@ -1068,8 +1377,9 @@ export interface AwsHybridResult {
   kekDerivationInfo: string
   wrapped: Uint8Array
   wrappedBytes: number
-  sourceKey: Uint8Array
-  unwrappedAtApplication: Uint8Array
+  /** Key check values of the exported key and of the key the application unwrapped; the values themselves are never read. */
+  sourceKcv: string
+  importedKcv: string
   matches: boolean
 }
 
@@ -1117,11 +1427,12 @@ export function runAwsHybridEstablishment(ctx: Hctx, variant: MlKemVariant = 768
     hsm_decapsulate(M, hSession, kmsMl.privHandle, enc.ciphertextBytes, variant, true)
   )
 
-  const sourceKey = hsm_generateRandom(M, hSession, 32)
+  const target = generateExportKey(ctx)
+  const source = keyCheck(ctx, target)
   const kekPartner = deriveKek(ctx, concat(partnerMl, partnerEcdh), HKDF_INFO_HYBRID)
-  const wrapped = aesKwWrap(ctx, kekPartner, sourceKey)
+  const wrapped = aesKwWrapKey(ctx, kekPartner, target)
   const kekApp = deriveKek(ctx, concat(awsMl, awsEcdh), HKDF_INFO_HYBRID)
-  const unwrappedAtApplication = aesKwUnwrap(ctx, kekApp, wrapped)
+  const imported = keyCheck(ctx, aesKwUnwrapKey(ctx, kekApp, wrapped))
 
   return {
     variant,
@@ -1140,9 +1451,9 @@ export function runAwsHybridEstablishment(ctx: Hctx, variant: MlKemVariant = 768
       'HKDF-SHA-256(mlkem_secret || ecdh_secret, info = "cloud-kms-exchange hybrid KEK") -> 32 bytes',
     wrapped,
     wrappedBytes: wrapped.length,
-    sourceKey,
-    unwrappedAtApplication,
-    matches: equalBytes(sourceKey, unwrappedAtApplication),
+    sourceKcv: source.kcv,
+    importedKcv: imported.kcv,
+    matches: source.block === imported.block,
   }
 }
 
@@ -1164,15 +1475,15 @@ export function observeClassical(r: ClassicalImportResult): StepObservations {
       }; the public modulus is ${r.rsaPartBytes} bytes`,
     ],
     source: [
-      `EC P-256 key pair created; the private key to export is a ${r.sourceKey.length}-byte scalar`,
+      'EC P-256 key pair created; the private key to export is a key object, sensitive, and its value is never read out',
     ],
     wrap: [
       `Wrapped blob: ${r.wrappedBytes} bytes = ${r.rsaPartBytes} bytes RSA-OAEP + ${r.kwpPartBytes} bytes AES-KWP`,
       `Checked by hand: the RSA part opens to the temporary AES-${p.aesKeyBits} key and the KWP part opens to the original private key: ${yesNo(r.structureVerified)}`,
     ],
     import: [
-      `Recovered private key is identical to the original: ${yesNo(r.matches)}`,
-      `A signature made with the imported key verifies under the original public key: ${yesNo(r.signatureVerified)}`,
+      `Imported as a sensitive, non-extractable key object. A signature made with it verifies under the original public key: ${yesNo(r.signatureVerified)}`,
+      `The key value never left either HSM; the signature is the proof that it is the same key.`,
     ],
   }
 }
@@ -1188,16 +1499,18 @@ export function observeHpke(r: HpkeImportResult): StepObservations {
     seal: [
       `Third-party engine: ${HPKE_ENGINE_LABEL[r.senderEngine]}`,
       `PKCS#11 calls: ${r.sealMechanisms.join(' → ')}`,
+      'The key to export is an AES-256 key object in the third-party HSM; wrapping it produces the HPKE ciphertext, and its value is never read out.',
       ...(r.note ? [r.note] : []),
     ],
     send: [
-      `enc: ${r.encBytes} bytes. ciphertext: ${r.ctBytes} bytes (the ${r.keyMaterial.length}-byte key plus ${r.overheadBytes} bytes of authentication tag)`,
+      `enc: ${r.encBytes} bytes. ciphertext: ${r.ctBytes} bytes (the ${EXPORT_KEY_BYTES}-byte key plus ${r.overheadBytes} bytes of authentication tag)`,
       `Sent: ${r.wireBytes} bytes`,
     ],
     open: [
       `Provider engine: ${HPKE_ENGINE_LABEL[r.engine]}`,
       `PKCS#11 calls: ${r.openMechanisms.join(' → ')}`,
-      `Recovered key is byte-identical to the original: ${yesNo(r.matches)}`,
+      `The unwrapped key has the same key check value as the original (${r.importedKcv}): ${yesNo(r.matches)}`,
+      'The key value never left either HSM; the two keys were compared by encrypting one known block under each.',
     ],
   }
 }
@@ -1214,8 +1527,9 @@ export function observeAwsMlKem(r: AwsMlKemResult): StepObservations {
     ],
     kek: [
       r.kekDerivationInfo,
-      `AES-KW output: ${r.wrappedBytes} bytes for a ${r.sourceKey.length}-byte key`,
-      `Application recovered the key and it is byte-identical to the original: ${yesNo(r.matches)}`,
+      `AES-KW output: ${r.wrappedBytes} bytes for a ${EXPORT_KEY_BYTES}-byte key`,
+      `The unwrapped key has the same key check value as the original (${r.importedKcv}): ${yesNo(r.matches)}`,
+      'Only the shared secret reached the application in plaintext; the exported key was wrapped and unwrapped as a key object and never read out.',
     ],
   }
 }
@@ -1233,8 +1547,9 @@ export function observeAwsHybrid(r: AwsHybridResult): StepObservations {
     combine: [
       `Input order: ${r.combinerInputOrder.join(', then ')}`,
       r.kekDerivationInfo,
-      `AES-KW output: ${r.wrappedBytes} bytes for a ${r.sourceKey.length}-byte key`,
-      `Application recovered the key and it is byte-identical to the original: ${yesNo(r.matches)}`,
+      `AES-KW output: ${r.wrappedBytes} bytes for a ${EXPORT_KEY_BYTES}-byte key`,
+      `The unwrapped key has the same key check value as the original (${r.importedKcv}): ${yesNo(r.matches)}`,
+      'Only the shared secret reached the application in plaintext; the exported key was wrapped and unwrapped as a key object and never read out.',
     ],
   }
 }

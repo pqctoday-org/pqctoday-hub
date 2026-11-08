@@ -234,13 +234,50 @@ describe('what the step teaches', () => {
     expect(seal.params.join(' | ')).toMatch(/aad = empty \(simulation choice\)/)
   })
 
-  it('shows the ML-KEM key spec as the API value, and the GovCloud note without a disagreement claim', () => {
+  it('shows the ML-KEM key spec as the API value', () => {
     expect(flowById('aws-mlkem').steps.find((s) => s.id === 'public')!.params).toContain(
       'KeySpec = ML_KEM_768'
     )
-    const note = providerById('aws').note ?? ''
-    expect(note).toMatch(/AWS GovCloud \(US\)/)
-    expect(note).not.toMatch(/differ/)
+  })
+
+  it('states what the two AWS pages say about GovCloud FIPS endpoints, as plain text with no claim id', () => {
+    expect(providerById('aws').note).toBe(
+      'AWS\u2019s readiness page lists hybrid post-quantum key exchange for AWS KMS on FIPS and non-FIPS endpoints in commercial and US GovCloud Regions, while its AWS KMS infrastructure security page says hybrid post-quantum TLS is not supported on FIPS endpoints in AWS GovCloud (US). Check the current AWS pages for your Region before relying on post-quantum TLS there.'
+    )
+  })
+
+  it('the AWS classical flow says the KMS key is ECC_NIST_P256 with an external origin', () => {
+    const params = flowById('aws-classical').steps.find((s) => s.id === 'params')!.params
+    expect(params).toContain('KMS key created with KeySpec = ECC_NIST_P256 and Origin = EXTERNAL')
+  })
+
+  it('HPKE Seal is shown as a key wrap and HPKE Open as a key unwrap, in that order, on a key object', () => {
+    for (const id of ['aws-hpke', 'gcp-hpke', 'azure-hpke']) {
+      const steps = flowById(id).steps
+      const seal = steps.findIndex(
+        (s) => s.apiName === 'C_WrapKeyAuthenticated (CKM_AES_GCM) = HPKE Seal'
+      )
+      const open = steps.findIndex(
+        (s) => s.apiName === 'C_UnwrapKeyAuthenticated (CKM_AES_GCM) = HPKE Open'
+      )
+      expect(seal, id).toBeGreaterThanOrEqual(0)
+      expect(open, id).toBeGreaterThan(seal)
+      expect(steps[seal].params.join(' | '), id).toMatch(
+        /hKey = the key to export \(an AES-256 key object/
+      )
+      expect(steps[seal].detail, id).toMatch(/never read out/)
+      expect(steps[open].params.join(' | '), id).toMatch(/sensitive, non-extractable key object/)
+    }
+  })
+
+  it('the AWS ML-KEM and hybrid flows wrap and unwrap a key object, and the secret is the only plaintext', () => {
+    const kek = flowById('aws-mlkem').steps.find((s) => s.id === 'kek')!
+    expect(kek.apiName).toMatch(/C_WrapKey \(CKM_AES_KEY_WRAP/)
+    expect(kek.params.join(' | ')).toMatch(/key object in the partner HSM/)
+    expect(kek.detail).toMatch(/Only the shared secret reached the application in plaintext/)
+    expect(flowById('aws-hybrid').steps.find((s) => s.id === 'combine')!.detail).toMatch(
+      /key object/
+    )
   })
 
   it('the v3.3 text does not say the draft matches X-Wing and says it defines its own composition and no HPKE mechanism', () => {

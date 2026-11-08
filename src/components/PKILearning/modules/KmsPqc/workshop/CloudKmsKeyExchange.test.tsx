@@ -75,8 +75,8 @@ vi.mock('../services/cloudKmsExchange', async (importOriginal) => {
         enc: new Uint8Array(1),
         ct: new Uint8Array(1),
         wire: new Uint8Array(1),
-        keyMaterial: new Uint8Array(32),
-        recovered: new Uint8Array(32),
+        sourceKcv: 'aabbcc',
+        importedKcv: 'aabbcc',
         matches: true,
         keygenMechanisms: ['stub keygen'],
         sealMechanisms: ['stub seal'],
@@ -213,7 +213,7 @@ describe('CloudKmsKeyExchange', () => {
     expect(
       await screen.findByText(/Wrapped blob: 536 bytes = 384 bytes RSA-OAEP \+ 152 bytes AES-KWP/)
     ).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent(/the recovered key matches the original/)
+    expect(screen.getByRole('status')).toHaveTextContent(/the imported key matches the original/)
     expect(hsmStub.addStepLog).toHaveBeenCalled()
   })
 

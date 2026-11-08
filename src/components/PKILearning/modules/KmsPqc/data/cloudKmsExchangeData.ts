@@ -149,7 +149,7 @@ export const PROVIDERS: readonly ProviderInfo[] = [
   {
     id: 'aws',
     name: 'AWS KMS',
-    note: 'AWS does not offer hybrid post-quantum TLS on its FIPS endpoints in AWS GovCloud (US); check the current AWS pages for your Region.',
+    note: 'AWS\u2019s readiness page lists hybrid post-quantum key exchange for AWS KMS on FIPS and non-FIPS endpoints in commercial and US GovCloud Regions, while its AWS KMS infrastructure security page says hybrid post-quantum TLS is not supported on FIPS endpoints in AWS GovCloud (US). Check the current AWS pages for your Region before relying on post-quantum TLS there.',
     claimIds: [
       'AWS-KMS-Import-Wrapping-Keys',
       'AWS-KMS-Post-Quantum-Keys',
@@ -242,16 +242,17 @@ const hpkeSteps = (
   {
     id: 'seal',
     actor: 'third-party',
-    title: 'Third-party HSM runs HPKE Seal',
-    apiName: 'HPKE Seal (RFC 9180, base mode)',
+    title: 'Third-party HSM runs HPKE Seal as a key wrap',
+    apiName: 'C_WrapKeyAuthenticated (CKM_AES_GCM) = HPKE Seal',
     params: [
       'mode = Base',
       'info = empty (simulation choice; not set in the provider guide)',
       'aad = empty (simulation choice)',
-      'plaintext = the key material',
+      'hKey = the key to export (an AES-256 key object in this HSM)',
+      'hWrappingKey = the AEAD key from the key schedule',
     ],
     detail:
-      'Encapsulate to the public key, run the HPKE key schedule, then encrypt the key material under the derived AEAD key. The PKCS#11 mechanisms depend on the engine you pick.',
+      'Encapsulate to the public key and run the HPKE key schedule. Then wrap the key object under the derived AEAD key with AES-GCM, using the HPKE nonce as the IV. The wrapped bytes are exactly the HPKE ciphertext of the key’s value, and the value is never read out. This engine exposes AES-GCM key wrapping through the authenticated wrap call. The PKCS#11 mechanisms before it depend on the engine you pick.',
     keyLocation: 'in-transit',
     quantumSafe: 'yes',
   },
@@ -260,7 +261,7 @@ const hpkeSteps = (
     actor: 'third-party',
     title: 'Send enc ‖ ciphertext',
     apiName: 'enc || ciphertext',
-    params: ['enc = the KEM ciphertext', 'ciphertext = AEAD output'],
+    params: ['enc = the KEM ciphertext', 'ciphertext = the wrapped key'],
     detail:
       'One message carries the KEM ciphertext and the encrypted key. A recorded copy is protected by the KEM, not by RSA.',
     keyLocation: 'in-transit',
@@ -269,11 +270,15 @@ const hpkeSteps = (
   {
     id: 'open',
     actor: 'provider',
-    title: 'Provider runs HPKE Open and imports the key',
-    apiName: 'HPKE Open (RFC 9180, base mode)',
-    params: ['decapsulate enc', 'derive the same AEAD key', 'decrypt and authenticate'],
+    title: 'Provider runs HPKE Open as a key unwrap and imports the key',
+    apiName: 'C_UnwrapKeyAuthenticated (CKM_AES_GCM) = HPKE Open',
+    params: [
+      'decapsulate enc',
+      'derive the same AEAD key',
+      'unwrap into a sensitive, non-extractable key object',
+    ],
     detail:
-      'The provider side decapsulates, derives the same key and opens the message. The simulation then compares the recovered key with the original.',
+      'The provider side decapsulates, derives the same key and unwraps the message into a new key object; the tag is checked inside the HSM. The simulation then compares the two keys by encrypting one known block under each, so neither key value is read out.',
     keyLocation: 'inside-hsm',
     quantumSafe: 'yes',
   },
@@ -299,7 +304,11 @@ export const FLOWS: readonly ExchangeFlow[] = [
         actor: 'provider',
         title: 'Get a wrapping key and an import token',
         apiName: 'GetParametersForImport',
-        params: ['WrappingAlgorithm = RSA_AES_KEY_WRAP_SHA_256', 'WrappingKeySpec = RSA_3072'],
+        params: [
+          'KMS key created with KeySpec = ECC_NIST_P256 and Origin = EXTERNAL',
+          'WrappingAlgorithm = RSA_AES_KEY_WRAP_SHA_256',
+          'WrappingKeySpec = RSA_3072',
+        ],
         detail:
           'The provider returns an RSA public key and an import token. In the simulation the in-browser HSM generates the RSA key pair; the private half stays in the HSM.',
         keyLocation: 'inside-hsm',
@@ -418,10 +427,13 @@ export const FLOWS: readonly ExchangeFlow[] = [
         id: 'kek',
         actor: 'application',
         title: 'Derive the key-encryption key and wrap',
-        apiName: 'HKDF-SHA-256, then AES-KW (RFC 3394)',
-        params: ['KEK = HKDF-SHA-256(secret)', 'wrap the AES-256 target key'],
+        apiName: 'HKDF-SHA-256, then C_WrapKey (CKM_AES_KEY_WRAP, RFC 3394)',
+        params: [
+          'KEK = HKDF-SHA-256(secret)',
+          'hKey = the AES-256 key to export (a key object in the partner HSM)',
+        ],
         detail:
-          'The partner derives the same KEK from its copy of the secret and wraps the target key. Your application derives the KEK from the Decapsulate output and unwraps it.',
+          'The partner derives the same KEK from its copy of the secret and wraps the key object. Your application derives the KEK from the Decapsulate output and unwraps it into a new key object. Only the shared secret reached the application in plaintext; the exported key is never read out.',
         keyLocation: 'caller-memory',
         quantumSafe: 'yes',
       },
@@ -471,7 +483,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
         apiName: 'HKDF-SHA-256 (RFC 5869)',
         params: ['input = ML-KEM secret, then ECDH secret', 'output = 32-byte KEK'],
         detail:
-          'The ML-KEM secret goes first. The derived key wraps the target with AES-KW (RFC 3394) on the partner side and unwraps it on your side.',
+          'The ML-KEM secret goes first. The derived key wraps the key object with AES-KW (RFC 3394) on the partner side and unwraps it into a new key object on your side. The exported key is never read out.',
         keyLocation: 'caller-memory',
         quantumSafe: 'yes',
       },
@@ -679,7 +691,7 @@ export const ENGINES: readonly EngineInfo[] = [
     label: 'PKCS#11 v3.3 draft (CKM_COMP_KEM)',
     mechanisms: 'CKM_COMP_KEM for encapsulation and decapsulation; HKDF and AES-GCM as in v3.2',
     standing:
-      'The v3.3 working draft defines CKM_COMP_KEM, a composite KEM, and no HPKE mechanism. It names CKP_COMP_KEM_MLKEM768_X25519, MLKEM768_ECDH_P256 and MLKEM1024_ECDH_P384 and defines its own composition for them. In this engine the CKM_COMP_KEM run interoperates with the v3.2 sequence, which the interoperability check below shows. Pure ML-KEM uses the same CKM_ML_KEM mechanism as in v3.2. It is a draft and can still change.',
+      'The v3.3 working draft defines CKM_COMP_KEM, a composite KEM, and no HPKE mechanism. It names CKP_COMP_KEM_MLKEM768_X25519, MLKEM768_ECDH_P256 and MLKEM1024_ECDH_P384 and defines its own composition for them. In this engine, an X-Wing message sealed with the v3.2 sequence opens on the v3.3 draft path; the interoperability check shows this. Pure ML-KEM uses the same CKM_ML_KEM mechanism as in v3.2. It is a draft and can still change.',
   },
   {
     id: 'candidate',
