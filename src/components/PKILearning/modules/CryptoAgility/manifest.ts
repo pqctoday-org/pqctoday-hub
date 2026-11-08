@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-agility',
-  contentVersion: 13,
+  contentVersion: 14,
   lm_id: 'LM-007',
   title: 'Crypto Agility',
   description:

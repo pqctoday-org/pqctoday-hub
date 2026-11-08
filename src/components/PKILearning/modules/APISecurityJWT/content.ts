@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'api-security-jwt',
   version: '1.0.0',
   lastReviewed: '2026-10-01',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-11-08',
 
   standards: [
     getStandard('FIPS 203'),

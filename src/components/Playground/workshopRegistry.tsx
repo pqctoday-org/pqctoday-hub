@@ -309,7 +309,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cloud-kms-key-exchange',
     pt_id: 'PT-034',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Cloud KMS Key Exchange',
     description:
       'Simulate importing a key into AWS KMS, Google Cloud KMS and Azure: the classical RSA key-wrap flow next to the HPKE flow, on PKCS#11 v3.2, the v3.3 draft and the candidate CKM_HPKE mechanism',
