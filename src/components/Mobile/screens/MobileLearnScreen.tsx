@@ -69,8 +69,10 @@ export function MobileLearnScreen() {
 
   // Arrow keys, Home and End move between the tabs and open the one reached (automatic
   // activation: each view renders at once, so there is nothing to wait for).
-  const onTabKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    const at = MODES.indexOf(mode)
+  const onTabKeyDown = (e: KeyboardEvent<HTMLButtonElement>, from: LearnMode) => {
+    // Measured from the tab that took the key, not from the current mode: the address, and so
+    // the mode, updates a moment after a key press, and a quick second press must not use the old one.
+    const at = MODES.indexOf(from)
     let to: number
     if (e.key === 'ArrowRight') to = (at + 1) % MODES.length
     else if (e.key === 'ArrowLeft') to = (at - 1 + MODES.length) % MODES.length
@@ -109,7 +111,7 @@ export function MobileLearnScreen() {
               aria-controls={panelId(m)}
               tabIndex={active ? 0 : -1}
               onClick={() => selectMode(m)}
-              onKeyDown={onTabKeyDown}
+              onKeyDown={(e) => onTabKeyDown(e, m)}
               className={cn(
                 'h-11 shrink-0 snap-start items-center gap-1.5 rounded-lg px-3 text-[12px] font-bold',
                 active

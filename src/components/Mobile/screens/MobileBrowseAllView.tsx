@@ -160,17 +160,18 @@ export function MobileBrowseAllView() {
           )}
         >
           <SlidersHorizontal size={15} aria-hidden="true" />
-          Filters
+          {/* One inline run, so the button's name reads "Filters (2 active)" in every browser. */}
+          <span>
+            Filters
+            {sheetFilterCount > 0 && <span className="sr-only"> ({sheetFilterCount} active)</span>}
+          </span>
           {sheetFilterCount > 0 && (
-            <>
-              <span
-                aria-hidden="true"
-                className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground"
-              >
-                {sheetFilterCount}
-              </span>
-              <span className="sr-only">, {sheetFilterCount} active</span>
-            </>
+            <span
+              aria-hidden="true"
+              className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground"
+            >
+              {sheetFilterCount}
+            </span>
           )}
         </Button>
       </div>

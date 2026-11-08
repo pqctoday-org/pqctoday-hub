@@ -195,7 +195,7 @@ describe('MobileBrowseAllView — status, sort and saved filters', () => {
     fireEvent.click(within(sheet()).getByRole('radio', { name: 'Completed' }))
     fireEvent.click(within(sheet()).getByRole('button', { name: /^Show 1 module$/ }))
     expect(rows().map((a) => a.getAttribute('href'))).toEqual([`/learn/${all[0].id}`])
-    expect(screen.getByRole('button', { name: 'Filters, 1 active' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Filters\s*\(1 active\)$/ })).toBeInTheDocument()
   })
 
   it('sorts A to Z within each track', () => {
