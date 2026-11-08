@@ -10,7 +10,8 @@
     "internal-folder",
     "agent-config-path",
     "internal-key",
-    "decision-citation"
+    "decision-citation",
+    "session-handle"
   ],
   "files": {
     ".env.example": {
@@ -75,7 +76,8 @@
       "private-repo": 4
     },
     "public/compliance/manifest.json": {
-      "decision-citation": 1
+      "decision-citation": 1,
+      "session-handle": 10
     },
     "public/data/fhe-evidence/fhe-evidence.v1.json": {
       "decision-citation": 6
@@ -93,14 +95,16 @@
       "evidence-cache": 2,
       "internal-log": 2,
       "private-repo": 4,
-      "run-id": 5
+      "run-id": 5,
+      "session-handle": 2
     },
     "public/industry-landscape/evidence/manifest.json": {
       "internal-folder": 1
     },
     "public/library/manifest.json": {
       "decision-citation": 2,
-      "internal-folder": 1
+      "internal-folder": 1,
+      "session-handle": 1
     },
     "public/migrate-proofs/manifest.json": {
       "evidence-cache": 6,
@@ -110,7 +114,8 @@
       "evidence-cache": 428,
       "home-path": 1,
       "internal-folder": 1,
-      "private-repo": 474
+      "private-repo": 474,
+      "session-handle": 26
     },
     "public/threats/claim-status.json": {
       "run-id": 209
@@ -264,7 +269,8 @@
       "internal-key": 680,
       "internal-log": 11,
       "private-repo": 31,
-      "run-id": 11
+      "run-id": 11,
+      "session-handle": 1
     },
     "src/data/archive/module-qa/module_qa_combined_#.csv": {
       "decision-citation": 6
@@ -273,7 +279,8 @@
       "private-repo": 14
     },
     "src/data/archive/pqc_maturity_governance_requirements_#.csv": {
-      "decision-citation": 68
+      "decision-citation": 68,
+      "session-handle": 5
     },
     "src/data/archive/pqc_product_catalog_#.csv": {
       "decision-citation": 70,
@@ -303,7 +310,8 @@
     "src/data/archive/timeline_#.csv": {
       "decision-citation": 2,
       "evidence-cache": 1,
-      "internal-key": 20
+      "internal-key": 20,
+      "session-handle": 2
     },
     "src/data/archive/trusted_sources_#.csv": {
       "decision-citation": 1,
@@ -338,13 +346,11 @@
     },
     "src/data/library_#.csv": {
       "decision-citation": 44,
-      "internal-key": 732
+      "internal-key": 732,
+      "session-handle": 1
     },
     "src/data/loaderUtils.ts": {
       "private-repo": 1
-    },
-    "src/data/module-qa/module_qa_combined_#.csv": {
-      "decision-citation": 6
     },
     "src/data/moduleCitationDeclarations.local.test.ts": {
       "private-repo": 1
@@ -354,9 +360,6 @@
     },
     "src/data/pqcAlgorithmsData.ts": {
       "private-repo": 1
-    },
-    "src/data/pqc_product_catalog_#.csv": {
-      "home-path": 1
     },
     "src/data/pqc_software_category_priority_matrix.csv": {
       "private-repo": 63

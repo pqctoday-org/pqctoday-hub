@@ -10,7 +10,8 @@
     "internal-folder",
     "agent-config-path",
     "internal-key",
-    "decision-citation"
+    "decision-citation",
+    "session-handle"
   ],
   "files": {
     "assets/App-#.js": {
@@ -22,7 +23,6 @@
       "internal-key": 18
     },
     "assets/index-#.js": {
-      "home-path": 1,
       "internal-key": 1470,
       "run-id": 1
     },
@@ -45,7 +45,8 @@
       "private-repo": 1
     },
     "compliance/manifest.json": {
-      "decision-citation": 1
+      "decision-citation": 1,
+      "session-handle": 10
     },
     "data/fhe-evidence/fhe-evidence.v1.json": {
       "decision-citation": 6
@@ -63,14 +64,16 @@
       "evidence-cache": 2,
       "internal-log": 2,
       "private-repo": 4,
-      "run-id": 5
+      "run-id": 5,
+      "session-handle": 2
     },
     "industry-landscape/evidence/manifest.json": {
       "internal-folder": 1
     },
     "library/manifest.json": {
       "decision-citation": 2,
-      "internal-folder": 1
+      "internal-folder": 1,
+      "session-handle": 1
     },
     "migrate-proofs/manifest.json": {
       "evidence-cache": 6,
@@ -80,7 +83,8 @@
       "evidence-cache": 428,
       "home-path": 1,
       "internal-folder": 1,
-      "private-repo": 474
+      "private-repo": 474,
+      "session-handle": 26
     },
     "threats/claim-status.json": {
       "run-id": 209
