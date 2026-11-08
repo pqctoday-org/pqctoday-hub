@@ -51,25 +51,25 @@ const scenarios: Scenario[] = [
   },
   {
     id: 'secure-exchange',
-    title: '2. Secure Key Exchange',
+    title: '2. Compare Paired Samples',
     description:
-      'Run BB84 without an eavesdropper using 16 qubits, then follow through to post-processing to see the complete key establishment pipeline.',
+      'Run BB84 without an eavesdropper using 16 qubits, then open the separate post-processing sample to compare both retained inputs.',
     badge: 'Protocol',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'QBER is ~0% in the simulated clean channel, confirming no eavesdropper. The sifted key passes through error correction and privacy amplification to produce a usable secret.',
+      'A low sampled QBER does not confirm absence of an eavesdropper. Post-processing generates its own 64-qubit batch or loads a worked pair; it rejects retained mismatches and shows bounded Toeplitz mechanics under declared fictional entropy/reserve assumptions. Local matching and this toy output do not establish a usable QKD secret.',
     config: { part: 0, eveEnabled: false, numQubits: 16 },
     icon: Shield,
   },
   {
     id: 'hybrid-derivation',
-    title: '3. Hybrid Key Derivation',
+    title: '3. Inspect the Separate HKDF Example',
     description:
-      'Combine a QKD-derived secret with a simulated ML-KEM-768 shared secret via HKDF. See how hybrid key derivation provides defense in depth.',
+      'In post-processing, compare a matched pair and compute its bounded output, then run the separate SHA-256/HKDF illustration on the retained sample digest plus random placeholder bytes.',
     badge: 'Hybrid',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:
-      'Both the QKD secret and ML-KEM secret contribute entropy. The HKDF output is secure even if one source is compromised.',
+      'The HKDF input contains 32 digest bytes and 32 random placeholder bytes; no ML-KEM operation runs. This fixed-length illustration is separate from the bounded Toeplitz output and does not establish a secure hybrid key or create input entropy.',
     config: { part: 1 },
     icon: Key,
   },

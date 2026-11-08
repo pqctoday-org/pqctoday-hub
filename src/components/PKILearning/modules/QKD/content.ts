@@ -68,7 +68,7 @@ export const content: ModuleContent = {
     keyConcepts:
       'QKD vs PQC: QKD provides information-theoretic security from physics; PQC provides computational security from quantum-hard mathematical problems; QKD requires dedicated quantum channels while PQC runs on standard networks.',
     workshopSummary:
-      'BB84 Protocol Simulator: Visual simulation with configurable Eve interception slider and adjustable qubit count; observe basis matching, sifted key generation, and QBER calculation. Post-Processing: Error correction, privacy amplification, and hybrid key derivation from raw QKD output. Global Deployments Explorer: Interactive database of worldwide QKD deployments including satellite and terrestrial networks with adoption trends.',
+      'BB84 Protocol Simulator: Visual simulation with configurable Eve interception slider and adjustable qubit count; observe basis matching, sifted key generation, and QBER calculation. Post-Processing: Compare both retained sample strings and reject mismatches; demonstrate bounded public-seed Toeplitz extraction under explicit fictional entropy/reserve assumptions, with separate SHA-256 and placeholder-input HKDF examples. Global Deployments Explorer: Interactive database of worldwide QKD deployments including satellite and terrestrial networks with adoption trends.',
     relatedStandards:
       'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final, October 2026). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-108 (KDF in Counter Mode). ETSI QKD standards (GS QKD series). EuroQCI initiative (pan-European quantum communication infrastructure). BB84 protocol (Bennett & Brassard, Quantum cryptography — Public key distribution and coin tossing, 1984)',
   },
