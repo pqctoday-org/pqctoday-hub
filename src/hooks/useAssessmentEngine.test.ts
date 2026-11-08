@@ -3,6 +3,33 @@ import { describe, it, expect } from 'vitest'
 import { computeAssessment } from './assessmentUtils'
 
 describe('useAssessmentEngine / computeAssessment', () => {
+  it('preserves a bounded 10–25 year retention range in the narrative', () => {
+    const result = computeAssessment({
+      industry: 'Finance & Banking',
+      country: 'United States',
+      currentCrypto: ['RSA-2048', 'AES-256'],
+      dataSensitivity: ['critical'],
+      complianceRequirements: [],
+      migrationStatus: 'planning',
+      dataRetention: ['10-25y'],
+    })
+    expect(result.narrative).toMatch(/10[–-]25 years/)
+    expect(result.narrative).not.toContain('25+ years')
+  })
+
+  it('preserves an open-ended 25-plus retention choice instead of the scoring proxy', () => {
+    const result = computeAssessment({
+      industry: 'Finance & Banking',
+      currentCrypto: ['RSA-2048'],
+      dataSensitivity: ['critical'],
+      complianceRequirements: [],
+      migrationStatus: 'planning',
+      dataRetention: ['25-plus'],
+    })
+    expect(result.narrative).toMatch(/25\+ years/)
+    expect(result.narrative).not.toContain('30+ years')
+  })
+
   it('computes legacy assessment (no extended inputs)', () => {
     const input = {
       industry: 'Technology',
