@@ -134,7 +134,7 @@ describe('CloudKmsKeyExchange', () => {
       'Hybrid in the application',
     ])
     expect(
-      screen.getByText(/AWS KMS imports key material only under an RSA wrapping key/)
+      screen.getByText(/AWS KMS imports key material under an RSA wrapping key/)
     ).toBeInTheDocument()
     expect(screen.queryByText(/Google Cloud KMS quantum-safe key import/)).not.toBeInTheDocument()
     expect(screen.getAllByText(/Source:/).length).toBeGreaterThan(0)

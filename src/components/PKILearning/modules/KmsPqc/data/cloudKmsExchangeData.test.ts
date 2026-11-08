@@ -30,11 +30,11 @@ const EXPECTED: Record<string, string> = {
   'AWS-KMS-ML-KEM-Launch-2026-10':
     'AWS added ML-KEM keys to AWS KMS on 26 October 2026; they are not available in the China, Middle East (UAE) and Middle East (Bahrain) Regions.',
   'AWS-KMS-Import-Wrapping-Keys':
-    'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+    'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
   'AWS-KMS-API-Decapsulate':
     'AWS KMS Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application.',
   'AWS-KMS-API-Encapsulate':
-    'AWS KMS Encapsulate works only with the public key of a KMS ML-KEM key, so encapsulating to a partner’s HSM key happens in the caller’s own library.',
+    'AWS KMS Encapsulate works only with the public key of a KMS ML-KEM key.',
   'AWS-KMS-API-GenerateDataKeyPair':
     'AWS KMS GenerateDataKeyPair can return ML-KEM data key pairs, with the private key in seed format, encrypted under a symmetric KMS key.',
   'AWS-KMS-Hybrid-PQ-TLS':
@@ -42,9 +42,9 @@ const EXPECTED: Record<string, string> = {
   'AWS-PQ-Readiness-Confidentiality':
     'AWS lists hybrid post-quantum key exchange as launched on FIPS and non-FIPS endpoints for AWS KMS, AWS Payment Cryptography and the AWS CloudHSM control plane.',
   'Google-Cloud-KMS-Quantum-Safe-Key-Import':
-    'Google Cloud KMS quantum-safe key import, in Preview since 6 August 2026, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.',
+    'Google Cloud KMS quantum-safe key import, in Preview, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.',
   'Google-Cloud-KMS-Key-Import':
-    'Google Cloud KMS key import wraps key material for transfer, with RSA-based import methods alongside the quantum-safe HPKE methods.',
+    'Google Cloud KMS key import wraps key material for transfer using RSA-based import methods.',
   'Google-Cloud-KMS-Release-Notes':
     'Google Cloud KMS release notes list the ML-KEM and X-Wing key encapsulation algorithms as Preview since 23 September 2025.',
   'Azure-Key-Vault-BYOK-Specification':

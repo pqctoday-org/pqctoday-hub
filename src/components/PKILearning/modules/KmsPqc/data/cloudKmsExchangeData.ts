@@ -64,7 +64,7 @@ export const PROVIDER_CLAIMS: readonly ProviderClaim[] = [
     id: 'AWS-KMS-Import-Wrapping-Keys',
     providerId: 'aws',
     sentence:
-      'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+      'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
   },
   {
     id: 'AWS-KMS-API-Decapsulate',
@@ -75,8 +75,7 @@ export const PROVIDER_CLAIMS: readonly ProviderClaim[] = [
   {
     id: 'AWS-KMS-API-Encapsulate',
     providerId: 'aws',
-    sentence:
-      'AWS KMS Encapsulate works only with the public key of a KMS ML-KEM key, so encapsulating to a partner’s HSM key happens in the caller’s own library.',
+    sentence: 'AWS KMS Encapsulate works only with the public key of a KMS ML-KEM key.',
   },
   {
     id: 'AWS-KMS-API-GenerateDataKeyPair',
@@ -100,13 +99,13 @@ export const PROVIDER_CLAIMS: readonly ProviderClaim[] = [
     id: 'Google-Cloud-KMS-Quantum-Safe-Key-Import',
     providerId: 'gcp',
     sentence:
-      'Google Cloud KMS quantum-safe key import, in Preview since 6 August 2026, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.',
+      'Google Cloud KMS quantum-safe key import, in Preview, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.',
   },
   {
     id: 'Google-Cloud-KMS-Key-Import',
     providerId: 'gcp',
     sentence:
-      'Google Cloud KMS key import wraps key material for transfer, with RSA-based import methods alongside the quantum-safe HPKE methods.',
+      'Google Cloud KMS key import wraps key material for transfer using RSA-based import methods.',
   },
   {
     id: 'Google-Cloud-KMS-Release-Notes',
