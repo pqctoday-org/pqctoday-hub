@@ -131,10 +131,10 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   'hybrid-sigs': [
     {
       prompt:
-        'Which construction lets a verifier strip one component signature and verify the other alone?',
-      options: ['Concatenation', 'Silithium (Fused)', 'All three equally'],
+        'In this sample, which construction verifies BOTH raw-message component signatures independently?',
+      options: ['Concatenation', 'Shared-binding model', 'All three equally'],
       answer: 0,
-      why: 'Concatenation has no non-separability: sig1 and sig2 stand alone. Nesting is weakly non-separable and Silithium is strongly non-separable.',
+      why: 'In this sample concatenation verifies both raw-message components. Nesting verifies the EC component alone, but its ML signature covers message plus EC signature. The local shared-binding model has separate observed component checks; one replacement experiment is not a proof of non-separability or published Silithium security.',
     },
   ],
   'cacp-kmip': [

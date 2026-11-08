@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { HybridSignatures } from './HybridSignatures'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { PlaygroundToolRoute } from '@/components/Playground/PlaygroundToolRoute'
+import { ToolExercise } from '@/components/shared/ToolExercise'
+import { StepExercise } from '@/components/shared/StepExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
@@ -237,7 +239,9 @@ describe('shared-binding tool aliases', () => {
     expect(screen.getByRole('region', { name: 'What you will do' })).toHaveTextContent(
       'retains the EC public key and original EC bytes'
     )
-    expect(await screen.findByRole('button', { name: 'Shared-binding model' })).toBeEnabled()
+    expect(
+      await screen.findByRole('heading', { name: 'Hybrid Signature Spectrums', level: 2 })
+    ).toBeVisible()
     const tool = WORKSHOP_TOOLS.find((entry) => entry.id === 'hybrid-sigs')!
     expect(tool.outputSpec).toContain('executed full-binding, raw-component and replacement checks')
     expect(tool.outputSpec).not.toContain('each component must independently verify')
@@ -272,4 +276,42 @@ describe('shared-binding tool aliases', () => {
       expect(block).not.toHaveTextContent('Silithium (Fused)')
     }
   )
+})
+
+describe('hybrid signature question outcomes', () => {
+  it('grades both raw-message components, distinguishing nesting and the local model', () => {
+    render(<ToolExercise toolId="hybrid-sigs" />)
+    expect(
+      screen.getByText(/verifies BOTH raw-message component signatures independently/)
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Shared-binding model' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Not quite — it is "Concatenation".')
+    fireEvent.click(screen.getByRole('button', { name: 'Concatenation' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Right.')
+    expect(screen.getByRole('status')).toHaveTextContent('Nesting verifies the EC component alone')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'not a proof of non-separability or published Silithium security'
+    )
+  })
+
+  it('preserves the actual nesting answer without presenting the local option as an SNS proof', () => {
+    render(<StepExercise moduleId="hybrid-crypto" stepId="hybrid-signatures" />)
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'It still verifies alone, but swapping it for a different EC signature would invalidate the outer ML-DSA signature (WNS)',
+      })
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('Right.')
+    expect(screen.getByRole('status')).toHaveTextContent('not published Silithium')
+    expect(screen.getByRole('status')).toHaveTextContent('do not prove Strong Non-Separability')
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'It cannot be verified alone, because the fused challenge μ binds both public keys (SNS)',
+      })
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('Not quite')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Nesting wraps the EC signature inside the ML-DSA signature'
+    )
+  })
 })
