@@ -99,9 +99,21 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <p className="text-sm text-foreground/90">
-            In NIST SP 800-37 Rev. 2, RMF step 1 is Prepare and step 2 is Categorize. Our view: data
-            classification is not optional; it is the foundation of any risk-based approach to
-            cryptographic migration.
+            <a
+              href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-37r2.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              NIST SP 800-37 Rev. 2, §§3.1–3.2
+            </a>{' '}
+            describes Prepare and Categorize activities for establishing risk-management context and
+            categorizing information systems by potential impact.
+          </p>
+          <p className="text-sm text-foreground/90 mt-2">
+            <strong>Hub teaching guidance:</strong> Record asset and data types, business use, and
+            the potential consequences of losing confidentiality, integrity or availability before
+            prioritising migration work.
           </p>
         </div>
 
