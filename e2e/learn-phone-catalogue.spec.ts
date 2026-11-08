@@ -166,6 +166,26 @@ test.describe('Browse all on a 390 px phone', () => {
   })
 })
 
+test.describe('The desktop workforce link on a 390 px phone', () => {
+  test('/learn?view=nice opens Browse all with the desktop note, not My Path', async ({ page }) => {
+    await page.goto('/learn?view=nice')
+    await expect(page.getByRole('tab', { name: /^Browse all \d+$/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+      { timeout: 30_000 }
+    )
+    await expect(page.getByRole('tab', { name: 'My Path' })).toHaveAttribute(
+      'aria-selected',
+      'false'
+    )
+    await expect(page.getByTestId('mobile-learn-nice-note')).toContainText(
+      'The workforce (NICE) view is on the desktop site.'
+    )
+    await expect(moduleLinks(page).first()).toBeVisible()
+    await expectNoSidewaysScroll(page, 390)
+  })
+})
+
 test.describe('Browse all on a 320 px phone', () => {
   test.use({ viewport: { width: 320, height: 640 } })
 

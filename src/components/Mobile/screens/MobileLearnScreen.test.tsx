@@ -153,13 +153,57 @@ describe('MobileLearnScreen: Browse all and Guided are on the phone', () => {
     expect(screen.getByTestId('mobile-guided-choices')).toBeInTheDocument()
   })
 
-  it.each([['/learn'], ['/learn?mode=mypath'], ['/learn?mode=nonsense'], ['/learn?view=nice']])(
-    '%s opens My Path (the workforce view is desktop-only)',
+  it.each([['/learn'], ['/learn?mode=mypath'], ['/learn?mode=nonsense']])(
+    '%s opens My Path',
     (path) => {
       renderScreen(path)
       expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
     }
   )
+
+  // The desktop's workforce (NICE) link. On a phone it opens Browse all with a note, not My Path
+  // (which asks for a role, so the link used to land on a prompt) and not a blank view.
+  it('?view=nice opens Browse all, the full catalogue, with the desktop note', () => {
+    renderScreen('/learn?view=nice')
+    expect(browseTab()).toHaveAttribute('aria-selected', 'true')
+    expect(myPathTab()).toHaveAttribute('aria-selected', 'false')
+    expect(within(screen.getByTestId('mobile-browse-list')).getAllByRole('link')).toHaveLength(
+      TOTAL_MODULE_COUNT
+    )
+    expect(screen.getByTestId('mobile-learn-nice-note')).toHaveTextContent(
+      'The workforce (NICE) view is on the desktop site. Here is the full module catalogue.'
+    )
+    expect(
+      screen.queryByText('Pick a role for a guided path tuned to you.')
+    ).not.toBeInTheDocument()
+  })
+
+  it('?view=nice needs no role', () => {
+    renderScreen('/learn?view=nice')
+    expect(usePersonaStore.getState().selectedPersona).toBeNull()
+    expect(screen.getByTestId('mobile-browse-list')).toBeInTheDocument()
+  })
+
+  it('an explicit mode wins over ?view=nice', () => {
+    renderScreen('/learn?view=nice&mode=mypath')
+    expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByTestId('mobile-learn-nice-note')).toBeInTheDocument()
+  })
+
+  it('?view=nice with an unknown mode opens Browse all', () => {
+    renderScreen('/learn?view=nice&mode=nonsense')
+    expect(browseTab()).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('the desktop note is shown only on a ?view=nice link', () => {
+    renderScreen('/learn?mode=browse')
+    expect(screen.queryByTestId('mobile-learn-nice-note')).not.toBeInTheDocument()
+  })
+
+  it('keeps the tab label Guided', () => {
+    renderScreen('/learn?view=nice')
+    expect(screen.getByRole('tab', { name: 'Guided' })).toBeInTheDocument()
+  })
 
   it('?mode=browse&track=Protocols preselects the Protocols chip and lists only that track', () => {
     renderScreen('/learn?mode=browse&track=Protocols')

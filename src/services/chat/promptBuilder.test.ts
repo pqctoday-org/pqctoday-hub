@@ -502,6 +502,15 @@ describe('buildGeminiSystemPrompt — link value lists match the pages', () => {
         expect(resolveBrowseTrack(track)).toBe(track)
       }
     })
+
+    // The assistant may link the three phone and desktop views by name: My Path, Browse all and
+    // Guided (?mode=guided). The Learn page reads each one, and no other value.
+    it('the mode list names the three views the Learn page reads, Guided included', () => {
+      expect(listed('/learn', 'mode')).toEqual(['mypath', 'browse', 'guided'])
+      const learnLine = prompt.split('\n').find((line) => line.includes('/learn (catalog)'))
+      expect(learnLine).toContain('/learn?mode=<mypath|browse|guided>')
+      expect(learnLine).toContain('Where do I start?')
+    })
   })
 })
 
