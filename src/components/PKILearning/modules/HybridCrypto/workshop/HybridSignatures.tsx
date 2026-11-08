@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react'
 import {
   Fingerprint,
   HelpCircle,
@@ -110,13 +110,13 @@ const CONSTRUCTIONS: Array<{
   },
   {
     id: 'silithium',
-    label: 'Silithium (Fused)',
+    label: 'Shared-binding model',
     icon: Fingerprint,
     tagline: 'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)',
-    nonSeparability: 'SNS (targeted)',
+    nonSeparability: 'Local experiment',
     nsColor: 'text-status-success',
     description:
-      'Fused Fiat-Shamir: both components share a single challenge μ that includes the EC commitment R. Neither component verifies without the shared μ. Targets Strong Non-Separability; the paper reports no separability issues for its construction.',
+      'A local shared-binding learning model: the challenge includes the EC commitment, both public keys and the message. Execute the component checks below; their outcomes are not a proof of non-separability or an implementation of published Silithium.',
     reference: 'ePrint 2025/2059',
     referenceUrl: 'https://eprint.iacr.org/2025/2059',
   },
@@ -205,32 +205,25 @@ export const HybridSignatures: React.FC = () => {
   const [activeConstruction, setActiveConstruction] = useState<ConstructionId>('concatenation')
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
-  // Shared op-log helper. Pushes a pending entry, returns done/fail closers.
+  // Each closer updates only its own entry, including after a message edit.
   const beginOp = useCallback((message: string) => {
     const startedAt = performance.now()
-    setLogEntries((prev) => [...prev, { status: 'pending', message }])
+    const pending: LogEntry = { status: 'pending', message }
+    setLogEntries((prev) => [...prev, pending])
+    const settle = (entry: LogEntry) =>
+      setLogEntries((prev) => prev.map((item) => (item === pending ? entry : item)))
     return {
       done: (label?: string) =>
-        setLogEntries((prev) => {
-          const next = [...prev]
-          next[next.length - 1] = {
-            status: 'success',
-            message: label ?? message.replace(/…$/, ''),
-
-            durationMs: Math.round(performance.now() - startedAt),
-          }
-          return next
+        settle({
+          status: 'success',
+          message: label ?? message.replace(/…$/, ''),
+          durationMs: Math.round(performance.now() - startedAt),
         }),
       fail: (err: unknown) =>
-        setLogEntries((prev) => {
-          const next = [...prev]
-          next[next.length - 1] = {
-            status: 'error',
-            message: `${message.replace(/…$/, '')} — ${err instanceof Error ? err.message : String(err)}`,
-
-            durationMs: Math.round(performance.now() - startedAt),
-          }
-          return next
+        settle({
+          status: 'error',
+          message: `${message.replace(/…$/, '')} — ${err instanceof Error ? err.message : String(err)}`,
+          durationMs: Math.round(performance.now() - startedAt),
         }),
     }
   }, [])
@@ -344,10 +337,63 @@ export const HybridSignatures: React.FC = () => {
     setState((prev) => ({ ...prev, [id]: { ...prev[id], ...patch } }))
   }, [])
 
+  const versions = useRef(new Map<ConstructionId, number>())
+  const running = useRef(new Set<ConstructionId>())
+  const mounted = useRef(true)
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [])
+  const beginRun = useCallback((id: ConstructionId) => {
+    if (running.current.has(id)) return null
+    running.current.add(id)
+    const revision = (versions.current.get(id) ?? 0) + 1
+    versions.current.set(id, revision)
+    return revision
+  }, [])
+  const isCurrent = useCallback(
+    (id: ConstructionId, revision: number) =>
+      mounted.current && versions.current.get(id) === revision,
+    []
+  )
+  const finishRun = useCallback(
+    (id: ConstructionId) => {
+      running.current.delete(id)
+      if (mounted.current) updateState(id, { loading: false })
+    },
+    [updateState]
+  )
+  const changeMessage = (value: string) => {
+    for (const id of ['concatenation', 'nesting', 'silithium'] as const) {
+      versions.current.set(id, (versions.current.get(id) ?? 0) + 1)
+    }
+    setMessage(value)
+    setState(
+      (prev) =>
+        Object.fromEntries(
+          Object.entries(prev).map(([id, item]) => [
+            id,
+            {
+              ...item,
+              sigResult: null,
+              verifyResult: null,
+              recombinationResult: null,
+              error: null,
+            },
+          ])
+        ) as Record<ConstructionId, ConstructionState>
+    )
+  }
+
   // ── Handlers ────────────────────────────────────────────────────────────────
 
   const handleKeygen = useCallback(
     async (id: ConstructionId) => {
+      const revision = beginRun(id)
+      if (revision === null) return
       updateState(id, {
         loading: true,
         error: null,
@@ -355,9 +401,15 @@ export const HybridSignatures: React.FC = () => {
         verifyResult: null,
         recombinationResult: null,
       })
-      const op = beginOp(`Generating ${id} hybrid keypair…`)
+      const op = beginOp(
+        `Generating ${id === 'silithium' ? 'shared-binding model' : id} hybrid keypair…`
+      )
       try {
         await new Promise((r) => setTimeout(r, 10))
+        if (!isCurrent(id, revision)) {
+          op.fail(new Error('Inputs changed; operation discarded.'))
+          return
+        }
         let keys: KeyState
         if (id === 'silithium') {
           keys = { backend: 'noble', pair: silithiumKeygen() }
@@ -366,33 +418,51 @@ export const HybridSignatures: React.FC = () => {
           const { M, hSession } = hsmRef.current
           keys = { backend: 'hsm', pair: hsmKeygen(M, hSession) }
         }
+        if (!isCurrent(id, revision)) return
         updateState(id, { keys, loading: false })
         op.done()
       } catch (err) {
+        if (!isCurrent(id, revision)) return
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
         updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
         op.fail(err)
+      } finally {
+        finishRun(id)
       }
     },
-    [updateState, beginOp]
+    [updateState, beginOp, beginRun, isCurrent, finishRun]
   )
 
   const handleSign = useCallback(
     async (id: ConstructionId) => {
       const { keys } = state[id]
       if (!keys) return
-      updateState(id, { loading: true, error: null, verifyResult: null })
+      const revision = beginRun(id)
+      if (revision === null) return
+      updateState(id, {
+        loading: true,
+        error: null,
+        sigResult: null,
+        verifyResult: null,
+        recombinationResult: null,
+      })
       if (intervalRef.current) clearInterval(intervalRef.current)
-      setSignPhase('Computing EC-Schnorr component (64B)…')
+      setSignPhase('Computing EC-Schnorr component (65B)…')
       intervalRef.current = setInterval(() => {
         setSignPhase((prev) =>
           prev?.includes('EC-Schnorr') ? 'Computing ML-DSA-65 component (3,309 B)…' : prev
         )
       }, 80)
-      const op = beginOp(`Signing message with ${id} hybrid construction…`)
+      const op = beginOp(
+        `Signing message with ${id === 'silithium' ? 'shared-binding model' : id} hybrid construction…`
+      )
       try {
         await new Promise((r) => setTimeout(r, 10))
+        if (!isCurrent(id, revision)) {
+          op.fail(new Error('Inputs changed; operation discarded.'))
+          return
+        }
         const msgBytes = new TextEncoder().encode(message)
         let sigResult: HybridSigResult
         if (id === 'silithium' && keys.backend === 'noble') {
@@ -407,28 +477,42 @@ export const HybridSignatures: React.FC = () => {
         } else {
           throw new Error('Backend mismatch')
         }
+        if (!isCurrent(id, revision)) return
         updateState(id, { sigResult, loading: false })
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
         op.done()
       } catch (err) {
+        if (!isCurrent(id, revision)) return
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
         updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
         op.fail(err)
+      } finally {
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        if (mounted.current) setSignPhase(null)
+        finishRun(id)
       }
     },
-    [state, message, updateState, beginOp]
+    [state, message, updateState, beginOp, beginRun, isCurrent, finishRun]
   )
 
   const handleVerify = useCallback(
     async (id: ConstructionId) => {
       const { keys, sigResult } = state[id]
       if (!keys || !sigResult) return
-      updateState(id, { loading: true, error: null })
-      const op = beginOp(`Verifying ${id} hybrid signature…`)
+      const revision = beginRun(id)
+      if (revision === null) return
+      updateState(id, { loading: true, error: null, verifyResult: null, recombinationResult: null })
+      const op = beginOp(
+        `Verifying ${id === 'silithium' ? 'shared-binding model' : id} hybrid signature…`
+      )
       try {
         await new Promise((r) => setTimeout(r, 10))
+        if (!isCurrent(id, revision)) {
+          op.fail(new Error('Inputs changed; operation discarded.'))
+          return
+        }
         const msgBytes = new TextEncoder().encode(message)
         let verifyResult: VerifyResult
         if (id === 'silithium' && keys.backend === 'noble') {
@@ -443,32 +527,56 @@ export const HybridSignatures: React.FC = () => {
         } else {
           throw new Error('Backend mismatch')
         }
+        if (!isCurrent(id, revision)) return
+        if (verifyResult.error) throw new Error(verifyResult.error)
         updateState(id, { verifyResult, loading: false })
         op.done()
       } catch (err) {
+        if (!isCurrent(id, revision)) return
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
         updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
         op.fail(err)
+      } finally {
+        finishRun(id)
       }
     },
-    [state, message, updateState, beginOp]
+    [state, message, updateState, beginOp, beginRun, isCurrent, finishRun]
   )
 
   const handleRecombinationAttack = useCallback(async () => {
-    const { keys, sigResult } = state['silithium']
+    const { keys, sigResult } = state.silithium
     if (!keys || !sigResult || keys.backend !== 'noble') return
-    updateState('silithium', { loading: true, error: null, recombinationResult: null })
+    const id = 'silithium'
+    const revision = beginRun(id)
+    if (revision === null) return
+    updateState(id, { loading: true, error: null, recombinationResult: null })
+    const op = beginOp('Checking public-only ML replacement…')
     try {
       await new Promise((r) => setTimeout(r, 10))
+      if (!isCurrent(id, revision)) {
+        op.fail(new Error('Inputs changed; operation discarded.'))
+        return
+      }
       const msgBytes = new TextEncoder().encode(message)
       const attackerKeys = silithiumKeygen()
-      const result = silithiumRecombinationAttack(msgBytes, sigResult.signatureBytes, attackerKeys)
-      updateState('silithium', { loading: false, recombinationResult: result })
+      const result = silithiumRecombinationAttack(msgBytes, sigResult.signatureBytes, {
+        ecPk: keys.pair.ecPk,
+        mlPk: attackerKeys.mlPk,
+        mlSk: attackerKeys.mlSk,
+      })
+      if (!isCurrent(id, revision)) return
+      if (result.error) throw new Error(result.error)
+      updateState(id, { recombinationResult: result })
+      op.done()
     } catch (err) {
-      updateState('silithium', { loading: false, error: getHybridSigErrorHint(err) })
+      if (!isCurrent(id, revision)) return
+      updateState(id, { error: getHybridSigErrorHint(err) })
+      op.fail(err)
+    } finally {
+      finishRun(id)
     }
-  }, [state, message, updateState])
+  }, [state, message, updateState, beginRun, beginOp, isCurrent, finishRun])
 
   const current = state[activeConstruction]
   const meta = CONSTRUCTIONS.find((c) => c.id === activeConstruction)!
@@ -547,8 +655,9 @@ export const HybridSignatures: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Hybrid Signature Spectrums</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Compare concatenation, nesting, and Silithium — ranging from no non-separability to the
-            Strong Non-Separability (SNS) that Silithium targets.
+            Compare concatenation, nesting, and a local shared-binding model. Observe component
+            checks and a public-only replacement experiment; these do not establish a security
+            proof.
           </p>
         </div>
       </div>
@@ -565,8 +674,8 @@ export const HybridSignatures: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <ShieldAlert size={13} className="shrink-0" />
             <span className="text-sm">
-              softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still
-              works via @noble.
+              softhsmv3 WASM failed to load — concatenation and nesting unavailable. The
+              shared-binding model still works via @noble.
             </span>
             {hsmInitAttempts < 3 ? (
               <Button
@@ -623,7 +732,8 @@ export const HybridSignatures: React.FC = () => {
               what prevents an attacker from stripping the PQC component?
             </strong>{' '}
             If they can, the document is no longer quantum-safe — it degrades silently to classical
-            security. This is the non-separability problem this tool demonstrates.
+            security. This tool explores that question with component checks and a limited local
+            binding experiment.
           </p>
           <p className="text-xs">
             Standards: IETF draft-ietf-lamps-pq-composite-sigs (a labelled concatenation, not the
@@ -703,7 +813,9 @@ export const HybridSignatures: React.FC = () => {
               {current.sigResult.separable
                 ? 'Separable'
                 : activeConstruction === 'silithium'
-                  ? 'Blocked in this simplified model'
+                  ? current.verifyResult
+                    ? 'Shared-binding model — component checks shown below'
+                    : 'Shared-binding model — verification not run'
                   : 'Non-Separable'}
             </span>
           </div>
@@ -719,7 +831,7 @@ export const HybridSignatures: React.FC = () => {
           id="hybrid-sig-message"
           className="w-full h-20 bg-muted border border-input rounded-lg px-3 py-2 text-sm font-mono text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => changeMessage(e.target.value)}
         />
       </div>
 
@@ -817,7 +929,7 @@ export const HybridSignatures: React.FC = () => {
         <div className="glass-panel p-4 space-y-4">
           <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
             <Lock size={15} className="text-primary" />
-            Signature ({current.sigResult.construction})
+            Signature ({meta.label})
           </h4>
 
           {/* Size comparison */}
@@ -880,11 +992,12 @@ export const HybridSignatures: React.FC = () => {
                   {current.sigResult.components.sharedChallenge}
                 </span>
                 <div className="text-muted-foreground mt-1 text-[11px]">
-                  μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg) — both components are bound to this value
+                  Local model: H(R ‖ pk_ec ‖ pk_ml ‖ msg), expanded to a 64-byte input
                 </div>
                 <div className="text-muted-foreground mt-0.5 text-[10px] italic">
-                  Approximation: full Silithium (ePrint 2025/2059) also includes the ML-DSA round-1
-                  lattice commitment w1 in μ. Not exposed by @noble/post-quantum externalMu API.
+                  This model uses the provider’s internal externalMu extension. Its input and
+                  operations are not the published Silithium transcript or a standardized external
+                  signature profile.
                 </div>
               </div>
             )}
@@ -907,15 +1020,33 @@ export const HybridSignatures: React.FC = () => {
               detail={current.verifyResult.valid ? 'Both components valid' : 'Failed'}
             />
             <ResultBadge
+              label="EC component in full binding"
+              pass={current.verifyResult.ecValid === true}
+              detail={
+                current.verifyResult.ecValid
+                  ? 'EC component check passed'
+                  : 'EC component check did not pass'
+              }
+            />
+            <ResultBadge
+              label="ML-DSA component in full binding"
+              pass={current.verifyResult.mlValid === true}
+              detail={
+                current.verifyResult.mlValid
+                  ? 'ML-DSA component check passed'
+                  : 'ML-DSA component check did not pass'
+              }
+            />
+            <ResultBadge
               label="EC-Schnorr alone"
               pass={current.verifyResult.ecAloneValid}
               warn={current.verifyResult.ecAloneValid}
               detail={
                 current.verifyResult.ecAloneValid
                   ? activeConstruction === 'silithium'
-                    ? 'UNEXPECTED — fused challenge mismatch should prevent this'
+                    ? 'Raw-message EC check passed in this sample'
                     : 'Separable ⚠ — EC strips cleanly'
-                  : 'Blocked ✓ — requires shared μ'
+                  : 'Raw-message EC check did not pass'
               }
             />
             <ResultBadge
@@ -926,7 +1057,7 @@ export const HybridSignatures: React.FC = () => {
                 current.verifyResult.mlAloneValid
                   ? 'Separable ⚠ — ML-DSA verifies on raw message alone'
                   : activeConstruction === 'silithium'
-                    ? 'Blocked ✓ — ML-DSA signed with fused μ, not raw msg'
+                    ? 'Raw-message ML-DSA check did not pass'
                     : 'Blocked ✓ — ML-DSA signed over msg‖ecSig, not msg alone'
               }
             />
@@ -961,12 +1092,10 @@ export const HybridSignatures: React.FC = () => {
               )}
               {activeConstruction === 'silithium' && !current.verifyResult.ecAloneValid && (
                 <p className="text-muted-foreground">
-                  The EC-Schnorr component cannot be verified with the standard challenge H(R ‖ pk ‖
-                  msg). The signer used the fused challenge μ that also incorporates pk_ml — so any
-                  attempt to verify just the EC part with the wrong challenge fails. This is the
-                  property RFC 9955 §1.3.4 calls Strong Non-Separability (SNS), shown here with a
-                  simplified Silithium (see the note under the shared challenge above); the security
-                  argument for the full scheme is in the paper (ePrint 2025/2059), not in this demo.
+                  The raw-message EC check did not pass. This local model signs with a shared
+                  challenge that also includes the ML public key. These observed component results
+                  do not prove Strong Non-Separability or the security of published Silithium; that
+                  construction and its analysis are separate research.
                 </p>
               )}
             </div>
@@ -982,9 +1111,9 @@ export const HybridSignatures: React.FC = () => {
             Recombination Attack Result
           </h4>
           <p className="text-xs text-muted-foreground">
-            An attacker generates a fresh Silithium key pair and signs the same message. They then
-            splice the <em>legitimate EC component</em> (R, s) with their own ML-DSA component (z)
-            and attempt to verify against their own public keys.
+            Keep the legitimate EC public key and original EC signature bytes. A replacement ML
+            signer uses only its own ML secret and the public commitment to sign the new bound
+            input. The legitimate EC secret is not used for this experiment.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <ResultBadge
@@ -992,27 +1121,36 @@ export const HybridSignatures: React.FC = () => {
               pass={current.recombinationResult.valid}
               detail={
                 current.recombinationResult.valid
-                  ? 'UNEXPECTED — recombination succeeded!'
-                  : 'Blocked ✓ — forged sig rejected'
+                  ? 'Combined replacement check passed'
+                  : 'Combined replacement check did not pass'
               }
             />
             <ResultBadge
-              label="EC alone (spliced)"
-              pass={current.recombinationResult.ecAloneValid}
-              warn={current.recombinationResult.ecAloneValid}
+              label="EC under replacement binding"
+              pass={current.recombinationResult.ecValid === true}
               detail={
-                current.recombinationResult.ecAloneValid
-                  ? 'EC verifies — attacker reused legit EC component'
-                  : 'Blocked ✓'
+                current.recombinationResult.ecValid
+                  ? 'EC component check passed'
+                  : 'EC component check did not pass'
+              }
+            />
+            <ResultBadge
+              label="ML-DSA under replacement binding"
+              pass={current.recombinationResult.mlValid === true}
+              detail={
+                current.recombinationResult.mlValid
+                  ? 'ML-DSA component check passed'
+                  : 'ML-DSA component check did not pass'
               }
             />
           </div>
           <div className="flex gap-2 p-3 rounded-lg border border-status-success/20 bg-status-success/5 text-xs text-muted-foreground">
             <ShieldCheck size={14} className="shrink-0 mt-0.5 text-status-success" />
             <span>
-              The attack fails because μ = H(R ‖ <strong>pk_ec ‖ pk_ml</strong> ‖ msg) binds both
-              public keys. Substituting the attacker&apos;s ML-DSA component requires their pk_ml,
-              which changes μ, making the legitimate EC response s invalid for the new challenge.
+              {current.recombinationResult.ecValid === false &&
+              current.recombinationResult.mlValid === true
+                ? 'Observed: the replacement ML check passed and the original EC response did not pass under the changed binding. The EC public key was unchanged. This is a local binding experiment, not a general security proof.'
+                : 'Read each component result above. This local experiment does not establish general non-separability or a published-scheme security proof.'}
             </span>
           </div>
         </div>
@@ -1022,8 +1160,8 @@ export const HybridSignatures: React.FC = () => {
       <div className="flex gap-2 p-3 bg-muted/50 rounded-lg border border-border text-xs text-muted-foreground">
         <Info size={14} className="shrink-0 mt-0.5" />
         <span>
-          Educational demonstration. Keys are ephemeral and never leave your browser. Silithium uses
-          the fused Fiat-Shamir construction from{' '}
+          Educational demonstration. Keys are ephemeral and never leave your browser. The local
+          shared-binding model uses fresh random EC signing nonces and is inspired by{' '}
           <a
             href="https://eprint.iacr.org/2025/2059"
             target="_blank"
@@ -1032,7 +1170,8 @@ export const HybridSignatures: React.FC = () => {
           >
             ePrint 2025/2059
           </a>{' '}
-          (Devevey, Guerreau, Roméas) with ML-DSA external-μ mode (FIPS 204 §5.2).
+          (Devevey, Guerreau, Roméas). Its approximation uses ML-DSA external-μ operations; it is
+          not the published scheme or its security proof.
         </span>
       </div>
     </div>

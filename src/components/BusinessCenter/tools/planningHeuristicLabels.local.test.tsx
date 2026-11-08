@@ -49,7 +49,7 @@ describe('sample planning labels preserve the difference from tested capability'
     expect(screen.queryByText('PQC-Protected Links')).not.toBeInTheDocument()
     expect(screen.queryByText('Native PQC')).not.toBeInTheDocument()
   })
-  it('keeps review selections across sample devices while denying assessed submission coverage', () => {
+  it('keeps review drafts per sample device while denying assessed submission coverage', () => {
     render(<DeviceSafetySimulator />)
     const considerations = [
       'Threat model includes quantum adversary',
@@ -70,9 +70,15 @@ describe('sample planning labels preserve the difference from tested capability'
     ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Device:' }))
     fireEvent.click(screen.getByRole('option', { name: MEDICAL_DEVICE_CATALOG[1].name }))
+    expect(screen.getByText('0/8 reviewed')).toBeInTheDocument()
+    expect(
+      screen.queryByText(/Sample checklist reviewed — device submission coverage/)
+    ).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Device:' }))
+    fireEvent.click(screen.getByRole('option', { name: MEDICAL_DEVICE_CATALOG[0].name }))
     expect(screen.getByText('8/8 reviewed')).toBeInTheDocument()
     expect(
-      screen.getByText(/Review selections are shared across these sample devices/)
+      screen.getByText(/Review selections are kept separately for each sample device/)
     ).toBeInTheDocument()
     expect(screen.queryByText(/This device submission addresses/)).not.toBeInTheDocument()
     expect(

@@ -30,25 +30,24 @@ export interface DatabaseEncryptionProfile {
   notes: string
 }
 
-export type DatabasePqcSupport = 'ga' | 'planned' | 'none'
+/** Catalogue availability is separate from a vendor release stage or database operation support. */
+export type DatabasePqcSupport = CatalogAvailability
 
-const AVAIL_TO_DB: Record<CatalogAvailability, DatabasePqcSupport> = {
-  available: 'ga',
-  partial: 'planned',
-  roadmap: 'planned',
-  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
-  psk: 'planned',
-  none: 'none',
-  unverified: 'planned',
+export const DATABASE_PQC_STATUS_LABELS: Record<
+  DatabasePqcSupport,
+  { label: string; className: string }
+> = {
+  available: { label: 'Available (catalogue)', className: 'text-primary' },
+  partial: { label: 'Partial support', className: 'text-status-warning' },
+  psk: { label: 'PSK-only (not PQC)', className: 'text-muted-foreground' },
+  roadmap: { label: 'Planned (catalogue)', className: 'text-status-warning' },
+  none: { label: 'No PQC listed', className: 'text-muted-foreground' },
+  unverified: { label: 'Unverified', className: 'text-muted-foreground' },
 }
 
-/**
- * Derive a database profile's PQC support from the CENTRAL CATALOG (single source
- * of truth) by its catalogName. Falls back to 'planned' if not in the catalog.
- */
+/** Preserve central catalogue evidence; a missing record does not establish a roadmap. */
 export function getProfilePqcSupport(profile: DatabaseEncryptionProfile): DatabasePqcSupport {
-  const status = getCatalogStatus(profile.catalogName)
-  return status ? AVAIL_TO_DB[status.availability] : 'planned'
+  return getCatalogStatus(profile.catalogName)?.availability ?? 'unverified'
 }
 
 export interface TDEMigrationStep {

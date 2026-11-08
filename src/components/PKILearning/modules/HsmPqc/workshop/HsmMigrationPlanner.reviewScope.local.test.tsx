@@ -20,6 +20,8 @@ vi.mock('../data/hsmConstants', async (importOriginal) => {
 describe('Migration planning review scope', () => {
   it('acknowledging every topic does not validate an unsupported algorithm or module', () => {
     render(<HsmMigrationPlanner />)
+    fireEvent.click(screen.getByRole('button', { name: 'Fictional migration case:' }))
+    fireEvent.click(screen.getByRole('option', { name: 'ML-DSA signing / PKCS#11 sample' }))
     fireEvent.click(screen.getByRole('button', { name: /Validation Planning/ }))
     expect(screen.getByText('UNSUPPORTED-SAMPLE-ALGORITHM')).toBeInTheDocument()
     const topics = screen.getAllByRole('button', { name: /^Review topic:/ })

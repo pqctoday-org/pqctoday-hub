@@ -160,6 +160,20 @@ export type TokenServiceProviderId = 'visa-vts' | 'mc-mdes' | 'amex-est'
 
 export type MobileWalletId = 'apple-pay' | 'google-pay' | 'samsung-pay'
 
+export interface TokenizationProtectionComponent {
+  boundary:
+    | 'transport-key-establishment'
+    | 'transport-authentication'
+    | 'request-authentication'
+    | 'payload-protection'
+    | 'key-delivery'
+    | 'device-attestation'
+    | 'internal-operation'
+  assessment: 'classical-public-key' | 'symmetric' | 'unspecified'
+  provenance: 'authored-sample' | 'approved-shared-tls-assumption'
+  description: string
+}
+
 export interface TokenizationStep {
   id: string
   order: number
@@ -167,7 +181,8 @@ export interface TokenizationStep {
   actor: string
   description: string
   cryptoUsed: string[]
-  quantumVulnerable: boolean
+  protectionComponents: TokenizationProtectionComponent[]
+  quantumVulnerable: boolean | null
   pqcReplacement?: string
 }
 

@@ -6,6 +6,7 @@ import {
   DATABASE_PROFILES,
   ENCRYPTION_LAYER_LABELS,
   getProfilePqcSupport,
+  DATABASE_PQC_STATUS_LABELS,
   type EncryptionLayer,
   type DatabaseEncryptionProfile,
 } from '../data/databaseConstants'
@@ -256,13 +257,9 @@ export const EncryptionLayerMapper: React.FC = () => {
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">PQC Support</span>
                     <span
-                      className={`font-bold ${getProfilePqcSupport(selectedDb) === 'ga' ? 'text-status-success' : getProfilePqcSupport(selectedDb) === 'planned' ? 'text-status-warning' : 'text-status-error'}`}
+                      className={`font-bold ${DATABASE_PQC_STATUS_LABELS[getProfilePqcSupport(selectedDb)].className}`}
                     >
-                      {getProfilePqcSupport(selectedDb) === 'ga'
-                        ? 'GA'
-                        : getProfilePqcSupport(selectedDb) === 'planned'
-                          ? 'Planned'
-                          : 'None'}
+                      {DATABASE_PQC_STATUS_LABELS[getProfilePqcSupport(selectedDb)].label}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs">

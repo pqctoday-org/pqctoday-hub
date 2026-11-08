@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   CheckCircle,
   Circle,
@@ -13,6 +13,13 @@ import {
 import { FIRMWARE_UPGRADE_PATHS, type FirmwareUpgradePath } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import {
+  MIGRATION_CASES,
+  buildPlanningTopics,
+  getMigrationCase,
+  reviewContextKey,
+  vendorDraftKey,
+} from './hsmMigrationRequirements'
 
 const PHASES = [
   {
@@ -41,70 +48,26 @@ const PHASES = [
   },
 ] as const
 
-interface ChecklistItem {
-  id: string
-  label: string
-  required: boolean
+interface VendorDraft {
+  hsmCount: number
+  caseId: string
+  emRequested: boolean
+  reviews: Map<string, Set<string>>
 }
 
-const VALIDATION_CHECKLIST: ChecklistItem[] = [
-  {
-    id: 'fips-scope',
-    label: 'Verify FIPS 140-3 certificate scope covers PQC algorithms',
-    required: true,
-  },
-  { id: 'cavp-ml-kem', label: 'Confirm CAVP validation for ML-KEM (FIPS 203)', required: true },
-  { id: 'cavp-ml-dsa', label: 'Confirm CAVP validation for ML-DSA (FIPS 204)', required: true },
-  {
-    id: 'cavp-slh-dsa',
-    label: 'Confirm CAVP validation for SLH-DSA (FIPS 205) if needed',
-    required: false,
-  },
-  {
-    id: 'cavp-lms',
-    label: 'Confirm CAVP validation for LMS/HSS (SP 800-208) if stateful sigs needed',
-    required: false,
-  },
-  {
-    id: 'entropy-source',
-    label: 'Verify DRBG entropy source meets SP 800-90A/B/C',
-    required: true,
-  },
-  {
-    id: 'side-channel',
-    label: 'Side-channel resistance testing completed (power, EM, fault)',
-    required: true,
-  },
-  { id: 'key-zeroization', label: 'Key zeroization on tamper detection verified', required: true },
-  {
-    id: 'pkcs11-compliance',
-    label: 'PKCS#11 v3.2+ PQC mechanism compliance tested (C_EncapsulateKey/C_DecapsulateKey)',
-    required: true,
-  },
-  {
-    id: 'backup-restore',
-    label: 'Backup/restore procedure validated with PQC keys',
-    required: true,
-  },
-  {
-    id: 'hybrid-interop',
-    label: 'Hybrid key pair interoperability tested (if applicable)',
-    required: false,
-  },
-  {
-    id: 'performance',
-    label: 'Performance benchmark: PQC operations within SLA requirements',
-    required: true,
-  },
-]
+const emptyDraft = (): VendorDraft => ({
+  hsmCount: 10,
+  caseId: '',
+  emRequested: false,
+  reviews: new Map(),
+})
 
 export const HsmMigrationPlanner: React.FC = () => {
   const [currentPhase, setCurrentPhase] = useState(0)
   const [selectedVendorId, setSelectedVendorId] = useState<string>(
     FIRMWARE_UPGRADE_PATHS[0].vendorId
   )
-  const [hsmCount, setHsmCount] = useState(10)
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
+  const [drafts, setDrafts] = useState<Map<string, VendorDraft>>(new Map())
 
   const selectedPath = useMemo(
     () =>
@@ -113,17 +76,32 @@ export const HsmMigrationPlanner: React.FC = () => {
     [selectedVendorId]
   )
 
-  const toggleCheck = useCallback((id: string) => {
-    setCheckedItems((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
+  const draftKey = vendorDraftKey(selectedPath)
+  const draft = drafts.get(draftKey) ?? emptyDraft()
+  const { hsmCount, caseId, emRequested } = draft
+  const selectedCase = getMigrationCase(caseId)
+  const contextKey = reviewContextKey(caseId, emRequested)
+  const checkedItems = draft.reviews.get(contextKey) ?? new Set<string>()
+  const topics = buildPlanningTopics(caseId, emRequested)
+
+  const updateDraft = (update: (current: VendorDraft) => VendorDraft) => {
+    setDrafts((current) => {
+      const next = new Map(current)
+      next.set(draftKey, update(current.get(draftKey) ?? emptyDraft()))
       return next
     })
-  }, [])
+  }
+
+  const toggleCheck = (id: string) => {
+    updateDraft((current) => {
+      const reviews = new Map(current.reviews)
+      const checked = new Set(reviews.get(contextKey))
+      if (checked.has(id)) checked.delete(id)
+      else checked.add(id)
+      reviews.set(contextKey, checked)
+      return { ...current, reviews }
+    })
+  }
 
   const getComplexityColor = (complexity: FirmwareUpgradePath['upgradeComplexity']): string => {
     switch (complexity) {
@@ -196,8 +174,9 @@ export const HsmMigrationPlanner: React.FC = () => {
     return `${totalMb} MB`
   }, [hsmCount])
 
-  const requiredChecked = VALIDATION_CHECKLIST.filter((item) => item.required)
-  const requiredComplete = requiredChecked.every((item) => checkedItems.has(item.id))
+  const requiredChecked = topics.filter((item) => item.required)
+  const requiredComplete =
+    Boolean(selectedCase) && requiredChecked.every((item) => checkedItems.has(item.id))
 
   return (
     <div className="space-y-6">
@@ -256,6 +235,7 @@ export const HsmMigrationPlanner: React.FC = () => {
               </span>
               <FilterDropdown
                 noContainer
+                ariaLabel="Current vendor and firmware"
                 selectedId={selectedVendorId}
                 onSelect={(id) => setSelectedVendorId(id)}
                 items={FIRMWARE_UPGRADE_PATHS.map((path) => ({
@@ -278,10 +258,45 @@ export const HsmMigrationPlanner: React.FC = () => {
                 min={1}
                 max={1000}
                 value={hsmCount}
-                onChange={(e) => setHsmCount(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                onChange={(e) => {
+                  const count = Math.max(1, parseInt(e.target.value, 10) || 1)
+                  updateDraft((current) => ({ ...current, hsmCount: count }))
+                }}
                 className="w-full rounded-lg bg-muted/50 border border-border p-2 text-sm text-foreground font-mono focus:outline-none focus:border-primary/50"
               />
             </div>
+          </div>
+
+          <div className="space-y-3 rounded-lg border border-border p-4">
+            <FilterDropdown
+              noContainer
+              label="Fictional migration case"
+              selectedId={caseId}
+              hideDefaultOption
+              items={[
+                { id: '', label: 'Choose a fictional case' },
+                ...MIGRATION_CASES.map((sample) => ({ id: sample.id, label: sample.label })),
+              ]}
+              onSelect={(nextCase) => updateDraft((current) => ({ ...current, caseId: nextCase }))}
+            />
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={emRequested}
+                onChange={(event) => {
+                  const requested = event.target.checked
+                  updateDraft((current) => ({ ...current, emRequested: requested }))
+                }}
+              />
+              This fictional project requests an EM-assessment evidence plan
+            </label>
+            <p className="text-xs text-muted-foreground">
+              These are explicit sample project requests, not claims of vendor support or mandatory
+              certification. Compare the requested operations and interface with the catalogue
+              notes. Drafts remain separate for each vendor and current/target firmware; returning
+              to a case restores its review topics. These session-only drafts reset when this
+              workshop remounts.
+            </p>
           </div>
 
           {/* Current Capabilities */}
@@ -521,14 +536,31 @@ export const HsmMigrationPlanner: React.FC = () => {
             certificate.
           </p>
 
+          <p className="text-sm font-medium">
+            {selectedCase
+              ? `Selected fictional case: ${selectedCase.label}`
+              : 'Choose a fictional case in Assessment to begin its review.'}
+          </p>
+          {selectedCase && (
+            <p className="text-xs text-muted-foreground">
+              Requested interface:{' '}
+              {selectedCase.interface === 'pkcs11' ? 'PKCS#11 3.2' : 'documented vendor API'}.{' '}
+              {selectedCase.validationRecords
+                ? 'This sample project explicitly requests module and selected-algorithm validation records.'
+                : 'This sample project requests functional test planning; validation records are not assumed mandatory.'}{' '}
+              EM assessment is {emRequested ? 'explicitly requested' : 'not requested'}.
+            </p>
+          )}
+
           {/* Checklist */}
           <div className="space-y-2">
-            {VALIDATION_CHECKLIST.map((item) => {
+            {topics.map((item) => {
               const isChecked = checkedItems.has(item.id)
               return (
                 <Button
                   variant="ghost"
                   key={item.id}
+                  aria-pressed={isChecked}
                   onClick={() => toggleCheck(item.id)}
                   className={`w-full h-auto min-w-0 whitespace-normal flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
                     isChecked
@@ -569,14 +601,20 @@ export const HsmMigrationPlanner: React.FC = () => {
               <span
                 className={`text-sm font-bold ${requiredComplete ? 'text-success' : 'text-foreground'}`}
               >
-                {requiredComplete ? 'Planning review complete' : 'Planning review in progress'}
+                {!selectedCase
+                  ? 'Planning review not started'
+                  : requiredComplete
+                    ? 'Planning review complete'
+                    : 'Planning review in progress'}
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {checkedItems.size} / {VALIDATION_CHECKLIST.length} items checked (
-              {requiredChecked.filter((item) => checkedItems.has(item.id)).length} /{' '}
-              {requiredChecked.length} core topics selected)
-            </p>
+            {selectedCase && (
+              <p className="text-xs text-muted-foreground">
+                {topics.filter((item) => checkedItems.has(item.id)).length} / {topics.length} items
+                checked ({requiredChecked.filter((item) => checkedItems.has(item.id)).length} /{' '}
+                {requiredChecked.length} core topics selected)
+              </p>
+            )}
           </div>
 
           {/* CAVP Algorithm Testing */}
@@ -585,8 +623,10 @@ export const HsmMigrationPlanner: React.FC = () => {
               Algorithm Test-Planning Topics
             </h5>
             <p className="text-xs text-muted-foreground mb-2">
-              For each selected algorithm, investigate the applicable testing and certificate scope.
-              This sample does not establish that an algorithm or module is validated.
+              The catalogue algorithm entries below are reference notes, not the selected case
+              requirements. Investigate the applicable testing and certificate scope for the
+              requested operations. This sample does not establish that an algorithm or module is
+              validated.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {selectedPath.pqcAlgorithmsAdded.map((alg) => (

@@ -694,7 +694,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/hybrid-sigs',
     title: 'Hybrid Signature Spectrums — PQC Crypto Lab | PQC Today',
     description:
-      'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to the SNS that Silithium targets',
+      'Execute concatenation, nesting and a local shared-binding model; compare actual component checks and a public-only ML replacement experiment, not a…',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [

@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { FiveGService } from './FiveGService'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
+import * as ProvisionOps from './ops/ProvisionOps'
 
 vi.mock('@/services/crypto/OpenSSLService', () => ({
   openSSLService: {
@@ -191,7 +192,7 @@ describe('FiveGService', () => {
     })
 
     it('computeOPc', async () => {
-      const res = await service.computeOPc('dummy_ki')
+      const res = await service.computeOPc('01'.repeat(16))
       expect(res).toBeDefined()
     })
 
@@ -200,14 +201,47 @@ describe('FiveGService', () => {
       expect(res).toBeDefined()
     })
 
-    it('importAtUDM', async () => {
-      const res = await service.importAtUDM('dummy_ki', 'dummy_opc')
-      expect(res).toBeDefined()
+    it('importAtUDM delegates the exact envelope/key/expected identity without serializing the key', async () => {
+      const key = { type: 'secret' } as CryptoKey
+      const result = {
+        record: { imsi: '310260123456789', k: '01'.repeat(16), opc: '02'.repeat(16) },
+        checks: { identity: 'fixture' },
+      }
+      const delegate = vi.spyOn(ProvisionOps, 'importAtUDM').mockResolvedValueOnce(result)
+      try {
+        expect(await service.importAtUDM('serialized-envelope', key, result.record.imsi)).toBe(
+          result
+        )
+        expect(delegate).toHaveBeenCalledWith(
+          service,
+          'serialized-envelope',
+          key,
+          result.record.imsi
+        )
+      } finally {
+        delegate.mockRestore()
+      }
     })
 
-    it('encryptTransport', async () => {
-      const res = await service.encryptTransport('dummy_ki', 'dummy_opc')
-      expect(res).toBeDefined()
+    it('encryptTransport delegates to the single authenticated implementation', async () => {
+      const key = { type: 'secret' } as CryptoKey
+      const result = {
+        envelope: {
+          format: 'pqctoday-provisioning-batch' as const,
+          version: 1 as const,
+          algorithm: 'AES-128-GCM' as const,
+          ivHex: '00'.repeat(12),
+          ciphertextHex: '11'.repeat(16),
+        },
+        transportKey: key,
+      }
+      const delegate = vi.spyOn(ProvisionOps, 'encryptTransport').mockResolvedValueOnce(result)
+      try {
+        expect(await service.encryptTransport('01'.repeat(16), '02'.repeat(16))).toBe(result)
+        expect(delegate).toHaveBeenCalledWith(service, '01'.repeat(16), '02'.repeat(16))
+      } finally {
+        delegate.mockRestore()
+      }
     })
   })
 })

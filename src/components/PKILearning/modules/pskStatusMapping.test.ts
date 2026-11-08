@@ -51,8 +51,8 @@ describe('learning modules and the pre-shared-key-only catalogue status', () => 
       const psk = statusFor(getter, 'psk')
       expect(psk).toBeDefined()
       expect(psk).not.toBe(statusFor(getter, 'available'))
-      if (name === 'IAM') {
-        // IAM preserves catalogue availability rather than inferring a release stage.
+      if (name === 'IAM' || name === 'Database encryption') {
+        // These consumers preserve catalogue availability rather than inferring a release stage.
         expect(psk).toBe('psk')
         expect(PQC_STATUS_LABELS.psk.label).toBe('PSK-only (not PQC)')
         expect(statusFor(getter, 'roadmap')).toBe('roadmap')

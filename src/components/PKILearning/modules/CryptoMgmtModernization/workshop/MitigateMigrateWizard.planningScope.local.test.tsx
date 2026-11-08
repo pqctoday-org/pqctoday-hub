@@ -16,8 +16,8 @@ const answer = (values: boolean[]) => {
   )
 }
 
-describe('majority wizard is a sample planning prompt, not feasibility', () => {
-  it('keeps migration suggestion with a missing critical prerequisite, without claiming sufficient agility', () => {
+describe('prerequisite-aware wizard is a sample planning prompt, not feasibility', () => {
+  it('keeps a supported migration suggestion conditional on both direct prerequisites', () => {
     start()
     expect(
       screen.getByText('Q1. Is the source code available and actively maintained by your team?')
@@ -30,7 +30,7 @@ describe('majority wizard is a sample planning prompt, not feasibility', () => {
     ).toBeInTheDocument()
     const show = screen.getByRole('button', { name: 'Show planning suggestion' })
     expect(show).toBeDisabled()
-    answer([false, true, true, true, false])
+    answer([true, true, true, false, false])
     fireEvent.click(show)
     expect(screen.getByText('PLANNING SUGGESTION: EXPLORE MIGRATION')).toBeInTheDocument()
     expect(
@@ -38,7 +38,7 @@ describe('majority wizard is a sample planning prompt, not feasibility', () => {
     ).toHaveTextContent(
       'not a finding that the system has sufficient crypto agility or that migration is feasible'
     )
-    expect(screen.getByText(/A missing prerequisite can outweigh the count/)).toHaveTextContent(
+    expect(screen.getByText(/The first two answers are prerequisites/)).toHaveTextContent(
       'protocol/key-format interoperability'
     )
     expect(
@@ -56,7 +56,7 @@ describe('majority wizard is a sample planning prompt, not feasibility', () => {
     }
   })
 
-  it('keeps mitigation/gateway comparison without claiming infeasibility or a demonstrated compensating control', () => {
+  it('keeps PKI alternatives without prescribing transport as a trust-path repair', () => {
     start()
     answer([false, true, false, true, false])
     fireEvent.click(screen.getByRole('button', { name: 'Show planning suggestion' }))
@@ -67,9 +67,9 @@ describe('majority wizard is a sample planning prompt, not feasibility', () => {
     expect(
       screen.queryByText(/Direct migration is not feasible at this time/)
     ).not.toBeInTheDocument()
-    expect(screen.getByText('Gateway capabilities to evaluate')).toBeInTheDocument()
+    expect(screen.getByText('Work through the remaining trust path')).toBeInTheDocument()
     expect(
-      screen.getByText(/Which connections or operations would the gateway cover/)
+      screen.getByText(/A TLS gateway does not reissue those certificates/)
     ).toBeInTheDocument()
     expect(screen.getByText(/§4.6 does not prescribe a sunset date/)).toHaveTextContent(
       'not a NIST deadline or a feasibility assessment'
@@ -80,7 +80,7 @@ describe('majority wizard is a sample planning prompt, not feasibility', () => {
   })
 
   it.each(Array.from({ length: 32 }, (_, mask) => mask))(
-    'preserves the five-answer threshold and reported count for bitmask %i',
+    'requires both direct prerequisites plus the threshold and preserves count for bitmask %i',
     (mask) => {
       start()
       const values = Array.from({ length: 5 }, (_, i) => Boolean(mask & (1 << i)))
@@ -89,7 +89,7 @@ describe('majority wizard is a sample planning prompt, not feasibility', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Show planning suggestion' }))
       expect(
         screen.getByText(
-          count >= 3
+          values[0] && values[1] && count >= 3
             ? 'PLANNING SUGGESTION: EXPLORE MIGRATION'
             : 'PLANNING SUGGESTION: EXPLORE MITIGATION'
         )

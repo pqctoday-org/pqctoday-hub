@@ -4,9 +4,13 @@ import { Factory, Truck, Server, CreditCard, Lock } from 'lucide-react'
 
 interface ProvisioningDiagramProps {
   step: number
+  accepted?: boolean
 }
 
-export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }) => {
+export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({
+  step,
+  accepted = false,
+}) => {
   return (
     <div className="relative w-full h-[300px] bg-card/40 rounded-lg p-4 flex items-center justify-between overflow-hidden">
       {/* Node 1: IDEMIA / Thales (SIM Factory) */}
@@ -62,11 +66,11 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
           {step === 2 && (
             <span className="text-xs text-primary font-bold">Illustrated card writing</span>
           )}
-          {step === 3 && (
-            <span className="text-xs text-foreground">Encrypting for Transport (eK)</span>
-          )}
+          {step === 3 && <span className="text-xs text-foreground">Browser AES-GCM envelope</span>}
           {step === 4 && (
-            <span className="text-xs text-foreground">Illustrated operator import</span>
+            <span className="text-xs text-foreground">
+              {accepted ? 'Authenticated sample accepted' : 'Validate sample envelope'}
+            </span>
           )}
         </div>
       </div>
@@ -75,12 +79,12 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       <div
         className={`
         relative z-10 w-24 h-24 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step === 4 ? 'border-success bg-success/10 shadow-[0_0_20px_hsl(var(--success)/0.2)]' : 'border-border bg-card/40'}
+        ${step === 4 && accepted ? 'border-success bg-success/10 shadow-[0_0_20px_hsl(var(--success)/0.2)]' : 'border-border bg-card/40'}
       `}
       >
         <Server className="w-8 h-8 mb-2" />
         <div className="font-bold text-center text-xs">MNO Core</div>
-        <div className="text-[10px] text-muted-foreground mt-0.5">UDM / HSM</div>
+        <div className="text-[10px] text-muted-foreground mt-0.5">Illustrated UDM zone</div>
       </div>
 
       {/* Node 3: USIM (Physical Card) - Positioned absolutely bottom center */}

@@ -38,7 +38,7 @@ const PARTS: WorkshopPart[] = [
     id: 'hybrid-signatures',
     title: 'Step 4: Hybrid Signatures',
     description:
-      'Concatenation, nesting, and Silithium — from no non-separability to the SNS that Silithium targets.',
+      'Concatenation, nesting and a local shared-binding model: execute component checks and a public-only replacement experiment, not a published-scheme security proof.',
     icon: Fingerprint,
   },
   {

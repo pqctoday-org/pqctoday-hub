@@ -11,6 +11,18 @@ import * as AuthOps from './ops/AuthOps'
 import * as UtilsOps from './ops/UtilsOps'
 import * as ProvisionOps from './ops/ProvisionOps'
 
+export type {
+  ProvisioningEnvelope,
+  ProvisioningRecord,
+  ProvisioningImportResult,
+} from './ops/provisioningBatch'
+
+export type {
+  AuthenticationStage,
+  AuthenticationSnapshot,
+  AuthenticationStageResult,
+} from './ops/authenticationSample'
+
 export const milenage = new MilenageService()
 
 // Default Operator Key — consistent across auth and provisioning flows
@@ -233,6 +245,10 @@ export class FiveGService {
 
   // --- Auth Flow ---
 
+  createAuthenticationSample() {
+    return AuthOps.createAuthenticationSample()
+  }
+
   async retrieveCredentials(): Promise<string> {
     return await AuthOps.retrieveCredentials(this)
   }
@@ -266,42 +282,19 @@ export class FiveGService {
   }
 
   async computeOPc(kiHex: string) {
-    const OP = new Uint8Array(DEFAULT_OP)
-    // Convert K hex to bytes
-    const K = new Uint8Array(kiHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
-
-    const opc = await milenage.computeOPc(K, OP)
-    return bytesToHex(opc)
+    return ProvisionOps.computeOPc(this, kiHex)
   }
 
   async personalizeUSIM(kiHex: string, opcHex: string): Promise<string> {
     return ProvisionOps.personalizeUSIM(this, kiHex, opcHex)
   }
 
-  async importAtUDM(eKiHex: string, opcHex: string): Promise<string> {
-    return ProvisionOps.importAtUDM(this, eKiHex, opcHex)
+  async importAtUDM(envelopeText: string, key: CryptoKey, expectedImsi?: string) {
+    return ProvisionOps.importAtUDM(this, envelopeText, key, expectedImsi)
   }
 
   async encryptTransport(kiHex: string, opcHex: string) {
-    // Use OpenSSL to encrypt the batch to a file
-    // Input: CSV or JSON
-    const content = `IMSI: 310260123456789, K: ${kiHex}, OPc: ${opcHex} `
-    const iv = new Uint8Array(16)
-    window.crypto.getRandomValues(iv)
-    const key = new Uint8Array(16)
-    window.crypto.getRandomValues(key) // Transport Key
-
-    // Let's use JS for simplicity of string output
-    const enc = await window.crypto.subtle.encrypt(
-      { name: 'AES-CBC', iv: iv },
-      await window.crypto.subtle.importKey('raw', key, { name: 'AES-CBC' }, false, ['encrypt']),
-      new TextEncoder().encode(content)
-    )
-
-    return `Transport Key: ${bytesToHex(key)}
-IV: ${bytesToHex(iv)}
-Encrypted Output(Hex):
-${bytesToHex(new Uint8Array(enc))} `
+    return ProvisionOps.encryptTransport(this, kiHex, opcHex)
   }
 }
 
