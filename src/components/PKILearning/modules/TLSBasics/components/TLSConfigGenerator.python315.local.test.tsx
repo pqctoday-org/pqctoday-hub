@@ -32,7 +32,7 @@ describe('copied Python TLS 1.3 client contract', () => {
     expect(copied).toContain("print(f'Group: {tls.group()}')")
     expect(copied).not.toContain('ctx.set_ciphers(')
     expect(screen.getByText(/OpenSSL 3.5\+ provides native ML-KEM support/)).toHaveTextContent(
-      'an OQS provider is not required'
+      'no OQS provider is needed for these groups'
     )
     expect(screen.getByText(/The offered/)).toHaveTextContent('fallback is classical key exchange')
   })

@@ -487,10 +487,12 @@ export const TLSConfigGenerator: React.FC = () => {
             <CodeBlock code={CLIENT_EXAMPLES} />
           </div>
           <p className="text-xs text-muted-foreground italic">
-            The Python example requires Python 3.15+ linked to OpenSSL 3.5+ with the selected groups
-            enabled. OpenSSL 3.5+ provides native ML-KEM support; an OQS provider is not required
-            for these native groups. Check the actual linked runtime and negotiated group. The
-            offered X25519 fallback is classical key exchange, not a PQC handshake.
+            The Python client is documentation: it is shown here, not run on this site, and it
+            targets Python 3.15 ssl APIs (set_ciphersuites, set_groups, SSLSocket.group()). It needs
+            Python 3.15 or later linked to OpenSSL 3.5+ with the selected groups enabled; OpenSSL
+            3.5+ provides native ML-KEM support, so no OQS provider is needed for these groups.
+            Check the linked runtime and the negotiated group on your own system. The offered X25519
+            fallback is classical key exchange, not a PQC handshake.
           </p>
           <p className="text-xs text-muted-foreground italic">
             <strong>CCM cipher suites</strong> (

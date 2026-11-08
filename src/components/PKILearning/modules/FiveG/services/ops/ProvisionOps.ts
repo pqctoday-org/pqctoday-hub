@@ -97,7 +97,7 @@ export async function importAtUDM(
   return {
     record,
     checks: {
-      envelope: 'Version1 envelope and nonce/tag lengths validated',
+      envelope: 'Version 1 envelope and nonce/tag lengths validated',
       authentication:
         'AES-128-GCM authentication and decryption passed with the separate local key',
       recordShape: 'One strict IMSI/K/OPc record validated',

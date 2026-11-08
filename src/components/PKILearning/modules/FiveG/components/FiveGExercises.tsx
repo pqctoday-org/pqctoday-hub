@@ -91,11 +91,11 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
       id: 'sim-provisioning',
       title: '6. SIM Key Provisioning Supply Chain',
       description:
-        'Review a sample factory-to-operator key-provisioning process. The browser generates sample bytes, computes OPc and encrypts a sample record; card personalization and operator import are labelled process walkthroughs, not executed hardware or database operations.',
+        'Review a sample factory-to-operator key-provisioning process. The browser generates sample bytes, computes OPc, encrypts a sample record with AES-128-GCM, then authenticates, decrypts and validates it into an in-memory sample record; card personalization is a labelled walkthrough, and no card or subscriber database is written.',
       badge: 'Supply Chain',
       badgeColor: 'bg-muted text-muted-foreground border-border',
       observe:
-        'The sample displays key material in browser memory. It does not prove HSM confinement, authenticated batch import or subscriber provisioning. Compare the illustrated steps with production-tool capabilities: protected key handling, supported card profiles, batch integrity checks, rejected-record reporting and audit logs.',
+        'The sample displays key material in browser memory. It does not prove HSM confinement, manufacturer identity, key distribution, replay protection or subscriber provisioning. Compare the illustrated steps with production-tool capabilities: protected key handling, supported card profiles, batch integrity checks, rejected-record reporting and audit logs.',
       config: { part: 2 },
     },
   ]
