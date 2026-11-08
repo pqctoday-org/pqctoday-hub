@@ -157,8 +157,7 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     classical: 'X25519 (32-byte shared secret)',
     pqc: 'ML-KEM-768 (32-byte shared secret)',
     // ML-KEM secret first, the order RFC 10024 uses for X25519MLKEM768. This module's combiner is
-    // its own HKDF call; the secret order is a design choice (the CMVP implementation guidance
-    // lets a module with an approved ML-KEM fix any order for its pre-defined hybrid sets).
+    // its own HKDF call; the secret order is a design choice of this module.
     combiner: 'HKDF-SHA-256(mlkem_ss || x25519_ss, info="hybrid-kek")',
     outputKeySize: 32,
     totalOverhead: '32 + 1,088 = 1,120 bytes ciphertext',
@@ -174,7 +173,7 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     outputKeySize: 32,
     totalOverhead: '65 + 1,088 = 1,153 bytes ciphertext',
     useCase:
-      'FIPS-oriented — P-256 is a FIPS-approved curve, and RFC 10024 puts its secret first in SecP256r1MLKEM768. The CMVP implementation guidance requires an approved ML-KEM for any hybrid claim and an approved key combiner; an X25519 hybrid with a validated ML-KEM can also meet it, so P-256 is not the only FIPS-oriented choice',
+      'FIPS-oriented — P-256 is a FIPS-approved curve, and RFC 10024 puts its secret first in SecP256r1MLKEM768. Whether a hybrid counts as FIPS-approved depends on the module\u2019s validated algorithms and the current CMVP implementation guidance; check both and the module\u2019s Security Policy',
   },
   {
     id: 'p384-mlkem1024',

@@ -39,6 +39,11 @@ describe('provider data', () => {
     expect(aws.notes).toContain(
       'AWS KMS supports hybrid post-quantum TLS that combines ECDH with ML-KEM on its service endpoints.'
     )
+    expect(aws.notes).not.toMatch(/another AWS page/)
+    expect(aws.notes).toMatch(
+      /Infrastructure security in AWS KMS page says AWS KMS supports hybrid post-quantum TLS in all Regions except the China Regions and does not support it on AWS GovCloud \(US\) FIPS endpoints/
+    )
+    expect(flat(aws.pqcAlgorithms)).not.toMatch(/one AWS page excludes/)
     expect(aws.autoRotationNote).toMatch(/symmetric encryption KMS keys/)
     expect(aws.autoRotationNote).toMatch(/ML-DSA and ML-KEM keys are not rotated automatically/)
     expect(aws.autoRotationNote).toMatch(/custom rotation period/)
@@ -97,9 +102,13 @@ describe('provider data', () => {
     expect(t.apiPattern).toMatch(/does not make the RSA wrap/)
     expect(text).not.toMatch(/GA \(v2\.22\.0\+\)/)
     expect(t.pqcAlgorithms.kem.map((k) => k.status)).toEqual([
-      'Technical preview since v2.20.0',
+      'Supported since v2.20.0; the v2.21.0 notes label the Web interface setting a technical preview',
       'Technical preview since v2.21.0',
     ])
+    expect(text).not.toMatch(/generally available from v2\.22\.0/)
+    expect(t.notes).toMatch(
+      /v2\.22\.0 enable quantum-resilient ciphers for Google Workspace CSE connections between Chrome and CipherTrust/
+    )
     expect(t.keyImportPath).toMatch(/wrap is classical/)
   })
 
@@ -109,8 +118,10 @@ describe('provider data', () => {
     expect(text).not.toMatch(/Planned/)
     expect(text).not.toMatch(/obj_type|pqc-central\/v1\/inventory|ENCAPSULATE/)
     expect(f.notes).toMatch(/PQC Central is a Key Insight discovery feature, not part of DSM/)
-    expect(f.fipsLevel).toMatch(/FIPS 140-2 Level 3 \(CMVP #4139/)
-    expect(f.fipsLevel).not.toMatch(/5555/)
+    expect(f.fipsLevel).toMatch(/FIPS 140-2 Level 3 \(CMVP #4139\)/)
+    expect(f.fipsLevel).toMatch(/historical list/)
+    expect(f.fipsLevel).toMatch(/not a current validation/)
+    expect(f.fipsLevel).not.toMatch(/5555|21 September 2026/)
     const tableValues = KMIP_PQC_KEY_TYPES.map((k) => k.providerSupport['fortanix-dsm'])
     expect(tableValues).not.toContain('Planned')
     expect(tableValues).not.toContain('Available')
@@ -251,7 +262,10 @@ describe('guided exercises', () => {
     expect(t).toMatch(/Partner HSM to AWS KMS: Which Path Is Quantum-Safe\?/)
     expect(t).toMatch(/A partner HSM must deliver an AES key to AWS KMS/)
     expect(t).not.toMatch(/FIPS-compliant environments should prefer P-256\+ML-KEM-768/)
-    expect(t).toMatch(/P-256 \+ ML-KEM-768 is not the only hybrid that suits a FIPS environment/)
+    expect(t).toMatch(
+      /Whether a hybrid counts as FIPS-approved depends on the module's validated algorithms/
+    )
+    expect(t).not.toMatch(/X25519, so check which hybrid sets/)
     expect(t).toMatch(
       /while the Cloud KMS release notes list ML-KEM and X-Wing as Preview since 23 September 2025/
     )

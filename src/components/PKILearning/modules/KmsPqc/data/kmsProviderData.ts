@@ -48,7 +48,7 @@ export const KMS_PROVIDERS: KMSProvider[] = [
         {
           name: 'ML-KEM (hybrid TLS)',
           status:
-            'Available on AWS KMS service endpoints, FIPS and non-FIPS (one AWS page excludes the China Regions and GovCloud (US) FIPS endpoints)',
+            'Available on AWS KMS service endpoints, FIPS and non-FIPS; AWS pages differ on the China Regions and GovCloud (US) FIPS endpoints',
         },
       ],
       sign: [
@@ -92,7 +92,7 @@ aws kms decapsulate \\
   --encapsulation-algorithm ML_KEM \\
   --shared-secret-ciphertext-blob fileb://ct.bin`,
     notes:
-      'AWS KMS supports hybrid post-quantum TLS that combines ECDH with ML-KEM on its service endpoints. AWS lists hybrid post-quantum key exchange as launched on FIPS and non-FIPS endpoints for AWS KMS, AWS Payment Cryptography and the AWS CloudHSM control plane. AWS pages differ on the edges, so check the endpoint and Region you use: another AWS page excludes the China Regions and AWS GovCloud (US) FIPS endpoints, which the AWS PQ readiness page lists as launched. Built on AWS-LC, an open-source library whose FIPS module has its own validation (CMVP #5314, Level 1), separate from the KMS HSM certificate.',
+      'AWS KMS supports hybrid post-quantum TLS that combines ECDH with ML-KEM on its service endpoints. AWS lists hybrid post-quantum key exchange as launched on FIPS and non-FIPS endpoints for AWS KMS, AWS Payment Cryptography and the AWS CloudHSM control plane. AWS pages differ on the edges, so check the endpoint and Region you use: the AWS KMS hybrid post-quantum TLS page says all endpoints including FIPS 140-3 validated endpoints in the Regions where AWS KMS is available, the AWS PQ readiness page lists FIPS and non-FIPS endpoints in commercial and US GovCloud Regions as launched, and the Infrastructure security in AWS KMS page says AWS KMS supports hybrid post-quantum TLS in all Regions except the China Regions and does not support it on AWS GovCloud (US) FIPS endpoints. Built on AWS-LC, an open-source library whose FIPS module has its own validation (CMVP #5314, Level 1), separate from the KMS HSM certificate.',
   },
   {
     id: 'gcp-kms',
@@ -283,13 +283,17 @@ vault write transit/encrypt/my-aes-key \\
     catalogName: 'Thales CipherTrust Manager',
     pqcAlgorithms: {
       kem: [
-        { name: 'ML-KEM TLS (Web interface)', status: 'Technical preview since v2.20.0' },
+        {
+          name: 'ML-KEM TLS (Web interface)',
+          status:
+            'Supported since v2.20.0; the v2.21.0 notes label the Web interface setting a technical preview',
+        },
         { name: 'ML-KEM TLS (SSH interface)', status: 'Technical preview since v2.21.0' },
       ],
       sign: [{ name: 'ML-DSA', status: 'Via Luna HSM backend (firmware 7.9+)' }],
     },
     envelopeEncryptionModel:
-      'CipherTrust Cloud Key Manager (CCKM) manages BYOK and HYOK keys across AWS, Azure and Google Cloud, and CipherTrust Manager integrates with Luna HSMs. Quantum-resilient ciphers for Google Workspace client-side encryption connections are generally available from v2.22.0. ML-KEM in this product protects TLS and SSH connections; it is not a key-wrapping format for cloud BYOK.',
+      'CipherTrust Cloud Key Manager (CCKM) manages BYOK and HYOK keys across AWS, Azure and Google Cloud, and CipherTrust Manager integrates with Luna HSMs. CipherTrust Manager and CCKM v2.22.0 enable quantum-resilient ciphers for Google Workspace client-side encryption connections between Chrome and CipherTrust. ML-KEM in this product protects TLS and SSH connections; it is not a key-wrapping format for cloud BYOK.',
     autoRotation: true,
     autoRotationNote:
       'CCKM v2.21 automates rotation of AWS KMS keys from its console, on schedules from monthly to yearly.',
@@ -313,7 +317,7 @@ vault write transit/encrypt/my-aes-key \\
 # Hybrid post-quantum TLS protects the API calls to AWS KMS.
 # It does not make the RSA wrap in step 2 quantum-safe.`,
     notes:
-      'Enterprise multi-cloud key management that integrates with Luna HSMs (firmware 7.9+) for ML-KEM and ML-DSA. ML-KEM TLS on the Web interface is a technical preview from v2.20.0, and on the SSH interface from v2.21.0 (v2.21.0 also lists post-quantum TLS channels between CCKM and Google Chrome as technical previews). Quantum-resilient ciphers for Google Workspace CSE connections are generally available from v2.22.0. This module does not state a later ML-KEM status because no later release note is held in its sources. KMIP and NAE protocol support for legacy integration.',
+      'Enterprise multi-cloud key management that integrates with Luna HSMs (firmware 7.9+) for ML-KEM and ML-DSA. Post-quantum curves are configurable in TLS groups on the Web interface from v2.20.0, and the v2.21.0 notes label the Web interface setting a technical preview. ML-KEM on the SSH interface is a technical preview from v2.21.0, and v2.21.0 also lists post-quantum TLS channels between CCKM and Google Chrome as technical previews. CipherTrust Manager and CCKM v2.22.0 enable quantum-resilient ciphers for Google Workspace CSE connections between Chrome and CipherTrust. This module does not state a later ML-KEM status because no later release note is held in its sources. KMIP and NAE protocol support for legacy integration.',
   },
   {
     id: 'fortanix-dsm',
@@ -338,7 +342,7 @@ vault write transit/encrypt/my-aes-key \\
     keyImportPath: 'Not covered by the sources this module cites.',
     kmipSupport: true,
     fipsLevel:
-      'DSM Appliance: FIPS 140-2 Level 3 (CMVP #4139, sunset 21 September 2026), classical algorithms only; post-quantum algorithms are not in the certificate\u2019s scope. The certificate covers the appliance; check SaaS deployments separately.',
+      'DSM Appliance: FIPS 140-2 Level 3 (CMVP #4139), now on NIST\u2019s historical list because the validation was sunset, so it is not a current validation; classical algorithms only; post-quantum algorithms are not in the certificate\u2019s scope. The certificate covers the appliance; check SaaS deployments separately.',
     hybridSupport: true,
     apiPattern: `# Fortanix DSM — API request shapes are not reproduced here
 # They are not in the sources this module cites. See the Fortanix DSM

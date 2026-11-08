@@ -62,7 +62,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'X-Wing (offered by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides the single-construction hybrid KEM defined in draft-connolly-cfrg-xwing-kem-11. P-256 + ML-KEM-768 is not the only hybrid that suits a FIPS environment. The CMVP implementation guidance requires an approved ML-KEM and an approved key combiner for a hybrid claim, and it lets a validated module pair that ML-KEM with a non-approved component such as X25519, so check which hybrid sets your validated module offers.',
+        "X-Wing (offered by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides the single-construction hybrid KEM defined in draft-connolly-cfrg-xwing-kem-11. Whether a hybrid counts as FIPS-approved depends on the module's validated algorithms and the current CMVP implementation guidance; check both and the module's Security Policy.",
       config: { step: 2 },
     },
     {
