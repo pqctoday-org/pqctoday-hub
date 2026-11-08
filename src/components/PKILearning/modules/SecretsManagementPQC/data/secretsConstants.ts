@@ -389,7 +389,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     ],
     encryptionAtRest: 'AES-256-GCM with Shamir Secret Sharing for unseal keys',
     encryptionInTransit:
-      'TLS 1.3 (no hybrid ML-KEM group documented for Vault; TLS hybrid groups come from RFC 10024 and RFC 9954, not HPKE)',
+      'TLS 1.3 (the Vault 1.19.4 and 1.20.0 changelogs list X25519MLKEM768 in the Go TLS stack; TLS hybrid groups come from RFC 10024 and RFC 9954, not HPKE)',
     envelopeEncryption: true,
     dynamicSecrets: true,
     kubernetesIntegration: 'vault-agent-injector / Vault Secrets Operator (VSO)',
