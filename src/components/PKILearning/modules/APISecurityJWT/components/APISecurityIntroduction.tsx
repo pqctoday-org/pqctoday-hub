@@ -488,7 +488,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-muted-foreground">HTTP Header Limit (default)</span>
+                <span className="text-muted-foreground">
+                  Example header budget (varies by server)
+                </span>
                 <span className="font-mono text-destructive">8 KB</span>
               </div>
               <div className="w-full bg-muted rounded-full h-3">
@@ -541,10 +543,10 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             (RFC 9068) or opaque strings; refresh tokens are usually opaque handles the
             authorization server looks up, so a quantum computer cannot forge them unless they are
             themselves signed tokens. <InlineTooltip term="DPoP">DPoP</InlineTooltip> proofs (RFC
-            9449) are separately signed JWTs created by the client. Their headers must contain the
-            client&rsquo;s public JWK and must not include its private key. An ordinary signed JWT
-            need not embed its verification key, so the illustrative token size above is not a DPoP
-            proof-size estimate.
+            9449) are separately signed JWTs created by the client. Their JOSE header must contain
+            the client&rsquo;s public JWK and must not include its private key. An ordinary signed
+            JWT need not embed its verification key, so the illustrative token size above is not a
+            DPoP proof-size estimate.
           </p>
           <p>
             Measure the complete serialized proof, access token and other HTTP headers together.

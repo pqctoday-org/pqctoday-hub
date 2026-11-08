@@ -215,7 +215,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         threat: 'both',
         pqcPath: 'Switch to the symmetric method, or wait for a revised standard with PQC options',
         notes:
-          'Only deployments that chose the optional asymmetric method are exposed. We found no post-quantum option for DNP3 in the documents we hold. Migration message size not specified—protocol profile and encoding required. An ML-KEM ciphertext is one algorithm component, not a complete exchange. Evaluate documented supported profiles and direction-specific serialized sample messages, including framing and transport limits, with production tools.',
+          'Only deployments that chose the optional asymmetric method are exposed. We found no post-quantum option for DNP3 in the documents we hold. Migration message size not specified—protocol profile and encoding required. Evaluate documented supported profiles and direction-specific serialized sample messages, including framing and transport limits, with production tools.',
       },
     ],
   },

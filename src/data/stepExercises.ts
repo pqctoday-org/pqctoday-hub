@@ -594,7 +594,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     options: [
       'Cert-expiry risk (≤30 d)',
       'CBOM coverage: certificates',
-      '% inventory backed by current FIPS 140-3',
+      '% scoped deployments using validated FIPS 140-3 modules',
     ],
     answer: 1,
     why: 'Each KPI carries a suggested stakeholder list, and the designer fades any KPI whose list does not include the active audience. CBOM coverage of certificates is pitched at the CISO and architect, whereas cert-expiry risk and FIPS 140-3 coverage both name the Board.',

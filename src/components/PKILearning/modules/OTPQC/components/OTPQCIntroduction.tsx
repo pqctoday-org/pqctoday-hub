@@ -766,11 +766,11 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             <p>
               BACnet/SC brings TLS 1.3 and X.509 to HVAC, lighting and access control (
               <LibLink id="ASHRAE-BACnet-SC-Whitepaper-2019">ASHRAE BACnet/SC white paper</LibLink>
-              ). Because it already uses TLS 1.3, adding a hybrid ML-KEM group is a stack update;
-              its elliptic-curve certificates are the forgery exposure. BACnet/SC is the TLS-based
-              BACnet datalink (ASHRAE Addendum bj: it is based on TLS-secured WebSocket
-              connections); BACnet/IP and MS/TP do not use it, and we have no figure for how much
-              equipment still runs on them.
+              ). Because it already uses TLS 1.3, a hybrid group depends on the profile, the TLS
+              stack and both peers; its elliptic-curve certificates are the forgery exposure.
+              BACnet/SC is the TLS-based BACnet datalink (ASHRAE Addendum bj: it is based on
+              TLS-secured WebSocket connections); BACnet/IP and MS/TP do not use it, and we have no
+              figure for how much equipment still runs on them.
             </p>
           </Card>
         </div>

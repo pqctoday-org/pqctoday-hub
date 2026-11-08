@@ -16,7 +16,7 @@
 2. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority
 3. Migrate container image signing from ECDSA P-256 to ML-DSA-65 via cosign or Notation
 4. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time
-5. Monitor crypto posture using Prometheus exporters, SIEM queries, and capacity planning data
+5. Monitor crypto posture by checking which sources can supply certificate algorithms (an exporter's expiry metrics do not carry the key algorithm), using SIEM checklists and capacity planning data
 6. Execute a six-phase migration runway with explicit rollback procedures
 
 ## Workshop Steps
@@ -51,8 +51,8 @@
 
 ### Step 5: Crypto Posture Monitor (4 tabs)
 
-**Metrics & Alerts**: 4 Prometheus exporters (cert-manager, Vault audit log, Istio/Envoy, x509-certificate-exporter)
-**SIEM Integration**: 4 queries (Splunk, Elastic, Datadog, Microsoft Sentinel)
+**Metrics & Alerts**: 4 monitoring-source capability requirements (cert-manager, Vault audit log, Istio/Envoy, x509-certificate-exporter) with non-executable examples; certificate algorithms must come from a documented source, since an exporter's expiry metrics do not carry the key algorithm, and missing algorithm data is Unknown
+**SIEM Integration**: 4 capability checklists, not runnable queries (Splunk, Elastic, Datadog, Microsoft Sentinel)
 **Capacity Planner**: ML-DSA-65 sig 3,309B vs ECDSA 64B (52×); TLS cert chain 2.4KB → 17.4KB (7.25×); TLS handshake 4KB → 18KB (4.5×); etcd growth: 3MB → 14MB per 1000 certs
 **ACME Lifecycle**: 7 steps; Let's Encrypt is targeting late 2026 for a staging environment that issues MTCs and 2027 for a production-ready environment (its post gives no ML-DSA issuance dates); cert-manager's Certificate privateKey.algorithm accepts RSA, ECDSA or Ed25519 (no ML-DSA value); internal CAs (Vault PKI, EJBCA) required for ML-DSA certs until ACME supports PQC
 

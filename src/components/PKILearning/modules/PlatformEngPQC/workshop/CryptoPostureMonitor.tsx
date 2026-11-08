@@ -130,6 +130,7 @@ const MetricsTab: React.FC = () => {
                                 : 'bg-status-warning/20 text-status-warning'
                             }`}
                           >
+                            {isConceptual ? 'Illustrative severity: ' : ''}
                             {alert.severity.toUpperCase()}
                           </span>
                           <span className="text-xs font-bold text-foreground">{alert.name}</span>

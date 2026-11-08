@@ -183,7 +183,7 @@ export const SMIME_CERT_EXTENSIONS: CertExtension[] = [
     critical: false,
     signingValue: 'rfc822Name: user@example.com',
     encryptionValue: 'rfc822Name: user@example.com',
-    description: 'Email address binding (required for S/MIME)',
+    description: 'Email address binding (commonly carried in S/MIME certificates)',
   },
   {
     name: 'subjectKeyIdentifier',

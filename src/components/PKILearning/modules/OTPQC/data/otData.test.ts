@@ -379,3 +379,19 @@ describe('Module text does not regress to the old wrong claims', () => {
     expect(text).not.toMatch(re)
   })
 })
+
+describe('OT protocol notes: DNP3 asymmetric update-key change', () => {
+  it('does not carry a stray ML-KEM ciphertext remark for a protocol with no PQC option', () => {
+    const layer = proto('dnp3-sav5').cryptoLayers.find((l) => /asymmetric/i.test(l.layerName))!
+    expect(layer.notes).toMatch(/no post-quantum option for DNP3/)
+    expect(layer.notes).not.toMatch(/ML-KEM ciphertext/)
+  })
+})
+
+describe('OT module summary text', () => {
+  it('describes the Protocol Analyzer sizes as illustrative, not as FIPS 203/204 deltas', () => {
+    const rag = fs.readFileSync(path.resolve(__dirname, '../rag-summary.md'), 'utf8')
+    expect(rag).not.toMatch(/FIPS 203\/204 size deltas/)
+    expect(rag).toMatch(/illustrative component or directional TLS group-share sizes/)
+  })
+})

@@ -33,7 +33,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
     phase: 0,
     title: 'Inventory & Baseline',
     description:
-      'Deploy x509-certificate-exporter and Prometheus alert rules. Run CBOM scanner across all pipeline stages. Document every classical crypto asset, its exposure window, and HNDL risk score.',
+      'Inventory certificate algorithms from a documented source; the x509-certificate-exporter expiry metrics do not carry the key algorithm. Run CBOM scanner across all pipeline stages. Document every classical crypto asset, its exposure window, and HNDL risk score.',
     durationWeeks: 2,
     dependencies: [],
     stageIds: ['source', 'build', 'sign', 'registry', 'deploy', 'runtime'],
@@ -242,7 +242,7 @@ const ROLLBACK_TREE: Record<string, RollbackNode> = {
   'no-issue': {
     id: 'no-issue',
     action:
-      'No active failures detected. Check Prometheus alerts for non-PQC cert drift. Run x509-certificate-exporter scan for any missed certificates.',
+      'No active failures detected. Compare certificate algorithms from a documented inventory source with policy; the x509-certificate-exporter expiry metrics do not carry the key algorithm, so a missing algorithm stays Unknown.',
     severity: 'ok',
     question: '',
   },

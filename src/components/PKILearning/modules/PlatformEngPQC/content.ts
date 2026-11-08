@@ -68,7 +68,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Identify every cryptographic primitive embedded in a CI/CD pipeline from source control to runtime. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority. Migrate container image signing from ECDSA P-256 to ML-DSA-65 via cosign or Notation. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time. Monitor crypto posture using Prometheus exporters, SIEM queries, and capacity planning data.',
+      'Identify every cryptographic primitive embedded in a CI/CD pipeline from source control to runtime. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority. Migrate container image signing from ECDSA P-256 to ML-DSA-65 via cosign or Notation. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time. Monitor crypto posture by checking which sources can supply certificate algorithms (the expiry metrics of an exporter do not carry the key algorithm), using SIEM checklists and capacity planning data.',
     keyConcepts:
       '### Algorithm Sizes (container signing and TLS). ECDSA P-256 signature: 64 bytes. ML-DSA-44 signature: 2,420 bytes (38×). ML-DSA-65 signature: 3,309 bytes (52×). SLH-DSA-128f signature: 17,088 bytes (267×). ECDSA P-256 X.509 cert: 800 bytes. ML-DSA-65 X.509 cert: 5,800 bytes (7.25×). TLS 1.3 handshake (classical): 4,096 bytes. TLS 1.3 handshake (PQC): 18,432 bytes (4.5×). TLS handshake latency P99: 12ms (classical) → 28ms (PQC, +133%). ### IaC Quantum-Vulnerable Defaults.',
     workshopSummary:

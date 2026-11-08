@@ -252,19 +252,25 @@ export function extractClassicalAlgorithmsFromText(text: string): CbomAlgorithm[
     if (/\bOAEP\b/.test(haystack)) schemes.add('RSAES-OAEP')
     if (/\bRSASSA-PKCS1\b/.test(haystack)) schemes.add('RSASSA-PKCS1')
     if (/\bRSAES-PKCS1\b/.test(haystack)) schemes.add('RSAES-PKCS1')
+    // Scheme named outright (PSS, OAEP, RSASSA-/RSAES-PKCS1), before any v1.5 inference.
+    const namedScheme = schemes.size > 0
     const explicitV15 = /\bPKCS\s*#?\s*1\b.*\bV?1[.]5\b/.test(haystack)
     if (explicitV15 && signing && !encryption) schemes.add('RSASSA-PKCS1')
     if (explicitV15 && encryption && !signing) schemes.add('RSAES-PKCS1')
-    // A global operation word may refer to another algorithm in catalogue text.
-    // Without an explicit RSA scheme, keep that mixed description unassessed.
+    // A global operation word may refer to another algorithm in catalogue text
+    // (a PQC, hash-based signature, symmetric or hash algorithm named alongside
+    // RSA). Unless the RSA scheme is named outright, keep that mixed description
+    // unassessed; an inferred PKCS#1 v1.5 scheme does not count as named.
     const otherAlgorithm =
-      /\b(?:ECDSA|ECDH|EDDSA|ED25519|ED448|X25519|X448|ML-KEM|ML-DSA|SLH-DSA)\b/.test(haystack)
+      /\b(?:ECDSA|ECDH|EDDSA|ED25519|ED448|X25519|X448|ML-KEM|ML-DSA|SLH-DSA|DIFFIE)\b|\b(?:KYBER|DILITHIUM|FALCON|SPHINCS|FRODOKEM|XMSS|BIKE|HQC)|\b(?:LMS|HSS|AES|SHA|DH)(?=\b|\d)/.test(
+        haystack
+      )
     const ambiguous =
       sizeList ||
       keyLengths.size > 1 ||
       schemes.size > 1 ||
       (signing && encryption) ||
-      (schemes.size === 0 && otherAlgorithm)
+      (!namedScheme && otherAlgorithm)
     out.push({
       canonical: !ambiguous && schemes.size === 1 ? [...schemes][0] : 'RSA',
       primitive: ambiguous ? 'unknown' : signing ? 'signature' : encryption ? 'pke' : 'unknown',

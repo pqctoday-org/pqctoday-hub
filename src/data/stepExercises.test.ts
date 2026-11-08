@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import fs from 'node:fs'
+import path from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { STEP_EXERCISES } from './stepExercises'
+import { POSTURE_KPIS } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/postureKPIs'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 
 describe('STEP_EXERCISES (round 9, wave 2)', () => {
@@ -99,5 +102,35 @@ describe('STEP_EXERCISES: contract-clause deadline question follows the dropdown
     expect(ex.prompt).toMatch(/NSM-10 quantum-risk objective/)
     expect(ex.options[ex.answer]).toBe('2035')
     expect(ex.why).not.toMatch(/2033|full enforcement|browsers, servers, cloud/)
+  })
+})
+
+describe('posture KPI exercise names', () => {
+  const root = path.resolve(__dirname, '../components/PKILearning/modules/CryptoMgmtModernization')
+  const oldName = '% inventory backed by current FIPS 140-3'
+  const fipsKpi = POSTURE_KPIS.find((k) => k.name.includes('FIPS 140-3'))
+
+  it('uses the posture KPI name, not the retired one, in the quiz and the board exercise', () => {
+    expect(fipsKpi).toBeDefined()
+    const exercises = fs.readFileSync(
+      path.join(root, 'CryptoMgmtModernizationExercises.tsx'),
+      'utf8'
+    )
+    expect(exercises).not.toContain(oldName)
+    expect(exercises).toContain(fipsKpi!.name)
+    const ex = STEP_EXERCISES['crypto-mgmt-modernization/posture-kpi']
+    expect(ex.options).toContain(fipsKpi!.name)
+    expect(JSON.stringify(STEP_EXERCISES)).not.toContain(oldName)
+  })
+
+  it('keeps the dimmed-KPI answer on a KPI whose audience excludes the board', () => {
+    const ex = STEP_EXERCISES['crypto-mgmt-modernization/posture-kpi']
+    const answered = POSTURE_KPIS.find((k) => k.name === ex.options[ex.answer])
+    expect(answered).toBeDefined()
+    expect(answered!.audience).not.toContain('board')
+    for (const [i, option] of ex.options.entries()) {
+      if (i === ex.answer) continue
+      expect(POSTURE_KPIS.find((k) => k.name === option)?.audience, option).toContain('board')
+    }
   })
 })

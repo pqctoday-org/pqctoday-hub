@@ -116,6 +116,25 @@ describe('extractClassicalAlgorithmsFromText', () => {
     expect(extractClassicalAlgorithmsFromText('ML-KEM-768')).toEqual([])
     expect(extractClassicalAlgorithmsFromText('')).toEqual([])
   })
+
+  it.each([
+    'hybrid RSA+Kyber(KEM)+Falcon(signature) prototype',
+    'Provides LMS (Leighton-Micali stateful hash-based signature) verification, used in parallel with RSA',
+    'Uses AES-256 to encrypt data at rest and is migrating to 4096-bit keys for RSA and Diffie-Hellman',
+    'RSA-2048 PKCS#1 v1.5 padding; ML-DSA-65 signatures',
+  ])('gives RSA no operation or scheme that another algorithm in "%s" carries', (text) => {
+    const rsa = extractClassicalAlgorithmsFromText(text).find((a) => a.canonical.startsWith('RSA'))
+    expect(rsa).toMatchObject({ canonical: 'RSA', primitive: 'unknown' })
+    expect(extractAllAlgorithmsFromText(text).find((a) => a.canonical === 'RSA')).toMatchObject({
+      primitive: 'unknown',
+    })
+  })
+
+  it('still reads a named RSA scheme beside another algorithm', () => {
+    expect(extractClassicalAlgorithmsFromText('RSA-2048 PSS signatures; AES-256')[0]).toMatchObject(
+      { canonical: 'RSASSA-PSS', primitive: 'signature', keyLength: 2048 }
+    )
+  })
 })
 
 describe('pairHybridAlgorithms / extractAllAlgorithmsFromText', () => {

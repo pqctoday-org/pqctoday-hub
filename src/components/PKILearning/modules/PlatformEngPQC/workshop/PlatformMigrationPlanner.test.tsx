@@ -68,3 +68,23 @@ describe('Platform migration planner: rollback guidance', () => {
     )
   })
 })
+
+describe('Platform migration planner: certificate monitoring wording', () => {
+  it('inventories certificate algorithms from a documented source instead of prescribing exporter alert rules', () => {
+    render(<PlatformMigrationPlanner />)
+    const t = text()
+    expect(t).not.toMatch(/Prometheus alert rules/)
+    expect(t).toMatch(/Inventory certificate algorithms from a documented source/)
+    expect(t).toMatch(/expiry metrics do not carry the key algorithm/)
+  })
+
+  it('does not send a healthy rollback outcome to exporter alerts for algorithm drift', () => {
+    openRollbackTree()
+    answer('No') // no handshake failures
+    answer('No') // no admission blocks
+    const t = text()
+    expect(t).not.toMatch(/Check Prometheus alerts for non-PQC cert drift/)
+    expect(t).toMatch(/expiry metrics do not carry the key algorithm/)
+    expect(t).toMatch(/a missing algorithm stays Unknown/)
+  })
+})
