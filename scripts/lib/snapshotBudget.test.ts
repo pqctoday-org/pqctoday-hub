@@ -212,3 +212,71 @@ describe('boundSnapshot refuses a reduction that drops something', () => {
     expect(() => boundSnapshot(RAW, TARGET, dropFirst('p'))).toThrow(/visible text/)
   })
 })
+
+/** Cards that carry tooltips: one sentence repeated on every card, one per card, one on two. */
+function tooltipPage(cards: number): string {
+  const card = (n: number) =>
+    `<div class="card" data-card="${n}"><h3>Item ${n} heading</h3>` +
+    `<span title="Trust score: how well this record is sourced.">Trust ${n}</span>` +
+    `<span title="Reviewed by reader ${n}">Reviewed</span>` +
+    `<span title="${n % 2 === 0 ? 'Even item' : 'Odd item'}">Parity</span>` +
+    `<a href="/library?ref=item-${n}">Open item ${n}</a></div>`
+  return (
+    `<!DOCTYPE html><html><head><title>The list</title></head>` +
+    `<body><div id="root"><main><h1>The list</h1>` +
+    `<p title="Trust score: how well this record is sourced.">Outside the list</p>` +
+    `<div class="grid">${Array.from({ length: cards }, (_, i) => card(i + 1)).join('')}</div>` +
+    `</main></div></body></html>`
+  )
+}
+
+describe('boundSnapshot: tooltips that repeat', () => {
+  const RAW_TIPS = tooltipPage(100)
+  const result = boundSnapshot(RAW_TIPS, Math.floor(byteLength(RAW_TIPS) * 0.3))
+  const titlesIn = (html: string) =>
+    Array.from(parse(html).querySelectorAll('#root [title]')).map((e) => e.getAttribute('title'))
+
+  it('keeps every distinct tooltip text on the page', () => {
+    const before = new Set(titlesIn(RAW_TIPS))
+    const after = new Set(titlesIn(result.html))
+    expect(after).toEqual(before)
+    expect(differences(fingerprint(parse(RAW_TIPS)), fingerprint(parse(result.html)))).toEqual([])
+  })
+
+  it('drops a tooltip from the later items when the page already shows the same text', () => {
+    const { intact } = result.compacted!
+    const compacted = listOf(result.html).slice(intact).join('')
+    expect(compacted).not.toContain('Trust score: how well this record is sourced.')
+    expect(compacted).not.toContain('Even item')
+    expect(compacted).not.toContain('Odd item')
+    expect(compacted).toContain('Reviewed by reader 100')
+  })
+
+  it('leaves the items kept intact, and every unique tooltip, as captured', () => {
+    const raw = listOf(RAW_TIPS)
+    const out = listOf(result.html)
+    const { intact } = result.compacted!
+    expect(out.slice(0, intact)).toEqual(raw.slice(0, intact))
+    for (let n = 1; n <= 100; n++) expect(result.html).toContain(`title="Reviewed by reader ${n}"`)
+  })
+
+  it('keeps the first copy of a tooltip that appears only in the compacted items', () => {
+    const onlyLater = tooltipPage(100).replace(
+      '<span title="Reviewed by reader 60">',
+      '<span title="Only here">'
+    )
+    const out = boundSnapshot(onlyLater, Math.floor(byteLength(onlyLater) * 0.3))
+    expect(titlesIn(out.html).filter((t) => t === 'Only here')).toHaveLength(1)
+  })
+
+  it('notices a tooltip text that disappeared from the page', () => {
+    const dropAllTitles = (item: Element) => {
+      const clone = item.cloneNode(true) as Element
+      for (const e of Array.from(clone.querySelectorAll('[title]'))) e.removeAttribute('title')
+      return clone
+    }
+    expect(() =>
+      boundSnapshot(RAW_TIPS, Math.floor(byteLength(RAW_TIPS) * 0.3), dropAllTitles)
+    ).toThrow(/tooltips/)
+  })
+})

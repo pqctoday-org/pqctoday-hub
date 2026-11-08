@@ -10,8 +10,10 @@ import { JSDOM } from 'jsdom'
  *
  * Over the target size, the page's biggest repeated list keeps its first items exactly as they are
  * and the rest are reduced to their content: every heading, every word of text and every link stays,
- * and only presentation (classes, styles, icons, data attributes) is removed. The app replaces the
- * saved copy when it starts, so what visitors see is unchanged.
+ * and only presentation (classes, styles, icons, data attributes) is removed. A tooltip (a title
+ * attribute) that says the same thing as one already on the page is dropped from the later items,
+ * so every distinct tooltip text stays on the page at least once. The app replaces the saved copy
+ * when it starts, so what visitors see is unchanged.
  *
  * Nothing is dropped, and each call proves it: the link targets, the visible text, the headings and
  * the whole <head> are compared before and after, and any difference throws.
@@ -59,6 +61,8 @@ export interface Fingerprint {
   text: string
   /** Every heading as "H2: text", sorted. */
   headings: string[]
+  /** Every distinct tooltip text (title attribute), sorted: a tooltip may repeat, never vanish. */
+  titles: string[]
   /** The whole <head>: title, description, canonical, robots, structured data. */
   head: string
 }
@@ -73,6 +77,11 @@ export function fingerprint(document: Document): Fingerprint {
     headings: Array.from(root.querySelectorAll('h1,h2,h3,h4,h5,h6'))
       .map((heading) => `${heading.tagName}: ${collapse(heading.textContent)}`)
       .sort(),
+    titles: Array.from(
+      new Set(
+        Array.from(root.querySelectorAll('[title]')).map((e) => e.getAttribute('title') ?? '')
+      )
+    ).sort(),
     head: document.head.outerHTML,
   }
 }
@@ -86,6 +95,8 @@ export function differences(before: Fingerprint, after: Fingerprint): string[] {
     out.push(`visible text (${before.text.length} characters before, ${after.text.length} after)`)
   if (before.headings.join('\n') !== after.headings.join('\n'))
     out.push(`headings (${before.headings.length} before, ${after.headings.length} after)`)
+  if (before.titles.join('\n') !== after.titles.join('\n'))
+    out.push(`tooltips (${before.titles.length} distinct before, ${after.titles.length} after)`)
   if (before.head !== after.head) out.push('head')
   return out
 }
@@ -103,6 +114,19 @@ function compactItem(item: Element): Element {
     }
   }
   return clone
+}
+
+/**
+ * Drop a tooltip that repeats one already seen; the first one of each text stays. `seen` starts
+ * with the tooltips of everything that is not being compacted and grows as items are visited.
+ */
+function dropRepeatedTooltips(item: Element, seen: Set<string>): void {
+  for (const element of [item, ...Array.from(item.querySelectorAll('[title]'))]) {
+    const title = element.getAttribute('title')
+    if (title === null) continue
+    if (seen.has(title)) element.removeAttribute('title')
+    else seen.add(title)
+  }
 }
 
 /** The largest group of same-tag siblings in the app's root, with how many bytes it holds. */
@@ -169,6 +193,16 @@ export function boundSnapshot(
   }
 
   const before = fingerprint(document)
+  const compacting = new Set<Element>(pairs.slice(intact).map((pair) => pair.item))
+  const insideCompacted = (element: Element): boolean => {
+    for (let n: Element | null = element; n && n !== list.parent; n = n.parentElement)
+      if (compacting.has(n)) return true
+    return false
+  }
+  const seen = new Set<string>()
+  for (const element of Array.from(root!.querySelectorAll('[title]')))
+    if (!insideCompacted(element)) seen.add(element.getAttribute('title') ?? '')
+  for (const { reduced } of pairs.slice(intact)) dropRepeatedTooltips(reduced, seen)
   for (const { item, reduced } of pairs.slice(intact)) item.replaceWith(reduced)
   list.parent.setAttribute('data-snapshot-compacted', `${intact}/${pairs.length}`)
   const broken = differences(before, fingerprint(document))
