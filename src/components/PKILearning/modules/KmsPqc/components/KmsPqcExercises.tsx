@@ -95,7 +95,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Key exchange',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys, so the import wrap stays classical even though the API call can ride hybrid post-quantum TLS. An ML-KEM exchange is quantum-safe, but AWS KMS Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application, so deriving a wrapping key and wrapping the AES key happen outside the HSM. Google Cloud KMS quantum-safe key import is in Preview and covers software-protected keys only.',
+        'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys. The import wrap therefore stays classical even though the API call can ride hybrid post-quantum TLS. An ML-KEM exchange is quantum-safe, but AWS KMS Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application, so deriving a wrapping key and wrapping the AES key happen outside the HSM. Google Cloud KMS quantum-safe key import is in Preview and covers software-protected keys only.',
       config: { step: 6 },
     },
   ]

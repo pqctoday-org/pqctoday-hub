@@ -93,8 +93,8 @@ const AWS_EXCHANGE_PATHS: ExchangePath[] = [
     path: 'Import (BYOK) into AWS KMS',
     mechanism: [
       'GetParametersForImport returns an RSA wrapping public key and an import token; ImportKeyMaterial accepts the wrapped key.',
-      'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
-      'A 256-bit AES or HMAC key is wrapped with RSAES_OAEP_SHA_256 or RSAES_OAEP_SHA_1. RSA private key material requires RSA_AES_KEY_WRAP_SHA_256 or RSA_AES_KEY_WRAP_SHA_1, and ECC private keys may use either family. RSAES_PKCS1_V1_5 has not been supported since 10 October 2023, and an SM2 wrapping key is offered in the China Regions only.',
+      'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+      'A 256-bit AES or HMAC key is wrapped with RSAES_OAEP_SHA_256 or RSAES_OAEP_SHA_1. RSA private key material requires RSA_AES_KEY_WRAP_SHA_256 or RSA_AES_KEY_WRAP_SHA_1, and ECC private keys may use either family. RSAES_PKCS1_V1_5 has not been supported since 10 October 2023.',
     ],
     quantumSafe:
       'No. The wrap is RSA. Hybrid post-quantum TLS protects the API call that carries it, not the wrap.',
@@ -115,7 +115,7 @@ const AWS_EXCHANGE_PATHS: ExchangePath[] = [
     path: 'ML-KEM key establishment',
     mechanism: [
       'The partner gets the public key with GetPublicKey and encapsulates with its own library; AWS KMS Decapsulate recovers the secret.',
-      "AWS KMS Encapsulate works only with the public key of a KMS ML-KEM key, so encapsulating to a partner's HSM key happens in the caller's own library.",
+      "AWS KMS Encapsulate works only with the public key of a KMS ML-KEM key. Encapsulating to a partner's HSM key therefore happens in the caller's own library.",
       'AWS KMS Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application.',
     ],
     quantumSafe:
@@ -228,15 +228,16 @@ const CloudKeyExchange: React.FC = () => (
     <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
       <h4 className="font-semibold text-foreground">Google Cloud KMS</h4>
       <p className="text-sm text-muted-foreground">
-        Google Cloud KMS key import wraps key material for transfer, with RSA-based import methods
-        alongside the quantum-safe HPKE methods. The RSA methods use RSAES-OAEP with SHA-1 plus
-        AES-KWP, or with SHA-256 with or without AES-KWP, under a 3072-bit or 4096-bit import-job
-        key.
+        Google Cloud KMS key import wraps key material for transfer using RSA-based import methods.
+        The quantum-safe HPKE methods are a separate set of import methods in Preview. The RSA
+        methods use RSAES-OAEP with SHA-1 plus AES-KWP, or with SHA-256 with or without AES-KWP,
+        under a 3072-bit or 4096-bit import-job key.
       </p>
       <p className="text-sm text-muted-foreground">
-        Google Cloud KMS quantum-safe key import, in Preview since 6 August 2026, wraps imported key
-        material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.
-        It is supported for software-backed keys (SOFTWARE protection level) only.
+        Google Cloud KMS quantum-safe key import, in Preview, wraps imported key material with HPKE
+        using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM. The Cloud KMS
+        release notes date the Preview to 6 August 2026. It is supported for software-backed keys
+        (SOFTWARE protection level) only.
       </p>
       <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
         <li>

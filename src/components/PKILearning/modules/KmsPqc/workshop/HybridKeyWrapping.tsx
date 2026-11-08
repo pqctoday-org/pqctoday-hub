@@ -18,7 +18,7 @@ const WRAP_MODE_LABELS: Record<WrapMode, { label: string; color: string }> = {
 const PROVIDER_WRAP_EXAMPLES: Record<string, Record<WrapMode, string>> = {
   'aws-kms': {
     classical: `// AWS KMS — Classical: RSA wrapping on import (BYOK)
-// AWS KMS imports key material only under an RSA wrapping key (use the key ID: this
+// AWS KMS imports key material under an RSA wrapping key (use the key ID: this
 // operation does not accept an alias)
 aws kms get-parameters-for-import \\
   --key-id <key-id-of-the-key-without-key-material> \\
