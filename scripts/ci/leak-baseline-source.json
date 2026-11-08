@@ -345,9 +345,7 @@
       "private-repo": 1
     },
     "src/data/library_#.csv": {
-      "decision-citation": 44,
-      "internal-key": 732,
-      "session-handle": 1
+      "internal-key": 64
     },
     "src/data/loaderUtils.ts": {
       "private-repo": 1
@@ -400,7 +398,7 @@
     },
     "src/data/validation/vector-manifest.json": {
       "decision-citation": 2,
-      "private-repo": 4
+      "private-repo": 3
     },
     "src/services/chat/factVerification.ts": {
       "private-repo": 1
