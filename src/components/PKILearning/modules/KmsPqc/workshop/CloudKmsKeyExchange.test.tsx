@@ -46,11 +46,12 @@ vi.mock('../services/cloudKmsExchange', async (importOriginal) => {
         profile: { ...profile, aesKeyBits: 256, oaepHash: 'sha256' },
         rsaKeyReused: false,
         rsaPartBytes: profile.rsaBits / 8,
-        kwpPartBytes: 40,
-        wrappedBytes: profile.rsaBits / 8 + 40,
+        kwpPartBytes: 152,
+        wrappedBytes: profile.rsaBits / 8 + 152,
         wrapped: new Uint8Array(1),
         sourceKey: new Uint8Array(32),
         importedKey: new Uint8Array(32),
+        signatureVerified: true,
         matches: true,
         structureVerified: true,
       }
@@ -210,7 +211,7 @@ describe('CloudKmsKeyExchange', () => {
     await user.click(screen.getByRole('button', { name: /Run simulation/ }))
     await waitFor(() => expect(calls.classical).toBe(1))
     expect(
-      await screen.findByText(/Wrapped blob: 424 bytes = 384 bytes RSA-OAEP \+ 40 bytes AES-KWP/)
+      await screen.findByText(/Wrapped blob: 536 bytes = 384 bytes RSA-OAEP \+ 152 bytes AES-KWP/)
     ).toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent(/the recovered key matches the original/)
     expect(hsmStub.addStepLog).toHaveBeenCalled()

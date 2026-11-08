@@ -127,14 +127,6 @@ export const PROVIDER_CLAIMS: readonly ProviderClaim[] = [
   },
 ]
 
-/** Reference ids this step must never cite (dropped from the release; see the release notes for the lane). */
-export const DROPPED_REFERENCE_IDS: readonly string[] = [
-  'AWS-KMS-API-DeriveSharedSecret',
-  'AWS-KMS-External-Key-Stores',
-  'AWS-KMS-Infrastructure-Security',
-  'Thales-CipherTrust-Manager-Release-Notes',
-]
-
 export const claimsFor = (ids: readonly string[]): ProviderClaim[] =>
   ids.map((id) => {
     const c = PROVIDER_CLAIMS.find((x) => x.id === id)
@@ -157,7 +149,7 @@ export const PROVIDERS: readonly ProviderInfo[] = [
   {
     id: 'aws',
     name: 'AWS KMS',
-    note: 'AWS\u2019s own pages differ on GovCloud FIPS endpoints, so check the current AWS pages for your Region before relying on post-quantum TLS there.',
+    note: 'AWS does not offer hybrid post-quantum TLS on its FIPS endpoints in AWS GovCloud (US); check the current AWS pages for your Region.',
     claimIds: [
       'AWS-KMS-Import-Wrapping-Keys',
       'AWS-KMS-Post-Quantum-Keys',
@@ -252,7 +244,12 @@ const hpkeSteps = (
     actor: 'third-party',
     title: 'Third-party HSM runs HPKE Seal',
     apiName: 'HPKE Seal (RFC 9180, base mode)',
-    params: ['mode = Base', 'info = empty', 'aad = empty', 'plaintext = the key material'],
+    params: [
+      'mode = Base',
+      'info = empty (simulation choice; not set in the provider guide)',
+      'aad = empty (simulation choice)',
+      'plaintext = the key material',
+    ],
     detail:
       'Encapsulate to the public key, run the HPKE key schedule, then encrypt the key material under the derived AEAD key. The PKCS#11 mechanisms depend on the engine you pick.',
     keyLocation: 'in-transit',
@@ -292,7 +289,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
     title: 'AWS KMS: import key material under an RSA wrapping key',
     availability: 'documented',
     summary:
-      'The third-party HSM wraps an AES-256 key under the RSA public key that AWS KMS issues for the import, and AWS KMS unwraps it inside its HSM.',
+      'The third-party HSM wraps an EC P-256 private key under the RSA public key that AWS KMS issues for the import, and AWS KMS unwraps it inside its HSM.',
     verdict:
       'RSA-based wrapping is not quantum-safe: a recorded blob stays only as safe as the RSA key. The call itself can ride hybrid post-quantum TLS, which protects the connection and not the wrapped blob.',
     claimIds: ['AWS-KMS-Import-Wrapping-Keys', 'AWS-KMS-Hybrid-PQ-TLS'],
@@ -311,10 +308,14 @@ export const FLOWS: readonly ExchangeFlow[] = [
       {
         id: 'source',
         actor: 'third-party',
-        title: 'Create the key to export',
-        apiName: 'C_GenerateKey (CKM_AES_KEY_GEN)',
-        params: ['AES-256', 'CKA_EXTRACTABLE = true (so the wrap mechanism can read it)'],
-        detail: 'A fresh AES-256 key is created in the third-party HSM.',
+        title: 'Create the EC P-256 key to export',
+        apiName: 'C_GenerateKeyPair (CKM_EC_KEY_PAIR_GEN)',
+        params: [
+          'P-256',
+          'CKA_EXTRACTABLE = true on the private key (so the wrap mechanism can read it)',
+        ],
+        detail:
+          'A fresh EC P-256 key pair is created in the third-party HSM. The private key is the key to export. CKM_RSA_AES_KEY_WRAP wraps asymmetric target keys, which is why this run exports an EC private key and not an AES key.',
         keyLocation: 'inside-hsm',
         quantumSafe: 'not-applicable',
       },
@@ -326,10 +327,10 @@ export const FLOWS: readonly ExchangeFlow[] = [
         params: [
           'mechanism = CKM_RSA_AES_KEY_WRAP',
           'RSA-OAEP, hash = SHA-256',
-          'temporary AES key = 256 bits',
+          'temporary AES key = 256 bits (simulation choice)',
         ],
         detail:
-          'RSA-OAEP protects a temporary AES key, and AES-KWP (RFC 5649) wraps the target key under it. The blob is the RSA part followed by the KWP part.',
+          'RSA-OAEP protects a temporary AES key, and AES-KWP (RFC 5649) wraps the private key under it. The blob is the RSA part followed by the KWP part.',
         keyLocation: 'in-transit',
         quantumSafe: 'no',
       },
@@ -340,7 +341,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
         apiName: 'ImportKeyMaterial',
         params: ['EncryptedKeyMaterial = the wrapped blob', 'ImportToken from the first step'],
         detail:
-          'The provider’s HSM unwraps the blob with the RSA private key. The simulation then compares the recovered key with the original.',
+          'The provider’s HSM unwraps the blob with the RSA private key. The simulation then checks that a signature made with the recovered key verifies under the original public key.',
         keyLocation: 'inside-hsm',
         quantumSafe: 'no',
       },
@@ -356,7 +357,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
     summary: HPKE_CANDIDATE_NOTE,
     verdict:
       'This is a design sketch. The key sent this way is protected by a post-quantum KEM, but the provider would have to offer a matching import path.',
-    claimIds: ['AWS-KMS-Import-Wrapping-Keys'],
+    claimIds: [],
     steps: hpkeSteps('AWS KMS', 'Candidate: publish an HPKE public key', [
       'KEM = the suite you choose below',
       'not an AWS KMS operation',
@@ -385,7 +386,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
         actor: 'provider',
         title: 'Fetch the public key of the ML-KEM KMS key',
         apiName: 'GetPublicKey',
-        params: ['KeySpec = an ML-KEM key spec (ML-KEM-768 in this run)'],
+        params: ['KeySpec = ML_KEM_768'],
         detail:
           'The partner receives the encapsulation key. The private half stays in the provider’s HSM.',
         keyLocation: 'inside-hsm',
@@ -486,7 +487,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
     title: 'Google Cloud KMS: import with an RSA import job',
     availability: 'documented',
     summary:
-      'The third-party HSM wraps the key under the RSA public key of an import job, and Cloud KMS unwraps it.',
+      'The third-party HSM wraps an EC P-256 private key under the RSA public key of an import job, and Cloud KMS unwraps it.',
     verdict:
       'RSA-based wrapping is not quantum-safe: a recorded blob stays only as safe as the RSA key.',
     claimIds: ['Google-Cloud-KMS-Key-Import'],
@@ -505,10 +506,14 @@ export const FLOWS: readonly ExchangeFlow[] = [
       {
         id: 'source',
         actor: 'third-party',
-        title: 'Create the key to export',
-        apiName: 'C_GenerateKey (CKM_AES_KEY_GEN)',
-        params: ['AES-256', 'CKA_EXTRACTABLE = true (so the wrap mechanism can read it)'],
-        detail: 'A fresh AES-256 key is created in the third-party HSM.',
+        title: 'Create the EC P-256 key to export',
+        apiName: 'C_GenerateKeyPair (CKM_EC_KEY_PAIR_GEN)',
+        params: [
+          'P-256',
+          'CKA_EXTRACTABLE = true on the private key (so the wrap mechanism can read it)',
+        ],
+        detail:
+          'A fresh EC P-256 key pair is created in the third-party HSM. The private key is the key to export. CKM_RSA_AES_KEY_WRAP wraps asymmetric target keys, which is why this run exports an EC private key and not an AES key.',
         keyLocation: 'inside-hsm',
         quantumSafe: 'not-applicable',
       },
@@ -523,7 +528,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
           'temporary AES key = 256 bits',
         ],
         detail:
-          'RSA-OAEP protects a temporary AES key, and AES-KWP (RFC 5649) wraps the target key under it.',
+          'RSA-OAEP protects a temporary AES key, and AES-KWP (RFC 5649) wraps the private key under it.',
         keyLocation: 'in-transit',
         quantumSafe: 'no',
       },
@@ -531,10 +536,10 @@ export const FLOWS: readonly ExchangeFlow[] = [
         id: 'import',
         actor: 'provider',
         title: 'Import the wrapped key into a key version',
-        apiName: 'ImportCryptoKeyVersion',
+        apiName: 'ImportCryptoKeyVersion (REST: cryptoKeyVersions.import)',
         params: ['wrapped key material = the blob', 'import job from the first step'],
         detail:
-          'The provider unwraps the blob with the import job’s private key. The simulation then compares the recovered key with the original.',
+          'The provider unwraps the blob with the import job’s private key. The simulation then checks that a signature made with the recovered key verifies under the original public key.',
         keyLocation: 'inside-hsm',
         quantumSafe: 'no',
       },
@@ -550,10 +555,11 @@ export const FLOWS: readonly ExchangeFlow[] = [
     summary:
       'The client runs HPKE Seal toward the public key of an import job and sends enc ‖ ciphertext.',
     verdict:
-      'The wrap is protected by a post-quantum KEM. The documents list the feature as Preview, so check the current state before relying on it.',
+      'The wrap is protected by a post-quantum KEM. The documents list this for software-protected keys only, as Preview, and only with pre-wrapped keys, so check the current state before relying on it.',
     claimIds: ['Google-Cloud-KMS-Quantum-Safe-Key-Import', 'Google-Cloud-KMS-Release-Notes'],
     steps: hpkeSteps('Google Cloud KMS', 'ImportJob', [
       'importMethod = the suite you choose below',
+      'protection level = SOFTWARE',
     ]),
   },
 
@@ -566,7 +572,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
     title: 'Azure: bring your own key with an RSA key exchange key',
     availability: 'documented',
     summary:
-      'The third-party HSM wraps the key under the public half of an RSA-HSM key exchange key, and the vault or Managed HSM unwraps it.',
+      'The third-party HSM wraps an EC P-256 private key under the public half of an RSA-HSM key exchange key, and the vault or Managed HSM unwraps it.',
     verdict:
       'RSA-based wrapping is not quantum-safe: a recorded blob stays only as safe as the RSA key.',
     claimIds: ['Azure-Key-Vault-BYOK-Specification', 'Azure-Managed-HSM-BYOK'],
@@ -585,10 +591,14 @@ export const FLOWS: readonly ExchangeFlow[] = [
       {
         id: 'source',
         actor: 'third-party',
-        title: 'Create the key to export',
-        apiName: 'C_GenerateKey (CKM_AES_KEY_GEN)',
-        params: ['AES-256', 'CKA_EXTRACTABLE = true (so the wrap mechanism can read it)'],
-        detail: 'A fresh AES-256 key is created in the third-party HSM.',
+        title: 'Create the EC P-256 key to export',
+        apiName: 'C_GenerateKeyPair (CKM_EC_KEY_PAIR_GEN)',
+        params: [
+          'P-256',
+          'CKA_EXTRACTABLE = true on the private key (so the wrap mechanism can read it)',
+        ],
+        detail:
+          'A fresh EC P-256 key pair is created in the third-party HSM. The private key is the key to export. CKM_RSA_AES_KEY_WRAP wraps asymmetric target keys, which is why this run exports an EC private key and not an AES key.',
         keyLocation: 'inside-hsm',
         quantumSafe: 'not-applicable',
       },
@@ -600,10 +610,10 @@ export const FLOWS: readonly ExchangeFlow[] = [
         params: [
           'mechanism = CKM_RSA_AES_KEY_WRAP',
           'RSA-OAEP, hash = SHA-1',
-          'temporary AES key = 256 bits',
+          'temporary AES key = 256 bits (simulation choice)',
         ],
         detail:
-          'RSA-OAEP protects a temporary AES key, and AES-KWP (RFC 5649) wraps the target key under it. The result is the transfer blob.',
+          'RSA-OAEP protects a temporary AES key, and AES-KWP (RFC 5649) wraps the private key under it. The result is the transfer blob.',
         keyLocation: 'in-transit',
         quantumSafe: 'no',
       },
@@ -611,10 +621,10 @@ export const FLOWS: readonly ExchangeFlow[] = [
         id: 'import',
         actor: 'provider',
         title: 'Import the transfer blob',
-        apiName: 'Import key (BYOK)',
-        params: ['transfer blob = the wrapped key'],
+        apiName: 'PUT /keys/<key-name>',
+        params: ['kty = EC-HSM', 'crv = P-256', 'key_hsm = the transfer blob'],
         detail:
-          'The vault unwraps the blob with the KEK’s private key. The simulation then compares the recovered key with the original.',
+          'The vault unwraps the blob with the KEK’s private key. The simulation then checks that a signature made with the recovered key verifies under the original public key.',
         keyLocation: 'inside-hsm',
         quantumSafe: 'no',
       },
@@ -630,7 +640,7 @@ export const FLOWS: readonly ExchangeFlow[] = [
     summary: HPKE_CANDIDATE_NOTE,
     verdict:
       'This is a design sketch. The key sent this way is protected by a post-quantum KEM, but the provider would have to offer a matching import path.',
-    claimIds: ['Azure-Key-Vault-BYOK-Specification'],
+    claimIds: [],
     steps: hpkeSteps('Azure Key Vault', 'Candidate: publish an HPKE public key', [
       'KEM = the suite you choose below',
       'not an Azure Key Vault operation',
@@ -667,9 +677,9 @@ export const ENGINES: readonly EngineInfo[] = [
   {
     id: 'v33',
     label: 'PKCS#11 v3.3 draft (CKM_COMP_KEM)',
-    mechanisms: 'CKM_COMP_KEM for the key agreement; HKDF and AES-GCM as in v3.2',
+    mechanisms: 'CKM_COMP_KEM for encapsulation and decapsulation; HKDF and AES-GCM as in v3.2',
     standing:
-      'The v3.3 working draft defines CKM_COMP_KEM, a composite KEM, and no HPKE mechanism. Three of its parameter sets match the HPKE-PQ hybrid KEMs (X-Wing, MLKEM768-P256, MLKEM1024-P384). Pure ML-KEM uses the same CKM_ML_KEM mechanism as in v3.2. It is a draft and can still change.',
+      'The v3.3 working draft defines CKM_COMP_KEM, a composite KEM, and no HPKE mechanism. It names CKP_COMP_KEM_MLKEM768_X25519, MLKEM768_ECDH_P256 and MLKEM1024_ECDH_P384 and defines its own composition for them. In this engine the CKM_COMP_KEM run interoperates with the v3.2 sequence, which the interoperability check below shows. Pure ML-KEM uses the same CKM_ML_KEM mechanism as in v3.2. It is a draft and can still change.',
   },
   {
     id: 'candidate',

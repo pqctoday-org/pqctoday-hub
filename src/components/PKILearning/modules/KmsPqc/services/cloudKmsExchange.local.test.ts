@@ -26,6 +26,7 @@
  * the sequences is shown instead by cross-engine interoperability.
  */
 import { describe, it, expect, beforeAll } from 'vitest'
+import { generateKeyPairSync, verify as nodeVerify } from 'node:crypto'
 import { shake256 } from '@noble/hashes/sha3.js'
 import { ml_kem768, ml_kem1024 } from '@noble/post-quantum/ml-kem.js'
 import { ml_kem768_x25519 } from '@noble/post-quantum/hybrid.js'
@@ -90,37 +91,56 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
   }, 60_000)
 
   // ── 1. Classical import ────────────────────────────────────────────────────
-  describe('classical import with CKM_RSA_AES_KEY_WRAP', () => {
+  describe('classical import with CKM_RSA_AES_KEY_WRAP (an EC P-256 private key is the target)', () => {
     it.each(Object.entries(CLASSICAL_PROFILES))(
-      '%s: 384-byte RSA part + 40-byte AES-KWP part, recovered key identical, structure opens by hand',
+      '%s: blob = RSA part + measured AES-KWP part, key recovered, signature proves it, structure opens by hand',
       (_provider, profile) => {
         const r = runClassicalImport(ctx, profile)
         expect(r.rsaPartBytes).toBe(profile.rsaBits / 8)
-        expect(r.kwpPartBytes).toBe(40)
-        expect(r.wrappedBytes).toBe(384 + 40)
+        // Measured, not typed in: the parts add up, and RFC 5649 makes the KWP part a multiple of 8.
+        expect(r.wrappedBytes).toBe(r.rsaPartBytes + r.kwpPartBytes)
+        expect(r.kwpPartBytes % 8).toBe(0)
+        expect(r.kwpPartBytes).toBeGreaterThanOrEqual(80)
+        expect(r.kwpPartBytes).toBeLessThanOrEqual(200)
+        expect(r.sourceKey.length).toBe(32)
+        expect(same(r.sourceKey, r.importedKey)).toBe(true)
+        expect(r.signatureVerified).toBe(true)
         expect(r.matches).toBe(true)
         expect(r.structureVerified).toBe(true)
-        expect(r.sourceKey.length).toBe(32)
       }
     )
 
     it.each(['sha256', 'sha1'] as const)(
-      'accepts a blob made by an independent implementation (Node RSA-OAEP %s + AES-KWP)',
+      'accepts a blob made by an independent implementation (Node: EC key as PKCS#8, RSA-OAEP %s + AES-KWP)',
       (oaepHash) => {
         const kp = generateWrappingKeyPair(ctx, 3072)
-        const key = S.hsm_generateRandom(M, hSession, 32)
-        const blob = rsaAesKeyWrapReference(kp.publicKeyDer, key, oaepHash)
-        const handle = rsaAesKeyUnwrap(ctx, kp.privHandle, blob, {
-          aesKeyBits: 256,
-          oaepHash,
-        })
-        expect(same(S.hsm_extractKeyValue(M, hSession, handle), key)).toBe(true)
+        const ec = generateKeyPairSync('ec', { namedCurve: 'P-256' })
+        const pkcs8 = Uint8Array.from(ec.privateKey.export({ format: 'der', type: 'pkcs8' }))
+        const scalar = Uint8Array.from(
+          Buffer.from(ec.privateKey.export({ format: 'jwk' }).d!, 'base64url')
+        )
+        const blob = rsaAesKeyWrapReference(kp.publicKeyDer, pkcs8, oaepHash)
+        // RFC 5649: padded length plus an 8-byte header, after the 384-byte RSA part.
+        expect(blob.length).toBe(384 + 8 * (Math.ceil(pkcs8.length / 8) + 1))
+        const handle = rsaAesKeyUnwrap(ctx, kp.privHandle, blob, { aesKeyBits: 256, oaepHash })
+        // Same private scalar as Node holds, and a signature from the imported key verifies under Node's public key.
+        expect(same(S.hsm_extractKeyValue(M, hSession, handle), scalar)).toBe(true)
+        const message = 'independent check'
+        const sig = S.hsm_ecdsaSign(M, hSession, handle, message)
+        expect(
+          nodeVerify(
+            'sha256',
+            Buffer.from(message),
+            { key: ec.publicKey, dsaEncoding: 'ieee-p1363' },
+            sig
+          )
+        ).toBe(true)
       }
     )
 
     it('refuses a blob wrapped under one OAEP hash when opened under the other (control)', () => {
       const kp = generateWrappingKeyPair(ctx, 3072)
-      const target = S.hsm_generateAESKey(M, hSession, 256)
+      const target = S.hsm_generateECKeyPair(M, hSession, 'P-256', true, 'control').privHandle
       const blob = rsaAesKeyWrap(ctx, kp.pubHandle, target, { aesKeyBits: 256, oaepHash: 'sha1' })
       expect(() =>
         rsaAesKeyUnwrap(ctx, kp.privHandle, blob, { aesKeyBits: 256, oaepHash: 'sha256' })
@@ -129,7 +149,7 @@ describe('cloud KMS key exchange simulation (real engine)', () => {
 
     it('refuses a blob with a flipped bit in the AES-KWP part (control)', () => {
       const kp = generateWrappingKeyPair(ctx, 3072)
-      const target = S.hsm_generateAESKey(M, hSession, 256)
+      const target = S.hsm_generateECKeyPair(M, hSession, 'P-256', true, 'control').privHandle
       const opts = { aesKeyBits: 256 as const, oaepHash: 'sha256' as const }
       const blob = rsaAesKeyWrap(ctx, kp.pubHandle, target, opts)
       blob[blob.length - 1] ^= 1

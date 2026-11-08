@@ -124,11 +124,14 @@ describe('engine sequences', () => {
     expect(effectiveEngine('v33', suiteById('mlkem768'))).toBe('v32')
     expect(effectiveEngine('v33', suiteById('mlkem1024'))).toBe('v32')
     expect(hpkeEngineNote('v33', suiteById('mlkem768'))).toMatch(/same CKM_ML_KEM mechanism/)
+    expect(hpkeEngineNote('v32', suiteById('xwing'))).toBeUndefined()
+    expect(hpkeEngineNote('candidate', suiteById('xwing'))).toBeUndefined()
   })
 
   it('X-Wing keeps the v3.3 composite sequence, and the other engines are unchanged', () => {
     expect(effectiveEngine('v33', suiteById('xwing'))).toBe('v33')
-    expect(hpkeEngineNote('v33', suiteById('xwing'))).toBeUndefined()
+    expect(hpkeEngineNote('v33', suiteById('xwing'))).toMatch(/names this pair MLKEM768_X25519/)
+    expect(hpkeEngineNote('v33', suiteById('xwing'))).not.toMatch(/match/)
     expect(effectiveEngine('v32', suiteById('xwing'))).toBe('v32')
     expect(effectiveEngine('candidate', suiteById('mlkem768'))).toBe('candidate')
   })
@@ -150,13 +153,16 @@ describe('classical profiles', () => {
 })
 
 describe('reference CKM_RSA_AES_KEY_WRAP blob layout', () => {
-  it('is the RSA modulus size plus an AES-KWP part (RFC 5649 adds an 8-byte header to a 32-byte key)', async () => {
-    // A throwaway RSA key made by Node, only to check the layout of the reference.
+  it('is the RSA modulus size plus an AES-KWP part sized from the wrapped PKCS#8 key (RFC 5649: padded length plus an 8-byte header)', async () => {
+    // Throwaway keys made by Node, only to check the layout of the reference.
     const { generateKeyPairSync } = await import('node:crypto')
-    const { publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 })
-    const der = Uint8Array.from(publicKey.export({ format: 'der', type: 'pkcs1' }))
-    const blob = rsaAesKeyWrapReference(der, new Uint8Array(32).fill(7), 'sha256')
-    expect(blob.length).toBe(256 + 40)
+    const rsa = generateKeyPairSync('rsa', { modulusLength: 2048 })
+    const der = Uint8Array.from(rsa.publicKey.export({ format: 'der', type: 'pkcs1' }))
+    const ec = generateKeyPairSync('ec', { namedCurve: 'P-256' })
+    const pkcs8 = Uint8Array.from(ec.privateKey.export({ format: 'der', type: 'pkcs8' }))
+    const blob = rsaAesKeyWrapReference(der, pkcs8, 'sha256')
+    const kwpBytes = 8 * (Math.ceil(pkcs8.length / 8) + 1)
+    expect(blob.length).toBe(256 + kwpBytes)
   })
 })
 

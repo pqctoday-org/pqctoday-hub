@@ -5,7 +5,7 @@
  *  - Every provider sentence is the registered claim, word for word, with its
  *    Library reference id. The expected sentences are pinned here so a reword in
  *    the data file fails.
- *  - The four references dropped from the release are never cited.
+ *  - Four Library references are never cited by this step.
  *  - The headline facts the step teaches are pinned: no post-quantum key import
  *    into AWS KMS, Decapsulate returns the secret to the caller, Google's HPKE
  *    import is Preview, AWS and Azure HPKE are labelled as candidate designs.
@@ -14,7 +14,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import {
-  DROPPED_REFERENCE_IDS,
+  ENGINES,
   FLOWS,
   PROVIDERS,
   PROVIDER_CLAIMS,
@@ -52,6 +52,14 @@ const EXPECTED: Record<string, string> = {
   'Azure-Managed-HSM-BYOK':
     'Azure Managed HSM BYOK uses an RSA-HSM key exchange key that has only the import key operation.',
 }
+
+// Library references this step does not cite.
+const NOT_CITED_REFERENCE_IDS = [
+  'AWS-KMS-API-DeriveSharedSecret',
+  'AWS-KMS-External-Key-Stores',
+  'AWS-KMS-Infrastructure-Security',
+  'Thales-CipherTrust-Manager-Release-Notes',
+]
 
 const STEP7_FILES = [
   'data/cloudKmsExchangeData.ts',
@@ -93,12 +101,10 @@ describe('provider claims', () => {
 })
 
 describe('source hygiene', () => {
-  it.each(STEP7_FILES)('%s cites none of the dropped references', (rel) => {
+  it.each(STEP7_FILES)('%s does not cite the references that are not cited', (rel) => {
     const text = read(rel)
-    for (const id of DROPPED_REFERENCE_IDS) {
-      // The data file lists them once, in DROPPED_REFERENCE_IDS, so a guard can name them.
-      const allowed = rel === 'data/cloudKmsExchangeData.ts' ? 1 : 0
-      expect(text.split(id).length - 1, `${rel}: ${id}`).toBe(allowed)
+    for (const id of NOT_CITED_REFERENCE_IDS) {
+      expect(text.includes(id), `${rel}: ${id}`).toBe(false)
     }
   })
 
@@ -173,6 +179,79 @@ describe('what the step teaches', () => {
         expect(['inside-hsm', 'in-transit', 'caller-memory']).toContain(s.keyLocation)
       }
     }
+  })
+
+  it('the classical flows export an EC private key, because CKM_RSA_AES_KEY_WRAP wraps asymmetric targets', () => {
+    for (const id of ['aws-classical', 'gcp-classical', 'azure-classical']) {
+      const f = flowById(id)
+      const source = f.steps.find((s) => s.id === 'source')!
+      expect(source.title, id).toMatch(/EC P-256/)
+      expect(source.apiName, id).toMatch(/CKM_EC_KEY_PAIR_GEN/)
+      expect(f.summary, id).toMatch(/EC P-256 private key/)
+      expect(f.steps.map((s) => s.detail).join(' '), id).not.toMatch(/AES-256 key is created/)
+    }
+    expect(flowById('aws-classical').steps.find((s) => s.id === 'source')!.detail).toMatch(
+      /asymmetric target keys/
+    )
+  })
+
+  it('the temporary AES key size is only stated as a fact where the provider names it', () => {
+    const wrapParams = (id: string) =>
+      flowById(id)
+        .steps.find((s) => s.id === 'wrap')!
+        .params.join(' | ')
+    expect(wrapParams('gcp-classical')).toMatch(
+      /temporary AES key = 256 bits(?! \(simulation choice\))/
+    )
+    expect(wrapParams('aws-classical')).toMatch(/\(simulation choice\)/)
+    expect(wrapParams('azure-classical')).toMatch(/\(simulation choice\)/)
+  })
+
+  it('Azure imports with the REST call the BYOK specification shows, not a made-up operation', () => {
+    const step = flowById('azure-classical').steps.find((s) => s.id === 'import')!
+    expect(step.apiName).toBe('PUT /keys/<key-name>')
+    expect(step.params).toContain('key_hsm = the transfer blob')
+    expect(step.params).toContain('kty = EC-HSM')
+    expect(step.apiName).not.toMatch(/Import key \(BYOK\)/)
+  })
+
+  it('the Google HPKE flow says software protection, Preview and pre-wrapped keys', () => {
+    const f = flowById('gcp-hpke')
+    expect(f.verdict).toMatch(
+      /software-protected keys only, as Preview, and only with pre-wrapped keys/
+    )
+    expect(f.steps.find((s) => s.id === 'publish')!.params).toContain('protection level = SOFTWARE')
+  })
+
+  it('the candidate HPKE flows cite no classical claim', () => {
+    expect(flowById('aws-hpke').claimIds).toEqual([])
+    expect(flowById('azure-hpke').claimIds).toEqual([])
+  })
+
+  it('the HPKE seal step labels info and aad as the simulation\u2019s choice', () => {
+    const seal = flowById('gcp-hpke').steps.find((s) => s.id === 'seal')!
+    expect(seal.params.join(' | ')).toMatch(/info = empty \(simulation choice/)
+    expect(seal.params.join(' | ')).toMatch(/aad = empty \(simulation choice\)/)
+  })
+
+  it('shows the ML-KEM key spec as the API value, and the GovCloud note without a disagreement claim', () => {
+    expect(flowById('aws-mlkem').steps.find((s) => s.id === 'public')!.params).toContain(
+      'KeySpec = ML_KEM_768'
+    )
+    const note = providerById('aws').note ?? ''
+    expect(note).toMatch(/AWS GovCloud \(US\)/)
+    expect(note).not.toMatch(/differ/)
+  })
+
+  it('the v3.3 text does not say the draft matches X-Wing and says it defines its own composition and no HPKE mechanism', () => {
+    const v33 = ENGINES.find((e) => e.id === 'v33')!.standing
+    expect(v33).not.toMatch(/\bmatch/i)
+    expect(v33).toMatch(/defines CKM_COMP_KEM, a composite KEM, and no HPKE mechanism/)
+    expect(v33).toMatch(/defines its own composition/)
+    expect(v33).toMatch(/can still change/)
+    expect(ENGINES.find((e) => e.id === 'candidate')!.standing).toMatch(
+      /in neither PKCS#11 v3\.2 nor the v3\.3 draft/
+    )
   })
 
   it('names three providers', () => {

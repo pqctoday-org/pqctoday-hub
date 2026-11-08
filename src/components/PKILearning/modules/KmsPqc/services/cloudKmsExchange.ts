@@ -29,7 +29,6 @@
  */
 import {
   hsm_generateRandom,
-  hsm_generateAESKey,
   hsm_importAESKey,
   hsm_importGenericSecret,
   hsm_extractKeyValue,
@@ -42,6 +41,8 @@ import {
   hsm_encapsulate,
   hsm_decapsulate,
   hsm_ecdhDerive,
+  hsm_ecdsaSign,
+  hsm_ecdsaVerify,
   hsm_hkdf,
   hsm_wrapKeyMech,
   hsm_unwrapKeyMech,
@@ -61,9 +62,13 @@ import {
   CKA_EXTRACTABLE,
   CKA_ENCRYPT,
   CKA_DECRYPT,
+  CKA_PRIVATE,
+  CKA_SIGN,
   CKA_UNWRAP,
   CKA_VALUE_LEN,
   CKK_AES,
+  CKK_EC,
+  CKO_PRIVATE_KEY,
   CKO_SECRET_KEY,
   CKM_SHA256,
   CKM_SHA_1,
@@ -210,19 +215,33 @@ const importedAesTemplate = (keyBits: 128 | 192 | 256, canUnwrap = false): AttrD
   ...(canUnwrap ? [{ type: CKA_UNWRAP, boolVal: true } as AttrDef] : []),
 ]
 
+/**
+ * What C_UnwrapKey needs to know about the EC private key the provider recovers. The classical
+ * flows export an EC P-256 private key because CKM_RSA_AES_KEY_WRAP is defined for asymmetric
+ * target keys (PKCS#11 v3.2, 6.1.19).
+ */
+export const ecPrivateImportTemplate = (): AttrDef[] => [
+  { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+  { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+  { type: CKA_TOKEN, boolVal: false },
+  { type: CKA_PRIVATE, boolVal: true },
+  { type: CKA_SENSITIVE, boolVal: false },
+  { type: CKA_EXTRACTABLE, boolVal: true },
+  { type: CKA_SIGN, boolVal: true },
+]
+
 /** C_UnwrapKey(CKM_RSA_AES_KEY_WRAP): the provider recovers the key inside its HSM. Returns the new key handle. */
 export function rsaAesKeyUnwrap(
   ctx: Hctx,
   privHandle: number,
   wrapped: Uint8Array,
   opts: RsaAesWrapOptions,
-  importedKeyBits: 128 | 192 | 256 = 256
+  template: AttrDef[] = ecPrivateImportTemplate()
 ): number {
   const { M, hSession } = ctx
   const p = buildRsaAesWrapParams(M, opts)
   const mech = buildMech(M, CKM_RSA_AES_KEY_WRAP, p.ptr, p.len)
   const wrappedPtr = writeBytes(M, wrapped)
-  const template = importedAesTemplate(importedKeyBits)
   const tpl = buildTemplate(M, template)
   const phKey = allocUlong(M)
   try {
@@ -311,25 +330,31 @@ export interface ClassicalImportResult {
   rsaKeyReused: boolean
   /** Length of the wrapping public modulus in bytes (the RSA-OAEP part of the blob). */
   rsaPartBytes: number
-  /** Length of the AES-KWP part of the blob (RFC 5649 pads and adds an 8-byte header). */
+  /** Length of the AES-KWP part of the blob, measured (RFC 5649 pads the wrapped encoding and adds an 8-byte header). */
   kwpPartBytes: number
   wrappedBytes: number
   wrapped: Uint8Array
-  /** The key material the third party wanted to import. */
+  /** The private scalar of the EC P-256 key the third party exports. */
   sourceKey: Uint8Array
-  /** What the provider's HSM holds after unwrap. */
+  /** The private scalar the provider's HSM holds after unwrap. */
   importedKey: Uint8Array
+  /** A signature made with the imported key verifies under the original public key. */
+  signatureVerified: boolean
+  /** The scalars are equal and the signature check passed. */
   matches: boolean
-  /** Whether the blob splits as expected: RSA-OAEP(temp AES key) ‖ AES-KWP(target). */
+  /** Whether the blob splits as expected: RSA-OAEP(temp AES key) followed by AES-KWP(target key). */
   structureVerified: boolean
 }
 
+const PROOF_MESSAGE = 'cloud-kms-exchange: proof of possession'
+
 /**
- * Whole classical import, both sides: provider generates the RSA wrapping key
- * pair, the third-party HSM wraps a fresh AES-256 key under the public half, the
- * provider unwraps it. The structure check decrypts the RSA part and unwraps the
- * AES-KWP part by hand, so it does not rely on the combined mechanism agreeing
- * with itself.
+ * Whole classical import, both sides: the provider generates the RSA wrapping key
+ * pair, the third-party HSM wraps an EC P-256 private key under the public half,
+ * and the provider unwraps it. The structure check decrypts the RSA part and
+ * unwraps the AES-KWP part by hand, so it does not rely on the combined mechanism
+ * agreeing with itself. The imported key is also proven by signing with it and
+ * verifying under the original public key.
  */
 export function runClassicalImport(
   ctx: Hctx,
@@ -338,17 +363,24 @@ export function runClassicalImport(
   const { M, hSession } = ctx
   // Provider side: wrapping key pair (public half is what GetParametersForImport / the KEK download / the import job returns).
   const rsa = getWrappingKeyPair(ctx, profile.rsaBits)
-  // Third-party HSM: the key to be exported. Extractable only because CKM_RSA_AES_KEY_WRAP wraps an extractable key.
-  const source = hsm_generateAESKey(M, hSession, 256)
-  const sourceKey = hsm_extractKeyValue(M, hSession, source)
+  // Third-party HSM: the key to be exported. The private key is extractable only because the wrap mechanism has to read it.
+  const source = hsm_generateECKeyPair(M, hSession, 'P-256', true, 'exported EC key')
+  const sourceKey = hsm_extractKeyValue(M, hSession, source.privHandle)
 
   const opts: RsaAesWrapOptions = { aesKeyBits: profile.aesKeyBits, oaepHash: profile.oaepHash }
-  const wrapped = rsaAesKeyWrap(ctx, rsa.pubHandle, source, opts)
+  const wrapped = rsaAesKeyWrap(ctx, rsa.pubHandle, source.privHandle, opts)
   const rsaPartBytes = profile.rsaBits / 8
   const kwpPartBytes = wrapped.length - rsaPartBytes
 
-  const imported = rsaAesKeyUnwrap(ctx, rsa.privHandle, wrapped, opts, 256)
+  const imported = rsaAesKeyUnwrap(ctx, rsa.privHandle, wrapped, opts)
   const importedKey = hsm_extractKeyValue(M, hSession, imported)
+  let signatureVerified = false
+  try {
+    const sig = hsm_ecdsaSign(M, hSession, imported, PROOF_MESSAGE)
+    signatureVerified = hsm_ecdsaVerify(M, hSession, source.pubHandle, PROOF_MESSAGE, sig)
+  } catch {
+    signatureVerified = false
+  }
 
   // Independent structure check: split the blob, undo the RSA part with RSA-OAEP, then AES-KWP the rest.
   let structureVerified = false
@@ -362,7 +394,7 @@ export function runClassicalImport(
       CKM_AES_KEY_WRAP_KWP,
       tempAes,
       kwpPart,
-      importedAesTemplate(256)
+      ecPrivateImportTemplate()
     )
     structureVerified =
       equalBytes(hsm_extractKeyValue(M, hSession, inner), sourceKey) &&
@@ -380,7 +412,8 @@ export function runClassicalImport(
     wrapped,
     sourceKey,
     importedKey,
-    matches: equalBytes(sourceKey, importedKey),
+    signatureVerified,
+    matches: equalBytes(sourceKey, importedKey) && signatureVerified,
     structureVerified,
   }
 }
@@ -520,10 +553,11 @@ export function effectiveEngine(engine: HpkeEngine, suite: HpkeImportSuite): Hpk
 }
 
 export function hpkeEngineNote(engine: HpkeEngine, suite: HpkeImportSuite): string | undefined {
-  if (engine === 'v33' && isPure(suite)) {
+  if (engine !== 'v33') return undefined
+  if (isPure(suite)) {
     return 'Pure ML-KEM uses the same CKM_ML_KEM mechanism in the v3.3 draft as in v3.2, so this run is identical to the v3.2 run. CKM_COMP_KEM in the v3.3 draft covers composite KEMs only.'
   }
-  return undefined
+  return 'The v3.3 draft names this pair MLKEM768_X25519 and defines its own composition. This run uses CKM_COMP_KEM for the X-Wing suite; the interoperability check shows whether it agrees with the v3.2 sequence in this engine.'
 }
 
 /** The provider-side key objects an Open needs, whichever engine made them. */
@@ -1129,12 +1163,17 @@ export function observeClassical(r: ClassicalImportResult): StepObservations {
           : 'generated just now'
       }; the public modulus is ${r.rsaPartBytes} bytes`,
     ],
-    source: [`AES-256 key created: ${r.sourceKey.length} bytes`],
+    source: [
+      `EC P-256 key pair created; the private key to export is a ${r.sourceKey.length}-byte scalar`,
+    ],
     wrap: [
       `Wrapped blob: ${r.wrappedBytes} bytes = ${r.rsaPartBytes} bytes RSA-OAEP + ${r.kwpPartBytes} bytes AES-KWP`,
-      `Checked by hand: the RSA part opens to the temporary AES-${p.aesKeyBits} key and the KWP part opens to the original key: ${yesNo(r.structureVerified)}`,
+      `Checked by hand: the RSA part opens to the temporary AES-${p.aesKeyBits} key and the KWP part opens to the original private key: ${yesNo(r.structureVerified)}`,
     ],
-    import: [`Recovered key is byte-identical to the original: ${yesNo(r.matches)}`],
+    import: [
+      `Recovered private key is identical to the original: ${yesNo(r.matches)}`,
+      `A signature made with the imported key verifies under the original public key: ${yesNo(r.signatureVerified)}`,
+    ],
   }
 }
 
