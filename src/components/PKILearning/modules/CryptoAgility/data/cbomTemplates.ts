@@ -195,7 +195,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'Wrapping symmetric data-encryption keys (DEK) for cloud storage',
     quantumStatus: 'vulnerable',
     recommendation:
-      'Migrate to ML-KEM-768 KEM-based key wrapping when cloud provider adds PQC support (AWS KMS PQC preview available)',
+      'Migrate to ML-KEM-768 key establishment for the wrapping key where the cloud provider offers ML-KEM keys. AWS KMS offers ML-KEM keys (ML_KEM_512, ML_KEM_768, ML_KEM_1024), but Decapsulate returns the shared secret to your application, which derives the wrapping key itself, and AWS KMS still imports key material only under an RSA wrapping key',
     infrastructureLayer: 'Cloud',
   },
   {

@@ -230,7 +230,7 @@ const CELL_TEMPLATES: Record<string, CellTemplate | typeof NOT_APPLICABLE> = {
     owner: 'customer',
     customerActions: [
       'Decide CloudHSM vs cloud KMS for key custody',
-      'Plan ML-DSA / ML-KEM key generation once the KMS adds support',
+      'Generate ML-DSA / ML-KEM keys where your KMS already offers them (AWS KMS does) and plan the rest as each provider ships them',
     ],
     providerActions: ['Provider supplies the KMS / CloudHSM service and FIPS 140-3 module'],
     notes: 'Customer controls key custody choice. PQC GA depends on the KMS roadmap per region.',

@@ -1086,7 +1086,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       '0 — no platform is at Production',
     ],
     answer: 1,
-    why: "Ready here means shipping or in preview, not merely on a roadmap: AWS KMS's ML-KEM key agreement is in preview, while SGX, TDX, CCA and SEV-SNP are only Planned and TrustZone and Keystone are community-only.",
+    why: 'Ready here means shipping or in preview, not merely on a roadmap: AWS Nitro Enclaves is the one platform at Preview. AWS KMS offers ML-DSA signing keys (ML_DSA_44, ML_DSA_65, ML_DSA_87) and ML-KEM key-establishment keys (ML_KEM_512, ML_KEM_768, ML_KEM_1024). Nitro attestation documents still use ECDSA P-384. SGX, TDX, CCA and SEV-SNP are only Planned and TrustZone and Keystone are community-only.',
   },
   'confidential-computing/encryption-mechanisms': {
     prompt:
