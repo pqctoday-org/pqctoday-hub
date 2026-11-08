@@ -49,6 +49,7 @@ const FIPS_LABEL: Record<FipsStatus, string> = {
   revoked: 'revoked',
   'in-mip': 'in MIP queue',
   'not-validated': 'not validated',
+  unknown: 'Unknown',
 }
 
 const FIPS_COLOR: Record<FipsStatus, string> = {
@@ -58,6 +59,7 @@ const FIPS_COLOR: Record<FipsStatus, string> = {
   revoked: 'bg-status-error/15 text-status-error border-status-error/30',
   'in-mip': 'bg-status-info/15 text-status-info border-status-info/30',
   'not-validated': 'bg-muted text-muted-foreground border-border',
+  unknown: 'bg-muted text-muted-foreground border-border border-dashed',
 }
 
 const ESV_LABEL: Record<EsvStatus, string> = {
@@ -66,6 +68,7 @@ const ESV_LABEL: Record<EsvStatus, string> = {
   revoked: 'ESV revoked',
   'in-mip': 'ESV in queue',
   'not-validated': 'not validated',
+  unknown: 'Unknown',
 }
 
 const ESV_COLOR: Record<EsvStatus, string> = {
@@ -74,7 +77,11 @@ const ESV_COLOR: Record<EsvStatus, string> = {
   revoked: 'bg-status-error/15 text-status-error border-status-error/30',
   'in-mip': 'bg-status-info/15 text-status-info border-status-info/30',
   'not-validated': 'bg-muted text-muted-foreground border-border',
+  unknown: 'bg-muted text-muted-foreground border-border border-dashed',
 }
+
+/** The status as the Markdown export prints it: the other values keep their catalogue ids. */
+const exportedStatus = (status: string): string => (status === 'unknown' ? 'Unknown' : status)
 
 const POSTURE_LIGHT: Record<RiskColor, string> = {
   red: 'bg-status-error',
@@ -206,8 +213,10 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
         name,
         version,
         matched: Boolean(lib),
-        fipsStatus: lib?.fipsStatus ?? 'not-validated',
-        esvStatus: lib?.esvStatus ?? 'not-validated',
+        // A component with no catalogue record has no known validation status; saying
+        // "not-validated" would state a fact the record cannot support.
+        fipsStatus: lib?.fipsStatus ?? 'unknown',
+        esvStatus: lib?.esvStatus ?? 'unknown',
         pqcSupport: lib?.pqcSupport ?? '—',
         posture: lib?.posture ?? 'yellow',
         notes: lib?.notes ?? 'No posture record — add to inventory and research.',
@@ -368,7 +377,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
         for (const row of cbomSlice) {
           const safeNotes = row.notes.replace(/\|/g, '\\|')
           lines.push(
-            `| ${row.name} | ${row.version || '—'} | ${row.fipsStatus} | ${row.esvStatus} | ${row.pqcSupport} | ${row.posture} | ${safeNotes} |`
+            `| ${row.name} | ${row.version || '—'} | ${exportedStatus(row.fipsStatus)} | ${exportedStatus(row.esvStatus)} | ${row.pqcSupport} | ${row.posture} | ${safeNotes} |`
           )
         }
       } else {
