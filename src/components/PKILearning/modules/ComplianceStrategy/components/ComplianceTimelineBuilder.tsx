@@ -828,7 +828,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                   />
                 </label>
               )}
-              {typeof m.completed !== 'boolean' && (
+              {m.completed !== undefined && typeof m.completed !== 'boolean' && (
                 <p className="text-xs text-muted-foreground break-all">
                   Completion not assessed; preserved raw value:{' '}
                   {JSON.stringify(m.completed) ?? 'not recorded'}

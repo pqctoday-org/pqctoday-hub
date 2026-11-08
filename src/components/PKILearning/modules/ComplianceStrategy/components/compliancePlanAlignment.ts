@@ -22,7 +22,9 @@ export const recordedCompletionLabel = (value: unknown): string =>
     ? 'Yes'
     : value === false
       ? 'No'
-      : `Unknown (raw: ${JSON.stringify(value) ?? 'not recorded'})`
+      : value === undefined
+        ? 'Not marked complete'
+        : `Unknown (raw: ${JSON.stringify(value)})`
 
 /** Explicit sample links only; no applicability, technical or legal assessment. */
 export function assessPlanAlignment(
@@ -41,7 +43,7 @@ export function assessPlanAlignment(
     return unknown(
       'Sample alignment unknown: no milestone-to-obligation scope or supporting checks are recorded here. Link activities explicitly; unrelated activities receive no credit.'
     )
-  if (relevant.some((m) => typeof m.completed !== 'boolean'))
+  if (relevant.some((m) => m.completed !== undefined && typeof m.completed !== 'boolean'))
     return unknown(
       'Sample completion unknown: a linked activity has no Boolean completion record. Raw saved input is preserved, not treated as Done or planned work.'
     )

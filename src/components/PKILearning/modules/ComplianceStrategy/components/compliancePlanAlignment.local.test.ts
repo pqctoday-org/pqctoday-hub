@@ -87,7 +87,7 @@ describe('explicit fictional activity alignment', () => {
       expect(raw).toEqual(before)
     }
   )
-  it.each(['true', 'false', 1, 0, null, undefined])(
+  it.each(['true', 'false', 1, 0, null, { done: true }, []])(
     'keeps nonboolean completion %j unknown without mutating the record',
     (completed) => {
       const raw = { ...milestone, completed } as unknown as UserMilestone
@@ -100,4 +100,15 @@ describe('explicit fictional activity alignment', () => {
       expect(assess([milestone, raw]).status).toBe('unknown')
     }
   )
+  it('retains omitted legacy completion as unfinished, not malformed or completed', () => {
+    const raw = { ...milestone }
+    delete raw.completed
+    const before = structuredClone(raw)
+    expect(assess([raw])).toMatchObject({
+      status: 'on-track',
+      alignmentLabel: 'Planned by reference year',
+    })
+    expect(raw).toEqual(before)
+    expect(Object.hasOwn(raw, 'completed')).toBe(false)
+  })
 })

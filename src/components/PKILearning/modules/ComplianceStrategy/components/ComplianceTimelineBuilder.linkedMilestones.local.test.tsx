@@ -291,4 +291,31 @@ describe('linked sample plan inputs and real serialized outputs', () => {
       screen.queryByLabelText('Recorded completion year for Unrelated sample, certificate')
     ).not.toBeInTheDocument()
   })
+  it('links and reopens an ordinary legacy record with omitted completion as planned, preserving the omission', () => {
+    const raw = { ...legacy.milestones![0] }
+    delete raw.completed
+    sample.saved = { ...legacy, milestones: [raw] }
+    const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(
+      screen.queryByText(/Completion not assessed; preserved raw value/)
+    ).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('checkbox'))
+    expect(screen.getByText('Planned by reference year')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Done' })).not.toBeInTheDocument()
+    expect(screen.getByTestId('markdown')).toHaveTextContent('Not marked complete')
+    fireEvent.click(screen.getByRole('button', { name: 'Save sample timeline' }))
+    const saved = sample.add.mock.calls[0][0].inputs
+    expect(Object.hasOwn(saved.milestones[0], 'completed')).toBe(false)
+    expect(saved.milestones[0]).toEqual({ ...raw, obligationKeys: ['fw-sample-2030'] })
+    sample.saved = JSON.parse(JSON.stringify(saved))
+    view.unmount()
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(screen.getByText('Planned by reference year')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Done' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Mark done' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+    expect(Object.hasOwn(sample.saved.milestones![0], 'completed')).toBe(false)
+  })
 })
