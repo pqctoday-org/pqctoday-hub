@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Search, LayoutGrid, List, Bookmark, SlidersHorizontal, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -9,32 +9,24 @@ import type { PersonaId } from '@/data/learningPersonas'
 import type { NiceProficiencyTier } from '@/data/niceFramework'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { useModuleTopicKeywords } from '@/hooks/useModuleTopicKeywords'
 import { getNiceMapping } from '@/data/niceModuleMapping'
-import { ModuleCard, type ModuleItem } from '../ModuleCard'
+import { ModuleCard } from '../ModuleCard'
 import { NiceView } from '../NiceView'
 import { ResearcherTaxonomyFilter, type TaxonomySelection } from '../ResearcherTaxonomyFilter'
 import { modulesByAlgorithm, modulesByStandard } from '../moduleEnrichment'
 import { MODULE_TRACKS, MODULE_TO_TRACK, TRACK_COLORS } from '../moduleData'
-import { TOTAL_MODULE_COUNT, NICE_AFFINITY_PERSONAS } from './learnRedesign.helpers'
-import { matchesAllWords } from '@/utils/searchMatch'
+import {
+  BROWSE_ALL,
+  BROWSE_SORT_ITEMS,
+  BROWSE_STATUS_ITEMS,
+  NICE_AFFINITY_PERSONAS,
+  TOTAL_MODULE_COUNT,
+  filterAndSortModules,
+  resolveBrowseTrack,
+  type BrowseSortMode,
+} from './learnRedesign.helpers'
 
-type SortMode = 'default' | 'alpha' | 'difficulty' | 'duration' | 'status'
-
-const STATUS_ITEMS = [
-  { id: 'All', label: 'All statuses' },
-  { id: 'not-started', label: 'Not started' },
-  { id: 'in-progress', label: 'In progress' },
-  { id: 'completed', label: 'Completed' },
-]
-const SORT_ITEMS = [
-  { id: 'default', label: 'Recommended' },
-  { id: 'alpha', label: 'Name A–Z' },
-  { id: 'difficulty', label: 'Difficulty' },
-  { id: 'duration', label: 'Shortest first' },
-  { id: 'status', label: 'By status' },
-]
-const DIFF_ORDER: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 }
-const STATUS_ORDER: Record<string, number> = { 'in-progress': 0, 'not-started': 1, completed: 2 }
 const TIER_LEVELS: Record<NiceProficiencyTier, number> = {
   awareness: 0,
   practitioner: 1,
@@ -50,11 +42,6 @@ function passesTier(moduleId: string, maxTier: NiceProficiencyTier): boolean {
   const m = getNiceMapping(moduleId)
   if (!m) return true
   return TIER_LEVELS[m.tier] <= TIER_LEVELS[maxTier]
-}
-
-function minutesOf(duration: string): number {
-  const n = parseInt(duration, 10)
-  return Number.isNaN(n) ? 999 : n
 }
 
 /**
@@ -81,30 +68,13 @@ export const BrowseAllView = ({
   const myLearnModules = useBookmarkStore((s) => s.myLearnModules)
 
   const [search, setSearch] = useState('')
-  // Curated per-module topic keywords (e.g. "Purdue model" for IoT & OT). Loaded
-  // lazily on the first search so the ~100 KB topic-summary text stays out of the
-  // initial Learn bundle; until it arrives, title + description still match.
-  const [topicKeywords, setTopicKeywords] = useState<Record<string, string> | null>(null)
+  // Curated per-module topic keywords (e.g. "Purdue model" for IoT & OT), loaded lazily on the
+  // first search; until they arrive, title + description still match.
   const hasSearch = search.trim().length > 0
-  useEffect(() => {
-    if (!hasSearch || topicKeywords) return
-    let cancelled = false
-    import('@/data/moduleTopicSummaries')
-      .then((m) => {
-        if (!cancelled) setTopicKeywords(m.MODULE_TOPIC_KEYWORDS)
-      })
-      .catch(() => {
-        // Keyword enrichment is best-effort; search keeps working on title + description.
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [hasSearch, topicKeywords])
-  const [status, setStatus] = useState('All')
-  const [sort, setSort] = useState<SortMode>('default')
-  const [track, setTrack] = useState(() =>
-    initialTrack && MODULE_TRACKS.some((t) => t.track === initialTrack) ? initialTrack : 'All'
-  )
+  const topicKeywords = useModuleTopicKeywords(hasSearch)
+  const [status, setStatus] = useState(BROWSE_ALL)
+  const [sort, setSort] = useState<BrowseSortMode>('default')
+  const [track, setTrack] = useState(() => resolveBrowseTrack(initialTrack))
   const [savedOnly, setSavedOnly] = useState(false)
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [advancedOpen, setAdvancedOpen] = useState(initialNiceMode)
@@ -125,47 +95,27 @@ export const BrowseAllView = ({
 
   const savedSet = useMemo(() => new Set(myLearnModules), [myLearnModules])
 
-  const matches = useMemo(() => {
-    const q = search.trim()
-    const groups = MODULE_TRACKS.map((t) => {
-      const mods = t.modules.filter((m) => {
-        if (track !== 'All' && t.track !== track) return false
-        if (savedOnly && !savedSet.has(m.id)) return false
-        if (status !== 'All' && (modules[m.id]?.status ?? 'not-started') !== status) return false
-        if (!passesTier(m.id, tier)) return false
-        if (taxonomyIds && !taxonomyIds.has(m.id)) return false
-        if (q && !matchesAllWords([m.title, m.description, topicKeywords?.[m.id]], q)) return false
-        return true
-      })
-      return { track: t.track, modules: mods as ModuleItem[] }
-    }).filter((g) => g.modules.length > 0)
-
-    const sorter = (a: ModuleItem, b: ModuleItem): number => {
-      switch (sort) {
-        case 'alpha':
-          return a.title.localeCompare(b.title)
-        case 'difficulty':
-          return (
-            (DIFF_ORDER[a.difficulty ?? 'beginner'] ?? 0) -
-            (DIFF_ORDER[b.difficulty ?? 'beginner'] ?? 0)
-          )
-        case 'duration':
-          return minutesOf(a.duration) - minutesOf(b.duration)
-        case 'status':
-          return (
-            (STATUS_ORDER[modules[a.id]?.status ?? 'not-started'] ?? 1) -
-            (STATUS_ORDER[modules[b.id]?.status ?? 'not-started'] ?? 1)
-          )
-        default:
-          return 0
-      }
-    }
-    if (sort !== 'default') groups.forEach((g) => g.modules.sort(sorter))
-    return groups
-  }, [search, status, sort, track, savedOnly, savedSet, tier, taxonomyIds, modules, topicKeywords])
+  // The workforce proficiency tier and the algorithm / standard taxonomy are desktop-only
+  // narrowing; the phone catalogue shares everything else through filterAndSortModules.
+  const matches = useMemo(
+    () =>
+      filterAndSortModules({
+        tracks: MODULE_TRACKS,
+        search,
+        topicKeywords,
+        track,
+        status,
+        sort,
+        savedOnly,
+        savedIds: savedSet,
+        progress: modules,
+        extraFilter: (id) => passesTier(id, tier) && (!taxonomyIds || taxonomyIds.has(id)),
+      }),
+    [search, status, sort, track, savedOnly, savedSet, tier, taxonomyIds, modules, topicKeywords]
+  )
 
   const shownCount = matches.reduce((n, g) => n + g.modules.length, 0)
-  const trackChips = ['All', ...MODULE_TRACKS.map((t) => t.track)]
+  const trackChips = [BROWSE_ALL, ...MODULE_TRACKS.map((t) => t.track)]
 
   const WorkforceToggle = (
     <Button
@@ -204,16 +154,16 @@ export const BrowseAllView = ({
             />
           </div>
           <FilterDropdown
-            items={STATUS_ITEMS}
+            items={BROWSE_STATUS_ITEMS}
             selectedId={status}
             onSelect={setStatus}
             size="sm"
             defaultLabel="All statuses"
           />
           <FilterDropdown
-            items={SORT_ITEMS}
+            items={BROWSE_SORT_ITEMS}
             selectedId={sort}
-            onSelect={(id) => setSort(id as SortMode)}
+            onSelect={(id) => setSort(id as BrowseSortMode)}
             size="sm"
             defaultLabel="Recommended"
           />
@@ -273,7 +223,7 @@ export const BrowseAllView = ({
           {trackChips.map((t) => {
             const active = track === t
             const count =
-              t === 'All'
+              t === BROWSE_ALL
                 ? TOTAL_MODULE_COUNT
                 : (MODULE_TRACKS.find((x) => x.track === t)?.modules.length ?? 0)
             return (
@@ -289,7 +239,7 @@ export const BrowseAllView = ({
                     : 'border-border text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {t === 'All' ? 'All tracks' : t} · {count}
+                {t === BROWSE_ALL ? 'All tracks' : t} · {count}
               </Button>
             )
           })}

@@ -672,7 +672,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many learning modules does PQC Today offer?',
         answer:
-          'PQC Today offers dozens of interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
+          'PQC Today offers dozens of interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Governance & Risk, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
         deepLink: '/learn',
       },
       {

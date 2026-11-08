@@ -522,6 +522,13 @@ export default defineConfig([
                 '!@/components/PKILearning',
                 '@/components/PKILearning/*',
                 '!@/components/PKILearning/usePersonaPathItems',
+                // guidedRouting.ts — the six "Where do I start?" statements, their
+                // targets and the framework crosswalk, pure data (.ts, no JSX). The
+                // phone's Guided tab reads the same file the desktop disclosure
+                // (WhereToStartTree.tsx, which stays blocked) does, so the two
+                // cannot drift. The directory is already un-ignored with its `*`
+                // re-block above, so the file needs only its own line.
+                '!@/components/PKILearning/guidedRouting',
                 // moduleData.ts — MODULE_CATALOG/MODULE_TO_TRACK/TRACK_COLORS, pure
                 // data (.ts, cannot contain JSX). The same per-module title/duration/
                 // lm_id lookup PersonaPathPhase/MyPathView/BrowseAllView all read —

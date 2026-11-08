@@ -17,87 +17,12 @@ import { useNavigate } from 'react-router'
 import { Compass, ArrowRight, ArrowLeft, Map } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
-  FRAMEWORK_PHASES,
-  PHASE_ORDER,
-  type PhaseId,
-  type PhaseCrosswalk,
-} from '@/data/frameworkPhases'
-
-/** A branch in the App. B router: a learner situation → a recommended first stop. */
-interface StartBranch {
-  id: string
-  /** Self-reported situation. */
-  question: string
-  /** Why this route. */
-  rationale: string
-  /** Route target — a learn module path or a top-level page. */
-  to: string
-  /** Button label for the target. */
-  cta: string
-  /** Phase this branch enters, used to surface the crosswalk row. */
-  phase: PhaseId
-}
-
-const BRANCHES: StartBranch[] = [
-  {
-    id: 'never-started',
-    question: 'Haven’t started — no mandate or budget yet',
-    rationale:
-      'Begin with the threat and the executive case so you can secure sponsorship before any technical work.',
-    to: '/learn/quantum-threats',
-    cta: 'Start: Quantum Threats',
-    phase: 'p0',
-  },
-  {
-    id: 'mandate-no-inventory',
-    question: 'Have a mandate, but don’t know what crypto we run',
-    rationale:
-      'You are at Discovery. Build a cryptographic inventory / CBOM before scoring or planning.',
-    to: '/learn/crypto-agility',
-    cta: 'Start: Crypto Agility & CBOM',
-    phase: 'p1',
-  },
-  {
-    id: 'inventory-no-priorities',
-    question: 'Have an inventory, but no risk priorities',
-    rationale:
-      'You are at Risk Scoring. Produce a prioritised, two-track backlog from your inventory.',
-    to: '/learn/pqc-risk-management',
-    cta: 'Start: PQC Risk Management',
-    phase: 'p3',
-  },
-  {
-    id: 'priorities-no-roadmap',
-    question: 'Know the priorities, need a multi-year plan',
-    rationale: 'You are at Roadmap & Governance. Stand up a program, PMO, and gated roadmap.',
-    to: '/learn/migration-program',
-    cta: 'Start: Migration Program',
-    phase: 'p4',
-  },
-  {
-    id: 'roadmap-migrating',
-    question: 'Roadmap exists — actively migrating systems',
-    rationale: 'You are at Execution. Use the migration workbench to sequence waves and cutovers.',
-    to: '/migrate',
-    cta: 'Open: Migrate',
-    phase: 'p5',
-  },
-  {
-    id: 'unsure',
-    question: 'Not sure — assess me',
-    rationale: 'Run the guided readiness assessment; it routes you to the right phase and modules.',
-    to: '/assess',
-    cta: 'Open: Risk Assessment',
-    phase: 'foundations',
-  },
-]
-
-const CROSSWALK_FRAMEWORKS: { key: keyof PhaseCrosswalk; label: string }[] = [
-  { key: 'nistCsf', label: 'NIST CSF 2.0' },
-  { key: 'pqcc', label: 'PQCC' },
-  { key: 'etsiTr103619', label: 'ETSI TR 103 619' },
-  { key: 'dutchHandbook', label: 'Dutch PQC Handbook' },
-]
+  START_BRANCHES,
+  crosswalkRows,
+  phaseHeading,
+  routingSourceNote,
+  type StartBranch,
+} from './guidedRouting'
 
 interface WhereToStartTreeProps {
   /**
@@ -114,7 +39,7 @@ export const WhereToStartTree: React.FC<WhereToStartTreeProps> = ({ defaultOpen 
   const [selected, setSelected] = useState<StartBranch | null>(null)
   const [open, setOpen] = useState(defaultOpen)
 
-  const crosswalkPhase = selected ? FRAMEWORK_PHASES[selected.phase] : null
+  const rows = selected ? crosswalkRows(selected.phase) : []
 
   return (
     <details
@@ -146,7 +71,7 @@ export const WhereToStartTree: React.FC<WhereToStartTreeProps> = ({ defaultOpen 
               Pick the statement that best describes your program today:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {BRANCHES.map((b) => (
+              {START_BRANCHES.map((b) => (
                 <Button
                   key={b.id}
                   variant="ghost"
@@ -181,7 +106,7 @@ export const WhereToStartTree: React.FC<WhereToStartTreeProps> = ({ defaultOpen 
               <p className="text-xs text-muted-foreground">{selected.rationale}</p>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                  Phase {crosswalkPhase?.number ?? '—'}: {crosswalkPhase?.name}
+                  {phaseHeading(selected.phase)}
                 </span>
                 <Button
                   variant="gradient"
@@ -195,7 +120,7 @@ export const WhereToStartTree: React.FC<WhereToStartTreeProps> = ({ defaultOpen 
               </div>
             </div>
 
-            {crosswalkPhase && (
+            {rows.length > 0 && (
               <div className="rounded-lg border border-border bg-muted/40 p-3">
                 <div className="flex items-center gap-1.5 mb-2">
                   <Map size={13} className="text-primary" />
@@ -204,26 +129,19 @@ export const WhereToStartTree: React.FC<WhereToStartTreeProps> = ({ defaultOpen 
                   </span>
                 </div>
                 <dl className="space-y-1.5">
-                  {CROSSWALK_FRAMEWORKS.map((fw) => {
-                    const value = crosswalkPhase.crosswalk[fw.key]
-                    const text = Array.isArray(value) ? value.join(', ') : value
-                    return (
-                      <div key={fw.key} className="grid grid-cols-[7rem,1fr] gap-2 text-xs">
-                        <dt className="font-medium text-muted-foreground">{fw.label}</dt>
-                        <dd className="text-foreground/80">{text}</dd>
-                      </div>
-                    )
-                  })}
+                  {rows.map((row) => (
+                    <div key={row.key} className="grid grid-cols-[7rem,1fr] gap-2 text-xs">
+                      <dt className="font-medium text-muted-foreground">{row.label}</dt>
+                      <dd className="text-foreground/80">{row.text}</dd>
+                    </div>
+                  ))}
                 </dl>
               </div>
             )}
           </div>
         )}
 
-        <p className="text-[11px] text-muted-foreground">
-          Routing follows Applied Quantum App. B; crosswalk reads App. G ({PHASE_ORDER.length}{' '}
-          phases) from the canonical framework model.
-        </p>
+        <p className="text-[11px] text-muted-foreground">{routingSourceNote()}</p>
       </div>
     </details>
   )
