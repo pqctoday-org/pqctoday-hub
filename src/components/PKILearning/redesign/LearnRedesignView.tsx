@@ -59,7 +59,7 @@ export const LearnRedesignView = () => {
   // First open defaults to "My Path" — the page's headline ("one guided path …
   // tuned to your role"). With no role yet, My Path shows the cold-start prompt to
   // pick a role; landing on the dense Browse catalog instead read as "off". The
-  // ?mode= deep-link (mypath|browse) — and the legacy ?view=nice — open Browse.
+  // ?mode= deep-link (mypath|browse|guided) opens that view; the legacy ?view=nice opens Browse.
   const [mode, setMode] = useState<Mode>(() => {
     const m = searchParams.get('mode')
     if (m === 'browse') return 'browse'
