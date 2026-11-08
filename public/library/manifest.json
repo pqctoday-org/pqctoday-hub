@@ -25544,6 +25544,51 @@
       "unified": "converted",
       "admittedAt": "2026-11-07T20:18:48.063760+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "draft-ietf-mls-pq-ciphersuites-07",
+      "title": "ML-KEM and Hybrid Cipher Suites for Messaging Layer Security",
+      "url": "https://datatracker.ietf.org/doc/html/draft-ietf-mls-pq-ciphersuites-07",
+      "status": "downloaded",
+      "filename": "draft-ietf-mls-pq-ciphersuites-07.html",
+      "sizeBytes": 93482,
+      "contentType": "text/html",
+      "sha256": "29878f89dfdfc2611d5b777286da994486dd10c89db760d2a572e9a50e26a9b6",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-08T16:54:15.283877+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "draft-ietf-jose-hpke-pq-pqt-02",
+      "title": "JOSE HPKE PQ & PQ/T Algorithm Registrations",
+      "url": "https://datatracker.ietf.org/doc/html/draft-ietf-jose-hpke-pq-pqt-02",
+      "status": "downloaded",
+      "filename": "draft-ietf-jose-hpke-pq-pqt-02.html",
+      "sizeBytes": 223072,
+      "contentType": "text/html",
+      "sha256": "3f9f4ebfc7fb9f9611d53aec799ad1ab2ff47e32a0ae4869b434be6be1cba34c",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-08T16:54:51.906758+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "draft-ietf-mls-extensions-11",
+      "title": "The Messaging Layer Security (MLS) Extensions",
+      "url": "https://datatracker.ietf.org/doc/html/draft-ietf-mls-extensions-11",
+      "status": "downloaded",
+      "filename": "draft-ietf-mls-extensions-11.html",
+      "sizeBytes": 218112,
+      "contentType": "text/html",
+      "sha256": "2082bcec61e8fe97cc70fd501383337c95a7aea5c786f9b3462bcb3ddf5146c6",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-08T16:55:07.667516+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
