@@ -14,6 +14,8 @@
  * - "DARPA PQMS" is not a programme we could find a primary source for.
  * - ML-KEM and ML-DSA rest on Module-LWE / Module-SIS, not Ring-LWE.
  * - McEliece dates from 1978, so "50+ years" (or "over 50 years") of cryptanalysis is wrong.
+ * - CNSA 2.0 dates come from NSA's FAQ version 2.2 (1 January 2027, 31 December 2030,
+ *   31 December 2031); the 2022 per-category schedule ending in 2033 is only quoted as older guidance.
  * - The assessment retention periods are sample assumptions: HIPAA sets no medical-record
  *   retention minimum, PCI DSS sets no cardholder-data storage period, and FERPA financial
  *   aid periods are record-specific.
@@ -134,6 +136,16 @@ const RULES: Rule[] = [
     test: (s) => /HIPAA|PHI/.test(s) && /\b(7|seven)[- ]year (minimum |retention)/i.test(s),
   },
   {
+    // NSA's CNSA 2.0 FAQ (version 2.2) sets the NSS dates: new acquisitions 1 January 2027,
+    // phase-out 31 December 2030, algorithms mandated 31 December 2031. The 2022 per-category
+    // schedule that ended in 2033 may only be quoted as older guidance.
+    name: 'CNSA 2.0 given a 2033 end date without saying it is the older 2022 schedule',
+    test: (s) =>
+      /CNSA/.test(s) &&
+      /\b2033\b/.test(s) &&
+      !/2022|older|superseded|history|historical|previous|earlier|no longer|retired/i.test(s),
+  },
+  {
     // HIPAA sets no medical-record retention period (state law does); its 6 years covers the
     // compliance documentation. The corrected retention rows call the 6 years a sample assumption.
     name: 'HIPAA given as the source of a minimum retention period for health records',
@@ -169,6 +181,11 @@ const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
   },
   { file: /pqcassessment_/, text: '2 years (PCI DSS cardholder data)' },
   { file: /pqcassessment_/, text: '6 years (FERPA / financial aid)' },
+  // The combined module Q&A file still has one answer that gives CNSA 2.0 a 2033 end date.
+  {
+    file: /module_qa_combined_/,
+    text: 'required to transition to exclusively Post-Quantum Cryptography (PQC) by the year 2033',
+  },
 ]
 
 const isPending = (s: Sentence) =>
@@ -211,6 +228,17 @@ describe('research and healthcare claim invariants', () => {
     })
   }
 
+  it('gives the CNSA 2.0 31 December 2030 phase-out with its exception in every topic summary', () => {
+    // NSA's FAQ attaches an exception to the phase-out ("unless otherwise granted an exception").
+    const phaseOuts = SENTENCES.filter(
+      (s) => /module-topic-summaries\.md$/.test(s.file) && /31 December 2030/.test(s.text)
+    )
+    expect(phaseOuts.length).toBeGreaterThan(0)
+    for (const s of phaseOuts) {
+      expect(s.text, s.text.slice(0, 100)).toMatch(/exceptions? possible|exception is granted/)
+    }
+  })
+
   it('every pending data-fix entry still matches a banned sentence (delete it once fixed)', () => {
     const stale = PENDING_DATA_FIXES.filter(
       (p) =>
@@ -237,6 +265,12 @@ describe('research and healthcare claim invariants', () => {
       )
     ).toBe(false)
     expect(fires('McEliece has been studied since 1978.')).toBe(false)
+    expect(fires('CNSA 2.0 requires exclusive PQC for NSS by 2033.')).toBe(true)
+    expect(
+      fires(
+        "NSA's 2022 category guidance had web browsers, servers and cloud services exclusive by 2033 (CNSA 2.0)."
+      )
+    ).toBe(false)
     expect(fires('6 years (HIPAA minimum)')).toBe(true)
     // the Privacy Rule's "minimum necessary" standard is not a retention period
     expect(fires('Apply the HIPAA minimum necessary standard to every disclosure.')).toBe(false)
