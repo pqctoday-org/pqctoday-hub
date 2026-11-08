@@ -188,8 +188,41 @@ export const MediaDrmIntroduction: React.FC<Props> = ({ onNavigateToWorkshop }) 
             The text of this edition does not mention quantum computing. The authentication
             signatures and the Diffie-Hellman exchange are the rungs a NIST IR 8547 table lists; the
             scramblers and the hash functions are not signature or key-establishment schemes. The
-            lesson says nothing about how strong DES-56 or AES-128 is against a quantum computer,
-            and it does not grade DES-56 at all.
+            lesson says nothing about how strong DES-56 or AES-128 is against a quantum computer.
+            Its tables do not grade DES-56; the next note gives NIST&rsquo;s statement about DES.
+          </p>
+        </div>
+
+        <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30 space-y-2">
+          <h3 className="font-semibold text-foreground flex items-center gap-2">
+            <Info size={16} /> Specification support is not a production recommendation
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            This edition makes DES-56 in ECB mode the mandatory scrambler (Table 5.5) and
+            AES-128-CBC optional for the CICAM and mandatory for HD hosts only. That is what a 2015
+            specification required of compliant devices. It is not advice to deploy DES today. NIST
+            withdrew FIPS 46-3, the Data Encryption Standard, in 2005 because, in its words, DES
+            &ldquo;no longer provides the security that is needed to protect Federal government
+            information&rdquo;, and encouraged the use of AES (FIPS 197) instead (
+            <a
+              href="https://csrc.nist.gov/news/2005/withdrawal-of-fips-46-3-fips-74-and-fips-81"
+              className="text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              NIST announcement, 19 May 2005
+            </a>
+            ). That is a statement about classical security, made for US federal systems. It sets no
+            deadline for broadcast or media products, and this lesson states none.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            DES is absent from the NIST IR 8547 tables because they list public-key signature and
+            key-establishment schemes, so absence from them says nothing either way about DES. To
+            judge a conditional-access or CI Plus product today, a learner would ask what the 2015
+            text cannot answer: which edition of the specification the product implements, whether
+            it supports the AES-128-CBC scrambler, whether DES-56 can be switched off, and whether
+            anything can push a connection down to DES-56. The vendor&rsquo;s and the
+            licensor&rsquo;s current documentation, not this lesson, is where those answers sit.
           </p>
         </div>
       </LearnSection>

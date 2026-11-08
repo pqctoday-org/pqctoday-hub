@@ -30,7 +30,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       severity: 'critical',
       timeframe: '2025-2035 deadlines',
       exampleScenario:
-        'You sell into US national security systems: CNSA 2.0 expects exclusive use of its algorithms for software and firmware signing by 2030. If you sell to federal civilian agencies, EO 14412 directs a FAR rule on contractor PQC requirements, so procurement terms may change once that rule is final.',
+        'You sell into US national security systems: CNSA 2.0 requires its algorithms in new national security system acquisitions from 1 January 2027, and equipment that cannot support CNSA 2.0 is phased out by 31 December 2030, exceptions possible. If you sell to federal civilian agencies, EO 14412 directs a FAR rule on contractor PQC requirements, so procurement terms may change once that rule is final.',
     },
     {
       id: 'board-liability',

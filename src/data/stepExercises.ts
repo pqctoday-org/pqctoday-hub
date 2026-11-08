@@ -32,7 +32,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Inverting a hash function',
     ],
     answer: 0,
-    why: 'That is why RSA and ECC are marked broken. Lattice and hash problems have no known quantum speedup, which is what makes ML-KEM, ML-DSA and SLH-DSA candidates.',
+    why: "That is why RSA and ECC are marked broken. No efficient quantum algorithm is known for the lattice problems behind ML-KEM and ML-DSA, and hash-based signatures rest on hash-function security. Quantum-resistant does not mean no quantum speedup at all: generic quantum search (Grover's algorithm) still gives a quadratic speedup against brute-force key or preimage search, so parameters are chosen with it in mind.",
   },
   'pqc-101/algorithm-comparison': {
     prompt: 'ML-KEM is quantum-resistant because its security rests on which problem?',
@@ -224,14 +224,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // crypto-dev-apis
   'crypto-dev-apis/build-buy-oss': {
     prompt:
-      'Expand the Open Source strategy card. According to its PQC Implications, which libraries are the only ones offering FIPS certification for PQC?',
-    options: [
-      'OpenSSL oqsprovider and Bouncy Castle',
-      'AWS-LC and wolfSSL',
-      'liboqs and cloudflare/circl',
-    ],
+      'Expand the Open Source strategy card. According to its PQC Implications, which of these libraries has ML-KEM listed on an active CMVP certificate?',
+    options: ['wolfSSL', 'AWS-LC', 'Bouncy Castle'],
     answer: 1,
-    why: "Open source leads PQC adoption, but the card points out that FIPS-certified PQC is available only where a commercial entity funds the validation: AWS-LC through Amazon's backing and wolfSSL through its commercial licence.",
+    why: 'AWS-LC 3 certificates #5298 and #5314 list ML-KEM as approved, while wolfCrypt #4718 lists no PQC algorithm and Bouncy Castle #4943 approves only LMS signature verification. Read the certificate for the exact version you ship.',
   },
   'crypto-dev-apis/crypto-agility-patterns': {
     prompt:
@@ -598,7 +594,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     options: [
       'Cert-expiry risk (≤30 d)',
       'CBOM coverage: certificates',
-      '% inventory backed by current FIPS 140-3',
+      '% scoped deployments using validated FIPS 140-3 modules',
     ],
     answer: 1,
     why: 'Each KPI carries a suggested stakeholder list, and the designer fades any KPI whose list does not include the active audience. CBOM coverage of certificates is pitched at the CISO and architect, whereas cert-expiry risk and FIPS 140-3 coverage both name the Board.',
@@ -851,14 +847,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'healthcare-pqc/device-safety-simulator': {
     prompt:
-      'With the default Cardiac Pacemaker (32 KB RAM) selected, the feasibility panel says 2 of 4 evaluated algorithms are feasible. Which two, and why those?',
+      'With the default Cardiac Pacemaker (32 KB RAM) selected, the feasibility panel says 3 of 4 evaluated algorithms are feasible. Which three, and why those?',
     options: [
-      'LMS (H5/W8) and XMSS (H10) — hash-based verification needs only about 4-5 KB of RAM, whereas ML-DSA-44 verification exceeds the RAM and FN-DSA needs floating point the core lacks',
-      'ML-DSA-44 and FN-DSA — lattice schemes have the smallest verification footprint',
-      'ML-DSA-44 and LMS (H5/W8) — one lattice and one hash-based option for hybrid mode',
+      "LMS (H5/W8), XMSS (H10) and FN-DSA — in a firmware update the device only verifies; the signer-side state of hash-based schemes and the floating-point cost of FN-DSA signing fall on the manufacturer's signing system, while this module's model assumes ML-DSA-44 needs more RAM than the device has",
+      'ML-DSA-44, FN-DSA and LMS (H5/W8) — lattice schemes have the smallest verification footprint',
+      'LMS (H5/W8) and XMSS (H10) only — the device must track which one-time keys have been used and FN-DSA needs floating point on the device',
     ],
     answer: 0,
-    why: 'On a tiny Cortex-M0+ class implant the binding constraint is verification memory: hash-based signature verification fits in a few kilobytes, while ML-DSA-44 needs more RAM than the device has and its 1.3 KB public key strains flash, and FN-DSA relies on double-precision floating point that must be emulated without an FPU.',
+    why: "The pacemaker only verifies, so the question is verification cost. In this module's model, hash-based verification fits in a few kilobytes, and FN-DSA verification is integer-only (its floating-point cost is in signing, which the signer bears; modelled from Cortex-M4F measurements, not measured on a Cortex-M0+). The module assumes ML-DSA-44 verification needs more RAM than the 32 KB, which depends on the implementation chosen. Hash-based signature state is the signer's concern (NIST SP 800-208), not the device's.",
   },
   'healthcare-pqc/hospital-migration-planner': {
     prompt:
@@ -988,7 +984,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     prompt: 'Which algorithms does the step mark as accepted for CNSA 2.0 firmware signing?',
     options: ['LMS, XMSS and ML-DSA-87', 'Every ML-DSA parameter set', 'FN-DSA-512 and ML-DSA-44'],
     answer: 0,
-    why: 'CNSA 2.0 accepts ML-DSA-87, or LMS/XMSS per NIST SP 800-208, for software and firmware signing: preferred from 2025, exclusive by 2030.',
+    why: "CNSA 2.0 accepts ML-DSA-87, or LMS/XMSS per NIST SP 800-208, for software and firmware signing. NSA's CNSA 2.0 FAQ (version 2.2) sets three dates for national security systems: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted.",
   },
   'iot-pqc/constrained-handshake': {
     prompt: 'Why is the EDHOC exchange so much smaller than DTLS 1.3 with certificates?',
@@ -1094,14 +1090,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'confidential-computing/encryption-mechanisms': {
     prompt:
-      'You drag the AES Key Width slider in the Grover Impact Calculator to 192-bit. What do the Post-Quantum Security cell and the assessment box show?',
+      'You move the AES Key Size slider in the Grover Impact Calculator to 192-bit. What does the calculator show?',
     options: [
-      '96-bit, and the box turns red — 96 is below the 128-bit post-quantum floor the calculator treats as safe, even though the NIST cell still reads Category 3',
-      '96-bit with a green box — NIST Category 3 counts as safe',
+      '2^192 for classical key search, 2^96 for the idealized Grover iteration count, and NIST Category 3 as a definition — as three separate readouts, with no safe or unsafe verdict, because concrete cost depends on circuit depth, error correction, parallelism and hardware and whether a key size is acceptable is a policy choice',
+      '96-bit, and the box turns red because 96 is below a 128-bit post-quantum floor',
       "192-bit — Grover's algorithm does not affect AES-192",
     ],
     answer: 0,
-    why: "Grover's quadratic speedup halves the effective key strength, so the calculator reports half the classical bits and only marks a width safe when that halved figure still reaches 128 bits — which only the 256-bit setting does.",
+    why: "The calculator shows the idealized sequential iteration count (about 2^(n/2)) next to the classical count and NIST's category definition, and says plainly that these are not a measured attack cost. NIST notes that Grover's algorithm needs a long serial computation, so a realistic attack runs many smaller instances in parallel and the speedup is less dramatic; which key size to require is a policy choice.",
   },
   'confidential-computing/tee-hsm-channel': {
     prompt:
@@ -1183,10 +1179,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // vendor-risk
   'vendor-risk/contract-clauses': {
     prompt:
-      'In the PQC Compliance Deadline Year dropdown, which year is labelled as CNSA 2.0 full enforcement for all NSS and the year NIST IR 8547 disallows RSA/ECC under NIST standards?',
-    options: ['2030', '2033', '2035'],
+      'In the PQC Compliance Deadline Year dropdown, which year is labelled as the NSM-10 quantum-risk objective?',
+    options: ['2030', '2031', '2035'],
     answer: 2,
-    why: 'The dropdown stacks the milestones: 2030 is CNSA 2.0 exclusivity for signing and networking plus the NIST deprecation target, 2033 covers browsers, servers, cloud and operating systems, and 2035 is the point where CNSA 2.0 applies to every NSS and NIST IR 8547 disallows quantum-vulnerable public-key algorithms.',
+    why: "The dropdown lists the three dates of NSA's CNSA 2.0 FAQ (2027 for new acquisitions, 2030 for the phase-out of equipment that cannot support CNSA 2.0, 2031 for the mandate), the 2025 step of NSA's 2022 category guidance marked as the older schedule, and 2035, which it labels the NSM-10 quantum-risk objective.",
   },
   // research-quantum-impact
   'research-quantum-impact/how-to-act': {
@@ -1213,11 +1209,11 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'You pick Key Management Policy. Your assessment recorded hardcoded crypto (no runtime algorithm swap) and critical data sensitivity. Which Maximum Key Rotation Period is pre-selected?',
     options: [
       '90 days — critical data sensitivity always wins',
-      "2 years — hardcoded crypto can't be rotated often, so the longest safe interval is suggested",
+      '2 years — the tool pre-selects its longest interval when the assessment records hardcoded crypto',
       '1 year — the middle option when the two signals conflict',
     ],
     answer: 1,
-    why: 'The rotation suggestion checks crypto agility before data sensitivity: an estate that cannot swap algorithms at runtime cannot absorb frequent rotations, so it is pushed to the longest interval even when the data would otherwise justify a 90-day cycle.',
+    why: 'The tool checks crypto agility before data sensitivity and pre-selects its longest interval for hardcoded crypto, even where the data would otherwise justify a 90-day cycle. Treat that as the tool’s starting point, not as a finding about your keys: replacing a key on a schedule (the cryptoperiod) and swapping the algorithm (crypto agility) are separate capabilities, so a fixed algorithm does not by itself mean keys cannot be rotated. The right period comes from risk and implementation factors such as the volume of data, the security life of the data, the key-distribution method and the cost of replacement (NIST SP 800-57 Part 1 Rev. 5, Sec. 5.3.1), and whether your systems can replace keys is something to confirm system by system.',
   },
   // pqc-risk-management
   'pqc-risk-management/crqc-scenario-planner': {

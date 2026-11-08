@@ -122,14 +122,15 @@ const SPONSOR_AUDIENCES: SponsorAudience[] = [
   {
     icon: ShieldCheck,
     title: 'Enterprises',
-    description: 'You sponsor for audit-ready evidence and compliance support.',
+    description: 'You sponsor educational planning resources for stakeholder discussion.',
     bullets: [
-      'Audit-ready PDF of migration-readiness assessments',
+      'Illustrative assessment report with sample planning inputs',
+      'Evaluate assumptions and supporting checks with your own production tools; the sample is not audited evidence',
       'Named in the compliance digest — planned, not yet built',
       'Vendor-mapping data refreshed monthly',
       'Priority support and onboarding calls',
     ],
-    cta: { label: 'See a sample migration-readiness report', to: EXAMPLE_REPORT_URL },
+    cta: { label: 'See a sample assessment report', to: EXAMPLE_REPORT_URL },
   },
   {
     icon: UserRoundCog,
@@ -394,7 +395,9 @@ function EditorialPromise() {
             or assessments within <code className="text-accent">/migrate</code>,{' '}
             <code className="text-accent">/compliance</code>, vendor-mapping data, or any other
             editorial content. Sponsors are clearly marked. We publicly disclose any vendor request
-            to modify a listing; we do not act on those requests.
+            to modify a listing. As the editorial-independence policy explains, requests may lead
+            only to primary-source-backed factual corrections or updates reflecting a changed
+            authoritative source; sponsorship does not buy a change to editorial outcomes.
           </p>
           <p className="text-sm text-muted-foreground mb-4">
             This is the entire reason vendors and enterprises trust our data — and the entire reason

@@ -38,7 +38,6 @@ import {
   EVIDENCE_SCENARIOS,
   buildEvidenceMemo,
   type EvidenceAnswer,
-  PCI_AS_OF_LABEL,
   VERDICT_LABELS,
   readListing,
   type EvidenceScenario,
@@ -47,6 +46,20 @@ import {
 import { PciCite } from '../components/sections/PciSections'
 
 const VERDICTS: Verdict[] = ['supported', 'not-supported', 'needs-more']
+
+const captureDateLabel = (isoDate: string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return 'Not recorded'
+  const date = new Date(`${isoDate}T00:00:00Z`)
+  if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== isoDate) {
+    return 'Not recorded'
+  }
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date)
+}
 
 const stringConfig = (config: Record<string, unknown> | undefined, key: string) => {
   const v = config?.[key]
@@ -62,6 +75,7 @@ const ListingReader: FC<{ initialListing?: string }> = ({ initialListing }) => {
   )
   const entry = entries.find((e) => e.approvalNumber === selected) ?? entries[0]
   const readings = readListing(entry.fields, pciListingFixture.asOf)
+  const capturedOn = captureDateLabel(pciListingFixture.asOf)
 
   return (
     <section className="glass-panel space-y-4 p-5" aria-labelledby="pci-listing-reader">
@@ -71,9 +85,10 @@ const ListingReader: FC<{ initialListing?: string }> = ({ initialListing }) => {
             Part A — Read a real PTS HSM listing
           </h3>
           <p className="text-sm text-muted-foreground">
-            Three real listings, copied verbatim from PCI’s public listing popups on{' '}
-            {PCI_AS_OF_LABEL}. Listings 4-40266 and 4-70041 were checked again on 22 October 2026
-            and were unchanged. Listings change; follow the link for the live entry.
+            Three real listings, copied verbatim from PCI’s public listing popups. Historical
+            fixture capture: {capturedOn}. The fixture records that listings 4-40266 and 4-70041
+            were checked again on 22 October 2026 and were unchanged. Listings change; follow the
+            link for the live entry.
           </p>
         </div>
         <FilterDropdown
@@ -122,7 +137,7 @@ const ListingReader: FC<{ initialListing?: string }> = ({ initialListing }) => {
         >
           PCI SSC listing {entry.approvalNumber} <ExternalLink size={10} aria-hidden="true" />
         </a>{' '}
-        · read {PCI_AS_OF_LABEL} · found via: {entry.foundVia} · field meanings:{' '}
+        · fixture captured {capturedOn} · found via: {entry.foundVia} · field meanings:{' '}
         <PciCite refKey="listingFields" label="listing field definitions" />
       </p>
 

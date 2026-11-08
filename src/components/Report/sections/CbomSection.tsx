@@ -103,6 +103,15 @@ function StatBar({
 }
 
 function CompliancePanel({ summary }: { summary: CbomReportSummary }) {
+  if (summary.basis === 'assessment-self-report') {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {summary.quantumUnassessedCount ?? summary.cryptoAssetCount} self-reported algorithm
+        declarations. Deployment security and migration status have not been assessed by these
+        records.
+      </p>
+    )
+  }
   const { quantumSafeCount, quantumVulnerableCount, cryptoAssetCount } = summary
   if (cryptoAssetCount === 0) {
     return (
@@ -135,7 +144,11 @@ function CoveragePanel({ summary }: { summary: CbomReportSummary }) {
   return (
     <div className="space-y-3">
       <StatBar
-        label="Components with detected crypto-assets"
+        label={
+          summary.basis === 'assessment-self-report'
+            ? 'Self-reported algorithm records'
+            : 'Components with detected crypto-assets'
+        }
         count={summary.componentsWithCrypto}
         total={summary.componentCount}
         colorClass="bg-primary"
@@ -190,8 +203,20 @@ function AlgorithmList({ summary }: { summary: CbomReportSummary }) {
                   {algo.name}
                 </td>
                 <td className="py-2.5 pr-3 text-xs">
-                  <span className={algo.classical ? 'text-status-error' : 'text-status-success'}>
-                    {algo.classical ? 'Classical' : 'Post-quantum'}
+                  <span
+                    className={
+                      summary.basis === 'assessment-self-report'
+                        ? 'text-muted-foreground'
+                        : algo.classical
+                          ? 'text-status-error'
+                          : 'text-status-success'
+                    }
+                  >
+                    {summary.basis === 'assessment-self-report'
+                      ? 'Self-reported'
+                      : algo.classical
+                        ? 'Classical'
+                        : 'Post-quantum'}
                   </span>
                 </td>
                 <td className="py-2.5 text-xs text-muted-foreground">
@@ -209,7 +234,11 @@ function AlgorithmList({ summary }: { summary: CbomReportSummary }) {
                       algo.standard
                     )
                   ) : (
-                    <span className="italic">no published standard yet</span>
+                    <span className="italic">
+                      {summary.basis === 'assessment-self-report'
+                        ? 'Standard reference not recorded'
+                        : 'no published standard yet'}
+                    </span>
                   )}
                 </td>
               </tr>
@@ -274,7 +303,8 @@ export function CbomSection({ defaultOpen = false }: { defaultOpen?: boolean }) 
           <p className="text-sm text-muted-foreground leading-relaxed">
             From your {MODE_LABEL[summary.mode] ?? summary.mode} — {summary.componentCount}{' '}
             {summary.componentCount === 1 ? 'component' : 'components'}, {summary.cryptoAssetCount}{' '}
-            {summary.cryptoAssetCount === 1 ? 'crypto-asset' : 'crypto-assets'} detected, saved{' '}
+            {summary.cryptoAssetCount === 1 ? 'crypto-asset' : 'crypto-assets'}{' '}
+            {summary.basis === 'assessment-self-report' ? 'declared' : 'detected'}, saved{' '}
             {formatDate(latest.createdAt)}.
           </p>
 

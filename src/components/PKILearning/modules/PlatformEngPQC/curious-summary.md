@@ -8,7 +8,7 @@ Infrastructure-as-Code (IaC) tools typically default to quantum-vulnerable setti
 
 ### The Key Takeaway
 
-Automation is the only way to manage PQC correctly at scale. Platform teams should use Policy-as-Code via OPA Gatekeeper or Kyverno to block classical algorithms at cluster admission, and employ Prometheus metrics to continuously monitor for algorithmic drift.
+Automation is the only way to manage PQC correctly at scale. Platform teams should use Policy-as-Code via OPA Gatekeeper or Kyverno to block classical algorithms at cluster admission, and check which monitoring sources can report certificate algorithms (expiry metrics alone do not carry the key algorithm) to watch for algorithmic drift.
 
 ### What's Happening
 

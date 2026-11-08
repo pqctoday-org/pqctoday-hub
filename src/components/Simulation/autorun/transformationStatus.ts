@@ -11,7 +11,7 @@
  */
 import type { SimScenario, SimTrackId } from './scenarioConfig'
 
-export type OnTime = 'in-progress' | 'done' | 'done-late' | 'late'
+export type OnTime = 'in-progress' | 'done' | 'done-late' | 'done-unknown' | 'late'
 
 export interface TrackStatus {
   id: SimTrackId
@@ -45,6 +45,7 @@ export interface StatusInput {
   migrationFraction: number // 0..1 — fraction of P5 (migration execution) done
   allAtTopBand: boolean // every phase at its own top band
   currentYear: number
+  objectiveAchievedYears?: Readonly<Record<string, number>>
 }
 
 // Where each track sits along the migration-execution progress (HNDL→TNFL, critical→general).
@@ -88,14 +89,23 @@ export function transformationStatus(inp: StatusInput): TransformationStatus {
         : o.id === 'critical'
           ? criticalDone
           : inp.allAtTopBand
+    const achievedYear = inp.objectiveAchievedYears?.[o.id]
     const onTime: OnTime = done
-      ? inp.currentYear <= o.byYear
-        ? 'done'
-        : 'done-late'
+      ? achievedYear == null || !Number.isFinite(achievedYear)
+        ? 'done-unknown'
+        : achievedYear <= o.byYear
+          ? 'done'
+          : 'done-late'
       : inp.currentYear > o.byYear
         ? 'late'
         : 'in-progress'
-    return { id: o.id, label: o.label, byYear: o.byYear, done, onTime }
+    return {
+      id: o.id,
+      label: o.id === 'critical' ? 'Illustrative migration progress milestone' : o.label,
+      byYear: o.byYear,
+      done,
+      onTime,
+    }
   })
 
   return { maturity: inp.programMaturity, hndlExposure, tracks, objectives }

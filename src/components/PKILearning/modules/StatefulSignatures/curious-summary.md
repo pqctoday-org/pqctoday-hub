@@ -4,7 +4,7 @@ Stateful hash-based signatures (LMS and XMSS) derive their security only from th
 
 ### Why It Matters
 
-Because each One-Time Signature (OTS) key in the Merkle tree can only be used safely once, the signer must track a monotonic state counter. Reusing the same leaf index for two different messages guarantees a catastrophic security failure, allowing an attacker to forge signatures.
+Because each One-Time Signature (OTS) key in the Merkle tree can only be used safely once, the signer must track a monotonic state counter. Reusing the same leaf index for two different messages breaks the one-time guarantee: the two signatures reveal more of the hash chains than one does, which can let an attacker forge some signatures, and more with each further reuse. It does not necessarily hand over the whole private key, but the key must then be treated as compromised.
 
 ### The Key Takeaway
 

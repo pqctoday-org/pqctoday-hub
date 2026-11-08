@@ -129,7 +129,7 @@ export const ACME_STEPS: AcmeStep[] = [
     id: 'finalize',
     title: 'Step 5 — Finalize with ML-DSA-65 CSR',
     description:
-      'With the domain validated, the client submits a Certificate Signing Request containing its ML-DSA-65 public key. This is the real crypto step — generated live in your browser.',
+      'This walkthrough uses illustrative placeholder text for the key and CSR; no key generation, CSR signing or ACME submission is executed here.',
     rfc: 'RFC 8555 §7.4, RFC 2986 (PKCS#10)',
     sidebarLines: [
       'The CSR is encoded as PKCS#10 (RFC 2986), base64url-encoded in the finalize request.',
@@ -140,7 +140,7 @@ export const ACME_STEPS: AcmeStep[] = [
     mockRequest: {
       method: 'POST',
       url: 'https://acme.example.com/acme/order/1/finalize',
-      body: { csr: '<base64url-encoded PKCS#10 CSR — generated below>' },
+      body: { csr: '<illustrative CSR placeholder; not generated PKCS#10>' },
     },
     mockResponse: {
       status: 200,

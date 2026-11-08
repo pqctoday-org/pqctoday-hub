@@ -159,7 +159,7 @@ export const QuantumThreatTimeline: React.FC = () => {
             <span className="w-3 h-3 rounded bg-status-error/30 border border-status-error inline-block" />
             Migration window
           </span>
-          <span>NSA CNSA 2.0 deadline: 2030 | NIST mandate: 2030</span>
+          <span>CNSA 2.0 phase-out of unsupported equipment: 2030 | NIST mandate: 2030</span>
         </div>
       </div>
 

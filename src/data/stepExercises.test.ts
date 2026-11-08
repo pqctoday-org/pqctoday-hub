@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import fs from 'node:fs'
+import path from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { STEP_EXERCISES } from './stepExercises'
+import { POSTURE_KPIS } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/postureKPIs'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 
 describe('STEP_EXERCISES (round 9, wave 2)', () => {
@@ -60,5 +63,74 @@ describe('STEP_EXERCISES: SLH-DSA answers follow FIPS 205', () => {
     expect(text).toContain('8n bits')
     expect(all).not.toMatch(/Non-FIPS 205|four functions|internal hash families|SHAKE-128/)
     expect(ex.why).toContain('category 1')
+  })
+})
+
+describe('STEP_EXERCISES: key rotation is not inferred from a fixed algorithm', () => {
+  const ex = STEP_EXERCISES['pqc-governance/policy-generator']
+  const all = `${ex.prompt} ${ex.options.join(' ')} ${ex.why}`
+
+  it('keeps the tool pre-selection as the answer but attributes it to the tool', () => {
+    expect(ex.options[ex.answer]).toMatch(/^2 years — the tool pre-selects its longest interval/)
+    expect(all).not.toMatch(/can.t be rotated/i)
+    expect(all).not.toMatch(/cannot absorb frequent rotations/i)
+  })
+
+  it('separates the cryptoperiod from crypto agility and names the factors that set a period', () => {
+    expect(ex.why).toMatch(/separate capabilities/)
+    expect(ex.why).toMatch(/does not by itself mean keys cannot be rotated/)
+    expect(ex.why).toMatch(/volume of data/)
+    expect(ex.why).toMatch(/SP 800-57 Part 1 Rev\. 5, Sec\. 5\.3\.1/)
+  })
+})
+
+describe('STEP_EXERCISES: CNSA 2.0 dates follow the FAQ', () => {
+  const ex = STEP_EXERCISES['iot-pqc/firmware-signing']
+  it('gives the three FAQ dates for national security systems', () => {
+    expect(ex.why).toContain('1 January 2027')
+    expect(ex.why).toContain('31 December 2030')
+    expect(ex.why).toContain('31 December 2031')
+  })
+  it('does not state the 2022 category schedule as the requirement', () => {
+    expect(ex.why).not.toMatch(/preferred from 2025|exclusive by 2030/)
+  })
+})
+
+describe('STEP_EXERCISES: contract-clause deadline question follows the dropdown', () => {
+  const ex = STEP_EXERCISES['vendor-risk/contract-clauses']
+  it('asks for the NSM-10 objective year and does not teach the 2022 schedule', () => {
+    expect(ex.prompt).toMatch(/NSM-10 quantum-risk objective/)
+    expect(ex.options[ex.answer]).toBe('2035')
+    expect(ex.why).not.toMatch(/2033|full enforcement|browsers, servers, cloud/)
+  })
+})
+
+describe('posture KPI exercise names', () => {
+  const root = path.resolve(__dirname, '../components/PKILearning/modules/CryptoMgmtModernization')
+  const oldName = '% inventory backed by current FIPS 140-3'
+  const fipsKpi = POSTURE_KPIS.find((k) => k.name.includes('FIPS 140-3'))
+
+  it('uses the posture KPI name, not the retired one, in the quiz and the board exercise', () => {
+    expect(fipsKpi).toBeDefined()
+    const exercises = fs.readFileSync(
+      path.join(root, 'CryptoMgmtModernizationExercises.tsx'),
+      'utf8'
+    )
+    expect(exercises).not.toContain(oldName)
+    expect(exercises).toContain(fipsKpi!.name)
+    const ex = STEP_EXERCISES['crypto-mgmt-modernization/posture-kpi']
+    expect(ex.options).toContain(fipsKpi!.name)
+    expect(JSON.stringify(STEP_EXERCISES)).not.toContain(oldName)
+  })
+
+  it('keeps the dimmed-KPI answer on a KPI whose audience excludes the board', () => {
+    const ex = STEP_EXERCISES['crypto-mgmt-modernization/posture-kpi']
+    const answered = POSTURE_KPIS.find((k) => k.name === ex.options[ex.answer])
+    expect(answered).toBeDefined()
+    expect(answered!.audience).not.toContain('board')
+    for (const [i, option] of ex.options.entries()) {
+      if (i === ex.answer) continue
+      expect(POSTURE_KPIS.find((k) => k.name === option)?.audience, option).toContain('board')
+    }
   })
 })

@@ -9,8 +9,8 @@ interface FIPSPlatform {
   os: string
   fipsModule: string
   fipsStatus: 'fips-140-3' | 'fips-140-2' | 'pending' | 'not-supported'
-  mlKemInFips: 'yes' | 'no' | 'pending'
-  mlDsaInFips: 'yes' | 'no' | 'pending'
+  mlKemInFips: 'yes' | 'no' | 'pending' | 'unknown'
+  mlDsaInFips: 'yes' | 'no' | 'pending' | 'unknown'
   fipsCertDate: string
   pqcFipsCertTarget: string
   hybridStrategy: string
@@ -45,10 +45,12 @@ sudo reboot
 openssl list -providers
 # fips (version: 3.0.7)
 
-# Attempt ML-KEM in FIPS mode (illustrative output; confirm on your build):
-openssl speed ml-kem-768
-# openssl: Error loading provider: fips
-# ml-kem-768 not in FIPS module
+# Check which active providers offer ML-KEM (it is listed only when one does):
+openssl list -kem-algorithms | grep -i ml-kem
+
+# Check the group a real connection negotiates (look for the
+# "Negotiated TLS1.3 group" line):
+openssl s_client -groups X25519MLKEM768 -brief -connect host.example:443 </dev/null
 
 # Workaround: dual-provider config in openssl.cnf
 # [provider_sect]
@@ -72,7 +74,7 @@ openssl speed ml-kem-768
     hybridStrategy:
       'Use Ubuntu Pro FIPS mode for regulated workloads. Run oqsprovider alongside FIPS provider for new PQC services. Separate network segments or containers may be required by compliance auditors.',
     notes:
-      'Ubuntu FIPS mode requires Ubuntu Pro subscription. The FIPS 140-3 module (OpenSSL 3.0.x) does not include PQC algorithms. Ubuntu Pro FIPS updates are conservative — PQC will not be added to the 22.04 or 24.04 FIPS modules. A new Ubuntu FIPS module that includes PQC is an expectation in this lesson, not a cited plan or date.',
+      'Ubuntu FIPS mode requires Ubuntu Pro subscription. The FIPS 140-3 module is based on OpenSSL 3.0.x, which predates the PQC algorithms added in OpenSSL 3.5.0 (April 2025), so this lesson does not expect ML-KEM or ML-DSA in it; this lesson cites no plan to add them to the 22.04 or 24.04 FIPS modules. A new Ubuntu FIPS module that includes PQC is an expectation in this lesson, not a cited plan or date.',
     commands: `# Ubuntu Pro FIPS setup:
 sudo ua attach <Ubuntu Pro token>
 sudo ua enable fips
@@ -82,14 +84,16 @@ sudo reboot
 ubuntu-advantage status
 # fips: enabled
 
-# Check if ML-KEM is available in FIPS mode:
-openssl list -providers | grep oqs
-# (empty — oqsprovider not available in FIPS mode)
+# Check which providers are active and whether any offers ML-KEM:
+openssl list -providers
+openssl list -kem-algorithms | grep -i ml-kem
 
-# Install oqsprovider for PQC (non-FIPS workloads):
-sudo apt install openssl-oqsprovider
+# oqsprovider comes from the Open Quantum Safe project. This lesson cites
+# no Ubuntu package for it: check your release's archive or build it from
+# the project's source. Whether it may be loaded next to the FIPS provider
+# in an approved configuration is not settled here; ask your assessor.
 
-# Configure dual-provider /etc/ssl/openssl.cnf:
+# Dual-provider /etc/ssl/openssl.cnf sketch:
 # [provider_sect]
 # default = default_sect
 # fips = fips_sect
@@ -100,57 +104,60 @@ sudo apt install openssl-oqsprovider
   {
     id: 'windows-fips',
     os: 'Windows Server 2025',
-    fipsModule: 'SymCrypt (CNG FIPS 140-3 module, CMVP #5313)',
+    fipsModule: 'Microsoft SymCrypt Cryptographic Library (FIPS 140-3, CMVP #5313)',
     fipsStatus: 'fips-140-3',
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
     fipsCertDate:
-      'SymCrypt: CMVP certificate #5313 (FIPS 140-3, Level 1, Active, validated 5 June 2026)',
+      'SymCrypt: CMVP certificate #5313 (FIPS 140-3, Level 1, Active, initial validation 5 June 2026). The certificate applies when the module is operated in approved mode; its Security Policy lists the tested operational environments, which this lesson has not matched to a specific Windows Server 2025 build.',
     pqcFipsCertTarget:
       'Certificate #5313 lists no ML-KEM or ML-DSA (the CMVP snapshot shows No PQC Mechanisms Detected); check the CMVP listing for a later certificate.',
     hybridStrategy:
-      'ML-KEM and ML-DSA ship in the SymCrypt / CNG stack since November 2025, but the validated SymCrypt certificate lists no PQC mechanisms, and the Microsoft TLS Supported Groups page shows the hybrid groups (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) as not available in FIPS mode (legacy). Check both before enabling them where FIPS mode is required.',
+      'Treat hybrid ML-KEM TLS and FIPS-validated operation as two separate questions on Windows. ML-KEM and ML-DSA APIs ship in the SymCrypt / CNG stack since November 2025, but certificate #5313 lists no PQC mechanisms, and the Microsoft TLS Supported Groups page shows the hybrid groups (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) as supported but not enabled by default, with "Available in FIPS mode (legacy)" set to No. Microsoft\'s TLS and post-quantum FAQ says regulated environments should use a hybrid group and implementation permitted by the applicable policy and validated cryptographic module, which may mean SecP256r1_MLKEM768 or SecP384r1_MLKEM1024 rather than X25519_MLKEM768. Until the exact module, approved algorithm and operational environment are shown to include the group you negotiate, the position is unresolved, not compliant.',
     notes:
-      'Windows Server 2025 with KB5068861 (November 2025) adds ML-KEM and ML-DSA API support (FIPS 203/204) to the SymCrypt / CNG cryptographic stack. ML-DSA signing is implemented. The CMVP snapshot shows no ML-KEM or ML-DSA on SymCrypt certificate #5313 (Active); check the CMVP listing for updates.',
-    commands: `# Enable FIPS compliance mode (Group Policy):
-# Computer Configuration → Windows Settings → Security Settings →
-# Local Policies → Security Options:
-# "System cryptography: Use FIPS compliant algorithms"
-
-# Or via registry:
-Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\FipsAlgorithmPolicy" \`
-  -Name "Enabled" -Value 1
-
-# Verify ML-KEM in FIPS mode:
-# 1. Enable FIPS mode
-# 2. Test TLS 1.3 connection — X25519MLKEM768 still negotiated
-(New-Object System.Net.WebClient).DownloadString('https://cloudflare.com') > $null
-# Capture with Wireshark — verify supported_groups includes X25519MLKEM768
-
-# Check SymCrypt version:
+      'Windows Server 2025 with KB5068861 (November 2025) adds API support for ML-KEM and ML-DSA (FIPS 203/204) through CNG and .NET, building on the PQC algorithms in SymCrypt. The CMVP snapshot shows no ML-KEM or ML-DSA on SymCrypt certificate #5313 (Active); check the CMVP listing for updates. Microsoft also states that the legacy FIPS mode setting is no longer recommended or required to operate with FIPS approval: using FIPS-approved algorithms is the only configuration needed.',
+    commands: `# 1. Record the OS build, then compare it with the tested operational
+#    environments in the Security Policy of certificate #5313:
 Get-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion" \`
   | Select-Object CurrentBuild
-# SymCrypt version tied to Windows build`,
+
+# 2. List the groups the TLS stack reports for this computer (Microsoft
+#    lists the ML-KEM hybrid groups as supported but disabled by default):
+Get-TlsEccCurve
+
+# 3. Enable the group you intend to test, at the top of the list
+#    (a Group Policy "ECC Curve Order" setting overrides this cmdlet):
+Enable-TlsEccCurve -Name "X25519_MLKEM768" -Position 0
+
+# 4. Capture a real connection and read the group the server selected:
+#    Wireshark filter tls.handshake.extensions_key_share_group
+#    The ServerHello key_share names the single group chosen for the
+#    exchange (RFC 8446, section 4.2.8). A ClientHello that merely
+#    offers a hybrid group does not show what was negotiated.
+
+# 5. If the capture shows a hybrid group, that still does not make it
+#    validated: certificate #5313 lists no ML-KEM, so keep the position
+#    "unresolved" until your assessor accepts a specific module.`,
   },
   {
     id: 'freebsd-fips',
     os: 'FreeBSD 14.x',
     fipsModule: 'No FreeBSD FIPS module is cited in this lesson',
     fipsStatus: 'not-supported',
-    mlKemInFips: 'no',
-    mlDsaInFips: 'no',
+    mlKemInFips: 'unknown',
+    mlDsaInFips: 'unknown',
     fipsCertDate:
       'This lesson cites no FIPS 140-3 certificate for the FreeBSD base system; check the CMVP validated modules list',
     pqcFipsCertTarget: 'This lesson cites no FIPS certification roadmap for FreeBSD',
     hybridStrategy:
-      'This lesson cites no FreeBSD FIPS module, so it treats FIPS as not constraining here. Use security/oqsprovider port for ML-KEM and ML-DSA. No hybrid strategy needed — PQC and classical algorithms can coexist freely.',
+      'This lesson cites no FreeBSD FIPS module, so the FIPS position here is unresolved, not unconstrained. If your policy requires a validated module, identify the exact module, its approved algorithms and its operational environment on the CMVP list before deploying ML-KEM or ML-DSA. The security/openssl-oqsprovider port provides PQC algorithms; this lesson does not claim that it, or any other ML-KEM implementation, sits inside a validated module boundary.',
     notes:
-      'This lesson cites no CMVP certificate for a FreeBSD crypto module, so it assumes no FIPS compatibility constraint on ML-KEM/ML-DSA deployment here; check the CMVP validated modules list for the current position.',
-    commands: `# Install PQC support on FreeBSD:
-pkg install openssl-quic oqsprovider
+      'This lesson cites no CMVP certificate for a FreeBSD crypto module, so whether ML-KEM or ML-DSA can be used here within a FIPS requirement is not verified. Check the CMVP validated modules list for the exact module, its approved algorithms and its tested operational environments.',
+    commands: `# Install PQC support on FreeBSD (package or port name: openssl-oqsprovider):
+pkg install openssl-oqsprovider
 
 # Or from ports:
-cd /usr/ports/security/oqsprovider && make install clean
+cd /usr/ports/security/openssl-oqsprovider && make install clean
 
 # Configure /etc/ssl/openssl.cnf for oqsprovider:
 # [provider_sect]
@@ -160,15 +167,16 @@ cd /usr/ports/security/oqsprovider && make install clean
 # module = /usr/local/lib/ossl-modules/oqsprovider.so
 # activate = 1
 
-# Test ML-KEM:
-openssl speed ml-kem-768
+# Check that a provider offers ML-KEM (it is listed only when one does):
+openssl list -kem-algorithms | grep -i ml-kem
 
-# Build from source with PQC (alternative):
-cd /usr/ports/security/openssl3 && make WITH_PQC=yes install clean`,
+# Check the group a real connection negotiates (look for the
+# "Negotiated TLS1.3 group" line):
+openssl s_client -groups X25519MLKEM768 -brief -connect host.example:443 </dev/null`,
   },
 ]
 
-type FIPSStatusValue = 'yes' | 'no' | 'pending'
+type FIPSStatusValue = 'yes' | 'no' | 'pending' | 'unknown'
 
 const INCLUSION_BADGE: Record<
   FIPSStatusValue,
@@ -188,6 +196,11 @@ const INCLUSION_BADGE: Record<
     label: 'Pending Cert',
     className: 'text-status-warning bg-status-warning/10 border-status-warning/30',
     icon: <Clock size={12} />,
+  },
+  unknown: {
+    label: 'Not verified',
+    className: 'text-muted-foreground bg-muted border-border',
+    icon: <Shield size={12} />,
   },
 }
 
@@ -287,12 +300,13 @@ export const FIPSCompatibilityChecker: React.FC = () => {
             <strong className="text-foreground">Key insight:</strong> Shipping ML-KEM in an
             operating system library is not the same as having it inside a FIPS 140-3 validated
             module. The Windows SymCrypt certificate (#5313) lists no PQC mechanisms in our CMVP
-            snapshot; the Go cryptographic modules that Linux-based platforms build on have FIPS
-            140-3 certificates that list ML-KEM (for example #5247), and Apple corecrypto appears
-            only at the algorithm-validation (ACVP) level for ML-KEM and ML-DSA. Check the
-            validated-module list for your exact platform and version rather than assuming your
-            distribution is covered: a distribution shipping an ML-KEM implementation is not the
-            same as that implementation being inside a validated module boundary.
+            snapshot, whereas the Go Cryptographic Module (certificate #5247, a library for Go
+            applications rather than an operating system) lists ML-KEM key generation and
+            encapsulation/decapsulation. Check the validated-module list for your exact module,
+            approved algorithm and operational environment rather than assuming your platform is
+            covered: a platform shipping an ML-KEM implementation is not the same as that
+            implementation being inside a validated module boundary, and a module with no cited
+            certificate stays unresolved, not unconstrained.
           </p>
         </div>
       </div>
@@ -388,19 +402,19 @@ export const FIPSCompatibilityChecker: React.FC = () => {
             {
               phase: 'Phase 1 (Now)',
               description:
-                'Keep FIPS mode enabled for regulated workloads. Deploy Windows Server 2025 for services where ML-KEM TLS is required AND FIPS compliance is needed simultaneously.',
+                'Keep FIPS-approved algorithms for regulated workloads. Where a regulated service also wants ML-KEM TLS, the recommendation depends on three things you must show for your exact deployment: the validated module (its Security Policy and tested operational environment), that ML-KEM is among that module’s approved algorithms, and which group a real connection negotiates. For Windows Server 2025 and SymCrypt certificate #5313 the CMVP snapshot lists no ML-KEM, so this lesson does not recommend it for services that need both; treat that combination as unresolved until a certificate says otherwise.',
               status: 'current',
             },
             {
               phase: 'Phase 2 (no date cited)',
               description:
-                'This module’s advice: use dual-provider OpenSSL config on Linux: FIPS provider for regulated services, default+oqsprovider for new PQC services. Network segment separation satisfies some auditors.',
+                'This module’s advice, not a vendor statement: where your assessor accepts PQC services outside the validated boundary, use a dual-provider OpenSSL config on Linux: FIPS provider for regulated services, default+oqsprovider for new PQC services. Whether network segment separation is acceptable is the assessor’s decision.',
               status: 'near',
             },
             {
               phase: 'Phase 3 (no date cited)',
               description:
-                'This module’s projection, not a vendor statement: RHEL 10 and Ubuntu 26.04 LTS ship new FIPS modules including ML-KEM and ML-DSA. Upgrade regulated systems to new OS versions. Full FIPS + PQC without dual-provider workaround.',
+                'This module’s projection, not a vendor statement: RHEL 10 and Ubuntu 26.04 LTS ship new FIPS modules including ML-KEM and ML-DSA. If that happens, confirm on the CMVP list that the certificate for your exact module, version and environment includes the algorithm before dropping the dual-provider workaround.',
               status: 'future',
             },
           ].map((phase) => (

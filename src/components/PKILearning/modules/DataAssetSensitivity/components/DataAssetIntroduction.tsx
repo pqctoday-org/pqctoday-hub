@@ -306,7 +306,8 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                   {
                     name: 'GDPR',
                     region: 'EU',
-                    scope: 'EU resident PII',
+                    scope:
+                      'Personal data where GDPR Art. 3 applies (for example offering goods or services to, or monitoring the behaviour of, people in the EU)',
                     req: 'Art. 32 — appropriate technical measures; PQC implied as best practice evolves',
                     deadline: null,
                   },

@@ -180,7 +180,12 @@ test('executive KPI dashboard separates catalog context and withholds an unsuppo
 
   await expect(page.getByText('Catalog comparison — not part of your score:')).toBeVisible()
   await expect(page.getByText('Not yet available')).toBeVisible()
-  await expect(page.getByText(/Evidence coverage:/)).toBeVisible()
+  await expect(page.getByText(/^Scored-value coverage:/)).toBeVisible()
+  await expect(
+    page.getByText(
+      /This is value availability, not evidence verification or production readiness\./
+    )
+  ).toBeVisible()
   await expect(page.getByText('Regulatory Exposure Index')).toHaveCount(0)
   await expect(page.getByText('Board-Ready NIST CSF Composite')).toHaveCount(0)
 

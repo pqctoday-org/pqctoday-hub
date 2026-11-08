@@ -14,6 +14,7 @@ import type {
 import { getMaxSensitivity, getMaxRetentionYears, getIndustryRetentionDefault } from './scoring'
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+import { formatDriver } from '@/data/driverLabels'
 
 /** Names the CRQC planning assumption used for an exposure window. Jurisdiction
  * policy milestones are deliberately excluded: they can pace migration, but
@@ -311,6 +312,9 @@ export function generateExtendedActions(
 
   const hasHighSensitivity =
     input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')
+  const sensitivityDriver = input.sensitivityUnknown
+    ? 'dataSensitivity:unknown'
+    : `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`
   if (
     hasHighSensitivity &&
     input.dataRetention?.length &&
@@ -318,25 +322,22 @@ export function generateExtendedActions(
   ) {
     actions.push({
       priority: priority++,
-      action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
+      action:
+        'Evaluate post-quantum protection for data-at-rest in your highest-sensitivity stores. It cannot undo exposure of data that was already captured, so establish whether that has happened.',
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'high',
-      drivers: [
-        `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`,
-        `dataRetention:${input.dataRetention.join(',')}`,
-      ],
+      drivers: [sensitivityDriver, `dataRetention:${input.dataRetention.join(',')}`],
     })
   } else if (hasHighSensitivity) {
     actions.push({
       priority: priority++,
-      action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
+      action:
+        'Evaluate post-quantum protection for data-at-rest in your highest-sensitivity stores. It cannot undo exposure of data that was already captured, so establish whether that has happened.',
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'medium',
-      drivers: [
-        `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`,
-      ],
+      drivers: [sensitivityDriver],
     })
   }
 
@@ -628,7 +629,11 @@ export function generateQuickSummary(
     )
   }
 
-  if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
+  if (input.sensitivityUnknown) {
+    parts.push(
+      'Data sensitivity is not assessed. Any high-sensitivity inputs used in this illustrative planning result are assumptions, not observed classifications.'
+    )
+  } else if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
     parts.push(
       'High data sensitivity makes Harvest-Now-Decrypt-Later an important scenario. Use the full track to model retention against the disclosed CRQC planning anchor.'
     )
@@ -671,7 +676,11 @@ export function generateNarrative(
     )
   }
 
-  if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
+  if (input.sensitivityUnknown) {
+    parts.push(
+      'Data sensitivity is not assessed. Any high-sensitivity inputs used in this illustrative planning result are assumptions, not observed classifications.'
+    )
+  } else if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
     parts.push(
       'High data sensitivity makes Harvest Now, Decrypt Later an important scenario to investigate for long-lived encrypted data.'
     )
@@ -692,11 +701,11 @@ export function generateNarrative(
     unknown: 'Your migration status is unclear — this should be established as a first priority.',
   }
   parts.push(statusMsg[input.migrationStatus] || '')
-  if (input.dataRetention?.length) {
+  if (!input.retentionUnknown && input.dataRetention?.length) {
     const years = getMaxRetentionYears(input.dataRetention)
     if (years > 10) {
       parts.push(
-        `With a data retention period of ${years}+ years, your data may remain confidential beyond this site's CRQC planning anchor.`
+        `${formatDriver(`dataRetention:${input.dataRetention.join(',')}`)} (selected retention). Assess whether these lifetimes extend beyond this site's CRQC planning anchor.`
       )
     }
   }

@@ -38,7 +38,7 @@ export const DatabaseEncryptionExercises: React.FC<DatabaseEncryptionExercisesPr
       badge: 'Layers',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Oracle supports 3 layers (TDE + Column + Application) while PostgreSQL only has TDE via pg_tde and application-layer encryption. Oracle has HSM integration and FIPS validation; PostgreSQL does not. Both use RSA-OAEP for DEK wrapping — both need ML-KEM-1024 upgrade.',
+        'Oracle supports 3 layers (TDE + Column + Application) while PostgreSQL only has TDE via pg_tde and application-layer encryption. Oracle’s Transparent Data Encryption can use an HSM or external key manager; pg_tde reaches an HSM only through an external key provider such as a KMIP server, and Percona says it does not yet support post-quantum encryption. Where a DEK wrap uses RSA-OAEP, that wrap needs a post-quantum replacement; pg_tde protects its internal keys with a principal key from the key provider.',
       config: { step: 0 },
     },
     {
@@ -54,24 +54,24 @@ export const DatabaseEncryptionExercises: React.FC<DatabaseEncryptionExercisesPr
     },
     {
       id: 'byok-architecture',
-      title: '3. HYOK vs BYOK PQC Readiness',
+      title: '3. HYOK vs BYOK key custody',
       description:
-        'Compare all three key ownership patterns in the BYOK Architecture Designer. Start with Provider-Managed (30% score), then compare to BYOK (65%), and finally HYOK (90%). Study the architecture diagram for each — especially how ML-KEM-1024 is used differently in BYOK vs HYOK.',
+        'Compare the three key ownership patterns in the BYOK Architecture Designer: Provider-Managed, BYOK and HYOK. For each, ask who holds the master key, whether the cloud database engine receives the plaintext DEK after the on-premises unwrap, and how access is revoked.',
       badge: 'Architecture',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'HYOK achieves 90% PQC readiness because the ML-KEM key pair lives in the customer HSM — the cloud provider never has access to the plaintext master key. BYOK scores 65% because the cloud KMS temporarily holds the unwrapped CMK in HSM memory during operations, creating a brief exposure window.',
+        "The patterns differ in key custody and revocation, not in a measured readiness score; any percentages are illustrative. With HYOK the master key stays in the customer HSM, but the cloud database engine still receives the plaintext DEK after the on-premises unwrap. With BYOK the customer's key material is imported into the cloud KMS.",
       config: { step: 2 },
     },
     {
       id: 'queryable-encryption',
       title: '4. Queryable Encryption Compatibility Matrix',
       description:
-        'Review the Query Compatibility Matrix in the Queryable Encryption Lab. Compare MongoDB FLE 2.0 vs SQL Server Always Encrypted vs pg_tde. Focus on the PQC compatibility column and understand why pg_tde shows all zeros in the matrix.',
+        'Review the Query Compatibility Matrix in the Queryable Encryption Lab. Compare MongoDB FLE 2.0 vs SQL Server Always Encrypted vs pg_tde. Focus on the PQC compatibility column and understand why pg_tde shows a cross in every column, and read the condition notes under the matrix: "Unknown" means not verified here, not unsupported.',
       badge: 'Queryable',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        'pg_tde shows no queryable encryption support because it is a TDE-only solution — all queries run on plaintext after block-level decryption. MongoDB FLE 2.0 supports equality + range + prefix queries on encrypted fields, making it the most capable queryable encryption solution today, though PQC support is still planned.',
+        'pg_tde shows no queryable encryption support because it is a TDE-only solution — all queries run on plaintext after block-level decryption. The matrix compares documented conditions per operation, not an overall ranking. MongoDB documents equality queries from 7.0, range queries from 8.0, and prefix, suffix and substring queries as public preview in 8.2 and generally available in 9.0. SQL Server Always Encrypted adds range and LIKE matching only with a secure enclave. None of these schemes is shown as PQC-ready.',
       config: { step: 3 },
     },
     {

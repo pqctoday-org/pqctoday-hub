@@ -19,7 +19,7 @@
 
 /** Primitive availability of one algorithm in one runtime or library. */
 export type SupportStatus =
-  'stable' | 'experimental' | 'preview' | 'not-implemented' | 'third-party-only'
+  'stable' | 'experimental' | 'preview' | 'not-implemented' | 'third-party-only' | 'unverified'
 
 /** The API × algorithm matrix also tracks standards that have not shipped yet. */
 export type MatrixStatus = SupportStatus | 'planned'
@@ -393,6 +393,7 @@ export const STATUS_TEXT: Record<MatrixStatus, string> = {
   'not-implemented': 'Not implemented',
   'third-party-only': 'Third-party only',
   planned: 'Planned',
+  unverified: 'Not verified here',
 }
 
 export function getRuntimeSupport(
@@ -467,6 +468,7 @@ export const SUPPORT_STATUS_COLORS: Record<MatrixStatus, string> = {
   'third-party-only': 'bg-primary/10 text-primary border-primary/40',
   planned: 'bg-status-info/20 text-status-info border-status-info/50',
   'not-implemented': 'bg-muted/50 text-muted-foreground border-border',
+  unverified: 'bg-muted/30 text-muted-foreground border-dashed border-border',
 }
 
 export const SUPPORT_STATUS_LABELS: Record<MatrixStatus, string> = STATUS_TEXT
@@ -514,29 +516,30 @@ const OTHER_CELLS: PQCSupportCell[] = [
     status: 'third-party-only',
     version: 'BC 1.74+',
     notes:
-      'Not in the JDK; Falcon (the basis of FN-DSA, FIPS 206 not published) via the Bouncy Castle provider',
+      'Not in the JDK; the Bouncy Castle provider integrates Falcon from BC 1.74 (Bouncy Castle does not label it FN-DSA; FIPS 206 not published)',
     codeSnippet: 'KeyPairGenerator kpg = KeyPairGenerator.getInstance("FALCON-512", "BC");',
   },
   {
     apiId: 'jca-jce',
     algorithmId: 'lms-xmss',
     status: 'third-party-only',
-    version: 'BC 1.74+ (BC provider; 1.65+ in the lightweight API)',
-    notes: 'Via the Bouncy Castle provider. Stateful signatures — requires state management',
+    version: 'BC 1.74+ (BC provider)',
+    notes:
+      'Via the Bouncy Castle provider: LMS/HSS integration is documented in BC 1.74; the first release and provider status of XMSS/XMSS^MT are not verified here. Stateful signatures — requires state management',
   },
   {
     apiId: 'jca-jce',
     algorithmId: 'hqc',
     status: 'third-party-only',
     version: 'BC 1.72+ (BCPQC provider)',
-    notes: 'Not in the JDK; via the Bouncy Castle provider',
+    notes: 'Not in the JDK; via the Bouncy Castle BCPQC provider',
   },
   {
     apiId: 'jca-jce',
     algorithmId: 'mceliece',
     status: 'third-party-only',
     version: 'BC 1.71+ (BCPQC provider)',
-    notes: 'Not in the JDK; via the Bouncy Castle provider',
+    notes: 'Not in the JDK; via the Bouncy Castle BCPQC provider',
   },
 
   // OpenSSL — algorithms outside FIPS 203/204/205
@@ -545,7 +548,7 @@ const OTHER_CELLS: PQCSupportCell[] = [
     algorithmId: 'fn-dsa',
     status: 'third-party-only',
     version: 'via oqsprovider',
-    notes: 'Not native; requires oqsprovider (liboqs)',
+    notes: 'Not native; oqsprovider (liboqs) exposes Falcon, which is not labelled FN-DSA',
   },
   {
     apiId: 'openssl',
@@ -564,9 +567,10 @@ const OTHER_CELLS: PQCSupportCell[] = [
   {
     apiId: 'openssl',
     algorithmId: 'mceliece',
-    status: 'third-party-only',
-    version: 'via oqsprovider',
-    notes: 'Not native; via oqsprovider — very large keys',
+    status: 'not-implemented',
+    version: '-',
+    notes:
+      'Not in the current oqsprovider algorithm list (which says it lists all algorithms oqsprovider supports); liboqs support is a separate question',
   },
 
   // PKCS#11
@@ -594,30 +598,32 @@ const OTHER_CELLS: PQCSupportCell[] = [
   {
     apiId: 'pkcs11',
     algorithmId: 'fn-dsa',
-    status: 'planned',
-    version: 'v3.3+',
-    notes: 'Not yet in PKCS#11 standard — expected in future revision',
+    status: 'not-implemented',
+    version: '-',
+    notes:
+      'No FN-DSA or Falcon mechanism in published PKCS#11 v3.2; no later OASIS version is committed to here',
   },
   {
     apiId: 'pkcs11',
     algorithmId: 'lms-xmss',
     status: 'stable',
     version: 'v3.1',
-    notes: 'CKM_HSS_KEY_PAIR_GEN — stateful, requires state object',
+    notes:
+      'HSS/LMS: CKM_HSS_KEY_PAIR_GEN — stateful, requires state object. XMSS and XMSS^MT have their own mechanisms (CKM_XMSS, CKM_XMSSMT), defined separately in the v3.2 specification',
   },
   {
     apiId: 'pkcs11',
     algorithmId: 'hqc',
-    status: 'planned',
-    version: 'v3.3+',
-    notes: 'Awaiting NIST standardization',
+    status: 'not-implemented',
+    version: '-',
+    notes: 'No HQC mechanism in published PKCS#11 v3.2',
   },
   {
     apiId: 'pkcs11',
     algorithmId: 'mceliece',
     status: 'not-implemented',
     version: '-',
-    notes: 'Key sizes too large for most HSM tokens',
+    notes: 'No Classic McEliece mechanism in published PKCS#11 v3.2',
   },
 
   // KSP / CNG — algorithms outside ML-KEM / ML-DSA / SLH-DSA
@@ -626,7 +632,8 @@ const OTHER_CELLS: PQCSupportCell[] = [
     algorithmId: 'fn-dsa',
     status: 'not-implemented',
     version: '-',
-    notes: 'No CNG algorithm identifier',
+    notes:
+      'No FN-DSA identifier in the Microsoft-defined CNG list; third-party providers may add algorithms',
   },
   {
     apiId: 'ksp-cng',
@@ -641,14 +648,16 @@ const OTHER_CELLS: PQCSupportCell[] = [
     algorithmId: 'hqc',
     status: 'not-implemented',
     version: '-',
-    notes: 'No CNG algorithm identifier',
+    notes:
+      'No HQC identifier in the Microsoft-defined CNG list; third-party providers may add algorithms',
   },
   {
     apiId: 'ksp-cng',
     algorithmId: 'mceliece',
     status: 'not-implemented',
     version: '-',
-    notes: 'No CNG algorithm identifier',
+    notes:
+      'No Classic McEliece identifier in the Microsoft-defined CNG list; third-party providers may add algorithms',
   },
 
   // Bouncy Castle
@@ -657,28 +666,31 @@ const OTHER_CELLS: PQCSupportCell[] = [
     algorithmId: 'fn-dsa',
     status: 'stable',
     version: '1.74+',
-    notes: 'Falcon-512/1024 (the basis of FN-DSA; FIPS 206 not published)',
+    notes:
+      'Falcon, integrated in the BC provider from 1.74 (not labelled FN-DSA; FIPS 206 not published)',
   },
   {
     apiId: 'bouncy-castle',
     algorithmId: 'lms-xmss',
     status: 'stable',
-    version: '1.74+ (BC provider; 1.65+ in the lightweight API)',
-    notes: 'Full LMS/HSS and XMSS/XMSS^MT',
+    version: '1.74+ (BC provider)',
+    notes:
+      'LMS/HSS integrated in the BC provider from 1.74; XMSS/XMSS^MT and the first release in the lightweight API are not verified here',
   },
   {
     apiId: 'bouncy-castle',
     algorithmId: 'hqc',
     status: 'stable',
     version: '1.72+ (BCPQC provider)',
-    notes: 'HQC-128/192/256',
+    notes: 'HQC in the BCPQC provider',
   },
   {
     apiId: 'bouncy-castle',
     algorithmId: 'mceliece',
     status: 'stable',
     version: '1.71+ (BCPQC provider)',
-    notes: 'Classic McEliece — all parameter sets',
+    notes:
+      'Classic McEliece added to the BC PQC provider in 1.71; parameter-set coverage not verified here',
   },
 
   // JCProv (Thales)
@@ -686,50 +698,57 @@ const OTHER_CELLS: PQCSupportCell[] = [
     apiId: 'jcprov',
     algorithmId: 'ml-kem',
     status: 'stable',
-    version: 'Luna 7.x FW',
-    notes: 'Depends on HSM firmware version',
+    version: 'Luna HSM Firmware 7.9.0+',
+    notes:
+      "Thales documents ML-KEM on Luna HSM Firmware 7.9.0 or newer; check Thales's PQC page (https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm) for the matching client and JCProv versions",
   },
   {
     apiId: 'jcprov',
     algorithmId: 'ml-dsa',
     status: 'stable',
-    version: 'Luna 7.x FW',
-    notes: 'Depends on HSM firmware version',
+    version: 'Luna HSM Firmware 7.9.0+',
+    notes:
+      "Thales documents ML-DSA on Luna HSM Firmware 7.9.0 or newer; check Thales's PQC page (https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm) for the matching client and JCProv versions",
   },
   {
     apiId: 'jcprov',
     algorithmId: 'slh-dsa',
-    status: 'experimental',
-    version: 'Luna 8.x FW',
-    notes: 'Firmware update required',
+    status: 'unverified',
+    version: '—',
+    notes:
+      'Not verified here: the Thales PQC page names LMS-HSS, ML-DSA and ML-KEM only; see https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm',
   },
   {
     apiId: 'jcprov',
     algorithmId: 'fn-dsa',
-    status: 'not-implemented',
-    version: '-',
-    notes: 'Not yet supported in Luna firmware',
+    status: 'unverified',
+    version: '—',
+    notes:
+      'Not verified here: the Thales PQC page names LMS-HSS, ML-DSA and ML-KEM only; see https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm',
   },
   {
     apiId: 'jcprov',
     algorithmId: 'lms-xmss',
     status: 'stable',
-    version: 'Luna 7.x FW',
-    notes: 'Stateful — HSM manages state counter',
+    version: 'Luna HSM Firmware 7.8.9+',
+    notes:
+      'Thales documents LMS-HSS (stateful) from Luna HSM Firmware 7.8.9; XMSS is not documented there. Thales notes LMS-HSS keys cannot be copied, so there is no backup or HA replication',
   },
   {
     apiId: 'jcprov',
     algorithmId: 'hqc',
-    status: 'not-implemented',
-    version: '-',
-    notes: 'Not in Luna firmware',
+    status: 'unverified',
+    version: '—',
+    notes:
+      'Not verified here: the Thales PQC page names LMS-HSS, ML-DSA and ML-KEM only; see https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm',
   },
   {
     apiId: 'jcprov',
     algorithmId: 'mceliece',
-    status: 'not-implemented',
-    version: '-',
-    notes: 'Key sizes exceed HSM capacity',
+    status: 'unverified',
+    version: '—',
+    notes:
+      'Not verified here: the Thales PQC page names LMS-HSS, ML-DSA and ML-KEM only; see https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm',
   },
 ]
 
@@ -739,19 +758,22 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
   {
     apiId: 'bouncy-castle',
     date: '2022-Q3',
-    event: 'CRYSTALS-Kyber/Dilithium support added',
+    event:
+      'Release 1.72 (25 Sep 2022) adds CRYSTALS-Kyber and CRYSTALS-Dilithium as NIST finalist candidates in the BCPQC provider, before the standards existed',
     algorithms: ['ml-kem', 'ml-dsa'],
   },
   {
     apiId: 'openssl',
-    date: '2023-Q1',
-    event: 'oqsprovider 0.5 for OpenSSL 3.x',
+    date: '2023-Q2',
+    event:
+      'oqsprovider 0.5.0 (9 Jun 2023) for OpenSSL 3.x: pre-standard Kyber, Dilithium and SPHINCS+ names, not the final FIPS 203/204/205 algorithms',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
     apiId: 'bouncy-castle',
-    date: '2024-Q2',
-    event: 'Updated to FIPS 203/204/205 final names',
+    date: '2024-Q4',
+    event:
+      'Release 1.79 (30 Oct 2024) adds ML-KEM, ML-DSA and SLH-DSA under the final FIPS 203/204/205 names; NIST published the final standards on 13 Aug 2024',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
@@ -788,7 +810,13 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
     apiId: 'pkcs11',
     date: '2025-Q4',
     event:
-      'PKCS#11 v3.2 ratified as an OASIS Standard (3 June 2026) with PQC mechanisms; CS01 was approved Nov 2025',
+      'PKCS#11 v3.2 Committee Specification 01 (14 Nov 2025) with ML-KEM, ML-DSA and SLH-DSA mechanisms; a committee specification, not yet an OASIS Standard',
+    algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
+  },
+  {
+    apiId: 'pkcs11',
+    date: '2026-Q2',
+    event: 'PKCS#11 v3.2 published as an OASIS Standard (3 Jun 2026)',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {

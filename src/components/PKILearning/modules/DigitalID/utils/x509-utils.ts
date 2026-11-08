@@ -1,18 +1,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import 'reflect-metadata'
+import { AsnConvert, OctetString } from '@peculiar/asn1-schema'
+import { AlgorithmIdentifier, SubjectPublicKeyInfo } from '@peculiar/asn1-x509'
+import { PemConverter } from '@peculiar/x509'
 import type { CryptoProvider } from './crypto-provider'
 import type { CryptoKey } from '../types'
 import {
-  buildSelfSignedX509,
-  ECDSA_SHA256_OID_STR,
+  issueCertificate,
+  ecdsaRawSignatureToDer,
   derToPem,
 } from '../../HybridCrypto/services/certBuilder'
+import { assertSigningSelection, isHsmBackedKey } from './hsm-crypto-provider'
 
 const hexToBytes = (hex: string): Uint8Array => {
-  const bytes = new Uint8Array(hex.length / 2)
-  for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16)
-  }
-  return bytes
+  if (hex.length % 2 !== 0 || !/^[0-9a-f]+$/i.test(hex))
+    throw new Error('Invalid sample public-key hex')
+  return Uint8Array.from(hex.match(/../g)!, (byte) => parseInt(byte, 16))
 }
 
 export async function generateX509Certificate(
@@ -21,21 +24,71 @@ export async function generateX509Certificate(
   subjectName: string,
   onLog?: (msg: string) => void
 ): Promise<string> {
-  if (onLog) onLog(`Generating X.509 v3 Certificate for ${subjectName}...`)
-
-  const pubKeyBytes = hexToBytes(key.publicKey)
-
-  // Determine signature algorithm based on key type
-  const algOid = key.algorithm === 'ES384' ? '1.2.840.10045.4.3.3' : ECDSA_SHA256_OID_STR
-
-  // The certBuilder expects a generic signer: (tbs: Uint8Array) => Promise<Uint8Array>
-  const signerFn = async (tbs: Uint8Array): Promise<Uint8Array> => {
-    if (onLog) onLog(`Signing TBSCertificate payload via provider...`)
-    return provider.signRaw(key, tbs, onLog)
+  assertSigningSelection(key.algorithm, key.curve)
+  onLog?.(
+    `Generating a self-signed sample certificate for ${subjectName} (${key.algorithm}/${key.curve})...`
+  )
+  const ed = key.algorithm === 'EdDSA'
+  const signatureOid = ed
+    ? '1.3.101.112'
+    : key.algorithm === 'ES384'
+      ? '1.2.840.10045.4.3.3'
+      : '1.2.840.10045.4.3.2'
+  let publicKey: Uint8Array
+  let subjectAlgId: AlgorithmIdentifier
+  if (isHsmBackedKey(key)) {
+    const bytes = hexToBytes(key.publicKey)
+    publicKey = ed ? bytes : new Uint8Array(AsnConvert.parse(bytes, OctetString).buffer)
+    subjectAlgId = ed
+      ? new AlgorithmIdentifier({ algorithm: '1.3.101.112' })
+      : new AlgorithmIdentifier({
+          algorithm: '1.2.840.10045.2.1',
+          parameters: (key.curve === 'P-384'
+            ? new Uint8Array([6, 5, 43, 129, 4, 0, 34])
+            : new Uint8Array([6, 8, 42, 134, 72, 206, 61, 3, 1, 7])
+          ).buffer,
+        })
+  } else {
+    // The existing OpenSSL provider stores a base64-encoded PEM SPKI, not hex.
+    const spki = AsnConvert.parse(PemConverter.decode(atob(key.publicKey))[0], SubjectPublicKeyInfo)
+    subjectAlgId = spki.algorithm
+    publicKey = new Uint8Array(spki.subjectPublicKey)
   }
-
-  const derBytes = await buildSelfSignedX509(pubKeyBytes, signerFn, algOid, subjectName)
-
-  if (onLog) onLog(`X.509 Certificate successfully generated and signed.`)
-  return derToPem(derBytes, 'CERTIFICATE')
+  const expectedParameters =
+    key.curve === 'P-384'
+      ? new Uint8Array([6, 5, 43, 129, 4, 0, 34])
+      : new Uint8Array([6, 8, 42, 134, 72, 206, 61, 3, 1, 7])
+  const expectedAlgorithm = new AlgorithmIdentifier({
+    algorithm: ed ? '1.3.101.112' : '1.2.840.10045.2.1',
+    ...(ed ? {} : { parameters: expectedParameters.buffer }),
+  })
+  if (
+    !subjectAlgId.isEqual(expectedAlgorithm) ||
+    (ed && (publicKey.length !== 32 || subjectAlgId.parameters !== undefined)) ||
+    (!ed && (publicKey.length !== (key.curve === 'P-384' ? 97 : 65) || publicKey[0] !== 4))
+  ) {
+    throw new Error('Sample certificate public key does not match the selected signing algorithm')
+  }
+  const { der } = await issueCertificate({
+    subject: subjectName,
+    subjectKeyOid: subjectAlgId.algorithm,
+    subjectAlgId,
+    subjectPublicKey: publicKey,
+    issuer: null,
+    isCA: false,
+    keyUsage: ['digitalSignature'],
+    selfSigner: {
+      signatureOid,
+      signerFn: async (tbs) => {
+        onLog?.(`Signing sample TBSCertificate using ${key.algorithm}/${key.curve}...`)
+        const signature = await provider.signRaw(key, tbs, onLog)
+        // PKCS#11 ECDSA is r||s; X.509 requires DER. Ed25519 is already raw.
+        return !ed && isHsmBackedKey(key) ? ecdsaRawSignatureToDer(signature) : signature
+      },
+    },
+  })
+  onLog?.(
+    'Self-signed sample certificate generated; this does not establish qualified-certificate status.'
+  )
+  return derToPem(der, 'CERTIFICATE')
 }

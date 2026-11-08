@@ -14,6 +14,16 @@ const renderPage = () =>
   )
 
 describe('SponsorView', () => {
+  it('preserves the disclosed factual-correction exception without selling editorial outcomes', () => {
+    renderPage()
+    expect(screen.getByText(/requests may lead/)).toHaveTextContent(
+      'primary-source-backed factual corrections'
+    )
+    expect(screen.getByText(/requests may lead/)).toHaveTextContent('changed authoritative source')
+    expect(screen.getByText(/requests may lead/)).toHaveTextContent(
+      'sponsorship does not buy a change to editorial outcomes'
+    )
+  })
   it('does not use a personal gmail contact address', () => {
     renderPage()
     expect(screen.queryByText(/pqctoday@gmail\.com/i)).not.toBeInTheDocument()
@@ -22,7 +32,7 @@ describe('SponsorView', () => {
 
   it('routes the sample-report CTA through the ephemeral example-report path, not a bare /report', () => {
     renderPage()
-    const cta = screen.getByRole('link', { name: /See a sample migration-readiness report/i })
+    const cta = screen.getByRole('link', { name: 'See a sample assessment report' })
     expect(cta).toHaveAttribute('href', EXAMPLE_REPORT_URL)
   })
 

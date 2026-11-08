@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useMemo, useRef } from 'react'
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { Plus, TreePine, Loader2, Trash2, Info, AlertTriangle } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -51,10 +51,16 @@ const SPEED_OPTIONS = [
 interface MerkleTreeBuilderProps {
   /** Called whenever a tree is successfully built, so Step 2 can use the same tree. */
   onTreeBuilt?: (levels: MerkleNode[][], certs: CertLeaf[]) => void
+  onTreeInvalidated?: () => void
+  initialCerts?: CertLeaf[] | null
 }
 
-export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuilt }) => {
-  const [certs, setCerts] = useState<CertLeaf[]>(SAMPLE_CERTS.slice(0, 4))
+export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
+  onTreeBuilt,
+  onTreeInvalidated,
+  initialCerts,
+}) => {
+  const [certs, setCerts] = useState<CertLeaf[]>(initialCerts ?? SAMPLE_CERTS.slice(0, 4))
   const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
@@ -66,6 +72,14 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
   const [animationLevel, setAnimationLevel] = useState<number | null>(null)
   const [speedIdx, setSpeedIdx] = useState(1) // default: Normal
   const abortRef = useRef(false)
+  const buildRevision = useRef(0)
+  useEffect(
+    () => () => {
+      buildRevision.current += 1
+      abortRef.current = true
+    },
+    []
+  )
 
   // Form state for adding a cert
   const [newSubject, setNewSubject] = useState('')
@@ -93,27 +107,40 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
     setNewSubject('')
     setLevels(null)
     setAnimationLevel(null)
-  }, [newSubject, newAlgo, certs.length])
+    abortRef.current = true
+    buildRevision.current += 1
+    onTreeInvalidated?.()
+  }, [newSubject, newAlgo, certs.length, onTreeInvalidated])
 
-  const handleRemoveCert = useCallback((id: number) => {
-    setCerts((prev) => prev.filter((c) => c.id !== id))
-    setLevels(null)
-    setAnimationLevel(null)
-  }, [])
+  const handleRemoveCert = useCallback(
+    (id: number) => {
+      setCerts((prev) => prev.filter((c) => c.id !== id))
+      setLevels(null)
+      setAnimationLevel(null)
+      abortRef.current = true
+      onTreeInvalidated?.()
+    },
+    [onTreeInvalidated]
+  )
 
   const handleLoadSample = useCallback(() => {
     setCerts([...SAMPLE_CERTS])
     setLevels(null)
     setAnimationLevel(null)
-  }, [])
+    abortRef.current = true
+    buildRevision.current += 1
+    onTreeInvalidated?.()
+  }, [onTreeInvalidated])
 
   const handleBuildTree = useCallback(async () => {
     if (certs.length < 2) return
+    const revision = ++buildRevision.current
     abortRef.current = true // cancel any running animation
     setIsBuilding(true)
     setAnimationLevel(null)
     try {
       const result = await buildMerkleTree(certs)
+      if (revision !== buildRevision.current) return
       setLevels(result.levels)
 
       const speed = SPEED_OPTIONS[speedIdx].ms
@@ -157,7 +184,8 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
         <p className="text-sm text-muted-foreground">
           Add certificate leaves, then build the tree to see SHA-256 hashes computed at each level.
           Tap (or hover, or focus with the keyboard and press Enter) on any node to see its full
-          hash.
+          hash. For non-power-of-two sample sizes, this visualization duplicates the last leaf. RFC
+          9162 logs use an unbalanced construction instead, so their roots are not interchangeable.
         </p>
       </div>
 
@@ -165,7 +193,12 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-bold text-foreground">Certificate Leaves ({certs.length})</h4>
-          <Button onClick={handleLoadSample} variant="link" className="text-xs h-auto p-0">
+          <Button
+            onClick={handleLoadSample}
+            disabled={isBuilding}
+            variant="link"
+            className="text-xs h-auto p-0"
+          >
             Load 8 sample certs
           </Button>
         </div>
@@ -223,7 +256,7 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
           </div>
           <Button
             onClick={handleAddCert}
-            disabled={!newSubject.trim()}
+            disabled={!newSubject.trim() || isBuilding}
             variant="outline"
             className="flex items-center gap-1 px-3 py-1.5 h-auto text-xs bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
           >
@@ -352,13 +385,15 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
 
           {/* Root hash callout */}
           <div className="mt-4 bg-accent/10 rounded-lg p-3 border border-accent/30">
-            <div className="text-xs font-bold text-foreground mb-1">Signed Root Hash</div>
+            <div className="text-xs font-bold text-foreground mb-1">
+              Computed Root Hash — Unsigned
+            </div>
             <div className="text-[10px] font-mono text-accent break-all">
               {levels[levels.length - 1][0].hash}
             </div>
             <p className="text-[10px] text-muted-foreground mt-1">
-              In the MTC model, only this root hash is signed by the CA &mdash; one PQ signature
-              covers all {certs.length} certificates in the batch.
+              This builder computes an unsigned root. In the MTC model, the root is signed by the CA
+              &mdash; one PQ signature covers all {certs.length} certificates in the batch.
             </p>
           </div>
 

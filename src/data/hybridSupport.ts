@@ -108,3 +108,24 @@ export function matchesHybridFacet(product: SoftwareItem, facet: HybridFacet): b
   if (facet === 'kem-api') return kem.includes('api') || kem.includes('api-experimental')
   return product.hybridSigSupport === 'api' || product.hybridSigSupport === 'api-experimental'
 }
+
+/** What the catalogue's structured hybrid fields say about one product. */
+export type HybridSupportLevel = 'yes' | 'partial' | 'no' | 'not-assessed'
+
+/**
+ * Hybrid support from the catalogue's structured fields only, never the free-text
+ * description (which can say hybrid is not offered). A hybrid TLS group or a hybrid
+ * KEM / composite signature API reads 'yes'; support that is only experimental reads
+ * 'partial'; a structured entry that lists no hybrid support reads 'no'; a product
+ * with no structured entry reads 'not-assessed'.
+ */
+export function hybridSupportLevel(item: SoftwareItem): HybridSupportLevel {
+  const kem = item.hybridKemSupport ?? []
+  const sig = item.hybridSigSupport
+  if (kem.length === 0 && !sig) return 'not-assessed'
+  if (kem.some((t) => t === 'tls-default' || t === 'tls-optin' || t === 'api') || sig === 'api') {
+    return 'yes'
+  }
+  if (kem.includes('api-experimental') || sig === 'api-experimental') return 'partial'
+  return 'no'
+}

@@ -592,6 +592,8 @@ function riskRegister(sector: DemoSector): DemoDoc {
     data: md(
       `# Cryptographic Risk Register — ${ORG[sector]}`,
       '',
+      '**Fictional planning example — not a reviewed risk assessment.** Use these entries to discuss assumptions and proposed mitigations. In production risk-management tools, evaluate ownership, scheduled reviews, treatment status and change history; this sample report does not demonstrate those capabilities or risk reduction.',
+      '',
       '| Asset | Current algorithm | Threat | Likelihood (1–5) | Impact (1–5) | Mitigation |',
       '| --- | --- | --- | --- | --- | --- |',
       ...assets.map(
@@ -634,7 +636,7 @@ function migrationRoadmap(sector: DemoSector): DemoDoc {
     data: md(
       `# PQC Migration Roadmap (Two-Track) — ${ORG[sector]}`,
       '',
-      '## External Regulatory Deadlines',
+      '## External Milestones Selected For This Plan',
       `- ${REG[sector]}: regulators increasingly expect demonstrable PQC progress; binding US deadlines come from the June 2026 Executive Order (key establishment ${US_EO_KEM_YEAR}, signatures ${US_EO_SIG_YEAR})`,
       '',
       '## Track A — Confidentiality (KEM)',
@@ -980,11 +982,13 @@ function cryptoVulnerabilityWatch(sector: DemoSector): DemoDoc {
   return {
     title: 'Crypto Vulnerability Watch',
     data: md(
-      `# Crypto Vulnerability Watch — ${ORG[sector]}`,
+      `# Crypto Vulnerability Watch — illustrative example for ${ORG[sector]}`,
+      '',
+      '**Authored learning example — not a live vulnerability scan or current NVD snapshot.** Fixed entries and counts illustrate a report layout; they do not establish the vulnerabilities present in a selected estate.',
       '',
       '## openssl',
       '**CPE:** cpe:2.3:a:openssl:openssl:3.1.0:*',
-      '**CVEs:** 3 in scope (top 3 of 8 in NVD)',
+      '**Illustrative CVE counts:** 3 in scope (top 3 of 8 in the example)',
       '',
       '**CVE-2023-5363** · HIGH · CVSS 7.5 · 2023-10-24',
       'Incorrect cipher key and IV length processing. Upgrade to 3.1.4.',
@@ -994,9 +998,9 @@ function cryptoVulnerabilityWatch(sector: DemoSector): DemoDoc {
       '',
       '## libpqcrypto 0.0.20211031',
       '**CPE:** cpe:2.3:a:libpqcrypto:libpqcrypto:0.0.20211031:*',
-      '**CVEs:** 0 critical — no CVEs in NVD at this version',
+      '**Illustrative critical-CVE count:** 0 in this example; this does not establish the absence of vulnerabilities or NVD records for this version',
       '',
-      `*NVD snapshot: current | Filtered to cryptographic libraries in ${ORG[sector]} estate.*`
+      '*For a current assessment, use your vulnerability-management tool with the exact product versions, inventory scope, source timestamps and applicability checks. Consult [NVD](https://nvd.nist.gov/vuln/search); a missing record does not establish that a component is safe.*'
     ),
   }
 }
@@ -1006,9 +1010,11 @@ function cryptoVulnerabilityWatch(sector: DemoSector): DemoDoc {
 // ---------------------------------------------------------------------------
 function cryptoCbom(sector: DemoSector): DemoDoc {
   return {
-    title: 'Cryptographic Bill of Materials (CBOM)',
+    title: 'Illustrative CBOM summary',
     data: md(
-      `# Cryptographic Bill of Materials — ${ORG[sector]}`,
+      `# Illustrative CBOM summary — ${ORG[sector]}`,
+      '',
+      'Fictional sample components and planning counts for this scenario; no discovery of an organisation has been performed.',
       '',
       '| Component | Version | Algorithm | Key size | HNDL risk | PQC status |',
       '| --- | --- | --- | --- | --- | --- |',
@@ -1019,9 +1025,9 @@ function cryptoCbom(sector: DemoSector): DemoDoc {
       `| cosign | 2.0 | ECDSA P-256 | P-256 | No (TNFL) | Track B ${PROGRAM_START_YEAR + 1} |`,
       '| internal-tls-sidecar | 1.2.0 | TLS 1.3, ECDHE | P-256 | Yes | Wave 1 |',
       '',
-      '**Total classical assets:** 14 | **PQC-ready:** 0 | **Hybrid-capable:** 2',
+      '**Illustrative scenario totals (selected examples shown above):** Classical assets: 14 | PQC-ready: 0 | Hybrid-capable: 2',
       '',
-      `*CycloneDX CBOM v1.7 format (crypto-asset support). Generated against ${ORG[sector]} production estate.*`
+      'This is a human-readable Markdown summary, not a machine-readable CycloneDX export. In production tools, look for scoped discovery, component/version and algorithm/key-parameter relationships, provenance and a schema-valid export for the intended CycloneDX version. An inventory or catalogue entry alone does not establish deployed protection.'
     ),
   }
 }

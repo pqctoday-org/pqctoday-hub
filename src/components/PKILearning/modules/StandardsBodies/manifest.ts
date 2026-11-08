@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'standards-bodies',
-  contentVersion: 23,
+  contentVersion: 24,
   lm_id: 'LM-004',
   title: 'Standards, Certification & Compliance Bodies',
   description:

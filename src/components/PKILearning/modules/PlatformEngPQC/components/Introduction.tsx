@@ -428,32 +428,41 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           icon={<Activity size={20} className="text-primary" />}
         >
           <p className="text-muted-foreground">
-            Continuous monitoring detects algorithm drift — when classical certs re-enter the
-            cluster through CA fallback, manual issuance, or operator error. Four Prometheus-based
-            exporters cover the full platform crypto surface.
+            Continuous monitoring can help detect algorithm drift when the required observations are
+            collected. Verify source versions, field mappings and collection coverage; these
+            examples do not establish complete platform coverage.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             {[
               {
                 tool: 'cert-manager Prometheus Exporter',
-                signal: 'Detects ECDSA/RSA certs still in Ready state after migration deadline',
-                metric: 'certmanager_certificate_ready_status{key_algorithm=~"ECDSA.*"}',
+                conceptual: true,
+                signal: 'Observe readiness and expiry separately from certificate algorithms.',
+                metric:
+                  'Verify certificate identity, algorithm source and collection coverage. Readiness alone does not establish the algorithm; missing facts are Unknown.',
               },
               {
                 tool: 'x509-certificate-exporter',
-                signal: 'Cluster-wide scan of all TLS Secrets; identifies non-PQC key algorithms',
-                metric: 'x509_cert_key_algorithm{algorithm!~"id-ML-DSA.*"}',
+                conceptual: true,
+                signal: 'Reconcile observed certificates with the intended inventory.',
+                metric:
+                  'Check configured sources, collection health and documented fields. An expiry metric or recording rule cannot supply an unobserved algorithm; incomplete coverage stays Unknown.',
               },
               {
                 tool: 'HashiCorp Vault Audit Log',
-                signal: 'Detects ECDSA transit signing operations in Vault',
-                metric: 'vault_transit_sign_requests_total{key_type="ecdsa-p256"}',
+                conceptual: true,
+                signal: 'Correlate documented operation records with key metadata.',
+                metric:
+                  'Inspect the audit schema, key identity/version, redaction and collection gaps using sample records. Missing algorithm context is Unknown, not a proven downgrade.',
               },
               {
-                tool: 'Istio / Envoy TLS Metrics',
-                signal: 'Monitors PQC cipher suite adoption in service mesh connections',
-                metric: 'envoy_ssl_handshake{cipher_suite!~".*X25519MLKEM768.*"}',
+                tool: 'Istio / Envoy TLS Observability Requirements',
+                conceptual: true,
+                signal:
+                  'Observe cipher suite, negotiated key-exchange group and peer authentication separately.',
+                metric:
+                  'Verify the exporter version, field mappings and collection coverage before evaluating a known group against policy. Missing group data is Unknown, not evidence of non-PQC negotiation.',
               },
             ].map((item) => (
               <div
@@ -462,7 +471,18 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               >
                 <div className="font-bold text-foreground">{item.tool}</div>
                 <div className="text-muted-foreground">{item.signal}</div>
-                <div className="font-mono text-[10px] text-primary bg-muted rounded px-1.5 py-0.5 break-all">
+                {item.conceptual && (
+                  <p className="font-semibold text-foreground">
+                    Capability requirement — not an alert rule
+                  </p>
+                )}
+                <div
+                  className={
+                    item.conceptual
+                      ? 'text-xs text-primary bg-muted rounded px-1.5 py-0.5 break-words'
+                      : 'font-mono text-[10px] text-primary bg-muted rounded px-1.5 py-0.5 break-all'
+                  }
+                >
                   {item.metric}
                 </div>
               </div>
@@ -470,9 +490,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </div>
 
           <p className="text-sm text-muted-foreground">
-            SIEM integration (Splunk, Elastic, Datadog, Microsoft Sentinel) extends monitoring to
-            cross-platform detection — catching algorithm-downgrade events, CI/CD OIDC token
-            algorithm drift, and TLS cipher negotiation without ML-KEM.
+            For SIEM integration, evaluate the input schema and representative known, missing and
+            malformed sample records before designing a rule. Compare observed facts with an
+            applicable policy; these capability examples are not executable queries or proof of
+            production coverage.
           </p>
         </CollapsibleSection>
       </div>

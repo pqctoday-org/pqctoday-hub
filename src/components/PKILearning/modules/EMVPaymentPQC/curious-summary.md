@@ -4,7 +4,7 @@ Payments run on two halves that share cryptography, share vendors and increasing
 
 ### Why It Matters
 
-A quantum computer able to break RSA-2048 could forge EMV certificates, letting criminals create counterfeit cards that pass offline terminal checks. Point-of-sale estates face a second exposure at Key Injection Facilities, where an RSA-wrapped Base Derivation Key protects millions of transactions — compromise it and every past and future key derived from it falls with it. On the banking side the threat is different: settlement traffic is long-lived and traverses parties you do not control, so harvest-now-decrypt-later exposure multiplies along a correspondent chain no single institution can migrate alone.
+A quantum computer able to break RSA-2048 could forge EMV certificates, letting criminals create counterfeit cards that pass offline terminal checks. Point-of-sale estates face a second exposure at Key Injection Facilities, where an RSA-wrapped initial terminal key, derived inside the HSM from the Base Derivation Key, protects that terminal's transactions — compromise the wrap and that terminal's initial key and the keys derived from it are exposed, while the Base Derivation Key itself stays inside the HSM. On the banking side the threat is different: settlement traffic is long-lived and traverses parties you do not control, so harvest-now-decrypt-later exposure multiplies along a correspondent chain no single institution can migrate alone.
 
 ### The Key Takeaway
 

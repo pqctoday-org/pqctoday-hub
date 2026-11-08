@@ -55,6 +55,7 @@ export interface SimPlayChoiceModalProps {
   defaultPhase: PhaseId
   /** Sector line for the "this run uses your assessed sector" personalization note. */
   sectorLabel?: string
+  inputSource?: 'assessment' | 'sample' | 'current'
   /**
    * "Play it yourself" — close onto the interactive board (07-29 review U-H1:
    * manual play is the actual game and must be a NAMED mode here, not
@@ -167,6 +168,7 @@ export function SimPlayChoiceModal({
   defaultCard,
   defaultPhase,
   sectorLabel,
+  inputSource = 'current',
   onInteractive,
 }: SimPlayChoiceModalProps) {
   const bookmark = useSimulationStore((s) => readOverviewBookmark(s.overviewBookmark))
@@ -235,24 +237,31 @@ export function SimPlayChoiceModal({
             Choose how to play
           </div>
           <h2 className="mb-1 text-lg font-bold text-foreground">
-            Every path runs on your own assessed organization
+            Choose how to explore the transformation journey
           </h2>
           {sectorLabel && (
             <p className="mb-4 text-[12px] text-muted-foreground">
-              This run uses your assessed sector:{' '}
-              <span className="font-semibold">{sectorLabel}</span>
+              {inputSource === 'assessment'
+                ? 'Using your assessment inputs'
+                : inputSource === 'sample'
+                  ? 'Using a fictional sample organization'
+                  : 'Current Simulation configuration'}{' '}
+              · <span className="font-semibold">{sectorLabel}</span>
             </p>
           )}
 
           {/* W7.1 — the shortest way in. The previous minimum was the ~45-minute
               overview, which is a lot to ask before a learner knows whether any
-              of this concerns them. Five beats: what the threat is, one asset,
-              one choice, its consequence, and what it meant. */}
+              of this concerns them. It is a short tour of selected learning and
+              reference resources from the Executive Mandate and Discovery
+              phases (the queue holds only learn and reference steps). It has no
+              asset decision or consequence of its own, so the card sends
+              learners who want to decide to the interactive board. */}
           <div className="mb-3">
             <PlayCard
-              title="Start here — 10-minute intro"
-              scope="What the quantum threat actually is, one exposed asset, one decision and its consequence — then a plain-language summary of what you just saw."
-              audience="Anyone new to this — no assessment or background needed"
+              title="Start here — short introduction"
+              scope="Explore the quantum threat and early planning through selected learning resources from Executive Mandate and Discovery. For making decisions yourself, choose the interactive board below."
+              audience="New learners; no prior background needed."
               standardMin={durations.intro}
               recommended={defaultCard === 'intro'}
               firstFocusRef={defaultCard === 'intro' ? primaryRef : undefined}
@@ -350,8 +359,8 @@ export function SimPlayChoiceModal({
               </h3>
               <p className="text-[12.5px] leading-snug text-muted-foreground">
                 No narration: you make every call on the board — pick moves, spend quarters, clear
-                gates, and live with the traps you hit. The three narrated runs above show the
-                journey; this one is the game.
+                gates, and live with the traps you hit. The narrated options above show the journey;
+                this one is the game.
               </p>
             </div>
             <Button

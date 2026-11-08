@@ -4,6 +4,10 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -51,12 +55,12 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'New software/firmware should support and prefer CNSA 2.0 algorithms',
+      label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },
     {
-      label: 'Software and firmware signing must use CNSA 2.0 exclusively',
+      label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
     },
@@ -69,7 +73,7 @@ export const content: ModuleContent = {
 
   narratives: {
     otsWarning:
-      'A Winternitz OTS key can sign exactly one message. Reusing a one-time key is a complete break — the private key becomes recoverable from two signatures.',
+      'A Winternitz OTS key can sign exactly one message. Reusing a one-time key breaks its one-time guarantee: every extra signature reveals more of the hash chains, so an attacker can begin forging signatures, and the set of messages they can forge grows with each reuse. Two signatures do not by themselves hand over the whole private key or let an attacker sign any message of their choice, but nothing bounds the damage once reuse is possible, so treat any reuse as a compromise and retire the key.',
     merkleExplain:
       'The Merkle tree root is the overall public key. Each leaf contains a one-time signature key pair.',
     stateManagement:

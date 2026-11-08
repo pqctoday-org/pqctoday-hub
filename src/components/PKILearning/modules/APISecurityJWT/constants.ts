@@ -383,7 +383,7 @@ export const OAUTH_MIGRATION_ITEMS: OAuthMigrationItem[] = [
     component: 'DPoP Proofs (JWS)',
     description: 'Proof of possession for sender-constrained tokens (RFC 9449)',
     impact:
-      'Each API request includes a DPoP proof JWT. PQC signatures add ~4 KB per request overhead.',
+      'Each API request includes a DPoP proof JWT. The proof also carries the public JWK, so an ML-DSA-65 proof is about 7 KB per request (a 3,309-byte signature and a 1,952-byte public key, both base64url-encoded), far more than the signature alone.',
     priority: 'medium',
   },
   {

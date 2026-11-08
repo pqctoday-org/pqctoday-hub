@@ -18,7 +18,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       >
         <Factory className="w-8 h-8 mb-2" />
         <div className="font-bold text-center text-xs">SIM Factory</div>
-        <div className="text-[10px] text-muted-foreground mt-0.5">HSM Secure Zone</div>
+        <div className="text-[10px] text-muted-foreground mt-0.5">Illustrated HSM zone</div>
       </div>
 
       {/* Path 1: Factory to USIM (Personalization) */}
@@ -54,19 +54,19 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
         {/* Labels */}
         <div className="absolute top-1/3 w-full text-center">
           {step === 0 && (
-            <span className="text-xs text-primary animate-pulse">Generating K (TRNG)...</span>
+            <span className="text-xs text-primary animate-pulse">Sample key generation</span>
           )}
           {step === 1 && (
             <span className="text-xs text-secondary animate-pulse">Computing OPc...</span>
           )}
           {step === 2 && (
-            <span className="text-xs text-primary font-bold">Personalizing USIM...</span>
+            <span className="text-xs text-primary font-bold">Illustrated card writing</span>
           )}
           {step === 3 && (
             <span className="text-xs text-foreground">Encrypting for Transport (eK)</span>
           )}
           {step === 4 && (
-            <span className="text-xs text-success animate-pulse">Importing to UDM/HSM...</span>
+            <span className="text-xs text-foreground">Illustrated operator import</span>
           )}
         </div>
       </div>

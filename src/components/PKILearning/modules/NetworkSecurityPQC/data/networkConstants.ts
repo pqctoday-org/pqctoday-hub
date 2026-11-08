@@ -357,7 +357,7 @@ export const ZTNA_COMPONENTS: ZeroTrustComponent[] = [
     migrationComplexity: 'high',
     keyAlgorithm: 'ML-DSA-65 + ECDSA P-256 (hybrid X.509)',
     notes:
-      'IdP certificate chains must be PQC-signed for ZTNA policies to be quantum-safe end-to-end. SAML/OIDC tokens signed with ML-DSA. Hybrid mode ensures compatibility with non-PQC clients during transition.',
+      'IdP certificate chains must be PQC-signed for ZTNA policies to be quantum-safe end-to-end. SAML/OIDC tokens signed with ML-DSA. Compatibility during transition depends on matching endpoint, protocol and credential profile support, plus a tested intended fallback policy; selecting Hybrid alone does not establish it.',
   },
   {
     id: 'device-posture',
@@ -400,7 +400,7 @@ export const ZTNA_COMPONENTS: ZeroTrustComponent[] = [
     migrationComplexity: 'medium',
     keyAlgorithm: 'ML-DSA-65 server cert + ML-KEM-768 key exchange (TLS 1.3)',
     notes:
-      'Application gateway is the critical PQC chokepoint for external user access. Must present hybrid TLS certs for compatibility. Vendors: Cloudflare Access, Zscaler ZPA, Prisma Access. Most have hybrid PQC TLS in GA or beta.',
+      'Application gateway is the critical PQC chokepoint for external user access. Certificate compatibility depends on endpoint support for the selected protocol and certificate profile, plus a tested intended fallback policy; a hybrid label alone is insufficient. Vendors: Cloudflare Access, Zscaler ZPA, Prisma Access. Most have hybrid PQC TLS in GA or beta.',
   },
 ]
 

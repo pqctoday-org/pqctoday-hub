@@ -19,6 +19,11 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_ACQUISITION_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -109,14 +114,24 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              The Commercial National Security Algorithm Suite 2.0 mandates PQC adoption for
-              National Security Systems. Key deadlines: software/firmware signing preferred by 2025,
-              exclusive by 2030 (with traditional networking); operating-system support by 2027;
-              web/cloud/servers and operating systems by 2033 (NSM-10 targets all NSS
-              quantum-resistant by 2035). Requires{' '}
-              <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>
+              The Commercial National Security Algorithm Suite 2.0 sets algorithm requirements for
+              National Security Systems (NSS); NSA states that it does not mandate requirements on
+              any entity outside NSS. Three NSS dates cover different things (NSA CNSA 2.0 FAQ,
+              version 2.2, October 2026, citing CNSSP&nbsp;15): <strong>new acquisitions</strong>{' '}
+              must use CNSA 2.0 algorithms from 1 January 2027;{' '}
+              <strong>installed equipment and services</strong> that cannot support CNSA 2.0 must be
+              phased out by 31 December 2030 unless an exception is granted; and{' '}
+              <strong>use of CNSA 2.0 algorithms</strong> is mandated by 31 December 2031 unless
+              otherwise noted. NSA&apos;s earlier 2022 advisory also anticipated class-specific
+              timetables (for example exclusive use in software/firmware signing and traditional
+              networking equipment by 2030, and in web browsers/servers, cloud services and
+              operating systems by 2033); read them together with the FAQ&apos;s &ldquo;unless
+              otherwise noted&rdquo; and check NSA&apos;s current text for your equipment class.
+              NSM-10&apos;s 2035 goal is a separate government-wide goal, not a CNSA 2.0 date. The
+              algorithm tables specify <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>
               -1024 (FIPS&nbsp;203) and <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-87
-              (FIPS&nbsp;204) as minimum security levels.
+              (FIPS&nbsp;204) for all classification levels; SLH-DSA is not part of CNSA 2.0 and is
+              not approved for any use in NSS.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -248,18 +263,17 @@ const Step2ApproachAndDeadlines: React.FC = () => (
             },
             {
               year: '2025',
-              event: 'CNSA 2.0 software/firmware signing preferred for NSS',
+              event: CNSA_2022_PREFERRED_LABEL,
               source: 'NSA',
             },
             {
-              year: '2026',
-              event: 'CNSA 2.0 new networking equipment must support PQC',
+              year: '2027',
+              event: CNSA_ACQUISITION_LABEL,
               source: 'NSA',
             },
             {
               year: '2030',
-              event:
-                'CNSA 2.0 software/firmware signing exclusive; legacy networking replaced; NIST RSA/ECC deprecated',
+              event: `${CNSA_PHASE_OUT_LABEL}; NIST RSA/ECC deprecated`,
               source: 'NSA/NIST',
             },
             {
@@ -354,9 +368,12 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                   key establishment by 31 December 2030 and for digital signatures by 31 December
                   2031, implemented by OMB M-26-15; it also directs a proposed FAR rule that would
                   require covered contractors to comply with NIST&rsquo;s FIPS by 31 December 2030.{' '}
-                  <strong>National security systems</strong>: CNSA 2.0 — software/firmware signing
-                  and traditional networking exclusive by 2030; web browsers/servers, cloud and
-                  operating systems by 2033; NSS transition complete by 2035 per NSM-10.
+                  <strong>National security systems</strong> (a separate scope: whether a contract
+                  or system is an NSS is an input to check first, not an assumption): CNSA 2.0 per
+                  NSA FAQ version 2.2 — CNSA 2.0 algorithms required in new acquisitions from 1
+                  January 2027; equipment and services that cannot support CNSA 2.0 phased out by 31
+                  December 2030 absent an exception; CNSA 2.0 algorithms mandated for use by 31
+                  December 2031 unless otherwise noted. NSM-10&apos;s 2035 goal is separate.
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -393,10 +410,18 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-medium text-foreground">Czech Republic</td>
                 <td className="py-2 px-2">NUKIB</td>
-                <td className="py-2 px-2 font-mono text-primary">2027</td>
+                <td className="py-2 px-2 font-mono text-primary">2030</td>
                 <td className="py-2 px-2">
-                  First EU member state to set a specific encryption migration deadline &mdash;
-                  ahead of the broader EU coordinated roadmap
+                  NÚKIB&apos;s annex on the quantum threat (English translation of Czech version
+                  2.0, valid from 1 February 2025) says it estimates the end of 2030 as the
+                  appropriate completion date for moving key establishment that protects sensitive
+                  information of a critical level of confidentiality to hybrid or stand-alone
+                  post-quantum schemes, and recommends starting the move to LMS or XMSS for firmware
+                  and software integrity as soon as possible. The related Minimum Requirements
+                  document (version 4.0) lists ML-KEM-1024 for stand-alone key establishment and
+                  says that entities liable under the Cyber Security Act must take NÚKIB&apos;s
+                  recommendations into account. We found no 2027 migration deadline in either
+                  document.
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -419,10 +444,15 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               </tr>
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-medium text-foreground">Taiwan</td>
-                <td className="py-2 px-2">NICS</td>
-                <td className="py-2 px-2 font-mono text-primary">2027</td>
+                <td className="py-2 px-2">PQC-CIA / III</td>
+                <td className="py-2 px-2 font-mono text-primary">&mdash;</td>
                 <td className="py-2 px-2">
-                  PQC migration target for critical semiconductor and technology sectors
+                  The Post-Quantum Cybersecurity Industry Alliance and the Institute for Information
+                  Industry published a PQC Migration Guide, version 1.00, on 16 April 2025. We found
+                  no Taiwan-specific migration deadline in it: its 2027 mentions are NIST&apos;s
+                  target for finishing the HQC standard and the CNSA 2.0 acquisition date. A 2027
+                  semiconductor-sector target is not verified here; check the original Taiwanese
+                  instrument before relying on one.
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -430,10 +460,15 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2">MAS</td>
                 <td className="py-2 px-2 font-mono text-primary">Guidance</td>
                 <td className="py-2 px-2">
-                  Monetary Authority of Singapore issued PQC readiness guidance (February 2024)
-                  directing financial institutions to begin cryptographic inventory and migration
-                  planning. No hard mandate yet; best-practice alignment with NIST standards
-                  expected. Particularly relevant for financial sector organizations.
+                  <strong>Financial institutions</strong>: MAS Circular MAS/TCRS/2024/01 (20
+                  February 2024) is an advisory listing measures to consider, such as a
+                  cryptographic inventory and crypto-agility; it sets no deadline. On 28 July 2026
+                  MAS said it will issue supervisory expectations later in 2026 with milestones and
+                  timelines, aiming for quantum resilience before the end of this decade. Those
+                  expectations had not yet been issued as of that statement.{' '}
+                  <strong>CII owners, government agencies and other organisations</strong>: CSA,
+                  GovTech and IMDA released a draft Quantum-Safe Migration Handbook (version 0.1, 23
+                  October 2025) for public consultation; it is voluntary and not prescriptive.
                 </td>
               </tr>
               <tr className="border-b border-border/50">

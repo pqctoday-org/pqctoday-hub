@@ -21,7 +21,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'post-processing',
     title: 'Part 2: Post-Processing',
-    description: 'Error correction, privacy amplification, and hybrid key derivation.',
+    description: 'Parity counting, sample SHA-256 output and HKDF with placeholder input.',
     icon: Hash,
   },
   {
@@ -33,13 +33,15 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'protocol-integration',
     title: 'Part 4: QKD + Classical Protocols',
-    description: 'Integrate QKD keys into TLS 1.3, IKEv2, MACsec, and SSH nonce/PSK fields.',
+    description:
+      'Explore local sample-key and HKDF outputs beside protocol references; no handshake or standard importer is executed.',
     icon: Network,
   },
   {
     id: 'hsm-derivation',
     title: 'Part 5: HSM Key Derivation',
-    description: 'Use QKD secret as NIST SP 800-108 key material inside an HSM (PKCS#11).',
+    description:
+      'Import a local sample secret and attempt the existing HSM derivation; inspect its browser-visible output and limits.',
     icon: Server,
   },
 ]

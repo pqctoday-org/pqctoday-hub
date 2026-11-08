@@ -166,7 +166,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
     io(
       'Ciphertext blocks and the server key. No secret.',
       'homomorphic',
-      'Linear operations on blocks, each followed by key switching and a programmable bootstrap that refreshes noise and evaluates a lookup table (carries, comparisons, any function of a block).',
+      'Leveled operations on blocks add noise and use up carry space without bootstrapping. Carry clearing, comparisons and other non-linear steps use key switching and a programmable bootstrap that refreshes noise and evaluates a lookup table (any function of a block); a complex integer operation can use several, and the library’s PBS counter shows how many. Which steps bootstrap depends on the API flavour and the parameter set.',
       'Result ciphertext blocks.'
     ),
     io(
@@ -444,13 +444,13 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
     io(
       'Would need the ciphertexts plus GBs of evaluation keys resident in HSM memory.',
       'rejected',
-      'Bootstrapping is NTT-heavy: millions of modular multiplications per operation. That is far beyond HSM memory and throughput.',
-      'Nothing. The request is refused and routed to the accelerator cluster.'
+      'Bootstrapping is dominated by NTTs and key switching over a multi-GB key set. In this sample profile that is beyond the token’s memory and throughput (bootstrapping was not measured on the token).',
+      'Nothing. The request is refused and routed to the untrusted compute cluster.'
     ),
     io(
       'Ciphertexts plus the public evaluation keys.',
       'homomorphic',
-      'Batched NTTs, key switching and bootstrapping on GPU or FPGA, outside the trust boundary.',
+      'Batched NTTs, key switching and bootstrapping on CPUs, GPUs or FPGAs, outside the trust boundary.',
       'Result ciphertext(s).'
     ),
     io(

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   filterByPatentLinkParams,
   inventorMatches,
+  NIST_STATUS_LABELS,
   parsePatentIds,
   patentIdMatches,
 } from './patentFilters'
@@ -60,5 +61,11 @@ describe('patentFilters', () => {
       expect(desktop.length).toBeGreaterThan(0)
       expect(filterByPatentLinkParams(patentsData, inventor, patentIds)).toEqual(desktop)
     }
+  })
+
+  it('labels the selected-for-standardization status in plain words, apart from the FIPS statuses', () => {
+    expect(NIST_STATUS_LABELS.selected_for_standardization).toBe('Selected for standardization')
+    expect(NIST_STATUS_LABELS.selected_for_standardization).not.toMatch(/FIPS/)
+    expect(NIST_STATUS_LABELS.fips_204).toBe('FIPS 204 (ML-DSA)')
   })
 })

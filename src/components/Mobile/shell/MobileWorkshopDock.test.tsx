@@ -135,7 +135,7 @@ describe('MobileWorkshopDock', () => {
     expect(screen.getByText('Why p-compliance matters')).toBeInTheDocument()
     expect(screen.getByText('Do the p-compliance thing')).toBeInTheDocument()
     expect(
-      screen.getByText(/Completes when a bookmark is added on compliance/i)
+      screen.getByText(/Review the activity, then use the manual completion control/i)
     ).toBeInTheDocument()
   })
 
@@ -161,11 +161,13 @@ describe('MobileWorkshopDock', () => {
     useWorkshopStore.getState().start('fixture-flow', 'p-compliance', 'US')
     renderDock()
     fireEvent.click(await screen.findByText('Step p-compliance'))
-    const markDone = await screen.findByRole('button', { name: /mark this step done/i })
+    const markDone = await screen.findByRole('button', { name: /mark activity complete/i })
     fireEvent.click(markDone)
     expect(useWorkshopStore.getState().completedStepIds).toContain('p-compliance')
     await waitFor(() => {
-      expect(screen.queryByRole('button', { name: /mark this step done/i })).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: /mark activity complete/i })
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -202,14 +204,18 @@ describe('MobileWorkshopDock', () => {
   it('collapsed bar sub-line shows the real task count, 0 of N before completion', async () => {
     useWorkshopStore.getState().start('fixture-flow', 'p-compliance', 'US')
     renderDock()
-    expect(await screen.findByText(/0 of 1 tasks · tap to open/i)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/1 suggested tasks · Not marked · tap to open/i)
+    ).toBeInTheDocument()
   })
 
   it('collapsed bar sub-line shows the full count once the step is marked complete', async () => {
     useWorkshopStore.getState().start('fixture-flow', 'p-compliance', 'US')
     useWorkshopStore.getState().markStepComplete('p-compliance')
     renderDock()
-    expect(await screen.findByText(/1 of 1 tasks · tap to open/i)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/1 suggested tasks · Activity marked complete · tap to open/i)
+    ).toBeInTheDocument()
   })
 
   it('pauses (not exits) on "Leave the workshop", preserving progress and hiding the dock', async () => {

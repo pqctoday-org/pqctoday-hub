@@ -201,3 +201,40 @@ describe('tls-learning.store migration v2 -> v3', () => {
     })
   })
 })
+
+describe('TLS run input snapshots', () => {
+  beforeEach(resetStore)
+  it('keeps the original input snapshot when settings change during or after a run', () => {
+    const store = useTLSStore.getState()
+    store.setClientConfig({ groups: ['X25519MLKEM768'] })
+    store.setIsSimulating(true)
+    store.setResults(null)
+    store.setClientConfig({ groups: ['P-256'] })
+    store.setServerConfig({ verifyClient: true })
+    store.setClientMessage('edited after launch')
+    expect(useTLSStore.getState().runInputs?.clientConfig.groups).toEqual(['X25519MLKEM768'])
+    expect(useTLSStore.getState().runInputs?.serverConfig.verifyClient).toBe(false)
+    store.setResults({ trace: [], status: 'success' })
+    store.setIsSimulating(false)
+    store.addRunToHistory({
+      cipher: 'sample',
+      keyExchange: 'X25519MLKEM768',
+      signature: 'sample',
+      clientIdentity: 'N/A',
+      serverIdentity: 'sample',
+      clientCaKeyType: 'N/A',
+      serverCaKeyType: 'sample',
+      totalBytes: 0,
+      handshakeBytes: 0,
+      appDataBytes: 0,
+      success: true,
+    })
+    const record = useTLSStore.getState().runHistory.at(-1)!
+    expect(record.inputs?.clientConfig.groups).toEqual(['X25519MLKEM768'])
+    expect(record.inputs?.serverConfig.verifyClient).toBe(false)
+    expect(record.inputs?.clientMessage).not.toBe('edited after launch')
+    store.clearSession()
+    expect(useTLSStore.getState().runInputs).toBeNull()
+    expect(record.inputs?.clientConfig.groups).toEqual(['X25519MLKEM768'])
+  })
+})

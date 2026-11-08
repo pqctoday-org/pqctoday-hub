@@ -140,7 +140,14 @@ describe('sabotage — the real engines and the golden check can fail', () => {
         expected('ML-DSA-sigVer-FIPS204')
       )
       expect(out.golden!.mismatched).toEqual([
-        { tgId: g0.tgId, tcId: validTc, field: 'testPassed', expected: true, actual: false },
+        {
+          tgId: g0.tgId,
+          tcId: validTc,
+          field: 'testPassed',
+          expected: true,
+          actual: false,
+          problem: 'different',
+        },
       ])
     }
   }, 60000)

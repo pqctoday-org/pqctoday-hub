@@ -25,7 +25,12 @@ export interface HSMVendor {
   notes: string
   firmwareVersion: string
   pkcs11Version: string
-  /** Omitted when the vendor's own pages do not say. */
+  /**
+   * Omitted (the card reads "Not stated") unless a source held in this repository states hybrid
+   * support for the same firmware and objects the card describes. No held source does for any
+   * vendor: the catalogue row for Thales Luna HSM names hybrid KEM only for software v7.9.1 and
+   * its NTLS SSH and REST APIs, which is narrower than a card flag can say.
+   */
   hybridSupport?: boolean
   sideChannelCountermeasures: string[]
 }
@@ -54,7 +59,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'network',
     firmwareVersion: '7.9.0 or newer',
     pkcs11Version: '3.0 (PQC extensions)',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Constant-time NTT',
       'Power analysis shielding',
@@ -73,7 +77,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'network',
     firmwareVersion: '13.8+ (ML-KEM: 13.8.3+)',
     pkcs11Version: 'Not stated in the release notes (PQC mechanisms are listed per release)',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Hardware PQC acceleration',
       'Constant-time lattice operations',
@@ -84,14 +87,14 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
   {
     id: 'utimaco',
     name: 'Utimaco',
-    product: 'SecurityServer Se Gen2 (Quantum Protect)',
+    product: 'u.trust GP HSM Se-Series (Quantum Protect)',
     type: 'on-prem',
     catalogName: 'Utimaco uTrust HSM',
-    fips140Level: 'FIPS 140-2 Level 3 (cert #3925, Historical since sunset)',
+    fips140Level:
+      'Unconfirmed: FIPS 140-2 Level 3 certificate #3925 (Historical) is listed under CryptoServer Se-Series Gen2, not under this product name',
     formFactor: 'pcie',
-    firmwareVersion: '5.0+ (Q-safe)',
+    firmwareVersion: 'Quantum Protect firmware module (version not stated by Utimaco)',
     pkcs11Version: '3.0',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Level 4 physical tamper protection',
       'Environmental failure protection',
@@ -110,7 +113,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'pcie',
     firmwareVersion: 'Beta firmware',
     pkcs11Version: '2.40',
-    hybridSupport: false,
     sideChannelCountermeasures: ['Hardware crypto acceleration', 'Isolated execution environment'],
   },
   {
@@ -123,7 +125,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'network',
     firmwareVersion: 'PQC beta',
     pkcs11Version: '2.40',
-    hybridSupport: false,
     sideChannelCountermeasures: ['Tamper-responsive enclosure', 'PCI HSM physical protections'],
   },
   // Cloud HSM vendors
@@ -138,7 +139,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'cloud',
     firmwareVersion: 'Provider-managed',
     pkcs11Version: '2.40 (ML-DSA via vendor-defined mechanisms)',
-    hybridSupport: false,
     sideChannelCountermeasures: ['Single-tenant access to the HSM (AWS CloudHSM FAQ)'],
   },
   {
@@ -167,7 +167,6 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     formFactor: 'cloud',
     firmwareVersion: 'N/A',
     pkcs11Version: 'N/A (Cloud KMS API)',
-    hybridSupport: false,
     sideChannelCountermeasures: [
       'Marvell LiquidSecurity HSMs (Google Cloud HSM architecture page)',
     ],
@@ -181,9 +180,8 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     catalogName: 'Crypto4A QxHSM',
     fips140Level: 'FIPS 140-3 Level 3 (cert #5497, lists ML-KEM, ML-DSA, SLH-DSA, LMS as approved)',
     formFactor: 'network',
-    firmwareVersion: 'v4.4+ (production PQC)',
+    firmwareVersion: 'Not published',
     pkcs11Version: '3.0 (PQC extensions)',
-    hybridSupport: true,
     sideChannelCountermeasures: [
       'Electromagnetic isolation enclosure',
       'Multi-event tamper-evidence sensors',
@@ -226,7 +224,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_KEY_PAIR_GEN → RSA-2048 (256-byte public key)',
     vendorNotes: {
       onPrem:
-        'Thales Luna 7.9.0 or newer, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Q-safe: PQC support in firmware',
+        'Thales Luna 7.9.0 or newer, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Quantum Protect: PQC support through a firmware module',
       cloud:
         'AWS CloudHSM: ML-DSA only, through vendor-defined PKCS#11 mechanisms; no ML-KEM. Azure Dedicated HSM (Thales Luna 7) can take the Luna firmware upgrade for existing customers, but the service is being retired and accepts no new customers (Microsoft supports existing customers until July 31, 2028). Google Cloud HSM: no PQC at the HSM level',
     },
@@ -281,7 +279,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP → 256-byte ciphertext (direct encryption)',
     vendorNotes: {
       onPrem:
-        'Thales Luna: CKM_ML_KEM through the vendor-defined CA_EncapsulateKey and CA_DecapsulateKey (the standard C_EncapsulateKey is not yet implemented; Luna ML-KEM programming guide, updated 2025-12-16). Entrust nShield: ML-KEM reached the PKCS#11 API in Security World v13.9.3 (firmware v13.8.3 or later, PostQuantum feature enabled); in v13.9.0 it was nCore-only. Utimaco: via Q-safe extension',
+        'Thales Luna: CKM_ML_KEM through the vendor-defined CA_EncapsulateKey and CA_DecapsulateKey (the standard C_EncapsulateKey is not yet implemented; Luna ML-KEM programming guide, updated 2025-12-16). Entrust nShield: ML-KEM reached the PKCS#11 API in Security World v13.9.3 (firmware v13.8.3 or later, PostQuantum feature enabled); in v13.9.0 it was nCore-only. Utimaco: through PKCS#11 vendor-defined mechanisms in the Quantum Protect package',
       cloud: 'No cloud HSM supports native PKCS#11 KEM encapsulation yet',
     },
   },
@@ -382,7 +380,7 @@ C_MessageVerifyFinal(hSession)`,
   {
     id: 'hybrid-keygen',
     step: 7,
-    name: 'Generate Hybrid Key Pair',
+    name: 'Generate Classical and PQC Key Pairs (Grouped)',
     command: `// Step 7a: Generate classical keypair
 C_GenerateKeyPair(hSession,
   &ecMechanism,     // CKM_EC_KEY_PAIR_GEN (P-256)
@@ -395,20 +393,25 @@ C_GenerateKeyPair(hSession,
   mlkemPubTemplate, mlkemPrivTemplate,
   &hMlkemPub, &hMlkemPriv)
 
-// Link via CKA_ID attribute (same ID for both pairs)`,
-    description: 'Generate a linked classical + PQC key pair for hybrid operations.',
+// Grouping convention only: give both pairs the same CKA_ID so the
+// application can find them together (the token does not combine them)`,
+    description:
+      'Generate a classical key pair and a PQC key pair as two separate operations, grouped by an application convention.',
     detail:
-      'Hybrid keys require two key pairs with the same CKA_ID attribute to link them logically. Applications perform both classical and PQC operations and combine the results. PKCS#11 v3.2 does not yet define a single composite key type — vendors use linked pairs. IETF composite signature drafts (draft-ounsworth-pq-composite-sigs) may standardize this.',
+      'These are two independent C_GenerateKeyPair calls. Giving both pairs the same CKA_ID is only a grouping convention: PKCS#11 v3.2 says the key identifier of a public key and its private key should be the same, describes CKA_ID as intended to distinguish among multiple keys, and states that Cryptoki does not enforce these associations. The convention is not a hybrid requirement, and linking the keys neither combines them nor adds security. The metadata only helps an application find the pairs: set the same CKA_ID on both and read it back with C_GetAttributeValue. PKCS#11 v3.2 defines no composite or hybrid PQC key type. The security of a hybrid scheme comes from the standard or protocol that defines how its components are used together, so a real design must follow that standard’s combiner, context and authentication rules. For example, composite ML-DSA (Internet-Draft draft-ietf-lamps-pq-composite-sigs, the successor of draft-ounsworth-pq-composite-sigs) keeps the component keys in one composite private key and signs a message representative that prepends a fixed prefix, an algorithm-specific label and the application context to a hash of the message; composite ML-KEM (draft-ietf-lamps-pq-composite-kem) defines a KEM combiner over both shared secrets.',
     output: `CKR_OK
   EC Public Key:     0x00000050 (65 bytes, P-256)
   EC Private Key:    0x00000051
   ML-KEM Public Key: 0x00000052 (1,184 bytes)
   ML-KEM Private Key: 0x00000053
-  Linked by CKA_ID:  "hybrid-pair-001"`,
-    classicalEquivalent: 'N/A — hybrid keys are unique to the PQC transition period',
+  CKA_ID (both pairs, application convention): "pair-group-001"`,
+    classicalEquivalent:
+      'C_GenerateKeyPair for each algorithm, as for any classical key pair; combining the components is a protocol or standard step, not a token operation',
     vendorNotes: {
-      onPrem: 'Thales Luna: native composite cert enrollment. Entrust: PQSDK hybrid support',
-      cloud: 'No cloud HSM supports linked hybrid key pairs yet',
+      onPrem:
+        'Support for composite or hybrid objects, and for any single combined key type, varies by product and release; not verified here, so check each vendor’s release notes and mechanism list',
+      cloud:
+        'Not verified here: check each cloud HSM service’s documentation for supported hybrid or composite mechanisms',
     },
   },
   {
@@ -450,6 +453,8 @@ const AVAIL_TO_SUPPORT: Record<CatalogAvailability, PqcSupportStatusKey> = {
   available: 'production',
   partial: 'limited',
   roadmap: 'roadmap',
+  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
+  psk: 'roadmap',
   none: 'roadmap',
   unverified: 'roadmap',
 }

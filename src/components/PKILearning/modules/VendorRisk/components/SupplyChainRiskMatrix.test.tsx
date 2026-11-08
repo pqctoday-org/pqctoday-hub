@@ -9,7 +9,11 @@ import {
   threatImpactLevel,
   IMPACT_BANDS,
   DOMAIN_THREAT_KEYWORDS,
+  buildSupplyChainMarkdown,
+  computeNoRiskDomains,
+  computeMatrixEntries,
 } from './SupplyChainRiskMatrix'
+import { hybridSupportLevel } from '@/data/hybridSupport'
 import { DOMAINS, type DomainId } from '@/data/migrationAssets'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
@@ -118,6 +122,7 @@ const cloudGap = makeProduct({
   pqcSupport: 'No',
   pqcMigrationPriority: 'Critical',
   pqcCapabilityDescription: 'Hybrid ML-KEM + X25519 key exchange',
+  hybridKemSupport: ['api'],
 })
 
 // platform: fully PQC-ready, no Critical priority, zero matching threats —
@@ -247,6 +252,99 @@ describe('SupplyChainRiskMatrix', () => {
     expect(screen.getByText('Hybrid')).toBeInTheDocument()
   })
 
+  describe('hybrid support reads only the catalogue structured fields', () => {
+    const describedOnly = makeProduct({
+      productId: 'h-1',
+      softwareName: 'DescribedOnly',
+      pqcSupport: 'Planned (hybrid mode)',
+      pqcCapabilityDescription: 'Hybrid mode is not offered; planned for a later release',
+    })
+    const tlsHybrid = makeProduct({
+      productId: 'h-2',
+      softwareName: 'TlsHybrid',
+      hybridKemSupport: ['tls-default'],
+    })
+    const experimental = makeProduct({
+      productId: 'h-3',
+      softwareName: 'ExperimentalHybrid',
+      hybridKemSupport: ['api-experimental'],
+    })
+    const noHybrid = makeProduct({
+      productId: 'h-4',
+      softwareName: 'NoHybrid',
+      hybridKemSupport: ['none'],
+    })
+    const compositeSig = makeProduct({
+      productId: 'h-5',
+      softwareName: 'CompositeSig',
+      hybridSigSupport: 'api',
+    })
+    const group = new Map<DomainId, SoftwareItem[]>([
+      ['kms', [describedOnly, tlsHybrid, experimental, noHybrid, compositeSig]],
+    ])
+
+    it('classifies each product from its structured fields, never its description', () => {
+      expect(hybridSupportLevel(describedOnly)).toBe('not-assessed')
+      expect(hybridSupportLevel(tlsHybrid)).toBe('yes')
+      expect(hybridSupportLevel(compositeSig)).toBe('yes')
+      expect(hybridSupportLevel(experimental)).toBe('partial')
+      expect(hybridSupportLevel(noHybrid)).toBe('no')
+    })
+
+    it('counts full, experimental-only and not-assessed products separately', () => {
+      const [stat] = computeDomainStats(group, threats, false, null)
+      expect(stat.hybridSupport).toBe(2)
+      expect(stat.hybridPartial).toBe(1)
+      expect(stat.hybridNotAssessed).toBe(1)
+      expect(stat.total).toBe(5)
+    })
+
+    it('shows a Hybrid badge only for products with a structured entry', () => {
+      mockData = baseData({ vendorsByDomain: group, totalProducts: 5 })
+      render(<SupplyChainRiskMatrix variant="flat" />)
+      expect(screen.getAllByText('Hybrid')).toHaveLength(2)
+      expect(screen.getAllByText('Hybrid (experimental)')).toHaveLength(1)
+      expect(screen.getByText('1 experimental only, 1 not assessed')).toBeInTheDocument()
+    })
+
+    it('says Not assessed when no product in the group has a structured entry', () => {
+      mockData = baseData({
+        vendorsByDomain: new Map<DomainId, SoftwareItem[]>([['kms', [describedOnly]]]),
+        totalProducts: 1,
+      })
+      render(<SupplyChainRiskMatrix variant="flat" />)
+      expect(screen.queryByText('Hybrid')).not.toBeInTheDocument()
+      const card = screen.getByTestId('layer-card-kms')
+      expect(within(card).getByText('Not assessed')).toBeInTheDocument()
+    })
+
+    it('exports the three counts without folding unassessed products into the total', () => {
+      const [stat] = computeDomainStats(group, threats, false, null)
+      const md = buildSupplyChainMarkdown({
+        industry: '',
+        country: '',
+        totalProducts: 5,
+        overallPqcPct: 0,
+        pqcReadyCount: 0,
+        overallFipsPct: 0,
+        fipsValidatedCount: 0,
+        domainStats: [stat],
+        matrixEntries: computeMatrixEntries([stat]),
+        noRiskDomains: computeNoRiskDomains([stat]),
+        hasIndustryContext: false,
+        industryContextHint: 'sample settings',
+        dependencyRelations: [],
+        cbomBuckets: { Code: [], Library: [], Application: [], File: [], Protocol: [], System: [] },
+        pipelineSources: '',
+        refreshCadence: '',
+        cmdbMapping: '',
+      })
+      expect(md).toContain('| Hybrid Support (catalogue structured fields) | 2 | 40% |')
+      expect(md).toContain('| Hybrid Support, experimental only | 1 | 20% |')
+      expect(md).toContain('| Hybrid Support, not assessed (no structured entry) | 1 | 20% |')
+    })
+  })
+
   it('expands ProductDetail when a dependency provider or dependent chip is clicked', () => {
     render(<SupplyChainRiskMatrix variant="flat" />)
     const providerButton = screen.getByRole('button', { name: 'OpenSSL' })
@@ -278,16 +376,50 @@ describe('SupplyChainRiskMatrix', () => {
     expect(kmsBadge).toBeInTheDocument()
   })
 
-  it('shows a fully-ready, zero-threat-match domain as "No risk" instead of a fabricated nonzero score', () => {
+  it('keeps a zero model score without presenting it as absence of production risk', () => {
     render(<SupplyChainRiskMatrix variant="flat" />)
     const platformCard = screen.getByTestId('layer-card-platform')
     expect(within(platformCard).getByTitle(/Migration Gap 0\/5 × Impact 0\/5/)).toHaveTextContent(
-      'No risk'
+      'No scored gap / matched threat'
     )
     // Named as its own chip in the "not plotted" strip, not silently dropped.
     const noRiskStrip = screen.getByTestId('no-risk-strip')
     expect(within(noRiskStrip).getByText(/not plotted above/i)).toBeInTheDocument()
     expect(within(noRiskStrip).getByText(DOMAINS.platform.label)).toBeInTheDocument()
+    expect(
+      within(noRiskStrip).getByText(/does not establish absence of production risk/)
+    ).toBeInTheDocument()
+    expect(within(platformCard).getByTitle(/Migration Gap 0\/5 × Impact 0\/5/)).not.toHaveClass(
+      'text-status-success'
+    )
+  })
+
+  it('preserves zero model scores and their limits in the shared saved/exported Markdown', () => {
+    const stats = computeDomainStats(vendorsByDomain, threats, true, null)
+    const input = {
+      industry: 'Finance',
+      country: '',
+      totalProducts: 8,
+      overallPqcPct: 50,
+      pqcReadyCount: 4,
+      overallFipsPct: 0,
+      fipsValidatedCount: 0,
+      domainStats: stats,
+      matrixEntries: computeMatrixEntries(stats),
+      noRiskDomains: computeNoRiskDomains(stats),
+      hasIndustryContext: true,
+      industryContextHint: 'sample settings',
+      dependencyRelations: [],
+      cbomBuckets: { Code: [], Library: [], Application: [], File: [], Protocol: [], System: [] },
+      pipelineSources: '',
+      refreshCadence: '',
+      cmdbMapping: '',
+    }
+    const markdown = buildSupplyChainMarkdown(input)
+    expect(markdown).toContain('Score 0 (No scored gap / matched threat')
+    expect(markdown).toContain('not absence of production risk')
+    expect(markdown).not.toContain('No risk —')
+    expect(stats.find((row) => row.domainId === 'platform')?.riskScore).toBe(0)
   })
 
   it('shows an explicit not-personalized state instead of silently reusing pqcMigrationPriority when no industry is selected', () => {

@@ -44,19 +44,20 @@ const MetricsTab: React.FC = () => {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Four Prometheus-compatible exporters cover the entire platform crypto surface. Each tool
-        exposes key algorithm labels — enabling alert rules that fire when classical crypto is still
-        active after your migration deadline.
+        Explore monitoring examples and capability requirements for platform crypto observability.
+        Check source versions, field availability and collection coverage before relying on a rule.
+        A labelled capability checklist is not executable telemetry.
       </p>
 
       {MONITORING_TOOLS.map((tool) => {
         const isExpanded = expandedId === tool.id
+        const isConceptual = tool.exampleKind === 'capability-requirements'
         return (
           <div key={tool.id} className="glass-panel overflow-hidden">
             <Button
               variant="ghost"
               onClick={() => toggle(tool.id)}
-              className="w-full text-left p-4 flex items-center gap-3"
+              className="w-full h-auto whitespace-normal text-left p-4 flex items-start gap-3"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -78,16 +79,27 @@ const MetricsTab: React.FC = () => {
 
             {isExpanded && (
               <div className="px-4 pb-4 border-t border-border pt-4 space-y-4 animate-fade-in">
+                {isConceptual && (
+                  <p className="text-sm font-semibold text-foreground border border-primary/30 rounded p-3">
+                    Capability requirements — not runnable alert rules
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground">{tool.description}</p>
 
                 {/* Metric examples */}
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground">Key Metrics</span>
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {isConceptual ? 'Required observations' : 'Key Metrics'}
+                  </span>
                   <div className="mt-2 space-y-1">
                     {tool.metricExamples.map((m) => (
                       <div
                         key={m}
-                        className="font-mono text-[10px] text-foreground bg-muted rounded px-2 py-1 border border-border truncate"
+                        className={
+                          isConceptual
+                            ? 'text-xs text-foreground bg-muted rounded px-2 py-1 border border-border whitespace-normal break-words'
+                            : 'font-mono text-[10px] text-foreground bg-muted rounded px-2 py-1 border border-border truncate'
+                        }
                       >
                         {m}
                       </div>
@@ -97,7 +109,9 @@ const MetricsTab: React.FC = () => {
 
                 {/* Alert rules */}
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground">PQC Alert Rules</span>
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {isConceptual ? 'Non-executable decision examples' : 'PQC Alert Rules'}
+                  </span>
                   <div className="mt-2 space-y-2">
                     {tool.alertExamples.map((alert) => (
                       <div
@@ -116,15 +130,23 @@ const MetricsTab: React.FC = () => {
                                 : 'bg-status-warning/20 text-status-warning'
                             }`}
                           >
+                            {isConceptual ? 'Illustrative severity: ' : ''}
                             {alert.severity.toUpperCase()}
                           </span>
                           <span className="text-xs font-bold text-foreground">{alert.name}</span>
                         </div>
-                        <pre className="font-mono text-[10px] text-muted-foreground whitespace-pre-wrap break-all">
-                          {alert.expression}
-                        </pre>
+                        {isConceptual ? (
+                          <p className="text-xs text-foreground whitespace-normal break-words">
+                            {alert.expression}
+                          </p>
+                        ) : (
+                          <pre className="font-mono text-[10px] text-muted-foreground whitespace-pre-wrap break-all">
+                            {alert.expression}
+                          </pre>
+                        )}
                         <p className="text-[10px] text-muted-foreground mt-1 italic">
-                          Fires when: {alert.threshold}
+                          {isConceptual ? 'Interpretation: ' : 'Fires when: '}
+                          {alert.threshold}
                         </p>
                       </div>
                     ))}
@@ -134,7 +156,9 @@ const MetricsTab: React.FC = () => {
                 {/* Integrations */}
                 <div className="flex flex-wrap gap-1">
                   <span className="text-xs text-muted-foreground font-medium">
-                    Integrates with:
+                    {isConceptual
+                      ? 'Potential destinations — verify integration:'
+                      : 'Integrates with:'}
                   </span>
                   {tool.integrations.map((i) => (
                     <span
@@ -163,9 +187,9 @@ const SIEMTab: React.FC = () => {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Pre-built SIEM queries for detecting quantum-vulnerable cryptographic operations in your
-        pipeline. Covers Vault signing key usage, cert-manager RSA issuance, CI/CD OIDC token
-        algorithm, and TLS cipher negotiation.
+        Non-executable SIEM capability checklists. Verify the destination version, input schema,
+        field mappings and observation coverage with sample records before designing an alert.
+        Missing observations remain Unknown; these examples do not detect incidents.
       </p>
 
       {SIEM_QUERIES.map((query) => {
@@ -175,7 +199,7 @@ const SIEMTab: React.FC = () => {
             <Button
               variant="ghost"
               onClick={() => toggle(query.id)}
-              className="w-full text-left p-4 flex items-center gap-3"
+              className="w-full h-auto whitespace-normal text-left p-4 flex items-start gap-3"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -188,7 +212,7 @@ const SIEMTab: React.FC = () => {
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${SIEM_SEVERITY_COLORS[query.severity]}`}
                   >
-                    {query.severity.toUpperCase()}
+                    Illustrative priority: {query.severity.toUpperCase()}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground truncate">{query.description}</p>
@@ -207,14 +231,16 @@ const SIEMTab: React.FC = () => {
                 <p className="text-xs text-muted-foreground">{query.description}</p>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-1 rounded border border-border">
-                    MITRE: {query.mitreTactic}
+                    Discussion context: {query.mitreTactic}
                   </span>
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground mb-2 block">Query</span>
-                  <pre className="bg-muted rounded-lg p-3 text-[11px] font-mono text-foreground overflow-x-auto border border-border whitespace-pre-wrap leading-relaxed">
+                  <span className="text-xs font-bold text-muted-foreground mb-2 block">
+                    Capability checklist — not a runnable query
+                  </span>
+                  <p className="bg-muted rounded-lg p-3 text-xs text-foreground border border-border whitespace-pre-wrap break-words leading-relaxed">
                     {query.query}
-                  </pre>
+                  </p>
                 </div>
               </div>
             )}
@@ -224,11 +250,11 @@ const SIEMTab: React.FC = () => {
 
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Integration workflow:</strong> Enable these queries in Audit mode first to
-          baseline volumes. Tune thresholds over 2 weeks before enabling alerting. Map alerts to
-          your on-call rotation with 48-hour SLA for CRITICAL findings. Weekly SIEM digest reports
-          should track percentage of operations using PQC algorithms — target 100% by your mandated
-          migration deadline.
+          <strong>Evaluate the capability:</strong> Check the documented source/version and field
+          mappings with known policy-matching, policy-mismatching, missing and malformed sample
+          observations. Choose the applicable policy, observation window and escalation criteria.
+          Retain sample results and coverage limits; Unknown is not evidence of compliance or an
+          incident.
         </p>
       </div>
     </div>
@@ -242,25 +268,22 @@ const CapacityTab: React.FC = () => {
   const [signsPerDay, setSignsPerDay] = useState(500)
 
   const etcdEntry = useMemo(() => SIZE_COMPARISONS.find((s) => s.id === 'etcd-secret'), [])
-  const tlsHandshake = useMemo(
-    () => CAPACITY_METRICS.find((m) => m.id === 'tls-handshake-latency'),
-    []
-  )
+  const tlsHandshake = useMemo(() => SIZE_COMPARISONS.find((s) => s.id === 'tls-handshake'), [])
 
-  const etcdClassical = etcdEntry ? (certCount * etcdEntry.classicalSize) / 1024 / 1024 : 0
-  const etcdPQC = etcdEntry ? (certCount * etcdEntry.pqcSize) / 1024 / 1024 : 0
+  const etcdClassical = etcdEntry ? (certCount * etcdEntry.classicalSize) / 1024 / 1024 : null
+  const etcdPQC = etcdEntry ? (certCount * etcdEntry.pqcSize) / 1024 / 1024 : null
 
-  const bandwidthClassicalKB = tlsHandshake
-    ? (signsPerDay * tlsHandshake.baselinePerUnit) / 1024
-    : 0
-  const bandwidthPQCKB = tlsHandshake ? (signsPerDay * tlsHandshake.pqcPerUnit) / 1024 : 0
+  const trafficClassicalKiB = tlsHandshake
+    ? (signsPerDay * tlsHandshake.classicalSize) / 1024
+    : null
+  const trafficPQCKiB = tlsHandshake ? (signsPerDay * tlsHandshake.pqcSize) / 1024 : null
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Quantify the infrastructure impact of migrating from ECDSA to ML-DSA and from X25519 to
-        ML-KEM. Calculate storage growth, bandwidth increase, and latency overhead before your
-        migration window.
+        Explore illustrative infrastructure impact using the sample sizes and timing assumptions
+        below. These calculations are planning examples, not measured performance or a guarantee of
+        total traffic for your TLS configuration.
       </p>
 
       {/* Size Comparison Table */}
@@ -321,8 +344,9 @@ const CapacityTab: React.FC = () => {
       <div className="glass-panel p-4 space-y-4">
         <h4 className="text-sm font-bold text-foreground">Infrastructure Impact Calculator</h4>
         <p className="text-xs text-muted-foreground">
-          Adjust your deployment parameters to estimate the storage and bandwidth impact of PQC
-          migration.
+          Adjust the sample counts to estimate stored key/certificate material and daily handshake
+          traffic volume. Traffic uses the sample bytes per handshake, not the latency in
+          milliseconds; it does not determine the link capacity needed during traffic peaks.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -343,11 +367,15 @@ const CapacityTab: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div className="bg-muted/50 rounded p-2 border border-border">
                 <div className="text-muted-foreground">etcd (Classical)</div>
-                <div className="font-bold text-foreground">{etcdClassical.toFixed(2)} MB</div>
+                <div className="font-bold text-foreground">
+                  {etcdClassical === null ? 'Not assessed' : `${etcdClassical.toFixed(2)} MiB`}
+                </div>
               </div>
               <div className="bg-status-warning/10 rounded p-2 border border-status-warning/20">
                 <div className="text-muted-foreground">etcd (PQC)</div>
-                <div className="font-bold text-status-warning">{etcdPQC.toFixed(2)} MB</div>
+                <div className="font-bold text-status-warning">
+                  {etcdPQC === null ? 'Not assessed' : `${etcdPQC.toFixed(2)} MiB`}
+                </div>
               </div>
             </div>
           </div>
@@ -368,33 +396,42 @@ const CapacityTab: React.FC = () => {
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div className="bg-muted/50 rounded p-2 border border-border">
-                <div className="text-muted-foreground">Bandwidth (Classical)</div>
+                <div className="text-muted-foreground">Sample Traffic Volume (Classical)</div>
                 <div className="font-bold text-foreground">
-                  {bandwidthClassicalKB.toFixed(1)} KB/day
+                  {trafficClassicalKiB === null
+                    ? 'Not assessed'
+                    : `${trafficClassicalKiB.toFixed(1)} KiB/day`}
                 </div>
               </div>
               <div className="bg-status-warning/10 rounded p-2 border border-status-warning/20">
-                <div className="text-muted-foreground">Bandwidth (PQC)</div>
+                <div className="text-muted-foreground">Sample Traffic Volume (PQC)</div>
                 <div className="font-bold text-status-warning">
-                  {bandwidthPQCKB.toFixed(1)} KB/day
+                  {trafficPQCKiB === null ? 'Not assessed' : `${trafficPQCKiB.toFixed(1)} KiB/day`}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Latency metrics */}
+        {/* Sample impact metrics */}
         <div>
-          <span className="text-xs font-bold text-muted-foreground">Latency Impact</span>
+          <span className="text-xs font-bold text-muted-foreground">
+            Sample Timing and Size Impact
+          </span>
           <div className="mt-2 space-y-2">
             {CAPACITY_METRICS.map((m) => {
-              const ratio = m.pqcPerUnit / m.baselinePerUnit
-              const pct = Math.round((ratio - 1) * 100)
+              const ratio = m.baselinePerUnit > 0 ? m.pqcPerUnit / m.baselinePerUnit : null
+              const pct = ratio === null ? null : Math.round((ratio - 1) * 100)
+              const pairMax = Math.max(m.baselinePerUnit, m.pqcPerUnit, 0)
+              const classicalWidth = pairMax > 0 ? (m.baselinePerUnit / pairMax) * 100 : 0
+              const pqcWidth = pairMax > 0 ? (m.pqcPerUnit / pairMax) * 100 : 0
               return (
                 <div key={m.id} className="bg-muted/30 rounded-lg p-3 border border-border">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-medium text-foreground">{m.label}</span>
-                    <span className="text-xs font-bold text-status-warning">+{pct}%</span>
+                    <span className="text-xs font-bold text-status-warning">
+                      {pct === null ? 'Percentage not assessed' : `${pct >= 0 ? '+' : ''}${pct}%`}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-[10px] text-muted-foreground mb-2">
                     <span>
@@ -405,7 +442,7 @@ const CapacityTab: React.FC = () => {
                       PQC: {m.pqcPerUnit.toLocaleString()} {m.unit}
                     </span>
                   </div>
-                  {/* Bar comparison */}
+                  {/* Each pair shares its own maximum, preserving the displayed unit. */}
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <div className="text-[9px] text-muted-foreground w-16 text-right shrink-0">
@@ -413,8 +450,10 @@ const CapacityTab: React.FC = () => {
                       </div>
                       <div className="flex-1 bg-muted rounded-full h-2">
                         <div
+                          role="img"
+                          aria-label={`${m.label}: Classical ${m.baselinePerUnit} ${m.unit}`}
                           className="bg-muted-foreground h-2 rounded-full"
-                          style={{ width: '100%' }}
+                          style={{ width: `${classicalWidth}%` }}
                         />
                       </div>
                     </div>
@@ -424,8 +463,10 @@ const CapacityTab: React.FC = () => {
                       </div>
                       <div className="flex-1 bg-muted rounded-full h-2">
                         <div
+                          role="img"
+                          aria-label={`${m.label}: PQC ${m.pqcPerUnit} ${m.unit}`}
                           className="bg-status-warning h-2 rounded-full"
-                          style={{ width: `${Math.min(100, (ratio / 8) * 100)}%` }}
+                          style={{ width: `${pqcWidth}%` }}
                         />
                       </div>
                     </div>
@@ -454,9 +495,9 @@ const ACMETab: React.FC = () => {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        The ACME certificate lifecycle with PQC overlay. Each step shows the current state
-        (classical / hybrid / PQC-ready / algorithm-agnostic) and what changes are needed for a
-        quantum-safe issuance pipeline via cert-manager with an ML-DSA-capable issuer.
+        Educational ACME lifecycle walkthrough — not a readiness assessment or an automated issuance
+        run. Each stage highlights capabilities to evaluate in the selected client, issuer and
+        relying parties; the topic labels do not certify product support.
       </p>
 
       {/* Step rail */}
@@ -467,7 +508,7 @@ const ACMETab: React.FC = () => {
               variant="ghost"
               key={step.id}
               onClick={() => setSelectedStep((prev) => (prev === step.id ? null : step.id))}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg border transition-colors text-center ${
+              className={`flex h-auto min-h-[88px] min-w-[140px] max-w-[180px] whitespace-normal flex-col items-center gap-1 px-3 py-2 rounded-lg border transition-colors text-center ${
                 selectedStep === step.id
                   ? 'border-primary bg-primary/10'
                   : 'border-border bg-muted/30 hover:border-primary/50'
@@ -533,7 +574,7 @@ const ACMETab: React.FC = () => {
 
       {/* Summary legend */}
       <div className="glass-panel p-4">
-        <h4 className="text-xs font-bold text-foreground mb-3">Step Status Legend</h4>
+        <h4 className="text-xs font-bold text-foreground mb-3">Learning Topic Legend</h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {(Object.keys(ACME_STATUS_LABELS) as ACMEStep['status'][]).map((status) => (
             <div key={status} className="flex items-center gap-2">
@@ -546,12 +587,9 @@ const ACMETab: React.FC = () => {
           ))}
         </div>
         <p className="text-[10px] text-muted-foreground mt-3">
-          Let&apos;s Encrypt is targeting late 2026 for a staging environment that issues Merkle
-          Tree Certificates (MTCs) and 2027 for a production-ready environment, and it is tracking
-          ML-DSA in X.509 (RFC 9881) and TLS. Its post says the transition will take time. This
-          module&apos;s advice: until post-quantum certificates are available from Let&apos;s
-          Encrypt, use internal CAs (Vault PKI, EJBCA) for ML-DSA certificate issuance in production
-          environments.
+          Evaluate the exact issuer, client version and profile with sample keys, CSRs, certificates
+          and chain-validation results. A product name, roadmap or successful challenge alone does
+          not establish PQC issuance or relying-party interoperability.
         </p>
       </div>
     </div>
@@ -571,9 +609,9 @@ export const CryptoPostureMonitor: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Crypto Posture Monitor</h3>
         <p className="text-sm text-muted-foreground">
-          Four-panel monitoring dashboard covering Prometheus metrics, SIEM integration, capacity
-          planning for PQC size overhead, and ACME certificate lifecycle automation with
-          cert-manager.
+          Explore non-executable monitoring and SIEM capability checklists, illustrative capacity
+          planning, and an educational ACME lifecycle. Use the examples to evaluate production
+          tools; this resource does not collect telemetry or automate certificate issuance.
         </p>
       </div>
 

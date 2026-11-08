@@ -4,6 +4,7 @@ import { filterComplianceRequirements, splitComplianceRequirements } from './com
 import { computeAssessment, computeAssessmentAsync } from './orchestrator'
 import { industryComplianceConfigs } from '../../data/industryAssessConfig'
 import { AVAILABLE_INDUSTRIES } from '../assessmentData'
+import { coversEverySector } from '../../utils/applicabilityEngine'
 import { EXAMPLE_REPORT_SHARE_PAYLOAD } from '../../data/exampleReport'
 import type { AssessmentInput } from '../assessmentTypes'
 
@@ -53,8 +54,19 @@ describe('filterComplianceRequirements — reference estates', () => {
   })
 
   it('only ever adds: whatever an exact-name match kept is still kept', () => {
-    type Cfg = { label: string; industries: string[]; countries: string[] }
-    const configs = industryComplianceConfigs as unknown as Cfg[]
+    type Cfg = {
+      id: string
+      label: string
+      industries: string[]
+      countries: string[]
+      allSectorsReviewed?: boolean
+    }
+    // The filter looks a label up and takes the first record with that name (a retired duplicate
+    // of an active framework can share its label), so the expectation does the same.
+    const allConfigs = industryComplianceConfigs as unknown as Cfg[]
+    const configs = allConfigs.filter(
+      (c, i) => allConfigs.findIndex((d) => d.label === c.label) === i
+    )
     const labels = configs.map((c) => c.label)
     const exactCountry = (c: Cfg, country: string) =>
       country === 'Global' ||
@@ -66,8 +78,7 @@ describe('filterComplianceRequirements — reference estates', () => {
         const exactMatch = configs
           .filter(
             (c) =>
-              (c.industries.includes(industry) || c.industries.length >= 3) &&
-              exactCountry(c, country)
+              (c.industries.includes(industry) || coversEverySector(c)) && exactCountry(c, country)
           )
           .map((c) => c.label)
         const now = new Set(filterComplianceRequirements(labels, industry, country))

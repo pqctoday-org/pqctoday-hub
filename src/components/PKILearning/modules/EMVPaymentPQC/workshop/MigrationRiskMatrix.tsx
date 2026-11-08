@@ -274,10 +274,15 @@ export const MigrationRiskMatrix: React.FC = () => {
       {/* ── Dependency DAG View ────────────────────────────────────── */}
       {view === 'dag' && (
         <div className="glass-panel p-4">
-          <div className="text-sm font-bold text-foreground mb-3">Migration Dependency Order</div>
+          <div className="text-sm font-bold text-foreground mb-3">
+            Illustrative Dependency Depth
+          </div>
           <p className="text-xs text-muted-foreground mb-4">
-            Components are ordered by dependency depth. Components at depth 0 have no dependencies
-            and can migrate first. Higher depths require prerequisite migrations.
+            Depth counts the longest chain of recorded prerequisite links in the filtered sample.
+            Depth 0 means no prerequisites are recorded in this view; it does not establish
+            migration readiness. Depth is not a duration-based critical path, and this graph does
+            not calculate a deployment schedule. Validate the dependencies and plan inventory,
+            preparation and pilots separately where appropriate.
           </p>
 
           <div className="space-y-2">
@@ -291,8 +296,8 @@ export const MigrationRiskMatrix: React.FC = () => {
                   <div key={depth}>
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
                       Depth {depth}
-                      {depth === 0 && ' (No Dependencies)'}
-                      {isCriticalPath && ' (Critical Path)'}
+                      {depth === 0 && ' (No Prerequisites Recorded in This View)'}
+                      {isCriticalPath && ' (Deepest Shown Dependency Level)'}
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {items.map((item) => {
@@ -446,7 +451,7 @@ export const MigrationRiskMatrix: React.FC = () => {
           {selectedVector.dependencies.length > 0 && (
             <div className="mb-3">
               <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
-                Dependencies (must migrate first)
+                Recorded dependencies in this sample plan
               </div>
               <div className="flex flex-wrap gap-1">
                 {selectedVector.dependencies.map((dep) => {

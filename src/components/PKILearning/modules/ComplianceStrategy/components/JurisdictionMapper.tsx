@@ -67,7 +67,8 @@ interface ConflictItem {
 function detectConflicts(
   selectedIds: string[],
   _frameworkMap: Map<string, ComplianceFramework[]>,
-  countryDeadlineMap: Map<string, number | null>
+  countryDeadlineMap: Map<string, number | null>,
+  nationalSecuritySystem = false
 ): ConflictItem[] {
   const conflicts: ConflictItem[] = []
   if (selectedIds.length < 2) return conflicts
@@ -110,10 +111,13 @@ function detectConflicts(
     selectedIds.includes('it') ||
     selectedIds.includes('es')
 
+  // CNSA 2.0 binds U.S. national security systems (and their contractors), not every
+  // U.S. system, so the wording is firm only when the sample system is one.
   if (hasUS && hasEU) {
     conflicts.push({
-      description:
-        'CNSA 2.0 requires ML-KEM-1024 and ML-DSA-87 minimum security levels for U.S. NSS. ANSSI/BSI recommend a hybrid classical+PQC approach during transition. These requirements can be reconciled only where NSA has identified a hybrid for the protocol; otherwise they conflict, so check which authority governs the system.',
+      description: nationalSecuritySystem
+        ? 'CNSA 2.0 requires ML-KEM-1024 and ML-DSA-87 minimum security levels for U.S. NSS. ANSSI/BSI recommend a hybrid classical+PQC approach during transition. These requirements can be reconciled only where NSA has identified a hybrid for the protocol; otherwise they conflict, so check which authority governs the system.'
+        : 'If the system is a national security system, CNSA 2.0 requires ML-KEM-1024 and ML-DSA-87 minimum security levels. ANSSI/BSI recommend a hybrid classical+PQC approach during transition. These requirements can be reconciled only where NSA has identified a hybrid for the protocol; otherwise they conflict, so check which authority governs the system.',
       jurisdictions: ['United States', 'EU/ANSSI/BSI'],
       severity: 'medium',
     })
@@ -123,8 +127,11 @@ function detectConflicts(
   const frOrDe = selectedIds.includes('fr') || selectedIds.includes('de')
   if (hasUS && frOrDe) {
     conflicts.push({
-      description:
-        'ANSSI (France) makes hybrid mandatory in its regulated perimeter and recommends it elsewhere; BSI (Germany) recommends hybrid; NSA CNSA 2.0 targets pure PQC, does not require hybrids and counts only hybrids it has specifically identified. Where a French or German authority applies to the same system, check whether NSA has identified a hybrid for that protocol before planning one.',
+      description: `ANSSI (France) makes hybrid mandatory in its regulated perimeter and recommends it elsewhere; BSI (Germany) recommends hybrid; ${
+        nationalSecuritySystem
+          ? 'NSA CNSA 2.0 targets'
+          : 'if the system is a national security system, NSA CNSA 2.0 targets'
+      } pure PQC, does not require hybrids and counts only hybrids it has specifically identified. Where a French or German authority applies to the same system, check whether NSA has identified a hybrid for that protocol before planning one.`,
       jurisdictions: ['United States', 'France/Germany'],
       severity: 'low',
     })
@@ -143,16 +150,17 @@ function detectConflicts(
 
   // Check for aggressive early deadlines
   const hasAU = selectedIds.includes('au')
-  const hasTW = selectedIds.includes('tw')
   const hasCZ = selectedIds.includes('cz')
   const earlyDeadlineCountries = [
     hasAU && 'Australia (2030)',
-    hasTW && 'Taiwan (2027)',
-    hasCZ && 'Czech Republic (2027)',
+    hasCZ && 'Czech Republic (end of 2030, NUKIB annex estimate)',
   ].filter(Boolean)
 
   if (earlyDeadlineCountries.length > 0 && (hasUS || hasEU)) {
-    const latestTarget = hasUS ? 'US full transition (2033-2035)' : 'EU full transition (2035)'
+    // NSM-10's goal is 2035 (NSA's CNSA 2.0 FAQ, version 2.2, cites it as "the 2035 goal outlined in NSM-10").
+    const latestTarget = hasUS
+      ? 'US full transition (by 2035, NSM-10)'
+      : 'EU full transition (2035)'
     conflicts.push({
       description: `${earlyDeadlineCountries.join(', ')} have deadlines significantly earlier than ${latestTarget}. Your migration plan must meet the earliest deadline across all jurisdictions.`,
       jurisdictions: [...earlyDeadlineCountries, hasUS ? 'United States' : 'EU'] as string[],
@@ -244,6 +252,7 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
   const { frameworks, countryDeadlines } = useExecutiveModuleData()
   const navigate = useNavigate()
   const [expandedFramework, setExpandedFramework] = useState<string | null>(null)
+  const [nationalSecuritySystem, setNationalSecuritySystem] = useState(false)
 
   const toggleJurisdiction = (id: string) => {
     onJurisdictionsChange(
@@ -301,8 +310,14 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
   }, [countryDeadlines])
 
   const conflicts = useMemo(
-    () => detectConflicts(selectedJurisdictions, frameworkMap, countryDeadlineMap),
-    [selectedJurisdictions, frameworkMap, countryDeadlineMap]
+    () =>
+      detectConflicts(
+        selectedJurisdictions,
+        frameworkMap,
+        countryDeadlineMap,
+        nationalSecuritySystem
+      ),
+    [selectedJurisdictions, frameworkMap, countryDeadlineMap, nationalSecuritySystem]
   )
 
   // All frameworks across selected jurisdictions (deduplicated, excluding dismissed)
@@ -474,6 +489,27 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
           ))}
         </div>
       </div>
+
+      {selectedJurisdictions.includes('us') && (
+        <label className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={nationalSecuritySystem}
+            onChange={(e) => setNationalSecuritySystem(e.target.checked)}
+            className="rounded border-input mt-0.5"
+          />
+          <span className="flex-1 text-sm text-foreground">
+            <span className="font-medium">
+              This sample system is a U.S. national security system or under an NSS contract
+            </span>{' '}
+            <span className="text-xs text-muted-foreground">
+              CNSA 2.0 applies only to national security systems. Leave this unticked and the
+              conflicts below are worded as &ldquo;if the system is a national security
+              system&rdquo;.
+            </span>
+          </span>
+        </label>
+      )}
 
       {/* Conflicts / Overlaps */}
       {conflicts.length > 0 && (

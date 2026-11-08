@@ -2,8 +2,8 @@
   {
     "term": "CCRA",
     "acronym": "CCRA",
-    "definition": "Common Criteria Recognition Arrangement — a 31-nation mutual recognition agreement under which national Certification Bodies issue and accept IT product security certificates based on ISO/IEC 15408 (Common Criteria).",
-    "technicalNote": "CCRA member nations include the US (NIAP), UK (NCSC), Germany (BSI), France (ANSSI), Japan, South Korea, Australia, and Canada. A CC certificate issued by any national CA is valid across all member states. The EU operates the EUCC as a stricter harmonized adaptation managed by ENISA.",
+    "definition": "Common Criteria Recognition Arrangement — an arrangement under which participating countries plan to recognise Common Criteria (ISO/IEC 15408) certificates authorised by any Certificate Authorising Participant. Only Certificate Authorising Participants authorise certificates issued by their certification bodies; Certificate Consuming Participants recognise them without issuing their own. Recognition covers certificates for evaluations against a collaborative Protection Profile or at EAL 1 to 2 with ALC_FLR.",
+    "technicalNote": "On the Common Criteria Portal, Certificate Authorising Participants include Australia, Canada, France (ANSSI), Germany (BSI), Japan, the Republic of Korea and the United States (NIAP); the United Kingdom is listed as a Certificate Consuming Participant. Participants plan to recognise certificates only within the arrangement's scope, and a participant may decline to recognise a certificate where recognising it would conflict with its law or, for an application involving classified information, for that application only (Articles 2 and 3). The EU's EUCC is a separate scheme set out in Implementing Regulation (EU) 2024/482 and applicable from 27 February 2025: certification bodies issue EUCC certificates at assurance level 'substantial' or 'high', and certification from a third country is recognised within the Union only through a mutual recognition agreement with the Union (Article 44).",
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
     "category": "organization"
@@ -129,7 +129,7 @@
   {
     "term": "Sigstore",
     "definition": "An open-source project (Linux Foundation) for keyless code signing. Developers authenticate with their existing identity (GitHub, Google) and receive short-lived certificates, eliminating long-term key management.",
-    "technicalNote": "Sigstore centralizes crypto in two services: Fulcio (CA) and Rekor (transparency log). Upgrading these to ML-DSA automatically provides PQC protection to all downstream ecosystems (npm, PyPI, Kubernetes).",
+    "technicalNote": "Sigstore's public-good service combines a certificate authority (Fulcio), a transparency log (Rekor) and a root of trust, with a client such as Cosign creating the ephemeral key pair and signing. A signature path is post-quantum only when the client, certificate, log, trust root and each ecosystem's verifier all support the algorithm; Sigstore's algorithm registry currently marks ML-DSA as experimental and not yet operational.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
     "category": "organization"
@@ -226,7 +226,7 @@
     "term": "CMVP",
     "acronym": "CMVP",
     "definition": "Cryptographic Module Validation Program — a joint NIST and CCCS program that tests cryptographic modules against FIPS 140-3 requirements. Validated modules appear on the NIST CMVP validated-modules list with a certificate number, recording that an accredited laboratory tested that module version against FIPS 140-3 at the stated security level; the Approved algorithms inside it must first complete CAVP algorithm validation.",
-    "technicalNote": "PQC FIPS 140-3 validation for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) modules began in 2024. Validation cycles take 12–18 months; procurement requiring FIPS 140-3 validated PQC must account for this lag. Check: csrc.nist.gov/projects/cmvp.",
+    "technicalNote": "Modules containing FIPS 203, 204 or 205 algorithms appear on the CMVP list only after the algorithm implementations have CAVP validation, and validation queue times vary; check the CMVP Modules In Process list. Procurement requiring FIPS 140-3 validated PQC must read the certificate for the exact module version and algorithms. Check: csrc.nist.gov/projects/cmvp.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
     "category": "organization"
@@ -234,7 +234,7 @@
   {
     "term": "CC",
     "acronym": "Common Criteria",
-    "definition": "International standard (ISO/IEC 15408) for security-product evaluation. Country-specific schemes (BSI Germany, ANSSI France, NIAP US, CCS Canada, etc.) run evaluations; results mutually recognised through the CCRA. EUCC succeeds the SOG-IS MRA in the EU.",
+    "definition": "International standard (ISO/IEC 15408) for security-product evaluation. National schemes (BSI Germany, ANSSI France, NIAP US, the Canadian Common Criteria Scheme, etc.) oversee evaluation and certification; the CCRA lets participants recognise certificates authorised by Certificate Authorising Participants, within its scope (collaborative Protection Profiles, or EAL 1 to 2 with ALC_FLR). In the EU, the EUCC (Implementing Regulation (EU) 2024/482, applicable from 27 February 2025) builds on the SOG-IS mutual recognition agreement.",
     "complexity": "intermediate",
     "category": "organization",
     "relatedModule": "/learn/standards-bodies"

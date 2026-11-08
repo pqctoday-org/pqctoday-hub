@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react'
 import { useVpnPacketStore } from '@/store/useVpnPacketStore'
 import { EXCHANGE_TYPE } from '@/utils/isakmp'
-import { Check, X } from 'lucide-react'
+import { Circle, CircleDot } from 'lucide-react'
 import { IKE_V2_EXCHANGES } from '@/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants'
 
 /** Mirrors IKEv2Mode in @/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants. */
@@ -14,9 +14,9 @@ interface VpnScorecardProps {
   keMode: ScorecardKeMode
   /** Auth alg name (e.g. 'RSA-2048' or 'ML-DSA-65'). */
   authAlg: string
-  /** Whether IKEv2 fragmentation was enabled in the run. */
+  /** Current fragmentation preference, not observed peer support. */
   fragmentationEnabled: boolean
-  /** Active MTU. Used to detect whether fragmentation actually triggered. */
+  /** Current requested MTU; not a packet-fragment validation result. */
   mtu: number
   /** Selected ML-KEM parameter set (512/768/1024). Defaults to 768 for callers
    * that predate the KEM-size selector. */
@@ -36,9 +36,9 @@ const Indicator: React.FC<{ on: boolean; label: string; subtitle?: string }> = (
 }) => (
   <div className="flex items-center gap-2">
     {on ? (
-      <Check className="h-4 w-4 text-status-success" aria-hidden="true" />
+      <CircleDot className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
     ) : (
-      <X className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+      <Circle className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
     )}
     <span className="flex flex-col">
       <span className={on ? 'text-foreground' : 'text-muted-foreground'}>{label}</span>
@@ -59,13 +59,11 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
 
   const stats = useMemo(() => {
     const totalBytes = packets.reduce((sum, p) => sum + p.bytes.length, 0)
-    // One round trip per distinct (exchangeType, messageId) request/response
-    // pair. Handles multiple IKE_INTERMEDIATE rounds (RFC 9370 allows up to
-    // 7, each with its own Message ID) and excludes INFORMATIONAL traffic.
+    // Distinct captured header IDs, not proof of paired requests/responses.
+    // Preserve the existing count and exclusion of INFORMATIONAL traffic.
     const handshakeMsgIds = new Set<string>()
     let intermediateSeen = false
     let authSeen = false
-    let oversizedSeen = false
     let skfSeen = false
     for (const p of packets) {
       if (p.header) {
@@ -74,21 +72,19 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
         }
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_INTERMEDIATE) intermediateSeen = true
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_AUTH) authSeen = true
-        // Next Payload 53 = Encrypted and Authenticated Fragment (SKF,
-        // RFC 7383) — a real fragment on the wire.
+        // Header value 53 identifies SKF; this does not validate its body,
+        // peer support negotiation or successful reassembly.
         if (p.header.nextPayload === 53) skfSeen = true
       }
-      if (p.bytes.length > mtu) oversizedSeen = true
     }
     return {
       totalBytes,
       roundTrips: handshakeMsgIds.size,
       intermediateSeen,
       authSeen,
-      oversizedSeen,
       skfSeen,
     }
-  }, [packets, mtu])
+  }, [packets])
 
   if (!tunnelEstablished) return null
 
@@ -96,12 +92,6 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
     stats.totalBytes > 0 ? Math.round((stats.totalBytes / CLASSICAL_BASELINE_BYTES - 1) * 100) : 0
 
   const pqKeOn = keMode !== 'classical'
-  const pqAuthOn = authAlg.toLowerCase().includes('ml-dsa')
-  // Real SKF fragments observed on the wire; the oversized fallback covers
-  // builds where charon sends whole messages regardless of MTU.
-  const rfc7383On = stats.skfSeen || (fragmentationEnabled && stats.oversizedSeen)
-  const rfc9242On = stats.intermediateSeen
-  const rfc9370On = keMode === 'hybrid'
 
   return (
     <div
@@ -111,52 +101,98 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
     >
       <div className="flex items-center gap-2">
         <span
-          className="inline-block h-2.5 w-2.5 rounded-full bg-status-success shadow-glow-sm"
+          className="inline-block h-2.5 w-2.5 rounded-full bg-muted-foreground"
           aria-hidden="true"
         />
-        <h3 className="text-lg font-semibold text-gradient">Tunnel Established</h3>
+        <h3 className="text-lg font-semibold text-gradient">Capture and current requests</h3>
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="flex flex-col">
-          <span className="text-xs text-muted-foreground">Total bytes on wire</span>
+          <span className="text-xs text-muted-foreground">Retained UDP payload bytes</span>
           <span className="font-mono text-base text-foreground">
             {stats.totalBytes.toLocaleString()}
           </span>
           <span
             className={`text-[10px] ${overheadPct >= 0 ? 'text-status-warning' : 'text-status-success'}`}
           >
-            vs ~{CLASSICAL_BASELINE_BYTES.toLocaleString()} classical ({overheadPct >= 0 ? '+' : ''}
-            {overheadPct}%)
+            {packets.length > 0 ? (
+              <>
+                vs ~{CLASSICAL_BASELINE_BYTES.toLocaleString()} illustrative classical baseline (
+                {overheadPct >= 0 ? '+' : ''}
+                {overheadPct}%)
+              </>
+            ) : (
+              'No retained capture; comparison not assessed'
+            )}
           </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs text-muted-foreground">Round trips</span>
+          <span className="text-xs text-muted-foreground">Distinct captured exchange IDs</span>
           <span className="font-mono text-base text-foreground">{stats.roundTrips}</span>
           <span className="text-[10px] text-muted-foreground">
-            vs {CLASSICAL_BASELINE_ROUND_TRIPS} classical
+            Classical example assumes {CLASSICAL_BASELINE_ROUND_TRIPS} round trips; this header-ID
+            count does not measure round trips.
           </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs text-muted-foreground">Packets</span>
+          <span className="text-xs text-muted-foreground">Retained packets</span>
           <span className="font-mono text-base text-foreground">{packets.length}</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs text-muted-foreground">MTU</span>
+          <span className="text-xs text-muted-foreground">Requested MTU</span>
           <span className="font-mono text-base text-foreground">{mtu} B</span>
         </div>
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        Current selections are requests, not negotiated outcomes. Retained headers do not establish
+        peer authentication, protocol conformance or fragment reassembly. Capture may be incomplete;
+        byte totals exclude IP/UDP overhead and are not complete network traffic measurements.
+      </p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Indicator
           on={pqKeOn}
-          label="PQC key exchange"
-          subtitle={pqKeOn ? `ML-KEM-${kemSize}` : ''}
+          label="Current key-exchange request"
+          subtitle={pqKeOn ? `${keMode}: ML-KEM-${kemSize}` : 'Classical'}
         />
-        <Indicator on={pqAuthOn} label="PQC authentication" subtitle={authAlg.toUpperCase()} />
-        <Indicator on={rfc9370On} label="RFC 9370 (Multiple KE)" />
-        <Indicator on={rfc9242On} label="RFC 9242 (IKE_INTERMEDIATE)" />
-        <Indicator on={rfc7383On} label="RFC 7383 (IKEv2 Fragmentation)" />
+        <Indicator
+          on={false}
+          label="Initiator authentication request"
+          subtitle={authAlg.toUpperCase()}
+        />
+        <Indicator
+          on={fragmentationEnabled}
+          label="Current fragmentation preference"
+          subtitle={fragmentationEnabled ? 'Enabled; peer support not assessed' : 'Disabled'}
+        />
+        <Indicator
+          on={stats.intermediateSeen}
+          label="IKE_INTERMEDIATE header"
+          subtitle={
+            stats.intermediateSeen
+              ? 'Observed in retained capture'
+              : 'Not observed in retained capture'
+          }
+        />
+        <Indicator
+          on={stats.authSeen}
+          label="IKE_AUTH header"
+          subtitle={
+            stats.authSeen
+              ? 'Observed; peer authentication not assessed'
+              : 'Not observed in retained capture'
+          }
+        />
+        <Indicator
+          on={stats.skfSeen}
+          label="SKF header (Next Payload 53)"
+          subtitle={
+            stats.skfSeen
+              ? 'Observed; fragment validity and reassembly not assessed'
+              : 'Not observed in retained capture'
+          }
+        />
       </div>
     </div>
   )

@@ -87,13 +87,37 @@ export const CuriousOrientationView: FC<CuriousOrientationViewProps> = () => {
         <Compass size={18} className="text-primary" />
         <h2 className="text-lg md:text-xl font-bold text-gradient">Does this affect me?</h2>
       </header>
-      <p className="text-sm text-foreground/85 leading-relaxed mb-4">
-        Compliance rules tell organisations <em>which</em> cryptographic algorithms they must use,{' '}
-        <em>where</em>, and <em>by when</em>. Most current rules require RSA or ECC; new rules are
-        starting to require post-quantum algorithms instead, each with its own deadline — some
-        already passed, some years out. The full Landscape below lists every rule, filterable by
-        country and industry.
+      <p className="text-sm text-foreground/85 leading-relaxed mb-3">
+        Rules about cryptography come in different kinds, and only some of them name an algorithm.
+        Which ones apply to you depends on your country, sector and systems, so check each rule's
+        scope. The full Landscape below lists them, filterable by country and industry.
       </p>
+      <ul className="mb-4 space-y-1.5 text-sm leading-snug text-muted-foreground">
+        <li>
+          <span className="font-medium text-foreground">Risk obligations</span> — a legal duty to
+          manage risk that names no algorithm. For example, the EU's NIS2 Directive has Member
+          States require essential and important entities to take risk-management measures, which
+          include policies on the use of cryptography and, where appropriate, encryption (Article
+          21).
+        </li>
+        <li>
+          <span className="font-medium text-foreground">Technical standards</span> — define how
+          cryptography is built or tested. For example, FIPS 140-3 sets security requirements for
+          cryptographic modules; it applies to US federal agencies and others may choose to adopt
+          it.
+        </li>
+        <li>
+          <span className="font-medium text-foreground">Guidance</span> — recommendations an
+          authority publishes. For example, Germany's BSI TR-02102 technical guidelines assess
+          cryptographic mechanisms and give longer-term guidance on choosing them.
+        </li>
+        <li>
+          <span className="font-medium text-foreground">Scoped algorithm mandates</span> — a rule
+          that names algorithms for a defined scope. For example, CNSA 2.0 requires specific
+          post-quantum algorithms (ML-KEM-1024 and ML-DSA-87, among others) in US national security
+          systems; NSA does not mandate it outside them.
+        </li>
+      </ul>
       {ruleMakers.length > 0 && (
         <div className="mb-4">
           <h3 className="mb-1.5 text-sm font-semibold text-foreground">

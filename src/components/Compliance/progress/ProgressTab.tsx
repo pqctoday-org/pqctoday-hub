@@ -10,8 +10,10 @@ import { useMemo } from 'react'
 import { CalendarClock, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router'
-import type { ComplianceFramework } from '@/data/complianceData'
+import clsx from 'clsx'
+import { bindingDataPresent, type ComplianceFramework } from '@/data/complianceData'
 import type { UserProfile } from '@/utils/applicabilityEngine'
+import { BINDING_CHIP_CLASS, bindingChipFor, bindingChipMeta } from '@/utils/bindingSplit'
 import { buildObligations } from '../obligations/obligationsModel'
 import { buildProgress, groupProgress, nextMilestone } from './progressModel'
 
@@ -24,7 +26,15 @@ interface ProgressTabProps {
 
 export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabProps) {
   const year = currentYear ?? new Date().getFullYear()
-  const entries = useMemo(() => buildProgress(buildObligations(profile), year), [profile, year])
+  const obligations = useMemo(() => buildObligations(profile), [profile])
+  const entries = useMemo(() => buildProgress(obligations, year), [obligations, year])
+  // A binding source binds the reader only when the applicability engine puts it
+  // in their mandatory tier; elsewhere the chip says it binds others.
+  const inScopeIds = useMemo(
+    () => new Set(obligations.filter((o) => o.tier === 'mandatory').map((o) => o.framework.id)),
+    [obligations]
+  )
+  const showBinding = bindingDataPresent()
   const groups = useMemo(() => groupProgress(entries), [entries])
   const next = useMemo(() => nextMilestone(entries, year), [entries, year])
 
@@ -111,6 +121,30 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
                   {entry.label && (
                     <span className="ml-1.5 text-xs text-muted-foreground">{entry.label}</span>
                   )}
+                  {showBinding &&
+                    (() => {
+                      const chip = bindingChipFor(
+                        entry.framework.bindingStatus,
+                        inScopeIds.has(entry.framework.id)
+                      )
+                      const meta = bindingChipMeta(chip)
+                      return (
+                        <span
+                          data-testid="progress-binding-chip"
+                          title={
+                            entry.framework.bindingBasis
+                              ? `${meta.description}. Basis: ${entry.framework.bindingBasis}`
+                              : meta.description
+                          }
+                          className={clsx(
+                            'ml-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-bold',
+                            BINDING_CHIP_CLASS[chip]
+                          )}
+                        >
+                          {meta.chip}
+                        </span>
+                      )
+                    })()}
                   <p className="mt-0.5 text-[11px] text-muted-foreground">
                     {entry.framework.deadline}
                   </p>

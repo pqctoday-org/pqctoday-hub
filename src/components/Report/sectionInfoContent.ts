@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { INDUSTRY_COMPOSITE_WEIGHTS } from '@/hooks/assessmentData'
+
+const financeWeights = INDUSTRY_COMPOSITE_WEIGHTS['Finance & Banking']
 
 export interface SectionInfoEntry {
   title: string
@@ -144,7 +147,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
     scoringPrinciples: [
       'Each category is scored 0\u2013100 independently.',
-      'Category weights are industry-specific (e.g., Finance: QE=0.30, MC=0.25, RP=0.25, OR=0.20).',
+      `Category weights are industry-specific in the Hub model (e.g., Finance: QE=${financeWeights.qe.toFixed(2)}, MC=${financeWeights.mc.toFixed(2)}, RP=${financeWeights.rp.toFixed(2)}, OR=${financeWeights.or.toFixed(2)}).`,
       'Category drivers (the text under each bar) explain what specifically is pulling each score up or down.',
     ],
     personaEffects: [
@@ -459,16 +462,17 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   migrationToolkit: {
     title: 'Migration Toolkit',
     summary:
-      'Shows products from the Migrate catalog that match your infrastructure and industry, helping you identify tools for your PQC migration.',
+      'Shows products from the Migrate catalog in the infrastructure layers and sub-categories you selected, ordered by migration priority, helping you identify tools for your PQC migration. Your industry does not change the list; if no layer is selected, the whole catalog is listed.',
     wizardInputs: [
       {
         label: 'Infrastructure (Step 12)',
         detail:
-          'Products are filtered to match your selected infrastructure layers and sub-categories (e.g., TLS libraries, PKI platforms, HSM vendors).',
+          'Products are filtered to match your selected infrastructure layers and sub-categories (e.g., TLS libraries, PKI platforms, HSM vendors). With no layer selected, nothing is filtered and the whole catalog is listed.',
       },
       {
         label: 'Industry (Step 1)',
-        detail: 'Products are further filtered by industry relevance.',
+        detail:
+          'Does not filter this list; products are chosen by infrastructure layer and sub-category only.',
       },
     ],
     personaEffects: [

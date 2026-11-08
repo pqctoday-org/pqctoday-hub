@@ -66,10 +66,12 @@ export function LibraryDocumentCard({
     <div
       data-deeplink-id={item.referenceId}
       onClick={() => onOpen(item.referenceId)}
-      className="glass-panel flex min-h-[172px] cursor-pointer flex-col rounded-2xl p-3.5 transition-colors hover:border-primary/40 hover:bg-card focus-within:border-primary/40"
+      className="glass-panel flex min-w-0 min-h-[172px] cursor-pointer flex-col rounded-2xl p-3.5 transition-colors hover:border-primary/40 hover:bg-card focus-within:border-primary/40"
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="font-mono text-[12px] font-semibold text-primary">{item.referenceId}</span>
+        <span className="min-w-0 break-all font-mono text-[12px] font-semibold text-primary">
+          {item.referenceId}
+        </span>
         {item.status && (
           <span
             className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
@@ -190,7 +192,7 @@ export function LibraryDocumentCard({
           carry a high trust score; neither implies the other. */}
       <div
         data-testid="library-card-meta"
-        className="mt-auto flex min-w-0 items-center gap-2 border-t border-border pt-2.5"
+        className="mt-auto flex min-w-0 flex-wrap items-center gap-2 border-t border-border pt-2.5"
       >
         <span
           data-testid="library-card-lifecycle"

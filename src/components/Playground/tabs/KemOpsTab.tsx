@@ -9,9 +9,17 @@ import { useHsmContext } from '../hsm/HsmContext'
 import { DataInput } from '../DataInput'
 import { logEvent } from '../../../utils/analytics'
 import { Button } from '../../ui/button'
+import { Textarea } from '../../ui/textarea'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { KcvBadge } from '../KcvBadge'
+import {
+  classicalKemUnavailableReason,
+  isClassicalKemAlgorithm,
+  isKemAlgorithm,
+  isPqcKemAlgorithm,
+  kemSelectionUnavailableReason,
+} from '../kemSelectionSupport'
 import {
   hsm_generateMLKEMKeyPair,
   hsm_encapsulate,
@@ -394,7 +402,8 @@ export const KemOpsTab: React.FC = () => {
 }
 
 const KemOpsTabSoftware: React.FC = () => {
-  const { loading } = useSettingsContext()
+  const recoveredTextId = React.useId()
+  const { loading, executionMode, wasmLoaded } = useSettingsContext()
   const { keyStore, selectedEncKeyId, setSelectedEncKeyId, selectedDecKeyId, setSelectedDecKeyId } =
     useKeyStoreContext()
   const {
@@ -406,7 +415,6 @@ const KemOpsTabSoftware: React.FC = () => {
     encryptedData,
     setEncryptedData,
     decryptedData,
-    setDecryptedData,
     dataToEncrypt,
     setDataToEncrypt,
     kemDecapsulationResult,
@@ -425,25 +433,46 @@ const KemOpsTabSoftware: React.FC = () => {
     classicalRecoveredSecret,
   } = useOperationsContext()
 
-  const isKEM = (algo: string) =>
-    algo.startsWith('ML-KEM') ||
-    algo.startsWith('HQC') ||
-    algo.startsWith('FrodoKEM') ||
-    algo.startsWith('Classic-McEliece') ||
-    ['X25519', 'X448', 'P-256', 'P-384', 'P-521', 'DH-2048'].includes(algo)
+  const kemPublicKeys = keyStore.filter((k) => k.type === 'public' && isKemAlgorithm(k.algorithm))
+  const kemPrivateKeys = keyStore.filter((k) => k.type === 'private' && isKemAlgorithm(k.algorithm))
 
-  const isClassical = (algo: string) =>
-    ['X25519', 'X448', 'P-256', 'P-384', 'P-521', 'DH-2048'].includes(algo)
-  const isPQC = (algo: string) => isKEM(algo) && !isClassical(algo)
+  const pqcPublicKeys = kemPublicKeys.filter((k) => isPqcKemAlgorithm(k.algorithm))
+  const classicalPublicKeys = kemPublicKeys.filter((k) => isClassicalKemAlgorithm(k.algorithm))
 
-  const kemPublicKeys = keyStore.filter((k) => k.type === 'public' && isKEM(k.algorithm))
-  const kemPrivateKeys = keyStore.filter((k) => k.type === 'private' && isKEM(k.algorithm))
-
-  const pqcPublicKeys = kemPublicKeys.filter((k) => isPQC(k.algorithm))
-  const classicalPublicKeys = kemPublicKeys.filter((k) => isClassical(k.algorithm))
-
-  const pqcPrivateKeys = kemPrivateKeys.filter((k) => isPQC(k.algorithm))
-  const classicalPrivateKeys = kemPrivateKeys.filter((k) => isClassical(k.algorithm))
+  const pqcPrivateKeys = kemPrivateKeys.filter((k) => isPqcKemAlgorithm(k.algorithm))
+  const classicalPrivateKeys = kemPrivateKeys.filter((k) => isClassicalKemAlgorithm(k.algorithm))
+  const encUnavailable = kemSelectionUnavailableReason({
+    keyStore,
+    primaryId: selectedEncKeyId,
+    secondaryId: secondaryEncKeyId,
+    operation: 'encapsulate',
+    isHybridMode,
+    executionMode,
+    wasmLoaded,
+  })
+  const decUnavailable = kemSelectionUnavailableReason({
+    keyStore,
+    primaryId: selectedDecKeyId,
+    secondaryId: secondaryDecKeyId,
+    operation: 'decapsulate',
+    isHybridMode,
+    executionMode,
+    wasmLoaded,
+  })
+  const keyOption = (key: (typeof keyStore)[number], role: 'public' | 'private') => {
+    const reason = isClassicalKemAlgorithm(key.algorithm)
+      ? classicalKemUnavailableReason(key, role)
+      : null
+    return {
+      id: key.id,
+      label: key.name,
+      trailing: reason ? (
+        <span className="text-xs text-muted-foreground" title={reason}>
+          Unavailable here
+        </span>
+      ) : undefined,
+    }
+  }
 
   return (
     <div className="w-full animate-fade-in space-y-8">
@@ -471,6 +500,14 @@ const KemOpsTabSoftware: React.FC = () => {
             />
           </div>
         </div>
+
+        <p role="note" className="text-xs text-muted-foreground mb-4">
+          Generating a key or viewing its bytes does not establish support for the next operation.
+          This sample's classical agreement adapters accept X25519 and P-256 CryptoKey values. X448,
+          DH-2048, P-384 and P-521 need other adapters here. In your own tools, check the curve, key
+          format and agreement API, then test compatible inputs on both sides. Input/path
+          availability is separate from an operation succeeding.
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 items-start">
           {/* ========== ENCAPSULATE COLUMN ========== */}
@@ -515,12 +552,12 @@ const KemOpsTabSoftware: React.FC = () => {
                     {isHybridMode ? 'Primary Public Key (PQC)' : 'Public Key'}
                   </span>
                   <FilterDropdown
+                    ariaLabel="Encapsulation public key"
                     selectedId={selectedEncKeyId || 'All'}
                     onSelect={(id) => setSelectedEncKeyId(id === 'All' ? '' : id)}
-                    items={(isHybridMode ? pqcPublicKeys : kemPublicKeys).map((k) => ({
-                      id: k.id,
-                      label: k.name,
-                    }))}
+                    items={(isHybridMode ? pqcPublicKeys : kemPublicKeys).map((k) =>
+                      keyOption(k, 'public')
+                    )}
                     defaultLabel="Select Key..."
                     noContainer
                   />
@@ -532,9 +569,10 @@ const KemOpsTabSoftware: React.FC = () => {
                       Secondary Public Key (Classical)
                     </span>
                     <FilterDropdown
+                      ariaLabel="Hybrid secondary public key"
                       selectedId={secondaryEncKeyId || 'All'}
                       onSelect={(id) => setSecondaryEncKeyId(id === 'All' ? '' : id)}
-                      items={classicalPublicKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      items={classicalPublicKeys.map((k) => keyOption(k, 'public'))}
                       defaultLabel="Select Key..."
                       noContainer
                     />
@@ -555,25 +593,14 @@ const KemOpsTabSoftware: React.FC = () => {
                   runOperation('encapsulate')
                   logEvent('Playground', 'KEM Encapsulate')
                 }}
-                disabled={!selectedEncKeyId || (isHybridMode && !secondaryEncKeyId) || loading}
-                title={
-                  !selectedEncKeyId
-                    ? 'Select a public key to continue'
-                    : isHybridMode && !secondaryEncKeyId
-                      ? 'Select the secondary (classical) public key to continue'
-                      : ''
-                }
+                disabled={Boolean(encUnavailable) || loading}
+                title={encUnavailable ?? ''}
                 className="w-full py-3 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Encapsulate
               </Button>
-              <GateReason
-                when={!loading && (!selectedEncKeyId || (isHybridMode && !secondaryEncKeyId))}
-                className="text-center"
-              >
-                {!selectedEncKeyId
-                  ? 'Generate or pick a public key above to enable this.'
-                  : 'Pick the secondary classical public key to enable this.'}
+              <GateReason when={!loading && Boolean(encUnavailable)} className="text-center">
+                {encUnavailable}
               </GateReason>
             </div>
 
@@ -773,12 +800,12 @@ const KemOpsTabSoftware: React.FC = () => {
                     {isHybridMode ? 'Primary Private Key (PQC)' : 'Private Key'}
                   </span>
                   <FilterDropdown
+                    ariaLabel="Decapsulation private key"
                     selectedId={selectedDecKeyId || 'All'}
                     onSelect={(id) => setSelectedDecKeyId(id === 'All' ? '' : id)}
-                    items={(isHybridMode ? pqcPrivateKeys : kemPrivateKeys).map((k) => ({
-                      id: k.id,
-                      label: k.name,
-                    }))}
+                    items={(isHybridMode ? pqcPrivateKeys : kemPrivateKeys).map((k) =>
+                      keyOption(k, 'private')
+                    )}
                     defaultLabel="Select Key..."
                     noContainer
                   />
@@ -790,9 +817,10 @@ const KemOpsTabSoftware: React.FC = () => {
                       Secondary Private Key (Classical)
                     </span>
                     <FilterDropdown
+                      ariaLabel="Hybrid secondary private key"
                       selectedId={secondaryDecKeyId || 'All'}
                       onSelect={(id) => setSecondaryDecKeyId(id === 'All' ? '' : id)}
-                      items={classicalPrivateKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      items={classicalPrivateKeys.map((k) => keyOption(k, 'private'))}
                       defaultLabel="Select Key..."
                       noContainer
                     />
@@ -813,11 +841,15 @@ const KemOpsTabSoftware: React.FC = () => {
                   runOperation('decapsulate')
                   logEvent('Playground', 'KEM Decapsulate')
                 }}
-                disabled={!selectedDecKeyId || (isHybridMode && !secondaryDecKeyId) || loading}
+                disabled={Boolean(decUnavailable) || loading}
+                title={decUnavailable ?? ''}
                 className="w-full py-3 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Decapsulate
               </Button>
+              <GateReason when={!loading && Boolean(decUnavailable)} className="text-center">
+                {decUnavailable}
+              </GateReason>
             </div>
 
             {/* Step 3: Ciphertext Input */}
@@ -1115,14 +1147,26 @@ const KemOpsTabSoftware: React.FC = () => {
               >
                 Decrypt
               </Button>
-              <DataInput
-                label="Decrypted Data (Output)"
-                value={decryptedData}
-                onChange={setDecryptedData}
-                inputType="binary"
-                placeholder="Recovered Message"
-                height="h-24"
-              />
+              <div
+                role="group"
+                aria-labelledby={`${recoveredTextId}-label`}
+                className="bg-muted/30 rounded-xl border border-border p-4"
+              >
+                <label
+                  id={`${recoveredTextId}-label`}
+                  htmlFor={recoveredTextId}
+                  className="block text-sm font-bold text-foreground mb-3"
+                >
+                  Recovered text (decoded output)
+                </label>
+                <Textarea
+                  id={recoveredTextId}
+                  value={decryptedData}
+                  readOnly
+                  placeholder="Recovered message text"
+                  className="h-24 font-mono resize-none"
+                />
+              </div>
             </div>
           </div>
         </div>

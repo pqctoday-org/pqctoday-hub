@@ -52,6 +52,11 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
         fields to reveal in Step 4.
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        Look for production wallet and verifier tools that inspect the supported encoded profile and
+        check actual validity fields, signatures, issuer trust and applicable status information.
+      </p>
+
       <Tabs defaultValue="credentials" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="credentials" className="gap-2">
@@ -100,14 +105,14 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                   <CardContent>
                     <div className="text-sm space-y-1">
                       <p>
-                        <span className="font-semibold">Format:</span> {cred.format}
+                        <span className="font-semibold">Declared sample format:</span> {cred.format}
                       </p>
                       <p>
                         <span className="font-semibold">Issued:</span>{' '}
                         {new Date(cred.issuanceDate).toLocaleDateString()}
                       </p>
                       <p>
-                        <span className="font-semibold">Status:</span>{' '}
+                        <span className="font-semibold">Illustrative date calculation:</span>{' '}
                         {(() => {
                           const issued = new Date(cred.issuanceDate)
                           const validityDays =
@@ -122,10 +127,17 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                                   : 'text-status-error font-bold'
                               }
                             >
-                              {status}
+                              {status === 'Valid'
+                                ? 'Sample timer not elapsed'
+                                : 'Sample timer elapsed'}
                             </span>
                           )
                         })()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        This timer uses the issuance date plus a sample duration (365 days by
+                        default). It does not check the credential expiration field, signature,
+                        issuer trust or status. It is not a credential validity result.
                       </p>
                       <Button
                         variant="outline"
@@ -133,15 +145,17 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                         className="mt-4 text-xs h-8 w-full"
                         onClick={() => setInspectId(inspectId === cred.id ? null : cred.id)}
                       >
-                        {inspectId === cred.id ? 'Hide Raw Structure' : 'Inspect Structure'}
+                        {inspectId === cred.id ? 'Hide stored sample' : 'Inspect stored sample'}
                       </Button>
 
                       {inspectId === cred.id && (
                         <div className="mt-2 text-left">
                           <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">
-                            {cred.format === 'mso_mdoc'
-                              ? 'BASE64 CBOR COSE_Sign1'
-                              : 'SD-JWT VC (~ DELIMITED)'}
+                            Stored sample representation — encoding not checked
+                          </p>
+                          <p className="mb-2 text-xs text-muted-foreground">
+                            This view prints the stored raw field, which may contain a JSON wrapper.
+                            The declared format does not establish wire-format compatibility.
                           </p>
                           <div className="p-3 bg-card border border-status-success/20 text-status-success font-mono text-[10px] rounded overflow-x-auto break-all max-h-48 shadow-inner">
                             {cred.raw}

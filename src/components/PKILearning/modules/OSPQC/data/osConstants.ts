@@ -25,7 +25,7 @@ export interface PackageFormat {
   tool: string
   currentSigningAlgo: string
   pqcMigrationPath: string
-  status: 'production' | 'experimental' | 'planned'
+  status: 'production' | 'experimental' | 'planned' | 'unverified'
   notes: string
 }
 
@@ -159,24 +159,24 @@ export const PACKAGE_FORMATS: PackageFormat[] = [
   {
     id: 'rpm',
     name: 'RPM (Red Hat Package Manager)',
-    tool: 'rpm-sign, gpg, dnf',
-    currentSigningAlgo: 'GPG RSA-4096 or ECDSA P-256',
+    tool: 'rpmsign, rpmkeys, sq (Sequoia), dnf',
+    currentSigningAlgo: 'OpenPGP RSA signatures (RPM v4)',
     pqcMigrationPath:
-      'ML-DSA-65 via libgcrypt PQC patch (experimental) OR sigstore-style detached signature with ML-DSA',
+      'RPM 6.0.0 and later can carry several OpenPGP signatures per package, including OpenPGP v6 and PQC keys and signatures. Red Hat signs RHEL 10.1 packages with a hybrid ML-DSA-87 + Ed448 key in addition to its RSA key.',
     status: 'experimental',
     notes:
-      'RPM v4.19+ supports pluggable signature backends. RHEL crypto team evaluating ML-DSA for RHEL 11 package signing. Current GPG v2.3+ does not natively support ML-DSA — requires oqsprovider patch or sigstore.',
+      'RPM 6.0.0 (22 September 2025) lists support for OpenPGP v6 and PQC keys and signatures and for multiple signatures per package; verification uses a Sequoia back end. Red Hat reports that its first post-quantum signed package was ipmitool-1.8.19-10.el10_1 (RHBA-2025:23156) and that packages are still also signed with the RSA key: systems that understand RPM 6 signatures verify both, older systems verify only the RSA signature. Red Hat describes its procedure for signing your own RPMs as a technology preview that is not intended for production use. The detached ML-DSA signature in this workshop is a lab example that no package manager checks.',
   },
   {
     id: 'deb',
     name: 'DEB (Debian/Ubuntu)',
-    tool: 'dpkg-sig, reprepro, apt-sign',
-    currentSigningAlgo: 'GPG RSA-4096',
+    tool: 'dpkg-sig, reprepro, apt-ftparchive',
+    currentSigningAlgo: 'OpenPGP signature on InRelease (sample in this lesson: RSA-4096)',
     pqcMigrationPath:
-      'ML-DSA-65 via GnuPG PQC extension OR Debian archive signing key migration to ML-DSA',
-    status: 'planned',
+      'This lesson cites no Debian or Ubuntu plan, date or release for ML-DSA archive or package signatures.',
+    status: 'unverified',
     notes:
-      'Debian Project tracking PQC signing as DEP-18. Ubuntu 26.04 LTS target for ML-DSA package signing support. InRelease file signing requires apt client updates to verify ML-DSA signatures.',
+      'DEP-18 is the Debian Enhancement Proposal "Encourage Continuous Integration and Merge Request based Collaboration for Debian packages"; it is about packaging workflow, not post-quantum signatures, so it is not cited here. An archive could only switch once the apt client verifies the new signature type. Check the Debian and Ubuntu release notes for the current position.',
   },
   {
     id: 'flatpak',
@@ -252,9 +252,10 @@ export const SSH_HOST_KEY_TYPES: SSHKeyType[] = [
     signatureBytes: 3309,
     quantumSafe: true,
     opensshSupport: 'Not named in the OpenSSH 10.0, 10.4 or 10.6 release notes',
-    rfcStatus: 'draft-sfluhrer-ssh-mldsa-06 (Internet-Draft, not a standard)',
+    rfcStatus:
+      'draft-sfluhrer-ssh-mldsa (Internet-Draft, revision 08 when checked; not a standard)',
     notes:
-      'The Internet-Draft draft-sfluhrer-ssh-mldsa-06 (7 April 2026, Intended Status: Informational, expires 9 October 2026) names the key types ssh-mldsa-44, ssh-mldsa-65 and ssh-mldsa-87, written with hyphens. Composite ML-DSA signatures for SSH are in draft-ietf-sshm-composite-sigs-00 (SSHM working group, 21 August 2026, Intended Status: Standards Track), which specifies ssh-mldsa44-ed25519 and ssh-mldsa87-p384; OpenSSH 10.6 (6 October 2026) enables ssh-mldsa44-ed25519. Another Internet-Draft, draft-sun-ssh-composite-sigs-03, describes further composite types such as ssh-mldsa65-es256. An Internet-Draft is a work in progress, not a standard.',
+      'The Internet-Draft draft-sfluhrer-ssh-mldsa (revision 08 when checked; expires 1 March 2027) names the key types ssh-mldsa-44, ssh-mldsa-65 and ssh-mldsa-87, written with hyphens. Composite ML-DSA signatures for SSH are in draft-ietf-sshm-composite-sigs-00 (SSHM working group, 21 August 2026, Intended Status: Standards Track), which specifies ssh-mldsa44-ed25519 and ssh-mldsa87-p384; OpenSSH 10.6 (6 October 2026) enables ssh-mldsa44-ed25519. Another Internet-Draft, draft-sun-ssh-composite-sigs-03, describes further composite types such as ssh-mldsa65-es256. An Internet-Draft is a work in progress, not a standard.',
   },
 ]
 
@@ -264,10 +265,10 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
     os: 'RHEL / CentOS Stream',
     policyMechanism: 'crypto-policies',
     defaultPolicy: 'DEFAULT (TLS 1.2+, RSA-2048+, AES-128+)',
-    pqcPolicy: 'FUTURE:PQCONLY (draft) — experimental in RHEL 10',
-    command: 'update-crypto-policies --set FUTURE',
+    pqcPolicy: 'DEFAULT:PQ on RHEL 9.7; the DEFAULT policy on RHEL 10.1 and later',
+    command: 'update-crypto-policies --set DEFAULT:PQ',
     notes:
-      'RHEL crypto-policies controls system-wide TLS, SSH, IPsec, and Kerberos settings. The FUTURE policy enables TLS 1.3-only and post-quantum groups. A PQCONLY subpolicy is in development for RHEL 10.',
+      'RHEL crypto-policies controls system-wide TLS, SSH, IPsec, and Kerberos settings. On RHEL 10.1 and later the DEFAULT policy enables and prefers post-quantum key exchange for TLS and SSH; on RHEL 9.7, applications based on OpenSSL or NSS can use PQC in TLS once update-crypto-policies --set DEFAULT:PQ is run.',
   },
   {
     id: 'ubuntu-openssl',

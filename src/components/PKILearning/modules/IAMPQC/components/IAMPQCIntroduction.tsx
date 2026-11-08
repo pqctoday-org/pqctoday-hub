@@ -254,7 +254,8 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           <InlineTooltip term="LDAP">LDAP</InlineTooltip>, and{' '}
           <InlineTooltip term="Kerberos">Kerberos</InlineTooltip> &mdash; all rely on classical
           cryptography for key exchange, authentication, and session establishment. Kerberos PKINIT
-          uses RSA for initial authentication; LDAP channels use TLS with classical ciphers.
+          authenticates the initial exchange with certificates and delivers the reply key by
+          Diffie-Hellman or RSA encryption; LDAP channels use TLS with classical ciphers.
         </p>
 
         <div className="space-y-3">
@@ -299,14 +300,23 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           </div>
           <ul className="text-xs text-muted-foreground space-y-1">
             <li>
-              &bull; PKINIT (RFC 4556) uses RSA to encrypt the initial authentication exchange
+              &bull; PKINIT (RFC 4556) delivers the AS reply key by Diffie-Hellman or by RSA
+              encryption to the client&rsquo;s public key; both are quantum-vulnerable
             </li>
             <li>
-              &bull; TGTs are valid 10 hours; service tickets 10 hours &mdash; long HNDL windows
+              &bull; Three different keys are involved: the AS reply key (protects one AS-REP), the
+              TGT session key (carried inside that AS-REP), and the KRBTGT long-term key (encrypts
+              every TGT in the domain)
             </li>
             <li>
-              &bull; A CRQC decrypting PKINIT exchanges enables domain-wide ticket forgery (Golden
-              Ticket equivalent)
+              &bull; A CRQC that recovers the reply key from a captured exchange gets that
+              client&rsquo;s TGT session key, so it can act as that one client only while the TGT is
+              valid (10 hours by default in Active Directory)
+            </li>
+            <li>
+              &bull; A Golden Ticket needs the KRBTGT long-term key as well. Attackers get it by
+              classical means such as credential dumping on a domain controller, and PKINIT does not
+              expose it
             </li>
             <li>
               &bull; We found no published Microsoft date for post-quantum PKINIT in Windows Server

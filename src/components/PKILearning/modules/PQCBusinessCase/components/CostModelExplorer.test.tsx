@@ -10,7 +10,7 @@ describe('CostModelExplorer', () => {
     expect(screen.getByText(/Bottom-up \(activity-based\)/i)).toBeInTheDocument()
     expect(screen.getByText(/Probabilistic \(Monte Carlo\)/i)).toBeInTheDocument()
     expect(screen.getByText(/Judgemental \(scenario\)/i)).toBeInTheDocument()
-    expect(screen.getByText(/Analogical \(historical\)/i)).toBeInTheDocument()
+    expect(screen.getByText(/Analogical \(illustrative anchor\)/i)).toBeInTheDocument()
   })
 
   it('shows the ALE cost-of-inaction reference and the comparison header', () => {

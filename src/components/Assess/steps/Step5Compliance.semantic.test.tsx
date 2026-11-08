@@ -10,6 +10,8 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
 import { Step5Compliance } from './Step5Compliance'
+import { complianceFrameworks } from '@/data/complianceData'
+import { deadlineUrgency } from '@/utils/deadlineUrgency'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -125,5 +127,31 @@ describe('Step5Compliance — Phase 3 free-text business-context rescue', () => 
     expect(screen.queryByText(/Suggested frameworks/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/Loading semantic search/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/Semantic search unavailable/i)).not.toBeInTheDocument()
+  })
+})
+
+describe('Step5Compliance — deadlines that have passed', () => {
+  it('prints "date passed" in the informational colour, never the error colour', () => {
+    vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+      hits: [],
+      mode: 'idle',
+      loading: false,
+    })
+    const passed = complianceFrameworks.filter(
+      (f) => f.deadline && f.deadline !== 'Ongoing' && deadlineUrgency(f.deadline) === 'overdue'
+    )
+    expect(passed.length).toBeGreaterThan(0)
+    const { container } = render(
+      <MemoryRouter>
+        <Step5Compliance />
+      </MemoryRouter>
+    )
+    const marked = screen.getAllByText(/— date passed$/)
+    expect(marked.length).toBeGreaterThan(0)
+    for (const el of marked) {
+      expect(el.parentElement).toHaveClass('text-status-info')
+      expect(el.parentElement).not.toHaveClass('text-status-error')
+    }
+    expect(container.textContent).not.toMatch(/overdue/i)
   })
 })

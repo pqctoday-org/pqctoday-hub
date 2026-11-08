@@ -64,12 +64,21 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
       return (
         <div className="space-y-2">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            Envelope encryption wraps a per-object AES-256 data-encryption-key (DEK) with a
-            key-encryption-key (KEK) held in the KMS/HSM. Migrating the WRAP step from RSA-OAEP to
-            ML-KEM-768 replaces a public-key encryption with a key-encapsulation — the DEK is
-            derived from the encapsulated shared secret instead of decrypted directly, so callers
-            that assume "decrypt the wrapped key" need a small API-level, not just algorithm-level,
-            change.
+            Envelope encryption protects each payload with an AES-256 data-encryption-key (DEK) and
+            stores that DEK wrapped under a key-encryption-key (KEK) held in the KMS/HSM. Migrating
+            the WRAP step from RSA-OAEP to ML-KEM-768 replaces a public-key encryption with a
+            key-encapsulation. Encapsulating to the KMS/HSM public key yields a KEM shared secret
+            and a ciphertext; the shared secret goes through an approved key-derivation function (as
+            required) to give a symmetric wrapping key, which wraps the existing DEK with an
+            authenticated mode. What is stored is the KEM ciphertext plus the wrapped DEK — not the
+            shared secret, and not the DEK in the clear — so callers that assume "decrypt the
+            wrapped key" need an API-level, not just algorithm-level, change. The AES-256 payload
+            encryption itself does not change.
+          </p>
+          <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+            Rewrapping replaces only the wrapped DEK, so the stored payload ciphertext is untouched.
+            Moving a payload to a new DEK needs full data re-encryption. Neither changes copies of
+            the old ciphertext or old wrapped key that were already taken.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Stat
@@ -80,7 +89,7 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
             <Stat
               label="ML-KEM-768 wrap"
               value={`${MLKEM768.signatureOrCiphertextBytes} bytes`}
-              note="ciphertext + KDF, not a direct decrypt"
+              note="KEM ciphertext only; the wrapped DEK is stored as well"
             />
           </div>
           <p className="text-[10.5px] text-muted-foreground">Sizes: NIST FIPS 203 (ML-KEM-768).</p>
@@ -91,27 +100,32 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
       return (
         <div className="space-y-2">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            Merkle Tree Certificates batch many end-entity certificates under ONE periodically
-            re-signed root, so a relying party verifies a short inclusion proof against a Merkle
-            root instead of a full PQC signature on every leaf certificate — a direct answer to
-            ML-DSA/SLH-DSA signatures being materially larger than RSA/ECDSA (LAMPS
-            draft-ietf-lamps-cert-binding-for-multi-cert, still evolving).
+            Merkle Tree Certificates (IETF PLANTS working group,
+            draft-ietf-plants-merkle-tree-certs-08 of 2 November 2026, still a work in progress)
+            have the CA log every certificate it issues and sign checkpoints and subtrees of that
+            log. A standalone certificate carries an inclusion proof to a signed subtree plus
+            cosignatures from the CA and other cosigners on that subtree, so log entries do not grow
+            with public-key and signature size, which matters because post-quantum signatures such
+            as ML-DSA are much larger than current ones. An optional landmark-relative certificate
+            needs no signatures, but only for up-to-date relying parties that already hold
+            predistributed log information.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Stat
               label="Merkle root"
               value="32 bytes"
-              note="SHA-256, fixed size regardless of tree size"
+              note="with SHA-256 (the draft recommends it); fixed size regardless of tree size"
             />
             <Stat
               label="Inclusion proof"
               value="log₂(N) hashes"
-              note="ordered sibling-hash array to the root"
+              note="sibling hashes from the entry up to a checkpoint or subtree"
             />
           </div>
           <p className="text-[10.5px] text-muted-foreground">
-            e.g. a 1M-leaf tree needs a ~20-hash (640-byte) proof — far smaller than re-verifying an
-            ML-DSA-65 signature ({MLDSA65.signatureBytes} bytes) per certificate.
+            e.g. a 1M-leaf tree needs a ~20-hash (640-byte) inclusion proof with SHA-256, against an
+            ML-DSA-65 signature of {MLDSA65.signatureBytes} bytes. This compares the proof alone: a
+            standalone certificate also carries cosignatures on the subtree.
           </p>
         </div>
       )

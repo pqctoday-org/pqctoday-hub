@@ -33,7 +33,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
     phase: 0,
     title: 'Inventory & Baseline',
     description:
-      'Deploy x509-certificate-exporter and Prometheus alert rules. Run CBOM scanner across all pipeline stages. Document every classical crypto asset, its exposure window, and HNDL risk score.',
+      'Inventory certificate algorithms from a documented source; the x509-certificate-exporter expiry metrics do not carry the key algorithm. Run CBOM scanner across all pipeline stages. Document every classical crypto asset, its exposure window, and HNDL risk score.',
     durationWeeks: 2,
     dependencies: [],
     stageIds: ['source', 'build', 'sign', 'registry', 'deploy', 'runtime'],
@@ -84,7 +84,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
       'Validate cipher negotiation with curl --curves X25519MLKEM768',
     ],
     rollbackNote:
-      'X25519MLKEM768 is a hybrid — X25519 fallback is automatic if clients do not support ML-KEM. No breaking change. Rollback: revert Helm values ssl-ecdh-curve to X25519:P-256.',
+      'A fallback to X25519 exists only because the Helm values above also list X25519 and P-256 after X25519MLKEM768, so the server can pick a group the client offers. That is a configuration choice and a policy trade-off, not an automatic property of the hybrid: the larger hybrid key share changes the ClientHello, so test with your own clients, proxies and load balancers before and after the change. This phase concerns key exchange (confidentiality); certificate signatures are a separate risk handled in later phases. Rollback: revert Helm values ssl-ecdh-curve to X25519:P-256, which returns every session to classical-only key exchange.',
     crqcUrgency: 'critical',
   },
   {
@@ -182,7 +182,7 @@ const ROLLBACK_TREE: Record<string, RollbackNode> = {
   'kem-revert': {
     id: 'kem-revert',
     action:
-      'Revert ssl-ecdh-curve to X25519:P-256. X25519MLKEM768 is additive — removing it is non-breaking. File bug with client vendor for ML-KEM support.',
+      'Revert ssl-ecdh-curve to X25519:P-256 (or the group list your clients support). This is a temporary policy trade-off: sessions fall back to classical-only key exchange and lose hybrid protection, so record which clients are affected, test compatibility again after the change, and file a bug with the client vendor for ML-KEM support. It affects key exchange only; certificate signatures are a separate matter.',
     severity: 'warning',
     question: '',
   },
@@ -202,14 +202,14 @@ const ROLLBACK_TREE: Record<string, RollbackNode> = {
   'hybrid-fail': {
     id: 'hybrid-fail',
     action:
-      'Client cannot validate an X.509 certificate chain signed with ML-DSA. Check client OpenSSL/BoringSSL version. Add ECDSA-only certificate exception for affected client until upgrade is possible.',
+      'Client cannot validate an X.509 certificate chain signed with ML-DSA. Check the client TLS library version. If you keep a classical certificate chain for affected clients until they can upgrade, treat it as a documented, time-limited exception with its own forgery risk, separate from the key-exchange decision.',
     severity: 'warning',
     question: '',
   },
   'wrong-issuer': {
     id: 'wrong-issuer',
     action:
-      'Certificate was not re-issued by new CA. Force cert-manager renewal: kubectl annotate cert {name} cert-manager.io/issue-once=true',
+      'Certificate was not re-issued by the new CA. Trigger a renewal with the cert-manager CLI, cmctl renew {name} -n {namespace}, then confirm the new certificate with cmctl status certificate {name} -n {namespace} and check its issuer and signature algorithm.',
     severity: 'ok',
     question: '',
   },
@@ -242,7 +242,7 @@ const ROLLBACK_TREE: Record<string, RollbackNode> = {
   'no-issue': {
     id: 'no-issue',
     action:
-      'No active failures detected. Check Prometheus alerts for non-PQC cert drift. Run x509-certificate-exporter scan for any missed certificates.',
+      'No active failures detected. Compare certificate algorithms from a documented inventory source with policy; the x509-certificate-exporter expiry metrics do not carry the key algorithm, so a missing algorithm stays Unknown.',
     severity: 'ok',
     question: '',
   },

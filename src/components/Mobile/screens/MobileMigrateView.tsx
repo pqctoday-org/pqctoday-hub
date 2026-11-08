@@ -25,7 +25,7 @@ import {
   type DomainId,
   type ReplaceAsset,
 } from '@/data/migrationAssets'
-import { softwareData, vendorMap } from '@/data/migrateData'
+import { softwareData, softwareMetadata, vendorMap } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
 import { getCertsForProduct } from '@/data/certificationXrefData'
@@ -118,6 +118,7 @@ const FACET_LABELS: Record<keyof ProductFacets, FacetLabel> = {
     values: {
       available: 'Available',
       partial: 'Partial',
+      psk: 'PSK',
       planned: 'Planned / roadmap',
       none: 'None',
       unknown: 'Not yet determined',
@@ -901,6 +902,7 @@ export function MobileMigrateView() {
 
       {tab === 'plan' && (
         <MobilePlanTab
+          plan={plan}
           posture={posture}
           choice={choice}
           chooseProduct={chooseProduct}
@@ -1048,7 +1050,7 @@ function MobileProductDetailSheet({
   }, [product])
 
   const supportDetail = (product?.pqcSupport || '')
-    .replace(/^\s*(yes|no|partial)\b[\s:,-]*/i, '')
+    .replace(/^\s*(yes|no|partial|psk)\b[\s:,-]*/i, '')
     .replace(/^\(|\)$/g, '')
     .trim()
 
@@ -1245,6 +1247,7 @@ function MobileProductDetailSheet({
 }
 
 function MobilePlanTab({
+  plan,
   posture,
   choice,
   chooseProduct,
@@ -1253,6 +1256,7 @@ function MobilePlanTab({
   onGoToReplace,
   onSelectProduct,
 }: {
+  plan: string[]
   posture: ReturnType<typeof useMigrationPlan>
   choice: Record<string, string[]>
   chooseProduct: (assetId: string, productName: string) => void
@@ -1511,9 +1515,12 @@ function MobilePlanTab({
         size="sm"
         onClick={() =>
           downloadPlanCbom({
-            planIds: posture.plannedAssets.map((a) => a.id),
+            planIds: plan,
             choice,
             timestamp: new Date().toISOString(),
+            products: softwareData,
+            catalogSnapshot: softwareMetadata?.filename,
+            capturedProductIds: nameToProductId,
           })
         }
         className="h-9 self-end text-[11.5px]"
@@ -1950,7 +1957,7 @@ function MobileVendorRoadmapPanel({
 }) {
   const display = deriveVendorRoadmapDisplay(roadmap, enrichment)
   if (!display) return null
-  const { title, roadmapUrl, gaStatus, dateLine, isEmpty } = display
+  const { title, roadmapUrl, gaStatus, gaStatusDetail, dateLine, isEmpty } = display
 
   if (isEmpty) {
     return <p className="text-[12.5px] text-muted-foreground">No roadmap published.</p>
@@ -1961,7 +1968,11 @@ function MobileVendorRoadmapPanel({
       <div>
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-[13px] font-bold text-foreground">{title}</span>
-          {gaStatus && <Badge tone={GA_STATUS_TONE[gaStatus.kind]}>{gaStatus.label}</Badge>}
+          {gaStatus && (
+            <Badge tone={GA_STATUS_TONE[gaStatus.kind]} title={gaStatusDetail ?? undefined}>
+              {gaStatus.label}
+            </Badge>
+          )}
         </div>
         {dateLine && (
           <p className="mt-0.5 flex items-center gap-1 text-[10.5px] text-muted-foreground">

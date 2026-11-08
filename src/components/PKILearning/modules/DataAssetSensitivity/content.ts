@@ -4,6 +4,10 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -86,11 +90,11 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0 software signing preferred',
+      label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },
-    { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    { label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
     {
       label: 'NIST: deprecate RSA, ECC and DH (all key sizes, 112-bit security and up)',
       year: NIST_DEPRECATION.deprecateClassical,

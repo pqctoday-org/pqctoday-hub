@@ -6,7 +6,7 @@ Identity and Access Management (IAM) is built entirely on cryptographic signatur
 
 ## Why It Matters
 
-Adversaries are actively capturing and storing these secure exchanges today. Kerberos is the highest priority risk: if a quantum computer breaks the initial RSA authentication exchange (PKINIT), the attacker could forge tickets and move laterally across an entire enterprise network, creating a catastrophic "Quantum Golden Ticket."
+Adversaries are actively capturing and storing these secure exchanges today. Kerberos is the highest priority risk: breaking a captured PKINIT exchange could expose that client's session key for as long as its ticket is valid; forging tickets for any account is a Golden Ticket, which needs the KRBTGT key and is a classical key-theft attack.
 
 ## The Key Takeaway
 
@@ -14,4 +14,4 @@ All enterprise token signing will soon migrate to the new ML-DSA (FIPS 204) stan
 
 ## What's Happening
 
-Our product catalogue records no post-quantum token signing for most of the identity providers this module lists, so Active Directory teams should plan the Kerberos PKINIT upgrade that prevents the catastrophic "Quantum Golden Ticket" scenario before vendors deliver it.
+Our product catalogue records no post-quantum token signing for most of the identity providers this module lists, so Active Directory teams should plan the Kerberos PKINIT upgrade once Microsoft documents it; protect the KRBTGT key separately.

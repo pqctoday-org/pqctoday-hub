@@ -3,7 +3,7 @@
 // Wizard navigation for the Assess redesign. Renders RENDER_ORDER_* but reads /
 // writes store.currentStep through the track-relative mapping so the legacy
 // wizard and the redesign agree on what "step N" means (resume, ?step, analytics).
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams, type SetURLSearchParams } from 'react-router'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
@@ -65,6 +65,10 @@ export function useAssessFlow({
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const [attemptedMap, setAttemptedMap] = useState<Record<string, boolean>>({})
   const [maxIdx, setMaxIdx] = useState(0)
+  // The ?step value this hook itself last wrote. The read effect ignores that
+  // value, so a link whose step differs from the stored step cannot make the
+  // read and write effects overwrite each other.
+  const lastWrittenStep = useRef<string | null>(null)
 
   const renderOrder = useMemo(() => renderOrderFor(mode), [mode])
   const total = renderOrder.length
@@ -107,6 +111,7 @@ export function useAssessFlow({
   useEffect(() => {
     const sp = searchParams.get('step')
     if (sp === null) return
+    if (sp === lastWrittenStep.current) return
     const parsed = parseInt(sp, 10)
     if (isNaN(parsed) || parsed < 0) return
     const key = keyAtStoreIndex(mode, parsed)
@@ -120,6 +125,7 @@ export function useAssessFlow({
     if (cur === String(currentStep)) return
     const next = new URLSearchParams(searchParams)
     next.set('step', String(currentStep))
+    lastWrittenStep.current = String(currentStep)
     setSearchParams(next, { replace: true })
   }, [currentStep, searchParams, setSearchParams])
 

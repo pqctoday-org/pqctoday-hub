@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { conceptXwalkData } from './conceptXwalkData'
+import {
+  conceptXwalkData,
+  STRUCTURAL_RELATIONSHIP_TYPES,
+  transformRow,
+  type RawXwalkRow,
+} from './conceptXwalkData'
 
 describe('conceptXwalkData', () => {
   it('loads without error and has at least 22 edges', () => {
@@ -198,6 +203,78 @@ describe('conceptXwalkData', () => {
         valid.has(edge.confidence),
         `bad confidence ${JSON.stringify(edge.confidence)} on ${edge.xwalkId}`
       ).toBe(true)
+    }
+  })
+})
+
+function rawRow(overrides: Partial<RawXwalkRow>): RawXwalkRow {
+  return {
+    xwalk_id: 'xw-test0001',
+    from_concept: 'ANSSI Common Criteria Certification',
+    to_concept: 'Common Criteria',
+    from_concept_id: 'guidance:anssi-common-criteria-certific',
+    to_concept_id: 'guidance:common-criteria',
+    relationship_type: 'scheme_under',
+    rationale_type: 'policy_reference',
+    evidence: 'test evidence',
+    verified_date: '2026-11-05',
+    verified_by: 'test',
+    confidence: 'high',
+    ...overrides,
+  }
+}
+
+describe('structural relationship types (scheme_under, part_of_series)', () => {
+  it('a scheme_under row loads with its direction and ids intact', () => {
+    const rec = transformRow(rawRow({ relationship_type: 'scheme_under' }))
+    expect(rec).not.toBeNull()
+    expect(rec?.relationshipType).toBe('scheme_under')
+    expect(rec?.fromConceptId).toBe('guidance:anssi-common-criteria-certific')
+    expect(rec?.toConceptId).toBe('guidance:common-criteria')
+    expect(rec?.confidenceScore).toBe(85)
+  })
+
+  it('a part_of_series row loads with its direction and ids intact', () => {
+    const rec = transformRow(
+      rawRow({
+        relationship_type: 'part_of_series',
+        from_concept: 'IEEE 1363a',
+        to_concept: 'IEEE 1363',
+        from_concept_id: 'standard:ieee-1363a',
+        to_concept_id: 'standard:ieee-1363',
+      })
+    )
+    expect(rec).not.toBeNull()
+    expect(rec?.relationshipType).toBe('part_of_series')
+    expect(rec?.fromConceptId).toBe('standard:ieee-1363a')
+    expect(rec?.toConceptId).toBe('standard:ieee-1363')
+  })
+
+  it('a relationship type outside the closed set is still dropped, not guessed', () => {
+    for (const bad of ['published_by', 'scheme-under', 'Scheme_Under', '']) {
+      expect(transformRow(rawRow({ relationship_type: bad })), bad).toBeNull()
+    }
+  })
+
+  it('the existing types still load', () => {
+    for (const ok of ['subset_of', 'superset_of', 'equivalent', 'intersects_with']) {
+      expect(transformRow(rawRow({ relationship_type: ok }))?.relationshipType, ok).toBe(ok)
+    }
+  })
+
+  it('exactly these two types are structural, and equivalent is not one of them', () => {
+    expect([...STRUCTURAL_RELATIONSHIP_TYPES].sort()).toEqual(['part_of_series', 'scheme_under'])
+    expect(STRUCTURAL_RELATIONSHIP_TYPES.has('equivalent')).toBe(false)
+  })
+
+  it('every shipped structural row names two different, resolved concepts', () => {
+    for (const edge of conceptXwalkData) {
+      if (!STRUCTURAL_RELATIONSHIP_TYPES.has(edge.relationshipType)) continue
+      expect(edge.fromConceptId, `${edge.xwalkId} from id`).toBeTruthy()
+      expect(edge.toConceptId, `${edge.xwalkId} to id`).toBeTruthy()
+      expect(edge.fromConceptId, `${edge.xwalkId} must join two different concepts`).not.toBe(
+        edge.toConceptId
+      )
     }
   })
 })

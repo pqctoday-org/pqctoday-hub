@@ -87,8 +87,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             Modern vehicles are among the most complex distributed computing systems in production
-            today. A premium vehicle contains 100&ndash;150 Electronic Control Units (
-            <InlineTooltip term="ECU">ECUs</InlineTooltip>) communicating over multiple bus
+            today. Example figures: a premium vehicle contains 100&ndash;150 Electronic Control
+            Units (<InlineTooltip term="ECU">ECUs</InlineTooltip>) communicating over multiple bus
             technologies; of these, 24&ndash;30 are security-relevant &mdash; the focus of PQC
             migration planning. The cryptographic requirements span from real-time safety-critical
             signing (brake-by-wire commands in &lt;1 ms) to bulk data protection (
@@ -173,9 +173,16 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <InlineTooltip term="CAN Bus">CAN 2.0</InlineTooltip> frames are limited to 8 bytes of
             payload &mdash; impossibly small for any PQC signature. CAN FD extends this to 64 bytes,
             still insufficient for <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> (3,309 bytes
-            at security level 3). Both require application-layer fragmentation. Automotive Ethernet
-            (1,500-byte MTU) can natively carry ML-KEM payloads (1,088 bytes) without fragmentation,
-            but even Ethernet will require IP fragmentation for ML-DSA-44 or larger signatures.
+            at security level 3). Both would need the signature split across several frames by a
+            transport or application protocol. Automotive Ethernet (typically a 1,500-byte MTU) can
+            carry an ML-KEM-768 ciphertext (1,088 bytes) in one packet, but not an ML-DSA-44
+            signature (2,420 bytes). That does not by itself force IP fragmentation: over TCP, which
+            is a byte stream, the transport splits the data into segments, and TLS splits handshake
+            messages across records (RFC 8446 section 5.1); over UDP, the protocol or application is
+            expected to avoid IP fragmentation, for example by fragmenting DTLS handshake messages
+            across records that each fit one datagram (RFC 9147 sections 3.3 and 4.3) or by sizing
+            messages to the path MTU. How a large signature is split depends on the protocol&rsquo;s
+            framing.
           </p>
         </div>
       </LearnSection>
@@ -374,11 +381,20 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             The core tension is between <strong>fail-safe</strong> and{' '}
-            <strong>fail-operational</strong> design. A fail-safe system (ASIL A/B) can enter a safe
-            state when crypto verification fails or times out. A fail-operational system (ASIL C/D)
-            must continue operating safely even during crypto failures &mdash; this requires
-            redundant verification paths and strict worst-case timing guarantees that PQC algorithms
-            must satisfy.
+            <strong>fail-operational</strong> design. A fail-safe function can enter a safe state
+            when crypto verification fails or times out. A fail-operational function must keep
+            operating safely even during crypto failures, which can call for a verification path
+            that does not depend on the PQC code and for a worst-case timing bound on it. Which
+            behaviour a function needs, and how much redundancy, comes from its own hazard analysis
+            and safety goals (including the time within which a fault must be handled, the fault
+            tolerant time interval), not from the ASIL letter alone.
+          </p>
+
+          <p className="text-xs text-muted-foreground">
+            The table below is a fictional set of example assumptions for learning, not ISO 26262
+            requirements and not a mapping given by any standard. The same ASIL letter can carry
+            different budgets for different functions: the Safety Crypto Analyzer&rsquo;s examples
+            give ASIL D functions 5, 10 and 15 ms and ASIL B functions 67 and 200 ms.
           </p>
 
           <div className="overflow-x-auto">
@@ -387,24 +403,24 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 <tr className="border-b border-border">
                   <th className="text-left py-2 px-3 text-muted-foreground font-medium">ASIL</th>
                   <th className="text-left py-2 px-3 text-muted-foreground font-medium">
-                    Safety Requirement
+                    Example Safety Behaviour
                   </th>
                   <th className="text-right py-2 px-3 text-muted-foreground font-medium">
-                    Latency Budget
+                    Assumed Latency Budget
                   </th>
                   <th className="text-left py-2 px-3 text-muted-foreground font-medium">
-                    Crypto Requirements
+                    Example Crypto Approach
                   </th>
                   <th className="text-left py-2 px-3 text-muted-foreground font-medium">
-                    PQC Timing Impact
+                    PQC Timing Impact (example)
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-border/50">
                   <td className="py-2 px-3 font-bold text-muted-foreground">QM</td>
-                  <td className="py-2 px-3">No safety requirement</td>
-                  <td className="text-right py-2 px-3">No limit</td>
+                  <td className="py-2 px-3">No safety function assumed</td>
+                  <td className="text-right py-2 px-3">No limit assumed</td>
                   <td className="py-2 px-3">Best effort</td>
                   <td className="py-2 px-3">
                     <span className="text-status-success font-medium">No impact</span>
@@ -412,7 +428,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="py-2 px-3 font-bold text-foreground">A</td>
-                  <td className="py-2 px-3">Fail-safe (light injuries)</td>
+                  <td className="py-2 px-3">Fail-safe</td>
                   <td className="text-right py-2 px-3">&lt;100 ms</td>
                   <td className="py-2 px-3">Auth on state transitions</td>
                   <td className="py-2 px-3">
@@ -421,7 +437,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="py-2 px-3 font-bold text-status-warning">B</td>
-                  <td className="py-2 px-3">Fail-safe (severe injuries)</td>
+                  <td className="py-2 px-3">Fail-safe</td>
                   <td className="text-right py-2 px-3">&lt;50 ms</td>
                   <td className="py-2 px-3">Periodic auth + watchdog</td>
                   <td className="py-2 px-3">
@@ -432,23 +448,23 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="py-2 px-3 font-bold text-status-error">C</td>
-                  <td className="py-2 px-3">Fail-operational (life-threat)</td>
+                  <td className="py-2 px-3">Fail-operational</td>
                   <td className="text-right py-2 px-3">&lt;10 ms</td>
                   <td className="py-2 px-3">Real-time auth every cycle</td>
                   <td className="py-2 px-3">
                     <span className="text-status-error font-medium">
-                      HW accel required for ML-DSA
+                      Measure on target hardware; acceleration is one option
                     </span>
                   </td>
                 </tr>
                 <tr>
                   <td className="py-2 px-3 font-bold text-status-error">D</td>
-                  <td className="py-2 px-3">Fail-operational (fatal)</td>
+                  <td className="py-2 px-3">Fail-operational</td>
                   <td className="text-right py-2 px-3">&lt;5 ms</td>
                   <td className="py-2 px-3">Deterministic auth + redundancy</td>
                   <td className="py-2 px-3">
                     <span className="text-status-error font-medium">
-                      Dedicated PQC crypto ASIC needed
+                      Measure worst-case timing on target hardware; no particular hardware assumed
                     </span>
                   </td>
                 </tr>
@@ -457,13 +473,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </div>
 
           <p>
-            For ASIL C/D functions like steer-by-wire and brake-by-wire, PQC verification must
-            complete within a single control loop iteration (typically 5&ndash;10 ms). Software-only{' '}
-            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> verification on an automotive-grade
-            ARM Cortex-A72 (2 GHz) takes approximately 2&ndash;4 ms; on a more constrained
-            Cortex-R52 (400 MHz) expect 5&ndash;15 ms &mdash; potentially exceeding the timing
-            budget. Hardware-accelerated PQC (via dedicated crypto coprocessors or FPGA fabric) can
-            reduce this to &lt;0.5 ms but adds BOM cost and silicon area.
+            For a fast control loop such as steer-by-wire or brake-by-wire, the safety analysis may
+            leave only a few milliseconds for verification. In this module&rsquo;s assumed figures,
+            software-only <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> verification takes
+            roughly 2&ndash;4 ms on an automotive-grade ARM Cortex-A72 (2 GHz) and 5&ndash;15 ms on
+            a more constrained Cortex-R52 (400 MHz), which could exceed a tight budget. Hardware
+            acceleration (crypto coprocessors or FPGA fabric) is one way to cut this, at a cost in
+            BOM and silicon area; whether it is needed is decided by measuring the worst-case
+            execution time on the target ECU, not by the ASIL letter.
           </p>
 
           <p>
@@ -497,8 +514,12 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             The vehicle&rsquo;s cryptographic lifecycle spans three distinct phases, each with
             different HSM roles and PQC requirements. At production, keys are injected under
             controlled factory conditions. During road life, HSMs perform millions of real-time
-            signing operations. At end-of-life, all key material must be securely destroyed to
-            prevent harvest-after-disposal attacks.
+            signing operations. At end-of-life, key material in the vehicle should be destroyed so
+            that a scrapped or resold vehicle does not leave usable credentials behind. Destruction
+            only covers the copies that are known and reachable: keys in backups, escrow or at the
+            backend need their own deletion, and it cannot recover anything retroactively. It is key
+            hygiene, separate from harvest-now-decrypt-later (a risk to data sent over classical key
+            exchange) and from forgery (a risk to signature keys).
           </p>
 
           <h3 className="text-sm font-bold text-foreground">
@@ -676,11 +697,16 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip> in automotive
-            requires abstraction at every layer. The AUTOSAR Adaptive Platform provides a Crypto
-            Service Manager (CSM) that decouples application code from specific algorithm
-            implementations. When a new PQC algorithm is standardized or an existing one is
-            deprecated, only the CSM driver needs updating &mdash; application ECUs receive the
-            change transparently via <InlineTooltip term="OTA Updates">OTA updates</InlineTooltip>.
+            requires abstraction at every layer. AUTOSAR has two different crypto interfaces: on the
+            Classic Platform, the Crypto Service Manager (CSM, with the Crypto Interface and Crypto
+            Drivers beneath it) is the standard way for software modules to reach cryptographic
+            functions; on the Adaptive Platform, the Cryptography functional cluster exposes the
+            CryptoAPI (ara::crypto), where Crypto Providers implement the algorithms. Both separate
+            application code from the implementation, which makes an algorithm change possible, but
+            not automatic or invisible: a new algorithm still needs a provider or driver that
+            supports it, a profile and data format that every peer ECU, backend and tool agrees on,
+            and compatibility testing across the vehicle and its ecosystem before it can be
+            delivered by <InlineTooltip term="OTA Updates">OTA updates</InlineTooltip>.
           </p>
 
           <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
@@ -731,9 +757,10 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             <InlineTooltip term="AUTOSAR">AUTOSAR</InlineTooltip> Adaptive Platform R23-11 includes
-            the Crypto Service Manager (ara::crypto) which supports algorithm-agnostic key
-            management. AUTOSAR Classic (used in most ECUs) can map its crypto stack onto the SHE
-            (Secure Hardware Extensions) interface, which on SHE-only ECUs has a fixed AES-128
+            a Cryptography functional cluster whose CryptoAPI (ara::crypto) covers cryptographic
+            operations, key management and certificate handling through Crypto Providers and a Key
+            Storage Provider. AUTOSAR Classic (used in most ECUs) can map its crypto stack onto the
+            SHE (Secure Hardware Extensions) interface, which on SHE-only ECUs has a fixed AES-128
             algorithm set with no asymmetric or PQC support. The Classic R23-11 Crypto Driver
             specification itself defines ECC and RSA algorithm families but no post-quantum family.
             The Classic-to-Adaptive migration is itself a multi-year effort that must be coordinated
@@ -1121,31 +1148,51 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           <p>
-            The regulatory backdrop is <strong>UNECE WP.29 R155 / R156</strong>: since July 2024
-            vehicle types need a valid Cyber Security Management System (CSMS) certificate under
-            R155 (and a Software Update Management System certificate under R156). R155 section
-            7.3.8 requires cryptographic modules to follow consensus standards; it does not mention
-            post-quantum cryptography.
+            The regulatory backdrop is <strong>UNECE WP.29 R155 / R156</strong>. R155 paragraph
+            7.3.1 requires the manufacturer to hold a valid Certificate of Compliance for the Cyber
+            Security Management System (CSMS) relevant to the vehicle type being approved, with a
+            carve-out for type approvals before 1 July 2024; R156 paragraph 3.5 requires the
+            Certificate of Compliance for the Software Update Management System (SUMS) to accompany
+            the application for approval. R155 paragraph 7.3.8 requires cryptographic modules to be
+            in line with consensus standards, or the manufacturer to justify their use; it does not
+            mention post-quantum cryptography. These are UN Regulations, and each market applies
+            them through its own type-approval rules. In the EU, for example, Regulation (EU)
+            2019/2144 (Annex II, item D4, &ldquo;Protection of vehicle against cyberattacks&rdquo;)
+            sets 6 July 2022 as the date from which EU type-approval of new vehicle types can be
+            refused on that requirement and 7 July 2024 as the date from which registration of new
+            vehicles that do not comply can be prohibited, for the vehicle categories marked in that
+            table. This module does not state other markets&rsquo; dates: check the type-approval
+            authority.
           </p>
 
           <p>
             <InlineTooltip term="TISAX">TISAX</InlineTooltip> (Trusted Information Security
-            Assessment Exchange), managed by the VDA (Verband der Automobilindustrie), is the
-            automotive industry&rsquo;s standard information security assessment framework. TISAX
-            assessment labels (AL 1&ndash;3) are required for suppliers handling confidential OEM
-            data. As PQC becomes a regulatory requirement, TISAX assessment scope is expanding to
-            include quantum-readiness criteria: cryptographic inventory documentation, PQC migration
-            timelines, and evidence of crypto-agility in delivered components.
+            Assessment Exchange) is governed by the ENX Association and is based on the Information
+            Security Assessment (ISA) catalogue, which ENX maintains and the VDA (Verband der
+            Automobilindustrie) publishes. A TISAX assessment is carried out at one of three
+            assessment levels (AL 1&ndash;3) that tell the audit provider how much to verify: AL 1
+            is a self-assessment that TISAX does not use for results, AL 2 is a plausibility check
+            and AL 3 is a comprehensive verification (ENX TISAX Participant Handbook). The result is
+            issued as labels tied to the assessment objectives a partner asks for, such as
+            information security, data protection or prototype protection; for example, &ldquo;Info
+            high&rdquo; maps to AL 2 and &ldquo;Info very high&rdquo; to AL 3, and labels are valid
+            for three years. Cryptography enters through the ISA catalogue&rsquo;s own control
+            (5.1.1 in ISA2027.1): how the use of cryptographic procedures is managed, with a concept
+            covering methods, key strengths and the key lifecycle. ISA2027.1 contains no
+            post-quantum criteria, so whether a customer asks suppliers about PQC is that
+            customer&rsquo;s own requirement, not part of a TISAX label.
           </p>
 
           <h3 className="text-sm font-bold text-foreground">Supplier PQC Readiness Cascade</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h3 className="text-sm font-bold text-foreground mb-2">OEM</h3>
+              <h3 className="text-sm font-bold text-foreground mb-2">OEM (fictional example)</h3>
               <p className="text-xs text-muted-foreground mb-2">
-                Defines PQC policy and algorithm requirements. Mandates hybrid mode for all new
-                platforms from 2027+. Requires TISAX AL2+ with PQC addendum from all Tier-1
-                suppliers.
+                Defines its own PQC policy and algorithm requirements. In this fictional example the
+                OEM requires hybrid mode on platforms launched after a date it chooses and asks
+                Tier-1 suppliers for a cryptographic inventory and migration plan. The policy and
+                date are invented for teaching; TISAX is a separate assessment of the
+                supplier&rsquo;s information-security management.
               </p>
               <p className="text-[10px] text-foreground font-medium">
                 Responsibility: Architecture, policy, validation
@@ -1198,17 +1245,20 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
               <h3 className="text-sm font-bold text-foreground mb-2">
-                AUTOSAR Adaptive (Crypto Service Manager)
+                AUTOSAR Adaptive (Cryptography / CryptoAPI)
               </h3>
               <p className="text-xs text-muted-foreground">
-                Used in zone controllers, ADAS, and infotainment. ara::crypto Crypto Service Manager
-                supports pluggable algorithm providers. PQC algorithms can be added as new CSM
-                drivers without changing application code. Supports{' '}
-                <InlineTooltip term="PKCS#11">PKCS#11</InlineTooltip>-backed HSM integration.
-                Algorithm negotiation enables hybrid classical+PQC during transition.
+                Used in zone controllers, ADAS, and infotainment. The CryptoAPI (ara::crypto)
+                separates applications from Crypto Providers, each a software- or hardware-based
+                implementation of a set of algorithms, so a provider can be added or replaced
+                without changing the API the application calls. That is provider abstraction, not a
+                transparent PQC migration: the provider must support the algorithm, and keys,
+                certificates and message formats must be agreed with every peer and tested. The
+                R23-11 text names no post-quantum algorithm; it has a generic key-encapsulation
+                interface whose naming example is RSA-based (KEM/RSA-2048).
               </p>
               <p className="text-[10px] text-status-success font-medium mt-2">
-                Full PQC extensibility via CSM driver updates
+                Pluggable providers; no PQC algorithm named in R23-11
               </p>
             </div>
           </div>
@@ -1233,8 +1283,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                   crypto creates a permanent vulnerability in every vehicle that ECU is installed
                   in. OEMs must enforce PQC readiness requirements at{' '}
                   <strong>every tier of the supply chain</strong> and require contractual guarantees
-                  of firmware-updateable cryptographic implementations. TISAX assessments must
-                  verify actual crypto-agility, not just policy documentation.
+                  of firmware-updateable cryptographic implementations. A customer that cares about
+                  crypto-agility has to ask for evidence beyond policy documents, in contract terms
+                  and its own supplier audits; a TISAX label does not by itself attest to it.
                 </p>
               </div>
             </div>

@@ -38,7 +38,7 @@ export const SecretsManagementExercises: React.FC<SecretsManagementExercisesProp
       badge: 'Risk',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        '5 of the 6 critical-risk secrets have Immediate HNDL exposure — they are usable by an attacker the moment they are decrypted. API keys (delayed) are the exception due to token lifetime limits, but remain critical. The prioritized action list shows ML-KEM-based mitigation for each type.',
+        '4 of the 6 critical-risk secrets have Immediate HNDL exposure — they are usable by an attacker the moment they are decrypted. API keys (delayed) are the exception due to token lifetime limits, but remain critical. TLS certificates carry authentication risk but no HNDL exposure: recovering a signing key does not decrypt recorded sessions. The prioritized action list names the step to migrate for each type; ML-KEM-derived wrapping applies only where an asymmetric step exists and the product supports it.',
       config: { step: 0 },
     },
     {

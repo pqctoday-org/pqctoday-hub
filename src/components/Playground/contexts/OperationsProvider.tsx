@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { OperationsContext } from './OperationsContext'
 import { useSettingsContext } from './SettingsContext'
 import { useKeyStoreContext } from './KeyStoreContext'
@@ -7,10 +7,12 @@ import { useKemOperations } from '../hooks/useKemOperations'
 import { useDsaOperations } from '../hooks/useDsaOperations'
 import { useSymmetricOperations } from '../hooks/useSymmetricOperations'
 import { useHashingOperations } from '../hooks/useHashingOperations'
+import { bytesToHex } from '@/utils/dataInputUtils'
 import { useAchievementStore } from '@/store/useAchievementStore'
 
 export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { executionMode, wasmLoaded, keySize, addLog, setLoading, setError } = useSettingsContext()
+  const { algorithm, executionMode, wasmLoaded, keySize, addLog, setLoading, setError } =
+    useSettingsContext()
 
   const {
     keyStore,
@@ -25,14 +27,48 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [sharedSecret, setSharedSecret] = useState<string>('')
   const [ciphertext, setCiphertext] = useState<string>('')
   const [encryptedData, setEncryptedData] = useState<string>('')
-  const [signature, setSignature] = useState<string>('')
-  const [verificationResult, setVerificationResult] = useState<boolean | null>(null)
+  const [signature, setSignatureValue] = useState<string>('')
+  const [verificationRecord, setVerificationRecord] = useState<{
+    valid: boolean
+    identity: string
+  } | null>(null)
   const [kemDecapsulationResult, setKemDecapsulationResult] = useState<boolean | null>(null)
   const [decapsulatedSecret, setDecapsulatedSecret] = useState<string>('')
   const [isHybridMode, setIsHybridMode] = useState<boolean>(false)
   const [secondaryEncKeyId, setSecondaryEncKeyId] = useState<string>('')
   const [secondaryDecKeyId, setSecondaryDecKeyId] = useState<string>('')
-  const [dataToSign, setDataToSign] = useState('Hello Quantum World!')
+  const [dataToSignBytes, setMessageBytes] = useState(() =>
+    new TextEncoder().encode('Hello Quantum World!')
+  )
+  const verificationIdentity = JSON.stringify([
+    selectedVerifyKeyId,
+    algorithm,
+    executionMode,
+    bytesToHex(dataToSignBytes),
+    signature,
+  ])
+  const verificationResult =
+    verificationRecord?.identity === verificationIdentity ? verificationRecord.valid : null
+  const setVerificationResult = (valid: boolean | null) =>
+    setVerificationRecord(valid === null ? null : { valid, identity: verificationIdentity })
+  const setSignature = (value: string) => {
+    setVerificationRecord(null)
+    setSignatureValue(value)
+  }
+  const setDataToSignBytes = (bytes: Uint8Array) => {
+    setVerificationRecord(null)
+    setMessageBytes(new Uint8Array(bytes))
+  }
+  const setDataToSign = (value: string) => setDataToSignBytes(new TextEncoder().encode(value))
+  let dataToSign = ''
+  try {
+    dataToSign = new TextDecoder('utf-8', { fatal: true }).decode(dataToSignBytes)
+  } catch {
+    /* Binary message: only the hex view is editable. */
+  }
+  useEffect(() => {
+    setVerificationRecord(null)
+  }, [selectedVerifyKeyId, algorithm, executionMode])
   const [dataToEncrypt, setDataToEncrypt] = useState('Secret Message')
   const [decryptedData, setDecryptedData] = useState('')
   const [symData, setSymData] = useState('48656c6c6f2053796d6d657472696320576f726c64')
@@ -45,6 +81,12 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [classicalSharedSecret, setClassicalSharedSecret] = useState('')
   const [pqcRecoveredSecret, setPqcRecoveredSecret] = useState<string>('')
   const [classicalRecoveredSecret, setClassicalRecoveredSecret] = useState<string>('')
+
+  useEffect(() => {
+    setDecapsulatedSecret('')
+    setKemDecapsulationResult(null)
+    setDecryptedData('')
+  }, [ciphertext, selectedDecKeyId, secondaryDecKeyId, hybridMethod, isHybridMode, executionMode])
 
   const { runKemOperation } = useKemOperations({
     keyStore,
@@ -79,6 +121,7 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     executionMode,
     wasmLoaded,
     dataToSign,
+    dataToSignBytes,
     signature,
     setSignature,
     setVerificationResult,
@@ -94,6 +137,7 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     symData,
     symOutput,
     sharedSecret,
+    decapsulatedSecret,
     dataToEncrypt,
     encryptedData,
     setSymData,
@@ -201,6 +245,8 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setVerificationResult,
         dataToSign,
         setDataToSign,
+        dataToSignBytes,
+        setDataToSignBytes,
         dataToEncrypt,
         setDataToEncrypt,
         decryptedData,

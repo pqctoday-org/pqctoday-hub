@@ -185,18 +185,20 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
               <tr className="border-b border-border">
                 <th className="text-left p-2 text-muted-foreground">Algorithm</th>
                 <th className="text-center p-2 text-muted-foreground">Classical Security</th>
-                <th className="text-center p-2 text-muted-foreground">Quantum Security</th>
-                <th className="text-center p-2 text-muted-foreground">Status</th>
+                <th className="text-center p-2 text-muted-foreground">
+                  Idealised quantum query bound
+                </th>
+                <th className="text-center p-2 text-muted-foreground">Reading</th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b border-border/50">
                 <td className="p-2 font-medium">AES-128</td>
                 <td className="p-2 text-center">128-bit</td>
-                <td className="p-2 text-center text-destructive font-bold">64-bit</td>
+                <td className="p-2 text-center text-warning font-bold">64-bit</td>
                 <td className="p-2 text-center">
-                  <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20">
-                    Insufficient
+                  <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
+                    Policy-dependent
                   </span>
                 </td>
               </tr>
@@ -206,7 +208,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 <td className="p-2 text-center text-warning font-bold">96-bit</td>
                 <td className="p-2 text-center">
                   <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
-                    Adequate
+                    Policy-dependent
                   </span>
                 </td>
               </tr>
@@ -216,7 +218,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 <td className="p-2 text-center text-success font-bold">128-bit</td>
                 <td className="p-2 text-center">
                   <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20">
-                    Secure
+                    Largest margin
                   </span>
                 </td>
               </tr>
@@ -233,12 +235,31 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             </tbody>
           </table>
         </div>
-        <div className="mt-4 bg-muted/50 rounded-lg p-3 border border-border">
+        <div className="mt-4 bg-muted/50 rounded-lg p-3 border border-border space-y-2">
           <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Practical note:</strong> Grover&apos;s algorithm is
-            less threatening than Shor&apos;s. It provides only a quadratic speedup (halving
-            security bits), and the algorithm requires sequential oracle queries — it cannot be
-            parallelized effectively. The fix is simple: double the key size (AES-128 → AES-256).
+            <strong className="text-foreground">Three separate questions.</strong> The table gives
+            the idealised query count: about 2<sup>64</sup> sequential evaluations of the AES
+            circuit for a 128-bit key. That is not a cost estimate, and it does not by itself make
+            AES-128 unacceptable.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <strong className="text-foreground">Gates, depth and hardware.</strong> Each query is a
+            whole AES evaluation, and the full quadratic speedup needs those steps to run in series
+            (Zalka). NIST&apos;s 2016 call for proposals estimates 2<sup>170</sup>/MAXDEPTH quantum
+            gates for AES-128 key recovery when circuit depth is limited to MAXDEPTH, and Grassl et
+            al. estimate about 2<sup>81</sup> overall circuit depth and 2,953 qubits. NIST&apos;s
+            PQC FAQ concludes that Grover&apos;s algorithm is quite likely to give little or no
+            advantage against AES, that AES-128 will remain secure for decades to come, and that
+            applications can keep using 128-, 192- or 256-bit AES keys; NIST IR 8547 states that
+            NIST-approved symmetric primitives with at least 128 bits of classical security are
+            believed to meet at least Category 1.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <strong className="text-foreground">Policy.</strong> Authorities differ. NIST uses
+            AES-128 key search as its Category 1 reference, while NSA&apos;s CNSA 2.0 asks national
+            security systems to use 256-bit AES keys. Moving from AES-128 to AES-256 is therefore a
+            policy or safety-margin choice for long-lived data, not an automatic rejection of
+            AES-128 derived from the 64-bit figure.
           </p>
         </div>
       </section>

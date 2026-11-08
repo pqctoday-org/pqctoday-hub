@@ -2,6 +2,7 @@
 import { saveAs } from 'file-saver'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { sanitizeTimelineMilestone } from '@/utils/timelineMilestone'
 import { usePersonaStore, defaultTierForPersona } from '@/store/usePersonaStore'
 import { isPersonaId } from '@/data/personaIds'
 import { useThemeStore } from '@/store/useThemeStore'
@@ -100,6 +101,7 @@ function getAssessmentData(): AssessmentData {
     vendorDependency: state.vendorDependency,
     vendorUnknown: state.vendorUnknown,
     timelinePressure: state.timelinePressure,
+    timelineMilestone: state.timelineMilestone ?? null,
     timelineUnknown: state.timelineUnknown,
     importComplianceSelection: state.importComplianceSelection,
     importProductSelection: state.importProductSelection,
@@ -435,6 +437,7 @@ export class UnifiedStorageService {
         vendorDependency: a.vendorDependency ?? '',
         vendorUnknown: a.vendorUnknown ?? false,
         timelinePressure: a.timelinePressure ?? '',
+        timelineMilestone: sanitizeTimelineMilestone(a.timelineMilestone),
         timelineUnknown: a.timelineUnknown ?? false,
         importComplianceSelection: a.importComplianceSelection ?? false,
         importProductSelection: a.importProductSelection ?? false,

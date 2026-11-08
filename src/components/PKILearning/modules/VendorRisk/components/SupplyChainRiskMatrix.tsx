@@ -12,6 +12,7 @@ import { migrateDomainHref } from '@/utils/migrateLinks'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
+import { hybridSupportLevel } from '@/data/hybridSupport'
 import { cpeByProduct } from '@/data/cpeXrefData'
 import { loadCveSnapshot } from '@/data/cveSnapshotData'
 import { threatsData, type ThreatData } from '@/data/threatsData'
@@ -29,7 +30,6 @@ import {
   Info,
   CheckSquare,
   Package,
-  CheckCircle,
   GitMerge,
   Download,
   Link2,
@@ -145,10 +145,23 @@ function renderPqcBadge(support: string) {
   )
 }
 
-function isHybridProduct(item: SoftwareItem): boolean {
-  const desc = (item.pqcCapabilityDescription || '').toLowerCase()
-  const support = (item.pqcSupport || '').toLowerCase()
-  return desc.includes('hybrid') || support.includes('hybrid')
+/** The per-product badge: only a structured hybrid entry earns one. */
+function hybridBadge(item: SoftwareItem): React.ReactNode {
+  const level = hybridSupportLevel(item)
+  if (level !== 'yes' && level !== 'partial') return undefined
+  return (
+    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+      <GitMerge size={9} /> {level === 'yes' ? 'Hybrid' : 'Hybrid (experimental)'}
+    </span>
+  )
+}
+
+/** The badge note for a group of products: the experimental-only and not-assessed counts. */
+function hybridNote(partial: number, notAssessed: number): string | undefined {
+  const parts: string[] = []
+  if (partial > 0) parts.push(`${partial} experimental only`)
+  if (notAssessed > 0) parts.push(`${notAssessed} not assessed`)
+  return parts.length > 0 ? parts.join(', ') : undefined
 }
 
 function getStatColor(count: number, total: number): string {
@@ -172,9 +185,13 @@ interface StatBadgeProps {
   count: number
   total: number
   isGap?: boolean
+  /** Replaces the count text, e.g. "Not assessed" when the catalogue has no entry to count. */
+  valueText?: string
+  /** Small line under the bar, e.g. how many products the count leaves out and why. */
+  note?: string
 }
 
-const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => {
+const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap, valueText, note }) => {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0
   const colorClass = isGap
     ? count === 0
@@ -195,7 +212,7 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
       <div className="flex items-baseline justify-between">
         <span className="text-xs text-muted-foreground">{label}</span>
         <span className={`text-sm font-semibold tabular-nums ${colorClass}`}>
-          {isGap ? (count > 0 ? count : 'None') : `${count}/${total}`}
+          {valueText ?? (isGap ? (count > 0 ? count : 'None') : `${count}/${total}`)}
         </span>
       </div>
       <div className="h-1 bg-muted rounded-full overflow-hidden">
@@ -204,6 +221,7 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
           style={{ width: `${barWidth}%` }}
         />
       </div>
+      {note && <p className="text-[10px] text-muted-foreground">{note}</p>}
     </div>
   )
 }
@@ -487,7 +505,12 @@ export interface DomainStat {
   total: number
   pqcReady: number
   fipsValidated: number
+  /** Products whose structured hybrid fields list hybrid TLS or a hybrid API. */
   hybridSupport: number
+  /** Products whose structured hybrid fields list experimental support only. */
+  hybridPartial: number
+  /** Products with no structured hybrid entry: not counted for or against. */
+  hybridNotAssessed: number
   /** Count of products flagged Critical/High `pqcMigrationPriority` by
    *  the catalog curator. Real data, surfaced as its own "Priority"
    *  badge — no longer used as the Impact axis input (see below). */
@@ -543,13 +566,12 @@ export function computeDomainStats(
     if (!products || products.length === 0) continue
 
     const total = products.length
-    const pqcReady = products.filter((p) => isPqcReady(p.pqcSupport)).length
+    const pqcReady = products.filter((p) => isPqcReady(p)).length
     const fipsValid = products.filter((p) => isFips1403Certified(p)).length
-    const hybrid = products.filter((p) => {
-      const desc = (p.pqcCapabilityDescription || '').toLowerCase()
-      const support = (p.pqcSupport || '').toLowerCase()
-      return desc.includes('hybrid') || support.includes('hybrid')
-    }).length
+    const hybridLevels = products.map(hybridSupportLevel)
+    const hybrid = hybridLevels.filter((l) => l === 'yes').length
+    const hybridPartial = hybridLevels.filter((l) => l === 'partial').length
+    const hybridNotAssessed = hybridLevels.filter((l) => l === 'not-assessed').length
     const criticalHigh = products.filter((p) =>
       isCriticalOrHighPriority(p.pqcMigrationPriority)
     ).length
@@ -564,6 +586,8 @@ export function computeDomainStats(
       pqcReady,
       fipsValidated: fipsValid,
       hybridSupport: hybrid,
+      hybridPartial,
+      hybridNotAssessed,
       criticalHigh,
       likelihood,
       threatMatches: domainThreatMatchCounts.get(domainId) ?? 0,
@@ -739,6 +763,8 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
   } = input
 
   let md = '# Supply Chain PQC Risk Matrix\n\n'
+  md +=
+    'A zero score means no scored gap or matched threat under these selected catalogue/text rules, not absence of production risk. Evaluate actual inventory, versions, trust, deployment and supplier/testing evidence with your production tools.\n\n'
   md += `**Generated:** ${new Date().toLocaleDateString()}\n`
   if (industry) md += `**Industry:** ${industry}\n`
   if (country) md += `**Country:** ${country}\n`
@@ -758,13 +784,15 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
     md += `| Metric | Count | % |\n|--------|-------|---|\n`
     md += `| PQC Ready | ${stat.pqcReady} | ${stat.total > 0 ? Math.round((stat.pqcReady / stat.total) * 100) : 0}% |\n`
     md += `| FIPS Validated | ${stat.fipsValidated} | ${stat.total > 0 ? Math.round((stat.fipsValidated / stat.total) * 100) : 0}% |\n`
-    md += `| Hybrid Support | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
+    md += `| Hybrid Support (catalogue structured fields) | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
+    md += `| Hybrid Support, experimental only | ${stat.hybridPartial} | ${stat.total > 0 ? Math.round((stat.hybridPartial / stat.total) * 100) : 0}% |\n`
+    md += `| Hybrid Support, not assessed (no structured entry) | ${stat.hybridNotAssessed} | ${stat.total > 0 ? Math.round((stat.hybridNotAssessed / stat.total) * 100) : 0}% |\n`
     md += `| Migration Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n`
     md += `| Priority (Critical/High, catalog-curated) | ${stat.criticalHigh} | ${stat.total > 0 ? Math.round((stat.criticalHigh / stat.total) * 100) : 0}% |\n`
     if (stat.impact === null) {
       md += `| Migration Gap × Impact | ${stat.likelihood} × not personalized | — (select an industry to compute Impact) |\n\n`
     } else {
-      md += `| Migration Gap × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${stat.likelihood === 0 || stat.impact === 0 ? 'No risk — not plotted on grid' : matrixRiskLevel(stat.riskScore ?? 0)}) |\n\n`
+      md += `| Migration Gap × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${stat.likelihood === 0 || stat.impact === 0 ? 'No scored gap / matched threat — not plotted on grid' : matrixRiskLevel(stat.riskScore ?? 0)}) |\n\n`
     }
   }
 
@@ -779,7 +807,7 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
       md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
     }
     if (noRiskDomains.length > 0) {
-      md += `\n_No risk — not plotted (0 on at least one axis):_ ${noRiskDomains.map((s) => DOMAINS[s.domainId]?.label ?? s.domainId).join(', ')}\n`
+      md += `\n_No scored gap / matched threat — not plotted (0 on at least one axis):_ ${noRiskDomains.map((s) => DOMAINS[s.domainId]?.label ?? s.domainId).join(', ')}\n`
     }
   }
   md += '\n'
@@ -1304,6 +1332,11 @@ export const SupplyChainRiskMatrix: React.FC<{
           Supply Chain Risk Matrix (Migration Gap × Impact)
         </h2>
         <p className="text-xs text-muted-foreground mb-3">
+          A zero means no scored gap or matched threat under these selected catalogue/text rules,
+          not absence of production risk. Evaluate actual inventory, versions, trust, deployment and
+          supplier/testing evidence with your production tools.
+        </p>
+        <p className="text-xs text-muted-foreground mb-3">
           Each migration domain plotted by <strong>migration gap</strong> (share of the domain not
           yet PQC-ready) × <strong>impact</strong> (the severity-weighted count of this
           industry&apos;s supply-chain-relevant threats naming this domain — Critical threats weigh
@@ -1365,22 +1398,22 @@ export const SupplyChainRiskMatrix: React.FC<{
             {noRiskDomains.length > 0 && (
               <div
                 data-testid="no-risk-strip"
-                className="mt-2 flex items-start gap-2 rounded-lg border border-status-success/30 bg-status-success/5 p-2 text-xs text-muted-foreground"
+                className="mt-2 flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-2 text-xs text-muted-foreground"
               >
-                <CheckCircle size={13} className="mt-0.5 shrink-0 text-status-success" />
+                <Info size={13} className="mt-0.5 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
                   <p>
                     <strong className="text-foreground">
                       {noRiskDomains.length} domain{noRiskDomains.length !== 1 ? 's' : ''}
                     </strong>{' '}
-                    not plotted above — zero on at least one axis, not enough matrix room for a true
-                    &quot;no risk&quot; cell:
+                    not plotted above — zero on at least one axis means no scored gap or matched
+                    threat under this model. It does not establish absence of production risk:
                   </p>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {noRiskDomains.map((s) => (
                       <span
                         key={s.domainId}
-                        className="rounded-full border border-status-success/20 bg-background px-2 py-0.5 font-medium text-status-success"
+                        className="rounded-full border border-border bg-background px-2 py-0.5 font-medium text-muted-foreground"
                       >
                         {DOMAINS[s.domainId]?.label ?? s.domainId}
                       </span>
@@ -1431,10 +1464,10 @@ export const SupplyChainRiskMatrix: React.FC<{
               </span>
             ) : stat.likelihood === 0 || stat.impact === 0 ? (
               <span
-                className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-status-success/10 text-status-success border-status-success/20"
+                className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-muted text-muted-foreground border-border"
                 title={`Migration Gap ${stat.likelihood}/5 × Impact ${stat.impact}/5 — not plotted on the grid above`}
               >
-                No risk
+                No scored gap / matched threat
               </span>
             ) : (
               <span
@@ -1482,7 +1515,13 @@ export const SupplyChainRiskMatrix: React.FC<{
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <StatBadge label="PQC Ready" count={stat.pqcReady} total={stat.total} />
                 <StatBadge label="FIPS Validated" count={stat.fipsValidated} total={stat.total} />
-                <StatBadge label="Hybrid Support" count={stat.hybridSupport} total={stat.total} />
+                <StatBadge
+                  label="Hybrid Support"
+                  count={stat.hybridSupport}
+                  total={stat.total}
+                  valueText={stat.hybridNotAssessed === stat.total ? 'Not assessed' : undefined}
+                  note={hybridNote(stat.hybridPartial, stat.hybridNotAssessed)}
+                />
                 <StatBadge label="Known CVEs" count={stat.cveCount} total={stat.total} isGap />
               </div>
 
@@ -1517,13 +1556,7 @@ export const SupplyChainRiskMatrix: React.FC<{
                       key={item.productId}
                       product={item}
                       compact
-                      extraBadges={
-                        isHybridProduct(item) ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                            <GitMerge size={9} /> Hybrid
-                          </span>
-                        ) : undefined
-                      }
+                      extraBadges={hybridBadge(item)}
                     />
                   ))
                 )}

@@ -116,7 +116,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
     label: 'Government / Defense',
     industry: 'Government & Defense',
     description:
-      'NSS-adjacent systems subject to CNSA 2.0 mandates with classified data sensitivity requiring highest-urgency migration.',
+      'Fictional government/defense planning case. Applicable NSS requirements, profile choices and dates are not established by this sample and need separate review.',
     entries: [
       {
         id: 'gov-001',
@@ -145,7 +145,8 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'supply-chain',
         likelihood: 4,
         impact: 5,
-        mitigation: 'Migrate to ML-DSA-65 or SLH-DSA; dual-sign during transition',
+        mitigation:
+          'Review the applicable NSS software-signing profile, required parameters, supplier configuration and transition plan; this sample does not approve an algorithm choice.',
       },
       {
         id: 'gov-004',

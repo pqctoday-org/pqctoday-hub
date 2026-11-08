@@ -682,10 +682,11 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         '   All on-chain public keys are at risk on Q-Day.\n\n' +
         '⚠  Ed25519 (Solana) — VULNERABLE\n' +
         "   Ed25519 is also an elliptic curve — Shor's applies.\n\n" +
-        '✓  HMAC-SHA512 (BIP32 derivation) — Quantum-Safe\n' +
-        "   Symmetric primitive. Grover's gives at best 2× speedup.\n\n" +
-        '✓  PBKDF2-HMAC-SHA512 (BIP39 seed) — Quantum-Safe\n' +
-        '   Your mnemonic and seed are safe; the derived EC keys are not.\n\n' +
+        '•  HMAC-SHA512 (BIP32 derivation) — symmetric-primitive consideration\n' +
+        "   Grover's idealized generic search uses quadratically fewer queries, not a twofold speedup.\n" +
+        '   Practical cost depends on circuit resources and parallelization; this is not a proof of seed security.\n\n' +
+        '•  PBKDF2-HMAC-SHA512 (BIP39 seed) — seed-derivation consideration\n' +
+        '   This summary does not assess seed entropy or handling and cannot establish mnemonic or seed security. Derived EC keys remain a separate quantum-risk consideration.\n\n' +
         'Migration Path:\n' +
         '  • Bitcoin: BIP-360 (P2MR) removes the key-spend path;\n' +
         '    PQ signatures are a separate, not yet specified proposal.\n' +

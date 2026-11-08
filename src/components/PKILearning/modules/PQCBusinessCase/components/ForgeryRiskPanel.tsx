@@ -7,7 +7,7 @@ const FORGERY_TARGETS = [
   { label: 'Financial transactions', example: 'Forged authorization on payments or trades' },
   {
     label: 'Document & contract signatures',
-    example: 'Repudiation — forged signatures are indistinguishable from real ones',
+    example: 'Repudiation — forged signatures can verify the same as real ones',
   },
   {
     label: 'TLS server authentication',
@@ -19,9 +19,13 @@ const FORGERY_TARGETS = [
  * The Breach Scenario Simulator models HNDL (confidentiality) exposure. This
  * panel exists because quantum risk has a SECOND, qualitatively different
  * attack class the breach-cost math above cannot represent: forging
- * signatures. Unlike HNDL, forgery cannot be done retroactively — there is
- * nothing to "harvest now" — so it argues for a different migration priority
- * (signatures, by CRQC-day) than HNDL does (key establishment, now). No
+ * signatures. Unlike HNDL, there is no encrypted record to "harvest now" and
+ * decrypt later; the attacker needs a CRQC to forge. It still reaches
+ * backwards in one way: a forged claim about a past record verifies unless
+ * earlier evidence anchors it. So it argues for a different migration order
+ * than HNDL (key establishment first), with long-lead signature work started
+ * before any scenario arrival date; no arrival date is treated as a reliable
+ * deadline. No
  * dollar figures are invented here; this is deliberately qualitative pending
  * a citable fraud-loss baseline (see the improvement plan, Phase 3.2).
  */
@@ -38,8 +42,12 @@ export const ForgeryRiskPanel: React.FC = () => {
         Everything above models <strong className="text-foreground">confidentiality</strong> risk —
         data harvested today, decrypted later. Quantum computing threatens a second, independent
         property: <strong className="text-foreground">authenticity</strong>. Once a CRQC can break a
-        signature scheme, it can forge NEW signatures going forward — but it cannot forge a
-        signature that was already validly created in the past.
+        signature scheme, an attacker can forge signatures, including signatures that claim to be
+        about the past: a forged signature or document dated earlier would verify unless evidence
+        that existed before the break anchors it, such as a trusted timestamp or archival renewal of
+        the signature evidence. Signatures that were genuinely made earlier stay the signer&apos;s,
+        but a verifier using the broken scheme can no longer tell them from forgeries without that
+        evidence.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {FORGERY_TARGETS.map((t) => (
@@ -62,8 +70,9 @@ export const ForgeryRiskPanel: React.FC = () => {
               HNDL — migrate key establishment NOW
             </p>
             <p className="text-muted-foreground">
-              Data is being harvested today. Every year of delay adds another year of exposed
-              historical data — there is no "catching up" later.
+              Data recorded today under a quantum-vulnerable key exchange could be decrypted later
+              if a CRQC exists, so for long-lived secrets each year of delay adds another year of
+              potentially exposed data.
             </p>
           </div>
           <div className="flex items-center justify-center text-muted-foreground">
@@ -71,11 +80,14 @@ export const ForgeryRiskPanel: React.FC = () => {
           </div>
           <div className="flex-1 bg-primary/10 border border-primary/30 rounded-lg p-3">
             <p className="font-semibold text-foreground mb-1">
-              Forgery — migrate signatures by CRQC-day
+              Forgery — start the long-lead signature work well before any scenario date
             </p>
             <p className="text-muted-foreground">
-              Not retroactive — only NEW signatures after a CRQC exists are at risk. Still urgent,
-              but the deadline is the CRQC arrival date itself, not today.
+              Forgery needs a CRQC to exist, but its reach includes claims about past records, so
+              plan trusted timestamps or archival renewal for evidence you must keep, and plan the
+              migration of verification trust (algorithms, certificates, trust anchors and
+              verifiers), which takes long lead time. No CRQC arrival date is reliable enough to
+              serve as the deadline; treat any such year as a scenario assumption.
             </p>
           </div>
         </div>

@@ -6,18 +6,51 @@ import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
+import { findCountryNextMilestone } from '@/components/Report/countryMilestone'
 import type { RoadmapOutput } from '../types'
 
 type CommsFormData = Record<string, Record<string, string | string[]>>
 
 const MODULE_ID = 'migration-program'
 
-function buildCommsSections(opts: {
+/**
+ * How the seeded text names the country's next timeline milestone. A milestone
+ * keeps its title and its binding status: a country listing alone does not make
+ * a planning target or advisory date a binding deadline for this organization.
+ */
+export function describeMilestone(opts: {
+  year: number
+  title?: string | null
+  binding?: boolean
+}): { ref: string; concern: string; board: string; trigger: string; intro: string } {
+  const { year, title, binding } = opts
+  const ref = `${year}${title ? ` (${title})` : ''}`
+  if (binding) {
+    return {
+      ref,
+      concern: `Whether the ${ref} milestone, listed as binding for its stated scope, covers our systems`,
+      board: `If the ${ref} milestone applies to our systems, missing it carries regulatory exposure. Applicability is to be confirmed against its stated scope.`,
+      trigger: `Slip risk against the ${ref} milestone, if it applies to us`,
+      intro: `The next milestone the timeline lists is ${ref}, classified as binding for its stated scope; confirm that it covers your systems before treating it as your deadline.`,
+    }
+  }
+  return {
+    ref,
+    concern: `Pacing the program against the ${ref} planning target (guidance, not a binding deadline)`,
+    board: `The ${ref} date is a planning target or advisory milestone, not a binding deadline. We use it to pace the program; whether any rule binds us depends on our sector and systems.`,
+    trigger: `Slip risk against the ${ref} planning target`,
+    intro: `The next milestone the timeline lists is ${ref}, which the timeline classifies as guidance or a planning target rather than a binding deadline.`,
+  }
+}
+
+export function buildCommsSections(opts: {
   industry: string
   country: string
   myFrameworksLabels: string[]
   myProductsCount: number
   deadlineYear: number | null
+  deadlineTitle?: string | null
+  deadlineBinding?: boolean
   roadmapMilestones?: Array<{ label: string; year: number; phaseId: string }> | null
 }): ArtifactSection[] {
   const {
@@ -26,8 +59,13 @@ function buildCommsSections(opts: {
     myFrameworksLabels,
     myProductsCount,
     deadlineYear,
+    deadlineTitle,
+    deadlineBinding,
     roadmapMilestones,
   } = opts
+  const milestoneText = deadlineYear
+    ? describeMilestone({ year: deadlineYear, title: deadlineTitle, binding: deadlineBinding })
+    : null
   const stakeholderDefault = [
     industry && `${industry} compliance lead`,
     'CISO',
@@ -38,7 +76,7 @@ function buildCommsSections(opts: {
     .filter(Boolean)
     .join('\n')
   const concernsDefault = [
-    deadlineYear && `Meeting ${deadlineYear} regulatory deadline`,
+    milestoneText && milestoneText.concern,
     myFrameworksLabels.length > 0 &&
       `Compliance with ${myFrameworksLabels.slice(0, 3).join(', ')}${myFrameworksLabels.length > 3 ? `, +${myFrameworksLabels.length - 3} more` : ''}`,
     myProductsCount > 0 && `Migrating ${myProductsCount} in-scope products`,
@@ -48,7 +86,7 @@ function buildCommsSections(opts: {
     .join('\n')
   const boardMsgDefault = [
     industry && `Quantum risk to our ${industry}${country ? ` operations in ${country}` : ''}.`,
-    deadlineYear && `Regulatory exposure if we miss the ${deadlineYear} deadline.`,
+    milestoneText && milestoneText.board,
     myFrameworksLabels.length > 0 &&
       `Frameworks at stake: ${myFrameworksLabels.slice(0, 4).join(', ')}.`,
   ]
@@ -63,7 +101,7 @@ function buildCommsSections(opts: {
           .join('\n')
       : null
   const triggersDefault = [
-    deadlineYear && `Slip risk against ${deadlineYear} deadline`,
+    milestoneText && milestoneText.trigger,
     myProductsCount > 0 && `Critical product without a PQC roadmap by Q-1 of deadline year`,
     'Budget overrun >10%',
     'Compliance gap identified in audit',
@@ -277,8 +315,25 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
   roadmapOutput,
 }) => {
   const { addExecutiveDocument } = useModuleStore()
-  const { industry, country, migrationDeadlineYear, myFrameworks, myProducts, frameworks } =
-    useExecutiveModuleData()
+  const {
+    industry,
+    country,
+    migrationDeadlineYear,
+    migrationDeadlineBinding,
+    userCountryData,
+    myFrameworks,
+    myProducts,
+    frameworks,
+  } = useExecutiveModuleData()
+  const nextMilestone = useMemo(
+    () =>
+      migrationDeadlineYear
+        ? findCountryNextMilestone(userCountryData?.countryName || country || '')
+        : null,
+    [migrationDeadlineYear, userCountryData, country]
+  )
+  const milestoneTitle = nextMilestone?.year === migrationDeadlineYear ? nextMilestone.title : null
+  const milestoneBinding = migrationDeadlineBinding ?? false
   const [seedCleared, setSeedCleared] = useState(false)
 
   // Restore the last-saved plan so edits survive navigation, same pattern as
@@ -326,6 +381,8 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
         myFrameworksLabels: seedCleared ? [] : myFrameworksLabels,
         myProductsCount: seedCleared ? 0 : myProducts.length,
         deadlineYear: seedCleared ? null : migrationDeadlineYear,
+        deadlineTitle: milestoneTitle,
+        deadlineBinding: milestoneBinding,
         roadmapMilestones: seedCleared ? null : (effectiveRoadmapOutput?.milestones ?? null),
       }),
     [
@@ -334,6 +391,8 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
       myFrameworksLabels,
       myProducts.length,
       migrationDeadlineYear,
+      milestoneTitle,
+      milestoneBinding,
       seedCleared,
       effectiveRoadmapOutput,
     ]
@@ -351,7 +410,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
       seedSources.push(
         `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
       )
-    if (migrationDeadlineYear) seedSources.push(`deadline ${migrationDeadlineYear} from /timeline`)
+    if (migrationDeadlineYear) seedSources.push(`${migrationDeadlineYear} milestone from /timeline`)
   }
   const roadmapMilestoneCount = effectiveRoadmapOutput?.milestones?.length ?? 0
   const builderKey = seedCleared
@@ -381,7 +440,7 @@ export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = (
           {industry ? ` in the ${industry} sector` : ''}
           {country ? ` (${country})` : ''}.
           {migrationDeadlineYear
-            ? ` Your earliest regulatory deadline is ${migrationDeadlineYear}.`
+            ? ` ${describeMilestone({ year: migrationDeadlineYear, title: milestoneTitle, binding: milestoneBinding }).intro}`
             : ''}{' '}
           Complete each section below, then switch to Preview mode to see the formatted document.
           Export to save to your learning portfolio.

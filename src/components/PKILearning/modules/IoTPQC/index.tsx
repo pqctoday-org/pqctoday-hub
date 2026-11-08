@@ -35,7 +35,7 @@ const PARTS: WorkshopPart[] = [
     id: 'firmware-signing',
     title: 'Step 2: Firmware Signing',
     description:
-      'Sign and verify a SUIT-style manifest for real with ML-DSA or LMS in the SoftHSM, and see the COSE envelope and CNSA 2.0 status.',
+      'Sign and verify sample JSON-manifest bytes with ML-DSA or LMS; inspect a separate conceptual envelope sketch and the stated sample limits.',
     icon: FileCode,
   },
   {

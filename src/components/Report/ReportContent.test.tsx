@@ -110,7 +110,8 @@ const baseResult: AssessmentResult = {
     },
     {
       priority: 2,
-      action: 'Implement hybrid PQC encryption for data-at-rest.',
+      action:
+        'Evaluate post-quantum protection for data-at-rest in your highest-sensitivity stores. It cannot undo exposure of data that was already captured, so establish whether that has happened.',
       category: 'short-term',
       relatedModule: '/threats',
     },
@@ -315,7 +316,9 @@ describe('ReportContent', () => {
     it('renders all actions', () => {
       renderReport()
       expect(screen.getAllByText(/quantum-vulnerable/).length).toBeGreaterThanOrEqual(1)
-      expect(screen.getAllByText(/hybrid PQC/).length).toBeGreaterThanOrEqual(1)
+      expect(
+        screen.getAllByText(/Evaluate post-quantum protection for data-at-rest/).length
+      ).toBeGreaterThanOrEqual(1)
       expect(screen.getAllByText(/awareness/).length).toBeGreaterThanOrEqual(1)
     })
 
@@ -330,6 +333,24 @@ describe('ReportContent', () => {
       renderReport()
       const links = screen.getAllByText('Explore')
       expect(links).toHaveLength(3)
+    })
+
+    it('links each top action straight to its own route', () => {
+      renderReport()
+      const hero = screen.getByTestId('top-three-actions')
+      const hrefs = Array.from(hero.querySelectorAll('a')).map((a) => a.getAttribute('href'))
+      expect(hrefs).toEqual(['/algorithms', '/threats', '/learn'])
+    })
+
+    it('falls back to the recommended actions section when an action names no route', () => {
+      renderReport({
+        ...baseResult,
+        recommendedActions: [{ ...baseResult.recommendedActions[0], relatedModule: '' }],
+      })
+      const hero = screen.getByTestId('top-three-actions')
+      expect(hero.querySelector('a')?.getAttribute('href')).toBe(
+        '/#report-section-recommendedActions'
+      )
     })
   })
 

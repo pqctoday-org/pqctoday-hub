@@ -78,24 +78,24 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
     },
     {
       id: 'auth-flow',
-      title: '5. 5G-AKA: Mutual Authentication',
+      title: '5. 5G-AKA: Selected Home-Network Computations',
       description:
-        'Run the full 5G-AKA authentication flow: credential retrieval, RAND generation, MILENAGE computation (f1-f5), AUTN construction, and KAUSF derivation. See how the network and subscriber mutually prove their identity.',
+        'Run selected sample home-network computations: load sample credentials, generate RAND, compute MILENAGE outputs, construct AUTN and derive KAUSF. This sequence does not verify a subscriber response or demonstrate full mutual authentication.',
       badge: 'Authentication',
       badgeColor: 'bg-tertiary/20 text-tertiary border-tertiary/50',
       observe:
-        'Watch the MILENAGE algorithm compute all five functions (MAC-A, XRES, CK, IK, AK) from K, OPc, and RAND. Note that MILENAGE uses AES-128 — a symmetric algorithm that Shor’s algorithm does not break, so it needs no PQC key-exchange or signature upgrade.',
+        'Inspect the sample MAC-A, RES, CK, IK and AK outputs. XRES* derivation, subscriber response verification and replay/freshness checks are not executed here. In production tools, look for complete authentication-vector generation and both parties’ verification results, including rejected responses.',
       config: { part: 1 },
     },
     {
       id: 'sim-provisioning',
       title: '6. SIM Key Provisioning Supply Chain',
       description:
-        "Walk through the factory-to-operator K lifecycle: generate K in a factory HSM using TRNG, compute OPc (unique per SIM), personalize the USIM secure element, encrypt K for transport (eK), and import it into the operator's encrypted subscriber database.",
+        'Review a sample factory-to-operator key-provisioning process. The browser generates sample bytes, computes OPc and encrypts a sample record; card personalization and operator import are labelled process walkthroughs, not executed hardware or database operations.',
       badge: 'Supply Chain',
       badgeColor: 'bg-muted text-muted-foreground border-border',
       observe:
-        "Notice how K never exists in plaintext outside the HSM — it is encrypted as eK before transit and stored encrypted in the subscriber database. The ARPF's HSM only holds K transiently when computing authentication vectors. OPc is unique per SIM because it derives from both K and the operator key OP, so leaking one SIM's K does not expose the operator key or other SIMs.",
+        'The sample displays key material in browser memory. It does not prove HSM confinement, authenticated batch import or subscriber provisioning. Compare the illustrated steps with production-tool capabilities: protected key handling, supported card profiles, batch integrity checks, rejected-record reporting and audit logs.',
       config: { part: 2 },
     },
   ]

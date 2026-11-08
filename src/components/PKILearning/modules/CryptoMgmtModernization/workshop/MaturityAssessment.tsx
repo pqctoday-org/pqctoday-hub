@@ -97,7 +97,7 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
       return 'Document policy, roll out ACME for public TLS, and subscribe to CMVP change notices.'
     if (average < 4)
       return 'Automate cert renewal end-to-end, instrument SIEM drift alerts, launch FIPS-freshness KPI.'
-    return 'Your posture has reached Tier 4 Adaptive — maintain continuous CMVP/CAVP monitoring and deliver quarterly executive crypto attestation.'
+    return 'Highest Hub self-rating band selected — discuss monitoring and executive reporting capabilities; this does not establish Tier 4 maturity.'
   }, [average])
 
   const currentTier = useMemo(() => {
@@ -148,9 +148,10 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Rate your organization from 1 (Partial) to 4 (Adaptive) on each pillar for each of the four
-        asset classes using the NIST CSWP.39 tier scale. Re-run this every annual PDCA cycle — the
-        radar chart makes year-over-year gains visible per asset class.
+        Use this Hub self-rating exercise to discuss each pillar and asset class on a 1–4 scale.
+        Defaults are example ratings, not assessed maturity. The average and radar chart summarize
+        your selections; they do not verify capabilities, establish a NIST tier or demonstrate
+        equivalence between frameworks. Suggested actions are illustrative discussion prompts.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -194,7 +195,7 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
 
         <div className="space-y-4">
           <div className="bg-muted/40 rounded-lg p-4 border border-border">
-            <div className="font-bold text-foreground mb-2">CPM Posture Radar</div>
+            <div className="font-bold text-foreground mb-2">Sample self-rating radar</div>
             <div className="w-full h-[380px]">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={chartData}>
@@ -220,33 +221,33 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
 
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
             <div className="flex justify-between items-center mb-2">
-              <div className="font-bold text-foreground">Overall score</div>
+              <div className="font-bold text-foreground">Average self-rating</div>
               <div className="text-xl font-bold text-primary">{average.toFixed(1)} / 4.0</div>
             </div>
             <div className="text-xs text-muted-foreground mb-3">
-              Weakest combination:{' '}
+              Lowest self-rated combination:{' '}
               <strong className="text-foreground">{weakest.pillar.label}</strong>
               {' · '}
               <strong className="text-foreground">{ASSET_CLASS_LABELS[weakest.asset]}</strong>
               {' (L'}
               {weakest.score} · {MATURITY_LEVEL_LABELS[weakest.score]})
             </div>
-            <div className="text-sm font-bold text-accent mb-1">Recommended next milestone</div>
+            <div className="text-sm font-bold text-accent mb-1">Illustrative next discussion</div>
             <p className="text-xs text-foreground/80">{nextMilestone}</p>
             <div className="mt-3 p-3 bg-muted/40 rounded-lg border border-border space-y-1">
               <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
-                NIST CSWP.39 Alignment
+                Illustrative tier example — Hub heuristic, not a NIST assessment
               </span>
               <p className="text-sm text-foreground font-medium">{cswp39Tier.label}</p>
               <p className="text-xs text-muted-foreground">{cswp39Tier.description}</p>
             </div>
             <div className="mt-2 p-3 bg-muted/40 rounded-lg border border-border">
               <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
-                Model Cross-Reference
+                Existing illustrative cross-framework labels — not equivalences
               </span>
               <div className="mt-1.5 grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
                 <div>
-                  <span className="text-muted-foreground">Meta PQC Level: </span>
+                  <span className="text-muted-foreground">Illustrative Meta label: </span>
                   <span className="font-medium text-foreground">
                     {average < 1.5
                       ? 'PQ-Unaware'
@@ -258,7 +259,7 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">CMMI: </span>
+                  <span className="text-muted-foreground">Illustrative CMMI label: </span>
                   <span className="font-medium text-foreground">
                     {average < 1.5
                       ? 'Level 1 · Initial'
@@ -270,7 +271,7 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
                   </span>
                 </div>
                 <div className="col-span-2">
-                  <span className="text-muted-foreground">ENISA / NCCoE stage: </span>
+                  <span className="text-muted-foreground">Illustrative ENISA / NCCoE label: </span>
                   <span className="font-medium text-foreground">
                     {average < 1.5
                       ? '1 · Awareness'
@@ -295,14 +296,15 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
           </div>
           <div>
             <h3 className="text-base font-bold text-foreground">
-              Authoritative Evidence — {maturityRequirements.length} requirements from{' '}
-              {uniqueSources} sources
+              Source reading references — {maturityRequirements.length} entries from {uniqueSources}{' '}
+              sources
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Your score ({average.toFixed(1)} / 4.0) maps to{' '}
+              This Hub heuristic places the average self-rating ({average.toFixed(1)} / 4.0) beside{' '}
               <strong className="text-foreground">{cswp39Tier.label}</strong>. Click the{' '}
-              <strong className="text-foreground">Tier {currentTier}</strong> row to see the
-              governance requirements your organisation needs to satisfy at that tier.
+              <strong className="text-foreground">Tier {currentTier}</strong> row to see the source
+              reading entries associated with that example tier. The ratings do not show that any
+              requirement has been met.
             </p>
           </div>
         </div>

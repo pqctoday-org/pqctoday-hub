@@ -11,6 +11,7 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, EO_14412, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+import { CNSA_PHASE_OUT_LABEL } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
@@ -45,7 +46,7 @@ export const content: ModuleContent = {
       source: 'EO 14412',
     },
     {
-      label: 'CNSA 2.0 software signing and networking exclusive',
+      label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
     },

@@ -35,33 +35,26 @@ export function useEthereumSigning({
   const steps: Step[] = [
     {
       id: 'sign',
-      title: '8. Sign Transaction',
+      title: '8. Sign Sample JSON Hash',
       description: (
         <>
-          Sign the transaction hash using OpenSSL's standard ECDSA implementation.
+          Attempt software OpenSSL signing of the JSON sample digest. The JavaScript reference
+          signature is also calculated as a separate reference. A failed OpenSSL attempt cannot
+          complete this signing step.
           <br />
           <br />
-          <strong>The Challenge:</strong> Standard ECDSA signatures (like those from OpenSSL) only
-          produce <strong>r</strong> and <strong>s</strong>. Ethereum requires a third parameter,{' '}
-          <strong>v</strong> (recovery ID).
-          <br />
-          <br />
-          <strong>The Solution:</strong> We compute <strong>v</strong> as a post-processing step. We
-          test recovery IDs (0 and 1) to find the correct one, then encode it.
+          The step computes sample recovery metadata after parsing the signature. It does not use
+          the optional HSM session or serialize an Ethereum transaction. Signature verification is a
+          separate step; the raw values shown here are not a blockchain acceptance result.
         </>
       ),
-      code: `// 1. SoftHSMv3 Signing (CKM_ECDSA)
-const signature = hsm_ecdsaSign(
-  hsm.module, 
-  hsm.sessionHandle, 
-  privHandle, 
-  sighash, 
-  CKM_ECDSA
-);
-
-// 2. Compute v (Post-processing)`,
+      code: `// Illustrative summary of the existing software path
+// Attempt OpenSSL signing of the saved JSON-payload digest.
+await openSSLService.execute(signCmd, filesToPass);
+// A JavaScript reference signature is also computed.
+// Parsed OpenSSL values are published only after the file-derived signer matches recovery.`,
       language: 'javascript',
-      actionLabel: 'Sign Transaction',
+      actionLabel: 'Sign Sample JSON Hash',
     },
   ]
 
@@ -69,6 +62,7 @@ const signature = hsm_ecdsaSign(
     let result = ''
 
     if (stepId === 'sign') {
+      actions.setSignature(null)
       if (!keyGen.privateKeyHex) throw new Error('Private key not found.')
       if (!state.txHash)
         throw new SignatureError('Missing transaction hash. Please generate transaction first.')
@@ -88,7 +82,6 @@ const signature = hsm_ecdsaSign(
       // 1. OpenSSL Signing (Raw Signature of Pre-Computed Hash)
       let openSSL_r: bigint = BigInt(0)
       let openSSL_s: bigint = BigInt(0)
-      let openSSL_error: string | null = null
 
       try {
         // Retrieve private key from store
@@ -99,7 +92,7 @@ const signature = hsm_ecdsaSign(
         const signCmd = `openssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ${hashFileName} -out ${sigFileName}`
 
         const res = await openSSLService.execute(signCmd, filesToPass)
-        if (res.error && (res.error.includes('error') || res.error.includes('failure'))) {
+        if (res.error) {
           throw new Error(res.error)
         }
 
@@ -119,43 +112,63 @@ const signature = hsm_ecdsaSign(
         if (derSig[pos] !== 0x30) throw new Error(`Invalid DER Header`)
         pos++ // 0x30
 
+        if (pos >= derSig.length) throw new Error('Missing DER sequence length')
         const seqLenByte = derSig[pos]
         pos++
+        let sequenceLength = seqLenByte
         if (seqLenByte & 0x80) {
-          pos += seqLenByte & 0x7f
+          const lengthBytes = seqLenByte & 0x7f
+          if (lengthBytes === 0 || pos + lengthBytes > derSig.length)
+            throw new Error('Invalid DER sequence length encoding')
+          sequenceLength = 0
+          for (let i = 0; i < lengthBytes; i++) {
+            sequenceLength = sequenceLength * 256 + derSig[pos++]
+            // A content length larger than the whole input cannot describe it.
+            if (sequenceLength > derSig.length)
+              throw new Error('DER sequence length exceeds the input')
+          }
         }
+        if (sequenceLength !== derSig.length - pos)
+          throw new Error('DER sequence length does not match the input')
+        const sequenceEnd = pos + sequenceLength
 
         // Parse R
+        if (pos + 2 > sequenceEnd) throw new Error('Missing DER integer R header')
         if (derSig[pos] !== 0x02) throw new Error('Invalid Integer Tag for R')
         pos++
         const rLen = derSig[pos]
         pos++
+        if (rLen === 0 || pos + rLen > sequenceEnd)
+          throw new Error('DER integer R length exceeds the sequence or is empty')
         const rBytes = derSig.slice(pos, pos + rLen)
         openSSL_r = BigInt('0x' + bytesToHex(rBytes))
         pos += rLen
 
         // Parse S
+        if (pos + 2 > sequenceEnd) throw new Error('Missing DER integer S header')
         if (derSig[pos] !== 0x02) throw new Error('Invalid Integer Tag for S')
         pos++
         const sLen = derSig[pos]
         pos++
+        if (sLen === 0 || pos + sLen > sequenceEnd)
+          throw new Error('DER integer S length exceeds the sequence or is empty')
         const sBytes = derSig.slice(pos, pos + sLen)
         openSSL_s = BigInt('0x' + bytesToHex(sBytes))
         pos += sLen
+        if (pos !== sequenceEnd) throw new Error('Unexpected bytes after DER signature integers')
       } catch (err: unknown) {
-        openSSL_error = err instanceof Error ? err.message : 'Unknown error'
-        console.error('OpenSSL Signing Failed:', err)
+        const detail = err instanceof Error ? err.message : 'Unknown error'
+        throw new SignatureError(`OpenSSL sample signing failed: ${detail}`)
       }
 
-      // 2. JS Signing (Fallback/Reference)
+      // 2. JS Signing (Separate Reference)
       const privBytes = hexToBytes(keyGen.privateKeyHex)
       const jsSig = secp256k1.sign(hash, privBytes, { prehash: false })
-      const jsSigObj = secp256k1.Signature.fromBytes(jsSig)
+      secp256k1.Signature.fromBytes(jsSig)
 
-      // Use JS values if OpenSSL failed
-      // Use JS values if OpenSSL failed
-      const final_r = openSSL_error ? jsSigObj.r : openSSL_r
-      let final_s = openSSL_error ? jsSigObj.s : openSSL_s
+      // The separate reference never substitutes for a failed OpenSSL operation.
+      const final_r = openSSL_r
+      let final_s = openSSL_s
 
       // Normalize to Low-S (EIP-2)
       // Ethereum requires s <= n/2. OpenSSL might produce s > n/2 (valid in ECDSA but not Eth)
@@ -187,7 +200,10 @@ const signature = hsm_ecdsaSign(
         expectedAddress = toChecksumAddress(bytesToHex(addrHash.slice(-20)))
         console.log(`[Sign] Derived Target Address from File: ${expectedAddress}`)
       } catch (err) {
-        console.warn('Could not derive address from private key file:', err)
+        const detail = err instanceof Error ? err.message : 'Unknown error'
+        throw new SignatureError(
+          `Could not establish the signer from the private key file: ${detail}`
+        )
       }
 
       // Helper for Modular Inverse
@@ -239,7 +255,10 @@ const signature = hsm_ecdsaSign(
         }
       }
 
-      if (!recoveryFound) recovery = 0
+      if (!recoveryFound)
+        throw new SignatureError(
+          'No recovery candidate matched the signer from the private key file.'
+        )
 
       // EIP-155: v = recovery + 35 + 2 * chainId (chainId = 1)
       const chainId = 1
@@ -251,7 +270,7 @@ const signature = hsm_ecdsaSign(
       const sHex = final_s.toString(16).padStart(64, '0')
       const vHex = v.toString(16)
 
-      result = `SUCCESS: Transaction Signed & Processed!
+      result = `Software sample signing trace:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. PREPARE (Keccak-256 Hash)
@@ -262,21 +281,25 @@ Keccak-256 Hash to Sign:
 📂 Artifact Saved: ${hashFileName}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2. SIGN (OpenSSL + Computation)
+2. SIGN (software providers and computation)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Message Hash (from Step 7): 0x${hashHex}
 
-Generated Signature Values:
+Produced Sample Signature Values (not verified in this step):
 r: 0x${rHex}
 s: 0x${sHex}
-v: 0x${vHex} (EIP-155 Computed: ${recovery} + 35 + 2*${chainId})
+v: 0x${vHex} (sample calculation: ${recovery} + 35 + 2*${chainId})
 
-Full RLP Signature Component:
+Raw r || s || v hex display — not an encoded Ethereum transaction:
 0x${rHex}${sHex}${vHex}
 
-Status: ${openSSL_error ? `FAILED: ${openSSL_error}` : 'SUCCESS ✅'}
+OpenSSL signing-attempt status: SUCCESS ✅
 
-📂 Artifact Saved: ${sigFileName}`
+Software value selection: Parsed OpenSSL values used; JavaScript reference also computed
+Recovery matching: Matching address candidate found
+
+Registered signature target: ${sigFileName}
+When produced, the saved OpenSSL signature contains DER bytes, separate from the raw r || s || v display. This registered target alone does not establish file presence or transaction compatibility.`
     }
 
     return result

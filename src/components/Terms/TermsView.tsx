@@ -132,8 +132,9 @@ export function TermsView() {
             The Platform is an <strong>educational and research tool</strong> for post-quantum
             cryptography (PQC). All cryptographic operations &mdash; including key generation,
             signing, verification, encryption, decryption, and key encapsulation &mdash; are
-            performed <strong>client-side in your browser</strong> using WebAssembly (WASM) and are
-            intended <strong>for educational and demonstration purposes only</strong>.
+            performed <strong>client-side in your browser</strong> using WebAssembly (WASM) modules,
+            the Web Crypto API and JavaScript libraries, and are intended{' '}
+            <strong>for educational and demonstration purposes only</strong>.
           </p>
           <p className="text-xs bg-accent/10 border border-accent/30 rounded px-3 py-2">
             In short: this is a demo, not a certified crypto library &mdash; never use keys it
@@ -298,7 +299,8 @@ export function TermsView() {
           <p>
             The Platform has no user accounts and no login credentials, and no server of its own
             that processes your data. All cryptographic operations and assessments run entirely in
-            your browser using client-side WebAssembly.
+            your browser, using client-side WebAssembly modules, the Web Crypto API and JavaScript
+            libraries.
           </p>
           <p>
             We use <strong>Google Analytics 4 (GA4)</strong> on every visit. It starts when a page

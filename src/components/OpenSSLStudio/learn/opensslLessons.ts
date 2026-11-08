@@ -152,15 +152,15 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         },
       },
       {
-        op: 'req -x509 -new -key learn-l2-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt',
+        op: 'req -x509 -new -key learn-l2-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt',
         label: 'Self-sign a post-quantum ML-DSA-65 certificate',
         run: async (ctx) => {
           await ctx.run(
-            'req -x509 -new -key learn-l2-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt'
+            'req -x509 -new -key learn-l2-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt'
           )
           const size = sizeOf(ctx, 'learn-l2-mldsa.crt')
           return {
-            detail: `${size} B self-signed certificate — the -sha256 here only hashes the TBSCertificate for reference in older parsers; ML-DSA itself hashes internally.`,
+            detail: `${size} B self-signed certificate. The command names no digest: ML-DSA signs the TBSCertificate directly and does its own message encoding and hashing inside the algorithm, so there is no separate SHA-256 digest of it. The certificate's signature algorithm reads ML-DSA-65, not sha256WithRSAEncryption.`,
           }
         },
       },
@@ -168,11 +168,22 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     compare: [
       {
         label: 'Self-signed certificate',
-        a: '1127 B (RSA-2048)',
-        b: '7529 B (ML-DSA-65)',
+        a: 'about 1.1 KB (RSA-2048; exact size in the step output)',
+        b: 'about 7.5 KB (ML-DSA-65; exact size in the step output)',
         same: false,
       },
-      { label: 'req command used', a: 'req -x509 -new -key ...', b: 'identical', same: true },
+      {
+        label: 'req command used',
+        a: 'req -x509 -new -key ... -sha256',
+        b: 'req -x509 -new -key ... (no digest option)',
+        same: false,
+      },
+      {
+        label: 'Signature algorithm in the certificate',
+        a: 'sha256WithRSAEncryption',
+        b: 'ML-DSA-65',
+        same: false,
+      },
     ],
     notes: [
       '-new alone (without -x509) produces a CSR for an external CA to sign — try it in the Workbench to see the difference.',
@@ -724,7 +735,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     tone: 'primary',
     title: 'Capstone — from workbench to wire',
     blurb:
-      "Every artifact so far has stayed inside the Workbench's virtual filesystem. This lesson generates one final certificate, then hands off to the Studio's TLS Simulator — a separate tool that runs a real TLS 1.3 handshake in WASM — to see a certificate actually used on the wire.",
+      "Every artifact so far has stayed inside the Workbench's virtual filesystem. This lesson generates one final certificate, then points to the Studio's TLS Simulator — a separate tool that runs a real TLS 1.3 handshake in WASM using its own bundled sample certificates — so you can see a certificate used on the wire. The Simulator does not pick up the files made here by itself; the notes say how to import them by hand.",
     setup:
       "Per docs.openssl.org's TLS introduction guide, TLS 1.3's handshake is ClientHello → ServerHello → both sides send Finished — notably the SERVER sends Finished before the client, the opposite order from TLS 1.2. The TLS Simulator supports hybrid post-quantum key shares (e.g. X25519MLKEM768) alongside pure ML-DSA certificates.",
     steps: [
@@ -737,25 +748,26 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         },
       },
       {
-        op: 'req -x509 -new -key learn-l11-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt',
-        label: 'Self-sign the certificate this handshake will present',
+        op: 'req -x509 -new -key learn-l11-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt',
+        label: 'Self-sign a certificate you can import into the TLS Simulator by hand',
         run: async (ctx) => {
           await ctx.run(
-            'req -x509 -new -key learn-l11-mldsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt'
+            'req -x509 -new -key learn-l11-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt'
           )
           return {
-            detail: `${sizeOf(ctx, 'learn-l11-mldsa.crt')} B certificate ready — this is the artifact the TLS Simulator will present as the server's identity.`,
+            detail: `${sizeOf(ctx, 'learn-l11-mldsa.crt')} B certificate ready. The TLS Simulator does not use it on its own: it starts with its own sample certificates, and the notes below say how to import this certificate and its key by hand.`,
           }
         },
       },
     ],
     notes: [
+      "The TLS Simulator does not read this lesson's files by itself. Its server starts with a bundled sample certificate and key (RSA-2048 by default, with ML-DSA-44 and ML-DSA-87 samples). To try this lesson's pair, choose 'Custom from OpenSSL Studio' under Server Identity, then use Import to pick learn-l11-mldsa.crt for the certificate and learn-l11-mldsa.key for the private key. The Simulator does not assume trust in a certificate it does not ship: the client needs a trusted CA selected before it verifies the server certificate, and this lesson does not set that up.",
       "TLS 1.3 changed the Finished-message order from TLS 1.2: the SERVER sends its Finished before the client does — a detail visible in the Simulator's step-by-step trace.",
       'The Simulator supports pure ML-DSA-44/65/87 certificates AND hybrid key-exchange groups (X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024) — authentication and key exchange migrate as two INDEPENDENT properties, both needed for a fully post-quantum handshake.',
       'The Simulator is honest about its own limits — composite certificates and HSM-backed signing are explicitly labeled as not yet built, not faked.',
     ],
     whyItMatters:
-      'A certificate sitting in a file is not the same as a certificate doing its job in a real protocol exchange. This capstone connects everything this curriculum built — keys, signatures, certificates — to the one place in this Studio where they get used the way a browser or server actually would.',
+      'A certificate sitting in a file is not the same as a certificate doing its job in a real protocol exchange. This capstone points from the keys, signatures and certificates this curriculum built to the one place in this Studio where certificates are used in a protocol exchange the way a browser or server would use them — with its own sample certificates unless you import yours.',
     tryRef: ['genpkey', 'x509'],
     crossPlaygroundLink: {
       to: '/playground?tool=tls-simulator',

@@ -46,7 +46,7 @@ function ZoneTile({ zone, active, metrics, onSelect, variant }: ZoneTileProps) {
   const style = CSWP39_ZONE_STYLES[zone]
   // eslint-disable-next-line security/detect-object-injection
   const totalCount = ZONE_ARTIFACT_TYPES[zone].length
-  const createdCount = getArtifactsForZone(metrics, zone).length
+  const createdCount = new Set(getArtifactsForZone(metrics, zone).map((doc) => doc.type)).size
 
   return (
     <Button

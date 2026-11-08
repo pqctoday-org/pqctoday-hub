@@ -394,6 +394,16 @@ describe('MobileAssessView', () => {
       }
     })
 
+    it('credential-lifetime: puts publicly trusted TLS in the under-1-year answer, not the 1–3 year one', () => {
+      goToComprehensiveStep('credential-lifetime')
+      const underOneYear = screen.getByText('Under 1 year').closest('button')!
+      expect(underOneYear).toHaveTextContent(/publicly trusted TLS/i)
+      expect(underOneYear).toHaveTextContent(/200 days/)
+      const oneToThree = screen.getByText('1–3 years').closest('button')!
+      expect(oneToThree).toHaveTextContent(/private-PKI/i)
+      expect(oneToThree).not.toHaveTextContent(/standard TLS/i)
+    })
+
     it('scale: two independent radiogroups, both must be set to satisfy the validator', () => {
       goToComprehensiveStep('scale')
       expect(screen.getByText(STEP_META.scale.question)).toBeInTheDocument()
@@ -434,6 +444,33 @@ describe('MobileAssessView', () => {
       expect(screen.getAllByText(/Key-Establishment Migration Deadline/).length).toBeGreaterThan(0)
       expect(screen.getByText('No Specific Deadline')).toBeInTheDocument()
       expect(screen.queryByText('Regulatory Deadline Within 1 Year')).not.toBeInTheDocument()
+    })
+
+    it('timeline: a country with published milestones still offers the own-target option', () => {
+      goToComprehensiveStep('timeline')
+      // A later published deadline and an organisation's own target map to the
+      // same stored value, so the option is named for both and stays selectable.
+      const own = screen.getByText('Own Target or Distant Deadline')
+      expect(
+        screen.getByText('Our own target date, or a published deadline more than 3 years away.')
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Internal Deadline Set')).not.toBeInTheDocument()
+      fireEvent.click(own.closest('button')!)
+      expect(useAssessmentFormStore.getState().timelinePressure).toBe('internal-deadline')
+    })
+
+    it('timeline: choosing a published milestone saves which one, and not the own-target option', () => {
+      goToComprehensiveStep('timeline')
+      const card = screen.getAllByText(/Key-Establishment Migration Deadline/)[0].closest('button')!
+      fireEvent.click(card)
+      const saved = useAssessmentFormStore.getState().timelineMilestone
+      expect(saved?.id).toMatch(/Key-Establishment Migration Deadline/)
+      expect(saved?.authority).toBeTruthy()
+      expect(typeof saved?.year).toBe('number')
+      expect(card).toHaveAttribute('aria-pressed', 'true')
+      // The same stored value also means "own target", but that option is not the chosen one here.
+      const own = screen.getByText('Own Target or Distant Deadline').closest('button')!
+      expect(own).toHaveAttribute('aria-pressed', 'false')
     })
   })
 

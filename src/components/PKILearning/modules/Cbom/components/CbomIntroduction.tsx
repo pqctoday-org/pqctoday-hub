@@ -248,18 +248,47 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
           <Badge kind="std" />
           <strong>Two kinds of identifier.</strong> <em>Assigned</em> ids are local and don&apos;t
           correlate (PKCS#11 <code>CKA_ID</code>, KMIP Unique Identifier, KMS key-id, JWK{' '}
-          <code>kid</code>). <em>Content-derived</em> ids do: the X.509 SKI / SPKI hash, KMIP
-          Digest, JWK Thumbprint (RFC 7638), KCV for symmetric keys. Correlate &ldquo;same key
-          across HSM / cert / code / wire&rdquo; on the <strong>SPKI fingerprint</strong>.
+          <code>kid</code>). <em>Content-derived</em> ids can correlate, but only when the scheme,
+          hash and input encoding match. An X.509 SKI is commonly a SHA-1 hash of the
+          subjectPublicKey bit string (or a 60-bit truncation of it), but RFC 5280 also allows other
+          methods. A JWK Thumbprint (RFC 7638) hashes a canonical JSON form of the key&apos;s
+          required members with a hash function the user chooses, so it is not an SPKI hash. A KMIP
+          Digest is computed over the key material in a stated key format type, not over the DER
+          SubjectPublicKeyInfo. A KCV (PKCS#11 <code>CKA_CHECK_VALUE</code>) is a 3-byte check value
+          for a symmetric key, and PKCS#11 states that two different keys can have the same value:
+          with only 24 bits, about 4,800 random keys already give a 50% chance of at least one
+          collision.
+        </p>
+        <p>
+          <Badge kind="view" />
+          To correlate &ldquo;same key across HSM / cert / code / wire&rdquo;, recompute one agreed
+          fingerprint (for example SHA-256 of the DER SubjectPublicKeyInfo) from normalized,
+          comparable public-key material, and treat a match as strong evidence rather than proof of
+          a unique key until the key material or a signature check confirms it. The sample grouping
+          in this module shows the idea; a production tool also needs, for each record, the
+          identifier scheme, the hash algorithm, the exact input encoding and the source, plus the
+          normalization step that turns each source&apos;s form into the comparable one.
         </p>
         <p>
           <Badge kind="std" />
-          <strong>Attestation</strong> proves a key&apos;s origin (generated in hardware,
-          non-exportable) — HSM/TPM attestation, Android Key Attestation, FIDO2/WebAuthn; for PQC,
-          attest generation in a FIPS 140-3-validated module. And record{' '}
-          <strong>where the key is managed</strong> — software (exportable, sprawl-prone), HSM
-          (non-exportable, attestable), or cloud KMS (API-mediated, envelope encryption) — it drives
-          risk and migration feasibility.
+          <strong>Attestation</strong> is evidence about a key, and what it proves depends on what
+          you verify: that the chain validates to a trust anchor you accept and nothing in it is
+          revoked; that the evidence is bound to the specific public key in front of you; what it
+          says about origin (generated on the device or imported) and the enforcement level (for
+          Android key attestation, the attestationSecurityLevel must be TrustedEnvironment or
+          StrongBox, and only the first key-description extension in the chain can be trusted); and,
+          where the format has one, that a fresh challenge ties it to your request. Hardware
+          residency is not the same as non-exportability: export and backup behavior is
+          configuration (in PKCS#11, <code>CKA_EXTRACTABLE</code>,{' '}
+          <code>CKA_NEVER_EXTRACTABLE</code> and <code>CKA_LOCAL</code> for keys generated on the
+          token), so read what the attestation claims about export and backup instead of assuming
+          it. For PQC, attesting generation in a FIPS 140-3-validated module is a claim about the
+          module, so check that the certificate covers the exact module and mode. For any sample you
+          are given, ask which of origin, hardware residency, non-exportability, key binding and
+          freshness it actually proves, and which it leaves unproven. And record{' '}
+          <strong>where the key is managed</strong> &mdash; software (exportable, sprawl-prone), HSM
+          (hardware-resident; whether it is non-exportable depends on its configuration), or cloud
+          KMS (API-mediated, envelope encryption) &mdash; it drives risk and migration feasibility.
         </p>
       </Section>
 

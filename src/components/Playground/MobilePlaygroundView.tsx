@@ -68,8 +68,9 @@ export const MobilePlaygroundView = () => {
         </div>
         <h3 className="text-xl font-bold text-foreground">Interactive Playground</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          The Playground runs real post-quantum cryptographic operations in your browser using
-          WebAssembly. It requires a desktop-sized screen for the full interactive experience.
+          This is an information view of the workbench’s capabilities, not an operation result. The
+          active workbench shows its selected execution mode; mock outputs are demonstrations. Open
+          a desktop-sized screen for its full controls.
         </p>
         <div className="flex items-center justify-center gap-2 pt-2">
           <Monitor size={16} className="text-primary" />
@@ -82,7 +83,7 @@ export const MobilePlaygroundView = () => {
       {/* Feature Grid */}
       <div className="space-y-3">
         <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-1">
-          Available Operations
+          Desktop workbench capabilities
         </h4>
         <div className="grid grid-cols-1 gap-3">
           {FEATURES.map((feature) => {
@@ -109,7 +110,7 @@ export const MobilePlaygroundView = () => {
 
       {/* Tech Stack Note */}
       <div className="glass-panel p-4 space-y-2">
-        <h4 className="text-sm font-semibold text-foreground">Powered By</h4>
+        <h4 className="text-sm font-semibold text-foreground">Implementation references</h4>
         <div className="flex flex-wrap gap-2">
           {['OpenSSL 3.6.3 WASM', 'liboqs', 'PKCS#11 v3.2', 'Web Crypto API'].map((tech) => (
             <span

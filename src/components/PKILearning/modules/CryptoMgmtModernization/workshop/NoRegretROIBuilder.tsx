@@ -301,23 +301,27 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
       .sort((a, b) => b.share - a.share)
   }, [outage, clm, fips, cve, ma, qDep, qIndep])
 
+  const [countsImported, setCountsImported] = useState(false)
+
   // Pull HSM + library counts from the CBOM built in Step 3.
   const hsmFromCbom = cbomAssets.filter((a) => a.type === 'hsm').length
   const libFromCbom = cbomAssets.filter((a) => a.type === 'library').length
   const canPullFromCbom = hsmFromCbom > 0 || libFromCbom > 0
   const handlePullFromCbom = () => {
+    setCountsImported(true)
     setFipsP((p) => ({
       ...p,
-      hsmCount: hsmFromCbom > 0 ? hsmFromCbom : p.hsmCount,
-      libraryCount: libFromCbom > 0 ? libFromCbom : p.libraryCount,
+      hsmCount: hsmFromCbom,
+      libraryCount: libFromCbom,
     }))
     setCveP((p) => ({
       ...p,
-      cvesPerYear: libFromCbom > 0 ? Math.max(1, Math.round(libFromCbom * 0.3)) : p.cvesPerYear,
+      cvesPerYear: libFromCbom > 0 ? Math.max(1, Math.round(libFromCbom * 0.3)) : 0,
     }))
   }
 
   const handleResetAll = () => {
+    setCountsImported(false)
     setHorizonYears(3)
     setDiscountRate(0)
     setPCrqc(1.0)
@@ -332,6 +336,13 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
 
   return (
     <div className="space-y-6">
+      {countsImported && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Counts use only the last imported valid components sample, including zero for absent
+          categories. The current Step 3 draft may differ. A partial inventory does not establish
+          whole-organisation counts. Other rates and costs remain illustrative assumptions.
+        </p>
+      )}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <p className="text-sm text-muted-foreground max-w-3xl">
           Tune your organization&apos;s assumptions. Every headline number expands into the
@@ -347,7 +358,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
               className="text-xs flex items-center gap-1"
             >
               <Database size={12} />
-              Pull from Step 3 CBOM ({hsmFromCbom} HSM / {libFromCbom} lib)
+              Pull last valid Step 3 sample ({hsmFromCbom} HSM / {libFromCbom} lib)
             </Button>
           )}
           <Button
@@ -571,7 +582,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`hsm_count × hsm_drift_rate × hsm_remediation_cost\n  + library_count × library_drift_rate × library_remediation_cost\n= ${fipsP.hsmCount} × ${fmtPct(fipsP.hsmDriftRate, 0)} × ${fmt$(fipsP.hsmRemediationCost)}\n  + ${fipsP.libraryCount} × ${fmtPct(fipsP.libraryDriftRate, 0)} × ${fmt$(fipsP.libraryRemediationCost)}\n= ${fmt$(fips)}/yr`}
-            explanation="The FIPS 140-3 IG added self-test requirements for ML-KEM/ML-DSA/SLH-DSA in August 2024 and, in September 2025, let their key-generation tests check against the private key only, and a module on the CMVP Modules-in-Process list has a status, not a completion date. Drift rate captures how often a given HSM or library hits an IG update, EoL, or revocation event in a year. Remediation cost is the emergency re-procurement or re-validation expense when it does. Use ‘Pull from Step 3 CBOM’ to populate the asset counts from your inventory."
+            explanation="The FIPS 140-3 IG added self-test requirements for ML-KEM/ML-DSA/SLH-DSA in August 2024 and, in September 2025, let their key-generation tests check against the private key only, and a module on the CMVP Modules-in-Process list has a status, not a completion date. Drift rate captures how often a given HSM or library hits an IG update, EoL, or revocation event in a year. Remediation cost is the emergency re-procurement or re-validation expense when it does. Use the last valid Step 3 components sample to populate sample asset counts; this does not check a later edited draft."
           >
             <ParamSlider
               label="HSM count"

@@ -191,7 +191,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   nShield 5s module)
                 </li>
                 <li>
-                  &bull; Utimaco SecurityServer (PCIe, FIPS 140-2 L3, certificate now Historical)
+                  &bull; Utimaco u.trust GP HSM Se-Series (PCIe; see its FIPS status in the vendor
+                  deep dive below)
                 </li>
               </ul>
               <p className="text-xs text-success mt-2 font-medium">
@@ -252,7 +253,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <span className="font-mono text-primary">CKK_ML_DSA</span>
                   <p className="text-muted-foreground mt-1">
                     Key type for ML-DSA (FIPS 204) digital signatures. Signatures are 3,309 bytes
-                    (ML-DSA-65) &mdash; existing buffers sized for 64-byte ECDSA will overflow.
+                    (ML-DSA-65), so a 64-byte buffer is insufficient. For functions using
+                    PKCS#11&apos;s variable-output convention, first query the required length with
+                    a null output buffer, then allocate accordingly. Handle CKR_BUFFER_TOO_SMALL
+                    using the returned required length; insufficient capacity does not itself
+                    establish a memory overflow.
                   </p>
                 </div>
               </div>
@@ -437,8 +442,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     <strong>Upgrade Path:</strong> Through PKCS#11 the PostQuantum feature must be
                     enabled and the firmware must be v13.8 or later (v13.8.3 or later for ML-KEM).
                     The 1&ndash;2 hours per HSM figure is this module&apos;s own planning estimate;
-                    the Entrust release notes and product pages we hold give no duration. An nShield
-                    5s module is on the CMVP Modules in Process list &mdash; a queue position, not
+                    Entrust&apos;s release notes and product pages give no duration. An nShield 5s
+                    module is on the CMVP Modules in Process list &mdash; a queue position, not
                     evidence of the outcome.
                   </p>
                   <p>
@@ -461,19 +466,21 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-bold text-foreground">
-                    Utimaco SecurityServer Se Gen2 (Quantum Protect)
+                    Utimaco u.trust GP HSM Se-Series (Quantum Protect)
                   </h3>
                   <VendorStatusBadge vendorId="utimaco" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">Q-safe extension</span>
+                    <span className="font-mono text-foreground">
+                      Quantum Protect firmware module
+                    </span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
                     <span className="text-status-warning font-medium">
-                      FIPS 140-2 Level 3 (cert #3925, Historical)
+                      Unconfirmed for this product (see Certification below)
                     </span>
                   </div>
                   <div>
@@ -489,14 +496,23 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div className="mt-3 space-y-1 text-xs text-muted-foreground">
                   <p>
-                    <strong>Upgrade Path:</strong> Q-safe is a firmware extension (not a full
-                    replacement). 1&ndash;3 hours per HSM. Existing keys preserved.
+                    <strong>Upgrade Path:</strong> Quantum Protect is delivered as a firmware
+                    module. The 1&ndash;3 hours per HSM figure is this module&apos;s own planning
+                    estimate; Utimaco&apos;s product pages give no duration.
                   </p>
                   <p>
-                    <strong>Unique Features:</strong> Cert #3925 is a FIPS 140-2 certificate, moved
-                    to the CMVP Historical list at sunset (checked 24 Sep 2026). PQC simulator
-                    available for API testing. SLH-DSA on roadmap. PCIe form factor for data center
-                    deployment.
+                    <strong>Unique Features:</strong> PQC simulator available for API testing.
+                    SLH-DSA on roadmap. PCIe form factor for data center deployment.
+                  </p>
+                  <p>
+                    <strong>Certification:</strong> The CMVP lists certificate #3925, a FIPS 140-2
+                    Level 3 certificate moved to the Historical list at sunset (checked 24 Sep
+                    2026), under the product name CryptoServer Se-Series Gen2. Utimaco&apos;s pages
+                    list the u.trust GP HSM Se-Series and the CryptoServer GP HSM as separate
+                    product lines, and this module has not established that the certificate covers
+                    the u.trust GP HSM Se-Series. Utimaco&apos;s site also headlines a FIPS 140-3
+                    Level 3 certification for the u.trust GP HSM Se-Series; its CMVP entry was not
+                    checked here.
                   </p>
                 </div>
               </div>
@@ -864,7 +880,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 'Algorithms Added',
                 'Complexity',
                 'Downtime (est.)',
-                'FIPS Recert',
+                'FIPS certificate',
               ]}
               rows={FIRMWARE_UPGRADE_PATHS.map((path) => [
                 path.vendorName,
@@ -891,8 +907,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <span key="d" className="text-muted-foreground">
                   {path.estimatedDowntime}
                 </span>,
-                <span key="r" className="text-warning font-bold">
-                  Required
+                <span key="r" className="text-foreground">
+                  {path.certificateNote}
                 </span>,
               ])}
             />
@@ -908,8 +924,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
               <h3 className="text-sm font-bold text-foreground">What the lab tests</h3>
               <p className="text-xs text-muted-foreground">
-                A PQC-capable HSM is checked in four separate places, and the single word
-                &ldquo;Required&rdquo; in the FIPS Recert column above covers all of them.{' '}
+                A PQC-capable HSM is checked in four separate places, and the entry in the FIPS
+                certificate column above speaks only to the module certificate.{' '}
                 <strong>CAVP</strong> is NIST&apos;s algorithm validation program (its tests are
                 specified in ACVP documents). <strong>CMVP</strong> is NIST&apos;s cryptographic
                 module validation program; a module&apos;s certificate lists its approved
@@ -1238,7 +1254,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   &bull; LMS or XMSS (single-tree only; HSS and XMSS^MT are not allowed in NSS)
                   preferred to start firmware signing now; validated ML-DSA-87 is also approved
                 </li>
-                <li>&bull; Software and firmware signing: CNSA 2.0 exclusively by 2030</li>
+                <li>&bull; New NSS acquisitions must be CNSA 2.0-compliant from 1 Jan 2027</li>
+                <li>
+                  &bull; Equipment that cannot support CNSA 2.0 phased out by 31 Dec 2030
+                  (exceptions possible)
+                </li>
                 <li>&bull; CNSA 2.0 mandated for National Security Systems by 31 Dec 2031</li>
                 <li>&bull; NSM-10 goal: quantum-resistant NSS by 2035</li>
                 <li>&bull; Tree height H=20 provides ~1M signatures per key</li>

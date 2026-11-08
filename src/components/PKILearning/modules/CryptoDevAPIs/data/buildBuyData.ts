@@ -152,29 +152,50 @@ export const SOURCING_STRATEGIES: SourcingStrategyData[] = [
   {
     id: 'commercial',
     name: 'Commercial',
-    tagline: 'Vendor support, pre-certified, SLA-backed',
+    tagline: 'Vendor support and validated modules, on contract terms',
     description:
-      'Purchase a commercial cryptographic library or HSM SDK with vendor support (Thales, Entrust, Utimaco, wolfSSL commercial, etc.). Get SLA-backed support, pre-certified FIPS modules, and compliance documentation.',
+      'Purchase a commercial cryptographic library or HSM SDK with vendor support (Thales, Entrust, Utimaco, wolfSSL commercial, etc.). Support terms, warranties and any liability limits are set by your contract. A validated module can reduce your certification work, but it does not make your deployment compliant.',
     pros: [
-      { text: 'Vendor SLA — guaranteed response times for security issues', impact: 'high' },
-      { text: 'Pre-certified FIPS 140-2/3 — no certification burden', impact: 'high' },
-      { text: 'Compliance documentation — audit-ready paperwork', impact: 'high' },
+      {
+        text: 'Vendor support — response times for security issues are whatever your contract commits to, so read the SLA',
+        impact: 'high',
+      },
+      {
+        text: 'Validated module may be available and can reduce your certification effort; the CMVP certificate covers the named module, its approved algorithms and its listed configuration, not your application or integration (FIPS 140-2 certificates move to the Historical list after 21 September 2026)',
+        impact: 'high',
+      },
+      {
+        text: 'Compliance documentation (certificate, Security Policy) is evidence for the module; evidence for your own deployment is still yours to produce',
+        impact: 'high',
+      },
       { text: 'Professional services for integration and migration', impact: 'medium' },
-      { text: 'Liability transfer — vendor assumes implementation correctness', impact: 'medium' },
-      { text: 'HSM integration — hardware key protection included', impact: 'medium' },
+      {
+        text: 'Warranties and indemnities depend on the licence agreement; licensing does not transfer your integration, configuration or compliance responsibility',
+        impact: 'medium',
+      },
+      {
+        text: 'HSM integration — hardware key custody, with extractability set by key attributes and module policy',
+        impact: 'medium',
+      },
     ],
     cons: [
-      { text: 'Significant cost — $50K-500K+/year licensing', impact: 'high' },
+      {
+        text: 'Licensing cost is contract-specific; the cost ranges shown for this option are illustrative planning assumptions, not quotes',
+        impact: 'high',
+      },
       { text: 'Vendor lock-in — switching costs are high', impact: 'high' },
       { text: 'Opaque code — cannot inspect implementation details', impact: 'medium' },
-      { text: 'Slower PQC adoption — vendor release cycles lag behind OSS', impact: 'high' },
+      {
+        text: 'PQC availability follows each vendor\u2019s release and validation schedule, which can lag open source — check the vendor\u2019s dated roadmap',
+        impact: 'high',
+      },
       { text: 'Feature set dictated by vendor roadmap, not your needs', impact: 'medium' },
       { text: 'Business continuity risk — vendor acquisition/shutdown', impact: 'low' },
     ],
     bestFor: [
-      'Financial services (FIPS mandatory, audit requirements)',
-      'Healthcare (HIPAA compliance, liability concerns)',
-      'Government/defense (Common Criteria, FIPS Level 3+)',
+      'Financial services where your regulator, customer contract or internal policy requires a validated module',
+      'Healthcare organisations whose contracts or risk assessment call for a validated module (check what applies to you)',
+      'US federal agencies and their contractors, where FIPS 140 validation applies when cryptography protects sensitive information, and programmes that require Common Criteria; the security level is chosen from the system\u2019s requirements',
       'Organizations without crypto engineering expertise',
       'Companies needing HSM hardware key protection',
     ],
@@ -185,7 +206,7 @@ export const SOURCING_STRATEGIES: SourcingStrategyData[] = [
       'You have strong in-house crypto expertise',
     ],
     pqcImplications:
-      'Commercial vendors are slower to adopt PQC — they wait for final NIST standards and then go through internal QA and FIPS re-certification. Thales Luna HSMs support ML-KEM/ML-DSA via firmware updates. wolfSSL commercial provides PQC and a FIPS 140-3 module, but that certificate (#4718) lists no PQC algorithm (checked 24 Sep 2026). Commercial PQC can lag open source; plan on the vendor\u2019s dated roadmap, not a generic interval.',
+      'Commercial PQC availability follows each vendor\u2019s release, QA and validation schedule. Thales Luna HSMs support ML-KEM/ML-DSA via firmware updates. wolfSSL commercial provides PQC and a FIPS 140-3 module, but that certificate (#4718) lists no PQC algorithm (checked 24 Sep 2026). Commercial PQC can lag open source; plan on the vendor\u2019s dated roadmap, not a generic interval.',
     estimatedTCO: {
       year1: '$100K-500K (licensing, integration, training)',
       year3: '$300K-1.5M (annual licensing, support renewals)',
@@ -202,7 +223,7 @@ export const WIZARD_QUESTIONS: WizardQuestion[] = [
     description: 'FIPS 140-3, Common Criteria, or other certifications needed',
     options: [
       {
-        label: 'FIPS 140-3 Level 2+ mandatory',
+        label: 'A FIPS 140-3 validated module is required (FIPS 140-2 only for existing systems)',
         weights: { build: -1, 'open-source': -1, commercial: 2 },
       },
       {
@@ -276,7 +297,8 @@ export const WIZARD_QUESTIONS: WizardQuestion[] = [
   {
     id: 'liability',
     question: 'What is your liability and compliance exposure?',
-    description: 'Legal/financial risk if crypto implementation has a flaw',
+    description:
+      'Legal/financial risk if the crypto implementation has a flaw; contract terms, not the sourcing model alone, decide who bears it',
     options: [
       {
         label: 'High (financial services, healthcare, government)',

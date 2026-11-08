@@ -21,6 +21,12 @@ describe('replaceTabParams', () => {
     expect(parseFacets(serializeFacets(f))).toEqual(f)
   })
 
+  it('round-trips the PSK status facet', () => {
+    const f = { ...NO_FACETS, pqc: 'psk' } as const
+    expect(serializeFacets(f)).toBe('pqc:psk')
+    expect(parseFacets('pqc:psk')).toEqual(f)
+  })
+
   it('ignores unknown keys and values (degrades to all)', () => {
     expect(parseFacets('pqc:bogus,nope:1,certified:linked')).toEqual({
       ...NO_FACETS,

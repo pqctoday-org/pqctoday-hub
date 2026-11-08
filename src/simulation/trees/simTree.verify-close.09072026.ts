@@ -63,8 +63,8 @@ const TREE: PhaseTree = {
           id: 'VC.2',
           title: 'Assemble the Migration Evidence Dossier',
           decision:
-            'Assemble real evidence — observed negotiation, negative testing, attestation — for every migrated system, not a checklist of milestones hit.',
-          do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard — destruction certificates for HSM-held keys, not a verbal confirmation. Re-encrypt long-lived archives under PQC BEFORE destroying the classical keys that protect them — the sequencing matters, not just the two actions.',
+            'Assemble real evidence for every migrated system, matched to what the system does (transport, storage or signing), not a checklist of milestones hit.',
+          do: 'Prove each migrated system with evidence that fits its job. Transport (TLS, VPN, SSH): observed PQC or hybrid negotiation, negative testing and configuration attestation. Storage: which key protects which bytes after the change, and whether the data key was rewrapped (same data key, new wrapping key) or the data re-encrypted (new data key); rewrapping does not help if copies of the old wrapped key or ciphertext were already taken. Signing: which verifiers accept the new signature and which old signing keys and trust anchors were retired; old signatures stay verifiable only while verifiers still trust the old key. Log classical key-material decommissioning per org key-destruction standard — destruction certificates for HSM-held keys, not a verbal confirmation — and rewrap or re-encrypt long-lived archives BEFORE destroying the classical keys that protect them; the sequencing matters, not just the two actions. Record the historic exposure that remains: traffic, ciphertext and backups already captured under classical keys are not protected by the migration.',
           output: 'Migration-verification evidence dossier',
           steps: [
             {

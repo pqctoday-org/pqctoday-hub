@@ -458,7 +458,8 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     id: 'bsi-deny-frodo-nopartner',
     policyFile: 'bsi-tr-02102.yaml',
     title: 'FrodoKEM-1344 without a hybrid partner',
-    description: 'BSI mandates HYBRID — a standalone PQC KEM (no classical partner) is rejected.',
+    description:
+      'BSI recommends hybrid — this policy rejects a standalone PQC KEM (no classical partner).',
     path: 'negative',
     request: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'FrodoKEM-1344' },
     expect: 'Deny',

@@ -47,12 +47,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;Supply chain risks are among the most significant challenges for PQC migration.
-              Organizations must evaluate vendors&apos; cryptographic capabilities and ensure
-              contractual commitments to post-quantum readiness.&rdquo;
+              &ldquo;The supply chains have dependencies on the maturity of standards, protocols,
+              and the cryptographic validation program before the products and services can be
+              delivered to the implementer.&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NIST SP 1800-38 (Draft), PQC Migration Handbook
+              &mdash; NIST CSWP 39-upd1, Section 5.3 (Technology Supply Chains)
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -71,9 +71,17 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Compliance Cascade</div>
               <p className="text-xs text-muted-foreground">
-                Regulatory deadlines (<InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip>,{' '}
-                <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip>) apply to your full
-                supply chain, not just your own code.
+                Ask first which requirement applies to you.{' '}
+                <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> sets algorithm requirements
+                for national security systems; NSA encourages adoption elsewhere but says it is not
+                an NSA requirement there.{' '}
+                <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip> applies to federal
+                agencies that use cryptography to protect sensitive information and to modules
+                operated for them under contract; private and commercial organizations may adopt it
+                voluntarily. Where a requirement applies, it attaches to the specific product,
+                module and configuration in scope. Module validation and PQC transition dates are
+                separate questions: a validated module shows what was tested, not that a transition
+                date is met.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -132,7 +140,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
       {/* Section 3: CBOM — Crypto Bill of Materials */}
       <section className="glass-panel p-6">
-        <div data-section-id="contracts" className="flex items-center gap-3 mb-4 scroll-mt-20">
+        <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <FileSearch size={24} className="text-primary" />
           </div>
@@ -145,24 +153,29 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Link to="/learn/sbom" className="text-primary hover:underline">
               SBOM
             </Link>{' '}
-            concept to track every cryptographic algorithm, key, certificate, and protocol used by a
-            software product. Demanding CBOMs from vendors is the single most impactful step toward
-            supply chain quantum readiness.
+            concept to list the cryptographic algorithms, keys, certificates, and protocols a
+            software product uses. It supports component visibility: you can see what a product
+            contains and judge which parts can be updated and which must be replaced. It is also a
+            supplier-produced inventory, so it stays self-attestation until you check it against
+            scoped independent testing, validation records, and change evidence, and it does not
+            show on its own which product versions will be supported. Use it alongside version
+            support, testing, and contractual commitments rather than in place of them.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">What a CBOM Reveals</div>
               <p className="text-xs text-muted-foreground">
                 Algorithm inventory, key sizes, protocol versions, certificate types, and quantum
-                vulnerability status per component.
+                vulnerability status per component, as far as the supplier records them.
+                Completeness is something to check, not assume.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Standard Format</div>
               <p className="text-xs text-muted-foreground">
-                CycloneDX 1.7 includes a crypto extension for machine-readable CBOM data. The
-                CycloneDX community (cyclonedx.org) maintains the specification, originally an OWASP
-                project.
+                CycloneDX 1.7, the current version on cyclonedx.org, models cryptographic assets, so
+                a CBOM can be machine-readable. The specification is developed by the OWASP
+                Foundation and is also standardized as ECMA-424 (Ecma TC54).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -222,6 +235,58 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <p className="text-xs text-muted-foreground">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4b: PQC Contract Requirements */}
+      <section className="glass-panel p-6">
+        <div data-section-id="contracts" className="flex items-center gap-3 mb-4 scroll-mt-20">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <ClipboardCheck size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">PQC Contract Requirements</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            Contract language turns a vendor&apos;s roadmap statement into something you can check
+            and enforce. The Contract Clauses tool in this module drafts these areas; they are this
+            module&apos;s drafting guidance, not legal advice, so have counsel review any language
+            before it goes into an agreement.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">Timeline and scope</div>
+              <p className="text-xs text-muted-foreground">
+                Tie vendor deadlines to your own migration plan and to the requirement that actually
+                applies to you, and name the products, versions, and configurations in scope.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">Version support</div>
+              <p className="text-xs text-muted-foreground">
+                State which product versions will receive PQC support and how long each version
+                stays supported, so a CBOM for one version is not read as a promise for another.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">Validation and testing</div>
+              <p className="text-xs text-muted-foreground">
+                Where your policy or contract requires validated modules, ask for the CMVP
+                certificate, the module name and version, and the tested configuration. Add scoped
+                independent testing results where the risk justifies them.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">
+                CBOM, change notice, and audit
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Require CBOM delivery at a stated frequency and format, advance notice of
+                cryptographic changes, and the right to check the CBOM against testing, validation,
+                and release evidence.
+              </p>
+            </div>
           </div>
         </div>
       </section>

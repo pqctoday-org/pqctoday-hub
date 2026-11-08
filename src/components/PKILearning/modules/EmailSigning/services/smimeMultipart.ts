@@ -75,7 +75,11 @@ export function smimeEnvelopeSigned(signedP7m: Uint8Array, headers: SmimeHeaders
 
 /** Wrap a CMS `EnvelopedData` / `AuthEnvelopedData` (`cms -encrypt` output)
  *  as a single-part `application/pkcs7-mime` MIME message. */
-export function smimeEnvelopeEncrypted(enveloped: Uint8Array, headers: SmimeHeaders = {}): string {
+export function smimeEnvelopeEncrypted(
+  enveloped: Uint8Array,
+  headers: SmimeHeaders = {},
+  contentType: 'EnvelopedData' | 'AuthEnvelopedData' = 'EnvelopedData'
+): string {
   const h = { ...defaultHeaders(), ...headers }
   const body = base64Wrap(enveloped)
   return [
@@ -84,7 +88,7 @@ export function smimeEnvelopeEncrypted(enveloped: Uint8Array, headers: SmimeHead
     `Subject: ${h.subject}`,
     `Date: ${h.date}`,
     'MIME-Version: 1.0',
-    'Content-Type: application/pkcs7-mime; smime-type=enveloped-data; name="smime.p7m"',
+    `Content-Type: application/pkcs7-mime; smime-type=${contentType === 'AuthEnvelopedData' ? 'authEnveloped-data' : 'enveloped-data'}; name="smime.p7m"`,
     'Content-Transfer-Encoding: base64',
     'Content-Disposition: attachment; filename="smime.p7m"',
     '',

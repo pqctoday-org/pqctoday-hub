@@ -591,21 +591,23 @@ const ReadinessChecklist: React.FC = () => {
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <CheckCircle2 size={18} className="text-primary" />
-        <h3 className="text-lg font-bold text-foreground">KMIP PQC Migration Readiness</h3>
+        <h3 className="text-lg font-bold text-foreground">KMIP PQC Checklist Review</h3>
       </div>
       <p className="text-sm text-muted-foreground">
-        Use this checklist to evaluate your organization&apos;s readiness for KMIP-based PQC key
-        management. Critical items must be resolved before deployment.
+        Mark the sample considerations you have reviewed. These Hub teaching priorities are not a
+        universal deployment checklist. With your production tools, evaluate the applicable server
+        and client versions, key operations, access controls and interoperability tests. Selecting
+        items here does not run those tests or establish deployment readiness.
       </p>
 
       {/* Progress bar */}
       <div className="bg-muted/30 rounded-lg p-4 border border-border">
         <div className="flex justify-between text-xs text-muted-foreground mb-2">
           <span>
-            Overall: {completed}/{total} complete
+            Reviewed: {completed}/{total}
           </span>
           <span className={criticalDone === criticalTotal ? 'text-success' : 'text-warning'}>
-            Critical: {criticalDone}/{criticalTotal}
+            Critical topics reviewed: {criticalDone}/{criticalTotal}
           </span>
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -666,8 +668,7 @@ const ReadinessChecklist: React.FC = () => {
         <div className="bg-success/10 rounded-lg p-4 border border-success/20 text-center">
           <CheckCircle2 size={24} className="text-success mx-auto mb-2" />
           <p className="text-sm font-bold text-success">
-            All readiness checks complete! Your environment is ready for KMIP-based PQC key
-            management.
+            Sample checklist reviewed — technical readiness not assessed.
           </p>
         </div>
       )}

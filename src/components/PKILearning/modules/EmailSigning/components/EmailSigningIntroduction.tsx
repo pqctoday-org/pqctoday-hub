@@ -103,12 +103,22 @@ const Step1SmimeCmsKem: React.FC = () => (
           PQC algorithms integrate with existing S/MIME infrastructure.
         </p>
         <p>
-          In this module's reading, together, these RFCs provide a complete PQC story for CMS:
-          ML-DSA for signing (RFC 9882), KEM-based encryption via KEMRecipientInfo (RFC 9629),
-          RSA-KEM as a transitional KEM option (RFC 9690), and{' '}
-          <InlineTooltip term="LMS/HSS">HSS/LMS</InlineTooltip> for hash-based firmware and
-          long-lived signatures (RFC 9708). See the <strong>References</strong> tab for full details
-          on each standard.
+          Together, these RFCs cover the main building blocks used in this module: ML-DSA for
+          signing (RFC 9882), KEM-based encryption via KEMRecipientInfo (RFC 9629, with the ML-KEM
+          conventions in RFC 9936), and <InlineTooltip term="LMS/HSS">HSS/LMS</InlineTooltip> for
+          hash-based firmware and long-lived signatures (RFC 9708). See the{' '}
+          <strong>References</strong> tab for full details on each standard.
+        </p>
+        <p>
+          RFC 9690 (RSA-KEM) is a different kind of entry. It puts <strong>RSA</strong> behind the
+          same KEM interface; the RFC presents it as a replacement for PKCS #1 v1.5 key transport in
+          new CMS applications, to avoid chosen-ciphertext weaknesses and gain a tighter security
+          proof, and it ties the security of RSA-KEM to the RSA problem. Because that problem is
+          what Shor&apos;s algorithm solves, RSA-KEM is a KEM but{' '}
+          <strong>not a post-quantum KEM</strong>; ML-KEM is the post-quantum KEM here. These RFCs
+          define message formats, not deadlines. Dates for retiring classical algorithms come from
+          policy documents and apply to named algorithms and systems, so check the scope of the
+          policy that applies to you before treating any date as a deadline for all email.
         </p>
       </div>
     </section>
@@ -183,17 +193,23 @@ const Step1SmimeCmsKem: React.FC = () => (
         </div>
         <div className="bg-muted/50 rounded-lg p-3 border border-border">
           <div className="text-xs font-bold text-foreground mb-1">
-            Why KEMs replace key transport
+            Why PQC uses KEMs instead of key transport
           </div>
           <p className="text-xs text-muted-foreground">
-            Post-quantum public-key encryption (like lattice-based encryption) is less efficient and
-            harder to standardize than KEM + symmetric key wrap.{' '}
             <InlineTooltip term="NIST">NIST</InlineTooltip> standardized{' '}
             <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> (
             <InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>) as a KEM primitive, not a
-            public-key encryption scheme. RFC 9629 bridges this gap by defining{' '}
-            <code className="text-foreground/70">KEMRecipientInfo</code>, a new CMS structure that
-            replaces <code className="text-foreground/70">KeyTransRecipientInfo</code>.
+            public-key encryption scheme: it produces a shared secret and a ciphertext, rather than
+            encrypting the CEK itself. RFC 9629 bridges this gap by defining{' '}
+            <code className="text-foreground/70">KEMRecipientInfo</code>, a CMS structure carried as
+            an <code className="text-foreground/70">OtherRecipientInfo</code> (object identifier{' '}
+            <code className="text-foreground/70">id-ori-kem</code>). It adds a KEM-based way to
+            deliver the CEK; it does not remove{' '}
+            <code className="text-foreground/70">KeyTransRecipientInfo</code>, and one message can
+            carry either kind. Inside it, <code className="text-foreground/70">kemct</code> (the KEM
+            ciphertext, used to recompute the key-encryption key) and{' '}
+            <code className="text-foreground/70">encryptedKey</code> (the CEK wrapped under that
+            key) are two separate ciphertexts with different purposes.
           </p>
         </div>
       </div>
@@ -377,16 +393,29 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          Migrating email security to PQC is uniquely challenging because S/MIME requires
-          <strong> bidirectional compatibility</strong> &mdash; both sender and recipient must
-          support the same algorithms. This creates a chicken-and-egg problem that doesn&apos;t
-          exist in TLS (where servers can unilaterally upgrade).
+          Migrating email security to PQC is challenging because S/MIME needs{' '}
+          <strong>compatibility between sender and recipient</strong>: the sender picks the
+          algorithms before sending, using the recipient&apos;s certificate and any capability
+          information it has (RFC 8551, Section 2.7.1), and the recipient must be able to use them.
+          CMS encryption is store-and-forward &mdash; in RFC 9629&apos;s words, the originator and
+          recipients do not need to be online at the same time &mdash; so nothing negotiates the
+          choice at delivery time.
+        </p>
+        <p>
+          TLS also needs support at both ends: in TLS 1.3 a server may not send a key share for a
+          group that the client did not list in its{' '}
+          <code className="text-foreground/70">supported_groups</code> extension (RFC 8446, Section
+          4.2.8). The difference is that the choice is negotiated live in every handshake, so a
+          server can add support first and clients that offer it benefit while others still connect
+          with a classical group. Fallback of that kind keeps connections working but also means a
+          classical-only peer gets classical protection, so deployment scope (which clients and
+          servers can be updated) decides the outcome.
         </p>
         <div className="space-y-2">
           {[
             {
               t: 'Dual-Algorithm Certificates',
-              d: 'During transition, organizations must issue both classical and PQC certificates for each user. Certificate management complexity doubles.',
+              d: 'While some correspondents can only use classical algorithms, a user may need both a classical and a PQC certificate, which adds certificate management work.',
             },
             {
               t: 'Recipient Capability Discovery',
@@ -394,11 +423,15 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
             },
             {
               t: 'Message Size Impact',
-              d: 'ML-DSA-65 signatures are ~3.3 KB (3,309 B, FIPS 204; vs ~72 bytes DER-encoded for ECDSA). Signed emails with certificate chains can grow by 10-15 KB, impacting mobile clients and constrained networks.',
+              d: 'ML-DSA-65 signatures are ~3.3 KB (3,309 B, FIPS 204; vs ~72 bytes DER-encoded for ECDSA). As an illustration, one signature plus a leaf and an intermediate certificate that each carry a 1,952 B key and a 3,309 B signature add roughly 14 KB before base64 encoding, which matters for mobile clients and constrained networks.',
             },
             {
-              t: 'Archival & Long-Term Validation',
-              d: 'Signed emails must remain verifiable for years or decades. Organizations need both classical and PQC signatures during the transition to ensure long-term validation.',
+              t: 'Fallback Is Not Hybrid',
+              d: 'A CMS message wraps one CEK once per RecipientInfo (RFC 5652, Section 6). If a sender adds both an RSA RecipientInfo and a KEMRecipientInfo for the same recipient so that either kind of client can open the message, anyone who can break the RSA entry recovers the same CEK, so confidentiality is that of the weakest decryption path the message allows. A cryptographically combined hybrid KEM instead merges the shared secrets of both algorithms into one key-encryption key; the IETF LAMPS composite ML-KEM work does this, and it was still an Internet-Draft, not an RFC, when this lesson was written.',
+            },
+            {
+              t: 'Archived Mail: Confidentiality vs Signature Validation',
+              d: "These are two separate problems. To read an archived encrypted message later, someone must still hold a private key that can recover its CEK (RFC 9629: the recipient's private key is needed to recover the keying material); keeping that key preserves access but also keeps a long-lived target, so whether to retain, re-encrypt or store decrypted copies is a policy choice. To trust an archived signature later, you need evidence that it existed before its algorithm or certificate became unreliable: RFC 4998 describes timestamps renewed over time, and RFC 3161 time-stamp tokens carry a time value from a time-stamping authority, so the trustworthiness of that time source matters as much as the signature algorithm.",
             },
             {
               t: 'Gateway & Relay Compatibility',

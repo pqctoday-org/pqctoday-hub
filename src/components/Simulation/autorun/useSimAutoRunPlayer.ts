@@ -258,9 +258,9 @@ export function passIntroFor(level: number, scenario: SimScenario): PassIntro {
   const parts: string[] = []
   if (kinds.has('activity')) parts.push('documents you produce')
   if (kinds.has('learn')) parts.push('comprehension checks')
-  if (kinds.has('workshop')) parts.push('hands-on practice results')
+  if (kinds.has('workshop')) parts.push('workshop resources opened (practice not established)')
   if (kinds.has('recurrence')) parts.push('evidence of the activity operated again over time')
-  if (kinds.has('reference')) parts.push('reviewed source material')
+  if (kinds.has('reference')) parts.push('reference resources opened (reading not established)')
   return {
     level,
     name: `Pass ${level} — ${meta.name}`,
@@ -1235,11 +1235,13 @@ export function useSimAutoRunPlayer({
           if (cancelled) return
           if (next >= q.length) {
             setCaption(
-              isWalkthroughMode(modeRef.current)
-                ? 'That’s the full program, end to end.'
-                : isPhaseMode(modeRef.current)
-                  ? `${phaseLabel(item.phase)} complete.`
-                  : 'Migration complete — full program maturity reached.'
+              modeRef.current === 'intro'
+                ? 'Short introduction complete — you have viewed selected resources on the threat and early planning.'
+                : isWalkthroughMode(modeRef.current)
+                  ? 'Executive Overview complete — an illustrative lifecycle walkthrough.'
+                  : isPhaseMode(modeRef.current)
+                    ? `${phaseLabel(item.phase)} complete.`
+                    : 'Sample journey complete — available steps and worked examples viewed; this does not establish full framework maturity.'
             )
             if (isWalkthroughMode(modeRef.current))
               useSimulationStore.getState().setOverviewBookmark(null)

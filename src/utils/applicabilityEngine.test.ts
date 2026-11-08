@@ -5,8 +5,10 @@ import type { ThreatData } from '../data/threatsData'
 import {
   applicableFrameworks,
   applicableThreats,
+  coversEverySector,
   groupByTier,
   isProfileEmpty,
+  reviewedAllSectorAnswer,
   type UserProfile,
 } from './applicabilityEngine'
 
@@ -453,5 +455,209 @@ describe('groupByTier', () => {
     expect(grouped.recognized).toEqual([])
     expect(grouped.advisory).toEqual([])
     expect(grouped.informational).toEqual([])
+  })
+})
+
+// ── relevance versus legal coverage ──────────────────────────────────────
+
+describe('applicableFrameworks — sector tags are relevance, not legal scope', () => {
+  const threeSectorBinding = (overrides: Partial<ComplianceFramework> = {}) =>
+    makeFramework({
+      id: 'US-AGENCY-RULE',
+      countries: ['United States'],
+      industries: ['Government & Defense', 'Information Technology', 'Finance & Insurance'],
+      enforcementBody: 'NIST',
+      bindingStatus: 'mandatory_for_scope',
+      bindingBasis: 'Agency rule, federal agencies only',
+      ...overrides,
+    })
+
+  it('does not make a three-sector record binding for a reader whose sector is not tagged', () => {
+    const healthcare: UserProfile = {
+      industry: 'Healthcare & Life Sciences',
+      country: 'United States',
+      region: 'americas',
+    }
+    const [result] = applicableFrameworks(healthcare, [threeSectorBinding()])
+    // Still shown as relevant to the country...
+    expect(result).toBeDefined()
+    // ...but not presented as binding on this reader.
+    expect(result?.tier).not.toBe('mandatory')
+    expect(result?.reason).toMatch(/check its stated scope/i)
+  })
+
+  it('keeps the mandatory tier when the reader sector is one of the record tags', () => {
+    const finance: UserProfile = {
+      industry: 'Finance & Insurance',
+      country: 'United States',
+      region: 'americas',
+    }
+    const [result] = applicableFrameworks(finance, [threeSectorBinding()])
+    expect(result?.tier).toBe('mandatory')
+  })
+
+  it('reaches the mandatory tier for an untagged sector only through an explicit reviewed all-sector flag', () => {
+    const healthcare: UserProfile = {
+      industry: 'Healthcare & Life Sciences',
+      country: 'United States',
+      region: 'americas',
+    }
+    const reviewed = threeSectorBinding({
+      allSectorsReviewed: true,
+    } as Partial<ComplianceFramework>)
+    const [result] = applicableFrameworks(healthcare, [reviewed])
+    expect(result?.tier).toBe('mandatory')
+  })
+
+  it('does not make a record with no sector tags binding without the reviewed flag', () => {
+    const anySector: UserProfile = {
+      industry: 'Healthcare & Life Sciences',
+      country: 'United States',
+      region: 'americas',
+    }
+    const [result] = applicableFrameworks(anySector, [threeSectorBinding({ industries: [] })])
+    expect(result?.tier).not.toBe('mandatory')
+  })
+  it('keeps GDPR in the mandatory tier for a sector outside its tags, because its scope clause is not sector-based', () => {
+    const gdpr = threeSectorBinding({
+      id: 'GDPR',
+      countries: ['European Union'],
+      industries: ['Healthcare & Life Sciences', 'Information Technology', 'Finance & Insurance'],
+      enforcementBody: 'European Commission',
+      bindingBasis: 'Regulation (EU) 2016/679',
+    })
+    const government: UserProfile = {
+      industry: 'Government & Defense',
+      country: 'France',
+      region: 'eu',
+    }
+    const [result] = applicableFrameworks(government, [gdpr])
+    expect(result?.tier).toBe('mandatory')
+    // The same record under another id is not covered by that review.
+    const [other] = applicableFrameworks(government, [{ ...gdpr, id: 'OTHER-3-SECTOR-LAW' }])
+    expect(other?.tier).not.toBe('mandatory')
+  })
+})
+
+describe('applicableFrameworks — the reviewed all-sector answer decides when it is filled in', () => {
+  const bank: UserProfile = {
+    industry: 'Healthcare & Life Sciences',
+    country: 'United States',
+    region: 'americas',
+  }
+  const threeTags = ['Government & Defense', 'Information Technology', 'Finance & Insurance']
+
+  it('yes covers every sector even with a single sector tag', () => {
+    const fw = makeFramework({
+      id: 'ALL-YES',
+      countries: ['United States'],
+      industries: ['Finance & Insurance'],
+      allSectorsReviewed: true,
+      enforcementBody: 'NIST',
+      bindingStatus: 'mandatory_for_scope',
+      bindingBasis: 'Agency rule, federal agencies only',
+    })
+    expect(coversEverySector(fw)).toBe(true)
+    const [result] = applicableFrameworks(bank, [fw])
+    expect(result?.item.id).toBe('ALL-YES')
+    expect(result?.tier).toBe('mandatory')
+  })
+
+  it('no does not cover a sector outside its tags, even with three tags', () => {
+    const fw = makeFramework({
+      id: 'ALL-NO',
+      countries: ['United States'],
+      industries: threeTags,
+      allSectorsReviewed: false,
+      enforcementBody: 'NIST',
+      bindingStatus: 'binding',
+      bindingBasis: 'Agency rule',
+    })
+    expect(coversEverySector(fw)).toBe(false)
+    // Dropped for a sector outside its tags. The three-tag count used to keep it as
+    // 'cross-border', so asserting the record is gone is what separates the two rules.
+    expect(applicableFrameworks(bank, [fw])).toEqual([])
+  })
+
+  it('no still shows the record to a sector inside its tags', () => {
+    const fw = makeFramework({
+      id: 'ALL-NO-INSIDE',
+      countries: ['United States'],
+      industries: [...threeTags, 'Healthcare & Life Sciences'],
+      allSectorsReviewed: false,
+      enforcementBody: 'NIST',
+      bindingStatus: 'binding',
+      bindingBasis: 'Agency rule',
+    })
+    const [result] = applicableFrameworks(bank, [fw])
+    expect(result?.tier).toBe('mandatory')
+  })
+
+  it('blank keeps the sector-tag count: three tags cover every sector, one tag does not', () => {
+    const three = makeFramework({ id: 'BLANK-3', industries: threeTags })
+    const one = makeFramework({ id: 'BLANK-1', industries: ['Finance & Insurance'] })
+    expect(three.allSectorsReviewed).toBeUndefined()
+    expect(coversEverySector(three)).toBe(true)
+    expect(coversEverySector(one)).toBe(false)
+  })
+
+  it('blank with no sector tags still covers every sector, as before', () => {
+    expect(coversEverySector(makeFramework({ industries: [] }))).toBe(true)
+  })
+
+  it('a record on the reviewed list covers every sector while its cell is blank, whatever its tag count', () => {
+    // The list and the tag fallback are one decision: trimming GDPR to a single tag must not
+    // make it a one-sector framework while the engine still lists it as reviewed.
+    const trimmed = makeFramework({ id: 'GDPR', industries: ['Finance & Insurance'] })
+    expect(reviewedAllSectorAnswer(trimmed)).toBe(true)
+    expect(coversEverySector(trimmed)).toBe(true)
+    const government: UserProfile = {
+      industry: 'Government & Defense',
+      country: 'France',
+      region: 'eu',
+    }
+    const gdpr = makeFramework({
+      id: 'GDPR',
+      countries: ['European Union'],
+      industries: ['Finance & Insurance'],
+      enforcementBody: 'European Commission',
+      bindingStatus: 'binding',
+      bindingBasis: 'Regulation (EU) 2016/679',
+    })
+    const [result] = applicableFrameworks(government, [gdpr])
+    expect(result?.tier).toBe('mandatory')
+  })
+
+  it('a filled cell overrides the reviewed list, and other ids have no list entry', () => {
+    expect(reviewedAllSectorAnswer(makeFramework({ id: 'GDPR', allSectorsReviewed: false }))).toBe(
+      false
+    )
+    expect(reviewedAllSectorAnswer(makeFramework({ id: 'X-1', allSectorsReviewed: true }))).toBe(
+      true
+    )
+    expect(reviewedAllSectorAnswer(makeFramework({ id: 'X-1' }))).toBeUndefined()
+    expect(
+      coversEverySector(makeFramework({ id: 'GDPR', industries: ['A'], allSectorsReviewed: false }))
+    ).toBe(false)
+  })
+
+  it('GDPR keeps the mandatory tier while its cell is blank, and loses it when the cell says no', () => {
+    const gdpr = makeFramework({
+      id: 'GDPR',
+      countries: ['European Union'],
+      industries: ['Healthcare & Life Sciences', 'Information Technology', 'Finance & Insurance'],
+      enforcementBody: 'European Commission',
+      bindingStatus: 'binding',
+      bindingBasis: 'Regulation (EU) 2016/679',
+    })
+    const government: UserProfile = {
+      industry: 'Government & Defense',
+      country: 'France',
+      region: 'eu',
+    }
+    const [blank] = applicableFrameworks(government, [gdpr])
+    expect(blank?.tier).toBe('mandatory')
+    const [no] = applicableFrameworks(government, [{ ...gdpr, allSectorsReviewed: false }])
+    expect(no?.tier).not.toBe('mandatory')
   })
 })

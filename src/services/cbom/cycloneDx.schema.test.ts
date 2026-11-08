@@ -9,6 +9,7 @@
  * that bom-1.7.schema.json $refs — loaded here too, or AJV can't resolve it.
  */
 import { describe, it, expect } from 'vitest'
+import { buildAssessmentCbom } from './assessmentCbom'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import Ajv from 'ajv'
@@ -128,6 +129,20 @@ describe('CycloneDX 1.7 — official JSON Schema validation', () => {
       algorithms: extractAllAlgorithmsFromText('TLS 1.3 hybrid X25519+ML-KEM-768 key exchange'),
     }
     const { valid, errors } = validateCbom(buildCbomDocument([input]).json)
+    expect(errors).toBe('')
+    expect(valid).toBe(true)
+  })
+})
+
+describe('assessment declarations — official CycloneDX 1.7 schema', () => {
+  it('validates declared RSA, ECDH, AES and unspecified algorithms without invented deployment properties', () => {
+    const { json } = buildAssessmentCbom([
+      { storedKey: 'RSA-2048', classical: 'RSA', keySize: '2048-bit' },
+      { storedKey: 'ECDH P-256', classical: 'ECDH (P-256)', keySize: '256-bit' },
+      { storedKey: 'AES-256', classical: 'AES-256', keySize: '256-bit' },
+      { storedKey: 'unknown', classical: 'Unknown algorithm' },
+    ])
+    const { valid, errors } = validateCbom(json)
     expect(errors).toBe('')
     expect(valid).toBe(true)
   })

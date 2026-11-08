@@ -87,17 +87,11 @@ const pruneStaleCacheKeys = async (keys: CacheKeys): Promise<void> => {
  * prunes cached entries left over from an earlier publication.
  */
 export const fetchComplianceData = async (): Promise<ComplianceRecord[]> => {
-  try {
-    const records = await fetchStaticComplianceData()
-
-    const meta = await fetchComplianceMeta()
-    const cacheKeys = cacheKeysFor(publicationSignature(meta, records))
-    await pruneStaleCacheKeys(cacheKeys)
-
-    return records
-  } catch {
-    return []
-  }
+  const records = await fetchStaticComplianceData()
+  const meta = await fetchComplianceMeta()
+  const cacheKeys = cacheKeysFor(publicationSignature(meta, records))
+  await pruneStaleCacheKeys(cacheKeys)
+  return records
 }
 
 // Pure, so the phone view shares it; re-exported to keep this module's API.
@@ -106,6 +100,7 @@ export { computeRecordsSnapshotDate }
 export const useComplianceRefresh = () => {
   const [data, setData] = useState<ComplianceRecord[]>([])
   const [loading, setLoading] = useState(false)
+  const [hasLoaded, setHasLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   // Sidecar for the loaded publication (retrieval dates, scope); null until
@@ -118,6 +113,7 @@ export const useComplianceRefresh = () => {
     try {
       const [records, sidecar] = await Promise.all([fetchComplianceData(), fetchComplianceMeta()])
       setData(records)
+      setHasLoaded(true)
       setMeta(sidecar)
       setLastUpdated(computeRecordsSnapshotDate(records))
     } catch (err) {
@@ -133,5 +129,5 @@ export const useComplianceRefresh = () => {
     refresh()
   }, [refresh])
 
-  return { data, loading, error, lastUpdated, meta, refresh }
+  return { data, loading, error, lastUpdated, meta, refresh, hasLoaded }
 }

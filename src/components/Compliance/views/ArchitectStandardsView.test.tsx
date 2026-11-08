@@ -9,6 +9,26 @@ vi.mock('../../../hooks/useApplicabilityWithPaths', () => ({
     profile: { industry: 'Finance', country: 'Germany', region: 'eu' as const },
     isEmpty: false,
     frameworks: [
+      ...(['recognized', 'cross-border', 'advisory'] as const).map((tier) => ({
+        item: {
+          id: `TEST-${tier}`,
+          label: `Test ${tier} framework`,
+          description: '',
+          industries: ['Finance'],
+          countries: ['Germany'],
+          requiresPQC: false,
+          pqcRequirement: 'guidance' as const,
+          deadline: 'Ongoing',
+          deadlinePhase: 'ongoing' as const,
+          notes: '',
+          enforcementBody: 'Test body',
+          libraryRefs: [],
+          timelineRefs: [],
+          bodyType: 'compliance_framework' as const,
+        },
+        tier,
+        reason: 'test',
+      })),
       {
         item: {
           id: 'BSI-TR-02102',
@@ -68,5 +88,26 @@ describe('ArchitectStandardsView', () => {
     renderView()
     expect(screen.getByText('European Union')).toBeInTheDocument()
     expect(screen.getByText('BSI TR-02102')).toBeInTheDocument()
+  })
+
+  it('does not say the matched frameworks bind the reader or constrain the system', () => {
+    const { container } = renderView()
+    const text = container.textContent ?? ''
+    expect(text).not.toMatch(/that bind your stack/i)
+    expect(text).toMatch(/may be relevant to your stack/)
+    expect(text).toMatch(/not a legal finding/)
+  })
+
+  it('keeps each framework its own tier instead of one blanket label', () => {
+    renderView()
+    const tiers = screen.getAllByTestId('framework-tier').map((el) => el.textContent)
+    expect(tiers).toEqual(
+      expect.arrayContaining(['Binding', 'Relevant / recognized', 'Cross-border', 'Advisory'])
+    )
+    // A recognized or advisory entry is never labelled Binding.
+    const advisory = screen.getByRole('button', { name: /Test advisory framework/ })
+    expect(advisory).toHaveTextContent('Advisory')
+    expect(advisory).not.toHaveTextContent('Binding')
+    expect(advisory).toHaveAttribute('title', expect.stringContaining('recommended adoption'))
   })
 })

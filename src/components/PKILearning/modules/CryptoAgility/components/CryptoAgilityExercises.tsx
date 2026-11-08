@@ -83,7 +83,7 @@ export const CryptoAgilityExercises: React.FC<CryptoAgilityExercisesProps> = ({
       badge: 'Full Plan',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The framework spans from discovery through monitoring. NSA CNSA 2.0 (which applies to U.S. national security systems) sets phased deadlines: software/firmware signing and traditional networking reach exclusive PQC by 2030, while web browsers, cloud services, and operating systems follow by 2033.',
+        'The framework spans from discovery through monitoring. NSA CNSA 2.0 applies to U.S. national security systems (NSS) only. The dates in force are the CNSSP 15 dates in NSA\u2019s CNSA 2.0 FAQ (version 2.2, October 2026): CNSA 2.0 algorithms are required in new NSS acquisitions from 1 January 2027; NSS equipment and services that cannot support CNSA 2.0 are to be phased out by 31 December 2030 unless an exception is granted; and CNSA 2.0 algorithms are mandated by 31 December 2031 unless otherwise noted. Outside NSS these dates are not an NSA requirement. The equipment-by-equipment table in NSA\u2019s September 2022 advisory (exclusive use by 2030 for signing and networking, by 2033 for browsers, cloud and operating systems) is earlier planning context, not the current schedule.',
       config: { step: 2 },
     },
   ]

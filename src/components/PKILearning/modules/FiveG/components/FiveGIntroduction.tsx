@@ -40,8 +40,12 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           permanent identity (IMSI) was transmitted in cleartext over the air interface, enabling
           &quot;IMSI catchers&quot; — rogue base stations that intercept and track mobile users. 5G
           addresses this with{' '}
-          <InlineTooltip term="SUCI">SUCI (Subscription Concealed Identifier)</InlineTooltip>,
-          encrypting the subscriber identity before it ever leaves the device.
+          <InlineTooltip term="SUCI">SUCI (Subscription Concealed Identifier)</InlineTooltip>: when
+          a protection scheme is in use, the permanent identity is concealed before it is sent over
+          the air. The same specification allows exceptions. The null-scheme returns its input
+          unchanged and gives no privacy, and it is used for unauthenticated emergency sessions,
+          when the home network has configured it, or when no Home Network Public Key is provisioned
+          on the USIM.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -55,7 +59,10 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-primary mb-1">5G Solution</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>SUCI encrypts identity on the USIM</li>
+              <li>
+                SUCI conceals the identity; the USIM or the phone (ME) computes it, as the operator
+                decides
+              </li>
               <li>
                 <InlineTooltip term="ECIES">ECIES</InlineTooltip>-based concealment (Profile A/B)
               </li>
@@ -91,9 +98,11 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
             <div className="text-sm font-bold text-primary mb-1">Privacy (SUCI)</div>
             <p className="text-xs text-muted-foreground">
-              The USIM encrypts the subscriber&apos;s permanent identity (
-              <InlineTooltip term="SUPI">SUPI</InlineTooltip>) into a concealed identifier (SUCI)
-              using ECIES or KEM. Only the Home Network can de-conceal it.
+              Using the Home Network Public Key that the operator provisions, the USIM or the mobile
+              equipment (ME), as the operator decides, conceals the subscriber&apos;s permanent
+              identity (<InlineTooltip term="SUPI">SUPI</InlineTooltip>) into a SUCI with ECIES
+              (Profile A or B). Only the home network can de-conceal it, and the null-scheme
+              conceals nothing.
             </p>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
@@ -125,6 +134,21 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           different asymmetric algorithm for key agreement, but all follow the same ECIES pattern:
           generate an ephemeral key, derive a shared secret, encrypt the MSIN, and compute a MAC
           tag.
+        </p>
+        <p className="text-xs text-muted-foreground mb-3">
+          Two points sit outside that pattern. First, the null-scheme (protection scheme identifier
+          0x0, TS 33.501 Annex C.2) returns the input as the output, so the SUCI carries the MSIN in
+          the clear and provides no privacy. The UE generates a null-scheme SUCI only for an
+          unauthenticated emergency session, when the home network has configured it, or when the
+          Home Network Public Key is not provisioned (the ME also falls back to it when the scheme
+          priority list is not provisioned in the USIM). Second, where the SUCI is computed is the
+          operator&apos;s choice: an indication stored on the USIM says whether the USIM or the ME
+          calculates it, and the ME calculates it when the indication is absent. When the USIM
+          calculates it, the USIM does not give the ME the key or scheme parameters. Even with a
+          protection scheme, the Home Network Identifier (MCC and MNC) and the Routing Indicator are
+          not concealed, so a captured SUCI hides only the subscriber part of the identity. To check
+          a real deployment, read the protection scheme identifier in captured registration messages
+          and the SUCI configuration on the USIM, rather than assuming that every SUCI is concealed.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -353,7 +377,9 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           cryptography used in the 3GPP specifications for the 5G System in standalone mode.
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs space-y-1 mb-4">
-          <p className="font-bold text-foreground/80">Hybrid Mode Secret Combination</p>
+          <p className="font-bold text-foreground/80">
+            Hybrid Mode Secret Combination (this playground&apos;s own construction)
+          </p>
           <ul className="text-muted-foreground space-y-0.5 ml-3 list-disc">
             <li>
               <code>Z_ecdh</code> — X25519 ECDH shared secret (32 bytes)
@@ -366,9 +392,15 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             </li>
           </ul>
           <p className="text-muted-foreground mt-1">
-            SHA-256 binds both secrets so that breaking either classical or PQC alone is
-            insufficient to recover Z. SHA3-256 is applied separately inside the ANSI X9.63 KDF.
-            Pure mode sets Z&nbsp;=&nbsp;Z_kem directly (no combination needed).
+            This combiner is the playground&apos;s own simplified design. No 3GPP specification
+            defines it, and this lesson cites no security analysis of it, so the playground shows
+            the data flow of a hybrid, not evidence that Z stays secret when only one component is
+            broken. NIST SP 800-227 (September 2025), Section 4.6.3, notes that a combiner that uses
+            only the two shared secrets, K&nbsp;←&nbsp;KDF(K1,&nbsp;K2), does not preserve IND-CCA
+            security whatever the KDF, and encourages combiners that do preserve it, for example one
+            that also hashes the ciphertexts, encapsulation keys and a domain separator. SHA3-256 is
+            applied separately inside the ANSI X9.63 KDF. Pure mode sets Z&nbsp;=&nbsp;Z_kem
+            directly (no combination needed).
           </p>
         </div>
         <Button

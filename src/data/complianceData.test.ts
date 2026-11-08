@@ -6,12 +6,16 @@ import Papa from 'papaparse'
 import {
   complianceFrameworks,
   allComplianceFrameworks,
+  mapComplianceRow,
+  toIndustryComplianceConfig,
+  type RawComplianceRow,
   complianceDB,
   bindingDataPresent,
   conceptIdForFramework,
   mergeFrameworksByLabel,
 } from './complianceData'
 import { BINDING_STATUSES } from '../utils/bindingSplit'
+import { parseAllSectorsReviewed } from './complianceData'
 import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
 import { maturityByRefId, maturityRequirements } from './maturityGovernanceData'
 import { libraryData } from './libraryData'
@@ -63,9 +67,12 @@ describe('complianceData', () => {
   const byId = (id: string) => complianceFrameworks.find((f) => f.id === id)
 
   it('treats an in-force phased range as active, not a distant deadline', () => {
-    // CNSA 2.0 "2025-2033" straddles the current year and is in force now — the
-    // parser must not bucket it by the far endpoint (mid/long).
-    expect(byId('CNSA-2')?.deadlinePhase).toBe('active')
+    // The Malaysia NACSA "2025-2030 (phased)" range straddles the current year and
+    // is in force now — the parser must not bucket it by the far endpoint (mid).
+    // CNSA 2.0 used to carry this pin as "2025-2033"; its deadline is now the
+    // NSA's own dated steps (2027, 2030, 2031), so it is correctly 'imminent'.
+    expect(byId('MALAYSIA-NACSA-PQC')?.deadlinePhase).toBe('active')
+    expect(byId('CNSA-2')?.deadlinePhase).toBe('imminent')
   })
 
   it('does not present ANSSI as a dated mandate', () => {
@@ -82,8 +89,11 @@ describe('complianceData', () => {
   })
 
   it('classifies anticipated/advisory frameworks correctly', () => {
-    // OSFI B-13 signals forthcoming (not current) PQC requirements.
-    expect(byId('OSFI-B13-PQC')?.pqcRequirement).toBe('expected')
+    // FedRAMP signals forthcoming (not current) PQC requirements.
+    expect(byId('FEDRAMP')?.pqcRequirement).toBe('expected')
+    // OSFI B-13 has no PQC text of its own; the "PQC alignment expected by 2030"
+    // note in its deadline column is not a requirement, so it is guidance.
+    expect(byId('OSFI-B13-PQC')?.pqcRequirement).toBe('guidance')
     // CISA's PQC Initiative is advisory guidance, not a partial mandate.
     expect(byId('cisa-pqc-initiative')?.pqcRequirement).toBe('guidance')
   })
@@ -256,6 +266,42 @@ describe('compliance binding_status column', () => {
     }
   })
 
+  it('reads the all_sectors_reviewed column: yes is reviewed for every sector, no is reviewed as not, blank is not reviewed', () => {
+    const hasSectorColumn = rows.length > 0 && 'all_sectors_reviewed' in rows[0]
+    for (const r of rows.filter((x) => x.status === 'active')) {
+      const fw = complianceFrameworks.find((f) => f.id === r.id)
+      const cell = hasSectorColumn ? (r.all_sectors_reviewed ?? '') : ''
+      expect(fw?.allSectorsReviewed, r.id).toBe(parseAllSectorsReviewed(cell))
+    }
+  })
+
+  it('holds only yes, no or a blank in the all_sectors_reviewed column (case and spaces ignored)', () => {
+    const bad = rows
+      .map((r) => ({ id: r.id, cell: (r.all_sectors_reviewed ?? '').trim().toLowerCase() }))
+      .filter((r) => r.cell !== '' && r.cell !== 'yes' && r.cell !== 'no')
+    // A "Y", "true", "yess" or "unclear" would silently read as "not reviewed".
+    expect(bad).toEqual([])
+  })
+
+  it('gives every active "no" at least one sector tag, so the record can still reach its own sector', () => {
+    const stranded = rows
+      .filter((r) => r.status !== 'deprecated' && r.status !== 'obsolete')
+      .filter((r) => (r.all_sectors_reviewed ?? '').trim().toLowerCase() === 'no')
+      .filter((r) => (r.industries ?? '').split(';').filter((t) => t.trim()).length === 0)
+      .map((r) => r.id)
+    // A "no" with no tags covers no sector at all and would vanish for every reader.
+    expect(stranded).toEqual([])
+  })
+
+  it('maps yes, no and anything else to true, false and not reviewed', () => {
+    expect(parseAllSectorsReviewed('yes')).toBe(true)
+    expect(parseAllSectorsReviewed(' Yes ')).toBe(true)
+    expect(parseAllSectorsReviewed('no')).toBe(false)
+    expect(parseAllSectorsReviewed('')).toBeUndefined()
+    expect(parseAllSectorsReviewed(undefined)).toBeUndefined()
+    expect(parseAllSectorsReviewed('unclear')).toBeUndefined()
+  })
+
   it('reports data as present exactly when some framework carries a status', () => {
     expect(bindingDataPresent()).toBe(
       complianceFrameworks.some((f) => f.bindingStatus !== undefined)
@@ -299,5 +345,61 @@ describe('the FIPS 140-3 record links to the CMVP documents', () => {
     const ids = new Set(libraryData.map((d) => d.referenceId))
     const missing = (record?.libraryRefs ?? []).filter((ref) => !ids.has(ref))
     expect(missing).toEqual([])
+  })
+})
+
+// The loader's row mapper, on small rows, so the column is tested whatever the real file holds.
+describe('compliance all_sectors_reviewed through the row mapper', () => {
+  const baseRow: RawComplianceRow = {
+    id: 'FIXTURE-1',
+    label: 'Fixture framework',
+    description: '',
+    industries: 'Finance & Insurance;Healthcare & Life Sciences;Information Technology',
+    countries: 'Global',
+    requires_pqc: 'yes',
+    deadline: '2030',
+    notes: '',
+    enforcement_body: '',
+    library_refs: '',
+    learn_modules: '',
+    timeline_refs: '',
+    body_type: '',
+    website: '',
+    trusted_source_id: '',
+    peer_reviewed: '',
+    vetting_body: '',
+    website_url_quality: '',
+  }
+  const cell = (all_sectors_reviewed: string | undefined) =>
+    mapComplianceRow({ ...baseRow, all_sectors_reviewed })
+
+  it('reads yes as reviewed for every sector and no as reviewed as not, whatever the tag count', () => {
+    expect(cell('yes')?.allSectorsReviewed).toBe(true)
+    expect(cell('no')?.allSectorsReviewed).toBe(false)
+    expect(cell('no')?.industries).toHaveLength(3)
+  })
+
+  it('reads a blank cell and a missing column as not yet reviewed', () => {
+    expect(cell('')?.allSectorsReviewed).toBeUndefined()
+    expect(cell('   ')?.allSectorsReviewed).toBeUndefined()
+    expect(mapComplianceRow(baseRow)?.allSectorsReviewed).toBeUndefined()
+  })
+
+  it('ignores case and surrounding spaces', () => {
+    expect(cell(' YES ')?.allSectorsReviewed).toBe(true)
+    expect(cell('No')?.allSectorsReviewed).toBe(false)
+    expect(cell('\u00a0yes\u00a0')?.allSectorsReviewed).toBe(true)
+  })
+
+  it('reads any other word as not yet reviewed, never as yes', () => {
+    for (const word of ['y', 'true', '1', 'yess', 'unclear', 'maybe', 'n']) {
+      expect(cell(word)?.allSectorsReviewed, word).toBeUndefined()
+    }
+  })
+
+  it('carries the answer into the assessment wizard configuration', () => {
+    expect(toIndustryComplianceConfig(cell('yes')!).allSectorsReviewed).toBe(true)
+    expect(toIndustryComplianceConfig(cell('no')!).allSectorsReviewed).toBe(false)
+    expect(toIndustryComplianceConfig(cell('')!).allSectorsReviewed).toBeUndefined()
   })
 })

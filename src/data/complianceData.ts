@@ -137,6 +137,13 @@ export interface ComplianceFramework {
    * See utils/bindingSplit.ts.
    */
   bindingStatus?: BindingStatus
+  /**
+   * The reviewed all-sector answer from the `all_sectors_reviewed` column, after its scope
+   * clause was read: `true` (yes, covers every sector), `false` (no), or absent (blank, not yet
+   * reviewed). The number of sector tags never stands in for a reviewed answer. See
+   * utils/applicabilityEngine.ts.
+   */
+  allSectorsReviewed?: boolean
   /** Short public citation of the instrument that makes it binding, from `binding_basis` (for example "Regulation (EU) 2022/2554, Article 6"). */
   bindingBasis?: string
   /**
@@ -159,7 +166,7 @@ export interface ComplianceFramework {
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
 
-interface RawComplianceRow {
+export interface RawComplianceRow {
   id: string
   label: string
   description: string
@@ -189,6 +196,7 @@ interface RawComplianceRow {
   related_standards?: string
   last_verified?: string
   binding_status?: string
+  all_sectors_reviewed?: string
   binding_basis?: string
   binding_scope?: string
   binding_scope_en?: string
@@ -288,10 +296,11 @@ function classifyDeadline(deadline: string, year: number | undefined): DeadlineP
   return 'long'
 }
 
-const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
-  RawComplianceRow,
-  ComplianceFramework
->(modules, /compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/, (row) => {
+/**
+ * Turns one row of the compliance CSV into a framework, or null for a row without an id or a
+ * label. Exported so the column readers can be tested on small fixture rows.
+ */
+export function mapComplianceRow(row: RawComplianceRow): ComplianceFramework | null {
   if (!row.id || !row.label) return null
 
   if (row.body_type && !validBodyTypes.includes(row.body_type as BodyType)) {
@@ -399,11 +408,17 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
     lastVerified: row.last_verified?.trim() || undefined,
     bindingStatus: parseBindingStatus(row.binding_status),
+    allSectorsReviewed: parseAllSectorsReviewed(row.all_sectors_reviewed),
     bindingBasis: row.binding_basis?.trim() || undefined,
     bindingScope: row.binding_scope?.trim() || undefined,
     bindingScopeEn: row.binding_scope_en?.trim() || undefined,
   }
-})
+}
+
+const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
+  RawComplianceRow,
+  ComplianceFramework
+>(modules, /compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/, mapComplianceRow)
 
 /**
  * All ACTIVE compliance frameworks from the latest compliance CSV. Deprecated /
@@ -414,6 +429,14 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
 export const complianceFrameworks: ComplianceFramework[] = filterActive(
   frameworks as Array<ComplianceFramework & { status?: string }>
 ) as ComplianceFramework[]
+
+/** `yes` → true, `no` → false, anything else (blank, unknown) → undefined (not reviewed). */
+export function parseAllSectorsReviewed(raw: string | undefined): boolean | undefined {
+  const v = raw?.trim().toLowerCase()
+  if (v === 'yes') return true
+  if (v === 'no') return false
+  return undefined
+}
 
 /**
  * True once at least one framework carries a reviewed `binding_status`. The
@@ -513,16 +536,23 @@ export const availableRegions: RegionBloc[] = REGION_BLOC_ORDER.filter((region) 
  * Maps compliance frameworks to IndustryComplianceConfig shape
  * for backward compatibility with the assessment wizard (Step 5).
  */
-export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = frameworks.map((fw) => ({
-  category: 'compliance' as const,
-  id: fw.id,
-  label: fw.label,
-  description: fw.description,
-  industries: fw.industries,
-  countries: fw.countries,
-  complianceDeadline: fw.deadline,
-  complianceNotes: fw.notes,
-}))
+export function toIndustryComplianceConfig(fw: ComplianceFramework): IndustryComplianceConfig {
+  return {
+    category: 'compliance' as const,
+    id: fw.id,
+    label: fw.label,
+    description: fw.description,
+    industries: fw.industries,
+    countries: fw.countries,
+    complianceDeadline: fw.deadline,
+    complianceNotes: fw.notes,
+    allSectorsReviewed: fw.allSectorsReviewed,
+  }
+}
+
+export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = frameworks.map(
+  toIndustryComplianceConfig
+)
 
 /**
  * Maps compliance frameworks to the COMPLIANCE_DB shape

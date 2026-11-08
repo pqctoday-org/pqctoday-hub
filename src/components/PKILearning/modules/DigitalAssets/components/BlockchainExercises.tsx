@@ -49,7 +49,7 @@ const scenarios: Scenario[] = [
     badge: 'EdDSA',
     badgeColor: 'bg-success/20 text-success border-success/50',
     observe:
-      'Notice the deterministic nonce in EdDSA — no random number generator needed, unlike ECDSA. The address is simpler: just the Base58-encoded 32-byte public key. EdDSA signs the raw message (hashing is internal).',
+      'Notice that EdDSA derives the nonce from the key and message (RFC 8032), so a weak RNG at signing cannot repeat a nonce, though implementations still need side-channel defences; ECDSA needs a unique, unpredictable nonce per signature (random, or derived per RFC 6979; reuse leaks the key). The address is simpler: just the Base58-encoded 32-byte public key. EdDSA signs the raw message (hashing is internal).',
     chain: 'solana',
   },
   {

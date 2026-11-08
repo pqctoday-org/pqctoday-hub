@@ -74,7 +74,8 @@ function HintDetail({ hint, label }: { hint: PersonaStepHint; label: string }) {
       {hint.suggestUnknown && (
         <p className="text-xs text-status-info">
           <CheckCircle size={10} className="inline mr-1" />
-          Auto-suggests &ldquo;I don&apos;t know&rdquo; for this persona
+          This question&apos;s guidance suggests considering &ldquo;I don&apos;t know&rdquo;;
+          automatic selection follows separate rules for unanswered questions.
         </p>
       )}
       {hint.recommendedOptions && hint.recommendedOptions.length > 0 && (
@@ -171,17 +172,18 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
 
                 {/* Explanation */}
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                  Your experience is shaped by your persona (role), selected industry and country,
-                  and proficiency level. The underlying questions and scoring remain the same
-                  &mdash; only the presentation and defaults change.
+                  Your role, industry, country and proficiency can affect wording, suggested answers
+                  and defaults. Some unknown answers are scored differently for executives, so
+                  changing role can affect calculated results. Automatic selection is limited to
+                  eligible unanswered questions and follows the active question&apos;s role or
+                  proficiency rules. Review the answers and assumptions before comparing results.
                 </p>
 
                 {/* Persona hints section */}
                 {!hasAnyHints ? (
                   <div className="rounded-lg border border-border bg-muted/10 px-4 py-3">
                     <p className="text-xs text-muted-foreground text-center">
-                      This step has no persona-specific customizations. All personas see the same
-                      question and options.
+                      No additional role-specific guidance is listed for this question.
                     </p>
                   </div>
                 ) : (
@@ -223,7 +225,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                             <HintDetail hint={p.hint} label={p.label} />
                           ) : (
                             <p className="text-xs text-muted-foreground italic">
-                              No customizations for this step.
+                              No additional role-specific guidance is listed for this question.
                             </p>
                           )}
                         </div>

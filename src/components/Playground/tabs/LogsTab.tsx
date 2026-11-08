@@ -185,7 +185,7 @@ const LogsTabSoftware: React.FC = () => {
                 {sortedLogs.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-12 text-center text-foreground/30 italic">
-                      No operations performed yet.
+                      No log entries
                     </td>
                   </tr>
                 ) : (

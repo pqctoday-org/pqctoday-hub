@@ -178,7 +178,7 @@ export function SshSimulationPanel() {
         const pqc = await sshEngine.runHandshake({ kex: pqcKex, hostKey: pqcHostKey })
         setPqcResult(pqc)
         appendLog(
-          `Modeled PQC done: connection_ok=${pqc.connection_ok}, auth_ms=${pqc.auth_ms.toFixed(1)}ms`
+          `Modeled operation trace finished; connection/authentication not assessed; operation_ms=${pqc.auth_ms.toFixed(1)}ms`
         )
       }
 
@@ -214,8 +214,8 @@ export function SshSimulationPanel() {
       : phase === 'running-classical'
         ? 'Running classical handshake…'
         : phase === 'running-pqc'
-          ? 'Running PQC handshake…'
-          : 'Run both handshakes'
+          ? 'Running PQC sample…'
+          : 'Run comparison'
 
   const allWirePackets = [
     ...(classicalResult?.wire_packets ?? []),
@@ -232,10 +232,9 @@ export function SshSimulationPanel() {
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-bold text-gradient">PQC SSH Simulator</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Real softhsmv3 PKCS#11 SSH handshakes — pick any ML-KEM KEX (hybrid or pure) plus an
-            ML-DSA or SLH-DSA host-key variant and compare it against the classical curve25519 +
-            ECDSA P-256 baseline. All key material lives inside the softhsmv3 WASM token; no network
-            or container required.
+            Compare a genuine OpenSSH classical baseline with the selected PQC sample. Supported
+            combinations run real OpenSSH; other combinations show modeled token operations and
+            message sizes. The result panels identify the retained run type.
           </p>
         </div>
         <Link to="/learn/vpn-ssh-pqc">
@@ -325,12 +324,15 @@ export function SshSimulationPanel() {
         <p>
           {realSelected ? (
             <>
-              <strong className="text-foreground">Runs the real OpenSSH binary.</strong> This combo
-              drives the genuine OpenSSH 10.x handshake compiled to WASM — both the host-key and
-              user-key signatures are produced by <span className="font-mono">C_Sign</span> inside
-              the embedded softhsmv3 token. The private keys never leave the HSM. (Client and server
-              run in one WASM process over an in-memory transport; all crypto and wire formats are
-              real.)
+              <strong className="text-foreground">
+                Runs the bundled, modified OpenSSH binary.
+              </strong>{' '}
+              This Hub build adds experimental post-quantum signature names and softhsmv3
+              integration to OpenSSH 10.x; it is not an unmodified stock build. This combo drives
+              its handshake compiled to WASM — both the host-key and user-key signatures are
+              produced by <span className="font-mono">C_Sign</span> inside the embedded softhsmv3
+              token. The private keys never leave the HSM. (Client and server run in one WASM
+              process over an in-memory transport; all crypto and wire formats are real.)
             </>
           ) : (
             <>
@@ -385,7 +387,7 @@ export function SshSimulationPanel() {
           variant="gradient"
           onClick={runHandshakes}
           disabled={isRunning || !browserSupport.supported}
-          aria-label="Run SSH handshakes"
+          aria-label="Run SSH comparison"
         >
           <Play className="w-4 h-4 mr-1" />
           {runLabel}
@@ -396,7 +398,7 @@ export function SshSimulationPanel() {
         </Button>
         {phase !== 'idle' && (
           <span className="text-xs text-muted-foreground ml-2">
-            {phase === 'done' && 'Both handshakes complete'}
+            {phase === 'done' && 'Comparison runs finished'}
             {phase === 'error' && '✗ Error — see logs'}
             {isRunning && '⏳ Running…'}
           </span>
@@ -465,7 +467,7 @@ export function SshSimulationPanel() {
       {/* Tabs: logs + PKCS#11 + wire packets */}
       <Tabs defaultValue="logs">
         <TabsList>
-          <TabsTrigger value="logs">Handshake Log</TabsTrigger>
+          <TabsTrigger value="logs">Run Log</TabsTrigger>
           <TabsTrigger value="pkcs11">PKCS#11 Calls</TabsTrigger>
           <TabsTrigger value="wire">
             Wire Packets{allWirePackets.length > 0 ? ` (${allWirePackets.length})` : ''}
@@ -477,7 +479,7 @@ export function SshSimulationPanel() {
           <div className="glass-panel p-3 h-48 overflow-y-auto font-mono text-xs space-y-0.5">
             {logs.length === 0 ? (
               <p className="text-muted-foreground italic">
-                Click &quot;Run both handshakes&quot; to start.
+                Click &quot;Run comparison&quot; to start.
               </p>
             ) : (
               logs.map((entry, i) => (
@@ -574,10 +576,17 @@ export function SshSimulationPanel() {
                 </Button>
               )}
           </div>
+          {pqcResult?.token_module === 'softhsmv3 (WASM)' && (
+            <p className="text-xs text-muted-foreground mb-2">
+              The retained PQC result is a modeled message-size sequence, not sent or authenticated
+              protocol events. Its USERAUTH_SUCCESS entry is illustrative, not a verification
+              result.
+            </p>
+          )}
           <div className="glass-panel h-64 overflow-y-auto">
             {allWirePackets.length === 0 ? (
               <div className="p-3 font-mono text-xs text-muted-foreground italic">
-                Run a handshake to populate the wire packet trace.
+                Run the comparison to populate the sample packet sequence.
               </div>
             ) : wirePacketsView === 'diagram' ? (
               <div className="flex flex-col">
@@ -641,7 +650,7 @@ export function SshSimulationPanel() {
             </p>
             {!pqcResult && !classicalResult ? (
               <p className="text-xs text-muted-foreground italic">
-                Run a handshake to generate the configuration.
+                Run the comparison to generate the configuration.
               </p>
             ) : (
               (() => {

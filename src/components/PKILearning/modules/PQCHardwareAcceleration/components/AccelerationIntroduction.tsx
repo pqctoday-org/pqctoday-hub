@@ -924,9 +924,13 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
           <Cited sources={['cupqcBlog', 'cupqcReq', 'cudaGpus']}>{CITED_FACTS.cupqc}</Cited>
           <p>
             <strong>ASICs</strong> share the FPGA’s limits — bus transfers, one engine shared by
-            many cores, a fixed area budget — and add their own: the design is frozen at tape-out,
-            takes years and a large up-front investment, and cannot follow a new parameter set or a
-            revised standard. Their reward is the highest clock and lowest power of any option.
+            many cores, a fixed area budget — and add their own: the circuits are fixed at tape-out,
+            and designing them takes years and a large up-front investment. Whether the algorithm
+            can still change afterwards depends on where its step-by-step sequence lives: hard-wired
+            logic or microcode in ROM cannot follow a new parameter set or a revised standard, while
+            writable, authenticated microcode or firmware can change the steps or parameters (but
+            never add hardware the chip lacks), as the table below shows. Their reward is typically
+            the highest clock and lowest power of any option.
           </p>
           <Cited sources={['adamsBridge', 'openTitanKmac']}>
             {CITED_FACTS.adamsBridge} Choosing only the highest security level keeps the silicon
@@ -1006,11 +1010,12 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
               </table>
             </div>
             <p className="text-xs text-foreground/80 leading-relaxed">
-              Read the two tables together. A complete, side-channel-protected ML-DSA + ML-KEM
-              engine fits in about a tenth of a square millimetre of 5 nm silicon, and lattice ASICs
-              run in milliwatts or less. The same engines in an FPGA need a mid-sized part like our
-              K26 — far more silicon and power — because programmable logic pays for its
-              flexibility:
+              Read the two tables together. A complete ML-DSA + ML-KEM engine fits in about a tenth
+              of a square millimetre of 5 nm silicon (an area figure the table notes pre-dates a
+              masking refactor, so it may not include the final side-channel protection), and
+              lattice ASICs run in milliwatts or less. The same engines in an FPGA need a mid-sized
+              part like our K26 — far more silicon and power — because programmable logic pays for
+              its flexibility:
             </p>
             <Cited sources={[]}>
               {FPGA_ASIC_GAP.text}{' '}
@@ -1073,10 +1078,14 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
                 follows the same steps whatever the secret key is, so a stopwatch learns nothing. It
                 is cheap. <strong>Masking</strong> goes further: every secret value is split into
                 random pieces (“shares”) that are processed separately and only recombine at the
-                end, so the power drawn or radio noise emitted at any moment is unrelated to the
-                key. It defeats power and electromagnetic analysis — but every share has to be
-                carried, refreshed with fresh randomness and recombined carefully, which costs extra
-                area, randomness and time, and the cost grows with the number of shares.
+                end, which is designed to reduce the leakage that power and electromagnetic analysis
+                can use. How much it helps depends on the masking order (how many shares) and on the
+                leakage model and assumptions the design was analysed and tested under; it is not a
+                blanket guarantee, and implementation flaws, attacks of a higher order than the one
+                tested, or leakage nobody modelled can still defeat a masked design. Every share has
+                to be carried, refreshed with fresh randomness and recombined carefully, which costs
+                extra area, randomness and time, and the cost grows with the number of shares. Being
+                built as an ASIC does not by itself show that a design resists physical attacks.
               </p>
             </div>
           </div>

@@ -10,13 +10,15 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     description:
       'Software Guard Extensions create hardware-isolated enclaves within user-space processes. Code and data inside an enclave are encrypted in memory and inaccessible to the OS, hypervisor, or other processes.',
     isolationMechanism: 'Enclave Page Cache (EPC) with hardware-enforced access control',
-    memoryEncryption: 'Memory Encryption Engine (MEE), AES-128-CTR with integrity tree',
+    memoryEncryption:
+      'Memory Encryption Engine (MEE); mode and key size depend on the processor generation',
     attestationType: 'both',
     attestationRoot: 'Intel DCAP PCK Certificate (ECDSA P-256)',
-    maxEnclaveSize: '256 MB (EPC, expandable via oversubscription)',
+    maxEnclaveSize:
+      '256 MB EPC on pre-third-generation Xeon; hundreds of GB per socket on recent Xeon platforms (Intel, June 2026, EPC by generation)',
     keyManagement:
       'Sealing key derived from MRSIGNER + MRENCLAVE + CPU SVN via EGETKEY instruction',
-    sideChannelProtection: ['AEX-Notify (SGX2)', 'TD partitioning', 'LFENCE serialization'],
+    sideChannelProtection: ['AEX-Notify (SGX2)', 'LFENCE serialization'],
     deploymentModel: 'both',
     cloudProviders: ['Azure DCsv3/DCdsv3', 'Alibaba Cloud', 'OVHcloud', 'Equinix Metal'],
     maturityLevel: 'mature',
@@ -46,7 +48,8 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
       'Trust Domain Extensions provide VM-level isolation through a Secure Arbitration Mode (SEAM) module. Each Trust Domain (TD) runs as a fully isolated VM with encrypted memory, invisible to the hypervisor.',
     isolationMechanism:
       'SEAM module mediates all hypervisor-TD interactions; SEPT for address translation',
-    memoryEncryption: 'Total Memory Encryption Multi-Key (TME-MK), AES-XTS-128 per TD',
+    memoryEncryption:
+      'Total Memory Encryption Multi-Key (TME-MK), AES-XTS per TD (128- or 256-bit key by generation and selection)',
     attestationType: 'remote',
     attestationRoot: 'Intel TDX Module Quote (ECDSA P-256 via DCAP infrastructure)',
     maxEnclaveSize: 'Full VM memory (no EPC limitation)',
@@ -119,7 +122,8 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
       'Confidential Compute Architecture introduces Realms — isolated VM-like execution environments managed by a Realm Management Monitor (RMM). CCA separates the hypervisor from the trusted firmware, reducing TCB.',
     isolationMechanism:
       'Realm Management Extension (RME); Granule Protection Table (GPT) enforces memory isolation',
-    memoryEncryption: 'Memory Encryption Engine (MEE) with per-Realm keys; AES-XTS-128',
+    memoryEncryption:
+      'Per-Realm keys; the memory-protection mode and key size are implementation-specific, so check the SoC documentation',
     attestationType: 'remote',
     attestationRoot: 'CCA Attestation Token (ECDSA P-384, signed by Platform token + Realm token)',
     maxEnclaveSize: 'Full Realm memory (VM-sized)',
@@ -157,7 +161,8 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
       'Secure Encrypted Virtualization with Secure Nested Paging provides VM-level memory encryption and integrity protection. SNP adds a Reverse Map Table (RMP) to prevent hypervisor-based memory remapping attacks.',
     isolationMechanism:
       'AMD Secure Processor (ASP) manages VM encryption keys; RMP enforces page ownership',
-    memoryEncryption: 'AES-XTS-128 via AMD Secure Memory Encryption (SME) engine, per-VM key',
+    memoryEncryption:
+      'AES with a per-VM key (AMD documents AES-128 XEX and AES-256 XTS modes; check your EPYC generation)',
     attestationType: 'remote',
     attestationRoot: 'AMD VCEK Certificate (ECDSA P-384, signed by AMD Root Key)',
     maxEnclaveSize: 'Full VM memory (limited only by platform memory)',

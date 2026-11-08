@@ -69,7 +69,7 @@ describe('LogsTab', () => {
     const ctx = createMockContext({ sortedLogs: [] })
     renderWithContext(ctx)
 
-    expect(screen.getByText('No operations performed yet.')).toBeInTheDocument()
+    expect(screen.getByText('No log entries')).toBeInTheDocument()
   })
 
   it('renders column headers', () => {

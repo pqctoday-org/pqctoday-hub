@@ -21,20 +21,19 @@ export const COMPLIANCE_DATA_URL = dataUrl('compliance-data.json')
 export const COMPLIANCE_META_URL = dataUrl('compliance-data.meta.json')
 
 export async function fetchStaticComplianceData(): Promise<ComplianceRecord[]> {
-  try {
-    const response = await fetch(COMPLIANCE_DATA_URL, { cache: 'no-cache' })
-    if (!response.ok) throw new Error('Failed to load static compliance data')
-    const json: unknown = await response.json()
-    if (!Array.isArray(json)) return []
-    // The dataset is FIPS 140-3 only (user decision 2026-09-24). An older
-    // publication still carrying FIPS 140-2 rows must not have them shown or
-    // counted anywhere, so they are dropped at the single load point.
-    return (json as ComplianceRecord[]).filter(
-      (r) => (r as { type?: string } | null)?.type !== 'FIPS 140-2'
-    )
-  } catch {
-    return []
-  }
+  // An unavailable/malformed snapshot is not an empty successful publication.
+  // Let callers show their existing unavailable/retry state.
+  const response = await fetch(COMPLIANCE_DATA_URL, { cache: 'no-cache' })
+  if (!response.ok) throw new Error('Failed to load published certification snapshot')
+  const json: unknown = await response.json()
+  if (!Array.isArray(json))
+    throw new Error('Published certification snapshot has an invalid format')
+  // The dataset is FIPS 140-3 only (user decision 2026-09-24). An older
+  // publication still carrying FIPS 140-2 rows must not have them shown or
+  // counted anywhere, so they are dropped at the single load point.
+  return (json as ComplianceRecord[]).filter(
+    (r) => (r as { type?: string } | null)?.type !== 'FIPS 140-2'
+  )
 }
 
 let metaInflight: Promise<ComplianceMeta | null> | null = null

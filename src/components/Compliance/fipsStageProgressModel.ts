@@ -25,6 +25,7 @@
 import type { ComplianceRecord } from './types'
 import type { CertificationXref, SoftwareItem } from '@/types/MigrateTypes'
 import { isConfirmedPqcAlgorithm } from './pqcCertificationTrendModel'
+import { pqcCoverageState } from './recordSemantics'
 
 export type FipsStage = 'none' | 'cavp' | 'in_progress' | 'certified'
 export const FIPS_STAGES: readonly FipsStage[] = ['none', 'cavp', 'in_progress', 'certified']
@@ -43,7 +44,7 @@ export const FIPS_STAGE_LABEL: Record<'products' | 'listings', Record<FipsStage,
     certified: 'Certified',
   },
   listings: {
-    none: 'FIPS 140-3 certificate, no PQC',
+    none: 'FIPS 140-3 certificate, no PQC algorithm listed',
     cavp: 'PQC CAVP validation',
     in_progress: 'IUT / MIP listing',
     certified: 'FIPS 140-3 certificate with PQC',
@@ -210,19 +211,61 @@ export function fipsTrackLine(timeline: ProductStageTimeline | null): string | n
   ].join(' · ')}.`
 }
 
+/**
+ * Why a FIPS 140-3 certificate is in no band of the listings view: its PQC
+ * coverage is not established either way. Each reason is its own count.
+ *   not-read       the certificate's algorithm list has not been read
+ *   pending        the check has not finished
+ *   heuristic      only a name match, not a named algorithm in the validated scope
+ *   flag           PQC is indicated, but no algorithm is named
+ *   unlisted-name  algorithms are named, but none is one the chart recognises as PQC
+ */
+export type UnestablishedKind = 'not-read' | 'pending' | 'heuristic' | 'flag' | 'unlisted-name'
+export type UnestablishedCounts = Record<UnestablishedKind, number>
+
+const UNESTABLISHED_LABEL: Record<UnestablishedKind, string> = {
+  'not-read': 'its algorithm list is not read',
+  pending: 'its check is pending',
+  heuristic: 'it is matched by name only',
+  flag: 'it carries a bare flag',
+  'unlisted-name': 'its algorithm name is not recognised',
+}
+
+/**
+ * FIPS 140-3 certificates in the chart's months that fall in neither the "PQC" nor the
+ * "no PQC" band, with the reason for each kind, so the bands are not read as a full count.
+ */
+export function unestablishedCaption(counts: UnestablishedCounts): string {
+  const kinds = (Object.keys(UNESTABLISHED_LABEL) as UnestablishedKind[]).filter(
+    (k) => counts[k] > 0
+  )
+  const total = kinds.reduce((n, k) => n + counts[k], 0)
+  if (total === 0) return ''
+  const parts = kinds.map((k) => `${counts[k]} where ${UNESTABLISHED_LABEL[k]}`).join('; ')
+  return ` ${total} FIPS 140-3 certificate${total === 1 ? '' : 's'} in these months ${total === 1 ? 'is' : 'are'} in neither band (${parts}).`
+}
+
 export interface ListingStageTrend {
   points: StagePoint[]
   /** NIST withholds some Modules In Process entries by vendor request. */
   inProcessNotDisplayed: number | null
+  /**
+   * FIPS 140-3 certificates in the charted months that are in neither the
+   * "no PQC" band nor the "with PQC" band, by reason. Never folded into "no PQC".
+   */
+  unestablished: UnestablishedCounts
 }
 
 /**
  * Monthly count of NIST LISTINGS at each stage, industry-wide:
- *   none        FIPS 140-3 certificates that cover no PQC
+ *   none        FIPS 140-3 certificates whose algorithm list was read and names no PQC
  *   cavp        CAVP validations covering PQC
  *   in_progress IUT entries by IUT date, and Modules In Process entries by the
  *               date of their CURRENT stage (NIST publishes no entry date)
- *   certified   FIPS 140-3 certificates covering PQC
+ *   certified   FIPS 140-3 certificates whose validated scope names a PQC algorithm
+ * A FIPS 140-3 certificate whose coverage is unread, pending, a name match only,
+ * a bare flag or an unrecognised name is in none of those bands; it is counted
+ * in `unestablished` instead of being treated as "no PQC".
  * CC / EUCC / CSPN are left out: the stages are the FIPS 140-3 track.
  */
 export function buildListingStageTrend(
@@ -238,20 +281,37 @@ export function buildListingStageTrend(
       { month, none: 0, cavp: 0, in_progress: 0, certified: 0 },
     ])
   )
-  const bump = (date: string | null | undefined, stage: FipsStage) => {
-    if (!date) return
+  const bump = (date: string | null | undefined, stage: FipsStage): boolean => {
+    if (!date) return false
     const pt = points.get(date.slice(0, 7))
-    if (pt) pt[stage] += 1
+    if (!pt) return false
+    pt[stage] += 1
+    return true
+  }
+  const unestablished: UnestablishedCounts = {
+    'not-read': 0,
+    pending: 0,
+    heuristic: 0,
+    flag: 0,
+    'unlisted-name': 0,
   }
   for (const r of records) {
-    const pqc = isConfirmedPqcAlgorithm(r.pqcCoverage)
+    const state = pqcCoverageState(r.pqcCoverage)
+    // Confirmed PQC needs an actual named algorithm in the validated scope.
+    const named = state === 'named'
+    const pqc = named && isConfirmedPqcAlgorithm(r.pqcCoverage)
     if (r.type === 'ACVP') {
       if (pqc) bump(r.date, 'cavp')
     } else if (r.type === 'FIPS 140-3') {
-      bump(r.date, pqc ? 'certified' : 'none')
+      if (pqc) bump(r.date, 'certified')
+      else if (state === 'none') bump(r.date, 'none')
+      else {
+        const kind: UnestablishedKind = state === 'named' ? 'unlisted-name' : state
+        if (r.date && points.has(r.date.slice(0, 7))) unestablished[kind] += 1
+      }
     }
   }
   for (const e of inProcess?.iut ?? []) bump(e.iutDate, 'in_progress')
   for (const e of inProcess?.mip ?? []) bump(e.stageDate, 'in_progress')
-  return { points: [...points.values()], inProcessNotDisplayed }
+  return { points: [...points.values()], inProcessNotDisplayed, unestablished }
 }

@@ -54,17 +54,17 @@ export const PAGE_EXERCISES: Record<string, PageExercise[]> = {
   ],
   '/faq': [
     {
-      concept: 'FIPS validation tiers — a vendor claim is not a validation',
+      concept: 'FIPS evidence classes — module certificate, algorithm validation and other claims',
       prompt:
-        "The Migrate catalog marks a product's FIPS status as 'Partial'. What does that mean?",
+        'A vendor page says its product is "FedRAMP authorized, WebTrust audited and runs in FIPS mode". What does that wording show about FIPS validation of its post-quantum algorithms?',
       options: [
-        'The product has achieved FIPS 140-3 certification with PQC algorithms',
-        'The vendor claims FIPS-mode operation, FedRAMP authorization or a WebTrust audit, but full PQC validation is still pending',
-        'No FIPS validation is available for the product',
-        'The certificate covers only some of the product’s editions',
+        'Nothing by itself: these are other claims, not a module certificate or an algorithm validation, and a real certificate must still list the PQC algorithms',
+        'That the module holds a FIPS 140-3 certificate covering them',
+        'That the algorithms are CAVP-validated, the prerequisite for a certificate',
+        'That NIST lists the module as in process',
       ],
-      answer: 1,
-      why: 'The three tiers encode certainty. Validated is FIPS 140-3 certification that covers PQC algorithms; Partial is a vendor claim (FIPS mode, FedRAMP, WebTrust) that has not yet been validated for PQC; No is nothing at all. Treat Partial as a claim to verify with the vendor, not as evidence of a validated PQC module.',
+      answer: 0,
+      why: 'Each phrase is a different class of evidence, and none of them is a validation. FedRAMP assesses a cloud service offering, a WebTrust audit reports on a certification authority’s controls, and “FIPS mode” is a vendor-stated setting. A FIPS 140-3 module certificate (CMVP) validates one named module; “CAVP only” means an algorithm implementation was validated, which is the prerequisite for a certificate; “in process” means the module is only listed as under review. Even a real certificate covers post-quantum algorithms only if its scope lists them, so open the certificate and read its exact module and algorithm scope.',
     },
   ],
   '/business': [

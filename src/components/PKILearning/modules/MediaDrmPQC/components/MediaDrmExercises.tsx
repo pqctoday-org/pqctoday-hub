@@ -49,7 +49,7 @@ export const MediaDrmExercises: React.FC<ExercisesProps> = ({
       badge: 'CI Plus',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'The authentication signatures (RSASSA-PSS) fall under Table 2 and the Diffie-Hellman negotiation under Table 4. DES-56, AES-128 and the hash functions are not signature or key-establishment schemes. The certificate signatures use SHA-1 (Table 9.1 and Annex I of the specification); SHA-256 is used for derived values such as the UCK. The lesson draws no conclusion about the strength of DES-56 or AES-128.',
+        'The authentication signatures (RSASSA-PSS) fall under Table 2 and the Diffie-Hellman negotiation under Table 4. DES-56, AES-128 and the hash functions are not signature or key-establishment schemes. The certificate signatures use SHA-1 (Table 9.1 and Annex I of the specification); SHA-256 is used for derived values such as the UCK. The lesson draws no conclusion about the strength of DES-56 or AES-128. NIST withdrew DES (FIPS 46-3) in 2005 for classical-security reasons, so absence from these tables is not a recommendation to use it.',
       config: { step: 0 },
     },
     {

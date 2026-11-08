@@ -23,25 +23,25 @@ const RULE_LABELS: Record<
   'most-restrictive': {
     label: 'Most Restrictive Wins',
     description:
-      'When multiple frameworks apply, always adopt the highest sensitivity tier prescribed by any single framework.',
+      'When several frameworks genuinely apply, the sample policy adopts the highest tier it assigns to any one of them.',
     color: 'text-status-error',
   },
   'jurisdiction-priority': {
     label: 'Jurisdiction Priority',
     description:
-      'When a jurisdiction-specific regulation designates a system as critical infrastructure or ICT service, that designation overrides narrower data-centric classifications.',
+      "In the sample policy, a jurisdiction-specific designation of a system as critical infrastructure or a critical ICT service raises the tier of the whole system above narrower data-centric tiers. The laws themselves define no such tier mapping; check each law's own scope and duties.",
     color: 'text-status-warning',
   },
   'data-subject-location': {
     label: 'Data Subject Location',
     description:
-      'Apply the requirements of the law governing the jurisdiction where each data subject resides — even if data processing happens elsewhere.',
+      "Where a law's territorial scope turns on where the data subject is (for example GDPR Art. 3(2): offering goods or services to, or monitoring the behaviour of, people in the EU), apply it to that group once its scope facts are met. Location alone is not enough.",
     color: 'text-primary',
   },
   'asset-type-override': {
     label: 'Asset Type Override',
     description:
-      'Key material and cryptographic assets are always classified at the highest applicable tier, independent of the sensitivity of the data they protect.',
+      'In the sample policy, key material and cryptographic assets are classified at the highest tier that applies to what their compromise would expose, independent of the tier of the data they protect.',
     color: 'text-status-info',
   },
 }
@@ -88,9 +88,13 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
       <div className="bg-status-info/10 border border-status-info/30 rounded-lg p-4">
         <p className="text-sm text-foreground">
           <span className="font-semibold text-status-info">Challenge:</span> Each scenario below
-          involves a data asset subject to multiple overlapping compliance frameworks that prescribe
-          different sensitivity tiers. Determine the correct governing classification using the four
-          resolution rules. Select your answer to reveal the reasoning.
+          involves a data asset where several frameworks may apply. The four tiers (Low, Medium,
+          High, Critical) are this module&apos;s sample organizational policy; none of these laws or
+          standards defines them. The table keeps two things apart: what each framework says, and
+          the tier this module&apos;s sample policy assigns with its reasoning. Before choosing, ask
+          which scope facts you would need to confirm (does each framework apply to this actor,
+          system and place?) and where the duties conflict. Then pick the sample-policy tier using
+          the four resolution rules. Select your answer to reveal the reasoning.
         </p>
       </div>
 
@@ -101,7 +105,7 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
           onClick={() => setRulesOpen((v) => !v)}
           className="w-full flex items-center justify-between px-4 py-3 bg-muted hover:bg-muted/80 transition-colors text-sm font-semibold text-foreground"
         >
-          <span>Four Resolution Rules</span>
+          <span>Four Sample-Policy Resolution Rules</span>
           {rulesOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </Button>
         {rulesOpen && (
@@ -192,31 +196,47 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
                         <th className="text-left px-3 py-2 text-muted-foreground font-medium">
                           Framework
                         </th>
-                        <th className="text-left px-3 py-2 text-muted-foreground font-medium">
-                          Prescribed Tier
-                        </th>
                         <th className="text-left px-3 py-2 text-muted-foreground font-medium hidden sm:table-cell">
-                          Reason
+                          What the framework says
+                        </th>
+                        <th className="text-left px-3 py-2 text-muted-foreground font-medium">
+                          This module&apos;s tier
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {scenario.conflictingRequirements.map((req, i) => {
-                        const reqCfg = SENSITIVITY_TIERS.find((t) => t.id === req.prescribedTier)
+                        const reqCfg = SENSITIVITY_TIERS.find((t) => t.id === req.moduleTier)
                         return (
-                          <tr key={i} className="border-b border-border last:border-0">
-                            <td className="px-3 py-2 font-semibold text-foreground whitespace-nowrap">
+                          <tr key={i} className="border-b border-border last:border-0 align-top">
+                            <td className="px-3 py-2 font-semibold text-foreground sm:whitespace-nowrap">
                               {req.framework}
+                              {/* Small screens: the two columns to the right are hidden or narrow, so stack both texts here. */}
+                              <div className="mt-2 space-y-2 font-normal sm:hidden">
+                                <p className="text-foreground leading-relaxed">
+                                  <span className="font-medium">What the framework says:</span>{' '}
+                                  {req.frameworkSays}
+                                </p>
+                                <p className="border-l-2 border-primary/30 pl-2 text-muted-foreground leading-relaxed">
+                                  <span className="font-medium text-foreground">
+                                    Module reasoning:
+                                  </span>{' '}
+                                  {req.tierRationale}
+                                </p>
+                              </div>
+                            </td>
+                            <td className="px-3 py-2 text-foreground hidden sm:table-cell leading-relaxed">
+                              {req.frameworkSays}
                             </td>
                             <td className="px-3 py-2">
                               <span
                                 className={`font-semibold px-1.5 py-0.5 rounded ${reqCfg?.bgClass ?? ''} ${reqCfg?.colorClass ?? ''}`}
                               >
-                                {reqCfg?.label ?? req.prescribedTier}
+                                {reqCfg?.label ?? req.moduleTier}
                               </span>
-                            </td>
-                            <td className="px-3 py-2 text-muted-foreground hidden sm:table-cell leading-relaxed">
-                              {req.reason}
+                              <p className="mt-1.5 hidden border-l-2 border-primary/30 pl-2 text-muted-foreground leading-relaxed sm:block">
+                                {req.tierRationale}
+                              </p>
                             </td>
                           </tr>
                         )
@@ -229,7 +249,7 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
                 {!isRevealed && (
                   <div className="space-y-2">
                     <p className="text-xs font-medium text-muted-foreground">
-                      What is the governing sensitivity tier for this asset?
+                      Which sample-policy tier governs this asset?
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {TIER_ORDER.map((tier) => {
@@ -256,10 +276,10 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
                     <div
                       className={`flex flex-wrap items-center gap-2 px-3 py-2 rounded-md text-xs font-semibold ${correctCfg?.bgClass ?? ''} ${correctCfg?.colorClass ?? ''} border ${correctCfg?.borderClass ?? ''}`}
                     >
-                      <span>Governing tier:</span>
+                      <span>Sample-policy tier:</span>
                       <span className="font-bold">{correctCfg?.label ?? scenario.correctTier}</span>
                       <span className="text-muted-foreground font-normal">
-                        via {scenario.governingFramework}
+                        driven by {scenario.governingFramework}
                       </span>
                       {userAnswer !== null && !isCorrect && (
                         <span className="ml-auto text-status-error font-normal">
@@ -347,7 +367,8 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
                     )}
                     {!hasKeyMaterial && !hasHighUrgency && (
                       <span>
-                        Multiple frameworks apply — confirm the most restrictive tier is selected.
+                        Multiple frameworks are flagged — confirm each one&apos;s scope facts first,
+                        then confirm the most restrictive tier is selected.
                       </span>
                     )}
                   </p>

@@ -206,12 +206,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     // vector, likelihood, impact and mitigation — it has no owner or review-date
     // field, so these lines describe what it renders.
     goodAnswer:
-      'Every entry is scored (likelihood × impact) and carries a written mitigation. A risk with no mitigation is a note, and notes do not get treated.',
+      'Record the scenario and a proposed mitigation alongside its illustrative likelihood × impact score. This worksheet does not track owners or review dates; evaluate those capabilities in production risk-management tools.',
     workedExample:
       "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely and Impact 5 — Catastrophic: the card shows Score: 20 (Critical) and the Risk Summary counts it as Critical.",
     name: 'Risk Register Builder',
     description:
-      'Build a PQC risk register with current algorithm, threat vector, likelihood, impact and mitigation',
+      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact and proposed mitigation',
     category: 'Risk & Strategy',
     icon: ListChecks,
     keywords: ['risk', 'register', 'inventory', 'mitigation', 'likelihood', 'impact'],
@@ -261,12 +261,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'audit-checklist',
     goodAnswer:
-      'You could hand this to an auditor tomorrow. If an item needs a conversation to explain, write the explanation into the item.',
+      'Explain which fictional planning topics you selected, what information is missing and how the related reading applies. Selections and notes do not establish audit readiness.',
     workedExample:
-      "Tick 'CBOM generated' and 'All systems cataloged', then add an evidence row with a CMVP certificate number: the Cryptographic Inventory readiness moves from Not Started toward Established, and an auditor can follow the row to the certificate.",
+      'Select two review topics, leave another unanswered and add a fictional reference note. The saved plan preserves those choices; topic counts describe selections, not an audit finding or validated evidence.',
     name: 'Audit Readiness Checklist',
     description:
-      'Multi-section audit checklist covering inventory, policy, controls, and documentation',
+      'Explore a Hub planning template for inventory, policy, controls and documentation; selections do not assess readiness',
     category: 'Compliance & Audit',
     icon: ClipboardCheck,
     keywords: ['audit', 'checklist', 'readiness', 'compliance', 'inventory', 'controls'],
@@ -281,7 +281,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Dates you did not choose, next to dates you did. The gap between the two is the plan.',
     workedExample:
-      "Select your jurisdictions and add a milestone such as 'Complete crypto inventory' with a year: the Gap Analysis says, per framework, whether the plan meets the deadline or how many years remain.",
+      "Select jurisdictions and add a fictional milestone such as 'Complete crypto inventory' with a year. Compare the dates; obligation satisfaction stays not assessed because these milestones do not record requirement-specific scope or supporting checks.",
     name: 'Compliance Timeline Builder',
     description: 'Plot framework milestones, deadlines, and dependencies on a single timeline',
     category: 'Compliance & Audit',
@@ -334,7 +334,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     workedExample:
-      'Choose the Executive lens, enter Systems Inventoried from your estate and select the products your organization uses in Migrate. Vendor Readiness then derives only from that scope; the combined score stays unavailable until at least 70% of the weight of the KPIs that can be scored has evidence; KPIs marked data unavailable are left out of that total.',
+      'Choose the Executive lens and enter a fictional Systems Inventoried value. Catalogue calculations use selected example products; other values are learner inputs. The combined sample score requires 70% scored-value coverage, not verified evidence. Saved values without usable provenance stay unassessed until explicitly used or recalculated; missing inputs must be supplied.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',
@@ -457,7 +457,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     workedExample:
-      'Choose the Executive lens and a reporting baseline. Select your products in Migrate for catalogue-based vendor measures; enter reviewed progress, compliance closure and pace values yourself. Missing values stay unscored, and the combined score is withheld until at least 70% of the weight of the KPIs that can be scored has values; KPIs marked data unavailable are left out of that total.',
+      'Choose the Executive lens and a fictional reporting baseline. Inspect catalogue-derived sample measures and enter hypothetical progress values. Missing or unconfirmed saved values stay unassessed; the combined score requires 70% scored-value coverage. Sample notes and learner-selected review labels do not verify evidence or establish readiness.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',
@@ -489,13 +489,13 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'hybrid-transition-planner',
     goodAnswer:
-      'A stated exit from hybrid, with a trigger. Hybrid without an end date is permanent, and permanent hybrid is twice the maintenance forever.',
+      'A stated target, its assumptions and review triggers. For a hybrid example, explain when to review continued use or a later transition. Pure-PQC and gateway choices need their own delivery plans; this worksheet does not generate those sequences.',
     workedExample:
       'Leave the defaults — TLS 1.3 on X25519, key exchange only, data lifetime 5 - 15 years, deadline 2030: the preview recommends Hybrid (Traditional + PQC) with X25519MLKEM768, a hybrid target of Q4 2028 and a pure-PQC sunset of Q4 2030.',
     name: 'Hybrid Transition Planner',
     audience: 'architect',
     description:
-      'Architect-facing decision tree from CSWP.39 §3.2.4 - pick traditional+PQC, PQC+PQC, pure PQC, or crypto-gateway pathway with concrete algorithm pairings',
+      'Explore a Hub worksheet with CSWP.39 references and illustrative traditional-plus-PQC, PQC-plus-PQC, pure-PQC or crypto-gateway suggestions',
     category: 'Migration Planning',
     icon: GitBranch,
     keywords: [
@@ -674,7 +674,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'crypto-cbom-builder',
     goodAnswer:
-      'A CBOM you can regenerate. A hand-built one is accurate for a week; a generated one is accurate for as long as you keep generating it.',
+      'A CBOM you can regenerate repeatably. Its accuracy depends on source coverage, input freshness and reconciliation with the scoped inventory; generation alone does not establish completeness.',
     workedExample:
       'Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get a FIPS, ESV, PQC and posture reading, and one click downloads a CycloneDX 1.7 CBOM.',
     name: 'Crypto BOM (CBOM) Builder',
@@ -796,12 +796,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'infra-modernization-planner',
     goodAnswer:
-      'PQC work rides existing refresh cycles wherever it can. Hardware you were replacing anyway is the cheapest migration you will ever do.',
+      'Explore how proposed cryptographic changes align with refresh plans. Costs, compatibility and readiness need separate assessment.',
     workedExample:
-      'List your HSMs with firmware and PQC capability (for example 4× Luna 7 PQC-capable, 2× nCipher without), the protocols you tested and the per-handshake growth: the export consolidates the PKI plan, the HSM/KMS upgrade schedule, the middlebox report and the capacity plan.',
+      'Enter a fictional HSM/KMS inventory and select protocol planning topics. The export records sample inputs; it does not run handshakes, measure capacity or establish infrastructure readiness.',
     name: 'Infrastructure Modernization Planner',
     description:
-      'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into one infrastructure-readiness artifact',
+      'Sample infrastructure planning worksheet for PKI, HSM/KMS, network compatibility topics and capacity assumptions; not a readiness assessment',
     category: 'Migration Planning',
     icon: Server,
     keywords: [
@@ -915,12 +915,12 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'migration-verification',
     goodAnswer:
-      'Evidence that the old algorithm is gone, not just that the new one works. Both running is the normal state, and it is not done.',
+      'Define the checks a workload needs, distinguish recorded references from performed tests, and plan trust retirement and continuing review.',
     workedExample:
-      "Fill all five evidence fields for 'Public web TLS (edge)' but three for 'Internal mTLS service mesh', and leave the RSA-4096 root CA key unconfirmed: the badges read Verified and Unverified 3/5, the key row flags TNFL, the header says 1/2.",
+      "Fill five sample reference fields in one fictional record and three in another. The first says 'Evidence recorded — review required'; the second remains incomplete. These counts record filled fields, not successful technical verification.",
     name: 'Migration Verification & Closure',
     description:
-      "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",
+      'Explore sample verification references, retirement planning and closure notes; filling this educational checklist does not verify a migration',
     category: 'Migration Planning',
     icon: ClipboardCheck,
     keywords: [

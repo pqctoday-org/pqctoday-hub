@@ -2,8 +2,8 @@
  * V2p7EkExplorer.tsx — V2.7 RC1 PQC EK Template Explorer
  *
  * For each of the 6 V2.7 EK persistent handles, TPM2_ReadPublic +
- * byte-level unmarshal of the returned TPMT_PUBLIC, then a spec-compliance
- * scoreboard vs V2.7 RC1 Tables 13/14 + Table 8 PolicyB digests + FIPS
+ * byte-level unmarshal of the returned TPMT_PUBLIC, then a selected-field
+ * comparison vs V2.7 RC1 Tables 13/14 + Table 8 PolicyB digests + FIPS
  * 203/204 pubkey-size tables.
  *
  * NOT a parser library — TPM 2.0 structures are length-prefixed plain
@@ -107,12 +107,15 @@ export function V2p7EkExplorer({ isWasmReady, v2p7Status }: Props) {
           <div>
             <h2 className="text-xl font-bold mb-2">V2.7 RC1 EK Template Explorer</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              For each of the 6 spec-mandated PQC EKs, the playground issues a real{' '}
+              For each of six sample PQC EK templates, the playground issues a{' '}
               <code>TPM2_ReadPublic</code> against its persistent handle, unmarshals the returned{' '}
-              <code>TPMT_PUBLIC</code>, and compares every field byte-exact against{' '}
-              <strong>TCG EK Credential Profile V2.7 RC1, Tables 13/14</strong> (ML-KEM Storage /
-              ML-DSA Signing templates), Table 8 PolicyB digests, and FIPS 203 Table 3 / FIPS 204
-              Table 2 pubkey sizes.
+              <code>TPMT_PUBLIC</code>, and compares five selected fields with the reference
+              snapshot in <strong>TCG EK Credential Profile V2.7 RC1, Tables 13/14</strong> (ML-KEM
+              Storage / ML-DSA Signing templates), Table 8 PolicyB digests, and FIPS 203 Table 3 /
+              FIPS 204 Table 2 pubkey sizes. These checks cover type, nameAlg, attributes, policy
+              and public-key length. The decoder assumes the reference parameter layout; it does not
+              validate every parameter or the full public-key encoding. For production tools,
+              evaluate complete structure decoding and template validation for the claimed version.
             </p>
           </div>
           <Button
@@ -269,11 +272,11 @@ function EkCard({ r }: { r: ReadResult }) {
         </div>
         {allOk ? (
           <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30">
-            spec-compliant
+            selected checks match
           </span>
         ) : (
           <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded border bg-status-warning/10 text-status-warning border-status-warning/30">
-            spec drift
+            selected-check mismatch
           </span>
         )}
       </div>

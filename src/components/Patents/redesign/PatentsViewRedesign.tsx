@@ -469,10 +469,18 @@ export function PatentsViewRedesign() {
     setParams(next, { replace: true })
   }, [params, setParams])
 
+  // Export the same records the active result view exposes. Insights retains
+  // its corpus-wide scope; Explore and Search must not silently widen it.
+  const exportPatents =
+    activeTab === 'search'
+      ? searchResults
+      : activeTab === 'explore'
+        ? exploreResults
+        : displayPatents
   const handleExport = useCallback(() => {
-    logPatentExport(displayPatents.length)
-    downloadCsv(generateCsv(displayPatents, PATENTS_CSV_COLUMNS), csvFilename('pqc-patents'))
-  }, [displayPatents])
+    logPatentExport(exportPatents.length)
+    downloadCsv(generateCsv(exportPatents, PATENTS_CSV_COLUMNS), csvFilename('pqc-patents'))
+  }, [exportPatents])
 
   // Resolved against the full corpus (either ID form), not the scoped list —
   // an out-of-scope link is widened into scope by the effect above.

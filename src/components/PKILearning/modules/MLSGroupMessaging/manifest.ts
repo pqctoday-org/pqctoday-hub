@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'mls-group-messaging',
-  contentVersion: 9,
+  contentVersion: 10,
   lm_id: 'LM-054',
   title: 'MLS — Group Messaging',
   description:
-    "Messaging Layer Security (RFC 9420), which uses HPKE and provides efficient asynchronous group key establishment with forward secrecy and post-compromise security for groups from two to thousands. In this module's illustration, a PKCS#11-backed openmls provider keeps signature keys in the HSM.",
+    "Messaging Layer Security (RFC 9420), which uses HPKE and provides efficient asynchronous group key establishment with forward secrecy and, conditionally, post-compromise security (once a committed fresh leaf key replaces the compromised one) for groups from two to thousands. In this module's illustration, an openmls provider holds signature keys as token objects of a PKCS#11 module (a software token in this sample).",
   whyThisMatters:
-    "MLS's TreeKEM provides forward secrecy and post-compromise security for groups from two to thousands, and the draft PQ MLS cipher suites have been submitted to the IESG for publication.",
+    "MLS's TreeKEM provides forward secrecy and, conditionally, post-compromise security (once a committed fresh leaf key replaces the compromised one) for groups from two to thousands, and the draft PQ MLS cipher suites have been submitted to the IESG for publication.",
   duration: '40 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

@@ -310,15 +310,16 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
               <div className="flex items-center gap-2">
                 <Cpu className="h-4 w-4 text-primary" />
                 <h4 className="text-sm font-semibold text-foreground">
-                  Physical → Logical Overhead
+                  Illustrative Ratio Arithmetic
                 </h4>
               </div>
 
               <p className="text-xs text-muted-foreground">
-                Fault-tolerant computation requires many noisy physical qubits to produce one
-                reliable logical qubit. The ratio depends on gate fidelity and error-correction
-                scheme. The last column shows how many physical qubits this attack would need at
-                each machine&apos;s current ratio.
+                This arithmetic multiplies an algorithm&apos;s listed logical-qubit count by each
+                machine&apos;s reported physical/logical ratio. Experimental encoding ratios do not
+                establish the hardware needed for a fault-tolerant cryptographic attack. The product
+                is an illustration, not an attack-capacity estimate; it omits circuit depth, target
+                logical error, gate error rates and architecture assumptions.
               </p>
 
               <div className="overflow-x-auto">
@@ -338,7 +339,7 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
                         Ratio
                       </th>
                       <th className="text-right py-1 pl-2 text-muted-foreground font-medium">
-                        Physical needed
+                        Illustrative Product
                       </th>
                     </tr>
                   </thead>
@@ -380,10 +381,10 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
               </div>
 
               <p className="text-[10px] text-muted-foreground">
-                * Estimated logical qubits based on published experimental results. Full
-                fault-tolerant operation for cryptographic attacks is projected to require ~1,000:1
-                physical-to-logical at scale. &quot;Physical needed&quot; = required logical qubits
-                × this machine&apos;s current ratio.
+                * The listed logical-qubit counts describe experimental results. The ~1,000:1
+                physical-to-logical comparison is an illustrative assumption here, not a validated
+                attack-resource requirement. &quot;Illustrative Product&quot; = the listed algorithm
+                count × this machine&apos;s current ratio. NISQ rows have no ratio or product.
               </p>
             </div>
           )}

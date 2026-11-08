@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  revisionAuthorshipLabel,
+  revisionReviewLabel,
+  hasCommitReference,
+  nonCommitReferenceLabel,
+} from './revisionProvenance'
 import { useRef } from 'react'
-import { X, GitMerge, Bot, UserCheck } from 'lucide-react'
+import { X, GitMerge, Bot } from 'lucide-react'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
@@ -129,14 +135,17 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
             merge date to its right. */}
         <div className="flex flex-wrap items-center gap-1.5 min-w-0 flex-1">
           {r.authored_by_llm ? (
-            <Bot className="w-3.5 h-3.5 shrink-0 text-accent" aria-label="LLM-authored" />
+            <Bot
+              className="w-3.5 h-3.5 shrink-0 text-accent"
+              aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
+            />
           ) : (
-            <UserCheck
-              className="w-3.5 h-3.5 shrink-0 text-status-success"
-              aria-label="Human-reviewed"
+            <GitMerge
+              className="w-3.5 h-3.5 shrink-0 text-muted-foreground"
+              aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
             />
           )}
-          <span className="text-sm text-foreground truncate">{r.reviewer_display}</span>
+          <span className="text-sm text-foreground truncate">{revisionReviewLabel(r)}</span>
           {offlineSuffix && (
             <span className="text-xs text-muted-foreground min-w-0 break-words">
               {offlineSuffix}
@@ -147,18 +156,10 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
           {formatDate(r.merge_timestamp)}
         </span>
       </div>
-      <div className="flex items-center gap-2 mt-1 ml-5">
+      <div className="flex flex-wrap items-center gap-2 mt-1 ml-5">
         <ChangeTypeBadge type={r.change_type} />
         <BypassChip revision={r} />
-        {r.merge_sha === 'pending' ? (
-          <span
-            className="inline-flex items-center gap-0.5 text-xs text-muted-foreground italic"
-            title="Recorded when this edit was made; the PR containing it hasn't merged yet"
-          >
-            <GitMerge className="w-3 h-3" />
-            Pending merge
-          </span>
-        ) : r.pr_number > 0 ? (
+        {r.pr_number > 0 ? (
           <a
             href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
             target="_blank"
@@ -167,16 +168,21 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
           >
             <GitMerge className="w-3 h-3" />#{r.pr_number}
           </a>
-        ) : (
+        ) : hasCommitReference(r.merge_sha) ? (
           <a
             href={`https://github.com/pqctoday-org/pqctoday-hub/commit/${r.merge_sha}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline font-mono"
+            title="Recorded Git reference; commit availability is not checked here."
           >
             <GitMerge className="w-3 h-3" />
             {r.merge_sha.slice(0, 7)}
           </a>
+        ) : (
+          <span className="text-xs text-muted-foreground break-words [overflow-wrap:anywhere]">
+            {nonCommitReferenceLabel(r.merge_sha)}
+          </span>
         )}
         {r.rows_affected !== null && (
           <span className="text-xs text-muted-foreground">{r.rows_affected} rows</span>

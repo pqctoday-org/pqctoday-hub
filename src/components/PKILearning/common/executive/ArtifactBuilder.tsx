@@ -35,6 +35,14 @@ export interface ArtifactSection {
   fields: ArtifactField[]
 }
 
+export type ArtifactFormData = Record<string, Record<string, string | string[]>>
+export interface ArtifactFieldEdit {
+  sectionId: string
+  fieldId: string
+  /** Present only for an explicitly toggled checklist option. */
+  optionValue?: string
+}
+
 interface ArtifactBuilderProps {
   title: string
   description?: string
@@ -58,6 +66,18 @@ interface ArtifactBuilderProps {
   /** Restore a previously-saved form snapshot (e.g. from `useSavedArtifactInputs`).
    *  Takes priority over `demoFill` and `field.defaultValue` in the lazy initializer. */
   initialData?: Record<string, Record<string, string | string[]>>
+  /** Optional identity for caller-owned inputs (e.g. editable policy rules).
+   *  Changes participate in Save/autosave without altering the form payload. */
+  saveRevision?: string
+  /** Opt-in caller-owned draft. Value and updater must be supplied together.
+   *  Only actual edit handlers call onChange; initialization and exports do not. */
+  controlledForm?: {
+    value: ArtifactFormData
+    onChange: (
+      update: (previous: ArtifactFormData) => ArtifactFormData,
+      edit: ArtifactFieldEdit
+    ) => void
+  }
 }
 
 export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
@@ -72,55 +92,81 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   wideTable = false,
   demoFill,
   initialData,
+  saveRevision,
+  controlledForm,
 }) => {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
   // Persistent done-state keyed on the form snapshot (survives edits).
   const [wasSaved, setWasSaved] = useState(false)
   const [lastSavedKey, setLastSavedKey] = useState<string | null>(null)
-  const [formData, setFormData] = useState<Record<string, Record<string, string | string[]>>>(
-    () => {
-      // Auto-run: overlay demo values on the field defaults so the form opens filled.
-      const fill = isAutoRunFillActive() ? demoFill : undefined
-      const initial: Record<string, Record<string, string | string[]>> = {}
-      for (const section of sections) {
-        initial[section.id] = {}
-        for (const field of section.fields) {
-          const saved = initialData?.[section.id]?.[field.id]
-          const demo = fill?.[section.id]?.[field.id]
-          initial[section.id][field.id] =
-            saved ?? demo ?? field.defaultValue ?? (field.type === 'checklist' ? [] : '')
-        }
+  const [internalFormData, setInternalFormData] = useState<
+    Record<string, Record<string, string | string[]>>
+  >(() => {
+    // Auto-run: overlay demo values on the field defaults so the form opens filled.
+    const fill = isAutoRunFillActive() ? demoFill : undefined
+    const initial: Record<string, Record<string, string | string[]>> = {}
+    for (const section of sections) {
+      initial[section.id] = {}
+      for (const field of section.fields) {
+        const saved = initialData?.[section.id]?.[field.id]
+        const demo = fill?.[section.id]?.[field.id]
+        initial[section.id][field.id] =
+          saved ?? demo ?? field.defaultValue ?? (field.type === 'checklist' ? [] : '')
       }
-      return initial
     }
+    return initial
+  })
+
+  const formData = controlledForm?.value ?? internalFormData
+  const mutateFormData = useCallback(
+    (update: (previous: ArtifactFormData) => ArtifactFormData, edit: ArtifactFieldEdit) => {
+      if (controlledForm) controlledForm.onChange(update, edit)
+      else setInternalFormData(update)
+    },
+    [controlledForm]
   )
 
   const updateField = useCallback(
     (sectionId: string, fieldId: string, value: string | string[]) => {
-      setFormData((prev) => ({
-        ...prev,
-        [sectionId]: {
-          ...prev[sectionId],
-          [fieldId]: value,
-        },
-      }))
+      mutateFormData(
+        (prev) => ({
+          ...prev,
+          [sectionId]: {
+            ...prev[sectionId],
+            [fieldId]: value,
+          },
+        }),
+        { sectionId, fieldId }
+      )
     },
-    []
+    [mutateFormData]
   )
 
-  const toggleChecklistItem = useCallback((sectionId: string, fieldId: string, item: string) => {
-    setFormData((prev) => {
-      const current = prev[sectionId]?.[fieldId]
-      const arr = Array.isArray(current) ? current : []
-      const updated = arr.includes(item) ? arr.filter((v) => v !== item) : [...arr, item]
-      return {
-        ...prev,
-        [sectionId]: { ...prev[sectionId], [fieldId]: updated },
-      }
-    })
-  }, [])
+  const toggleChecklistItem = useCallback(
+    (sectionId: string, fieldId: string, item: string) => {
+      mutateFormData(
+        (prev) => {
+          const current = prev[sectionId]?.[fieldId]
+          const arr = Array.isArray(current) ? current : []
+          const updated = arr.includes(item) ? arr.filter((v) => v !== item) : [...arr, item]
+          return {
+            ...prev,
+            [sectionId]: { ...prev[sectionId], [fieldId]: updated },
+          }
+        },
+        { sectionId, fieldId, optionValue: item }
+      )
+    },
+    [mutateFormData]
+  )
 
-  const currentKey = useMemo(() => JSON.stringify(formData), [formData])
+  const currentKey = useMemo(
+    () =>
+      saveRevision === undefined
+        ? JSON.stringify(formData)
+        : JSON.stringify([formData, saveRevision]),
+    [formData, saveRevision]
+  )
   const editedSince = wasSaved && lastSavedKey !== null && currentKey !== lastSavedKey
 
   const handleSetMode = useCallback((m: 'edit' | 'preview') => setMode(m), [])

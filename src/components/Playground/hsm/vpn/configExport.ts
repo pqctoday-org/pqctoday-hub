@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { vpnExchangeLabel } from './exchangeDescription'
 /**
  * Export the current VPN simulator configuration as a downloadable bundle.
  * Produces a .zip containing strongswan.conf, ipsec.conf / swanctl.conf,
@@ -96,9 +97,11 @@ the simulator does, not whether the result is safe to run. It is not.
 
 ## Simulator caveats
 
-- The WASM simulator runs the full IKEv2 handshake for real: ML-KEM in the
-  primary KE slot, ECP-256 as Additional KE 1 over a real IKE_INTERMEDIATE
-  round (RFC 9242/9370), RFC 7383 fragmentation, and CHILD_SA negotiation
+- Normal selector proposal: ${vpnExchangeLabel(cfg.mode)}. This describes the
+  selected mode, not proof of a completed negotiation. Custom URL proposal overrides
+  require inspecting the actual negotiation trace; this bundle does not attest their order.
+- The WASM simulator implements IKEv2 exchanges including IKE_INTERMEDIATE
+  (RFC 9242/9370), RFC 7383 fragmentation, and CHILD_SA negotiation
   (stub-kernel SPIs; no ESP data plane). strongSwan 6.0+ supports all of
   this natively — RFC 9370 multiple key exchanges, the \`mlkem512/768/1024\`
   proposal keywords, and \`ke1_\`–\`ke7_\` additional-KE prefixes — no patches

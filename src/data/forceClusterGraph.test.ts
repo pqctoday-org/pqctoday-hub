@@ -160,6 +160,13 @@ describe('connection headings and the direction of industry links', () => {
     expect(isSymmetricRel('related')).toBe(true)
     expect(isSymmetricRel('intersects_with')).toBe(true)
     expect(isSymmetricRel('cites')).toBe(false)
+    // Scheme-under-umbrella and part-of-series read differently from each end, and never as sameness.
+    expect(relHeading('scheme_under', 'outgoing')).toBe('National scheme under')
+    expect(relHeading('scheme_under', 'incoming')).toBe('Umbrella of')
+    expect(relHeading('part_of_series', 'outgoing')).toBe('Part of series with')
+    expect(relHeading('part_of_series', 'incoming')).toBe('Includes')
+    expect(isSymmetricRel('scheme_under')).toBe(false)
+    expect(isSymmetricRel('part_of_series')).toBe(false)
     // A relation the table does not know is still shown as words.
     expect(relHeading('some_new-relation', 'outgoing')).toBe('Some new relation')
   })

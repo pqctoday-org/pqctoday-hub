@@ -24,7 +24,7 @@ const EXERCISES = [
   {
     title: 'Scenario: Government Compliance Deadline',
     prompt:
-      'Your agency operates national security systems subject to CNSA 2.0 (exclusive PQC by 2030 for the earliest categories). You have 200+ systems using RSA-3072 and ECDSA P-256 (both quantum-vulnerable), plus AES-128 (which CNSA 2.0 upgrades to AES-256). Build a prioritized risk register with at least 4 entries covering different asset types and threat vectors.',
+      'Your agency operates national security systems subject to CNSA 2.0 (new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 absent an exception, and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted). You have 200+ systems using RSA-3072 and ECDSA P-256 (both quantum-vulnerable), plus AES-128 (which CNSA 2.0 upgrades to AES-256). Build a prioritized risk register with at least 4 entries covering different asset types and threat vectors.',
     workshopStep: 1,
     workshopStepLabel: 'Step 2 — Risk Register Builder',
   },

@@ -31,11 +31,11 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       id: 'api-selection',
       title: '1. API Selection — Choose the right crypto API for a PQC-enabled payment gateway',
       description:
-        'In the API Architecture Explorer (Step 1), compare JCA/JCE and OpenSSL EVP APIs. Your payment gateway needs: cross-platform support, PKCS#11 HSM integration, and ML-DSA signing for transaction authorization. Which API scores higher for HSM integration? Which has better PQC readiness?',
+        'In the API Architecture Explorer (Step 1), compare JCA/JCE and OpenSSL EVP APIs. Your payment gateway needs: cross-platform support, PKCS#11 HSM integration, and ML-DSA signing for transaction authorization. How does each API reach an HSM, and what does each one offer for ML-DSA?',
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'JCA/JCE via JCProv and OpenSSL via PKCS#11 engine both achieve HSM integration, but through different paths. OpenSSL scores higher on PQC readiness (native ML-KEM/ML-DSA/SLH-DSA since OpenSSL 3.5), while JCA/JCE has broader Java ecosystem integration. For a Java-native stack, JCA+JCProv+BouncyCastle is optimal. For a C/C++ gateway, OpenSSL 3.5+ is the clear winner.',
+        'JCA/JCE reaches a Luna HSM through the Luna JSP provider, while JCPROV is a separate PKCS#11 wrapper; OpenSSL reaches an HSM through its PKCS#11 engine. Both achieve HSM integration, but through different paths. For post-quantum algorithms, OpenSSL has ML-KEM, ML-DSA and SLH-DSA natively since OpenSSL 3.5, and the JDK has ML-KEM and ML-DSA in its default provider since JDK 24 (the Luna JSP route needs JDK 24/25 or later), while JCA/JCE has broader Java ecosystem integration. Choose by your key-custody, HSM and runtime requirements.',
       config: { step: 0 },
     },
     {
@@ -47,7 +47,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Languages',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        "Rust's ownership model and borrow checker prevent use-after-free on key buffers at compile time; the pqcrypto and aws-lc-rs crates provide PQC support. In Java, the JVM's garbage collector means key material may persist in memory longer before collection, though Bouncy Castle's zero-copy APIs reduce exposure. Go's garbage collector is non-deterministic for key cleanup, and compile-time memory guarantees are not provided by the language.",
+        "Rust's ownership model and borrow checker prevent use-after-free on key buffers at compile time; the aws-lc-rs crate provides PQC support. The pqcrypto crates also provide it, but their own README says they are unmaintained and should not be used in new projects, and PQClean is archived. In Java, the JVM's garbage collector means key material may persist in memory longer before collection, though Bouncy Castle's zero-copy APIs reduce exposure. Go's garbage collector is non-deterministic for key cleanup, and compile-time memory guarantees are not provided by the language.",
       config: { step: 1 },
     },
     {

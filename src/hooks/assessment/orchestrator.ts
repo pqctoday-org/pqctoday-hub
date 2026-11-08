@@ -10,6 +10,7 @@ import {
 } from '../assessmentData'
 
 import { splitComplianceRequirements } from './complianceFilter'
+import { milestoneForPressure } from '../../utils/timelineMilestone'
 
 import type {
   AssessmentInput,
@@ -261,7 +262,8 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
       recommendedActions.push({
         priority: priority++,
-        action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
+        action:
+          'Evaluate post-quantum protection for data-at-rest in your highest-sensitivity stores. It cannot undo exposure of data that was already captured, so establish whether that has happened.',
         category: 'immediate',
         relatedModule: '/threats',
       })
@@ -658,6 +660,7 @@ export function buildAssessmentProfile(
   input: AssessmentInput,
   hasExtended: boolean
 ): AssessmentProfile {
+  const milestone = milestoneForPressure(input.timelinePressure, input.timelineMilestone)
   return {
     industry: input.industry,
     country: input.country,
@@ -686,6 +689,7 @@ export function buildAssessmentProfile(
     teamSize: input.teamSize,
     scaleUnknown: !!input.scaleUnknown,
     timelinePressure: input.timelinePressure,
+    ...(milestone ? { timelineMilestone: milestone } : {}),
     migrationUnknown: !!input.migrationUnknown,
     agilityUnknown: !!input.agilityUnknown,
     timelineUnknown: !!input.timelineUnknown,

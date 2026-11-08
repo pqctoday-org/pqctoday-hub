@@ -526,6 +526,28 @@ describe('EntropyEvidenceLab', () => {
     expect(screen.getByTestId('evl-allowed-verdict')).toHaveTextContent('Insufficient evidence')
   })
 
+  it('preserves a conclusion with its original dataset and clears the new case note', async () => {
+    await openRunScreen('syn-stuck')
+    goToStep(6)
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'Original stuck-source conclusion' },
+    })
+    goToStep(1)
+    fireEvent.click(await screen.findByTestId('evl-case-syn-biased'))
+    fireEvent.click(screen.getByText('Previous conclusion drafts (1)'))
+    expect(screen.getByRole('article', { name: 'Conclusion draft 1' })).toHaveTextContent(
+      'Synthetic: Stuck source'
+    )
+    expect(screen.getByRole('article', { name: 'Conclusion draft 1' })).toHaveTextContent(
+      'Original stuck-source conclusion'
+    )
+    goToStep(6)
+    expect(screen.getByRole('textbox')).toHaveValue('')
+    fireEvent.click(screen.getByTestId('evl-export-evidence'))
+    const exported = JSON.parse(await downloads[downloads.length - 1].blob.text())
+    expect(JSON.stringify(exported)).not.toContain('Original stuck-source conclusion')
+  })
+
   it('synthetic stuck source: the tool awards no entropy', async () => {
     await openRunScreen('syn-stuck')
     fireEvent.click(screen.getByTestId('evl-seq-run'))

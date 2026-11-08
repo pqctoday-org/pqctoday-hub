@@ -15,7 +15,7 @@ export interface CbomSummaryAlgorithm {
    *  same label buildCbomDocument() uses as the crypto-asset's own name. */
   name: string
   family: string
-  classical: boolean
+  classical?: boolean
   /** First registry citation for the family, if standardized — never fabricated. */
   standard?: string
   standardUrl?: string
@@ -23,6 +23,9 @@ export interface CbomSummaryAlgorithm {
 
 export interface CbomReportSummary {
   mode: string
+  /** Assessment declarations carry no deployment-security assessment. */
+  basis?: 'assessment-self-report'
+  quantumUnassessedCount?: number
   generatedAt: number
   componentCount: number
   /** Components that expose at least one crypto-asset (PQC or classical). */

@@ -65,14 +65,14 @@ function CompareCell({
         (spec === undefined ? (
           <p className="text-sm font-mono text-foreground">
             {live.toLocaleString()} {unit}
-            <span className="text-[10px] text-muted-foreground"> live</span>
+            <span className="text-[10px] text-muted-foreground"> sample</span>
           </p>
         ) : (
           <p
             className={`text-xs font-mono ${matches ? 'text-status-success' : 'text-status-warning'}`}
           >
             {matches ? '✓' : '≠'} {live.toLocaleString()} {unit}
-            <span className="text-[10px]"> live</span>
+            <span className="text-[10px]"> sample</span>
           </p>
         ))}
     </div>
@@ -146,7 +146,7 @@ function RunnerInner({ algorithm }: Props) {
           engine can&apos;t execute it. Pick{' '}
           <span className="font-mono text-foreground">curve25519-sha256</span> or{' '}
           <span className="font-mono text-foreground">mlkem768x25519-sha256</span> above to run a
-          real handshake.
+          token-operation sample.
         </p>
         <Link
           to="/playground/pqc-ssh-sim"
@@ -164,16 +164,16 @@ function RunnerInner({ algorithm }: Props) {
     phase === 'initializing'
       ? 'Initializing softhsmv3…'
       : phase === 'running'
-        ? 'Running real handshake…'
-        : 'Run live handshake'
+        ? 'Running token operations…'
+        : 'Run token-operation sample'
 
   return (
     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-primary" />
           <div>
-            <h4 className="text-sm font-semibold text-foreground">Live execution</h4>
+            <h4 className="text-sm font-semibold text-foreground">Modeled SSH operation sample</h4>
             <p className="text-[11px] text-muted-foreground mt-0.5">
               Same softhsmv3-driven engine the{' '}
               <Link
@@ -183,7 +183,9 @@ function RunnerInner({ algorithm }: Props) {
                 playground tool
                 <ExternalLink className="w-2.5 h-2.5" />
               </Link>{' '}
-              uses. Confirms the spec values above against real PKCS#11 output.
+              uses for modeled runs. Its output combines actual token operations with modeled
+              message-size accounting; it does not establish a network connection or full SSH
+              authentication.
             </p>
           </div>
         </div>
@@ -193,7 +195,7 @@ function RunnerInner({ algorithm }: Props) {
             variant="gradient"
             onClick={run}
             disabled={isRunning}
-            aria-label="Run live SSH handshake"
+            aria-label="Run SSH token-operation sample"
           >
             <Play className="w-3 h-3 mr-1" /> {runLabel}
           </Button>
@@ -202,7 +204,7 @@ function RunnerInner({ algorithm }: Props) {
             variant="outline"
             onClick={handleReset}
             disabled={isRunning}
-            aria-label="Reset the handshake"
+            aria-label="Reset the operation sample"
           >
             <RotateCcw className="w-3 h-3" aria-hidden="true" />
           </Button>
@@ -228,7 +230,7 @@ function RunnerInner({ algorithm }: Props) {
           live={result?.kex_reply_share_bytes ?? null}
         />
         <CompareCell
-          label="Wall-time (live only)"
+          label="Sample operation wall-time"
           live={result ? Math.round(result.auth_ms) : null}
           unit="ms"
         />
@@ -257,8 +259,9 @@ function RunnerInner({ algorithm }: Props) {
           src/components/PKILearning/modules/VPNSSHModule/data/sshConstants.ts
         </span>
         . Live values come from the shared <span className="font-mono">sshEngine</span> (
-        <span className="font-mono">src/wasm/openssh.ts</span>) — every byte and every millisecond
-        is a real PKCS#11 call against softhsmv3.
+        <span className="font-mono">src/wasm/openssh.ts</span>) — the displayed values combine token
+        output with modeled size and timing accounting. They do not establish peer secret agreement
+        or completed SSH authentication.
       </p>
     </div>
   )

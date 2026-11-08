@@ -11,6 +11,7 @@ interface UseSymmetricOperationsProps {
   symData: string
   symOutput: string
   sharedSecret: string
+  decapsulatedSecret: string
   dataToEncrypt: string
   encryptedData: string
   setSymData: (val: string) => void
@@ -29,6 +30,7 @@ export const useSymmetricOperations = ({
   symData,
   symOutput,
   sharedSecret,
+  decapsulatedSecret,
   dataToEncrypt,
   encryptedData,
   setSymData,
@@ -45,6 +47,8 @@ export const useSymmetricOperations = ({
     setLoading(true)
     setError(null)
     const start = performance.now()
+
+    if (type === 'decrypt' || type === 'encrypt') setDecryptedData('')
 
     try {
       // 1. Identify the key involved (if any)
@@ -145,7 +149,8 @@ export const useSymmetricOperations = ({
             executionTime: end - start,
           })
         } else if (type === 'decrypt') {
-          if (!sharedSecret) throw new Error('No shared secret available.')
+          if (!decapsulatedSecret)
+            throw new Error('No receiver secret available. Run Decapsulate first.')
           if (!encryptedData) throw new Error('No encrypted data available. Run Encrypt first.')
 
           const combinedEncryptedData = hexToBytes(encryptedData)
@@ -154,7 +159,7 @@ export const useSymmetricOperations = ({
 
           const key = await window.crypto.subtle.importKey(
             'raw',
-            hexToBytes(sharedSecret) as BufferSource,
+            hexToBytes(decapsulatedSecret) as BufferSource,
             { name: 'AES-GCM' },
             false,
             ['decrypt']
@@ -174,7 +179,7 @@ export const useSymmetricOperations = ({
           const end = performance.now()
 
           addLog({
-            keyLabel: 'Shared Secret',
+            keyLabel: 'Recovered Receiver Secret',
             operation: 'AES-GCM Decrypt',
             result: 'Message Decrypted Successfully',
             executionTime: end - start,
@@ -189,7 +194,9 @@ export const useSymmetricOperations = ({
           if (!sharedSecret) throw new Error('No shared secret available. Run Encapsulate first.')
           if (!dataToEncrypt) throw new Error('Please enter a message to encrypt.')
 
-          const encrypted = 'mock_encrypted_' + btoa(dataToEncrypt)
+          const encrypted =
+            'mock_encrypted_' +
+            btoa(JSON.stringify({ secret: sharedSecret, message: dataToEncrypt }))
           setEncryptedData(encrypted)
 
           addLog({
@@ -199,12 +206,16 @@ export const useSymmetricOperations = ({
             executionTime: end - start,
           })
         } else if (type === 'decrypt') {
-          if (!sharedSecret) throw new Error('No shared secret available.')
+          if (!decapsulatedSecret)
+            throw new Error('No receiver secret available. Run Decapsulate first.')
           if (!encryptedData) throw new Error('No encrypted data available. Run Encrypt first.')
 
           let decrypted = ''
           if (encryptedData.startsWith('mock_encrypted_')) {
-            decrypted = atob(encryptedData.replace('mock_encrypted_', ''))
+            const sample = JSON.parse(atob(encryptedData.replace('mock_encrypted_', '')))
+            if (sample.secret !== decapsulatedSecret)
+              throw new Error('Mock receiver secret does not match the sender secret.')
+            decrypted = sample.message
           } else {
             throw new Error('Invalid mock encrypted data format.')
           }

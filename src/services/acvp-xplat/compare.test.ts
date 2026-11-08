@@ -9,6 +9,7 @@ import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:f
 import os from 'node:os'
 import path from 'node:path'
 import { sha256Hex } from '../acvp/ir'
+import { FIXTURE_ROOT } from '../acvp/node/fixtures'
 import {
   compareCell,
   compareTargets,
@@ -329,6 +330,58 @@ describe('acvp-xplat comparator (WS-H)', () => {
       expect(refs.find((r) => r.name === fx)?.planIndex).toHaveLength(180)
     } finally {
       rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
+  it('a frozen reference response that lost an answer field is refused, even with its manifest hash re-sealed', async () => {
+    const tmp = mkdtempSync(path.join(os.tmpdir(), 'acvp-xplat-run-'))
+    try {
+      cpSync(RUN, tmp, { recursive: true })
+      for (const [fx, field] of [
+        ['ML-KEM-encapDecap-FIPS203', 'k'],
+        ['ML-DSA-sigVer-FIPS204', 'testPassed'],
+      ] as const) {
+        const dir = path.join(tmp, 'bundles', fx)
+        const doc = JSON.parse(readFileSync(path.join(dir, 'response.json'), 'utf8')) as Doc
+        delete doc.testGroups[0].tests[0][field]
+        const text = `${JSON.stringify(doc, null, 2)}\n`
+        writeFileSync(path.join(dir, 'response.json'), text)
+        const mPath = path.join(dir, 'manifest.json')
+        const m = JSON.parse(readFileSync(mPath, 'utf8')) as { files: Record<string, string> }
+        m.files['response.json'] = await sha256Hex(text)
+        writeFileSync(mPath, `${JSON.stringify(m, null, 2)}\n`)
+        await expect(loadFixtureRefs(repo, tmp), fx).rejects.toThrow(
+          /reference response disagrees with NIST expectedResults\.json/
+        )
+        cpSync(path.join(RUN, 'bundles', fx), dir, { recursive: true })
+      }
+      // control: untouched copies load
+      await expect(loadFixtureRefs(repo, tmp)).resolves.toHaveLength(2)
+    } finally {
+      rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
+  it('a frozen run is checked against expected results that fit the prompt it answers', async () => {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'acvp-xplat-fixtures-'))
+    try {
+      cpSync(path.join(repo, FIXTURE_ROOT), path.join(root, FIXTURE_ROOT), { recursive: true })
+      const file = path.join(
+        root,
+        FIXTURE_ROOT,
+        'ML-KEM-encapDecap-FIPS203',
+        'expectedResults.json'
+      )
+      const doc = JSON.parse(readFileSync(file, 'utf8')) as Doc
+      // A decapsulation case that claims testPassed instead of k is self-consistent, but not for this prompt.
+      const group = doc.testGroups.find((g) => 'k' in g.tests[0] && !('c' in g.tests[0]))!
+      group.tests[0] = { tcId: group.tests[0].tcId, testPassed: true }
+      writeFileSync(file, JSON.stringify(doc, null, 2))
+      await expect(loadFixtureRefs(root, RUN)).rejects.toThrow(
+        /expected results cannot be compared/
+      )
+    } finally {
+      rmSync(root, { recursive: true, force: true })
     }
   })
 

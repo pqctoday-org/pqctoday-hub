@@ -209,8 +209,8 @@ export const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
   { id: 'V185-003', name: 'TPM2_GetCapability(ALGS)', section: 'Part 3 §30.2' },
   { id: 'V185-004', name: 'ML-KEM Algorithm Registered (0x00A0)', section: 'Part 2 §6.3' },
   { id: 'V185-005', name: 'ML-DSA Algorithm Registered (0x00A1)', section: 'Part 2 §6.3' },
-  { id: 'V185-006', name: 'TPM2_GetRandom Entropy Source', section: '§16.1' },
-  { id: 'V185-007', name: 'Entropy Non-Trivial (32B)', section: '§16.1' },
+  { id: 'V185-006', name: 'TPM2_GetRandom Response Length', section: '§16.1' },
+  { id: 'V185-007', name: 'Nonconstant Output Sanity Check (32B)', section: '§16.1' },
   { id: 'V185-008', name: 'CreatePrimary ML-KEM-768 EK', section: '§11.2.6 Table 204' },
   { id: 'V185-009', name: 'ML-KEM-768 Public Key = 1184 B', section: 'FIPS 203' },
   { id: 'V185-010', name: 'CreatePrimary ML-DSA-65 AK', section: '§11.2.7 Table 207' },
@@ -438,8 +438,11 @@ export function ComplianceRunner() {
 
         addLine('divider', '')
 
-        // ── Phase 4: Entropy Verification ───────────────────────────
-        addLine('phase', '[+] Phase 4 — Entropy Verification  (TCG V1.85 §16.1)')
+        // ── Phase 4: Output Sanity Checks ───────────────────────────
+        addLine(
+          'phase',
+          '[+] Phase 4 — GetRandom response and basic output sanity  (TCG V1.85 §16.1)'
+        )
         addLine('send', '    → TPM2_GetRandom(bytesRequested=32)')
 
         updateCheck('V185-006', { status: 'running' })
@@ -456,10 +459,10 @@ export function ComplianceRunner() {
             const randSize = getU16(resp, 10)
             randomBytes = resp.slice(12, 12 + randSize)
             if (randSize >= 32) {
-              markPass('V185-006', `${randSize} random bytes returned`)
+              markPass('V185-006', `${randSize} bytes reported by GetRandom`)
               addLine(
                 'recv',
-                `    ← ${randSize} random bytes returned  (DRBG, AES-256-CTR seeded at manufacture) ✓`,
+                `    ← ${randSize} bytes reported by GetRandom; generator design and seeding not assessed ✓`,
                 true
               )
             } else {
@@ -472,19 +475,34 @@ export function ComplianceRunner() {
           addLine('recv', `    ← ERROR: ${String(e)}`, false)
         }
 
+        addLine(
+          'recv',
+          '    Scope: these output checks do not establish entropy, unpredictability or source validation.'
+        )
+
         updateCheck('V185-007', { status: 'running' })
         await delay()
         if (randomBytes && randomBytes.length >= 32) {
           const allZero = randomBytes.every((b) => b === 0)
           const allSame = randomBytes.every((b) => b === randomBytes![0])
           if (!allZero && !allSame) {
-            markPass('V185-007', `Entropy OK (first 4: ${toHex(randomBytes.slice(0, 4))})`)
-            addLine('recv', `    ← Entropy OK (first 4: ${toHex(randomBytes.slice(0, 4))}) ✓`, true)
-          } else {
-            markFail('V185-007', `Degenerate entropy: ${allZero ? 'all zeros' : 'all same byte'}`)
+            markPass(
+              'V185-007',
+              `Nonconstant sample only; entropy not assessed (first 4: ${toHex(randomBytes.slice(0, 4))})`
+            )
             addLine(
               'recv',
-              `    ← Degenerate entropy: ${allZero ? 'all zeros' : 'all same byte'} ✗`,
+              `    ← Nonconstant sample only; entropy not assessed (first 4: ${toHex(randomBytes.slice(0, 4))}) ✓`,
+              true
+            )
+          } else {
+            markFail(
+              'V185-007',
+              `Constant output detected: ${allZero ? 'all zeros' : 'all same byte'}`
+            )
+            addLine(
+              'recv',
+              `    ← Constant output detected: ${allZero ? 'all zeros' : 'all same byte'} ✗`,
               false
             )
           }
@@ -1483,7 +1501,20 @@ export function ComplianceRunner() {
         <p className="text-sm text-muted-foreground">
           Run RC4-snapshot conformance checks against the WASM TPM emulator. The current normative
           specification is final TPM 2.0 Library Version 185. This educational suite is not TCG
-          certification or proof of final-v185 conformance.
+          certification or proof of final-v185 conformance. The GetRandom checks only observe
+          response length and reject constant sample output; even a predictable counter can pass.
+          They do not establish entropy, unpredictability, DRBG design or seeding. For production
+          tools, evaluate the documented noise-source design, entropy assessment and health tests;
+          see{' '}
+          <a
+            href="https://csrc.nist.gov/pubs/sp/800/90/b/final"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            NIST SP 800-90B
+          </a>
+          .
         </p>
         {hasData && (
           <Button

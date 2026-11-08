@@ -96,9 +96,15 @@ const CREDENTIAL_LIFETIME_OPTIONS: { id: string; label: string; description: str
   {
     id: 'under-1y',
     label: 'Under 1 year',
-    description: 'Short-lived tokens, ACME auto-renewed certificates',
+    description:
+      'Short-lived tokens, ACME auto-renewed certificates, and publicly trusted TLS server certificates (the CA/Browser Forum Baseline Requirements cap these at 200 days for certificates issued from 15 March 2026)',
   },
-  { id: '1-3y', label: '1–3 years', description: 'Standard TLS / end-entity certificates' },
+  {
+    id: '1-3y',
+    label: '1–3 years',
+    description:
+      'Private-PKI end-entity certificates, where your own policy sets the lifetime (publicly trusted TLS certificates are shorter than this)',
+  },
   {
     id: '3-10y',
     label: '3–10 years',
@@ -175,8 +181,8 @@ const TIMELINE_STATIC_OPTIONS: { value: TimelineValue; label: string; descriptio
   },
   {
     value: 'internal-deadline',
-    label: 'Internal Deadline Set',
-    description: 'Our organization has set its own PQC migration target date.',
+    label: 'Own Target or Distant Deadline',
+    description: 'Our own target date, or a published deadline more than 3 years away.',
   },
   {
     value: 'no-deadline',
@@ -666,8 +672,15 @@ export function MobileAssessView() {
             <UnknownToggle
               checked={store.complianceUnknown}
               onChange={store.setComplianceUnknown}
-              label="Skip — won't change my score much"
+              label="I’m not sure — use profile assumptions"
             />
+            {store.complianceUnknown && (
+              <p className="text-[10.5px] italic text-muted-foreground">
+                The framework selections above use assumptions from your current profile. These
+                assumptions can affect the modelled score and recommendations; they do not establish
+                which obligations apply to an organization. Review the selections and their sources.
+              </p>
+            )}
           </>
         )}
 
@@ -865,13 +878,22 @@ export function MobileAssessView() {
                 <div className="flex flex-col gap-1.5">
                   {countryDeadlines.map((phase) => {
                     const derived = deriveTimelinePressure(phase.endYear)
-                    const selected = store.timelinePressure === derived
+                    // A saved choice names its milestone, so only that card reads as chosen.
+                    const selected =
+                      store.timelinePressure === derived &&
+                      (!store.timelineMilestone || store.timelineMilestone.id === phase.title)
                     return (
                       <Button
                         key={phase.title}
                         type="button"
                         variant="ghost"
-                        onClick={() => store.setTimelinePressure(derived)}
+                        onClick={() =>
+                          store.setTimelinePressure(derived, {
+                            id: phase.title,
+                            authority: phase.events[0]?.orgName ?? '',
+                            year: phase.endYear,
+                          })
+                        }
                         aria-pressed={selected}
                         className={cn(
                           'h-auto flex-col items-start gap-0.5 whitespace-normal rounded-lg border p-2.5 text-left',
@@ -896,8 +918,13 @@ export function MobileAssessView() {
                       </Button>
                     )
                   })}
-                  {TIMELINE_STATIC_OPTIONS.filter((o) => o.value === 'no-deadline').map((opt) => {
-                    const selected = store.timelinePressure === opt.value
+                  {TIMELINE_STATIC_OPTIONS.filter(
+                    (o) => o.value === 'internal-deadline' || o.value === 'no-deadline'
+                  ).map((opt) => {
+                    // "Own target" stays unselected while a published milestone is the saved choice.
+                    const selected =
+                      store.timelinePressure === opt.value &&
+                      !(opt.value === 'internal-deadline' && store.timelineMilestone)
                     return (
                       <Button
                         key={opt.value}

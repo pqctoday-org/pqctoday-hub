@@ -30,9 +30,18 @@ const GA_STATUS_CLASS: Record<GaStatusKind, string> = {
   planned: 'bg-muted/50 text-muted-foreground border-border',
 }
 
-function GaStatusChip({ kind, label }: { kind: GaStatusKind; label: string }) {
+function GaStatusChip({
+  kind,
+  label,
+  detail,
+}: {
+  kind: GaStatusKind
+  label: string
+  detail?: string | null
+}) {
   return (
     <span
+      title={detail ?? undefined}
       className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border whitespace-nowrap ${GA_STATUS_CLASS[kind]}`}
     >
       {label}
@@ -50,7 +59,7 @@ const SCOPE_CHIP_CLASS: Record<ScopeChipKind, string> = {
 export const VendorRoadmapPanel = ({ roadmap, enrichment }: VendorRoadmapPanelProps) => {
   const display = deriveVendorRoadmapDisplay(roadmap, enrichment)
   if (!display) return null
-  const { title, roadmapUrl, gaStatus, scopeChip, dateLine, isEmpty } = display
+  const { title, roadmapUrl, gaStatus, gaStatusDetail, scopeChip, dateLine, isEmpty } = display
 
   return (
     <div className="space-y-3">
@@ -59,7 +68,9 @@ export const VendorRoadmapPanel = ({ roadmap, enrichment }: VendorRoadmapPanelPr
         <div className="flex items-center gap-1.5 flex-wrap">
           <MapIcon size={13} className="text-primary shrink-0" aria-hidden="true" />
           <span className="text-xs font-medium text-foreground">{title}</span>
-          {gaStatus && <GaStatusChip kind={gaStatus.kind} label={gaStatus.label} />}
+          {gaStatus && (
+            <GaStatusChip kind={gaStatus.kind} label={gaStatus.label} detail={gaStatusDetail} />
+          )}
           {display.roadmapStatus && <StatusBadge status={display.roadmapStatus} size="sm" />}
           {scopeChip && (
             <span

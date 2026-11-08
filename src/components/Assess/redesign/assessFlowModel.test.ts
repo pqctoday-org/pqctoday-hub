@@ -169,3 +169,17 @@ describe('assess flow model — track info matches the report contract', () => {
     expect(FULL_LOCKED_SECTIONS).toEqual(['Per-domain risk breakdown', 'Progress over time'])
   })
 })
+
+describe('assess flow model — use-case ordering guidance', () => {
+  it('explains the roadmap order from consequences and dependencies, not a fixed TLS/VPN-first rule', () => {
+    const why = STEP_META['use-cases'].why
+    // A storage-urgent or signing-dependent estate must not be told that TLS/VPN always goes first.
+    expect(why).not.toMatch(/(TLS|VPN)[^.]*move first/i)
+    expect(why).not.toMatch(/niche use cases later/i)
+    // The teaching order is tied to what the order depends on.
+    expect(why).toMatch(/consequences/i)
+    expect(why).toMatch(/dependenc/i)
+    expect(why).toMatch(/storage/i)
+    expect(why).toMatch(/signing/i)
+  })
+})

@@ -168,8 +168,8 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       }
 
       if (isFips1403Certified(s)) fipsValidatedCount++
-      if (isPqcReady(s.pqcSupport)) pqcReadyCount++
-      readinessWeightSum += pqcReadinessTier(s.pqcSupport)
+      if (isPqcReady(s)) pqcReadyCount++
+      readinessWeightSum += pqcReadinessTier(s)
     }
 
     const vendorReadinessWeighted =
@@ -183,7 +183,7 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
     const vendorReadinessByDomain = new Map<DomainId, { weighted: number; count: number }>()
     for (const [domain, products] of vendorsByDomain.entries()) {
       let sum = 0
-      for (const p of products) sum += pqcReadinessTier(p.pqcSupport)
+      for (const p of products) sum += pqcReadinessTier(p)
       vendorReadinessByDomain.set(domain, {
         weighted: products.length > 0 ? sum / products.length : 0,
         count: products.length,

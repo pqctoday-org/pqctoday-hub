@@ -17,7 +17,10 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       offlineAuth: ['RSA-2048 (CDA)', 'RSA-1024 (legacy DDA)'],
       onlineAuth: ['3DES DUKPT', 'AES DUKPT (migration)'],
       keyManagement: ['RSA-2048 key transport', 'ECDSA P-256 (newer terminals)'],
-      ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
+      ecommerce: [
+        'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures)',
+        '3-D Secure 2.x (signing details unverified)',
+      ],
     },
     pqcPosture: 'published-guidance',
     pqcStance: '',
@@ -64,7 +67,10 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       offlineAuth: ['RSA-2048 (CDA)', 'RSA-1024 (legacy DDA)'],
       onlineAuth: ['3DES DUKPT', 'AES DUKPT (adoption growing)'],
       keyManagement: ['RSA-2048 key transport', 'ECDSA P-256'],
-      ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
+      ecommerce: [
+        'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures)',
+        '3-D Secure 2.x (signing details unverified)',
+      ],
     },
     pqcPosture: 'prototype-testing',
     pqcStance:
@@ -135,7 +141,10 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       offlineAuth: ['RSA-2048 (CDA)'],
       onlineAuth: ['3DES DUKPT', 'AES DUKPT'],
       keyManagement: ['RSA-2048 key transport'],
-      ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', 'SafeKey 2.0 (3DS-based)'],
+      ecommerce: [
+        'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures)',
+        'SafeKey 2.0 (3DS-based)',
+      ],
     },
     pqcPosture: 'readiness-program',
     pqcStance:
@@ -235,7 +244,10 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       offlineAuth: ['RSA-2048 (DDA primarily)'],
       onlineAuth: ['3DES DUKPT'],
       keyManagement: ['RSA-2048 key transport'],
-      ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', 'ProtectBuy (3DS-based)'],
+      ecommerce: [
+        'TLS 1.2/1.3 ((EC)DHE key exchange, RSA/ECDSA certificate signatures)',
+        'ProtectBuy (3DS-based)',
+      ],
     },
     pqcPosture: 'shared-standards',
     pqcStance:

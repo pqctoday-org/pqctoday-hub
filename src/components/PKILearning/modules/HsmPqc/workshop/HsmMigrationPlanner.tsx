@@ -31,13 +31,13 @@ const PHASES = [
     id: 'key-migration',
     label: 'Key Migration',
     icon: HardDrive,
-    description: 'Plan backup, dual-partition strategy, and migration duration.',
+    description: 'Review sample backup, continuity assumptions, and migration duration.',
   },
   {
     id: 'validation',
-    label: 'Validation',
+    label: 'Validation Planning',
     icon: Shield,
-    description: 'FIPS 140-3 re-validation checklist and CAVP algorithm testing status.',
+    description: 'Review topics for module validation scope and algorithm-testing evidence.',
   },
 ] as const
 
@@ -205,7 +205,7 @@ export const HsmMigrationPlanner: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">HSM Firmware Migration Planner</h3>
         <p className="text-sm text-muted-foreground">
           Plan your HSM firmware migration from classical to PQC in 4 phases. Select your vendor and
-          fleet size to see upgrade paths, timelines, and validation requirements.
+          fleet size to see example upgrade paths, timelines, and validation-planning topics.
         </p>
       </div>
 
@@ -338,12 +338,12 @@ export const HsmMigrationPlanner: React.FC = () => {
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">Estimated downtime per HSM:</span>{' '}
+                <span className="text-muted-foreground">Authored downtime scenario per HSM:</span>{' '}
                 <span className="text-foreground">{selectedPath.estimatedDowntime}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">FIPS Recertification:</span>{' '}
-                <span className="text-warning font-bold">Required (CMVP resubmission)</span>
+                <span className="text-muted-foreground">FIPS certificate:</span>{' '}
+                <span className="text-foreground">{selectedPath.certificateNote}</span>
               </div>
             </div>
 
@@ -367,12 +367,13 @@ export const HsmMigrationPlanner: React.FC = () => {
           {/* Estimated Total Time */}
           <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
             <h5 className="text-sm font-bold text-foreground mb-1">
-              Rolling Upgrade Estimate ({hsmCount} HSMs)
+              Illustrative Upgrade Timing ({hsmCount} HSMs)
             </h5>
             <p className="text-lg font-bold text-primary">{estimateTotalTime}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Using rolling upgrade strategy (one HSM at a time, classical operations continue on
-              remaining HSMs during each upgrade window).
+              This arithmetic assumes one-at-a-time upgrades; it does not establish that other
+              devices can carry the workload or that a one-device fleet remains available. Check
+              supported redundancy and measure continuity in the intended configuration.
             </p>
           </div>
 
@@ -401,23 +402,29 @@ export const HsmMigrationPlanner: React.FC = () => {
                 <span className="text-foreground font-bold">{hsmCount}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Estimated Total Backup:</span>{' '}
+                <span className="text-muted-foreground">Illustrative Total Backup:</span>{' '}
                 <span className="text-primary font-bold">{estimateBackupSize}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">Per HSM:</span>{' '}
-                <span className="text-foreground">~250 MB (keys + config + state)</span>
+                <span className="text-foreground">
+                  ~250 MB (sample keys + config + state assumption)
+                </span>
               </div>
             </div>
           </div>
 
           {/* Dual-Partition Strategy */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h5 className="text-sm font-bold text-foreground mb-2">Dual-Partition Strategy</h5>
+            <h5 className="text-sm font-bold text-foreground mb-2">
+              Illustrative parallel-service scenario
+            </h5>
             <p className="text-xs text-muted-foreground mb-3">
-              During migration, each HSM runs two logical partitions in parallel. The classical
-              partition handles existing operations while the PQC partition is being configured and
-              tested.
+              The diagram illustrates parallel workloads; two logical partitions alone do not
+              establish independent firmware or restart isolation. This sample does not test
+              uninterrupted service during an upgrade, including with one HSM. In your own tools,
+              check the supported rolling-upgrade configuration, independent redundancy and
+              capacity, and test service continuity before relying on it.
             </p>
 
             {/* Visual Timeline */}
@@ -428,7 +435,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                 </span>
                 <div className="flex-1 h-6 rounded bg-success/20 border border-success/30 flex items-center px-2">
                   <span className="text-[10px] text-success font-medium">
-                    Active &mdash; RSA, ECDSA, AES (continues during migration)
+                    Illustrated RSA, ECDSA, AES workload (continuity not tested)
                   </span>
                 </div>
               </div>
@@ -456,7 +463,9 @@ export const HsmMigrationPlanner: React.FC = () => {
 
           {/* Migration Duration Estimate */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h5 className="text-sm font-bold text-foreground mb-2">Migration Duration</h5>
+            <h5 className="text-sm font-bold text-foreground mb-2">
+              Illustrative Migration Duration
+            </h5>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
                 <span className="text-muted-foreground">Firmware Upgrade:</span>{' '}
@@ -481,8 +490,12 @@ export const HsmMigrationPlanner: React.FC = () => {
             <div className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
-                <strong>Critical:</strong> Always take a full backup of each HSM before starting
-                firmware upgrade. Verify backup integrity by restoring to a test HSM if available.
+                <strong>Backup and recovery limits:</strong> Check which keys, configuration and
+                current state the vendor-supported backup actually preserves, and test the
+                documented recovery path with sample keys. Non-exportable and stateful signing keys
+                need their specific supported recovery controls; a backup file alone does not
+                establish safe restoration. Downgrade or rollback may be restricted. This planner
+                neither tests nor guarantees recovery, rollback or continued service.
               </p>
             </div>
           </div>
@@ -501,10 +514,11 @@ export const HsmMigrationPlanner: React.FC = () => {
       {/* Phase 4: Validation */}
       {currentPhase === 3 && (
         <div className="glass-panel p-6 space-y-4 animate-fade-in">
-          <h4 className="text-base font-bold text-foreground">Phase 4: Validation</h4>
+          <h4 className="text-base font-bold text-foreground">Phase 4: Validation Planning</h4>
           <p className="text-sm text-muted-foreground">
-            Complete the FIPS 140-3 re-validation checklist. Required items must be verified before
-            the migration is considered complete.
+            Select the topics you have reviewed in this sample plan. These acknowledgments do not
+            perform algorithm tests, verify a module configuration or update a validation
+            certificate.
           </p>
 
           {/* Checklist */}
@@ -516,7 +530,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                   variant="ghost"
                   key={item.id}
                   onClick={() => toggleCheck(item.id)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
+                  className={`w-full h-auto min-w-0 whitespace-normal flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
                     isChecked
                       ? 'bg-success/5 border-success/20'
                       : 'bg-muted/50 border-border hover:border-primary/30'
@@ -527,10 +541,12 @@ export const HsmMigrationPlanner: React.FC = () => {
                   ) : (
                     <Circle size={16} className="text-muted-foreground shrink-0" />
                   )}
-                  <span className="text-xs text-foreground flex-1">{item.label}</span>
+                  <span className="text-xs text-foreground flex-1 min-w-0 break-words">
+                    Review topic: {item.label}
+                  </span>
                   {item.required && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold shrink-0">
-                      REQUIRED
+                      CORE TOPIC
                     </span>
                   )}
                 </Button>
@@ -553,24 +569,24 @@ export const HsmMigrationPlanner: React.FC = () => {
               <span
                 className={`text-sm font-bold ${requiredComplete ? 'text-success' : 'text-foreground'}`}
               >
-                {requiredComplete ? 'Validation Complete' : 'Validation In Progress'}
+                {requiredComplete ? 'Planning review complete' : 'Planning review in progress'}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
               {checkedItems.size} / {VALIDATION_CHECKLIST.length} items checked (
               {requiredChecked.filter((item) => checkedItems.has(item.id)).length} /{' '}
-              {requiredChecked.length} required items complete)
+              {requiredChecked.length} core topics selected)
             </p>
           </div>
 
           {/* CAVP Algorithm Testing */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h5 className="text-sm font-bold text-foreground mb-2">
-              CAVP Algorithm Testing Status
+              Algorithm Test-Planning Topics
             </h5>
             <p className="text-xs text-muted-foreground mb-2">
-              Each PQC algorithm must pass CAVP (Cryptographic Algorithm Validation Program) testing
-              before the FIPS 140-3 module certificate can be updated.
+              For each selected algorithm, investigate the applicable testing and certificate scope.
+              This sample does not establish that an algorithm or module is validated.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {selectedPath.pqcAlgorithmsAdded.map((alg) => (
@@ -579,7 +595,9 @@ export const HsmMigrationPlanner: React.FC = () => {
                   className="text-center p-2 rounded bg-primary/10 border border-primary/20"
                 >
                   <span className="text-[10px] font-mono text-primary block">{alg}</span>
-                  <span className="text-[10px] text-muted-foreground">CAVP Required</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    Review applicable testing
+                  </span>
                 </div>
               ))}
             </div>
@@ -596,10 +614,11 @@ export const HsmMigrationPlanner: React.FC = () => {
       {/* Educational Disclaimer */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong> Migration timelines and backup estimates are approximate and based
-          on vendor documentation. Actual times depend on HSM utilization, key count, network
-          bandwidth, and organizational change management processes. Always consult your HSM
-          vendor&apos;s official migration guide before proceeding.
+          <strong>Illustrative planning assumptions:</strong> The timings, backup sizes and fixed
+          key-generation/testing allowances are authored sample inputs, not measurements of a
+          selected product or verified vendor guarantees. Use the exact vendor/version documentation
+          and your own measured configuration to evaluate firmware, backup, service continuity and
+          permitted rollback capabilities. No firmware or backup operation runs in this planner.
         </p>
       </div>
     </div>

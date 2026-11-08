@@ -142,11 +142,11 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/pqc-ssh-sim': {
     developer:
-      'Pick a key exchange such as mlkem768-curve25519-sha256 (marked REAL) and a host key like ssh-mldsa-65, press Run both handshakes, and read the Handshake Log, PKCS#11 Calls and Wire Packets tabs beside the classical baseline.',
+      'Pick a key exchange such as mlkem768-curve25519-sha256 (marked REAL) and a host key like ssh-mldsa-65, press Run comparison, and read the Run Log, PKCS#11 Calls and Wire Packets tabs beside the classical baseline.',
     architect:
-      'The side-by-side telemetry compares Classical (ecdsa-nistp256 + curve25519) with PQC (ML-DSA-65 + ML-KEM-768 × X25519) on packet sizes and round trips; the Host Trust & TOFU note covers what changes when host keys change algorithm.',
+      'Compare the displayed algorithm identifiers, byte counts and timing for the classical and PQC samples. Check the retained result origin: a modeled operation trace does not measure network round trips or establish authentication. The Host Trust & TOFU note explains the host-key transition context.',
     researcher:
-      'Variants marked REAL run on softhsmv3 and those marked MODEL are computed; compare an ML-DSA host key with an SLH-DSA one on the Wire Packets tab to measure the difference in the KEXINIT and signature payloads.',
+      'Inspect the retained result origin and operation log, then compare the reported signature and share byte counts across variants. Modeled packet entries illustrate a sequence; they are not captured network traffic or peer-verification results.',
   },
   '/playground/suci-flow': {
     developer:
@@ -350,8 +350,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/risk-register': {
     executive:
-      'Read the four example entries, RSA-2048, AES-128, ECDSA P-256 and DH-2048, with their likelihood and impact: the Risk Summary is the shape of the register the programme will be held to, and every entry needs a named owner.',
-    grc: 'Add Risk Entry for each asset with its threat, likelihood, impact, owner and mitigation strategy; the How Likelihood × Impact Scoring Works panel is the method to cite, and Copy Markdown or .pdf exports the register for the risk committee.',
+      'Read the example assets, algorithms, threats, likelihood and impact to discuss proposed mitigations. Evaluate ownership and scheduled-review tracking in your production risk-management tools; this sample worksheet does not capture those fields.',
+    grc: 'Use Add Risk Entry to record a sample asset, algorithm, threat, likelihood, impact and proposed mitigation. Copy Markdown or .pdf retains the worksheet and its limits; look for owner, review-date and treatment-status tracking in production tools.',
   },
   '/business/tools/risk-treatment-plan': {
     executive:
@@ -365,8 +365,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/audit-checklist': {
     executive:
-      'The seven readiness areas, from Cryptographic Inventory to Exceptions, each move from Not Started toward Established as items are ticked: the overall picture is what an audit will find today.',
-    grc: "Tick each control, for example 'CBOM generated' or 'RACI defined', and add an evidence row with the reference such as a CMVP certificate number; every item cites its source (EO 14028, SP 800-131A, CSF 2.0) so the auditor can follow the row.",
+      'Read the selected fictional planning topics and information gaps across inventory, policy, controls and documentation. The counts describe topic selections, not what an audit would find or whether evidence is valid.',
+    grc: 'Record fictional planning notes and related references. This Hub-authored template does not establish that every topic is a source requirement; check the primary source and applicability before using a requirement in your production process.',
   },
   '/business/tools/compliance-timeline': {
     executive:

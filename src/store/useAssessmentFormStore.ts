@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { AssessmentInput } from '../hooks/assessmentTypes'
+import type { AssessmentInput, TimelineMilestone } from '../hooks/assessmentTypes'
 import { usePersonaStore } from './usePersonaStore'
 import { useHistoryStore } from './useHistoryStore'
 import { computeSmartDefaults } from '../components/Assess/smartDefaults'
 import { pullLegacyAssessmentState, runLegacyAssessmentMigrations } from './assessmentMigration'
 import { findReferenceEstate } from '../data/assessmentScenarios'
+import { milestoneForPressure, sanitizeTimelineMilestone } from '../utils/timelineMilestone'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
@@ -55,6 +56,8 @@ export interface AssessmentFormState {
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
+  /** The published milestone picked in the timeline step, when one was; null otherwise. */
+  timelineMilestone: TimelineMilestone | null
   timelineUnknown: boolean
   importComplianceSelection: boolean
   importProductSelection: boolean
@@ -96,7 +99,11 @@ export interface AssessmentFormState {
   toggleInfraAutomation: (tool: string) => void
   setVendorDependency: (dep: NonNullable<AssessmentInput['vendorDependency']>) => void
   setVendorUnknown: (val: boolean) => void
-  setTimelinePressure: (pressure: NonNullable<AssessmentInput['timelinePressure']>) => void
+  /** Sets the summary value; the milestone is kept only when one is passed with it. */
+  setTimelinePressure: (
+    pressure: NonNullable<AssessmentInput['timelinePressure']>,
+    milestone?: TimelineMilestone | null
+  ) => void
   setTimelineUnknown: (val: boolean) => void
   setImportComplianceSelection: (val: boolean) => void
   setImportProductSelection: (val: boolean) => void
@@ -140,6 +147,7 @@ const INITIAL_STATE = {
   vendorDependency: '' as NonNullable<AssessmentInput['vendorDependency']> | '',
   vendorUnknown: false,
   timelinePressure: '' as NonNullable<AssessmentInput['timelinePressure']> | '',
+  timelineMilestone: null as TimelineMilestone | null,
   timelineUnknown: false,
   importComplianceSelection: true,
   importProductSelection: true,
@@ -189,7 +197,10 @@ function applyDefaultsToUnknownSteps(
     updates.infrastructureSubCategories = {}
   }
   if (state.vendorUnknown) updates.vendorDependency = defaults.vendorDependency
-  if (state.timelineUnknown) updates.timelinePressure = defaults.timelinePressure
+  if (state.timelineUnknown) {
+    updates.timelinePressure = defaults.timelinePressure
+    updates.timelineMilestone = null
+  }
 }
 
 export const useAssessmentFormStore = create<AssessmentFormState>()(
@@ -247,6 +258,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           updates.vendorDependency = ''
           updates.vendorUnknown = false
           updates.timelinePressure = ''
+          updates.timelineMilestone = null
           updates.timelineUnknown = false
         }
         set(updates)
@@ -293,6 +305,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           complianceUnknown: false,
           lastWizardUpdate: new Date().toISOString(),
         }
+        // A milestone belongs to the country whose list it was picked from.
+        if (country !== state.country) updates.timelineMilestone = null
         if (hasAnyUnknown(state)) {
           const defaults = computeSmartDefaults(
             state.industry,
@@ -660,9 +674,10 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         }
       },
 
-      setTimelinePressure: (pressure) =>
+      setTimelinePressure: (pressure, milestone) =>
         set({
           timelinePressure: pressure,
+          timelineMilestone: milestoneForPressure(pressure, milestone),
           timelineUnknown: false,
           lastWizardUpdate: new Date().toISOString(),
         }),
@@ -675,12 +690,14 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           set({
             timelineUnknown: true,
             timelinePressure: defaults.timelinePressure,
+            timelineMilestone: null,
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
           set({
             timelineUnknown: false,
             timelinePressure: '',
+            timelineMilestone: null,
             lastWizardUpdate: new Date().toISOString(),
           })
         }
@@ -747,6 +764,11 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           input.timelinePressure = state.timelinePressure as NonNullable<
             AssessmentInput['timelinePressure']
           >
+        const timelineMilestone = milestoneForPressure(
+          state.timelinePressure,
+          state.timelineMilestone
+        )
+        if (timelineMilestone) input.timelineMilestone = timelineMilestone
         if (state.timelineUnknown) input.timelineUnknown = true
         if (state.agilityUnknown) input.agilityUnknown = true
         const persona = usePersonaStore.getState().selectedPersona
@@ -757,7 +779,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
     {
       name: 'pqc-assessment-form',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
       migrate: (persistedState: unknown, version: number) => {
         let state = (persistedState ?? {}) as Record<string, unknown>
 
@@ -780,6 +802,12 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         if (version < 2) {
           if (!Array.isArray(state.cryptoLibraries)) state.cryptoLibraries = []
           if (!Array.isArray(state.infraAutomation)) state.infraAutomation = []
+        }
+
+        // V3: add the optional timeline milestone. An old saved state has none,
+        // so it stays valid with the pair empty; anything else is checked.
+        if (version < 3) {
+          state.timelineMilestone = sanitizeTimelineMilestone(state.timelineMilestone)
         }
 
         return state
@@ -817,6 +845,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         vendorDependency: state.vendorDependency,
         vendorUnknown: state.vendorUnknown,
         timelinePressure: state.timelinePressure,
+        timelineMilestone: state.timelineMilestone,
         timelineUnknown: state.timelineUnknown,
         importComplianceSelection: state.importComplianceSelection,
         importProductSelection: state.importProductSelection,

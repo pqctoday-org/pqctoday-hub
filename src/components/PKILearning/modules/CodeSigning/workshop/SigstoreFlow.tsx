@@ -63,16 +63,16 @@ const STEP_DETAILS: Record<number, { classical: string; pqc: string; detail: str
       'The developer logs in via GitHub/Google/Microsoft OIDC. The identity provider issues a JWT that Fulcio uses to bind an identity to a certificate. This step is algorithm-agnostic.',
   },
   2: {
-    classical: 'ECDSA P-256 keypair (valid ~20 min)',
-    pqc: 'ML-DSA-65 keypair (valid ~20 min)',
+    classical: 'ECDSA P-256 keypair (ephemeral, in memory)',
+    pqc: 'ML-DSA-65 keypair (ephemeral, in memory)',
     detail:
-      "A short-lived keypair is generated locally. The private key never leaves the developer's machine and is automatically destroyed after signing. Private key: ECDSA P-256 = 32 bytes, ML-DSA-65 = 4,032 bytes. The ML-DSA-65 public key is 1,952 bytes.",
+      'A short-lived keypair is generated in memory on the signing machine. The private key is destroyed shortly after signing. Private key: ECDSA P-256 = 32 bytes, ML-DSA-65 = 4,032 bytes. The ML-DSA-65 public key is 1,952 bytes.',
   },
   3: {
     classical: 'X.509 cert with ECDSA P-256 public key',
     pqc: 'X.509 cert with ML-DSA-65 public key',
     detail:
-      'Fulcio issues a certificate binding the OIDC identity (e.g., "user@github.com") to the ephemeral public key. The cert is short-lived (~20 minutes) and logged in a Certificate Transparency log.',
+      'Fulcio issues a certificate binding the OIDC identity (e.g., "name@example.com") to the ephemeral public key. The certificate is short-lived (valid for 10 minutes) and published to a certificate transparency log.',
   },
   4: {
     classical: 'ECDSA signature (64 bytes)',
@@ -90,13 +90,14 @@ const STEP_DETAILS: Record<number, { classical: string; pqc: string; detail: str
     classical: 'ECDSA private key securely erased',
     pqc: 'ML-DSA-65 private key securely erased',
     detail:
-      'The ephemeral private key is destroyed immediately after signing. There is no long-term key to protect, rotate, or revoke. The transparency log serves as the permanent proof that the signature was valid at the time of signing.',
+      "The ephemeral private key is destroyed shortly after signing, so there is no long-term artifact-signing key to protect, rotate, or revoke. The certificate expires within minutes; the transparency log's signed timestamp lets a verifier check later that the signature was made while the certificate was valid.",
   },
   7: {
-    classical: 'Verify ECDSA sig + cert chain + Rekor inclusion',
-    pqc: 'Verify ML-DSA-65 sig + cert chain + Rekor inclusion',
+    classical:
+      'Verify ECDSA sig + expected identity and issuer + cert chain to trust root + Rekor inclusion',
+    pqc: 'Verify ML-DSA-65 sig + expected identity and issuer + cert chain to trust root + Rekor inclusion',
     detail:
-      "Verification checks three things: (1) the signature is valid for the artifact hash, (2) the certificate chains to Fulcio's root CA, and (3) the Rekor log contains a matching entry. No public keys need to be distributed.",
+      "Verification checks four things: (1) the signature is valid for the artifact hash under the public key in the certificate; (2) the certificate's identity and OIDC issuer match the identity and issuer the verifier expects, which the verifier must supply as policy (for example cosign's --certificate-identity and --certificate-oidc-issuer); (3) the certificate chains to Fulcio's root, taken from a trust root that verifiers must obtain and keep current (Sigstore distributes it, with Rekor's public key, using TUF); and (4) the Rekor entry carries an inclusion proof and a signed timestamp showing the signature was made while the short-lived certificate was valid. Keyless signing removes long-lived artifact-signing keys; it does not remove trust-root distribution or the need for an identity policy.",
   },
 }
 
@@ -409,18 +410,21 @@ export const SigstoreFlow: React.FC = () => {
       {/* Key Advantage */}
       <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
         <div className="text-xs font-bold text-primary mb-2">
-          Why Sigstore Simplifies PQC Migration
+          What Sigstore Changes in a PQC Migration
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-muted-foreground">
           <div>
             <strong className="text-foreground">Traditional code signing:</strong> Every developer
-            manages long-term private keys. PQC migration requires every developer to generate new
-            PQC keys, update signing configurations, and distribute new public keys.
+            manages long-term private keys, so PQC migration means generating new keys, updating
+            signing configurations, and distributing new public keys or certificates.
           </div>
           <div>
-            <strong className="text-foreground">Sigstore keyless signing:</strong> Only Fulcio (CA)
-            and Rekor (log) need to upgrade to PQC. Developers get PQC protection automatically
-            through ephemeral certificates &mdash; zero configuration changes needed.
+            <strong className="text-foreground">Sigstore keyless signing:</strong> Developers hold
+            no long-term artifact-signing keys to replace, because each signature uses an ephemeral
+            key. Migration is still not automatic: the signing client must generate keys and request
+            certificates for the new algorithm, Fulcio and Rekor must support it, and verifiers must
+            support it and obtain updated trust roots and an identity policy. Signatures already
+            made stay as they were.
           </div>
         </div>
       </div>
@@ -429,9 +433,10 @@ export const SigstoreFlow: React.FC = () => {
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong> This walkthrough simulates the Sigstore keyless signing flow with
-          realistic data structures. Sigstore is a Linux Foundation project used by npm, PyPI,
-          Kubernetes, and many other ecosystems. PQC support in Sigstore is under active
-          development. The transparency log entries shown are for educational purposes only.
+          realistic data structures. Sigstore is backed by the OpenSSF under the Linux Foundation.
+          The ML-DSA-65 view illustrates how a post-quantum flow could look; check Sigstore&apos;s
+          documentation for what it currently supports. The transparency log entries shown are for
+          educational purposes only.
         </p>
       </div>
     </div>

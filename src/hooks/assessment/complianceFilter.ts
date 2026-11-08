@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { industryComplianceConfigs } from '../../data/industryAssessConfig'
-import { sectorCodesOverlap } from '../../utils/applicabilityEngine'
+import { coversEverySector, sectorCodesOverlap } from '../../utils/applicabilityEngine'
 import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'
 
 /**
@@ -14,9 +14,12 @@ import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'
  * silently dropped frameworks such as PCI DSS for most industries; both sides
  * are resolved to the shared sector codes first. A framework listed for
  * "European Union" applies in every member state, which an exact match also
- * missed (DORA was dropped for a bank in Germany). A framework tagged with
- * three or more industries is treated as broadly applicable, and a framework
- * that is not in the config is never dropped.
+ * missed (DORA was dropped for a bank in Germany). A framework whose reviewed
+ * all-sector answer is yes is kept for every industry and one whose answer is
+ * no only for the industries it names, however many it names; until a
+ * framework has been reviewed, one tagged with three or more industries is
+ * treated as broadly applicable (`coversEverySector`). A framework that is not
+ * in the config is never dropped.
  */
 /** The selected frameworks that apply to the visitor, and the ones that were left out. */
 export interface ComplianceSplit {
@@ -42,7 +45,7 @@ export function splitComplianceRequirements(
 
     const industryMatch =
       framework.industries.includes(industry) ||
-      framework.industries.length >= 3 ||
+      coversEverySector(framework) ||
       sectorCodesOverlap(framework.industries, industry)
 
     const countryMatch =

@@ -485,17 +485,29 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <EyeOff size={20} /> Encrypted Client Hello (ECH)
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          PQC protects the <em>content</em> of TLS connections from quantum attack, but the initial
-          ClientHello — including the{' '}
-          <InlineTooltip term="SNI">Server Name Indication (SNI)</InlineTooltip> — is sent in
-          plaintext, revealing <em>which site</em> a user is connecting to. Encrypted Client Hello
-          (ECH) solves this by encrypting the ClientHello using a key published in DNS.
+          TLS 1.3 sends the ClientHello, including the{' '}
+          <InlineTooltip term="SNI">Server Name Indication (SNI)</InlineTooltip>, in plaintext, so
+          an on-path observer can see <em>which site</em> a user is connecting to. Encrypted Client
+          Hello (ECH, RFC 9849) lets the client encrypt the real (&quot;inner&quot;) ClientHello to
+          an ECH public key that the server normally publishes in DNS, and send a decoy
+          (&quot;outer&quot;) ClientHello. This hides the SNI and other sensitive fields such as the
+          ALPN list among the sites that share the same ECH configuration. RFC 9849 states that ECH
+          is not in itself sufficient to protect the identity of the server: the target may still be
+          visible through plaintext DNS queries or the server&apos;s IP address.
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border">
           <p className="text-xs text-muted-foreground">
-            Major browsers are deploying ECH alongside hybrid PQC key exchange (X25519MLKEM768).
-            Together, they protect both the metadata (who you connect to) and the content (what you
-            exchange) against current and future adversaries.
+            ECH and a hybrid key exchange such as X25519MLKEM768 protect different things. The
+            hybrid group protects the key exchange of the TLS session. The inner ClientHello is
+            encrypted separately with HPKE (RFC 9180) under the server&apos;s ECH key, using the KEM
+            named in the ECH configuration. RFC 9180 defines only Diffie-Hellman KEMs (P-256, P-384,
+            P-521, X25519, X448) and acknowledges that a non-quantum-resistant KEM used with HPKE
+            can be broken by a quantum computer; the IANA HPKE registry lists ML-KEM-based
+            identifiers that come from Internet-Drafts. RFC 9849 also states that ECH provides no
+            forward secrecy for the inner ClientHello, because the server&apos;s ECH key is static.
+            So a hybrid TLS key exchange does not by itself keep ECH-protected metadata private
+            against a future quantum computer: that depends on the KEM in the site&apos;s ECH
+            configuration, which this lesson does not assume is post-quantum.
           </p>
         </div>
       </section>

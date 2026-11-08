@@ -24,31 +24,23 @@ export async function personalizeUSIM(
 ): Promise<string> {
   const imsi = '310260123456789'
 
-  return `═══════════════════════════════════════════════════════════════
-            USIM PERSONALIZATION (Factory)
-═══════════════════════════════════════════════════════════════
+  return `USIM PERSONALIZATION — PROCESS WALKTHROUGH
 
-Step 1: Writing Master Key to Secure Element
-  > EF_K:    ${kiHex}
-  > Status:  Written to tamper-resistant memory
+This step displays a fictional personalization plan. No USIM or secure element is accessed.
 
-Step 2: Writing Derived Operator Key
-  > EF_OPc:  ${opcHex}
-  > Status:  Written (OP never stored on SIM)
+Illustrated inputs:
+  > Sample subscriber key K: ${kiHex}
+  > Sample derived operator key OPc: ${opcHex}
+  > Sample IMSI: ${imsi}
 
-Step 3: Writing Subscriber Identity
-  > EF_IMSI: ${imsi}
-  > MCC: 310 (USA)
-  > MNC: 260 (T-Mobile)
-  > MSIN: 123456789
+Production actions illustrated (not executed):
+  > Write subscriber keys through the supported personalization interface.
+  > Store keys and identity data with the intended access protections.
+  > Configure transport and PIN/PUK policies for the selected card profile.
 
-Step 4: Security Configuration
-  > Transport lock: ENABLED
-  > PIN retry counter: 3
-  > PUK retry counter: 10
-
-[SUCCESS] USIM personalization complete.
-[INFO] Card ready for secure transport to MNO.`
+[WALKTHROUGH] Personalization process reviewed.
+[NOT EXECUTED] No key was written to a card, no protection setting was tested, and no card readiness was established.
+[TOOL CAPABILITIES] Look for protected key handling, supported card profiles, controlled personalization access and operation logs. Check these capabilities with your own production tools.`
 }
 
 export async function importAtUDM(
@@ -56,39 +48,37 @@ export async function importAtUDM(
   eKiHex: string,
   opcHex: string
 ): Promise<string> {
-  // Simulate operator import — decrypt transport-encrypted K
   const imsi = '310260123456789'
 
-  return `═══════════════════════════════════════════════════════════════
-            OPERATOR KEY IMPORT
-═══════════════════════════════════════════════════════════════
+  return `OPERATOR KEY IMPORT — PROCESS WALKTHROUGH
 
-Step 1: Receiving Encrypted Key Batch
-  > File: out_batch_2026.enc
-  > Records: 1
+This step displays a fictional operator import plan. It does not consume or decrypt the encrypted batch.
 
-Step 2: Decrypting eK with Transport Key (inside HSM)
-  > eK (encrypted):  ${eKiHex.substring(0, 32)}...
-  > Transport Key:   [PROTECTED — pre-shared]
-  > Decrypted K:     [PROTECTED — transient in HSM]
+Illustrated inputs:
+  > Sample encrypted input excerpt (not validated): ${eKiHex.substring(0, 32)}...
+  > Sample IMSI: ${imsi}
+  > Sample OPc: ${opcHex}
 
-Step 3: Storing in Encrypted Subscriber Database
-  > IMSI: ${imsi}
-  > K:    [re-encrypted and stored in subscriber DB]
-  > OPc:  ${opcHex}
+Production actions illustrated (not executed):
+  > Decrypt the received batch using controlled transport-key access.
+  > Check batch integrity, origin and record validity before accepting entries.
+  > Protect accepted subscriber keys in storage and record the import outcome.
 
-Step 4: Verifying Import Integrity
-  > MAC verification: PASS
-  > Key validation:   PASS
+Checks performed by this walkthrough:
+  > Batch decryption: NOT EXECUTED
+  > MAC verification: NOT EXECUTED
+  > Key validation: NOT EXECUTED
+  > Subscriber database write: NOT EXECUTED
 
-[SUCCESS] Subscriber provisioning complete.
-[INFO] ${imsi} ready for 5G-AKA authentication.`
+[WALKTHROUGH] Operator import process reviewed.
+[NOT EXECUTED] No subscriber was provisioned and no authentication readiness was established.
+[TOOL CAPABILITIES] Evaluate authenticated batch handling, rejected-record reporting, protected key storage, access controls and audit logs in production provisioning tools. A displayed process is not evidence that these controls worked.`
 }
 
 export async function encryptTransport(_ctx: FiveGService, kiHex: string, opcHex: string) {
   // Use OpenSSL to encrypt the batch to a file
   // Input: CSV or JSON
-  const content = `IMSI: 310123456789000, K: ${kiHex}, OPc: ${opcHex} `
+  const content = `IMSI: 310260123456789, K: ${kiHex}, OPc: ${opcHex} `
   const iv = new Uint8Array(16)
   window.crypto.getRandomValues(iv)
   const key = new Uint8Array(16)

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { requireSampleTrustInputs } from './utils/sampleTrust'
 import React, { useState, useEffect, useCallback } from 'react'
 import { Play, Loader2 } from 'lucide-react'
 import { useTLSStore } from '@/store/tls-learning.store'
@@ -31,19 +32,7 @@ const TLS_HSM_OPERATIONS = [
   'C_MessageSignFinal',
 ]
 
-import {
-  DEFAULT_CLIENT_CERT,
-  DEFAULT_CLIENT_KEY,
-  DEFAULT_SERVER_CERT,
-  DEFAULT_SERVER_KEY,
-  DEFAULT_ROOT_CA,
-  DEFAULT_MLDSA_ROOT_CA,
-  DEFAULT_MLDSA_SERVER_CERT,
-  DEFAULT_MLDSA_CLIENT_CERT,
-  DEFAULT_MLDSA87_ROOT_CA,
-  DEFAULT_MLDSA87_SERVER_CERT,
-  DEFAULT_MLDSA87_CLIENT_CERT,
-} from './utils/defaultCertificates'
+import { useSampleTrustDefaults } from './utils/useSampleTrustDefaults'
 import manifest from './manifest'
 
 const MODULE_ID = 'tls-basics'
@@ -64,10 +53,9 @@ export const TLSBasicsModule: React.FC = () => {
   const {
     clientConfig,
     serverConfig,
-    setClientConfig,
-    setServerConfig,
     isSimulating,
     setIsSimulating,
+    runInputs,
     results,
     setResults,
     commands,
@@ -81,76 +69,7 @@ export const TLSBasicsModule: React.FC = () => {
     return () => clearSession()
   }, [clearSession])
 
-  // --- Initialize Default Certificates ---
-  useEffect(() => {
-    const initDefaults = () => {
-      // If we already have certificates AND caPem, don't regenerate (persists navigation)
-      if (serverConfig.certificates.certPem && serverConfig.certificates.caPem) return
-
-      console.log('Loading default certificates...')
-
-      // Use pre-generated defaults for speed/stability
-      setServerConfig({
-        certificates: {
-          keyPem: DEFAULT_SERVER_KEY,
-          certPem: DEFAULT_SERVER_CERT,
-          caPem: DEFAULT_ROOT_CA,
-        },
-      })
-      setClientConfig({
-        certificates: {
-          keyPem: DEFAULT_CLIENT_KEY,
-          certPem: DEFAULT_CLIENT_CERT,
-          caPem: DEFAULT_ROOT_CA,
-        },
-      })
-      console.log('Default certificates loaded.')
-    }
-
-    initDefaults()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Intentionally run once on mount; store persistence handles re-entry
-
-  // --- Dynamic Trust Store Management ---
-  useEffect(() => {
-    if (!serverConfig.certificates.certPem || !clientConfig.certificates.certPem) return
-
-    const getRootCa = (certPem: string | undefined) => {
-      if (certPem === DEFAULT_MLDSA_SERVER_CERT || certPem === DEFAULT_MLDSA_CLIENT_CERT)
-        return DEFAULT_MLDSA_ROOT_CA
-      if (certPem === DEFAULT_MLDSA87_SERVER_CERT || certPem === DEFAULT_MLDSA87_CLIENT_CERT)
-        return DEFAULT_MLDSA87_ROOT_CA
-      return DEFAULT_ROOT_CA
-    }
-
-    const requiredClientCa = getRootCa(serverConfig.certificates.certPem)
-    if (clientConfig.certificates.caPem !== requiredClientCa) {
-      setClientConfig({
-        certificates: {
-          ...clientConfig.certificates,
-          caPem: requiredClientCa,
-        },
-      })
-    }
-
-    const requiredServerCa = getRootCa(clientConfig.certificates.certPem)
-    if (serverConfig.certificates.caPem !== requiredServerCa) {
-      setServerConfig({
-        certificates: {
-          ...serverConfig.certificates,
-          caPem: requiredServerCa,
-        },
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    serverConfig.certificates.certPem,
-    clientConfig.certificates.certPem,
-    serverConfig.certificates.caPem,
-    clientConfig.certificates.caPem,
-    setClientConfig,
-    setServerConfig,
-  ])
+  useSampleTrustDefaults()
 
   // --- Simulation ---
   const triggerSimulation = useCallback(async () => {
@@ -165,6 +84,7 @@ export const TLSBasicsModule: React.FC = () => {
     ]
 
     try {
+      requireSampleTrustInputs(clientConfig, serverConfig)
       markStepComplete(MODULE_ID, 'config')
 
       const encoder = new TextEncoder()
@@ -176,12 +96,12 @@ export const TLSBasicsModule: React.FC = () => {
         { name: 'ssl/server.key', data: encoder.encode(serverConfig.certificates.keyPem || '') },
       ]
 
-      const clientCaPem = clientConfig.certificates.caPem || serverCertPem
+      const clientCaPem = clientConfig.certificates.caPem
       if (clientCaPem) {
         simFiles.push({ name: 'ssl/client-ca.crt', data: encoder.encode(clientCaPem) })
       }
 
-      const serverCaPem = serverConfig.certificates.caPem || clientCertPem
+      const serverCaPem = serverConfig.certificates.caPem
       if (serverCaPem && serverConfig.verifyClient) {
         simFiles.push({ name: 'ssl/server-ca.crt', data: encoder.encode(serverCaPem) })
       }
@@ -314,15 +234,17 @@ export const TLSBasicsModule: React.FC = () => {
         `[Server] Cert key: C_GetAttributeValue(CKA_VALUE) → ${pubKeyBytes.length} B SubjectPublicKeyInfo`
       )
 
-      // Step 3: Sign TLS CertificateVerify message
+      // Step 3: Sign the existing illustrative message, separate from TLS.
       const handshakeTranscript =
         'TLS-1.3-CertificateVerify:ClientHello+ServerHello+...+CertificateVerify'
       const sigBytes = hsm_sign(M, hSession, privHandle, handshakeTranscript)
       addLine(
-        `[Server] CertificateVerify: C_MessageSignInit(CKM_ML_DSA) + C_SignMessage(transcript) → ${sigBytes.length} B`
+        `[Sample] Sign illustrative message: C_MessageSignInit(CKM_ML_DSA) + C_SignMessage(placeholder) → ${sigBytes.length} B`
       )
       addLine(
-        `[Client] Verify: sig[0..7]=${Array.from(sigBytes.slice(0, 8))
+        `[Sample] Signature prefix (first 8 bytes; not a verification result): ${Array.from(
+          sigBytes.slice(0, 8)
+        )
           .map((b) => b.toString(16).padStart(2, '0'))
           .join('')}…`
       )
@@ -440,7 +362,7 @@ export const TLSBasicsModule: React.FC = () => {
               <TLSSummary
                 events={results.trace || []}
                 status={results.status === 'success' ? 'success' : 'failed'}
-                mTLSEnabled={serverConfig.verifyClient ?? false}
+                mTLSEnabled={(runInputs?.serverConfig ?? serverConfig).verifyClient ?? false}
               />
             )}
 
@@ -450,20 +372,13 @@ export const TLSBasicsModule: React.FC = () => {
             {/* HSM-Backed Server — Live PKCS#11 Demo */}
             <div className="space-y-3">
               <h3 className="text-base font-semibold text-foreground">
-                HSM-Backed TLS Server (PKCS#11) — Side Demo
+                Sample HSM signing operation — separate from the TLS handshake
               </h3>
               <p className="text-xs text-muted-foreground">
-                Side-by-side demo: this panel runs an ML-DSA-65 sign operation in the SoftHSMv3 WASM
-                module separately from the TLS handshake above. For end-to-end HSM-backed signing
-                during the actual handshake, toggle <strong>Live HSM Mode</strong> at the top of
-                this Workshop tab — that route loads softhsmv3 inside openssl.wasm via
-                pkcs11-provider, so the CertificateVerify sign call routes through{' '}
-                <code className="font-mono">C_SignInit</code> +{' '}
-                <code className="font-mono">C_SignMessage</code> on the same key the cert was minted
-                from. The signed transcript here uses a placeholder string for illustration; real
-                CertificateVerify content is{' '}
-                <code className="font-mono">ContextString || SHA-256(handshake messages)</code> (RFC
-                9846 §4.5.2).
+                This side demonstration signs a fixed illustrative message with the sample HSM. It
+                is separate from the TLS handshake above. It does not build a CertificateVerify
+                input or execute a signature-verification check. Inspect the operation log for the
+                calls actually executed.
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />
@@ -471,7 +386,7 @@ export const TLSBasicsModule: React.FC = () => {
               {hsm.isReady && (
                 <div className="glass-panel p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold">Run HSM Server Key Operations</p>
+                    <p className="text-sm font-semibold">Run sample HSM signing operation</p>
                     <Button
                       variant="gradient"
                       onClick={runHsmServerDemo}
@@ -483,7 +398,7 @@ export const TLSBasicsModule: React.FC = () => {
                           <Loader2 size={11} className="animate-spin" /> Running…
                         </>
                       ) : (
-                        'Execute (Live WASM)'
+                        'Sign illustrative message (live WASM)'
                       )}
                     </Button>
                   </div>
@@ -533,8 +448,8 @@ export const TLSBasicsModule: React.FC = () => {
                 log={hsm.log}
                 onClear={hsm.clearLog}
                 defaultOpen={true}
-                title="PKCS#11 Call Log — TLS Server Operations"
-                emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
+                title="PKCS#11 Call Log — Sample Signing Operations"
+                emptyMessage="Run the sample signing operation to inspect its calls."
                 filterFns={TLS_HSM_OPERATIONS}
               />
               {hsm.keys.length > 0 && (

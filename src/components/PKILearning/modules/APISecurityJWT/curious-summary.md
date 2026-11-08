@@ -8,7 +8,7 @@ Shor's algorithm running on a future, cryptographically relevant quantum compute
 
 ### The Key Takeaway
 
-While the token format doesn't change, the math inside does—and it carries a large size penalty, along with new key formats and verifier policies. An ML-DSA-65 signature is 3,309 bytes compared to a 64-byte ES256 signature, representing a ~51x size increase. This enormous token size can immediately break default 8 KB HTTP headers, exceed 4 KB browser cookie limits, and spike bandwidth requirements for mobile APIs. Engineering teams must overhaul caching and session storage architectures to accommodate this PQC footprint.
+While the token format doesn't change, the math inside does—and it carries a large size penalty, along with new key formats and verifier policies. An ML-DSA-65 signature is 3,309 bytes compared to a 64-byte ES256 signature, representing a ~51x size increase. This enormous token size can approach or exceed configured HTTP header limits (which vary), exceed the 4 KB browser cookie limit, and spike bandwidth requirements for mobile APIs. Engineering teams must overhaul caching and session storage architectures to accommodate this PQC footprint.
 
 ### What's Happening
 

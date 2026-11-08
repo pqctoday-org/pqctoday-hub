@@ -35,6 +35,18 @@ describe('computePatentKpis', () => {
     expect(k.topAssignee).toEqual({ name: 'IBM', count: 3 })
   })
 
+  it('does not count a selected-for-standardization status as FIPS-mapped', () => {
+    const k = computePatentKpis([
+      p({
+        nistRoundStatus: [
+          { status: 'selected_for_standardization' },
+        ] as PatentItem['nistRoundStatus'],
+      }),
+      p({ nistRoundStatus: [{ status: 'fips_204' }] as PatentItem['nistRoundStatus'] }),
+    ])
+    expect(k.fipsMapped).toBe(1)
+  })
+
   it('is safe on an empty corpus', () => {
     const k = computePatentKpis([])
     expect(k.inScope).toBe(0)

@@ -20,8 +20,9 @@ const PARTS: WorkshopPart[] = [
   },
   {
     id: 'audit-readiness',
-    title: 'Step 2: Audit Readiness',
-    description: 'Build a compliance audit readiness checklist for your PQC migration.',
+    title: 'Step 2: Audit Planning Topics',
+    description:
+      'Select sample audit-planning topics to investigate with your own tools; selections do not establish audit readiness.',
     icon: CheckSquare,
   },
   {
@@ -33,9 +34,9 @@ const PARTS: WorkshopPart[] = [
   },
   {
     id: 'regulatory-gap-assessment',
-    title: 'Step 4: Regulatory Gap Assessment',
+    title: 'Step 4: Regulatory Review Topics',
     description:
-      'Identify compliance gaps across your selected jurisdictions and generate a prioritized remediation plan.',
+      'Explore catalogue review topics for selected jurisdictions; implementation status remains not assessed.',
     icon: ShieldCheck,
   },
 ]

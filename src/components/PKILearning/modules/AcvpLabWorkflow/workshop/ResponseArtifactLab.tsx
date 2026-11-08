@@ -3,7 +3,13 @@ import React, { Suspense, lazy, useRef, useState } from 'react'
 import { Download, FileCheck2, Loader2, Upload } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
-import { compareToExpected, type GoldenComparison } from '@/services/acvp/compare'
+import {
+  compareToExpected,
+  isFullMatch,
+  nonmatchingCaseCount,
+  type GoldenComparison,
+  type GoldenMismatch,
+} from '@/services/acvp/compare'
 import { summarizeEvidence, type EvidenceSummary } from './workshopLogic'
 import {
   PUBLIC_FIXTURES,
@@ -52,10 +58,12 @@ class PrototypeBoundary extends React.Component<
   }
 }
 
-const FilePick: React.FC<{ label: string; onText: (name: string, text: string) => void }> = ({
-  label,
-  onText,
-}) => {
+const FilePick: React.FC<{
+  label: string
+  onText: (name: string, text: string) => void
+  /** Called when the chosen file cannot be read at all. */
+  onReadError?: (message: string) => void
+}> = ({ label, onText, onReadError }) => {
   const ref = useRef<HTMLInputElement>(null)
   return (
     <>
@@ -67,7 +75,14 @@ const FilePick: React.FC<{ label: string; onText: (name: string, text: string) =
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0]
-          if (f) void readFileText(f).then((t) => onText(f.name, t))
+          if (f) {
+            void readFileText(f).then(
+              (t) => onText(f.name, t),
+              onReadError
+                ? (err: unknown) => onReadError(err instanceof Error ? err.message : String(err))
+                : undefined
+            )
+          }
           e.target.value = ''
         }}
       />
@@ -77,6 +92,27 @@ const FilePick: React.FC<{ label: string; onText: (name: string, text: string) =
     </>
   )
 }
+
+const plural = (n: number, one: string, many: string): string => `${n} ${n === 1 ? one : many}`
+
+const describeMismatch = (m: GoldenMismatch): string => {
+  const where = `tgId ${m.tgId} / tcId ${m.tcId}`
+  switch (m.problem) {
+    case 'missing':
+      return `${where}: ${m.field} is missing from the response`
+    case 'different':
+      return `${where}: ${m.field} differs from the published answer`
+    case 'invalid':
+      return `${where}: ${m.field} is not ${m.field === 'testPassed' ? 'true or false' : 'valid even-length hex text'}`
+    case 'unexpected':
+      return `${where}: ${m.field} is not an answer field for this test`
+  }
+}
+
+/** The text a learner sees when a file cannot be compared at all. */
+const describeCompareFailure = (e: unknown): string => (e instanceof Error ? e.message : String(e))
+
+const MAX_LISTED = 10
 
 /**
  * Workshop step 3 — produce and check a response artifact:
@@ -95,6 +131,21 @@ export const ResponseArtifactLab: React.FC = () => {
   const [compareError, setCompareError] = useState<string | null>(null)
   const [evidence, setEvidence] = useState<EvidenceSummary | null>(null)
   const [evidenceError, setEvidenceError] = useState<string | null>(null)
+  // Only the newest upload may show a result, and only for the sample that is selected now.
+  const compareRun = useRef(0)
+  const selectedFixture = useRef<PublicFixtureId>(fixtureId)
+
+  const clearComparison = () => {
+    compareRun.current++
+    setComparison(null)
+    setCompareError(null)
+  }
+
+  const chooseFixture = (id: PublicFixtureId) => {
+    selectedFixture.current = id
+    setFixtureId(id)
+    clearComparison()
+  }
 
   const savePrompt = async () => {
     setSaving(true)
@@ -106,13 +157,24 @@ export const ResponseArtifactLab: React.FC = () => {
   }
 
   const compare = async (_name: string, text: string) => {
-    setComparison(null)
-    setCompareError(null)
+    clearComparison()
+    const run = compareRun.current
+    const stillCurrent = () => run === compareRun.current
+    let response: unknown
     try {
-      const expected = JSON.parse(await PUBLIC_FIXTURES[fixtureId].loadExpected())
-      setComparison(compareToExpected(JSON.parse(text), expected))
+      response = JSON.parse(text)
     } catch (e) {
-      setCompareError(e instanceof Error ? e.message : String(e))
+      setCompareError(`The file is not valid JSON: ${describeCompareFailure(e)}`)
+      return
+    }
+    try {
+      const expected: unknown = JSON.parse(
+        await PUBLIC_FIXTURES[selectedFixture.current].loadExpected()
+      )
+      const result = compareToExpected(response, expected)
+      if (stillCurrent()) setComparison(result)
+    } catch (e) {
+      if (stillCurrent()) setCompareError(describeCompareFailure(e))
     }
   }
 
@@ -143,11 +205,7 @@ export const ResponseArtifactLab: React.FC = () => {
                 size="sm"
                 variant={fixtureId === id ? 'secondary' : 'ghost'}
                 aria-pressed={fixtureId === id}
-                onClick={() => {
-                  setFixtureId(id)
-                  setComparison(null)
-                  setCompareError(null)
-                }}
+                onClick={() => chooseFixture(id)}
               >
                 {PUBLIC_FIXTURES[id].label}
               </Button>
@@ -205,38 +263,85 @@ export const ResponseArtifactLab: React.FC = () => {
         </h3>
         <p className="text-foreground/80">
           Load the response.json you downloaded. It is compared, test case by test case, with the
-          expectedResults.json NIST published for the same sample (the vector set chosen in A). This
-          local check exists only because the sample is public: for a vector set issued to an ACVTS
-          session, only the server holds the expected answers.
+          expectedResults.json NIST published for the same sample (the vector set chosen in A).
+          Every answer NIST lists for a case must be present and equal: a case that has only its id,
+          or lacks one answer, does not match. This local check exists only because the sample is
+          public: for a vector set issued to an ACVTS session, only the server holds the expected
+          answers.
         </p>
-        <FilePick label="Load response.json" onText={(n, t) => void compare(n, t)} />
-        <div aria-live="polite">
+        <FilePick
+          label="Load response.json"
+          onText={(n, t) => void compare(n, t)}
+          onReadError={(message) => {
+            clearComparison()
+            setCompareError(`The file could not be read: ${message}`)
+          }}
+        />
+        <div aria-live="polite" data-testid="ral-compare-live">
           {compareError ? (
-            <p role="alert" className="text-status-error">
-              Comparison failed: {compareError}
-            </p>
+            <div
+              role="alert"
+              className="space-y-1 text-status-error"
+              data-testid="ral-compare-error"
+            >
+              <p>{compareError}</p>
+              <p className="text-xs text-muted-foreground">
+                Nothing was compared, so nothing is counted as a match. Fix the file, or load a
+                response.json produced in step B.
+              </p>
+            </div>
           ) : null}
           {comparison ? (
             <div
               className="space-y-1 rounded-md border border-border bg-muted/30 p-3 text-xs"
               data-testid="ral-comparison"
             >
-              <p className="font-semibold text-foreground">
+              <p className="font-semibold text-foreground" data-testid="ral-comparison-verdict">
                 <FileCheck2 className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />
-                {comparison.matched} matched · {comparison.mismatched.length} mismatched ·{' '}
+                {isFullMatch(comparison)
+                  ? `All ${comparison.expectedTotal} expected cases match NIST’s published sample answers.`
+                  : `Not a full match: ${comparison.matched} of ${comparison.expectedTotal} expected cases match NIST’s published sample answers.`}
+              </p>
+              <p className="text-foreground" data-testid="ral-comparison-counts">
+                {comparison.matched} matched ·{' '}
+                {plural(nonmatchingCaseCount(comparison), 'case differs', 'cases differ')} (
+                {plural(comparison.mismatched.length, 'field difference', 'field differences')}) ·{' '}
                 {comparison.unanswered} unanswered · {comparison.unexpected.length} unexpected (of{' '}
-                {comparison.expectedTotal} expected)
+                {comparison.expectedTotal} expected, {PUBLIC_FIXTURES[fixtureId].label})
               </p>
               <p className="text-muted-foreground">
-                “Unanswered” cases are the groups the prototype marked unsupported (or errored).
-                They are not failures, and they are not passes: a vector set with unanswered cases
-                could not reach the “passed” disposition on an ACVP server.
+                A case differs when an answer is missing, wrong, or not valid for its type. The
+                number of field differences counts answers, not cases. “Unanswered” cases are
+                expected cases that response.json does not contain, for example groups the prototype
+                marked unsupported; their absence alone does not say why. They are neither passes
+                nor wrong answers, and a vector set with unanswered cases could not reach the
+                “passed” disposition on an ACVP server. “Unexpected” cases are in your file but not
+                in the sample.
               </p>
-              {comparison.mismatched.slice(0, 10).map((m) => (
+              <p className="text-muted-foreground">
+                This compares only with NIST’s published sample answers. It is not an ACVTS server
+                verdict, a validation or a certificate.
+              </p>
+              {comparison.mismatched.slice(0, MAX_LISTED).map((m) => (
                 <p key={`${m.tgId}-${m.tcId}-${m.field}`} className="text-status-error">
-                  tgId {m.tgId} / tcId {m.tcId}: {m.field} differs
+                  {describeMismatch(m)}
                 </p>
               ))}
+              {comparison.mismatched.length > MAX_LISTED ? (
+                <p className="text-muted-foreground">
+                  …and {comparison.mismatched.length - MAX_LISTED} more field differences.
+                </p>
+              ) : null}
+              {comparison.unexpected.slice(0, MAX_LISTED).map((u) => (
+                <p key={`unexpected-${u.tgId}-${u.tcId}`} className="text-status-error">
+                  tgId {u.tgId} / tcId {u.tcId}: not in the sample
+                </p>
+              ))}
+              {comparison.unexpected.length > MAX_LISTED ? (
+                <p className="text-muted-foreground">
+                  …and {comparison.unexpected.length - MAX_LISTED} more cases not in the sample.
+                </p>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -319,10 +424,11 @@ export const ResponseArtifactLab: React.FC = () => {
             </dd>
             <dt className="font-mono text-foreground">goldenComparison</dt>
             <dd>
-              For a public sample only: how many answers match NIST&rsquo;s published expected
-              results, and how many differ or are missing. For a prompt issued to a laboratory the
-              expected answers are not supplied: the ACVTS server holds them. A file made in the
-              browser carries no NIST comparison; step C shows the match count instead.
+              For a public sample only: how many cases match NIST&rsquo;s published expected
+              results, how many answer fields differ or are missing (a count of fields, not cases)
+              and how many cases are unanswered. For a prompt issued to a laboratory the expected
+              answers are not supplied: the ACVTS server holds them. A file made in the browser
+              carries no NIST comparison; step C shows the match count instead.
             </dd>
           </dl>
         </details>
@@ -368,7 +474,8 @@ export const ResponseArtifactLab: React.FC = () => {
                 <>
                   <dt className="text-muted-foreground">compared with NIST</dt>
                   <dd className="text-foreground">
-                    {evidence.golden.matched} matched · {evidence.golden.mismatched} mismatched ·{' '}
+                    {evidence.golden.matched} matched ·{' '}
+                    {plural(evidence.golden.mismatched, 'field difference', 'field differences')} ·{' '}
                     {evidence.golden.unanswered} unanswered (of {evidence.golden.expectedTotal})
                   </dd>
                 </>

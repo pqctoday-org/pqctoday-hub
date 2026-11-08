@@ -2,6 +2,21 @@
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import type { PersonaId } from '@/data/personaIds'
 
+/**
+ * Which published milestone, and whose, a visitor picked as their migration
+ * deadline in the Assess timeline step. It is detail beside the five-value
+ * `timelinePressure` summary, never a replacement for it: scoring reads only
+ * `timelinePressure`, and the pair is absent for "own target" and "no deadline".
+ */
+export interface TimelineMilestone {
+  /** The milestone's name as the timeline step shows it; identifies it within the country's list. */
+  id: string
+  /** The body that published it (short name). */
+  authority: string
+  /** The year the milestone ends, when the timeline gives one. */
+  year?: number
+}
+
 export interface AssessmentInput {
   industry: string
   currentCrypto: string[]
@@ -32,6 +47,8 @@ export interface AssessmentInput {
   /** When true, user indicated they don't know their vendor dependency model. */
   vendorUnknown?: boolean
   timelinePressure?: 'within-1y' | 'within-2-3y' | 'internal-deadline' | 'no-deadline' | 'unknown'
+  /** The published milestone the visitor picked, when they picked one. Detail only; scoring ignores it. */
+  timelineMilestone?: TimelineMilestone
   /** When true, user indicated they don't know their timeline pressure. */
   timelineUnknown?: boolean
   /** How long signed artifacts / certificates must remain trusted (multi-select, HNFL uses longest). */
@@ -209,6 +226,8 @@ export interface AssessmentProfile {
   teamSize?: string
   scaleUnknown: boolean
   timelinePressure?: string
+  /** The published milestone the visitor picked, when they picked one. Shared links and exports carry it. */
+  timelineMilestone?: TimelineMilestone
   timelineUnknown: boolean
 }
 

@@ -60,24 +60,27 @@ export const content: ModuleContent = {
     },
     // The 2026/2030/2035 dates come from the NIS Cooperation Group "Coordinated
     // Implementation Roadmap for the Transition to Post-Quantum Cryptography"
-    // (11 June 2025), which implements Commission Recommendation (EU) 2024/1101.
+    // (Part 1, version 1.1, 11 June 2025), a recommended timeline for Member States'
+    // use cases by risk class that follows Commission Recommendation (EU) 2024/1101.
+    // The roadmap does not name the EUDI Wallet.
     // They are NOT in the EUDI ARF (the ARF contains no PQC roadmap) and
     // NOT in the ENISA wallet-architecture analysis — both were cited here
     // previously and neither states these dates.
     {
-      label: 'National PQC transition roadmaps due',
+      label: 'Initial national PQC transition roadmaps established (recommended by 31 Dec 2026)',
       year: 2026,
       source: 'EU PQC Recommendation',
       timelineEventId: 'european-union-ec-member-state-strategy-initiation',
     },
     {
-      label: 'High-risk system PQC migration',
+      label: 'High-risk use cases transitioned (recommended by 31 Dec 2030)',
       year: 2030,
       source: 'EU PQC Recommendation',
       timelineEventId: 'european-union-ec-high-risk-systems-secured',
     },
     {
-      label: 'Full PQC transition for EUDI infrastructure',
+      label:
+        'Medium-risk use cases transitioned, low-risk as far as feasible (recommended by 31 Dec 2035)',
       year: 2035,
       source: 'EU PQC Recommendation',
       timelineEventId: 'european-union-ec-full-eu-pqc-transition',
@@ -86,8 +89,8 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'eIDAS 2.0 (Regulation EU 2024/1183) mandates every EU member state issue an EUDI Wallet. Person Identification Data (PID) is the credential a national PID Provider issues after identity verification; other attestations do not require it. Two credential formats carry that data: mso_mdoc (ISO 18013-5, CBOR, proximity via NFC/BLE) and SD-JWT VC (RFC 9901 base SD-JWT, JSON, built for remote/online verification). Selective disclosure lets a holder reveal only the requested attributes — e.g. proving age without revealing a birthplace — enforcing GDPR data-minimization by construction, not policy. Qualified Electronic Attestations (QEAA) and Qualified Electronic Signatures (QES) are issued by QTSPs listed on National Trusted Lists; a QES has the legal effect of a handwritten signature across all 27 member states via the eIDAS trust-framework bridge. The OpenID4VP and OpenID4VCI specifications use classical ECDSA P-256 in most of their examples, which a large-scale quantum computer running Shor’s algorithm could forge.',
+      'eIDAS 2.0 (Regulation EU 2024/1183) mandates every EU member state issue an EUDI Wallet. Person Identification Data (PID) is the credential a national PID Provider issues after identity verification; other attestations do not require it. Two credential formats carry that data: mso_mdoc (ISO 18013-5, CBOR, proximity via NFC/BLE) and SD-JWT VC (RFC 9901 base SD-JWT, JSON, built for remote/online verification). Selective disclosure lets a holder reveal only chosen attributes — e.g. proving age without revealing a birthplace — which supports data minimisation; whether a request meets GDPR Art. 5(1)(c) still depends on what the verifier asks for and why, and unlinkability needs separate measures such as batch issuance. A Qualified Electronic Attestation of Attributes (QEAA) is an attestation issued by a qualified trust service provider (QTSP). A Qualified Electronic Signature (QES) is an advanced electronic signature created by a qualified signature creation device (QSCD) and based on a qualified certificate; it has the equivalent legal effect of a handwritten signature, and a QES based on a qualified certificate issued in one Member State is recognised in all others (Regulation (EU) No 910/2014, Articles 3(12), 25(2) and 25(3)). The OpenID4VP and OpenID4VCI specifications use classical ECDSA P-256 in most of their examples, which a large-scale quantum computer running Shor’s algorithm could forge.',
     workshopSummary:
-      'EUDI Wallet: inspect a holder’s stored credentials, keys, and activity history. PID Issuer: authenticate as a citizen and receive an mso_mdoc PID credential. University Attestation: obtain an SD-JWT diploma attestation, gated on already holding a valid PID. Relying Party: present selective attributes to a bank to open an account, without the bank ever contacting the issuer. QES: sign a document through a QTSP via the CSC API, producing a legally binding qualified signature.',
+      'EUDI Wallet: inspect a holder’s stored credentials, keys, and activity history. PID Issuer: authenticate as a citizen and receive an mso_mdoc PID credential. University Attestation: obtain an SD-JWT diploma attestation, gated on already holding a valid PID. Relying Party: present selective attributes to a bank to open an account, without the bank ever contacting the issuer. QES (illustrative): a fictional role flow that signs a sample document through a QTSP step and the CSC API. The workshop uses a locally generated sample key, a self-signed certificate and a simulated authorization, so each assurance step is an illustrative message and the result is not a qualified signature. In production tools, look for a qualified certificate issued by a QTSP, a qualified signature creation device (QSCD, which can be a remote QSCD managed by a QTSP), evidence that the signatory has sole control of the signing key, and a qualified trust service doing the signing.',
   },
 }

@@ -44,6 +44,33 @@ describe('TwoTrackRoadmapTimeline (render smoke)', () => {
     expect(screen.getByText(/CNSA 2.0/)).toBeInTheDocument()
   })
 
+  it('names the selected external milestones neutrally, not as red deadlines', () => {
+    render(
+      <TwoTrackRoadmapTimeline
+        milestones={milestones}
+        deadlines={[{ label: 'CNSA 2.0', year: 2030, source: 'US' }]}
+        yearRange={[2025, 2032]}
+        onChange={vi.fn()}
+      />
+    )
+    expect(screen.getByText('External milestones you selected')).toBeInTheDocument()
+    const chip = screen.getByText('2030 · CNSA 2.0')
+    expect(chip.className).not.toMatch(/status-error/)
+    expect(chip.className).toMatch(/text-muted-foreground/)
+  })
+
+  it('shows no external-milestone caption when none is selected', () => {
+    render(
+      <TwoTrackRoadmapTimeline
+        milestones={milestones}
+        deadlines={[]}
+        yearRange={[2025, 2032]}
+        onChange={vi.fn()}
+      />
+    )
+    expect(screen.queryByText('External milestones you selected')).not.toBeInTheDocument()
+  })
+
   it('adds a milestone through the form (and never renders raw years as NaN)', () => {
     const onChange = vi.fn()
     render(

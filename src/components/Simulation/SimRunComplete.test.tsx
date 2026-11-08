@@ -67,7 +67,7 @@ describe('SimRunComplete (run-end ceremony)', () => {
   it('shows a "behind" note when an objective is unmet', () => {
     const partial = objectives.map((o) => (o.id === 'migration' ? { ...o, done: false } : o))
     renderCeremony({ objectives: partial, maturity: 3 })
-    expect(screen.getByText(/some objectives finished behind/i)).toBeInTheDocument()
+    expect(screen.getByText(/some objectives remain incomplete/i)).toBeInTheDocument()
   })
 
   it('closes on Escape (a11y)', () => {
@@ -199,5 +199,22 @@ describe('persona debriefs (W7.4)', () => {
   it('does not claim competence when the learner did the work themselves', () => {
     renderCeremony({ seat: 'developer', learnerShare: 1 })
     expect(screen.getByText(/evidence is work you did yourself/i)).toBeInTheDocument()
+  })
+})
+
+describe('completion timing qualification', () => {
+  it('does not call a late run on time', () => {
+    renderCeremony({ objectives: objectives.map((o) => ({ ...o, achievedYear: o.byYear + 1 })) })
+    expect(screen.getByText(/All objectives completed; some were late/)).toBeInTheDocument()
+    expect(screen.queryByText(/completed on time/)).not.toBeInTheDocument()
+  })
+  it('shows unknown timing when completion dates are absent', () => {
+    renderCeremony()
+    expect(screen.getByText(/completion timing unknown for one or more/)).toBeInTheDocument()
+    expect(screen.getAllByText('✓ timing unknown')).toHaveLength(3)
+  })
+  it('calls the sample on time only with complete on-time dates', () => {
+    renderCeremony({ objectives: objectives.map((o) => ({ ...o, achievedYear: o.byYear })) })
+    expect(screen.getByText(/All objectives completed on time/)).toBeInTheDocument()
   })
 })

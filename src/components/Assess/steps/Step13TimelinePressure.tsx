@@ -20,8 +20,14 @@ const Step13TimelinePressure = ({
   hideHeading = false,
   hideHints = false,
 }: EmbeddedStepProps = {}) => {
-  const { country, timelinePressure, setTimelinePressure, timelineUnknown, setTimelineUnknown } =
-    useAssessmentStore()
+  const {
+    country,
+    timelinePressure,
+    timelineMilestone,
+    setTimelinePressure,
+    timelineUnknown,
+    setTimelineUnknown,
+  } = useAssessmentStore()
 
   // Build country-specific deadline options from the timeline
   const countryDeadlines = useMemo(() => {
@@ -51,8 +57,8 @@ const Step13TimelinePressure = ({
     },
     {
       value: 'internal-deadline' as const,
-      label: 'Internal Deadline Set',
-      description: 'Our organization has set its own PQC migration target date.',
+      label: 'Own Target or Distant Deadline',
+      description: 'Our own target date, or a published deadline more than 3 years away.',
     },
     {
       value: 'no-deadline' as const,
@@ -139,14 +145,24 @@ const Step13TimelinePressure = ({
           >
             {countryDeadlines.map((phase) => {
               const derived = deriveTimelinePressure(phase.endYear)
-              const isSelected = timelinePressure === derived
+              // A saved choice names its milestone, so only that card reads as chosen;
+              // an answer saved before milestones were kept has none and matches by summary.
+              const isSelected =
+                timelinePressure === derived &&
+                (!timelineMilestone || timelineMilestone.id === phase.title)
               return (
                 <Button
                   key={phase.title}
                   variant="ghost"
                   role="radio"
                   aria-checked={isSelected}
-                  onClick={() => setTimelinePressure(derived)}
+                  onClick={() =>
+                    setTimelinePressure(derived, {
+                      id: phase.title,
+                      authority: phase.events[0]?.orgName ?? '',
+                      year: phase.endYear,
+                    })
+                  }
                   className={clsx(
                     'w-full h-auto p-4 flex-col items-start whitespace-normal border',
                     isSelected
@@ -169,29 +185,37 @@ const Step13TimelinePressure = ({
               )
             })}
 
-            {/* Always show fallback options */}
+            {/* Always show the options that do not depend on a published milestone:
+                an organisation can set its own target date whatever its country publishes. */}
             <div className="border-t border-border pt-3 mt-2 space-y-2">
               <p className="text-xs text-muted-foreground font-medium">Other options</p>
               {staticOptions
-                .filter((o) => o.value === 'no-deadline')
-                .map((opt) => (
-                  <Button
-                    key={opt.value}
-                    variant="ghost"
-                    role="radio"
-                    aria-checked={timelinePressure === opt.value}
-                    onClick={() => setTimelinePressure(opt.value)}
-                    className={clsx(
-                      'w-full h-auto p-4 flex-col items-start whitespace-normal border',
-                      timelinePressure === opt.value
-                        ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
-                        : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
-                    )}
-                  >
-                    <span className="font-bold text-sm">{opt.label}</span>
-                    <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-                  </Button>
-                ))}
+                .filter((o) => o.value === 'internal-deadline' || o.value === 'no-deadline')
+                .map((opt) => {
+                  // "Own target" shares its stored value with a distant published milestone;
+                  // while a milestone is the saved choice, that card is the chosen one.
+                  const chosen =
+                    timelinePressure === opt.value &&
+                    !(opt.value === 'internal-deadline' && timelineMilestone)
+                  return (
+                    <Button
+                      key={opt.value}
+                      variant="ghost"
+                      role="radio"
+                      aria-checked={chosen}
+                      onClick={() => setTimelinePressure(opt.value)}
+                      className={clsx(
+                        'w-full h-auto p-4 flex-col items-start whitespace-normal border',
+                        chosen
+                          ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                          : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
+                      )}
+                    >
+                      <span className="font-bold text-sm">{opt.label}</span>
+                      <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+                    </Button>
+                  )
+                })}
             </div>
           </div>
         </>

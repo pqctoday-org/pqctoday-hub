@@ -34,6 +34,13 @@ interface RiskRegisterBuilderProps {
   scenarioCrqcYear?: number | null
 }
 
+const WORKSHEET_SCOPE =
+  'Record an asset, algorithm, threat, likelihood, impact and proposed mitigation. These entries support a planning discussion; the worksheet does not capture risk owners, scheduled review dates or treatment status.'
+export const AUTOMATIC_RISK_RATING_SCOPE =
+  'Where automatic starting ratings are used, they are adjustable teaching ratings, not event probabilities or measured risk. Algorithm rows start at likelihood 5 when the assessment HNDL flag is true (including signing rows; this does not measure signature-forgery probability), otherwise 4 for migration not started and 3 otherwise. Product rows start at 4. Threat rows start at 5 for critical, 4 for high and 3 otherwise. Starting impact uses recorded sensitivity text: 5 for critical/classified, otherwise 4 for high/regulated, 3 for medium, 2 for low and 3 when none matches. A starred framework adds 1 to algorithm-row impact only, capped at 5; starring is not proof of applicability. Values may be edited or saved from earlier inputs, so current entries can differ from these initial rules.'
+const PRODUCTION_CAPABILITIES =
+  'In production tools, look for named risk and treatment owners, scheduled reviews, treatment status and change history. Check that these remain linked to the risk’s scope and assumptions when records are edited or exported. These capabilities support follow-through; completing a record does not demonstrate risk reduction.'
+
 const THREAT_VECTORS = [
   { value: 'hndl', label: 'Harvest Now, Decrypt Later (HNDL)' },
   { value: 'shor', label: 'Shor\u2019s Algorithm (Key Exchange/Signing)' },
@@ -79,6 +86,8 @@ export function buildRiskRegisterMarkdown(
 ): string {
   let md = '# Quantum Risk Register\n\n'
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+  md += `**Sample risk worksheet.** ${WORKSHEET_SCOPE}\n\n`
+  md += `## Starting-rating scope\n\n${AUTOMATIC_RISK_RATING_SCOPE}\n\n`
   md += '---\n\n'
   md += '| # | Asset | Algorithm | Threat Vector | L | I | Score | Level | Mitigation |\n'
   md += '|---|-------|-----------|---------------|---|---|-------|-------|------------|\n'
@@ -107,6 +116,7 @@ export function buildRiskRegisterMarkdown(
   md += `- **Low:** ${low}\n`
   md += `- **Total Entries:** ${riskEntries.length}\n`
 
+  md += `\n## Production-tool capabilities to evaluate\n\n${PRODUCTION_CAPABILITIES}\n`
   md += '\n---\n\n'
   md +=
     '*Aligned to NIST CSWP 39 §5 (Strategic Plan) and §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
@@ -216,6 +226,15 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
           placeholders, not your data. Edit or replace them to build your own register.
         </div>
       )}
+      <aside
+        aria-label="Risk worksheet scope"
+        className="rounded-lg border border-border p-3 text-xs text-muted-foreground space-y-2"
+      >
+        <p>
+          <strong className="text-foreground">Sample risk worksheet.</strong> {WORKSHEET_SCOPE}
+        </p>
+        <p>{PRODUCTION_CAPABILITIES}</p>
+      </aside>
       <EducationalGuide
         open={guideOpen}
         onToggle={() => setGuideOpen(!guideOpen)}

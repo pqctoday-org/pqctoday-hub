@@ -41,8 +41,10 @@ function computeRiskScore(ratings: Record<string, ExceptionRating>): number {
     const mult = WEIGHT_MULTIPLIER[criterion.weight] ?? 1
     max += mult * 2
     const r = ratings[criterion.id]
-    if (r === 'yes') total += mult * 2
+    const availability = criterion.id === 'compensating-controls'
+    if (r === 'yes') total += availability ? 0 : mult * 2
     else if (r === 'partial') total += mult * 1
+    else if (r === 'no' && availability) total += mult * 2
   }
   if (max === 0) return 0
   return Math.round((total / max) * 100)
@@ -71,8 +73,14 @@ export const EscalationFramework: React.FC = () => {
     exceptionOwner: '',
   })
 
+  const missingRatings = EXCEPTION_CRITERIA.filter(
+    (criterion) => !['yes', 'partial', 'no'].includes(exState.ratings[criterion.id])
+  ).length
+  const allRated = missingRatings === 0
   const riskScore = computeRiskScore(exState.ratings)
-  const riskInfo = getRiskLabel(riskScore)
+  const riskInfo = allRated
+    ? getRiskLabel(riskScore)
+    : { label: 'Not assessed', color: 'text-muted-foreground' }
 
   const toggleControl = (id: string) => {
     setExState((prev) => ({
@@ -97,7 +105,7 @@ export const EscalationFramework: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* View toggle */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button
           variant={activeView === 'tiers' ? 'gradient' : 'ghost'}
           onClick={() => setActiveView('tiers')}
@@ -210,7 +218,8 @@ export const EscalationFramework: React.FC = () => {
         <div className="space-y-6">
           <p className="text-sm text-muted-foreground">
             Use this tool to evaluate a policy exception request. Rate each criterion, select
-            compensating controls, and the builder will recommend the appropriate approval tier.
+            compensating controls, and explore an illustrative review route. This does not grant an
+            exception.
           </p>
 
           {/* System info */}
@@ -265,6 +274,15 @@ export const EscalationFramework: React.FC = () => {
             <div className="space-y-3">
               {EXCEPTION_CRITERIA.map((criterion) => {
                 const rating = (exState.ratings[criterion.id] as ExceptionRating) || ''
+                // Availability is protective: retain the answer text, reverse only its risk color.
+                const riskRating =
+                  criterion.id === 'compensating-controls'
+                    ? rating === 'yes'
+                      ? 'no'
+                      : rating === 'no'
+                        ? 'yes'
+                        : rating
+                    : rating
                 return (
                   <div
                     key={criterion.id}
@@ -292,7 +310,7 @@ export const EscalationFramework: React.FC = () => {
                     <Button
                       variant="ghost"
                       onClick={() => cycleRatingForCriterion(criterion.id)}
-                      className={`shrink-0 px-3 py-1.5 h-auto rounded border text-xs font-bold transition-colors ${RATING_COLORS[rating]}`}
+                      className={`shrink-0 px-3 py-1.5 h-auto rounded border text-xs font-bold transition-colors ${RATING_COLORS[riskRating]}`}
                     >
                       {RATING_LABELS[rating]}
                     </Button>
@@ -305,7 +323,7 @@ export const EscalationFramework: React.FC = () => {
           {/* Compensating controls */}
           <div className="glass-panel p-4 space-y-3">
             <p className="text-sm font-semibold text-foreground">Compensating Controls</p>
-            <div className="grid sm:grid-cols-2 gap-3">
+            <div className="grid min-w-0 grid-cols-1 sm:grid-cols-2 gap-3">
               {COMPENSATING_CONTROLS.map((control) => {
                 const selected = exState.selectedControls.includes(control.id)
                 return (
@@ -313,18 +331,18 @@ export const EscalationFramework: React.FC = () => {
                     key={control.id}
                     variant="ghost"
                     onClick={() => toggleControl(control.id)}
-                    className={`text-left p-3 h-auto rounded-lg border transition-colors justify-start ${
+                    className={`text-left p-3 h-auto min-w-0 w-full whitespace-normal rounded-lg border transition-colors justify-start ${
                       selected
                         ? 'bg-primary/10 border-primary/40'
                         : 'bg-muted/30 border-border hover:bg-muted/50'
                     }`}
                   >
-                    <div className="flex items-start gap-2">
+                    <div className="flex min-w-0 items-start gap-2">
                       <CheckCircle2
                         size={14}
                         className={`mt-0.5 shrink-0 ${selected ? 'text-primary' : 'text-muted-foreground'}`}
                       />
-                      <div>
+                      <div className="min-w-0">
                         <p className="text-xs font-semibold text-foreground">{control.label}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {control.description}
@@ -340,7 +358,9 @@ export const EscalationFramework: React.FC = () => {
           {/* Risk score result */}
           <div className="glass-panel p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-foreground">Exception Risk Assessment</p>
+              <p className="text-sm font-semibold text-foreground">
+                Illustrative Exception Risk Score
+              </p>
               <Button
                 variant="ghost"
                 onClick={resetException}
@@ -350,28 +370,44 @@ export const EscalationFramework: React.FC = () => {
               </Button>
             </div>
 
+            <p className="text-xs text-muted-foreground">
+              This Hub score and review route are teaching illustrations, not a production risk
+              assessment or approval. Selecting controls does not establish that they are
+              implemented or effective.
+            </p>
             <div className="flex items-center gap-4">
-              <div
-                className="w-16 h-16 rounded-full border-4 flex items-center justify-center text-xl font-bold shrink-0"
-                style={{
-                  borderColor:
-                    riskScore >= 70
-                      ? 'hsl(var(--status-error))'
-                      : riskScore >= 40
-                        ? 'hsl(var(--status-warning))'
-                        : 'hsl(var(--status-success))',
-                  color:
-                    riskScore >= 70
-                      ? 'hsl(var(--status-error))'
-                      : riskScore >= 40
-                        ? 'hsl(var(--status-warning))'
-                        : 'hsl(var(--status-success))',
-                }}
-              >
-                {riskScore}
-              </div>
+              {allRated && (
+                <div
+                  className="w-16 h-16 rounded-full border-4 flex items-center justify-center text-xl font-bold shrink-0"
+                  style={{
+                    borderColor:
+                      riskScore >= 70
+                        ? 'hsl(var(--status-error))'
+                        : riskScore >= 40
+                          ? 'hsl(var(--status-warning))'
+                          : 'hsl(var(--status-success))',
+                    color:
+                      riskScore >= 70
+                        ? 'hsl(var(--status-error))'
+                        : riskScore >= 40
+                          ? 'hsl(var(--status-warning))'
+                          : 'hsl(var(--status-success))',
+                  }}
+                >
+                  {riskScore}
+                </div>
+              )}
               <div>
+                {allRated && (
+                  <p className="text-xs text-muted-foreground">Illustrative review route</p>
+                )}
                 <p className={`text-sm font-bold ${riskInfo.color}`}>{riskInfo.label}</p>
+                {!allRated && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {missingRatings} unanswered {missingRatings === 1 ? 'criterion' : 'criteria'}.
+                    Rate every criterion before interpreting the sample score.
+                  </p>
+                )}
                 {exState.selectedControls.length > 0 && (
                   <p className="text-xs text-muted-foreground mt-1">
                     {exState.selectedControls.length} compensating control
@@ -394,20 +430,22 @@ export const EscalationFramework: React.FC = () => {
               </div>
             </div>
 
-            <div className="w-full bg-muted rounded-full h-2">
-              <div
-                className="h-2 rounded-full transition-all duration-500"
-                style={{
-                  width: `${riskScore}%`,
-                  backgroundColor:
-                    riskScore >= 70
-                      ? 'hsl(var(--status-error))'
-                      : riskScore >= 40
-                        ? 'hsl(var(--status-warning))'
-                        : 'hsl(var(--status-success))',
-                }}
-              />
-            </div>
+            {allRated && (
+              <div className="w-full bg-muted rounded-full h-2">
+                <div
+                  className="h-2 rounded-full transition-all duration-500"
+                  style={{
+                    width: `${riskScore}%`,
+                    backgroundColor:
+                      riskScore >= 70
+                        ? 'hsl(var(--status-error))'
+                        : riskScore >= 40
+                          ? 'hsl(var(--status-warning))'
+                          : 'hsl(var(--status-success))',
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

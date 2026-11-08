@@ -117,6 +117,11 @@ describe('MigrationVerification (render smoke)', () => {
     const { container } = render(<MigrationVerification />)
     expect(container.textContent).not.toContain('Prove migration with the 5-point')
     expect(container.textContent).toContain('Evidence recorded — review required. Filling')
+    expect(container.textContent).not.toContain('the evidence that migration actually happened')
+    expect(container.textContent).toContain('as educational drafts')
+    expect(container.textContent).toContain(
+      'does not establish that a migration or retirement was performed'
+    )
     expect(
       screen.getByRole('heading', { name: /Migration Verification & Program Closure/ })
     ).toBeInTheDocument()

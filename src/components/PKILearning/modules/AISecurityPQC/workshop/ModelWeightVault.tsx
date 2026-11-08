@@ -59,8 +59,9 @@ export const ModelWeightVault: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-1">Model Weight Vault</h3>
         <p className="text-sm text-muted-foreground">
-          Configure a protection scheme for your model weights. Compare classical vs PQC overhead
-          and generate a protection manifest.
+          Compare sample model-weight protection profiles and their illustrative overhead. The
+          manifest records your selections; it does not execute encryption, signing or deployment
+          checks.
         </p>
       </div>
 
@@ -264,11 +265,11 @@ export const ModelWeightVault: React.FC = () => {
         </div>
       </div>
 
-      {/* Protection Manifest */}
+      {/* Sample Selection Manifest */}
       <div className="glass-panel p-4 border-primary/30">
         <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <ShieldCheck size={16} className="text-primary" />
-          Protection Manifest
+          Sample Selection Manifest
         </h4>
         <div className="font-mono text-xs space-y-1 text-foreground/80">
           <p>
@@ -283,7 +284,7 @@ export const ModelWeightVault: React.FC = () => {
           </p>
           <p>Deployment: {deployProfile.name}</p>
           <p>
-            Quantum Safety:{' '}
+            Selected Primitive Coverage:{' '}
             <span
               className={
                 wrapProfile.quantumSafe && signProfile.quantumSafe
@@ -292,11 +293,16 @@ export const ModelWeightVault: React.FC = () => {
               }
             >
               {wrapProfile.quantumSafe && signProfile.quantumSafe
-                ? 'FULL PQC PROTECTION'
-                : 'PARTIAL — upgrade required'}
+                ? 'PQC wrapping and signing selected — deployment not assessed'
+                : 'Classical primitive selected — deployment not assessed'}
             </span>
           </p>
         </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Selecting PQC algorithms does not establish full model protection. Evaluate supported
+          implementations, key handling, attestation, isolation and update privacy with your
+          production tools for the deployment you plan.
+        </p>
       </div>
     </div>
   )

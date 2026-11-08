@@ -78,16 +78,17 @@ export const loadFixtureRefs = async (
       if (have !== want) throw new Error(`${dir}: ${what} ${have} ≠ manifest ${want}`)
     }
     const reference = JSON.parse(referenceText) as unknown
+    const prepared = await preparePrompt(promptText)
+    if (!prepared.ok) throw new Error(`fixture ${name} no longer parses`)
     const golden = compareToExpected(
       reference,
-      JSON.parse(readFixture(repoRoot, name, 'expectedResults.json'))
+      JSON.parse(readFixture(repoRoot, name, 'expectedResults.json')),
+      { prompt: prepared.ir }
     )
     if (golden.mismatched.length > 0 || golden.unexpected.length > 0) {
       throw new Error(`${dir}: reference response disagrees with NIST expectedResults.json`)
     }
     const planIndex = readJson(path.join(dir, 'plan-index.json')) as PlanIndexItem[]
-    const prepared = await preparePrompt(promptText)
-    if (!prepared.ok) throw new Error(`fixture ${name} no longer parses`)
     const livePlanReproducible =
       (await sha256Hex(canonicalJson(prepared.plan))) === manifest.canonicalSha256.plan
     if (

@@ -39,9 +39,9 @@ const PHASE_BY_STEP_ID: Record<string, SuciPhase> = {
 // Keep short — this renders as a red-bordered addendum, not a full essay.
 const ATTACKER_BY_STEP: Record<string, Partial<Record<SuciProfile, string>>> = {
   init_network_key: {
-    A: 'Nothing — operator key generation happens inside the HN HSM, never on air.',
-    B: 'Nothing — operator key generation happens inside the HN HSM, never on air.',
-    C: 'Nothing — ML-KEM/X25519 keypairs stay inside the HN HSM.',
+    A: 'No modeled radio output. HSM mode creates protected key handles; the separate software comparison uses browser key files.',
+    B: 'No modeled radio output. HSM mode creates protected key handles; the separate software comparison uses browser key files.',
+    C: 'No modeled radio output. The PQC research example also keeps software-comparison key material in browser files and memory.',
   },
   provision_usim: {
     A: 'Nothing — SIM personalization is an out-of-band factory step.',
@@ -54,19 +54,19 @@ const ATTACKER_BY_STEP: Record<string, Partial<Record<SuciProfile, string>>> = {
     C: 'Nothing — the USIM reads the 1184-byte HN pubkey locally.',
   },
   gen_ephemeral_key: {
-    A: 'Nothing yet — the ephemeral X25519 keypair stays in the USIM until Step 10.',
-    B: 'Nothing yet — the ephemeral P-256 keypair stays in the USIM until Step 10.',
+    A: 'No modeled radio output yet. The ephemeral public key is included later in the SUCI; the software comparison also holds sample private-key bytes.',
+    B: 'No modeled radio output yet. The ephemeral public key is included later in the SUCI; the software comparison also holds sample private-key bytes.',
     C: 'Nothing yet — hybrid X25519 key (if any) stays local; ML-KEM has no separate UE ephemeral key.',
   },
   compute_shared_secret: {
-    A: 'Nothing — Z is derived inside the USIM and never leaves it.',
-    B: 'Nothing — Z is derived inside the USIM and never leaves it.',
-    C: 'Nothing — Z_kem, Z_ecdh, and the combined Z all stay inside the USIM.',
+    A: 'No modeled radio output. This browser reads the sample shared secret into JavaScript for the walkthrough.',
+    B: 'No modeled radio output. This browser reads the sample shared secret into JavaScript for the walkthrough.',
+    C: 'No modeled radio output. Sample PQC/hybrid secrets are also read into JavaScript for display and comparison.',
   },
   derive_keys: {
-    A: 'Nothing — K_enc (AES-128) and K_mac stay inside the USIM HSM.',
-    B: 'Nothing — K_enc (AES-128) and K_mac stay inside the USIM HSM.',
-    C: 'Nothing — K_enc (AES-256) and K_mac (HMAC-SHA3-256) stay inside the USIM.',
+    A: 'No modeled radio output. The walkthrough reads sample encryption and MAC keys into JavaScript; it does not demonstrate end-to-end key isolation.',
+    B: 'No modeled radio output. The walkthrough reads sample encryption and MAC keys into JavaScript; it does not demonstrate end-to-end key isolation.',
+    C: 'No modeled radio output. The research walkthrough also retains sample encryption and MAC keys in browser memory.',
   },
   encrypt_msin: {
     A: 'Still nothing on air — the AES-128-CTR ciphertext is buffered for Step 10.',
@@ -100,7 +100,7 @@ const ATTACKER_BY_STEP: Record<string, Partial<Record<SuciProfile, string>>> = {
 const PE_DEFAULT: Record<string, string[]> = {
   init_network_key: [
     'The home network created a long-term keypair inside its HSM.',
-    'The private key stays in the HSM forever; only the public key gets shared.',
+    'HSM mode uses a protected private-key handle. Its separate software comparison uses sample key files; this is not a demonstration that all private bytes stay inside an HSM.',
     'This pubkey will later let every SIM on the network encrypt its identity to you — and only you can decrypt.',
   ],
   provision_usim: [
@@ -115,27 +115,28 @@ const PE_DEFAULT: Record<string, string[]> = {
   ],
   gen_ephemeral_key: [
     'The SIM created a fresh, one-time keypair just for this connection attempt.',
-    'Private key stays in the SIM HSM; public key will be sent later inside the SUCI.',
-    'Because it is single-use, even a future key compromise cannot retro-decrypt this session (forward secrecy).',
+    'The modeled SUCI includes the ephemeral public key. The software comparison also retains sample private-key bytes in the browser.',
+    'A fresh UE key does not by itself provide forward secrecy against later compromise of the home network private key: captured SUCIs include the UE public key needed for deconcealment.',
   ],
   compute_shared_secret: [
     'The SIM combined its ephemeral private key with the home network public key.',
     'The result (Z) is a 32-byte shared secret that only the SIM and the home network can derive.',
-    'An attacker would need one of the two private keys — it has neither.',
+    'The walkthrough assumes uncompromised private keys; this sample does not establish that assumption for production tools.',
   ],
   derive_keys: [
     'Z was expanded into two purpose-specific keys using the ANSI X9.63 KDF.',
     'K_enc will encrypt your identity; K_mac will authenticate the ciphertext.',
     'Separate keys for separate jobs — a standard cryptographic hygiene pattern.',
+    'For production isolation, evaluate opaque-handle derivation, export controls and the lifecycle of plaintext inputs and copies; this browser exposes sample Z and keys in JavaScript.',
   ],
   encrypt_msin: [
     'Your MSIN (the subscriber part of the IMSI) was just encrypted with AES-CTR under K_enc.',
     'CTR mode is length-preserving: ciphertext is exactly the same byte-count as the plaintext.',
-    'The original MSIN is no longer in memory outside the HSM.',
+    'The sample SUPI/MSIN remains in React/JavaScript state and buffers for inspection. Encryption does not erase those copies.',
   ],
   compute_mac: [
     'The ciphertext just got a cryptographic integrity tag using K_mac.',
-    'The 64-bit tag (truncated) is enough to detect any bit-flip by an attacker.',
+    'The truncated tag provides finite forgery resistance; it is not a guarantee that every alteration will be detected.',
     'The home network will verify this BEFORE decrypting — authenticate-then-decrypt.',
   ],
   visualize_suci: [
@@ -157,14 +158,14 @@ const PE_DEFAULT: Record<string, string[]> = {
 
 const PE_PROFILE_C_OVERRIDES: Record<string, string[]> = {
   init_network_key: [
-    'The home network created TWO keypairs: ML-KEM-768 (post-quantum) and X25519 (classical).',
+    'The PQC research example uses ML-KEM-768; hybrid mode additionally uses X25519. It is not a standardized 3GPP Profile C.',
     'The large ML-KEM public key is 1184 bytes — orders of magnitude bigger than Profile A/B pubkeys.',
-    'Both private keys live in the HN HSM; only a harvest-now-decrypt-later attacker is defeated by ML-KEM.',
+    'HSM mode uses protected key handles; its separate software comparison retains sample private-key material in browser files and memory.',
   ],
   compute_shared_secret: [
     'ML-KEM encapsulation just produced Z_kem plus a 1088-byte ciphertext that only the HN can decapsulate.',
     'In hybrid mode, the SIM also did classical X25519 ECDH to get Z_ecdh.',
-    'Final Z = SHA-256(Z_ecdh ‖ Z_kem) — safe if EITHER component survives future attacks.',
+    'Hybrid mode uses this project’s SHA-256(Z_ecdh ‖ Z_kem) construction. This sample does not establish a general security guarantee for hybrid designs.',
   ],
   derive_keys: [
     'Z was expanded using SHA3-256 (instead of SHA-256) for added resilience; SHA-256 is currently considered secure against quantum attacks (ATIS).',
@@ -174,7 +175,7 @@ const PE_PROFILE_C_OVERRIDES: Record<string, string[]> = {
   encrypt_msin: [
     'Your MSIN was encrypted with AES-256-CTR (stronger than Profiles A/B).',
     'CTR mode still preserves length — ciphertext size matches plaintext size.',
-    'AES-256 keeps ~128 bits of security even under Grover’s quantum algorithm.',
+    'This sample retains the plaintext SUPI/MSIN in browser state and buffers; encryption does not erase it. Evaluate data lifecycle and key-isolation capabilities in production tools.',
   ],
   compute_mac: [
     'The ciphertext got an HMAC-SHA3-256 integrity tag, truncated to 64 bits on air.',

@@ -46,7 +46,7 @@ import type { Cswp39Params } from '../useComplianceUrlState'
 
 const SUB_VIEWS: { id: SubView; label: string }[] = [
   { id: 'cycle', label: 'Agility cycle' },
-  { id: 'maturity', label: 'Maturity self-check' },
+  { id: 'maturity', label: 'Explore maturity tiers' },
   { id: 'evidence', label: 'Evidence map' },
 ]
 
@@ -427,6 +427,10 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
 
   return (
     <div className="space-y-4">
+      <p className="text-xs text-muted-foreground">
+        Select a tier to explore its characteristics. This navigation does not assess or establish
+        your organization’s maturity.
+      </p>
       {/* Tier selector */}
       <div className="flex flex-col gap-2 sm:flex-row">
         {CSWP39_TIERS.map((t) => {
@@ -468,7 +472,9 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-2 flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${TONES[TIER_TONE[cur.tone]].solidBg}`} />
-            <h3 className="text-sm font-bold text-foreground">You are here · {cur.name}</h3>
+            <h3 className="text-sm font-bold text-foreground">
+              Exploring tier {tier} · {cur.name}
+            </h3>
           </div>
           <p className="text-xs leading-relaxed text-muted-foreground">{cur.characteristics}</p>
         </div>
@@ -477,16 +483,17 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
           <div className="rounded-2xl border border-status-success/40 bg-status-success/5 p-5">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-status-success">
               <Check size={15} />
-              Top tier reached
+              Highest tier in this overview
             </h3>
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Sustain adaptive agility: keep policy-as-code enforcement, continuous CMVP/ACVP sync,
-              and board-level attestation running.
+              In this adaptive example, consider policy-as-code enforcement, continuous CMVP/ACVP
+              monitoring and executive reporting. Selecting it does not show these capabilities
+              exist.
             </p>
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-border bg-muted/10 p-5">
-            <h3 className="mb-2 text-sm font-bold text-foreground">To reach {next!.name}</h3>
+            <h3 className="mb-2 text-sm font-bold text-foreground">Explore next · {next!.name}</h3>
             <ul className="space-y-1.5">
               {next!.howToReach.map((a, i) => (
                 <li key={i} className="flex items-start gap-2 text-xs text-foreground/90">
@@ -547,7 +554,7 @@ function EvidenceView({
 
   return (
     <div className="space-y-5">
-      {/* Authoritative evidence — the real LLM-extracted governance corpus. */}
+      {/* Extracted candidate mappings need source and applicability review. */}
       <section className="rounded-2xl border border-border bg-card p-5">
         <div className="mb-4 flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -555,28 +562,30 @@ function EvidenceView({
           </span>
           <div>
             <h3 className="text-sm font-bold text-foreground">
-              Authoritative Evidence — {maturityRequirements.length} requirements from{' '}
+              Candidate governance mappings — {maturityRequirements.length} extracted records from{' '}
               {uniqueSources} sources
             </h3>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              LLM-extracted governance obligations mapped to each CSWP.39 pillar and maturity tier.
-              Click any highlighted cell to see sourced requirements.
+              Machine-extracted text mapped into the Hub teaching grid. Check the original source,
+              context and applicability before treating a row as an obligation; extraction and a
+              source link do not establish independent review. Click a highlighted cell to inspect
+              the recorded passage.
             </p>
           </div>
         </div>
         <div className="mb-4 grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/30 p-4 sm:grid-cols-3">
           <KpiCell
-            label="CSWP-39 grid coverage"
+            label="Hub grid population"
             value={`${kpi.coverage}%`}
-            sub={`${kpi.populated}/${kpi.total} cells populated`}
+            sub={`${kpi.populated}/${kpi.total} cells populated; not organizational readiness`}
           />
           <KpiCell
-            label="Mean confidence"
-            value={`${kpi.meanConfidence}/100`}
+            label="Mean extraction-label score"
+            value={kpi.recordCount > 0 ? `${kpi.meanConfidence}/100` : 'Not available'}
             sub={
               kpi.recordCount > 0
-                ? 'across extracted CSWP-39 requirements'
-                : 'no CSWP-39 requirements extracted yet'
+                ? 'Hub display rule: low 25, medium 60, high 95; not a measured probability or assurance score'
+                : 'no CSWP-39 records available for this display rule'
             }
           />
           <KpiCell

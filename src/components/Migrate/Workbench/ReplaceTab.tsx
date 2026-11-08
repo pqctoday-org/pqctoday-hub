@@ -366,6 +366,7 @@ export function ReplaceTab({
                 items={[
                   { id: 'available', label: 'Available' },
                   { id: 'partial', label: 'Partial' },
+                  { id: 'psk', label: 'PSK' },
                   { id: 'planned', label: 'Planned / roadmap' },
                   { id: 'none', label: 'None' },
                   { id: 'unknown', label: 'Not yet determined' },

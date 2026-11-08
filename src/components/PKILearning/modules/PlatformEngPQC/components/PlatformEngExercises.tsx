@@ -79,7 +79,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Capacity',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
       observe:
-        "With 500 certs, etcd storage grows from ~1.5 MB (classical RSA-2048 key+cert at 3KB each) to ~7 MB (ML-DSA-65 at 14KB each) — approximately a 4.7× increase (this module's planning assumption, not a measurement). For most clusters, this is negligible relative to total etcd capacity (default 8 GB). The storage impact is NOT a reason to delay migration. The TLS handshake latency increase (12ms → 28ms, +133%) warrants more attention in high-throughput microservice environments.",
+        "For 500 certificates, the module's illustrative sizes of 3 KB and 14 KB per key-and-certificate pair give about 1.5 MB and 7 MB, or 4.7×. This is a sample byte estimate, not measured etcd usage. In etcd v3.5, the backend quota starts at 2 GiB unless configured otherwise; the documentation suggests 8 GiB as an upper size for normal environments, not the default. Assess the configured quota, existing objects, retained history and operational headroom before drawing a capacity conclusion. The sample alone does not establish whether storage should change a migration plan. The 12 ms and 28 ms handshake values are also illustrative; test the intended configuration and workload with production tools.",
       config: { step: 4 },
     },
     {
@@ -90,7 +90,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-accent/20 text-accent border-accent/50',
       observe:
-        'The decision path leads to: "Revert ssl-ecdh-curve to X25519:P-256. The X25519MLKEM768 group is additive — removing it is non-breaking. File bug with client vendor for ML-KEM support." This is the correct approach because X25519MLKEM768 (ML-KEM-768 + X25519) is a hybrid — removing the ML-KEM component is safe for compatibility and does not break existing sessions. The classical X25519 continues to provide forward secrecy.',
+        'The decision path leads to: revert ssl-ecdh-curve to X25519:P-256 and file a bug with the client vendor for ML-KEM support. Treat the revert as a temporary policy trade-off back to classical-only key exchange. Test client compatibility.',
       config: { step: 5 },
     },
   ]
@@ -132,6 +132,16 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
             </summary>
             <div className="mt-3 p-3 rounded-lg bg-status-success/10 border border-status-success/20">
               <p className="text-xs text-muted-foreground">{scenario.observe}</p>
+              {scenario.id === 'capacity-impact' && (
+                <a
+                  className="text-xs text-primary underline"
+                  href="https://etcd.io/docs/v3.5/dev-guide/limit/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  etcd v3.5 system limits — storage quota guidance
+                </a>
+              )}
             </div>
           </details>
 

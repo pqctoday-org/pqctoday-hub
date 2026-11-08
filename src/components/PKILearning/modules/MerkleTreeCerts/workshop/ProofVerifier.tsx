@@ -256,7 +256,8 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
         <p className="text-sm text-muted-foreground mt-1">
           In the MTC model, this proof is embedded in the certificate itself — relying parties use
           it to verify the cert was included in the CA&apos;s signed batch without downloading the
-          full tree.
+          full tree. This step checks the hash path only. Its locally built root is unsigned;
+          authenticating a tree head requires a separate signature and trust check.
         </p>
       </div>
 
@@ -731,7 +732,7 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
                         <div>
                           <div className="text-sm font-bold text-success">Verification Passed</div>
                           <div className="text-[10px] text-muted-foreground">
-                            Computed root matches the signed root hash
+                            Computed root matches the expected root hash
                           </div>
                         </div>
                       </div>

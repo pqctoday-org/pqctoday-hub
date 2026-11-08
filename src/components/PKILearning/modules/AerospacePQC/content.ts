@@ -6,6 +6,7 @@ import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { CNSA_PHASE_OUT_LABEL } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 
 export const content: ModuleContent = {
   moduleId: 'aerospace-pqc',
@@ -51,8 +52,7 @@ export const content: ModuleContent = {
       source: 'CNSA 2.0',
     },
     {
-      label:
-        'NSS equipment and services that cannot support CNSA 2.0 phased out, unless an exception is granted',
+      label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
     },

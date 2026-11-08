@@ -7,6 +7,10 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, NIST_DEPRECATION, FIPS_STANDARDS } from '@/data/regulatoryTimelines'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_ACQUISITION_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -62,7 +66,7 @@ export const content: ModuleContent = {
       source: 'NIST',
     },
     {
-      label: 'CNSA 2.0 begins phased PQC mandates for U.S. national security systems',
+      label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },
@@ -141,14 +145,14 @@ export const timelineMilestones = [
     phase: 'Standardization',
   },
   {
-    year: String(CNSA_2_0.softwarePreferred),
-    event: 'CNSA 2.0 begins phased PQC mandates for U.S. national security systems',
-    phase: 'Policy',
-  },
-  {
     year: '2026',
     event:
       'EO 14412 sets U.S. federal civilian PQC deadlines — key establishment 2030, digital signatures 2031',
+    phase: 'Policy',
+  },
+  {
+    year: String(CNSA_2_0.networkingRequired),
+    event: CNSA_ACQUISITION_LABEL,
     phase: 'Policy',
   },
   {

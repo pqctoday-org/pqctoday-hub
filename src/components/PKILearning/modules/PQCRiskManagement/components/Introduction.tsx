@@ -7,6 +7,7 @@ import {
   Clock,
   ClipboardList,
   Grid3X3,
+  GitCompareArrows,
   ArrowRight,
   BarChart3,
   AlertTriangle,
@@ -260,7 +261,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            This workshop walks you through a structured three-step quantum risk management process:
+            This workshop walks you through a structured four-step quantum risk management process:
           </p>
           <div className="space-y-2">
             {[
@@ -281,6 +282,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 t: 'Risk Heatmap Visualization',
                 d: 'Plot your risks on a 5x5 likelihood-impact grid to identify critical migration priorities.',
                 icon: Grid3X3,
+              },
+              {
+                n: 4,
+                t: 'Compliance Gap Analysis',
+                d: 'Map your risk register against CNSA 2.0 and NIST IR 8547 deadlines to identify compliance gaps.',
+                icon: GitCompareArrows,
               },
             ].map((step) => {
               const Icon = step.icon
@@ -321,11 +328,15 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <div className="text-xs font-bold text-foreground mb-2">Regulatory Pressure</div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>
-                  &bull; NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip>: PQC required
-                  for NSS by 2030&ndash;2035
+                  &bull; NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (National
+                  Security Systems only; FAQ version 2.2, October 2026): new acquisitions from 1
+                  January 2027, equipment and services that cannot support it phased out by 31
+                  December 2030 absent an exception, and CNSA 2.0 algorithms mandated by 31 December
+                  2031 unless otherwise noted. NSM-10&apos;s 2035 goal is separate; the CRQC
+                  Scenario Planner shows each date with its scope and source
                 </li>
                 <li>
-                  &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable digital signature
+                  &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable public-key
                   algorithms deprecated after 2030, disallowed under NIST standards and guidelines
                   after 2035
                 </li>

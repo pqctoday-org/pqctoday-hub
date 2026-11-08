@@ -60,7 +60,7 @@ export type CompositeMLDSASignerFn = (
   mldsaCtx: Uint8Array
 ) => Promise<Uint8Array>
 
-/** Signs M' under the classical algorithm pinned by the profile (ECDSA-SHA512
+/** Signs M' under the classical algorithm pinned by the profile (ECDSA with its curve-specific hash
  *  or RSASSA-PSS-SHA256). Returns the signature in its standard encoding —
  *  DER for ECDSA, raw octet string for RSA-PSS — per draft-19 §4.3. */
 export type CompositeClassicalSignerFn = (mprime: Uint8Array) => Promise<Uint8Array>
@@ -282,7 +282,7 @@ export async function verifyCompositeCmsSignedData(
   }
 }
 
-async function verifyClassical(
+export async function verifyClassical(
   profile: CompositeProfileDraft19,
   pub: Uint8Array,
   sig: Uint8Array,
@@ -310,7 +310,7 @@ async function verifyClassical(
       return false
     }
   }
-  // ECDSA P-256-SHA-512 / P-384-SHA-512: pub = uncompressed point (0x04|X|Y),
+  // ECDSA with the profile's traditional hash (distinct from PH): pub = uncompressed point (0x04|X|Y),
   // sig = DER ECDSA-Sig-Value SEQUENCE { r, s }.
   //
   // CRITICAL: pass `lowS: false`. @noble/curves defaults to `lowS: true`
@@ -319,10 +319,12 @@ async function verifyClassical(
   // half of [1, n-1]. RFC 5480 / RFC 6090 / X.509 / CMS make NO such
   // requirement — softhsm + OpenSSL emit raw r||s without S normalization.
   // Without lowS:false here, half of all composite verifications fail.
-  const curve =
-    profile.compositeOid === COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512.compositeOid ? p256 : p384
+  if (profile.classical.kind !== 'ecdsa') return false
+  const curve = profile.classical.curve === 'P-256' ? p256 : p384
   try {
-    const msgHash = new Uint8Array(await crypto.subtle.digest('SHA-512', mPrime as BufferSource))
+    const msgHash = new Uint8Array(
+      await crypto.subtle.digest(profile.classical.tradHash, mPrime as BufferSource)
+    )
     return curve.verify(sig, msgHash, pub, { format: 'der', prehash: false, lowS: false })
   } catch {
     return false

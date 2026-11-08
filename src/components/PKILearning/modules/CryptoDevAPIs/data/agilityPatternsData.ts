@@ -47,11 +47,16 @@ Signature sig = Signature.getInstance(alg, providerName);`,
       },
       {
         language: 'C (OpenSSL)',
-        code: `// Load PQC provider at startup
-const char *provName = getenv("CRYPTO_PROVIDER");
-OSSL_PROVIDER_load(NULL, provName ? provName : "default");
-// All EVP calls now use the configured provider`,
-        notes: 'Environment variable or config file drives provider selection.',
+        code: `// Loading a provider makes its algorithms available; it does not select them
+const char *provName = getenv("CRYPTO_PROVIDER"); // e.g. "default" or "oqsprovider"
+OSSL_PROVIDER_load(NULL, "default"); // an explicit load switches off the implicit default fallback
+if (provName) OSSL_PROVIDER_load(NULL, provName);
+// Selection happens when the algorithm is fetched: name + property query
+char query[64];
+snprintf(query, sizeof query, "provider=%s", provName ? provName : "default");
+EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, algName, query);`,
+        notes:
+          "OSSL_PROVIDER_load() only makes a provider available. The implementation an EVP call uses is chosen when the algorithm is fetched, from the algorithm name and a property query. If several loaded providers offer the algorithm and the query does not tell them apart, OpenSSL chooses among them in an indeterminate way. The provider=<name> property is a convention OpenSSL's own providers follow; check what a third-party provider defines. An environment variable or config file can drive the choice.",
       },
     ],
   },
@@ -163,7 +168,7 @@ combined := hkdf.New(sha256.New,
     id: 'algorithm-negotiation',
     name: 'Algorithm Negotiation',
     description:
-      'Client and server advertise supported algorithms and agree on the strongest mutually-supported option. Similar to TLS cipher suite negotiation. Enables gradual ecosystem-wide migration.',
+      'Client and server advertise supported algorithms and agree on a mutually-supported option, as in TLS cipher suite and key-exchange group negotiation. Enables gradual ecosystem-wide migration, but only stays safe when the offers and the choice are authenticated and each side enforces a minimum policy.',
     whenToUse: [
       'Client-server protocols where both sides may have different capabilities',
       'Interoperability with legacy systems during migration',
@@ -171,8 +176,8 @@ combined := hkdf.New(sha256.New,
     ],
     tradeoffs: [
       {
-        pro: 'Backward compatible — falls back to classical if peer lacks PQC',
-        con: 'Downgrade attacks possible without proper safeguards',
+        pro: 'Backward compatible — can fall back to classical for a peer that lacks PQC, under an explicit and logged fallback rule',
+        con: 'Downgrade attacks possible unless the offers and the choice are authenticated and a minimum policy is enforced',
       },
       {
         pro: 'Enables gradual migration across an ecosystem',
@@ -186,15 +191,22 @@ combined := hkdf.New(sha256.New,
     codeExamples: [
       {
         language: 'Pseudocode',
-        code: `// Algorithm negotiation pattern
-clientSupported = ["ML-KEM-768", "X25519", "P-256"]
-serverSupported = ["ML-KEM-768", "ML-KEM-512", "X25519"]
+        code: `// Algorithm negotiation pattern (sketch)
+clientOffers = ["X25519+ML-KEM-768", "X25519", "P-256"] // sent in the first message
+serverPolicy = {
+  preferred: ["X25519+ML-KEM-768", "X25519"],
+  minimum: "X25519", // fail closed below this
+  classicalFallback: "only for listed legacy peers, logged",
+}
 
-// Server selects strongest mutual algorithm
-agreed = negotiate(clientSupported, serverSupported)
-// Result: "ML-KEM-768" (highest priority mutual)`,
+agreed = negotiate(clientOffers, serverPolicy)
+if (agreed == none) abort() // never "send anyway"
+
+// Both sides then authenticate a hash of the whole transcript
+// (offers + choice), as TLS 1.3 does in CertificateVerify and Finished.
+// A stripped PQC offer makes the two transcripts differ and the handshake fails.`,
         notes:
-          'Priority ordering determines preference. Server-side selection prevents client-driven downgrade.',
+          'Priority ordering only decides preference among the offers that arrive. If an attacker can edit the offers on the wire, the server simply picks from what is left, so server-side selection alone does not prevent downgrade. Prevention needs the offers and the choice bound into an authenticated transcript (TLS 1.3 signs the handshake transcript in CertificateVerify and covers it with Finished, RFC 8446), a minimum policy that fails closed, and classical fallback only under an explicit, logged condition. The binding is only as strong as the authentication algorithm is at handshake time.',
       },
     ],
   },

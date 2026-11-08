@@ -147,10 +147,11 @@ export function MobileAboutView() {
                   {group.id === 'vision' && (
                     <>
                       <Row title="Our vision">
-                        The algorithms protecting your data today — RSA, ECC, the cryptography
-                        behind TLS, SSH and every digital signature — will be broken by quantum
-                        computers. Most organisations do not know which systems are vulnerable, and
-                        most practitioners have never practiced post-quantum cryptography hands-on.
+                        The algorithms protecting your data today — RSA and elliptic-curve
+                        algorithms, and the RSA and ECDSA signatures in TLS and SSH — would be
+                        broken by a sufficiently capable quantum computer. Most organisations do not
+                        know which systems are vulnerable, and most practitioners have never
+                        practiced post-quantum cryptography hands-on.
                       </Row>
                       <Row title="How this hub adapts to you">
                         Telling the hub your role changes which pages lead your navigation, which
@@ -193,16 +194,19 @@ export function MobileAboutView() {
                         inaccuracies. Leaders are featured only with written consent.
                       </Row>
                       <Row title="Trust Engine">
-                        Records carry a trust score, a link to the original source document and, for
-                        every reviewed change, a named reviewer in a signed public audit trail. Each
-                        claim is checked against the source&rsquo;s exact words, and every change
-                        goes through the same maintainer-run flow — not a one-time label.
+                        Source links and any recorded trust or review metadata provide context for
+                        the entries that include them. Coverage varies by dataset; missing source or
+                        reviewer metadata does not establish that a claim was reviewed, and a
+                        computed result is not a guarantee of factual accuracy. Inspect the
+                        available source and its scope before reusing a claim.
                       </Row>
                       <Row title="Security audit">
-                        <span className="font-semibold text-status-success">0 vulnerabilities</span>{' '}
-                        (production and dev) — last audited {lastAudited}. OWASP Top 10 compliant:
-                        no dangerouslySetInnerHTML/eval/innerHTML, every external link protected
-                        against tabnabbing, no hardcoded secrets, CSP configured.
+                        Latest recorded report: {lastAudited}. This dated production npm dependency
+                        scan and static-code review concerns an earlier application version; it does
+                        not establish current vulnerability status or OWASP Top 10 compliance. HTML
+                        insertion requires controls at each use. User-supplied cloud API keys are
+                        saved in browser storage; public build-time identifiers are distinct from
+                        secret credentials.
                       </Row>
                     </>
                   )}
@@ -225,7 +229,8 @@ export function MobileAboutView() {
                         PQC Today is a fully static website — no backend server, no database, no
                         user accounts. Preferences, assessment results and learning progress are
                         stored in your browser's localStorage. {LOCAL_DATA_LEAVES_STATEMENT}{' '}
-                        Cryptographic operations run entirely client-side via WebAssembly.
+                        Cryptographic operations run entirely in your browser, using WebAssembly
+                        modules, the Web Crypto API and JavaScript libraries.
                       </Row>
                       <Row title="Analytics">
                         <span className="font-semibold text-foreground">Google Analytics 4</span>{' '}
@@ -256,9 +261,12 @@ export function MobileAboutView() {
                     <>
                       <Row title="Open source license">
                         Released under{' '}
-                        <span className="font-semibold text-foreground">GNU AGPL-3.0</span>. Free to
-                        copy, distribute and modify, provided modifications stay under the same
-                        license.
+                        <span className="font-semibold text-foreground">GNU AGPL-3.0</span>. You can
+                        run and modify it for your own use. If you pass copies on, they stay under
+                        the same license with their source; if you offer a modified version to
+                        people over a network, you must offer them its source. Private changes you
+                        never share are not covered by those obligations. The full license text
+                        governs.
                         <div className="mt-2 flex flex-col gap-1.5">
                           <ExternalLinkRow
                             href="https://github.com/pqctoday-org/pqctoday-hub/blob/main/LICENSE"

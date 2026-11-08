@@ -280,7 +280,7 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
           onClick={(l) => onFilter({ quantumRelevance: RELEVANCE_LABEL_TO_ID[l] ?? l })}
         />
         <PieCard
-          title="Patents by region"
+          title="Assignee-name heuristic groups"
           data={regionRows}
           colorMap={REGION_COLORS}
           onFilter={(l) => onFilter({ region: l })}
@@ -362,6 +362,13 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
           </div>
         )}
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        Region groups are inferred from assignee names using Hub rules, not verified headquarters,
+        nationality or filing jurisdiction. Missing or ambiguous names can be misclassified. Chart
+        filters retain these heuristic groups; they do not establish the geographic patent
+        landscape.
+      </p>
 
       <p className="pt-2 text-center text-[11px] text-muted-foreground">
         Patent data sourced from USPTO. For research and education — not legal or IP advice.

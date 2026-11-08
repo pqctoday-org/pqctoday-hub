@@ -15,7 +15,7 @@ import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { HsmPqcIntroduction } from './components/HsmPqcIntroduction'
 import { HsmPqcExercises } from './components/HsmPqcExercises'
 import { PKCS11_MECHANISMS } from './data/hsmConstants'
-import { HSM_PKCS11_OPERATIONS } from './data/hsmVendorData'
+import { HSM_PKCS11_OPERATIONS, HSM_VENDORS } from './data/hsmVendorData'
 import ragSummary from './rag-summary.md?raw'
 import curiousSummary from './curious-summary.md?raw'
 
@@ -131,6 +131,55 @@ describe('HsmPqc: what the lab tests and the vendor statements', () => {
     ]) {
       expect(page).not.toContain(gone)
     }
+  })
+
+  it("names the Utimaco product and its post-quantum package as Utimaco's own pages do", () => {
+    const page = openIntroText()
+    expect(page).toContain('utimaco u.trust gp hsm se-series (pcie;')
+    expect(page).toContain('utimaco u.trust gp hsm se-series (quantum protect)')
+    expect(page).toContain('quantum protect firmware module')
+    for (const gone of ['utimaco securityserver', 'q-safe']) {
+      expect(page).not.toContain(gone)
+    }
+  })
+
+  it('does not attach the CryptoServer Se-Series Gen2 certificate to the u.trust Se-Series name', () => {
+    const page = openIntroText()
+    // The CMVP lists certificate #3925 under the CryptoServer name. Nothing the module cites
+    // says the u.trust GP HSM Se-Series is the same product, so the page may say where the
+    // certificate is listed but not that this product holds it.
+    expect(page).toContain('under the product name cryptoserver se-series gen2')
+    expect(page).toContain(
+      'has not established that the certificate covers the u.trust gp hsm se-series'
+    )
+    expect(page).not.toContain('se-series (pcie, fips 140-2')
+    expect(page).not.toContain('fips 140-2 level 3 (cert #3925, historical)')
+    // The card shows no certificate claim of its own
+    expect(page).toContain('unconfirmed for this product')
+  })
+
+  it('uses the same Utimaco product wording and certificate attribution in the vendor table', () => {
+    const utimaco = HSM_VENDORS.find((v) => v.id === 'utimaco')!
+    expect(utimaco.product).toBe('u.trust GP HSM Se-Series (Quantum Protect)')
+    expect(utimaco.firmwareVersion).toBe(
+      'Quantum Protect firmware module (version not stated by Utimaco)'
+    )
+    expect(utimaco.fips140Level).toMatch(/^Unconfirmed:/)
+    expect(utimaco.fips140Level).toContain('listed under CryptoServer Se-Series Gen2')
+    const everyUtimacoText = JSON.stringify({
+      vendors: HSM_VENDORS,
+      operations: HSM_PKCS11_OPERATIONS,
+    }).toLowerCase()
+    for (const gone of ['securityserver', 'q-safe', 'se gen2 (quantum', '5.0+']) {
+      expect(everyUtimacoText).not.toContain(gone)
+    }
+  })
+
+  it("does not speak about the maintainers' document holdings in learner text", () => {
+    const page = openIntroText()
+    expect(page).not.toContain('pages we hold')
+    expect(page).toContain("utimaco's product pages give no duration")
+    expect(page).toContain("entrust's release notes and product pages give no duration")
   })
 
   it('the exercises say the same about hedged signing, nShield, AWS CloudHSM and the submission route', () => {

@@ -7,8 +7,18 @@ import React, { useState } from 'react'
 import { Check, Zap, ChevronDown } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { DOMAIN_META, TONES } from './tones'
-import { STEP_META, type AssessStepKey, type AssessTrack } from './assessFlowModel'
+import { STEP_META, TRACK_INFO, type AssessStepKey, type AssessTrack } from './assessFlowModel'
+import { FULL_LOCKED_SECTIONS } from './reportContract'
 import type { AssessFlow } from './useAssessFlow'
+
+const sectionList = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' })
+
+/** Fast-track upsell copy, built from the shared track and report contracts. */
+function fastTrackUnlockCopy(): string {
+  const extra = TRACK_INFO.comprehensive.count - TRACK_INFO.quick.count
+  const sections = sectionList.format(FULL_LOCKED_SECTIONS.map((name) => name.toLowerCase()))
+  return `Answer the ${extra} extra full-track ${extra === 1 ? 'question' : 'questions'} to unlock ${sections}.`
+}
 
 interface AssessStepRailProps {
   flow: AssessFlow
@@ -143,7 +153,7 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
             Fast track → partial report
           </div>
           <p className="mb-2.5 text-[11px] leading-relaxed text-muted-foreground">
-            The algorithm map, dated roadmap &amp; trending need the 5 extra full-track questions.
+            {fastTrackUnlockCopy()}
           </p>
           <Button
             variant="ghost"

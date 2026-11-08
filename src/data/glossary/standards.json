@@ -46,7 +46,7 @@
     "term": "Common Criteria",
     "acronym": "CC",
     "definition": "An international standard (ISO/IEC 15408) for evaluating the security properties of IT products, used globally for government procurement.",
-    "technicalNote": "The Common Criteria Recognition Arrangement (CCRA) is a 31-nation mutual recognition agreement: national Certification Bodies (e.g., BSI for Germany, ANSSI for France, NIAP for the US) issue CC certificates that are accepted across all member states. The EUCC is the EU-specific adaptation managed by ENISA.",
+    "technicalNote": "The Common Criteria Recognition Arrangement (CCRA) is an arrangement between government participants: national Certification Bodies (e.g., BSI for Germany, ANSSI for France, NIAP for the US) authorise CC certificates, and other participants plan to recognise them within the arrangement's scope (collaborative Protection Profiles, or assurance up to EAL 2). Recognition is not an endorsement or guarantee of a product. EUCC is a separate EU scheme based on the Common Criteria, adopted under the Cybersecurity Act.",
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
     "category": "standard"
@@ -54,8 +54,8 @@
   {
     "term": "EUCC",
     "acronym": "EUCC",
-    "definition": "EU Cybersecurity Certification Scheme — the European Union's harmonized product security certification scheme based on Common Criteria, managed by ENISA under the EU Cybersecurity Act (2019).",
-    "technicalNote": "EUCC certificates are valid across all 27 EU member states, eliminating the need for per-country certification. ENISA maintains the Agreed Cryptographic Mechanisms (ACM) list specifying which PQC algorithms are approved for EUCC-certified products. National Certification Authorities (e.g., BSI, ANSSI) issue EUCC certificates.",
+    "definition": "EU Cybersecurity Certification Scheme — the European Union's harmonized product security certification scheme based on Common Criteria, adopted by Commission Implementing Regulation (EU) 2024/482 under the EU Cybersecurity Act (2019).",
+    "technicalNote": "A European cybersecurity certificate is recognised in all Member States under the Cybersecurity Act, but certification is voluntary unless Union or national law requires it. EUCC certificates at assurance level 'substantial' or 'high' are issued by accredited certification bodies (for 'high', authorised by the national cybersecurity certification authority) after evaluation by an ITSEF. The Agreed Cryptographic Mechanisms document of the European Cybersecurity Certification Group gives recommendations on cryptographic mechanisms preferably used in products submitted to certification; it is maintained by an ECCG subgroup and is not a list of approved PQC algorithms.",
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
     "category": "standard"
@@ -69,8 +69,8 @@
   },
   {
     "term": "NIS2 Directive",
-    "definition": "The EU Network and Information Security Directive 2 (Directive 2022/2555), requiring operators of essential services and digital service providers to implement strong cryptographic controls. Transposed into national law across EU member states by October 2024.",
-    "technicalNote": "NIS2 mandates risk-based security measures including encryption and cryptographic key management. ENISA guidance links NIS2 obligations directly to PQC migration timelines, making it a key compliance driver for EU organisations.",
+    "definition": "The EU Network and Information Security Directive 2 (Directive (EU) 2022/2555). Article 21 requires essential and important entities to take appropriate and proportionate cybersecurity risk-management measures, including policies and procedures on the use of cryptography and, where appropriate, encryption. Member States had to adopt national measures by 17 October 2024 and apply them from 18 October 2024; what applies to a given entity depends on national law.",
+    "technicalNote": "Article 21(2)(h) names cryptography and encryption policies as one of the minimum elements of the measures; the Directive text does not mention post-quantum cryptography. EU-level PQC timelines come from separate documents: the Commission's Recommendation of 11 April 2024 and the roadmap that EU Member States, supported by the Commission, issued in June 2025, which the Commission describes as a high-level paper aimed at Member States.",
     "relatedModule": "/compliance",
     "complexity": "intermediate",
     "category": "standard"
@@ -108,7 +108,7 @@
   {
     "term": "NIST SP 800-131A",
     "definition": "NIST Special Publication providing guidance on transitioning the use of cryptographic algorithms and key lengths. Defines which algorithms are approved, deprecated, or disallowed for federal use.",
-    "technicalNote": "Revision 3 (2019) deprecated SHA-1 and 2TDEA. A future revision is expected to align with NIST IR 8547 timelines, formally disallowing RSA, ECDSA, and DH after 2035.",
+    "technicalNote": "The current final edition is Revision 2 (March 2019); among other things it disallows SHA-1 for digital signature generation except where NIST protocol-specific guidance allows it. Revision 3 has been released only as an initial public draft (October 2024). NIST IR 8547 (October 2026) states that NIST will revise SP 800-131A with more detailed guidelines and schedules, and that NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035.",
     "relatedModule": "/library?ref=NIST-SP-800-131A-Rev3",
     "complexity": "intermediate",
     "category": "standard"
@@ -138,7 +138,7 @@
   {
     "term": "HIPAA",
     "acronym": "HIPAA",
-    "definition": "Health Insurance Portability and Accountability Act, the U.S. law requiring encryption of protected health information. Patient data faces HNDL risk.",
+    "definition": "Health Insurance Portability and Accountability Act, a U.S. law whose Security Rule requires covered entities and business associates to protect electronic protected health information. Encryption is an addressable specification: it must be assessed and implemented where reasonable and appropriate, or the reason documented and an equivalent measure used. Patient data faces HNDL risk.",
     "relatedModule": "/threats",
     "complexity": "intermediate",
     "category": "standard"
@@ -220,7 +220,7 @@
   },
   {
     "term": "NIST SP 800-57",
-    "definition": "NIST Special Publication 800-57: Recommendation for Key Management. Defines the seven-stage key lifecycle (pre-operational, operational, post-operational, etc.) and cryptoperiod guidance.",
+    "definition": "NIST Special Publication 800-57: Recommendation for Key Management. Part 1 Rev. 5 (May 2020) describes four key-management phases (pre-operational, operational, post-operational and destroyed), the key states within them, and cryptoperiod guidance. Revision 6 is an initial public draft (December 2025).",
     "complexity": "intermediate",
     "category": "standard",
     "relatedModule": "/learn/kms-pqc"
@@ -299,8 +299,8 @@
   {
     "term": "NIST RMF",
     "acronym": "RMF",
-    "definition": "NIST Risk Management Framework (SP 800-37) — a six-step lifecycle process (Categorise, Select, Implement, Assess, Authorise, Monitor) for managing information security and privacy risk in federal and commercial systems.",
-    "technicalNote": "Step 1 (Categorise) uses FIPS 199 impact levels (Low/Moderate/High) to classify systems. For PQC, categorisation directly informs which controls from SP 800-53 apply, including post-quantum cryptographic requirements.",
+    "definition": "NIST Risk Management Framework (SP 800-37 Rev. 2) — a seven-step lifecycle process (Prepare, Categorise, Select, Implement, Assess, Authorise, Monitor) for managing information security and privacy risk in information systems and organisations.",
+    "technicalNote": "The Categorise step classifies the system and its information by the impact of loss, using FIPS 199, which results in low-, moderate- or high-impact designations; the Select step then chooses and tailors control baselines. SP 800-37 Rev. 2 (December 2018) does not itself set post-quantum requirements.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard"
@@ -316,7 +316,7 @@
   {
     "term": "FIPS 199",
     "definition": "Federal Information Processing Standard 199 — NIST's standard for categorising federal information and information systems. Defines three impact levels (Low, Moderate, High) for confidentiality, integrity, and availability that drive control selection in the NIST RMF.",
-    "technicalNote": "High confidentiality impact (per FIPS 199) triggers the most stringent cryptographic requirements. Under CNSA 2.0, High-impact systems face the earliest PQC migration deadlines.",
+    "technicalNote": "A High rating on any one of the three objectives (confidentiality, integrity or availability) makes a federal system a high impact system. As NIST IR 8547 describes OMB M-26-15, such systems and high value assets must adopt PQC for key establishment by 31 December 2030 and for digital signatures by 31 December 2031. National security systems follow CNSA 2.0 under CNSS policy instead; M-26-15 does not apply to them.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard"
@@ -324,8 +324,8 @@
   {
     "term": "GDPR",
     "acronym": "GDPR",
-    "definition": "General Data Protection Regulation — EU Regulation 2016/679 requiring appropriate technical and organisational measures to protect personal data. The \"appropriate technical measures\" clause is interpreted to require state-of-the-art encryption, creating an implicit obligation to migrate to PQC as quantum threats mature.",
-    "technicalNote": "GDPR Art. 32 (\"Security of processing\") obliges controllers and processors to implement encryption commensurate with the risk. As CRQC timelines become clearer, regulators are expected to interpret Art. 32 as mandating PQC readiness for long-retained personal data.",
+    "definition": "General Data Protection Regulation — EU Regulation 2016/679 requiring controllers and processors to implement appropriate technical and organisational measures to protect personal data. Article 32 lists pseudonymisation and encryption among the measures to consider, judged against the state of the art, cost and risk. The regulation names no algorithms and sets no post-quantum migration date.",
+    "technicalNote": "GDPR Art. 32 (\"Security of processing\") requires a level of security appropriate to the risk, taking account of the state of the art, the costs of implementation and the nature, scope, context and purposes of processing; encryption is listed \"as appropriate\". The text does not mention quantum computing. Whether long-retained personal data needs post-quantum protection is an assessment under that risk-based test (this site's reading), and how Art. 32 applies in a given case is decided by the competent supervisory authority or court.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard"
@@ -341,7 +341,7 @@
   {
     "term": "CCPA",
     "acronym": "CCPA",
-    "definition": "California Consumer Privacy Act — U.S. state law (effective 2020, amended by CPRA in 2023) granting California residents rights over their personal data. Data breaches of unencrypted personal information trigger mandatory notification, incentivising strong cryptography including PQC for long-retained data.",
+    "definition": "California Consumer Privacy Act — U.S. state law, operative since 1 January 2020 and amended by the CPRA from 1 January 2023, giving California residents rights over their personal data. Section 1798.150 lets consumers sue for statutory damages when nonencrypted and nonredacted personal information is exposed because a business failed to maintain reasonable security. The statute does not mention post-quantum cryptography.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "beginner",
     "category": "standard"
@@ -349,7 +349,7 @@
   {
     "term": "LGPD",
     "acronym": "LGPD",
-    "definition": "Lei Geral de Proteção de Dados — Brazil's data protection law (Law 13.709/2018), modelled on GDPR. Requires appropriate technical security measures for personal data. Brazilian DPA (ANPD) guidance on cryptographic adequacy is expected to align with global PQC migration timelines.",
+    "definition": "Lei Geral de Proteção de Dados — Brazil's data protection law (Law 13.709/2018), modelled on GDPR. Article 46 requires processing agents to adopt technical and administrative security measures to protect personal data from unauthorised access and from accidental or unlawful destruction, loss, alteration or improper processing. The national authority (ANPD) may set minimum technical standards; the law text does not mention encryption.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard"
@@ -357,7 +357,7 @@
   {
     "term": "PDPA",
     "acronym": "PDPA",
-    "definition": "Personal Data Protection Act — Singapore's primary data protection law administered by the PDPC. Requires reasonable security arrangements to protect personal data. Singapore's CSA has published PQC guidance referencing PDPA obligations for organisations managing long-retained personal data.",
+    "definition": "Personal Data Protection Act — Singapore's primary data protection law administered by the PDPC. Section 24 requires organisations to make reasonable security arrangements to protect personal data in their possession or under their control. The PDPC's guidelines say there is no one-size-fits-all solution and list encrypting personal data among example technical measures.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard"
@@ -365,8 +365,8 @@
   {
     "term": "DORA",
     "acronym": "DORA",
-    "definition": "Digital Operational Resilience Act — EU Regulation 2022/2554, applying to financial entities and their ICT service providers from January 2025. Requires ICT risk management, resilience testing, and third-party risk oversight. PQC migration readiness is expected to be assessed under DORA's ICT risk management chapter.",
-    "technicalNote": "DORA Art. 6 mandates a comprehensive ICT risk management framework including cryptographic controls. EBA and ESMA technical standards under DORA are expected to reference ENISA PQC guidance as it matures.",
+    "definition": "Digital Operational Resilience Act — EU Regulation 2022/2554, applying to financial entities and their ICT service providers from 17 January 2025. Requires an ICT risk management framework, resilience testing, and third-party risk oversight. Delegated Regulation (EU) 2024/1774 requires an encryption and cryptographic-controls policy that provides for updating cryptographic technology as cryptanalysis develops; neither text sets a post-quantum migration date.",
+    "technicalNote": "DORA Art. 9(4)(d) requires policies and protocols for protecting cryptographic keys, with data encrypted based on data classification and ICT risk assessment. Delegated Regulation (EU) 2024/1774 Art. 6 (encryption and cryptographic controls) and Art. 7 (cryptographic key management) set the detailed policy content; its recitals refer to threats from quantum advancements, but the texts name no post-quantum algorithms.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard"
@@ -392,15 +392,15 @@
     "term": "NERC CIP",
     "acronym": "NERC CIP",
     "definition": "North American Electric Reliability Corporation Critical Infrastructure Protection standards. Mandatory cybersecurity requirements for bulk electric system operators.",
-    "technicalNote": "CIP-012 mandates encrypted inter-control-center communications (ICCP/TASE.2) — the highest-priority PQC migration target in the energy sector. CIP-013 requires supply chain risk management including vendor PQC readiness.",
+    "technicalNote": "CIP-012 requires an applicable Responsible Entity that owns or operates a Control Center to implement a documented plan to mitigate the risks of unauthorized disclosure and modification of real-time assessment and monitoring data sent between Control Centers; encryption is one example method, and no protocol or algorithm is named. CIP-013 requires supply chain cyber security risk management plans for high and medium impact BES Cyber Systems. Neither standard mentions post-quantum cryptography; any PQC priority for these links is analysis of a stated scenario, not a CIP requirement.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
   },
   {
     "term": "IEC 61850",
-    "definition": "International standard for communication networks and systems in substations. Defines GOOSE, MMS, and Sampled Values protocols for protection and control.",
-    "technicalNote": "GOOSE messages have a 4ms delivery requirement for protection relay tripping. HMAC authentication is quantum-safe, but asymmetric key distribution for HMAC seeds requires PQC migration.",
+    "definition": "International standard series for communication networks and systems in power utility automation, including substations. Its mappings cover MMS, GOOSE and Sampled Values for protection and control.",
+    "technicalNote": "IEC 62351-6:2020 describes time-critical Layer 2 GOOSE and Sampled Value applications as requiring 3 ms response times and does not recommend encryption for them; authentication uses a message authentication code. Key management is specified separately in IEC 62351-9, and that public-key side is where post-quantum migration questions arise.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
@@ -408,7 +408,7 @@
   {
     "term": "IEC 62351",
     "definition": "Power systems management and associated information exchange — security standard. Covers TLS profiles, GOOSE authentication, and key management for power systems.",
-    "technicalNote": "Part 3 covers TCP/IP security (TLS for MMS/ICCP), Part 6 covers GOOSE peer-to-peer authentication using HMAC, and Part 9 defines key management architecture for power systems.",
+    "technicalNote": "Part 3 (IEC 62351-3:2023) profiles TLS for protocols over TCP/IP; Part 4 covers profiles including MMS and derivatives (the basis for ICCP security); Part 5 (2023) secures IEC 60870-5 and derivatives, and DNP3 Secure Authentication is based on it; Part 6 (2020) secures IEC 61850 protocols including GOOSE and Sampled Values with message authentication codes; and Part 9 (2023) specifies cyber security key management. Editions differ by part, so cite the edition used.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
@@ -416,7 +416,7 @@
   {
     "term": "IEEE 2030.5",
     "definition": "Smart Energy Profile 2.0 standard for distributed energy resource communication using certificate-based device authentication.",
-    "technicalNote": "Each DER (solar inverter, battery, EV charger) has a unique IEEE 2030.5 device certificate signed by the utility CA. Fleet-wide PQC certificate reissuance is required for migration.",
+    "technicalNote": "In the California Smart Inverter Profile, each communicating device has an X.509 v3 device certificate that chains to a root CA through a manufacturer CA, not a utility CA, and TLS 1.2 with TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8 over P-256 is specified. A move to post-quantum certificates would need an updated profile and reissued device certificates.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
@@ -488,8 +488,8 @@
   {
     "term": "ASIL",
     "acronym": "ASIL",
-    "definition": "Automotive Safety Integrity Level, a risk classification defined by ISO 26262 ranging from QM (quality management, no safety requirement) to ASIL-D (most stringent). Higher ASIL levels demand tighter crypto verification latency budgets and redundancy requirements.",
-    "technicalNote": "ASIL-D systems (braking, steering) require fail-operational crypto with dual-path verification (PQC primary + classical backup) and hardware watchdog timers. Verification must complete within 10-15ms. ASIL-A/B systems can tolerate fail-safe degradation with relaxed timing.",
+    "definition": "Automotive Safety Integrity Level, a risk classification defined by ISO 26262: ASIL A (lowest) to ASIL D (highest integrity requirements), plus QM (quality management, no safety requirement). The level comes from a hazard analysis of severity, exposure and controllability, and sets how rigorous the safety measures must be.",
+    "technicalNote": "The ASIL label does not by itself fix a cryptographic latency budget, redundancy scheme or fail-operational behaviour. Such requirements are derived for each item from its hazard analysis and its fault tolerant time interval (FTTI), the time a fault can be present before a hazardous event; checks must fit inside that budget on the target hardware. The safe reaction to a failed or late verification is decided in the item's safety concept. Any specific figure, such as a millisecond verification budget or a dual PQC and classical path, is a design assumption for a stated scenario and should be labelled as one.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
     "category": "standard"
@@ -505,8 +505,8 @@
   },
   {
     "term": "AUTOSAR",
-    "definition": "AUTomotive Open System ARchitecture, a standardized software architecture for automotive ECUs. AUTOSAR Classic Platform provides the SHE-based Crypto Service Manager (limited to AES/CMAC). AUTOSAR Adaptive Platform offers a flexible Crypto Service Manager that can integrate PQC algorithms.",
-    "technicalNote": "AUTOSAR Adaptive Platform is the key enabler for automotive crypto-agility. Its Crypto Service Manager abstracts algorithm selection behind a provider interface, allowing OEMs to swap ECDSA for ML-DSA without modifying application software. Classic Platform ECUs (80%+ of deployed fleet) cannot be upgraded to PQC without hardware replacement.",
+    "definition": "AUTomotive Open System ARchitecture, a standardized software architecture for automotive ECUs, with a Classic Platform and an Adaptive Platform. On the Classic Platform, software calls the Crypto Service Manager (CSM), which reaches software or hardware crypto drivers (for example an HSM or SHE) through the Crypto Interface. On the Adaptive Platform, the Cryptography functional cluster exposes the ara::crypto API, with crypto providers behind it.",
+    "technicalNote": "The two platforms specify different crypto interfaces, so Classic and Adaptive software are not interchangeable. In release R25-11, the Adaptive Cryptography specification lists algorithm identifiers for ML-DSA, ML-KEM and SLH-DSA, while the Classic CSM, Crypto Interface and Crypto Driver specifications list algorithm families such as AES, RSA and ECDSA plus a custom family and do not mention post-quantum algorithms. Whether a given ECU can run a post-quantum algorithm depends on its crypto driver or provider, memory, processing power and any hardware security module, so it has to be assessed per ECU.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
     "category": "standard"
@@ -531,7 +531,7 @@
     "term": "FedRAMP",
     "acronym": "FedRAMP",
     "definition": "Federal Risk and Authorization Management Program — a U.S. government-wide program that provides a standardized approach to security assessment, authorization, and continuous monitoring for cloud products and services used by federal agencies.",
-    "technicalNote": "FedRAMP authorization requires FIPS 140-2/140-3 validated cryptographic modules. As NIST finalizes PQC standards, FedRAMP-authorized cloud service providers will need to migrate to quantum-resistant algorithms to maintain their Authority to Operate (ATO). Timeline aligns with CNSA 2.0 milestones.",
+    "technicalNote": "Under FedRAMP's Consolidated Rules for 2026, the use of cryptographic modules validated by the NIST Cryptographic Module Validation Program depends on the certification class: Class A and B providers may use them, Class C providers should and Class D providers must. OMB M-26-15 tells agencies to engage their FedRAMP-authorized cloud providers about PQC migration responsibilities. CNSA 2.0 dates apply to national security systems, not to FedRAMP.",
     "relatedModule": "/learn/compliance-strategy",
     "complexity": "intermediate",
     "category": "standard"
@@ -563,7 +563,7 @@
   {
     "term": "eIDAS",
     "acronym": "electronic IDentification, Authentication and trust Services",
-    "definition": "EU regulation governing electronic identity and trust services across member states. eIDAS 2.0 introduces the EU Digital Identity Wallet with phased PQC-relevant milestones for high-risk and full PQC adoption.",
+    "definition": "EU regulation (No 910/2014) governing electronic identification and trust services across member states. Regulation (EU) 2024/1183 (eIDAS 2.0) establishes the European Digital Identity Framework: each Member State must provide at least one European Digital Identity Wallet within 24 months of the entry into force of the implementing acts. The amending text sets no post-quantum requirements.",
     "complexity": "intermediate",
     "category": "standard",
     "relatedModule": "/learn/digital-id"
@@ -624,8 +624,8 @@
   },
   {
     "term": "OMB M-23-02",
-    "definition": "US Office of Management and Budget memorandum (November 2022) requiring federal agencies to maintain an annual cryptographic inventory and a prioritised PQC migration plan through 2035.",
-    "technicalNote": "OMB M-23-02 is the policy backstop behind much of the federal PQC inventory cadence; it sits alongside CNSA 2.0 (NSS deadlines 2030/2033) as the recurring forcing function for cryptographic posture programs in federal scope.",
+    "definition": "US Office of Management and Budget memorandum (November 2022) directing federal agencies to submit an annual prioritized inventory of quantum-vulnerable cryptographic systems (excluding national security systems) until 2035 or as superseding guidance directs, plus an assessment of the funding needed to migrate them.",
+    "technicalNote": "OMB M-23-02 sets the recurring inventory cadence for non-national-security federal systems, with a focus on high value assets and high impact systems. OMB M-26-15 (June 2026) later requires agencies to submit PQC Migration Plans and sets migration phases. National security systems are outside both memoranda and follow CNSA 2.0 under NSS policy.",
     "relatedModule": "/learn/crypto-mgmt-modernization",
     "complexity": "intermediate",
     "category": "standard"

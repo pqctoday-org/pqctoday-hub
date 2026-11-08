@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { PolicyTemplateGenerator } from './PolicyTemplateGenerator'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
 
 describe('PolicyTemplateGenerator', () => {
   it('renders all four policy type tiles', () => {
@@ -65,5 +66,22 @@ describe('PolicyTemplateGenerator', () => {
     fireEvent.click(keyMgmtTile)
     expect(cryptoTile).toHaveAttribute('aria-pressed', 'false')
     expect(keyMgmtTile).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('presents the hardcoded-crypto rotation default as a starting point to confirm per system', () => {
+    useAssessmentStore.setState({ cryptoAgility: 'hardcoded' })
+    try {
+      render(<PolicyTemplateGenerator />)
+      fireEvent.click(screen.getByRole('button', { name: /Key Management Policy/i }))
+      expect(screen.getByRole('button', { name: /2 years/ })).toBeInTheDocument()
+      const note = screen.getByText(/Starting point only/)
+      expect(note).toHaveTextContent('pre-selects its longest interval')
+      expect(note).toHaveTextContent('confirm per system')
+      expect(note).toHaveTextContent('SP 800-57 Pt 1 Rev 5 Sec 5.3.1')
+      expect(screen.queryByText(/longest safe interval/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/can’t be rotated often/)).not.toBeInTheDocument()
+    } finally {
+      useAssessmentStore.setState({ cryptoAgility: '' })
+    }
   })
 })

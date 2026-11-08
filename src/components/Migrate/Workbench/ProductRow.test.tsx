@@ -73,6 +73,28 @@ describe('ProductRow sponsor badge', () => {
   })
 })
 
+describe('ProductRow PQC status badge', () => {
+  it('shows PSK for a pre-shared-key-only product, never Partial or Unknown', () => {
+    render(
+      <ProductRow
+        product={makeItem({
+          pqcStatusCanonical: 'psk',
+          pqcSupport: 'PSK (pre-shared key mixed in)',
+        })}
+      />
+    )
+    expect(screen.getByText('PSK')).toBeInTheDocument()
+    expect(screen.queryByText('Partial')).not.toBeInTheDocument()
+    expect(screen.queryByText('Unknown')).not.toBeInTheDocument()
+  })
+
+  it('still shows Partial for a partial product', () => {
+    render(<ProductRow product={makeItem({ pqcStatusCanonical: 'partial' })} />)
+    expect(screen.getByText('Partial')).toBeInTheDocument()
+    expect(screen.queryByText('PSK')).not.toBeInTheDocument()
+  })
+})
+
 describe('ProductRow compact + extraBadges', () => {
   it('keeps the default card chrome when compact is omitted (no regression)', () => {
     const { container } = render(<ProductRow product={makeItem({})} />)

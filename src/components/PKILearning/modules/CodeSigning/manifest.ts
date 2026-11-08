@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'code-signing',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-029',
   title: 'Code Signing',
   description:
@@ -31,7 +31,7 @@ const manifest: ModuleManifest = {
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {
     step: 'binary-signing',
-    text: 'Pick ML-DSA-44, 65 or 87 in Binary Signing, generate a keypair, type some data and press Sign: the SHA-256 hash and the signature appear with its byte size — real ones when Live WASM mode is on.',
+    text: 'Pick ML-DSA-44, 65 or 87 in Binary Signing. Explore placeholder outputs in the walkthrough, or enable Live HSM Mode, generate sample keys and choose Sign and check sample. The live check verifies a signature on your message; the separately displayed SHA-256 value is its fingerprint.',
   },
   playgroundTool: 'firmware-signing',
   taxonomy: { algorithms: ['ML-DSA', 'LMS/XMSS'], standards: ['FIPS 204', 'NIST SP 800-208'] },

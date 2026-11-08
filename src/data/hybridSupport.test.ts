@@ -6,6 +6,7 @@ import {
   parseHybridSigSupport,
   hybridSupportBadges,
   matchesHybridFacet,
+  hybridSupportLevel,
 } from './hybridSupport'
 
 const item = (over: Partial<SoftwareItem>) => ({ productId: 'x', ...over }) as SoftwareItem
@@ -111,5 +112,32 @@ describe('matchesHybridFacet', () => {
     for (const f of ['tls-default', 'kem-api', 'sig-api'] as const) {
       expect(matchesHybridFacet(item({}), f)).toBe(false)
     }
+  })
+})
+
+describe('hybridSupportLevel', () => {
+  it('reads not-assessed when neither structured column is present', () => {
+    expect(hybridSupportLevel(item({}))).toBe('not-assessed')
+    expect(hybridSupportLevel(item({ hybridKemSupport: [] }))).toBe('not-assessed')
+  })
+
+  it('reads yes for a hybrid TLS group, a hybrid KEM API or a composite signature API', () => {
+    expect(hybridSupportLevel(item({ hybridKemSupport: ['tls-default'] }))).toBe('yes')
+    expect(hybridSupportLevel(item({ hybridKemSupport: ['tls-optin'] }))).toBe('yes')
+    expect(hybridSupportLevel(item({ hybridKemSupport: ['api'] }))).toBe('yes')
+    expect(hybridSupportLevel(item({ hybridSigSupport: 'api' }))).toBe('yes')
+  })
+
+  it('reads partial for experimental-only support, and yes wins over experimental', () => {
+    expect(hybridSupportLevel(item({ hybridKemSupport: ['api-experimental'] }))).toBe('partial')
+    expect(hybridSupportLevel(item({ hybridSigSupport: 'api-experimental' }))).toBe('partial')
+    expect(
+      hybridSupportLevel(item({ hybridKemSupport: ['api-experimental'], hybridSigSupport: 'api' }))
+    ).toBe('yes')
+  })
+
+  it('reads no for a structured entry that lists no hybrid support', () => {
+    expect(hybridSupportLevel(item({ hybridKemSupport: ['none'] }))).toBe('no')
+    expect(hybridSupportLevel(item({ hybridSigSupport: 'none' }))).toBe('no')
   })
 })

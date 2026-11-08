@@ -7,10 +7,12 @@ interface Props {
   onNavigateToWorkshop?: (step?: number) => void
 }
 
-const EXERCISES: { prompt: string; step: number; cta: string }[] = [
+const EXERCISES: { prompt: string; explanation?: string; step: number; cta: string }[] = [
   {
     prompt:
-      'A vulnerability scanner reports "CKM_ECDSA_SHA256" and a JWT service reports "ES256" for what your team suspects is the same signing key. Confirm it — and explain why "RSA2048" alone, from a third tool, can\'t be normalized the same way.',
+      'A sample scanner reports "CKM_ECDSA_SHA256" and a sample JWT record reports "ES256". Use the normalizer to compare their algorithm families. What do those labels tell you, and what additional information would you need before linking the records to the same signing key? Why does "RSA2048" alone leave its signing profile unspecified?',
+    explanation:
+      'Matching algorithm labels or families does not establish key identity. ES256 specifies P-256 with SHA-256; CKM_ECDSA_SHA256 does not by itself select the key’s curve. In production tools, inspect key parameters, public-key fingerprints computed over a comparable representation, and record provenance before linking keys. This normalizer resolves names; it does not verify that two records contain the same key.',
     step: 0,
     cta: 'Use the Algorithm Normalizer',
   },
@@ -25,12 +27,13 @@ const EXERCISES: { prompt: string; step: number; cta: string }[] = [
 export const CryptoRegistryExercises: FC<Props> = ({ onNavigateToWorkshop }) => (
   <div className="space-y-3">
     <p className="text-sm text-muted-foreground">
-      Apply each idea in the workshop. There&apos;s no single right answer — reason through the
-      trade-off, then check it against the tool.
+      Apply each idea in the workshop. Distinguish what the tool resolves from information it does
+      not receive or verify.
     </p>
     {EXERCISES.map((ex, i) => (
       <div key={i} className="glass-panel p-4">
         <p className="text-sm text-foreground mb-3">{ex.prompt}</p>
+        {ex.explanation && <p className="text-xs text-muted-foreground mb-3">{ex.explanation}</p>}
         <Button
           variant="outline"
           size="sm"

@@ -19,6 +19,7 @@
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { canonicalJson, sha256Hex } from '../ir'
+import { nonmatchingCaseCount } from '../compare'
 import { createPkcs11Engine } from '../engine'
 import type { PlanProfile } from '../dispatch'
 import { executePrepared, preparePrompt } from '../run'
@@ -86,6 +87,8 @@ const appVersion = (repoRoot: string): string | null => {
     return null
   }
 }
+
+const plural = (n: number, noun: string): string => `${n} ${noun}${n === 1 ? '' : 's'}`
 
 export const runCli = async (args: CliArgs, repoRoot: string): Promise<CliResult> => {
   const promptText = readFileSync(args.prompt, 'utf8')
@@ -166,7 +169,9 @@ export const runCli = async (args: CliArgs, repoRoot: string): Promise<CliResult
     const g = run.golden
     summary +=
       `; golden vs expectedResults: ${g.matched}/${ev.answered} matched, ` +
-      `${g.mismatched.length} mismatched, ${g.unanswered} unanswered, ${g.unexpected.length} unexpected`
+      `${plural(g.mismatched.length, 'field difference')} in ${plural(nonmatchingCaseCount(g), 'case')}, ` +
+      `${g.unanswered} unanswered, ${g.unexpected.length} unexpected`
+    // Absent cases (unsupported on purpose) keep their treatment; a present case with a missing or wrong answer fails.
     if (g.mismatched.length > 0 || g.unexpected.length > 0) exitCode = 1
   }
   return { exitCode, summary, responsePath, evidencePath }

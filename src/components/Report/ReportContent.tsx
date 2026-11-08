@@ -100,6 +100,18 @@ const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_SUBCATEGORIES: Record<string, string[]> = {}
 
+function SharedNotIncluded({ title, id }: { title: string; id?: string }) {
+  return (
+    <section id={id} className="glass-panel p-4 print:break-inside-avoid">
+      <h3 className="font-semibold text-foreground">{title}</h3>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Not included in this shared assessment. This link contains no saved {title.toLowerCase()}{' '}
+        snapshot; work saved in this browser has not been added to the sender's report.
+      </p>
+    </section>
+  )
+}
+
 interface AssessReportProps {
   result: AssessmentResult
   expandToken?: number
@@ -177,7 +189,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const infrastructureSubCategories = shared
     ? (profile?.infrastructureSubCategories ?? EMPTY_SUBCATEGORIES)
     : liveInfrastructureSubCategories
-  const hiddenThreats = useAssessmentStore((s) => s.hiddenThreats)
+  const liveHiddenThreats = useAssessmentStore((s) => s.hiddenThreats)
+  const hiddenThreats = shared ? EMPTY_STRING_ARRAY : liveHiddenThreats
   const hideThreat = useAssessmentStore((s) => s.hideThreat)
   const restoreAllThreats = useAssessmentStore((s) => s.restoreAllThreats)
   const livePersona = usePersonaStore((s) => s.selectedPersona)
@@ -190,7 +203,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   // migration, so a researcher gets the PDF and CSV only.
   const showEngineeringPlan = selectedPersona === 'developer' || selectedPersona === 'ops'
   const showBoardExports = !showEngineeringPlan && selectedPersona !== 'researcher'
-  const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
+  const liveHiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
+  const hiddenProducts = shared ? EMPTY_STRING_ARRAY : liveHiddenProducts
   // Subscribe to each primitive field separately — a selector that builds a new
   // object every call breaks useSyncExternalStore's snapshot caching (zustand +
   // React 18) and can trigger "getSnapshot should be cached" render loops.
@@ -384,6 +398,14 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       recipient's own global persona, which must not happen while
                       they're looking at someone else's report. */}
                     <ReportControlDeck fullTrack={isComprehensive} shared={shared} />
+                    {shared && (
+                      <p className="glass-panel p-4 text-sm text-muted-foreground">
+                        This shared assessment includes the sender's result and provided profile.
+                        Saved CBOMs, Simulation runs, assessment history, programme ownership,
+                        product selections and interactive ROI scenarios are not included. Current
+                        Hub catalogue examples are reference context, not the sender's inventory.
+                      </p>
+                    )}
 
                     {/* Persona verdict (redesign) — re-leads the result for the active role,
                       above the "Do this first" hero. */}
@@ -411,9 +433,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                                 : a.category === 'short-term'
                                   ? 'Short-term · this quarter'
                                   : 'Long-term · plan it',
-                            href: a.relatedModule
-                              ? `/learn/${a.relatedModule}`
-                              : '#report-section-recommendedActions',
+                            href: a.relatedModule || '#report-section-recommendedActions',
                           }))}
                         />
                       </div>
@@ -639,9 +659,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         expression of Phase 2 (frameworkPhases.ts p2). Reads its
                         own saved artifact rather than assessment `result`, so it
                         isn't gated on `result.assessmentProfile` like Discovery. */}
-                    {phaseVisible('cbom') && cfg('cbom').state !== 'hidden' && (
-                      <CbomSection defaultOpen={cfg('cbom').state === 'open'} />
-                    )}
+                    {phaseVisible('cbom') &&
+                      cfg('cbom').state !== 'hidden' &&
+                      (shared ? (
+                        <SharedNotIncluded title="CBOM" id="report-section-cbom" />
+                      ) : (
+                        <CbomSection defaultOpen={cfg('cbom').state === 'open'} />
+                      ))}
 
                     {/* Algorithm Migration Matrix */}
                     {phaseVisible('algorithmMigration') &&
@@ -698,12 +722,16 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {phaseVisible('migrationToolkit') &&
                       cfg('migrationToolkit').state !== 'hidden' && (
                         <div id="report-section-migrationToolkit">
-                          <MigrationToolkit
-                            assessmentInfrastructure={infrastructure}
-                            assessmentSubCategories={infrastructureSubCategories}
-                            assessmentIndustry={industry}
-                            defaultOpen={cfg('migrationToolkit').state === 'open'}
-                          />
+                          {shared ? (
+                            <SharedNotIncluded title="Product selections" />
+                          ) : (
+                            <MigrationToolkit
+                              assessmentInfrastructure={infrastructure}
+                              assessmentSubCategories={infrastructureSubCategories}
+                              assessmentIndustry={industry}
+                              defaultOpen={cfg('migrationToolkit').state === 'open'}
+                            />
+                          )}
                         </div>
                       )}
 
@@ -721,20 +749,29 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* ROI Calculator */}
-                    <ROICalculatorSection
-                      result={result}
-                      industry={industry}
-                      defaultOpen={false}
-                      onSummaryChange={setRoiSummary}
-                      infoTip={<SectionInfoTip sectionId="roiCalculator" />}
-                      quickTrack={!isComprehensive}
-                    />
+                    {shared ? (
+                      <SharedNotIncluded
+                        title="Interactive ROI scenario"
+                        id="report-section-roiCalculator"
+                      />
+                    ) : (
+                      <ROICalculatorSection
+                        result={result}
+                        industry={industry}
+                        defaultOpen={false}
+                        onSummaryChange={setRoiSummary}
+                        infoTip={<SectionInfoTip sectionId="roiCalculator" />}
+                        quickTrack={!isComprehensive}
+                      />
+                    )}
 
                     {/* KPI Trending — comprehensive-gated. Three states: locked on a
                         quick assessment, empty until ≥2 saved snapshots, populated
                         otherwise. */}
                     <div id="report-section-kpiTrending">
-                      {isComprehensive ? (
+                      {shared ? (
+                        <SharedNotIncluded title="Assessment history" />
+                      ) : isComprehensive ? (
                         assessmentHistory.length >= 2 ? (
                           <KPITrendingSection
                             history={assessmentHistory}
@@ -761,8 +798,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           industry={industry}
                           currentCrypto={currentCrypto}
                           hiddenThreats={hiddenThreats}
-                          hideThreat={hideThreat}
-                          restoreAllThreats={restoreAllThreats}
+                          hideThreat={shared ? undefined : hideThreat}
+                          restoreAllThreats={shared ? undefined : restoreAllThreats}
                           hiddenForIndustryCount={hiddenForIndustryCount}
                           defaultOpen={cfg('threatLandscape').state === 'open'}
                         />
@@ -772,11 +809,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         artifact (the sim-roadmap doc), same independent-fetch
                         pattern as CbomSection above. */}
                     {phaseVisible('simulationOutcomes') &&
-                      cfg('simulationOutcomes').state !== 'hidden' && (
+                      cfg('simulationOutcomes').state !== 'hidden' &&
+                      (shared ? (
+                        <SharedNotIncluded
+                          title="Simulation outcomes"
+                          id="report-section-simulationOutcomes"
+                        />
+                      ) : (
                         <SimulationOutcomesSection
                           defaultOpen={cfg('simulationOutcomes').state === 'open'}
                         />
-                      )}
+                      ))}
 
                     {/* NICE Framework Workforce Gap Report. Skipped on a shared/example
                         view for the same reason as QRA above — `getInput()` is the
@@ -917,7 +960,15 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             />
                           </>
                         )}
-                        {showEngineeringPlan && <EngineeringPlanExport result={result} />}
+                        {showEngineeringPlan &&
+                          (shared ? (
+                            <p className="text-sm text-muted-foreground">
+                              Engineering migration plan not included: this link contains no
+                              product-selection or saved API-audit snapshot.
+                            </p>
+                          ) : (
+                            <EngineeringPlanExport result={result} />
+                          ))}
                         <Button
                           variant="ghost"
                           onClick={handleCSVExport}
@@ -963,10 +1014,11 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                   result={result}
                   industry={industry}
                   country={country}
-                  roiSummary={roiSummary}
+                  roiSummary={shared ? null : roiSummary}
                   generatedAt={result.generatedAt}
                   visible={showBoardBrief}
-                  ownership={ownership}
+                  ownership={shared ? undefined : ownership}
+                  shared={shared}
                 />
               </td>
             </tr>

@@ -373,8 +373,8 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   // ═══════════════════════════════════════════════════════════════
   {
     id: 'research-sourced',
-    title: 'Followed the Citation',
-    description: 'Read a claim in the Library and traced it into the Timeline',
+    title: 'Visited the References',
+    description: 'Visited the Library and Timeline to explore their references',
     category: 'cross-feature',
     rarity: 'common',
     icon: 'BookOpen',
@@ -383,13 +383,13 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   },
   {
     id: 'research-reproduced',
-    title: 'Reproduced It',
-    description: 'Ran a real cryptographic operation instead of taking the number on trust',
+    title: 'Explored a Tool',
+    description: 'Opened a Playground tool; run its sample checks to inspect the results',
     category: 'cross-feature',
     rarity: 'uncommon',
     icon: 'Microscope',
-    // Any Playground tool counts: the point of the rung is that the reader
-    // executed the primitive themselves, not which primitive it was.
+    // Existing tracking records tool visits, not execution or successful verification.
+    // Keep the stable award ID for saved progress; describe only that participation.
     condition: (s: ActivitySnapshot) => s.playgroundToolsUsed.length >= 1,
   },
   {
@@ -467,7 +467,7 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'business-strategist',
     title: 'Strategist',
-    description: 'Used 5+ different Command Center tools',
+    description: 'Opened 5 distinct Command Center tool pages',
     category: 'business',
     rarity: 'uncommon',
     icon: 'BarChart3',
@@ -475,8 +475,8 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   },
   {
     id: 'business-complete',
-    title: 'Full Toolkit',
-    description: 'Used all 14 Command Center tools',
+    title: 'Viewed 14 Tools',
+    description: 'Opened 14 distinct Command Center tool pages',
     category: 'business',
     rarity: 'rare',
     icon: 'Building2',

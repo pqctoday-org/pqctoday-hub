@@ -13,7 +13,7 @@ This module explains how DNSSEC — the DNS Security Extensions that sign DNS an
 - **Downgrade risk** (RFC 6840 §5.11) — a lenient validator accepting any single valid signature path can be tricked into accepting a stripped classical signature if a zone is dual-signed; the fix is requiring algorithm 18 whenever the zone's DS record advertises it
 - **Cloudflare's real pilot** (2026-09-10 blog post) — 1.1.1.1 validates ML-DSA-44 by default; dnstest.dev is a live, ML-DSA-44-signed test zone; this is resolver-side validation only, not production zone signing
 - **What's missing** — authoritative-side signing support and registrar DS-record support are Cloudflare's own stated next steps; end-to-end PQ DNSSEC also needs the root and other registries to adopt algorithm 18, beyond what Cloudflare alone can deliver
-- **Two distinct estimates** — Cloudflare's ~2029 target is its own company-wide post-quantum security goal (not a DNSSEC-specific date); the DNS root zone's own algorithm rollover is a separate, broader estimate of mid-2030s (Verisign), since every delegation level needs PQ support (the migration order isn't fixed)
+- **Distinct dates and scenarios** — Cloudflare's ~2029 target is its own company-wide post-quantum security goal (not a DNSSEC-specific date); the DNS root zone's own algorithm rollovers are separate and broader: the ICANN/IANA first rollover is classical (new ECDSA Root KSK in 2027, RSA Root KSK retired in 2029), and Verisign's December 2023 comments say a second rollover "in the mid-2030s may well involve the incorporation of post-quantum cryptography", a dated, conditional scenario rather than an ICANN/IANA plan or a forecast; every delegation level needs PQ support (the migration order isn't fixed)
 - **Parallel size-mitigation drafts** — draft-sheth-pqc-dnssec-strategy surveys SLH-DSA-MTL/Falcon/XMSS/LMS candidates; draft-fregly-dnsop-slh-dsa-mtl-dnssec and draft-kaizer-dnsop-ml-dsa-mtl-dnssec both apply Merkle Tree Ladder mode (to SLH-DSA and ML-DSA respectively) to shrink per-query signature cost; none has IETF working-group status yet
 
 ## Workshop / Interactive Activities
@@ -22,7 +22,7 @@ The workshop has 3 steps:
 
 1. **Signature Size Explorer** — compare RSA-2048, ECDSA P-256, Ed25519, ML-DSA-44, and SLH-DSA-SHA2-128s signature sizes against the ~1,232-byte DNS UDP ceiling; both PQ options shown exceed it
 2. **PQ Validation Chain Walkthrough** — root → TLD → domain trust chain, toggling between "today" (algorithm 18 exists only at the dnstest.dev leaf) and "full deployment" (algorithm 18 at every level up to the root)
-3. **Deployment Roadmap Tracker** — Cloudflare's own roadmap (resolver validation done → authoritative signing → registrar DS support → ~2029 company-wide PQ target) versus the DNS root's separate mid-2030s rollover estimate
+3. **Deployment Roadmap Tracker** — Cloudflare's own roadmap (resolver validation done → authoritative signing → registrar DS support → ~2029 company-wide PQ target) versus the DNS root's separate rollovers (the classical ICANN/IANA first rollover and Verisign's conditional mid-2030s scenario for a second)
 
 ## Related Standards
 

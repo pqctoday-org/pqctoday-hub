@@ -1,15 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Step 4 — Live HSM Provider (Phase 1 foundation).
- *
- * Lazy-loads the CMS worker, asks it to bring up the OpenSSL WASM module
- * with pkcs11-provider statically linked, and reports the registration
- * status. This step proves the end-to-end bundle wiring works BEFORE the
- * Phase 2 service layer (sign / verify / encrypt / decrypt) is added.
- *
- * Worker contract:
- *   Outbound  LOAD_AND_INIT
- *   Inbound   READY / INIT_DONE / ERROR / LOG / PONG
+ * CMS worker / provider initialization status, separate from operation outcomes.
+ * Worker contract: LOAD_AND_INIT; READY / INIT_DONE / ERROR / LOG / PONG.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CheckCircle2, AlertTriangle, RefreshCw, FlaskConical, ExternalLink } from 'lucide-react'
@@ -113,12 +105,10 @@ export function LiveHSMProvider() {
           Live HSM Provider — bundle smoke test
         </h2>
         <p className="text-sm text-muted-foreground">
-          Loads the OpenSSL WASM bundle with{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs">pkcs11-provider</code> +{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs">softhsmv3</code> statically linked,
-          registers the provider via <code className="text-xs">pqctoday_cms_init()</code>, and
-          confirms the round-trip works. Real CMS sign/verify/encrypt/decrypt operations land in
-          Phase 2 once this foundation is green.
+          This panel checks whether the bundled CMS worker and PKCS#11 provider initialize.
+          Registration alone does not establish that a particular key-generation, signing,
+          verification, encryption or decryption operation succeeded. The separate sample controls
+          below report their own executed operations and results.
         </p>
       </header>
 
@@ -156,21 +146,13 @@ export function LiveHSMProvider() {
       )}
 
       <div className="glass-panel space-y-2 p-4 text-xs text-muted-foreground">
-        <p className="font-medium text-foreground">What this proves</p>
-        <ul className="list-disc space-y-1 pl-5">
-          <li>
-            <code>openssl.wasm</code> in <code>public/wasm/</code> includes both pkcs11-provider and
-            softhsmv3 as statically-linked archives.
-          </li>
-          <li>
-            The exported <code className="rounded bg-muted px-1 py-0.5">_pqctoday_cms_init</code>{' '}
-            entry point registers the provider and loads its OPENSSL_CONF stanza.
-          </li>
-          <li>
-            From here, an <code>openssl cms -sign -signer pkcs11:object=alice -keyform engine</code>
-            invocation can route signing to softhsmv3 in-process (Phase 3).
-          </li>
-        </ul>
+        <p className="font-medium text-foreground">What initialization checks</p>
+        <p>
+          The worker reports the outcome of its provider-initialization request. Use each sample
+          operation's output to inspect what that operation actually executed; initialization is not
+          a substitute for an operation result. Evaluate provider setup and supported mechanisms for
+          the exact version and configuration used by your own tools.
+        </p>
         <p className="pt-2">
           Source:{' '}
           <a
@@ -189,7 +171,7 @@ export function LiveHSMProvider() {
         </p>
       </div>
 
-      {/* Phase 2 + 4 — CMS sign+verify and encrypt+decrypt. Both work with
+      {/* Existing CMS sign+verify and encrypt+decrypt demonstrations work with
           software keys today, independent of provider symbol landing. The
           HSM toggle inside each demo is only enabled when the provider
           registration succeeded. */}

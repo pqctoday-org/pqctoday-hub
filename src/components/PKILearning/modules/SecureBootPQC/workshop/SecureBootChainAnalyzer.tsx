@@ -28,16 +28,16 @@ const KEY_ANALYSIS_RESULTS: KeyAnalysisResult[] = [
     keyId: 'KEK',
     risk: 'critical',
     finding:
-      'RSA-2048 KEK is quantum-vulnerable. Compromise allows unauthorized updates to the db (Authorized Signature Database), enabling malicious bootloaders to be trusted.',
+      'RSA-2048 KEK is quantum-vulnerable. The KEK does not verify boot images; it authorizes updates to db and dbx, so a forged KEK signature lets an attacker rewrite db and have malicious bootloaders trusted.',
     pqcAction:
-      'Migrate all KEKs to ML-DSA-65. OS vendors (Microsoft, Red Hat, Canonical) must issue PQC KEK certificates. EFI Signature List format update required.',
+      'Migrate all KEKs to ML-DSA-65 once firmware can verify it. OS vendors that hold KEKs would need to issue PQC KEK certificates, and the EFI Signature List format would need to carry them; neither is verified here.',
     effort: 'High — requires coordination with OS vendors and certificate re-issuance',
   },
   {
     keyId: 'db',
     risk: 'high',
     finding:
-      'db certificates use RSA-2048. Forged db signatures could allow unauthorized bootloaders. Note: a minimal self-signed ML-DSA-65 certificate is about 5.5 KB vs about 0.8 KB for RSA-2048 (measured with OpenSSL 3.6.3; real certificates are larger) — db storage impact is significant.',
+      'The certificates in db that verify bootloader signatures use RSA-2048. A CRQC could forge a signature that verifies against such a certificate, so a malicious image would pass the db check (this is image-signing trust, separate from the KEK that authorizes db updates). Note: a minimal self-signed ML-DSA-65 certificate is about 5.5 KB vs about 0.8 KB for RSA-2048 (measured with OpenSSL 3.6.3; real certificates are larger) — db storage impact is significant.',
     pqcAction:
       'Re-issue all db signing certificates with ML-DSA-65. Update UEFI variable storage allocation to accommodate larger PQC certificates.',
     effort: 'Medium — certificate re-issuance; db storage may need expansion',
@@ -57,7 +57,7 @@ const KEY_ANALYSIS_RESULTS: KeyAnalysisResult[] = [
     finding:
       'MOK list managed by shim uses RSA-2048 or RSA-4096. Quantum attack could forge MOK signatures, allowing custom kernels/modules to load without authorization.',
     pqcAction:
-      'shim PQC support pending (depends on UEFI Forum MOK spec update and Microsoft KEK migration). Plan: re-enroll MOK keys with ML-DSA-65 after shim 16.0+ is released with PQC support.',
+      'No shim release note up to 16.1 (13 August 2025) mentions post-quantum signatures, so shim PQC support and its timing are not established here; check the shim project. Plan: re-enroll MOK keys with a post-quantum algorithm only after a shim release supports it.',
     effort: 'Medium — requires shim update, admin re-enrollment',
   },
 ]

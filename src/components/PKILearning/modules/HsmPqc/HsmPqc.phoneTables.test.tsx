@@ -2,7 +2,7 @@
 /**
  * Every table on the HSM lesson's Learn tab must read on a phone: below 640 px each row is a
  * stacked block with its column headings as labels, from 640 px up it is a table, and no column
- * (the firmware table's "FIPS Recert" in particular) is cut off inside a narrow scrolling box.
+ * (the firmware table's "FIPS certificate" in particular) is cut off inside a narrow scrolling box.
  * jsdom does not apply Tailwind, so these assertions pin the markup and classes that produce that
  * layout, not the pixels.
  */
@@ -56,7 +56,7 @@ const CASES: [string, number, string[]][] = [
       'Algorithms Added',
       'Complexity',
       'Downtime (est.)',
-      'FIPS Recert',
+      'FIPS certificate',
     ],
   ],
 ]
@@ -83,12 +83,21 @@ describe('HSM lesson tables on a phone', () => {
     }
   )
 
-  it('shows the FIPS Recert value of every vendor in the stacked firmware blocks', () => {
+  it('shows the certificate note of every vendor in the stacked firmware blocks', () => {
     openSections()
     const stacked = within(screen.getByTestId('hsm-firmware-migration-stacked'))
-    const labels = stacked.getAllByText('FIPS Recert')
+    const labels = stacked.getAllByText('FIPS certificate')
     expect(labels).toHaveLength(FIRMWARE_UPGRADE_PATHS.length)
-    expect(stacked.getAllByText('Required')).toHaveLength(FIRMWARE_UPGRADE_PATHS.length)
+    // one certificate note per path, and no single word standing in for all of them
+    expect(stacked.queryByText('Required')).not.toBeInTheDocument()
+    // the whole note, so a second clause naming another certificate is never cut off
+    const notes = FIRMWARE_UPGRADE_PATHS.map((p) => p.certificateNote)
+    for (const note of new Set(notes)) {
+      expect(stacked.getAllByText(note)).toHaveLength(notes.filter((n) => n === note).length)
+    }
+    const thales = FIRMWARE_UPGRADE_PATHS.find((p) => p.vendorId === 'thales-luna')
+    expect(thales?.certificateNote).toContain('5450')
+    expect(stacked.getAllByText(/5450/).length).toBeGreaterThan(0)
     for (const path of FIRMWARE_UPGRADE_PATHS) {
       expect(stacked.getByText(path.vendorName)).toBeInTheDocument()
       expect(stacked.getAllByText(path.upgradeComplexity.toUpperCase()).length).toBeGreaterThan(0)

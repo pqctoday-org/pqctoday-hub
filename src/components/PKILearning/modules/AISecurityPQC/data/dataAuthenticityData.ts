@@ -12,7 +12,7 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
     id: 'c2pa-credentials',
     name: 'C2PA Content Credentials',
     description:
-      'Coalition for Content Provenance and Authenticity standard. Embeds cryptographically signed metadata (creator identity, creation tool, edit history) directly into content files. Creates a verifiable chain of custody from origin to consumption.',
+      'Coalition for Content Provenance and Authenticity standard. Embeds cryptographically signed metadata (signer identity, creation tool and edit assertions) in content files. A valid signature shows which signer vouched for which bytes and assertions; it does not show how the content was made or that it is accurate. For example, the C2PA specification gives a generative-AI video whose manifest declares it AI-generated; a manifest like that can carry a perfectly valid signature, so a valid signature does not mean the content is human-made.',
     cryptoInvolved:
       'X.509 certificate chains; COSE_Sign1 claim signatures using ECDSA, RSASSA-PSS or Ed25519, written into the claim signature box of a JUMBF manifest',
     pqcRelevance:
@@ -20,8 +20,9 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
       'and Ed25519. All are quantum-vulnerable, and the allowed list holds no post-quantum algorithm; the specification says implementations shall not support ' +
       'additional algorithms on an optional basis, so adding one such as ML-DSA would take a revision of the specification. Provenance signed today with any of ' +
       'these can be forged after a CRQC, undermining the provenance chain.',
-    accuracy: '100% for signed content (cryptographic verification), 0% for unsigned content',
-    performanceOverhead: 'Minimal — metadata signing adds <10ms per content item',
+    accuracy:
+      'Not a synthetic-data detector and not a quality score. Signature validity is a yes/no check of the signed bytes and the signer\u2019s certificate. Whether the signer is trusted, what the signed claims say about origin, and whether the content is good are separate questions, and unsigned content simply carries no claim',
+    performanceOverhead: 'Illustrative estimate: metadata signing adds <10ms per content item',
     maturity: 'production',
   },
   {
@@ -34,8 +35,8 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
     pqcRelevance:
       'Perceptual hashes themselves are not quantum-vulnerable, but HMAC-authenticated hash databases use symmetric keys that benefit from PQC key wrapping.',
     accuracy:
-      '85–95% for near-duplicate detection, high false-positive rate for AI-generated variants',
-    performanceOverhead: 'Low — ~5ms per image, ~50ms per text document',
+      'Illustrative (fictional) figure: 85–95% near-duplicate matches. It finds similar items; it does not say whether an item is AI-generated',
+    performanceOverhead: 'Illustrative estimate: ~5ms per image, ~50ms per text document',
     maturity: 'production',
   },
   {
@@ -47,8 +48,10 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
       'Watermark embedding uses keyed PRNGs, detection uses statistical hypothesis testing. Key management via KMS.',
     pqcRelevance:
       'Watermark keying material stored long-term needs PQC-wrapped keys. If watermark keys are compromised via quantum attack, adversaries can strip watermarks from synthetic content, defeating detection.',
-    accuracy: '70–90% for known watermark schemes, <50% for unknown or removed watermarks',
-    performanceOverhead: 'Medium — watermark detection requires model inference (~100ms per item)',
+    accuracy:
+      'Illustrative (fictional) figures: 70–90% for a known watermark scheme, under 50% when the scheme is unknown or the watermark is removed. It can only flag content that carries a watermark; finding none proves nothing',
+    performanceOverhead:
+      'Illustrative estimate: watermark detection may need model inference (~100ms per item)',
     maturity: 'emerging',
   },
   {
@@ -60,9 +63,10 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
       'SHA-256 hash chain + ECDSA/ML-DSA signature per entry. Merkle tree for batch verification.',
     pqcRelevance:
       'Critical PQC target. Provenance chains must remain trustworthy for the lifetime of the model (potentially decades). ECDSA-signed provenance entries become forgeable post-CRQC, allowing retroactive data poisoning claims.',
-    accuracy: '100% for tamper detection (cryptographic), relies on honest initial signing',
+    accuracy:
+      'Detects later changes to logged entries through hash and signature checks. It cannot tell whether the first entry was honest, who the signer is trusted to be, or whether the data is good',
     performanceOverhead:
-      'Low per-entry (<5ms signing), scales linearly with dataset transformations',
+      'Illustrative estimate: <5ms signing per entry, scaling linearly with dataset transformations',
     maturity: 'emerging',
   },
   {
@@ -73,8 +77,10 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
     cryptoInvolved: 'None directly. Classification results should be signed for integrity.',
     pqcRelevance:
       'Detection result attestations need PQC signatures to remain trustworthy. A CRQC could forge "human-verified" labels on AI-generated content.',
-    accuracy: '60–85% overall, degrades rapidly with paraphrasing and newer models',
-    performanceOverhead: 'High — requires separate inference model (~200-500ms per document)',
+    accuracy:
+      'Illustrative (fictional) figure: 60–85% overall. Classifiers of this kind make both false-positive and false-negative errors, so their output is a hint, not proof',
+    performanceOverhead:
+      'Illustrative estimate: needs a separate inference model (~200-500ms per document)',
     maturity: 'emerging',
   },
 ]
@@ -218,15 +224,15 @@ export const MODEL_COLLAPSE_CURVES: Record<string, ModelCollapseDataPoint[]> = {
 
 export const COLLAPSE_SCENARIO_LABELS: Record<string, { label: string; color: string }> = {
   'no-verification': {
-    label: 'No Verification',
+    label: 'No Verification (fictional scores)',
     color: 'text-status-error',
   },
   'basic-filtering': {
-    label: 'Statistical Filtering Only',
+    label: 'Statistical Filtering Only (fictional scores)',
     color: 'text-status-warning',
   },
   'provenance-verified': {
-    label: 'Cryptographic Provenance',
+    label: 'Provenance-Based Selection (fictional scores)',
     color: 'text-status-success',
   },
 }

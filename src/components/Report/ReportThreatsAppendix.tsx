@@ -128,7 +128,7 @@ interface ReportThreatsAppendixProps {
   /** User's selected algorithms — rows matching these get highlighted. */
   userAlgorithms?: string[]
   hiddenThreatIds: string[]
-  onHideThreat: (id: string) => void
+  onHideThreat?: (id: string) => void
 }
 
 /** Check if a threat's cryptoAtRisk field mentions any of the user's algorithms. */

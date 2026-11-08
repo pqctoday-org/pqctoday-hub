@@ -11,6 +11,9 @@ const run = (migrationFraction: number, currentYear: number, p0Level = 2, allAtT
     migrationFraction,
     allAtTopBand,
     currentYear,
+    objectiveAchievedYears: Object.fromEntries(
+      getScenario('US').objectives.map((o) => [o.id, currentYear])
+    ),
   })
 
 describe('transformationStatus', () => {
@@ -46,5 +49,41 @@ describe('transformationStatus', () => {
   it('governance objective tracks P0 reaching level 2', () => {
     expect(run(0, 2027, 1).objectives.find((o) => o.id === 'governance')!.done).toBe(false)
     expect(run(0, 2027, 2).objectives.find((o) => o.id === 'governance')!.done).toBe(true)
+  })
+})
+
+describe('milestone history', () => {
+  const input = {
+    scenario: getScenario('US'),
+    programMaturity: 2,
+    p0Level: 2,
+    migrationFraction: 0.5,
+    allAtTopBand: false,
+  }
+  it('keeps an on-time achievement on time when the clock advances', () => {
+    const history = { governance: 2027, critical: 2030 }
+    const earlier = transformationStatus({
+      ...input,
+      currentYear: 2030,
+      objectiveAchievedYears: history,
+    })
+    const later = transformationStatus({
+      ...input,
+      currentYear: 2035,
+      objectiveAchievedYears: history,
+    })
+    expect(earlier.objectives.find((o) => o.id === 'critical')?.onTime).toBe('done')
+    expect(later.objectives.find((o) => o.id === 'critical')?.onTime).toBe('done')
+  })
+  it('does not invent achievement dates for legacy completed objectives', () => {
+    const status = transformationStatus({ ...input, currentYear: 2035 })
+    expect(status.objectives.find((o) => o.id === 'critical')?.onTime).toBe('done-unknown')
+    expect(status.objectives.find((o) => o.id === 'migration')?.done).toBe(false)
+  })
+  it('labels a count-based milestone as illustrative rather than protected assets', () => {
+    const status = transformationStatus({ ...input, currentYear: 2030 })
+    expect(status.objectives.find((o) => o.id === 'critical')?.label).toBe(
+      'Illustrative migration progress milestone'
+    )
   })
 })

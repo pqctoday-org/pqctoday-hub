@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Download, FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -19,6 +19,7 @@ import {
   downloadCbomJson,
   type CbomComponentInput,
 } from '@/services/cbom/cycloneDx'
+import { buildAssessmentCbom } from '@/services/cbom/assessmentCbom'
 import { summarizeCbom, type CbomReportSummary } from '@/services/cbom/reportSummary'
 import {
   cbomRowToCbomInput,
@@ -81,7 +82,20 @@ const POSTURE_LIGHT: Record<RiskColor, string> = {
   green: 'bg-status-success',
 }
 
+export interface SbomDraftState {
+  text: string
+  selectedSbom: string
+  mode: Mode
+  valid: boolean
+  issue: string | null
+  count: number
+  unmatched: number
+  source: string
+}
+
 interface LibraryCBOMBuilderProps {
+  initialSbomDraft?: SbomDraftState
+  onSbomDraftChange?: (state: SbomDraftState) => void
   onCbomExport?: (items: CbomExportItem[]) => void
 }
 
@@ -96,7 +110,11 @@ interface SavedCbomInputs {
 
 const VALID_MODES: readonly Mode[] = ['sbom', 'libs', 'hsm', 'files', 'assessment']
 
-export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomExport }) => {
+export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
+  onCbomExport,
+  initialSbomDraft,
+  onSbomDraftChange,
+}) => {
   const assessmentTransitions = useAlgorithmTransitionsForAssessment()
   const { myProducts } = useExecutiveModuleData()
   const hasAssessmentCrypto = assessmentTransitions.length > 0 || myProducts.length > 0
@@ -107,19 +125,18 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     savedInputs?.mode && (VALID_MODES as readonly string[]).includes(savedInputs.mode)
       ? (savedInputs.mode as Mode)
       : null
+  // An explicitly saved scope stays selected even when its current inputs
+  // are empty; do not substitute unrelated catalogue records on restore.
   const [mode, setMode] = useState<Mode>(
-    savedMode && (savedMode !== 'assessment' || hasAssessmentCrypto)
-      ? savedMode
-      : hasAssessmentCrypto
-        ? 'assessment'
-        : 'libs'
+    initialSbomDraft?.mode ?? savedMode ?? (hasAssessmentCrypto ? 'assessment' : 'libs')
   )
   const [selectedSbom, setSelectedSbom] = useState<string>(
-    savedInputs?.selectedSbom && SAMPLE_SBOMS.some((s) => s.id === savedInputs.selectedSbom)
-      ? savedInputs.selectedSbom
-      : SAMPLE_SBOMS[0].id
+    initialSbomDraft?.selectedSbom ??
+      (savedInputs?.selectedSbom && SAMPLE_SBOMS.some((s) => s.id === savedInputs.selectedSbom)
+        ? savedInputs.selectedSbom
+        : SAMPLE_SBOMS[0].id)
   )
-  const [userSbom, setUserSbom] = useState<string>('')
+  const [userSbom, setUserSbom] = useState<string>(initialSbomDraft?.text ?? '')
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const liveCmvp = useLiveCmvpStatus()
 
@@ -130,33 +147,95 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     return SAMPLE_SBOMS.find((s) => s.id === selectedSbom) ?? SAMPLE_SBOMS[0]
   }, [selectedSbom, userSbom])
 
-  const cbomSlice = useMemo((): CbomRow[] => {
+  const parsedSbom = useMemo((): { valid: boolean; issue: string | null; rows: CbomRow[] } => {
+    let parsed: unknown
     try {
-      const parsed = JSON.parse(activeSbom.content) as { components?: unknown }
-      const components: unknown[] = Array.isArray(parsed.components) ? parsed.components : []
-      return components.map((raw): CbomRow => {
-        const c = (raw ?? {}) as Record<string, unknown>
-        const name = String(c.name ?? '')
-        const version = String(c.version ?? '')
-        const lib = matchLibrary(name, version)
-        return {
-          name,
-          version,
-          matched: Boolean(lib),
-          fipsStatus: lib?.fipsStatus ?? 'not-validated',
-          esvStatus: lib?.esvStatus ?? 'not-validated',
-          pqcSupport: lib?.pqcSupport ?? '—',
-          posture: lib?.posture ?? 'yellow',
-          notes: lib?.notes ?? 'No posture record — add to inventory and research.',
-        }
-      })
+      parsed = JSON.parse(activeSbom.content)
     } catch {
-      return []
+      return {
+        valid: false,
+        issue: 'Malformed JSON: fix the syntax before mapping this draft.',
+        rows: [],
+      }
     }
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      return {
+        valid: false,
+        issue:
+          'Unsupported input shape: this teaching mapper needs an object with a components array.',
+        rows: [],
+      }
+    }
+    const document = parsed as Record<string, unknown>
+    if ('spdxVersion' in document || '@graph' in document || !('components' in document)) {
+      return {
+        valid: false,
+        issue:
+          'Unsupported input format: SPDX and other document shapes are not mapped here. Use the components-shaped teaching subset.',
+        rows: [],
+      }
+    }
+    if (!Array.isArray(document.components)) {
+      return { valid: false, issue: 'Malformed components: components must be an array.', rows: [] }
+    }
+    const rows: CbomRow[] = []
+    for (const [index, raw] of document.components.entries()) {
+      if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+        return {
+          valid: false,
+          issue: `Malformed component ${index + 1}: each entry must be an object.`,
+          rows: [],
+        }
+      }
+      const component = raw as Record<string, unknown>
+      if (
+        typeof component.name !== 'string' ||
+        component.name.trim() === '' ||
+        (component.version !== undefined && typeof component.version !== 'string')
+      ) {
+        return {
+          valid: false,
+          issue: `Malformed component ${index + 1}: name must be a nonblank string and version, when supplied, must be a string.`,
+          rows: [],
+        }
+      }
+      const name = component.name
+      const version = (component.version as string | undefined) ?? ''
+      const lib = matchLibrary(name, version)
+      rows.push({
+        name,
+        version,
+        matched: Boolean(lib),
+        fipsStatus: lib?.fipsStatus ?? 'not-validated',
+        esvStatus: lib?.esvStatus ?? 'not-validated',
+        pqcSupport: lib?.pqcSupport ?? '—',
+        posture: lib?.posture ?? 'yellow',
+        notes: lib?.notes ?? 'No posture record — add to inventory and research.',
+      })
+    }
+    return { valid: true, issue: null, rows }
   }, [activeSbom])
+  const cbomSlice = parsedSbom.rows
+  const latestSbomValidity = useRef(parsedSbom.valid)
+  // Layout updates precede the shared export component's passive unmount flush.
+  useLayoutEffect(() => {
+    latestSbomValidity.current = parsedSbom.valid
+  }, [parsedSbom.valid])
+  useEffect(() => {
+    onSbomDraftChange?.({
+      text: userSbom,
+      selectedSbom,
+      mode,
+      valid: parsedSbom.valid,
+      issue: parsedSbom.issue,
+      count: cbomSlice.length,
+      unmatched: cbomSlice.filter((row) => !row.matched).length,
+      source: userSbom.trim() ? 'Pasted components draft' : activeSbom.filename,
+    })
+  }, [userSbom, selectedSbom, mode, parsedSbom, cbomSlice, activeSbom.filename, onSbomDraftChange])
 
   useEffect(() => {
-    if (!onCbomExport) return
+    if (!onCbomExport || !parsedSbom.valid) return
     const items: CbomExportItem[] = cbomSlice.map((row) => ({
       name: row.name,
       version: row.version,
@@ -168,7 +247,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       notes: row.notes,
     }))
     onCbomExport(items)
-  }, [cbomSlice, onCbomExport])
+  }, [cbomSlice, parsedSbom.valid, onCbomExport])
 
   /** The current mode's inventory, in the neutral shape both the CycloneDX
    *  export and the /report structured summary are derived from — computed
@@ -181,7 +260,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         return HSM_VENDORS.map(hsmToCbomInput)
       case 'files':
         return FILE_ARTIFACTS.map(fileArtifactToCbomInput)
-      // 'libs' and 'assessment' both export the library posture inventory.
+      case 'assessment':
+        return [] // handled as self-reported algorithm records below
+      // Library mode exports the catalogue posture inventory.
       default:
         return CRYPTO_LIBRARIES.map(libraryToCbomInput)
     }
@@ -190,20 +271,29 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
   /** A schema-valid CycloneDX 1.7 CBOM for the current mode's inventory. Unlike
    *  the Markdown export, this is a real machine-readable artifact downstream
    *  tooling (Dependency-Track, scanners, auditors) can ingest. */
+  const assessmentCbom = useMemo(
+    () => buildAssessmentCbom(assessmentTransitions),
+    [assessmentTransitions]
+  )
   const cycloneDxJson = useMemo(() => {
+    if (mode === 'assessment') return assessmentCbom.json
     return buildCbomDocument(cbomInputs, {
       toolName: 'PQC Today CBOM Builder',
       properties: [{ name: 'pqctoday:mode', value: mode }],
     }).json
-  }, [cbomInputs, mode])
+  }, [cbomInputs, mode, assessmentCbom])
 
   const handleDownloadCycloneDx = useCallback(() => {
+    if (mode === 'sbom' && !latestSbomValidity.current) return
     downloadCbomJson(cycloneDxJson, 'crypto-bom-cyclonedx')
-  }, [cycloneDxJson])
+  }, [cycloneDxJson, mode])
 
   /** Compact structured summary persisted alongside the save so /report can
    *  render real numbers without re-parsing the CycloneDX JSON. */
-  const reportSummary = useMemo(() => summarizeCbom(cbomInputs, mode), [cbomInputs, mode])
+  const reportSummary = useMemo(
+    () => (mode === 'assessment' ? assessmentCbom.summary : summarizeCbom(cbomInputs, mode)),
+    [cbomInputs, mode, assessmentCbom]
+  )
 
   /** Markdown serialization of the current CBOM slice + library posture +
    *  HSM coverage for Command Center export. The format mirrors a CycloneDX
@@ -267,13 +357,13 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         lines.push('')
       }
     }
-    if (mode === 'sbom' || mode === 'libs') {
+    if (mode === 'sbom') {
       lines.push(
         `## CBOM slice — ${cbomSlice.length} component${cbomSlice.length !== 1 ? 's' : ''}`
       )
       lines.push('')
       if (cbomSlice.length > 0) {
-        lines.push('| Component | Version | FIPS | ESV | PQC | Posture | Notes |')
+        lines.push('| Component | Version | Reported FIPS status | ESV | PQC | Posture | Notes |')
         lines.push('|---|---|---|---|---|---|---|')
         for (const row of cbomSlice) {
           const safeNotes = row.notes.replace(/\|/g, '\\|')
@@ -286,12 +376,55 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       }
       lines.push('')
     }
+    if (mode === 'libs') {
+      // These rows follow the displayed catalogue, not the separately selected SBOM.
+      // Entity-escape cell content so pipes/newlines cannot create extra rows or columns.
+      const cell = (value: string | number | null | undefined): string =>
+        value === null || value === undefined || value === ''
+          ? '—'
+          : String(value)
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/\\/g, '&#92;')
+              .replace(/\|/g, '&#124;')
+              .replace(/\r\n|\r|\n/g, '&#10;')
+              .replace(/[*_`[\]]/g, (character) => `&#${character.charCodeAt(0)};`)
+      lines.push(
+        `## Library catalogue — ${CRYPTO_LIBRARIES.length} component${CRYPTO_LIBRARIES.length !== 1 ? 's' : ''}`
+      )
+      lines.push('')
+      lines.push(
+        '| Catalogue ID | Component | Vendor | Version | EoL | Reported FIPS status | CMVP catalogue association | Reported ESV status | PQC support | High CVEs (1y) | Posture | Notes |'
+      )
+      lines.push('|---|---|---|---|---|---|---|---|---|---|---|---|')
+      for (const lib of CRYPTO_LIBRARIES) {
+        const values = [
+          lib.id,
+          lib.name,
+          lib.vendor,
+          lib.latestVersion,
+          lib.eolDate === null ? 'active' : lib.eolDate,
+          FIPS_LABEL[lib.fipsStatus],
+          lib.cmvpCertNumber,
+          ESV_LABEL[lib.esvStatus],
+          lib.pqcSupport,
+          lib.openCveHigh,
+          lib.posture,
+          lib.notes,
+        ]
+        lines.push(`| ${values.map(cell).join(' | ')} |`)
+      }
+      lines.push('')
+    }
     if (mode === 'hsm') {
       lines.push(
         `## HSM inventory — ${HSM_VENDORS.length} vendor${HSM_VENDORS.length !== 1 ? 's' : ''}`
       )
       lines.push('')
-      lines.push('| Vendor | Product | Firmware | FIPS Level | FIPS Status | PQC support | Notes |')
+      lines.push(
+        '| Vendor | Product | Firmware | Reported FIPS level | Reported FIPS status | PQC support | Notes |'
+      )
       lines.push('|---|---|---|---|---|---|---|')
       for (const v of HSM_VENDORS) {
         const safeNotes = (v.notes ?? '').replace(/\|/g, '\\|')
@@ -324,19 +457,24 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       lines.push('')
     }
     return lines.join('\n')
-  }, [mode, cbomSlice])
+  }, [mode, cbomSlice, assessmentTransitions, myProducts])
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Three linked views over the software and hardware inventory: map an SBOM into a
-        crypto-focused <InlineTooltip term="CBOM">CBOM</InlineTooltip> slice, inspect your library
-        posture, and track <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip> Level 3
-        status for every HSM your keys live in.
+        Use the linked sample inventory views to map an SBOM into a crypto-focused{' '}
+        <InlineTooltip term="CBOM">CBOM</InlineTooltip> slice, inspect library posture, and review
+        reported HSM levels and certificate associations.
+      </p>
+
+      <p className="text-xs text-muted-foreground">
+        CMVP snapshot links cover FIPS 140-3 records only. A missing link does not establish
+        certificate absence or validity; check the original source for its standard, module and
+        configuration scope.
       </p>
 
       <div className="flex flex-wrap gap-2">
-        {hasAssessmentCrypto && (
+        {(hasAssessmentCrypto || mode === 'assessment') && (
           <Button
             variant={mode === 'assessment' ? 'gradient' : 'outline'}
             onClick={() => setMode('assessment')}
@@ -364,7 +502,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           onClick={() => setMode('hsm')}
           className="text-xs"
         >
-          Hardware FIPS 140-3 L3
+          HSM inventory
         </Button>
         <Button
           variant={mode === 'files' ? 'gradient' : 'outline'}
@@ -379,14 +517,16 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         <div className="space-y-3">
           <PreFilledBanner
             summary={
-              [
+              ([
                 assessmentTransitions.length > 0 &&
                   `${assessmentTransitions.length} algorithm${assessmentTransitions.length !== 1 ? 's' : ''} from your assessment`,
                 myProducts.length > 0 &&
                   `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`,
               ]
                 .filter(Boolean)
-                .join(' + ') + '.'
+                .join(' + ') ||
+                'No assessment algorithm or selected product records are available in this view') +
+              '.'
             }
             onClear={() => setMode('libs')}
           />
@@ -443,6 +583,12 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
 
       {mode === 'sbom' && (
         <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">
+            Teaching subset only: an object with a components array; each entry needs a name and may
+            have a string version. This is not a full CycloneDX or SPDX parser. Blank text uses the
+            selected bundled sample. Pasted text stays in this mounted module; saved reports do not
+            restore pasted source after a reload.
+          </p>
           <div className="bg-muted/40 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-foreground block mb-2">Sample SBOM</div>
             <FilterDropdown
@@ -461,23 +607,37 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
               htmlFor="cmm-user-sbom"
               className="text-xs font-bold text-foreground block mt-3 mb-1"
             >
-              Or paste your own CycloneDX / SPDX JSON
+              Paste components-shaped JSON
             </label>
             <textarea
               id="cmm-user-sbom"
               value={userSbom}
               onChange={(e) => setUserSbom(e.target.value)}
               className="w-full h-24 bg-background border border-input rounded px-2 py-1 text-[11px] font-mono text-foreground"
-              placeholder="Paste CycloneDX JSON here to override the sample"
+              placeholder="Paste an object with a components array to override the sample"
             />
           </div>
 
           <div className="bg-muted/40 rounded-lg p-3 border border-border">
             <div className="font-bold text-sm text-foreground mb-2">CBOM slice</div>
-            {cbomSlice.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic">
-                No components parsed. Use a sample or paste a valid CycloneDX JSON with a
-                <code className="text-xs mx-1">components</code> array.
+            {parsedSbom.valid && cbomSlice.length > 0 && (
+              <p role="status" className="text-xs text-muted-foreground mb-2">
+                {cbomSlice.length} mapped sample rows;{' '}
+                {cbomSlice.filter((row) => !row.matched).length} without a catalogue match.
+                Unmatched posture/status values are teaching fallbacks, not confirmed certification
+                or availability findings.
+              </p>
+            )}
+            {!parsedSbom.valid ? (
+              <p role="alert" className="text-xs text-status-error">
+                {parsedSbom.issue} Save and export are unavailable for this draft. Any existing
+                valid mapping or saved report is left unchanged; fix the draft or explicitly select
+                a bundled sample.
+              </p>
+            ) : cbomSlice.length === 0 ? (
+              <p role="status" className="text-xs text-muted-foreground italic">
+                Supported empty components sample: no rows were supplied. This does not establish
+                that an organisation has no cryptographic dependencies.
               </p>
             ) : (
               <div className="overflow-x-auto">
@@ -555,7 +715,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                 <th className="p-2 font-bold">Library</th>
                 <th className="p-2 font-bold">Latest</th>
                 <th className="p-2 font-bold">EoL</th>
-                <th className="p-2 font-bold">FIPS 140-3</th>
+                <th className="p-2 font-bold">Reported FIPS status</th>
                 <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                 <th className="p-2 font-bold">PQC</th>
                 <th className="p-2 font-bold">High CVEs (1y)</th>
@@ -619,7 +779,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
               <tr className="bg-muted/60 text-left">
                 <th className="p-2 font-bold">Vendor / Product</th>
                 <th className="p-2 font-bold">Firmware</th>
-                <th className="p-2 font-bold">FIPS level</th>
+                <th className="p-2 font-bold">Reported FIPS level</th>
                 <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                 <th className="p-2 font-bold">Algorithm evidence and scope</th>
                 <th className="p-2 font-bold">Platform binding</th>
@@ -738,42 +898,50 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           scanners, or auditors (PQC and classical algorithms both emit as{' '}
           <code>cryptographic-asset</code> components).
         </p>
-        <Button onClick={handleDownloadCycloneDx} variant="outline" className="shrink-0">
+        <Button
+          onClick={handleDownloadCycloneDx}
+          disabled={mode === 'sbom' && !parsedSbom.valid}
+          variant="outline"
+          className="shrink-0"
+        >
           <Download className="w-4 h-4 mr-2" />
           Download CycloneDX 1.7
         </Button>
       </div>
 
       {/* Save to Command Center / export */}
-      <ExportableArtifact
-        title="CBOM - Export"
-        exportData={exportMarkdown}
-        filename="crypto-bom"
-        formats={['markdown', 'pdf', 'docx']}
-        wideTable
-        onExport={() => {
-          addExecutiveDocument({
-            id: `crypto-cbom-${Date.now()}`,
-            moduleId: 'crypto-management-modernization',
-            type: 'crypto-cbom',
-            title: `CBOM — ${new Date().toLocaleDateString()}`,
-            data: exportMarkdown,
-            inputs: {
-              mode,
-              selectedSbom,
-              assessmentSeed:
-                mode === 'assessment' ? assessmentTransitions.map((t) => t.storedKey) : undefined,
-              reportSummary,
-            } satisfies SavedCbomInputs,
-            createdAt: Date.now(),
-          })
-        }}
-      >
-        <p className="text-sm text-muted-foreground">
-          Save the CBOM slice to your Command Center under the Management Tools zone, or export as
-          markdown / PDF / DOCX.
-        </p>
-      </ExportableArtifact>
+      {(mode !== 'sbom' || parsedSbom.valid) && (
+        <ExportableArtifact
+          title="CBOM - Export"
+          exportData={exportMarkdown}
+          filename="crypto-bom"
+          formats={['markdown', 'pdf', 'docx']}
+          wideTable
+          onExport={() => {
+            if (mode === 'sbom' && !latestSbomValidity.current) return
+            addExecutiveDocument({
+              id: `crypto-cbom-${Date.now()}`,
+              moduleId: 'crypto-management-modernization',
+              type: 'crypto-cbom',
+              title: `CBOM — ${new Date().toLocaleDateString()}`,
+              data: exportMarkdown,
+              inputs: {
+                mode,
+                selectedSbom,
+                assessmentSeed:
+                  mode === 'assessment' ? assessmentTransitions.map((t) => t.storedKey) : undefined,
+                reportSummary,
+              } satisfies SavedCbomInputs,
+              createdAt: Date.now(),
+            })
+          }}
+        >
+          <p className="text-sm text-muted-foreground">
+            Save the CBOM slice to your Command Center under the Management Tools zone, or export as
+            markdown / PDF / DOCX.
+          </p>
+        </ExportableArtifact>
+      )}
     </div>
   )
 }

@@ -55,45 +55,84 @@ interface DeveloperImplementationViewProps {
 
 // Algorithm family → /algorithms deep-link highlight token. Reuses the same
 // highlight schema as the executive "View Top 5" button in AlgorithmsView.
-export const CI_GATE_YAML = `# .github/workflows/pqc-inventory-policy.yml
-# Example inventory policy. A finding requires review; it is not, by itself,
-# a legal compliance determination.
-name: PQC Inventory Policy
-
+export const CI_GATE_YAML = `# .github/workflows/pqc-inventory-review.yml
+# Educational family-review example, not a compliance/security verdict.
+# Supply a reviewed cbom.json first (for example, a Hub sample export).
+# This does not scan a project or validate the complete CycloneDX schema.
+name: Sample inventory review
 on:
   pull_request:
   push:
     branches: [main]
-
 jobs:
-  pqc-gate:
+  review:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Generate CBOM with cyclonedx-cli
+      - name: Inspect a CycloneDX 1.7 sample
+        shell: bash
         run: |
-          npx -y @cyclonedx/cdxgen -t cryptography \\
-            --required-only \\
-            -o cbom.json .
-
-      - name: Evaluate the inventory policy
-        run: |
-          if jq -e '.components[]
-            | select(.cryptoProperties.algorithmProperties.executionEnvironment == "software")
-            | select(.cryptoProperties.algorithmProperties.implementationPlatform | test("rsa|ecdsa|ecdh"; "i"))
-            | select((.cryptoProperties.algorithmProperties.cryptoFunctions // [])
-              | map(test("ml-kem|ml-dsa|slh-dsa|hybrid"; "i")) | any | not)' cbom.json >/dev/null; then
-            echo "::error::Inventory policy finding: classical implementation has no recorded PQC/hybrid companion"
-            exit 1
-          else
-            echo "No inventory-policy findings detected"
+          set -eu
+          if ! command -v jq >/dev/null 2>&1; then
+            echo "::error::Evaluation failed: jq is unavailable"
+            exit 2
           fi
+          if ! report=$(jq -sc '
+            def incomplete($reason): {outcome:"incomplete", reason:$reason};
+            if length != 1 then incomplete("Expected exactly one JSON document")
+            elif (.[0] | type) != "object" then incomplete("Expected a BOM object")
+            else .[0] as $bom |
+              if $bom.bomFormat != "CycloneDX" or $bom.specVersion != "1.7"
+              then incomplete("This example inspects CycloneDX 1.7 only")
+              elif ($bom.components | type) != "array"
+              then incomplete("Missing component inventory")
+              elif any($bom.components[]; type != "object")
+              then incomplete("Unsupported component shape")
+              elif any($bom.components[]; has("components") and .components != [])
+                or ($bom.metadata.component.components? != null and $bom.metadata.component.components != [])
+              then incomplete("Nested component inventory is outside this example")
+              else
+                # These are sample review targets, NOT an approved/security list.
+                ["RSAES-OAEP","RSAES-PKCS1","RSASSA-PKCS1","RSASSA-PSS","ECDSA","ECDH"] as $targets |
+                ["ML-KEM","ML-DSA","SLH-DSA","AES"] as $other_examples |
+                [$bom.components[] |
+                  select(.type == "cryptographic-asset" and .cryptoProperties.assetType == "algorithm") |
+                  {ref: .["bom-ref"], name: .name,
+                   family: .cryptoProperties.algorithmProperties.algorithmFamily}] as $records |
+                [$records[] | select((.family | type) == "string") | select(.family as $f | $targets | index($f))] as $findings |
+                [$records[] | select((.family | type) != "string" or (.family as $f | ($targets + $other_examples) | index($f) | not))] as $unknown |
+                if ($records | length) == 0 then incomplete("No algorithm-asset evidence")
+                elif ($unknown | length) > 0 then
+                  {outcome:"incomplete", reason:"Missing or out-of-example algorithm identity", findings:$findings, unassessed:$unknown}
+                elif ($findings | length) > 0 then
+                  {outcome:"review", findings:$findings, inspected:($records | length)}
+                else {outcome:"none", inspected:($records | length)} end
+              end
+            end' cbom.json); then
+            echo "::error::Evaluation failed: JSON parsing, file access or jq evaluation failed; inspect stderr"
+            exit 2
+          fi
+          printf '%s\\n' "$report"
+          if ! outcome=$(printf '%s\\n' "$report" | jq -r '.outcome'); then
+            echo "::error::Evaluation failed: could not read the review result"
+            exit 2
+          fi
+          case "$outcome" in
+            review) echo "::error::Recorded algorithm-family review items; inspect their context"; exit 1 ;;
+            incomplete) echo "::error::Evidence incomplete; no clean result established"; exit 2 ;;
+            none) echo "No targeted findings in the inspected sample scope; not a compliance or security verdict" ;;
+            *) echo "::error::Evaluation failed: unrecognised review outcome"; exit 2 ;;
+          esac
 `
 
 function DevModuleCertSummary() {
   const { data } = useComplianceRefresh()
-  return <ModuleCertificationStatus records={data ?? []} />
+  return (
+    <ModuleCertificationStatus
+      records={data ?? []}
+      closingNote="These catalogue records are not your dependency inventory. The CI example reviews only the structured algorithm-family evidence supplied in its sample input."
+    />
+  )
 }
 
 function CIGateSnippet() {
@@ -114,10 +153,10 @@ function CIGateSnippet() {
       <header className="flex items-center gap-2 flex-wrap">
         <Terminal size={16} className="text-primary" />
         <h3 className="text-base font-semibold text-foreground">
-          Wire an inventory policy into CI
+          Inspect inventory evidence in CI
         </h3>
         <span className="text-xs text-muted-foreground">
-          Example review gate; tailor it to your architecture and obligations
+          Limited family-review example; supply a reviewed CycloneDX 1.7 input
         </span>
         <Button
           variant="outline"
@@ -134,17 +173,12 @@ function CIGateSnippet() {
         <code>{CI_GATE_YAML}</code>
       </pre>
       <p className="text-xs text-muted-foreground">
-        A failure is an inventory finding, not a compliance verdict. Confirm the component, protocol
-        context, migration plan and applicable obligation before blocking release. Uses{' '}
-        <a
-          href="https://github.com/CycloneDX/cdxgen"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:underline"
-        >
-          @cyclonedx/cdxgen
-        </a>{' '}
-        for the CBOM scan.
+        This example separates review items, incomplete evidence and evaluation errors. It inspects
+        only top-level algorithm assets in a CycloneDX 1.7 input and a finite set of example
+        families; it does not validate the complete schema, parameters, hybrid binding or deployed
+        security. Missing identities and unsupported nested inventories stay incomplete. Generate
+        and review your inventory with your own tools before this step, then assess each item’s
+        component, protocol context and migration plan. No targeted finding is not an approval.
       </p>
     </section>
   )

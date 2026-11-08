@@ -1,40 +1,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { ChevronRight, CheckCircle2, Circle, X } from 'lucide-react'
+import { ChevronRight, CheckCircle2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
+import { describeWorkshopParticipation } from '@/utils/workshopParticipation'
 import { useWorkshopAutoComplete } from '@/hooks/useWorkshopAutoComplete'
 import { flattenFlow, findStepIndex, getNextStep, getPrevStep } from '@/data/workshopRegistry'
 import { buildStepUrl, isOnStepRoute } from '@/utils/workshopDeepLink'
-import type { WorkshopCompletionSignal, WorkshopStep } from '@/types/Workshop'
+import type { WorkshopStep } from '@/types/Workshop'
 import { MobileSheet } from '../primitives/Sheet'
 import { MobileProgress } from '../primitives/Progress'
 import { mobileDockPanel } from '../mobileTokens'
 import { cn } from '@/lib/utils'
-
-/** "You will know it worked when" — expectedOutput plus the real
- *  completionSignal phrased in words, matching the handoff ("Completes when
- *  a bookmark is added on Library — the step ticks itself"). Real signal
- *  data, not invented copy — a step with no signal just shows expectedOutput
- *  plus a note that it's confirmed manually. */
-function describeCompletionSignal(sig: WorkshopCompletionSignal | undefined): string | null {
-  if (!sig) return null
-  switch (sig.kind) {
-    case 'route-visited':
-      return `Completes when you open ${sig.route} — the step ticks itself.`
-    case 'assessment-complete':
-      return 'Completes when the assessment is finished — the step ticks itself.'
-    case 'bookmark-added':
-      return `Completes when a bookmark is added on ${sig.surface} — the step ticks itself.`
-    case 'module-progress':
-      return 'Completes as you read through the module — the step ticks itself.'
-    case 'filter-applied':
-      return 'Completes when you apply that filter — the step ticks itself.'
-  }
-}
 
 /**
  * Handoff screens 23/24 — guided workshop dock, over real pages rather than
@@ -158,7 +138,7 @@ export function MobileWorkshopDock() {
     pause()
   }
 
-  const signalCopy = describeCompletionSignal(currentStep.completionSignal)
+  const signalCopy = describeWorkshopParticipation(currentStep.completionSignal)
 
   return (
     <>
@@ -195,9 +175,8 @@ export function MobileWorkshopDock() {
                 {currentStep.title}
               </span>
               <span className="block text-[10.5px] text-primary-foreground/80">
-                {currentStep.tasks.length > 0 &&
-                  `${isPassed ? currentStep.tasks.length : 0} of ${currentStep.tasks.length} tasks · `}
-                tap to open
+                {currentStep.tasks.length > 0 && `${currentStep.tasks.length} suggested tasks · `}
+                {isPassed ? 'Activity marked complete · ' : 'Not marked · '}tap to open
               </span>
             </span>
           </Button>
@@ -261,15 +240,9 @@ export function MobileWorkshopDock() {
                   key={task}
                   className="flex min-h-[44px] items-center gap-2.5 rounded-lg border border-border/60 px-2.5 py-2"
                 >
-                  {isPassed ? (
-                    <CheckCircle2 size={16} className="shrink-0 text-success" aria-hidden="true" />
-                  ) : (
-                    <Circle
-                      size={16}
-                      className="shrink-0 text-muted-foreground"
-                      aria-hidden="true"
-                    />
-                  )}
+                  <span className="shrink-0 text-muted-foreground" aria-hidden="true">
+                    •
+                  </span>
                   <span className="text-[12.5px] text-foreground">{task}</span>
                 </li>
               ))}
@@ -279,10 +252,18 @@ export function MobileWorkshopDock() {
 
         <div className="mt-3 rounded-xl border border-border bg-muted/20 p-3">
           <p className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
-            You&apos;ll know it worked when
+            Activity guide
           </p>
           <p className="mt-1 text-[12px] leading-[1.55] text-foreground/90">
             {currentStep.expectedOutput}
+          </p>
+          {isPassed && (
+            <p className="mt-1 text-[10.5px] text-muted-foreground">
+              Activity marked complete. Its completion origin is not recorded.
+            </p>
+          )}
+          <p className="mt-1 text-[10.5px] text-muted-foreground">
+            Task lists are guides; participation credit does not verify each task.
           </p>
           {signalCopy && (
             <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">{signalCopy}</p>
@@ -296,7 +277,7 @@ export function MobileWorkshopDock() {
             onClick={() => markStepComplete(currentStep.id)}
             className="mt-3 h-10 w-full rounded-[10px] border-border text-[12px] font-bold text-foreground"
           >
-            Mark this step done
+            Mark activity complete
           </Button>
         )}
 

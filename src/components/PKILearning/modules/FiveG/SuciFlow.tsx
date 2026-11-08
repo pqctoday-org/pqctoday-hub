@@ -377,6 +377,14 @@ const Z = zKemBytes`,
     const stepData = rawSteps[wizard.currentStep]
     fiveGService.state.supi = customSupi || '310260123456789'
     fiveGService.state.profile = profile // ensure profile is always set before any step runs
+    if (stepData.id === 'compute_shared_secret') {
+      hsmHandlesRef.current.sharedSecretHandle = undefined
+      hsmHandlesRef.current.combinedZBytes = undefined
+      hsmHandlesRef.current.kemCiphertext = undefined
+      hsmHandlesRef.current.kEncBytes = undefined
+      hsmHandlesRef.current.kMacBytes = undefined
+      hsmHandlesRef.current.ciphertext = undefined
+    }
     let result: string | Record<string, string> = ''
 
     try {
@@ -895,7 +903,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
 
           if (profile !== 'C') {
             // Profiles A/B: ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.4
-            // ECDH Z stays inside HSM; KDF computed via SubtleCrypto SHA-256.
+            // This sample reads ECDH Z into JavaScript for its SubtleCrypto SHA-256 KDF.
             // PKCS#11 v3.2 has no CKM_ANSI_X9_63_KDF mechanism — SubtleCrypto is the correct bridge.
             const zBytes = hsm_extractKeyValue(
               M,
@@ -1704,14 +1712,23 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         key={`${profile}-${pqcMode}`} // Force re-mount on profile or mode change
         steps={steps}
         currentStepIndex={wizard.currentStep}
-        onExecute={() => wizard.execute(executeStep)}
+        onExecute={() => {
+          if (rawSteps[wizard.currentStep].id === 'compute_shared_secret') {
+            wizard.setIsStepComplete(false)
+            wizard.setOutput(null)
+          }
+          return wizard.execute(executeStep)
+        }}
         output={wizard.output}
         isExecuting={wizard.isExecuting}
         error={wizard.error}
         isStepComplete={wizard.isStepComplete}
         onNext={wizard.handleNext}
         onBack={wizard.handleBack}
-        plainEnglishEnabled={plainEnglish}
+        plainEnglishEnabled={
+          plainEnglish &&
+          (rawSteps[wizard.currentStep].id !== 'compute_shared_secret' || wizard.isStepComplete)
+        }
         phaseLabels={SUCI_PHASE_LABELS}
         canonicalTabNames={['SoftHSM3', 'SoftHSMv3']}
         tabExplainer="SoftHSM3 runs inside your browser via WASM — it's the canonical output for this module. The OpenSSL Engine tab shows the equivalent command-line computation for cross-reference."

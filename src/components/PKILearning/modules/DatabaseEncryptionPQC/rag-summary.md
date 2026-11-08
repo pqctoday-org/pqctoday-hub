@@ -24,7 +24,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF; this is this module's design, since FIPS 203 says the shared secret can be used directly as a key in symmetric-key cryptography), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
 
-4. **Online Re-Encryption** — Oracle: `ALTER TABLESPACE REKEY`. SQL Server: `ALTER DATABASE ENCRYPTION KEY REGENERATE WITH ALGORITHM = AES_256`. MongoDB: `db.adminCommand({ rotateMasterKey: 1 })`. All support online migration with zero application downtime.
+4. **Online Re-Encryption** — Oracle: `ALTER TABLESPACE <name> ENCRYPTION ONLINE REKEY` (ONLINE conversion builds new datafiles and needs free space). SQL Server: `ALTER DATABASE ENCRYPTION KEY REGENERATE WITH ALGORITHM = AES_256`. MongoDB: `db.adminCommand({ rotateMasterKey: 1 })`. In this module's sample plan these run online, with no application downtime assumed.
 
 5. **Integrity Verification** — DBCC CHECKDB (SQL Server) / Oracle RMAN validation. Test ML-KEM ciphertext decapsulation end-to-end.
 
@@ -36,23 +36,23 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 ## BYOK/HYOK Patterns
 
-### Provider-Managed (30% PQC Readiness)
+### Provider-Managed (illustrative 30% PQC readiness)
 
 - Cloud provider generates and stores all key material
 - No customer control over PQC migration timeline
 - Key custody sits with the provider; regulated entities rely on provider controls for key-lifecycle requirements (for example DORA RTS 2024/1774 Article 7)
 
-### BYOK — Bring Your Own Key (65% PQC Readiness)
+### BYOK — Bring Your Own Key (illustrative 65% PQC readiness)
 
 - In this module's reading, customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
 - ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only; check Azure and Google Cloud per service
 - Cloud KMS briefly holds unwrapped CMK in HSM memory — residual exposure
 - Satisfies most regulatory BYOK requirements
 
-### HYOK — Hold Your Own Key (90% PQC Readiness)
+### HYOK — Hold Your Own Key (illustrative 90% PQC readiness)
 
 - Customer key never leaves on-premises infrastructure
-- Cloud database receives only encrypted DEKs
+- Cloud database receives the plaintext DEK after the on-premises unwrap
 - On-prem HSM: Thales CipherTrust, Entrust DataControl, Utimaco
 - ML-KEM-1024 PKCS#11 v3.2 mechanisms: `CKM_ML_KEM_KEY_PAIR_GEN`, `CKM_ML_KEM`
 - Key flow: ML-KEM-1024.Encaps(ek) → KEM ciphertext (1,568 B) + shared_secret → HKDF-SHA-256 → 256-bit wrapping key → AES-256-KW(DEK)
@@ -124,6 +124,6 @@ No vendor PQC dates for databases are cited in this module; any vendor date or r
 - **AES-256 is quantum-safe**: Grover's algorithm reduces effective bits from 256 to 128 — still above the 112-bit security minimum. No data file re-encryption needed.
 - **DEK wrapping is the PQC target**: RSA-OAEP and ECDH used to wrap DEKs must be replaced with a standardized KEM: ML-KEM-768 is the FIPS 203 default; ML-KEM-1024 where a policy such as CNSA 2.0 requires it.
 - **ML-KEM-1024 key sizes**: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.
-- **Online migration**: Oracle (`ALTER TABLESPACE REKEY`) and SQL Server (`ALTER DATABASE ENCRYPTION KEY REGENERATE`) support zero-downtime TDE re-keying.
+- **Online migration**: Oracle (`ALTER TABLESPACE <name> ENCRYPTION ONLINE REKEY`) and SQL Server (`ALTER DATABASE ENCRYPTION KEY REGENERATE`) support zero-downtime TDE re-keying.
 - **HNDL risk**: Database backups captured today with RSA-wrapped DEKs may be decryptable after a CRQC arrives. Priority: databases with long data retention (healthcare, financial records, classified).
 - **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard); ML-KEM, ML-DSA and SLH-DSA Cryptographic Algorithm values are defined in KMIP 3.0 (Committee Specification Draft 02, May 2026), which is not ratified; KMIP 2.1 has none. Thales CipherTrust Manager’s release notes list ML-KEM on its web interface from v2.20.0; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.

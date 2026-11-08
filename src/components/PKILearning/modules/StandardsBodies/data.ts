@@ -124,7 +124,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     keyPqcOutputs: [
       'ISO/IEC 14888-4:2024 (Digital signatures with appendix – Part 4: Stateful hash-based mechanisms)',
       "ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers amendment; covers Classic McEliece and FrodoKEM, as Bouncy Castle's release notes state; ML-KEM not confirmed against the amendment's scope text)",
-      'ISO/IEC 20085 (KEM reference, in development)',
+      'ISO/IEC 20085-1:2019 and 20085-2:2020 (test tools and calibration methods for non-invasive, side-channel attack testing of cryptographic modules; not a KEM standard)',
     ],
     libraryRefs: [
       'ISO/IEC 14888-4:2024',
@@ -584,7 +584,8 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         role: 'certification',
         label: 'Common Criteria Evaluation',
         body: 'CCRA / BSI / ANSSI',
-        description: '',
+        description:
+          'Common Criteria (CC) splits the work across three roles. Evaluation: a facility that is independent of the developer assesses a specific product against the CC, using the Common Evaluation Methodology, and reports its findings to a certification body. Certification: the certification body runs the national scheme and issues the certificate together with a public certification report; BSI (Germany) and ANSSI (France) are listed on the Common Criteria Portal as certificate-authorising members of the Common Criteria Recognition Arrangement (CCRA). Recognition: CCRA participants plan to recognise certificates authorised by other authorising participants, but the arrangement covers only certificates that claim a collaborative Protection Profile or Evaluation Assurance Levels 1 to 2 with ALC_FLR (Art. 2), and it has no binding effect in national, international or European law (Art. 18). A certificate confirms that a specific product completed evaluation; it is not an endorsement, warranty or guarantee of the product (Art. 18). What was evaluated is set by the product’s Security Target or Protection Profile, so a certificate does not by itself show that the product implements a post-quantum standard such as ISO/IEC 14888-4.',
       },
       {
         id: 'eu-procurement',
@@ -706,8 +707,8 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       note: 'Post-Brexit, UK maintains its own standards track aligned with ISO and ETSI (not sourced in the Library)',
     },
     'certification-body': {
-      orgs: ['NCSC (CAPS — Commercial Product Assurance)', 'UKAS-accredited labs'],
-      note: 'UK CC certificates no longer automatically recognized in EU post-Brexit',
+      orgs: ['NCSC (CAPS, the assisted-products service for High Grade products used by HMG)'],
+      note: 'CAPS is a different scheme from Commercial Product Assurance (CPA), which assessed commodity products from 2014 to 2019, was closed in 2020 except for Smart Meters, and is no longer run by the NCSC. Common Criteria recognition is a third thing: the NCSC stopped producing Common Criteria certificates on 1 October 2019 but, as a certificate-consuming participant of the CCRA, still recognises CCRA-compliant certificates.',
     },
     'compliance-framework': {
       orgs: ['UK Gov PQC Roadmap (2025)', 'NCSC Cyber Essentials'],

@@ -4,6 +4,10 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -68,18 +72,18 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0 software signing preferred',
+      label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },
-    { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    { label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
   ],
 
   narratives: {
     overview:
       'Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server). Addresses secret classification by HNDL risk, automated rotation with PQC keys, cloud provider roadmaps, and Kubernetes/CI-CD pipeline integration.',
     keyConcepts:
-      'Secret types vs encryption keys: what PQC protects. Harvest-now-decrypt-later (HNDL) risk for long-lived credentials. HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65). Dynamic secrets and TTL-based rotation with PQC. AWS Secrets Manager / Azure Key Vault / GCP Secret Manager PQC timelines. Kubernetes secrets encryption-at-rest with ML-KEM (via KMS plugin). External Secrets Operator and SPIFFE/SPIRE integration. CI/CD OIDC + ML-DSA short-lived certificate patterns.',
+      'Secret types vs encryption keys: what PQC protects. Harvest-now-decrypt-later (HNDL) risk for long-lived credentials. HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65) as a proposed design: Vault documents no ML-KEM transit key type. Dynamic secrets and TTL-based rotation with PQC. AWS Secrets Manager / Azure Key Vault / GCP Secret Manager PQC timelines. Kubernetes secrets encryption-at-rest (via KMS plugin). External Secrets Operator and SPIFFE/SPIRE integration. CI/CD OIDC + ML-DSA short-lived certificate patterns.',
     relatedStandards:
       "NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — ML-KEM). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). BIP-32/BIP-39 (HD wallet key derivation, cited for secret-derivation parallels — this hub's BIP-39 citation is deprecated pending re-capture of the source page, not because the standard changed).",
   },

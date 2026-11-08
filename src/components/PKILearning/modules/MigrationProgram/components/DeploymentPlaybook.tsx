@@ -10,8 +10,11 @@ import type { RoadmapOutput } from '../types'
 // Exported (07192026, Batch 3) for the simulation's real-tool doc generator —
 // the sim's sample playbook is the tool's own real checklist content.
 export const DEPLOYMENT_PLAYBOOK_TITLE = 'PQC Deployment Playbook'
+const RETIREMENT_SAMPLE_SCOPE =
+  'Retirement entries are fictional planning examples; separate sample tests can illustrate rejection of an old path, but do not establish retirement of a deployed system.'
 export const DEPLOYMENT_PLAYBOOK_DESCRIPTION =
-  'Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback.'
+  'Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback. ' +
+  RETIREMENT_SAMPLE_SCOPE
 export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
   {
     title: 'Pre-Deployment Preparation',
@@ -62,7 +65,8 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
       },
       {
         id: 'hybrid-perf-test',
-        label: 'Benchmark hybrid handshake latency (expect 2-5% increase)',
+        label:
+          'Benchmark full and resumed handshake latency, throughput, message sizes and failure rates against the selected baseline',
       },
       {
         id: 'hybrid-interop',
@@ -148,7 +152,7 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
     ],
   },
   {
-    title: 'Decommission Plan (CSWP.39 §4.6)',
+    title: 'Hub Lifecycle Planning (related reading: CSWP.39 §4.6)',
     items: [
       {
         id: 'decom-record-mitigation',
@@ -163,7 +167,7 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
       {
         id: 'decom-sunset-date',
         label:
-          'Set a mandatory sunset date — CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them',
+          'Hub planning prompt: record an appropriate gateway review/exit or sunset plan; CSWP.39 §4.6 describes gateway architecture and does not prescribe a sunset date',
         critical: true,
       },
       {
@@ -177,7 +181,8 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
       },
       {
         id: 'decom-evidence',
-        label: 'Capture evidence at retirement — CMVP cert # / ACVP run / CVE-scan clean',
+        label:
+          'Record fictional retirement examples: before/after inventory and configuration, removed trust entries, and retired dependency paths',
       },
       {
         id: 'decom-cmdb-cbom',
@@ -278,13 +283,16 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
         <div>
           <h2 className="text-base font-semibold text-foreground">Methodology</h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Grounded in NIST CSWP.39 §4 — Crypto Agility in System Implementations, which covers how
-            agility is achieved at each layer touched by a rollout: crypto-library APIs, the OS
-            kernel, service mesh, embedded/RTOS, and hardware. The Decommission Plan section below
-            applies §4.6: a crypto gateway restores agility at the network boundary for legacy
-            systems that cannot be modified directly, but the legacy component's own cryptography
-            stays in place — so every gateway entry needs a planned sunset date rather than standing
-            in as the migration itself.
+            Related reading: NIST CSWP.39 §4 discusses system implementations; §4.6 describes an
+            external gateway that can help provide crypto agility when legacy components cannot be
+            changed directly. The lifecycle checklist below is a Hub planning example. Its
+            review/exit prompt and critical-item labels are teaching choices, not a sunset rule
+            prescribed by NIST. A gateway can change the architecture while embedded legacy
+            cryptography remains unchanged.
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {RETIREMENT_SAMPLE_SCOPE} Module validation, algorithm tests and vulnerability scans
+            answer different questions; none alone shows that an old deployment path was removed.
           </p>
         </div>
       </div>

@@ -82,6 +82,22 @@ describe('TERMS.md and the /terms page say the same about privacy', () => {
     )
   })
 
+  it('both say the in-browser cryptography uses more than WebAssembly alone', () => {
+    // Renders the page once; section 3 and section 10 are read from the same render.
+    const page = privacySectionFromPage()
+    const sectionThree = /^## 3\. [^\n]*\n([\s\S]*?)(?=^## \d+\. )/m.exec(termsMd)?.[1] ?? ''
+    const intro =
+      'using WebAssembly (WASM) modules, the Web Crypto API and JavaScript libraries, and are intended for educational and demonstration purposes only.'
+    expect(normalize(sectionThree)).toContain(intro)
+    const heading = screen.getByRole('heading', { name: /^3\. Educational Purpose/ })
+    // eslint-disable-next-line testing-library/no-node-access -- the section has no accessible name to query by
+    expect(normalize(heading.closest('section')?.textContent ?? '')).toContain(intro)
+    const privacy =
+      'using client-side WebAssembly modules, the Web Crypto API and JavaScript libraries'
+    expect(privacySectionBodyFromMd()).toContain(privacy)
+    expect(normalize(page.text)).toContain(privacy)
+  })
+
   it('neither text still claims that nothing is tracked', () => {
     const page = normalize(privacySectionFromPage().text)
     for (const text of [page, normalize(termsMd)]) {

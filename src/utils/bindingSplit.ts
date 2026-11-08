@@ -123,6 +123,22 @@ export function bindingChipFor(status: BindingStatus | undefined, inScope: boole
   return status === 'mandatory_for_scope' ? 'scoped' : 'binding'
 }
 
+/** Chip label and tooltip text for one chip. The Report and the Progress tab both read this. */
+export function bindingChipMeta(chip: BindingChip): { chip: string; description: string } {
+  if (chip === 'elsewhere') return BINDING_ELSEWHERE_META
+  if (chip === 'scoped') return BINDING_SCOPED_META
+  return BINDING_GROUP_META[chip]
+}
+
+/** Tints for the chip beside a framework: one table, so the two screens cannot diverge. */
+export const BINDING_CHIP_CLASS: Record<BindingChip, string> = {
+  binding: 'bg-status-error/10 text-status-error',
+  scoped: 'bg-status-error/10 text-status-error',
+  elsewhere: 'bg-muted text-muted-foreground',
+  guidance: 'bg-muted text-muted-foreground',
+  unclassified: 'bg-muted/20 text-muted-foreground',
+}
+
 /**
  * Split a list of applicable frameworks into the three groups, keeping each
  * group in the order given. Every item lands in exactly one group.

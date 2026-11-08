@@ -163,26 +163,33 @@ function kebab(s: string): string {
  * `NSA CNSA 2.0`). Used by buildConceptGraph so a click on either form
  * yields the same neighbourhood.
  *
- * Two independent signals feed this, unioned:
+ * Identity is deliberately narrow. Two registry rows are the same concept
+ * only when one of these holds, both of which are curated in the registry:
  *
- * 1. Fuzzy token-substring match on kebab(source_row_id). For example:
- *      center.kebab = "cnsa-2"
- *      library "NSA CNSA 2.0".kebab = "nsa-cnsa-2-0"
- *        → contains "-cnsa-2-" → equivalent ✓
- *    Minimum needle length 4 avoids generic tokens like "nsa", "iso"
- *    gobbling the entire registry. This signal misses pairs where one side
- *    inserts an extra token the other doesn't have — e.g. compliance's
- *    "ISO-19790" vs library's "ISO-IEC-19790" (the "iec" infix breaks the
- *    substring match), which is exactly what the explicit alias below
- *    covers.
+ * 1. Same source record: the two rows carry the same `source_row_id` once
+ *    case and punctuation are normalised (`FIPS 203` and `FIPS-203`; one
+ *    library or compliance record registered under more than one concept id).
  *
- * 2. Explicit `aliases` declarations on either row, in the
+ * 2. An explicit `aliases` declaration on either row, in the
  *    `<source_table>:<source_row_id>` form (e.g. compliance row
  *    `guidance:iso-19790` carrying alias `library:ISO-IEC-19790`). Checked
  *    as a direct row-to-row comparison rather than via the shared
  *    `conceptIdByStoreKey` map, because that map is last-write-wins by CSV
  *    row order — a row's own natural self-registration can silently shadow
  *    an earlier row's alias pointing at the same key.
+ *
+ * A shared token inside a longer identifier is NOT identity. `NIST` is the
+ * publisher of every NIST publication, `Common Criteria` is the umbrella
+ * above each national certification scheme, `IEEE 1363` has an amendment
+ * `1363a`, `SP 1800-38` has volumes A, B and C, and a timeline milestone is
+ * the announcement of a document rather than the document. Those are
+ * publisher, series, scheme, companion and anchor relationships; folding
+ * them into one concept made one framework inherit the cross-walk edges of
+ * dozens of unrelated publications. Where two rows really are the same
+ * document or a versioned alias of it, the registry row carries an alias.
+ * Scheme-under-umbrella and part-of-series links are recorded as cross-walk
+ * rows of type `scheme_under` and `part_of_series`; they show as edges and
+ * never as identity.
  */
 export function equivalentCanonicals(center: ConceptRegistryRow): string[] {
   const out = new Set<string>()
@@ -190,18 +197,10 @@ export function equivalentCanonicals(center: ConceptRegistryRow): string[] {
   if (center.sourceRowId) {
     const needle = kebab(center.sourceRowId)
     if (needle.length >= 4) {
-      // Token match: needle bounded by start/end, hyphens, OR a single
-      // trailing alpha letter that itself sits at end-of-string or before a
-      // hyphen. The alpha-letter branch is what lets `nist-nccoe-sp-1800-38`
-      // match `nist-nccoe-sp-1800-38a/b/c` (the doc-suffix convention NIST
-      // uses). Digit suffixes still don't match, so `fips-2` doesn't gobble
-      // `fips-203`.
-      const re = new RegExp(`(^|-)${needle}([a-z](?=-|$)|-|$)`)
       for (const r of conceptRegistry) {
         if (r.conceptId === center.conceptId) continue
         if (!r.sourceRowId) continue
-        const hay = kebab(r.sourceRowId)
-        if (hay === needle || re.test(hay)) out.add(r.conceptId)
+        if (kebab(r.sourceRowId) === needle) out.add(r.conceptId)
       }
     }
   }

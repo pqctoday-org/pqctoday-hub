@@ -38,7 +38,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Biometric',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'DNA SNP profiles are 5 MB vs 512 bytes for fingerprints, but both are permanently compromised. DNA data additionally affects biological relatives, making it the highest-priority biometric type for PQC migration.',
+        'DNA SNP profiles are 5 MB vs 512 bytes for fingerprints, but neither can be reissued; whether exposure enables impersonation depends on template protection, presentation attack detection and a second factor. DNA data additionally affects biological relatives, making it the highest-priority biometric type for PQC migration.',
       config: { step: 0 },
     },
     {
@@ -60,7 +60,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Privacy',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'Pediatric records have 25-year true retention. Genomic data is effectively lifetime (100+ years). Both exceed the CRQC timeline, making them immediate HNDL targets.',
+        'This fictional scenario uses 25 years for pediatric records and a century-long confidentiality assumption for genomic data. These are sample planning inputs, not universal requirements. Compare those assumptions with migration time and the scenario’s quantum-threat horizon.',
       config: { step: 2 },
     },
     {

@@ -108,7 +108,10 @@ export interface DataFoundationRow {
 const DATA_FOUNDATION_META: Record<DataFoundationKey, Omit<DataFoundationRow, 'records'>> = {
   timeline: { dataset: 'Timeline Events', sources: '80+ orgs' },
   library: { dataset: 'Library Resources', sources: '30+ standards bodies' },
-  algorithms: { dataset: 'Algorithm Reference', sources: 'FIPS 203/204/205 (+206 draft)' },
+  algorithms: {
+    dataset: 'Algorithm Reference',
+    sources: 'FIPS 203/204/205 (FIPS 206 in development)',
+  },
   compliance: { dataset: 'Compliance Frameworks', sources: 'NIST, CAVP, CC, ANSSI' },
   migrate: { dataset: 'Migrate Products', sources: '9 infrastructure layers' },
   threats: { dataset: 'Threat Landscape', sources: '8+ industry sectors' },

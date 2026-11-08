@@ -6,6 +6,10 @@ import { Landmark, CheckCircle, Loader2, Eye, AlertTriangle } from 'lucide-react
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { createPresentation } from '../../utils/sdjwt-utils'
+import {
+  verifySampleSdPresentation,
+  sampleHolderMatchesIssuer,
+} from '../../utils/samplePresentation'
 import type { CryptoProvider } from '../../utils/crypto-provider'
 import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
 import { SoftHSMCryptoProvider, isHsmBackedKey } from '../../utils/hsm-crypto-provider'
@@ -37,10 +41,14 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
 }) => {
   const [step, setStep] = useState<RPStep>('START')
   const [loading, setLoading] = useState(false)
+  const [verificationError, setVerificationError] = useState<string | null>(null)
   const [presentationData, setPresentationData] = useState<{
     signature: string
     payload: string
     key: CryptoKey
+    nonce: string
+    audience: string
+    issuerJwt?: string
   } | null>(null)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
@@ -58,9 +66,6 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
     return ossl
   }
 
-  // Heuristic: Ensure we have at least one valid key to sign with
-  const availableKey = wallet.keys.find((k) => k.usage === 'SIGN')
-
   /**
    * What the bank asks for. Spans BOTH credentials in one request, which is
    * the ARF's own model: `age_over_18` proves eligibility from the PID while
@@ -76,6 +81,17 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   const pidCred = wallet.credentials.find(
     (c) => c.type.includes('PersonIdentificationData') || c.format === 'mso_mdoc'
   )
+
+  // Use the credential's saved sample key binding rather than the wallet's first key.
+  const availableKey = wallet.keys.find((key) => {
+    if (key.usage !== 'SIGN') return false
+    if (!sdJwtCred?.raw) return true
+    try {
+      return sampleHolderMatchesIssuer(key, (JSON.parse(sdJwtCred.raw) as SdJwtVc).issuerJwt)
+    } catch {
+      return false
+    }
+  })
 
   /** Every claim the holder could disclose, per credential, read from the credentials themselves. */
   const availableClaims = (): { key: string; source: 'diploma' | 'pid' }[] => {
@@ -147,6 +163,8 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
 
   const handlePresentation = async () => {
     setLoading(true)
+    setVerificationError(null)
+    setPresentationData(null)
     try {
       if (!availableKey) {
         throw new Error('No signing key found in wallet to create proof.')
@@ -183,6 +201,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
           signature: presentationString,
           payload: presentationString,
           key: availableKey,
+          nonce: challenge,
+          audience,
+          issuerJwt: sdJwtVc.issuerJwt,
         })
         addLog(`Presentation generated:\n${presentationString.substring(0, 40)}...`)
 
@@ -199,6 +220,8 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
             `PID mdoc disclosure: sending [${mdocPres.disclosed.map((d) => d.elementIdentifier).join(', ') || 'none'}], withholding [${mdocPres.withheld.join(', ') || 'none'}]`
           )
           const checks = await verifyMdocPresentation(mdocPres, provider, addOpenSSLLog)
+          if (checks.some((check) => !check.digestMatched))
+            throw new Error('Sample PID disclosure digest verification failed.')
           for (const c of checks) {
             addLog(
               `  digest check ${c.element}: ${c.digestMatched ? 'MATCHES the issuer-signed MSO' : 'FAILED'}`
@@ -214,18 +237,38 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
         // No SD-JWT credential — use device binding proof (works with PID mdoc)
         addLog('Generating Device Binding Proof (no SD-JWT credential found)...')
 
+        const nonce = crypto.randomUUID()
         const payload = JSON.stringify({
           iss: 'did:wallet:123',
           aud: 'https://bank.example.com',
-          nonce: crypto.randomUUID(),
+          nonce,
           iat: Date.now(),
         })
         addLog(`Signing Verification Payload: ${payload.substring(0, 60)}...`)
 
         const provider = getCryptoProvider()
         const signature = await provider.signData(availableKey, payload, addOpenSSLLog)
-        setPresentationData({ signature, payload, key: availableKey })
+        setPresentationData({
+          signature,
+          payload,
+          key: availableKey,
+          nonce,
+          audience: 'https://bank.example.com',
+        })
         addLog(`Signature generated: ${signature.substring(0, 20)}...`)
+        if (pidCred?.raw) {
+          const mdoc = JSON.parse(pidCred.raw) as MsoMdoc
+          const selected = claims
+            .filter((c) => c.source === 'pid' && selectedClaims.includes(c.key))
+            .map((c) => c.key)
+          const checks = await verifyMdocPresentation(
+            createMdocPresentation(mdoc, selected),
+            provider,
+            addOpenSSLLog
+          )
+          if (checks.some((check) => !check.digestMatched))
+            throw new Error('Sample PID disclosure digest verification failed.')
+        }
       }
 
       addLog('Presentation with Proof sent to Bank.')
@@ -235,82 +278,70 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
       setStep('VERIFICATION')
       setLoading(false)
     } catch (e) {
-      if (e instanceof Error) {
-        addLog(`Error: ${e.message}`)
-      }
+      const message = e instanceof Error ? e.message : 'Sample presentation failed.'
+      addLog(message)
+      setVerificationError(message)
+      setPresentationData(null)
       setLoading(false)
+      setStep('REFUSED')
     }
   }
 
   const handleVerification = async () => {
     setLoading(true)
-    addLog('Bank Verifying Presentation...')
-
-    // Under-sharing is allowed at the disclosure step precisely so this is
-    // reachable: a verifier that accepts an incomplete presentation would
-    // teach the wrong lesson about what selective disclosure costs.
-    if (missing.length) {
-      addLog(`Bank: presentation is missing [${missing.join(', ')}].`)
-      addLog(
-        'Bank: cryptographic proof is VALID, but the request is unsatisfied — account opening refused.'
-      )
-      addLog('Nothing you withheld was transmitted; the bank cannot see it to judge it.')
-      setLoading(false)
-      setStep('REFUSED')
-      return
-    }
-
+    setVerificationError(null)
+    addLog('Checking the sample presentation...')
     try {
-      if (presentationData) {
-        if (hsm.isReady) {
-          hsm.addStepLog('🏦 Bank Verification (Relying Party)')
-        }
-
-        // SD-JWT presentations use '~' as separator; plain proofs do not
-        const isSDJWT = presentationData.payload.includes('~')
-
-        if (isSDJWT) {
-          const parts = presentationData.payload.split('~')
-          const kbJwt = parts[parts.length - 1]
-          const jwtParts = kbJwt.split('.')
-
-          if (jwtParts.length === 3) {
-            const signingInput = `${jwtParts[0]}.${jwtParts[1]}`
-            const signature = jwtParts[2]
-
-            const provider = getCryptoProvider()
-            const isValid = await provider.verifySignature(
-              presentationData.key,
-              signature,
-              signingInput,
-              addOpenSSLLog
-            )
-            addLog(
-              isValid ? 'KB-JWT Signature Valid. SD-Hash verified.' : 'KB-JWT Signature INVALID!'
-            )
-          } else {
-            addLog('Presentation invalid format.')
-          }
-        } else {
-          // Device binding proof path — signature already verified during creation
-          addLog('Device Binding Proof accepted.')
-        }
+      if (!presentationData) throw new Error('No complete sample presentation is available.')
+      const provider = getCryptoProvider()
+      if (presentationData.issuerJwt) {
+        await verifySampleSdPresentation(
+          presentationData.payload,
+          {
+            issuerJwt: presentationData.issuerJwt,
+            nonce: presentationData.nonce,
+            audience: presentationData.audience,
+          },
+          presentationData.key,
+          provider,
+          addOpenSSLLog
+        )
+        addLog(
+          'Sample holder signature, saved key confirmation, nonce/audience and disclosure digest bindings passed.'
+        )
+      } else {
+        const payload = JSON.parse(presentationData.payload)
+        if (payload.nonce !== presentationData.nonce || payload.aud !== presentationData.audience)
+          throw new Error('Sample device-proof challenge mismatch.')
+        if (
+          !(await provider.verifySignature(
+            presentationData.key,
+            presentationData.signature,
+            presentationData.payload,
+            addOpenSSLLog
+          ))
+        )
+          throw new Error(
+            'Sample device-binding signature check did not pass. Inspect the operation log for the cause.'
+          )
+        addLog('Sample device-binding signature and challenge passed.')
       }
+      if (missing.length) throw new Error(`The sample request is missing: ${missing.join(', ')}.`)
+      addLog(
+        'Issuer-chain trust, revocation/status and account-approval decisions are simulated assumptions, not checks performed by this exercise.'
+      )
+      addLog(
+        'The sample does not implement a complete SD-JWT/mdoc verifier or production freshness policy.'
+      )
+      setStep('COMPLETE')
     } catch (e) {
-      if (e instanceof Error) {
-        addLog(`Verification error: ${e.message}`)
-      }
+      const message = e instanceof Error ? e.message : 'Sample presentation verification failed.'
+      addLog(message)
+      setVerificationError(message)
+      setStep('REFUSED')
+    } finally {
+      setLoading(false)
     }
-
-    addLog(
-      'Checking credential revocation status (Token Status List — draft-ietf-oauth-status-list, still IETF draft, not yet an RFC)...'
-    )
-    await new Promise((r) => setTimeout(r, 500))
-    addLog('Status checked. No revocations found.')
-    addLog('Trust Chain Valid (eIDAS Trust Framework).')
-    addLog('Selective Disclosure Checked.')
-    setLoading(false)
-    setStep('COMPLETE')
   }
 
   return (
@@ -323,6 +354,11 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
         <CardDescription>Verify your identity to open a premium bank account</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
+        {verificationError && (
+          <p role="alert" className="text-status-error">
+            {verificationError}
+          </p>
+        )}
         <LiveHSMToggle
           hsm={hsm}
           operations={['C_Verify', 'C_Sign', 'C_Digest']}
@@ -503,7 +539,12 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
               )}
 
               {step === 'VERIFICATION' && (
-                <Button variant="ghost" onClick={handleVerification} className="w-full">
+                <Button
+                  variant="ghost"
+                  onClick={handleVerification}
+                  disabled={loading}
+                  className="w-full"
+                >
                   Check Verification Result
                 </Button>
               )}
@@ -514,9 +555,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                     <AlertTriangle className="w-12 h-12 text-status-warning mx-auto mb-2" />
                     <h3 className="font-bold text-status-warning">Account Opening Refused</h3>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Your proof was cryptographically valid — the bank simply did not receive
-                      everything it asked for. The attributes you withheld were never transmitted,
-                      so it has no way to evaluate them.
+                      A sample proof check failed or required information was missing. Read the
+                      recorded reason above before trying again. Withheld attributes are not
+                      transmitted by this sample presentation.
                     </p>
                     <Button
                       onClick={() => {
@@ -537,9 +578,10 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                 <div className="space-y-4">
                   <div className="bg-success/5 p-4 rounded border border-success/30 text-center">
                     <CheckCircle className="w-12 h-12 text-success mx-auto mb-2" />
-                    <h3 className="font-bold text-success">Account Opened!</h3>
+                    <h3 className="font-bold text-success">Sample account opening accepted</h3>
                     <p className="text-sm text-success mb-4">
-                      Your identity has been verified successfully.
+                      Sample proof checks passed. Identity approval, issuer trust, status checks and
+                      the account decision remain simulated.
                     </p>
                     <Button onClick={onBack} variant="outline" size="sm">
                       Return to Wallet

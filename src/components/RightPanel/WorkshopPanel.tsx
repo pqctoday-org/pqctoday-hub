@@ -30,9 +30,11 @@ import type { WorkshopChapter, WorkshopFlow, WorkshopRegion, WorkshopStep } from
 import { WorkshopPrereqList } from './WorkshopPrereqList'
 import { labelForRegion } from '@/utils/workshopRegion'
 import { WorkshopStepCard } from './WorkshopStepCard'
+import { describeWorkshopParticipation } from '@/utils/workshopParticipation'
 import { useWorkshopAutoComplete } from '@/hooks/useWorkshopAutoComplete'
 import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
 import { buildStepUrl, personaRegionToWorkshop } from '@/utils/workshopDeepLink'
+import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 
 export const WorkshopPanel: React.FC = () => {
   useWorkshopAutoComplete()
@@ -155,6 +157,9 @@ export const WorkshopPanel: React.FC = () => {
     matchedEntry,
     compatibleEntries,
     activeFlow,
+    flowLoading,
+    flowError,
+    retryFlow,
     isLoading,
     error: manifestError,
     retry: retryManifest,
@@ -186,7 +191,13 @@ export const WorkshopPanel: React.FC = () => {
   // The Start / Record buttons are enabled when prerequisites are met for the
   // active flow (matched OR overridden). Generic flows have wildcard match so
   // they're always available; specific flows require the picked region.
-  const prereqsReady = activeFlow !== null && pickedRegion !== null
+  const prereqsReady =
+    activeFlow !== null &&
+    activeFlow.id === activeEntry?.id &&
+    !flowLoading &&
+    !flowError &&
+    !isLoading &&
+    pickedRegion !== null
 
   const headerTitle = activeEntry?.title ?? 'Workshop'
   const headerSubtitle = activeEntry
@@ -209,6 +220,19 @@ export const WorkshopPanel: React.FC = () => {
           <p className="text-xs text-muted-foreground break-all">{manifestError.message}</p>
           <Button variant="outline" size="sm" onClick={retryManifest}>
             Retry
+          </Button>
+        </section>
+      )}
+
+      {flowError && manifest && (
+        <section
+          role="alert"
+          className="rounded-lg border border-status-warning/40 bg-card p-3 space-y-2"
+        >
+          <p className="text-sm text-foreground">Couldn&apos;t load the selected workshop.</p>
+          <p className="text-xs text-muted-foreground break-all">{flowError.message}</p>
+          <Button variant="outline" size="sm" onClick={retryFlow}>
+            Retry selected workshop
           </Button>
         </section>
       )}
@@ -306,7 +330,14 @@ export const WorkshopPanel: React.FC = () => {
         <section className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
           Loading workshop catalogue…
         </section>
-      ) : activeTab === 'recommended' ? (
+      ) : flowLoading ? (
+        <section
+          role="status"
+          className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground"
+        >
+          Loading selected workshop…
+        </section>
+      ) : flowError ? null : activeTab === 'recommended' ? (
         activeFlow ? (
           <>
             {flowOverrideId && matchedEntry && activeEntry?.id !== matchedEntry.id && (
@@ -352,7 +383,7 @@ export const WorkshopPanel: React.FC = () => {
           className="w-full"
           disabled={!activeFlow || !prereqsReady}
           onClick={() => {
-            if (!activeFlow || !pickedRegion) return
+            if (!prereqsReady || !activeFlow || !pickedRegion) return
             const steps = flattenFlow(
               activeFlow,
               pickedRegion,
@@ -521,7 +552,7 @@ export const WorkshopPanel: React.FC = () => {
           className="w-full"
           disabled={!activeFlow || !prereqsReady}
           onClick={() => {
-            if (!activeFlow || !pickedRegion) return
+            if (!prereqsReady || !activeFlow || !pickedRegion) return
             const steps = flattenFlow(
               activeFlow,
               pickedRegion,
@@ -541,13 +572,51 @@ export const WorkshopPanel: React.FC = () => {
         </Button>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        {manifest?.flows.length ?? 0} flow{(manifest?.flows.length ?? 0) === 1 ? '' : 's'}{' '}
-        available. Additional persona flows (Curious, Developer, Architect, Ops, Researcher; other
-        industries) are in development.
-      </p>
+      <p className="text-xs text-muted-foreground">{describeFlowAvailability(manifest)}</p>
     </div>
   )
+}
+
+/**
+ * What the shipped manifest actually offers, derived from it rather than written by hand:
+ * the roles that have a flow of their own, the roles that are offered only the generic
+ * overview, and the roles whose flow is written for specific industries only.
+ */
+function describeFlowAvailability(
+  manifest: import('@/services/workshopFlowLoader').WorkshopFlowManifest | null
+): string {
+  const flows = manifest?.flows ?? []
+  const count = flows.length
+  const head = `${count} flow${count === 1 ? '' : 's'} available.`
+  if (count === 0) return head
+
+  const label = (role: PersonaId): string => PERSONAS[role]?.label ?? role
+  const rolesOf = (match: import('@/types/Workshop').FlowMatch): PersonaId[] =>
+    match.roles === '*' ? [] : match.roles
+  const withFlow = new Set<PersonaId>(flows.flatMap((f) => rolesOf(f.match)))
+  const without = (Object.keys(PERSONAS) as PersonaId[]).filter((r) => !withFlow.has(r))
+  // A role is industry-limited when none of its flows covers every industry.
+  const industryLimited = [...withFlow].filter((role) =>
+    flows.filter((f) => rolesOf(f.match).includes(role)).every((f) => f.match.industries !== '*')
+  )
+
+  const parts = [head]
+  parts.push(`Roles with a flow of their own: ${[...withFlow].map(label).join(', ')}.`)
+  if (without.length > 0) {
+    parts.push(
+      `Roles with none yet (${without.map(label).join(', ')}) are offered the generic overview.`
+    )
+  }
+  if (industryLimited.length > 0) {
+    const detail = industryLimited.map((role) => {
+      const industries = flows
+        .filter((f) => rolesOf(f.match).includes(role))
+        .flatMap((f) => (f.match.industries === '*' ? [] : f.match.industries))
+      return `${label(role)} (${[...new Set(industries)].join(', ')})`
+    })
+    parts.push(`Written for specific industries only: ${detail.join('; ')}.`)
+  }
+  return parts.join(' ')
 }
 
 function formatMatchSummary(match: import('@/types/Workshop').FlowMatch): string {
@@ -808,6 +877,16 @@ const RunningView: React.FC<RunningViewProps> = ({
         </div>
       </div>
 
+      <div
+        className="px-4 md:px-6 py-2 text-xs text-muted-foreground border-b border-border"
+        role="status"
+      >
+        {completedStepIds.includes(step.id)
+          ? 'Activity marked complete. Its completion origin is not recorded. '
+          : ''}
+        {describeWorkshopParticipation(step.completionSignal)} Task lists are guides; participation
+        credit does not verify each task.
+      </div>
       <WorkshopStepCard
         step={step}
         flow={flow}

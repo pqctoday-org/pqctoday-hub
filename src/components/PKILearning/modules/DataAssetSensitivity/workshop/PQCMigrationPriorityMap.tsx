@@ -13,13 +13,20 @@ import {
   DEFAULT_SCORING_WEIGHTS,
   type DataAsset,
   type ScoredAsset,
+  type ScoringWeights,
+  ESTIMATED_CRQC_YEAR,
 } from '../data/sensitivityConstants'
 import { COMPLIANCE_MANDATES, getEarliestDeadline } from '../data/industryComplianceData'
 
 interface PQCMigrationPriorityMapProps {
   assets: DataAsset[]
-  selectedMandates: string[]
-  scoredAssets?: ScoredAsset[]
+  /**
+   * Estate-wide mandate list kept for the caller's other views. It is not copied
+   * onto assets whose applicability is unstated: unknown stays unknown.
+   */
+  selectedMandates?: string[]
+  weights?: ScoringWeights
+  crqcYear?: number
 }
 
 const MIGRATION_EFFORT_LABEL: Record<string, string> = {
@@ -205,23 +212,14 @@ function AssetPriorityRow({ scored, rank }: { scored: ScoredAsset; rank: number 
 
 export const PQCMigrationPriorityMap: React.FC<PQCMigrationPriorityMapProps> = ({
   assets,
-  selectedMandates,
-  scoredAssets,
+  weights = DEFAULT_SCORING_WEIGHTS,
+  crqcYear = ESTIMATED_CRQC_YEAR,
 }) => {
   const scored = useMemo(() => {
-    if (scoredAssets && scoredAssets.length > 0) return scoredAssets
     return [...assets]
-      .map((a) =>
-        scoreAsset(
-          {
-            ...a,
-            complianceFlags: a.complianceFlags.length > 0 ? a.complianceFlags : selectedMandates,
-          },
-          DEFAULT_SCORING_WEIGHTS
-        )
-      )
+      .map((a) => scoreAsset(a, weights, crqcYear))
       .sort((a, b) => b.compositeScore - a.compositeScore)
-  }, [assets, selectedMandates, scoredAssets])
+  }, [assets, weights, crqcYear])
 
   const bandCounts = useMemo(() => {
     const counts = { Critical: 0, High: 0, Medium: 0, Low: 0 }
@@ -236,6 +234,10 @@ export const PQCMigrationPriorityMap: React.FC<PQCMigrationPriorityMapProps> = (
     const lines = [
       '# PQC Migration Priority Map',
       `Generated: ${new Date().toLocaleDateString()}`,
+      '',
+      `Illustrative quantum-threat year assumption: ${crqcYear}`,
+      `Scoring weights (%): sensitivity ${weights.sensitivity}, retention ${weights.retention}, compliance ${weights.compliance}, confidentiality window ${weights.hndlWindow}`,
+      'Scores are educational planning estimates, not predictions of a quantum computer or proof of protection.',
       '',
       '## Priority Summary',
       `- Critical (≥80): ${bandCounts.Critical} asset(s)`,
@@ -280,6 +282,11 @@ export const PQCMigrationPriorityMap: React.FC<PQCMigrationPriorityMapProps> = (
 
   return (
     <div className="space-y-5">
+      <p className="text-sm text-muted-foreground">
+        Illustrative quantum-threat year assumption: {crqcYear}. Scores use the current inventory
+        and selected scoring weights; they are planning estimates, not a prediction or proof of
+        protection.
+      </p>
       {/* Priority Band Summary */}
       <div className="glass-panel p-4">
         <div className="flex items-center justify-between mb-3">

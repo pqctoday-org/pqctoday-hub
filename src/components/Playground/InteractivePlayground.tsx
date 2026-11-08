@@ -31,11 +31,21 @@ import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
+import { InteractiveExecutionNotice } from './InteractiveExecutionNotice'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 export const InteractivePlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
-  const { activeTab, setActiveTab, algorithm, keySize, error, lastLogEntry } = useSettingsContext()
+  const {
+    activeTab,
+    setActiveTab,
+    algorithm,
+    keySize,
+    error,
+    lastLogEntry,
+    executionMode,
+    wasmLoaded,
+  } = useSettingsContext()
   const { keyStore } = useKeyStoreContext()
   const [, setSearchParams] = useSearchParams()
 
@@ -104,7 +114,7 @@ export const InteractivePlayground = () => {
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()
     setPageActions({
       shareTitle: 'Interactive Playground — PQC Today',
-      shareText: 'Run real PQC crypto operations in your browser',
+      shareText: 'Explore sample crypto operations and their execution modes',
     })
     return () => clearPageActions()
   }, [])
@@ -115,7 +125,7 @@ export const InteractivePlayground = () => {
         <ExecutiveRedirectBanner
           className="mb-4 shrink-0"
           title="Interactive Playground is a hands-on engineering workbench."
-          subtitle="This surface runs real key generation, encryption and signing operations in your browser — useful for your engineering team, not for board-level or governance decisions. For that context:"
+          subtitle="This workbench demonstrates key generation, encryption and signing with a visible execution mode. Distinguish executed checks from mock outputs. For board-level or governance context:"
           ctas={[
             { label: 'Command Center →', to: '/business' },
             { label: 'Compliance landscape →', to: '/compliance' },
@@ -129,9 +139,11 @@ export const InteractivePlayground = () => {
           effect — see SimplifiedViewNotice. */}
       <SimplifiedViewNotice
         className="mb-4 shrink-0"
-        what="Some advanced controls — hardware-backed keys, ACVP test vectors and raw parameter tuning — are folded away."
-        stillReal="Every operation you run here is genuine ML-KEM and ML-DSA, executing in your browser."
+        what="You can unlock advanced controls in linked engineering workbenches."
+        stillReal="Preview access does not establish whether an operation uses an engine or mock output; check the selected execution mode and individual results."
       />
+
+      <InteractiveExecutionNotice executionMode={executionMode} wasmLoaded={wasmLoaded} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">

@@ -74,7 +74,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Safety',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'ML-DSA-44 verification (~0.3ms on automotive SoC) easily fits the 10ms budget. However, ASIL-D requires fail-operational mode: if the PQC path stalls, a classical ECDSA backup must maintain braking. This dual-path architecture adds complexity but is mandatory for safety certification.',
+        'ML-DSA-44 verification (~0.3ms on automotive SoC) easily fits the 10ms budget. However, in this module’s example, braking is assumed to need fail-operational behaviour: if the PQC path stalls, a second verification path that does not depend on the PQC code could keep braking while the failure is logged. Whether a design needs this, and what the second path is, comes from the function’s hazard analysis and safety goals, not from the ASIL letter; no standard cited here requires a classical backup.',
       config: { step: 2 },
     },
     {
@@ -82,11 +82,11 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       title:
         '4. Fleet OTA Campaign with PQC Signatures — Assess signature overhead for mass firmware updates',
       description:
-        'Configure a 1M-vehicle fleet in the OTA Orchestration Planner. Compare campaign completion time using ECDSA vs ML-DSA-65 firmware signatures. Evaluate the bandwidth impact of larger PQC signatures across the dependency graph.',
+        'Open the OTA Orchestration Planner and compare its illustrative signature-overhead and campaign calculations. Load & Run opens this step without resetting your current fleet size or signature selection. The observations below describe the default six-target teaching sample with ML-DSA-65, not every current configuration.',
       badge: 'OTA',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'ML-DSA-65 adds ~3.3 KB (3,309 B, FIPS 204) per signed firmware block (vs 72 bytes for ECDSA). For a 6-ECU campaign with 200 MB total firmware, PQC signature overhead adds <0.01% \u2014 negligible. The critical path is the ADAS ECU (45 min update, A/B partition) which gates all downstream ECUs.',
+        'For the planner’s default target set with ML-DSA-65, read Total Firmware, Sig Overhead, and Critical Path from its metrics. Compare the dependency path shown by the gateway and ADAS updates. Those values are illustrative calculations in the planner’s displayed units, not measured benchmarks; assess actual update timing and bandwidth with your own production tools.',
       config: { step: 3 },
     },
     {

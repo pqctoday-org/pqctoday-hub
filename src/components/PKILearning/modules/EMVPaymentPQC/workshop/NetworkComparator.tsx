@@ -109,7 +109,7 @@ const RadarChart: React.FC<{ networks: PaymentNetwork[] }> = ({ networks }) => {
       viewBox={`0 0 ${RADAR_SIZE} ${RADAR_SIZE}`}
       className="w-full max-w-[280px] mx-auto"
       role="img"
-      aria-label="Radar chart comparing network scores"
+      aria-label="Illustrative network score comparison, not measured readiness"
     >
       {/* Background rings */}
       {[1, 2, 3, 4, 5].map((ring) => (
@@ -241,6 +241,12 @@ export const NetworkComparator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <p className="text-sm text-muted-foreground">
+        Reported network card counts may overlap; their sum is not a count of unique cards at risk.
+        The radar uses authored illustrative scores, not measured readiness, certification or a
+        validated ranking. Evaluate the criteria, scope, dates and source evidence with your own
+        tools before comparing real networks.
+      </p>
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <FilterDropdown
@@ -284,7 +290,7 @@ export const NetworkComparator: React.FC = () => {
         <div className="glass-panel p-4 text-center">
           <CreditCard size={20} className="mx-auto text-primary mb-1" />
           <div className="text-2xl font-bold text-foreground">{totalCards}</div>
-          <div className="text-xs text-muted-foreground">Total Cards at Risk</div>
+          <div className="text-xs text-muted-foreground">Gross Reported Network Card Counts</div>
         </div>
         <div className="glass-panel p-4 text-center">
           <ShieldCheck size={20} className="mx-auto text-status-success mb-1" />
@@ -488,7 +494,7 @@ export const NetworkComparator: React.FC = () => {
           {/* Radar chart overlay */}
           <div className="glass-panel p-4">
             <h4 className="text-sm font-semibold text-foreground mb-3 text-center">
-              Risk Profile Overlay
+              Illustrative Score Overlay
             </h4>
             <RadarChart networks={comparedNetworks} />
             <div className="flex justify-center gap-4 mt-3">

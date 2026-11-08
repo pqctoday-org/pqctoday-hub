@@ -17,6 +17,7 @@ import type {
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 import {
   applicableFrameworks,
+  coversEverySector,
   expandIndustriesForMatching,
   type ApplicabilityTier,
   type UserProfile,
@@ -212,7 +213,7 @@ export interface ApplicableFrameworksView {
 /** Build a short human reason for why a framework is hidden, by checking which
  *  applicability dimension (country, industry, or both) failed for the user's
  *  profile. Designed for the small expander panel — keep terse, no jargon. */
-function describeHiddenReason(
+export function describeHiddenReason(
   framework: TrackedFramework,
   industry: string,
   country: string
@@ -223,9 +224,9 @@ function describeHiddenReason(
   const fwIndustries = framework.industries ?? []
 
   const countryUniversal = fwCountries.length === 0 || fwCountries.includes('Global')
-  // Mirror the engine's industry-universal heuristic so the reason stays
-  // consistent with what `applicableFrameworks` actually evaluates.
-  const industryUniversal = fwIndustries.length === 0 || fwIndustries.length >= 3
+  // Same rule the engine applies (reviewed all-sector answer, else the tag count), so the
+  // reason stays consistent with what `applicableFrameworks` actually evaluates.
+  const industryUniversal = coversEverySector(framework)
   const expandedFwIndustries = expandIndustriesForMatching(fwIndustries)
 
   const countryMismatch = !!userCountry && !countryUniversal && !fwCountries.includes(userCountry)
@@ -306,7 +307,7 @@ export interface BusinessMetrics {
 
   // Compliance
   trackedFrameworks: TrackedFramework[]
-  complianceGapCount: number
+  pqcFrameworkReviewCount: number
 
   // Governance
   governanceModules: ModuleProgressInfo[]
@@ -744,9 +745,9 @@ export function useBusinessMetrics(): BusinessMetrics {
       })
       .sort((a, b) => (a.daysUntilDeadline ?? Infinity) - (b.daysUntilDeadline ?? Infinity))
 
-    const complianceGapCount = trackedFrameworks.filter(
-      (f) => f.requiresPQC && assessmentStore.migrationStatus !== 'started'
-    ).length
+    // Tracked catalogue flags identify review prompts, not assessed compliance gaps.
+    // A migration-status selection cannot establish that a framework is satisfied.
+    const pqcFrameworkReviewCount = trackedFrameworks.filter((f) => f.requiresPQC).length
 
     // ── Governance modules ──────────────────────────────────────
     const governanceModules = GOVERNANCE_MODULES.map((id) => getModuleProgress(moduleStore, id))
@@ -852,7 +853,9 @@ export function useBusinessMetrics(): BusinessMetrics {
       assessmentStore.assessmentStatus === 'not-started' &&
       trackedFrameworks.length === 0 &&
       resolvedProducts.length === 0 &&
+      allDocs.length === 0 &&
       !execLearningStarted &&
+      !grcLearningStarted &&
       !governanceStarted
 
     return {
@@ -866,7 +869,7 @@ export function useBusinessMetrics(): BusinessMetrics {
       completedAt: assessmentStore.completedAt,
 
       trackedFrameworks,
-      complianceGapCount,
+      pqcFrameworkReviewCount,
 
       governanceModules,
       cryptoAgility: assessmentStore.cryptoAgility || 'Not assessed',

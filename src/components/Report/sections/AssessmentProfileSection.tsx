@@ -4,6 +4,7 @@
 import { Briefcase } from 'lucide-react'
 import clsx from 'clsx'
 import type { AssessmentProfile } from '../../../hooks/assessmentTypes'
+import { timelineAnswerLabel } from '../../../utils/timelineMilestone'
 import {
   CollapsibleSection,
   ProfileField,
@@ -129,9 +130,11 @@ export const AssessmentProfileSummary = ({
             />
             <ProfileField
               label="Timeline Pressure"
-              value={
+              value={timelineAnswerLabel(
+                profile.timelinePressure,
+                profile.timelineMilestone,
                 profile.timelinePressure ? TIMELINE_LABELS[profile.timelinePressure] : undefined
-              }
+              )}
             />
           </>
         )}

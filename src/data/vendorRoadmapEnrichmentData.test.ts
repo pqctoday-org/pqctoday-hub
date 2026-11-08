@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
-import { parseFileDate, pickEnrichmentForRoadmap } from './vendorRoadmapEnrichmentData'
+import {
+  enrichmentForRoadmap,
+  parseFileDate,
+  pickEnrichmentForRoadmap,
+} from './vendorRoadmapEnrichmentData'
+import { vendorRoadmaps } from './vendorRoadmapData'
 import type { VendorRoadmapEnrichment } from '@/types/MigrateTypes'
 
 function makeEnrichment(overrides: Partial<VendorRoadmapEnrichment>): VendorRoadmapEnrichment {
@@ -81,14 +86,62 @@ describe('pickEnrichmentForRoadmap', () => {
     ).toBeUndefined()
   })
 
-  it('falls back to the single candidate when there is exactly one, url unset', () => {
-    expect(pickEnrichmentForRoadmap([general], undefined)).toBe(general)
+  it('a url-less legacy analysis is the answer for a vendor whose only record it is', () => {
+    // Sections written before roadmapUrl was recorded carry '' — there is no
+    // url on them to contradict the row's.
+    const legacy = makeEnrichment({ roadmapUrl: '' })
+    expect(pickEnrichmentForRoadmap([legacy], undefined)).toBe(legacy)
+    expect(pickEnrichmentForRoadmap([legacy], 'https://example.com/now-known')).toBe(legacy)
   })
 
-  it('falls back to the single candidate when there is exactly one, url does not match (legacy content)', () => {
-    // Covers enrichment sections written before roadmapUrl was recorded —
-    // roadmapUrl on the stored record is '' but the row now has a real url.
-    const legacy = makeEnrichment({ roadmapUrl: '' })
-    expect(pickEnrichmentForRoadmap([legacy], 'https://example.com/now-known')).toBe(legacy)
+  it('a row with no url does not adopt an analysis that was extracted from some specific page', () => {
+    // The analysis names its own source page; a row that links to nothing
+    // cannot show that it is the same document.
+    expect(pickEnrichmentForRoadmap([general], undefined)).toBeUndefined()
+    expect(pickEnrichmentForRoadmap([general], '')).toBeUndefined()
+  })
+
+  // Same vendor, but the only analysis was extracted from a different page
+  // than the one the row now links to. Showing it would attribute one page's
+  // algorithms, dates and quotes to another page's card.
+  it.each([
+    {
+      case: 'a company page analysed, the row now links a filing',
+      analysed: 'https://vendor.example/company/our-approach',
+      row: 'https://vendor.example/investors/annual-report.pdf',
+    },
+    {
+      case: 'a product page analysed, the row now links a blog post',
+      analysed: 'https://other.example/solutions/quantum-safe',
+      row: 'https://other.example/blog/understanding-the-quantum-risk/',
+    },
+  ])('does not hand a sole analysis to a row linking to a different document: $case', (c) => {
+    const analysis = makeEnrichment({ roadmapUrl: c.analysed, targetMigrationDates: 'Q4 2026' })
+    expect(pickEnrichmentForRoadmap([analysis], c.row)).toBeUndefined()
+    // The same analysis is still the answer for the page it came from.
+    expect(pickEnrichmentForRoadmap([analysis], c.analysed)).toBe(analysis)
+  })
+
+  it('does not hand a legacy analysis to a row when the vendor also has an analysis of another page', () => {
+    // Two records and no exact match: there is no basis to say which of them,
+    // if either, belongs to this row.
+    const legacy = makeEnrichment({ roadmapUrl: '', targetMigrationDates: 'old' })
+    const specific = makeEnrichment({ roadmapUrl: 'https://vendor.example/a' })
+    expect(pickEnrichmentForRoadmap([legacy, specific], 'https://vendor.example/b')).toBeUndefined()
+  })
+})
+
+describe('enrichmentForRoadmap on the shipped data', () => {
+  it('no roadmap card shows an analysis extracted from a different document than its own link', () => {
+    for (const row of vendorRoadmaps) {
+      const shown = enrichmentForRoadmap(row.vendorId, row.roadmapUrl)
+      if (!shown) continue
+      const sameDocument = shown.roadmapUrl === row.roadmapUrl
+      const legacyWithoutUrl = shown.roadmapUrl === ''
+      expect(
+        sameDocument || legacyWithoutUrl,
+        `${row.vendorId} links ${row.roadmapUrl} but would show an analysis of ${shown.roadmapUrl}`
+      ).toBe(true)
+    }
   })
 })

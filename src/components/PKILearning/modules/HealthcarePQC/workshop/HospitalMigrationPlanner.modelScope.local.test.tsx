@@ -1,0 +1,61 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+import { describe, expect, it } from 'vitest'
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
+import { HospitalMigrationPlanner } from './HospitalMigrationPlanner'
+
+function patientBudgetRow() {
+  return within(screen.getAllByRole('table')[0]).getByRole('row', {
+    name: /Patient Portal & Telehealth/,
+  })
+}
+
+function matrixSnapshot() {
+  return screen.getAllByRole('table')[1].textContent
+}
+
+describe('Hospital planning sample model scope', () => {
+  it('changes illustrative costs without changing baseline priority or phase, then resets', async () => {
+    const user = userEvent.setup()
+    const view = render(<HospitalMigrationPlanner />)
+    expect(
+      screen.getByText(/Priority and phase use each layer’s fixed sensitivity/)
+    ).toHaveTextContent(
+      'they do not recalculate priority or phase, demonstrate reduced risk, or confirm vendor support.'
+    )
+    const initialMatrix = matrixSnapshot()
+    const endpoint = screen.getAllByRole('spinbutton', { name: 'Endpoints' })[0]
+    expect(endpoint).toHaveValue(50)
+    expect(within(patientBudgetRow()).getAllByRole('cell').at(-1)).toHaveTextContent('$0')
+
+    await user.click(screen.getAllByRole('button', { name: 'Crypto Posture:' })[0])
+    await user.click(screen.getByRole('option', { name: 'Full PQC (ML-KEM + ML-DSA)' }))
+    expect(within(patientBudgetRow()).getAllByRole('cell').at(-1)).toHaveTextContent('$250,000')
+    expect(matrixSnapshot()).toBe(initialMatrix)
+
+    fireEvent.change(endpoint, { target: { value: '100' } })
+    expect(endpoint).toHaveValue(100)
+    expect(within(patientBudgetRow()).getAllByRole('cell').at(-1)).toHaveTextContent('$500,000')
+    expect(matrixSnapshot()).toBe(initialMatrix)
+
+    await user.click(screen.getByRole('button', { name: 'Reset All' }))
+    expect(endpoint).toHaveValue(50)
+    expect(within(patientBudgetRow()).getByText('No Change')).toBeInTheDocument()
+    expect(within(patientBudgetRow()).getAllByRole('cell').at(-1)).toHaveTextContent('$0')
+    expect(matrixSnapshot()).toBe(initialMatrix)
+    view.unmount()
+  })
+
+  it('keeps zero cost for changed endpoint counts when No Change is selected', async () => {
+    const view = render(<HospitalMigrationPlanner />)
+    const initialMatrix = matrixSnapshot()
+    const endpoint = screen.getAllByRole('spinbutton', { name: 'Endpoints' })[0]
+    fireEvent.change(endpoint, { target: { value: '100' } })
+    expect(endpoint).toHaveValue(100)
+    expect(within(patientBudgetRow()).getAllByRole('cell').at(-1)).toHaveTextContent('$0')
+    expect(matrixSnapshot()).toBe(initialMatrix)
+    expect(screen.getByText(/All layers are set to/)).toBeInTheDocument()
+    view.unmount()
+  })
+})

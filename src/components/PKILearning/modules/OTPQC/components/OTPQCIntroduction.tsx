@@ -612,8 +612,11 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             <li>
               <strong>CNSA 2.0</strong> (<LibLink id="NSA CNSA 2.0">NSA</LibLink>) lists LMS and
               XMSS (per <LibLink id="NIST SP 800-208">SP 800-208</LibLink>) for software and
-              firmware signing, with ML-DSA-87 as its general signature. Software and firmware
-              signing should prefer CNSA 2.0 from 2025 and use it exclusively by 2030.
+              firmware signing, with ML-DSA-87 as its general signature. NSA&apos;s CNSA 2.0 FAQ
+              (version 2.2) sets three dates for national security systems: new acquisitions from 1
+              January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030
+              (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless
+              otherwise noted.
             </li>
           </ul>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -763,11 +766,11 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             <p>
               BACnet/SC brings TLS 1.3 and X.509 to HVAC, lighting and access control (
               <LibLink id="ASHRAE-BACnet-SC-Whitepaper-2019">ASHRAE BACnet/SC white paper</LibLink>
-              ). Because it already uses TLS 1.3, adding a hybrid ML-KEM group is a stack update;
-              its elliptic-curve certificates are the forgery exposure. BACnet/SC is the TLS-based
-              BACnet datalink (ASHRAE Addendum bj: it is based on TLS-secured WebSocket
-              connections); BACnet/IP and MS/TP do not use it, and we have no figure for how much
-              equipment still runs on them.
+              ). Because it already uses TLS 1.3, a hybrid group depends on the profile, the TLS
+              stack and both peers; its elliptic-curve certificates are the forgery exposure.
+              BACnet/SC is the TLS-based BACnet datalink (ASHRAE Addendum bj: it is based on
+              TLS-secured WebSocket connections); BACnet/IP and MS/TP do not use it, and we have no
+              figure for how much equipment still runs on them.
             </p>
           </Card>
         </div>
@@ -875,11 +878,16 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               </tbody>
             </table>
           </div>
-          <h3 className="text-sm font-bold text-foreground">CNSA 2.0 — per-category dates</h3>
+          <h3 className="text-sm font-bold text-foreground">
+            CNSA 2.0 — per-category dates (NSA&apos;s 2022 category guidance; superseded for
+            planning by the dates in NSA&apos;s CNSA 2.0 FAQ, version 2.2)
+          </h3>
           <p className="text-xs text-muted-foreground">
-            For US National Security Systems and their suppliers. There is no universal
-            &ldquo;hybrid by&rdquo; or &ldquo;PQC-only by&rdquo; date and no hybrid mandate — each
-            category has its own. AES-256 is a CNSA 2.0 algorithm with no sunset.
+            This table is history: it shows three categories from NSA&apos;s 2022 chart for US
+            National Security Systems and their suppliers. Plan against the FAQ&apos;s three dates
+            (1 January 2027, 31 December 2030 and 31 December 2031). The 2022 chart set no universal
+            &ldquo;hybrid by&rdquo; or &ldquo;PQC-only by&rdquo; date and no hybrid mandate: each
+            category had its own dates. AES-256 is a CNSA 2.0 algorithm with no sunset.
           </p>
           <div
             className="overflow-x-auto"

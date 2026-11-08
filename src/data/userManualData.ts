@@ -266,7 +266,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   migrate: {
     title: 'Migration Workbench',
     summary:
-      'Browse 880+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
+      'Browse the catalogue of software products, each with its own PQC status, organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
     sections: [
       {
         heading: 'Infrastructure Layer Stack',
@@ -299,95 +299,111 @@ export const pageManuals: Record<PageId, PageManual> = {
   assess: {
     title: 'Risk Assessment',
     summary:
-      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~3 min) or Comprehensive (13 steps, ~5 min) mode.",
+      'Answer guided questions about your organization to build an educational priority index and a planning report. Choose the Fast track (6 questions, about 3 minutes) or the Full track (13 questions, about 5 minutes). The result is a learning model built from your answers, not a formal evaluation or a measurement of your estate.',
     sections: [
       {
-        heading: 'Assessment Modes',
-        body: 'Quick mode covers 6 essential questions (Industry, Country, Crypto, Sensitivity, Compliance, Migration) for a rapid readiness check. Comprehensive mode adds 7 deeper steps: Use Cases, Data Retention, Credential Lifetime, Organization Scale, Crypto Agility, Infrastructure, and Timeline Pressure.',
+        heading: 'Choosing a Track',
+        body: 'The chooser offers a Fast track (6 questions) and a Full track (13 questions); a role can show a "Recommended for you" tag on one of them. When a role is selected, its recommended track starts straight away and the chooser is skipped. A Track switch above the questions changes track. A third option, "No estate to describe? Use a reference one", assesses a documented example organization with every question pre-answered, and the report says on its face that it came from a reference estate.',
       },
       {
-        heading: '13 Comprehensive Steps',
-        body: 'Industry → Country → Crypto Stack → Data Sensitivity → Compliance → Migration Status → Use Cases → Data Retention → Credential Lifetime → Organization Scale → Crypto Agility → Infrastructure → Timeline Pressure. Four risk categories scored: Strategic, Operational, Compliance, and Vendor.',
+        heading: 'The Questions',
+        body: 'The questions fall into three groups. Your organization: Industry and Jurisdiction. Cryptographic exposure: Crypto in use, Data sensitivity, Compliance, Use cases, Data retention and Credential lifetime. Migration readiness: Migration status, Organizational scale, Crypto agility, Infrastructure and Timeline pressure. The Fast track asks Industry, Jurisdiction, Crypto in use, Data sensitivity, Compliance and Migration status; the Full track adds the other seven.',
       },
       {
-        heading: 'Progress & Navigation',
-        body: 'A progress bar shows your position in the wizard. You can navigate back to previous steps to change answers. Your progress is saved automatically — you can leave and resume later.',
+        heading: 'Answering and Navigating',
+        body: 'Each question shows what your answer changes in the report and a "Why we ask" note. Use Back and Continue to move between questions; Compliance, Use cases and Infrastructure can be skipped with Skip. Where you do not know an answer, choose "I\'m not sure" and the report applies a stated default instead. Save link copies a link that resumes from the current step, and Reset clears all answers. After the last question, Review answers opens a summary where any answer can be edited before the report is generated.',
       },
       {
-        heading: 'Results',
-        body: 'After completing the assessment, you are directed to the Report page with personalized recommendations based on your answers. The assessment also pre-filters other pages (Compliance, Migrate) for your context.',
+        heading: 'What the Scoring Covers',
+        body: 'The report turns your answers into an educational priority index from 0 to 100, built from four weighted categories: Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. The weights are editorial choices that vary by industry profile, so the index is a planning aid and not a measured risk probability, a graded result or an external benchmark. The Full track also unlocks the per-domain risk breakdown and progress over time; on the Fast track those two sections stay locked.',
+      },
+      {
+        heading: 'After You Finish',
+        body: 'The completion screen offers View my risk report, Retake and, on the Fast track, a Continue button for the remaining questions. Your industry and country answers also feed the For You view on the Compliance page and the context line on the Command Center.',
       },
     ],
     tips: [
-      'Your assessment data persists in localStorage — it survives page refreshes.',
-      'Persona-based mode recommendations appear on the mode selector to help you choose.',
+      'Your answers are saved in this browser (local storage), so they survive a page refresh; if you return to an unfinished assessment within 24 hours, a prompt offers to resume it.',
+      'Under each question, "In your report" says what that answer changes, so you can see which answers matter before you choose.',
     ],
   },
 
   report: {
     title: 'Readiness Report',
     summary:
-      'View your personalized PQC readiness report generated from your assessment responses, with actionable recommendations and links to relevant resources.',
+      'View the educational report generated from your assessment answers, with a priority index, findings, compliance and migration context and recommended actions. It is a planning aid built from what you entered, not a formal evaluation or a certification.',
     sections: [
       {
-        heading: 'Report Overview',
-        body: 'The report summarizes your PQC readiness across multiple dimensions: risk level, compliance gaps, migration priority, and recommended next steps. Includes Board Brief, KPI Trending, Migration Roadmap, ROI Calculator, and HNDL/HNFL risk window analysis.',
+        heading: 'Report Contents',
+        body: 'The report covers Country PQC Migration Timeline, Educational Priority Index, Quantum Readiness Assessment, Key Findings, Risk Breakdown, Executive Summary, Assessment Profile, HNDL / HNFL Risk Windows, Cryptographic Discovery, Cryptographic Bill of Materials (CBOM), Candidate Algorithm Transitions, Compliance Impact, Recommended Actions, Migration Roadmap, Migration Toolkit, Third-Party & Vendor PQC Risk, ROI & Financial Case, Progress Over Time, Industry Threat Landscape and Simulation Outcomes, plus a NICE Workforce Gap Report on your own report. Your role decides which sections are shown, so the table of contents (with Expand all and Collapse) lists only what applies. Risk Breakdown and Progress Over Time need the Full track and show a locked notice after a Fast-track assessment; Progress Over Time also waits until at least two Full-track assessments have been saved.',
       },
       {
-        heading: 'Recommendations',
-        body: 'Each section includes specific, actionable recommendations tailored to your industry, country, and cryptographic stack. Persona-aware CTAs adapt the report sections to your role. Recommendations link to relevant pages (Compliance, Migrate, Library) for deeper exploration.',
+        heading: 'The Priority Index',
+        body: 'The Educational Priority Index (0 to 100) comes from four weighted categories: Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Higher means the model suggests investigating earlier. It is not a measured risk probability, a graded result or an external benchmark, and selecting a compliance framework adds modelled pressure without establishing that the framework applies to you. The "How this was calculated" disclosure under the index shows the working, and the info button next to the generation date opens "How This Report Works", which also explains how "I\'m not sure" answers are handled.',
       },
       {
-        heading: 'URL Hydration & Sharing',
-        body: 'Reports can be shared via URL parameters encoding your assessment context (?i=industry, ?cy=country, ?c=crypto, ?d=sensitivity, ?f=frameworks, etc.). Recipients see the same personalized view. Supports Print/PDF output.',
+        heading: 'Recommendations and Links',
+        body: 'Recommended Actions list the next steps the model suggests for your answers, and can open the Migrate page filtered to the related products. Compliance Impact links each framework to its entry on the Compliance page. Which sections and calls to action appear depends on your selected role.',
       },
       {
-        heading: 'Navigation & History',
-        body: 'Action buttons link directly to pre-filtered views on the Compliance and Migrate pages. Assessment snapshots provide historical tracking of readiness changes over time.',
+        heading: 'Sharing, Printing and Export',
+        body: 'The Share button in the top bar copies or shares a link that opens the same report for the recipient; the link carries a share token (?share=). Older links built from individual parameters (?i=industry, ?cy=country and so on) still open, as an approximate view recomputed from what they carry. At the bottom of the report, Print / Save as PDF (Download report (PDF) for roles without the board exports) and Export CSV are always there; depending on your role you also see Print Executive Brief, a board pack export or an engineering plan export. Edit Answers returns to the assessment and Start Over clears it.',
       },
     ],
     tips: [
-      'Complete the Assessment wizard first for the most accurate report.',
-      'Share the report URL with colleagues — it encodes your assessment context.',
+      'Complete the Assessment first; a Full-track assessment fills in more of the report than a Fast-track one.',
+      "A shared link shows the sender's report to the recipient without changing the recipient's own saved assessment.",
     ],
   },
 
   'business-center': {
     title: 'Command Center',
     summary:
-      'Your PQC readiness command center for managing risk artifacts, compliance documents, governance plans, vendor evaluations, and action items.',
+      'A worked-example command center organised around the NIST CSWP.39 Fig. 3 Crypto Agility Strategic Plan. Use it to learn the shape of a PQC programme: create planning artifacts, follow next steps and see which part of the plan each belongs to.',
     sections: [
       {
         heading: 'Getting Started',
-        body: 'The welcome state shows CTA buttons to begin: Risk Assessment, Compliance Review, and Executive Learning Track. Complete the assessment first to populate your context banner with industry and country.',
+        body: 'Until you have started something (an assessment, a tracked compliance framework, a bookmarked product, or an Executive or governance learning module), the page shows a welcome state with a short introduction for your role, a "Start with these tools" row, an Explore Compliance button and a learning button for your role. Complete the Risk Assessment to fill the context line with your industry, country and the date you last assessed.',
       },
       {
-        heading: 'Artifact Sections',
-        body: 'Five sections organize your work: Risk Management, Compliance & Regulatory, Governance, Vendor/Supply Chain, and Action Items. Each section contains artifact cards that you can create, edit, and manage.',
+        heading: 'Next Steps and What Applies',
+        body: 'Your next steps lists the most useful actions first (three, four or five of them, depending on the Density shown in the banner at the top of the page, which follows your role and experience level), followed by a card summarising what applies to your profile.',
       },
       {
-        heading: 'Artifact Drawer',
-        body: 'Click any artifact card or the "New" button to open the artifact drawer. Write and edit documents with rich text. Artifacts are saved to localStorage and persist across sessions.',
+        heading: 'The Six Zones',
+        body: 'The plan has six zones: Governance, Assets, Management Tools, Data-Centric Risk Management, Mitigation and Migration. Select a zone in the diagram or in the Zones list to open its panel. In the Zones list (shown at Intermediate and Advanced density), Focus shows only the open zone and Show all brings the others back. A link ending in ?zone= and a zone id (for example governance) opens that zone directly.',
+      },
+      {
+        heading: 'Artifacts',
+        body: "Each zone panel lists the artifacts you have saved as cards, and placeholders for the artifact types you have not created yet; select a placeholder to start one. A card opens in the artifact drawer, where you can view it, edit it in that type's builder, export it as Markdown or PDF, or delete it; click a card's title to rename it. Artifacts are saved in this browser (local storage) and persist across sessions on the same device.",
       },
       {
         heading: 'Filter & Export',
-        body: 'Filter artifacts by type using the dropdown. Export all artifacts as a ZIP file for offline use or to share with your team.',
+        body: 'At Advanced density a toolbar above the page filters your artifacts by type and Export ZIP downloads the filtered artifacts as pqc-artifacts.zip. At other densities the same artifacts are reachable from their zone panels.',
+      },
+      {
+        heading: 'Learning Bar',
+        body: "The bar at the bottom tracks the six Executive Learning Path modules. For roles other than Executive it is labelled as optional context for your role, because it is the Executive path rather than your own; open Learn for your role's path. It starts collapsed at Advanced density.",
       },
     ],
     tips: [
-      'Complete the Assessment wizard to populate the context banner with your industry and country.',
-      'The Learning Bar at the bottom links to relevant executive learning modules.',
+      'Complete the Assessment to fill the context line with your industry and country.',
+      'The page is a worked example, not a live GRC console: use it to learn the structure, then build your own programme records off-platform.',
     ],
   },
 
   learn: {
     title: 'Learning Center',
     summary:
-      'Structured PQC education with 73 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
+      'Structured PQC education: 75 modules in nine tracks, from foundations through protocols, infrastructure, governance and industry topics, with hands-on workshops where a module has them. The Practice quiz is a separate entry.',
     sections: [
       {
+        heading: 'Finding a Module',
+        body: 'The Learn page has three views. My Path shows a sequence tuned to the role you picked in the top bar. Browse all lists every module and can be narrowed by track, search, status and saved modules, in a grid or a list. Guided routing asks about your migration situation and points to a first module or page, with a framework crosswalk. The Practice quiz button opens the quiz.',
+      },
+      {
         heading: 'Module Tracks',
-        body: 'Modules are organized into nine tracks: Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Industries, Executive and Role Guides. Use the sidebar or dashboard to browse by track.',
+        body: 'Modules are organised into nine tracks: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Governance & Risk and Industries. Browse all shows a chip for each track with its module count.',
       },
       {
         heading: 'Module Tabs',
@@ -395,21 +411,21 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Progress Tracking',
-        body: 'The sidebar shows completion status for each module with checkmarks. Your progress is saved automatically. The dashboard view shows overall track completion percentages.',
+        body: 'Inside a module, a progress panel lists its lesson sections with checkmarks and shows a percentage, plus workshop progress where the module has a workshop. Your progress is saved in this browser (local storage) and survives a refresh on the same device.',
       },
       {
         heading: 'Navigation',
-        body: 'Use the Previous/Next buttons to navigate between lesson steps within a module. The "Next Module" CTA appears when you complete a module to guide you to the recommended next topic.',
+        body: "On a module's Learn tab, Mark as Read marks every lesson section done. On the Workshop tab, use Previous Step and Next Step (or the step chips) to move through the exercises; the last step offers Complete Module. When all of a module's workshop steps are done, a prompt links to the next module in your role's path if there is one.",
       },
       {
         heading: 'Achievements',
-        body: 'Earn achievement badges as you complete modules, tracks, and milestones. Achievement toasts appear when you unlock new badges. View your full collection in the progress dashboard.',
+        body: 'Badges are awarded for learning activity such as workshop steps, modules and tracks, and also for using other parts of the Hub; a toast appears when you unlock one. The badge collection is shown on the Home page score card and in the Journey tab of the right-hand panel.',
       },
     ],
     tips: [
-      'Start with the Foundations track if you are new to PQC.',
-      'Workshop exercises use real WASM-based crypto — all operations run locally in your browser.',
-      'The quiz module tests your knowledge across all tracks.',
+      'Start with the Foundations track if you are new to PQC, or pick a role first so My Path can order the modules for you.',
+      'Workshop exercises that use WebAssembly cryptography run locally in your browser.',
+      'The Practice quiz draws on questions across many topics, filtered by your role and the difficulty you choose.',
     ],
   },
 
@@ -420,19 +436,23 @@ export const pageManuals: Record<PageId, PageManual> = {
     sections: [
       {
         heading: 'Category Navigation',
-        body: 'Questions are organized by category with quick-link navigation pills at the top. Click a category pill to jump directly to that section.',
+        body: 'Questions are organized by category with quick-link pills at the top. Select a category pill to jump to that section. Each question opens when you select it.',
       },
       {
         heading: 'Search',
-        body: 'Use the search bar to filter questions across all categories. Multi-term search is supported — results match any word in both questions and answers.',
+        body: 'Use the search bar to filter questions across all categories. A question is shown only if it contains every word you type, in the question or in its answer.',
       },
       {
-        heading: 'Deep Links',
-        body: 'Each answer includes direct links to relevant app pages and features for further exploration.',
+        heading: 'Your Role',
+        body: 'When you have picked a role, a "Start here" block above the categories leads with the three questions that role asks first, and role-matching questions float to the top of their category with a "For you" tag. Nothing is hidden: the full list is always below.',
+      },
+      {
+        heading: 'Learn More Links',
+        body: 'Each open answer ends with a Learn more link to the page or module where the topic is covered in depth.',
       },
     ],
     tips: [
-      'Can\'t find your answer? Use the "Ask the PQC Assistant" button at the bottom to chat with the AI assistant.',
+      "Can't find your answer? The Assistant tab in the right-hand panel opens the PQC Assistant; the button at the bottom of this page opens the About page, which describes it.",
     ],
   },
 }

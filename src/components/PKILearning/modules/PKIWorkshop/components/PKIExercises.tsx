@@ -55,11 +55,11 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
       id: 'hash-based',
       title: '3. Hash-Based Signatures (SLH-DSA)',
       description:
-        'Generate a Root CA using SLH-DSA-SHA2-128s (SPHINCS+) and compare its signature and key sizes with ML-DSA. Understand the trade-off between lattice-based and hash-based post-quantum signatures.',
+        "Generate a Root CA using SLH-DSA-SHA2-256s (SPHINCS+, NIST category 5, the generator's small-signature SLH-DSA option) and compare its signature and public-key sizes with the Root CA from exercise 2 (ML-DSA-87, also category 5). Understand the trade-off between lattice-based and hash-based post-quantum signatures.",
       badge: 'Stateless Hash',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'SLH-DSA-SHA2-128s signatures are ~7,856 bytes (larger than ML-DSA) but rely only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1). Notice the longer signing time compared to ML-DSA — the trade-off is conservative security assumptions vs performance.',
+        'At the same category (5), SLH-DSA-SHA2-256s has a 29,792-byte signature and a 64-byte public key, against 4,627 bytes and 2,592 bytes for ML-DSA-87 (FIPS 205 and FIPS 204, Table 2 in each). The signature is more than six times larger while the public key is far smaller. SLH-DSA relies only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1). Expect SLH-DSA-SHA2-256s signing to be noticeably slower than ML-DSA-87 (in one OpenSSL 3.6.3 run, about 0.2 s against too fast to measure); timings vary with the implementation and machine. The trade-off is conservative security assumptions versus size and signing cost. The 128-bit variants (for example SLH-DSA-SHA2-128s, 7,856-byte signatures) are not offered by this generator.',
       workshopStep: 1,
     },
     {

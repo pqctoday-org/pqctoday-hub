@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useRef } from 'react'
 import { Search, Copy, Check, AlertTriangle, ShieldCheck, XCircle, Loader2 } from 'lucide-react'
 import { ml_dsa44, ml_dsa65, ml_dsa87 } from '@noble/post-quantum/ml-dsa.js'
 import { SAMPLE_JWTS, JOSE_SIGNING_ALGORITHMS } from '../constants'
@@ -45,6 +45,13 @@ export const JWTInspector: React.FC = () => {
   const [katResult, setKatResult] = useState<{ valid: boolean; alg: string } | null>(null)
   const [katError, setKatError] = useState<string | null>(null)
   const [verifying, setVerifying] = useState(false)
+  const verificationRequest = useRef(0)
+  const invalidateVerification = () => {
+    verificationRequest.current++
+    setKatResult(null)
+    setKatError(null)
+    setVerifying(false)
+  }
 
   const decoded = useMemo(() => decodeJWT(jwtInput), [jwtInput])
 
@@ -54,6 +61,7 @@ export const JWTInspector: React.FC = () => {
   }, [decoded])
 
   const handleVerifyAgainstKat = useCallback(async () => {
+    const request = ++verificationRequest.current
     setVerifying(true)
     setKatError(null)
     setKatResult(null)
@@ -66,11 +74,13 @@ export const JWTInspector: React.FC = () => {
         publicKey: katPublicKey,
         backend: 'noble',
       })
-      setKatResult({ valid: result.valid, alg: String(decoded.header.alg) })
+      if (request === verificationRequest.current)
+        setKatResult({ valid: result.valid, alg: String(decoded.header.alg) })
     } catch (e) {
-      setKatError(e instanceof Error ? e.message : String(e))
+      if (request === verificationRequest.current)
+        setKatError(e instanceof Error ? e.message : String(e))
     } finally {
-      setVerifying(false)
+      if (request === verificationRequest.current) setVerifying(false)
     }
   }, [jwtInput, katPublicKey, decoded])
 
@@ -87,6 +97,7 @@ export const JWTInspector: React.FC = () => {
   }, [decoded])
 
   const handleSampleChange = (key: SampleKey) => {
+    invalidateVerification()
     setSelectedSample(key)
     setJwtInput(SAMPLE_JWTS[key])
     setKatResult(null)
@@ -150,6 +161,7 @@ export const JWTInspector: React.FC = () => {
           id="jwt-token-input"
           value={jwtInput}
           onChange={(e) => {
+            invalidateVerification()
             setJwtInput(e.target.value)
             setSelectedSample('' as SampleKey)
           }}

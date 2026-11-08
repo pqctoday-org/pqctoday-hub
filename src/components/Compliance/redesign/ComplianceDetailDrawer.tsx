@@ -29,7 +29,7 @@ import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { getTrustedSource } from '@/data/trustedSourcesData'
 import { getAuthoritativeSource } from '@/data/authoritativeSourcesData'
-import { buildDrawerDetail, type PillarId } from './pillarModel'
+import { buildDrawerDetail, NO_STRUCTURED_DATE_LABEL, type PillarId } from './pillarModel'
 import { pillClasses, TONES } from './tones'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
@@ -346,8 +346,11 @@ export function ComplianceDetailDrawer({
                         >
                           {node.kind}
                         </div>
-                        <div className="text-sm font-bold leading-tight text-foreground">
-                          {node.value}
+                        <div
+                          className="text-sm font-bold leading-tight text-foreground"
+                          title={node.label && node.label !== node.value ? node.value : undefined}
+                        >
+                          {node.label ?? node.value}
                         </div>
                         {node.sub && (
                           <div className="mt-0.5 text-[10.5px] text-muted-foreground">
@@ -366,11 +369,13 @@ export function ComplianceDetailDrawer({
               </div>
             </section>
 
-            {/* Deadline phases */}
+            {/* Dates the record states; an undated record shows one "no structured date" step */}
             {d.phases.length > 0 && (
               <section>
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Deadline phases
+                  {d.phases.every((ph) => ph.label === NO_STRUCTURED_DATE_LABEL)
+                    ? 'Dates this record states'
+                    : 'Deadline phases'}
                 </h3>
                 <ol className="flex items-start justify-between gap-1">
                   {d.phases.map((ph, i) => {
@@ -439,9 +444,16 @@ export function ComplianceDetailDrawer({
                       <span
                         className={`h-1.5 w-1.5 shrink-0 rounded-full ${TONES[c.tone].solidBg}`}
                       />
-                      <span className="text-xs font-semibold text-foreground">{c.name}</span>
-                      <span className="min-w-0 flex-1 truncate text-[10.5px] text-muted-foreground">
-                        {c.note}
+                      <span
+                        className="flex min-w-0 flex-1 flex-col items-start gap-0.5"
+                        title={c.label !== c.name ? c.name : undefined}
+                      >
+                        <span className="max-w-full whitespace-normal break-words text-xs font-semibold text-foreground">
+                          {c.label}
+                        </span>
+                        <span className="max-w-full truncate text-[10.5px] text-muted-foreground">
+                          {c.note}
+                        </span>
                       </span>
                       <ChevronRight
                         size={13}

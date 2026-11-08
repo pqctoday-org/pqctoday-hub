@@ -12,7 +12,7 @@ import {
   PlayCircle,
 } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
-import JSZip from 'jszip'
+import { artifactArchive } from './lib/artifactArchive'
 import { PageHeader } from '@/components/common/PageHeader'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileCommandCenterView } from '@/components/Mobile/screens/MobileCommandCenterView'
@@ -523,11 +523,7 @@ export function BusinessCenterView() {
       'Export Artifacts ZIP',
       personaLabel(`count=${filteredArtifacts.length}`)
     )
-    const zip = new JSZip()
-    for (const doc of filteredArtifacts) {
-      const safeName = doc.title.replace(/[^a-z0-9_\- ]/gi, '').replace(/\s+/g, '_')
-      zip.file(`${safeName}.md`, doc.data)
-    }
+    const zip = artifactArchive(filteredArtifacts)
     const blob = await zip.generateAsync({ type: 'blob' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')

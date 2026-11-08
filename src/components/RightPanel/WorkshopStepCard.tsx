@@ -19,11 +19,7 @@ import type { WorkshopCue, WorkshopFlow, WorkshopStep } from '@/types/Workshop'
 import { buildStepUrl } from '@/utils/workshopDeepLink'
 import { useWorkshopOverlayStore } from '@/store/useWorkshopOverlayStore'
 import { useWorkshopFixtures } from '@/hooks/useWorkshopFixtures'
-import {
-  useWorkshopStore,
-  PRESENTATION_SPEED_MULTIPLIER,
-  STEP_DURATION_MS,
-} from '@/store/useWorkshopStore'
+import { useWorkshopStore, PRESENTATION_SPEED_MULTIPLIER } from '@/store/useWorkshopStore'
 
 interface WorkshopStepCardProps {
   step: WorkshopStep
@@ -104,14 +100,14 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
     // caption waits for the previous speech to finish + buffer (see VideoOverlay
     // for the same scheduler). Eliminates dead air; absorbs long captions.
     const mul = PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
-    const originalMs = Math.max(1, step.estMinutes * 60_000)
-    const targetMs = Math.min(originalMs * mul, STEP_DURATION_MS[playbackSpeed] * 6)
     const SPEECH_BUFFER_MS = 1500
 
     // 'advance' is filtered from visibleCues but we still need its tMs for the
     // non-TTS timing gate so the step doesn't jump past its authored hold time.
+    // There is no other time limit: every authored cue fires at its own scaled
+    // time, so a long step is never cut off before its last cue.
     const advanceCue = (step.cues ?? []).find((c) => c.kind === 'advance')
-    const advanceTMs = advanceCue ? advanceCue.tMs * mul : targetMs
+    const advanceTMs = advanceCue ? advanceCue.tMs * mul : 0
 
     startTimeRef.current = performance.now()
     pausedAtRef.current = null
@@ -167,7 +163,6 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
         }
         return
       }
-      if (elapsed >= targetMs) return
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)

@@ -8,7 +8,7 @@
  * NOT a trust-anchored production flow — the AK is locally provisioned, the
  * ephemeral EK cert issuer is not a real CA. This demonstrates the
  * cryptographic plumbing end-to-end (TPM-resident ML-DSA AK → real signed
- * attestation → spec-compliant cross-stack verification).
+ * attestation → sample cross-stack signature check).
  */
 import { useCallback, useState } from 'react'
 import { AlertCircle, CheckCircle2, Download, Play, Shield, XCircle } from 'lucide-react'
@@ -389,7 +389,7 @@ export function AttestationPanel({ isWasmReady }: Props) {
       // (education-notice remediation 2026-09-26).
       notice: EDUCATION_NOTICE,
       notice_detail:
-        'Simulated TPM attestation produced by an in-browser WASM TPM. The AK was locally provisioned, the EK certificate issuer is not a real CA, and the fips_*_expected fields are size expectations from FIPS 204 — not a FIPS validation, a certification, or a verdict of any kind. This bundle is not evidence about any real platform.',
+        'Simulated TPM attestation produced by an in-browser WASM TPM. The AK was locally provisioned, the EK certificate issuer is not a real CA, and the fips_*_expected fields are size expectations from FIPS 204 — not a FIPS validation, a certification, or a verdict of any kind. The public TPM_GENERATED prefix is a format marker, not proof of origin. Trusted AK/credential binding, nonce freshness and PCR-policy assessment are separate. This bundle is not evidence about any real platform.',
       operation: result.operation,
       algorithm: result.ak.label,
       handle: `0x${result.ak.persistentHandle.toString(16)}`,
@@ -573,8 +573,8 @@ export function AttestationPanel({ isWasmReady }: Props) {
               label="TPM_GENERATED_VALUE prefix"
               value={
                 result.hasGeneratedMagic
-                  ? '0xFF 54 43 47 — confirms attest blob came from a TPM (V1.85 Part 1 §22.1.2)'
-                  : 'missing — not a TPM-generated attestation'
+                  ? '0xFF 54 43 47 — expected format marker present; not proof of TPM origin'
+                  : 'expected format marker missing; origin not established'
               }
             />
             <ResultRow

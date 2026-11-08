@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
+import { HEALTHCARE_DATA_PROFILES } from '../data/healthcareConstants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -49,8 +50,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             Healthcare organizations are custodians of the most sensitive category of personal data:
             biometrics. Unlike passwords, API keys, or even Social Security numbers, biometric
             identifiers &mdash; fingerprints, iris scans, facial geometry, and DNA profiles &mdash;
-            are <strong>permanently bound to an individual</strong>. They cannot be rotated,
-            revoked, or reissued after a breach.
+            are <strong>bound to an individual</strong>. The underlying trait cannot be rotated or
+            reissued the way a password can, and a raw sample that leaks cannot be taken back. What
+            a breach costs depends on what was stored and on how the biometric is used to
+            authenticate.
           </p>
 
           <p>
@@ -73,11 +76,16 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                   Case Study: OPM Breach (2015)
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  The U.S. Office of Personnel Management breach exposed{' '}
-                  <strong>5.6 million fingerprint records</strong> alongside 21.5 million background
-                  investigation files. Over a decade later, every affected individual&apos;s
-                  fingerprints remain compromised &mdash; and will remain so for life. Had genomic
-                  or iris data been included, the damage would extend across generations.
+                  The U.S. Office of Personnel Management&apos;s September 2015 update said that the
+                  fingerprints of approximately <strong>5.6 million</strong> of the 21.5 million
+                  people whose Social Security numbers and other sensitive information were impacted
+                  had been stolen. Those fingerprints cannot be changed. OPM said at the time that
+                  federal experts believed the ability to misuse fingerprint data was limited, but
+                  that this could change as technology evolves: the breach was a confidentiality
+                  harm, and how far it enables impersonation depends on whether verifiers detect
+                  presentation attacks and require a second factor. Had genomic data been included,
+                  the exposure would also reach biological relatives, and no one can change their
+                  genome.
                 </p>
               </div>
             </div>
@@ -102,7 +110,7 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
               <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <AlertTriangle size={16} className="text-status-error" />
-                Permanent Biometrics (Irrevocable)
+                Biometric Traits (Hard to Change)
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Fingerprints &mdash; cannot be changed</li>
@@ -121,11 +129,21 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               Key Insight
             </h3>
             <p className="text-xs text-muted-foreground">
-              A quantum computer decrypting a biometric database doesn&apos;t just breach data
-              &mdash; it <strong>permanently compromises every identity in that database</strong>.
-              Unlike a password breach where users can reset credentials, a biometric breach is
-              irreversible. This makes pre-quantum encryption of biometric data stores one of the
-              highest-priority PQC migration targets in healthcare.
+              A quantum computer decrypting a biometric database exposes what was stored; it does
+              not by itself let anyone sign in as those people. Keep four things apart. The{' '}
+              <strong>trait</strong> cannot be changed. A <strong>raw sample</strong> that leaks can
+              be reused, so collect and keep as little as possible and delete what is no longer
+              needed. A stored <strong>template</strong> can be protected, and template-protection
+              schemes can make it revocable, although NIST SP 800-63B-4 notes that the availability
+              of such solutions is limited. An <strong>authentication attack</strong> is a separate
+              question: NIST SP 800-63B-4 says biometric characteristics are not secrets and can
+              often be obtained without consent, so it allows biometrics only as part of
+              multi-factor authentication with a physical authenticator, expects presentation attack
+              detection (PAD) and an alternative non-biometric option, and prefers comparison on the
+              user&apos;s own device over a central store. Pre-quantum encryption of biometric data
+              stores remains a strong candidate for early PQC migration, because the confidentiality
+              harm cannot be undone by the individual, but PAD, a second factor and local comparison
+              are what limit the authentication risk.
             </p>
           </div>
         </div>
@@ -147,10 +165,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             Applying the Mosca Inequality to pharmaceutical data reveals why the industry must act
-            now. If the <strong>security shelf life</strong> of a compound&apos;s data (typically
-            20+ years until patent expiry) plus the <strong>migration time</strong> to PQC
-            (estimated 5&ndash;10 years for pharmaceutical IT) exceeds the time until a CRQC
-            arrives, then the data is already at risk of HNDL harvesting.
+            now. If the <strong>security shelf life</strong> of a compound&apos;s data (a sample 20
+            years here; the real figure depends on the patent filing date and remaining term,
+            regulatory exclusivities and trade-secret value) plus the{' '}
+            <strong>migration time</strong> to PQC (a sample 5&ndash;10 years for pharmaceutical IT)
+            exceeds the time until a CRQC arrives, then the data is already at risk of HNDL
+            harvesting.
           </p>
 
           {/* Drug pipeline data assets */}
@@ -227,12 +247,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                   Mosca Inequality for Pharma
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  A drug in Phase I trials today will have data requiring protection for 20+ years
-                  (patent life + data exclusivity). If PQC migration takes 7 years and CRQC arrives
-                  in 2035, the Mosca window has already closed: <strong>20 + 7 &gt; 9</strong>.
-                  Competitors or nation-state actors harvesting encrypted trial data today could
-                  decrypt it before the drug&apos;s patent expires, stealing billions in R&amp;D
-                  investment.
+                  Take a sample drug whose trial data needs 20 years of confidentiality (a US patent
+                  term runs 20 years from filing and much of it is used during development, so real
+                  horizons differ by product). If PQC migration takes 7 years and CRQC arrives in
+                  2035, nine years away, the Mosca window has already closed:{' '}
+                  <strong>20 + 7 &gt; 9</strong>. Competitors or nation-state actors harvesting
+                  encrypted trial data today could decrypt it while it still has competitive value.
                 </p>
               </div>
             </div>
@@ -263,9 +283,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <InlineTooltip term="42 CFR Part 2">
               <strong>42 CFR Part 2</strong>
             </InlineTooltip>{' '}
-            imposes even stricter protections than HIPAA on substance use disorder treatment
-            records, requiring patient consent for virtually any disclosure &mdash; including to
-            other treating physicians.
+            imposes stricter protections than HIPAA on substance use disorder treatment records.
+            Under the 2024 final rule, with compliance required from February 2026, one patient
+            consent can cover all future uses and disclosures for treatment, payment and health care
+            operations, so do not assume a separate consent for every disclosure. Confirm the
+            consent scope that applies to a given record flow.
           </p>
 
           {/* Privacy categories */}
@@ -276,53 +298,59 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                 <tr className="border-b border-border">
                   <th className="text-left p-2 text-muted-foreground font-medium">Category</th>
                   <th className="text-left p-2 text-muted-foreground font-medium">Regulation</th>
-                  <th className="text-center p-2 text-muted-foreground font-medium">Retention</th>
+                  <th className="text-center p-2 text-muted-foreground font-medium">
+                    Sample planning horizon
+                  </th>
                   <th className="text-center p-2 text-muted-foreground font-medium">HNDL Risk</th>
                 </tr>
               </thead>
               <tbody>
                 {[
                   {
-                    category: 'General PHI',
-                    regulation: 'HIPAA',
-                    retention: '6-10 years',
+                    category: 'General health records',
+                    regulation: 'HIPAA + State Laws',
+                    profile: 'adult-ehr',
                     risk: 'high',
                   },
                   {
                     category: 'Pediatric Records',
                     regulation: 'HIPAA + State Laws',
-                    retention: '25+ years',
+                    profile: 'pediatric-ehr',
                     risk: 'critical',
                   },
                   {
                     category: 'Genomic Data',
                     regulation: 'GINA + HIPAA',
-                    retention: 'Lifetime + generational',
+                    profile: 'genomic',
                     risk: 'critical',
                   },
                   {
                     category: 'Substance Abuse',
                     regulation: '42 CFR Part 2',
-                    retention: 'Indefinite',
+                    profile: 'substance-abuse',
                     risk: 'critical',
                   },
                   {
                     category: 'Mental Health',
                     regulation: 'HIPAA + State Laws',
-                    retention: '10-25 years',
+                    profile: 'mental-health',
                     risk: 'high',
                   },
                   {
                     category: 'Reproductive Health',
                     regulation: 'HIPAA + State Laws',
-                    retention: '10+ years',
+                    profile: 'reproductive-health',
                     risk: 'high',
                   },
                 ].map((row) => (
                   <tr key={row.category} className="border-b border-border/50">
                     <td className="p-2 text-xs font-bold text-foreground">{row.category}</td>
                     <td className="p-2 text-xs text-muted-foreground">{row.regulation}</td>
-                    <td className="p-2 text-center text-xs text-foreground">{row.retention}</td>
+                    <td className="p-2 text-center text-xs text-foreground">
+                      {HEALTHCARE_DATA_PROFILES.find((p) => p.id === row.profile)
+                        ?.trueRetentionYears ?? '—'}{' '}
+                      years
+                    </td>
                     <td className="p-2 text-center">
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
@@ -339,6 +367,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               </tbody>
             </table>
           </div>
+          <p className="text-xs text-muted-foreground">
+            The horizons above are the same sample planning assumptions the Patient Privacy Mapper
+            uses, not legal retention periods. HIPAA&apos;s 6-year rule covers required compliance
+            documentation; medical-record retention is set mainly by state law and varies by record
+            type.
+          </p>
 
           {/* Stigma amplifier */}
           <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
@@ -368,12 +402,11 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               Genomic Data: A Generational Risk
             </h3>
             <p className="text-xs text-muted-foreground">
-              Genomic data is unique because it is both <strong>lifetime-persistent</strong> (your
-              genome never changes) and <strong>generational</strong> (it reveals information about
-              parents, children, and siblings). A pediatric patient&apos;s genomic sequence
-              collected today must remain confidential for 100+ years &mdash; well beyond any
-              reasonable CRQC timeline. This data is an immediate HNDL target and requires PQC
-              protection now, not after a regulatory mandate.
+              Genomic information can remain sensitive across a person's lifetime and can reveal
+              information about relatives. Choose confidentiality-lifetime assumptions for the
+              particular use case, then compare them with migration time and quantum-threat
+              assumptions. A century-long example is an illustrative planning input, not a universal
+              confidentiality or retention requirement.
             </p>
           </div>
         </div>
@@ -441,14 +474,22 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               processors. For illustration, this module models a pacemaker-class device as an{' '}
               <strong>ARM Cortex-M0+</strong> with only <strong>32 KB of RAM</strong> and a 48 MHz
               clock. This module assumes that ML-DSA-44, the smallest ML-DSA parameter set, needs
-              more RAM than the whole 32 KB (a planning assumption, not a measurement).
+              more RAM than the whole 32 KB in the portable implementation it models (a planning
+              assumption, not a measurement; a published Cortex-M4F measurement of a stack-optimised
+              build is far lower, so the result depends on the implementation chosen).
             </p>
             <p className="text-xs text-muted-foreground">
-              For these constrained devices, <strong>hash-based signatures</strong> like LMS (H5/W8)
-              and XMSS (H10) are assumed here to be the only feasible PQC options, with verification
-              fitting in a few KB of RAM (also a planning assumption). However, they are stateful
-              &mdash; the device must track which one-time keys have been used, adding complexity to
-              firmware update mechanisms.
+              In a firmware update the device only verifies, so the question is the cost of
+              verification. In this module&apos;s model, <strong>hash-based signatures</strong> like
+              LMS (H5/W8) and XMSS (H10) fit, with verification needing a few KB of RAM (also a
+              planning assumption). FN-DSA (Falcon) is modelled as feasible for verification too:
+              its floating-point cost is in signing, which the manufacturer&apos;s signing system
+              bears, while verification is integer-only. The hash-based schemes are stateful, but
+              the state belongs to the signer: its signing system must make sure that no one-time
+              key ever signs two messages (NIST SP 800-208) and must update its stored state before
+              it exports each signature, so that a crash cannot lead to key reuse. The pacemaker
+              holds no such state. A firmware version counter that refuses older images
+              (anti-rollback) is a separate mechanism that a device may keep in addition.
             </p>
           </div>
 
@@ -473,6 +514,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                     be compromised or bypassed, and the devices did not limit &ldquo;RF
                     wake-up&rdquo; commands, which could be sent repeatedly to reduce battery life.
                     Abbott&apos;s mitigation was a firmware update applied by a healthcare provider.
+                    This was an ordinary authentication and rate-limiting weakness that needed no
+                    quantum computer; the quantum scenarios in the device simulator are hypothetical
+                    devices and are kept separate from it.
                   </li>
                   <li>
                     &bull; <strong>MedJack attacks</strong> &mdash; attackers compromise medical
@@ -481,9 +525,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                     outdated operating systems with no crypto agility.
                   </li>
                   <li>
-                    &bull; <strong>Insulin pump vulnerabilities</strong> &mdash; researchers
-                    demonstrated remote command injection on insulin pumps, capable of delivering
-                    lethal doses. Firmware integrity verification relied on RSA-1024 signatures.
+                    &bull; <strong>Insulin pump vulnerabilities</strong> &mdash; FDA has described a
+                    wireless vulnerability in a marketed insulin pump family in which a nearby
+                    unauthorized person could potentially connect and change settings or insulin
+                    delivery. The cryptographic details differ by product, so ask a manufacturer
+                    what authenticates commands and protects firmware updates rather than assuming
+                    one algorithm.
                   </li>
                 </ul>
               </div>
@@ -630,14 +677,22 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Clock size={14} className="text-primary" />
-                FDA 510(k) Approval Delays
+                Planning Medical-Device Changes
               </h3>
               <p className="text-xs text-muted-foreground">
-                Any change to a medical device&apos;s cryptographic subsystem may require a new{' '}
-                <strong>510(k) premarket notification</strong> or even a full PMA (Premarket
-                Approval). The FDA review process takes <strong>3&ndash;12 months</strong>, during
-                which the device cannot ship with the update. For Class III devices (pacemakers,
-                defibrillators), the approval timeline can extend to 18+ months.
+                Assess the particular device change, its applicable submission pathway and the
+                supplier's documented plan. Do not assume that every cryptographic change requires
+                the same submission or a fixed review delay. Use the{' '}
+                <a
+                  href="https://www.fda.gov/medical-devices/premarket-notification-510k/new-510k-required-modification-device"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline"
+                >
+                  FDA guidance on device modifications
+                </a>{' '}
+                to frame the questions for the manufacturer; this sample does not determine the
+                regulatory outcome or review duration for a device.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -668,9 +723,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               <strong>Health Information Sharing and Analysis Center (H-ISAC)</strong> are the
               primary coordinating bodies for healthcare cybersecurity in the United States. HSCC
               publishes the Health Industry Cybersecurity Practices (HICP) guidelines, while H-ISAC
-              provides threat intelligence and incident response coordination. Both organizations
-              are actively developing PQC transition guidance for the healthcare sector, including
-              recommended migration timelines and priority frameworks.
+              provides threat intelligence and incident response coordination. This lesson does not
+              assume a published sector migration timeline: check their current publications and
+              your own regulators for any PQC-specific guidance.
             </p>
           </div>
         </div>

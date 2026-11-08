@@ -40,8 +40,18 @@ interface TreatmentDecision {
 }
 
 interface ResidualOverride {
-  likelihood: number
-  impact: number
+  likelihood?: number
+  impact?: number
+}
+
+function validHypotheticalRating(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 5
+}
+
+function quantifiedHypothesis(
+  draft: ResidualOverride | undefined
+): draft is Required<ResidualOverride> {
+  return validHypotheticalRating(draft?.likelihood) && validHypotheticalRating(draft?.impact)
 }
 
 interface SavedTreatmentInputs {
@@ -75,7 +85,7 @@ const TREATMENT_OPTIONS: {
     color: 'text-primary',
     bg: 'bg-primary/10 border-primary/20',
     guidance:
-      'Migrate to PQC algorithms to reduce likelihood and/or impact. Set your expected post-mitigation values below.',
+      'Propose a mitigation and explain its assumptions. Selecting the strategy does not implement it or reduce this score; enter both hypothetical ratings to explore a projected case.',
   },
   {
     value: 'accept',
@@ -84,7 +94,7 @@ const TREATMENT_OPTIONS: {
     color: 'text-success',
     bg: 'bg-success/10 border-success/20',
     guidance:
-      'Risk is within tolerance. Example: NIST IR 8547 states that NIST-approved symmetric primitives with 128 or more bits of classical security are believed to satisfy no less than Category 1 security requirements.',
+      'Propose acceptance; the selection does not establish that risk is within tolerance or approved. Example: NIST IR 8547 states that NIST-approved symmetric primitives with 128 or more bits of classical security are believed to satisfy no less than Category 1 security requirements.',
   },
   {
     value: 'transfer',
@@ -93,7 +103,7 @@ const TREATMENT_OPTIONS: {
     color: 'text-warning',
     bg: 'bg-warning/10 border-warning/20',
     guidance:
-      'Shift responsibility to a third party (e.g., managed PKI/CA service handling PQC migration, or cyber insurance covering quantum-related breaches). Set your expected post-transfer values below.',
+      'Propose transferring specified responsibility or financial exposure. Operational impact may remain unchanged. Selecting Transfer does not implement a contract or reduce risk; enter both hypothetical ratings and explain the assumptions.',
   },
   {
     value: 'avoid',
@@ -102,7 +112,7 @@ const TREATMENT_OPTIONS: {
     color: 'text-destructive',
     bg: 'bg-destructive/10 border-destructive/20',
     guidance:
-      'Eliminate the risk source entirely (e.g., decommission a legacy system using 3DES rather than migrate it).',
+      'Propose removing the risk source. Selecting Avoid does not decommission anything: this entry remains visible at its baseline. Evaluate the required removal, dependent services and residual exposure with your production tools.',
   },
 ]
 
@@ -220,23 +230,32 @@ function TreatmentSelector({
       {/* Residual risk overrides for "mitigate" and "transfer" */}
       {(decision?.strategy === 'mitigate' || decision?.strategy === 'transfer') && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-muted/30 rounded-lg border border-border">
+          <p className="text-xs text-muted-foreground sm:col-span-2">
+            Baseline: likelihood {entry.likelihood} × impact {entry.impact}. Choose both ratings
+            explicitly to explore an unverified hypothetical case. Missing or invalid values are not
+            a quantified projection. Stored draft values may include older defaults; review their
+            assumptions rather than treating them as measured outcomes.
+          </p>
           <div>
             <span className="block text-xs font-medium text-muted-foreground mb-1">
-              Post-{decision.strategy === 'transfer' ? 'transfer' : 'mitigation'} Likelihood
+              Hypothetical likelihood — draft:{' '}
+              {residualOverride?.likelihood === undefined
+                ? 'not entered'
+                : String(residualOverride.likelihood)}
             </span>
             <FilterDropdown
               noContainer
-              selectedId={String(residualOverride?.likelihood ?? entry.likelihood)}
-              onSelect={(id) =>
-                onResidualChange(entry.id, {
-                  likelihood: Number(id),
-                  impact:
-                    residualOverride?.impact ??
-                    (decision.strategy === 'transfer'
-                      ? Math.max(1, entry.impact - 1)
-                      : entry.impact),
-                })
+              defaultLabel="Choose likelihood 1–5"
+              selectedId={
+                validHypotheticalRating(residualOverride?.likelihood)
+                  ? String(residualOverride.likelihood)
+                  : ''
               }
+              onSelect={(id) => {
+                const value = Number(id)
+                if (validHypotheticalRating(value))
+                  onResidualChange(entry.id, { ...residualOverride, likelihood: value })
+              }}
               items={[
                 { id: '1', label: '1 \u2014 Rare' },
                 { id: '2', label: '2 \u2014 Unlikely' },
@@ -248,20 +267,24 @@ function TreatmentSelector({
           </div>
           <div>
             <span className="block text-xs font-medium text-muted-foreground mb-1">
-              Post-{decision.strategy === 'transfer' ? 'transfer' : 'mitigation'} Impact
+              Hypothetical impact — draft:{' '}
+              {residualOverride?.impact === undefined
+                ? 'not entered'
+                : String(residualOverride.impact)}
             </span>
             <FilterDropdown
               noContainer
-              selectedId={String(
-                residualOverride?.impact ??
-                  (decision.strategy === 'transfer' ? Math.max(1, entry.impact - 1) : entry.impact)
-              )}
-              onSelect={(id) =>
-                onResidualChange(entry.id, {
-                  likelihood: residualOverride?.likelihood ?? entry.likelihood,
-                  impact: Number(id),
-                })
+              defaultLabel="Choose impact 1–5"
+              selectedId={
+                validHypotheticalRating(residualOverride?.impact)
+                  ? String(residualOverride.impact)
+                  : ''
               }
+              onSelect={(id) => {
+                const value = Number(id)
+                if (validHypotheticalRating(value))
+                  onResidualChange(entry.id, { ...residualOverride, impact: value })
+              }}
               items={[
                 { id: '1', label: '1 \u2014 Negligible' },
                 { id: '2', label: '2 \u2014 Minor' },
@@ -446,8 +469,7 @@ function RiskHeatmapGrid({
                     return (
                       <td
                         key={colIdx}
-                        onClick={() => onCellClick(rowIdx, colIdx)}
-                        className={`p-1.5 border border-border/50 cursor-pointer transition-all align-top ${getZoneBg(score)} ${getZoneText(score)} ${
+                        className={`p-0 border border-border/50 transition-all align-top ${getZoneBg(score)} ${getZoneText(score)} ${
                           isSelected ? 'ring-2 ring-primary ring-inset' : 'hover:brightness-90'
                         }`}
                         style={{ minWidth: 90, minHeight: 64 }}
@@ -457,7 +479,14 @@ function RiskHeatmapGrid({
                             : `Score ${score} (${getRiskColor(score)})`
                         }
                       >
-                        <div className="flex flex-col gap-1 min-h-[52px]">
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          onClick={() => onCellClick(rowIdx, colIdx)}
+                          aria-pressed={isSelected}
+                          aria-label={`Likelihood ${likelihood} (${label}), impact ${impact} (${IMPACT_LABELS[colIdx]}), score ${score} (${getRiskColor(score)}); ${cellEntries.length ? cellEntries.map((e) => e.assetName || 'Unnamed asset').join(', ') : 'no assets'}`}
+                          className="w-full h-full min-h-[64px] rounded-none p-1.5 flex flex-col gap-1 items-stretch justify-start text-left font-normal text-inherit focus-visible:ring-inset"
+                        >
                           {/* Score badge */}
                           <span className="text-[10px] font-bold opacity-60 self-end">{score}</span>
                           {/* Entry markers */}
@@ -472,7 +501,7 @@ function RiskHeatmapGrid({
                               </div>
                             )
                           })}
-                        </div>
+                        </Button>
                       </td>
                     )
                   })}
@@ -557,22 +586,18 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
 
   // Compute residual entries
   const residualEntries = useMemo(() => {
-    return riskEntries
-      .filter((entry) => treatmentDecisions[entry.id]?.strategy !== 'avoid')
-      .map((entry) => {
-        const decision = treatmentDecisions[entry.id]
-        const override = residualOverrides[entry.id]
-
-        if (decision?.strategy === 'mitigate' && override) {
-          return { ...entry, likelihood: override.likelihood, impact: override.impact }
-        }
-        if (decision?.strategy === 'transfer') {
-          return override
-            ? { ...entry, likelihood: override.likelihood, impact: override.impact }
-            : { ...entry, impact: Math.max(1, entry.impact - 1) }
-        }
-        return entry
-      })
+    return riskEntries.map((entry) => {
+      const decision = treatmentDecisions[entry.id]
+      const draft = residualOverrides[entry.id]
+      if (
+        (decision?.strategy === 'mitigate' || decision?.strategy === 'transfer') &&
+        quantifiedHypothesis(draft)
+      )
+        return { ...entry, likelihood: draft.likelihood, impact: draft.impact }
+      // No quantified case is supplied by a strategy choice, incomplete/invalid
+      // draft, or planned avoidance. Keep the original baseline visible.
+      return entry
+    })
   }, [riskEntries, treatmentDecisions, residualOverrides])
 
   const activeEntries = viewMode === 'inherent' ? riskEntries : residualEntries
@@ -638,17 +663,20 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
 
     const strategies = ['mitigate', 'accept', 'transfer', 'avoid'] as const
-    md += '## Treatment Summary\n\n'
+    md +=
+      'Draft strategy choices and hypothetical estimates only. Nothing here establishes implementation or measured risk reduction. Missing/invalid estimates keep the baseline visible for comparison, not as a residual-risk prediction. Stored values may include older defaults; their origin is not established.\n\n'
+    md += '## Planned Strategy Choices\n\n'
     md += '| Treatment | Count |\n|-----------|-------|\n'
     for (const s of strategies) {
       const count = Object.values(treatmentDecisions).filter((d) => d.strategy === s).length
       md += `| ${s.charAt(0).toUpperCase() + s.slice(1)} | ${count} |\n`
     }
     const untreated = riskEntries.length - Object.keys(treatmentDecisions).length
-    md += `| Untreated | ${untreated} |\n\n`
+    md += `| No strategy selected | ${untreated} |\n\n`
 
-    md += '## Inherent vs. Residual Risk\n\n'
-    md += '| Level | Inherent | Residual | Change |\n|-------|----------|----------|--------|\n'
+    md += '## Baseline vs. Projected Sample Scores\n\n'
+    md +=
+      '| Level | Baseline | Projected sample / baseline retained if unassessed | Change |\n|-------|----------|----------|--------|\n'
     for (const [level, data] of Object.entries(riskDelta)) {
       const change = data.after - data.before
       const changeStr = change > 0 ? `+${change}` : `${change}`
@@ -657,32 +685,29 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
     md += '\n'
 
     md += '## Treatment Decisions\n\n'
-    md += '| # | Asset | Inherent Score | Treatment | Residual Score | Justification |\n'
-    md += '|---|-------|---------------|-----------|---------------|---------------|\n'
+    md +=
+      '| # | Asset | Baseline Score | Planned Strategy | Draft Likelihood × Impact | Projected Sample Score | Justification |\n'
+    md +=
+      '|---|-------|---------------|-----------|---------------|---------------|---------------|\n'
     riskEntries.forEach((entry, idx) => {
       const inherentScore = entry.likelihood * entry.impact
       const decision = treatmentDecisions[entry.id]
-      const strategy = decision?.strategy ?? 'untreated'
+      const strategy = decision?.strategy ?? 'not selected'
       const justification = decision?.justification || '-'
 
-      let residualScore: string
-      if (decision?.strategy === 'avoid') {
-        residualScore = 'Removed'
-      } else if (decision?.strategy === 'mitigate' && residualOverrides[entry.id]) {
-        const o = residualOverrides[entry.id]
-        const s = o.likelihood * o.impact
-        residualScore = `${s} (${getRiskColor(s)})`
-      } else if (decision?.strategy === 'transfer') {
-        const o = residualOverrides[entry.id]
-        const l = o?.likelihood ?? entry.likelihood
-        const i = o?.impact ?? Math.max(1, entry.impact - 1)
-        const s = l * i
-        residualScore = `${s} (${getRiskColor(s)})`
-      } else {
-        residualScore = `${inherentScore} (${getRiskColor(inherentScore)})`
+      const draft = residualOverrides[entry.id]
+      const rawDraft = `${draft?.likelihood === undefined ? 'not entered' : String(draft.likelihood)} × ${draft?.impact === undefined ? 'not entered' : String(draft.impact)}`
+      let residualScore = `Not assessed; baseline ${inherentScore} (${getRiskColor(inherentScore)}) shown`
+      if (decision?.strategy === 'avoid')
+        residualScore = `Planned avoidance — reduction not assessed; baseline ${inherentScore} shown`
+      else if (
+        (decision?.strategy === 'mitigate' || decision?.strategy === 'transfer') &&
+        quantifiedHypothesis(draft)
+      ) {
+        const score = draft.likelihood * draft.impact
+        residualScore = `${score} (${getRiskColor(score)}) — hypothetical draft, not measured or implemented`
       }
-
-      md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${inherentScore} (${getRiskColor(inherentScore)}) | ${strategy} | ${residualScore} | ${justification} |\n`
+      md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${inherentScore} (${getRiskColor(inherentScore)}) | ${strategy} | ${rawDraft} | ${residualScore} | ${justification} |\n`
     })
     md += '\n'
 
@@ -692,7 +717,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
       if (!entry) return
       const score = entry.likelihood * entry.impact
       const decision = treatmentDecisions[id]
-      const strategy = decision ? ` | Treatment: ${decision.strategy}` : ''
+      const strategy = decision ? ` | Planned strategy: ${decision.strategy}` : ''
       md += `${idx + 1}. **${entry.assetName || 'Unnamed'}** \u2014 Score: ${score}${strategy}\n`
       const reason = priorityReasons[id]
       if (reason) md += `   *Priority note: ${reason}*\n`
@@ -762,9 +787,12 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         <div className="text-sm text-muted-foreground">
           <p>
             This workshop guides you through three activities: assign a{' '}
-            <strong>treatment strategy</strong> to each risk (click any cell), compare{' '}
-            <strong>inherent vs. residual risk</strong>, and set your{' '}
-            <strong>migration priority order</strong>.
+            <strong>treatment strategy</strong> to each risk (select any cell), compare{' '}
+            <strong>baseline vs. projected sample scores</strong>, and set your{' '}
+            <strong>migration priority order</strong>. Choices are proposed work, not implemented
+            controls. A projected score requires both hypothetical ratings; otherwise the baseline
+            stays visible, not a prediction of residual risk. Stored drafts may include older
+            defaults and must be reviewed as assumptions.
           </p>
         </div>
       </div>
@@ -784,7 +812,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
                   : 'bg-background text-muted-foreground hover:bg-muted'
               }`}
             >
-              Inherent Risk
+              Baseline Risk
             </Button>
             <Button
               variant="ghost"
@@ -797,13 +825,13 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
                   : 'bg-background text-muted-foreground hover:bg-muted'
               }`}
             >
-              Residual Risk
+              Projected Sample
             </Button>
           </div>
           <span className="text-xs text-muted-foreground">
             {hasTreatments
-              ? `${treatmentProgress}% treated (${Object.keys(treatmentDecisions).length} of ${riskEntries.length})`
-              : 'No treatments assigned yet — click a cell to start'}
+              ? `${treatmentProgress}% strategy choices recorded (${Object.keys(treatmentDecisions).length} of ${riskEntries.length})`
+              : 'No strategy choices recorded yet — select a cell to start'}
           </span>
         </div>
 
@@ -834,7 +862,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         <div className="flex items-center gap-2 mb-4">
           <Grid3X3 size={18} className="text-primary" />
           <h3 className="text-base font-semibold text-foreground">
-            {viewMode === 'inherent' ? 'Inherent' : 'Residual'} Risk Heatmap
+            {viewMode === 'inherent' ? 'Baseline' : 'Projected Sample'} Risk Heatmap
           </h3>
           <span className="text-xs text-muted-foreground ml-2">
             ({activeEntries.length} {activeEntries.length === 1 ? 'risk' : 'risks'} plotted)
@@ -877,7 +905,8 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         <div className="flex items-center justify-center gap-2 mt-4 px-4 py-2 bg-muted/40 border border-border rounded-lg w-fit mx-auto">
           <MousePointer2 size={14} className="text-primary shrink-0" />
           <span className="text-sm font-medium text-foreground">
-            Click any cell to assign a treatment strategy
+            Select a cell to assign a treatment strategy; use Tab then Enter or Space with a
+            keyboard
           </span>
         </div>
       </div>
@@ -909,6 +938,15 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
                     </span>
                     <span className="text-xs text-muted-foreground">{entry.currentAlgorithm}</span>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    {treatmentDecisions[entry.id]?.strategy === 'avoid'
+                      ? 'Planned avoidance — reduction not assessed; baseline retained.'
+                      : (treatmentDecisions[entry.id]?.strategy === 'mitigate' ||
+                            treatmentDecisions[entry.id]?.strategy === 'transfer') &&
+                          quantifiedHypothesis(residualOverrides[entry.id])
+                        ? 'Hypothetical draft estimate — not measured or implemented. Stored values may include older defaults.'
+                        : 'Projection not assessed — no complete valid hypothetical rating pair; baseline retained.'}
+                  </p>
                   {entry.mitigation && (
                     <p className="text-xs text-muted-foreground">
                       <strong>Mitigation plan:</strong> {entry.mitigation}
@@ -919,7 +957,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
                       Treatment Strategy
                     </span>
                     <TreatmentSelector
-                      entry={entry}
+                      entry={riskEntries.find((baseline) => baseline.id === entry.id) ?? entry}
                       decision={treatmentDecisions[entry.id]}
                       residualOverride={residualOverrides[entry.id]}
                       onDecisionChange={handleDecisionChange}
@@ -939,7 +977,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
 
       {/* 5. Treatment Summary Cards */}
       <div className="glass-panel p-6">
-        <h3 className="text-base font-semibold text-foreground mb-4">Treatment Summary</h3>
+        <h3 className="text-base font-semibold text-foreground mb-4">Planned Strategy Choices</h3>
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
           {TREATMENT_OPTIONS.map((opt) => {
             const Icon = opt.icon
@@ -959,7 +997,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
             <div className="text-xl font-bold text-muted-foreground">
               {riskEntries.length - Object.keys(treatmentDecisions).length}
             </div>
-            <div className="text-xs text-muted-foreground">Untreated</div>
+            <div className="text-xs text-muted-foreground">No strategy selected</div>
           </div>
         </div>
         {treatmentProgress > 0 && treatmentProgress < 100 && (
@@ -1005,7 +1043,8 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         onExport={handleSaveToPortfolio}
       >
         <p className="text-xs text-muted-foreground">
-          Includes treatment decisions, residual risk analysis, and priority order.
+          Includes draft strategy choices, baseline and hypothetical sample scores, assumptions and
+          priority order; no implementation or measured reduction is established.
         </p>
       </ExportableArtifact>
     </div>
@@ -1110,8 +1149,9 @@ export function EducationalGuide({
               ) : (
                 <>
                   <strong>Reading direction:</strong> Scan from top-right (urgent) to bottom-left
-                  (safe). Multiple entries in one cell indicate a systemic risk &mdash; an algorithm
-                  or threat vector affecting many assets simultaneously.
+                  (lower relative score under this model). Multiple entries in one cell indicate a
+                  systemic risk &mdash; an algorithm or threat vector affecting many assets
+                  simultaneously.
                 </>
               )}
             </p>

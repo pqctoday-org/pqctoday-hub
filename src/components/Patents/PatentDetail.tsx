@@ -420,12 +420,19 @@ export function PatentDetail({
         {/* Impact score */}
         <div className="glass-panel rounded-lg p-3 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground">Migration Impact</span>
+            <span className="text-xs font-semibold text-foreground">
+              Hub catalogue analysis score
+            </span>
             <span className={`text-xs font-bold ${IMPACT_COLOR[patent.impactLevel]}`}>
               {patent.impactLevel}
             </span>
           </div>
           <ImpactBar score={patent.impactScore} />
+          <p className="text-xs text-muted-foreground">
+            This uncalibrated Hub score combines recorded migration urgency, listed standardized
+            algorithms and claim/domain breadth. Missing source records can affect it. A high score
+            does not establish migration priority, deployed security, patent validity or IP value.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
             <span>
               Crypto agility:{' '}

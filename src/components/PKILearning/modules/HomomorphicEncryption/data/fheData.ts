@@ -138,10 +138,10 @@ export const FHE_QUANTUM_EXPOSURE: FheQuantumExposure[] = [
   },
   {
     id: 'integrity',
-    component: 'Integrity of evaluation keys and results (FHE is malleable)',
+    component: 'Authenticity of evaluation keys and result ciphertexts (FHE is malleable)',
     typical: 'ECDSA / RSA signatures',
     broken: true,
-    fix: 'ML-DSA or SLH-DSA signatures',
+    fix: 'ML-DSA or SLH-DSA signatures replace the quantum-vulnerable ones. They show who signed a key or ciphertext and that it was not altered afterwards, provided the verifier already trusts the signer’s public key. They do not show that the computation was correct: an evaluator can sign a wrong result. Correctness against a malicious evaluator needs a verifiable-computation proof (research) or an application-specific check',
   },
   {
     id: 'backup',

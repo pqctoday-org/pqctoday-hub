@@ -71,17 +71,17 @@ describe('standardsFor (Cryptography Registry lookup)', () => {
 })
 
 describe('extractClassicalAlgorithmsFromText', () => {
-  it('detects RSA with key length, defaulting to signing unless encryption is named', () => {
+  it('preserves RSA key length without inventing an unstated padding scheme', () => {
     const signing = extractClassicalAlgorithmsFromText('RSA-2048 certificate')
     expect(signing[0]).toMatchObject({
-      canonical: 'RSASSA-PKCS1',
-      primitive: 'signature',
+      canonical: 'RSA',
+      primitive: 'unknown',
       keyLength: 2048,
       classical: true,
     })
 
     const enc = extractClassicalAlgorithmsFromText('RSA-2048 key exchange')
-    expect(enc[0]).toMatchObject({ canonical: 'RSAES-PKCS1', primitive: 'pke' })
+    expect(enc[0]).toMatchObject({ canonical: 'RSA', primitive: 'pke' })
   })
 
   it('detects ECDSA with a namespaced curve identifier', () => {
@@ -115,6 +115,25 @@ describe('extractClassicalAlgorithmsFromText', () => {
   it('returns an empty list for PQC-only or empty text', () => {
     expect(extractClassicalAlgorithmsFromText('ML-KEM-768')).toEqual([])
     expect(extractClassicalAlgorithmsFromText('')).toEqual([])
+  })
+
+  it.each([
+    'hybrid RSA+Kyber(KEM)+Falcon(signature) prototype',
+    'Provides LMS (Leighton-Micali stateful hash-based signature) verification, used in parallel with RSA',
+    'Uses AES-256 to encrypt data at rest and is migrating to 4096-bit keys for RSA and Diffie-Hellman',
+    'RSA-2048 PKCS#1 v1.5 padding; ML-DSA-65 signatures',
+  ])('gives RSA no operation or scheme that another algorithm in "%s" carries', (text) => {
+    const rsa = extractClassicalAlgorithmsFromText(text).find((a) => a.canonical.startsWith('RSA'))
+    expect(rsa).toMatchObject({ canonical: 'RSA', primitive: 'unknown' })
+    expect(extractAllAlgorithmsFromText(text).find((a) => a.canonical === 'RSA')).toMatchObject({
+      primitive: 'unknown',
+    })
+  })
+
+  it('still reads a named RSA scheme beside another algorithm', () => {
+    expect(extractClassicalAlgorithmsFromText('RSA-2048 PSS signatures; AES-256')[0]).toMatchObject(
+      { canonical: 'RSASSA-PSS', primitive: 'signature', keyLength: 2048 }
+    )
   })
 })
 
@@ -269,10 +288,16 @@ describe('buildCbomDocument', () => {
     }
   })
 
-  it('surfaces certifications as component evidence + external references', () => {
+  it('preserves certificate associations and references without invented identity evidence', () => {
     const doc = JSON.parse(buildCbomDocument([libWithAlgos]).json)
     const lib = doc.components.find((c: { type: string }) => c.type === 'library')
-    expect(lib.evidence.identity[0].methods[0].technique).toBe('attestation')
+    expect(lib.evidence).toBeUndefined()
+    expect(
+      JSON.parse(
+        lib.properties.find((p: { name: string }) => p.name === 'pqctoday:certificateReferences')
+          .value
+      )
+    ).toEqual(libWithAlgos.certifications)
     expect(lib.externalReferences[0].type).toBe('certification-report')
   })
 

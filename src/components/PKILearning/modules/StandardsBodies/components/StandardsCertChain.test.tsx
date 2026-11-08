@@ -78,4 +78,12 @@ describe('StandardsCertChain', () => {
     )
     expect(screen.getByText('0 / 3 links placed correctly')).toBeInTheDocument()
   })
+
+  it('gives every link of every scenario a non-empty explanation', () => {
+    for (const scenario of CHAIN_SCENARIOS) {
+      for (const node of scenario.nodes) {
+        expect(node.description.trim(), `${scenario.title}: ${node.label}`).not.toBe('')
+      }
+    }
+  })
 })

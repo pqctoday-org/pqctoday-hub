@@ -151,21 +151,21 @@ export const DAL_DESCRIPTIONS: Record<
 > = {
   A: {
     name: 'Catastrophic',
-    coverage: 'MC/DC + 100% structural',
+    coverage: 'MC/DC + decision + statement',
     description:
-      'Failure could cause or contribute to a catastrophic failure condition for the aircraft. Requires Modified Condition/Decision Coverage (MC/DC) testing and formal methods verification.',
+      'Failure could cause or contribute to a catastrophic failure condition for the aircraft. Structural coverage analysis must show that all statements, all decisions and all conditions (Modified Condition/Decision Coverage, MC/DC) were exercised. Formal methods are an optional technique, not a stated requirement of this level: when an applicant uses them, the DO-333/ED-216 supplement applies in addition to DO-178C/ED-12C.',
   },
   B: {
     name: 'Hazardous',
     coverage: 'Decision coverage + 100% statement',
     description:
-      'Failure could cause a large reduction in safety margins or physical distress to passengers. Requires decision coverage testing.',
+      'Failure could cause a large reduction in safety margins or physical distress to passengers. Structural coverage analysis must show that all statements and all decisions were exercised.',
   },
   C: {
     name: 'Major',
     coverage: 'Statement coverage',
     description:
-      'Failure could cause a significant reduction in safety margins or increase crew workload. Requires statement coverage testing.',
+      'Failure could cause a significant reduction in safety margins or increase crew workload. Structural coverage analysis must show that all statements were exercised.',
   },
   D: {
     name: 'Minor',
@@ -207,19 +207,20 @@ export const CERTIFICATION_AUTHORITIES = [
     id: 'tcca',
     name: 'TCCA',
     country: 'Canada',
-    standard: 'Advisory Circular 500-025',
-    framework: 'DO-326A (adopted)',
-    status: 'Recommended',
-    notes: 'TCCA accepts FAA/EASA security assessments via bilateral agreements.',
+    standard: 'Not verified here',
+    framework: 'No mapping stated',
+    status: 'Not verified here',
+    notes:
+      'This lesson states no Transport Canada Civil Aviation (TCCA) airworthiness-security requirement. The 500-series (airworthiness) advisory circulars on Transport Canada\u2019s published list, read on 5 November 2026, include none on aircraft cybersecurity. Check TCCA directly, and any validation arrangement with the FAA or EASA, for your project.',
   },
   {
     id: 'anac',
     name: 'ANAC',
     country: 'Brazil',
-    standard: 'RBAC-E 94 Subpart A',
-    framework: 'DO-326A (adopted)',
-    status: 'Recommended',
+    standard: 'Not verified here',
+    framework: 'No mapping stated',
+    status: 'Not verified here',
     notes:
-      'ANAC aligns with FAA/EASA standards. Embraer aircraft follow DO-326A for export markets.',
+      'This lesson states no ANAC airworthiness-security mapping. RBAC-E 94 is ANAC\u2019s rule for civil unmanned aircraft (\u201cRequisitos gerais para aeronaves n\u00e3o tripuladas de uso civil\u201d), so it is not a general airworthiness-security standard. Check ANAC\u2019s current airworthiness regulations for your project.',
   },
 ]

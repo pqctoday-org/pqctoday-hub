@@ -324,7 +324,12 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         license: 'Apache-2.0',
         embedded: 'pkcs11-provider',
       },
-      { name: 'Web Crypto API (X25519, P-256)', license: 'W3C', native: true },
+      {
+        name: 'Web Crypto API (SHA-2, AES, HMAC, HKDF, ECDSA, ECDH, RSA, Ed25519, X25519)',
+        license: 'W3C',
+        native: true,
+        note: 'Built into the browser, not shipped by this site; which algorithms are available depends on the browser.',
+      },
       { name: '@oqs/liboqs-js', pkg: '@oqs/liboqs-js' },
       { name: '@noble/hashes', pkg: '@noble/hashes' },
       { name: '@noble/curves', pkg: '@noble/curves' },

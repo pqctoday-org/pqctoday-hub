@@ -15,33 +15,71 @@ import {
 } from '../data/scaleEncryptionData'
 import { EFFORT_COLORS, PRIVACY_MATURITY_COLORS } from '../data/aiSecurityConstants'
 
+// Exact counts are used only where the existing sample notes state them.
+// Parameter ranges are model-size context, never a number of model instances.
+const PLANNER_PRESETS = SCALE_REFERENCE_POINTS.map((ref) => ({
+  id: ref.id,
+  name: ref.name,
+  datasetSizeTB: ref.datasetSizeTB,
+  parameterCount: ref.modelParams,
+  modelCount: ref.id === 'startup' ? 1 : null,
+  regions: ref.id === 'startup' ? 1 : ref.id === 'enterprise' ? 3 : null,
+  inferencePerDay:
+    ref.inferencePerDay === '100K'
+      ? 100000
+      : ref.inferencePerDay === '10M'
+        ? 10000000
+        : ref.inferencePerDay === '1B'
+          ? 1000000000
+          : null,
+  agentCount: null,
+  retentionYears: null,
+}))
+
+const formatCount = (value: number | null) =>
+  value === null ? 'Unknown' : value.toLocaleString('en-US')
+
 export const ScaleEncryptionPlanner: React.FC = () => {
-  const [datasetSizeGB, setDatasetSizeGB] = useState(100000) // 100 TB
-  const [modelCount, setModelCount] = useState(12)
-  const [inferencePerDay, setInferencePerDay] = useState(10000000) // 10M
-  const [agentCount, setAgentCount] = useState(50)
-  const [retentionYears, setRetentionYears] = useState(7)
-  const [regions, setRegions] = useState(3)
+  const [datasetSizeGB, setDatasetSizeGB] = useState<number | null>(100000) // 100 TB
+  const [modelCount, setModelCount] = useState<number | null>(12)
+  const [inferencePerDay, setInferencePerDay] = useState<number | null>(10000000) // 10M
+  const [agentCount, setAgentCount] = useState<number | null>(50)
+  const [retentionYears, setRetentionYears] = useState<number | null>(7)
+  const [regions, setRegions] = useState<number | null>(3)
+  const [parameterCount, setParameterCount] = useState<string | null>(null)
   const [showPrivacy, setShowPrivacy] = useState(false)
 
   const analysis = useMemo(() => {
-    const totalDEKs = estimateDEKCount(datasetSizeGB, modelCount)
-    const totalKEKs = estimateKEKCount(regions, modelCount)
-    const kmsOps = estimateKMSOpsPerDay(inferencePerDay, agentCount, totalDEKs)
-    const storageOverhead = estimateStorageOverhead(totalDEKs, modelCount)
-    const bwOverhead = estimateBandwidthOverhead(inferencePerDay)
-    const hndlRisk = estimateHNDLRiskWindow(retentionYears)
+    const totalDEKs =
+      datasetSizeGB === null || modelCount === null
+        ? null
+        : estimateDEKCount(datasetSizeGB, modelCount)
+    const totalKEKs =
+      regions === null || modelCount === null ? null : estimateKEKCount(regions, modelCount)
+    const kmsOps =
+      inferencePerDay === null || agentCount === null || totalDEKs === null
+        ? null
+        : estimateKMSOpsPerDay(inferencePerDay, agentCount, totalDEKs)
+    const storageOverhead =
+      totalDEKs === null || modelCount === null
+        ? null
+        : estimateStorageOverhead(totalDEKs, modelCount)
+    const bwOverhead = inferencePerDay === null ? null : estimateBandwidthOverhead(inferencePerDay)
+    const hndlRisk = retentionYears === null ? null : estimateHNDLRiskWindow(retentionYears)
 
     return { totalDEKs, totalKEKs, kmsOps, storageOverhead, bwOverhead, hndlRisk }
   }, [datasetSizeGB, modelCount, inferencePerDay, agentCount, retentionYears, regions])
 
   const loadPreset = (presetId: string) => {
-    const ref = SCALE_REFERENCE_POINTS.find((r) => r.id === presetId)
-    if (!ref) return
-    setDatasetSizeGB(ref.datasetSizeTB * 1024)
-    setModelCount(parseInt(ref.modelParams.split('–')[0]) || 7)
-    const infMap: Record<string, number> = { '100K': 100000, '10M': 10000000, '1B': 1000000000 }
-    setInferencePerDay(infMap[ref.inferencePerDay] || 10000000)
+    const preset = PLANNER_PRESETS.find((ref) => ref.id === presetId)
+    if (!preset) return
+    setDatasetSizeGB(preset.datasetSizeTB * 1000)
+    setParameterCount(preset.parameterCount)
+    setModelCount(preset.modelCount)
+    setInferencePerDay(preset.inferencePerDay)
+    setAgentCount(preset.agentCount)
+    setRetentionYears(preset.retentionYears)
+    setRegions(preset.regions)
   }
 
   return (
@@ -49,8 +87,8 @@ export const ScaleEncryptionPlanner: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-1">Scale Encryption Planner</h3>
         <p className="text-sm text-muted-foreground">
-          Input your AI infrastructure parameters to calculate PQC migration requirements — key
-          counts, KMS operations, storage overhead, and HNDL risk windows.
+          Explore illustrative key counts, operation volumes and retention-window comparisons from
+          sample inputs. These estimates do not establish production capacity or security.
         </p>
       </div>
 
@@ -58,13 +96,22 @@ export const ScaleEncryptionPlanner: React.FC = () => {
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-2">Quick Presets</h4>
         <div className="flex flex-wrap gap-2">
-          {SCALE_REFERENCE_POINTS.map((ref) => (
+          {PLANNER_PRESETS.map((ref) => (
             <Button key={ref.id} variant="outline" size="sm" onClick={() => loadPreset(ref.id)}>
               {ref.name}
             </Button>
           ))}
         </div>
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        Presets replace the previous scenario. Blank fields are not specified, not zero; enter them
+        to compute dependent totals. Parameters per model are size context, not model count.
+      </p>
+      <p className="text-sm text-foreground">
+        Parameters per model (preset context): <strong>{parameterCount ?? 'Not specified'}</strong>.
+        The key model assumes ten shards per model regardless of this range.
+      </p>
 
       {/* Input parameters */}
       <div className="glass-panel p-4 space-y-4">
@@ -76,17 +123,17 @@ export const ScaleEncryptionPlanner: React.FC = () => {
           {[
             {
               label: 'Dataset Size (TB)',
-              value: datasetSizeGB / 1024,
-              onChange: (v: number) => setDatasetSizeGB(v * 1024),
-              min: 0.1,
+              value: datasetSizeGB === null ? null : datasetSizeGB / 1000,
+              onChange: (v: number | null) => setDatasetSizeGB(v === null ? null : v * 1000),
+              min: 0,
               max: 100000,
-              step: 10,
+              step: 0.1,
             },
             {
               label: 'Model Count',
               value: modelCount,
               onChange: setModelCount,
-              min: 1,
+              min: 0,
               max: 1000,
               step: 1,
             },
@@ -94,7 +141,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
               label: 'Inference/Day',
               value: inferencePerDay,
               onChange: setInferencePerDay,
-              min: 1000,
+              min: 0,
               max: 10000000000,
               step: 100000,
             },
@@ -102,7 +149,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
               label: 'Agent Count',
               value: agentCount,
               onChange: setAgentCount,
-              min: 1,
+              min: 0,
               max: 10000,
               step: 1,
             },
@@ -110,7 +157,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
               label: 'Retention (years)',
               value: retentionYears,
               onChange: setRetentionYears,
-              min: 1,
+              min: 0,
               max: 30,
               step: 1,
             },
@@ -118,7 +165,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
               label: 'Regions',
               value: regions,
               onChange: setRegions,
-              min: 1,
+              min: 0,
               max: 20,
               step: 1,
             },
@@ -128,69 +175,133 @@ export const ScaleEncryptionPlanner: React.FC = () => {
               <input
                 type="number"
                 aria-label={input.label}
-                value={input.value}
-                onChange={(e) => input.onChange(Number(e.target.value) || input.min)}
+                value={input.value ?? ''}
+                onChange={(e) => {
+                  const value = e.target.value === '' ? null : Number(e.target.value)
+                  const wholeCount = input.label !== 'Dataset Size (TB)'
+                  input.onChange(
+                    value !== null &&
+                      Number.isFinite(value) &&
+                      value >= 0 &&
+                      (!wholeCount || Number.isInteger(value))
+                      ? value
+                      : null
+                  )
+                }}
                 min={input.min}
                 max={input.max}
                 step={input.step}
                 className="w-full px-3 py-2 rounded border border-input bg-background text-foreground text-sm"
               />
+              {input.value === null && (
+                <p className="text-xs text-muted-foreground mt-1">Not specified — enter a value.</p>
+              )}
             </div>
           ))}
         </div>
+        <p className="text-xs text-muted-foreground">
+          Dataset units are decimal: 1 TB = 1,000 GB. Counts and years use nonnegative whole
+          numbers; clearing a field means unknown.
+        </p>
       </div>
 
       {/* Results */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <Shield size={16} className="text-primary" />
-          PQC Migration Analysis
+          Illustrative Sizing Estimates
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <div className="glass-panel p-3 text-center">
-            <p className="text-2xl font-bold text-foreground">
-              {analysis.totalDEKs >= 1000000
-                ? `${(analysis.totalDEKs / 1000000).toFixed(1)}M`
-                : analysis.totalDEKs >= 1000
-                  ? `${(analysis.totalDEKs / 1000).toFixed(0)}K`
-                  : analysis.totalDEKs}
+          <div
+            className="glass-panel p-3 text-center min-w-0"
+            role="group"
+            aria-label="Estimated DEKs"
+          >
+            <p className="text-lg sm:text-2xl font-bold text-foreground break-words">
+              {formatCount(analysis.totalDEKs)}
             </p>
-            <p className="text-xs text-muted-foreground">Total DEKs</p>
+            <p className="text-xs text-muted-foreground">Estimated DEKs</p>
           </div>
-          <div className="glass-panel p-3 text-center">
-            <p className="text-2xl font-bold text-foreground">{analysis.totalKEKs}</p>
-            <p className="text-xs text-muted-foreground">Total KEKs</p>
-          </div>
-          <div className="glass-panel p-3 text-center">
-            <p className="text-2xl font-bold text-primary">
-              {analysis.kmsOps >= 1000000
-                ? `${(analysis.kmsOps / 1000000).toFixed(1)}M`
-                : analysis.kmsOps >= 1000
-                  ? `${(analysis.kmsOps / 1000).toFixed(0)}K`
-                  : analysis.kmsOps}
+          <div
+            className="glass-panel p-3 text-center min-w-0"
+            role="group"
+            aria-label="Estimated KEKs"
+          >
+            <p className="text-lg sm:text-2xl font-bold text-foreground break-words">
+              {formatCount(analysis.totalKEKs)}
             </p>
-            <p className="text-xs text-muted-foreground">KMS Ops/Day</p>
+            <p className="text-xs text-muted-foreground">Estimated KEKs</p>
           </div>
-          <div className="glass-panel p-3 text-center">
-            <p className="text-2xl font-bold text-foreground">
-              {analysis.storageOverhead.toFixed(2)} GB
+          <div
+            className="glass-panel p-3 text-center min-w-0"
+            role="group"
+            aria-label="Modeled KMS operations per day"
+          >
+            <p className="text-lg sm:text-2xl font-bold text-primary break-words">
+              {formatCount(analysis.kmsOps)}
             </p>
-            <p className="text-xs text-muted-foreground">Storage Overhead</p>
+            <p className="text-xs text-muted-foreground">Modeled KMS Ops/Day</p>
           </div>
-          <div className="glass-panel p-3 text-center">
-            <p className="text-2xl font-bold text-foreground">{analysis.bwOverhead.toFixed(2)}%</p>
-            <p className="text-xs text-muted-foreground">Bandwidth Overhead</p>
-          </div>
-          <div className="glass-panel p-3 text-center">
-            <p
-              className={`text-sm font-bold ${analysis.hndlRisk.startsWith('High') ? 'text-status-error' : analysis.hndlRisk.startsWith('Medium') ? 'text-status-warning' : 'text-status-success'}`}
-            >
-              {analysis.hndlRisk.split('—')[0]}
+          <div
+            className="glass-panel p-3 text-center min-w-0"
+            role="group"
+            aria-label="Modeled storage delta"
+          >
+            <p className="text-lg sm:text-2xl font-bold text-foreground break-words">
+              {analysis.storageOverhead === null
+                ? 'Unknown'
+                : `${analysis.storageOverhead.toFixed(6)} GiB`}
             </p>
-            <p className="text-xs text-muted-foreground">HNDL Risk</p>
+            <p className="text-xs text-muted-foreground">Modeled Storage Delta</p>
+          </div>
+          <div
+            className="glass-panel p-3 text-center min-w-0"
+            role="group"
+            aria-label="Illustrative bandwidth overhead"
+          >
+            <p className="text-lg sm:text-2xl font-bold text-foreground break-words">
+              {analysis.bwOverhead === null ? 'Unknown' : `${analysis.bwOverhead.toFixed(2)}%`}
+            </p>
+            <p className="text-xs text-muted-foreground">Illustrative Bandwidth Overhead</p>
+          </div>
+          <div
+            className="glass-panel p-3 text-center min-w-0"
+            role="group"
+            aria-label="Illustrative retention window"
+          >
+            <p className="text-sm font-bold text-foreground">
+              {analysis.hndlRisk?.split('—')[0] ?? 'Not assessed'}
+            </p>
+            <p className="text-xs text-muted-foreground">Illustrative Retention Window</p>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-3">{analysis.hndlRisk}</p>
+        <p className="text-xs text-muted-foreground mt-3">
+          {retentionYears === null
+            ? 'Enter retention years to compare the sample window.'
+            : `Sample expiry year: ${2026 + retentionYears}. The band compares this year with the exercise boundaries only.`}
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          The example rule uses base year 2026: expiry by 2030 is Low, 2031–2035 is Medium, and
+          after 2035 is High. These are illustrative bands, not a quantum-arrival forecast or an
+          organization-specific HNDL risk assessment.
+        </p>
+        <details className="text-xs text-muted-foreground mt-3">
+          <summary className="cursor-pointer font-medium">
+            Illustrative calculation assumptions
+          </summary>
+          <p className="mt-2">
+            The existing model assigns one DEK per decimal GB plus ten shards per model; KEKs are
+            one root per region plus one per model per region. Daily KMS operations add one per
+            inference, ten per agent and rounded-up 1% DEK rotation. These are example counts, not
+            measured service throughput.
+          </p>
+          <p className="mt-2">
+            Storage uses the existing byte-size comparison and binary GiB (2^30 bytes). Bandwidth
+            uses the existing example connection assumptions, not a measured network benchmark. With
+            production tools, inventory actual shards and key hierarchy, and measure caching,
+            rotation and connection reuse before sizing.
+          </p>
+        </details>
       </div>
 
       {/* Migration phases */}

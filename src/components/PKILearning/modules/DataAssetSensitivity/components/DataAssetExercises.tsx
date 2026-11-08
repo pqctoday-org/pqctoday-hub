@@ -36,11 +36,11 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       id: 'healthcare-hndl',
       title: '1. Healthcare HNDL Classification Challenge',
       description:
-        'A regional hospital system stores electronic health records (ePHI) under HIPAA. The regulation requires 6-year minimum retention from last patient encounter — but records are routinely kept 30+ years in practice. Using the Asset Inventory Builder, create an asset entry for this ePHI database: Asset Type = Data Store, Sensitivity = High, Retention = 25+ years, Industry = Healthcare. Then check the HNDL Risk Year column.',
+        'A regional hospital system stores electronic health records (ePHI) under HIPAA. HIPAA’s 6-year rule covers required compliance documentation, not patient records; state law and other requirements set medical-record retention. For this sample, assume a 30-year retention period set by the hospital’s own legal and business requirements. Using the Asset Inventory Builder, create an asset entry for this ePHI database: Asset Type = Data Store, Sensitivity = High, Retention = 25+ years, Industry = Healthcare. Then check the HNDL Risk Year column.',
       badge: 'HNDL',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'With a 30-year retention period and High sensitivity, the HNDL risk year is 2034 − 30 = 2004. In effect, data collected as far back as 2004 (the CRQC year minus the retention period) is already in adversary archives. When you run this asset through the Sensitivity Scoring Engine (Step 4), the composite score will be ≥ 85 — placing it in the Critical urgency band. HIPAA + NIST IR 8547 compliance flags add further urgency.',
+        'Compare the selected hypothetical CRQC year with the sample retention period to inspect the calculated HNDL planning threshold. This does not establish when records were collected or that an adversary captured them. In Step 4, inspect the score, urgency band and drivers produced by the current weights and selected framework flags. These are illustrative prioritization results, not a guaranteed Critical result or a compliance finding.',
       config: { step: 0 },
     },
     {
@@ -62,7 +62,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Methodology',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'NIST RMF categorizes the root CA as FIPS 199 "High" impact — for national security systems, CNSA 2.0 specifies CRYSTALS-Dilithium with Level V parameters for signing (with LMS/XMSS for software/firmware signing); software and firmware signing should transition to exclusive CNSA 2.0 use by 2030, while large PKI systems should support and favor CNSA 2.0 by 2030, moving to exclusive use by 2033. ISO 27005 scores it Critical risk (Likelihood 3 × Consequence 5 = 15) — treatment: Mitigate, immediate. FAIR ALE is highest for this asset because root CA compromise enables forging all certificates — catastrophic loss magnitude drives ALE into the tens of millions. DORA/NIS2 Protect pillar fails because RSA-4096 will no longer meet "state-of-the-art." For a CNSA 2.0-scoped CA, the compliant choice is ML-DSA-87; where CNSA compliance is not required, the Priority Map highlights SLH-DSA (stateless hash-based) as the most conservative long-term option for key material with indefinite validity periods.',
+        'NIST RMF categorizes the root CA as FIPS 199 "High" impact — for national security systems, CNSA 2.0 specifies ML-DSA-87 (FIPS 204) for signing (with LMS/XMSS for software/firmware signing). NSA\'s CNSA 2.0 FAQ (version 2.2) sets three dates for national security systems: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted. ISO 27005 scores it Critical risk (Likelihood 3 × Consequence 5 = 15) — treatment: Mitigate, immediate. FAIR ALE is highest for this asset because root CA compromise enables forging all certificates — catastrophic loss magnitude drives ALE into the tens of millions. DORA/NIS2 Protect pillar fails because RSA-4096 will no longer meet "state-of-the-art." For a CNSA 2.0-scoped CA, the compliant choice is ML-DSA-87; where CNSA compliance is not required, the Priority Map highlights SLH-DSA (stateless hash-based) as the most conservative long-term option for key material with indefinite validity periods.',
       config: { step: 2 },
     },
     {
@@ -73,7 +73,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Workshop',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        "The highest-urgency asset will typically be a Critical-sensitivity, 25+ year retention asset under CNSA 2.0 or NIS2 scope (composite score ≥ 85). Assets scoring below 33 (Low urgency) are typically short-lived communication channels with no active compliance mandate. For US Government & Defense organizations, This module's reading is that CNSA 2.0's 2030 deadline for transitioning deployed software and firmware to CNSA 2.0-compliant signatures is most constraining; for EU financial institutions, DORA's January 2025 enforcement date drives immediate crypto risk management documentation. Export your Priority Map as Markdown to share with your security team.",
+        'Compare the assets’ displayed scores, urgency bands and contributing factors under your selected weights and framework flags. Changing those assumptions can change the order; an illustrative Low result does not establish that migration can safely wait. Check the applicable system scope and dated source guidance before using a framework or date to prioritise work. An industry label or an illustrative score does not establish which requirements apply or that they have been met. Export your Priority Map as Markdown to discuss its assumptions with your security team.',
       config: { step: 0 },
     },
   ]

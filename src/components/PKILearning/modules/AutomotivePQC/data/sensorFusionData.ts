@@ -33,7 +33,7 @@ export const SENSOR_PROFILES: SensorProfile[] = [
     description:
       '3D point cloud for obstacle detection and mapping. Generates massive data volumes requiring real-time authentication.',
     quantumThreat:
-      'HNDL: Recorded LiDAR frames could be replayed with forged signatures to create phantom obstacles.',
+      'Forgery, not harvest-now-decrypt-later: an attacker able to break ECDSA could forge frame signatures to inject phantom obstacles. Replaying recorded frames is a separate attack that signatures alone do not stop (freshness or counters are needed).',
   },
   {
     id: 'radar',
@@ -80,8 +80,14 @@ export const SENSOR_PROFILES: SensorProfile[] = [
     latencyBudgetMs: 10,
     currentAuth: 'None (trusted); GPS spoofing protection via multi-constellation',
     description: 'Position and motion data for localization. High frequency, small messages.',
+    // Dormant field: the Sensor Data Integrity Simulator does not render quantumThreat.
+    // Galileo OSNMA (IDD ICD issue 1.1, January 2024) authenticates the navigation message
+    // with TESLA keyed tags; the TESLA root key is authenticated by an ECDSA digital signature
+    // (classical, not post-quantum). Galileo's OSNMA information note says authentication does
+    // not prevent spoofing, does not protect against jamming, and a position computed from
+    // non-verified ranging information cannot be considered authenticated.
     quantumThreat:
-      'GPS spoofing already possible classically. PQC-signed GNSS authentication (Galileo OSNMA) addresses this.',
+      'GNSS spoofing is already possible without a quantum computer. Galileo OSNMA authenticates the navigation message with TESLA keyed tags whose root key is signed with classical ECDSA (not post-quantum). It does not authenticate ranging and does not stop jamming, so it is one layer, not a complete anti-spoofing answer.',
   },
   {
     id: 'v2x',

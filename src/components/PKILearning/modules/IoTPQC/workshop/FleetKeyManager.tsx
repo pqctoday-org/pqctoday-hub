@@ -107,9 +107,10 @@ export const FleetKeyManager: React.FC<{ initial?: Partial<FleetConfig> }> = ({ 
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Plan a fleet-wide key rotation. Devices are spread over many cells or collectors that run in
-        parallel, while every device&apos;s key update passes through the same head-end HSM — so at
-        fleet scale the HSM, not the radio, is often the limit. All results are model estimates.
+        Explore an illustrative fleet key-update model with parallel cells or collectors and a
+        shared head-end HSM. Network estimates cover only KEM exchange material and modeled framing,
+        excluding the signature counted in HSM work. This incomplete comparison does not establish
+        the full rotation time or actual bottleneck.
       </p>
 
       <div className="glass-panel p-4">
@@ -236,24 +237,24 @@ export const FleetKeyManager: React.FC<{ initial?: Partial<FleetConfig> }> = ({ 
       <div className="glass-panel p-4" data-testid="rotation-results">
         <div className="flex items-center gap-2 mb-3">
           <Clock size={16} className="text-primary" />
-          <h3 className="text-sm font-bold text-foreground">Rotation analysis — model estimate</h3>
+          <h3 className="text-sm font-bold text-foreground">Partial key-update model</h3>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <Cell
-            label="Bytes per device (PQC)"
+            label="KEM + framing per device (signature excluded)"
             value={`${result.pqcBytesPerDevice.toLocaleString('en-US')} B`}
           />
           <Cell
-            label="Bytes per device (today)"
+            label="Classical key transport + framing per device"
             value={`${result.classicalBytesPerDevice.toLocaleString('en-US')} B`}
             note={
               result.sizeMultiplier
-                ? `PQC is ${result.sizeMultiplier.toFixed(1)}×`
+                ? `Modeled byte subsets: ${result.sizeMultiplier.toFixed(1)}×`
                 : 'symmetric key transport'
             }
           />
           <Cell
-            label="Network time per cell"
+            label="Partial network time per cell (signature excluded)"
             value={fmtHours(result.networkHoursPerCell)}
             note={`${result.cells.toLocaleString('en-US')} cells in parallel · today ${fmtHours(result.classicalNetworkHoursPerCell)}`}
           />
@@ -276,17 +277,20 @@ export const FleetKeyManager: React.FC<{ initial?: Partial<FleetConfig> }> = ({ 
             <AlertTriangle size={14} className="text-status-warning shrink-0 mt-0.5" />
           )}
           <p className="text-muted-foreground">
-            Fleet rotation takes about <strong>{fmtHours(result.rotationHours)}</strong>, limited by
-            the <strong>{result.bottleneck === 'hsm' ? 'head-end HSM' : 'per-cell network'}</strong>{' '}
-            — {(result.periodShare * 100).toFixed(1)}% of each {Math.round(result.periodDays)}-day
-            rotation period. Annual key-update traffic across the fleet:{' '}
-            {result.annualFleetGB.toFixed(1)} GB.
+            The larger time in this incomplete model is{' '}
+            <strong>{fmtHours(result.rotationHours)}</strong> from the{' '}
+            <strong>{result.bottleneck === 'hsm' ? 'head-end HSM' : 'per-cell network'}</strong>{' '}
+            estimate — {(result.periodShare * 100).toFixed(1)}% of each{' '}
+            {Math.round(result.periodDays)}-day rotation period. Annual modeled KEM + framing volume
+            across the fleet (signature excluded): {result.annualFleetGB.toFixed(1)} GB.
           </p>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
           Model: device sends a fresh KEM public key, the head-end returns the ciphertext, plus{' '}
           {PROTOCOL_OVERHEAD_BYTES} B of framing; links run at {LINK_UTILISATION * 100}% of the
-          stated rate.
+          stated rate. Signature bytes are not included in network time or annual volume. Assess the
+          selected signing profile, authenticated message format and transport overhead with your
+          own tools before drawing conclusions about a complete rotation.
         </p>
         {!result.suiteHasPublicKey && (
           <p className="text-[10px] text-muted-foreground mt-1">

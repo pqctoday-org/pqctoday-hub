@@ -14,8 +14,8 @@ import { Button } from '@/components/ui/button'
 const AGILITY_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'agility-mldsa-primary',
-    useCase: 'Primary PQC algorithm (ML-DSA-65)',
-    standard: 'CNSA 2.0 + FIPS 204',
+    useCase: 'Example PQC signature parameter set (ML-DSA-65)',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: 'CryptoAgility migration test: algorithm=ML-DSA-65,epoch=2026',
@@ -248,8 +248,8 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
 
       <KatValidationPanel
         specs={AGILITY_KAT_SPECS}
-        label="Crypto Agility Known Answer Tests"
-        authorityNote="CNSA 2.0 · FIPS 204 · FIPS 205 · FIPS 186-5"
+        label="Crypto Agility sample checks"
+        authorityNote="FIPS 204 · FIPS 205 · FIPS 186-5 · FIPS 202. These sample runs are not cryptographic-module validation, and the ML-DSA-65 row is not a CNSA 2.0 test: CNSA 2.0 specifies ML-DSA-87."
       />
     </div>
   )

@@ -9,6 +9,7 @@ import type {
   CredentialAttribute,
 } from '../../types'
 import { createSDJWT } from '../../utils/sdjwt-utils'
+import { signAndVerifySampleBinding, verifyIssuedSampleJwt } from '../../utils/sampleProof'
 import type { CryptoProvider } from '../../utils/crypto-provider'
 import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
 import { SoftHSMCryptoProvider, isHsmBackedKey } from '../../utils/hsm-crypto-provider'
@@ -77,6 +78,11 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 }) => {
   const [step, setStep] = useState<FlowStep>('START')
   const [loading, setLoading] = useState(false)
+  const [verifiedPresentation, setVerifiedPresentation] = useState<{
+    keyId: string
+    credentialId: string
+  } | null>(null)
+  const [flowError, setFlowError] = useState<string | null>(null)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
 
@@ -96,7 +102,14 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   // Check for PID availability
   const pidCredential = wallet.credentials.find((c) => c.type.includes('PersonIdentificationData'))
 
+  const proofIsCurrent =
+    verifiedPresentation?.keyId === wallet.keys[0]?.id &&
+    verifiedPresentation?.credentialId === pidCredential?.id &&
+    verifiedPresentation !== null
+
   const handleStart = () => {
+    setVerifiedPresentation(null)
+    setFlowError(null)
     setStep('PID_CHECK')
     addLog('Connecting to University Portal...')
     if (!pidCredential) {
@@ -109,6 +122,8 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   const handlePresentation = async () => {
     setLoading(true)
     setStep('PRESENTATION')
+    setVerifiedPresentation(null)
+    setFlowError(null)
 
     // Mock VP Request: Please show "family_name" and "given_name" from PID
     addLog('University requests: [family_name, given_name] from PID.')
@@ -116,9 +131,10 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 
     // Find PID Key (mocking lookup)
     const pidKey = wallet.keys[0] // Simplified assumption for education: 1st key is PID key
-    if (!pidKey) {
+    if (!pidKey || !pidCredential) {
       addLog('Error: No signing key found for PID.')
       setLoading(false)
+      setStep('PID_CHECK')
       return
     }
 
@@ -138,12 +154,20 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
       addLog('Key Binding Signature via PKCS#11 HSM (CKM_ECDSA_SHA256)')
     }
     try {
-      await provider.signData(pidKey, challengePayload, addOpenSSLLog)
+      await signAndVerifySampleBinding(provider, pidKey, challengePayload, addOpenSSLLog)
     } catch (e) {
-      addLog(`VP signing error: ${e instanceof Error ? e.message : 'unknown'}`)
+      const message = e instanceof Error ? e.message : 'Sample presentation failed.'
+      addLog(message)
+      setFlowError(message)
+      setLoading(false)
+      setStep('PID_CHECK')
+      return
     }
 
-    addLog('Device binding signature verified.')
+    setVerifiedPresentation({ keyId: pidKey.id, credentialId: pidCredential!.id })
+    addLog(
+      'Sample key-binding signature verified. PID issuer trust and identity checks are simulated.'
+    )
     await new Promise((r) => setTimeout(r, 500))
 
     addLog('VP Sent to University Verifier.')
@@ -152,66 +176,81 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   }
 
   const handleIssuance = async () => {
+    if (!proofIsCurrent) {
+      setFlowError('Verify the current sample presentation before issuance.')
+      return
+    }
+    setFlowError(null)
     setLoading(true)
-    addLog('Issuing Master of Science Diploma...')
+    try {
+      addLog('Issuing Master of Science Diploma...')
 
-    const provider = getCryptoProvider()
+      const provider = getCryptoProvider()
 
-    // 1. Generate Holder Key for Diploma Binding (P-384/ES384 per ARF attestation profile)
-    if (hsm.isReady) {
-      hsm.addStepLog("🔑 The Wallet's Proof of Possession (PoP) Key")
+      // 1. Generate Holder Key for Diploma Binding (P-384/ES384 per ARF attestation profile)
+      if (hsm.isReady) {
+        hsm.addStepLog("🔑 The Wallet's Proof of Possession (PoP) Key")
+      }
+      const holderKey = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog)
+      addLog(`Generated Holder Key for Binding: ${holderKey.id} (P-384/ES384)`)
+
+      // 2. University (Issuer) generates SD-JWT
+      if (hsm.isReady) {
+        hsm.addStepLog('🛡️ The Wallet Instance Attestation (WIA) Key')
+      }
+      const issuerKey = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog) // Mock issuer key
+
+      // EUDI ARF QTSA Provider Certificate representation
+      const issuerCertPem = await generateX509Certificate(
+        issuerKey,
+        provider,
+        '/CN=Tech University Attestation Provider/C=EU',
+        addOpenSSLLog
+      )
+      addLog('Attestation Provider Certificate (X.509 DER) constructed via @peculiar.')
+      addOpenSSLLog(issuerCertPem)
+
+      const claims: CredentialAttribute[] = [
+        { name: 'given_name', value: MARIA_IDENTITY.given_name, type: 'sd' },
+        { name: 'family_name', value: MARIA_IDENTITY.family_name, type: 'sd' },
+        { name: 'degree', value: 'Master of Science (Computer Science)', type: 'sd' },
+        { name: 'gpa', value: 3.8, type: 'sd' },
+        { name: 'honors', value: true, type: 'sd' },
+      ]
+
+      const sdJwt = await createSDJWT(
+        claims,
+        issuerKey,
+        holderKey,
+        provider,
+        'https://university.edu',
+        'eu.europa.ec.eudi.diploma.1',
+        addOpenSSLLog
+      )
+
+      await verifyIssuedSampleJwt(provider, issuerKey, sdJwt.issuerJwt, addOpenSSLLog)
+
+      const credential: VerifiableCredential = {
+        id: `diploma-${Date.now()}`,
+        type: ['VerifiableCredential', 'UniversityDegreeCredential'],
+        issuer: 'Technical University of Madrid',
+        issuanceDate: new Date().toISOString(),
+        credentialSubject: {}, // In SD-JWT, claims are in the JWT/disclosures
+        format: 'dc+sd-jwt',
+        raw: JSON.stringify(sdJwt),
+      }
+
+      addLog('Credential Issued (SD-JWT) and downloaded to Wallet.')
+      onCredentialIssued(credential, holderKey)
+      setLoading(false)
+      setStep('COMPLETE')
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Sample issuance failed.'
+      addLog(message)
+      setFlowError(message)
+    } finally {
+      setLoading(false)
     }
-    const holderKey = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog)
-    addLog(`Generated Holder Key for Binding: ${holderKey.id} (P-384/ES384)`)
-
-    // 2. University (Issuer) generates SD-JWT
-    if (hsm.isReady) {
-      hsm.addStepLog('🛡️ The Wallet Instance Attestation (WIA) Key')
-    }
-    const issuerKey = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog) // Mock issuer key
-
-    // EUDI ARF QTSA Provider Certificate representation
-    const issuerCertPem = await generateX509Certificate(
-      issuerKey,
-      provider,
-      '/CN=Tech University Attestation Provider/C=EU',
-      addOpenSSLLog
-    )
-    addLog('Attestation Provider Certificate (X.509 DER) constructed via @peculiar.')
-    addOpenSSLLog(issuerCertPem)
-
-    const claims: CredentialAttribute[] = [
-      { name: 'given_name', value: MARIA_IDENTITY.given_name, type: 'sd' },
-      { name: 'family_name', value: MARIA_IDENTITY.family_name, type: 'sd' },
-      { name: 'degree', value: 'Master of Science (Computer Science)', type: 'sd' },
-      { name: 'gpa', value: 3.8, type: 'sd' },
-      { name: 'honors', value: true, type: 'sd' },
-    ]
-
-    const sdJwt = await createSDJWT(
-      claims,
-      issuerKey,
-      holderKey,
-      provider,
-      'https://university.edu',
-      'eu.europa.ec.eudi.diploma.1',
-      addOpenSSLLog
-    )
-
-    const credential: VerifiableCredential = {
-      id: `diploma-${Date.now()}`,
-      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
-      issuer: 'Technical University of Madrid',
-      issuanceDate: new Date().toISOString(),
-      credentialSubject: {}, // In SD-JWT, claims are in the JWT/disclosures
-      format: 'dc+sd-jwt',
-      raw: JSON.stringify(sdJwt),
-    }
-
-    addLog('Credential Issued (SD-JWT) and downloaded to Wallet.')
-    onCredentialIssued(credential, holderKey)
-    setLoading(false)
-    setStep('COMPLETE')
   }
 
   return (
@@ -228,6 +267,11 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6">
+          {flowError && (
+            <p role="alert" className="text-status-error">
+              {flowError}
+            </p>
+          )}
           <LiveHSMToggle
             hsm={hsm}
             operations={['C_GenerateKeyPair', 'C_Sign', 'C_Digest']}
@@ -311,11 +355,18 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
               {step === 'VERIFICATION' && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-success justify-center">
-                    <ShieldCheck className="w-6 h-6" /> Identity Verified
+                    <ShieldCheck className="w-6 h-6" />{' '}
+                    {proofIsCurrent
+                      ? 'Sample key binding verified'
+                      : 'Sample presentation needs verification'}
                   </div>
                   <div className="bg-secondary/5 p-3 rounded-lg border border-secondary/20 text-sm text-muted-foreground">
                     <p className="font-medium text-foreground mb-1">
                       Format: SD-JWT VC (draft-ietf-oauth-sd-jwt-vc, built on SD-JWT / RFC 9901)
+                    </p>
+                    <p>
+                      PID issuer trust, identity attributes and university approval are simulated in
+                      this example.
                     </p>
                     <p>
                       For online verification scenarios (like University Diplomas), EUDI ARF
@@ -328,7 +379,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                   <Button
                     variant="ghost"
                     onClick={handleIssuance}
-                    disabled={loading}
+                    disabled={loading || !proofIsCurrent}
                     className="w-full"
                   >
                     {loading && <Loader2 className="animate-spin mr-2" />} Issue Diploma

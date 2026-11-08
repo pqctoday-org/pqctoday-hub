@@ -6,7 +6,7 @@ import { LmsConfig } from './LmsConfig'
 import { useOpenSSLStore } from '../../store'
 
 vi.mock('../../store', () => ({
-  useOpenSSLStore: vi.fn(),
+  useOpenSSLStore: Object.assign(vi.fn(), { getState: vi.fn() }),
 }))
 
 import { lmsService } from '../../../../wasm/LmsService'
@@ -45,6 +45,7 @@ describe('LmsConfig', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(useOpenSSLStore.getState).mockImplementation(() => vi.mocked(useOpenSSLStore)())
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
     vi.mocked(useOpenSSLStore).mockReturnValue(mockStore as any)
     vi.spyOn(console, 'error').mockImplementation((...args) => {

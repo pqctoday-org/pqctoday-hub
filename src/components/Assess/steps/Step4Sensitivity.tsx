@@ -129,15 +129,17 @@ const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedSt
               <div className="flex items-center gap-2">
                 <Info size={14} className="text-primary shrink-0" />
                 <p className="text-xs text-muted-foreground">
-                  Showing data types common in the{' '}
-                  <strong className="text-foreground">{industry}</strong> sector.
+                  Sensitivity-level examples for the{' '}
+                  <strong className="text-foreground">{industry}</strong> sector. Selecting any
+                  example selects its level; all examples at that level are selected together. This
+                  records a sensitivity category, not an inventory of data types.
                 </p>
               </div>
             </div>
             <div
               className="space-y-3"
               role="group"
-              aria-label={`${industry} data sensitivity types`}
+              aria-label={`${industry} sensitivity-level examples`}
             >
               {industrySensitivities.map((item) => {
                 const level = SENSITIVITY_SCORE_TO_LEVEL[item.sensitivityScore] ?? 'medium'

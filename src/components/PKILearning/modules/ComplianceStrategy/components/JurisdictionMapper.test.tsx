@@ -85,3 +85,109 @@ describe('JurisdictionMapper — Migrate links', () => {
     expect(screen.getByTestId('loc').textContent).toBe('/migrate?product=alpha-lib')
   })
 })
+
+describe('JurisdictionMapper — early-deadline conflict', () => {
+  it('lists Australia and the Czech annex estimate, and leaves Taiwan out of the list', () => {
+    mocks.software = []
+    render(
+      <MemoryRouter initialEntries={['/learn/compliance-strategy']}>
+        <JurisdictionMapper
+          selectedJurisdictions={['us', 'au', 'cz', 'tw']}
+          onJurisdictionsChange={() => {}}
+          dismissedFrameworks={new Set()}
+          onDismissedFrameworksChange={() => {}}
+        />
+      </MemoryRouter>
+    )
+    const early = screen.getByText(/have deadlines significantly earlier than/)
+    expect(early).toHaveTextContent('Australia (2030)')
+    expect(early).toHaveTextContent('Czech Republic (end of 2030, NUKIB annex estimate)')
+    expect(early).not.toHaveTextContent('Taiwan')
+    expect(early).not.toHaveTextContent('2027')
+  })
+
+  it('does not raise the early-deadline conflict for Taiwan alone', () => {
+    mocks.software = []
+    render(
+      <MemoryRouter initialEntries={['/learn/compliance-strategy']}>
+        <JurisdictionMapper
+          selectedJurisdictions={['us', 'tw']}
+          onJurisdictionsChange={() => {}}
+          dismissedFrameworks={new Set()}
+          onDismissedFrameworksChange={() => {}}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(/have deadlines significantly earlier than/)).not.toBeInTheDocument()
+  })
+})
+
+describe('JurisdictionMapper — CNSA 2.0 applies to national security systems', () => {
+  const NSS_LABEL =
+    /This sample system is a U\.S\. national security system or under an NSS contract/
+  const renderWith = (selected: string[]) => {
+    mocks.software = []
+    return render(
+      <MemoryRouter initialEntries={['/learn/compliance-strategy']}>
+        <JurisdictionMapper
+          selectedJurisdictions={selected}
+          onJurisdictionsChange={() => {}}
+          dismissedFrameworks={new Set()}
+          onDismissedFrameworksChange={() => {}}
+        />
+      </MemoryRouter>
+    )
+  }
+
+  it('offers the national-security-system checkbox only when the U.S. is selected, unticked by default', () => {
+    renderWith(['us', 'eu'])
+    expect(screen.getByRole('checkbox', { name: NSS_LABEL })).not.toBeChecked()
+  })
+
+  it('does not show the checkbox without the U.S.', () => {
+    renderWith(['eu', 'fr'])
+    expect(screen.queryByRole('checkbox', { name: NSS_LABEL })).not.toBeInTheDocument()
+  })
+
+  it('words the U.S./EU conflict conditionally until the box is ticked', () => {
+    renderWith(['us', 'eu'])
+    expect(
+      screen.getByText(/^If the system is a national security system, CNSA 2\.0 requires/)
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/^CNSA 2\.0 requires ML-KEM-1024/)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('checkbox', { name: NSS_LABEL }))
+    expect(
+      screen.getByText(
+        /^CNSA 2\.0 requires ML-KEM-1024 and ML-DSA-87 minimum security levels for U\.S\. NSS/
+      )
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText(/^If the system is a national security system, CNSA 2\.0/)
+    ).not.toBeInTheDocument()
+  })
+
+  it('words the U.S./France-Germany conflict conditionally until the box is ticked', () => {
+    renderWith(['us', 'fr'])
+    expect(
+      screen.getByText(
+        /if the system is a national security system, NSA CNSA 2\.0 targets pure PQC/
+      )
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('checkbox', { name: NSS_LABEL }))
+    const text = screen.getByText(/ANSSI \(France\) makes hybrid mandatory/).textContent ?? ''
+    expect(text).toMatch(/BSI \(Germany\) recommends hybrid; NSA CNSA 2\.0 targets pure PQC/)
+    expect(text).not.toMatch(/if the system is a national security system/)
+  })
+
+  it('names the NSM-10 goal of 2035 as the U.S. full-transition target in the early-deadline conflict', () => {
+    renderWith(['us', 'au'])
+    expect(screen.getByText(/have deadlines significantly earlier than/)).toHaveTextContent(
+      'earlier than US full transition (by 2035, NSM-10).'
+    )
+    fireEvent.click(screen.getByRole('checkbox', { name: NSS_LABEL }))
+    expect(screen.getByText(/have deadlines significantly earlier than/)).toHaveTextContent(
+      'earlier than US full transition (by 2035, NSM-10).'
+    )
+    expect(screen.queryByText(/2033/)).toBeNull()
+  })
+})

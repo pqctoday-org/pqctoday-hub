@@ -73,6 +73,22 @@ export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.isComplete])
 
+  // A run with no question is never shown as a blank quiz: say so and give the way back.
+  if (questions.length === 0) {
+    return (
+      <div role="status" className="glass-panel space-y-3 p-6 text-center">
+        <p className="font-semibold text-foreground">No matching questions</p>
+        <p className="text-sm text-muted-foreground">
+          The current filters leave no questions for this quiz. Go back to widen the filters or
+          choose a different topic.
+        </p>
+        <Button variant="outline" onClick={onExit}>
+          Back to topics
+        </Button>
+      </div>
+    )
+  }
+
   if (!currentQuestion) return null
 
   const handleCheckAnswer = () => {

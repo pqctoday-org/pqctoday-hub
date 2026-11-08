@@ -116,6 +116,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'de-bsi-germany-quantum-secure-id-card-demonstrator': [
     'Germany:BSI — Germany Quantum-Secure ID Card Demonstrator',
   ],
+  'denmark-samsik-quantum-safe-transition-guidance-revised': [
+    'Denmark:SAMSIK — Quantum-Safe Transition Guidance Revised',
+  ],
   'denmark-transition-to-quantum-safe-cryptography-guidance': [
     'Denmark:SAMSIK — Transition to Quantum-Safe Cryptography',
   ],
@@ -132,6 +135,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'european-union-ec-cryptographic-inventory-mandate': [
     'European Union:EC — Cryptographic Inventory Mandate',
+    'European Union:EC — Cryptographic Inventory Recommended as a First Step',
   ],
   'european-union-ec-eu-cyber-resilience-act-in-force': [
     'European Union:EC — EU Cyber Resilience Act In Force',
@@ -528,6 +532,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'singapore-csa-govtech-imda-quantum-safe-handbook-and-quantum-readiness-index-rel': [
     'Singapore:CSA/GovTech/IMDA — Draft Quantum-Safe Handbook Released for Public Consultation',
     'Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index Released',
+  ],
+  'singapore-csa-govtech-imda-quantum-safe-handbook-v1-released': [
+    'Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook V1 Released',
   ],
   'singapore-csa-mas-financial-sector-planning': ['Singapore:CSA/MAS — Financial Sector Planning'],
   'singapore-imda-nqsn-launched': ['Singapore:IMDA — NQSN+ Launched'],

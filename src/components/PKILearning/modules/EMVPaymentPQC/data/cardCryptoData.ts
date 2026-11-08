@@ -32,7 +32,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
     ],
     pqcMigrationPath:
       'Replace RSA static signatures with ML-DSA-44 or FN-DSA-512. However, SDA is being phased out in favor of CDA regardless of PQC migration.',
-    prevalence: '~5% of active EMV cards (legacy, declining)',
+    prevalence: 'Illustrative: ~5% of active EMV cards (legacy, declining)',
   },
   {
     id: 'dda',
@@ -64,7 +64,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
     ],
     pqcMigrationPath:
       'FN-DSA-512 (Falcon, FIPS 206 in development) produces compact signatures (~666 bytes, fixed padded size) that are easier to fit in constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
-    prevalence: '~35% of active EMV cards',
+    prevalence: 'Illustrative: ~35% of active EMV cards',
   },
   {
     id: 'cda',
@@ -88,7 +88,6 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
       'Strongest offline authentication \u2014 binds card identity to transaction',
       'Prevents both cloning AND transaction modification attacks',
       'Single signature covers authentication + authorization (efficiency)',
-      'Recommended by EMVCo for all new card deployments',
     ],
     weaknesses: [
       'Most computationally expensive \u2014 requires both symmetric and asymmetric crypto on-card',
@@ -97,7 +96,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
     ],
     pqcMigrationPath:
       "This module's advice: Hybrid approach recommended: RSA-2048 + FN-DSA-512 dual signatures during transition. Long-term: pure FN-DSA-512 CDA when card chip capacity and terminal software support it.",
-    prevalence: '~60% of active EMV cards (majority of new issuance)',
+    prevalence: 'Illustrative: ~60% of active EMV cards (majority of new issuance)',
   },
 ]
 
@@ -165,7 +164,7 @@ export const PROVISIONING_STEPS: ProvisioningStep[] = [
     ],
     quantumVulnerable: true,
     pqcReplacement:
-      'FN-DSA-512 ICC key pair + ML-DSA-44 Issuer CA signature + ML-KEM-768 key transport',
+      'FN-DSA-512 ICC key pair + ML-DSA-44 Issuer CA signature + ML-KEM-768 key establishment (conceptual)',
     dataElements: [
       'ICC RSA key pair (public + private)',
       'ICC public key certificate (signed by Issuer CA)',

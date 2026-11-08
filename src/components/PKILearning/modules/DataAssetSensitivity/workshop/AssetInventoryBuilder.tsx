@@ -18,6 +18,7 @@ import {
   type AssetType,
   type RetentionPeriod,
 } from '../data/sensitivityConstants'
+import { COMPLIANCE_MANDATES } from '../data/industryComplianceData'
 
 interface AssetInventoryBuilderProps {
   assets: DataAsset[]
@@ -55,8 +56,8 @@ function HndlIndicator({
       className={`text-xs font-mono ${isAtRisk ? 'text-status-error font-bold' : 'text-muted-foreground'}`}
       title={
         isAtRisk
-          ? 'Data encrypted before this year is already in adversary archives'
-          : 'HNDL exposure starts in this year'
+          ? 'Threshold year already reached: data captured now that must stay confidential for this long would still be sensitive when a CRQC arrives'
+          : 'Threshold year: data captured from this year on, and kept confidential for this long, would still be sensitive when a CRQC arrives'
       }
     >
       {isAtRisk ? (
@@ -84,7 +85,12 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
   const [currentEncryption, setCurrentEncryption] = useState('')
   const [businessOwner, setBusinessOwner] = useState('')
   const [industry, setIndustry] = useState(AVAILABLE_INDUSTRIES[0])
+  const [complianceFlags, setComplianceFlags] = useState<string[]>([])
   const [error, setError] = useState('')
+
+  const toggleFlag = (id: string) => {
+    setComplianceFlags((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]))
+  }
 
   const handleAdd = () => {
     if (!name.trim()) {
@@ -101,12 +107,17 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
       currentEncryption: currentEncryption.trim() || 'Not specified',
       businessOwner: businessOwner.trim() || 'Unassigned',
       industry,
-      complianceFlags: [],
+      // Only the laws and standards the learner ticked, in the module's list order.
+      complianceFlags: COMPLIANCE_MANDATES.filter((m) => complianceFlags.includes(m.id)).map(
+        (m) => m.id
+      ),
     }
     onAssetsChange([...assets, newAsset])
     setName('')
     setCurrentEncryption('')
     setBusinessOwner('')
+    // Applicability belongs to one asset: do not carry the ticks over to the next one.
+    setComplianceFlags([])
   }
 
   const handleRemove = (id: string) => {
@@ -154,13 +165,13 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
             aria-label="Assumed CRQC arrival year"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground">
-            <span>2028 (optimistic)</span>
-            <span>2034 (consensus)</span>
-            <span>2042 (conservative)</span>
+            <span>2028 (earlier)</span>
+            <span>2034 (module default)</span>
+            <span>2042 (later)</span>
           </div>
           <p className="text-[10px] text-muted-foreground">
-            Drag to explore how CRQC timing changes your HNDL risk exposure. The HNDL Risk Year
-            column updates live for each asset.
+            Drag to explore how CRQC timing moves each asset&apos;s HNDL threshold year. The HNDL
+            Risk Year column updates live for each asset.
           </p>
         </div>
       )}
@@ -253,6 +264,37 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
               noContainer
             />
           </div>
+
+          <fieldset
+            className="md:col-span-2 min-w-0 border-0 p-0 m-0"
+            aria-describedby="asset-flags-help"
+          >
+            <legend className="text-xs text-muted-foreground mb-1">
+              Applicable laws and standards
+            </legend>
+            <p id="asset-flags-help" className="text-[10px] text-muted-foreground mb-2">
+              Tick the laws and standards you have confirmed apply to this asset. An asset with none
+              ticked is scored without a legal mandate.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1">
+              {COMPLIANCE_MANDATES.map((m) => (
+                <label
+                  key={m.id}
+                  className="flex items-start gap-2 rounded px-1 py-1.5 cursor-pointer hover:bg-muted/30 max-md:min-h-[44px] max-md:items-center"
+                >
+                  <input
+                    type="checkbox"
+                    checked={complianceFlags.includes(m.id)}
+                    onChange={() => toggleFlag(m.id)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-primary max-md:mt-0 max-md:h-5 max-md:w-5"
+                  />
+                  <span className="text-xs text-foreground">
+                    {m.name} <span className="text-muted-foreground">{m.fullName}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
         </div>
 
         <Button onClick={handleAdd} variant="outline" className="flex items-center gap-2">
@@ -287,6 +329,7 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                   <th className="text-left py-2 pr-4 font-medium">HNDL Risk Year</th>
                   <th className="text-left py-2 pr-4 font-medium">Industry</th>
                   <th className="text-left py-2 pr-4 font-medium">Encryption</th>
+                  <th className="text-left py-2 pr-4 font-medium">Laws and standards</th>
                   <th className="py-2 font-medium" />
                 </tr>
               </thead>
@@ -319,6 +362,13 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                       <td className="py-3 pr-4 text-muted-foreground text-xs font-mono">
                         {asset.currentEncryption}
                       </td>
+                      <td className="py-3 pr-4 text-muted-foreground text-xs">
+                        {asset.complianceFlags.length > 0
+                          ? asset.complianceFlags
+                              .map((f) => COMPLIANCE_MANDATES.find((m) => m.id === f)?.name ?? f)
+                              .join(', ')
+                          : 'Not stated'}
+                      </td>
                       <td className="py-3">
                         <Button
                           variant="ghost"
@@ -339,11 +389,18 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
 
         {assets.length > 0 && (
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-xs text-muted-foreground">
-            <strong className="text-foreground">HNDL Risk Year</strong> = assumed CRQC year (
-            <span className="font-mono text-primary">{crqcYear}</span>) − data retention years.
-            Assets showing <span className="text-status-error font-bold">at risk</span> were
-            collected before the HNDL threshold and may already be in adversary archives. Use the
-            scenario slider above to explore how CRQC timing shifts your exposure window.
+            <strong className="text-foreground">HNDL Risk Year</strong> is the threshold year for
+            newly captured data: assumed CRQC year (
+            <span className="font-mono text-primary">{crqcYear}</span>) − required confidentiality
+            lifetime. This tool uses the retention period as a stand-in for that lifetime. Data
+            captured in year <em>c</em> would still need confidentiality at the CRQC year when{' '}
+            <em>c</em> + lifetime ≥ CRQC year (sample: captured 2027 + 7 years = 2034). Assets
+            showing <span className="text-status-error font-bold">at risk</span> have a threshold
+            year that has already been reached, so data captured today with that lifetime would be
+            exposed if recorded while protected only by quantum-vulnerable key establishment. This
+            tool does not collect when or whether any data was captured, so it cannot show that
+            anything is already in an adversary&apos;s possession. Use the scenario slider above to
+            explore how CRQC timing shifts the threshold.
           </div>
         )}
       </div>
@@ -361,8 +418,9 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
             regardless of other factors
           </li>
           <li>
-            Short-lived communication channels (TLS certs, &lt;1 year) have lower HNDL risk but
-            still need migration planning
+            Short-lived certificates (under 1 year) limit how long a forged signature on that key
+            would be useful, but the confidentiality of recorded sessions depends on the
+            key-establishment mode, so they still need migration planning
           </li>
           <li>
             In Step 4, the Sensitivity Scoring Engine will calculate a composite urgency score for

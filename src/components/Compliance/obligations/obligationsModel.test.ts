@@ -61,8 +61,9 @@ describe('resolveRequirements', () => {
 
 describe('milestonesFor', () => {
   it('reads the structured column and sorts ascending', () => {
-    const eidas = frameworkById('EIDAS')
-    const years = milestonesFor(eidas).map((m) => m.year)
+    // CNSA 2.0 carries three dated steps (2027, 2030, 2031) in its structured column.
+    const cnsa = frameworkById('CNSA-2')
+    const years = milestonesFor(cnsa).map((m) => m.year)
     expect(years.length).toBeGreaterThan(1)
     expect([...years].sort((a, b) => a - b)).toEqual(years)
   })
@@ -98,6 +99,9 @@ describe('buildObligations', () => {
 describe('groupObligations', () => {
   it('orders bands by tier and drops empty ones', () => {
     const groups = groupObligations(buildObligations(EU_FINANCE))
+    // The Cyber Resilience Act is reviewed as covering only the sectors it names, and a finance
+    // profile is not one of them, so it is left out of the list altogether (it used to appear
+    // here as a cross-border band). The bands that remain keep their tier order.
     expect(groups.map((g) => g.tier)).toEqual(['mandatory', 'recognized', 'advisory'])
     for (const g of groups) expect(g.rows.length).toBeGreaterThan(0)
   })

@@ -52,7 +52,7 @@
         "samples": 1000000,
         "pStay": 0.7
       },
-      "teachingNote": "Balanced bits (mean ≈ 0.5) that repeat the previous bit 70% of the time. Most Common Value alone looks near 1 bit/sample; the Markov and predictor estimators expose the correlation (true per-sample min-entropy −log2(0.7) ≈ 0.515).",
+      "teachingNote": "Balanced bits (mean ≈ 0.5) that repeat the previous bit 70% of the time. Most Common Value alone looks near 1 bit/sample; the Markov and predictor estimators expose the correlation. For an ideal stochastic Markov source with this repeat probability the asymptotic min-entropy rate is approximately −log2(0.7) ≈ 0.515 bits/sample. This repeatable fixed-seed demonstration has no fresh entropy, so 0.515 is the model’s rate, not the true entropy of these bytes.",
       "file": "d4-markov-1bit.bin",
       "bytes": 1000000,
       "sha256": "974dbc8bb0253ef6a18b8277150f146bef3ae68ab9513aee640b6335b99f5e47"

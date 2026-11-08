@@ -23,6 +23,8 @@ import {
   getU32,
   toHex,
   TPM_CAP_HANDLES,
+  TPM_CC_Startup,
+  TPM_CC_RSA_Decrypt,
   type DemoCommandExtras,
 } from '../../../../wasm/tpmSerializer'
 import { getRcInfo } from '../tpmCommandDefs'
@@ -56,6 +58,7 @@ export interface TpmLessonStep {
   op: string
   label: string
   expect?: LessonStepExpect
+  expectedRefusal?: { commandCode: number; responseCodes: readonly number[] }
   run: (ctx: TpmLearnContext, results: (TpmStepResult | null)[]) => Promise<TpmStepResult>
 }
 
@@ -74,15 +77,36 @@ async function execOk(ctx: TpmLearnContext, cmd: Uint8Array): Promise<Uint8Array
   return resp
 }
 
-/** Execute expecting a nonzero rc; throws (for expect:'refusal') with the decoded name. */
-async function execRefused(ctx: TpmLearnContext, cmd: Uint8Array): Promise<never> {
-  const resp = await ctx.exec(cmd)
-  const { rc } = parseRespHeader(resp)
-  if (rc === 0) {
-    throw new Error('Unexpectedly succeeded — this should not happen.')
+/** A well-formed non-success response, bound to the command actually sent. */
+export class TpmObservedRefusal extends Error {
+  readonly commandCode: number
+  readonly responseCode: number
+  readonly response: Uint8Array
+  constructor(commandCode: number, responseCode: number, response: Uint8Array) {
+    const info = getRcInfo(responseCode)
+    super(`${info.name} (${formatRc(responseCode)}) — ${info.description}`)
+    this.commandCode = commandCode
+    this.responseCode = responseCode
+    this.response = response
   }
-  const info = getRcInfo(rc)
-  throw new Error(`${info.name} (${formatRc(rc)}) — ${info.description}`)
+}
+
+/** Observe a refusal; the runner separately matches the step's declared command/code pair. */
+async function execRefused(ctx: TpmLearnContext, cmd: Uint8Array): Promise<never> {
+  if (cmd.length < 10 || getU32(cmd, 2) !== cmd.length) {
+    throw new Error('Malformed TPM request — refusal not assessed.')
+  }
+  const resp = await ctx.exec(cmd)
+  const { tag, size, rc } = parseRespHeader(resp)
+  if (resp.length < 10 || size !== resp.length || (tag !== 0x8001 && tag !== 0x8002)) {
+    throw new Error('Malformed TPM response — refusal not assessed.')
+  }
+  if (rc === 0) throw new Error('Unexpected success — the required TPM refusal was not observed.')
+  // TPM error responses have the no-sessions tag and only the ten-byte header (Part 3 §6).
+  if (tag !== 0x8001 || size !== 10) {
+    throw new Error('Malformed TPM error response — refusal not assessed.')
+  }
+  throw new TpmObservedRefusal(getU32(cmd, 6), rc, resp.slice())
 }
 
 /** CreatePrimary via the demo serializer; returns the new transient handle. */
@@ -180,6 +204,7 @@ export const TPM_LESSONS: TpmLesson[] = [
         op: 'TPM2_Startup (again)',
         label: 'Break a rule on purpose: start an already-started TPM',
         expect: 'refusal',
+        expectedRefusal: { commandCode: TPM_CC_Startup, responseCodes: [0x100] },
         run: async (ctx) => {
           return execRefused(ctx, serializeDemoCommand('TPM2_Startup', ''))
         },
@@ -353,9 +378,21 @@ export const TPM_LESSONS: TpmLesson[] = [
         op: 'TPM2_RSA_Decrypt (corrupted ciphertext)',
         label: 'Classical failure mode: corrupt one byte — OAEP refuses LOUDLY',
         expect: 'refusal',
+        expectedRefusal: { commandCode: TPM_CC_RSA_Decrypt, responseCodes: [0x84] },
         run: async (ctx) => {
-          const corrupted = ctx.chain.rsaCiphertext!.slice()
-          corrupted[0] ^= 0xff
+          const original = ctx.chain.rsaCiphertext
+          if (!original || original.length !== 256) {
+            throw new Error(
+              'Generate the 256-byte sample RSA ciphertext before testing its refusal.'
+            )
+          }
+          const corrupted = original.slice()
+          // Lower one nonzero byte: the integer stays below the valid original (and modulus).
+          // Flipping the high byte can instead trigger the engine's out-of-modulus SIZE error.
+          let changed = corrupted.length - 1
+          while (changed >= 0 && corrupted[changed] === 0) changed--
+          if (changed < 0) throw new Error('Expected a nonzero sample RSA ciphertext.')
+          corrupted[changed] -= 1
           return execRefused(
             ctx,
             serializeDemoCommand('TPM2_RSA_Decrypt', 'RSA-2048-DEC', ctx.chain.handles.rsaDec, {
@@ -848,7 +885,7 @@ export const TPM_LESSONS: TpmLesson[] = [
           const sigAlg = getU16(resp, 16 + quotedSize)
           const sigSize = getU16(resp, 20 + quotedSize)
           return {
-            detail: `TPMS_ATTEST ${quotedSize} B + RSASSA signature ${sigSize} B (sigAlg 0x${sigAlg.toString(16)}, inherited from the pinned scheme via inScheme=NULL). The attest structure begins with TPM_GENERATED — proof no caller supplied it.`,
+            detail: `TPMS_ATTEST ${quotedSize} B + RSASSA signature ${sigSize} B (sigAlg 0x${sigAlg.toString(16)}, inherited from the pinned scheme via inScheme=NULL). The structure begins with the expected TPM_GENERATED format marker; this public prefix alone does not establish who produced it.`,
           }
         },
       },
@@ -883,8 +920,8 @@ export const TPM_LESSONS: TpmLesson[] = [
     ],
     compareHeaders: ['', 'Classical Quote', 'V1.85 ML-DSA Quote'],
     notes: [
-      'The Attestation tab does the full relying-party side — independent signature verification and a downloadable JSON evidence bundle you can verify outside the browser.',
-      'Restricted + pinned scheme is the attestation trust argument: the key CANNOT sign arbitrary caller data, so a valid Quote signature proves the TPM generated the report.',
+      'The Attestation tab demonstrates a sample signature check and exports the bytes for inspection. It does not implement a complete relying-party trust, freshness or PCR-policy decision.',
+      'A production attestation decision needs a signature under an authenticated restricted attestation key, appropriate credential/key binding, nonce freshness and PCR-policy checks. This browser uses a locally provisioned sample key; a format prefix or signature alone does not authenticate a physical TPM.',
     ],
     whyItMatters:
       'Attestation is why TPMs exist: proving platform state to someone who doesn’t trust the platform. Every size you measured propagates into fleet evidence pipelines — 7–8× more bytes per attestation is an infrastructure line item, not a rounding error.',
@@ -897,11 +934,11 @@ export const TPM_LESSONS: TpmLesson[] = [
     n: 8,
     tag: 'Audit',
     tone: 'warn',
-    title: 'An honest TPM — detect fake crypto and spec drift yourself',
+    title: 'TPM sample checks — known placeholders and reference differences',
     blurb:
-      'A 2026 audit of this very playground found silent-placeholder risks and a compliance suite that could report a false 100% score. This lesson turns those checks into things YOU run: placeholder detection, bridge status, and a live spec-vs-engine drift check.',
+      'Inspect bridge status, check known placeholder patterns and compare a selected response with the pinned reference. These are bounded sample checks, not complete cryptographic or TPM conformance verification.',
     setup:
-      'This engine’s PQC math runs through a crypto bridge to a real ML-KEM/ML-DSA implementation. If that bridge failed to load, commands would still “work” — returning placeholder bytes. Trust, then verify: the same discipline the CACP playground’s Lesson 9 teaches at the KMS layer.',
+      'The sample uses a crypto bridge for PQC operations. Bridge status and recognizable fallback-byte patterns are diagnostics, not proof of algorithm correctness. In production tools, evaluate verified outputs, supported parameters, defined errors and conformance evidence for the actual implementation version.',
     steps: [
       {
         op: 'getPqcBridgeStatus()',
@@ -920,7 +957,7 @@ export const TPM_LESSONS: TpmLesson[] = [
       },
       {
         op: 'TPM2_Encapsulate/Decapsulate — placeholder detector',
-        label: 'Prove the KEM output is not the 0xDD placeholder pattern',
+        label: 'Check KEM output for the known 0xDD placeholder pattern',
         run: async (ctx) => {
           await ctx.flushAll()
           const kem = await createPrimary(ctx, 'MLKEM-768')
@@ -931,16 +968,18 @@ export const TPM_LESSONS: TpmLesson[] = [
           const ctSize = getU16(resp, 12 + ssSize)
           ctx.chain.ciphertext = resp.slice(14 + ssSize, 14 + ssSize + ctSize)
           if (ss.every((b) => b === 0xdd)) {
-            throw new Error('Shared secret is all 0xDD — placeholder stubs active, NOT real ML-KEM')
+            throw new Error(
+              'Empty output or the known 0xDD placeholder pattern detected; this is not usable sample evidence.'
+            )
           }
           return {
-            detail: `ss[0..7]=${toHex(ss.slice(0, 8))} — non-trivial bytes, not the 0xDD stub pattern. This is the Compliance Suite’s V185-017 check, run by hand.`,
+            detail: `ss[0..7]=${toHex(ss.slice(0, 8))} — the known 0xDD placeholder pattern was not detected. This V185-017 diagnostic does not establish ML-KEM correctness.`,
           }
         },
       },
       {
         op: 'TPM2_SignDigest — placeholder detector',
-        label: 'Prove the ML-DSA signature is not the 0xEE placeholder pattern',
+        label: 'Check the signature for the known 0xEE placeholder pattern',
         run: async (ctx) => {
           const ak = await createPrimary(ctx, 'MLDSA-65')
           ctx.chain.handles.mldsa = ak
@@ -949,10 +988,12 @@ export const TPM_LESSONS: TpmLesson[] = [
           const sig = resp.slice(18, 18 + sigSize)
           ctx.chain.digestSignature = sig
           if (sig.every((b) => b === 0xee)) {
-            throw new Error('Signature is all 0xEE — placeholder stub active, NOT real ML-DSA')
+            throw new Error(
+              'Empty output or the known 0xEE placeholder pattern detected; this is not usable sample evidence.'
+            )
           }
           return {
-            detail: `sig[0..7]=${toHex(sig.slice(0, 8))}, ${sigSize} B — real lattice signature (V185-018 by hand). A stub that returns success is worse than an error: it teaches you to trust nothing happened.`,
+            detail: `sig[0..7]=${toHex(sig.slice(0, 8))}, ${sigSize} B — the known 0xEE placeholder pattern was not detected (V185-018). This does not establish that the signature is valid or that ML-DSA was implemented correctly.`,
           }
         },
       },

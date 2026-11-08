@@ -426,7 +426,11 @@ const EthereumPQC: React.FC = () => (
         <div className="flex items-start gap-2">
           <ArrowRight size={12} className="text-accent mt-0.5 shrink-0" />
           <span className="text-muted-foreground">
-            Trade-off: higher gas cost (~300k–500k gas per PQC sig verification vs ~21k for ECDSA)
+            Gas boundaries differ: ~21k is the standard ETH-transfer baseline, not the cost of ECDSA
+            verification. The ~300k–500k PQC-verification range here uses unverified illustrative
+            figures, not a measured comparison. For your selected implementation, assess transaction
+            base cost, calldata, contract or precompile verification, account validation and bundler
+            overhead separately.
           </span>
         </div>
       </div>
@@ -503,7 +507,9 @@ const EthereumPQC: React.FC = () => (
           </span>
           <span className="text-muted-foreground">
             <strong className="text-foreground">EOA ECDSA wallets</strong> — EIP-8141 native account
-            abstraction enabling PQ signature migration (~200k gas for hash-based sigs)
+            abstraction enabling PQ signature migration (the ~200k hash-based-signature figure is
+            unverified and illustrative; no implementation-specific gas benchmark is established
+            here)
           </span>
         </div>
         <div className="flex items-start gap-2">

@@ -2,7 +2,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import { useAssessFlow } from './useAssessFlow'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
@@ -68,5 +68,57 @@ describe('useAssessFlow', () => {
     expect(result.current.activeKey).toBe('crypto')
     // crypto is legacy index 2 in comprehensive → store.currentStep === 2
     expect(useAssessmentStore.getState().currentStep).toBe(2)
+  })
+})
+
+describe('useAssessFlow ?step deep link', () => {
+  // Counts renders and fails fast: a read/write feedback loop between the URL
+  // and the store would otherwise re-render until the worker runs out of memory.
+  const RENDER_CAP = 40
+  const counter = { renders: 0 }
+  const useFlowWithUrl = () => {
+    const flow = useAssessFlow({ mode: 'comprehensive', onLastStep: vi.fn() })
+    const location = useLocation()
+    const navigate = useNavigate()
+    React.useEffect(() => {
+      counter.renders += 1
+      if (counter.renders > RENDER_CAP) throw new Error('?step link keeps re-rendering')
+    })
+    return { flow, location, navigate }
+  }
+  const wrapperAt = (entry: string) =>
+    function Wrapper({ children }: { children: React.ReactNode }) {
+      return <MemoryRouter initialEntries={[entry]}>{children}</MemoryRouter>
+    }
+
+  beforeEach(() => {
+    counter.renders = 0
+  })
+
+  it('opening a link whose step differs from the stored step settles on the link step', () => {
+    expect(useAssessmentStore.getState().currentStep).toBe(0)
+    const { result } = renderHook(useFlowWithUrl, { wrapper: wrapperAt('/assess?step=5') })
+    expect(useAssessmentStore.getState().currentStep).toBe(5)
+    expect(result.current.location.search).toBe('?step=5')
+    expect(counter.renders).toBeLessThan(RENDER_CAP)
+  })
+
+  it('following an older link while further along moves back to the link step', () => {
+    const { result } = renderHook(useFlowWithUrl, { wrapper: wrapperAt('/assess?step=5') })
+    act(() => useAssessmentStore.getState().setStep(8))
+    expect(result.current.location.search).toBe('?step=8')
+
+    counter.renders = 0
+    act(() => result.current.navigate('/assess?step=5'))
+    expect(useAssessmentStore.getState().currentStep).toBe(5)
+    expect(result.current.location.search).toBe('?step=5')
+    expect(counter.renders).toBeLessThan(RENDER_CAP)
+  })
+
+  it('keeps writing the stored step to the link as the reader moves on', () => {
+    const { result } = renderHook(useFlowWithUrl, { wrapper: wrapperAt('/assess') })
+    expect(result.current.location.search).toBe('?step=0')
+    act(() => useAssessmentStore.getState().setStep(3))
+    expect(result.current.location.search).toBe('?step=3')
   })
 })

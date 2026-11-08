@@ -104,16 +104,21 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
             </div>
             <p className="text-xs text-muted-foreground">
               Used by Solana. Defined in RFC 8032. Twisted Edwards curve with 128-bit security.
-              32-byte public keys. Signatures use <InfoTooltip term="eddsa" /> with deterministic
-              nonces — immune to nonce-reuse attacks.
+              32-byte public keys. Signatures use <InfoTooltip term="eddsa" />, which derives each
+              signature&apos;s nonce by hashing a secret part of the key together with the message,
+              so signing needs no random number generator.
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
             <div className="text-sm font-bold text-warning mb-1">Key Differences</div>
             <p className="text-xs text-muted-foreground">
-              secp256k1 ECDSA uses a random nonce per signature (nonce reuse leaks the private key).
-              Ed25519 EdDSA derives the nonce deterministically from the message, eliminating this
-              class of vulnerability entirely.
+              ECDSA needs a fresh, unique and unpredictable nonce k for every signature; reusing it
+              or biasing it can reveal the private key. An implementation can draw k from a secure
+              random source or derive it deterministically from the key and message (RFC 6979).
+              Ed25519 EdDSA always derives its nonce deterministically from the key and message (RFC
+              8032), so a weak random number generator at signing time cannot repeat a nonce.
+              Neither scheme is immune to implementation flaws: both still need defences against
+              side-channel leaks.
             </p>
           </div>
         </div>
@@ -185,9 +190,10 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
             <span className="text-muted-foreground font-mono text-xs mt-0.5">2.</span>
             <span className="text-foreground/80">
               <strong className="text-warning">Sign with private key</strong> —{' '}
-              <InfoTooltip term="ecdsa" /> produces (r, s) using a random nonce k.{' '}
-              <InfoTooltip term="eddsa" /> produces (R, s) using a deterministic nonce derived from
-              the private key and message — no random number generator needed.
+              <InfoTooltip term="ecdsa" /> produces (r, s) using a per-signature nonce k that must
+              be unique and unpredictable (random, or derived deterministically per RFC 6979).{' '}
+              <InfoTooltip term="eddsa" /> produces (R, s) using a nonce derived deterministically
+              from the private key and message — no random number generator needed at signing time.
             </span>
           </div>
           <div className="flex items-start gap-2">

@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronRight,
   Clock,
+  Info,
   Globe,
   Plus,
   ToggleLeft,
@@ -131,7 +132,7 @@ interface GapItem {
   key: string
   framework: string
   deadlineYear: number
-  status: 'completed' | 'on-track' | 'at-risk'
+  status: 'completed' | 'on-track' | 'at-risk' | 'unknown'
   gap: string
   detail?: FrameworkDetail | TimelineDetail
 }
@@ -140,51 +141,18 @@ export function computeGapAnalysis(
   frameworkDeadlines: ExternalDeadline[],
   milestones: UserMilestone[]
 ): GapItem[] {
-  const now = new Date().getFullYear()
-  const latestMilestoneYear =
-    milestones.length > 0 ? Math.max(...milestones.map((m) => m.year)) : now
-
-  return frameworkDeadlines.map((d) => {
-    const yearsRemaining = d.year - now
-    const milestonesBeforeDeadline = milestones.filter((m) => m.year <= d.year)
-    // A *planned* certification milestone signals intent; only a *completed* one
-    // (explicitly marked done) means the obligation is actually met. Inferring
-    // "met" from the planned category alone let a missed deadline show as done.
-    const hasPlannedCertification = milestonesBeforeDeadline.some(
-      (m) => m.category === 'Certification' || m.category === 'Renewal'
-    )
-    const hasCompletedCertification = milestonesBeforeDeadline.some(
-      (m) => (m.category === 'Certification' || m.category === 'Renewal') && m.completed === true
-    )
-
-    let status: 'completed' | 'on-track' | 'at-risk'
-    let gap: string
-
-    if (hasCompletedCertification) {
-      status = 'completed'
-      gap = d.year <= now ? 'Deadline met' : 'Requirement met ahead of deadline'
-    } else if (d.year <= now) {
-      status = 'at-risk'
-      const ago = `${now - d.year} year${now - d.year !== 1 ? 's' : ''} ago`
-      gap = hasPlannedCertification
-        ? `Deadline passed ${ago}; certification milestone planned but not marked complete`
-        : `Deadline passed ${ago}`
-    } else if (latestMilestoneYear >= d.year || hasPlannedCertification) {
-      status = 'on-track'
-      gap = `${yearsRemaining} year${yearsRemaining !== 1 ? 's' : ''} remaining, plan extends to deadline`
-    } else if (yearsRemaining <= 2 && milestones.length === 0) {
-      status = 'at-risk'
-      gap = `${yearsRemaining} year${yearsRemaining !== 1 ? 's' : ''} remaining, no milestones planned`
-    } else if (yearsRemaining <= 3 && latestMilestoneYear < d.year - 1) {
-      status = 'at-risk'
-      gap = `${yearsRemaining} year${yearsRemaining !== 1 ? 's' : ''} remaining, plan gap of ${d.year - latestMilestoneYear} year${d.year - latestMilestoneYear !== 1 ? 's' : ''}`
-    } else {
-      status = 'on-track'
-      gap = `${yearsRemaining} year${yearsRemaining !== 1 ? 's' : ''} remaining`
-    }
-
-    return { key: d.key, framework: d.label, deadlineYear: d.year, status, gap, detail: d.detail }
-  })
+  // Milestones preserve learner-recorded planning history, but contain no
+  // obligation/scope association or supporting check. Category and dates alone
+  // cannot establish that any selected obligation is met or on track.
+  void milestones
+  return frameworkDeadlines.map((d) => ({
+    key: d.key,
+    framework: d.label,
+    deadlineYear: d.year,
+    status: 'unknown',
+    gap: 'Obligation satisfaction not assessed: no milestone-to-obligation scope or supporting checks are recorded here. A learner-marked milestone is planning history, not evidence that this requirement was met.',
+    detail: d.detail,
+  }))
 }
 
 // ---------------------------------------------------------------------------
@@ -488,9 +456,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
     [externalDeadlines, milestones]
   )
 
-  const atRiskCount = gapAnalysis.filter((g) => g.status === 'at-risk').length
-  const onTrackCount = gapAnalysis.filter((g) => g.status === 'on-track').length
-  const completedCount = gapAnalysis.filter((g) => g.status === 'completed').length
+  const unknownCount = gapAnalysis.filter((g) => g.status === 'unknown').length
 
   // Pinned compliance deadlines for the Gantt chart
   const togglePinned = useCallback((key: string) => {
@@ -562,7 +528,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
     }
 
     if (gapAnalysis.length > 0) {
-      md += '\n## Gap Analysis\n\n'
+      md += '\n## Obligation Satisfaction — Not Assessed\n\n'
       md += '| Framework | Deadline | Status | Notes |\n'
       md += '|-----------|----------|--------|-------|\n'
       for (const g of gapAnalysis) {
@@ -605,7 +571,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
     }
     if (gapAnalysis.length > 0) {
       if (sections.length) sections.push([])
-      sections.push(['Gap Analysis'])
+      sections.push(['Obligation Satisfaction — Not Assessed'])
       sections.push(['Framework', 'Deadline', 'Status', 'Notes'])
       for (const g of gapAnalysis)
         sections.push([g.framework, g.deadlineYear, g.status.toUpperCase(), g.gap])
@@ -679,7 +645,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
           <Globe size={28} className="mx-auto text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground">
             No regulatory timeline data available for the selected jurisdictions. Framework
-            deadlines are shown in the gap analysis below.
+            deadlines are shown in the obligation review below.
           </p>
         </div>
       )}
@@ -757,8 +723,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                   aria-pressed={!!m.completed}
                   title={
                     m.completed
-                      ? 'Completed — counts toward a met deadline'
-                      : 'Mark complete (only a completed Certification/Renewal milestone meets a deadline)'
+                      ? 'Learner-marked done — obligation satisfaction remains unassessed'
+                      : 'Mark this planning milestone done; obligation satisfaction remains unassessed'
                   }
                   className={
                     m.completed
@@ -784,7 +750,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
         </div>
       )}
 
-      {/* Gap Analysis */}
+      {/* Obligation Review */}
       {externalDeadlines.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -798,37 +764,23 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
               ) : (
                 <ChevronRight size={16} className="text-muted-foreground" />
               )}
-              <h3 className="text-lg font-semibold text-foreground">Gap Analysis</h3>
+              <h3 className="text-lg font-semibold text-foreground">Obligation Review</h3>
               <span className="text-xs text-muted-foreground">
                 ({gapAnalysis.length} deadline{gapAnalysis.length !== 1 ? 's' : ''})
               </span>
             </Button>
             <div className="flex items-center gap-4 text-xs">
-              {completedCount > 0 && (
-                <span className="flex items-center gap-1 text-status-success">
-                  <CheckCircle2 size={12} /> {completedCount} completed
-                </span>
-              )}
-              {onTrackCount > 0 && (
-                <span className="flex items-center gap-1 text-status-success">
-                  <TrendingUp size={12} /> {onTrackCount} on track
-                </span>
-              )}
-              {atRiskCount > 0 && (
-                <span className="flex items-center gap-1 text-status-error">
-                  <AlertTriangle size={12} /> {atRiskCount} at risk
-                </span>
-              )}
+              <span className="flex items-center gap-1 text-muted-foreground">
+                <Info size={12} /> {unknownCount} not assessed
+              </span>
             </div>
           </div>
 
           <p className="text-xs text-muted-foreground -mt-2">
-            Status is computed, not editorial: <span className="text-status-success">on track</span>{' '}
-            means your milestone plan reaches the deadline year (or a Certification/Renewal
-            milestone is already marked done); <span className="text-status-error">at risk</span>{' '}
-            means the deadline has passed with nothing marked done, or the plan doesn&apos;t reach
-            it in time. Publication/status entries (e.g. a standard&apos;s &quot;Final (published
-            …)&quot; date) are excluded — they aren&apos;t a compliance obligation.
+            Obligation satisfaction is not assessed. Milestone labels, dates and Done flags do not
+            record requirement-specific scope or supporting checks. Review the applicable
+            obligation, planned work and evidence with your production tools; the calendar remains a
+            planning view. Publication/status entries are excluded from this deadline list.
           </p>
 
           {gapExpanded && (
@@ -858,6 +810,9 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                       aria-expanded={expandedGapIdx === idx}
                     >
                       <div className="flex items-center gap-3">
+                        {item.status === 'unknown' && (
+                          <Info size={16} className="text-muted-foreground shrink-0" />
+                        )}
                         {item.status === 'completed' && (
                           <CheckCircle2 size={16} className="text-status-success shrink-0" />
                         )}
@@ -878,18 +833,22 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                         <span className="text-sm font-mono text-primary">{item.deadlineYear}</span>
                         <span
                           className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                            item.status === 'at-risk'
-                              ? 'bg-status-error/20 text-status-error'
-                              : item.status === 'completed'
-                                ? 'bg-status-success/20 text-status-success'
-                                : 'bg-status-success/10 text-status-success'
+                            item.status === 'unknown'
+                              ? 'bg-muted text-muted-foreground'
+                              : item.status === 'at-risk'
+                                ? 'bg-status-error/20 text-status-error'
+                                : item.status === 'completed'
+                                  ? 'bg-status-success/20 text-status-success'
+                                  : 'bg-status-success/10 text-status-success'
                           }`}
                         >
-                          {item.status === 'at-risk'
-                            ? 'At Risk'
-                            : item.status === 'completed'
-                              ? 'Done'
-                              : 'On Track'}
+                          {item.status === 'unknown'
+                            ? 'Not assessed'
+                            : item.status === 'at-risk'
+                              ? 'At Risk'
+                              : item.status === 'completed'
+                                ? 'Done'
+                                : 'On Track'}
                         </span>
                         <Button
                           variant="ghost"
@@ -956,7 +915,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
           onExport={handleSaveToDocuments}
         >
           <p className="text-sm text-muted-foreground">
-            Export your compliance timeline, milestones, and gap analysis.
+            Export your planning timeline, learner-marked milestones, and unassessed obligation
+            review.
           </p>
         </ExportableArtifact>
       )}

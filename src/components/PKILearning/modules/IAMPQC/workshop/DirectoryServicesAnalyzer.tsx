@@ -46,9 +46,9 @@ const ATTACK_SCENARIOS: Record<
     {
       title: 'PKINIT RSA Decryption Attack',
       description:
-        'A CRQC decrypts captured Kerberos PKINIT handshakes from network recordings. The RSA-encrypted pre-authentication data reveals the session key, enabling ticket forgery and full domain compromise without any credentials.',
+        "A CRQC recovers the PKINIT reply key from a recorded Kerberos exchange. PKINIT (RFC 4556) delivers that key either by Diffie-Hellman or by RSA encryption to the client public key; both can be broken by Shor's algorithm. The reply key decrypts one AS-REP, which carries that client's TGT session key, so the attacker can act as that one client only while the TGT is valid (10 hours by default in Active Directory). It does not reveal the KRBTGT key, so it does not by itself let the attacker forge tickets for other accounts or compromise the domain.",
       mitigation:
-        'Deploy Windows Server 2025 with PQC PKINIT support (not sourced in the Library). Configure clients to use ML-KEM for PKINIT key exchange. Enforce PQC ciphers via Group Policy.',
+        'Illustrative future target, not a current setting: Microsoft lists Kerberos on its Windows post-quantum roadmap but gives no version or date for PQC in PKINIT, and we found no documented client or Group Policy setting for it. Windows Server 2025 offers ML-KEM and ML-DSA through its cryptography APIs; that is not PKINIT support. Before planning a rollout, check Microsoft documentation for the supported algorithms, how clients and domain controllers negotiate them, and validation evidence for the cryptographic module. Meanwhile, inventory PKINIT and smart-card logon dependencies.',
     },
     {
       title: 'NTLM Credential Exposure',
@@ -58,11 +58,11 @@ const ATTACK_SCENARIOS: Record<
         'Disable NTLM via Group Policy (Network Security: Restrict NTLM). Enforce Kerberos authentication exclusively. Use Protected Users security group for privileged accounts.',
     },
     {
-      title: 'Golden Ticket via KRBTGT Exposure',
+      title: 'Golden Ticket via KRBTGT Key Theft',
       description:
-        'If the KRBTGT account password hash is compromised and later quantum-decrypted, attackers can forge Ticket Granting Tickets (Golden Tickets) for any user, including Domain Admins.',
+        'A Golden Ticket is forged with the KRBTGT account long-term key, which attackers obtain by classical means such as credential dumping on a domain controller. With that key they can create Ticket Granting Tickets for any user, including Domain Admins. This is a key-theft attack: a quantum computer adds no step to a key that is already stolen, and post-quantum PKINIT would not stop it.',
       mitigation:
-        'Rotate KRBTGT password twice (per Microsoft guidance). Migrate to PQC-capable Kerberos. Monitor for anomalous ticket requests via Microsoft Sentinel.',
+        'Protect and monitor domain controllers and privileged accounts. After a suspected theft, reset the KRBTGT password twice and wait at least the maximum ticket lifetime (10 hours by default) between resets, as Microsoft guidance describes. Watch for anomalous ticket requests with your detection tooling.',
     },
   ],
   openldap: [
@@ -76,9 +76,9 @@ const ATTACK_SCENARIOS: Record<
     {
       title: 'Simple Bind Credential Exposure',
       description:
-        'LDAP simple bind sends credentials (Base64-encoded username:password) over the TLS channel. If TLS is quantum-decrypted, all bind credentials are exposed.',
+        'An LDAP simple bind carries the bind distinguished name and the password as an OCTET STRING in the BindRequest (RFC 4511, RFC 4513). Nothing encodes or hides the password: without TLS it is readable on the network, and inside TLS it is protected only by that session. If the session was recorded and its key exchange is later broken, the bind credentials are exposed. HTTP Basic is different: it Base64-encodes user-id:password, and Base64 is a reversible encoding, not protection (RFC 7617).',
       mitigation:
-        'Enforce SASL/GSSAPI authentication (Kerberos-backed) over simple bind. Require StartTLS or LDAPS. Disable anonymous and simple bind in slapd.conf.',
+        'Prefer SASL/GSSAPI (Kerberos-backed) over simple bind. Require StartTLS or LDAPS before any simple bind. Where no client needs them, disable anonymous and simple bind (slapd.conf: disallow bind_anon bind_simple).',
     },
   ],
   'azure-ad': [
@@ -87,7 +87,7 @@ const ATTACK_SCENARIOS: Record<
       description:
         'A CRQC could derive a private signing key from the published public key material and forge identity tokens.',
       mitigation:
-        'Watch for a Microsoft announcement of post-quantum Entra token signing (we found none). Enforce short token lifetimes (15-minute access tokens) to limit replay window. Enable Continuous Access Evaluation (CAE).',
+        'Watch for a Microsoft announcement of post-quantum Entra token signing (we found none). Short token lifetimes (for example 15-minute access tokens) limit how long a stolen token can be replayed, but do not stop forgery, because an attacker with a recovered signing key mints fresh tokens. Continuous Access Evaluation (CAE) lets Entra tell a resource to stop honouring tokens of a real session after events such as account disablement; it is not a signature check and is not a defence against forged tokens.',
     },
     {
       title: 'Refresh Token Interception',

@@ -132,7 +132,7 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
       mti: 'X25519MLKEM768 (RFC 10024)',
       alternates: ['ML-KEM-768 (FIPS 203, pure PQC)'],
       rationale:
-        'For deployments that must interoperate with non-PQC peers this module recommends the hybrid X25519MLKEM768 (RFC 10024): it combines X25519 with ML-KEM-768 so that security holds if either component is unbroken (defense-in-depth, as draft-ietf-uta-pqc-app puts it). Pure ML-KEM-768 is an option for deployments that require exclusively post-quantum key exchange.',
+        'For deployments that must interoperate with non-PQC peers this module recommends the hybrid X25519MLKEM768 (RFC 10024): it combines X25519 with ML-KEM-768 so that the shared secret stays secure if either component is unbroken. That protection applies only to connections where both peers support the named group and the handshake selects it; a classical-only peer cannot negotiate it. For such a peer the connection uses a separately negotiated classical group (for example X25519) if the client offers one and local policy allows it, and then has no post-quantum protection; if policy forbids classical fallback, the handshake fails (RFC 9954 describes a hybrid-aware party falling back to a non-hybrid exchange only if it is willing to downgrade). Pure ML-KEM-768 is an option for deployments that require exclusively post-quantum key exchange and whose peers all support it.',
     }
   }
 
@@ -239,24 +239,47 @@ const PROTOCOL_MTI_NOTES: Record<string, string> = {
     'Custom protocol: you own negotiation - pin the MTI explicitly, version your cipher list, and integrity-protect negotiation to prevent downgrade.',
 }
 
+// Postures that limit the choice to algorithms standardized in FIPS 203, 204 and 205 (hashes come
+// from FIPS 180-4 and 202 in every posture). NIST has selected HQC and Falcon for standardization,
+// which is still in progress, so no final FIPS covers them; FrodoKEM, Classic McEliece and
+// sntrup761 are not NIST standards. All of them sit outside these postures.
+const FIPS_STANDARD_POSTURES = ['fips-validated-only', 'nist-pqc-only']
+const OUTSIDE_FIPS_203_204_205 = /HQC|Falcon|FN-DSA|FrodoKEM|McEliece|sntrup/i
+
+export function isOutsidePosture(inputs: MTIInputs, label: string): boolean {
+  return (
+    FIPS_STANDARD_POSTURES.includes(inputs.standardsPosture) && OUTSIDE_FIPS_203_204_205.test(label)
+  )
+}
+
+function markForPosture(inputs: MTIInputs, label: string): string {
+  return isOutsidePosture(inputs, label)
+    ? `${label} [outside the chosen standards posture: no final FIPS covers it]`
+    : label
+}
+
 function computeWatchOuts(
   inputs: MTIInputs,
   sig: { mti: string; alternates: string[] },
-  kem: { mti: string }
+  kem: { mti: string; alternates: string[] }
 ): string[] {
   const out: string[] = []
+  const inFipsPosture = FIPS_STANDARD_POSTURES.includes(inputs.standardsPosture)
 
   // Protocol-specific carriage note — the `protocol` input shapes HOW the MTI is negotiated.
-  const protocolNote = PROTOCOL_MTI_NOTES[inputs.protocol]
-  if (protocolNote) out.push(protocolNote)
-
-  // Interop break risk
-  if (inputs.interopProfile.includes('pure-pqc-peers') && /X25519MLKEM768|MLKEM768/.test(kem.mti)) {
-    // pure-pqc peers and hybrid MTI: ok
-  }
-  if (inputs.interopProfile.includes('non-pqc-peers') && !/X25519MLKEM768/.test(kem.mti)) {
+  if (inputs.protocol === 'SSH' && inFipsPosture) {
     out.push(
-      `MTI KEM "${kem.mti}" will not interop with non-PQC peers - confirm peer matrix or pick a hybrid KEM.`
+      `SSH: sntrup761x25519-sha512 uses sntrup761, which no FIPS covers, so it is outside the "${postureLabel(inputs.standardsPosture)}" posture. Use an ML-KEM-based hybrid key exchange (mlkem768x25519) once your SSH implementation offers it, and check whether the certificate of the module that performs it covers the combination.`
+    )
+  } else {
+    const protocolNote = PROTOCOL_MTI_NOTES[inputs.protocol]
+    if (protocolNote) out.push(protocolNote)
+  }
+
+  // Interop: a hybrid or pure-PQC group only works when both peers support it.
+  if (inputs.interopProfile.includes('non-pqc-peers')) {
+    out.push(
+      `Classical-only peers cannot negotiate "${kem.mti}": the group is used only when both peers support it. For those peers the connection uses a separately negotiated classical key exchange if your policy allows one, and then has no post-quantum protection; if policy forbids classical fallback, the handshake fails. State which classical groups stay allowed, which peers may fall back, and how fallbacks are logged.`
     )
   }
 
@@ -272,12 +295,24 @@ function computeWatchOuts(
     )
   }
 
-  // Standards-posture mismatch
-  if (inputs.standardsPosture === 'fips-validated-only') {
-    const alternatesLooseHQC = sig.alternates.join(' ').match(/HQC|Falcon|FrodoKEM/)
-    if (alternatesLooseHQC) {
+  // Standards-posture mismatch: check the MTI and every alternate, signature and KEM alike.
+  if (inFipsPosture) {
+    const flagged = [sig.mti, ...sig.alternates, kem.mti, ...kem.alternates].filter((label) =>
+      isOutsidePosture(inputs, label)
+    )
+    if (flagged.length > 0) {
       out.push(
-        'Standards posture is FIPS-validated-only, but an alternate uses a NIST alternate / IETF draft - downgrade or revisit posture.'
+        `Marked as outside the "${postureLabel(inputs.standardsPosture)}" posture: ${flagged.join('; ')}. NIST has selected HQC and Falcon for standardization, but that process is still in progress, so no final FIPS covers them, and the other flagged algorithms are not NIST standards. Keep them only if local policy changes the posture.`
+      )
+    }
+  }
+  if (inputs.standardsPosture === 'fips-validated-only') {
+    out.push(
+      'FIPS-validated-only: FIPS 203, 204 and 205 standardize algorithms; they are not module certificates. "Validated" means the cryptographic module that performs the operation holds an Active CMVP certificate that lists the algorithm and parameter set you chose, for the version and operating environment you deploy. Algorithm validation (CAVP) is a prerequisite for a module certificate, not a substitute. Read the certificate and Security Policy of the exact module, including how it covers any hybrid combination.'
+    )
+    if (/X25519MLKEM768/.test(kem.mti)) {
+      out.push(
+        'RFC 10024 says the ML-KEM implementation must be the certified part of X25519MLKEM768, and names SecP256r1MLKEM768 for use cases that need both shared secrets from FIPS-approved mechanisms (SecP384r1MLKEM1024 for high-security environments that need them with a larger margin).'
       )
     }
   }
@@ -308,10 +343,10 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
   const watchOuts = computeWatchOuts(inputs, sig, kem)
 
   return {
-    sigMTI: sig.mti,
-    sigAlternates: sig.alternates,
-    kemMTI: kem.mti,
-    kemAlternates: kem.alternates,
+    sigMTI: markForPosture(inputs, sig.mti),
+    sigAlternates: sig.alternates.map((a) => markForPosture(inputs, a)),
+    kemMTI: markForPosture(inputs, kem.mti),
+    kemAlternates: kem.alternates.map((a) => markForPosture(inputs, a)),
     hashMTI: hash.mti,
     hashAlternates: hash.alternates,
     rationaleSig: sig.rationale,
@@ -327,19 +362,19 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
 
 /**
  * National-guidance positions cited by the recommendations above, read from the
- * primary documents on 2026-08-12 (both already in this app's library and
- * cached under pqctoday-priv/local-evidence-cache/library/).
+ * primary documents on 2026-08-12 (both are in this app's library).
  *
  * This tool previously said only "ANSSI/BSI guidance accepts ML-DSA at Cat 3",
- * with no document, section or URL behind it — and a 2026-08-10 audit counted
- * the three occurrences of the letters "BSI"/"ANSSI" in this file (two of them
- * dropdown labels) toward a perfect grounding score. Reading the sources showed
- * the claim was half right in the half that matters:
+ * with no document, section or URL behind it. Reading the sources showed the
+ * claim was half right in the half that matters:
  *
- *  - BSI TR-02102-1, Table 5.3 and section 5.7: ML-DSA is a recommended
+ *  - BSI TR-02102-1, Table 5.3 and section 5.3.4: ML-DSA is a recommended
  *    signature algorithm, and the recommended parameter sets are ML-DSA-65 and
  *    ML-DSA-87 — "NIST Security Strength Categories 3 and 5" — in the "hedged"
- *    variant. Standalone. So the BSI half was correct.
+ *    variant, and only together with a classical signature scheme; hash-based
+ *    signatures (SLH-DSA, XMSS, LMS) can in principle also be used alone if
+ *    implementation security is carefully considered. So the BSI half was
+ *    correct on the parameter sets, not on standalone use.
  *  - ANSSI PG-083 v3 (2026): "Utilise sans hybridation et quel que soit le jeu
  *    de parametres utilise, le mecanisme de signature numerique ML-DSA ne
  *    respecte pas la regle RegleSecuAsym." ML-DSA alone fails ANSSI's rule at
@@ -351,7 +386,7 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
  *    3 is acceptable, Category 5 preferred.
  */
 export const NATIONAL_GUIDANCE_SOURCES = {
-  bsi: 'BSI TR-02102-1, Table 5.3 and section 5.7 (ML-DSA-65 / ML-DSA-87, hedged)',
+  bsi: 'BSI TR-02102-1, Table 5.3 and section 5.3.4 (ML-DSA-65 / ML-DSA-87, hedged; only together with a classical signature, hash-based schemes excepted)',
   anssiRule:
     'ANSSI PG-083 v3 (2026), RegleSecuAsym & ReglePQSecuAsym — a product aiming at post-quantum security must satisfy both rules to ensure no security regression',
   anssiLevel: 'ANSSI PQC position paper — prefer NIST level 5, level 3 acceptable',

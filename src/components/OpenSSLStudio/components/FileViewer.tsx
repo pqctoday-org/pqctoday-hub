@@ -5,6 +5,8 @@ import { openSSLService } from '../../../services/crypto/OpenSSLService'
 import { useOpenSSLStore } from '../store'
 import { Button } from '@/components/ui/button'
 
+type ParseAttempt = { ok: true; stdout: string } | { ok: false; error: string }
+
 export const FileViewer: React.FC = () => {
   const { viewingFile, setViewingFile } = useOpenSSLStore()
   const [viewMode, setViewMode] = useState<'tree' | 'hex' | 'text'>('tree')
@@ -41,27 +43,51 @@ export const FileViewer: React.FC = () => {
 
           const inputFile = { name: viewingFile.name, data: content }
 
-          let command = isCSR
+          const command = isCSR
             ? `openssl req -in ${viewingFile.name} -text -noout`
             : `openssl x509 -in ${viewingFile.name} -text -noout`
 
-          let result = await openSSLService.execute(command, [inputFile])
+          // The service rejects when OpenSSL exits non-zero (a key file is not a
+          // certificate, so x509 exits 1 on it), so a failed parse has to be
+          // caught here for the key parser below to get its turn.
+          const attempt = async (cmd: string): Promise<ParseAttempt> => {
+            try {
+              const result = await openSSLService.execute(cmd, [inputFile])
+              return result.error
+                ? { ok: false, error: result.error }
+                : { ok: true, stdout: result.stdout }
+            } catch (err) {
+              return {
+                ok: false,
+                error: err instanceof Error ? err.message : 'Failed to parse file',
+              }
+            }
+          }
+
+          let outcome = await attempt(command)
           if (cancelled) return
 
           // If x509 failed and it's a PEM/KEY file, try parsing as Key
           if (
-            result.error &&
+            !outcome.ok &&
             (viewingFile.name.endsWith('.pem') || viewingFile.name.endsWith('.key'))
           ) {
-            command = `openssl pkey -in ${viewingFile.name} -text -noout`
-            result = await openSSLService.execute(command, [inputFile])
+            const certificateError = outcome.error
+            outcome = await attempt(`openssl pkey -in ${viewingFile.name} -text -noout`)
             if (cancelled) return
+            // Both parsers were tried: keep both reasons, not only the last one.
+            if (!outcome.ok && outcome.error !== certificateError) {
+              outcome = {
+                ok: false,
+                error: `Not readable as a certificate: ${certificateError}\nNot readable as a private key: ${outcome.error}`,
+              }
+            }
           }
 
-          if (result.error) {
-            setError(result.error)
+          if (outcome.ok) {
+            setParsedOutput(outcome.stdout)
           } else {
-            setParsedOutput(result.stdout)
+            setError(outcome.error)
           }
         } catch (err) {
           if (cancelled) return

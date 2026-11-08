@@ -68,3 +68,13 @@ export function urgencyColor(urgency: DeadlineUrgency): string {
       return 'text-muted-foreground'
   }
 }
+
+/**
+ * Text colour for a deadline shown to a reader. A date that has passed is a
+ * fact about the calendar: the page does not know whether the rule binds the
+ * reader or whether anything is still outstanding, so a passed date is shown
+ * in a neutral informational colour, never in the error colour.
+ */
+export function urgencyTextColor(urgency: DeadlineUrgency): string {
+  return urgency === 'overdue' ? 'text-status-info' : urgencyColor(urgency)
+}

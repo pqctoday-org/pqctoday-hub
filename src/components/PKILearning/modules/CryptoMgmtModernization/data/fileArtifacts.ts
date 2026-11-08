@@ -27,10 +27,11 @@ export const FILE_ARTIFACTS: FileArtifactRecord[] = [
     label: 'TLS server certificate (PEM/DER)',
     category: 'Certificate file',
     classical: 'RSA-2048 or ECDSA-P256',
-    pqcTarget: 'Hybrid X25519+ML-KEM-768, or pure ML-KEM-768 once CA chain ready',
+    pqcTarget:
+      'A post-quantum signature in the certificate (for example ML-DSA, FIPS 204) once the CA chain and client trust stores support it',
     posture: 'yellow',
     notes:
-      'Issued by internal or public CA. Migration depends on CA support for ML-DSA leaf certs and client trust-store updates.',
+      'Issued by internal or public CA. The certificate authenticates the server with a signature, so its migration target is a signature algorithm, not a KEM group. The TLS key exchange (for example the hybrid X25519MLKEM768 group, RFC 10024) is a separate dependency, configured in the TLS stack, and it is the part exposed to harvest-now-decrypt-later; RFC 9954 notes that session authentication cannot be retroactively broken. Certificate migration depends on CA support for ML-DSA leaf certs and client trust-store updates.',
   },
   {
     id: 'codesign-binary',
@@ -40,7 +41,7 @@ export const FILE_ARTIFACTS: FileArtifactRecord[] = [
     pqcTarget: 'SLH-DSA-SHA2-128s or ML-DSA-65',
     posture: 'red',
     notes:
-      'Long-lived signatures on shipped binaries are HNDL-sensitive. SLH-DSA preferred where signature size is acceptable due to stateless hash-based security margin.',
+      'A signature on a shipped binary is checked long after it was made, so the risk is forgery and loss of trust in old signatures once a cryptographically relevant quantum computer exists. It is not harvest-now-decrypt-later: there is no recorded ciphertext to decrypt. Assess the verification policy instead: which verifiers check the signature, how long it must stay trusted, and whether timestamps or re-signing can extend that trust. SLH-DSA is an option where signature size is acceptable; its security rests on hash functions rather than lattice problems.',
   },
   {
     id: 'disk-encryption-keys',
@@ -50,7 +51,7 @@ export const FILE_ARTIFACTS: FileArtifactRecord[] = [
     pqcTarget: 'AES-256 retained; rotate key-wrapping keys to ML-KEM-768 envelopes',
     posture: 'green',
     notes:
-      'Symmetric AES-256 keeps a 128-bit margin against Grover. Treat the key-encryption-key chain as the migration target, not the data key.',
+      'In the idealized Grover model, AES-256 keeps a margin of about 128 bits. Treat the key-encryption-key chain as the migration target, not the data key.',
   },
   {
     id: 'archive-at-rest',

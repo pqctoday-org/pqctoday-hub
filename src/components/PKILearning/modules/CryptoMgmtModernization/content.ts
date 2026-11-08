@@ -4,6 +4,10 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -159,12 +163,12 @@ export const content: ModuleContent = {
       source: 'CA/B Forum SC-081v3; TLS BR §6.3.2 (from 2029-03-15)',
     },
     {
-      label: 'CNSA 2.0 software signing preferred',
+      label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },
     {
-      label: 'CNSA 2.0 software exclusive',
+      label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
     },
@@ -183,7 +187,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'Eight interactive steps: (1) CPM Maturity Self-Assessment scoring the organization on a 5×4 grid (five pillars × four asset classes, rated 1–4 per CSWP.39 tier scale); (2) Inventory Lifecycle Simulator walking assets through the six-stage operational loop with canonical CLM scenarios (shadow-cert discovery, 47-day renewal, intermediate-CA rotation, OCSP drift); (3) Library & Hardware CBOM Builder combining SBOM→CBOM extraction, library version/EoL tracking, FIPS 140-3 Level 3 validation status, and SP 800-90B ESV status for libraries and HSMs — PQC migration is a trigger to verify entropy sources meet increased security-strength requirements; (4) No-Regret ROI Builder calculating ROI, NPV, and payback under quantum-happens and quantum-never-happens scenarios using outage avoidance, CLM automation, FIPS-drift remediation, library-CVE response, and CryptoCOE M&A readiness — every headline number expands into an editable sub-model with formula, parameters, source citation, and explanation; (5) Posture KPI Dashboard Designer for board-ready metrics across all five pillars; (6) Management Tools Coverage Audit (7) a cryptographic policy-informed risk assessment engine that analyzes the collected data, produces a prioritized list of assets and recommends actions to reduce risks; (8) a decision for each asset, based on its level of crypto agility, between smooth migration and compensatory mitigation measures.',
     entropyCompliance:
-      'A common process gap in PQC migration programs: organizations track algorithm FIPS 140-3 validation but overlook the parallel SP 800-90B Entropy Source Validation (ESV) track. ESV is a separate CMVP submission — a library or HSM can hold a FIPS 140-3 certificate without its entropy source ever being independently validated. PQC algorithms demand higher-quality randomness (ML-KEM encapsulation requires 32 bytes from an SP 800-90A/C-approved DRBG seeded by a validated source), so migration is the right moment to audit the full RNG chain: entropy source → conditioning → DRBG. Infrastructure changes — cloud migration, containerization, VM consolidation — are also ESV re-evaluation triggers because they alter the entropy pool available to the OS and can silently degrade seed quality. The CMM Assurance pillar should include an ESV status field in the CBOM for every cryptographic library and HSM, and the remediation workflow should distinguish algorithm re-validation from entropy source re-validation, as timelines and vendors differ. The SP 800-90 suite is a living document (SP 800-90A/B/C revised independently); the same CMVP change-notice subscription used for FIPS 140-3 IG updates must also track SP 800-90A/B/C revision publications — each revision can retire approved mechanisms, tighten minimum-entropy thresholds, or impose new health-test requirements, and ESV certificates bound to superseded revisions are not automatically compliant.',
+      'A common process gap in PQC migration programs: organizations track algorithm FIPS 140-3 validation but overlook the parallel SP 800-90B Entropy Source Validation (ESV) track. ESV is a separate record from both the CAVP algorithm validation and the CMVP module certificate — a library or HSM can hold a FIPS 140-3 certificate without its entropy source ever being independently validated. PQC algorithms demand higher-quality randomness (ML-KEM encapsulation requires 32 bytes from an SP 800-90A/C-approved DRBG seeded by a validated source), so migration is the right moment to audit the full RNG chain: entropy source → conditioning → DRBG. Infrastructure changes — cloud migration, containerization, VM consolidation — are also ESV re-evaluation triggers because they alter the entropy pool available to the OS and can silently degrade seed quality. The CMM Assurance pillar should include an ESV status field in the CBOM for every cryptographic library and HSM, and the remediation workflow should distinguish algorithm re-validation from entropy source re-validation, as timelines and vendors differ. The SP 800-90 suite is a living document (SP 800-90A/B/C revised independently); the same CMVP change-notice subscription used for FIPS 140-3 IG updates must also track SP 800-90A/B/C revision publications — each revision can retire approved mechanisms, tighten minimum-entropy thresholds, or impose new health-test requirements, and ESV certificates bound to superseded revisions are not automatically compliant.',
     protocolDeprecation:
       "This module's advice: The CMM Assurance pillar must maintain a standards-watch subscription across: IETF RFC Obsoletes/Updates (e.g., RFC 8996 deprecating TLS 1.0/1.1, RFC 7465 prohibiting RC4), NIST SP 800-131A revision cycle (3DES sunset, RSA-1024 below minimum security), NSA CNSA suite announcements, CA/B Forum ballot outcomes (SHA-1 code-signing ban), ETSI TS 119 312, BSI TR-02102, and ANSSI RGS. When a deprecation notice is published, CBOM classification rules must be updated to flag the newly prohibited primitive, and the operational loop must trigger discovery scans for affected endpoints, library configs, TLS termination points, SSH server policies, IKEv2 proposals, and code-signing pipelines — each with separate ownership and change-management tracks. The Observability pillar closes the loop: continuous protocol-version and cipher-suite scanning ensures deprecated primitives do not re-appear after infrastructure refreshes.",
     relatedStandards:

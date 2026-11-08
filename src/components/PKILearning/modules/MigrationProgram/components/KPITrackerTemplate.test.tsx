@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import Papa from 'papaparse'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { KPITrackerTemplate, buildKpiTrackerMarkdown } from './KPITrackerTemplate'
 import { buildDimensions } from '@/data/kpiCatalog'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -106,9 +107,7 @@ describe('KPITrackerTemplate', () => {
   it('withholds an empty executive score on screen and in the saved report', () => {
     mockPersona = 'executive'
     render(<KPITrackerTemplate />)
-    expect(
-      screen.getByText(/enter organization-specific evidence before interpreting/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/enter sample values before interpreting/i)).toBeInTheDocument()
     const markdown = buildKpiTrackerMarkdown({
       dimensions: buildDimensions('executive', 'migration', mockData),
       activePersona: 'executive',
@@ -117,7 +116,7 @@ describe('KPITrackerTemplate', () => {
       userWeights: {},
       touchedIds: new Set(),
     })
-    expect(markdown).toContain('Overall Score: not available — evidence coverage 0%')
+    expect(markdown).toContain('Overall Score: not available — scored-value coverage 0%')
     expect(markdown).not.toContain('Overall Migration Progress: 0/100')
     expect(screen.queryByText(/Tracker auto-scored from/)).not.toBeInTheDocument()
   })
@@ -161,7 +160,7 @@ describe('KPITrackerTemplate', () => {
       },
     ]
     render(<KPITrackerTemplate />)
-    expect(screen.getByText(/Evidence coverage: 0%/)).toBeInTheDocument()
+    expect(screen.getByText(/Scored-value coverage: 0%/)).toBeInTheDocument()
     expect(screen.getByText(/Not yet available/)).toBeInTheDocument()
     expect(screen.queryByText(/weights sum to 0%/i)).not.toBeInTheDocument()
   })
@@ -202,7 +201,7 @@ describe('KPITrackerTemplate', () => {
       },
     ]
     const view = render(<KPITrackerTemplate />)
-    fireEvent.click(screen.getAllByText('Evidence details', { exact: true })[0])
+    fireEvent.click(screen.getAllByText('Sample measure notes', { exact: true })[0])
     expect(screen.getByLabelText('Systems Inventoried Denominator')).toHaveValue('250')
     fireEvent.change(screen.getByLabelText('Systems Inventoried Evidence owner'), {
       target: { value: 'Reviewed Inventory Team' },
@@ -249,7 +248,7 @@ describe('KPITrackerTemplate', () => {
     expect(partial).toContain('Overall Score: not available')
   })
 
-  it('does not let a stored score for an untouched KPI outrank its live auto score', () => {
+  it('preserves a legacy snapshot as unknown until current calculation is explicitly chosen', () => {
     mockPersona = 'executive'
     mockData = { ...baseData(60), isAssessmentComplete: true }
     mockStoreState.artifacts.executiveDocuments = [
@@ -270,13 +269,32 @@ describe('KPITrackerTemplate', () => {
       },
     ]
     render(<KPITrackerTemplate />)
-    fireEvent.click(screen.getAllByText('Evidence details', { exact: true })[0])
+    fireEvent.click(screen.getAllByText('Sample measure notes', { exact: true })[0])
     fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
     const saved = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
-    expect(saved.data).not.toContain('99/100')
+    expect(saved.data).toContain('99/100 — not assessed for current use')
+    expect(saved.data).toContain('Value origin not recorded')
     expect(
       (saved.inputs as { userScores: Record<string, number> }).userScores['risk-posture']
-    ).not.toBe(99)
+    ).toBe(99)
+    expect((saved.inputs as { originalSavedInputs: unknown }).originalSavedInputs).toEqual(
+      mockStoreState.artifacts.executiveDocuments[0].inputs
+    )
+    expect(screen.getByRole('button', { name: 'Saved' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Saved · edited since' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Saved · edited since' }))
+    const updated = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
+    expect(
+      (updated.inputs as { userScores: Record<string, number> }).userScores['risk-posture']
+    ).toBe(40)
+    expect(
+      (updated.inputs as { valueOrigins: Record<string, string> }).valueOrigins['risk-posture']
+    ).toBe('calculated-current')
+    expect((updated.inputs as { originalSavedInputs: unknown }).originalSavedInputs).toEqual(
+      mockStoreState.artifacts.executiveDocuments[0].inputs
+    )
+    expect(screen.getByRole('button', { name: 'Saved' })).toBeInTheDocument()
   })
 
   it('restores a save made before touched ids were stored without throwing', () => {
@@ -347,5 +365,153 @@ describe('KPITrackerTemplate', () => {
     expect(
       screen.getByText(/Start year set to 2028.*last Roadmap Builder export/i)
     ).toBeInTheDocument()
+  })
+  it('exports actual CSV with unknown saved values outside the active Score column', async () => {
+    mockPersona = 'executive'
+    mockData = { ...baseData(60), isAssessmentComplete: true }
+    mockStoreState.artifacts.executiveDocuments = [
+      {
+        id: 'csv-kpis',
+        moduleId: 'migration-program',
+        type: 'kpi-tracker',
+        title: 'Fictional CSV example',
+        data: '',
+        createdAt: 1,
+        inputs: {
+          personaOverride: 'executive',
+          startYear: null,
+          userScores: {
+            'systems-inventoried': 99,
+            'compliance-gaps': 0,
+            'risk-posture': 40,
+            'threat-exposure': 0,
+            'fips-validated': 77,
+          },
+          userWeights: {},
+          touchedIds: [],
+          valueOrigins: {
+            'compliance-gaps': 'learner-entered',
+            'risk-posture': 'calculated-current',
+            'threat-exposure': 'not-entered',
+            'fips-validated': 'calculated-current',
+          },
+        },
+      },
+    ]
+    let exported: Blob | undefined
+    const NativeURL = URL
+    vi.stubGlobal(
+      'URL',
+      class extends NativeURL {
+        static createObjectURL(blob: Blob) {
+          exported = blob
+          return 'blob:sample-tracker'
+        }
+        static revokeObjectURL() {}
+      }
+    )
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    try {
+      render(<KPITrackerTemplate />)
+      fireEvent.click(screen.getByRole('button', { name: 'Use current calculation (40)' }))
+      fireEvent.click(screen.getByRole('button', { name: '.csv' }))
+      expect(exported?.type).toBe('text/csv')
+      const text = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(String(reader.result))
+        reader.onerror = () => reject(reader.error)
+        reader.readAsText(exported!)
+      })
+      const parsed = Papa.parse<string[]>(text, {
+        delimiter: ',',
+        skipEmptyLines: true,
+      })
+      expect(parsed.errors).toEqual([])
+      const index = parsed.data.findIndex((row) => row[0] === 'KPI')
+      const headers = parsed.data[index]
+      const records = parsed.data
+        .slice(index + 1)
+        .map((row) => Object.fromEntries(headers.map((key, i) => [key, row[i]])))
+      const byLabel = Object.fromEntries(records.map((row) => [row.KPI, row]))
+      expect(byLabel['Systems Inventoried']).toMatchObject({
+        Score: '',
+        'Raw worksheet value (not an assessed score)': '99',
+        'Original saved snapshot value': '99',
+        'Included in overall calculation': 'false',
+      })
+      const compliance = records.find(
+        (row) => row['Value origin'] === 'Learner-entered sample value'
+      )!
+      expect(compliance).toMatchObject({ Score: '0', 'Included in overall calculation': 'true' })
+      const current = records.find(
+        (row) => row['Value origin'] === 'Calculated from current selected sample inputs'
+      )!
+      expect(current).toMatchObject({ Score: '40', 'Included in overall calculation': 'true' })
+      expect(
+        records
+          .filter((row) => row['Included in overall calculation'] === 'false')
+          .every((row) => row.Score === '')
+      ).toBe(true)
+    } finally {
+      click.mockRestore()
+      vi.unstubAllGlobals()
+    }
+  })
+  it('saves unavailable placeholders as unrecorded and retains that unknown origin on reload', () => {
+    mockPersona = 'executive'
+    const view = render(<KPITrackerTemplate />)
+    const manual = screen.getByTestId('kpi-dim-systems-inventoried')
+    fireEvent.click(within(manual).getByRole('button', { name: 'Use displayed sample value' }))
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const saved = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    const inputs = saved.inputs as {
+      userScores: Record<string, number>
+      valueOrigins: Record<string, string>
+    }
+    expect(inputs.userScores['risk-posture']).toBe(0)
+    expect(inputs.valueOrigins['risk-posture']).toBe('unrecorded')
+    expect(inputs.valueOrigins['vendor-readiness']).toBe('unrecorded')
+    expect(inputs.valueOrigins['fips-validated']).toBe('unrecorded')
+    view.unmount()
+    mockStoreState.artifacts.executiveDocuments = [saved]
+    render(<KPITrackerTemplate />)
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const reopened = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    expect((reopened.inputs as typeof inputs).valueOrigins['risk-posture']).toBe('unrecorded')
+    expect((reopened.inputs as typeof inputs).userScores['risk-posture']).toBe(0)
+    expect(screen.getByTestId('kpi-dim-risk-posture')).toHaveAttribute('data-disabled', 'true')
+  })
+
+  it('saves a genuine current calculation as a snapshot while inputs are unavailable, then recomputes live', () => {
+    mockPersona = 'executive'
+    mockData = { ...baseData(60), isAssessmentComplete: true }
+    const view = render(<KPITrackerTemplate />)
+    fireEvent.click(
+      within(screen.getByTestId('kpi-dim-systems-inventoried')).getByRole('button', {
+        name: 'Use displayed sample value',
+      })
+    )
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const first = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    type Inputs = { userScores: Record<string, number>; valueOrigins: Record<string, string> }
+    expect((first.inputs as Inputs).userScores['risk-posture']).toBe(40)
+    expect((first.inputs as Inputs).valueOrigins['risk-posture']).toBe('calculated-current')
+    mockData = { ...baseData(null), isAssessmentComplete: false }
+    view.rerender(<KPITrackerTemplate />)
+    expect(screen.getByTestId('kpi-dim-risk-posture')).toHaveAttribute('data-disabled', 'true')
+    fireEvent.click(screen.getByRole('button', { name: /^Saved(?: · edited since)?$/ }))
+    const unavailable = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    expect((unavailable.inputs as Inputs).userScores['risk-posture']).toBe(40)
+    expect((unavailable.inputs as Inputs).valueOrigins['risk-posture']).toBe('calculated-snapshot')
+    expect((unavailable.inputs as Inputs).valueOrigins['systems-inventoried']).toBe(
+      'learner-entered'
+    )
+    mockData = { ...baseData(50), isAssessmentComplete: true }
+    view.rerender(<KPITrackerTemplate />)
+    expect(screen.getByRole('slider', { name: 'Risk Posture score' })).toHaveValue('50')
+    fireEvent.click(screen.getByRole('button', { name: /^Saved(?: · edited since)?$/ }))
+    const current = addExecutiveDocument.mock.lastCall![0] as ExecutiveDocument
+    expect((current.inputs as Inputs).userScores['risk-posture']).toBe(50)
+    expect((current.inputs as Inputs).valueOrigins['risk-posture']).toBe('calculated-current')
   })
 })

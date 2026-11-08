@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, FileText, Check, Copy, Activity } from 'lucide-react'
+import { AsnConvert } from '@peculiar/asn1-schema'
+import { Certificate } from '@peculiar/asn1-x509'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { CryptoLogDisplay } from './CryptoLogDisplay'
@@ -29,16 +31,71 @@ const getIdentityFromCert = (certPem: string | undefined): string => {
   return 'Custom'
 }
 
-// Determine CA key type from the CA PEM used for verification
+// SubjectPublicKeyInfo algorithm OIDs (RFC 5280 section 4.1.2.7) for the CA key labels.
+const CA_KEY_OIDS: Record<string, string> = {
+  '1.2.840.113549.1.1.1': 'RSA', // rsaEncryption, RFC 8017
+  '1.3.101.112': 'Ed25519', // RFC 8410
+  '1.3.101.113': 'Ed448', // RFC 8410
+  '2.16.840.1.101.3.4.3.17': 'ML-DSA-44', // FIPS 204
+  '2.16.840.1.101.3.4.3.18': 'ML-DSA-65',
+  '2.16.840.1.101.3.4.3.19': 'ML-DSA-87',
+}
+const EC_PUBLIC_KEY_OID = '1.2.840.10045.2.1' // id-ecPublicKey, RFC 5480
+// DER of the namedCurve parameter (an OBJECT IDENTIFIER), RFC 5480 section 2.1.1.1
+const EC_CURVES: Record<string, string> = {
+  '06082a8648ce3d030107': 'P-256',
+  '06052b81040022': 'P-384',
+  '06052b81040023': 'P-521',
+}
+const UNKNOWN_CA_KEY_TYPE = 'Unknown'
+
+const spkiLabel = (der: Uint8Array): string => {
+  const algorithm = AsnConvert.parse(der, Certificate).tbsCertificate.subjectPublicKeyInfo.algorithm
+  if (algorithm.algorithm === EC_PUBLIC_KEY_OID) {
+    const params = algorithm.parameters
+      ? Array.from(new Uint8Array(algorithm.parameters), (b) => b.toString(16).padStart(2, '0'))
+      : []
+    const curve = EC_CURVES[params.join('')]
+    return curve ? `EC (${curve})` : 'EC'
+  }
+  return CA_KEY_OIDS[algorithm.algorithm] ?? UNKNOWN_CA_KEY_TYPE
+}
+
+/**
+ * Label the CA by the SubjectPublicKeyInfo algorithm inside the CA certificate itself.
+ * PEM bodies are base64 DER, so the text of the PEM never names the algorithm; a PEM that
+ * cannot be parsed or uses an unlisted algorithm stays "Unknown" rather than defaulting to RSA.
+ */
 const getCaTypeFromPem = (caPem: string | undefined): string => {
   if (!caPem) return 'N/A'
-  if (caPem.includes('ML-DSA-87') || caPem.includes('mldsa87')) return 'ML-DSA-87'
-  if (caPem.includes('ML-DSA') || caPem.includes('mldsa')) return 'ML-DSA-44'
-  return 'RSA'
+  const blocks =
+    caPem.match(/-----BEGIN CERTIFICATE-----[A-Za-z0-9+/=\s]+?-----END CERTIFICATE-----/g) ?? []
+  const labels = blocks.map((block) => {
+    try {
+      const base64 = block.replace(/-----(BEGIN|END) CERTIFICATE-----|\s/g, '')
+      const der = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
+      return spkiLabel(der)
+    } catch {
+      return UNKNOWN_CA_KEY_TYPE
+    }
+  })
+  return labels.length > 0 ? [...new Set(labels)].join(' + ') : UNKNOWN_CA_KEY_TYPE
 }
 
 export const TLSNegotiationResults: React.FC = () => {
-  const { results, clientConfig, serverConfig, addRunToHistory } = useTLSStore()
+  const {
+    results,
+    clientConfig: draftClientConfig,
+    serverConfig: draftServerConfig,
+    runInputs,
+    addRunToHistory,
+  } = useTLSStore()
+  const clientConfig = runInputs?.clientConfig ?? draftClientConfig
+  const serverConfig = runInputs?.serverConfig ?? draftServerConfig
+  const inputsChanged =
+    !!runInputs &&
+    (JSON.stringify(draftClientConfig) !== JSON.stringify(runInputs.clientConfig) ||
+      JSON.stringify(draftServerConfig) !== JSON.stringify(runInputs.serverConfig))
   const lastRecordedRef = useRef<string | null>(null)
 
   // Record run to history when simulation completes - MUST be before early return
@@ -209,6 +266,12 @@ export const TLSNegotiationResults: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full">
+      {inputsChanged && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Settings changed—run again to test them. These results retain the settings used by the
+          previous run.
+        </p>
+      )}
       {/* Status Banner */}
       <div
         className={clsx(

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useRef } from 'react'
+import { useRef, type SyntheticEvent } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
@@ -19,6 +19,20 @@ interface FrameworkConceptGraphModalProps {
   /** The framework the graph belongs to — Share links to its drawer
    *  (`/compliance?framework=<id>`); the graph itself has no URL. */
   frameworkId: string
+}
+
+/**
+ * React delivers an event from a portal to the component that rendered it, not
+ * to the page element it sits under. The modal is rendered inside a framework
+ * card (and inside the detail pop-up), so without this a click on the graph
+ * canvas, a zoom control or the backdrop also reached the card's own click
+ * handler and opened the framework detail panel behind the graph. Stopping
+ * click and wheel at the modal boundary keeps those interactions inside the
+ * modal. Pointer-down and key events are left alone: outside-click menus and
+ * page shortcuts listen for those on the document.
+ */
+function keepInsideModal(event: SyntheticEvent) {
+  event.stopPropagation()
 }
 
 /**
@@ -42,7 +56,8 @@ export function FrameworkConceptGraphModal({
   if (!isOpen) return null
 
   const content = (
-    <>
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- not an interactive control: `display: contents` boundary that only stops portal events reaching the card; keyboard access stays on the controls inside.
+    <div className="contents" onClick={keepInsideModal} onWheel={keepInsideModal}>
       <div className="fixed inset-0 z-overlay bg-black/60" onClick={onClose} aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
         <FocusLock returnFocus>
@@ -68,8 +83,10 @@ export function FrameworkConceptGraphModal({
                   {title}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  1-hop neighbourhood; dashed edges = synthetic <code>implements</code> edges to
-                  algorithm leaves.
+                  One-hop view of recorded relationships; dashed links add generated algorithm
+                  context. Scroll below the graph for direction, evidence and the derived Hub
+                  confidence index. These mappings are learning aids, not legal or conformance
+                  determinations.
                 </p>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
@@ -88,7 +105,7 @@ export function FrameworkConceptGraphModal({
                 </Button>
               </div>
             </div>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 min-h-0 overflow-y-auto">
               <FrameworkConceptGraph
                 centerConceptId={centerConceptId}
                 height={Math.min(700, window.innerHeight - 200)}
@@ -97,7 +114,7 @@ export function FrameworkConceptGraphModal({
           </div>
         </FocusLock>
       </div>
-    </>
+    </div>
   )
 
   return createPortal(content, document.body)

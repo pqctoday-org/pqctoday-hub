@@ -50,7 +50,8 @@ export const KMS_PROVIDERS: KMSProvider[] = [
       'GenerateDataKey → plaintext DEK + encrypted DEK. ML-KEM hybrid TLS protects API transit. DEK wrapped with customer CMK using AES-256.',
     autoRotation: true,
     kmipSupport: false,
-    fipsLevel: 'FIPS 140-3 Level 3 (AWS-LC module)',
+    fipsLevel:
+      'AWS KMS HSMs: FIPS 140-3 Level 3 (CMVP #4884). AWS-LC (CMVP #5314) is a separate software module validated at Level 1.',
     hybridSupport: true,
     apiPattern: `// AWS KMS — ML-DSA signing
 aws kms create-key \\
@@ -63,7 +64,7 @@ aws kms sign \\
   --message fileb://data.bin \\
   --message-type RAW`,
     notes:
-      'ML-KEM hybrid TLS protects data in transit to KMS, ACM, and Secrets Manager in non-FIPS endpoints across all AWS Regions in the aws partition. Built on AWS-LC, a FIPS 140-3 validated open-source library.',
+      'ML-KEM hybrid TLS protects data in transit to KMS, ACM, and Secrets Manager in non-FIPS endpoints across all AWS Regions in the aws partition. Built on AWS-LC, an open-source library whose FIPS module has its own validation (CMVP #5314, Level 1), separate from the KMS HSM certificate.',
   },
   {
     id: 'gcp-kms',
@@ -86,7 +87,8 @@ aws kms sign \\
       'KEM keys use the KEY_ENCAPSULATION purpose: you encapsulate on the client with the public key, and Cloud KMS decapsulates with the private key. PQC keys are at the SOFTWARE protection level only. Powered by BoringCrypto and Tink (not sourced in the Library).',
     autoRotation: true,
     kmipSupport: false,
-    fipsLevel: 'FIPS 140-2 Level 3 applies to classical Cloud HSM keys',
+    fipsLevel:
+      'Cloud HSM keys: FIPS 140-2 Level 3 (classical keys). Software-protected keys, including the PQC keys listed here, use BoringCrypto, which is validated separately.',
     hybridSupport: true,
     apiPattern: `# Google Cloud KMS — ML-KEM key (SOFTWARE protection level)
 gcloud kms keys create my-pqc-kem-key \\
@@ -124,7 +126,8 @@ gcloud kms decapsulate --version=1 --key=my-pqc-kem-key \\
       'WrapKey/UnwrapKey with RSA or AES. Managed HSM tier for FIPS 140-3 Level 3. PQC key types not yet available in Key Vault API.',
     autoRotation: true,
     kmipSupport: false,
-    fipsLevel: 'FIPS 140-2 Level 1 (Standard) / FIPS 140-3 Level 3 (Managed HSM)',
+    fipsLevel:
+      'Standard tier: FIPS 140-2 Level 1. Managed HSM: FIPS 140-3 Level 3. Check the current Microsoft key-management comparison for the Premium tier and your key version.',
     hybridSupport: false,
     apiPattern: `// Azure Key Vault — current (RSA, planned PQC)
 az keyvault key create \\
@@ -158,7 +161,8 @@ az keyvault key create \\
       'Transit secrets engine: encrypt/decrypt/sign/verify/rewrap. PQC signing experimental. Classical AES-256-GCM for encryption (quantum-safe).',
     autoRotation: true,
     kmipSupport: true,
-    fipsLevel: 'FIPS 140-3 (Enterprise with Seal Wrap)',
+    fipsLevel:
+      'Enterprise FIPS 140-3 Inside builds use BoringCrypto (CMVP #4735, Level 1 software). Seal Wrap uses a configured external seal, so any validation level comes from that device, not from Vault.',
     hybridSupport: true,
     apiPattern: `# HashiCorp Vault — ML-DSA signing (experimental)
 vault write transit/keys/my-pqc-key \\
@@ -188,7 +192,8 @@ vault write transit/sign/my-pqc-key \\
       'BYOK/HYOK across AWS/Azure/GCP. Centralized key lifecycle management with Luna HSM as root of trust. ML-KEM TLS for Google Workspace CSE (GA v2.22.0+).',
     autoRotation: true,
     kmipSupport: true,
-    fipsLevel: 'FIPS 140-3 Level 3 (via Luna Network HSM 7)',
+    fipsLevel:
+      'A Luna HSM 7 backend can provide a FIPS 140-3 Level 3 root of trust (CMVP #4962). The level belongs to the HSM, not to CipherTrust Manager, which is a separate product.',
     hybridSupport: true,
     apiPattern: `# Thales CipherTrust — multi-cloud key management
 # Key creation with Luna HSM backing
@@ -226,7 +231,8 @@ POST /v1/cckm/aws/upload-key
       'Runtime Encryption with Intel SGX. Multicloud key management with Confidential Computing.',
     autoRotation: true,
     kmipSupport: true,
-    fipsLevel: 'FIPS 140-2 Level 2 (planned FIPS 140-3)',
+    fipsLevel:
+      'DSM Appliance: FIPS 140-3 Level 3 (CMVP #5555, hardware). The certificate covers the appliance; check SaaS deployments separately.',
     hybridSupport: true,
     apiPattern: `# Fortanix DSM — PQC key management
 POST /crypto/v1/keys
@@ -249,6 +255,8 @@ const AVAIL_TO_KMS: Record<CatalogAvailability, KmsPqcStatus> = {
   available: 'ga',
   partial: 'preview',
   roadmap: 'planned',
+  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
+  psk: 'planned',
   none: 'planned',
   unverified: 'planned',
 }

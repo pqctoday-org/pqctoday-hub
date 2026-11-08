@@ -64,7 +64,7 @@ const STAGE_DETAILS: Record<
       detail:
         'ML-DSA-65 public key (1,952 bytes) stored in ROM. Significantly larger than LMS/XMSS, which may be prohibitive for the most constrained embedded platforms.',
       verification:
-        'ROM code reads the ML-DSA public key and performs lattice-based signature verification. No state tracking needed — fully stateless operation.',
+        'ROM code reads the ML-DSA public key and verifies the signature. Its security rests on lattice problems, but verification itself is ordinary polynomial arithmetic and hashing, not a lattice search. Verification keeps no state (LMS and XMSS verification keep none either); the extra cost is the larger public key and signature to store and read.',
     },
   },
   1: {
@@ -84,7 +84,7 @@ const STAGE_DETAILS: Record<
       detail:
         'ML-DSA-65 public key enrolled in UEFI Secure Boot key database. Standard X.509 certificate wrapping with ML-DSA as the signature algorithm.',
       verification:
-        'Bootloader signature verified using ML-DSA lattice reduction. Verification is fast (~0.2 ms, indicative) and requires no state management — each verification is independent.',
+        "Bootloader signature verified with ML-DSA verification: polynomial arithmetic and hashing (lattice reduction is the attacker's problem, not the verifier's). Verification is fast (~0.2 ms, indicative) and each verification is independent of earlier ones.",
     },
   },
   2: {
@@ -102,9 +102,9 @@ const STAGE_DETAILS: Record<
     },
     'ml-dsa': {
       detail:
-        'OS kernel signed with ML-DSA-65. Stateless signing means no leaf tracking — the same key can sign unlimited kernel builds without state management.',
+        'OS kernel signed with ML-DSA-65. The signer keeps no leaf state, so the key can sign many kernel builds without a counter to manage.',
       verification:
-        'Standard ML-DSA verification. No counter state to validate. Measured boot extends TPM PCRs identically to the stateful approaches.',
+        'Standard ML-DSA verification. As with LMS and XMSS, the verifier validates no counter; only the signer tracks state. Measured boot extends TPM PCRs identically to the stateful approaches.',
     },
   },
   3: {
@@ -116,14 +116,14 @@ const STAGE_DETAILS: Record<
     },
     xmss: {
       detail:
-        'Device firmware signed with XMSS. BSI (German Federal Office for Information Security) recommends XMSS for firmware signing in European government systems.',
+        'Device firmware signed with XMSS. BSI TR-02102-1 (January 2026) recommends the stateful hash-based schemes XMSS, XMSS^MT, LMS and HSS only where safe, error-free state management can be guaranteed, and names the signing of software and firmware updates as such a scenario.',
       verification: 'Firmware image hash verified against the XMSS signature.',
     },
     'ml-dsa': {
       detail:
         'Device firmware signed with ML-DSA-65. The larger signature (3,309 bytes vs ~2,500 bytes for LMS/XMSS) adds minimal overhead relative to typical firmware image sizes (megabytes).',
       verification:
-        'ML-DSA signature verification is fast and stateless. Ideal for constrained devices that cannot maintain a secure state counter.',
+        'ML-DSA verification is fast and keeps no state, as LMS and XMSS verification do. For a constrained verifier the differences are memory, time and ROM: a 1,952-byte public key and a 3,309-byte signature (ML-DSA-65) against roughly 56 to 68 bytes and about 2.5 KB for the hash-based schemes. The state counter is a signer-side burden, so a device that only verifies never needs one.',
     },
   },
 }
@@ -450,8 +450,8 @@ export const SecureBootChain: React.FC = () => {
               <p>{activeAlgorithm.stateRequirement}</p>
               <p className="mt-1">
                 Each signing operation advances the counter by 1. Reusing a leaf index is{' '}
-                <strong className="text-destructive">catastrophic</strong> — it reveals the private
-                key material.
+                <strong className="text-destructive">catastrophic</strong> — two signatures from the
+                same one-time key could let an attacker forge a third (RFC 8554).
               </p>
             </div>
           </div>
@@ -684,15 +684,11 @@ export const SecureBootChain: React.FC = () => {
           {[
             {
               year: '2025',
-              text: 'New software and firmware should support and prefer CNSA 2.0 algorithms (LMS/XMSS)',
+              text: "Software and firmware signing: support and prefer CNSA 2.0 (NSA's 2022 category guidance; superseded for planning by the dates in NSA's CNSA 2.0 FAQ, version 2.2; this date has passed)",
             },
             {
               year: '2030',
-              text: 'All deployed National Security Systems must use CNSA 2.0 signatures for firmware and software',
-            },
-            {
-              year: '2033\u201335',
-              text: 'Full quantum-resistant enforcement across all NSS cryptographic operations',
+              text: "Software and firmware signing: exclusively use CNSA 2.0 (NSA's 2022 category guidance; superseded for planning by the dates in NSA's CNSA 2.0 FAQ, version 2.2; its other equipment categories carry different dates)",
             },
           ].map((milestone) => (
             <div key={milestone.year} className="flex items-start gap-3">
@@ -704,9 +700,17 @@ export const SecureBootChain: React.FC = () => {
           ))}
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
-          Firmware signing was prioritized ahead of general PQC because firmware keys have
-          10&ndash;20 year lifetimes. Devices deployed today will still be in the field when
-          cryptographically relevant quantum computers arrive.
+          Separate general dates, not specific to signing (NSA CNSA 2.0 FAQ v2.2, October 2026):
+          CNSA 2.0 required in new NSS acquisitions from 1 January 2027; NSS equipment and services
+          that cannot support CNSA 2.0 phased out by 31 December 2030 unless excepted; CNSA 2.0
+          algorithms mandated by 31 December 2031 unless otherwise noted; NSM-10 sets a 2035 goal
+          for quantum-resistant NSS. Check NSA&apos;s current documents for the date that applies to
+          your equipment type.
+        </p>
+        <p className="text-[10px] text-muted-foreground mt-2">
+          NSA prioritizes firmware signing because the verification algorithm in deployed devices is
+          often not easily updated, so firmware-signing algorithms are frequently locked in for the
+          life of a system (CNSA 2.0 FAQ v2.2).
         </p>
       </div>
 
@@ -719,8 +723,8 @@ export const SecureBootChain: React.FC = () => {
           </div>
           <p className="text-xs text-muted-foreground">
             Stateful signatures require careful operational procedures &mdash; the state counter
-            must be persisted atomically, never cloned, and never rolled back. A single leaf reuse
-            catastrophically compromises the entire key. For a detailed exploration of Merkle tree
+            must be persisted atomically, never cloned, and never rolled back. Reusing a single leaf
+            can let an attacker forge signatures. For a detailed exploration of Merkle tree
             mechanics, parameter selection, and state management risks, see the{' '}
             <Link
               to="/learn/stateful-signatures"
@@ -738,9 +742,9 @@ export const SecureBootChain: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong> This simulation demonstrates the secure boot trust chain and
           firmware signing workflow with realistic data structures and signature sizes. In
-          production, firmware signing keys are managed in FIPS 140-validated HSMs, and the boot
-          chain verification happens in hardware (TPM, secure elements). All keys and signatures
-          shown are for educational purposes only.
+          production, firmware signing keys are typically kept in HSMs, and boot-chain verification
+          is anchored in hardware (ROM, TPM, secure elements). All keys and signatures shown are for
+          educational purposes only.
         </p>
       </div>
     </div>

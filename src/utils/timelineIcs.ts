@@ -12,8 +12,8 @@
  *
  *  - The corpus records YEARS, not dates. Emitting `20270101` as if it were the
  *    day a mandate lands would be inventing precision the source does not have,
- *    so every event is an ALL-DAY event covering the phase's own span, and its
- *    description says the year is the granularity we hold.
+ *    so bounded phases are ALL-DAY spans and open-ended phases are labelled
+ *    one-day planning reminders. Their descriptions explain the precision.
  *  - Every event carries its source URL where we have one, so the calendar
  *    entry can be checked against the document rather than trusted.
  */
@@ -90,9 +90,11 @@ export function phasesToIcs(phases: TimelinePhase[], options: IcsOptions): strin
       phase.description,
       '',
       `Phase: ${phase.phase}`,
-      `Source granularity: this corpus records YEARS, not exact dates — treat ${phase.startYear}${
-        endYear !== phase.startYear ? `–${endYear}` : ''
-      } as the window, not the day.`,
+      phase.openEnded
+        ? `Planning reminder only: this one-day calendar entry uses 1 January ${phase.startYear} as a chosen placeholder for year-precision planning, not a source date, deadline, end date or phase duration. At least one source event in this grouped phase has no end date stated; other events may have bounded dates. Consult the timeline and linked sources for individual event dates.`
+        : `Source granularity: this corpus records YEARS, not exact dates — treat ${phase.startYear}${
+            endYear !== phase.startYear ? `–${endYear}` : ''
+          } as the window, not the day.`,
       ...phase.events
         .filter((e) => e.sourceUrl)
         .map((e) => `Source: ${e.sourceUrl}`)
@@ -105,10 +107,13 @@ export function phasesToIcs(phases: TimelinePhase[], options: IcsOptions): strin
       'BEGIN:VEVENT',
       fold(`UID:${uid}@pqctoday.com`),
       `DTSTAMP:${stamp}`,
-      // All-day span: DTEND is exclusive in RFC 5545, hence endYear + 1.
       `DTSTART;VALUE=DATE:${yearDate(phase.startYear)}`,
-      `DTEND;VALUE=DATE:${yearDate(endYear + 1)}`,
-      fold(`SUMMARY:${escapeText(`${options.countryName}: ${phase.title}`)}`),
+      // DATE without DTEND/DURATION is one day (RFC 5545 §3.6.1), not an
+      // invented end for an open-ended phase. Bounded DTEND stays exclusive.
+      ...(phase.openEnded ? [] : [`DTEND;VALUE=DATE:${yearDate(endYear + 1)}`]),
+      fold(
+        `SUMMARY:${escapeText(`${phase.openEnded ? 'Planning reminder — ' : ''}${options.countryName}: ${phase.title}`)}`
+      ),
       fold(`DESCRIPTION:${escapeText(description)}`),
       'TRANSP:TRANSPARENT',
       'END:VEVENT'

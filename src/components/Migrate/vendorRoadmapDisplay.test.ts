@@ -53,6 +53,69 @@ describe('getGaStatusInfo', () => {
     expect(getGaStatusInfo('Unknown')).toBeNull()
     expect(getGaStatusInfo('')).toBeNull()
   })
+
+  it('reads the leading state with the same words and spacing as the later segments', () => {
+    expect(getGaStatusInfo('General availability')).toEqual({ kind: 'ga', label: 'GA' })
+    expect(getGaStatusInfo('  GA')).toEqual({ kind: 'ga', label: 'GA' })
+    expect(getGaStatusInfo('Early access')).toEqual({ kind: 'preview', label: 'Preview' })
+    expect(getGaStatusInfo('Early availability; GA (cloud)')).toMatchObject({
+      kind: 'preview',
+      label: 'Preview + GA',
+      mixedKinds: ['preview', 'ga'],
+    })
+    // a word that merely starts with "ga" is not a state
+    expect(getGaStatusInfo('Gated rollout')).toBeNull()
+  })
+
+  // A vendor sentence can report different states for different capabilities.
+  // Windows: the algorithms and ADCS certificates are GA, while hybrid TLS key
+  // exchange and composite algorithms are still Preview.
+  const WINDOWS_MIXED =
+    'GA (PQC algorithms on Windows 11/Server 2025; ML-DSA certificates in ADCS); Preview (TLS hybrid key exchange; composite algorithms in APIs)'
+
+  it('reports both states for a status that is GA for some capabilities and Preview for others', () => {
+    const info = getGaStatusInfo(WINDOWS_MIXED)
+    expect(info?.label).toBe('GA + Preview')
+    expect(info?.mixedKinds).toEqual(['ga', 'preview'])
+    // Never reduced to its first word, and never coloured as if it were all GA.
+    expect(info?.label).not.toBe('GA')
+    expect(info?.kind).not.toBe('ga')
+  })
+
+  it('reports both states when the second is a trailing qualifier', () => {
+    const info = getGaStatusInfo(
+      'GA (General Availability), with CloudHSM ML-DSA support in preview.'
+    )
+    expect(info?.label).toBe('GA + Preview')
+    expect(info?.mixedKinds).toEqual(['ga', 'preview'])
+  })
+
+  it('treats a pre-GA early-availability segment as not generally available', () => {
+    const info = getGaStatusInfo('GA (R82 QSKE); Early Availability (R82.10 TLS Inspection)')
+    expect(info?.mixedKinds).toEqual(['ga', 'preview'])
+  })
+
+  it('lists the states in the order the vendor gives them', () => {
+    expect(getGaStatusInfo('Preview (hybrid TLS); GA (ML-DSA certificates)')?.label).toBe(
+      'Preview + GA'
+    )
+  })
+
+  it('a single-state status stays a single state, whatever its detail says', () => {
+    // Words inside parentheses or quotations describe the status; they are not another status.
+    expect(getGaStatusInfo('Planned (JDK 27 GA in September 2026; backports scheduled)')).toEqual({
+      kind: 'planned',
+      label: 'Planned',
+    })
+    expect(getGaStatusInfo('GA (previously in preview until 2025)')).toEqual({
+      kind: 'ga',
+      label: 'GA',
+    })
+    expect(getGaStatusInfo('GA; "available to everyone, no longer in preview"')).toEqual({
+      kind: 'ga',
+      label: 'GA',
+    })
+  })
 })
 
 describe('getScopeChipInfo', () => {
@@ -145,6 +208,35 @@ describe('deriveVendorRoadmapDisplay', () => {
       deriveVendorRoadmapDisplay(roadmap({ roadmapUrl: 'https://example.com' }), undefined)?.isEmpty
     ).toBe(false)
     expect(deriveVendorRoadmapDisplay(undefined, enrichment())?.isEmpty).toBe(false)
+  })
+
+  it('keeps the product-specific status beside a mixed GA and Preview badge', () => {
+    const status =
+      'GA (PQC algorithms on Windows 11/Server 2025; ML-DSA certificates in ADCS); Preview (TLS hybrid key exchange; composite algorithms in APIs)'
+    const d = deriveVendorRoadmapDisplay(undefined, enrichment({ currentGaStatus: status }))
+    expect(d?.gaStatus?.label).toBe('GA + Preview')
+    // The sentence that says WHICH capabilities are GA and which are Preview
+    // is carried through whole, not cut to its first word.
+    expect(d?.gaStatusDetail).toBe(status)
+  })
+
+  it('carries a single-state status scope through, and nothing extra for a bare badge', () => {
+    expect(
+      deriveVendorRoadmapDisplay(
+        undefined,
+        enrichment({
+          currentGaStatus: 'GA (Post-quantum encryption enabled for all websites in 2022)',
+        })
+      )?.gaStatusDetail
+    ).toBe('GA (Post-quantum encryption enabled for all websites in 2022)')
+    expect(
+      deriveVendorRoadmapDisplay(undefined, enrichment({ currentGaStatus: 'GA' }))?.gaStatusDetail
+    ).toBeNull()
+    expect(
+      deriveVendorRoadmapDisplay(undefined, enrichment({ currentGaStatus: 'No PQC' }))
+        ?.gaStatusDetail
+    ).toBeNull()
+    expect(deriveVendorRoadmapDisplay(roadmap(), undefined)?.gaStatusDetail).toBeNull()
   })
 
   it('defaults the title to "Vendor PQC Roadmap" when roadmapTitle is empty', () => {

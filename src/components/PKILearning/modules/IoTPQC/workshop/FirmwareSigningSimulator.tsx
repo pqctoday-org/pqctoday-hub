@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Step 2 — Firmware signing with SUIT/COSE.
+ * Step 2 — JSON-manifest signatures and a separate conceptual COSE/SUIT sketch.
  *
  * REWRITTEN 2026-10-01. The pre-split step showed `randomHex()` as the
  * signature and a timer as "verification". Now:
@@ -262,9 +262,9 @@ export const FirmwareSigningSimulator: React.FC<{ initial?: FirmwareSigningConfi
   return (
     <div className="space-y-6">
       <p className="text-sm text-foreground/80">
-        Sign a firmware manifest the way a SUIT update does: hash the image, put the digest in the
-        manifest, sign the manifest. ML-DSA and LMS signatures are computed and verified in the
-        browser&apos;s SoftHSM; the other algorithms show sizes only and are labelled.
+        This sample hashes an illustrative image and signs the UTF-8 JSON manifest bytes with ML-DSA
+        or LMS. Other algorithms show sizes only. The envelope sketch is conceptual: this sample
+        does not encode or verify a COSE/SUIT update.
       </p>
 
       <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
@@ -384,7 +384,7 @@ export const FirmwareSigningSimulator: React.FC<{ initial?: FirmwareSigningConfi
           {outcome.manifestText && (
             <div className="text-xs">
               <div className="font-bold text-foreground">
-                2. Manifest (shown as JSON; SUIT encodes it in CBOR per draft-ietf-suit-manifest)
+                2. JSON manifest bytes used by this sample
               </div>
               <pre
                 className="bg-muted/50 rounded p-2 border border-border font-mono text-[10px] overflow-x-auto"
@@ -397,7 +397,9 @@ export const FirmwareSigningSimulator: React.FC<{ initial?: FirmwareSigningConfi
             </div>
           )}
           <div className="text-xs">
-            <div className="font-bold text-foreground">3. Signature ({alg.name})</div>
+            <div className="font-bold text-foreground">
+              3. Signature over JSON-manifest bytes ({alg.name})
+            </div>
             {outcome.signatureBytes !== null ? (
               <div className="space-y-1 mt-1">
                 <div className="font-mono text-muted-foreground break-all">
@@ -420,7 +422,8 @@ export const FirmwareSigningSimulator: React.FC<{ initial?: FirmwareSigningConfi
                   ) : (
                     <XCircle size={12} className="text-destructive" />
                   )}
-                  Verify over the manifest: {outcome.verified ? 'valid' : 'INVALID'}
+                  Primitive signature check over these JSON bytes:{' '}
+                  {outcome.verified ? 'valid' : 'INVALID'}
                 </div>
                 <div className="flex items-center gap-1">
                   {outcome.tamperRejected ? (
@@ -448,7 +451,13 @@ export const FirmwareSigningSimulator: React.FC<{ initial?: FirmwareSigningConfi
             )}
           </div>
           <div className="text-xs">
-            <div className="font-bold text-foreground">4. COSE_Sign1 inside the SUIT envelope</div>
+            <div className="font-bold text-foreground">
+              4. Conceptual COSE/SUIT envelope sketch — not encoded or verified here
+            </div>
+            <p className="text-muted-foreground">
+              The signature input and bytes above belong to the JSON sample, not this envelope
+              sketch. No COSE Sig_structure or SUIT encoding is built by this demonstration.
+            </p>
             <pre
               className="bg-muted/50 rounded p-2 border border-border font-mono text-[10px] overflow-x-auto"
               // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).

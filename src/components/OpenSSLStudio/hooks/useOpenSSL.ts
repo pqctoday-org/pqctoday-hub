@@ -81,6 +81,9 @@ export const useOpenSSL = () => {
   useEffect(() => {
     // Track if this effect instance is active
     let active = true
+    const pendingRuns = pendingRunsRef.current
+    const pendingKeygen = pendingKeygenRef.current
+    const pendingList = pendingListRef.current
 
     // Initialize Worker
     const worker = new Worker(new URL('../worker/openssl.worker.ts', import.meta.url), {
@@ -282,11 +285,20 @@ export const useOpenSSL = () => {
     return () => {
       active = false
       worker.terminate()
+      if (workerRef.current === worker) workerRef.current = null
+      const error = new Error('OpenSSL worker closed before the request completed.')
+      for (const pending of pendingRuns.values()) pending.reject(error)
+      pendingRuns.clear()
+      for (const pending of pendingKeygen.values()) pending.reject(error)
+      pendingKeygen.clear()
+      for (const pending of pendingList.values()) pending.reject(error)
+      pendingList.clear()
       setIsReady(false)
     }
   }, [
     addLog,
     addFile,
+    addPkcs11LogEntry,
     setIsProcessing,
     addStructuredLog,
     setLastExecutionTime,

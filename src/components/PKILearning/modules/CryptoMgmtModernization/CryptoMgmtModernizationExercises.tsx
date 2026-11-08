@@ -74,7 +74,7 @@ const EXERCISES = [
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     scenario:
       'You have 10 minutes on the agenda once a quarter. Pick 4–6 KPIs that fit on a single slide and answer "are we safer than last quarter?"',
-    hint: 'Use the Posture KPI Dashboard Designer with audience=Board. Strong candidates: % inventory backed by current FIPS 140-3, % certs auto-renewed, cert-expiry risk, policy-drift rate, crypto-debt trend.',
+    hint: 'Use the Posture KPI Dashboard Designer with audience=Board. Strong candidates: % scoped deployments using validated FIPS 140-3 modules, % certs auto-renewed, cert-expiry risk, policy-drift rate, crypto-debt trend.',
     step: 4,
   },
   {

@@ -179,6 +179,11 @@ export const ConversationMenu: React.FC = () => {
                         downloadMarkdown(md, `${conv.title.replace(/[^a-z0-9]/gi, '-')}.md`)
                       }}
                       className="p-0.5 [@media(pointer:coarse)]:p-1.5 h-auto min-h-0 text-muted-foreground hover:text-primary"
+                      onKeyDown={(e) => {
+                        // Preserve the button's native activation instead of selecting
+                        // its parent conversation option and cancelling the download.
+                        if (e.key === 'Enter' || e.key === ' ') e.stopPropagation()
+                      }}
                       aria-label={`Export conversation: ${conv.title}`}
                     >
                       <Download size={11} />

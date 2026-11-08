@@ -8,7 +8,7 @@ A CRQC could break the asymmetric cryptography that protects most digital commun
 
 ### The Key Takeaway
 
-Use the dates that actually apply to you. If you supply U.S. National Security Systems, CNSA 2.0 sets them; otherwise use your regulator's and your customers' dates. The method has three steps: CRQC scenario planning, building a comprehensive risk register, and visualizing exposure on a 5x5 likelihood-impact heatmap to guide executive decision-making. The heatmap ranks your assets against each other; it does not measure when a quantum computer will arrive.
+Use the dates that actually apply to you. If you supply U.S. National Security Systems, CNSA 2.0 sets them; otherwise use your regulator's and your customers' dates. The method has four steps: CRQC scenario planning, building a comprehensive risk register, visualizing exposure on a 5x5 likelihood-impact heatmap to guide executive decision-making, and mapping the register against the compliance deadlines that apply to you. The heatmap ranks your assets against each other; it does not measure when a quantum computer will arrive.
 
 ### What's Happening
 

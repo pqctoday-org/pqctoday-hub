@@ -108,7 +108,7 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   CKO_PROFILE: {
     hex: '0x00000009',
-    def: 'New object class introduced by PKCS#11 Profiles v3.2 §3: a token exposes one CKO_PROFILE object per conformance profile it claims — discoverable by any application via a plain C_FindObjects, no vendor-specific query needed.',
+    def: 'A profile object identifies a PKCS#11 profile the token declares it implements. Profile discovery already appears in Profiles v3.0 and specification v3.1; C_FindObjects can discover these objects.',
   },
   CKA_CLASS: {
     hex: '0x00000000',
@@ -129,11 +129,11 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   CKA_PROFILE_ID: {
     hex: '0x00000601',
-    def: 'The single attribute on a CKO_PROFILE object — which conformance profile it names (e.g. CKP_BASELINE_PROVIDER). Read-only, fixed at creation.',
+    def: 'The attribute a CKO_PROFILE object adds to the common object attributes — which profile it names (e.g. CKP_BASELINE_PROVIDER). Defined in Profiles v3.0 and specification v3.1, before v3.2.',
   },
   CKA_ALLOWED_MECHANISMS: {
     hex: '0x40000600',
-    def: 'v3.2 §4.8 Table 13 — an array attribute pinning a key to a specific allow-list of mechanisms. Any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID, even if the mechanism itself is otherwise valid for that key type — the enforcement happens per-key, not just per-token.',
+    def: 'An array attribute pinning a key to a specific allow-list of mechanisms (v3.2 §4.8, Table 26; the attribute already exists in the v2.40 specification). Any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID, even if the mechanism itself is otherwise valid for that key type — the enforcement happens per-key, not just per-token.',
   },
   CKA_PARAMETER_SET: {
     def: "Which named parameter set a PQC key uses — e.g. one of SLH-DSA's 12 CKP_SLH_DSA_* sets, distinct from the generic CKA_KEY_TYPE/CKA_KEY_TYPE algorithm family.",
@@ -146,11 +146,11 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   CKA_TRUSTED: {
     hex: '0x00000086',
-    def: 'v3.2 §4.2 Table 13 footnote 10 — "Can only be set to CK_TRUE by the SO user." This engine enforces that more strictly than the footnote alone implies: silently dropped from C_GenerateKey templates (no error — the key is created, just without the flag), and permanently read-only via C_SetAttributeValue for every caller, SO included, once an object exists. The only live path to CKA_TRUSTED=TRUE is C_CreateObject (raw key import) on an SO session.',
+    def: 'Present since the v2.40 specification. v3.2 §4.2 Table 13 footnote 10 — "Can only be set to CK_TRUE by the SO user." This engine enforces that more strictly than the footnote alone implies: silently dropped from C_GenerateKey templates (no error — the key is created, just without the flag), and permanently read-only via C_SetAttributeValue for every caller, SO included, once an object exists. The only live path to CKA_TRUSTED=TRUE is C_CreateObject (raw key import) on an SO session.',
   },
   CKA_WRAP_WITH_TRUSTED: {
     hex: '0x00000210',
-    def: 'v3.2 §4.8/§4.10 — pins a key so it can only be wrapped by a wrapping key whose own CKA_TRUSTED=TRUE. Unlike CKA_TRUSTED itself, this one is ordinary client-settable — no SO gate.',
+    def: 'Present since the v2.40 specification (v3.2 §4.10 and §4.11) — pins a key so it can only be wrapped by a wrapping key whose own CKA_TRUSTED=TRUE. Unlike CKA_TRUSTED itself, this one is ordinary client-settable — no SO gate.',
   },
   CKR_ATTRIBUTE_READ_ONLY: {
     hex: '0x00000010',
@@ -269,13 +269,13 @@ export const TERMS: GlossaryTerm[] = [
     id: 'session-state',
     label: 'Session state',
     cat: 'protocol',
-    def: 'A session is Public or User (authenticated via C_Login) crossed with Read-Only or Read/Write — four states in total, e.g. "R/W User Functions" — visible via C_GetSessionInfo.',
+    def: 'PKCS#11 defines five session states: R/O Public Session, R/O User Functions, R/W Public Session, R/W User Functions and R/W SO Functions. The Security Officer state exists only for read/write sessions: read-only SO sessions do not exist, and a read-only session open while the SO is logged in behaves like R/O Public Session. C_GetSessionInfo reports the current state. Session state is separate from per-operation authentication: a private key with CKA_ALWAYS_AUTHENTICATE needs a C_Login with the context-specific user type right after each operation on it is initialised, which authenticates that key for that operation rather than the session.',
   },
   {
     id: 'object-class',
     label: 'Object class',
     cat: 'protocol',
-    def: 'Every PKCS#11 object (CKA_CLASS) is exactly one of a fixed set: public key, private key, secret key, certificate, data, domain parameters, and (new in v3.2) profile.',
+    def: 'CKA_CLASS identifies an object class, for example public key, private key, secret key, certificate, data, domain parameters or profile. Profile objects predate v3.2.',
   },
   {
     id: 'template',
@@ -293,7 +293,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'baseline-provider',
     label: 'Baseline Provider profile',
     cat: 'protocol',
-    def: "PKCS#11 Profiles v3.2's minimum conformance profile (CKP_BASELINE_PROVIDER) — a fixed, spec-defined list of functions and mechanisms every claiming token must support, discoverable via a CKO_PROFILE object rather than vendor documentation.",
+    def: 'A standard profile describing baseline requirements for a PKCS#11 provider, discoverable through CKO_PROFILE. It already appears in Profiles v3.0; the applicable profile edition defines the requirements.',
   },
   {
     id: 'kem',
@@ -347,7 +347,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'validation-objects',
     label: 'Validation objects (CKO_VALIDATION)',
     cat: 'protocol',
-    def: 'v3.2 §4.15 — describes which third-party validation (e.g. NIST CMVP) a module conforms to. Session-level validation flags (§4.15.3.1, C_GetSessionValidationFlags) ARE implemented here — honestly, always empty, since this build has no such validation. Key-object-level flags (§4.15.3.2, CKA_OBJECT_VALIDATION_FLAGS) and CKO_VALIDATION objects themselves are not implemented at all — a distinct gap from trust objects above.',
+    def: 'v3.2 §4.15 defines validation metadata and operation indicators. C_GetSessionValidationFlags reports last-operation flags under the applicable rules; a flag value alone is not a module-certificate lookup. This lesson reads session flags, not CKO_VALIDATION objects or CKA_OBJECT_VALIDATION_FLAGS. Check an exact module validation claim separately against the CMVP entry and security policy.',
   },
   {
     id: 'composite',

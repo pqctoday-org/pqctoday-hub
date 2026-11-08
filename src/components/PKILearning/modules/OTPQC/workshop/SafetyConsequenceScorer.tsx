@@ -247,14 +247,22 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">Score (model estimate)</h4>
+        <h4 className="text-sm font-bold text-foreground mb-3">
+          Illustrative safety scenario score
+        </h4>
+        <p className="text-xs text-muted-foreground mb-3">
+          These authored factors combine selected cryptographic weaknesses with existing
+          unauthenticated paths. They are not a separate measure of extra risk caused by a quantum
+          computer, a measured likelihood or a production safety assessment. The symmetric factor is
+          a teaching assumption, not a measured security margin.
+        </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-muted-foreground">Consequence</div>
             <div className="text-lg font-mono font-bold">{result.consequence}</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-muted-foreground">Quantum exposure</div>
+            <div className="text-muted-foreground">Scenario exposure factor</div>
             <div className="text-lg font-mono font-bold">×{result.exposure}</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -268,7 +276,9 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
         </div>
         <div className="mt-4 flex justify-center">
           <div className={`rounded-xl p-5 text-center border ${levelColor(result.riskLevel)}`}>
-            <p className="text-[10px] font-bold uppercase text-muted-foreground">Compound score</p>
+            <p className="text-[10px] font-bold uppercase text-muted-foreground">
+              Illustrative compound score
+            </p>
             <p className="text-4xl font-bold font-mono">{result.compound}</p>
             <p className="text-[10px] font-bold uppercase mt-1">{result.riskLevel}</p>
           </div>

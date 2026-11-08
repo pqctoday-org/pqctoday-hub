@@ -77,6 +77,8 @@ export interface LessonStep {
    * key); 'pending': §8.1.2 async accept — OperationPending + a correlation
    * value, not a payload. Default: 'success'. */
   expect?: 'success' | 'refusal' | 'pending'
+  /** Required certificate answer, separate from successful request processing. */
+  expectValidity?: 'Valid' | 'Invalid'
 }
 
 /** Collect every UniqueIdentifier in a response tree (e.g. CreateSplitKey's
@@ -171,7 +173,7 @@ export const LESSONS: Lesson[] = [
       'The request/response SHAPE is identical except the CryptographicAlgorithm value and the size of what comes back. That equivalence is crypto-agility at the protocol level.',
     ],
     whyItMatters:
-      'If your integration code only ever reads PrivateKeyUniqueIdentifier / PublicKeyUniqueIdentifier off the response and treats them as opaque handles — never parsing key material client-side — this flip IS the entire migration for object creation. No code change, just a policy/config change (see the Agility tab).',
+      'If your integration code only ever reads PrivateKeyUniqueIdentifier / PublicKeyUniqueIdentifier off the response and treats them as opaque handles — never parsing key material client-side — this flip changes object creation without a code change for such a caller; public keys, certificates and verifier support still have to be rolled out (see the Agility tab).',
     tryRef: ['CreateKeyPair', 'Activate'],
   },
   {
@@ -528,7 +530,7 @@ export const LESSONS: Lesson[] = [
       },
     ],
     notes: [
-      "Grover's algorithm gives a quantum computer only a QUADRATIC speedup on unstructured search — it effectively halves a symmetric key's bit strength. AES-256 loses headroom (down to ~128-bit effective security), not safety: 128-bit-effective is still completely infeasible to brute-force.",
+      "Grover's algorithm gives a quantum computer only a QUADRATIC speedup on unstructured search — In the idealized query-count model it roughly halves the key size to search; real attacks also pay for a very long serial quantum computation (NIST PQC FAQ). AES-256 loses headroom, not safety: 128-bit-effective is still completely infeasible to brute-force.",
       "Contrast: Shor's algorithm gives an EXPONENTIAL speedup against the math (factoring, discrete log) RSA/ECC/DH rely on — that's why those need full replacement, not just a bigger key. SHA-256/384/3 hashing follows the same Grover logic as AES — also fine as-is.",
     ],
     whyItMatters:
@@ -620,7 +622,7 @@ export const LESSONS: Lesson[] = [
       { label: 'CryptographicAlgorithm value', a: 'ML-KEM-768', b: 'X25519MLKEM768', same: false },
     ],
     notes: [
-      "X25519MLKEM768 is a single first-class KMIP 3.0 CSD02 CryptographicAlgorithm value (published codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets by pure concatenation (ss_mlkem ‖ ss_x25519, 64 B total) — no KDF, matching RFC 10024 §4.3 exactly.",
+      "X25519MLKEM768 is a single first-class KMIP 3.0 CSD02 CryptographicAlgorithm value (published codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets by pure concatenation (ss_mlkem ‖ ss_x25519, 64 B total) — no KDF, matching RFC 10024 §4.3 exactly. In TLS 1.3 the key schedule (HKDF) derives keys from this raw secret (RFC 10024 s5-s6).",
       "A second hybrid variant exists for shops standardized on NIST curves instead of X25519: SecP256r1MLKEM768 (draft codepoint 0x5D, IANA TLS group 0x11EB) — same idea, ECDH P-256 in place of X25519, same pure-concatenation combiner (ss_p256 ‖ ss_mlkem). Not run as its own step here since the wire flow is identical to X25519MLKEM768 above; try it directly in the Commands tab's algorithm picker.",
       '⚠ What about hybrid SIGNATURES — e.g. "need both ECDSA and ML-DSA to verify"? KMIP has no native composite-signature algorithm or dual-sign operation yet; no committee draft defines one. Two spec-compliant workarounds exist today: (1) an extension codepoint (KMIP reserves 8XXXXXXX) registering a single composite name, planned but not yet standard, or (2) two independently-linked keys signed together inside ONE Batch request — which you actually can run: see the Batch & Macros tab\'s "Provision & sign" recipe pattern.',
     ],
@@ -801,10 +803,10 @@ export const LESSONS: Lesson[] = [
     tag: 'New in 0.13',
     tone: 'warn',
     title: 'An honest HSM: claims you can check',
-    blurb: 'Destroy really scrubs, read-only refuses, Locate really filters.',
+    blurb: 'Inspect lifecycle and refusal outcomes, and understand what they do not establish.',
     setup:
-      'A Success status is only worth what the server actually did. A 2026 audit of this engine hunted precisely that gap and found 13 places where the wire said Success while nothing (or the wrong thing) happened — attributes silently dropped, Destroy that only flipped a flag while plaintext sat in the database, Locate filters accepted and ignored. Engine 0.13.0 fixed all of them, and 0.12.0\'s "honest maximum" pass emptied Query\'s advertised-but-not-implemented list. This lesson runs three of those honesty guarantees live.',
-    sideHeaders: ['The claim', 'The proof'],
+      'A Success status is only worth what the server actually did. A 2026 audit of this engine hunted precisely that gap and found 13 places where the wire said Success while nothing (or the wrong thing) happened — attributes silently dropped, Destroy that only flipped a flag while plaintext sat in the database, Locate filters accepted and ignored. Engine 0.13.0 fixed all of them, and 0.12.0\'s "honest maximum" pass emptied Query\'s advertised-but-not-implemented list. This lesson checks API outcomes. It does not measure memory zeroization or persistent-storage erasure.',
+    sideHeaders: ['The claim', 'The observed response'],
     classical: {
       algorithm: null,
       algoLabel: 'What the wire used to hide',
@@ -833,12 +835,12 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Destroy',
-          label: 'Destroy the key — material zeroized, storage securely deleted',
+          label: 'Request destruction of the sample key',
           buildSpec: (r) => ({ op: 'Destroy', uid: field(r, 0, 'uid') }),
         },
         {
           op: 'Get',
-          label: 'Try to Get it back — the material is genuinely gone',
+          label: 'Try Get after Destroy — observe the API refusal',
           expect: 'refusal',
           buildSpec: (r) => ({ op: 'Get', uid: field(r, 0, 'uid') }),
         },
@@ -853,8 +855,8 @@ export const LESSONS: Lesson[] = [
       },
       {
         label: 'Destroy',
-        a: 'flag flipped, bytes kept',
-        b: 'zeroized + secure_delete',
+        a: 'a lifecycle response alone',
+        b: 'Get refused; storage erasure not tested',
         same: false,
       },
       {
@@ -871,12 +873,13 @@ export const LESSONS: Lesson[] = [
       },
     ],
     notes: [
+      'A refused Get shows that this API did not return the key after Destroy. The same observation is possible when access is blocked but bytes remain. Memory zeroization and persistent-media sanitization require separate implementation and storage assurance; this sample does not test them.',
       "The Dev tab's palette, switched to Corpus, is the systematic version of this lesson: 97 of the 102 OASIS conformance tests pass against the engine's native baseline, and the in-browser replay pins its own exact breakdown — a new silent skip fails the suite rather than shrinking the pass count.",
       "The same audit fixed usage-budget honesty: once Get Usage Allocation grants part of a key's operation budget, re-setting the UsageLimits attribute is refused (§4.69) — a budget you can silently reset is not a budget.",
-      'Not every real operation gets its own walkthrough here. Identity/access (CreateUser, CreateGroup, CreateCredential, Login/Logout), lifecycle (Deactivate — a reversible state change, distinct from Destroy\'s irreversible key-material scrub; Obliterate — Destroy plus wiping the managed-object METADATA too, for when even "a key with this UID once existed" must not be provable), and policy-shaping (Set/Get Constraints, Set Defaults) are all genuinely implemented — try them directly in the Commands tab\'s Reference sub-tab. What\'s honestly NOT implemented, and never pretends to be: Notify and Put (§6.2 server-to-client push — this playground has no "client" to push to; the spec itself says delivery is by unspecified out-of-band means) and Delegated Login / Re-Provision (no handler, never corpus-required).',
+      'Not every real operation gets its own walkthrough here. Identity/access (CreateUser, CreateGroup, CreateCredential, Login/Logout), lifecycle (Deactivate — a reversible state change, distinct from Destroy, which requests key destruction; Obliterate additionally addresses managed-object metadata, without proving external copies or audit records were erased), and policy-shaping (Set/Get Constraints, Set Defaults) are all genuinely implemented — try them directly in the Commands tab\'s Reference sub-tab. What\'s honestly NOT implemented, and never pretends to be: Notify and Put (§6.2 server-to-client push — this playground has no "client" to push to; the spec itself says delivery is by unspecified out-of-band means) and Delegated Login / Re-Provision (no handler, never corpus-required).',
     ],
     whyItMatters:
-      'Compliance evidence is only as good as the server\'s honesty — "the key material SHALL be destroyed" is an auditable claim, not a status code. An engine that refuses what it cannot do, and does what it says, is the difference between a conformance REPORT and conformance.',
+      'When evaluating production tools, ask which destruction technique applies to the specific implementation, media and copies, and how its outcome is verified and validated. This sample shows an API refusal, not proof that every copy of key material was erased.',
     tryRef: ['SetAttribute', 'Destroy', 'Locate', 'GetUsageAllocation'],
   },
   {
@@ -895,6 +898,7 @@ export const LESSONS: Lesson[] = [
       steps: [
         {
           op: 'Validate',
+          expectValidity: 'Valid',
           label:
             'Set up a demo CA (real ECDSA keygen + a real self-signed root cert) and Validate it',
           preRun: (engine) => {
@@ -910,6 +914,7 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Validate',
+          expectValidity: 'Invalid',
           label: 'Corrupt one hex nibble of the SAME certificate and Validate again',
           buildRaw: () => ({
             op: 'Validate',
@@ -926,6 +931,7 @@ export const LESSONS: Lesson[] = [
       steps: [
         {
           op: 'Validate',
+          expectValidity: 'Valid',
           label:
             'Set up a demo CA (real ML-DSA-65 keygen + a real self-signed root cert) and Validate it',
           preRun: (engine) => {
@@ -941,6 +947,7 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Validate',
+          expectValidity: 'Invalid',
           label: 'Corrupt one hex nibble of the SAME certificate and Validate again',
           buildRaw: () => ({
             op: 'Validate',

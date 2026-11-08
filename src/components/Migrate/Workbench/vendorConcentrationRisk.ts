@@ -37,13 +37,37 @@ export function useVendorConcentrationRisks(): RiskCard[] {
     const scopeNoun = hasSelection ? 'selected' : 'catalog'
 
     // ── Single-source domains: exactly one GA product covers this asset ──
-    const singleSource = REPLACE_ASSETS.filter((asset) => {
-      const gaCount = productsForDomain(asset.id).filter(
+    const domainCoverage = REPLACE_ASSETS.map((asset) => ({
+      asset,
+      availableCount: productsForDomain(asset.id).filter(
         (p) =>
           (!hasSelection || selectedSet.has(p.productId)) && productPqcStatus(p).status === 'ga'
-      ).length
-      return gaCount === 1
-    })
+      ).length,
+    }))
+    const singleSource = domainCoverage
+      .filter((item) => item.availableCount === 1)
+      .map((item) => item.asset)
+    const withoutRecordedCoverage = domainCoverage
+      .filter((item) => item.availableCount === 0)
+      .map((item) => item.asset)
+    const hasRecordedCoverage = domainCoverage.some((item) => item.availableCount > 0)
+    const singleSourceDetail =
+      domainCoverage.length === 0
+        ? `No domains are defined for ${scopeNoun} coverage; coverage is not assessed.`
+        : !hasRecordedCoverage
+          ? `No available ${scopeNoun} products are recorded for these domains; coverage has not been established.`
+          : [
+              singleSource.length > 0
+                ? `Only one available ${scopeNoun} product is currently mapped to: ${singleSource.map((a) => a.label).join(', ')}.`
+                : withoutRecordedCoverage.length === 0
+                  ? `Every mapped domain has more than one available ${scopeNoun} product recorded.`
+                  : `Domains with recorded coverage have more than one available ${scopeNoun} product.`,
+              withoutRecordedCoverage.length > 0
+                ? `No available ${scopeNoun} product is recorded for: ${withoutRecordedCoverage.map((a) => a.label).join(', ')}.`
+                : '',
+            ]
+              .filter(Boolean)
+              .join(' ')
 
     // ── Vendor concentration: which vendor supplies the most GA products ──
     const gaProducts = scopeItems.filter((p) => productPqcStatus(p).status === 'ga')
@@ -86,11 +110,10 @@ export function useVendorConcentrationRisks(): RiskCard[] {
       {
         key: 'single-source',
         title: 'Single-source catalog coverage',
-        headline: `${singleSource.length} of ${REPLACE_ASSETS.length}`,
-        detail:
-          singleSource.length > 0
-            ? `Only one available ${scopeNoun} product is currently mapped to: ${singleSource.map((a) => a.label).join(', ')}.`
-            : `Every mapped domain has more than one available ${scopeNoun} product recorded.`,
+        headline: hasRecordedCoverage
+          ? `${singleSource.length} of ${REPLACE_ASSETS.length}`
+          : 'No data',
+        detail: singleSourceDetail,
         severe: singleSource.length > 0,
       },
       {
@@ -105,11 +128,13 @@ export function useVendorConcentrationRisks(): RiskCard[] {
       {
         key: 'cert-gap',
         title: 'FIPS evidence gap',
-        headline: `${certGapPct}%`,
+        headline: gaProducts.length > 0 ? `${certGapPct}%` : 'Not assessed',
         detail:
-          gaWithoutFips.length > 0
-            ? `${gaWithoutFips.length} of ${gaProducts.length} available ${scopeNoun} products have no linked FIPS 140-3 validation in this catalog.`
-            : `Every available ${scopeNoun} product has a linked FIPS 140-3 validation record.`,
+          gaProducts.length === 0
+            ? `FIPS evidence coverage is not assessed because no available ${scopeNoun} products are recorded.`
+            : gaWithoutFips.length > 0
+              ? `${gaWithoutFips.length} of ${gaProducts.length} available ${scopeNoun} products have no linked FIPS 140-3 validation in this catalog.`
+              : `Every available ${scopeNoun} product has a linked FIPS 140-3 validation record.`,
         severe: certGapPct >= 30,
       },
       {

@@ -1,4 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  revisionAuthorshipLabel,
+  revisionReviewLabel,
+  hasCommitReference,
+  nonCommitReferenceLabel,
+} from './revisionProvenance'
 import { useMemo, useState } from 'react'
 import { GitMerge, Bot, Filter, X } from 'lucide-react'
 import { useNavigate } from 'react-router'
@@ -61,7 +67,7 @@ interface GlobalRevisionsFeedProps {
   className?: string
   /** When set, show only revisions for this entity */
   entityFilter?: string
-  /** Domain for entityFilter */
+  /** Limit to a domain, independently of entityFilter */
   domainFilter?: string
 }
 
@@ -171,16 +177,22 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
     <div className="flex max-sm:flex-col items-start gap-3 py-3 border-b border-border last:border-0">
       <div className="mt-0.5 shrink-0">
         {r.authored_by_llm ? (
-          <Bot className="w-4 h-4 text-accent" aria-label="LLM-authored" />
+          <Bot
+            className="w-4 h-4 text-accent"
+            aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
+          />
         ) : (
-          <GitMerge className="w-4 h-4 text-status-success" aria-label="Human-reviewed" />
+          <GitMerge
+            className="w-4 h-4 text-muted-foreground"
+            aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
+          />
         )}
       </div>
       {/* max-sm:w-full: in the phone column layout items-start sized this to its
           content, and long draft names in the chips ran past 390 px. */}
       <div className="min-w-0 flex-1 max-sm:w-full [overflow-wrap:anywhere]">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-sm font-medium text-foreground">{r.reviewer_display}</span>
+          <span className="text-sm font-medium text-foreground">{revisionReviewLabel(r)}</span>
           <span className="text-xs text-muted-foreground capitalize">{r.domain}</span>
           <span className="text-xs text-muted-foreground">{r.change_type.replace(/_/g, ' ')}</span>
           <BypassChip revision={r} />
@@ -189,7 +201,7 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
         {r.record_ids && r.record_ids.length > 0 && (
           <EntityChips ids={r.record_ids} domain={r.domain} />
         )}
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex flex-wrap items-center gap-2 mt-1">
           {r.pr_number > 0 ? (
             <a
               href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
@@ -199,23 +211,21 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
             >
               PR #{r.pr_number}
             </a>
-          ) : r.merge_sha === 'baseline' ? (
-            <span
-              className="text-xs text-muted-foreground italic"
-              title="Recorded before this module/tool had a tracked PR or commit — no git object to link to."
-            >
-              Initial import
-            </span>
-          ) : r.merge_sha ? (
+          ) : hasCommitReference(r.merge_sha) ? (
             <a
               href={`https://github.com/pqctoday-org/pqctoday-hub/commit/${r.merge_sha}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-primary hover:underline font-mono"
+              title="Recorded Git reference; commit availability is not checked here."
             >
               {r.merge_sha.slice(0, 7)}
             </a>
-          ) : null}
+          ) : (
+            <span className="text-xs text-muted-foreground break-words [overflow-wrap:anywhere]">
+              {nonCommitReferenceLabel(r.merge_sha)}
+            </span>
+          )}
           {offlineSuffix && <span className="text-xs text-muted-foreground">{offlineSuffix}</span>}
         </div>
       </div>
@@ -234,10 +244,12 @@ export function GlobalRevisionsFeed({
   domainFilter,
 }: GlobalRevisionsFeedProps) {
   const navigate = useNavigate()
-  const { revisions, isLoading } = useRevisions()
+  const { revisions, isLoading, error, retry } = useRevisions()
   const availableDomains = domains ?? ALL_DOMAINS
   const [activeDomains, setActiveDomains] = useState<Set<string>>(new Set(availableDomains))
-  const [page, setPage] = useState(1)
+  const scopeKey = JSON.stringify([domainFilter, entityFilter])
+  const [pagination, setPagination] = useState({ scopeKey, page: 1 })
+  const page = pagination.scopeKey === scopeKey ? pagination.page : 1
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [personaSortActive, setPersonaSortActive] = useState(true)
 
@@ -272,7 +284,11 @@ export function GlobalRevisionsFeed({
     // (FeedEntry) instead of a PR/commit link, rather than hidden.
     const base = entityFilter
       ? byRecord(revisions, domainFilter ?? '', entityFilter)
-      : revisions.filter((r) => activeDomains.size === 0 || activeDomains.has(r.domain))
+      : revisions.filter(
+          (r) =>
+            (!domainFilter || r.domain === domainFilter) &&
+            (activeDomains.size === 0 || activeDomains.has(r.domain))
+        )
 
     // When entityFilter is active the entries are already scoped to one
     // record, so persona sort is a no-op.
@@ -294,12 +310,13 @@ export function GlobalRevisionsFeed({
       }
       return next
     })
-    setPage(1)
+    setPagination({ scopeKey, page: 1 })
   }
 
   if (isLoading) {
     return (
-      <div className={`space-y-2 ${className}`}>
+      <div role="status" aria-label="Loading revision history" className={`space-y-2 ${className}`}>
+        <span className="sr-only">Loading revision history...</span>
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="h-14 rounded-md bg-muted animate-pulse" />
         ))}
@@ -307,9 +324,23 @@ export function GlobalRevisionsFeed({
     )
   }
 
+  if (error) {
+    return (
+      <div role="alert" className={`space-y-2 rounded-lg border border-border p-4 ${className}`}>
+        <p className="text-sm text-foreground">{error}</p>
+        <p className="text-xs text-muted-foreground">
+          Your URL scope and filters are preserved. Retry to load the records.
+        </p>
+        <Button variant="outline" size="sm" onClick={retry}>
+          Retry revision history
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className={`space-y-3 ${className}`}>
-      {entityFilter ? (
+      {entityFilter || domainFilter ? (
         <div className="flex items-center gap-2 text-sm">
           <Button
             variant="link"
@@ -320,7 +351,7 @@ export function GlobalRevisionsFeed({
             ← All revisions
           </Button>
           <span className="text-muted-foreground">/</span>
-          <span className="font-mono text-foreground">{entityFilter}</span>
+          <span className="font-mono text-foreground">{entityFilter ?? 'Domain scope'}</span>
           {domainFilter && (
             <span className="text-xs text-muted-foreground capitalize">({domainFilter})</span>
           )}
@@ -365,7 +396,11 @@ export function GlobalRevisionsFeed({
       )}
 
       {visible.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-4 text-center">No revision records.</p>
+        <p className="text-sm text-muted-foreground py-4 text-center">
+          {revisions.length === 0
+            ? 'No revision records.'
+            : 'No revision records match this scope.'}
+        </p>
       ) : (
         <div>
           {visible.map((r, i) => (
@@ -379,7 +414,7 @@ export function GlobalRevisionsFeed({
           variant="ghost"
           size="sm"
           className="w-full text-muted-foreground"
-          onClick={() => setPage((p) => p + 1)}
+          onClick={() => setPagination({ scopeKey, page: page + 1 })}
         >
           Load more ({filtered.length - visible.length} remaining)
         </Button>

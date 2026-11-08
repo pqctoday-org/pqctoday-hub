@@ -16,6 +16,16 @@ describe('DataAssetSensitivity compliance mandates', () => {
     expect(broken).toEqual([])
   })
 
+  it('states GDPR scope through its territorial triggers, not residence alone', () => {
+    const gdpr = COMPLIANCE_MANDATES.find((m) => m.id === 'GDPR')!
+    // Art. 3(1): establishment in the Union; Art. 3(2): offering to, or monitoring, people in the Union.
+    expect(gdpr.scope).toMatch(/establishment/)
+    expect(gdpr.scope).toMatch(/offering goods or services/)
+    expect(gdpr.scope).toMatch(/monitoring the behaviour/)
+    expect(gdpr.scope).not.toMatch(/EU residents processed by any organization globally/)
+    expect(gdpr.pqcRequirement).not.toMatch(/PQC will become expected/)
+  })
+
   it('has no forward-looking deadlineYear in the past', () => {
     const currentYear = new Date().getFullYear()
     const stale: string[] = []

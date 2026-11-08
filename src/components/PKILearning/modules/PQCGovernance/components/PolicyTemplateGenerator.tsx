@@ -13,6 +13,7 @@ import { OptionTile } from '@/components/common/OptionTile'
 import { Button } from '@/components/ui/button'
 import { FileText, KeyRound, Building2, CalendarClock } from 'lucide-react'
 import type { RACIOutput, PolicyOutput } from '../types'
+import type { ExecutiveDocument } from '@/services/storage/types'
 
 export type PolicyType =
   'crypto-algorithm' | 'key-management' | 'vendor-requirements' | 'migration-timeline'
@@ -76,13 +77,14 @@ function suggestRotationPeriod(
   dataSensitivity: string[],
   cryptoAgility: string
 ): RotationSuggestion {
-  // Hardcoded crypto can't rotate often → push to longer rotation; agile orgs
-  // can run aggressive 90-day rotation safely.
+  // Starting point only: the longest interval is pre-selected when the assessment
+  // records hardcoded crypto (key replacement and algorithm agility are separate,
+  // so each system needs its own decision); agile orgs with critical data get 90 days.
   if (cryptoAgility === 'hardcoded')
     return {
       value: '2-years',
       rationale:
-        'Suggested from your assessment: hardcoded crypto (no runtime algorithm swap) can’t be rotated often, so this defaults to the longest safe interval.',
+        'Starting point only: this tool pre-selects its longest interval when the assessment records hardcoded crypto; key replacement and algorithm agility are separate, so confirm per system (SP 800-57 Pt 1 Rev 5 Sec 5.3.1).',
     }
   if (cryptoAgility === 'agile' && dataSensitivity.includes('critical'))
     return {
@@ -707,21 +709,128 @@ interface KpiDriftRule {
   policyAction: string
 }
 
+type PolicyFormData = Record<string, Record<string, string | string[]>>
+interface OriginalPolicySnapshot {
+  id: string
+  title: string
+  data: string
+  createdAt: number
+  inputs?: unknown
+}
+interface PolicyRuleDraft {
+  // Missing means legacy rendered content, not an empty editable list.
+  kpiDriftRules?: KpiDriftRule[]
+  originalPolicySnapshot?: OriginalPolicySnapshot
+}
+const EMPTY_RULES: KpiDriftRule[] = []
+const EMPTY_RULE_DRAFT: PolicyRuleDraft = { kpiDriftRules: EMPTY_RULES }
+
+function asRecord(value: unknown): Record<string, unknown> | undefined {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined
+}
+function isRuleList(value: unknown): value is KpiDriftRule[] {
+  return (
+    Array.isArray(value) &&
+    value.every((rule) => {
+      const row = asRecord(rule)
+      return (
+        typeof row?.kpi === 'string' &&
+        typeof row.threshold === 'string' &&
+        typeof row.policyAction === 'string'
+      )
+    })
+  )
+}
+function originalSnapshot(value: unknown): OriginalPolicySnapshot | undefined {
+  const row = asRecord(value)
+  return row && typeof row.data === 'string' && typeof row.id === 'string'
+    ? (row as unknown as OriginalPolicySnapshot)
+    : undefined
+}
+function readPolicyDrafts(documents: ExecutiveDocument[]) {
+  // Keep future subtype keys and their data opaque, including explicit empty
+  // rule arrays. The existing shared store saves one document per module/type.
+  const drafts = new Map<string, unknown>()
+  for (const doc of documents) {
+    const inputs = asRecord(doc.inputs)
+    if (!inputs) continue
+    const aggregate = asRecord(inputs.policyDraftsByType)
+    const candidates = aggregate ? Object.entries(aggregate) : []
+    if (typeof inputs.policyType === 'string') candidates.push([inputs.policyType, inputs])
+    for (const [type, value] of candidates) {
+      if (drafts.has(type)) continue
+      if (!POLICY_TYPES.some((p) => p.id === type)) {
+        drafts.set(type, value)
+        continue
+      }
+      const draft = asRecord(value) ?? {}
+      const snapshot = originalSnapshot(draft.originalPolicySnapshot)
+      drafts.set(type, {
+        ...draft,
+        ...(!isRuleList(draft.kpiDriftRules) && !snapshot
+          ? {
+              originalPolicySnapshot: {
+                id: doc.id,
+                title: doc.title,
+                data: doc.data,
+                createdAt: doc.createdAt,
+                inputs: doc.inputs,
+              },
+            }
+          : {}),
+      })
+    }
+  }
+  return {
+    byType: Object.fromEntries(drafts) as Record<string, unknown>,
+    baseInputs: asRecord(documents[0]?.inputs) ?? {},
+  }
+}
+function rulesForSavedDraft(value: unknown): PolicyRuleDraft {
+  const draft = asRecord(value)
+  if (!draft) return EMPTY_RULE_DRAFT
+  return {
+    ...(isRuleList(draft.kpiDriftRules) ? { kpiDriftRules: draft.kpiDriftRules } : {}),
+    ...(originalSnapshot(draft.originalPolicySnapshot)
+      ? { originalPolicySnapshot: originalSnapshot(draft.originalPolicySnapshot) }
+      : {}),
+  }
+}
+function renderRuleDraft(draft: PolicyRuleDraft): string {
+  let md = draft.kpiDriftRules ? renderKpiDriftRulesMd(draft.kpiDriftRules) : ''
+  if (draft.originalPolicySnapshot) {
+    md += '\n---\n\n## Preserved original policy snapshot (read-only)\n\n'
+    md +=
+      'The loaded document did not record editable rule inputs. This is the original rendered document, not recovered editable rules.\n\n'
+    // Do not parse arbitrary old Markdown or replace an unrecorded array with
+    // an empty one. Keep the full original text, including ambiguous tables.
+    md += draft.originalPolicySnapshot.data
+  }
+  return md
+}
+
 function renderKpiDriftRulesMd(rules: KpiDriftRule[]): string {
-  let md = '\n---\n\n## KPI Drift Rules (CSWP.39 §5.4 -> §5.1 feedback loop)\n\n'
+  let md = '\n---\n\n## Hub sample KPI drift rules\n\n'
   if (rules.length === 0) {
     md +=
-      '_No drift rules defined. Per §5.4 - KPI exceptions should feed back into policy-as-code updates._\n\n'
+      '_No sample drift rules defined. These illustrative rows can link a chosen threshold to a policy-review action; they do not enforce policy._\n\n'
   } else {
     md += '| KPI | Threshold | Policy action when threshold breached |\n|---|---|---|\n'
     for (const r of rules) {
-      md += `| ${r.kpi || '-'} | ${r.threshold || '-'} | ${r.policyAction || '-'} |\n`
+      const cell = (value: string) =>
+        (value || '-')
+          .replace(/\\/g, '\\\\')
+          .replace(/\|/g, '\\|')
+          .replace(/\r\n|\r|\n/g, ' ')
+      md += `| ${cell(r.kpi)} | ${cell(r.threshold)} | ${cell(r.policyAction)} |\n`
     }
     md += '\n'
   }
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39 §5.2 - Crypto Security Policy Enforcement, and §5.4 - Measuring Migration Progress. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+    '*Related reading: NIST CSWP 39-upd1 §5.2 - Crypto Security Policy Enforcement, and §6.5 - Maturity Assessment for Crypto Agility. These Hub sample rules are not a NIST-prescribed feedback loop or maturity assessment. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   // N5: sanitise non-ASCII punctuation in the exported markdown string only.
   md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
@@ -747,7 +856,23 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
   const dataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
   const cryptoAgility = useAssessmentStore((s) => s.cryptoAgility)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const [kpiDriftRules, setKpiDriftRules] = useState<KpiDriftRule[]>([])
+  const savedDrafts = useMemo(() => readPolicyDrafts(savedPolicyDrafts), [savedPolicyDrafts])
+  const [ruleDraftsByType, setRuleDraftsByType] = useState<
+    Partial<Record<PolicyType, PolicyRuleDraft>>
+  >({})
+  const activeRuleDraft = useMemo(
+    () =>
+      ruleDraftsByType[activePolicyType] ??
+      rulesForSavedDraft(savedDrafts.byType[activePolicyType]),
+    [ruleDraftsByType, activePolicyType, savedDrafts]
+  )
+  const kpiDriftRules = activeRuleDraft.kpiDriftRules ?? EMPTY_RULES
+  const preservingLegacyRules = activeRuleDraft.kpiDriftRules === undefined
+  const updateRuleDraft = (update: (draft: PolicyRuleDraft) => PolicyRuleDraft) =>
+    setRuleDraftsByType((prev) => ({
+      ...prev,
+      [activePolicyType]: update(prev[activePolicyType] ?? activeRuleDraft),
+    }))
 
   useEffect(() => {
     if (!onOutput) return
@@ -755,30 +880,24 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
   }, [activePolicyType, onOutput])
 
   const addKpiDriftRule = () =>
-    setKpiDriftRules((prev) => [...prev, { kpi: '', threshold: '', policyAction: '' }])
+    updateRuleDraft((prev) => ({
+      ...prev,
+      kpiDriftRules: [...(prev.kpiDriftRules ?? []), { kpi: '', threshold: '', policyAction: '' }],
+    }))
   const updateKpiDriftRule = (idx: number, patch: Partial<KpiDriftRule>) =>
-    setKpiDriftRules((prev) => prev.map((row, i) => (i === idx ? { ...row, ...patch } : row)))
+    updateRuleDraft((prev) => ({
+      ...prev,
+      kpiDriftRules: (prev.kpiDriftRules ?? []).map((row, i) =>
+        i === idx ? { ...row, ...patch } : row
+      ),
+    }))
   const removeKpiDriftRule = (idx: number) =>
-    setKpiDriftRules((prev) => prev.filter((_, i) => i !== idx))
+    updateRuleDraft((prev) => ({
+      ...prev,
+      kpiDriftRules: (prev.kpiDriftRules ?? []).filter((_, i) => i !== idx),
+    }))
 
   const simplified = selectedPersona === 'executive' || selectedPersona === 'curious'
-
-  // Latest saved draft per policy type — keyed so switching tabs restores that
-  // tab's own draft instead of cross-contaminating it with another type's.
-  // `useSavedArtifactDocuments` already provides the filter-by-type +
-  // newest-first sort; this only adds the per-policyType grouping on top,
-  // instead of re-implementing that filter/sort itself.
-  const savedFormDataByType = useMemo(() => {
-    const map: Partial<Record<PolicyType, Record<string, Record<string, string | string[]>>>> = {}
-    for (const doc of savedPolicyDrafts) {
-      const inputs = doc.inputs as
-        | { policyType?: PolicyType; formData?: Record<string, Record<string, string | string[]>> }
-        | undefined
-      if (!inputs?.policyType || !inputs.formData || map[inputs.policyType]) continue
-      map[inputs.policyType] = inputs.formData
-    }
-    return map
-  }, [savedPolicyDrafts])
 
   const frameworkNames = useMemo(
     () => execData.frameworksByIndustry.map((f) => f.label).slice(0, 12),
@@ -828,8 +947,28 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
   const handleExport = useCallback(
     (data: Record<string, Record<string, string | string[]>>) => {
       const markdown =
-        renderPolicyPreview(activePolicyType, data) + renderKpiDriftRulesMd(kpiDriftRules)
+        renderPolicyPreview(activePolicyType, data) + renderRuleDraft(activeRuleDraft)
       const policyLabel = POLICY_TYPES.find((p) => p.id === activePolicyType)?.label || 'Policy'
+
+      const previousDraft = asRecord(savedDrafts.byType[activePolicyType]) ?? {}
+      const draft: Record<string, unknown> = {
+        ...previousDraft,
+        formData: data,
+        ...activeRuleDraft,
+      }
+      if (preservingLegacyRules) delete draft.kpiDriftRules
+      const inputs: Record<string, unknown> = {
+        ...savedDrafts.baseInputs,
+        policyType: activePolicyType,
+        formData: data,
+        policyDraftsByType: { ...savedDrafts.byType, [activePolicyType]: draft },
+      }
+      // Do not carry the previous active subtype's rules/snapshot into another.
+      delete inputs.kpiDriftRules
+      delete inputs.originalPolicySnapshot
+      if (!preservingLegacyRules) inputs.kpiDriftRules = kpiDriftRules
+      if (activeRuleDraft.originalPolicySnapshot)
+        inputs.originalPolicySnapshot = activeRuleDraft.originalPolicySnapshot
 
       addExecutiveDocument({
         id: `policy-${activePolicyType}-${Date.now()}`,
@@ -838,11 +977,18 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
         title: policyLabel,
         data: markdown,
         // Keyed by policyType so a later restore only rehydrates the matching tab.
-        inputs: { policyType: activePolicyType, formData: data },
+        inputs,
         createdAt: Date.now(),
       })
     },
-    [activePolicyType, addExecutiveDocument, kpiDriftRules]
+    [
+      activePolicyType,
+      addExecutiveDocument,
+      kpiDriftRules,
+      activeRuleDraft,
+      preservingLegacyRules,
+      savedDrafts,
+    ]
   )
 
   const seedSources: string[] = []
@@ -918,37 +1064,70 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
       {/* ArtifactBuilder */}
       <ArtifactBuilder
         key={activePolicyType}
+        saveRevision={JSON.stringify(activeRuleDraft)}
         title={POLICY_TYPES.find((p) => p.id === activePolicyType)?.label || 'Policy'}
         description={POLICY_TYPES.find((p) => p.id === activePolicyType)?.description}
         sections={sections}
         onExport={handleExport}
-        initialData={savedFormDataByType[activePolicyType]}
+        initialData={
+          asRecord(savedDrafts.byType[activePolicyType])?.formData as PolicyFormData | undefined
+        }
         exportFilename={`pqc-${activePolicyType}-policy`}
         renderPreview={(data) =>
-          renderPolicyPreview(activePolicyType, data) + renderKpiDriftRulesMd(kpiDriftRules)
+          renderPolicyPreview(activePolicyType, data) + renderRuleDraft(activeRuleDraft)
         }
         exportFormats={['markdown', 'docx', 'pdf']}
         wideTable
       />
 
-      {/* CSWP.39 §5.4 → §5.1 KPI drift feedback loop */}
+      {/* Hub sample drift rules; related source sections do not prescribe this mechanism. */}
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
-            <h3 className="text-base font-semibold text-foreground">
-              KPI Drift Rules (CSWP.39 §5.4 → §5.1 feedback loop)
-            </h3>
+            <h3 className="text-base font-semibold text-foreground">Hub sample KPI drift rules</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Define which KPI exceptions should trigger updates to this policy template — turning
-              observed drift into policy-as-code feedback. Educational only — these rows export with
-              the policy.
+              Choose illustrative KPI thresholds and policy-review actions. These Hub sample rows
+              export with the policy but do not execute or enforce it. Related NIST CSWP.39 §5.2
+              policy and §6.5 maturity discussions do not prescribe this feedback mechanism or a
+              scoring threshold.
             </p>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={addKpiDriftRule}>
-            + Add drift rule
-          </Button>
+          {!preservingLegacyRules && (
+            <Button type="button" variant="outline" size="sm" onClick={addKpiDriftRule}>
+              + Add drift rule
+            </Button>
+          )}
         </div>
-        {kpiDriftRules.length === 0 ? (
+        {activeRuleDraft.originalPolicySnapshot && (
+          <details className="rounded-lg border border-border p-3">
+            <summary className="cursor-pointer text-sm font-medium">
+              Original policy snapshot (read-only)
+            </summary>
+            <p className="text-xs text-muted-foreground my-2">
+              The loaded document did not record editable rule inputs. This snapshot preserves its
+              original rendered text; these are not recovered editable rules.
+            </p>
+            <pre className="whitespace-pre-wrap break-words text-xs">
+              {activeRuleDraft.originalPolicySnapshot.data}
+            </pre>
+          </details>
+        )}
+        {preservingLegacyRules ? (
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Legacy rule text is preserved read-only when this policy is saved or exported. Start a
+              replacement list only if you want to enter new editable rules; the original snapshot
+              will remain in the saved draft and export history.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => updateRuleDraft((prev) => ({ ...prev, kpiDriftRules: [] }))}
+            >
+              Start replacement rule list
+            </Button>
+          </div>
+        ) : kpiDriftRules.length === 0 ? (
           <p className="text-xs text-muted-foreground italic">No drift rules defined.</p>
         ) : (
           <div className="space-y-2">

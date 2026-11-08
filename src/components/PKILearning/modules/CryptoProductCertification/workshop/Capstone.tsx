@@ -42,6 +42,7 @@ import {
   EIDAS_SCENARIO_SCOPE,
   EXTENDED_ARTIFACTS,
   MANDATE_LABEL,
+  MANDATE_SCOPE_NOTE,
   MATRIX_SCHEMES,
   PASS_CONDITIONS,
   PATH_ARTIFACT,
@@ -180,6 +181,9 @@ const CheckRow = ({ c }: { c: CapstoneCheck }) => (
   </li>
 )
 
+const ADVISORY_CHECK_NOTICE =
+  'These advisory checks cover completeness, selected reference answers and recognized wording patterns. They do not establish correctness of every matrix cell, safety of every claim or justification of an assurance level.'
+
 export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
   const activePath = useActiveLearnPathId(manifest.id, manifest)
   const cfgPath = config?.path
@@ -209,7 +213,10 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
   const deadlines = useMemo(() => marketDeadlineRows().filter((m) => m.customers.length), [])
   const generatedAt = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const markdown = useMemo(
-    () => withEducationNoticeMarkdown(capstoneMarkdown(s, generatedAt)),
+    () =>
+      withEducationNoticeMarkdown(
+        `> ${ADVISORY_CHECK_NOTICE}\n\n${capstoneMarkdown(s, generatedAt)}`
+      ),
     [s, generatedAt]
   )
 
@@ -271,9 +278,9 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
         />
         <Callout tone="info">
           <p>
-            Practitioner orientation — not laboratory training. The checks below are heuristics that
-            enforce the minimum pass conditions; a reviewer grades the rubric. The product and its
-            versions are fictional.
+            Practitioner orientation — not laboratory training. The checks below are limited
+            heuristics for this fictional product and its versions. Compare your reasoning with the
+            cited references; the automated checks do not grade every answer for correctness.
           </p>
         </Callout>
         {focus ? (
@@ -675,6 +682,9 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
               </li>
             ))}
           </ul>
+          <p className="mt-1 text-muted-foreground" data-testid="mandate-scope-note">
+            {MANDATE_SCOPE_NOTE}
+          </p>
           <p className="mt-1 text-muted-foreground">
             {ANCHOR_CUSTOMER_PROFILES['payment-processor'].deadlineNote}
           </p>
@@ -704,9 +714,8 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
                   onChange={(candidateV) => setRow({ candidate: candidateV })}
                 />
                 <TextField
-                  id="capstone-field-7"
-                  label={<>Planned route and timing (against the deadlines above)</>}
-
+                  id={`capstone-release-route-${r.id}`}
+                  label={<>Planned route and timing — {r.label} (against the deadlines above)</>}
                   rows={2}
                   value={row.route}
                   onChange={(e) => setRow({ route: e.target.value })}
@@ -760,8 +769,14 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
       {/* Checks and rubric */}
       <section className="glass-panel space-y-4 p-5" aria-labelledby="capstone-checks">
         <h4 id="capstone-checks" className="font-semibold text-foreground">
-          Checks and rubric
+          Advisory checks and rubric
         </h4>
+        <p className="text-xs text-muted-foreground">{ADVISORY_CHECK_NOTICE}</p>
+        <p className="text-xs text-muted-foreground">
+          Compare each answer and its reasoning with the cited references. Look for production tools
+          that expose the exact product, version and configuration scope and the evidence behind
+          each result.
+        </p>
         <div
           className={`rounded-lg border p-3 text-sm ${
             failedPass.length
@@ -774,13 +789,15 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
           data-testid="capstone-verdict"
         >
           {failedPass.length
-            ? `Does not pass: ${failedPass.length} minimum pass condition(s) failed.`
+            ? `Does not pass limited reference/pattern checks: ${failedPass.length} recognized failure(s). This is not a full assessment.`
             : qualityDone
-              ? 'All minimum pass conditions met and the timed artifacts are complete — ready for review.'
-              : 'Minimum pass conditions met so far; complete the timed artifacts.'}
+              ? 'Advisory completeness and pattern checks satisfied — reasoning and claim accuracy still need evaluation.'
+              : 'No recognized failure so far — complete the sample artifacts; correctness is not established.'}
         </div>
         <div>
-          <p className="text-xs font-semibold text-foreground">Minimum pass conditions</p>
+          <p className="text-xs font-semibold text-foreground">
+            Limited reference and wording checks
+          </p>
           <ul className="mt-1 space-y-1">
             {passConditions.map((c) => (
               <CheckRow key={c.id} c={c} />
@@ -788,7 +805,9 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
           </ul>
         </div>
         <div>
-          <p className="text-xs font-semibold text-foreground">Timed artifacts</p>
+          <p className="text-xs font-semibold text-foreground">
+            Artifact completeness and selected reference checks
+          </p>
           <ul className="mt-1 space-y-1">
             {quality.map((c) => (
               <CheckRow key={c.id} c={c} />
@@ -851,7 +870,8 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">
             Copy or download your capstone — every artifact, the checks and the rubric — as markdown
-            or PDF, or as structured JSON for a reviewer’s tooling.
+            or PDF, or as structured JSON. These downloads retain advisory heuristic results; they
+            do not establish semantic correctness or certification.
           </p>
           <Button variant="outline" size="sm" onClick={downloadJson}>
             <Download size={14} className="mr-1.5" aria-hidden="true" /> .json

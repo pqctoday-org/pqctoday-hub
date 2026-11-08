@@ -22,44 +22,38 @@ export function SecurityAuditSection() {
       <div className="flex items-center gap-3 mb-6">
         <ShieldCheck className="text-primary" size={24} />
         <div>
-          <h2 className="text-xl font-semibold">Security Audit</h2>
-          <p className="text-xs text-muted-foreground">Last audited: {lastAudited}</p>
+          <h2 className="text-xl font-semibold">Recorded Security Review</h2>
+          <p className="text-xs text-muted-foreground">Latest recorded report: {lastAudited}</p>
         </div>
       </div>
 
       <div className="space-y-4">
-        {/* Production Status */}
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-status-success border border-status-success">
-          <ShieldCheck className="text-status-success mt-0.5 shrink-0" size={18} />
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">
+          <ShieldCheck className="text-primary mt-0.5 shrink-0" size={18} />
           <div>
-            <p className="text-sm font-semibold text-status-success">
-              0 vulnerabilities (production and dev)
-            </p>
+            <p className="text-sm font-semibold text-foreground">Dated review snapshot</p>
             <p className="text-xs text-muted-foreground mt-1">
-              All dependencies &mdash; runtime and development &mdash; have zero known CVEs.
-              Verified via <code className="text-xs">npm audit</code> in CI on every push.
+              The recorded report describes a production npm dependency scan and static-code review
+              of an earlier application version. It does not establish the current vulnerability
+              status of all dependencies, bundled engines or configurations.
             </p>
           </div>
         </div>
 
-        {/* OWASP Compliance */}
         <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">
           <ShieldCheck className="text-primary mt-0.5 shrink-0" size={18} />
           <div>
-            <p className="text-sm font-semibold text-foreground">OWASP Top 10 compliant</p>
+            <p className="text-sm font-semibold text-foreground">Scope and browser key storage</p>
             <ul className="text-xs text-muted-foreground mt-1 space-y-0.5 list-disc list-inside">
+              <li>A dependency scan or lint check does not establish OWASP Top 10 compliance.</li>
               <li>
-                No <code className="text-xs">dangerouslySetInnerHTML</code>,{' '}
-                <code className="text-xs">eval()</code>, or{' '}
-                <code className="text-xs">innerHTML</code> in production code
+                Rendering controls must be assessed where HTML is inserted; this page does not claim
+                that every component avoids HTML insertion.
               </li>
               <li>
-                Every external link protected against tabnabbing (
-                <code className="text-xs">rel=&quot;noopener noreferrer&quot;</code>)
+                User-supplied cloud API keys are saved in browser storage. Public build-time
+                identifiers are distinct from secret credentials.
               </li>
-              <li>No hardcoded secrets &mdash; all credentials via environment variables</li>
-              <li>Content Security Policy configured with scoped connect-src whitelist</li>
-              <li>ESLint security plugin active in CI</li>
             </ul>
           </div>
         </div>

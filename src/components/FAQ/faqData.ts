@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { PersonaId } from '@/data/learningPersonas'
 
+/**
+ * The one status record for FIPS 206 (FN-DSA), used by every answer that mentions it and
+ * mirrored by the About page's data-foundation label. Source: NIST's post-quantum
+ * standardization page (updated 27 October 2026: Falcon "will be published in FIPS 206
+ * (in development)") and NIST's list of FIPS publications and drafts, checked 5 November
+ * 2026, which has no FIPS 206 entry. Update the date and wording here when that changes.
+ */
+export const FIPS_206_STATUS =
+  "FIPS 206 is planned, not published: NIST's post-quantum standardization page (updated 27 October 2026) lists it as in development, and NIST's FIPS list (checked 5 November 2026) shows no draft or final text."
+
 export interface FAQItem {
   question: string
   answer: string
@@ -52,13 +62,15 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is FN-DSA (Falcon)?',
         answer:
-          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm) is the name NIST plans to use for a standard based on Falcon. FIPS 206 remains in development; NIST has not published an Initial Public Draft or final standard. Falcon produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares the Falcon-512 and Falcon-1024 candidate parameters.',
+          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm) is the name NIST plans to use for a standard based on Falcon. ' +
+          FIPS_206_STATUS +
+          ' Falcon produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares the Falcon-512 and Falcon-1024 candidate parameters.',
         deepLink: '/algorithms?highlight=fn-dsa',
       },
       {
         question: 'What is a hybrid cryptographic approach?',
         answer:
-          'A hybrid cryptographic approach combines a classical algorithm (such as ECDH or RSA) with a post-quantum algorithm (such as ML-KEM) so that the combined scheme remains secure as long as either algorithm is unbroken. This hedging strategy is recommended by ANSSI, BSI, and other agencies during the transition period while confidence in PQC algorithms matures. The Hybrid Crypto module covers composite certificates, dual key exchange, and deployment patterns.',
+          'A hybrid cryptographic approach combines a classical algorithm (such as ECDH) with a post-quantum algorithm (such as ML-KEM). For key establishment, a well-built combiner (for example, concatenating both shared secrets and deriving keys from them with a key derivation function, as the TLS 1.3 design does) aims for a result that stays secure as long as at least one component is unbroken; that property rests on the combiner and on the component KEMs, and the TLS specification states that one cannot assume a similar hybridization is secure in other protocols. Acceptance policy matters as much as construction: if connections may complete with classical-only key exchange when a peer lacks hybrid support, you gain compatibility but not post-quantum protection, and hybrid key exchange alone does not make authentication hybrid (with ordinary single-algorithm certificates, authentication still relies on one algorithm). Likewise, a hybrid signature guards against the failure of either component only if verifiers require both to verify; accepting either one trades that protection for interoperability. ANSSI and BSI both recommend hybrid key establishment during the transition while confidence in PQC algorithms matures. The Hybrid Crypto module covers composite certificates, dual key exchange, and deployment patterns.',
         deepLink: '/learn/hybrid-crypto',
       },
       {
@@ -70,7 +82,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What NIST security levels exist?',
         answer:
-          'NIST defines five security levels for PQC algorithms: Level 1 targets at least AES-128 equivalent security, Level 2 targets SHA-256 collision resistance, Level 3 targets AES-192, Level 4 targets SHA-384, and Level 5 targets AES-256. Most deployments use Level 1 (ML-KEM-512, ML-DSA-44) or Level 3 (ML-KEM-768, ML-DSA-65) to balance security and performance. The Algorithms page maps each algorithm variant to its security level and includes side-by-side performance benchmarks that compare each PQC algorithm directly against its classical counterpart (e.g., ML-KEM-768 versus X25519, ML-DSA-65 versus ECDSA P-256).',
+          'NIST defines five post-quantum security categories (often called levels) by reference primitives: Category 1 is at least as hard to break as key search on AES-128, Category 2 as collision search on SHA-256, Category 3 as key search on AES-192, Category 4 as collision search on SHA3-384, and Category 5 as key search on AES-256. The FIPS standards assign parameter sets to these categories: ML-KEM-512, ML-KEM-768 and ML-KEM-1024 are categories 1, 3 and 5 (FIPS 203), and ML-DSA-44, ML-DSA-65 and ML-DSA-87 are categories 2, 3 and 5 (FIPS 204). Note that ML-DSA-44 is Category 2, not Category 1. A category is a security-strength claim, not a deployment recommendation: which parameter set to use is set by the policy or profile that governs your system. For example, the Australian Information Security Manual approves ML-KEM-768 or ML-KEM-1024 and prefers ML-KEM-1024, and approves ML-DSA-65 or ML-DSA-87 and prefers ML-DSA-87, while the X25519MLKEM768 TLS group is built on ML-KEM-768. The Algorithms page maps each algorithm variant to its security level and includes side-by-side performance benchmarks that compare each PQC algorithm directly against its classical counterpart (e.g., ML-KEM-768 versus X25519, ML-DSA-65 versus ECDSA P-256).',
         deepLink: '/algorithms',
       },
       {
@@ -82,13 +94,13 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'Why is RSA vulnerable but AES is not?',
         answer:
-          "Shor's algorithm can factor large integers and compute discrete logarithms in polynomial time on a quantum computer, directly breaking RSA and elliptic curve cryptography. Grover's algorithm, the best known quantum attack on symmetric ciphers, only provides a quadratic speedup — halving the effective key length — so AES-256 retains 128-bit security even against a quantum adversary. The Quantum Threats module illustrates these attack complexities side by side.",
+          "Shor's algorithm can factor large integers and compute discrete logarithms in polynomial time on a sufficiently large quantum computer, directly breaking RSA and elliptic curve cryptography. Grover's algorithm, the generic quantum key-search attack, gives at most a quadratic speedup: in the idealized query-count model, searching a 256-bit key takes on the order of 2^128 Grover iterations. That idealized count is not a practical security level, because the full speedup needs the iterations to run in series, while real attacks rely on massive parallelism, so NIST considers it quite likely that Grover's algorithm gives little or no advantage against AES. Which AES key size to use is a separate policy choice: NIST says current applications can continue to use 128-, 192- or 256-bit keys, while BSI advises 256-bit keys for applications with high or long-term protection needs. The Quantum Threats module illustrates these attack complexities side by side.",
         deepLink: '/learn/quantum-threats',
       },
       {
         question: 'When should I use ML-KEM vs ML-DSA vs SLH-DSA?',
         answer:
-          'Choose the algorithm based on operation type: ML-KEM (FIPS 203) is the right choice for key exchange and establishing shared secrets — it replaces ECDH and RSA key encapsulation. ML-DSA (FIPS 204) is the primary choice for digital signatures, offering the best balance of signature speed, key size, and security; prefer it for general-purpose authentication, code signing, and certificate issuance. SLH-DSA (FIPS 205) is a conservative hash-based fallback when algorithm diversity matters more than performance — its security relies only on hash function properties, providing a hedge if lattice assumptions are weakened. FN-DSA (FIPS 206, pending) is preferred when compact signatures are critical, such as for smart cards or bandwidth-constrained IoT devices. The Algorithms page provides a side-by-side comparison of all parameter sets.',
+          'Choose the algorithm based on operation type: ML-KEM (FIPS 203) is the right choice for key exchange and establishing shared secrets — it replaces ECDH and RSA key encapsulation. ML-DSA (FIPS 204) is the primary choice for digital signatures, offering the best balance of signature speed, key size, and security; prefer it for general-purpose authentication, code signing, and certificate issuance. SLH-DSA (FIPS 205) is a conservative hash-based fallback when algorithm diversity matters more than performance — its security relies only on hash function properties, providing a hedge if lattice assumptions are weakened. FN-DSA (planned FIPS 206, not yet published) is the option being standardized for cases where compact signatures are critical, such as smart cards or bandwidth-constrained IoT devices. The Algorithms page provides a side-by-side comparison of all parameter sets.',
         deepLink: '/algorithms?highlight=ML-KEM,ML-DSA,SLH-DSA',
       },
       {
@@ -140,7 +152,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: "How does Grover's algorithm affect symmetric encryption?",
         answer:
-          "Grover's algorithm provides a quadratic speedup for brute-force search, effectively halving the security level of symmetric ciphers — AES-128 drops to 64-bit security and AES-256 drops to 128-bit security. Because 128-bit security remains computationally infeasible, AES-256 is considered quantum-safe, while AES-128 may need to be phased out for high-security applications. The Quantum Threats module visualizes these security reductions.",
+          "Grover's algorithm gives a quadratic speedup for brute-force key search. In the idealized query-count model that is the often-quoted halving: about 2^64 Grover iterations for a 128-bit key and 2^128 for a 256-bit key. That idealized count is not an operational security level. To get the full speedup the iterations must run in series (Zalka, 1997), real attacks use massive parallelism, and quantum hardware is expected to cost more than classical hardware, so NIST considers it quite likely that Grover's algorithm gives little or no advantage against AES and expects AES-128 to remain secure for decades. The key-size recommendation is a separate, conservative policy choice: NIST says current applications can continue to use AES with 128-, 192- or 256-bit keys, while BSI advises 256-bit keys for applications with high or long-term protection needs and ANSSI encourages parameters at least as strong as AES-256 as a conservative measure. The Quantum Threats module explains Shor's and Grover's algorithms and includes a key-size analyzer.",
         deepLink: '/learn/quantum-threats',
       },
       {
@@ -174,7 +186,9 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What are the four FIPS standards for PQC?',
         answer:
-          'NIST has published three PQC FIPS standards: FIPS 203 (ML-KEM, lattice-based key encapsulation), FIPS 204 (ML-DSA, lattice-based digital signatures), and FIPS 205 (SLH-DSA, stateless hash-based signatures). All three were published in August 2024. A fourth, planned FIPS 206 for FN-DSA, remains in development with no published Initial Public Draft or final text. The Reference Library has the published standards and related source material.',
+          'NIST has published three PQC FIPS standards: FIPS 203 (ML-KEM, lattice-based key encapsulation), FIPS 204 (ML-DSA, lattice-based digital signatures), and FIPS 205 (SLH-DSA, stateless hash-based signatures). All three were published in August 2024. A fourth standard, for FN-DSA, is planned. ' +
+          FIPS_206_STATUS +
+          ' The Reference Library has the published standards and related source material.',
         deepLink: '/library',
       },
       {
@@ -204,7 +218,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is ETSI TS 103 744?',
         answer:
-          'ETSI TS 103 744 is a European Telecommunications Standards Institute specification providing migration guidance for adopting post-quantum cryptography in telecom networks. It addresses the specific challenges of network function virtualization, 5G infrastructure, and subscriber identity protection during the PQC transition. The Reference Library catalogs this alongside other ETSI PQC publications.',
+          'ETSI TS 103 744 (Quantum-safe Hybrid Key Establishment, V1.2.2, February 2026) is a European Telecommunications Standards Institute specification of methods for deriving cryptographic keys from multiple shared secrets, where the secrets come from an existing traditional key agreement such as ECDH and from a quantum-safe key encapsulation mechanism. It defines a concatenation combiner (CatKDF) and a cascade combiner (CasKDF). Its scope is the construction of hybrid key exchange, not telecom migration planning. For telecom-specific migration questions, such as 5G core network security and subscriber identity concealment, see GSMA PQ.03 (Post-Quantum Cryptography Guidelines for Telecom Use Cases), and see ETSI TR 103 619 for general migration strategies. The Reference Library catalogs these alongside other ETSI PQC publications.',
         deepLink: '/library?ref=ETSI%20TS%20103%20744',
       },
       {
@@ -304,7 +318,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What PQC timelines exist for Japan, Singapore, and Australia?',
         answer:
-          "Japan's NISC (National center of Incident readiness and Strategy for Cybersecurity) has aligned its PQC guidance with NIST standards, recommending organizations begin cryptographic inventories now and prioritize systems with long data retention periods. Singapore's CSA (Cyber Security Agency) issued a quantum safety advisory in 2023 and updated its Critical Information Infrastructure protection framework to include quantum risk. Australia's ASD (Australian Signals Directorate) and ACSC published quantum risk guidance endorsing NIST-aligned PQC algorithms and recommending that government agencies begin migration planning. All three are less prescriptive on deadlines than the US or EU but are accelerating their frameworks. The Timeline view tracks APAC milestones alongside Western deadlines.",
+          "These three countries each publish dated milestones, but from different authorities and for different audiences, so they should not be lumped together. Japan: an interim summary issued in November 2025 by the inter-ministerial liaison conference on PQC use in government agencies sets, as a rule, a target of migrating government agencies to PQC by around 2035, with earlier migration considered system by system for especially sensitive or very long-lived information and a roadmap to be drawn up in fiscal 2026. Singapore: the Cyber Security Agency's Quantum-Safe Migration Handbook (version 1, 16 July 2026) lists milestones for Critical Information Infrastructure (CII) owners: a quantum-safe migration plan submitted to CSA by 31 March 2027, new CII systems with a digital component supporting quantum-safe algorithms or being quantum-safe ready from 1 January 2028, and migration completed by 31 December 2031. The handbook describes itself as informational and not mandatory overall, yet lists these as requirements for CII owners; for financial institutions, the Monetary Authority of Singapore's February 2024 advisory (Circular MAS/TCRS/2024/01) says they need crypto-agility to migrate away from vulnerable algorithms. Australia: the Australian Signals Directorate's Information Security Manual (September 2026 release), a framework that organisations apply through their own risk management, says DH, ECDH, ECDSA and RSA will not be approved beyond 2030, and its control ISM-1917 covers the development and procurement of new cryptographic equipment, applications and libraries so that they support ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by no later than 2030. Whether a given milestone binds a particular organisation depends on its sector and regulator, so check the authority named for each country. The Timeline view tracks APAC milestones alongside Western deadlines.",
         deepLink: '/timeline',
       },
     ],
@@ -326,7 +340,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: "What is eIDAS 2.0's PQC requirement?",
         answer:
-          'eIDAS 2.0 is the updated EU regulation governing electronic identification and trust services, including the European Digital Identity Wallet (EUDI Wallet). While it does not mandate specific PQC algorithms yet, it requires crypto agility and quantum-readiness in qualified trust services to ensure long-term signature validity. The Compliance Tracker details eIDAS 2.0 requirements alongside other EU frameworks.',
+          'eIDAS 2.0 (Regulation (EU) 2024/1183, amending Regulation (EU) No 910/2014) is the updated EU regulation governing electronic identification and trust services, including the European Digital Identity Wallet (EUDI Wallet). Its text does not mention post-quantum cryptography or quantum computing and names no algorithms. What it says about cryptography is general: recital 73 says trust service providers should use cryptographic methods reflecting current best practices and trustworthy implementations, and Article 24(2)(e) requires qualified trust service providers to use trustworthy systems and products, including suitable cryptographic techniques. The EU position on PQC readiness sits in a separate, non-binding instrument, Commission Recommendation (EU) 2024/1101, which encourages Member States to move public administrations and critical infrastructures to post-quantum cryptography as soon as possible and to follow a coordinated implementation roadmap. Treat PQC readiness for trust services as recommended migration practice, not as a PQC provision of eIDAS 2.0 itself, and check the implementing rules and technical standards that apply to your service. The Compliance Tracker details eIDAS 2.0 requirements alongside other EU frameworks.',
         deepLink: '/compliance?framework=EIDAS',
       },
       {
@@ -350,19 +364,19 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: "What is NERC-CIP's relevance to PQC?",
         answer:
-          'NERC-CIP (North American Electric Reliability Corporation — Critical Infrastructure Protection) standards mandate security controls for the bulk electric system, including the protection of electronic security perimeters and communications. As quantum computing threatens the cryptographic foundations of these protections, NERC-CIP compliance will require PQC upgrades to encryption and authentication. The Compliance Tracker shows energy sector requirements.',
+          'NERC-CIP (North American Electric Reliability Corporation — Critical Infrastructure Protection) standards set mandatory security requirements for the bulk electric system, including electronic security perimeters and communications between control centers. The published text of CIP-003-9, CIP-005-7, CIP-007-6, CIP-012-1, CIP-012-2 and CIP-015-1 does not mention quantum computing or PQC and does not name cryptographic algorithms; CIP-012, for example, requires a documented plan to mitigate unauthorized disclosure and modification of real-time assessment and monitoring data in transit between control centers. So none of these adopted standards requires PQC today, and whether later revisions will address it is not settled. Upgrading energy-sector encryption and authentication to quantum-safe algorithms is a readiness recommendation for your own risk planning, and a prediction about future rules should not be read as a current obligation; check NERC for newer versions of these standards. The Compliance Tracker shows energy sector requirements.',
         deepLink: '/compliance?framework=NERC-CIP',
       },
       {
         question: "What is Common Criteria's role in PQC?",
         answer:
-          'Common Criteria (ISO/IEC 15408) is the international framework for evaluating IT product security, and the Common Criteria Recognition Arrangement (CCRA) enables mutual recognition across 31 member nations. Protection profiles for PQC-capable products are under development, and future evaluations will require demonstrating quantum resilience. The Compliance Tracker includes Common Criteria PQC developments.',
+          'Common Criteria (ISO/IEC 15408) is the international framework for evaluating IT product security, and the Common Criteria Recognition Arrangement (CCRA) supports recognition of certificates among participating nations (check the Common Criteria portal for the current member list). The framework is an evaluation method; which cryptographic mechanisms a certification scheme accepts is set by that scheme. In EU cybersecurity certification (EUCC), for example, the ECCG Agreed Cryptographic Mechanisms document recommends the mechanisms that should preferably be used in ICT products submitted to certification; version 2.0 was adopted in mid-2025 and a version 3 was under public review until the end of July 2026. Whether and when a scheme or protection profile will ask products to demonstrate quantum resilience is a prediction, not a settled requirement, so check the scheme you certify under rather than assuming a general PQC obligation. The Compliance Tracker includes Common Criteria PQC developments.',
         deepLink: '/compliance?framework=COMMON-CRITERIA',
       },
       {
         question: 'What is ISO/SAE 21434?',
         answer:
-          'ISO/SAE 21434 is the international standard for automotive cybersecurity engineering, requiring threat analysis and risk assessment throughout the vehicle lifecycle including cryptographic components. It mandates crypto agility — the ability to update algorithms without hardware replacement — which is critical given 15-year vehicle lifetimes spanning the quantum transition. The Compliance Tracker maps ISO 21434 to PQC requirements.',
+          'ISO/SAE 21434 is the international standard for automotive cybersecurity engineering: it specifies engineering requirements for cybersecurity risk management across the concept, development, production, operation, maintenance and decommissioning of road-vehicle electrical and electronic systems, and it states that it does not prescribe specific technology or solutions. It therefore does not by itself mandate crypto agility or any particular algorithm-upgrade mechanism. What it gives you is a lifecycle risk process that cryptographic components fall under: for each one, evaluate how long it must stay in service, whether its algorithms can be updated after deployment, and what the risk is if they cannot. Designing for software-updatable cryptography is design guidance that supports that risk management, not a clause of the standard. The Compliance Tracker lists ISO 21434 alongside PQC-related frameworks.',
         deepLink: '/compliance?framework=ISO-SAE-21434',
       },
       {
@@ -466,7 +480,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What PQC algorithms work for VPN/IPsec?',
         answer:
-          'For VPN and IPsec, ML-KEM provides post-quantum key exchange within IKEv2 (supported by strongSwan and other implementations), while ML-DSA provides PQC certificate authentication for tunnel endpoints. Hybrid modes combining classical and PQC algorithms are recommended during the transition to ensure backward compatibility and defense in depth. The VPN/SSH module covers configuration for strongSwan, WireGuard, and OpenVPN.',
+          'For VPN and IPsec, RFC 9370 lets IKEv2 run multiple key exchanges when it builds a security association, which is how a post-quantum key exchange such as ML-KEM is added alongside a classical Diffie-Hellman group (strongSwan, for example, includes an ML-KEM key-exchange plugin). The ML-KEM profile for IKEv2 and PQC signature authentication for IKEv2 were still Internet-Drafts in the RFC Editor queue when this answer was last reviewed (November 2026), so check the IETF datatracker and your vendor for current status before relying on interoperability of ML-DSA certificate authentication for tunnel endpoints. A hybrid configuration lets peers that support only the classical exchange still connect: RFC 9370 notes that unless both peers support and agree to use the additional key exchanges, the result is the same shared secret as plain IKEv2. That is compatibility, not post-quantum protection, so confirm in testing that the additional exchange was actually negotiated and set policy to require it where you need it. The VPN/SSH module covers configuration for strongSwan, WireGuard, and OpenVPN.',
         deepLink: '/learn/vpn-ssh-pqc',
       },
       {
@@ -530,25 +544,25 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the OpenSSL provider architecture for PQC?',
         answer:
-          'OpenSSL 3.x uses a loadable provider architecture where PQC algorithms can be added without modifying the core library — the OQS provider (oqsprovider) adds over 50 post-quantum algorithms to any OpenSSL 3.x installation. Applications using the EVP API automatically gain access to PQC algorithms when the provider is loaded. The OS PQC module covers provider configuration and system-wide crypto policy management.',
+          'OpenSSL 3.x uses a loadable provider architecture, so cryptographic algorithms can be added without modifying the core library. Loading a provider does not by itself make an application quantum-safe: what an application uses depends on the OpenSSL version, the API it calls and the protocol it negotiates. OpenSSL 3.5.0 (April 2025) implements ML-KEM, ML-DSA and SLH-DSA natively in its default provider and puts the hybrid X25519MLKEM768 group first in its default TLS group list. On earlier 3.x releases the Open Quantum Safe provider (oqsprovider, built on liboqs) can add algorithms, but its documentation describes it as meant for research and prototyping and recommends against relying on it in production; it also needs OpenSSL 3.2 or later for TLS 1.3 signature algorithms. An application only uses a new algorithm if it asks for it, for example through the supported-groups setting or by naming the algorithm, so verify the negotiated behavior with a handshake test, for example by reading the negotiated group with SSL_get0_group_name (OpenSSL 3.2 and later) on a test client and server, instead of assuming it. The OS PQC module covers provider configuration and system-wide crypto policy management.',
         deepLink: '/learn/os-pqc',
       },
       {
         question: 'How do you configure PQC TLS on Linux?',
         answer:
-          'On RHEL and Fedora, the update-crypto-policies command can enable hybrid PQC cipher suites system-wide for all applications that use the system TLS libraries. On Debian and Ubuntu, GnuTLS priority strings in /etc/gnutls/config control the available cipher suites, while applications using OpenSSL can load the oqsprovider for PQC support. The OS PQC module provides configuration walkthroughs for each distribution.',
+          'The setup depends on the distribution and on the TLS library an application uses. On RHEL 10.1 and later, the DEFAULT system-wide crypto policy enables and prefers post-quantum key exchange for TLS and SSH for applications that use OpenSSL, GnuTLS, NSS or Go; on RHEL 9.7, applications based on OpenSSL or NSS can use PQC in TLS once update-crypto-policies --set DEFAULT:PQ is run. The mechanism is hybrid key-exchange groups in TLS 1.3, such as X25519MLKEM768, not new cipher suites. Elsewhere, availability follows the library version and build: OpenSSL 3.5 and later include PQC natively, older OpenSSL releases can load oqsprovider for testing, and GnuTLS release notes say its PQC support is provided through leancrypto, so it depends on how your distribution builds it. Each application also has to use the library setting that offers the hybrid group, so check applications one by one and confirm with a test connection that the negotiated group is hybrid. The OS PQC module provides configuration examples for several operating systems.',
         deepLink: '/learn/os-pqc',
       },
       {
         question: "What is HashiCorp Vault's PQC migration path?",
         answer:
-          "HashiCorp Vault's PQC migration involves upgrading the transit encryption engine to use ML-KEM for key wrapping, migrating auto-unseal integrations to PQC-capable KMS endpoints, and updating dynamic secret generation to issue PQC-algorithm certificates. The seal/unseal keys and shamir shares also need PQC-compatible encryption for long-term security. The Secrets Management module simulates a complete Vault PQC migration.",
+          "HashiCorp Vault's PQC migration is easier to plan if you separate its mechanisms. Vault encrypts the data it writes to storage with a 256-bit AES-GCM cipher behind its security barrier, and the transit engine's default key type is aes256-gcm96; these symmetric mechanisms are not what Shor's algorithm breaks. Unseal keys are split with Shamir's Secret Sharing, which divides a key into shares and does not itself use public-key encryption; the quantum-exposed parts are around it, for example shares encrypted to recipients' public keys with the init pgp-keys option, and the TLS connections to Vault. With auto-unseal, Vault asks an external HSM or KMS to decrypt the root key, so trace whether that service protects it with a symmetric or an asymmetric key and how Vault reaches it. Signatures and certificates are the other exposed area: transit keys of type rsa, ecdsa and ed25519, and PKI issuers with those key types, are quantum-vulnerable. Vault's documentation lists ML-DSA keys for the PKI secrets engine and ML-DSA, SLH-DSA and hybrid signature key types for transit (Enterprise), but no ML-KEM key type, so ML-KEM-based wrapping of transit keys or of the seal would be a proposed integration through an external KMS, HSM or plugin, not a built-in Vault feature. The Secrets Management module's Vault Transit Simulator models such a design.",
         deepLink: '/learn/secrets-management-pqc',
       },
       {
         question: 'What database encryption changes need PQC?',
         answer:
-          'Database encryption migration involves upgrading Transparent Data Encryption (TDE) master key wrapping from RSA to ML-KEM, migrating column-level encryption (CLE) to PQC-aware client libraries, and updating BYOK/HYOK key import workflows to use post-quantum key encapsulation. Queryable encryption schemes that depend on deterministic or order-preserving encryption face additional research challenges. The Database Encryption module walks through each layer.',
+          'Start by tracing what actually protects the data in each database, because only some of those dependencies are quantum-exposed. Bulk encryption in Transparent Data Encryption (TDE) uses symmetric keys (SQL Server, for example, documents its database encryption key as a symmetric key using AES), and symmetric standards are not expected to need replacing for the PQC migration (NIST IR 8547), so that layer stays unchanged apart from choosing 256-bit keys where policy asks for them. The exposed pieces are the asymmetric dependencies around it: a wrapper for the data encryption key that is itself an asymmetric key or certificate (SQL Server protects its database encryption key with a certificate or with an asymmetric key held by an EKM module), BYOK key-import wrapping that uses RSA (AWS KMS, for instance, wraps imported key material with an RSA public key), and the TLS or KMIP channel to the key manager. Only those asymmetric wrappers and transports need a quantum-safe replacement, such as a key-encapsulation-based wrapper; a symmetric master key held in an HSM or KMS needs no algorithm change. Treat column-level encryption the same way: check whether each client library uses symmetric encryption only or also wraps keys with an asymmetric algorithm. The Database Encryption module walks through each layer.',
         deepLink: '/learn/database-encryption-pqc',
       },
       {
@@ -576,7 +590,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the PQC impact on payment systems (EMV)?',
         answer:
-          'EMV payment systems face PQC challenges at multiple layers: card authentication schemes (SDA, DDA, CDA) need compact signatures where FN-DSA-512 is preferred for constrained smart card chips, DUKPT terminal key injection must migrate to ML-KEM, and tokenization services (Visa VTS, Mastercard MDES) need PQC-wrapped keys. The payment networks Visa, Mastercard, Amex, UnionPay, and Discover are each developing migration roadmaps. The EMV Payment module simulates these migration scenarios.',
+          'EMV payment systems face PQC questions at several separate layers, and they should not be merged. DUKPT (derived unique key per transaction, ANSI X9.24-3) derives per-transaction keys from an initial terminal key using symmetric cryptography, so the derivation itself is not what a quantum computer breaks and should not be described as migrating to ML-KEM. The exposed part is how the initial keys reach terminals: where keys are injected or loaded remotely using public-key techniques (ANSI X9.24-2 covers using asymmetric techniques to distribute symmetric keys), those asymmetric steps are the quantum-vulnerable part and need a quantum-safe design; a KEM such as ML-KEM is one candidate for that transport step only. Card authentication (SDA, DDA, CDA) is a third, separate layer: which post-quantum signature algorithm and parameter set card platforms will use is decided by EMVCo and payment-network specifications, so treat any specific choice, including for constrained smart card chips, as unsettled rather than as a recommendation. Tokenization services (Visa VTS, Mastercard MDES) are a fourth layer to take up with the service provider. The EMV Payment module simulates these migration scenarios.',
         deepLink: '/learn/emv-payment-pqc',
       },
       {
@@ -606,19 +620,19 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does the automotive industry approach PQC?',
         answer:
-          'The automotive industry must address PQC across V2X (Vehicle-to-Everything) PKI certificates, in-vehicle network authentication, and over-the-air software update signing, all complicated by 15-year vehicle lifetimes that span the quantum transition. ISO/SAE 21434 requires cryptographic agility, meaning vehicles must be capable of algorithm upgrades without hardware replacement. The Automotive module explores V2X PKI migration and ECU firmware signing.',
+          'The automotive industry must address PQC across V2X (Vehicle-to-Everything) PKI certificates, in-vehicle network authentication, and over-the-air software update signing, all complicated by vehicles that stay in service for a long time. ISO/SAE 21434 asks for cybersecurity risk management across the vehicle lifecycle but does not prescribe technology, so whether a component can have its algorithms updated without hardware replacement is something to evaluate in that risk assessment, as design guidance rather than a clause of the standard. The Automotive module explores V2X PKI migration and ECU firmware signing.',
         deepLink: '/learn/automotive-pqc',
       },
       {
         question: 'What is the energy sector PQC migration?',
         answer:
-          'The energy sector must migrate PQC across SCADA and ICS protocols (including DNP3 and IEC 61850 Secure Authentication), substation automation (IEC 62351), and grid management systems, while managing equipment lifecycles of 30 years or more. NERC-CIP compliance will increasingly require quantum-resilient cryptography for bulk electric system protection. The Energy and Utilities module covers the specific protocols and regulatory requirements.',
+          'The energy sector must migrate PQC across SCADA and ICS protocols (including DNP3 and IEC 61850 Secure Authentication), substation automation (IEC 62351), and grid management systems, while managing long equipment lifecycles. The NERC-CIP standards named in the NERC-CIP entry above do not mention PQC, so quantum-resilient cryptography for bulk electric system protection is a readiness recommendation based on those lifecycles, not a NERC-CIP requirement today. The Energy and Utilities module covers the specific protocols and regulatory requirements.',
         deepLink: '/learn/ot-pqc',
       },
       {
         question: 'How does PQC protect AI systems?',
         answer:
-          'AI systems need PQC protection across three primary vectors: model weight encryption protecting intellectual property in transit and at rest, federated learning channel security preventing model poisoning, and inference API authentication ensuring only authorized clients can access model endpoints. As AI models become high-value targets, the cryptographic infrastructure protecting them must be quantum-resilient. The AI Security module covers these threat vectors and migration approaches.',
+          'AI systems have PQC-relevant exposure at several separate points: model weight encryption protecting intellectual property in transit and at rest, secure channels between federated learning participants and the aggregation server, and inference API authentication ensuring only authorized clients can access model endpoints. Channel security (for example, TLS with quantum-resistant key exchange and authentication) protects updates from eavesdropping and tampering in transit and identifies participants, but it does not prevent model poisoning: NIST notes that compromised clients can send malicious updates that poison the global model. Defenses against poisoning are separate controls, such as robust (Byzantine-resilient) aggregation, limits on how much any one participant can influence the global model (NIST mentions gradient clipping and differential privacy), controls on which clients take part, and validation of training data and models (NIST describes training-data sanitization and model inspection). NIST also notes that motivated adversaries can bypass these defenses and that clipping and differential privacy only mitigate to some extent. As AI models become high-value targets, the cryptographic infrastructure protecting them must be quantum-resilient. The AI Security module covers these threat vectors and migration approaches.',
         deepLink: '/learn/ai-security-pqc',
       },
       {
@@ -741,7 +755,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What PQC libraries should developers use?',
         answer:
-          'The recommended PQC libraries depend on your language ecosystem: liboqs for C/C++, Bouncy Castle for Java, oqsprovider for OpenSSL-based applications, pqcrypto for Rust, and aws-lc (AWS LibCrypto) for AWS-integrated systems. For Python, oqs-python wraps liboqs, and for Go, the standard library is adding PQC support. The Developer Quantum Impact module compares these libraries across security level support, FIPS validation status, and API ergonomics.',
+          "Treat sample and research libraries and production libraries as two different decisions. For learning, prototypes and interoperability tests, liboqs (C, with wrappers such as liboqs-python) and oqsprovider for OpenSSL are sample and research options: their own documentation says not to rely on them in a production environment or to protect sensitive data. For production, evaluate the supported library already in your platform and language stack. For example, OpenSSL 3.5 and later include ML-KEM, ML-DSA and SLH-DSA natively; Go's standard library has had crypto/mlkem since Go 1.24 and enables X25519MLKEM768 by default in crypto/tls; and Bouncy Castle for Java and AWS-LC include ML-KEM and ML-DSA implementations. The Rust pqcrypto crates are marked unmaintained by their maintainers, who advise against using them in new projects. For any library, evaluate before production: whether the release is supported and maintained, what validation applies (a FIPS 140-3 certificate covers a specific validated module, as with the FIPS module of AWS-LC, not every feature of a library), and whether the protocols you need interoperate with your peers. The Developer Quantum Impact module covers library API transitions across OpenSSL, Bouncy Castle and liboqs bindings.",
         deepLink: '/learn/dev-quantum-impact',
         persona: 'developer',
       },
@@ -755,7 +769,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What PQC operations tasks should IT teams plan?',
         answer:
-          'IT operations teams should plan for automated certificate rotation (PQC certificates may need more frequent rotation due to larger revocation lists), HSM firmware upgrades to support PKCS#11 v3.2 PQC mechanisms, system-wide crypto-policy updates via tools like update-crypto-policies, and monitoring dashboards to track algorithm deprecation across the infrastructure. The Operations module provides runbooks and automation templates.',
+          'IT operations teams should plan for automated certificate rotation, HSM firmware upgrades to support PKCS#11 v3.2 PQC mechanisms, system-wide crypto-policy updates via tools like update-crypto-policies, and monitoring dashboards to track algorithm deprecation across the infrastructure. Treat the drivers of rotation as separate: ecosystem and policy rules (for example, the CA/Browser Forum schedule that reduces the maximum validity of publicly trusted TLS server certificates from 398 days to 47 days between March 2026 and March 2029), key compromise or other revocation reasons (RFC 5280 defines reasons such as keyCompromise and superseded), the validity period your own CA policy sets, algorithm transitions that replace classical or hybrid certificates, and the sheer number of certificates you issue. Choosing a PQC algorithm does not by itself set a rotation interval, and a CRL entry carries a certificate serial number and revocation date rather than the certificate key or signature, so larger PQC certificates do not by themselves make revocation lists a reason to rotate more often. The Operations module provides runbooks and automation templates.',
         deepLink: '/learn/ops-quantum-impact',
         persona: 'ops',
       },

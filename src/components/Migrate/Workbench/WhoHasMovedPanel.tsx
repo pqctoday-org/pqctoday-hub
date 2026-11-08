@@ -14,11 +14,14 @@
  * counts, categories and the named examples — so it cannot claim a level of
  * adoption the data does not show, and it moves when the catalog moves.
  *
- * The honesty constraint that shapes it: only products whose post-quantum
- * support is backed by a PROOF DOCUMENT are counted as "moved". A vendor's own
- * claim is a claim. Saying "N products have shipped it" on the strength of
- * marketing copy would be the exact failure the proof-gating exists to prevent,
- * and this reader is the least equipped to catch it.
+ * The honesty constraint that shapes it: "moved" is read from the catalogue's
+ * canonical PQC status, never from a free-text support string. A product counts
+ * only when its status is "available" AND its evidence was reviewed and
+ * confirmed it. Partial, planned or roadmap, and not-yet-determined products
+ * are counted in their own buckets, because a non-empty support string or a
+ * proof link on its own does not show that a product ships a post-quantum
+ * capability. Even "available" is a catalogue status for the product, not a
+ * statement about every operation, version or deployment, and the panel says so.
  */
 import { useMemo } from 'react'
 import { Link } from 'react-router'
@@ -27,11 +30,25 @@ import { softwareData } from '@/data/migrateData'
 
 export function WhoHasMovedPanel() {
   const summary = useMemo(() => {
-    const claimsPqc = softwareData.filter(
-      (p) => p.pqcSupport && !/^(no|none|planned|roadmap)/i.test(p.pqcSupport.trim())
+    const statusOf = (p: (typeof softwareData)[number]) =>
+      (p.pqcStatusCanonical || '').trim().toLowerCase()
+    const available = softwareData.filter((p) => statusOf(p) === 'available')
+    // "Moved" needs reviewed evidence behind an "available" status, not just a
+    // proof link or a support string. A row whose evidence review is partial,
+    // pending or withheld is "available" in the catalogue but not counted here.
+    const proven = available.filter(
+      (p) => p.verificationStatus === 'Verified' && p.proofUrl?.trim()
     )
-    // "Moved" means we hold a document, not that a vendor said so.
-    const proven = claimsPqc.filter((p) => p.proofUrl?.trim())
+    const partial = softwareData.filter((p) => statusOf(p) === 'partial').length
+    // A pre-shared key as the only quantum protection is its own bucket: not
+    // moved, not partial, and not "not yet determined" either.
+    const psk = softwareData.filter((p) => statusOf(p) === 'psk').length
+    const planned = softwareData.filter((p) => {
+      const s = statusOf(p)
+      return s === 'roadmap' || s === 'planned'
+    }).length
+    const none = softwareData.filter((p) => statusOf(p) === 'none').length
+    const undetermined = softwareData.length - available.length - partial - psk - planned - none
 
     const byCategory = new Map<string, number>()
     for (const p of proven) {
@@ -40,16 +57,20 @@ export function WhoHasMovedPanel() {
     }
     const topCategories = [...byCategory.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4)
 
-    // Named examples: the most recently proven, so the page shows movement
-    // rather than the same four vendors forever.
+    // Named examples: the most recent evidence dates, so the page does not
+    // show the same four vendors forever.
     const examples = [...proven]
       .sort((a, b) => (b.proofPublicationDate ?? '').localeCompare(a.proofPublicationDate ?? ''))
       .slice(0, 5)
 
     return {
       total: softwareData.length,
-      claims: claimsPqc.length,
+      available: available.length,
       proven: proven.length,
+      partial,
+      psk,
+      planned,
+      undetermined,
       topCategories,
       examples,
     }
@@ -64,33 +85,29 @@ export function WhoHasMovedPanel() {
         <h2 className="text-base font-bold text-foreground">Who has already moved</h2>
       </div>
 
-      {/* Two sentences, because the honest one depends on the data. As of the
-          08-09 catalog every product claiming support also carries a proof
-          document, so the "the rest is the vendor's word" phrasing would be
-          describing a gap that does not exist — and inventing a caveat is as
-          much a misstatement as omitting one. If unproven claims reappear, the
-          second branch says so without anyone editing this file. */}
-      {summary.claims === summary.proven ? (
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Of the <span className="font-semibold text-foreground">{summary.total}</span> products we
-          track, <span className="font-semibold text-foreground">{summary.proven}</span> support
-          post-quantum cryptography today — and for every one of them we hold the document that
-          shows it, not just the vendor’s word.
-        </p>
-      ) : (
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Of the <span className="font-semibold text-foreground">{summary.total}</span> products we
-          track, <span className="font-semibold text-foreground">{summary.claims}</span> say they
-          support post-quantum cryptography — and for{' '}
-          <span className="font-semibold text-foreground">{summary.proven}</span> of those we hold a
-          document that shows it. The other {summary.claims - summary.proven} rest on the vendor’s
-          word, which we record but do not count here.
-        </p>
-      )}
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        Of the <span className="font-semibold text-foreground">{summary.total}</span> products we
+        track, <span className="font-semibold text-foreground">{summary.proven}</span> are recorded
+        as having post-quantum support available, with reviewed evidence behind that status.{' '}
+        {summary.partial} more have partial support,{' '}
+        {summary.psk > 0
+          ? `${summary.psk} rely on a pre-shared key (PSK) only, which is not post-quantum support, `
+          : ''}
+        {summary.planned} are planned or on a roadmap, and {summary.undetermined} are not yet
+        determined; these are counted separately and not as moved.
+        {summary.available > summary.proven
+          ? ` Another ${summary.available - summary.proven} are marked available but their evidence review is not finished, so they are not counted here.`
+          : ''}
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        “Available” is a status for the product as catalogued. It does not say which operations,
+        protocol profiles or versions are covered, or that anyone has deployed it. Open a product to
+        see what its own evidence covers.
+      </p>
 
       {summary.topCategories.length > 0 && (
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          It has landed first where you would expect:{' '}
+          Largest catalogue categories among them:{' '}
           {summary.topCategories.map(([cat, n], i) => (
             <span key={cat}>
               {i > 0 ? ', ' : ''}
@@ -103,7 +120,7 @@ export function WhoHasMovedPanel() {
 
       {summary.examples.length > 0 && (
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Most recently proven:{' '}
+          Products with the most recently dated evidence:{' '}
           {summary.examples.map((p, i) => (
             <span key={p.softwareName}>
               {i > 0 ? ', ' : ''}

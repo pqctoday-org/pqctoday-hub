@@ -4,6 +4,12 @@
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, EO_14412, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+import {
+  CNSA_2022_PREFERRED_LABEL,
+  CNSA_ACQUISITION_LABEL,
+  CNSA_MANDATE_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -93,11 +99,11 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0 software signing preferred',
+      label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },
-    { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    { label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
     {
       label: 'NIST: deprecate quantum-vulnerable public-key crypto (RSA, ECC)',
       year: NIST_DEPRECATION.deprecateClassical,
@@ -124,7 +130,13 @@ export const content: ModuleContent = {
     overview:
       'The Compliance & Regulatory Strategy module teaches executives how to navigate the complex and evolving landscape of PQC compliance requirements across jurisdictions. It covers jurisdiction mapping to identify applicable frameworks and deadline conflicts, audit readiness checklisting with 30 evidence items across 6 categories (Cryptographic Inventory, Policy & Governance, Risk Assessment, Technical Controls, Vendor Management, Evidence & Documentation), and compliance timeline building that overlays organizational milestones on regulatory deadlines with gap analysis.',
     keyConcepts:
-      'Major PQC Compliance Frameworks — CNSA 2.0 (NSA, US national security systems), EO 14412 (US federal civilian HVAs and high-impact systems: key establishment by 31 Dec 2030, digital signatures by 31 Dec 2031, implemented via OMB M-26-15; a directed FAR rule would require covered contractors to comply with NIST’s FIPS by 31 Dec 2030), NIST IR 8547 (US federal guidance; final, October 2026), ETSI (European standards), ANSSI (French national agency), BSI (German federal office). CNSA 2.0 Timeline — software/firmware signing preferred 2025, exclusive 2030; new networking equipment 2026; web, cloud, servers and operating systems by 2033; NSM-10 targets all remaining NSS quantum-resistant by 2035. Compliance-First vs.',
+      'Major PQC Compliance Frameworks — CNSA 2.0 (NSA, US national security systems), EO 14412 (US federal civilian HVAs and high-impact systems: key establishment by 31 Dec 2030, digital signatures by 31 Dec 2031, implemented via OMB M-26-15; a directed FAR rule would require covered contractors to comply with NIST’s FIPS by 31 Dec 2030), NIST IR 8547 (US federal guidance; final, October 2026), ETSI (European standards), ANSSI (French national agency), BSI (German federal office). NSA’s 2022 category guidance (older schedule) — software/firmware signing preferred 2025, exclusive 2030; new networking equipment 2026; web, cloud, servers and operating systems by 2033; NSM-10 targets all remaining NSS quantum-resistant by 2035. The three dates of NSA’s CNSA 2.0 FAQ (version 2.2) replace it for planning — ' +
+      CNSA_ACQUISITION_LABEL +
+      '; ' +
+      CNSA_PHASE_OUT_LABEL +
+      '; ' +
+      CNSA_MANDATE_LABEL +
+      '. Compliance-First vs.',
     workshopSummary:
       'The workshop has 3 interactive steps: Jurisdiction Mapper — select from 24 jurisdictions across 4 regions (North America, Europe, Asia Pacific, Middle East); see matching compliance frameworks, earliest deadlines, and automatically detected conflicts including China algorithm divergence and early-deadline countries; export as Markdown/CSV.',
     relatedStandards:

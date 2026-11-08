@@ -20,8 +20,7 @@ export interface UserMilestone {
   year: number
   quarter?: 1 | 2 | 3 | 4
   category?: string
-  /** Real completion signal. A deadline is only "met" when a covering
-   *  Certification/Renewal milestone is marked done — not merely planned. */
+  /** Learner-recorded milestone completion; does not establish obligation satisfaction. */
   completed?: boolean
 }
 
@@ -29,7 +28,7 @@ export interface ComplianceDeadline {
   key: string
   label: string
   year: number
-  status: 'completed' | 'on-track' | 'at-risk'
+  status: 'completed' | 'on-track' | 'at-risk' | 'unknown'
 }
 
 const MILESTONE_CATEGORY_COLORS: Record<string, { color: string; glow: string }> = {
@@ -370,11 +369,13 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
                   {years.map((year) => {
                     if (year === dl.year) {
                       const color =
-                        dl.status === 'at-risk'
-                          ? 'hsl(var(--phase-regulation))'
-                          : dl.status === 'completed'
-                            ? 'hsl(var(--status-success))'
-                            : 'hsl(var(--phase-deadline))'
+                        dl.status === 'unknown'
+                          ? 'hsl(var(--muted-foreground))'
+                          : dl.status === 'at-risk'
+                            ? 'hsl(var(--phase-regulation))'
+                            : dl.status === 'completed'
+                              ? 'hsl(var(--status-success))'
+                              : 'hsl(var(--phase-deadline))'
                       return (
                         <td
                           key={year}
@@ -382,6 +383,9 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
                         >
                           <div
                             className="w-full h-full flex items-center justify-center relative"
+                            role="img"
+                            title={`${dl.label}: ${dl.year} — ${dl.status === 'unknown' ? 'Obligation satisfaction not assessed' : dl.status}`}
+                            aria-label={`${dl.label}: ${dl.year} — ${dl.status === 'unknown' ? 'Obligation satisfaction not assessed' : dl.status}`}
                             style={{ zIndex: 20 }}
                           >
                             <Flag className="w-4 h-4" style={{ color, fill: color }} />

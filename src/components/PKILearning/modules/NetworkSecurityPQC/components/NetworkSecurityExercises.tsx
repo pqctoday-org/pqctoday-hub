@@ -62,7 +62,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'IDS/IPS',
       badgeColor: 'bg-warning/20 text-status-warning border-warning/50',
       observe:
-        'Enabling the downgrade attack detection rule (high false positive risk) at 5% base FP rate increases the adjusted rate to 9%. A balanced ruleset with Hybrid KEM Detection + Certificate Size + PQC Inventory achieves 90%+ coverage at <5% false positives. Avoid enabling all 6 rules simultaneously without environment tuning.',
+        'In this illustrative model, enabling one high false positive risk rule, such as downgrade attack detection, at 5% base FP rate increases the adjusted rate to 7% (5% × 1.4). With no high-risk rules enabled, the same base rate remains 5%. Compare the selected rules’ modelled coverage and adjusted rate; these outputs are not measured IDS performance or a calibrated detection guarantee. Evaluate the trade-off with your own tools and environment.',
       config: { step: 2 },
     },
     {
@@ -84,7 +84,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'Zero Trust',
       badgeColor: 'bg-success/20 text-status-success border-success/50',
       observe:
-        'Leaving the Identity Provider on classical crypto produces a high risk score even if all other components are hybrid — the IdP is the trust anchor for all ZTNA access decisions. Setting all components to Hybrid reduces the transition risk score to under 30 while maintaining backwards compatibility with non-PQC clients.',
+        'In this illustrative scoring model, all five components set to Hybrid produce 28 (Low Risk). Leaving the Identity Provider on Classical while the other four remain Hybrid produces 40 (Moderate Risk), so review the IdP dependency even though this model does not label that case High Risk. Selecting Hybrid does not establish compatibility: check matching endpoint, protocol and certificate or token profile support, define the intended fallback policy, and test it with your own tools.',
       config: { step: 4 },
     },
   ]

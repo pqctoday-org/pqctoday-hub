@@ -17,15 +17,15 @@ type StepState = 'idle' | 'active' | 'done'
 interface WalkthroughState {
   currentStep: number
   stepStates: StepState[]
-  /** PEM-encoded ML-DSA-65 public key (generated at step 5) */
+  /** Illustrative public-key text prepared at step 5; not a generated key. */
   publicKeyPem: string | null
-  /** Simulated CSR PEM for display */
+  /** Illustrative CSR text for display; not a valid PKCS#10 artifact. */
   csrPem: string | null
   cryptoLoading: boolean
   cryptoError: string | null
 }
 
-/** Simulate a PEM-formatted public key for display purposes when real WASM isn't available */
+/** Build placeholder text for this educational walkthrough; no key is generated. */
 function makeFakePem(type: string, bytes: number): string {
   const b64 = btoa(
     Array.from({ length: bytes }, () => Math.floor(Math.random() * 256))
@@ -94,7 +94,7 @@ ${Array.from({ length: 8 }, () =>
         csrPem,
         cryptoLoading: false,
         cryptoError:
-          'Crypto engine unavailable — showing educational simulation. For real keys, use the Playground.',
+          'Illustration preparation failed — showing fallback placeholder text. For actual key generation, use the Playground.',
       }))
     }
   }, [])
@@ -222,13 +222,13 @@ ${Array.from({ length: 8 }, () =>
               </div>
             )}
 
-            {/* Finalize step: real crypto output */}
+            {/* Finalize step: illustrative text output */}
             {isFinalizeStep && (
               <div className="mt-4 space-y-3">
                 {state.cryptoLoading && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Loader2 size={14} className="animate-spin" aria-hidden="true" />
-                    Generating ML-DSA-65 keypair…
+                    Preparing illustrative key and CSR text…
                   </div>
                 )}
                 {state.cryptoError && (
@@ -237,38 +237,44 @@ ${Array.from({ length: 8 }, () =>
                 {state.csrPem && (
                   <div>
                     <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1.5">
-                      Generated CSR (ML-DSA-65)
+                      Illustrative CSR text — not a valid PKCS#10 request
                     </p>
                     <pre className="text-xs bg-muted/30 border border-border rounded-lg p-3 overflow-x-auto text-muted-foreground leading-relaxed max-h-32 overflow-y-auto">
                       {state.csrPem}
                     </pre>
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex flex-wrap gap-2 mt-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => downloadText(state.csrPem!, 'ml-dsa-65-csr.pem')}
-                        className="gap-1.5 text-xs"
+                        onClick={() =>
+                          downloadText(state.csrPem!, 'ml-dsa-65-csr-illustration.txt')
+                        }
+                        className="gap-1.5 text-xs h-auto whitespace-normal text-left max-w-full py-2"
                       >
                         <Download size={12} />
-                        Download CSR
+                        Download CSR illustration (.txt)
                       </Button>
                       {state.publicKeyPem && (
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => downloadText(state.publicKeyPem!, 'ml-dsa-65-pub.pem')}
-                          className="gap-1.5 text-xs"
+                          onClick={() =>
+                            downloadText(
+                              state.publicKeyPem!,
+                              'ml-dsa-65-public-key-illustration.txt'
+                            )
+                          }
+                          className="gap-1.5 text-xs h-auto whitespace-normal text-left max-w-full py-2"
                         >
                           <KeyRound size={12} />
-                          Download Public Key
+                          Download public-key illustration (.txt)
                         </Button>
                       )}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-2">
-                      Verify with:{' '}
-                      <code className="font-mono bg-muted/30 px-1 rounded">
-                        openssl req -text -noout -in ml-dsa-65-csr.pem
-                      </code>
+                      These placeholder strings explain the flow. They are not generated
+                      cryptographic artifacts and cannot be parsed or verified as a CSR or public
+                      key. Use the existing Playground for actual key generation.
                     </p>
                   </div>
                 )}

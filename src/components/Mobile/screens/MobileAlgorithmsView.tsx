@@ -23,7 +23,11 @@ import { MobileSheet } from '../primitives/Sheet'
 interface SheetAlgo {
   name: string
   family: string
+  /** The catalogue's standard/status-of-standardisation text; it is not always a FIPS number. */
   fipsStandard: string | null
+  /** Catalogue status text and its source, as the desktop drawer shows them. */
+  status?: string
+  statusUrl?: string
   securityLevel: number | null
   publicKeyBytes: number | null
   privateKeyBytes: number | null
@@ -45,6 +49,8 @@ function sheetFromDetail(d: AlgorithmDetail): SheetAlgo {
     name: d.name,
     family: d.family,
     fipsStandard: d.fipsStandard || null,
+    status: d.status || undefined,
+    statusUrl: d.statusUrl || undefined,
     securityLevel: d.securityLevel,
     publicKeyBytes: d.publicKeySize,
     privateKeyBytes: d.privateKeySize,
@@ -432,10 +438,10 @@ export function MobileAlgorithmsView() {
               </div>
               <div>
                 <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                  FIPS standard
+                  Standard
                 </dt>
                 <dd className="mt-0.5 text-[12px] text-foreground">
-                  {selected.fipsStandard ?? 'None'}
+                  {selected.fipsStandard ?? 'Not stated'}
                 </dd>
               </div>
               <div>
@@ -484,6 +490,26 @@ export function MobileAlgorithmsView() {
                 </div>
               )}
             </dl>
+            {selected.status && (
+              <div className="mt-3 border-t border-border pt-3">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Status
+                </p>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-foreground">
+                  {selected.status}
+                </p>
+                {selected.statusUrl && (
+                  <a
+                    href={selected.statusUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-[44px] items-center text-[12px] text-primary hover:underline"
+                  >
+                    Status source
+                  </a>
+                )}
+              </div>
+            )}
           </>
         )}
       </MobileSheet>

@@ -2,7 +2,7 @@
 import type { LibraryItem } from '@/data/libraryData'
 
 const SCOPE_SENSITIVE_CLAIM =
-  /\b(mandat(?:e|ed|ory)|require(?:d|ment)?|must|prohibit(?:s|ed)?|deadline|compliant|certif(?:y|ied|ication))\b/i
+  /\b(mandat(?:e|ed|ory)|require(?:s|d|ment|ments)?|must|prohibit(?:s|ed)?|deadline|compliant|certif(?:y|ied|ication))\b/i
 
 const DOCUMENTED_PRIMARY_REVIEW =
   /fetched and read directly|verified verbatim|content-verified|official .* reviewed|cross-checked by codex and approved|corrected via approved proposal/i
@@ -17,12 +17,12 @@ export function hasSufficientClaimReview(item: LibraryItem): boolean {
 
 /**
  * Catalog summaries are pqctoday editorial text, not quotations from the
- * publisher. Low-confidence or stale summaries containing obligation language
- * need an explicit scope warning: applicability often depends on jurisdiction,
- * system class, scheme version, and effective date.
+ * publisher. Obligation language needs an applicability reminder regardless of
+ * confidence or checking date: those metadata do not establish applicability to
+ * a learner's jurisdiction, system class, scheme version, or effective date.
  */
 export function needsScopeVerification(item: LibraryItem): boolean {
-  return SCOPE_SENSITIVE_CLAIM.test(item.shortDescription ?? '') && !hasSufficientClaimReview(item)
+  return SCOPE_SENSITIVE_CLAIM.test(item.shortDescription ?? '')
 }
 
 export const MISSING_REVIEWED_SUMMARY =

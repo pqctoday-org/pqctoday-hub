@@ -16,6 +16,7 @@ import {
   Users,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { cn } from '@/lib/utils'
 import { useApplicability } from '@/hooks/useApplicability'
@@ -324,11 +325,17 @@ const TIER_TONE: Record<ApplicabilityTier, string> = {
 export function MobileComplianceView({
   records,
   recordsLoaded = false,
+  recordsLoading = false,
+  recordsError = null,
+  onRetryRecords,
   meta,
 }: {
   /** The certification records ComplianceView already loaded (for `?cert=`). */
   records?: readonly MobileCertRecord[]
   recordsLoaded?: boolean
+  recordsLoading?: boolean
+  recordsError?: string | null
+  onRetryRecords?: () => void
   /** The snapshot sidecar's per-source retrieval times (compliance-data.meta.json). */
   meta?: MobileRecordsMeta | null
 } = {}) {
@@ -406,8 +413,10 @@ export function MobileComplianceView({
   const closeFramework = () => setParam('framework', null, true)
   const closeRecord = () => setParam('cert', null, true)
 
-  const certRecord = certParam ? (records?.find((r) => r.id === certParam) ?? null) : null
-  const certNotFound = !!certParam && recordsLoaded && !certRecord
+  const recordsReady = recordsLoaded && !recordsLoading && !recordsError
+  const certRecord =
+    certParam && recordsReady ? (records?.find((r) => r.id === certParam) ?? null) : null
+  const certNotFound = !!certParam && recordsReady && !certRecord
 
   // Records search — the same `?q=` / `?rstatus=all` params desktop's records
   // table reads (default scope: current records only, newest first), so a
@@ -425,7 +434,7 @@ export function MobileComplianceView({
         : [],
     [records, recordScope, recordQuery, recordTab]
   )
-  const hasRecordList = !!records && records.length > 0
+  const hasRecordList = recordsReady && !!records && records.length > 0
   // The record-type chips scroll sideways on a phone: bring the selected one (the last, Entropy
   // (ESV), is off-screen at 390px) into view when the tab changes or a link lands on it.
   const typeChipsRef = useRef<HTMLDivElement>(null)
@@ -598,6 +607,19 @@ export function MobileComplianceView({
           onDismiss={closeFramework}
         />
       )}
+      {(section === 'records' || section === 'products') && recordsError && (
+        <div role="alert">
+          <ErrorAlert message={recordsError} onRetry={onRetryRecords} />
+        </div>
+      )}
+      {(section === 'records' || section === 'products') && !recordsError && !recordsReady && (
+        <p role="status" className="text-[11.5px] text-muted-foreground">
+          {recordsLoading
+            ? 'Loading certification records…'
+            : 'Certification snapshot has not loaded yet.'}
+        </p>
+      )}
+
       {certNotFound && (
         <DeepLinkNotice
           kind="not-found"
@@ -870,12 +892,18 @@ export function MobileComplianceView({
               <PackageSearch size={14} className="text-primary" aria-hidden="true" />
               Read product evidence correctly
             </h2>
-            <p className="mt-1 text-[10.5px] text-muted-foreground">
-              Current snapshot: {mobileEvidenceSummary.algorithm} PQC algorithm-validation records,{' '}
-              {mobileEvidenceSummary.module} PQC-covering module-validation records, and{' '}
-              {mobileEvidenceSummary.evaluated} evaluated-product records naming PQC. These classes
-              are not interchangeable and do not prove deployment compliance.
-            </p>
+            {recordsReady ? (
+              <p className="mt-1 text-[10.5px] text-muted-foreground">
+                Current snapshot: {mobileEvidenceSummary.algorithm} PQC algorithm-validation
+                records, {mobileEvidenceSummary.module} PQC-covering module-validation records, and{' '}
+                {mobileEvidenceSummary.evaluated} evaluated-product records naming PQC. These
+                classes are not interchangeable and do not prove deployment compliance.
+              </p>
+            ) : (
+              <p className="mt-1 text-[10.5px] text-muted-foreground">
+                Snapshot counts are unavailable until records load successfully.
+              </p>
+            )}
           </div>
           {[
             [
@@ -945,8 +973,10 @@ export function MobileComplianceView({
 
       {section === 'records' && (
         <div className="flex flex-col gap-3">
-          {records && !hasRecordList && !recordsLoaded && (
-            <p className="text-[11.5px] text-muted-foreground">Loading certification records…</p>
+          {recordsReady && !hasRecordList && (
+            <p className="text-[11.5px] text-muted-foreground">
+              The loaded snapshot contains no certification records.
+            </p>
           )}
           {hasRecordList && (
             <section aria-label="Certification records" className="flex flex-col gap-2">
@@ -1181,6 +1211,11 @@ export function MobileComplianceView({
               Close
             </Button>
           </div>
+          <p className="text-[11px] text-muted-foreground">
+            These are machine-extracted candidate practices, not automatically legal requirements.
+            Verify the passage and primary source before relying on them. Sources and Practices
+            shows the recorded extraction details and their review limitations.
+          </p>
           <ul className="flex flex-col gap-1.5">
             {evrefRequirements.slice(0, EVREF_PHONE_LIMIT).map((r) => (
               <li
@@ -1210,8 +1245,12 @@ export function MobileComplianceView({
         <div className="flex flex-col gap-2.5">
           <p className="text-[10.5px] text-muted-foreground">
             {CSWP39_SOURCE_METADATA.documentLabel} · published{' '}
-            {CSWP39_SOURCE_METADATA.publicationDate} · data reviewed{' '}
+            {CSWP39_SOURCE_METADATA.publicationDate} · data extracted{' '}
             {CSWP39_SOURCE_METADATA.dataExtractedAt}
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            PQC Today synthesis — not NIST&apos;s section structure · 5-step cycle · 4-tier
+            self-check.
           </p>
           {CSWP39_STEPS.map((step) => {
             const open = openStep === step.id
@@ -2013,7 +2052,9 @@ function MobileFrameworkDetailSheet({
                     >
                       {node.kind}
                     </p>
-                    <p className="text-[12px] font-bold text-foreground">{node.value}</p>
+                    <p className="text-[12px] font-bold text-foreground">
+                      {node.label ?? node.value}
+                    </p>
                     {node.sub && <p className="text-[10px] text-muted-foreground">{node.sub}</p>}
                   </div>
                 ))}

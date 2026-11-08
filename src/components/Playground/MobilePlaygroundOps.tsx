@@ -3,7 +3,7 @@
  * MobilePlaygroundOps — reduced interactive Playground for mobile.
  * Provides KEM + Sign & Verify tabs via scroll-snap carousel with WASM capability check.
  */
-import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react'
+import { useState, useRef, useEffect, useCallback, useId, lazy, Suspense } from 'react'
 import { useLocation } from 'react-router'
 import {
   AlertTriangle,
@@ -18,10 +18,13 @@ import { PlaygroundProvider } from './PlaygroundProvider'
 import { KemOpsTab } from './tabs/KemOpsTab'
 import { SignVerifyTab } from './tabs/SignVerifyTab'
 import { WorkshopToolsTab } from './tabs/WorkshopToolsTab'
+import { LogsTab } from './tabs/LogsTab'
 import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { useHsmContext } from './hsm/HsmContext'
 import { Button } from '../ui/button'
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities'
+import { useSettingsContext } from './contexts/SettingsContext'
+import { InteractiveExecutionNotice } from './InteractiveExecutionNotice'
 import { algorithmLaunchPhoneReason } from '@/data/algorithmLaunch'
 
 const MobilePlaygroundView = lazy(() =>
@@ -87,9 +90,13 @@ function LaunchNotice() {
 }
 
 function MobileOpsContent() {
+  const { executionMode, wasmLoaded } = useSettingsContext()
   const { hsmLog, clearHsmLog } = useHsmContext()
   const [activeTab, setActiveTab] = useState<TabId>('kem')
   const [logOpen, setLogOpen] = useState(false)
+  const [logSource, setLogSource] = useState<'software' | 'pkcs11'>('software')
+  const logPanelId = useId()
+  const logTitle = logSource === 'software' ? 'Software playground log' : 'Shared PKCS#11 log'
   const scrollRef = useRef<HTMLDivElement>(null)
 
   // Sync scroll position to active tab indicator
@@ -119,6 +126,7 @@ function MobileOpsContent() {
 
   return (
     <div className="flex flex-col h-full">
+      <InteractiveExecutionNotice executionMode={executionMode} wasmLoaded={wasmLoaded} />
       {/* Tab indicator dots */}
       <div className="flex items-center justify-center gap-4 py-3 border-b border-border shrink-0">
         {TABS.map((tab) => {
@@ -164,14 +172,55 @@ function MobileOpsContent() {
           variant="ghost"
           type="button"
           onClick={() => setLogOpen((o) => !o)}
+          aria-expanded={logOpen}
+          aria-controls={logPanelId}
           className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           {logOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
-          PKCS#11 Log
+          {logOpen ? 'Hide' : 'Show'} {logTitle.toLowerCase()}
         </Button>
         {logOpen && (
-          <div className="max-h-[30vh] overflow-y-auto border-t border-border/50 px-3 pb-3">
-            <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} />
+          <div
+            id={logPanelId}
+            role="region"
+            aria-label={logTitle}
+            className="max-h-[30vh] overflow-auto border-t border-border/50 px-3 pb-3"
+          >
+            <div role="group" aria-label="Log source" className="flex flex-wrap gap-2 py-2">
+              <Button
+                variant="ghost"
+                type="button"
+                aria-pressed={logSource === 'software'}
+                onClick={() => setLogSource('software')}
+                className="text-xs"
+              >
+                Software
+              </Button>
+              <Button
+                variant="ghost"
+                type="button"
+                aria-pressed={logSource === 'pkcs11'}
+                onClick={() => setLogSource('pkcs11')}
+                className="text-xs"
+              >
+                Shared PKCS#11
+              </Button>
+            </div>
+            <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+              {logSource === 'software'
+                ? 'Software-provider records, including initialization. Changing the selected mode does not reclassify earlier entries.'
+                : 'A separate shared PKCS#11 trace. Clearing it leaves the software log and keys unchanged. Some workshop tools keep their own logs.'}
+            </p>
+            {logSource === 'software' ? (
+              <LogsTab />
+            ) : (
+              <Pkcs11LogPanel
+                log={hsmLog}
+                onClear={clearHsmLog}
+                title="Shared PKCS#11 trace"
+                defaultOpen
+              />
+            )}
           </div>
         )}
       </div>

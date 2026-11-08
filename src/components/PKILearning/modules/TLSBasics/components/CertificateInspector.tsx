@@ -13,6 +13,132 @@ interface CertificateInspectorProps {
   title: string
 }
 
+// Security categories, key sizes and signature sizes come from FIPS 203 (Tables 2-3), FIPS 204
+// (Table 2) and FIPS 205 (Table 2). Classical figures are rough size references only.
+interface PqcAlgoInfo {
+  sigSize?: string
+  pubKeySize: string
+  level: string
+  classical: string
+  classicalPubKey: string
+}
+
+const ECDSA_P256_REF = 'ECDSA P-256 sig: ~72 B, pub key: 64 B'
+
+// SLH-DSA public key = 2n bytes; the signature size depends on the parameter set (FIPS 205,
+// Table 2). One row per parameter set: [name, OID suffix after 2.16.840.1.101.3.4.3,
+// security category, public key, signature].
+const SLH_DSA_SETS: Array<[string, number, number, string, string]> = [
+  ['SLH-DSA-SHA2-128s', 20, 1, '32 B', '7,856 B'],
+  ['SLH-DSA-SHA2-128f', 21, 1, '32 B', '17,088 B'],
+  ['SLH-DSA-SHA2-192s', 22, 3, '48 B', '16,224 B'],
+  ['SLH-DSA-SHA2-192f', 23, 3, '48 B', '35,664 B'],
+  ['SLH-DSA-SHA2-256s', 24, 5, '64 B', '29,792 B'],
+  ['SLH-DSA-SHA2-256f', 25, 5, '64 B', '49,856 B'],
+  ['SLH-DSA-SHAKE-128s', 26, 1, '32 B', '7,856 B'],
+  ['SLH-DSA-SHAKE-128f', 27, 1, '32 B', '17,088 B'],
+  ['SLH-DSA-SHAKE-192s', 28, 3, '48 B', '16,224 B'],
+  ['SLH-DSA-SHAKE-192f', 29, 3, '48 B', '35,664 B'],
+  ['SLH-DSA-SHAKE-256s', 30, 5, '64 B', '29,792 B'],
+  ['SLH-DSA-SHAKE-256f', 31, 5, '64 B', '49,856 B'],
+]
+
+const PQC_ALGO_INFO: Record<string, PqcAlgoInfo> = {
+  'ML-DSA-44': {
+    sigSize: '2,420 B',
+    pubKeySize: '1,312 B',
+    level: 'NIST category 2',
+    classical: 'ECDSA P-256 sig: ~72 B, pub key: 64 B',
+    classicalPubKey: '64 B',
+  },
+  'ML-DSA-65': {
+    sigSize: '3,309 B',
+    pubKeySize: '1,952 B',
+    level: 'NIST category 3',
+    classical: 'ECDSA P-384 sig: ~96 B, pub key: 96 B',
+    classicalPubKey: '96 B',
+  },
+  'ML-DSA-87': {
+    sigSize: '4,627 B',
+    pubKeySize: '2,592 B',
+    level: 'NIST category 5',
+    classical: 'ECDSA P-521 sig: ~139 B, pub key: 132 B',
+    classicalPubKey: '132 B',
+  },
+  'ML-KEM-512': {
+    pubKeySize: '800 B',
+    level: 'NIST category 1',
+    classical: 'X25519 key share: 32 B',
+    classicalPubKey: '32 B',
+  },
+  'ML-KEM-768': {
+    pubKeySize: '1,184 B',
+    level: 'NIST category 3',
+    classical: 'X25519 key share: 32 B',
+    classicalPubKey: '32 B',
+  },
+  'ML-KEM-1024': {
+    pubKeySize: '1,568 B',
+    level: 'NIST category 5',
+    classical: 'P-384 key share: 97 B',
+    classicalPubKey: '97 B',
+  },
+  ...Object.fromEntries(
+    SLH_DSA_SETS.map(([name, , category, pubKeySize, sigSize]): [string, PqcAlgoInfo] => [
+      name,
+      {
+        sigSize,
+        pubKeySize,
+        level: `NIST category ${category}`,
+        classical: ECDSA_P256_REF,
+        classicalPubKey: '64 B',
+      },
+    ])
+  ),
+}
+
+// Dotted object identifiers from the NIST computer security objects register, for builds that
+// print the OID instead of the algorithm name.
+const PQC_OID_TO_NAME = new Map<string, string>([
+  ['2.16.840.1.101.3.4.4.1', 'ML-KEM-512'],
+  ['2.16.840.1.101.3.4.4.2', 'ML-KEM-768'],
+  ['2.16.840.1.101.3.4.4.3', 'ML-KEM-1024'],
+  ['2.16.840.1.101.3.4.3.17', 'ML-DSA-44'],
+  ['2.16.840.1.101.3.4.3.18', 'ML-DSA-65'],
+  ['2.16.840.1.101.3.4.3.19', 'ML-DSA-87'],
+  ...SLH_DSA_SETS.map(([name, oid]): [string, string] => [`2.16.840.1.101.3.4.3.${oid}`, name]),
+])
+
+const normalizeAlgoName = (name: string): string =>
+  name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .replace(/^id/, '')
+
+const PQC_NAME_LOOKUP = new Map<string, string>(
+  Object.keys(PQC_ALGO_INFO).map((name): [string, string] => [normalizeAlgoName(name), name])
+)
+
+// Resolve one parsed identifier (OpenSSL name or dotted OID) to a known PQC parameter set.
+const resolvePqcAlgo = (identifier: string | null): { name: string; info: PqcAlgoInfo } | null => {
+  if (!identifier) return null
+  const name = /^[0-9.]+$/.test(identifier)
+    ? PQC_OID_TO_NAME.get(identifier)
+    : PQC_NAME_LOOKUP.get(normalizeAlgoName(identifier))
+  // eslint-disable-next-line security/detect-object-injection -- name comes from the fixed maps
+  return name ? { name, info: PQC_ALGO_INFO[name] } : null
+}
+
+// Read the subject-key and signature algorithm identifiers from `openssl x509|req -text` output.
+const describeCertificateAlgorithms = (output: string) => {
+  const keyId = output.match(/^\s*Public Key Algorithm:\s*(\S+)/m)?.[1] ?? null
+  const sigId = output.match(/^\s*Signature Algorithm:\s*(\S+)/m)?.[1] ?? null
+  const key = resolvePqcAlgo(keyId)
+  const signature = resolvePqcAlgo(sigId)
+  const primary = key ?? signature
+  return primary ? { key, signature, primary } : null
+}
+
 export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
   isOpen,
   onClose,
@@ -207,67 +333,13 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
   }
 
   // --- PQC Size Annotation ---
+  //
+  // The annotation is driven by the algorithm identifiers OpenSSL parsed from the uploaded
+  // certificate or CSR: the "Public Key Algorithm" line (the subject key) and the first
+  // "Signature Algorithm" line (the signature on the certificate). Name fragments elsewhere in
+  // the text (subject, SAN, extensions) are never used.
 
-  // Detected PQC algorithm name in the parsed output (case-insensitive)
-  const detectPqcAlgo = (output: string): string | null => {
-    const lower = output.toLowerCase()
-    if (lower.includes('mldsa87') || lower.includes('ml-dsa-87')) return 'ML-DSA-87'
-    if (lower.includes('mldsa65') || lower.includes('ml-dsa-65')) return 'ML-DSA-65'
-    if (lower.includes('mldsa44') || lower.includes('ml-dsa-44')) return 'ML-DSA-44'
-    if (lower.includes('mlkem1024') || lower.includes('ml-kem-1024')) return 'ML-KEM-1024'
-    if (lower.includes('mlkem768') || lower.includes('ml-kem-768')) return 'ML-KEM-768'
-    if (lower.includes('mlkem512') || lower.includes('ml-kem-512')) return 'ML-KEM-512'
-    if (lower.includes('slhdsa') || lower.includes('sphincs')) return 'SLH-DSA'
-    return null
-  }
-
-  const PQC_ALGO_INFO: Record<
-    string,
-    { sigSize?: string; pubKeySize: string; level: string; classical: string }
-  > = {
-    'ML-DSA-44': {
-      sigSize: '2,420 B',
-      pubKeySize: '1,312 B',
-      level: 'NIST L2',
-      classical: 'ECDSA P-256 sig: ~72 B, pub key: 64 B',
-    },
-    'ML-DSA-65': {
-      sigSize: '3,309 B',
-      pubKeySize: '1,952 B',
-      level: 'NIST L3',
-      classical: 'ECDSA P-384 sig: ~96 B, pub key: 96 B',
-    },
-    'ML-DSA-87': {
-      sigSize: '4,627 B',
-      pubKeySize: '2,592 B',
-      level: 'NIST L5',
-      classical: 'ECDSA P-521 sig: ~139 B, pub key: 132 B',
-    },
-    'ML-KEM-768': {
-      pubKeySize: '1,184 B',
-      level: 'NIST L3',
-      classical: 'X25519 key share: 32 B',
-    },
-    'ML-KEM-1024': {
-      pubKeySize: '1,568 B',
-      level: 'NIST L5',
-      classical: 'P-384 key share: 97 B',
-    },
-    'ML-KEM-512': {
-      pubKeySize: '800 B',
-      level: 'NIST L2',
-      classical: 'X25519 key share: 32 B',
-    },
-    'SLH-DSA': {
-      sigSize: '7,856 – 49,856 B (varies by params)', // FIPS 205 Table 2: SHA2-128s to SHAKE-256f
-      pubKeySize: '32 B',
-      level: 'NIST L1–L5',
-      classical: 'ECDSA sig: ~72 B',
-    },
-  }
-
-  const pqcAlgo = parsedOutput ? detectPqcAlgo(parsedOutput) : null
-  const pqcInfo = pqcAlgo ? PQC_ALGO_INFO[pqcAlgo] : null
+  const pqcAlgos = parsedOutput ? describeCertificateAlgorithms(parsedOutput) : null
 
   // --- Main Render ---
 
@@ -348,30 +420,40 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                 </div>
               ) : parsedOutput ? (
                 <div className="h-full overflow-auto p-6 font-mono text-xs custom-scrollbar">
-                  {pqcInfo && (
+                  {pqcAlgos && (
                     <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/20 font-sans text-xs not-prose">
                       <div className="flex items-center gap-2 mb-2">
                         <Info size={14} className="text-primary shrink-0" />
                         <span className="font-semibold text-foreground">
-                          PQC Certificate — {pqcAlgo} ({pqcInfo.level})
+                          {pqcAlgos.key
+                            ? `PQC Certificate — ${pqcAlgos.key.name} (${pqcAlgos.key.info.level})`
+                            : `Certificate signed with ${pqcAlgos.primary.name} (${pqcAlgos.primary.info.level})`}
                         </span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
-                        <div className="text-muted-foreground">Public Key Size</div>
-                        <div className="font-mono text-foreground">
-                          {pqcInfo.pubKeySize}
-                          <span className="text-muted-foreground ml-1">
-                            (classical: {pqcInfo.classical.split(':')[1]?.trim()})
-                          </span>
-                        </div>
-                        {pqcInfo.sigSize && (
+                        {pqcAlgos.key && (
+                          <>
+                            <div className="text-muted-foreground">Public Key Size</div>
+                            <div className="font-mono text-foreground">
+                              {pqcAlgos.key.info.pubKeySize}
+                              <span className="text-muted-foreground ml-1">
+                                (classical: {pqcAlgos.key.info.classicalPubKey})
+                              </span>
+                            </div>
+                          </>
+                        )}
+                        {pqcAlgos.signature?.info.sigSize && (
                           <>
                             <div className="text-muted-foreground">Signature Size</div>
-                            <div className="font-mono text-foreground">{pqcInfo.sigSize}</div>
+                            <div className="font-mono text-foreground">
+                              {pqcAlgos.signature.name}: {pqcAlgos.signature.info.sigSize}
+                            </div>
                           </>
                         )}
                         <div className="text-muted-foreground">Classical equivalent</div>
-                        <div className="font-mono text-muted-foreground">{pqcInfo.classical}</div>
+                        <div className="font-mono text-muted-foreground">
+                          {pqcAlgos.primary.info.classical}
+                        </div>
                       </div>
                     </div>
                   )}

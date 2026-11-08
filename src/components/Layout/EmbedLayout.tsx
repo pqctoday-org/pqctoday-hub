@@ -16,7 +16,8 @@ import {
   Shield,
   AlertTriangle,
 } from 'lucide-react'
-import { Button } from '../ui/button'
+import { buttonVariants } from '../ui/button-variants'
+import { cn } from '@/lib/utils'
 import { PoweredByBadge } from '../ui/PoweredByBadge'
 import { useEmbed } from '../../embed/EmbedProvider'
 import { getActivePresets } from '../../embed/routePresets'
@@ -265,7 +266,7 @@ export const EmbedLayout = () => {
     active?.scrollIntoView({ inline: 'nearest', block: 'nearest' })
   }, [location.pathname, isSidebarLayout, isBelowMdViewport])
 
-  // Shared nav items renderer (used in both top and sidebar layouts)
+  // One styled link per destination; no nested keyboard-interactive button.
   const renderNavItems = () =>
     visibleNavItems.map((item) => {
       const embedUrl = `/embed${item.basePath}`
@@ -273,57 +274,50 @@ export const EmbedLayout = () => {
         <NavLink
           key={item.basePath}
           to={`${embedUrl}${location.search}`}
-          className={isSidebarLayout ? 'w-full' : 'flex-shrink-0'}
-          end={false}
-        >
-          {({ isActive }) => (
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label={`${item.label} view`}
-              aria-current={isActive ? 'page' : undefined}
-              title={item.label}
-              className={
-                isSidebarLayout
-                  ? isNarrowSidebar
-                    ? isActive
-                      ? navActiveBg
-                        ? 'w-full flex-col justify-center items-center text-primary-foreground h-auto py-2 px-1 rounded-md gap-0.5'
-                        : 'w-full flex-col justify-center items-center bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-1 gap-0.5'
-                      : 'w-full flex-col justify-center items-center text-muted-foreground hover:text-foreground h-auto py-2 px-1 gap-0.5'
-                    : isActive
-                      ? navActiveBg
-                        ? 'w-full justify-start text-primary-foreground h-auto py-2 px-3 rounded-md'
-                        : 'w-full justify-start bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-3'
-                      : 'w-full justify-start text-muted-foreground hover:text-foreground h-auto py-2 px-3'
+          aria-label={`${item.label} view`}
+          title={item.label}
+          className={({ isActive }) =>
+            cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              isSidebarLayout ? 'w-full' : 'flex-shrink-0',
+              isSidebarLayout
+                ? isNarrowSidebar
+                  ? isActive
+                    ? navActiveBg
+                      ? 'w-full flex-col justify-center items-center text-primary-foreground h-auto py-2 px-1 rounded-md gap-0.5'
+                      : 'w-full flex-col justify-center items-center bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-1 gap-0.5'
+                    : 'w-full flex-col justify-center items-center text-muted-foreground hover:text-foreground h-auto py-2 px-1 gap-0.5'
                   : isActive
                     ? navActiveBg
-                      ? 'text-foreground h-auto py-1.5 px-3 rounded-md'
-                      : 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
-                    : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
-              }
-              style={{
-                ...(isActive && navActiveBg ? { backgroundColor: navActiveBg } : {}),
-                ...(navFg && !isActive ? { color: `${navFg}99` } : {}),
-              }}
+                      ? 'w-full justify-start text-primary-foreground h-auto py-2 px-3 rounded-md'
+                      : 'w-full justify-start bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-3'
+                    : 'w-full justify-start text-muted-foreground hover:text-foreground h-auto py-2 px-3'
+                : isActive
+                  ? navActiveBg
+                    ? 'text-foreground h-auto py-1.5 px-3 rounded-md'
+                    : 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
+                  : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
+            )
+          }
+          style={({ isActive }) => ({
+            ...(isActive && navActiveBg ? { backgroundColor: navActiveBg } : {}),
+            ...(navFg && !isActive ? { color: `${navFg}99` } : {}),
+          })}
+          end={false}
+        >
+          <item.icon
+            size={isNarrowSidebar ? 18 : 16}
+            aria-hidden="true"
+            className={isNarrowSidebar ? '' : 'mr-1.5'}
+          />
+          {isSidebarLayout ? (
+            <span
+              className={isNarrowSidebar ? 'text-[10px] leading-tight text-center' : 'text-[13px]'}
             >
-              <item.icon
-                size={isNarrowSidebar ? 18 : 16}
-                aria-hidden="true"
-                className={isNarrowSidebar ? '' : 'mr-1.5'}
-              />
-              {isSidebarLayout ? (
-                <span
-                  className={
-                    isNarrowSidebar ? 'text-[10px] leading-tight text-center' : 'text-[13px]'
-                  }
-                >
-                  {item.label}
-                </span>
-              ) : (
-                <span className="text-[13px]">{item.label}</span>
-              )}
-            </Button>
+              {item.label}
+            </span>
+          ) : (
+            <span className="text-[13px]">{item.label}</span>
           )}
         </NavLink>
       )
@@ -497,7 +491,12 @@ export const EmbedLayout = () => {
                 ⚠ Sandbox / Test Mode — not for production use
               </div>
             )}
-            <main id="main-content" className="w-full py-4 px-4 md:py-6 md:px-6" role="main">
+            <main
+              ref={mainRef}
+              id="main-content"
+              className="w-full py-4 px-4 md:py-6 md:px-6"
+              role="main"
+            >
               {renderContent()}
             </main>
             <PoweredByBadge />

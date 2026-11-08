@@ -375,12 +375,11 @@ const Step1WhyConceptsCosts: React.FC = () => (
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          No published methodology yet gives a reliable top-down total for a full PQC migration
-          &mdash; the field has too few completed programs to calibrate against. The defensible move
-          is to estimate the same program in <em>more than one way</em> and treat agreement between
-          methods as confidence, and divergence as a signal to dig deeper. Six model families are in
-          use &mdash; the workshop&apos;s Cost Model Explorer (Step 1) lets you watch them diverge
-          on one scenario:
+          The workshop&apos;s cost estimates are illustrative and depend on the scenario inputs,
+          scope and assumptions. Estimate the same scoped program in <em>more than one way</em>,
+          then examine which inputs and assumptions the methods share. Agreement between correlated
+          methods is not independent validation; divergence is a prompt to investigate. The Cost
+          Model Explorer (Step 1) compares six model families on one scenario:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {[
@@ -423,12 +422,11 @@ const Step1WhyConceptsCosts: React.FC = () => (
               Triangulate &mdash; don&apos;t trust one number
             </div>
             <p className="text-xs text-foreground/90">
-              Under deep uncertainty, cross-checking a bottom-up buildup against an independent
-              second estimate is stronger than precision within any single method. The
-              workshop&apos;s ROI Calculator does this for you: it reconciles your per-product
-              estimate against an independent assessment-derived one and flags when the two disagree
-              &mdash; still pair the result with your finance team&apos;s discounted-cash-flow model
-              before committing capital.
+              The workshop&apos;s ROI Calculator compares the per-product estimate with a second,
+              assessment-derived heuristic and flags disagreement. Both can share scenario inputs
+              and assumptions, so agreement does not establish reliability or independent evidence.
+              Use your own scoped costs, supplier pricing and uncertainty analysis alongside your
+              finance team&apos;s discounted-cash-flow model before committing capital.
             </p>
           </div>
         </div>

@@ -565,6 +565,18 @@ describe('SBOM gate', () => {
     )
   })
 
+  it('accepts the browser Web Crypto row under whichever algorithm list its name carries', () => {
+    const t = makeTree()
+    t.curated.groups[1].components = t.curated.groups[1].components.map((c) =>
+      c.name === 'Web Crypto API (X25519, P-256)'
+        ? { ...c, name: 'Web Crypto API (SHA-2, AES, HMAC, ECDSA, Ed25519, X25519)' }
+        : c
+    )
+    expect(derive(t.root, t.curated).problems.join('\n')).not.toMatch(
+      /only the browser's own Web Crypto/
+    )
+  })
+
   it('fails when the shipped code names a model that is not recorded, or a record no code names', () => {
     const t = makeTree()
     t.write('public/data/embeddings-meta.json', JSON.stringify({ model: 'org/embed-2' }))

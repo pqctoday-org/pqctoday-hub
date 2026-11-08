@@ -52,7 +52,8 @@ export interface CbomAlgorithm {
   /** The algorithm-family name — the STANDARD name where one is published
    *  (e.g. 'ML-KEM' even when the source text said 'Kyber'); otherwise the
    *  best-known pre-standardization name (e.g. 'Falcon'). This is what's
-   *  emitted as both the crypto-asset's display name and `algorithmFamily`. */
+   *  emitted as the crypto-asset's display name; `algorithmFamily` is omitted
+   *  when this name is not in the registry (for example, generic RSA). */
   canonical: string
   /** CycloneDX 1.7 `algorithmProperties.primitive` enum value. */
   primitive: string
@@ -80,7 +81,7 @@ export interface CbomAlgorithm {
   hybridRole?: 'classical' | 'post-quantum'
 }
 
-/** A FIPS 140-3 (CMVP) or CAVP algorithm certificate surfaced as component evidence (the catalog's certType "ACVP" is a CAVP record). */
+/** A catalogue-associated certificate reference, not identity or capability evidence. */
 export interface CbomCertification {
   certType: string
   certId: string
@@ -221,28 +222,58 @@ function detectCurve(haystack: string): string | undefined {
 }
 
 /**
- * Classical (quantum-vulnerable) algorithm tokens. Families and primitives
- * verified against the vendored Cryptography Registry 07092026 — RSA is 4
- * distinct registry families (signing vs encryption, PKCS1 vs PSS/OAEP
- * padding), not one. Source text in this codebase (e.g. "RSA-2048") almost
- * never states the mode explicitly, so RSA mode is a documented best-effort
- * default, not a guarantee: PKCS1-signing unless the text names encryption/
- * key-exchange, matching the dominant real-world case (certificate signing)
- * in this product's domain. X25519/X448 are a variant of the ECDH family in
- * the registry, not their own family — matched separately here only because
- * they need no curve-name extraction, then folded into the ECDH primitive.
+ * Classical algorithm declarations from free text. RSA padding and purpose
+ * are retained only when explicit and unambiguous; generic RSA is not evidence
+ * of a particular signing/encryption scheme. Mixed declarations stay generic,
+ * with source descriptions retained by the caller. This is not discovery or
+ * implementation validation. X25519/X448 use the registry's ECDH family.
  */
 export function extractClassicalAlgorithmsFromText(text: string): CbomAlgorithm[] {
   const haystack = (text || '').toUpperCase()
   const out: CbomAlgorithm[] = []
 
-  if (haystack.includes('RSA')) {
-    const keyLenMatch = haystack.match(/RSA[-\s]?(1024|2048|3072|4096)/)
-    const keyLength = keyLenMatch ? Number(keyLenMatch[1]) : undefined
-    const isEncryption = /ENCRYPT|KEY.?EXCHANGE|\bKEX\b|OAEP/.test(haystack)
+  if (/\bRSA(?:SSA|ES)?(?=\b|\d)/.test(haystack)) {
+    const keyLengths = new Set(
+      Array.from(haystack.matchAll(/\bRSA[-\s]?(1024|2048|3072|4096)\b/g), (m) => Number(m[1]))
+    )
+    const sizeList =
+      /\bRSA[-\s]?(?:1024|2048|3072|4096)\s*[/,]\s*(?=\d)/.test(haystack) ||
+      /\bRSA[-\s]?(?:1024|2048|3072|4096)\s+(?:AND\/OR|AND|OR)\s+(?:1024|2048|3072|4096)\b/.test(
+        haystack
+      )
+    const keyLength = keyLengths.size === 1 && !sizeList ? [...keyLengths][0] : undefined
+    const signing = /\b(?:SIGN|SIGNATURE|SIGNATURES|SIGNING|VERIFY|RSASSA|PSS)\b/.test(haystack)
+    const encryption =
+      /\bENCRYPT(?:ION|ING)?\b|\bKEY[-\s]?(?:EXCHANGE|TRANSPORT)\b|\bKEX\b|\bRSAES\b|\bOAEP\b/.test(
+        haystack
+      )
+    const schemes = new Set<string>()
+    if (/\bPSS\b/.test(haystack)) schemes.add('RSASSA-PSS')
+    if (/\bOAEP\b/.test(haystack)) schemes.add('RSAES-OAEP')
+    if (/\bRSASSA-PKCS1\b/.test(haystack)) schemes.add('RSASSA-PKCS1')
+    if (/\bRSAES-PKCS1\b/.test(haystack)) schemes.add('RSAES-PKCS1')
+    // Scheme named outright (PSS, OAEP, RSASSA-/RSAES-PKCS1), before any v1.5 inference.
+    const namedScheme = schemes.size > 0
+    const explicitV15 = /\bPKCS\s*#?\s*1\b.*\bV?1[.]5\b/.test(haystack)
+    if (explicitV15 && signing && !encryption) schemes.add('RSASSA-PKCS1')
+    if (explicitV15 && encryption && !signing) schemes.add('RSAES-PKCS1')
+    // A global operation word may refer to another algorithm in catalogue text
+    // (a PQC, hash-based signature, symmetric or hash algorithm named alongside
+    // RSA). Unless the RSA scheme is named outright, keep that mixed description
+    // unassessed; an inferred PKCS#1 v1.5 scheme does not count as named.
+    const otherAlgorithm =
+      /\b(?:ECDSA|ECDH|EDDSA|ED25519|ED448|X25519|X448|ML-KEM|ML-DSA|SLH-DSA|DIFFIE)\b|\b(?:KYBER|DILITHIUM|FALCON|SPHINCS|FRODOKEM|XMSS|BIKE|HQC)|\b(?:LMS|HSS|AES|SHA|DH)(?=\b|\d)/.test(
+        haystack
+      )
+    const ambiguous =
+      sizeList ||
+      keyLengths.size > 1 ||
+      schemes.size > 1 ||
+      (signing && encryption) ||
+      (!namedScheme && otherAlgorithm)
     out.push({
-      canonical: isEncryption ? 'RSAES-PKCS1' : 'RSASSA-PKCS1',
-      primitive: isEncryption ? 'pke' : 'signature',
+      canonical: !ambiguous && schemes.size === 1 ? [...schemes][0] : 'RSA',
+      primitive: ambiguous ? 'unknown' : signing ? 'signature' : encryption ? 'pke' : 'unknown',
       classical: true,
       ...(keyLength ? { keyLength } : {}),
     })
@@ -343,6 +374,7 @@ export function cryptoRandomUuid(): string {
 // Values must be members of the 1.7 schema's cryptoFunctions enum (verified
 // 07092026 — no 'exchange' value exists; key-agreement is keygen + keyderive).
 function cryptoFunctionsFor(primitive: string): string[] {
+  if (primitive === 'unknown') return ['unknown']
   if (primitive === 'kem') return ['encapsulate', 'decapsulate']
   if (primitive === 'key-agree') return ['keygen', 'keyderive']
   if (primitive === 'pke') return ['encrypt', 'decrypt']
@@ -362,6 +394,7 @@ export function buildCbomDocument(
   let cryptoAssetCount = 0
 
   for (const input of inputs) {
+    const properties = [...(input.properties ?? [])]
     const component: Record<string, unknown> = {
       type: input.type,
       'bom-ref': input.bomRef,
@@ -371,21 +404,17 @@ export function buildCbomDocument(
       ...(input.publisher ? { publisher: input.publisher } : {}),
       ...(input.cpe ? { cpe: input.cpe } : {}),
       ...(input.purl ? { purl: input.purl } : {}),
-      properties: input.properties ?? [],
+      properties,
     }
 
     const certs = input.certifications ?? []
     if (certs.length > 0) {
-      component.evidence = {
-        identity: certs.map((c) => ({
-          field: 'cpe',
-          confidence: 1,
-          // CycloneDX requires method-level `confidence` alongside `technique`.
-          methods: [
-            { technique: 'attestation', confidence: 1, value: `${c.certType} ${c.certId}`.trim() },
-          ],
-        })),
-      }
+      // A catalogue certificate association does not establish CPE identity or
+      // attest 100% confidence. Keep even linkless IDs without inventing evidence.
+      properties.push({
+        name: 'pqctoday:certificateReferences',
+        value: JSON.stringify(certs),
+      })
       const certRefs = certs
         .filter((c) => c.certLink)
         .map((c) => ({ type: 'certification-report', url: c.certLink, comment: c.certType }))
@@ -427,7 +456,8 @@ export function buildCbomDocument(
           algorithmProperties: {
             primitive: algo.primitive,
             ...(algorithmFamily ? { algorithmFamily } : {}),
-            executionEnvironment: 'software-plain-ram',
+            // The input describes algorithms, not an observed execution environment.
+            executionEnvironment: 'unknown',
             ...(parameterSetIdentifier ? { parameterSetIdentifier } : {}),
             ...(algo.ellipticCurve ? { ellipticCurve: algo.ellipticCurve } : {}),
             ...(algo.securityCategory ? { nistQuantumSecurityLevel: algo.securityCategory } : {}),

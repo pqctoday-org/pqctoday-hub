@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
+  ALL_SEGMENTS_PQC_NOTE,
   GATEWAY_COMPONENTS,
   TOPOLOGY_PRESETS,
   TLS_MODES,
@@ -195,10 +196,18 @@ export const TopologyBuilder: React.FC = () => {
                         <div className="flex items-center gap-2 text-xs">
                           <span
                             className={
-                              modeInfo.quantumSafe ? 'text-status-success' : 'text-status-warning'
+                              modeInfo.quantumSafe === null
+                                ? 'text-muted-foreground'
+                                : modeInfo.quantumSafe
+                                  ? 'text-status-success'
+                                  : 'text-status-warning'
                             }
                           >
-                            {modeInfo.quantumSafe ? 'Quantum-safe' : 'Quantum-vulnerable'}
+                            {modeInfo.quantumSafe === null
+                              ? 'Depends on the endpoints (unresolved)'
+                              : modeInfo.quantumSafe
+                                ? 'Quantum-safe'
+                                : 'Quantum-vulnerable'}
                           </span>
                         </div>
                       )}
@@ -275,7 +284,9 @@ export const TopologyBuilder: React.FC = () => {
                     ? 'text-status-error'
                     : analysis.hndlExposure === 'medium'
                       ? 'text-status-warning'
-                      : 'text-status-success'
+                      : analysis.hndlExposure === 'unresolved'
+                        ? 'text-muted-foreground'
+                        : 'text-status-success'
                 }`}
               >
                 {analysis.hndlExposure.charAt(0).toUpperCase() + analysis.hndlExposure.slice(1)}
@@ -284,11 +295,20 @@ export const TopologyBuilder: React.FC = () => {
             </div>
           </div>
 
+          {analysis.unresolvedSegments > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {analysis.unresolvedSegments} segment
+              {analysis.unresolvedSegments > 1 ? 's are' : ' is'} not counted as vulnerable or safe:
+              the algorithms of a passthrough session are set by the two endpoints, not by the
+              gateway, and this topology does not say what they negotiate.
+            </p>
+          )}
+
           <div className="space-y-2">
             <div className="text-xs font-bold text-foreground">Recommendations</div>
             {analysis.recommendations.map((rec, idx) => (
               <div key={idx} className="flex items-start gap-2 text-sm text-foreground/80">
-                {rec.includes('quantum-safe') ? (
+                {rec === ALL_SEGMENTS_PQC_NOTE ? (
                   <CheckCircle2 size={14} className="text-status-success shrink-0 mt-0.5" />
                 ) : (
                   <AlertTriangle size={14} className="text-status-warning shrink-0 mt-0.5" />

@@ -25,3 +25,17 @@ describe('AwsKmsPolicyLab', () => {
     expect(container.textContent).toMatch(/postQuantumTlsEnabled/)
   })
 })
+
+it('does not claim effective ML-DSA-only permissions after an extra unconditional grant', () => {
+  render(<AwsKmsPolicyLab />)
+  fireEvent.click(screen.getByRole('button', { name: 'Insert Solution Snippet' }))
+  const editor = screen.getByLabelText(EDITOR) as HTMLTextAreaElement
+  const policy = JSON.parse(editor.value)
+  policy.Statement.push({ Effect: 'Allow', Action: 'kms:CreateKey', Resource: '*' })
+  fireEvent.change(editor, { target: { value: JSON.stringify(policy) } })
+  expect(screen.getByText('Sample patterns found')).toBeInTheDocument()
+  expect(
+    screen.getByText(/An additional Allow statement could permit other key creation/)
+  ).toBeInTheDocument()
+  expect(screen.queryByText('New signing keys will be ML-DSA')).not.toBeInTheDocument()
+})

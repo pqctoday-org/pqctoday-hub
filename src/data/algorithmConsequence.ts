@@ -105,12 +105,11 @@ export function transitionConsequence(
   const noun = m.dimension === 'public key' ? 'Public keys' : `${m.dimension}s`
   const Noun = noun.charAt(0).toUpperCase() + noun.slice(1)
 
-  // A shrink is real and worth saying plainly — several symmetric and hash
-  // rows do not grow at all, and telling an executive "this one costs you
-  // nothing" is as useful as telling them one costs a lot.
+  // Similar or smaller selected byte fields do not establish end-to-end
+  // capacity requirements. Preserve the comparison without inferring zero cost.
   if (growthFactor <= 1.05) {
     return {
-      sentence: `${Noun} stay about the same size (${formatBytes(m.fromBytes)} → ${formatBytes(m.toBytes)}) — no capacity work needed for this one.`,
+      sentence: `${Noun}: ${formatBytes(m.fromBytes)} → ${formatBytes(m.toBytes)} for the selected byte field. CPU, memory, latency and end-to-end capacity requirements are not assessed by this comparison; benchmark the target workflow.`,
       growthFactor,
       dimension: m.dimension,
     }

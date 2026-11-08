@@ -7,6 +7,10 @@
  * chained value could silently lose fields at a step boundary. One definition.
  */
 import type { DataSensitivityClass } from '@/utils/breachCostModel'
+import type {
+  BreachProbabilityOriginLabel,
+  BreachProbabilityProvenance,
+} from '@/utils/breachProbabilityOrigin'
 
 export interface InactionScenarioRecord {
   modelVersion: 'coi-2'
@@ -18,6 +22,7 @@ export interface InactionScenarioRecord {
   migrationCostUSD: number
   delayPremiumPerYearUSD: number
   annualBreachProbPct: number
+  probabilityProvenance?: BreachProbabilityProvenance
   breachBaselineUSD: number
   baselineOrigin: 'breach-simulator' | 'industry-default'
   baseYearsOfData: number
@@ -32,7 +37,7 @@ export interface InactionScenarioRecord {
   }
   sourceStatus: {
     breachBaseline: 'IBM 2025 sector assumption — one edition behind and not independently verified'
-    breachProbability: 'Cyentia IRIS 2025 primary-verified'
+    breachProbability: BreachProbabilityOriginLabel
     crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model'
   }
 }
@@ -61,6 +66,7 @@ export interface BreachOutput {
   yearsOfData: number
   hndlFactorPct: number
   annualBreachProbPct: number
+  probabilityProvenance?: BreachProbabilityProvenance
 }
 
 export interface InactionOutput {

@@ -63,9 +63,12 @@ export function DataPrivacySection() {
                   stored in your browser&apos;s localStorage. {LOCAL_DATA_LEAVES_STATEMENT}
                 </li>
                 <li>
-                  <strong className="text-foreground">Client-side cryptography</strong> &mdash; all
-                  cryptographic operations run entirely in your browser via WebAssembly (OpenSSL,
-                  liboqs). No keys or certificates are ever sent to a server.
+                  <strong className="text-foreground">Client-side cryptography</strong> &mdash; the
+                  site&apos;s cryptographic operations run in your browser, using WebAssembly
+                  modules (such as OpenSSL and liboqs), the browser&apos;s Web Crypto API and
+                  JavaScript libraries; the Software Bill of Materials on this page lists them. They
+                  are for education and demonstration, not certified cryptographic modules. No keys
+                  or certificates are ever sent to a server.
                 </li>
                 <li>
                   <strong className="text-foreground">Third-party data flows</strong> &mdash; the

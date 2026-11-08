@@ -293,11 +293,10 @@ function ASILRequirementsTable() {
     <div className="glass-panel p-4">
       <h4 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
         <Info size={16} className="text-primary" />
-        ISO 26262 ASIL Crypto Requirements
+        Example crypto design assumptions by ASIL (not ISO 26262 requirements)
       </h4>
       <p className="text-xs text-muted-foreground mb-4">
-        How each ASIL level maps to cryptographic verification requirements and PQC migration
-        impact.
+        How each ASIL level maps to example crypto design assumptions and PQC migration impact.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -308,7 +307,7 @@ function ASILRequirementsTable() {
                 Diagnostic Coverage
               </th>
               <th className="text-left p-2 text-muted-foreground font-medium text-xs">
-                Crypto Requirement
+                Crypto Design Assumption
               </th>
               <th className="text-left p-2 text-muted-foreground font-medium text-xs">
                 Redundancy
@@ -356,9 +355,8 @@ export const SafetyCryptoAnalyzer: React.FC = () => {
   return (
     <div className="space-y-6">
       <p className="text-sm text-foreground/80">
-        Map ISO 26262 ASIL levels to cryptographic verification requirements and evaluate whether
-        PQC algorithms can meet the real-time timing budgets of safety-critical automotive
-        functions.
+        Map ASIL levels to example crypto design assumptions and evaluate whether PQC algorithms can
+        meet the real-time timing budgets of safety-critical automotive functions.
       </p>
 
       {/* Function Selector */}

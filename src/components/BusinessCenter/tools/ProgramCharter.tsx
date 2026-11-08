@@ -600,15 +600,13 @@ export const ProgramCharter: React.FC = () => {
             <span className="font-medium text-foreground">
               Cost-driver taxonomy (Framework Activity 0.2c):
             </span>{' '}
-            discovery &amp; inventory tooling; cryptographic engineering labor (typically the
-            largest line); vendor PQC licensing &amp; upgrades; HSM/hardware refresh (firmware
-            upgrades alone $50K&ndash;$500K+ depending on module count); PKI modernization;
-            performance &amp; capacity uplift; testing environments; program management overhead.{' '}
-            <span className="font-medium text-foreground">Reference program economics:</span> a
-            large-enterprise Year 1 foundation typically runs $1.5M&ndash;$4M (varies by estate
-            complexity); a major global telco&apos;s decade-scale program has run on the order of
-            $300M&ndash;$500M, peaking around 50 FTEs (illustrative anchors, not a quote for your
-            organization).
+            discovery &amp; inventory tooling; cryptographic engineering labor; vendor PQC licensing
+            &amp; upgrades; HSM/hardware refresh; PKI modernization; performance &amp; capacity
+            uplift; testing environments; program management overhead. Build an estimate from scoped
+            work, system counts, supplier pricing, staffing, delivery schedule and stated
+            assumptions. Explain what is included, what remains uncertain and when the estimate will
+            be reviewed. The sample budget fields are editable teaching inputs, not observed
+            programme spending or a supplier quote.
           </p>
         </div>
       </section>

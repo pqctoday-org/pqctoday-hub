@@ -715,7 +715,7 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
     timeline: {
       hint: 'Timeline pressure is a multiplier (1.0-1.3) applied to the regulatory pressure score. Country-specific deadlines from the timeline CSV are shown.',
       hintExpert:
-        'Pressure multipliers: within-1y=1.3, within-2-3y=1.15, internal-deadline=1.05, no-deadline=1.0, unknown=1.1. Applied after regulatory_pressure_score calculation.',
+        'Pressure multipliers: within-1y=1.3, within-2-3y=1.15, internal-deadline (your own target, or a published deadline more than 3 years away)=1.05, no-deadline=1.0, unknown=1.1. Applied after regulatory_pressure_score calculation.',
     },
   },
   'cert-engineer': {
@@ -739,7 +739,7 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       hint: 'Pick the most sensitive data the module will protect in its target deployments. It sets how long classical keys in the field remain a harvest-now, decrypt-later exposure.',
     },
     compliance: {
-      hint: 'Select the frameworks your buyers will cite. Each deadline becomes the date by which a certificate must list PQC algorithms — and certification lead times are long.',
+      hint: "Select the frameworks your buyers will cite, then read each source's milestones separately: an inventory milestone, an advisory target and a validation obligation are different things. Only a source that sets a validation obligation (CAVP algorithm validation or a CMVP module certificate) makes a certificate listing a requirement, so check which one the buyer's source asks for. Certification lead times are long.",
     },
     migration: {
       hint: 'Answer for the product line rather than the whole organisation: has PQC work started inside the module?',
@@ -826,7 +826,7 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       hintBeginner:
         'How long are your certificates valid? Check your TLS certs, SSH keys, and any CA certificates you manage.',
       hintExpert:
-        'Map all credential lifetimes: root CA (10-30yr), intermediate CA (3-10yr), TLS leaf (90d via ACME to 2yr), SSH host keys (rotation schedule), code signing (3-5yr).',
+        'Map all credential lifetimes: root CA (10-30yr), intermediate CA (3-10yr), TLS leaf (publicly trusted certificates issued from 15 March 2026 are capped at 200 days by the CA/Browser Forum Baseline Requirements; private PKI follows your own policy), SSH host keys (rotation schedule), code signing (3-5yr).',
     },
     scale: {
       hint: 'Count production systems: servers, containers, IoT devices, network appliances, and HSMs that use crypto operations.',

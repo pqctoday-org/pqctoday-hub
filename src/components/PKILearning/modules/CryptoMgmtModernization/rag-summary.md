@@ -66,7 +66,7 @@ Quantum-dependent benefits are additive, never load-bearing.
    status trackers.
 4. **No-Regret ROI Builder** — ROI, NPV, and payback under quantum-happens / never-happens. Every headline (program cost + 6 benefit streams) expands into an editable sub-model with formula, parameters, source citation, and plain-English explanation. Globals: horizon, discount rate, P(CRQC within horizon). "Pull from Step 3 CBOM" populates HSM/library counts.
 5. **Posture KPI Dashboard Designer** — KPI taxonomy across five pillars.
-6. **CLM Vendor Evaluator** — interactive scorecard for evaluating Venafi, AppViewX, and Keyfactor based on PQC readiness criteria (HSM orchestration, hybrid certificates, ACME automation).
+6. **CLM Vendor Evaluator** — interactive scorecard for practising how to evaluate fictional CLM platform profiles on PQC readiness criteria (HSM orchestration, hybrid certificates, ACME automation); the profiles describe no real product.
 
 ## Key standards
 

@@ -653,8 +653,23 @@ export function KmipPlaygroundView() {
     setEncIvHex(null)
   }
 
+  // Counts policy loads so a slow, older load that settles after a newer one
+  // cannot overwrite the policy the reader chose last.
+  const policyLoadSeq = useRef(0)
+
+  // A policy file is read as YAML only when the server answered without an HTTP
+  // error: an error response (for example a 404 page) must not reach the engine
+  // or the YAML view. A server that answers 200 with other content is caught by
+  // the engine, which refuses text that is not a policy.
+  const fetchPolicyText = async (file: string): Promise<string> => {
+    const r = await fetch(`/kmip-policies/${file}`)
+    if (!r.ok) throw new Error(`Policy file ${file} could not be loaded (HTTP ${r.status})`)
+    return r.text()
+  }
+
   const onLoadPolicy = async (preset: PolicyPreset) => {
     if (!engine) return
+    const seq = ++policyLoadSeq.current
     setBusy(true)
     try {
       if (preset.files && preset.files.length > 0) {
@@ -664,13 +679,12 @@ export function KmipPlaygroundView() {
         // the concatenation, purely for the List/YAML/Visual tabs' display —
         // `parsePolicyModel` just scans for `- type:` lines, so it merges
         // every file's rules into one model regardless of the boundary.
-        const yamls = await Promise.all(
-          preset.files.map((f) => fetch(`/kmip-policies/${f}`).then((r) => r.text()))
-        )
-        setPolicyYaml(yamls.join('\n\n# ── next module ──\n\n'))
+        const yamls = await Promise.all(preset.files.map((f) => fetchPolicyText(f)))
+        if (seq !== policyLoadSeq.current) return
         const res = engine.activateModulePreset(preset.name, yamls)
         if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
         else {
+          setPolicyYaml(yamls.join('\n\n# ── next module ──\n\n'))
           const modStatus = engine.policyModulesStatus()
           saveCacpPresetSession({
             presetFile: preset.file,
@@ -680,34 +694,38 @@ export function KmipPlaygroundView() {
           })
         }
       } else {
-        const yaml = await fetch(`/kmip-policies/${preset.file}`).then((r) => r.text())
-        setPolicyYaml(yaml)
+        const yaml = await fetchPolicyText(preset.file)
+        if (seq !== policyLoadSeq.current) return
         const res = engine.loadPolicy(yaml)
         if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
-        else
+        else {
+          setPolicyYaml(yaml)
           saveCacpPresetSession({
             presetFile: preset.file,
             moduleFiles: null,
             uncoveredOps: 'deny',
             fingerprints: [engine.policyStatus().fingerprint ?? ''],
           })
+        }
       }
       refresh(engine)
     } catch (err) {
       // fetch failure (missing/!ok policy file) or a wasm panic loading it.
-      setResult(engineError('LoadPolicy', err))
+      if (seq === policyLoadSeq.current) setResult(engineError('LoadPolicy', err))
     } finally {
-      setBusy(false)
+      if (seq === policyLoadSeq.current) setBusy(false)
     }
   }
 
   // Apply an edited policy (from the visual editor) to the engine and surface it
   // site-wide — the graph is the source of truth, so List/Timeline/YAML + every
   // plane reflect the edit. Returns the loader result (warnings feed the editor).
+  // The YAML is published only when the engine accepted it, so the views never
+  // show a policy the engine refused.
   const onApplyYaml = (yaml: string) => {
     if (!engine) return undefined
     const res = engine.loadPolicy(yaml)
-    setPolicyYaml(yaml)
+    if (res.ok) setPolicyYaml(yaml)
     refresh(engine)
     return res
   }
@@ -772,7 +790,7 @@ export function KmipPlaygroundView() {
       steps: [
         {
           title: 'Why crypto-agility?',
-          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, so clients that look keys up by name need no code change. Watch that happen live.',
+          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, so a key-management caller that looks keys up by a stable name can keep making the same calls. Anyone who verifies signatures or holds public keys still needs the new public keys, reissued certificates and algorithm support, rolled out together. Watch the policy change live.',
         },
         {
           title: 'Start on the "before"',
@@ -878,13 +896,13 @@ export function KmipPlaygroundView() {
         {
           title: 'Switch to Auto-migrate',
           act: () => loadPolicyByFile('auto-migrate-on-use.yaml'),
-          body: "This policy lets an EXISTING classical key keep working, but rekeys it to PQC the moment it's used — no flag day, no re-issue.",
+          body: "This policy lets an EXISTING classical key keep working, but rekeys it to PQC the moment it's used, so the caller's handle needs no change. The new ML-DSA key is a different key with its own public key: certificates must be reissued and every verifier must be given the new public key and support the algorithm.",
         },
         {
           title: 'Sign — and watch it migrate',
           target: '[data-tour="sign-btn"]',
           act: () => onSign(),
-          body: 'The moment you Sign, the policy rekeys ECDSA-P256 → ML-DSA-65 and signs with the new key — a new key is minted and the old one is deactivated and superseded. The handle keeps working because the engine follows the supersedes link.',
+          body: 'The moment you Sign, the policy rekeys ECDSA-P256 → ML-DSA-65 and signs with the new key — a new key is minted and the old one is deactivated and superseded. The handle keeps working because the engine follows the supersedes link; signatures made with the old key stay verifiable only with the old public key.',
         },
       ],
     },
@@ -1255,10 +1273,11 @@ export function KmipPlaygroundView() {
                     The fix isn&apos;t swapping in a PQC algorithm once; it&apos;s a control plane
                     that can migrate keys again whenever the roadmap changes,{' '}
                     <span className="font-medium text-foreground">
-                      with no flag day and no application code change
+                      so a key-management caller that uses stable key names can keep its calls
                     </span>
-                    . Everything below is that idea made hands-on — flip the policy strip and watch
-                    the same request behave differently.
+                    . Public keys, certificates, verifier support and the rollout order still have
+                    to be planned. Everything below is that idea made hands-on — flip the policy
+                    strip and watch the same request behave differently.
                   </p>
                 </div>
                 <Button

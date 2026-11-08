@@ -18,11 +18,12 @@ describe('IAM vendor rows derive PQC status from the central catalog', () => {
     for (const v of IAM_VENDORS) {
       const avail = getCatalogStatus(v.catalogName)?.availability
       const status = getVendorPqcStatus(v)
-      expect(['ga', 'preview', 'roadmap', 'planned', 'none']).toContain(status)
-      if (avail === 'available') expect(status).toBe('ga')
-      if (avail === 'partial') expect(status).toBe('preview')
+      expect(['available', 'partial', 'roadmap', 'none', 'unverified']).toContain(status)
+      if (avail === 'available') expect(status).toBe('available')
+      if (avail === 'partial') expect(status).toBe('partial')
       if (avail === 'roadmap') expect(status).toBe('roadmap')
       if (avail === 'none') expect(status).toBe('none')
+      if (avail === 'unverified' || !avail) expect(status).toBe('unverified')
     }
   })
 

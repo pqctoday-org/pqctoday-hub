@@ -97,9 +97,22 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     location: '/etc/ssh/ssh_host_*',
     algorithm: 'Ed25519',
     keySize: 256,
-    usage: 'SSH host key authentication',
+    usage: 'SSH host key authentication (server signature over the key-exchange hash)',
     quantumStatus: 'vulnerable',
-    recommendation: 'Enable mlkem768x25519-sha256 key exchange in OpenSSH 9.x',
+    recommendation:
+      'A hybrid key exchange does not replace this Ed25519 host signature, so it is a separate change from the key-exchange record below. OpenSSH 10.6 (October 2026) enables the ssh-mldsa44-ed25519 composite signature (ML-DSA-44 with Ed25519, specified in an Internet-Draft); both ends must support it, so test client and server versions before relying on it',
+    infrastructureLayer: 'AppServers',
+  },
+  {
+    id: 'ssh-kex',
+    component: 'SSH Server (OpenSSH)',
+    location: 'SSH transport key exchange',
+    algorithm: 'X25519',
+    keySize: 256,
+    usage: 'SSH transport key exchange (curve25519-sha256)',
+    quantumStatus: 'vulnerable',
+    recommendation:
+      'Enable the hybrid mlkem768x25519-sha256 key exchange (RFC 10042). OpenSSH added it in 9.9 and has used it by default since 10.0; confirm that your servers and clients run versions that offer it',
     infrastructureLayer: 'AppServers',
   },
   {
@@ -122,7 +135,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'File integrity verification',
     quantumStatus: 'safe',
     recommendation:
-      'No action required — SHA-256 provides 128-bit post-quantum collision resistance',
+      'Assess collision resistance separately from preimage resistance. The classical birthday bound is not a universal quantum strength estimate; compare the attack model, memory and circuit resources for this integrity use case.',
     infrastructureLayer: 'SecSoftware',
   },
   {
@@ -373,6 +386,20 @@ export const CBOM_CYCLONEDX_SAMPLE = {
           nistQuantumSecurityLevel: 0,
         },
         oid: '1.3.101.112',
+      },
+    },
+    {
+      type: 'cryptographic-asset',
+      name: 'X25519 SSH Key Exchange',
+      cryptoProperties: {
+        assetType: 'algorithm',
+        algorithmProperties: {
+          primitive: 'key-agree',
+          parameterSetIdentifier: '256',
+          classicalSecurityLevel: 128,
+          nistQuantumSecurityLevel: 0,
+        },
+        oid: '1.3.101.110',
       },
     },
     {

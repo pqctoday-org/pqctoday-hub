@@ -4,8 +4,9 @@
  * layman analogy describes — not decoration — so a reader can map "one cook,
  * one pan" to "one value per instruction", "school bus" to "fixed launch cost
  * + thousands of lanes", and so on. Numbers inside the drawings are either
- * structural (register widths) or PQC Today measurements from
- * data/measurements.ts, never invented.
+ * structural (register widths), illustrative workload choices, or attributed
+ * PQC Today measurements from data/measurements.ts. Diagrams do not establish
+ * universal hardware capability or implementation performance.
  */
 import React from 'react'
 import { motion, MotionConfig } from 'framer-motion'
@@ -255,9 +256,7 @@ const GpuVisual: React.FC = () => {
   const cells = Array.from({ length: cols * rows }, (_, i) => i)
   return (
     <div className="space-y-3">
-      <Title className="text-status-info">
-        Fixed launch cost, then thousands of lanes in lockstep — only a full batch pays it back
-      </Title>
+      <Title className="text-status-info">Illustrative batch-versus-launch-cost comparison</Title>
       <svg viewBox="0 0 600 230" className="w-full h-56" role="img" aria-label="GPU batching">
         {[
           { y: 20, label: '1 signature', fill: 1 },
@@ -308,16 +307,17 @@ const GpuVisual: React.FC = () => {
               className="fill-muted-foreground text-[9px]"
             >
               {row.fill === 1
-                ? '1 lane busy, the rest idle — the CPU finishes first'
-                : 'every lane busy — launch cost shared by all'}
+                ? 'One-operation illustration; internal parallel work not shown'
+                : 'Batch illustration; launch cost shared across operations'}
             </text>
           </g>
         ))}
       </svg>
       <Caption>
-        GPUs trade latency for throughput: each launch costs a fixed start-up time, and memory
-        delays are hidden only when many independent operations are in flight. That is why GPU PQC
-        results are quoted at batches of thousands.
+        Launch and transfer overhead can affect latency. These authored diagrams are not
+        measurements or a limit on parallelism within an individual PQC operation. Evaluate the
+        exact implementation, batch size and hardware; the drawing does not establish which
+        processor finishes first.
       </Caption>
     </div>
   )
@@ -471,23 +471,35 @@ const AsicVisual: React.FC = () => {
         <line x1={310} y1={100} x2={350} y2={100} className="stroke-warning" strokeWidth={2} />
         <rect
           x={350}
-          y={55}
+          y={45}
           width={130}
-          height={90}
+          height={110}
           rx={6}
           className="fill-warning/25 stroke-warning"
           strokeWidth={2}
         />
-        <text x={415} y={85} textAnchor="middle" className="fill-foreground text-[10px] font-bold">
+        <text x={415} y={72} textAnchor="middle" className="fill-foreground text-[10px] font-bold">
           PQC engine
         </text>
-        <text x={415} y={102} textAnchor="middle" className="fill-muted-foreground text-[9px]">
-          fixed algorithms
+        <text x={415} y={88} textAnchor="middle" className="fill-muted-foreground text-[9px]">
+          fixed circuits
         </text>
-        <text x={415} y={116} textAnchor="middle" className="fill-muted-foreground text-[9px]">
-          fixed parameter sets
+        <text
+          x={415}
+          y={101}
+          textAnchor="middle"
+          className="fill-muted-foreground text-[9px]"
+          data-testid="asic-parameters-label"
+        >
+          <tspan x={415}>parameters fixed unless </tspan>
+          <tspan x={415} dy={11}>
+            microcode/firmware{' '}
+          </tspan>
+          <tspan x={415} dy={11}>
+            is writable
+          </tspan>
         </text>
-        <text x={415} y={130} textAnchor="middle" className="fill-muted-foreground text-[9px]">
+        <text x={415} y={139} textAnchor="middle" className="fill-muted-foreground text-[9px]">
           fixed clock
         </text>
         <text x={500} y={80} className="fill-foreground text-[9px]">
@@ -525,10 +537,15 @@ const NpuVisual: React.FC = () => {
   return (
     <div className="space-y-3">
       <Title className="text-destructive">
-        A giant grid of 8-bit multiply-add units — PQC needs exact 23-bit arithmetic and bit
-        shuffling
+        Illustrative kernel-mapping challenges: this ML-DSA example needs exact 23-bit arithmetic
+        and bit operations
       </Title>
-      <svg viewBox="0 0 600 210" className="w-full h-52" role="img" aria-label="NPU mismatch">
+      <svg
+        viewBox="0 0 600 210"
+        className="w-full h-52"
+        role="img"
+        aria-label="Illustrative NPU kernel mapping"
+      >
         {grid.map((i) => (
           <rect
             key={i}
@@ -550,18 +567,22 @@ const NpuVisual: React.FC = () => {
           {
             y: 30,
             ok: false,
-            text: 'ML-DSA numbers are mod q = 8,380,417 (23 bits) — they do not fit in 8 bits',
+            text: 'ML-DSA mod q = 8,380,417 (23 bits) needs more than a single 8-bit lane',
           },
-          { y: 60, ok: false, text: 'Results must be exact; NPU quantisation rounds by design' },
+          {
+            y: 60,
+            ok: false,
+            text: 'This example needs exact results; assess supported arithmetic and decomposition',
+          },
           {
             y: 90,
             ok: false,
-            text: 'Keccak/SHAKE is XOR, AND, NOT and rotate — no multiplication at all',
+            text: 'Keccak/SHAKE needs XOR, AND, NOT and rotate; assess supported bit operations',
           },
           {
             y: 120,
             ok: false,
-            text: 'Each NTT stage would need a round trip back to the CPU',
+            text: 'Assess CPU coordination and data movement for the selected NTT kernel',
           },
           {
             y: 160,
@@ -598,11 +619,11 @@ const NpuVisual: React.FC = () => {
         ))}
       </svg>
       <Caption>
-        The contrast with GPUs is instructive: NVIDIA cuPQC runs on the GPU’s general-purpose CUDA
-        cores, which do exact integer arithmetic. Even research that does push lattice-style math
-        onto 8-bit tensor units (TensorFHE) splits every 32-bit number into four 8-bit pieces and
-        relies on those neighbouring general-purpose cores to put them back together. A
-        fixed-function NPU has no such neighbour.
+        An unavailable or inefficient kernel is different from mathematical impossibility.
+        Decomposition is an implementation technique, not proof of support on every NPU. This
+        diagram does not establish a platform’s capability or the absence of a CPU in a complete
+        SoC. Evaluate supported operations, decomposition and data movement with sample tests on
+        your chosen platform.
       </Caption>
     </div>
   )

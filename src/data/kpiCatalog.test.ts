@@ -14,37 +14,44 @@ import {
 } from './kpiCatalog'
 import { getKpiTarget } from './kpiTargets'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import type { SoftwareItem } from '@/types/MigrateTypes'
 
 // ── pqcReadinessTier ───────────────────────────────────────────────────────
 
 describe('pqcReadinessTier', () => {
   it('returns 1.0 for "Yes (ML-KEM production)" narrative strings', () => {
-    expect(pqcReadinessTier('Yes (ML-KEM production)')).toBe(1.0)
-    expect(pqcReadinessTier('yes')).toBe(1.0)
+    expect(pqcReadinessTier({ pqcSupport: 'Yes (ML-KEM production)' })).toBe(1.0)
+    expect(pqcReadinessTier({ pqcSupport: 'yes' })).toBe(1.0)
   })
 
   it('returns 0.7 for hybrid/partial strings', () => {
-    expect(pqcReadinessTier('Partial (ML-KEM only)')).toBe(0.7)
-    expect(pqcReadinessTier('Hybrid X25519+ML-KEM')).toBe(0.7)
+    expect(pqcReadinessTier({ pqcSupport: 'Partial (ML-KEM only)' })).toBe(0.7)
+    expect(pqcReadinessTier({ pqcSupport: 'Hybrid X25519+ML-KEM' })).toBe(0.7)
   })
 
   it('returns 0.2 for planned / roadmap / announced', () => {
-    expect(pqcReadinessTier('Planned (Dilithium 2026)')).toBe(0.2)
-    expect(pqcReadinessTier('Roadmap')).toBe(0.2)
-    expect(pqcReadinessTier('Announced')).toBe(0.2)
+    expect(pqcReadinessTier({ pqcSupport: 'Planned (Dilithium 2026)' })).toBe(0.2)
+    expect(pqcReadinessTier({ pqcSupport: 'Roadmap' })).toBe(0.2)
+    expect(pqcReadinessTier({ pqcSupport: 'Announced' })).toBe(0.2)
   })
 
   it('returns 0 for None / No / empty', () => {
-    expect(pqcReadinessTier('None')).toBe(0)
-    expect(pqcReadinessTier('No')).toBe(0)
-    expect(pqcReadinessTier('')).toBe(0)
-    expect(pqcReadinessTier(null)).toBe(0)
-    expect(pqcReadinessTier(undefined)).toBe(0)
+    expect(pqcReadinessTier({ pqcSupport: 'None' })).toBe(0)
+    expect(pqcReadinessTier({ pqcSupport: 'No' })).toBe(0)
+    expect(pqcReadinessTier({ pqcSupport: '' })).toBe(0)
+    expect(pqcReadinessTier({ pqcSupport: null })).toBe(0)
+    expect(pqcReadinessTier({ pqcSupport: undefined })).toBe(0)
+  })
+
+  it('puts a pre-shared-key-only value at 0.4, even when its text mentions partial or planned algorithms', () => {
+    expect(pqcReadinessTier({ pqcSupport: 'PSK (pre-shared key mixed in)' })).toBe(0.4)
+    expect(pqcReadinessTier({ pqcSupport: 'psk (ML-KEM planned)' })).toBe(0.4)
+    expect(pqcReadinessTier({ pqcSupport: 'PSK (partial hybrid support planned)' })).toBe(0.4)
   })
 
   it('returns a conservative middle (0.3) for narrative non-match', () => {
-    expect(pqcReadinessTier('Credential')).toBe(0.3)
-    expect(pqcReadinessTier('Identity')).toBe(0.3)
+    expect(pqcReadinessTier({ pqcSupport: 'Credential' })).toBe(0.3)
+    expect(pqcReadinessTier({ pqcSupport: 'Identity' })).toBe(0.3)
   })
 })
 
@@ -446,16 +453,83 @@ describe('crown-jewel-coverage (E1)', () => {
 
 describe('isPqcReady — one shared definition (RM-11)', () => {
   it('counts deployed/full and hybrid as ready', () => {
-    expect(isPqcReady('Yes (ML-KEM production)')).toBe(true)
-    expect(isPqcReady('Partial (ML-KEM, hybrid)')).toBe(true)
+    expect(isPqcReady({ pqcSupport: 'Yes (ML-KEM production)' })).toBe(true)
+    expect(isPqcReady({ pqcSupport: 'Partial (ML-KEM, hybrid)' })).toBe(true)
+    expect(isPqcReady({ pqcSupport: 'Partial (ML-KEM planned)' })).toBe(true)
+  })
+  it('does NOT count a pre-shared-key-only product as ready', () => {
+    expect(isPqcReady({ pqcSupport: 'PSK (pre-shared key mixed in)' })).toBe(false)
+    expect(isPqcReady({ pqcSupport: 'PSK (ML-KEM planned, partial hybrid)' })).toBe(false)
   })
   it('does NOT count planned, pilot, narrative or none as ready (the old over-count)', () => {
-    expect(isPqcReady('Planned (ML-DSA 2026)')).toBe(false)
-    expect(isPqcReady('Pilot')).toBe(false)
-    expect(isPqcReady('Credential management')).toBe(false)
-    expect(isPqcReady('None')).toBe(false)
-    expect(isPqcReady('No')).toBe(false)
-    expect(isPqcReady('')).toBe(false)
+    expect(isPqcReady({ pqcSupport: 'Planned (ML-DSA 2026)' })).toBe(false)
+    expect(isPqcReady({ pqcSupport: 'Pilot' })).toBe(false)
+    expect(isPqcReady({ pqcSupport: 'Credential management' })).toBe(false)
+    expect(isPqcReady({ pqcSupport: 'None' })).toBe(false)
+    expect(isPqcReady({ pqcSupport: 'No' })).toBe(false)
+    expect(isPqcReady({ pqcSupport: '' })).toBe(false)
+  })
+})
+
+describe('pqcReadinessTier — normalised catalogue status decides first', () => {
+  it('maps each canonical status to its tier', () => {
+    expect(pqcReadinessTier({ pqcStatusCanonical: 'available' })).toBe(1.0)
+    expect(pqcReadinessTier({ pqcStatusCanonical: 'partial' })).toBe(0.7)
+    expect(pqcReadinessTier({ pqcStatusCanonical: 'psk' })).toBe(0.4)
+    expect(pqcReadinessTier({ pqcStatusCanonical: 'roadmap' })).toBe(0.2)
+    expect(pqcReadinessTier({ pqcStatusCanonical: 'none' })).toBe(0)
+  })
+
+  it('lets the canonical status override the support text in both directions', () => {
+    // Text that starts "Planned" but mentions hybrid and partial support: the text rule ticks it.
+    const planned = 'Planned (partial hybrid support in the next release)'
+    expect(pqcReadinessTier({ pqcSupport: planned })).toBe(0.7)
+    expect(pqcReadinessTier({ pqcSupport: planned, pqcStatusCanonical: 'roadmap' })).toBe(0.2)
+    expect(isPqcReady({ pqcSupport: planned, pqcStatusCanonical: 'roadmap' })).toBe(false)
+    // Text that starts "Available" matches no text keyword (narrative middle); the status settles it.
+    const available = 'Available (ML-KEM and ML-DSA in the current release)'
+    expect(pqcReadinessTier({ pqcSupport: available })).toBe(0.3)
+    expect(pqcReadinessTier({ pqcSupport: available, pqcStatusCanonical: 'available' })).toBe(1.0)
+    expect(isPqcReady({ pqcSupport: available, pqcStatusCanonical: 'available' })).toBe(true)
+    // An explicit none wins over optimistic text.
+    expect(pqcReadinessTier({ pqcSupport: 'Yes (ML-KEM)', pqcStatusCanonical: 'none' })).toBe(0)
+  })
+
+  it('falls back to the support text when the status is blank, missing or unverified', () => {
+    for (const pqcStatusCanonical of ['', '  ', undefined, null, 'unknown', 'something-else']) {
+      expect(pqcReadinessTier({ pqcSupport: 'Yes (ML-KEM production)', pqcStatusCanonical })).toBe(
+        1.0
+      )
+      expect(pqcReadinessTier({ pqcSupport: 'Planned (ML-DSA 2026)', pqcStatusCanonical })).toBe(
+        0.2
+      )
+      expect(pqcReadinessTier({ pqcSupport: 'PSK (pre-shared key)', pqcStatusCanonical })).toBe(0.4)
+      expect(pqcReadinessTier({ pqcSupport: 'None', pqcStatusCanonical })).toBe(0)
+    }
+  })
+
+  it('keeps ready at 0.7 and above for every canonical status', () => {
+    expect(isPqcReady({ pqcStatusCanonical: 'available' })).toBe(true)
+    expect(isPqcReady({ pqcStatusCanonical: 'partial' })).toBe(true)
+    expect(isPqcReady({ pqcStatusCanonical: 'psk' })).toBe(false)
+    expect(isPqcReady({ pqcStatusCanonical: 'roadmap' })).toBe(false)
+    expect(isPqcReady({ pqcStatusCanonical: 'none' })).toBe(false)
+  })
+
+  it('averages the canonical tier in the vendor readiness KPI', () => {
+    const dims = buildDimensions(
+      'ops',
+      'migration',
+      mockData({
+        totalProducts: 100,
+        myProducts: [
+          { pqcSupport: 'Planned (partial hybrid)', pqcStatusCanonical: 'roadmap' },
+          { pqcSupport: 'Available (ML-KEM)', pqcStatusCanonical: 'available' },
+        ] as ExecutiveModuleData['myProducts'],
+      })
+    )
+    // (0.2 + 1.0) / 2 = 0.6; the text rule alone would give (0.7 + 0.3) / 2 = 0.5.
+    expect(dims.find((d) => d.id === 'vendor-readiness')?.autoScore).toBe(60)
   })
 })
 
@@ -551,5 +625,69 @@ describe('fips1403Stage — the source-backed stage decides, the free text only 
     expect(fips1403Stage({ hasCertification: 'in_progress', fipsValidated: 'No' })).toBe(
       'in_process'
     )
+  })
+})
+
+const hybrid = KPI_CATALOG.find((kpi) => kpi.id === 'hybrid-deployment')!
+
+type Fields = Pick<SoftwareItem, 'hybridKemSupport' | 'hybridSigSupport' | 'pqcSupport'>
+
+// Only the selected products are read by this specific auto-score function.
+function selection(products: Partial<Fields>[], totalProducts: number): ExecutiveModuleData {
+  return {
+    myProducts: products.map((fields, index) => ({ softwareName: `Sample ${index}`, ...fields })),
+    totalProducts,
+  } as unknown as ExecutiveModuleData
+}
+
+const yes: Partial<Fields> = { hybridKemSupport: ['tls-default'] }
+const experimental: Partial<Fields> = { hybridKemSupport: ['api-experimental'] }
+const no: Partial<Fields> = { hybridKemSupport: ['none'], hybridSigSupport: 'none' }
+const notAssessed: Partial<Fields> = {}
+
+describe('selected catalogue hybrid support (structured fields)', () => {
+  it('scores the assessed selected entries: yes counts one, experimental-only half', () => {
+    expect(hybrid.autoScore!(selection([yes, yes], 250))).toBe(100)
+    expect(hybrid.autoScore!(selection([yes, no, no, no], 250))).toBe(25)
+    expect(hybrid.autoScore!(selection([experimental, no], 250))).toBe(25)
+    expect(hybrid.autoScore!(selection([experimental], 250))).toBe(50)
+  })
+
+  it('rounds 100 x (yes + 0.5 x partial) / assessed to the nearest whole number', () => {
+    // 1 / 3 = 33.33 rounds down; 1.5 / 4 = 37.5 rounds up; 2 / 3 = 66.67 rounds up.
+    expect(hybrid.autoScore!(selection([yes, no, no], 250))).toBe(33)
+    expect(hybrid.autoScore!(selection([yes, experimental, no, no], 250))).toBe(38)
+    expect(hybrid.autoScore!(selection([yes, yes, no], 250))).toBe(67)
+  })
+
+  it('leaves entries with no structured entry out of the count', () => {
+    expect(hybrid.autoScore!(selection([yes, notAssessed, notAssessed], 250))).toBe(100)
+    expect(hybrid.autoScore!(selection([yes, no, notAssessed, notAssessed], 250))).toBe(50)
+  })
+
+  it('returns null when nothing in the selection is assessed', () => {
+    expect(hybrid.autoScore!(selection([], 250))).toBeNull()
+    expect(hybrid.autoScore!(selection([notAssessed, notAssessed], 250))).toBeNull()
+  })
+
+  it('does not read the free-text support description', () => {
+    expect(
+      hybrid.autoScore!(selection([{ pqcSupport: 'Hybrid X25519 + ML-KEM' }, { ...no }], 250))
+    ).toBe(0)
+    expect(hybrid.autoScore!(selection([{ pqcSupport: 'Planned hybrid support' }], 250))).toBeNull()
+  })
+
+  it('does not change when the unrelated catalogue population changes', () => {
+    const products = [yes, no]
+    expect(hybrid.autoScore!(selection(products, 250))).toBe(50)
+    expect(hybrid.autoScore!(selection(products, 2000))).toBe(50)
+    expect(hybrid.autoScore!(selection(products, 0))).toBe(50)
+  })
+
+  it('is labelled as a structured-field measure of the selected entries', () => {
+    expect(hybrid.label).toBe('Hybrid support in selected catalogue entries (structured fields)')
+    expect(hybrid.description).toContain('structured hybrid')
+    expect(hybrid.description).toContain('does not establish deployment coverage')
+    expect(hybrid.disabledReason).toContain('Select sample catalogue products')
   })
 })

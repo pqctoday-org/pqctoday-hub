@@ -57,15 +57,17 @@ const SORT_DIRECTION: Partial<Record<SortOption, 'asc' | 'desc'>> = {
 const getAllExpandedIds = (items: LibraryItem[]): Set<string> => {
   const ids = new Set<string>()
   const visited = new Set<string>()
+  const inScopeIds = new Set(items.map((item) => item.referenceId))
 
   const traverse = (nodes: LibraryItem[]) => {
     nodes.forEach((node) => {
       if (visited.has(node.referenceId)) return
       visited.add(node.referenceId)
 
-      if (node.children && node.children.length > 0) {
+      const children = node.children?.filter((child) => inScopeIds.has(child.referenceId)) ?? []
+      if (children.length > 0) {
         ids.add(node.referenceId)
-        traverse(node.children)
+        traverse(children)
       }
     })
   }
@@ -83,6 +85,9 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
 }) => {
   const { libraryBookmarks, toggleLibraryBookmark } = useBookmarkStore()
   const libraryBookmarkSet = useMemo(() => new Set(libraryBookmarks), [libraryBookmarks])
+  // The page's flat selected list also drives its count/export. Global child
+  // references may describe dependencies that did not pass those filters.
+  const inScopeIds = useMemo(() => new Set(data.map((item) => item.referenceId)), [data])
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
     if (defaultExpandAll) {
       return getAllExpandedIds(data)
@@ -207,7 +212,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
       newVisited.add(item.referenceId)
 
       const isExpanded = expandedIds.has(item.referenceId)
-      const hasChildren = item.children && item.children.length > 0
+      const children = item.children?.filter((child) => inScopeIds.has(child.referenceId)) ?? []
+      const hasChildren = children.length > 0
       const sourceAction = resolveLibrarySourceAction(item)
 
       const rows = [
@@ -352,7 +358,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
       ]
 
       if (isExpanded && hasChildren) {
-        rows.push(...renderRows(item.children!, level + 1, newVisited))
+        rows.push(...renderRows(children, level + 1, newVisited))
       }
 
       return rows

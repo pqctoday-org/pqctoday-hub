@@ -107,10 +107,13 @@ describe('OT protocol facts', () => {
     })
   })
 
-  it('every public-key size delta comes from the algorithm registry', () => {
+  it('public-key sizes use algorithm components or RFC 10024 group shares', () => {
     const allowed = new Set([
       32,
       33,
+      65, // TLS uncompressed P-256 point, RFC 10024 section 4.2
+      1120, // X25519MLKEM768 server share
+      1153, // SecP256r1MLKEM768 server share
       getAlgorithm('ML-KEM-768').signatureOrCiphertextBytes,
       getAlgorithm('ML-DSA-44').signatureOrCiphertextBytes,
       getAlgorithm('ML-DSA-65').signatureOrCiphertextBytes,
@@ -332,8 +335,20 @@ describe('Regulations (E2/E3/E7/E13–E16)', () => {
     const c = (s: string) => CNSA_2_0_CATEGORIES.find((x) => x.category.startsWith(s))!
     expect([c('Software').prefer, c('Software').exclusive]).toEqual([2025, 2030])
     expect([c('Traditional').prefer, c('Traditional').exclusive]).toEqual([2026, 2030])
-    expect([c('Operating').prefer, c('Operating').exclusive]).toEqual([2027, 2031])
-    expect(c('All').exclusive).toBe(2031)
+    // 2022 chart: operating systems exclusive 2033 (not the FAQ's 2031 mandate year)
+    expect([c('Operating').prefer, c('Operating').exclusive]).toEqual([2027, 2033])
+  })
+  it('the 2022 table has no all-systems row (the FAQ mandate year is not a 2022 value)', () => {
+    expect(CNSA_2_0_CATEGORIES.map((x) => x.category)).not.toContain(
+      'All National Security Systems'
+    )
+    expect(CNSA_2_0_CATEGORIES.some((x) => x.exclusive === 2031)).toBe(false)
+  })
+  it('the per-category CNSA 2.0 table is marked as the 2022 guidance, superseded by the FAQ dates', () => {
+    const src = fs.readFileSync(path.resolve(__dirname, 'regulationsData.ts'), 'utf8')
+    expect(src).toMatch(
+      /NSA's 2022 category\s+\*?\s*guidance; superseded for planning by the dates in NSA's CNSA 2\.0 FAQ, version 2\.2/
+    )
   })
 })
 
@@ -362,5 +377,21 @@ describe('Module text does not regress to the old wrong claims', () => {
     [/arXiv[^.]*1512\.07004/i, 'GOOSE timing source'],
   ])('%s is absent (%s)', (re) => {
     expect(text).not.toMatch(re)
+  })
+})
+
+describe('OT protocol notes: DNP3 asymmetric update-key change', () => {
+  it('does not carry a stray ML-KEM ciphertext remark for a protocol with no PQC option', () => {
+    const layer = proto('dnp3-sav5').cryptoLayers.find((l) => /asymmetric/i.test(l.layerName))!
+    expect(layer.notes).toMatch(/no post-quantum option for DNP3/)
+    expect(layer.notes).not.toMatch(/ML-KEM ciphertext/)
+  })
+})
+
+describe('OT module summary text', () => {
+  it('describes the Protocol Analyzer sizes as illustrative, not as FIPS 203/204 deltas', () => {
+    const rag = fs.readFileSync(path.resolve(__dirname, '../rag-summary.md'), 'utf8')
+    expect(rag).not.toMatch(/FIPS 203\/204 size deltas/)
+    expect(rag).toMatch(/illustrative component or directional TLS group-share sizes/)
   })
 })

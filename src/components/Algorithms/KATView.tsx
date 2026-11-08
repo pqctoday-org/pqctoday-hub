@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { algorithmLaunchHref } from '@/data/algorithmLaunch'
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import {
   Shield,
   Lock,
@@ -198,10 +198,20 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
     <div className="border border-border rounded-lg p-5 bg-muted/30 hover:border-primary/50 transition-colors space-y-4">
       <div className="flex items-start justify-between">
         <h5 className="font-semibold text-foreground text-lg">{config.name}</h5>
-        <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
-          {levelLabel(config.securityLevel)}
+        <span
+          className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30"
+          title={config.strengthNote}
+        >
+          {config.strengthNote
+            ? `${levelLabel(config.securityLevel)} hash category`
+            : levelLabel(config.securityLevel)}
         </span>
       </div>
+      {config.strengthNote && (
+        <p className="-mt-2 text-xs text-muted-foreground" data-testid="kat-strength-note">
+          {config.strengthNote}
+        </p>
+      )}
 
       <div className="space-y-1.5 text-sm">
         <div className="flex justify-between">
@@ -316,6 +326,8 @@ const SLHDSATile: React.FC<{
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resultsOpen, setResultsOpen] = useState(false)
+  const variantRef = useRef(variant)
+  variantRef.current = variant
   const { ref: runButtonRef, markRunStart } = useRestoreFocusAfterRun(running)
 
   // ?kat: re-read on same-route navigation. A different variant drops the
@@ -363,6 +375,7 @@ const SLHDSATile: React.FC<{
   const done = results.length === specs.length && !running
 
   const handleRun = useCallback(async () => {
+    const runVariant = variantRef.current
     markRunStart()
     setRunning(true)
     setError(null)
@@ -378,16 +391,19 @@ const SLHDSATile: React.FC<{
         hsm.addStepLog(`Test · ${spec.useCase || spec.id}`)
         const r = await runKAT(M, hSession, spec, { advertised })
         out.push(r)
+        if (variantRef.current !== runVariant) return
         setResults([...out])
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err))
+      if (variantRef.current === runVariant)
+        setError(err instanceof Error ? err.message : String(err))
     } finally {
       setRunning(false)
     }
   }, [hsm, specs, markRunStart])
 
   const handleVariantChange = (id: string) => {
+    if (running) return
     // The dropdown's own "default" row reports 'All' — that is the default variant.
     const next = toSlhDsaVariant(id)
     setVariant(next)
@@ -416,6 +432,7 @@ const SLHDSATile: React.FC<{
           items={SLH_DSA_DROPDOWN_ITEMS}
           selectedId={variant}
           onSelect={handleVariantChange}
+          disabled={running}
           defaultLabel={DEFAULT_SLH_DSA_VARIANT}
           variant="ghost"
         />

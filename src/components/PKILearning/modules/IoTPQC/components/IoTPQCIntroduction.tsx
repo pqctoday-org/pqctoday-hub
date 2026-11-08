@@ -29,6 +29,7 @@ import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCove
 import { Button } from '@/components/ui/button'
 import { BENCH_SOURCES, DEVICE_CLASSES, IOT_PROTOCOLS, algorithmById } from '../constants'
 import { LEARN_FACTS as F } from '../learnFacts'
+import { CNSA_2_0_BY_CLASS } from '@/data/regulatoryTimelines'
 
 interface IoTPQCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -322,10 +323,20 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           assumption. The LMS-vs-XMSS gap ({F.xmssOverLms}× in that benchmark) comes from the
           reference code, as its authors note.
         </p>
-        <Callout title="CNSA 2.0 (national security systems)">
+        <Callout title="CNSA 2.0 (national security systems only)">
           <p>
-            Firmware and software signing should prefer CNSA 2.0 algorithms from 2025 and use them
-            exclusively by 2030.
+            NSA&apos;s CNSA 2.0 FAQ (Ver. 2.2, October 2026) gives these dates for national security
+            systems (NSS), through CNSSP 15: CNSA 2.0 algorithms are required in all new NSS
+            acquisitions from 1 January {CNSA_2_0_BY_CLASS[0].year}; NSS equipment and services that
+            cannot support CNSA 2.0 are to be phased out by 31 December {CNSA_2_0_BY_CLASS[1].year};
+            and CNSA 2.0 algorithms are mandated by 31 December {CNSA_2_0_BY_CLASS[2].year} unless
+            otherwise noted. For firmware and software signing NSA allows LMS or XMSS (not HSS or
+            XMSS^MT) or ML-DSA-87, and not SLH-DSA. It singles firmware out as more urgent because
+            the verification algorithm is often locked in for the life of the product, so firmware
+            must be quantum-resistant at the time of acquisition. NSA encourages CNSA 2.0 adoption
+            beyond NSS but says it is not an NSA requirement there. For example, sensor firmware in
+            a device bought for an NSS is in scope; the same sensor sold to a utility is not covered
+            by CNSA 2.0 unless a contract or other policy adopts it.
           </p>
         </Callout>
         <p>
@@ -469,17 +480,20 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
               <strong>RFC 8879 compression</strong> saves only the structured part — PQC keys and
               signatures are high-entropy, which limits how much compression can help.{' '}
               <strong>C509</strong> re-encodes the certificate in CBOR (same key, same signature).{' '}
-              <strong>RFC 7250 raw public keys</strong> drop the chain but need a key pinned at
-              provisioning. <strong>PSK resumption</strong> sends no certificate after the first
-              handshake.
+              <strong>RFC 7250 raw public keys</strong> drop the chain, but the key has to be bound
+              to its owner out of band (a key pinned at provisioning is the simplest way, and ties
+              rotation and revocation to updating the device). <strong>PSK resumption</strong> sends
+              no certificate after the first handshake.
             </p>
           </Callout>
           <Callout title="Merkle Tree Certificates — with a condition">
             <p>
-              draft-ietf-plants-merkle-tree-certs replaces the CA signature with an inclusion proof
-              of {F.mtcHashBytes} bytes per tree level, and drops the intermediate. It works only if
-              the relying party already holds current trusted tree heads, distributed out of band —
-              a device that is offline for months needs a fallback chain. See{' '}
+              draft-ietf-plants-merkle-tree-certs (still an Internet-Draft) logs what a CA issues.
+              Its optional landmark-relative form carries only an inclusion proof of{' '}
+              {F.mtcHashBytes} bytes per tree level and no signatures, but it works only for a
+              relying party that holds up-to-date trusted landmark subtrees for that CA. The
+              standalone form carries cosignatures and works for anyone who trusts the CA and its
+              cosigners, so a device that has missed landmark updates needs the standalone form. See{' '}
               <L to="/learn/merkle-tree-certs">Merkle Tree Certificates</L>.
             </p>
           </Callout>

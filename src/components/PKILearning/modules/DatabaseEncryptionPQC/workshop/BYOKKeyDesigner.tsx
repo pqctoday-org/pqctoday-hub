@@ -36,20 +36,6 @@ export const BYOKKeyDesigner: React.FC = () => {
   const selected =
     BYOK_ARCHITECTURES.find((a) => a.id === selectedPatternId) ?? BYOK_ARCHITECTURES[0]
 
-  const scoreColor =
-    selected.pqcReadinessScore >= 80
-      ? 'text-status-success'
-      : selected.pqcReadinessScore >= 50
-        ? 'text-status-warning'
-        : 'text-status-error'
-
-  const scoreBarColor =
-    selected.pqcReadinessScore >= 80
-      ? 'bg-status-success'
-      : selected.pqcReadinessScore >= 50
-        ? 'bg-status-warning'
-        : 'bg-status-error'
-
   return (
     <div className="space-y-6">
       {/* Pattern selector */}
@@ -77,20 +63,6 @@ export const BYOKKeyDesigner: React.FC = () => {
                 >
                   {arch.pattern}
                 </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="text-xs text-muted-foreground">PQC Readiness:</div>
-                <div
-                  className={`text-xs font-bold ${
-                    arch.pqcReadinessScore >= 80
-                      ? 'text-status-success'
-                      : arch.pqcReadinessScore >= 50
-                        ? 'text-status-warning'
-                        : 'text-status-error'
-                  }`}
-                >
-                  {arch.pqcReadinessScore}%
-                </div>
               </div>
             </Button>
           )
@@ -145,31 +117,15 @@ export const BYOKKeyDesigner: React.FC = () => {
           </div>
         </div>
 
-        {/* PQC readiness + pros/cons */}
+        {/* PQC upgrade path + pros/cons */}
         <div className="space-y-4">
-          {/* PQC Readiness Score */}
+          {/* PQC upgrade path */}
           <div className="glass-panel p-5">
             <div className="flex items-center gap-2 mb-3">
               <ShieldCheck size={18} className="text-primary" />
-              <div className="text-sm font-bold text-foreground">PQC Readiness Score</div>
+              <div className="text-sm font-bold text-foreground">PQC Upgrade Path</div>
             </div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className={`text-3xl font-bold ${scoreColor}`}>
-                {selected.pqcReadinessScore}%
-              </div>
-              <div className="flex-1">
-                <div className="h-3 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${scoreBarColor}`}
-                    style={{ width: `${selected.pqcReadinessScore}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="bg-muted/30 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-primary mb-1">PQC Upgrade Path</div>
-              <p className="text-xs text-muted-foreground">{selected.pqcUpgrade}</p>
-            </div>
+            <p className="text-xs text-muted-foreground">{selected.pqcUpgrade}</p>
           </div>
 
           {/* Pros */}
@@ -220,10 +176,6 @@ export const BYOKKeyDesigner: React.FC = () => {
                 <th className="text-center py-2 px-2 text-muted-foreground font-medium">
                   Complexity
                 </th>
-                <th className="text-center py-2 px-2 text-muted-foreground font-medium">
-                  PQC Score
-                </th>
-                <th className="text-left py-2 px-2 text-muted-foreground font-medium">Best For</th>
               </tr>
             </thead>
             <tbody>
@@ -232,40 +184,22 @@ export const BYOKKeyDesigner: React.FC = () => {
                   pattern: 'Provider-Managed',
                   control: 'None',
                   complexity: 'Low',
-                  score: 30,
-                  bestFor: 'Non-regulated workloads',
                 },
                 {
                   pattern: 'BYOK',
                   control: 'Customer generates',
                   complexity: 'Medium',
-                  score: 65,
-                  bestFor: 'Most regulated enterprises',
                 },
                 {
                   pattern: 'HYOK',
                   control: 'Full customer custody',
                   complexity: 'High',
-                  score: 90,
-                  bestFor: 'NSM-8, DORA, classified',
                 },
               ].map((row) => (
                 <tr key={row.pattern} className="border-b border-border/50">
                   <td className="py-2 px-2 font-medium text-foreground">{row.pattern}</td>
                   <td className="py-2 px-2 text-center text-muted-foreground">{row.control}</td>
                   <td className="py-2 px-2 text-center text-muted-foreground">{row.complexity}</td>
-                  <td
-                    className={`py-2 px-2 text-center font-bold ${
-                      row.score >= 80
-                        ? 'text-status-success'
-                        : row.score >= 50
-                          ? 'text-status-warning'
-                          : 'text-status-error'
-                    }`}
-                  >
-                    {row.score}%
-                  </td>
-                  <td className="py-2 px-2 text-muted-foreground">{row.bestFor}</td>
                 </tr>
               ))}
             </tbody>

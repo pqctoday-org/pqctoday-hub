@@ -122,7 +122,7 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       label: 'Keep the inventory in a shared spreadsheet',
       desc: 'Faster to produce, everyone can edit it.',
       evaluate: trap(
-        "Fails. Not machine-verifiable: it can't be queried, diffed, or fed to compliance automation. Gate G2 stays blocked and you're stuck at Level 1."
+        'Fails in this scenario. Gate G2 asks for structured, validated records, and a free-form spreadsheet that anyone can edit cannot be checked against a schema, queried or compared over time with confidence, so the gate stays blocked. A spreadsheet or CSV is a reasonable place to start collecting or to feed a tool, and a phased inventory (the highest-risk systems first) is normal practice; the records the gate accepts are the structured ones, for example a CycloneDX CBOM generated or imported from that data.'
       ),
     },
     {

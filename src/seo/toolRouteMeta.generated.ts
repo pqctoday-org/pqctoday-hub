@@ -31,7 +31,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/audit-checklist',
     title: 'Audit Readiness Checklist — PQC Business Tool | PQC Today',
     description:
-      'Multi-section audit checklist covering inventory, policy, controls, and documentation',
+      'Explore a Hub planning template for inventory, policy, controls and documentation; selections do not assess readiness',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
@@ -234,7 +234,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/hybrid-transition-planner',
     title: 'Hybrid Transition Planner — PQC Business Tool | PQC Today',
     description:
-      'Architect-facing decision tree from CSWP.39 §3.2.4 - pick traditional+PQC, PQC+PQC, pure PQC, or crypto-gateway pathway with concrete algorithm pairings',
+      'Explore a Hub worksheet with CSWP.39 references and illustrative traditional-plus-PQC, PQC-plus-PQC, pure-PQC or crypto-gateway suggestions',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
@@ -247,7 +247,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/infra-modernization-planner',
     title: 'Infrastructure Modernization Planner — PQC Business Tool | PQC Today',
     description:
-      'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into…',
+      'Sample infrastructure planning worksheet for PKI, HSM/KMS, network compatibility topics and capacity assumptions; not a readiness assessment',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
@@ -310,7 +310,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/migration-verification',
     title: 'Migration Verification & Closure — PQC Business Tool | PQC Today',
     description:
-      "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",
+      'Explore sample verification references, retirement planning and closure notes; filling this educational checklist does not verify a migration',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
@@ -386,7 +386,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/risk-register',
     title: 'Risk Register Builder — PQC Business Tool | PQC Today',
     description:
-      'Build a PQC risk register with current algorithm, threat vector, likelihood, impact and mitigation',
+      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact and proposed mitigation',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
@@ -534,7 +534,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/digital-id',
     title: 'EUDI Wallet Architecture — PQC Crypto Lab | PQC Today',
     description:
-      'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
+      'Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [
@@ -794,7 +794,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/pqc-ssh-sim',
     title: 'PQC SSH Simulator — PQC Crypto Lab | PQC Today',
     description:
-      'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11.',
+      'Compare byte sizes and timings from bundled modified OpenSSH handshake samples and modeled token-operation traces.',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [
@@ -902,7 +902,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/sbx-cloud-kms',
     title: 'Cloud KMS Key Wrapping — PQC Crypto Lab | PQC Today',
     description:
-      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 — the key-wrapping pattern cloud KMS services (AWS, Azure, ...',
+      'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 as a fictional KEM+DEM key-wrapping pattern for protecting ...',
     kind: 'sandbox-tool',
     index: false,
     sourceGlobs: [
@@ -1000,7 +1000,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/sbx-osslsigncode',
     title: 'Code Signing (osslsigncode) — PQC Crypto Lab | PQC Today',
     description:
-      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65, demonstrating the supply-ch...',
+      'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65. WHY IT MATTERS: a code sign...',
     kind: 'sandbox-tool',
     index: false,
     sourceGlobs: [
@@ -1203,7 +1203,8 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
   {
     path: '/playground/tee-channel',
     title: 'TEE-HSM Secure Channel — PQC Crypto Lab | PQC Today',
-    description: 'Build a TEE-to-HSM trusted channel with ML-DSA + ML-KEM + AES wrap',
+    description:
+      'Explore sample TEE-HSM provisioning with signature verification, ML-KEM and AES key wrap',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [

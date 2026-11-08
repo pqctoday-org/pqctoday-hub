@@ -843,7 +843,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
 
         <div className="space-y-3">
           <div className="text-xs font-bold text-foreground">
-            Interim Hybrid Approach for TPMs Built to Earlier Versions:
+            Interim Hybrid Sketch for TPMs Built to Earlier Versions (illustrative, with limits):
           </div>
           {[
             {
@@ -854,15 +854,15 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             },
             {
               step: 2,
-              title: 'Software ML-DSA-65 key co-signs the same nonce',
+              title: 'Software ML-DSA-65 key signs the same evidence',
               detail:
-                'An ML-DSA-65 key pair generated in software (outside the TPM) signs the same challenge nonce, providing quantum-safe attestation. The ML-DSA public key is bound to the TPM AIK certificate.',
+                'An ML-DSA-65 key pair generated in software (outside the TPM) would have to sign the nonce together with the quote and the reported PCR values, so that one authenticated message carries the claims and the freshness challenge; a signature over the nonce alone shows only that the holder of the software key saw the challenge. Because the key lives in software, it has no hardware root of trust, and how the verifier comes to trust its public key (who certifies it, and what ties it to this TPM) is unresolved in this sketch.',
             },
             {
               step: 3,
               title: 'Verifier validates both signatures',
               detail:
-                'The relying party checks: (1) TPM AIK certificate chain (hardware binding), (2) ML-DSA signature (quantum-safe proof). Both must pass.',
+                'The relying party checks: (1) the TPM AIK certificate chain and quote (hardware-backed evidence, still protected only by a quantum-vulnerable signature), (2) the ML-DSA signature over the same evidence and nonce. The second check adds post-quantum protection only to the extent that the software key’s provenance is established, so do not call the pair quantum-safe attestation until a post-quantum key bound to a hardware root of trust (for example a TPM built to library v185 or later) signs the quote.',
             },
           ].map((item) => (
             <div

@@ -716,7 +716,9 @@ export const hsm_eddsaVerify = (
   hSession: number,
   pubHandle: number,
   message: string | Uint8Array,
-  sigBytes: Uint8Array
+  sigBytes: Uint8Array,
+  // Opt in for negative educational checks: operational errors are not rejection evidence.
+  strictErrors = false
 ): boolean => {
   const params = buildEdDSAParams(M, false)
   const mech = buildMech(M, CKM_EDDSA, params.ptr, params.len)
@@ -726,6 +728,11 @@ export const hsm_eddsaVerify = (
   try {
     checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(EdDSA)')
     const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    // CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE are signature outcomes.
+    // Preserve the historical boolean contract for callers that have not opted in.
+    if (strictErrors && rv !== 0 && rv !== 0x000000c0 && rv !== 0x000000c1) {
+      checkRV(rv, 'C_Verify(EdDSA)')
+    }
     return rv === 0
   } finally {
     params.allocPtrs.forEach((p) => M._free(p))

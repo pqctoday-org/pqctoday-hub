@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'verification-closure',
-  contentVersion: 11,
+  contentVersion: 12,
   lm_id: 'LM-061',
   title: 'Decommissioning & Program Closure',
   description:
@@ -32,7 +32,7 @@ const manifest: ModuleManifest = {
   ],
   startHere: {
     step: 'decommission-checklist',
-    text: 'Retire one classical asset in the Decommission Checklist: deprecate, remove, verify removed, log — the four gates a closure claim has to show.',
+    text: 'Explore one fictional asset in the Decommission Checklist: deprecate, mark removed, review the worksheet status and log. Then identify the independent observations needed to establish actual retirement with production tools.',
   },
   embeddable: true,
   taxonomy: {

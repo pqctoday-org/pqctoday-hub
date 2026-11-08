@@ -47,11 +47,66 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
         <p>
           Secrets themselves are often not directly encrypted with asymmetric cryptography — they
           are stored in vaults that use <em>envelope encryption</em>. In envelope encryption, a Data
-          Encryption Key (DEK) encrypts the secret, and a Key Encryption Key (KEK) wraps the DEK.
-          The KEK is the quantum-vulnerable component when it uses RSA-OAEP or ECDH-ES. Migrating to{' '}
-          <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> for the KEK protects all secrets in
-          the vault without touching the secrets themselves.
+          Encryption Key (DEK) encrypts the secret, and a Key Encryption Key (KEK) protects the DEK.
+          Which step is quantum-vulnerable depends on how the DEK is protected, so evaluate each
+          boundary separately instead of replacing every KEK with{' '}
+          <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>:
         </p>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 px-2 text-muted-foreground font-medium">Boundary</th>
+                <th className="text-left py-2 px-2 text-muted-foreground font-medium">Example</th>
+                <th className="text-left py-2 px-2 text-muted-foreground font-medium">
+                  Quantum exposure
+                </th>
+                <th className="text-left py-2 px-2 text-muted-foreground font-medium">
+                  Migration step
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {
+                  boundary: 'Symmetric KEK',
+                  example:
+                    'An AES key in a KMS wraps the DEK. AWS Secrets Manager supports only symmetric encryption KMS keys; Google documents AES-256 or AES-128 KEKs.',
+                  exposure:
+                    "Shor's algorithm does not apply; only generic Grover search of the key.",
+                  step: 'No ML-KEM needed. Keep key length and access policy in view.',
+                },
+                {
+                  boundary: 'Asymmetric key transport',
+                  example: 'A DEK encrypted to a public key with RSA-OAEP or ECDH-ES.',
+                  exposure: 'Quantum-vulnerable: a recorded wrapped DEK can be attacked later.',
+                  step: 'Replace this step with a post-quantum or hybrid KEM, where your product supports one.',
+                },
+                {
+                  boundary: 'KEM-derived wrapping key',
+                  example:
+                    'A shared secret from ML-KEM encapsulation, turned into a wrapping key with a KDF.',
+                  exposure: 'Post-quantum for this step, if implemented and reviewed correctly.',
+                  step: 'Only where the provider, plugin or product exposes it; it does not touch the secrets themselves.',
+                },
+                {
+                  boundary: 'Transport to the key service',
+                  example: 'The TLS connection that carries KMS or vault API calls.',
+                  exposure: 'The TLS key exchange has its own harvest-now-decrypt-later exposure.',
+                  step: 'Hybrid post-quantum TLS where the service offers it.',
+                },
+              ].map((row) => (
+                <tr key={row.boundary} className="border-b border-border/50 align-top">
+                  <td className="py-2 px-2 font-medium text-foreground">{row.boundary}</td>
+                  <td className="py-2 px-2 text-muted-foreground">{row.example}</td>
+                  <td className="py-2 px-2 text-muted-foreground">{row.exposure}</td>
+                  <td className="py-2 px-2 text-muted-foreground">{row.step}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
@@ -73,15 +128,16 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               {[
                 {
                   type: 'API Keys / Tokens',
-                  classical: 'AES-256 DEK wrapped with RSA-OAEP KEK',
-                  pqc: 'ML-KEM-768 KEK → AES-256 DEK',
+                  classical: 'AES-256 DEK wrapped with RSA-OAEP (asymmetric transport)',
+                  pqc: 'ML-KEM-derived wrapping key (where supported); an AES-256 KEK stays as is',
                   priority: 'High',
                   priorityCls: 'text-status-warning',
                 },
                 {
                   type: 'DB Credentials',
-                  classical: 'Vault master key (RSA unsealed)',
-                  pqc: 'ML-KEM vault seal + dynamic secrets TTL 8h',
+                  classical:
+                    'Vault root key protected by its unseal key (Shamir shares or auto-unseal)',
+                  pqc: 'Dynamic secrets TTL 8h; a post-quantum seal only if the platform documents one',
                   priority: 'Critical',
                   priorityCls: 'text-status-error',
                 },
@@ -135,8 +191,9 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             <InlineTooltip term="Secret Zero">&quot;Secret Zero&quot;</InlineTooltip> problem — how
             do you securely introduce an application to the vault without hardcoding a first
             credential? — is addressed by <strong>SPIFFE/SPIRE</strong> injecting verified workload
-            identity. For the vault itself, migrating the master seal key to ML-KEM cascades PQC
-            protection to all stored secrets.
+            identity. For the vault itself, the seal protects the root key; moving the seal to a
+            post-quantum mechanism depends on the platform documenting one (the provider list below
+            records that Vault documents no ML-KEM seal).
           </p>
         </div>
       </LearnSection>
@@ -162,6 +219,19 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           arrives, the attacker can decrypt the harvested TLS session, extract the API key, and use
           it to access your systems — or re-sell it. Short-lived OAuth tokens (1h TTL) have much
           lower HNDL risk since they expire before a CRQC is practically deployable.
+        </p>
+
+        <p>
+          Evaluate confidentiality and authentication separately. A recorded TLS session is
+          decrypted by breaking its <strong>key exchange</strong>: static RSA key transport, where
+          the client encrypts the premaster secret to the server certificate&apos;s public key (TLS
+          1.2 and earlier, RFC 5246), or the (EC)DH values of an ephemeral exchange. TLS 1.3 removed
+          static RSA key transport (RFC 8446). The certificate&apos;s ECDSA or RSA signing key
+          instead <strong>authenticates</strong> the handshake: recovering it later lets an attacker
+          impersonate the server while the certificate is still accepted, but it does not recover
+          past session keys. Replace or rotate signing keys to address authentication risk, and use
+          hybrid post-quantum key exchange to address harvested traffic; neither substitutes for the
+          other.
         </p>
 
         <div className="overflow-x-auto">
@@ -201,7 +271,8 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
                 {
                   type: 'TLS Certificates',
                   lifetime: '90 days',
-                  exposure: 'Immediate — session decryption',
+                  exposure:
+                    'Impersonation after a CRQC — recovering the signing key does not decrypt recorded sessions',
                   risk: 'Critical',
                   riskCls: 'text-status-error',
                 },
@@ -379,15 +450,16 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             },
             {
               provider: 'AWS Secrets Manager',
-              status: 'Via KMS (GA)',
+              status: 'Via KMS (docs read 5 Nov 2026)',
               statusCls: 'text-status-info bg-status-info/10 border-status-info/30',
               details: [
-                'No secrets-manager-native PQC — inherits AWS KMS ML-DSA-44/65/87 signing key specs (GA June 2025)',
-                'No ML-KEM key spec: AWS ML-KEM is hybrid post-quantum TLS in transit only, not an at-rest key type',
+                'No secrets-manager-native PQC: Secrets Manager encrypts each secret value with an AES-256 data key that AWS KMS generates and encrypts under a symmetric encryption KMS key, and it supports only symmetric encryption KMS keys, so it cannot use an ML-KEM or ML-DSA KMS key',
+                'AWS KMS itself has ML-DSA-44/65/87 signing key specs (documented June 2025) and ML-KEM key specs ML_KEM_512/768/1024 with Encapsulate and Decapsulate operations (documentation history entry dated 23 October 2026)',
+                'Encapsulate and Decapsulate are not available in China Regions; key material cannot be imported into ML-DSA or ML-KEM KMS keys',
                 'AWS SDK for Java 2.x can enable hybrid post-quantum key agreement by calling .postQuantumTlsEnabled(true) when building the AWS Common Runtime HTTP client',
                 'No native dynamic secrets — use Lambda rotation or Vault AWS auth',
               ],
-              note: 'The simplest path: AWS KMS offers hybrid post-quantum TLS (ML-KEM in transit) for the KMS / Secrets Manager APIs. There is no ML-KEM CMK key spec, so secrets are not ML-KEM-encrypted at rest (AWS KMS native PQC today is ML-DSA signing key specs, GA June 2025).',
+              note: 'Keep the distinction explicit: AWS KMS now offers ML-KEM keys for key establishment, but Secrets Manager at-rest encryption still uses AES-256 data keys under symmetric KMS keys, so a secret is not ML-KEM-encrypted at rest. Use hybrid post-quantum TLS for the KMS / Secrets Manager API calls and an ML-KEM KMS key only where your own design needs key establishment. Re-check the AWS KMS documentation and region scope before relying on this.',
             },
             {
               provider: 'Azure Key Vault (Managed HSM)',
@@ -443,10 +515,12 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               <InlineTooltip term="Envelope Encryption">Envelope Encryption</InlineTooltip> Pattern
             </div>
             <p className="text-xs text-muted-foreground">
-              All cloud providers use envelope encryption: DEK (AES-256-GCM) encrypts the secret,
-              KEK wraps the DEK. The KEK is stored in the provider&apos;s KMS and is the
-              quantum-vulnerable component. Switching the KEK to ML-KEM protects all secrets without
-              re-encrypting secret content.
+              AWS Secrets Manager and Google&apos;s default encryption both use envelope encryption:
+              a DEK encrypts the data and a KEK protects the DEK. In both documented designs the KEK
+              is symmetric (AWS Secrets Manager supports only symmetric encryption KMS keys; Google
+              wraps DEKs with AES-256 or AES-128 KEKs), and Shor&apos;s algorithm does not break a
+              symmetric KEK. Migrate the boundary that is actually asymmetric, and use a provider
+              KEM option only where its service accepts it.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -454,10 +528,12 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               <InlineTooltip term="BYOK">BYOK</InlineTooltip> (Bring Your Own Key)
             </div>
             <p className="text-xs text-muted-foreground">
-              BYOK lets you generate and manage the KEK in your own HSM or Vault instance. With BYOK
-              + ML-KEM, you control the PQC upgrade timeline independently of the cloud
-              provider&apos;s roadmap. AWS CloudHSM and Azure Managed HSM support BYOK with
-              HSM-backed keys.
+              BYOK lets you generate key material in your own HSM or Vault instance and import it
+              into the provider&apos;s key service. Whether that gives you control of a post-quantum
+              upgrade depends on the key types the provider accepts for import: AWS KMS imports
+              symmetric encryption, HMAC and asymmetric keys except ML-DSA and ML-KEM keys, so an
+              ML-KEM KMS key has to be generated inside AWS KMS. Check each provider&apos;s import
+              documentation.
             </p>
           </div>
         </div>
@@ -483,12 +559,12 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             {
               title: 'Kubernetes Encryption at Rest',
               content:
-                'Configure --encryption-provider-config on kube-apiserver with a KMS provider. Use the KMS v2 plugin (Kubernetes 1.25+) pointing to a cloud KMS or Vault instance. With AWS KMS ML-KEM key spec as the KMS provider, all etcd secrets are ML-KEM protected. The External Secrets Operator (ESO) pattern keeps secrets in the vault and injects them at runtime, so they are not duplicated into etcd.',
+                "By default the API server stores Secrets unencrypted in etcd. Configure --encryption-provider-config on kube-apiserver with a KMS provider and use KMS v2 (KMS v1 is deprecated since Kubernetes 1.28 and disabled by default since 1.29). The provider uses envelope encryption, so an attacker needs both etcd and the KMS. The key type is set by the KMS plugin: AWS KMS ML-KEM keys use Encapsulate and Decapsulate, while the Encrypt operation needs an ENCRYPT_DECRYPT key, so whether a given plugin can use an ML-KEM key is not verified here; check the plugin's documentation before claiming ML-KEM protection for etcd.",
             },
             {
               title: 'External Secrets Operator (ESO)',
               content:
-                "ESO syncs secrets from external stores (Vault, AWS Secrets Manager, Azure Key Vault) to Kubernetes Secret objects at runtime. The Secret lives only in the external vault (PQC-protected) and in-memory in the pod. GitOps repos never contain secret values. PQC protection comes entirely from the external store's KEK algorithm.",
+                "ESO's controller fetches secrets from an external store (Vault, AWS Secrets Manager, Azure Key Vault and others) and creates Kubernetes Secret objects that it keeps in sync. Those Secrets are stored in etcd like any other Secret, so etcd encryption at rest and RBAC on Secrets still apply. This sync pattern differs from direct delivery: Vault Agent Injector renders secrets to a shared memory volume mounted in the pod, and the Secrets Store CSI Driver mounts them as a volume (it can optionally also sync them as Kubernetes Secrets). GitOps repos need not contain secret values with either pattern. Protection of the stored value in the external store is that store's own design.",
             },
             {
               title: 'SPIFFE/SPIRE Workload Identity',
@@ -523,7 +599,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
                 'No downloaded service account key files (JSON credentials)',
                 'All identities attested via SPIFFE/SPIRE or cloud-native workload identity',
                 'All secret access via audited vault with per-request leases',
-                'Secrets never duplicated into Kubernetes etcd (ESO pattern)',
+                'Few or no secret copies in Kubernetes etcd: volume or agent delivery avoids them, an ESO sync creates them, so encrypt etcd at rest either way',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2">
                   <Lock size={10} className="text-primary shrink-0 mt-0.5" />

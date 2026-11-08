@@ -470,7 +470,7 @@ function supplyChainMatrixSample() {
   for (const item of items) cbomBuckets[mapToAssetClass(item)].push(item)
 
   const totalProducts = items.length
-  const pqcReadyCount = items.filter((i) => isPqcReady(i.pqcSupport)).length
+  const pqcReadyCount = items.filter((i) => isPqcReady(i)).length
   const fipsValidatedCount = items.filter((i) => isFips1403Certified(i)).length
 
   return buildSupplyChainMarkdown({
@@ -569,7 +569,7 @@ function migrationVerificationState(sector: DemoSector): VerifyState {
 function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
   const industry = sector === 'financial' ? 'Finance & Banking' : 'Healthcare'
   const industryThreats = threatsData.filter((t) => t.industry === industry)
-  const pqcReadyCount = softwareData.filter((i) => isPqcReady(i.pqcSupport)).length
+  const pqcReadyCount = softwareData.filter((i) => isPqcReady(i)).length
   const fipsValidatedCount = softwareData.filter((i) => isFips1403Certified(i)).length
   return {
     threatsByIndustry: new Map(),
@@ -839,17 +839,30 @@ export const REAL_DOC_GENERATORS: Partial<
   'kpi-dashboard': (sector) => {
     const dimensions = buildDimensions('executive', 'governance', demoKpiExecData(sector), null)
     const scores: Record<string, number> = {}
-    let seed = 0
     for (const d of dimensions) {
-      if (d.disabled) continue
-      scores[d.id] = d.autoScore && d.autoScore > 0 ? d.autoScore : 55 + (seed++ % 3) * 10
+      if (
+        d.disabled ||
+        d.notYetScored ||
+        typeof d.autoScore !== 'number' ||
+        !Number.isFinite(d.autoScore)
+      )
+        continue
+      scores[d.id] = d.autoScore
     }
     return {
       title: 'PQC Governance KPI Dashboard',
       data:
         (isExecutiveBankOverview(sector)
           ? "# Illustrative future board reporting pack\n\nSample indicators for discussing post-approval reporting. These figures are not the organisation's current delivery progress, measured readiness or approved targets.\n\n"
-          : '') + buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
+          : '') +
+        buildKpiDashboardMarkdown(
+          dimensions,
+          'executive',
+          scores,
+          {},
+          {},
+          new Set(Object.keys(scores))
+        ),
     }
   },
   // Reuse the roadmap builder without assigning legal deadlines from sector alone.

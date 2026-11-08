@@ -93,7 +93,7 @@ export const SIGSTORE_STEPS: SigstoreStep[] = [
     step: 2,
     title: 'Ephemeral Key Generation',
     description:
-      'Ephemeral ECDSA P-256 keypair created (valid ~20 minutes); ML-DSA is a proposed future upgrade',
+      'Ephemeral ECDSA P-256 keypair created in memory; ML-DSA is a proposed future upgrade',
     icon: 'Key',
   },
   {
@@ -124,7 +124,7 @@ export const SIGSTORE_STEPS: SigstoreStep[] = [
     step: 7,
     title: 'Verification',
     description:
-      'Verifier checks Rekor log entry, cert chain, and signature — no keys to distribute',
+      'Verifier checks the signature, the expected identity and issuer, the certificate chain to the Sigstore trust root, and the Rekor inclusion proof',
     icon: 'CheckCircle',
   },
 ]
@@ -321,7 +321,7 @@ export const FIRMWARE_SIGNING_ALGORITHMS: FirmwareSigningAlgorithm[] = [
     stateRequirement:
       'Monotonic counter in TPM or secure element. Must never be cloned, rolled back, or reset.',
     cnsa2Status:
-      'Listed for software and firmware signing in NSS (advisory Table I), single-tree LMS only (the FAQ says HSS is not allowed); NSA wants LMS and XMSS used whenever possible; exclusive CNSA 2.0 use expected by 2030',
+      'Listed for software and firmware signing in NSS (advisory Table I), single-tree LMS only (the FAQ says HSS is not allowed); NSA wants LMS and XMSS used whenever possible; the NSA CNSA 2.0 FAQ (version 2.2) mandates CNSA 2.0 algorithms for NSS by 31 December 2031 unless otherwise noted',
     bestFor: 'Firmware signing, secure boot (controlled environments with HSM)',
     signingSpeed: '~0.5 ms',
     verificationSpeed: '~0.1 ms',
@@ -349,7 +349,8 @@ export const FIRMWARE_SIGNING_ALGORITHMS: FirmwareSigningAlgorithm[] = [
     signatureSize: 3309,
     publicKeySize: 1952,
     stateful: false,
-    stateRequirement: 'None — fully stateless. No counter, no state management overhead.',
+    stateRequirement:
+      'No signing state: the signer needs no counter. Verification keeps no state for any of these algorithms.',
     cnsa2Status:
       'Not a CNSA 2.0 parameter set — CNSA 2.0 approves only ML-DSA-87 (and prefers LMS/XMSS for firmware)',
     bestFor: 'General code signing, environments where state management is impractical',

@@ -13,6 +13,7 @@ import {
   type InProcessData,
   type InProcessMatch,
   type StagePoint,
+  unestablishedCaption,
 } from './fipsStageProgressModel'
 import { formatIsoDate } from './recordSemantics'
 
@@ -206,14 +207,25 @@ export function PqcCertificationTrendChart({
       </div>
 
       <p className="mb-2 text-[10.5px] text-muted-foreground">
-        Record scope:{' '}
-        <span className="font-semibold text-foreground">
-          {recordScope === 'current'
-            ? 'current and validated records only'
-            : 'current plus historical, archived and revoked records'}
-        </span>
-        . This chart follows the FIPS 140-3 evidence path; Common Criteria and other evaluated
-        claims are excluded rather than treated as validation.
+        {view === 'products' ? (
+          <>
+            Catalogue evidence scope: catalogue products, their certification cross-references and
+            matched in-process listings. The surrounding current/historical record filter does not
+            restrict this product evidence set. Open the underlying evidence to check the specific
+            module and configuration scope.
+          </>
+        ) : (
+          <>
+            Record scope:{' '}
+            <span className="font-semibold text-foreground">
+              {recordScope === 'current'
+                ? 'current and validated records only'
+                : 'current plus historical, archived and revoked records'}
+            </span>
+            . This chart follows the FIPS 140-3 evidence path; Common Criteria and other evaluated
+            claims are excluded rather than treated as validation.
+          </>
+        )}
       </p>
 
       {points.length === 0 ? (
@@ -291,6 +303,7 @@ export function PqcCertificationTrendChart({
               ? `; NIST withholds ${listingTrend.inProcessNotDisplayed} in-process modules by vendor request`
               : ''}
             . Counts listings, not distinct modules — one module can appear at several stages.
+            {unestablishedCaption(listingTrend.unestablished)}
           </>
         )}
         {asOf && ` Newest record dated ${formatIsoDate(asOf.toISOString())}.`}

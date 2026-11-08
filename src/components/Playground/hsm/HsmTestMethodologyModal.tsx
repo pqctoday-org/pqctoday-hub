@@ -78,7 +78,13 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose} className="shrink-0 -mt-1 -mr-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            aria-label="Close test methodology"
+            className="shrink-0 -mt-1 -mr-1"
+          >
             <X size={16} />
           </Button>
         </div>

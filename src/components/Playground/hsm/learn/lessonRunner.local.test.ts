@@ -54,7 +54,12 @@ describe('classifyStepOutcome', () => {
 
   it('expect: "refusal" with a real engine failure classifies as refused-ok', () => {
     const entries = [call({ fn: 'C_UnwrapKeyAuthenticated', ok: false }), header()]
-    expect(classifyStepOutcome('refusal', entries)).toBe('refused-ok')
+    expect(
+      classifyStepOutcome('refusal', entries, {
+        operations: ['C_UnwrapKeyAuthenticated', 'C_SetAttributeValue'],
+        returnCodes: [0x11],
+      })
+    ).toBe('refused-ok')
   })
 
   it('expect: "refusal" with ZERO new log entries (a setup/JS crash before any engine call) fails — the masking-bug regression', () => {
@@ -92,7 +97,12 @@ describe('classifyStepOutcome', () => {
       call({ fn: 'C_Logout', ok: true }), // setup: logout
       header(),
     ]
-    expect(classifyStepOutcome('refusal', entries)).toBe('refused-ok')
+    expect(
+      classifyStepOutcome('refusal', entries, {
+        operations: ['C_UnwrapKeyAuthenticated', 'C_SetAttributeValue'],
+        returnCodes: [0x11],
+      })
+    ).toBe('refused-ok')
   })
 })
 
@@ -155,5 +165,42 @@ describe('ensureEngineForStep', () => {
     await expect(ensureEngineForStep(t, {})).rejects.toThrow(
       'Engine boot failed: wasm fetch failed.'
     )
+  })
+})
+
+// A negative exercise must reach its declared operation and refusal reason.
+describe('declared refusal identity', () => {
+  const expected = { operations: ['C_Decrypt'], returnCodes: [0x42] }
+  it('accepts only the intended operation and code', () => {
+    expect(
+      classifyStepOutcome(
+        'refusal',
+        [call({ fn: 'C_Decrypt', ok: false, rvHex: '0x00000042' })],
+        expected
+      )
+    ).toBe('refused-ok')
+    for (const entry of [
+      call({ fn: 'C_Initialize', ok: false, rvHex: '0x00000042' }),
+      call({ fn: 'C_Decrypt', ok: false, rvHex: '0x00000005' }),
+      call({ fn: 'C_Decrypt', ok: false, rvHex: 'TRAP' }),
+    ])
+      expect(classifyStepOutcome('refusal', [entry], expected)).toBe('failed')
+  })
+  it('does not hide an unrelated setup failure behind an intended refusal', () => {
+    expect(
+      classifyStepOutcome(
+        'refusal',
+        [
+          call({ fn: 'C_Initialize', ok: false, rvHex: '0x00000005' }),
+          call({ fn: 'C_Decrypt', ok: false, rvHex: '0x00000042' }),
+        ],
+        expected
+      )
+    ).toBe('failed')
+  })
+  it('requires a declaration instead of accepting any failed call', () => {
+    expect(
+      classifyStepOutcome('refusal', [call({ fn: 'C_Decrypt', ok: false, rvHex: '0x00000042' })])
+    ).toBe('failed')
   })
 })

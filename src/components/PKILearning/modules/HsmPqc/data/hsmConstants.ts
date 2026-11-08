@@ -40,6 +40,14 @@ export interface SideChannelVector {
   hsmRelevance: 'high' | 'medium' | 'low'
 }
 
+/**
+ * One row of the migration planner. `pqcAlgorithmsAdded` lists only algorithms the vendor's own
+ * documentation names for the target release; an algorithm the documentation does not mention is
+ * left out of the list and discussed in `notes` as absent from the documentation, which is not the
+ * same as unsupported. `upgradeComplexity` and `estimatedDowntime` are Hub planning assumptions
+ * for the exercise, not vendor figures. Keep any digits in `estimatedDowntime` at the start of the
+ * string, because the planner reads the first numbers it finds as minutes or hours.
+ */
 export interface FirmwareUpgradePath {
   vendorId: string
   vendorName: string
@@ -48,6 +56,12 @@ export interface FirmwareUpgradePath {
   pqcAlgorithmsAdded: string[]
   upgradeComplexity: 'low' | 'medium' | 'high'
   estimatedDowntime: string
+  /**
+   * What the module's own FIPS 140 certificate lists for post-quantum algorithms, in one or two
+   * clauses. The lesson table and the planner both show the whole note, so a second clause (for
+   * example a separate certificate that does list algorithms) is never dropped.
+   */
+  certificateNote: string
   notes: string
 }
 
@@ -845,32 +859,43 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     vendorName: 'Thales Luna 7',
     currentFirmware: '7.8.x or earlier',
     targetFirmware: '7.9.0 or newer',
-    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
+    pqcAlgorithmsAdded: [
+      'ML-KEM-512/768/1024 (from 7.9.0)',
+      'ML-DSA-44/65/87 (from 7.9.0)',
+      'LMS/HSS (from 7.8.9)',
+    ],
     upgradeComplexity: 'low',
-    estimatedDowntime: '30-60 minutes per HSM',
-    notes: 'PQC integrated into core firmware.',
+    estimatedDowntime: '30-60 minutes per HSM (planning assumption, not a Thales figure)',
+    certificateNote:
+      'Certificate 4684 (Luna K7) lists no post-quantum algorithm; separate certificate 5450 (Luna T7) lists ML-KEM, ML-DSA and LMS.',
+    notes:
+      'Thales documents ML-KEM and ML-DSA mechanisms from firmware 7.9.0 (released July 2025), which needs Luna HSM Client 10.9.0 or newer and Luna Appliance Software 7.9.0 or newer, and LMS-HSS from firmware 7.8.9. ML-KEM encapsulation and decapsulation use the vendor-defined CA_EncapsulateKey and CA_DecapsulateKey functions. HSS private keys cannot be cloned, backed up or used in an HA group. SLH-DSA and XMSS are not mentioned in the 7.9.0, 7.9.1 or 7.10.0 firmware release notes read for this lesson; that is absence from the documentation, not a statement that they are unsupported. CMVP certificate 4684 (Luna K7, firmware 7.8.4 and 7.8.5) lists no post-quantum algorithm. The separate certificate 5450 (Luna T7) lists ML-KEM, ML-DSA and LMS; its CMVP page gives no firmware version, so read its Security Policy to see which firmware it covers (Thales documentation, CMVP; checked 5 Nov 2026).',
   },
   {
     vendorId: 'entrust-nshield',
     vendorName: 'Entrust nShield 5',
     currentFirmware: '13.6.x or earlier',
     targetFirmware: '13.8+ (ML-KEM: 13.8.3+)',
-    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
+    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA'],
     upgradeComplexity: 'low',
     estimatedDowntime: '1-2 hours per HSM (planning estimate)',
+    certificateNote:
+      'Certificate 4745 (nShield 5s) lists no post-quantum algorithm; an nShield 5s module is in CMVP Modules in Process (a queue position, not an outcome).',
     notes:
-      'ML-DSA and SLH-DSA need firmware v13.8 or later and ML-KEM needs v13.8.3 or later, with the PostQuantum feature enabled in each case (release notes). CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
+      'ML-DSA and SLH-DSA need firmware v13.8 or later and ML-KEM needs v13.8.3 or later, with the PostQuantum feature enabled in each case (release notes). Through PKCS#11, ML-DSA arrived in Security World v13.9.0, ML-KEM in v13.9.3 and SLH-DSA in v13.9.5; before those releases ML-KEM and SLH-DSA were reachable only through nCore. LMS and XMSS are not mentioned in the v13.9.0, v13.9.3 or v13.9.5 release notes, so their availability through the HSM is not established here (Entrust has a separate CAVP validation, A7990, for LMS in its PQSDK software). CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
   },
   {
     vendorId: 'utimaco',
-    vendorName: 'Utimaco SecurityServer',
-    currentFirmware: '4.x',
-    targetFirmware: 'Q-safe extension',
-    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
+    vendorName: 'Utimaco u.trust GP HSM Se-Series',
+    currentFirmware: 'Version not stated by Utimaco',
+    targetFirmware: 'Quantum Protect firmware module',
+    pqcAlgorithmsAdded: ['ML-KEM (FIPS 203)', 'ML-DSA (FIPS 204)', 'LMS/HSS', 'XMSS/XMSS-MT'],
     upgradeComplexity: 'low',
-    estimatedDowntime: '1-3 hours per HSM (firmware + Q-safe extension)',
+    estimatedDowntime: '1-3 hours per HSM (planning assumption, not a Utimaco figure)',
+    certificateNote:
+      "Utimaco's product page gives no FIPS 140 statement for the post-quantum algorithms.",
     notes:
-      'Q-safe is a firmware extension installed on top of the base firmware. Existing keys preserved. Free PQC simulator available for pre-upgrade testing. SLH-DSA on roadmap for a future Q-safe update. Cert #3925 is a FIPS 140-2 Level 3 certificate, now Historical (sunset).',
+      'Utimaco describes Quantum Protect as an application package, delivered as a firmware module, that adds post-quantum algorithms to the u.trust General Purpose HSM Se-Series as an in-field upgrade with no HSM exchange; applications reach it through PKCS#11 vendor-defined mechanisms, and a free simulator is offered for testing before the upgrade. The product page lists ML-KEM, ML-DSA, LMS and HSS, and XMSS and XMSS-MT, and shows SLH-DSA (FIPS 205) as in progress and on the roadmap, so SLH-DSA is planned, not available. The page gives no firmware version, parameter sets, key-preservation statement or FIPS 140 statement for the post-quantum algorithms. CAVP certificates A7400 (ML-DSA, ML-KEM) and A7401 (LMS) name the containerized HSM on u.trust Anchor as the operating environment, not the Se-Series. Cert #3925 (CryptoServer Se-Series Gen2) is a FIPS 140-2 Level 3 certificate, now Historical (sunset). Source: Utimaco Quantum Protect product page, CMVP and CAVP pages; checked 5 Nov 2026.',
   },
   {
     vendorId: 'aws-cloudhsm',
@@ -880,30 +905,46 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     pqcAlgorithmsAdded: ['ML-DSA-44/65/87'],
     upgradeComplexity: 'low',
     estimatedDowntime: 'None for the customer — provider-managed',
+    certificateNote:
+      'Provider-managed. Certificate 4703 (Marvell LS2 HSM Family) lists no post-quantum algorithm.',
     notes:
-      'ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 15 Oct 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 15 Oct 2026), so FIPS mode is not the same as appearing on the certificate. AWS manages the HSM side; customers update the client SDK.',
+      'ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 5 Nov 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 5 Nov 2026), so FIPS mode is not the same as appearing on the certificate. AWS manages the HSM side; customers update the client SDK.',
   },
   {
     vendorId: 'azure-dhsm',
     vendorName: 'Azure Dedicated HSM',
     currentFirmware: 'Thales Luna 7 firmware 7.0.3 (the version Azure documents)',
     targetFirmware: 'Thales Luna 7.9.0 or newer (customer-administered)',
-    pqcAlgorithmsAdded: ['ML-KEM (FIPS 203)', 'ML-DSA (FIPS 204)', 'LMS-HSS (from 7.8.9)'],
+    pqcAlgorithmsAdded: [
+      'ML-KEM (FIPS 203, Luna 7.9.0)',
+      'ML-DSA (FIPS 204, Luna 7.9.0)',
+      'LMS-HSS (Luna 7.8.9)',
+    ],
     upgradeComplexity: 'low',
-    estimatedDowntime: '30-60 minutes per HSM (same as Thales Luna 7)',
+    estimatedDowntime: '30-60 minutes per HSM (same planning assumption as Thales Luna 7)',
+    certificateNote:
+      "Azure lists no post-quantum algorithm in the documents this lesson cites; Azure's own documentation was not matched to a certificate here.",
     notes:
-      'Azure Dedicated HSM is the Thales Luna 7 HSM (model A790). Azure lists no PQC algorithm. Azure says the customer has full administrative control, including upgrading firmware, and should consult Thales Support first; Azure does not say whether the service offers firmware 7.9. Backup/restore recommended before upgrade. The service is retiring: no new customer onboardings, and existing customers are supported until 31 July 2028.',
+      'Azure Dedicated HSM is the Thales Luna 7 HSM (model A790). The algorithms listed are those Thales documents for the Luna firmware named in each entry; they are not an Azure support statement. Azure lists no PQC algorithm. Azure says the customer has full administrative control, including upgrading firmware, and should consult Thales Support first; Azure does not say whether the service offers firmware 7.9. Backup/restore recommended before upgrade. The service is retiring: no new customer onboardings, and existing customers are supported until 31 July 2028 (Azure Dedicated HSM overview and FAQ, checked 5 Nov 2026).',
   },
   {
     vendorId: 'crypto4a-qxhsm',
     vendorName: 'Crypto4A QxHSM',
-    currentFirmware: 'v4.3 or earlier',
-    targetFirmware: 'v4.4+ (PQC production)',
-    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
+    currentFirmware: 'Not published',
+    targetFirmware: 'Not published',
+    pqcAlgorithmsAdded: [
+      'ML-KEM',
+      'ML-DSA',
+      'SLH-DSA',
+      'LMS/HSS',
+      'XMSS (not in FIPS-validated configuration)',
+    ],
     upgradeComplexity: 'low',
-    estimatedDowntime: '30-60 minutes per HSM (FPGA firmware update)',
+    estimatedDowntime: '30-60 minutes per HSM (planning assumption, not a Crypto4A figure)',
+    certificateNote:
+      'Certificate 5497 (QASM Cryptographic Module) lists ML-KEM, ML-DSA, SLH-DSA and LMS but does not name QxHSM.',
     notes:
-      'FPGA-based design enables algorithm agility via firmware update — no hardware replacement needed. CAVP A5631 covers ML-KEM, ML-DSA, SLH-DSA and LMS. FIPS 140-3 Level 3 certificate #5497 (19 Aug 2026) lists all four as approved; the FIPS 140-2 certificate #4250 is Historical.',
+      'Crypto4A publishes no firmware version, upgrade procedure or downtime figure for QxHSM, so this row is a placeholder for the exercise and not a documented upgrade path. The QxHSM product page lists ML-KEM, ML-DSA, SLH-DSA, LMS and HSS, and XMSS/XMSS-MT, says XMSS/XMSS-MT is not currently available in a FIPS-validated configuration, and says future algorithms arrive through quantum-safe firmware updates. CMVP certificate 5497 (QASM Cryptographic Module, FIPS 140-3 Level 3, initial validation 19 Aug 2026) lists ML-KEM, ML-DSA, SLH-DSA and LMS under CAVP A5631 and no XMSS; Crypto4A describes QASM as the cryptographic module at the core of its HSM, but the certificate does not name QxHSM. The FIPS 140-2 certificate #4250 is Historical. Source: Crypto4A QxHSM product page and announcement of 19 Aug 2026, CMVP; checked 5 Nov 2026.',
   },
 ]
 

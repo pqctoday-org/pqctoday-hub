@@ -56,6 +56,24 @@ export interface LearnSectionProps {
  */
 export const SECTION_READ_DWELL_MS = 1500
 
+/** Fine steps so a tall section's visible share is re-checked as the reader scrolls. */
+const READ_THRESHOLDS = Array.from({ length: 21 }, (_, i) => i / 20)
+
+/**
+ * A section counts as being read once half of it is on screen. A section more
+ * than twice as tall as the screen can never be half visible, so for those the
+ * test is that it fills half of the screen instead; otherwise a long section
+ * could never be marked read, and a module that has one could never complete.
+ */
+function isHalfRead(entry: IntersectionObserverEntry): boolean {
+  if (!entry.isIntersecting) return false
+  if (entry.intersectionRatio >= 0.5) return true
+  const { boundingClientRect, intersectionRect } = entry
+  if (!boundingClientRect || !intersectionRect) return false
+  const screen = entry.rootBounds?.height ?? window.innerHeight
+  return boundingClientRect.height > 2 * screen && intersectionRect.height >= 0.5 * screen
+}
+
 /** Reads the deep-link target from either `#section-id` or `?section=`. */
 export const useDeepLinkTarget = (): string => {
   const location = useLocation()
@@ -102,7 +120,8 @@ export const useSectionAnchors = (): void => {
     return () => cancelAnimationFrame(raf)
   }, [target])
 
-  // Mark each section read once half of it has been on screen FOR A WHILE.
+  // Mark each section read once half of it (or, for a section taller than twice
+  // the screen, half the screen) has been on screen FOR A WHILE.
   useEffect(() => {
     if (!moduleId || isAutoRunFillActive()) return
     // Both anchor styles. Some modules mark sections with `data-section-id`;
@@ -136,7 +155,7 @@ export const useSectionAnchors = (): void => {
           const el = entry.target as HTMLElement
           const id = el.dataset.sectionId ?? el.id
           if (!id) continue
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          if (isHalfRead(entry)) {
             if (timers.has(id)) continue
             timers.set(
               id,
@@ -151,7 +170,7 @@ export const useSectionAnchors = (): void => {
           }
         }
       },
-      { threshold: [0.5] }
+      { threshold: READ_THRESHOLDS }
     )
     els.forEach((el) => observer.observe(el))
     return () => {
@@ -224,7 +243,7 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
     return () => cancelAnimationFrame(raf)
   }, [isTarget])
 
-  // Mark read once half the section has been on screen for a beat — but only
+  // Mark read once half the section (see isHalfRead) has been on screen for a beat — but only
   // while it is open, so a collapsed header scrolling past does not count as
   // having read it. The dwell matches useSectionAnchors above: an accordion
   // already expanded on arrival would otherwise be marked read on load.
@@ -235,7 +254,7 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          if (isHalfRead(entry)) {
             if (timer) continue
             timer = setTimeout(() => {
               timer = undefined
@@ -247,7 +266,7 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
           }
         }
       },
-      { threshold: [0.5] }
+      { threshold: READ_THRESHOLDS }
     )
     observer.observe(el)
     return () => {
