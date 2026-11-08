@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Search, LayoutGrid, List, Bookmark, SlidersHorizontal, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -9,6 +9,7 @@ import type { PersonaId } from '@/data/learningPersonas'
 import type { NiceProficiencyTier } from '@/data/niceFramework'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { useModuleTopicKeywords } from '@/hooks/useModuleTopicKeywords'
 import { getNiceMapping } from '@/data/niceModuleMapping'
 import { ModuleCard } from '../ModuleCard'
 import { NiceView } from '../NiceView'
@@ -67,25 +68,10 @@ export const BrowseAllView = ({
   const myLearnModules = useBookmarkStore((s) => s.myLearnModules)
 
   const [search, setSearch] = useState('')
-  // Curated per-module topic keywords (e.g. "Purdue model" for IoT & OT). Loaded
-  // lazily on the first search so the ~100 KB topic-summary text stays out of the
-  // initial Learn bundle; until it arrives, title + description still match.
-  const [topicKeywords, setTopicKeywords] = useState<Record<string, string> | null>(null)
+  // Curated per-module topic keywords (e.g. "Purdue model" for IoT & OT), loaded lazily on the
+  // first search; until they arrive, title + description still match.
   const hasSearch = search.trim().length > 0
-  useEffect(() => {
-    if (!hasSearch || topicKeywords) return
-    let cancelled = false
-    import('@/data/moduleTopicSummaries')
-      .then((m) => {
-        if (!cancelled) setTopicKeywords(m.MODULE_TOPIC_KEYWORDS)
-      })
-      .catch(() => {
-        // Keyword enrichment is best-effort; search keeps working on title + description.
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [hasSearch, topicKeywords])
+  const topicKeywords = useModuleTopicKeywords(hasSearch)
   const [status, setStatus] = useState(BROWSE_ALL)
   const [sort, setSort] = useState<BrowseSortMode>('default')
   const [track, setTrack] = useState(() => resolveBrowseTrack(initialTrack))
