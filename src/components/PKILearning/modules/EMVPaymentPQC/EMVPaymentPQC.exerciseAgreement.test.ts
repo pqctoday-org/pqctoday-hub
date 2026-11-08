@@ -62,15 +62,20 @@ describe('exercise answers agree with the workshop data', () => {
     expect(cda.steps.filter((s) => s.quantumVulnerable)).toHaveLength(3)
   })
 
-  it('Visa VTS has the 5-of-6 split exercise 4 states, and differs from MDES/EST', () => {
+  it('tokenization exercise agrees with the declared classical TLS sample and separate unknown', () => {
     const counts = Object.fromEntries(
       TOKENIZATION_FLOWS.map((f) => [f.id, f.steps.filter((s) => s.quantumVulnerable).length])
     )
     // Exercise 4 sends the learner to VTS specifically, so its number is the
     // one that must match — this is exactly what was wrong before.
-    expect(counts['visa-vts'], 'exercise 4 instructs "select Visa VTS"').toBe(5)
-    expect(counts['mc-mdes']).toBe(4)
-    expect(counts['amex-est']).toBe(4)
+    expect(counts['visa-vts'], 'exercise 4 instructs "select Visa VTS"').toBe(6)
+    expect(counts['mc-mdes']).toBe(6)
+    expect(counts['amex-est']).toBe(5)
+    expect(
+      TOKENIZATION_FLOWS.find((f) => f.id === 'amex-est')!
+        .steps.filter((s) => s.quantumVulnerable === null)
+        .map((s) => s.id)
+    ).toEqual(['est-2'])
     TOKENIZATION_FLOWS.forEach((f) => expect(f.steps).toHaveLength(6))
   })
 
