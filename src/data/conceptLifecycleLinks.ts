@@ -73,9 +73,10 @@ function libraryRefsBehind(row: ConceptRegistryRow): string[] {
  * Whether the record behind a registry id is still a draft.
  * - A Library-backed record is a draft when its lifecycle label is "Draft"
  *   (this also covers proposals and Internet-Drafts).
- * - A Compliance-backed record is a draft when its binding status is "draft"
- *   or any Library document it cites is one: the row for SP 800-131A Rev 3
- *   cites the Rev 3 draft.
+ * - A Compliance-backed record is a draft when its own binding status is
+ *   "draft" (the row for SP 800-131A Rev 3 is). The Library documents a
+ *   Compliance row cites are not part of the test: a national law that cites
+ *   the Rev 3 draft as supporting reading is not itself a draft.
  * An id that is not in the registry is not known to be a draft; the rules
  * reject such an id for other reasons.
  */
@@ -85,9 +86,7 @@ export function isDraftConcept(conceptId: string): boolean {
   const isDraftRef = (ref: string) => findLibraryItemByRef(ref)?.lifecycleLabel === 'Draft'
   if (libraryRefsBehind(row).some(isDraftRef)) return true
   if (row.sourceTable === 'compliance' && row.sourceRowId) {
-    const framework = getFrameworkById(row.sourceRowId)
-    if (framework?.bindingStatus === 'draft') return true
-    if ((framework?.libraryRefs ?? []).some(isDraftRef)) return true
+    if (getFrameworkById(row.sourceRowId)?.bindingStatus === 'draft') return true
   }
   return false
 }

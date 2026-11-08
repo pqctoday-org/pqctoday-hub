@@ -223,8 +223,14 @@ describe('isDraftConcept on the shipped Library and Compliance rows', () => {
   it('SP 800-131A Rev 3 and SP 800-57 Part 1 Rev 6 are drafts, whichever record names them', () => {
     expect(isDraftConcept('standard:nist-sp-800-131a-rev3')).toBe(true)
     expect(isDraftConcept('standard:nist-sp-800-57-pt1-r6')).toBe(true)
-    // The Compliance row for SP 800-131A is Rev 3 as well: it cites the draft.
+    // The Compliance row for SP 800-131A is Rev 3 as well: its own binding status is "draft".
     expect(isDraftConcept('guidance:nist-sp800-131a')).toBe(true)
+  })
+
+  it('a Compliance row that only cites a draft is not a draft itself', () => {
+    // Several national laws list the Rev 3 draft among their supporting reading.
+    expect(isDraftConcept('guidance:at-nis2')).toBe(false)
+    expect(isDraftConcept('guidance:cnsa-2')).toBe(false)
   })
 
   it('a released edition and an unknown id are not drafts', () => {
