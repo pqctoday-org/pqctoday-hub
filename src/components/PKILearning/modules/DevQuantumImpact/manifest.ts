@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'dev-quantum-impact',
-  contentVersion: 11,
+  contentVersion: 12,
   lm_id: 'LM-048',
   title: 'Developer Quantum Impact',
   description:
