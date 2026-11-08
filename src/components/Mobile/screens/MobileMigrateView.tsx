@@ -11,11 +11,13 @@ import {
 } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
+  AlertTriangle,
   ArrowRight,
   Calendar,
   Check,
   ExternalLink,
   FileText,
+  Info,
   Newspaper,
   BookText,
   Plus,
@@ -42,7 +44,8 @@ import {
   enrichmentForRoadmap,
   ownEnrichmentForVendor,
 } from '@/data/vendorRoadmapEnrichmentData'
-import { getCertsForProduct } from '@/data/certificationXrefData'
+import { certCoverageText, getCertsForProduct } from '@/data/certificationXrefData'
+import { getRelatedResource } from '@/data/purlXrefData'
 import {
   productsForDomain,
   productsForVendor,
@@ -1045,6 +1048,44 @@ function MobileProductRow({
   )
 }
 
+/** What one certificate covers, as visible text (a touch screen has no hover): the certified
+ *  module, platform and release, then one sentence on how it relates to the catalogue release.
+ *  Renders nothing when the certificate file records neither. */
+function CertCoverageLines({
+  cert,
+  catalogueRelease,
+}: {
+  cert: CertificationXref
+  catalogueRelease?: string
+}) {
+  const { covers, sentence, limited } = certCoverageText(cert, catalogueRelease)
+  if (!covers && !sentence) return null
+  return (
+    <>
+      {covers && (
+        <span className="mt-0.5 block break-words text-[11.5px] text-foreground/90">
+          Covers: {covers}
+        </span>
+      )}
+      {sentence && (
+        <span
+          className={cn(
+            'mt-0.5 flex items-start gap-1 text-[11px]',
+            limited ? 'text-status-warning' : 'text-muted-foreground'
+          )}
+        >
+          {limited ? (
+            <AlertTriangle size={11} className="mt-0.5 shrink-0" aria-hidden="true" />
+          ) : (
+            <Info size={11} className="mt-0.5 shrink-0" aria-hidden="true" />
+          )}
+          {sentence}
+        </span>
+      )}
+    </>
+  )
+}
+
 function MobileProductDetailSheet({
   product,
   onClose,
@@ -1086,6 +1127,11 @@ function MobileProductDetailSheet({
   // status without closing it and re-reading the row.
   const pqc = product ? productPqcStatus(product) : null
   const fips = product ? productFipsBadge(product) : null
+
+  // A project page beside the product (test suite, SDK, ...), from its own columns.
+  const relatedResource = product
+    ? getRelatedResource(product.productId, product.softwareName)
+    : undefined
 
   const hasVendorRoadmap =
     !!product?.vendorId &&
@@ -1148,6 +1194,7 @@ function MobileProductDetailSheet({
                                 Classical only — covers no PQC algorithm
                               </span>
                             )}
+                            <CertCoverageLines cert={c} catalogueRelease={product.latestVersion} />
                           </span>
                           <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-muted-foreground">
                             {c.certDate}
@@ -1201,6 +1248,34 @@ function MobileProductDetailSheet({
               </div>
             )}
           </div>
+
+          {relatedResource && (
+            <section aria-labelledby="mobile-related-resources">
+              <h3
+                id="mobile-related-resources"
+                className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              >
+                Related resources
+              </h3>
+              <ul>
+                <li>
+                  <a
+                    href={relatedResource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center gap-1.5 break-words text-[13px] font-semibold text-primary hover:underline"
+                  >
+                    <ExternalLink size={13} className="shrink-0" aria-hidden="true" />
+                    <span className="min-w-0 break-words">
+                      {relatedResource.kindLabel
+                        ? `${relatedResource.kindLabel}: ${relatedResource.name}`
+                        : relatedResource.name}
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </section>
+          )}
 
           {(product.openSourceMaintainers?.length ?? 0) > 0 && (
             // A side list must not take the product sheet down if its chunk cannot be loaded.

@@ -183,6 +183,15 @@ const CertTypePopover: React.FC<{
           >
             <span className="flex min-w-0 flex-col">
               <span className="truncate text-foreground">{cert.certDate || 'Undated'}</span>
+              {cert.certProduct && (
+                <span
+                  data-testid="cert-module-name"
+                  title={cert.certProduct}
+                  className="line-clamp-2 text-[10px] text-muted-foreground"
+                >
+                  {cert.certProduct}
+                </span>
+              )}
               {hasPqc && (
                 <span className="truncate text-[10px] text-muted-foreground">
                   PQC: {cert.pqcAlgorithms}

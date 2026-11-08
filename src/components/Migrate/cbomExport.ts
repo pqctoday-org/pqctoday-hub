@@ -14,7 +14,8 @@
  */
 import type { SoftwareItem, CertificationXref } from '../../types/MigrateTypes'
 import { cpeByProduct, cpeXrefMetadata } from '../../data/cpeXrefData'
-import { purlByProduct, purlXrefMetadata } from '../../data/purlXrefData'
+import { getRelatedResource, purlByProduct, purlXrefMetadata } from '../../data/purlXrefData'
+import { relatedResourceCbomReference } from '../../data/relatedResources'
 import { getCertsForProduct, certsByProduct, xrefMetadata } from '../../data/certificationXrefData'
 import {
   buildCbomDocument,
@@ -76,6 +77,8 @@ export function softwareItemToCbomInput(
   const cpe = cpeByProduct.get(item.productId) ?? cpeByProduct.get(item.softwareName)
   const purl = purlByProduct.get(item.productId) ?? purlByProduct.get(item.softwareName)
   const certs = getCertsForProduct(item.productId, item.softwareName)
+  // A project page beside the product goes out as an external reference, never as `purl`.
+  const related = getRelatedResource(item.productId, item.softwareName)
 
   const properties: CbomProperty[] = [
     { name: 'pqctoday:infrastructureLayer', value: item.infrastructureLayer || '' },
@@ -147,7 +150,11 @@ export function softwareItemToCbomInput(
       certType: c.certType,
       certId: c.certId,
       certLink: c.certLink,
+      // What the certificate covers, so the export says what the page says.
+      ...(c.certCovers ? { covers: c.certCovers } : {}),
+      ...(c.certRelationship ? { relationship: c.certRelationship } : {}),
     })),
+    ...(related ? { externalReferences: [relatedResourceCbomReference(related)] } : {}),
     algorithms: extractPqcAlgorithms(item, certs),
   }
 }

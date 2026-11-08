@@ -17,9 +17,10 @@ import {
   Info,
 } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import { getCertsForProduct } from '@/data/certificationXrefData'
+import { certCoverageText, getCertsForProduct } from '@/data/certificationXrefData'
 import { cpeByProduct } from '@/data/cpeXrefData'
-import { purlByProduct } from '@/data/purlXrefData'
+import { getRelatedResource, purlByProduct } from '@/data/purlXrefData'
+import { sameResourceAddress } from '@/data/relatedResources'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import {
   crossSourceEnrichmentForRoadmap,
@@ -57,6 +58,8 @@ import { lazyWithRetry } from '@/utils/lazyWithRetry'
 // here so this view's chunk is the one the build makes wait for it.
 const ProductMaintainers = lazyWithRetry(() => import('./ProductMaintainers'))
 
+const CERT_COVERAGE_ORDER = ['FIPS 140-3', 'ACVP', 'Common Criteria', 'PSA Certified']
+
 export function ProductDetail({ product }: { product: SoftwareItem }) {
   const certs = getCertsForProduct(product.productId, product.softwareName)
   // ADDED (Bug 2 remediation): the CPE/PURL cross-reference join (~915 + 800
@@ -68,6 +71,23 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   const hasCpe = !!cpe && (cpe.status === 'matched' || cpe.status === 'partial') && !!cpe.nvdUrl
   const purl = purlByProduct.get(product.productId) ?? purlByProduct.get(product.softwareName)
   const hasPurl = !!purl && purl.status === 'matched' && !!purl.registryUrl
+  // A project page beside the product (its test suite, SDK, ...). Read from its own
+  // columns: never the package identifier above, never a fallback for it.
+  const relatedResource = getRelatedResource(product.productId, product.softwareName)
+  // Certificates that say what they cover (module, platform, release), in the order the
+  // badges list them. A certificate with nothing recorded adds no line.
+  const coverageRows = certs
+    .map((cert) => ({
+      cert,
+      coverage: certCoverageText(cert, product.latestVersion),
+    }))
+    .filter((row) => row.coverage.covers || row.coverage.sentence)
+    .sort(
+      (a, b) =>
+        CERT_COVERAGE_ORDER.indexOf(a.cert.certType) -
+          CERT_COVERAGE_ORDER.indexOf(b.cert.certType) ||
+        (a.cert.certDate < b.cert.certDate ? 1 : a.cert.certDate > b.cert.certDate ? -1 : 0)
+    )
   const roadmaps = product.vendorId ? (roadmapByVendorId.get(product.vendorId) ?? []) : []
   const vendorEnrichments = product.vendorId
     ? (enrichmentByVendorId.get(product.vendorId) ?? [])
@@ -220,6 +240,41 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             Certifications
           </p>
           {certs.length > 0 && <CertBadges certs={certs} />}
+          {coverageRows.length > 0 && (
+            <ul
+              aria-label="What each certificate covers"
+              data-testid="cert-coverage"
+              className="mt-2 space-y-1.5"
+            >
+              {coverageRows.map(({ cert, coverage }) => (
+                <li
+                  key={`${cert.certType}|${cert.certId}|${cert.certDate}|${cert.certLink}`}
+                  className="text-foreground/80"
+                >
+                  <span className="font-medium text-foreground">
+                    {cert.certType}
+                    {cert.certId ? ` #${cert.certId}` : ''}
+                  </span>
+                  {coverage.covers && <>: {coverage.covers}</>}
+                  {coverage.sentence && (
+                    <span
+                      data-testid="cert-coverage-sentence"
+                      className={`mt-0.5 flex items-start gap-1.5 ${
+                        coverage.limited ? 'text-status-warning' : 'text-muted-foreground'
+                      }`}
+                    >
+                      {coverage.limited ? (
+                        <AlertTriangle size={12} className="mt-0.5 shrink-0" aria-hidden />
+                      ) : (
+                        <Info size={12} className="mt-0.5 shrink-0" aria-hidden />
+                      )}
+                      {coverage.sentence}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
           {/*
            * The distinction a certificate badge alone cannot make: this product
            * IS validated, and the validation does not cover PQC. 11 active
@@ -309,6 +364,32 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
         </div>
       )}
 
+      {relatedResource && (
+        <div>
+          <p
+            id={`related-resources-${product.productId}`}
+            className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground"
+          >
+            Related resources
+          </p>
+          <ul aria-labelledby={`related-resources-${product.productId}`}>
+            <li>
+              <a
+                href={relatedResource.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 break-all text-primary hover:underline"
+              >
+                <ExternalLink size={12} className="shrink-0" aria-hidden />
+                {relatedResource.kindLabel
+                  ? `${relatedResource.kindLabel}: ${relatedResource.name}`
+                  : relatedResource.name}
+              </a>
+            </li>
+          </ul>
+        </div>
+      )}
+
       {hasMaintainers && (
         // A side list must not take the product view down if its chunk cannot be loaded.
         <OptionalSection>
@@ -365,16 +446,17 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             <ExternalLink size={12} aria-hidden /> {vendor.vendorDisplayName || 'Vendor'}
           </a>
         )}
-        {product.repositoryUrl && (
-          <a
-            href={product.repositoryUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-primary hover:underline"
-          >
-            <ExternalLink size={12} aria-hidden /> Repository
-          </a>
-        )}
+        {product.repositoryUrl &&
+          !sameResourceAddress(product.repositoryUrl, relatedResource?.url) && (
+            <a
+              href={product.repositoryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-primary hover:underline"
+            >
+              <ExternalLink size={12} aria-hidden /> Repository
+            </a>
+          )}
         {product.proofUrl && (
           <a
             href={product.proofUrl}

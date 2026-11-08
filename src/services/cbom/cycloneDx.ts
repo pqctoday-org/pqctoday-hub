@@ -86,6 +86,17 @@ export interface CbomCertification {
   certType: string
   certId: string
   certLink?: string
+  /** The certified module, platform and release, when the source records it. */
+  covers?: string
+  /** How the certificate relates to the catalogue release, when the source records it. */
+  relationship?: string
+}
+
+/** A CycloneDX external reference carried onto a component as given. */
+export interface CbomExternalReference {
+  type: string
+  url: string
+  comment?: string
 }
 
 /** CycloneDX 1.7 component types this emitter uses. */
@@ -108,6 +119,8 @@ export interface CbomComponentInput {
   purl?: string
   properties?: CbomProperty[]
   certifications?: CbomCertification[]
+  /** Extra external references (for example a related project page). Never a package identifier. */
+  externalReferences?: CbomExternalReference[]
   /** PQC and/or classical algorithms this component provides → emitted as
    *  child crypto-asset components. */
   algorithms?: CbomAlgorithm[]
@@ -419,6 +432,13 @@ export function buildCbomDocument(
         .filter((c) => c.certLink)
         .map((c) => ({ type: 'certification-report', url: c.certLink, comment: c.certType }))
       if (certRefs.length > 0) component.externalReferences = certRefs
+    }
+    const extraRefs = (input.externalReferences ?? []).filter((r) => r.url)
+    if (extraRefs.length > 0) {
+      component.externalReferences = [
+        ...extraRefs,
+        ...((component.externalReferences as unknown[] | undefined) ?? []),
+      ]
     }
 
     components.push(component)
