@@ -21,7 +21,11 @@ import { getCertsForProduct } from '@/data/certificationXrefData'
 import { cpeByProduct } from '@/data/cpeXrefData'
 import { purlByProduct } from '@/data/purlXrefData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
-import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
+import {
+  crossSourceEnrichmentForRoadmap,
+  enrichmentByVendorId,
+  enrichmentForRoadmap,
+} from '@/data/vendorRoadmapEnrichmentData'
 import { softwareData, vendorMap } from '@/data/migrateData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
@@ -343,6 +347,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
               key={r.compositeId}
               roadmap={r}
               enrichment={enrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
+              crossSource={crossSourceEnrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
             />
           ))
         : vendorEnrichments.length > 0 && (

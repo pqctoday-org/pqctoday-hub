@@ -1,5 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
   ArrowRight,
@@ -27,7 +36,12 @@ import {
 } from '@/data/migrationAssets'
 import { softwareData, softwareMetadata, vendorMap } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
-import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
+import {
+  crossSourceEnrichmentForRoadmap,
+  enrichmentByVendorId,
+  enrichmentForRoadmap,
+  ownEnrichmentForVendor,
+} from '@/data/vendorRoadmapEnrichmentData'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import {
   productsForDomain,
@@ -68,7 +82,12 @@ import type {
   VendorRoadmap,
   VendorRoadmapEnrichment,
 } from '@/types/MigrateTypes'
-import { deriveVendorRoadmapDisplay } from '@/components/Migrate/vendorRoadmapDisplay'
+import {
+  deriveVendorRoadmapDisplay,
+  type AnalysisFacts,
+  type AnalysisSourceInfo,
+  analysisSourceLinkLabel,
+} from '@/components/Migrate/vendorRoadmapDisplay'
 import { MobileSheet } from '../primitives/Sheet'
 import { OptionalSection } from '@/components/ui/OptionalSection'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
@@ -1718,6 +1737,7 @@ function MobileRoadmapsTab({
                     key={r.compositeId}
                     roadmap={r}
                     enrichment={enrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
+                    crossSource={crossSourceEnrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
                   />
                 ))}
               </div>
@@ -1880,7 +1900,9 @@ function RoadmapVendorCard({
   // 2026-08-24 audit R4.8: same real field + "None detected" sentinel guard
   // as VendorRoadmapPanel.tsx:136 (desktop) — a per-vendor dated milestone,
   // not invented, was the one concrete fact these cards were missing.
-  const targetDates = enrichmentByVendorId.get(vendorId)?.[0]?.targetMigrationDates
+  // The date comes from the analysis the opened panel shows as the vendor's
+  // own, never from one the panel keeps under "Analysis from another source".
+  const targetDates = ownEnrichmentForVendor(vendorId)?.targetMigrationDates
   return (
     // 2026-08-28: was a single <Button> wrapping everything, including the
     // product-count line — no second tap target was possible without
@@ -1951,13 +1973,20 @@ const GA_STATUS_TONE: Record<string, Tone> = {
 function MobileVendorRoadmapPanel({
   roadmap,
   enrichment,
+  crossSource,
 }: {
   roadmap: VendorRoadmap | undefined
   enrichment: VendorRoadmapEnrichment | undefined
+  /** An analysis written from a different page than this row's own link; shown
+   *  in its own labelled block with a link to the page it came from. */
+  crossSource?: VendorRoadmapEnrichment
 }) {
-  const display = deriveVendorRoadmapDisplay(roadmap, enrichment)
+  const display = deriveVendorRoadmapDisplay(roadmap, enrichment, crossSource)
+  const sourceHeadingId = useId()
+  const otherHeadingId = useId()
   if (!display) return null
-  const { title, roadmapUrl, gaStatus, gaStatusDetail, dateLine, isEmpty } = display
+  const { title, roadmapUrl, gaStatus, gaStatusDetail, dateLine, isEmpty, analysisSource } = display
+  const other = display.crossSource
 
   if (isEmpty) {
     return <p className="text-[12.5px] text-muted-foreground">No roadmap published.</p>
@@ -1992,13 +2021,89 @@ function MobileVendorRoadmapPanel({
         )}
       </div>
 
-      {display.pqcAlgorithms.length > 0 && (
+      {/* A vendor with no roadmap row: say which page the analysis came from. */}
+      {analysisSource && (
+        <section aria-labelledby={sourceHeadingId}>
+          <h3
+            id={sourceHeadingId}
+            className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground"
+          >
+            Analysis source
+          </h3>
+          <MobileAnalysisSourceLink source={analysisSource} />
+        </section>
+      )}
+
+      <MobileAnalysisFacts facts={display} />
+
+      {/* An analysis written from a different page than the row's own link:
+       *  its own block, source first, so its facts never read as the row's. */}
+      {other && (
+        <section
+          aria-labelledby={otherHeadingId}
+          data-testid="analysis-other-source"
+          className="flex flex-col gap-2.5 rounded-xl border border-border bg-muted/20 p-3"
+        >
+          <h3 id={otherHeadingId} className="text-[12.5px] font-bold text-foreground">
+            Analysis from another source
+          </h3>
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            {roadmapUrl
+              ? 'This analysis was written from a different page than the roadmap linked above.'
+              : 'This analysis was written from a different page than this roadmap entry.'}
+          </p>
+          <MobileAnalysisSourceLink source={other.source} />
+          {other.gaStatus && (
+            <div>
+              <Badge
+                tone={GA_STATUS_TONE[other.gaStatus.kind]}
+                title={other.gaStatusDetail ?? undefined}
+              >
+                {other.gaStatus.label}
+              </Badge>
+            </div>
+          )}
+          <MobileAnalysisFacts facts={other} />
+        </section>
+      )}
+    </div>
+  )
+}
+
+/** Link to the page an analysis was written from: a 44 px target whose text
+ *  wraps, named "Analysis source: <title> (opens in a new tab)". */
+function MobileAnalysisSourceLink({ source }: { source: AnalysisSourceInfo }) {
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={analysisSourceLinkLabel(source)}
+      className="inline-flex min-h-11 w-full items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/5 px-3 py-2 text-[12px] font-semibold text-primary"
+    >
+      <ExternalLink size={13} className="shrink-0" aria-hidden="true" />
+      <span className="min-w-0 break-words">
+        {source.title ?? source.siteName}
+        {source.title && (
+          <span className="font-normal text-muted-foreground"> ({source.siteName})</span>
+        )}
+      </span>
+    </a>
+  )
+}
+
+/** Algorithms, target dates, hybrid mode, frameworks and the first quote of one
+ *  analysis; the same markup for the row's own analysis and the cross-source one. */
+function MobileAnalysisFacts({ facts }: { facts: AnalysisFacts }) {
+  return (
+    <>
+      {facts.pqcAlgorithms.length > 0 && (
         <div>
           <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Algorithms
           </p>
           <div className="flex flex-wrap gap-1">
-            {display.pqcAlgorithms.map((alg) => (
+            {facts.pqcAlgorithms.map((alg) => (
               <span
                 key={alg}
                 className="rounded border border-primary/20 bg-primary/8 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-primary"
@@ -2010,38 +2115,38 @@ function MobileVendorRoadmapPanel({
         </div>
       )}
 
-      {display.migrationDates && (
+      {facts.migrationDates && (
         <div>
           <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Target dates
           </p>
-          <p className="text-[11.5px] text-foreground/90">{display.migrationDates}</p>
+          <p className="text-[11.5px] text-foreground/90">{facts.migrationDates}</p>
         </div>
       )}
 
-      {(display.hybridModeText || display.complianceFrameworks.length > 0) && (
+      {(facts.hybridModeText || facts.complianceFrameworks.length > 0) && (
         <div className="flex flex-col gap-1 border-t border-border pt-2.5 text-[10.5px] text-muted-foreground">
-          {display.hybridModeText && (
+          {facts.hybridModeText && (
             <p>
               <span className="font-semibold text-foreground/80">Hybrid:</span>{' '}
-              {display.hybridModeText}
+              {facts.hybridModeText}
             </p>
           )}
-          {display.complianceFrameworks.length > 0 && (
+          {facts.complianceFrameworks.length > 0 && (
             <p>
               <span className="font-semibold text-foreground/80">Compliance:</span>{' '}
-              {display.complianceFrameworks.join(' · ')}
+              {facts.complianceFrameworks.join(' · ')}
             </p>
           )}
         </div>
       )}
 
-      {display.firstQuote && (
+      {facts.firstQuote && (
         <p className="border-l-2 border-border pl-2.5 text-[11px] italic leading-relaxed text-muted-foreground">
-          &ldquo;{display.firstQuote}&rdquo;
+          &ldquo;{facts.firstQuote}&rdquo;
         </p>
       )}
-    </div>
+    </>
   )
 }
 

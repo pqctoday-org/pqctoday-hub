@@ -358,6 +358,12 @@ export interface VendorRoadmapEnrichment {
   customerActionRequired: string
   keyQuotes: string[]
   extractionQuality: 'HIGH' | 'MEDIUM' | 'LOW'
+  /**
+   * The title recorded for the page the analysis was written from (the
+   * analysis file's "Roadmap Title"). Optional: sections written before it
+   * was recorded have none, and readers then see the site name alone.
+   */
+  sourceTitle?: string
 }
 
 export interface VendorPartner {
