@@ -43809,6 +43809,23 @@
       "identity": "SKIPPED",
       "status": "downloaded",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "softwareName": "Google Chrome",
+      "refId": "google-chrome",
+      "filename": "google-chrome-brief-02964b1d.html",
+      "sizeBytes": 6542,
+      "content_type": "text/html",
+      "url": "https://chromestatus.com/api/v0/features/5174590524489728",
+      "sha256": "bfa21119901e3263e92e3759147993120219ccd8222f8d04ae8eb5d7175d4ec6",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-08T17:29:30.924141+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
   ],
   "total": 2638,

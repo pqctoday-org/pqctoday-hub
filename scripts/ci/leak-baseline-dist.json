@@ -8,7 +8,10 @@
     "run-id",
     "internal-log",
     "internal-folder",
-    "agent-config-path"
+    "agent-config-path",
+    "internal-key",
+    "decision-citation",
+    "session-handle"
   ],
   "files": {
     "assets/App-#.js": {
@@ -16,10 +19,15 @@
       "internal-folder": 2,
       "private-repo": 6
     },
+    "assets/algorithmsData-#.js": {
+      "internal-key": 18
+    },
     "assets/index-#.js": {
-      "evidence-cache": 11,
-      "home-path": 1,
-      "run-id": 818
+      "internal-key": 1470,
+      "run-id": 1
+    },
+    "assets/leadersData-#.js": {
+      "internal-key": 33
     },
     "assets/trustScoreData-#.js": {
       "evidence-cache": 1,
@@ -36,24 +44,36 @@
     "changelog/index.html": {
       "private-repo": 1
     },
+    "compliance/manifest.json": {
+      "decision-citation": 1,
+      "session-handle": 10
+    },
+    "data/fhe-evidence/fhe-evidence.v1.json": {
+      "decision-citation": 6
+    },
     "data/pqctoday-oscal-assessment-plan.json": {
       "private-repo": 3
     },
     "data/rag-corpus.json": {
+      "decision-citation": 1,
       "internal-folder": 1,
       "private-repo": 1
     },
     "data/revisions.jsonl": {
+      "decision-citation": 7,
       "evidence-cache": 2,
       "internal-log": 2,
       "private-repo": 4,
-      "run-id": 5
+      "run-id": 5,
+      "session-handle": 2
     },
     "industry-landscape/evidence/manifest.json": {
       "internal-folder": 1
     },
     "library/manifest.json": {
-      "internal-folder": 1
+      "decision-citation": 2,
+      "internal-folder": 1,
+      "session-handle": 1
     },
     "migrate-proofs/manifest.json": {
       "evidence-cache": 6,
@@ -63,12 +83,14 @@
       "evidence-cache": 428,
       "home-path": 1,
       "internal-folder": 1,
-      "private-repo": 474
+      "private-repo": 474,
+      "session-handle": 26
     },
     "threats/claim-status.json": {
       "run-id": 209
     },
     "threats/manifest.json": {
+      "decision-citation": 1,
       "evidence-cache": 1,
       "internal-folder": 1
     },
@@ -79,6 +101,7 @@
       "home-path": 2
     },
     "wasm/wasm-provenance.json": {
+      "decision-citation": 12,
       "private-repo": 25
     }
   }
