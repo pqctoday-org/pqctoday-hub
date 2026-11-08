@@ -149,6 +149,21 @@ describe('leak-guard', () => {
     expect(scanDiff(diff('src/data/a.csv', ['the ownership decision tree']))).toEqual([])
   })
 
+  it('flags a working-session handle in data files only', () => {
+    // Assembled from fragments so this file holds no literal handle.
+    const handle = ['antigravity', 'd8'].join('-')
+    const note = `2026-09-27 review (${handle}, ruling by ${['antigravity', '33'].join('-')}): position paper`
+    for (const file of ['src/data/a_01012026.csv', 'public/data/b.json', 'public/c.jsonl']) {
+      expect(scanDiff(diff(file, [note])).map((f) => f.rule)).toEqual(['session-handle'])
+    }
+    expect(scanDiff(diff('src/lib/x.ts', [note]))).toEqual([])
+    expect(scanText(note, 'commit message')).toEqual([])
+    // Longer words and other names are not handles.
+    for (const text of ['the antigravity-dev folder', 'antigravity research', 'anti-gravity-d8']) {
+      expect(scanDiff(diff('src/data/a.csv', [text]))).toEqual([])
+    }
+  })
+
   it('does not flag ordinary teaching content', () => {
     const lines = [
       'Large language models such as Claude or GPT can leak secrets.',

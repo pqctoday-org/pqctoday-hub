@@ -93,6 +93,9 @@ export const RULES: LeakRule[] = [
       /\bowner(?:['\u2019]s)?[ -](?:decisions?|rulings?|approv\w*|convention|polic(?:y|ies)|rule|review|chose|wording)\b/i,
     files: DATA_FILE,
   },
+  // A working-session handle (the workspace name, a dash and a hexadecimal
+  // suffix) names an internal session. Data notes should not carry it.
+  { id: 'session-handle', pattern: /\bantigravity-[0-9a-f]+\b/i, files: DATA_FILE },
 ]
 
 /** The rules that apply to `file`; with no file, only the rules that apply everywhere. */
