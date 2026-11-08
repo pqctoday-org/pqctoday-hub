@@ -81,6 +81,24 @@ describe('library catalog claim semantics', () => {
     ).toBe(false)
   })
 
+  it('counts a row as reviewed when its notes carry the review stamp, the older correction stamp, or neither', () => {
+    const base = { confidenceScore: 80, lastVerified: '2026-11-08' }
+    expect(
+      hasSufficientClaimReview(
+        item({ ...base, dataQualityNotes: 'Corrected on review 2026-11-08.' })
+      )
+    ).toBe(true)
+    expect(
+      hasSufficientClaimReview(
+        item({
+          ...base,
+          dataQualityNotes: 'Imported. | corrected via approved proposal 2026-10-28',
+        })
+      )
+    ).toBe(true)
+    expect(hasSufficientClaimReview(item({ ...base, dataQualityNotes: 'Imported.' }))).toBe(false)
+  })
+
   it('explains when a paid source has no separate free official summary', () => {
     expect(paidSourceContext(item({ accessType: 'paid' }))).toContain('publisher purchase page')
     expect(
