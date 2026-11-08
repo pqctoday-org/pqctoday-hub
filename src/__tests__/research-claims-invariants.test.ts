@@ -14,9 +14,12 @@
  * - "DARPA PQMS" is not a programme we could find a primary source for.
  * - ML-KEM and ML-DSA rest on Module-LWE / Module-SIS, not Ring-LWE.
  * - McEliece dates from 1978, so "50+ years" (or "over 50 years") of cryptanalysis is wrong.
+ * - The assessment retention periods are sample assumptions: HIPAA sets no medical-record
+ *   retention minimum, PCI DSS sets no cardholder-data storage period, and FERPA financial
+ *   aid periods are record-specific.
  *
  * Scope: Learn module sources, the topic summaries the assistant reads, and the LATEST
- * dated quiz and combined module Q&A CSVs. Checked per sentence, whitespace-normalised.
+ * dated quiz, assessment and combined module Q&A CSVs. Checked per sentence, whitespace-normalised.
  *
  * Run locally: `npx vitest run src/__tests__/research-claims-invariants.test.ts`
  */
@@ -55,6 +58,7 @@ const SOURCES: string[] = [
   path.join(ROOT, 'src/data/module-topic-summaries.md'),
   latestDated(path.join(ROOT, 'src/data/module-qa'), 'module_qa_combined_'),
   latestDated(path.join(ROOT, 'src/data'), 'pqcquiz_'),
+  latestDated(path.join(ROOT, 'src/data'), 'pqcassessment_'),
 ]
 
 interface Sentence {
@@ -129,6 +133,23 @@ const RULES: Rule[] = [
     name: 'HIPAA given a 7-year PHI retention requirement (it is 6 years, for documentation)',
     test: (s) => /HIPAA|PHI/.test(s) && /\b(7|seven)[- ]year (minimum |retention)/i.test(s),
   },
+  {
+    // HIPAA sets no medical-record retention period (state law does); its 6 years covers the
+    // compliance documentation. The corrected retention rows call the 6 years a sample assumption.
+    name: 'HIPAA given as the source of a minimum retention period for health records',
+    test: (s) => /HIPAA minimum(?! necessary)|Minimum retention under HIPAA/i.test(s),
+  },
+  {
+    // PCI DSS sets no minimum or maximum storage time for cardholder data.
+    name: 'PCI DSS given as the source of a cardholder-data retention period',
+    test: (s) =>
+      /\d+ years? \(PCI DSS cardholder data\)|Maximum cardholder data storage period/i.test(s),
+  },
+  {
+    // 34 CFR 668.24(e) sets record-specific periods for financial aid records, not a flat 6 years.
+    name: 'FERPA / financial aid given a flat 6-year retention period',
+    test: (s) => /\b6 years? \(FERPA/i.test(s),
+  },
 ]
 
 /**
@@ -137,7 +158,18 @@ const RULES: Rule[] = [
  * corrected CSV ships an entry stops matching; the second test then fails until the
  * entry is deleted, so the list cannot rot.
  */
-const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = []
+const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
+  // The older block of the assessment file (no category column) still carries the three
+  // retention labels that the current retention rows replaced; the proposed cell changes are
+  // with the data lane. Delete these entries when that file is revised.
+  { file: /pqcassessment_/, text: '6 years (HIPAA minimum)' },
+  {
+    file: /pqcassessment_/,
+    text: 'Minimum retention under HIPAA for protected health information',
+  },
+  { file: /pqcassessment_/, text: '2 years (PCI DSS cardholder data)' },
+  { file: /pqcassessment_/, text: '6 years (FERPA / financial aid)' },
+]
 
 const isPending = (s: Sentence) =>
   PENDING_DATA_FIXES.some((p) => p.file.test(s.file) && s.text.includes(p.text))
@@ -205,5 +237,13 @@ describe('research and healthcare claim invariants', () => {
       )
     ).toBe(false)
     expect(fires('McEliece has been studied since 1978.')).toBe(false)
+    expect(fires('6 years (HIPAA minimum)')).toBe(true)
+    // the Privacy Rule's "minimum necessary" standard is not a retention period
+    expect(fires('Apply the HIPAA minimum necessary standard to every disclosure.')).toBe(false)
+    expect(fires('2 years (PCI DSS cardholder data)')).toBe(true)
+    expect(fires('6 years (FERPA / financial aid)')).toBe(true)
+    expect(fires('6 years (sample assumption)')).toBe(false)
+    expect(fires('2 years (sample retention period)')).toBe(false)
+    expect(fires('6 years (institutional policy example)')).toBe(false)
   })
 })
