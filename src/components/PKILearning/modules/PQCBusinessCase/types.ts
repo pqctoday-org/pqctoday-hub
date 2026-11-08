@@ -47,6 +47,14 @@ export interface ROIOutput {
   roiPercent: number
   paybackMonths: number
   breachCostSavingsUSD: number
+  /** The count of systems or products behind the figures. Absent in outputs saved before it existed. */
+  productsToMigrate?: number
+  /**
+   * Whether that count is the learner's own entry (`entered`), the opening example, or a count
+   * restored from a model saved before the learner could enter one. Downstream pages say so when
+   * it is not the learner's own.
+   */
+  productsSource?: 'example' | 'entered' | 'saved-model'
 }
 
 export interface BreachOutput {

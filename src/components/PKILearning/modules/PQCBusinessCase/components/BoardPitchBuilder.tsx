@@ -18,6 +18,7 @@ import {
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
 import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
+import { productCountOutputNote } from './roiProductCount'
 
 const MODULE_ID = 'pqc-business-case'
 
@@ -74,6 +75,13 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
   // so switching roles resets the form state to the new persona's defaults.
   const variant = useMemo(() => getPitchVariant(selectedPersona, data), [selectedPersona, data])
 
+  // Says so when the figures rest on the opening example or an unconfirmed restored count, so an
+  // example never reaches a board slide looking like the reader's own estate.
+  const countNote = productCountOutputNote(
+    effectiveRoiOutput?.productsSource,
+    effectiveRoiOutput?.productsToMigrate
+  )
+
   const sections = useMemo(() => {
     return variant.sections.map((s) => ({
       ...s,
@@ -86,7 +94,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
           const parts: string[] = []
           if (effectiveRoiOutput) {
             parts.push(
-              `Migration investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)} | 3-year ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(effectiveRoiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(effectiveRoiOutput.breachCostSavingsUSD)}`
+              `Migration investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)}${countNote ? ` (${countNote})` : ''} | 3-year ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(effectiveRoiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(effectiveRoiOutput.breachCostSavingsUSD)}`
             )
           }
           if (effectiveInactionOutput) {
@@ -118,9 +126,14 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
             ...f,
             // With products selected the first line is a different note, so the
             // modelled-total sentence goes in front of it instead.
-            defaultValue: f.defaultValue.includes(NO_COST_ESTIMATE_NOTE)
-              ? f.defaultValue.replace(NO_COST_ESTIMATE_NOTE, MODELLED_COST_NOTE)
-              : `${MODELLED_TOTAL_SENTENCE} ${f.defaultValue}`,
+            defaultValue: [
+              f.defaultValue.includes(NO_COST_ESTIMATE_NOTE)
+                ? f.defaultValue.replace(NO_COST_ESTIMATE_NOTE, MODELLED_COST_NOTE)
+                : `${MODELLED_TOTAL_SENTENCE} ${f.defaultValue}`,
+              countNote
+                ? `\nCount behind the total: ${countNote}. Enter your own count in the ROI Calculator before presenting this figure.`
+                : '',
+            ].join(''),
           }
         }
         return f
@@ -132,6 +145,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     effectiveBreachOutput,
     effectiveInactionOutput,
     inactionSummary,
+    countNote,
   ])
 
   const sources: string[] = []
@@ -223,7 +237,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         <PreFilledBanner
           summary={[
             effectiveRoiOutput &&
-              `ROI data ${roiOutput ? 'from Step 2' : 'from your last ROI Calculator export'} (investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)}, ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}%)`,
+              `ROI data ${roiOutput ? 'from Step 2' : 'from your last ROI Calculator export'} (investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)}, ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}%${countNote ? `; ${countNote}` : ''})`,
             effectiveBreachOutput &&
               `Breach scenario data ${breachOutput ? 'from Step 3' : 'from your last Breach Scenario Simulator export'} (delta: ${formatCurrency(effectiveBreachOutput.deltaUSD)})`,
             effectiveInactionOutput &&

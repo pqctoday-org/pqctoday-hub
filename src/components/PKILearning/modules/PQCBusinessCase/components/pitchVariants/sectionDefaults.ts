@@ -255,7 +255,7 @@ export const MODELLED_TOTAL_SENTENCE =
   'The programme total above comes from the ROI model, which is an illustrative scenario, not a reviewed estate cost estimate.'
 
 /** Replaces the no-estimate line when the funding amount is filled from an ROI model output. */
-export const MODELLED_COST_NOTE = `${MODELLED_TOTAL_SENTENCE} Catalogue size is not an organisation inventory.`
+export const MODELLED_COST_NOTE = `${MODELLED_TOTAL_SENTENCE} It rests on the count of systems or products entered in the ROI calculator, which is your own entry or an example value; it is not taken from the Hub catalogue.`
 
 export function buildBudgetDefault(data: Data): { amount: string; breakdown: string } {
   const scopeNote =
