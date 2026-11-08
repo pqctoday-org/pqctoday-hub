@@ -21,7 +21,7 @@ import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import compositeExamples from '@/data/acvp/composite-sigs-06-jose-examples.json'
 import sphincsExamples from '@/data/acvp/cose-sphincs-plus-10-examples.json'
-import hpkeExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
+import hpkeExamples from '@/data/acvp/jose-hpke-pq-pqt-02-examples.json'
 import snapshot from '../../../../../public/data/jose-drafts-snapshot.json'
 import { HPKE_JWE_SPEC } from './hpkeJwe'
 

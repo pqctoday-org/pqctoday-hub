@@ -8,7 +8,7 @@ import author from '@/data/acvp/xwing-draft-test-vectors.json'
 import cfrg from '@/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json'
 import { runXwingKat } from './xwingKat'
 import { x25519 } from '@noble/curves/ed25519.js'
-import publishedJwe from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
+import publishedJwe from '@/data/acvp/jose-hpke-pq-pqt-02-examples.json'
 import { base64urlDecode, base64urlEncode } from './jwtUtils'
 import { hpkeJweDecrypt, generateHpkeKeyPair } from './hpkeJwe'
 

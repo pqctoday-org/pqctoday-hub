@@ -1,22 +1,22 @@
 {
-  "$schema": "Published JOSE examples from draft-ietf-jose-hpke-pq-pqt-01 Appendix A (A.3 HPKE-9, A.7 HPKE-12: Integrated Encryption only). Values copied unchanged from the authors' unfolded vector set examples/jose-vectors.json at the pinned commit; every value was checked to appear verbatim in the RFC 8792-unfolded archived draft text. Decryption vectors: HPKE encryption is randomized, so encryption is tested by round trip.",
-  "spec": "draft-ietf-jose-hpke-pq-pqt-01",
+  "$schema": "Published JOSE examples from draft-ietf-jose-hpke-pq-pqt-02 Appendix A (A.3 HPKE-9, A.7 HPKE-12: Integrated Encryption only). Values copied unchanged from the authors' unfolded vector set examples/jose-vectors.json at the pinned commit; every value was checked to appear verbatim in the RFC 8792-unfolded archived draft text. The vector set is byte-identical to the one published with -01 (HPKE-8/9/10/12/13 parameters unchanged). Decryption vectors: HPKE encryption is randomized, so encryption is tested by round trip.",
+  "spec": "draft-ietf-jose-hpke-pq-pqt-02",
   "jwe_spec": "draft-ietf-jose-hpke-encrypt-22",
-  "source_url": "https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt",
-  "source_sha256": "d35e0fc262e99e725cbe0c9bb8fc1e8917a7432031a70e16c20c0ed4f38302ac",
-  "upstream_vectors_url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/47a746533ebb94c4193ee6a4e2f76170a6790335/examples/jose-vectors.json",
+  "source_url": "https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-02.txt",
+  "source_sha256": "b47d6543db5dc986b252744b005c970772d78a2afbc9b7205df84e2eae81fef0",
+  "upstream_vectors_url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/56727aa3c3d2e7dc8c175dd01ea8a9dcf9c12325/examples/jose-vectors.json",
   "upstream_vectors_sha256": "97e5fd1c5bd417b3af3f8948e8c54914c7c9f544ad786182d18cf15a011bd2c0",
   "plaintext_source": {
     "note": "The draft does not print the plaintext. It is the constant in the authors' generator script at the same commit.",
-    "url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/47a746533ebb94c4193ee6a4e2f76170a6790335/scripts/jwe.js",
+    "url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/56727aa3c3d2e7dc8c175dd01ea8a9dcf9c12325/scripts/jwe.js",
     "sha256": "f1d4f145775aa61ff3ccc7d5295455243c45d149044e754a3db28147b9c9109d"
   },
-  "retrieved_at": "2026-10-01",
+  "retrieved_at": "2026-11-08",
   "plaintext": "You can trust us to stick with you through thick and thin–to the bitter end. And you can trust us to keep any secret of yours–closer than you keep it yourself. But you cannot trust us to let you face trouble alone, and go off without a word. We are your friends, Frodo.",
   "aad_text": "The Fellowship of the Ring",
   "vectors": [
     {
-      "label": "draft-ietf-jose-hpke-pq-pqt-01 Appendix A.7 HPKE-12 example",
+      "label": "draft-ietf-jose-hpke-pq-pqt-02 Appendix A.7 HPKE-12 example",
       "alg": "HPKE-12",
       "jwk": {
         "kty": "AKP",
@@ -34,7 +34,7 @@
       "compact": "eyJhbGciOiJIUEtFLTEyIiwia2lkIjoianc4R1dyWURVempIMGFaUlhsQ3Rjb2tRd0k0ZWxQTEpLS3VsemlRd3NCNCJ9.e69-F0C9xtPkza2EzcpZJD7ogDwzuZmdPqg9L0J5M_vuPm9F-3FFfLPpiqKINn2bozlj80Tfia3tBHpC7PUyVJiXsyh417ZdMgim_DG8Na_wG7A_j-H8vpXrW7EEsW0wqYohkGJwi6eSq0Vbd4tDPeWCL7rRDeMmseRPUkzhmTKmhx9T_jSgI0M4D0UHeXPud1eUAavFZS8xiAdADoiJFxtnS67s8tNobg63099O2ZAciOvfTZucqwSWPwqL8GBh5ieHizVnk8YvPSqByJ-rjdezRU_GghZ6F8Mk2PqzuMARVUR-QknbFqQO9rHYRMxTdEPBmGHfhpRJDgHxADLTgHuNNnrnAzTZgnsQC9lljfnvqcwdDb5SYqcqEz4F3t9m5d_QiiFtrXUdZi6u581uuXLU4vrgiLC3aRvCNrcU-qY7NaBA2vO2nOCsdjRAotWlYbFwYkX5tPXkqzj7_ZXiM0GR55koR_mnTV-_i574qJfry7w8J2yru-0DVCYtSAaXTNEwlwXSsyCQtRN19LrTixKpP0U928m6DMrl6TJ5IJ56sn9BVrQI6Q1aoogWZDfH-KQT1sI6oRisMQNdV14SKawZbMjhbCn1mQFpGH8SCdCofOV1LQhCKHwJ9jYZTKjLPjRX1bPauzHSDhFR70yr2xazK2Hx-tqwwllKyKkBvJIDRmg7r8IyjZ6sAKDR5J2zf6hIVLpEu3_j2XQvo1KX4lxD0f5qXvBLE0R1n57dF45NE1Ij_nvVO-l-rQzE3SAQylQ6bRlRyXRrtGkdw6GLOuPyoQJZgR3PWNdxTSlFSKzAOIzIVlgxo6Fot1EAYJsxttbrZ2sINh6Qkdh5Q-MUUPTdixdiwOLaCJIs9_dsF54uPbUPq3n6aTQve2xJ6Dkj4wC5hOsaOejH705y7TLgiHaIBwOyfJd06LkVf8tgZea6q-3cQ9Jji0qDPr2bq3uXzTubHxn1a-FrsKvKHwW2ljifnyzTYozxDUVDf51euk5Fn-mR-Ns0dalVNwVqlK-YYo3kIbhmLKHvSgXVB76T903qLVRqrQQWHO_w46g_lnT10Ta3SfZw3u_2oBQ_dC--68_b1xDKOqLGvApXFRCl4-u4rOTMuVfZ6RT2_fNR67mOk71vG9fc-ZWn69myX4yfjco1ZcbsW0qb9otY1auNDefmoXGK-j7oFknOpyjEQ5qXy5B17l5pYS_nqHKkgUznQm5UMUWydtF8W-Pb1rvfdHGSavTkdaZKUd4Uyq70ylIzFFx1cK7Bi4KjJH7Q8Uhzpt4miATD6hEe-kc8iybdoSMJqe_QhIKJtngRrjkuDYNEGwcb-rZkn3KLh0juFkoOlmbTPcHcLBKv_a4-PcB2CUAp8pJTf-uiJg6eZzsgyIvY_JQKgCnGfDqk9QXO2NlFyG_R6y9kaVw65YXAJSSni7bMBQbymhExMgfBDqs9xTQ..OVegzSMbIG9TxaH4xHXD_8GemaeruyQ-pPV5jvUHwkUmcgV04TQkJ33oooQJApX4rh1B89AR8Vd3Fqtlb8gMfunbnSHE-iejZNRc9qVXzfyueskK8zMKFEydGRUI63BFZJLRXZIuZv_dmYqwc9nbJJOpqo9mU5jkdyHVK3Hbbs4qzA7jbqx0wXFaifakYMprOptUKrTXtTBUAVvxyf6JldJLmKR6FjrElMxA0BPWKuPduhkz9JhOkwurJ_LfZqx4c5tsjYYXbFTAM9PkGkkMPQuON3OP_WutBZEItOb5xtF2s6o6bwZ9URknWRL22oI0n8I6QlrjWNab_f8GIuBlxFiFuUQH2NfzWFE_eiwjUHzCg9q5kz4MuDWizCy3NE-UCw."
     },
     {
-      "label": "draft-ietf-jose-hpke-pq-pqt-01 Appendix A.3 HPKE-9 example",
+      "label": "draft-ietf-jose-hpke-pq-pqt-02 Appendix A.3 HPKE-9 example",
       "alg": "HPKE-9",
       "jwk": {
         "kty": "AKP",

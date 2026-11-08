@@ -1,6 +1,6 @@
 {
   "$schema": "internal: JOSE/COSE PQC draft snapshot. Refresh with npx tsx scripts/refresh-jose-drafts-snapshot.ts; the audit panel treats a snapshot older than max_age_days as expired.",
-  "generated_at": "2026-10-22",
+  "generated_at": "2026-11-08",
   "source": "datatracker.ietf.org doc.json, via scripts/refresh-jose-drafts-snapshot.ts",
   "drafts": {
     "draft-ietf-cose-dilithium": {
@@ -56,11 +56,11 @@
       "title": "Use of Hybrid Public Key Encryption (HPKE) with JSON Web Encryption (JWE)",
       "state": "Active",
       "iesg_state": "RFC Ed Queue",
-      "rfceditor_state": "Blocked"
+      "rfceditor_state": "In Progress"
     },
     "draft-ietf-jose-hpke-pq-pqt": {
-      "current_version": "01",
-      "current_date": "2026-07-06",
+      "current_version": "02",
+      "current_date": "2026-10-25",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/",
       "covers": ["pureKem", "hybridKem"],
       "note": "Registers the PQ and PQ/T HPKE suites for JOSE. Replaces draft-reddy-cose-jose-pqc-hybrid-hpke.",

@@ -67,7 +67,7 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       id: 'jwe-encrypt',
       title: '4. Encrypt a JWT payload with HPKE and ML-KEM',
       description:
-        'Encrypt a JWT payload as an HPKE JWE (draft-ietf-jose-hpke-pq-pqt-01): generate an ML-KEM-768 recipient key, build a protected header with only "alg" and "kid", let HPKE seal the payload, and assemble the five JWE parts. Decrypt it, switch to the HPKE-9 hybrid (ML-KEM-768 + X25519) and compare the sizes, then decrypt the draft\'s own published example.',
+        'Encrypt a JWT payload as an HPKE JWE (draft-ietf-jose-hpke-pq-pqt-02): generate an ML-KEM-768 recipient key, build a protected header with only "alg" and "kid", let HPKE seal the payload, and assemble the five JWE parts. Decrypt it, switch to the HPKE-9 hybrid (ML-KEM-768 + X25519) and compare the sizes, then decrypt the draft\'s own published example.',
       badge: 'JWE Encryption',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
