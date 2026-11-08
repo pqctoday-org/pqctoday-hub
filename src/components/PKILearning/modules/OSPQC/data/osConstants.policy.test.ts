@@ -17,3 +17,18 @@ describe('RHEL crypto-policies row in the system TLS policy table', () => {
     expect(all).not.toMatch(/FUTURE|PQCONLY/)
   })
 })
+
+describe('Ubuntu row in the system TLS policy table', () => {
+  const ubuntu = SYSTEM_TLS_POLICIES.find((p) => p.id === 'ubuntu-openssl')!
+
+  it('names the OpenSSL versions of 24.04 and 26.04 and the 3.5.0 requirement for the group', () => {
+    expect(ubuntu.notes).toMatch(/Ubuntu 24\.04 LTS ships OpenSSL 3\.0\.13/)
+    expect(ubuntu.notes).toMatch(/Ubuntu 26\.04 LTS ships OpenSSL 3\.5\.5/)
+    expect(ubuntu.pqcPolicy).toMatch(/OpenSSL 3\.5\.0 or later/)
+  })
+
+  it('does not teach update-crypto-policies, OpenSSL 3.2 or an oqsprovider backport for Ubuntu', () => {
+    const all = `${ubuntu.policyMechanism} ${ubuntu.pqcPolicy} ${ubuntu.command} ${ubuntu.notes}`
+    expect(all).not.toMatch(/update-crypto-policies|OpenSSL 3\.2|oqsprovider|backported/)
+  })
+})

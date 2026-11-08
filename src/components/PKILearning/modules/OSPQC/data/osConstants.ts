@@ -65,7 +65,7 @@ export const OS_PLATFORMS: OSPlatform[] = [
     name: 'Ubuntu 24.04 LTS (Noble)',
     family: 'linux',
     packageManager: 'apt / dpkg',
-    cryptoFramework: 'OpenSSL 3.2.x + update-crypto-policies',
+    cryptoFramework: 'OpenSSL 3.0.13 (24.04 LTS); OpenSSL 3.5.5 (26.04 LTS)',
     fipsCapable: true,
   },
   {
@@ -273,12 +273,13 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
   {
     id: 'ubuntu-openssl',
     os: 'Ubuntu 24.04 LTS',
-    policyMechanism: '/etc/ssl/openssl.cnf + update-crypto-policies',
+    policyMechanism: '/etc/ssl/openssl.cnf',
     defaultPolicy: 'DEFAULT (TLS 1.2+, ECDHE, RSA-2048+)',
-    pqcPolicy: 'TLS 1.3 groups = x25519mlkem768:x25519:P-256',
+    pqcPolicy:
+      'TLS 1.3 groups = x25519mlkem768:x25519:P-256 (needs OpenSSL 3.5.0 or later, Ubuntu 26.04 LTS)',
     command: 'openssl.cnf: Groups = x25519mlkem768:x25519:prime256v1',
     notes:
-      'Ubuntu 24.04 ships OpenSSL 3.2.x with ML-KEM hybrid TLS groups available. System-wide config via /etc/ssl/openssl.cnf. The oqsprovider package enables additional PQC algorithms. update-crypto-policies backported from RHEL.',
+      'Ubuntu 24.04 LTS ships OpenSSL 3.0.13 (noble package), which has no ML-KEM. Ubuntu 26.04 LTS ships OpenSSL 3.5.5, which has ML-KEM, ML-DSA and SLH-DSA built in. System-wide config via /etc/ssl/openssl.cnf.',
   },
   {
     id: 'windows-schannel',

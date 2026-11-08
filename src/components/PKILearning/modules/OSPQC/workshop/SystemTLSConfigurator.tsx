@@ -96,7 +96,8 @@ Server Temp Key: X25519MLKEM768, 1152 bits
     id: 'ubuntu',
     label: 'Ubuntu 24.04 LTS',
     currentPolicy: 'DEFAULT (OpenSSL system config)',
-    pqcPolicy: 'ML-KEM hybrid groups via /etc/ssl/openssl.cnf',
+    pqcPolicy:
+      'x25519mlkem768 group via /etc/ssl/openssl.cnf, which needs OpenSSL 3.5.0 or later (Ubuntu 26.04 LTS; Ubuntu 24.04 LTS ships OpenSSL 3.0.13)',
     configFile: '/etc/ssl/openssl.cnf',
     currentCiphers: [
       { name: 'TLS_AES_256_GCM_SHA384', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
@@ -116,7 +117,7 @@ Server Temp Key: X25519MLKEM768, 1152 bits
         name: 'x25519mlkem768 (hybrid KEM group)',
         quantumSafe: true,
         enabled: true,
-        note: 'TLS 1.3 group — new!',
+        note: 'TLS 1.3 group; OpenSSL 3.5.0 or later only',
       },
       { name: 'x25519 (fallback)', quantumSafe: false, enabled: true, note: 'Classical fallback' },
       { name: 'TLS_AES_256_GCM_SHA384', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
@@ -129,7 +130,7 @@ Server Temp Key: X25519MLKEM768, 1152 bits
         note: 'TLS 1.2 retained',
       },
     ],
-    beforeConfig: `# /etc/ssl/openssl.cnf — current (default Ubuntu 24.04)
+    beforeConfig: `# /etc/ssl/openssl.cnf — current (default Ubuntu 24.04, OpenSSL 3.0.13)
 [system_default_sect]
 MinProtocol = TLSv1.2
 CipherString = DEFAULT@SECLEVEL=2
@@ -137,30 +138,29 @@ CipherString = DEFAULT@SECLEVEL=2
 # Check active groups:
 $ openssl s_client -connect example.com:443 2>&1 | grep "Server Temp Key"
 Server Temp Key: X25519, 253 bits`,
-    afterConfig: `# /etc/ssl/openssl.cnf — after PQC hybrid config
+    afterConfig: `# /etc/ssl/openssl.cnf — after PQC hybrid config (OpenSSL 3.5.0 or later)
 [system_default_sect]
 MinProtocol = TLSv1.2
 CipherString = DEFAULT@SECLEVEL=2
 Groups = x25519mlkem768:x25519:prime256v1:secp384r1
 
-# Apply (no restart needed — OpenSSL reads config per-process):
+# Check the version first; it must report 3.5.0 or later
+# (Ubuntu 26.04 LTS ships OpenSSL 3.5.5):
+$ openssl version
+
+# Each process reads openssl.cnf when it starts, so restart the
+# services that use it:
 $ openssl version -d
 OPENSSLDIR: "/usr/lib/ssl"
 
-# Verify hybrid negotiation:
+# Verify hybrid negotiation (example; the exact output varies by build):
 $ openssl s_client -connect cloudflare.com:443 \\
   -groups x25519mlkem768:x25519 2>&1 | grep "Server Temp Key"
-Server Temp Key: X25519MLKEM768, 1152 bits
-
-# For oqsprovider (additional PQC algorithms):
-$ sudo apt install -y openssl-oqsprovider
-$ openssl list -providers
-  oqs  (version: 0.7.0)
-  default  (version: 3.2.0)`,
+# Expected: the "Server Temp Key" line names X25519MLKEM768.`,
     impactNote:
-      'Adding x25519mlkem768 as the preferred group has minimal compatibility impact — TLS 1.3 peers that do not support ML-KEM will fall back to x25519. No application restarts required.',
+      'Adding x25519mlkem768 as the preferred group has minimal compatibility impact: TLS 1.3 peers that do not support ML-KEM fall back to x25519. Each process reads openssl.cnf when it starts, so restart the services that need the new group.',
     compatNote:
-      'OpenSSL 3.2 on Ubuntu 24.04 supports x25519mlkem768 natively. For ML-DSA certificates, install oqsprovider or upgrade to OpenSSL 3.5+ (Ubuntu 25.10+).',
+      'Ubuntu 24.04 LTS ships OpenSSL 3.0.13, which has no ML-KEM and no x25519mlkem768 group, so this change does not apply there. Ubuntu 26.04 LTS ships OpenSSL 3.5.5, which has ML-KEM, ML-DSA and SLH-DSA built in, and OpenSSL 3.5.0 makes X25519MLKEM768 the first entry of its default TLS group list. The Ubuntu package archive has no oqs provider package for 24.04 or 26.04, so on 24.04 the route is an upgrade to 26.04 LTS or an OpenSSL 3.5.0 or later build from outside the archive.',
   },
   windows: {
     id: 'windows',
