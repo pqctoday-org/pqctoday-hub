@@ -237,7 +237,12 @@ describe('ROICalculator', () => {
       },
     }
     renderCalc()
+    // The comparison reads the learner's own count: the opening example is not assessed.
     expect(screen.getByText(/Cross-check vs your assessment/i)).toBeInTheDocument()
+    expect(screen.getByText(/Not assessed until you enter your own count/i)).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText(/Systems or products in your scenario/i), {
+      target: { value: '40' },
+    })
     expect(screen.getByText(/Assessment-derived estimate/i)).toBeInTheDocument()
     // The reconciliation renders exactly one verdict (aligned or divergent).
     expect(
@@ -245,7 +250,7 @@ describe('ROICalculator', () => {
     ).toBeInTheDocument()
   })
 
-  it('shows the selected-scope cost in the cross-check panel once Products to Migrate is below the full estate', () => {
+  it('compares the count the learner entered, not the catalogue size, with the assessment', () => {
     mockData = {
       ...baseMockData,
       isAssessmentComplete: true,
@@ -264,17 +269,24 @@ describe('ROICalculator', () => {
       },
     }
     renderCalc()
-    // Default productsToMigrate = min(totalProducts, 50) = totalProducts here (10),
-    // so the selected-scope line shouldn't render — it would just repeat the
-    // full-estate number.
-    expect(screen.queryByText(/At your selected scope/i)).not.toBeInTheDocument()
+    // The opening example (50) is not the learner's count, so nothing is compared yet.
+    expect(screen.queryByText(/Per-product model/i)).not.toBeInTheDocument()
 
-    const productsSlider = screen.getByLabelText(/Products to Migrate/i) as HTMLInputElement
-    fireEvent.change(productsSlider, { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText(/Systems or products in your scenario/i), {
+      target: { value: '5' },
+    })
+    // 5 systems or products x $75K, whatever the catalogue holds (10 here).
+    expect(screen.getByText(/Per-product model \(your count\)/i)).toBeInTheDocument()
+    expect(screen.getByText(/\$75K × 5 systems or products/)).toBeInTheDocument()
+    expect(screen.queryByText(/catalogue products/i)).not.toBeInTheDocument()
+  })
 
-    expect(
-      screen.getByText(/At your selected scope \(5 of 10 products above\)/i)
-    ).toBeInTheDocument()
+  it('uses a labelled number field with an example of 50, not a slider capped by the catalogue', () => {
+    renderCalc()
+    const field = screen.getByLabelText(/Systems or products in your scenario/i) as HTMLInputElement
+    expect(field.type).toBe('text')
+    expect(field.value).toBe('50')
+    expect(screen.getByText(/Example: change to your own count/)).toBeInTheDocument()
   })
 
   it('prompts to run the assessment when none is complete (cross-check empty state)', () => {
