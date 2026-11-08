@@ -7,6 +7,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS } from '@/data/learningPersonas'
 import { QUIZ_QUESTIONS, quizMetadata, QUIZ_CATEGORIES } from '@/data/quizData'
 import { QuizIntro } from './QuizIntro'
+import { OTHER_ROLES_SCORE_NOTE } from './roleScope'
 import { QuizWizard } from './QuizWizard'
 import type { QuizCompletionData } from './QuizWizard'
 import { QuizResults } from './QuizResults'
@@ -40,8 +41,12 @@ interface NoMatchingQuestionsProps {
   difficulties: string[]
   industry: string | null
   roleLabel?: string
+  /** This quiz is already showing every role's questions. */
+  allRoles?: boolean
   onBroadenDifficulty?: () => void
   onClearIndustry?: () => void
+  /** Offered only when widening to all roles would give the requested topics a question. */
+  onShowAllRoles?: () => void
   onBack?: () => void
 }
 
@@ -54,8 +59,10 @@ function NoMatchingQuestions({
   difficulties,
   industry,
   roleLabel,
+  allRoles,
   onBroadenDifficulty,
   onClearIndustry,
+  onShowAllRoles,
   onBack,
 }: NoMatchingQuestionsProps) {
   const subject = topics.length > 0 ? topics.map(categoryLabel).join(', ') : 'Your selection'
@@ -63,7 +70,7 @@ function NoMatchingQuestions({
   const filters = [
     `difficulty: ${difficulties.map(difficultyLabel).join(', ')}`,
     ...(industry ? [`industry: ${industry}`] : []),
-    ...(roleLabel ? [`role: ${roleLabel}`] : []),
+    ...(roleLabel ? [`role: ${allRoles ? 'all roles' : roleLabel}`] : []),
   ].join('; ')
   return (
     <div
@@ -87,12 +94,30 @@ function NoMatchingQuestions({
             Clear the industry filter
           </Button>
         )}
+        {onShowAllRoles && (
+          // h-auto / whitespace-normal: the default button is one line high and never wraps, so
+          // this longer label would run past a 320 px screen.
+          <Button
+            variant="outline"
+            onClick={onShowAllRoles}
+            aria-describedby="quiz-all-roles-note"
+            className="h-auto min-h-11 whitespace-normal py-2 text-left"
+          >
+            Show questions for all roles
+          </Button>
+        )}
         {onBack && (
           <Button variant="outline" onClick={onBack}>
             Choose a different topic
           </Button>
         )}
       </div>
+      {onShowAllRoles && (
+        <p id="quiz-all-roles-note" className="text-xs leading-relaxed text-muted-foreground">
+          This changes this quiz only, not your role on the rest of the site.{' '}
+          {OTHER_ROLES_SCORE_NOTE}
+        </p>
+      )}
     </div>
   )
 }
@@ -226,17 +251,27 @@ export const QuizModule: React.FC = () => {
   const [emptyRunTopics, setEmptyRunTopics] = useState<QuizCategory[] | null>(null)
   const startTimeRef = useRef(0)
 
-  const filteredQuestions = useMemo(() => {
-    let pool = QUIZ_QUESTIONS
-    if (selectedPersona) {
-      pool = pool.filter((q) => q.personas.length === 0 || q.personas.includes(selectedPersona))
-    }
-    pool = pool.filter((q) => selectedDifficulties.includes(q.difficulty))
+  // Every role's questions for this quiz only. It is never written to the persona store, so the rest
+  // of the site keeps the reader's role, and it is not stored: a new visit starts with the role on.
+  const [allRoles, setAllRoles] = useState(false)
+  const allRolesRadioRef = useRef<HTMLInputElement>(null)
+  const focusRoleScopeAfterWiden = useRef(false)
+
+  // The difficulty and industry filters, before the role filter narrows it.
+  const unscopedPool = useMemo(() => {
+    let pool = QUIZ_QUESTIONS.filter((q) => selectedDifficulties.includes(q.difficulty))
     if (industryFilter) {
       pool = pool.filter((q) => q.industries.length === 0 || q.industries.includes(industryFilter))
     }
     return pool
-  }, [selectedPersona, selectedDifficulties, industryFilter])
+  }, [selectedDifficulties, industryFilter])
+
+  const filteredQuestions = useMemo(() => {
+    if (!selectedPersona || allRoles) return unscopedPool
+    return unscopedPool.filter(
+      (q) => q.personas.length === 0 || q.personas.includes(selectedPersona)
+    )
+  }, [selectedPersona, allRoles, unscopedPool])
 
   const filteredCategories = useMemo(() => {
     const counts = new Map<QuizCategory, number>()
@@ -268,6 +303,25 @@ export const QuizModule: React.FC = () => {
     setIndustryFilter(null)
     setEmptyRunTopics(null)
   }, [])
+
+  const handleAllRolesChange = useCallback((all: boolean) => {
+    setAllRoles(all)
+    setEmptyRunTopics(null)
+  }, [])
+
+  // The notice button leaves the page when it is used, so focus would fall back to the document;
+  // hand it to the role switch, which is where the reader can undo the change.
+  const handleShowAllRoles = useCallback(() => {
+    focusRoleScopeAfterWiden.current = true
+    handleAllRolesChange(true)
+  }, [handleAllRolesChange])
+
+  useEffect(() => {
+    if (allRoles && focusRoleScopeAfterWiden.current) {
+      focusRoleScopeAfterWiden.current = false
+      allRolesRadioRef.current?.focus()
+    }
+  }, [allRoles])
 
   // Time tracking
   useEffect(() => {
@@ -427,6 +481,14 @@ export const QuizModule: React.FC = () => {
   ])
   const showNoMatch =
     emptyRunTopics !== null || (isMobileShell ? mobileNoMatch : unavailableTopics.length > 0)
+  // Offer every role's questions only when they would give the requested topics something to ask
+  // under the current difficulty and industry filters; a role that already has them gets no button.
+  const widenToAllRolesHelps = useMemo(() => {
+    if (!selectedPersona || allRoles) return false
+    if (noMatchTopics.length === 0) return unscopedPool.length > filteredQuestions.length
+    const wanted = new Set<string>(noMatchTopics)
+    return unscopedPool.some((q) => wanted.has(q.category))
+  }, [selectedPersona, allRoles, noMatchTopics, unscopedPool, filteredQuestions.length])
   useEffect(() => {
     if (
       isMobileShell &&
@@ -449,16 +511,19 @@ export const QuizModule: React.FC = () => {
       difficulties={selectedDifficulties}
       industry={industryFilter}
       roleLabel={persona?.label}
+      allRoles={allRoles}
       onBroadenDifficulty={
         selectedDifficulties.length < ALL_DIFFICULTIES.length ? handleBroadenDifficulty : undefined
       }
       onClearIndustry={industryFilter ? handleClearIndustry : undefined}
+      onShowAllRoles={widenToAllRolesHelps ? handleShowAllRoles : undefined}
       onBack={isMobileShell ? () => navigate(-1) : undefined}
     />
   ) : null
 
   if (isMobileShell) {
-    const title = checkpointState?.checkpointLabel ?? persona?.label ?? 'Quiz'
+    const baseTitle = checkpointState?.checkpointLabel ?? persona?.label ?? 'Quiz'
+    const title = allRoles ? `${baseTitle} · all roles` : baseTitle
     let body: ReactNode
     if (view === 'quiz') {
       body = (
@@ -484,6 +549,7 @@ export const QuizModule: React.FC = () => {
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
             {mobilePoolSize} questions across {mobileTopicCount}{' '}
             {mobileTopicCount === 1 ? 'topic' : 'topics'}.
+            {allRoles && ` From all roles, for this quiz only. ${OTHER_ROLES_SCORE_NOTE}`}
           </p>
           <Button
             variant="gradient"
@@ -542,6 +608,10 @@ export const QuizModule: React.FC = () => {
           categories={filteredCategories}
           initialCategories={initialCategories}
           personaLabel={checkpointState?.checkpointLabel ?? persona?.label}
+          roleLabel={persona?.label}
+          allRoles={allRoles}
+          onAllRolesChange={handleAllRolesChange}
+          allRolesRadioRef={allRolesRadioRef}
           industryFilter={industryFilter}
           onClearIndustryFilter={() => {
             userClearedFilter.current = true

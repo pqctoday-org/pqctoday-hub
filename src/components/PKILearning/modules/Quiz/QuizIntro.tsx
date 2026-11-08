@@ -6,6 +6,7 @@ import { Brain, Zap, Clock, Sparkles, Building2, X } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { TopicSelector } from './components/TopicSelector'
+import { OTHER_ROLES_SCORE_NOTE } from './roleScope'
 import type { QuizCategory, QuizMode, QuizCategoryMeta } from './types'
 
 const SECONDS_PER_QUESTION = 45
@@ -33,6 +34,13 @@ interface QuizIntroProps {
   initialCategories?: QuizCategory[]
   /** Label of the active persona for the suggestion banner */
   personaLabel?: string
+  /** The site-wide role, when one is set; the My role / All roles switch is shown only then. */
+  roleLabel?: string
+  /** This quiz shows every role's questions (never the site-wide role). */
+  allRoles?: boolean
+  onAllRolesChange?: (allRoles: boolean) => void
+  /** Lets the page hand focus to the All roles control after a notice button widens the quiz. */
+  allRolesRadioRef?: React.Ref<HTMLInputElement>
   /** Active industry filter from persona store (null = no filter) */
   industryFilter: string | null
   onClearIndustryFilter: () => void
@@ -49,6 +57,10 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   categories,
   initialCategories,
   personaLabel,
+  roleLabel,
+  allRoles = false,
+  onAllRolesChange,
+  allRolesRadioRef,
   industryFilter,
   onClearIndustryFilter,
   selectedDifficulties,
@@ -124,6 +136,64 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
             Clear
           </Button>
         </motion.div>
+      )}
+
+      {/* Whose questions: this quiz only, never the site-wide role */}
+      {roleLabel && onAllRolesChange && (
+        <div data-workshop-target="quiz-role-scope">
+          <h3
+            id="quiz-role-scope-label"
+            className="text-sm font-bold text-foreground uppercase tracking-wider mb-3"
+          >
+            Questions for
+          </h3>
+          <div
+            role="radiogroup"
+            aria-labelledby="quiz-role-scope-label"
+            className="flex flex-wrap gap-2"
+          >
+            {[
+              { value: 'role', all: false, label: `My role (${roleLabel})` },
+              { value: 'all', all: true, label: 'All roles' },
+            ].map((opt) => {
+              const checked = allRoles === opt.all
+              return (
+                <label
+                  key={opt.value}
+                  className={clsx(
+                    'flex min-h-11 max-w-full cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ring-offset-background',
+                    checked
+                      ? 'border-primary bg-primary/10 text-foreground'
+                      : 'border-border text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  <input
+                    ref={opt.all ? allRolesRadioRef : undefined}
+                    type="radio"
+                    name="quiz-role-scope"
+                    value={opt.value}
+                    checked={checked}
+                    onChange={() => onAllRolesChange(opt.all)}
+                    className="size-4 shrink-0 accent-primary"
+                  />
+                  <span className="min-w-0 break-words">{opt.label}</span>
+                </label>
+              )
+            })}
+          </div>
+          <p
+            role="status"
+            data-testid="quiz-role-scope-status"
+            className="mt-2 text-xs leading-relaxed text-muted-foreground empty:mt-0"
+          >
+            {allRoles && (
+              <>
+                Showing questions for all roles. This changes this quiz only, not your role on the
+                rest of the site. {OTHER_ROLES_SCORE_NOTE}
+              </>
+            )}
+          </p>
+        </div>
       )}
 
       {/* Time-based quiz selection */}
@@ -238,7 +308,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           {personaLabel && initialCategories && initialCategories.length > 0 && (
             <span className="flex items-center gap-1 text-xs text-primary">
               <Sparkles size={12} />
-              Filtered for {personaLabel}
+              {allRoles ? 'Preselected for' : 'Filtered for'} {personaLabel}
             </span>
           )}
         </div>
