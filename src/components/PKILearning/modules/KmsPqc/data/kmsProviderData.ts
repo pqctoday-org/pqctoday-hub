@@ -273,7 +273,7 @@ vault write -f transit/keys/my-aes-key type="aes256-gcm96"
 vault write transit/encrypt/my-aes-key \\
   plaintext=$(base64 <<< "data to encrypt")`,
     notes:
-      "HashiCorp's transit secrets engine API documentation (checked 8 November 2026) lists the ml-dsa key type with parameter sets 44, 65 and 87, SLH-DSA with 12 parameter sets, and a hybrid key type that combines ML-DSA with an elliptic-curve algorithm; these key types are marked Enterprise. HashiCorp Vault's transit engine creates ML-DSA keys with type ml-dsa and a parameter_set of 44, 65 or 87. Vault Enterprise also has a KMIP secrets engine. The API documentation does not state their maturity; the Vault changelog describes the ML-DSA and SLH-DSA support as experimental.",
+      "HashiCorp's transit secrets engine API documentation (checked 8 November 2026) lists the ml-dsa key type with parameter sets 44, 65 and 87, SLH-DSA with 12 parameter sets, and a hybrid key type that combines ML-DSA with an elliptic-curve algorithm; these key types are marked Enterprise. HashiCorp Vault's transit engine creates ML-DSA keys with type ml-dsa and a parameter_set of 44, 65 or 87. Vault\u2019s changelog also lists support for X25519MLKEM768 (post quantum key agreement) in the Go TLS stack Vault uses, so hybrid post-quantum TLS is not undocumented for Vault. Vault Enterprise also has a KMIP secrets engine. The API documentation does not state their maturity; the Vault changelog describes the ML-DSA and SLH-DSA support as experimental.",
   },
   {
     id: 'thales-ciphertrust',

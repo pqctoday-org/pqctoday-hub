@@ -82,6 +82,7 @@ describe('provider data', () => {
     expect(vault.apiPattern).not.toMatch(/ml-dsa-65|hybrid_algorithm/)
     expect(vault.apiPattern).toMatch(/aes256-gcm96/)
     expect(vault.envelopeEncryptionModel).toMatch(/cannot encrypt/)
+    expect(vault.notes).toMatch(/X25519MLKEM768 \(post quantum key agreement\)/)
     expect(vault.notes).toContain(
       "HashiCorp Vault's transit engine creates ML-DSA keys with type ml-dsa and a parameter_set of 44, 65 or 87."
     )
