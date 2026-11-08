@@ -96,13 +96,13 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/hybrid-sigs': {
     developer:
-      'Choose Concatenation, Nesting or Silithium (Fused), then Generate Key Pairs, Sign and Verify on your message: the PKCS#11 trace shows the ML-DSA-65 calls through softhsmv3 and the description says whether a component signature can be stripped and verified alone.',
+      'Choose Concatenation, Nesting or Shared-binding model, then Generate Key Pairs, Sign and Verify. Compare the actual full-binding and raw-message EC/ML checks. Concatenation and nesting use the PKCS#11 trace for ML-DSA; the local shared-binding model runs in JavaScript and is not published Silithium or a security proof.',
     architect:
-      "The three modes differ in non-separability: concatenation offers none, nesting weak, Silithium targets strong; the Why hybrid signatures? panel and each mode's IETF reference are the basis for choosing one for a migration-period certificate.",
+      'Compare the observed component checks and the public-only ML replacement experiment. The local shared-binding model is not published Silithium or a non-separability proof. For a production certificate decision, require a versioned standard/profile, relying-party compatibility checks and implementation evidence from your own tools.',
     researcher:
-      'Sign the same message under all three constructions and compare signature layouts: the trace and the descriptions let you reproduce each composition and its separability property.',
+      'Sign the same message under all three options and compare measured layouts and actual checks. The local shared-binding model uses fresh random EC nonces; its public-only ML replacement experiment tests one binding case, not the published Silithium construction or a general non-separability property.',
     'cert-engineer':
-      'Sign one message under Concatenation, Nesting and Silithium (Fused): for Concatenation and Nesting the PKCS#11 trace isolates the ML-DSA-65 calls — the primitive that algorithm testing covers — from the composition wrapped around them. Silithium runs below the PKCS#11 boundary, so its trace stays empty; the IETF LAMPS composite ML-DSA specification (draft-ietf-lamps-pq-composite-sigs) is the standards-track route a lab would test.',
+      'Sign one message under Concatenation, Nesting and Shared-binding model. The first two expose ML-DSA calls in the PKCS#11 trace; the local model uses provider-internal JavaScript operations outside that boundary. Its component/replacement outcomes are not published-scheme conformance or validation evidence. Evaluate the exact versioned standard/profile and implementation evidence with your production tools.',
   },
   '/playground/kdf-derivation': {
     developer:
@@ -738,7 +738,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     developer:
       'Compare classical, PQC and hybrid key generation, run KEM encapsulation and hybrid signatures, generate the two root CAs and the hybrid X.509 formats, then the HPKE step, composed from PKCS#11 v3.2 mechanisms and shown beside the v3.3 draft composite KEM.',
     architect:
-      'The certificate steps generate and compare the hybrid X.509 approaches with the IETF reference artifacts, and the signature-spectrum step covers concatenation, nesting and Silithium: the relying-party compatibility decision.',
+      'The certificate steps generate and compare the hybrid X.509 approaches with the IETF reference artifacts, and the signature-spectrum step compares concatenation, nesting and a local shared-binding model. Its checks do not implement published Silithium or prove non-separability; use versioned profiles, relying-party compatibility checks and implementation evidence for the production decision.',
     researcher:
       'The IETF reference artifacts in the certificate deep-dive and the three signature compositions with their non-separability properties are the material to check against the drafts.',
     ops: 'Generate the classical and PQC root CAs and the hybrid certificate formats: which one a relying party that only knows ECDSA still validates is the property your fleet needs during migration.',

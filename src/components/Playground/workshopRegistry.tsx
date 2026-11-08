@@ -470,7 +470,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.2',
     name: 'Hybrid Signature Spectrums',
     description:
-      'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to the SNS that Silithium targets',
+      'Execute concatenation, nesting and a local shared-binding model; compare actual component checks and a public-only ML replacement experiment, not a published-scheme security proof',
     category: 'HSM / PKCS#11',
     algorithms: ['EC-Schnorr', 'secp256k1', 'ML-DSA-65', 'SHA-256'],
     icon: Fingerprint,
@@ -496,13 +496,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
-        'Choose Concatenation, Nesting or Silithium (Fused), then Generate Key Pairs, Sign the message and Verify to see whether the EC-Schnorr and ML-DSA-65 halves still verify once stripped apart.',
+        'Choose Concatenation, Nesting or Shared-binding model, then Generate Key Pairs, Sign and Verify. Read the full-binding and raw-message EC/ML checks; the local model is not published Silithium or a security proof.',
       workedExample:
-        'Concatenation verifies but both halves strip cleanly (Separable); with Silithium the Verification Results show EC-Schnorr alone and ML-DSA alone as Blocked, and Recombination Attack tries to reassemble the parts.',
+        'With a valid local-model sample, both full-binding components pass while the separate raw-message checks do not. Recombination Attack retains the EC public key and original EC bytes while signing a replacement ML component with its own key: inspect the actual EC, ML and combined results.',
     },
     hasOutput: true,
     outputSpec:
-      'Concatenated/nested ML-DSA-65 + EC-Schnorr signature; each component must independently verify under respective public key.',
+      'Sample EC-Schnorr + ML-DSA-65 bytes with executed full-binding, raw-component and replacement checks. Results apply to the selected local construction; they do not establish a published profile, interoperability or a security proof.',
   },
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
