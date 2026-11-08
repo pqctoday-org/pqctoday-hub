@@ -32256,7 +32256,7 @@
   "successorDependencies": "Implementation of hybrid IPsec (IKEv2 with ML-KEM); Implementation of hybrid SSH (with ML-KEM)"
  },
  "Germany:BSI — Transition to Quantum-Safe Signatures by 2035": {
-  "mainTopic": "BSI TR-02102-1 sets a 2035 target for requiring standalone PQC algorithms, permitting hybrid configurations from 2030 onward.",
+  "mainTopic": "BSI TR-02102-1 recommends classic signature mechanisms only until the end of 2035 and recommends a quantum-safe signature scheme only in combination with a classic signature scheme; the sole use of classic key agreement mechanisms is recommended only until the end of 2031.",
   "pqcAlgorithms": [
    "ML-KEM",
    "ML-DSA",
@@ -32270,7 +32270,9 @@
    "Post-Quantum"
   ],
   "migrationTimeline": [
-   "2030: Hybrid configurations permitted; 2035: Standalone PQC required for all sensitive systems"
+   "End of 2030: applications with very high protection requirements should already transition to quantum-safe key agreement",
+   "End of 2031: sole use of classic key agreement mechanisms only recommended until then",
+   "End of 2035: classic signature mechanisms only recommended until then"
   ],
   "regionsAndBodies": {
    "regions": [
@@ -32308,8 +32310,10 @@
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "Hybrid configurations (classical + PQC) permitted from 2030",
-   "Standalone PQC replaces hybrid requirement by 2035"
+   "Quantum-safe signature schemes are recommended only in combination with a classic signature scheme",
+   "hash-based signatures may in principle also be used alone",
+   "provided the implementation security of stateful and stateless hash-based mechanisms is carefully considered",
+   "quantum-safe key agreement is recommended in hybrid form with a classical mechanism"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
@@ -32360,7 +32364,7 @@
    "End of 2030: very high protection requirements should already transition to quantum-safe mechanisms",
    "End of 2035: classic signature mechanisms only recommended until then"
   ],
-  "successorDependencies": "Implementation of standalone ML-KEM/ML-DSA; Deprecation of classical-only asymmetric mechanisms"
+  "successorDependencies": "In future versions, signature methods that are not quantum-safe will only be recommended for hybrid use; products designed with an expected lifetime beyond 2030 should be upgradable to quantum-safe methods, including post-quantum signatures in the software and firmware upgrade mechanism"
  },
  "Germany:BSI — Very High Protection Requirements — Transition to Quantum-Safe Mechanisms by End of 2030 Using Hybrid Form": {
   "mainTopic": "BSI Technical Guideline TR-02102-1 (2026-01) providing recommendations for cryptographic mechanisms, key lengths, and quantum-safe migration strategies, including the discontinuation of sole classical asymmetric mechanisms.",

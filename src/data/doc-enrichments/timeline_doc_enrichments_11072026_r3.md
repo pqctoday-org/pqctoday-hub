@@ -1,0 +1,73 @@
+---
+generated: 2026-11-07
+collection: timeline
+documents_processed: 1
+enrichment_method: manual-extraction, human-reviewed correction to one existing entry against BSI TR-02102-1 (sections 2.1 and 5.3.4); every field not listed in the section below is unchanged from the generation the entry was carried forward from
+---
+
+## Germany:BSI — Transition to Quantum-Safe Signatures by 2035
+
+- **Reference ID**: Germany:BSI — Transition to Quantum-Safe Signatures by 2035
+- **Title**: Transition to Quantum-Safe Signatures by 2035
+- **Authors**: Bundesamt für Sicherheit in der Informationstechnik
+- **Publication Date**: 2025-01-31
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: BSI TR-02102-1 recommends classic signature mechanisms only until the end of 2035 and recommends a quantum-safe signature scheme only in combination with a classic signature scheme; the sole use of classic key agreement mechanisms is recommended only until the end of 2031.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FrodoKEM; Classic McEliece; HQC
+- **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
+- **Migration Timeline Info**: End of 2030: applications with very high protection requirements should already transition to quantum-safe key agreement; End of 2031: sole use of classic key agreement mechanisms only recommended until then; End of 2035: classic signature mechanisms only recommended until then
+- **Applicable Regions / Bodies**: Regions: United States, Germany, Bodies: NIST, BSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS, SSH, IPsec
+- **Infrastructure Layers**: Email, Disk Encryption
+- **Standardization Bodies**: BSI
+- **Compliance Frameworks Referenced**: BSI TR-02102-1
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: BSI recommends the sole use of classic key agreement mechanisms only until the end of 2031; For applications with very high protection requirements the transition to quantum-safe mechanisms should already take place by the end of 2030; BSI recommends the use of classic signature mechanisms only until the end of 2035; Post-quantum mechanisms are recommended in hybrid form
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Quantum-safe signature schemes are recommended only in combination with a classic signature scheme; hash-based signatures may in principle also be used alone, provided the implementation security of stateful and stateless hash-based mechanisms is carefully considered; quantum-safe key agreement is recommended in hybrid form with a classical mechanism
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; hybrid-crypto; migration-program
+- **Implementation Attack Surface**: side-channel attacks, fault attacks, side-channel resistance of concrete implementations
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: conformance testing (conformance of RSA keys), interoperability testing (implied by hybridization and standardised versions)
+- **QKD Protocols & Quantum Networking**: quantum key distribution (QKD), quantum physical effects, limited transmission distances, specialised hardware
+- **QRNG & Entropy Sources**: random generators, DRG.3, NTG.1, PTG.2, seed generation for random number generators, AIS 20/31, AIS 31
+- **Constrained Device & IoT Suitability**: cryptographic hardware components, contactless chip cards
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: phased rollout
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: BSI TR-02102-1 recommends using classic signature mechanisms only until the end of 2035; post-quantum mechanisms are to be used in hybrid form.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Long-Term (3-5yr)
+- **Phase Transition Narrative**: Moves from recommending classic signatures to recommending post-quantum signature mechanisms in hybrid form: BSI recommends classic signatures only until the end of 2035.
+- **Historical Significance**: BSI gives a recommended end date (end of 2035) for the sole use of classic signature mechanisms; the guideline does not require standalone post-quantum signatures.
+- **Implementation Timeline Dates**: End of 2031: sole use of classic key agreement mechanisms only recommended until then; End of 2030: very high protection requirements should already transition to quantum-safe mechanisms; End of 2035: classic signature mechanisms only recommended until then
+- **Successor Events & Dependencies**: In future versions, signature methods that are not quantum-safe will only be recommended for hybrid use; products designed with an expected lifetime beyond 2030 should be upgradable to quantum-safe methods, including post-quantum signatures in the software and firmware upgrade mechanism
+- **Source Document Title**: Technical Guideline – Cryptographic Algorithms and Key Lengths
+- **Source Document Publication Date**: January 23, 2026
+- **Country Migration Dates**: Germany: 2029 — discontinuation of DSA recommendation; Germany: end of 2030 — very high protection requirements should already transition to quantum-safe key agreement; Germany: end of 2031 — sole use of classic key agreement only recommended until then; Germany: end of 2035 — classic signature mechanisms only recommended until then
+- **Timeline Cross-Reference**: Germany 2030: CONSISTENT (Very High Protection Requirements — Transition to Quantum-Safe Mechanisms by End of 2030 Using Hybrid Form); Germany 2031: CONSISTENT (BSI Sets 2031 End for Sole Use of Classical Key Agreement in IKEv2/IPsec); Germany 2035: CONSISTENT (Transition to Quantum-Safe Signatures by 2035)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: Germany_BSI_Full_PQC_Transition_Standalone_Algorithms_Required.pdf (568,388 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-07-17T22:19:13
+- **Generation Model**: automated extraction, human-reviewed
