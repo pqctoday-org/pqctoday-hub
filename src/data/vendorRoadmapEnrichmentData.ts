@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { VendorRoadmapEnrichment } from '../types/MigrateTypes'
+import { roadmapByVendorId } from './vendorRoadmapData'
+import { isHeldAnalysisSource } from './heldAnalysisSources'
 
 // 2026-08-07 archive-sweep audit: merge-all source with 3 archived files this
 // glob can't see. Deliberately NOT widened — the audit found zero net key loss
@@ -39,6 +41,7 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
     const F = {
       vendorId: /\*\*Vendor ID\*\*:\s*(.+)$/m,
       roadmapUrl: /\*\*Roadmap URL\*\*:\s*(.+)$/m,
+      roadmapTitle: /\*\*Roadmap Title\*\*:\s*(.+)$/m,
       scope: /\*\*Roadmap Scope\*\*:\s*(.+)$/m,
       algorithms: /\*\*PQC Algorithms Announced\*\*:\s*(.+)$/m,
       dates: /\*\*Target Migration Dates\*\*:\s*(.+)$/m,
@@ -59,6 +62,8 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
 
     const rawRoadmapUrl = field(F.roadmapUrl) ?? ''
     const roadmapUrl = rawRoadmapUrl === 'None' ? '' : rawRoadmapUrl
+    const rawTitle = field(F.roadmapTitle) ?? ''
+    const sourceTitle = rawTitle === '' || rawTitle === 'None' ? undefined : rawTitle
     // Composite key: a vendor with more than one active roadmap row has one
     // section per row (enrich-vendor-roadmaps.py's row_key()), and each
     // needs its own enrichment record — vendorId alone would let the second
@@ -76,6 +81,7 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
       customerActionRequired: field(F.customerAction) ?? '',
       keyQuotes: parseQuotes(field(F.quotes)),
       extractionQuality: quality as VendorRoadmapEnrichment['extractionQuality'],
+      ...(sourceTitle ? { sourceTitle } : {}),
     })
   }
 
@@ -159,4 +165,81 @@ export function enrichmentForRoadmap(
   roadmapUrl: string | undefined
 ): VendorRoadmapEnrichment | undefined {
   return pickEnrichmentForRoadmap(enrichmentByVendorId.get(vendorId), roadmapUrl)
+}
+
+/**
+ * Pure matcher for the analysis that may be shown, labelled, on a roadmap row
+ * that has no analysis of its own (see {@link pickEnrichmentForRoadmap}).
+ *
+ * A row whose address is not the address an analysis was written from gets no
+ * analysis in the row's own place. Such an analysis still describes a real
+ * page by the same vendor, so it is offered separately, and only under these
+ * conditions:
+ *
+ * - the row has no analysis of its own;
+ * - the analysis records an http(s) address of its own (one with no address
+ *   cannot be linked, so there would be nothing to say where it came from);
+ * - that address is not held (see heldAnalysisSources.ts: a page that did not
+ *   resolve is not linked and its facts are not shown as another source);
+ * - that address is not the address of any of the vendor's roadmap rows (an
+ *   analysis that belongs to another row is shown on that row);
+ * - the row is the first of the vendor's rows without an analysis of its own,
+ *   so a vendor with several such rows shows the analysis once, not on each.
+ *
+ * `vendorRowUrls` is every active roadmap address of the vendor, in the order
+ * the rows are shown; it defaults to the one row being asked about.
+ */
+export function pickCrossSourceEnrichment(
+  candidates: VendorRoadmapEnrichment[] | undefined,
+  roadmapUrl: string | undefined,
+  vendorRowUrls?: readonly string[]
+): VendorRoadmapEnrichment | undefined {
+  if (!candidates || candidates.length === 0) return undefined
+  const wanted = roadmapUrl ?? ''
+  const rowUrls = vendorRowUrls ?? [wanted]
+  if (pickEnrichmentForRoadmap(candidates, wanted)) return undefined
+  const firstWithoutOwn = rowUrls.find((u) => !pickEnrichmentForRoadmap(candidates, u))
+  if (firstWithoutOwn !== undefined && firstWithoutOwn !== wanted) return undefined
+  return candidates.find(
+    (c) =>
+      /^https?:\/\//i.test(c.roadmapUrl) &&
+      !rowUrls.includes(c.roadmapUrl) &&
+      !isHeldAnalysisSource(c.roadmapUrl)
+  )
+}
+
+/**
+ * The analysis shown, under "Analysis from another source", on one specific
+ * roadmap row that has no analysis of its own -- see
+ * {@link pickCrossSourceEnrichment}. Never the row's own analysis: where
+ * {@link enrichmentForRoadmap} returns one, this returns none.
+ */
+export function crossSourceEnrichmentForRoadmap(
+  vendorId: string,
+  roadmapUrl: string | undefined
+): VendorRoadmapEnrichment | undefined {
+  const rowUrls = (roadmapByVendorId.get(vendorId) ?? []).map((r) => r.roadmapUrl)
+  return pickCrossSourceEnrichment(
+    enrichmentByVendorId.get(vendorId),
+    roadmapUrl,
+    rowUrls.length > 0 ? rowUrls : undefined
+  )
+}
+
+/**
+ * The analysis a vendor summary (the phone vendor card) may quote facts from.
+ * It is the same record the vendor's panel shows as the row's own: the first
+ * roadmap row's own analysis, or, for a vendor with no roadmap row, the one
+ * analysis the panel shows. An analysis the panel keeps under "Analysis from
+ * another source" is not the vendor's own roadmap, so a card must not quote
+ * facts from it as if the roadmap had said them.
+ */
+export function ownEnrichmentForVendor(vendorId: string): VendorRoadmapEnrichment | undefined {
+  const rows = roadmapByVendorId.get(vendorId) ?? []
+  if (rows.length === 0) return enrichmentByVendorId.get(vendorId)?.[0]
+  for (const row of rows) {
+    const own = enrichmentForRoadmap(row.vendorId, row.roadmapUrl)
+    if (own) return own
+  }
+  return undefined
 }

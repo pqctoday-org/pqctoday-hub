@@ -105,19 +105,61 @@ const CERT_TYPE_CONFIG: Record<
   },
 }
 
-type PopoverPosition = { top: number; left: number } | { bottom: number; left: number }
+type PopoverPosition = ({ top: number; left: number } | { bottom: number; left: number }) & {
+  maxHeight: number
+}
+
+/** The module-name line is shown only where the certificate file records what the
+ *  certificate covers (or how it relates to the catalogue release), so a page whose
+ *  data records nothing looks exactly as it did before those columns existed. */
+function showsModuleName(cert: CertificationXref): boolean {
+  return !!cert.certProduct && !!(cert.certCovers || cert.certRelationship)
+}
+
+// Measured row heights (px) for the popover, used only to decide which side of the
+// trigger has room: a date line, an optional PQC or classical-only line, and an
+// optional two-line module name, plus the row's own padding.
+const POPOVER_ROW_BASE = 34
+const POPOVER_ROW_EXTRA_LINE = 14
+const POPOVER_ROW_MODULE_NAME = 28
+const POPOVER_PADDING = 16
+const POPOVER_EDGE_GAP = 12
+
+function estimatePopoverHeight(certs: CertificationXref[]): number {
+  return (
+    POPOVER_PADDING +
+    certs.reduce((sum, c) => {
+      const extraLine = c.classicalOnly || (c.pqcAlgorithms && !c.pqcAlgorithms.startsWith('No '))
+      return (
+        sum +
+        POPOVER_ROW_BASE +
+        (extraLine ? POPOVER_ROW_EXTRA_LINE : 0) +
+        (showsModuleName(c) ? POPOVER_ROW_MODULE_NAME : 0)
+      )
+    }, 0)
+  )
+}
 
 /** Computed from the trigger's `getBoundingClientRect()` at click time (not
  *  in an effect — an effect that calls setState synchronously on every
  *  render is a react-hooks/set-state-in-effect violation, and the position
- *  only ever needs to be computed once, when the popover opens). */
-function computePopoverPosition(rect: DOMRect): PopoverPosition {
+ *  only ever needs to be computed once, when the popover opens).
+ *
+ *  Opens below the trigger when the whole list fits there, otherwise above it
+ *  when it fits there, otherwise on the roomier side. The panel is never
+ *  taller than the room on the side it opens to; a longer list scrolls inside it. */
+function computePopoverPosition(rect: DOMRect, certs: CertificationXref[]): PopoverPosition {
   const halfW = 130
   const clampedLeft = Math.max(halfW + 8, Math.min(rect.left, window.innerWidth - halfW - 8))
-  if (window.innerHeight - rect.bottom >= 180) {
-    return { top: rect.bottom + 6, left: clampedLeft }
-  }
-  return { bottom: window.innerHeight - rect.top + 6, left: clampedLeft }
+  const needed = estimatePopoverHeight(certs)
+  const roomBelow = Math.max(0, window.innerHeight - rect.bottom - 6 - POPOVER_EDGE_GAP)
+  const roomAbove = Math.max(0, rect.top - 6 - POPOVER_EDGE_GAP)
+  const openBelow = roomBelow >= needed || (roomAbove < needed && roomBelow >= roomAbove)
+  const room = openBelow ? roomBelow : roomAbove
+  const maxHeight = Math.max(120, room)
+  return openBelow
+    ? { top: rect.bottom + 6, left: clampedLeft, maxHeight }
+    : { bottom: window.innerHeight - rect.top + 6, left: clampedLeft, maxHeight }
 }
 
 /**
@@ -150,7 +192,12 @@ const CertTypePopover: React.FC<{
         return
       onClose()
     }
-    const handleScroll = () => onClose()
+    // Scrolling the page closes the popover (it is positioned for where the trigger
+    // was); scrolling the list inside it must not.
+    const handleScroll = (e: Event) => {
+      if (e.target instanceof Node && panelRef.current?.contains(e.target)) return
+      onClose()
+    }
     document.addEventListener('keydown', handleKey)
     document.addEventListener('mousedown', handleOutsideTap)
     window.addEventListener('scroll', handleScroll, { capture: true })
@@ -166,7 +213,7 @@ const CertTypePopover: React.FC<{
       ref={panelRef}
       role="menu"
       style={{ position: 'fixed', zIndex: 9999, ...position }}
-      className="w-64 space-y-1 rounded-lg border border-border bg-background p-2 shadow-lg"
+      className="w-64 space-y-1 overflow-y-auto rounded-lg border border-border bg-background p-2 shadow-lg"
     >
       {certs.map((cert) => {
         const hasPqc =
@@ -183,6 +230,15 @@ const CertTypePopover: React.FC<{
           >
             <span className="flex min-w-0 flex-col">
               <span className="truncate text-foreground">{cert.certDate || 'Undated'}</span>
+              {showsModuleName(cert) && (
+                <span
+                  data-testid="cert-module-name"
+                  title={cert.certProduct}
+                  className="line-clamp-2 text-[10px] text-muted-foreground"
+                >
+                  {cert.certProduct}
+                </span>
+              )}
               {hasPqc && (
                 <span className="truncate text-[10px] text-muted-foreground">
                   PQC: {cert.pqcAlgorithms}
@@ -271,7 +327,7 @@ const CertTypeBadge: React.FC<{
           setPopoverPosition((cur) => {
             if (cur) return null
             const rect = triggerRef.current?.getBoundingClientRect()
-            return rect ? computePopoverPosition(rect) : null
+            return rect ? computePopoverPosition(rect, certsOfType) : null
           })
         }}
         title={`${count} ${config.plural}${scopeNote}${hasPqc ? ` — newest covers PQC: ${newest.pqcAlgorithms}` : ''}`}

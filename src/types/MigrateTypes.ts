@@ -216,6 +216,14 @@ export interface MigrationStep {
   estimatedDuration: string
 }
 
+/**
+ * How a certificate relates to the catalogue's current release of the product,
+ * as recorded in the certificate file's `cert_relationship` column. Blank means
+ * "not recorded" and is never read as `same_release`.
+ */
+export type CertRelationship =
+  'same_release' | 'earlier_release' | 'platform_specific' | 'module_of_product'
+
 export interface CertificationXref {
   productId: string
   softwareName: string
@@ -233,6 +241,14 @@ export interface CertificationXref {
    * only" and never counted as PQC progress (user ruling 7a, 2026-09-27).
    */
   classicalOnly: boolean
+  /**
+   * What the certificate's module covers (module, platform and release), in the
+   * certificate file's `cert_covers` column. Absent when the column is absent or
+   * blank on this row.
+   */
+  certCovers?: string
+  /** How the certificate relates to the catalogue release; absent when not recorded. */
+  certRelationship?: CertRelationship
 }
 
 /** Post-quantum algorithm families an HSM capability fact can be about. */
@@ -294,6 +310,15 @@ export interface CpeXref {
   lastVerifiedDate: string
 }
 
+/**
+ * What a related resource is, as recorded in the package-identifier file's
+ * `related_resource_kind` column. A related resource is a project page that
+ * sits beside a product (its test suite, SDK, source, documentation or issue
+ * tracker). It is not the product's package identifier.
+ */
+export type RelatedResourceKind =
+  'test_suite' | 'sdk' | 'source_repository' | 'documentation' | 'issue_tracker'
+
 export interface PurlXref {
   productId: string
   softwareName: string
@@ -305,6 +330,10 @@ export interface PurlXref {
   status: 'matched' | 'not_found'
   registryUrl: string
   lastVerifiedDate: string
+  /** A project page beside the product (see {@link RelatedResourceKind}); absent when the column is absent or blank. */
+  relatedResourceUrl?: string
+  /** What the related resource is; absent when blank or not one of the known kinds. */
+  relatedResourceKind?: RelatedResourceKind
 }
 
 export interface SaasXref {
@@ -358,6 +387,12 @@ export interface VendorRoadmapEnrichment {
   customerActionRequired: string
   keyQuotes: string[]
   extractionQuality: 'HIGH' | 'MEDIUM' | 'LOW'
+  /**
+   * The title recorded for the page the analysis was written from (the
+   * analysis file's "Roadmap Title"). Optional: sections written before it
+   * was recorded have none, and readers then see the site name alone.
+   */
+  sourceTitle?: string
 }
 
 export interface VendorPartner {

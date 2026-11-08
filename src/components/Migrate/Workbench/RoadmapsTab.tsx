@@ -7,7 +7,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Map as MapIcon, ChevronDown } from 'lucide-react'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
-import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
+import {
+  crossSourceEnrichmentForRoadmap,
+  enrichmentByVendorId,
+  enrichmentForRoadmap,
+} from '@/data/vendorRoadmapEnrichmentData'
 import { vendorMap, softwareData } from '@/data/migrateData'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { Input } from '../../ui/input'
@@ -347,6 +351,7 @@ function RoadmapCard({
               key={r.compositeId}
               roadmap={r}
               enrichment={enrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
+              crossSource={crossSourceEnrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
             />
           ))}
         </div>
