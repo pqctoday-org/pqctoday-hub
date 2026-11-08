@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:6f233f26-99ac-454e-bf10-34437f48337b",
+  "serialNumber": "urn:uuid:c66f27c8-781e-4414-8328-9fc75d7bdb2d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-01T00:00:00.000Z",
+    "timestamp": "2026-11-07T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -127,14 +127,9 @@
       "bom-ref": "031cdc85c6a8ed29",
       "name": "Project Eleven Solana PQC",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA",
-          "primitive": "signature",
-          "algorithmFamily": "ML-DSA"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "First post-quantum testnet for Solana blockchain developed in collaboration with Solana Foundation. Replaces EdDSA signatures with NIST-standardized ML-DSA demonstrating quantum-resistant transactions are practical on high-throughput blockchain architectures (65000+ TPS). Open-sourced testnet with readiness assessments and migration test environments. $20M Series A funding announced January 2026.",
+      "description": "Collaboration between Project Eleven and the Solana Foundation. Project Eleven led a threat assessment and deployed a functioning post-quantum signature system on a Solana testnet, which the announcement says shows that end-to-end quantum-resistant transactions are practical and scalable. The announcement names no signature algorithm and gives no performance figures.",
       "externalReferences": [
         {
           "type": "website",
@@ -611,9 +606,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "71b08bbe88d5be2b",
+      "bom-ref": "25861fddfc86424e",
       "name": "Google Tink",
-      "version": "1.21.0",
+      "version": "1.24.0",
       "purl": "pkg:github/tink-crypto/tink-java",
       "cpe": "cpe:2.3:a:google:tink:1.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -1277,9 +1272,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e3323f5ae316cc11",
+      "bom-ref": "42726290dc5ddcb6",
       "name": "Cosmian covercrypt",
-      "version": "v15.0.0",
+      "version": "v16.0.1",
       "purl": "pkg:github/Cosmian/cover_crypt",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -1515,7 +1510,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3 CMVP #5313 Microsoft SymCrypt Cryptographic Library, Active)"
+          "value": "Yes (FIPS 140-3 CMVP #5313 Microsoft SymCrypt Cryptographic Library, Active; the certificate's security policy lists SymCrypt 103.8.0)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -1571,7 +1566,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3)"
+          "value": "Yes (FIPS 140-3 CMVP #5314 AWS-LC 3 Cryptographic Module (static) and #5298 AWS-LC 3 Cryptographic Module (dynamic), Level 1, Active; the module is AWS-LC-FIPS v3.1, not the v5.13.0 release; ML-KEM is in the approved algorithm list, no ML-DSA)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -1595,12 +1590,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
         }
       },
-      "description": "GPU-accelerated PQC library for high-throughput workloads. Achieves 143x/99x/84x speedup over CPU for ML-KEM Keygen/Encapsulation/Decapsulation. Integrated with Open Quantum Safe (OQS) project via Linux Foundation PQCA. Essential for AI/ML security and high-performance computing.",
+      "description": "GPU-accelerated cryptography SDK for high-throughput workloads. The cuPQC-PK library provides ML-KEM-512/768/1024 and ML-DSA-44/65/87 for use inside CUDA kernels. On an NVIDIA H100 GPU, cuPQC-PK achieves 13.5M ML-KEM-768 keygen/s, 9.0M encap/s and 8.5M decap/s, speedups of 175x, 120x and 135x versus a single-core AMD EPYC 7313P CPU. Open Quantum Safe (OQS) is among the projects working on integration. Version 0.6.0 also adds the cuPQC-BigInt and cuPQC-NTT libraries; cuPQC-Hash provides SHA-2, SHA-3, SHAKE and Poseidon2.",
       "externalReferences": [
         {
           "type": "website",
@@ -1774,9 +1768,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "aaf8aedcc0406201",
+      "bom-ref": "7232176b66b0e287",
       "name": "Entrust nShield",
-      "version": "13.9.5 (Security World; nShield 5s firmware 13.8.4, Solo XC firmware 13.8.3)",
+      "version": "13.9.6 (Security World; nShield 5s firmware 13.8.6, Solo XC firmware 13.8.5)",
       "cpe": "cpe:2.3:h:entrust:nshield_5c:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -1785,7 +1779,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Full PQC suite in firmware v13.8.0+. ML-KEM (512/768/1024), ML-DSA (44/65/87), SLH-DSA (all 12 param sets) natively via PKCS#11. LMS/HSS and XMSS available via PQSDK C API. All CAVP validated Sep 2025. FIPS 140-3 Level 3 (cert #4765; PQC resubmission pending).",
+      "description": "PQC in firmware v13.8 or later with the PostQuantum feature enabled (ML-KEM needs v13.8.3 or later). PKCS#11: ML-KEM (512/768/1024), ML-DSA (44/65/87) and SLH-DSA (all 12 parameter sets); ML-DSA and SLH-DSA are also available in CNG and ML-DSA in the JCE provider. Security World 13.9.6 adds FPGA acceleration of ML-KEM and a default SSH key exchange of mlkem768x25519-sha256 for the internal connection to the nShield 5 nCore API and CodeSafe 5. LMS keys can be created with the nShield PQC Option Pack. All CAVP validated Sep 2025. FIPS 140-3 Level 3: CMVP #4745 (which lists firmware 13.2.4) and #5329, both nShield 5s, list no ML-KEM, ML-DSA or SLH-DSA; the formerly cited #4765 is on the Historical list.",
       "externalReferences": [
         {
           "type": "website",
@@ -1831,7 +1825,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Production-ready PQC with native ML-KEM (FIPS 203) ML-DSA (FIPS 204) and LMS/HSS (SP 800-208) support integrated into firmware v7.9+. Software v7.9.1 adds hybrid KEM (ML-KEM) for NTLS SSH and REST APIs. FW v7.9.2 adds Cryptographic Bill of Materials (CBOM) via REST API PQC key attestation and USB HSM (G7) PQC extension. FIPS 140-3 Level 3 validated; PQC-inclusive FIPS 140-3 certification in progress.",
+      "description": "Production-ready PQC with native ML-KEM (FIPS 203) ML-DSA (FIPS 204) and LMS/HSS (SP 800-208) support integrated into firmware v7.9+. Software v7.9.1 adds hybrid KEM (ML-KEM) for NTLS SSH and REST APIs. FW v7.9.2 adds Cryptographic Bill of Materials (CBOM) via REST API PQC key attestation and USB HSM (G7) PQC extension. FIPS 140-3 Level 3 certificates #4684 (Luna K7, firmware 7.8.4 and 7.8.5) and #4962 (Luna G7, firmware 7.7.3) list classical algorithms only; the vendor's firmware 7.9.2 release notes describe 7.9.2 as the next candidate for FIPS 140 certification.",
       "externalReferences": [
         {
           "type": "website",
@@ -2369,9 +2363,14 @@
       "purl": "pkg:github/rustls/rustls",
       "cpe": "cpe:2.3:a:rustls_project:rustls:0.1.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
       },
-      "description": "PQC support is available only via the `rustls-aws-lc-rs` provider, which includes post-quantum algorithms. The default `rustls-ring` provider does not support post-quantum algorithms. Specific PQC algorithm names are not listed in the text.",
+      "description": "The default crate features in rustls 0.23.40 are aws_lc_rs, logging, prefer-post-quantum, std and tls12 (the same list as in 0.23.46), so the default provider is aws-lc-rs and X25519MLKEM768 (hybrid X25519 and ML-KEM-768) is the highest-priority key exchange group. The ring provider is optional, default features can be disabled, and a custom CryptoProvider can replace the cryptography; the documentation names the aws-lc-rs provider as the one that supplies X25519MLKEM768. The group a connection negotiates also depends on the peer and on the application's configuration. MLKEM768 on its own is available separately and is not enabled by default.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -4275,9 +4274,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e7ce07f27d8060ca",
+      "bom-ref": "71db61796ffa7b94",
       "name": "Linux IMA/EVM",
-      "version": "6.19",
+      "version": "1.7 (ima-evm-utils)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4367,9 +4366,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "76f9090543a8902e",
+      "bom-ref": "0ec82d3d20bf3500",
       "name": "CockroachDB Encryption",
-      "version": "25.2.19",
+      "version": "26.4.0",
       "purl": "pkg:github/cockroachdb/cockroach",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
@@ -5018,6 +5017,54 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "d35f894da696280b",
+      "name": "Envoy Proxy",
+      "version": "1.40.2",
+      "purl": "pkg:github/envoyproxy/envoy",
+      "cpe": "cpe:2.3:a:envoyproxy:envoy:1.13.6:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The provided text contains no mention of Post-Quantum Cryptography (PQC) algorithms, hybrid modes, or migration plans. It only mentions general security audits and fuzzing infrastructure.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/envoyproxy/envoy"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/envoyproxy/envoy/issues/21961"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "envoy-proxy"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Application Servers"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (BoringCrypto)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "11698f33358c590f",
       "name": "Node.js",
       "version": "v26.10.0",
@@ -5161,6 +5208,53 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d1f8cc0ed224bedf",
+      "name": "Kong API Gateway",
+      "version": "3.16.0.1",
+      "purl": "pkg:github/Kong/kong",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated in the document. The text mentions \"semantic security\" and \"MCP traffic security\" but does not specify Post-Quantum Cryptography algorithms or implementations.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/Kong/kong"
+        },
+        {
+          "type": "website",
+          "url": "https://konghq.com"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "kong-api-gateway"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "API Security and JWT Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -5577,6 +5671,100 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "c5b84723d842d68c",
+      "name": "AMD SEV-SNP (Secure Encrypted Virtualization)",
+      "version": "EPYC Turin (5th Gen)",
+      "purl": "pkg:github/AMDESE/AMDSEV",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The document does not mention Post-Quantum Cryptography, PQC algorithms, or migration plans. It focuses on memory encryption for VMs using standard symmetric and asymmetric cryptography inherent to the AMD-V architecture.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/AMDESE/AMDSEV"
+        },
+        {
+          "type": "website",
+          "url": "https://www.amd.com/en/developer/sev.html"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "amd-sev-snp-secure-encrypted-virtualization"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Confidential Computing"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "fed3ae1067fb91b9",
+      "name": "ARM Confidential Compute Architecture (CCA)",
+      "version": "Version 3.0",
+      "purl": "pkg:github/ARM-software/cca-rmm-acs",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The document does not mention Post-Quantum Cryptography, PQC algorithms, or migration plans. It focuses on confidential computing via hardware isolation (Realms) rather than specific cryptographic algorithm updates for quantum resistance.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/ARM-software/cca-rmm-acs"
+        },
+        {
+          "type": "website",
+          "url": "https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "arm-confidential-compute-architecture-cca"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Confidential Computing"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "44b94a0839121053",
       "name": "Google Cloud KMS",
       "cryptoProperties": {
@@ -5671,13 +5859,9 @@
       "name": "Thales Luna Cloud HSM (DPoD)",
       "version": "Per Thales's official Luna Cloud HSM Customer Release Notes (last updated 2026-06-19), current entries are 'Luna Cloud HSM Firmware Version 3.0' (rollout: NA/EU FIPS H2 2026, NA/EU non-FIPS H2 2025) and 'HSM Client 10.9.0' (released July 2025) — not 'Luna HSM Firmware v7.9.2 (Software v7.9.1, UC v10.9.2)'. Luna Cloud HSM uses its own version track, distinct from the on-premises Luna Network HSM's 7.9.x firmware numbering.",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "No evidence found that Luna Cloud HSM (the DPoD service) itself supports ML-KEM/ML-DSA/LMS-HSS as of 2026-06-19. PQC support (ML-KEM FIPS 203, ML-DSA FIPS 204, HSS per NIST SP 800-208) is confirmed by Thales's July-2026 solution brief only for on-premises/dedicated Luna 7-family hardware (Luna Network, PCIe, USB, Backup HSM) — not for the Luna Cloud HSM service.",
+      "description": "No post-quantum mechanism is listed for the Luna Cloud HSM service in its North America and EU, FIPS and non-FIPS mechanism summaries or in its customer release notes (pages last updated 2026-10-30), and the service runs its own firmware track (Luna Cloud HSM Firmware Version 3.0). Thales HSM Client 10.9.4 release notes (September 2026) describe post-quantum key generation, use, backup and restore across Luna PCIe HSM 7, Luna Network HSM 7 and Luna USB HSM 7, with PQC keys backed up and restored on Luna Backup HSM 7 (requires firmware 7.9.3); they do not name Luna Cloud HSM. The pages read do not say whether or when the service will add post-quantum mechanisms.",
       "externalReferences": [
         {
           "type": "website",
@@ -6880,7 +7064,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "MISTRAL PQC encryptor unveiled Nov 2025 (European Cyber Week); still in operational testing at announcement, with commercial availability targeted for June 2026 — specific PQC algorithm not publicly disclosed by Thales. ANSSI-aligned, CC EAL4+, 4x10 Gbps.",
+      "description": "MISTRAL PQC encryptor unveiled Nov 2025 (European Cyber Week); in operational testing at announcement, with availability scheduled for June 2026. No source cited for this row confirms that availability began. The specific PQC algorithm is not publicly disclosed by Thales. ANSSI-aligned, CC EAL4+, 4x10 Gbps.",
       "externalReferences": [
         {
           "type": "website",
@@ -7252,52 +7436,6 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a5a5f109ac8b4607",
-      "name": "Nokia Quantum-Safe Networks",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
-      },
-      "description": "Nokia's Quantum-Safe Networks portfolio is sold as available today using symmetric (non-PQC) mechanisms: symmetric centralized key distribution for optical encryption and, for IPsec, post-quantum pre-shared keys mixed into IKEv2 (RFC 8784). Nokia describes PQC keys as coming 'once they are available'. Its January 2026 IPsec blog says ML-KEM hybrid IKEv2 (RFC 9370) is 'nearly ready'. QKD is in development or trial and is not PQC.",
-      "externalReferences": [
-        {
-          "type": "website",
-          "url": "https://www.nokia.com/industries/quantum-safe-networks/"
-        }
-      ],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "nokia-quantum-safe-networks"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "5G & Telecom Security"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": "Network"
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "No"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "75"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
       "bom-ref": "009006e4fb47b275",
       "name": "Thales 5G Quantum-Safe SIM",
       "cryptoProperties": {
@@ -7570,6 +7708,51 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "cca3b65e3dd2d9bb",
+      "name": "walt.id",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The provided text does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any migration plans related to PQC. It focuses on standard cryptographic verification for W3C Verifiable Credentials.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/walt-id"
+        },
+        {
+          "type": "website",
+          "url": "https://walt.id/verifiable-credentials"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "walt-id"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Identity & Verifiable Credentials"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -7918,7 +8101,7 @@
           "primitive": "hash"
         }
       },
-      "description": "Official C reference implementation of XMSS and XMSS^MT per RFC 8391, originally written by two of the RFC's five authors (Andreas Hülsing and Joost Rijneveld). Covers all RFC 8391 parameter sets with SHA-2 and SHAKE hash functions. Includes key generation, signing, verification, and state persistence. Repository has had no commits since 2021-03-16 and multiple open issues (some dating to 2019) remain unaddressed, indicating it is effectively unmaintained rather than actively maintained. Historically used as a canonical cross-validation reference for other XMSS implementations.",
+      "description": "Official C reference implementation of XMSS and XMSS^MT per RFC 8391, originally written by two of the RFC's five authors (Andreas Hülsing and Joost Rijneveld). Selects the parameter set at run time through a 32-bit OID prefix on keys. The parameter-name table in params.c lists the RFC 8391 sets (SHA2-256, SHA2-512, SHAKE128 and SHAKE256 variants) and the sets that NIST SP 800-208 adds: XMSS-SHA2_{10,16,20}_192, XMSS-SHAKE256_{10,16,20}_256 and XMSS-SHAKE256_{10,16,20}_192, with the matching XMSSMT names. SP 800-208 approves only the SHA-256, SHA-256/192, SHAKE256/256 and SHAKE256/192 sets, so the RFC 8391 sets that use SHA2-512, SHAKE128 or 64-byte SHAKE256 output are not among the approved sets. The README documents RFC 8391 coverage and states no test results for the SP 800-208 sets. Includes key generation, signing, verification, and state persistence. Repository has had no commits since 2021-03-16 and multiple open issues (some dating to 2019) remain unaddressed, indicating it is effectively unmaintained rather than actively maintained. Historically used as a canonical cross-validation reference for other XMSS implementations.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -8645,7 +8828,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Delinea introduced industry-first quantum-safe encryption for Secret Server / Delinea Platform (announced March 2024), leveraging NIST-recommended CRYSTALS-Kyber (Kyber-1024 in place of AES-256 for secret data encryption). The QuantumLock feature (an upgrade of DoubleLock) adds a quantum-resistant layer protecting privileged access to secrets (Kyber/pre-FIPS 203; NIST ML-KEM compliance not confirmed)",
+      "description": "Delinea introduced industry-first quantum-safe encryption for Secret Server / Delinea Platform (announced March 2024), leveraging NIST-recommended CRYSTALS-Kyber. The QuantumLock feature (an upgrade of DoubleLock) adds an optional layer in which Kyber-1024 key encapsulation, instead of RSA-2048, protects the private key for a secret; the protected data is still decrypted with a symmetric algorithm such as AES-256, so Kyber-1024 does not replace AES-256 (Kyber/pre-FIPS 203; the Secret Server 11.6.x documentation names CRYSTALS Kyber-1024, not ML-KEM, and NIST ML-KEM compliance is not confirmed)",
       "externalReferences": [
         {
           "type": "website",
@@ -8691,7 +8874,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "AWS Secrets Manager supports hybrid post-quantum TLS using ML-KEM (Module-Lattice KEM, FIPS 203) combined with classical X25519 for the key exchange on its API endpoints (all Regions except China). An",
+      "description": "AWS Secrets Manager supports hybrid post-quantum TLS using ML-KEM (Module-Lattice KEM, FIPS 203) combined with classical X25519 for the key exchange on its API endpoints (all Regions except China).",
       "externalReferences": [
         {
           "type": "website",
@@ -8722,6 +8905,88 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8d43c99f501bf566",
+      "name": "GCP Secret Manager",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Google Cloud Secret Manager encrypts secret data with a data encryption key that is wrapped by a key encryption key; with customer-managed encryption keys (CMEK) the key encryption key is a symmetric key managed in Cloud KMS. The cited Secret Manager page does not document a post-quantum algorithm, an AES key size, TLS behaviour or a FIPS 140 validation.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://docs.cloud.google.com/secret-manager/docs/cmek"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "gcp-secret-manager"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secrets Management"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Validation status not stated (the cited page does not document a FIPS 140 validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "096bc53d36e49201",
+      "name": "JumpCloud Directory Platform",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated. The document mentions \"Intelligent IT,\" \"Zero Trust,\" and \"AI-Powered\" features but contains no explicit mention of Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or migration plans.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://jumpcloud.com"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "jumpcloud-directory-platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Identity & Access Management (IAM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -8925,7 +9190,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Splunk Enterprise 10.4 (GA 2026-05-18) adds post-quantum cryptography support in TLS 1.3 connections. Supports ML-KEM (FIPS 203) key-exchange groups: hybrid X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024, and pure MLKEM512/768/1024. Described as the first milestone of phased PQC support (algorithms based on Kyber/Dilithium/SPHINCS+ toward FIPS 203/204/205) (Dilithium referenced; FIPS 204/ML-DSA compliance not confirmed)",
+      "description": "Splunk Enterprise 10.4 (GA 2026-05-18) adds post-quantum cryptography support in TLS 1.3 connections. Supports ML-KEM (FIPS 203) key-exchange groups: hybrid X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024, and pure MLKEM512/768/1024. Described as the first milestone of phased PQC support (algorithms based on Kyber/Dilithium/SPHINCS+ toward FIPS 203/204/205) (Dilithium referenced; FIPS 204/ML-DSA compliance not confirmed). Per the 10.4 documentation, PQC is not supported in FIPS mode, in the App Key Value Store (KV Store) or in the CLI, and Golang sidecars support only the X25519MLKEM768 hybrid group.",
       "externalReferences": [
         {
           "type": "website",
@@ -8940,6 +9205,141 @@
         {
           "name": "pqctoday:category",
           "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "77cee27c763a2026",
+      "name": "Elastic Stack (ELK)",
+      "version": "9.5.6",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Elasticsearch release notes list updates to the Bouncy Castle and Bouncy Castle FIPS libraries among security changes and do not document a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/elastic"
+        },
+        {
+          "type": "website",
+          "url": "https://www.elastic.co/elastic-stack"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "elastic-stack-elk"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "fecb187871cb8f06",
+      "name": "Zeek Network Analysis Framework",
+      "version": "9.0.1",
+      "purl": "pkg:github/zeek/zeek",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated in the document. The text describes Zeek as a network analysis framework with protocol analyzers but contains no mention of Post-Quantum Cryptography algorithms, implementation status, or migration plans.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/zeek/zeek"
+        },
+        {
+          "type": "website",
+          "url": "https://zeek.org"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "zeek-network-analysis-framework"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Protocol Analyzers"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ad4674fb09c27e3d",
+      "name": "Tenable Nessus Professional",
+      "version": "10.12.6",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated. The document focuses on vulnerability assessment, CVE coverage, and compliance checks but contains no mention of Post-Quantum Cryptography algorithms, support, or migration plans.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.tenable.com/products/nessus"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "tenable-nessus-professional"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Protocol Analyzers"
         },
         {
           "name": "pqctoday:layer",
@@ -9048,6 +9448,52 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "cea2c1642a34d045",
+      "name": "CrowdStrike Falcon",
+      "cpe": "cpe:2.3:a:crowdstrike:falcon:6.31.14505.0:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "Falcon",
+          "primitive": "other"
+        }
+      },
+      "description": "The cited Falcon platform page does not mention post-quantum cryptography. CrowdStrike's Falcon for IT page lists post-quantum cryptography readiness among its operational use cases and describes visibility into endpoint cryptographic posture; it does not state that the Falcon sensor or platform uses post-quantum algorithms.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.crowdstrike.com/products/endpoint-security/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "crowdstrike-falcon"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "91568b3d9dcbafa9",
       "name": "VMware Horizon",
       "version": "2606",
@@ -9091,9 +9537,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2ed0c7b0276bce8a",
+      "bom-ref": "1a796bc6c794ad8d",
       "name": "PuTTY",
-      "version": "0.84",
+      "version": "0.85",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9137,6 +9583,58 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "248fc9acf759b736",
+      "name": "Paramiko (Python SSH)",
+      "version": "5.1.0",
+      "purl": "pkg:github/paramiko/paramiko",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "Paramiko 5.1.0 (2026-10-17) added the mlkem768x25519-sha256 post-quantum hybrid key exchange (ML-KEM-768 with X25519), interoperable with OpenSSH 10.0+. It is enabled automatically, and preferred over the classical methods, when the installed cryptography library exposes ML-KEM, which requires OpenSSL 3.5+, AWS-LC, or BoringSSL. The changelog entry covers key exchange only.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/paramiko/paramiko"
+        },
+        {
+          "type": "website",
+          "url": "https://www.paramiko.org"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "paramiko-python-ssh"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "SSH Implementation Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -9195,39 +9693,35 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "68c0c3d42e67209e",
-      "name": "Cisco ASA (Adaptive Security Appliance)",
-      "version": "9.19",
+      "bom-ref": "95e45934fadb38a7",
+      "name": "Microsoft Remote Desktop Services (RDS)",
+      "version": "Windows Server 2025",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Per Cisco Secure Firewall PQC roadmap: ASA 9.18+ supports RFC 8784 (PSK mixing in IKEv2); ASA 9.19+ supports RFC 9242 and RFC 9370 hybrid key exchange. ML-KEM support arrives in ASA 9.25 / FTD 10.5 (targeted late 2026); ML-DSA and broader PQC planned for ASA/FTD 11.0 (2H 2027). GA release line is 9.24(x).",
+      "description": "The cited Remote Desktop Services documentation landing page does not mention post-quantum cryptography. Microsoft's Post Quantum Crypto Tech Blog (5 October 2026) states that RDP can use a TLS 1.3 post-quantum hybrid key establishment on a fully patched Windows Server 2025 after a hybrid group such as SecP384r1_MLKEM1024 is enabled; the setting is system-wide. Microsoft's Windows TLS 1.3 FAQ (14 September 2026) says hybrid TLS 1.3 is not enabled by default.",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html"
+          "url": "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/"
         }
       ],
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": "cisco-asa-adaptive-security-appliance"
+          "value": "microsoft-remote-desktop-services-rds"
         },
         {
           "name": "pqctoday:category",
-          "value": "Network Security Software"
+          "value": "Remote Access and VDI Software"
         },
         {
           "name": "pqctoday:layer",
-          "value": "Network"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes — FIPS 140-3: CMVP #5067 ASA Cryptographic Module (FPR 4200, Level 2, Active, sunset 2030-09-21), #5069 (FPR 1000, Level 2, Active, sunset 2030-09-22), #5287 ASA on 4K/9K (Level 1, Active, sunset 2031-05-21), #5114 and #5262 ASA Virtual (Level 1, Active); none lists PQC algorithms"
+          "value": "No"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -9235,7 +9729,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "75"
+          "value": "60"
         }
       ]
     },
@@ -9324,6 +9818,49 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ef47c15c06b1aa04",
+      "name": "MikroTik RouterOS",
+      "version": "7.25.1",
+      "cpe": "cpe:2.3:o:mikrotik:routeros:5.15:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The RouterOS 7.24 changelog (2026-Aug-14) lists 'ssh - added mlkem768x25519-sha256 key exchange support'. IPsec/IKEv2 also supports a Post-Quantum Pre-shared Key (PPK), added in RouterOS 7.21 (command line only) according to its changelog; PPK is a pre-shared-key method, not a NIST post-quantum algorithm.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://mikrotik.com/software"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "mikrotik-routeros"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -9567,9 +10104,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "716a7eb208007668",
+      "bom-ref": "96ffa72cfde5d4e6",
       "name": "Kubernetes",
-      "version": "1.36",
+      "version": "1.37",
       "purl": "pkg:github/kubernetes/kubernetes",
       "cpe": "cpe:2.3:a:kubernetes:kubernetes:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -9813,6 +10350,136 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "00b658a471b96ce0",
+      "name": "Palo Alto GlobalProtect",
+      "version": "6.3",
+      "cpe": "cpe:2.3:a:paloaltonetworks:globalprotect:1.1.7:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "Palo Alto Networks documents post-quantum support in GlobalProtect: an Enable Post-Quantum Key Exchange (KEM) option that adds ML-KEM alongside the standard IKEv2 key exchange, and a TLS service profile setting that selects X25519_MLKEM768 as the PQC supported group. It requires GlobalProtect 6.4.1 and PAN-OS 12.1.8 or later, and it is supported for the IKEv2 tunnel protocol only, not for the IPSec tunnel protocol.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.paloaltonetworks.com/sase/globalprotect"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "palo-alto-globalprotect"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "VPN and IPsec Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (FIPS 140-3 CMVP #5484 GlobalProtect App, Active)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "642ea469d8056b70",
+      "name": "Mavenir Cloud RAN",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Mavenir white paper, Security in Open RAN (January 2021), describes Open RAN security based on a zero-trust architecture, with IPsec and TLS on network interfaces and X.509 certificate-based mutual authentication. It does not mention post-quantum cryptography.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://mavenir.com/portfolio/5g/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "mavenir-cloud-ran"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "5G & Telecom Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8306a7cced85c589",
+      "name": "NEC 5G Core",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "NEC's cloud-native 4G/5G Converged Core product page describes a highly open, cloud-native 5G core architecture that enables the use of 4G EPC functions, with a software-based User Plane Function. The page does not mention post-quantum cryptography.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.nec.com/en/global/solutions/5g/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "nec-5g-core"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "5G & Telecom Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "97379ab6c66ed570",
       "name": "Apache Traffic Server",
       "version": "10.2.0",
@@ -9861,9 +10528,61 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "788499ac864d6f35",
+      "bom-ref": "f8fc32b1e7abd70b",
+      "name": "PyCryptodome",
+      "version": "4.4.0",
+      "purl": "pkg:github/Legrandin/pycryptodome",
+      "cpe": "cpe:2.3:a:pycryptodome:pycryptodome:-:*:*:*:*:python:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "PyCryptodome v4.1.0 (2026-10-19) added Crypto.PublicKey.MLDSA and Crypto.Signature.mldsa for ML-DSA (FIPS 204) keys and signatures, including HashML-DSA. v4.2.0 (2026-10-24) added Crypto.PublicKey.MLKEM for ML-KEM (FIPS 203) keys and Crypto.PublicKey.Hybrid with the MLKEM768-X25519 (X-Wing) hybrid KEM, which Crypto.Protocol.HPKE accepts. Hybrid keys can only be generated and used with HPKE; they cannot be exported or imported.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/Legrandin/pycryptodome"
+        },
+        {
+          "type": "website",
+          "url": "https://pycryptodome.readthedocs.io"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pycryptodome"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "227855759cf2c928",
       "name": "libssh",
-      "version": "0.12.0",
+      "version": "0.12.2",
       "cpe": "cpe:2.3:a:libssh:libssh:0.5.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -9913,20 +10632,20 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2ede10e73bae1a2d",
+      "bom-ref": "1e652d26a0d151a9",
       "name": "Apache Tomcat",
-      "version": "11.0.22",
+      "version": "11.0.27",
       "purl": "pkg:github/apache/tomcat",
       "cpe": "cpe:2.3:a:apache:tomcat:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
+          "parameterSetIdentifier": "ML-DSA",
           "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Apache Tomcat: Java web server. Tomcat's TLS connector has native, Tomcat-specific PQC support (not merely inherited from the JDK): its official SSL/TLS Configuration HOW-TO documents a dedicated 'Post Quantum Cryptography' section requiring OpenSSL 3.5+ via the tcnative/FFM OpenSSL provider (which itself needs Java 22+ for the FFM API, not Java 24). SSLHostConfig's <Certificate> element accepts a Tomcat-specific type=\"MLDSA\" value for post-quantum certificate selection at the TLS 1.3 handshake; ML-KEM (e.g. X25519MLKEM768) is negotiated automatically as a TLS key-exchange group by the OpenSSL provider, with no separate Tomcat config keyword.",
+      "description": "Apache Tomcat: Java web server. Its 11.0 SSL/TLS Configuration HOW-TO has a 'Post Quantum Cryptography' section: PQC functionality requires OpenSSL 3.5 or newer. The OpenSSL-based TLS implementation is available through Tomcat Native or, with the Java FFM API, on Java 25 (11.0.27 documentation). SSLHostConfig's <Certificate> element accepts type=\"MLDSA\" for ML-DSA certificates, selected at the TLS 1.3 handshake; a hybrid setup pairs an RSA certificate with an MLDSA certificate. The HOW-TO checks the setup with the X25519MLKEM768 key-exchange group, and SSLHostConfig has a groups attribute that restricts which named groups are enabled.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -10064,13 +10783,54 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "c8a112a3233a8ab4",
+      "name": "Azure DevOps",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Azure DevOps product page does not document a post-quantum capability: it describes no post-quantum cryptography algorithms, implementation status or migration plans.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://azure.microsoft.com/en-us/products/devops"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "azure-devops"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Supply Chain & DevSecOps"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No FIPS 140 module validation stated on the cited product page"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "6cf79eb9b1b25062",
       "name": "OAuth 2.0 / OpenID Connect (OIDC)",
       "version": "OAuth 2.1 (draft)",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "The iGov Profile for OAuth 2.0 (Implementers Draft 2, published 13 April 2026) requires TLS 1.3 and states that when post-quantum safety is required for TLS, implementers SHOULD adopt a NIST PQC cipher suite such as X25519MLKEM768 or SecP256r1MLKEM768. It also says implementations SHOULD be crypto-agile and SHOULD monitor post-quantum cryptography specifications. JWTs MUST use PS256, ES256, or Ed25519 (no post-quantum signature algorithm).",
+      "description": "The iGov Profile for OAuth 2.0 (Implementers Draft 2, published 13 April 2026) requires TLS 1.3 and states that when post-quantum safety is required for TLS, implementers SHOULD adopt a post-quantum hybrid option such as X25519MLKEM768 or SecP256r1MLKEM768. The profile calls these cipher suites; RFC 10024 defines them as TLS 1.3 supported groups, that is, hybrid key-agreement mechanisms, so they protect the TLS key exchange only and are not cipher suites or signature algorithms. The profile also says implementations SHOULD be crypto-agile and SHOULD monitor post-quantum cryptography specifications. JWTs MUST use PS256, ES256, or Ed25519 (no post-quantum signature algorithm).",
       "externalReferences": [
         {
           "type": "website",
@@ -10481,9 +11241,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "52f97b3d88e8226c",
+      "bom-ref": "5f3f138da37fe1c8",
       "name": "Bitcoin Core",
-      "version": "31.1",
+      "version": "32.1",
       "purl": "pkg:github/bitcoin/bitcoin",
       "cpe": "cpe:2.3:a:bitcoincore:bitcoin_core:0.16.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -10691,7 +11451,7 @@
           "primitive": "kem"
         }
       },
-      "description": "QRL 2.0 / Project Zond Testnet V2 launched 2026-03-31 as an EVM-compatible PoS network; mainnet is gated on completion of external audits. PQC: ML-DSA-87 (Dilithium, FIPS 204) is the primary signature scheme (required for staking validators, unlimited signatures per address), with integration completed across the stack; XMSS (stateful, one-time keys) secures the original 2018 mainnet. SLH-DSA/SPHINCS+ is recognized at the wallet-descriptor level, with integration continuing toward and after mainnet. Falcon-1024 (FN-DSA) signatures and ML-KEM (FIPS 203) key encapsulation are being implemented to secure the peer-to-peer networking layer (in progress as of late May 2026). The Hyperion compiler is a post-quantum superset of Solidity with NIST-approved post-quantum primitives layered on top.",
+      "description": "QRL 2.0 / Project Zond Testnet V2 launched 2026-03-31 as an EVM-compatible PoS network; mainnet is gated on completion of external security assessments. PQC: ML-DSA-87 (Dilithium, FIPS 204) is the primary signature scheme (required for staking validators, unlimited signatures per address), with integration completed across the stack; XMSS (stateful, one-time keys) secures the original 2018 mainnet. SLH-DSA/SPHINCS+ is recognized at the wallet-descriptor level, with integration continuing toward and after mainnet. As of late August 2026, the QRL 2.0 page says Falcon-1024 (FN-DSA) signatures have been added in go-qrllib, with network-layer integration continuing, and that an ML-KEM (FIPS 203) key-encapsulation implementation to secure the peer-to-peer networking layer is underway. The Hyperion compiler is a post-quantum superset of Solidity with NIST-approved post-quantum primitives layered on top.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -11185,6 +11945,90 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "420c7fd40a7c58a6",
+      "name": "Claroty Platform",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated. The document mentions \"PGP Key\" in the context of Threat Research resources but does not describe Post-Quantum Cryptography algorithms, implementation status, or migration plans.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://claroty.com/platform"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "claroty-platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Industrial Control System & OT Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b3b6e100e825a1c5",
+      "name": "Dragos Platform",
+      "version": "3.1",
+      "cpe": "cpe:2.3:a:dragos:dragos_platform:2.2.1:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated. The document focuses on OT security monitoring, asset inventory, vulnerability management, and threat detection but contains no mention of Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or migration plans.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.dragos.com/platform/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "dragos-platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Industrial Control System & OT Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "36a64664c4a38ad7",
       "name": "Nozomi Networks Guardian",
       "version": "N2OS v26.4.0",
@@ -11257,6 +12101,133 @@
         {
           "name": "pqctoday:layer",
           "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b0034d9762e40cb4",
+      "name": "Siemens SINEMA Remote Connect",
+      "version": "3.2 SP4",
+      "cpe": "cpe:2.3:a:siemens:sinema_remote_connect:-:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited SINEMA Remote Connect V3.2 SP4 server manual (04/2025) states that connections use IPsec or OpenVPN and does not document a post-quantum capability, hybrid mode or migration plan.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.siemens.com/sinema-remote-connect"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "siemens-sinema-remote-connect"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Industrial Control System & OT Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "918db7bad80ec75b",
+      "name": "HiddenLayer Model Scanner",
+      "version": "2.3",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated. The document focuses on AI security (model scanning, guardrails, agentic security) and does not mention Post-Quantum Cryptography algorithms or migration plans.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://hiddenlayer.com/model-scanner"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "hiddenlayer-model-scanner"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "AI/ML Security Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "561eb8ef505dd984",
+      "name": "Cranium AI Security Platform",
+      "version": "1.5",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated. The document focuses on AI security governance, vulnerability monitoring, and compliance but contains no mention of Post-Quantum Cryptography algorithms or implementations.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://cranium.ai"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "cranium-ai-security-platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "AI/ML Security Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -11837,7 +12808,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Detects PQC and hybrid algorithm usage in live network traffic and PCAP captures. SSH detection (production): sntrup761x25519-sha512@openssh.com (OpenSSH 9.0+) via custom SSH_MSG_KEXINIT parser; mlkem/kyber/ntruprime SSH variants are pattern-ready but NOT yet implemented (roadmap item). TLS 1.3 detection: X25519Kyber768 (Chrome 0x11ec), X25519Kyber768Draft00 (Cloudflare 0xfe31/0x6399), NIST ML-KEM drafts (0x2001+) via custom ClientHello/ServerHello supported_groups and key_share extension parser. QUIC detection is a partial implementation (nDPI classification plus the TLS extension parser applied to the TLS-in-QUIC handshake; limited testing; the README also lists QUIC as limited/nDPI-only with a custom QUIC Initial parser on the roadmap). IKE/IPsec via nDPI classification (limited metadata support, not extensively tested). Post-quantum signature detection (ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon) is roadmap-only, not yet implemented — requires future TLS certificate parsing. PQC flags bitmask tracks KEM presence, signature presence, hybrid negotiation, offered-only, and session resumption states. No nDPI patches required for SSH/TLS PQC extraction.",
+      "description": "Passive analyzer that detects post-quantum and hybrid key exchange in live network traffic and PCAP captures and keeps what a handshake offered apart from what was negotiated. SSH detection (production): a custom parser extracts the kex_algorithms name-list from SSH_MSG_KEXINIT and the tool reports a negotiated key-exchange algorithm in ssh_kex_negotiated (the client-offered list ssh_kex_offered comes from nDPI and may be empty); sntrup761x25519-sha512@openssh.com (OpenSSH 9.0+) is detected, while mlkem, kyber and ntruprime SSH variants are pattern-ready but NOT yet implemented (roadmap item). TLS 1.3 detection: a custom ClientHello/ServerHello parser reads the supported_groups and key_share extensions and reports the group the server selected in tls_negotiated_group (groups the client offered are in tls_supported_groups, nDPI JSON, limited), recognizing X25519Kyber768 (Chrome 0x11ec), X25519Kyber768Draft00 (Cloudflare 0xfe31/0x6399) and NIST ML-KEM draft group codes (0x2001+). These are key-exchange groups, not cipher suites or signature algorithms. QUIC detection is a partial implementation (nDPI classification plus the TLS extension parser applied to the TLS-in-QUIC handshake; limited testing; the README also lists QUIC as limited/nDPI-only with a custom QUIC Initial parser on the roadmap). IKE/IPsec via nDPI classification (limited metadata support, not extensively tested). Post-quantum signature detection (ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon) is roadmap-only, not yet implemented; it requires future TLS certificate parsing. The PQC flags bitmask tracks KEM presence, signature presence, hybrid negotiation, offered-only and session resumption states (value 9 means PQC offered but the server chose a classical exchange). No nDPI patches required for SSH/TLS PQC extraction.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -11979,7 +12950,7 @@
           "primitive": "kem"
         }
       },
-      "description": "FIPS 140-3 certified cryptographic library from PQShield supporting all NIST-standardized PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), plus hash-based LMS and XMSS and Falcon. OpenSSL integration via provider. CMVP certificate #4800 is Level 1 (not Level 3), validated 2024-09-16 for PQCryptoLib v1.0.0 covering classical algorithms only (no PQC in validated scope). CAVP certificates: A3011 (v1.0.0), A7693 (v1.0.2), A6553 (v3.0.0). PQC-inclusive CMVP module (with ML-KEM/ML-DSA) on the NIST Modules-in-Process/IUT list. Targets enterprise and government deployments.",
+      "description": "Cryptographic library from PQShield supporting all NIST-standardized PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), plus hash-based LMS and XMSS and Falcon. OpenSSL integration via provider. CMVP certificate #4800 is Level 1, validated 2024-09-16 for PQCryptoLib v1.0.0 covering classical algorithms only (no PQC in validated scope). CAVP certificates: A3011 (v1.0.0), A7693 (v1.0.2), A6553 (v3.0.0), A8807 (v3.5.1; the NIST record lists ML-KEM, ML-DSA and SLH-DSA, first validated 7/24/2026). PQCryptoLib-Core is on the NIST Modules In Process list for FIPS 140-3. Targets enterprise and government deployments.",
       "externalReferences": [
         {
           "type": "website",
@@ -12001,7 +12972,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3 CMVP #4800, Level 1, validated 2024-09-16, classical algorithms only; PQC not in FIPS scope). PQC CMVP (ML-KEM/ML-DSA) in process; CAVP A7693 (v1.0.2) and A6553 (v3.0.0)"
+          "value": "Yes (FIPS 140-3 CMVP #4800, module PQCryptoLib v1.0.0, Level 1, validated 2024-09-16, tested on Ubuntu 20.04 LTS, classical algorithms only; PQC not in FIPS scope). Later versions (3.x) have no CMVP certificate linked; PQCryptoLib-Core is on the CMVP Modules In Process list. CAVP algorithm validation: A7693 (v1.0.2), A6553 (v3.0.0), A8807 (v3.5.1: ML-KEM, ML-DSA, SLH-DSA; first validated 7/24/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12155,6 +13126,47 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "2c7c591bce625d6b",
+      "name": "Crypto Quantique QDID Platform",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "QDID PUF IP is a hardware PUF that generates a unique identity from quantum tunnelling current variations in standard CMOS and can generate multiple uncorrelated keys. The product page says these keys can be used for symmetric and asymmetric cryptography and for post-quantum cryptographic algorithms, and lists post-quantum cryptography among applications. It names no post-quantum algorithm implemented in QDID itself.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.crypto-quantique.com"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "crypto-quantique-qdid-platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "IoT Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "5d07f348573f48ac",
       "name": "Kudelski IoT Security Platform",
       "cryptoProperties": {
@@ -12187,57 +13199,6 @@
         {
           "name": "pqctoday:fips_validated",
           "value": "No"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "75"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
-      "bom-ref": "e7e12ee1f0a21a26",
-      "name": "Cisco IOS XR",
-      "version": "25.4.2",
-      "cpe": "cpe:2.3:o:cisco:ios_xr_for_crs-1:-:*:*:*:*:*:*:*",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
-        }
-      },
-      "description": "Cisco IOS XR is the service-provider routing OS for ASR 9000, NCS, and 8000 platforms. Separately from the ML-KEM/ML-DSA (NIST-PQC) roadmap, which is not yet GA, IOS XR has shipped a distinct quantum-safe mechanism since Release 24.1.1 on the Cisco NCS 1004 optical platform: RFC 8784 Postquantum Preshared Keys (PPK) for IKEv2/OTNsec encryption, available as manual PPK or dynamic PPK via the Cisco Secure Key Integration Protocol (SKIP) against an external key source (e.g. QKD). This is a symmetric-key-based quantum-resistance method, not a NIST ML-KEM/ML-DSA lattice algorithm. Full IOS XR NIST-PQC (ML-KEM/ML-DSA) migration is expected to follow the IOS XE 26 roadmap; not yet formally announced as of Q1 2026.",
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/ios-xr"
-        },
-        {
-          "type": "website",
-          "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/"
-        }
-      ],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "cisco-ios-xr"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "Network Operating Systems"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": "OS"
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "No CMVP certificate naming Cisco IOS XR is linked. CMVP #5356 'IOS Common Cryptographic Module (IC2M)' (Cisco, FIPS 140-3 Level 1, Active) lists IOS-XE 17.12 platforms and does not name IOS XR."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12305,7 +13266,7 @@
           "primitive": "kem"
         }
       },
-      "description": "OpenShift Container Platform 4.22 bundles Kubernetes 1.35 (confirmed 'This release uses Kubernetes 1.35 with CRI-O runtime,' RHEA-2026:0449). Per Red Hat's official 4.22 release notes ('About PQC compliance'), OpenShift supports PQC readiness for secure cluster communication via RHEL/RHCOS platform cryptographic capabilities and TLS 1.3 security profiles, including hybrid ML-KEM key exchange where enabled by the configured TLS profile and supported by the component — inherited from the underlying platform/Kubernetes stack, not an OpenShift-specific algorithm addition. Only ML-KEM is documented (no ML-DSA/SLH-DSA in base OpenShift release notes).",
+      "description": "OpenShift Container Platform 4.22 bundles Kubernetes 1.35 (the 4.22.0 container-image advisory RHEA-2026:0449 lists 'Bump Kubernetes v1.35.3 to master'). Per Red Hat's official 4.22 release notes ('About PQC compliance'), OpenShift supports PQC readiness for secure cluster communication via RHEL/RHCOS platform cryptographic capabilities and TLS 1.3 security profiles, including hybrid ML-KEM key exchange where enabled by the configured TLS profile and supported by the component — inherited from the underlying platform/Kubernetes stack, not an OpenShift-specific algorithm addition. Only ML-KEM is documented (no ML-DSA/SLH-DSA in base OpenShift release notes).",
       "externalReferences": [
         {
           "type": "vcs",
@@ -12354,7 +13315,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CertCentral does not currently issue PQC certificates. DigiCert's own current documentation states: 'At the current time, CertCentral doesn't issue public CA certificates with these algorithms' (ML-DSA, SLH-DSA, ML-KEM). DigiCert's PQC-support matrix lists Private CA, Device Trust, Document Trust, Software Trust, TrustCore SDK, TrustEdge, and Trust Lifecycle Manager as PQC-capable services; CertCentral is not included. No CertCentral-specific PQC timeline or committed date was found in any DigiCert source. The previously-cited 'Early enterprise pilots' / 'PQC Labs adoption' / 2025-2026 language originates from DigiCert's generic, company-wide marketing guide, which never mentions CertCentral by name.",
+      "description": "CertCentral does not currently issue public CA certificates with PQC algorithms. DigiCert's own current documentation states: 'At the current time, CertCentral doesn't issue public CA certificates with these algorithms' (ML-DSA, SLH-DSA, ML-KEM). DigiCert's PQC-support matrix marks at least one of these algorithms for Private CA, Device Trust, Software Trust, TrustCore SDK, TrustEdge and Trust Lifecycle; Document Trust appears in the matrix with none marked, and CertCentral is not included. No CertCentral-specific PQC timeline or committed date was found in any DigiCert source. The previously-cited 'Early enterprise pilots' / 'PQC Labs adoption' / 2025-2026 language originates from DigiCert's generic, company-wide marketing guide, which never mentions CertCentral by name.",
       "externalReferences": [
         {
           "type": "website",
@@ -12376,7 +13337,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (CA infrastructure FIPS 140-3)"
+          "value": "Validation status not stated (the cited DigiCert PQC pages do not document a CMVP module validation for this service)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12421,7 +13382,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (CA infrastructure FIPS 140-3)"
+          "value": "Validation status not stated (the cited DigiCert PQC page documents FIPS 140-3 certified crypto only for the TrustCore SDK)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12475,6 +13436,92 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7c93ecd9637a6b61",
+      "name": "Fortinet FortiManager",
+      "version": "7.6.7",
+      "cpe": "cpe:2.3:o:fortinet:fortimanager_firmware:5.0.3:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited FortiManager 7.6.6 release notes refer readers to the FortiManager 7.6 New Features Guide for new features and do not mention post-quantum cryptography. Post-quantum capabilities of FortiOS are separate from FortiManager and are not documented on this page as FortiManager features.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.fortinet.com/products/management/fortimanager"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "fortinet-fortimanager"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Validation status not stated (the cited release notes do not document a FIPS 140 validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e713503f27340301",
+      "name": "Fortinet FortiAuthenticator",
+      "version": "6.6.6",
+      "cpe": "cpe:2.3:a:fortinet:fortiauthenticator:3.0.0:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited FortiAuthenticator 6.6.6 release notes state that 6.6.6 is a patch release with no new features and do not mention post-quantum cryptography. Post-quantum capabilities of FortiOS are separate from FortiAuthenticator and are not documented on this page as FortiAuthenticator features.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://docs.fortinet.com/product/fortiauthenticator/latest/administration-guide"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "fortinet-fortiauthenticator"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Identity & Access Management (IAM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Validation status not stated (the cited release notes do not document a FIPS 140 validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -12913,6 +13960,47 @@
         {
           "name": "pqctoday:layer",
           "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c0d72ebb3403845f",
+      "name": "NXP SE051 Secure Element",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited SE051 data sheet (Rev. 1.4, 28 March 2022) lists RSA and ECC asymmetric algorithms, AES and DES symmetric algorithms, and SHA-2 and HMAC operations, and states that the secure element is updatable at applet level. It does not document a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-proven-secure-element-family-for-the-iot:SE051"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "nxp-se051-secure-element"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -13716,6 +14804,47 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "5593ff08ad10fa77",
+      "name": "Unisys ClearPath Forward",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited ClearPath Forward page has a 'Taking the quantum leap' section about quantum computing's potential to improve business operations and does not document a post-quantum cryptography algorithm, status or migration plan. On its Q3 2025 earnings call (6 November 2025) Unisys said it had released updates to one of its ClearPath Forward operating systems with significant post-quantum cryptography security algorithm enhancements, without naming the system or algorithms. Its June 2026 Investor Day deck lists post-quantum readiness in the near-term security items of the ClearPath ecosystem roadmap.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.unisys.com/solutions/enterprise-computing/clearpath-forward/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "unisys-clearpath-forward"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "ffe079bcf47167d6",
       "name": "Lattice MachXO5-NX",
       "cryptoProperties": {
@@ -13806,9 +14935,52 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0c087a91551cb481",
-      "name": "NetApp ONTAP 9.16",
-      "version": "9.18.1",
+      "bom-ref": "1fe124bbdfa4f45b",
+      "name": "IBM Storage Scale 5.2",
+      "version": "5.2.0",
+      "cpe": "cpe:2.3:a:ibm:storage_scale:5.2.3.0:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited IBM Storage Scale 5.2.0 Concepts, Planning, and Installation Guide does not mention post-quantum cryptography or quantum-resistant algorithms.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.ibm.com/docs/en/storage-scale/5.2.0?topic=introduction-whats-new-in-storage-scale"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ibm-storage-scale-5-2"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Data Storage & Protection"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9b6a9e9404a1ffaa",
+      "name": "NetApp ONTAP 9",
+      "version": "9.19.1",
       "cpe": "cpe:2.3:a:netapp:ontap:9.16.1:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -14107,6 +15279,92 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "94f425054ae2162e",
+      "name": "Druva Data Resiliency Cloud",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, FrodoKEM, Classic-McEliece",
+          "primitive": "kem"
+        }
+      },
+      "description": "The cited Druva blog (30 June 2022) gives general guidance on preparing for post-quantum cryptography and lists NIST finalist algorithms (Classic McEliece, CRYSTALS-Kyber, NTRU, CRYSTALS-Dilithium, FrodoKem). It does not state that Druva Data Resiliency Cloud implements, supports or plans PQC.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.druva.com/products/data-resiliency-cloud/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "druva-data-resiliency-cloud"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Data Storage & Protection"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "3875ea6781241a74",
+      "name": "Scality RING9",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Scality press release (17 November 2022) announces RING9 features: flash tiering, a monitoring stack based on Prometheus and AlertManager, ecosystem integration with Veeam and VMware Cloud Director, and AWS IAM-compatible bucket policies. It does not mention post-quantum cryptography.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.scality.com/products/ring/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "scality-ring9"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Data Storage & Protection"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "a6bf6ced258ca341",
       "name": "Amazon Web Services (AWS)",
       "cryptoProperties": {
@@ -14194,6 +15452,90 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "99cbd7055ee8c4ee",
+      "name": "Microsoft Hyper-V",
+      "cpe": "cpe:2.3:o:microsoft:windows_server_2008:-:-:*:*:datacenter_without_hyper-v:*:itanium:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any PQC migration plans. It only references standard security features like BitLocker, Secure Boot, and TPM 2.0.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/hyper-v-technology-overview"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "microsoft-hyper-v"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c6c6191ee28423a5",
+      "name": "Nutanix AHV",
+      "cpe": "cpe:2.3:o:nutanix:ahv:-:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Nutanix AHV product page does not state a post-quantum capability. It mentions self-healing security configurations, software-defined firewalls, microsegmentation and automated compliance reporting, without naming cryptographic algorithms.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.nutanix.com/products/acropolis/ahv"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "nutanix-ahv"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "8a1cddbe8baef4dc",
       "name": "Docker Engine 28.0",
       "version": "29.5.3",
@@ -14237,9 +15579,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "99c828c6a562db28",
+      "bom-ref": "9ae9cb51ca084bd8",
       "name": "Amazon EKS",
-      "version": "AWS SDK for Java v2.0; AWS-LC-FIPS-3.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14248,7 +15589,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "PQC support for Amazon EKS is documented through two distinct, EKS-connected mechanisms — neither of which is AWS Transfer Family or the AWS SDK for Java v2 (both are unrelated services/libraries with no documented EKS-specific connection). (1) ALB/NLB listeners provisioned for EKS Ingress/Service resources via the AWS Load Balancer Controller can use ML-KEM hybrid post-quantum TLS security policies (e.g. ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09; algorithms SecP256r1MLKEM768/SecP384r1MLKEM1024/X25519MLKEM768) — the same ML-KEM-hybrid-only capability already verified on the standalone ALB catalog row. This requires the cluster operator to explicitly select a PQ-TLS policy; AWS Load Balancer Controller-provisioned listeners do not default to one. (2) The AWS Secrets Store CSI Driver add-on for EKS (v2.0.0 or later) automatically prefers ML-KEM hybrid post-quantum TLS when pods retrieve secrets from AWS Secrets Manager, per the AWS Security Blog (published 24 Apr 2026, updated 12 Jun 2026). Not stated as a native/automatic feature of the EKS control plane itself.",
+      "description": "The cited AWS pages do not document a post-quantum feature of the Amazon EKS control plane. Two connected components are documented. (1) The AWS Secrets Store CSI Driver provider, used on EKS as an add-on (v2.0.0 or later), enables and prefers ML-KEM hybrid post-quantum TLS when pods retrieve secrets from AWS Secrets Manager, per the AWS Security Blog (published 24 Apr 2026, updated 12 Jun 2026). (2) Separately, AWS Application and Network Load Balancers support opt-in post-quantum TLS security policies with hybrid key agreement including ML-KEM (AWS announcement of 21 Nov 2025); that announcement does not mention EKS, so its use for EKS ingress is not established by it. Both concern TLS key exchange only.",
       "externalReferences": [
         {
           "type": "website",
@@ -14465,7 +15806,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Cloud CDN has no independent TLS stack: per Google's Cloud CDN docs, it 'works with the global external Application Load Balancer or the classic Application Load Balancer to deliver content' — that Load Balancer handles TLS termination. The Load Balancer layer now documents post-quantum hybrid key exchange (X25519MLKEM768/ML-KEM): opt-in today (disabled by default), default-enabled after October 2026, always-enabled after October 2027. Cloud KMS's ML-KEM/ML-DSA/SLH-DSA reached General Availability (announced 2026-07-28) — no longer 'preview' — but Cloud KMS is a separate key-management product, not Cloud CDN, and is not evidence for CDN's own PQC posture. Google's company-wide PQC roadmap (published 2026-08-11) marks Load Balancers and Cloud KMS algorithms 'Completed' in 2026, with full PQC readiness convergence now targeted for 2029, not 'end of 2026.'",
+      "description": "Cloud CDN has no independent TLS stack: per Google's Cloud CDN docs, it 'works with the global external Application Load Balancer or the classic Application Load Balancer to deliver content' — that Load Balancer handles TLS termination. Google's Load Balancing documentation (last updated 2026-10-26) describes post-quantum hybrid key exchange (X25519MLKEM768/ML-KEM) as disabled by default and enabled only when set to ENABLED, with a planned rollout of enabled by default after October 2026 (disabled when set to DEFERRED) and always enabled after October 2027; the page does not state that the default has changed. Cloud KMS's ML-KEM/ML-DSA/SLH-DSA reached General Availability (announced 2026-07-28) — no longer 'preview' — but Cloud KMS is a separate key-management product, not Cloud CDN, and is not evidence for CDN's own PQC posture. Google's company-wide PQC roadmap (published 2026-08-11) marks Load Balancers and Cloud KMS algorithms 'Completed' in 2026, with full PQC readiness convergence now targeted for 2029, not 'end of 2026.'",
       "externalReferences": [
         {
           "type": "website",
@@ -14547,6 +15888,338 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "bdcc6c874498ae27",
+      "name": "Mimecast Cloud Integrated",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited 2023 Mimecast Email Security Cloud Integrated datasheet does not state a post-quantum capability. It covers AI-powered phishing, URL and attachment protection layered on Microsoft 365.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.mimecast.com/products/email-security/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "mimecast-cloud-integrated"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Email Encryption & Collaboration"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "abe896d38dc1b5a6",
+      "name": "Proofpoint Aegis",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited April 24, 2023 Proofpoint press release describes the Aegis Threat Protection platform as AI/ML-powered email threat protection and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.proofpoint.com/us/products/aegis"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "proofpoint-aegis"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Email Encryption & Collaboration"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b9a619d9a62634e8",
+      "name": "Barracuda Email Protection",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Barracuda Email Protection product page does not state a post-quantum capability. It describes AI-powered email threat detection and does not name cryptographic algorithms.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.barracuda.com/products/email-protection"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "barracuda-email-protection"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Email Encryption & Collaboration"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "2dbe3a90ab829470",
+      "name": "OpenText Content Cloud",
+      "version": "26.2",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited OpenText Content Management 26.2 release post does not mention post-quantum cryptography.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.opentext.com/products/content-cloud"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "opentext-content-cloud"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Data Storage & Protection"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "0da3035d2b993da4",
+      "name": "Hyland OnBase",
+      "cpe": "cpe:2.3:a:hyland:onbase:18.0.0.0:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited ISSI OnBase security page describes AES-128 or AES-256 encryption at rest and TLS in transit and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.hyland.com/en/products/onbase"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "hyland-onbase"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Data Storage & Protection"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "52e4b36e2e013f26",
+      "name": "Forcepoint DLP",
+      "version": "10.4.3",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Forcepoint DLP product page covers data loss prevention, classification and policy enforcement and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.forcepoint.com/product/data-loss-prevention-dlp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "forcepoint-dlp"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Data Storage & Protection"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "383b9d0630fca8f2",
+      "name": "IBM Aspera",
+      "cpe": "cpe:2.3:a:ibm:aspera_application_platform_on_demand:-:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited IBM Aspera product page describes FASP-based high-speed transfer with built-in line-rate security and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.ibm.com/products/aspera"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ibm-aspera"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Email Encryption & Collaboration"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "881d480c6b8b179f",
+      "name": "Signiant Media Shuttle",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Signiant Media Shuttle product page states that TLS secures transfers in flight and does not name post-quantum algorithms or hybrid modes.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.signiant.com/products/media-shuttle/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "signiant-media-shuttle"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Email Encryption & Collaboration"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "ce41961da8dfde34",
       "name": "Microsoft Defender for Endpoint",
       "cpe": "cpe:2.3:a:microsoft:defender_for_endpoint:-:*:*:*:*:-:*:*",
@@ -14584,6 +16257,422 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "35044000e164f837",
+      "name": "VMware Workspace ONE",
+      "cpe": "cpe:2.3:a:vmware:workspace_one:2.5.1:*:*:*:*:iphone_os:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The Workspace ONE Cloud Services security guide documents TLS 1.2+ and AES-256 controls but does not mention post-quantum cryptography.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.vmware.com/products/workspace-one.html"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "vmware-workspace-one"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d5a66817239dba24",
+      "name": "Microsoft Intune",
+      "cpe": "cpe:2.3:a:microsoft:intune_endpoint_protection:-:*:*:*:*:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Microsoft Intune documentation landing page does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.microsoft.com/en-us/security/business/microsoft-intune"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "microsoft-intune"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "86de90ba374e5fb0",
+      "name": "Ivanti Neurons for MDM",
+      "version": "127",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Ivanti Neurons for MDM product page refers to encryption of device communication and certificate-based device authentication in general terms and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.ivanti.com/products/ivanti-neurons-for-mdm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ivanti-neurons-for-mdm"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "42827daad6c2452c",
+      "name": "Jamf Pro",
+      "version": "11.32.0",
+      "cpe": "cpe:2.3:a:jamf:jamf:8.5:*:*:*:pro:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Jamf Pro product page describes Apple device management and security and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.jamf.com/products/jamf-pro/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "jamf-pro"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "6f7214abeb74f02a",
+      "name": "SOTI MobiControl",
+      "version": "2026.1.2",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited SOTI MobiControl product page describes mobile device management and security and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.soti.net/products/mobicontrol/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "soti-mobicontrol"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7cfc1df7744b9fe9",
+      "name": "Recorded Future",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Recorded Future homepage describes a threat intelligence platform and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.recordedfuture.com/post-quantum-cryptography-threat-landscape"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "recorded-future"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ad56a0c0215820d2",
+      "name": "Cyberint (Check Point)",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited page (Check Point Exposure Management, formerly Cyberint) describes attack surface management, deep and dark web monitoring, cyber threat intelligence, digital risk protection, supply chain intelligence and CTEM. It does not mention post-quantum cryptography.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.checkpoint.com/cyberint/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "cyberint-check-point"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "03985275e92c8c2a",
+      "name": "GitHub Copilot Security",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited GitHub Copilot product page describes Copilot as an AI coding agent and lists code security features, including finding code quality and security issues before a pull request. It does not mention post-quantum cryptography.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.blog/news-insights/product-news/whats-coming-to-our-github-actions-2026-security-roadmap/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "github-copilot-security"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Supply Chain & DevSecOps"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a87780e4111a3cf7",
+      "name": "Veracode Platform",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Veracode homepage lists application security testing products (SAST, DAST, SCA, container security and others) and does not state a post-quantum capability, either for the platform's own cryptography or for scanning code that uses quantum-vulnerable algorithms.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.veracode.com/products/binary-static-analysis-sast"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "veracode-platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Supply Chain & DevSecOps"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ea7cb42d8e2987d9",
+      "name": "Checkmarx One",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited Checkmarx One product page describes an AI-assisted application security testing platform and does not state a post-quantum capability, either for the platform's own cryptography or for scanning code that uses quantum-vulnerable algorithms.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://checkmarx.com/product/checkmarx-one-platform/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "checkmarx-one"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Supply Chain & DevSecOps"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
         }
       ]
     },
@@ -14815,6 +16904,47 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "4a1c4e05378ea1a7",
+      "name": "DuckDuckGo Browser",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The cited DuckDuckGo download page describes the browser's privacy protections and does not state a post-quantum capability.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://spreadprivacy.com/duckduckgo-post-quantum-privacy/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "duckduckgo-browser"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Web & Application Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "442a6dea7a497019",
       "name": "General Dynamics Mission",
       "cryptoProperties": {
@@ -14861,7 +16991,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Proton VPN's 2025-2026 fall and winter roadmap says its new VPN architecture, replacing the current WireGuard implementation, will allow it to provide robust post-quantum encryption in the future. No post-quantum algorithm or delivery date is named.",
+      "description": "Proton VPN's 2025-2026 fall and winter roadmap says its new VPN architecture, intended to address the limits of the current WireGuard implementation, will allow it to provide robust post-quantum encryption in the future. No post-quantum algorithm or delivery date is named.",
       "externalReferences": [
         {
           "type": "website",
@@ -14897,9 +17027,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8a47c2f060e3fd7e",
+      "bom-ref": "09ce3c4700f159ac",
       "name": "MinIO Enterprise",
-      "version": "RELEASE.2026-08-07T18-34-35Z (latest MinIO AIStor Enterprise release, confirmed via dl.min.io/aistor release-notes directory; AIStor now has its own separate release/support cadence. The open-source minio/minio GitHub repo was archived/read-only by its owner on 2026-04-25 — confirmed directly via GitHub's archive banner — and is no longer the live product; its last tag, RELEASE.2025-10-15T17-29-55Z, is stale/inapplicable to the current Enterprise product)",
+      "version": "RELEASE.2026-09-19T17-05-25Z (latest MinIO AIStor server release, released 2026-09-19 per dl.min.io; the open-source minio/minio GitHub repository was archived by its owner on 2026-04-25 and its last tag, RELEASE.2025-10-15T17-29-55Z, predates the current product)",
       "cpe": "cpe:2.3:a:miniorange:oauth_single_sign_on:48.4.9:*:*:*:enterprise:wordpress:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
@@ -14994,7 +17124,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Cloud-hosted encryption backed by CryptoHub HSMs with PCI HSM validated PQC. Supports ML-DSA and ML-KEM. KMES Series 3 VirtuCrypt cloud HSM.",
+      "description": "Cloud-hosted encryption backed by CryptoHub HSMs. Futurex states that its PQC-supporting HSMs are PCI HSM validated. Supports ML-DSA and ML-KEM. KMES Series 3 VirtuCrypt cloud HSM.",
       "externalReferences": [
         {
           "type": "website",
@@ -15016,7 +17146,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (PCI HSM)"
+          "value": "No FIPS 140 module validation stated; PCI HSM approval is a different scheme (the cited announcement names no CMVP certificate)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -15062,7 +17192,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (WebTrust)"
+          "value": "No FIPS 140 module validation stated on the cited page; WebTrust is not a FIPS 140 validation"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -15397,9 +17527,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8807738c39b2f25b",
+      "bom-ref": "6df97e4d54197d73",
       "name": "EVERTRUST STREAM",
-      "version": "2.1",
+      "version": "2.1.12",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -15576,9 +17706,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "6de046963ec9b90f",
+      "bom-ref": "1af3ab80b6dc801b",
       "name": "MTG AG CLM",
-      "version": "6.15.0",
+      "version": "6.17.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -15618,9 +17748,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "06855cc750d59e2f",
+      "bom-ref": "d3a906062e3d3d47",
       "name": "MTG AG KMS",
-      "version": "3.19.1",
+      "version": "3.21.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -16249,7 +18379,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3)"
+          "value": "Yes (FIPS 140-3 CMVP #5512 Dell BSAFE Crypto Module for C, Level 1, Active; classical algorithms only; PQC not in FIPS scope)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -16542,9 +18672,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1f5ba35dbb29b1e1",
+      "bom-ref": "f3ae68b143a72b51",
       "name": "Ascertia ADSS Server/SAM",
-      "version": "8.4.1 (ADSS Server platform, released 2026-06-24; SAM's ML-DSA support was demonstrated while the platform was at 8.4, per the Apr-May 2026 blog series)",
+      "version": "8.4",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -17001,14 +19131,14 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0416a2d95a4753a2",
+      "bom-ref": "2a8ea146541d9b54",
       "name": "AdGuard DNS",
-      "version": "2.23",
+      "version": "2.24",
       "cpe": "cpe:2.3:a:adguard-dns:adguard_dns:2.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "AdGuard states it is the first DNS service to bring client-side post-quantum cryptography (per AdGuard's own December 2025 announcement, an unverified vendor claim). Uses X25519MLKEM768 hybrid key exchange to protect DoT, DoH, DoQ, and DNSSEC. Enabled by default in the AdGuard DNS service since v2.19, but only usable through AdGuard's own client apps (initially Nightly/beta builds for Windows, Android, and Mac) — most operating systems and generic DoT/DoH/DoQ clients do not support it natively, and AdGuard VPN app support was not yet available at launch.",
+      "description": "AdGuard states it is the first DNS service to bring client-side post-quantum cryptography (per AdGuard's own December 22, 2025 announcement, an unverified vendor claim). AdGuard DNS uses the X25519MLKEM768 hybrid key exchange for DoT, DoH and DoQ connections between the client and the resolver; the announcement does not say DNSSEC signatures are post-quantum. Enabled by default in the AdGuard DNS service since v2.19, but only usable through AdGuard's own client apps (at announcement, Nightly builds for Windows, Android and Mac): most operating systems and generic DoT/DoH/DoQ clients do not support it natively, and AdGuard VPN app support was not yet available at launch.",
       "externalReferences": [
         {
           "type": "website",
@@ -17450,7 +19580,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Satellite constellation designed to integrate SEALSQ post-quantum chips. Quantum-safe key distribution and quantum-resistant digital identities from orbit are planned beginning with the next launch in early 2026.",
+      "description": "Satellite constellation designed to integrate SEALSQ post-quantum chips. A December 2025 announcement said quantum-safe key distribution and quantum-resistant digital identities from orbit would begin with the next launch, planned for early 2026. WISeKey announced on March 30, 2026 that its 21st satellite, WISeSat 4.0, equipped with the SEALSQ QS7001 chip, had launched; that announcement does not state that quantum-safe key distribution is operating.",
       "externalReferences": [
         {
           "type": "website",
@@ -17486,9 +19616,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "807fb48e4a3ca484",
+      "bom-ref": "b8c90497a882dfec",
       "name": "SEALSQ QVault TPM",
-      "version": "Sampling 2026",
+      "version": "QVault TPM 185 engineering samples (available as of 2026-09-25)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -19244,7 +21374,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Cloud SASE platform preparing ML-KEM (specifically ML-KEM 768) post-quantum key exchange for secure web gateway and ZTNA. Per Netskope's own blog, the quantum-resilient version of Netskope One is still in development, not yet shipped/GA.",
+      "description": "Netskope's blog (June 17, 2025) states the company is focusing on NIST's PQC algorithms, specifically ML-KEM 768, across its infrastructure, and that quantum-resilient Netskope One is in development with sandbox testing by customers intended shortly. The post identifies five places in the Netskope One architecture where encryption is used and says all were evaluated for a post-quantum attack; it does not state general availability.",
       "externalReferences": [
         {
           "type": "website",
@@ -19286,7 +21416,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Zero-config mesh VPN with post-quantum hybrid key exchange. Based on WireGuard.",
+      "description": "Mesh VPN based on WireGuard. Tailscale's documentation states its WireGuard implementation is not post-quantum secure and does not use pre-shared keys, and that it intends to build automatic PSK provisioning and distribution to devices; it documents no post-quantum handshake.",
       "externalReferences": [
         {
           "type": "website",
@@ -21178,9 +23308,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f9007baf2f228295",
+      "bom-ref": "4c2a2f6982e85dfa",
       "name": "WinSCP PQC File Transfer",
-      "version": "Stable 6.5.6 (released 2026-03-25); development track 6.6.2 RC (2026-06-17), 6.6.3 in progress; ML-KEM since 6.4.2 beta (2025-01-27), NTRU Prime since 6.4 beta (2024-09-19)",
+      "version": "6.7 (released 2026-10-14); ML-KEM since 6.4.2 beta (2025-01-27)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -21225,9 +23355,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a71cd2254ec7b3a3",
+      "bom-ref": "e201c91360e88d45",
       "name": "curl PQC",
-      "version": "8.22.0",
+      "version": "8.23.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -22333,7 +24463,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Phio TX: FIPS 140-3 and FIPS 203 (ML-KEM) validated post-quantum key management platform; unified policy control over PQC, QKD, QRNG, RSA/ECC; EUCC compliance mode (v4.5.3, Feb 2026); Centralized Management Console (Apr 2026)",
+      "description": "Phio TX: post-quantum key management platform with unified policy control over PQC, QKD, QRNG, RSA/ECC. The vendor reports CAVP certificate #6060 for its ML-KEM (FIPS 203) implementation (algorithm-level validation) and CMVP certificate #4850 for a FIPS 140-3 Level 2 module (firmware 3.2.3) whose approved-algorithm list does not include ML-KEM; EUCC compliance mode (v4.5.3, Feb 2026); Centralized Management Console (Apr 2026)",
       "externalReferences": [
         {
           "type": "website",
@@ -22355,7 +24485,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes — FIPS 140-3 Level 2, CMVP #4850 Quantum Xchange Phio TX (Active, sunset 2029-10-22); ML-KEM is not among the module's approved algorithms"
+          "value": "Yes — FIPS 140-3 Level 2, CMVP #4850 Quantum Xchange Phio TX (hardware PhioTX, PhioTX-Q; firmware 3.2.3; initial validation 2024-10-23; Active, sunset 2029-10-22); ML-KEM is not among the module's approved algorithms"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -23509,9 +25639,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e4b259371c089ae2",
+      "bom-ref": "299eb9010d4a15e5",
       "name": "QuantumCTek PQC Chip",
-      "version": "1.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -23845,13 +25974,12 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ab389c0e4e600535",
+      "bom-ref": "c9e7fbcbff194ca0",
       "name": "Kryptonite Shipovnik PQC Signature (Russia)",
-      "version": "1.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Russia's first domestic PQC digital signature replacing GOST 34.10",
+      "description": "Shipovnik ('Rosehip') is a post-quantum digital signature scheme introduced by researchers at Kryptonite as a replacement for the GOST 34.10-2018 elliptic-curve signature. It is described as Russia's first post-quantum signature scheme and has been made open-source to encourage analysis. As of late 2025 Russia has not issued a national PQC standard, so the scheme is a candidate, not a standard.",
       "externalReferences": [
         {
           "type": "website",
@@ -24309,9 +26437,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5e95344daf003a1b",
+      "bom-ref": "8158bc11f2bb105f",
       "name": "Mozilla NSS",
-      "version": "3.132",
+      "version": "3.133",
       "cpe": "cpe:2.3:a:mozilla:nss:3.20.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -24320,7 +26448,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Network Security Services library powering Firefox and Thunderbird TLS. Implements ML-KEM-768 hybrids for TLS 1.3 key exchange: X25519MLKEM768 (default since NSS 3.107), plus SecP256r1MLKEM768 and SecP384r1MLKEM1024 (both added in NSS 3.118 — June 2026).",
+      "description": "Network Security Services library powering Firefox and Thunderbird TLS. Implements ML-KEM hybrids for TLS 1.3 key exchange: X25519MLKEM768 (made the default in NSS 3.118, released 18 November 2025), plus SecP256r1MLKEM768 and SecP384r1MLKEM1024 (both added in NSS 3.118).",
       "externalReferences": [
         {
           "type": "vcs",
@@ -24923,6 +27051,54 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "abfa5655cc402aba",
+      "name": "Stytch Authentication Platform",
+      "manufacturer": {
+        "name": "Stytch"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "B2B and Consumer authentication platform with passwordless, passkeys, MFA, B2B SSO, organisation management. Frontend + backend SDKs (iOS, Android, React Native, JS). PQC posture not published.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://stytch.com"
+        },
+        {
+          "type": "website",
+          "url": "https://stytch.com/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "stytch-platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Customer Identity & Access Management (CIAM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "7fb6ab45a68f3eff",
       "name": "OpenSSL 3.5.0",
       "version": "3.5.0",
@@ -24935,7 +27111,7 @@
           "primitive": "kem"
         }
       },
-      "description": "First OpenSSL release with native ML-KEM, ML-DSA, and SLH-DSA support without the OQS provider. X25519MLKEM768 hybrid key exchange enabled by default in TLS 1.3. Released April 29, 2025.",
+      "description": "First OpenSSL release with native ML-KEM, ML-DSA, and SLH-DSA support without the OQS provider. X25519MLKEM768 hybrid key exchange enabled by default in TLS 1.3. Released 8 April 2025.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -24961,7 +27137,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS module in progress)"
+          "value": "No CMVP certificate for an OpenSSL 3.5 series FIPS provider is linked. CMVP #4985 (OpenSSL FIPS Provider, FIPS 140-3 Level 1, validated 3/11/2025) lists no PQC algorithms. An OpenSSL FIPS Provider from The OpenSSL Corporation is on the CMVP Modules In Process list."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26816,7 +28992,7 @@
           "primitive": "kem"
         }
       },
-      "description": "IVPN implements quantum-resistant VPN connections via a hybrid KEM approach layered over WireGuard. Uses Kyber-1024 and Classic McEliece as post-quantum KEMs combined with X25519 via WireGuard PresharedKey rotation. Documented in official help centre (sntrup761 + Kyber pre-FIPS; not FIPS 203/ML-KEM compliant)",
+      "description": "IVPN apps start quantum-resistant WireGuard connections by default. A PresharedKey (PSK) is calculated as the SHA256 sum of the ciphers from two KEMs, Kyber-1024 and Classic-McEliece-348864, exchanged over IVPN's REST API during WireGuard key regeneration. IVPN's blog notes that the approach does not make the connection entirely quantum-proof because it still relies on classical cryptographic primitives. The documentation dates from August 2023, describes Kyber as a NIST finalist, and does not mention ML-KEM or FIPS 203.",
       "externalReferences": [
         {
           "type": "website",
@@ -27863,9 +30039,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f62234035200467a",
+      "bom-ref": "44c5a1a6946524ae",
       "name": "InfoSec Global AgileSec",
-      "version": "2025 Release",
       "manufacturer": {
         "name": "InfoSec Global"
       },
@@ -27894,7 +30069,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (Trusted)"
+          "value": "No FIPS 140 module validation stated; the cited announcement reports FedRAMP Moderate authorization (August 2025), which is not a FIPS 140 validation"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -28053,9 +30228,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "47d6b3920b9119c1",
+      "bom-ref": "a72322a8acbd9ad8",
       "name": "OpenMLS",
-      "version": "0.8.1",
+      "version": "0.9.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -28063,7 +30238,7 @@
           "primitive": "kem"
         }
       },
-      "description": "OpenMLS PQ branch tracks draft-ietf-mls-pq-ciphersuites-04 (ML-KEM + ML-DSA cipher suites for MLS group messaging).",
+      "description": "OpenMLS 0.9.0 (changelog dated 2026-08-03; release published 2026-08-25) lists 'P-384, ML-DSA and additional PQ ciphersuites' (#2046, #2118) and a fix so that OpenMlsRustCrypto's supports() agrees for MLS_256_MLKEM1024_AES256GCM_SHA512_MLDSA87. Release 0.6.0 had added an X-Wing-based ciphersuite (X-Wing combines ML-KEM and X25519). The release notes do not say which draft of the MLS post-quantum ciphersuites specification these ciphersuites follow.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -28573,14 +30748,9 @@
         "name": "Microsoft"
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Playwright is a browser automation framework. In the PQC context it validates ML-KEM-768 hybrid TLS connections through real browser engines. Chromium 124+ supports X25519MLKEM768 (kyber hybrid); Firefox has experimental OQS-based PQC TLS. Sandbox scenario 6 navigates Playwright/Chromium to a PQC-TLS nginx server and asserts the negotiated cipher suite includes X25519MLKEM768. Playwright itself has no crypto logic — it exposes the TLS capabilities of the underlying browser engine.",
+      "description": "Playwright is a browser automation and testing framework with no cryptography logic of its own: it downloads and drives Chromium, Firefox and WebKit builds, so any post-quantum TLS key exchange seen in a test is performed by the browser's TLS stack. The cited browser manifest lists the bundled browser versions only (Chromium 158.0.8127.18, Firefox 159.0, WebKit 27.2) and does not describe TLS behaviour. In sandbox scenario 6, Playwright drives Chromium to a PQC-TLS nginx server and the test asserts that the negotiated TLS key-exchange group is X25519MLKEM768 (a TLS 1.3 supported group, not a cipher suite).",
       "externalReferences": [
         {
           "type": "vcs",
@@ -28851,14 +31021,9 @@
       "name": "Red Hat Enterprise Linux 10.2",
       "version": "10.2",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA",
-          "primitive": "signature",
-          "algorithmFamily": "ML-DSA"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "RHEL 10.2 GA May 6 2026. Extends RHEL 10.x PQC foundation with additional quantum-resistant features. Ships alongside Red Hat Certificate System 11.0 which integrates NIST-standardized ML-DSA signatures into PKI infrastructure. Defends against harvest-now-decrypt-later attacks. Continues unified PQC rollout across Red Hat enterprise Linux portfolio.",
+      "description": "Red Hat's May 6, 2026 announcement of the upcoming general availability of RHEL 10.2 and 9.8 says the releases feature post-quantum cryptography integrating NIST standards, alongside confidential computing and sealed images; it names no algorithm or package. Red Hat Certificate System 11.0, a separate product available alongside RHEL, introduces quantum-resistant signatures. Red Hat's release-dates page lists RHEL 10.2 general availability on 2026-05-19.",
       "externalReferences": [
         {
           "type": "website",
@@ -29030,7 +31195,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Red Hat Certificate System 11.0 announced May 6 2026, alongside the upcoming RHEL 10.2 and 9.8 releases. Per Red Hat, it introduces quantum-resistant signatures to help organizations meet emerging NIST standards and resist \"harvest now, decrypt later\".",
+      "description": "Red Hat announced Red Hat Certificate System 11.0 on May 6, 2026, as available alongside Red Hat Enterprise Linux 10.2 and 9.8. Per Red Hat, it introduces quantum-resistant signatures to help organizations meet emerging NIST standards and resist 'harvest now, decrypt later'. The announcement names no algorithm. Digital signatures detect modification of data and authenticate the signer (FIPS 204); they do not by themselves protect traffic captured earlier from later decryption.",
       "externalReferences": [
         {
           "type": "website",
@@ -29924,7 +32089,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3 CMVP)"
+          "value": "Yes — FIPS 140-3 Level 1, CMVP #5083 CGI Momentum Java Cryptographic Module v4.0.0 (initial validation 2025-10-22; Active, sunset 2029-07-28); the certificate lists no PQC algorithms"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -30703,7 +32868,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "No (CAVP algorithm validation A6936, not a CMVP module validation)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -31594,9 +33759,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1254068daa527606",
+      "bom-ref": "735de425f7a0c0ab",
       "name": "pkcs11-provider (pqctoday composite)",
-      "version": "HEAD (built 2026-06-03)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -31877,16 +34041,16 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "607f9d6c4d030c20",
+      "bom-ref": "314d086573e9c466",
       "name": "ssh-audit",
-      "version": "3.3.0",
+      "version": "3.9.0",
       "manufacturer": {
         "name": "Joe Testa"
       },
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "ssh-audit (jtesta) is an SSH server/client configuration auditing tool. It detects and reports post-quantum SSH key-exchange algorithms such as sntrup761x25519-sha512 and mlkem768x25519-sha256 advertised by an endpoint. It is an analysis tool, not a PQC implementation. Used in the sandbox crypto-discovery scenario to confirm PQC SSH kex negotiation.",
+      "description": "SSH server and client configuration scanner (jtesta). It gathers the key-exchange algorithms an endpoint offers and identifies post-quantum ones such as sntrup761x25519-sha512 and mlkem768x25519-sha256 (added in 3.3.0) and mlkem768nistp256-sha256 and mlkem1024nistp384-sha384 (added in 3.9.0); since 3.9.0 it also warns on key exchanges that are not post-quantum safe. It reports what an endpoint advertises: an offered algorithm does not show which one a given session negotiated. It is an analysis tool, not a PQC implementation. Used in the sandbox crypto-discovery scenario to check which post-quantum SSH key-exchange algorithms a server advertises.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31930,9 +34094,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "99a835dd707d036e",
+      "bom-ref": "bccaed3b2b48ad8f",
       "name": "pqctoday-kmip",
-      "version": "v0.29.0",
+      "version": "v0.32.0",
       "manufacturer": {
         "name": "pqctoday (self)"
       },
@@ -31943,7 +34107,7 @@
           "primitive": "kem"
         }
       },
-      "description": "pqctoday-kmip is pqctoday's own MIT-licensed KMIP 3.0 server, written in Rust and executing crypto on the softhsmrustv3 PKCS#11 v3.2 engine (NOT on ThalesGroup/kmip-go, which an earlier catalog revision recorded in error). It exposes a three-plane architecture: a crypto-agility policy plane, KMIP 3.0 key management, and PKCS#11 crypto execution. Verified by execution on 2026-08-09: ML-DSA-65 Create+Sign and ML-KEM-768 Create+Encapsulate+Decapsulate all succeeded against a live server, with 6 managed objects and an audit trail reporting 37 policy decisions, 78 KMIP operations and 14 PKCS#11 calls. Data-plane TLS is quantum-safe-profiled: TLS 1.3 only with hybrid ML-KEM groups, classical key exchange refused outright.",
+      "description": "pqctoday-kmip is pqctoday's own KMIP 3.0 server, licensed AGPL-3.0-only, written in Rust and executing crypto on the softhsmrustv3 PKCS#11 v3.2 engine (NOT on ThalesGroup/kmip-go, which an earlier catalog revision recorded in error). It exposes a three-plane architecture: a crypto-agility policy plane, KMIP 3.0 key management, and PKCS#11 crypto execution. Verified by execution on 2026-08-09: ML-DSA-65 Create+Sign and ML-KEM-768 Create+Encapsulate+Decapsulate all succeeded against a live server, with 6 managed objects and an audit trail reporting 37 policy decisions, 78 KMIP operations and 14 PKCS#11 calls. Data-plane TLS is quantum-safe-profiled: TLS 1.3 only with hybrid ML-KEM groups, classical key exchange refused outright.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -33292,7 +35456,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CAVP-validated (cert A8232, 2026-04-08) HSM firmware version 6.7.0.0: ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus classical AES/SHA/HMAC/ECDSA/RSA/TDES and TLS 1.3 KDF.",
+      "description": "CAVP-validated (cert A8232, first validated 2026-04-08) HSM cryptographic library firmware version 6.9.0.0: ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), SLH-DSA (KeyGen, SigGen, SigVer), plus classical AES, SHA, HMAC, ECDSA, EdDSA, RSA and DRBG algorithms and the TLS 1.3 KDF.",
       "externalReferences": [],
       "properties": [
         {
@@ -33490,9 +35654,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "01d4a3d8ea7b7a47",
+      "bom-ref": "cf80283cb0f3b24c",
       "name": "PQCA mldsa-native",
-      "version": "v1.0.0-alpha",
+      "version": "v2.0.0",
       "manufacturer": {
         "name": "Post-Quantum Cryptography Alliance"
       },
@@ -33504,7 +35668,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "v1.0.0-alpha release of a C90 library for ML-DSA / FIPS 204. Designed for production with minimal dependencies. Includes native backends for AArch64 and x86-64. Memory safety, type safety, and timing leakage are checked via static model checking (CBMC) and dynamic instrumentation (valgrind). External APIs are expected but not guaranteed to be stable.",
+      "description": "mldsa-native v2.0.0 (published 2026-08-07) is described as the first stable release of a C90 implementation of ML-DSA / FIPS 204. It has AArch64 (Neon) and x86_64 (AVX2) assembly backends, memory- and type-safety proofs for the C code (CBMC), and functional-correctness and memory-safety proofs for both assembly backends (HOL Light and s2n-bignum). The initial v1.0.0-alpha release was announced on November 25, 2025.",
       "externalReferences": [],
       "properties": [
         {
@@ -33592,7 +35756,7 @@
           "primitive": "kem"
         }
       },
-      "description": "The module supports ML-KEM (EncapDecap, KeyGen) and SLH-DSA (KeyGen, SigGen, SigVer) as part of its FIPS 140-3 approved cryptographic algorithms and services.",
+      "description": "The CAVP record lists ML-KEM (EncapDecap, KeyGen) and SLH-DSA (KeyGen, SigGen, SigVer) among the algorithms validated for this software module (A7986).",
       "externalReferences": [],
       "properties": [
         {
@@ -33609,7 +35773,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, FIPS 140-3 approved; First Validated: 1/30/2026"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A7986 (ML-KEM, SLH-DSA; first validated 1/30/2026). A module named Hikvision FIPS Provider is on the CMVP Modules In Process list."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33636,7 +35800,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Supports ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (EncapDecap, KeyGen), and SLH-DSA (KeyGen, SigGen, SigVer). Validated under FIPS standards.",
+      "description": "Supports ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (EncapDecap, KeyGen), and SLH-DSA (KeyGen, SigGen, SigVer). These algorithm implementations hold CAVP algorithm validation A7669 (tested on Ubuntu 24.04.2 LTS on an HPE ProLiant ML 110 Gen10).",
       "externalReferences": [],
       "properties": [
         {
@@ -33653,7 +35817,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, FIPS validated cryptographic module (First Validated: 11/3/2025)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A7669 (ML-DSA, ML-KEM, SLH-DSA; first validated 11/3/2025). A module named HPE Cryptographic Module is on the CMVP Modules In Process list."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33697,7 +35861,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (First Validated: 5/28/2025; Algorithms include FIPS186-5, FIPS 203/204/205 implied by ML-KEM/ML-DSA/SLH-DSA names, SP800-56Ar3, SP800-108)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A6961 (LMS, ML-DSA, ML-KEM, SLH-DSA; first validated 5/28/2025)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33829,7 +35993,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (CAVP Validated; First Validated: 10/29/2025)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A7616 (LMS, ML-DSA, ML-KEM, SLH-DSA; first validated 10/29/2025)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33873,7 +36037,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (First Validated: 5/26/2026; listed under Cryptographic Algorithm Validation Program)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8378 (LMS, ML-DSA, ML-KEM, SLH-DSA; first validated 5/26/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33962,7 +36126,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, First Validated: 10/6/2025"
+          "value": "No CMVP module validation linked for the 3.5.4 provider; CAVP algorithm validation A7481 (ML-DSA, ML-KEM, SLH-DSA; first validated 10/6/2025). CMVP #4985 (OpenSSL FIPS Provider, FIPS 140-3 Level 1) lists no PQC algorithms. An OpenSSL FIPS Provider from The OpenSSL Corporation is on the CMVP Modules In Process list."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34007,7 +36171,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (Validated by NIST CAVP on 10/6/2025)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A7478 (ML-DSA; first validated 10/6/2025)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34338,7 +36502,7 @@
           "primitive": "kem"
         }
       },
-      "description": "FIPS 140-3 validated software-only cryptographic module (PGP Cryptographic Engine v5.0.0) implementing functions for Symantec Encryption products. CAVP-validated post-quantum algorithms: ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (KeyGen, EncapDecap), and SLH-DSA (KeyGen, SigGen, SigVer), alongside classical AES, SHA2/3, HMAC, ECDSA, RSA, and EdDSA. Tested on Debian 11, macOS 15, RHEL 9, and Windows 11.",
+      "description": "Software-only cryptographic module (PGP Cryptographic Engine v5.0.0) implementing functions for Symantec Encryption products. CAVP-validated post-quantum algorithms: ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (KeyGen, EncapDecap), and SLH-DSA (KeyGen, SigGen, SigVer), alongside classical AES, SHA2/3, HMAC, ECDSA, RSA, and EdDSA. Tested on Debian 11, macOS 15, RHEL 9, and Windows 11.",
       "externalReferences": [],
       "properties": [
         {
@@ -34355,7 +36519,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, FIPS 140-3 validated software only cryptographic module. First Validated: 6/22/2026."
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8618 (ML-DSA, ML-KEM, SLH-DSA; first validated 6/22/2026). A module named PGP Cryptographic Engine from Broadcom is on the CMVP Modules In Process list."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34399,7 +36563,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (CAVP Validated; First Validated: 7/7/2026)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8741 (ML-DSA, ML-KEM, SLH-DSA; first validated 7/7/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34444,7 +36608,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (NIST CAVP, same record covers classical FIPS186-5/SP800-56Cr1 algorithms AND post-quantum SLH-DSA per FIPS 205)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8614 (SLH-DSA and classical entries; first validated 6/18/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34747,7 +36911,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (CAVP Validated; First Validated: 10/30/2024)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A6046 (ML-KEM, ML-DSA, SLH-DSA, LMS; first validated 10/30/2024)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34791,7 +36955,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (First Validated: 3/30/2026; Algorithms reference FIPS 186-4, FIPS 186-5, FIPS 202)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8179 (ML-DSA, ML-KEM, SLH-DSA; first validated 3/30/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -35035,7 +37199,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (Validated under Cryptographic Algorithm Validation Program; First Validated: 5/6/2026)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8331 (ML-DSA, ML-KEM; first validated 5/6/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -35080,7 +37244,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (First Validated: 9/8/2025; references FIPS 186-5, FIPS 203/204 implied by ML-DSA naming, SP 800-56A/B, SP 800-108)"
+          "value": "No CMVP module validation linked for ML-DSA. CMVP #4884 (AWS Key Management Service HSM, FIPS 140-3 Level 3, firmware 1.8.104, validated 11/18/2024) lists no PQC algorithms. CAVP algorithm validation A7365 (ML-DSA; first validated 9/8/2025). Further AWS Key Management Service HSM entries are on the CMVP Modules In Process list."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -35514,16 +37678,7 @@
         }
       },
       "description": "pqctoday's age recipient plugin implementing the X-Wing hybrid KEM (X25519 + ML-KEM-768) so age — and therefore SOPS — can wrap secrets to a post-quantum recipient. The post-quantum key material is generated in and held by softhsmv3 over PKCS#11 rather than in a file. This is the component that gives the sandbox's SOPS GitOps scenario its PQC; SOPS itself has none (see the getsops-sops row).",
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
-        }
-      ],
+      "externalReferences": [],
       "properties": [
         {
           "name": "pqctoday:product_id",
@@ -35553,9 +37708,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f1253bc1eb400ff9",
+      "bom-ref": "85d79f79c8730d31",
       "name": "OpenSSL 3.6",
-      "version": "3.6.3",
+      "version": "3.6.5",
       "cpe": "cpe:2.3:a:openssl:openssl:3.6.0:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -36628,7 +38783,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes — CAVP validated (First Validated: 9/18/2026)"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8953 (ML-DSA, ML-KEM; first validated 9/18/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -36708,7 +38863,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, FIPS 140-3 (implied by CAVP listing and \"First Validated\" date), Certificate A7514"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A7514 (includes LMS SigVer; first validated 10/14/2025)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -36748,7 +38903,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, FIPS 140-3 (implied by CAVP listing and FIPS186-4/5 references), Certificate A7686, First Validated 11/14/2025"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A7686 (includes LMS SigVer; first validated 11/14/2025)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -36792,7 +38947,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, CAVP Project A8178, First Validated 3/26/2026"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8178 (includes SLH-DSA SigVer; first validated 3/26/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -36832,7 +38987,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, First Validated: 7/13/2026, Certificate A8750"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8750 (includes LMS SigVer; first validated 7/13/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -36872,7 +39027,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes, First Validated: 8/21/2026, Certificate A8896"
+          "value": "No CMVP module validation linked; CAVP algorithm validation A8896 (includes LMS SigVer; first validated 8/21/2026)"
         },
         {
           "name": "pqctoday:algorithm_source",
