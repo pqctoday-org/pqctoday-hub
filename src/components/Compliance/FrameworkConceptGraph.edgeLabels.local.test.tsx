@@ -146,9 +146,7 @@ describe('a graph without a "published by" or "replaces" link looks exactly as b
       ],
     }
     render(<FrameworkConceptGraph centerConceptId="a" />)
-    expect(
-      screen.queryByRole('region', { name: 'Link types in this view' })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'What the links mean' })).not.toBeInTheDocument()
     expect(screen.queryByTestId('legend-list')).not.toBeInTheDocument()
     expect(captured.edges[0].ariaLabel).toBe('Recorded relationship from a to b: subset_of')
     const details = screen.getByRole('region', {
@@ -179,7 +177,7 @@ describe('legend: what the links mean', () => {
       ],
     }
     render(<FrameworkConceptGraph centerConceptId="doc" />)
-    const legend = screen.getByRole('region', { name: 'Link types in this view' })
+    const legend = screen.getByRole('region', { name: 'What the links mean' })
     const terms = within(legend)
       .getAllByRole('term')
       .map((t) => t.textContent)
@@ -211,6 +209,51 @@ describe('legend: what the links mean', () => {
     const term = within(list).getByRole('term')
     expect(term.className).toMatch(/flex/)
     expect(list).toHaveTextContent('Replaces an older edition')
+  })
+})
+
+describe('legend placement and naming', () => {
+  const graphWithBoth = (): XwalkGraph => ({
+    nodes: [
+      { id: 'a', label: 'Sample A', sourceType: 'standard', isCenter: true },
+      { id: 'b', label: 'Sample B', sourceType: 'standard', isCenter: false },
+      { id: 'c', label: 'Sample C', sourceType: 'standard', isCenter: false },
+    ],
+    edges: [
+      { ...edge('replaces', 'supersedes'), source: 'a', target: 'b' },
+      { ...edge('overlap', 'intersects_with', 'technical_dependency'), source: 'a', target: 'c' },
+    ],
+  })
+
+  it('is above the canvas, so it is in view without scrolling the graph region', () => {
+    captured.graph = graphWithBoth()
+    render(<FrameworkConceptGraph centerConceptId="a" />)
+    const legend = screen.getByRole('region', { name: 'What the links mean' })
+    const canvas = screen.getByTestId('edge-label-canvas')
+    expect(legend.compareDocumentPosition(canvas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('is a native disclosure named by its own visible heading', () => {
+    captured.graph = graphWithBoth()
+    render(<FrameworkConceptGraph centerConceptId="a" />)
+    const heading = screen.getByText('What the links mean')
+    expect(heading.tagName).toBe('SUMMARY')
+    expect(screen.getByRole('region', { name: 'What the links mean' })).toBeInTheDocument()
+  })
+
+  it('names every link in plain words once the legend is shown, so one screen uses one name per link', () => {
+    captured.graph = graphWithBoth()
+    render(<FrameworkConceptGraph centerConceptId="a" />)
+    const details = screen.getByRole('region', {
+      name: 'Recorded relationships and generated context',
+    })
+    expect(details).toHaveTextContent('Relationship: Relates to')
+    expect(details).toHaveTextContent('Relationship: Replaces an older edition')
+    expect(details).not.toHaveTextContent('intersects_with')
+    expect(captured.edges.map((e) => e.ariaLabel)).toEqual([
+      'Recorded relationship from Sample A to Sample B: Replaces an older edition',
+      'Recorded relationship from Sample A to Sample C: Relates to',
+    ])
   })
 })
 

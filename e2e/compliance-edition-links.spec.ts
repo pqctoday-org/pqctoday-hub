@@ -44,23 +44,23 @@ interface Pair {
 }
 
 function findPair(): Pair | null {
-  const frameworkIds = new Set(
-    latestCsv('compliance')
-      .filter((r) => (r['status'] ?? 'active') === 'active')
-      .map((r) => r['id'])
-  )
+  // The cross-walk names a record by its id or by its label; both open the same record.
+  const frameworkIdByName = new Map<string, string>()
+  for (const r of latestCsv('compliance')) {
+    if ((r['status'] ?? 'active') !== 'active') continue
+    frameworkIdByName.set(r['id'], r['id'])
+    if (r['label']) frameworkIdByName.set(r['label'], r['id'])
+  }
   const rows = latestCsv('concept_xwalks').filter(
     (r) =>
       r['relationship_type'] === 'supersedes' &&
       !['deprecated', 'obsolete'].includes(r['status'] ?? '')
   )
   for (const r of rows) {
-    if (frameworkIds.has(r['from_concept'])) {
-      return { frameworkId: r['from_concept'], wording: 'Replaces an older edition' }
-    }
-    if (frameworkIds.has(r['to_concept'])) {
-      return { frameworkId: r['to_concept'], wording: 'Replaced by a newer edition' }
-    }
+    const newer = frameworkIdByName.get(r['from_concept'])
+    if (newer) return { frameworkId: newer, wording: 'Replaces an older edition' }
+    const older = frameworkIdByName.get(r['to_concept'])
+    if (older) return { frameworkId: older, wording: 'Replaced by a newer edition' }
   }
   return null
 }

@@ -66,6 +66,8 @@ describe('shipped "published by" and "replaces an older edition" rows', () => {
       expect(org, `${r.xwalkId}: ${r.toConceptId} is not a curated organisation`).not.toBeNull()
       // The node's own label names the same organisation as its id does.
       expect(sourceOrganizationFor(node?.displayLabel)?.id, `${r.xwalkId} label`).toBe(org?.id)
+      // ...and so does its link: the graph shows the registry label and address.
+      expect(node?.primaryUrl, `${r.xwalkId} address`).toBe(org?.sourceUrl)
     }
   })
 

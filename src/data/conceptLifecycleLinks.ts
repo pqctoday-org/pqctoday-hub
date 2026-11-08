@@ -12,11 +12,18 @@
 //   `concept_only` registry row whose id is `concept_only:org-<id>`, where
 //   `<id>` is an entry in the curated source-organisations list. A publisher is
 //   never inferred from a catalogue text column, and an organisation that is not
-//   on the list is not drawn.
+//   on the list is not drawn. An organisation node (curated or not) is never a
+//   document: it cannot be an edition or the document end of a publisher link.
+// - An edition is a document-type record (standard, guidance or framework), not a
+//   timeline milestone, an algorithm or an organisation. When both editions have a
+//   publication date in the Library, the newer edition is not dated before the
+//   older one.
 // - A document that is still a draft does not replace anything. SP 800-131A
 //   Rev 3 and SP 800-57 Part 1 Rev 6 are initial public drafts: they do not yet
 //   replace Rev 2 and Rev 5, so no "replaces an older edition" link is drawn
-//   from them until the Library records them as released.
+//   from them until the Library records them as released. The test fails closed:
+//   if the Library or Compliance record behind the newer edition cannot be found,
+//   its status is unknown and no replacement link is drawn from it.
 //
 // `dropUndrawableLifecycleLinks` runs when the cross-walk file is loaded, so
 // every view (side panel, phone sheet, concept graph, Explore graph) sees only
@@ -42,7 +49,24 @@ export interface LifecycleLookups {
   registryRow: (conceptId: string) => ConceptRegistryRow | undefined
   /** True when the record is a draft (not yet released), by the Library or Compliance record behind it. */
   isDraft: (conceptId: string) => boolean
+  /**
+   * True when the registry row is backed by a Library or Compliance record that cannot be found,
+   * so its status is unknown. Optional: when absent, no record is treated as missing.
+   */
+  sourceRecordMissing?: (conceptId: string) => boolean
+  /** The Library's initial publication date for the record (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`), when it has one. */
+  publicationDate?: (conceptId: string) => string | undefined
 }
+
+/** Registry record types that stand for a document: the only kinds that can be an edition or have a publisher. */
+const DOCUMENT_SOURCE_TYPES: ReadonlySet<ConceptRegistryRow['sourceType']> = new Set([
+  'standard',
+  'guidance',
+  'framework',
+])
+
+/** The id shape of a publisher node, curated or not. An organisation is never a document. */
+const isOrganisationId = (conceptId: string) => conceptId.startsWith(PUBLISHER_CONCEPT_PREFIX)
 
 /** The curated organisation behind a publisher node id, or null when the id is not a publisher node. */
 export function publisherOrganizationFor(
@@ -72,13 +96,19 @@ function libraryRefsBehind(row: ConceptRegistryRow): string[] {
 /**
  * Whether the record behind a registry id is still a draft.
  * - A Library-backed record is a draft when its lifecycle label is "Draft"
- *   (this also covers proposals and Internet-Drafts).
- * - A Compliance-backed record is a draft when its own binding status is
+ *   (this also covers proposals and Internet-Drafts). That includes a record the
+ *   registry row names through a `library:` alias: an alias says the row is the
+ *   same document as that Library record, so the Library's status applies. A
+ *   Compliance row can carry such an alias (the row for ACVP does).
+ * - A Compliance-backed record is also a draft when its own binding status is
  *   "draft" (the row for SP 800-131A Rev 3 is). The Library documents a
- *   Compliance row cites are not part of the test: a national law that cites
- *   the Rev 3 draft as supporting reading is not itself a draft.
+ *   Compliance row merely cites (`library_refs`) are not part of the test: a
+ *   national law that cites the Rev 3 draft as supporting reading is not itself
+ *   a draft.
  * An id that is not in the registry is not known to be a draft; the rules
- * reject such an id for other reasons.
+ * reject such an id for other reasons. A record that cannot be found is not
+ * called a draft here either; `isSourceRecordMissing` covers that case and the
+ * rules treat it as unknown, not as released.
  */
 export function isDraftConcept(conceptId: string): boolean {
   const row = conceptByCanonicalId.get(conceptId)
@@ -91,9 +121,57 @@ export function isDraftConcept(conceptId: string): boolean {
   return false
 }
 
+/**
+ * True when the registry row is backed by a Library or Compliance record that is
+ * not in the shipped data. Its status (released or draft) is then unknown, and an
+ * unknown status is not treated as released.
+ */
+export function isSourceRecordMissing(conceptId: string): boolean {
+  const row = conceptByCanonicalId.get(conceptId)
+  if (!row) return false
+  if (row.sourceTable === 'library') return !findLibraryItemByRef(row.sourceRowId)
+  if (row.sourceTable === 'compliance') return !getFrameworkById(row.sourceRowId)
+  return false
+}
+
+/** The Library's initial publication date for the record behind a registry id, when the Library has one. */
+export function publicationDateOf(conceptId: string): string | undefined {
+  const row = conceptByCanonicalId.get(conceptId)
+  if (!row) return undefined
+  for (const ref of libraryRefsBehind(row)) {
+    const date = findLibraryItemByRef(ref)?.initialPublicationDate?.trim()
+    if (date) return date
+  }
+  return undefined
+}
+
+function dateParts(value: string): number[] | null {
+  const m = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(value.trim())
+  return m
+    ? m
+        .slice(1)
+        .filter((x) => x !== undefined)
+        .map(Number)
+    : null
+}
+
+/** True when `a` is strictly before `b`, comparing only the precision (year, month, day) both dates have. */
+export function isEarlierDate(a: string, b: string): boolean {
+  const pa = dateParts(a)
+  const pb = dateParts(b)
+  if (!pa || !pb) return false
+  for (let i = 0; i < Math.min(pa.length, pb.length); i++) {
+    // eslint-disable-next-line security/detect-object-injection -- i is a loop index over two short arrays
+    if (pa[i] !== pb[i]) return pa[i] < pb[i]
+  }
+  return false
+}
+
 const DEFAULT_LOOKUPS: LifecycleLookups = {
   registryRow: (id) => conceptByCanonicalId.get(id),
   isDraft: isDraftConcept,
+  sourceRecordMissing: isSourceRecordMissing,
+  publicationDate: publicationDateOf,
 }
 
 /**
@@ -109,17 +187,31 @@ export function lifecycleLinkProblem(
   if (record.relationshipType === 'supersedes') {
     if (!from || !to) return 'a replacement link needs both editions to be registered records'
     if (from === to) return 'a document cannot replace itself'
-    if (!lookups.registryRow(from)) return 'the newer edition is not a registered record'
+    const newer = lookups.registryRow(from)
+    if (!newer) return 'the newer edition is not a registered record'
+    // An organisation node is never an edition, curated or not.
+    if (isOrganisationId(from) || isOrganisationId(to)) return 'an organisation is not an edition'
     // The draft rule comes before the other checks on purpose: it is the one the
     // reader would notice (a draft shown as already replacing a released edition).
     if (lookups.isDraft(from))
       return 'the newer edition is still a draft, so it replaces nothing yet'
-    if (!lookups.registryRow(to)) return 'the older edition is not a registered record'
+    // Fail closed: if the record behind the newer edition cannot be found, whether
+    // it is a draft is unknown, and an unknown status is not treated as released.
+    if (lookups.sourceRecordMissing?.(from)) {
+      return 'the newer edition has no Library or Compliance record to check its status against'
+    }
+    const older = lookups.registryRow(to)
+    if (!older) return 'the older edition is not a registered record'
     if (
-      publisherOrganizationFor(from, lookups.registryRow) ||
-      publisherOrganizationFor(to, lookups.registryRow)
+      !DOCUMENT_SOURCE_TYPES.has(newer.sourceType) ||
+      !DOCUMENT_SOURCE_TYPES.has(older.sourceType)
     ) {
-      return 'an organisation is not an edition'
+      return 'an edition must be a document record (standard, guidance or framework)'
+    }
+    const newerDate = lookups.publicationDate?.(from)
+    const olderDate = lookups.publicationDate?.(to)
+    if (newerDate && olderDate && isEarlierDate(newerDate, olderDate)) {
+      return 'the newer edition is dated before the older edition'
     }
     return null
   }
@@ -127,9 +219,11 @@ export function lifecycleLinkProblem(
   if (record.relationshipType === 'published_by') {
     if (!from || !to)
       return 'a publisher link needs the document and the publisher to be registered'
-    if (!lookups.registryRow(from)) return 'the document is not a registered record'
-    if (publisherOrganizationFor(from, lookups.registryRow)) {
-      return 'the document end is an organisation'
+    const document = lookups.registryRow(from)
+    if (!document) return 'the document is not a registered record'
+    if (isOrganisationId(from)) return 'the document end is an organisation'
+    if (!DOCUMENT_SOURCE_TYPES.has(document.sourceType)) {
+      return 'the document end must be a document record (standard, guidance or framework)'
     }
     if (!publisherOrganizationFor(to, lookups.registryRow)) {
       return 'the publisher is not a curated source organisation'

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { useId } from 'react'
 import { edgeLabelFor } from '@/utils/conceptGraphLayout'
 import { DIRECTIONAL_LINK_TYPES, LINK_DEFINITIONS } from '@/utils/conceptLinkWords'
 
@@ -59,6 +60,7 @@ function definitionFor(type: string): string {
  * and whether the link is generated.
  */
 export function ConceptLinkLegend({ types }: ConceptLinkLegendProps) {
+  const titleId = useId()
   const present = new Set(types)
   const ordered = [
     ...LEGEND_ORDER.filter((t) => present.has(t)),
@@ -66,23 +68,32 @@ export function ConceptLinkLegend({ types }: ConceptLinkLegendProps) {
   ]
   if (ordered.length === 0) return null
 
+  // A native <details>: one line above the graph, keyboard-operable, closed until a
+  // reader asks. The region is named by its visible heading (the summary).
   return (
-    <section className="border-t border-border p-4 space-y-3" aria-label="Link types in this view">
-      <h4 className="text-sm font-semibold">What the links mean</h4>
-      <dl
-        className="grid grid-cols-1 gap-x-4 gap-y-2 text-xs sm:grid-cols-[max-content_1fr]"
-        data-testid="legend-list"
-      >
-        {ordered.map((type) => (
-          <div key={type} className="flex flex-col gap-0.5 sm:contents">
-            <dt className="flex items-center gap-2 font-medium text-foreground">
-              <LineSample type={type} />
-              <span>{type === 'implements' ? 'implements' : edgeLabelFor(type)}</span>
-            </dt>
-            <dd className="min-w-0 break-words text-muted-foreground">{definitionFor(type)}</dd>
-          </div>
-        ))}
-      </dl>
+    <section className="border-b border-border" aria-labelledby={titleId}>
+      <details>
+        <summary
+          id={titleId}
+          className="min-h-11 cursor-pointer select-none px-4 py-3 text-sm font-semibold"
+        >
+          What the links mean
+        </summary>
+        <dl
+          className="grid grid-cols-1 gap-x-4 gap-y-2 px-4 pb-4 text-xs sm:grid-cols-[max-content_1fr]"
+          data-testid="legend-list"
+        >
+          {ordered.map((type) => (
+            <div key={type} className="flex flex-col gap-0.5 sm:contents">
+              <dt className="flex items-center gap-2 font-medium text-foreground">
+                <LineSample type={type} />
+                <span>{type === 'implements' ? 'implements' : edgeLabelFor(type)}</span>
+              </dt>
+              <dd className="min-w-0 break-words text-muted-foreground">{definitionFor(type)}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
     </section>
   )
 }

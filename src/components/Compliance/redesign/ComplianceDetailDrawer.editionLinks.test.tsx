@@ -41,6 +41,8 @@ const injected: ConceptXwalkRecord[] = vi.hoisted(() => {
       row(`xw-older-${i}`, 'intersects_with', 'Edition Test Older', peer, 99 - i),
     ]),
     row('xw-supersedes', 'supersedes', 'Edition Test Newer', 'Edition Test Older', 30),
+    // The same pair also has an overlap row, at the highest confidence of all.
+    row('xw-same-pair', 'equivalent', 'Edition Test Newer', 'Edition Test Older', 100),
     row(
       'xw-publisher',
       'published_by',
@@ -111,7 +113,7 @@ function orgNode(id: string, label: string): ConceptRegistryRow {
 }
 
 beforeAll(() => {
-  // The publisher nodes the data lane will add: one curated, one not on the list.
+  // The publisher nodes a later data release will add: one curated, one not on the list.
   conceptByCanonicalId.set('concept_only:org-us-nist', orgNode('concept_only:org-us-nist', 'NIST'))
   conceptByCanonicalId.set(
     'concept_only:org-made-up-institute',
@@ -164,6 +166,28 @@ describe('buildDrawerDetail with edition links', () => {
     const d = buildDrawerDetail(newer, 'standardize')
     expect(d.crosswalk.some((c) => c.name === 'US NIST')).toBe(false)
     expect(d.chain.some((c) => c.value === 'US NIST' || c.kind === 'Published by')).toBe(false)
+  })
+})
+
+describe('a pair with both a replacement link and another link', () => {
+  it('is listed once, as the replacement link, in the side panel list and the traceability chain', () => {
+    for (const [fw, other] of [
+      [newer, 'Edition Test Older'],
+      [older, 'Edition Test Newer'],
+    ] as const) {
+      const d = buildDrawerDetail(fw, 'standardize')
+      const rows = d.crosswalk.filter((c) => c.name === other)
+      expect(rows).toHaveLength(1)
+      expect(rows[0].pinned).toBe(true)
+      const chainRows = d.chain.filter((c) => c.value === other)
+      expect(chainRows).toHaveLength(1)
+      expect(chainRows[0].kind).toMatch(/edition/)
+      expect(d.crosswalk.some((c) => /equivalent/i.test(c.note))).toBe(false)
+    }
+  })
+
+  it('still shows the full set of ranked overlaps for the other records', () => {
+    expect(buildDrawerDetail(newer, 'standardize').crosswalk).toHaveLength(4)
   })
 })
 

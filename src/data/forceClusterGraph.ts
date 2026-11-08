@@ -622,8 +622,8 @@ function buildEdges(
     const cid = conceptIdForRow('compliance', fw.id)
     if (cid) conceptIdToNodeId.set(cid, `comp-${slug(fw.id)}`)
   }
-  // Replacement links go first: one pair gets one link here, and "replaces" is the
-  // more specific fact than the "intersects" row that usually exists for the same pair.
+  // Replacement links go first: a pair is joined once per direction here, and "replaces" is the
+  // more specific fact than an "intersects" row for the same pair in the same direction.
   const xwalkRows = [
     ...conceptXwalkData.filter((x) => x.relationshipType === 'supersedes'),
     ...conceptXwalkData.filter((x) => x.relationshipType !== 'supersedes'),

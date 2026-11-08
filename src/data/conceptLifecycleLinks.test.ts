@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 // The rules that decide whether a "published by" or "replaces an older edition"
-// row may be drawn. The owner's rule (2026-11-08): a draft never replaces
-// anything, and a publisher is only ever a curated source organisation.
+// row may be drawn: a draft never replaces anything, a publisher is only ever a
+// curated source organisation, and an edition is a document record.
 import { describe, expect, it } from 'vitest'
 import type { ConceptXwalkRecord } from './conceptXwalkData'
 import { conceptByCanonicalId, type ConceptRegistryRow } from './conceptRegistry'
@@ -10,7 +10,9 @@ import {
   PUBLISHER_CONCEPT_PREFIX,
   dropUndrawableLifecycleLinks,
   isDraftConcept,
+  isEarlierDate,
   isPublisherConceptId,
+  isSourceRecordMissing,
   lifecycleLinkProblem,
   publisherLinksOutsideScope,
   publisherOrganizationFor,
@@ -56,11 +58,18 @@ function registryRow(conceptId: string, sourceType: ConceptRegistryRow['sourceTy
 }
 
 /** A small registry and a draft list, so the rules are tested without depending on shipped rows. */
-function lookups(drafts: string[] = []): LifecycleLookups {
+function lookups(
+  drafts: string[] = [],
+  extra: { missing?: string[]; dates?: Record<string, string> } = {}
+): LifecycleLookups {
   const known = new Map<string, ConceptRegistryRow>([
     ['standard:doc-v2', registryRow('standard:doc-v2', 'standard')],
     ['standard:doc-v1', registryRow('standard:doc-v1', 'standard')],
     ['standard:doc-v3-draft', registryRow('standard:doc-v3-draft', 'standard')],
+    ['guidance:rule-v2', registryRow('guidance:rule-v2', 'guidance')],
+    ['framework:fw-v1', registryRow('framework:fw-v1', 'framework')],
+    ['timeline:milestone', registryRow('timeline:milestone', 'timeline')],
+    ['algorithm:alg', registryRow('algorithm:alg', 'algorithm')],
     ['concept_only:org-us-nist', registryRow('concept_only:org-us-nist', 'concept_only')],
     ['concept_only:org-made-up', registryRow('concept_only:org-made-up', 'concept_only')],
     ['concept_only:other', registryRow('concept_only:other', 'concept_only')],
@@ -68,6 +77,8 @@ function lookups(drafts: string[] = []): LifecycleLookups {
   return {
     registryRow: (id) => known.get(id),
     isDraft: (id) => drafts.includes(id),
+    sourceRecordMissing: (id) => (extra.missing ?? []).includes(id),
+    publicationDate: (id) => extra.dates?.[id],
   }
 }
 
@@ -108,6 +119,89 @@ describe('supersedes: "replaces an older edition"', () => {
   })
 })
 
+describe('supersedes: organisation nodes, record types, dates and unknown status', () => {
+  it('an organisation node is never an edition, curated or not', () => {
+    for (const org of ['concept_only:org-us-nist', 'concept_only:org-made-up']) {
+      expect(
+        lifecycleLinkProblem(row('a', 'supersedes', 'standard:doc-v2', org), lookups()),
+        `${org} as the older edition`
+      ).toMatch(/organisation is not an edition/)
+      expect(
+        lifecycleLinkProblem(row('b', 'supersedes', org, 'standard:doc-v1'), lookups()),
+        `${org} as the newer edition`
+      ).toMatch(/organisation is not an edition/)
+    }
+  })
+
+  it('only document records can be editions: not a milestone, an algorithm or a plain concept', () => {
+    for (const other of ['timeline:milestone', 'algorithm:alg', 'concept_only:other']) {
+      const asOlder = lifecycleLinkProblem(
+        row('a', 'supersedes', 'standard:doc-v2', other),
+        lookups()
+      )
+      const asNewer = lifecycleLinkProblem(
+        row('b', 'supersedes', other, 'standard:doc-v1'),
+        lookups()
+      )
+      expect(asOlder, `${other} as the older edition`).toMatch(/must be a document record/)
+      expect(asNewer, `${other} as the newer edition`).toMatch(/must be a document record/)
+    }
+    for (const doc of ['standard:doc-v2', 'guidance:rule-v2', 'framework:fw-v1']) {
+      expect(
+        lifecycleLinkProblem(row('c', 'supersedes', doc, 'standard:doc-v1'), lookups()),
+        doc
+      ).toBeNull()
+    }
+  })
+
+  it('rejects a row written the wrong way round when both Library dates are known', () => {
+    const dates = { 'standard:doc-v2': '2019-05-01', 'standard:doc-v1': '2023-01-10' }
+    expect(
+      lifecycleLinkProblem(
+        row('a', 'supersedes', 'standard:doc-v2', 'standard:doc-v1'),
+        lookups([], { dates })
+      )
+    ).toMatch(/dated before the older edition/)
+    // Right way round, equal dates and a missing date all pass.
+    expect(
+      lifecycleLinkProblem(
+        row('b', 'supersedes', 'standard:doc-v1', 'standard:doc-v2'),
+        lookups([], { dates })
+      )
+    ).toBeNull()
+    expect(
+      lifecycleLinkProblem(
+        row('c', 'supersedes', 'standard:doc-v2', 'standard:doc-v1'),
+        lookups([], { dates: { 'standard:doc-v2': '2020-01-01', 'standard:doc-v1': '2020-01-01' } })
+      )
+    ).toBeNull()
+    expect(
+      lifecycleLinkProblem(
+        row('d', 'supersedes', 'standard:doc-v2', 'standard:doc-v1'),
+        lookups([], { dates: { 'standard:doc-v1': '2023-01-10' } })
+      )
+    ).toBeNull()
+  })
+
+  it('compares dates only to the precision both have', () => {
+    expect(isEarlierDate('2019', '2023-01-10')).toBe(true)
+    expect(isEarlierDate('2023', '2023-01-10')).toBe(false)
+    expect(isEarlierDate('2023-02', '2023-01-10')).toBe(false)
+    expect(isEarlierDate('2023-01-09', '2023-01-10')).toBe(true)
+    expect(isEarlierDate('', '2023-01-10')).toBe(false)
+    expect(isEarlierDate('March 2023', '2023-01-10')).toBe(false)
+  })
+
+  it('fails closed: a newer edition whose Library or Compliance record cannot be found is not drawn', () => {
+    const r = row('a', 'supersedes', 'standard:doc-v2', 'standard:doc-v1')
+    expect(lifecycleLinkProblem(r, lookups([], { missing: ['standard:doc-v2'] }))).toMatch(
+      /no Library or Compliance record to check/
+    )
+    // Only the newer end matters for the draft rule.
+    expect(lifecycleLinkProblem(r, lookups([], { missing: ['standard:doc-v1'] }))).toBeNull()
+  })
+})
+
 describe('published_by: "published by"', () => {
   it('draws a registered document published by a curated source organisation', () => {
     const r = row('xw-5', 'published_by', 'standard:doc-v2', 'concept_only:org-us-nist')
@@ -143,6 +237,27 @@ describe('published_by: "published by"', () => {
         lookups()
       )
     ).toMatch(/document is not a registered/)
+  })
+
+  it('an organisation node is never the document end, curated or not', () => {
+    for (const org of ['concept_only:org-us-nist', 'concept_only:org-made-up']) {
+      expect(
+        lifecycleLinkProblem(row('a', 'published_by', org, 'concept_only:org-us-nist'), lookups()),
+        org
+      ).toMatch(/document end is an organisation/)
+    }
+  })
+
+  it('the document end must be a document record', () => {
+    for (const other of ['timeline:milestone', 'algorithm:alg', 'concept_only:other']) {
+      expect(
+        lifecycleLinkProblem(
+          row('a', 'published_by', other, 'concept_only:org-us-nist'),
+          lookups()
+        ),
+        other
+      ).toMatch(/must be a document record/)
+    }
   })
 
   it('other relationship types are never held to these rules', () => {
@@ -227,6 +342,26 @@ describe('isDraftConcept on the shipped Library and Compliance rows', () => {
     expect(isDraftConcept('guidance:nist-sp800-131a')).toBe(true)
   })
 
+  it('a Compliance row that names a Library draft by alias is a draft; a citation alone is not', () => {
+    // ACVP's Compliance row carries the alias library:NIST-ACVP, a Library record labelled Draft:
+    // an alias says it is the same document, so the Library's status applies.
+    expect(isDraftConcept('guidance:acvp')).toBe(true)
+  })
+
+  it('fails closed on the shipped rows whose Library record cannot be found', () => {
+    for (const id of [
+      'standard:draft-connolly-cfrg-xwing-kem-10',
+      'standard:draft-ietf-tls-hybrid-design-16',
+    ]) {
+      expect(conceptByCanonicalId.has(id), `${id} is in the registry`).toBe(true)
+      expect(isSourceRecordMissing(id), `${id} has no Library record`).toBe(true)
+      const r = row('xw-x', 'supersedes', id, 'standard:nist-sp-800-57-pt1-r5')
+      expect(lifecycleLinkProblem(r), id).toMatch(/no Library or Compliance record to check/)
+    }
+    expect(isSourceRecordMissing('standard:nist-sp-800-57-pt1-r5')).toBe(false)
+    expect(isSourceRecordMissing('guidance:fips-140-3')).toBe(false)
+  })
+
   it('a Compliance row that only cites a draft is not a draft itself', () => {
     // Several national laws list the Rev 3 draft among their supporting reading.
     expect(isDraftConcept('guidance:at-nis2')).toBe(false)
@@ -239,7 +374,7 @@ describe('isDraftConcept on the shipped Library and Compliance rows', () => {
     expect(isDraftConcept('standard:does-not-exist')).toBe(false)
   })
 
-  it('the shipped rules refuse the two drafts named by the owner as the newer edition', () => {
+  it('the shipped rules refuse the two named drafts as the newer edition', () => {
     // SP 800-131A Rev 3 -> Rev 2 (Rev 2 has no registry row yet, so the draft rule has to be the reason).
     const rev3 = row(
       'xw-131a',

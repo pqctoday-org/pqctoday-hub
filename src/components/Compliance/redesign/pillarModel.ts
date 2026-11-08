@@ -344,7 +344,9 @@ const PINNED_REPLACEMENT_MAX = 4
  * The rows to list: replacement links first ("Replaced by a newer edition"
  * before "Replaces an older edition"), then the `max` highest-confidence other
  * rows. Replacement links are pinned so that higher-confidence overlaps never
- * push the answer to "is there a newer edition?" out of the list.
+ * push the answer to "is there a newer edition?" out of the list. A record that
+ * is pinned is not listed a second time under another relationship ("equivalent
+ * to", "relates to"): one other record gets one row, the replacement link.
  */
 function pinnedThenRanked(
   framework: ComplianceFramework,
@@ -355,8 +357,18 @@ function pinnedThenRanked(
   const replacements = edges.filter((e) => e.relationshipType === 'supersedes')
   const replacedBy = replacements.filter((e) => !idsToMatch.has(e.fromConcept))
   const replaces = replacements.filter((e) => idsToMatch.has(e.fromConcept))
-  const rest = edges.filter((e) => e.relationshipType !== 'supersedes')
-  return [...[...replacedBy, ...replaces].slice(0, PINNED_REPLACEMENT_MAX), ...rest.slice(0, max)]
+  const pinned = [...replacedBy, ...replaces].slice(0, PINNED_REPLACEMENT_MAX)
+  // The other record of a row, by its stored name and by its concept id.
+  const otherKeys = (e: ConceptXwalkRecord): string[] =>
+    (idsToMatch.has(e.fromConcept)
+      ? [e.toConcept, e.toConceptId]
+      : [e.fromConcept, e.fromConceptId]
+    ).filter(Boolean)
+  const pinnedKeys = new Set(pinned.flatMap(otherKeys))
+  const rest = edges.filter(
+    (e) => e.relationshipType !== 'supersedes' && !otherKeys(e).some((k) => pinnedKeys.has(k))
+  )
+  return [...pinned, ...rest.slice(0, max)]
 }
 
 function otherSide(edge: ConceptXwalkRecord, framework: ComplianceFramework): string {
