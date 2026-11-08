@@ -1,11 +1,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useMemo } from 'react'
+import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import React, { useMemo, useState } from 'react'
 import { AlertTriangle, Globe, Info, ChevronRight } from 'lucide-react'
 import {
   JURISDICTION_FRAMEWORKS,
   getJurisdictionFramework,
   type FrameworkRequirement,
 } from '../data/complianceFrameworks'
+
+import {
+  CASE_TOPICS,
+  emptyCaseAnswers,
+  loadedCaseAnswers,
+  evaluateCase,
+  type Applicability,
+  type CaseAnswer,
+  type CaseTopicId,
+} from './regulatoryGapCase'
 
 interface RegulatoryGapAssessmentProps {
   selectedJurisdictions: string[]
@@ -31,6 +43,19 @@ const EFFORT_BADGE: Record<string, string> = {
 export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = ({
   selectedJurisdictions,
 }) => {
+  const [answers, setAnswers] = useState(emptyCaseAnswers)
+  const [caseLoaded, setCaseLoaded] = useState(false)
+  const results = evaluateCase(answers)
+  const updateAnswer = (
+    id: CaseTopicId,
+    field: 'applicability' | 'answer',
+    value: Applicability | CaseAnswer
+  ) => {
+    setAnswers((current) => ({
+      ...current,
+      [id]: { ...Object.entries(current).find(([key]) => key === id)![1], [field]: value },
+    }))
+  }
   const coveredJurisdictions = useMemo(
     () =>
       selectedJurisdictions
@@ -74,8 +99,102 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
 
   return (
     <div className="space-y-6">
+      <section
+        aria-label="Fictional records-service assessment"
+        className="glass-panel p-4 space-y-4"
+      >
+        <h4 className="font-semibold">Fictional records-service assessment</h4>
+        <p className="text-sm text-muted-foreground">
+          Editable case answers establish only this teaching scenario’s results, not legal
+          compliance or deployed controls. Jurisdiction selection does not supply answers. Use your
+          production tools to establish applicable obligations, control facts and dependencies.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            className="btn-primary"
+            onClick={() => {
+              setAnswers(loadedCaseAnswers())
+              setCaseLoaded(true)
+            }}
+          >
+            Load fictional case
+          </Button>
+          <Button
+            className="btn-secondary"
+            onClick={() => {
+              setAnswers(emptyCaseAnswers())
+              setCaseLoaded(false)
+            }}
+          >
+            Clear case answers
+          </Button>
+        </div>
+        <p className="text-sm">
+          {caseLoaded
+            ? 'Fictional case loaded; answers remain editable.'
+            : 'No case loaded; answer explicitly or load the fictional facts.'}
+        </p>
+        <p role="status" className="text-sm">
+          Case results: {results.filter((r) => r.outcome === 'Gap').length} gaps;{' '}
+          {results.filter((r) => r.outcome === 'Met').length} Met;{' '}
+          {results.filter((r) => r.outcome === 'Unknown').length} Unknown;{' '}
+          {results.filter((r) => r.outcome === 'Not applicable').length} Not applicable.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Planning order follows the declared inventory-before-plan dependency. Unknown facts need
+          investigation, not a remediation rank. Effort is a separate fictional assumption, not a
+          risk score.
+        </p>
+        {CASE_TOPICS.map((topic) => {
+          const result = results.find((row) => row.id === topic.id)!
+          return (
+            <section
+              key={topic.id}
+              aria-label={topic.title}
+              className="rounded-lg border border-border p-3 space-y-2 min-w-0"
+            >
+              <h5 className="font-semibold">{topic.title}</h5>
+              <p className="text-sm">{topic.question}</p>
+              <p className="text-xs text-muted-foreground">Fictional fact: {topic.fact}</p>
+              <div className="flex flex-wrap gap-3">
+                <div className="space-y-1">
+                  <p className="text-xs">Applicability</p>
+                  <FilterDropdown
+                    items={['Unknown', 'Applies', 'Not applicable']}
+                    selectedId={result.applicability}
+                    onSelect={(value) =>
+                      updateAnswer(topic.id, 'applicability', value as Applicability)
+                    }
+                    ariaLabel={`Applicability — ${topic.title}`}
+                    hideDefaultOption
+                    className="max-w-full"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs">Answer</p>
+                  <FilterDropdown
+                    items={['Unknown', 'Missing', 'Partial', 'Met']}
+                    selectedId={result.answer}
+                    onSelect={(value) => updateAnswer(topic.id, 'answer', value as CaseAnswer)}
+                    ariaLabel={`Answer — ${topic.title}`}
+                    hideDefaultOption
+                    className="max-w-full"
+                  />
+                </div>
+              </div>
+              <p className="text-sm">
+                Case-question result: {result.outcome}. Action: {result.action}. Case effort:{' '}
+                {topic.effort}.
+              </p>
+              <p className="text-xs">{result.rationale}</p>
+            </section>
+          )
+        })}
+      </section>
       <div className="glass-panel p-4 space-y-2">
-        <p className="text-sm font-semibold text-foreground">Implementation status: Not assessed</p>
+        <p className="text-sm font-semibold text-foreground">
+          Catalogue implementation status: Not assessed
+        </p>
         <p className="text-sm text-muted-foreground">
           Selecting a jurisdiction chooses catalogue topics; it does not establish that requirements
           are met or that a control gap exists. Catalogue flags suggest topics to review, not
