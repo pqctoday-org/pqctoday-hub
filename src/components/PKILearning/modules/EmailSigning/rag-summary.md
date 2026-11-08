@@ -14,12 +14,12 @@ The Email and Document Signing module covers Cryptographic Message Syntax (CMS) 
 - **Why KEMs replace key transport** — NIST standardized ML-KEM (FIPS 203) as a KEM primitive, not a public-key encryption scheme; RFC 9629 bridges this with KEMRecipientInfo
 - **Signing certificates** require keyUsage: digitalSignature/nonRepudiation, extKeyUsage: id-kp-emailProtection, subjectAltName: rfc822Name; algorithm: ML-DSA-65 or ECDSA P-256
 - **Encryption certificates** require keyUsage: keyEncipherment (RSA) or keyAgreement (ECDH); for ML-KEM certificates keyEncipherment is the only key usage set when the keyUsage extension is present (RFC 9935 §5); algorithm: ML-KEM-768 or RSA-2048
-- **Separate key pairs** — users typically have separate signing (ML-DSA) and encryption (ML-KEM) key pairs; smimeCapabilities attribute advertises supported algorithms
+- **Separate key pairs** — users typically have separate signing (ML-DSA) and encryption (ML-KEM) key pairs; smimeCapabilities attribute lists, in preference order and only in part, the algorithms a signer says it can handle (RFC 8551 section 2.5.2)
 - **OpenPGP (RFC 9580 / RFC 9980)** — the other email and file standard; no X.509 certificates or CA, keys carry their own identities. RFC 9980 (Post-Quantum Cryptography in OpenPGP, Proposed Standard) adds composite PQ/T algorithms: ML-KEM-768+X25519 (algorithm ID 35, MUST) and ML-KEM-1024+X448 (36, SHOULD) for encryption; ML-DSA-65+Ed25519 (30, MUST) and ML-DSA-87+Ed448 (31, SHOULD) for signatures; standalone SLH-DSA-SHAKE-128s/128f/256s (32-34, MAY). Lattice schemes only as composites (either half secures the message); SLH-DSA standalone because its hash-based assumptions are well understood. PQ algorithms are for v6 keys only, except ML-KEM-768+X25519, also allowed in v4 encryption-capable subkeys
 - **Migration challenges**:
   - **Bidirectional compatibility** — both sender and recipient must support the same algorithms (unlike TLS where servers can upgrade unilaterally)
   - **Dual-algorithm certificates** — organizations must issue both classical and PQC certificates during transition
-  - **Recipient capability discovery** — senders must discover recipient algorithm support via smimeCapabilities and LDAP
+  - **Recipient capability discovery** — senders must find out which algorithms each recipient can handle, for example from the smimeCapabilities of the recipient's earlier signed messages (a partial list in preference order) and from LDAP directory lookups
   - **Message size impact** — ML-DSA-65 signatures are approximately 3.3 KB versus 72 bytes for ECDSA; signed emails with certificate chains grow 10-15 KB
   - **Archival and long-term validation** — signed emails must remain verifiable for years or decades
   - **Gateway compatibility** — email gateways, DLP systems, and archival solutions must understand PQC-signed CMS structures

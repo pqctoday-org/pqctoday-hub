@@ -78,11 +78,11 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       id: 'migration-strategy',
       title: '5. Dual-Algorithm Migration Strategy',
       description:
-        'Review the S/MIME extensions in the certificate viewer, then examine how smimeCapabilities enables gradual PQC rollout. Consider how an organization would maintain both RSA and ML-DSA certificates during transition.',
+        'Review the S/MIME extensions in the certificate viewer, then examine what smimeCapabilities tells a sender about the algorithms a correspondent can handle during a gradual PQC rollout. Consider how an organization would maintain both RSA and ML-DSA certificates during transition.',
       badge: 'Migration',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'A sender can put both a KeyTransRecipientInfo (RSA) and a KEMRecipientInfo (ML-KEM) in one message for the same recipient, but both entries wrap the same CEK, so anyone who can break the RSA entry can read the message: the weakest permitted decryption path sets the confidentiality. That is multiple-recipient fallback, not a hybrid KEM, which combines the shared secrets of two algorithms into one key-encryption key. The smimeCapabilities attribute signals which algorithms each party supports.',
+        'A sender can put both a KeyTransRecipientInfo (RSA) and a KEMRecipientInfo (ML-KEM) in one message for the same recipient, but both entries wrap the same CEK, so anyone who can break the RSA entry can read the message: the weakest permitted decryption path sets the confidentiality. That is multiple-recipient fallback, not a hybrid KEM, which combines the shared secrets of two algorithms into one key-encryption key. The smimeCapabilities attribute is a partial list of the algorithms a signer says it can handle, in order of preference.',
       config: { step: 0 },
     },
   ]
