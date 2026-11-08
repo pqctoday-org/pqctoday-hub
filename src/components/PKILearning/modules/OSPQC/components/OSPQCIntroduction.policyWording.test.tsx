@@ -31,3 +31,12 @@ describe('OSPQC introduction: Red Hat crypto-policies row', () => {
     expect(text).not.toContain('X25519MLKEM768 hybrid group systemwide')
   })
 })
+
+describe('OSPQC introduction: Ubuntu openssl.cnf row', () => {
+  it('ties the x25519mlkem768 group to Ubuntu 26.04 LTS (OpenSSL 3.5.5), not to 24.04', () => {
+    const text = introText()
+    expect(text).toContain('Ubuntu 26.04 LTS (OpenSSL 3.5.5)')
+    expect(text).toContain('Ubuntu 24.04 LTS ships OpenSSL 3.0.13, which has no ML-KEM.')
+    expect(text).not.toMatch(/Ubuntu 24\.04 LTS\s*Groups = x25519mlkem768/)
+  })
+})

@@ -259,7 +259,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'mature',
     pqcReadiness: 'preview',
     pqcNotes:
-      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints. Nitro attestation documents still use ECDSA P-384, and the attestation key migration timeline is not public.',
+      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange). AWS pages differ on the edges: the AWS KMS hybrid post-quantum TLS page says all endpoints, including FIPS 140-3 validated endpoints, in the Regions where AWS KMS is available; the AWS PQ readiness page lists FIPS and non-FIPS endpoints in commercial and US GovCloud Regions as launched; and the Infrastructure security in AWS KMS page says hybrid post-quantum TLS is supported in all Regions except the China Regions and is not supported on AWS GovCloud (US) FIPS endpoints, so check the endpoint and Region you use. Nitro attestation documents still use ECDSA P-384, and the attestation key migration timeline is not public.',
     strengths: [
       'Extremely simple trust model — no OS, no network, no storage in enclave',
       'Tight KMS integration for attestation-based key access',
