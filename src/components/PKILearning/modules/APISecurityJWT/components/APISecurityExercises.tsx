@@ -78,7 +78,7 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       id: 'size-analysis',
       title: '5. Analyze token sizes across 7 algorithms',
       description:
-        'Edit the JWT payload and observe how total token size changes across all 7 signing algorithms. Note the segmented bar chart showing header, payload, and signature proportions. Identify which algorithms exceed the 8 KB HTTP header limit.',
+        'Edit the JWT payload and observe how total token size changes across all 7 signing algorithms. Note the segmented bar chart showing header, payload, and signature proportions. Identify which algorithms would use most of a configured HTTP header limit (limits vary; the 8 KB bar in the lesson is only an example budget).',
       badge: 'Size Analyzer',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
