@@ -170,23 +170,7 @@ const RULES: Rule[] = [
  * corrected CSV ships an entry stops matching; the second test then fails until the
  * entry is deleted, so the list cannot rot.
  */
-const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
-  // The older block of the assessment file (no category column) still carries the three
-  // retention labels that the current retention rows replaced; the proposed cell changes are
-  // with the data lane. Delete these entries when that file is revised.
-  { file: /pqcassessment_/, text: '6 years (HIPAA minimum)' },
-  {
-    file: /pqcassessment_/,
-    text: 'Minimum retention under HIPAA for protected health information',
-  },
-  { file: /pqcassessment_/, text: '2 years (PCI DSS cardholder data)' },
-  { file: /pqcassessment_/, text: '6 years (FERPA / financial aid)' },
-  // The combined module Q&A file still has one answer that gives CNSA 2.0 a 2033 end date.
-  {
-    file: /module_qa_combined_/,
-    text: 'required to transition to exclusively Post-Quantum Cryptography (PQC) by the year 2033',
-  },
-]
+const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = []
 
 const isPending = (s: Sentence) =>
   PENDING_DATA_FIXES.some((p) => p.file.test(s.file) && s.text.includes(p.text))
