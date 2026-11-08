@@ -76,6 +76,227 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   )
 }
 
+interface ExchangePath {
+  path: string
+  mechanism: string[]
+  quantumSafe: string
+  whereKeyEnds: string
+}
+
+/**
+ * AWS KMS key-exchange paths, from the AWS KMS Developer Guide and API Reference pages
+ * (post-quantum keys, importing key material, Encapsulate, Decapsulate, GenerateDataKeyPair).
+ * Sentences that are claim-matched to a Library row are reproduced word for word.
+ */
+const AWS_EXCHANGE_PATHS: ExchangePath[] = [
+  {
+    path: 'Import (BYOK) into AWS KMS',
+    mechanism: [
+      'GetParametersForImport returns an RSA wrapping public key and an import token; ImportKeyMaterial accepts the wrapped key.',
+      'AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys.',
+      'A 256-bit AES or HMAC key is wrapped with RSAES_OAEP_SHA_256 or RSAES_OAEP_SHA_1; asymmetric private key material uses RSA_AES_KEY_WRAP_SHA_256 or RSA_AES_KEY_WRAP_SHA_1. RSAES_PKCS1_V1_5 has not been supported since 10 October 2023.',
+    ],
+    quantumSafe:
+      'No. The wrap is RSA. Hybrid post-quantum TLS protects the API call that carries it, not the wrap.',
+    whereKeyEnds: 'Inside AWS KMS, in an imported key.',
+  },
+  {
+    path: 'Export out of AWS KMS',
+    mechanism: [
+      'A KMS key is not exported. Only data keys and data key pairs come out.',
+      'AWS KMS GenerateDataKeyPair can return ML-KEM data key pairs, with the private key in seed format, encrypted under a symmetric KMS key.',
+      'The response also carries a plaintext copy of the private key unless a Nitro enclave Recipient is used, and a Recipient is limited to the RSAES_OAEP_SHA_256 algorithm.',
+    ],
+    quantumSafe:
+      'Encrypting under a symmetric AES-256 KMS key: yes. Delivery to a Nitro enclave Recipient: no, it is RSA.',
+    whereKeyEnds: 'The caller’s memory, outside any HSM.',
+  },
+  {
+    path: 'ML-KEM key establishment',
+    mechanism: [
+      'The partner gets the public key with GetPublicKey and encapsulates with its own library; AWS KMS Decapsulate recovers the secret.',
+      "AWS KMS Encapsulate works only with the public key of a KMS ML-KEM key, so encapsulating to a partner's HSM key happens in the caller's own library.",
+      'AWS KMS Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application.',
+    ],
+    quantumSafe:
+      'Yes for the key establishment (FIPS 203). The secret then lives outside the HSM, so any wrapping or key derivation done with it is the application’s job.',
+    whereKeyEnds:
+      'The application’s memory, in plaintext. It is not a KMS key, and Decapsulate has no Recipient option to deliver it to an enclave.',
+  },
+  {
+    path: 'Hybrid, combined in your application',
+    mechanism: [
+      'Combine an ECDH secret (the DeriveSharedSecret operation) with the Decapsulate secret using an SP 800-56C key derivation, in your own code.',
+      'The AWS KMS ML-KEM key specs are ML_KEM_512, ML_KEM_768 and ML_KEM_1024; none of them is a hybrid.',
+    ],
+    quantumSafe:
+      'The combined secret is quantum-safe if the ML-KEM part is, but the combiner runs outside the HSM.',
+    whereKeyEnds: 'The application’s memory.',
+  },
+  {
+    path: 'RSA key transport',
+    mechanism: [
+      'The partner encrypts the key to the public key of a KMS RSA key; Decrypt returns the plaintext to the caller.',
+    ],
+    quantumSafe: 'No. RSA key transport is quantum-vulnerable.',
+    whereKeyEnds: 'The caller’s memory.',
+  },
+]
+
+const CloudKeyExchange: React.FC = () => (
+  <div className="space-y-4" data-testid="cloud-key-exchange">
+    <h3 className="text-base font-bold text-foreground">
+      Exchanging keys with a third-party HSM or KMS
+    </h3>
+    <p className="text-muted-foreground">
+      Moving a key between a partner HSM or key manager and a cloud KMS is a different problem from
+      encrypting data with a KMS. This section sets out what AWS KMS, Google Cloud KMS and Azure Key
+      Vault document for key import and key establishment as of November 2026, whether each path is
+      quantum-safe, and where the key ends up. The Workshop step &ldquo;Exchange keys with a cloud
+      KMS&rdquo; simulates these flows in the browser; no cloud service is called.
+    </p>
+    <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+      <p className="text-sm text-foreground">
+        <strong>Headline, November 2026.</strong> The AWS and Azure pages cited here describe
+        RSA-based key import only: for AWS KMS and Azure Key Vault there is no quantum-safe import
+        path in these pages, and they describe no preview of one. Google Cloud KMS documents a
+        quantum-safe import built on HPKE, in Preview, for software-protected keys. A quantum-safe
+        transport protects the API call that carries a wrapped key; it does not change how the key
+        is wrapped.
+      </p>
+    </div>
+
+    <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+      <h4 className="font-semibold text-foreground">AWS KMS</h4>
+      <p className="text-sm text-muted-foreground">
+        AWS KMS offers ML-DSA signing keys (ML_DSA_44, ML_DSA_65, ML_DSA_87) and ML-KEM
+        key-establishment keys (ML_KEM_512, ML_KEM_768, ML_KEM_1024). AWS added ML-KEM keys to AWS
+        KMS on 26 October 2026; they are not available in the China, Middle East (UAE) and Middle
+        East (Bahrain) Regions. Neither key family can receive imported key material.
+      </p>
+      <div
+        className="overflow-x-auto"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard.
+        tabIndex={0}
+        role="region"
+        aria-label="AWS KMS key exchange paths"
+      >
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border text-left text-muted-foreground">
+              <th className="py-2 px-2 font-medium">Path</th>
+              <th className="py-2 px-2 font-medium">Mechanism</th>
+              <th className="py-2 px-2 font-medium">Quantum-safe?</th>
+              <th className="py-2 px-2 font-medium">Where the key ends up</th>
+            </tr>
+          </thead>
+          <tbody>
+            {AWS_EXCHANGE_PATHS.map((row) => (
+              <tr key={row.path} className="border-b border-border/50 align-top">
+                <th scope="row" className="py-2 px-2 text-left font-semibold text-foreground">
+                  {row.path}
+                </th>
+                <td className="py-2 px-2 text-muted-foreground space-y-1">
+                  {row.mechanism.map((m) => (
+                    <p key={m}>{m}</p>
+                  ))}
+                </td>
+                <td className="py-2 px-2 text-muted-foreground">{row.quantumSafe}</td>
+                <td className="py-2 px-2 text-muted-foreground">{row.whereKeyEnds}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-sm text-muted-foreground">
+        An external key store keeps the key in your own HSM (see the HYOK card above); it supports
+        only symmetric encryption keys and offers no ML-KEM path. AWS Payment Cryptography has its
+        own key import and export methods; they are not covered here. AWS KMS supports hybrid
+        post-quantum TLS that combines ECDH with ML-KEM on its service endpoints. AWS lists hybrid
+        post-quantum key exchange as launched on FIPS and non-FIPS endpoints for AWS KMS, AWS
+        Payment Cryptography and the AWS CloudHSM control plane. AWS pages differ on the edges, so
+        check the endpoint and Region you use: another AWS page excludes the China Regions and AWS
+        GovCloud (US) FIPS endpoints, which the AWS PQ readiness page lists as launched.
+      </p>
+      <p className="text-sm text-muted-foreground">
+        AWS&apos;s post-quantum keys page notes that AWS KMS is closely tracking the IETF
+        post-quantum HPKE draft as a replacement for RSA-based encryption; it describes no import
+        feature built on it.
+      </p>
+    </div>
+
+    <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+      <h4 className="font-semibold text-foreground">Google Cloud KMS</h4>
+      <p className="text-sm text-muted-foreground">
+        Google Cloud KMS key import wraps key material for transfer, with RSA-based import methods
+        alongside the quantum-safe HPKE methods. The RSA methods use RSAES-OAEP with SHA-1 or
+        SHA-256, with or without AES-KWP, under a 3072-bit or 4096-bit import-job key.
+      </p>
+      <p className="text-sm text-muted-foreground">
+        Google Cloud KMS quantum-safe key import, in Preview since 6 August 2026, wraps imported key
+        material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.
+        It is supported for software-backed keys (SOFTWARE protection level) only.
+      </p>
+      <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+        <li>
+          You create an import job with one of the import methods
+          HPKE_KEM_XWING_HKDF_SHA256_AES_256_GCM, HPKE_KEM_ML_KEM_768_HKDF_SHA256_AES_256_GCM or
+          HPKE_KEM_ML_KEM_1024_HKDF_SHA256_AES_256_GCM. A job expires after three days.
+        </li>
+        <li>
+          When the job is ACTIVE you download its public key. On your side, wrapping runs
+          HPKE.Seal() as defined in RFC 9180 and concatenates the encapsulated key and the
+          ciphertext (<code>enc || ciphertext</code>). Google&apos;s Go sample uses Tink with an
+          empty context.
+        </li>
+        <li>The imported key material becomes a new key version on an existing target key.</li>
+      </ul>
+      <p className="text-sm text-muted-foreground">
+        The launch stage of key encapsulation differs by source. Google Cloud KMS release notes list
+        the ML-KEM and X-Wing key encapsulation algorithms as Preview since 23 September 2025.
+        Google&apos;s 28 July 2026 blog post announces general availability of ML-KEM key
+        encapsulation; check the current launch stage before relying on either. Post-quantum signing
+        in Cloud KMS became generally available on 16 July 2026.
+      </p>
+    </div>
+
+    <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+      <h4 className="font-semibold text-foreground">Azure Key Vault and Managed HSM</h4>
+      <p className="text-sm text-muted-foreground">
+        Azure Key Vault BYOK transfers a key wrapped with CKM_RSA_AES_KEY_WRAP under an RSA-HSM key
+        exchange key of 2048, 3072 or 4096 bits. Azure Managed HSM BYOK uses an RSA-HSM key exchange
+        key that has only the import key operation.
+      </p>
+      <p className="text-sm text-muted-foreground">
+        The mechanism encrypts an ephemeral AES key with RSA-OAEP (SHA-1) and the target key with
+        AES key wrap with padding, then concatenates the two. The transfer blob is a{' '}
+        <code>.byok</code> file whose header names the key exchange key and the CKM_RSA_AES_KEY_WRAP
+        mechanism. The Azure pages cited here describe no post-quantum option.
+      </p>
+    </div>
+
+    <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+      <li>
+        <strong>Transport is not the wrap.</strong> Hybrid post-quantum TLS to a KMS endpoint
+        protects the request. Whether a key moved between two HSMs is quantum-safe depends on the
+        key-wrapping step, which is RSA for AWS KMS and Azure and HPKE for Google&apos;s Preview
+        import.
+      </li>
+      <li>
+        <strong>A plain ML-KEM exchange hands the secret to the application.</strong> The
+        application can derive a wrapping key (HKDF) and wrap a key with AES-KW, but the derivation
+        and the wrap happen outside the HSM.
+      </li>
+      <li>
+        <strong>HPKE is the pattern.</strong> Google&apos;s import shows what a post-quantum import
+        looks like: the sender runs HPKE Seal to the service&apos;s public key, and the service
+        opens it inside its boundary. The Workshop step shows the same flow as a candidate design
+        for AWS and Azure, labelled as not offered by those providers.
+      </li>
+    </ul>
+  </div>
+)
+
 export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNavigateToWorkshop }) => {
   // The data-section-id anchors below were already here and already
   // matched this module's manifest; nothing read them. One call makes
@@ -207,9 +428,14 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               </table>
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
-              PQC keys are significantly larger than classical equivalents &mdash; 4&ndash;10&times;
-              vs RSA baselines, and up to 40&times; vs ECDSA P-256 &mdash; impacting HSM storage,
-              certificate sizes, and network bandwidth during key distribution.
+              PQC public keys are about 3&times; (ML-KEM-512) to 10&times; (ML-DSA-87) the size of
+              an RSA-2048 public key, and up to about 40&times; the size of an ECDSA P-256 public
+              key &mdash; impacting HSM storage, certificate sizes, and network bandwidth during key
+              distribution. The Security column uses two scales: classical rows show approximate bit
+              strength (NIST SP 800-57 Part 1 Rev. 5, Table 2), and PQC rows show NIST security
+              categories. SP 800-57 has no row for RSA-4096, which falls between its 128-bit and
+              192-bit entries. The RSA private-key sizes are typical DER lengths and vary by a few
+              bytes between keys.
             </p>
           </div>
         </CollapsibleSection>
@@ -312,6 +538,14 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             . With a sound combiner, the derived key stays secret as long as either shared secret
             does.
           </p>
+          <p>
+            Do not confuse these key-wrap combiners with the TLS hybrid groups. X25519MLKEM768,
+            SecP256r1MLKEM768 and SecP384r1MLKEM1024 (RFC 10024) protect a live connection: the two
+            secrets are concatenated and fed to the TLS 1.3 key schedule. The combiners below wrap a
+            key that is stored, so this module defines its own HKDF call over the two secrets. They
+            are different constructions even when they use the same two algorithms, and a TLS group
+            name does not describe how a KMS wraps its keys.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {HYBRID_COMBINER_MODES.map((mode) => (
@@ -351,7 +585,18 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
         <p>
           Cloud <InlineTooltip term="KMS">KMS</InlineTooltip> providers and on-premises key
           management solutions are at different stages of PQC adoption. Understanding each
-          provider&apos;s capabilities is critical for multi-cloud strategies.
+          provider&apos;s capabilities is critical for multi-cloud strategies. The list is not
+          exhaustive: Entrust nShield and KeyControl and IBM key-management products are not covered
+          by this module&apos;s sources.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          A post-quantum algorithm counts as FIPS-validated only if the module&apos;s own FIPS 140-3
+          validation covers it. The CMVP implementation guidance requires an ML-KEM implementation
+          to show FIPS 203 compliance and pass its self-tests, and a hybrid scheme to use an
+          approved key combiner, so check the certificate and Security Policy for the module that
+          runs your keys. The AWS KMS HSM certificate (CMVP #4884) lists no ML-DSA or ML-KEM
+          algorithm, and a key service&apos;s FIPS level does not carry over to a newer key type by
+          implication.
         </p>
 
         <div className="space-y-4">
@@ -409,7 +654,16 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
                   {provider.apiPattern}
                 </pre>
 
+                {provider.launchStageNote && (
+                  <p className="text-[10px] text-warning mb-2">{provider.launchStageNote}</p>
+                )}
                 <p className="text-[10px] text-muted-foreground">{provider.notes}</p>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  <strong>Key import:</strong> {provider.keyImportPath}
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  <strong>Rotation:</strong> {provider.autoRotationNote}
+                </p>
               </div>
             )
           })}
@@ -438,15 +692,19 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
                 <div className="text-lg font-bold text-foreground">
                   {ENTERPRISE_SCENARIO.totalCertificates}
                 </div>
-                <div className="text-[10px] text-muted-foreground">Total Certificates</div>
+                <div className="text-[10px] text-muted-foreground">Total Keys and Certificates</div>
               </div>
               <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
                 <div className="text-lg font-bold text-destructive">400</div>
-                <div className="text-[10px] text-muted-foreground">Quantum-Vulnerable</div>
+                <div className="text-[10px] text-muted-foreground">
+                  Quantum-Vulnerable (RSA and ECDSA)
+                </div>
               </div>
               <div className="bg-success/5 rounded-lg p-3 border border-success/20 text-center">
                 <div className="text-lg font-bold text-success">100</div>
-                <div className="text-[10px] text-muted-foreground">Already Safe (AES-256)</div>
+                <div className="text-[10px] text-muted-foreground">
+                  Already Safe (100 AES-256 data keys)
+                </div>
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
@@ -456,6 +714,15 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               chains with larger signatures add more overhead.
             </p>
           </div>
+
+          <p className="text-xs text-muted-foreground">
+            NIST SP 800-57 Part 1 Revision 6 (Initial Public Draft, December 2025, so it may still
+            change) adds ML-KEM-aware cryptoperiods: it suggests no more than one or two years for a
+            public static encapsulation key and recommends no more than two years for a private
+            static decapsulation key, which may need to outlive the encapsulation key because
+            earlier ciphertexts still have to be decapsulated. Revision 5 remains the final
+            publication.
+          </p>
 
           {/* Phased rotation approach */}
           <div className="space-y-2">
@@ -577,18 +844,41 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               <p className="text-xs text-muted-foreground">
                 KMIP 3.0 (Committee Specification Draft 02, 7 May 2026) adds the FIPS 203, 204 and
                 205 algorithms (ML-KEM, ML-DSA, SLH-DSA) and includes Encapsulate and Decapsulate
-                operations. Use KMIP as the abstraction layer for cross-provider key operations:
-                create, wrap, unwrap, rotate, destroy.
+                operations; KMIP 2.1 is the OASIS Standard. Use KMIP as the abstraction layer for
+                cross-provider key operations: Create Key Pair, Get (with a wrapping specification),
+                Re-key Key Pair, Revoke and Destroy. KMIP has no Wrap, Unwrap or Rotate operation.
+                Re-key replaces a symmetric key; Re-key Key Pair replaces a key pair, which is what
+                an ML-KEM or ML-DSA key needs. A key moves Pre-Active, Active, Deactivated,
+                Destroyed (Compromised is a further state), and Destroy applies only to Pre-Active
+                or Deactivated objects, so an Active key is first deactivated with Revoke.
               </p>
+              <div
+                className="mt-2 flex flex-wrap items-center gap-1 text-[10px]"
+                role="img"
+                aria-label="KMIP key lifecycle: Pre-Active, then Activate to Active, then Revoke to Deactivated, then Destroy to Destroyed"
+              >
+                {['Pre-Active', 'Active', 'Deactivated', 'Destroyed'].map((state, idx) => (
+                  <React.Fragment key={state}>
+                    {idx > 0 && (
+                      <span className="text-muted-foreground">
+                        &rarr; {['Activate', 'Revoke', 'Destroy'][idx - 1]} &rarr;
+                      </span>
+                    )}
+                    <span className="rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-primary">
+                      {state}
+                    </span>
+                  </React.Fragment>
+                ))}
+              </div>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">Key Backup Strategy</div>
               <p className="text-xs text-muted-foreground">
                 In this module&apos;s design, PQC key backup uses quantum-safe wrapping for the
                 backup envelope: ML-KEM wraps the backup keys, with M-of-N key splitting for
-                disaster recovery, and backup HSMs run PQC-capable firmware. The Applied Quantum
-                framework describes PQC key-wrapping around classical HSM operations as interim
-                protection.
+                disaster recovery, and backup HSMs run PQC-capable firmware. For HSMs that cannot
+                yet be upgraded, the Applied Quantum framework (v2.1) suggests PQC key-wrapping
+                around classical HSM operations as interim protection.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -773,6 +1063,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             </div>
           ))}
         </div>
+        <CloudKeyExchange />
         <p className="text-muted-foreground">
           NIST SP 800-210 sets out access-control guidance across IaaS, PaaS and SaaS and is the
           reference for arguing where a boundary actually sits. It was published in July 2020,
