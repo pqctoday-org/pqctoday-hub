@@ -538,7 +538,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What HSMs support ML-KEM and ML-DSA?',
         answer:
-          'Major HSM vendors including Thales (Luna), Entrust (nShield), Utimaco, and AWS CloudHSM have announced or delivered PQC algorithm support including ML-KEM and ML-DSA, with varying levels of FIPS 140-3 validation status. Some vendors offer firmware upgrades for existing hardware while others require new PQC-capable models. The Migrate catalog tracks HSM PQC support and FIPS validation status.',
+          'Major HSM vendors including Thales (Luna), Entrust (nShield) and Utimaco have announced or delivered PQC algorithm support including ML-KEM and ML-DSA, with varying levels of FIPS 140-3 validation status. Cloud HSMs differ: AWS CloudHSM documents ML-DSA key generation and signing (in FIPS mode on hsm2m.medium clusters from 1 September 2026) but no ML-KEM command. Some vendors offer firmware upgrades for existing hardware while others require new PQC-capable models. The Migrate catalog tracks HSM PQC support and FIPS validation status.',
         deepLink: '/migrate?domain=hsm',
       },
       {

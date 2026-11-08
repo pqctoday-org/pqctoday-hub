@@ -769,7 +769,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/learn/kms-pqc': {
     architect:
-      'Design the three-level key hierarchy (root KEK, zone KEK, DEK), compare ML-KEM envelope encryption with RSA-OAEP wrapping, explore the X25519 plus ML-KEM-768 combiner per provider, and write an AWS KMS key policy that enforces hybrid PQC.',
+      'Design the three-level key hierarchy (root KEK, zone KEK, DEK), compare ML-KEM envelope encryption with RSA-OAEP wrapping, explore the X25519 plus ML-KEM-768 combiner per provider, and write an AWS KMS policy that restricts key specs and key usage; no policy condition can require post-quantum TLS, which is a client setting.',
     researcher:
       'The envelope-encryption comparison and the hybrid combiner step are the primitives, and the KMIP v3.0 step maps PQC key types across providers.',
     ops: 'Plan PQC key rotation with provider-specific strategies and compliance windows in Step 4, and the KMIP operations in Step 5: the KMS is where every downstream key lives.',
