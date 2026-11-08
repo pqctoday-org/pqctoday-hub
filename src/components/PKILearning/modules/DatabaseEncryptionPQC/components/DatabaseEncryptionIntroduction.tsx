@@ -329,7 +329,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               Customer generates keys in on-prem HSM, uploads to cloud KMS. Can enforce ML-KEM-1024
               wrapping for CMK import on customer&apos;s own schedule. Cloud KMS must support an
               ML-KEM import-wrapping format (AWS KMS offers ML-KEM key specs, but its import
-              wrapping keys are RSA only; check Azure and Google Cloud per service).
+              wrapping keys are RSA (SM2 in the China Regions); check Azure and Google Cloud per
+              service).
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">

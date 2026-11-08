@@ -47,7 +47,7 @@ The three patterns differ in key custody and revocation, not in a measured PQC r
 ### BYOK — Bring Your Own Key
 
 - In this module's reading, customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
-- ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only; check Azure and Google Cloud per service
+- ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA (SM2 in the China Regions); check Azure and Google Cloud per service
 - Cloud KMS briefly holds unwrapped CMK in HSM memory — residual exposure
 - Satisfies most regulatory BYOK requirements
 
