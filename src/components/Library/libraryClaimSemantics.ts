@@ -5,7 +5,7 @@ const SCOPE_SENSITIVE_CLAIM =
   /\b(mandat(?:e|ed|ory)|require(?:s|d|ment|ments)?|must|prohibit(?:s|ed)?|deadline|compliant|certif(?:y|ied|ication))\b/i
 
 const DOCUMENTED_PRIMARY_REVIEW =
-  /fetched and read directly|verified verbatim|content-verified|official .* reviewed|cross-checked by codex and approved|corrected via approved proposal/i
+  /fetched and read directly|verified verbatim|content-verified|official .* reviewed|cross-checked by codex and approved|corrected via approved proposal|corrected on review \d{4}-\d{2}-\d{2}/i
 
 export function hasSufficientClaimReview(item: LibraryItem): boolean {
   if (!item.lastVerified) return false
