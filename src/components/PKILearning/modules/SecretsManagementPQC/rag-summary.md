@@ -44,5 +44,5 @@ Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secr
 
 ## Cloud Provider PQC Status (March 2026)
 
-- AWS Secrets Manager: hybrid ML-KEM TLS on its non-FIPS endpoints (data in transit)
+- AWS Secrets Manager: AWS lists hybrid post-quantum key exchange as launched on its FIPS and non-FIPS endpoints in commercial and US GovCloud Regions (data in transit)
 - AWS KMS ML-KEM keys (Encapsulate/Decapsulate); Secrets Manager stays AES-256 under symmetric KMS keys

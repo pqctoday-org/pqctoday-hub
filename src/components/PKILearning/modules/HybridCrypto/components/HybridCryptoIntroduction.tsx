@@ -131,8 +131,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             >
               Cloudflare
             </a>
-            ); and AWS KMS, ACM and Secrets Manager endpoints support it (non-FIPS endpoints, April
-            2025,{' '}
+            ); and AWS KMS, ACM and Secrets Manager endpoints support it (launched on non-FIPS
+            endpoints in April 2025,{' '}
             <a
               href="https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/"
               target="_blank"
@@ -141,7 +141,39 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             >
               AWS
             </a>
-            ).
+            ). AWS lists hybrid post-quantum key exchange as launched on FIPS and non-FIPS endpoints
+            for AWS KMS, AWS Payment Cryptography and the AWS CloudHSM control plane. AWS pages
+            differ on the edges, so check the endpoint and Region you use: the{' '}
+            <a
+              href="https://docs.aws.amazon.com/kms/latest/developerguide/pqtls.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              AWS KMS hybrid post-quantum TLS page
+            </a>{' '}
+            says all endpoints including FIPS 140-3 validated endpoints in the Regions where AWS KMS
+            is available, the{' '}
+            <a
+              href="https://aws.amazon.com/security/post-quantum-cryptography/aws-pq-readiness-confidentiality/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              AWS PQ readiness page
+            </a>{' '}
+            lists FIPS and non-FIPS endpoints in commercial and US GovCloud Regions as launched, and
+            the{' '}
+            <a
+              href="https://docs.aws.amazon.com/kms/latest/developerguide/infrastructure-security.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Infrastructure security in AWS KMS
+            </a>{' '}
+            page says AWS KMS supports hybrid post-quantum TLS in all Regions except the China
+            Regions and does not support it on AWS GovCloud (US) FIPS endpoints.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h3 className="text-sm font-bold text-foreground mb-3">How X25519MLKEM768 Works</h3>
