@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'healthcare-pqc',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-01',
+  lastEdited: '2026-11-08',
 
   standards: [
     getStandard('FIPS 203'),

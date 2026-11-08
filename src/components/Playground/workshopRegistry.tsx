@@ -467,7 +467,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-sigs',
     pt_id: 'PT-027',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Hybrid Signature Spectrums',
     description:
       'Execute concatenation, nesting and a local shared-binding model; compare component checks and a replacement experiment. Not a security proof.',
@@ -496,7 +496,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
-        'Choose Concatenation, Nesting or Shared-binding model, then Generate Key Pairs, Sign and Verify. Read the full-binding and raw-message EC/ML checks; the local model is not published Silithium or a security proof.',
+        'Choose Concatenation, Nesting or Shared-binding model (Silithium-inspired), then Generate Key Pairs, Sign and Verify. Read the full-binding and raw-message EC/ML checks. The local model is not the published Silithium scheme, and this page does not claim strong non-separability or a security proof.',
       workedExample:
         'With a valid local-model sample, both full-binding components pass while the separate raw-message checks do not. Recombination Attack retains the EC public key and original EC bytes while signing a replacement ML component with its own key: inspect the actual EC, ML and combined results.',
     },
