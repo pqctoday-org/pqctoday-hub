@@ -51,7 +51,7 @@ describe('awareness score and answers to other roles questions', () => {
   it('saves correct answers to other roles questions but does not count them', () => {
     useModuleStore.getState().mergeCorrectQuestionIds(otherRolesIds)
     // Saved: every one of them is in the reader's mastery record.
-    const saved = new Set(useModuleStore.getState().quizMastery.correctQuestionIds)
+    const saved = new Set(useModuleStore.getState().quizMastery?.correctQuestionIds ?? [])
     expect(otherRolesIds.every((id) => saved.has(id))).toBe(true)
     // Not counted: the role's Knowledge dimension has not moved.
     expect(knowledge().raw).toBe(0)
