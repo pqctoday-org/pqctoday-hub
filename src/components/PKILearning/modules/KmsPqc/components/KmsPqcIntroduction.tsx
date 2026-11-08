@@ -181,7 +181,7 @@ const CloudKeyExchange: React.FC = () => (
         role="region"
         aria-label="AWS KMS key exchange paths"
       >
-        <table className="w-full text-xs">
+        <table className="w-full min-w-[40rem] text-xs">
           <thead>
             <tr className="border-b border-border text-left text-muted-foreground">
               <th className="py-2 px-2 font-medium">Path</th>
@@ -215,8 +215,20 @@ const CloudKeyExchange: React.FC = () => (
         post-quantum TLS that combines ECDH with ML-KEM on its service endpoints. AWS lists hybrid
         post-quantum key exchange as launched on FIPS and non-FIPS endpoints for AWS KMS, AWS
         Payment Cryptography and the AWS CloudHSM control plane. AWS pages differ on the edges, so
-        check the endpoint and Region you use: another AWS page excludes the China Regions and AWS
-        GovCloud (US) FIPS endpoints, which the AWS PQ readiness page lists as launched.
+        check the endpoint and Region you use: the AWS KMS hybrid post-quantum TLS page says all
+        endpoints including FIPS 140-3 validated endpoints in the Regions where AWS KMS is
+        available, the AWS PQ readiness page lists FIPS and non-FIPS endpoints in commercial and US
+        GovCloud Regions as launched, and the{' '}
+        <a
+          href="https://docs.aws.amazon.com/kms/latest/developerguide/infrastructure-security.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:underline"
+        >
+          Infrastructure security in AWS KMS
+        </a>{' '}
+        page says AWS KMS supports hybrid post-quantum TLS in all Regions except the China Regions
+        and does not support it on AWS GovCloud (US) FIPS endpoints.
       </p>
       <p className="text-sm text-muted-foreground">
         AWS&apos;s post-quantum keys page notes that AWS KMS is closely tracking the IETF
@@ -248,8 +260,8 @@ const CloudKeyExchange: React.FC = () => (
         <li>
           When the job is ACTIVE you download its public key. On your side, wrapping runs
           HPKE.Seal() as defined in RFC 9180 and concatenates the encapsulated key and the
-          ciphertext (<code>enc || ciphertext</code>). Google&apos;s Go sample uses Tink with an
-          empty context.
+          ciphertext (<code>enc || ciphertext</code>). Google&apos;s Go sample wraps the key with
+          the tink-go library.
         </li>
         <li>The imported key material becomes a new key version on an existing target key.</li>
       </ul>
@@ -593,12 +605,14 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
         </p>
         <p className="text-xs text-muted-foreground">
           A post-quantum algorithm counts as FIPS-validated only if the module&apos;s own FIPS 140-3
-          validation covers it. The CMVP implementation guidance requires an ML-KEM implementation
-          to show FIPS 203 compliance and pass its self-tests, and a hybrid scheme to use an
-          approved key combiner, so check the certificate and Security Policy for the module that
-          runs your keys. The AWS KMS HSM certificate (CMVP #4884) lists no ML-DSA or ML-KEM
-          algorithm, and a key service&apos;s FIPS level does not carry over to a newer key type by
-          implication.
+          validation covers it. The CMVP implementation guidance for FIPS 140-3 says a module&apos;s
+          ML-KEM shall show compliance with FIPS 203 and SP 800-227, and treats a hybrid scheme as
+          an approved ML-KEM plus one or more other algorithms combined through an approved key
+          combiner (SP 800-227 Section 4.6.2). Whether a hybrid counts as FIPS-approved depends on
+          the module&apos;s validated algorithms and the current guidance, so check both and the
+          Security Policy of the module that runs your keys. The AWS KMS HSM certificate (CMVP
+          #4884) lists no ML-DSA or ML-KEM algorithm, and a key service&apos;s FIPS level does not
+          carry over to a newer key type by implication.
         </p>
 
         <div className="space-y-4">

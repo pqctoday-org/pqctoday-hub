@@ -95,11 +95,45 @@ describe('KmsPqcIntroduction: exchanging keys with a third-party HSM or KMS', ()
     expect(text).toMatch(/The Azure pages cited here describe no post-quantum option/)
   })
 
-  it('states the GovCloud nuance as plain text, not as a settled FIPS scope', () => {
+  it('says what each of the three AWS pages says about FIPS, China and GovCloud, and links the Infrastructure security page', () => {
     const text = lessonText()
     expect(text).toMatch(/AWS pages differ on the edges/)
-    expect(text).toMatch(/excludes the China Regions and AWS GovCloud \(US\) FIPS endpoints/)
+    expect(text).not.toMatch(/another AWS page/)
+    expect(text).toMatch(
+      /the AWS KMS hybrid post-quantum TLS page says all endpoints including FIPS 140-3 validated endpoints in the Regions where AWS KMS is available/
+    )
+    expect(text).toMatch(
+      /the AWS PQ readiness page lists FIPS and non-FIPS endpoints in commercial and US GovCloud Regions as launched/
+    )
+    expect(text).toMatch(
+      /Infrastructure security in AWS KMS page says AWS KMS supports hybrid post-quantum TLS in all Regions except the China Regions and does not support it on AWS GovCloud \(US\) FIPS endpoints/
+    )
     expect(text).not.toMatch(/non-FIPS endpoints across all AWS Regions/)
+    const link = screen.getByRole('link', { name: 'Infrastructure security in AWS KMS' })
+    expect(link).toHaveAttribute(
+      'href',
+      'https://docs.aws.amazon.com/kms/latest/developerguide/infrastructure-security.html'
+    )
+  })
+
+  it('describes the Google Go sample only as using the tink-go library', () => {
+    const text = lessonText()
+    expect(text).toMatch(/Google's Go sample wraps the key with the tink-go library/)
+    expect(text).not.toMatch(/empty context/)
+  })
+
+  it('quotes the CMVP guidance narrowly and does not say an X25519 hybrid meets it', () => {
+    const text = lessonText()
+    expect(text).toMatch(/shall show compliance with FIPS 203 and SP 800-227/)
+    expect(text).toMatch(/depends on the module's validated algorithms and the current guidance/)
+    expect(text).not.toMatch(/X25519 hybrid with a validated ML-KEM/)
+    expect(text).not.toMatch(/pass its self-tests/)
+  })
+
+  it('gives the AWS key-exchange table a width floor so it scrolls on a phone', () => {
+    lessonText()
+    const region = screen.getByRole('region', { name: 'AWS KMS key exchange paths' })
+    expect(region.querySelector('table')?.className).toMatch(/min-w-\[40rem\]/)
   })
 })
 
