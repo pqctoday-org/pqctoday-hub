@@ -694,7 +694,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/hybrid-sigs',
     title: 'Hybrid Signature Spectrums — PQC Crypto Lab | PQC Today',
     description:
-      'Execute concatenation, nesting and a local shared-binding model; compare actual component checks and a public-only ML replacement experiment, not a…',
+      'Execute concatenation, nesting and a local shared-binding model; compare component checks and a replacement experiment. Not a security proof.',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [
