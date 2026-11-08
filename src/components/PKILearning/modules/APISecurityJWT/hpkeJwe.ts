@@ -4,7 +4,7 @@
  *
  *   - JWE wiring: draft-ietf-jose-hpke-encrypt-22 §5 (Integrated Encryption)
  *     and §7 (producing / consuming JWEs).
- *   - PQ suites: draft-ietf-jose-hpke-pq-pqt-01 §3 — HPKE-12 (ML-KEM-768) and
+ *   - PQ suites: draft-ietf-jose-hpke-pq-pqt-02 §3 — HPKE-12 (ML-KEM-768) and
  *     HPKE-9 (MLKEM768-X25519, the X-Wing PQ/T hybrid), both with the
  *     single-stage SHAKE256 KDF and AES-256-GCM.
  *
@@ -19,7 +19,7 @@
  * hpkeJweHsm.ts. This file then only does the JWE wiring around it.
  *
  * Verified against the draft's own published examples
- * (src/data/acvp/jose-hpke-pq-pqt-01-examples.json, hpkeJwe.test.ts).
+ * (src/data/acvp/jose-hpke-pq-pqt-02-examples.json, hpkeJwe.test.ts).
  */
 import * as HPKE from 'hpke'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
@@ -72,7 +72,7 @@ export const HPKE_JWE_ALGS = Object.keys(HPKE_JWE_SUITES) as HpkeJweAlg[]
 /** Draft revisions this implementation is pinned to. */
 export const HPKE_JWE_SPEC = {
   jwe: 'draft-ietf-jose-hpke-encrypt-22',
-  suites: 'draft-ietf-jose-hpke-pq-pqt-01',
+  suites: 'draft-ietf-jose-hpke-pq-pqt-02',
 } as const
 
 /** Both suites: one-stage SHAKE256 KDF (kdf_id 0x0011) and AES-256-GCM (aead_id 0x0002). */
@@ -212,7 +212,7 @@ function suiteFor(alg: HpkeJweAlg) {
 
 // ── Keys ────────────────────────────────────────────────────────────────────
 
-/** Private JWK for these suites: kty "AKP" (RFC 9964), pq-pqt-01 §4. */
+/** Private JWK for these suites: kty "AKP" (RFC 9964), pq-pqt-02 §4. */
 export interface HpkeAkpJwk {
   kty: 'AKP'
   alg: HpkeJweAlg

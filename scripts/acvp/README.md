@@ -27,7 +27,7 @@ verify nothing.
 
 The one citation that was deliberately not covered here — `jose-pqc-kem-jwe-kat`'s one-shot
 `source.generator` for PQC Today's own output — left with that file on 2026-10-01. Its
-replacement, `jose-hpke-pq-pqt-01-examples`, holds the draft authors' published examples.
+replacement, `jose-hpke-pq-pqt-02-examples`, holds the draft authors' published examples.
 
 ## Recording a source check as the review — `record-source-checks.ts`
 

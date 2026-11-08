@@ -17,7 +17,7 @@ import {
   hpkeJweEncryptInHsm,
 } from '../hpkeJwe'
 import { type HsmHpkeRecipient, hsmHpkeRecipient, softHsmHpkeOps } from '../hpkeJweHsm'
-import publishedExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
+import publishedExamples from '@/data/acvp/jose-hpke-pq-pqt-02-examples.json'
 import { Button } from '@/components/ui/button'
 import { XwingEvidence } from './XwingEvidence'
 import { ShieldCheck } from 'lucide-react'
@@ -266,21 +266,24 @@ export const JWEEncryption: React.FC = () => {
           >
             draft-ietf-jose-hpke-encrypt
           </a>{' '}
-          (in the RFC Editor queue) defines how HPKE carries a JWE, and{' '}
+          (RFC Editor queue, editing in progress as of November 2026) defines how HPKE carries a
+          JWE, and{' '}
           <a
-            href="https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt"
+            href="https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-02.txt"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-hpke-pq-pqt-01
+            draft-ietf-jose-hpke-pq-pqt-02
           </a>{' '}
-          registers the ML-KEM suites used here. This workshop pins its examples to revision -01;
-          revision -02 adds serialization references and updates recommendation context without
-          changing the HPKE-9 parameters. All operations run real crypto in your browser, and the
-          code is checked against the examples published in that draft. It is still an early
-          working-group draft, so the algorithm names may change — not a format to deploy yet. An
-          earlier direct-KEM design (draft-ietf-jose-pqc-kem) was dropped for JOSE in 2026.
+          registers the ML-KEM suites used here. This workshop checks its examples against revision
+          -02 (25 October 2026). Compared with -01, that revision adds references for the KEM
+          serialization and drops the sentence preferring hybrid suites; the HPKE-8, -9, -10, -12
+          and -13 parameters and the published examples are unchanged. All operations run real
+          crypto in your browser, and the code is checked against the examples published in that
+          draft. It is still a working-group draft (as of November 2026), so the algorithm names may
+          change — not a format to deploy yet. An earlier direct-KEM design
+          (draft-ietf-jose-pqc-kem) was dropped for JOSE in 2026.
         </p>
       </div>
 

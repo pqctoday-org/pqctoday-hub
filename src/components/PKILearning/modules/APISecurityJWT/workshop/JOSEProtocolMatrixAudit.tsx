@@ -45,7 +45,7 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import coseDilithiumKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'
 import compositeExamples from '@/data/acvp/composite-sigs-06-jose-examples.json'
-import hpkeExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
+import hpkeExamples from '@/data/acvp/jose-hpke-pq-pqt-02-examples.json'
 import { type HpkeJweAlg, hpkeJweDecrypt } from '../hpkeJwe'
 
 // In-browser JOSE-KAT runner — same vectors that joseKat.test.ts, compositeKat.test.ts
@@ -152,7 +152,7 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
     })
   }
 
-  // ── Published HPKE JWE examples (draft-ietf-jose-hpke-pq-pqt-01 Appendix A) ─
+  // ── Published HPKE JWE examples (draft-ietf-jose-hpke-pq-pqt-02 Appendix A) ─
   // Made by the draft authors with a different ML-KEM implementation: decrypting
   // them is interop evidence for the JWE tab, not a self round-trip.
   for (const v of hpkeExamples.vectors as {
@@ -177,9 +177,9 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
       evidence = `threw: ${e instanceof Error ? e.message : String(e)}`
     }
     out.push({
-      id: `hpke-pq-pqt-01-${v.alg}`,
-      spec: 'draft-ietf-jose-hpke-pq-pqt-01 Appendix A (published example)',
-      reference: 'https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt',
+      id: `hpke-pq-pqt-02-${v.alg}`,
+      spec: 'draft-ietf-jose-hpke-pq-pqt-02 Appendix A (published example)',
+      reference: 'https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-02.txt',
       vector: v.alg,
       description: `Decrypt the draft's published ${v.alg} JWE with its published private key`,
       passed,
@@ -1066,12 +1066,12 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           </a>{' '}
           Appendix A.1, and the HPKE-12 and HPKE-9 JWE examples in{' '}
           <a
-            href="https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt"
+            href="https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-02.txt"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-hpke-pq-pqt-01
+            draft-ietf-jose-hpke-pq-pqt-02
           </a>{' '}
           Appendix A — all external vectors, written by the RFC and drafts&apos; authors.
         </p>

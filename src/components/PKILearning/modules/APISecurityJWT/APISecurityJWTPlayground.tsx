@@ -34,7 +34,7 @@ const SECTIONS = [
     id: 'jwe-encryption',
     title: 'Step 4 — JWE Encryption',
     description:
-      'PQ JWE with HPKE Integrated Encryption — HPKE-12 (ML-KEM-768) and HPKE-9 (ML-KEM-768 + X25519) per draft-ietf-jose-hpke-pq-pqt-01, checked against its published examples',
+      'PQ JWE with HPKE Integrated Encryption — HPKE-12 (ML-KEM-768) and HPKE-9 (ML-KEM-768 + X25519) per draft-ietf-jose-hpke-pq-pqt-02, checked against its published examples',
   },
   {
     id: 'token-size',

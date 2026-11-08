@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { MLS_CIPHERSUITES } from './mlsData'
+import { MLS_CIPHERSUITES, MLS_LIBRARY_REFS } from './mlsData'
+import { content } from '../content'
 
-// Cipher-suite names registered by draft-ietf-mls-pq-ciphersuites-06, section 3.1.
+// Cipher-suite names registered by draft-ietf-mls-pq-ciphersuites-07, section 3.1 (the same eleven names as -06).
 const REGISTERED_PQ_SUITES = [
   'MLS_128_MLKEM768X25519_AES128GCM_SHA256_Ed25519',
   'MLS_128_MLKEM768X25519_AES256GCM_SHA384_Ed25519',
@@ -55,5 +56,22 @@ describe('MLS cipher-suite catalogue', () => {
     expect(row.signature).toMatch(/per session/i)
     expect(JSON.stringify(row)).not.toMatch(/X25519\s*‖\s*ML-KEM/)
     expect(row.signature).not.toMatch(/Ed25519 \+ ML-DSA/)
+  })
+})
+
+describe('MLS draft revisions', () => {
+  it('names revision -07 of the cipher-suite draft and -11 of the extensions framework', () => {
+    const pq = MLS_CIPHERSUITES.filter((c) => c.status === 'draft-pq')
+    expect(pq.every((c) => c.referenceId === 'draft-ietf-mls-pq-ciphersuites-07')).toBe(true)
+    expect(MLS_LIBRARY_REFS).toContain('draft-ietf-mls-pq-ciphersuites-07')
+    expect(MLS_LIBRARY_REFS).toContain('draft-ietf-mls-extensions-11')
+    expect(MLS_LIBRARY_REFS).not.toContain('draft-ietf-mls-pq-ciphersuites-06')
+    expect(MLS_LIBRARY_REFS).not.toContain('draft-ietf-mls-extensions-09')
+  })
+
+  it('cites the same revisions in the module standards', () => {
+    const ids = content.standards.map((s) => s.id)
+    expect(ids).toContain('draft-ietf-mls-pq-ciphersuites-07')
+    expect(ids).toContain('draft-ietf-mls-extensions-11')
   })
 })
