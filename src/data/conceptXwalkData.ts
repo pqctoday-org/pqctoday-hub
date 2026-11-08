@@ -1,15 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { loadLatestCSV } from './csvUtils'
+import { dropUndrawableLifecycleLinks, type RejectedLifecycleLink } from './conceptLifecycleLinks'
 
 /**
- * `scheme_under` and `part_of_series` are structural links between two
- * different documents or schemes, never sameness:
+ * `scheme_under`, `part_of_series`, `published_by` and `supersedes` are
+ * structural links between two different documents, schemes or organisations,
+ * never sameness:
  * - `scheme_under`: from = a national certification scheme, to = the umbrella
  *   scheme it operates under (e.g. a national Common Criteria scheme under the
  *   Common Criteria umbrella).
  * - `part_of_series`: from = a volume, amendment or companion, to = the main
  *   document or series it belongs to.
- * Neither makes two concepts equivalent, and neither carries applicability.
+ * - `published_by`: from = a document, to = the organisation that published
+ *   it. The organisation is a `concept_only` registry row built from the
+ *   curated source-organisations list (`sourceOrganizations.ts`).
+ * - `supersedes`: from = the newer edition, to = the older edition it
+ *   replaces. Never drawn while the newer edition is still a draft.
+ * None of them makes two concepts equivalent, and none carries applicability.
  */
 export type XwalkRelationshipType =
   | 'subset_of'
@@ -18,6 +25,8 @@ export type XwalkRelationshipType =
   | 'intersects_with'
   | 'scheme_under'
   | 'part_of_series'
+  | 'published_by'
+  | 'supersedes'
   | 'not_related'
 
 /**
@@ -88,17 +97,33 @@ const VALID_RELATIONSHIP_TYPES = new Set<string>([
   'intersects_with',
   'scheme_under',
   'part_of_series',
+  'published_by',
+  'supersedes',
   'not_related',
 ])
 
 /**
- * Relationship types that only say how two different documents or schemes
- * belong together. They are shown as relationships, but they never merge two
- * concepts into one and never make one document apply because the other does.
+ * Relationship types that only say how two different documents, schemes or
+ * organisations belong together. They are shown as relationships, but they
+ * never merge two concepts into one and never make one document apply because
+ * the other does.
  */
 export const STRUCTURAL_RELATIONSHIP_TYPES: ReadonlySet<XwalkRelationshipType> = new Set([
   'scheme_under',
   'part_of_series',
+  'published_by',
+  'supersedes',
+])
+
+/**
+ * The two life-cycle links: who published a document, and which older edition
+ * a newer one replaces. Rows of these types are checked again after loading
+ * (see `conceptLifecycleLinks.ts`) and are dropped, not drawn, when the check
+ * fails.
+ */
+export const LIFECYCLE_RELATIONSHIP_TYPES: ReadonlySet<XwalkRelationshipType> = new Set([
+  'published_by',
+  'supersedes',
 ])
 
 const VALID_RATIONALE_TYPES = new Set<string>([
@@ -148,13 +173,19 @@ export function transformRow(row: RawXwalkRow): ConceptXwalkRecord | null {
   }
 }
 
-function loadXwalkData(): ConceptXwalkRecord[] {
+const loaded = (() => {
   const { data } = loadLatestCSV<RawXwalkRow, ConceptXwalkRecord>(
     modules,
     XWALK_REGEX,
     transformRow
   )
-  return data
-}
+  // A "replaces" link is never drawn for a draft, and a "published by" link only
+  // ever points at a curated organisation. Rows that fail are kept out of every
+  // view; `conceptXwalkRejectedLifecycleLinks` lists them for the data checks.
+  return dropUndrawableLifecycleLinks(data)
+})()
 
-export const conceptXwalkData: ConceptXwalkRecord[] = loadXwalkData()
+export const conceptXwalkData: ConceptXwalkRecord[] = loaded.kept
+
+/** Life-cycle rows in the latest file that were not drawn, each with the plain reason. */
+export const conceptXwalkRejectedLifecycleLinks: readonly RejectedLifecycleLink[] = loaded.rejected
