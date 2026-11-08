@@ -49,7 +49,7 @@ const read = (rel: string): string => flat(path.join(ROOT, rel))
 /** [pattern, why it is wrong] */
 const BANNED: Array<[RegExp, string]> = [
   [
-    /AWS KMS (offers|has|creates) no ML-KEM keys|but no ML-KEM keys/i,
+    /AWS KMS (offers|has|creates) no ML-KEM keys|AWS KMS[^.]{0,80}but no ML-KEM keys/i,
     'AWS KMS has offered ML-KEM keys since October 2026',
   ],
   [
@@ -89,6 +89,22 @@ const BANNED: Array<[RegExp, string]> = [
   [
     /\(AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only\) to generate ML-KEM-1024 key wrapping keys\. Establish KMIP v2 connectivity/i,
     'AWS KMS has no KMIP endpoint, and its ML-KEM keys only Encapsulate and Decapsulate',
+  ],
+  [
+    /not documented in the Vault pages read here|no hybrid ML-KEM group documented for Vault/i,
+    'the Vault 1.19.4 and 1.20.0 changelogs list X25519MLKEM768 in the Go TLS stack',
+  ],
+  [
+    /documentation history entry dated 23 October 2026|documentation entry dated 23 October 2026|ML_KEM_1024, from 23 October 2026/i,
+    'one launch date for AWS KMS ML-KEM keys: 26 October 2026 (the AWS announcement)',
+  ],
+  [
+    /Azure Key Vault KMIP v2\.1|Azure Key Vault with KMIP v2\.1 connectivity/i,
+    'no held Azure page documents a KMIP endpoint; the provider table lists none',
+  ],
+  [
+    /the AWS KMS security page excludes/i,
+    'name the page (Infrastructure security in AWS KMS) and say what each AWS page says',
   ],
 ]
 
@@ -132,6 +148,11 @@ const VERBATIM: Array<[string, string, string]> = [
   [
     'Azure-Key-Vault-BYOK-Specification',
     'Azure Key Vault BYOK transfers a key wrapped with CKM_RSA_AES_KEY_WRAP under an RSA-HSM key exchange key of 2048, 3072 or 4096 bits.',
+    'src/data/glossary/concepts.json',
+  ],
+  [
+    'Google-Cloud-KMS-Quantum-Safe-Key-Import',
+    'Google Cloud KMS quantum-safe key import, in Preview since 6 August 2026, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM.',
     'src/data/glossary/concepts.json',
   ],
   [
@@ -180,15 +201,30 @@ describe('AWS KMS claim invariants', () => {
       'AWS KMS offers ML-KEM keys whose Decapsulate returns the shared secret to the caller, with RSA-only import wrapping and no KMIP endpoint'
     )
     expect(summaries).toContain('a key spec AWS KMS has offered since June 2025')
+    const dbRag = read('src/components/PKILearning/modules/DatabaseEncryptionPQC/rag-summary.md')
+    expect(dbRag).toContain('AWS KMS has no KMIP endpoint')
   })
 
   it('the hybrid-TLS passages name the GovCloud and China edges instead of saying "non-FIPS only"', () => {
     const intro = read(
       'src/components/PKILearning/modules/HybridCrypto/components/HybridCryptoIntroduction.tsx'
     )
-    expect(intro).toContain('excludes the China Regions and AWS GovCloud (US) FIPS endpoints')
+    expect(intro).toContain(
+      'AWS pages differ on the edges, so check the endpoint and Region you use'
+    )
+    expect(intro).toContain(
+      'lists FIPS and non-FIPS endpoints in commercial and US GovCloud Regions as launched'
+    )
+    expect(intro).toContain(
+      'page says AWS KMS supports hybrid post-quantum TLS in all Regions except the China Regions and does not support it on AWS GovCloud (US) FIPS endpoints'
+    )
+    expect(intro).toContain(
+      'docs.aws.amazon.com/kms/latest/developerguide/infrastructure-security.html'
+    )
     const rag = read('src/components/PKILearning/modules/HybridCrypto/rag-summary.md')
-    expect(rag).toContain('AWS GovCloud (US) FIPS endpoints and the China Regions')
+    expect(rag).toContain(
+      'supports hybrid post-quantum TLS in all Regions except the China Regions and does not support it on AWS GovCloud (US) FIPS endpoints'
+    )
   })
 
   it('the Vault TLS rows do not attribute TLS hybrid groups to HPKE', () => {
@@ -196,10 +232,16 @@ describe('AWS KMS claim invariants', () => {
       'src/components/PKILearning/modules/SecretsManagementPQC/components/SecretsManagementIntroduction.tsx'
     )
     expect(intro).toContain('defined in RFC 10024 and RFC 9954, not by HPKE (RFC 9180)')
+    expect(intro).toContain(
+      'the Vault 1.19.4 and 1.20.0 changelogs list X25519MLKEM768 key agreement in the Go TLS stack'
+    )
     const constants = read(
       'src/components/PKILearning/modules/SecretsManagementPQC/data/secretsConstants.ts'
     )
     expect(constants).toContain('TLS hybrid groups come from RFC 10024 and RFC 9954, not HPKE')
+    expect(constants).toContain(
+      'the Vault 1.19.4 and 1.20.0 changelogs list X25519MLKEM768 in the Go TLS stack'
+    )
   })
 
   it('the cloud responsibility matrix and CBOM template no longer wait for AWS KMS support', () => {
