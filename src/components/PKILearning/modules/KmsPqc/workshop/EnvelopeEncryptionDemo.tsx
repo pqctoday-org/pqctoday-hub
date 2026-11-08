@@ -42,12 +42,14 @@ import {
   CKO_SECRET_KEY,
   CKA_KEY_TYPE,
   CKK_AES,
+  CKK_GENERIC_SECRET,
   CKA_TOKEN,
   CKA_ENCRYPT,
   CKA_DECRYPT,
   CKA_SENSITIVE,
   CKA_EXTRACTABLE,
   type AttrDef,
+  type SoftHSMModule,
 } from '@/wasm/softhsm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -68,7 +70,9 @@ type WrapMechanism = 'aes-kw' | 'aes-kwp' | 'aes-gcm'
 const RSA_OAEP_STANDARD = 'PKCS #1 v2.2 §7.1 · RFC 8017'
 
 /** Fixed 32-byte HKDF salt for the KMS envelope encryption protocol.
- *  SP 800-56C Rev 2 §4.1: salt length SHALL be ≥ L bits (SHA-256 → 32 B).
+ *  The length is this module's design choice (it matches the SHA-256 output length). SP 800-56C
+ *  does not require a minimum salt length, and RFC 5869 §3.1 lets the salt be any length or
+ *  absent.
  *  Value: UTF-8 "kms-envelope-salt-v1" right-padded with 0x00 to 32 bytes. */
 const ENVELOPE_HKDF_SALT: Uint8Array = (() => {
   const buf = new Uint8Array(32)
@@ -76,39 +80,70 @@ const ENVELOPE_HKDF_SALT: Uint8Array = (() => {
   return buf
 })()
 
-const KMS_KAT_SPECS: KatTestSpec[] = [
+/**
+ * Known-answer checks for the primitives this workshop calls. The evidence class of each row is
+ * derived from its vector file (ACVP reference sample, published standard vector, or a
+ * round-trip with no external expected value) and shown next to the result, so a round-trip row
+ * is labelled as one here too.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export const KMS_KAT_SPECS: KatTestSpec[] = [
+  // FIPS 203 decapsulation against NIST ACVP-Server sample vectors, one per parameter set
   {
-    id: 'kms-envelope-kem-768',
-    useCase: 'Envelope KEM encap/decap round-trip (ML-KEM-768)',
-    standard: 'FIPS 203 §7 (encap/decap round-trip)',
+    id: 'kms-envelope-kem-decap-512',
+    useCase: 'Envelope KEM decapsulation vs NIST ACVP vector (ML-KEM-512)',
+    standard: 'FIPS 203 §7.3 (NIST ACVP decapsulation sample)',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
-    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+    kind: { type: 'mlkem-decap', variant: 512 },
   },
   {
     id: 'kms-envelope-kem-decap-768',
     useCase: 'Envelope KEM decapsulation vs NIST ACVP vector (ML-KEM-768)',
-    standard: 'FIPS 203 §7.2 (NIST ACVP decap KAT)',
+    standard: 'FIPS 203 §7.3 (NIST ACVP decapsulation sample)',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-decap', variant: 768 },
   },
   {
+    id: 'kms-envelope-kem-decap-1024',
+    useCase: 'Envelope KEM decapsulation vs NIST ACVP vector (ML-KEM-1024)',
+    standard: 'FIPS 203 §7.3 (NIST ACVP decapsulation sample)',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-decap', variant: 1024 },
+  },
+  // Round-trips: they show the engine is self-consistent, not that it matches a published answer
+  {
+    id: 'kms-envelope-kem-768',
+    useCase: 'Envelope KEM encap/decap round-trip (ML-KEM-768)',
+    standard: 'FIPS 203 §7 (round-trip only, no external expected value)',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
     id: 'kms-envelope-kem-512',
     useCase: 'Envelope KEM encap/decap round-trip (ML-KEM-512)',
-    standard: 'FIPS 203 §7 (encap/decap round-trip)',
+    standard: 'FIPS 203 §7 (round-trip only, no external expected value)',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 512 },
   },
   {
     id: 'kms-envelope-kem-1024',
     useCase: 'Envelope KEM encap/decap round-trip (ML-KEM-1024)',
-    standard: 'FIPS 203 §7 (encap/decap round-trip)',
+    standard: 'FIPS 203 §7 (round-trip only, no external expected value)',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 1024 },
   },
+  // AES-GCM: a NIST CAVP gcmDecrypt256 vector, then this module's own header as a round-trip
+  {
+    id: 'kms-dek-decrypt-gcm-cavp',
+    useCase: 'DEK decryption vs NIST CAVP vector (AES-256-GCM)',
+    standard: 'SP 800-38D (NIST CAVP gcmDecrypt256 vector)',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-decrypt', testIndex: 0 },
+  },
   {
     id: 'kms-dek-encrypt',
-    useCase: 'DEK encryption (AES-256-GCM)',
-    standard: 'SP 800-38D',
+    useCase: 'DEK encryption round-trip (AES-256-GCM)',
+    standard: 'SP 800-38D (round-trip only, no external expected value)',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-functional' },
     message: 'KMS envelope header: keyId=arn:kms:pqc/key-001,context=prod-db',
@@ -123,18 +158,137 @@ const KMS_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'kms-kek-hkdf',
     useCase: 'KEK derivation from master (HKDF-SHA256)',
-    standard: 'SP 800-108 + RFC 5869',
+    standard: 'RFC 5869 (Appendix A.1 vector); SP 800-56C Rev 2 two-step procedure',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5869',
     kind: { type: 'hkdf-derive' },
   },
   {
     id: 'kms-kek-kwp',
-    useCase: 'KEK wrapping with padding (AES-KWP)',
-    standard: 'RFC 5649 + SP 800-38F',
+    useCase: 'KEK wrapping with padding (AES-256-KWP): length rule and round-trip',
+    standard: 'RFC 5649 §4.1 (round-trip only; the published §6 vectors run in the check below)',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5649',
     kind: { type: 'aes-kwp-wrap' },
   },
 ]
+
+/**
+ * RFC 5649 section 6 publishes AES Key Wrap with Padding examples for a 192-bit KEK. This module
+ * wraps with a 256-bit KEK, so these vectors prove the CKM_AES_KEY_WRAP_KWP mechanism reproduces a
+ * published answer (wrap) and recovers the published key data (unwrap); they are not an AES-256
+ * vector. Each value was re-derived with an independent AES-KWP implementation before it was
+ * pinned here.
+ */
+export interface PublishedKwpVector {
+  id: string
+  description: string
+  kekHex: string
+  keyHex: string
+  wrappedHex: string
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const RFC5649_SECTION6_VECTORS: PublishedKwpVector[] = [
+  {
+    id: 'rfc5649-s6-20-octets',
+    description: 'RFC 5649 §6: 20-octet key data (padded to 24), 192-bit KEK',
+    kekHex: '5840df6e29b02af1ab493b705bf16ea1ae8338f4dcc176a8',
+    keyHex: 'c37b7e6492584340bed12207808941155068f738',
+    wrappedHex: '138bdeaa9b8fa7fc61f97742e72248ee5ae6ae5360d1ae6a5f54f373fa543b6a',
+  },
+  {
+    id: 'rfc5649-s6-7-octets',
+    description: 'RFC 5649 §6: 7-octet key data (padded to 8), 192-bit KEK',
+    kekHex: '5840df6e29b02af1ab493b705bf16ea1ae8338f4dcc176a8',
+    keyHex: '466f7250617369',
+    wrappedHex: 'afbeb0f07dfbf5419200f2ccb50bb24f',
+  },
+]
+
+export interface PublishedKwpResult {
+  id: string
+  description: string
+  pass: boolean
+  details: string
+}
+
+const hexBytes = (hex: string): Uint8Array =>
+  Uint8Array.from(hex.match(/../g) ?? [], (h) => parseInt(h, 16))
+const bytesHex = (b: Uint8Array): string =>
+  Array.from(b)
+    .map((x) => x.toString(16).padStart(2, '0'))
+    .join('')
+
+/**
+ * Run the RFC 5649 section 6 vectors through the HSM: wrap the published key data and compare
+ * with the published ciphertext, then unwrap the published ciphertext and compare with the
+ * published key data.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function runPublishedKwpVectors(
+  M: SoftHSMModule,
+  hSession: number,
+  vectors: PublishedKwpVector[] = RFC5649_SECTION6_VECTORS
+): PublishedKwpResult[] {
+  return vectors.map((v) => {
+    try {
+      const kek = hsm_importAESKey(
+        M,
+        hSession,
+        hexBytes(v.kekHex),
+        false,
+        false,
+        true,
+        true,
+        false,
+        true
+      )
+      const key = hsm_importGenericSecret(M, hSession, hexBytes(v.keyHex))
+      const wrapped = bytesHex(hsm_wrapKeyMech(M, hSession, CKM_AES_KEY_WRAP_KWP, kek, key))
+      if (wrapped !== v.wrappedHex) {
+        return {
+          id: v.id,
+          description: v.description,
+          pass: false,
+          details: `wrap gave ${wrapped}, RFC 5649 §6 publishes ${v.wrappedHex}`,
+        }
+      }
+      const recoveredHandle = hsm_unwrapKeyMech(
+        M,
+        hSession,
+        CKM_AES_KEY_WRAP_KWP,
+        kek,
+        hexBytes(v.wrappedHex),
+        [
+          { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+          { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+          { type: CKA_TOKEN, boolVal: false },
+          { type: CKA_EXTRACTABLE, boolVal: true },
+        ]
+      )
+      const recovered = bytesHex(hsm_extractKeyValue(M, hSession, recoveredHandle))
+      return recovered === v.keyHex
+        ? {
+            id: v.id,
+            description: v.description,
+            pass: true,
+            details: `wrap reproduces the published ${v.wrappedHex.length / 2}-byte ciphertext; unwrap recovers the published ${v.keyHex.length / 2}-byte key data`,
+          }
+        : {
+            id: v.id,
+            description: v.description,
+            pass: false,
+            details: `unwrap gave ${recovered}, RFC 5649 §6 publishes ${v.keyHex}`,
+          }
+    } catch (e) {
+      return {
+        id: v.id,
+        description: v.description,
+        pass: false,
+        details: e instanceof Error ? e.message : String(e),
+      }
+    }
+  })
+}
 
 const LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -230,6 +384,62 @@ const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, b
       <pre className="text-[10px] font-mono bg-muted/50 rounded border border-border p-2 overflow-x-auto whitespace-pre-wrap break-all text-foreground/70 max-h-28 overflow-y-auto leading-relaxed">
         {hex}
       </pre>
+    </div>
+  )
+}
+
+/** Runs the RFC 5649 section 6 published AES-KWP vectors on the workshop's live HSM. */
+const PublishedKwpVectorCheck: React.FC<{ hsm: ReturnType<typeof useHSM> }> = ({ hsm }) => {
+  const [results, setResults] = useState<PublishedKwpResult[] | null>(null)
+
+  const run = () => {
+    const M = hsm.moduleRef.current
+    if (!M) return
+    setResults(runPublishedKwpVectors(M, hsm.hSessionRef.current))
+  }
+
+  return (
+    <div className="glass-panel p-4 space-y-3" data-testid="published-kwp-check">
+      <div>
+        <p className="text-sm font-semibold text-foreground">
+          AES-KWP published vectors (RFC 5649 §6)
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          The AES-KWP row above is a length check and a round-trip, so it cannot catch a wrong
+          answer. RFC 5649 §6 publishes two examples, both for a 192-bit KEK. This module wraps with
+          a 256-bit KEK, so these vectors show that the CKM_AES_KEY_WRAP_KWP mechanism reproduces a
+          published ciphertext and recovers the published key data; they are not an AES-256 vector.
+        </p>
+      </div>
+      <div className="flex items-center gap-3 flex-wrap">
+        <Button variant="outline" size="sm" onClick={run} disabled={!hsm.isReady}>
+          Run RFC 5649 §6 vectors
+        </Button>
+        <GateReason when={!hsm.isReady} className="mt-0">
+          Start the live HSM above to run this check.
+        </GateReason>
+      </div>
+      {results && (
+        <ul className="space-y-1 text-xs" aria-label="RFC 5649 vector results">
+          {results.map((r) => (
+            <li key={r.id} className="flex items-start gap-2">
+              {r.pass ? (
+                <CheckCircle
+                  size={12}
+                  className="text-success shrink-0 mt-0.5"
+                  aria-hidden="true"
+                />
+              ) : (
+                <Circle size={12} className="text-destructive shrink-0 mt-0.5" aria-hidden="true" />
+              )}
+              <span className="text-foreground/80">
+                <span className="font-semibold">{r.pass ? 'Passed' : 'Failed'}</span> —{' '}
+                {r.description}: {r.details}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -336,6 +546,10 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (the engine
         // returned none after C_UnwrapKey). In production, DEKs would be extractable=false, sensitive=true;
         // KCV would be the only integrity verification method.
+        // Each step header is logged BEFORE the PKCS#11 calls it names: the log panel starts a
+        // new section at every header, so a header logged after its calls would label the NEXT
+        // step's calls instead.
+        hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
         setProgressLabel('Generating key pair...')
         const dekHandle = hsm_generateAESKey(
           M,
@@ -357,9 +571,11 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           generatedAt: ts(),
         })
         addLine(`DEK: AES-256 key generated (32 B, for data encryption)`)
-        hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
 
         // Step 2: Generate RSA key pair (KEK)
+        hsm.addStepLog(
+          `── Step 2: Generate RSA-${bits} Key Pair (CKM_RSA_PKCS_KEY_PAIR_GEN) ──────────`
+        )
         setProgressLabel('Generating key pair...')
         const { pubHandle, privHandle } = hsm_generateRSAWrapKeyPair(M, hSession, bits)
         hsm.registerKey(M, hSession, {
@@ -377,23 +593,21 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           generatedAt: ts(),
         })
         addLine(`KEK: RSA-${bits} key pair — public key ${bits / 8} B (e=65537)`)
-        hsm.addStepLog(
-          `── Step 2: Generate RSA-${bits} Key Pair (CKM_RSA_PKCS_KEY_PAIR_GEN) ──────────`
-        )
 
         // Read KCV and raw bytes of original DEK (before wrap)
         const kcvBefore = fmtKcv(hsm_getKeyCheckValue(M, hSession, dekHandle))
         const dekBytesOrig = hsm_extractKeyValue(M, hSession, dekHandle)
 
         // Step 3: Wrap DEK with RSA-OAEP public key
-        setProgressLabel('Wrapping DEK...')
-        const wrappedDek = hsm_rsaOaepWrapKey(M, hSession, pubHandle, dekHandle)
-        addLine(`Wrapped DEK: ${wrappedDek.length} B (RSA-OAEP, ${RSA_OAEP_STANDARD})`)
         hsm.addStepLog(
           `── Step 3: Wrap DEK (CKM_RSA_PKCS_OAEP / ${RSA_OAEP_STANDARD}) ─────────────`
         )
+        setProgressLabel('Wrapping DEK...')
+        const wrappedDek = hsm_rsaOaepWrapKey(M, hSession, pubHandle, dekHandle)
+        addLine(`Wrapped DEK: ${wrappedDek.length} B (RSA-OAEP, ${RSA_OAEP_STANDARD})`)
 
         // Step 4: Unwrap DEK with RSA-OAEP private key
+        hsm.addStepLog('── Step 4: Unwrap DEK (CKM_RSA_PKCS_OAEP) · DEK compared ────────────')
         setProgressLabel('Verifying integrity...')
         const recoveredDekHandle = hsm_rsaOaepUnwrapKey(
           M,
@@ -417,7 +631,6 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         setKcvResult({ comparison, path: 'rsa' })
 
         addLine(describeDekComparison(comparison))
-        hsm.addStepLog('── Step 4: Unwrap DEK (CKM_RSA_PKCS_OAEP) · DEK compared ────────────')
 
         addLine(
           `Storage overhead: RSA-${bits} ciphertext = ${wrappedDek.length} B total (1 wrapped blob)`
@@ -434,6 +647,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (the engine
         // returned none after C_UnwrapKey). In production, DEKs would be extractable=false, sensitive=true;
         // KCV would be the only integrity verification method.
+        hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
         setProgressLabel('Generating key pair...')
         const dekHandle = hsm_generateAESKey(
           M,
@@ -455,9 +669,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           generatedAt: ts(),
         })
         addLine(`DEK: AES-256 key generated (32 B, for data encryption)`)
-        hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
 
         // Step 2: Generate ML-KEM key pair (KEK)
+        hsm.addStepLog(`── Step 2: Generate ML-KEM-${variant} Key Pair (FIPS 203) ──────────────`)
         setProgressLabel('Generating key pair...')
         const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, variant)
         hsm.registerKey(M, hSession, {
@@ -478,9 +692,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         addLine(
           `KEK: ML-KEM-${variant} key pair — encapsulation key ${pubKeyBytes.length} B (FIPS 203)`
         )
-        hsm.addStepLog(`── Step 2: Generate ML-KEM-${variant} Key Pair (FIPS 203) ──────────────`)
 
         // Step 3: KEM Encapsulate → shared secret + ciphertext
+        hsm.addStepLog('── Step 3: KEM Encapsulate (CKM_ML_KEM / FIPS 203) ─────────────────')
         setProgressLabel('Encapsulating shared secret...')
         const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, pubHandle, variant)
         hsm.registerKey(M, hSession, {
@@ -494,9 +708,11 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         addLine(
           `Encapsulation: ciphertext ${ciphertextBytes.length} B, shared secret ${secretBytes.length} B (random, FIPS 203)`
         )
-        hsm.addStepLog('── Step 3: KEM Encapsulate (CKM_ML_KEM / FIPS 203) ─────────────────')
 
-        // Step 4: HKDF-SHA256 → 32-byte wrapping key (SP 800-56C Rev 2 §4.1)
+        // Step 4: HKDF-SHA256 → 32-byte wrapping key (RFC 5869; the SP 800-56C extract-then-expand
+        // procedure with HMAC). The 32-byte salt is this module's design choice, not a value
+        // SP 800-56C requires.
+        hsm.addStepLog('── Step 4: Derive Wrapping Key (CKM_HKDF_DERIVE / SP 800-56C + RFC 5869) ─')
         const derivableHandle = hsm_importGenericSecret(M, hSession, secretBytes)
         hsm.registerKey(M, hSession, {
           handle: derivableHandle,
@@ -531,13 +747,15 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         addLine(
           `HKDF-SHA256 (RFC 5869, a version of the SP 800-56C extraction-then-expansion procedure that uses HMAC for both steps): derived ${wrapKeyBytes.length} B wrapping key — salt=kms-envelope-salt-v1 info="kms-envelope-v1"`
         )
-        hsm.addStepLog('── Step 4: Derive Wrapping Key (CKM_HKDF_DERIVE / SP 800-56C + RFC 5869) ─')
 
         // Read KCV and raw bytes of original DEK (before wrap)
         const kcvBefore = fmtKcv(hsm_getKeyCheckValue(M, hSession, dekHandle))
         const dekBytesOrig = hsm_extractKeyValue(M, hSession, dekHandle)
 
         // Step 5: Wrap DEK using selected mechanism
+        hsm.addStepLog(
+          `── Step 5: Wrap DEK (${mechMeta.label} / ${mechMeta.standard}) ─────────────`
+        )
         const wrapKeyHandle = hsm_importAESKey(
           M,
           hSession,
@@ -579,11 +797,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           wrappedDek = hsm_wrapKeyMech(M, hSession, mechMeta.ckm!, wrapKeyHandle, dekHandle)
           addLine(`Wrapped DEK: ${wrappedDek.length} B (${mechMeta.label}, ${mechMeta.standard})`)
         }
-        hsm.addStepLog(
-          `── Step 5: Wrap DEK (${mechMeta.label} / ${mechMeta.standard}) ─────────────`
-        )
 
         // Step 6: Decapsulate → recover shared secret → re-derive wrapping key → unwrap DEK
+        hsm.addStepLog('── Step 6: Decapsulate + Unwrap DEK · DEK compared ─────────────────')
         setProgressLabel('Verifying integrity...')
         const recoveredSecretHandle = hsm_decapsulate(
           M,
@@ -607,7 +823,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           `KEM round-trip: ${secretMatch ? '✓ shared secrets match' : '✗ shared secrets differ'} (${recoveredSecretBytes.length} B)`
         )
 
-        // Re-derive the same wrapping key from the recovered secret (same salt — SP 800-56C Rev 2 §4.1)
+        // Re-derive the same wrapping key from the recovered secret (same salt and info as step 4)
         const derivableHandle2 = hsm_importGenericSecret(M, hSession, recoveredSecretBytes)
         hsm.registerKey(M, hSession, {
           handle: derivableHandle2,
@@ -692,7 +908,6 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         setKcvResult({ comparison, path: 'ml-kem' })
 
         addLine(describeDekComparison(comparison))
-        hsm.addStepLog('── Step 6: Decapsulate + Unwrap DEK · DEK compared ─────────────────')
 
         const totalBytes = ciphertextBytes.length + wrappedDek.length + (gcmIv?.length ?? 0)
         addLine(
@@ -1453,6 +1668,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         label="KMS PQC Known Answer Tests"
         authorityNote="FIPS 203 · SP 800-56C Rev 2 · SP 800-38D · RFC 3394 · RFC 5649 · RFC 5869"
       />
+
+      <PublishedKwpVectorCheck hsm={hsm} />
 
       {/* ── PKCS#11 log & Key Inspector (Bottom Layout) ────────────────────── */}
       {hsm.isReady && (
