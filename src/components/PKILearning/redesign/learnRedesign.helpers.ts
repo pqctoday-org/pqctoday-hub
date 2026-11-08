@@ -202,7 +202,7 @@ export const BROWSE_ALL = 'All'
 export type BrowseSortMode = 'default' | 'alpha' | 'difficulty' | 'duration' | 'status'
 
 /** Status filter choices (id `All` means no status filter). */
-export const BROWSE_STATUS_ITEMS: ReadonlyArray<{ id: string; label: string }> = [
+export const BROWSE_STATUS_ITEMS: { id: string; label: string }[] = [
   { id: BROWSE_ALL, label: 'All statuses' },
   { id: 'not-started', label: 'Not started' },
   { id: 'in-progress', label: 'In progress' },
@@ -210,7 +210,7 @@ export const BROWSE_STATUS_ITEMS: ReadonlyArray<{ id: string; label: string }> =
 ]
 
 /** Sort choices, in display order. */
-export const BROWSE_SORT_ITEMS: ReadonlyArray<{ id: BrowseSortMode; label: string }> = [
+export const BROWSE_SORT_ITEMS: { id: BrowseSortMode; label: string }[] = [
   { id: 'default', label: 'Recommended' },
   { id: 'alpha', label: 'Name A–Z' },
   { id: 'difficulty', label: 'Difficulty' },
