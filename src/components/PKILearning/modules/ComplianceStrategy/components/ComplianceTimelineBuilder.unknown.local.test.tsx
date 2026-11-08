@@ -66,7 +66,7 @@ describe('unassociated milestone history remains planning data', () => {
   it('keeps unrelated completed certificates unknown in screen, real CSV and saved/reloaded drafts', () => {
     const before = structuredClone(sample.saved)
     const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
-    expect(screen.getByText('Not assessed')).toBeInTheDocument()
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Done' })).toHaveAttribute(
       'title',
       'Learner-marked done — obligation satisfaction remains unassessed'
@@ -74,22 +74,31 @@ describe('unassociated milestone history remains planning data', () => {
     expect(screen.getByTestId('markdown')).toHaveTextContent('UNKNOWN')
     expect(screen.getByTestId('markdown')).not.toHaveTextContent('Requirement met')
     const csv = Papa.parse<string[]>(screen.getByTestId('csv').textContent ?? '').data
-    expect(csv).toContainEqual(['2025', 'Unrelated sample, certificate', 'Certification', 'Yes'])
+    expect(csv).toContainEqual([
+      '2025',
+      'Unrelated sample, certificate',
+      'Certification',
+      'Yes',
+      'sample-cert',
+      '',
+      '[]',
+    ])
     expect(
       csv.some(
         (row) =>
           row[0] === 'Fictional, obligation' &&
           row[1] === '2030' &&
           row[2] === 'UNKNOWN' &&
-          row[3].includes('no milestone-to-obligation scope')
+          row[4].includes('no milestone-to-obligation scope')
       )
     ).toBe(true)
     fireEvent.click(screen.getByRole('button', { name: 'Done' }))
-    expect(screen.getByText('Not assessed')).toBeInTheDocument()
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Save sample timeline' }))
     const doc = sample.add.mock.calls[0][0]
     expect(doc.inputs).toEqual({
       ...before,
+      scenarioAsOfYear: 2026,
       milestones: [{ ...before.milestones![0], completed: false }],
     })
     expect(doc.data).toContain('UNKNOWN')
@@ -100,7 +109,7 @@ describe('unassociated milestone history remains planning data', () => {
       'aria-pressed',
       'false'
     )
-    expect(screen.getByText('Not assessed')).toBeInTheDocument()
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
     expect(sample.saved.pinnedDeadlines).toEqual(['fw-sample-2030'])
   })
   it('renders a pinned unknown obligation marker with a neutral explicit label', () => {
