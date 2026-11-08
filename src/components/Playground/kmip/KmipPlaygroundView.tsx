@@ -292,6 +292,9 @@ function whatThisMeans(r: OpResult): string | null {
   }
 }
 
+/** How one policy-preset load ended; see `loadPreset` in the component. */
+type PresetLoadOutcome = 'applied' | 'failed' | 'superseded'
+
 export function KmipPlaygroundView() {
   const { pathname } = useLocation()
   const role = usePersonaStore((s) => s.selectedPersona)
@@ -667,9 +670,15 @@ export function KmipPlaygroundView() {
     return r.text()
   }
 
-  const onLoadPolicy = async (preset: PolicyPreset) => {
-    if (!engine) return
+  // Loads a preset and reports how it ended: 'applied' (the engine now holds this
+  // preset), 'failed' (the file could not be read or the engine refused it; nothing
+  // else replaced it) or 'superseded' (a newer load started meanwhile and owns the
+  // engine). The restore-on-mount path needs that answer; the tabs only need the
+  // load itself (`onLoadPolicy` below).
+  const loadPreset = async (preset: PolicyPreset): Promise<PresetLoadOutcome> => {
+    if (!engine) return 'failed'
     const seq = ++policyLoadSeq.current
+    let applied = false
     setBusy(true)
     try {
       if (preset.files && preset.files.length > 0) {
@@ -680,10 +689,11 @@ export function KmipPlaygroundView() {
         // `parsePolicyModel` just scans for `- type:` lines, so it merges
         // every file's rules into one model regardless of the boundary.
         const yamls = await Promise.all(preset.files.map((f) => fetchPolicyText(f)))
-        if (seq !== policyLoadSeq.current) return
+        if (seq !== policyLoadSeq.current) return 'superseded'
         const res = engine.activateModulePreset(preset.name, yamls)
         if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
         else {
+          applied = true
           setPolicyYaml(yamls.join('\n\n# ── next module ──\n\n'))
           const modStatus = engine.policyModulesStatus()
           saveCacpPresetSession({
@@ -695,10 +705,11 @@ export function KmipPlaygroundView() {
         }
       } else {
         const yaml = await fetchPolicyText(preset.file)
-        if (seq !== policyLoadSeq.current) return
+        if (seq !== policyLoadSeq.current) return 'superseded'
         const res = engine.loadPolicy(yaml)
         if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
         else {
+          applied = true
           setPolicyYaml(yaml)
           saveCacpPresetSession({
             presetFile: preset.file,
@@ -715,6 +726,13 @@ export function KmipPlaygroundView() {
     } finally {
       if (seq === policyLoadSeq.current) setBusy(false)
     }
+    // A load is superseded as soon as a newer one has started, whichever way it ended.
+    if (seq !== policyLoadSeq.current) return 'superseded'
+    return applied ? 'applied' : 'failed'
+  }
+
+  const onLoadPolicy = async (preset: PolicyPreset): Promise<void> => {
+    await loadPreset(preset)
   }
 
   // Apply an edited policy (from the visual editor) to the engine and surface it
@@ -746,23 +764,33 @@ export function KmipPlaygroundView() {
     const preset = POLICY_PRESETS.find((p) => p.file === saved.presetFile)
     if (!preset) return
     const isModular = Boolean(preset.files && preset.files.length > 0)
-    void onLoadPolicy(preset).then(() => {
-      const fresh = isModular
-        ? engine.policyModulesStatus().modules.map((m) => m.fingerprint)
-        : [engine.policyStatus().fingerprint ?? '']
-      const changed =
-        fresh.length !== saved.fingerprints.length ||
-        fresh.some((f, i) => f !== saved.fingerprints[i])
-      if (changed) setStaleNotice(true)
-      // Drafts only ever apply to an editable (single-file) preset — the
-      // visual editor is `readOnly` for a multi-module one, so no draft
-      // could have been made under it in the first place.
+    void loadPreset(preset).then((outcome) => {
+      // A load the reader replaced with another policy must change nothing: the
+      // engine now holds their choice, so comparing fingerprints would show a false
+      // "updated" notice and re-applying the old draft would overwrite what they chose.
+      if (outcome === 'superseded') return
+      // The fingerprint comparison is only meaningful when this preset is what the
+      // engine holds; an unreadable or refused preset says nothing about the policy.
+      if (outcome === 'applied') {
+        const fresh = isModular
+          ? engine.policyModulesStatus().modules.map((m) => m.fingerprint)
+          : [engine.policyStatus().fingerprint ?? '']
+        const changed =
+          fresh.length !== saved.fingerprints.length ||
+          fresh.some((f, i) => f !== saved.fingerprints[i])
+        if (changed) setStaleNotice(true)
+      }
+      // The saved draft is local and needs no network, so it is re-applied whenever the
+      // reader has not chosen another policy since (also after an unreadable or refused
+      // preset). Drafts only ever apply to an editable (single-file) preset — the
+      // visual editor is `readOnly` for a multi-module one, so no draft could have been
+      // made under it in the first place.
       if (!isModular && saved.draftYaml && saved.draftPresetFile === saved.presetFile) {
         const res = onApplyYaml(saved.draftYaml)
         if (res?.ok) saveCacpDraft(saved.presetFile, saved.draftYaml)
       }
     })
-    // onLoadPolicy/onApplyYaml are fresh closures every render; this effect
+    // loadPreset/onApplyYaml are fresh closures every render; this effect
     // must run exactly once (per the ref guard above), not on every render
     // a new closure identity would otherwise trigger.
     // eslint-disable-next-line react-hooks/exhaustive-deps
