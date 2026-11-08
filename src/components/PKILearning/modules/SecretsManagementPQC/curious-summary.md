@@ -12,4 +12,4 @@ Dynamic secrets (like 8-hour TTL database credentials) eliminate HNDL risk autom
 
 ### What's Happening
 
-Support differs by platform. AWS KMS documents ML-KEM keys with Encapsulate and Decapsulate operations (documentation entry dated 23 October 2026), while AWS Secrets Manager still protects secrets with AES-256 data keys under symmetric KMS keys. HashiCorp's Vault transit documentation lists ML-DSA, SLH-DSA and hybrid signing key types but no ML-KEM type. Organizations are also shifting from long-lived static API keys to short-lived dynamic secrets that expire before they can be misused.
+Support differs by platform. AWS KMS documents ML-KEM keys with Encapsulate and Decapsulate operations (added on 26 October 2026), while AWS Secrets Manager still protects secrets with AES-256 data keys under symmetric KMS keys. HashiCorp's Vault transit documentation lists ML-DSA, SLH-DSA and hybrid signing key types but no ML-KEM type. Organizations are also shifting from long-lived static API keys to short-lived dynamic secrets that expire before they can be misused.

@@ -226,7 +226,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     ).toBeVisible({ timeout: 40_000 })
   })
 
-  test('JWEEncryption decrypts the published draft-ietf-jose-hpke-pq-pqt-01 examples (HPKE-12 and HPKE-9)', async ({
+  test('JWEEncryption decrypts the published draft-ietf-jose-hpke-pq-pqt-02 examples (HPKE-12 and HPKE-9)', async ({
     page,
   }) => {
     await openWorkshop(page)
@@ -341,7 +341,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     // 12 vectors: 3 RFC 9964 ML-DSA JOSE KATs + the 7 published composite examples
     // of draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 + the 2 published HPKE JWE
-    // examples of draft-ietf-jose-hpke-pq-pqt-01 Appendix A
+    // examples of draft-ietf-jose-hpke-pq-pqt-02 Appendix A
     await expect(page.getByText(/12 passed/)).toBeVisible({ timeout: 60_000 })
     await expect(page.getByText(/0 failed/).first()).toBeVisible()
   })

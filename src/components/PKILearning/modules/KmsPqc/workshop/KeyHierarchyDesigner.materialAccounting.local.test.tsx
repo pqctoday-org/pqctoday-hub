@@ -4,10 +4,10 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { KeyHierarchyDesigner, hierarchyMaterial } from './KeyHierarchyDesigner'
 describe('sample hierarchy material accounting', () => {
   it.each([
-    ['traditional', 'classical', 'classical', 4864, 21756, 42620],
-    ['default hybrid', 'hybrid', 'hybrid', 16650, 34752, 67402],
+    ['traditional', 'classical', 'classical', 4864, 22356, 43220],
+    ['default hybrid', 'hybrid', 'hybrid', 16650, 35352, 68002],
     ['PQC', 'pqc', 'pqc', 14976, 30336, 61312],
-    ['mixed', 'classical', 'pqc', 12864, 28096, 56960],
+    ['mixed', 'classical', 'pqc', 12864, 28696, 57560],
   ] as const)('%s counts AES secrets once', (_name, root, zone, pub, priv, total) => {
     const a = hierarchyMaterial({ 'root-kek': root, 'zone-kek': zone, dek: 'pqc' })!
     expect(a.publicBytes).toBe(pub)

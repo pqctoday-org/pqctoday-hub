@@ -14,8 +14,8 @@ interface LevelConfig {
 /** Approximate public key sizes by level and mode */
 const KEY_SIZES: Record<string, Record<AlgorithmMode, { pubKey: number; privKey: number }>> = {
   'root-kek': {
-    classical: { pubKey: 512, privKey: 2048 }, // RSA-4096
-    hybrid: { pubKey: 512 + 1568, privKey: 2048 + 3168 }, // RSA-4096 + ML-KEM-1024
+    classical: { pubKey: 512, privKey: 2348 }, // RSA-4096 (typical PKCS#1 DER private key, about 2.3 kB)
+    hybrid: { pubKey: 512 + 1568, privKey: 2348 + 3168 }, // RSA-4096 + ML-KEM-1024
     pqc: { pubKey: 1568, privKey: 3168 }, // ML-KEM-1024
   },
   'zone-kek': {
@@ -368,7 +368,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                   Private Key
                 </th>
                 <th className="text-left py-2 px-2 text-muted-foreground font-medium">
-                  Security Level
+                  Security (classical rows: approximate bits; PQC rows: NIST category)
                 </th>
               </tr>
             </thead>

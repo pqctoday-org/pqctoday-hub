@@ -42,6 +42,19 @@ describe('countText', () => {
     )
     expect(countText(text)).toEqual({ 'private-repo': 2, 'home-path': 1 })
   })
+
+  it('counts internal item keys and, for data files only, "owner decision"', () => {
+    const key = ['q', 'timeline', 'edit-some-row-description'].join(':')
+    const text = [`applied via approved proposal ${key}`, 'set by owner decision', 'clean'].join(
+      '\n'
+    )
+    expect(countText(text)).toEqual({ 'internal-key': 1 })
+    expect(countText(text, 'src/lib/note.ts')).toEqual({ 'internal-key': 1 })
+    expect(countText(text, 'src/data/rows.csv')).toEqual({
+      'internal-key': 1,
+      'decision-citation': 1,
+    })
+  })
 })
 
 describe('baselineKey', () => {
@@ -57,6 +70,17 @@ describe('baselineKey', () => {
 })
 
 describe('scanTree', () => {
+  it('applies the data-only rule to data files and not to code or docs', () => {
+    put('data/notes.csv', 'a,b\n1,set by owner decision\n')
+    put('data/notes.json', '{"note":"owner decision"}\n')
+    put('src/code.ts', '// per the owner decision\n')
+    put('README.md', 'owner decision\n')
+    expect(scanTree(dir).counts).toEqual({
+      'data/notes.csv': { 'decision-citation': 1 },
+      'data/notes.json': { 'decision-citation': 1 },
+    })
+  })
+
   it('treats a rotated dated copy as one family and keeps the highest count', () => {
     put('data/rows_09302026.csv', `${PRIVATE_REPO}\n${PRIVATE_REPO}\n`)
     put('data/rows_10112026.csv', `${PRIVATE_REPO}\n${PRIVATE_REPO}\n${PRIVATE_REPO}\n`)

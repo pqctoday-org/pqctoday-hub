@@ -49,6 +49,121 @@ describe('leak-guard', () => {
     expect(f.map((x) => x.rule)).toEqual(['gitignore-reinclude'])
   })
 
+  it('flags an internal item key anywhere, naming the rule and not the key', () => {
+    // Assembled from fragments so this file holds no literal key.
+    const key = ['q', 'library', 'edit-some-document-short-description'].join(':')
+    const found = scanDiff(diff('src/data/x.csv', [`Applied via approved proposal ${key} on 2026`]))
+    expect(found).toEqual([{ rule: 'internal-key', where: 'src/data/x.csv:1' }])
+    expect(format(found, 'enforce')).not.toContain('some-document')
+    // Also in commit text and PR text, which have no file path.
+    expect(scanText(`see ${key}`, 'PR body').map((f) => f.rule)).toEqual(['internal-key'])
+    // The key shape needs a section and a slug, and a separate word before the q.
+    for (const text of [
+      'q:only-one-part',
+      'faq:library:edit-x',
+      'seq-q:library:x',
+      'Q: Which algorithm? A: ML-KEM',
+      'https://example.org/search?q=ml-kem:fips',
+      'ratio q:p',
+    ]) {
+      expect(scanDiff(diff('src/data/x.csv', [text]))).toEqual([])
+    }
+  })
+
+  it('flags dated handles of the shape words-MMDD:ROW-ID, and nothing that only looks like one', () => {
+    // Assembled from fragments so this file holds no literal handle.
+    const handles = [
+      ['claim-check', '0924'].join('-') + ':AERO-003#status',
+      ['resource-by-hand', '0925'].join('-') + ':HSM-001#source_url',
+      ['revert-criticality', '0924'].join('-') + ':CROS-009',
+      ['hold-vendor-second-source', '0924'].join('-') + ':CLOUD-004',
+      ['user-ruling', '0924'].join('-') + ':AUS-TEL-001#status',
+    ]
+    for (const h of handles) {
+      const found = scanDiff(
+        diff('src/data/x.csv', [`corrected via approved proposal ${h} 2026-09-25`])
+      )
+      expect(found).toEqual([{ rule: 'internal-key', where: 'src/data/x.csv:1' }])
+      expect(format(found, 'enforce')).not.toContain('AERO-003')
+    }
+    for (const text of [
+      'iso-8601:2019 date formats',
+      'en-1999:2001 revised',
+      'fips-2026: the profile',
+      'claim-check 0924: AERO-003',
+      'notes:AES-256 was used',
+      'Claim-Check-0924:AERO-003',
+    ]) {
+      expect(scanDiff(diff('src/data/x.csv', [text]))).toEqual([])
+    }
+  })
+
+  it('flags notes that cite the owner as an approver, in data files only', () => {
+    const cited = [
+      'Owner chose this as the main deadline on 2026-10-21.',
+      'added on the owner\'s decision ("Yes, add it")',
+      'owner approved the adjudicated value',
+      'marked partial under owner convention 2026-09-25',
+      'SUPERSEDED (owner review 2026-10-03): validated',
+      '(owner policy: one row per product)',
+      'a ruling by the owner\u2019s rule',
+      'the label is the owner\u2019s wording',
+      'recorded per owner approval',
+    ]
+    for (const note of cited) {
+      expect(scanDiff(diff('src/data/a.csv', [note])).map((f) => f.rule)).toEqual([
+        'decision-citation',
+      ])
+      expect(scanDiff(diff('src/lib/x.ts', [note]))).toEqual([])
+      expect(scanText(note, 'commit message')).toEqual([])
+    }
+    // Ordinary words around "owner" are not citations.
+    for (const note of [
+      'the key owner is notified',
+      'ownership review of the vendor',
+      'asset owners decide who may read the data',
+      'the owner of a certificate renews it',
+      'Owner milestones on p. 25',
+    ]) {
+      expect(scanDiff(diff('src/data/a.csv', [note]))).toEqual([])
+    }
+  })
+
+  it('flags "owner decision" in data files only', () => {
+    const note = 'All-sector flag: marked all-sector by owner decision; no scope clause settles it.'
+    for (const file of ['src/data/a_01012026.csv', 'public/data/b.json', 'public/c.jsonl']) {
+      expect(scanDiff(diff(file, [note])).map((f) => f.rule)).toEqual(['decision-citation'])
+    }
+    expect(scanDiff(diff('src/data/a.csv', ['By Owner-Decision of the board']))).toHaveLength(1)
+    // Code comments and repository docs may use the phrase.
+    for (const file of ['src/lib/x.ts', 'GATES.md', '.github/workflows/ci.yml', 'dist/x.html']) {
+      expect(scanDiff(diff(file, [note]))).toEqual([])
+    }
+    // Commit and PR text have no file path, so the data-only rule does not apply.
+    expect(scanText(note, 'commit message')).toEqual([])
+    // The same text in a data file is found when the file is named.
+    expect(scanText(note, 'f:1', 'src/data/a.csv').map((f) => f.rule)).toEqual([
+      'decision-citation',
+    ])
+    // A longer word is not the phrase.
+    expect(scanDiff(diff('src/data/a.csv', ['the ownership decision tree']))).toEqual([])
+  })
+
+  it('flags a working-session handle in data files only', () => {
+    // Assembled from fragments so this file holds no literal handle.
+    const handle = ['antigravity', 'd8'].join('-')
+    const note = `2026-09-27 review (${handle}, ruling by ${['antigravity', '33'].join('-')}): position paper`
+    for (const file of ['src/data/a_01012026.csv', 'public/data/b.json', 'public/c.jsonl']) {
+      expect(scanDiff(diff(file, [note])).map((f) => f.rule)).toEqual(['session-handle'])
+    }
+    expect(scanDiff(diff('src/lib/x.ts', [note]))).toEqual([])
+    expect(scanText(note, 'commit message')).toEqual([])
+    // Longer words and other names are not handles.
+    for (const text of ['the antigravity-dev folder', 'antigravity research', 'anti-gravity-d8']) {
+      expect(scanDiff(diff('src/data/a.csv', [text]))).toEqual([])
+    }
+  })
+
   it('does not flag ordinary teaching content', () => {
     const lines = [
       'Large language models such as Claude or GPT can leak secrets.',

@@ -11,6 +11,7 @@
 // rather than keep a second, driftable copy of the same logic.
 
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '@/types/MigrateTypes'
+import { isHeldAnalysisSource } from '@/data/heldAnalysisSources'
 
 const NONE_DETECTED = 'None detected'
 
@@ -146,43 +147,79 @@ export interface VendorRoadmapDateLine {
   date: string
 }
 
-export interface VendorRoadmapDisplay {
-  title: string
-  roadmapUrl: string | null
-  vendorName: string
-  roadmapStatus: VendorRoadmap['status'] | null
+/** Where an analysis was written from: the page address it records. */
+export interface AnalysisSourceInfo {
+  /** The analysed page's own address (http or https only). */
+  url: string
+  /** The title recorded for that page, or null when none was recorded. */
+  title: string | null
+  /** The site the page is on ("example.com"), so the link says where it leads. */
+  siteName: string
+}
+
+/** The facts an analysis states, derived the same way wherever they are shown. */
+export interface AnalysisFacts {
   gaStatus: GaStatusInfo | null
   /** The vendor's own status wording, when it says more than the badge does
    * (which capabilities are GA, which are in preview). Null when the badge
    * already says it all. */
   gaStatusDetail: string | null
   scopeChip: ScopeChipInfo | null
-  dateLine: VendorRoadmapDateLine | null
   pqcAlgorithms: string[]
   migrationDates: string | null
   hybridModeText: string | null
   complianceFrameworks: string[]
   firstQuote: string | null
+}
+
+/** An analysis shown beside a roadmap row it was not written from. */
+export interface CrossSourceDisplay extends AnalysisFacts {
+  source: AnalysisSourceInfo
+}
+
+export interface VendorRoadmapDisplay extends AnalysisFacts {
+  title: string
+  roadmapUrl: string | null
+  vendorName: string
+  roadmapStatus: VendorRoadmap['status'] | null
+  dateLine: VendorRoadmapDateLine | null
+  /** For a vendor with no roadmap row, where the shown analysis came from.
+   * Null when there is a roadmap row (the row's own link says it) or the
+   * analysis records no address. */
+  analysisSource: AnalysisSourceInfo | null
+  /** An analysis written from another page than this row's, kept apart from
+   * the row's own facts. Null when there is none to show. */
+  crossSource: CrossSourceDisplay | null
   /** True when there's genuinely nothing to show beyond the empty-state
    * message (no URL and no enrichment at all). */
   isEmpty: boolean
 }
 
-/** Every derived/filtered value VendorRoadmapPanel.tsx's JSX reads, computed
- * once here so desktop and mobile can't drift. Returns null only when BOTH
- * roadmap and enrichment are undefined (same top guard the desktop
- * component always had) -- callers render nothing in that case. */
-export function deriveVendorRoadmapDisplay(
-  roadmap: VendorRoadmap | undefined,
+/** The address, title and site of the page an analysis was written from, or
+ * null when it records no usable (http or https) address, or when that address
+ * is held because it did not resolve (see heldAnalysisSources.ts). */
+export function analysisSourceInfo(
   enrichment: VendorRoadmapEnrichment | undefined
-): VendorRoadmapDisplay | null {
-  if (!roadmap && !enrichment) return null
+): AnalysisSourceInfo | null {
+  const url = enrichment?.roadmapUrl?.trim()
+  if (!url || !/^https?:\/\//i.test(url) || isHeldAnalysisSource(url)) return null
+  let siteName = url
+  try {
+    siteName = new URL(url).hostname.replace(/^www\./i, '')
+  } catch {
+    // A malformed address still links as written; the site name is the address.
+  }
+  return { url, title: enrichment?.sourceTitle?.trim() || null, siteName }
+}
 
-  const hasUrl = !!roadmap?.roadmapUrl
-  let dateLine: VendorRoadmapDateLine | null = null
-  if (roadmap?.lastVerifiedDate) dateLine = { label: 'verified', date: roadmap.lastVerifiedDate }
-  else if (roadmap?.publishDate) dateLine = { label: 'published', date: roadmap.publishDate }
+/** The accessible name of a link to an analysis's source page: what it is,
+ * the visible title and site, and that it opens in a new tab. */
+export function analysisSourceLinkLabel(source: AnalysisSourceInfo): string {
+  const visible = source.title ? `${source.title} (${source.siteName})` : source.siteName
+  return `Analysis source: ${visible} (opens in a new tab)`
+}
 
+function deriveAnalysisFacts(enrichment: VendorRoadmapEnrichment | undefined): AnalysisFacts {
   const migrationDates =
     enrichment?.targetMigrationDates && enrichment.targetMigrationDates !== NONE_DETECTED
       ? enrichment.targetMigrationDates
@@ -203,20 +240,53 @@ export function deriveVendorRoadmapDisplay(
       : null
 
   return {
-    title: roadmap?.roadmapTitle || 'Vendor PQC Roadmap',
-    roadmapUrl: hasUrl ? roadmap!.roadmapUrl : null,
-    vendorName: roadmap?.vendorName ?? '',
-    roadmapStatus: roadmap?.status ?? null,
     gaStatus,
     gaStatusDetail,
     scopeChip: getScopeChipInfo(enrichment?.roadmapScope),
-    dateLine,
     pqcAlgorithms: enrichment?.pqcAlgorithms ?? [],
     migrationDates,
     hybridModeText,
     complianceFrameworks: enrichment?.complianceFrameworks ?? [],
     firstQuote:
       enrichment?.keyQuotes && enrichment.keyQuotes.length > 0 ? enrichment.keyQuotes[0] : null,
-    isEmpty: !hasUrl && !enrichment,
+  }
+}
+
+/** Every derived/filtered value VendorRoadmapPanel.tsx's JSX reads, computed
+ * once here so desktop and mobile can't drift. Returns null only when the
+ * roadmap, the enrichment and the cross-source analysis are all undefined
+ * (same top guard the desktop component always had) -- callers render nothing
+ * in that case.
+ *
+ * `crossSource` is an analysis written from a different page than the row's
+ * own (see crossSourceEnrichmentForRoadmap). Its facts are returned only in
+ * `crossSource`, never merged into the row's own fields, so a caller cannot
+ * show them next to the row's link as if that page had said them. */
+export function deriveVendorRoadmapDisplay(
+  roadmap: VendorRoadmap | undefined,
+  enrichment: VendorRoadmapEnrichment | undefined,
+  crossSource?: VendorRoadmapEnrichment
+): VendorRoadmapDisplay | null {
+  if (!roadmap && !enrichment && !crossSource) return null
+
+  const hasUrl = !!roadmap?.roadmapUrl
+  let dateLine: VendorRoadmapDateLine | null = null
+  if (roadmap?.lastVerifiedDate) dateLine = { label: 'verified', date: roadmap.lastVerifiedDate }
+  else if (roadmap?.publishDate) dateLine = { label: 'published', date: roadmap.publishDate }
+
+  const crossSourceInfo = crossSource ? analysisSourceInfo(crossSource) : null
+
+  return {
+    title: roadmap?.roadmapTitle || 'Vendor PQC Roadmap',
+    roadmapUrl: hasUrl ? roadmap!.roadmapUrl : null,
+    vendorName: roadmap?.vendorName ?? '',
+    roadmapStatus: roadmap?.status ?? null,
+    dateLine,
+    ...deriveAnalysisFacts(enrichment),
+    analysisSource: !roadmap ? analysisSourceInfo(enrichment) : null,
+    crossSource: crossSourceInfo
+      ? { source: crossSourceInfo, ...deriveAnalysisFacts(crossSource) }
+      : null,
+    isEmpty: !hasUrl && !enrichment && !crossSourceInfo,
   }
 }

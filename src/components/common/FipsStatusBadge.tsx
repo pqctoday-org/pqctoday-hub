@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import clsx from 'clsx'
-import { getCertsForProduct } from '@/data/certificationXrefData'
+import { certIsLimited, getCertsForProduct } from '@/data/certificationXrefData'
 import {
   classifyFips,
   pqcBoundary,
@@ -20,6 +20,9 @@ const TONE: Record<FipsState, string> = {
   none: 'bg-muted text-muted-foreground',
   unknown: 'bg-muted text-muted-foreground',
 }
+
+const LIMITED_CERT_TEXT =
+  'At least one active FIPS 140-3 certificate does not cover the catalogue release or the whole product; see the certificate details for what each covers.'
 
 const BOUNDARY_TEXT = {
   yes: 'PQC algorithms are inside the validated module boundary.',
@@ -60,9 +63,13 @@ export const FipsStatusBadge: React.FC<FipsStatusBadgeProps> = ({
   const label = validated
     ? `${FIPS_STATE_SHORT[state]}${boundary === 'yes' ? ' · incl. PQC' : boundary === 'no' ? ' · classical' : ''}`
     : FIPS_STATE_SHORT[state]
+  // One line only when the certificate file says a certificate is for an earlier release,
+  // named platforms or a module of the product. Nothing recorded adds nothing.
+  const limitedCert = certs.some((c) => c.certType === 'FIPS 140-3' && certIsLimited(c))
   const title = [
     FIPS_STATE_LABEL[state],
     validated ? BOUNDARY_TEXT[boundary] : null,
+    validated && limitedCert ? LIMITED_CERT_TEXT : null,
     fipsValidated || null,
   ]
     .filter(Boolean)

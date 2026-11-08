@@ -31,6 +31,13 @@
         "reason": "The program names go with the PCI certification verdict that is no longer asserted on the same eight rows.",
         "until": "2026-11-13"
       }
+    },
+    "migrate-catalog": {
+      "proof_verification_notes": {
+        "expectedEmptied": 67,
+        "reason": "Sixty-seven rows kept only an internal review log in this note column; the log is removed from the public data. Their values and sources are unchanged.",
+        "until": "2026-11-13"
+      }
     }
   }
 }

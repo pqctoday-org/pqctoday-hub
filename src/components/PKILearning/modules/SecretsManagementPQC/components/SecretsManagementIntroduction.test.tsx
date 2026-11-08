@@ -66,8 +66,12 @@ describe('SecretsManagementIntroduction AWS provider row', () => {
     expect(text).not.toMatch(/There is no ML-KEM CMK key spec/i)
     expect(text).toMatch(/ML_KEM_512\/768\/1024/)
     expect(text).toMatch(/Encapsulate and Decapsulate/)
-    expect(text).toMatch(/23 October 2026/)
-    expect(text).toMatch(/not available in China Regions/i)
+    expect(text).toMatch(/26 October 2026/)
+    expect(text).not.toMatch(/23 October 2026/)
+    expect(text).toMatch(
+      /not available in the China, Middle East \(UAE\) and Middle East \(Bahrain\) Regions/i
+    )
+    expect(text).toMatch(/imports key material under an RSA wrapping key/)
     expect(text).toMatch(/supports only symmetric encryption KMS keys/i)
     expect(text).toMatch(/not ML-KEM-encrypted at rest/i)
   })

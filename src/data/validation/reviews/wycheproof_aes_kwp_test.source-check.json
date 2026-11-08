@@ -1,7 +1,7 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:wycheproof_aes_kwp_test",
-  "subjectSha256": "09f4ffa71a6ae07f218a058f8ecb20ee7805a4e167432b3e5c5198a68684b9c9",
+  "subjectSha256": "b1a3c8252e907870297dd66d8836623d4c16bdbddb50de888e955a7b82f7f11e",
   "fileSha256": "53006942fa0ba09b99c09c7120e3d4a847938579a8f4e533fa8ded3617c790a7",
   "result": "match",
   "tool": "scripts/acvp/vendor_wycheproof.py",
@@ -19,5 +19,5 @@
   "compared": {
     "cases": 254
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-08"
 }

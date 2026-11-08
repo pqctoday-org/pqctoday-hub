@@ -30,6 +30,19 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { Button } from '@/components/ui/button'
+import type { ROIOutput } from '../types'
+import { ProductCountField } from './ProductCountField'
+import {
+  EXAMPLE_PRODUCT_COUNT,
+  MAX_PRODUCT_COUNT,
+  MIN_PRODUCT_COUNT,
+  isOwnCount,
+  parseProductCount,
+  productCountScopeNote,
+  productCountSourceLabel,
+  restoredCountSource,
+  type ProductCountSource,
+} from './roiProductCount'
 import {
   ANNUAL_BREACH_PROBABILITY_PCT,
   IBM_BASELINE_UNVERIFIED_NOTE,
@@ -50,8 +63,8 @@ import {
 const REGULATORY_ASSUMPTIONS_NOTE =
   'The selected framework count, editable penalty amount and fixed incident rate are illustrative scenario assumptions, not an enforcement estimate. The penalty is not a sourced average; this calculation does not establish legal liability or that migration prevents penalties.'
 
-const CATALOGUE_SCOPE_NOTE =
-  'Product counts use the filtered Hub catalogue, not an inventory of your organisation. The catalogue-count scenario and profile-based calculation may use different scopes and shared assumptions; agreement or spread does not establish calibration, accuracy or confidence.'
+const COMPARISON_SCOPE_NOTE =
+  'The scenario and the profile-based calculation may use different scopes and shared assumptions; agreement or spread does not establish calibration, accuracy or confidence.'
 
 const PROFILE_FLOOR_NOTE =
   'The assessment-derived calculation returned the sample cost floor. That value alone does not establish whether the profile is incomplete or the estimate is reliable; review the selected scope and assumptions before using it.'
@@ -70,7 +83,10 @@ function formatPercent(value: number): string {
 }
 
 interface ROIAssumptions {
+  /** The learner's own count of systems or products to migrate (never the Hub catalogue size). */
   productsToMigrate: number
+  /** Where that count came from; models saved before this marker existed restore as `saved-model`. */
+  productsSource: ProductCountSource
   costPerProduct: number
   annualOpexPct: number // % of capex per year
   hndlExposurePct: number
@@ -97,13 +113,6 @@ interface TornadoRow {
   low: number
   high: number
   delta: number
-}
-
-interface ROIOutput {
-  totalCostUSD: number
-  roiPercent: number
-  paybackMonths: number
-  breachCostSavingsUSD: number
 }
 
 interface ROICalculatorProps {
@@ -140,7 +149,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
 
   const computeDefaultAssumptions = useCallback(
     (): ROIAssumptions => ({
-      productsToMigrate: Math.min(data.totalProducts, 50),
+      productsToMigrate: EXAMPLE_PRODUCT_COUNT,
+      productsSource: 'example',
       costPerProduct: 75_000,
       annualOpexPct: 15,
       hndlExposurePct: 50,
@@ -156,7 +166,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       horizonYears: 3,
       discountRatePct: 10,
     }),
-    [data.totalProducts, defaultApplicableFrameworks]
+    [defaultApplicableFrameworks]
   )
 
   const [assumptions, setAssumptions] = useState<ROIAssumptions>(() => {
@@ -164,14 +174,59 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     // model saved before a field was added (e.g. orgSizeTier) still round-trips
     // without a crash or an undefined value reaching the UI.
     const defaults = computeDefaultAssumptions()
-    return savedAssumptions ? { ...defaults, ...savedAssumptions } : defaults
+    if (!savedAssumptions) return defaults
+    const merged = { ...defaults, ...savedAssumptions }
+    const savedCount = savedAssumptions.productsToMigrate
+    const usable =
+      Number.isInteger(savedCount) &&
+      savedCount >= MIN_PRODUCT_COUNT &&
+      savedCount <= MAX_PRODUCT_COUNT
+    // A model saved before the learner could enter a count carries a catalogue-bounded number and no
+    // marker: it restores as "from your saved model" and is not read as the learner's inventory.
+    return usable
+      ? { ...merged, productsSource: restoredCountSource(savedAssumptions.productsSource) }
+      : { ...merged, productsToMigrate: defaults.productsToMigrate, productsSource: 'example' }
   })
+
+  // What the learner has typed in the count field. It can be blank or invalid while the figures keep
+  // the last valid count in `assumptions.productsToMigrate`.
+  const [countText, setCountText] = useState(() => String(assumptions.productsToMigrate))
+  const parsedCount = useMemo(() => parseProductCount(countText), [countText])
+  // Whether the field has focus: a half-typed entry ("1," on the way to "1,200", or a cleared field)
+  // gets no message until the reader leaves the field, so a screen reader is not told of errors that
+  // typing a valid number passes through.
+  const [countFocused, setCountFocused] = useState(false)
+  // The message and aria-invalid; the comparison below waits on any unusable entry.
+  const countError =
+    !parsedCount.ok && (!parsedCount.incomplete || !countFocused) ? parsedCount.message : null
+  const countUsable = parsedCount.ok
+
+  const handleCountTextChange = useCallback((text: string) => {
+    setCountText(text)
+    const parsed = parseProductCount(text)
+    if (parsed.ok) {
+      setAssumptions((prev) => ({
+        ...prev,
+        productsToMigrate: parsed.value,
+        productsSource: 'entered',
+      }))
+    }
+  }, [])
+
+  // Confirming keeps the count in use, so the field must show that count too, not whatever unusable
+  // text the reader had left in it.
+  const confirmRestoredCount = useCallback(() => {
+    setAssumptions((prev) => ({ ...prev, productsSource: 'entered' }))
+    setCountText(String(assumptions.productsToMigrate))
+  }, [assumptions.productsToMigrate])
 
   // A restored saved model never re-derives from the user's current /migrate +
   // assessment data on its own (the lazy initializer above only runs once) —
   // this gives an explicit way back to fresh, up-to-date computed defaults.
   const resetToComputedDefaults = useCallback(() => {
-    setAssumptions(computeDefaultAssumptions())
+    const defaults = computeDefaultAssumptions()
+    setAssumptions(defaults)
+    setCountText(String(defaults.productsToMigrate))
   }, [computeDefaultAssumptions])
 
   const updateAssumption = useCallback(
@@ -249,7 +304,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
 
   // Independent second estimate: the cost the user's assessment profile implies
   // (infra layers × algo count × agility/vendor/team multipliers). This is a
-  // different method from the per-product slider, so reconciling the two is an
+  // different method from the per-product count, so reconciling the two is an
   // honest cross-check rather than a restatement of the same number.
   const assessmentDerived = useMemo(
     () =>
@@ -259,19 +314,22 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     [data.isAssessmentComplete, data.assessmentResult]
   )
 
+  // The comparison reads the learner's own count. While the opening example (or an unconfirmed
+  // restored count) is in place there is nothing of theirs to compare, so it is not assessed; the
+  // Hub catalogue never stands in for the count.
+  const countIsOwn = isOwnCount(assumptions.productsSource) && countUsable
+  const crossCheckWaitsForCount = !!assessmentDerived && !countIsOwn
   const crossCheck = useMemo(() => {
-    if (!assessmentDerived) return null
-    // Compare methodologies at full-estate scale so a user modeling a subset via
-    // productsToMigrate doesn't produce a spurious divergence.
-    const methodAFullEstate = assumptions.costPerProduct * data.totalProducts
+    if (!assessmentDerived || !countIsOwn) return null
+    const scenarioCost = assumptions.costPerProduct * assumptions.productsToMigrate
     const assessmentCost = assessmentDerived.migrationCost
     return {
-      methodAFullEstate,
+      scenarioCost,
       assessmentCost,
       lowConfidence: assessmentCost === MIGRATION_COST_FLOOR,
-      recon: reconcileEstimates(methodAFullEstate, assessmentCost),
+      recon: reconcileEstimates(scenarioCost, assessmentCost),
     }
-  }, [assessmentDerived, assumptions.costPerProduct, data.totalProducts])
+  }, [assessmentDerived, countIsOwn, assumptions.costPerProduct, assumptions.productsToMigrate])
 
   useEffect(() => {
     if (onOutput && financials.totalCost > 0) {
@@ -280,6 +338,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         roiPercent: financials.roiPercent,
         paybackMonths: financials.paybackMonths,
         breachCostSavingsUSD: financials.breachCostSavings,
+        productsToMigrate: assumptions.productsToMigrate,
+        productsSource: assumptions.productsSource,
       })
     }
   }, [
@@ -288,6 +348,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     financials.roiPercent,
     financials.paybackMonths,
     financials.breachCostSavings,
+    assumptions.productsToMigrate,
+    assumptions.productsSource,
   ])
 
   // Sensitivity (tornado): vary each input ±30% and measure NPV impact.
@@ -369,7 +431,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     }
     md += `\n## Assumptions\n\n`
     md += `### Investment\n`
-    md += `- Catalogue products in selected scenario: ${assumptions.productsToMigrate} of ${data.totalProducts}\n`
+    md += `- Systems or products in scenario (your count): ${assumptions.productsToMigrate.toLocaleString('en-US')} (${productCountSourceLabel(assumptions.productsSource)})\n`
     md += `- Capex per product: ${formatCurrency(assumptions.costPerProduct)}\n`
     md += `- **Total capex: ${formatCurrency(financials.totalMigrationCost)}**\n`
     md += `- Annual opex: ${assumptions.annualOpexPct}% of capex = ${formatCurrency(financials.annualOpex)}/year\n\n`
@@ -388,7 +450,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `- Incident rate: ${Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% per framework per year (illustrative assumption)\n`
     md += `- **Annual modeled contribution: ${formatCurrency(financials.complianceSavings)}**\n\n`
     md += `${REGULATORY_ASSUMPTIONS_NOTE}\n\n`
-    md += `${CATALOGUE_SCOPE_NOTE}\n\n`
+    md += `${productCountScopeNote(assumptions.productsSource)}\n\n`
+    md += `${COMPARISON_SCOPE_NOTE}\n\n`
     md += `### Financial Modeling\n`
     md += `- Planning horizon: ${assumptions.horizonYears} years\n`
     md += `- Discount rate (WACC): ${assumptions.discountRatePct}%\n`
@@ -399,12 +462,14 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         md += `${PROFILE_FLOOR_NOTE}\n\n`
       } else {
         md += `| Method | Estimate |\n|--------|----------|\n`
-        md += `| Per-product model (catalogue-count scenario) | ${formatCurrency(crossCheck.methodAFullEstate)} |\n`
+        md += `| Per-product model (your count) | ${formatCurrency(crossCheck.scenarioCost)} |\n`
         md += `| Assessment-derived | ${formatCurrency(crossCheck.assessmentCost)} |\n`
         md += `| Numerical comparison | ${crossCheck.recon.verdict === 'aligned' ? 'Within sample comparison band' : 'Outside sample comparison band'} (${
           crossCheck.recon.ratio === Infinity ? '∞' : `${crossCheck.recon.ratio.toFixed(1)}×`
         }, ${Math.round(crossCheck.recon.spreadPct)}% spread) |\n\n`
       }
+    } else if (crossCheckWaitsForCount) {
+      md += `## Scenario comparison\n\nNot assessed until you enter your own count of systems or products.\n\n`
     }
     md += `## Sensitivity (NPV impact at ±30%)\n\n`
     md += `| Driver | Low | High | Range |\n|--------|-----|------|-------|\n`
@@ -422,13 +487,13 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     financials,
     data.industry,
     data.country,
-    data.totalProducts,
     data.frameworksByIndustry.length,
     industryBreachBaseline,
     quantumMultiplier,
     tornado,
     costOfInaction,
     crossCheck,
+    crossCheckWaitsForCount,
   ])
 
   const primaryTornadoColor = 'hsl(var(--primary))'
@@ -472,10 +537,6 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           if (data.myFrameworks.length > 0)
             sources.push(
               `${data.myFrameworks.length} framework${data.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
-            )
-          if (data.myProducts.length > 0)
-            sources.push(
-              `${data.myProducts.length} product${data.myProducts.length !== 1 ? 's' : ''} from /migrate`
             )
           if (data.criticalThreatCount > 0 && data.industry)
             sources.push(`${data.industryThreats.length} industry threats`)
@@ -536,7 +597,9 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">{CATALOGUE_SCOPE_NOTE}</p>
+      <p className="text-xs text-muted-foreground">
+        {productCountScopeNote(assumptions.productsSource)} {COMPARISON_SCOPE_NOTE}
+      </p>
 
       {/* ── Investment (Capex + Opex) ── */}
       <details className="glass-panel p-4" open>
@@ -546,31 +609,15 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </summary>
         <div className="mt-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="roi-products"
-                className="block text-sm font-medium text-foreground mb-2"
-              >
-                Products to Migrate
-              </label>
-              <input
-                id="roi-products"
-                type="range"
-                min={1}
-                max={data.totalProducts}
-                step={1}
-                value={assumptions.productsToMigrate}
-                onChange={(e) => updateAssumption('productsToMigrate', parseInt(e.target.value))}
-                className="w-full accent-primary"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>1</span>
-                <span className="text-sm font-mono text-primary">
-                  {assumptions.productsToMigrate} of {data.totalProducts}
-                </span>
-                <span>{data.totalProducts}</span>
-              </div>
-            </div>
+            <ProductCountField
+              text={countText}
+              value={assumptions.productsToMigrate}
+              source={assumptions.productsSource}
+              error={countError}
+              onTextChange={handleCountTextChange}
+              onFocusChange={setCountFocused}
+              onConfirm={confirmRestoredCount}
+            />
             <div>
               <label
                 htmlFor="roi-cost-per-product"
@@ -624,8 +671,9 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           </div>
           <div className="bg-muted/50 rounded-lg p-3">
             <p className="text-xs font-mono text-muted-foreground">
-              Capex: {assumptions.productsToMigrate} × {formatCurrency(assumptions.costPerProduct)}{' '}
-              ={' '}
+              Capex: {assumptions.productsToMigrate.toLocaleString('en-US')} systems or products (
+              {productCountSourceLabel(assumptions.productsSource)}) ×{' '}
+              {formatCurrency(assumptions.costPerProduct)} ={' '}
               <span className="text-primary font-bold">
                 {formatCurrency(financials.totalMigrationCost)}
               </span>{' '}
@@ -647,34 +695,23 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           {crossCheck ? (
             <>
               <p className="text-xs text-muted-foreground">
-                The per-product scenario below uses the full filtered Hub catalogue count, not your
-                organisation&apos;s estate. It is shown beside a separate profile-based calculation;
-                their scope and planning horizons have not been reconciled. They may share
-                assumptions. The catalogue-count comparison does not move with the Products to
-                Migrate slider; the selected catalogue subset is shown separately. Agreement is not
+                The per-product scenario below uses the count of systems or products you entered. It
+                is shown beside a separate profile-based calculation; their scope and planning
+                horizons have not been reconciled. They may share assumptions. Agreement is not
                 calibration.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-muted/50 rounded-lg p-3 border border-border">
                   <div className="text-xs text-muted-foreground mb-1">
-                    Per-product model (catalogue-count scenario)
+                    Per-product model (your count)
                   </div>
                   <div className="text-lg font-bold text-foreground">
-                    {formatCurrency(crossCheck.methodAFullEstate)}
+                    {formatCurrency(crossCheck.scenarioCost)}
                   </div>
                   <div className="text-[11px] text-muted-foreground mt-1 font-mono">
-                    {formatCurrency(assumptions.costPerProduct)} × {data.totalProducts} catalogue
-                    products
+                    {formatCurrency(assumptions.costPerProduct)} ×{' '}
+                    {assumptions.productsToMigrate.toLocaleString('en-US')} systems or products
                   </div>
-                  {assumptions.productsToMigrate !== data.totalProducts && (
-                    <div className="text-[11px] text-muted-foreground mt-2 pt-2 border-t border-border font-mono">
-                      At your selected scope ({assumptions.productsToMigrate} of{' '}
-                      {data.totalProducts} products above):{' '}
-                      <span className="text-foreground font-semibold">
-                        {formatCurrency(financials.totalMigrationCost)}
-                      </span>
-                    </div>
-                  )}
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3 border border-border">
                   <div className="text-xs text-muted-foreground mb-1">
@@ -734,6 +771,17 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 </div>
               )}
             </>
+          ) : crossCheckWaitsForCount ? (
+            <div className="bg-muted/50 rounded-lg p-3 border border-border flex items-start gap-2">
+              <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground" data-testid="roi-cross-check-waiting">
+                {!countUsable
+                  ? 'Not assessed while the count above cannot be used. Enter a whole number of 1 or more to compare it with your assessment.'
+                  : assumptions.productsSource === 'saved-model'
+                    ? 'Not assessed until you enter your own count. Confirm or change the count of systems or products above to compare it with your assessment.'
+                    : 'Not assessed until you enter your own count. Replace the example count of systems or products above to compare it with your assessment.'}
+              </p>
+            </div>
           ) : (
             <div className="bg-muted/50 rounded-lg p-3 border border-border flex items-start gap-2">
               <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
@@ -1114,9 +1162,9 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </summary>
         <div className="mt-3 text-sm text-muted-foreground space-y-2">
           <p>
-            <strong>Investment:</strong> Capex (products × per-product cost) plus annual opex
-            modeled as a % of capex. Typical ongoing opex covers HSM maintenance, key rotation, and
-            audit — industry defaults are 10–20% of capex.
+            <strong>Investment:</strong> Capex (your count of systems or products × per-product
+            cost) plus annual opex modeled as a % of capex. Typical ongoing opex covers HSM
+            maintenance, key rotation, and audit — industry defaults are 10–20% of capex.
           </p>
           <p>
             <strong>Risk reduction:</strong> Industry breach baseline (IBM Cost of a Data Breach
@@ -1189,6 +1237,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               roiPercent: financials.roiPercent,
               paybackMonths: financials.paybackMonths,
               breachCostSavingsUSD: financials.breachCostSavings,
+              productsToMigrate: assumptions.productsToMigrate,
+              productsSource: assumptions.productsSource,
             },
             createdAt: Date.now(),
           })

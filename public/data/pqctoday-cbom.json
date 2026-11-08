@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:c66f27c8-781e-4414-8328-9fc75d7bdb2d",
+  "serialNumber": "urn:uuid:e8355cfc-6417-433b-b6a1-34c06b399865",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-07T00:00:00.000Z",
+    "timestamp": "2026-11-08T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -4750,7 +4750,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Hybrid post-quantum TLS (ECDH+ML-KEM via s2n-tls) on all AWS KMS endpoints — but currently supported only on Linux, and only in SDKs using the AWS Common Runtime (e.g. AWS SDK for Java 2.x), not a blanket capability across all clients/platforms. 'Native PQC key types on roadmap' claim is unconfirmed by any AWS documentation found — should be re-sourced or dropped.",
+      "description": "Hybrid post-quantum TLS (ECDH+ML-KEM via s2n-tls) on all AWS KMS endpoints — but currently supported only on Linux, and only in SDKs using the AWS Common Runtime (e.g. AWS SDK for Java 2.x), not a blanket capability across all clients/platforms.",
       "externalReferences": [
         {
           "type": "website",
@@ -5819,7 +5819,7 @@
           "primitive": "kem"
         }
       },
-      "description": "ML-DSA digital signatures (FIPS 204) GA since June 2025 with ML-DSA-44/65/87 key specs via CreateKey/Sign/Verify APIs in FIPS 140-3 L3 HSMs. ML-KEM hybrid TLS for API transit protection via AWS-LC. PQC key import (BYOK) not supported — ML-DSA keys must be generated in KMS. External Key Store (XKS) symmetric-only — no PQC HYOK. AWS Private CA supports ML-DSA certificate issuance for code signing workflows.",
+      "description": "ML-DSA digital signatures (FIPS 204) GA since June 2025 with ML-DSA-44/65/87 key specs via CreateKey/Sign/Verify APIs in FIPS 140-3 L3 HSMs. ML-KEM keys (ML_KEM_512/768/1024; Encapsulate, Decapsulate and ML-KEM data key pairs), announced 26 October 2026, not available in the China, Middle East (UAE) and Middle East (Bahrain) Regions. ML-KEM hybrid TLS for API transit protection via AWS-LC. PQC key import (BYOK) not supported — ML-DSA and ML-KEM key material cannot be imported (imported key material is wrapped under RSA wrapping keys), so those keys must be generated in KMS. External Key Store (XKS) symmetric-only — no PQC HYOK. AWS Private CA supports ML-DSA certificate issuance for code signing workflows.",
       "externalReferences": [
         {
           "type": "website",
@@ -5841,7 +5841,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3 L3)"
+          "value": "Yes (FIPS 140-3 L3, CMVP #4884; the certificate lists no ML-DSA or ML-KEM algorithm)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -6356,7 +6356,7 @@
           "primitive": "kem"
         }
       },
-      "description": "The post says Chrome Desktop clients used hybrid X25519 and Kyber key exchange, and announces that Chrome 131 will switch from Kyber to ML-KEM and offer hybrid ML-KEM key-share prediction (0x11EC). It does not document ML-DSA, certificate signatures, or a released Chrome 131 build.",
+      "description": "The post says Chrome Desktop clients used hybrid X25519 and Kyber key exchange, and announces that Chrome 131 will switch from Kyber to ML-KEM and offer hybrid ML-KEM key-share prediction (0x11EC). That post does not document ML-DSA, certificate signatures, or a released Chrome 131 build. Separately, the Chrome Platform Status record for \"Support for ML-DSA in TLS\" (feature 5174590524489728, record snapshot 2026-10-20) lists Chrome 150 with the feature enabled by default and no flag, and says a user or administrator must configure a trusted root explicitly because a publicly trusted ML-DSA certificate cannot currently be issued; that record's status still reads Proposed.",
       "externalReferences": [
         {
           "type": "website",
@@ -11808,7 +11808,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Proposal for a staged transition using a Hybrid Signature Model combining ECDSA with Falcon/Dilithium. Includes C-Chain precompiles for PQC verification and Subnet Modularity for testing PQ-only environments before mainnet enforcement. Currently in technical review phase via ACP repository.",
+      "description": "Proposal for a staged transition using a Hybrid Signature Model combining ECDSA with Falcon/Dilithium. Includes C-Chain precompiles for PQC verification and Subnet Modularity for testing PQ-only environments before mainnet enforcement. The proposal was posted by an independent research lab; its ACP pull request (#278) was closed on 24 February 2026 by an Avalanche Foundation admin because it replaced the repository README. No Avalanche-adopted PQC plan is documented.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -26492,6 +26492,57 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "ad58915b4c2b3973",
+      "name": "mbedTLS",
+      "version": "3.6.x",
+      "purl": "pkg:github/Mbed-TLS/mbedtls",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "mbedTLS does NOT currently ship ML-KEM. Per the official mbedTLS roadmap and the trustedfirmware.org mailing list, ML-KEM is a 'Future' item with no release timeline; ML-DSA is only in investigation/prototype (2025 CQ4-2026 CQ2). The project recommends the separate mlkem-native (PQ-Code-Alliance) C90 library for PQC. ARM embedded TLS library for IoT/constrained devices.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/Mbed-TLS/mbedtls"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/Mbed-TLS/mbedtls"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "mbedtls"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "a4c29885fca39355",
       "name": "RustCrypto ML-KEM",
       "version": "0.3.x",
@@ -34839,6 +34890,44 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "fe99d342cdd7ce79",
+      "name": "Citrix FIPS Cryptographic Module",
+      "manufacturer": {
+        "name": "Citrix Systems Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Citrix-FIPS-Cryptographic-Module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "61579bd088617a48",
       "name": "QASM Cryptographic Module",
       "version": "1.1",
@@ -37244,7 +37333,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No CMVP module validation linked for ML-DSA. CMVP #4884 (AWS Key Management Service HSM, FIPS 140-3 Level 3, firmware 1.8.104, validated 11/18/2024) lists no PQC algorithms. CAVP algorithm validation A7365 (ML-DSA; first validated 9/8/2025). Further AWS Key Management Service HSM entries are on the CMVP Modules In Process list."
+          "value": "No CMVP module validation linked for ML-DSA. CMVP #4884 (AWS Key Management Service HSM, FIPS 140-3 Level 3, firmware 1.8.104, validated 11/18/2024) lists no PQC algorithms. CAVP algorithm validation A7365 (ML-DSA; first validated 9/8/2025) and A8804 (ML-DSA and ML-KEM; implementation 3.0.4; validated 7/24/2026). Further AWS Key Management Service HSM entries are on the CMVP Modules In Process list."
         },
         {
           "name": "pqctoday:algorithm_source",

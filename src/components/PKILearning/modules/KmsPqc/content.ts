@@ -13,9 +13,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'kms-pqc',
-  version: '1.0.1',
+  version: '1.1.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-02',
+  lastEdited: '2026-11-08',
 
   standards: [
     getStandard('FIPS 203'),
@@ -68,6 +68,32 @@ export const content: ModuleContent = {
     getStandard('NSA CNSA 2.0 FAQ'), // pt-envelope-encrypt: January 1, 2027
     getStandard('Chosen-Ciphertext-Attacks-Against-Protocols-Based-on-the-RSA'), // m-kms-pqc: 1998; pt-envelope-encrypt: 1998
     getStandard('Key-encapsulation-mechanisms'), // m-kms-pqc: 1,120 bytes
+    // Key exchange with a third-party HSM or KMS (November 2026). Each id backs the sentence of the
+    // same name in KmsPqcIntroduction; the AWS, Google and Azure pages are held in the Library.
+    getStandard('AWS-KMS-Post-Quantum-Keys'),
+    getStandard('AWS-KMS-ML-KEM-Launch-2026-10'),
+    getStandard('AWS-KMS-Import-Wrapping-Keys'),
+    getStandard('AWS-KMS-API-Decapsulate'),
+    getStandard('AWS-KMS-API-Encapsulate'),
+    getStandard('AWS-KMS-API-GenerateDataKeyPair'),
+    getStandard('AWS-KMS-Hybrid-PQ-TLS'),
+    getStandard('AWS-PQ-Readiness-Confidentiality'),
+    getStandard('Google-Cloud-KMS-Quantum-Safe-Key-Import'),
+    getStandard('Google-Cloud-KMS-Key-Import'),
+    getStandard('Google-Cloud-KMS-Release-Notes'),
+    getStandard('Azure-Key-Vault-BYOK-Specification'),
+    getStandard('Azure-Managed-HSM-BYOK'),
+    getStandard('HashiCorp-Vault-Transit-API'),
+    // HPKE (RFC 9180) is the wrapping format of Google's quantum-safe import; RFC 10024 names the
+    // TLS hybrid groups the lesson separates from the KMS key-wrap combiners.
+    getStandard('RFC 9180'),
+    getStandard('RFC-10024'),
+    // ML-KEM-aware cryptoperiods in the draft revision; Revision 5 stays the final publication.
+    getStandard('NIST-SP-800-57-Pt1-R6'),
+    // CMVP implementation guidance for ML-KEM and hybrid schemes in the approved mode.
+    getStandard('NIST-FIPS140-3-IG-PQC'),
+    // Interim PQC key-wrapping around classical HSM operations (v2.1).
+    getStandard('AQ-PQC-Migration-Framework-v2.1-2026'),
   ],
 
   algorithms: [

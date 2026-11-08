@@ -13,7 +13,7 @@
  *  - ES256 (inner layer of the Nested JWT tab): RFC 7515 Appendix A.3, verified
  *    with the same WebCrypto call HybridJWT.tsx uses.
  *  - The HPKE JWE tab has its own file, hpkeJwe.test.ts, against the
- *    published examples of draft-ietf-jose-hpke-pq-pqt-01.
+ *    published examples of draft-ietf-jose-hpke-pq-pqt-02.
  */
 import { describe, expect, it } from 'vitest'
 import { slh_dsa_sha2_128s, slh_dsa_shake_128s } from '@noble/post-quantum/slh-dsa.js'

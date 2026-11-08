@@ -466,6 +466,11 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Turn it into a plan: Infrastructure Modernization Planner',
     why: 'This tool practises the KMS & PQC Key Management module, phase 6 (Infrastructure & Performance); Infrastructure Modernization Planner produces a deliverable of that phase.',
   },
+  '/playground/cloud-kms-key-exchange': {
+    to: '/business/tools/infra-modernization-planner',
+    label: 'Turn it into a plan: Infrastructure Modernization Planner',
+    why: 'This tool practises the KMS & PQC Key Management module, phase 6 (Infrastructure & Performance); Infrastructure Modernization Planner produces a deliverable of that phase.',
+  },
   '/playground/token-migration': {
     to: '/business/tools/hybrid-transition-planner',
     label: 'Turn it into a plan: Hybrid Transition Planner',

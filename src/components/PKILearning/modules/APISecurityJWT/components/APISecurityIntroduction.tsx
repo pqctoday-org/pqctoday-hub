@@ -221,8 +221,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs-06</code>), and
             ML-KEM encryption for JWE, which now goes through HPKE (
             <code className="text-foreground/70">draft-ietf-jose-hpke-encrypt</code>, in the RFC
-            Editor queue, plus the PQ suites in{' '}
-            <code className="text-foreground/70">draft-ietf-jose-hpke-pq-pqt</code>), which the
+            Editor queue and being edited, plus the PQ suites in{' '}
+            <code className="text-foreground/70">draft-ietf-jose-hpke-pq-pqt</code>, a working-group
+            draft at revision <code className="text-foreground/70">-02</code>), which the
             workshop&apos;s JWE tab implements. An earlier direct-KEM draft for JWE was narrowed to
             COSE in its revision <code className="text-foreground/70">-06</code>.
           </p>

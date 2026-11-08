@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'tls-basics',
   version: '1.1.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-08',
 
   standards: [
     getStandard('FIPS 203'),
@@ -25,6 +25,7 @@ export const content: ModuleContent = {
     // TLS 1.3', Standards Track, defines X25519MLKEM768, SecP256r1MLKEM768 and
     // SecP384r1MLKEM1024.
     getStandard('RFC-10024'),
+    getStandard('RFC-9849'), // TLS Encrypted Client Hello (ECH section)
     getStandard('NIST SP 800-227'),
     getStandard('draft-sheffer-tls-pqc-continuity'),
     // DECLARED 2026-08-22. narratives.mtcProofSize states 736 bytes typical and a

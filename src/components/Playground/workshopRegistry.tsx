@@ -22,6 +22,7 @@ import {
   Gauge,
   Mail,
   KeySquare,
+  ArrowLeftRight,
 } from 'lucide-react'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -304,6 +305,46 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     hasOutput: true,
     outputSpec:
       'AES-256-GCM wrapped DEK (base64) + ML-KEM ciphertext; unwrapped DEK must equal original DEK.',
+  },
+  {
+    id: 'cloud-kms-key-exchange',
+    pt_id: 'PT-034',
+    version: '1.0.1',
+    name: 'Cloud KMS Key Exchange',
+    description:
+      'Simulate importing a key into AWS KMS, Google Cloud KMS and Azure: the classical RSA key-wrap flow next to the HPKE flow, on PKCS#11 v3.2, the v3.3 draft and the candidate CKM_HPKE mechanism',
+    category: 'HSM / PKCS#11',
+    algorithms: ['ML-KEM-768', 'ML-KEM-1024', 'X-Wing', 'RSA-3072', 'AES-256', 'HPKE'],
+    icon: ArrowLeftRight,
+    moduleLink: '/learn/kms-pqc?tab=workshop&step=6',
+    keywords: [
+      'cloud kms',
+      'aws kms',
+      'google cloud kms',
+      'azure key vault',
+      'byok',
+      'key import',
+      'key exchange',
+      'hpke',
+      'x-wing',
+      'ml-kem',
+      'rsa key wrap',
+      'ckm_rsa_aes_key_wrap',
+      'ckm_comp_kem',
+      'simulation',
+    ],
+    difficulty: 'advanced',
+    requires: [],
+    recommendedPersonas: ['architect', 'ops', 'developer'],
+    intro: {
+      whatYouWillDo:
+        'Pick AWS KMS, Google Cloud KMS or Azure, then a flow: the classical RSA import, or the HPKE import on the PKCS#11 v3.2, v3.3 draft or candidate CKM_HPKE engine. Press Run simulation and read the measured sizes and where the key sits at each step.',
+      workedExample:
+        'On AWS KMS choose Classical import and run it: the wrapped blob is the RSA part plus the AES-KWP part, and the recovered key matches the original. Switch to HPKE (candidate), pick X-Wing and run: the message grows to enc plus ciphertext, protected by a post-quantum KEM. Everything is a simulation; no cloud call is made.',
+    },
+    hasOutput: true,
+    outputSpec:
+      'Wrapped key blob (RSA-OAEP part plus AES-KWP part) or HPKE enc || ciphertext; the key imported on the provider side must be the same key the third-party HSM exported, shown by a signature or a key check value and never by reading the key out.',
   },
   {
     id: 'token-migration',
@@ -1244,9 +1285,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half names the draft revisions it was verified against
-      // (hpke-encrypt-22, hpke-pq-pqt-01). The earlier direct-KEM JWE
+      // (hpke-encrypt-22, hpke-pq-pqt-02). The earlier direct-KEM JWE
       // (draft-ietf-jose-pqc-kem-05) was removed when -06 narrowed to COSE.
-      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01, in the browser or entirely inside softhsmv3 (PQCToday candidate CKM_HPKE mechanism).',
+      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-02, in the browser or entirely inside softhsmv3 (PQCToday candidate CKM_HPKE mechanism).',
     category: 'OpenSSL Studio',
     algorithms: [
       'ML-DSA-44',
@@ -1543,6 +1584,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'envelope-encrypt': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo').then((m) => ({
       default: m.EnvelopeEncryptionDemo,
+    }))
+  ),
+  'cloud-kms-key-exchange': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/KmsPqc/workshop/CloudKmsKeyExchange').then((m) => ({
+      default: m.CloudKmsKeyExchange,
     }))
   ),
   'token-migration': lazyWithRetry(() =>

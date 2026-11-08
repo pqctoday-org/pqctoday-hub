@@ -538,7 +538,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What HSMs support ML-KEM and ML-DSA?',
         answer:
-          'Major HSM vendors including Thales (Luna), Entrust (nShield), Utimaco, and AWS CloudHSM have announced or delivered PQC algorithm support including ML-KEM and ML-DSA, with varying levels of FIPS 140-3 validation status. Some vendors offer firmware upgrades for existing hardware while others require new PQC-capable models. The Migrate catalog tracks HSM PQC support and FIPS validation status.',
+          'Major HSM vendors including Thales (Luna), Entrust (nShield) and Utimaco have announced or delivered PQC algorithm support including ML-KEM and ML-DSA, with varying levels of FIPS 140-3 validation status. Cloud HSMs differ: AWS CloudHSM documents ML-DSA key generation and signing (in FIPS mode on hsm2m.medium clusters from 1 September 2026) but no ML-KEM command. Some vendors offer firmware upgrades for existing hardware while others require new PQC-capable models. The Migrate catalog tracks HSM PQC support and FIPS validation status.',
         deepLink: '/migrate?domain=hsm',
       },
       {
@@ -672,7 +672,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many learning modules does PQC Today offer?',
         answer:
-          'PQC Today offers dozens of interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
+          'PQC Today offers dozens of interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Governance & Risk, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
         deepLink: '/learn',
       },
       {

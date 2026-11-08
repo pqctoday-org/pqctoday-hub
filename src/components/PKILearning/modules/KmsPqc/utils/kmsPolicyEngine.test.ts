@@ -87,6 +87,44 @@ describe('validateKmsPqcPolicy', () => {
   })
 })
 
+describe('ML-KEM key establishment pattern', () => {
+  it('finds ML-KEM key specs limited to ENCAPSULATE_DECAPSULATE, separately from the ML-DSA task', () => {
+    const r = validateKmsPqcPolicy(
+      policy([
+        createKey({
+          StringEquals: {
+            'kms:KeySpec': ['ML_KEM_768', 'ML_KEM_1024'],
+            'kms:KeyUsage': 'ENCAPSULATE_DECAPSULATE',
+          },
+        }),
+      ])
+    )
+    expect(r.allowsMlKemKeyEstablishment).toBe(true)
+    expect(r.restrictsKeySpecToMlDsa).toBe(false)
+    expect(r.isComplete).toBe(false)
+  })
+
+  it('does not accept an ML-KEM spec with signing usage, or a mixed spec list', () => {
+    const wrongUsage = validateKmsPqcPolicy(
+      policy([
+        createKey({ StringEquals: { 'kms:KeySpec': 'ML_KEM_768', 'kms:KeyUsage': 'SIGN_VERIFY' } }),
+      ])
+    )
+    expect(wrongUsage.allowsMlKemKeyEstablishment).toBe(false)
+    const mixed = validateKmsPqcPolicy(
+      policy([
+        createKey({
+          StringEquals: {
+            'kms:KeySpec': ['ML_KEM_768', 'ML_DSA_65'],
+            'kms:KeyUsage': 'ENCAPSULATE_DECAPSULATE',
+          },
+        }),
+      ])
+    )
+    expect(mixed.allowsMlKemKeyEstablishment).toBe(false)
+  })
+})
+
 describe('malformed policy structures', () => {
   it.each(['null', '[]', '"text"', '{"Statement":[null]}', '{"Statement":[4]}'])(
     'handles %s without throwing',

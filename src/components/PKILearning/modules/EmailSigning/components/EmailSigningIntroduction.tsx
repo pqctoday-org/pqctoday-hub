@@ -282,7 +282,9 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           encryption. This is especially true for PQC migration, where signing keys (ML-DSA) and
           encryption keys (ML-KEM) use fundamentally different algorithms. The{' '}
           <code className="text-foreground/70">smimeCapabilities</code> attribute in signed messages
-          advertises supported algorithms, enabling gradual PQC rollout.
+          lists, in order of preference, algorithms the sender says it can handle (RFC 8551 section
+          2.5.2). It is a partial list, so it helps a correspondent choose algorithms during a
+          gradual PQC rollout but does not carry out the rollout.
         </p>
       </div>
     </section>
@@ -419,7 +421,7 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
             },
             {
               t: 'Recipient Capability Discovery',
-              d: 'Senders must discover which algorithms each recipient supports before encrypting. The smimeCapabilities attribute and LDAP directory lookups become critical.',
+              d: "Senders must find out which algorithms each recipient can handle before encrypting. The smimeCapabilities attribute (a signer's own partial list, in order of preference) and LDAP directory lookups are the places to look.",
             },
             {
               t: 'Message Size Impact',

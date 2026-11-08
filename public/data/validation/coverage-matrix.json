@@ -5,7 +5,7 @@
   "inputs": {
     "src/data/validation/mechanism-inventory.generated.json": "7030d2a4dbd2b54b7f5ffd7da1c83ad556e390be13b59c21f7a3b9f1c9c68c68",
     "src/data/validation/capability-map.json": "1048fb1080cc877891d59ff825d98b26d220bde12781c98cdaf97749a27b926a",
-    "src/data/validation/vector-manifest.json": "d7d11cd28e039ff788f8f41ac9a56f352615ad56faf43bfe01ce43ac9a0399d6",
+    "src/data/validation/vector-manifest.json": "1f49c890e4b6b52dab8f04a588d7dd841e29fc3998d776e2a7f1bcdc77f82a8c",
     "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
     "src/data/validation/open-gaps.json": "623b3aea5f6aa821c7adfb3e4a5ef0e6dde98acb6a1756d2f15762fd368f68b7",
     "src/data/validation/testRegistry.ts": "2e4bb93416906300a42b865c66c859004ac0405a1b841c749cb8c46dd5e53e96"

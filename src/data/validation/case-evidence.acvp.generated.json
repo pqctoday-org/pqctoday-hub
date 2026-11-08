@@ -1,7 +1,7 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "7422f144b4f7cd205d7ef34b51607743b875b6d66e898a70364cb02acd03f81f",
+    "manifestSha256": "ee2f815af7f39cd2400029a2f71e9e2cd37e0ee8064c59d394c43cf15351b890",
     "registrySha256": "4a218d261f75fd68f386b2d78d52b9ba1cb88efc16e928e6d3cf560b95a4e7c5"
   },
   "records": {

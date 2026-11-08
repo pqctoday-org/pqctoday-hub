@@ -56,6 +56,18 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
       why: 'A KEM produces a shared secret rather than wrapping a chosen key, so a KDF turns that secret into the wrapping key before AES-KW, AES-KWP or AES-GCM runs.',
     },
   ],
+  'cloud-kms-key-exchange': [
+    {
+      prompt: 'Run AWS KMS, Classical import. What does the measured wrapped blob consist of?',
+      options: [
+        'An RSA-OAEP part the size of the RSA modulus, then an AES-KWP part for the key',
+        'An ML-KEM ciphertext followed by an AES-GCM tag',
+        'A single RSA signature over the key',
+      ],
+      answer: 0,
+      why: 'CKM_RSA_AES_KEY_WRAP wraps a temporary AES key with RSA-OAEP and then wraps the target key with AES-KWP under it, so the run shows the modulus size plus a short AES-KWP part. Both parts rest on RSA, so the wrap is not quantum-safe.',
+    },
+  ],
   'token-migration': [
     {
       prompt:

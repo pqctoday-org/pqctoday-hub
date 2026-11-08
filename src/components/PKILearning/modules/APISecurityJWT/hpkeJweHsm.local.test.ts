@@ -2,7 +2,7 @@
 /**
  * PQ JWE with the whole HPKE operation inside SoftHSM3 (PKCS#11 CKM_HPKE with
  * the SHAKE256 KDF, hsm #310), against:
- *   - the draft-ietf-jose-hpke-pq-pqt-01 Appendix A examples — the published
+ *   - the draft-ietf-jose-hpke-pq-pqt-02 Appendix A examples — the published
  *     JWK "priv" seed imported into the token, the token derives "pub", and the
  *     published compact JWE opens inside the token;
  *   - the noble/`hpke` browser path, in both directions (a token-sealed JWE
@@ -15,7 +15,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, it, expect, beforeAll } from 'vitest'
 import * as SoftHSM from '@/wasm/softhsm'
-import examples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
+import examples from '@/data/acvp/jose-hpke-pq-pqt-02-examples.json'
 import { base64urlDecode, base64urlEncode } from './jwtUtils'
 import {
   HPKE_JWE_AEAD_ID,

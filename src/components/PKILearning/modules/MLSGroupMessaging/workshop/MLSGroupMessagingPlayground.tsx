@@ -62,7 +62,7 @@ export const MLSGroupMessagingPlayground: React.FC = () => (
       <p>
         In the draft pure post-quantum suite{' '}
         <strong>MLS_192_MLKEM768_AES256GCM_SHA384_MLDSA65</strong>{' '}
-        (draft-ietf-mls-pq-ciphersuites-06), path secrets are HPKE-encrypted to{' '}
+        (draft-ietf-mls-pq-ciphersuites-07), path secrets are HPKE-encrypted to{' '}
         <strong>ML-KEM-768</strong> public keys and signatures use <strong>ML-DSA-65</strong>, so
         both confidentiality and authentication use post-quantum algorithms. The draft&apos;s first
         eight suites keep a traditional signature and give post-quantum confidentiality only.

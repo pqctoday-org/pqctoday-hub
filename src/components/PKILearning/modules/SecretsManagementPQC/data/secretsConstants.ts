@@ -388,7 +388,8 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
       'ML-KEM (no transit key type documented)',
     ],
     encryptionAtRest: 'AES-256-GCM with Shamir Secret Sharing for unseal keys',
-    encryptionInTransit: 'TLS 1.3 (hybrid ML-KEM planned via HPKE)',
+    encryptionInTransit:
+      'TLS 1.3 (the Vault 1.19.4 and 1.20.0 changelogs list X25519MLKEM768 in the Go TLS stack; TLS hybrid groups come from RFC 10024 and RFC 9954, not HPKE)',
     envelopeEncryption: true,
     dynamicSecrets: true,
     kubernetesIntegration: 'vault-agent-injector / Vault Secrets Operator (VSO)',
@@ -413,7 +414,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'Secrets Store CSI Driver + AWS provider / External Secrets Operator',
     fipsMode: true,
     roadmapNote:
-      'No native dynamic secrets. PQC comes via the KMS endpoint hybrid ML-KEM TLS (data in transit); AWS KMS offers ML-KEM key specs (ML_KEM_512/768/1024) for key establishment. Secrets Manager endpoints themselves support hybrid ML-KEM key agreement in non-FIPS endpoints.',
+      'No native dynamic secrets. PQC comes via the KMS endpoint hybrid ML-KEM TLS (data in transit); AWS KMS offers ML-KEM key specs (ML_KEM_512/768/1024) for key establishment. AWS lists hybrid post-quantum key exchange as launched on Secrets Manager FIPS and non-FIPS endpoints in commercial and US GovCloud Regions (AWS PQ readiness page, read 8 November 2026).',
   },
   {
     id: 'azure-key-vault',

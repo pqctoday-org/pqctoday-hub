@@ -98,6 +98,46 @@ describe('BoardPitchBuilder — cross-tool output chaining', () => {
     expect(screen.getByDisplayValue(/Migration investment: \$999/)).toBeInTheDocument()
   })
 
+  it('says the figures rest on the example count when the calculator was left on its example', () => {
+    renderPitch({
+      roiOutput: {
+        totalCostUSD: 999,
+        roiPercent: 10,
+        paybackMonths: 1,
+        breachCostSavingsUSD: 1,
+        productsToMigrate: 50,
+        productsSource: 'example',
+      },
+    })
+    const note = 'example count of 50 systems or products, not your own'
+    expect(screen.getAllByText(new RegExp(note)).length).toBeGreaterThan(0) // the banner
+    expect(
+      screen.getByDisplayValue(new RegExp(`Migration investment: \\$999 \\(${note}\\)`))
+    ).toBeInTheDocument()
+    expect(
+      screen.getByDisplayValue(/Count behind the total: example count of 50/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByDisplayValue(/Enter your own count in the ROI Calculator/)
+    ).toBeInTheDocument()
+  })
+
+  it('says nothing about an example when the learner entered the count', () => {
+    renderPitch({
+      roiOutput: {
+        totalCostUSD: 999,
+        roiPercent: 10,
+        paybackMonths: 1,
+        breachCostSavingsUSD: 1,
+        productsToMigrate: 120,
+        productsSource: 'entered',
+      },
+    })
+    expect(screen.queryByText(/not your own/)).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue(/Count behind the total/)).not.toBeInTheDocument()
+    expect(screen.getByDisplayValue(/Migration investment: \$999 \|/)).toBeInTheDocument()
+  })
+
   it('does not say no cost estimate is attached once the amount comes from the ROI model', () => {
     renderPitch({
       roiOutput: { totalCostUSD: 999, roiPercent: 10, paybackMonths: 1, breachCostSavingsUSD: 1 },

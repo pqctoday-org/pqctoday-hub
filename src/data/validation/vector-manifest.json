@@ -18694,36 +18694,36 @@
       "publishabilityGaps": []
     },
     {
-      "id": "jose-hpke-pq-pqt-01-examples",
-      "path": "src/data/acvp/jose-hpke-pq-pqt-01-examples.json",
-      "sha256": "7077793c91561b40a171de87f616df5b7d80d75662ce74b3b0f32d1cc7f4dc09",
+      "id": "jose-hpke-pq-pqt-02-examples",
+      "path": "src/data/acvp/jose-hpke-pq-pqt-02-examples.json",
+      "sha256": "bca747e800692e71cdaa8d1082a510c6e823d059922ff4e890079d37d7b7eac7",
       "status": "quarantined",
-      "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active.",
+      "statusReason": "Contributed 2026-10-01 against revision -01 and re-pinned to revision -02 on 2026-11-08; awaiting the WS-I two-person vector-source review before promotion to active.",
       "evidenceClass": "published-standard-kat",
       "source": {
         "kind": "published-document",
         "documentStatus": "internet-draft",
-        "citation": "draft-ietf-jose-hpke-pq-pqt-01 Appendix A.3 (HPKE-9) and A.7 (HPKE-12) JOSE examples — an Internet-Draft (work in progress), not an RFC",
-        "url": "https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt",
-        "revision": "draft-ietf-jose-hpke-pq-pqt-01",
+        "citation": "draft-ietf-jose-hpke-pq-pqt-02 Appendix A.3 (HPKE-9) and A.7 (HPKE-12) JOSE examples — an Internet-Draft (work in progress), not an RFC",
+        "url": "https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-02.txt",
+        "revision": "draft-ietf-jose-hpke-pq-pqt-02",
         "verification": {
-          "date": "2026-10-01",
-          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py (fetch_bytes_resilient): the archived draft text, and the authors' unfolded vector set examples/jose-vectors.json and generator scripts/jwe.js at github.com/panva/draft-jose-hpke-pq-pqt commit 47a746533ebb94c4193ee6a4e2f76170a6790335. The HPKE-9 and HPKE-12 entries were copied unchanged from jose-vectors.json, and every JWK, flattened and compact value was checked to appear verbatim in the RFC 8792-unfolded Appendix A of the archived text. The plaintext (not printed in the draft) is the constant in scripts/jwe.js.",
+          "date": "2026-11-08",
+          "method": "Fetched 2026-11-08: the archived draft-ietf-jose-hpke-pq-pqt-02 text, and the authors' unfolded vector set examples/jose-vectors.json and generator scripts/jwe.js at github.com/panva/draft-jose-hpke-pq-pqt commit 56727aa3c3d2e7dc8c175dd01ea8a9dcf9c12325 (the commit behind revision -02). The vector set and the generator script are byte-identical to the ones published with revision -01 (same SHA-256). The HPKE-9 and HPKE-12 entries were copied unchanged from jose-vectors.json, and every JWK, flattened and compact value was checked to appear verbatim in the RFC 8792-unfolded Appendix A of the archived -02 text. The plaintext (not printed in the draft) is the constant in scripts/jwe.js.",
           "result": "match",
           "evidence": [
             {
-              "title": "draft-ietf-jose-hpke-pq-pqt-01",
-              "url": "https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt",
-              "sha256": "d35e0fc262e99e725cbe0c9bb8fc1e8917a7432031a70e16c20c0ed4f38302ac"
+              "title": "draft-ietf-jose-hpke-pq-pqt-02",
+              "url": "https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-02.txt",
+              "sha256": "b47d6543db5dc986b252744b005c970772d78a2afbc9b7205df84e2eae81fef0"
             },
             {
-              "title": "draft-jose-hpke-pq-pqt examples/jose-vectors.json @ 47a74653",
-              "url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/47a746533ebb94c4193ee6a4e2f76170a6790335/examples/jose-vectors.json",
+              "title": "draft-jose-hpke-pq-pqt examples/jose-vectors.json @ 56727aa3",
+              "url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/56727aa3c3d2e7dc8c175dd01ea8a9dcf9c12325/examples/jose-vectors.json",
               "sha256": "97e5fd1c5bd417b3af3f8948e8c54914c7c9f544ad786182d18cf15a011bd2c0"
             },
             {
-              "title": "draft-jose-hpke-pq-pqt scripts/jwe.js @ 47a74653 (plaintext constant)",
-              "url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/47a746533ebb94c4193ee6a4e2f76170a6790335/scripts/jwe.js",
+              "title": "draft-jose-hpke-pq-pqt scripts/jwe.js @ 56727aa3 (plaintext constant)",
+              "url": "https://raw.githubusercontent.com/panva/draft-jose-hpke-pq-pqt/56727aa3c3d2e7dc8c175dd01ea8a9dcf9c12325/scripts/jwe.js",
               "sha256": "f1d4f145775aa61ff3ccc7d5295455243c45d149044e754a3db28147b9c9109d"
             },
             {
@@ -18746,11 +18746,11 @@
       ],
       "cases": [
         {
-          "caseId": "jose-hpke-pq-pqt-01-examples#/vectors/0",
+          "caseId": "jose-hpke-pq-pqt-02-examples#/vectors/0",
           "pointer": "/vectors/0",
           "algorithm": {
             "name": "HPKE JWE (Integrated Encryption)",
-            "revision": "draft-ietf-jose-hpke-pq-pqt-01"
+            "revision": "draft-ietf-jose-hpke-pq-pqt-02"
           },
           "operation": "jwe-decrypt",
           "parameters": {
@@ -18759,16 +18759,16 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-hpke-pq-pqt-01 Appendix A.7 HPKE-12 example (private JWK, flattened JWE with AAD, compact JWE)"
+            "label": "draft-ietf-jose-hpke-pq-pqt-02 Appendix A.7 HPKE-12 example (private JWK, flattened JWE with AAD, compact JWE)"
           },
-          "lineage": ["jose-hpke-pq-pqt-01-examples-1"]
+          "lineage": ["jose-hpke-pq-pqt-02-examples-1"]
         },
         {
-          "caseId": "jose-hpke-pq-pqt-01-examples#/vectors/1",
+          "caseId": "jose-hpke-pq-pqt-02-examples#/vectors/1",
           "pointer": "/vectors/1",
           "algorithm": {
             "name": "HPKE JWE (Integrated Encryption)",
-            "revision": "draft-ietf-jose-hpke-pq-pqt-01"
+            "revision": "draft-ietf-jose-hpke-pq-pqt-02"
           },
           "operation": "jwe-decrypt",
           "parameters": {
@@ -18777,17 +18777,17 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-hpke-pq-pqt-01 Appendix A.3 HPKE-9 example (private JWK, flattened JWE with AAD, compact JWE)"
+            "label": "draft-ietf-jose-hpke-pq-pqt-02 Appendix A.3 HPKE-9 example (private JWK, flattened JWE with AAD, compact JWE)"
           },
-          "lineage": ["jose-hpke-pq-pqt-01-examples-1"]
+          "lineage": ["jose-hpke-pq-pqt-02-examples-1"]
         }
       ],
       "lineage": [
         {
-          "id": "jose-hpke-pq-pqt-01-examples-1",
+          "id": "jose-hpke-pq-pqt-02-examples-1",
           "appliesTo": [
-            "jose-hpke-pq-pqt-01-examples#/vectors/0",
-            "jose-hpke-pq-pqt-01-examples#/vectors/1"
+            "jose-hpke-pq-pqt-02-examples#/vectors/0",
+            "jose-hpke-pq-pqt-02-examples#/vectors/1"
           ],
           "upstreamOperation": "JWE encryption examples produced by the draft authors with the `hpke` npm package on Node's native WebCrypto ML-KEM",
           "localOperation": "jwe-decrypt of the compact and flattened (with JWE AAD) examples under the published private JWK, with noble ML-KEM-768 / X-Wing / SHAKE256 plugged into `hpke`; pub re-derived from the priv seed; -22 header rules and tamper cases (hpkeJwe.test.ts). Also: priv imported into SoftHSM3 as CKA_SEED, pub re-derived in the token, compact example opened with C_DecapsulateKey(CKM_HPKE) + C_Decrypt(AES-256-GCM) (hpkeJweHsm.local.test.ts)",
@@ -18805,7 +18805,7 @@
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "Added 2026-10-01 (HPKE/JWE follow-up to the api-security-jwt remediation) to replace the self-pinned jose-pqc-kem-jwe-kat snapshot, whose pqc-kem-05 direct-KEM JWE was dropped from JOSE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard. Independence: the KEM, KDF and JOSE wiring are checked against a different implementation; in the browser path the HPKE key schedule is the same `hpke` package on both sides. Since 2026-10-01 both examples also decrypt inside SoftHSM3 (Rust engine, PKCS#11 CKM_HPKE, pqctoday-hsm #310), whose ML-KEM, X-Wing, SHAKE256 key schedule and AES-GCM share no code with `hpke` or the authors' generator (hpkeJweHsm.local.test.ts)."
+      "notes": "Re-pinned to revision -02 on 2026-11-08 (parameters and example values unchanged from -01). Added 2026-10-01 (HPKE/JWE follow-up to the api-security-jwt remediation) to replace the self-pinned jose-pqc-kem-jwe-kat snapshot, whose pqc-kem-05 direct-KEM JWE was dropped from JOSE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard. Independence: the KEM, KDF and JOSE wiring are checked against a different implementation; in the browser path the HPKE key schedule is the same `hpke` package on both sides. Since 2026-10-01 both examples also decrypt inside SoftHSM3 (Rust engine, PKCS#11 CKM_HPKE, pqctoday-hsm #310), whose ML-KEM, X-Wing, SHAKE256 key schedule and AES-GCM share no code with `hpke` or the authors' generator (hpkeJweHsm.local.test.ts)."
     },
     {
       "id": "hpke-pq-04-test-vectors",
@@ -94635,7 +94635,25 @@
           ]
         }
       ],
-      "copies": [],
+      "copies": [
+        {
+          "path": "src/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo.tsx",
+          "kind": "embedded-values",
+          "cases": [
+            "wycheproof_aes_kwp_test#/testGroups/1/tests/83",
+            "wycheproof_aes_kwp_test#/testGroups/1/tests/84"
+          ],
+          "fields": ["ct", "key", "msg"],
+          "note": "The envelope-encryption workshop runs these AES-KWP cases as its published-vector check."
+        },
+        {
+          "path": "src/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo.log.test.tsx",
+          "kind": "embedded-values",
+          "cases": ["wycheproof_aes_kwp_test#/testGroups/1/tests/84"],
+          "fields": ["ct"],
+          "note": "Test of the workshop's call log that embeds this case."
+        }
+      ],
       "publishabilityGaps": [],
       "notes": "Scope rule WYC-SCOPE-1 (scripts/acvp/vendor_wycheproof.py): vendored because a runner executes every case of this file against both engines. Reject-path evidence NIST does not publish. Cases with parameters.wycheproofResult = 'acceptable' (Wycheproof states refusing them and accepting them are both defensible) are registered expectation=positive so they can NEVER be read as reject-path coverage we do not have; the executed row still asserts 'refused OR exactly the upstream value', and a third answer fails."
     },

@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
-// Side-panel wording for the two structural relationship types. A national
+// Side-panel wording for the structural relationship types. A national
 // scheme reads "National scheme under" the umbrella, and the umbrella reads
 // "Umbrella of" the scheme; a volume reads "Part of series with" its main
-// document, and the main document reads "Includes" the volume. Neither is
-// ever worded as sameness.
+// document, and the main document reads "Includes" the volume; a document
+// reads "Published by" its publisher, and a newer edition "Replaces an older
+// edition" while the older one is "Replaced by a newer edition". None is ever
+// worded as sameness.
 import { describe, expect, it, vi } from 'vitest'
 import type { ConceptXwalkRecord } from '@/data/conceptXwalkData'
 
@@ -65,8 +67,26 @@ describe('relationshipVerb', () => {
   })
 
   it('a type the table does not know degrades to the neutral wording', () => {
-    expect(relationshipVerb(record('published_by'), true)).toBe('Relates to')
-    expect(relationshipVerb(record('published_by'), false)).toBe('Relates to')
+    expect(relationshipVerb(record('cites'), true)).toBe('Relates to')
+    expect(relationshipVerb(record('cites'), false)).toBe('Relates to')
+  })
+
+  it('published_by reads "Published by" from the document and "Publishes" from the publisher', () => {
+    expect(relationshipVerb(record('published_by'), true)).toBe('Published by')
+    expect(relationshipVerb(record('published_by'), false)).toBe('Publishes')
+  })
+
+  it('supersedes reads "Replaces an older edition" from the newer one and "Replaced by a newer edition" from the older', () => {
+    expect(relationshipVerb(record('supersedes'), true)).toBe('Replaces an older edition')
+    expect(relationshipVerb(record('supersedes'), false)).toBe('Replaced by a newer edition')
+  })
+
+  it('neither life-cycle type is ever worded as sameness or applicability', () => {
+    for (const type of ['published_by', 'supersedes']) {
+      for (const side of [true, false]) {
+        expect(relationshipVerb(record(type), side)).not.toMatch(/equivalent|same|applies/i)
+      }
+    }
   })
 })
 

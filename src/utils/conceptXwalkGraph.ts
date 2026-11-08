@@ -8,6 +8,7 @@ import {
   type ConceptSourceType,
 } from '@/data/conceptRegistry'
 import { paramSetsByStandard } from '@/data/standardImplementsAlgoXref'
+import { isPublisherConceptId } from '@/data/conceptLifecycleLinks'
 
 /**
  * Edge between two concepts in the graph view. Distinguishes IR 8477 typed
@@ -32,6 +33,8 @@ export interface XwalkGraphNode {
   primaryUrl?: string
   /** True for the framework that was the seed of the traversal. */
   isCenter: boolean
+  /** True for a publishing organisation (a curated source organisation), not a document. */
+  isPublisher?: boolean
 }
 
 export interface XwalkGraph {
@@ -58,6 +61,9 @@ export function buildConceptGraph(
 
   const center = conceptByCanonicalId.get(centerConceptId)
   if (!center) return { nodes: [], edges: [] }
+  // A publisher is a neighbour of the documents it published, never a centre:
+  // its neighbourhood would be every document it has published.
+  if (isPublisherConceptId(centerConceptId)) return { nodes: [], edges: [] }
 
   // Equivalent canonicals — a compliance row's short-form id (e.g. CNSA-2)
   // and the library-stub long form (NSA CNSA 2.0) describe the same concept
@@ -134,6 +140,7 @@ function toNode(r: ConceptRegistryRow, isCenter: boolean): XwalkGraphNode {
     sourceType: r.sourceType,
     primaryUrl: r.primaryUrl || undefined,
     isCenter,
+    ...(isPublisherConceptId(r.conceptId) ? { isPublisher: true } : {}),
   }
 }
 
@@ -235,13 +242,19 @@ function registryLabelForStandard(conceptId: string): string {
  * the centre concept (or any of its equivalent canonicals) has at least one
  * xwalk edge authored against it. Avoids surfacing an icon that opens an
  * empty graph for frameworks that don't yet have SME-authored relationships.
+ * A publisher link alone does not count: it is shown as a line of text, and a
+ * graph of one document and its publisher teaches nothing. A publisher itself
+ * never opens a graph.
  */
 export function hasGraphEdges(centerConceptId: string): boolean {
   const center = conceptByCanonicalId.get(centerConceptId)
   if (!center) return false
+  if (isPublisherConceptId(centerConceptId)) return false
   const centerIds = new Set<string>([centerConceptId, ...equivalentCanonicals(center)])
   return conceptXwalkData.some(
-    (e) => centerIds.has(e.fromConceptId) || centerIds.has(e.toConceptId)
+    (e) =>
+      e.relationshipType !== 'published_by' &&
+      (centerIds.has(e.fromConceptId) || centerIds.has(e.toConceptId))
   )
 }
 

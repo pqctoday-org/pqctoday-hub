@@ -16,6 +16,7 @@ vi.mock('@/data/cpeXrefData', () => ({
 vi.mock('@/data/purlXrefData', () => ({
   purlByProduct: sources.purl,
   purlXrefMetadata: null,
+  getRelatedResource: () => undefined,
 }))
 vi.mock('@/data/certificationXrefData', () => ({
   certsByProduct: sources.certs,

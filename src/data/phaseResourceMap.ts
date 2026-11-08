@@ -167,6 +167,7 @@ export const PLAYGROUND_PHASES: Record<string, PhaseResource> = {
   'tls-simulator': { phasesServed: ['p5'], legs: ['practice', 'output'] },
   'hybrid-encrypt': { phasesServed: ['p5'], legs: ['practice', 'output'] },
   'envelope-encrypt': { phasesServed: ['p5'], legs: ['practice', 'output'] },
+  'cloud-kms-key-exchange': { phasesServed: ['p5'], legs: ['practice', 'output'] },
   'vpn-sim': { phasesServed: ['p5'], legs: ['practice', 'output'] },
   'pqc-ssh-sim': { phasesServed: ['p5'], legs: ['practice', 'output'] },
   'suci-flow': { phasesServed: ['p5'], legs: ['practice', 'output'] },

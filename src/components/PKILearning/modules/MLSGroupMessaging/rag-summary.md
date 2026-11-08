@@ -2,8 +2,8 @@
 
 Module: `mls-group-messaging` (LM-054). Covers RFC 9420 Messaging Layer
 Security, TreeKEM ratcheting, HPKE-based path-update encryption, and the
-PQ ciphersuite drafts (`draft-ietf-mls-pq-ciphersuites-06`,
-`draft-ietf-mls-combiner-02`, `draft-ietf-mls-extensions-09`).
+PQ ciphersuite drafts (`draft-ietf-mls-pq-ciphersuites-07`,
+`draft-ietf-mls-combiner-02`, `draft-ietf-mls-extensions-11`).
 
 Architecture lab: `pqctoday-hsm/openmls-provider/` — a Rust crate that
 implements OpenMLS's `OpenMlsProvider` trait by routing the
@@ -33,9 +33,9 @@ resistance, isolation from the host and assurance evidence separately.
 
 - RFC 9420 — MLS base protocol
 - RFC 9180 — HPKE (used inside MLS for path updates)
-- draft-ietf-mls-pq-ciphersuites-06 — ML-KEM + ML-DSA ciphersuites
+- draft-ietf-mls-pq-ciphersuites-07 — ML-KEM + ML-DSA ciphersuites (IESG state Publication Requested since 19 October 2026)
 - draft-ietf-mls-combiner-02 — classical + PQ hybrid combiner
-- draft-ietf-mls-extensions-10 — MLS extensions framework
+- draft-ietf-mls-extensions-11 — MLS extensions framework (working-group draft)
 
 ## Status
 

@@ -9,8 +9,10 @@ import type { PhaseId } from './frameworkPhases'
 import type { Freshness } from './contentFreshness'
 
 export interface MoveCtx {
-  /** Country/jurisdiction with hybrid mandate + end state. */
-  country: { id: string; label: string; hybrid: string; endState: string }
+  /** Country/jurisdiction with its hybrid stance + end state. `force` is the jurisdiction
+   *  record's own label for the instrument: 'requirement' only where a binding rule exists;
+   *  'guidance' (or missing) means a published position, which the verdicts must not call a mandate. */
+  country: { id: string; label: string; hybrid: string; endState: string; force?: string }
   /** Sector with data shelf-life X. */
   sector: { id: string; label: string; x: number }
   size: { id: string; label: string }
@@ -226,7 +228,10 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         ctx.country.hybrid === 'required'
           ? {
               kind: 'trap',
-              outcome: `Compliance FAIL. ${ctx.country.label} (${ctx.country.id}) mandates HYBRID — a pure-only deployment is non-compliant and must be reworked. This is the classic cross-jurisdiction trap.`,
+              outcome:
+                ctx.country.force === 'requirement'
+                  ? `Compliance FAIL. ${ctx.country.label} (${ctx.country.id}) requires HYBRID — a pure-only deployment is non-compliant and must be reworked. This is the classic cross-jurisdiction trap.`
+                  : `Misaligned. ${ctx.country.label} (${ctx.country.id}) expects HYBRID through the transition — that is published guidance, binding only where a system falls under the instrument named for the jurisdiction. A pure-only deployment departs from it and has to be justified or reworked. This is the classic cross-jurisdiction trap.`,
             }
           : {
               kind: 'warn',
@@ -247,7 +252,7 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         ctx.country.endState === 'hybrid'
           ? {
               kind: 'sound',
-              outcome: `Sound. Hybrid matches the ${ctx.country.id} end-state mandate — reversible, standards-aligned, and compliant.`,
+              outcome: `Sound. Hybrid matches the ${ctx.country.id} end-state position — reversible and standards-aligned.`,
             }
           : {
               kind: 'warn',

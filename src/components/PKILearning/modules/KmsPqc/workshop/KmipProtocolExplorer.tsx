@@ -161,9 +161,9 @@ const OperationSimulator: React.FC = () => {
       </div>
       <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" className="mb-2" />
       <p className="text-sm text-muted-foreground">
-        Compare illustrative KMIP v3.0 XML with provider-specific API examples, then execute the
-        lifecycle concept in the browser-local KMIP/PKCS#11 engine. No cloud account or provider API
-        is contacted.
+        Compare illustrative KMIP v3.0 (draft) XML with provider-specific API examples, then execute
+        the lifecycle concept in the browser-local KMIP/PKCS#11 engine. No cloud account or provider
+        API is contacted.
       </p>
 
       {/* Operation selector */}
@@ -198,7 +198,7 @@ const OperationSimulator: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-primary uppercase tracking-wider">
-              Illustrative KMIP v3.0 XML
+              Illustrative KMIP v3.0 (draft) XML
             </span>
             <Button
               variant="ghost"
@@ -268,7 +268,7 @@ const OperationSimulator: React.FC = () => {
               <p className="mt-1 text-xs text-warning">
                 {selectedOp.id === 'wrap'
                   ? 'The runnable analogue demonstrates ML-KEM encapsulation, not KMIP Get-with-KeyWrappingSpecification.'
-                  : 'The runnable analogue creates a replacement pair; it does not claim to implement KMIP ReKey semantics.'}
+                  : 'The runnable analogue creates a replacement pair; it does not claim to implement KMIP Re-key Key Pair semantics.'}
               </p>
             )}
           </div>
@@ -345,9 +345,10 @@ const PqcKeyTypeMapping: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground">PQC Key Type Mapping</h3>
       </div>
       <p className="text-sm text-muted-foreground">
-        KMIP 3.0 extends the <code className="text-primary">CryptographicAlgorithm</code>{' '}
-        enumeration with PQC key types. This table shows how each algorithm maps to KMIP enums and
-        which providers support them.
+        KMIP 3.0 (Committee Specification Draft 02, 7 May 2026; KMIP 2.1 is the OASIS Standard, and
+        a 2.1 server cannot negotiate 3.0) extends the{' '}
+        <code className="text-primary">CryptographicAlgorithm</code> enumeration with PQC key types.
+        This table shows how each algorithm maps to KMIP enums and which providers support them.
       </p>
 
       <div className="flex gap-2">

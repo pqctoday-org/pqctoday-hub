@@ -20,7 +20,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       lmsBytes: 2512,
       feasibility: 'infeasible',
       notes:
-        'ML-DSA-65 signature (3,309 B) requires 16 ACARS blocks per signed message. Even LMS (H10/W4, 2,512 B) requires 12 blocks. Multi-block fragmentation increases VHF channel occupancy dramatically.',
+        'At 220 B per block, the ML-DSA-65 signature (3,309 B) alone needs at least 16 ACARS blocks per signed message, and LMS (H10/W4, 2,512 B) at least 12. These are lower bounds from signature bytes only: they exclude message content and framing, and they do not by themselves give the increase in VHF channel occupancy.',
     },
   },
   {

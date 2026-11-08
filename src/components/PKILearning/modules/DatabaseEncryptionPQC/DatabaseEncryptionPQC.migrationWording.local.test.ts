@@ -37,15 +37,15 @@ describe('database re-encryption commands and figures are stated as they work', 
     expect(flat(introSource)).toContain('KeyVault.rewrapManyDataKey')
   })
 
-  it('labels CPU, downtime and readiness figures as samples', () => {
+  it('labels CPU and downtime figures as samples and carries no readiness percentage', () => {
     const intro = flat(introSource)
     expect(intro).toContain('Sample assumption: CPU overhead of 5&ndash;15%')
     expect(intro).toContain(
       'Sample assumption: a maintenance window of 2&ndash;8 hours for a 1TB database'
     )
-    expect(ragSummary).toContain('(illustrative 30% PQC readiness)')
-    expect(ragSummary).toContain('(illustrative 65% PQC readiness)')
-    expect(ragSummary).toContain('(illustrative 90% PQC readiness)')
+    // The key-ownership patterns carry no readiness percentage (not even an "illustrative" one).
+    expect(ragSummary).not.toMatch(/\d+% PQC readiness/)
+    expect(ragSummary).toContain('not in a measured PQC readiness score')
     expect(ragSummary).not.toContain('with zero application downtime')
   })
 

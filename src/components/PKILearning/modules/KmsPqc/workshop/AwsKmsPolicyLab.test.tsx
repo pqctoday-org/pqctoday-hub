@@ -19,6 +19,22 @@ describe('AwsKmsPolicyLab', () => {
     expect(v.isComplete).toBe(true)
   })
 
+  it('shows the ML-KEM key-establishment pattern and the reason ML_DSA_44 is left out of the solution', () => {
+    render(<AwsKmsPolicyLab />)
+    expect(
+      screen.getByText(/Optional: ML-KEM KeySpec with ENCAPSULATE_DECAPSULATE usage found/)
+    ).toBeInTheDocument()
+    expect(document.body.textContent).toMatch(/leaves out ML_DSA_44/)
+    expect(document.body.textContent).toMatch(
+      /kms:Decapsulate hands the shared secret to the caller in plaintext/
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Insert Solution Snippet' }))
+    const after = (screen.getByLabelText(EDITOR) as HTMLTextAreaElement).value
+    const v = validateKmsPqcPolicy(after)
+    expect(v.allowsMlKemKeyEstablishment).toBe(true)
+    expect(v.isComplete).toBe(true)
+  })
+
   it('never teaches a TLS cipher-suite condition key', () => {
     const { container } = render(<AwsKmsPolicyLab />)
     expect(container.textContent).not.toMatch(/tlsCipherSuites|_PQ"/)

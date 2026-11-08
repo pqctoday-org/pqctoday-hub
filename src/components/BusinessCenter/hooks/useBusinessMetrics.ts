@@ -529,11 +529,20 @@ function computeActionItems(
       })
     }
   } else if (!execLearningStarted) {
+    // The learning bar names the executive path "optional context for your role" for every
+    // role that is neither executive nor unset, so the to-do says the same instead of telling
+    // those readers to begin it as their own path.
+    const optionalForRole = profile.persona !== null && profile.persona !== 'executive'
     items.push({
-      priority: 2,
+      // An optional item sits below the required ones, not level with them.
+      priority: optionalForRole ? 3 : 2,
       icon: BookOpen,
-      title: 'Begin your executive learning path',
-      description: 'Build PQC knowledge with business-focused modules.',
+      title: optionalForRole
+        ? 'Optional: executive learning path'
+        : 'Begin your executive learning path',
+      description: optionalForRole
+        ? 'Optional context for your role: business-focused modules from the executive path.'
+        : 'Build PQC knowledge with business-focused modules.',
       action: { label: 'Start Learning', path: '/learn/exec-quantum-impact' },
     })
   }

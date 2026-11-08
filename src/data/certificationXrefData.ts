@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { CertificationXref } from '../types/MigrateTypes'
+import type { CertificationXref, CertRelationship } from '../types/MigrateTypes'
 import { loadLatestCSV } from './csvUtils'
 
 // Glob import to find all matching xref CSV files
@@ -23,6 +23,71 @@ interface RawXrefRow {
   cert_link: string
   /** pqc_cert_present | no_pqc_cert_classical_only (blank on rows written before 2026-09-27) */
   pqc_cert_flag?: string
+  /** same_release | earlier_release | platform_specific | module_of_product (blank when not recorded) */
+  cert_relationship?: string
+  /** Free text: the certified module, platform and release (blank when not recorded) */
+  cert_covers?: string
+}
+
+export const CERT_RELATIONSHIPS: readonly CertRelationship[] = [
+  'same_release',
+  'earlier_release',
+  'platform_specific',
+  'module_of_product',
+]
+
+/** The relationship named in the file; undefined when blank or not a known value. */
+export function parseCertRelationship(raw: string | undefined): CertRelationship | undefined {
+  const value = (raw ?? '').trim().toLowerCase()
+  return CERT_RELATIONSHIPS.find((r) => r === value)
+}
+
+/** What one certificate covers, worded once for the page, the phone sheet and the export. */
+export interface CertCoverage {
+  /** The certified module, platform and release as the file records them; null when blank. */
+  covers: string | null
+  /** One plain sentence on how it relates to the catalogue release; null when not recorded. */
+  sentence: string | null
+  /** True when the sentence says the certificate does not cover the catalogue release or product as a whole. */
+  limited: boolean
+}
+
+/**
+ * The coverage lines for one certificate. A blank relationship adds no sentence
+ * and is never read as "same release"; a blank `cert_covers` adds no coverage
+ * line. `catalogueRelease` is the catalogue's latest version of the product.
+ */
+export function certCoverageText(
+  cert: Pick<CertificationXref, 'certCovers' | 'certRelationship'>,
+  catalogueRelease?: string
+): CertCoverage {
+  const covers = cert.certCovers?.trim() || null
+  const release = catalogueRelease?.trim()
+  switch (cert.certRelationship) {
+    case 'earlier_release':
+      return {
+        covers,
+        sentence: `Covers an earlier release than the catalogue's latest${release ? ` (${release})` : ''}`,
+        limited: true,
+      }
+    case 'platform_specific':
+      return { covers, sentence: 'Covers named hardware platforms only', limited: true }
+    case 'module_of_product':
+      return {
+        covers,
+        sentence: 'Covers a validated module the product uses, not the whole product',
+        limited: true,
+      }
+    case 'same_release':
+      return { covers, sentence: 'Matches the catalogue release', limited: false }
+    default:
+      return { covers, sentence: null, limited: false }
+  }
+}
+
+/** True when the file says this certificate does not cover the catalogue release or product as a whole. */
+export function certIsLimited(cert: Pick<CertificationXref, 'certRelationship'>): boolean {
+  return certCoverageText({ certRelationship: cert.certRelationship }).limited
 }
 
 /**
@@ -52,6 +117,10 @@ const { data: allXrefs, metadata } = loadLatestCSV<RawXrefRow, CertificationXref
     certDate: row.cert_date,
     certLink: row.cert_link,
     classicalOnly: isClassicalOnlyCert(row.pqc_cert_flag, row.pqc_algorithms),
+    ...(row.cert_covers?.trim() ? { certCovers: row.cert_covers.trim() } : {}),
+    ...(parseCertRelationship(row.cert_relationship)
+      ? { certRelationship: parseCertRelationship(row.cert_relationship) }
+      : {}),
   })
 )
 

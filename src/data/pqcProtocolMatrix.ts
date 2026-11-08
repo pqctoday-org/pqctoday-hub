@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-01'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-08'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -455,7 +455,7 @@ export const TRANSPORT_ISSUES: TransportIssue[] = [
     name: 'Merkle Tree Certs',
     affectedProtocolIds: ['tls-1-3', 'x509'],
     description:
-      'PLANTS WG draft (draft-ietf-plants-merkle-tree-certs) defines a new X.509 cert form with integrated Certificate-Transparency-style logging, designed to reduce overhead for short-lived certs and large PQ signatures. Optional signatureless mode avoids signatures entirely when relying parties have current transparency state.',
+      'PLANTS WG draft (draft-ietf-plants-merkle-tree-certs) defines a new X.509 cert form with integrated Certificate-Transparency-style logging, designed to reduce overhead for short-lived certs and large PQ signatures. Optional signatureless mode avoids signatures entirely when relying parties have current transparency state. Chrome Canary 152 and later offers flag-based MTC testing (verify-mtcs and test-root-store) against a test root store, and Let’s Encrypt has said it is targeting an MTC staging environment in late 2026 and a production-ready one in 2027.',
     referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/',
   },
   {
@@ -857,6 +857,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-editor-queue',
         stageNote:
           'Re-checked 2026-10-17: draft-ietf-tls-mldsa-06 is in the RFC Editor queue (approved by the IESG at the 2026-07-02 telechat).',
+        deploymentPosture: 'pilot',
+        deploymentNote:
+          "Chrome's testing page says Chrome 150 and later support ML-DSA in private PKI hierarchies: enabled by default with no flag, but only against a root the user or administrator configures explicitly (chrome://certificate-manager or enterprise policy). No publicly trusted ML-DSA certificate can be issued and the Chrome Root Store is unchanged; the feature's Chrome Platform Status record still reads Proposed (snapshot 2026-10-20). No public-web deployment.",
         refs: [
           {
             kind: 'draft',
@@ -1544,16 +1547,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         id: 'draft-ietf-cose-hpke-27',
-        title: 'draft-ietf-cose-hpke-27 — HPKE with COSE (IESG processing)',
+        title: 'draft-ietf-cose-hpke-27 — HPKE with COSE (IESG: Waiting for AD Go-Ahead)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/',
-        date: '2026-10-22',
+        date: '2026-09-12',
       },
       {
-        id: 'draft-ietf-jose-hpke-pq-pqt-01',
+        id: 'draft-ietf-jose-hpke-pq-pqt-02',
         title:
-          'draft-ietf-jose-hpke-pq-pqt-01 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
+          'draft-ietf-jose-hpke-pq-pqt-02 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
-        date: '2026-07-06',
+        date: '2026-10-25',
       },
     ],
     dimensions: {
@@ -1786,21 +1789,20 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         id: 'draft-ietf-jose-hpke-encrypt-22',
-        // Verified 2026-10-01 against datatracker doc.json: IESG state "RFC Ed Queue",
-        // RFC Editor state "Blocked" (Reference Not Received, i.e. MISSREF). Earlier
-        // labels — "Submitted to IESG for Publication" (08-22) and "Waiting for AD
-        // Go-Ahead" (09-03) — were each true once and are both superseded.
+        // Verified 2026-11-08 against datatracker doc.json: IESG state "RFC Ed Queue",
+        // RFC Editor state "In Progress". On 2026-10-01 the RFC Editor state was
+        // "Blocked" (Reference Not Received, i.e. MISSREF); that block has cleared.
         title:
-          'draft-ietf-jose-hpke-encrypt-22 — HPKE with JWE (RFC Editor queue, blocked on a normative reference)',
+          'draft-ietf-jose-hpke-encrypt-22 — HPKE with JWE (RFC Editor queue, editing in progress)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
         date: '2026-07-06',
       },
       {
-        id: 'draft-ietf-jose-hpke-pq-pqt-01',
+        id: 'draft-ietf-jose-hpke-pq-pqt-02',
         title:
-          'draft-ietf-jose-hpke-pq-pqt-01 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
+          'draft-ietf-jose-hpke-pq-pqt-02 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
-        date: '2026-07-06',
+        date: '2026-10-25',
       },
       {
         id: 'draft-ietf-cose-sphincs-plus-10',
@@ -1815,7 +1817,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          "Corrected 2026-10-01: pure ML-KEM for JWE is registered by draft-ietf-jose-hpke-pq-pqt-01 ('I-D Exists', pre-WG-Last-Call) on top of draft-ietf-jose-hpke-encrypt-22 (RFC Editor queue). The previously cited JOSE PQ-KEM draft (jose-pqc-kem) became COSE-only in its -06 revision (2026-07-06).",
+          "Corrected 2026-10-01: pure ML-KEM for JWE is registered by draft-ietf-jose-hpke-pq-pqt-02 ('I-D Exists', pre-WG-Last-Call) on top of draft-ietf-jose-hpke-encrypt-22 (RFC Editor queue). The previously cited JOSE PQ-KEM draft (jose-pqc-kem) became COSE-only in its -06 revision (2026-07-06).",
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
@@ -1823,7 +1825,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-jose-hpke-pq-pqt',
             title: 'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
-            publishedOn: '2026-07-06',
+            publishedOn: '2026-10-25',
           },
           {
             kind: 'draft',
@@ -1847,7 +1849,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          "draft-ietf-jose-hpke-encrypt is in the RFC Editor queue (blocked on a normative reference, checked 2026-10-01), but it's algorithm-agnostic HPKE-JOSE plumbing — it doesn't register ML-KEM identifiers. draft-ietf-jose-hpke-pq-pqt is the document that actually does, and it remains at 'I-D Exists' — pre-WG-Last-Call. Real PQC support needs both documents, so this cell tracks the lagging, algorithm-defining one.",
+          "draft-ietf-jose-hpke-encrypt is in the RFC Editor queue (state 'In Progress', no longer blocked, checked 2026-11-08), but it's algorithm-agnostic HPKE-JOSE plumbing — it doesn't register ML-KEM identifiers. draft-ietf-jose-hpke-pq-pqt is the document that actually does, and it remains at 'I-D Exists' — pre-WG-Last-Call. Real PQC support needs both documents, so this cell tracks the lagging, algorithm-defining one.",
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
@@ -1856,7 +1858,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title:
               'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
-            publishedOn: '2026-07-06',
+            publishedOn: '2026-10-25',
           },
           {
             kind: 'draft',
@@ -1943,9 +1945,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         pureKemNote:
           // Names the revisions explicitly: what the tool was verified against, not
           // which revision is current. Bump only together with hpkeJwe.ts and the fixture.
-          "HPKE-12 (ML-KEM-768) JWE with HPKE Integrated Encryption per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01, verified in-browser against that draft's published Appendix A examples. Work-in-progress drafts.",
+          "HPKE-12 (ML-KEM-768) JWE with HPKE Integrated Encryption per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-02, verified in-browser against that draft's published Appendix A examples. Work-in-progress drafts.",
         hybridKemNote:
-          "HPKE-9 (ML-KEM-768 + X25519, X-Wing) JWE per draft-ietf-jose-hpke-pq-pqt-01, verified against the draft's published Appendix A example. Work-in-progress draft.",
+          "HPKE-9 (ML-KEM-768 + X25519, X-Wing) JWE per draft-ietf-jose-hpke-pq-pqt-02, verified against the draft's published Appendix A example. Work-in-progress draft.",
         pureSigNote:
           'ML-DSA-44/65/87 verified against the RFC 9964 Appendix A.1 vectors in-browser. SLH-DSA is exercised as a primitive; only SLH-DSA-SHA2-128s and -SHAKE-128s are JOSE algorithms (draft-ietf-cose-sphincs-plus-10), with no external JOSE vectors here.',
         hybridSigNote:
@@ -2807,12 +2809,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-mls-pq-ciphersuites-06',
+        id: 'draft-ietf-mls-pq-ciphersuites-07',
         title:
-          'draft-ietf-mls-pq-ciphersuites-06 — PQ Cipher Suites for MLS (Waiting for WG Chair Go-Ahead)',
+          'draft-ietf-mls-pq-ciphersuites-07 — PQ Cipher Suites for MLS (Publication Requested to the IESG)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-        date: '2026-07-02',
-        localFile: '/library/draft-ietf-mls-pq-ciphersuites-06.html',
+        date: '2026-11-01',
+        localFile: '/library/draft-ietf-mls-pq-ciphersuites-07.html',
       },
       {
         id: 'draft-ietf-mls-combiner-02',
@@ -2826,12 +2828,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-mls-combiner-02.html',
       },
       {
-        id: 'draft-ietf-mls-extensions-10',
-        title:
-          'draft-ietf-mls-extensions-10 — MLS Extensions framework (Waiting for Implementation; Revised I-D needed after WGLC)',
+        id: 'draft-ietf-mls-extensions-11',
+        title: 'draft-ietf-mls-extensions-11 — MLS Extensions framework (working-group draft)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-extensions/',
-        date: '2026-03-02',
-        localFile: '/library/draft-ietf-mls-extensions-10.html',
+        date: '2026-11-02',
+        localFile: '/library/draft-ietf-mls-extensions-11.html',
       },
     ],
     dimensions: {
@@ -2839,14 +2840,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback. Single draft covers all 4 cases',
+          'Publication requested from the IESG on 2026-10-19 (on draft-06); the current revision is draft-07 (2026-11-01), posted while the draft is in that state. The working group has finished its review and the IESG has not yet started IETF Last Call. Single draft covers all 4 cases',
         refs: [
           {
             kind: 'draft',
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-07-02',
+            publishedOn: '2026-11-01',
           },
         ],
       },
@@ -2854,7 +2855,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback; same draft as Pure KEM',
+          'Publication requested from the IESG on 2026-10-19 (on draft-06); the current revision is draft-07 (2026-11-01). The working group has finished its review; same draft as Pure KEM',
         note: 'Combiner seeds PQ guarantees into the traditional ciphersuite via the exporter secret.',
         refs: [
           {
@@ -2862,7 +2863,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-07-02',
+            publishedOn: '2026-11-01',
           },
         ],
       },
@@ -2870,7 +2871,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback; same draft as Pure KEM',
+          'Publication requested from the IESG on 2026-10-19 (on draft-06); the current revision is draft-07 (2026-11-01). The working group has finished its review; same draft as Pure KEM',
         note: 'Cipher suites bundle ML-DSA with the PQ KEM as a paired choice.',
         refs: [
           {
@@ -2878,7 +2879,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-07-02',
+            publishedOn: '2026-11-01',
           },
         ],
       },
@@ -2886,7 +2887,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-last-call',
         stageNote:
-          'Waiting for WG Chair Go-Ahead (draft-05, 2026-07-02); revised I-D needed after WGLC feedback; same draft as Pure KEM',
+          'Publication requested from the IESG on 2026-10-19 (on draft-06); the current revision is draft-07 (2026-11-01). The working group has finished its review; same draft as Pure KEM',
         note: 'Hybrid sig path is via session combination; cert-layer composite-sigs lives in the X.509 row.',
         refs: [
           {
@@ -2894,7 +2895,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-mls-pq-ciphersuites',
             title: 'PQ Cipher Suites for MLS (covers all 4 cases)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
-            publishedOn: '2026-07-02',
+            publishedOn: '2026-11-01',
           },
           {
             kind: 'rfc',
@@ -2926,7 +2927,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     liveDeployments: [],
     noDeploymentReason:
-      'No product ships PQ-MLS (RFC 9420 + draft-ietf-mls-pq-ciphersuites) today — the draft is still awaiting WG Chair Go-Ahead after WG Last Call. Apple iMessage PQ3 and Signal’s PQXDH are genuine production PQ messaging deployments, but they are proprietary ratchet protocols, NOT MLS — see the Signal (PQXDH) row for that deployment; iMessage PQ3 has no dedicated row since it is Apple-internal and unpublished as a formal spec.',
+      'No product ships PQ-MLS (RFC 9420 + draft-ietf-mls-pq-ciphersuites) today — the draft has completed working-group review and publication was requested from the IESG on 2026-10-19; the current revision is draft-07 (2026-11-01), but it is not yet an RFC. Apple iMessage PQ3 and Signal’s PQXDH are genuine production PQ messaging deployments, but they are proprietary ratchet protocols, NOT MLS — see the Signal (PQXDH) row for that deployment; iMessage PQ3 has no dedicated row since it is Apple-internal and unpublished as a formal spec.',
     sources: [
       {
         label: 'IETF MLS working group documents',

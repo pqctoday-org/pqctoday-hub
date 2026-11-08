@@ -17,42 +17,64 @@ const WRAP_MODE_LABELS: Record<WrapMode, { label: string; color: string }> = {
 /** Provider-specific API examples for key wrapping */
 const PROVIDER_WRAP_EXAMPLES: Record<string, Record<WrapMode, string>> = {
   'aws-kms': {
-    classical: `// AWS KMS — Classical RSA key wrapping
-aws kms create-key \\
-  --key-spec RSA_3072 \\
-  --key-usage ENCRYPT_DECRYPT
+    classical: `// AWS KMS — Classical: RSA wrapping on import (BYOK)
+// AWS KMS imports key material under an RSA wrapping key (use the key ID: this
+// operation does not accept an alias)
+aws kms get-parameters-for-import \\
+  --key-id <key-id-of-the-key-without-key-material> \\
+  --wrapping-algorithm RSAES_OAEP_SHA_256 \\
+  --wrapping-key-spec RSA_3072
 
-aws kms encrypt \\
-  --key-id alias/rsa-wrapping-key \\
-  --plaintext fileb://dek.bin \\
-  --encryption-algorithm RSAES_OAEP_SHA_256`,
-    pqc: `// AWS KMS — PQC transit protection
-// ML-KEM hybrid TLS protects API calls in transit
-// DEK wrapping uses AES-256 CMK (quantum-safe symmetric)
-aws kms generate-data-key \\
-  --key-id alias/aes-256-cmk \\
-  --key-spec AES_256
-# ML-KEM hybrid TLS encrypts this API call end-to-end`,
-    hybrid: `// AWS KMS — Hybrid approach
-// Transit: ML-KEM hybrid TLS (automatic)
-// At rest: AES-256 CMK wrapping
-// Signing: ML-DSA for integrity
+// Wrap the AES-256 key outside AWS (for example in a PKCS#11 HSM) under the
+// downloaded public key, then import it with the import token:
+aws kms import-key-material \\
+  --key-id <key-id-of-the-key-without-key-material> \\
+  --import-token fileb://import-token.bin \\
+  --encrypted-key-material fileb://wrapped-key.bin \\
+  --expiration-model KEY_MATERIAL_DOES_NOT_EXPIRE`,
+    pqc: `// AWS KMS — PQC: ML-KEM key establishment
 aws kms create-key \\
-  --key-spec ML_DSA_65 \\
-  --key-usage SIGN_VERIFY
+  --key-spec ML_KEM_768 \\
+  --key-usage ENCAPSULATE_DECAPSULATE
 
-aws kms generate-data-key \\
-  --key-id alias/aes-256-cmk \\
-  --key-spec AES_256
-# Transit protected by ML-KEM hybrid TLS`,
+aws kms get-public-key --key-id alias/kem-key
+
+// The third party encapsulates with its own library (AWS-LC, OpenSSL,
+// Bouncy Castle): encapsulation key -> ciphertext + 32-byte shared secret.
+aws kms decapsulate \\
+  --key-id alias/kem-key \\
+  --encapsulation-algorithm ML_KEM \\
+  --shared-secret-ciphertext-blob fileb://ct.bin
+
+// Decapsulate returns the 32-byte secret in plaintext to your application.
+// In the application: wrapping_key = HKDF-SHA-256(secret, salt, info)
+//                     wrapped_dek  = AES-256-KW(wrapping_key, DEK)`,
+    hybrid: `// AWS KMS — Hybrid: two secrets combined in your application
+// 1. ECDH with a KMS elliptic-curve key (key usage KEY_AGREEMENT) and the
+//    partner's public key; the raw shared secret is returned to you
+aws kms derive-shared-secret \\
+  --key-id alias/ecdh-key \\
+  --key-agreement-algorithm ECDH \\
+  --public-key fileb://partner-public-key.der
+
+// 2. ML-KEM: Decapsulate as in the PQC example above
+// 3. In the application, outside the HSM, with an approved key combiner (SP 800-227 Section 4.6.2):
+//      wrapping_key = HKDF-SHA-256(mlkem_secret || ecdh_secret, info="hybrid-kek")
+//      wrapped_dek  = AES-256-KW(wrapping_key, DEK)
+// AWS KMS has no native hybrid key spec: the combiner is yours.`,
   },
   'gcp-kms': {
-    classical: `// Google Cloud KMS — Classical wrapping
-gcloud kms keys create wrapping-key \\
-  --keyring=my-ring \\
+    classical: `// Google Cloud KMS — Classical: RSA import job
+// (method RSA_OAEP_3072_SHA256_AES_256, the recommended RSA method; gcloud
+// takes it lowercase and hyphenated)
+gcloud kms import-jobs create my-import-job \\
   --location=global \\
-  --purpose=asymmetric-encryption \\
-  --default-algorithm=rsa-decrypt-oaep-3072-sha256`,
+  --keyring=my-ring \\
+  --import-method=rsa-oaep-3072-sha256-aes-256 \\
+  --protection-level=software
+
+// The client wraps the key with RSAES-OAEP (SHA-256) and AES-KWP under the
+// job's 3072-bit public key. The wrap is RSA, so it is not quantum-safe.`,
     pqc: `// Google Cloud KMS — ML-KEM key encapsulation (SOFTWARE level)
 gcloud kms keys create pqc-kem-key \\
   --keyring=my-ring \\
@@ -66,7 +88,15 @@ gcloud kms keys create pqc-kem-key \\
 # Cloud KMS recovers the shared secret from the ciphertext:
 gcloud kms decapsulate --version=1 --key=pqc-kem-key \\
   --keyring=my-ring --location=global \\
-  --ciphertext-file=ct.bin --shared-secret-file=ss.bin`,
+  --ciphertext-file=ct.bin --shared-secret-file=ss.bin
+
+# Quantum-safe key IMPORT (Preview, SOFTWARE level) uses HPKE instead
+# (method HPKE_KEM_ML_KEM_768_HKDF_SHA256_AES_256_GCM, lowercase and hyphenated):
+gcloud kms import-jobs create my-import-job \\
+  --location=global --keyring=my-ring \\
+  --import-method=hpke-kem-ml-kem-768-hkdf-sha256-aes-256-gcm \\
+  --protection-level=software
+# The client runs HPKE.Seal() to the job's public key and uploads enc || ciphertext.`,
     hybrid: `// Google Cloud KMS — X-Wing hybrid KEM (SOFTWARE level)
 gcloud kms keys create xwing-key \\
   --keyring=my-ring \\
@@ -78,41 +108,67 @@ gcloud kms keys create xwing-key \\
 # encapsulate on the client, decapsulate in Cloud KMS.
 gcloud kms decapsulate --version=1 --key=xwing-key \\
   --keyring=my-ring --location=global \\
-  --ciphertext-file=ct.bin --shared-secret-file=ss.bin`,
+  --ciphertext-file=ct.bin --shared-secret-file=ss.bin
+
+# Quantum-safe key IMPORT with X-Wing (Preview):
+gcloud kms import-jobs create my-import-job \\
+  --location=global --keyring=my-ring \\
+  --import-method=hpke-kem-xwing-hkdf-sha256-aes-256-gcm \\
+  --protection-level=software`,
   },
   'azure-kv': {
-    classical: `// Azure Key Vault — Classical wrapping
+    classical: `// Azure Key Vault — Classical: BYOK with an RSA key exchange key
 az keyvault key create \\
   --vault-name my-vault \\
-  --name wrapping-key \\
-  --kty RSA \\
-  --size 3072
+  --name KEKforBYOK \\
+  --kty RSA-HSM \\
+  --size 3072 \\
+  --ops import
 
-az keyvault key wrap-key \\
+// Your HSM vendor's BYOK tool wraps the target key under the KEK's public key
+// with CKM_RSA_AES_KEY_WRAP (RSA-OAEP SHA-1 + AES key wrap with padding) and
+// writes a .byok transfer blob. Then import it:
+az keyvault key import \\
   --vault-name my-vault \\
-  --name wrapping-key \\
-  --algorithm RSA-OAEP-256 \\
-  --value <base64-dek>`,
-    pqc: `// Azure Key Vault — PQC (planned)
-// Native ML-KEM key types not yet in Key Vault API
-// SymCrypt supports ML-KEM internally
-// Workaround: use OCT-HSM 256-bit AES keys
+  --name imported-key \\
+  --byok-file KeyTransferPackage-imported-key.byok
+
+// Wrapping a DEK with a vault key is the WrapKey/UnwrapKey operation, called
+// through the REST API or an SDK (this explorer shows no CLI command for it).`,
+    pqc: `// Azure Key Vault — PQC (not offered)
+// Native ML-KEM key types are not in the Key Vault API.
+// SymCrypt supports ML-KEM internally.
+// Symmetric AES-256 keys are quantum-resistant for symmetric wrapping;
+// oct-HSM keys are a Managed HSM key type, not a vault key type:
 az keyvault key create \\
-  --vault-name my-vault \\
+  --hsm-name my-managed-hsm \\
   --name aes-wrapping-key \\
   --kty oct-HSM \\
-  --size 256
-# AES-256 is quantum-resistant for symmetric wrapping`,
-    hybrid: `// Azure Key Vault
-// Microsoft aims for early adoption of quantum-safe capabilities by 2029 and a complete transition of its services and products by 2033
-// Current approach: RSA + AES-256 dual wrapping
-az keyvault key create \\
-  --vault-name my-vault \\
-  --name rsa-key --kty RSA --size 3072
-az keyvault key create \\
-  --vault-name my-vault \\
-  --name aes-key --kty oct-HSM --size 256
-# Wrap DEK with both keys; unwrap requires both`,
+  --size 256`,
+    hybrid: `// Azure Key Vault — no post-quantum/traditional hybrid mode
+// Microsoft has stated Microsoft-wide goals of early quantum-safe adoption by 2029
+// and a complete transition by 2033; no Key Vault-specific date is sourced here.
+// Wrapping a key under an RSA key and again under an AES key is layering, not a
+// hybrid key agreement that combines a classical and a post-quantum secret.`,
+  },
+}
+
+/** What a reader should notice about where the secret or key ends up. */
+const PROVIDER_WRAP_NOTES: Record<string, Partial<Record<WrapMode, string>>> = {
+  'aws-kms': {
+    classical:
+      'The wrap is RSA, so it is not quantum-safe. Hybrid post-quantum TLS to the KMS endpoint protects the API call, not the wrap.',
+    pqc: 'Where the secret sits: Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application, outside the HSM. The HKDF and AES-KW steps are the application’s job. AWS KMS ML-KEM and ML-DSA keys cannot receive imported key material.',
+    hybrid:
+      'Where the secret sits: both secrets, and the combined wrapping key, are in the application’s memory. AWS KMS has no hybrid key spec such as X-Wing, so the combiner runs outside the HSM.',
+  },
+  'gcp-kms': {
+    classical: 'RSA-based import methods are not quantum-safe.',
+    pqc: 'The HPKE import methods are the quantum-safe path in this table, in Preview and for software-protected keys only.',
+  },
+  'azure-kv': {
+    classical:
+      'The Azure pages describe RSA-based BYOK only; no post-quantum import option is described.',
   },
 }
 
@@ -294,6 +350,13 @@ export const HybridKeyWrapping: React.FC = () => {
                   </pre>
                 </div>
 
+                <p className="text-[10px] text-muted-foreground">
+                  This is the KMS-wrap combiner of this module, one of the choices SP 800-227
+                  Section 4.6 allows. TLS&apos;s X25519MLKEM768 group (RFC 10024) concatenates the
+                  same two secrets, ML-KEM first, and feeds them to the TLS 1.3 key schedule, so it
+                  is a different construction.
+                </p>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
                     <div className="text-lg font-bold text-foreground">
@@ -373,10 +436,16 @@ export const HybridKeyWrapping: React.FC = () => {
               <p className="text-xs text-muted-foreground mb-2">
                 {activeProvider.envelopeEncryptionModel}
               </p>
+              <p className="text-[10px] text-muted-foreground mb-2">
+                Auto-rotation: {activeProvider.autoRotationNote}
+              </p>
+              {activeProvider.launchStageNote && (
+                <p className="text-[10px] text-warning mb-2">{activeProvider.launchStageNote}</p>
+              )}
               <div className="flex flex-wrap gap-2 text-[10px]">
                 {activeProvider.autoRotation && (
                   <span className="px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20">
-                    Auto-Rotation
+                    Auto-Rotation (scoped, see note)
                   </span>
                 )}
                 {activeProvider.hybridSupport && (
@@ -401,6 +470,11 @@ export const HybridKeyWrapping: React.FC = () => {
                 {PROVIDER_WRAP_EXAMPLES[selectedProvider]?.[wrapMode] ??
                   '// API example not available for this combination'}
               </pre>
+              {PROVIDER_WRAP_NOTES[selectedProvider]?.[wrapMode] && (
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  {PROVIDER_WRAP_NOTES[selectedProvider]?.[wrapMode]}
+                </p>
+              )}
             </div>
           </div>
         )}

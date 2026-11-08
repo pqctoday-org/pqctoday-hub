@@ -43,6 +43,10 @@ const RELATIONSHIP_MULTIPLIER: Record<XwalkRelationshipType, number> = {
   // how documents belong together, not that one applies because the other does.
   scheme_under: 0,
   part_of_series: 0,
+  // Who published a document, and which edition replaced which, are facts
+  // about documents. A newer edition does not make the older one apply.
+  published_by: 0,
+  supersedes: 0,
   not_related: 0,
 }
 

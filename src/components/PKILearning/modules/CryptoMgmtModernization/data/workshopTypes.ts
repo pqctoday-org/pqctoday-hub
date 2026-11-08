@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export type FipsStatusExport =
-  'active' | 'active-pqc' | 'historical' | 'revoked' | 'in-mip' | 'not-validated'
+  'active' | 'active-pqc' | 'historical' | 'revoked' | 'in-mip' | 'not-validated' | 'unknown'
 
-export type EsvStatusExport = 'active' | 'historical' | 'revoked' | 'in-mip' | 'not-validated'
+export type EsvStatusExport =
+  'active' | 'historical' | 'revoked' | 'in-mip' | 'not-validated' | 'unknown'
 
 export type PostureColor = 'red' | 'yellow' | 'green'
 

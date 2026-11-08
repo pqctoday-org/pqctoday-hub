@@ -36,6 +36,11 @@ import Papa from 'papaparse'
 import { glob } from 'glob'
 import { createHash } from 'crypto'
 import { EDUCATION_NOTICE } from '../src/data/educationNotice'
+import {
+  buildRelatedResource,
+  relatedResourceCbomReference,
+  sameResourceAddress,
+} from '../src/data/relatedResources'
 
 const DATA_DIR = path.resolve(process.cwd(), 'src/data')
 const OUT_PATH = path.resolve(process.cwd(), 'public/data/pqctoday-cbom.json')
@@ -112,6 +117,11 @@ interface RawPurlXref {
   software_name: string
   purl: string
   status: string
+  /** A project page beside the product; blank or absent on most rows. */
+  related_resource_url?: string
+  related_resource_kind?: string
+  /** Set on a retired row, which is history and not a live identifier. */
+  deprecated_at?: string
 }
 
 interface RawCpeXref {
@@ -212,6 +222,24 @@ async function main() {
   // explicit "not_found" entries for SBOM-tooling completeness.
   const purlByProductId = new Map<string, string>()
   const purlBySoftwareName = new Map<string, string>()
+  // A related resource (a test suite, SDK, ...) is a project page beside the
+  // product. It is exported as an external reference and never as the purl.
+  const relatedByProductId = new Map<string, ReturnType<typeof relatedResourceCbomReference>>()
+  const relatedBySoftwareName = new Map<string, ReturnType<typeof relatedResourceCbomReference>>()
+  for (const r of purlXref.rows) {
+    // A retired row is history: its related resource is not exported either.
+    if ((r.deprecated_at ?? '').trim()) continue
+    const related = buildRelatedResource(r.related_resource_url, r.related_resource_kind)
+    if (related) {
+      const ref = relatedResourceCbomReference(related)
+      if (r.product_id && !relatedByProductId.has(r.product_id)) {
+        relatedByProductId.set(r.product_id, ref)
+      }
+      if (r.software_name && !relatedBySoftwareName.has(r.software_name)) {
+        relatedBySoftwareName.set(r.software_name, ref)
+      }
+    }
+  }
   for (const r of purlXref.rows) {
     if (!r.purl || r.status !== 'matched') continue
     if (r.product_id) purlByProductId.set(r.product_id, r.purl)
@@ -270,6 +298,8 @@ async function main() {
     // in migrate_purl_xref carry only software_name as the join key).
     const purl = purlByProductId.get(p.product_id) ?? purlBySoftwareName.get(p.software_name)
     const cpe = cpeByProductId.get(p.product_id)
+    const related =
+      relatedByProductId.get(p.product_id) ?? relatedBySoftwareName.get(p.software_name)
 
     const bom_ref = createHash('sha256')
       .update(`${p.product_id}:${p.software_name}:${p.latest_version || ''}`)
@@ -304,7 +334,10 @@ async function main() {
       },
       description: p.pqc_capability_description || undefined,
       externalReferences: [
-        ...(p.repository_url ? [{ type: 'vcs', url: p.repository_url }] : []),
+        ...(related ? [related] : []),
+        ...(p.repository_url && !sameResourceAddress(p.repository_url, related?.url)
+          ? [{ type: 'vcs', url: p.repository_url }]
+          : []),
         ...(p.authoritative_source ? [{ type: 'website', url: p.authoritative_source }] : []),
       ].filter(Boolean),
       properties: [

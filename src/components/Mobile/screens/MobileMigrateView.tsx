@@ -1,12 +1,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
+  AlertTriangle,
   ArrowRight,
   Calendar,
   Check,
   ExternalLink,
   FileText,
+  Info,
   Newspaper,
   BookText,
   Plus,
@@ -27,8 +38,14 @@ import {
 } from '@/data/migrationAssets'
 import { softwareData, softwareMetadata, vendorMap } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
-import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
-import { getCertsForProduct } from '@/data/certificationXrefData'
+import {
+  crossSourceEnrichmentForRoadmap,
+  enrichmentByVendorId,
+  enrichmentForRoadmap,
+  ownEnrichmentForVendor,
+} from '@/data/vendorRoadmapEnrichmentData'
+import { certCoverageText, getCertsForProduct } from '@/data/certificationXrefData'
+import { getRelatedResource } from '@/data/purlXrefData'
 import {
   productsForDomain,
   productsForVendor,
@@ -68,7 +85,12 @@ import type {
   VendorRoadmap,
   VendorRoadmapEnrichment,
 } from '@/types/MigrateTypes'
-import { deriveVendorRoadmapDisplay } from '@/components/Migrate/vendorRoadmapDisplay'
+import {
+  deriveVendorRoadmapDisplay,
+  type AnalysisFacts,
+  type AnalysisSourceInfo,
+  analysisSourceLinkLabel,
+} from '@/components/Migrate/vendorRoadmapDisplay'
 import { MobileSheet } from '../primitives/Sheet'
 import { OptionalSection } from '@/components/ui/OptionalSection'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
@@ -1026,6 +1048,44 @@ function MobileProductRow({
   )
 }
 
+/** What one certificate covers, as visible text (a touch screen has no hover): the certified
+ *  module, platform and release, then one sentence on how it relates to the catalogue release.
+ *  Renders nothing when the certificate file records neither. */
+function CertCoverageLines({
+  cert,
+  catalogueRelease,
+}: {
+  cert: CertificationXref
+  catalogueRelease?: string
+}) {
+  const { covers, sentence, limited } = certCoverageText(cert, catalogueRelease)
+  if (!covers && !sentence) return null
+  return (
+    <>
+      {covers && (
+        <span className="mt-0.5 block text-[11.5px] text-foreground/90 [overflow-wrap:anywhere]">
+          Covers: {covers}
+        </span>
+      )}
+      {sentence && (
+        <span
+          className={cn(
+            'mt-0.5 flex items-start gap-1 text-[11px]',
+            limited ? 'text-status-warning' : 'text-muted-foreground'
+          )}
+        >
+          {limited ? (
+            <AlertTriangle size={11} className="mt-0.5 shrink-0" aria-hidden="true" />
+          ) : (
+            <Info size={11} className="mt-0.5 shrink-0" aria-hidden="true" />
+          )}
+          {sentence}
+        </span>
+      )}
+    </>
+  )
+}
+
 function MobileProductDetailSheet({
   product,
   onClose,
@@ -1067,6 +1127,11 @@ function MobileProductDetailSheet({
   // status without closing it and re-reading the row.
   const pqc = product ? productPqcStatus(product) : null
   const fips = product ? productFipsBadge(product) : null
+
+  // A project page beside the product (test suite, SDK, ...), from its own columns.
+  const relatedResource = product
+    ? getRelatedResource(product.productId, product.softwareName)
+    : undefined
 
   const hasVendorRoadmap =
     !!product?.vendorId &&
@@ -1116,7 +1181,7 @@ function MobileProductDetailSheet({
                           rel="noopener noreferrer"
                           className="flex items-start justify-between gap-2 rounded border border-border/60 bg-muted/20 px-2 py-1.5 text-[11.5px] text-foreground/90 hover:bg-muted/40"
                         >
-                          <span>
+                          <span className="min-w-0">
                             <span className="font-mono">{c.certId}</span>
                             {c.certificationLevel && <> · {c.certificationLevel}</>}
                             {c.pqcAlgorithms && !c.pqcAlgorithms.startsWith('No ') && (
@@ -1129,6 +1194,7 @@ function MobileProductDetailSheet({
                                 Classical only — covers no PQC algorithm
                               </span>
                             )}
+                            <CertCoverageLines cert={c} catalogueRelease={product.latestVersion} />
                           </span>
                           <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-muted-foreground">
                             {c.certDate}
@@ -1182,6 +1248,34 @@ function MobileProductDetailSheet({
               </div>
             )}
           </div>
+
+          {relatedResource && (
+            <section aria-labelledby="mobile-related-resources">
+              <h3
+                id="mobile-related-resources"
+                className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              >
+                Related resources
+              </h3>
+              <ul>
+                <li>
+                  <a
+                    href={relatedResource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center gap-1.5 break-words text-[13px] font-semibold text-primary hover:underline"
+                  >
+                    <ExternalLink size={13} className="shrink-0" aria-hidden="true" />
+                    <span className="min-w-0 break-words">
+                      {relatedResource.kindLabel
+                        ? `${relatedResource.kindLabel}: ${relatedResource.name}`
+                        : relatedResource.name}
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </section>
+          )}
 
           {(product.openSourceMaintainers?.length ?? 0) > 0 && (
             // A side list must not take the product sheet down if its chunk cannot be loaded.
@@ -1718,6 +1812,7 @@ function MobileRoadmapsTab({
                     key={r.compositeId}
                     roadmap={r}
                     enrichment={enrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
+                    crossSource={crossSourceEnrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
                   />
                 ))}
               </div>
@@ -1880,7 +1975,9 @@ function RoadmapVendorCard({
   // 2026-08-24 audit R4.8: same real field + "None detected" sentinel guard
   // as VendorRoadmapPanel.tsx:136 (desktop) — a per-vendor dated milestone,
   // not invented, was the one concrete fact these cards were missing.
-  const targetDates = enrichmentByVendorId.get(vendorId)?.[0]?.targetMigrationDates
+  // The date comes from the analysis the opened panel shows as the vendor's
+  // own, never from one the panel keeps under "Analysis from another source".
+  const targetDates = ownEnrichmentForVendor(vendorId)?.targetMigrationDates
   return (
     // 2026-08-28: was a single <Button> wrapping everything, including the
     // product-count line — no second tap target was possible without
@@ -1951,13 +2048,20 @@ const GA_STATUS_TONE: Record<string, Tone> = {
 function MobileVendorRoadmapPanel({
   roadmap,
   enrichment,
+  crossSource,
 }: {
   roadmap: VendorRoadmap | undefined
   enrichment: VendorRoadmapEnrichment | undefined
+  /** An analysis written from a different page than this row's own link; shown
+   *  in its own labelled block with a link to the page it came from. */
+  crossSource?: VendorRoadmapEnrichment
 }) {
-  const display = deriveVendorRoadmapDisplay(roadmap, enrichment)
+  const display = deriveVendorRoadmapDisplay(roadmap, enrichment, crossSource)
+  const sourceHeadingId = useId()
+  const otherHeadingId = useId()
   if (!display) return null
-  const { title, roadmapUrl, gaStatus, gaStatusDetail, dateLine, isEmpty } = display
+  const { title, roadmapUrl, gaStatus, gaStatusDetail, dateLine, isEmpty, analysisSource } = display
+  const other = display.crossSource
 
   if (isEmpty) {
     return <p className="text-[12.5px] text-muted-foreground">No roadmap published.</p>
@@ -1992,13 +2096,90 @@ function MobileVendorRoadmapPanel({
         )}
       </div>
 
-      {display.pqcAlgorithms.length > 0 && (
+      {/* A vendor with no roadmap row: say which page the analysis came from. */}
+      {analysisSource && (
+        // A group, not a landmark: the Vendors tab repeats this line for dozens of vendors.
+        <div role="group" aria-labelledby={sourceHeadingId}>
+          <h3
+            id={sourceHeadingId}
+            className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground"
+          >
+            Analysis source
+          </h3>
+          <MobileAnalysisSourceLink source={analysisSource} />
+        </div>
+      )}
+
+      <MobileAnalysisFacts facts={display} />
+
+      {/* An analysis written from a different page than the row's own link:
+       *  its own block, source first, so its facts never read as the row's. */}
+      {other && (
+        <section
+          aria-labelledby={otherHeadingId}
+          data-testid="analysis-other-source"
+          className="flex flex-col gap-2.5 rounded-xl border border-border bg-muted/20 p-3"
+        >
+          <h3 id={otherHeadingId} className="text-[12.5px] font-bold text-foreground">
+            Analysis from another source
+          </h3>
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            {roadmapUrl
+              ? 'This analysis was written from a different page than the roadmap linked above.'
+              : 'This analysis was written from a different page than this roadmap entry.'}
+          </p>
+          <MobileAnalysisSourceLink source={other.source} />
+          {other.gaStatus && (
+            <div>
+              <Badge
+                tone={GA_STATUS_TONE[other.gaStatus.kind]}
+                title={other.gaStatusDetail ?? undefined}
+              >
+                {other.gaStatus.label}
+              </Badge>
+            </div>
+          )}
+          <MobileAnalysisFacts facts={other} />
+        </section>
+      )}
+    </div>
+  )
+}
+
+/** Link to the page an analysis was written from: a 44 px target whose text
+ *  wraps, named "Analysis source: <title> (opens in a new tab)". */
+function MobileAnalysisSourceLink({ source }: { source: AnalysisSourceInfo }) {
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={analysisSourceLinkLabel(source)}
+      className="inline-flex min-h-11 w-full items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/5 px-3 py-2 text-[12px] font-semibold text-primary"
+    >
+      <ExternalLink size={13} className="shrink-0" aria-hidden="true" />
+      <span className="min-w-0 break-words">
+        {source.title ?? source.siteName}
+        {source.title && (
+          <span className="font-normal text-muted-foreground"> ({source.siteName})</span>
+        )}
+      </span>
+    </a>
+  )
+}
+
+/** Algorithms, target dates, hybrid mode, frameworks and the first quote of one
+ *  analysis; the same markup for the row's own analysis and the cross-source one. */
+function MobileAnalysisFacts({ facts }: { facts: AnalysisFacts }) {
+  return (
+    <>
+      {facts.pqcAlgorithms.length > 0 && (
         <div>
           <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Algorithms
           </p>
           <div className="flex flex-wrap gap-1">
-            {display.pqcAlgorithms.map((alg) => (
+            {facts.pqcAlgorithms.map((alg) => (
               <span
                 key={alg}
                 className="rounded border border-primary/20 bg-primary/8 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-primary"
@@ -2010,38 +2191,38 @@ function MobileVendorRoadmapPanel({
         </div>
       )}
 
-      {display.migrationDates && (
+      {facts.migrationDates && (
         <div>
           <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Target dates
           </p>
-          <p className="text-[11.5px] text-foreground/90">{display.migrationDates}</p>
+          <p className="text-[11.5px] text-foreground/90">{facts.migrationDates}</p>
         </div>
       )}
 
-      {(display.hybridModeText || display.complianceFrameworks.length > 0) && (
+      {(facts.hybridModeText || facts.complianceFrameworks.length > 0) && (
         <div className="flex flex-col gap-1 border-t border-border pt-2.5 text-[10.5px] text-muted-foreground">
-          {display.hybridModeText && (
+          {facts.hybridModeText && (
             <p>
               <span className="font-semibold text-foreground/80">Hybrid:</span>{' '}
-              {display.hybridModeText}
+              {facts.hybridModeText}
             </p>
           )}
-          {display.complianceFrameworks.length > 0 && (
+          {facts.complianceFrameworks.length > 0 && (
             <p>
               <span className="font-semibold text-foreground/80">Compliance:</span>{' '}
-              {display.complianceFrameworks.join(' · ')}
+              {facts.complianceFrameworks.join(' · ')}
             </p>
           )}
         </div>
       )}
 
-      {display.firstQuote && (
+      {facts.firstQuote && (
         <p className="border-l-2 border-border pl-2.5 text-[11px] italic leading-relaxed text-muted-foreground">
-          &ldquo;{display.firstQuote}&rdquo;
+          &ldquo;{facts.firstQuote}&rdquo;
         </p>
       )}
-    </div>
+    </>
   )
 }
 

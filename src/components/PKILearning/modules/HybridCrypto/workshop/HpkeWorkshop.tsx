@@ -114,8 +114,8 @@ const AEAD_OPTIONS = [
 const ALL_MODE_OPTIONS = [
   { id: String(HPKE_MODE.BASE), label: 'Base' },
   { id: String(HPKE_MODE.PSK), label: 'PSK' },
-  { id: String(HPKE_MODE.AUTH), label: 'Auth' },
-  { id: String(HPKE_MODE.AUTH_PSK), label: 'AuthPSK' },
+  { id: String(HPKE_MODE.AUTH), label: 'Auth (RFC 9180 only)' },
+  { id: String(HPKE_MODE.AUTH_PSK), label: 'AuthPSK (RFC 9180 only)' },
 ]
 
 const toHex = hex
@@ -1360,6 +1360,14 @@ export const HpkeWorkshop: React.FC = () => {
         <p className="px-6 -mt-2 mb-4 text-[11px] text-muted-foreground">
           The SHAKE256 key derivation (draft-ietf-hpke-pq) is offered only in the PQCToday proposal
           sequence: the other two sequences here do not build this one-stage KDF from v3.2 pieces.
+        </p>
+      )}
+      {!handlePath && (
+        <p className="px-6 -mt-2 mb-4 text-[11px] text-muted-foreground">
+          Auth and AuthPSK are RFC 9180 only: removed in the successor, draft-ietf-hpke-hpke-06 (RFC
+          Editor queue, November 2026). That draft does not specify them but reserves their mode
+          values (0x02, 0x03) and does not deprecate them, so existing RFC 9180 deployments can keep
+          using them. They are kept here so you can compare all four modes.
         </p>
       )}
       {handlePath && (

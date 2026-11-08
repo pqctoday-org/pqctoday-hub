@@ -538,3 +538,55 @@ describe('traverseXwalkPaths — structural relationships carry no applicability
     expect(results[0].bestPath.relationshipType).toBe('intersects_with')
   })
 })
+
+describe('traverseXwalkPaths — published by and replaces carry no applicability', () => {
+  const architect = getLens('architect')
+  // Allow the two life-cycle types and accept any score, so only the traversal's own
+  // guard can keep them out: a persona list or a confidence floor would hide a gap.
+  const open = {
+    ...architect,
+    trustPathConfig: {
+      ...architect.trustPathConfig,
+      confidenceThreshold: 0,
+      twoHopEnabled: true,
+      allowedRelationships: [
+        'intersects_with',
+        'published_by',
+        'supersedes',
+      ] as ConceptXwalkRecord['relationshipType'][],
+    },
+  }
+
+  it('a document does not apply because its publisher is matched, or the other way round', () => {
+    const edges = [edge('DOC-A', 'NIST', 'published_by', 'high', 'technical_dependency')]
+    for (const matched of ['DOC-A', 'NIST']) {
+      expect(
+        traverseXwalkPaths([direct(matched, matched, 'mandatory')], edges, open),
+        matched
+      ).toHaveLength(0)
+    }
+  })
+
+  it('an older edition does not apply because the newer edition is matched, or the other way round', () => {
+    const edges = [edge('DOC-V2', 'DOC-V1', 'supersedes', 'high', 'technical_dependency')]
+    for (const matched of ['DOC-V2', 'DOC-V1']) {
+      expect(
+        traverseXwalkPaths([direct(matched, matched, 'mandatory')], edges, open),
+        matched
+      ).toHaveLength(0)
+    }
+  })
+
+  it('adding the two links to a set of edges changes no derived result', () => {
+    const base = [edge('A', 'B', 'intersects_with', 'high', 'technical_dependency')]
+    const withLinks = [
+      ...base,
+      edge('A', 'ORG', 'published_by', 'high', 'technical_dependency'),
+      edge('B', 'A-OLD', 'supersedes', 'high', 'technical_dependency'),
+    ]
+    const matches = [direct('A', 'A', 'mandatory')]
+    expect(traverseXwalkPaths(matches, withLinks, open)).toEqual(
+      traverseXwalkPaths(matches, base, open)
+    )
+  })
+})

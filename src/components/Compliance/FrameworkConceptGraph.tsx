@@ -19,11 +19,14 @@ import { ExternalLink } from 'lucide-react'
 import { buildConceptGraph } from '@/utils/conceptXwalkGraph'
 import {
   NODE_WIDTH,
+  edgeLabelFor,
   edgePathThroughLabel,
   layoutConceptGraph,
   type PlacedEdge,
 } from '@/utils/conceptGraphLayout'
+import { DIRECTIONAL_LINK_TYPES, isLifecycleLinkType } from '@/utils/conceptLinkWords'
 import type { ConceptSourceType } from '@/data/conceptRegistry'
+import { ConceptLinkLegend } from './ConceptLinkLegend'
 
 interface FrameworkConceptGraphProps {
   /** Canonical concept_id of the framework to centre the graph on. */
@@ -94,7 +97,13 @@ interface ConceptNodeData extends Record<string, unknown> {
   label: string
   sourceType: ConceptSourceType
   isCenter: boolean
+  isPublisher?: boolean
   primaryUrl?: string
+}
+
+/** The small caption under a node's name: a publisher is an organisation, not a `concept_only` record. */
+function kindOf(d: ConceptNodeData): string {
+  return d.isPublisher ? 'publisher' : d.sourceType
 }
 
 function ConceptNode({ data }: NodeProps) {
@@ -117,11 +126,11 @@ function ConceptNode({ data }: NodeProps) {
         justifyContent: 'center',
         textAlign: 'center',
       }}
-      title={`${d.sourceType}: ${d.label}`}
+      title={`${kindOf(d)}: ${d.label}`}
     >
       <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
       <div style={{ fontWeight: d.isCenter ? 600 : 500, wordBreak: 'break-word' }}>{d.label}</div>
-      <div style={{ fontSize: 10, opacity: 0.7, marginTop: 2 }}>{d.sourceType}</div>
+      <div style={{ fontSize: 10, opacity: 0.7, marginTop: 2 }}>{kindOf(d)}</div>
       {d.primaryUrl ? (
         <a
           href={d.primaryUrl}
@@ -149,6 +158,23 @@ const nodeTypes = { concept: ConceptNode }
 
 interface ConceptEdgeData extends Record<string, unknown> {
   label: PlacedEdge
+}
+
+/**
+ * The link's name in the details list and accessible name. "Published by" and
+ * "Replaces an older edition" are always given in plain words. When the legend is
+ * shown (the graph carries one of them) every link is, so one screen never uses
+ * two names for one link; otherwise a link keeps the stored identifier it has
+ * always shown here.
+ */
+function linkName(
+  edge: { isSynthetic: boolean; relationshipType: string },
+  plainWords: boolean
+): string {
+  if (edge.isSynthetic) return edge.relationshipType
+  return plainWords || isLifecycleLinkType(edge.relationshipType)
+    ? edgeLabelFor(edge.relationshipType)
+    : edge.relationshipType
 }
 
 /**
@@ -203,8 +229,13 @@ export function FrameworkConceptGraph({
   height = 480,
 }: FrameworkConceptGraphProps) {
   const graph = useMemo(() => buildConceptGraph(centerConceptId), [centerConceptId])
+  // The legend, and plain-words names for every link, appear only when the graph carries a
+  // "published by" or "replaces" link, so a graph without one looks exactly as it did before.
+  const hasLifecycleLink = graph.edges.some((e) => isLifecycleLinkType(e.relationshipType))
 
   const { nodes, edges } = useMemo(() => {
+    const nodeLabel = new Map(graph.nodes.map((n) => [n.id, n.label]))
+    const labelOf = (id: string) => nodeLabel.get(id) ?? id
     const layout = layoutConceptGraph(graph.nodes, graph.edges)
     const positions = new Map(layout.nodes.map((p) => [p.id, p]))
     const labels = new Map(layout.edges.map((p) => [p.id, p]))
@@ -218,6 +249,7 @@ export function FrameworkConceptGraph({
           label: n.label,
           sourceType: n.sourceType,
           isCenter: n.isCenter,
+          isPublisher: n.isPublisher,
           primaryUrl: n.primaryUrl,
         },
       }
@@ -231,15 +263,12 @@ export function FrameworkConceptGraph({
           type: 'concept',
           source: e.source,
           target: e.target,
-          ariaLabel: `${e.isSynthetic ? 'Generated context' : 'Recorded relationship'} from ${e.source} to ${e.target}: ${e.relationshipType}`,
-          markerEnd:
-            e.relationshipType === 'subset_of' ||
-            e.relationshipType === 'superset_of' ||
-            e.relationshipType === 'scheme_under' ||
-            e.relationshipType === 'part_of_series' ||
-            (e.isSynthetic && e.relationshipType === 'implements')
-              ? { type: MarkerType.ArrowClosed }
-              : undefined,
+          ariaLabel: hasLifecycleLink
+            ? `${e.isSynthetic ? 'Generated context' : 'Recorded relationship'} from ${labelOf(e.source)} to ${labelOf(e.target)}: ${linkName(e, true)}`
+            : `${e.isSynthetic ? 'Generated context' : 'Recorded relationship'} from ${e.source} to ${e.target}: ${e.relationshipType}`,
+          markerEnd: DIRECTIONAL_LINK_TYPES.has(e.relationshipType)
+            ? { type: MarkerType.ArrowClosed }
+            : undefined,
           data: { label } satisfies ConceptEdgeData,
           style: e.isSynthetic
             ? { stroke: 'var(--color-muted-foreground, #6b7280)', strokeDasharray: '4 4' }
@@ -248,7 +277,7 @@ export function FrameworkConceptGraph({
       ]
     })
     return { nodes: flowNodes, edges: flowEdges }
-  }, [graph])
+  }, [graph, hasLifecycleLink])
 
   if (graph.nodes.length === 0) {
     return (
@@ -270,6 +299,10 @@ export function FrameworkConceptGraph({
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- This labelled scroll region must let keyboard users reach the relationship details below the canvas.
       tabIndex={0}
     >
+      {/* Above the canvas, so it is in view without scrolling the region; closed until opened. */}
+      {hasLifecycleLink && (
+        <ConceptLinkLegend types={[...new Set(graph.edges.map((e) => e.relationshipType))]} />
+      )}
       <div style={{ height }} className="relative">
         <ReactFlow
           nodes={nodes}
@@ -315,7 +348,8 @@ export function FrameworkConceptGraph({
                   <span className="font-medium">To:</span> {to}
                 </p>
                 <p>
-                  <span className="font-medium">Relationship:</span> {edge.relationshipType}
+                  <span className="font-medium">Relationship:</span>{' '}
+                  {linkName(edge, hasLifecycleLink)}
                 </p>
                 {edge.isSynthetic ? (
                   <p className="text-muted-foreground">

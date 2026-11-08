@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PQ JWE (HPKE Integrated Encryption) against the published examples of
- * draft-ietf-jose-hpke-pq-pqt-01 Appendix A — HPKE-12 (ML-KEM-768) and HPKE-9
+ * draft-ietf-jose-hpke-pq-pqt-02 Appendix A — HPKE-12 (ML-KEM-768) and HPKE-9
  * (MLKEM768-X25519) — plus the draft-ietf-jose-hpke-encrypt-22 §5 / §7.2 rules.
  *
  * The examples were produced by the draft authors with the `hpke` package on
@@ -13,7 +13,7 @@
 import { describe, expect, it } from 'vitest'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
 import { ml_kem768_x25519 } from '@noble/post-quantum/hybrid.js'
-import examples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
+import examples from '@/data/acvp/jose-hpke-pq-pqt-02-examples.json'
 import { base64urlDecode, base64urlEncode } from './jwtUtils'
 import {
   HPKE_JWE_SUITES,
@@ -39,7 +39,7 @@ const vectors = examples.vectors as Example[]
 const reHeader = (token: string, header: Record<string, unknown>) =>
   [base64urlEncode(enc.encode(JSON.stringify(header))), ...token.split('.').slice(1)].join('.')
 
-describe('HPKE JWE — draft-ietf-jose-hpke-pq-pqt-01 published examples', () => {
+describe('HPKE JWE — draft-ietf-jose-hpke-pq-pqt-02 published examples', () => {
   it('covers exactly the two in-scope Integrated Encryption algorithms', () => {
     expect(vectors.map((v) => v.alg).sort()).toEqual(['HPKE-12', 'HPKE-9'])
   })

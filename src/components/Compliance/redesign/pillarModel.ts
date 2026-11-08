@@ -11,7 +11,9 @@ import { conceptIdForFramework, getFrameworkById, regionForCountry } from '@/dat
 import { findLibraryItemByRef } from '@/data/libraryData'
 import { conceptXwalkData, type ConceptXwalkRecord } from '@/data/conceptXwalkData'
 import { conceptByCanonicalId } from '@/data/conceptRegistry'
+import { publisherOrganizationFor } from '@/data/conceptLifecycleLinks'
 import { equivalentCanonicals } from '@/utils/conceptXwalkGraph'
+import { LIFECYCLE_LINK_WORDS } from '@/utils/conceptLinkWords'
 import type { Tone } from './tones'
 
 export type PillarId = 'standardize' | 'certify' | 'comply'
@@ -165,6 +167,8 @@ export interface CrosswalkItem {
   label: string
   note: string
   tone: Tone
+  /** True for an edition link ("Replaced by a newer edition"): listed first and shown in full, not clipped. */
+  pinned?: boolean
 }
 
 export interface DrawerDetail {
@@ -178,6 +182,12 @@ export interface DrawerDetail {
   dossierFocus: string
   dossierItems: string[]
   crosswalk: CrosswalkItem[]
+  /**
+   * One plain line for the header ("Published by National Institute of Standards
+   * and Technology (NIST)"), present only when the cross-walk records a curated
+   * publisher for this record. It is not a related record and cannot be opened.
+   */
+  publishedByLine?: string
 }
 
 const n = (kind: string, value: string, sub: string, tone: Tone): ChainNode => ({
@@ -224,9 +234,10 @@ function rationaleLabel(rationaleType: string): string {
 }
 
 /**
- * Verb from `framework`'s perspective — subset/superset, scheme/umbrella and
- * series/member flip when framework is the `to` side. A type this table does
- * not know reads as the neutral "Relates to".
+ * Verb from `framework`'s perspective — subset/superset, scheme/umbrella,
+ * series/member, publisher/document and newer/older edition flip when
+ * framework is the `to` side. A type this table does not know reads as the
+ * neutral "Relates to".
  */
 export function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: boolean): string {
   switch (edge.relationshipType) {
@@ -240,6 +251,14 @@ export function relationshipVerb(edge: ConceptXwalkRecord, frameworkIsFromSide: 
       return frameworkIsFromSide ? 'National scheme under' : 'Umbrella of'
     case 'part_of_series':
       return frameworkIsFromSide ? 'Part of series with' : 'Includes'
+    case 'published_by':
+      return frameworkIsFromSide
+        ? LIFECYCLE_LINK_WORDS.published_by.fromSource
+        : LIFECYCLE_LINK_WORDS.published_by.fromTarget
+    case 'supersedes':
+      return frameworkIsFromSide
+        ? LIFECYCLE_LINK_WORDS.supersedes.fromSource
+        : LIFECYCLE_LINK_WORDS.supersedes.fromTarget
     case 'intersects_with':
     default:
       return 'Relates to'
@@ -280,12 +299,76 @@ function frameworkMatchIds(framework: ComplianceFramework): Set<string> {
   return new Set([framework.id, framework.label, ...equivalentMatchLabels(framework)])
 }
 
-/** Real extracted relationships involving this framework, highest-confidence first. */
-function xwalkEdgesForFramework(framework: ComplianceFramework): ConceptXwalkRecord[] {
+/** Every cross-walk row that names this framework at either end, highest-confidence first. */
+function allXwalkEdgesForFramework(framework: ComplianceFramework): ConceptXwalkRecord[] {
   const idsToMatch = frameworkMatchIds(framework)
   return conceptXwalkData
     .filter((e) => idsToMatch.has(e.fromConcept) || idsToMatch.has(e.toConcept))
     .sort((a, b) => b.confidenceScore - a.confidenceScore)
+}
+
+/**
+ * Real extracted relationships involving this framework, highest-confidence
+ * first. A "published by" row is not a related record, so it is left out here
+ * and read by `publishedByLineFor` instead.
+ */
+function xwalkEdgesForFramework(framework: ComplianceFramework): ConceptXwalkRecord[] {
+  return allXwalkEdgesForFramework(framework).filter((e) => e.relationshipType !== 'published_by')
+}
+
+/**
+ * "Published by <organisation>" for the header, from the curated publisher
+ * rows of this record. Organisations come from the curated source-organisation
+ * list only; a row whose publisher is not on it adds nothing.
+ */
+function publishedByLineFor(framework: ComplianceFramework): string | undefined {
+  const idsToMatch = frameworkMatchIds(framework)
+  const names: string[] = []
+  for (const e of allXwalkEdgesForFramework(framework)) {
+    if (e.relationshipType !== 'published_by' || !idsToMatch.has(e.fromConcept)) continue
+    const org = publisherOrganizationFor(e.toConceptId)
+    if (org && !names.includes(org.name)) names.push(org.name)
+  }
+  if (names.length === 0) return undefined
+  const list =
+    names.length === 1
+      ? names[0]
+      : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`
+  return `${LIFECYCLE_LINK_WORDS.published_by.fromSource} ${list}`
+}
+
+/** At most this many replacement links are pinned above the ranked related records. */
+const PINNED_REPLACEMENT_MAX = 4
+
+/**
+ * The rows to list: replacement links first ("Replaced by a newer edition"
+ * before "Replaces an older edition"), then the `max` highest-confidence other
+ * rows. Replacement links are pinned so that higher-confidence overlaps never
+ * push the answer to "is there a newer edition?" out of the list. A record that
+ * is pinned is not listed a second time under another relationship ("equivalent
+ * to", "relates to"): one other record gets one row, the replacement link.
+ */
+function pinnedThenRanked(
+  framework: ComplianceFramework,
+  edges: ConceptXwalkRecord[],
+  max: number
+): ConceptXwalkRecord[] {
+  const idsToMatch = frameworkMatchIds(framework)
+  const replacements = edges.filter((e) => e.relationshipType === 'supersedes')
+  const replacedBy = replacements.filter((e) => !idsToMatch.has(e.fromConcept))
+  const replaces = replacements.filter((e) => idsToMatch.has(e.fromConcept))
+  const pinned = [...replacedBy, ...replaces].slice(0, PINNED_REPLACEMENT_MAX)
+  // The other record of a row, by its stored name and by its concept id.
+  const otherKeys = (e: ConceptXwalkRecord): string[] =>
+    (idsToMatch.has(e.fromConcept)
+      ? [e.toConcept, e.toConceptId]
+      : [e.fromConcept, e.fromConceptId]
+    ).filter(Boolean)
+  const pinnedKeys = new Set(pinned.flatMap(otherKeys))
+  const rest = edges.filter(
+    (e) => e.relationshipType !== 'supersedes' && !otherKeys(e).some((k) => pinnedKeys.has(k))
+  )
+  return [...pinned, ...rest.slice(0, max)]
 }
 
 function otherSide(edge: ConceptXwalkRecord, framework: ComplianceFramework): string {
@@ -337,12 +420,15 @@ function xwalkChainNodes(
   max: number
 ): ChainNode[] {
   const idsToMatch = frameworkMatchIds(framework)
-  return edges.slice(0, max).map((edge) => {
+  return pinnedThenRanked(framework, edges, max).map((edge) => {
     const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
+    // An edition link states a fact about two editions, not a kind of overlap,
+    // so it carries no "basis" line.
+    const sub = edge.relationshipType === 'supersedes' ? '' : rationaleLabel(edge.rationaleType)
     const node = n(
       relationshipVerb(edge, frameworkIsFromSide),
       otherSide(edge, framework),
-      rationaleLabel(edge.rationaleType),
+      sub,
       'info'
     )
     return { ...node, label: otherSideLabel(edge, framework) }
@@ -355,12 +441,19 @@ function xwalkCrosswalkItems(
   max: number
 ): CrosswalkItem[] {
   const idsToMatch = frameworkMatchIds(framework)
-  return edges.slice(0, max).map((edge) => {
+  return pinnedThenRanked(framework, edges, max).map((edge) => {
     const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
+    const verb = relationshipVerb(edge, frameworkIsFromSide)
+    if (edge.relationshipType === 'supersedes') {
+      return {
+        ...xw(otherSide(edge, framework), otherSideLabel(edge, framework), verb, 'info'),
+        pinned: true,
+      }
+    }
     return xw(
       otherSide(edge, framework),
       otherSideLabel(edge, framework),
-      `${relationshipVerb(edge, frameworkIsFromSide).toLowerCase()} · ${rationaleLabel(edge.rationaleType)}`,
+      `${verb.toLowerCase()} · ${rationaleLabel(edge.rationaleType)}`,
       'info'
     )
   })
@@ -535,5 +628,6 @@ export function buildDrawerDetail(framework: ComplianceFramework, pillar: Pillar
     dossierFocus,
     dossierItems,
     crosswalk,
+    publishedByLine: publishedByLineFor(framework),
   }
 }

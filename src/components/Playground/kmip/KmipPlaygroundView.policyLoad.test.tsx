@@ -4,12 +4,13 @@
 // policy the engine actually accepted, a missing file must not be read as YAML,
 // and a slow earlier load must not replace a policy chosen later. The engine and
 // fetch are mocked; the Policy tab is a stub that exposes the props the view
-// hands it.
+// hands it. The last tests cover the restore of the previous session on mount.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
-import type { PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { loadCacpSession, saveCacpDraft, saveCacpPresetSession } from './cacpSessionStorage'
 
 type PolicyViewProps = {
   policyYaml: string | null
@@ -164,5 +165,77 @@ describe('KmipPlaygroundView policy loading', () => {
       captured.props!.onApplyYaml('accepted: true')
     })
     expect(shown()).toBe('accepted: true')
+  })
+
+  describe('restoring the previous session on mount', () => {
+    const savedFile = POLICY_PRESETS.find((p) => !p.files)!.file
+    const saveSession = () => {
+      saveCacpPresetSession({
+        presetFile: savedFile,
+        moduleFiles: null,
+        uncoveredOps: 'deny',
+        fingerprints: ['saved-fp'],
+      })
+      saveCacpDraft(savedFile, 'draft: true')
+    }
+    const staleNotice = () => screen.queryByText(/Policy updated since your last visit/)
+
+    it('shows the updated-policy notice and re-applies the draft when the restored load is the current one', async () => {
+      saveSession()
+      fetchMock.mockResolvedValue(okResponse('restored policy'))
+      await mountPolicyTab()
+      await waitFor(() => expect(staleNotice()).toBeInTheDocument())
+      expect(engine.loadPolicy).toHaveBeenCalledWith('restored policy')
+      expect(engine.loadPolicy).toHaveBeenCalledWith('draft: true')
+    })
+
+    it('shows no notice and does not re-apply the draft when the reader chose another policy first', async () => {
+      saveSession()
+      let releaseRestore!: (r: unknown) => void
+      fetchMock.mockImplementation((url: string) =>
+        url.endsWith(savedFile)
+          ? new Promise((res) => {
+              releaseRestore = res
+            })
+          : Promise.resolve(okResponse('second policy'))
+      )
+      await mountPolicyTab()
+      await waitFor(() => expect(releaseRestore).toBeTypeOf('function'))
+      await act(() => captured.props!.onLoadPolicy(preset('second.yaml')))
+      expect(shown()).toBe('second policy')
+
+      // the slower restore now settles; it has been replaced and must change nothing
+      await act(async () => {
+        releaseRestore(okResponse('restored policy'))
+        await new Promise((resolve) => setTimeout(resolve, 0))
+      })
+      expect(staleNotice()).not.toBeInTheDocument()
+      expect(engine.loadPolicy).toHaveBeenCalledTimes(1)
+      expect(engine.loadPolicy).toHaveBeenCalledWith('second policy')
+      expect(shown()).toBe('second policy')
+    })
+
+    it('keeps the saved draft, without a notice, when the saved policy file cannot be read', async () => {
+      saveSession()
+      fetchMock.mockResolvedValue(notFound())
+      await mountPolicyTab()
+      // the draft is local: it is applied and stays stored although the preset never loaded
+      await waitFor(() => expect(engine.loadPolicy).toHaveBeenCalledWith('draft: true'))
+      expect(staleNotice()).not.toBeInTheDocument()
+      expect(engine.loadPolicy).toHaveBeenCalledTimes(1)
+      expect(loadCacpSession().draftYaml).toBe('draft: true')
+      expect(loadCacpSession().draftPresetFile).toBe(savedFile)
+    })
+
+    it('keeps the saved draft, without a notice, when the engine refuses the saved preset', async () => {
+      saveSession()
+      fetchMock.mockResolvedValue(okResponse('restored policy'))
+      engine.loadPolicy.mockReturnValueOnce({ ok: false, error: 'bad rule' })
+      await mountPolicyTab()
+      await waitFor(() => expect(engine.loadPolicy).toHaveBeenCalledWith('draft: true'))
+      expect(engine.loadPolicy).toHaveBeenNthCalledWith(1, 'restored policy')
+      expect(staleNotice()).not.toBeInTheDocument()
+      expect(loadCacpSession().draftYaml).toBe('draft: true')
+    })
   })
 })

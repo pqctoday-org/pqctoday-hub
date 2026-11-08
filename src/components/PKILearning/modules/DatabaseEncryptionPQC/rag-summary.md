@@ -20,7 +20,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 1. **Inventory & Key Hierarchy Audit** — Enumerate all encrypted databases using `sys.dm_database_encryption_keys` (SQL Server) or `V$ENCRYPTED_TABLESPACES` (Oracle). Document RSA/ECC-wrapped DEK locations. Generate CBOM.
 
-2. **PQC-Capable External KMS Setup** — Configure AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
+2. **PQC-Capable External KMS Setup** — Configure AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys; Decapsulate returns the shared secret to the caller and AWS KMS has no KMIP endpoint), or a KMS that offers a KMIP endpoint for KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF; this is this module's design, since FIPS 203 says the shared secret can be used directly as a key in symmetric-key cryptography), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
 
@@ -36,20 +36,22 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 ## BYOK/HYOK Patterns
 
-### Provider-Managed (illustrative 30% PQC readiness)
+The three patterns differ in key custody and revocation, not in a measured PQC readiness score; this module gives no readiness percentage for them.
+
+### Provider-Managed (the weakest customer control)
 
 - Cloud provider generates and stores all key material
 - No customer control over PQC migration timeline
 - Key custody sits with the provider; regulated entities rely on provider controls for key-lifecycle requirements (for example DORA RTS 2024/1774 Article 7)
 
-### BYOK — Bring Your Own Key (illustrative 65% PQC readiness)
+### BYOK — Bring Your Own Key
 
 - In this module's reading, customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
 - ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only; check Azure and Google Cloud per service
 - Cloud KMS briefly holds unwrapped CMK in HSM memory — residual exposure
 - Satisfies most regulatory BYOK requirements
 
-### HYOK — Hold Your Own Key (illustrative 90% PQC readiness)
+### HYOK — Hold Your Own Key
 
 - Customer key never leaves on-premises infrastructure
 - Cloud database receives the plaintext DEK after the on-premises unwrap

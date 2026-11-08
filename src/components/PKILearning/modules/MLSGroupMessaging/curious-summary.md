@@ -10,7 +10,7 @@ solves this. Instead of a chain of pairwise locks, MLS arranges members
 as leaves of a binary tree. Each branch holds a secret known only to the members below it. When you add a friend, or rotate a key, only the nodes on your path up the tree change, so the work grows with the logarithm of the group size — O(log N) — instead of with the group size.
 
 The next chapter is post-quantum: ML-KEM and ML-DSA suites are in IETF
-at draft -06 (July 2026), now submitted to the IESG for publication.
+at draft -07 (November 2026), and the IESG has been asked to publish them.
 
 This module covers:
 

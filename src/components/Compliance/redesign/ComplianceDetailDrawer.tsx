@@ -169,6 +169,14 @@ export function ComplianceDetailDrawer({
                 <Globe size={12} />
                 {d.juris}
               </p>
+              {d.publishedByLine && (
+                <p
+                  className="mt-1 break-words text-xs text-muted-foreground"
+                  data-testid="drawer-published-by"
+                >
+                  {d.publishedByLine}
+                </p>
+              )}
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ItemShareButton
@@ -451,7 +459,14 @@ export function ComplianceDetailDrawer({
                         <span className="max-w-full whitespace-normal break-words text-xs font-semibold text-foreground">
                           {c.label}
                         </span>
-                        <span className="max-w-full truncate text-[10.5px] text-muted-foreground">
+                        <span
+                          className={
+                            c.pinned
+                              ? 'max-w-full whitespace-normal break-words text-[11px] font-medium text-foreground'
+                              : 'max-w-full truncate text-[10.5px] text-muted-foreground'
+                          }
+                          data-testid={c.pinned ? 'drawer-edition-link' : undefined}
+                        >
                           {c.note}
                         </span>
                       </span>

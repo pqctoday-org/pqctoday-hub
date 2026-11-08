@@ -123,6 +123,11 @@ function computeRisk(item: CbomExportItem): { score: number; factors: string[]; 
   } else if (item.fipsStatus === 'not-validated') {
     score += 2
     factors.push('No FIPS 140-3 validation')
+  } else if (item.fipsStatus === 'unknown') {
+    // No record for this component: the gap is flagged for research with the same weight a
+    // missing validation carries, but it is not reported as a validation that was found absent.
+    score += 2
+    factors.push('FIPS 140-3 status not established')
   } else if (item.fipsStatus === 'in-mip') {
     score += 1
     factors.push('FIPS cert in MIP queue')
@@ -137,6 +142,9 @@ function computeRisk(item: CbomExportItem): { score: number; factors: string[]; 
   } else if (item.esvStatus === 'not-validated') {
     score += 1
     factors.push('No SP 800-90B ESV validation')
+  } else if (item.esvStatus === 'unknown') {
+    score += 1
+    factors.push('SP 800-90B ESV status not established')
   }
 
   const noPqc =

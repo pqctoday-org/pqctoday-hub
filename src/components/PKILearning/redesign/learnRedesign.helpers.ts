@@ -14,7 +14,9 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { matchesAllWords } from '@/utils/searchMatch'
 import { MODULE_TRACKS } from '../moduleData'
+import type { ModuleItem } from '../ModuleCard'
 import type { PersonaPathPhase } from '../usePersonaPathItems'
 
 /** Display order for the persona lens pills (curious first — the cold-start default). */
@@ -187,4 +189,131 @@ export function formatHours(minutes: number): string {
  */
 export function pathSkipsPqcBasics(personaId: PersonaId): boolean {
   return !PERSONAS[personaId].recommendedPath.includes('pqc-101')
+}
+
+// ---------------------------------------------------------------------------------------------
+// Browse all: the filter and sort rules, shared by the desktop catalogue (BrowseAllView) and the
+// phone one (MobileBrowseAllView), so the two always list the same modules in the same order.
+// ---------------------------------------------------------------------------------------------
+
+/** The value of the "all tracks" chip and of an unset status filter. */
+export const BROWSE_ALL = 'All'
+
+export type BrowseSortMode = 'default' | 'alpha' | 'difficulty' | 'duration' | 'status'
+
+/** Status filter choices (id `All` means no status filter). */
+export const BROWSE_STATUS_ITEMS: { id: string; label: string }[] = [
+  { id: BROWSE_ALL, label: 'All statuses' },
+  { id: 'not-started', label: 'Not started' },
+  { id: 'in-progress', label: 'In progress' },
+  { id: 'completed', label: 'Completed' },
+]
+
+/** Sort choices, in display order. */
+export const BROWSE_SORT_ITEMS: { id: BrowseSortMode; label: string }[] = [
+  { id: 'default', label: 'Recommended' },
+  { id: 'alpha', label: 'Name A–Z' },
+  { id: 'difficulty', label: 'Difficulty' },
+  { id: 'duration', label: 'Shortest first' },
+  { id: 'status', label: 'By status' },
+]
+
+const DIFF_ORDER: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 }
+const STATUS_ORDER: Record<string, number> = { 'in-progress': 0, 'not-started': 1, completed: 2 }
+
+/** "30 min" → 30; a duration that does not start with a number sorts last. */
+export function minutesOf(duration: string): number {
+  const n = parseInt(duration, 10)
+  return Number.isNaN(n) ? 999 : n
+}
+
+/**
+ * The track a `?track=` link or a chip names: the catalogue's own spelling when it is one of the
+ * catalogue's tracks, otherwise "All" (an unknown or empty name is ignored, never an empty list).
+ */
+export function resolveBrowseTrack(raw: string | null | undefined): string {
+  return raw && MODULE_TRACKS.some((t) => t.track === raw) ? raw : BROWSE_ALL
+}
+
+/** A group of catalogue modules under one track heading. */
+export interface BrowseGroup {
+  track: string
+  modules: ModuleItem[]
+}
+
+export interface BrowseFilterInput {
+  /** The catalogue to filter, grouped by track (normally `MODULE_TRACKS`). */
+  tracks: ReadonlyArray<{ track: string; modules: readonly ModuleItem[] }>
+  /** Free text; every word must appear in the title, description or topic keywords. */
+  search?: string
+  /** Curated per-module topic keywords, once loaded (search works on title and description without them). */
+  topicKeywords?: Readonly<Record<string, string>> | null
+  /** A track name, or `All`. */
+  track?: string
+  /** `not-started`, `in-progress`, `completed`, or `All`. */
+  status?: string
+  sort?: BrowseSortMode
+  savedOnly?: boolean
+  /** Ids of the modules the reader has saved. */
+  savedIds?: ReadonlySet<string>
+  /** Per-module progress, as `useModuleStore` keeps it (a module with no entry is not started). */
+  progress?: Readonly<Record<string, { status?: string } | undefined>>
+  /** Extra desktop-only narrowing (workforce proficiency tier, algorithm or standard); a module must pass it. */
+  extraFilter?: (moduleId: string) => boolean
+}
+
+/**
+ * The Browse all list: the catalogue narrowed by track, saved, status, the extra filter and the
+ * search words, each track's modules sorted, and tracks left with no modules dropped. `default`
+ * keeps the catalogue's own (recommended) order.
+ */
+export function filterAndSortModules(input: BrowseFilterInput): BrowseGroup[] {
+  const {
+    tracks,
+    search = '',
+    topicKeywords = null,
+    track = BROWSE_ALL,
+    status = BROWSE_ALL,
+    sort = 'default',
+    savedOnly = false,
+    savedIds,
+    progress = {},
+    extraFilter,
+  } = input
+  const q = search.trim()
+  const statusOf = (id: string) => progress[id]?.status ?? 'not-started'
+
+  const groups = tracks
+    .map((t) => ({
+      track: t.track,
+      modules: t.modules.filter((m) => {
+        if (track !== BROWSE_ALL && t.track !== track) return false
+        if (savedOnly && !savedIds?.has(m.id)) return false
+        if (status !== BROWSE_ALL && statusOf(m.id) !== status) return false
+        if (extraFilter && !extraFilter(m.id)) return false
+        if (q && !matchesAllWords([m.title, m.description, topicKeywords?.[m.id]], q)) return false
+        return true
+      }) as ModuleItem[],
+    }))
+    .filter((g) => g.modules.length > 0)
+
+  const sorter = (a: ModuleItem, b: ModuleItem): number => {
+    switch (sort) {
+      case 'alpha':
+        return a.title.localeCompare(b.title)
+      case 'difficulty':
+        return (
+          (DIFF_ORDER[a.difficulty ?? 'beginner'] ?? 0) -
+          (DIFF_ORDER[b.difficulty ?? 'beginner'] ?? 0)
+        )
+      case 'duration':
+        return minutesOf(a.duration) - minutesOf(b.duration)
+      case 'status':
+        return (STATUS_ORDER[statusOf(a.id)] ?? 1) - (STATUS_ORDER[statusOf(b.id)] ?? 1)
+      default:
+        return 0
+    }
+  }
+  if (sort !== 'default') groups.forEach((g) => g.modules.sort(sorter))
+  return groups
 }

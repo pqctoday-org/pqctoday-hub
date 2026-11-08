@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  analysisSourceInfo,
+  analysisSourceLinkLabel,
   deriveVendorRoadmapDisplay,
   getGaStatusInfo,
   getScopeChipInfo,
   cleanHybridModeText,
 } from './vendorRoadmapDisplay'
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '@/types/MigrateTypes'
+import { HELD_ANALYSIS_SOURCES } from '@/data/heldAnalysisSources'
 
 function roadmap(overrides: Partial<VendorRoadmap> = {}): VendorRoadmap {
   return {
@@ -246,5 +249,125 @@ describe('deriveVendorRoadmapDisplay', () => {
     expect(
       deriveVendorRoadmapDisplay(roadmap({ roadmapTitle: 'Acme 2027 Migration' }), undefined)?.title
     ).toBe('Acme 2027 Migration')
+  })
+})
+
+describe('analysisSourceInfo', () => {
+  it('reads the address, the recorded title and the site without a leading www', () => {
+    expect(
+      analysisSourceInfo(
+        enrichment({ roadmapUrl: 'https://www.example.com/a/b.html', sourceTitle: 'A page' })
+      )
+    ).toEqual({ url: 'https://www.example.com/a/b.html', title: 'A page', siteName: 'example.com' })
+  })
+
+  it('has no title when none was recorded', () => {
+    expect(
+      analysisSourceInfo(enrichment({ roadmapUrl: 'https://example.com/x' }))?.title
+    ).toBeNull()
+  })
+
+  it('has nothing to link when there is no address, or it is not http or https', () => {
+    expect(analysisSourceInfo(undefined)).toBeNull()
+    expect(analysisSourceInfo(enrichment({ roadmapUrl: '' }))).toBeNull()
+    expect(analysisSourceInfo(enrichment({ roadmapUrl: 'javascript:alert(1)' }))).toBeNull()
+    expect(analysisSourceInfo(enrichment({ roadmapUrl: 'ftp://example.com/file' }))).toBeNull()
+  })
+
+  it('names the link by what it is, the title and site, and that it opens a new tab', () => {
+    expect(
+      analysisSourceLinkLabel({
+        url: 'https://example.com/x',
+        title: 'A page',
+        siteName: 'example.com',
+      })
+    ).toBe('Analysis source: A page (example.com) (opens in a new tab)')
+    expect(
+      analysisSourceLinkLabel({
+        url: 'https://example.com/x',
+        title: null,
+        siteName: 'example.com',
+      })
+    ).toBe('Analysis source: example.com (opens in a new tab)')
+  })
+})
+
+describe('deriveVendorRoadmapDisplay: analysis from another source', () => {
+  const row = roadmap({ roadmapUrl: 'https://example.com/file.pdf', roadmapTitle: 'The paper' })
+  const other = enrichment({
+    roadmapUrl: 'https://example.com/page.html',
+    sourceTitle: 'The paper (web page)',
+    currentGaStatus: 'Preview',
+    targetMigrationDates: 'Pilot in 2027',
+    pqcAlgorithms: ['ML-KEM'],
+    keyQuotes: ['Plan now.'],
+  })
+
+  it('keeps every fact of the other page out of the fields that describe the row itself', () => {
+    const d = deriveVendorRoadmapDisplay(row, undefined, other)!
+    expect(d.gaStatus).toBeNull()
+    expect(d.migrationDates).toBeNull()
+    expect(d.pqcAlgorithms).toEqual([])
+    expect(d.firstQuote).toBeNull()
+    expect(d.roadmapUrl).toBe('https://example.com/file.pdf')
+    expect(d.title).toBe('The paper')
+    expect(d.analysisSource).toBeNull()
+  })
+
+  it('carries the other page facts and its source in crossSource', () => {
+    const d = deriveVendorRoadmapDisplay(row, undefined, other)!
+    expect(d.crossSource).toMatchObject({
+      source: {
+        url: 'https://example.com/page.html',
+        title: 'The paper (web page)',
+        siteName: 'example.com',
+      },
+      gaStatus: { kind: 'preview', label: 'Preview' },
+      migrationDates: 'Pilot in 2027',
+      pqcAlgorithms: ['ML-KEM'],
+      firstQuote: 'Plan now.',
+    })
+  })
+
+  it('has no crossSource without one, or when its address cannot be linked', () => {
+    expect(deriveVendorRoadmapDisplay(row, undefined)!.crossSource).toBeNull()
+    expect(
+      deriveVendorRoadmapDisplay(row, undefined, enrichment({ roadmapUrl: '' }))!.crossSource
+    ).toBeNull()
+  })
+
+  it('a row with no link but a cross-source analysis is not empty', () => {
+    expect(deriveVendorRoadmapDisplay(roadmap({ roadmapUrl: '' }), undefined, other)!.isEmpty).toBe(
+      false
+    )
+  })
+
+  it('names the source of the analysis of a vendor with no roadmap row, and of nothing else', () => {
+    const own = enrichment({ roadmapUrl: 'https://example.com/page.html' })
+    expect(deriveVendorRoadmapDisplay(undefined, own)!.analysisSource?.url).toBe(
+      'https://example.com/page.html'
+    )
+    expect(deriveVendorRoadmapDisplay(row, own)!.analysisSource).toBeNull()
+    expect(
+      deriveVendorRoadmapDisplay(undefined, enrichment({ roadmapUrl: '' }))!.analysisSource
+    ).toBeNull()
+  })
+})
+
+describe('held analysis sources in the display', () => {
+  const held = HELD_ANALYSIS_SOURCES[0]
+  const row = roadmap({ roadmapUrl: 'https://example.com/file.pdf' })
+
+  it('gives no link for a held address', () => {
+    expect(analysisSourceInfo(enrichment({ roadmapUrl: held.url }))).toBeNull()
+  })
+
+  it('has no crossSource and no source line for a held analysis', () => {
+    expect(
+      deriveVendorRoadmapDisplay(row, undefined, enrichment({ roadmapUrl: held.url }))!.crossSource
+    ).toBeNull()
+    expect(
+      deriveVendorRoadmapDisplay(undefined, enrichment({ roadmapUrl: held.url }))!.analysisSource
+    ).toBeNull()
   })
 })

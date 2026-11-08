@@ -385,7 +385,9 @@ export const InitialScopingAssessment: React.FC = () => {
       {state.seeded && sources.length > 0 && (
         <PreFilledBanner
           summary={`Scope seeded from ${sources.join(' + ')}${
-            totalProducts ? ` (estate ~${totalProducts} catalogued products)` : ''
+            totalProducts
+              ? ` (the catalogue lists ${totalProducts} products; that is not your estate)`
+              : ''
           }.`}
           onClear={() =>
             setState({

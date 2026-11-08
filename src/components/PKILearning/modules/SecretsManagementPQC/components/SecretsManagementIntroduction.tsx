@@ -444,7 +444,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               details: [
                 'Transit ml-dsa, slh-dsa and hybrid sign/verify key types — Enterprise only, per the Vault transit documentation',
                 'ML-KEM transit key types and PQC seal/unseal — not documented; we found none announced',
-                'Hybrid TLS (X25519+ML-KEM) for Vault API — via HPKE RFC 9180',
+                'Hybrid TLS (X25519MLKEM768) for the Vault API: the Vault 1.19.4 and 1.20.0 changelogs list X25519MLKEM768 key agreement in the Go TLS stack, so check your build and listener; TLS hybrid key-exchange groups are defined in RFC 10024 and RFC 9954, not by HPKE (RFC 9180)',
               ],
               note: 'On-premises deployment gives full control over upgrade timing. Dynamic secrets are available now and eliminate many HNDL risks without waiting for PQC algorithms.',
             },
@@ -454,8 +454,9 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               statusCls: 'text-status-info bg-status-info/10 border-status-info/30',
               details: [
                 'No secrets-manager-native PQC: Secrets Manager encrypts each secret value with an AES-256 data key that AWS KMS generates and encrypts under a symmetric encryption KMS key, and it supports only symmetric encryption KMS keys, so it cannot use an ML-KEM or ML-DSA KMS key',
-                'AWS KMS itself has ML-DSA-44/65/87 signing key specs (documented June 2025) and ML-KEM key specs ML_KEM_512/768/1024 with Encapsulate and Decapsulate operations (documentation history entry dated 23 October 2026)',
-                'Encapsulate and Decapsulate are not available in China Regions; key material cannot be imported into ML-DSA or ML-KEM KMS keys',
+                'AWS KMS itself has ML-DSA-44/65/87 signing key specs (documented June 2025) and ML-KEM key specs ML_KEM_512/768/1024 with Encapsulate and Decapsulate operations',
+                'AWS added ML-KEM keys to AWS KMS on 26 October 2026; they are not available in the China, Middle East (UAE) and Middle East (Bahrain) Regions.',
+                'AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys.',
                 'AWS SDK for Java 2.x can enable hybrid post-quantum key agreement by calling .postQuantumTlsEnabled(true) when building the AWS Common Runtime HTTP client',
                 'No native dynamic secrets — use Lambda rotation or Vault AWS auth',
               ],
