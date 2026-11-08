@@ -800,33 +800,36 @@ personalizeCard(sampleIdentity, K, OPc);`,
     },
     {
       id: 'encrypt_transport',
-      title: '4. Encrypt for Transport',
+      title: '4. Encrypt a Sample Record',
       description:
-        'Run sample AES-CBC encryption in the browser with a fresh sample key and IV. The displayed key is educational data, not protected HSM storage. This step creates no MAC and does not establish batch authenticity or successful operator import.',
-      code: `// Browser sample: encrypt the sample record using AES-CBC.
-// A fresh key and IV are generated; no MAC is created by this step.
-const ciphertext = await crypto.subtle.encrypt(
-  { name: 'AES-CBC', iv }, sampleKey, encodedSampleRecord
-);`,
-      output: `[SAMPLE] AES-CBC ciphertext displayed in the browser.
-[NOT EXECUTED] No export file, MAC or operator import created.`,
+        'Encrypt one fictional subscriber record with browser AES-128-GCM. A fresh 96-bit nonce and separate nonextractable local sample key protect this versioned teaching format. The encrypted envelope includes its authentication tag; it does not distribute the key or establish manufacturer identity.',
+      code: `// Executed browser sample, not an operator transport standard.
+// Keep sampleKey separately in memory; it is not part of envelope.
+const encryptedRecord = await crypto.subtle.encrypt(
+  { name: 'AES-GCM', iv, additionalData: formatHeader, tagLength: 128 },
+  sampleKey, encodedSampleRecord
+);
+// envelope = { format, version, algorithm, ivHex, ciphertextHex }
+// ciphertextHex contains encrypted record bytes followed by the tag.`,
+      output: `[SAMPLE] Browser AES-128-GCM encryption of one fictional record.
+[SAMPLE] Separate local key; no key-distribution or manufacturer-identity check.`,
     },
     {
       id: 'import_udm',
-      title: '5. Import at Operator',
+      title: '5. Authenticate and Inspect Sample Import',
       description:
-        "Review the operator import process: controlled decryption, batch integrity/origin checks, record validation and protected subscriber-key storage. This walkthrough performs none of those operations. Production designs and key placement depend on the operator's supported tools and architecture.",
-      code: `// Illustrated operator process — not executed
-const record = file.readRecord();
-checkBatchIntegrityAndOrigin(record);
-const K = HSM.decrypt(TransportKey, record.eK);
-validateSubscriberRecord(record, K);
-
-// Illustrative protected-storage step; exact design is deployment-specific
-subscriberDB.store(record.IMSI, HSM.reEncrypt(K));`,
-      output: `[WALKTHROUGH] Operator import process reviewed.
-[NOT EXECUTED] Decryption, MAC/key validation and database write.
-[NOT EXECUTED] No subscriber provisioning or readiness established.`,
+        'Authenticate and decrypt the edited sample envelope with its matching local key. Validate the record, expected fictional IMSI and OPc relationship before accepting it in memory. Alter the ciphertext to test rejection, then restore it to retry. Production tools need supported formats, protected key handling, rejection logs and replay controls; this sample writes no card or subscriber database.',
+      code: `// Executed local sample checks; publish only after every check passes.
+validateEnvelope(envelope);
+const record = await authenticateAndDecrypt(envelope, sampleKey);
+validateRecord(record);
+checkExpectedIMSI(record.imsi);
+checkOPcFromK(record.k, record.opc);
+acceptInMemory(record);
+// No USIM write, database storage, replay or sender-identity check.`,
+      output: `[SAMPLE] Authentication, decryption and record consistency checked.
+[SAMPLE] Accepted record is inspectable in memory only.
+[NOT EXECUTED] Card writing, subscriber database storage, key distribution or replay checks.`,
     },
   ],
 }

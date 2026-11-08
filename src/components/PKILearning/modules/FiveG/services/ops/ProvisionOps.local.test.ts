@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { createDecipheriv, webcrypto } from 'node:crypto'
+import { webcrypto } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FiveGService } from '../FiveGService'
 import { importAtUDM, personalizeUSIM } from './ProvisionOps'
@@ -25,35 +25,31 @@ describe('Provisioning distinguishes process walkthroughs from sample encryption
     expect(result).not.toContain('[SUCCESS]')
     expect(result).not.toContain('Written to tamper-resistant memory')
   })
-  it('does not decrypt, validate or import arbitrary supplied data while explaining the missing operations', async () => {
+  it('rejects malformed batches before decrypting rather than treating the walkthrough as an import', async () => {
     const decrypt = vi.spyOn(window.crypto.subtle, 'decrypt')
     const service = new FiveGService()
+    const key = await window.crypto.subtle.generateKey({ name: 'AES-GCM', length: 128 }, false, [
+      'encrypt',
+      'decrypt',
+    ])
     for (const encrypted of ['not-an-encrypted-batch', '00'.repeat(16), '']) {
-      const result = await service.importAtUDM(encrypted, opc)
-      expect(result).toEqual(await importAtUDM(service, encrypted, opc))
-      expect(result).toContain('MAC verification: NOT EXECUTED')
-      expect(result).toContain('Key validation: NOT EXECUTED')
-      expect(result).toContain('Subscriber database write: NOT EXECUTED')
-      expect(result).toContain('No subscriber was provisioned')
-      expect(result).not.toMatch(/MAC verification: PASS|\[SUCCESS\]/)
+      await expect(service.importAtUDM(encrypted, key)).rejects.toThrow()
+      await expect(importAtUDM(service, encrypted, key)).rejects.toThrow()
     }
     expect(decrypt).not.toHaveBeenCalled()
   })
-  it('preserves executable sample AES-CBC encryption without calling it a successful import', async () => {
-    const result = await new FiveGService().encryptTransport(k, opc)
-    const key = result.match(/Transport Key: ([a-f0-9]+)/)![1]
-    const iv = result.match(/IV: ([a-f0-9]+)/)![1]
-    const encrypted = result.match(/Encrypted Output\(Hex\):\n([a-f0-9]+)/)![1]
-    const decipher = createDecipheriv(
-      'aes-128-cbc',
-      Buffer.from(key, 'hex'),
-      Buffer.from(iv, 'hex')
+  it('delegates a real authenticated sample roundtrip while keeping card/database actions unexecuted', async () => {
+    const service = new FiveGService()
+    const actualOpc = await service.computeOPc(k)
+    const encrypted = await service.encryptTransport(k, actualOpc)
+    expect(encrypted.envelope.algorithm).toBe('AES-128-GCM')
+    expect(encrypted.transportKey.extractable).toBe(false)
+    const imported = await service.importAtUDM(
+      JSON.stringify(encrypted.envelope),
+      encrypted.transportKey
     )
-    const plain = Buffer.concat([
-      decipher.update(Buffer.from(encrypted, 'hex')),
-      decipher.final(),
-    ]).toString('utf8')
-    expect(plain).toBe(`IMSI: 310260123456789, K: ${k}, OPc: ${opc} `)
-    expect(result).not.toMatch(/MAC verification|provisioning complete|\[SUCCESS\]/)
+    expect(imported.record).toEqual({ imsi: '310260123456789', k, opc: actualOpc })
+    expect(imported.checks.authentication).toContain('passed')
+    expect(imported.checks.sampleStorage).toContain('no USIM or subscriber database write')
   })
 })
