@@ -8,7 +8,9 @@
     "run-id",
     "internal-log",
     "internal-folder",
-    "agent-config-path"
+    "agent-config-path",
+    "internal-key",
+    "decision-citation"
   ],
   "files": {
     "assets/App-#.js": {
@@ -17,9 +19,8 @@
       "private-repo": 6
     },
     "assets/index-#.js": {
-      "evidence-cache": 11,
       "home-path": 1,
-      "run-id": 818
+      "run-id": 1
     },
     "assets/trustScoreData-#.js": {
       "evidence-cache": 1,

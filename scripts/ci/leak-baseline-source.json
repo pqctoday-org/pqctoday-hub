@@ -8,7 +8,9 @@
     "run-id",
     "internal-log",
     "internal-folder",
-    "agent-config-path"
+    "agent-config-path",
+    "internal-key",
+    "decision-citation"
   ],
   "files": {
     ".env.example": {
@@ -24,12 +26,6 @@
       "private-repo": 6
     },
     "e2e/compliance-persona-overwhelm.spec.ts": {
-      "private-repo": 1
-    },
-    "e2e/migrate-persona-defaults.spec.ts": {
-      "private-repo": 1
-    },
-    "e2e/threats-persona-defaults.spec.ts": {
       "private-repo": 1
     },
     "e2e/timeline-persona-region.spec.ts": {
@@ -83,8 +79,7 @@
     },
     "public/data/rag-corpus.json": {
       "internal-folder": 1,
-      "private-repo": 1,
-      "run-id": 1
+      "private-repo": 1
     },
     "public/data/revisions.jsonl": {
       "evidence-cache": 2,
@@ -93,7 +88,6 @@
       "run-id": 5
     },
     "public/industry-landscape/evidence/manifest.json": {
-      "evidence-cache": 1,
       "internal-folder": 1
     },
     "public/library/manifest.json": {
@@ -116,9 +110,6 @@
       "evidence-cache": 1,
       "internal-folder": 1
     },
-    "public/timeline/manifest.json": {
-      "internal-folder": 1
-    },
     "public/vendor-roadmaps/manifest.json": {
       "internal-folder": 1
     },
@@ -126,7 +117,7 @@
       "home-path": 2
     },
     "public/wasm/wasm-provenance.json": {
-      "private-repo": 26
+      "private-repo": 25
     },
     "scripts/ci/check-tool-version-bump.ts": {
       "private-repo": 1
@@ -182,17 +173,7 @@
     "src/components/PKILearning/modules/APISecurityJWT/jwtUtils.ts": {
       "private-repo": 1
     },
-    "src/components/PKILearning/modules/CcEuccCertification/data/ccEuData.ts": {
-      "private-repo": 1
-    },
-    "src/components/PKILearning/modules/CcEuccCertification/data/regionalSchemesData.ts": {
-      "run-id": 2
-    },
     "src/components/PKILearning/modules/ConfidentialComputing/workshop/TEEHSMTrustedChannel.tsx": {
-      "private-repo": 1
-    },
-    "src/components/PKILearning/modules/CryptoMgmtModernization/components/MTINegotiator.tsx": {
-      "evidence-cache": 1,
       "private-repo": 1
     },
     "src/components/PKILearning/modules/CryptoProductCertification/manifest.ts": {
@@ -208,9 +189,6 @@
       "private-repo": 1
     },
     "src/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo.tsx": {
-      "private-repo": 1
-    },
-    "src/components/PKILearning/modules/PciCertification/data/pciListingFixture.ts": {
       "private-repo": 1
     },
     "src/components/PKILearning/modules/SecureBootPQC/workshop/FirmwareSigningMigrator.tsx": {
@@ -305,13 +283,6 @@
     "src/data/learningPersonas.ts": {
       "private-repo": 1
     },
-    "src/data/library_#.csv": {
-      "evidence-cache": 11,
-      "internal-folder": 11,
-      "internal-log": 11,
-      "private-repo": 31,
-      "run-id": 11
-    },
     "src/data/loaderUtils.ts": {
       "private-repo": 1
     },
@@ -324,13 +295,8 @@
     "src/data/pqcAlgorithmsData.ts": {
       "private-repo": 1
     },
-    "src/data/pqc_complete_algorithm_reference_#.csv": {
-      "private-repo": 14
-    },
     "src/data/pqc_product_catalog_#.csv": {
-      "evidence-cache": 5,
-      "home-path": 1,
-      "run-id": 647
+      "home-path": 1
     },
     "src/data/pqc_software_category_priority_matrix.csv": {
       "private-repo": 63
@@ -341,19 +307,12 @@
     "src/data/product-extractions/csc_018_extractions_#.md": {
       "home-path": 1
     },
-    "src/data/quantum_threats_hsm_industries_#.csv": {
-      "evidence-cache": 2,
-      "run-id": 90
-    },
     "src/data/roiBaselines.ts": {
       "evidence-cache": 4,
       "private-repo": 5
     },
     "src/data/role_board_content_#.csv": {
-      "run-id": 3
-    },
-    "src/data/timeline_#.csv": {
-      "evidence-cache": 1
+      "run-id": 1
     },
     "src/data/trusted_sources_#.csv": {
       "run-id": 4
@@ -366,7 +325,7 @@
       "private-repo": 1
     },
     "src/data/validation/vector-manifest.json": {
-      "private-repo": 6
+      "private-repo": 4
     },
     "src/services/chat/factVerification.ts": {
       "private-repo": 1
