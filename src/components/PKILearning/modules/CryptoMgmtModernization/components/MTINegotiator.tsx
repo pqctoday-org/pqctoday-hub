@@ -368,10 +368,13 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
  * with no document, section or URL behind it. Reading the sources showed the
  * claim was half right in the half that matters:
  *
- *  - BSI TR-02102-1, Table 5.3 and section 5.7: ML-DSA is a recommended
+ *  - BSI TR-02102-1, Table 5.3 and section 5.3.4: ML-DSA is a recommended
  *    signature algorithm, and the recommended parameter sets are ML-DSA-65 and
  *    ML-DSA-87 — "NIST Security Strength Categories 3 and 5" — in the "hedged"
- *    variant. Standalone. So the BSI half was correct.
+ *    variant, and only together with a classical signature scheme; hash-based
+ *    signatures (SLH-DSA, XMSS, LMS) can in principle also be used alone if
+ *    implementation security is carefully considered. So the BSI half was
+ *    correct on the parameter sets, not on standalone use.
  *  - ANSSI PG-083 v3 (2026): "Utilise sans hybridation et quel que soit le jeu
  *    de parametres utilise, le mecanisme de signature numerique ML-DSA ne
  *    respecte pas la regle RegleSecuAsym." ML-DSA alone fails ANSSI's rule at
@@ -383,7 +386,7 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
  *    3 is acceptable, Category 5 preferred.
  */
 export const NATIONAL_GUIDANCE_SOURCES = {
-  bsi: 'BSI TR-02102-1, Table 5.3 and section 5.7 (ML-DSA-65 / ML-DSA-87, hedged)',
+  bsi: 'BSI TR-02102-1, Table 5.3 and section 5.3.4 (ML-DSA-65 / ML-DSA-87, hedged; only together with a classical signature, hash-based schemes excepted)',
   anssiRule:
     'ANSSI PG-083 v3 (2026), RegleSecuAsym & ReglePQSecuAsym — a product aiming at post-quantum security must satisfy both rules to ensure no security regression',
   anssiLevel: 'ANSSI PQC position paper — prefer NIST level 5, level 3 acceptable',

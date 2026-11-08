@@ -139,7 +139,7 @@ export const EU_EXECUTIVE_INTENTS: Intent[] = [
   {
     label: 'BSI (Germany)',
     description:
-      'TR-02102-1 (2026-01) recommends ML-KEM-768 and FrodoKEM-976 only in hybrid with a classical mechanism, ML-DSA-65 only combined with a classical signature, and SLH-DSA at 192-bit+ (not 128), which it allows alone. Classic McEliece is still listed for hybrid use, but BSI advised on 29 Sep 2026 against new developments with it',
+      'TR-02102-1 (2026-01) recommends ML-KEM-768 and FrodoKEM-976 only in hybrid with a classical mechanism, ML-DSA-65 only combined with a classical signature, and SLH-DSA at 192-bit+ (not 128), which it says can in principle also be used alone if implementation security is carefully considered. Classic McEliece is still listed for hybrid use, but BSI advised on 29 Sep 2026 against new developments with it',
     icon: <ArrowRight size={15} />,
     params: {
       tab: 'detailed',
