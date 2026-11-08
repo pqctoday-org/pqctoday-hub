@@ -179,7 +179,10 @@ export const KmsRotationPlanner: React.FC = () => {
               tasks: [
                 { name: 'Revoke all pure-classical TLS certificates', status: 'pending' },
                 { name: 'Migrate CA intermediate keys to ML-DSA-87', status: 'pending' },
-                { name: 'Migrate Azure Key Vault to native PQC (target 2029)', status: 'pending' },
+                {
+                  name: 'Migrate Azure Key Vault to native PQC when Microsoft offers PQC key types (2029 is a Microsoft-wide goal, not a Key Vault date)',
+                  status: 'pending',
+                },
                 { name: 'Update API authentication to ML-DSA-44 (35 services)', status: 'pending' },
                 { name: 'Enable PQC-only wrapping across all KMS providers', status: 'pending' },
                 {
