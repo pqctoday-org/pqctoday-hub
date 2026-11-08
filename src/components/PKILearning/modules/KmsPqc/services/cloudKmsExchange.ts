@@ -521,7 +521,7 @@ export function effectiveEngine(engine: HpkeEngine, suite: HpkeImportSuite): Hpk
 
 export function hpkeEngineNote(engine: HpkeEngine, suite: HpkeImportSuite): string | undefined {
   if (engine === 'v33' && isPure(suite)) {
-    return 'Pure ML-KEM uses the same CKM_ML_KEM mechanism in the v3.3 draft as in v3.2, so this run is identical to the v3.2 run. The v3.3 draft adds CKM_COMP_KEM for the hybrid suites only.'
+    return 'Pure ML-KEM uses the same CKM_ML_KEM mechanism in the v3.3 draft as in v3.2, so this run is identical to the v3.2 run. CKM_COMP_KEM in the v3.3 draft covers composite KEMs only.'
   }
   return undefined
 }

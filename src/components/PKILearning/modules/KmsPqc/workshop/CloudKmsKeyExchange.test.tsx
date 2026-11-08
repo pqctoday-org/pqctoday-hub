@@ -172,8 +172,13 @@ describe('CloudKmsKeyExchange', () => {
     renderStep()
     await user.click(screen.getByRole('radio', { name: 'HPKE (candidate)' }))
     await user.click(screen.getByRole('radio', { name: /PQCToday candidate CKM_HPKE/ }))
-    expect(screen.getByText(/not allocated by OASIS and part of no standard/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/not allocated by OASIS and is in neither PKCS#11 v3\.2 nor the v3\.3 draft/)
+    ).toBeInTheDocument()
     await user.click(screen.getByRole('radio', { name: /v3\.3 draft/ }))
+    expect(
+      screen.getByText(/defines CKM_COMP_KEM, a composite KEM, and no HPKE mechanism/)
+    ).toBeInTheDocument()
     expect(screen.getByText(/It is a draft and can still change/)).toBeInTheDocument()
   })
 

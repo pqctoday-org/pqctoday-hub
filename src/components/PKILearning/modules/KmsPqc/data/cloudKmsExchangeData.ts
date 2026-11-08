@@ -670,14 +670,14 @@ export const ENGINES: readonly EngineInfo[] = [
     label: 'PKCS#11 v3.3 draft (CKM_COMP_KEM)',
     mechanisms: 'CKM_COMP_KEM for the key agreement; HKDF and AES-GCM as in v3.2',
     standing:
-      'The v3.3 working draft adds CKM_COMP_KEM for the hybrid suites (X-Wing, MLKEM768-P256, MLKEM1024-P384). Pure ML-KEM uses the same CKM_ML_KEM mechanism as in v3.2. It is a draft and can still change.',
+      'The v3.3 working draft defines CKM_COMP_KEM, a composite KEM, and no HPKE mechanism. Three of its parameter sets match the HPKE-PQ hybrid KEMs (X-Wing, MLKEM768-P256, MLKEM1024-P384). Pure ML-KEM uses the same CKM_ML_KEM mechanism as in v3.2. It is a draft and can still change.',
   },
   {
     id: 'candidate',
     label: 'PQCToday candidate CKM_HPKE',
     mechanisms: 'CKM_HPKE (vendor-defined 0x80000014): Encap and KeySchedule in one call',
     standing:
-      'A PQCToday proposal, not allocated by OASIS and part of no standard. The numeric value is vendor-defined.',
+      'A PQCToday proposal in the vendor-defined range. It is not allocated by OASIS and is in neither PKCS#11 v3.2 nor the v3.3 draft.',
   },
 ]
 
