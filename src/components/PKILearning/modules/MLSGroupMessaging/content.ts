@@ -12,11 +12,9 @@ export const content: ModuleContent = {
   standards: [
     getStandard('RFC 9420'),
     getStandard('RFC 9180'),
-    // -06, not -04. This module's own narratives have described -06 since July 2026
-    // while this citation, mlsData.ts and MLSIntroduction.tsx still named -04 — and
-    // THIS line is the one that decides which document the accuracy checker opens,
-    // which is why the checker never caught the module contradicting itself.
-    getStandard('draft-ietf-mls-pq-ciphersuites-06'),
+    // Current revision (-07). The module's narratives, mlsData.ts and MLSIntroduction.tsx name
+    // the same revision as this citation, which is what the accuracy checker opens.
+    getStandard('draft-ietf-mls-pq-ciphersuites-07'),
     getStandard('draft-ietf-mls-combiner-02'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
@@ -24,7 +22,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('RFC 5869'),
-    getStandard('draft-ietf-mls-extensions-09'),
+    getStandard('draft-ietf-mls-extensions-11'),
   ],
 
   algorithms: [
@@ -39,7 +37,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'MLS (RFC 9420) provides asynchronous group key establishment with forward secrecy and post-compromise security for groups from two to thousands, using TreeKEM: every member is a leaf of a binary tree, and a Commit that carries a path refreshes the sender\'s direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. Recovery from a compromised member is conditional: it starts only when the group processes a Commit that replaces that member\'s leaf key with a fresh one the attacker never saw. `draft-ietf-mls-pq-ciphersuites` (-06, 21 July 2026; datatracker on 30 October 2026: WG state "Submitted to IESG for Publication", IESG state "Publication Requested") registers eleven ML-KEM cipher suites, hybrid and pure, the first eight with traditional signatures and the last three with ML-DSA-44, ML-DSA-65 and ML-DSA-87; `draft-ietf-mls-combiner-02` specifies a hybrid path — run a traditional and a PQ MLS session in parallel and combine them by importing a secret exported from the PQ session as a Pre-Shared Key (PSK) into the traditional session.',
+      'MLS (RFC 9420) provides asynchronous group key establishment with forward secrecy and post-compromise security for groups from two to thousands, using TreeKEM: every member is a leaf of a binary tree, and a Commit that carries a path refreshes the sender\'s direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. Recovery from a compromised member is conditional: it starts only when the group processes a Commit that replaces that member\'s leaf key with a fresh one the attacker never saw. `draft-ietf-mls-pq-ciphersuites` (-07, 1 November 2026; datatracker on 8 November 2026: IESG state "Publication Requested") registers eleven ML-KEM cipher suites, hybrid and pure, the first eight with traditional signatures and the last three with ML-DSA-44, ML-DSA-65 and ML-DSA-87; `draft-ietf-mls-combiner-02` specifies a hybrid path — run a traditional and a PQ MLS session in parallel and combine them by importing a secret exported from the PQ session as a Pre-Shared Key (PSK) into the traditional session.',
     workshopSummary:
       "TreeKEM Ratchet Tree Visualizer: watch a Commit refresh a sender's direct path and advance the group epoch secret. OpenMLS ↔ PKCS#11 Provider Architecture: see how `openmls_pqctoday_crypto` routes OpenMLS's ~15-function `OpenMlsCrypto` trait through PKCS#11 v3.2 against softhsmv3, with signature keys generated as non-extractable HSM token objects.",
   },
@@ -86,7 +84,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     title: 'Ciphersuites — baseline, PQ, hybrid',
     body: [
       'MLS RFC 9420 registers seven fixed cipher suites (0x0001 to 0x0007), each pairing a specific DHKEM, KDF, AEAD, hash and signature scheme; MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 is the mandatory-to-implement suite.',
-      '`draft-ietf-mls-pq-ciphersuites-06` (21 July 2026) registers eleven ML-KEM cipher suites: hybrid (ML-KEM with X25519, P-256 or P-384) and pure ML-KEM. The first eight combine the KEM with a traditional signature algorithm; the last three also use post-quantum signatures (ML-DSA-44, ML-DSA-65 and ML-DSA-87).',
+      '`draft-ietf-mls-pq-ciphersuites-07` (1 November 2026) registers eleven ML-KEM cipher suites: hybrid (ML-KEM with X25519, P-256 or P-384) and pure ML-KEM. The first eight combine the KEM with a traditional signature algorithm; the last three also use post-quantum signatures (ML-DSA-44, ML-DSA-65 and ML-DSA-87).',
       '`draft-ietf-mls-combiner-02` (expired, WGLC revival pending) specifies a hybrid combiner: run two MLS sessions in parallel (one traditional, one PQ) and combine them by exporting a secret from the PQ session and importing it as a Pre-Shared Key (PSK) into the traditional session, to achieve amortized PQ confidentiality and authenticity. It is an architecture, not a single cipher suite: each session names its own cipher suite (a traditional one and a pure post-quantum one), and the combiner does not change how cipher suites compute group keys (section 8.1 of the draft).',
     ],
   },
@@ -105,7 +103,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     body: [
       'Two things have to converge for production PQ MLS: (1) the upstream OpenMLS workspace registers `draft-ietf-mls-pq-ciphersuites` in `openmls_traits::types::Ciphersuite`, and (2) our provider wires `CKM_ML_KEM_*` and `CKM_ML_DSA` through.',
       'A parallel path is the hybrid combiner: a traditional and a PQ MLS session run in parallel and combined through a PSK exported from the PQ session. This is the path most enterprise messaging vendors are watching, because it lets them ship MLS today and turn on PQ when their HSM fleet is ready, without re-keying.',
-      'Status snapshot (30 October 2026, from the drafts\' datatracker pages): the PQ ciphersuite draft is an Active Internet-Draft at -06 (21 July 2026; last updated 2026-10-19); its WG state is "Submitted to IESG for Publication" and its IESG state is "Publication Requested". The combiner draft (-02, 22 October 2025) is expired; its WG state is "Waiting for WG Chair Go-Ahead, Revised I-D Needed - Issue raised by WGLC". Check the datatracker pages for the current state.',
+      'Status snapshot (8 November 2026, from the drafts\' datatracker pages): the PQ ciphersuite draft is an Active Internet-Draft at -07 (1 November 2026; the list of eleven suites is unchanged from -06) and its IESG state is "Publication Requested". The MLS extensions framework (`draft-ietf-mls-extensions`) is an active working-group draft at -11 (2 November 2026). As checked on 30 October 2026, the combiner draft (-02, 22 October 2025) is expired; its WG state is "Waiting for WG Chair Go-Ahead, Revised I-D Needed - Issue raised by WGLC". Check the datatracker pages for the current state.',
     ],
   },
 ]

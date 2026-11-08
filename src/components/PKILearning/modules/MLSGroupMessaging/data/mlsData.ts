@@ -44,7 +44,7 @@ export const MLS_CIPHERSUITES: MLSCiphersuite[] = [
     kdf: 'HKDF-SHA256',
     aead: 'AES-128-GCM',
     signature: 'Ed25519 (post-quantum confidentiality only)',
-    referenceId: 'draft-ietf-mls-pq-ciphersuites-06',
+    referenceId: 'draft-ietf-mls-pq-ciphersuites-07',
   },
   {
     id: 'mls_192_mlkem768_aes256gcm_sha384_mldsa65',
@@ -54,7 +54,7 @@ export const MLS_CIPHERSUITES: MLSCiphersuite[] = [
     kdf: 'HKDF-SHA384',
     aead: 'AES-256-GCM',
     signature: 'ML-DSA-65',
-    referenceId: 'draft-ietf-mls-pq-ciphersuites-06',
+    referenceId: 'draft-ietf-mls-pq-ciphersuites-07',
   },
   {
     // An architecture, not a cipher suite: two MLS sessions, each with its own cipher suite,
@@ -74,9 +74,9 @@ export const MLS_CIPHERSUITES: MLSCiphersuite[] = [
 export const MLS_LIBRARY_REFS = [
   'RFC 9420',
   'RFC 9180',
-  'draft-ietf-mls-pq-ciphersuites-06',
+  'draft-ietf-mls-pq-ciphersuites-07',
   'draft-ietf-mls-combiner-02',
-  'draft-ietf-mls-extensions-09',
+  'draft-ietf-mls-extensions-11',
 ]
 
 /**
