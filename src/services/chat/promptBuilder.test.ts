@@ -39,6 +39,8 @@ import {
 import { threatsData } from '@/data/threatsData'
 import { lensProtocolsFor } from '@/data/threatProtocolLens'
 import { ROUTE_META, isNoindexRoute } from '@/seo/routeMeta'
+import { MODULE_TRACKS } from '@/components/PKILearning/moduleData'
+import { resolveBrowseTrack } from '@/components/PKILearning/redesign/learnRedesign.helpers'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { validateDeepLink } from '@/services/search/deepLinkGrammar'
 
@@ -473,6 +475,30 @@ describe('buildGeminiSystemPrompt — link value lists match the pages', () => {
     expect(listed('/timeline', 'region')).toEqual(lists.timelineRegion)
     expect(listed('/threats', 'class')).toEqual(lists.threatClass)
     expect(listed('/playground/interactive', 'tab')).toEqual(lists.playgroundTab)
+  })
+
+  // The prompt named an "Executive" track the catalogue does not have, and left out Governance &
+  // Risk, so links built from it matched nothing. The list now comes from the catalogue itself.
+  describe('Learn', () => {
+    it('track lists exactly the catalogue’s tracks, in order, each written as one token', () => {
+      expect(listed('/learn', 'track')).toEqual(MODULE_TRACKS.map((t) => t.track))
+      expect(buildLinkValueLists().learnTrack).toEqual(
+        MODULE_TRACKS.map((t) => encodeURIComponent(t.track))
+      )
+    })
+
+    it('no longer names an Executive track, and does name Governance & Risk', () => {
+      expect(prompt).not.toMatch(/track names:[^\n]*Executive/)
+      expect(listed('/learn', 'track')).not.toContain('Executive')
+      expect(listed('/learn', 'track')).toContain('Governance & Risk')
+      expect(prompt).toContain('Governance%20%26%20Risk')
+    })
+
+    it('every listed track is accepted by the Learn page', () => {
+      for (const track of listed('/learn', 'track')) {
+        expect(resolveBrowseTrack(track)).toBe(track)
+      }
+    })
   })
 })
 
