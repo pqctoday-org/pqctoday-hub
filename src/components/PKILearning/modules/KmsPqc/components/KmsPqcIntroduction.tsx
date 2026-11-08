@@ -152,8 +152,8 @@ const CloudKeyExchange: React.FC = () => (
       Moving a key between a partner HSM or key manager and a cloud KMS is a different problem from
       encrypting data with a KMS. This section sets out what AWS KMS, Google Cloud KMS and Azure Key
       Vault document for key import and key establishment as of November 2026, whether each path is
-      quantum-safe, and where the key ends up. The Workshop step &ldquo;Exchange keys with a cloud
-      KMS&rdquo; simulates these flows in the browser; no cloud service is called.
+      quantum-safe, and where the key ends up. Workshop Step 7, &ldquo;Cloud KMS Key
+      Exchange,&rdquo; simulates these flows in the browser; no cloud service is called.
     </p>
     <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
       <p className="text-sm text-foreground">

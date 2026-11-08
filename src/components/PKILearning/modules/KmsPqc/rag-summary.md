@@ -31,7 +31,7 @@ workshop_steps: 7
 4. KMS Rotation Planner — Enterprise rotation planning with provider-specific strategies
 5. KMIP Protocol Explorer — KMIP v3.0 (draft) vs provider API comparison, PQC key type mapping, cross-provider sync visualizer, migration readiness checklist
 6. AWS Policy Lab — Write and check an IAM policy that allows only ML-DSA signing keys to be created (kms:KeySpec, kms:KeyUsage), with an optional ML-KEM key-establishment statement
-7. Exchange keys with a cloud KMS — simulate classical and HPKE key-exchange flows for AWS KMS, Google Cloud KMS and Azure Key Vault in the browser (no cloud calls)
+7. Cloud KMS Key Exchange — simulate classical and HPKE key-exchange flows for AWS KMS, Google Cloud KMS and Azure Key Vault in the browser (no cloud calls)
 
 ## Key Standards
 
