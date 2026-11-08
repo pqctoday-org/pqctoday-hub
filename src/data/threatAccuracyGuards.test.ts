@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { threatsData } from './threatsData'
 import { libraryData } from './libraryData'
@@ -37,6 +39,28 @@ describe('Threats accuracy guards', () => {
     for (const threat of currentCnsaRows) {
       expect(threat.description, threat.threatId).not.toMatch(/\b2033\b/)
     }
+  })
+
+  it('keeps the published source manifest on the current CNSA 2.0 FAQ v2.2 milestones', () => {
+    // The manifest ships to the site with each source's description; the CNSA rows
+    // must not carry the superseded 2033 / category-schedule wording, must carry the
+    // exception on the 2030 phase-out, and must read as text for readers.
+    const manifest = JSON.parse(
+      readFileSync(resolve(process.cwd(), 'public/threats/manifest.json'), 'utf-8')
+    ) as { entries: { refId: string; label?: string }[] }
+    const byId = new Map(
+      manifest.entries.filter((entry) => entry.label).map((entry) => [entry.refId, entry.label])
+    )
+    for (const id of ['AERO-002', 'GOV-002', 'GOV-005']) {
+      const label = byId.get(id)
+      expect(label, id).toBeTruthy()
+      expect(label, id).not.toMatch(/\b2033\b/)
+      expect(label, id).toContain('1 January 2027')
+      expect(label, id).toContain('31 December 2030 (exceptions possible)')
+      expect(label, id).toContain('31 December 2031')
+      expect(label, id).not.toMatch(/must not be presented|should not be presented/i)
+    }
+    expect(byId.get('GOV-005')).toContain('2035 NSM-10 goal is not a CNSA 2.0 date')
   })
 
   it('does not retain the known expired future-tense statements', () => {

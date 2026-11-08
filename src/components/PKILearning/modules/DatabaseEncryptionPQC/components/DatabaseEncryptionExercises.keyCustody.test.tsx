@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { DatabaseEncryptionExercises } from './DatabaseEncryptionExercises'
+import introSource from './DatabaseEncryptionIntroduction.tsx?raw'
 
 function exerciseText(): string {
   render(
@@ -32,9 +33,19 @@ describe('database encryption key ownership exercise', () => {
   it('states that HYOK still hands the cloud engine the plaintext DEK', () => {
     const text = exerciseText()
     expect(text).toContain(
-      "The patterns differ in key custody and revocation, not in a measured readiness score; any percentages are illustrative. With HYOK the master key stays in the customer HSM, but the cloud database engine still receives the plaintext DEK after the on-premises unwrap. With BYOK the customer's key material is imported into the cloud KMS."
+      "The patterns differ in key custody and revocation, not in a measured readiness score. With HYOK the master key stays in the customer HSM, but the cloud database engine still receives the plaintext DEK after the on-premises unwrap. With BYOK the customer's key material is imported into the cloud KMS."
     )
     expect(text).not.toMatch(/HYOK achieves 90% PQC readiness/)
     expect(text).not.toMatch(/BYOK scores 65%/)
+  })
+
+  it('states no readiness difference or percentage for the three patterns in the exercise or the introduction', () => {
+    const text = exerciseText()
+    expect(text).not.toMatch(/percentages are illustrative/)
+    const intro = introSource.replace(/\s+/g, ' ')
+    expect(intro).toContain(
+      'Three models exist, differing in who holds the key and who can revoke it:'
+    )
+    expect(intro).not.toMatch(/dramatically different/)
   })
 })

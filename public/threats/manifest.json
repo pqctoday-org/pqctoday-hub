@@ -8,7 +8,7 @@
     {
       "threatId": "AERO-002",
       "refId": "AERO-002",
-      "label": "Satellite communication HNDL vulnerability: Military and commercial satellites have 15-25 year operational lifespans. NSA CNSA 2.0 mandates PQC for all national security systems including satellite uplink/downlink — NSS equipment must phase out quantum-vulnerable algorithms by 2033 (CNSA 2.0 FAQ Dec 2024 sets December 31, 2030 for phasing out non-CNSA 2.0 equipment, mandatory CNSA 2.0 use by December 31, 2031, full NSS quantum resistance by 2033). Currently intercepted satellite communications are harvestable for future quantum decryption.",
+      "label": "Satellite communication HNDL vulnerability: military and commercial satellites can have long operational lifespans. For National Security Systems, NSA CNSA 2.0 FAQ version 2.2 requires new acquisitions to be CNSA 2.0-compliant from 1 January 2027, unsupported equipment and services to be phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms to be mandated by 31 December 2031, unless otherwise noted. These are NSS migration milestones, not a CRQC-arrival forecast. Intercepted quantum-vulnerable satellite communications may face future decryption if their confidentiality lifetime extends beyond CRQC arrival.",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
       "file": "threats/AERO-002.pdf",
@@ -581,7 +581,7 @@
     {
       "threatId": "GOV-002",
       "refId": "GOV-002",
-      "label": "CNSA 2.0 compliance deadline pressure: NSA mandates CNSA 2.0 compliance with phased deadlines — software/firmware signing supported and preferred by 2025 (exclusively by 2030), networking equipment supported and preferred by 2026 (exclusively by 2030), NSS acquisitions by January 2027, web browsers/servers/cloud supported and preferred by 2025 (exclusively by 2033), full transition by 2033.",
+      "label": "CNSA 2.0 migration pressure: NSA FAQ version 2.2 requires new National Security System acquisitions to be CNSA 2.0-compliant from 1 January 2027, equipment and services that cannot support CNSA 2.0 to be phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms to be mandated by 31 December 2031, unless otherwise noted. These milestones supersede the earlier category schedule for current planning and are not a CRQC-arrival forecast.",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
       "file": "threats/GOV-002.pdf",
@@ -639,7 +639,7 @@
     {
       "threatId": "GOV-005",
       "refId": "GOV-005",
-      "label": "NSA CNSA 2.0 mandates technology-category migration timelines for National Security System operators, requiring software/firmware signing and web/cloud services to prefer PQC by 2025, networking by 2026, operating systems by 2027, and constrained devices by 2030, with exclusive deadlines between 2030 and 2033. The December 2024 FAQ further requires phasing out non-compliant equipment by December 31, 2030, enforcing mandatory CNSA 2.0 use by December 31, 2031, and achieving full NSS quantum resistance by 2033.",
+      "label": "NSA CNSA 2.0 FAQ version 2.2 requires new National Security System acquisitions to be CNSA 2.0-compliant from 1 January 2027, equipment and services that cannot support CNSA 2.0 to be phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms to be mandated by 31 December 2031, unless otherwise noted. The separate 2035 NSM-10 goal is not a CNSA 2.0 date.",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
       "file": "threats/GOV-005.pdf",

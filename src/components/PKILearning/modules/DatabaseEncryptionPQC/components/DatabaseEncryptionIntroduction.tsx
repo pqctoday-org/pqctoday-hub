@@ -306,8 +306,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
       >
         <p>
           Key ownership architecture determines who can access plaintext key material &mdash; and
-          therefore who can decrypt your database. Three models exist, with dramatically different
-          PQC readiness:
+          therefore who can decrypt your database. Three models exist, differing in who holds the
+          key and who can revoke it:
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

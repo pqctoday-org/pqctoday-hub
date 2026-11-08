@@ -122,7 +122,7 @@ import { SECTORS, SIM_CRQC_YEAR } from '@/data/moscaClock'
 import { deriveSimClock } from './hooks/useSimClock'
 import { JURISDICTION_RULES, checkChoice } from '@/data/jurisdiction'
 import { deadlineScopeFor } from '@/data/moscaClock'
-import { JURISDICTION_AUTHORITY_NOTE } from '@/data/jurisdictionsData'
+import { JURISDICTION_AUTHORITY_NOTE, JURISDICTION_BY_CODE } from '@/data/jurisdictionsData'
 import { useArchetypeChangeNotice } from '@/hooks/useArchetypeChangeNotice'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
@@ -2037,6 +2037,7 @@ export function SimulationView() {
       label: jur?.authority ?? JURISDICTION_AUTHORITY_NOTE[country]?.authority ?? country,
       hybrid: jur?.hybrid ?? 'interim',
       endState: jur?.endState ?? 'pure',
+      force: JURISDICTION_BY_CODE[country]?.force,
     },
     sector: { id: sector, label: sectorOpt.label, x: sectorOpt.shelfLifeYears },
     size: { id: size, label: sizeOpt.label },

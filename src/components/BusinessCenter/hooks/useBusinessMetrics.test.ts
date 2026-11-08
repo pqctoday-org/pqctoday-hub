@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, renderHook, screen } from '@testing-library/react'
 import { createElement } from 'react'
 import { MemoryRouter } from 'react-router'
@@ -313,6 +313,50 @@ describe('useBusinessMetrics — educational PQC framework review prompts', () =
         screen.getByText('0 tracked PQC framework review prompts. Compliance is not assessed.')
       ).toBeInTheDocument()
       expect(screen.queryByText(/No compliance gaps flagged/i)).not.toBeInTheDocument()
+    }
+  )
+})
+
+describe('useBusinessMetrics — executive learning path to-do wording by role', () => {
+  beforeEach(() => {
+    mockAssessmentStore.industry = ''
+    mockAssessmentStore.country = ''
+    mockAssessmentStore.complianceRequirements = []
+    mockAssessmentStore.assessmentStatus = 'complete'
+    mockComplianceStore.myFrameworks = []
+  })
+  afterEach(() => {
+    mockPersonaStore.selectedPersona = 'executive'
+  })
+
+  const learningItem = () => {
+    const { result } = renderHook(() => useBusinessMetrics())
+    return result.current.actionItems.find(
+      (item) => item.action.path === '/learn/exec-quantum-impact'
+    )
+  }
+
+  it('tells an executive to begin the executive learning path', () => {
+    mockPersonaStore.selectedPersona = 'executive'
+    expect(learningItem()?.title).toBe('Begin your executive learning path')
+  })
+
+  it('tells a reader with no role picked to begin it (the default)', () => {
+    mockPersonaStore.selectedPersona = null
+    expect(learningItem()?.title).toBe('Begin your executive learning path')
+    expect(learningItem()?.priority).toBe(2)
+  })
+
+  it.each(['developer', 'architect', 'ops', 'researcher', 'cert-engineer', 'curious'])(
+    'calls it optional for the %s role, matching the learning bar title',
+    (persona) => {
+      mockPersonaStore.selectedPersona = persona
+      const item = learningItem()
+      expect(item?.title).toBe('Optional: executive learning path')
+      expect(item?.title).not.toMatch(/^Begin/)
+      expect(item?.description).toMatch(/Optional context for your role/)
+      // optional items rank below the required priority-2 items
+      expect(item?.priority).toBe(3)
     }
   )
 })

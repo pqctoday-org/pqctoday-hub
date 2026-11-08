@@ -29,4 +29,16 @@ describe('EmailSigningExercises: KEMRecipientInfo fields and multi-recipient fal
     expect(t).toMatch(/not a hybrid KEM/)
     expect(t).not.toMatch(/KEM is quantum-safe/)
   })
+
+  it('asks what smimeCapabilities tells a sender instead of saying it enables the rollout', () => {
+    const t = text()
+    expect(t).toMatch(
+      /what smimeCapabilities tells a sender about the algorithms a correspondent can handle/
+    )
+    expect(t).toMatch(
+      /partial list of the algorithms a signer says it can handle, in order of preference/
+    )
+    expect(t).not.toMatch(/smimeCapabilities enables gradual PQC rollout/)
+    expect(t).not.toMatch(/signals which algorithms each party supports/)
+  })
 })

@@ -2,8 +2,8 @@
 import { describe, it, expect } from 'vitest'
 import { SIM_MOVES, type MoveCtx } from './simMoves'
 
-const ctx = (over: number, hybrid: string, endState: string): MoveCtx => ({
-  country: { id: 'DE', label: 'Germany', hybrid, endState },
+const ctx = (over: number, hybrid: string, endState: string, force?: string): MoveCtx => ({
+  country: { id: 'DE', label: 'Germany', hybrid, endState, force },
   sector: { id: 'healthcare', label: 'Healthcare', x: 15 },
   size: { id: 'mid', label: 'Mid' },
   over,
@@ -24,6 +24,29 @@ describe('simMoves', () => {
     const pure = SIM_MOVES.p5!.find((m) => m.label.includes('PURE'))!
     expect(pure.evaluate(ctx(3, 'required', 'hybrid')).kind).toBe('trap') // DE/FR mandate
     expect(pure.evaluate(ctx(3, 'interim', 'pure')).kind).toBe('warn') // US/UK
+  })
+
+  it('P5 "pure" play calls a hybrid expectation a mandate only where the jurisdiction record says binding', () => {
+    const pure = SIM_MOVES.p5!.find((m) => m.label.includes('PURE'))!
+    const guidance = pure.evaluate(ctx(3, 'required', 'hybrid', 'guidance'))
+    expect(guidance.kind).toBe('trap')
+    expect(guidance.outcome).toMatch(/published guidance/)
+    expect(guidance.outcome).not.toMatch(/mandate|Compliance FAIL|non-compliant/i)
+    // A record with no force label is not treated as binding either.
+    expect(pure.evaluate(ctx(3, 'required', 'hybrid')).outcome).not.toMatch(
+      /mandate|Compliance FAIL/i
+    )
+    const binding = pure.evaluate(ctx(3, 'required', 'hybrid', 'requirement'))
+    expect(binding.kind).toBe('trap')
+    expect(binding.outcome).toMatch(/requires HYBRID/)
+    expect(binding.outcome).not.toMatch(/mandates/)
+  })
+
+  it('P5 hybrid-everywhere verdict does not call the end state a mandate', () => {
+    const hybrid = SIM_MOVES.p5!.find((m) => m.label.startsWith('Deploy hybrid everywhere'))!
+    const verdict = hybrid.evaluate(ctx(3, 'required', 'hybrid', 'guidance'))
+    expect(verdict.kind).toBe('sound')
+    expect(verdict.outcome).not.toMatch(/mandate/i)
   })
 
   it('context tokens are interpolated into outcomes (clock "over", sector)', () => {

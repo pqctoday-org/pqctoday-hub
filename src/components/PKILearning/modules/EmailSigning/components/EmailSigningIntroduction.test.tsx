@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { EmailSigningIntroduction } from './EmailSigningIntroduction'
+import ragSummary from '../rag-summary.md?raw'
 
 const text = () => {
   const { container } = render(
@@ -47,5 +48,24 @@ describe('EmailSigningIntroduction: what each CMS standard is, and what migratio
     expect(t).toMatch(/RFC 4998/)
     expect(t).toMatch(/RFC 3161/)
     expect(t).not.toMatch(/Organizations need both classical and PQC signatures/)
+  })
+
+  it('describes smimeCapabilities as a partial, ordered list the sender can handle, not as what enables the rollout', () => {
+    const t = text()
+    expect(t).toMatch(
+      /smimeCapabilities attribute in signed messages lists, in order of preference/
+    )
+    expect(t).toMatch(/partial list/)
+    expect(t).toMatch(/RFC 8551 section 2\.5\.2/)
+    expect(t).not.toMatch(/enabling gradual PQC rollout/)
+  })
+
+  it("describes recipient capability discovery as a signer's partial list, here and in the lesson summary", () => {
+    const t = text()
+    expect(t).toMatch(/a signer's own partial list, in order of preference/)
+    expect(t).not.toMatch(/Senders must discover which algorithms each recipient supports/)
+    expect(ragSummary).toMatch(/lists, in preference order and only in part/)
+    expect(ragSummary).not.toMatch(/advertises supported algorithms/)
+    expect(ragSummary).not.toMatch(/must discover recipient algorithm support/)
   })
 })

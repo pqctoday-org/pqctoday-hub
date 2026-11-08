@@ -20,6 +20,7 @@ export type FipsStatus =
   | 'revoked' // cert revoked
   | 'in-mip' // module in Modules-in-Process queue
   | 'not-validated' // no CMVP validation
+  | 'unknown' // no catalogue record, so the CMVP status is not established
 
 export type EsvStatus =
   | 'active' // SP 800-90B ESV certificate currently active
@@ -27,6 +28,7 @@ export type EsvStatus =
   | 'revoked' // ESV cert revoked
   | 'in-mip' // ESV submission in NIST Entropy Source Validation Program queue
   | 'not-validated' // no SP 800-90B ESV submission
+  | 'unknown' // no catalogue record, so the entropy-source status is not established
 
 export type RiskColor = 'red' | 'yellow' | 'green'
 

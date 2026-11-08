@@ -162,7 +162,7 @@ describe('library Markdown follows the displayed catalogue', () => {
     })
     const sbom = markdown()
     expect(sbom).toContain(
-      '| SBOM-only row | 9 | not-validated | not-validated | — | yellow | No posture record — add to inventory and research. |'
+      '| SBOM-only row | 9 | Unknown | Unknown | — | yellow | No posture record — add to inventory and research. |'
     )
     fireEvent.click(screen.getByRole('button', { name: 'Library posture' }))
     const libs = markdown()
