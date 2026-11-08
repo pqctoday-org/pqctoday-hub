@@ -282,7 +282,7 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     step: 2,
     title: 'PQC-Capable External KMS Setup',
     description:
-      'Configure a PQC-capable KMS (AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only) to generate ML-KEM-1024 key wrapping keys. Establish KMIP v2 connectivity from the database server.',
+      'Configure a PQC-capable KMS to generate ML-KEM-1024 key wrapping keys. AWS KMS Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application. AWS KMS imports key material only under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096) and cannot import key material into ML-DSA or ML-KEM KMS keys. AWS KMS is reached through its own API rather than a KMIP endpoint, so establish KMIP v2 connectivity from the database server only to a KMS that offers a KMIP endpoint.',
     classicalApproach:
       'External KMS with RSA-2048/4096 TLS-wrapped KMIP connection. Key wrapping via RSA-OAEP or AES-WRAP.',
     pqcApproach:
