@@ -176,10 +176,12 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onBack }) => {
         <Info size={13} className="shrink-0" />
         <p>
           This local 5G-AKA authentication-check sample uses browser software MILENAGE and key
-          derivation, not a live USIM, HSM or network. Its fictional single subscriber accepts only
-          the exact next sequence value, then increments without wrapping. Reset is a local sample
-          reset, not production resynchronization or durable replay protection. KSEAF, KAMF and NAS
-          security mode are not executed.
+          derivation, not a live USIM, HSM or network. It is a teaching model, not 3GPP conformance:
+          its fictional single subscriber applies its own exact-next-sequence policy (no SQN window,
+          AUTS resynchronization or NAS exchange), then increments without wrapping. If you generate
+          a new challenge before the pending one is accepted, the UE still expects the earlier
+          value; use Reset. Reset is a local sample reset, not production resynchronization or
+          durable replay protection. KSEAF, KAMF and NAS security mode are not executed.
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
