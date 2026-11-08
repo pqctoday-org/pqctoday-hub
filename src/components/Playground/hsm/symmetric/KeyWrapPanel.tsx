@@ -192,15 +192,15 @@ const MECH_INFO: MechInfo[] = [
       'RSA key: ≥ 2048-bit (2048 approved, 3072+ recommended for post-2030). OAEP hash: SHA-256/384/512.',
     aws: {
       supported: true,
-      note: 'CKM_RSA_PKCS_OAEP supported. AWS BYOK uses RSA-OAEP (2048/3072/4096) wrapping an AES-256 KEK.',
+      note: 'CKM_RSA_PKCS_OAEP supported. AWS KMS import is RSA only: the wrapping key is RSA_2048, RSA_3072 or RSA_4096, RSAES_OAEP_SHA_256 or _SHA_1 wraps a 256-bit AES key, and RSA_AES_KEY_WRAP_SHA_256 or _SHA_1 wraps an asymmetric private key. The AWS pages describe no quantum-safe import.',
     },
     gcp: {
       supported: true,
-      note: 'Primary BYOK import method: RSA-OAEP-4096-SHA256 wraps an AES-256 KEK, AES-KWP wraps the target.',
+      note: 'RSA import methods use RSAES-OAEP (SHA-1 or SHA-256) with AES-KWP; RSA_OAEP_3072_SHA256_AES_256 is the recommended one. A separate Preview import uses HPKE and is not this mechanism.',
     },
     azure: {
       supported: true,
-      note: 'Managed HSM BYOK: RSA-OAEP (3072 or 4096) + AES-KWP. Documented in MS Key Vault BYOK spec.',
+      note: 'Key Vault and Managed HSM BYOK use CKM_RSA_AES_KEY_WRAP (RSA-OAEP with SHA-1 plus AES-KWP) under an RSA-HSM key exchange key of 2048, 3072 or 4096 bits. Documented in the Microsoft Key Vault BYOK specification.',
     },
   },
   {
@@ -215,11 +215,11 @@ const MECH_INFO: MechInfo[] = [
       'P-256 + ML-KEM-768 (NIST L3) or ML-KEM-1024 (L5). HKDF info="hybrid-wrap-kek". Output: 3 blobs (ephemeral pubkey + ML-KEM ciphertext + wrapped key).',
     aws: {
       supported: false,
-      note: 'ML-KEM not yet in CloudHSM. BYOK uses RSA-OAEP + AES-KW only. ML-KEM TLS transport supported; ML-DSA signing announced.',
+      note: 'CloudHSM has ML-DSA in FIPS mode on hsm2m.medium since 1 Sep 2026 and no ML-KEM. AWS KMS has ML-KEM keys, but Decapsulate returns the secret to the caller, and AWS KMS import is RSA_AES_KEY_WRAP / RSA-OAEP only.',
     },
     gcp: {
       supported: false,
-      note: 'ML-KEM-768/1024 + X-Wing available as KEM key purpose (preview), but NOT wired into BYOK import flow. BYOK still RSA-OAEP + AES-KW.',
+      note: 'ML-KEM-768/1024 and X-Wing are a KEM key purpose (Preview in the release notes since 23 Sep 2025; the 28 Jul 2026 blog post says GA). Quantum-safe key import with HPKE is in Preview since 6 Aug 2026 for software keys; it is not this composed ECDH + ML-KEM + AES-KW pattern.',
     },
     azure: {
       supported: false,
@@ -354,10 +354,12 @@ const WrapInfoModal = ({ onClose }: { onClose: () => void }) => (
               </li>
             </ol>
             <p>
-              This is why cloud providers (AWS, GCP, Azure) offer ML-KEM for TLS sessions but still
-              use RSA-OAEP for BYOK imports — RSA-OAEP is a key transport mechanism that can
-              directly encrypt a chosen key. The KEM→HKDF→AES-KW pattern demonstrated here is the
-              expected migration path once cloud HSMs adopt PQC wrapping.
+              This is why AWS KMS and Azure Key Vault offer ML-KEM for TLS sessions (AWS also as KMS
+              keys) but still use RSA wrapping for BYOK imports — RSA-OAEP is a key transport
+              mechanism that can directly encrypt a chosen key. Google Cloud KMS has a Preview
+              quantum-safe import built on HPKE, which follows the same KEM-then-symmetric idea. The
+              KEM→HKDF→AES-KW pattern demonstrated here composes that idea from separate PKCS#11
+              calls; it is a teaching sketch, not any provider&apos;s import format.
             </p>
           </div>
         </div>
