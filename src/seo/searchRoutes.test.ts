@@ -42,7 +42,7 @@ describe('search route manifest', () => {
 
   it('classifies the exact current inventory', () => {
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'business-tool')).toHaveLength(37)
-    expect(SEARCH_ROUTES.filter((route) => route.kind === 'browser-tool')).toHaveLength(33)
+    expect(SEARCH_ROUTES.filter((route) => route.kind === 'browser-tool')).toHaveLength(34)
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'sandbox-tool')).toHaveLength(23)
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'lab')).toHaveLength(4)
     // Pages other than Learn modules are pinned; the Learn module pages and the total follow from the

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
-import { KeyRound, Lock, Shuffle, CalendarClock, Globe } from 'lucide-react'
+import { KeyRound, Lock, Shuffle, CalendarClock, Globe, ArrowLeftRight } from 'lucide-react'
 import { KmsPqcIntroduction } from './components/KmsPqcIntroduction'
 import { KmsPqcExercises } from './components/KmsPqcExercises'
 import { KeyHierarchyDesigner } from './workshop/KeyHierarchyDesigner'
@@ -10,6 +10,7 @@ import { KmsRotationPlanner } from './workshop/KmsRotationPlanner'
 import { KmipProtocolExplorer } from './workshop/KmipProtocolExplorer'
 import { KmsMigrationRunbook } from './workshop/KmsMigrationRunbook'
 import { AwsKmsPolicyLab } from './workshop/AwsKmsPolicyLab'
+import { CloudKmsKeyExchange } from './workshop/CloudKmsKeyExchange'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -53,6 +54,13 @@ const PARTS: WorkshopPart[] = [
       'Write and check an IAM policy that lets administrators create ML-DSA signing keys only, and see why post-quantum TLS is a client setting.',
     icon: Lock,
   },
+  {
+    id: 'cloud-kms-exchange',
+    title: 'Step 7: Cloud KMS Key Exchange',
+    description:
+      'Simulate importing a key into AWS KMS, Google Cloud KMS and Azure: the classical RSA flow next to the HPKE flow, on selectable PKCS#11 engines.',
+    icon: ArrowLeftRight,
+  },
 ]
 
 export const KmsPqcModule: FC = () => (
@@ -88,6 +96,8 @@ export const KmsPqcModule: FC = () => (
           )
         case 5:
           return <AwsKmsPolicyLab key={`aws-${configKey}`} />
+        case 6:
+          return <CloudKmsKeyExchange key={`cloud-kms-${configKey}`} />
         default:
           return null
       }

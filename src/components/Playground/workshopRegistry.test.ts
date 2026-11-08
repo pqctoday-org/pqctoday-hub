@@ -135,6 +135,7 @@ describe('workshopRegistry — Wave C intro strip (2026-09-18)', () => {
         'cert-capacity',
         'bitcoin-flow',
         'cacp-kmip',
+        'cloud-kms-key-exchange',
         'digital-id',
         'drbg-demo',
         'email-signing',

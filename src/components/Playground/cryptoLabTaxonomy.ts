@@ -69,6 +69,7 @@ export const VERB_TAGS: Record<string, VerbId[]> = {
   'lms-hss': ['sign', 'keys'],
   'hybrid-encrypt': ['encrypt', 'exchange'],
   'envelope-encrypt': ['encrypt'],
+  'cloud-kms-key-exchange': ['exchange', 'keys'],
   'token-migration': ['sign'],
   'tee-channel': ['exchange', 'encrypt'],
   'firmware-signing': ['sign'],
@@ -179,7 +180,14 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
     {
       label: 'Encryption & key wrap',
       // 'sbx-secrets-vault' omitted: see VERB_TAGS comment above.
-      ids: ['hybrid-encrypt', 'envelope-encrypt', 'tee-channel', 'sbx-cloud-kms', 'sbx-sops'],
+      ids: [
+        'hybrid-encrypt',
+        'envelope-encrypt',
+        'tee-channel',
+        'cloud-kms-key-exchange',
+        'sbx-cloud-kms',
+        'sbx-sops',
+      ],
     },
     {
       label: 'Key management & sizing',
