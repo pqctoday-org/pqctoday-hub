@@ -6,6 +6,7 @@ import {
   DATABASE_PROFILES,
   COMPLEXITY_LABELS,
   getProfilePqcSupport,
+  DATABASE_PQC_STATUS_LABELS,
 } from '../data/databaseConstants'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -309,19 +310,9 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                     </td>
                     <td className="py-2 px-2">
                       <span
-                        className={`font-bold ${
-                          getProfilePqcSupport(db) === 'ga'
-                            ? 'text-status-success'
-                            : getProfilePqcSupport(db) === 'planned'
-                              ? 'text-status-warning'
-                              : 'text-muted-foreground'
-                        }`}
+                        className={`font-bold ${DATABASE_PQC_STATUS_LABELS[getProfilePqcSupport(db)].className}`}
                       >
-                        {getProfilePqcSupport(db) === 'ga'
-                          ? 'GA'
-                          : getProfilePqcSupport(db) === 'planned'
-                            ? 'Planned'
-                            : 'None'}
+                        {DATABASE_PQC_STATUS_LABELS[getProfilePqcSupport(db)].label}
                       </span>
                     </td>
                     <td className="py-2 px-2 text-muted-foreground">{action}</td>
