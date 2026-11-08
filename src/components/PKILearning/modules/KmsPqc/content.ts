@@ -91,7 +91,7 @@ export const content: ModuleContent = {
     // ML-KEM-aware cryptoperiods in the draft revision; Revision 5 stays the final publication.
     getStandard('NIST-SP-800-57-Pt1-R6'),
     // CMVP implementation guidance for ML-KEM and hybrid schemes in the approved mode.
-    getStandard('NIST-FIPS-140-3-IG-Sep-2025-PQC'),
+    getStandard('NIST-FIPS140-3-IG-PQC'),
     // Interim PQC key-wrapping around classical HSM operations (v2.1).
     getStandard('AQ-PQC-Migration-Framework-v2.1-2026'),
   ],

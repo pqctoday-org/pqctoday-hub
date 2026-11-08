@@ -94635,7 +94635,25 @@
           ]
         }
       ],
-      "copies": [],
+      "copies": [
+        {
+          "path": "src/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo.tsx",
+          "kind": "embedded-values",
+          "cases": [
+            "wycheproof_aes_kwp_test#/testGroups/1/tests/83",
+            "wycheproof_aes_kwp_test#/testGroups/1/tests/84"
+          ],
+          "fields": ["ct", "key", "msg"],
+          "note": "The envelope-encryption workshop runs these AES-KWP cases as its published-vector check."
+        },
+        {
+          "path": "src/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo.log.test.tsx",
+          "kind": "embedded-values",
+          "cases": ["wycheproof_aes_kwp_test#/testGroups/1/tests/84"],
+          "fields": ["ct"],
+          "note": "Test of the workshop's call log that embeds this case."
+        }
+      ],
       "publishabilityGaps": [],
       "notes": "Scope rule WYC-SCOPE-1 (scripts/acvp/vendor_wycheproof.py): vendored because a runner executes every case of this file against both engines. Reject-path evidence NIST does not publish. Cases with parameters.wycheproofResult = 'acceptable' (Wycheproof states refusing them and accepting them are both defensible) are registered expectation=positive so they can NEVER be read as reject-path coverage we do not have; the executed row still asserts 'refused OR exactly the upstream value', and a third answer fails."
     },
