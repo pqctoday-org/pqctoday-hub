@@ -19,11 +19,7 @@
       "internal-folder": 2,
       "private-repo": 6
     },
-    "assets/algorithmsData-#.js": {
-      "internal-key": 9
-    },
     "assets/index-#.js": {
-      "internal-key": 134,
       "run-id": 1
     },
     "assets/leadersData-#.js": {
@@ -90,7 +86,6 @@
       "run-id": 209
     },
     "threats/manifest.json": {
-      "decision-citation": 1,
       "evidence-cache": 1,
       "internal-folder": 1
     },
