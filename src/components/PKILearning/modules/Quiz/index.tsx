@@ -310,7 +310,8 @@ export const QuizModule: React.FC = () => {
   }, [])
 
   // The notice button leaves the page when it is used, so focus would fall back to the document;
-  // hand it to the role switch, which is where the reader can undo the change.
+  // on the desktop intro hand it to the role switch, which is where the reader can undo the change.
+  // The phone has no switch (the view changes to the quiz or the length choice), so there it is a no-op.
   const handleShowAllRoles = useCallback(() => {
     focusRoleScopeAfterWiden.current = true
     handleAllRolesChange(true)
@@ -551,6 +552,16 @@ export const QuizModule: React.FC = () => {
             {mobileTopicCount === 1 ? 'topic' : 'topics'}.
             {allRoles && ` From all roles, for this quiz only. ${OTHER_ROLES_SCORE_NOTE}`}
           </p>
+          {allRoles && persona && (
+            // The phone has no switch; this is its way back to the reader's own role.
+            <Button
+              variant="outline"
+              onClick={() => handleAllRolesChange(false)}
+              className="h-auto min-h-11 whitespace-normal py-2 text-left"
+            >
+              Back to {persona.label} only
+            </Button>
+          )}
           <Button
             variant="gradient"
             onClick={() => {

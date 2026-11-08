@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { Brain, Zap, Clock, Sparkles, Building2, X } from 'lucide-react'
@@ -70,11 +70,24 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     initialCategories ?? []
   )
   const [timeMinutes, setTimeMinutes] = useState(15)
+  // Set when the reader goes back to "My role": the topics only other roles have leave the list, so
+  // the ticks on them must leave too, or Start would count topics the reader cannot see.
+  const dropHiddenTopicsAfterScopeChange = useRef(false)
   const reduced = usePrefersReducedMotion()
 
   const questionCount = Math.round((timeMinutes * 60) / SECONDS_PER_QUESTION)
   const isQuickPool = timeMinutes <= QUICK_POOL_THRESHOLD_MIN
   const activePoolSize = isQuickPool ? quickPoolSize || 0 : totalPoolSize || 0
+
+  useEffect(() => {
+    if (!dropHiddenTopicsAfterScopeChange.current) return
+    dropHiddenTopicsAfterScopeChange.current = false
+    const offered = new Set<string>(categories.map((c) => c.id))
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time clean-up after the reader switched the role scope; it cannot run in the click handler because the topic list changes only after the parent re-renders
+    setSelectedCategories((prev) =>
+      prev.some((id) => !offered.has(id)) ? prev.filter((id) => offered.has(id)) : prev
+    )
+  }, [categories])
 
   const handleToggleCategory = (categoryId: QuizCategory) => {
     setSelectedCategories((prev) =>
@@ -140,7 +153,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
 
       {/* Whose questions: this quiz only, never the site-wide role */}
       {roleLabel && onAllRolesChange && (
-        <div data-workshop-target="quiz-role-scope">
+        <div>
           <h3
             id="quiz-role-scope-label"
             className="text-sm font-bold text-foreground uppercase tracking-wider mb-3"
@@ -173,7 +186,11 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
                     name="quiz-role-scope"
                     value={opt.value}
                     checked={checked}
-                    onChange={() => onAllRolesChange(opt.all)}
+                    onChange={() => {
+                      if (!opt.all) dropHiddenTopicsAfterScopeChange.current = true
+                      onAllRolesChange(opt.all)
+                    }}
+                    aria-describedby={opt.all ? 'quiz-role-scope-hint' : undefined}
                     className="size-4 shrink-0 accent-primary"
                   />
                   <span className="min-w-0 break-words">{opt.label}</span>
@@ -181,17 +198,21 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               )
             })}
           </div>
+          {/* Always shown, so the reader reads what All roles does before choosing it. */}
+          <p
+            id="quiz-role-scope-hint"
+            data-testid="quiz-role-scope-hint"
+            className="mt-2 text-xs leading-relaxed text-muted-foreground"
+          >
+            All roles changes this quiz only, not your role on the rest of the site.{' '}
+            {OTHER_ROLES_SCORE_NOTE}
+          </p>
           <p
             role="status"
             data-testid="quiz-role-scope-status"
-            className="mt-2 text-xs leading-relaxed text-muted-foreground empty:mt-0"
+            className="mt-1 text-xs font-medium text-foreground empty:mt-0"
           >
-            {allRoles && (
-              <>
-                Showing questions for all roles. This changes this quiz only, not your role on the
-                rest of the site. {OTHER_ROLES_SCORE_NOTE}
-              </>
-            )}
+            {allRoles && 'Showing questions for all roles.'}
           </p>
         </div>
       )}

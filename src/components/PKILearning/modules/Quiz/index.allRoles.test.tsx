@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { QuizModule } from './index'
+import { OTHER_ROLES_SCORE_NOTE } from './roleScope'
 import { PERSONAS } from '@/data/learningPersonas'
 import { QUIZ_QUESTIONS, QUIZ_CATEGORIES } from '@/data/quizData'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -95,9 +97,7 @@ describe('Quiz "Show questions for all roles" (desktop)', () => {
   it('says in the notice that answers to other roles questions do not change the role score', () => {
     usePersonaStore.getState().setPersona(pair.personaId)
     renderQuiz(`/learn/quiz?category=${pair.category}`)
-    expect(screen.getByTestId('quiz-no-match')).toHaveTextContent(
-      "Answers to other roles' questions are saved but do not count toward your role's awareness score."
-    )
+    expect(screen.getByTestId('quiz-no-match')).toHaveTextContent(OTHER_ROLES_SCORE_NOTE)
   })
 
   it('clicking it clears the notice and leaves the site-wide role unchanged', () => {
@@ -151,11 +151,13 @@ describe('Quiz "Show questions for all roles" (desktop)', () => {
     expect(screen.queryByRole('button', { name: SHOW_ALL })).not.toBeInTheDocument()
   })
 
-  it('does not remember the choice: a new visit starts with the role filter on', () => {
+  it('does not remember the choice: nothing is stored, and a new visit starts with the role filter on', () => {
     usePersonaStore.getState().setPersona(pair.personaId)
     const view = renderQuiz(`/learn/quiz?category=${pair.category}`)
+    const storedBefore = JSON.stringify({ ...localStorage })
     fireEvent.click(screen.getByRole('button', { name: SHOW_ALL }))
     expect(screen.queryByTestId('quiz-no-match')).not.toBeInTheDocument()
+    expect(JSON.stringify({ ...localStorage })).toBe(storedBefore)
     view.unmount()
     renderQuiz(`/learn/quiz?category=${pair.category}`)
     expect(screen.getByTestId('quiz-no-match')).toBeInTheDocument()
@@ -170,6 +172,20 @@ describe('Quiz "My role / All roles" switch on the desktop intro', () => {
     expect(within(group).getByRole('radio', { name: /My role/ })).toBeChecked()
     expect(within(group).getByRole('radio', { name: 'All roles' })).not.toBeChecked()
     expect(group).toHaveTextContent(PERSONAS[pair.personaId].label)
+  })
+
+  it('says what All roles does and how it affects the score before it is chosen', () => {
+    usePersonaStore.getState().setPersona(pair.personaId)
+    renderQuiz('/learn/quiz')
+    const hint = screen.getByTestId('quiz-role-scope-hint')
+    expect(hint).toBeVisible()
+    expect(hint).toHaveTextContent('All roles changes this quiz only, not your role')
+    expect(hint).toHaveTextContent(OTHER_ROLES_SCORE_NOTE)
+    // The All roles radio is described by that hint, so a screen reader reads it with the choice.
+    const allRoles = screen.getByRole('radio', { name: 'All roles' })
+    expect(allRoles).toHaveAccessibleDescription(hint.textContent ?? '')
+    // The live region stays quiet until the choice is made.
+    expect(screen.getByTestId('quiz-role-scope-status')).toBeEmptyDOMElement()
   })
 
   it('is not shown when no role is set, because every question already applies', () => {
@@ -187,9 +203,7 @@ describe('Quiz "My role / All roles" switch on the desktop intro', () => {
     const status = screen.getByTestId('quiz-role-scope-status')
     expect(status).toHaveAttribute('role', 'status')
     expect(status).toHaveTextContent('Showing questions for all roles.')
-    expect(status).toHaveTextContent(
-      "Answers to other roles' questions are saved but do not count toward your role's awareness score."
-    )
+    expect(screen.getByTestId('quiz-role-scope-hint')).toHaveTextContent(OTHER_ROLES_SCORE_NOTE)
     expect(usePersonaStore.getState().selectedPersona).toBe(pair.personaId)
   })
 
@@ -204,13 +218,58 @@ describe('Quiz "My role / All roles" switch on the desktop intro', () => {
     expect(usePersonaStore.getState().selectedPersona).toBe(pair.personaId)
   })
 
-  it('is reachable with the keyboard: a native radio pair, so arrow keys move between them', () => {
+  it('works with the arrow keys: Right chooses All roles, Left chooses My role', async () => {
+    const user = userEvent.setup()
     usePersonaStore.getState().setPersona(pair.personaId)
     renderQuiz('/learn/quiz')
-    const radios = screen.getAllByRole('radio') as HTMLInputElement[]
-    const names = radios.map((r) => r.getAttribute('name'))
-    expect(new Set(names).size).toBe(1)
-    expect(radios.every((r) => r.type === 'radio')).toBe(true)
+    screen.getByRole('radio', { name: /My role/ }).focus()
+    await user.keyboard('{ArrowRight}')
+    expect(screen.getByRole('radio', { name: 'All roles' })).toBeChecked()
+    expect(screen.getByTestId('quiz-role-scope-status')).toHaveTextContent(
+      'Showing questions for all roles.'
+    )
+    await user.keyboard('{ArrowLeft}')
+    expect(screen.getByRole('radio', { name: /My role/ })).toBeChecked()
+    expect(screen.getByTestId('quiz-role-scope-status')).toBeEmptyDOMElement()
+  })
+
+  // The role's own topics are ticked when the intro opens, so the count is read, not assumed.
+  const selectedCount = () => {
+    const match = /(\d+) topics? selected/.exec(document.body.textContent ?? '')
+    return match ? Number(match[1]) : 0
+  }
+
+  it('going back to My role clears the ticks on topics only other roles have, so Start never lands on an empty notice', () => {
+    usePersonaStore.getState().setPersona(pair.personaId)
+    renderQuiz('/learn/quiz')
+    const startedWith = selectedCount()
+    fireEvent.click(screen.getByRole('radio', { name: 'All roles' }))
+    const label = QUIZ_CATEGORIES.find((c) => c.id === pair.category)!.label
+    fireEvent.click(screen.getAllByRole('button', { name: new RegExp(`^${label}`) })[0])
+    expect(selectedCount()).toBe(startedWith + 1)
+
+    fireEvent.click(screen.getByRole('radio', { name: /My role/ }))
+    // The topic left the list and its tick left with it; the role's own ticks stay.
+    expect(selectedCount()).toBe(startedWith)
+    // Start counts only topics the reader can see, so it cannot land on an empty notice.
+    const startButtons = screen.getAllByRole('button', { name: 'Start Quiz' })
+    fireEvent.click(startButtons[startButtons.length - 1])
+    expect(screen.queryByTestId('quiz-no-match')).not.toBeInTheDocument()
+  })
+
+  it('keeps the ticks on topics the role can still answer when going back to My role', () => {
+    usePersonaStore.getState().setPersona(pair.personaId)
+    renderQuiz('/learn/quiz')
+    const startedWith = selectedCount()
+    fireEvent.click(screen.getByRole('radio', { name: 'All roles' }))
+    const ticked = new Set(PERSONAS[pair.personaId].quizCategories as string[])
+    const extra = QUIZ_CATEGORIES.find(
+      (c) => !ticked.has(c.id) && forRole(pair.personaId, c.id).length > 0
+    )!
+    fireEvent.click(screen.getAllByRole('button', { name: new RegExp(`^${extra.label}`) })[0])
+    expect(selectedCount()).toBe(startedWith + 1)
+    fireEvent.click(screen.getByRole('radio', { name: /My role/ }))
+    expect(selectedCount()).toBe(startedWith + 1)
   })
 })
 
@@ -240,11 +299,24 @@ describe('Quiz "Show questions for all roles" (phone)', () => {
     const choice = screen.getByTestId('quiz-length-choice')
     expect(choice).toHaveTextContent(`${longTotal} questions across 1 topic.`)
     expect(choice).toHaveTextContent('From all roles, for this quiz only.')
-    expect(choice).toHaveTextContent(
-      "Answers to other roles' questions are saved but do not count toward your role's awareness score."
-    )
+    expect(choice).toHaveTextContent(OTHER_ROLES_SCORE_NOTE)
     fireEvent.click(screen.getByRole('button', { name: /^Full quiz/ }))
     expect(screen.getByText(`Question 1 of ${longTotal}`)).toBeInTheDocument()
+  })
+
+  it('gives the phone a way back to the reader own role from the length choice', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    usePersonaStore.getState().setPersona(LONG_TOPIC.personaId)
+    renderQuiz(`/learn/quiz?category=${LONG_TOPIC.category}`)
+    fireEvent.click(screen.getByRole('button', { name: SHOW_ALL }))
+    fireEvent.click(
+      screen.getByRole('button', { name: `Back to ${PERSONAS[LONG_TOPIC.personaId].label} only` })
+    )
+    // The role has no question for this topic, so the notice is back with its button.
+    expect(screen.queryByTestId('quiz-length-choice')).not.toBeInTheDocument()
+    expect(screen.getByTestId('quiz-no-match')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: SHOW_ALL })).toBeInTheDocument()
+    expect(usePersonaStore.getState().selectedPersona).toBe(LONG_TOPIC.personaId)
   })
 
   it('clicking it starts the quiz with the topic questions and names the scope in the title', () => {

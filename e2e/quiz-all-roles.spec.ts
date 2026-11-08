@@ -2,6 +2,7 @@
 import { expect, type Page } from '@playwright/test'
 import { injectAxe, checkA11y } from 'axe-playwright'
 import { test } from './fixtures/blockAnalytics'
+import { OTHER_ROLES_SCORE_NOTE } from '../src/components/PKILearning/modules/Quiz/roleScope'
 
 /**
  * Quiz: "Show questions for all roles" and the My role / All roles switch.
@@ -71,7 +72,7 @@ test('desktop: the notice widens this quiz only, the role stays, and focus lands
   await page.goto(`/learn/quiz?category=${TOPIC}`)
   const notice = page.getByTestId('quiz-no-match')
   await expect(notice).toBeVisible({ timeout: 15_000 })
-  await expect(notice).toContainText("Answers to other roles' questions are saved")
+  await expect(notice).toContainText(OTHER_ROLES_SCORE_NOTE)
 
   await notice.getByRole('button', { name: SHOW_ALL }).click()
   await expect(notice).toBeHidden()
@@ -96,12 +97,18 @@ test('desktop: the My role / All roles switch is always on the intro and works w
   await expect(group).toBeVisible({ timeout: 15_000 })
   const mine = group.getByRole('radio', { name: /My role/ })
   await expect(mine).toBeChecked()
+  // The consequence is readable before All roles is chosen, and described to a screen reader.
+  await expect(page.getByTestId('quiz-role-scope-hint')).toContainText(OTHER_ROLES_SCORE_NOTE)
+  await expect(group.getByRole('radio', { name: 'All roles' })).toHaveAccessibleDescription(
+    new RegExp(OTHER_ROLES_SCORE_NOTE.slice(0, 40))
+  )
+  await expect(page.getByTestId('quiz-role-scope-status')).toBeEmpty()
 
   await mine.focus()
   await page.keyboard.press('ArrowRight')
   await expect(group.getByRole('radio', { name: 'All roles' })).toBeChecked()
   await expect(page.getByTestId('quiz-role-scope-status')).toContainText(
-    "Answers to other roles' questions are saved but do not count toward your role's awareness score."
+    'Showing questions for all roles.'
   )
   await page.keyboard.press('ArrowLeft')
   await expect(mine).toBeChecked()
@@ -115,10 +122,10 @@ test('desktop: the My role / All roles switch is always on the intro and works w
   })
 })
 
-test('phone 390 px: the notice button wraps, starts the quiz and nothing overflows', async ({
+test('phone 375 px: the notice button wraps, starts the quiz and nothing overflows', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 })
+  await page.setViewportSize({ width: 375, height: 812 })
   await page.goto(`/learn/quiz?category=${TOPIC}`)
   const notice = page.getByTestId('quiz-no-match')
   await expect(notice).toBeVisible({ timeout: 15_000 })
@@ -128,7 +135,7 @@ test('phone 390 px: the notice button wraps, starts the quiz and nothing overflo
   const box = await button.boundingBox()
   expect(box).not.toBeNull()
   expect(box!.x).toBeGreaterThanOrEqual(0)
-  expect(box!.x + box!.width).toBeLessThanOrEqual(390)
+  expect(box!.x + box!.width).toBeLessThanOrEqual(375)
   expect(box!.height).toBeGreaterThanOrEqual(44)
 
   await button.click()
@@ -140,3 +147,33 @@ test('phone 390 px: the notice button wraps, starts the quiz and nothing overflo
   expect(await storedRole(page)).toBe(ROLE)
   expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
 })
+
+// The desktop intro (with the My role / All roles switch) is also what a reader sees below 1024 px
+// when the phone layout is off, and the role name makes the first pill long.
+for (const width of [375, 768]) {
+  test(`intro below 1024 px (${width}): the switch wraps, stays inside the screen and works`, async ({
+    page,
+  }) => {
+    await page.addInitScript(() => localStorage.setItem('pqc-feature-mobile-shell', '0'))
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/learn/quiz')
+    const group = page.getByRole('radiogroup', { name: 'Questions for' })
+    await expect(group).toBeVisible({ timeout: 15_000 })
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
+
+    for (const radio of await group.getByRole('radio').all()) {
+      const pill = await radio.locator('xpath=..').boundingBox()
+      expect(pill).not.toBeNull()
+      expect(pill!.x).toBeGreaterThanOrEqual(0)
+      expect(pill!.x + pill!.width).toBeLessThanOrEqual(width)
+      expect(pill!.height).toBeGreaterThanOrEqual(44)
+    }
+
+    await group.getByRole('radio', { name: 'All roles' }).check()
+    await expect(page.getByTestId('quiz-role-scope-status')).toContainText(
+      'Showing questions for all roles.'
+    )
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
+    expect(await storedRole(page)).toBe(ROLE)
+  })
+}
