@@ -361,11 +361,12 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
       <Section id="cbom-codify" icon={Languages} title="Codifying & normalizing crypto">
         <p>
           <Badge kind="view" />
-          One mechanism has <strong>many names</strong>. ECDSA-P256-SHA256 is{' '}
-          <code>CKM_ECDSA_SHA256</code> to an HSM, OID <code>1.2.840.10045.4.3.2</code> to a
-          certificate, <code>ES256</code> to a JWT, and <code>0x0403</code> to TLS 1.3 — and the
-          curve alone is P-256 = secp256r1 = prime256v1. Six codification layers (spec, OID,
-          protocol code point, key-mgmt enum, library string, CBOM) with no shared key.
+          One mechanism has <strong>many names</strong>. ECDSA with SHA-256 is{' '}
+          <code>CKM_ECDSA_SHA256</code> to an HSM and OID <code>1.2.840.10045.4.3.2</code> in a
+          certificate, with the curve taken from the key&apos;s parameters; <code>ES256</code> to a
+          JWT and <code>0x0403</code> to TLS 1.3 also name P-256 — and the curve alone is P-256 =
+          secp256r1 = prime256v1. Six codification layers (spec, OID, protocol code point, key-mgmt
+          enum, library string, CBOM) with no shared key.
         </p>
         <p>
           <Badge kind="std" />

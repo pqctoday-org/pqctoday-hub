@@ -414,8 +414,8 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
             retention are your highest priority for PQC migration
           </li>
           <li>
-            Key material (root CA keys, HSM-protected secrets) should always be treated as Critical
-            regardless of other factors
+            Key material (root CA keys, HSM-protected secrets) is often rated Critical; confirm it
+            from what the key protects, how long that trust lasts and how the key can be replaced
           </li>
           <li>
             Short-lived certificates (under 1 year) limit how long a forged signature on that key
