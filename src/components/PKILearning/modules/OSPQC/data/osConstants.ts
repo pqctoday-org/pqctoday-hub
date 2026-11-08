@@ -119,7 +119,7 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     platform: 'Linux, macOS, FreeBSD',
     type: 'userspace',
     pqcStatus: 'supported',
-    version: 'OpenSSL 3.3+',
+    version: 'OpenSSL 3.5.0+ for built-in PQC; earlier 3.x needs oqsprovider',
     notes:
       'ML-KEM (FIPS 203) and ML-DSA (FIPS 204) available as built-in EVP algorithms in OpenSSL 3.5.0 and later. Older 3.x distro packages require oqsprovider plugin. System-wide configuration via openssl.cnf groups directive.',
   },
@@ -272,7 +272,7 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
   },
   {
     id: 'ubuntu-openssl',
-    os: 'Ubuntu 24.04 LTS',
+    os: 'Ubuntu 24.04 / 26.04 LTS',
     policyMechanism: '/etc/ssl/openssl.cnf',
     defaultPolicy: 'DEFAULT (TLS 1.2+, ECDHE, RSA-2048+)',
     pqcPolicy:

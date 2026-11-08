@@ -148,10 +148,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
               status: 'experimental',
             },
             {
-              os: 'Ubuntu 24.04 LTS',
+              os: 'Ubuntu 26.04 LTS (OpenSSL 3.5.5)',
               mechanism: '/etc/ssl/openssl.cnf',
               command: 'Groups = x25519mlkem768:x25519:prime256v1',
-              effect: 'Adds ML-KEM hybrid as preferred TLS 1.3 group for all OpenSSL apps',
+              effect:
+                'Adds ML-KEM hybrid as preferred TLS 1.3 group for OpenSSL 3.5.0 or later. Ubuntu 24.04 LTS ships OpenSSL 3.0.13, which has no ML-KEM.',
               status: 'available',
             },
             {

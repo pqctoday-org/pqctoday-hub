@@ -65,9 +65,9 @@ $ update-crypto-policies --show
 DEFAULT
 
 # TLS groups active (OpenSSL):
-$ openssl s_client -connect example.com:443 2>&1 | grep "Server Temp Key"
-Server Temp Key: X25519, 253 bits
-# (no ML-KEM hybrid — classical only)
+$ openssl s_client -connect example.com:443 </dev/null 2>&1 \\
+  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
+# Expected: Negotiated TLS1.3 group: X25519 (no ML-KEM hybrid, classical only)
 
 # On RHEL 10.1 and later the DEFAULT policy already enables and prefers
 # post-quantum key exchange, so this "before" state applies to RHEL 9.7.`,
@@ -80,8 +80,9 @@ DEFAULT:PQ
 
 # TLS groups active after change:
 $ openssl s_client -connect pqc-enabled-server.com:443 \\
-  -groups x25519mlkem768:x25519:P-256 2>&1 | grep "Server Temp Key"
-Server Temp Key: X25519MLKEM768, 1152 bits
+  -groups x25519mlkem768:x25519:P-256 </dev/null 2>&1 \\
+  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
+# Expected: Negotiated TLS1.3 group: X25519MLKEM768
 # (hybrid key exchange: ML-KEM-768 + X25519)
 
 # On RHEL 10.1 and later no change is needed for applications that use
@@ -94,7 +95,7 @@ Server Temp Key: X25519MLKEM768, 1152 bits
   },
   ubuntu: {
     id: 'ubuntu',
-    label: 'Ubuntu 24.04 LTS',
+    label: 'Ubuntu 24.04 / 26.04 LTS',
     currentPolicy: 'DEFAULT (OpenSSL system config)',
     pqcPolicy:
       'x25519mlkem768 group via /etc/ssl/openssl.cnf, which needs OpenSSL 3.5.0 or later (Ubuntu 26.04 LTS; Ubuntu 24.04 LTS ships OpenSSL 3.0.13)',
@@ -136,8 +137,9 @@ MinProtocol = TLSv1.2
 CipherString = DEFAULT@SECLEVEL=2
 
 # Check active groups:
-$ openssl s_client -connect example.com:443 2>&1 | grep "Server Temp Key"
-Server Temp Key: X25519, 253 bits`,
+$ openssl s_client -connect example.com:443 </dev/null 2>&1 \\
+  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
+# Expected: Negotiated TLS1.3 group: X25519`,
     afterConfig: `# /etc/ssl/openssl.cnf — after PQC hybrid config (OpenSSL 3.5.0 or later)
 [system_default_sect]
 MinProtocol = TLSv1.2
@@ -148,15 +150,16 @@ Groups = x25519mlkem768:x25519:prime256v1:secp384r1
 # (Ubuntu 26.04 LTS ships OpenSSL 3.5.5):
 $ openssl version
 
-# Each process reads openssl.cnf when it starts, so restart the
-# services that use it:
-$ openssl version -d
-OPENSSLDIR: "/usr/lib/ssl"
+# Each process reads openssl.cnf when it starts. Restart the services
+# that use it, for example:
+$ sudo systemctl restart <service>
 
 # Verify hybrid negotiation (example; the exact output varies by build):
 $ openssl s_client -connect cloudflare.com:443 \\
-  -groups x25519mlkem768:x25519 2>&1 | grep "Server Temp Key"
-# Expected: the "Server Temp Key" line names X25519MLKEM768.`,
+  -groups x25519mlkem768:x25519 </dev/null 2>&1 \\
+  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
+# Expected on OpenSSL 3.5.0 or later: Negotiated TLS1.3 group: X25519MLKEM768
+# A classical X25519 fallback prints: Peer Temp Key: X25519`,
     impactNote:
       'Adding x25519mlkem768 as the preferred group has minimal compatibility impact: TLS 1.3 peers that do not support ML-KEM fall back to x25519. Each process reads openssl.cnf when it starts, so restart the services that need the new group.',
     compatNote:
@@ -265,7 +268,7 @@ certutil -csplist | findstr /i "ml-kem"`,
 
 const OS_FILTER_ITEMS = [
   { id: 'rhel', label: 'RHEL / CentOS' },
-  { id: 'ubuntu', label: 'Ubuntu 24.04 LTS' },
+  { id: 'ubuntu', label: 'Ubuntu 24.04 / 26.04 LTS' },
   { id: 'windows', label: 'Windows Server 2025' },
 ]
 

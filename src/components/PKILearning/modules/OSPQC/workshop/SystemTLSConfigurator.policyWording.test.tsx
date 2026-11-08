@@ -41,4 +41,23 @@ describe('System TLS configurator: Ubuntu OpenSSL facts', () => {
     expect(ubuntu).not.toMatch(/OpenSSL 3\.2|oqsprovider|update-crypto-policies|Ubuntu 25\.10/)
     expect(ubuntu).not.toMatch(/Server Temp Key: X25519MLKEM768, 1152 bits/)
   })
+
+  it('verifies the negotiated group with stdin closed on every OS block (OpenSSL 3.5+ prints no Server Temp Key line)', () => {
+    expect(src).not.toMatch(/grep "Server Temp Key"/)
+    expect(src.split('</dev/null 2>&1').length - 1).toBe(4)
+    expect(src.split('| grep -E "Negotiated TLS1.3 group|Peer Temp Key"').length - 1).toBe(4)
+    expect(ubuntu).toContain(
+      'Expected on OpenSSL 3.5.0 or later: Negotiated TLS1.3 group: X25519MLKEM768'
+    )
+  })
+
+  it('restarts a named service instead of showing the OpenSSL directory query', () => {
+    expect(ubuntu).toContain('$ sudo systemctl restart <service>')
+    expect(ubuntu).not.toContain('openssl version -d')
+  })
+
+  it('labels the Ubuntu choice "Ubuntu 24.04 / 26.04 LTS" in the selector and the config', () => {
+    expect(src).toContain("{ id: 'ubuntu', label: 'Ubuntu 24.04 / 26.04 LTS' }")
+    expect(ubuntu).toContain("label: 'Ubuntu 24.04 / 26.04 LTS'")
+  })
 })

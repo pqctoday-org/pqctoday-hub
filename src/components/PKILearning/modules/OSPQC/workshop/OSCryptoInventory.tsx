@@ -84,7 +84,7 @@ const CRYPTO_COMPONENTS: CryptoComponent[] = [
     quantumRisk: 'medium',
     migrationEffort: 'low',
     notes:
-      'curl 8.x with OpenSSL 3.2+ backend automatically supports X25519MLKEM768 if openssl.cnf groups are configured. No application-level changes needed.',
+      'curl 8.x with OpenSSL 3.5.0+ backend automatically supports X25519MLKEM768 if openssl.cnf groups are configured. No application-level changes needed.',
   },
   {
     id: 'git',
