@@ -2,6 +2,10 @@
 //
 // Sources whose address did not resolve on 8 Nov 2026.
 //
+// "Did not resolve" covers a page that is gone (not found) and a page that
+// could not be shown to answer at all. Anything not shown to return a real page
+// is held.
+//
 // An analysis names the page it was written from. Where that page no longer
 // returns a real page, linking it would send a reader to an error page, and
 // presenting facts "from another source" that no longer exists would mislead.
@@ -38,6 +42,11 @@ export const HELD_ANALYSIS_SOURCES: readonly HeldAnalysisSource[] = [
     vendorId: 'VND-240',
     url: 'https://www.orange.com/en/news/2025/orange-leading-way-quantum-technologies-safer-smarter-future',
     seen: 'page not found',
+  },
+  {
+    vendorId: 'VND-379',
+    url: 'https://www.businesswire.com/news/home/20260324083438/en/HPE-Introduces-Sweeping-Security-Advancements-to-Secure-AI-Adoption-and-Strengthen-Enterprise-Resiliency',
+    seen: 'could not be opened (connection error in a desktop browser, access refused to automated checks)',
   },
 ]
 
