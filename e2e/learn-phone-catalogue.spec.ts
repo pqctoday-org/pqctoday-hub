@@ -183,6 +183,10 @@ test.describe('The desktop workforce link on a 390 px phone', () => {
     )
     await expect(moduleLinks(page).first()).toBeVisible()
     await expectNoSidewaysScroll(page, 390)
+    // The note belongs to Browse all only: Guided drops it.
+    await page.getByRole('tab', { name: 'Guided' }).click()
+    await expect(page.getByTestId('mobile-guided-choices')).toBeVisible()
+    await expect(page.getByTestId('mobile-learn-nice-note')).toHaveCount(0)
   })
 })
 
@@ -268,6 +272,13 @@ test.describe('Accessibility (axe, serious and critical)', () => {
     await page.getByRole('button', { name: /^Filters/ }).click()
     await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible()
     await expectNoSeriousViolations(page, 'the Filters sheet')
+  })
+
+  test('Browse all from the workforce link, with the desktop note', async ({ page }) => {
+    await page.goto('/learn?view=nice')
+    await expect(page.getByTestId('mobile-learn-nice-note')).toBeVisible({ timeout: 30_000 })
+    await expect(moduleLinks(page).first()).toBeVisible()
+    await expectNoSeriousViolations(page, '/learn?view=nice')
   })
 
   test('Guided, choices and an answer', async ({ page }) => {

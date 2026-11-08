@@ -24,6 +24,9 @@ import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
  * chat assistant, `/learn?mode=browse&track=Protocols` — switches the view and the track chip.
  * Browse all keeps its own `track` and `q`; leaving it drops them.
  *
+ * A link to the desktop's workforce (NICE) view, `?view=nice`, opens Browse all here with a note
+ * that the workforce view is on the desktop site. The note shows only while Browse all is open.
+ *
  * Still on the desktop site only, by decision: the workforce (NICE) view and the algorithm and
  * standard filters. A role is not needed for Browse all or Guided; My Path asks for one.
  */
@@ -98,7 +101,7 @@ export function MobileLearnScreen() {
     <div className="px-4 pb-4 pt-4">
       {/* The page's level-one heading: the header title is plain text. */}
       <h1 className="sr-only">Learn</h1>
-      {niceLink && (
+      {niceLink && mode === 'browse' && (
         <p
           data-testid="mobile-learn-nice-note"
           className="mb-3 rounded-lg border border-border bg-card px-3 py-2 text-[12px] leading-relaxed text-muted-foreground"

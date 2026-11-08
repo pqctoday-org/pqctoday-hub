@@ -187,7 +187,17 @@ describe('MobileLearnScreen: Browse all and Guided are on the phone', () => {
   it('an explicit mode wins over ?view=nice', () => {
     renderScreen('/learn?view=nice&mode=mypath')
     expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
+    expect(screen.queryByTestId('mobile-learn-nice-note')).not.toBeInTheDocument()
+  })
+
+  it('the desktop note goes when a reader opens another view', async () => {
+    const user = userEvent.setup()
+    renderScreen('/learn?view=nice')
     expect(screen.getByTestId('mobile-learn-nice-note')).toBeInTheDocument()
+    await user.click(guidedTab())
+    expect(screen.queryByTestId('mobile-learn-nice-note')).not.toBeInTheDocument()
+    await user.click(myPathTab())
+    expect(screen.queryByTestId('mobile-learn-nice-note')).not.toBeInTheDocument()
   })
 
   it('?view=nice with an unknown mode opens Browse all', () => {
