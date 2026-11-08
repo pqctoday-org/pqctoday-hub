@@ -47,7 +47,8 @@ export const KMS_PROVIDERS: KMSProvider[] = [
         },
         {
           name: 'ML-KEM (hybrid TLS)',
-          status: 'Available on AWS KMS service endpoints (FIPS and non-FIPS; China excluded)',
+          status:
+            'Available on AWS KMS service endpoints, FIPS and non-FIPS (one AWS page excludes the China Regions and GovCloud (US) FIPS endpoints)',
         },
       ],
       sign: [
@@ -62,7 +63,7 @@ export const KMS_PROVIDERS: KMSProvider[] = [
     autoRotationNote:
       'Automatic rotation applies to symmetric encryption KMS keys with KMS-generated key material only (yearly by default, with a custom rotation period allowed, plus on-demand rotation). ML-DSA and ML-KEM keys are not rotated automatically: create a new key and move the alias to it.',
     keyImportPath:
-      'Import uses an RSA wrapping key only (RSA_2048, RSA_3072 or RSA_4096), so the wrap is not quantum-safe. ML-KEM keys can establish a secret but cannot receive imported key material.',
+      'Import uses an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096; an SM2 wrapping key is also offered in the China Regions), so the wrap is not quantum-safe. ML-KEM keys can establish a secret but cannot receive imported key material.',
     kmipSupport: false,
     fipsLevel:
       'AWS KMS HSMs: FIPS 140-3 Level 3 (CMVP #4884). AWS-LC (CMVP #5314) is a separate software module validated at Level 1.',
@@ -74,7 +75,7 @@ aws kms create-key \\
 
 aws kms sign \\
   --key-id alias/my-pqc-key \\
-  --signing-algorithm ML_DSA_65 \\
+  --signing-algorithm ML_DSA_SHAKE_256 \\
   --message fileb://data.bin \\
   --message-type RAW
 
@@ -134,7 +135,7 @@ aws kms decapsulate \\
     launchStageNote:
       'Signing: GA since 16 Jul 2026. Key encapsulation: Preview in the Cloud KMS release notes (since 23 Sep 2025), GA in the 28 Jul 2026 blog post. Quantum-safe key import: Preview since 6 Aug 2026.',
     keyImportPath:
-      'Import jobs offer RSA-based methods (RSAES-OAEP with SHA-1 or SHA-256, with or without AES-KWP) and, in Preview, quantum-safe HPKE methods. Only the HPKE methods protect the key in transit against a quantum attacker, and they cover software-protected keys only.',
+      'Import jobs offer RSA-based methods (RSAES-OAEP with SHA-1 plus AES-KWP, or with SHA-256 with or without AES-KWP) and, in Preview, quantum-safe HPKE methods. Only the HPKE methods protect the key in transit against a quantum attacker, and they cover software-protected keys only.',
     kmipSupport: false,
     fipsLevel:
       'Cloud HSM keys: FIPS 140-2 Level 3 (classical keys). The post-quantum key types listed here are at the SOFTWARE protection level only; the Cloud KMS pages this module cites state no FIPS validation for them.',
@@ -176,8 +177,12 @@ gcloud kms import-jobs create my-import-job \\
     type: 'cloud',
     catalogName: 'Azure Key Vault',
     pqcAlgorithms: {
-      kem: [{ name: 'ML-KEM', status: 'Integration via SymCrypt — not yet as Key Vault key type' }],
-      sign: [{ name: 'ML-DSA', status: 'Planned — SymCrypt supports it, Key Vault API pending' }],
+      kem: [
+        { name: 'ML-KEM', status: 'Not offered as a Key Vault key type (SymCrypt supports it)' },
+      ],
+      sign: [
+        { name: 'ML-DSA', status: 'Not offered as a Key Vault key type (SymCrypt supports it)' },
+      ],
     },
     envelopeEncryptionModel:
       'WrapKey and UnwrapKey operations with an RSA key (called through the REST API or an SDK). Managed HSM tier for FIPS 140-3 Level 3. PQC key types not yet available in the Key Vault API.',
@@ -185,7 +190,7 @@ gcloud kms import-jobs create my-import-job \\
     autoRotationNote:
       'Key Vault key auto-rotation applies to the key types the service offers (RSA and EC); it has no post-quantum key type to rotate.',
     keyImportPath:
-      'BYOK uses an RSA-HSM key exchange key of 2048, 3072 or 4096 bits that allows only the import operation, and a transfer blob made with CKM_RSA_AES_KEY_WRAP (RSA-OAEP with SHA-1 plus AES key wrap with padding). The pages cited here describe no post-quantum option.',
+      'BYOK uses an RSA-HSM key exchange key that allows only the import operation (2048, 3072 or 4096 bits for Key Vault), and a Key Vault transfer blob made with CKM_RSA_AES_KEY_WRAP (RSA-OAEP with SHA-1 plus AES key wrap with padding). The pages cited here describe no post-quantum option.',
     kmipSupport: false,
     fipsLevel:
       'Standard tier: software-protected keys, FIPS 140-2 Level 1. Premium tier: HSM Platform 1 keys are protected at FIPS 140-2 Level 2 and HSM Platform 2 keys at FIPS 140-3 Level 3 (new keys are created on Platform 2). Managed HSM: FIPS 140-3 Level 3.',
@@ -284,7 +289,7 @@ vault write transit/encrypt/my-aes-key \\
       sign: [{ name: 'ML-DSA', status: 'Via Luna HSM backend (firmware 7.9+)' }],
     },
     envelopeEncryptionModel:
-      'CipherTrust Cloud Key Manager (CCKM) manages BYOK and HYOK keys across AWS, Azure and Google Cloud, with a Luna HSM able to act as root of trust. Quantum-resilient ciphers for Google Workspace client-side encryption connections are generally available from v2.22.0. ML-KEM in this product protects TLS and SSH connections; it is not a key-wrapping format for cloud BYOK.',
+      'CipherTrust Cloud Key Manager (CCKM) manages BYOK and HYOK keys across AWS, Azure and Google Cloud, and CipherTrust Manager integrates with Luna HSMs. Quantum-resilient ciphers for Google Workspace client-side encryption connections are generally available from v2.22.0. ML-KEM in this product protects TLS and SSH connections; it is not a key-wrapping format for cloud BYOK.',
     autoRotation: true,
     autoRotationNote:
       'CCKM v2.21 automates rotation of AWS KMS keys from its console, on schedules from monthly to yearly.',
@@ -308,7 +313,7 @@ vault write transit/encrypt/my-aes-key \\
 # Hybrid post-quantum TLS protects the API calls to AWS KMS.
 # It does not make the RSA wrap in step 2 quantum-safe.`,
     notes:
-      'Enterprise multi-cloud key management with a Luna HSM as root of trust. ML-KEM TLS on the Web interface is a technical preview from v2.20.0, and on the SSH interface from v2.21.0 (v2.21.0 also lists post-quantum TLS channels between CCKM and Google Chrome as technical previews). Quantum-resilient ciphers for Google Workspace CSE connections are generally available from v2.22.0. This module does not state a later ML-KEM status because no later release note is held in its sources. KMIP and NAE protocol support for legacy integration.',
+      'Enterprise multi-cloud key management that integrates with Luna HSMs (firmware 7.9+) for ML-KEM and ML-DSA. ML-KEM TLS on the Web interface is a technical preview from v2.20.0, and on the SSH interface from v2.21.0 (v2.21.0 also lists post-quantum TLS channels between CCKM and Google Chrome as technical previews). Quantum-resilient ciphers for Google Workspace CSE connections are generally available from v2.22.0. This module does not state a later ML-KEM status because no later release note is held in its sources. KMIP and NAE protocol support for legacy integration.',
   },
   {
     id: 'fortanix-dsm',
@@ -328,12 +333,12 @@ vault write transit/encrypt/my-aes-key \\
     },
     envelopeEncryptionModel:
       'Runtime Encryption with Intel SGX. Multicloud key management with Confidential Computing.',
-    autoRotation: true,
+    autoRotation: false,
     autoRotationNote: 'Rotation scope per key type is not stated in the sources this module cites.',
     keyImportPath: 'Not covered by the sources this module cites.',
     kmipSupport: true,
     fipsLevel:
-      'DSM Appliance: FIPS 140-3 Level 3 (CMVP #5555, hardware). The certificate covers the appliance; check SaaS deployments separately.',
+      'DSM Appliance: FIPS 140-2 Level 3 (CMVP #4139, sunset 21 September 2026), classical algorithms only; post-quantum algorithms are not in the certificate\u2019s scope. The certificate covers the appliance; check SaaS deployments separately.',
     hybridSupport: true,
     apiPattern: `# Fortanix DSM — API request shapes are not reproduced here
 # They are not in the sources this module cites. See the Fortanix DSM

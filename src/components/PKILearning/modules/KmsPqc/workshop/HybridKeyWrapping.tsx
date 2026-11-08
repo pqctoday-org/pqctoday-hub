@@ -18,16 +18,17 @@ const WRAP_MODE_LABELS: Record<WrapMode, { label: string; color: string }> = {
 const PROVIDER_WRAP_EXAMPLES: Record<string, Record<WrapMode, string>> = {
   'aws-kms': {
     classical: `// AWS KMS — Classical: RSA wrapping on import (BYOK)
-// AWS KMS imports key material only under an RSA wrapping key
+// AWS KMS imports key material only under an RSA wrapping key (use the key ID: this
+// operation does not accept an alias)
 aws kms get-parameters-for-import \\
-  --key-id alias/imported-key \\
+  --key-id <key-id-of-the-key-without-key-material> \\
   --wrapping-algorithm RSAES_OAEP_SHA_256 \\
   --wrapping-key-spec RSA_3072
 
 // Wrap the AES-256 key outside AWS (for example in a PKCS#11 HSM) under the
 // downloaded public key, then import it with the import token:
 aws kms import-key-material \\
-  --key-id alias/imported-key \\
+  --key-id <key-id-of-the-key-without-key-material> \\
   --import-token fileb://import-token.bin \\
   --encrypted-key-material fileb://wrapped-key.bin \\
   --expiration-model KEY_MATERIAL_DOES_NOT_EXPIRE`,
@@ -57,7 +58,7 @@ aws kms derive-shared-secret \\
   --public-key fileb://partner-public-key.der
 
 // 2. ML-KEM: Decapsulate as in the PQC example above
-// 3. In the application, outside the HSM, with an SP 800-56C style KDF:
+// 3. In the application, outside the HSM, with an approved key combiner (SP 800-227 Section 4.6.2):
 //      wrapping_key = HKDF-SHA-256(mlkem_secret || ecdh_secret, info="hybrid-kek")
 //      wrapped_dek  = AES-256-KW(wrapping_key, DEK)
 // AWS KMS has no native hybrid key spec: the combiner is yours.`,
@@ -134,8 +135,8 @@ az keyvault key import \\
 
 // Wrapping a DEK with a vault key is the WrapKey/UnwrapKey operation, called
 // through the REST API or an SDK (this explorer shows no CLI command for it).`,
-    pqc: `// Azure Key Vault — PQC (planned)
-// Native ML-KEM key types are not yet in the Key Vault API.
+    pqc: `// Azure Key Vault — PQC (not offered)
+// Native ML-KEM key types are not in the Key Vault API.
 // SymCrypt supports ML-KEM internally.
 // Symmetric AES-256 keys are quantum-resistant for symmetric wrapping;
 // oct-HSM keys are a Managed HSM key type, not a vault key type:
@@ -145,9 +146,8 @@ az keyvault key create \\
   --kty oct-HSM \\
   --size 256`,
     hybrid: `// Azure Key Vault — no post-quantum/traditional hybrid mode
-// Microsoft aims for early adoption of quantum-safe capabilities by 2029 and a
-// complete transition of its services and products by 2033 (a Microsoft-wide
-// goal; no Key Vault date is sourced here).
+// Microsoft has stated Microsoft-wide goals of early quantum-safe adoption by 2029
+// and a complete transition by 2033; no Key Vault-specific date is sourced here.
 // Wrapping a key under an RSA key and again under an AES key is layering, not a
 // hybrid key agreement that combines a classical and a post-quantum secret.`,
   },
@@ -158,7 +158,7 @@ const PROVIDER_WRAP_NOTES: Record<string, Partial<Record<WrapMode, string>>> = {
   'aws-kms': {
     classical:
       'The wrap is RSA, so it is not quantum-safe. Hybrid post-quantum TLS to the KMS endpoint protects the API call, not the wrap.',
-    pqc: 'Where the secret sits: Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application, outside the HSM. The HKDF and AES-KW steps are the application’s job. It cannot be turned into a KMS key.',
+    pqc: 'Where the secret sits: Decapsulate returns the 32-byte ML-KEM shared secret in plaintext to the calling application, outside the HSM. The HKDF and AES-KW steps are the application’s job. AWS KMS ML-KEM and ML-DSA keys cannot receive imported key material.',
     hybrid:
       'Where the secret sits: both secrets, and the combined wrapping key, are in the application’s memory. AWS KMS has no hybrid key spec such as X-Wing, so the combiner runs outside the HSM.',
   },

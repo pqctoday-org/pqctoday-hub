@@ -156,8 +156,9 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     name: 'X25519 + ML-KEM-768',
     classical: 'X25519 (32-byte shared secret)',
     pqc: 'ML-KEM-768 (32-byte shared secret)',
-    // ML-KEM secret first, as SP 800-56C approved-first ordering suggests when the ML-KEM
-    // implementation is the validated one.
+    // ML-KEM secret first, the order RFC 10024 uses for X25519MLKEM768. This module's combiner is
+    // its own HKDF call; the secret order is a design choice (the CMVP implementation guidance
+    // lets a module with an approved ML-KEM fix any order for its pre-defined hybrid sets).
     combiner: 'HKDF-SHA-256(mlkem_ss || x25519_ss, info="hybrid-kek")',
     outputKeySize: 32,
     totalOverhead: '32 + 1,088 = 1,120 bytes ciphertext',
@@ -173,7 +174,7 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     outputKeySize: 32,
     totalOverhead: '65 + 1,088 = 1,153 bytes ciphertext',
     useCase:
-      'FIPS-oriented — P-256 is a FIPS-approved curve and its secret goes first, so the ECDH implementation is the one that must be validated (RFC 10024 orders SecP256r1MLKEM768 the same way for this reason)',
+      'FIPS-oriented — P-256 is a FIPS-approved curve, and RFC 10024 puts its secret first in SecP256r1MLKEM768. The CMVP implementation guidance requires an approved ML-KEM for any hybrid claim and an approved key combiner; an X25519 hybrid with a validated ML-KEM can also meet it, so P-256 is not the only FIPS-oriented choice',
   },
   {
     id: 'p384-mlkem1024',
@@ -184,7 +185,7 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     outputKeySize: 32,
     totalOverhead: '97 + 1,568 = 1,665 bytes ciphertext',
     useCase:
-      'High-security environments, NIST Level 5 — the pairing standardised as the TLS group SecP384r1MLKEM1024 (RFC 10024) and registered as MLKEM1024-P384 in the HPKE post-quantum draft. No standard defines an X25519 + ML-KEM-1024 pairing',
+      'High-security environments, NIST Level 5 — the pairing standardised as the TLS group SecP384r1MLKEM1024 (RFC 10024) and registered as MLKEM1024-P384 in the HPKE post-quantum draft. RFC 10024 defines no X25519 + ML-KEM-1024 group',
   },
   {
     id: 'xwing',
@@ -581,7 +582,8 @@ vault write transit/keys/pqc-root-sig \\
   {
     id: 'get',
     name: 'Get',
-    description: 'Retrieve key metadata and attributes.',
+    description:
+      'Retrieve a managed object (KMIP Get Attributes returns an object\u2019s attributes).',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -658,7 +660,7 @@ vault read transit/keys/pqc-root-sig
     id: 'activate',
     name: 'Activate',
     description:
-      'Transition a key from Pre-Active to Active state. AWS KMS keys and Vault transit keys are usable once created, so those providers have no separate activation step; a KMIP server moves a Pre-Active object to Active with Activate.',
+      'Transition a key from Pre-Active to Active state. KMS-generated AWS KMS keys and Vault transit keys have no separate activation step in their APIs; a KMIP server moves a Pre-Active object to Active with Activate.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -716,7 +718,7 @@ vault write transit/keys/pqc-root-sig/config \\
     id: 'wrap',
     name: 'Wrap (Encrypt DEK)',
     description:
-      'Use a symmetric wrapping key to wrap a data encryption key: KMIP does this with Get plus a Key Wrapping Specification (NISTKeyWrap is AES key wrap), not with a Wrap operation. An ML-KEM key is not used this way. A KEM produces a shared secret rather than encrypting a key, so the KEM flow is encapsulate, derive a wrapping key with a KDF, then AES-KW; KMIP 3.0 (draft) adds Encapsulate and Decapsulate operations for the first step.',
+      'Use a symmetric wrapping key to wrap a data encryption key: KMIP does this with Get plus a Key Wrapping Specification (NISTKeyWrap is one of the KMIP block cipher modes), not with a Wrap operation. An ML-KEM key is not used this way. A KEM produces a shared secret rather than encrypting a key, so the KEM flow is encapsulate, derive a wrapping key with a KDF, then AES-KW; KMIP 3.0 (draft) adds Encapsulate and Decapsulate operations for the first step.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>

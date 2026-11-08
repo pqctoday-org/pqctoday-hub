@@ -43,7 +43,11 @@ describe('provider data', () => {
     expect(aws.autoRotationNote).toMatch(/ML-DSA and ML-KEM keys are not rotated automatically/)
     expect(aws.autoRotationNote).toMatch(/custom rotation period/)
     expect(aws.envelopeEncryptionModel).toMatch(/Decapsulate/)
-    expect(aws.keyImportPath).toMatch(/RSA wrapping key only/)
+    expect(aws.keyImportPath).toMatch(/RSA wrapping key/)
+    expect(aws.keyImportPath).toMatch(/SM2 wrapping key is also offered in the China Regions/)
+    // AWS KMS names the ML-DSA signing algorithm ML_DSA_SHAKE_256 for every ML-DSA key spec.
+    expect(aws.apiPattern).toContain('--signing-algorithm ML_DSA_SHAKE_256')
+    expect(aws.apiPattern).not.toMatch(/--signing-algorithm ML_DSA_(44|65|87)/)
   })
 
   it('Google: signing GA and key encapsulation launch stage kept apart; no validated-boundary claim', () => {
@@ -54,6 +58,7 @@ describe('provider data', () => {
     const text = flat(gcp)
     expect(text).not.toMatch(/BoringCrypto/)
     expect(gcp.fipsLevel).toMatch(/state no FIPS validation for them/)
+    expect(gcp.keyImportPath).toMatch(/SHA-1 plus AES-KWP, or with SHA-256 with or without AES-KWP/)
     expect(text).toMatch(/hpke-kem-xwing-hkdf-sha256-aes-256-gcm/)
   })
 
@@ -103,6 +108,8 @@ describe('provider data', () => {
     expect(text).not.toMatch(/Planned/)
     expect(text).not.toMatch(/obj_type|pqc-central\/v1\/inventory|ENCAPSULATE/)
     expect(f.notes).toMatch(/PQC Central is a Key Insight discovery feature, not part of DSM/)
+    expect(f.fipsLevel).toMatch(/FIPS 140-2 Level 3 \(CMVP #4139/)
+    expect(f.fipsLevel).not.toMatch(/5555/)
     const tableValues = KMIP_PQC_KEY_TYPES.map((k) => k.providerSupport['fortanix-dsm'])
     expect(tableValues).not.toContain('Planned')
     expect(tableValues).not.toContain('Available')
@@ -124,7 +131,7 @@ describe('constants', () => {
     const p384 = HYBRID_COMBINER_MODES.find((m) => m.id === 'p384-mlkem1024')!
     expect(p384.useCase).toMatch(/SecP384r1MLKEM1024/)
     expect(p384.useCase).toMatch(/MLKEM1024-P384/)
-    expect(p384.useCase).toMatch(/No standard defines an X25519 \+ ML-KEM-1024 pairing/)
+    expect(p384.useCase).toMatch(/RFC 10024 defines no X25519 \+ ML-KEM-1024 group/)
   })
 
   it('key-size table gives classical strength in bits, adds RSA-4096 and a realistic private-key size', () => {
@@ -202,6 +209,10 @@ describe('HybridKeyWrapping explorer', () => {
     const text = document.body.textContent ?? ''
     expect(text).toMatch(/aws kms decapsulate/)
     expect(text).toMatch(/Decapsulate returns the 32-byte ML-KEM shared secret in plaintext/)
+    fireEvent.click(screen.getByRole('button', { name: 'Classical Only' }))
+    // AWS rejects an alias in GetParametersForImport, so the example must use a key ID.
+    expect(document.body.textContent).toMatch(/aws kms get-parameters-for-import/)
+    expect(document.body.textContent).not.toMatch(/alias\/imported-key/)
     fireEvent.click(screen.getByRole('button', { name: 'Hybrid' }))
     expect(document.body.textContent).toMatch(/derive-shared-secret/)
     expect(document.body.textContent).toMatch(/AWS KMS has no native hybrid key spec/)
@@ -239,7 +250,7 @@ describe('guided exercises', () => {
     expect(t).toMatch(/Partner HSM to AWS KMS: Which Path Is Quantum-Safe\?/)
     expect(t).toMatch(/A partner HSM must deliver an AES key to AWS KMS/)
     expect(t).not.toMatch(/FIPS-compliant environments should prefer P-256\+ML-KEM-768/)
-    expect(t).toMatch(/depends on which component your validated module covers/)
+    expect(t).toMatch(/P-256 \+ ML-KEM-768 is not the only hybrid that suits a FIPS environment/)
     expect(t).toMatch(
       /while the Cloud KMS release notes list ML-KEM and X-Wing as Preview since 23 September 2025/
     )
@@ -271,8 +282,10 @@ describe('summaries and neighbouring files', () => {
       )
       .replace(/\s+/g, ' ')
     expect(src).not.toMatch(/ML-DSA signing announced/)
-    expect(src).toMatch(/ML-DSA in FIPS mode on hsm2m\.medium since 1 Sep 2026 and no ML-KEM/)
-    expect(src).toMatch(/AWS KMS import is RSA only/)
+    expect(src).toMatch(
+      /ML-DSA in FIPS mode on hsm2m\.medium since 1 Sep 2026 \(FIPS mode is an operating mode/
+    )
+    expect(src).toMatch(/AWS KMS import uses an RSA wrapping key/)
     expect(src).toMatch(/Quantum-safe key import with HPKE is in Preview since 6 Aug 2026/)
     expect(src).not.toMatch(/NOT wired into BYOK import flow/)
     expect(src).toMatch(/the 28 Jul 2026 blog post says GA/)
