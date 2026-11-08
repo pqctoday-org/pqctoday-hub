@@ -685,85 +685,67 @@ const supi = mcc + mnc + bcdDecode(msinBcd)`,
   AUTH_STEPS: [
     {
       id: 'retrieve_creds',
-      title: '1. Retrieve Credentials (UDM/HSM)',
+      title: '1. Load Independent Sample Credentials',
       description:
-        "The ARPF (Authentication credential Repository and Processing Function) retrieves the subscriber's encrypted K, Operator Key (OP), and Sequence Number (SQN) from the subscriber database and injects them into the HSM for authentication vector computation. The HSM holds K only for the duration of this computation — it is not stored permanently, as operators manage millions of subscribers. The SEAF (Security Anchor Function) in the serving AMF forwarded the SUPI after SUCI deconcealment. SQN prevents replay attacks — the USIM will reject authentication if SQN is not fresh.",
-      code: `// ARPF retrieves credentials from subscriber DB → injects into HSM
-const encRecord = subscriberDB.get(SUPI);
-const K = HSM.decrypt(encRecord.eK);  // K injected for computation only
-const OP = HSM.getOP();               // Operator Key
-const SQN = encRecord.SQN;`,
-      output: `[ARPF] Retrieving subscriber credentials from database...
-[ARPF] Injecting K into HSM for computation...
-[ARPF] K: [PROTECTED — transient in HSM]
-[ARPF] OP: [PROTECTED]
-[ARPF] Current SQN: 0x00...01`,
+        'Load separate fixed home-network and subscriber credential copies for this fictional subscriber. These browser sample values are not read from an HSM, card or operator database.',
+      code: "// Executed local browser sample activity\nawait sample.execute('retrieve_creds');",
+      output: '',
     },
     {
       id: 'gen_rand',
-      title: '2. Generate Random Challenge',
+      title: '2. Generate Pending Challenge',
       description:
-        "The ARPF's HSM generates a cryptographically secure 128-bit random number (RAND) to challenge the USIM. RAND is sent in cleartext to the UE via the SEAF — its secrecy is not required because the authentication relies on K (the shared secret), not RAND confidentiality.",
-      code: `// Generate 128-bit random challenge
-const RAND = crypto.randomBytes(16);`,
-      output: `[ARPF/HSM] Assessing TRNG...
-[ARPF/HSM] Generated RAND: 0x23553CBE... (128 bits)`,
+        'Generate fresh browser RAND and retain the displayed home-network SQN for this challenge. The separate UE next-expected counter is not changed by vector generation.',
+      code: "// Executed local browser sample activity\nawait sample.execute('gen_rand');",
+      output: '',
     },
     {
       id: 'compute_milenage',
-      title: '3. Compute MILENAGE Functions',
+      title: '3. Compute Home-Network MILENAGE',
       description:
-        "Using K, OPc, and RAND, the HSM computes the MILENAGE function set (f1-f5) per 3GPP TS 35.206. MILENAGE uses AES-128 internally — a symmetric algorithm that Shor's algorithm does not break (Grover's algorithm can only erode the effective key length). This means 5G-AKA authentication itself needs no PQC key-exchange or signature upgrade, unlike SUCI concealment, whose ECIES key agreement is asymmetric and for which ATIS recommends that 3GPP specify quantum-resistant key encapsulation. On the UE side, the USIM performs the identical MILENAGE computation with its copy of K to verify the network and produce RES.",
-      code: `// Execute MILENAGE algorithm (both UDM and USIM compute this)
-const { MAC, XRES, CK, IK, AK } = milenage(K, OPc, RAND, SQN, AMF);
-
-// f1: MAC-A  — Network authentication (USIM verifies this)
-// f2: XRES   — Expected response (network verifies USIM's RES)
-// f3: CK     — Cipher Key (128-bit)
-// f4: IK     — Integrity Key (128-bit)
-// f5: AK     — Anonymity Key (conceals SQN in AUTN)`,
-      output: `[HSM] Computing MILENAGE (f1-f5)...
-[HSM] MAC-A: 0x4A9FFAC3...
-[HSM] XRES: 0xA54211D5...
-[HSM] CK: 0xB40BA9A3...
-[HSM] IK: 0xF769BCD7...
-[HSM] AK: 0xAA689C64...`,
+        'Calculate the home-network MAC-A, RES, CK, IK and AK using software AES-128. This prepares sender values; it does not establish that the subscriber accepted anything.',
+      code: "// Executed local browser sample activity\nawait sample.execute('compute_milenage');",
+      output: '',
     },
     {
       id: 'compute_autn',
-      title: '4. Compute AUTN (Mutual Authentication)',
+      title: '4. Construct Sender AUTN',
       description:
-        "The Authentication Token (AUTN) proves the network's identity to the UE — this is the 'mutual' in mutual authentication. AUTN = (SQN XOR AK) || AMF || MAC-A. The UE receives RAND + AUTN, recomputes MILENAGE with its own K, and verifies: (1) MAC-A matches (proving the network knows K), and (2) SQN is in the acceptable range (preventing replays). If verification passes, the USIM sends back RES. The SEAF compares HXRES* (hash of XRES*) to verify the UE without ever seeing the raw XRES.",
-      code: `// Network Side: Construct AUTN
-const concealedSQN = XOR(SQN, AK);
-const AUTN = concealedSQN + AMF + MAC;
-
-// UE Side (mirror verification):
-// 1. Compute MILENAGE(K, OPc, RAND, ...)
-// 2. Recover SQN = concealedSQN XOR AK
-// 3. Verify MAC-A matches → network is authentic
-// 4. Verify SQN is fresh → not a replay
-// 5. Send RES back to network`,
-      output: `[HSM] Assembling AUTN...
-[HSM] Concealed SQN: 0x55F23ED0...
-[HSM] AUTN: 0x55F23ED08D0CB9B94A9FFAC354DFAFB3`,
+        'Construct AUTN from concealed SQN, AMF and MAC-A. The editable received AUTN is a separate input to the UE check, so altered bytes are checked rather than silently replaced.',
+      code: "// Executed local browser sample activity\nawait sample.execute('compute_autn');",
+      output: '',
     },
     {
       id: 'derive_kausf',
-      title: '5. Derive 5G Keys (KAUSF)',
+      title: '5. Complete Home-Network Vector',
       description:
-        'The AUSF key (KAUSF) is derived from CK and IK bound to the Serving Network Name (SNN). This binding ties the anchor key to the serving network, which prevents one serving network from claiming to be a different serving network. KAUSF feeds the 5G key hierarchy: KAUSF → KSEAF (the anchor key, provided to the serving network) → KAMF (at AMF), from which KNASint/KNASenc (NAS signaling protection) and KgNB (radio layer) are each derived. The SEAF in the serving AMF receives KSEAF and never sees KAUSF itself, enforcing home-network control.',
-      code: `// KDF for KAUSF (TS 33.501 Annex A.2)
-// FC=0x6A binds to serving network name
-const SNN = "5G:mnc260.mcc310.3gppnetwork.org";
-const KAUSF = HMAC_SHA256(CK || IK, FC || SNN || len(SNN) || SQN_xor_AK || 0x0006);
-
-// Downstream Key Hierarchy:
-// KAUSF → KSEAF (anchor key) → KAMF → KNASint, KNASenc and KgNB (each derived from KAMF)`,
-      output: `[UDM] Deriving KAUSF...
-[UDM] KAUSF: 0x8a9b... derived successfully.
-[UDM] Selected sample outputs: RAND, AUTN and KAUSF.
-[NOT EXECUTED] XRES* derivation or subscriber response verification.`,
+        'Derive KAUSF and XRES* using the configured SNN and RAND, then HXRES*. Inspect actual RAND, AUTN, KAUSF, XRES* and HXRES*; no KSEAF, KAMF or NAS security-mode operation is performed.',
+      code: "// Executed local browser sample activity\nawait sample.execute('derive_kausf');",
+      output: '',
+    },
+    {
+      id: 'verify_ue',
+      title: '6. Run Independent UE Checks',
+      description:
+        'The UE uses its own credential copy and received RAND/AUTN to recover SQN and recompute MAC-A. It checks MAC, AMF separation and the fictional exact-next-SQN rule. Only full local success releases its independently derived RES* and advances the UE counter.',
+      code: "// Executed local browser sample activity\nawait sample.execute('verify_ue');",
+      output: '',
+    },
+    {
+      id: 'verify_seaf',
+      title: '7. Check Received Response at SEAF',
+      description:
+        'Hash the actual received RES* with the challenge RAND and compare HRES* with home-network HXRES*. A match is the serving-network check only, not final home-network acceptance.',
+      code: "// Executed local browser sample activity\nawait sample.execute('verify_seaf');",
+      output: '',
+    },
+    {
+      id: 'verify_ausf',
+      title: '8. Check Response at AUSF',
+      description:
+        'Compare that same received RES* with pending XRES* after current UE and serving-check receipts. Only an accepted local comparison consumes the pending challenge. A replay or changed response cannot reuse an earlier check.',
+      code: "// Executed local browser sample activity\nawait sample.execute('verify_ausf');",
+      output: '',
     },
   ],
 

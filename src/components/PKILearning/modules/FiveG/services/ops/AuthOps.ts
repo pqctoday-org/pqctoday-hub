@@ -3,6 +3,7 @@ import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { bytesToHex } from '@/services/crypto/FileUtils'
 import type { FiveGService } from '../FiveGService'
 import { DEFAULT_OP, milenage } from '../FiveGService'
+import { AuthenticationSample } from './authenticationSample'
 
 export async function retrieveCredentials(ctx: FiveGService): Promise<string> {
   // Use test vectors if injected, otherwise defaults
@@ -286,4 +287,9 @@ export async function runMilenage(ctx: FiveGService) {
     ik: bytesToHex(vectors.IK),
     ak: bytesToHex(vectors.AK),
   }
+}
+
+/** A separate local context; does not share the provisioning or legacy auth state. */
+export function createAuthenticationSample(): AuthenticationSample {
+  return new AuthenticationSample({ opHex: bytesToHex(DEFAULT_OP) })
 }

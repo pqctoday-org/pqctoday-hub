@@ -17,6 +17,12 @@ export type {
   ProvisioningImportResult,
 } from './ops/provisioningBatch'
 
+export type {
+  AuthenticationStage,
+  AuthenticationSnapshot,
+  AuthenticationStageResult,
+} from './ops/authenticationSample'
+
 export const milenage = new MilenageService()
 
 // Default Operator Key — consistent across auth and provisioning flows
@@ -238,6 +244,10 @@ export class FiveGService {
   }
 
   // --- Auth Flow ---
+
+  createAuthenticationSample() {
+    return AuthOps.createAuthenticationSample()
+  }
 
   async retrieveCredentials(): Promise<string> {
     return await AuthOps.retrieveCredentials(this)
