@@ -1063,7 +1063,7 @@ function CertCoverageLines({
   return (
     <>
       {covers && (
-        <span className="mt-0.5 block break-words text-[11.5px] text-foreground/90">
+        <span className="mt-0.5 block text-[11.5px] text-foreground/90 [overflow-wrap:anywhere]">
           Covers: {covers}
         </span>
       )}
@@ -1181,7 +1181,7 @@ function MobileProductDetailSheet({
                           rel="noopener noreferrer"
                           className="flex items-start justify-between gap-2 rounded border border-border/60 bg-muted/20 px-2 py-1.5 text-[11.5px] text-foreground/90 hover:bg-muted/40"
                         >
-                          <span>
+                          <span className="min-w-0">
                             <span className="font-mono">{c.certId}</span>
                             {c.certificationLevel && <> · {c.certificationLevel}</>}
                             {c.pqcAlgorithms && !c.pqcAlgorithms.startsWith('No ') && (
@@ -2098,7 +2098,8 @@ function MobileVendorRoadmapPanel({
 
       {/* A vendor with no roadmap row: say which page the analysis came from. */}
       {analysisSource && (
-        <section aria-labelledby={sourceHeadingId}>
+        // A group, not a landmark: the Vendors tab repeats this line for dozens of vendors.
+        <div role="group" aria-labelledby={sourceHeadingId}>
           <h3
             id={sourceHeadingId}
             className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground"
@@ -2106,7 +2107,7 @@ function MobileVendorRoadmapPanel({
             Analysis source
           </h3>
           <MobileAnalysisSourceLink source={analysisSource} />
-        </section>
+        </div>
       )}
 
       <MobileAnalysisFacts facts={display} />

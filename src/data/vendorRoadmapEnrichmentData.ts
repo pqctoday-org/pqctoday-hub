@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { VendorRoadmapEnrichment } from '../types/MigrateTypes'
 import { roadmapByVendorId } from './vendorRoadmapData'
+import { isHeldAnalysisSource } from './heldAnalysisSources'
 
 // 2026-08-07 archive-sweep audit: merge-all source with 3 archived files this
 // glob can't see. Deliberately NOT widened — the audit found zero net key loss
@@ -176,8 +177,10 @@ export function enrichmentForRoadmap(
  * conditions:
  *
  * - the row has no analysis of its own;
- * - the analysis records an address of its own (an analysis with no address
+ * - the analysis records an http(s) address of its own (one with no address
  *   cannot be linked, so there would be nothing to say where it came from);
+ * - that address is not held (see heldAnalysisSources.ts: a page that did not
+ *   resolve is not linked and its facts are not shown as another source);
  * - that address is not the address of any of the vendor's roadmap rows (an
  *   analysis that belongs to another row is shown on that row);
  * - the row is the first of the vendor's rows without an analysis of its own,
@@ -197,7 +200,12 @@ export function pickCrossSourceEnrichment(
   if (pickEnrichmentForRoadmap(candidates, wanted)) return undefined
   const firstWithoutOwn = rowUrls.find((u) => !pickEnrichmentForRoadmap(candidates, u))
   if (firstWithoutOwn !== undefined && firstWithoutOwn !== wanted) return undefined
-  return candidates.find((c) => c.roadmapUrl !== '' && !rowUrls.includes(c.roadmapUrl))
+  return candidates.find(
+    (c) =>
+      /^https?:\/\//i.test(c.roadmapUrl) &&
+      !rowUrls.includes(c.roadmapUrl) &&
+      !isHeldAnalysisSource(c.roadmapUrl)
+  )
 }
 
 /**

@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router'
 import { MobileMigrateView } from './MobileMigrateView'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
+import { HELD_ANALYSIS_SOURCES } from '@/data/heldAnalysisSources'
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '@/types/MigrateTypes'
 
 // Fixture vendors added to the loaded maps for this file only, so the checks
@@ -15,12 +16,19 @@ import type { VendorRoadmap, VendorRoadmapEnrichment } from '@/types/MigrateType
 const WITHHELD = 'VND-ZZ-WITHHELD'
 const MATCHED = 'VND-ZZ-MATCHED'
 const NO_ROW = 'VND-ZZ-NOROW'
+//  - HELD_ROW / HELD_NOROW: the same two shapes, but the analysis address is one
+//    that did not resolve (see heldAnalysisSources.ts).
+const HELD_ROW = 'VND-ZZ-HELDROW'
+const HELD_NOROW = 'VND-ZZ-HELDNOROW'
+const HELD_URL = HELD_ANALYSIS_SOURCES[0].url
 
 const NAMES: Record<string, string> = {
   [WITHHELD]: 'Zzfixture Withheld Card',
   [MATCHED]: 'Zzfixture Matched Card',
   // A vendor with no roadmap row and no vendor-list entry is listed by its id.
   [NO_ROW]: NO_ROW,
+  [HELD_ROW]: 'Zzfixture Held Row Card',
+  [HELD_NOROW]: HELD_NOROW,
 }
 
 const WITHHELD_ROW = 'https://withheld.example/files/paper.pdf'
@@ -73,13 +81,20 @@ beforeAll(() => {
   ])
   roadmapByVendorId.set(MATCHED, [row(MATCHED, MATCHED_ROW)])
   enrichmentByVendorId.set(MATCHED, [analysis(MATCHED, MATCHED_ROW, 'Matched rollout in 2028')])
+  roadmapByVendorId.set(HELD_ROW, [row(HELD_ROW, 'https://heldrow.example/files/paper.pdf')])
+  enrichmentByVendorId.set(HELD_ROW, [
+    analysis(HELD_ROW, HELD_URL, 'Held cross-source rollout in 2031'),
+  ])
+  enrichmentByVendorId.set(HELD_NOROW, [
+    analysis(HELD_NOROW, HELD_URL, 'Held analysis-only rollout in 2032', 'A held page'),
+  ])
   enrichmentByVendorId.set(NO_ROW, [
     analysis(NO_ROW, NO_ROW_PAGE, 'Analysis-only rollout in 2029', 'A blog post'),
   ])
 })
 
 afterAll(() => {
-  for (const id of [WITHHELD, MATCHED, NO_ROW]) {
+  for (const id of [WITHHELD, MATCHED, NO_ROW, HELD_ROW, HELD_NOROW]) {
     roadmapByVendorId.delete(id)
     enrichmentByVendorId.delete(id)
   }
@@ -130,6 +145,7 @@ describe('phone roadmap sheet', () => {
     })
     expect(link).toHaveAttribute('href', WITHHELD_PAGE)
     expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'))
     expect(link.className).toContain('min-h-11')
     // Long titles wrap rather than push the sheet sideways at 390 px.
     expect(link.querySelector('span.break-words')).not.toBeNull()
@@ -155,12 +171,32 @@ describe('phone roadmap sheet', () => {
 
   it('says where the analysis of a vendor with no roadmap row came from', () => {
     const sheet = openSheet(NO_ROW)
-    const source = within(sheet).getByRole('region', { name: 'Analysis source' })
+    const source = within(sheet).getByRole('group', { name: 'Analysis source' })
     expect(
       within(source).getByRole('link', {
         name: 'Analysis source: A blog post (norow.example) (opens in a new tab)',
       })
     ).toHaveAttribute('href', NO_ROW_PAGE)
     expect(within(sheet).queryByText('Analysis from another source')).toBeNull()
+  })
+})
+
+describe('phone roadmap sheet: sources whose address did not resolve', () => {
+  it('shows no block, no link and none of the facts for a held cross-source analysis', () => {
+    const sheet = openSheet(HELD_ROW)
+    expect(within(sheet).queryByText('Analysis from another source')).toBeNull()
+    expect(within(sheet).queryByText('Held cross-source rollout in 2031')).toBeNull()
+    expect(
+      within(sheet)
+        .getAllByRole('link')
+        .map((a) => a.getAttribute('href'))
+    ).toEqual(['https://heldrow.example/files/paper.pdf'])
+  })
+
+  it('shows no source link for a held analysis of a vendor with no roadmap row, and keeps its facts', () => {
+    const sheet = openSheet(HELD_NOROW)
+    expect(within(sheet).queryByRole('group', { name: 'Analysis source' })).toBeNull()
+    expect(within(sheet).queryByRole('link')).toBeNull()
+    expect(within(sheet).getByText('Held analysis-only rollout in 2032')).toBeInTheDocument()
   })
 })

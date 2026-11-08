@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { VendorRoadmapPanel } from './VendorRoadmapPanel'
+import { HELD_ANALYSIS_SOURCES } from '@/data/heldAnalysisSources'
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '@/types/MigrateTypes'
 
 // A vendor whose roadmap row links the PDF while the analysis was written from
@@ -129,7 +130,7 @@ describe('VendorRoadmapPanel: analysis from another source', () => {
 describe('VendorRoadmapPanel: vendor with an analysis and no roadmap row', () => {
   it('says where the analysis came from, with a link to that page', () => {
     render(<VendorRoadmapPanel roadmap={undefined} enrichment={analysis()} />)
-    const source = screen.getByRole('region', { name: 'Analysis source' })
+    const source = screen.getByRole('group', { name: 'Analysis source' })
     expect(
       within(source).getByRole('link', {
         name: /Analysis source: Migration to post-quantum cryptography.*opens in a new tab/i,
@@ -141,6 +142,12 @@ describe('VendorRoadmapPanel: vendor with an analysis and no roadmap row', () =>
     expect(screen.getByText('ML-KEM')).toBeInTheDocument()
   })
 
+  it('is a group, not a landmark, so a list of many vendors adds no landmark per vendor', () => {
+    render(<VendorRoadmapPanel roadmap={undefined} enrichment={analysis()} />)
+    expect(screen.getByRole('group', { name: 'Analysis source' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Analysis source' })).toBeNull()
+  })
+
   it('shows no source line when the analysis recorded no address', () => {
     render(<VendorRoadmapPanel roadmap={undefined} enrichment={analysis({ roadmapUrl: '' })} />)
     expect(screen.queryByText('Analysis source')).toBeNull()
@@ -150,5 +157,43 @@ describe('VendorRoadmapPanel: vendor with an analysis and no roadmap row', () =>
   it('shows no source line on a vendor with a roadmap row', () => {
     render(<VendorRoadmapPanel roadmap={roadmap} enrichment={analysis({ roadmapUrl: ROW_URL })} />)
     expect(screen.queryByText('Analysis source')).toBeNull()
+  })
+})
+
+describe('VendorRoadmapPanel: sources whose address did not resolve', () => {
+  const held = HELD_ANALYSIS_SOURCES[0]
+
+  it('shows no block, no link and none of its facts for a held cross-source analysis', () => {
+    render(
+      <VendorRoadmapPanel
+        roadmap={roadmap}
+        enrichment={undefined}
+        crossSource={analysis({ roadmapUrl: held.url })}
+      />
+    )
+    expect(screen.queryByText('Analysis from another source')).toBeNull()
+    expect(screen.queryByText('ML-KEM')).toBeNull()
+    expect(screen.queryByText('Pilot in 2027')).toBeNull()
+    expect(screen.getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([ROW_URL])
+  })
+
+  it('shows no source link for a held analysis of a vendor with no roadmap row, and keeps its facts', () => {
+    render(
+      <VendorRoadmapPanel roadmap={undefined} enrichment={analysis({ roadmapUrl: held.url })} />
+    )
+    expect(screen.queryByText('Analysis source')).toBeNull()
+    expect(screen.queryByRole('link')).toBeNull()
+    expect(screen.getByText('ML-KEM')).toBeInTheDocument()
+  })
+
+  it('a different address of the same vendor is not held', () => {
+    render(
+      <VendorRoadmapPanel
+        roadmap={roadmap}
+        enrichment={undefined}
+        crossSource={analysis({ roadmapUrl: `${held.url}-other` })}
+      />
+    )
+    expect(screen.getByText('Analysis from another source')).toBeInTheDocument()
   })
 })

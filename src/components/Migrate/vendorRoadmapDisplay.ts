@@ -11,6 +11,7 @@
 // rather than keep a second, driftable copy of the same logic.
 
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '@/types/MigrateTypes'
+import { isHeldAnalysisSource } from '@/data/heldAnalysisSources'
 
 const NONE_DETECTED = 'None detected'
 
@@ -195,12 +196,13 @@ export interface VendorRoadmapDisplay extends AnalysisFacts {
 }
 
 /** The address, title and site of the page an analysis was written from, or
- * null when it records no usable (http or https) address. */
+ * null when it records no usable (http or https) address, or when that address
+ * is held because it did not resolve (see heldAnalysisSources.ts). */
 export function analysisSourceInfo(
   enrichment: VendorRoadmapEnrichment | undefined
 ): AnalysisSourceInfo | null {
   const url = enrichment?.roadmapUrl?.trim()
-  if (!url || !/^https?:\/\//i.test(url)) return null
+  if (!url || !/^https?:\/\//i.test(url) || isHeldAnalysisSource(url)) return null
   let siteName = url
   try {
     siteName = new URL(url).hostname.replace(/^www\./i, '')

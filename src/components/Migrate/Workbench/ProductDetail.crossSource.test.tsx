@@ -119,7 +119,7 @@ describe('ProductDetail vendor roadmap analysis source', () => {
         <ProductDetail product={product(NO_ROW)} />
       </MemoryRouter>
     )
-    const source = screen.getByRole('region', { name: 'Analysis source' })
+    const source = screen.getByRole('group', { name: 'Analysis source' })
     expect(within(source).getByRole('link')).toHaveAttribute('href', NO_ROW_PAGE)
     expect(screen.queryByText('Analysis from another source')).toBeNull()
   })

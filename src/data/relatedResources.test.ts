@@ -12,7 +12,7 @@ import {
 } from './relatedResources'
 
 describe('related resource kinds', () => {
-  it('knows the four approved kinds and the owner-approved issue tracker', () => {
+  it('knows the five kinds, including issue tracker', () => {
     expect([...RELATED_RESOURCE_KINDS].sort()).toEqual(
       ['documentation', 'issue_tracker', 'sdk', 'source_repository', 'test_suite'].sort()
     )

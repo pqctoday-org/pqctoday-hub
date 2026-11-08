@@ -9,6 +9,7 @@ import {
   cleanHybridModeText,
 } from './vendorRoadmapDisplay'
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '@/types/MigrateTypes'
+import { HELD_ANALYSIS_SOURCES } from '@/data/heldAnalysisSources'
 
 function roadmap(overrides: Partial<VendorRoadmap> = {}): VendorRoadmap {
   return {
@@ -349,6 +350,24 @@ describe('deriveVendorRoadmapDisplay: analysis from another source', () => {
     expect(deriveVendorRoadmapDisplay(row, own)!.analysisSource).toBeNull()
     expect(
       deriveVendorRoadmapDisplay(undefined, enrichment({ roadmapUrl: '' }))!.analysisSource
+    ).toBeNull()
+  })
+})
+
+describe('held analysis sources in the display', () => {
+  const held = HELD_ANALYSIS_SOURCES[0]
+  const row = roadmap({ roadmapUrl: 'https://example.com/file.pdf' })
+
+  it('gives no link for a held address', () => {
+    expect(analysisSourceInfo(enrichment({ roadmapUrl: held.url }))).toBeNull()
+  })
+
+  it('has no crossSource and no source line for a held analysis', () => {
+    expect(
+      deriveVendorRoadmapDisplay(row, undefined, enrichment({ roadmapUrl: held.url }))!.crossSource
+    ).toBeNull()
+    expect(
+      deriveVendorRoadmapDisplay(undefined, enrichment({ roadmapUrl: held.url }))!.analysisSource
     ).toBeNull()
   })
 })

@@ -10,6 +10,7 @@ import {
   pickEnrichmentForRoadmap,
 } from './vendorRoadmapEnrichmentData'
 import { roadmapByVendorId, vendorRoadmaps } from './vendorRoadmapData'
+import { HELD_ANALYSIS_SOURCES, isHeldAnalysisSource } from './heldAnalysisSources'
 import type { VendorRoadmapEnrichment } from '@/types/MigrateTypes'
 
 function makeEnrichment(overrides: Partial<VendorRoadmapEnrichment>): VendorRoadmapEnrichment {
@@ -220,12 +221,15 @@ describe('cross-source analysis on the shipped data', () => {
     }
   })
 
-  it('every vendor row whose analysis was written from another page is offered that page', () => {
+  it('every vendor row whose analysis was written from another page that resolves is offered that page', () => {
     for (const [vendorId, rows] of roadmapByVendorId) {
       const analyses = enrichmentByVendorId.get(vendorId) ?? []
       const rowUrls = rows.map((r) => r.roadmapUrl)
       const unattached = analyses.filter(
-        (a) => a.roadmapUrl !== '' && !rowUrls.includes(a.roadmapUrl)
+        (a) =>
+          /^https?:\/\//i.test(a.roadmapUrl) &&
+          !rowUrls.includes(a.roadmapUrl) &&
+          !isHeldAnalysisSource(a.roadmapUrl)
       )
       const rowsWithoutOwn = rows.filter((r) => !enrichmentForRoadmap(vendorId, r.roadmapUrl))
       const offered = rows.filter((r) => crossSourceEnrichmentForRoadmap(vendorId, r.roadmapUrl))
@@ -263,6 +267,57 @@ describe('ownEnrichmentForVendor', () => {
     for (const [vendorId, rows] of roadmapByVendorId) {
       const withheld = rows.every((r) => !enrichmentForRoadmap(vendorId, r.roadmapUrl))
       if (withheld) expect(ownEnrichmentForVendor(vendorId)).toBeUndefined()
+    }
+  })
+})
+
+describe('held analysis sources (addresses that did not resolve)', () => {
+  const held = HELD_ANALYSIS_SOURCES[0]
+  const rowUrl = 'https://vendor.example/whitepaper.pdf'
+
+  it('a held analysis is not offered as another source', () => {
+    const analysis = makeEnrichment({ roadmapUrl: held.url })
+    expect(pickCrossSourceEnrichment([analysis], rowUrl)).toBeUndefined()
+  })
+
+  it('a held analysis does not hide another analysis of the same vendor that is linkable', () => {
+    const heldOne = makeEnrichment({ roadmapUrl: held.url })
+    const fine = makeEnrichment({ roadmapUrl: 'https://vendor.example/other-page.html' })
+    expect(pickCrossSourceEnrichment([heldOne, fine], rowUrl)).toBe(fine)
+  })
+
+  it('an analysis whose address is not http or https is not offered, and does not block a later one', () => {
+    const odd = makeEnrichment({ roadmapUrl: 'ftp://vendor.example/file' })
+    const fine = makeEnrichment({ roadmapUrl: 'https://vendor.example/ok.html' })
+    expect(pickCrossSourceEnrichment([odd], rowUrl)).toBeUndefined()
+    expect(pickCrossSourceEnrichment([odd, fine], rowUrl)).toBe(fine)
+  })
+
+  it('holds the exact address only', () => {
+    expect(isHeldAnalysisSource(held.url)).toBe(true)
+    expect(isHeldAnalysisSource(` ${held.url} `)).toBe(true)
+    expect(isHeldAnalysisSource(`${held.url}/more`)).toBe(false)
+    expect(isHeldAnalysisSource('')).toBe(false)
+    expect(isHeldAnalysisSource(undefined)).toBe(false)
+  })
+
+  it('every held address is still an address one of that vendor analyses records, so none goes stale', () => {
+    for (const h of HELD_ANALYSIS_SOURCES) {
+      const recorded = (enrichmentByVendorId.get(h.vendorId) ?? []).map((e) => e.roadmapUrl)
+      expect(
+        recorded,
+        `${h.vendorId}: ${h.url} is no longer recorded by any analysis; remove the hold`
+      ).toContain(h.url)
+    }
+  })
+
+  it('no row of a held vendor is offered the held address as another source', () => {
+    for (const h of HELD_ANALYSIS_SOURCES) {
+      for (const row of roadmapByVendorId.get(h.vendorId) ?? []) {
+        expect(crossSourceEnrichmentForRoadmap(h.vendorId, row.roadmapUrl)?.roadmapUrl).not.toBe(
+          h.url
+        )
+      }
     }
   })
 })

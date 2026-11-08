@@ -78,6 +78,7 @@ describe('phone product sheet: related resources', () => {
     const link = within(section).getByRole('link', { name: 'SDK: MicrochipTech/cryptoauthlib' })
     expect(link).toHaveAttribute('href', 'https://github.com/MicrochipTech/cryptoauthlib')
     expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'))
     expect(link.className).toContain('min-h-11')
     // Long names wrap rather than push the sheet sideways at 390 px.
     expect(link.querySelector('span.break-words')).not.toBeNull()

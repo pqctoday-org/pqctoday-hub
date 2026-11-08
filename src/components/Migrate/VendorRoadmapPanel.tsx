@@ -222,7 +222,8 @@ export const VendorRoadmapPanel = ({
 
       {/* A vendor with no roadmap row: say which page the analysis came from. */}
       {analysisSource && (
-        <section aria-labelledby={sourceHeadingId} className="space-y-1">
+        // A group, not a landmark: the Roadmaps tab repeats this line for dozens of vendors.
+        <div role="group" aria-labelledby={sourceHeadingId} className="space-y-1">
           <h3
             id={sourceHeadingId}
             className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground"
@@ -230,7 +231,7 @@ export const VendorRoadmapPanel = ({
             Analysis source
           </h3>
           <AnalysisSourceLink source={analysisSource} />
-        </section>
+        </div>
       )}
 
       {enrichment && <AnalysisFactsView facts={display} />}

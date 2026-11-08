@@ -120,6 +120,8 @@ interface RawPurlXref {
   /** A project page beside the product; blank or absent on most rows. */
   related_resource_url?: string
   related_resource_kind?: string
+  /** Set on a retired row, which is history and not a live identifier. */
+  deprecated_at?: string
 }
 
 interface RawCpeXref {
@@ -225,6 +227,8 @@ async function main() {
   const relatedByProductId = new Map<string, ReturnType<typeof relatedResourceCbomReference>>()
   const relatedBySoftwareName = new Map<string, ReturnType<typeof relatedResourceCbomReference>>()
   for (const r of purlXref.rows) {
+    // A retired row is history: its related resource is not exported either.
+    if ((r.deprecated_at ?? '').trim()) continue
     const related = buildRelatedResource(r.related_resource_url, r.related_resource_kind)
     if (related) {
       const ref = relatedResourceCbomReference(related)

@@ -114,6 +114,25 @@ describe('generate-cbom related resources', () => {
     expect(component?.externalReferences).toHaveLength(1)
   })
 
+  it('skips a retired row when it comes to related resources', () => {
+    const { code, log, component } = generate({
+      purlHeader: WITH_COLUMNS + ',deprecated_at',
+      purlRows: [
+        'p1,Fixture Product,,not_found,https://github.com/Intel/tdx,source_repository,2026-11-01',
+      ],
+    })
+    expect(code, log).toBe(0)
+    expect(component?.externalReferences).toEqual([])
+  })
+
+  it('still exports a related resource from a live row that has an empty deprecated_at column', () => {
+    const { component } = generate({
+      purlHeader: WITH_COLUMNS + ',deprecated_at',
+      purlRows: ['p1,Fixture Product,,not_found,https://github.com/Intel/tdx,source_repository,'],
+    })
+    expect(component?.externalReferences).toHaveLength(1)
+  })
+
   it('works unchanged on a file without the columns, and with blank columns', () => {
     const without = generate({
       purlHeader: WITHOUT_COLUMNS,
