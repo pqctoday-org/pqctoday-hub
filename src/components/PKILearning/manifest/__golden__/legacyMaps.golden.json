@@ -720,7 +720,7 @@
     "hybrid-crypto": 7,
     "iam-pqc": 6,
     "iot-pqc": 6,
-    "kms-pqc": 6,
+    "kms-pqc": 7,
     "mls-group-messaging": 2,
     "media-drm-pqc": 3,
     "merkle-tree-certs": 5,
@@ -3310,6 +3310,10 @@
       {
         "id": "aws-policy-lab",
         "label": "AWS Policy Lab"
+      },
+      {
+        "id": "cloud-kms-exchange",
+        "label": "Cloud KMS Key Exchange"
       }
     ],
     "mls-group-messaging": [

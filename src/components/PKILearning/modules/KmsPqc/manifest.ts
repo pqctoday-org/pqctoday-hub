@@ -30,6 +30,7 @@ const manifest: ModuleManifest = {
     { id: 'rotation-planner', label: 'Rotation Planner' },
     { id: 'kmip-explorer', label: 'KMIP Protocol Explorer' },
     { id: 'aws-policy-lab', label: 'AWS Policy Lab' },
+    { id: 'cloud-kms-exchange', label: 'Cloud KMS Key Exchange' },
   ],
   startHere: {
     step: 'envelope-encryption',
