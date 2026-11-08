@@ -20,6 +20,14 @@ import {
 import { MobileSheet } from '../primitives/Sheet'
 import { DESKTOP_ONLY_WORKSHOP_LABEL, workshopRunsOnPhone } from '../desktopOnlyWorkshop'
 
+// The Filters sheet's radio buttons and checkbox keep the native input (so the keyboard, the
+// grouping and the screen-reader roles come for free) but draw it from the theme's colours: a
+// native control stays white in dark mode, because the site sets no `color-scheme`.
+const CHECK_BASE =
+  'relative h-5 w-5 shrink-0 cursor-pointer appearance-none border-2 border-muted-foreground bg-card checked:border-primary checked:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+const RADIO_CLASS = `${CHECK_BASE} rounded-full before:absolute before:inset-[3px] before:scale-0 before:rounded-full before:bg-primary-foreground checked:before:scale-100`
+const CHECKBOX_CLASS = `${CHECK_BASE} rounded before:absolute before:left-[5px] before:top-[1px] before:h-[10px] before:w-[5px] before:rotate-45 before:border-b-2 before:border-r-2 before:border-primary-foreground before:opacity-0 checked:before:opacity-100`
+
 const STATUS_TEXT: Record<string, string> = {
   completed: 'Completed',
   'in-progress': 'In progress',
@@ -140,7 +148,7 @@ export function MobileBrowseAllView() {
             type="search"
             value={search}
             onChange={(e) => setParam('q', e.target.value)}
-            placeholder="Try “TLS” or “HSM”"
+            placeholder="Search modules"
             autoComplete="off"
             enterKeyHint="search"
             className="h-11 min-w-0 flex-1 bg-transparent text-[16px] text-foreground placeholder:text-muted-foreground focus:outline-none"
@@ -326,7 +334,7 @@ export function MobileBrowseAllView() {
                   value={item.id}
                   checked={status === item.id}
                   onChange={() => setStatus(item.id)}
-                  className="h-5 w-5 shrink-0 accent-primary"
+                  className={RADIO_CLASS}
                 />
                 {item.label}
               </label>
@@ -348,7 +356,7 @@ export function MobileBrowseAllView() {
                   value={item.id}
                   checked={sort === item.id}
                   onChange={() => setSort(item.id)}
-                  className="h-5 w-5 shrink-0 accent-primary"
+                  className={RADIO_CLASS}
                 />
                 {item.label}
               </label>
@@ -360,7 +368,7 @@ export function MobileBrowseAllView() {
               type="checkbox"
               checked={savedOnly}
               onChange={(e) => setSavedOnly(e.target.checked)}
-              className="h-5 w-5 shrink-0 accent-primary"
+              className={CHECKBOX_CLASS}
             />
             Saved modules only ({savedModules.length})
           </label>
