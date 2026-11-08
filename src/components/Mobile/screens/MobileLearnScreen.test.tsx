@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { act, render, screen, fireEvent, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, useLocation } from 'react-router'
 import { MobileLearnScreen } from './MobileLearnScreen'
@@ -243,6 +243,41 @@ describe('MobileLearnScreen: the tabs follow the tabs pattern', () => {
     expect(myPathTab()).toHaveFocus() // wraps around
     await user.keyboard('{ArrowLeft}')
     expect(guidedTab()).toHaveFocus()
+  })
+
+  // The address, and so the mode, updates a moment after a key press. A second press that arrives
+  // before it must count from the tab that took it. Measured from the old mode, both presses went
+  // to Browse all and Guided was never reached.
+  it('two quick arrow presses before the address updates still reach the third tab', () => {
+    renderScreen()
+    // Both presses must land in one batch, before the router's update is applied; separate
+    // awaited presses (user-event) would let it settle in between and hide the bug.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    act(() => {
+      fireEvent.keyDown(myPathTab(), { key: 'ArrowRight' })
+      fireEvent.keyDown(browseTab(), { key: 'ArrowRight' })
+    })
+    expect(guidedTab()).toHaveAttribute('aria-selected', 'true')
+    expect(where()).toBe('/learn?mode=guided')
+  })
+
+  it.each([['altKey'], ['metaKey'], ['ctrlKey']])(
+    'leaves %s + arrow to the browser (Back and Forward shortcuts): no tab change, not cancelled',
+    (modifier) => {
+      renderScreen()
+      const notCancelled = fireEvent.keyDown(myPathTab(), {
+        key: 'ArrowRight',
+        [modifier]: true,
+      })
+      expect(notCancelled).toBe(true)
+      expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
+      expect(where()).toBe('/learn')
+    }
+  )
+
+  it('plain arrow keys are still cancelled, so the page does not scroll sideways', () => {
+    renderScreen()
+    expect(fireEvent.keyDown(myPathTab(), { key: 'ArrowRight' })).toBe(false)
   })
 
   it('Home and End jump to the first and last tab', async () => {

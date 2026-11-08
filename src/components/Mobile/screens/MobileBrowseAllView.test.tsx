@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Link, MemoryRouter, useLocation } from 'react-router'
 import '@testing-library/jest-dom'
 import { MobileBrowseAllView } from './MobileBrowseAllView'
@@ -113,6 +114,61 @@ describe('MobileBrowseAllView — the whole catalogue on a phone', () => {
   })
 })
 
+describe('MobileBrowseAllView — typing in the search box', () => {
+  it('typed character by character, the box, the address and the list all follow', async () => {
+    const user = userEvent.setup()
+    renderBrowse()
+    await user.type(searchBox(), 'hsm')
+    expect(searchBox()).toHaveValue('hsm')
+    expect(where()).toBe('/learn?mode=browse&q=hsm')
+    await waitFor(() => expect(rows().length).toBeLessThan(TOTAL_MODULE_COUNT))
+  })
+
+  it('an edit in the middle of the text keeps the caret edit, not the end of the text', async () => {
+    const user = userEvent.setup()
+    renderBrowse('/learn?mode=browse&q=hm')
+    const box = searchBox() as HTMLInputElement
+    box.focus()
+    box.setSelectionRange(1, 1)
+    await user.keyboard('s')
+    expect(box).toHaveValue('hsm')
+    expect(where()).toBe('/learn?mode=browse&q=hsm')
+  })
+
+  it('backspacing to nothing empties the box and removes q from the address', async () => {
+    const user = userEvent.setup()
+    renderBrowse('/learn?mode=browse&q=ab')
+    await user.type(searchBox(), '{Backspace}{Backspace}')
+    expect(searchBox()).toHaveValue('')
+    expect(where()).toBe('/learn?mode=browse')
+  })
+
+  it('a link that changes ?q= while the screen is open replaces the box text', () => {
+    render(
+      <MemoryRouter initialEntries={['/learn?mode=browse&q=tls']}>
+        <MobileBrowseAllView />
+        <Link to="/learn?mode=browse&q=hsm">other link</Link>
+      </MemoryRouter>
+    )
+    expect(searchBox()).toHaveValue('tls')
+    fireEvent.click(screen.getByRole('link', { name: 'other link' }))
+    expect(searchBox()).toHaveValue('hsm')
+  })
+})
+
+describe('MobileBrowseAllView — focus is kept when a pressed button goes away', () => {
+  it('"Clear filters" hands focus to the result line, which reads the full count again', async () => {
+    const user = userEvent.setup()
+    renderBrowse('/learn?mode=browse&q=zzzznotaword')
+    await user.click(screen.getByRole('button', { name: 'Clear filters' }))
+    expect(screen.queryByText('No modules match your filters.')).not.toBeInTheDocument()
+    const status = screen.getByRole('status')
+    expect(status).toHaveFocus()
+    expect(status).toHaveTextContent(`Showing ${TOTAL_MODULE_COUNT} of ${TOTAL_MODULE_COUNT}`)
+    expect(document.body).not.toHaveFocus()
+  })
+})
+
 describe('MobileBrowseAllView — track chips and the address', () => {
   it('?track= preselects that chip and lists only that track', () => {
     renderBrowse('/learn?mode=browse&track=Protocols')
@@ -221,15 +277,18 @@ describe('MobileBrowseAllView — status, sort and saved filters', () => {
     ])
   })
 
-  it('resets the sheet filters but leaves the search and track alone', () => {
+  it('resets the sheet filters but leaves the search and track alone, and keeps focus on the button', async () => {
+    const user = userEvent.setup()
     renderBrowse('/learn?mode=browse&track=Protocols')
     openFilters()
     fireEvent.click(within(sheet()).getByRole('radio', { name: 'Completed' }))
-    expect(within(sheet()).getByRole('button', { name: 'Reset filters' })).toBeEnabled()
-    fireEvent.click(within(sheet()).getByRole('button', { name: 'Reset filters' }))
+    const reset = within(sheet()).getByRole('button', { name: 'Reset filters' })
+    await user.click(reset)
     expect(within(sheet()).getByRole('radio', { name: 'All statuses' })).toBeChecked()
-    expect(within(sheet()).getByRole('button', { name: 'Reset filters' })).toBeDisabled()
     expect(where()).toContain('track=Protocols')
+    // It used to disable itself while pressed, which dropped keyboard focus out of the sheet.
+    expect(reset).toBeEnabled()
+    expect(reset).toHaveFocus()
   })
 
   it('closes the sheet with Escape and gives focus back to the Filters button', () => {
@@ -240,6 +299,7 @@ describe('MobileBrowseAllView — status, sort and saved filters', () => {
     expect(sheet()).toBeInTheDocument()
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(button).toHaveFocus()
   })
 })
 

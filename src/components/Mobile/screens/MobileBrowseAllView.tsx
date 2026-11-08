@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useCallback, useId, useMemo, useState } from 'react'
+import { useCallback, useId, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { Bookmark, CheckCircle2, Circle, CircleDot, Search, SlidersHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useModuleTopicKeywords } from '@/hooks/useModuleTopicKeywords'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import { MODULE_TRACKS } from '@/components/PKILearning/moduleData'
 import {
   BROWSE_ALL,
@@ -66,7 +67,6 @@ export function MobileBrowseAllView() {
   const savedModules = useBookmarkStore((s) => s.myLearnModules)
   const toggleSaved = useBookmarkStore((s) => s.toggleMyLearnModule)
 
-  const search = params.get('q') ?? ''
   // An unknown track name in the address is ignored, never an empty list.
   const track = resolveBrowseTrack(params.get('track'))
   const [status, setStatus] = useState(BROWSE_ALL)
@@ -78,8 +78,8 @@ export function MobileBrowseAllView() {
   const statusName = `${baseId}-status`
   const sortName = `${baseId}-sort`
 
-  const topicKeywords = useModuleTopicKeywords(search.trim().length > 0)
   const savedSet = useMemo(() => new Set(savedModules), [savedModules])
+  const statusLine = useRef<HTMLParagraphElement>(null)
 
   const setParam = useCallback(
     (key: 'track' | 'q', value: string | null) => {
@@ -95,6 +95,14 @@ export function MobileBrowseAllView() {
     },
     [setParams]
   )
+
+  // The search box keeps its own text (see useUrlBackedText) and mirrors it to ?q=.
+  const {
+    text: search,
+    update: setSearch,
+    reset: resetSearch,
+  } = useUrlBackedText(params.get('q') ?? '', (next) => setParam('q', next || null))
+  const topicKeywords = useModuleTopicKeywords(search.trim().length > 0)
 
   const groups = useMemo(
     () =>
@@ -122,6 +130,10 @@ export function MobileBrowseAllView() {
   }
   const clearEverything = () => {
     resetSheetFilters()
+    resetSearch('')
+    // The button that was pressed leaves the page with the empty state; keep keyboard and
+    // screen-reader focus on the result line, which stays and now reads the full count.
+    statusLine.current?.focus()
     setParams(
       (prev) => {
         const next = new URLSearchParams(prev)
@@ -147,7 +159,7 @@ export function MobileBrowseAllView() {
             id={searchId}
             type="search"
             value={search}
-            onChange={(e) => setParam('q', e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search modules"
             autoComplete="off"
             enterKeyHint="search"
@@ -220,7 +232,12 @@ export function MobileBrowseAllView() {
         })}
       </div>
 
-      <p role="status" className="text-[12px] text-muted-foreground">
+      <p
+        ref={statusLine}
+        role="status"
+        tabIndex={-1}
+        className="text-[12px] text-muted-foreground focus:outline-none"
+      >
         Showing <span className="font-semibold text-foreground">{shown}</span> of{' '}
         {TOTAL_MODULE_COUNT}
       </p>
@@ -378,7 +395,6 @@ export function MobileBrowseAllView() {
               type="button"
               variant="outline"
               onClick={resetSheetFilters}
-              disabled={sheetFilterCount === 0}
               className="h-11 flex-1 rounded-[10px] text-[13px] font-semibold"
             >
               Reset filters

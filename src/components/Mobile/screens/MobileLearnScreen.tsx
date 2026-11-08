@@ -70,6 +70,8 @@ export function MobileLearnScreen() {
   // Arrow keys, Home and End move between the tabs and open the one reached (automatic
   // activation: each view renders at once, so there is nothing to wait for).
   const onTabKeyDown = (e: KeyboardEvent<HTMLButtonElement>, from: LearnMode) => {
+    // Alt+Left, Cmd+Left and the like are the browser's Back and Forward, not tab keys.
+    if (e.altKey || e.ctrlKey || e.metaKey) return
     // Measured from the tab that took the key, not from the current mode: the address, and so
     // the mode, updates a moment after a key press, and a quick second press must not use the old one.
     const at = MODES.indexOf(from)
