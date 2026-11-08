@@ -136,6 +136,16 @@ to 2026-09-29.
    `git branch -d` (merged-only), and delete the remote branch with
    `gh api -X DELETE repos/pqctoday-org/pqctoday-hub/git/refs/heads/<branch>`.
    Never `git push --delete`: it runs this hook's full ~30 min gate.
+   - **Release PRs:** once the release is verified live (step 5), also clean
+     up every worktree whose work the release carried, not only the release's
+     own. A worktree qualifies when its head is an ancestor of `origin/main`
+     or `git cherry origin/main <head>` prints no `+` lines, and it has no
+     uncommitted changes and no process running inside it. Remove it with a
+     plain `git worktree remove` (never `--force`). Leave any worktree that an
+     open release or lane still uses.
+   - Run `git branch -d` from a checkout that is on an up-to-date `main`.
+     `-d` checks against the current branch, so it refuses merged branches
+     while that checkout sits on an old one.
 
 ## GitHub — deploy (`.github/workflows/deploy.yml`)
 
