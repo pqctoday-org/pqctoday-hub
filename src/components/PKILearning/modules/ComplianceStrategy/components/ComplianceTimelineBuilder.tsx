@@ -25,7 +25,12 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import { ExportableArtifact } from '../../../common/executive/ExportableArtifact'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { ComplianceGantt } from './ComplianceGantt'
-import { assessPlanAlignment } from './compliancePlanAlignment'
+import {
+  assessPlanAlignment,
+  isObligationKeyArray,
+  validObligationKeys,
+  recordedCompletionLabel,
+} from './compliancePlanAlignment'
 import type { ComplianceGanttRow, UserMilestone, ComplianceDeadline } from './ComplianceGantt'
 import type { TimelinePhase, TimelineEvent, EventType } from '@/types/timeline'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -494,6 +499,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
       label: newLabel.trim(),
       year: newYear,
       category: newCategory,
+      completed: false,
     }
     setMilestones((prev) => [...prev, ms].sort((a, b) => a.year - b.year))
     setNewLabel('')
@@ -504,7 +510,9 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
   }, [])
 
   const toggleMilestoneDone = useCallback((id: string) => {
-    setMilestones((prev) => prev.map((m) => (m.id === id ? { ...m, completed: !m.completed } : m)))
+    setMilestones((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, completed: m.completed !== true } : m))
+    )
   }, [])
 
   // Export markdown
@@ -531,16 +539,16 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
       md += '| Year | Milestone | Category | Done | ID | Completion year | Obligation keys |\n'
       md += '|------|-----------|----------|------|----|-----------------|-----------------|\n'
       for (const m of milestones) {
-        md += `| ${m.year} | ${m.label} | ${m.category || ''} | ${m.completed ? 'Yes' : 'No'} | ${m.id} | ${m.completedYear ?? ''} | ${JSON.stringify(m.obligationKeys ?? [])} |\n`
+        md += `| ${m.year} | ${m.label} | ${m.category || ''} | ${recordedCompletionLabel(m.completed)} | ${m.id} | ${m.completedYear ?? ''} | ${JSON.stringify(m.obligationKeys === undefined ? [] : m.obligationKeys)} |\n`
       }
     }
 
     if (gapAnalysis.length > 0) {
       md += '\n## Linked Sample Plan Alignment\n\n'
-      md += '| Framework | Reference year | Palette | Alignment | Notes |\n'
-      md += '|-----------|----------------|---------|-----------|-------|\n'
+      md += '| Framework | Reference year | Alignment | Notes |\n'
+      md += '|-----------|----------------|-----------|-------|\n'
       for (const g of gapAnalysis) {
-        md += `| ${g.framework} | ${g.deadlineYear} | ${g.status.toUpperCase()} | ${g.alignmentLabel} | ${g.gap} |\n`
+        md += `| ${g.framework} | ${g.deadlineYear} | ${g.alignmentLabel} | ${g.gap} |\n`
       }
     }
 
@@ -593,24 +601,18 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
           m.year,
           m.label,
           m.category || '',
-          m.completed ? 'Yes' : 'No',
+          recordedCompletionLabel(m.completed),
           m.id,
           m.completedYear ?? '',
-          JSON.stringify(m.obligationKeys ?? []),
+          JSON.stringify(m.obligationKeys === undefined ? [] : m.obligationKeys),
         ])
     }
     if (gapAnalysis.length > 0) {
       if (sections.length) sections.push([])
       sections.push(['Linked Sample Plan Alignment'])
-      sections.push(['Framework', 'Reference Year', 'Palette', 'Alignment', 'Notes'])
+      sections.push(['Framework', 'Reference Year', 'Alignment', 'Notes'])
       for (const g of gapAnalysis)
-        sections.push([
-          g.framework,
-          g.deadlineYear,
-          g.status.toUpperCase(),
-          g.alignmentLabel,
-          g.gap,
-        ])
+        sections.push([g.framework, g.deadlineYear, g.alignmentLabel, g.gap])
     }
     return rowsToCsv(sections)
   }, [ganttRows, milestones, gapAnalysis, scenarioAsOfYear])
@@ -755,12 +757,12 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             <div key={m.id} className="flex flex-col gap-3 px-4 py-2 glass-panel">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex min-w-0 flex-wrap items-center gap-3">
-                  {m.completed && (
+                  {m.completed === true && (
                     <CheckCircle2 size={14} className="text-status-success shrink-0" />
                   )}
                   <span className="text-sm font-mono text-primary">{m.year}</span>
                   <span
-                    className={`text-sm ${m.completed ? 'text-status-success' : 'text-foreground'}`}
+                    className={`text-sm ${m.completed === true ? 'text-status-success' : 'text-foreground'}`}
                   >
                     {m.label}
                   </span>
@@ -775,20 +777,22 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                     variant="ghost"
                     size="sm"
                     onClick={() => toggleMilestoneDone(m.id)}
-                    aria-pressed={!!m.completed}
+                    aria-pressed={m.completed === true}
                     title={
-                      m.completed
+                      m.completed === true
                         ? 'Learner-marked done — obligation satisfaction remains unassessed'
                         : 'Mark this planning milestone done; obligation satisfaction remains unassessed'
                     }
                     className={
-                      m.completed
+                      m.completed === true
                         ? 'text-status-success'
                         : 'text-muted-foreground hover:text-status-success'
                     }
                   >
                     <CheckCircle2 size={14} />
-                    <span className="ml-1 text-xs">{m.completed ? 'Done' : 'Mark done'}</span>
+                    <span className="ml-1 text-xs">
+                      {m.completed === true ? 'Done' : 'Mark done'}
+                    </span>
                   </Button>
                   <Button
                     variant="ghost"
@@ -801,7 +805,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                   </Button>
                 </div>
               </div>
-              {m.completed && (
+              {m.completed === true && (
                 <label className="text-sm">
                   Recorded completion year for {m.label}
                   <input
@@ -824,7 +828,16 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                   />
                 </label>
               )}
-              <fieldset className="min-w-0 space-y-2">
+              {typeof m.completed !== 'boolean' && (
+                <p className="text-xs text-muted-foreground break-all">
+                  Completion not assessed; preserved raw value:{' '}
+                  {JSON.stringify(m.completed) ?? 'not recorded'}
+                </p>
+              )}
+              <fieldset
+                className="min-w-0 space-y-2"
+                disabled={m.obligationKeys !== undefined && !isObligationKeyArray(m.obligationKeys)}
+              >
                 <legend className="text-xs font-medium">
                   Explicit reference associations for {m.label}
                 </legend>
@@ -832,16 +845,25 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                   <label key={d.key} className="flex items-start gap-2 text-xs break-words">
                     <input
                       type="checkbox"
-                      checked={m.obligationKeys?.includes(d.key) ?? false}
+                      checked={validObligationKeys(m.obligationKeys).includes(d.key)}
                       onChange={(e) =>
                         setMilestones((prev) =>
                           prev.map((item) =>
-                            item.id === m.id
+                            item.id === m.id &&
+                            (item.obligationKeys === undefined ||
+                              isObligationKeyArray(item.obligationKeys))
                               ? {
                                   ...item,
                                   obligationKeys: e.target.checked
-                                    ? [...new Set([...(item.obligationKeys ?? []), d.key])]
-                                    : (item.obligationKeys ?? []).filter((key) => key !== d.key),
+                                    ? [
+                                        ...new Set([
+                                          ...validObligationKeys(item.obligationKeys),
+                                          d.key,
+                                        ]),
+                                      ]
+                                    : validObligationKeys(item.obligationKeys).filter(
+                                        (key) => key !== d.key
+                                      ),
                                 }
                               : item
                           )
@@ -853,7 +875,13 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                     </span>
                   </label>
                 ))}
-                {(m.obligationKeys ?? [])
+                {m.obligationKeys !== undefined && !isObligationKeyArray(m.obligationKeys) && (
+                  <p className="text-xs text-muted-foreground break-all">
+                    Associations not assessed; preserved malformed raw value:{' '}
+                    {JSON.stringify(m.obligationKeys)}. An array of string keys is required.
+                  </p>
+                )}
+                {validObligationKeys(m.obligationKeys)
                   .filter((key) => !externalDeadlines.some((d) => d.key === key))
                   .map((key) => (
                     <p key={key} className="text-xs text-muted-foreground break-all">

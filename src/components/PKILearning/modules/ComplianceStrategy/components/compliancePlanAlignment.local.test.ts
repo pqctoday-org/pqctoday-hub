@@ -78,4 +78,26 @@ describe('explicit fictional activity alignment', () => {
     expect(records).toEqual(before)
     expect(assessPlanAlignment('removed,key', 2030, records, 2030).status).toBe('on-track')
   })
+  it.each(['a', 'prefix-a-suffix', ['a', 1], null, { a: true }])(
+    'does not coerce malformed associations %j into links',
+    (obligationKeys) => {
+      const raw = { ...milestone, obligationKeys } as unknown as UserMilestone
+      const before = structuredClone(raw)
+      expect(assess([raw]).status).toBe('unknown')
+      expect(raw).toEqual(before)
+    }
+  )
+  it.each(['true', 'false', 1, 0, null, undefined])(
+    'keeps nonboolean completion %j unknown without mutating the record',
+    (completed) => {
+      const raw = { ...milestone, completed } as unknown as UserMilestone
+      const before = structuredClone(raw)
+      expect(assess([raw])).toMatchObject({
+        status: 'unknown',
+        gap: expect.stringContaining('Boolean completion'),
+      })
+      expect(raw).toEqual(before)
+      expect(assess([milestone, raw]).status).toBe('unknown')
+    }
+  )
 })

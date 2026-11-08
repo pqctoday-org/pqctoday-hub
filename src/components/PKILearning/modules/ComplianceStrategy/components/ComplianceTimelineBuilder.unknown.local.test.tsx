@@ -71,7 +71,7 @@ describe('unassociated milestone history remains planning data', () => {
       'title',
       'Learner-marked done — obligation satisfaction remains unassessed'
     )
-    expect(screen.getByTestId('markdown')).toHaveTextContent('UNKNOWN')
+    expect(screen.getByTestId('markdown')).toHaveTextContent('Unknown')
     expect(screen.getByTestId('markdown')).not.toHaveTextContent('Requirement met')
     const csv = Papa.parse<string[]>(screen.getByTestId('csv').textContent ?? '').data
     expect(csv).toContainEqual([
@@ -88,8 +88,8 @@ describe('unassociated milestone history remains planning data', () => {
         (row) =>
           row[0] === 'Fictional, obligation' &&
           row[1] === '2030' &&
-          row[2] === 'UNKNOWN' &&
-          row[4].includes('no milestone-to-obligation scope')
+          row[2] === 'Unknown' &&
+          row[3].includes('no milestone-to-obligation scope')
       )
     ).toBe(true)
     fireEvent.click(screen.getByRole('button', { name: 'Done' }))
@@ -101,7 +101,7 @@ describe('unassociated milestone history remains planning data', () => {
       scenarioAsOfYear: 2026,
       milestones: [{ ...before.milestones![0], completed: false }],
     })
-    expect(doc.data).toContain('UNKNOWN')
+    expect(doc.data).toContain('Unknown')
     view.unmount()
     sample.saved = doc.inputs
     render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)

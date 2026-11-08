@@ -10,6 +10,20 @@ export interface PlanAlignment {
 export const isSampleYear = (year: unknown): year is number =>
   typeof year === 'number' && Number.isInteger(year) && year >= 1 && year <= 9999
 
+/** Saved input is opaque JSON; neither substring matches nor coercion establishes a link. */
+export const isObligationKeyArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((key) => typeof key === 'string')
+
+export const validObligationKeys = (value: unknown): string[] =>
+  isObligationKeyArray(value) ? value : []
+
+export const recordedCompletionLabel = (value: unknown): string =>
+  value === true
+    ? 'Yes'
+    : value === false
+      ? 'No'
+      : `Unknown (raw: ${JSON.stringify(value) ?? 'not recorded'})`
+
 /** Explicit sample links only; no applicability, technical or legal assessment. */
 export function assessPlanAlignment(
   key: string,
@@ -17,7 +31,7 @@ export function assessPlanAlignment(
   milestones: UserMilestone[],
   scenarioAsOfYear: number | null
 ): PlanAlignment {
-  const relevant = milestones.filter((m) => m.obligationKeys?.includes(key))
+  const relevant = milestones.filter((m) => validObligationKeys(m.obligationKeys).includes(key))
   const unknown = (gap: string): PlanAlignment => ({
     status: 'unknown',
     alignmentLabel: 'Unknown',
@@ -26,6 +40,10 @@ export function assessPlanAlignment(
   if (!relevant.length)
     return unknown(
       'Sample alignment unknown: no milestone-to-obligation scope or supporting checks are recorded here. Link activities explicitly; unrelated activities receive no credit.'
+    )
+  if (relevant.some((m) => typeof m.completed !== 'boolean'))
+    return unknown(
+      'Sample completion unknown: a linked activity has no Boolean completion record. Raw saved input is preserved, not treated as Done or planned work.'
     )
   if (!isSampleYear(referenceYear) || !isSampleYear(scenarioAsOfYear))
     return unknown(

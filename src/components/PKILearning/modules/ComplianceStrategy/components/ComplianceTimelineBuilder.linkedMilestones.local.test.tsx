@@ -95,7 +95,6 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     expect(csv).toContainEqual([
       'Fictional, obligation',
       '2030',
-      'COMPLETED',
       'Recorded by reference year',
       expect.stringContaining('exact dated deadline'),
     ])
@@ -211,5 +210,85 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
     expect(screen.getByLabelText('Sample scenario as-of year')).toHaveValue(null)
     expect(screen.getByText('Unknown')).toBeInTheDocument()
+  })
+  it('exports human alignment without internal palette/status codes for planned activities', () => {
+    sample.saved = {
+      ...legacy,
+      milestones: [
+        { ...legacy.milestones![0], completed: false, obligationKeys: ['fw-sample-2030'] },
+      ],
+    }
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    const md = screen.getByTestId('markdown').textContent ?? ''
+    const csv = Papa.parse<string[]>(screen.getByTestId('csv').textContent ?? '').data
+    expect(md).toContain('| Framework | Reference year | Alignment | Notes |')
+    expect(md).toContain('Planned by reference year')
+    expect(md).not.toContain('Palette')
+    expect(md).not.toContain('ON-TRACK')
+    expect(csv).toContainEqual(['Framework', 'Reference Year', 'Alignment', 'Notes'])
+    expect(csv).toContainEqual([
+      'Fictional, obligation',
+      '2030',
+      'Planned by reference year',
+      expect.stringContaining('not delivered work'),
+    ])
+    expect(csv.flat()).not.toContain('ON-TRACK')
+  })
+  it('restores a malformed string association as unassessed without substring credit, array crashes or raw-data loss', () => {
+    const raw = {
+      ...legacy.milestones![0],
+      completedYear: 2025,
+      obligationKeys: 'prefix-fw-sample-2030-suffix',
+      oldField: 'preserve',
+    }
+    sample.saved = { ...legacy, milestones: [raw] } as unknown as ComplianceTimelineSavedInputs
+    const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox')).not.toBeChecked()
+    expect(screen.getByRole('checkbox')).toBeDisabled()
+    expect(
+      screen.getByText(/Associations not assessed; preserved malformed raw value/)
+    ).toHaveTextContent('prefix-fw-sample-2030-suffix')
+    fireEvent.click(screen.getByRole('button', { name: 'Save sample timeline' }))
+    expect(sample.add.mock.calls[0][0].inputs.milestones[0]).toEqual(raw)
+    expect(
+      Papa.parse<string[]>(screen.getByTestId('csv').textContent ?? '').data.some(
+        (row) => row[6] === JSON.stringify(raw.obligationKeys)
+      )
+    ).toBe(true)
+    sample.saved = sample.add.mock.calls[0][0].inputs
+    view.unmount()
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox')).not.toBeChecked()
+  })
+  it('restores nonboolean completion as unknown, not Done, and preserves its raw value on save/reopen', () => {
+    const raw = {
+      ...legacy.milestones![0],
+      completed: 'false',
+      completedYear: 2025,
+      obligationKeys: ['fw-sample-2030'],
+    }
+    sample.saved = { ...legacy, milestones: [raw] } as unknown as ComplianceTimelineSavedInputs
+    const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Done' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Mark done' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+    expect(screen.getByText(/Completion not assessed; preserved raw value/)).toHaveTextContent(
+      '"false"'
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Save sample timeline' }))
+    expect(sample.add.mock.calls[0][0].inputs.milestones[0]).toEqual(raw)
+    expect(screen.getByTestId('markdown')).toHaveTextContent('Unknown (raw: "false")')
+    sample.saved = sample.add.mock.calls[0][0].inputs
+    view.unmount()
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
+    expect(
+      screen.queryByLabelText('Recorded completion year for Unrelated sample, certificate')
+    ).not.toBeInTheDocument()
   })
 })
