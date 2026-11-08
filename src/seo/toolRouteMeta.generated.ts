@@ -531,6 +531,19 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     contentRegion: '#main-content',
   },
   {
+    path: '/playground/cloud-kms-key-exchange',
+    title: 'Cloud KMS Key Exchange — PQC Crypto Lab | PQC Today',
+    description:
+      'Simulate importing a key into AWS KMS, Google Cloud KMS and Azure: the classical RSA key-wrap flow next to the HPKE flow, on PKCS#11 v3.2, the v3.3 draft…',
+    kind: 'browser-tool',
+    index: true,
+    sourceGlobs: [
+      'src/components/Playground/workshopRegistry.tsx',
+      'src/components/Playground/PlaygroundToolRoute.tsx',
+    ],
+    contentRegion: '#main-content',
+  },
+  {
     path: '/playground/digital-id',
     title: 'EUDI Wallet Architecture — PQC Crypto Lab | PQC Today',
     description:

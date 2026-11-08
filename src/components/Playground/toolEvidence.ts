@@ -49,6 +49,12 @@ export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
     summary:
       'Real key establishment, derivation, wrapping, and authenticated encryption in-browser.',
   },
+  'cloud-kms-key-exchange': {
+    primary: 'real-crypto',
+    secondary: 'protocol-model',
+    summary:
+      'Real wrapping, key encapsulation and authenticated encryption in the browser inside a modelled provider flow; no cloud service is called.',
+  },
   'token-migration': {
     primary: 'real-crypto',
     summary:
