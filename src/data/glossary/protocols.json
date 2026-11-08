@@ -544,7 +544,7 @@
     "term": "ACARS",
     "acronym": "ACARS",
     "definition": "Aircraft Communications Addressing and Reporting System. A digital data link for transmitting short messages between aircraft and ground stations via VHF radio or SATCOM.",
-    "technicalNote": "ACARS messages are limited to 220-byte blocks. ML-DSA-65 signatures (3,309 bytes) require 15+ blocks, making in-band PQC authentication infeasible without protocol redesign or gateway-mediated signing.",
+    "technicalNote": "ACARS messages are limited to 220-byte blocks. ML-DSA-65 signatures (3,309 bytes) need at least 16 blocks before message content and framing, so in-band PQC authentication needs a fragmentation and transport-overhead design, or gateway-mediated signing, rather than a drop-in change.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
     "category": "protocol"
