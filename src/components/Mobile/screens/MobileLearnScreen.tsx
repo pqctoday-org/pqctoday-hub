@@ -24,6 +24,9 @@ import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
  * chat assistant, `/learn?mode=browse&track=Protocols` — switches the view and the track chip.
  * Browse all keeps its own `track` and `q`; leaving it drops them.
  *
+ * A link to the desktop's workforce (NICE) view, `?view=nice`, opens Browse all here with a note
+ * that the workforce view is on the desktop site. The note shows only while Browse all is open.
+ *
  * Still on the desktop site only, by decision: the workforce (NICE) view and the algorithm and
  * standard filters. A role is not needed for Browse all or Guided; My Path asks for one.
  */
@@ -31,8 +34,14 @@ type LearnMode = 'mypath' | 'browse' | 'guided'
 
 const MODES: readonly LearnMode[] = ['mypath', 'browse', 'guided']
 
-function modeOf(raw: string | null): LearnMode {
-  return (MODES as readonly string[]).includes(raw ?? '') ? (raw as LearnMode) : 'mypath'
+/**
+ * The view a link asks for. A valid `mode` wins. Without one, the desktop's workforce link
+ * (`?view=nice`) opens Browse all, the catalogue it sits in on the phone; anything else opens
+ * My Path, as before.
+ */
+function modeOf(raw: string | null, niceLink: boolean): LearnMode {
+  if ((MODES as readonly string[]).includes(raw ?? '')) return raw as LearnMode
+  return niceLink ? 'browse' : 'mypath'
 }
 
 const TAB_LABELS: Record<LearnMode, string> = {
@@ -45,7 +54,8 @@ export function MobileLearnScreen() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [roleSwitchOpen, setRoleSwitchOpen] = useState(false)
   const [params, setParams] = useSearchParams()
-  const mode = modeOf(params.get('mode'))
+  const niceLink = params.get('view') === 'nice'
+  const mode = modeOf(params.get('mode'), niceLink)
   const baseId = useId()
   const tabRefs = useRef(new Map<LearnMode, HTMLButtonElement>())
   const tabId = (m: LearnMode) => `${baseId}-tab-${m}`
@@ -91,6 +101,14 @@ export function MobileLearnScreen() {
     <div className="px-4 pb-4 pt-4">
       {/* The page's level-one heading: the header title is plain text. */}
       <h1 className="sr-only">Learn</h1>
+      {niceLink && mode === 'browse' && (
+        <p
+          data-testid="mobile-learn-nice-note"
+          className="mb-3 rounded-lg border border-border bg-card px-3 py-2 text-[12px] leading-relaxed text-muted-foreground"
+        >
+          The workforce (NICE) view is on the desktop site. Here is the full module catalogue.
+        </p>
+      )}
       <div
         className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto rounded-none bg-transparent px-4 pb-1"
         role="tablist"
