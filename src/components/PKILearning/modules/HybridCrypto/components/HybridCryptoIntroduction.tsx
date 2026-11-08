@@ -131,8 +131,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             >
               Cloudflare
             </a>
-            ); and AWS KMS, ACM and Secrets Manager endpoints support it (non-FIPS endpoints, April
-            2025,{' '}
+            ); and AWS KMS, ACM and Secrets Manager endpoints support it (launched on non-FIPS
+            endpoints in April 2025,{' '}
             <a
               href="https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/"
               target="_blank"
@@ -141,7 +141,11 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             >
               AWS
             </a>
-            ).
+            ). AWS lists hybrid post-quantum key exchange as launched on FIPS and non-FIPS endpoints
+            for AWS KMS, AWS Payment Cryptography and the AWS CloudHSM control plane. AWS pages
+            differ on the edges, so check the endpoint and Region you use: the AWS KMS security page
+            excludes the China Regions and AWS GovCloud (US) FIPS endpoints, which the AWS PQ
+            readiness page lists as launched.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h3 className="text-sm font-bold text-foreground mb-3">How X25519MLKEM768 Works</h3>
