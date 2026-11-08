@@ -125,7 +125,13 @@ describe('MigrationVerification (render smoke)', () => {
     expect(
       screen.getByRole('heading', { name: /Migration Verification & Program Closure/ })
     ).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /Verification records/ })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: /Verification records.*with all evidence recorded/ })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/This tool records text; it does not authenticate evidence or execute tests/)
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Verified', { exact: true })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Decommissioning log/ })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Closure & BAU handover/ })).toBeInTheDocument()
   })

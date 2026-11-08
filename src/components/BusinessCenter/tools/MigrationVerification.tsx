@@ -151,7 +151,7 @@ const SEED_STATE: VerifyState = {
   },
 }
 
-/** How many of the 5 evidence fields are filled in for a record. */
+/** Field-completeness helpers only; these do not validate the recorded evidence. */
 export function verifiedCount(r: VerificationRecord): number {
   return EVIDENCE_FIELDS.filter((f) => r.evidence[f.key].trim().length > 0).length
 }
@@ -373,7 +373,7 @@ export const MigrationVerification: React.FC = () => {
                     className="flex-1"
                   />
                   <span
-                    className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
+                    className={`min-w-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
                       done
                         ? 'border-status-success/40 bg-status-success/10 text-status-success'
                         : 'border-status-warning/40 bg-status-warning/10 text-status-warning'
