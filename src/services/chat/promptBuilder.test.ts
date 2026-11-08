@@ -488,7 +488,10 @@ describe('buildGeminiSystemPrompt — link value lists match the pages', () => {
     })
 
     it('no longer names an Executive track, and does name Governance & Risk', () => {
-      expect(prompt).not.toMatch(/track names:[^\n]*Executive/)
+      // The whole /learn line, not a phrase the new prompt no longer has.
+      const learnLine = prompt.split('\n').find((line) => line.includes('/learn (catalog)'))
+      expect(learnLine).toBeDefined()
+      expect(learnLine).not.toContain('Executive')
       expect(listed('/learn', 'track')).not.toContain('Executive')
       expect(listed('/learn', 'track')).toContain('Governance & Risk')
       expect(prompt).toContain('Governance%20%26%20Risk')

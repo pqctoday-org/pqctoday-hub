@@ -121,21 +121,32 @@ test.describe('Browse all on a 390 px phone', () => {
     await expect(page).toHaveURL(new RegExp(`${href!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`))
   })
 
-  test('the Filters sheet narrows by saved modules and Save keeps a module across a reload', async ({
+  test('Save keeps a module across a reload, and the Filters sheet narrows to saved modules', async ({
     page,
   }) => {
     await openBrowse(page)
-    const first = moduleLinks(page).first()
-    const title = (await first.innerText()).split('\n').find((l) => l.trim() && !/:\s*$/.test(l))!
-    expect(title).toBeTruthy()
-    const save = list(page).getByRole('button', { pressed: false }).first()
-    await save.click()
+    const firstRow = moduleLinks(page).first().locator('xpath=ancestor::li')
+    const savedHref = await moduleLinks(page).first().getAttribute('href')
+    await firstRow.getByRole('button', { pressed: false }).click()
     await expect(list(page).getByRole('button', { pressed: true })).toHaveCount(1)
+
+    // A real reload: the saved module is still saved, and it is the same module.
+    await page.reload()
+    await expect(list(page)).toBeVisible()
+    const pressed = list(page).getByRole('button', { pressed: true })
+    await expect(pressed).toHaveCount(1)
+    await expect(pressed.locator('xpath=ancestor::li').getByRole('link')).toHaveAttribute(
+      'href',
+      savedHref!
+    )
+
     await page.getByRole('button', { name: /^Filters/ }).click()
     const sheet = page.getByRole('dialog', { name: 'Filters' })
+    await expect(sheet.getByLabel('Saved modules only (1)')).toBeVisible()
     await sheet.getByLabel(/^Saved modules only/).check()
     await sheet.getByRole('button', { name: /^Show 1 module$/ }).click()
     await expect(moduleLinks(page)).toHaveCount(1)
+    await expect(moduleLinks(page).first()).toHaveAttribute('href', savedHref!)
     await expect(page.getByRole('button', { name: 'Filters (1 active)' })).toBeVisible()
     await expectNoSidewaysScroll(page, 390)
   })

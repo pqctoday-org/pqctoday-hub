@@ -7,6 +7,7 @@ import Papa from 'papaparse'
 import { FAQ_DATA, PERSONA_FAQ_LEAD, personaLeadItems } from './faqData'
 import type { PersonaId } from '@/data/learningPersonas'
 import { MANIFESTS } from '../PKILearning/manifest/registry'
+import { MODULE_TRACKS } from '../PKILearning/moduleData'
 import { findLibraryItemByRef } from '@/data/libraryData'
 
 // Legacy/short `/learn/<slug>` aliases that resolve outside the manifest-derived
@@ -356,5 +357,14 @@ describe('library and protocol-stack answers', () => {
     expect(answer).toMatch(/unmaintained/i)
     expect(answer).toMatch(/validat/i)
     expect(answer).not.toMatch(/pqcrypto for Rust/)
+  })
+
+  it('the learning-modules answer names exactly the catalogue tracks (it once listed an Executive track and left out Governance & Risk)', () => {
+    const answer = answerOf('How many learning modules does PQC Today offer?')
+    for (const { track } of MODULE_TRACKS) expect(answer).toContain(track)
+    expect(answer).not.toContain('Executive')
+    // The answer spells the count out; a tenth track means the answer needs rewording.
+    expect(MODULE_TRACKS).toHaveLength(9)
+    expect(answer).toContain('nine tracks')
   })
 })
