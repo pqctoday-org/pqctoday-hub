@@ -94,8 +94,9 @@ export interface SignatureOverhead {
   algorithm: string
   signatureBytes: number
   publicKeyBytes: number
-  /** Number of signatures per firmware package (manifest + each block) */
+  /** Fictional signature count per ECU package; not a mandated OTA format. */
   signaturesPerPackage: number
+  /** Retained field name; value is KiB: signatures plus one raw key component. */
   totalOverheadKB: number
 }
 
@@ -105,44 +106,43 @@ export const SIGNATURE_OVERHEADS: SignatureOverhead[] = [
     signatureBytes: 64,
     publicKeyBytes: 33,
     signaturesPerPackage: 32,
-    totalOverheadKB: 3.1,
   },
   {
     algorithm: 'RSA-2048',
     signatureBytes: 256,
     publicKeyBytes: 256,
     signaturesPerPackage: 32,
-    totalOverheadKB: 16.4,
   },
   {
     algorithm: 'ML-DSA-44',
     signatureBytes: 2420,
     publicKeyBytes: 1312,
     signaturesPerPackage: 32,
-    totalOverheadKB: 78.9,
   },
   {
     algorithm: 'ML-DSA-65',
     signatureBytes: 3309,
     publicKeyBytes: 1952,
     signaturesPerPackage: 32,
-    totalOverheadKB: 107.8,
   },
   {
     algorithm: 'LMS (H10/W4)',
     signatureBytes: 2512, // RFC 8554 H10/W4 with the HSS header (was 2156, unsourced)
     publicKeyBytes: 56,
     signaturesPerPackage: 32,
-    totalOverheadKB: 80.4,
   },
   {
     algorithm: 'FN-DSA-512',
     signatureBytes: 666,
     publicKeyBytes: 897,
     signaturesPerPackage: 32,
-    totalOverheadKB: 22.2,
   },
-]
+].map((entry) => ({
+  ...entry,
+  // Common educational packaging policy; excludes certificates and framing.
+  totalOverheadKB:
+    (entry.signaturesPerPackage * entry.signatureBytes + entry.publicKeyBytes) / 1024,
+}))
 
 // ---------------------------------------------------------------------------
 // Campaign Computation Helpers

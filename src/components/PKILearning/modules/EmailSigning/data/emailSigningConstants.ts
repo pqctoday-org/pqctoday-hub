@@ -148,7 +148,7 @@ export const ALGORITHM_OIDS: AlgorithmOID[] = [
   },
 ]
 
-// ── S/MIME Certificate Extension Requirements ──────────────────────────────
+// ── S/MIME Certificate Extension Examples ──────────────────────────────
 export interface CertExtension {
   name: string
   oid: string
@@ -207,7 +207,8 @@ export const SMIME_CERT_EXTENSIONS: CertExtension[] = [
     critical: false,
     signingValue: 'Advertised signing algorithms',
     encryptionValue: 'Advertised encryption algorithms',
-    description: 'Announces supported S/MIME algorithms to peers',
+    description:
+      'Optional certificate extension for advertising S/MIME capabilities (RFC 4262); it must be noncritical.',
   },
 ]
 
@@ -439,14 +440,14 @@ export const CMS_AUTH_ENVELOPED_DATA_STRUCTURE: ASN1Node = {
             },
             {
               label: 'encryptedContent',
-              value: '[AEAD-encrypted email bytes + auth tag]',
+              value: '[Encrypted email bytes (ciphertext); authentication tag is in mac]',
               highlight: 'common',
             },
           ],
         },
         {
           label: 'mac',
-          value: '[implicit in GCM auth tag]',
+          value: '[Explicit AES-GCM authentication tag, separate from encryptedContent]',
           highlight: 'common',
         },
       ],

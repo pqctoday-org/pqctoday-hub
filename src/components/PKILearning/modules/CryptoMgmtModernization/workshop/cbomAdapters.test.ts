@@ -10,6 +10,7 @@ import { CRYPTO_LIBRARIES } from '../data/cryptoLibraries'
 import { HSM_VENDORS } from '../data/hsmVendors'
 import { FILE_ARTIFACTS } from '../data/fileArtifacts'
 import { buildCbomDocument } from '@/services/cbom/cycloneDx'
+import bomSchema from '@/services/cbom/schema/bom-1.7.schema.json'
 
 interface DocComponent {
   type: string
@@ -73,7 +74,7 @@ describe('libraryToCbomInput → buildCbomDocument', () => {
   })
 })
 
-describe('full-catalog CBOM validity (CycloneDX 1.6 enums + uniqueness)', () => {
+describe('full-catalog CBOM validity (CycloneDX 1.7 enums + uniqueness)', () => {
   const VALID_COMPONENT_TYPES = new Set([
     'library',
     'application',
@@ -82,19 +83,12 @@ describe('full-catalog CBOM validity (CycloneDX 1.6 enums + uniqueness)', () => 
     'platform',
     'cryptographic-asset',
   ])
-  // 07092026: classical algorithms (RSA/ECDSA/ECDH/EdDSA) now also emit as
-  // crypto-assets, adding 'pke'/'key-agree' primitives and their functions.
-  const VALID_PRIMITIVES = new Set(['kem', 'signature', 'pke', 'key-agree'])
-  const VALID_FUNCTIONS = new Set([
-    'encapsulate',
-    'decapsulate',
-    'sign',
-    'verify',
-    'encrypt',
-    'decrypt',
-    'keygen',
-    'keyderive',
-  ])
+  // Use the emitted schema version, including its explicit unknown values.
+  // A missing source declaration must not force the exporter to invent a primitive.
+  const algorithmSchema =
+    bomSchema.definitions.cryptoProperties.properties.algorithmProperties.properties
+  const VALID_PRIMITIVES = new Set<string>(algorithmSchema.primitive.enum)
+  const VALID_FUNCTIONS = new Set<string>(algorithmSchema.cryptoFunctions.items.enum)
 
   it('every real catalog row emits enum-valid components with unique bom-refs', () => {
     const inputs = [
@@ -103,6 +97,7 @@ describe('full-catalog CBOM validity (CycloneDX 1.6 enums + uniqueness)', () => 
       ...FILE_ARTIFACTS.map(fileArtifactToCbomInput),
     ]
     const doc = JSON.parse(buildCbomDocument(inputs).json)
+    expect(doc.specVersion).toBe('1.7')
     const components = doc.components as DocComponent[]
     expect(components.length).toBeGreaterThan(inputs.length) // parents + crypto-assets
 
