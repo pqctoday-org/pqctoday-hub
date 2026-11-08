@@ -242,7 +242,7 @@ export const PKILearningView: React.FC = () => {
             </Suspense>
           )}
           {showSidebar && (
-            <p className="text-[11px] text-muted-foreground text-center mt-4 opacity-70">
+            <p className="text-[11px] text-muted-foreground text-center mt-4">
               Learning module content can be inaccurate. Please double-check its information. Report
               inaccuracies in{' '}
               <a
