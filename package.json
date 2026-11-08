@@ -98,6 +98,7 @@
     "generate:role-board-content": "tsx scripts/generate-role-board-content.ts",
     "generate:data-filenames": "tsx scripts/generate-data-filenames.ts",
     "generate:data-filenames:check": "tsx scripts/generate-data-filenames.ts --check",
+    "check:csv-columns": "tsx scripts/ci/csv-columns.ts",
     "audit:role-board-drift": "tsx scripts/generate-role-board-content.ts --check",
     "generate:sitemap:check": "tsx scripts/generate-sitemap.ts --check",
     "gen:tool-route-meta": "TSX_TSCONFIG_PATH=tsconfig.app.json tsx scripts/ci/gen-tool-route-meta.ts",
