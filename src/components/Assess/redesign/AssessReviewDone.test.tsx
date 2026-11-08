@@ -72,8 +72,8 @@ describe('summarizeAnswer', () => {
       ...blank(),
       dataRetention: ['2y-pci', '6y-ferpa'],
     }).text
-    expect(text).toContain('2 years (PCI DSS cardholder data)')
-    expect(text).toContain('6 years (FERPA / financial aid)')
+    expect(text).toContain('2 years (sample retention period)')
+    expect(text).toContain('6 years (institutional policy example)')
     expect(text).not.toMatch(/2y Pci|6y Ferpa/)
     expect(summarizeAnswer('retention', { ...blank(), dataRetention: ['1-5y'] }).text).toBe(
       '1-5 years'
