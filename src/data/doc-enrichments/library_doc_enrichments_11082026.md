@@ -93540,8 +93540,8 @@ enrichment_method: automated extraction, human-reviewed
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Yes
 - **Hybrid PQC KEM Evidence**: "We generally use hybrid PQ key exchange, which combines ML-KEM with a traditional key exchange method."
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "details on using ML-DSA with IAM RA for quantum-resistant trust policies and certificates"
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: The page covers TLS key exchange; it only points to a separate announcement for ML-DSA with IAM Roles Anywhere ("details on using ML-DSA with IAM RA for quantum-resistant trust policies and certificates")
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: TLS-1.3
@@ -93580,7 +93580,7 @@ enrichment_method: automated extraction, human-reviewed
 - **Authors**: Google Cloud Documentation
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
-- **Document Status**: Current
+- **Document Status**: Preview (pre-GA)
 - **Main Topic**: How to import a cryptographic key into Cloud KMS as a new key version using quantum-safe import methods (HPKE with ML-KEM or X-Wing) to protect keys in transit against "store now, decrypt later" attacks.
 - **PQC Algorithms Covered**: ML-KEM; X-Wing
 - **Quantum Threats Addressed**: Store now, decrypt later (SNDL) attacks by future quantum computers
@@ -93593,7 +93593,7 @@ enrichment_method: automated extraction, human-reviewed
 - **Standardization Bodies**: None detected
 - **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: X25519; AES-256-GCM; HKDF-SHA256
-- **Key Takeaways**: Quantum-safe key import protects key material in transit against store-now-decrypt-later attacks; Supported only for SOFTWARE protection level keys; Choose an import method among X-Wing, ML-KEM-768 or ML-KEM-1024 HPKE variants; Wrap key material locally with HPKE.Seal() using the import job's public key; Import jobs expire after three days and must be ACTIVE before use
+- **Key Takeaways**: Quantum-safe key import protects key material in transit against store-now-decrypt-later attacks; Supported only for SOFTWARE protection level keys; Choose an import method among X-Wing, ML-KEM-768 or ML-KEM-1024 HPKE variants; Wrap key material locally with HPKE.Seal() using the import job's public key; Import jobs expire after three days and must be ACTIVE before use; The feature is in Preview: during preview, only pre-wrapped keys can be imported
 - **Security Levels & Parameters**: ML-KEM-768; ML-KEM-1024; X-Wing (ML-KEM-768 + X25519); AES-256-GCM; HKDF-SHA256
 - **Hybrid & Transition Approaches**: X-Wing hybrid KEM (ML-KEM-768 and X25519) within HPKE
 - **Pure PQC KEM Support**: Yes
@@ -93606,7 +93606,7 @@ enrichment_method: automated extraction, human-reviewed
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Preview (pre-GA); during preview, only pre-wrapped keys can be imported
 - **Performance & Size Considerations**: Import job expires after three days; target key material example is a 32-byte key
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Cryptographic library supporting HPKE and ML-KEM/X-Wing (Tink, OpenSSL); Google Cloud CLI; Cloud KMS Importer or Admin IAM role; SOFTWARE protection level key; billing-enabled Google Cloud project with Cloud KMS API enabled

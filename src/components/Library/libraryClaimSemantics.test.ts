@@ -81,7 +81,7 @@ describe('library catalog claim semantics', () => {
     ).toBe(false)
   })
 
-  it('counts a row as reviewed when its notes carry the review stamp, the older correction stamp, or neither', () => {
+  it('counts the review stamp and the older correction stamp as review, and neither as no review', () => {
     const base = { confidenceScore: 80, lastVerified: '2026-11-08' }
     expect(
       hasSufficientClaimReview(
