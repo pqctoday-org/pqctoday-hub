@@ -696,7 +696,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               HPKE is a public-key encryption scheme built from three swappable components — a{' '}
               <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip>, a KDF, and an
               AEAD — combined through a standard KeySchedule so any KEM/KDF/AEAD triple, plus one of
-              four modes (Base, PSK, Auth, AuthPSK), yields an interoperable construction.
+              four RFC 9180 modes (Base, PSK, Auth, AuthPSK), yields an interoperable construction.
               &quot;Hybrid&quot; in HPKE&apos;s own name refers to this KEM+KDF+AEAD composition,
               not to a PQC+classical pairing — that is a separate, additional meaning layered on top
               by draft-ietf-hpke-pq (below), and easy to conflate with the certificate-level hybrid
@@ -721,11 +721,18 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <Link to="/learn/mls-group-messaging" className="text-primary underline">
                   MLS Group Messaging
                 </Link>{' '}
-                module).
+                module). Its post-quantum cipher suites (draft-ietf-mls-pq-ciphersuites-07) have
+                been sent to the IESG with a request for publication.
               </li>
               <li>
-                <strong>TLS 1.3 Encrypted Client Hello (ECH)</strong> uses it to encrypt the
-                ClientHello.
+                <strong>
+                  TLS 1.3 Encrypted Client Hello (ECH,{' '}
+                  <Link to="/library?ref=RFC-9849" className="text-primary underline">
+                    RFC 9849
+                  </Link>
+                  )
+                </strong>{' '}
+                uses it to encrypt the ClientHello.
               </li>
               <li>
                 <strong>
@@ -742,7 +749,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                     COSE
                   </Link>
                 </strong>{' '}
-                extend it to wrap a JWT or CWT payload the same way.
+                extend it to wrap a JWT or CWT payload the same way. Status in November 2026:
+                draft-ietf-jose-hpke-encrypt-22 is in the RFC Editor queue, the JOSE post-quantum
+                suites (draft-ietf-jose-hpke-pq-pqt-02) are a working-group draft, and
+                draft-ietf-cose-hpke-27 is with the IESG waiting for an Area Director go-ahead.
               </li>
             </ul>
           </div>
@@ -754,8 +764,23 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <Link to="/library?ref=draft-ietf-hpke-pq" className="text-primary underline">
                 draft-ietf-hpke-pq
               </Link>{' '}
-              — still an Internet-Draft, not yet an RFC — which registers pure ML-KEM and PQ/T
-              hybrid KEM IDs that plug into the same KeySchedule and Seal/Open.
+              — still an Internet-Draft, not yet an RFC (working-group draft, revision -05 of 6 July
+              2026) — which registers pure ML-KEM and PQ/T hybrid KEM IDs that plug into the same
+              KeySchedule and Seal/Open.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">RFC 9180 is being revised.</strong> The successor
+              of RFC 9180,{' '}
+              <Link to="/library?ref=draft-ietf-hpke-hpke-06" className="text-primary underline">
+                draft-ietf-hpke-hpke-06
+              </Link>
+              , removes the Auth and AuthPSK modes. The IETF Datatracker lists it in the RFC Editor
+              queue (state on 8 November 2026). The draft is dated 29 October 2026. It adds a
+              framework for single-stage KDFs, which is where the SHAKE and TurboSHAKE KDFs from
+              draft-ietf-hpke-pq plug in. It also requires that applications not derive an AEAD key
+              and nonce from an exported secret without fresh per-derivation input, and it requires
+              implementations to support <code>info</code> values of at least 64 bytes and
+              recommends support for at least 16,384 bytes.
             </p>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
@@ -804,6 +829,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <strong>Auth and AuthPSK stay classical-only</strong>: draft-ietf-hpke-pq&apos;s
               ML-KEM and PQ/T hybrid KEM entries mark the Auth column &quot;no&quot;, since ML-KEM
               has no AuthEncap/AuthDecap interface.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">Auth and AuthPSK are RFC 9180 only.</strong> The
+              successor draft does not specify them. It reserves their mode values (0x02 and 0x03)
+              and does not deprecate them, so existing RFC 9180 deployments can keep using them as
+              that RFC describes. The workshop below still offers all four modes so you can compare
+              them, and labels the two RFC 9180-only modes.
             </p>
             <p className="text-[10px] text-muted-foreground italic">
               The MLKEM768-X25519/P256 and MLKEM1024-P384 hybrid KEMs are not defined by
