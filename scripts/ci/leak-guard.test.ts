@@ -49,6 +49,47 @@ describe('leak-guard', () => {
     expect(f.map((x) => x.rule)).toEqual(['gitignore-reinclude'])
   })
 
+  it('flags an internal item key anywhere, naming the rule and not the key', () => {
+    // Assembled from fragments so this file holds no literal key.
+    const key = ['q', 'library', 'edit-some-document-short-description'].join(':')
+    const found = scanDiff(diff('src/data/x.csv', [`Applied via approved proposal ${key} on 2026`]))
+    expect(found).toEqual([{ rule: 'internal-key', where: 'src/data/x.csv:1' }])
+    expect(format(found, 'enforce')).not.toContain('some-document')
+    // Also in commit text and PR text, which have no file path.
+    expect(scanText(`see ${key}`, 'PR body').map((f) => f.rule)).toEqual(['internal-key'])
+    // The key shape needs a section and a slug, and a separate word before the q.
+    for (const text of [
+      'q:only-one-part',
+      'faq:library:edit-x',
+      'seq-q:library:x',
+      'Q: Which algorithm? A: ML-KEM',
+      'https://example.org/search?q=ml-kem:fips',
+      'ratio q:p',
+    ]) {
+      expect(scanDiff(diff('src/data/x.csv', [text]))).toEqual([])
+    }
+  })
+
+  it('flags "owner decision" in data files only', () => {
+    const note = 'All-sector flag: marked all-sector by owner decision; no scope clause settles it.'
+    for (const file of ['src/data/a_01012026.csv', 'public/data/b.json', 'public/c.jsonl']) {
+      expect(scanDiff(diff(file, [note])).map((f) => f.rule)).toEqual(['decision-citation'])
+    }
+    expect(scanDiff(diff('src/data/a.csv', ['By Owner-Decision of the board']))).toHaveLength(1)
+    // Code comments and repository docs may use the phrase.
+    for (const file of ['src/lib/x.ts', 'GATES.md', '.github/workflows/ci.yml', 'dist/x.html']) {
+      expect(scanDiff(diff(file, [note]))).toEqual([])
+    }
+    // Commit and PR text have no file path, so the data-only rule does not apply.
+    expect(scanText(note, 'commit message')).toEqual([])
+    // The same text in a data file is found when the file is named.
+    expect(scanText(note, 'f:1', 'src/data/a.csv').map((f) => f.rule)).toEqual([
+      'decision-citation',
+    ])
+    // A longer word is not the phrase.
+    expect(scanDiff(diff('src/data/a.csv', ['the ownership decision tree']))).toEqual([])
+  })
+
   it('does not flag ordinary teaching content', () => {
     const lines = [
       'Large language models such as Claude or GPT can leak secrets.',

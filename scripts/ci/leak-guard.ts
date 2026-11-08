@@ -10,8 +10,9 @@
  *
  * WHAT IT MATCHES. Only generic leak patterns: references to the private
  * companion repository, local home-directory paths, temporary session paths,
- * the evidence-cache folder, internal run identifiers and internal folder
- * paths. A broader private check runs outside this repository.
+ * the evidence-cache folder, internal run identifiers, internal folder
+ * paths, internal item keys, and (in data files only) the phrase
+ * "owner decision". A broader private check runs outside this repository.
  *
  * OUTPUT IS REDACTED. A finding names the rule and the location, never the
  * matched text, so a CI log cannot itself publish what it caught.
@@ -52,7 +53,16 @@ import { join } from 'node:path'
 export interface LeakRule {
   id: string
   pattern: RegExp
+  /**
+   * When set, the rule only applies to files whose path matches. A rule with
+   * no `files` applies everywhere, including commit messages and PR text
+   * (which have no file path).
+   */
+  files?: RegExp
 }
+
+/** Data files: CSV and JSON, where a note or value is published as data. */
+const DATA_FILE = /\.(csv|jsonl?)$/i
 
 export const RULES: LeakRule[] = [
   { id: 'private-repo', pattern: /pqctoday-(priv|admin)\b/i },
@@ -63,7 +73,19 @@ export const RULES: LeakRule[] = [
   { id: 'internal-log', pattern: /\bcodex-log\b/i },
   { id: 'internal-folder', pattern: /(?<![\w-])maintenance\/(lineage|runs|goldens|runbooks)\b/i },
   { id: 'agent-config-path', pattern: /\.claude\/(skills|agents|projects)\b/i },
+  // An internal item key, written `q:<section>:<slug>`. These handles mean
+  // nothing to a reader of the data, so they should not be published.
+  { id: 'internal-key', pattern: /(?<![\w-])q:[a-z][a-z0-9-]*:[a-z0-9][a-z0-9-]*/ },
+  // The phrase "owner decision" in a data note cites an internal approval. Code
+  // comments and repository docs may use the phrase, so the rule covers data
+  // files only. The rule id avoids the phrase so a baseline file never matches.
+  { id: 'decision-citation', pattern: /\bowner[ -]decisions?\b/i, files: DATA_FILE },
 ]
+
+/** The rules that apply to `file`; with no file, only the rules that apply everywhere. */
+function rulesFor(file?: string): LeakRule[] {
+  return RULES.filter((r) => !r.files || (file !== undefined && r.files.test(file)))
+}
 
 /** Files that necessarily contain the patterns themselves. */
 const SELF = new Set(['scripts/ci/leak-guard.ts', 'scripts/ci/leak-guard.test.ts'])
@@ -80,11 +102,12 @@ export interface Finding {
   where: string
 }
 
-export function scanText(text: string, where: string): Finding[] {
+export function scanText(text: string, where: string, file?: string): Finding[] {
   const out: Finding[] = []
   const lines = text.split(/\r?\n/)
+  const rules = rulesFor(file)
   lines.forEach((line, i) => {
-    for (const r of RULES) {
+    for (const r of rules) {
       if (r.pattern.test(line)) out.push({ rule: r.id, where: `${where}:${i + 1}` })
     }
   })
@@ -120,7 +143,7 @@ export function scanDiff(diff: string): Finding[] {
   const out: Finding[] = []
   for (const a of addedLines(diff)) {
     if (isSelf(a.file) || a.file === '/dev/null') continue
-    for (const r of RULES) {
+    for (const r of rulesFor(a.file)) {
       if (r.pattern.test(a.text)) out.push({ rule: r.id, where: `${a.file}:${a.line}` })
     }
     if (a.file === '.gitignore' && a.text.trim().startsWith('!')) {
@@ -274,10 +297,11 @@ export function baselineKey(file: string): string {
     .replace(/_\d{8}(?:_r\d+)?(?=(?:-#)?\.[A-Za-z0-9]+$)/, '_#')
 }
 
-export function countText(text: string): Record<string, number> {
+export function countText(text: string, file?: string): Record<string, number> {
   const out: Record<string, number> = {}
+  const rules = rulesFor(file)
   for (const line of text.split(/\r?\n/)) {
-    for (const r of RULES) {
+    for (const r of rules) {
       if (r.pattern.test(line)) out[r.id] = (out[r.id] ?? 0) + 1
     }
   }
@@ -331,7 +355,7 @@ export function scanTree(
     }
     const buf = readFileSync(full)
     if (buf.subarray(0, 8192).includes(0)) continue // binary
-    const found = countText(buf.toString('utf8'))
+    const found = countText(buf.toString('utf8'), file)
     const key = baselineKey(file)
     for (const [rule, n] of Object.entries(found)) {
       const family = (counts[key] ??= {})
