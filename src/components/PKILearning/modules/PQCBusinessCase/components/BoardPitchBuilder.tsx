@@ -83,7 +83,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
   )
 
   const sections = useMemo(() => {
-    return variant.sections.map((s) => ({
+    const variantSections = variant.sections.map((s) => ({
       ...s,
       fields: s.fields.map((f) => {
         if (
@@ -139,6 +139,24 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         return f
       }),
     }))
+    return [
+      ...variantSections,
+      {
+        id: 'sources-assumptions',
+        title: 'Sources and assumptions used',
+        description:
+          'Identify the source of each figure used in this proposal. For a sample, label invented inputs explicitly. For model outputs, record the model, input assumptions, source dates and limitations; consult the originating tool for its references. List only sources actually used.',
+        fields: [
+          {
+            id: 'basis',
+            label: 'Sources and assumptions used',
+            type: 'textarea' as const,
+            placeholder:
+              'e.g. Fictional work-plan effort × sample daily rate + tooling allowance + reserve. State scope, uncertainty and what would refine the estimate.',
+          },
+        ],
+      },
+    ]
   }, [
     variant.sections,
     effectiveRoiOutput,
@@ -196,14 +214,27 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     '',
   ].join('\n')
 
+  // Source attribution belongs to this edited proposal, rather than an
+  // unconditional list of datasets used by other tools. Older saved drafts
+  // without this field remain editable and explicitly show the missing basis.
   const renderPreviewBound = useCallback(
-    (formData: FormData) => variant.renderPreview(formData, data) + BASIS_OF_FIGURES,
+    (formData: FormData) => {
+      const basis = formData['sources-assumptions']?.basis
+      const text = typeof basis === 'string' ? basis.trim() : ''
+      return (
+        variant.renderPreview(formData, data) +
+        '\n\n---\n\n## Sources and assumptions used\n\n' +
+        (text || '_Sources and assumptions not recorded. Review the basis of each figure._') +
+        '\n' +
+        BASIS_OF_FIGURES
+      )
+    },
     [variant, data, BASIS_OF_FIGURES]
   )
 
   const handleExport = useCallback(
     (formData: FormData) => {
-      const markdown = variant.renderPreview(formData, data) + BASIS_OF_FIGURES
+      const markdown = renderPreviewBound(formData)
       addExecutiveDocument({
         id: `board-pitch-${selectedPersona ?? 'default'}-${Date.now()}`,
         moduleId: MODULE_ID,
@@ -215,7 +246,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         createdAt: Date.now(),
       })
     },
-    [variant, data, selectedPersona, addExecutiveDocument, BASIS_OF_FIGURES]
+    [variant, renderPreviewBound, selectedPersona, addExecutiveDocument]
   )
 
   return (
@@ -253,8 +284,9 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         <div>
           <p className="text-sm font-medium text-foreground">{variant.title}</p>
           <p className="text-xs text-muted-foreground">
-            Every section is pre-populated from your assessment data. Edit any field inline, switch
-            to Preview to see the formatted document, then export as Markdown or PPTX.
+            Draft fields can be pre-populated from assessment and saved scenarios. Record the
+            sources and assumptions actually used, edit any field inline, switch to Preview to see
+            the formatted document, then export as Markdown or PPTX.
           </p>
           {data.isAssessmentComplete && (
             <p className="text-xs text-muted-foreground mt-2">
