@@ -29590,6 +29590,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl"
+    },
+    {
+      "product_id": "avalanche",
+      "refId": "avalanche",
+      "file": "avalanche-1de88ce6-9e4220b2.html",
+      "sizeBytes": 238211,
+      "content_type": "text/html",
+      "url": "https://github.com/avalanche-foundation/ACPs/pull/278",
+      "sha256": "9e4220b25f9fe390af5b08789b412e1feb84f75459a2f07a62422b9548840951",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-08T22:24:24.926548+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
