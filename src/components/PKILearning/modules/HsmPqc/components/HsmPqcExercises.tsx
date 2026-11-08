@@ -78,13 +78,14 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
     },
     {
       id: 'firmware-migration',
-      title: '5. Firmware Migration Planning — Plan upgrade for 10 HSMs with zero downtime',
+      title:
+        '5. Firmware Migration Planning — Estimate upgrade duration and review service continuity',
       description:
-        'Open the Migration Planner workshop. Select Thales Luna 7 as your vendor. Walk through all 4 phases: Assessment, Firmware Planning, Key Migration, and Validation. For a fleet of 10 HSMs, calculate total migration time using the dual-partition strategy where classical and PQC partitions run in parallel.',
+        'Open the Migration Planner workshop. In Assessment, select the fictional independent signing + key establishment case that explicitly requests validation records, then select Thales Luna 7 as your vendor. Walk through all 4 phases: Assessment, Firmware Planning, Key Migration, and Validation. For a fleet of 10 HSMs, inspect the illustrative one-at-a-time upgrade estimate and review the separate service-continuity assumptions.',
       badge: 'Migration',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'With Thales Luna 7 (low complexity, 30-60 min/HSM), a rolling upgrade of 10 HSMs takes approximately 5-10 hours. The dual-partition strategy allows classical operations to continue during migration. Note that adding PQC algorithms in new firmware needs CAVP algorithm validations and a module revalidation — the existing certificate does not cover the new firmware, so budget for the CMVP timeline. Under the CMVP Management Manual (version 2.7, 9 April 2026) the route is an Update (UPDT) only if each category of security change (approved algorithms, SSPs, approved services, self-tests, FSM states) stays under 30%; otherwise the module goes through a Full Submission (FS). The Learn tab panel "What the lab tests" quotes the sources.',
+        'With Thales Luna 7 selected, this sample assumes 30-60 min/HSM and one-at-a-time upgrades: 10 HSMs therefore give an illustrative 5-10 hour maintenance range, not a verified vendor timing or service-disruption result. Logical partitions alone do not establish uninterrupted service. Evaluate supported partition/failover capacity, compatibility and rollback with your own tools before relying on continuity. For this case’s explicit validation-records request, inspect the target firmware, exact module configuration, selected-algorithm records and the catalogue FIPS certificate note. Whether CMVP work is needed depends on the actual change and certificate scope; it is not an automatic requirement for every functional planning case. Under the CMVP Management Manual (version 2.7, 9 April 2026) the route is an Update (UPDT) only if each category of security change (approved algorithms, SSPs, approved services, self-tests, FSM states) stays under 30%; otherwise the module goes through a Full Submission (FS). The Learn tab panel "What the lab tests" quotes the sources.',
       config: { step: 2 },
     },
     {

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Lock, ShieldCheck, AlertTriangle } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   MODEL_SIZE_PROFILES,
@@ -54,14 +54,56 @@ export const ModelWeightVault: React.FC = () => {
   const classicalWrap = KEY_WRAPPING_OVERHEADS[0] // RSA-2048
   const classicalSign = MODEL_SIGNING_OVERHEADS[1] // ECDSA P-256
 
+  const modelGB = sizeProfile.typicalFileSizeGB
+  const limitGB = deployProfile.maxModelSizeGB
+  const capacityState =
+    !Number.isFinite(modelGB) || modelGB < 0
+      ? 'invalid-model'
+      : typeof limitGB !== 'number'
+        ? 'missing-limit'
+        : !Number.isFinite(limitGB) || limitGB < 0
+          ? 'invalid-limit'
+          : modelGB > limitGB
+            ? 'exceeds'
+            : 'within'
+  const capacityTitle =
+    capacityState === 'within'
+      ? 'Within stated sample file-size limit'
+      : capacityState === 'exceeds'
+        ? 'Exceeds stated sample file-size limit'
+        : capacityState === 'missing-limit'
+          ? 'Limit not supplied — capacity not assessed'
+          : capacityState === 'invalid-model'
+            ? 'Invalid model file size — capacity not assessed'
+            : 'Invalid profile limit — capacity not assessed'
+  const capacityBasis =
+    capacityState === 'within' || capacityState === 'exceeds'
+      ? `${modelGB} GB model file ${capacityState === 'exceeds' ? '>' : '≤'} ${limitGB} GB stated profile limit.`
+      : capacityState === 'missing-limit'
+        ? `${modelGB} GB model file; the selected profile supplies no numeric capacity limit.`
+        : 'A finite, non-negative model file size and profile limit are needed for this comparison.'
+  const wrappingSelection = wrapProfile.quantumSafe
+    ? `PQC primitive selected — category ${wrapProfile.nistLevel}`
+    : 'Classical primitive selected — no PQC category'
+  const signingSelection = signProfile.quantumSafe
+    ? `PQC primitive selected — category ${signProfile.nistLevel}`
+    : 'Classical primitive selected — no PQC category'
+  const attestationAssumption = deployProfile.attestationAvailable
+    ? 'Capability assumed available in this sample profile — not verified'
+    : 'Capability not included in this sample profile — not verified'
+  const inUseAssumption = deployProfile.encryptionInUse
+    ? 'Assumed by this sample profile — not executed or verified'
+    : 'Not assumed by this sample profile'
+
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-1">Model Weight Vault</h3>
         <p className="text-sm text-muted-foreground">
           Compare sample model-weight protection profiles and their illustrative overhead. The
-          manifest records your selections; it does not execute encryption, signing or deployment
-          checks.
+          file-size screen compares selected values with a fictional profile limit. The manifest
+          records choices and assumptions. No encryption, signing, attestation or deployment
+          operation is executed.
         </p>
       </div>
 
@@ -141,14 +183,14 @@ export const ModelWeightVault: React.FC = () => {
 
       {/* Comparison Table */}
       <div>
-        <h4 className="text-sm font-bold text-foreground mb-3">Overhead Comparison</h4>
+        <h4 className="text-sm font-bold text-foreground mb-3">Illustrative Overhead Comparison</h4>
         <div className="glass-panel overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left p-3 text-muted-foreground font-medium">Metric</th>
                 <th className="text-center p-3 text-status-error font-medium">Classical</th>
-                <th className="text-center p-3 text-status-success font-medium">Selected PQC</th>
+                <th className="text-center p-3 text-foreground font-medium">Selected example</th>
                 <th className="text-center p-3 text-muted-foreground font-medium">Change</th>
               </tr>
             </thead>
@@ -200,22 +242,16 @@ export const ModelWeightVault: React.FC = () => {
                 </td>
               </tr>
               <tr className="border-b border-border/50">
-                <td className="p-3 text-foreground">Quantum Safe</td>
-                <td className="text-center p-3">
-                  <AlertTriangle size={16} className="text-status-error inline" />
-                </td>
-                <td className="text-center p-3">
-                  {wrapProfile.quantumSafe && signProfile.quantumSafe ? (
-                    <ShieldCheck size={16} className="text-status-success inline" />
-                  ) : (
-                    <AlertTriangle size={16} className="text-status-error inline" />
-                  )}
-                </td>
-                <td className="text-center p-3 text-xs">
-                  {wrapProfile.quantumSafe && signProfile.quantumSafe
-                    ? 'Level ' + Math.min(wrapProfile.nistLevel, signProfile.nistLevel)
-                    : 'Not safe'}
-                </td>
+                <td className="p-3 text-foreground">Wrapping selection</td>
+                <td className="text-center p-3 text-xs">Classical baseline</td>
+                <td className="text-center p-3 text-xs">{wrappingSelection}</td>
+                <td className="text-center p-3 text-xs">Selected scheme only; not executed</td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="p-3 text-foreground">Signing selection</td>
+                <td className="text-center p-3 text-xs">Classical baseline</td>
+                <td className="text-center p-3 text-xs">{signingSelection}</td>
+                <td className="text-center p-3 text-xs">Selected scheme only; not executed</td>
               </tr>
             </tbody>
           </table>
@@ -225,6 +261,9 @@ export const ModelWeightVault: React.FC = () => {
       {/* Deployment details */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-2">{deployProfile.name}</h4>
+        <p className="text-xs text-muted-foreground mb-1">
+          Selected fictional profile assumptions:
+        </p>
         <p className="text-sm text-foreground/80">{deployProfile.description}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-xs">
           <div>
@@ -232,71 +271,86 @@ export const ModelWeightVault: React.FC = () => {
             <span className="text-foreground">{deployProfile.keyStorageLocation}</span>
           </div>
           <div>
-            <span className="text-muted-foreground">Attestation: </span>
-            <span
-              className={
-                deployProfile.attestationAvailable ? 'text-status-success' : 'text-muted-foreground'
-              }
-            >
-              {deployProfile.attestationAvailable ? 'Available' : 'Not available'}
-            </span>
+            <span className="text-muted-foreground">Attestation capability assumption: </span>
+            <span className="text-foreground">{attestationAssumption}</span>
           </div>
           <div>
-            <span className="text-muted-foreground">Max Model: </span>
+            <span className="text-muted-foreground">Stated model-file limit: </span>
             <span className="text-foreground">
-              {deployProfile.maxModelSizeGB ? `${deployProfile.maxModelSizeGB} GB` : 'Unlimited'}
+              {typeof limitGB === 'number' && Number.isFinite(limitGB) && limitGB >= 0
+                ? `${limitGB} GB (sample assumption)`
+                : limitGB === null
+                  ? 'Not supplied'
+                  : 'Invalid value'}
             </span>
           </div>
           <div>
-            <span className="text-muted-foreground">Encryption in Use: </span>
-            <span
-              className={
-                deployProfile.encryptionInUse ? 'text-status-success' : 'text-muted-foreground'
-              }
-            >
-              {deployProfile.encryptionInUse ? 'Yes' : 'No'}
-            </span>
+            <span className="text-muted-foreground">In-use encryption assumption: </span>
+            <span className="text-foreground">{inUseAssumption}</span>
           </div>
         </div>
+        <div
+          role="status"
+          aria-label="Sample file-size capacity"
+          className="mt-4 rounded border border-border p-3 space-y-1"
+        >
+          <p
+            className={`text-sm font-semibold ${capacityState === 'exceeds' ? 'text-status-warning' : 'text-foreground'}`}
+          >
+            {capacityTitle}
+          </p>
+          <p className="text-xs text-foreground/80">{capacityBasis}</p>
+          <p className="text-xs text-muted-foreground">
+            This compares only the selected model file size with a fictional profile limit. It does
+            not establish runtime working-set memory, hardware compatibility or a deployable system.
+          </p>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          No attestation report, certificate chain, measurement or freshness challenge is verified
+          here. Check those capabilities with your deployment tools; availability alone is not
+          evidence that the model is protected.
+        </p>
+        {selectedDeploy === 'federated' && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            This fictional profile is not a general definition of federated learning. No aggregation
+            or update-privacy protocol is selected or tested here; the in-use encryption assumption
+            does not establish update confidentiality.
+          </p>
+        )}
         <div className="glass-panel p-3 mt-3 border-l-4 border-primary">
           <p className="text-xs text-foreground/70">
-            <strong>PQC Considerations:</strong> {deployProfile.pqcConsiderations}
+            <strong>Sample profile review topics (not checked):</strong>{' '}
+            {deployProfile.pqcConsiderations}
           </p>
         </div>
       </div>
 
       {/* Sample Selection Manifest */}
-      <div className="glass-panel p-4 border-primary/30">
+      <div
+        role="region"
+        aria-label="Sample selection manifest"
+        className="glass-panel p-4 border-primary/30"
+      >
         <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-          <ShieldCheck size={16} className="text-primary" />
+          <Lock size={16} className="text-primary" />
           Sample Selection Manifest
         </h4>
         <div className="font-mono text-xs space-y-1 text-foreground/80">
           <p>
             Model: {sizeProfile.label} ({sizeProfile.typicalFileSizeGB} GB)
           </p>
-          <p>Encryption at Rest: AES-256-GCM</p>
+          <p>Assumed encryption at rest: AES-256-GCM (not executed)</p>
           <p>
-            Key Wrapping: {wrapProfile.algorithmLabel} (NIST Level {wrapProfile.nistLevel})
+            Key Wrapping: {wrapProfile.algorithmLabel} — {wrappingSelection}
           </p>
           <p>
-            Model Signing: {signProfile.algorithmLabel} (NIST Level {signProfile.nistLevel})
+            Model Signing: {signProfile.algorithmLabel} — {signingSelection}
           </p>
-          <p>Deployment: {deployProfile.name}</p>
-          <p>
-            Selected Primitive Coverage:{' '}
-            <span
-              className={
-                wrapProfile.quantumSafe && signProfile.quantumSafe
-                  ? 'text-status-success'
-                  : 'text-status-error'
-              }
-            >
-              {wrapProfile.quantumSafe && signProfile.quantumSafe
-                ? 'PQC wrapping and signing selected — deployment not assessed'
-                : 'Classical primitive selected — deployment not assessed'}
-            </span>
-          </p>
+          <p>Deployment profile: {deployProfile.name} (fictional assumptions)</p>
+          <p>File-size screen: {capacityTitle}</p>
+          <p>{capacityBasis}</p>
+          <p>Attestation: {attestationAssumption}</p>
+          <p>In-use encryption: {inUseAssumption}</p>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
           Selecting PQC algorithms does not establish full model protection. Evaluate supported

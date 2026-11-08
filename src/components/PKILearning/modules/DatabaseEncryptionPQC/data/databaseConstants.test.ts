@@ -23,9 +23,7 @@ describe('Database profiles derive PQC support from the central catalog', () => 
     for (const p of DATABASE_PROFILES) {
       const avail = getCatalogStatus(p.catalogName)?.availability
       const support = getProfilePqcSupport(p)
-      expect(['ga', 'planned', 'none']).toContain(support)
-      if (avail === 'available') expect(support).toBe('ga')
-      if (avail === 'none') expect(support).toBe('none')
+      expect(support).toBe(avail ?? 'unverified')
     }
   })
 })

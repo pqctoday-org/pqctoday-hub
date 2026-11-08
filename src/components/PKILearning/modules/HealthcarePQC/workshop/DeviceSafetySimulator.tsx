@@ -381,8 +381,9 @@ const FeasibilityTable: React.FC<{ device: MedicalDeviceProfile }> = ({ device }
 
 const FDAChecklistSection: React.FC<{
   checkedItems: Set<string>
+  deviceName: string
   onToggle: (id: string) => void
-}> = ({ checkedItems, onToggle }) => {
+}> = ({ checkedItems, deviceName, onToggle }) => {
   const completedCount = checkedItems.size
   const totalCount = FDA_PREMARKET_CHECKLIST.length
   const progressPct = Math.round((completedCount / totalCount) * 100)
@@ -398,14 +399,17 @@ const FDAChecklistSection: React.FC<{
           {completedCount}/{totalCount} reviewed
         </span>
       </div>
+      <p className="text-sm text-foreground mb-2">Selected sample device: {deviceName}</p>
       <p className="text-sm text-muted-foreground mb-4">
         A PQC readiness checklist for FDA 510(k) and PMA cybersecurity documentation. The items are
         this module&apos;s own, derived from FDA&apos;s recommendation to use cryptography that
         stays strong throughout the device&apos;s service life; FDA&apos;s guidance itself does not
         mention quantum computers or PQC algorithms. Check each item as you review it for your
         sample. Selections record reviewed topics, not submission coverage or technical checks.
-        Review selections are shared across these sample devices. Evaluate documentation, test
-        evidence and tool capabilities for each intended device and use with your production tools.
+        Review selections are kept separately for each sample device during this visit. Switching
+        back restores that device&apos;s draft; these review selections are not saved. Evaluate
+        documentation, test evidence and tool capabilities for each intended device and use with
+        your production tools.
       </p>
 
       {/* Progress bar */}
@@ -472,7 +476,7 @@ const FDAChecklistSection: React.FC<{
 export const DeviceSafetySimulator: React.FC = () => {
   const [selectedDeviceId, setSelectedDeviceId] = useState('pacemaker')
   const [expandedAttack, setExpandedAttack] = useState<string | null>(null)
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
+  const [reviewDrafts, setReviewDrafts] = useState<Map<string, Set<string>>>(new Map())
 
   const deviceItems = useMemo(
     () => MEDICAL_DEVICE_CATALOG.map((d) => ({ id: d.id, label: d.name })),
@@ -485,6 +489,8 @@ export const DeviceSafetySimulator: React.FC = () => {
     [selectedDeviceId]
   )
 
+  const checkedItems = reviewDrafts.get(selectedDevice.id) ?? new Set<string>()
+
   const handleDeviceChange = (id: string) => {
     setSelectedDeviceId(id)
     setExpandedAttack(null)
@@ -495,13 +501,16 @@ export const DeviceSafetySimulator: React.FC = () => {
   }
 
   const handleChecklistToggle = (id: string) => {
-    setCheckedItems((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
+    const deviceId = selectedDevice.id
+    setReviewDrafts((prev) => {
+      const next = new Map(prev)
+      const deviceItems = new Set(prev.get(deviceId) ?? [])
+      if (deviceItems.has(id)) {
+        deviceItems.delete(id)
       } else {
-        next.add(id)
+        deviceItems.add(id)
       }
+      next.set(deviceId, deviceItems)
       return next
     })
   }
@@ -586,7 +595,11 @@ export const DeviceSafetySimulator: React.FC = () => {
       <FeasibilityTable device={selectedDevice} />
 
       {/* FDA Premarket Checklist */}
-      <FDAChecklistSection checkedItems={checkedItems} onToggle={handleChecklistToggle} />
+      <FDAChecklistSection
+        checkedItems={checkedItems}
+        deviceName={selectedDevice.name}
+        onToggle={handleChecklistToggle}
+      />
     </div>
   )
 }

@@ -78,13 +78,13 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
     },
     {
       id: 'auth-flow',
-      title: '5. 5G-AKA: Selected Home-Network Computations',
+      title: '5. Local 5G-AKA Authentication Checks',
       description:
-        'Run selected sample home-network computations: load sample credentials, generate RAND, compute MILENAGE outputs, construct AUTN and derive KAUSF. This sequence does not verify a subscriber response or demonstrate full mutual authentication.',
+        'Run the local sample from independent network and UE credential copies through vector generation, UE MAC/sequence checks, serving-network hash comparison and home-network response equality. Alter the received AUTN or response, inspect the failed check, and restore the genuine pending value to retry. After acceptance, replay the old challenge and inspect the visible next-sequence rejection.',
       badge: 'Authentication',
       badgeColor: 'bg-tertiary/20 text-tertiary border-tertiary/50',
       observe:
-        'Inspect the sample MAC-A, RES, CK, IK and AK outputs. XRES* derivation, subscriber response verification and replay/freshness checks are not executed here. In production tools, look for complete authentication-vector generation and both parties’ verification results, including rejected responses.',
+        'A valid local attempt advances the UE next-expected counter and consumes its pending challenge only after both network comparisons. Bad MAC or malformed input cannot release a UE response; a genuine old challenge fails the fictional exact-next-sequence rule. A changed response fails its actual comparison, while restoring the current genuine response permits the defined local retry. Reset resets this sample, not a production resynchronization profile. With your own tools, evaluate separately scoped UE, serving-network and home-network results and replay behavior; this browser sample does not assess a deployed exchange.',
       config: { part: 1 },
     },
     {

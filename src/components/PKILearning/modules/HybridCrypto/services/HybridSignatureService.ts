@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Hybrid Signature Service — three constructions from the IETF hybrid signature spectrum.
+ * Hybrid Signature Service — two signature combinations and a local shared-binding learning model.
  *
  * 1. Concatenation  — two independent sigs; either verifies alone (separable)
  * 2. Nesting        — ML-DSA outer covers EC-Schnorr inner; EC alone still passes, but
  *                     the outer binding prevents recombination
- * 3. Silithium      — fused Fiat-Shamir; neither component verifies independently
- *                     (eprint 2025/2059, Devevey–Guerreau–Roméas)
+ * 3. Shared-binding model — an experimental local construction, inspired by
+ *                     eprint 2025/2059; not the published Silithium scheme or its security proof.
  *
  * Crypto:
  *   EC-Schnorr  → secp256k1 via @noble/curves
- *   ML-DSA-65   → @noble/post-quantum internal API (externalMu mode)
+ *   ML-DSA-65   → @noble/post-quantum internal API (provider externalMu extension)
  *   Hash        → SHA-256 via @noble/hashes
  */
 
@@ -76,10 +76,13 @@ export function ecSchnorrKeygen(): ECSchnorrKeyPair {
   return { sk: secretKey, pk: publicKey }
 }
 
-/** Deterministic nonce derived from sk and msg — prevents nonce reuse attacks. */
-export function ecSchnorrDeriveNonce(sk: Uint8Array, msg: Uint8Array): bigint {
-  const seed = sha256(concat(sk, msg, new Uint8Array([0x4b]))) // 0x4b = 'K' (nonce domain)
-  return bytesToBigint(seed) % CURVE_ORDER
+/** Fresh scalar from the existing curve provider for every signing operation.
+ * The legacy helper signature is retained; its output is no longer deterministic.
+ */
+export function ecSchnorrDeriveNonce(_sk: Uint8Array, _msg: Uint8Array): bigint {
+  void _sk
+  void _msg
+  return bytesToBigint(secp256k1.utils.randomSecretKey())
 }
 
 /**
@@ -228,7 +231,7 @@ export function concatenationVerify(
   const R = ecBytes.slice(0, 33)
   const s = ecBytes.slice(33, 65)
   const ecValid = ecSchnorrVerify(msg, keyPair.ecPk, R, s)
-  const mlValid = ml_dsa65.verify(keyPair.mlPk, msg, mlSig)
+  const mlValid = ml_dsa65.verify(mlSig, msg, keyPair.mlPk)
   return {
     valid: ecValid && mlValid,
     ecValid,
@@ -291,9 +294,9 @@ export function nestingVerify(
   const s = ecBytes.slice(33, 65)
   const nestedMsg = concat(msg, ecBytes)
   const ecValid = ecSchnorrVerify(msg, keyPair.ecPk, R, s)
-  const mlValid = ml_dsa65.verify(keyPair.mlPk, nestedMsg, mlSig)
+  const mlValid = ml_dsa65.verify(mlSig, nestedMsg, keyPair.mlPk)
   // ML-DSA signed over msg‖ecSig, so verifying on raw msg alone fails (different message)
-  const mlAloneValid = ml_dsa65.verify(keyPair.mlPk, msg, mlSig)
+  const mlAloneValid = ml_dsa65.verify(mlSig, msg, keyPair.mlPk)
   return {
     valid: ecValid && mlValid,
     ecValid,
@@ -303,11 +306,10 @@ export function nestingVerify(
   }
 }
 
-// ── Construction 3: Silithium (Fused, eprint 2025/2059) ──────────────────────
+// ── Construction 3: Local shared-binding model (Silithium-inspired) ──────────────────────
 
 /**
- * Silithium key generation: secp256k1 EC-Schnorr + ML-DSA-65.
- * ML-DSA uses internal keygen (deterministic from random seed for reproducibility).
+ * Local-model key generation: existing providers generate secp256k1 and ML-DSA-65 keys.
  */
 export function silithiumKeygen(): HybridSigKeyPair {
   const ec = ecSchnorrKeygen()
@@ -316,19 +318,18 @@ export function silithiumKeygen(): HybridSigKeyPair {
 }
 
 /**
- * Silithium sign — adapted Fiat-Shamir with shared challenge μ.
+ * Local learning-model sign — shared challenge μ, not a Silithium implementation.
  *
- * Protocol (approximation of ePrint 2025/2059 §3):
- *  1. EC commitment:     k = DRBG(sk_ec, msg),  R = k·G  (secp256k1)
+ * Local model operations (not a published protocol profile):
+ *  1. EC commitment:     fresh random scalar k from the curve provider, R = k·G
  *  2. Shared challenge:  μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)  expanded to 64 bytes
  *  3. EC response:       s = (k + e·sk_ec) mod n,  e = μ[:32] as bigint mod n
- *  4. ML-DSA response:   z = ML-DSA.Sign_internal(sk_ml, μ)  [FIPS 204 §6.2, Alg. 7, external μ]
+ *  4. ML-DSA response:   provider internal.sign with its externalMu extension
  *  Signature: R(33) ‖ s(32) ‖ z
  *
- * NOTE: the paper's full Silithium also binds the ML-DSA round-1 lattice commitment w1
- * in the challenge (μ = H(R_ec ‖ w1 ‖ pk_ec ‖ pk_ml ‖ msg)). w1 is not exposed by
- * @noble/post-quantum's externalMu API, so we approximate without it. The core security
- * property — both components share the same challenge — is preserved.
+ * This model computes its own input from public R, both public keys and msg.
+ * The provider's externalMu extension accepts that 64-byte input; this is not a
+ * standardized external signature profile or the published Silithium transcript.
  */
 export function silithiumSign(msg: Uint8Array, keyPair: HybridSigKeyPair): HybridSigResult {
   const t0 = performance.now()
@@ -371,7 +372,7 @@ export function silithiumSign(msg: Uint8Array, keyPair: HybridSigKeyPair): Hybri
       concatenationBytes,
       savedBytes: concatenationBytes - totalBytes,
     },
-    separable: false, // neither component verifies without the shared μ
+    separable: false, // legacy display hint; actual component outcomes come from verification
     timingMs,
   }
 }
@@ -401,8 +402,8 @@ export function silithiumVerify(
     // because the signer used the fused challenge, not the standard one.
     const ecAloneValid = ecSchnorrVerify(msg, keyPair.ecPk, Rbytes, sBytes)
 
-    // ML-DSA was signed with external μ (not standard hash(msg)), so raw msg verify fails
-    const mlAloneValid = false
+    // Execute the separate raw-message check; do not infer its result from the model.
+    const mlAloneValid = ml_dsa65.verify(mlSig, msg, keyPair.mlPk)
     return { valid: ecValid && mlValid, ecValid, mlValid, ecAloneValid, mlAloneValid }
   } catch (err) {
     return {
@@ -417,22 +418,21 @@ export function silithiumVerify(
 }
 
 /**
- * Recombination attack test: try to swap the ML-DSA component from a different signature.
- * Should always return false — the ML-DSA sig is bound to μ which includes R.
+ * Replace only the ML component/key while retaining the original EC public key
+ * and commitment. The replacement signer never receives or reads the EC secret.
+ * This is a local binding experiment, not a proof of published non-separability.
  */
 export function silithiumRecombinationAttack(
   msg: Uint8Array,
   legitSig: Uint8Array,
-  attackerKeyPair: HybridSigKeyPair
+  replacement: Pick<HybridSigKeyPair, 'ecPk' | 'mlPk' | 'mlSk'>
 ): VerifyResult {
-  // Generate a fresh ML-DSA sig from attacker key for the same message
-  const attackerResult = silithiumSign(msg, attackerKeyPair)
-  const attackerMlSig = attackerResult.signatureBytes.slice(65)
-
-  // Splice: use legitimate EC part + attacker ML part
-  const spliced = concat(legitSig.slice(0, 65), attackerMlSig)
+  const originalR = legitSig.slice(0, 33)
+  const mu = hashToMu(concat(originalR, replacement.ecPk, replacement.mlPk, msg))
+  const replacementMl = ml_dsa65.internal.sign(mu, replacement.mlSk, { externalMu: true })
+  const spliced = concat(legitSig.slice(0, 65), replacementMl)
   return silithiumVerify(msg, spliced, {
-    ecPk: attackerKeyPair.ecPk, // won't match legitimate EC pk
-    mlPk: attackerKeyPair.mlPk,
+    ecPk: replacement.ecPk,
+    mlPk: replacement.mlPk,
   })
 }
