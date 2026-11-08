@@ -60,7 +60,7 @@ export const DatabaseEncryptionExercises: React.FC<DatabaseEncryptionExercisesPr
       badge: 'Architecture',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        "The patterns differ in key custody and revocation, not in a measured readiness score; any percentages are illustrative. With HYOK the master key stays in the customer HSM, but the cloud database engine still receives the plaintext DEK after the on-premises unwrap. With BYOK the customer's key material is imported into the cloud KMS.",
+        "The patterns differ in key custody and revocation, not in a measured readiness score. With HYOK the master key stays in the customer HSM, but the cloud database engine still receives the plaintext DEK after the on-premises unwrap. With BYOK the customer's key material is imported into the cloud KMS.",
       config: { step: 2 },
     },
     {
