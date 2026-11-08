@@ -99,6 +99,13 @@ jobs:
         # No VITE_* secrets: the PR build is never deployed.
         run: npm run build
 
+      # Public-boundary scan, built site: the same command as ci.yml, so a change
+      # that puts a forbidden name into the built pages fails the PR instead of
+      # reaching main first. The saved-page size limit needs no step here: the
+      # prerender inside `npm run build` already fails the build on an oversize page.
+      - name: Public-boundary scan (built site)
+        run: node --experimental-strip-types scripts/ci/leak-guard.ts --tree dist --baseline scripts/ci/leak-baseline-dist.json --mode enforce
+
       - name: Browser Playground and Business Tool routes, roles, mobile layout and accessibility
         # Fast education-tool UI contract only. Real-WASM/crypto execution
         # remains in the nightly and release suites so this required PR check
