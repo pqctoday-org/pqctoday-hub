@@ -51,7 +51,7 @@ function computeMetrics(
   signing: MessageSigning,
   kem: SessionKEM,
   format: MessageFormat
-): ProtocolMetrics {
+): Omit<ProtocolMetrics, 'quantumSafe'> {
   // Base handshake bytes by transport
   const transportBase: Record<TransportProtocol, number> = {
     'tls-1.3': 4500,
@@ -112,7 +112,6 @@ function computeMetrics(
     'hybrid-ml-kem-x25519': 3,
   }
 
-  const quantumSafe = signing !== 'none' && auth !== 'pre-shared-key'
   const interop: Record<TransportProtocol, number> = {
     'tls-1.3': 5,
     'dtls-1.3': 4,
@@ -125,18 +124,16 @@ function computeMetrics(
     perMessageOverheadBytes,
     handshakeLatencyMs,
     securityLevel: kemLevel[kem],
-    quantumSafe,
     interoperabilityScore: interop[transport],
   }
 }
 
 // Classical baseline for comparison
-const CLASSICAL_METRICS: ProtocolMetrics = {
+const CLASSICAL_METRICS: Omit<ProtocolMetrics, 'quantumSafe'> = {
   handshakeBytes: 4500 + 32 + 800, // TLS + X25519 + ECDSA mTLS
   perMessageOverheadBytes: 64 + 200, // ECDSA sig + JSON
   handshakeLatencyMs: 8,
   securityLevel: 0,
-  quantumSafe: false,
   interoperabilityScore: 5,
 }
 
@@ -293,6 +290,41 @@ export const Agent2AgentProtocol: React.FC = () => {
         authentication method or complete protocol. The stars are a fixed teaching rubric, not
         interoperability evidence. PSK strength and channel authentication are not evaluated here.
       </p>
+
+      <div className="glass-panel p-4 space-y-3">
+        <h4 className="text-sm font-bold text-foreground">Selected security properties</h4>
+        <dl className="space-y-3 text-sm">
+          <div>
+            <dt className="font-medium">Message signing constituent</dt>
+            <dd className="text-muted-foreground">
+              {signing === 'ml-dsa-44'
+                ? 'ML-DSA-44: claimed NIST category 2'
+                : signing === 'ml-dsa-65'
+                  ? 'ML-DSA-65: claimed NIST category 3'
+                  : signing === 'slh-dsa'
+                    ? 'SLH-DSA: category not assessed without a parameter set'
+                    : 'No per-message signature selected; this does not remove separately selected channel authentication.'}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-medium">Authentication assumption</dt>
+            <dd className="text-muted-foreground">
+              {auth === 'mtls-ml-dsa'
+                ? 'The sample selects mutually authenticated TLS with ML-DSA credentials. Channel authentication is assumed, not executed, and is distinct from signing individual messages.'
+                : auth === 'pre-shared-key'
+                  ? 'The sample selects PSK authentication. Quantum resistance is not assessed: key entropy, provisioning, key establishment and the protocol profile must be specified; a PSK is not inherently quantum-unsafe.'
+                  : 'The sample selects a proof-of-possession token. Its signing algorithm, token validation, replay protection and channel binding must be specified before assessing authentication or quantum resistance.'}
+            </dd>
+          </div>
+        </dl>
+        <p className="text-xs text-muted-foreground">
+          The KEM and signing categories describe separate selected constituents, not an overall
+          protocol category. The ML-DSA category claims follow FIPS 204 and depend on its stated
+          conditions. Use your production tools to inspect negotiated algorithms, credential and
+          token validation, peer identity, key provenance and replay handling; test valid and
+          rejected cases. These selections do not demonstrate those capabilities.
+        </p>
+      </div>
 
       {/* Throughput analysis */}
       <div className="glass-panel p-4">
