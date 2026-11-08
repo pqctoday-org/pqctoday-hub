@@ -50,10 +50,20 @@ async function checkOwnCount(page: Page) {
   await field.fill('abc')
   await expect(field).toHaveAttribute('aria-invalid', 'true')
   await expect(page.locator('#roi-products-message')).toContainText(
-    'The figures below still use 120.'
+    'The figures on this page still use 120.'
   )
   await field.fill('120')
   await expect(field).not.toHaveAttribute('aria-invalid', 'true')
+
+  // Typing a number with a comma passes through "1," and "1,2": no error is announced on the way.
+  await field.fill('')
+  await field.pressSequentially('1,')
+  await expect(field).not.toHaveAttribute('aria-invalid', 'true')
+  await expect(page.locator('#roi-products-message')).toBeEmpty()
+  await field.pressSequentially('200')
+  await expect(field).not.toHaveAttribute('aria-invalid', 'true')
+  await expect(page.getByText(/Capex: 1,200 systems or products/)).toBeVisible()
+  await field.fill('120')
 
   // The markdown download carries the count, its unit and its source.
   const download = page.waitForEvent('download')
@@ -90,17 +100,17 @@ test('desktop: the learner enters, saves and restores their own count', async ({
   })
 })
 
-test('phone 390 px: a full-width numeric field, the unit under it and no sideways scroll', async ({
+test('phone 375 px: a full-width numeric field, the unit under it and no sideways scroll', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 })
+  await page.setViewportSize({ width: 375, height: 812 })
   await page.goto(ROUTE)
   const field = page.getByLabel(COUNT_LABEL)
   await expect(field).toBeVisible({ timeout: 20_000 })
   const box = await field.boundingBox()
   expect(box).not.toBeNull()
   expect(box!.height).toBeGreaterThanOrEqual(44)
-  expect(box!.x + box!.width).toBeLessThanOrEqual(390)
+  expect(box!.x + box!.width).toBeLessThanOrEqual(375)
   // The unit text sits under the field, not beside it.
   const help = page.locator('#roi-products-help')
   const helpBox = await help.boundingBox()

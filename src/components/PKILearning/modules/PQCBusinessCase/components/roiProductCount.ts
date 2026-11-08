@@ -21,7 +21,26 @@ export const EXAMPLE_PRODUCT_COUNT = 50
  */
 export type ProductCountSource = 'example' | 'entered' | 'saved-model'
 
-export type ProductCountParse = { ok: true; value: number } | { ok: false; message: string }
+export type ProductCountParse =
+  | { ok: true; value: number }
+  /**
+   * `incomplete` marks text that is plausibly still being typed (blank, or "1," on the way to
+   * "1,200"): the page waits for the field to lose focus before it says anything about it.
+   */
+  | { ok: false; message: string; incomplete: boolean }
+
+const WHOLE_NUMBER_MESSAGE =
+  'Use a whole number of 1 or more. Commas are fine; letters, decimals and a minus sign are not.'
+
+/** "1," "1,2" "12,345," "1,234,5": the start of a number written with thousands commas. */
+function isIncompleteThousands(text: string): boolean {
+  const groups = text.split(',')
+  if (groups.length < 2) return false
+  const first = groups[0]
+  const middle = groups.slice(1, -1)
+  const last = groups[groups.length - 1]
+  return /^\d{1,3}$/.test(first) && middle.every((g) => /^\d{3}$/.test(g)) && /^\d{0,2}$/.test(last)
+}
 
 /** "1,200" or "12,345,678": a leading group of 1 to 3 digits, then groups of exactly 3. */
 function hasThousandsCommas(text: string): boolean {
@@ -39,23 +58,22 @@ export function parseProductCount(raw: string): ProductCountParse {
       ok: false,
       message:
         'Enter the number of systems or products in your scenario (a whole number, 1 or more).',
+      incomplete: true,
     }
   }
   const digits = hasThousandsCommas(text) ? text.replace(/,/g, '') : text
   if (!/^\d+$/.test(digits)) {
-    return {
-      ok: false,
-      message: 'Use a whole number of 1 or more, with no letters, decimals or minus sign.',
-    }
+    return { ok: false, message: WHOLE_NUMBER_MESSAGE, incomplete: isIncompleteThousands(text) }
   }
   const value = Number(digits)
   if (value < MIN_PRODUCT_COUNT) {
-    return { ok: false, message: 'The count must be 1 or more.' }
+    return { ok: false, message: 'The count must be 1 or more.', incomplete: false }
   }
   if (value > MAX_PRODUCT_COUNT) {
     return {
       ok: false,
       message: `The most this calculator accepts is ${MAX_PRODUCT_COUNT.toLocaleString('en-US')}. Check the entry.`,
+      incomplete: false,
     }
   }
   return { ok: true, value }
@@ -93,4 +111,19 @@ export function isOwnCount(source: ProductCountSource): boolean {
 /** What a saved model's count is, given the marker it was saved with (none before the marker existed). */
 export function restoredCountSource(marker: unknown): ProductCountSource {
   return marker === 'example' || marker === 'entered' ? marker : 'saved-model'
+}
+
+/**
+ * One short phrase for a downstream page (the board pitch) when the count behind a figure is not
+ * the learner's own entry; null when it is, or when an older saved output carries no marker.
+ */
+export function productCountOutputNote(
+  source: ProductCountSource | undefined,
+  count: number | undefined
+): string | null {
+  const of =
+    typeof count === 'number' ? ` of ${count.toLocaleString('en-US')} systems or products` : ''
+  if (source === 'example') return `example count${of}, not your own`
+  if (source === 'saved-model') return `count${of} from a saved model, not confirmed as yours`
+  return null
 }

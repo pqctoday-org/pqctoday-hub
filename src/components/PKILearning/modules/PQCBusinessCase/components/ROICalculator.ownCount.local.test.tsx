@@ -190,7 +190,8 @@ describe('the learner enters their own count of systems or products', () => {
     const message = document.getElementById('roi-products-message')!
     expect(message).toHaveAttribute('role', 'status')
     expect(message).toHaveAttribute('aria-live', 'polite')
-    expect(message).toHaveTextContent('The figures below still use 120.')
+    expect(message).toHaveTextContent('The figures on this page still use 120.')
+    expect(message).not.toHaveTextContent('below')
     expect(exportText()).toContain('Systems or products in scenario (your count): 120')
     expect(exportText()).toContain('| Capital Expenditure | $9.0M |')
     expect(screen.queryByText('Per-product model (your count)')).not.toBeInTheDocument()
@@ -200,6 +201,56 @@ describe('the learner enters their own count of systems or products', () => {
     expect(countField()).not.toHaveAttribute('aria-invalid')
     expect(document.getElementById('roi-products-message')).toBeEmptyDOMElement()
     expect(screen.getByText('Per-product model (your count)')).toBeInTheDocument()
+  })
+
+  it('does not announce a half-typed number with commas while the field has focus, and says why after it loses focus', () => {
+    renderCalc()
+    const field = countField()
+    const message = () => document.getElementById('roi-products-message')!
+    fireEvent.focus(field)
+    // Typing 1,200 passes through "1," "1,2" and "1,20", none of which is a mistake yet.
+    for (const partial of ['1,', '1,2', '1,20']) {
+      enterCount(partial)
+      expect(message()).toBeEmptyDOMElement()
+      expect(field).not.toHaveAttribute('aria-invalid')
+    }
+    enterCount('1,200')
+    expect(message()).toBeEmptyDOMElement()
+    expect(exportText()).toContain('(your count): 1,200')
+
+    // Leaving the field with a half-typed number explains the real cause, the comma.
+    enterCount('1,2')
+    fireEvent.blur(field)
+    expect(field).toHaveAttribute('aria-invalid', 'true')
+    expect(message()).toHaveTextContent('Commas are fine')
+    // Back in the field, finishing the number clears it.
+    fireEvent.focus(field)
+    enterCount('1,200')
+    expect(field).not.toHaveAttribute('aria-invalid')
+    expect(message()).toBeEmptyDOMElement()
+  })
+
+  it('does not announce a cleared field while it has focus, only after it loses focus', () => {
+    renderCalc()
+    const field = countField()
+    fireEvent.focus(field)
+    enterCount('')
+    expect(document.getElementById('roi-products-message')).toBeEmptyDOMElement()
+    expect(field).not.toHaveAttribute('aria-invalid')
+    fireEvent.blur(field)
+    expect(field).toHaveAttribute('aria-invalid', 'true')
+    expect(document.getElementById('roi-products-message')).toHaveTextContent(
+      'Enter the number of systems or products in your scenario'
+    )
+  })
+
+  it('announces a mistake that typing cannot fix, such as letters, at once even with focus', () => {
+    renderCalc()
+    const field = countField()
+    fireEvent.focus(field)
+    enterCount('12a')
+    expect(field).toHaveAttribute('aria-invalid', 'true')
+    expect(document.getElementById('roi-products-message')).toHaveTextContent('Commas are fine')
   })
 
   it('accepts thousands separators and the largest count of 1,000,000', () => {
@@ -253,6 +304,22 @@ describe('the learner enters their own count of systems or products', () => {
     expect(screen.getByText('Per-product model (your count)')).toBeInTheDocument()
   })
 
+  it('confirming a restored count puts that count back in the field, replacing unusable text', () => {
+    saved.inputs = { productsToMigrate: 10, costPerProduct: 75_000 }
+    mockData = { ...baseMockData, isAssessmentComplete: true, assessmentResult: assessment }
+    renderCalc()
+    enterCount('abc')
+    expect(countField()).toHaveAttribute('aria-invalid', 'true')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Use 10 as my count' }))
+    expect(countField()).toHaveValue('10')
+    expect(countField()).not.toHaveAttribute('aria-invalid')
+    expect(document.getElementById('roi-products-message')).toBeEmptyDOMElement()
+    // The capex line, the field and the comparison now agree.
+    expect(exportText()).toContain('(your count): 10 (entered by you)')
+    expect(screen.getByText('Per-product model (your count)')).toBeInTheDocument()
+  })
+
   it('restores a model saved with the marker as the learner count', () => {
     saved.inputs = { productsToMigrate: 300, productsSource: 'entered' }
     renderCalc()
@@ -285,6 +352,8 @@ describe('the learner enters their own count of systems or products', () => {
     const doc = saved.add.mock.lastCall?.[0]
     expect(doc.inputs.productsToMigrate).toBe(120)
     expect(doc.inputs.productsSource).toBe('entered')
+    expect(doc.output.productsToMigrate).toBe(120)
+    expect(doc.output.productsSource).toBe('entered')
     expect(doc.data).toContain('Systems or products in scenario (your count): 120')
     expect(doc.data).not.toContain('Catalogue products in selected scenario')
   })

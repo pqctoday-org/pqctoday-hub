@@ -30,6 +30,7 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { Button } from '@/components/ui/button'
+import type { ROIOutput } from '../types'
 import { ProductCountField } from './ProductCountField'
 import {
   EXAMPLE_PRODUCT_COUNT,
@@ -114,13 +115,6 @@ interface TornadoRow {
   delta: number
 }
 
-interface ROIOutput {
-  totalCostUSD: number
-  roiPercent: number
-  paybackMonths: number
-  breachCostSavingsUSD: number
-}
-
 interface ROICalculatorProps {
   onOutput?: (output: ROIOutput) => void
 }
@@ -197,10 +191,15 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
   // What the learner has typed in the count field. It can be blank or invalid while the figures keep
   // the last valid count in `assumptions.productsToMigrate`.
   const [countText, setCountText] = useState(() => String(assumptions.productsToMigrate))
-  const countError = useMemo(() => {
-    const parsed = parseProductCount(countText)
-    return parsed.ok ? null : parsed.message
-  }, [countText])
+  const parsedCount = useMemo(() => parseProductCount(countText), [countText])
+  // Whether the field has focus: a half-typed entry ("1," on the way to "1,200", or a cleared field)
+  // gets no message until the reader leaves the field, so a screen reader is not told of errors that
+  // typing a valid number passes through.
+  const [countFocused, setCountFocused] = useState(false)
+  // The message and aria-invalid; the comparison below waits on any unusable entry.
+  const countError =
+    !parsedCount.ok && (!parsedCount.incomplete || !countFocused) ? parsedCount.message : null
+  const countUsable = parsedCount.ok
 
   const handleCountTextChange = useCallback((text: string) => {
     setCountText(text)
@@ -214,9 +213,12 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     }
   }, [])
 
+  // Confirming keeps the count in use, so the field must show that count too, not whatever unusable
+  // text the reader had left in it.
   const confirmRestoredCount = useCallback(() => {
     setAssumptions((prev) => ({ ...prev, productsSource: 'entered' }))
-  }, [])
+    setCountText(String(assumptions.productsToMigrate))
+  }, [assumptions.productsToMigrate])
 
   // A restored saved model never re-derives from the user's current /migrate +
   // assessment data on its own (the lazy initializer above only runs once) —
@@ -315,7 +317,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
   // The comparison reads the learner's own count. While the opening example (or an unconfirmed
   // restored count) is in place there is nothing of theirs to compare, so it is not assessed; the
   // Hub catalogue never stands in for the count.
-  const countIsOwn = isOwnCount(assumptions.productsSource) && countError === null
+  const countIsOwn = isOwnCount(assumptions.productsSource) && countUsable
   const crossCheckWaitsForCount = !!assessmentDerived && !countIsOwn
   const crossCheck = useMemo(() => {
     if (!assessmentDerived || !countIsOwn) return null
@@ -336,6 +338,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         roiPercent: financials.roiPercent,
         paybackMonths: financials.paybackMonths,
         breachCostSavingsUSD: financials.breachCostSavings,
+        productsToMigrate: assumptions.productsToMigrate,
+        productsSource: assumptions.productsSource,
       })
     }
   }, [
@@ -344,6 +348,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     financials.roiPercent,
     financials.paybackMonths,
     financials.breachCostSavings,
+    assumptions.productsToMigrate,
+    assumptions.productsSource,
   ])
 
   // Sensitivity (tornado): vary each input ±30% and measure NPV impact.
@@ -609,6 +615,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               source={assumptions.productsSource}
               error={countError}
               onTextChange={handleCountTextChange}
+              onFocusChange={setCountFocused}
               onConfirm={confirmRestoredCount}
             />
             <div>
@@ -768,7 +775,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <div className="bg-muted/50 rounded-lg p-3 border border-border flex items-start gap-2">
               <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
               <p className="text-xs text-muted-foreground" data-testid="roi-cross-check-waiting">
-                {countError
+                {!countUsable
                   ? 'Not assessed while the count above cannot be used. Enter a whole number of 1 or more to compare it with your assessment.'
                   : assumptions.productsSource === 'saved-model'
                     ? 'Not assessed until you enter your own count. Confirm or change the count of systems or products above to compare it with your assessment.'
@@ -1230,6 +1237,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               roiPercent: financials.roiPercent,
               paybackMonths: financials.paybackMonths,
               breachCostSavingsUSD: financials.breachCostSavings,
+              productsToMigrate: assumptions.productsToMigrate,
+              productsSource: assumptions.productsSource,
             },
             createdAt: Date.now(),
           })
