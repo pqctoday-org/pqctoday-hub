@@ -17,7 +17,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import { getStandard } from '@/data/standardsRegistry'
+import { findStandard, getStandard } from '@/data/standardsRegistry'
 import { UEFI_KEY_TYPES, BOOT_CHAIN_STAGES, FIRMWARE_ALGO_SIZES } from '../data/secureBootConstants'
 import {
   FIRMWARE_VENDORS,
@@ -96,6 +96,14 @@ const SP_800_140 = getStandard('NIST-SP-800-140')
 const SP_800_140B = getStandard('NIST-SP-800-140B')
 const SP_800_140C = getStandard('NIST-SP-800-140C')
 const FIPS_186_5 = getStandard('FIPS 186-5')
+// Library rows cited by the "TPM or Caliptra" comparison. The Caliptra row is admitted for release
+// 4.202; findStandard keeps this page rendering where the Library CSV predates it, and
+// trustHardwareCitations.test.ts requires that it resolves.
+const TPM_PART_1 = getStandard('TCG-TPM-V185-Part1')
+const CALIPTRA_HW = findStandard('Hardware-Specification-Caliptra-2-1-Documentation') ?? {
+  title: 'Caliptra 2.1 hardware specification',
+  deepLink: '/library?ref=Hardware-Specification-Caliptra-2-1-Documentation',
+}
 
 /** The CMVP's own list of approved security functions (the web page behind SP 800-140C). */
 const CMVP_SECURITY_FUNCTIONS_URL =
@@ -890,6 +898,64 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             PQC migration procedure.
           </p>
         </div>
+
+        <div
+          className="bg-muted/50 rounded-lg p-4 border border-border"
+          data-testid="tpm-or-caliptra"
+        >
+          <div className="text-sm font-bold text-foreground mb-2">TPM or Caliptra?</div>
+          <p className="text-xs text-muted-foreground mb-3">
+            Both are roots of trust that record measurements and sign reports about them, but they
+            sit in different places and measure different things.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="rounded-lg border border-border p-3 text-xs text-muted-foreground space-y-1">
+              <div className="text-sm font-bold text-foreground">TPM 2.0 (host root of trust)</div>
+              <p>
+                <strong>Where:</strong> a hardware TPM, such as a chip on the motherboard, or a
+                software implementation of the same interface.
+              </p>
+              <p>
+                <strong>What it measures:</strong> platform firmware and boot software hand it
+                digests of what they load; the TPM folds them into PCRs. The first measuring code
+                (the core root of trust for measurement) is supplied by the platform, not by the
+                TPM.
+              </p>
+              <p>
+                <strong>What it attests:</strong> the TPM can attest to PCR values, so a verifier
+                can check a log of boot measurements for the host.
+              </p>
+              <p>
+                Source: <LibCite std={TPM_PART_1}>TCG TPM 2.0 Library v185, Part 1</LibCite>{' '}
+                (sections on Platform Configuration Registers and on initialisation).
+              </p>
+            </div>
+            <div className="rounded-lg border border-border p-3 text-xs text-muted-foreground space-y-1">
+              <div className="text-sm font-bold text-foreground">
+                Caliptra (root of trust inside a chip)
+              </div>
+              <p>
+                <strong>Where:</strong> a root-of-trust-for-measurement cryptographic subsystem
+                inside a system-on-chip: the SoC brings it out of reset and writes its fuses. It is
+                an open design from the Caliptra project.
+              </p>
+              <p>
+                <strong>What it measures:</strong> it keeps measurements in its own PCR vault, and
+                its hardware hashes the firmware written into its instruction memory, a
+                tamper-evident record of the code that actually loaded.
+              </p>
+              <p>
+                <strong>What it attests:</strong> hardware hashes all the PCRs together with a nonce
+                supplied by its firmware and signs that digest with a key in its key vault; the 2.1
+                documentation describes this signing as an ECC flow.
+              </p>
+              <p>
+                Source: <LibCite std={CALIPTRA_HW}>Caliptra 2.1 hardware specification</LibCite>{' '}
+                (PCR vault, PCR signing and boot sections).
+              </p>
+            </div>
+          </div>
+        </div>
       </CollapsibleSection>
 
       {/* Section 4: Vendor Roadmaps */}
@@ -1093,6 +1159,20 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               <div className="text-sm font-medium text-foreground">Crypto Agility</div>
               <div className="text-xs text-muted-foreground">
                 Algorithm-agnostic cryptographic infrastructure
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/arch-quantum-impact?tab=workshop&step=5"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Route size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">
+                Compare with the other trust hardware
+              </div>
+              <div className="text-xs text-muted-foreground">
+                TPMs, Caliptra, HSMs, confidential computing and DPUs side by side
               </div>
             </div>
           </Link>
