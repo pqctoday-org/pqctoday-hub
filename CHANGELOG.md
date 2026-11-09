@@ -57,14 +57,14 @@ Lessons and tools are updated: the 5G, tokenization, hybrid-signature, HSM and m
 
 ### Data
 
-- The retired duplicate EU Cyber Resilience Act entry now cites Regulation (EU) 2024/2847 and its EUR-Lex text instead of the NIS2 directive.
-- The assessment data no longer carries 83 rows of an older, column-shifted copy that the site never read; every question and option is unchanged.
-- Threat, algorithm-transition and compliance notes no longer carry internal correction labels; each shows a plain "Corrected on review" or "Retired on review" date.
-- Document Analysis is added for 18 HPKE, cloud KMS, MLS and JOSE documents in the Library.
-- Six older Library notes give the saved copy and its checksum.
-- Two catalogue entries (Avalanche, General Dynamics Mission Systems) now read Unknown where the cited page names no post-quantum capability.
-- Internal review markers in the Library and catalogue are replaced by a neutral review stamp.
-- The HPKE post-quantum transition row is dated to the current IETF draft (6 July 2026).
+- **EU Cyber Resilience Act duplicate cites the right regulation** [view:/compliance] [persona:grc] [persona:architect]: the retired duplicate EU Cyber Resilience Act entry now cites Regulation (EU) 2024/2847 and its EUR-Lex text instead of the NIS2 directive.
+- **Assessment data drops an unused copy** [view:/assess] [persona:grc] [persona:executive]: the assessment data no longer carries 83 rows of an older, column-shifted copy that the site never read; every question and option is unchanged.
+- **Data notes show plain review dates** [view:/threats] [view:/algorithms] [view:/compliance] [persona:grc] [persona:researcher]: threat, algorithm-transition and compliance notes no longer carry internal correction labels; each shows a plain "Corrected on review" or "Retired on review" date.
+- **Library: Document Analysis for 18 more documents** [view:/library] [persona:researcher] [persona:developer] [persona:architect]: Document Analysis is added for 18 HPKE, cloud KMS, MLS and JOSE documents in the Library.
+- **Library notes name the saved copy** [view:/library] [persona:researcher] [persona:grc]: six older Library notes give the saved copy and its checksum.
+- **Two catalogue entries read Unknown** [view:/migrate] [persona:architect] [persona:ops]: two catalogue entries (Avalanche, General Dynamics Mission Systems) now read Unknown where the cited page names no post-quantum capability.
+- **Library and catalogue show a neutral review stamp** [view:/library] [view:/migrate] [persona:researcher] [persona:architect] [persona:ops]: internal review markers in the Library and catalogue are replaced by a neutral review stamp.
+- **HPKE transition row is dated to the current draft** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher]: the HPKE post-quantum transition row is dated to the current IETF draft (6 July 2026).
 
 ## [4.200.0] - 2026-11-08
 
