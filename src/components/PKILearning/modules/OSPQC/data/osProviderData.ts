@@ -195,7 +195,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     catalogName: 'iOS 26 / macOS 26',
     fipsMode: 'partial',
     sshPqcStatus:
-      'macOS 26 upgrades SSH to a quantum-secure key exchange (Apple Platform Security guide); the guide does not describe PQC host key signatures',
+      'macOS 26 adds a post-quantum key exchange to SSH (Apple Platform Security guide); the guide does not describe PQC host key signatures',
     pkgSigningPqc: 'macOS Gatekeeper / code signing uses ECDSA P-256; ML-DSA not yet',
     roadmapYear: '2026-02-11',
     mlKemSupport:
