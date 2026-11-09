@@ -77,7 +77,10 @@ const GOVERNANCE_LEAD = 3 // governance in place ahead of critical HNDL migratio
 const STANDARDS_BY_COUNTRY: Record<string, { HNDL: string; TNFL: string }> = {
   US: { HNDL: 'FIPS 203 / ML-KEM', TNFL: 'FIPS 204 / ML-DSA' },
   DE: { HNDL: 'BSI TR-02102-1 / ML-KEM (hybrid)', TNFL: 'BSI TR-02102-1 / ML-DSA (hybrid)' },
-  FR: { HNDL: 'ANSSI / ML-KEM (hybrid required)', TNFL: 'ANSSI / ML-DSA (hybrid required)' },
+  FR: {
+    HNDL: 'ANSSI / ML-KEM (hybrid strongly recommended)',
+    TNFL: 'ANSSI / ML-DSA (hybrid strongly recommended)',
+  },
   UK: { HNDL: 'NCSC / ML-KEM-768', TNFL: 'NCSC / ML-DSA-65' },
 }
 const DEFAULT_STANDARDS = { HNDL: 'PQC key establishment', TNFL: 'PQC digital signatures' }
