@@ -607,10 +607,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     >
                       A6131 (SLH-DSA)
                     </Link>{' '}
-                    (SLH-DSA key generation, signature generation and verification). An algorithm
-                    must be CAVP tested or, where an Implementation Guidance permits, vendor
-                    affirmed, before a module uses it in an approved mode. A passed algorithm test
-                    is a prerequisite of a module validation, not a substitute for it.
+                    (SLH-DSA key generation, signature generation and verification). In general, an
+                    algorithm must be CAVP tested, or vendor affirmed where an Implementation
+                    Guidance permits it, before a module may use it in an approved mode; a passed
+                    algorithm test does not by itself validate the module.
                   </p>
                   <LibLinks
                     refs={[
@@ -947,9 +947,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   Powered by the Thales Luna 7 HSM (model A790). Azure&apos;s pages list no PQC
                   algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS
                   from 7.8.9. Customers administer the firmware themselves, after consulting Thales
-                  Support, and Azure does not say whether the service offers firmware 7.9. The
-                  Marvell LiquidSecurity hardware in Microsoft&apos;s pages belongs to Azure Managed
-                  HSM and Azure Cloud HSM, not to this service.
+                  Support, and Azure does not say whether the service offers firmware 7.9.
+                  Microsoft&apos;s pages name Marvell LiquidSecurity hardware for Azure Managed HSM
+                  and Azure Cloud HSM, not for this service.
                 </p>
                 <p>
                   <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers

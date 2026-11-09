@@ -206,7 +206,7 @@ export const TRUST_CARDS: TrustCard[] = [
       {
         q: 'what',
         text: 'Caliptra is an open root-of-trust design from the CHIPS Alliance; its hardware specification defines a cryptographic subsystem for measurement.',
-        sources: [CAL_HW, CAL_VER],
+        sources: [CAL_HW, CALIPTRA_ROT],
       },
       {
         q: 'where',
@@ -220,7 +220,7 @@ export const TRUST_CARDS: TrustCard[] = [
       },
       {
         q: 'pq',
-        text: 'Release 2.0 adds ML-DSA firmware-signature support and release 2.1 adds ML-KEM in the Adams Bridge accelerator, which supports ML-KEM-1024 only.',
+        text: 'Release 2.0 adds ML-DSA firmware signature support and release 2.1 adds ML-KEM in the Adams Bridge accelerator, which supports ML-KEM-1024 only.',
         sources: [CAL_VER, ADAMS_BRIDGE],
       },
     ],
@@ -789,7 +789,7 @@ export const GRID_ROWS: GridRow[] = [
     cells: {
       tpm: C(
         'stated',
-        'Not published for TPMs in general; the PC Client profile mentions TCG’s FIPS 140-3 guidance for TPM 2.0 for self-test behaviour and timing, and marks TPM2_ChangePPS and TPM2_ChangeEPS as commands that might be required for a FIPS 140 evaluation.',
+        'Not published for TPMs in general; the PC Client profile mentions TCG’s FIPS 140-3 guidance for TPM 2.0 on self-test behaviour and timing, and marks TPM2_ChangePPS and TPM2_ChangeEPS as commands that might be required for a FIPS 140 evaluation.',
         TPM_PC
       ),
       caliptra: np(),
