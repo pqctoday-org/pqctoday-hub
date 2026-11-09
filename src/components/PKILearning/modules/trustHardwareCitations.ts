@@ -23,6 +23,10 @@ export const TRUST_HARDWARE_CITATIONS = {
     'Tessera-Integrated-HSM-SDK-tessera-sw-README',
     'Open-source-Integrated-HSM-for-hardware-security-Microsoft-A',
     'Advancing-hardware-security-through-open-source-collaboratio',
+    'Azure-Key-Vault-Managed-HSM-Overview',
+    'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M',
+    'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M-2',
+    'Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS',
   ],
   'confidential-computing': ['Confidential-VMs-Explained-An-Empirical-Analysis-of-AMD-SEV'],
   'secure-boot-pqc': [

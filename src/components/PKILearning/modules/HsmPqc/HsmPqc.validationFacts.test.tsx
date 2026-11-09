@@ -310,20 +310,21 @@ describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera card
     expect(flat(curiousSummary)).not.toContain("in microsoft's pages")
   })
 
-  it('links each Securosys CAVP number to its NIST page and the Managed HSM overview', () => {
+  it('links each Securosys CAVP number and the Managed HSM overview to their Library rows', () => {
     openIntroText()
-    for (const [n, v] of [
-      ['A6129', '38739'],
-      ['A6130', '38740'],
-      ['A6131', '38741'],
-    ]) {
-      expect(screen.getByRole('link', { name: n }).getAttribute('href')).toBe(
-        `https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=${v}`
+    const rows: [string, string][] = [
+      ['A6129 (ML-KEM)', 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M'],
+      ['A6130 (ML-DSA)', 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M-2'],
+      ['A6131 (SLH-DSA)', 'Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS'],
+    ]
+    for (const [name, id] of rows) {
+      expect(screen.getAllByRole('link', { name })[0].getAttribute('href')).toBe(
+        `/library?ref=${id}`
       )
     }
-    expect(screen.getByRole('link', { name: 'Managed HSM overview' }).getAttribute('href')).toBe(
-      'https://learn.microsoft.com/en-us/azure/key-vault/managed-hsm/overview'
-    )
+    expect(
+      screen.getAllByRole('link', { name: 'Managed HSM overview' })[0].getAttribute('href')
+    ).toBe('/library?ref=Azure-Key-Vault-Managed-HSM-Overview')
     const rag = flat(ragSummary)
     for (const n of ['A6129', 'A6130', 'A6131']) expect(rag).toContain(flat(n))
   })

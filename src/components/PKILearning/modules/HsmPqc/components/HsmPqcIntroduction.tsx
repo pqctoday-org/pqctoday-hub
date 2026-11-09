@@ -587,32 +587,26 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     <strong>Algorithm validations (CAVP, not a module certificate):</strong>{' '}
                     NIST&apos;s CAVP pages name Securosys SA and the Primus HSM firmware
                     implementation, version 3.1.0 (first validated 7 Nov 2024), for{' '}
-                    <a
-                      href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38739"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to="/library?ref=Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M"
                       className="text-primary hover:underline"
                     >
-                      A6129
-                    </a>{' '}
+                      A6129 (ML-KEM)
+                    </Link>{' '}
                     (ML-KEM key generation and encapsulation/decapsulation),{' '}
-                    <a
-                      href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38740"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to="/library?ref=Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M-2"
                       className="text-primary hover:underline"
                     >
-                      A6130
-                    </a>{' '}
+                      A6130 (ML-DSA)
+                    </Link>{' '}
                     (ML-DSA key generation, signature generation and verification) and{' '}
-                    <a
-                      href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38741"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to="/library?ref=Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS"
                       className="text-primary hover:underline"
                     >
-                      A6131
-                    </a>{' '}
+                      A6131 (SLH-DSA)
+                    </Link>{' '}
                     (SLH-DSA key generation, signature generation and verification). A passed
                     algorithm test is a prerequisite of a module validation, not a substitute for
                     it.
@@ -630,6 +624,18 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                       {
                         id: 'Securosys-Primus-HSM-CyberVault-PQC-ready',
                         label: 'Securosys announcement',
+                      },
+                      {
+                        id: 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M',
+                        label: 'CAVP A6129 (ML-KEM)',
+                      },
+                      {
+                        id: 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M-2',
+                        label: 'CAVP A6130 (ML-DSA)',
+                      },
+                      {
+                        id: 'Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS',
+                        label: 'CAVP A6131 (SLH-DSA)',
                       },
                     ]}
                   />
@@ -887,14 +893,12 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   maintenance, and, for Managed HSM, provisioning; Cloud HSM is a customer-owned
                   cluster that the customer provisions, reached over a private endpoint in your
                   virtual network (Microsoft Learn pages read 8 Nov 2026; see also the{' '}
-                  <a
-                    href="https://learn.microsoft.com/en-us/azure/key-vault/managed-hsm/overview"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to="/library?ref=Azure-Key-Vault-Managed-HSM-Overview"
                     className="text-primary hover:underline"
                   >
                     Managed HSM overview
-                  </a>
+                  </Link>
                   ).
                 </p>
                 <LibLinks
@@ -903,6 +907,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                       id: 'About-keys-Azure-Key-Vault-Managed-HSM',
                       label: 'Managed HSM: about keys',
                     },
+                    { id: 'Azure-Key-Vault-Managed-HSM-Overview', label: 'Managed HSM overview' },
                     { id: 'Azure-Managed-HSM-BYOK', label: 'Managed HSM BYOK' },
                   ]}
                 />
