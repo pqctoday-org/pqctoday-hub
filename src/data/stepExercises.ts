@@ -165,7 +165,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'web-gateway-pqc/handshake-budget': {
     prompt:
-      "You tick both Session Resumption (PSK, -90%) and Certificate Compression (RFC 8879, -30%). How does the calculator combine them into the 'After mitigations' figure?",
+      "You tick both Session Resumption (PSK, -90%) and Certificate Compression (-30%, a planning input: RFC 8879 gives no size reduction). How does the calculator combine them into the 'After mitigations' figure?",
     options: [
       'Only the larger reduction (90%) applies',
       'The percentages add up to 120%, capped at 100%',

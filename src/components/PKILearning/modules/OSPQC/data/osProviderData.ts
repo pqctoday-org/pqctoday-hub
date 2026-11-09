@@ -194,7 +194,8 @@ export const OS_VENDORS: OSVendorStatus[] = [
     opensslVersion: 'CryptoKit / Security.framework (native) / Homebrew OpenSSL 3.x (user)',
     catalogName: 'iOS 26 / macOS 26',
     fipsMode: 'partial',
-    sshPqcStatus: 'macOS ships OpenSSH 9.x; no PQC host key support in system SSH',
+    sshPqcStatus:
+      'macOS 26 upgrades SSH to a quantum-secure key exchange (Apple Platform Security guide); the guide does not describe PQC host key signatures',
     pkgSigningPqc: 'macOS Gatekeeper / code signing uses ECDSA P-256; ML-DSA not yet',
     roadmapYear: '2026-02-11',
     mlKemSupport:
