@@ -98,6 +98,24 @@ const LabQuote: React.FC<{ source: string; children: React.ReactNode }> = ({
   </blockquote>
 )
 
+/** Links to the Library rows a card's statements come from. */
+const LibLinks: React.FC<{ refs: { id: string; label: string }[] }> = ({ refs }) => (
+  <p className="text-[11px]">
+    Library:{' '}
+    {refs.map((r, i) => (
+      <React.Fragment key={r.id}>
+        {i > 0 && ' · '}
+        <Link
+          to={`/library?ref=${encodeURIComponent(r.id)}`}
+          className="text-primary hover:underline"
+        >
+          {r.label}
+        </Link>
+      </React.Fragment>
+    ))}
+  </p>
+)
+
 export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNavigateToWorkshop }) => {
   // The data-section-id anchors below were already here and already
   // matched this module's manifest; nothing read them. One call makes
@@ -663,6 +681,121 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
             </div>
 
+            {/* Azure Cloud HSM */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-foreground">Azure Cloud HSM</h3>
+                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-muted/50 text-muted-foreground border-border">
+                  NONE LISTED
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <span className="text-muted-foreground">PQC Support:</span>{' '}
+                  <span className="text-foreground">
+                    None listed on Microsoft&apos;s Azure Cloud HSM overview or FAQ
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">FIPS:</span>{' '}
+                  <span className="text-foreground">
+                    FIPS 140-3 Level 3 validated (Microsoft&apos;s statement)
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Tenancy:</span>{' '}
+                  <span className="text-foreground">
+                    Single-tenant; each cluster has its own customer-specific security domain and
+                    three HSMs
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Interfaces:</span>{' '}
+                  <span className="text-foreground">
+                    PKCS#11, OpenSSL, Java (JCA and JCE), CNG and a key storage provider (KSP)
+                  </span>
+                </div>
+              </div>
+              <div className="mt-3 text-xs text-muted-foreground space-y-1">
+                <p>
+                  <strong>Who runs it:</strong> Microsoft runs the service and the customer holds
+                  administrative authority over the HSMs. Microsoft&apos;s pages say the service
+                  takes care of high availability, patching and maintenance, that Microsoft oversees
+                  the firmware, and that the hardware is Marvell LiquidSecurity. Microsoft calls it
+                  the successor to Azure Dedicated HSM. Its overview says it is not a good fit for
+                  Azure services that need customer-managed keys, and points those cases to Managed
+                  HSM (Microsoft Learn pages read 8 Nov 2026).
+                </p>
+                <LibLinks
+                  refs={[
+                    { id: 'Overview-of-Azure-Cloud-HSM', label: 'Azure Cloud HSM overview' },
+                    {
+                      id: 'Frequently-Asked-Questions-FAQ-About-Azure-Cloud-HSM',
+                      label: 'Azure Cloud HSM FAQ',
+                    },
+                    { id: 'What-is-Azure-Dedicated-HSM', label: 'Azure Dedicated HSM overview' },
+                  ]}
+                />
+              </div>
+            </div>
+
+            {/* Azure Managed HSM */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-foreground">Azure Managed HSM</h3>
+                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-muted/50 text-muted-foreground border-border">
+                  NONE LISTED
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <span className="text-muted-foreground">PQC Support:</span>{' '}
+                  <span className="text-foreground">
+                    No PQC algorithm in its key types (RSA-HSM, EC-HSM, oct-HSM); Microsoft notes
+                    that 256-bit AES keys are quantum-resistant
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">FIPS:</span>{' '}
+                  <span className="text-foreground">
+                    FIPS 140-3 Level 3 validated hardware; every key is HSM-protected
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Tenancy:</span>{' '}
+                  <span className="text-foreground">
+                    Single-tenant instance with its own security domain, on hardware that other
+                    Managed HSM instances share
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Interfaces:</span>{' '}
+                  <span className="text-foreground">
+                    A data-plane endpoint per instance
+                    (https://&lt;hsm-name&gt;.managedhsm.azure.net)
+                  </span>
+                </div>
+              </div>
+              <div className="mt-3 text-xs text-muted-foreground space-y-1">
+                <p>
+                  <strong>Who runs it:</strong> a fully managed Microsoft service. Microsoft says it
+                  can attest that a key was generated and resides inside an HSM that Microsoft
+                  operates, and keys can be generated in the HSM or imported by bring-your-own-key.
+                  Compare Azure Cloud HSM, where the customer holds administrative authority over
+                  the cluster (Microsoft Learn pages read 8 Nov 2026).
+                </p>
+                <LibLinks
+                  refs={[
+                    {
+                      id: 'About-keys-Azure-Key-Vault-Managed-HSM',
+                      label: 'Managed HSM: about keys',
+                    },
+                    { id: 'Azure-Managed-HSM-BYOK', label: 'Managed HSM BYOK' },
+                  ]}
+                />
+              </div>
+            </div>
+
             {/* Azure Dedicated HSM */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
@@ -734,6 +867,130 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   HSM uses Marvell LiquidSecurity HSMs (certificate #4399) in FIPS 140-2 Level 3
                   certified hardware security modules.
                 </p>
+              </div>
+            </div>
+
+            {/* Securosys */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-foreground">
+                  Securosys Primus HSM CyberVault
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-primary/10 text-primary border-primary/20">
+                  PQC LISTED
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <span className="text-muted-foreground">PQC Support:</span>{' '}
+                  <span className="text-foreground">
+                    ML-DSA, SLH-DSA, ML-KEM, HSS-LMS and XMSS (Securosys fact sheet, August 2025)
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">FIPS:</span>{' '}
+                  <span className="text-foreground">
+                    FIPS 140-3 Level 3 listed as in certification; Common Criteria EAL4+ (same fact
+                    sheet)
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Who runs it:</span>{' '}
+                  <span className="text-foreground">
+                    The owner: a 1U rack appliance (X2 models) that supports clustering, load
+                    balancing and failover
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Interfaces:</span>{' '}
+                  <span className="text-foreground">
+                    JCE/JCA, PKCS#11, OpenSSL v3, Microsoft CNG/KSP, a RESTful API and a KMIP API
+                  </span>
+                </div>
+              </div>
+              <div className="mt-3 text-xs text-muted-foreground space-y-1">
+                <p>
+                  Securosys&apos; firmware v3.x algorithm list gives each algorithm a separate
+                  status for the Common Criteria evaluated configuration and for FIPS mode: for
+                  example, HSS-LMS is listed as approved in FIPS mode and not allowed in the Common
+                  Criteria configuration. Read the status for the mode you will run in, and check
+                  the module certificate and Security Policy as for any other vendor (pages read 8
+                  Nov 2026).
+                </p>
+                <LibLinks
+                  refs={[
+                    {
+                      id: 'Primus-HSM-CyberVault-X2-models-fact-sheet-Securosys',
+                      label: 'X2 fact sheet',
+                    },
+                    {
+                      id: 'List-of-Algorithms-and-Functions-for-Firmware-v3-x-Securosys',
+                      label: 'Firmware v3.x algorithms',
+                    },
+                    {
+                      id: 'Securosys-Primus-HSM-CyberVault-PQC-ready',
+                      label: 'Securosys announcement',
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+
+            {/* Tessera: specification stage */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-foreground">
+                  Tessera (specification and open designs)
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-muted/50 text-muted-foreground border-border">
+                  NO PRODUCT OR CERTIFICATE YET
+                </span>
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground space-y-2">
+                <p>
+                  Tessera is a specification for a workload-attached &ldquo;integrated HSM&rdquo;,
+                  published with open firmware and an open hardware design. The sources read
+                  describe no product and no certificate: the SDK repository says &ldquo;This
+                  project is still under development and is not yet ready for deployment&rdquo;, and
+                  Microsoft&apos;s announcement gives FIPS 140-3 Level 3 as what the project is
+                  designed to enforce. Microsoft describes Tessera as an evolution of the Azure
+                  Integrated HSM; facts about that earlier Azure Integrated HSM are not facts about
+                  Tessera. Tessera&apos;s specifications name Caliptra as the root of trust for its
+                  devices. (Tessera Definition and Chip Requirements specifications v0.5.0, the DARC
+                  specification, the SDK README and Microsoft&apos;s Project Tessera announcement,
+                  read 8 Nov 2026.){' '}
+                  <Link
+                    to="/learn/arch-quantum-impact?tab=workshop&step=5"
+                    className="text-primary hover:underline"
+                  >
+                    See how it compares in Step 6 of Architect Quantum Impact
+                  </Link>
+                  .
+                </p>
+                <LibLinks
+                  refs={[
+                    {
+                      id: 'Tessera-Integrated-HSM-Project-Definition-0-5-0',
+                      label: 'Project Definition',
+                    },
+                    {
+                      id: 'Tessera-Integrated-HSM-Chip-Requirements-Specification-0-5-0',
+                      label: 'Chip Requirements',
+                    },
+                    {
+                      id: 'Tessera-Integrated-HSM-DARC-Device-Authentication-Root-Certi',
+                      label: 'DARC',
+                    },
+                    {
+                      id: 'Tessera-Integrated-HSM-SDK-tessera-sw-README',
+                      label: 'SDK README',
+                    },
+                    {
+                      id: 'Open-source-Integrated-HSM-for-hardware-security-Microsoft-A',
+                      label: 'Microsoft announcement',
+                    },
+                  ]}
+                />
               </div>
             </div>
           </div>
@@ -1315,6 +1572,20 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
       <section className="glass-panel p-6 border-secondary/20">
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/arch-quantum-impact?tab=workshop&step=5"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Layers size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">
+                Compare with the other trust hardware
+              </div>
+              <div className="text-xs text-muted-foreground">
+                HSMs, TPMs, Caliptra, confidential computing and DPUs side by side
+              </div>
+            </div>
+          </Link>
           <Link
             to="/learn/kms-pqc"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"

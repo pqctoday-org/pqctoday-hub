@@ -246,3 +246,72 @@ describe('HsmPqc: ML-DSA signing text names the calls the simulator shows (Steps
     expect(hss).toContain('C_Sign/C_Verify')
   })
 })
+
+// Cloud HSM cards added for the trust-hardware comparison: each phrase is what the provider's
+// own page says (Microsoft Learn: Azure Cloud HSM overview and FAQ, Managed HSM overview and
+// key pages; the Securosys X2 fact sheet and firmware v3.x algorithm list; the Tessera specification,
+// SDK README and Microsoft's Project Tessera announcement), read 8 Nov 2026.
+describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera cards', () => {
+  const NEW_CARD_FACTS = [
+    'Azure Cloud HSM',
+    'Azure Managed HSM',
+    'Securosys Primus HSM CyberVault',
+    "None listed on Microsoft's Azure Cloud HSM overview or FAQ",
+    'Single-tenant; each cluster has its own customer-specific security domain and three HSMs',
+    'PKCS#11, OpenSSL, Java (JCA and JCE), CNG and a key storage provider (KSP)',
+    'Microsoft calls it the successor to Azure Dedicated HSM',
+    'a fully managed Microsoft service',
+    'Marvell LiquidSecurity',
+    'ML-DSA, SLH-DSA, ML-KEM, HSS-LMS and XMSS (Securosys fact sheet, August 2025)',
+    'HSS-LMS is listed as approved in FIPS mode and not allowed in the Common Criteria configuration',
+    'This project is still under development and is not yet ready for deployment',
+    'Microsoft describes Tessera as an evolution of the Azure Integrated HSM',
+    'facts about that earlier Azure Integrated HSM are not facts about Tessera',
+  ]
+
+  it('shows each new card fact on the Learn tab', () => {
+    const page = openIntroText()
+    for (const fact of NEW_CARD_FACTS) {
+      expect(page, `Learn tab: ${fact}`).toContain(flat(fact))
+    }
+  })
+
+  it('keeps the Azure Dedicated HSM retirement note', () => {
+    const page = openIntroText()
+    expect(page).toContain(
+      flat('No new customer onboardings; existing customers supported until 31 July 2028.')
+    )
+  })
+
+  it('says the same about the new cards in the rag-summary and the curious summary', () => {
+    const rag = flat(ragSummary)
+    expect(rag).toContain(flat('Azure Cloud HSM (Microsoft Learn overview and FAQ'))
+    expect(rag).toContain(
+      flat('Azure Managed HSM (Microsoft Learn, Key Vault Managed HSM about keys')
+    )
+    expect(rag).toContain(flat('Securosys Primus HSM CyberVault (Securosys X2 fact sheet'))
+    expect(rag).toContain(
+      flat('Microsoft describes Tessera as an evolution of the Azure Integrated HSM')
+    )
+    expect(flat(curiousSummary)).toContain(
+      flat('Tessera is a specification with open firmware and an open hardware design')
+    )
+  })
+
+  it('does not describe Tessera with product words or Azure Integrated HSM facts', () => {
+    const page = openIntroText()
+    const tessera = page.slice(page.indexOf('tessera (specification and open designs)'))
+    expect(tessera).toContain('no product or certificate yet')
+    for (const word of ['ships', 'now available', 'is certified', 'in every server']) {
+      expect(tessera.slice(0, 1800), word).not.toContain(word)
+    }
+  })
+
+  it('links to the trust-hardware comparison step from the closing block', () => {
+    openIntroText()
+    const links = screen
+      .getAllByRole('link', { name: /Compare with the other trust hardware/ })
+      .map((a) => a.getAttribute('href'))
+    expect(links).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5'])
+  })
+})
