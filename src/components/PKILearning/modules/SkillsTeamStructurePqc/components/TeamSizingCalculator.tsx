@@ -38,6 +38,7 @@ export const TeamAllocationEditor: React.FC<{
             <p>
               Allocated programme FTE: <strong>{fteText(assessment.total)}</strong>
             </p>
+            {assessment.total === 0 && <p>Unstaffed draft: no incremental FTE allocated.</p>}
             <p>
               Delivery: {fteText(assessment.delivery)} FTE + coordination:{' '}
               {fteText(assessment.coordination)} FTE

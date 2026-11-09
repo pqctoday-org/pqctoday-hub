@@ -152,6 +152,23 @@ for (const surface of ['learn', 'business'] as const)
         'Allocated programme FTE: 2.2'
       )
     })
+    it('shows an all-zero allocation as an exportable unstaffed draft', async () => {
+      const writeText = copiedText()
+      mount()
+      fireEvent.change(estate(), { target: { value: '600' } })
+      for (const id of ALLOCATION_ROLE_ORDER.filter(
+        (id) => id !== 'exec-sponsor' && id !== 'ot-specialist'
+      ))
+        fireEvent.change(row(id), { target: { value: '0' } })
+      expect(screen.getByText('Allocated programme FTE:')).toHaveTextContent(
+        'Allocated programme FTE: 0'
+      )
+      expect(screen.getByText('Unstaffed draft: no incremental FTE allocated.')).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Copy' }))
+      await waitFor(() => expect(writeText).toHaveBeenCalled())
+      expect(writeText.mock.calls[0][0]).toContain('Allocated programme total: 0 FTE')
+      expect(writeText.mock.calls[0][0]).toContain('Unstaffed draft: no incremental FTE allocated.')
+    })
     it('does not turn a malformed saved allocation into a fabricated zero plan', () => {
       documents = [
         {

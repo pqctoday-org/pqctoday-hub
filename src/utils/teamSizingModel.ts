@@ -191,6 +191,7 @@ export function allocationMarkdown(context: TeamSizingContext, draft: unknown): 
     `- Allocated delivery: ${fteText(result.delivery)} FTE`,
     `- Allocated coordination: ${fteText(result.coordination)} FTE`,
     `- Allocated programme total: ${fteText(result.total)} FTE`,
+    ...(result.total === 0 ? ['Unstaffed draft: no incremental FTE allocated.'] : []),
     `- Delivery difference from ratio reference: ${fteText(result.delivery - result.reference)} FTE`,
     '',
     '| Role | Allocated FTE | Framework reference band |',
