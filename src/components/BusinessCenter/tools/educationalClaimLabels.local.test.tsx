@@ -106,7 +106,9 @@ describe('educational selections do not establish performed checks', () => {
     }
     for (const field of screen.getAllByLabelText(/^Handover date for/))
       fireEvent.change(field, { target: { value: '2028-05-01' } })
-    for (const button of screen.getAllByRole('button', { name: /☐/ })) fireEvent.click(button)
+    // The checkbox glyph is hidden from assistive technology, so the toggles are found by their
+    // pressed state.
+    for (const button of screen.getAllByRole('button', { pressed: false })) fireEvent.click(button)
     expect(
       screen.getByText('Sample checklist entries complete — closure not assessed')
     ).toBeInTheDocument()

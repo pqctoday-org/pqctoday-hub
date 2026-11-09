@@ -868,7 +868,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'A 30-minute architect guide to post-quantum system design. Crypto agility patterns, hybrid deployment strategies, and infrastructure migration sequencing.',
     canonical: `${BASE_URL}/learn/arch-quantum-impact`,
-    structuredData: buildModuleSchema('Architect Quantum Impact Guide', 'PT20M', 'Beginner'),
+    structuredData: buildModuleSchema('Architect Quantum Impact Guide', 'PT30M', 'Beginner'),
   },
 
   '/learn/ops-quantum-impact': {

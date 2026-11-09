@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { EDUCATION_NOTICE } from '@/data/educationNotice'
 import {
   CHAIN_SAMPLE,
   generateMeasuredChains,
@@ -100,6 +101,10 @@ export function MeasuredChainExample({ disabled = false, onBusyChange, onInspect
           Sample private keys are not displayed, downloaded or added to your artifact store.
         </p>
       </details>
+      <p className="text-xs text-muted-foreground" data-testid="chain-example-notice">
+        {EDUCATION_NOTICE} The downloads are binary sample files and cannot carry this notice
+        themselves.
+      </p>
       <div className="flex flex-wrap gap-2">
         <Button
           className="h-auto min-h-[44px] max-w-full whitespace-normal text-left"
