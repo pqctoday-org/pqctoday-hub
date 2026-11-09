@@ -22,6 +22,7 @@ export const TRUST_HARDWARE_CITATIONS = {
     'Tessera-Integrated-HSM-DARC-Device-Authentication-Root-Certi',
     'Tessera-Integrated-HSM-SDK-tessera-sw-README',
     'Open-source-Integrated-HSM-for-hardware-security-Microsoft-A',
+    'Advancing-hardware-security-through-open-source-collaboratio',
   ],
   'confidential-computing': ['Confidential-VMs-Explained-An-Empirical-Analysis-of-AMD-SEV'],
   'secure-boot-pqc': [
@@ -30,6 +31,7 @@ export const TRUST_HARDWARE_CITATIONS = {
     'Hardware-Specification-Caliptra-2-1-Documentation',
     'Caliptra-A-Datacenter-System-on-a-Chip-SoC-Root-of-Trust-RoT',
     'ML-DSA-Documentation-Caliptra-2-1-Documentation-Adams-Bridge',
+    'Advancing-hardware-security-through-open-source-collaboratio',
   ],
   'pqc-hw-acceleration': [
     'Hardware-Specification-Caliptra-2-1-Documentation',
@@ -40,6 +42,8 @@ export const TRUST_HARDWARE_CITATIONS = {
     'Adams-Bridge-chipsalliance-adams-bridge-README',
     'Adam-s-Bridge-Side-Channel-Protection',
     'tessera-abr-params-pkg-sv-ML-DSA-and-ML-KEM-accelerator-para',
+    'Tessera-Integrated-HSM-Chip-Requirements-Specification-0-5-0',
+    'Advancing-hardware-security-through-open-source-collaboratio',
   ],
   'kms-pqc': [
     'Secure-Key-Release-with-Azure-Key-Vault-and-Azure-Confidenti',

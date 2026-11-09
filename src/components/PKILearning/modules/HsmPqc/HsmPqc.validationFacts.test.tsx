@@ -262,6 +262,13 @@ describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera card
     'Microsoft calls it the successor to Azure Dedicated HSM',
     'Sold as a 1U rack appliance (X2 models) that supports clustering, load balancing and failover',
     'Both services give the customer administrative control of the keys',
+    'while Microsoft runs patching and maintenance, and, for Managed HSM, provisioning',
+    'Cloud HSM is a customer-owned cluster that the customer provisions',
+    'Algorithm validations (CAVP, not a module certificate)',
+    'Securosys SA and the Primus HSM firmware implementation, version 3.1.0 (first validated 7 Nov 2024)',
+    'MUST have a Caliptra 2.2 subsystem root of trust',
+    'come from the Caliptra 2.1 documentation',
+    'scheduled for release in December',
     'https://<hsm-name>.managedhsm.azure.net',
     'a fully managed Microsoft service',
     'Marvell LiquidSecurity',
@@ -301,6 +308,30 @@ describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera card
     )
     expect(flat(curiousSummary)).toContain(flat('in the Microsoft pages read'))
     expect(flat(curiousSummary)).not.toContain("in microsoft's pages")
+  })
+
+  it('links each Securosys CAVP number to its NIST page and the Managed HSM overview', () => {
+    openIntroText()
+    for (const [n, v] of [
+      ['A6129', '38739'],
+      ['A6130', '38740'],
+      ['A6131', '38741'],
+    ]) {
+      expect(screen.getByRole('link', { name: n }).getAttribute('href')).toBe(
+        `https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=${v}`
+      )
+    }
+    expect(screen.getByRole('link', { name: 'Managed HSM overview' }).getAttribute('href')).toBe(
+      'https://learn.microsoft.com/en-us/azure/key-vault/managed-hsm/overview'
+    )
+    const rag = flat(ragSummary)
+    for (const n of ['A6129', 'A6130', 'A6131']) expect(rag).toContain(flat(n))
+  })
+
+  it('keeps Securosys with the on-premises vendors in the curious summary', () => {
+    const c = flat(curiousSummary)
+    expect(c).toContain(flat('(such as Thales, Entrust, Utimaco and Securosys)'))
+    expect(c).not.toContain(flat('in the Microsoft pages read, while Securosys'))
   })
 
   it('keeps the Azure Dedicated HSM retirement note', () => {

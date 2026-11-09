@@ -54,6 +54,8 @@ describe('Secure Boot: TPM or Caliptra', () => {
     expect(text).toContain('signed attestations rooted in unique per-asset cryptographic entropy')
     expect(text).toContain('authentication to a discrete tpm device')
     expect(text).toContain('the two can be present on one platform')
+    expect(text).toContain('all of this is from the caliptra 2.1 documentation')
+    expect(text).toContain('caliptra 2.2, which the tessera chip requirements call for')
   })
 
   it('does not call either one a replacement for the other', () => {

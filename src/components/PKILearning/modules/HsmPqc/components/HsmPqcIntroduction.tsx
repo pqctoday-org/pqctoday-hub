@@ -583,6 +583,40 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     check the module certificate and Security Policy as for any other vendor (pages
                     read 8 Nov 2026).
                   </p>
+                  <p>
+                    <strong>Algorithm validations (CAVP, not a module certificate):</strong>{' '}
+                    NIST&apos;s CAVP pages name Securosys SA and the Primus HSM firmware
+                    implementation, version 3.1.0 (first validated 7 Nov 2024), for{' '}
+                    <a
+                      href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38739"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      A6129
+                    </a>{' '}
+                    (ML-KEM key generation and encapsulation/decapsulation),{' '}
+                    <a
+                      href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38740"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      A6130
+                    </a>{' '}
+                    (ML-DSA key generation, signature generation and verification) and{' '}
+                    <a
+                      href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38741"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      A6131
+                    </a>{' '}
+                    (SLH-DSA key generation, signature generation and verification). A passed
+                    algorithm test is a prerequisite of a module validation, not a substitute for
+                    it.
+                  </p>
                   <LibLinks
                     refs={[
                       {
@@ -849,10 +883,19 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   can attest that a key was generated and resides inside an HSM that Microsoft
                   operates, and keys can be generated in the HSM or imported by bring-your-own-key.
                   Both services give the customer administrative control of the keys (Managed HSM
-                  through local RBAC; Cloud HSM through HSM users) while Microsoft runs
-                  provisioning, patching and maintenance; Cloud HSM is a customer-owned cluster
-                  reached over a private endpoint in your virtual network (Microsoft Learn pages
-                  read 8 Nov 2026).
+                  through local RBAC; Cloud HSM through HSM users) while Microsoft runs patching and
+                  maintenance, and, for Managed HSM, provisioning; Cloud HSM is a customer-owned
+                  cluster that the customer provisions, reached over a private endpoint in your
+                  virtual network (Microsoft Learn pages read 8 Nov 2026; see also the{' '}
+                  <a
+                    href="https://learn.microsoft.com/en-us/azure/key-vault/managed-hsm/overview"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Managed HSM overview
+                  </a>
+                  ).
                 </p>
                 <LibLinks
                   refs={[
@@ -959,10 +1002,13 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   Microsoft&apos;s announcement gives FIPS 140-3 Level 3 as what the project is
                   designed to enforce. Microsoft describes Tessera as an evolution of the Azure
                   Integrated HSM; facts about that earlier Azure Integrated HSM are not facts about
-                  Tessera. Tessera&apos;s specifications name Caliptra as the root of trust for its
-                  devices. (Tessera Definition and Chip Requirements specifications v0.5.0, the DARC
-                  specification, the SDK README and Microsoft&apos;s Project Tessera announcement,
-                  read 8 Nov 2026.){' '}
+                  Tessera. Tessera&apos;s Chip Requirements say it &ldquo;MUST have a Caliptra 2.2
+                  subsystem root of trust&rdquo;; the Caliptra specifications and figures in this
+                  module and in PQC Hardware Acceleration come from the Caliptra 2.1 documentation,
+                  and Microsoft&apos;s 13 October 2026 post says Caliptra 2.2 is &ldquo;scheduled
+                  for release in December&rdquo;. (Tessera Definition and Chip Requirements
+                  specifications v0.5.0, the DARC specification, the SDK README and Microsoft&apos;s
+                  Project Tessera announcement, read 8 Nov 2026.){' '}
                   <Link
                     to="/learn/arch-quantum-impact?tab=workshop&step=5"
                     className="text-primary hover:underline"
@@ -992,6 +1038,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     {
                       id: 'Open-source-Integrated-HSM-for-hardware-security-Microsoft-A',
                       label: 'Microsoft announcement',
+                    },
+                    {
+                      id: 'Advancing-hardware-security-through-open-source-collaboratio',
+                      label: 'Microsoft OCP 2026 post (Caliptra 2.2)',
                     },
                   ]}
                 />

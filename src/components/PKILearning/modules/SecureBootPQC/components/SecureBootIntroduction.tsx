@@ -109,6 +109,12 @@ const CALIPTRA_SPEC = findStandard(
   title: 'Caliptra: A Datacenter System on a Chip (SoC) Root of Trust (RoT)',
   deepLink: '/library?ref=Caliptra-A-Datacenter-System-on-a-Chip-SoC-Root-of-Trust-RoT',
 }
+const ADAMS_MLDSA = findStandard(
+  'ML-DSA-Documentation-Caliptra-2-1-Documentation-Adams-Bridge'
+) ?? {
+  title: 'Adams Bridge ML-DSA documentation (Caliptra 2.1)',
+  deepLink: '/library?ref=ML-DSA-Documentation-Caliptra-2-1-Documentation-Adams-Bridge',
+}
 const CALIPTRA_HW = findStandard('Hardware-Specification-Caliptra-2-1-Documentation') ?? {
   title: 'Caliptra 2.1 hardware specification',
   deepLink: '/library?ref=Hardware-Specification-Caliptra-2-1-Documentation',
@@ -949,10 +955,11 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                 an open design from the Caliptra project.
               </p>
               <p>
-                <strong>What it measures:</strong> the SoC measures the code and configuration it
-                boots into Caliptra, which stores the measurements in its own PCR vault; its
-                hardware also hashes the firmware written into its instruction memory, a
-                tamper-evident record of the code that actually loaded.
+                <strong>What it measures:</strong> the specification requires the SoC to measure the
+                code and configuration it boots into Caliptra, and Caliptra to store the
+                measurements, which it does in its own PCR vault; its hardware also hashes the
+                firmware written into its instruction memory, a tamper-evident record of the code
+                that actually loaded.
               </p>
               <p>
                 <strong>What it attests:</strong> it reports the measurements with signed
@@ -973,7 +980,11 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                 Sources: <LibCite std={CALIPTRA_SPEC}>Caliptra specification, revision 2.1</LibCite>{' '}
                 (silicon RoT goals, DICE attestation, DICE Protection Environment) and{' '}
                 <LibCite std={CALIPTRA_HW}>Caliptra 2.1 hardware specification</LibCite> (PCR vault,
-                PCR signing and boot sections).
+                PCR signing and boot sections) and the{' '}
+                <LibCite std={ADAMS_MLDSA}>Adams Bridge ML-DSA page</LibCite>. All of this is from
+                the Caliptra 2.1 documentation; Caliptra 2.2, which the Tessera Chip Requirements
+                call for, is &ldquo;scheduled for release in December&rdquo; (Microsoft, 13 October
+                2026).
               </p>
             </div>
           </div>

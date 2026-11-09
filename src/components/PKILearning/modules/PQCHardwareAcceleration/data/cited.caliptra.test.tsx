@@ -106,14 +106,23 @@ describe('Adams Bridge speed figures', () => {
 })
 
 describe('Tessera accelerator note', () => {
-  it('names it a separate, specification-stage design with its own parameter sets', () => {
-    expect(CITED_FACTS.tesseraAccelerator).toMatch(/separate design, at the specification stage/)
+  it('describes it as an open hardware design with its own parameter sets, separate by inference', () => {
+    expect(CITED_FACTS.tesseraAccelerator).toMatch(
+      /open hardware design, with no silicon or product in the sources read/
+    )
     expect(CITED_FACTS.tesseraAccelerator).toMatch(
       /implements every ML-DSA and ML-KEM parameter set, selected at run time/
     )
     expect(CITED_FACTS.tesseraAccelerator).toMatch(/ML-DSA-44\/65\/87 and ML-KEM-512\/768\/1024/)
-    expect(CITED_FACTS.tesseraAccelerator).toMatch(/do not read them as the same engine/)
+    expect(CITED_FACTS.tesseraAccelerator).toMatch(
+      /reading them as separate designs is our inference, so do not read them as the same engine/
+    )
     expect(CITED_FACTS.tesseraAccelerator).toMatch(/does not say how the two relate/)
+    expect(CITED_FACTS.tesseraAccelerator).toContain(
+      '“MUST have a Caliptra 2.2 subsystem root of trust”'
+    )
+    expect(CITED_FACTS.tesseraAccelerator).toContain('come from the Caliptra 2.1 documentation')
+    expect(CITED_FACTS.tesseraAccelerator).toContain('“scheduled for release in December”')
     expect(CITED_FACTS.adamsBridge).toMatch(/ML-DSA-87 and ML-KEM-1024 parameter sets only/)
   })
 
@@ -142,7 +151,7 @@ describe('Tessera accelerator note', () => {
       screen.getAllByRole('link', { name: /Compare with the other trust hardware/ })
     ).toHaveLength(1)
     expect(flat(ragSummary)).toContain(
-      "Tessera's accelerator is a separate, specification-stage design"
+      "Tessera's accelerator comes from an open hardware design with no silicon or product in the sources read"
     )
   })
 })
