@@ -20,11 +20,15 @@ const encodeLen = (len: number): number[] => {
   return [0x80 | bytes.length, ...bytes]
 }
 
+// Studio-internal private-key wrapper. RFC 8554 (and RFC 9708 / RFC 9802) define no
+// private-key file format, so this borrows a PKCS#8 shape around an internal OID. It
+// is only meant to be read back by this Studio; the page says so next to Load Sample
+// Data. Public keys no longer share this OID: they use the standard HSS identifier.
 const toPKCS8 = (privKey: Uint8Array): string => {
   // Version: 0 (Integer)
   const version = [0x02, 0x01, 0x00]
 
-  // AlgoId: Same as SPKI
+  // AlgoId: Studio-internal OID (not the standard HSS public-key identifier)
   const oid = [0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x07, 0x02, 0x01]
   const algoId = [0x30, ...encodeLen(oid.length), ...oid]
 
@@ -460,6 +464,12 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           A bundled WebAssembly engine generates, signs and verifies LMS keys here, not the openssl
           command line. OpenSSL 3.6 can verify LMS only when built with enable-lms; this build is
           not.
+        </p>
+        <p className="text-xs text-muted-foreground pl-6 mb-3">
+          Public keys use the standard HSS public-key format, so other tools can read them. Private
+          key files are a Studio-internal wrapper (an internal OID around the engine&apos;s key
+          bytes), not a standard PKCS#8 key: RFC 8554 defines no private-key format, so no other
+          tool can read them.
         </p>
         <div className="ml-6 flex items-center gap-3 flex-wrap">
           <Button

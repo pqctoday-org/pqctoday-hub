@@ -107,6 +107,20 @@ describe('Stored PEM text and UTF-8 bytes consume the same existing LMS key', ()
     }
   )
   it.each(['text', 'utf8'] as const)(
+    'passes the exact 60 key bytes of an RFC 9802 public key (raw BIT STRING) from %s to the verifier',
+    async (kind) => {
+      // Independent fixed layout: SEQUENCE 78, AlgorithmIdentifier 13 with only the
+      // id-alg-hss-lms-hashsig OID, BIT STRING 61 with zero unused bits, raw key.
+      const hss = Uint8Array.of(0, 0, 0, 1, 0, 0, 0, 6, 0, 0, 0, 4, ...new Array(48).fill(9))
+      const hssOid = [0x06, 0x0b, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 1, 9, 16, 3, 17]
+      const rfc9802 = armor('PUBLIC KEY', [0x30, 78, 0x30, 13, ...hssOid, 0x03, 61, 0, ...hss])
+      show('verify', kind === 'text' ? rfc9802 : new TextEncoder().encode(rfc9802))
+      fireEvent.click(screen.getByRole('button', { name: 'Verify (WASM)' }))
+      await waitFor(() => expect(operations.verify).toHaveBeenCalledTimes(1))
+      expect(operations.verify.mock.calls[0][0]).toEqual(hss)
+    }
+  )
+  it.each(['text', 'utf8'] as const)(
     'does not send malformed %s PEM to the signer',
     async (kind) => {
       const bad = '-----BEGIN PRIVATE KEY-----\n%%%\n-----END PRIVATE KEY-----'
