@@ -69,6 +69,32 @@ describe('Studio comparisons follow the current completed attempt', () => {
     expect(keyRow().getByText('1708 B (RSA-2048)')).toBeInTheDocument()
   })
 
+  it('renders the signature table with headers and a summary tied to it', async () => {
+    const lengths = new Map([
+      ['learn-l3-rsa.sig', 200],
+      ['learn-l3-mldsa.sig', 500],
+    ])
+    const run = vi.fn(async (cmd: string) => {
+      const out = /-out (\S+)/.exec(cmd)?.[1]
+      if (out) put(out, lengths.get(out) ?? 64)
+      return { stdout: '' }
+    })
+    show(run)
+    fireEvent.click(screen.getByRole('button', { name: /^L3\s*Sign & verify/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Run all' }))
+    const table = await screen.findByRole('table', { name: 'Compare' })
+    expect(within(table).getByRole('columnheader', { name: 'RSA-2048' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'ML-DSA-65' })).toBeInTheDocument()
+    const row = within(within(table).getByRole('row', { name: /Signature size/ }))
+    expect(row.getByRole('rowheader', { name: 'Signature size' })).toBeInTheDocument()
+    expect(row.getByText('200 B (RSA-2048)')).toBeInTheDocument()
+    expect(row.getByText('500 B (ML-DSA-65)')).toBeInTheDocument()
+    const summary =
+      'Measured signature-file ratio: ML-DSA-65 / RSA-2048 ≈ 2.5×. These configured samples are not equivalent-strength profiles.'
+    expect(screen.getByText(summary)).toBeInTheDocument()
+    expect(table).toHaveAccessibleDescription(summary)
+  })
+
   it('keeps missing current output incomplete even if the command returns successfully', async () => {
     const run = vi.fn(async () => ({ stdout: '' }))
     show(run)

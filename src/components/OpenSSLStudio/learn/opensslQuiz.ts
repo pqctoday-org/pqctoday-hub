@@ -42,7 +42,7 @@ export const OPENSSL_QUIZZES: Record<string, QuizQuestion[]> = {
       why: 'req has two personalities: -new alone builds a PKCS#10 CSR; adding -x509 makes it self-sign a certificate directly. Try req -new alone in the Workbench to see the CSR-only path.',
     },
     {
-      q: 'The RSA-2048 certificate was about 1.1 KB and the ML-DSA-65 certificate about 7.5 KB. What stayed the same between the two req commands?',
+      q: 'The certificate comparison shows the two file lengths from this attempt. What stayed the same between the two req commands?',
       options: [
         'Nothing — the commands were completely different',
         'The command shape: req -x509 -new -key <file> -days 365 -subj "..." -out <file>. The RSA command also names -sha256; the ML-DSA command names no digest because ML-DSA signs the certificate body directly',
@@ -64,7 +64,7 @@ export const OPENSSL_QUIZZES: Record<string, QuizQuestion[]> = {
       why: "This is the exact branch OpenSSL Studio's own Workbench makes internally when you pick Sign for a PQC vs. classical key — dgst for classical (hash-then-sign, hash is your choice), pkeyutl for ML-DSA/SLH-DSA (hashing is fixed by the algorithm).",
     },
     {
-      q: "The ML-DSA-65 signature measured 3309 B against RSA-2048's 256 B — about 13× larger. What does the lesson's verify step prove that a \"Verified OK\" message alone wouldn't?",
+      q: 'The signature comparison shows the measured lengths and their ratio. What does the lesson\'s verify step prove that a "Verified OK" message alone wouldn\'t?',
       options: [
         'Nothing extra — verification just prints a fixed success message regardless of input',
         'That a genuine pkeyutl -verify call against the real public key, signature, and data files succeeded — a fabricated demo could print the same string without running anything',

@@ -73,14 +73,28 @@ describe('Studio comparison uses successful output-file measurements', () => {
     )
   })
 
-  it('derives the signature ratio from retained counts rather than four-times prose', () => {
+  it.each([
+    { rsa: 256, mldsa: 3309, ratio: '12.9×' },
+    { rsa: 100, mldsa: 500, ratio: '5.0×' },
+  ])(
+    'derives the signature ratio from retained counts ($rsa B and $mldsa B)',
+    ({ rsa, mldsa, ratio }) => {
+      const result: (OpenSslStepResult | undefined)[] = Array.from({ length: 9 }, () => undefined)
+      result[2] = { detail: 'Controlled RSA measurement', byteLength: rsa }
+      result[6] = { detail: 'Controlled ML-DSA measurement', byteLength: mldsa }
+      const measured = openSslRunComparison(lesson('sign-verify'), result)!
+      expect(measured.rows.find((row) => row.label === 'Signature size')).toMatchObject({
+        a: `${rsa} B (RSA-2048)`,
+        b: `${mldsa} B (ML-DSA-65)`,
+      })
+      expect(measured.summary).toContain(`ML-DSA-65 / RSA-2048 ≈ ${ratio}`)
+      expect(measured.summary).toContain('not equivalent-strength')
+    }
+  )
+
+  it('withdraws the ratio when either signature measurement is unavailable', () => {
     const result: (OpenSslStepResult | undefined)[] = Array.from({ length: 9 }, () => undefined)
     result[2] = { detail: 'Controlled RSA measurement', byteLength: 256 }
-    result[6] = { detail: 'Controlled ML-DSA measurement', byteLength: 3309 }
-    const measured = openSslRunComparison(lesson('sign-verify'), result)!
-    expect(3309 / 256).toBeCloseTo(12.92578125)
-    expect(measured.summary).toContain('12.9×')
-    expect(measured.summary).toContain('not equivalent-strength')
     result[6] = { detail: 'Unavailable output', byteLength: 0 }
     expect(openSslRunComparison(lesson('sign-verify'), result)).toBeUndefined()
   })

@@ -143,6 +143,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     measuredComparisons: [
       { label: 'Private key (PEM)', aStep: 0, bStep: 1, aLabel: 'RSA-2048', bLabel: 'ML-DSA-65' },
     ],
+    compareHeaders: ['Aspect', 'RSA-2048', 'ML-DSA-65'],
     compare: [
       {
         label: 'Private key (PEM)',
@@ -191,7 +192,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out learn-l2-rsa.key'
           )
-          return { detail: `${sizeOf(ctx, 'learn-l2-rsa.key')} B key ready.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l2-rsa.key')} B key ready.` }
         },
       },
       {
@@ -213,7 +214,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Generate the ML-DSA-65 key for the post-quantum certificate',
         run: async (ctx) => {
           await ctx.run('genpkey -algorithm ML-DSA-65 -out learn-l2-mldsa.key')
-          return { detail: `${sizeOf(ctx, 'learn-l2-mldsa.key')} B key ready.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l2-mldsa.key')} B key ready.` }
         },
       },
       {
@@ -240,6 +241,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         bLabel: 'ML-DSA-65',
       },
     ],
+    compareHeaders: ['Aspect', 'RSA-2048', 'ML-DSA-65'],
     compare: [
       {
         label: 'Self-signed certificate',
@@ -286,7 +288,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Generate 64 random bytes to sign',
         run: async (ctx) => {
           await ctx.run('rand -out learn-l3-data.txt 64')
-          return { detail: `${sizeOf(ctx, 'learn-l3-data.txt')} B of data ready.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l3-data.txt')} B of data ready.` }
         },
       },
       {
@@ -318,7 +320,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Extract the public key — dgst -verify needs it, not the private key',
         run: async (ctx) => {
           await ctx.run('pkey -in learn-l3-rsa.key -pubout -out learn-l3-rsa.pub')
-          return { detail: `${sizeOf(ctx, 'learn-l3-rsa.pub')} B public key extracted.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l3-rsa.pub')} B public key extracted.` }
         },
       },
       {
@@ -358,7 +360,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Extract the ML-DSA public key',
         run: async (ctx) => {
           await ctx.run('pkey -in learn-l3-mldsa.key -pubout -out learn-l3-mldsa.pub')
-          return { detail: `${sizeOf(ctx, 'learn-l3-mldsa.pub')} B public key extracted.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l3-mldsa.pub')} B public key extracted.` }
         },
       },
       {
@@ -385,6 +387,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         showRatio: true,
       },
     ],
+    compareHeaders: ['Aspect', 'RSA-2048', 'ML-DSA-65'],
     compare: [
       {
         label: 'Signing command',
@@ -431,7 +434,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Generate an ML-KEM-768 keypair',
         run: async (ctx) => {
           await ctx.run('genpkey -algorithm ML-KEM-768 -out learn-l4-mlkem.key')
-          return { detail: `${sizeOf(ctx, 'learn-l4-mlkem.key')} B private key.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l4-mlkem.key')} B private key.` }
         },
       },
       {
@@ -439,7 +442,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Extract the public key (this is what a peer would receive)',
         run: async (ctx) => {
           await ctx.run('pkey -in learn-l4-mlkem.key -pubout -out learn-l4-mlkem.pub')
-          return { detail: `${sizeOf(ctx, 'learn-l4-mlkem.pub')} B public key.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l4-mlkem.pub')} B public key.` }
         },
       },
       {
@@ -450,7 +453,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
             'pkeyutl -encap -inkey learn-l4-mlkem.pub -pubin -out learn-l4-ct.bin -secret learn-l4-secret.bin'
           )
           return {
-            detail: `Ciphertext ${sizeOf(ctx, 'learn-l4-ct.bin')} B, shared secret ${sizeOf(ctx, 'learn-l4-secret.bin')} B — both fixed by FIPS 203 for ML-KEM-768 (1088 B / 32 B).`,
+            detail: `Ciphertext ${measuredSizeOf(ctx, 'learn-l4-ct.bin')} B, shared secret ${measuredSizeOf(ctx, 'learn-l4-secret.bin')} B — both fixed by FIPS 203 for ML-KEM-768 (1088 B / 32 B).`,
           }
         },
       },
@@ -544,7 +547,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Generate 48 random bytes as plaintext',
         run: async (ctx) => {
           await ctx.run('rand -out learn-l6-data.txt 48')
-          return { detail: `${sizeOf(ctx, 'learn-l6-data.txt')} B plaintext ready.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l6-data.txt')} B plaintext ready.` }
         },
       },
       {
@@ -555,7 +558,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
             'enc -aes-256-cbc -in learn-l6-data.txt -out learn-l6-data.enc -pass pass:learnkit -pbkdf2'
           )
           return {
-            detail: `${sizeOf(ctx, 'learn-l6-data.enc')} B ciphertext (CBC pads to a block boundary).`,
+            detail: `${measuredSizeOf(ctx, 'learn-l6-data.enc')} B ciphertext (CBC pads to a block boundary).`,
           }
         },
       },
@@ -648,6 +651,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         },
       },
     ],
+    compareHeaders: ['Aspect', 'HKDF / SSKDF', 'PBKDF2 / SCRYPT'],
     compare: [
       {
         label: 'Input assumption',
@@ -700,7 +704,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'req -x509 -new -key learn-l8-rsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l8-rsa.crt'
           )
-          return { detail: `${sizeOf(ctx, 'learn-l8-rsa.crt')} B certificate ready.` }
+          return { detail: `${measuredSizeOf(ctx, 'learn-l8-rsa.crt')} B certificate ready.` }
         },
       },
       {
@@ -711,7 +715,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
             'pkcs12 -export -in learn-l8-rsa.crt -inkey learn-l8-rsa.key -out learn-l8-bundle.p12 -passout pass:learnkit123'
           )
           return {
-            detail: `${sizeOf(ctx, 'learn-l8-bundle.p12')} B .p12 file — AES-256-CBC + PBKDF2 by default in OpenSSL 3.x, no -legacy flag needed.`,
+            detail: `${measuredSizeOf(ctx, 'learn-l8-bundle.p12')} B .p12 file — AES-256-CBC + PBKDF2 by default in OpenSSL 3.x, no -legacy flag needed.`,
           }
         },
       },
@@ -722,7 +726,9 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'pkcs12 -in learn-l8-bundle.p12 -out learn-l8-restored.pem -passin pass:learnkit123 -nodes'
           )
-          return { detail: `${sizeOf(ctx, 'learn-l8-restored.pem')} B PEM — key + cert restored.` }
+          return {
+            detail: `${measuredSizeOf(ctx, 'learn-l8-restored.pem')} B PEM — key + cert restored.`,
+          }
         },
       },
     ],
@@ -849,7 +855,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
             'req -x509 -new -key learn-l11-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l11-mldsa.crt'
           )
           return {
-            detail: `${sizeOf(ctx, 'learn-l11-mldsa.crt')} B certificate ready. The TLS Simulator does not use it on its own: it starts with its own sample certificates, and the notes below say how to import this certificate and its key by hand.`,
+            detail: `${measuredSizeOf(ctx, 'learn-l11-mldsa.crt')} B certificate ready. The TLS Simulator does not use it on its own: it starts with its own sample certificates, and the notes below say how to import this certificate and its key by hand.`,
           }
         },
       },
