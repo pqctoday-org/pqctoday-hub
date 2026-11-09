@@ -76,7 +76,7 @@ export function JurisdictionPanel({ country, size }: { country: string; size: Si
       {size === 'global' && (
         <p className="mt-2 text-xs text-muted-foreground">
           Global estate spans jurisdictions — cross-region links must satisfy the strictest (hybrid
-          wherever any region requires it).
+          wherever any region expects it).
         </p>
       )}
     </div>

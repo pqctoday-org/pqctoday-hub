@@ -76,10 +76,13 @@ export function checkChoice(country: string, choice: MigChoice): ComplianceVerdi
       level: 'fail',
       // "requires" only where the instrument on file is a requirement; published guidance
       // (BSI TR-02102-1, ENISA, ANSSI outside its regulated scope) is "expected", not mandated.
+      // Where the instrument's force is not recorded, say neither.
       reason:
         rule.force === 'requirement'
           ? `${rule.authority} requires hybrid — a pure choice is non-compliant.`
-          : `${rule.authority} expects hybrid in its published guidance — a pure-only choice departs from it.`,
+          : rule.force === 'guidance'
+            ? `${rule.authority} expects hybrid in its published guidance — a pure-only choice departs from it.`
+            : `${rule.authority}'s recorded stance is hybrid — a pure-only choice departs from it.`,
       evaluated: true,
     }
   if (rule.endState === 'pure' && choice === 'hybrid')

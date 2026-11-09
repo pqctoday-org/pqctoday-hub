@@ -341,10 +341,10 @@ export function ArchitecturePanel({
           </div>
 
           <p className="mt-2 text-xs text-muted-foreground">
-            Migrate the eligible links (hybrid or pure). A non-compliant strategy still migrates but
-            lowers your compliance score. Blocked links wait on a product/vendor PQC release;
-            monitor-only links have no PQC path assumed in this scenario. This does not establish an
-            inherent protocol limitation.
+            Migrate the eligible links (hybrid or pure). A strategy that departs from the
+            jurisdiction's stated position still migrates but lowers your compliance score. Blocked
+            links wait on a product/vendor PQC release; monitor-only links have no PQC path assumed
+            in this scenario. This does not establish an inherent protocol limitation.
           </p>
         </>
       )}

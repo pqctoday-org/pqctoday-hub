@@ -19,6 +19,19 @@ describe('jurisdiction', () => {
     }
   })
 
+  it('claims neither a requirement nor published guidance where the instrument force is not recorded', () => {
+    const rule = JURISDICTION_RULES.DE
+    const onFile = rule.force
+    rule.force = ''
+    try {
+      const reason = checkChoice('DE', 'pure').reason
+      expect(reason).toContain("BSI's recorded stance is hybrid")
+      expect(reason).not.toMatch(/requires hybrid|published guidance|non-compliant/)
+    } finally {
+      rule.force = onFile
+    }
+  })
+
   it('says "requires" only for an instrument on file as a requirement', () => {
     const rule = JURISDICTION_RULES.DE
     const onFile = rule.force
