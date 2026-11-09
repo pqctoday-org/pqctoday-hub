@@ -43826,6 +43826,23 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "brief"
+    },
+    {
+      "softwareName": "Google Chrome",
+      "refId": "google-chrome",
+      "filename": "google-chrome-brief-75502aeb.html",
+      "sizeBytes": 17993,
+      "content_type": "text/html",
+      "url": "https://googlechrome.github.io/chromerootprogram/cqrp/testing/",
+      "sha256": "59d95d173b7ff43cccac95866488e69ea1ae3747bffba1594ecdf18b5357b4c9",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-09T03:21:49.437349+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
   ],
   "total": 2638,

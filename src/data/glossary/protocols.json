@@ -406,7 +406,7 @@
   },
   {
     "term": "LoRaWAN",
-    "definition": "Long Range Wide Area Network, a low-power WAN protocol for IoT. Uses AES-128 pre-shared keys. Maximum payload of 222 bytes makes PQC KEM infeasible inline.",
+    "definition": "Long Range Wide Area Network, a low-power WAN protocol for IoT. Uses AES-128 pre-shared keys. The maximum application payload of a frame depends on region and data rate: in the LoRaWAN 1.0.3 Regional Parameters it ranges from 11 bytes (US902-928, lowest data rate) to 242 bytes, and EU863-870 allows 51 to 222 bytes (242 without repeater compatibility). An ML-KEM-768 ciphertext alone is 1,088 bytes, so a PQC key exchange cannot fit in one frame and would need fragmentation across frames or a different exchange design.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
     "category": "protocol"
@@ -421,7 +421,7 @@
   {
     "term": "CoAP",
     "acronym": "CoAP",
-    "definition": "Constrained Application Protocol, a lightweight RESTful protocol designed for IoT devices. Runs over UDP with DTLS for security. Maximum payload of ~1,024 bytes makes PQC key exchange challenging.",
+    "definition": "Constrained Application Protocol, a lightweight RESTful protocol designed for IoT devices. Runs over UDP with DTLS for security. RFC 7252 sets no fixed maximum message size: it advises avoiding IP fragmentation and, when the path MTU is unknown, assuming a 1,280-byte IP MTU, for which 1,152 bytes of message and 1,024 bytes of payload are good upper bounds. Larger exchanges, such as a PQC key exchange with kilobyte-sized keys or signatures, can use block-wise transfers, so the practical limit depends on the link, the adaptation layer and the handshake design rather than on one message size.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
     "category": "protocol"
@@ -464,7 +464,7 @@
     "term": "DLMS/COSEM",
     "acronym": "DLMS/COSEM",
     "definition": "Device Language Message Specification / Companion Specification for Energy Metering. Used globally for smart meter communication with security suites based on AES and ECDSA/ECDH.",
-    "technicalNote": "Security Suite 1 uses AES-GCM-128 + ECDSA P-256 + ECDH P-256. PQC key exchange (ML-KEM-768 at 1088 bytes vs ECDH at 33 bytes) creates a 33x bandwidth increase that is significant at scale for millions of meters.",
+    "technicalNote": "Security Suite 1 uses AES-GCM-128 + ECDSA P-256 + ECDH P-256. For scale, an ECDH P-256 public value is 33 bytes compressed (65 uncompressed), while ML-KEM-768 uses a 1,184-byte encapsulation key and a 1,088-byte ciphertext. Dividing the ciphertext by one 33-byte point (a 33x ratio) compares single objects, not exchanges: the real increase depends on the full message flow (both key shares or the encapsulation key plus ciphertext, signatures and certificates), the DLMS framing and block transfer, and the communication medium, and has to be measured for the chosen meter profile.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -553,7 +553,7 @@
     "term": "CPDLC",
     "acronym": "CPDLC",
     "definition": "Controller-Pilot Data Link Communications. A text-based ATC communication system replacing voice with structured data messages between pilots and air traffic controllers.",
-    "technicalNote": "CPDLC operates over SATCOM with 600ms RTT and supports up to 1,024-byte messages. PQC signature authentication is feasible (ML-DSA-44 fits in 3 blocks) but adds latency to safety-critical ATC clearances.",
+    "technicalNote": "CPDLC messages travel over aircraft data links whose latency, message size and block framing differ by link and profile. An ML-DSA-44 signature is 2,420 bytes (FIPS 204), so how many link blocks or messages a signed clearance needs, and how much latency that adds to a safety-critical ATC clearance, depends on the chosen link and framing and has to be measured for that profile.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -562,7 +562,7 @@
     "term": "ADS-B",
     "acronym": "ADS-B",
     "definition": "Automatic Dependent Surveillance-Broadcast. A surveillance system where aircraft broadcast their GPS-derived position, altitude, and velocity on 1090 MHz, receivable by ground stations and other aircraft.",
-    "technicalNote": "ADS-B transmits unauthenticated 112-bit messages (14 bytes payload) with no encryption or signing. The message size is far too small for any PQC signature. Authentication requires out-of-band verification or protocol redesign.",
+    "technicalNote": "ADS-B transmits unauthenticated 112-bit (14-byte) messages with no encryption or signing. That is the whole over-the-air frame, including its format, address and parity fields, so the application data inside it is smaller still. A frame this small cannot carry any PQC signature (an ML-DSA-44 signature is 2,420 bytes). Authentication requires out-of-band verification or protocol redesign.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -588,7 +588,7 @@
   {
     "term": "CCC Digital Key",
     "definition": "A specification by the Car Connectivity Consortium (CCC) enabling smartphones to function as vehicle keys via NFC, BLE, or UWB. CCC Digital Key 3.0 uses ECDH P-256 key agreement and ECDSA P-256 certificates, both quantum-vulnerable.",
-    "technicalNote": "NFC transport limits APDUs to 256 bytes, making ML-KEM-768 ciphertext (1,088 bytes) require 5 APDUs per key exchange. BLE (512-byte L2CAP frames) and UWB (symmetric ranging, quantum-safe) handle PQC migration more gracefully. Owner-to-friend key sharing adds another quantum-vulnerable certificate chain.",
+    "technicalNote": "How many APDUs (NFC) or frames (BLE) a PQC exchange needs depends on the APDU form (short or extended length), the negotiated BLE link settings and the complete message flow, so a ciphertext-only count understates it: the ML-KEM-768 ciphertext alone is 1,088 bytes, before the encapsulation key, signatures and certificates. Owner-to-friend key sharing adds another quantum-vulnerable certificate chain.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -597,7 +597,7 @@
     "term": "CAN Bus",
     "acronym": "CAN",
     "definition": "Controller Area Network, the dominant in-vehicle serial bus protocol with an 8-byte (CAN 2.0) or 64-byte (CAN FD) payload per frame. CAN buses connect ECUs for powertrain, chassis, and body functions.",
-    "technicalNote": "CAN 2.0 payload (8 bytes) cannot carry any PQC signature in a single frame — even the smallest ML-DSA-44 signature (2,420 bytes) requires 303 CAN frames. CAN FD (64 bytes) is slightly better but still impractical for per-message PQC signing. Automotive Ethernet (1,500-byte MTU) is the PQC-feasible bus for ADAS and infotainment zones.",
+    "technicalNote": "A classical CAN frame carries at most 8 data bytes, so an ML-DSA-44 signature (2,420 bytes, FIPS 204) alone would span at least 303 frames, and at least 38 CAN FD frames of 64 bytes, before any segmentation header, message data or counters. Per-message PQC signing on a CAN bus is therefore impractical without redesign. Automotive Ethernet carries much larger frames (a standard 1,500-byte MTU), which removes the frame-count problem, but whether it suits a given ADAS or infotainment zone still depends on the full message flow, the latency budget and the processing capability of the chosen design.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "intermediate",
     "category": "protocol"

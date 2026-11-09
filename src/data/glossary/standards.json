@@ -454,7 +454,7 @@
   {
     "term": "DO-178C",
     "definition": "Software Considerations in Airborne Systems and Equipment Certification. The primary standard for certifying safety-critical avionics software, defining five Design Assurance Levels (DAL A through E).",
-    "technicalNote": "Adding a PQC cryptographic library to a DAL-A system (e.g., Flight Management System) requires MC/DC test coverage, traceability, and independent verification. Recertification costs $2-10M and takes 12-24 months.",
+    "technicalNote": "Adding a PQC cryptographic library to a DAL-A system (e.g., Flight Management System) generally requires MC/DC structural coverage, traceability and independent verification of the changed software. Recertification cost and schedule depend on the system, the extent of the change, the certification authority and the supplier, so any published figure is an estimate for a stated project, not a value set by the standard.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
     "category": "standard"
@@ -547,7 +547,7 @@
   {
     "term": "CSWP 39",
     "acronym": "NIST Cybersecurity White Paper 39",
-    "definition": "NIST CSWP 39 — Considerations for Achieving Crypto Agility — Strategies and Practices (final, December 2025). Defines a 5-pillar crypto-agility model (inventory, governance, lifecycle, observability, assurance) across a 4-tier maturity ladder (Partial → Risk-Informed → Repeatable → Adaptive).",
+    "definition": "NIST CSWP 39 — Considerations for Achieving Crypto Agility: Strategies and Practices (Update 1; first published December 19, 2025, updated June 29, 2026). Covers crypto agility in security protocols and in system implementations, a strategic plan for managing an organization's cryptographic risks, and an illustrative four-tier maturity model adapted from the NIST Cybersecurity Framework tiers (Partial → Risk-Informed → Repeatable → Adaptive). The five-pillar model used in PQC Today's Crypto Management module (inventory, governance, lifecycle, observability, assurance) is this site's own teaching overlay, not a NIST taxonomy.",
     "relatedModule": "/library?ref=NIST CSWP 39",
     "complexity": "advanced",
     "category": "standard"
