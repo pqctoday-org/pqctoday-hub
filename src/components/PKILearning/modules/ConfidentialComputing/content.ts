@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'confidential-computing',
   version: '1.0.0',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-09',
 
   standards: [
     getStandard('FIPS 203'),

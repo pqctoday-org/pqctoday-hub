@@ -993,7 +993,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-workshop',
     pt_id: 'PT-015',
-    version: '1.0.6',
+    version: '1.0.7',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
@@ -1233,7 +1233,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'openssl-studio',
     pt_id: 'PT-023',
-    version: '1.0.5',
+    version: '1.0.6',
     name: 'OpenSSL Studio',
     description:
       'Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
@@ -1281,7 +1281,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.3.4',
+    version: '1.3.5',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half names the draft revisions it was verified against
@@ -1383,7 +1383,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'email-signing',
     pt_id: 'PT-031',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'S/MIME & CMS Workshop',
     description:
       'Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt. Toggle routes signing key through softhsmv3 PKCS#11.',

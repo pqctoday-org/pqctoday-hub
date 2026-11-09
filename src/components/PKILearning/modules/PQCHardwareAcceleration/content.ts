@@ -16,7 +16,7 @@ export const content: ModuleContent = {
   version: '1.1.0',
   // No lastReviewed yet — this new module's claims have not been independently
   // reviewed via record_module_review.py (moduleReviewHonesty.test.ts).
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-09',
 
   standards: [
     getStandard('FIPS 202'),

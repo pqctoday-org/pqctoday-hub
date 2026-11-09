@@ -16,7 +16,7 @@ export const content: ModuleContent = {
   moduleId: 'kms-pqc',
   version: '1.1.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-09',
 
   standards: [
     getStandard('FIPS 203'),
