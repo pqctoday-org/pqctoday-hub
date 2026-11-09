@@ -88,7 +88,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       id: 'migration-wizard',
       title: '6. Migration Decision Lab — Plan a Java RSA codebase migration to ML-DSA',
       description:
-        'In the Migration Decision Lab (Step 8), use the Decision Wizard. Select: Java/Kotlin → JCA/JCE → No HSM required → Compliance: SOC 2 → Timeline: 12 months. Follow the wizard to your recommended migration path. Then click "Migration Paths" and examine the before/after code examples.',
+        'In the Migration Decision Lab (Step 8), use the Decision Wizard. Select: Java / Kotlin → JCA/JCE (standard) → No HSM needed. Follow the wizard to your recommended migration path, then click "View full migration path" and examine the before/after code examples.',
       badge: 'Migration',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
       observe:
