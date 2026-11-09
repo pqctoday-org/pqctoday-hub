@@ -78,6 +78,23 @@ describe('Actual Studio output remains visible for LMS plain logs', () => {
     expect(screen.getByText('FAILURE: Signature is INVALID.', { exact: true })).toBeInTheDocument()
     expect(screen.queryByText('OpenSSL Studio — ready')).not.toBeInTheDocument()
   })
+  it('shows the LMS output pane once the engine has written boot lines, and keeps other tools unchanged', () => {
+    // The real worker sends LOG lines while it loads; the hook stores them as plain logs.
+    show('lms')
+    act(() =>
+      StudioWorker.instances[0].send({ type: 'LOG', stream: 'stdout', message: 'boot line' })
+    )
+    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument()
+    expect(screen.queryByText('OpenSSL Studio — ready')).not.toBeInTheDocument()
+  })
+  it('keeps the starters in every other tool when the engine writes boot lines', () => {
+    show('genpkey')
+    act(() =>
+      StudioWorker.instances[0].send({ type: 'LOG', stream: 'stdout', message: 'boot line' })
+    )
+    expect(screen.getByText('OpenSSL Studio — ready')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument()
+  })
   it('leaves every other category exactly as before: plain logs alone keep the starters', () => {
     show('genpkey')
     act(() => useOpenSSLStore.getState().addLog('info', 'Plain line from another tool'))
