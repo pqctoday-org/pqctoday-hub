@@ -267,7 +267,7 @@ export function sizingSanityCheck(
     if (heuristicFte > hi) {
       return {
         diverges: true,
-        note: `The ratio gives ${heuristicFte.toFixed(1)} FTE, but the same section of The Applied Quantum PQC Migration Framework says a >10,000-instance estate should "${SIZING_SANITY_BANDS.largeEstateNote}". Treat the ratio as an upper bound and staff toward the ${lo}-${hi} FTE band unless you can justify the difference.`,
+        note: `The ratio gives ${heuristicFte.toFixed(1)} FTE, but the same section of The Applied Quantum PQC Migration Framework says a >10,000-instance estate should "${SIZING_SANITY_BANDS.largeEstateNote}". The office band does not establish the same staffing population or phase as the ratio. Keep its ${lo}-${hi} FTE reference separate from the selected allocation; it is not an automatic cap.`,
       }
     }
     return null

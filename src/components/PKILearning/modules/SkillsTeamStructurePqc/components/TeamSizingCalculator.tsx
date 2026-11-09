@@ -1,251 +1,296 @@
 // SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
-import React, { useState, useMemo, useCallback } from 'react'
-import { Calculator, Info } from 'lucide-react'
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { ROLE_DETAIL } from '../data/teamModel'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
-import { ROLE_CROSSWALK, CORE_ROLE_ORDER, ROLE_DETAIL, SIZING } from '../data/teamModel'
+import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import {
+  ALLOCATION_ROLE_ORDER,
+  allocationRowText,
+  allocationReferenceNote,
+  allocationMarkdown,
+  assessTeamAllocation,
+  editTeamAllocation,
+  fteText,
+  seedTeamAllocation,
+  type TeamSizingContext,
+} from '@/utils/teamSizingModel'
 
-type Phase = 'firstTwoYears' | 'productionRollout'
-
-/** Round up to a sensible whole-FTE count (never below the dedicated core). */
-function variableFte(instances: number, ratio: number): number {
-  if (instances <= 0) return 0
-  return Math.ceil(instances / ratio)
+export const TeamAllocationEditor: React.FC<{
+  context: TeamSizingContext
+  draft: unknown
+  onEdit: (id: FrameworkRoleId, value: string) => void
+  onReset: () => void
+  renderRoleDetail?: (id: FrameworkRoleId) => React.ReactNode
+}> = ({ context, draft, onEdit, onReset, renderRoleDetail }) => {
+  const assessment = assessTeamAllocation(context, draft)
+  return (
+    <section aria-label="Staffing allocation" className="space-y-4">
+      <div className="glass-panel p-4 space-y-2">
+        <h3 className="font-semibold">Fictional staffing allocation</h3>
+        {assessment.status === 'ready' ? (
+          <div aria-live="polite">
+            <p>
+              Allocated programme FTE: <strong>{fteText(assessment.total)}</strong>
+            </p>
+            <p>
+              Delivery: {fteText(assessment.delivery)} FTE + coordination:{' '}
+              {fteText(assessment.coordination)} FTE
+            </p>
+            <p>
+              Ratio delivery reference: {fteText(assessment.reference)} FTE; delivery difference:{' '}
+              {fteText(assessment.delivery - assessment.reference)} FTE
+            </p>
+          </div>
+        ) : (
+          <p role="status">Allocation unavailable: {assessment.reason}</p>
+        )}
+        <p className="text-sm text-muted-foreground">
+          Edit the role allocations below. Delivery plus coordination gives the programme total; OT
+          stays inside delivery.
+        </p>
+        <details className="text-sm text-muted-foreground">
+          <summary className="cursor-pointer">How the sample is allocated</summary>
+          <p className="mt-2">
+            The Hub uses the source ratio to seed delivery. Its reference-midpoint weights are
+            security 3, AppSec 1 and vendor 0.5, plus OT 0.75 when selected. Shares are rounded to
+            hundredths while preserving their total. Fictional coordination defaults are 0.5 QRPM +
+            0.25 architect + 0.25 PMO below 1,000 instances, or 1 + 0.75 + 0.75 otherwise. Edit them
+            to explore a different allocation. This convention is not a source-prescribed minimum or
+            staffing-adequacy test.
+          </p>
+        </details>
+        <p className="text-sm text-muted-foreground">{allocationReferenceNote(context)}</p>
+        <Button variant="outline" onClick={onReset}>
+          Reset sample allocations
+        </Button>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        {ALLOCATION_ROLE_ORDER.map((id) => (
+          <div
+            key={id}
+            role="group"
+            aria-label={ROLE_CROSSWALK[id].label}
+            className="glass-panel p-4 space-y-2"
+          >
+            {id === 'exec-sponsor' ? (
+              <h4 className="text-sm font-semibold">{ROLE_CROSSWALK[id].label}</h4>
+            ) : (
+              <label className="block text-sm font-semibold" htmlFor={`allocation-${id}`}>
+                {ROLE_CROSSWALK[id].label}
+              </label>
+            )}
+            {id === 'exec-sponsor' ? (
+              <p className="text-sm">Not counted in incremental FTE</p>
+            ) : (
+              <Input
+                id={`allocation-${id}`}
+                aria-label={`${ROLE_CROSSWALK[id].label} allocated FTE`}
+                type="number"
+                min="0"
+                step="0.01"
+                value={allocationRowText(draft, id)}
+                disabled={id === 'ot-specialist' && !context.otInScope}
+                onChange={(event) => onEdit(id, event.target.value)}
+              />
+            )}
+            <p className="text-xs text-muted-foreground">
+              Framework reference band: {ROLE_CROSSWALK[id].typicalFte}
+            </p>
+            {id === 'ot-specialist' && !context.otInScope && (
+              <p className="text-xs">OT is outside the selected scope.</p>
+            )}
+            {id === 'exec-sponsor' && (
+              <p className="text-xs">
+                Existing sponsor participation remains necessary; this sample excludes it from the
+                incremental staffing budget.
+              </p>
+            )}
+            {renderRoleDetail?.(id)}
+          </div>
+        ))}
+      </div>
+    </section>
+  )
 }
-
-const DEDICATED_CORE_COUNT = CORE_ROLE_ORDER.filter((r) => ROLE_DETAIL[r].dedicatedOverhead).length
 
 interface SavedSizingInputs {
-  instances: number
-  phase: Phase
+  instances: number | string
+  phase: 'firstTwoYears' | 'productionRollout'
   otInScope: boolean
   seedCleared: boolean
+  allocationDraft?: unknown
 }
-
 export const TeamSizingCalculator: React.FC = () => {
-  // Restore the last-saved sizing so estate size / phase / OT scope survive
-  // navigation, now that ExportableArtifact autosaves them. (WS6 task 6.)
-  const savedInputs = useSavedArtifactInputs<SavedSizingInputs>('team-sizing-plan')
-  const [instances, setInstances] = useState<number>(savedInputs?.instances ?? 2000)
-  const [phase, setPhase] = useState<Phase>(savedInputs?.phase ?? 'firstTwoYears')
-  const [otInScope, setOtInScope] = useState<boolean>(savedInputs?.otInScope ?? false)
-  const [seedCleared, setSeedCleared] = useState(savedInputs?.seedCleared ?? false)
-  const { addExecutiveDocument } = useModuleStore()
-  const { industry } = useExecutiveModuleData()
-
-  const ratio =
-    phase === 'firstTwoYears' ? SIZING.firstTwoYearsRatio : SIZING.productionRolloutRatio
-
-  const variable = useMemo(() => variableFte(instances, ratio), [instances, ratio])
-
-  // Dedicated overhead is staffed regardless of estate size. The variable FTE
-  // pool is distributed to the scaling roles; the dedicated core is always on.
-  const totalFte = useMemo(() => {
-    // Dedicated core counts as ~1 FTE each (QRPM 1.0, Architect ~0.75, PMO ~0.75).
-    const dedicated = DEDICATED_CORE_COUNT
-    const ot = otInScope ? 1 : 0
-    return Math.max(dedicated, variable) + ot
-  }, [variable, otInScope])
-
-  const band = useMemo(() => {
-    if (instances < SIZING.partTimeBelow) {
-      return {
-        tone: 'text-status-warning',
-        label: 'Small estate',
-        note: `Below ${SIZING.partTimeBelow.toLocaleString()} instances: a part-time QRPM with consulting augmentation for the Cryptographic Architect role is viable.`,
-      }
-    }
-    if (instances > SIZING.programOfficeAbove) {
-      return {
-        tone: 'text-status-error',
-        label: 'Program-office estate',
-        note: `Above ${SIZING.programOfficeAbove.toLocaleString()} instances: plan a dedicated program office with ${SIZING.programOfficeFteLow}–${SIZING.programOfficeFteHigh} FTEs at peak.`,
-      }
+  const saved = useSavedArtifactInputs<SavedSizingInputs>('team-sizing-plan')
+  const [state, setState] = useState(() => {
+    const context: TeamSizingContext = {
+      estateInstances: String(saved?.instances ?? 2000),
+      sizingPhase: saved?.phase === 'productionRollout' ? 'production' : 'early',
+      otInScope: saved?.otInScope ?? false,
     }
     return {
-      tone: 'text-primary',
-      label: 'Standard estate',
-      note: 'Apply the sizing heuristic directly; keep the dedicated core staffed throughout.',
+      context,
+      draft:
+        saved?.allocationDraft === undefined ? seedTeamAllocation(context) : saved.allocationDraft,
+      seedCleared: saved?.seedCleared ?? false,
+      notice: '',
     }
-  }, [instances])
-
-  const exportMarkdown = useMemo(() => {
-    let md = '# PQC Team Sizing Plan\n\n'
-    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-    md += `- **Cryptographic instances (CBOM):** ${instances.toLocaleString()}\n`
-    md += `- **Phase:** ${phase === 'firstTwoYears' ? 'First two years (discovery, CBOM, risk scoring, pilot)' : 'Production rollout (mature tooling)'}\n`
-    md += `- **Sizing ratio:** 1 FTE per ${ratio.toLocaleString()} instances\n`
-    md += `- **OT in scope:** ${otInScope ? 'Yes (+1 OT Security Specialist)' : 'No'}\n`
-    md += `- **Estimated total program FTEs:** ${totalFte}\n\n`
-    md += `> ${band.note}\n\n`
-    md += '## Core roles\n\n'
-    md += '| Role | Typical FTE | Source | Dedicated overhead |\n'
-    md += '|------|-------------|--------|--------------------|\n'
-    for (const roleId of CORE_ROLE_ORDER) {
-      const role = ROLE_CROSSWALK[roleId]
-      const detail = ROLE_DETAIL[roleId]
-      md += `| ${role.label} | ${role.typicalFte} | ${detail.source} | ${detail.dedicatedOverhead ? 'Yes' : 'No'} |\n`
-    }
-    md +=
-      '\nSizing heuristic (Applied Quantum PQC Migration Framework, p. 161): one dedicated FTE per 500 cryptographic instances for the first two years, dropping to one per 1,000 during production rollout. QRPM, Cryptographic Architect, and PMO Analyst are dedicated overhead regardless of estate size.\n'
-    return md
-  }, [instances, phase, ratio, otInScope, totalFte, band])
-
+  })
+  const { addExecutiveDocument } = useModuleStore()
+  const { industry } = useExecutiveModuleData()
+  const { context, draft } = state
+  const assessment = assessTeamAllocation(context, draft)
+  const markdown =
+    '# PQC Team Sizing Plan\n\n' +
+    allocationMarkdown(context, draft) +
+    '\n\n## Reference staffing sources\n' +
+    ALLOCATION_ROLE_ORDER.map(
+      (id) => `- ${ROLE_CROSSWALK[id].label}: ${ROLE_DETAIL[id].source}`
+    ).join('\n')
+  const current = useRef({ state, assessment, markdown })
+  useLayoutEffect(() => {
+    current.current = { state, assessment, markdown }
+  }, [state, assessment, markdown])
   const handleExport = useCallback(() => {
+    const value = current.current
+    if (value.assessment.status !== 'ready') return
     addExecutiveDocument({
       id: `skills-team-${Date.now()}`,
       moduleId: 'skills-team-structure',
       type: 'team-sizing-plan',
       title: 'PQC Team Sizing Plan',
-      data: exportMarkdown,
+      data: value.markdown,
       inputs: {
-        instances,
-        phase,
-        otInScope,
-        seedCleared,
+        instances: value.state.context.estateInstances,
+        phase: value.state.context.sizingPhase === 'early' ? 'firstTwoYears' : 'productionRollout',
+        otInScope: value.state.context.otInScope,
+        seedCleared: value.state.seedCleared,
+        allocationDraft: value.state.draft,
       } satisfies SavedSizingInputs,
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown, instances, phase, otInScope, seedCleared])
-
+  }, [addExecutiveDocument])
+  const updateContext = (patch: Partial<TeamSizingContext>, clear = false) =>
+    setState((previous) => {
+      const next = { ...previous.context, ...patch }
+      return {
+        ...previous,
+        context: next,
+        draft: seedTeamAllocation(next),
+        seedCleared: previous.seedCleared || clear,
+        notice: 'Sample allocations reset for changed inputs.',
+      }
+    })
   return (
     <div className="space-y-6">
-      {!seedCleared && (
+      {!state.seedCleared && (
         <PreFilledBanner
           summary={`Default estate of 2,000 cryptographic instances${industry ? ` (${industry} context)` : ''}. Replace with your CBOM count.`}
-          onClear={() => {
-            setInstances(0)
-            setSeedCleared(true)
-          }}
+          onClear={() => updateContext({ estateInstances: '' }, true)}
         />
       )}
       <p className="text-sm text-muted-foreground">
-        Convert your cryptographic estate size into a program FTE estimate. Team size depends on
-        estate complexity, not on revenue or headcount.
+        Use a consistent fictional CBOM instance count. Inspect and edit the work allocation; the
+        framework ratios are planning references, not measured staffing requirements.
       </p>
-
-      {/* Inputs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="glass-panel p-4">
-          <label htmlFor="sts-instances" className="block text-xs font-bold text-foreground mb-2">
-            Cryptographic instances (CBOM)
-          </label>
-          <input
-            id="sts-instances"
-            type="number"
-            min={0}
-            step={100}
-            value={instances}
-            onChange={(e) => setInstances(Math.max(0, Number(e.target.value) || 0))}
-            className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
-          <p className="text-[10px] text-muted-foreground mt-1">
-            TLS endpoints, certificates, HSMs, keys, libraries, etc.
-          </p>
-        </div>
-
-        <div className="glass-panel p-4">
-          <span className="block text-xs font-bold text-foreground mb-2">Program phase</span>
-          <div className="flex flex-col gap-1.5" role="radiogroup" aria-label="Program phase">
-            {(
-              [
-                ['firstTwoYears', `First two years (1 / ${SIZING.firstTwoYearsRatio})`],
-                ['productionRollout', `Production rollout (1 / ${SIZING.productionRolloutRatio})`],
-              ] as const
-            ).map(([value, label]) => (
-              <Button
-                key={value}
-                variant="ghost"
-                role="radio"
-                aria-checked={phase === value}
-                onClick={() => setPhase(value)}
-                className={`justify-start text-left text-xs px-3 py-2 rounded border h-auto ${
-                  phase === value
-                    ? 'border-primary text-primary bg-primary/10'
-                    : 'border-border text-muted-foreground'
-                }`}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        <div className="glass-panel p-4">
-          <span className="block text-xs font-bold text-foreground mb-2">OT in scope?</span>
+      <div className="glass-panel p-4 space-y-3">
+        <label htmlFor="sts-instances" className="block text-sm font-semibold">
+          Cryptographic instances (CBOM)
+        </label>
+        <Input
+          id="sts-instances"
+          type="number"
+          min="1"
+          step="1"
+          value={context.estateInstances}
+          onChange={(event) => updateContext({ estateInstances: event.target.value })}
+        />
+        <div role="radiogroup" aria-label="Program phase" className="flex flex-wrap gap-2">
           <Button
-            variant="ghost"
-            role="switch"
-            aria-checked={otInScope}
-            onClick={() => setOtInScope((v) => !v)}
-            className={`w-full justify-start text-left text-xs px-3 py-2 rounded border h-auto ${
-              otInScope
-                ? 'border-primary text-primary bg-primary/10'
-                : 'border-border text-muted-foreground'
-            }`}
+            role="radio"
+            aria-checked={context.sizingPhase === 'early'}
+            onClick={() => updateContext({ sizingPhase: 'early' })}
           >
-            {otInScope ? 'Yes — add OT Security Specialist' : 'No OT systems'}
+            First two years (1 / 500)
           </Button>
-          <p className="text-[10px] text-muted-foreground mt-2">
-            OT Security Specialists are scarce; add ~1 FTE when ICS/SCADA is in scope.
-          </p>
-        </div>
-      </div>
-
-      {/* Result */}
-      <div className="glass-panel p-6 text-center">
-        <Calculator size={20} className="text-primary mx-auto mb-2" />
-        <div className="text-4xl font-bold text-gradient">{totalFte}</div>
-        <div className="text-sm text-muted-foreground mt-1">estimated program FTEs</div>
-        <div className={`mt-3 text-xs font-bold ${band.tone}`}>{band.label}</div>
-        <div className="flex items-start gap-2 justify-center mt-2 max-w-xl mx-auto">
-          <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground text-left">{band.note}</p>
-        </div>
-        <p className="text-[10px] text-muted-foreground mt-3">
-          Variable pool: {variable} FTE from the {ratio.toLocaleString()}-instance ratio &middot;
-          dedicated core: {DEDICATED_CORE_COUNT} (QRPM, Cryptographic Architect, PMO Analyst)
-          {otInScope ? ' · +1 OT specialist' : ''}.
-        </p>
-        {/* ADDED 2026-08-22. The heuristic's source was named in the EXPORT string and in
-            content.ts's header comment, but nothing on screen said where the ratio came
-            from — a reader working the calculator saw a hard number from nobody. No
-            standards body publishes PQC team-sizing ratios: NICE (SP 800-181r1) defines
-            work roles and competencies but no headcount, and the PQCC roadmap's
-            Activity 4.3 "Assess Workforce Needs" is qualitative. The ratio is one
-            practitioner framework's heuristic and is labelled as such. */}
-        <p className="text-[10px] text-muted-foreground mt-2 max-w-xl mx-auto">
-          Sizing ratios are a heuristic from the{' '}
-          <a
-            href="https://pqcframework.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline"
+          <Button
+            role="radio"
+            aria-checked={context.sizingPhase === 'production'}
+            onClick={() => updateContext({ sizingPhase: 'production' })}
           >
-            Applied Quantum PQC Migration Framework v2.1
-          </a>{' '}
-          (Marin Ivezi&#263; / Applied Quantum, CC BY 4.0), Skills &amp; Team Structure, p.&nbsp;161
-          &mdash; not a standards-body figure. Calibrate against your own estate before budgeting.
-        </p>
+            Production rollout (1 / 1000)
+          </Button>
+        </div>
+        <Button
+          role="switch"
+          aria-label="OT in scope"
+          aria-checked={context.otInScope}
+          onClick={() => updateContext({ otInScope: !context.otInScope })}
+        >
+          {context.otInScope ? 'OT included in delivery pool' : 'No OT systems'}
+        </Button>
+        {state.notice && (
+          <p role="status" className="text-sm">
+            {state.notice}
+          </p>
+        )}
       </div>
-
-      {/* Export */}
-      <ExportableArtifact
-        title="Team Sizing Plan Export"
-        exportData={exportMarkdown}
-        filename="pqc-team-sizing-plan"
-        formats={['markdown', 'pdf']}
-        onExport={handleExport}
-        wideTable
-      >
-        <p className="text-sm text-muted-foreground">
-          Export your sizing plan and core-role table as Markdown.
-        </p>
-      </ExportableArtifact>
+      <TeamAllocationEditor
+        context={context}
+        draft={draft}
+        onEdit={(id, value) =>
+          setState((previous) => ({
+            ...previous,
+            draft: editTeamAllocation(previous.context, previous.draft, id, value),
+          }))
+        }
+        renderRoleDetail={(id) => (
+          <p className="text-xs text-muted-foreground">
+            Reference staffing source: {ROLE_DETAIL[id].source}
+          </p>
+        )}
+        onReset={() =>
+          setState((previous) => ({
+            ...previous,
+            draft: seedTeamAllocation(previous.context),
+            notice: 'Sample allocations reset.',
+          }))
+        }
+      />
+      <p className="text-xs text-muted-foreground">
+        Reference:{' '}
+        <a
+          href="https://pqcframework.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline"
+        >
+          Applied Quantum PQC Migration Framework v2.1
+        </a>
+        , Skills &amp; Team Structure, p. 161 (Marin Ivezić / Applied Quantum, CC BY 4.0). The
+        500/1000 ratios and source bands remain references; the delivery/coordination split,
+        fractional defaults and allocation weights are Hub teaching assumptions.
+      </p>
+      {assessment.status === 'ready' ? (
+        <ExportableArtifact
+          title="Team Sizing Plan Export"
+          exportData={markdown}
+          filename="pqc-team-sizing-plan"
+          formats={['markdown', 'pdf']}
+          onExport={handleExport}
+          wideTable
+        >
+          <p className="text-sm">Export the selected row allocations and their reconciled total.</p>
+        </ExportableArtifact>
+      ) : (
+        <p className="text-sm">Correct the inputs to enable saving and export.</p>
+      )}
     </div>
   )
 }
