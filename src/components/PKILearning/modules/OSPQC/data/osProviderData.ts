@@ -107,8 +107,9 @@ export const OS_VENDORS: OSVendorStatus[] = [
   {
     id: 'ubuntu',
     vendor: 'Canonical',
-    platform: 'Ubuntu 26.04 LTS (Resolute Raccoon) / 25.10',
-    opensslVersion: 'OpenSSL 3.5 (25.10 / 26.04) — 24.04 LTS is OpenSSL 3.0 (no PQC)',
+    platform: 'Ubuntu 26.04 LTS (Resolute Raccoon)',
+    opensslVersion:
+      'OpenSSL 3.5 (26.04 LTS) — 24.04 LTS is OpenSSL 3.0 (no PQC); 25.10 (OpenSSL 3.5) reached end of life on 9 July 2026',
     catalogName: 'Ubuntu 26.04 LTS',
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'No production PQC SSH; tracking OpenSSH experimental branch',

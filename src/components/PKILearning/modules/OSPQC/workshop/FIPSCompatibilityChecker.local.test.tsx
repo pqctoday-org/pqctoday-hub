@@ -87,4 +87,18 @@ describe('FIPSCompatibilityChecker recommendation follows the certificate eviden
     expect(text).toMatch(/#5247/)
     expect(text).toMatch(/library for Go\s+applications rather than an operating system/)
   })
+  it('cites the Ubuntu CMVP certificates and the current Ubuntu Pro commands', () => {
+    render(<FIPSCompatibilityChecker />)
+    expandCard('Ubuntu 22.04 / 24.04 LTS (Ubuntu Pro)')
+    const text = pageText()
+    expect(text).toMatch(/CMVP #4794/)
+    expect(text).toMatch(/CMVP #5115/)
+    expect(text).toMatch(/sudo pro attach <Ubuntu Pro token> --no-auto-enable/)
+    expect(text).toMatch(/sudo pro enable fips-updates/)
+    expect(text).toMatch(/cat \/proc\/sys\/crypto\/fips_enabled/)
+    expect(text).not.toMatch(/sudo ua (attach|enable)|ubuntu-advantage status/)
+    // The oqsprovider-next-to-FIPS question is open, so the row must not instruct it.
+    expect(text).not.toMatch(/Run oqsprovider alongside FIPS provider/)
+    expect(text).toMatch(/not settled here/)
+  })
 })

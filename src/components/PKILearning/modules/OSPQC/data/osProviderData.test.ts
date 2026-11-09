@@ -32,3 +32,16 @@ describe('OS vendor rows derive PQC status from the central catalog', () => {
     }
   })
 })
+
+describe('Ubuntu row names only supported releases as current', () => {
+  const ubuntu = OS_VENDORS.find((v) => v.id === 'ubuntu')!
+
+  it('lists Ubuntu 26.04 LTS as the platform and 25.10 only as an end-of-life release', () => {
+    expect(ubuntu.platform).toBe('Ubuntu 26.04 LTS (Resolute Raccoon)')
+    expect(ubuntu.platform).not.toContain('25.10')
+    expect(ubuntu.opensslVersion).toContain(
+      '25.10 (OpenSSL 3.5) reached end of life on 9 July 2026'
+    )
+    expect(ubuntu.opensslVersion).toContain('24.04 LTS is OpenSSL 3.0')
+  })
+})

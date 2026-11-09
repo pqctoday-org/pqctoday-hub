@@ -40,3 +40,12 @@ describe('OSPQC introduction: Ubuntu openssl.cnf row', () => {
     expect(text).not.toMatch(/Ubuntu 24\.04 LTS\s*Groups = x25519mlkem768/)
   })
 })
+
+describe('OSPQC introduction: FreeBSD oqsprovider row', () => {
+  it('uses the FreeBSD package name that exists (pkg install openssl-oqsprovider)', () => {
+    const text = introText()
+    expect(text).toContain('pkg install openssl-oqsprovider && configure openssl.cnf')
+    expect(text).toContain('FreeBSD port security/openssl-oqsprovider')
+    expect(text).not.toMatch(/pkg install oqsprovider/)
+  })
+})

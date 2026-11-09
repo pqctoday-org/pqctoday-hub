@@ -166,8 +166,9 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             {
               os: 'FreeBSD 14.x',
               mechanism: '/etc/ssl/openssl.cnf + oqsprovider',
-              command: 'pkg install oqsprovider && configure openssl.cnf',
-              effect: 'ML-KEM hybrid TLS available after installing oqsprovider port',
+              command: 'pkg install openssl-oqsprovider && configure openssl.cnf',
+              effect:
+                'ML-KEM hybrid TLS available after installing the openssl-oqsprovider package (FreeBSD port security/openssl-oqsprovider) and activating it in openssl.cnf',
               status: 'manual',
             },
           ].map((entry) => (
