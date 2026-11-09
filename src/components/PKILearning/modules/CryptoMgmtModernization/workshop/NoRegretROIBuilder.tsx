@@ -4,16 +4,22 @@ import { ChevronDown, ExternalLink, Database, RotateCcw } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import type { CbomExportItem } from '../data/workshopTypes'
+import { roiCashflows } from './roiCashflows'
 
-const fmt$ = (n: number) =>
-  n >= 1_000_000
-    ? `$${(n / 1_000_000).toFixed(n >= 10_000_000 ? 1 : 2)}M`
-    : n >= 1_000
-      ? `$${(n / 1_000).toFixed(0)}k`
-      : `$${n.toFixed(0)}`
+const fmt$ = (n: number): string =>
+  n < 0
+    ? `-${fmt$(-n)}`
+    : n >= 1_000_000
+      ? `$${(n / 1_000_000).toFixed(n >= 10_000_000 ? 1 : 2)}M`
+      : n >= 1_000
+        ? `$${(n / 1_000).toFixed(0)}k`
+        : `$${n.toFixed(0)}`
 
 const fmtPct = (x: number, digits = 0) => `${(x * 100).toFixed(digits)}%`
-const fmtYears = (n: number) => (Number.isFinite(n) ? `${n.toFixed(2)} y` : 'never in horizon')
+const fmtYears = (n: number | null) => (n == null ? 'No crossover within horizon' : `${n} y`)
+const fmtRoi = (n: number | null) => (n == null ? 'Undefined — no cost' : `${n.toFixed(0)}%`)
+const exactUsd = (n: number) =>
+  n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
 
 // ───────────────────────────────────────────────────────────────────────────────
 // Inline math-model accordion. Lighter than ui/CollapsibleSection (no glass-panel,
@@ -104,9 +110,8 @@ const ParamSlider: React.FC<{
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
-// Sub-model parameter shapes + computers. Defaults are calibrated so that the
-// rolled-up headline values match the previous flat-slider defaults — no
-// regression in Scenario A/B totals at first paint.
+// Editable fictional sub-model inputs, with a scoped source benchmark for labour.
+// Each benefit uses the displayed time basis; totals come from annual cashflow rows.
 // ───────────────────────────────────────────────────────────────────────────────
 
 interface CostParams {
@@ -151,11 +156,11 @@ interface ClmParams {
   scaleFactor: number
 }
 const clmDefaults: ClmParams = {
-  forresterCompositeAnnual: 4_430_000,
+  forresterCompositeAnnual: 2_639_569,
   scaleFactor: 0.74,
 }
 const computeClm = (p: ClmParams) => p.forresterCompositeAnnual * p.scaleFactor
-// 4.43M × 0.74 ≈ 3.28M
+// Study Year 1 in-place renewal labour only; subsequent constant annual use is illustrative.
 
 interface FipsParams {
   hsmCount: number
@@ -222,28 +227,6 @@ const quantumDefaults: QuantumParams = {
 const computeQuantum = (p: QuantumParams) => p.valueOfLongLivedSecrets * p.hndlCaptureFraction
 // 30M × 0.4 = 12M (× p_crqc applied globally)
 
-// ───────────────────────────────────────────────────────────────────────────────
-// Output math: payback (cumulative-cashflow crossover) + NPV (discounted).
-// Replaces the prior `annualProgramCost / qIndep` formula which did not
-// represent payback for an ongoing program.
-// ───────────────────────────────────────────────────────────────────────────────
-function paybackYears(annualNetCashflow: number): number {
-  // Constant-cashflow shortcut: net positive → payback at year 1; never otherwise.
-  // (Fractional within year 1 because the program only "owes" one year of cost
-  // by the end of year 1; if benefit covers it, payback = 1.)
-  if (annualNetCashflow <= 0) return Infinity
-  return 1
-}
-function npv(annualNetCashflow: number, horizon: number, rate: number): number {
-  let total = 0
-  for (let t = 1; t <= horizon; t++) {
-    total += annualNetCashflow / Math.pow(1 + rate, t)
-  }
-  return total
-}
-
-// ───────────────────────────────────────────────────────────────────────────────
-
 export interface NoRegretROIBuilderProps {
   cbomAssets?: CbomExportItem[]
 }
@@ -272,34 +255,47 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
   const qIndep = outage + clm + fips + cve + ma
   const qDep = quantumRaw * pCrqc
 
-  const totalCost = annualProgramCost * horizonYears
-  const benefitA = qIndep * horizonYears
-  const benefitB = (qIndep + qDep) * horizonYears
+  // The existing M&A control says how many years its fixed saving takes to
+  // realize. Do not keep collecting that same saving after those years end.
+  const annualBenefits = Array.from(
+    { length: horizonYears },
+    (_, index) => outage + clm + fips + cve + (index < maP.amortizeYears ? ma : 0)
+  )
+  const scenarioA = roiCashflows(annualProgramCost, annualBenefits, 0, discountRate)
+  const scenarioB = roiCashflows(annualProgramCost, annualBenefits, qDep, discountRate)
+  const totalCost = scenarioA.totalCost
+  const benefitA = scenarioA.totalBenefit
+  const benefitB = scenarioB.totalBenefit
+  const roiA = scenarioA.roiPercent
+  const roiB = scenarioB.roiPercent
+  const paybackA = scenarioA.paybackYear
+  const paybackB = scenarioB.paybackYear
+  const npvA = scenarioA.npv
+  const npvB = scenarioB.npv
 
-  const roiA = totalCost === 0 ? 0 : ((benefitA - totalCost) / totalCost) * 100
-  const roiB = totalCost === 0 ? 0 : ((benefitB - totalCost) / totalCost) * 100
-
-  const paybackA = paybackYears(qIndep - annualProgramCost)
-  const paybackB = paybackYears(qIndep + qDep - annualProgramCost)
-
-  const npvA = npv(qIndep - annualProgramCost, horizonYears, discountRate)
-  const npvB = npv(qIndep + qDep - annualProgramCost, horizonYears, discountRate)
-
-  // Sensitivity strip: each stream's share of total annual benefit (Scenario B).
+  // All shares use undiscounted horizon totals, not a mix of annual flows and stock.
   const sensitivity = useMemo(() => {
-    const totalAnnual = qIndep + qDep
-    if (totalAnnual <= 0) return []
+    const total =
+      (outage + clm + fips + cve) * horizonYears +
+      ma * Math.min(horizonYears, maP.amortizeYears) +
+      qDep
+    if (total <= 0) return []
     return [
-      { id: 'outage', label: 'Outage avoidance', value: outage, qDep: false },
-      { id: 'clm', label: 'CLM automation', value: clm, qDep: false },
-      { id: 'fips', label: 'FIPS drift', value: fips, qDep: false },
-      { id: 'cve', label: 'Library CVE', value: cve, qDep: false },
-      { id: 'ma', label: 'M&A readiness', value: ma, qDep: false },
+      { id: 'outage', label: 'Outage avoidance', value: outage * horizonYears, qDep: false },
+      { id: 'clm', label: 'CLM automation', value: clm * horizonYears, qDep: false },
+      { id: 'fips', label: 'FIPS drift', value: fips * horizonYears, qDep: false },
+      { id: 'cve', label: 'Library CVE', value: cve * horizonYears, qDep: false },
+      {
+        id: 'ma',
+        label: 'M&A readiness',
+        value: ma * Math.min(horizonYears, maP.amortizeYears),
+        qDep: false,
+      },
       { id: 'quantum', label: 'Quantum breach', value: qDep, qDep: true },
     ]
-      .map((s) => ({ ...s, share: s.value / totalAnnual }))
+      .map((stream) => ({ ...stream, share: stream.value / total }))
       .sort((a, b) => b.share - a.share)
-  }, [outage, clm, fips, cve, ma, qDep, qIndep])
+  }, [outage, clm, fips, cve, ma, qDep, horizonYears, maP.amortizeYears])
 
   const [countsImported, setCountsImported] = useState(false)
 
@@ -347,8 +343,8 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
         <p className="text-sm text-muted-foreground max-w-3xl">
           Tune your organization&apos;s assumptions. Every headline number expands into the
           underlying math with editable parameters and the source it&apos;s anchored to. The model
-          separates benefit streams that pay off <strong>regardless</strong> of quantum arrival from
-          the single stream that depends on a CRQC materializing within the horizon.
+          separates potential operational savings that do not require quantum arrival from the
+          single stream that depends on a CRQC materializing within the horizon.
         </p>
         <div className="flex flex-wrap gap-2">
           {canPullFromCbom && (
@@ -403,7 +399,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
             max={1}
             step={0.05}
             format={(v) => fmtPct(v, 0)}
-            hint="Probability of cryptanalytically-relevant quantum computer arriving within the horizon. Multiplies the quantum-dependent stream in Scenario B."
+            hint="Probability of cryptanalytically-relevant quantum computer arriving within the horizon. Weights the one-time fixed-stock benefit in Scenario B."
           />
         </div>
       </div>
@@ -535,25 +531,25 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
             </span>
           </div>
           <p className="text-[10px] text-muted-foreground">
-            Forrester DigiCert ONE composite, scaled to your estate size.
+            Year 1 renewal-labour benchmark, scaled using your sample assumption.
           </p>
           <MathModel
-            formula={`forrester_composite_annual × scale_factor\n= ${fmt$(clmP.forresterCompositeAnnual)} × ${fmtPct(clmP.scaleFactor, 0)}\n= ${fmt$(clm)}/yr`}
-            explanation="Forrester TEI of DigiCert ONE (July 2025) modeled a composite organization realizing $13.3M of benefits over 3 years — $13.3M ÷ 3 ≈ $4.43M/year — from CLM automation: $7.9M labor savings, $2.8M reduced security incidents, $2.8M revenue and efficiencies. Scale factor maps composite benefit to your estate (cert volume, current manual effort, automation maturity). This is a vendor-commissioned TEI on a specific product — treat as upper-bound benchmark, not a guaranteed outcome."
+            formula={`annual_renewal_labour_benchmark × scale_factor\n= ${exactUsd(clmP.forresterCompositeAnnual)} × ${fmtPct(clmP.scaleFactor, 0)}\n= ${fmt$(clm)}/yr`}
+            explanation="The DigiCert-commissioned Forrester study (July 2025), Total Benefits table, reports $2,639,569 of Year 1 risk-adjusted labour savings for renewals of certificates already in place. This editable benchmark excludes its incident, revenue and legacy-tool savings. Repeating the selected annual amount over this model’s horizon is a Hub constant-flow assumption, not the study’s Year 2/3 schedule. Its three-year present value is not an annual cashflow. Scale and validate the assumptions; this is not a guaranteed return."
             source={{
               label: 'Forrester TEI of DigiCert ONE (July 2025)',
-              href: 'https://www.digicert.com/news/total-economic-report-shows-big-roi-with-digicert-one',
+              href: 'https://tei.forrester.com/go/DigiCert/DigiCertONE/index.html',
             }}
           >
             <ParamSlider
-              label="Forrester composite (annual)"
+              label="Annual renewal-labour benchmark"
               value={clmP.forresterCompositeAnnual}
               onChange={(v) => setClmP((p) => ({ ...p, forresterCompositeAnnual: v }))}
-              min={1_000_000}
+              min={0}
               max={10_000_000}
-              step={50_000}
+              step={1}
               format={fmt$}
-              hint="$13.3M / 3y = $4.43M/yr per DigiCert ONE TEI composite."
+              hint="Source Year 1 renewal labour: $2,639,569. Other study benefit streams are excluded."
             />
             <ParamSlider
               label="Scale factor (your estate vs composite)"
@@ -710,7 +706,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`(baseline_pqc_transition_cost × cryptocoe_savings_factor × confidence_factor)\n  / amortize_years\n= (${fmt$(maP.baselinePqcTransitionCost)} × ${fmtPct(maP.cryptocoeSavingsFactor, 0)} × ${fmtPct(maP.confidenceFactor, 0)}) / ${maP.amortizeYears}\n= ${fmt$(ma)}/yr`}
-            explanation="This module assumes that establishing a Cryptographic Center of Excellence before 2028 lowers PQC transition cost; the savings factor is an illustrative assumption of this module, not a sourced figure, so set your own. This benefit is independent of CRQC arrival — it accrues from the unification of crypto policy, faster M&A integration, and reduced firefighting — which is why this stream is NOT flagged quantum-dependent. Confidence factor adjusts for your readiness; amortize over the years it takes to realize."
+            explanation="This fictional model assumes a Cryptographic Center of Excellence reduces one scoped transition cost; the savings factor is an illustrative assumption of this module, not a sourced figure, so set your own. This benefit is independent of CRQC arrival — it accrues from the unification of crypto policy, faster M&A integration, and reduced firefighting — which is why this stream is NOT flagged quantum-dependent. Confidence factor adjusts for your readiness; spread the fixed saving over the selected realization years. This contribution stops after those years; it is not a new saving every subsequent year."
           >
             <ParamSlider
               label="Baseline PQC transition cost (one-time)"
@@ -759,25 +755,26 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
               Quantum breach avoidance (Scenario B)
             </span>
             <span className="text-xs font-bold text-foreground whitespace-nowrap">
-              {fmt$(qDep)}/yr
+              {fmt$(qDep)} once
             </span>
           </div>
           <p className="text-[10px] text-muted-foreground">
-            HNDL-era compromise of long-lived secrets. Multiplied by P(CRQC within horizon).
+            One fixed stock of future records protected before collection, weighted by P(CRQC within
+            horizon).
           </p>
           <p className="text-[10px] text-status-warning font-bold mt-1">
             Quantum-dependent: applies only in Scenario B.
           </p>
           <MathModel
-            formula={`p_crqc_within_horizon × value_of_long_lived_secrets × hndl_capture_fraction\n= ${fmtPct(pCrqc, 0)} × ${fmt$(quantumP.valueOfLongLivedSecrets)} × ${fmtPct(quantumP.hndlCaptureFraction, 0)}\n= ${fmt$(qDep)}/yr`}
-            explanation="HNDL is asymmetric — already-exfiltrated data cannot be retroactively protected. This stream measures the value of FUTURE-stored long-lived secrets that quantum-resistant migration would protect from harvest-now/decrypt-later attack. Capture fraction is the share of long-lived secrets adversaries plausibly already collect today. P(CRQC within horizon) lives in the global controls above so its effect is auditable. NIST IR 8547 (final, October 2026) discusses HNDL throughout — it is the principal urgency driver for confidentiality."
+            formula={`p_crqc_within_horizon × value_of_long_lived_secrets × hndl_capture_fraction\n= ${fmtPct(pCrqc, 0)} × ${fmt$(quantumP.valueOfLongLivedSecrets)} × ${fmtPct(quantumP.hndlCaptureFraction, 0)}\n= ${fmt$(qDep)} once, at the end of year ${horizonYears}`}
+            explanation="Already-exfiltrated data cannot be retroactively protected. This fictional case values one fixed stock of future long-lived records migrated before collection. Multiply its value by the assumed capture fraction and horizon probability once, not once per year. For timing and discounting, the entire expected benefit is placed at the end of the selected horizon; that is an explicit model assumption, not a forecast of arrival or proof of protection. No new annual cohorts are assumed."
             source={{
               label: 'NIST IR 8547 (final)',
               href: 'https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf',
             }}
           >
             <ParamSlider
-              label="Value of long-lived secrets"
+              label="Value of fixed future-record stock"
               value={quantumP.valueOfLongLivedSecrets}
               onChange={(v) => setQuantumP((p) => ({ ...p, valueOfLongLivedSecrets: v }))}
               min={1_000_000}
@@ -793,7 +790,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
               max={1}
               step={0.01}
               format={(v) => fmtPct(v, 0)}
-              hint="Share of long-lived secrets adversaries plausibly already hold."
+              hint="Assumed share of this future stock that would be collected without migration; excludes copies already stolen."
             />
             <p className="text-[10px] text-muted-foreground italic">
               P(CRQC within horizon) is set in the global controls above (currently{' '}
@@ -806,7 +803,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
       {/* ── Sensitivity strip ────────────────────────────────────────────────── */}
       <div className="bg-muted/40 rounded-lg p-4 border border-border">
         <div className="text-xs font-bold text-foreground mb-2">
-          Which stream dominates? (share of total annual benefit, Scenario B)
+          Which stream dominates? (share of total horizon benefit, Scenario B)
         </div>
         <div className="space-y-1">
           {sensitivity.map((s) => (
@@ -834,13 +831,17 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
 
       {/* ── Scenario outputs ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/30">
+        <div
+          role="region"
+          aria-label="Scenario A results"
+          className="bg-muted/40 rounded-lg p-4 border border-border"
+        >
           <div className="font-bold text-foreground mb-2">
             Scenario A — quantum never arrives ({horizonYears} y horizon)
           </div>
           <div className="space-y-1 text-xs">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Quantum-independent benefit</span>
+              <span className="text-muted-foreground">Non-stock benefit in year 1</span>
               <span className="font-bold text-foreground">{fmt$(qIndep)}/yr</span>
             </div>
             <div className="flex justify-between">
@@ -861,22 +862,34 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
             </div>
             <div className="flex justify-between pt-1 border-t border-status-success/30">
               <span className="font-bold text-status-success">{horizonYears}-year ROI</span>
-              <span className="font-bold text-status-success text-lg">{roiA.toFixed(0)}%</span>
+              <span
+                className={clsx(
+                  'font-bold text-lg',
+                  roiA != null && roiA < 0 ? 'text-status-error' : 'text-foreground'
+                )}
+              >
+                {fmtRoi(roiA)}
+              </span>
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground italic mt-2">
-            No-regret case. This is what your board should see first.
+            Compare operational benefits against program costs first; a positive result depends on
+            the selected assumptions.
           </p>
         </div>
 
-        <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/30">
+        <div
+          role="region"
+          aria-label="Scenario B results"
+          className="bg-muted/40 rounded-lg p-4 border border-border"
+        >
           <div className="font-bold text-foreground mb-2">
-            Scenario B — CRQC arrives within {horizonYears} y (P = {fmtPct(pCrqc, 0)})
+            Scenario B — assumed P(CRQC within {horizonYears} y) = {fmtPct(pCrqc, 0)}
           </div>
           <div className="space-y-1 text-xs">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Quantum-dependent benefit added</span>
-              <span className="font-bold text-foreground">{fmt$(qDep)}/yr</span>
+              <span className="text-muted-foreground">Fixed-stock benefit at horizon end</span>
+              <span className="font-bold text-foreground">{fmt$(qDep)} once</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Total benefit ({horizonYears}y)</span>
@@ -896,13 +909,58 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
             </div>
             <div className="flex justify-between pt-1 border-t border-status-info/30">
               <span className="font-bold text-status-info">{horizonYears}-year ROI</span>
-              <span className="font-bold text-status-info text-lg">{roiB.toFixed(0)}%</span>
+              <span
+                className={clsx(
+                  'font-bold text-lg',
+                  roiB != null && roiB < 0 ? 'text-status-error' : 'text-foreground'
+                )}
+              >
+                {fmtRoi(roiB)}
+              </span>
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground italic mt-2">
-            Upside case. The quantum-dependent stream is additive — never load-bearing.
+            Compare this expected-value scenario with Scenario A. The fixed-stock contribution is
+            counted once; it may change whether the case breaks even.
           </p>
         </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full text-xs">
+          <caption className="p-3 text-left text-muted-foreground">
+            Sample cashflow schedule (USD). Annual costs and recurring benefits are constant; M&A
+            savings end after {maP.amortizeYears} years. The fixed-record benefit appears once in
+            year {horizonYears}. All values are undiscounted here; NPV discounts these rows.
+          </caption>
+          <thead>
+            <tr className="text-left border-b border-border">
+              {['Year', 'Non-stock benefits', 'Stock benefit (B)', 'Cost', 'Net A', 'Net B'].map(
+                (label) => (
+                  <th key={label} scope="col" className="p-2 whitespace-nowrap">
+                    {label}
+                  </th>
+                )
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {scenarioB.rows.map((row, index) => (
+              <tr key={row.year} className="border-b border-border">
+                <th scope="row" className="p-2">
+                  {row.year}
+                </th>
+                <td className="p-2 whitespace-nowrap">{exactUsd(row.annualBenefit)}</td>
+                <td className="p-2 whitespace-nowrap">{exactUsd(row.stockBenefit)}</td>
+                <td className="p-2 whitespace-nowrap">{exactUsd(row.cost)}</td>
+                <td className="p-2 whitespace-nowrap">
+                  {exactUsd(scenarioA.rows.at(index)?.net ?? 0)}
+                </td>
+                <td className="p-2 whitespace-nowrap">{exactUsd(row.net)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* ── Output math explanation ──────────────────────────────────────────── */}
@@ -913,12 +971,14 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
         <MathModel
           defaultOpen={false}
           formula={`ROI = (total_benefit − total_cost) / total_cost × 100\nPayback = first year t where Σ (annual_benefit − annual_cost) ≥ 0\nNPV = Σ (annual_net_cashflow_t / (1 + r)^t)  for t = 1..horizon`}
-          explanation="ROI is the simple, undiscounted return for the chosen horizon. Payback is the cumulative-cashflow crossover — for an ongoing program with constant annual cost, this resolves to year 1 if annual benefit exceeds annual cost, else 'never in horizon'. NPV applies the discount rate from the global controls, so executives can see the discount-sensitivity penalty by dialling r above 0%."
+          explanation="ROI uses undiscounted horizon totals and is undefined when total cost is zero. Payback is the first year with nonnegative cumulative net cashflow; no crossover is reported if none occurs within the horizon. NPV discounts each year’s net cashflow, including the one-time stock benefit only at the horizon end."
         >
           <p className="text-[11px] text-muted-foreground">
-            Model limitations: constant-cashflow assumption (no ramp-up curve); no Monte Carlo on
-            input distributions; payback collapses to a simple year-1/never test under constant
-            cashflows. For full board modeling, pair with the Business Case module (LM-036).
+            Model limitations: recurring streams use constant annual inputs; the fixed M&A saving
+            ends after its realization period and the stock benefit occurs once at horizon end.
+            Streams must represent distinct costs to avoid overlap. There is no Monte Carlo analysis
+            or evidence that these sample assumptions apply to an organisation. For full board
+            modeling, pair with the Business Case module (LM-036).
           </p>
         </MathModel>
       </div>
