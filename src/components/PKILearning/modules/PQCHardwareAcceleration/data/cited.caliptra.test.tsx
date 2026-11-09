@@ -51,6 +51,7 @@ describe('Adams Bridge masking cost', () => {
     expect(adamsText).toMatch(/11,144 → 11,986 cycles/)
     expect(adamsText).toMatch(/909,602 → 1,398,044 gate equivalents/)
     expect(adamsText).toMatch(/at most 2 to ML-KEM/)
+    expect(adamsRows[0].url).toMatch(/adams_bridge_mldsa\.html$/)
     expect(adamsRows[0].platform).toMatch(/not silicon/)
   })
 
@@ -64,6 +65,9 @@ describe('Adams Bridge masking cost', () => {
 
   it('says the cost depends on version and operation', () => {
     expect(MASKING_TAKEAWAYS.join(' ')).toMatch(/depends on the version and the operation/)
+    expect(MASKING_TAKEAWAYS.join(' ')).toMatch(/a security presentation \(version not stated\)/)
+    expect(MASKING_TAKEAWAYS.join(' ')).not.toMatch(/earlier security presentation/)
+    expect(flat(ragSummary)).not.toMatch(/earlier Adams Bridge security presentation/)
   })
 })
 
@@ -72,19 +76,32 @@ describe('Adams Bridge speed figures', () => {
 
   it('replaces the 26 / 61 / 31 µs phases with the documented 2.1 figures', () => {
     expect(ab?.perf).not.toMatch(/26 \/ 61 \/ 31/)
-    expect(ab?.perf).toMatch(/58 µs unprotected, 63 µs protected/)
-    expect(ab?.perf).toMatch(/19 µs unprotected, 20 µs protected/)
+    expect(ab?.perf).toMatch(/signing round 58 µs \(63 µs protected\)/)
+    expect(ab?.perf).toMatch(/decapsulation 19 µs \(20 µs protected\)/)
   })
 
   it('labels them as documented figures for a named version, not silicon measurements', () => {
-    expect(ab?.perf).toMatch(/Documented, not measured on silicon/)
-    expect(ab?.perf).toMatch(/RTL simulation at 600 MHz/)
-    expect(ab?.perf).toMatch(/Adams Bridge v3\.0/)
+    expect(ab?.perf).toMatch(/Documented, not silicon: RTL simulation, 600 MHz, v3\.0/)
   })
 
   it('replaces the area figure that pre-dated the masking refactor', () => {
     expect(ab?.area).not.toMatch(/0\.1096/)
     expect(ab?.area).toMatch(/0\.0459 mm²/)
+  })
+
+  it('leaves no sentence on the page that still gives the old area or the "pre-dates" note', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter>
+          <AccelerationIntroduction onNavigateToWorkshop={() => {}} />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    const page = flat(document.body.textContent ?? '')
+    expect(page).not.toContain('a tenth of a square millimetre')
+    expect(page).not.toContain('pre-dates a masking refactor')
+    expect(page).toContain('about 0.05 square millimetres of 5 nm silicon')
+    expect(page).toContain('0.0459 mm²')
   })
 })
 
@@ -95,7 +112,8 @@ describe('Tessera accelerator note', () => {
       /implements every ML-DSA and ML-KEM parameter set, selected at run time/
     )
     expect(CITED_FACTS.tesseraAccelerator).toMatch(/ML-DSA-44\/65\/87 and ML-KEM-512\/768\/1024/)
-    expect(CITED_FACTS.tesseraAccelerator).toMatch(/not read the two as the same engine/)
+    expect(CITED_FACTS.tesseraAccelerator).toMatch(/do not read them as the same engine/)
+    expect(CITED_FACTS.tesseraAccelerator).toMatch(/does not say how the two relate/)
     expect(CITED_FACTS.adamsBridge).toMatch(/ML-DSA-87 and ML-KEM-1024 parameter sets only/)
   })
 

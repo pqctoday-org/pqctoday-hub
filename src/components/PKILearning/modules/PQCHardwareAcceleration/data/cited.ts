@@ -8,13 +8,13 @@
  *
  * Caliptra / Adams Bridge figures are DOCUMENTED figures for a named version (the Adams Bridge
  * v3.0 columns on the Caliptra 2.1 documentation site, taken from adams-bridge commit 753d4d4,
- * RTL simulation at 600 MHz), not silicon measurements. Library rows for these sources:
+ * RTL simulation at 600 MHz), not silicon measurements. Library rows for these sources (declared
+ * in content.ts): ML-DSA-Documentation-Caliptra-2-1-Documentation-Adams-Bridge (signing 58 vs
+ * 63 µs), ML-KEM-Documentation-Caliptra-2-1-Documentation-Adams-Bridge,
+ * Adam-s-Bridge-Hardware-Specification-Version-3-0 (area table),
  * Hardware-Specification-Caliptra-2-1-Documentation, Caliptra-versioning,
- * ML-KEM-Documentation-Caliptra-2-1-Documentation-Adams-Bridge,
  * Adams-Bridge-chipsalliance-adams-bridge-README, Adam-s-Bridge-Side-Channel-Protection and
- * tessera-abr-params-pkg-sv-ML-DSA-and-ML-KEM-accelerator-para (declared in content.ts). The
- * Adams Bridge ML-DSA documentation page and hardware specification (signing 58 vs 63 µs; area
- * table) are linked below by URL; they have no Library row yet.
+ * tessera-abr-params-pkg-sv-ML-DSA-and-ML-KEM-accelerator-para.
  */
 
 export interface CitedSource {
@@ -72,7 +72,7 @@ export const SOURCES: Record<string, CitedSource> = {
   adamsBridge: {
     id: 'adamsBridge',
     label: 'CHIPS Alliance — Adams Bridge ML-DSA accelerator (documented for Caliptra 2.1)',
-    url: 'https://github.com/chipsalliance/adams-bridge/blob/753d4d4c8f7df58480237f978df132892e614668/docs/AdamsBridge_MLDSA.md',
+    url: 'https://chipsalliance.github.io/caliptra-web/docs/2.1/hardware/adams_bridge_mldsa.html',
   },
   adamsBridgeSca: {
     id: 'adamsBridgeSca',
@@ -311,7 +311,7 @@ export const CITED_FACTS = {
   adamsBridge:
     'The Adams Bridge accelerator in Caliptra (ML-DSA from 2.0, ML-KEM added in 2.1) has a hardware NTT, a Keccak (SHAKE128/256) core, samplers and side-channel masking — and its documentation says it supports the ML-DSA-87 and ML-KEM-1024 parameter sets only.',
   tesseraAccelerator:
-    'Tessera’s accelerator is a separate design, at the specification stage: its hardware repository’s parameter package says the core implements every ML-DSA and ML-KEM parameter set, selected at run time (ML-DSA-44/65/87 and ML-KEM-512/768/1024), where Adams Bridge’s documentation lists ML-DSA-87 and ML-KEM-1024 only. Do not read the two as the same engine.',
+    'Tessera’s accelerator is a separate design, at the specification stage: its hardware repository’s parameter package says the core implements every ML-DSA and ML-KEM parameter set, selected at run time (ML-DSA-44/65/87 and ML-KEM-512/768/1024), where Adams Bridge’s documentation lists ML-DSA-87 and ML-KEM-1024 only. The package uses Adams Bridge’s abr naming, and the repository does not say how the two relate; do not read them as the same engine.',
   openTitan:
     'OpenTitan (Earl Grey) verifies boot images with ECDSA-P256 plus SLH-DSA-SHA2-128s running on its SHA-256/HMAC block; its separate KMAC block implements SHA-3, SHAKE and cSHAKE with masking.',
   cupqc:
@@ -474,10 +474,10 @@ export const ASIC_ENGINES: AsicEngine[] = [
   {
     engine: 'Caliptra Adams Bridge (ML-DSA-87 + ML-KEM-1024, side-channel protected)',
     node: '5 nm',
-    area: '0.0459 mm² at 5 nm with core masking and without the masked Keccak (repository documentation, tag v3.0-rc1); 1,398,044 gate equivalents with both, SRAM included',
+    area: '0.0459 mm² at 5 nm with core masking, without the masked Keccak; 1,398,044 gate equivalents with both',
     power: 'not published',
-    perf: 'Documented, not measured on silicon (RTL simulation at 600 MHz, Adams Bridge v3.0 figures in the Caliptra 2.1 documentation): ML-DSA-87 one signing round 58 µs unprotected, 63 µs protected; ML-KEM-1024 decapsulation 19 µs unprotected, 20 µs protected',
-    url: 'https://github.com/chipsalliance/adams-bridge/tree/753d4d4c8f7df58480237f978df132892e614668/docs',
+    perf: 'Documented, not silicon: RTL simulation, 600 MHz, v3.0. ML-DSA-87 signing round 58 µs (63 µs protected); ML-KEM-1024 decapsulation 19 µs (20 µs protected)',
+    url: 'https://github.com/chipsalliance/adams-bridge/blob/753d4d4c8f7df58480237f978df132892e614668/docs/AdamsBridgeHardwareSpecification.md',
   },
   {
     engine: 'Sapphire (MIT) — configurable lattice crypto processor',
@@ -661,9 +661,9 @@ export const MASKING_COSTS: MaskingCost[] = [
     impl: 'Caliptra Adams Bridge v3.0, ML-KEM-1024 / ML-DSA-87 (Caliptra 2.1 documentation)',
     protection:
       '2-share masking + shuffling (two parallel NTT engines); masked Keccak, on by default',
-    cost: 'Depends on the operation. The documentation says arithmetic masking adds no cycles to ML-DSA and at most 2 to ML-KEM (its cost is area), and that the masked Keccak adds latency: ML-DSA-87 one signing round 58 → 63 µs (35,012 → 38,036 cycles), about 15% for key generation and 9–11% for signing; ML-KEM-1024 decapsulation 11,144 → 11,986 cycles (8–11% for ML-KEM). Area 909,602 → 1,398,044 gate equivalents',
-    platform: 'ASIC design; documented figures from RTL simulation at 600 MHz, not silicon',
-    url: 'https://github.com/chipsalliance/adams-bridge/tree/753d4d4c8f7df58480237f978df132892e614668/docs',
+    cost: 'Arithmetic masking adds no cycles to ML-DSA and at most 2 to ML-KEM; the masked Keccak adds latency: ML-DSA-87 signing round 58 → 63 µs, ML-KEM-1024 decapsulation 11,144 → 11,986 cycles. Area 909,602 → 1,398,044 gate equivalents',
+    platform: 'ASIC design; documented RTL-simulation figures at 600 MHz, not silicon',
+    url: 'https://chipsalliance.github.io/caliptra-web/docs/2.1/hardware/adams_bridge_mldsa.html',
   },
   {
     impl: 'Caliptra Adams Bridge, ML-KEM-1024 / ML-DSA-87 (security presentation, version not stated)',
@@ -718,7 +718,7 @@ export const MASKING_COSTS: MaskingCost[] = [
 
 export const MASKING_TAKEAWAYS = [
   'In software, first-order masking costs roughly 3–7× the time for Kyber and Dilithium, and the cost climbs steeply with each extra order (Kyber768: 3.5× at first order, over 100× at third).',
-  'In hardware the bill can be paid in area as well as time, and it depends on the version and the operation: for Adams Bridge the 2.1-era documentation says arithmetic masking adds no cycles to ML-DSA and at most 2 to ML-KEM (two parallel NTT engines, so the cost is area), while its masked Keccak adds latency (ML-DSA-87 one signing round 58 → 63 µs), and an earlier security presentation reports 37% for signing and 10% for ML-KEM — while masked Keccak in OpenTitan more than doubles the round logic.',
+  'In hardware the bill can be paid in area as well as time, and it depends on the version and the operation: for Adams Bridge the 2.1-era documentation says arithmetic masking adds no cycles to ML-DSA and at most 2 to ML-KEM (two parallel NTT engines, so the cost is area), while its masked Keccak adds latency (about 15% for ML-DSA key generation and 9–11% for signing, 8–11% for ML-KEM; one ML-DSA-87 signing round 58 → 63 µs), and a security presentation (version not stated) reports 37% for signing and 10% for ML-KEM — while masked Keccak in OpenTitan more than doubles the round logic.',
   'Masking a design that was not built for it can be disastrous: one first-order ML-DSA FPGA design added only 13–20% area but ran 378× slower.',
   'Always ask which attacks a “protected” product covers: constant-time (timing), SPA, or DPA/masking — and at what order.',
 ]

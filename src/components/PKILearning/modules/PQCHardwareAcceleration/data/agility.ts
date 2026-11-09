@@ -147,7 +147,7 @@ export const AGILITY_STRATEGIES: AgilityStrategy[] = [
     title: 'Reprogram the hardware when the workload changes',
     plain:
       'An FPGA can swap whole images (profiles) or single slots (partial reconfiguration). An ASIC cannot — which is why ASIC PQC engines fix their parameter sets up front.',
-    ours: 'We swap ML-DSA and SLH-DSA profiles live on the KV260; Caliptra’s Adams Bridge documents ML-DSA-87 and ML-KEM-1024 only (Tessera’s accelerator is a separate, specification-stage design that covers more parameter sets).',
+    ours: 'We swap ML-DSA and SLH-DSA profiles live on the KV260; Caliptra’s Adams Bridge documents ML-DSA-87 and ML-KEM-1024 only (Tessera’s accelerator is a separate, specification-stage design whose parameter package lists more parameter sets).',
   },
   {
     title: 'Prefer general instructions over fixed engines on the CPU',

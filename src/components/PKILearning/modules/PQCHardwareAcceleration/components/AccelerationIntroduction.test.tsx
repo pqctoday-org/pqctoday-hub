@@ -45,9 +45,9 @@ describe('Hardware acceleration introduction: masking and ASIC agility', () => {
     )
   })
 
-  it('does not call the engine side-channel protected on the strength of a pre-refactor area figure', () => {
+  it('does not call the engine fully side-channel protected on the strength of the core-masking area figure', () => {
     const t = pageText()
     expect(t).not.toMatch(/A complete, side-channel-protected ML-DSA \+ ML-KEM engine/)
-    expect(t).toMatch(/may not include the final side-channel protection/)
+    expect(t).toMatch(/leaves out part of the final side-channel protection/)
   })
 })

@@ -1021,12 +1021,12 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
               </table>
             </div>
             <p className="text-xs text-foreground/80 leading-relaxed">
-              Read the two tables together. A complete ML-DSA + ML-KEM engine fits in about a tenth
-              of a square millimetre of 5 nm silicon (an area figure the table notes pre-dates a
-              masking refactor, so it may not include the final side-channel protection), and
-              lattice ASICs run in milliwatts or less. The same engines in an FPGA need a mid-sized
-              part like our K26 — far more silicon and power — because programmable logic pays for
-              its flexibility:
+              Read the two tables together. A complete ML-DSA + ML-KEM engine fits in about 0.05
+              square millimetres of 5 nm silicon (the table&apos;s physical figure covers the core
+              masking but not the masked Keccak, so it leaves out part of the final side-channel
+              protection), and lattice ASICs run in milliwatts or less. The same engines in an FPGA
+              need a mid-sized part like our K26 — far more silicon and power — because programmable
+              logic pays for its flexibility:
             </p>
             <Cited sources={[]}>
               {FPGA_ASIC_GAP.text}{' '}
