@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { Introduction } from './Introduction'
+import manifest from '../manifest'
 
 const introRoot = () => {
   const view = render(
@@ -49,5 +50,23 @@ describe('VendorRisk Introduction: applicability, contract anchor, and what a CB
     const t = flat(introRoot())
     expect(t).toMatch(/maturity of standards, protocols, and the cryptographic validation program/)
     expect(t).toMatch(/NIST CSWP 39-upd1, Section 5\.3/)
+  })
+})
+
+describe('VendorRisk Introduction: every learn section in the manifest has an anchor', () => {
+  it('lists the CBOM section in the navigation and anchors it in the page', () => {
+    const entry = manifest.learnSections?.find((s) => s.id === 'cbom')
+    expect(entry?.label).toBe('CBOM: Crypto Bill of Materials')
+    const root = introRoot()
+    const anchor = root.querySelector('[data-section-id="cbom"]')
+    expect(anchor).not.toBeNull()
+    expect(anchor!.textContent).toMatch(/CBOM: Crypto Bill of Materials/)
+  })
+
+  it('has one on-page anchor for each manifest learn section', () => {
+    const root = introRoot()
+    for (const s of manifest.learnSections ?? []) {
+      expect(root.querySelector(`[data-section-id="${s.id}"]`), `${s.id} anchor`).not.toBeNull()
+    }
   })
 })

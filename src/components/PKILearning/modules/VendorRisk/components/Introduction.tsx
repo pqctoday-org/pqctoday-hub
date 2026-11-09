@@ -140,7 +140,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
       {/* Section 3: CBOM — Crypto Bill of Materials */}
       <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div data-section-id="cbom" className="flex items-center gap-3 mb-4 scroll-mt-20">
           <div className="p-2 rounded-lg bg-primary/10">
             <FileSearch size={24} className="text-primary" />
           </div>

@@ -2471,6 +2471,10 @@
         "label": "Supply Chain Crypto Deps"
       },
       {
+        "id": "cbom",
+        "label": "CBOM: Crypto Bill of Materials"
+      },
+      {
         "id": "contracts",
         "label": "PQC Contract Requirements"
       },
