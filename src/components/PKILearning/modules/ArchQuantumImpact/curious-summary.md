@@ -8,7 +8,7 @@ Architectural decisions made today will outlive the quantum transition. Designin
 
 ### Strategy
 
-Crypto-agility is a survival requirement, not an optional feature. Architects must immediately map all cryptographic touchpoints and mandate abstraction layers across new deployments. By planning now for the massive footprint of PQC algorithms and establishing strict algorithm-selection governance, you insulate your company's core infrastructure.
+Crypto-agility is a survival requirement, not an optional feature. Architects must immediately map all cryptographic touchpoints and mandate abstraction layers across new deployments. By planning now for the massive footprint of PQC algorithms and establishing strict algorithm-selection governance, you insulate your company's core infrastructure. Architects also need to tell apart the hardware that roots trust and protects keys (TPMs, Caliptra, Tessera, HSMs, cloud HSMs, confidential computing and two kinds of DPU), because each sits in a different place, is controlled by a different party and has a different post-quantum status.
 
 ### Ecosystem
 

@@ -802,7 +802,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2635,
+    estimatedMinutes: 2645,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -814,7 +814,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'hsm-pqc',
       'pki-workshop',
     ],
-    essentialsMinutes: 380,
+    essentialsMinutes: 390,
     quizDescription:
       'Test your knowledge on cryptographic foundations, architecture strategy (crypto agility, crypto management modernization, hybrid crypto, QKD), infrastructure protocols (TLS, network security, DNSSEC, MLS group messaging, KMS, HSMs, stateful signatures, SLH-DSA, PKI, Merkle tree certs), PQC testing & validation, identity and credentials, API security, code signing, and IoT/OT security.',
     quizCategories: [
