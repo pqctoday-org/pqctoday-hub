@@ -87,7 +87,9 @@ describe('sample planning labels preserve the difference from tested capability'
   })
   it('shows the 100%-rating/0%-systems counterexample honestly in screen and saved output', () => {
     render(<ManagementToolsAudit />)
-    expect(screen.getByText(/preselects Manual for every category/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Catalogue selections do not preselect implementation ratings/)
+    ).toBeInTheDocument()
     for (const button of screen.getAllByRole('button', { name: 'Automated' }))
       fireEvent.click(button)
     expect(screen.getByText('Hub Tool-Category Rating')).toBeInTheDocument()

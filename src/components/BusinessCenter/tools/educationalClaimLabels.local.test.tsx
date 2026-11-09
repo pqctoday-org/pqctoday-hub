@@ -15,14 +15,30 @@ const saved = vi.hoisted(() => vi.fn())
 vi.mock('@/wasm/kmip/kmipEngine', () => ({
   getKmipEngine: () => Promise.reject(new Error('No engine used by review test')),
 }))
-vi.mock('@/hooks/useSavedArtifactInputs', () => ({ useSavedArtifactInputs: () => undefined }))
-vi.mock('@/store/useModuleStore', () => ({
-  useModuleStore: (select: (state: { addExecutiveDocument: typeof saved }) => unknown) =>
-    select({ addExecutiveDocument: saved }),
+vi.mock('@/hooks/useSavedArtifactInputs', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/hooks/useSavedArtifactInputs')>()),
+  useSavedArtifactInputs: () => undefined,
 }))
+vi.mock('@/store/useModuleStore', () => {
+  const state = { addExecutiveDocument: saved, artifacts: { executiveDocuments: [] } }
+  return {
+    useModuleStore: Object.assign((select: (value: typeof state) => unknown) => select(state), {
+      getState: () => state,
+    }),
+  }
+})
 vi.mock('@/components/PKILearning/common/executive/ExportableArtifact', () => ({
-  ExportableArtifact: ({ exportData, onExport }: { exportData: string; onExport: () => void }) => (
+  ExportableArtifact: ({
+    exportData,
+    onExport,
+    children,
+  }: {
+    exportData: string
+    onExport?: () => void
+    children?: React.ReactNode
+  }) => (
     <>
+      {children}
       <pre data-testid="export-content">{exportData}</pre>
       <Button onClick={onExport}>Save sample plan</Button>
     </>
@@ -94,9 +110,7 @@ describe('educational selections do not establish performed checks', () => {
     expect(
       screen.getByText('Sample checklist entries complete — closure not assessed')
     ).toBeInTheDocument()
-    expect(
-      screen.getByText(/No closure record or evidence dossier has been generated or archived/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Closure and archival remain unassessed/)).toBeInTheDocument()
     expect(screen.queryByText(/program can close/)).not.toBeInTheDocument()
   })
   it('preserves a preselected TLS topic in exported and saved sample inputs without verification', () => {
