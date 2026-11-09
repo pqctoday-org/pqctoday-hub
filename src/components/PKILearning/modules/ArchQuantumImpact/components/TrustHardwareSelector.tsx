@@ -18,6 +18,7 @@ import {
   type CellKind,
 } from '../data/trustHardware'
 import { sourceLabel } from '../data/sourceLabel'
+import { TrustHardwareVenn } from './TrustHardwareVenn'
 
 type View = 'cards' | 'grid' | 'pick' | 'combine'
 
@@ -42,13 +43,6 @@ const KIND_LABEL: Record<CellKind, string | null> = {
   varies: 'Varies by product',
   'not-published': null,
 }
-
-/**
- * INFOGRAPHIC SLOT (lane V). A Venn-style picture of the eight kinds is being prepared; it is
- * registered here only after the owner picks an image. While this is null nothing renders.
- * Do not add an image file until then.
- */
-const INFOGRAPHIC = null as { src: string; alt: string } | null
 
 /** Library links for a list of source ids, shown by document title; the id stays in the link target. */
 const SourceList: React.FC<{ ids: string[]; label?: string }> = ({ ids, label = 'Sources' }) => {
@@ -530,11 +524,7 @@ export const TrustHardwareSelector: React.FC = () => {
         </p>
       </div>
 
-      {INFOGRAPHIC && (
-        <figure className="max-w-3xl mx-auto">
-          <img src={INFOGRAPHIC.src} alt={INFOGRAPHIC.alt} className="w-full h-auto rounded-lg" />
-        </figure>
-      )}
+      <TrustHardwareVenn />
 
       <div
         role="group"

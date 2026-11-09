@@ -11,13 +11,15 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, within, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import Papa from 'papaparse'
 import '@testing-library/jest-dom'
 import { hasStandard } from '@/data/standardsRegistry'
 import { loadIndustryLandscape } from '@/data/industryLandscapeData'
 import { TrustHardwareSelector } from './components/TrustHardwareSelector'
 import { SHORT_TITLE_MAX, sourceLabel } from './data/sourceLabel'
+import { VENN } from './data/trustHardwareVenn'
 import {
   CATEGORY_IDS,
   COMBINE_CASES,
@@ -291,10 +293,50 @@ describe('TrustHardwareSelector render', () => {
     expect(screen.getByText(/Do not assume one exists/)).toBeInTheDocument()
   })
 
-  it('renders no infographic while the slot is empty', () => {
+  it('shows the overlap picture by URL, with alt text, lazy loading and a text version', () => {
     renderStep()
-    expect(screen.queryByRole('img')).not.toBeInTheDocument()
-    expect(screen.queryByRole('figure')).not.toBeInTheDocument()
+    const figure = screen.getByTestId('trust-venn')
+    const img = within(figure).getAllByRole('img')[0]
+    expect(img).toHaveAttribute('src', VENN.src)
+    expect(img.getAttribute('src')).not.toMatch(/^data:/)
+    expect(img).toHaveAttribute('alt', VENN.alt)
+    expect(img).toHaveAttribute('loading', 'lazy')
+    expect(img).toHaveAttribute('decoding', 'async')
+    expect(img).toHaveAttribute('width', String(VENN.width))
+    expect(img).toHaveAttribute('height', String(VENN.height))
+    expect(within(figure).getByText(VENN.caption)).toBeInTheDocument()
+    expect(within(figure).getByText('Read the diagram as text')).toBeInTheDocument()
+    expect(within(figure).getByText(VENN.regions[0])).toBeInTheDocument()
+  })
+
+  it('opens the picture full size and closes it again', () => {
+    renderStep()
+    fireEvent.click(screen.getByRole('button', { name: 'View the overlap diagram full size' }))
+    const dialog = screen.getByRole('dialog', { name: 'Overlap diagram full view' })
+    expect(within(dialog).getByRole('img')).toHaveAttribute('src', VENN.src)
+    fireEvent.click(screen.getAllByRole('button', { name: 'Close diagram' })[1])
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+})
+
+describe('Overlap picture', () => {
+  const file = join(process.cwd(), 'public', VENN.src)
+
+  it('exists as a WebP file served from public/ and is small enough to lazy-load', () => {
+    expect(existsSync(file)).toBe(true)
+    const bytes = readFileSync(file)
+    expect(bytes.subarray(0, 4).toString('ascii')).toBe('RIFF')
+    expect(bytes.subarray(8, 12).toString('ascii')).toBe('WEBP')
+    expect(bytes.length).toBeLessThan(400 * 1024)
+  })
+
+  it('has one-sentence alt text and a caption that names no tools', () => {
+    expect(VENN.alt.length).toBeGreaterThan(40)
+    expect(VENN.alt.split('. ').length).toBe(1)
+    expect(VENN.caption).toMatch(/desk comparison of published documents \(November 2026\)/)
+    const text = [VENN.alt, VENN.caption, ...VENN.regions, ...VENN.tableRows].join(' ')
+    expect(text).not.toMatch(/\b(gemini|codex|claude|chatgpt|gpt|midjourney|generated|ai-)\b/i)
+    expect(text).not.toMatch(/\b(ships|shipped|shipping|available|certified|in every server)\b/i)
   })
 })
 
