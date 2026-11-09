@@ -81,6 +81,40 @@ describe('auditCryptoApi - decision table', () => {
 })
 
 describe('auditCryptoApi - language-specific output', () => {
+  it('keeps the Node native-provider version boundaries in the recommendation and export', () => {
+    const inputs = { ...baseInputs, language: 'Node.js' }
+    const rec = auditCryptoApi(inputs)
+    const checklist = rec.callSiteChecklist.join(' ')
+    expect(checklist).toMatch(/ML-DSA.*v24\.6\.0/)
+    expect(checklist).toMatch(/ML-KEM.*v24\.7\.0/)
+    expect(checklist).toMatch(/older targets.*separately evaluated/)
+    expect(checklist).not.toMatch(/does not yet ship/)
+    const view = renderCryptoApiMarkdown({
+      stackInventory: inputs,
+      refactorScope: inputs,
+      plan: inputs,
+    })
+    expect(view).toContain('v24.6.0')
+    expect(view).toContain('v24.7.0')
+  })
+
+  it('offers native CryptoKit on supported OS versions without assuming older targets support it', () => {
+    const inputs = { ...baseInputs, language: 'Swift' }
+    const rec = auditCryptoApi(inputs)
+    const checklist = rec.callSiteChecklist.join(' ')
+    expect(checklist).toMatch(/MLDSA65 and MLKEM768 on iOS 26 and macOS 26 or later/)
+    expect(checklist).toMatch(/runtime availability/)
+    expect(checklist).toMatch(/older supported systems.*separately evaluated/)
+    expect(rec.recommendedFacadePattern).toMatch(/CryptoKit.*older deployment targets/)
+    expect(checklist).not.toMatch(/No native PQC/)
+    const view = renderCryptoApiMarkdown({
+      stackInventory: inputs,
+      refactorScope: inputs,
+      plan: inputs,
+    })
+    expect(view).toContain('iOS 26 and macOS 26 or later')
+  })
+
   it('Go language emits crypto.Signer + golangci-lint guidance', () => {
     const rec = auditCryptoApi({ ...baseInputs, language: 'Go' })
     expect(rec.callSiteChecklist.join(' ')).toMatch(/crypto\.Signer/)

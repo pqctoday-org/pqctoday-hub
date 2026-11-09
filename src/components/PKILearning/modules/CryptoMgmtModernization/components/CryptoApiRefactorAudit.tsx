@@ -134,7 +134,7 @@ const LANGUAGE_CHECKLISTS: Record<string, string[]> = {
   'Node.js': [
     'Grep for `crypto.sign("RSA-SHA256", ...)`, `crypto.createSign("RSA-SHA256")`, `crypto.publicEncrypt({...padding...})`',
     'Replace literal algorithm strings with a parameter; route through a facade module that re-exports `sign` / `verify` / `encapsulate` / `decapsulate`',
-    'Node native crypto does not yet ship ML-KEM / ML-DSA - use `liboqs-node` or `node-pqcrypto` behind the facade',
+    'Node.js node:crypto added ML-DSA key generation and signing in v24.6.0, and ML-KEM key generation with encapsulate / decapsulate in v24.7.0. Check the deployed runtime and API stability before choosing the native provider; older targets need a separately evaluated compatible provider. Reference: [Node.js v24.7 crypto API](https://nodejs.org/download/release/v24.7.0/docs/api/crypto.html)',
     'Keep the facade async-only so future WASM-backed providers (browser parity) drop in without API changes',
   ],
   Python: [
@@ -170,7 +170,7 @@ const LANGUAGE_CHECKLISTS: Record<string, string[]> = {
   Swift: [
     'Grep for `SecKeyCreate*`, `SecKeyRawSign`, `CryptoKit` `P256.Signing.PrivateKey` direct uses',
     'Wrap with a `CryptoFacade` protocol; the rest of the app speaks the protocol, not the underlying framework',
-    'No native PQC on iOS / macOS today - bridge via a Rust / C library (liboqs) compiled into the app',
+    'CryptoKit provides MLDSA65 and MLKEM768 on iOS 26 and macOS 26 or later. Gate their use on the deployment target and runtime availability; older supported systems need a separately evaluated compatible provider. References: [MLDSA65](https://developer.apple.com/documentation/cryptokit/mldsa65) and [MLKEM768](https://developer.apple.com/documentation/cryptokit/mlkem768)',
     'Use `SecKey` attribute parameterisation rather than hardcoding `kSecAttrKeyType` values',
   ],
   Kotlin: [
@@ -210,7 +210,7 @@ function pickFacadePattern(language: string): string {
     case 'JavaScript (browser)':
       return 'Define a `webCryptoFacade.ts` module that wraps `window.crypto.subtle` and a WASM-liboqs adapter; routes by algorithm.'
     case 'Swift':
-      return 'Define a `CryptoFacade` protocol with `sign` / `verify` / `encapsulate` requirements; back it with `SecKey` + a liboqs-Swift wrapper.'
+      return 'Define a `CryptoFacade` protocol with `sign` / `verify` / `encapsulate` requirements; select CryptoKit PQC APIs on supported OS versions and a separately evaluated compatible provider when older deployment targets require one.'
     case 'Kotlin':
       return 'Define a `CryptoFacade` interface; inject the JCA / BouncyCastle PQC implementation via DI.'
     default:
