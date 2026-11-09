@@ -696,7 +696,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What does the Compliance Tracker show?',
         answer:
-          "The Compliance Tracker aggregates PQC mandates and recommendations with framework timelines, source references and industry context. Its records come from dated dataset snapshots updated through a maintainer-run checking and review process; sources are not scraped daily by an automatic timer. A record can lag its source until the next pass. Check the dataset version, source date and last-verified date, then read the linked authority for the rule's actual subject and scope. The About page explains maintenance and freshness, and the Changelog records published updates. Country, industry and framework filters help you find the relevant records; a filtered view does not establish compliance.",
+          "The Compliance Tracker aggregates PQC mandates and recommendations with framework timelines, source references and industry context. Its records come from dated dataset snapshots updated through a maintainer-run checking and review process. This view reads those snapshots; it does not scrape the linked authorities while you browse. A record can lag its source until the next pass. Check the dataset version, source date and last-verified date, then read the linked authority for the rule's actual subject and scope. The About page explains maintenance and freshness, and the Changelog records published updates. Country, industry and framework filters help you find the relevant records; a filtered view does not establish compliance.",
         deepLink: '/compliance',
       },
       {
