@@ -29,6 +29,12 @@ describe('productPqcStatus', () => {
     )
   })
 
+  it('shows the older canonical spelling "planned" as Roadmap, not Unknown', () => {
+    expect(
+      productPqcStatus(item({ pqcStatusCanonical: 'planned', pqcSupport: 'Planned (2027)' })).status
+    ).toBe('roadmap')
+  })
+
   it('falls back to a "Yes" pqcSupport as GA', () => {
     expect(productPqcStatus(item({ pqcSupport: 'Yes (ML-KEM)' })).status).toBe('ga')
   })
