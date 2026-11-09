@@ -207,4 +207,23 @@ describe('Actual closure artifact save and restore', () => {
     expect(screen.getByLabelText('Handover date for CBOM + continuous discovery')).toHaveValue('')
     expect(documents()).toEqual([foreign])
   })
+  it('exposes each acknowledgment toggle state to assistive technology', async () => {
+    render(<ClosureHandoverRegister />)
+    const user = userEvent.setup()
+    const toggle = (name: string) =>
+      screen.getByRole('button', { name: (label) => label.includes(name) })
+    for (const name of criteria) expect(toggle(name)).toHaveAttribute('aria-pressed', 'false')
+    await user.click(toggle(criteria[0]))
+    expect(toggle(criteria[0])).toHaveAttribute('aria-pressed', 'true')
+    for (const name of criteria.slice(1))
+      expect(toggle(name)).toHaveAttribute('aria-pressed', 'false')
+    await user.click(toggle(criteria[0]))
+    expect(toggle(criteria[0])).toHaveAttribute('aria-pressed', 'false')
+  })
+  it('calls the saved item a sample record once every entry is complete', async () => {
+    render(<ClosureHandoverRegister />)
+    await fill()
+    expect(screen.getByText(/Save or download the sample record\./)).toBeInTheDocument()
+    expect(screen.queryByText(/the actual record/)).not.toBeInTheDocument()
+  })
 })

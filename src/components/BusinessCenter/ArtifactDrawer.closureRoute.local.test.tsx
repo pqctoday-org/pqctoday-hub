@@ -57,7 +57,7 @@ describe('Scoped closure artifact reopens its actual workshop', () => {
   it('uses the exact workshop link and omits unrelated editor/reviewer workflow', async () => {
     const close = vi.fn()
     show(doc, 'view', close)
-    const link = screen.getByRole('link', { name: 'Reopen handover workshop' })
+    const link = screen.getByRole('link', { name: 'Reopen workshop: handover register' })
     expect(link).toHaveAttribute('href', '/learn/verification-closure?tab=workshop&step=2')
     expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /In review/ })).not.toBeInTheDocument()
@@ -85,7 +85,9 @@ describe('Scoped closure artifact reopens its actual workshop', () => {
     show(document)
     expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /In review/ })).toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: 'Reopen handover workshop' })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Reopen workshop: handover register' })
+    ).not.toBeInTheDocument()
   })
   it('preserves ordinary create and edit paths', () => {
     const view = show(null, 'create')
@@ -98,7 +100,9 @@ describe('Scoped closure artifact reopens its actual workshop', () => {
   })
   it('retains read-only affordance restrictions', () => {
     show(doc, 'view', vi.fn(), true)
-    expect(screen.queryByRole('link', { name: 'Reopen handover workshop' })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Reopen workshop: handover register' })
+    ).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument()
   })
 })

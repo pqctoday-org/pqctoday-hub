@@ -138,6 +138,7 @@ export function ClosureHandoverRegister() {
               <Button
                 key={c.id}
                 variant="ghost"
+                aria-pressed={crit.has(c.id)}
                 onClick={() =>
                   setCrit((prev) => {
                     const next = new Set(prev)
@@ -179,7 +180,7 @@ export function ClosureHandoverRegister() {
           {ready ? (
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
               <FileCheck2 size={12} /> Sample entries complete. Inspect the generated draft below;
-              Save or download the actual record. Closure and archival remain unassessed.
+              Save or download the sample record. Closure and archival remain unassessed.
             </p>
           ) : (
             <p className="mt-1 text-xs text-muted-foreground">

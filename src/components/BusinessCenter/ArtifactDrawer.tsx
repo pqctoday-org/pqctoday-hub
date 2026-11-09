@@ -213,7 +213,7 @@ export function ArtifactDrawer({
               <Link
                 to="/learn/verification-closure?tab=workshop&step=2"
                 onClick={onClose}
-                aria-label="Reopen handover workshop"
+                aria-label="Reopen workshop: handover register"
                 className={buttonVariants({ variant: 'outline', size: 'sm' })}
               >
                 <Pencil size={14} />
