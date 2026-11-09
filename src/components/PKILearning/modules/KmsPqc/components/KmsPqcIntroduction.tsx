@@ -1105,9 +1105,9 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             Premium) releases an HSM-protected, exportable key to an attested trusted execution
             environment when the Microsoft Azure Attestation claims satisfy a release policy set
             when the key is created. AWS KMS works with AWS Nitro Enclaves: its key-policy condition
-            keys (kms:RecipientAttestation:ImageSha384 and kms:RecipientAttestation:PCR) make KMS
-            allow operations with a key only if the enclave provides a signed attestation document
-            whose measurements match the policy.
+            keys (<code>kms:RecipientAttestation:ImageSha384</code> and{' '}
+            <code>kms:RecipientAttestation:PCR</code>) make KMS allow operations with a key only if
+            the enclave provides a signed attestation document whose measurements match the policy.
           </p>
           <p className="text-sm text-muted-foreground">
             In both cases the key service relies on the attestation and on the hardware behind it;
