@@ -768,9 +768,10 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Draw 4 KB of random bytes to a file',
         run: async (ctx) => {
           await ctx.run('rand -out learn-l9-random.bin 4096')
+          const size = measuredSizeOf(ctx, 'learn-l9-random.bin')
           const bytes = ctx.readFile('learn-l9-random.bin')
           return {
-            detail: `${bytes?.length ?? -1} B written. First 8 bytes: ${bytes ? hex(bytes) : '?'}… — every genpkey call in this curriculum drew from this same source.`,
+            detail: `${size} B written. First 8 bytes: ${bytes ? hex(bytes) : '?'}… — every genpkey call in this curriculum drew from this same source.`,
           }
         },
       },
