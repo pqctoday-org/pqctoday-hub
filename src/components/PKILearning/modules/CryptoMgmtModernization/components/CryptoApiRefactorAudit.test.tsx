@@ -85,8 +85,9 @@ describe('auditCryptoApi - language-specific output', () => {
     const inputs = { ...baseInputs, language: 'Node.js' }
     const rec = auditCryptoApi(inputs)
     const checklist = rec.callSiteChecklist.join(' ')
-    expect(checklist).toMatch(/ML-DSA.*v24\.6\.0/)
-    expect(checklist).toMatch(/ML-KEM.*v24\.7\.0/)
+    expect(checklist).toMatch(/ML-DSA key generation and signing in v24\.6\.0/)
+    expect(checklist).toMatch(/ML-KEM key generation with encapsulate \/ decapsulate in v24\.7\.0/)
+    expect(checklist).toMatch(/in v24\.7\.0; these need OpenSSL 3\.5 or later/)
     expect(checklist).toMatch(/older targets.*separately evaluated/)
     expect(checklist).not.toMatch(/does not yet ship/)
     const view = renderCryptoApiMarkdown({
@@ -94,8 +95,8 @@ describe('auditCryptoApi - language-specific output', () => {
       refactorScope: inputs,
       plan: inputs,
     })
-    expect(view).toContain('v24.6.0')
-    expect(view).toContain('v24.7.0')
+    expect(view).toContain('ML-DSA key generation and signing in v24.6.0')
+    expect(view).toContain('ML-KEM key generation with encapsulate / decapsulate in v24.7.0')
   })
 
   it('offers native CryptoKit on supported OS versions without assuming older targets support it', () => {

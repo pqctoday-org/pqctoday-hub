@@ -134,7 +134,7 @@ const LANGUAGE_CHECKLISTS: Record<string, string[]> = {
   'Node.js': [
     'Grep for `crypto.sign("RSA-SHA256", ...)`, `crypto.createSign("RSA-SHA256")`, `crypto.publicEncrypt({...padding...})`',
     'Replace literal algorithm strings with a parameter; route through a facade module that re-exports `sign` / `verify` / `encapsulate` / `decapsulate`',
-    'Node.js node:crypto added ML-DSA key generation and signing in v24.6.0, and ML-KEM key generation with encapsulate / decapsulate in v24.7.0. Check the deployed runtime and API stability before choosing the native provider; older targets need a separately evaluated compatible provider. Reference: [Node.js v24.7 crypto API](https://nodejs.org/download/release/v24.7.0/docs/api/crypto.html)',
+    'Node.js node:crypto added ML-DSA key generation and signing in v24.6.0, and ML-KEM key generation with encapsulate / decapsulate in v24.7.0; these need OpenSSL 3.5 or later. Check the deployed runtime and API stability before choosing the native provider; older targets need a separately evaluated compatible provider. Reference: [Node.js v24.7 crypto API](https://nodejs.org/download/release/v24.7.0/docs/api/crypto.html)',
     'Keep the facade async-only so future WASM-backed providers (browser parity) drop in without API changes',
   ],
   Python: [
