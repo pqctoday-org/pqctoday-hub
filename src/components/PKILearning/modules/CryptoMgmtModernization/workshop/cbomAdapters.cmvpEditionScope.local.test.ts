@@ -25,7 +25,7 @@ describe('CBOM source association without inferred FIPS edition', () => {
       expect(input.certifications).toEqual([{ certType: 'CMVP catalogue association', certId }])
       expect(input.properties).toContainEqual({
         name: 'pqctoday:cmvpEditionScope',
-        value: expect.stringContaining('edition not established by this record'),
+        value: expect.stringContaining('where recorded, are preserved'),
       })
       const doc = JSON.parse(buildCbomDocument([input]).json)
       const component = doc.components.find((item: { type: string }) => item.type === type)
@@ -61,7 +61,27 @@ describe('CBOM source association without inferred FIPS edition', () => {
     expect(newer.certifications?.[0]?.certType).toBe('CMVP catalogue association')
     expect(newer.properties).toContainEqual({
       name: 'pqctoday:cmvpEditionScope',
-      value: expect.stringContaining('edition not established by this record'),
+      value: expect.stringContaining('An unstated edition is unknown'),
+    })
+  })
+
+  it('retains explicit legacy and mixed-edition references rather than calling their editions unstated', () => {
+    expect(libraryToCbomInput(legacyLibrary).certifications?.[0]?.certId).toContain('FIPS 140-2')
+    expect(hsmToCbomInput(legacyHsm).certifications?.[0]?.certId).toContain('FIPS 140-2')
+    const reference = '#sample-new (FIPS 140-3); #sample-old (FIPS 140-2, historical)'
+    const input = libraryToCbomInput({ ...legacyLibrary, cmvpCertNumber: reference })
+    const component = JSON.parse(buildCbomDocument([input]).json).components[0]
+    const references = JSON.parse(
+      component.properties.find(
+        (property: { name: string }) => property.name === 'pqctoday:certificateReferences'
+      ).value
+    )
+    expect(references).toEqual([{ certType: 'CMVP catalogue association', certId: reference }])
+    expect(component.properties).toContainEqual({
+      name: 'pqctoday:cmvpEditionScope',
+      value: expect.stringContaining(
+        'does not establish validation of the selected product version'
+      ),
     })
   })
 
