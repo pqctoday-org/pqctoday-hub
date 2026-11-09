@@ -41,6 +41,21 @@
         "public/wasm/entropy90b/ea_restart.mjs",
         "public/wasm/entropy90b/BUILDINFO.json"
       ]
+    },
+    {
+      "key": "lms-safe-v1",
+      "label": "LMS/HSS bounded-signature sample engine",
+      "repo": "pqctoday-org/pqctoday-hub",
+      "commit": "59947f47da2d06781816c04fdb19cc6d711341aa",
+      "files": {
+        "public/wasm/lms/lms.03281779ef438cfbe69583344285ff846bb728f538c56967745fbc539e09fc4e.wasm": "03281779ef438cfbe69583344285ff846bb728f538c56967745fbc539e09fc4e"
+      },
+      "lockFiles": [
+        "public/wasm/lms/lms.165b5e96778a650fab94911b67ca0662cf56650b74b0811a5102a31889e54158.js",
+        "public/wasm/lms/lms.202589108ce29387ab98f5d4f15f06535f1c2f102bdfd60faa318cd1634d442b.buildinfo.json",
+        "public/wasm/lms.202589108ce29387ab98f5d4f15f06535f1c2f102bdfd60faa318cd1634d442b.NOTICES.txt"
+      ],
+      "note": "New pinned Cisco hash-sigs build with caller-supplied signature capacity, exact written length and content-bound JS/WASM resources. This is not a reproduction of the legacy binary or a conformance claim. Pair provenance is schema1 at public/wasm/lms/lms.202589108ce29387ab98f5d4f15f06535f1c2f102bdfd60faa318cd1634d442b.buildinfo.json (SHA256 83e5336de84834eea3bbc4bc185418badd1146bb654638e63584e17847d5d480), retained verbatim and hash-locked via lockFiles; this is not the generic tool/deps/files BUILDINFO schema consumed by the SBOM embedded-version reader."
     }
   ]
 }
