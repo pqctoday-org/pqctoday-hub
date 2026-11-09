@@ -10,9 +10,10 @@ import {
 } from './DataDrivenScorecard'
 import { effectiveScorecardWeight, scoredWeightShare } from './scorecardCoverage'
 import type { KpiValueOrigin } from './scorecardValueOrigin'
+import { REPORTED_PERCENT_MESSAGE } from './reportingOnlyMeasure'
 
 /** How the reported-percent field is found by assistive technology. */
-const BUDGET_INPUT = { name: 'Budget Utilization reported percent' }
+const BUDGET_INPUT = { name: /Reported utilization \(%\) — excluded from readiness/ }
 
 const dimensions: ScorecardDimension[] = [
   {
@@ -347,5 +348,154 @@ describe('older saves and cleared fields keep missing distinct from zero', () =>
         'Origin: Manual sample input — not entered'
       )
     ).toBeInTheDocument()
+  })
+})
+
+describe('the reported-percent field', () => {
+  it('has an accessible name that contains its visible label, with period and scope as the description', () => {
+    render(<Worksheet />)
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
+    const visible = 'Reported utilization (%) — excluded from readiness'
+    expect(screen.getByText(visible)).toBeInTheDocument()
+    expect(input).toHaveAccessibleName(`Budget Utilization ${visible}`)
+    expect(input).toHaveAccessibleDescription('Period: Unknown · Scope: Unknown')
+    const row = within(screen.getByTestId('kpi-dim-budget'))
+    fireEvent.click(row.getByText('Sample measure notes'))
+    fireEvent.change(row.getByRole('textbox', { name: 'Budget Utilization Reporting period' }), {
+      target: { value: '2026 Q4' },
+    })
+    fireEvent.change(row.getByRole('textbox', { name: 'Reporting scope' }), {
+      target: { value: 'Fictional service A' },
+    })
+    expect(input).toHaveAccessibleDescription('Period: 2026 Q4 · Scope: Fictional service A')
+  })
+
+  it('rejects negative and oversized entries with a message and keeps the previous value', () => {
+    const onScoreChange = vi.fn()
+    render(
+      <DataDrivenScorecard
+        title="Invalid entries"
+        dimensions={dimensions}
+        initialScores={{ budget: 80 }}
+        initialValueOrigins={{ budget: 'learner-entered' }}
+        onScoreChange={onScoreChange}
+      />
+    )
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
+    for (const raw of ['-5', '-0.01', '1001', '1e300']) {
+      fireEvent.change(input, { target: { value: raw } })
+      expect(screen.getByRole('alert')).toHaveTextContent(REPORTED_PERCENT_MESSAGE)
+      expect(input).toBeInvalid()
+      expect(input).toHaveAccessibleDescription(
+        `Period: Unknown · Scope: Unknown ${REPORTED_PERCENT_MESSAGE}`
+      )
+      // The box shows the kept value, not the rejected text, and nothing was stored.
+      expect(input).toHaveValue(80)
+    }
+    expect(onScoreChange).not.toHaveBeenCalled()
+
+    fireEvent.change(input, { target: { value: '0' } })
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(input).not.toBeInvalid()
+    expect(input).toHaveValue(0)
+    expect(onScoreChange).toHaveBeenLastCalledWith({ readiness: 50, budget: 0 })
+  })
+
+  it('does not turn a rejected entry into a stored 0 when the field was empty', async () => {
+    render(<Worksheet />)
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
+    fireEvent.change(input, { target: { value: '-5' } })
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+    expect(input).toHaveValue(null)
+    expect(within(screen.getByTestId('kpi-dim-budget')).getByText('Unknown')).toBeInTheDocument()
+    expect(budgetCsvRecord(await exportAs('.csv'))).toMatchObject({
+      Score: '',
+      'Raw worksheet value (not an assessed score)': '',
+    })
+    expect(await exportAs('.md')).toContain(
+      '| Budget Utilization | Unknown — reporting only; excluded from readiness |'
+    )
+  })
+
+  it('does not clear a stored value for an unreadable entry: half typed, or an exponent that overflows to infinity', () => {
+    const onScoreChange = vi.fn()
+    render(
+      <DataDrivenScorecard
+        title="Half typed"
+        dimensions={dimensions}
+        initialScores={{ budget: 80 }}
+        initialValueOrigins={{ budget: 'learner-entered' }}
+        onScoreChange={onScoreChange}
+      />
+    )
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
+    // A browser reports half-typed text such as "-" or "1e", and an exponent such as
+    // "1e999" that overflows to infinity, as an empty value with badInput set.
+    Object.defineProperty(input, 'validity', { configurable: true, value: { badInput: true } })
+    fireEvent.change(input, { target: { value: '' } })
+    expect(screen.getByRole('alert')).toHaveTextContent(REPORTED_PERCENT_MESSAGE)
+    expect(input).toHaveValue(80)
+    expect(onScoreChange).not.toHaveBeenCalled()
+  })
+})
+
+describe('exports of a restored value that has not been assessed for current use', () => {
+  it('say so in Markdown and CSV, as the screen does', async () => {
+    render(
+      <DataDrivenScorecard
+        title="Origin not recorded"
+        dimensions={dimensions}
+        initialScores={{ budget: 80 }}
+        exportFormats={['markdown', 'csv']}
+      />
+    )
+    expect(
+      within(screen.getByTestId('kpi-dim-budget')).getByText(
+        'Saved value: 80% — current use not assessed'
+      )
+    ).toBeInTheDocument()
+    expect(budgetCsvRecord(await exportAs('.csv'))).toMatchObject({
+      Score: '',
+      'Raw worksheet value (not an assessed score)': '80',
+      'Original saved snapshot value': '80',
+      'Current-use status':
+        'Reporting only — excluded from readiness; not assessed for current use',
+      'Included in overall calculation': 'false',
+    })
+    expect(await exportAs('.md')).toContain(
+      '| Budget Utilization | 80% — not assessed for current use; reporting only; excluded from readiness |'
+    )
+  })
+})
+
+describe('scope text in exports', () => {
+  const withScope = (scope: string) => (
+    <DataDrivenScorecard
+      title="Scope text"
+      dimensions={dimensions}
+      initialScores={{ budget: 80 }}
+      initialValueOrigins={{ budget: 'learner-entered' }}
+      exportFormats={['markdown', 'csv']}
+      observations={{ budget: { scope, verificationState: 'not-verified' } }}
+    />
+  )
+
+  it('keeps a quote, a comma and a line break in the CSV scope as one cell', async () => {
+    const scope = 'Fictional "payments" service, region A\nsecond line\r\nthird line'
+    render(withScope(scope))
+    expect(budgetCsvRecord(await exportAs('.csv')).Scope).toBe(scope)
+  })
+
+  it('stops a scope that starts like a formula from running in a spreadsheet', async () => {
+    for (const scope of ['=HYPERLINK("https://example.test")', '+1', '-1', '@SUM(A1)']) {
+      const view = render(withScope(scope))
+      expect(budgetCsvRecord(await exportAs('.csv')).Scope).toBe(`'${scope}`)
+      view.unmount()
+    }
+  })
+
+  it('escapes a pipe and flattens a line break in the Markdown scope', async () => {
+    render(withScope('Service A | B\nregion C'))
+    expect(await exportAs('.md')).toContain('scope: Service A \\| B region C;')
   })
 })

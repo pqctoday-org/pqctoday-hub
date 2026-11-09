@@ -29,7 +29,10 @@ import {
   effectiveScorecardWeight,
   isReadinessDimension,
 } from '@/components/PKILearning/common/executive/scorecardCoverage'
-import { withoutNeverEnteredReportingScores } from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
+import {
+  reportingOnlyScoreCell,
+  withoutNeverEnteredReportingScores,
+} from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
 import type { PolicyOutput } from '../types'
 
 const SURFACE = 'governance' as const
@@ -133,7 +136,7 @@ export function buildKpiDashboardMarkdown(
     }
     const value = scores[d.id] ?? d.autoScore
     if (d.reportingOnly) {
-      md += `| ${d.label} | ${value === undefined ? 'Unknown' : `${value}%`} — reporting only; excluded from readiness | 0% | —${lineage}\n`
+      md += `| ${d.label} | ${reportingOnlyScoreCell(value, isPending(d))} | 0% | —${lineage}\n`
       md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; scope: ${observation?.scope?.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ') || 'Unknown'}; as of ${observation?.asOfDate || 'not provided'}.\n`
       continue
     }

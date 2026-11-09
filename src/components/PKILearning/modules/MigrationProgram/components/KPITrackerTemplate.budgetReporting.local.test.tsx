@@ -48,7 +48,7 @@ const data: ExecutiveModuleData = {
 }
 
 /** How the reported-percent field is found by assistive technology. */
-const BUDGET_INPUT = { name: 'Budget Utilization reported percent' }
+const BUDGET_INPUT = { name: /Reported utilization \(%\) — excluded from readiness/ }
 
 describe('finance reporting stays outside migration readiness', () => {
   it('keeps the budget visible for each relevant role and excludes its target and weight', () => {
@@ -91,6 +91,41 @@ describe('finance reporting stays outside migration readiness', () => {
       expect(md).toContain('2026 Q4')
       expect(md).not.toContain('125/100')
     }
+  })
+})
+
+describe('Markdown rows for a reporting-only budget', () => {
+  const dimensions = buildDimensions('executive', 'migration', data)
+  const input = {
+    dimensions,
+    activePersona: 'executive' as const,
+    riskHistory: [],
+    userScores: { 'budget-utilization': 80 },
+    userWeights: {},
+    touchedIds: new Set<string>(),
+  }
+
+  it('say when a restored value has not been assessed for current use', () => {
+    const md = buildKpiTrackerMarkdown({
+      ...input,
+      valueOrigins: { 'budget-utilization': 'unrecorded' },
+    })
+    expect(md).toContain(
+      '| Budget Utilization | 80% — not assessed for current use; reporting only; excluded from readiness |'
+    )
+  })
+
+  it('escapes a pipe and flattens a line break in the scope', () => {
+    const md = buildKpiTrackerMarkdown({
+      ...input,
+      observations: {
+        'budget-utilization': {
+          scope: 'Service A | B\nregion C',
+          verificationState: 'not-verified',
+        },
+      },
+    })
+    expect(md).toContain('| Service A \\| B region C |')
   })
 })
 

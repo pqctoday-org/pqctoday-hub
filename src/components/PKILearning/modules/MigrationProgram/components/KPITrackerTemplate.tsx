@@ -20,7 +20,7 @@ import {
 } from '@/components/PKILearning/common/executive'
 import type { KpiDefinition, KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_CATALOG, KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
-import { rowsToCsv } from '@/services/export/csvExport'
+import { rowsToCsv, spreadsheetSafeText } from '@/services/export/csvExport'
 import { useHasUserInteracted } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import type { ScorecardObservation } from '@/components/PKILearning/common/executive/DataDrivenScorecard'
 import {
@@ -29,7 +29,11 @@ import {
   effectiveScorecardWeight,
   isReadinessDimension,
 } from '@/components/PKILearning/common/executive/scorecardCoverage'
-import { withoutNeverEnteredReportingScores } from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
+import {
+  reportingOnlyScoreCell,
+  reportingOnlyStatus,
+  withoutNeverEnteredReportingScores,
+} from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -142,8 +146,7 @@ export function buildKpiTrackerMarkdown({
       continue
     }
     if (d.reportingOnly) {
-      const raw = scores[d.id]
-      md += `| ${d.label} | ${raw === undefined ? 'Unknown' : `${raw}%`} — reporting only; excluded from readiness | 0% | — | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(valueOrigins?.[d.id] ?? currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
+      md += `| ${d.label} | ${reportingOnlyScoreCell(scores[d.id], isPending(d))} | 0% | — | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(valueOrigins?.[d.id] ?? currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
       continue
     }
     const scoreCell = isPending(d)
@@ -378,14 +381,14 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
           : String(userScores[d.id] ?? d.autoScore ?? 0),
         loadedSavedScores?.[d.id] ?? '',
         d.reportingOnly
-          ? 'Reporting only — excluded from readiness'
+          ? reportingOnlyStatus(userScores[d.id], pending)
           : d.disabled
             ? 'Required inputs unavailable'
             : pending
               ? 'Not assessed for current use'
               : 'Assessed sample value',
         !isReadinessDimension(d) || pending ? 'false' : 'true',
-        observations[d.id]?.scope ?? '',
+        spreadsheetSafeText(observations[d.id]?.scope ?? ''),
       ]
     })
     return rowsToCsv([header, ...rows])

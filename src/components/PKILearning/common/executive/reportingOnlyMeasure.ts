@@ -22,3 +22,46 @@ export function withoutNeverEnteredReportingScores(
   )
   return Object.fromEntries(Object.entries(scores).filter(([id]) => !neverEntered.has(id)))
 }
+
+/**
+ * Largest reported percent the field accepts. Spending can run well past the
+ * approved budget, so the ceiling is generous, but it stops a mistyped
+ * exponent from being stored and printed as "1e+300%".
+ */
+export const REPORTED_PERCENT_MAX = 1000
+
+export const REPORTED_PERCENT_MESSAGE = `Enter a number from 0 to ${REPORTED_PERCENT_MAX}. The previous value was kept.`
+
+export type ReportedPercentResult = { ok: true; value: number } | { ok: false; message: string }
+
+/**
+ * Read what was typed into the reported-percent field. Negative, infinite,
+ * not-a-number and absurdly large entries are rejected, never clamped: clamping
+ * a bad entry would store it as a real 0%.
+ */
+export function parseReportedPercent(raw: string): ReportedPercentResult {
+  const trimmed = raw.trim()
+  const value = trimmed === '' ? Number.NaN : Number(trimmed)
+  if (!Number.isFinite(value) || value < 0 || value > REPORTED_PERCENT_MAX) {
+    return { ok: false, message: REPORTED_PERCENT_MESSAGE }
+  }
+  // Number('-0') is -0; keep a plain 0.
+  return { ok: true, value: value === 0 ? 0 : value }
+}
+
+/**
+ * Score cell of a Markdown row for a reporting-only measure. A restored value
+ * that has not been assessed for current use says so, as the screen does.
+ */
+export function reportingOnlyScoreCell(raw: number | undefined, notAssessed: boolean): string {
+  const value = raw === undefined ? 'Unknown' : `${raw}%`
+  const lead = raw !== undefined && notAssessed ? ' — not assessed for current use;' : ' —'
+  return `${value}${lead} reporting only; excluded from readiness`
+}
+
+/** Current-use status of a CSV row for a reporting-only measure. */
+export function reportingOnlyStatus(raw: number | undefined, notAssessed: boolean): string {
+  return raw !== undefined && notAssessed
+    ? 'Reporting only — excluded from readiness; not assessed for current use'
+    : 'Reporting only — excluded from readiness'
+}
