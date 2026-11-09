@@ -265,12 +265,13 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
           ML-DSA CMS sign + verify (end-to-end)
         </h2>
         <p className="text-sm text-muted-foreground">
-          Runs the full <code className="rounded bg-muted px-1 py-0.5 text-xs">genpkey</code> →{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs">req -x509</code> →{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs">cms -sign</code> →{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs">cms -verify</code> pipeline inside
-          the OpenSSL WASM worker. Software keys today; pkcs11-provider routing flips on once Step 4
-          reports a green init.
+          Generates the selected sample key, issues a self-signed certificate, then runs{' '}
+          <code className="rounded bg-muted px-1 py-0.5 text-xs">cms -sign</code> and{' '}
+          <code className="rounded bg-muted px-1 py-0.5 text-xs">cms -verify</code> inside the
+          OpenSSL WASM worker. With Use HSM key selected, PKCS#11 creates the token key and
+          provider-routed commands reference its URI. Software mode uses <code>genpkey</code> and a
+          PEM key instead. The separate results show whether each operation succeeded; provider
+          initialization alone does not establish that outcome.
         </p>
       </header>
 

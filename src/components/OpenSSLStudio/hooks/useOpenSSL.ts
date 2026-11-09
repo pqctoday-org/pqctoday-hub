@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef, useCallback } from 'react'
 import { useOpenSSLStore } from '../store'
+import { OPENSSL_READY_LOG } from '../readyLog'
 import type { WorkerMessage, WorkerResponse } from '../worker/types'
 import { parseOpensslArgs } from '../worker/commandParser'
 import { lookupCkr } from '../../../wasm/pkcs11Inspect'
@@ -164,7 +165,7 @@ export const useOpenSSL = () => {
           break
         }
         case 'READY':
-          addLog('info', 'OpenSSL System Ready')
+          addLog('info', OPENSSL_READY_LOG)
           setIsReady(true)
           setLoadError(null)
           break

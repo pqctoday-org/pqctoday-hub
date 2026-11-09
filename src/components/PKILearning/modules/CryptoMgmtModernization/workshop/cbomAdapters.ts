@@ -83,7 +83,7 @@ export function matchLibrary(name: string, version: string): CryptoLibrary | und
 
 const CMVP_ASSOCIATION_TYPE = 'CMVP catalogue association'
 const CMVP_EDITION_SCOPE =
-  'FIPS standard edition not established by this record; inspect the referenced certificate and configuration.'
+  'Edition and module scope, where recorded, are preserved in this catalogue certificate reference and source notes. An unstated edition is unknown; this reference alone does not establish validation of the selected product version.'
 
 export function libraryToCbomInput(lib: CryptoLibrary): CbomComponentInput {
   const properties: CbomProperty[] = [
