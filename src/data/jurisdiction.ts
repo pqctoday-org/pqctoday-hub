@@ -17,6 +17,9 @@ export interface JurisdictionRule {
   endState: EndState
   /** Plain-language summary for the panel. */
   note: string
+  /** Whether the governing instrument is a requirement or guidance (empty = not recorded).
+   *  A verdict may say "requires" only where this is 'requirement'. */
+  force?: 'requirement' | 'guidance' | ''
 }
 
 // Import + re-export from the canonical CSV-driven source.
@@ -71,7 +74,15 @@ export function checkChoice(country: string, choice: MigChoice): ComplianceVerdi
     return {
       ok: false,
       level: 'fail',
-      reason: `${rule.authority} requires hybrid — a pure choice is non-compliant.`,
+      // "requires" only where the instrument on file is a requirement; published guidance
+      // (BSI TR-02102-1, ENISA, ANSSI outside its regulated scope) is "expected", not mandated.
+      // Where the instrument's force is not recorded, say neither.
+      reason:
+        rule.force === 'requirement'
+          ? `${rule.authority} requires hybrid — a pure choice is non-compliant.`
+          : rule.force === 'guidance'
+            ? `${rule.authority} expects hybrid in its published guidance — a pure-only choice departs from it.`
+            : `${rule.authority}'s recorded stance is hybrid — a pure-only choice departs from it.`,
       evaluated: true,
     }
   if (rule.endState === 'pure' && choice === 'hybrid')

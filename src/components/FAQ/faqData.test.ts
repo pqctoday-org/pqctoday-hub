@@ -368,3 +368,18 @@ describe('library and protocol-stack answers', () => {
     expect(answer).toContain('nine tracks')
   })
 })
+
+describe('FAQ: ANSSI position', () => {
+  const item = FAQ_DATA.flatMap((c) => c.items).find(
+    (i) => i.question === 'What is the ANSSI PQC position?'
+  )
+
+  it('says hybrid is mandatory only inside the regulated perimeter, not that ANSSI requires it everywhere', () => {
+    expect(item).toBeDefined()
+    expect(item!.answer).toContain('strongly recommends hybrid')
+    expect(item!.answer).toContain('to date, its PQC guidance has no regulatory force by itself')
+    expect(item!.answer).toContain('mandatory only inside the regulated perimeter')
+    expect(item!.answer).toContain('hash-based signatures (SLH-DSA, XMSS, LMS) are the exception')
+    expect(item!.answer).not.toMatch(/requires hybrid|most aggressive European timelines/)
+  })
+})

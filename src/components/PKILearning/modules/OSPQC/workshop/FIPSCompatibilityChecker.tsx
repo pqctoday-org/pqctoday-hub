@@ -64,25 +64,28 @@ openssl s_client -groups X25519MLKEM768 -brief -connect host.example:443 </dev/n
   {
     id: 'ubuntu-fips',
     os: 'Ubuntu 22.04 / 24.04 LTS (Ubuntu Pro)',
-    fipsModule: 'FIPS Ubuntu (OpenSSL 3.0.x FIPS module via Ubuntu Pro)',
+    fipsModule:
+      'Ubuntu OpenSSL Cryptographic Module via Ubuntu Pro (CMVP #4794 for 22.04, #5115 for 24.04)',
     fipsStatus: 'fips-140-3',
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
-    fipsCertDate: '',
+    fipsCertDate:
+      'CMVP #4794: Ubuntu 22.04 OpenSSL Cryptographic Module (FIPS 140-3, Level 1, Active, initial validation 11 September 2024, an interim validation, OpenSSL 3.0.5-based). CMVP #5115: Ubuntu 24.04 OpenSSL Cryptographic Module (FIPS 140-3, Active, initial validation 6 January 2026). A certificate applies when the module is operated in approved mode as its Security Policy specifies.',
     pqcFipsCertTarget:
       'Ubuntu 26.04 LTS: a FIPS module that includes PQC is an expectation in this lesson; no validation date is cited',
     hybridStrategy:
-      'Use Ubuntu Pro FIPS mode for regulated workloads. Run oqsprovider alongside FIPS provider for new PQC services. Separate network segments or containers may be required by compliance auditors.',
+      'Use Ubuntu Pro FIPS mode for regulated workloads. Whether a separate PQC provider such as oqsprovider may run next to the FIPS provider is not settled here: this lesson cites no Ubuntu package for it, so ask your assessor. Separate network segments or containers may be required by compliance auditors.',
     notes:
-      'Ubuntu FIPS mode requires Ubuntu Pro subscription. The FIPS 140-3 module is based on OpenSSL 3.0.x, which predates the PQC algorithms added in OpenSSL 3.5.0 (April 2025), so this lesson does not expect ML-KEM or ML-DSA in it; this lesson cites no plan to add them to the 22.04 or 24.04 FIPS modules. A new Ubuntu FIPS module that includes PQC is an expectation in this lesson, not a cited plan or date.',
-    commands: `# Ubuntu Pro FIPS setup:
-sudo ua attach <Ubuntu Pro token>
-sudo ua enable fips
+      'Ubuntu FIPS mode requires an Ubuntu Pro token (Canonical offers Ubuntu Pro free for personal use on up to five physical machines; check the subscription terms for FIPS). The 22.04 FIPS 140-3 module (#4794) is based on OpenSSL 3.0.5, and Ubuntu 24.04 ships OpenSSL 3.0.13; OpenSSL 3.0 predates the PQC algorithms added in OpenSSL 3.5.0 (April 2025), so this lesson does not expect ML-KEM or ML-DSA in either module and cites no plan to add them to the 22.04 or 24.04 FIPS modules. A new Ubuntu FIPS module that includes PQC is an expectation in this lesson, not a cited plan or date.',
+    commands: `# Ubuntu Pro FIPS setup (Canonical recommends the fips-updates stream;
+# Livepatch is incompatible only with the legacy fips stream):
+sudo pro attach <Ubuntu Pro token>
+sudo pro enable fips-updates
 sudo reboot
 
-# Check FIPS status:
-ubuntu-advantage status
-# fips: enabled
+# Check FIPS status (a value of 1 means FIPS mode is active):
+sudo pro status --all
+cat /proc/sys/crypto/fips_enabled
 
 # Check which providers are active and whether any offers ML-KEM:
 openssl list -providers

@@ -408,6 +408,7 @@ export const JURISDICTION_RULES: Record<string, JurisdictionRule> = Object.fromE
       hybrid: j.hybrid as HybridStance,
       endState: j.endState as EndState,
       note: j.note,
+      force: j.force,
     } satisfies JurisdictionRule,
   ])
 )

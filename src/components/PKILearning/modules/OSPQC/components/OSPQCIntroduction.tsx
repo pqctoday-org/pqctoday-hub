@@ -166,8 +166,9 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             {
               os: 'FreeBSD 14.x',
               mechanism: '/etc/ssl/openssl.cnf + oqsprovider',
-              command: 'pkg install oqsprovider && configure openssl.cnf',
-              effect: 'ML-KEM hybrid TLS available after installing oqsprovider port',
+              command: 'pkg install openssl-oqsprovider && configure openssl.cnf',
+              effect:
+                'ML-KEM hybrid TLS available after installing the openssl-oqsprovider package (FreeBSD port security/openssl-oqsprovider) and activating it in openssl.cnf',
               status: 'manual',
             },
           ].map((entry) => (
@@ -440,7 +441,8 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-2">FIPS + PQC Hybrid Strategy</div>
           <p className="text-xs text-muted-foreground mb-3">
-            Until PQC algorithms appear in FIPS-certified modules, use a dual approach:
+            Until PQC algorithms appear in FIPS-certified modules, one option, if your assessor
+            agrees, is a dual approach:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="bg-background rounded p-3 border border-border">
@@ -453,8 +455,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-[10px] font-bold text-foreground mb-1">New PQC Services</div>
               <p className="text-xs text-muted-foreground">
-                New services use the default OpenSSL provider + oqsprovider. Document the non-FIPS
-                status and include it in compliance assessment until new FIPS certs are issued.
+                Where your assessor accepts PQC services outside the validated boundary, new
+                services can use a non-validated PQC provider: the default OpenSSL provider on
+                OpenSSL 3.5 or later, or oqsprovider on older releases. Whether it may run next to
+                the FIPS provider is the assessor&apos;s decision. Document the non-FIPS status and
+                include it in compliance assessment until new FIPS certs are issued.
               </p>
             </div>
           </div>

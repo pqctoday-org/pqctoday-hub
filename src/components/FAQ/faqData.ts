@@ -230,7 +230,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the ANSSI PQC position?',
         answer:
-          "France's ANSSI (Agence nationale de la securite des systemes d'information) requires hybrid classical-plus-PQC deployment for all lattice-based algorithms as a transitional security measure, reflecting caution about the maturity of lattice hardness assumptions. ANSSI has set some of the most aggressive European timelines, requiring PQC support in qualified products. The Reference Library links to ANSSI's published position papers and technical guidance.",
+          "France's ANSSI (Agence nationale de la securite des systemes d'information) strongly recommends hybrid classical-plus-PQC deployment wherever post-quantum protection is deployed, in the short and medium term, because post-quantum algorithms and their implementations have had less scrutiny than classical ones; hash-based signatures (SLH-DSA, XMSS, LMS) are the exception. ANSSI says that, to date, its PQC guidance has no regulatory force by itself: hybrid is mandatory only inside the regulated perimeter (classified and Diffusion Restreinte data, vital-infrastructure systems, product qualification), and ANSSI aims to add PQC requirements for product qualification from 2027. The Reference Library links to ANSSI's published position papers and technical guidance.",
         deepLink: '/library?ref=ANSSI%20PQC%20Position%20Paper',
       },
       {

@@ -15,8 +15,10 @@ import { plannedVerificationSample } from '@/components/Simulation/autorun/plann
  *     key-destruction standard (e.g. NIST SP 800-88 purge/destroy procedures —
  *     the framework names "the organization's key destruction standard," not
  *     SP 800-88 specifically; SP 800-88 is media sanitization guidance whose
- *     Purge/Destroy actions are commonly reused for key material). An
- *     unconfirmed signing-key retirement raises a Trust-Now-Forge-Later flag.
+ *     Purge/Destroy actions are commonly reused for key material). A
+ *     signing-key retirement raises a Trust-Now-Forge-Later flag until
+ *     verifier trust in the old public key is withdrawn: destroying the private
+ *     key does not clear it.
  *  3. Closure & BAU handover — closure sign-off + the permanent owners of the
  *     never-ending capabilities (Discovery, CBOM, Risk, Vendor governance).
  */
@@ -104,7 +106,14 @@ export interface DecommissionRow {
   retiredDate: string
   owner: string
   method: string
+  /** Destruction of the retired material is confirmed. For a signing key this does NOT clear the TNFL flag. */
   confirmed: boolean
+  /**
+   * Verifiers no longer trust the retired signing key's public key (revoked, removed from trust
+   * stores or replaced). Absent in records saved before this field existed, which reads as not
+   * withdrawn.
+   */
+  trustWithdrawn?: boolean
 }
 
 export interface VerifyState {
@@ -141,6 +150,7 @@ const SEED_STATE: VerifyState = {
       owner: '',
       method: 'SP 800-88 purge',
       confirmed: false,
+      trustWithdrawn: false,
     },
   ],
   closure: {
@@ -158,9 +168,12 @@ export function verifiedCount(r: VerificationRecord): number {
 export const isVerified = (r: VerificationRecord): boolean =>
   verifiedCount(r) === EVIDENCE_FIELDS.length
 
-/** A retired-but-unconfirmed signing key is a standing Trust-Now-Forge-Later risk. */
+/**
+ * A retired signing key whose public key verifiers still trust is a standing
+ * Trust-Now-Forge-Later risk, whether or not its private key was destroyed.
+ */
 export const isTnflLiability = (d: DecommissionRow): boolean =>
-  d.kind === 'signing-key' && !d.confirmed
+  d.kind === 'signing-key' && !d.trustWithdrawn
 
 export function buildMarkdown(state: VerifyState): string {
   const lines: string[] = []
@@ -198,17 +211,20 @@ export function buildMarkdown(state: VerifyState): string {
   if (state.decommissions.length === 0) {
     lines.push('_No classical material logged for decommissioning._')
   } else {
-    lines.push('| Material | Kind | Retired | Owner | Method | Confirmed |')
-    lines.push('|---|---|---|---|---|---|')
+    lines.push(
+      '| Material | Kind | Retired | Owner | Method | Destruction confirmed | Verifier trust withdrawn |'
+    )
+    lines.push('|---|---|---|---|---|---|---|')
     for (const d of state.decommissions) {
-      const confirmed = d.confirmed ? '✓' : isTnflLiability(d) ? '⚠ TNFL liability' : 'pending'
+      const destroyed = d.confirmed ? '✓' : 'pending'
+      const trust = d.kind !== 'signing-key' ? 'n/a' : isTnflLiability(d) ? '⚠ TNFL liability' : '✓'
       lines.push(
-        `| ${d.material || '—'} | ${d.kind} | ${d.retiredDate || '—'} | ${d.owner || '—'} | ${d.method || '—'} | ${confirmed} |`
+        `| ${d.material || '—'} | ${d.kind} | ${d.retiredDate || '—'} | ${d.owner || '—'} | ${d.method || '—'} | ${destroyed} | ${trust} |`
       )
     }
     lines.push('')
     lines.push(
-      "> A retired-but-trusted signing key is a standing Trust-Now-Forge-Later liability — destroy per your organization's key-destruction standard and confirm."
+      '> Destroying a retired signing private key does not prevent quantum forgery while verifiers still trust its vulnerable public key. Plan withdrawal of that trust and handle private-key destruction under the applicable retention and key-management policy. For PKI migration and timelines, see the [NCSC PQC migration guidance](https://www.ncsc.gov.uk/guidance/pqc-migration-timelines).'
     )
   }
   lines.push('')
@@ -316,6 +332,7 @@ export const MigrationVerification: React.FC = () => {
           owner: '',
           method: 'SP 800-88 purge',
           confirmed: false,
+          trustWithdrawn: false,
         },
       ],
     }))
@@ -433,9 +450,19 @@ export const MigrationVerification: React.FC = () => {
           Decommissioning log (classical material)
         </h3>
         <p className="text-xs text-muted-foreground">
-          A retired-but-trusted <span className="font-medium text-foreground">signing key</span> is
-          a standing Trust-Now-Forge-Later liability — destroy per your organization's
-          key-destruction standard and confirm.
+          Destroying a retired signing private key does not prevent quantum forgery while verifiers
+          still trust its vulnerable public key. Plan withdrawal of that trust and handle
+          private-key destruction under the applicable retention and key-management policy. For PKI
+          migration and timelines, see the{' '}
+          <a
+            href="https://www.ncsc.gov.uk/guidance/pqc-migration-timelines"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            NCSC PQC migration guidance
+          </a>
+          .
         </p>
         <div className="space-y-2">
           {state.decommissions.map((d) => (
@@ -482,15 +509,28 @@ export const MigrationVerification: React.FC = () => {
                 noContainer
                 size="sm"
               />
-              <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <input
-                  type="checkbox"
-                  checked={d.confirmed}
-                  onChange={(e) => setDecommission(d.id, { confirmed: e.target.checked })}
-                  aria-label="Destruction confirmed"
-                />
-                {d.confirmed ? 'confirmed' : isTnflLiability(d) ? '⚠ TNFL' : 'pending'}
-              </label>
+              <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                <label className="flex items-center gap-1.5">
+                  <input
+                    type="checkbox"
+                    checked={d.confirmed}
+                    onChange={(e) => setDecommission(d.id, { confirmed: e.target.checked })}
+                    aria-label="Destruction confirmed"
+                  />
+                  {d.confirmed ? 'destruction confirmed' : 'destruction pending'}
+                </label>
+                {d.kind === 'signing-key' && (
+                  <label className="flex items-center gap-1.5">
+                    <input
+                      type="checkbox"
+                      checked={!!d.trustWithdrawn}
+                      onChange={(e) => setDecommission(d.id, { trustWithdrawn: e.target.checked })}
+                      aria-label="Verifier trust withdrawn"
+                    />
+                    {isTnflLiability(d) ? '⚠ TNFL: verifiers still trust it' : 'trust withdrawn'}
+                  </label>
+                )}
+              </div>
               <Button
                 type="button"
                 variant="ghost"

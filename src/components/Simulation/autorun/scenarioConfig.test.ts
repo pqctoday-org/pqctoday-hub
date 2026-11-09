@@ -45,4 +45,16 @@ describe('scenarioConfig', () => {
     expect(de.tracks).toHaveLength(4)
     expect(de.programEndYear).toBe(2035)
   })
+
+  it('labels the French and German standards without calling hybrid a requirement', () => {
+    const fr = getScenario('FR')
+    expect(fr.standards.HNDL).toBe('ANSSI / ML-KEM (hybrid strongly recommended)')
+    expect(fr.standards.TNFL).toBe('ANSSI / ML-DSA (hybrid strongly recommended)')
+    const de = getScenario('DE')
+    expect(de.standards.HNDL).toBe('BSI TR-02102-1 / ML-KEM (hybrid)')
+    for (const std of [fr.standards, de.standards]) {
+      expect(std.HNDL).not.toMatch(/required|mandatory/i)
+      expect(std.TNFL).not.toMatch(/required|mandatory/i)
+    }
+  })
 })

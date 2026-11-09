@@ -92,7 +92,7 @@ const MATRIX_ALGOS: { algo: string; op: string | null }[] = [
   { algo: 'ML-KEM-768', op: 'CreateKeyPair:KeyAgreement' },
   { algo: 'SLH-DSA-SHA2-256s', op: 'CreateKeyPair:Sign' },
   // Stateful HBS (SP 800-208) + the CSD02 hybrid KEM — CNSA 2.0 allows
-  // LMS/XMSS and denies HSS; BSI mandates hybrid establishment. None of
+  // LMS/XMSS and denies HSS; BSI recommends hybrid establishment. None of
   // these were visible anywhere in the UI (2026-07-04 gap audit).
   { algo: 'LMS', op: 'CreateKeyPair:Sign' },
   { algo: 'HSS', op: 'CreateKeyPair:Sign' },

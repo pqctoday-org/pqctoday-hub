@@ -32,3 +32,31 @@ describe('OS vendor rows derive PQC status from the central catalog', () => {
     }
   })
 })
+
+describe('Ubuntu row names only supported releases as current', () => {
+  const ubuntu = OS_VENDORS.find((v) => v.id === 'ubuntu')!
+
+  it('lists Ubuntu 26.04 LTS as the platform and 25.10 only as an end-of-life release', () => {
+    expect(ubuntu.platform).toBe('Ubuntu 26.04 LTS (Resolute Raccoon)')
+    expect(ubuntu.platform).not.toContain('25.10')
+    expect(ubuntu.opensslVersion).toContain(
+      '25.10 (OpenSSL 3.5) reached end of life on 9 July 2026'
+    )
+    expect(ubuntu.opensslVersion).toContain('24.04 LTS is OpenSSL 3.0')
+  })
+})
+
+describe('Apple row cites CryptoKit for ML-KEM and ML-DSA', () => {
+  const apple = OS_VENDORS.find((v) => v.id === 'macos')!
+
+  it('names the CryptoKit types available from iOS 26 and macOS 26, not a planned API', () => {
+    expect(apple.mlKemSupport).toContain('CryptoKit (MLKEM768, MLKEM1024; iOS 26 and macOS 26')
+    expect(apple.mlDsaSupport).toContain('CryptoKit (MLDSA65, MLDSA87; iOS 26 and macOS 26')
+    expect(`${apple.mlKemSupport} ${apple.mlDsaSupport}`).not.toMatch(/planned|Swift 6/)
+  })
+
+  it('does not place the ML-KEM or ML-DSA APIs in Security.framework', () => {
+    expect(apple.mlKemSupport).not.toMatch(/in Security\.framework/)
+    expect(apple.mlDsaSupport).not.toMatch(/in Security\.framework/)
+  })
+})

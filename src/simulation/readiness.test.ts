@@ -53,7 +53,7 @@ describe('computeReadiness (WS-04 — two-gate, estate-grounded)', () => {
 
   it('non-compliant choice still migrates but lowers compliance (separate meter)', () => {
     const all = decideAll('mid', 'pure')
-    // DE (BSI) requires hybrid → pure is non-compliant
+    // DE (BSI guidance) expects hybrid → pure departs from it
     const de = computeReadiness('mid', 1, all, 'DE')
     const us = computeReadiness('mid', 1, all, 'US')
     // readiness is identical — the pure edges still count as migrated

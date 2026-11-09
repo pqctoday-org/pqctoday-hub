@@ -470,6 +470,19 @@
       "admittedAt": "2026-09-18T03:21:09.639800+00:00",
       "admittedBy": "admit.py",
       "identity": "MATCH"
+    },
+    {
+      "refId": "FR",
+      "file": "FR-063f9f30.html",
+      "bytes": 68784,
+      "content_type": "text/html",
+      "url": "https://cyber.gouv.fr/cryptographie-post-quantique-faq",
+      "sha256": "619cb9ec9b2f90154d8e7884129cc4efc756230918d24946556f906d788edaa0",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-09T04:16:06.746779+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH"
     }
   ]
 }

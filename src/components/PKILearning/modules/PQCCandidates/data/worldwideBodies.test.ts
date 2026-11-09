@@ -27,3 +27,23 @@ describe('worldwide bodies: KpqC', () => {
     expect(kpqc.detail).not.toMatch(/independence from US standards/)
   })
 })
+
+describe('worldwide bodies: ANSSI and BSI hybrid stance', () => {
+  const anssi = WORLDWIDE_BODIES.find((b) => b.id === 'anssi')!
+  const bsi = WORLDWIDE_BODIES.find((b) => b.id === 'bsi')!
+
+  it('limits the ANSSI hybrid mandate to its regulated perimeter', () => {
+    const text = `${anssi.role} ${anssi.detail}`
+    expect(anssi.role).toMatch(/strongly recommends hybrid/)
+    expect(anssi.role).toMatch(/mandatory only inside its regulated perimeter/)
+    expect(anssi.detail).toMatch(/to date, its PQC guidance has no regulatory force by itself/)
+    expect(anssi.detail).toMatch(/except for hash-based signatures \(SLH-DSA, XMSS, LMS\)/)
+    expect(text).not.toMatch(/mandatory hybrid PQC for high-sensitivity|must use hybrid/)
+  })
+
+  it('does not call BSI TR-02102-1 an authoritative procurement reference', () => {
+    expect(bsi).toBeDefined()
+    expect(bsi.detail).toMatch(/recommendation to developers/)
+    expect(bsi.detail).not.toMatch(/Authoritative reference for German federal procurement/)
+  })
+})

@@ -40,3 +40,27 @@ describe('OSPQC introduction: Ubuntu openssl.cnf row', () => {
     expect(text).not.toMatch(/Ubuntu 24\.04 LTS\s*Groups = x25519mlkem768/)
   })
 })
+
+describe('OSPQC introduction: FreeBSD oqsprovider row', () => {
+  it('uses the FreeBSD package name that exists (pkg install openssl-oqsprovider)', () => {
+    const text = introText()
+    expect(text).toContain('pkg install openssl-oqsprovider && configure openssl.cnf')
+    expect(text).toContain('FreeBSD port security/openssl-oqsprovider')
+    expect(text).not.toMatch(/pkg install oqsprovider/)
+  })
+})
+
+describe('OSPQC introduction: FIPS + PQC hybrid strategy', () => {
+  it('leaves the PQC provider and its coexistence with the FIPS provider to the assessor', () => {
+    const text = introText()
+    expect(text).toContain('one option, if your assessor agrees, is a dual approach')
+    expect(text).toContain(
+      'Where your assessor accepts PQC services outside the validated boundary'
+    )
+    expect(text).toContain('the default OpenSSL provider on OpenSSL 3.5 or later')
+    expect(text).toContain(
+      "Whether it may run next to the FIPS provider is the assessor's decision"
+    )
+    expect(text).not.toContain('New services use the default OpenSSL provider + oqsprovider')
+  })
+})

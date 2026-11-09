@@ -107,8 +107,9 @@ export const OS_VENDORS: OSVendorStatus[] = [
   {
     id: 'ubuntu',
     vendor: 'Canonical',
-    platform: 'Ubuntu 26.04 LTS (Resolute Raccoon) / 25.10',
-    opensslVersion: 'OpenSSL 3.5 (25.10 / 26.04) — 24.04 LTS is OpenSSL 3.0 (no PQC)',
+    platform: 'Ubuntu 26.04 LTS (Resolute Raccoon)',
+    opensslVersion:
+      'OpenSSL 3.5 (26.04 LTS) — 24.04 LTS is OpenSSL 3.0 (no PQC); 25.10 (OpenSSL 3.5) reached end of life on 9 July 2026',
     catalogName: 'Ubuntu 26.04 LTS',
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'No production PQC SSH; tracking OpenSSH experimental branch',
@@ -190,15 +191,16 @@ export const OS_VENDORS: OSVendorStatus[] = [
     id: 'macos',
     vendor: 'Apple',
     platform: 'macOS 26 / iOS 26',
-    opensslVersion: 'Security.framework (native) / Homebrew OpenSSL 3.x (user)',
+    opensslVersion: 'CryptoKit / Security.framework (native) / Homebrew OpenSSL 3.x (user)',
     catalogName: 'iOS 26 / macOS 26',
     fipsMode: 'partial',
     sshPqcStatus: 'macOS ships OpenSSH 9.x; no PQC host key support in system SSH',
     pkgSigningPqc: 'macOS Gatekeeper / code signing uses ECDSA P-256; ML-DSA not yet',
     roadmapYear: '2026-02-11',
     mlKemSupport:
-      'ML-KEM-768 in Security.framework (macOS 26+); Network.framework X25519MLKEM768 TLS 1.3',
-    mlDsaSupport: 'ML-DSA in Security.framework (macOS 26+); CryptoKit API planned for Swift 6.x',
+      'ML-KEM-768 and ML-KEM-1024 in CryptoKit (MLKEM768, MLKEM1024; iOS 26 and macOS 26 and later); URLSession and the Network framework use hybrid post-quantum TLS by default where the server supports it',
+    mlDsaSupport:
+      'ML-DSA-65 and ML-DSA-87 in CryptoKit (MLDSA65, MLDSA87; iOS 26 and macOS 26 and later)',
     notes: '',
   },
   {
