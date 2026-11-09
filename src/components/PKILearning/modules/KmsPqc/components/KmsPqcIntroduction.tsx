@@ -948,6 +948,20 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             </div>
           </Link>
           <Link
+            to="/learn/arch-quantum-impact?tab=workshop&step=5"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Route size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">
+                Compare with the other trust hardware
+              </div>
+              <div className="text-xs text-muted-foreground">
+                HSMs, TPMs, confidential computing and DPUs side by side
+              </div>
+            </div>
+          </Link>
+          <Link
             to="/learn/crypto-agility"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
@@ -1080,6 +1094,44 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
           ))}
         </div>
         <CloudKeyExchange />
+        <div
+          className="p-4 rounded-lg bg-muted/50 border border-border space-y-2"
+          data-testid="key-release-attested"
+        >
+          <h4 className="font-semibold text-foreground">Key release to an attested workload</h4>
+          <p className="text-sm text-muted-foreground">
+            A key service can also decide when a key is used: only after the workload shows what it
+            is running. Two documented examples. Azure Key Vault Secure Key Release (Managed HSM and
+            Premium) releases an HSM-protected, exportable key to an attested trusted execution
+            environment when the Microsoft Azure Attestation claims satisfy a release policy set
+            when the key is created. AWS KMS works with AWS Nitro Enclaves: its key-policy condition
+            keys (kms:RecipientAttestation:ImageSha384 and kms:RecipientAttestation:PCR) make KMS
+            allow operations with a key only if the enclave provides a signed attestation document
+            whose measurements match the policy.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            In both cases the key service relies on the attestation and on the hardware behind it;
+            how those attestations work is covered in{' '}
+            <Link to="/learn/confidential-computing" className="text-primary hover:underline">
+              Confidential Computing
+            </Link>
+            . Sources:{' '}
+            <Link
+              to="/library?ref=Secure-Key-Release-with-Azure-Key-Vault-and-Azure-Confidenti"
+              className="text-primary hover:underline"
+            >
+              Microsoft Learn, Secure Key Release
+            </Link>{' '}
+            and{' '}
+            <Link
+              to="/library?ref=Using-cryptographic-attestation-with-AWS-KMS-AWS-Nitro-Encla"
+              className="text-primary hover:underline"
+            >
+              AWS Nitro Enclaves User Guide, cryptographic attestation with AWS KMS
+            </Link>{' '}
+            (read 8 Nov 2026).
+          </p>
+        </div>
         <p className="text-muted-foreground">
           NIST SP 800-210 sets out access-control guidance across IaaS, PaaS and SaaS and is the
           reference for arguing where a boundary actually sits. It was published in July 2020,
