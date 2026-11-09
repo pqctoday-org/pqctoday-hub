@@ -504,8 +504,8 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How do PQC certificates affect TLS chain size?',
         answer:
-          'A typical ML-DSA certificate chain (root, intermediate, and leaf) totals approximately 14KB compared to about 3KB for an equivalent RSA chain, due to the larger public keys and signatures in PQC algorithms. This increased size is significant for IoT devices with limited bandwidth and for mobile connections with high latency. The PKI Workshop module quantifies the overhead and explores mitigation strategies.',
-        deepLink: '/learn/pki-workshop',
+          'The PKI Workshop has a measured example with matching fictional certificate metadata: homogeneous ML-DSA-65 versus RSA-2048 with SHA-256/PKCS#1 v1.5 signatures. It transmits exactly the leaf and intermediate; the root is supplied only as a local sample trust anchor. With the declared names, serials, extensions and 2026-01-01 to 2027-01-01 validity, the two transmitted DER certificates total 11,082 bytes for ML-DSA-65 and 1,624 bytes for RSA-2048. The actual TLS 1.3 Certificate bodies are 11,096 and 1,638 bytes; adding each 4-byte Handshake header gives 11,100 and 1,642 bytes. These counts exclude CertificateVerify, key exchange, TLS records and compression, and the profiles are not equal security categories. Open Workshop, select Step 4: Parse Certificate, then Generate measured sample chains to reproduce the counts, inspect the public certificates and download the serialized messages. Different chain composition or metadata changes the result; use tools that export DER and measure the actual transmitted chain rather than assume a universal certificate size or latency penalty.',
+        deepLink: '/learn/pki-workshop?tab=workshop',
       },
       {
         question: 'What is a Merkle Tree Certificate?',
