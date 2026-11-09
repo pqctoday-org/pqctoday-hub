@@ -22,9 +22,9 @@ interface IntroductionProps {
 }
 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
-  // The data-section-id anchors below were already here and already
-  // matched this module's manifest; nothing read them. One call makes
-  // deep links land and section progress record.
+  // The data-section-id anchors below match this module's manifest (the
+  // cbom anchor was added with its manifest entry); nothing read the older
+  // ones. One call makes deep links land and section progress record.
   useSectionAnchors()
 
   return (

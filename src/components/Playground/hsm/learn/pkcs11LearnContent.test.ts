@@ -131,7 +131,7 @@ describe('what is new in v3.2 versus what existed before', () => {
 
   it('the trust lesson says the two trusted-key attributes already existed in v2.40', () => {
     expect(lessonText('trust-wrapping-policy')).toMatch(
-      /already defined in the PKCS #11 Base Specification Version 2\.40/
+      /already defined in the PKCS #11 Cryptographic Token Interface Base Specification Version 2\.40/
     )
   })
 
