@@ -1,0 +1,56 @@
+{
+  "upstream": {
+    "repo": "https://github.com/cisco/hash-sigs.git",
+    "commit": "77688282cbfc0070f5355efeae8d2ea2f57b9168",
+    "tree": "bb4a87e85ff000f9d00f14943687f1c29ec29d92"
+  },
+  "wrapper": "src/wasm/lms_wasm_wrapper.c",
+  "algorithms": "Existing SHA256 one-level generation UI; imported library-valid keys retain existing parser behavior.",
+  "portable_sha256_patch": {
+    "file": "sha256.h",
+    "from": "#define USE_OPENSSL 1",
+    "to": "#define USE_OPENSSL 0",
+    "count": 1
+  },
+  "secret_method": 2,
+  "emcc_version": "5.0.7-git",
+  "compiler_workers": 2,
+  "exports": [
+    "_generate_keypair_wasm",
+    "_get_signature_length_wasm",
+    "_sign_message_bounded_wasm",
+    "_verify_wasm",
+    "_malloc",
+    "_free"
+  ],
+  "sources": [
+    "sha256.c",
+    "hash.c",
+    "lm_common.c",
+    "lm_ots_common.c",
+    "lm_ots_sign.c",
+    "lm_ots_verify.c",
+    "lm_verify.c",
+    "hss_common.c",
+    "hss_generate.c",
+    "hss_sign.c",
+    "hss_verify.c",
+    "hss_compute.c",
+    "hss_derive.c",
+    "hss_keygen.c",
+    "hss_param.c",
+    "hss_reserve.c",
+    "hss_aux.c",
+    "endian.c",
+    "hss_thread_single.c",
+    "hss_zeroize.c",
+    "hss.c",
+    "hss_alloc.c",
+    "hss_sign_inc.c",
+    "hss_verify_inc.c"
+  ],
+  "upstream_license": {
+    "file": "license.txt",
+    "sha256": "becfee09d72fb931a6a73153db6688175b63dfb80e16a92a98520ca5a138ca64"
+  }
+}
