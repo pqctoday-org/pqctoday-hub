@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The SEV-SNP overhead is a workload-dependent range from a measurement study, not a fixed "~2-5%".
- * Source: Misono et al., "Confidential VMs Explained", SIGMETRICS 2025 (PACMMCS 8(3), Dec 2024):
+ * Source: Misono et al., "Confidential VMs Explained", Proc. ACM Meas. Anal. Comput. Syst. 8(3), Article 36
+ * (December 2024), as the saved paper cites itself:
  * Phoronix memory suite 7.29% (SEV-SNP) / 4.06% (TDX); TensorFlow BERT, large VM, 16% / 18%.
  */
 import { describe, it, expect } from 'vitest'
@@ -24,6 +25,8 @@ describe('SEV-SNP performance overhead', () => {
     expect(line).toMatch(/slower still/)
     expect(line).toMatch(/41% longer on SEV-SNP \(73% on TDX\)/)
     expect(line).toMatch(/Misono/)
-    expect(line).toMatch(/SIGMETRICS 2025/)
+    expect(line).toMatch(/a 2024 measurement study/)
+    expect(line).toMatch(/Proc\. Meas\. Anal\. Comput\. Syst\. 8\(3\), December 2024/)
+    expect(line).not.toMatch(/SIGMETRICS/)
   })
 })
