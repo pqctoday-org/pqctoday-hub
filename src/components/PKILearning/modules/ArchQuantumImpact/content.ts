@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'arch-quantum-impact',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-02',
+  lastEdited: '2026-11-08',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,5: FIPS 203 (the ML-KEM ciphertext sizes this module quotes),
@@ -65,7 +65,7 @@ export const content: ModuleContent = {
     keyConcepts:
       'KMS Migration Complexity — key wrapping hierarchies must be redesigned to accommodate ML-KEM-768/1024 ciphertexts (1,088/1,568 bytes vs. RSA-OAEP 256 bytes); HSM firmware upgrades are required for hardware-backed PQC key generation — not all current HSM models have PQC firmware available; key wrapping with ML-KEM requires re-encryption of all existing DEKs under new PQC KEKs (envelope re-encryption at scale).',
     workshopSummary:
-      'The workshop has 3 interactive steps: Threat Impact Explorer — six-panel architectural briefing: KMS/HSM migration complexity matrix (by HSM vendor tier and key hierarchy depth), certificate chain size calculator (input: cert count + algorithm + chain depth → output: total chain size, MTU fragmentation risk, OCSP response size), hybrid architecture decision flowchart (KEM combiner selection, fallback logic patterns, dual-cert vs.',
+      'The workshop has six steps. Steps 1 to 3 are the role guide (why it matters, what to learn, how to act). Step 4 is a nine-criterion architecture readiness self-assessment. Step 5, Strangler Fig, models migrating a legacy monolithic crypto service behind a PQC API gateway. Step 6, Trust Hardware Selector, compares eight kinds of trust hardware (TPM 2.0, Caliptra, Tessera, hardware HSM, cloud HSM, confidential computing, DPU you buy and cloud operator DPU) in cards and a 10-row grid, with two exercises, Pick the right one and How they combine. Tessera is described as specification and code with no product or certificate yet.',
     relatedStandards:
       'FIPS 203 (ML-KEM — parameter sets: ML-KEM-512, ML-KEM-768, ML-KEM-1024). FIPS 204 (ML-DSA — parameter sets: ML-DSA-44, ML-DSA-65, ML-DSA-87). FIPS 205 (SLH-DSA — 12 parameter sets including SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-256s). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners). NIST SP 800-208 (Recommendation for Stateful Hash-Based Signature Schemes — LMS/XMSS).',
   },

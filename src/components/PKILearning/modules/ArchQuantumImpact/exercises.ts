@@ -20,4 +20,9 @@ export const ARCH_QUANTUM_EXERCISES: ArchExercise[] = [
     prompt:
       'Your IoT architecture uses 3-level cert chains on devices with 16KB TLS buffer limits. ML-DSA-65 certificates would create 12KB chains. Evaluate alternatives: Merkle Tree Certificates, SLH-DSA parameter trade-offs, or redesigning the chain depth. Use the workshop tools to document your analysis.',
   },
+  {
+    title: 'Scenario: Choosing Trust Hardware',
+    prompt:
+      'Your architecture needs keys rooted in hardware: a boot-time root of trust, long-term custody of signing keys, and keys released only to an attested workload. Open Step 6, Trust Hardware Selector, in the Workshop tab: compare the eight kinds in the grid, work through "Pick the right one" and "How they combine", then write down which kind you would use for each need and what you would ask each vendor to document.',
+  },
 ]
