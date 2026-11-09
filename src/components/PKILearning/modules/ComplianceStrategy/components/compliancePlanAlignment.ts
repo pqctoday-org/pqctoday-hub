@@ -17,6 +17,21 @@ export const isObligationKeyArray = (value: unknown): value is string[] =>
 export const validObligationKeys = (value: unknown): string[] =>
   isObligationKeyArray(value) ? value : []
 
+/** Saved input is opaque JSON: only an array can be a list of milestones. */
+export const restoreMilestoneList = (value: unknown): UserMilestone[] =>
+  Array.isArray(value)
+    ? value.filter(
+        (item): item is UserMilestone =>
+          typeof item === 'object' && item !== null && !Array.isArray(item)
+      )
+    : []
+
+/** A saved list of text values, or undefined when the saved value is not an array. */
+export const restoreStringList = (value: unknown): string[] | undefined =>
+  Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string')
+    : undefined
+
 export const recordedCompletionLabel = (value: unknown): string =>
   value === true
     ? 'Yes'
@@ -69,6 +84,12 @@ export function assessPlanAlignment(
       status: 'at-risk',
       alignmentLabel: 'Late plan/record',
       gap: 'At least one linked activity is planned or recorded after the reference year. This compares years only, not an exact legal deadline or obligation satisfaction.',
+    }
+  if (relevant.some((m) => !m.completed && m.year < scenarioAsOfYear))
+    return {
+      status: 'unknown',
+      alignmentLabel: 'Planned year passed, not recorded done',
+      gap: 'At least one unfinished linked activity has a planned year before the scenario as-of year and is not recorded done. A plan is not a delivery date, so no on-track conclusion is drawn. Update the plan or record the completion.',
     }
   if (relevant.every((m) => m.completed))
     return {

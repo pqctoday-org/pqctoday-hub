@@ -30,6 +30,8 @@ import {
   isObligationKeyArray,
   validObligationKeys,
   recordedCompletionLabel,
+  restoreMilestoneList,
+  restoreStringList,
 } from './compliancePlanAlignment'
 import type { ComplianceGanttRow, UserMilestone, ComplianceDeadline } from './ComplianceGantt'
 import type { TimelinePhase, TimelineEvent, EventType } from '@/types/timeline'
@@ -316,7 +318,9 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
   const savedInputs = useSavedArtifactInputs<ComplianceTimelineSavedInputs>('compliance-timeline')
 
   // Milestone state
-  const [milestones, setMilestones] = useState<UserMilestone[]>(savedInputs?.milestones ?? [])
+  const [milestones, setMilestones] = useState<UserMilestone[]>(
+    restoreMilestoneList(savedInputs?.milestones)
+  )
   const [scenarioAsOfYear, setScenarioAsOfYear] = useState<number | null>(
     savedInputs && Object.hasOwn(savedInputs, 'scenarioAsOfYear')
       ? (savedInputs.scenarioAsOfYear ?? null)
@@ -333,7 +337,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
   const [gapExpanded, setGapExpanded] = useState(true)
   const [expandedGapIdx, setExpandedGapIdx] = useState<number | null>(null)
   const [pinnedDeadlines, setPinnedDeadlines] = useState<Set<string>>(
-    new Set(savedInputs?.pinnedDeadlines ?? [])
+    new Set(restoreStringList(savedInputs?.pinnedDeadlines) ?? [])
   )
 
   // Resolve jurisdiction IDs to country names
@@ -511,7 +515,17 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
 
   const toggleMilestoneDone = useCallback((id: string) => {
     setMilestones((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, completed: m.completed !== true } : m))
+      prev.map((m) => {
+        if (m.id !== id) return m
+        // Marking an activity not done also drops its recorded completion year, so a
+        // saved or exported record never shows "No" beside a completion year.
+        if (m.completed === true) {
+          const notDone = { ...m, completed: false }
+          delete notDone.completedYear
+          return notDone
+        }
+        return { ...m, completed: true }
+      })
     )
   }, [])
 

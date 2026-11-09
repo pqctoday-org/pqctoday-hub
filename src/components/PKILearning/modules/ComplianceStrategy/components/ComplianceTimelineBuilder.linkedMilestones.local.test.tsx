@@ -215,7 +215,12 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     sample.saved = {
       ...legacy,
       milestones: [
-        { ...legacy.milestones![0], completed: false, obligationKeys: ['fw-sample-2030'] },
+        {
+          ...legacy.milestones![0],
+          year: 2027,
+          completed: false,
+          obligationKeys: ['fw-sample-2030'],
+        },
       ],
     }
     render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
@@ -292,7 +297,7 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     ).not.toBeInTheDocument()
   })
   it('links and reopens an ordinary legacy record with omitted completion as planned, preserving the omission', () => {
-    const raw = { ...legacy.milestones![0] }
+    const raw = { ...legacy.milestones![0], year: 2027 }
     delete raw.completed
     sample.saved = { ...legacy, milestones: [raw] }
     const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
@@ -317,5 +322,75 @@ describe('linked sample plan inputs and real serialized outputs', () => {
       'false'
     )
     expect(Object.hasOwn(sample.saved.milestones![0], 'completed')).toBe(false)
+  })
+  it('labels an unfinished linked activity whose planned year has passed in neutral terms', () => {
+    const past = { ...legacy.milestones![0], obligationKeys: ['fw-sample-2030'], completed: false }
+    sample.saved = { ...legacy, milestones: [past] }
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    const chip = screen.getByText('Planned year passed, not recorded done')
+    expect(chip).toHaveClass('bg-muted')
+    expect(chip).not.toHaveClass('text-status-success')
+    expect(screen.queryByText('Planned by reference year')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('img', {
+        name: 'Fictional, obligation: 2030 — Planned year passed, not recorded done',
+      })
+    ).toBeInTheDocument()
+    expect(screen.getByTestId('markdown')).toHaveTextContent('not a delivery date')
+    fireEvent.change(screen.getByLabelText('Sample scenario as-of year'), {
+      target: { value: '2025' },
+    })
+    expect(screen.getByText('Planned by reference year')).toBeInTheDocument()
+  })
+  it('drops the completion year when an activity is marked not done, in the screen, export and save', () => {
+    const done = {
+      ...legacy.milestones![0],
+      obligationKeys: ['fw-sample-2030'],
+      completed: true,
+      completedYear: 2025,
+    }
+    sample.saved = { ...legacy, milestones: [done] }
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(
+      screen.getByLabelText('Recorded completion year for Unrelated sample, certificate')
+    ).toHaveValue(2025)
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }))
+    expect(
+      screen.queryByLabelText('Recorded completion year for Unrelated sample, certificate')
+    ).not.toBeInTheDocument()
+    const rows = Papa.parse<string[]>(screen.getByTestId('csv').textContent ?? '').data
+    expect(rows).toContainEqual([
+      '2025',
+      'Unrelated sample, certificate',
+      'Certification',
+      'No',
+      'sample-cert',
+      '',
+      '["fw-sample-2030"]',
+    ])
+    fireEvent.click(screen.getByRole('button', { name: 'Save sample timeline' }))
+    const saved = sample.add.mock.calls[0][0].inputs.milestones[0]
+    expect(saved.completed).toBe(false)
+    expect(Object.hasOwn(saved, 'completedYear')).toBe(false)
+  })
+  it('opens without error when saved lists are not arrays, and keeps only usable entries', () => {
+    sample.saved = {
+      milestones: 'oops',
+      pinnedDeadlines: { 0: 'fw-sample-2030' },
+      selectedJurisdictions: 'us',
+    } as unknown as ComplianceTimelineSavedInputs
+    const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(screen.getByText('Add Migration Milestone')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Remove / })).not.toBeInTheDocument()
+    view.unmount()
+    sample.saved = {
+      ...legacy,
+      milestones: [null, 'x', 7, legacy.milestones![0]],
+      pinnedDeadlines: ['fw-sample-2030', 4],
+    } as unknown as ComplianceTimelineSavedInputs
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    expect(
+      screen.getAllByRole('button', { name: 'Remove Unrelated sample, certificate' })
+    ).toHaveLength(1)
   })
 })
