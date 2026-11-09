@@ -364,6 +364,12 @@ describe('Overlap picture', () => {
     const text = tableText().join(' ')
     expect(text).toContain('AWS CloudHSM: ML-DSA.')
     expect(text).toContain('Azure Managed HSM: no PQC key types.')
+    expect(text).toContain(
+      'Chip requirements list ML-KEM and ML-DSA operations; the SDK is under development and not yet ready for deployment'
+    )
+    expect(text).toContain(
+      'Google: quantum-safe key import into Cloud KMS, supported only for the SOFTWARE protection level'
+    )
     expect(text).toContain('Azure Managed HSM: same API as Key Vault')
     expect(text).toContain('Thales, Utimaco and Securosys document it')
     expect(text).toContain('No PKCS#11 found in the TPM documents checked')
@@ -374,6 +380,8 @@ describe('Overlap picture', () => {
     expect(text).not.toMatch(/through an add-on library/i)
     expect(text).not.toMatch(/offered by every vendor listed/i)
     expect(text).not.toMatch(/uses the Key Vault API/i)
+    expect(text).not.toMatch(/device commands/i)
+    expect(text).not.toMatch(/PQC in software only/i)
     const pq = VENN.tableRows.find((r) => r.id === 'pq')!
     expect(pq.cells.traditional.lines.join(' ')).not.toMatch(/Entrust|Utimaco/)
   })

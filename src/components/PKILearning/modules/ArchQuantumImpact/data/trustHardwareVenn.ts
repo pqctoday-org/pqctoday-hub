@@ -41,7 +41,9 @@ export const VENN = {
           sources: ['TCG-TPM-V185-Part1'],
         },
         tessera: {
-          lines: ['ML-KEM, ML-DSA device commands; SDK in development'],
+          lines: [
+            'Chip requirements list ML-KEM and ML-DSA operations; the SDK is under development and not yet ready for deployment',
+          ],
           sources: [
             'Tessera-Integrated-HSM-SDK-tessera-sw-README',
             'Tessera-Integrated-HSM-Chip-Requirements-Specification-0-5-0',
@@ -63,7 +65,7 @@ export const VENN = {
           lines: [
             'AWS CloudHSM: ML-DSA.',
             'Azure Managed HSM: no PQC key types.',
-            'Google: PQC in software only',
+            'Google: quantum-safe key import into Cloud KMS, supported only for the SOFTWARE protection level',
           ],
           sources: [
             'Supported-mechanisms-for-the-PKCS-11-library-for-AWS-CloudHS',
