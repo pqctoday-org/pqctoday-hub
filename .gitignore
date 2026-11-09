@@ -263,8 +263,11 @@ e2e/playwright-state.json
 
 # === Private development files (synced to pqc-timeline-app-priv) ===
 
-# AI / Agent config
+# AI / Agent config (agent instruction files stay local)
 CLAUDE.md
+AGENTS.md
+GEMINI.md
+CODEX.md
 .claude
 .claude/
 .cursorrules

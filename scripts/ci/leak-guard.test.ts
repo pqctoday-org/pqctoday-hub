@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
-import { addedLines, format, scanDiff, scanText } from './leak-guard'
+import { addedLines, countText, format, RULES, scanDiff, scanText } from './leak-guard'
 
 const diff = (file: string, added: string[], start = 1) =>
   [
@@ -127,6 +127,31 @@ describe('leak-guard', () => {
     ]) {
       expect(scanDiff(diff('src/data/a.csv', [note]))).toEqual([])
     }
+  })
+
+  it('flags a quoted owner answer in added data lines', () => {
+    for (const note of [
+      'Retired (owner said "Retire it (Recommended)" at 07:53 CDT 2026-10-16).',
+      'Owner asked to track every source used, 2026-10-22.',
+      'owner wrote: keep the row',
+      'per the owner\u2019s answered question',
+      'the owner replied at 09:10',
+      'the owner says keep it',
+    ]) {
+      const rules = scanDiff(diff('src/data/a_01012026.csv', [note])).map((f) => f.rule)
+      expect(rules).toContain('decision-quote')
+      expect(scanDiff(diff('src/lib/x.ts', [note]))).toEqual([])
+      expect(scanText(note, 'commit message')).toEqual([])
+    }
+    for (const note of ['the key owner signs the request', 'the data owner may ask for a copy']) {
+      expect(scanDiff(diff('src/data/a.csv', [note]))).toEqual([])
+    }
+  })
+
+  it('keeps the quoted-answer rule out of tree counts, so the baseline never rises', () => {
+    const note = 'Retired (owner said "Retire it" at 07:53).'
+    expect(countText(note, 'src/data/archive/a_01012026.csv')).toEqual({})
+    expect(RULES.find((r) => r.id === 'decision-quote')?.tree).toBe(false)
   })
 
   it('flags "owner decision" in data files only', () => {
