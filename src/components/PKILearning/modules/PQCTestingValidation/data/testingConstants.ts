@@ -554,7 +554,6 @@ export interface ProductionKPI {
   unit: string
   classical: number
   hybrid: number
-  deltaLabel: string // human-readable delta description
 }
 
 export const PRODUCTION_TLS_KPIS: ProductionKPI[] = [
@@ -563,42 +562,36 @@ export const PRODUCTION_TLS_KPIS: ProductionKPI[] = [
     unit: 'cps',
     classical: 51520,
     hybrid: 32320,
-    deltaLabel: '37% drop',
   },
   {
     label: 'Client Throughput',
     unit: 'Mbps',
     classical: 7312,
     hybrid: 4968,
-    deltaLabel: '32% drop',
   },
   {
     label: 'Client Gets/s',
     unit: 'req/s',
     classical: 51520,
     hybrid: 32960,
-    deltaLabel: '36% drop',
   },
   {
     label: 'Client Get Time (mean)',
     unit: 'ms',
     classical: 2.72,
     hybrid: 98.55,
-    deltaLabel: '3,523% increase',
   },
   {
     label: 'Time to First Byte (mean)',
     unit: 'ms',
     classical: 2.04,
     hybrid: 85.045,
-    deltaLabel: '4,069% increase',
   },
   {
     label: 'Time to Last Byte (mean)',
     unit: 'ms',
     classical: 2.72,
     hybrid: 98.553,
-    deltaLabel: '3,523% increase',
   },
 ]
 
@@ -608,14 +601,12 @@ export const PRODUCTION_VPN_KPIS: ProductionKPI[] = [
     unit: 'tunnels/s',
     classical: 17768,
     hybrid: 4471,
-    deltaLabel: '75% drop (297% slower)',
   },
   {
     label: 'VPN Tunnel Setup Time',
     unit: 'ms',
     classical: 3.422,
     hybrid: 4.28,
-    deltaLabel: '20% increase',
   },
 ]
 
