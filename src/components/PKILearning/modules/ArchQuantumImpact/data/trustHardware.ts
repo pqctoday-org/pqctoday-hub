@@ -72,6 +72,12 @@ const AWS_KMS_NITRO = 'Using-cryptographic-attestation-with-AWS-KMS-AWS-Nitro-En
 const SECUROSYS_X2 = 'Primus-HSM-CyberVault-X2-models-fact-sheet-Securosys'
 const UTIMACO_SP = 'Utimaco-u-trust-Anchor-FIPS-140-3-Non-Proprietary-Security-P'
 const LUNA_PQC = 'Post-Quantum-Algorithms-Luna-HSM'
+const LUNA_BRIEF = 'Product-Brief-Luna-Network-HSM-7'
+const AWS_FAQ = 'FAQs-AWS-CloudHSM'
+const AWS_COMPLIANCE = 'Compliance-validation-for-AWS-CloudHSM'
+const CMVP_4703 = 'CMVP-Certificate-4703-Marvell-LS2-HSM-Family'
+const AZ_CLOUD_AUDIT = 'Tutorial-Configure-and-Query-HSM-Operation-Audit-Logs-for-Az'
+const AZ_BOOST = 'Overview-of-Azure-Boost'
 /** Key release to an attested workload: Azure Secure Key Release and AWS KMS with Nitro Enclaves. */
 const KEY_RELEASE = [AZ_SKR, AWS_KMS_NITRO]
 
@@ -273,18 +279,18 @@ export const TRUST_CARDS: TrustCard[] = [
     sentences: [
       {
         q: 'what',
-        text: 'A hardware security module is a tamper-protected device that keeps keys and performs cryptographic operations inside its boundary.',
-        sources: [SECUROSYS_X2, UTIMACO_SP],
+        text: 'A hardware security module is a tamper-protected device that keeps keys and performs cryptographic operations inside its boundary; Thales describes Luna Network HSMs as tamper-resistant, network-attached appliances.',
+        sources: [SECUROSYS_X2, UTIMACO_SP, LUNA_BRIEF],
       },
       {
         q: 'where',
-        text: 'The owner runs it, for example as a 1U rack appliance (Securosys Primus CyberVault X2) or as a PCIe plug-in card (Utimaco u.trust Anchor).',
-        sources: [SECUROSYS_X2, UTIMACO_SP],
+        text: 'The owner runs it, for example as a 1U rack appliance (Securosys Primus CyberVault X2, Thales Luna Network HSM 7) or as a PCIe plug-in card (Utimaco u.trust Anchor).',
+        sources: [SECUROSYS_X2, UTIMACO_SP, LUNA_BRIEF],
       },
       {
         q: 'protects',
-        text: 'It performs operations on keys inside a tamper-protected boundary; the Primus CyberVault X2 lists tamper protection and can run customer-defined logic inside that boundary.',
-        sources: [SECUROSYS_X2],
+        text: 'It performs operations on keys inside a tamper-protected boundary; the Primus CyberVault X2 can run customer-defined logic inside that boundary, and Luna Network HSM 7 lists separate roles, multi-person MofN approval with multi-factor authentication, and secure audit logging.',
+        sources: [SECUROSYS_X2, LUNA_BRIEF],
       },
       {
         q: 'pq',
@@ -380,18 +386,18 @@ export const TRUST_CARDS: TrustCard[] = [
   {
     id: 'dpu-cloud',
     name: 'Cloud operator DPU',
-    tagline: 'AWS Nitro, Google Titanium',
+    tagline: 'AWS Nitro, Azure Boost, Google Titanium',
     modules: [DEEP.cc],
     sentences: [
       {
         q: 'what',
-        text: 'These are the provider’s own cards and security chips that run its virtualisation, network and storage, such as AWS Nitro Cards and Google Titanium.',
-        sources: [NITRO, TITANIUM],
+        text: 'These are the provider’s own cards, chips and offload hardware that run its virtualisation, network and storage, such as AWS Nitro Cards, Azure Boost and Google Titanium.',
+        sources: [NITRO, AZ_BOOST, TITANIUM],
       },
       {
         q: 'where',
-        text: 'They sit in the provider’s servers, separate from the main system board, and the provider designs and runs them.',
-        sources: [NITRO, TITANIUM],
+        text: 'They sit in the provider’s servers and the provider designs and runs them; AWS describes its Nitro Cards as independent of the main system board, and Microsoft describes Azure Boost as its in-house developed hardware and software.',
+        sources: [NITRO, AZ_BOOST, TITANIUM],
       },
       {
         q: 'protects',
@@ -439,9 +445,10 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'hardware-hsm': C(
         'stated',
-        'A tamper-protected device that you run: a 1U rack appliance (Securosys Primus CyberVault X2) or a PCIe plug-in card (Utimaco u.trust Anchor).',
+        'A tamper-protected device that you run: a 1U rack appliance (Primus CyberVault X2, Luna Network HSM 7) or a PCIe plug-in card (Utimaco u.trust Anchor).',
         SECUROSYS_X2,
-        UTIMACO_SP
+        UTIMACO_SP,
+        LUNA_BRIEF
       ),
       'cloud-hsm': C(
         'stated',
@@ -462,8 +469,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'dpu-cloud': C(
         'stated',
-        'The provider’s own cards, separate from the main system board, running its virtualisation, network and storage.',
+        'The provider’s own cards and offload hardware, running its virtualisation, network and storage; AWS describes Nitro Cards as independent of the main system board.',
         NITRO,
+        AZ_BOOST,
         TITANIUM
       ),
     },
@@ -491,8 +499,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'hardware-hsm': C(
         'stated',
-        'You run the device and its administration; the Primus CyberVault X2 lists local console and remote SSH administration.',
-        SECUROSYS_X2
+        'You run the device and its administration. Luna Network HSM 7 lists separate roles and multi-person MofN approval; the Primus CyberVault X2 lists local console and remote SSH administration.',
+        SECUROSYS_X2,
+        LUNA_BRIEF
       ),
       'cloud-hsm': C(
         'varies',
@@ -511,8 +520,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'dpu-cloud': C(
         'stated',
-        'The cloud provider designs, runs and updates the cards.',
+        'The cloud provider designs, runs and updates the cards; Microsoft calls Azure Boost a system it designed.',
         NITRO,
+        AZ_BOOST,
         TITANIUM
       ),
     },
@@ -540,8 +550,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'hardware-hsm': C(
         'stated',
-        'Keeps them inside the module, in storage partitions; the Primus CyberVault X2 lists partitions with fixed storage.',
-        SECUROSYS_X2
+        'Keeps them inside the module; Thales states that Luna keys always remain in FIPS-validated, tamper-evident hardware, and the Primus CyberVault X2 lists storage partitions.',
+        SECUROSYS_X2,
+        LUNA_BRIEF
       ),
       'cloud-hsm': C(
         'stated',
@@ -725,11 +736,16 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'hardware-hsm': C(
         'varies',
-        'Securosys lists secure log and audit, and the Utimaco u.trust Anchor policy lists an audit-log key. Varies by product.',
+        'Luna Network HSM 7 lists secure audit logging, Securosys lists secure log and audit, and the Utimaco u.trust Anchor policy lists an audit-log key. Varies by product.',
         SECUROSYS_X2,
-        UTIMACO_SP
+        UTIMACO_SP,
+        LUNA_BRIEF
       ),
-      'cloud-hsm': np(),
+      'cloud-hsm': C(
+        'varies',
+        'Varies by service. Azure Cloud HSM records tamper-evident entries generated by the HSM firmware for management operations such as sign-ins, key creation and deletion, and backup and restore; the HSM signs each batch.',
+        AZ_CLOUD_AUDIT
+      ),
       'confidential-computing': np(),
       'dpu-bought': np(),
       'dpu-cloud': np(),
@@ -759,9 +775,12 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'cloud-hsm': C(
         'varies',
-        'Providers state FIPS 140 Level 3: Azure Cloud HSM under 140-3 and Google Cloud HSM under 140-2. AWS CloudHSM is not covered by the sources read here.',
+        'Providers state FIPS 140 Level 3: Azure Cloud HSM under 140-3, Google Cloud HSM under 140-2, and AWS CloudHSM hsm2m.medium under 140-3, which AWS ties to the Marvell LS2 HSM Family (certificate 4703).',
         AZ_CLOUD_HSM,
-        GOOGLE_HSM
+        GOOGLE_HSM,
+        AWS_FAQ,
+        AWS_COMPLIANCE,
+        CMVP_4703
       ),
       'confidential-computing': np(),
       'dpu-bought': C(
@@ -815,8 +834,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'dpu-cloud': C(
         'stated',
-        'Run the cloud’s virtual network, storage and isolation for customer instances.',
+        'Run the cloud’s virtual network, storage and isolation for customer instances; Azure Boost offloads storage processing to an FPGA.',
         NITRO,
+        AZ_BOOST,
         TITANIUM
       ),
     },
