@@ -5,6 +5,7 @@
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
+import { citedStandards } from '../trustHardwareCitations'
 
 export const content: ModuleContent = {
   moduleId: 'confidential-computing',
@@ -55,6 +56,8 @@ export const content: ModuleContent = {
     // trust model (four-hierarchy TPM architecture, EK/SRK/AIK/IDevID key
     // roles) and cited no TCG standard. Active library row.
     getStandard('TCG-TPM-V185-Part1'),
+    // Release 4.202 trust-hardware changes: the Library rows the new statements come from.
+    ...citedStandards('confidential-computing'),
   ],
 
   algorithms: [

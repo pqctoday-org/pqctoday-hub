@@ -10,6 +10,7 @@ import {
 } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
+import { citedStandards } from '../trustHardwareCitations'
 
 export const content: ModuleContent = {
   moduleId: 'secure-boot-pqc',
@@ -79,6 +80,8 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-800-140'),
     getStandard('NIST-SP-800-140B'),
     getStandard('NIST-SP-800-140C'),
+    // Release 4.202 trust-hardware changes: the Library rows the new statements come from.
+    ...citedStandards('secure-boot-pqc'),
   ],
 
   algorithms: [
@@ -106,7 +109,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'UEFI Secure Boot key hierarchy (PK/KEK/db) migration to ML-DSA-65. Firmware signing with post-quantum algorithms. TPM 2.0 path to post-quantum attestation. Vendor roadmaps: AMI, Insyde, EDK2, Dell, HPE. Hardware supply chain integrity at scale. Boot-time verify latency on a microcontroller root of trust: flash-read vs software-verify time for ECDSA P-256, RSA-3072, ML-DSA-44 and LMS on a Cortex-M4-class core (model estimate, sourced cycle counts)',
+      'UEFI Secure Boot key hierarchy (PK/KEK/db) migration to ML-DSA-65. Firmware signing with post-quantum algorithms. TPM 2.0 path to post-quantum attestation, and how a TPM (host root of trust) differs from Caliptra (root of trust inside a chip). Vendor roadmaps: AMI, Insyde, EDK2, Dell, HPE. Hardware supply chain integrity at scale. Boot-time verify latency on a microcontroller root of trust: flash-read vs software-verify time for ECDSA P-256, RSA-3072, ML-DSA-44 and LMS on a Cortex-M4-class core (model estimate, sourced cycle counts)',
     workshopSummary:
       'Secure Boot Chain Analyzer. Firmware Signing Migrator. TPM Key Hierarchy Explorer. Firmware Vendor Matrix. Attestation Flow Designer. Boot Verify Latency — signature load + verify time on a Cortex-M4-class MCU; the 100 ms boot budget is illustrative. See /learn/iot-pqc for wider constrained-device context',
   },

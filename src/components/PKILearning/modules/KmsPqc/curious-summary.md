@@ -15,3 +15,5 @@ Because post-quantum algorithms cannot share one key pair between encryption and
 ## What's Happening
 
 Cloud providers and Hardware Security Module (HSM) vendors are redesigning their platforms to support the massive throughput required to manage millions of these new, specialized Post-Quantum keys securely.
+
+Some key services also hold back a key until the program asking for it proves what it is running. Azure Key Vault's Secure Key Release and AWS KMS used with Nitro Enclaves both work this way: the service checks a signed attestation against a policy before it releases or allows use of the key.

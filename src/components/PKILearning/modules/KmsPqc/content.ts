@@ -10,6 +10,7 @@ import {
 } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
+import { citedStandards } from '../trustHardwareCitations'
 
 export const content: ModuleContent = {
   moduleId: 'kms-pqc',
@@ -94,6 +95,8 @@ export const content: ModuleContent = {
     getStandard('NIST-FIPS140-3-IG-PQC'),
     // Interim PQC key-wrapping around classical HSM operations (v2.1).
     getStandard('AQ-PQC-Migration-Framework-v2.1-2026'),
+    // Release 4.202 trust-hardware changes: the Library rows the new statements come from.
+    ...citedStandards('kms-pqc'),
   ],
 
   algorithms: [
