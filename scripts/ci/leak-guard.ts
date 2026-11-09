@@ -12,7 +12,8 @@
  * companion repository, local home-directory paths, temporary session paths,
  * the evidence-cache folder, internal run identifiers, internal folder
  * paths, internal item keys, and (in data files only) notes that cite the
- * owner's decision, ruling, approval or convention. A broader private check
+ * owner's decision, ruling, approval or convention, or quote the owner's
+ * answer (added lines only). A broader private check
  * runs outside this repository.
  *
  * OUTPUT IS REDACTED. A finding names the rule and the location, never the
@@ -60,6 +61,12 @@ export interface LeakRule {
    * (which have no file path).
    */
   files?: RegExp
+  /**
+   * `false` keeps the rule out of TREE mode: it checks only what a change adds.
+   * For a rule added after matching text was already public, so the frozen
+   * baseline never has to rise (it only ever shrinks).
+   */
+  tree?: boolean
 }
 
 /** Data files: CSV and JSON, where a note or value is published as data. */
@@ -93,14 +100,26 @@ export const RULES: LeakRule[] = [
       /\bowner(?:['\u2019]s)?[ -](?:decisions?|rulings?|approv\w*|convention|polic(?:y|ies)|rule|review|chose|wording)\b/i,
     files: DATA_FILE,
   },
+  // A data note that quotes the owner's answer ("owner said ... at <time>") also
+  // records an internal approval. Checked in added lines only: matching notes
+  // already in the published history are accepted as they are, and a tree-mode
+  // count for them would mean raising the baseline.
+  {
+    id: 'decision-quote',
+    pattern: /\bowner(?:['\u2019]s)?[ -](?:said|says|wrote|asked|answered|replied)\b/i,
+    files: DATA_FILE,
+    tree: false,
+  },
   // A working-session handle (the workspace name, a dash and a hexadecimal
   // suffix) names an internal session. Data notes should not carry it.
   { id: 'session-handle', pattern: /\bantigravity-[0-9a-f]+\b/i, files: DATA_FILE },
 ]
 
 /** The rules that apply to `file`; with no file, only the rules that apply everywhere. */
-function rulesFor(file?: string): LeakRule[] {
-  return RULES.filter((r) => !r.files || (file !== undefined && r.files.test(file)))
+function rulesFor(file?: string, tree = false): LeakRule[] {
+  return RULES.filter(
+    (r) => (!tree || r.tree !== false) && (!r.files || (file !== undefined && r.files.test(file)))
+  )
 }
 
 /** Files that necessarily contain the patterns themselves. */
@@ -315,7 +334,7 @@ export function baselineKey(file: string): string {
 
 export function countText(text: string, file?: string): Record<string, number> {
   const out: Record<string, number> = {}
-  const rules = rulesFor(file)
+  const rules = rulesFor(file, true)
   for (const line of text.split(/\r?\n/)) {
     for (const r of rules) {
       if (r.pattern.test(line)) out[r.id] = (out[r.id] ?? 0) + 1
