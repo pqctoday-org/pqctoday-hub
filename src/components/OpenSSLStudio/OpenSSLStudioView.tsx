@@ -36,6 +36,7 @@ import { AlgorithmExplorerPanel } from './learn/AlgorithmExplorerPanel'
 
 import { useOpenSSLStore } from './store'
 import { useOpenSSL } from './hooks/useOpenSSL'
+import { OPENSSL_READY_LOG } from './readyLog'
 import { OPENSSL_CATEGORIES, type OpenSSLCategory } from './categories'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
@@ -149,6 +150,10 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
     loadError,
   } = useOpenSSLStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  // LMS results are plain log lines (no structured row, no PKCS#11 call). Ignore
+  // the engine's READY line so an idle LMS session still shows the starters.
+  const hasLmsOutput =
+    category === 'lms' && logs.some((entry) => entry.message !== OPENSSL_READY_LOG)
   // Hoisted here (not inside WorkbenchPreview) so the Learn tab shares the
   // exact same worker/WASM instance as the Workbench instead of each tab
   // mounting its own useOpenSSL() and reloading the engine on tab switch.
@@ -495,10 +500,12 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                             structuredLogs row — gating on structuredLogs alone
                             hid the PKCS#11 trace at exactly the moment it was
                             most useful (right after generating a token key,
-                            before running any CLI command). */}
-                        {logs.length === 0 &&
-                        structuredLogs.length === 0 &&
-                        pkcs11Log.length === 0 ? (
+                            before running any CLI command). The LMS panel is the
+                            one tool whose results are plain log lines only, so for
+                            that category plain logs also count, except the engine's
+                            own READY line, which every tool gets and which would
+                            otherwise remove the starter commands everywhere. */}
+                        {!hasLmsOutput && structuredLogs.length === 0 && pkcs11Log.length === 0 ? (
                           <div className="flex flex-col items-start justify-center h-full p-6 gap-4">
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Terminal size={16} />

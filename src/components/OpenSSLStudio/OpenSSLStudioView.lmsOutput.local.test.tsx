@@ -4,24 +4,31 @@ import { MemoryRouter } from 'react-router'
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { OpenSSLStudioView } from './OpenSSLStudioView'
 import { useOpenSSLStore } from './store'
-// Keep the actual parent/store/TerminalOutput. No crypto operation is mocked
-// as successful here: these cases exercise only the output visibility boundary.
-vi.mock('./hooks/useOpenSSL', () => ({
-  useOpenSSL: () => ({
-    executeCommand: vi.fn(),
-    executeSkey: vi.fn(),
-    runCommand: vi.fn(),
-    retryLoad: vi.fn(),
-    hsmKeygen: vi.fn(),
-    hsmListObjects: vi.fn(),
-  }),
-}))
+import { OPENSSL_READY_LOG } from './readyLog'
+// Keep the actual parent, store, hook and TerminalOutput. The engine is a stub
+// Worker that only reports READY, exactly as the real worker does when it has
+// loaded: the hook then writes its own READY log line, which these cases must
+// survive. No crypto operation is mocked as successful.
+class StudioWorker {
+  static instances: StudioWorker[] = []
+  onmessage: ((event: MessageEvent) => void) | null = null
+  postMessage = vi.fn()
+  terminate = vi.fn()
+  constructor() {
+    StudioWorker.instances.push(this)
+  }
+  send(data: object) {
+    this.onmessage?.({ data } as MessageEvent)
+  }
+}
 vi.mock('./Workbench', () => ({ Workbench: () => <div>Sample builder</div> }))
 vi.mock('./learn/OpenSslLearnView', () => ({ OpenSslLearnView: () => null }))
 vi.mock('./FileEditor', () => ({ FileEditor: () => null }))
 const oldScroll = Element.prototype.scrollIntoView
 beforeEach(() => {
   Element.prototype.scrollIntoView = vi.fn()
+  StudioWorker.instances = []
+  vi.stubGlobal('Worker', StudioWorker)
   useOpenSSLStore.setState({
     files: [],
     logs: [],
@@ -30,34 +37,52 @@ beforeEach(() => {
     activeTab: 'terminal',
     editingFile: null,
     viewingFile: null,
-    isReady: true,
+    isReady: false,
   })
 })
 afterEach(() => {
+  vi.unstubAllGlobals()
   Element.prototype.scrollIntoView = oldScroll
   useOpenSSLStore.getState().resetStore()
 })
-function show() {
-  return render(
-    <MemoryRouter initialEntries={['/openssl?cmd=lms']}>
+function show(cmd: 'lms' | 'genpkey', ready = true) {
+  const view = render(
+    <MemoryRouter initialEntries={[`/openssl?cmd=${cmd}`]}>
       <OpenSSLStudioView />
     </MemoryRouter>
   )
+  expect(StudioWorker.instances).toHaveLength(1)
+  if (ready) act(() => StudioWorker.instances[0].send({ type: 'READY' }))
+  return view
 }
+const messages = () => useOpenSSLStore.getState().logs.map((entry) => entry.message)
+
 describe('Actual Studio output remains visible for LMS plain logs', () => {
-  it('keeps starters for an empty session', () => {
-    show()
-    expect(screen.getByText('OpenSSL Studio — ready')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument()
-  })
+  it.each(['lms', 'genpkey'] as const)(
+    'keeps the starter commands after the engine reports READY (%s category)',
+    (cmd) => {
+      show(cmd)
+      // The real hook has logged its READY line, so the log is not empty.
+      expect(messages()).toEqual([OPENSSL_READY_LOG])
+      expect(screen.getByText('OpenSSL Studio — ready')).toBeInTheDocument()
+      expect(screen.getByText('openssl version')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument()
+    }
+  )
   it('shows actual plain success and failure logs without a CLI or upload prerequisite', () => {
-    show()
+    show('lms')
     act(() => useOpenSSLStore.getState().addLog('info', 'SUCCESS: Signature is VALID!'))
     expect(screen.getByText('SUCCESS: Signature is VALID!', { exact: true })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument()
     act(() => useOpenSSLStore.getState().addLog('error', 'FAILURE: Signature is INVALID.'))
     expect(screen.getByText('FAILURE: Signature is INVALID.', { exact: true })).toBeInTheDocument()
     expect(screen.queryByText('OpenSSL Studio — ready')).not.toBeInTheDocument()
+  })
+  it('leaves every other category exactly as before: plain logs alone keep the starters', () => {
+    show('genpkey')
+    act(() => useOpenSSLStore.getState().addLog('info', 'Plain line from another tool'))
+    expect(screen.getByText('OpenSSL Studio — ready')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument()
   })
   it('preserves the structured-command output boundary', () => {
     useOpenSSLStore.getState().addStructuredLog({
@@ -66,7 +91,7 @@ describe('Actual Studio output remains visible for LMS plain logs', () => {
       details: 'sample',
       executionTime: 0,
     })
-    show()
+    show('genpkey')
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument()
     expect(screen.queryByText('OpenSSL Studio — ready')).not.toBeInTheDocument()
   })
@@ -79,7 +104,7 @@ describe('Actual Studio output remains visible for LMS plain logs', () => {
       ms: 1,
       ok: true,
     })
-    show()
+    show('genpkey')
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument()
     expect(screen.queryByText('OpenSSL Studio — ready')).not.toBeInTheDocument()
   })
