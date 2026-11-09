@@ -295,3 +295,61 @@ describe('older saves and zero', () => {
     ).toBeInTheDocument()
   })
 })
+
+async function exportAs(button: '.csv' | '.md'): Promise<string> {
+  let exported: Blob | undefined
+  const create = vi.spyOn(URL, 'createObjectURL').mockImplementation((blob) => {
+    exported = blob as Blob
+    return 'blob:export'
+  })
+  const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+  try {
+    fireEvent.click(screen.getByRole('button', { name: button }))
+    return await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(String(reader.result))
+      reader.readAsText(exported!)
+    })
+  } finally {
+    create.mockRestore()
+    revoke.mockRestore()
+    click.mockRestore()
+  }
+}
+
+it('keeps a never-entered default 0 out of the screen and exports after switching to a persona with a budget row', async () => {
+  state.artifacts.executiveDocuments = [
+    {
+      id: 'sample-old',
+      type: 'kpi-tracker',
+      moduleId: 'migration-program',
+      data: 'Original sample',
+      createdAt: 1,
+      inputs: {
+        // Opened under a lens that has no budget row.
+        personaOverride: 'grc',
+        userScores: { 'budget-utilization': 0 },
+        valueOrigins: { 'budget-utilization': 'not-entered' },
+      },
+    },
+  ]
+  render(<KPITrackerTemplate />)
+  expect(screen.queryByTestId('kpi-dim-budget-utilization')).not.toBeInTheDocument()
+  fireEvent.click(screen.getByTestId('persona-tab-executive'))
+  expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(null)
+  expect(
+    within(screen.getByTestId('kpi-dim-budget-utilization')).getByText('Unknown')
+  ).toBeInTheDocument()
+
+  const csv = Papa.parse<string[]>(await exportAs('.csv'), { delimiter: ',', skipEmptyLines: true })
+  const headerIndex = csv.data.findIndex((row) => row.at(0) === 'KPI')
+  const headers = csv.data.at(headerIndex)!
+  const values = csv.data.slice(headerIndex + 1).find((row) => row.includes('Budget Utilization'))!
+  expect(Object.fromEntries(headers.map((key, i) => [key, values.at(i)]))).toMatchObject({
+    Score: '',
+    'Raw worksheet value (not an assessed score)': '',
+    'Original saved snapshot value': '',
+  })
+  expect(await exportAs('.md')).toContain('| Budget Utilization | Unknown — reporting only;')
+})

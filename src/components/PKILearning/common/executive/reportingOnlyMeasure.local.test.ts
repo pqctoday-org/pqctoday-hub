@@ -2,8 +2,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   REPORTED_PERCENT_MAX,
-  REPORTED_PERCENT_MESSAGE,
   parseReportedPercent,
+  reportedPercentMessage,
   reportingOnlyScoreCell,
   reportingOnlyStatus,
   withoutNeverEnteredReportingScores,
@@ -34,7 +34,16 @@ describe('parseReportedPercent', () => {
     ['just above the ceiling', String(REPORTED_PERCENT_MAX + 1)],
     ['a huge finite number', '1e300'],
   ])('rejects %s with the visible message instead of clamping', (_label, raw) => {
-    expect(parseReportedPercent(raw)).toEqual({ ok: false, message: REPORTED_PERCENT_MESSAGE })
+    expect(parseReportedPercent(raw)).toEqual({ ok: false })
+  })
+})
+
+describe('reportedPercentMessage', () => {
+  it('names the range, and claims a kept value only when there was one', () => {
+    expect(reportedPercentMessage(true)).toBe(
+      'Enter a number from 0 to 1000. The previous value was kept.'
+    )
+    expect(reportedPercentMessage(false)).toBe('Enter a number from 0 to 1000.')
   })
 })
 
@@ -83,6 +92,24 @@ describe('withoutNeverEnteredReportingScores', () => {
       ).toEqual({ budget: 0 })
     }
   )
+
+  it('drops the budget default even when the persona on screen has no budget row', () => {
+    // A persona lens without the row can open a save and switch to one that has it.
+    expect(
+      withoutNeverEnteredReportingScores(
+        [{ id: 'ordinary' }],
+        { ordinary: 0, 'budget-utilization': 0 },
+        { 'budget-utilization': 'not-entered', ordinary: 'not-entered' }
+      )
+    ).toEqual({ ordinary: 0 })
+    expect(
+      withoutNeverEnteredReportingScores(
+        [],
+        { 'budget-utilization': 0 },
+        { 'budget-utilization': 'learner-entered' }
+      )
+    ).toEqual({ 'budget-utilization': 0 })
+  })
 
   it('keeps a score with no recorded origin and passes undefined through', () => {
     expect(withoutNeverEnteredReportingScores(dimensions, { budget: 0 }, undefined)).toEqual({

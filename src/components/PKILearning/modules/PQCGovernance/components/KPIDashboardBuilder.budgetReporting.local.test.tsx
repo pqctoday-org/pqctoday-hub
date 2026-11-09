@@ -311,3 +311,64 @@ describe('older saves, zero and the save trend', () => {
     expect(trend()).toMatch(/: 1 (improving|worsening), \d+ unchanged, /)
   })
 })
+
+async function exportAs(button: '.csv' | '.md'): Promise<string> {
+  let exported: Blob | undefined
+  const create = vi.spyOn(URL, 'createObjectURL').mockImplementation((blob) => {
+    exported = blob as Blob
+    return 'blob:export'
+  })
+  const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+  try {
+    fireEvent.click(screen.getByRole('button', { name: button }))
+    return await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(String(reader.result))
+      reader.readAsText(exported!)
+    })
+  } finally {
+    create.mockRestore()
+    revoke.mockRestore()
+    click.mockRestore()
+  }
+}
+
+it('keeps a never-entered default 0 out of the screen, the saved scores and the exports after switching to a persona with a budget row', async () => {
+  state.artifacts.executiveDocuments = [
+    {
+      id: 'sample-old',
+      type: 'kpi-dashboard',
+      moduleId: 'pqc-governance',
+      data: 'Original sample',
+      createdAt: 1,
+      inputs: {
+        // Opened under a lens that has no budget row.
+        activePersona: 'grc',
+        scores: { 'budget-utilization': 0 },
+        valueOrigins: { 'budget-utilization': 'not-entered' },
+      },
+    },
+  ]
+  render(<KPIDashboardBuilder />)
+  expect(screen.queryByTestId('kpi-dim-budget-utilization')).not.toBeInTheDocument()
+  fireEvent.click(screen.getByTestId('persona-tab-executive'))
+  expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(null)
+  expect(
+    within(screen.getByTestId('kpi-dim-budget-utilization')).getByText('Unknown')
+  ).toBeInTheDocument()
+
+  fireEvent.click(screen.getByRole('button', { name: /^Save/ }))
+  const saved = addExecutiveDocument.mock.calls.at(-1)![0]
+  expect(saved.inputs.scores).not.toHaveProperty('budget-utilization')
+  expect(saved.data).toContain('| Budget Utilization | Unknown — reporting only;')
+
+  const csv = Papa.parse<string[]>(await exportAs('.csv'), { delimiter: ',', skipEmptyLines: true })
+  const headerIndex = csv.data.findIndex((row) => row.at(0) === 'Dimension ID')
+  const headers = csv.data.at(headerIndex)!
+  const values = csv.data.slice(headerIndex + 1).find((row) => row.at(0) === 'budget-utilization')!
+  expect(Object.fromEntries(headers.map((key, i) => [key, values.at(i)]))).toMatchObject({
+    'Raw worksheet value (not an assessed score)': '',
+    'Original saved snapshot value': '',
+  })
+})

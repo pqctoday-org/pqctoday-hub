@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import Papa from 'papaparse'
 import {
@@ -10,7 +11,7 @@ import {
 } from './DataDrivenScorecard'
 import { effectiveScorecardWeight, scoredWeightShare } from './scorecardCoverage'
 import type { KpiValueOrigin } from './scorecardValueOrigin'
-import { REPORTED_PERCENT_MESSAGE } from './reportingOnlyMeasure'
+import { reportedPercentMessage } from './reportingOnlyMeasure'
 
 /** How the reported-percent field is found by assistive technology. */
 const BUDGET_INPUT = { name: /Reported utilization \(%\) — excluded from readiness/ }
@@ -249,12 +250,12 @@ async function exportAs(button: '.csv' | '.md'): Promise<string> {
   }
 }
 
-function budgetCsvRecord(csv: string): Record<string, string> {
+function budgetCsvRecord(csv: string, id = 'budget'): Record<string, string> {
   const parsed = Papa.parse<string[]>(csv, { delimiter: ',', skipEmptyLines: true })
   expect(parsed.errors).toEqual([])
   const index = parsed.data.findIndex((row) => row.at(0) === 'Dimension ID')
   const headers = parsed.data.at(index)!
-  const row = parsed.data.slice(index + 1).find((cells) => cells.at(0) === 'budget')!
+  const row = parsed.data.slice(index + 1).find((cells) => cells.at(0) === id)!
   return Object.fromEntries(headers.map((key, i) => [key, row.at(i) ?? '']))
 }
 
@@ -351,6 +352,36 @@ describe('older saves and cleared fields keep missing distinct from zero', () =>
   })
 })
 
+describe('a persona lens that gains the budget row after the save was opened', () => {
+  it('does not bring the never-entered default back into the screen or the exports', async () => {
+    const budget: ScorecardDimension = { ...dimensions[1], id: 'budget-utilization' }
+    const props = {
+      title: 'Persona switch',
+      initialScores: { readiness: 50, 'budget-utilization': 0 },
+      initialValueOrigins: {
+        readiness: 'calculated-current',
+        'budget-utilization': 'not-entered',
+      } as Record<string, KpiValueOrigin>,
+      exportFormats: ['markdown', 'csv'] as ('markdown' | 'csv')[],
+    }
+    // Opened under a lens with no budget row, then switched to one that has it.
+    const view = render(<DataDrivenScorecard {...props} dimensions={[dimensions[0]]} />)
+    view.rerender(<DataDrivenScorecard {...props} dimensions={[dimensions[0], budget]} />)
+    expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(null)
+    expect(
+      within(screen.getByTestId('kpi-dim-budget-utilization')).getByText('Unknown')
+    ).toBeInTheDocument()
+    expect(budgetCsvRecord(await exportAs('.csv'), 'budget-utilization')).toMatchObject({
+      Score: '',
+      'Raw worksheet value (not an assessed score)': '',
+      'Original saved snapshot value': '',
+    })
+    expect(await exportAs('.md')).toContain(
+      '| Budget Utilization | Unknown — reporting only; excluded from readiness |'
+    )
+  })
+})
+
 describe('the reported-percent field', () => {
   it('has an accessible name that contains its visible label, with period and scope as the description', () => {
     render(<Worksheet />)
@@ -370,7 +401,7 @@ describe('the reported-percent field', () => {
     expect(input).toHaveAccessibleDescription('Period: 2026 Q4 · Scope: Fictional service A')
   })
 
-  it('rejects negative and oversized entries with a message and keeps the previous value', () => {
+  it('rejects negative and oversized entries with a message, stores nothing, and shows the kept value after blur', () => {
     const onScoreChange = vi.fn()
     render(
       <DataDrivenScorecard
@@ -384,15 +415,20 @@ describe('the reported-percent field', () => {
     const input = screen.getByRole('spinbutton', BUDGET_INPUT)
     for (const raw of ['-5', '-0.01', '1001', '1e300']) {
       fireEvent.change(input, { target: { value: raw } })
-      expect(screen.getByRole('alert')).toHaveTextContent(REPORTED_PERCENT_MESSAGE)
+      expect(screen.getByRole('alert')).toHaveTextContent(reportedPercentMessage(true))
       expect(input).toBeInvalid()
       expect(input).toHaveAccessibleDescription(
-        `Period: Unknown · Scope: Unknown ${REPORTED_PERCENT_MESSAGE}`
+        `Period: Unknown · Scope: Unknown ${reportedPercentMessage(true)}`
       )
-      // The box shows the kept value, not the rejected text, and nothing was stored.
-      expect(input).toHaveValue(80)
+      // What was typed stays in the box while the field has focus; nothing was stored.
+      expect(input).toHaveValue(Number(raw))
     }
     expect(onScoreChange).not.toHaveBeenCalled()
+
+    // Leaving the field shows what is stored, and the message stays to explain why.
+    fireEvent.blur(input)
+    expect(input).toHaveValue(80)
+    expect(screen.getByRole('alert')).toHaveTextContent(reportedPercentMessage(true))
 
     fireEvent.change(input, { target: { value: '0' } })
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
@@ -405,8 +441,9 @@ describe('the reported-percent field', () => {
     render(<Worksheet />)
     const input = screen.getByRole('spinbutton', BUDGET_INPUT)
     fireEvent.change(input, { target: { value: '-5' } })
-    expect(screen.getByRole('alert')).toBeInTheDocument()
-    expect(input).toHaveValue(null)
+    // There was no previous value, so the message does not claim one was kept.
+    expect(screen.getByRole('alert')).toHaveTextContent(reportedPercentMessage(false))
+    expect(screen.getByRole('alert')).not.toHaveTextContent('previous value')
     expect(within(screen.getByTestId('kpi-dim-budget')).getByText('Unknown')).toBeInTheDocument()
     expect(budgetCsvRecord(await exportAs('.csv'))).toMatchObject({
       Score: '',
@@ -415,9 +452,25 @@ describe('the reported-percent field', () => {
     expect(await exportAs('.md')).toContain(
       '| Budget Utilization | Unknown — reporting only; excluded from readiness |'
     )
+    // Empty again after leaving the field: no stale alert on an empty box.
+    fireEvent.blur(input)
+    expect(input).toHaveValue(null)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
-  it('does not clear a stored value for an unreadable entry: half typed, or an exponent that overflows to infinity', () => {
+  it('clears the message when the field is emptied', async () => {
+    const user = userEvent.setup()
+    render(<Worksheet />)
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
+    await user.type(input, '-5')
+    expect(screen.getByRole('alert')).toHaveTextContent(reportedPercentMessage(false))
+    await user.clear(input)
+    expect(input).toHaveValue(null)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(input).not.toBeInvalid()
+  })
+
+  it('does not clear a stored value or rewrite the box for an unreadable entry; it judges the entry on blur', () => {
     const onScoreChange = vi.fn()
     render(
       <DataDrivenScorecard
@@ -428,14 +481,86 @@ describe('the reported-percent field', () => {
         onScoreChange={onScoreChange}
       />
     )
-    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT) as HTMLInputElement
     // A browser reports half-typed text such as "-" or "1e", and an exponent such as
     // "1e999" that overflows to infinity, as an empty value with badInput set.
     Object.defineProperty(input, 'validity', { configurable: true, value: { badInput: true } })
     fireEvent.change(input, { target: { value: '' } })
-    expect(screen.getByRole('alert')).toHaveTextContent(REPORTED_PERCENT_MESSAGE)
+    expect(onScoreChange).not.toHaveBeenCalled()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(input.value).toBe('')
+    fireEvent.blur(input)
+    expect(screen.getByRole('alert')).toHaveTextContent(reportedPercentMessage(true))
     expect(input).toHaveValue(80)
     expect(onScoreChange).not.toHaveBeenCalled()
+  })
+})
+
+/**
+ * jsdom does not model badInput. Emulate a browser: a lone ".", "-" or "e" reads as
+ * an empty value with badInput set until the next key arrives.
+ */
+function emulateBrowserBadInput(input: HTMLInputElement) {
+  let lastKey = ''
+  input.addEventListener('keydown', (event) => {
+    lastKey = event.key
+  })
+  input.addEventListener('keyup', () => {
+    lastKey = ''
+  })
+  Object.defineProperty(input, 'validity', {
+    configurable: true,
+    get: () => ({ badInput: input.value === '' && ['.', '-', 'e'].includes(lastKey) }),
+  })
+}
+
+describe('typing over a selected value in the reported-percent field', () => {
+  function renderStored(onScoreChange = vi.fn()) {
+    render(
+      <DataDrivenScorecard
+        title="Typing"
+        dimensions={dimensions}
+        initialScores={{ budget: 80 }}
+        initialValueOrigins={{ budget: 'learner-entered' }}
+        onScoreChange={onScoreChange}
+      />
+    )
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT) as HTMLInputElement
+    emulateBrowserBadInput(input)
+    return { input, onScoreChange }
+  }
+  const budgets = (fn: ReturnType<typeof vi.fn>) =>
+    fn.mock.calls.map(([scores]) => (scores as Record<string, number>).budget)
+
+  it('keeps ".5" typed over a selection, instead of undoing the "." and ending at 805', async () => {
+    const user = userEvent.setup()
+    const { input, onScoreChange } = renderStored()
+    await user.type(input, '.5', { initialSelectionStart: 0, initialSelectionEnd: 2 })
+    expect(input).toHaveValue(0.5)
+    expect(budgets(onScoreChange)).toEqual([0.5])
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    // Leaving the field shows the stored value in its plain form.
+    await user.tab()
+    expect(input.value).toBe('0.5')
+  })
+
+  it('keeps "1e3" typed over a selection, instead of ending at 13', async () => {
+    const user = userEvent.setup()
+    const { input, onScoreChange } = renderStored()
+    await user.type(input, '1e3', { initialSelectionStart: 0, initialSelectionEnd: 2 })
+    expect(input).toHaveValue(1000)
+    expect(budgets(onScoreChange)).toEqual([1, 1000])
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('still refuses an exponent that passes the ceiling, with the previous value named', async () => {
+    const user = userEvent.setup()
+    const { input, onScoreChange } = renderStored()
+    await user.type(input, '1e4', { initialSelectionStart: 0, initialSelectionEnd: 2 })
+    expect(budgets(onScoreChange)).toEqual([1])
+    expect(screen.getByRole('alert')).toHaveTextContent(reportedPercentMessage(true))
+    await user.tab()
+    expect(input).toHaveValue(1)
   })
 })
 

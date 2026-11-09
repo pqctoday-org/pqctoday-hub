@@ -19,8 +19,8 @@ import {
 } from './scorecardValueOrigin'
 import {
   REPORTED_PERCENT_MAX,
-  REPORTED_PERCENT_MESSAGE,
   parseReportedPercent,
+  reportedPercentMessage,
   reportingOnlyScoreCell,
   reportingOnlyStatus,
   withoutNeverEnteredReportingScores,
@@ -271,21 +271,32 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     [onScoreChange, scores, dimensions]
   )
 
-  // Why the reported-percent field last refused what was typed, by dimension id.
+  // Reported-percent field. The text being typed is held as a draft, so a keystroke
+  // that is not yet a number (".", "-", the "e" of "1e3") or that is refused never
+  // rewrites the box under the typist. The draft is dropped on blur and the box
+  // shows what is stored.
+  const [reportedDrafts, setReportedDrafts] = useState<Record<string, string>>({})
+  // Why the field last refused what was typed, by dimension id.
   const [reportedErrors, setReportedErrors] = useState<Record<string, string>>({})
   const handleReportedInput = useCallback(
     (d: ScorecardDimension, input: HTMLInputElement) => {
+      const text = input.value
+      const setDraft = (draft: string) =>
+        setReportedDrafts((prev) => ({
+          ...Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id)),
+          [d.id]: draft,
+        }))
       const showError = (message: string | undefined) =>
         setReportedErrors((prev) => {
           const without = Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id))
           return message === undefined ? without : { ...without, [d.id]: message }
         })
-      if (input.value === '') {
-        // A half-typed entry such as "-" or "1e" reads as empty; it is not a clear.
-        if (input.validity?.badInput) {
-          showError(REPORTED_PERCENT_MESSAGE)
-          return
-        }
+      setDraft(text)
+      if (text === '') {
+        // A browser reports half-typed number text such as "." or "-", and an
+        // exponent that overflows, as an empty value with badInput set. That is not a
+        // clear: leave the stored value alone and judge the entry when it is finished.
+        if (input.validity?.badInput) return
         showError(undefined)
         // Cleared means never entered again: not a recorded edit.
         userOverriddenRef.current.delete(d.id)
@@ -301,15 +312,32 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         onScoreChange?.(next)
         return
       }
-      const parsed = parseReportedPercent(input.value)
+      const parsed = parseReportedPercent(text)
       if (!parsed.ok) {
-        showError(parsed.message)
+        showError(reportedPercentMessage(scores[d.id] !== undefined))
         return
       }
       showError(undefined)
       handleScoreChange(d.id, parsed.value)
     },
     [scores, onScoreChange, handleScoreChange]
+  )
+  const handleReportedBlur = useCallback(
+    (d: ScorecardDimension, input: HTMLInputElement) => {
+      // Read the box now: the updaters below run after the draft is dropped.
+      const unfinished = input.value === '' && Boolean(input.validity?.badInput)
+      const hasStoredValue = scores[d.id] !== undefined
+      setReportedDrafts((prev) =>
+        Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id))
+      )
+      setReportedErrors((prev) => {
+        const without = Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id))
+        // Empty again: nothing is left to correct, so no stale alert.
+        if (!hasStoredValue) return without
+        return unfinished ? { ...without, [d.id]: reportedPercentMessage(true) } : prev
+      })
+    },
+    [scores]
   )
 
   const effectiveWeight = useCallback(
@@ -646,8 +674,9 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                         : `${uid}-${d.id}-period`
                     }
                     aria-invalid={reportedErrors[d.id] ? true : undefined}
-                    value={scores[d.id] ?? ''}
+                    value={reportedDrafts[d.id] ?? scores[d.id] ?? ''}
                     onChange={(event) => handleReportedInput(d, event.currentTarget)}
+                    onBlur={(event) => handleReportedBlur(d, event.currentTarget)}
                     className="mt-1 block w-32 rounded border border-border bg-background p-2"
                   />
                   <span id={`${uid}-${d.id}-period`} className="mt-1 block">
