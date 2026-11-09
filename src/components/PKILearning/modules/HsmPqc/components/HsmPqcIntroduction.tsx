@@ -890,8 +890,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  <strong>Who runs it:</strong> a fully managed Microsoft service. Microsoft says it
-                  can attest that a key was generated and resides inside an HSM that Microsoft
+                  <strong>Who runs it:</strong> a fully managed Microsoft service. Microsoft&apos;s
+                  overview says Managed HSMs use Marvell LiquidSecurity HSM adapters. Microsoft says
+                  it can attest that a key was generated and resides inside an HSM that Microsoft
                   operates, and keys can be generated in the HSM or imported by bring-your-own-key.
                   Both services give the customer administrative control of the keys (Managed HSM
                   through local RBAC; Cloud HSM through HSM users) while Microsoft runs patching and
@@ -946,8 +947,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   Powered by the Thales Luna 7 HSM (model A790). Azure&apos;s pages list no PQC
                   algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS
                   from 7.8.9. Customers administer the firmware themselves, after consulting Thales
-                  Support, and Azure does not say whether the service offers firmware 7.9. Azure
-                  Managed HSM uses Marvell LiquidSecurity HSM adapters.
+                  Support, and Azure does not say whether the service offers firmware 7.9. The
+                  Marvell LiquidSecurity hardware in Microsoft&apos;s pages belongs to Azure Managed
+                  HSM and Azure Cloud HSM, not to this service.
                 </p>
                 <p>
                   <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers
