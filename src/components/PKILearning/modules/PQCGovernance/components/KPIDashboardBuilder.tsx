@@ -26,6 +26,8 @@ import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import {
   OVERALL_SCORE_MIN_COVERAGE,
   scoredWeightShare,
+  effectiveScorecardWeight,
+  isReadinessDimension,
 } from '@/components/PKILearning/common/executive/scorecardCoverage'
 import type { PolicyOutput } from '../types'
 
@@ -41,8 +43,8 @@ function coercePersona(p: string | null | undefined): KpiPersonaId {
 const METHODOLOGY_MD = `## How this score is computed
 
 The **Overall Score** is the weighted average of the KPI sliders below, using the
-per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
-measure; the weighted average is rounded to a whole number. A combined score is
+per-persona weights in the Weight column (they sum to 100%). Each readiness KPI is a 0–100
+measure; reporting-only budget utilization is excluded from both score and scored-value coverage. Raw reported finance percentages may exceed 100 and are not readiness scores. The weighted average is rounded to a whole number. A combined score is
 withheld until at least 70% of the weight of the KPIs that can be scored has
 entered or calculated sample values; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing. This 70% coverage threshold is a Hub worksheet display rule, not a NIST-prescribed maturity or readiness criterion.
 
@@ -87,7 +89,7 @@ export function buildKpiDashboardMarkdown(
   touchedIds?: ReadonlySet<string>,
   valueOrigins?: Record<string, KpiValueOrigin>
 ): string {
-  const ew = (d: (typeof dimensions)[number]) => (d.id in weights ? (weights[d.id] ?? 0) : d.weight)
+  const ew = (d: (typeof dimensions)[number]) => effectiveScorecardWeight(d, weights)
   const isPending = (d: (typeof dimensions)[number]) =>
     valueOrigins
       ? !isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
@@ -97,7 +99,7 @@ export function buildKpiDashboardMarkdown(
   let totalWeight = 0
   for (const d of dimensions) {
     const value = scores[d.id] ?? d.autoScore
-    if (d.disabled || isPending(d) || value === undefined) continue
+    if (!isReadinessDimension(d) || isPending(d) || value === undefined) continue
     weightedSum += value * ew(d)
     totalWeight += ew(d)
   }
@@ -129,6 +131,11 @@ export function buildKpiDashboardMarkdown(
       continue
     }
     const value = scores[d.id] ?? d.autoScore
+    if (d.reportingOnly) {
+      md += `| ${d.label} | ${value === undefined ? 'Unknown' : `${value}%`} — reporting only; excluded from readiness | 0% | —${lineage}\n`
+      md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; scope: ${observation?.scope?.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ') || 'Unknown'}; as of ${observation?.asOfDate || 'not provided'}.\n`
+      continue
+    }
     md += `| ${d.label} | ${value === undefined ? '_not yet scored_' : isPending(d) ? `${value}/100 — not assessed for current use` : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
     md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
   }

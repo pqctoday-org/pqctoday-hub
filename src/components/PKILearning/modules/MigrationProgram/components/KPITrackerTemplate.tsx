@@ -26,6 +26,8 @@ import type { ScorecardObservation } from '@/components/PKILearning/common/execu
 import {
   OVERALL_SCORE_MIN_COVERAGE,
   scoredWeightShare,
+  effectiveScorecardWeight,
+  isReadinessDimension,
 } from '@/components/PKILearning/common/executive/scorecardCoverage'
 
 const MODULE_ID = 'migration-program'
@@ -103,8 +105,7 @@ export function buildKpiTrackerMarkdown({
   md +=
     'Scored-value coverage measures available worksheet values, not evidence verification or production readiness. Optional sample notes are learner supplied.\n\n'
 
-  const ew = (d: (typeof dimensions)[number]) =>
-    d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
+  const ew = (d: (typeof dimensions)[number]) => effectiveScorecardWeight(d, userWeights)
   // Manual KPIs with no computed baseline and no score yet read as "not yet
   // scored" rather than a numeric 0 — excluded from the average so it
   // doesn't read as alarmingly low before the user has entered anything.
@@ -117,7 +118,7 @@ export function buildKpiTrackerMarkdown({
   let totalWeight = 0
   let weightedSum = 0
   for (const d of dimensions) {
-    if (d.disabled || isPending(d)) continue
+    if (!isReadinessDimension(d) || isPending(d)) continue
     const score = scores[d.id] ?? d.autoScore ?? 0
     weightedSum += score * ew(d)
     totalWeight += ew(d)
@@ -139,6 +140,11 @@ export function buildKpiTrackerMarkdown({
       md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(valueOrigins?.[d.id] ?? currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
       continue
     }
+    if (d.reportingOnly) {
+      const raw = scores[d.id]
+      md += `| ${d.label} | ${raw === undefined ? 'Unknown' : `${raw}%`} — reporting only; excluded from readiness | 0% | — | ${formatMappings(mappingsFor(d.id))} | ${d.description} | ${kpiValueOriginLabel(valueOrigins?.[d.id] ?? currentKpiValueOrigin(d, touchedIds.has(d.id)), d.disabled)} |\n`
+      continue
+    }
     const scoreCell = isPending(d)
       ? `${scores[d.id] ?? d.autoScore ?? 0}/100 — not assessed for current use`
       : `${scores[d.id] ?? d.autoScore ?? 0}/100`
@@ -146,15 +152,15 @@ export function buildKpiTrackerMarkdown({
   }
   md += '\n## Sample Measurement Notes\n\n'
   md +=
-    '| KPI | Numerator | Denominator | Unit | Period | As of | Sample owner | Sample reference | Learner-recorded review label |\n'
+    '| KPI | Numerator | Denominator | Unit | Period | As of | Sample owner | Sample reference | Learner-recorded review label | Scope |\n'
   md +=
-    '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|\n'
+    '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|-------|\n'
   const cell = (value: string | undefined) =>
     (value || 'not provided').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')
   for (const dimension of dimensions) {
     const observation = observations[dimension.id]
     if (!observation) continue
-    md += `| ${cell(dimension.label)} | ${cell(observation.numerator)} | ${cell(observation.denominator)} | ${cell(observation.unit)} | ${cell(observation.reportingPeriod)} | ${cell(observation.asOfDate)} | ${cell(observation.owner)} | ${cell(observation.evidenceReference)} | ${observation.verificationState} |\n`
+    md += `| ${cell(dimension.label)} | ${cell(observation.numerator)} | ${cell(observation.denominator)} | ${cell(observation.unit)} | ${cell(observation.reportingPeriod)} | ${cell(observation.asOfDate)} | ${cell(observation.owner)} | ${cell(observation.evidenceReference)} | ${observation.verificationState} | ${cell(observation.scope)} |\n`
   }
   md += '\n## Data Sources\n\n'
   md += `- Vendor and FIPS measures use only products explicitly selected in Migrate; catalogue status does not verify deployment. Compliance closure, exposure coverage and pace require organization-entered values.\n`
@@ -268,7 +274,8 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     () =>
       dimensions.filter(
         (d) =>
-          !d.disabled && isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
+          isReadinessDimension(d) &&
+          isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
       ).length,
     [dimensions, valueOrigins]
   )
@@ -312,8 +319,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   // Structured CSV (one row per KPI) built from the live dimensions — not the
   // markdown body, so `.csv` opens as real columns in a spreadsheet. Audit C5.
   const exportCsv = useMemo(() => {
-    const ew = (d: (typeof dimensions)[number]) =>
-      d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
+    const ew = (d: (typeof dimensions)[number]) => effectiveScorecardWeight(d, userWeights)
     const header = [
       'KPI',
       'Score',
@@ -335,10 +341,12 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       'Original saved snapshot value',
       'Current-use status',
       'Included in overall calculation',
+      'Scope',
     ]
     const rows = dimensions.map((d) => {
       const pending = !isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
-      const scoreCell = d.disabled || pending ? '' : String(userScores[d.id] ?? d.autoScore ?? 0)
+      const scoreCell =
+        !isReadinessDimension(d) || pending ? '' : String(userScores[d.id] ?? d.autoScore ?? 0)
       return [
         d.label,
         scoreCell,
@@ -356,14 +364,19 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         observations[d.id]?.owner ?? '',
         observations[d.id]?.evidenceReference ?? '',
         observations[d.id]?.verificationState ?? 'not-verified',
-        String(userScores[d.id] ?? d.autoScore ?? 0),
+        d.reportingOnly && userScores[d.id] === undefined
+          ? ''
+          : String(userScores[d.id] ?? d.autoScore ?? 0),
         loadedSavedScores?.[d.id] ?? '',
-        d.disabled
-          ? 'Required inputs unavailable'
-          : pending
-            ? 'Not assessed for current use'
-            : 'Assessed sample value',
-        d.disabled || pending ? 'false' : 'true',
+        d.reportingOnly
+          ? 'Reporting only — excluded from readiness'
+          : d.disabled
+            ? 'Required inputs unavailable'
+            : pending
+              ? 'Not assessed for current use'
+              : 'Assessed sample value',
+        !isReadinessDimension(d) || pending ? 'false' : 'true',
+        observations[d.id]?.scope ?? '',
       ]
     })
     return rowsToCsv([header, ...rows])
@@ -583,19 +596,22 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
           means a score built from two KPIs reads identically to one built from
           eight. Say which. (Audit 2026-08-10, W4-1.) */}
       <p className="text-xs text-muted-foreground leading-relaxed">
-        <strong className="text-foreground/80">How this is scored:</strong> each KPI&apos;s 0–100
-        value is multiplied by its weight, summed, and divided by the total weight of the KPIs
+        <strong className="text-foreground/80">How this is scored:</strong> each scored KPI&apos;s
+        0–100 value is multiplied by its weight, summed, and divided by the total weight of the KPIs
         included — a weighted average. KPIs marked data unavailable or not yet scored are left out
         of both halves of that division rather than counted as zero, so an unscored KPI does not
         drag the headline down. It also means the score describes only the KPIs you have actually
         scored:{' '}
         <strong>
-          {scoredCount} of {dimensions.length}
+          {scoredCount} of {dimensions.filter((dimension) => !dimension.reportingOnly).length}
         </strong>{' '}
         here. The combined score is withheld until at least 70% of the weight of the KPIs that can
         be scored has values. That 70% coverage threshold is a Hub worksheet display rule, not a
         NIST-prescribed maturity criterion or proof of readiness. Weights are the per-persona
-        defaults unless you have edited them.
+        defaults unless you have edited them. Budget utilization is a separate raw finance measure
+        and is excluded from this score and scored-value coverage, including when an older saved
+        weight exists. Its raw reported percent may exceed 100; optional spend/budget notes do not
+        calculate or verify that percent.
       </p>
 
       <ExportableArtifact
