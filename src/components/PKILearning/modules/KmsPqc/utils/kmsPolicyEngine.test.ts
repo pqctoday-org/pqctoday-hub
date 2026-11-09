@@ -14,7 +14,7 @@ const createKey = (condition: unknown) => ({
 })
 
 describe('validateKmsPqcPolicy', () => {
-  it('passes an IAM policy that allows only ML-DSA signing keys', () => {
+  it('passes the supported sample fragment with restricted CreateKey Allow paths', () => {
     const r = validateKmsPqcPolicy(
       policy([
         createKey({
@@ -75,7 +75,9 @@ describe('validateKmsPqcPolicy', () => {
   })
 
   it('needs an Allow on kms:CreateKey', () => {
-    const r = validateKmsPqcPolicy(policy([{ Effect: 'Allow', Action: 'kms:Sign', Resource: '*' }]))
+    const r = validateKmsPqcPolicy(
+      policy([{ Effect: 'Allow', Action: 'kms:DescribeKey', Resource: '*' }])
+    )
     expect(r.allowsCreateKey).toBe(false)
     expect(r.errorMessage).toMatch(/kms:CreateKey/)
   })

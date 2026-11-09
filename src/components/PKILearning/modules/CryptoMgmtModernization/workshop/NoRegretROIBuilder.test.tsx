@@ -4,19 +4,8 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { NoRegretROIBuilder } from './NoRegretROIBuilder'
 import type { CbomExportItem } from '../data/workshopTypes'
 
-// At default sub-parameters (calibrated to preserve the prior flat-slider headlines):
-//   annual cost     = 6 × 200k + 150k + 120k + 180k + 150k = $1.80M
-//   outage          = 11M × 0.86 × 0.69                    = $6.527M
-//   clm             = 4.43M × 0.74                         = $3.278M
-//   fips            = 10 × 0.18 × 600k + 15 × 0.20 × 40k   = $1.20M
-//   cve             = 4 × 240 × 150 + 600k                 = $0.744M
-//   ma              = (12M × 0.5 × 0.7) / 3                = $1.40M
-//   quantum (raw)   = 30M × 0.4                            = $12.00M
-//   pCrqc default   = 1.0 → qDep = 12.00M
-//   qIndep          = 6.527 + 3.278 + 1.20 + 0.744 + 1.40  = $13.149M
-// 3-year totals (horizon=3):
-//   benefitA = 39.45M, totalCost = 5.40M, ROI_A ≈ 631%
-//   benefitB = 75.45M,                     ROI_B ≈ 1297%
+// Defaults use a scoped annual labour benchmark and one stock benefit at horizon end.
+// Independent cashflow boundary cases are covered in roiCashflows.local.test.ts.
 
 describe('NoRegretROIBuilder', () => {
   it('renders all six benefit-stream headlines and the program cost', () => {
@@ -33,21 +22,20 @@ describe('NoRegretROIBuilder', () => {
   it('rolls up default sub-parameters to the expected headline numbers', () => {
     render(<NoRegretROIBuilder />)
     // Headline values appear next to each stream label. Match dollar formats.
-    // These confirm sub-models compute the same totals as the prior flat sliders.
     expect(screen.getAllByText('$1.80M/yr').length).toBeGreaterThanOrEqual(1) // program cost
     expect(screen.getByText('$6.53M/yr')).toBeInTheDocument() // outage
-    expect(screen.getByText('$3.28M/yr')).toBeInTheDocument() // clm
+    expect(screen.getByText('$1.95M/yr')).toBeInTheDocument() // clm
     expect(screen.getByText('$1.20M/yr')).toBeInTheDocument() // fips
     expect(screen.getByText('$744k/yr')).toBeInTheDocument() // cve
     expect(screen.getByText('$1.40M/yr')).toBeInTheDocument() // ma
-    // qDep ($12.0M/yr) appears both as the stream headline and in the Scenario B summary
-    expect(screen.getAllByText('$12.0M/yr').length).toBeGreaterThanOrEqual(1)
+    // The fixed stock contributes once, including the Scenario B summary.
+    expect(screen.getAllByText('$12.0M once').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders both Scenario A and Scenario B output panels', () => {
     render(<NoRegretROIBuilder />)
     expect(screen.getByText(/Scenario A — quantum never arrives/)).toBeInTheDocument()
-    expect(screen.getByText(/Scenario B — CRQC arrives within/)).toBeInTheDocument()
+    expect(screen.getByText(/Scenario B — assumed P\(CRQC within/)).toBeInTheDocument()
   })
 
   it('shows the sensitivity strip ranking streams by share', () => {

@@ -59,6 +59,33 @@ describe('Algorithm check size provenance', () => {
     expect(screen.queryByText(/^pk:/)).not.toBeInTheDocument()
     expect(screen.queryByText(/modulus-derived/)).not.toBeInTheDocument()
   })
+  it.each([
+    [2048, 270, 1191],
+    [3072, 398, 1767],
+    [4096, 526, 2349],
+  ])(
+    'shows actual RSA-%s public/private PKCS#1 bytes without a guessed catalogue match',
+    async (bits, publicBytes, privateBytes) => {
+      runBenchmark.mockResolvedValue({
+        ...timings,
+        publicKeyBytes: publicBytes,
+        privateKeyBytes: privateBytes,
+        sigCiphertextBytes: bits / 8,
+        rsaKeyEncoding: 'pkcs1-der',
+      })
+      render(<AlgorithmCheckButton algorithm={algo(`RSA-${bits}`, publicBytes, bits / 8)} />)
+      fireEvent.click(screen.getByRole('button'))
+      await screen.findByText(`RSA public: ${publicBytes} B · PKCS#1 RSAPublicKey DER`)
+      expect(
+        screen.getByText(
+          `RSA private: ${privateBytes} B · PKCS#1 RSAPrivateKey DER (serialized from generated sample attributes)`
+        )
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/^pk:/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Serialized RSA key sizes not measured/)).not.toBeInTheDocument()
+      expect(screen.getByText(`sig:${bits / 8}B ✓`)).toBeInTheDocument()
+    }
+  )
   it('preserves the existing non-RSA output badge and timing display', async () => {
     runBenchmark.mockResolvedValue({
       ...timings,

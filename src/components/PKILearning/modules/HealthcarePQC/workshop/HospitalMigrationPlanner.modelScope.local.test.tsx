@@ -47,6 +47,42 @@ describe('Hospital planning sample model scope', () => {
     view.unmount()
   })
 
+  it('includes only selected work in the roadmap, retaining all baseline matrix priorities', async () => {
+    const user = userEvent.setup()
+    const view = render(<HospitalMigrationPlanner />)
+    const matrix = matrixSnapshot()
+    expect(
+      screen.getByText(
+        'No migration work selected. Choose an action above to build the sample roadmap.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Phase 1: Critical Priority (2023–2027)')).not.toBeInTheDocument()
+    await user.click(screen.getAllByRole('button', { name: 'Crypto Posture:' })[0])
+    await user.click(screen.getByRole('option', { name: 'Planning Only' }))
+    expect(
+      screen.queryByText(
+        'No migration work selected. Choose an action above to build the sample roadmap.'
+      )
+    ).not.toBeInTheDocument()
+    expect(matrixSnapshot()).toBe(matrix)
+    const roadmap = screen.getByText('Selected Migration Work').closest('.glass-panel')!
+    expect(
+      within(roadmap as HTMLElement).getByText('Patient Portal & Telehealth')
+    ).toBeInTheDocument()
+    expect(
+      within(roadmap as HTMLElement).queryByText('Medical Devices (IoMT)')
+    ).not.toBeInTheDocument()
+    await user.click(screen.getAllByRole('button', { name: 'Crypto Posture:' })[0])
+    await user.click(screen.getByRole('option', { name: 'No Change' }))
+    expect(
+      screen.getByText(
+        'No migration work selected. Choose an action above to build the sample roadmap.'
+      )
+    ).toBeInTheDocument()
+    expect(matrixSnapshot()).toBe(matrix)
+    view.unmount()
+  })
+
   it('keeps zero cost for changed endpoint counts when No Change is selected', async () => {
     const view = render(<HospitalMigrationPlanner />)
     const initialMatrix = matrixSnapshot()

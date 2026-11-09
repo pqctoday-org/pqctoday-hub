@@ -28,7 +28,9 @@ describe('Sourcing example teaching scope', () => {
     )
     expect(screen.getAllByText('Named reference example')).toHaveLength(3)
     expect(screen.queryByText(/Leading option in this teaching model/)).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /Build Your Own/ }))
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Build Your Own Full control, full responsibility' })
+    )
     expect(screen.getByText('Illustrative TCO bands')).toBeInTheDocument()
     expect(screen.getByText(/Authored planning ranges/)).toHaveTextContent('not supplier quotes')
     fireEvent.click(
@@ -40,14 +42,13 @@ describe('Sourcing example teaching scope', () => {
     expect(screen.queryByText(/Leading option in this teaching model/)).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Dedicated crypto engineering team' }))
     fireEvent.click(screen.getByRole('button', { name: '> $1M / year' }))
-    expect(
-      screen.getByText(/Leading option in this teaching model: Commercial/)
-    ).toBeInTheDocument()
+    expect(screen.queryByText(/Leading eligible sample candidate/)).not.toBeInTheDocument()
+    expect(screen.getByText(/No assessed eligible leader/)).toBeInTheDocument()
     expect(screen.getByText('8', { exact: true })).toBeInTheDocument()
     expect(screen.getByText('6', { exact: true })).toBeInTheDocument()
     expect(screen.getByText('9', { exact: true })).toBeInTheDocument()
     expect(screen.getByText(/Hub-authored answer weights/)).toHaveTextContent(
-      'do not verify requirements, suitability or cost'
+      'do not verify real candidate capabilities or cost'
     )
     expect(screen.queryByText('Real-World Case Studies')).not.toBeInTheDocument()
   })

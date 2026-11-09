@@ -18,8 +18,10 @@ software, and keys.
 - A **single expired certificate** can cause an outage. This module's cost model uses an
   illustrative assumption of about **$11M** per outage and 86% annual incidence; these are the
   module's own assumptions, not sourced figures.
-- Forrester measured a **312% return** on automating certificate lifecycle management — pure
-  savings, unrelated to quantum.
+- A DigiCert-commissioned Forrester study **modeled a 312% return over three years** for a
+  composite programme combining several benefit types. This is not measured pure labour savings
+  or a promised return for another organisation. The workshop lets you compare explicit costs
+  and benefit assumptions, including a case without quantum-related benefits.
 
 ## How it's different from "crypto agility"
 

@@ -51,7 +51,7 @@ const PARTS: WorkshopPart[] = [
     id: 'aws-policy-lab',
     title: 'Step 6: AWS Policy Lab',
     description:
-      'Write and check an IAM policy that lets administrators create ML-DSA signing keys only, and see why post-quantum TLS is a client setting.',
+      'Check every CreateKey Allow path within this lab’s supported IAM sample fragment, and see why post-quantum TLS is a client setting.',
     icon: Lock,
   },
   {

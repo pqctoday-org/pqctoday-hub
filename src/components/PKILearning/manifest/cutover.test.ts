@@ -19,8 +19,22 @@ import {
 } from './derive'
 import golden from './__golden__/legacyMaps.golden.json'
 
+const historicalCryptoMgmtDescription =
+  'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.'
+const reviewedCryptoMgmtDescription =
+  'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative, with a business case tested against explicit costs, benefits and uncertainty.'
+
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
-  it('MODULE_CATALOG', () => expect(buildCatalog(MANIFESTS)).toEqual(golden.MODULE_CATALOG))
+  it('MODULE_CATALOG', () => {
+    // Retain the historical snapshot; only the reviewed conditional business-case
+    // description changes. All other catalogue fields remain guarded exactly.
+    const original = golden.MODULE_CATALOG['crypto-mgmt-modernization']
+    expect(original.description).toBe(historicalCryptoMgmtDescription)
+    expect(buildCatalog(MANIFESTS)).toEqual({
+      ...golden.MODULE_CATALOG,
+      'crypto-mgmt-modernization': { ...original, description: reviewedCryptoMgmtDescription },
+    })
+  })
   it('MODULE_STEP_COUNTS', () =>
     expect(buildStepCounts(MANIFESTS)).toEqual(golden.MODULE_STEP_COUNTS))
   it('LEARN_SECTIONS', () => expect(buildLearnSections(MANIFESTS)).toEqual(golden.LEARN_SECTIONS))
@@ -44,7 +58,17 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
     }
     expect(buildWorkshopSteps(MANIFESTS)).toEqual(expected)
   })
-  it('MODULE_TRACKS', () => expect(buildModuleTracks(MANIFESTS)).toEqual(golden.MODULE_TRACKS))
+  it('MODULE_TRACKS', () => {
+    const expected = golden.MODULE_TRACKS.map((track) => ({
+      ...track,
+      modules: track.modules.map((module) => {
+        if (module.id !== 'crypto-mgmt-modernization') return module
+        expect(module.description).toBe(historicalCryptoMgmtDescription)
+        return { ...module, description: reviewedCryptoMgmtDescription }
+      }),
+    }))
+    expect(buildModuleTracks(MANIFESTS)).toEqual(expected)
+  })
   it('MODULE_PLAYGROUND_TOOL', () =>
     expect(buildPlaygroundTools(MANIFESTS)).toEqual(golden.MODULE_PLAYGROUND_TOOL))
   it('MODULE_TAXONOMY', () => expect(buildTaxonomy(MANIFESTS)).toEqual(golden.MODULE_TAXONOMY))

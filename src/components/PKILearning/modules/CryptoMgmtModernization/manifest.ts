@@ -7,9 +7,9 @@ const manifest: ModuleManifest = {
   lm_id: 'LM-052',
   title: 'Cryptographic Management Modernization',
   description:
-    'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.',
+    'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative, with a business case tested against explicit costs, benefits and uncertainty.',
   whyThisMatters:
-    "A cryptographic posture management program pays for itself even if quantum computers never arrive — certificate outages and forgotten keys are today's incidents; PQC readiness is just the reason budget finally exists to fix it.",
+    'Certificate outages and unmanaged keys create present-day costs. Compare a management programme’s expected savings with its costs, including a case without quantum-related benefits; the return depends on scoped work and assumptions.',
   duration: '55 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p1',

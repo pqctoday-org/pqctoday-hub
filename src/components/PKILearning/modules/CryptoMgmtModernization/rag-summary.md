@@ -49,13 +49,15 @@ This is this module's own five-pillar model.
 ## No-regret ROI streams
 
 1. Cert-outage avoidance (illustrative assumption of this module: ~$11M/event × 86% annual incidence; not sourced figures).
-2. CLM automation (312% ROI, $10.1M NPV over 3 years — Forrester TEI of DigiCert ONE, July 2025; vendor-commissioned, treat as upper-bound benchmark).
+2. CLM automation labour: the editable starting benchmark is the commissioned Forrester study’s Year 1 renewal-labour cashflow ($2,639,569), scaled by the learner. Repetition in later years is the Hub’s constant-flow assumption. The study’s 312% ROI and $10.1M NPV describe its modeled composite programme over three years, not pure labour savings or an established upper bound.
 3. FIPS 140-3 drift remediation avoided.
 4. Library CVE response acceleration.
-5. Time-to-market and M&A readiness (illustrative assumption of this module: ~50% lower PQC
-   transition cost for orgs with a CryptoCOE before 2028; not a sourced figure).
+5. Time-to-market and M&A readiness: a fictional fixed transition-cost saving, spread over the
+   selected realization period. Its annual contribution stops after that period.
 
-Quantum-dependent benefits are additive, never load-bearing.
+The quantum case adds one probability-weighted benefit for a fixed stock of future records,
+counted once at the horizon end. Previously stolen copies cannot be retroactively protected.
+Whether either case has a positive return depends on the selected costs and assumptions.
 
 ## Workshop tools
 

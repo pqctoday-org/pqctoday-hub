@@ -31,12 +31,12 @@ vi.mock('../data/complianceFrameworks', () => {
 describe('Jurisdiction selection is not a control assessment', () => {
   it('changing region leaves implementation unknown even for an unflagged catalogue topic', () => {
     const { rerender } = render(<RegulatoryGapAssessment selectedJurisdictions={['sample-a']} />)
-    expect(screen.getByText('Implementation status: Not assessed')).toBeInTheDocument()
+    expect(screen.getByText('Catalogue implementation status: Not assessed')).toBeInTheDocument()
     expect(screen.queryByText('Met Requirements')).not.toBeInTheDocument()
     expect(screen.getByText('Other Review Topics')).toBeInTheDocument()
     rerender(<RegulatoryGapAssessment selectedJurisdictions={['sample-b']} />)
     expect(screen.getByText('Fictional region sample-b')).toBeInTheDocument()
-    expect(screen.getByText('Implementation status: Not assessed')).toBeInTheDocument()
+    expect(screen.getByText('Catalogue implementation status: Not assessed')).toBeInTheDocument()
     expect(screen.queryByText(/^\d+ met$/)).not.toBeInTheDocument()
   })
 })

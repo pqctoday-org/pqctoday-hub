@@ -144,7 +144,7 @@ export const CryptoMgmtModernizationModule: FC = () => {
   return (
     <ModuleShell
       manifest={manifest}
-      description="Build a modern cryptographic posture management program across certificates, libraries, software, and keys. Iterative. Measurable. ROI-positive even if quantum never arrives."
+      description="Build a modern cryptographic posture management program across certificates, libraries, software, and keys. Compare iterative management practices and a conditional business case, with and without quantum-related benefits."
       learnRaw={(api) => (
         <>
           <InPageToc containerRef={learnContentRef} mode="mobile" className="xl:hidden mb-3" />

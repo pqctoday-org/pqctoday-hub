@@ -7,7 +7,6 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
-import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 export type CoverageLevel = 0 | 1 | 2 | 3
 
@@ -160,38 +159,15 @@ export function computeMaturityScore(
 }
 
 export const ManagementToolsAudit: React.FC = () => {
-  const { myProducts, industry } = useExecutiveModuleData()
-  // Count /migrate products that sit in a management-tool layer (scanner, SIEM,
-  // CMDB, SBOM, zero-trust, inventory, PAM). Drives BOTH seeds below so the
-  // maturity headline and the coverage sliders tell the same story.
-  const productMgmt = myProducts.filter((p) =>
-    /(scanner|siem|cmdb|sbom|zero[- ]?trust|inventory|pam)/i.test(
-      `${p.softwareName} ${p.infrastructureLayer || ''}`
-    )
-  ).length
-  // Seed maturity from /migrate. A detected mgmt-tool product means the tool is
-  // *present* — seed Manual (1), not Partial, so the headline opens non-zero
-  // without overstating maturity. Previously this was hardcoded 0, which made
-  // the "Tool-chain completeness" headline read 0% while the coverage sliders
-  // below were seeded 25-75% — a contradiction.
-  const initLevels = () => {
-    const seed: CoverageLevel = productMgmt > 0 ? 1 : 0
-    return Object.fromEntries(TOOLS.map((t) => [t.id, seed])) as Record<string, CoverageLevel>
-  }
-  // Seed systems-coverage % from the same signal. No detected products → 0
-  // (honestly unseeded), not a fabricated 25% floor.
-  // Systems-coverage % is NEVER seeded. It used to be `min(75, 25 + n*10)`,
-  // so detecting one management product in /migrate asserted that 35% of the
-  // estate's systems were covered by it, and three products asserted 55%.
-  // There is no relationship between a product count and a coverage
-  // percentage — the number was invented and then displayed as if measured.
-  // Detecting a product tells us the tool EXISTS (which still seeds `levels`);
-  // how much of the estate it reaches is something only the user knows.
-  // (Audit 2026-08-10, W1-5.)
+  const { myProducts } = useExecutiveModuleData()
+  // A catalogue selection identifies a product to investigate, not an installed
+  // capability, operating mode or measured coverage. Start each fresh rating at
+  // None; learners enter each category's sample rating independently.
+  const initLevels = () => Object.fromEntries(TOOLS.map((t) => [t.id, 0 as CoverageLevel]))
   const initPct = () => Object.fromEntries(TOOLS.map((t) => [t.id, 0]))
 
   // Restore the last-saved audit so it round-trips instead of resetting to
-  // the /migrate-derived seed on every visit.
+  // a fresh unrated state on every visit.
   const savedInputs = useSavedArtifactInputs<{
     levels: Record<string, CoverageLevel>
     sysPct: Record<string, number>
@@ -203,7 +179,6 @@ export const ManagementToolsAudit: React.FC = () => {
   const [sysPct, setSysPct] = useState<Record<string, number>>(
     () => savedInputs?.sysPct ?? initPct()
   )
-  const [seedCleared, setSeedCleared] = useState(false)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
   const setLevel = (id: string, lvl: CoverageLevel) => setLevels((prev) => ({ ...prev, [id]: lvl }))
@@ -232,7 +207,7 @@ export const ManagementToolsAudit: React.FC = () => {
       'Reference reading: NIST CSWP.39 §5. The weights and display bands are Hub teaching heuristics, not NIST completeness thresholds.'
     )
     lines.push(
-      'Selected category ratings, including seeded assumptions, are not tested capabilities. Systems-coverage percentages are recorded separately and do not contribute to this rating; even 100% does not establish inventory coverage or implemented controls.'
+      'Selected category ratings are learner-entered sample assumptions, not tested capabilities. Systems-coverage percentages are recorded separately and do not contribute to this rating; even 100% does not establish inventory coverage or implemented controls.'
     )
     lines.push('')
     lines.push('## Coverage by tool category')
@@ -265,36 +240,25 @@ export const ManagementToolsAudit: React.FC = () => {
     return lines.join('\n')
   }, [levels, sysPct, completeness, gaps])
 
-  const seedSources: string[] = []
-  if (!seedCleared && !savedInputs) {
-    if (myProducts.length > 0)
-      seedSources.push(
-        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
-      )
-    if (industry) seedSources.push(`industry (${industry})`)
-  }
-
   return (
     <div className="space-y-6">
       {savedInputs && (
-        <PreFilledBanner summary="Restored your last saved audit — adjust the controls below to update it." />
+        <p role="status" className="text-sm text-foreground">
+          Restored your last saved audit — adjust the controls below to update it.
+        </p>
       )}
-      {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Illustrative category ratings seeded from ${seedSources.join(' + ')}.`}
-          onClear={() => {
-            setSysPct(Object.fromEntries(TOOLS.map((t) => [t.id, 0])))
-            setLevels(Object.fromEntries(TOOLS.map((t) => [t.id, 0 as CoverageLevel])))
-            setSeedCleared(true)
-          }}
-        />
+      {!savedInputs && myProducts.length > 0 && (
+        <p role="status" className="text-sm text-foreground">
+          {myProducts.length} selected catalogue product{myProducts.length === 1 ? '' : 's'}{' '}
+          available for your review. No implementation ratings or systems coverage inferred.
+        </p>
       )}
       <p className="text-sm text-muted-foreground">
         Explore discovery, assessment, configuration and enforcement tool capabilities using sample
-        ratings. A matched catalogue management product preselects Manual for every category as an
-        illustrative starting assumption, not evidence of those capabilities. Review each category
-        independently. Evaluate actual coverage, integration and test results with your production
-        tools; this exercise does not assess implemented controls or data completeness.
+        ratings. Catalogue selections do not preselect implementation ratings. Fresh categories
+        start at None with 0% systems coverage; enter each sample rating and coverage independently.
+        Evaluate actual coverage, integration and test results with your production tools; this
+        exercise does not assess implemented controls or data completeness.
       </p>
 
       {/* Tool coverage cards */}
@@ -303,7 +267,12 @@ export const ManagementToolsAudit: React.FC = () => {
           const lvl = levels[tool.id]
           const pct = sysPct[tool.id]
           return (
-            <div key={tool.id} className="bg-muted/40 rounded-lg p-4 border border-border">
+            <div
+              key={tool.id}
+              role="group"
+              aria-label={tool.name}
+              className="bg-muted/40 rounded-lg p-4 border border-border"
+            >
               <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -332,6 +301,7 @@ export const ManagementToolsAudit: React.FC = () => {
                         <Button
                           key={l}
                           variant={lvl === l ? 'gradient' : 'outline'}
+                          aria-pressed={lvl === l}
                           onClick={() => setLevel(tool.id, l)}
                           className="flex-1 py-0.5 text-[10px] font-bold h-7 min-w-0"
                         >
@@ -391,11 +361,11 @@ export const ManagementToolsAudit: React.FC = () => {
             it identically. Say so, rather than leaving a bare percentage. */}
         <p className="text-[11px] text-muted-foreground leading-relaxed">
           <strong className="text-foreground/80">How this is scored:</strong> each tool&apos;s
-          coverage level (None 0 → Automated 3) is multiplied by its importance to a PQC migration,
-          summed, and divided by the maximum possible weighted total. It is a weighted average, not
-          a plain one — the four foundational tools (crypto scanners, vulnerability management,
-          asset management, configuration management) each count three times as much as data
-          classification. Systems-coverage percentages are yours to enter; nothing seeds them,
+          selected category rating (None 0 → Automated 3) is multiplied by its importance to a PQC
+          migration, summed, and divided by the maximum possible weighted total. It is a weighted
+          average, not a plain one — the four foundational tools (crypto scanners, vulnerability
+          management, asset management, configuration management) each count three times as much as
+          data classification. Systems-coverage percentages are yours to enter; nothing seeds them,
           because a count of detected products says nothing about how much of your estate they
           reach. These percentages do not contribute to the headline rating: all categories set to
           Automated still score 100% with 0% systems coverage. Neither number verifies a capability.

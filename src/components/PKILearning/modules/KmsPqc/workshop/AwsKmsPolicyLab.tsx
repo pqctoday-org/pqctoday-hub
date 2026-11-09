@@ -18,7 +18,7 @@ const INITIAL_JSON = `{
   ]
 }`
 
-const SOLUTION = `    ,{
+const SIGNING_SOLUTION = `    ,{
       "Sid": "CreateMlDsaSigningKeysOnly",
       "Effect": "Allow",
       "Action": "kms:CreateKey",
@@ -29,8 +29,12 @@ const SOLUTION = `    ,{
           "kms:KeyUsage": "SIGN_VERIFY"
         }
       }
-    },
-    {
+    }`
+
+// Optional extra, kept apart from the signing-only solution: a second creation path
+// for key-establishment keys. It is recognised as the optional ML-KEM pattern, and it
+// stops the signing-only check from completing because that path is not a signing key.
+const ML_KEM_OPTIONAL = `    ,{
       "Sid": "CreateMlKemKeyEstablishmentKeysOnly",
       "Effect": "Allow",
       "Action": "kms:CreateKey",
@@ -47,11 +51,11 @@ export const AwsKmsPolicyLab: React.FC = () => {
   const [policyJson, setPolicyJson] = useState(INITIAL_JSON)
   const validation = useMemo(() => validateKmsPqcPolicy(policyJson), [policyJson])
 
-  const insertSnippet = () => {
+  const insertSnippet = (snippet: string) => {
     const insertPos = policyJson.lastIndexOf(']')
     if (insertPos !== -1) {
       setPolicyJson(
-        policyJson.substring(0, insertPos) + SOLUTION + '\n  ' + policyJson.substring(insertPos)
+        policyJson.substring(0, insertPos) + snippet + '\n  ' + policyJson.substring(insertPos)
       )
     }
   }
@@ -71,17 +75,24 @@ export const AwsKmsPolicyLab: React.FC = () => {
           <code>kms:KeyUsage</code> to be <code>SIGN_VERIFY</code>. The sample solution allows{' '}
           <code>ML_DSA_65</code> and <code>ML_DSA_87</code> and leaves out <code>ML_DSA_44</code>;
           that is a policy choice, so add <code>ML_DSA_44</code> if your policy needs the smallest
-          parameter set. Optional extra: the solution also allows ML-KEM key-establishment keys (
+          parameter set. The solution snippet is signing-only and completes the task. Optional
+          extra: a separate snippet adds a second creation path for ML-KEM key-establishment keys (
           <code>ML_KEM_768</code>, <code>ML_KEM_1024</code>) with key usage{' '}
-          <code>ENCAPSULATE_DECAPSULATE</code>.
+          <code>ENCAPSULATE_DECAPSULATE</code>. The optional pattern is detected on its own row, but
+          that path is not a signing key, so the signing-only check reports incomplete while it is
+          present; remove it to return to the signing-only result. Neither is an account-wide
+          permissions result.
         </p>
       </div>
 
       <div className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
-        Educational limitation: this checks selected patterns, not all condition keys or effective
-        permissions. In production, evaluate the full policy context with your provider's policy
-        tools and test both intended access and unintended grants. A green pattern check here is not
-        an authorization guarantee.
+        This local sample checks every CreateKey Allow path in the declared fragment. It supports
+        only Allow, literal kms:DescribeKey, kms:ListKeys, kms:TagResource and kms:CreateKey
+        actions, Resource * (or its one-element array), and one StringEquals or
+        StringEqualsIgnoreCase block using kms:KeySpec and kms:KeyUsage. Unsupported features remain
+        incomplete; they are not an AWS deny verdict. In production, use your provider’s tools to
+        evaluate the full policy/request context and test both intended access and unintended
+        grants.
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Editor */}
@@ -90,14 +101,24 @@ export const AwsKmsPolicyLab: React.FC = () => {
             <span className="font-mono text-xs flex items-center gap-2 min-w-0 truncate">
               <FileJson size={14} className="shrink-0" /> key-admin-iam-policy.json
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertSnippet}
-              className="h-6 text-[10px] px-2 shrink-0"
-            >
-              Insert Solution Snippet
-            </Button>
+            <div className="flex flex-wrap gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => insertSnippet(SIGNING_SOLUTION)}
+                className="h-6 text-[10px] px-2 shrink-0"
+              >
+                Insert Solution Snippet
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => insertSnippet(ML_KEM_OPTIONAL)}
+                className="h-6 text-[10px] px-2 shrink-0"
+              >
+                Insert optional ML-KEM snippet
+              </Button>
+            </div>
           </div>
           <textarea
             aria-label="key-admin-iam-policy.json editor"
@@ -112,21 +133,25 @@ export const AwsKmsPolicyLab: React.FC = () => {
         <div className="min-w-0 glass-panel p-6 flex flex-col justify-between h-[500px] overflow-y-auto">
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-              <Cloud size={20} /> Limited structure checks
+              <Cloud size={20} /> Declared sample subset check
             </h3>
 
             <div className="space-y-3">
               <ValidationRow label="Valid JSON syntax" isSuccess={validation.isValidJson} />
               <ValidationRow
-                label="An Allow statement names kms:CreateKey"
+                label="All features are in the declared sample subset"
+                isSuccess={validation.isSupportedSubset}
+              />
+              <ValidationRow
+                label="A supported Allow path names kms:CreateKey"
                 isSuccess={validation.allowsCreateKey}
               />
               <ValidationRow
-                label="ML-DSA KeySpec pattern found"
+                label="Every CreateKey Allow restricts KeySpec to ML-DSA"
                 isSuccess={validation.restrictsKeySpecToMlDsa}
               />
               <ValidationRow
-                label="SIGN_VERIFY usage pattern found"
+                label="Every CreateKey Allow requires SIGN_VERIFY"
                 isSuccess={validation.requiresSignVerify}
               />
               <ValidationRow
@@ -134,7 +159,7 @@ export const AwsKmsPolicyLab: React.FC = () => {
                 isSuccess={validation.usesOnlyRealConditionKeys}
               />
               <ValidationRow
-                label="Optional: ML-KEM KeySpec with ENCAPSULATE_DECAPSULATE usage found"
+                label="One optional ML-KEM creation pattern detected"
                 isSuccess={validation.allowsMlKemKeyEstablishment}
               />
             </div>
@@ -142,14 +167,15 @@ export const AwsKmsPolicyLab: React.FC = () => {
 
           <div className="mt-6">
             {validation.isComplete ? (
-              <div className="bg-success/10 border border-success/30 p-4 rounded-lg flex gap-3 text-success-foreground">
+              <div className="bg-success/10 border border-success/30 p-4 rounded-lg flex gap-3 text-foreground">
                 <ShieldCheck size={28} className="shrink-0 text-success" />
                 <div>
-                  <h4 className="font-bold text-md mb-1">Sample patterns found</h4>
+                  <h4 className="font-bold text-md mb-1">Sample constraints satisfied</h4>
                   <p className="text-sm opacity-90">
-                    These structural patterns do not prove effective permissions. An additional
-                    Allow statement could permit other key creation; this checker does not evaluate
-                    the complete permission context.
+                    All CreateKey Allow paths in this supported sample fragment require the selected
+                    ML-DSA signing-key conditions. This does not establish effective account
+                    permissions: other policies, principals, boundaries and request context are
+                    outside this sample.
                   </p>
                 </div>
               </div>
@@ -157,7 +183,7 @@ export const AwsKmsPolicyLab: React.FC = () => {
               <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex gap-3 text-status-error">
                 <ShieldAlert size={28} className="shrink-0" />
                 <div className="w-full">
-                  <h4 className="font-bold text-md mb-1">Not there yet</h4>
+                  <h4 className="font-bold text-md mb-1">Incomplete sample check</h4>
                   <p className="text-sm opacity-90">
                     {validation.errorMessage ?? 'The policy does not meet the task yet.'}
                   </p>
