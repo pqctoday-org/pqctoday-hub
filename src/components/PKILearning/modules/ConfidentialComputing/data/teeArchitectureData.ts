@@ -189,7 +189,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
       'Larger TCB than SGX (includes full guest OS)',
       'AES-128 memory encryption (Grover halves to 64-bit effective)',
       'VCEK certificate chain tied to AMD root — centralized trust',
-      'Performance overhead on memory-intensive workloads (~2-5%)',
+      'Performance overhead depends on the workload: a 2025 measurement study (Misono et al., SIGMETRICS 2025) averaged 7.29% on a memory benchmark suite and 16% on one large-VM machine-learning inference test (Intel TDX: 4.06% and 18%)',
     ],
     radarScores: { isolation: 4, encryption: 4, attestation: 4, cloud: 5, pqc: 2, maturity: 4 },
   },

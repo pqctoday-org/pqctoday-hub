@@ -860,6 +860,20 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </div>
             </div>
           </Link>
+          <Link
+            to="/learn/arch-quantum-impact?tab=workshop&step=5"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Layers size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">
+                Compare with the other trust hardware
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Side by side with TPMs, HSMs, DPUs and other roots of trust
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 
