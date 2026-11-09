@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import {
   MigrationVerification,
   verifiedCount,
@@ -50,7 +50,11 @@ describe('evidence field completeness', () => {
 })
 
 describe('decommissioning TNFL flag', () => {
-  const row = (kind: DecommissionRow['kind'], confirmed: boolean): DecommissionRow => ({
+  const row = (
+    kind: DecommissionRow['kind'],
+    confirmed: boolean,
+    trustWithdrawn?: boolean
+  ): DecommissionRow => ({
     id: 'd',
     material: 'root CA key',
     kind,
@@ -58,13 +62,23 @@ describe('decommissioning TNFL flag', () => {
     owner: '',
     method: 'SP 800-88 purge',
     confirmed,
+    trustWithdrawn,
   })
-  it('flags an unconfirmed signing-key retirement as a TNFL liability', () => {
+  it('flags a signing-key retirement as a TNFL liability until trust is withdrawn', () => {
     expect(isTnflLiability(row('signing-key', false))).toBe(true)
+    expect(isTnflLiability(row('signing-key', false, false))).toBe(true)
   })
-  it('does not flag a confirmed signing key, nor non-signing material', () => {
-    expect(isTnflLiability(row('signing-key', true))).toBe(false)
+  it('does not clear the flag when the private key is destroyed but verifiers still trust it', () => {
+    expect(isTnflLiability(row('signing-key', true))).toBe(true)
+    expect(isTnflLiability(row('signing-key', true, false))).toBe(true)
+  })
+  it('clears the flag once verifier trust is withdrawn, whether or not destruction is confirmed', () => {
+    expect(isTnflLiability(row('signing-key', false, true))).toBe(false)
+    expect(isTnflLiability(row('signing-key', true, true))).toBe(false)
+  })
+  it('does not flag non-signing material', () => {
     expect(isTnflLiability(row('certificate', false))).toBe(false)
+    expect(isTnflLiability(row('kek', true))).toBe(false)
   })
 })
 
@@ -114,6 +128,23 @@ describe('buildMarkdown', () => {
     )
     expect(md).toContain('while verifiers still trust its vulnerable public key')
     expect(md).not.toContain('liability — destroy per')
+    expect(md).toContain('| Destruction confirmed | Verifier trust withdrawn |')
+  })
+
+  it('keeps the TNFL warning in the export when the key is destroyed but trust is not withdrawn', () => {
+    const destroyed: VerifyState = {
+      ...state,
+      decommissions: [{ ...state.decommissions[0], confirmed: true }],
+    }
+    const md = buildMarkdown(destroyed)
+    expect(md).toMatch(/\| ✓ \| ⚠ TNFL liability \|/)
+    const withdrawn: VerifyState = {
+      ...state,
+      decommissions: [{ ...state.decommissions[0], confirmed: true, trustWithdrawn: true }],
+    }
+    const clean = buildMarkdown(withdrawn)
+    expect(clean).toMatch(/\| ✓ \| ✓ \|/)
+    expect(clean).not.toContain('⚠ TNFL liability')
   })
 })
 
@@ -146,5 +177,16 @@ describe('MigrationVerification (render smoke)', () => {
     expect(screen.queryByText('Verified', { exact: true })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Decommissioning log/ })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Closure & BAU handover/ })).toBeInTheDocument()
+  })
+
+  it('confirming destruction does not clear the TNFL flag; withdrawing trust does', () => {
+    const { container } = render(<MigrationVerification />)
+    expect(container.textContent).toContain('⚠ TNFL: verifiers still trust it')
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Destruction confirmed' }))
+    expect(container.textContent).toContain('destruction confirmed')
+    expect(container.textContent).toContain('⚠ TNFL: verifiers still trust it')
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Verifier trust withdrawn' }))
+    expect(container.textContent).not.toContain('⚠ TNFL: verifiers still trust it')
+    expect(container.textContent).toContain('trust withdrawn')
   })
 })

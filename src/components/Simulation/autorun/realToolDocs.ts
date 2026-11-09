@@ -543,6 +543,7 @@ function migrationVerificationState(sector: DemoSector): VerifyState {
         // practice for a root signing key.
         method: 'Witnessed HSM zeroization ceremony (logged)',
         confirmed: true,
+        trustWithdrawn: true,
       },
     ],
     closure: {
