@@ -19,3 +19,13 @@ function csvCell(value: string | number): string {
   const s = value === null || value === undefined ? '' : String(value)
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
 }
+
+/**
+ * Free text typed into a form can begin a spreadsheet formula (`=`, `+`, `-`,
+ * `@`, or a tab or carriage return that some programs skip). A leading
+ * apostrophe makes the spreadsheet read the cell as text. Use it for
+ * learner-typed cells; `rowsToCsv` quoting alone does not stop a formula.
+ */
+export function spreadsheetSafeText(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value
+}

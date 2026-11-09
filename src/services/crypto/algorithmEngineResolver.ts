@@ -19,8 +19,9 @@ export interface BenchmarkResult {
   keyGenMs: number
   signEncapsMs: number
   verifyDecapsMs: number
-  /** Runner key-size fields. RSA serialized measurements are unavailable;
+  /** Runner key-size fields. RSA encodings are named by rsaKeyEncoding;
    * other legacy branches may retain raw/reference-derived sizes. */
+  rsaKeyEncoding?: 'pkcs1-der'
   publicKeyBytes: number | null
   privateKeyBytes: number | null
   /** RSA parameter-derived values are not measurements of an encoded key. */
@@ -197,6 +198,7 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
   let publicKeyBytes: number | null = 0
   let privateKeyBytes: number | null = 0
   let keySizeEstimates: BenchmarkResult['keySizeEstimates']
+  let rsaKeyEncoding: BenchmarkResult['rsaKeyEncoding']
   let sigCiphertextBytes: number | null = null
   let sharedSecretBytes: number | null = null
   let keyGenMs = 0
@@ -317,9 +319,16 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     keyGenMs = timeMs(() => {
       rsaResult = softhsm.hsm_generateRSAKeyPair(mod, hSession, bits, true)
     })
-    // No serialized public/private artifact is extracted by this benchmark.
-    publicKeyBytes = null
-    privateKeyBytes = null
+    // Measure the actual generated public key and caller-serialized private CRT
+    // attributes. Neither hex/PEM text nor a modulus-derived estimate is counted.
+    const { readRsaPrivateKeyDer } = await import('./rsaKeyEncoding')
+    publicKeyBytes = softhsm.hsm_extractRSAPublicKeyDer(
+      mod,
+      hSession,
+      rsaResult!.pubHandle
+    ).byteLength
+    privateKeyBytes = readRsaPrivateKeyDer(mod, hSession, rsaResult!.privHandle).byteLength
+    rsaKeyEncoding = 'pkcs1-der'
     keySizeEstimates = {
       rsaModulusBytes: bits / 8,
       rsaPrivateHeuristicBytes: (bits / 8) * 2,
@@ -423,6 +432,7 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     publicKeyBytes,
     privateKeyBytes,
     ...(keySizeEstimates ? { keySizeEstimates } : {}),
+    ...(rsaKeyEncoding ? { rsaKeyEncoding } : {}),
     sigCiphertextBytes,
     sharedSecretBytes,
   }

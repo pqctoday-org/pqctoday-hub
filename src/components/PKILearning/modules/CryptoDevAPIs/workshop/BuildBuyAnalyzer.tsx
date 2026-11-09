@@ -8,6 +8,16 @@ import {
   type SourcingStrategy,
 } from '../data/buildBuyData'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import {
+  assessBuildBuy,
+  emptyCosts,
+  emptyFacts,
+  REQUIREMENTS,
+  sampleCostTotals,
+  workedComparison,
+  type SampleFact,
+} from './buildBuyAssessment'
 
 const STRATEGY_COLORS: Record<SourcingStrategy, { bg: string; border: string; text: string }> = {
   build: { bg: 'bg-status-error/10', border: 'border-status-error/40', text: 'text-status-error' },
@@ -29,33 +39,16 @@ const IMPACT_COLORS = {
   low: 'text-status-success',
 }
 
-type ScoresMap = Record<SourcingStrategy, number>
-
 export const BuildBuyAnalyzer: React.FC = () => {
   const [answers, setAnswers] = useState<Record<string, number>>({})
+  const [facts, setFacts] = useState(emptyFacts)
+  const [costs, setCosts] = useState(emptyCosts)
   const [expandedStrategies, setExpandedStrategies] = useState<Set<SourcingStrategy>>(new Set())
   const [expandedCases, setExpandedCases] = useState<Set<string>>(new Set())
-
-  const scores: ScoresMap = useMemo(() => {
-    const s: ScoresMap = { build: 5, 'open-source': 5, commercial: 5 }
-    Object.entries(answers).forEach(([qId, optionIdx]) => {
-      const q = WIZARD_QUESTIONS.find((q) => q.id === qId)
-      if (!q) return
-      const opt = q.options[optionIdx]
-      if (!opt) return
-      ;(Object.keys(opt.weights) as SourcingStrategy[]).forEach((k) => {
-        s[k] += opt.weights[k]
-      })
-    })
-    return s
-  }, [answers])
-
-  const totalAnswered = Object.keys(answers).length
+  const assessment = useMemo(() => assessBuildBuy(answers, facts), [answers, facts])
+  const { scores, eligibility, leaders, contributions } = assessment
+  const totalAnswered = assessment.answered
   const totalQuestions = WIZARD_QUESTIONS.length
-  const maxScore = Math.max(...Object.values(scores))
-  const recommendation = (Object.keys(scores) as SourcingStrategy[]).find(
-    (k) => scores[k] === maxScore
-  )
 
   const toggleStrategy = (id: SourcingStrategy) =>
     setExpandedStrategies((prev) => {
@@ -174,6 +167,120 @@ export const BuildBuyAnalyzer: React.FC = () => {
         </div>
       </div>
 
+      <div className="glass-panel p-4 space-y-3">
+        <h3 className="font-bold text-foreground">
+          Fictional candidate assumptions and worked costs
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          These editable facts describe fictional candidates, not properties inferred from a
+          sourcing category or proof about a real product. A selected mandatory requirement must be
+          recorded Yes for a candidate to lead; No blocks it and Unknown remains unassessed. Answer
+          all three requirement questions (validation, portability and source access).
+        </p>
+        <Button
+          variant="outline"
+          className="h-auto whitespace-normal"
+          onClick={() => {
+            const example = workedComparison()
+            setAnswers(example.answers)
+            setFacts(example.facts)
+            setCosts(example.costs)
+          }}
+        >
+          Load fictional worked comparison
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Worked case: the in-house candidate has not completed validation; the open-source
+          candidate is assumed to meet all three requirements; the commercial candidate is assumed
+          to lack required portability and source access. Change these assumptions for another
+          sample. They are not vendor or certification claims.
+        </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {SOURCING_STRATEGIES.map((strategy) => {
+            const totals = sampleCostTotals(costs[strategy.id])
+            return (
+              <fieldset
+                key={strategy.id}
+                className="min-w-0 border border-border rounded-lg p-3 space-y-3"
+              >
+                <legend className="px-1 font-semibold">{strategy.name} candidate</legend>
+                {REQUIREMENTS.map((requirement) => (
+                  <div key={requirement.id} className="text-sm">
+                    <span>{requirement.label}</span>
+                    <FilterDropdown
+                      ariaLabel={`${strategy.name} ${requirement.label} assumption`}
+                      className="mt-1 w-full"
+                      selectedId={facts[strategy.id][requirement.id]}
+                      items={[
+                        { id: 'unknown', label: 'Unknown' },
+                        { id: 'yes', label: 'Yes' },
+                        { id: 'no', label: 'No' },
+                      ]}
+                      onSelect={(value) =>
+                        setFacts((current) => ({
+                          ...current,
+                          [strategy.id]: {
+                            ...current[strategy.id],
+                            [requirement.id]: value as SampleFact,
+                          },
+                        }))
+                      }
+                      noContainer
+                      hideDefaultOption
+                    />
+                  </div>
+                ))}
+                {(['setup', 'annual'] as const).map((field) => (
+                  <label key={field} className="block text-sm">
+                    {field === 'setup' ? 'One-time setup (USD)' : 'Annual recurring cost (USD)'}
+                    <input
+                      type="number"
+                      min="0"
+                      step="any"
+                      aria-label={`${strategy.name} ${field} cost`}
+                      className="mt-1 w-full min-w-0 rounded border border-border bg-background p-2"
+                      value={
+                        field === 'setup' ? costs[strategy.id].setup : costs[strategy.id].annual
+                      }
+                      onChange={(event) =>
+                        setCosts((current) => ({
+                          ...current,
+                          [strategy.id]: { ...current[strategy.id], [field]: event.target.value },
+                        }))
+                      }
+                    />
+                  </label>
+                ))}
+                <div className="space-y-1 text-sm">
+                  {[1, 3, 5].map((year, index) => (
+                    <div key={year} className="flex justify-between gap-2 flex-wrap">
+                      <span>Year {year} sample total</span>
+                      <output aria-label={`${strategy.name} Year ${year} sample cost`}>
+                        {totals
+                          ? new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: 'USD',
+                              maximumFractionDigits: 2,
+                            }).format(totals.at(index)!)
+                          : 'Unassessed'}
+                      </output>
+                    </div>
+                  ))}
+                </div>
+              </fieldset>
+            )
+          })}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Sample arithmetic: setup once + years × annual recurring cost, for 1, 3 and 5 completed
+          years. No discounting, tax or inflation. Zero is valid; missing or invalid costs are
+          unassessed. These totals are separate from the authored TCO ranges above and do not change
+          the preference weights or establish affordability. For your own tools, check the actual
+          validation boundary/configuration, portability and source-access terms, and build a costed
+          work plan with your own quantities and rates.
+        </p>
+      </div>
+
       {/* Scoring Wizard */}
       <div className="glass-panel p-4">
         <h3 className="font-bold text-foreground mb-4">Decision Wizard</h3>
@@ -190,7 +297,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
                     onClick={() => {
                       setAnswers((prev) => ({ ...prev, [q.id]: idx }))
                     }}
-                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                    className={`h-auto min-w-0 max-w-full whitespace-normal text-left text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                       answers[q.id] === idx
                         ? 'border-primary text-primary bg-primary/10'
                         : 'border-border text-muted-foreground hover:border-primary/50'
@@ -211,8 +318,8 @@ export const BuildBuyAnalyzer: React.FC = () => {
               Illustrative weighted scores ({totalAnswered}/{totalQuestions} answered)
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Hub-authored answer weights compare options for discussion; these scores do not verify
-              requirements, suitability or cost.
+              Hub-authored answer weights compare options for discussion. Eligibility screens only
+              the entered fictional facts; scores do not verify real candidate capabilities or cost.
             </p>
             <div className="space-y-2">
               {(Object.entries(scores) as [SourcingStrategy, number][]).map(([strategy, score]) => {
@@ -240,19 +347,76 @@ export const BuildBuyAnalyzer: React.FC = () => {
                 )
               })}
             </div>
-            {recommendation && totalAnswered >= 3 && (
-              <div
-                className={`mt-3 p-3 rounded-lg border ${STRATEGY_COLORS[recommendation].border} ${STRATEGY_COLORS[recommendation].bg}`}
-              >
+            <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+              {SOURCING_STRATEGIES.map((strategy) => {
+                const result = eligibility[strategy.id]
+                return (
+                  <div
+                    key={strategy.id}
+                    role="status"
+                    aria-label={`${strategy.name} sample eligibility`}
+                    className="rounded border border-border p-3 text-sm"
+                  >
+                    <strong>
+                      {strategy.name}:{' '}
+                      {result.status === 'eligible'
+                        ? 'Eligible for this sample'
+                        : result.status === 'ineligible'
+                          ? 'Not eligible for this sample'
+                          : 'Unassessed'}
+                    </strong>
+                    {result.failed.length > 0 && <p>Not met: {result.failed.join('; ')}</p>}
+                    {result.unknown.length > 0 && <p>Unassessed: {result.unknown.join('; ')}</p>}
+                  </div>
+                )
+              })}
+            </div>
+            {leaders.length > 0 ? (
+              <div className="mt-3 rounded border border-primary/30 bg-primary/10 p-3">
                 <div className="font-bold text-sm text-foreground">
-                  Leading option in this teaching model:{' '}
-                  {SOURCING_STRATEGIES.find((s) => s.id === recommendation)?.name}
+                  {leaders.length === 1
+                    ? 'Leading eligible sample candidate'
+                    : 'Joint leading eligible sample candidates'}
+                  :{' '}
+                  {leaders
+                    .map((id) => SOURCING_STRATEGIES.find((strategy) => strategy.id === id)!.name)
+                    .join(', ')}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {SOURCING_STRATEGIES.find((s) => s.id === recommendation)?.description}
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Highest score among assessed eligible candidates for the {totalAnswered} answered
+                  questions. Unassessed candidates are not a confirmed comparison; this is not a
+                  procurement approval.
                 </p>
               </div>
+            ) : (
+              <p role="status" className="mt-3 text-sm text-muted-foreground">
+                No assessed eligible leader. Complete the requirement questions and selected
+                candidate assumptions; failed requirements cannot be compensated by preference
+                points.
+              </p>
             )}
+            <details className="mt-3 text-sm">
+              <summary className="cursor-pointer font-semibold">
+                Inspect selected answer contributions
+              </summary>
+              <p className="my-2">
+                Each strategy starts at 5 points. Add the unchanged authored weights below.
+              </p>
+              <ul className="space-y-2">
+                {contributions.map((row) => (
+                  <li key={row.questionId}>
+                    <strong>{row.question}</strong> {row.option}
+                    <div>
+                      Build {row.weights.build >= 0 ? '+' : ''}
+                      {row.weights.build}; Open Source {row.weights['open-source'] >= 0 ? '+' : ''}
+                      {row.weights['open-source']}; Commercial{' '}
+                      {row.weights.commercial >= 0 ? '+' : ''}
+                      {row.weights.commercial}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </details>
           </div>
         )}
       </div>

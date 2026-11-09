@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11072026.csv
+ * Source: src/data/role_board_content_11082026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1448 documents, trust-tiered',
+          '1495 documents, trust-tiered',
           'Regulatory data verified 7 Nov 2026',
         ],
         sideCard: {
@@ -167,7 +167,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1448 documents, trust-tiered',
+          '1495 documents, trust-tiered',
           'Regulatory data verified 7 Nov 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -306,7 +306,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1448 documents, trust-tiered',
+          '1495 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -448,7 +448,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1448 documents, trust-tiered', 'Regulatory data verified 7 Nov 2026'],
+        proofChips: ['1495 documents, trust-tiered', 'Regulatory data verified 7 Nov 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -520,7 +520,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1448 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1495 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -664,7 +664,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1448 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1495 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -734,7 +734,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1448 documents, trust-tiered', 'Regulatory data verified 7 Nov 2026'],
+        proofChips: ['1495 documents, trust-tiered', 'Regulatory data verified 7 Nov 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -1210,11 +1210,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             "The closure tool checks against the framework's own five-point evidence standard, not a checklist we invented.",
         },
         gridTitle: 'What you walk out with',
-        gridSub: 'Evidence a reviewer will take',
+        gridSub: 'Sample checks and planning resources',
         gridCards: [
           {
-            title: 'The report the closure feeds',
-            body: 'A worked example of the generated report, before you run an assessment of your own.',
+            title: 'Sample assessment report',
+            body: 'Explore a sample risk and planning report generated from assessment answers. Use the separately linked closure tool to practice recording migration-check references.',
             href: '/report?example=1',
           },
           {
@@ -1384,7 +1384,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 20 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
 
         trackChips: [
           'PQC 101',
@@ -1461,7 +1461,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 20 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
 
         trackChips: [
           'PQC 101',
@@ -1539,7 +1539,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 20 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
 
         trackChips: [
           'PQC 101',
@@ -1620,7 +1620,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 20 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
 
         trackChips: [
           'PQC 101',
@@ -1697,7 +1697,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 20 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
 
         trackChips: [
           'PQC 101',
@@ -1774,7 +1774,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 20 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
 
         trackChips: [
           'PQC 101',
@@ -2192,7 +2192,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
 
         headline: '“It looks fine” is not a closure record.',
         sub: 'Negotiated suites verified per endpoint, monitoring that would notice a silent downgrade, and a closure report you can attach to the change ticket.',
-        ctaPrimary: 'See a finished closure report',
+        ctaPrimary: 'Explore a sample assessment report',
         ctaPrimaryHref: '/report?example=1',
         ctaSecondary: 'Record the closure evidence',
         ctaSecondaryHref: '/business/tools/migration-verification',
@@ -2212,7 +2212,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'If your monitoring cannot see a downgrade, you did not migrate.',
           footnote:
-            'The example report is generated from sample answers — your own numbers replace them once you run an assessment.',
+            'The sample assessment report illustrates risk and planning from sample answers. It is separate from migration checks and the educational closure-reference tool linked here.',
         },
         gridTitle: 'Where the evidence lives',
         gridSub: 'Evidence, not an assertion',
@@ -2509,7 +2509,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1448 documents, trust-tiered',
+          '1495 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {

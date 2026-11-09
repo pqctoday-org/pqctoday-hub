@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, useEffect, useId } from 'react'
 import { ChevronDown, ChevronUp, Lock, Target } from 'lucide-react'
 import { ExportableArtifact } from './ExportableArtifact'
-import { rowsToCsv } from '@/services/export/csvExport'
+import { rowsToCsv, spreadsheetSafeText } from '@/services/export/csvExport'
 import { Button } from '@/components/ui/button'
-import { scoredWeightShare } from './scorecardCoverage'
+import {
+  scoredWeightShare,
+  effectiveScorecardWeight,
+  isReadinessDimension,
+} from './scorecardCoverage'
 import {
   currentKpiValueOrigin,
   kpiValueOriginLabel,
@@ -13,6 +17,14 @@ import {
   restoredKpiValueOrigins,
   isKpiValueAssessed,
 } from './scorecardValueOrigin'
+import {
+  REPORTED_PERCENT_MAX,
+  parseReportedPercent,
+  reportedPercentMessage,
+  reportingOnlyScoreCell,
+  reportingOnlyStatus,
+  withoutNeverEnteredReportingScores,
+} from './reportingOnlyMeasure'
 
 export interface ScorecardDimension {
   id: string
@@ -23,6 +35,8 @@ export interface ScorecardDimension {
   valueSource?: KpiValueSource
   userOverride?: boolean
   weight: number
+  /** Raw reporting measure, excluded even when a saved weight override exists. */
+  reportingOnly?: boolean
   maxScore?: number
   /** When true, render dimension as disabled with `disabledReason`. Excluded from weighted sum. */
   disabled?: boolean
@@ -49,6 +63,7 @@ export interface ScorecardObservation {
   denominator?: string
   unit?: string
   reportingPeriod?: string
+  scope?: string
   asOfDate?: string
   owner?: string
   evidenceReference?: string
@@ -133,11 +148,18 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   observations = {},
   onObservationChange,
 }) => {
-  const [loadedSavedScores] = useState(() => initialScores)
+  const uid = useId()
+  // A default 0 that older saves wrote for a reporting-only measure nobody entered
+  // restores as missing, not as an entered 0%.
+  const [loadedSavedScores] = useState(() =>
+    withoutNeverEnteredReportingScores(dimensions, initialScores, initialValueOrigins)
+  )
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {}
     for (const d of dimensions) {
-      initial[d.id] = initialScores?.[d.id] ?? d.autoScore ?? 0
+      if (!d.reportingOnly || loadedSavedScores?.[d.id] !== undefined) {
+        initial[d.id] = loadedSavedScores?.[d.id] ?? d.autoScore ?? 0
+      }
     }
     return initial
   })
@@ -147,7 +169,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   )
   const [showWeights, setShowWeights] = useState(false)
   const [valueOrigins, setValueOrigins] = useState<Record<string, KpiValueOrigin>>(() =>
-    restoredKpiValueOrigins(initialScores, initialValueOrigins)
+    restoredKpiValueOrigins(loadedSavedScores, initialValueOrigins)
   )
   const valueOrigin = useCallback(
     (d: ScorecardDimension) => {
@@ -230,9 +252,13 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
 
   const handleScoreChange = useCallback(
     (dimId: string, value: number) => {
-      const clamped = Math.max(0, Math.min(100, value))
-      userOverriddenRef.current.add(dimId)
+      if (!Number.isFinite(value)) return
       const dimension = dimensions.find((d) => d.id === dimId)
+      // An out-of-range reporting figure is rejected by the field before it gets
+      // here; never turn one into a stored 0 by clamping.
+      if (dimension?.reportingOnly && (value < 0 || value > REPORTED_PERCENT_MAX)) return
+      const clamped = dimension?.reportingOnly ? value : Math.max(0, Math.min(100, value))
+      userOverriddenRef.current.add(dimId)
       setValueOrigins((prev) => ({
         ...prev,
         [dimId]: dimension?.valueSource === 'calculated' ? 'learner-override' : 'learner-entered',
@@ -245,9 +271,77 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     [onScoreChange, scores, dimensions]
   )
 
+  // Reported-percent field. The text being typed is held as a draft, so a keystroke
+  // that is not yet a number (".", "-", the "e" of "1e3") or that is refused never
+  // rewrites the box under the typist. The draft is dropped on blur and the box
+  // shows what is stored.
+  const [reportedDrafts, setReportedDrafts] = useState<Record<string, string>>({})
+  // Why the field last refused what was typed, by dimension id.
+  const [reportedErrors, setReportedErrors] = useState<Record<string, string>>({})
+  const handleReportedInput = useCallback(
+    (d: ScorecardDimension, input: HTMLInputElement) => {
+      const text = input.value
+      const setDraft = (draft: string) =>
+        setReportedDrafts((prev) => ({
+          ...Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id)),
+          [d.id]: draft,
+        }))
+      const showError = (message: string | undefined) =>
+        setReportedErrors((prev) => {
+          const without = Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id))
+          return message === undefined ? without : { ...without, [d.id]: message }
+        })
+      setDraft(text)
+      if (text === '') {
+        // A browser reports half-typed number text such as "." or "-", and an
+        // exponent that overflows, as an empty value with badInput set. That is not a
+        // clear: leave the stored value alone and judge the entry when it is finished.
+        if (input.validity?.badInput) return
+        showError(undefined)
+        // Cleared means never entered again: not a recorded edit.
+        userOverriddenRef.current.delete(d.id)
+        setUserOverridden((prev) => {
+          if (!prev.has(d.id)) return prev
+          const touched = new Set(prev)
+          touched.delete(d.id)
+          return touched
+        })
+        const next = Object.fromEntries(Object.entries(scores).filter(([id]) => id !== d.id))
+        setScores(next)
+        setValueOrigins((prev) => ({ ...prev, [d.id]: currentKpiValueOrigin(d, false) }))
+        onScoreChange?.(next)
+        return
+      }
+      const parsed = parseReportedPercent(text)
+      if (!parsed.ok) {
+        showError(reportedPercentMessage(scores[d.id] !== undefined))
+        return
+      }
+      showError(undefined)
+      handleScoreChange(d.id, parsed.value)
+    },
+    [scores, onScoreChange, handleScoreChange]
+  )
+  const handleReportedBlur = useCallback(
+    (d: ScorecardDimension, input: HTMLInputElement) => {
+      // Read the box now: the updaters below run after the draft is dropped.
+      const unfinished = input.value === '' && Boolean(input.validity?.badInput)
+      const hasStoredValue = scores[d.id] !== undefined
+      setReportedDrafts((prev) =>
+        Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id))
+      )
+      setReportedErrors((prev) => {
+        const without = Object.fromEntries(Object.entries(prev).filter(([id]) => id !== d.id))
+        // Empty again: nothing is left to correct, so no stale alert.
+        if (!hasStoredValue) return without
+        return unfinished ? { ...without, [d.id]: reportedPercentMessage(true) } : prev
+      })
+    },
+    [scores]
+  )
+
   const effectiveWeight = useCallback(
-    (d: ScorecardDimension): number =>
-      d.id in weightOverrides ? (weightOverrides[d.id] ?? 0) : d.weight,
+    (d: ScorecardDimension): number => effectiveScorecardWeight(d, weightOverrides),
     [weightOverrides]
   )
 
@@ -274,7 +368,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     let totalWeight = 0
     let weightedSum = 0
     for (const d of dimensions) {
-      if (d.disabled || isPending(d)) continue
+      if (!isReadinessDimension(d) || isPending(d)) continue
       const score = scores[d.id] ?? 0
       const w = effectiveWeight(d)
       weightedSum += score * w
@@ -315,6 +409,11 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       const lineage = ` | ${originLabel(d)} | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
       if (d.disabled) {
         md += `| ${d.label} | _disabled — ${d.disabledReason ?? 'no data'}_ | ${Math.round(effectiveWeight(d) * 100)}%${hasTargets ? ' | —' : ''}${lineage}\n`
+        continue
+      }
+      if (d.reportingOnly) {
+        md += `| ${d.label} | ${reportingOnlyScoreCell(scores[d.id], isPending(d))} | 0%${hasTargets ? ' | —' : ''}${lineage}\n`
+        md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; scope: ${observation?.scope?.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ') || 'Unknown'}; as of ${observation?.asOfDate || 'not provided'}.\n`
         continue
       }
       const target = hasTargets ? ` | ${d.target !== undefined ? `${d.target}` : '—'}` : ''
@@ -365,13 +464,14 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       'Original saved snapshot value',
       'Current-use status',
       'Included in overall calculation',
+      'Scope',
     ]
     const rows = dimensions.map((d) => {
       const observation = observations[d.id]
       return [
         d.id,
         d.label,
-        d.disabled || isPending(d) ? '' : String(scores[d.id] ?? 0),
+        !isReadinessDimension(d) || isPending(d) ? '' : String(scores[d.id] ?? 0),
         (effectiveWeight(d) * 100).toFixed(0),
         d.target ?? '',
         d.disabled ? 'true' : 'false',
@@ -385,14 +485,17 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         observation?.owner ?? '',
         observation?.evidenceReference ?? '',
         observation?.verificationState ?? 'not-verified',
-        String(scores[d.id] ?? 0),
+        d.reportingOnly && scores[d.id] === undefined ? '' : String(scores[d.id] ?? 0),
         loadedSavedScores?.[d.id] ?? '',
-        d.disabled
-          ? 'Required inputs unavailable'
-          : isPending(d)
-            ? 'Not assessed for current use'
-            : 'Assessed sample value',
-        d.disabled || isPending(d) ? 'false' : 'true',
+        d.reportingOnly
+          ? reportingOnlyStatus(scores[d.id], isPending(d))
+          : d.disabled
+            ? 'Required inputs unavailable'
+            : isPending(d)
+              ? 'Not assessed for current use'
+              : 'Assessed sample value',
+        !isReadinessDimension(d) || isPending(d) ? 'false' : 'true',
+        spreadsheetSafeText(observation?.scope ?? ''),
       ]
     })
     return rowsToCsv([header, ...rows])
@@ -457,10 +560,12 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                     value={Math.round(effectiveWeight(d) * 100)}
                     onChange={(e) => handleWeightChange(d.id, parseInt(e.target.value, 10) / 100)}
                     className="flex-1 accent-primary"
-                    disabled={d.disabled}
+                    disabled={d.disabled || d.reportingOnly}
                   />
                   <span className="w-12 text-right font-mono">
-                    {Math.round(effectiveWeight(d) * 100)}%
+                    {d.reportingOnly
+                      ? 'Reporting only'
+                      : `${Math.round(effectiveWeight(d) * 100)}%`}
                   </span>
                 </div>
               ))}
@@ -519,60 +624,112 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
             >
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="text-sm font-medium text-foreground">{d.label}</p>
+                  <p id={`${uid}-${d.id}-title`} className="text-sm font-medium text-foreground">
+                    {d.label}
+                  </p>
                   <p className="text-xs text-muted-foreground">{d.description}</p>
                   <p className="text-[11px] text-muted-foreground mt-1">Origin: {originLabel(d)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {pending ? (
                     <span className="text-xs italic text-muted-foreground">
-                      {initialScores?.[d.id] !== undefined
-                        ? `Saved value: ${score} — current use not assessed`
-                        : 'Not yet scored'}
+                      {scores[d.id] !== undefined && initialScores?.[d.id] !== undefined
+                        ? `Saved value: ${score}${d.reportingOnly ? '%' : ''} — current use not assessed`
+                        : d.reportingOnly
+                          ? 'Unknown'
+                          : 'Not yet scored'}
                     </span>
                   ) : (
-                    <span className={`text-lg font-bold ${getScoreColor(score, colorScale)}`}>
+                    <span
+                      className={`text-lg font-bold ${d.reportingOnly ? 'text-foreground' : getScoreColor(score, colorScale)}`}
+                    >
                       {score}
+                      {d.reportingOnly ? '%' : ''}
                     </span>
                   )}
-                  <span className="text-xs text-muted-foreground">({weightPct}%)</span>
+                  <span className="text-xs text-muted-foreground">
+                    {d.reportingOnly ? 'Reporting only' : `(${weightPct}%)`}
+                  </span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden relative">
-                  <div
-                    className={`h-full rounded-full transition-all duration-300 ${pending ? 'bg-muted-foreground/30' : getBarColor(score, colorScale)}`}
-                    style={{ width: `${score}%` }}
+              {d.reportingOnly ? (
+                <div className="text-xs text-muted-foreground">
+                  <label
+                    id={`${uid}-${d.id}-label`}
+                    htmlFor={`${uid}-${d.id}-input`}
+                    className="block"
+                  >
+                    Reported utilization (%) — excluded from readiness
+                  </label>
+                  <input
+                    id={`${uid}-${d.id}-input`}
+                    type="number"
+                    min="0"
+                    max={REPORTED_PERCENT_MAX}
+                    step="any"
+                    aria-labelledby={`${uid}-${d.id}-title ${uid}-${d.id}-label`}
+                    aria-describedby={
+                      reportedErrors[d.id]
+                        ? `${uid}-${d.id}-period ${uid}-${d.id}-error`
+                        : `${uid}-${d.id}-period`
+                    }
+                    aria-invalid={reportedErrors[d.id] ? true : undefined}
+                    value={reportedDrafts[d.id] ?? scores[d.id] ?? ''}
+                    onChange={(event) => handleReportedInput(d, event.currentTarget)}
+                    onBlur={(event) => handleReportedBlur(d, event.currentTarget)}
+                    className="mt-1 block w-32 rounded border border-border bg-background p-2"
                   />
-                  {d.target !== undefined && (
+                  <span id={`${uid}-${d.id}-period`} className="mt-1 block">
+                    Period: {observations[d.id]?.reportingPeriod || 'Unknown'} · Scope:{' '}
+                    {observations[d.id]?.scope || 'Unknown'}
+                  </span>
+                  {reportedErrors[d.id] && (
+                    <span
+                      id={`${uid}-${d.id}-error`}
+                      role="alert"
+                      className="mt-1 block text-status-error"
+                    >
+                      {reportedErrors[d.id]}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden relative">
                     <div
-                      className="absolute top-[-2px] bottom-[-2px] w-0.5 bg-foreground/70"
-                      style={{ left: `${d.target}%` }}
-                      title={d.targetLabel ?? `Target: ${d.target}`}
-                      data-testid={`kpi-target-${d.id}`}
+                      className={`h-full rounded-full transition-all duration-300 ${pending ? 'bg-muted-foreground/30' : getBarColor(score, colorScale)}`}
+                      style={{ width: `${score}%` }}
+                    />
+                    {d.target !== undefined && (
+                      <div
+                        className="absolute top-[-2px] bottom-[-2px] w-0.5 bg-foreground/70"
+                        style={{ left: `${d.target}%` }}
+                        title={d.targetLabel ?? `Target: ${d.target}`}
+                        data-testid={`kpi-target-${d.id}`}
+                      />
+                    )}
+                  </div>
+                  {d.target !== undefined && (
+                    <Target
+                      size={12}
+                      className="text-muted-foreground"
+                      aria-label={`Example target ${d.target}`}
+                    />
+                  )}
+                  {d.userOverride !== false && (
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={score}
+                      onChange={(e) => handleScoreChange(d.id, parseInt(e.target.value))}
+                      className="w-24 accent-primary"
+                      aria-label={`${d.label} score`}
                     />
                   )}
                 </div>
-                {d.target !== undefined && (
-                  <Target
-                    size={12}
-                    className="text-muted-foreground"
-                    aria-label={`Example target ${d.target}`}
-                  />
-                )}
-                {d.userOverride !== false && (
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={score}
-                    onChange={(e) => handleScoreChange(d.id, parseInt(e.target.value))}
-                    className="w-24 accent-primary"
-                    aria-label={`${d.label} score`}
-                  />
-                )}
-              </div>
-              {pending && (
+              )}
+              {pending && (!d.reportingOnly || scores[d.id] !== undefined) && (
                 <div className="mt-2 flex flex-wrap gap-2">
                   {d.userOverride !== false && (
                     <Button
@@ -610,6 +767,25 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                   Sample measure notes
                 </summary>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {d.reportingOnly && (
+                    <label className="space-y-1 text-xs text-muted-foreground">
+                      <span>Reporting scope</span>
+                      <input
+                        type="text"
+                        value={observations[d.id]?.scope ?? ''}
+                        onChange={(event) =>
+                          onObservationChange?.(d.id, {
+                            ...observations[d.id],
+                            verificationState:
+                              observations[d.id]?.verificationState ?? 'not-verified',
+                            scope: event.target.value,
+                          })
+                        }
+                        placeholder="Fictional programme or service"
+                        className="block w-full rounded border border-border bg-background p-2"
+                      />
+                    </label>
+                  )}
                   {(
                     [
                       ['numerator', 'Numerator', 'Completed or conforming items'],
@@ -630,7 +806,13 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                       <input
                         type={field === 'asOfDate' ? 'date' : 'text'}
                         value={observations[d.id]?.[field] ?? ''}
-                        placeholder={placeholder}
+                        placeholder={
+                          d.reportingOnly && field === 'numerator'
+                            ? 'Actual spend'
+                            : d.reportingOnly && field === 'denominator'
+                              ? 'Approved budget'
+                              : placeholder
+                        }
                         onChange={(event) =>
                           onObservationChange?.(d.id, {
                             ...observations[d.id],
@@ -667,9 +849,11 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                   </label>
                 </div>
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  The slider is an illustrative 0–100 value. These optional fictional measure notes
-                  and review labels do not affect scored-value coverage. The Hub does not verify
-                  them or assess a deployed system.
+                  {d.reportingOnly
+                    ? 'The raw reported percent may exceed 100 and is independent of the optional actual-spend and approved-budget notes; the Hub does not calculate or verify their consistency.'
+                    : 'The slider is an illustrative 0–100 value.'}{' '}
+                  These optional fictional measure notes and review labels do not affect
+                  scored-value coverage. The Hub does not verify them or assess a deployed system.
                 </p>
               </details>
             </div>

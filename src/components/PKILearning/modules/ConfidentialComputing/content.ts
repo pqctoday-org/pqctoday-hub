@@ -5,12 +5,13 @@
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
+import { citedStandards } from '../trustHardwareCitations'
 
 export const content: ModuleContent = {
   moduleId: 'confidential-computing',
   version: '1.0.0',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-09',
 
   standards: [
     getStandard('FIPS 203'),
@@ -55,6 +56,8 @@ export const content: ModuleContent = {
     // trust model (four-hierarchy TPM architecture, EK/SRK/AIK/IDevID key
     // roles) and cited no TCG standard. Active library row.
     getStandard('TCG-TPM-V185-Part1'),
+    // Release 4.202 trust-hardware changes: the Library rows the new statements come from.
+    ...citedStandards('confidential-computing'),
   ],
 
   algorithms: [

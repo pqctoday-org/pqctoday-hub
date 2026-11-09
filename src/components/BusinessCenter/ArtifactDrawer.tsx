@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useCallback, useEffect, Suspense } from 'react'
+import { Link } from 'react-router'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { X, Download, Pencil, Eye, FileDown, Maximize2, Minimize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -61,6 +63,15 @@ export function ArtifactDrawer({
   onCreated,
   readOnly,
 }: ArtifactDrawerProps) {
+  const isScopedClosure =
+    mode !== 'create' &&
+    document?.moduleId === 'verification-closure' &&
+    document.type === 'migration-verification' &&
+    typeof document.inputs === 'object' &&
+    document.inputs !== null &&
+    !Array.isArray(document.inputs) &&
+    '__artifactScope' in document.inputs &&
+    document.inputs.__artifactScope === 'verification-closure/handover'
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   // Half/full toggle. Always starts at half — per design, no persistence.
   // On mobile (< sm) the drawer is already full-width via `w-full`, so the
@@ -198,13 +209,24 @@ export function ArtifactDrawer({
             <p className="text-xs text-muted-foreground">{headerSubtitle}</p>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {mode === 'view' && document && BuilderComponent && !readOnly && (
+            {isScopedClosure && !readOnly && (
+              <Link
+                to="/learn/verification-closure?tab=workshop&step=2"
+                onClick={onClose}
+                aria-label="Reopen workshop: handover register"
+                className={buttonVariants({ variant: 'outline', size: 'sm' })}
+              >
+                <Pencil size={14} />
+                <span className="hidden sm:inline ml-1">Reopen workshop</span>
+              </Link>
+            )}
+            {mode === 'view' && document && BuilderComponent && !readOnly && !isScopedClosure && (
               <Button variant="outline" size="sm" onClick={() => onModeChange('edit')}>
                 <Pencil size={14} />
                 <span className="hidden sm:inline ml-1">Edit</span>
               </Button>
             )}
-            {mode === 'edit' && document && (
+            {mode === 'edit' && document && !isScopedClosure && (
               <Button variant="outline" size="sm" onClick={() => onModeChange('view')}>
                 <Eye size={14} />
                 <span className="hidden sm:inline ml-1">View</span>
@@ -225,7 +247,7 @@ export function ArtifactDrawer({
                   variant="ghost"
                   size="sm"
                   onClick={handleExportPdf}
-                  disabled={isExportingPdf || mode !== 'view'}
+                  disabled={isExportingPdf || (mode !== 'view' && !isScopedClosure)}
                   title={
                     mode === 'view' ? 'Download as PDF' : 'Switch to view mode to download as PDF'
                   }
@@ -263,7 +285,7 @@ export function ArtifactDrawer({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-5">
-          {mode === 'view' && document ? (
+          {(mode === 'view' || isScopedClosure) && document ? (
             <div className="bg-background">
               <MarkdownView content={document.data} />
             </div>
@@ -321,7 +343,7 @@ export function ArtifactDrawer({
                 Delete
               </Button>
             ) : null}
-            {document && (
+            {document && !isScopedClosure && (
               <ApprovalStatusControl
                 status={document.approvalStatus ?? 'draft'}
                 reviewer={document.reviewer}

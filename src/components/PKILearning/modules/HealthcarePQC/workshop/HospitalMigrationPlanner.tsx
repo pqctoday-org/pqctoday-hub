@@ -185,21 +185,21 @@ export const HospitalMigrationPlanner: React.FC = () => {
         label: 'Phase 1: Critical Priority (2023\u20132027)',
         description:
           'Internet-facing and highest-sensitivity layers. Deploy PQC hybrid TLS on patient portals, begin medical device firmware signing migration, and protect genomic research infrastructure.',
-        layers: prioritizedLayers.filter((p) => p.phase === 1),
+        layers: prioritizedLayers.filter((p) => p.phase === 1 && p.posture !== 'no-change'),
       },
       {
         phase: 2,
         label: 'Phase 2: High Priority (2027\u20132029)',
         description:
           'Internal clinical systems with significant data sensitivity. Upgrade EHR workstations, medical imaging PACS, and laboratory systems during planned maintenance cycles.',
-        layers: prioritizedLayers.filter((p) => p.phase === 2),
+        layers: prioritizedLayers.filter((p) => p.phase === 2 && p.posture !== 'no-change'),
       },
       {
         phase: 3,
         label: 'Phase 3: Standard Priority (2029\u20132031)',
         description:
           'Internal pharmacy and remaining laboratory systems. Align with NIST classical algorithm deprecation timeline and vendor update availability.',
-        layers: prioritizedLayers.filter((p) => p.phase === 3),
+        layers: prioritizedLayers.filter((p) => p.phase === 3 && p.posture !== 'no-change'),
       },
     ]
     return phases.filter((p) => p.layers.length > 0)
@@ -313,6 +313,7 @@ export const HospitalMigrationPlanner: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <FilterDropdown
                         items={POSTURE_OPTIONS}
+                        hideDefaultOption
                         selectedId={override.posture}
                         onSelect={(id) => handlePostureChange(layer.id, id)}
                         label="Crypto Posture"
@@ -664,14 +665,23 @@ export const HospitalMigrationPlanner: React.FC = () => {
         <SectionHeader
           sectionKey="roadmap"
           icon={<Check size={16} className="text-status-success" />}
-          title="3-Phase Migration Roadmap"
-          subtitle="Prioritized timeline with budget allocation per phase"
+          title="Selected Migration Work"
+          subtitle="Selected planning and migration actions grouped by their baseline phase"
           expanded={expandedSections.roadmap}
           onToggle={toggleSection}
         />
 
         {expandedSections.roadmap && (
           <div className="p-4 space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Only layers with a selected planning or migration action appear here. No Change leaves
+              a layer outside the selected work; its baseline priority remains in the matrix.
+            </p>
+            {phaseGroups.length === 0 && (
+              <p className="text-sm">
+                No migration work selected. Choose an action above to build the sample roadmap.
+              </p>
+            )}
             {phaseGroups.map((pg) => {
               const phaseBudget = pg.layers.reduce((sum, p) => sum + p.subtotal, 0)
               const phaseColor =

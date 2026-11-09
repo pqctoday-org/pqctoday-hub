@@ -73,6 +73,7 @@ export interface KpiDefinition {
   label: string
   description: string
   category: KpiCategory
+  reportingOnly?: boolean
   /** Which surfaces this KPI appears on. */
   surfaces: readonly KpiSurface[]
   /** Default weight per persona (0–1). Undefined = KPI not shown to that persona. */
@@ -565,13 +566,13 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     id: 'budget-utilization',
     label: 'Budget Utilization',
     description:
-      'Percentage of allocated PQC migration budget spent on plan (target range: 70–90%).',
+      'Reported actual spend as a percentage of the approved budget for the stated period and scope. Finance reporting only; spending more does not establish readiness.',
     category: 'financial',
     surfaces: ['governance', 'migration'],
-    weights: { executive: 0.1, architect: 0.05, ops: 0.05 },
+    weights: { executive: 0, architect: 0, ops: 0 },
+    reportingOnly: true,
     userOverride: true,
     mappings: { soc2: 'CC9.1' },
-    defaultTarget: 80,
   },
 
   // ── Research-facing ───────────────────────────────────────────────────
@@ -711,8 +712,9 @@ export function buildDimensions(
       id: k.id,
       label: k.label,
       description: k.description,
+      reportingOnly: k.reportingOnly,
       weight,
-      autoScore: auto ?? 0,
+      autoScore: k.reportingOnly ? undefined : (auto ?? 0),
       valueSource: k.autoScore === undefined ? 'manual' : 'calculated',
       userOverride: k.userOverride ?? true,
       disabled,

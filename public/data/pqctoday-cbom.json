@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:e8355cfc-6417-433b-b6a1-34c06b399865",
+  "serialNumber": "urn:uuid:754b2805-4c09-4df2-be14-7a81cc8885a6",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-08T00:00:00.000Z",
+    "timestamp": "2026-11-09T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -1528,9 +1528,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "de249b1e3122a55a",
+      "bom-ref": "da115abfe62ceb7c",
       "name": "AWS-LC",
-      "version": "v5.0.0 (FIPS branch decoupled; also v1.73.0 in legacy scheme)",
+      "version": "v5.13.0 (FIPS branch decoupled; also v1.73.0 in legacy scheme)",
       "purl": "pkg:github/aws/aws-lc",
       "cpe": "cpe:2.3:a:amazon:aws-lc-sys:-:*:*:*:*:rust:*:*",
       "cryptoProperties": {
@@ -1825,7 +1825,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Production-ready PQC with native ML-KEM (FIPS 203) ML-DSA (FIPS 204) and LMS/HSS (SP 800-208) support integrated into firmware v7.9+. Software v7.9.1 adds hybrid KEM (ML-KEM) for NTLS SSH and REST APIs. FW v7.9.2 adds Cryptographic Bill of Materials (CBOM) via REST API PQC key attestation and USB HSM (G7) PQC extension. FIPS 140-3 Level 3 certificates #4684 (Luna K7, firmware 7.8.4 and 7.8.5) and #4962 (Luna G7, firmware 7.7.3) list classical algorithms only; the vendor's firmware 7.9.2 release notes describe 7.9.2 as the next candidate for FIPS 140 certification.",
+      "description": "Production-ready PQC with native ML-KEM (FIPS 203) ML-DSA (FIPS 204) and LMS/HSS (SP 800-208) support integrated into firmware v7.9+. Software v7.9.1 adds hybrid KEM (ML-KEM) for NTLS SSH and REST APIs. PQC key attestation requires firmware 7.9.1 or newer, with the cmu utility from Luna HSM Client 10.9.1 or newer. Software v7.9.1 also adds Cryptographic Bill of Materials (CBOM) collection through the REST API. Firmware 7.9.2 extends ML-KEM and ML-DSA support to the Luna USB HSM (G7). FIPS 140-3 Level 3 certificates #4684 (Luna K7, firmware 7.8.4 and 7.8.5) and #4962 (Luna G7, firmware 7.7.3) list classical algorithms only; the vendor's firmware 7.9.2 release notes describe 7.9.2 as the next candidate for FIPS 140 certification.",
       "externalReferences": [
         {
           "type": "website",
@@ -6356,7 +6356,7 @@
           "primitive": "kem"
         }
       },
-      "description": "The post says Chrome Desktop clients used hybrid X25519 and Kyber key exchange, and announces that Chrome 131 will switch from Kyber to ML-KEM and offer hybrid ML-KEM key-share prediction (0x11EC). That post does not document ML-DSA, certificate signatures, or a released Chrome 131 build. Separately, the Chrome Platform Status record for \"Support for ML-DSA in TLS\" (feature 5174590524489728, record snapshot 2026-10-20) lists Chrome 150 with the feature enabled by default and no flag, and says a user or administrator must configure a trusted root explicitly because a publicly trusted ML-DSA certificate cannot currently be issued; that record's status still reads Proposed.",
+      "description": "The post says Chrome Desktop clients used hybrid X25519 and Kyber key exchange, and announces that Chrome 131 will switch from Kyber to ML-KEM and offer hybrid ML-KEM key-share prediction (0x11EC). That post does not document ML-DSA, certificate signatures, or a released Chrome 131 build. Separately, the Chrome Platform Status record for \"Support for ML-DSA in TLS\" (feature 5174590524489728, record snapshot 2026-10-20) lists Chrome 150 with the feature enabled by default and no flag, and says a user or administrator must configure a trusted root explicitly because a publicly trusted ML-DSA certificate cannot currently be issued; that record's status still reads Proposed. The Chrome Root Program's testing instructions (last updated 28 October 2026) say that beginning in Chrome 150, Chrome supports ML-DSA in private PKI hierarchies, which makes it possible to test post-quantum X.509 certificates other than Merkle Tree Certificates locally or within enterprise environments.",
       "externalReferences": [
         {
           "type": "website",
@@ -10743,7 +10743,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "GitLab CI/CD: built partially in Go. gitlab.com servers use PQC TLS from Go 1.24+.",
+      "description": "GitLab's gitlab-sshd documentation shows mlkem768x25519-sha256 in its example key exchange settings, for Git over SSH; the page does not call it post-quantum, name a GitLab version or say whether it is on by default. The 2025 GitLab issue cited as proof calls mlkem768x25519 a post-quantum key agreement scheme, says the Go SSH library supports it from Go 1.24, and says it had to be enabled manually.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -15416,7 +15416,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Microsoft's Quantum Safe Program now targets full transition of products and services to post-quantum cryptography by 2029 (accelerated from a prior 2033 target; announced 2026-06-30). Note this is Windows/SymCrypt-platform capability, not an Azure-service-specific claim: ML-KEM and ML-DSA are available via CNG and Certificate functions for Windows Insiders and Linux, and TLS 1.3 hybrid key exchange is enabled in SymCrypt-OpenSSL v1.9.0. As an Azure cloud service specifically, Azure Key Vault Premium (public preview) and Managed HSM support quantum-resistant AES-256 symmetric key wrapping (AES-KW/AES-GCM/AES-CBC via oct-HSM keys) per CNSA 2.0 guidance; ML-KEM/ML-DSA asymmetric PQC support is not yet documented for Azure Key Vault as of the live Microsoft Learn documentation (updated 2026-07-30).",
+      "description": "Microsoft's Quantum Safe Program now targets full transition of products and services to post-quantum cryptography by 2029 (accelerated from a prior 2033 target; announced 2026-06-30). Note this is Windows/SymCrypt-platform capability, not an Azure-service-specific claim: ML-KEM and ML-DSA are available via CNG and Certificate functions for Windows Insiders and Linux, and TLS 1.3 hybrid key exchange is enabled in SymCrypt-OpenSSL v1.9.0. As an Azure cloud service specifically, Azure Front Door, Microsoft's global edge service, now negotiates TLS 1.3 hybrid ML-KEM key establishment (X25519MLKEM768 and SecP256r1MLKEM768) with clients (6 November 2026); the post says extending it to connections to Azure services is the next phase. Azure Key Vault Premium (public preview) and Managed HSM support quantum-resistant AES-256 symmetric key wrapping (AES-KW/AES-GCM/AES-CBC via oct-HSM keys) per CNSA 2.0 guidance; ML-KEM/ML-DSA asymmetric PQC support is not yet documented for Azure Key Vault as of the live Microsoft Learn documentation (updated 2026-07-30).",
       "externalReferences": [
         {
           "type": "website",

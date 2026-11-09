@@ -1,9 +1,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState, type FC } from 'react'
-import { AlertTriangle, BookOpen, Rocket, ClipboardCheck, GitMerge } from 'lucide-react'
+import {
+  AlertTriangle,
+  BookOpen,
+  Rocket,
+  ClipboardCheck,
+  GitMerge,
+  ShieldCheck,
+} from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { StranglerFigArchitect } from './components/StranglerFigArchitect'
+import { TrustHardwareSelector } from './components/TrustHardwareSelector'
 import { ARCH_GUIDE_DATA } from './data'
 import { ARCH_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
@@ -44,6 +52,13 @@ const PARTS: WorkshopPart[] = [
     description:
       'Model the gradual migration of a legacy monolithic service using a PQC API Gateway.',
     icon: GitMerge,
+  },
+  {
+    id: 'trust-hardware',
+    title: 'Step 6: Trust Hardware Selector',
+    description:
+      'Tell apart eight kinds of trust hardware, compare them side by side, and choose between them.',
+    icon: ShieldCheck,
   },
 ]
 
@@ -180,6 +195,8 @@ export const ArchQuantumImpactModule: FC = () => (
           return <SelfAssessmentStep key={`assess-${configKey}`} />
         case 4:
           return <StranglerFigArchitect key={`strangler-${configKey}`} />
+        case 5:
+          return <TrustHardwareSelector key={`trust-hardware-${configKey}`} />
         default:
           return null
       }

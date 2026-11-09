@@ -2516,7 +2516,7 @@
   "successorDependencies": "Requires NIST standard finalization; Enables national cryptographic inventories; Depends on standards-based PQC availability."
  },
  "European Union:ENISA — PQC Integration Study": {
-  "mainTopic": "Go to the main content Topics Topics Learn more about the topics Access For National / EU authorities Cyber Threats EU incident response and cyber crisis management Market Product Security and Certification Risk Management Skills and competences Stat",
+  "mainTopic": "ENISA’s October 2022 integration study examines post-standardization challenges: designing cryptographic protocols and integrating post-quantum systems into existing protocols. It follows ENISA’s 2021 state-of-the-art and quantum-mitigation study.",
   "pqcAlgorithms": [],
   "quantumThreats": [
    "Post-Quantum"
@@ -2596,7 +2596,7 @@
   "successorDependencies": "Designing new cryptographic protocols; Integrating post-quantum systems into existing protocols"
  },
  "European Union:EC — EU PQC Recommendation Published": {
-  "mainTopic": "Skip to main content en en Select your language Close bg български es español cs čeština da dansk de Deutsch et eesti el ελληνικά en English fr français ga Gaeilge hr hrvatski it italiano lv latviešu lt lietuvių hu magyar mt Malti nl Nederlands pl po",
+  "mainTopic": "The European Commission’s 11 April 2024 Recommendation calls for a coordinated EU roadmap for the transition to post-quantum cryptography, developed with Member States through the NIS Cooperation Group. It addresses coordinated actions for public administrations and critical infrastructure; it is a recommendation, not evidence that the transition is already complete.",
   "pqcAlgorithms": [
    "ML-KEM",
    "ML-DSA",
@@ -6743,7 +6743,7 @@
    "SHA3-512"
   ],
   "hybridApproaches": [
-   "PQ/T hybrid schemes not recommended for security purposes but CNSA 1.0 algorithms kept as a hybrid layer with CNSA 2.0 for IKEv2 key establishment indefinitely."
+   "NSA FAQ v2.2 does not require hybrids for security but permits identified constructions for interoperability or protocol constraints. For its IKEv2 profile CNSA 1.0 key establishment is followed by encrypted ML-KEM-1024 key establishment for the foreseeable future. This is not an indefinite general hybrid mandate."
   ],
   "performanceConsiderations": [],
   "targetAudience": [
@@ -7097,8 +7097,7 @@
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "Backup standard based on different math approach",
-   "fallback in case ML-KEM proves vulnerable"
+   "The source describes algorithm diversity and a backup/fallback KEM based on different mathematics not a hybrid combiner or simultaneous execution of HQC and ML-KEM."
   ],
   "performanceConsiderations": [
    "HQC is a lengthier algorithm than ML-KEM",
@@ -7450,7 +7449,6 @@
    "NIST L2",
    "NIST L5",
    "ML-DSA-44",
-   "ML-DSA-768",
    "ML-KEM-768",
    "ML-KEM-1024",
    "Ascon-AEAD128",
@@ -7467,7 +7465,7 @@
   ],
   "performanceConsiderations": [
    "One commenter (CTIA) states that a Level 5 CRYSTALS-Dilithium signature is about 18 times the size of a 256-byte RSA signature",
-   "One commenter states that ML-DSA in TLS would typically add a round trip to the handshake"
+   "One commenter estimates that larger ML-DSA TLS handshake bytes can require an additional transport round trip when they exceed a commonly used initial TCP window. This is conditional on transcript size and transport conditions, not an inherent extra TLS protocol flight or a NIST performance requirement."
   ],
   "targetAudience": [
    "Security Architect",
@@ -9118,7 +9116,7 @@
    "ML-DSA",
    "SLH-DSA",
    "LMS",
-   "HMS",
+   "HSS",
    "XMSS",
    "XMSSMT"
   ],
@@ -18115,8 +18113,7 @@
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "Backup standard approach",
-   "different math approach for fallback"
+   "The source describes algorithm diversity and a backup/fallback KEM based on different mathematics not a hybrid combiner or simultaneous execution of HQC and ML-KEM."
   ],
   "performanceConsiderations": [
    "HQC is lengthier than ML-KEM",
@@ -30001,19 +29998,16 @@
    "Design systems for cryptographic agility to support various protocols and algorithms"
   ],
   "securityLevels": [
-   "128 bits",
-   "433 qubits",
-   "6",
-   "100-qubit array",
-   "100",
-   "000 qubits"
+   "128-bit security reference in the source’s symmetric-cryptography discussion. Not a physical-qubit count or module assurance level"
   ],
   "hybridApproaches": [
    "Hybrid methods",
    "Combiners",
    "Cryptographic agility"
   ],
-  "performanceConsiderations": [],
+  "performanceConsiderations": [
+   "Historical hardware examples in the brief: IBM Osprey (2022) has 433 physical qubits. Caltech example is a 6100-qubit array, explicitly not comparable to a quantum computer. IBM’s cited plan targets 100000 qubits by 2033 and is not a demonstrated cryptanalytic capability. Raw qubit counts across technologies are not interchangeable with fault-tolerant logical qubits or cryptographic security strength."
+  ],
   "targetAudience": [
    "CISO",
    "Security Architect",
@@ -31162,7 +31156,7 @@
   "successorDependencies": "Requires the drafting of a detailed roadmap (工程表) in fiscal year 2026; Depends on CRYPTREC's safety and implementation performance evaluations of FIPS 203, 204, and 205."
  },
  "United Arab Emirates:TII — NIST Additional Digital Signature Schemes Round 2 candidates": {
-  "mainTopic": "This document reports on the first round of the NIST Post-Quantum Cryptography Standardization Process for additional digital signature schemes, detailing the evaluation criteria and the selection of 14 candidates to advance to the second round.",
+  "mainTopic": "NIST IR 8528 reports 14 additional digital-signature candidates advancing to Round 2; it does not itself identify TII participation. Separately, TII’s 6 March 2025 announcement reports that its researchers and international partners contributed to six of those schemes and supplied updates in February 2025.",
   "pqcAlgorithms": [
    "ML-KEM",
    "ML-DSA",
@@ -31242,7 +31236,8 @@
    "NIST selected 14 signature algorithms to advance to the second round of the Additional Digital Signatures standardization process",
    "The selection prioritized diversification of the signature portfolio beyond structured lattices",
    "Candidates were evaluated based on security, cost/performance, and algorithm/implementation characteristics",
-   "The process aims to standardize signatures for use in protocols like TLS, SSH, and DNSSEC."
+   "The process aims to standardize signatures for use in protocols like TLS, SSH, and DNSSEC.",
+   "Institutional attribution comes from TII’s own 6 March 2025 announcement, not the NIST round-selection report. This self-report is distinct from standardization or endorsement of a TII product."
   ],
   "securityLevels": [
    "NIST Security Categories 1",
@@ -31782,7 +31777,7 @@
   "keyTakeaways": [
    "ITI mandates incorporation of NIST PQC algorithms into ICP-Brasil",
    "DOC-ICP-01.01 updated to version 6.0",
-   "Four new quantum-safe certificate types defined (SE-S, SE-H, AE-S)",
+   "Four added certificate categories are enumerated as SE-S, SE-H, AE-S and AE-H. Permitted cryptographic algorithms are specified separately by certificate/key role",
    "Specific OIDs assigned for ML-DSA and ML-KEM variants"
   ],
   "securityLevels": [
@@ -31953,7 +31948,7 @@
   "successorDependencies": null
  },
  "European Union:EC — High-Risk Use Cases Transitioned to PQC": {
-  "mainTopic": "Skip to main content en en Select your language Close bg български es español cs čeština da dansk de Deutsch et eesti el ελληνικά en English fr français ga Gaeilge hr hrvatski it italiano lv latviešu lt lietuvių hu magyar mt Malti nl Nederlands pl po",
+  "mainTopic": "The NIS Cooperation Group’s June 2025 coordinated PQC roadmap recommends transitioning high-risk use cases as soon as possible and no later than the end of 2030, with transition completed for as many systems as practically feasible by 2035. These are recommended future transition targets, not evidence that the named systems are already secured.",
   "pqcAlgorithms": [],
   "quantumThreats": [
    "Post-Quantum"
@@ -34726,12 +34721,16 @@
    "Cryptographic inventory and risk assessment are mandatory preparatory steps before migration."
   ],
   "securityLevels": [
-   "FIPS 140-3 Level",
-   "EAL",
-   "NIST L1-L5 (implied by FIPS references",
-   "but specific levels not explicitly mapped to algorithms in text)",
-   "2048-bit RSA",
-   "256-bit ECC"
+   "Roadmap framework L1: Basic Conformance",
+   "Roadmap framework L2A: Software Security Assurance",
+   "Roadmap framework L2B: IT/IoT Hardware Security Assurance",
+   "Roadmap framework L2C: OT Hardware Security Assurance",
+   "Roadmap framework L3: Enterprise Infrastructure Security",
+   "Roadmap framework L4: Critical Infrastructure Security",
+   "FIPS 140-3/ISO/IEC 19790 module assurance is a distinct referenced framework. No product certificate or specific validated level is asserted",
+   "Common Criteria Evaluation Assurance Level (EAL) is a separate referenced scale. No numeric EAL is assigned here",
+   "2048-bit RSA reference",
+   "256-bit ECC reference"
   ],
   "hybridApproaches": [
    "Hybrid PQC mechanisms",

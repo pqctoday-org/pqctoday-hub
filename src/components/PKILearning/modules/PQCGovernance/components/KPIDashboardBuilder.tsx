@@ -26,7 +26,13 @@ import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import {
   OVERALL_SCORE_MIN_COVERAGE,
   scoredWeightShare,
+  effectiveScorecardWeight,
+  isReadinessDimension,
 } from '@/components/PKILearning/common/executive/scorecardCoverage'
+import {
+  reportingOnlyScoreCell,
+  withoutNeverEnteredReportingScores,
+} from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
 import type { PolicyOutput } from '../types'
 
 const SURFACE = 'governance' as const
@@ -41,8 +47,8 @@ function coercePersona(p: string | null | undefined): KpiPersonaId {
 const METHODOLOGY_MD = `## How this score is computed
 
 The **Overall Score** is the weighted average of the KPI sliders below, using the
-per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
-measure; the weighted average is rounded to a whole number. A combined score is
+per-persona weights in the Weight column (they sum to 100%). Each readiness KPI is a 0–100
+measure; reporting-only budget utilization is excluded from both score and scored-value coverage. Raw reported finance percentages may exceed 100 and are not readiness scores. The weighted average is rounded to a whole number. A combined score is
 withheld until at least 70% of the weight of the KPIs that can be scored has
 entered or calculated sample values; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing. This 70% coverage threshold is a Hub worksheet display rule, not a NIST-prescribed maturity or readiness criterion.
 
@@ -87,7 +93,7 @@ export function buildKpiDashboardMarkdown(
   touchedIds?: ReadonlySet<string>,
   valueOrigins?: Record<string, KpiValueOrigin>
 ): string {
-  const ew = (d: (typeof dimensions)[number]) => (d.id in weights ? (weights[d.id] ?? 0) : d.weight)
+  const ew = (d: (typeof dimensions)[number]) => effectiveScorecardWeight(d, weights)
   const isPending = (d: (typeof dimensions)[number]) =>
     valueOrigins
       ? !isKpiValueAssessed(valueOrigins[d.id] ?? currentKpiValueOrigin(d, false))
@@ -97,7 +103,7 @@ export function buildKpiDashboardMarkdown(
   let totalWeight = 0
   for (const d of dimensions) {
     const value = scores[d.id] ?? d.autoScore
-    if (d.disabled || isPending(d) || value === undefined) continue
+    if (!isReadinessDimension(d) || isPending(d) || value === undefined) continue
     weightedSum += value * ew(d)
     totalWeight += ew(d)
   }
@@ -129,6 +135,11 @@ export function buildKpiDashboardMarkdown(
       continue
     }
     const value = scores[d.id] ?? d.autoScore
+    if (d.reportingOnly) {
+      md += `| ${d.label} | ${reportingOnlyScoreCell(value, isPending(d))} | 0% | —${lineage}\n`
+      md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; scope: ${observation?.scope?.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ') || 'Unknown'}; as of ${observation?.asOfDate || 'not provided'}.\n`
+      continue
+    }
     md += `| ${d.label} | ${value === undefined ? '_not yet scored_' : isPending(d) ? `${value}/100 — not assessed for current use` : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
     md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
   }
@@ -157,12 +168,17 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   )
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const scoresRef = useRef<Record<string, number>>(savedInputs?.scores ?? {})
+  // Older saves wrote a default 0 for budget utilization that nobody entered; it
+  // restores as missing, as on the scorecard.
+  const [restoredScores] = useState(() =>
+    withoutNeverEnteredReportingScores(dimensions, savedInputs?.scores, savedInputs?.valueOrigins)
+  )
+  const scoresRef = useRef<Record<string, number>>(restoredScores ?? {})
   // The scorecard reports which KPIs the person has set; the saved Markdown reads
   // the same set so it agrees with the screen about what is still "not yet scored".
   const touchedRef = useRef<ReadonlySet<string>>(new Set(savedInputs?.touchedIds ?? []))
   const weightsRef = useRef<Record<string, number>>(savedInputs?.weights ?? {})
-  const originsRef = useRef(restoredKpiValueOrigins(savedInputs?.scores, savedInputs?.valueOrigins))
+  const originsRef = useRef(restoredKpiValueOrigins(restoredScores, savedInputs?.valueOrigins))
   const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
 
   const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
@@ -256,7 +272,11 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         let improving = 0
         let unchanged = 0
         let worsening = 0
+        // Reporting-only measures such as budget utilization have no better or
+        // worse direction, so they never count toward the trend.
+        const reportingOnlyIds = new Set(dimensions.filter((d) => d.reportingOnly).map((d) => d.id))
         for (const [id, value] of Object.entries(scoresRef.current)) {
+          if (reportingOnlyIds.has(id)) continue
           const prior = previous.scores[id]
           if (prior === undefined) continue
           if (value > prior) improving++
@@ -284,7 +304,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
     }
     setWasSaved(true)
     setDirtySinceSave(false)
-  }, [persistScorecard, activePersona, originalSavedInputs])
+  }, [persistScorecard, dimensions, activePersona, originalSavedInputs])
 
   const handleScoreChange = useCallback(
     (scores: Record<string, number>) => {

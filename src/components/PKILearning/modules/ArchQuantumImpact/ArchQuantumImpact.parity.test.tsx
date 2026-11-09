@@ -6,11 +6,12 @@
  * behaviour-preserving.
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { ArchQuantumImpactModule } from './index'
+import manifest from './manifest'
 
 describe('ArchQuantumImpact render parity', () => {
   it('renders the gradient header, the in-page description, and all six tabs', () => {
@@ -38,5 +39,29 @@ describe('ArchQuantumImpact render parity', () => {
     ]) {
       expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
+  })
+
+  it('declares six workshop steps, the sixth being the Trust Hardware Selector', () => {
+    expect(manifest.workshopSteps?.map((s) => s.id)).toEqual([
+      'why-it-matters',
+      'what-to-learn',
+      'how-to-act',
+      'self-assessment',
+      'strangler-fig',
+      'trust-hardware',
+    ])
+    expect(manifest.duration).toBe('30 min')
+  })
+
+  it('offers Step 6 in the workshop and renders the selector there', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter initialEntries={['/?tab=workshop&step=5']}>
+          <ArchQuantumImpactModule />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    fireEvent.click(screen.getByRole('tab', { name: 'Workshop' }))
+    expect(screen.getAllByText(/Step 6: Trust Hardware Selector/).length).toBeGreaterThan(0)
   })
 })

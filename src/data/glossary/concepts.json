@@ -234,7 +234,7 @@
   {
     "term": "Composite Certificate",
     "definition": "An X.509 certificate encoding both a classical and a PQC key/signature under a single composite OID. Both signatures must verify. Requires all relying parties to support the composite OID — legacy-incompatible.",
-    "technicalNote": "Defined in IETF drafts: composite ML-KEM (draft-ietf-lamps-pq-composite-kem) and composite ML-DSA (draft-ietf-lamps-pq-composite-sigs). Both the public key and the signature are RAW CONCATENATIONS with the ML-DSA component FIRST — no ASN.1 wrapper — so a verifier splits at ML-DSA's fixed length. Each profile also fixes a traditional hash that tracks the CURVE (P-256 → SHA-256, P-384 → SHA-384); the SHAxxx in a profile name is the pre-hash applied to the message, not the traditional algorithm's hash. Neither OpenSSL 3.6.3 nor 4.x registers any composite algorithm, so stock OpenSSL cannot parse these certificates at all.",
+    "technicalNote": "Composite signatures are specified in RFC 10073 (formerly draft-ietf-lamps-pq-composite-sigs) and composite ML-KEM in draft-ietf-lamps-pq-composite-kem. In each, the key material is a raw concatenation with the post-quantum component first and no ASN.1 wrapper inside the BIT STRING: for signatures the public key is mldsaPK || tradPK and the signature is mldsaSig || tradSig; for ML-KEM the key is mlkemPK || tradPK and the ciphertext is mlkemCT || tradCT. A verifier splits at the first component's fixed length. Each signature profile also fixes a traditional hash that tracks the CURVE (P-256 → SHA-256, P-384 → SHA-384); the SHAxxx in a profile name is the pre-hash applied to the message, not the traditional algorithm's hash. Support depends on the library and release: the OpenSSL 3.6 and 4.1 release notes checked for this entry list no composite algorithm, so verify support in the exact release and provider you use; a verifier that does not recognise the composite OID cannot validate such a certificate.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"
@@ -509,7 +509,7 @@
   {
     "term": "Rekor",
     "definition": "The transparency log component of Sigstore. Rekor is an immutable, append-only log that records every signing event — signature, certificate, and artifact hash — for public auditability.",
-    "technicalNote": "PQC migration increases Rekor entry sizes significantly (~200 bytes for ECDSA vs ~3,600 bytes for ML-DSA-65). Storage overhead is the primary cost of PQC migration in Sigstore.",
+    "technicalNote": "PQC migration increases the size of Rekor entries because signatures, certificates and public keys are larger (an ML-DSA-65 signature is 3,309 bytes, against roughly 70 bytes for a DER-encoded ECDSA P-256 signature). The total entry size and storage cost depend on the entry type and encoding, the Rekor version and what else is stored (certificate chain, artifact hash, attestations), so measure them for the deployment instead of assuming a fixed per-entry size or that storage is the primary cost.",
     "relatedModule": "/learn/code-signing",
     "complexity": "advanced",
     "category": "concept"
@@ -1030,7 +1030,7 @@
     "term": "Account Abstraction",
     "acronym": "AA",
     "definition": "An Ethereum protocol feature (EIP-4337) that enables smart contract wallets with arbitrary signature verification logic. This allows users to switch from ECDSA to PQC signatures (ML-DSA or FN-DSA) today without a protocol hard fork.",
-    "technicalNote": "EIP-4337 smart accounts verify PQC signatures on-chain at higher gas cost (~300k–500k gas per PQC signature vs ~21k for ECDSA). Combined with EIP-7702 (code delegation for EOAs), this provides a two-phase PQC migration path for Ethereum.",
+    "technicalNote": "EIP-4337 smart accounts can run arbitrary signature-verification code on-chain, so a PQC signature scheme can in principle be verified in contract code at a higher gas cost than the built-in ECDSA check. The actual cost depends on the algorithm, its implementation, the network and the EVM version, and has to be measured: figures such as ~300k–500k gas per PQC signature are illustrative, and 21k gas is the base cost of a simple transaction, not the cost of an ECDSA verification. Combined with EIP-7702 (code delegation for EOAs), contract-based verification can offer existing accounts a path to PQC signatures where the network supports it.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
     "category": "concept"
@@ -1110,7 +1110,7 @@
   {
     "term": "Return on Investment",
     "acronym": "ROI",
-    "definition": "A financial metric measuring the benefit generated relative to costs invested. For PQC migration, calculated as breach avoidance savings, compliance penalty avoidance, and operational efficiency gains minus migration costs.",
+    "definition": "A financial metric comparing the benefit generated with the cost invested, usually (benefit − cost) ÷ cost over a stated period. For PQC migration the benefit is estimated from breach avoidance savings, compliance penalty avoidance and operational efficiency gains, and the cost is the migration investment. Net benefit (benefit minus cost) is a different quantity; the period, discounting and assumptions behind each benefit must be stated for the figure to mean anything.",
     "relatedModule": "/learn/pqc-business-case",
     "complexity": "beginner",
     "category": "concept"
@@ -1151,7 +1151,7 @@
   {
     "term": "Sensitivity Scoring",
     "definition": "A composite scoring method that combines multiple risk dimensions — data type, regulatory scope, cryptographic exposure, and retention period — into a single numeric score used to rank migration urgency across data assets.",
-    "technicalNote": "Typical weightings: data type (30%), regulatory requirements (25%), cryptographic exposure (25%), retention period (20%). Scores above the critical threshold trigger immediate PQC migration planning regardless of other factors.",
+    "technicalNote": "Example weightings (illustrative, not a standard): data type (30%), regulatory requirements (25%), cryptographic exposure (25%), retention period (20%). Each organisation chooses its own dimensions, weights and thresholds; a score above whatever critical threshold the organisation sets moves an asset up in migration planning, alongside other factors such as dependencies and migration effort.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "concept"
@@ -1159,7 +1159,7 @@
   {
     "term": "HNDL Risk Window",
     "definition": "The period during which data harvested today could realistically be decrypted by a future CRQC. Calculated as the gap between the estimated CRQC arrival year and the data's required confidentiality end date.",
-    "technicalNote": "Formula: HNDL Risk Year = CRQC Arrival Year − Data Retention Years. If this value is ≤ the current year, data is already inside the risk window. Most guidance uses 2030–2035 as a conservative CRQC bound.",
+    "technicalNote": "Formula: HNDL Risk Year = CRQC Arrival Year − Data Retention Years. If this value is ≤ the current year, data is already inside the risk window. The CRQC arrival year is an assumption the person using the model chooses, not a measured date; published expert estimates vary widely, so test several scenarios and treat any single year as a modelling input rather than a consensus forecast.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "concept"
@@ -1167,7 +1167,7 @@
   {
     "term": "FAIR Model",
     "acronym": "FAIR",
-    "definition": "Factor Analysis of Information Risk — a quantitative risk methodology that models cybersecurity risk in financial terms. Decomposes risk into Threat Event Frequency (TEF) and Loss Magnitude to produce Annualized Loss Expectancy (ALE).",
+    "definition": "Factor Analysis of Information Risk — a quantitative risk methodology that models cybersecurity risk in financial terms. Decomposes risk into Loss Event Frequency (how often a loss occurs, itself Threat Event Frequency combined with Vulnerability, the probability that a threat event becomes a loss) and Loss Magnitude, to produce an annualized loss estimate.",
     "technicalNote": "For PQC, FAIR enables CFOs to compare the cost of migrating now versus the expected financial loss from a post-CRQC breach of harvested data. Key inputs: probability of CRQC by year X, value of data at risk, probability of adversary having collected it.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "advanced",
@@ -1176,7 +1176,7 @@
   {
     "term": "Threat Event Frequency",
     "acronym": "TEF",
-    "definition": "A FAIR model component representing how often a threat agent is likely to act against an asset in a given time period. For quantum threats, TEF reflects the probability of a capable CRQC existing and being wielded against a specific organisation's harvested data.",
+    "definition": "A FAIR model component: how often, within a stated time period, a threat agent is expected to act against an asset. TEF is a frequency, not a probability; the chance that such an action becomes a loss is the separate Vulnerability factor. For quantum threats, TEF reflects how often an adversary holding a capable CRQC would be expected to act against a specific organisation's harvested data, an uncertain quantity that has to be stated as an explicit assumption.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "advanced",
     "category": "concept"
@@ -1200,7 +1200,7 @@
   },
   {
     "term": "Risk Treatment",
-    "definition": "The process of selecting and implementing options to address an identified risk. ISO 27005 defines four treatment options: Mitigate (implement controls), Accept (tolerate the risk), Transfer (insurance/outsource), Avoid (cease the activity). For quantum risk, \"Mitigate\" means migrating to PQC; \"Accept\" is only defensible for non-sensitive, short-lived data.",
+    "definition": "The process of selecting and implementing options to address an identified risk. ISO 27005 defines four treatment options: Mitigate (implement controls), Accept (tolerate the risk), Transfer (insurance/outsource), Avoid (cease the activity). For quantum risk, \"Mitigate\" means migrating to PQC; \"Accept\" is a documented decision made within the organisation's risk appetite and based on the data's confidentiality lifetime and exposure, and it does not undo any data an adversary has already captured.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "concept"
@@ -1208,7 +1208,7 @@
   {
     "term": "PQC Migration Priority",
     "definition": "A ranked ordering of data assets and cryptographic dependencies by urgency of migration to post-quantum algorithms. Priority is computed from sensitivity tier, HNDL risk window, regulatory obligations, and migration effort, enabling organisations to sequence their migration roadmap rationally.",
-    "technicalNote": "High-priority assets (Critical sensitivity + current HNDL window + regulatory mandate) should be targeted for PQC migration within 12–18 months. Low-priority assets (Low sensitivity + short retention + no mandate) can follow later roadmap phases.",
+    "technicalNote": "Example guidance (illustrative, not a standard): high-priority assets (Critical sensitivity + current HNDL window + regulatory mandate) belong in the earliest migration phases, with timing set by the organisation's own deadlines and migration effort; a 12–18 month target is one example, not a rule. Low-priority assets (Low sensitivity + short retention + no mandate) can follow in later roadmap phases.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "concept"
@@ -1232,7 +1232,7 @@
   {
     "term": "Vendor PQC Readiness",
     "definition": "An assessment of a technology vendor's progress toward supporting post-quantum cryptographic algorithms across their product portfolio. Evaluated across dimensions: algorithm support, FIPS validation status, CBOM availability, migration documentation, SLA commitments, and estimated delivery timeline.",
-    "technicalNote": "A vendor readiness scorecard typically weights: PQC algorithm support (30%), FIPS 140-3 validation status (25%), migration tooling (20%), contractual commitments (15%), and timeline certainty (10%). Low vendor readiness is itself a supply chain risk.",
+    "technicalNote": "An illustrative scorecard might weight PQC algorithm support (30%), FIPS 140-3 validation status (25%), migration tooling (20%), contractual commitments (15%), and timeline certainty (10%); these weights are an authored example, not a published standard or survey result, and each organisation should set its own. Low vendor readiness is itself a supply chain risk.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
     "category": "concept"
@@ -1280,15 +1280,15 @@
   {
     "term": "Risk Heatmap",
     "definition": "A 5×5 grid visualisation plotting risks by likelihood (y-axis) and impact (x-axis). Cells are colour-coded green to red to indicate overall risk level. Used in PQC risk management to communicate prioritisation of quantum-vulnerable assets to executive stakeholders.",
-    "technicalNote": "Standard thresholds: Low (1–4), Medium (5–9), High (10–16), Critical (17–25). Quantum risks trend toward high impact (full plaintext exposure) with increasing likelihood as CRQC timelines advance. The heatmap should be reassessed annually as CRQC estimates evolve.",
+    "technicalNote": "Example thresholds (one illustrative convention, not a standard): Low (1–4), Medium (5–9), High (10–16), Critical (17–25); each organisation defines its own bands in its risk policy. Quantum risks trend toward high impact (full plaintext exposure) with increasing likelihood as CRQC timelines advance. Reassess the heatmap on whatever cadence the risk policy sets (annually is a common choice) and whenever CRQC estimates change materially.",
     "relatedModule": "/learn/pqc-risk-management",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "Cryptographic Exposure Window",
-    "definition": "The period during which an organisation's classically-encrypted data is at risk of retrospective decryption, spanning from the date of data collection to the date PQC migration is complete. Adversaries exploiting HNDL attacks capture data now to decrypt once a CRQC is available.",
-    "technicalNote": "Reducing the exposure window requires either (a) completing PQC migration before the CRQC arrives, or (b) ensuring data reaches end-of-life before the CRQC arrives. Long-lived assets (health records, intellectual property, identity credentials) have the widest windows.",
+    "definition": "The period during which classically-encrypted data is at risk of retrospective decryption, from the time it is protected by a quantum-vulnerable algorithm until it is no longer sensitive. Migrating to PQC stops new data from entering the window, but ciphertext an adversary has already captured stays exposed once a CRQC exists. Adversaries exploiting HNDL attacks capture data now to decrypt once a CRQC is available.",
+    "technicalNote": "Completing PQC migration limits the exposure of data protected after that date, but it does not protect traffic or stored ciphertext that an adversary has already captured under classical algorithms. Reducing exposure therefore means (a) migrating early enough that less sensitive data is captured under classical protection and (b) ensuring captured data reaches end-of-life, or loses its sensitivity, before a CRQC arrives. Long-lived assets (health records, intellectual property, identity credentials) have the widest windows.",
     "relatedModule": "/learn/pqc-risk-management",
     "complexity": "intermediate",
     "category": "concept"
@@ -1552,7 +1552,7 @@
   {
     "term": "Training Data Poisoning",
     "definition": "An attack where adversaries inject malicious or manipulated samples into an AI model's training dataset to corrupt its behavior, produce biased outputs, or introduce backdoors.",
-    "technicalNote": "PQC relevance: ML-DSA signatures on training data manifests create tamper-evident data pipelines. Without cryptographic provenance, poisoned data is indistinguishable from legitimate data. HNDL attackers could harvest encrypted training data today and reconstruct proprietary datasets once quantum computers arrive.",
+    "technicalNote": "PQC relevance: ML-DSA signatures on training data manifests make a dataset tamper-evident and attributable to a signer, so later modification is detectable. A signature does not show that the samples are benign, and poisoning that happens before signing is not detected. HNDL attackers could harvest encrypted training data today and reconstruct proprietary datasets once quantum computers arrive.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1568,7 +1568,7 @@
   {
     "term": "Model Collapse",
     "definition": "A degenerative process where AI models trained on AI-generated data progressively lose quality, diversity, and accuracy over successive generations, eventually producing incoherent or repetitive outputs.",
-    "technicalNote": "Model collapse is a statistical inevitability when synthetic data contaminates training corpora without provenance verification. Cryptographic content credentials (C2PA) and ML-DSA-signed data manifests can distinguish human-created from AI-generated training data, preserving model quality.",
+    "technicalNote": "Research reports model collapse when models are trained repeatedly on their own generated output in place of real data; it is not an unconditional consequence of any use of synthetic data, and studies find that accumulating synthetic data alongside real data avoids it. Cryptographic content credentials (C2PA) and ML-DSA-signed data manifests can show who attests to a dataset's origin and that it has not been altered, but they do not by themselves show that content is human-created or of good quality, so they support provenance policies rather than guarantee model quality.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1609,7 +1609,7 @@
   {
     "term": "Model Provenance",
     "definition": "The complete documented history of an AI model's creation — including training data sources, hyperparameters, training infrastructure, fine-tuning steps, and evaluation results — cryptographically signed to ensure integrity.",
-    "technicalNote": "Model provenance chains use hash chains and digital signatures to create tamper-evident audit trails. ECDSA-signed provenance is quantum-vulnerable for the entire model lifetime (potentially decades). ML-DSA provenance signatures ensure long-term verifiability beyond Q-Day.",
+    "technicalNote": "Model provenance chains use hash chains and digital signatures to create tamper-evident audit trails. ECDSA-signed provenance is quantum-vulnerable for as long as the signatures must remain verifiable (potentially the model's whole lifetime). Using ML-DSA removes the dependence on a quantum-vulnerable signature algorithm, but long-term verifiability also depends on how keys, certificates and timestamps are bound and preserved over time. A signature shows that a record has not changed since the key holder signed it; it does not show that the recorded training data, hyperparameters or evaluation results are accurate.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1617,7 +1617,7 @@
   {
     "term": "Zonal Architecture",
     "definition": "A vehicle E/E (electrical/electronic) architecture that replaces domain-based ECU organization (powertrain, chassis, body, ADAS) with zone-based controllers that manage all functions within a physical region of the vehicle.",
-    "technicalNote": "Zonal architecture reduces total ECU count by 30-40% and consolidates crypto operations in powerful zone controllers. These zone controllers can run PQC algorithms on automotive-grade SoCs (NXP S32G, Infineon AURIX TC4x), whereas legacy domain ECUs often lack the compute and memory for PQC.",
+    "technicalNote": "Zonal architecture reduces the number of ECUs by an amount that depends on the vehicle and platform, and consolidates crypto operations in zone controllers. Zone controllers can have more compute and memory than many legacy domain ECUs, but whether a particular automotive SoC runs PQC algorithms within its latency, memory and safety limits has to be measured on that part.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -1625,7 +1625,7 @@
   {
     "term": "Sensor Fusion",
     "definition": "The process of combining data from multiple sensors (LiDAR, radar, cameras, ultrasonic, GPS/IMU) to create a unified, accurate representation of the vehicle environment for autonomous driving decisions.",
-    "technicalNote": "Sensor fusion pipelines must authenticate data integrity to prevent adversarial injection. LiDAR generates 300+ MB/s requiring per-frame signing. ML-DSA-44 signing (0.8ms) fits ADAS latency budgets; FN-DSA-512 offers more compact signatures (666 bytes vs 2,420) for bandwidth-constrained CAN FD buses.",
+    "technicalNote": "Sensor fusion pipelines must authenticate data integrity to prevent adversarial injection. Raw sensor streams such as LiDAR can run at very high data rates that depend on the sensor model and configuration, so per-frame signing has to be sized against the stream's actual rate. Whether ML-DSA-44 signing fits an ADAS latency budget depends on the processor, the implementation and the safety timing requirement, and has to be measured; FN-DSA-512 offers more compact signatures (666 bytes vs 2,420) for bandwidth-constrained CAN FD buses.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
     "category": "concept"
@@ -2071,7 +2071,7 @@
   {
     "term": "Crypto Policy",
     "definition": "A system-wide configuration that sets the default cryptographic algorithm preferences for all supported applications and libraries. Red Hat-based systems use update-crypto-policies; Debian-based systems configure algorithm preferences via OpenSSL and GnuTLS configuration files.",
-    "technicalNote": "Red Hat crypto-policies (RHEL 8+): update-crypto-policies --set FUTURE disables SHA-1 and RSA-2048. A custom PQC policy flows to OpenSSL, GnuTLS, NSS, Kerberos, and Java via /etc/crypto-policies/back-ends/ symlinks. Create a PQC policy: echo '[alg_policy] cipher = AES-256-GCM hybrid-ml-kem' > /etc/crypto-policies/policies/PQC.pol; update-crypto-policies --set PQC.",
+    "technicalNote": "Red Hat crypto-policies (RHEL 8+): update-crypto-policies --set FUTURE disables SHA-1 and RSA-2048. A custom policy flows to OpenSSL, GnuTLS, NSS, Kerberos, and Java via /etc/crypto-policies/back-ends/ symlinks. Policy file syntax and the available algorithm names differ by distribution and release, and a hybrid ML-KEM policy entry is not established here for any named release: test any custom PQC policy on the exact OS release, and verify what a client actually negotiates (for example the TLS group in a handshake) rather than assuming the policy applied.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -2142,7 +2142,7 @@
   {
     "term": "PQC Migration Budget",
     "definition": "The estimated total cost of transitioning an organization's cryptographic infrastructure to post-quantum algorithms, including hardware upgrades, software updates, staff training, compliance certification, and operational overhead during the hybrid transition period.",
-    "technicalNote": "Key cost drivers: HSM firmware upgrades ($50K–$500K per cluster), certificate re-issuance across PKI hierarchy, application code changes for larger key/signature sizes, re-certification costs (FIPS 140-3, Common Criteria), and potential performance infrastructure upgrades to handle increased computational and bandwidth requirements.",
+    "technicalNote": "Key cost drivers: HSM firmware upgrades or replacement (cost depends on the vendor, model, cluster size and support contract), certificate re-issuance across the PKI hierarchy, application code changes for larger key/signature sizes, re-certification costs (FIPS 140-3, Common Criteria), and potential performance infrastructure upgrades to handle increased computational and bandwidth requirements. Any dollar amount is an estimate for a stated estate and vendor quote, not a typical figure.",
     "relatedModule": "/learn/exec-quantum-impact",
     "complexity": "beginner",
     "category": "concept"
@@ -2150,7 +2150,7 @@
   {
     "term": "Key Size Impact",
     "definition": "The significant increase in cryptographic key and signature sizes when migrating from classical to post-quantum algorithms. ML-KEM public keys are 800–1568 bytes (vs. 32–91 for ECC), and ML-DSA signatures are 2420–4627 bytes (vs. 64–72 for ECDSA), affecting APIs, protocols, and storage.",
-    "technicalNote": "Practical impacts: JWT tokens may exceed HTTP header limits, TLS handshakes require additional round trips, certificate chains grow 10–50x, PKCS#11 buffer sizes need adjustment, and database column widths for stored keys must be expanded. Performance budgets for latency-sensitive applications (payments, IoT) require careful re-evaluation.",
+    "technicalNote": "Practical impacts: JWT tokens may exceed HTTP header limits, a TLS handshake can need extra network round trips when its messages no longer fit the sender's initial congestion window (this depends on the groups, signature algorithms and certificate chain chosen), certificate chains grow by an amount that depends on the algorithms and chain contents (an ML-DSA-65 signature alone is 3,309 bytes, against roughly 70 bytes for ECDSA P-256), PKCS#11 buffer sizes need adjustment, and database column widths for stored keys must be expanded. Performance budgets for latency-sensitive applications (payments, IoT) require careful re-evaluation.",
     "relatedModule": "/learn/dev-quantum-impact",
     "complexity": "intermediate",
     "category": "concept"
@@ -2174,7 +2174,7 @@
   {
     "term": "Performance Budget",
     "definition": "The allocation of computational resources (CPU cycles, memory, bandwidth, latency) for cryptographic operations within an application or system. PQC algorithms have different performance profiles than classical algorithms, requiring budget redesign during migration.",
-    "technicalNote": "ML-KEM-768 encapsulation is ~5x faster than ECDH P-256 but produces larger ciphertexts. ML-DSA-65 signing is comparable to Ed25519 but verification is slower and signatures are ~36x larger. SLH-DSA is orders of magnitude slower for signing but provides hash-based security without lattice assumptions. Architecture decisions must balance security level, performance, and bandwidth constraints per use case.",
+    "technicalNote": "Sizes change before speeds do: an ML-KEM-768 public key is 1,184 bytes and its ciphertext 1,088 bytes (X25519 keys are 32 bytes), and an ML-DSA-65 signature is 3,309 bytes (Ed25519: 64). SLH-DSA signing is much slower than lattice-based signing in typical implementations, while its security rests on hash functions rather than lattice assumptions. Relative CPU timings between PQC and classical algorithms depend on the implementation, CPU, compiler and operation, so measure them on the target platform; architecture decisions must balance security level, performance, and bandwidth constraints per use case.",
     "relatedModule": "/learn/arch-quantum-impact",
     "complexity": "advanced",
     "category": "concept"
@@ -2190,7 +2190,7 @@
   {
     "term": "Certificate Rotation at Scale",
     "definition": "The operational challenge of replacing certificates across large infrastructure deployments when migrating to PQC algorithms, complicated by larger certificate sizes, new CA hierarchies, and the need to maintain backward compatibility during the transition period.",
-    "technicalNote": "Key considerations: ACME/cert-manager automation must support PQC certificate types, multi-CA coordination when different CAs adopt PQC at different rates, certificate transparency (CT) log compatibility with larger PQC certificates, and monitoring for mixed classical/PQC certificate environments. Expect 10–50x increase in certificate chain sizes affecting TLS handshake latency.",
+    "technicalNote": "Key considerations: ACME/cert-manager automation must support PQC certificate types, multi-CA coordination when different CAs adopt PQC at different rates, certificate transparency (CT) log compatibility with larger PQC certificates, and monitoring for mixed classical/PQC certificate environments. Certificate chains grow by an amount that depends on the algorithms and chain contents (each ML-DSA-65 signature adds 3,309 bytes and each public key 1,952 bytes, against roughly 70 and 65 bytes for ECDSA P-256), which affects TLS handshake size and latency.",
     "relatedModule": "/learn/ops-quantum-impact",
     "complexity": "advanced",
     "category": "concept"
@@ -2247,7 +2247,7 @@
   {
     "term": "Crypto Inventory",
     "definition": "A comprehensive catalog of all cryptographic assets across an organization — including algorithms in use, key sizes, certificate types, library versions, protocol configurations, and their locations across code, infrastructure, and third-party systems.",
-    "technicalNote": "Crypto inventory differs from CBOM in scope: CBOM is code-level (source and binaries), while a crypto inventory spans network traffic (passive discovery), endpoint configuration (active scanning), and code analysis. A complete inventory combines all three: passive network probes (CryptoNext COMPASS, pqc-flow) + endpoint scans (pqcscan) + CBOM generation (CBOMkit). Typical enterprise inventory phase: 2–4 weeks for network + 1 week for endpoint scans.",
+    "technicalNote": "Crypto inventory differs from CBOM in scope: CBOM is code-level (source and binaries), while a crypto inventory spans network traffic (passive discovery), endpoint configuration (active scanning), and code analysis. A complete inventory combines all three: passive network probes (CryptoNext COMPASS, pqc-flow) + endpoint scans (pqcscan) + CBOM generation (CBOMkit). How long this takes depends on the size of the estate, how much of it the network and endpoint tools can reach and the tooling used, so plan it from the scope of the target estate rather than from a fixed number of weeks.",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "intermediate",
     "category": "concept"
@@ -2255,7 +2255,7 @@
   {
     "term": "Performance Baseline",
     "definition": "A set of established metrics for classical cryptographic algorithm performance (ECDH, RSA, ECDSA) used as a reference point to measure the overhead introduced by PQC algorithms. Enables data-driven decisions about hardware capacity, latency budgets, and migration sequencing.",
-    "technicalNote": "Critical baselines for PQC migration: TLS handshake latency (classical: 8ms LAN, 68ms WAN), IKEv2 SA setup (classical: 38ms LAN, 240ms WAN), certificate size (RSA-2048: 1.2KB). PQC overhead vs baseline: hybrid TLS ~1.2x handshake latency, pure-PQC IKEv2 up to 53x SA setup time on WAN. Tools for baseline measurement: PQC-LEO (open source), VIAVI TeraVM (commercial), Keysight CyPerf (freemium).",
+    "technicalNote": "Critical baselines for PQC migration are measured on your own target: TLS handshake latency, IKEv2 SA setup time and certificate size, on your own LAN and WAN and hardware. Published PQC overheads vary widely with algorithm, parameter set, implementation and network conditions, so compare like with like. Tools for baseline measurement: PQC-LEO (open source), VIAVI TeraVM (commercial), Keysight CyPerf (freemium).",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "intermediate",
     "category": "concept"
@@ -2345,7 +2345,7 @@
     "term": "Cryptographic Posture Management",
     "acronym": "CPM",
     "definition": "The continuous, iterative management discipline of knowing what cryptography you have, keeping it healthy, and proving it across certificates, libraries, application software, and key material. Distinct from crypto-agility (capability) and from a CryptoCOE (operating model).",
-    "technicalNote": "CPM is organised around five pillars (Inventory, Governance, Lifecycle, Observability, Assurance) and a six-stage operational loop (Discover → Classify → Score → Remediate → Attest → Reassess) wrapped in a strategic annual PDCA cycle.",
+    "technicalNote": "As taught in PQC Today's Crypto Management module, CPM is organised around five pillars (Inventory, Governance, Lifecycle, Observability, Assurance) and a six-stage operational loop (Discover → Classify → Score → Remediate → Attest → Reassess) wrapped in a strategic annual PDCA cycle. These are this site's own teaching overlays: NIST CSWP 39 (Update 1) discusses crypto agility, a strategic plan and an illustrative maturity model adapted from the CSF tiers, but it does not define the five pillars or the six-stage loop.",
     "relatedModule": "/learn/crypto-mgmt-modernization",
     "complexity": "intermediate",
     "category": "concept"
@@ -2353,8 +2353,8 @@
   {
     "term": "Certificate Lifecycle Management",
     "acronym": "CLM",
-    "definition": "The provisioning, rotation, revocation, and retirement workflow for X.509 certificates across an enterprise. Becomes mathematically impossible to run manually under CA/B Forum SC-081v3's 47-day TLS cert validity (March 2029).",
-    "technicalNote": "Modern CLM is driven by ACME (RFC 8555), EST (RFC 7030), and CMP (RFC 4210). Shadow-cert discovery via Certificate Transparency logs is a standard input. Forrester TEI 2025 modelled 312% ROI on CLM automation for one vendor — treat as upper bound.",
+    "definition": "The provisioning, rotation, revocation, and retirement workflow for X.509 certificates across an enterprise. Under CA/B Forum SC-081v3, the maximum validity of publicly trusted TLS certificates falls to 47 days from March 2029, so renewal has to be automated: manual renewal across a large certificate inventory becomes impractical.",
+    "technicalNote": "Modern CLM is driven by ACME (RFC 8555), EST (RFC 7030), and CMP (RFC 4210). Shadow-cert discovery via Certificate Transparency logs is a standard input. A Forrester TEI study (2025) modelled a 312% ROI on CLM automation for one vendor; that is a single vendor's model with its own assumptions, neither a general benchmark nor a limit for other organisations.",
     "relatedModule": "/learn/crypto-mgmt-modernization",
     "complexity": "intermediate",
     "category": "concept"
@@ -2539,7 +2539,7 @@
   },
   {
     "term": "Data Minimization",
-    "definition": "The GDPR principle (Article 5(1)(c)) requiring collection of only the personal data necessary for a specific purpose. Selective disclosure enforces it cryptographically rather than by policy.",
+    "definition": "The GDPR principle (Article 5(1)(c)) requiring personal data to be adequate, relevant and limited to what is necessary for the purposes for which it is processed. Selective disclosure can support minimization technically, but it does not by itself establish necessity or enforce purpose limitation; that depends on the policy that decides which claims are requested and how they are used.",
     "relatedModule": "/learn/digital-id",
     "complexity": "beginner",
     "category": "concept"
@@ -2598,7 +2598,7 @@
   {
     "term": "OpenSSL",
     "definition": "The most widely deployed open-source cryptography and TLS toolkit, providing both a command-line tool and the libssl/libcrypto libraries that a large share of Linux, network appliance, and application-layer software links against for TLS and general cryptographic operations.",
-    "technicalNote": "OpenSSL 3.5 (April 2025) added ML-KEM and ML-DSA to its default provider, so any application linked against system OpenSSL 3.5+ gains hybrid PQC TLS support without code changes — the same mechanism the oqsprovider add-on supplied for older 3.x releases. Distinct from OpenSSL Provider, which is the plugin architecture that makes this pluggable.",
+    "technicalNote": "OpenSSL 3.5 (April 2025) added ML-KEM, ML-DSA and SLH-DSA, and changed the default TLS supported-groups list to include and prefer hybrid PQC key-exchange groups (default key shares: X25519MLKEM768 and X25519) — the capability the oqsprovider add-on supplied for older 3.x releases. An application gets hybrid PQC TLS from this only when it uses those defaults and the peer also supports a hybrid group: an application or library that sets its own group list or restricts itself to classical algorithms keeps its classical-only behavior, so verify the negotiated group rather than assuming it. Distinct from OpenSSL Provider, which is the plugin architecture that makes this pluggable.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "beginner",
     "category": "concept"

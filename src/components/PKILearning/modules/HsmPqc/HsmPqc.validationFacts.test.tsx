@@ -246,3 +246,131 @@ describe('HsmPqc: ML-DSA signing text names the calls the simulator shows (Steps
     expect(hss).toContain('C_Sign/C_Verify')
   })
 })
+
+// Cloud HSM cards added for the trust-hardware comparison: each phrase is what the provider's
+// own page says (Microsoft Learn: Azure Cloud HSM overview and FAQ, Managed HSM overview and
+// key pages; the Securosys X2 fact sheet and firmware v3.x algorithm list; the Tessera specification,
+// SDK README and Microsoft's Project Tessera announcement), read 8 Nov 2026.
+describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera cards', () => {
+  const NEW_CARD_FACTS = [
+    'Azure Cloud HSM',
+    'Azure Managed HSM',
+    'Securosys Primus HSM CyberVault',
+    "None listed on Microsoft's Azure Cloud HSM overview or FAQ",
+    'Single-tenant; each cluster has its own customer-specific security domain and three HSMs',
+    'PKCS#11, OpenSSL, Java (JCA and JCE), CNG and a key storage provider (KSP)',
+    'Microsoft calls it the successor to Azure Dedicated HSM',
+    'Sold as a 1U rack appliance (X2 models) that supports clustering, load balancing and failover',
+    'Both services give the customer administrative control of the keys',
+    'while Microsoft runs patching and maintenance, and, for Managed HSM, provisioning',
+    'Cloud HSM is a customer-owned cluster that the customer provisions',
+    'Algorithm validations (CAVP, not a module certificate)',
+    'Securosys SA and the Primus HSM firmware implementation, version 3.1.0 (first validated 7 Nov 2024)',
+    'MUST have a Caliptra 2.2 subsystem root of trust',
+    'come from the Caliptra 2.1 documentation',
+    'scheduled for release in December',
+    'https://<hsm-name>.managedhsm.azure.net',
+    'a fully managed Microsoft service',
+    'Marvell LiquidSecurity',
+    'ML-DSA, SLH-DSA, ML-KEM, HSS-LMS and XMSS (Securosys X2 fact sheet, version FS-E03)',
+    'HSS-LMS is listed as approved in FIPS mode and not allowed in the Common Criteria configuration',
+    'This project is still under development and is not yet ready for deployment',
+    'Microsoft describes Tessera as an evolution of the Azure Integrated HSM',
+    'facts about that earlier Azure Integrated HSM are not facts about Tessera',
+  ]
+
+  it('shows each new card fact on the Learn tab', () => {
+    const page = openIntroText()
+    for (const fact of NEW_CARD_FACTS) {
+      expect(page, `Learn tab: ${fact}`).toContain(flat(fact))
+    }
+  })
+
+  it('places the Securosys appliance in the on-prem deep dive, not the cloud one', () => {
+    const page = openIntroText()
+    const onPrem = page.indexOf(flat('On-Prem HSM PQC Deep Dive'))
+    const securosys = page.indexOf(flat('Securosys Primus HSM CyberVault'))
+    const cloud = page.indexOf(flat('Cloud HSM PQC Deep Dive'))
+    expect(onPrem).toBeGreaterThan(-1)
+    expect(securosys).toBeGreaterThan(onPrem)
+    expect(cloud).toBeGreaterThan(securosys)
+    const rag = ragSummary.split('\n')
+    expect(rag.find((l) => l.startsWith('- On-prem HSM deep dive'))).toContain('Securosys')
+    expect(rag.find((l) => l.startsWith('- Cloud HSM deep dive'))).not.toContain('Securosys')
+  })
+
+  it('attributes the Dedicated HSM retirement to the Dedicated HSM overview', () => {
+    const rag = flat(ragSummary)
+    expect(rag).toContain(
+      flat(
+        'The Azure Dedicated HSM overview (read 8 Nov 2026) says Microsoft calls Azure Cloud HSM the successor'
+      )
+    )
+    expect(flat(curiousSummary)).toContain(flat('in the Microsoft pages read'))
+    expect(flat(curiousSummary)).not.toContain("in microsoft's pages")
+  })
+
+  it('links each Securosys CAVP number and the Managed HSM overview to their Library rows', () => {
+    openIntroText()
+    const rows: [string, string][] = [
+      ['A6129 (ML-KEM)', 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M'],
+      ['A6130 (ML-DSA)', 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M-2'],
+      ['A6131 (SLH-DSA)', 'Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS'],
+    ]
+    for (const [name, id] of rows) {
+      expect(screen.getAllByRole('link', { name })[0].getAttribute('href')).toBe(
+        `/library?ref=${id}`
+      )
+    }
+    expect(
+      screen.getAllByRole('link', { name: 'Managed HSM overview' })[0].getAttribute('href')
+    ).toBe('/library?ref=Azure-Key-Vault-Managed-HSM-Overview')
+    const rag = flat(ragSummary)
+    for (const n of ['A6129', 'A6130', 'A6131']) expect(rag).toContain(flat(n))
+  })
+
+  it('keeps Securosys with the on-premises vendors in the curious summary', () => {
+    const c = flat(curiousSummary)
+    expect(c).toContain(flat('(such as Thales, Entrust, Utimaco and Securosys)'))
+    expect(c).not.toContain(flat('in the Microsoft pages read, while Securosys'))
+  })
+
+  it('keeps the Azure Dedicated HSM retirement note', () => {
+    const page = openIntroText()
+    expect(page).toContain(
+      flat('No new customer onboardings; existing customers supported until 31 July 2028.')
+    )
+  })
+
+  it('says the same about the new cards in the rag-summary and the curious summary', () => {
+    const rag = flat(ragSummary)
+    expect(rag).toContain(flat('Azure Cloud HSM (Microsoft Learn overview and FAQ'))
+    expect(rag).toContain(
+      flat('Azure Managed HSM (Microsoft Learn, Key Vault Managed HSM about keys')
+    )
+    expect(rag).toContain(flat('Securosys Primus HSM CyberVault (Securosys X2 fact sheet'))
+    expect(rag).toContain(
+      flat('Microsoft describes Tessera as an evolution of the Azure Integrated HSM')
+    )
+    expect(flat(curiousSummary)).toContain(
+      flat('Tessera is a specification with open firmware and an open hardware design')
+    )
+  })
+
+  it('does not describe Tessera with product words or Azure Integrated HSM facts', () => {
+    const page = openIntroText()
+    const tessera = page.slice(page.indexOf('tessera (specification and open designs)'))
+    expect(tessera).toContain('no product or certificate yet')
+    for (const word of ['ships', 'now available', 'is certified', 'in every server']) {
+      expect(tessera.slice(0, 1800), word).not.toContain(word)
+    }
+  })
+
+  it('links to the trust-hardware comparison step from the closing block', () => {
+    openIntroText()
+    const links = screen
+      .getAllByRole('link', { name: /Compare with the other trust hardware/ })
+      .map((a) => a.getAttribute('href'))
+    expect(links).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5'])
+  })
+})

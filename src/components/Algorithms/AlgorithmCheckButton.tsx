@@ -112,6 +112,27 @@ function ExactAlgorithmCheck({ algorithm }: AlgorithmCheckButtonProps) {
             // Legacy RSA results without origin information also cannot establish
             // a serialized-container measurement or a like-for-like catalogue check.
             if (algorithm.name.startsWith('RSA-')) {
+              if (
+                result.rsaKeyEncoding === 'pkcs1-der' &&
+                result.publicKeyBytes !== null &&
+                result.privateKeyBytes !== null
+              ) {
+                return (
+                  <span className="text-muted-foreground">
+                    <span className="block">
+                      RSA public: {result.publicKeyBytes} B · PKCS#1 RSAPublicKey DER
+                    </span>
+                    <span className="block">
+                      RSA private: {result.privateKeyBytes} B · PKCS#1 RSAPrivateKey DER (serialized
+                      from generated sample attributes)
+                    </span>
+                    <span className="block">
+                      Binary encoding measurements; catalogue encoding is unspecified, so no
+                      key-size match is inferred.
+                    </span>
+                  </span>
+                )
+              }
               return (
                 <span className="text-muted-foreground">
                   Serialized RSA key sizes not measured

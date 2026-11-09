@@ -17,6 +17,11 @@ import {
 
 const ILLUSTRATIVE_TOKEN_REFERENCE_BYTES = 8192 // Fixed illustrative compact-token reference, not a server limit
 
+// Existing worked HTTP/1 sample: prefix plus the terminating CRLF, in ASCII bytes.
+const AUTHORIZATION_LINE_OVERHEAD_BYTES = new TextEncoder().encode(
+  'Authorization: Bearer \r\n'
+).byteLength
+
 interface TokenSizeData {
   name: string
   jose: string
@@ -25,6 +30,7 @@ interface TokenSizeData {
   signatureB64Length: number
   signatureBytes: number
   totalLength: number
+  authorizationLineBytes: number
   broken: boolean
   nistLevel?: number
   measured: boolean
@@ -48,6 +54,14 @@ function getSizeLabelColor(total: number): string {
   return 'text-destructive'
 }
 
+function lineHeadroomLabel(lineBytes: number, budget: number | null): string {
+  if (budget === null) return 'Budget not assessed'
+  const remaining = budget - lineBytes
+  if (remaining < 0) return `${(-remaining).toLocaleString()} B over budget`
+  if (remaining === 0) return '0 B headroom (exact boundary)'
+  return `${remaining.toLocaleString()} B headroom`
+}
+
 // PQC algs we can actually sign in the browser
 const MEASURABLE_ALGS = new Set<string>([
   'ML-DSA-44',
@@ -63,6 +77,12 @@ export const TokenSizeAnalyzer: React.FC = () => {
   const [isMeasuring, setIsMeasuring] = useState(true)
   const [measureError, setMeasureError] = useState<string | null>(null)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+  const [lineBudgetInput, setLineBudgetInput] = useState('8192')
+  const parsedBudget = Number(lineBudgetInput)
+  const lineBudget =
+    lineBudgetInput.trim() !== '' && Number.isSafeInteger(parsedBudget) && parsedBudget > 0
+      ? parsedBudget
+      : null
 
   const isPayloadValid = useMemo(() => {
     try {
@@ -157,6 +177,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
           signatureB64Length,
           signatureBytes: sigBytes,
           totalLength,
+          authorizationLineBytes: totalLength + AUTHORIZATION_LINE_OVERHEAD_BYTES,
           broken: alg.broken,
           nistLevel: alg.nistLevel,
           measured: measuredSigBytes[alg.jose] !== undefined,
@@ -201,9 +222,10 @@ export const TokenSizeAnalyzer: React.FC = () => {
 
       <p className="text-xs text-muted-foreground">
         The 4 KiB and 8 KiB bands are illustrative compact-token references, not HTTP or cookie
-        acceptance limits. These lengths exclude Authorization/Bearer framing, other request headers
-        and cookie names/attributes. Check the limits and scope documented for the tools and
-        configuration you select.
+        acceptance limits. Compact-token lengths exclude Authorization/Bearer framing; the complete
+        HTTP/1 field-line figures below include that framing and CRLF. Other request headers, cookie
+        names/attributes and HTTP/2 compression are outside this comparison. Check the limits and
+        scope documented for the tools and configuration you select.
       </p>
 
       {/* Payload Editor */}
@@ -219,6 +241,35 @@ export const TokenSizeAnalyzer: React.FC = () => {
         {!isPayloadValid && (
           <p className="text-[10px] text-status-error mt-1">
             Invalid JSON. Fix the payload to see size calculations.
+          </p>
+        )}
+      </div>
+
+      <div className="glass-panel p-4">
+        <label
+          htmlFor="authorization-line-budget"
+          className="block text-sm font-bold text-foreground mb-2"
+        >
+          Illustrative HTTP/1 Authorization field-line budget (bytes)
+        </label>
+        <input
+          id="authorization-line-budget"
+          type="number"
+          min="1"
+          step="1"
+          value={lineBudgetInput}
+          onChange={(event) => setLineBudgetInput(event.target.value)}
+          aria-invalid={lineBudget === null}
+          className="w-full sm:max-w-xs rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
+        />
+        <p className="mt-2 text-xs text-muted-foreground">
+          Each complete line adds the 22-byte prefix and 2-byte CRLF to the compact token. This
+          adjustable budget describes one fictional line, not a server default or proof of
+          acceptance.
+        </p>
+        {lineBudget === null && (
+          <p className="mt-2 text-xs text-status-error">
+            Budget not assessed. Enter a positive whole number of bytes.
           </p>
         )}
       </div>
@@ -322,6 +373,10 @@ export const TokenSizeAnalyzer: React.FC = () => {
                     <span>Payload: {item.payloadB64Length}</span>
                     <span>Signature: {item.signatureB64Length}</span>
                   </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Authorization line: {item.authorizationLineBytes.toLocaleString()} B ·{' '}
+                    {lineHeadroomLabel(item.authorizationLineBytes, lineBudget)}
+                  </p>
                 </div>
               )
             })}
@@ -372,6 +427,12 @@ export const TokenSizeAnalyzer: React.FC = () => {
                   <th className="text-right p-2 text-muted-foreground font-medium">Sig (bytes)</th>
                   <th className="text-right p-2 text-muted-foreground font-medium">Sig (b64)</th>
                   <th className="text-right p-2 text-muted-foreground font-medium">Total JWT</th>
+                  <th className="text-right p-2 text-muted-foreground font-medium">
+                    Authorization line
+                  </th>
+                  <th className="text-right p-2 text-muted-foreground font-medium">
+                    Illustrative budget headroom
+                  </th>
                   <th className="text-right p-2 text-muted-foreground font-medium">vs ES256</th>
                 </tr>
               </thead>
@@ -402,6 +463,12 @@ export const TokenSizeAnalyzer: React.FC = () => {
                             ? `${item.totalLength} B`
                             : `${(item.totalLength / 1024).toFixed(1)} KiB`}
                         </span>
+                      </td>
+                      <td className="p-2 text-right font-mono text-xs text-foreground">
+                        {item.authorizationLineBytes.toLocaleString()} B
+                      </td>
+                      <td className="p-2 text-right text-xs text-muted-foreground">
+                        {lineHeadroomLabel(item.authorizationLineBytes, lineBudget)}
                       </td>
                       <td className="p-2 text-right font-mono text-xs text-muted-foreground">
                         {item.jose === 'ES256' ? '1.0x' : `${multiplier}x`}

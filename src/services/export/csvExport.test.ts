@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { rowsToCsv } from './csvExport'
+import { rowsToCsv, spreadsheetSafeText } from './csvExport'
 
 describe('rowsToCsv (RFC-4180)', () => {
   it('joins plain cells with commas and CRLF rows', () => {
@@ -24,5 +24,20 @@ describe('rowsToCsv (RFC-4180)', () => {
 
   it('returns an empty string for no rows', () => {
     expect(rowsToCsv([])).toBe('')
+  })
+})
+
+describe('spreadsheetSafeText', () => {
+  it.each(['=SUM(A1)', '+1', '-1', '@cmd', '\tcmd', '\rcmd'])(
+    'prefixes an apostrophe when text starts with a formula character: %j',
+    (value) => {
+      expect(spreadsheetSafeText(value)).toBe(`'${value}`)
+    }
+  )
+
+  it('leaves ordinary text, empty text and inner formula characters alone', () => {
+    expect(spreadsheetSafeText('Fictional service, A')).toBe('Fictional service, A')
+    expect(spreadsheetSafeText('')).toBe('')
+    expect(spreadsheetSafeText('Q4 = done + signed')).toBe('Q4 = done + signed')
   })
 })

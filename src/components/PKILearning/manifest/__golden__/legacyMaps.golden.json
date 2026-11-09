@@ -41,7 +41,7 @@
       "lm_id": "LM-049",
       "title": "Architect Quantum Impact",
       "description": "Architecture decisions that outlast the quantum transition: KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design.",
-      "duration": "20 min",
+      "duration": "30 min",
       "difficulty": "beginner",
       "frameworkPhase": "foundations"
     },
@@ -689,7 +689,7 @@
     "api-security-jwt": 7,
     "acvp-lab-workflow": 3,
     "aerospace-pqc": 6,
-    "arch-quantum-impact": 5,
+    "arch-quantum-impact": 6,
     "automotive-pqc": 6,
     "cbom": 4,
     "cc-eucc-certification": 2,
@@ -2471,6 +2471,10 @@
         "label": "Supply Chain Crypto Deps"
       },
       {
+        "id": "cbom",
+        "label": "CBOM: Crypto Bill of Materials"
+      },
+      {
         "id": "contracts",
         "label": "PQC Contract Requirements"
       },
@@ -2645,6 +2649,10 @@
       {
         "id": "strangler-fig",
         "label": "Strangler Fig"
+      },
+      {
+        "id": "trust-hardware",
+        "label": "Trust Hardware Selector"
       }
     ],
     "automotive-pqc": [
@@ -4097,7 +4105,7 @@
           "lm_id": "LM-049",
           "title": "Architect Quantum Impact",
           "description": "Architecture decisions that outlast the quantum transition: KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design.",
-          "duration": "20 min",
+          "duration": "30 min",
           "difficulty": "beginner",
           "frameworkPhase": "foundations"
         },

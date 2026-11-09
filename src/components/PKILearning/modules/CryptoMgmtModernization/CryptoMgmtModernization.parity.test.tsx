@@ -25,9 +25,11 @@ describe('CryptoMgmtModernization render parity', () => {
       screen.getByRole('heading', { name: 'Cryptographic Management Modernization' })
     ).toBeInTheDocument()
     // in-page <p> DIFFERS from the catalog description: it uses
-    // ". Iterative. Measurable. ROI-positive" where the catalog uses an em-dash.
+    // "Compare iterative management practices" where the catalog uses an em-dash.
     // Matching this distinguishing phrase proves the description override slot.
-    expect(screen.getByText(/Iterative\. Measurable\. ROI-positive/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Compare iterative management practices and a conditional business case/)
+    ).toBeInTheDocument()
     for (const name of [
       'Learn',
       'Visual',

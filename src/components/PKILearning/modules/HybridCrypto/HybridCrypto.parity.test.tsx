@@ -64,7 +64,10 @@ describe('HybridCrypto render parity', () => {
     expect(screen.queryByText(/single most common real-world failure/)).not.toBeInTheDocument()
     expect(screen.queryByText(/§4.2 requires this for FIPS/)).not.toBeInTheDocument()
     expect(content.narratives?.nistRecommendation).toContain(
-      'Compatibility with existing systems depends on the protocol'
+      'A suitably designed classical/PQC combination can retain security if one component remains secure.'
+    )
+    expect(content.narratives?.nistRecommendation).not.toContain(
+      'Compatibility with existing systems'
     )
     expect(content.narratives?.nistRecommendation).not.toContain('backward compatibility')
   })

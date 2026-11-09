@@ -134,7 +134,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is a CRQC and when might one exist?',
         answer:
-          "A Cryptographically Relevant Quantum Computer (CRQC) is a quantum computer capable of running Shor's algorithm against production key sizes, requiring on the order of thousands of stable logical qubits. Expert surveys (GRI 2025 Quantum Threat Timeline) put a CRQC most likely in the mid-2030s, though breakthroughs could accelerate this. The Threats dashboard tracks expert timeline estimates and updated forecasts.",
+          "A Cryptographically Relevant Quantum Computer (CRQC) can run an attack such as Shor's algorithm against a specified production key size. GRI's 2025 Quantum Threat Timeline survey averages the lower and upper ends of experts' likelihood bins to about 28-49% within 10 years of the survey (around 2035) and 51-70% within 15 years (around 2040). The survey's reference task is breaking RSA-2048 within 24 hours. These are uncertain, opinion-based ranges, not measured arrival probabilities or a most-likely year. For migration planning, compare your data's confidentiality lifetime and migration lead time with multiple threat scenarios rather than wait for a predicted Q-Day. The Threats dashboard provides the source and scenario context.",
         deepLink: '/threats',
       },
       {
@@ -170,7 +170,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the difference between physical and logical qubits?',
         answer:
-          "Physical qubits are the raw hardware units in today's quantum processors — they are extremely noisy and error-prone, making them unsuitable for long computations on their own. Logical qubits are error-corrected qubits built from many physical qubits using quantum error correction codes, providing the reliability needed to run algorithms like Shor's. The conversion ratio is steep: current estimates require roughly 1,000 physical qubits per logical qubit for fault-tolerant operation, meaning a CRQC capable of attacking RSA-2048 would need millions of physical qubits — far beyond today's largest devices (Google's Willow chip reached 105 physical qubits in 2024, a milestone but orders of magnitude short of CRQC scale). The Quantum Threats module contextualizes hardware progress against CRQC thresholds.",
+          "Physical qubits are hardware units; logical qubits use quantum error correction to make computations reliable. There is no universal physical-to-logical conversion ratio: code, physical error rate, connectivity, algorithm and target runtime matter. For a concrete comparison, Gidney's 2025 RSA-2048 resource estimate uses fewer than one million noisy physical qubits for less than a week, whereas the earlier Gidney-Ekera 2019 estimate used 20 million for eight hours. Both assume a square nearest-neighbor grid, 0.1% gate errors, 1 microsecond surface-code cycles and 10 microsecond control reaction time; the newer design changes arithmetic, storage codes and magic-state production. These are fault-tolerant resource estimates, not executed RSA attacks or hardware thresholds. Compare the full assumptions and runtime tradeoff when evaluating a resource claim; raw device qubit counts alone do not establish a CRQC.",
         deepLink: '/threats',
       },
     ],
@@ -230,7 +230,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the ANSSI PQC position?',
         answer:
-          "France's ANSSI (Agence nationale de la securite des systemes d'information) requires hybrid classical-plus-PQC deployment for all lattice-based algorithms as a transitional security measure, reflecting caution about the maturity of lattice hardness assumptions. ANSSI has set some of the most aggressive European timelines, requiring PQC support in qualified products. The Reference Library links to ANSSI's published position papers and technical guidance.",
+          "France's ANSSI (Agence nationale de la securite des systemes d'information) strongly recommends hybrid classical-plus-PQC deployment wherever post-quantum protection is deployed, in the short and medium term, because post-quantum algorithms and their implementations have had less scrutiny than classical ones; hash-based signatures (SLH-DSA, XMSS, LMS) are the exception. ANSSI says that, to date, its PQC guidance has no regulatory force by itself: hybrid is mandatory only inside the regulated perimeter (classified and Diffusion Restreinte data, vital-infrastructure systems, product qualification), and ANSSI aims to add PQC requirements for product qualification from 2027. The Reference Library links to ANSSI's published position papers and technical guidance.",
         deepLink: '/library?ref=ANSSI%20PQC%20Position%20Paper',
       },
       {
@@ -468,7 +468,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does ML-KEM change the TLS 1.3 handshake?',
         answer:
-          'In a PQC TLS 1.3 handshake, the client includes an ML-KEM public key (or hybrid key share) in the ClientHello message, and the server encapsulates a shared secret in the ServerHello response. This adds approximately 1KB to the handshake compared to classical ECDH, primarily from the larger key and ciphertext sizes. The TLS Basics module includes a step-through handshake simulator comparing classical, hybrid, and pure PQC modes.',
+          'For the X25519MLKEM768 group specified in RFC 10024, the client share is 1,216 bytes (32 X25519 + 1,184 ML-KEM encapsulation-key bytes), and the server share is 1,120 bytes (32 X25519 + 1,088 ML-KEM ciphertext bytes). The X25519-only baseline is 32 bytes in each direction, so the additional key-share data is 2,272 bytes: (1,216 + 1,120) - (32 + 32). This counts both directions, before other TLS framing, certificate-chain and signature data; it is not a total-handshake or fixed latency estimate. Measure the actual negotiated group, transcript and transport behavior with your TLS tools. The TLS Basics module demonstrates the message roles.',
         deepLink: '/learn/tls-basics',
       },
       {
@@ -498,14 +498,14 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the JWT size problem with PQC?',
         answer:
-          'ML-DSA-65 digital signatures are 3,309 bytes (FIPS 204) compared to only ~64 bytes for an ECDSA P-256 signature (256 bytes would be RSA-2048), which causes JWT tokens signed with PQC algorithms to exceed many API gateway and HTTP header size limits. This impacts OAuth 2.0 flows, microservice authentication, and any system that passes signed tokens in HTTP headers. The API Security module explores mitigation strategies including token compression and reference tokens.',
-        deepLink: '/learn/api-security-jwt',
+          "For ML-DSA-65, the raw signature is 3,309 bytes (FIPS 204). In a compact JWS with the usual base64url-encoded signature, the base64url signature segment is 4,412 bytes (4,412 ASCII characters), before the encoded header, payload and two dots. That is distinct from a 64-byte ES256 signature or a 256-byte RSA-2048 signature. The existing Token Size Analyzer's worked payload produces a 4,711-byte complete HTTP/1 Authorization field line for its ML-DSA-65 sample versus 379 bytes for ES256, including 24 bytes for the 'Authorization: Bearer ' prefix and terminating CRLF. Those are that sample's sizes, not universal JWT or server limits. Open the analyzer, change the payload and configured per-line budget, and compare the actual serialized line at and beyond the boundary. Assess the real proxy/gateway limits and verifier profile; reference tokens are a separate deployment option, not a size guarantee.",
+        deepLink: '/learn/api-security-jwt?tab=workshop&step=4',
       },
       {
         question: 'How do PQC certificates affect TLS chain size?',
         answer:
-          'A typical ML-DSA certificate chain (root, intermediate, and leaf) totals approximately 14KB compared to about 3KB for an equivalent RSA chain, due to the larger public keys and signatures in PQC algorithms. This increased size is significant for IoT devices with limited bandwidth and for mobile connections with high latency. The PKI Workshop module quantifies the overhead and explores mitigation strategies.',
-        deepLink: '/learn/pki-workshop',
+          'The PKI Workshop has a measured example with matching fictional certificate metadata: homogeneous ML-DSA-65 versus RSA-2048 with SHA-256/PKCS#1 v1.5 signatures. It transmits exactly the leaf and intermediate; the root is supplied only as a local sample trust anchor. With the declared names, serials, extensions and 2026-01-01 to 2027-01-01 validity, the two transmitted DER certificates total 11,082 bytes for ML-DSA-65 and 1,624 bytes for RSA-2048. The actual TLS 1.3 Certificate bodies are 11,096 and 1,638 bytes; adding each 4-byte Handshake header gives 11,100 and 1,642 bytes. These counts exclude CertificateVerify, key exchange, TLS records and compression, and the profiles are not equal security categories. Open Workshop, select Step 4: Parse Certificate, then Generate measured sample chains to reproduce the counts, inspect the public certificates and download the serialized messages. Different chain composition or metadata changes the result; use tools that export DER and measure the actual transmitted chain rather than assume a universal certificate size or latency penalty.',
+        deepLink: '/learn/pki-workshop?tab=workshop',
       },
       {
         question: 'What is a Merkle Tree Certificate?',
@@ -696,13 +696,13 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What does the Compliance Tracker show?',
         answer:
-          'The Compliance Tracker aggregates PQC mandates and recommendations from NIST, ANSSI, BSI, NCSC, Common Criteria, and other regulatory bodies, showing framework timelines, deadline dates, and industry-specific requirements in a unified view. It scrapes authoritative sources daily and cross-references compliance frameworks with the Reference Library and Migration catalog. The tracker supports filtering by country, industry, and compliance framework.',
+          "The Compliance Tracker aggregates PQC mandates and recommendations with framework timelines, source references and industry context. Its records come from dated dataset snapshots updated through a maintainer-run checking and review process. This view reads those snapshots; it does not scrape the linked authorities while you browse. A record can lag its source until the next pass. Check the dataset version, source date and last-verified date, then read the linked authority for the rule's actual subject and scope. The About page explains maintenance and freshness, and the Changelog records published updates. Country, industry and framework filters help you find the relevant records; a filtered view does not establish compliance.",
         deepLink: '/compliance',
       },
       {
         question: 'How does the PQC Assistant chatbot work?',
         answer:
-          'The PQC Assistant is a RAG-powered (Retrieval-Augmented Generation) AI chatbot that searches thousands of content chunks aggregated from every data source in the application — including modules, standards, compliance frameworks, and enrichment data — to provide verified answers with source references and deep-links. It runs entirely client-side and does not send your questions to any external AI service. Answers include citations to specific modules, library entries, and compliance frameworks.',
+          'The PQC Assistant retrieves relevant Hub content to support answers with citations and deep links. In Local LLM (WebLLM) mode, inference runs in your browser and your chat prompts are not sent to an external AI inference service; model files still need network downloads before local use. If you choose the Gemini cloud mode and provide your Google AI API key, chat messages, retrieved Hub context and page context are sent to Google for processing. Local storage of the key does not make that cloud inference local. Choose the mode deliberately and check its data-use terms before entering sensitive information. Source citations help you verify an answer; they do not themselves prove it correct. The About and Terms pages describe both modes.',
         deepLink: '/about',
       },
       {

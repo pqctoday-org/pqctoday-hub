@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-mgmt-modernization',
   version: '1.1.3',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-09',
 
   // ORDERED FOR A READER. It used to be ordered for the SAMPLER, and that constraint is
   // gone: accuracy_spotcheck.py opened four entries by even stride, so which four a
@@ -181,7 +181,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'This module operationalises the Crypto Agility Strategic Plan defined in NIST CSWP 39-upd1 (19 Dec 2025, updated 29 Jun 2026). CPM is the organisational discipline that executes the CSWP.39 process loop: Govern → Inventory → Identify Gaps → Prioritise → Implement → Repeat. Cryptographic Management Modernization (CMM) teaches executives and architects how to stand up a Cryptographic Posture Management program — a continuous, iterative program spanning certificates, cryptographic libraries, application software, and key material. Distinct from crypto-agility (a technical capability) and from a CryptoCOE (an operating model), CMM is the management discipline that answers: do we know what we have, is it healthy, can we prove it, and does the investment pay off whether quantum arrives on schedule or never?',
+      'This module operationalises the Crypto Agility Strategic Plan defined in NIST CSWP 39-upd1 (19 Dec 2025, updated 29 Jun 2026). CPM is the organisational discipline that executes the CSWP.39 process loop: Govern → Inventory → Identify Gaps → Prioritise → Implement → Repeat. Cryptographic Management Modernization (CMM) teaches executives and architects how to stand up a Cryptographic Posture Management program — a continuous, iterative program spanning certificates, cryptographic libraries, application software, and key material. Distinct from crypto-agility (a technical capability) and from a CryptoCOE (an operating model), CMM is the management discipline that answers: do we know what we have, is it healthy, can we prove it, and how do costs, benefits and uncertainty change the investment case with or without quantum-related benefits?',
     keyConcepts:
       'Five pillars — Inventory (unified CBOM across four asset classes), Governance (policy + ownership), Lifecycle (CLM: provisioning through retirement with automated renewal under the 47-day maximum validity period for Subscriber Certificates issued on or after 2029-03-15, and internal PKI on its own policy), Observability (drift alerts and SIEM integration), Assurance (audit + attestation, including FIPS 140-3 L3 validation tracking for libraries and hardware, SP 800-90B Entropy Source Validation status, and CVE patch-revalidate bind management). Dual-loop iteration — a strategic annual Plan-Do-Check-Act cadence wrapping an operational continuous Discover → Classify → Score → Remediate → Attest → Reassess loop. Program Office Model — five CPM roles (Crypto PM, FIPS/CMVP Engineer, CLM Architect, Crypto Developer Champion, Supplier Risk Analyst) with RACI across the five pillars and headcount benchmarks by org size. Pre-Deployment Lab Blueprint — hardware (FIPS 140-3 L3 HSM, TLS termination appliance, network tap) and software (FIPS library build, ACVP client, cert scanner, SBOM-to-CBOM pipeline — see the sbom module for what the SBOM half of that pipeline actually contains) requirements, lab isolation rules, and a five-step lab-to-prod promotion workflow with required evidence artifacts per change type.',
     workshopSummary:

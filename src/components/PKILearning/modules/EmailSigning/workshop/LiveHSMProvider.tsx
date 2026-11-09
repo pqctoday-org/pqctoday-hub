@@ -6,6 +6,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CheckCircle2, AlertTriangle, RefreshCw, FlaskConical, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CodeBlock } from '@/components/ui/code-block'
+import { CopyButton } from '@/components/ui/CopyButton'
 import {
   WorkshopOperationLog,
   type LogEntry,
@@ -24,6 +26,24 @@ type InitStatus =
   | { kind: 'error'; detail: string }
 
 const REQUEST_ID = 'cms-init'
+
+const HSM_CMS_RECIPE = [
+  {
+    title: 'Issue the sample certificate',
+    command:
+      "openssl req -new -x509 -key 'pkcs11:object=alice;type=private?pin-value=1234' -out alice.crt -subj '/CN=Alice/O=PQC Workshop/C=US' -days 365",
+  },
+  {
+    title: 'Sign the entered payload',
+    command:
+      "openssl cms -sign -signer alice.crt -inkey 'pkcs11:object=alice;type=private?pin-value=1234' -in payload-alice.bin -binary -nodetach -outform DER -out signed-alice.p7m -md sha256",
+  },
+  {
+    title: 'Verify and recover the payload',
+    command:
+      'openssl cms -verify -in signed-alice.p7m -inform DER -certfile alice.crt -CAfile alice.crt -binary -out out-alice.bin',
+  },
+] as const
 
 export function LiveHSMProvider() {
   const workerRef = useRef<Worker | null>(null)
@@ -170,6 +190,73 @@ export function LiveHSMProvider() {
           .
         </p>
       </div>
+
+      <section
+        aria-label="ML-DSA-65 HSM command recipe"
+        className="glass-panel min-w-0 space-y-3 p-4 text-sm"
+      >
+        <h3 className="font-semibold">Worked ML-DSA-65 HSM recipe</h3>
+        <p>
+          When the signing sample below is available (it needs the provider check above to finish
+          without an error), select <strong>ML-DSA-65</strong>, keep <strong>Use HSM key</strong>{' '}
+          selected, enter a fictional payload, then choose <strong>Sign + Verify</strong>. These are
+          the provider-routed commands after token and key preparation, for the bundled OpenSSL
+          3.6.3 and pkcs11-provider 1.1 sample. This named recipe stays ML-DSA-65 if you select a
+          different algorithm below.
+        </p>
+        <p>
+          The sample first initializes its own token and creates the <code>alice</code> key through
+          PKCS#11 <code>C_GenerateKeyPair</code>. The commands below use workspace filenames. To
+          copy them into a separately prepared workspace, create its own ML-DSA-65 token key named{' '}
+          <code>alice</code> and supply the entered UTF-8 payload as <code>payload-alice.bin</code>.
+          Another worker or a native terminal needs its own setup and key; matching labels do not
+          share token objects. <code>genpkey -out pkcs11:…</code> is not this preparation: that
+          output path writes a file rather than creating the required token object.
+        </p>
+        <p>
+          In a session where pkcs11-provider is already registered, as in this sample and in OpenSSL
+          Studio, the URI selects the sample key through that builtin provider; no ENGINE option or
+          native module path is needed there. A native terminal must have the provider registered
+          and configured first. <code>1234</code> is this fictional sample&apos;s public PIN, not a
+          production credential-handling example.
+        </p>
+        {HSM_CMS_RECIPE.map(({ title, command }) => (
+          <div key={title} className="min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h4 className="font-medium">{title}</h4>
+              <CopyButton
+                text={command}
+                label={`Copy: ${title}`}
+                className="h-auto max-w-full whitespace-normal text-left"
+              />
+            </div>
+            <CodeBlock code={command} aria-label={title} className="mt-2 max-w-full" />
+          </div>
+        ))}
+        <p>
+          The copied commands use the explicit private-key URI returned by OpenSSL Studio. The CMS
+          lesson retains its existing compatibility spelling,{' '}
+          <code className="break-all">pkcs11:object=alice;pin-value=1234</code>, inside its separate
+          worker. Both select that worker&apos;s own prepared sample key; this is not a transfer of
+          token objects between workers.
+        </p>
+        <p>
+          These workspace files are separate from the signing sample&apos;s internal{' '}
+          <code>/ssl/</code> files. The sample runs the same certificate/signing operations with
+          those internal paths, then copies its returned signed DER to{' '}
+          <code>/ssl/in-alice.p7m</code> for verification. The copyable sequence instead verifies
+          its own preceding <code>signed-alice.p7m</code> directly. <code>-binary</code> preserves
+          payload bytes; <code>-nodetach</code> embeds them. The local self-signed certificate is
+          the sample trust anchor. Inspect the certificate and downloaded CMS, and compare the
+          recovered bytes with the input; initialization alone is not that result.
+        </p>
+        <p>
+          With your production tools, evaluate provider and key selection, token key generation,
+          actual artifact verification and failure reporting. Retain the configuration, public
+          artifacts and input-byte comparison. A successful browser software-token sample does not
+          establish physical-HSM protection, deployed trust or every mechanism&apos;s support.
+        </p>
+      </section>
 
       {/* Existing CMS sign+verify and encrypt+decrypt demonstrations work with
           software keys today, independent of provider symbol landing. The

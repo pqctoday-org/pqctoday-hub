@@ -932,9 +932,20 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
             never add hardware the chip lacks), as the table below shows. Their reward is typically
             the highest clock and lowest power of any option.
           </p>
-          <Cited sources={['adamsBridge', 'openTitanKmac']}>
+          <Cited sources={['adamsBridge', 'adamsBridgeSca', 'openTitanKmac']}>
             {CITED_FACTS.adamsBridge} Choosing only the highest security level keeps the silicon
-            small — and means ML-DSA-44/65 users get no help from it.
+            small — and means ML-DSA-44/65 users get no help from it. The speed figures below are
+            documented figures for a named version, from RTL simulation, not silicon measurements.
+          </Cited>
+          <Cited sources={['tesseraRtl']}>
+            {CITED_FACTS.tesseraAccelerator}{' '}
+            <Link
+              to="/learn/arch-quantum-impact?tab=workshop&step=5"
+              className="underline hover:text-foreground"
+            >
+              See Tessera next to the other trust hardware
+            </Link>
+            .
           </Cited>
           <div className="space-y-2">
             <div className="text-sm font-bold text-foreground">
@@ -1010,12 +1021,12 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
               </table>
             </div>
             <p className="text-xs text-foreground/80 leading-relaxed">
-              Read the two tables together. A complete ML-DSA + ML-KEM engine fits in about a tenth
-              of a square millimetre of 5 nm silicon (an area figure the table notes pre-dates a
-              masking refactor, so it may not include the final side-channel protection), and
-              lattice ASICs run in milliwatts or less. The same engines in an FPGA need a mid-sized
-              part like our K26 — far more silicon and power — because programmable logic pays for
-              its flexibility:
+              Read the two tables together. A complete ML-DSA + ML-KEM engine fits in about 0.05
+              square millimetres of 5 nm silicon (the table&apos;s physical figure covers the core
+              masking but not the masked Keccak, so it leaves out part of the final side-channel
+              protection), and lattice ASICs run in milliwatts or less. The same engines in an FPGA
+              need a mid-sized part like our K26 — far more silicon and power — because programmable
+              logic pays for its flexibility:
             </p>
             <Cited sources={[]}>
               {FPGA_ASIC_GAP.text}{' '}
@@ -1259,7 +1270,7 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
 
       <section className="glass-panel p-6">
         <h3 className="text-sm font-bold text-foreground mb-3">Related modules</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           {[
             {
               to: '/learn/slh-dsa',
@@ -1272,6 +1283,11 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
               note: 'Where accelerated PQC runs in production',
             },
             { to: '/learn/iot-pqc', label: 'IoT & Embedded', note: 'Small cores, tight budgets' },
+            {
+              to: '/learn/arch-quantum-impact?tab=workshop&step=5',
+              label: 'Compare with the other trust hardware',
+              note: 'Where accelerators sit next to TPMs, HSMs and DPUs',
+            },
           ].map((l) => (
             <Link
               key={l.to}

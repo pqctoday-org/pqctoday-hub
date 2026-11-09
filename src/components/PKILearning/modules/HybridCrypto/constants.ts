@@ -4,7 +4,11 @@
 
 import type { CompositeProfileDraft19 } from './services/certBuilder'
 
-export type NonSeparabilityLevel = 'none' | 'wns' | 'sns'
+/**
+ * RFC 9955 non-separability levels, plus 'unclaimed' for a construction this module
+ * runs as a local experiment and makes no non-separability claim about.
+ */
+export type NonSeparabilityLevel = 'none' | 'wns' | 'sns' | 'unclaimed'
 export type HybridSigConstruction = 'concatenation' | 'nesting' | 'fused'
 
 export interface HybridSignatureModel {
@@ -54,7 +58,7 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
     id: 'silithium',
     name: 'Shared-binding model (Silithium-inspired)',
     construction: 'fused',
-    nonSeparability: 'sns',
+    nonSeparability: 'unclaimed',
     components: ['EC-Schnorr (secp256k1)', 'ML-DSA-65'],
     tagline: 'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)',
     description:

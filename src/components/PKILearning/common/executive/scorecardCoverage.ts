@@ -7,6 +7,23 @@
  */
 export const OVERALL_SCORE_MIN_COVERAGE = 0.7
 
+/** Reporting measures stay visible but never become readiness through saved overrides. */
+export function effectiveScorecardWeight(
+  dimension: { id: string; weight: number; reportingOnly?: boolean },
+  overrides: Record<string, number> = {}
+): number {
+  if (dimension.reportingOnly) return 0
+  return dimension.id in overrides ? (overrides[dimension.id] ?? 0) : dimension.weight
+}
+
+/** A dimension that can contribute to the readiness score: neither locked nor reporting-only. */
+export function isReadinessDimension(dimension: {
+  reportingOnly?: boolean
+  disabled?: boolean
+}): boolean {
+  return !dimension.reportingOnly && !dimension.disabled
+}
+
 /**
  * Share of the scorable weight that has a value (0..1).
  *
@@ -15,7 +32,7 @@ export const OVERALL_SCORE_MIN_COVERAGE = 0.7
  * Counting them made some roles unable to reach the threshold: on a fresh
  * worksheet a GRC reader's unlocked KPIs make up only 61% of the intended weight.
  */
-export function scoredWeightShare<D extends { disabled?: boolean }>(
+export function scoredWeightShare<D extends { disabled?: boolean; reportingOnly?: boolean }>(
   dimensions: readonly D[],
   weightOf: (dimension: D) => number,
   isScored: (dimension: D) => boolean
@@ -23,7 +40,7 @@ export function scoredWeightShare<D extends { disabled?: boolean }>(
   let scorable = 0
   let scored = 0
   for (const dimension of dimensions) {
-    if (dimension.disabled) continue
+    if (!isReadinessDimension(dimension)) continue
     const weight = weightOf(dimension)
     scorable += weight
     if (isScored(dimension)) scored += weight

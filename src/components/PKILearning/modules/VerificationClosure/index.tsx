@@ -25,7 +25,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'closure-handover-register',
     title: 'Step 3: Closure & Handover Register',
-    description: 'Transfer standing capabilities to permanent owners and close.',
+    description:
+      'Prepare and save a fictional capability-handover record; sample entries do not establish actual closure.',
     icon: Archive,
   },
 ]

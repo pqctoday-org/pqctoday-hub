@@ -369,7 +369,7 @@ export const OAUTH_MIGRATION_ITEMS: OAuthMigrationItem[] = [
     component: 'Access Tokens (JWS)',
     description: 'Bearer tokens signed by the authorization server',
     impact:
-      'ML-DSA-65 signatures increase token size from ~800 bytes to ~5 KB. May exceed default HTTP header limits.',
+      'ML-DSA-65 signatures increase token size from ~800 bytes to ~5 KB. May exceed a configured HTTP header limit: defaults differ by server (Apache httpd 8190 bytes per header field, nginx 8 KB per header buffer, Tomcat 8 KiB, Node.js 16 KiB) and proxies set their own.',
     priority: 'high',
   },
   {

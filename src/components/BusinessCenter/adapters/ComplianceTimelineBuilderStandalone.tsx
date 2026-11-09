@@ -6,6 +6,7 @@ import {
   ComplianceTimelineBuilder,
   type ComplianceTimelineSavedInputs,
 } from '@/components/PKILearning/modules/ComplianceStrategy/components/ComplianceTimelineBuilder'
+import { restoreStringList } from '@/components/PKILearning/modules/ComplianceStrategy/components/compliancePlanAlignment'
 import { JURISDICTIONS_LEGACY as JURISDICTIONS } from '@/data/jurisdictionsData'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -71,8 +72,9 @@ export function ComplianceTimelineBuilderStandalone() {
   // `selectedJurisdictions` is present (even as `[]`) once anything has ever
   // been saved — check for that, not `.length > 0`, so a deliberately-cleared
   // selection is respected instead of being re-seeded from assessment data.
-  const hasSavedJurisdictions = savedTimelineInputs?.selectedJurisdictions !== undefined
-  const savedJurisdictionIds = savedTimelineInputs?.selectedJurisdictions ?? []
+  const restoredJurisdictions = restoreStringList(savedTimelineInputs?.selectedJurisdictions)
+  const hasSavedJurisdictions = restoredJurisdictions !== undefined
+  const savedJurisdictionIds = restoredJurisdictions ?? []
   const assessmentJurisdictionIds = deriveJurisdictionIdsFromCountry(input?.country)
   const myFrameworkJurisdictionIds = deriveJurisdictionIdsFromFrameworks(myFrameworks)
   const myTimelineJurisdictionIds = deriveJurisdictionIdsFromTimelineCountries(myTimelineCountries)

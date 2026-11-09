@@ -34,9 +34,9 @@ const PARTS: WorkshopPart[] = [
   },
   {
     id: 'regulatory-gap-assessment',
-    title: 'Step 4: Regulatory Review Topics',
+    title: 'Step 4: Regulatory Gap Case',
     description:
-      'Explore catalogue review topics for selected jurisdictions; implementation status remains not assessed.',
+      'Work through editable fictional case answers and dependencies; jurisdiction catalogue topics do not establish compliance.',
     icon: ShieldCheck,
   },
 ]

@@ -9,13 +9,14 @@
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
+import { citedStandards } from '../trustHardwareCitations'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-hw-acceleration',
   version: '1.1.0',
   // No lastReviewed yet — this new module's claims have not been independently
   // reviewed via record_module_review.py (moduleReviewHonesty.test.ts).
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-09',
 
   standards: [
     getStandard('FIPS 202'),
@@ -26,6 +27,8 @@ export const content: ModuleContent = {
     getStandard('IACR-2018-952'),
     // SPHINCS+ (CCS 2019) — parallel-hash (AVX2) implementation strategy.
     getStandard('IACR-2019-1086'),
+    // Release 4.202 trust-hardware changes: the Library rows the new statements come from.
+    ...citedStandards('pqc-hw-acceleration'),
   ],
 
   algorithms: [

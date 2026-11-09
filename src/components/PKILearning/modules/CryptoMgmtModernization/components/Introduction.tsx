@@ -758,8 +758,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Five benefit streams pay off independently of whether CRQC arrives in 2030, 2040, or
-            never.
+            Five potential operational benefit streams do not depend on CRQC arrival. Whether they
+            outweigh programme costs depends on the selected scope and assumptions.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -772,7 +772,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-sm font-bold text-status-success">CLM automation</div>
               <p className="text-[11px] text-muted-foreground mt-1">
-                312% ROI, $10.1M NPV over 3 years (Forrester TEI of DigiCert ONE, July 2025).
+                A DigiCert-commissioned Forrester composite model reported 312% ROI and $10.1M NPV
+                over three years; these are modeled total-programme results, not measured CLM labour
+                savings.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -794,12 +796,24 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </p>
             </div>
           </div>
-          <Quote cite="Forrester Total Economic Impact of DigiCert ONE (July 2025), commissioned by DigiCert">
-            A composite organization modeled on interviewed DigiCert ONE customers realized 312% ROI
-            and $10.1M NPV over three years &mdash; with $7.9M in labor savings, $2.8M from reduced
-            security incidents, and $2.8M in revenue and efficiency gains. Treat as upper-bound
-            benchmark for a specific product, not a guaranteed outcome for any CLM platform.
-          </Quote>
+          <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-2">
+            <p className="font-semibold">Study summary — Hub paraphrase</p>
+            <p>
+              The July 2025 DigiCert-commissioned Forrester TEI models one composite organisation,
+              with $13.3M in three-year risk-adjusted benefit present value. This total combines
+              several benefit types; it is not annual labour savings or an established upper bound
+              for another organisation. The workshop uses the study’s Year 1 renewal-labour amount
+              as an editable benchmark and exposes its own projection assumptions.
+            </p>
+            <a
+              href="https://tei.forrester.com/go/DigiCert/DigiCertONE/index.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              Read the commissioned study and its assumptions
+            </a>
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button

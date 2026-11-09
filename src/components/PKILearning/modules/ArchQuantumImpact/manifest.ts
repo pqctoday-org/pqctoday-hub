@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'arch-quantum-impact',
-  contentVersion: 15,
+  contentVersion: 16,
   lm_id: 'LM-049',
   title: 'Architect Quantum Impact',
   description:
     'Architecture decisions that outlast the quantum transition: KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design.',
   whyThisMatters:
     'Architecture decisions made today — KMS, HSM, PKI topology — outlive any single algorithm; get crypto-agility wrong now and every future PQC transition costs far more to retrofit.',
-  duration: '20 min',
+  duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',
   track: 'Role Guides',
@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'how-to-act', label: 'How to Act' },
     { id: 'self-assessment', label: 'Architecture Readiness Self-Assessment' },
     { id: 'strangler-fig', label: 'Strangler Fig' },
+    { id: 'trust-hardware', label: 'Trust Hardware Selector' },
   ],
   startHere: {
     step: 'strangler-fig',

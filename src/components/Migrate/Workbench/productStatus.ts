@@ -52,6 +52,9 @@ export function productPqcStatus(item: SoftwareItem): ProductStatusBadge {
     case 'psk':
       return PQC_BADGE.psk
     case 'roadmap':
+    case 'planned':
+      // 'planned' is the older canonical spelling of roadmap; the catalogue
+      // loader and the "Planned / roadmap" filter already treat it so.
       return PQC_BADGE.roadmap
     case 'none':
       return PQC_BADGE.none

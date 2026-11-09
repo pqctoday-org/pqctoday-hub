@@ -28,6 +28,7 @@ import {
   type SampleCheckStatus,
 } from './crlOutcomes'
 import { getCryptoErrorHint } from '@/utils/cryptoErrorHint'
+import { MeasuredChainExample } from './MeasuredChainExample'
 
 interface VerificationRecord {
   success: boolean
@@ -50,6 +51,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     (c) => !(c.tags?.includes('root') && c.tags?.includes('ca'))
   )
 
+  const [isMeasuringChain, setIsMeasuringChain] = useState(false)
   const [certInput, setCertInput] = useState('')
   const [selectedArtifactId, setSelectedArtifactId] = useState('')
   const [selectedArtifactName, setSelectedArtifactName] = useState('')
@@ -663,6 +665,28 @@ S8Y=
 
   return (
     <div className="space-y-6">
+      <MeasuredChainExample
+        disabled={
+          isParsing ||
+          isConverting ||
+          isVerifying ||
+          isVerifyingCrl ||
+          isFingerprintLoading ||
+          isVerifyingCsr
+        }
+        onBusyChange={setIsMeasuringChain}
+        onInspect={(certificate, name) => {
+          setCertInput(certificate.pem)
+          setSelectedArtifactId('')
+          setSelectedArtifactName(name)
+          setSelectedHybridFile('')
+          setParsedOutput(null)
+          setFingerprint(null)
+          setCsrVerifyResult(null)
+          setConversionResult(null)
+          setError(null)
+        }}
+      />
       {/* Artifact Selection */}
       <div className="bg-card/80 border border-border rounded-2xl p-5">
         <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -672,6 +696,7 @@ S8Y=
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <FilterDropdown
+              disabled={isMeasuringChain}
               label="Select a Certificate or CSR to inspect"
               items={[
                 ...csrs.map((csr) => ({
@@ -696,6 +721,7 @@ S8Y=
           </div>
           <div className="flex items-end">
             <Button
+              disabled={isMeasuringChain}
               variant="ghost"
               onClick={loadExampleCert}
               className="text-sm text-primary hover:text-primary/80 underline mb-2"
@@ -709,6 +735,7 @@ S8Y=
         {hybridCertFiles.length > 0 && (
           <div className="mt-4 space-y-2">
             <FilterDropdown
+              disabled={isMeasuringChain}
               label="Or load a Hybrid / PQC Certificate (from Playground)"
               items={hybridCertFiles.map((f) => ({
                 id: f.name,
@@ -749,7 +776,7 @@ S8Y=
 
           <textarea
             aria-label="Certificate, CSR or CRL PEM"
-            disabled={verificationBusy}
+            disabled={isMeasuringChain || verificationBusy}
             value={certInput}
             onChange={(e) => {
               setCertInput(e.target.value)
@@ -764,7 +791,7 @@ S8Y=
             <Button
               variant="gradient"
               onClick={handleParse}
-              disabled={isParsing || !certInput}
+              disabled={isMeasuringChain || isParsing || !certInput}
               className="flex items-center justify-center gap-2 px-4 py-2 font-bold rounded transition-colors disabled:opacity-50"
             >
               {isParsing ? <Loader2 className="animate-spin" size={16} /> : <Search size={16} />}
@@ -775,7 +802,7 @@ S8Y=
               <Button
                 variant="ghost"
                 onClick={() => handleConvert('DER')}
-                disabled={isConverting || !certInput || isCrlInput}
+                disabled={isMeasuringChain || isConverting || !certInput || isCrlInput}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
               >
                 {isConverting ? (
@@ -788,7 +815,13 @@ S8Y=
               <Button
                 variant="ghost"
                 onClick={() => handleConvert('P7B')}
-                disabled={isConverting || !certInput || certInput.includes('REQUEST') || isCrlInput}
+                disabled={
+                  isMeasuringChain ||
+                  isConverting ||
+                  !certInput ||
+                  certInput.includes('REQUEST') ||
+                  isCrlInput
+                }
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
                 title="CSRs and CRLs cannot be converted to P7B"
               >
@@ -807,7 +840,7 @@ S8Y=
             <Button
               variant="ghost"
               onClick={handleGetFingerprint}
-              disabled={isFingerprintLoading}
+              disabled={isMeasuringChain || isFingerprintLoading}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Compute the SHA-256 fingerprint of this certificate"
             >
@@ -832,7 +865,7 @@ S8Y=
             <Button
               variant="ghost"
               onClick={handleVerifyCsr}
-              disabled={isVerifyingCsr}
+              disabled={isMeasuringChain || isVerifyingCsr}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Verify the CSR's self-signature to confirm the requester holds the private key"
             >
@@ -864,7 +897,7 @@ S8Y=
 
           {selectedIsEndEntity && rootCAs.length > 0 && (
             <fieldset
-              disabled={verificationBusy}
+              disabled={isMeasuringChain || verificationBusy}
               className="min-w-0 space-y-3 rounded border border-border p-3"
             >
               <p className="text-xs text-muted-foreground">
@@ -875,6 +908,7 @@ S8Y=
                 different tool. Delta, indirect and scoped CRLs are not supported here.
               </p>
               <FilterDropdown
+                disabled={isMeasuringChain}
                 label="Sample issuer CA (explicit trust anchor)"
                 items={caChoices.map((c) => ({
                   id: c.choiceKey,
@@ -889,6 +923,7 @@ S8Y=
                 className="w-full"
               />
               <FilterDropdown
+                disabled={isMeasuringChain}
                 label="Sample CRL"
                 items={crlChoices.map((c) => ({
                   id: c.choiceKey,
@@ -918,7 +953,7 @@ S8Y=
             <Button
               variant="ghost"
               onClick={handleVerifyChain}
-              disabled={verificationBusy}
+              disabled={isMeasuringChain || verificationBusy}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Verify this certificate's trust chain against the Root CA"
             >
@@ -967,7 +1002,7 @@ S8Y=
             <Button
               variant="ghost"
               onClick={handleVerifyCrl}
-              disabled={verificationBusy}
+              disabled={isMeasuringChain || verificationBusy}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Run the configured check with the explicitly selected sample issuer and CRL"
             >
@@ -1050,6 +1085,7 @@ S8Y=
             {parsedOutput && (
               <div className="flex gap-2">
                 <Button
+                  disabled={isMeasuringChain}
                   variant="ghost"
                   onClick={() => setViewMode('tree')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
@@ -1062,6 +1098,7 @@ S8Y=
                   Tree View
                 </Button>
                 <Button
+                  disabled={isMeasuringChain}
                   variant="ghost"
                   onClick={() => setViewMode('raw')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
