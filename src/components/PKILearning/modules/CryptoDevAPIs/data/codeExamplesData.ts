@@ -66,24 +66,53 @@ EVP_PKEY *sample_generate_mldsa65_key(void) {
     operation: 'keygen',
     language: 'C',
     algorithm: 'ML-DSA-65',
-    code: `// PKCS#11 v3.2 — ML-DSA key pair generation
-CK_MECHANISM mech = {CKM_ML_DSA_KEY_PAIR_GEN, NULL, 0};
-CK_ATTRIBUTE pubTmpl[] = {
-    {CKA_TOKEN, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_VERIFY, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_ML_DSA_PARAMETER_SET,
-     "ML-DSA-65", 9}
-};
-CK_ATTRIBUTE privTmpl[] = {
-    {CKA_TOKEN, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_SIGN, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_SENSITIVE, &ckTrue, sizeof(CK_BBOOL)}
-};
-CK_OBJECT_HANDLE hPub, hPriv;
-C_GenerateKeyPair(session, &mech,
-    pubTmpl, 3, privTmpl, 3,
-    &hPub, &hPriv);`,
-    notes: 'Keys stored on HSM token. Handles are opaque — key material never exposed.',
+    code: `// Unix calling-convention macros for the official OASIS headers.
+#define CK_PTR *
+#define CK_DECLARE_FUNCTION(returnType, name) returnType name
+#define CK_DECLARE_FUNCTION_POINTER(returnType, name) returnType (* name)
+#define CK_CALLBACK_FUNCTION(returnType, name) returnType (* name)
+#define NULL_PTR 0
+#include "pkcs11.h"
+
+// PKCS#11 v3.2. The caller supplies a logged-in read/write session.
+CK_RV generate_sample_mldsa65(CK_FUNCTION_LIST_PTR api,
+                            CK_SESSION_HANDLE session,
+                            CK_OBJECT_HANDLE_PTR publicKey,
+                            CK_OBJECT_HANDLE_PTR privateKey)
+{
+    CK_BBOOL ckTrue = CK_TRUE;
+    CK_ML_DSA_PARAMETER_SET_TYPE parameterSet = CKP_ML_DSA_65;
+    CK_MECHANISM mechanism = {CKM_ML_DSA_KEY_PAIR_GEN, NULL_PTR, 0};
+    CK_ATTRIBUTE publicTemplate[] = {
+        {CKA_TOKEN, &ckTrue, sizeof(ckTrue)},
+        {CKA_VERIFY, &ckTrue, sizeof(ckTrue)},
+        {CKA_PARAMETER_SET, &parameterSet, sizeof(parameterSet)}
+    };
+    CK_ATTRIBUTE privateTemplate[] = {
+        {CKA_TOKEN, &ckTrue, sizeof(ckTrue)},
+        {CKA_SIGN, &ckTrue, sizeof(ckTrue)},
+        {CKA_SENSITIVE, &ckTrue, sizeof(ckTrue)}
+    };
+    CK_OBJECT_HANDLE generatedPublic = CK_INVALID_HANDLE;
+    CK_OBJECT_HANDLE generatedPrivate = CK_INVALID_HANDLE;
+    CK_RV result;
+
+    if (publicKey == NULL_PTR || privateKey == NULL_PTR)
+        return CKR_ARGUMENTS_BAD;
+    *publicKey = CK_INVALID_HANDLE;
+    *privateKey = CK_INVALID_HANDLE;
+    if (api == NULL_PTR || api->C_GenerateKeyPair == NULL_PTR)
+        return CKR_ARGUMENTS_BAD;
+    result = api->C_GenerateKeyPair(session, &mechanism,
+        publicTemplate, 3, privateTemplate, 3,
+        &generatedPublic, &generatedPrivate);
+    if (result != CKR_OK) return result;
+    *publicKey = generatedPublic;
+    *privateKey = generatedPrivate;
+    return CKR_OK;
+}`,
+    notes:
+      'Compile with the OASIS PKCS#11 v3.2 headers and an implementation supporting CKM_ML_DSA_KEY_PAIR_GEN. CKA_PARAMETER_SET takes the numeric CK_ML_DSA_PARAMETER_SET_TYPE value CKP_ML_DSA_65, not a name string; the private key inherits this selection from the public template. Check the returned CK_RV before using handles. The caller initializes its chosen provider, opens and authenticates a read/write sample-token session, then destroys owned objects, logs out, closes the session and finalizes. CKA_TOKEN requests token storage and CKA_SENSITIVE restricts private-value reads; opaque handles alone do not establish hardware residency or non-extractability. Evaluate these capabilities and failure behavior in your production tool.',
   },
   {
     apiId: 'ksp-cng',
