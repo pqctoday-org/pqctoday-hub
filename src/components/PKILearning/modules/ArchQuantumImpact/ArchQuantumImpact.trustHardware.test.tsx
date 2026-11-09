@@ -32,8 +32,8 @@ import {
 /**
  * The Library rows for Tessera, Caliptra, the DPUs, the cloud services and the key-release
  * documents are admitted in the same release. Until they are in the newest Library CSV in this
- * checkout, set TRUSTHW_EXTRA_LIBRARY_CSV to a CSV that has them (for example the data branch's
- * newest library_*.csv) to check the ids without copying the file.
+ * checkout, set TRUSTHW_EXTRA_LIBRARY_CSV to a CSV that has them (a newer library_*.csv) to
+ * check the ids without copying the file.
  */
 function extraLibraryIds(): Set<string> {
   const path = process.env.TRUSTHW_EXTRA_LIBRARY_CSV
@@ -314,6 +314,7 @@ describe('TrustHardwareSelector render', () => {
     fireEvent.click(screen.getByRole('button', { name: 'View the overlap diagram full size' }))
     const dialog = screen.getByRole('dialog', { name: 'Overlap diagram full view' })
     expect(within(dialog).getByRole('img')).toHaveAttribute('src', VENN.src)
+    expect(within(dialog).getByRole('img').style.touchAction).toBe('pan-x pan-y pinch-zoom')
     fireEvent.click(screen.getAllByRole('button', { name: 'Close diagram' })[1])
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
@@ -328,6 +329,19 @@ describe('Overlap picture', () => {
     expect(bytes.subarray(0, 4).toString('ascii')).toBe('RIFF')
     expect(bytes.subarray(8, 12).toString('ascii')).toBe('WEBP')
     expect(bytes.length).toBeLessThan(400 * 1024)
+  })
+
+  it('keeps the text version in step with the picture, with notes and cited sources', () => {
+    const all = [...VENN.regions, ...VENN.tableRows, ...VENN.notes].join(' ')
+    expect(all).toMatch(/Caliptra 2\.2 is the version the Tessera specification requires/)
+    expect(all).toMatch(/scheduled for release in December 2026/)
+    expect(all).toMatch(
+      /Rust SDK and OpenSSL provider and no PKCS#11 interface in its repositories/
+    )
+    expect(VENN.caption).toMatch(/bring-your-own-key/)
+    const extra = extraLibraryIds()
+    const unresolved = VENN.sources.filter((id) => !hasStandard(id) && !extra.has(id))
+    expect(unresolved, `Library ids missing: ${unresolved.join(' | ')}`).toEqual([])
   })
 
   it('has one-sentence alt text and a caption that names no tools', () => {

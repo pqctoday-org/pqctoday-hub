@@ -6,6 +6,7 @@ import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { VENN } from '../data/trustHardwareVenn'
+import { SourceList } from './SourceList'
 
 /** The overlap picture with its caption, a text version of its regions, and a full-size view. */
 export const TrustHardwareVenn: React.FC = () => {
@@ -51,6 +52,12 @@ export const TrustHardwareVenn: React.FC = () => {
               <li key={r}>{r}</li>
             ))}
           </ul>
+          <ul className="list-disc pl-5 space-y-1">
+            {VENN.notes.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+          <SourceList ids={[...VENN.sources]} />
         </div>
       </details>
 
@@ -80,7 +87,7 @@ export const TrustHardwareVenn: React.FC = () => {
                   width={VENN.width}
                   height={VENN.height}
                   className="block w-[1100px] max-w-none h-auto select-none md:w-auto md:max-w-full md:max-h-[90vh] md:object-contain"
-                  style={{ touchAction: 'pinch-zoom' }}
+                  style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
                 />
               </div>
               <Button

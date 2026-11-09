@@ -9,7 +9,7 @@
  *
  * Source ids are Library reference_ids, cited exactly as admitted for this release.
  *
- * Wording rules (owner decisions 2026-11-08):
+ * Wording rules:
  *  - Tessera is described from its specifications and repositories only: specification and code,
  *    no product or certificate yet. Its targets are requirements, never measurements.
  *  - Microsoft describes Tessera as an evolution of the Azure Integrated HSM; facts about the
@@ -47,7 +47,7 @@ const CSA_GUIDE = 'CSA-PQC-Guide-2025'
 const IG_PQC = 'NIST-FIPS140-3-IG-PQC'
 const GSMA_PQ03 = 'GSMA PQ.03 PQC Guidelines'
 
-// Rows admitted for this release (plan section A.2), cited exactly as in the Library.
+// Library rows added for this release, cited exactly as in the Library.
 const TESSERA_DEF = 'Tessera-Integrated-HSM-Project-Definition-0-5-0'
 const TESSERA_CHIP = 'Tessera-Integrated-HSM-Chip-Requirements-Specification-0-5-0'
 const TESSERA_TMK = 'Tessera-Masking-Key-Transfer-Protocol-0-5-0'
@@ -78,6 +78,8 @@ const AWS_COMPLIANCE = 'Compliance-validation-for-AWS-CloudHSM'
 const CMVP_4703 = 'CMVP-Certificate-4703-Marvell-LS2-HSM-Family'
 const AZ_CLOUD_AUDIT = 'Tutorial-Configure-and-Query-HSM-Operation-Audit-Logs-for-Az'
 const AZ_BOOST = 'Overview-of-Azure-Boost'
+const CALIPTRA_ROT = 'Caliptra-A-Datacenter-System-on-a-Chip-SoC-Root-of-Trust-RoT'
+const CONFIDENTIAL_VMS = 'Confidential-VMs-Explained-An-Empirical-Analysis-of-AMD-SEV'
 /** Key release to an attested workload: Azure Secure Key Release and AWS KMS with Nitro Enclaves. */
 const KEY_RELEASE = [AZ_SKR, AWS_KMS_NITRO]
 
@@ -294,7 +296,7 @@ export const TRUST_CARDS: TrustCard[] = [
       },
       {
         q: 'pq',
-        text: 'Post-quantum support varies by product: Luna HSMs list ML-DSA and ML-KEM from firmware 7.9.0 and LMS-HSS from 7.8.9, and the Primus CyberVault series lists ML-KEM, ML-DSA, SLH-DSA, HSS/LMS and XMSS. An algorithm validation is not a module validation.',
+        text: 'Post-quantum support varies by product: Luna HSMs list ML-DSA and ML-KEM from firmware 7.9.0 and LMS-HSS from 7.8.9, and the Primus CyberVault series lists ML-KEM, ML-DSA, SLH-DSA, HSS/LMS and XMSS. Algorithm validations, such as those NIST’s CAVP lists for Securosys, are not by themselves FIPS 140 module validations.',
         sources: [LUNA_PQC, SECUROSYS_X2, SECUROSYS],
       },
     ],
@@ -330,22 +332,22 @@ export const TRUST_CARDS: TrustCard[] = [
   {
     id: 'confidential-computing',
     name: 'Confidential computing',
-    tagline: 'SEV-SNP, TDX, CCA, Nitro Enclaves',
+    tagline: 'AMD SEV-SNP, Intel TDX, AWS Nitro Enclaves',
     modules: [DEEP.cc],
     sentences: [
       {
         q: 'what',
         text: 'Confidential computing uses hardware that encrypts a workload’s memory and limits which code can read it, so data stays protected while it is processed.',
-        sources: [NIST_CC, TEE_SOK],
+        sources: [NIST_CC, TEE_SOK, CONFIDENTIAL_VMS],
       },
       {
         q: 'where',
         text: 'It is a mode of the CPU and platform rather than a separate key device: a virtual machine or enclave runs in the protected mode.',
-        sources: [NIST_CC, TEE_SOK],
+        sources: [NIST_CC, TEE_SOK, CONFIDENTIAL_VMS],
       },
       {
         q: 'protects',
-        text: 'It protects data and code in use; it does not keep long-term keys, because the workload fetches keys after remote attestation and uses them in protected memory.',
+        text: 'It protects data and code in use. In the key-release workflow that NIST describes, the workload fetches keys after remote attestation and uses them in protected memory.',
         sources: [NIST_CC, ...KEY_RELEASE],
       },
       {
@@ -358,27 +360,27 @@ export const TRUST_CARDS: TrustCard[] = [
   {
     id: 'dpu-bought',
     name: 'DPU you buy',
-    tagline: 'BlueField, OCTEON, Pensando, Intel IPU',
+    tagline: 'NVIDIA BlueField, Marvell OCTEON, AMD Pensando',
     modules: [DEEP.network],
     sentences: [
       {
         q: 'what',
-        text: 'A data processing unit is a network card with its own processors and crypto engines that moves networking, storage and security work off the server CPU.',
-        sources: [OCTEON],
+        text: 'A data processing unit is a network device with its own processors and crypto engines that handles networking, storage and security work in place of the host; NVIDIA’s DOCA guide describes secure network communication fully offloaded to BlueField or ConnectX hardware.',
+        sources: [OCTEON, DOCA_PSP],
       },
       {
         q: 'where',
-        text: 'It sits in your server in the packet path and can encrypt traffic inline; the host sets up keys and rules, as in NVIDIA’s DOCA PSP Gateway sample.',
+        text: 'It sits in the packet path and can encrypt traffic inline. In NVIDIA’s DOCA PSP Gateway sample the application can run on the DPU, where the PSP resources are on the DPU and transparent to the host, or on the host.',
         sources: [DOCA_PSP, OCTEON],
       },
       {
         q: 'protects',
-        text: 'It protects traffic on the wire at the card’s rated speed; the key setup in NVIDIA’s sample travels over a channel that is unencrypted unless you change it.',
+        text: 'It protects traffic on the wire at the device’s rated speed. In NVIDIA’s sample the receiver derives its keys inside the device from master keys the device manages, and the key exchange between applications uses a gRPC channel that is unencrypted unless you change it.',
         sources: [DOCA_PSP],
       },
       {
         q: 'pq',
-        text: 'The sources read give no post-quantum key exchange for these cards; certification varies, and AMD Pensando PenTrust holds FIPS 140-3 Level 1.',
+        text: 'The sources read give no post-quantum key exchange for these devices; certification varies, and AMD Pensando PenTrust holds FIPS 140-3 Level 1.',
         sources: [PENSANDO, DOCA_PSP],
       },
     ],
@@ -464,8 +466,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'dpu-bought': C(
         'stated',
-        'A network card with its own processors, installed in your server and able to encrypt traffic inline.',
-        OCTEON
+        'A network device with its own processors in the packet path, able to encrypt traffic inline; NVIDIA’s sample can run on the DPU or on the host.',
+        OCTEON,
+        DOCA_PSP
       ),
       'dpu-cloud': C(
         'stated',
@@ -504,18 +507,18 @@ export const GRID_ROWS: GridRow[] = [
         LUNA_BRIEF
       ),
       'cloud-hsm': C(
-        'varies',
+        'stated',
         'The provider runs the hardware; the customer administers users and keys. In Azure Cloud HSM, Microsoft handles patching and maintenance.',
         AZ_CLOUD_HSM
       ),
       'confidential-computing': C(
         'stated',
-        'The VM or enclave owner decides which code runs and which keys it fetches; attestation lets a key service check before release.',
+        'The data owner or a relying party sets the attestation policy; the key service releases keys to a workload that meets it.',
         NIST_CC
       ),
       'dpu-bought': C(
         'stated',
-        'The server owner runs the card; keys and rules are set from software on the host.',
+        'The server owner runs it. In NVIDIA’s DOCA PSP Gateway sample, the application that exchanges keys and programs the device can run on the DPU or on the host.',
         DOCA_PSP
       ),
       'dpu-cloud': C(
@@ -567,10 +570,14 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'dpu-bought': C(
         'stated',
-        'Holds the keys of the connections it encrypts; in the sources read they are set from the host.',
+        'Holds the keys of the connections it encrypts; in NVIDIA’s sample the receiver derives them in the device from a pair of master keys the device manages.',
         DOCA_PSP
       ),
-      'dpu-cloud': np(),
+      'dpu-cloud': C(
+        'stated',
+        'The provider’s own keys: AWS says the keys for EBS, instance storage and VPC networking are only ever in plaintext in the Nitro Cards’ protected volatile memory.',
+        NITRO
+      ),
     },
   },
   {
@@ -611,7 +618,12 @@ export const GRID_ROWS: GridRow[] = [
         RATS
       ),
       'dpu-bought': np(),
-      'dpu-cloud': np(),
+      'dpu-cloud': C(
+        'stated',
+        'Provider-side: Azure Boost uses attestation through Azure’s Attestation Service, and Google’s Titan chips attest the firmware version deployed on a machine.',
+        AZ_BOOST,
+        TITANIUM
+      ),
     },
   },
   {
@@ -655,7 +667,7 @@ export const GRID_ROWS: GridRow[] = [
       ),
       caliptra: C(
         'stated',
-        'Release 2.1 adds an ML-KEM-1024 accelerator (Adams Bridge) for Caliptra’s own functions; no application key import is described.',
+        'Release 2.1 adds an ML-KEM-1024 accelerator (Adams Bridge); its documentation describes caller-supplied ephemeral decapsulation keys (for example through a mailbox command) and no long-term keys.',
         ADAMS_BRIDGE,
         TESSERA_CHIP
       ),
@@ -694,12 +706,12 @@ export const GRID_ROWS: GridRow[] = [
       ),
       caliptra: C(
         'stated',
-        'Firmware is checked against manufacturer ECC plus LMS or ML-DSA keys; a security version number is compared with fuses, and a fuse can switch the check off.',
-        CAL_VER
+        'Firmware is checked against manufacturer keys (ECC plus LMS or ML-DSA, each with a revoke fuse); a security version number is compared with a fuse minimum, and an anti-rollback disable fuse exists.',
+        CALIPTRA_ROT
       ),
       tessera: C(
         'specified',
-        'Requirement: all firmware is loaded and measured by Caliptra, with an anti-rollback counter of at least 32 counts.',
+        'Requirement: all firmware is loaded and measured by Caliptra, with an anti-rollback counter of at least 32 counts for non-Caliptra firmware.',
         TESSERA_CHIP
       ),
       'hardware-hsm': C(
@@ -709,12 +721,16 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'cloud-hsm': C(
         'varies',
-        'The provider decides; in Azure Cloud HSM, Microsoft oversees the firmware, the HSM manufacturer maintains it, and the customer takes no action.',
+        'The provider decides; in Azure Cloud HSM, Microsoft oversees the firmware and the customer takes no action; the HSM manufacturer maintains the hardware.',
         AZ_CLOUD_FAQ
       ),
       'confidential-computing': np(),
       'dpu-bought': np(),
-      'dpu-cloud': np(),
+      'dpu-cloud': C(
+        'stated',
+        'Provider-side: Google’s Titan chips reject bad firmware pushes and help enforce revocation of known-vulnerable code, which mitigates rollback and replay attacks.',
+        TITANIUM
+      ),
     },
   },
   {
@@ -748,7 +764,11 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'confidential-computing': np(),
       'dpu-bought': np(),
-      'dpu-cloud': np(),
+      'dpu-cloud': C(
+        'stated',
+        'Provider-side: AWS says operator access to the servers goes through authenticated, authorized, logged and audited administrative APIs.',
+        NITRO
+      ),
     },
   },
   {
@@ -757,8 +777,8 @@ export const GRID_ROWS: GridRow[] = [
     question: 'What certification is published?',
     cells: {
       tpm: C(
-        'varies',
-        'Varies by chip; the PC Client profile points to TCG’s FIPS 140-3 guidance for TPM 2.0.',
+        'stated',
+        'Not published for TPMs in general; the PC Client profile notes TCG’s FIPS 140-3 guidance for TPM 2.0 only for self-test behaviour and timing.',
         TPM_PC
       ),
       caliptra: np(),
@@ -769,13 +789,13 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'hardware-hsm': C(
         'varies',
-        'Varies by product and firmware. An algorithm validation is not a module validation, so check the module’s own certificate.',
+        'Varies by product and firmware. Algorithm validations, such as those NIST’s CAVP lists for Securosys, are not by themselves FIPS 140 module validations, so check the module’s own certificate.',
         SECUROSYS,
         IG_PQC
       ),
       'cloud-hsm': C(
         'varies',
-        'Providers state FIPS 140 Level 3: Azure Cloud HSM under 140-3, Google Cloud HSM under 140-2, and AWS CloudHSM hsm2m.medium under 140-3, which AWS ties to the Marvell LS2 HSM Family (certificate 4703).',
+        'Azure Cloud HSM states 140-3 Level 3 and Google Cloud HSM 140-2 Level 3. AWS cites certificate 4703 for hsm2m.medium in FIPS mode; NIST lists 4703 as Marvell LS2 HSM Family, in approved mode.',
         AZ_CLOUD_HSM,
         GOOGLE_HSM,
         AWS_FAQ,
@@ -785,10 +805,15 @@ export const GRID_ROWS: GridRow[] = [
       'confidential-computing': np(),
       'dpu-bought': C(
         'varies',
-        'AMD Pensando PenTrust holds FIPS 140-3 Level 1, a software-hybrid module; for other cards, not published.',
+        'AMD Pensando PenTrust holds FIPS 140-3 Level 1, a software-hybrid module; for other devices, not published.',
         PENSANDO
       ),
-      'dpu-cloud': np(),
+      'dpu-cloud': C(
+        'varies',
+        'Provider statements: Azure Boost cites NIST 800-193 certification and a FIPS 140 certified system kernel; Google lists BoringSSL and PSP in FIPS 140-3 level 1 libraries.',
+        AZ_BOOST,
+        TITANIUM
+      ),
     },
   },
   {
@@ -829,8 +854,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       'dpu-bought': C(
         'stated',
-        'Move network, storage and security work off the CPU, including inline encryption.',
-        OCTEON
+        'Move network, storage and security work away from the host, including inline encryption.',
+        OCTEON,
+        DOCA_PSP
       ),
       'dpu-cloud': C(
         'stated',
@@ -848,8 +874,8 @@ export const GRID_ROWS: GridRow[] = [
 export const GRID_FINDINGS: (Sourced & { heading: string })[] = [
   {
     heading: 'What they share',
-    text: 'All eight rest on a hardware root, so all eight ask you to trust the maker of that hardware.',
-    sources: [TPM_P1, CAL_HW, TESSERA_CHIP, NIST_CC, NITRO],
+    text: 'All eight rest on a hardware root; what differs is who builds, runs and controls that hardware.',
+    sources: [TPM_P1, CAL_HW, TESSERA_CHIP, SECUROSYS_X2, AZ_CLOUD_HSM, NIST_CC, OCTEON, NITRO],
   },
   {
     heading: 'The biggest split',
@@ -936,12 +962,12 @@ export const SCENARIOS: Scenario[] = [
     lessWell: [
       {
         category: 'caliptra',
-        text: 'It boots and identifies one chip; it is not the host platform’s measurement store.',
-        sources: [CAL_HW],
+        text: 'Choose it when the need is one chip’s own boot and identity; for the host platform’s measurements, a TPM is the module the PC Client profile describes.',
+        sources: [CAL_HW, TPM_PC],
       },
       {
         category: 'confidential-computing',
-        text: 'Its attestation describes the VM or enclave, not the board’s boot.',
+        text: 'Its attestation reports on the VM or enclave; ask the host’s TPM for the board’s boot state.',
         sources: [NIST_CC],
       },
     ],
@@ -955,7 +981,7 @@ export const SCENARIOS: Scenario[] = [
     landscapeUseCaseId: 'telco-transport',
     best: ['dpu-bought'],
     why: {
-      text: 'A DPU you buy sits in the packet path with crypto engines and encrypts traffic inline. The Landscape row names IPsec on the security gateway; the DPU documents describe the inline offload and that the host sets the keys.',
+      text: 'A DPU you buy sits in the packet path with crypto engines and encrypts traffic inline. The Landscape row names IPsec on the security gateway; the DPU documents describe the inline offload, and in NVIDIA’s sample the application can run on the DPU itself.',
       sources: [OCTEON, DOCA_PSP, GSMA_PQ03],
     },
     lessWell: [
@@ -966,7 +992,7 @@ export const SCENARIOS: Scenario[] = [
       },
       {
         category: 'dpu-cloud',
-        text: 'These are the provider’s cards; you cannot choose their design or load your own keys into them.',
+        text: 'These are the provider’s cards; the documents describe no way for you to choose their design or load your own keys into them.',
         sources: [NITRO, TITANIUM],
       },
     ],
@@ -1041,13 +1067,13 @@ export const SCENARIOS: Scenario[] = [
     origin: 'authored',
     best: ['dpu-cloud'],
     why: {
-      text: 'AWS documents that some instance types use Nitro hardware offload to encrypt traffic between instances with AES-256-GCM. The provider runs the cards and holds that encryption, so you do not load keys into them.',
+      text: 'AWS documents that some instance types use Nitro hardware offload to encrypt traffic between instances with AES-256-GCM. The provider runs the cards, and the documents describe no customer key loading into them.',
       sources: [NITRO],
     },
     lessWell: [
       {
         category: 'dpu-bought',
-        text: 'It is a card you install and run in your own servers, so it does not apply inside a provider’s network.',
+        text: 'Consider it when you run your own servers; inside a provider’s network, the provider’s own cards do this work.',
         sources: [OCTEON, DOCA_PSP],
       },
       {
@@ -1137,7 +1163,7 @@ export const COMBINE_CASES: CombineCase[] = [
     parts: ['dpu-bought', 'hardware-hsm'],
     steps: [
       {
-        text: 'In NVIDIA’s DOCA PSP Gateway sample, keys are exchanged between application instances and then installed in the card with encryption rules.',
+        text: 'In NVIDIA’s DOCA PSP Gateway sample, keys are exchanged between application instances and then installed in the device with encryption rules.',
         sources: [DOCA_PSP],
       },
       {
@@ -1145,12 +1171,12 @@ export const COMBINE_CASES: CombineCase[] = [
         sources: [DOCA_PSP],
       },
       {
-        text: 'The DPU documents read describe no standard way to load a wrapped key from an HSM into a DPU, so keys arrive in the clear from a daemon or the application.',
+        text: 'The DPU documents read describe no standard way to load a wrapped key from an HSM into a DPU.',
         sources: [DOCA_PSP],
       },
     ],
     takeaway: {
-      text: 'This case teaches a limit: the keys of a DPU come from host software, and the sources read do not describe an HSM-to-DPU flow. Do not assume one exists.',
+      text: 'This case teaches a limit: the sources read describe key exchange handled by an application, over a channel that is unencrypted by default in NVIDIA’s sample, and no HSM-to-DPU flow. Do not assume one exists.',
       sources: [DOCA_PSP],
     },
   },

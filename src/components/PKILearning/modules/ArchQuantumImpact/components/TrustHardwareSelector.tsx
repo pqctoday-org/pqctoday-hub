@@ -17,7 +17,7 @@ import {
   type CategoryId,
   type CellKind,
 } from '../data/trustHardware'
-import { sourceLabel } from '../data/sourceLabel'
+import { SourceList } from './SourceList'
 import { TrustHardwareVenn } from './TrustHardwareVenn'
 
 type View = 'cards' | 'grid' | 'pick' | 'combine'
@@ -42,31 +42,6 @@ const KIND_LABEL: Record<CellKind, string | null> = {
   specified: 'Requirement in a specification',
   varies: 'Varies by product',
   'not-published': null,
-}
-
-/** Library links for a list of source ids, shown by document title; the id stays in the link target. */
-const SourceList: React.FC<{ ids: string[]; label?: string }> = ({ ids, label = 'Sources' }) => {
-  if (ids.length === 0) return null
-  return (
-    <p className="text-[11px] text-muted-foreground leading-snug">
-      {label}:{' '}
-      {ids.map((id, i) => {
-        const { short, full } = sourceLabel(id)
-        return (
-          <React.Fragment key={id}>
-            {i > 0 && '; '}
-            <Link
-              to={`/library?ref=${encodeURIComponent(id)}`}
-              className="text-primary hover:underline"
-              title={`${full} (${id})`}
-            >
-              {short}
-            </Link>
-          </React.Fragment>
-        )
-      })}
-    </p>
-  )
 }
 
 // ---- Cards ----------------------------------------------------------------------------------
@@ -97,8 +72,10 @@ const CardsView: React.FC = () => (
               <dt className="text-xs font-semibold uppercase tracking-wide text-primary">
                 {QUESTION_LABEL[s.q]}
               </dt>
-              <dd className="text-sm text-foreground/90 leading-relaxed">{s.text}</dd>
-              <SourceList ids={s.sources} />
+              <dd className="space-y-1 text-sm text-foreground/90 leading-relaxed">
+                {s.text}
+                <SourceList ids={s.sources} />
+              </dd>
             </div>
           ))}
         </dl>
@@ -166,7 +143,7 @@ const GridView: React.FC = () => {
         Scroll the table sideways to see all eight kinds.
       </p>
       <div
-        className="overflow-x-auto rounded-lg border border-border snap-x snap-proximity md:scroll-pl-[11rem]"
+        className="overflow-x-auto rounded-lg border border-border snap-x snap-proximity scroll-pl-[6.5rem] md:scroll-pl-[11rem]"
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard users must be able to scroll the wide grid
         tabIndex={0}
         role="region"
@@ -178,7 +155,7 @@ const GridView: React.FC = () => {
             <tr>
               <th
                 scope="col"
-                className="md:sticky md:left-0 z-20 bg-muted md:border-r md:border-border text-left p-3 w-[9.5rem] min-w-[9.5rem] md:w-[11rem] md:min-w-[11rem] text-xs font-semibold text-foreground"
+                className="sticky left-0 z-20 bg-muted border-r border-border text-left p-2 md:p-3 w-[6.5rem] min-w-[6.5rem] max-w-[6.5rem] md:w-[11rem] md:min-w-[11rem] md:max-w-none text-[11px] md:text-xs font-semibold text-foreground"
               >
                 Question
               </th>
@@ -202,7 +179,7 @@ const GridView: React.FC = () => {
                   <tr className="align-top">
                     <th
                       scope="row"
-                      className="md:sticky md:left-0 z-10 bg-background border-t border-border md:border-r text-left p-3 w-[9.5rem] min-w-[9.5rem] md:w-[11rem] md:min-w-[11rem] align-top text-xs font-semibold text-foreground"
+                      className="sticky left-0 z-10 bg-background border-t border-border border-r text-left p-2 md:p-3 w-[6.5rem] min-w-[6.5rem] max-w-[6.5rem] md:w-[11rem] md:min-w-[11rem] md:max-w-none align-top text-[11px] md:text-xs font-semibold text-foreground"
                     >
                       <span className="block">{row.label}</span>
                       <Button
@@ -210,6 +187,7 @@ const GridView: React.FC = () => {
                         size="sm"
                         className="mt-1 h-auto px-0 py-1 text-[11px] text-primary whitespace-normal"
                         aria-expanded={open}
+                        aria-label={`${open ? 'Hide' : 'Show'} sources for ${row.label}`}
                         onClick={() => toggle(row.id)}
                       >
                         {open ? (
@@ -249,7 +227,7 @@ const GridView: React.FC = () => {
                   </tr>
                   {open && (
                     <tr>
-                      <td className="md:sticky md:left-0 z-10 bg-muted border-t border-border md:border-r p-3 text-[11px] text-muted-foreground">
+                      <td className="sticky left-0 z-10 bg-muted border-t border-border border-r p-2 md:p-3 w-[6.5rem] min-w-[6.5rem] max-w-[6.5rem] md:w-[11rem] md:min-w-[11rem] md:max-w-none text-[11px] text-muted-foreground">
                         Sources for “{row.label}”
                       </td>
                       {CATEGORY_IDS.map((id) => (
