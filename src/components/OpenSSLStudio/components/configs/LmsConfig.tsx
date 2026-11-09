@@ -6,6 +6,7 @@ import { Info } from 'lucide-react'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { encodeLmsPublicKey as toSPKI, decodeLmsPublicKey } from './lmsPublicKey'
 
 // --- ASN.1 / PEM Helpers ---
 
@@ -17,22 +18,6 @@ const encodeLen = (len: number): number[] => {
   const bytes: number[] = []
   for (let i = 0; i < hex.length; i += 2) bytes.push(parseInt(hex.slice(i, i + 2), 16))
   return [0x80 | bytes.length, ...bytes]
-}
-
-// Helper to wrap LMS keys in ASN.1
-const toSPKI = (pubKey: Uint8Array): string => {
-  // OID: 2.16.840.1.101.3.7.2.1 (id-alg-hss-lms-hashsig)
-  const oid = [0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x07, 0x02, 0x01]
-  const algoId = [0x30, ...encodeLen(oid.length), ...oid] // Sequence(OID)
-
-  // BitString: 0x03, Len, 0x00 (padding), KeyBytes
-  const bitString = [0x03, ...encodeLen(pubKey.length + 1), 0x00, ...Array.from(pubKey)]
-
-  // SPKI: Sequence(AlgoId, BitString)
-  const spki = [0x30, ...encodeLen(algoId.length + bitString.length), ...algoId, ...bitString]
-
-  const b64 = btoa(String.fromCharCode(...spki))
-  return `-----BEGIN PUBLIC KEY-----\n${(b64.match(/.{1,64}/g) ?? []).join('\n')}\n-----END PUBLIC KEY-----`
 }
 
 const toPKCS8 = (privKey: Uint8Array): string => {
@@ -61,15 +46,12 @@ const toPKCS8 = (privKey: Uint8Array): string => {
 
 const fromPEM = (pem: string | Uint8Array): Uint8Array => {
   if (typeof pem !== 'string') {
-    // If it's already binary and NOT PEM (starts with 0x30...), straightforward check?
-    // But files content in store could be Uint8Array (binary) or string (text).
-    // If it was saved as 'text', it is string.
-    // If it is 'binary', it is Uint8Array.
-    // If Uint8Array, check if it looks like PEM (ascii bytes for -----)?
-    // Or assume raw if Uint8Array?
-    // Previous files were raw Uint8Array. New files are PEM string.
-    // If we receive Uint8Array, assume it is RAW key bytes (legacy support or raw).
-    return pem
+    // Uploaded files and Load Samples store PEM text as UTF-8 bytes. Decode
+    // that representation through the same PEM path as a text file; retain
+    // legacy raw keys byte-for-byte when they do not have PEM armor.
+    const text = new TextDecoder().decode(pem)
+    if (!/^\s*-----BEGIN /.test(text)) return pem
+    pem = text
   }
 
   // Strip headers
@@ -78,6 +60,8 @@ const fromPEM = (pem: string | Uint8Array): Uint8Array => {
   const bytes = new Uint8Array(binStr.length)
 
   for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i)
+
+  if (pem.includes('-----BEGIN PUBLIC KEY-----')) return decodeLmsPublicKey(bytes)
 
   // Parse ASN.1 to find Key
   // Simple scanner:

@@ -138,8 +138,16 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
-  const { editingFile, activeTab, structuredLogs, pkcs11Log, setActiveTab, isReady, loadError } =
-    useOpenSSLStore()
+  const {
+    editingFile,
+    activeTab,
+    logs,
+    structuredLogs,
+    pkcs11Log,
+    setActiveTab,
+    isReady,
+    loadError,
+  } = useOpenSSLStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   // Hoisted here (not inside WorkbenchPreview) so the Learn tab shares the
   // exact same worker/WASM instance as the Workbench instead of each tab
@@ -488,7 +496,9 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                             hid the PKCS#11 trace at exactly the moment it was
                             most useful (right after generating a token key,
                             before running any CLI command). */}
-                        {structuredLogs.length === 0 && pkcs11Log.length === 0 ? (
+                        {logs.length === 0 &&
+                        structuredLogs.length === 0 &&
+                        pkcs11Log.length === 0 ? (
                           <div className="flex flex-col items-start justify-center h-full p-6 gap-4">
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Terminal size={16} />
