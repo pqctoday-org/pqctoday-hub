@@ -15,16 +15,20 @@ import { canonicalPositiveInteger } from '@/utils/derInteger'
 
 // RFC 8017 A.1.2, in RSAPrivateKey order. Read only the existing sample
 // key's standard attributes; RSA CKA_VALUE is not an exported key encoding.
-const COMPONENTS = [
-  ['modulus', CKA_MODULUS],
-  ['public exponent', CKA_PUBLIC_EXPONENT],
-  ['private exponent', CKA_PRIVATE_EXPONENT],
-  ['prime1', CKA_PRIME_1],
-  ['prime2', CKA_PRIME_2],
-  ['exponent1', CKA_EXPONENT_1],
-  ['exponent2', CKA_EXPONENT_2],
-  ['coefficient', CKA_COEFFICIENT],
-] as const
+// A function, not a module-level table: the attribute constants come from a
+// chunk that the production build wraps for top-level await, so reading them
+// while this module starts up would capture undefined.
+const rsaPrivateComponents = () =>
+  [
+    ['modulus', CKA_MODULUS],
+    ['public exponent', CKA_PUBLIC_EXPONENT],
+    ['private exponent', CKA_PRIVATE_EXPONENT],
+    ['prime1', CKA_PRIME_1],
+    ['prime2', CKA_PRIME_2],
+    ['exponent1', CKA_EXPONENT_1],
+    ['exponent2', CKA_EXPONENT_2],
+    ['coefficient', CKA_COEFFICIENT],
+  ] as const
 
 function lengthOctets(length: number): number[] {
   if (length < 128) return [length]
@@ -36,10 +40,10 @@ function lengthOctets(length: number): number[] {
 /** Serialize actual positive RSA CRT magnitudes, not a modulus-size estimate.
  * This is a caller-created PKCS#1 DER artifact, not the engine's internal PKCS#8.
  */
-export function serializeRsaPrivateKeyDer(components: readonly Uint8Array[]): Uint8Array {
-  if (components.length !== COMPONENTS.length)
+export function serializeRsaPrivateKeyDer(values: readonly Uint8Array[]): Uint8Array {
+  if (values.length !== rsaPrivateComponents().length)
     throw new Error('RSA private key needs all eight CRT attributes')
-  const integers = components.map((value) => {
+  const integers = values.map((value) => {
     if (value.length === 0 || !value.some((byte) => byte !== 0)) {
       throw new Error('RSA private key attribute must be a nonzero positive magnitude')
     }
@@ -57,12 +61,12 @@ export function readRsaPrivateKeyDer(
   session: number,
   handle: number
 ): Uint8Array {
-  const components = COMPONENTS.map(([name, attribute]) => {
+  const values = rsaPrivateComponents().map(([name, attribute]) => {
     const result = readBytesAttr(M, session, handle, attribute)
     if (result.rv !== 0 || result.value === null) {
       throw new Error(`RSA private ${name} attribute unavailable (0x${result.rv.toString(16)})`)
     }
     return result.value
   })
-  return serializeRsaPrivateKeyDer(components)
+  return serializeRsaPrivateKeyDer(values)
 }
