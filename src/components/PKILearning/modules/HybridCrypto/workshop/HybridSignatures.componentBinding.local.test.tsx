@@ -234,7 +234,7 @@ describe('shared-binding tool aliases', () => {
       'Choose Concatenation, Nesting or Shared-binding model'
     )
     expect(screen.getByRole('region', { name: 'What you will do' })).toHaveTextContent(
-      'not published Silithium or a security proof'
+      'not the published Silithium scheme, and this page does not claim strong non-separability or a security proof'
     )
     expect(screen.getByRole('region', { name: 'What you will do' })).toHaveTextContent(
       'retains the EC public key and original EC bytes'
