@@ -10,7 +10,7 @@
 // rail. The GlossaryProvider lives in OpenSSLStudioView so the Workbench's
 // own command preview could (in a later pass) share the same glossary
 // session; for now this view is its own consumer.
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import {
   AlertTriangle,
@@ -31,11 +31,11 @@ import { QuizCard } from '../../Playground/learnkit/QuizCard'
 import { Term } from '../../Playground/learnkit/Term'
 import { useOpenSSLStore } from '../store'
 import type { OpenSSLCategory } from '../categories'
-import { OPENSSL_LESSONS } from './opensslLessons'
+import { OPENSSL_LESSONS, isMeasuredByteLength, openSslRunComparison } from './opensslLessons'
 import { OPENSSL_QUIZZES } from './opensslQuiz'
 import { resolveGlossaryKey } from './opensslGlossary'
 import type { OpenSslLearnContext } from './opensslLearnContext'
-import type { OpenSslLessonStep } from './opensslLessons'
+import type { OpenSslLessonStep, OpenSslStepResult } from './opensslLessons'
 
 type StepStatus = 'pending' | 'running' | 'ok' | 'refused-ok' | 'failed'
 
@@ -52,6 +52,7 @@ interface LogEntry {
 interface StepRunState {
   status: StepStatus
   detail?: string
+  result?: OpenSslStepResult
   log?: LogEntry[]
 }
 
@@ -170,6 +171,7 @@ export function OpenSslLearnView({
   runCommand: (cmd: string) => Promise<{ stdout: string }>
   onTryInWorkbench: (category: OpenSSLCategory) => void
 }) {
+  const comparisonSummaryId = useId()
   const [lessonIdx, setLessonIdx] = useState(0)
   const lesson = OPENSSL_LESSONS.at(lessonIdx)!
   const [stepStates, setStepStates] = useState<StepRunState[]>(() =>
@@ -243,17 +245,25 @@ export function OpenSslLearnView({
     try {
       const result = await step.run(ctx)
       if (!current()) return false
-      const met = step.expect !== 'refusal' && step.expect !== 'pending'
+      const needsMeasurement =
+        step.expect !== 'refusal' &&
+        step.expect !== 'pending' &&
+        lesson.measuredComparisons?.some((row) => row.aStep === i || row.bStep === i)
+      const measured = !needsMeasurement || isMeasuredByteLength(result.byteLength)
+      const met = step.expect !== 'refusal' && step.expect !== 'pending' && measured
       setStepStates((prev) =>
         prev.map((s, j) =>
           j === i
             ? {
                 status: met ? 'ok' : 'failed',
+                result: met ? result : undefined,
                 detail: met
                   ? result.detail
                   : step.expect === 'refusal'
                     ? 'The expected refusal was not observed. This step remains incomplete.'
-                    : 'The expected outcome was not established. This step remains incomplete.',
+                    : !measured
+                      ? 'The current output-file measurement is missing. This step remains incomplete.'
+                      : 'The expected outcome was not established. This step remains incomplete.',
                 log: logs,
               }
             : s
@@ -330,6 +340,10 @@ export function OpenSslLearnView({
       )
     )
 
+  const comparison = openSslRunComparison(
+    lesson,
+    stepStates.map((state) => state.result)
+  )
   const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
 
   return (
@@ -425,16 +439,35 @@ export function OpenSslLearnView({
               ))}
             </ol>
 
-            {allDone && lesson.compare && (
+            {allDone && comparison && (
               <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-foreground">
-                  Compare
-                </p>
-                <table className="w-full text-[12px]">
+                <table
+                  className="w-full text-[12px]"
+                  aria-describedby={comparison.summary ? comparisonSummaryId : undefined}
+                >
+                  <caption className="mb-2 text-left text-[11px] font-bold uppercase tracking-wide text-foreground">
+                    Compare
+                  </caption>
+                  <thead>
+                    <tr className="text-left text-muted-foreground">
+                      {(lesson.compareHeaders ?? ['Aspect', 'First option', 'Second option']).map(
+                        (header) => (
+                          <th key={header} scope="col" className="pb-1.5 pr-3 font-semibold">
+                            {header}
+                          </th>
+                        )
+                      )}
+                    </tr>
+                  </thead>
                   <tbody>
-                    {lesson.compare.map((row) => (
-                      <tr key={row.label} className="border-t border-border first:border-t-0">
-                        <td className="py-1.5 pr-3 font-medium text-foreground">{row.label}</td>
+                    {comparison.rows.map((row) => (
+                      <tr key={row.label} className="border-t border-border">
+                        <th
+                          scope="row"
+                          className="py-1.5 pr-3 text-left font-medium text-foreground"
+                        >
+                          {row.label}
+                        </th>
                         <td
                           className={cn(
                             'py-1.5 pr-3',
@@ -455,6 +488,11 @@ export function OpenSslLearnView({
                     ))}
                   </tbody>
                 </table>
+                {comparison.summary && (
+                  <p id={comparisonSummaryId} className="mt-2 text-[12px] text-muted-foreground">
+                    {comparison.summary}
+                  </p>
+                )}
               </div>
             )}
 
