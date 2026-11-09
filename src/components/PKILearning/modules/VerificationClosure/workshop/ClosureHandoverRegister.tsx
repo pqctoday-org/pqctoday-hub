@@ -153,7 +153,8 @@ export function ClosureHandoverRegister() {
                     : 'border-border text-foreground'
                 }`}
               >
-                {crit.has(c.id) ? '☑' : '☐'} <span className="ml-1">{c.label}</span>
+                <span aria-hidden="true">{crit.has(c.id) ? '☑' : '☐'}</span>{' '}
+                <span className="ml-1">{c.label}</span>
               </Button>
             ))}
           </div>

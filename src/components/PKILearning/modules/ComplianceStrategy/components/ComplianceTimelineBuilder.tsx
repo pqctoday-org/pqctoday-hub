@@ -929,7 +929,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             </Button>
             <div className="flex items-center gap-4 text-xs">
               <span className="flex items-center gap-1 text-muted-foreground">
-                <Info size={12} /> {unknownCount} not assessed
+                <Info size={12} /> {unknownCount} without an on-time plan result
               </span>
             </div>
           </div>
