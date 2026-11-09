@@ -47,10 +47,11 @@ describe('ArchitecturePanel (interactive, two-gate)', () => {
   })
 
   it('a non-compliant strategy still migrates (no longer blocked) but is flagged', () => {
-    // Germany (BSI) requires hybrid → "pure" is non-compliant, but migration is ALLOWED now
+    // Germany (BSI guidance) expects hybrid → "pure" departs from it, but migration is ALLOWED now
     render(<ArchitecturePanel size="small" country="DE" p5Frac={1} />)
     fireEvent.click(screen.getByRole('button', { name: /^pure$/i }))
-    expect(screen.getByText(/requires hybrid/i)).toBeInTheDocument()
+    expect(screen.getByText(/expects hybrid in its published guidance/i)).toBeInTheDocument()
+    expect(screen.queryByText(/requires hybrid/i)).not.toBeInTheDocument()
     const bulk = screen.getByRole('button', { name: /Migrate eligible/i })
     expect(bulk).not.toBeDisabled()
     fireEvent.click(bulk)

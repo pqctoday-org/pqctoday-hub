@@ -3,9 +3,33 @@ import { describe, it, expect } from 'vitest'
 import { JURISDICTION_RULES, checkChoice, recommendedChoice } from './jurisdiction'
 
 describe('jurisdiction', () => {
-  it('mandate countries reject a pure choice', () => {
-    expect(checkChoice('DE', 'pure').level).toBe('fail') // BSI requires hybrid
+  it('countries whose guidance expects hybrid reject a pure choice', () => {
+    expect(checkChoice('DE', 'pure').level).toBe('fail') // BSI guidance expects hybrid
     expect(checkChoice('DE', 'hybrid').level).toBe('ok')
+  })
+
+  it('does not call published guidance a requirement', () => {
+    for (const c of ['DE', 'FR', 'EU']) {
+      const rule = JURISDICTION_RULES[c]
+      expect(rule.hybrid, `${c} hybrid stance`).toBe('required')
+      expect(rule.force, `${c} instrument force`).toBe('guidance')
+      const verdict = checkChoice(c, 'pure')
+      expect(verdict.reason, `${c} reason`).toContain('expects hybrid in its published guidance')
+      expect(verdict.reason, `${c} reason`).not.toMatch(/requires hybrid|non-compliant/)
+    }
+  })
+
+  it('says "requires" only for an instrument on file as a requirement', () => {
+    const rule = JURISDICTION_RULES.DE
+    const onFile = rule.force
+    rule.force = 'requirement'
+    try {
+      expect(checkChoice('DE', 'pure').reason).toContain(
+        'requires hybrid — a pure choice is non-compliant.'
+      )
+    } finally {
+      rule.force = onFile
+    }
   })
 
   it('pure-end-state countries accept pure and warn on hybrid', () => {
