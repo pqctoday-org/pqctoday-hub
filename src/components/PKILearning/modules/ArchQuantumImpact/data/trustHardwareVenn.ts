@@ -64,7 +64,7 @@ export const VENN = {
         cloud: {
           lines: [
             'AWS CloudHSM: ML-DSA.',
-            'Azure Managed HSM: no PQC key types.',
+            'Azure Managed HSM: no post-quantum public-key types.',
             'Google: quantum-safe key import into Cloud KMS, supported only for the SOFTWARE protection level',
           ],
           sources: [
@@ -90,7 +90,9 @@ export const VENN = {
           ],
         },
         tessera: {
-          lines: ['Rust SDK and OpenSSL provider; no PKCS#11 interface in the repositories'],
+          lines: [
+            'The SDK README names a Rust SDK, a simulator and an OpenSSL provider; no PKCS#11 interface is described in it',
+          ],
           sources: ['Tessera-Integrated-HSM-SDK-tessera-sw-README'],
         },
         traditional: {

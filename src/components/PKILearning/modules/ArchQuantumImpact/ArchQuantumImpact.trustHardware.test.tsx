@@ -363,7 +363,10 @@ describe('Overlap picture', () => {
     }
     const text = tableText().join(' ')
     expect(text).toContain('AWS CloudHSM: ML-DSA.')
-    expect(text).toContain('Azure Managed HSM: no PQC key types.')
+    expect(text).toContain('Azure Managed HSM: no post-quantum public-key types.')
+    expect(text).toContain(
+      'The SDK README names a Rust SDK, a simulator and an OpenSSL provider; no PKCS#11 interface is described in it'
+    )
     expect(text).toContain(
       'Chip requirements list ML-KEM and ML-DSA operations; the SDK is under development and not yet ready for deployment'
     )
@@ -381,6 +384,8 @@ describe('Overlap picture', () => {
     expect(text).not.toMatch(/offered by every vendor listed/i)
     expect(text).not.toMatch(/uses the Key Vault API/i)
     expect(text).not.toMatch(/device commands/i)
+    expect(text).not.toMatch(/no PQC key types/i)
+    expect(text).not.toMatch(/in the repositories/i)
     expect(text).not.toMatch(/PQC in software only/i)
     const pq = VENN.tableRows.find((r) => r.id === 'pq')!
     expect(pq.cells.traditional.lines.join(' ')).not.toMatch(/Entrust|Utimaco/)
@@ -390,6 +395,10 @@ describe('Overlap picture', () => {
     renderStep()
     const scroller = screen.getByTestId('trust-venn-table')
     expect(scroller.className).toContain('overflow-x-auto')
+    expect(scroller.getAttribute('aria-label')).not.toMatch(/sideways/i)
+    expect(
+      screen.getByText('Scroll the table sideways to see all four columns.').className
+    ).toContain('md:hidden')
     for (const r of VENN.tableRows)
       for (const c of VENN.tableColumns) {
         const cell = within(scroller).getByTestId(`venn-cell-${r.id}-${c.id}`)

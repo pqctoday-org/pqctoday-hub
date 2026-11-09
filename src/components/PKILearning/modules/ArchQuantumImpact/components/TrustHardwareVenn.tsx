@@ -37,12 +37,15 @@ export const TrustHardwareVenn: React.FC = () => {
         <p className="text-center text-[11px] text-muted-foreground mt-1.5">Click image to zoom</p>
       </div>
       <figcaption className="text-xs text-muted-foreground text-center">{VENN.caption}</figcaption>
+      <p className="text-xs text-muted-foreground md:hidden">
+        Scroll the table sideways to see all four columns.
+      </p>
       <div
         className="overflow-x-auto rounded-lg border border-border"
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard users must be able to scroll the table sideways
         tabIndex={0}
         role="region"
-        aria-label="Post-quantum and PKCS#11 comparison table, scrolls sideways"
+        aria-label="Post-quantum and PKCS#11 comparison table"
         data-testid="trust-venn-table"
       >
         <table className="w-full min-w-[640px] border-separate border-spacing-0 text-sm">
