@@ -7,14 +7,6 @@
  */
 export const OVERALL_SCORE_MIN_COVERAGE = 0.7
 
-/**
- * Share of the scorable weight that has a value (0..1).
- *
- * Locked KPIs (`disabled`: the data they read is not there yet) cannot be
- * scored, so they are left out of the denominator as well as the numerator.
- * Counting them made some roles unable to reach the threshold: on a fresh
- * worksheet a GRC reader's unlocked KPIs make up only 61% of the intended weight.
- */
 /** Reporting measures stay visible but never become readiness through saved overrides. */
 export function effectiveScorecardWeight(
   dimension: { id: string; weight: number; reportingOnly?: boolean },
@@ -24,6 +16,7 @@ export function effectiveScorecardWeight(
   return dimension.id in overrides ? (overrides[dimension.id] ?? 0) : dimension.weight
 }
 
+/** A dimension that can contribute to the readiness score: neither locked nor reporting-only. */
 export function isReadinessDimension(dimension: {
   reportingOnly?: boolean
   disabled?: boolean
@@ -31,6 +24,14 @@ export function isReadinessDimension(dimension: {
   return !dimension.reportingOnly && !dimension.disabled
 }
 
+/**
+ * Share of the scorable weight that has a value (0..1).
+ *
+ * Locked KPIs (`disabled`: the data they read is not there yet) cannot be
+ * scored, so they are left out of the denominator as well as the numerator.
+ * Counting them made some roles unable to reach the threshold: on a fresh
+ * worksheet a GRC reader's unlocked KPIs make up only 61% of the intended weight.
+ */
 export function scoredWeightShare<D extends { disabled?: boolean; reportingOnly?: boolean }>(
   dimensions: readonly D[],
   weightOf: (dimension: D) => number,

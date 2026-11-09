@@ -47,6 +47,9 @@ const data: ExecutiveModuleData = {
   migrationDeadlineYear: 2035,
 }
 
+/** How the reported-percent field is found by assistive technology. */
+const BUDGET_INPUT = { name: 'Budget Utilization reported percent' }
+
 describe('finance reporting stays outside migration readiness', () => {
   it('keeps the budget visible for each relevant role and excludes its target and weight', () => {
     for (const persona of ['executive', 'architect', 'ops'] as const) {
@@ -146,13 +149,8 @@ it('saves and reopens exact raw finance inputs without adopting an old readiness
     },
   ]
   const view = render(<KPITrackerTemplate />)
-  expect(
-    screen.getByRole('spinbutton', { name: 'Budget Utilization reported percent' })
-  ).toHaveValue(80)
-  fireEvent.change(
-    screen.getByRole('spinbutton', { name: 'Budget Utilization reported percent' }),
-    { target: { value: '125' } }
-  )
+  expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(80)
+  fireEvent.change(screen.getByRole('spinbutton', BUDGET_INPUT), { target: { value: '125' } })
   const row = within(screen.getByTestId('kpi-dim-budget-utilization'))
   fireEvent.click(row.getByText('Sample measure notes'))
   fireEvent.change(row.getByRole('textbox', { name: 'Budget Utilization Reporting period' }), {
@@ -174,11 +172,11 @@ it('saves and reopens exact raw finance inputs without adopting an old readiness
   expect(saved.data).toContain('Fictional service A')
   view.unmount()
   render(<KPITrackerTemplate />)
-  expect(
-    screen.getByRole('spinbutton', { name: 'Budget Utilization reported percent' })
-  ).toHaveValue(125)
+  expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(125)
   expect(screen.getByText('Period: 2026 Q4 · Scope: Fictional service A')).toBeInTheDocument()
   expect(screen.getByText('Not yet available')).toBeInTheDocument()
+  // The old weight of 1 would lift coverage well above 0% if it still counted.
+  expect(screen.getByText(/^Scored-value coverage: 0% of the weight/)).toBeInTheDocument()
 
   let exported: Blob | undefined
   const create = vi.spyOn(URL, 'createObjectURL').mockImplementation((blob) => {
@@ -214,4 +212,51 @@ it('saves and reopens exact raw finance inputs without adopting an old readiness
     revoke.mockRestore()
     click.mockRestore()
   }
+})
+
+describe('older saves and zero', () => {
+  it('restores a default 0 that nobody entered as missing, and saves it as missing', () => {
+    state.artifacts.executiveDocuments = [
+      {
+        id: 'sample-old',
+        type: 'kpi-tracker',
+        moduleId: 'migration-program',
+        data: 'Original sample',
+        createdAt: 1,
+        inputs: {
+          personaOverride: 'executive',
+          userScores: { 'budget-utilization': 0 },
+          valueOrigins: { 'budget-utilization': 'not-entered' },
+        },
+      },
+    ]
+    render(<KPITrackerTemplate />)
+    expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(null)
+    const row = within(screen.getByTestId('kpi-dim-budget-utilization'))
+    expect(row.getByText('Unknown')).toBeInTheDocument()
+    expect(row.queryByText(/Saved value/)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /^Save/ }))
+    const saved = addExecutiveDocument.mock.calls.at(-1)![0]
+    expect(saved.inputs.userScores).not.toHaveProperty('budget-utilization')
+    expect(saved.data).toContain('| Budget Utilization | Unknown — reporting only; excluded from')
+    expect(saved.data).not.toContain('0% — reporting only')
+  })
+
+  it('keeps a deliberate 0 through save and reload', () => {
+    const view = render(<KPITrackerTemplate />)
+    fireEvent.change(screen.getByRole('spinbutton', BUDGET_INPUT), { target: { value: '0' } })
+    fireEvent.click(screen.getByRole('button', { name: /^Save/ }))
+    const saved = addExecutiveDocument.mock.calls.at(-1)![0]
+    expect(saved.inputs).toMatchObject({
+      userScores: { 'budget-utilization': 0 },
+      valueOrigins: { 'budget-utilization': 'learner-entered' },
+    })
+    expect(saved.data).toContain('0% — reporting only; excluded from readiness')
+    view.unmount()
+    render(<KPITrackerTemplate />)
+    expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(0)
+    expect(
+      within(screen.getByTestId('kpi-dim-budget-utilization')).getByText('0%')
+    ).toBeInTheDocument()
+  })
 })

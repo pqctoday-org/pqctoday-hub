@@ -29,6 +29,7 @@ import {
   effectiveScorecardWeight,
   isReadinessDimension,
 } from '@/components/PKILearning/common/executive/scorecardCoverage'
+import { withoutNeverEnteredReportingScores } from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -243,13 +244,21 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   // The scorecard manages its own internal scores. We mirror them into local
   // state ONLY when they actually differ — blindly forwarding every sync feeds
   // back into the scorecard's auto-sync effect and causes an update storm.
+  // Older saves wrote a default 0 for budget utilization that nobody entered; it
+  // restores as missing, as on the scorecard.
+  const [loadedSavedScores] = useState(() =>
+    withoutNeverEnteredReportingScores(
+      dimensions,
+      savedInputs?.userScores,
+      savedInputs?.valueOrigins
+    )
+  )
   const [userScores, setUserScores] = useState<Record<string, number>>(
-    () => savedInputs?.userScores ?? {}
+    () => loadedSavedScores ?? {}
   )
   const [valueOrigins, setValueOrigins] = useState<Record<string, KpiValueOrigin>>(() =>
-    restoredKpiValueOrigins(savedInputs?.userScores, savedInputs?.valueOrigins)
+    restoredKpiValueOrigins(loadedSavedScores, savedInputs?.valueOrigins)
   )
-  const [loadedSavedScores] = useState(() => savedInputs?.userScores)
   const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
   const handleValueOriginsChange = useCallback((next: Record<string, KpiValueOrigin>) => {
     setValueOrigins((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next))

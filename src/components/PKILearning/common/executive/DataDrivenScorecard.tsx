@@ -17,6 +17,7 @@ import {
   restoredKpiValueOrigins,
   isKpiValueAssessed,
 } from './scorecardValueOrigin'
+import { withoutNeverEnteredReportingScores } from './reportingOnlyMeasure'
 
 export interface ScorecardDimension {
   id: string
@@ -140,12 +141,16 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   observations = {},
   onObservationChange,
 }) => {
-  const [loadedSavedScores] = useState(() => initialScores)
+  // A default 0 that older saves wrote for a reporting-only measure nobody entered
+  // restores as missing, not as an entered 0%.
+  const [loadedSavedScores] = useState(() =>
+    withoutNeverEnteredReportingScores(dimensions, initialScores, initialValueOrigins)
+  )
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {}
     for (const d of dimensions) {
-      if (!d.reportingOnly || initialScores?.[d.id] !== undefined) {
-        initial[d.id] = initialScores?.[d.id] ?? d.autoScore ?? 0
+      if (!d.reportingOnly || loadedSavedScores?.[d.id] !== undefined) {
+        initial[d.id] = loadedSavedScores?.[d.id] ?? d.autoScore ?? 0
       }
     }
     return initial
@@ -156,7 +161,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   )
   const [showWeights, setShowWeights] = useState(false)
   const [valueOrigins, setValueOrigins] = useState<Record<string, KpiValueOrigin>>(() =>
-    restoredKpiValueOrigins(initialScores, initialValueOrigins)
+    restoredKpiValueOrigins(loadedSavedScores, initialValueOrigins)
   )
   const valueOrigin = useCallback(
     (d: ScorecardDimension) => {
@@ -582,8 +587,19 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                         const next = Object.fromEntries(
                           Object.entries(scores).filter(([id]) => id !== d.id)
                         )
+                        // Cleared means never entered again: not a recorded edit.
+                        userOverriddenRef.current.delete(d.id)
+                        setUserOverridden((prev) => {
+                          if (!prev.has(d.id)) return prev
+                          const touched = new Set(prev)
+                          touched.delete(d.id)
+                          return touched
+                        })
                         setScores(next)
-                        setValueOrigins((prev) => ({ ...prev, [d.id]: 'unrecorded' }))
+                        setValueOrigins((prev) => ({
+                          ...prev,
+                          [d.id]: currentKpiValueOrigin(d, false),
+                        }))
                         onScoreChange?.(next)
                       } else {
                         handleScoreChange(d.id, Number(event.target.value))

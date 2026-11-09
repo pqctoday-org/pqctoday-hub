@@ -29,6 +29,7 @@ import {
   effectiveScorecardWeight,
   isReadinessDimension,
 } from '@/components/PKILearning/common/executive/scorecardCoverage'
+import { withoutNeverEnteredReportingScores } from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
 import type { PolicyOutput } from '../types'
 
 const SURFACE = 'governance' as const
@@ -164,12 +165,17 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   )
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const scoresRef = useRef<Record<string, number>>(savedInputs?.scores ?? {})
+  // Older saves wrote a default 0 for budget utilization that nobody entered; it
+  // restores as missing, as on the scorecard.
+  const [restoredScores] = useState(() =>
+    withoutNeverEnteredReportingScores(dimensions, savedInputs?.scores, savedInputs?.valueOrigins)
+  )
+  const scoresRef = useRef<Record<string, number>>(restoredScores ?? {})
   // The scorecard reports which KPIs the person has set; the saved Markdown reads
   // the same set so it agrees with the screen about what is still "not yet scored".
   const touchedRef = useRef<ReadonlySet<string>>(new Set(savedInputs?.touchedIds ?? []))
   const weightsRef = useRef<Record<string, number>>(savedInputs?.weights ?? {})
-  const originsRef = useRef(restoredKpiValueOrigins(savedInputs?.scores, savedInputs?.valueOrigins))
+  const originsRef = useRef(restoredKpiValueOrigins(restoredScores, savedInputs?.valueOrigins))
   const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
 
   const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
@@ -263,7 +269,11 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         let improving = 0
         let unchanged = 0
         let worsening = 0
+        // Reporting-only measures such as budget utilization have no better or
+        // worse direction, so they never count toward the trend.
+        const reportingOnlyIds = new Set(dimensions.filter((d) => d.reportingOnly).map((d) => d.id))
         for (const [id, value] of Object.entries(scoresRef.current)) {
+          if (reportingOnlyIds.has(id)) continue
           const prior = previous.scores[id]
           if (prior === undefined) continue
           if (value > prior) improving++
@@ -291,7 +301,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
     }
     setWasSaved(true)
     setDirtySinceSave(false)
-  }, [persistScorecard, activePersona, originalSavedInputs])
+  }, [persistScorecard, dimensions, activePersona, originalSavedInputs])
 
   const handleScoreChange = useCallback(
     (scores: Record<string, number>) => {

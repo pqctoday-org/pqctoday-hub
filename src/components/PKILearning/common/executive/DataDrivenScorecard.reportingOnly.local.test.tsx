@@ -9,6 +9,10 @@ import {
   type ScorecardObservation,
 } from './DataDrivenScorecard'
 import { effectiveScorecardWeight, scoredWeightShare } from './scorecardCoverage'
+import type { KpiValueOrigin } from './scorecardValueOrigin'
+
+/** How the reported-percent field is found by assistive technology. */
+const BUDGET_INPUT = { name: 'Budget Utilization reported percent' }
 
 const dimensions: ScorecardDimension[] = [
   {
@@ -68,7 +72,7 @@ describe('reporting measures cannot buy readiness', () => {
 
   it('keeps 0, 80, 100 and 125 raw while the headline stays fixed, and ordinary scoring still works', () => {
     render(<Worksheet />)
-    const budget = screen.getByRole('spinbutton', { name: 'Budget Utilization reported percent' })
+    const budget = screen.getByRole('spinbutton', BUDGET_INPUT)
     expect(budget).toHaveValue(null)
     expect(screen.getByText('Period: Unknown · Scope: Unknown')).toBeInTheDocument()
     for (const value of [0, 80, 100, 125]) {
@@ -119,10 +123,7 @@ describe('reporting measures cannot buy readiness', () => {
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
     try {
       render(<Worksheet />)
-      fireEvent.change(
-        screen.getByRole('spinbutton', { name: 'Budget Utilization reported percent' }),
-        { target: { value: '125' } }
-      )
+      fireEvent.change(screen.getByRole('spinbutton', BUDGET_INPUT), { target: { value: '125' } })
       const row = within(screen.getByTestId('kpi-dim-budget'))
       fireEvent.click(row.getByText('Sample measure notes'))
       fireEvent.change(row.getByRole('textbox', { name: 'Budget Utilization Reporting period' }), {
@@ -189,7 +190,7 @@ it('clears a recorded finance value to Unknown while retaining its original snap
         minimumCoverageForOverall={0.7}
       />
     )
-    const input = screen.getByRole('spinbutton', { name: 'Budget Utilization reported percent' })
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
     expect(input).toHaveValue(80)
     fireEvent.change(input, { target: { value: '0' } })
     expect(within(screen.getByTestId('kpi-dim-budget')).getByText('0%')).toBeInTheDocument()
@@ -218,4 +219,133 @@ it('clears a recorded finance value to Unknown while retaining its original snap
     revoke.mockRestore()
     click.mockRestore()
   }
+})
+
+async function readBlob(blob: Blob): Promise<string> {
+  return new Promise<string>((resolve) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.readAsText(blob)
+  })
+}
+
+/** Click an export button and return what the page handed to the download. */
+async function exportAs(button: '.csv' | '.md'): Promise<string> {
+  let exported: Blob | undefined
+  const create = vi.spyOn(URL, 'createObjectURL').mockImplementation((blob) => {
+    exported = blob as Blob
+    return 'blob:export'
+  })
+  const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+  try {
+    fireEvent.click(screen.getByRole('button', { name: button }))
+    return await readBlob(exported!)
+  } finally {
+    create.mockRestore()
+    revoke.mockRestore()
+    click.mockRestore()
+  }
+}
+
+function budgetCsvRecord(csv: string): Record<string, string> {
+  const parsed = Papa.parse<string[]>(csv, { delimiter: ',', skipEmptyLines: true })
+  expect(parsed.errors).toEqual([])
+  const index = parsed.data.findIndex((row) => row.at(0) === 'Dimension ID')
+  const headers = parsed.data.at(index)!
+  const row = parsed.data.slice(index + 1).find((cells) => cells.at(0) === 'budget')!
+  return Object.fromEntries(headers.map((key, i) => [key, row.at(i) ?? '']))
+}
+
+describe('older saves and cleared fields keep missing distinct from zero', () => {
+  it('restores a default 0 that nobody entered as missing on screen and in both exports', async () => {
+    render(
+      <DataDrivenScorecard
+        title="Old save"
+        dimensions={dimensions}
+        initialScores={{ readiness: 50, budget: 0 }}
+        initialValueOrigins={{ readiness: 'calculated-current', budget: 'not-entered' }}
+        exportFormats={['markdown', 'csv']}
+        minimumCoverageForOverall={0.7}
+      />
+    )
+    expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(null)
+    const row = within(screen.getByTestId('kpi-dim-budget'))
+    expect(row.getByText('Unknown')).toBeInTheDocument()
+    expect(row.queryByText(/Saved value/)).not.toBeInTheDocument()
+    expect(
+      row.queryByRole('button', { name: 'Use displayed sample value' })
+    ).not.toBeInTheDocument()
+    expect(row.getByText('Origin: Manual sample input — not entered')).toBeInTheDocument()
+
+    expect(budgetCsvRecord(await exportAs('.csv'))).toMatchObject({
+      Score: '',
+      'Raw worksheet value (not an assessed score)': '',
+      'Original saved snapshot value': '',
+      'Included in overall calculation': 'false',
+    })
+    const md = await exportAs('.md')
+    expect(md).toContain(
+      '| Budget Utilization | Unknown — reporting only; excluded from readiness |'
+    )
+    expect(md).not.toContain('0% — reporting only')
+  })
+
+  it('keeps a deliberate 0 through save and reload', () => {
+    const scores = vi.fn()
+    const origins = vi.fn()
+    const view = render(
+      <DataDrivenScorecard
+        title="Zero"
+        dimensions={dimensions}
+        onScoreChange={scores}
+        onValueOriginsChange={origins}
+      />
+    )
+    fireEvent.change(screen.getByRole('spinbutton', BUDGET_INPUT), { target: { value: '0' } })
+    const savedScores = scores.mock.calls.at(-1)![0] as Record<string, number>
+    const savedOrigins = origins.mock.calls.at(-1)![0] as Record<string, KpiValueOrigin>
+    expect(savedScores.budget).toBe(0)
+    expect(savedOrigins.budget).toBe('learner-entered')
+    view.unmount()
+
+    render(
+      <DataDrivenScorecard
+        title="Zero"
+        dimensions={dimensions}
+        initialScores={savedScores}
+        initialValueOrigins={savedOrigins}
+      />
+    )
+    expect(screen.getByRole('spinbutton', BUDGET_INPUT)).toHaveValue(0)
+    const row = within(screen.getByTestId('kpi-dim-budget'))
+    expect(row.getByText('0%')).toBeInTheDocument()
+    expect(row.queryByText('Unknown')).not.toBeInTheDocument()
+  })
+
+  it('returns a cleared field to not entered and out of the touched set', () => {
+    const touched = vi.fn()
+    const origins = vi.fn()
+    render(
+      <DataDrivenScorecard
+        title="Cleared"
+        dimensions={dimensions}
+        onTouchedChange={touched}
+        onValueOriginsChange={origins}
+      />
+    )
+    const input = screen.getByRole('spinbutton', BUDGET_INPUT)
+    fireEvent.change(input, { target: { value: '80' } })
+    expect([...(touched.mock.calls.at(-1)![0] as Set<string>)]).toContain('budget')
+    expect((origins.mock.calls.at(-1)![0] as Record<string, string>).budget).toBe('learner-entered')
+
+    fireEvent.change(input, { target: { value: '' } })
+    expect([...(touched.mock.calls.at(-1)![0] as Set<string>)]).not.toContain('budget')
+    expect((origins.mock.calls.at(-1)![0] as Record<string, string>).budget).toBe('not-entered')
+    expect(
+      within(screen.getByTestId('kpi-dim-budget')).getByText(
+        'Origin: Manual sample input — not entered'
+      )
+    ).toBeInTheDocument()
+  })
 })
