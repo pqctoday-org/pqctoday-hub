@@ -208,7 +208,7 @@ export function buildMarkdown(state: VerifyState): string {
     }
     lines.push('')
     lines.push(
-      "> A retired-but-trusted signing key is a standing Trust-Now-Forge-Later liability — destroy per your organization's key-destruction standard and confirm."
+      '> Destroying a retired signing private key does not prevent quantum forgery while verifiers still trust its vulnerable public key. Plan withdrawal of that trust and handle private-key destruction under the applicable retention and key-management policy. For PKI migration and timelines, see the [NCSC PQC migration guidance](https://www.ncsc.gov.uk/guidance/pqc-migration-timelines).'
     )
   }
   lines.push('')
@@ -433,9 +433,19 @@ export const MigrationVerification: React.FC = () => {
           Decommissioning log (classical material)
         </h3>
         <p className="text-xs text-muted-foreground">
-          A retired-but-trusted <span className="font-medium text-foreground">signing key</span> is
-          a standing Trust-Now-Forge-Later liability — destroy per your organization's
-          key-destruction standard and confirm.
+          Destroying a retired signing private key does not prevent quantum forgery while verifiers
+          still trust its vulnerable public key. Plan withdrawal of that trust and handle
+          private-key destruction under the applicable retention and key-management policy. For PKI
+          migration and timelines, see the{' '}
+          <a
+            href="https://www.ncsc.gov.uk/guidance/pqc-migration-timelines"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            NCSC PQC migration guidance
+          </a>
+          .
         </p>
         <div className="space-y-2">
           {state.decommissions.map((d) => (

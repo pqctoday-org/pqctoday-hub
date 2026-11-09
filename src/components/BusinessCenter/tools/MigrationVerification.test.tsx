@@ -108,7 +108,12 @@ describe('buildMarkdown', () => {
     expect(md).not.toContain('**Verified**')
     expect(md).toContain('does not evaluate evidence or verify a deployment')
     expect(md).toContain('Incomplete evidence (2/5)')
-    expect(md).toContain('⚠ TNFL liability') // unconfirmed signing key
+    expect(md).toContain('⚠ TNFL liability') // unconfirmed retirement declaration
+    expect(md).toContain(
+      'Destroying a retired signing private key does not prevent quantum forgery'
+    )
+    expect(md).toContain('while verifiers still trust its vulnerable public key')
+    expect(md).not.toContain('liability — destroy per')
   })
 })
 
@@ -121,6 +126,13 @@ describe('MigrationVerification (render smoke)', () => {
     expect(container.textContent).toContain('as educational drafts')
     expect(container.textContent).toContain(
       'does not establish that a migration or retirement was performed'
+    )
+    expect(container.textContent).toContain(
+      'Destroying a retired signing private key does not prevent quantum forgery'
+    )
+    expect(screen.getByRole('link', { name: 'NCSC PQC migration guidance' })).toHaveAttribute(
+      'href',
+      'https://www.ncsc.gov.uk/guidance/pqc-migration-timelines'
     )
     expect(
       screen.getByRole('heading', { name: /Migration Verification & Program Closure/ })
