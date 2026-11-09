@@ -191,15 +191,16 @@ export const OS_VENDORS: OSVendorStatus[] = [
     id: 'macos',
     vendor: 'Apple',
     platform: 'macOS 26 / iOS 26',
-    opensslVersion: 'Security.framework (native) / Homebrew OpenSSL 3.x (user)',
+    opensslVersion: 'CryptoKit / Security.framework (native) / Homebrew OpenSSL 3.x (user)',
     catalogName: 'iOS 26 / macOS 26',
     fipsMode: 'partial',
     sshPqcStatus: 'macOS ships OpenSSH 9.x; no PQC host key support in system SSH',
     pkgSigningPqc: 'macOS Gatekeeper / code signing uses ECDSA P-256; ML-DSA not yet',
     roadmapYear: '2026-02-11',
     mlKemSupport:
-      'ML-KEM-768 in Security.framework (macOS 26+); Network.framework X25519MLKEM768 TLS 1.3',
-    mlDsaSupport: 'ML-DSA in Security.framework (macOS 26+); CryptoKit API planned for Swift 6.x',
+      'ML-KEM-768 and ML-KEM-1024 in CryptoKit (MLKEM768, MLKEM1024; iOS 26 and macOS 26 and later); URLSession and the Network framework use hybrid post-quantum TLS by default where the server supports it',
+    mlDsaSupport:
+      'ML-DSA-65 and ML-DSA-87 in CryptoKit (MLDSA65, MLDSA87; iOS 26 and macOS 26 and later)',
     notes: '',
   },
   {
