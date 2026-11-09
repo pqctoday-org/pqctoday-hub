@@ -6,6 +6,7 @@ import {
   RotateCcw,
   ShieldAlert,
   ShieldCheck,
+  CircleHelp,
   Smartphone,
   CreditCard,
   Fingerprint,
@@ -14,6 +15,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { TOKENIZATION_FLOWS, MOBILE_WALLETS } from '../data/tokenizationData'
+import { assessTokenizationProtection } from '../data/tokenizationAssessment'
 import type { TokenizationStep, MobileWalletId } from '../data/emvConstants'
 
 // ── Helpers ──────────────────────────────────────────────────────────────
@@ -51,6 +53,9 @@ export const TokenizationExplorer: React.FC = () => {
 
   const totalSteps = selectedFlow.steps.length
   const vulnerableCount = selectedFlow.steps.filter((s) => s.quantumVulnerable).length
+
+  const symmetricCount = selectedFlow.steps.filter((s) => s.quantumVulnerable === false).length
+  const unknownCount = selectedFlow.steps.filter((s) => s.quantumVulnerable === null).length
 
   // Animation timer
   const stopTimer = useCallback(() => {
@@ -131,6 +136,14 @@ export const TokenizationExplorer: React.FC = () => {
       <div className="glass-panel p-4">
         <div className="text-sm font-bold text-foreground mb-1">{selectedFlow.name}</div>
         <p className="text-xs text-muted-foreground">{selectedFlow.description}</p>
+        <p className="text-xs text-muted-foreground mt-3">
+          Sample TLS assumption: every TLS-labelled step in these fictional teaching sequences uses
+          classical (EC)DHE key establishment and RSA/ECDSA certificate authentication. This is not
+          a verified production protocol of the named provider. Symmetric encryption or HMAC
+          protects one component; it does not erase a classical public-key dependency. An
+          unspecified algorithm is not assessed, and an HSM label alone does not establish
+          cryptographic protection.
+        </p>
       </div>
 
       {/* ── Animated Provisioning Sequence ─────────────────────────── */}
@@ -249,27 +262,39 @@ export const TokenizationExplorer: React.FC = () => {
       {/* ── Summary Panel ──────────────────────────────────────────── */}
       <div className="glass-panel p-4">
         <div className="text-sm font-bold text-foreground mb-3">Vulnerability Summary</div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="text-center p-3 bg-muted/30 rounded-lg border border-border">
             <div className="text-lg font-bold text-foreground">{totalSteps}</div>
             <div className="text-[10px] text-muted-foreground">Total Steps</div>
           </div>
           <div className="text-center p-3 bg-status-error/10 rounded-lg border border-status-error/30">
             <div className="text-lg font-bold text-status-error">{vulnerableCount}</div>
-            <div className="text-[10px] text-muted-foreground">Quantum-Vulnerable</div>
+            <div className="text-[10px] text-muted-foreground">Classical public-key exposure</div>
           </div>
           <div className="text-center p-3 bg-status-success/10 rounded-lg border border-status-success/30">
-            <div className="text-lg font-bold text-status-success">
-              {totalSteps - vulnerableCount}
-            </div>
-            <div className="text-[10px] text-muted-foreground">Quantum-Safe</div>
+            <div className="text-lg font-bold text-status-success">{symmetricCount}</div>
+            <div className="text-[10px] text-muted-foreground">Symmetric-only in this sample</div>
+          </div>
+          <div className="text-center p-3 bg-muted/30 rounded-lg border border-border">
+            <div className="text-lg font-bold text-foreground">{unknownCount}</div>
+            <div className="text-[10px] text-muted-foreground">Not assessed</div>
           </div>
         </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          Counts describe modelled step boundaries, not attack probabilities, unique keys or
+          measured provider readiness. With your own tools, check negotiated groups and
+          certificate/signature algorithms, HSM operations and configurations, and evidence for the
+          transaction path.
+        </p>
 
         <div className="mt-3 bg-muted/20 rounded-lg p-3 border border-border">
           <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
             PQC Replacement Overview
           </div>
+          <p className="text-xs text-muted-foreground mb-2">
+            Conceptual replacements address the named component only. Changing key exchange alone
+            leaves classical certificate, request-signature or attestation authentication to assess.
+          </p>
           <ul className="space-y-1">
             {selectedFlow.steps
               .filter((s) => s.quantumVulnerable && s.pqcReplacement)
@@ -301,16 +326,18 @@ function ProvisioningStepCard({
   isVisible: boolean
 }) {
   if (!isVisible) return null
+  const assessment = assessTokenizationProtection(step.protectionComponents)
 
   return (
-    <div
+    <article
+      aria-label={step.label}
       className={`rounded-lg p-3 border transition-all animate-in fade-in slide-in-from-left-2 duration-300 ${
         step.quantumVulnerable
           ? 'border-status-error/40 bg-status-error/5'
           : 'border-border bg-muted/20'
       }`}
     >
-      <div className="flex items-center justify-between mb-1.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-mono font-bold text-muted-foreground w-5 text-center">
             {index + 1}
@@ -320,12 +347,12 @@ function ProvisioningStepCard({
         {step.quantumVulnerable ? (
           <span className="inline-flex items-center gap-1 text-[10px] font-bold rounded px-1.5 py-0.5 bg-status-error/20 text-status-error border border-status-error/50">
             <ShieldAlert size={10} />
-            Vulnerable
+            Classical public-key exposure
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold rounded px-1.5 py-0.5 bg-status-success/20 text-status-success border border-status-success/50">
-            <ShieldCheck size={10} />
-            Safe
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold rounded px-1.5 py-0.5 bg-muted text-muted-foreground border border-border">
+            {assessment === 'not-assessed' ? <CircleHelp size={10} /> : <ShieldCheck size={10} />}
+            {assessment === 'not-assessed' ? 'Not assessed' : 'Symmetric-only in this sample'}
           </span>
         )}
       </div>
@@ -344,12 +371,17 @@ function ProvisioningStepCard({
         ))}
       </div>
 
+      <ul className="text-xs text-muted-foreground list-disc pl-4 mt-2 space-y-1">
+        {step.protectionComponents.map((component, idx) => (
+          <li key={`${component.boundary}-${idx}`}>{component.description}</li>
+        ))}
+      </ul>
       {step.quantumVulnerable && step.pqcReplacement && (
         <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-status-success">
           <ShieldCheck size={10} className="shrink-0" />
           <span className="font-medium">PQC: {step.pqcReplacement}</span>
         </div>
       )}
-    </div>
+    </article>
   )
 }

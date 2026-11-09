@@ -78,7 +78,7 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       id: 'migration-strategy',
       title: '5. Dual-Algorithm Migration Strategy',
       description:
-        'Review the S/MIME extensions in the certificate viewer, then examine what smimeCapabilities tells a sender about the algorithms a correspondent can handle during a gradual PQC rollout. Consider how an organization would maintain both RSA and ML-DSA certificates during transition.',
+        'Review the S/MIME extensions in the certificate viewer, then examine what smimeCapabilities tells a sender about the algorithms a correspondent can handle. Consider how an organization would maintain both RSA and ML-DSA certificates during transition.',
       badge: 'Migration',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:

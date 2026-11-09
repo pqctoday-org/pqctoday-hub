@@ -92853,3 +92853,1083 @@ enrichment_method: automated extraction, human-reviewed
 - **Window Chars**: 10183
 
 ---
+## draft-ietf-mls-pq-ciphersuites-07
+
+- **Reference ID**: draft-ietf-mls-pq-ciphersuites-07
+- **Title**: ML-KEM and Hybrid Cipher Suites for Messaging Layer Security
+- **Authors**: IETF Datatracker
+- **Publication Date**: 2026-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Active Internet-Draft
+- **Main Topic**: Internet-Draft registering new Messaging Layer Security (MLS) cipher suites based on ML-KEM, alone or hybridized with traditional elliptic curve KEMs, combined with AEAD, hash and ML-DSA or traditional signature algorithms.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: Cryptographically-relevant quantum computer; Harvest now, decrypt later attacks
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF; NIST; IANA
+- **Leaders Contributions Mentioned**: Rohan Mahy (author); Richard L. Barnes (author); CFRG Hybrid KEM design team (Aron Wussler, Bas Westerbaan, Deirdre Connolly, Mike Ounsworth, Nick Sullivan, Stephen Farrell) acknowledged for their work; Mark Atwood provided corrections and clarifications
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: MLS (Messaging Layer Security, RFC 9420); HPKE; TLS 1.3 signature schemes
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; NIST; IANA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: X25519; P-256; P-384; Ed25519; ECDSA; AES-128-GCM; AES-256-GCM; ChaCha20-Poly1305; SHA-256; SHA-384; HMAC; HKDF; SHA-3; SHAKE
+- **Key Takeaways**: Registers eleven new MLS cipher suites (0x0010-0x0017 and 0x0020-0x0022) using pure ML-KEM or PQ/T hybrid KEMs; The first eight suites pair PQ or hybrid KEMs with traditional signatures, giving post-quantum confidentiality only against passive attackers while authenticity remains classical; The last three suites add ML-DSA-44, ML-DSA-65 and ML-DSA-87 signatures for post-quantum authentication; HKDF-SHA256 and HKDF-SHA384 are used inside MLS because single-stage KDFs like SHAKE lack the Extract and Expand functions MLS needs; Variants cover users wanting NIST-only cryptography, a higher security level, or a hybrid KEM rather than pure ML-KEM
+- **Security Levels & Parameters**: ML-KEM-768; ML-KEM-1024; ML-DSA-44; ML-DSA-65; ML-DSA-87; 128-bit security; 192-bit security; 256-bit security; KEM IDs 0x647a, 0x0050, 0x0051, 0x0041, 0x0042
+- **Hybrid & Transition Approaches**: PQ/T hybrid KEMs ML-KEM-768+X25519, ML-KEM-768+P-256 and ML-KEM-1024+P-384 using a hybrid combiner with SHAKE as PRG and SHA-3 as KDF; Traditional-signature cipher suites that address harvest now, decrypt later without the cost of post-quantum signatures
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: Section 2: "ML-KEM-768 (128-bit security, NIST, pure PQ KEM)"; suites 0x0015-0x0017 and 0x0021-0x0022
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: Section 2: "ML-KEM-768 + X25519 (128-bit security, Non-NIST, PQ/T hybrid KEM)"
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: Section 3.1: suites 0x0020-0x0022 use mldsa44, mldsa65 and mldsa87 signatures (paraphrase — not found verbatim in the document)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: MLS
+- **PQC Heatmap Protocols Evidence**: MLS: "registers new cipher suites for Messaging Layer Security (MLS) based on 'post-quantum' algorithms"
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ChaCha20-Poly1305 chosen for acceptable performance when implemented entirely in software
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Support for RFC 9420 MLS; HPKE with the PQ KEMs of draft-ietf-hpke-pq; ML-DSA signature schemes per draft-ietf-tls-mldsa; HKDF-SHA256 and HKDF-SHA384
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; crypto-agility; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: ChaCha20-Poly1305 chosen for acceptable performance when implemented entirely in software
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Multiple cipher suite variants offered so users can pick NIST-only cryptography, a higher security level, or hybrid versus pure ML-KEM
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-mls-pq-ciphersuites-07.html (93,482 bytes, 15,669 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:49
+- **Evidence SHA-256**: 29878f89dfdfc2611d5b777286da994486dd10c89db760d2a572e9a50e26a9b6
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 29878f89dfdfc261
+- **Reader**: unified/5 full
+- **Window Chars**: 15669
+
+---
+
+## draft-ietf-jose-hpke-pq-pqt-02
+
+- **Reference ID**: draft-ietf-jose-hpke-pq-pqt-02
+- **Title**: JOSE HPKE PQ & PQ/T Algorithm Registrations
+- **Authors**: IETF Datatracker
+- **Publication Date**: 2026-10-25
+- **Last Updated**: Not specified
+- **Document Status**: Active Internet-Draft
+- **Main Topic**: Registers PQ and PQ/T hybrid HPKE-based algorithm identifiers (using ML-KEM) for JOSE/JWE, covering integrated and key encryption, JWK representation, and test vectors.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: CRQC; Harvest Now Decrypt Later (HNDL)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF; NSA (CNSA 2.0 referenced)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE; JWE; HPKE; JWK; TLS 1.3
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; NSA
+- **Compliance Frameworks Referenced**: CNSA 2.0
+- **Classical Algorithms Referenced**: P-256; X25519; P-384; AES-256-GCM; ECDH; SHAKE256
+- **Key Takeaways**: Registers pure ML-KEM-768/1024 and PQ/T hybrid (MLKEM768-P256, MLKEM768-X25519, MLKEM1024-P384) HPKE algorithms for JOSE in both integrated and key-encryption forms; ML-KEM-512 is deliberately not registered because of concern about future cryptanalysis; Multi-recipient General JWE JSON must use only quantum-resistant key management algorithms to avoid HNDL exposure of the CEK; Pure PQ suites serve compliance mandates such as CNSA 2.0 while hybrids preserve confidentiality if either component holds; All suites use SHAKE256 KDF and AES-256-GCM as the sole AEAD to limit implementation complexity
+- **Security Levels & Parameters**: NIST level 3 (ML-KEM-768); NIST level 5 (ML-KEM-1024); ML-KEM-768; ML-KEM-1024; P-256 ~128-bit classical; P-384 ~192-bit classical; AES-256-GCM; SHAKE256
+- **Hybrid & Transition Approaches**: PQ/T hybrid HPKE KEMs (MLKEM768-P256, MLKEM768-X25519, MLKEM1024-P384) alongside pure PQ options; PQ/T Hybrid Confidentiality property
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "HPKE-12 ML-KEM-768 ( 0x0041 ) SHAKE256 ( 0x0011 ) AES-256-GCM ( 0x0002 )" (§3.2); HPKE-13 ML-KEM-1024 (§3.2)
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "HPKE-9 MLKEM768-X25519 ( 0x647a ) SHAKE256 ( 0x0011 ) AES-256-GCM ( 0x0002 )" (§3.1)
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Support for HPKE with JWE per draft-ietf-jose-hpke-encrypt; AKP JWK key type support; HPKE PQ KEM implementations per draft-ietf-hpke-pq; SHAKE256 and AES-256-GCM
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; api-security-jwt; Threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors (private JWK, Flattened JWE JSON, JWE Compact) for all algorithms in Appendix A
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Multi-recipient JWE requires all recipients to use quantum-resistant algorithms; future work to adjust JOSE Implementation Requirements for existing entries
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-jose-hpke-pq-pqt-02.html (223,072 bytes, 20,631 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:50
+- **Evidence SHA-256**: 3f9f4ebfc7fb9f9611d53aec799ad1ab2ff47e32a0ae4869b434be6be1cba34c
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 3f9f4ebfc7fb9f96
+- **Reader**: unified/5 selection
+- **Window Chars**: 20631
+
+---
+
+## draft-ietf-mls-extensions-11
+
+- **Reference ID**: draft-ietf-mls-extensions-11
+- **Title**: The Messaging Layer Security (MLS) Extensions
+- **Authors**: IETF Datatracker
+- **Publication Date**: 2026-11-02
+- **Last Updated**: Not specified
+- **Document Status**: Active Internet-Draft
+- **Main Topic**: Defines the MLS Safe Application Interface and extensions (component IDs, app_data_dictionary, AppDataUpdate, AppEphemeral) so applications and components can safely use MLS cryptographic facilities with domain separation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF (Messaging Layer Security Working Group)
+- **Leaders Contributions Mentioned**: R. Robert (Phoenix R&D) is listed as the sole author of the draft
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: MLS (Messaging Layer Security); HPKE
+- **Infrastructure Layers**: Authentication Service; Delivery Service; Key Management
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: HPKE (Hybrid Public Key Encryption, RFC 9180, named without specific KEM/KDF/AEAD algorithms)
+- **Key Takeaways**: Application components must be assigned unique ComponentIDs that are incorporated into all labelled operations to achieve domain separation; HPKE encryption, signing, exporters, PSKs and AAD should be used through the Safe* wrappers so components cannot decrypt or sign in place of other components; The forward-secure Exporter Tree gives one exported secret per ComponentID that must be deleted once consumed; The app_data_dictionary extension and AppDataUpdate proposal allow application data in the GroupContext to be updated without sending whole extensions or an UpdatePath; Application components must not change MLS security properties or require new security analysis of the core protocol
+- **Security Levels & Parameters**: ComponentID is a uint16; Exporter Tree has 2^16 leaves (one per ComponentID bit pattern); no cryptographic security levels or parameter sets specified
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: MLS
+- **PQC Heatmap Protocols Evidence**: MLS: "The Messaging Layer Security (MLS) protocol is an asynchronous group authenticated key exchange protocol."
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ComponentID is a two-byte value; Exporter Tree with 2^16 leaves generated on demand for space efficiency; AppDataUpdate avoids transmitting the whole extension value and avoids an UpdatePath
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: MLS implementation per RFC 9420; HPKE per RFC 9180; Support for the app_components and safe_aad components when advertising app_data_dictionary; Application-assigned unique ComponentIDs
+- **Relevant PQC Today Features**: Algorithms; Playground
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-mls-extensions-11.html (218,112 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:50
+- **Evidence SHA-256**: 2082bcec61e8fe97cc70fd501383337c95a7aea5c786f9b3462bcb3ddf5146c6
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 2082bcec61e8fe97
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## draft-ietf-hpke-hpke-06
+
+- **Reference ID**: draft-ietf-hpke-hpke-06
+- **Title**: Hybrid Public Key Encryption
+- **Authors**: IETF Datatracker
+- **Publication Date**: 2026-10-29
+- **Last Updated**: Not specified
+- **Document Status**: Active Internet-Draft
+- **Main Topic**: Specification of Hybrid Public Key Encryption (HPKE), a scheme combining a KEM, KDF and AEAD to encrypt arbitrary-sized plaintexts to a recipient public key, obsoleting RFC 9180.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: HPKE; TLS 1.3 (referenced); TLS Encrypted Client Hello (referenced); Oblivious HTTP (referenced); MLS (referenced)
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; NIST; IEEE; ISO/IEC; ANSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDH; HKDF; SHA-2; HMAC; DHKEM(P-256, HKDF-SHA256); DHKEM(P-384, HKDF-SHA384); DHKEM(P-521, HKDF-SHA512); DHKEM(X25519, HKDF-SHA256); DHKEM(X448, HKDF-SHA512); X25519; X448; P-256; P-384; P-521; HKDF-SHA256; HKDF-SHA384; HKDF-SHA512; AES-128-GCM; AES-256-GCM; ChaCha20Poly1305; RSA
+- **Key Takeaways**: HPKE works for any combination of KEM, KDF and AEAD; The KEM used within HPKE must be CCA-secure and its shared secret must be a uniformly random byte string of length Nsecret; KDF choice should match at least the security level of the KEM and any PSK; Bad ephemeral randomness can completely break confidentiality in Base mode and cause nonce reuse; One-stage KDFs and post-quantum KEMs are deferred to a separate draft (draft-ietf-hpke-pq)
+- **Security Levels & Parameters**: DHKEM(P-256, HKDF-SHA256) Nsecret 32, Nenc 65; DHKEM(P-384, HKDF-SHA384) Nsecret 48, Nenc 97; DHKEM(P-521, HKDF-SHA512) Nsecret 64, Nenc 133; DHKEM(X25519, HKDF-SHA256) Nsecret 32, Nenc 32; DHKEM(X448, HKDF-SHA512) Nsecret 64, Nenc 56; HKDF-SHA256 Nh 32; HKDF-SHA384 Nh 48; HKDF-SHA512 Nh 64
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: Nsecret 32/48/64 bytes; Nenc 65/97/133/32/56 bytes; Npk 65/97/133/32/56 bytes; Nsk 32/48/66/32/56 bytes; Nh 32/48/64 bytes
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: A KEM, KDF and AEAD combination; application-level transport of enc, psk_id and other non-private parameters; mechanism to identify which recipient public key was used; validation of deserialized public keys
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; crypto-agility; tls-basics
+- **Implementation Attack Surface**: Bad ephemeral randomness (low entropy or compromised RNG); AEAD nonce reuse; partitioning oracle attacks (referenced)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors (KAT-style) for DHKEM, KDF and AEAD combinations; deterministic encapsulation (EncapDerand) for testing; edge-case test vectors (DeriveKeyPair rejection sampling, empty and zero-byte inputs)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-hpke-hpke-06.html (354,835 bytes, 20,846 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:52
+- **Evidence SHA-256**: 66046d35f58a87a3b5d25230f3b65ecdc5bff8b7b145b0aaf803dac5719b7375
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 66046d35f58a87a3
+- **Reader**: unified/5 selection
+- **Window Chars**: 20846
+
+---
+
+## RFC-9849
+
+- **Reference ID**: RFC-9849
+- **Title**: TLS Encrypted Client Hello
+- **Authors**: E. Rescorla, K. Oku, N. Sullivan, C. A. Wood
+- **Publication Date**: 2026-03-03
+- **Last Updated**: Not specified
+- **Document Status**: Proposed Standard
+- **Main Topic**: RFC 9849 specifies the TLS Encrypted Client Hello (ECH) extension, which encrypts a ClientHello under a server public key (using HPKE) to protect the SNI and other sensitive handshake fields.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IESG, IANA
+- **Leaders Contributions Mentioned**: E. Rescorla, K. Oku, N. Sullivan and C. A. Wood are the document authors (no specific contributions described)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3; DTLS 1.3; HPKE; DNS over HTTPS; DNS over TLS; DNS over DTLS; DNS over QUIC; HTTPS/SVCB DNS records
+- **Infrastructure Layers**: DNS; PKI; Reverse proxy / client-facing server; IANA registries
+- **Standardization Bodies**: IETF; IESG; IANA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: DHKEM(X25519, HKDF-SHA256); X25519; HKDF-SHA256; AES-128-GCM; X509 certificates
+- **Key Takeaways**: ECH encrypts the inner ClientHello under a server public key to hide the SNI; ECH alone is insufficient for server identity privacy and requires encrypted DNS; ECH does not provide forward secrecy for the inner ClientHello because the server's ECH key is static, so servers should rotate keys regularly; Compliant implementations must support DHKEM(X25519, HKDF-SHA256) with HKDF-SHA256 and AES-128-GCM absent an application profile
+- **Security Levels & Parameters**: HPKE suite DHKEM(X25519, HKDF-SHA256) / HKDF-SHA256 / AES-128-GCM; ECH extension codepoint 0xfe0d; ech_outer_extensions 0xfd00; ech_required alert 121
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "ECH is supported in TLS 1.3 [ RFC8446 ] , DTLS 1.3 [ RFC9147 ] , and newer versions of the TLS and DTLS protocols." (§1)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: Changes to client, client-facing server, and backend server; HPKE support; encrypted DNS recommended for effective privacy; regular server ECH key rotation
+- **Relevant PQC Today Features**: tls-basics; crypto-agility
+- **Implementation Attack Surface**: SNI-based denial-of-service (forced server decryption operations); related privacy leaks via OCSP/CRL traffic
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Requires coordinated changes across client, client-facing server, and backend server; deployment mistakes can cause compatibility issues; use cases depending on unencrypted SNI may no longer work
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9849.html (1,081,287 bytes, 21,134 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:54
+- **Evidence SHA-256**: b93ed63b2d2461d525a1e24e7b2a09b6faebfe58008e58984d00d8bbffad92ff
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: b93ed63b2d2461d5
+- **Reader**: unified/5 selection
+- **Window Chars**: 21134
+
+---
+
+## AWS-KMS-Post-Quantum-Keys
+
+- **Reference ID**: AWS-KMS-Post-Quantum-Keys
+- **Title**: Post-quantum keys in AWS KMS
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: AWS KMS developer guide page describing the ML-DSA signature keys and ML-KEM key-encapsulation keys that AWS KMS supports for post-quantum cryptography, including key specs, operations and workflow.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: Shor's Algorithm; Harvest Now Decrypt Later; sufficiently large fault-tolerant quantum computer recovering private keys
+- **Migration Timeline Info**: Milestones: 2016: NIST began public standardization effort for post-quantum algorithms; August 2024: NIST published first post-quantum cryptography standards (FIPS 203, FIPS 204)
+- **Applicable Regions / Bodies**: Regions: China Regions (ML-KEM keys not available); Bodies: NIST, IETF, AWS
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS KMS (AWS Key Management Service)
+- **Protocols Covered**: TLS (hybrid post-quantum TLS with AWS KMS); PQ-HPKE (IETF draft)
+- **Infrastructure Layers**: Cloud KMS; Key Management; HSM
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: FIPS 140-3; FIPS 203; FIPS 204
+- **Classical Algorithms Referenced**: RSA; ECC; ECDH; AES-GCM; HMAC
+- **Key Takeaways**: AWS KMS supports ML-DSA (FIPS 204) for post-quantum signatures and ML-KEM (FIPS 203) for post-quantum key establishment in FIPS 140-3 Level 3 HSMs; Messages over 4 KB for ML-DSA require an externally computed 64-byte μ submitted with the EXTERNAL_MU message type; ML-KEM keys use KeyUsage ENCAPSULATE_DECAPSULATE with Encapsulate/Decapsulate APIs and yield a 32-byte shared secret; Post-quantum KMS keys do not protect KMS request/response traffic, so post-quantum TLS is needed as well; ML-KEM keys are unavailable in the China Regions
+- **Security Levels & Parameters**: ML_DSA_44; ML_DSA_65; ML_DSA_87; ML_KEM_512; ML_KEM_768; ML_KEM_1024; FIPS 140-3 Security Level 3 HSMs
+- **Hybrid & Transition Approaches**: Hybrid post-quantum TLS with AWS KMS; PQ-HPKE (IETF draft) as PQ-safe replacement for RSA-based encryption
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "AWS KMS offers three distinct security levels through different key specifications, ML_KEM_512, ML_KEM_768, and ML_KEM_1024." for post-quantum key establishment
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Key Management Service (AWS KMS) supports Module-Lattice Digital Signature Algorithm (ML-DSA) for post-quantum cryptographic signatures."
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: ML-DSA RAW signing for messages up to 4 KB; 64-byte message representation μ for larger messages; ML-KEM 32-byte shared secret
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: KMS key with KeyUsage ENCAPSULATE_DECAPSULATE for ML-KEM; externally computed 64-byte μ for messages larger than 4 KB; verifying received public key came from expected party
+- **Relevant PQC Today Features**: Algorithms; kms-pqc; hsm-pqc; hybrid-crypto
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Regional availability limit (ML-KEM unavailable in China Regions); externally computed μ required for messages over 4 KB
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: AWS-KMS-Post-Quantum-Keys.html (22,059 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:54
+- **Evidence SHA-256**: a6cac6fa4ecf991756c5aaf7eca3179908c634d5a7813ca8801676d4f9f30c64
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: a6cac6fa4ecf9917
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## AWS-KMS-Import-Wrapping-Keys
+
+- **Reference ID**: AWS-KMS-Import-Wrapping-Keys
+- **Title**: Download the public key and import token (AWS KMS)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: How to download the wrapping public key and import token from AWS KMS (via console or GetParametersForImport API), including selection of RSA/SM2 wrapping key specs and wrapping algorithms for importing key material.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: China Regions; Bodies: OSCCA
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS Key Management Service (AWS KMS); OpenSSL
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; HSM; Cloud KMS
+- **Standardization Bodies**: OSCCA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; AES; SM2; SM4; SHA-256; SHA-1; ECC_NIST_P521; RSAES_OAEP_SHA_256; RSAES_OAEP_SHA_1; RSA_AES_KEY_WRAP_SHA_256; RSA_AES_KEY_WRAP_SHA_1; RSAES_PKCS1_V1_5; SM2PKE; HMAC
+- **Key Takeaways**: Use the longest practical RSA wrapping key spec (RSA_4096 is recommended); The wrapping public key and import token are an indivisible set valid for only 24 hours; Use an RSA_AES_KEY_WRAP_SHA_* algorithm to wrap RSA private key material, and not ECC_NIST_P521 material with RSA_2048 and RSAES_OAEP_SHA_*; RSAES_PKCS1_V1_5 is no longer supported as of October 10, 2023; ML-DSA and ML-KEM KMS keys cannot have key material imported
+- **Security Levels & Parameters**: RSA_4096 (recommended); RSA_3072; RSA_2048; SM2; 256-bit AES key; 128-bit SM4 key
+- **Hybrid & Transition Approaches**: None detected (the two-step hybrid wrapping algorithm RSA_AES_KEY_WRAP is classical-only, not a PQC hybrid)
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Wrapping public key and import token valid for 24 hours; RSA wrapping key lengths of 2048, 3072 and 4096 bits; 256-bit AES key material
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: KMS key with Origin of External (no key material); AWS CLI or AWS KMS console access; OpenSSL for base64 decoding; HSM or key management system supporting the chosen wrapping algorithm
+- **Relevant PQC Today Features**: kms-pqc; hsm-pqc; Algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Key material must be re-downloaded and re-encrypted for every import; multi-Region keys require import into the primary Region key first, then each replica Region key; wrapping set expires after 24 hours and must be re-downloaded
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: AWS-KMS-Import-Wrapping-Keys.html (39,980 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:55
+- **Evidence SHA-256**: 383f82ab1b60ba1ffa4c35bb48dd119cc9eb21566ae0d398894c735354c98f42
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 383f82ab1b60ba1f
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## AWS-KMS-API-Decapsulate
+
+- **Reference ID**: AWS-KMS-API-Decapsulate
+- **Title**: Decapsulate (AWS KMS API Reference)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: AWS KMS Decapsulate API operation, which recovers the 32-byte shared secret encapsulated with the public key of an ML-KEM KMS key.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS Key Management Service (AWS KMS)
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Cloud KMS
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FIPS 203
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Decapsulate returns a 32-byte shared secret usable directly as key material or via a key derivation function; Implicit rejection returns a pseudo-random value for invalid or altered ciphertext, so the two parties must confirm they derived the same shared secret; InvalidCiphertextException is raised only when the ciphertext length is inconsistent with the ML-KEM key spec; The KMS key must have KeyUsage ENCAPSULATE_DECAPSULATE and be in a compatible key state; Cross-account use is supported via key ARN or alias ARN, and the operation is not available in China Regions
+- **Security Levels & Parameters**: 32-byte shared secret; SharedSecretCiphertextBlob maximum length 6144
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "Recovers the shared secret that was encapsulated with the public key of an ML-KEM KMS key."
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Shared secret 32 bytes; SharedSecretCiphertextBlob maximum length 6144; SharedSecret maximum length 4096 (Base64-encoded); KeyId maximum length 2048
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Asymmetric ML-KEM KMS key with KeyUsage ENCAPSULATE_DECAPSULATE; kms:Decapsulate permission in key policy; KMS key in a compatible key state; SharedSecretCiphertextBlob produced by the Encapsulate operation
+- **Relevant PQC Today Features**: kms-pqc; Algorithms; hybrid-crypto
+- **Implementation Attack Surface**: Chosen-ciphertext attacks mitigated via implicit rejection
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: DryRun parameter to check whether a request will succeed
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Not available in China Regions; eventual consistency model may require grant tokens for new grants
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: AWS-KMS-API-Decapsulate.html (37,372 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:55
+- **Evidence SHA-256**: 1d6992c3f92191951069ed36144a0a5e16be487732545f2d8ad130f4dba0d97f
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 1d6992c3f9219195
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## AWS-KMS-API-Encapsulate
+
+- **Reference ID**: AWS-KMS-API-Encapsulate
+- **Title**: Encapsulate (AWS KMS API Reference)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: AWS KMS Encapsulate API operation, which generates a shared secret and its ciphertext using the public key of an ML-KEM KMS key pair.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected (the operation is stated as not available in China Regions); Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS Key Management Service (AWS KMS); AWS CLI; AWS SDKs
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Cloud KMS
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FIPS 203
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Encapsulate generates a 32-byte shared secret and its ciphertext from an ML-KEM KMS key's public key; The only valid EncapsulationAlgorithm is ML_KEM, and the KMS key must have KeyUsage ENCAPSULATE_DECAPSULATE; Pass SharedSecretCiphertextBlob to Decapsulate to recover the shared secret; The operation is not available in China Regions and requires the kms:Encapsulate permission; Cross-account use is supported by specifying the key ARN or alias ARN
+- **Security Levels & Parameters**: ML_KEM_512; ML_KEM_768; ML_KEM_1024; 32-byte shared secret
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "The only valid value is ML_KEM" (EncapsulationAlgorithm parameter)
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Shared secret 32 bytes; Ciphertext 768 bytes for ML_KEM_512; Ciphertext 1088 bytes for ML_KEM_768; Ciphertext 1568 bytes for ML_KEM_1024; SharedSecret max length 4096; SharedSecretCiphertextBlob max length 6144
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: ML-KEM KMS key with KeySpec ML_KEM_512, ML_KEM_768 or ML_KEM_1024 and KeyUsage ENCAPSULATE_DECAPSULATE; kms:Encapsulate permission in key policy; KMS key in a compatible key state; Region outside China Regions
+- **Relevant PQC Today Features**: Algorithms; kms-pqc; Playground
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: DryRun parameter to check whether a request will succeed
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Cross-account use requires key ARN or alias ARN; Not available in China Regions; AWS KMS eventual consistency model applies, with grant tokens for new grants
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: AWS-KMS-API-Encapsulate.html (35,848 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:56
+- **Evidence SHA-256**: d5906e298139deb9b879f2a3c32bccd38cf3022e7e5cb5fa9c54bd32fd51fa75
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: d5906e298139deb9
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## AWS-KMS-API-GenerateDataKeyPair
+
+- **Reference ID**: AWS-KMS-API-GenerateDataKeyPair
+- **Title**: GenerateDataKeyPair (AWS KMS API Reference)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: AWS KMS GenerateDataKeyPair API operation, which returns a unique asymmetric data key pair (RSA, ECC, SM2 or ML-KEM) for use outside AWS KMS, with the private key encrypted under a symmetric KMS key.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: China (SM2 key spec available only in China Regions; ML-KEM key specs not available in China Regions); Bodies: AWS
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS Key Management Service; AWS Nitro Enclaves; AWS NitroTPM
+- **Protocols Covered**: X.509 (SubjectPublicKeyInfo encoding); PKCS8
+- **Infrastructure Layers**: Cloud KMS; Key Management; Trusted Execution Environment (Nitro Enclaves, NitroTPM)
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC; SM2; RSAES_OAEP_SHA_256; ECC_NIST_P256; ECC_NIST_P384; ECC_NIST_P521; ECC_SECG_P256K1; ECC_NIST_EDWARDS25519
+- **Key Takeaways**: Use ML_KEM_512, ML_KEM_768 or ML_KEM_1024 as the KeyPairSpec to generate ML-KEM data key pairs; ML-KEM key specs are not available in China Regions; ML-KEM private keys are returned in seed format so private key length is the same for all ML-KEM key pair specs; Use GenerateDataKeyPairWithoutPlaintext when the plaintext private key is not immediately needed; KMS key usage restrictions do not apply to data key pairs used outside AWS KMS
+- **Security Levels & Parameters**: ML_KEM_512; ML_KEM_768; ML_KEM_1024; RSA_2048; RSA_3072; RSA_4096
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: Valid KeyPairSpec values include "ML_KEM_512 | ML_KEM_768 | ML_KEM_1024"
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: PrivateKeyPlaintext max length 4096; PublicKey max length 8192; PrivateKeyCiphertextBlob max length 6144; CiphertextForRecipient max length 6144; ML-KEM private key length is the same for all parameter sets (seed format)
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: Symmetric encryption KMS key (not asymmetric, not in a custom key store); KMS key in a compatible key state; kms:GenerateDataKeyPair permission; AWS Nitro Enclaves SDK or AWS SDK for attestation use; Decrypt operation to recover the encrypted private key
+- **Relevant PQC Today Features**: kms-pqc; Algorithms; hsm-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: DryRun parameter to check whether a request will succeed
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: AWS-KMS-API-GenerateDataKeyPair.html (46,038 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:56
+- **Evidence SHA-256**: c2d0b1fc8b40124506de2ea88dcb604456579f6dc8527dc5f626ced29d8bd86f
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: c2d0b1fc8b401245
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## AWS-KMS-Hybrid-PQ-TLS
+
+- **Reference ID**: AWS-KMS-Hybrid-PQ-TLS
+- **Title**: Using hybrid post-quantum TLS with AWS KMS
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: How to use and monitor hybrid post-quantum TLS (ECDH combined with ML-KEM) for API calls to AWS KMS, including verification via CloudTrail, alerting via CloudWatch, and performance considerations.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Harvest now, decrypt later; large-scale quantum computing attacks on classic TLS key exchange; quantum attacks on AES-GCM ciphertexts (effective key security reduced to 128 bits)
+- **Migration Timeline Info**: In August 2024, NIST finalized its first post-quantum cryptography standards; AWS KMS now supports hybrid post-quantum key exchange for TLS
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST, ETSI, AWS
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS KMS; s2n-tls; AWS SDKs; AWS Common Runtime HTTP Client; AWS CloudTrail; Amazon CloudWatch
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: Cloud KMS; Key Management; Cloud monitoring and logging
+- **Standardization Bodies**: NIST; ETSI
+- **Compliance Frameworks Referenced**: FIPS 140-3; FIPS 203
+- **Classical Algorithms Referenced**: ECDH; X25519; AES-GCM; AES-256
+- **Key Takeaways**: Use hybrid post-quantum TLS for all AWS KMS API calls if data requires long-term confidentiality; Verify hybrid use by checking the keyExchange field (e.g. X25519MLKEM768) in the CloudTrail tlsDetails section; Create a CloudWatch metric filter and alarm to detect clients calling AWS KMS without MLKEM key exchange; Test API calls from different network locations because larger handshake messages may be blocked by legacy proxies, firewalls or DPI; Hybrid TLS protects only data in transit, while data under KMS keys is protected by 256-bit AES-GCM
+- **Security Levels & Parameters**: X25519MLKEM768; 256-bit AES-GCM keys (effective security reduced to 128 bits under quantum attack)
+- **Hybrid & Transition Approaches**: Hybrid key exchange combining ECDH with ML-KEM (X25519MLKEM768) in TLS; retains classic cipher suite strength while adding quantum resilience
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "hybrid post-quantum key exchange option for TLS which combines Elliptic Curve Diffie-Hellman (ECDH) with ML-KEM"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "this field shows a hybrid algorithm such as X25519MLKEM768" (Verifying and Monitoring section)
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Hybrid key exchange slightly increases size and processing time of some TLS handshake messages; overall performance impact imperceptible for most workloads; larger ClientHello and key exchange messages may be blocked by DPI proxies/firewalls
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: AWS SDK with hybrid post-quantum TLS support enabled; CloudTrail events sent to CloudWatch Logs; CloudWatch metric filter and alarm; network paths/firewalls permitting new TLS key exchange groups
+- **Relevant PQC Today Features**: kms-pqc; tls-basics; hybrid-crypto; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: CloudTrail tlsDetails keyExchange field inspection; CloudWatch metric filter detecting calls without MLKEM key exchange
+- **Testing & Validation Methods**: Testing AWS KMS API calls from different network locations to detect blocking by intermediate hosts, proxies or firewalls
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Legacy intermediate hosts, proxies or firewalls with DPI may block the new key exchange groups and larger handshake messages; requires SDK configuration and coordination with security/IT teams to unblock
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Work with security team or IT administrators to unblock new TLS key exchange groups
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Not Applicable
+- **Source Document**: AWS-KMS-Hybrid-PQ-TLS.html (26,495 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:57
+- **Evidence SHA-256**: d2e19c7b29ab474eacda60e223e6cc910bb14252268f74c26d941fe7f19868be
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: d2e19c7b29ab474e
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## AWS-PQ-Readiness-Confidentiality
+
+- **Reference ID**: AWS-PQ-Readiness-Confidentiality
+- **Title**: AWS Support for Post-Quantum Confidentiality
+- **Authors**: Amazon Web Services, Inc.
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: AWS reference page listing, service by service, the status of hybrid ML-KEM post-quantum key exchange support for protecting data in transit, including shared-responsibility guidance and transparent versus opt-in support.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: Harvest now, decrypt later; future decryption of recorded data by a large quantum computer
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Amazon API Gateway; AWS Application Auto Scaling; AWS AppSync; Amazon Aurora MySQL; Amazon Aurora PostgreSQL; AWS Certificate Manager (ACM); AWS CloudHSM; Amazon CloudFront; Amazon Cognito; Amazon DynamoDB; Elastic Load Balancing: Application Load Balancer (ALB); Elastic Load Balancing: Network Load Balancer (NLB); AWS Key Management Service (KMS); AWS Identity and Access Management (IAM); AWS IAM Roles Anywhere (IAM RA); AWS CloudTrail
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: Cloud service endpoints; Load Balancers; Key Management (KMS); HSM (CloudHSM); Certificate Management (ACM); Edge/CDN (CloudFront); Databases; Observability and Governance (CloudTrail)
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS (FIPS and non-FIPS endpoints)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Public AWS service endpoints transparently deploy server-side hybrid ML-KEM support, so customers must update clients to a version and configuration that supports ML-KEM; For customer-owned resources such as load balancers, customers must opt in by applying a newer quantum-resistant TLS policy; Aurora MySQL and PostgreSQL require minimum database versions (MySQL 8.4.8; PostgreSQL 18) plus client updates; CloudTrail already records TLS version and cipher suite, with key exchange logging available for some services and coming soon for others; AWS Classic Load Balancer has no PQC plan, so customers should migrate to Elastic Load Balancer
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid PQ key exchange combining ML-KEM with a traditional key exchange method; expected to evolve toward pure PQ key exchange in the future; opt-in TLS policies preferring hybrid PQ key exchange; stricter policies disallowing fallback to older TLS versions
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "We generally use hybrid PQ key exchange, which combines ML-KEM with a traditional key exchange method."
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: The page covers TLS key exchange; it only points to a separate announcement for ML-DSA with IAM Roles Anywhere ("details on using ML-DSA with IAM RA for quantum-resistant trust policies and certificates")
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Post-quantum key exchange in protocols like TLS helps secure data against this risk of harvest now and decrypt later."
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Launch blog for KMS referenced as including in-depth performance analysis of hybrid PQ key exchange (no concrete values in the text)
+- **Target Audience**: CISO; Security Architect; Developer; Operations
+- **Implementation Prerequisites**: Update clients that invoke AWS APIs to a version supporting ML-KEM; Aurora MySQL version 8.4.8 or later; Aurora PostgreSQL version 18 or later with updated SSL groups; Apply quantum-resistant TLS policy to load balancer listeners or API Gateway; Use updated web browsers or client applications for CloudFront
+- **Relevant PQC Today Features**: Migrate; hybrid-crypto; tls-basics; kms-pqc; hsm-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: CloudTrail records TLS version, cipher suite and key exchange; ALB/NLB connection and access logs include keyExchange; IAM condition keys support allowlist of PQ-ready SSL policies and denylist of legacy policies; database logs can include TLS information
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Shared responsibility model: transparent server-side support versus customer opt-in; clients must be updated; minimum database versions required; Classic Load Balancer has no PQC plan and requires migration to Elastic Load Balancer; CloudFront origin connections coming soon
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Request a PQ migration consult; shared responsibility model dividing server-side and client/resource configuration duties
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: AWS-PQ-Readiness-Confidentiality.html (438,227 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:57
+- **Evidence SHA-256**: 0ffcc6cffed6205b6e7ebf95f3af81443c3e1fe567e9a0cf35bda8607e30d086
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 0ffcc6cffed6205b
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## Google-Cloud-KMS-Quantum-Safe-Key-Import
+
+- **Reference ID**: Google-Cloud-KMS-Quantum-Safe-Key-Import
+- **Title**: Quantum-safe key import (Cloud KMS)
+- **Authors**: Google Cloud Documentation
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Preview (pre-GA)
+- **Main Topic**: How to import a cryptographic key into Cloud KMS as a new key version using quantum-safe import methods (HPKE with ML-KEM or X-Wing) to protect keys in transit against "store now, decrypt later" attacks.
+- **PQC Algorithms Covered**: ML-KEM; X-Wing
+- **Quantum Threats Addressed**: Store now, decrypt later (SNDL) attacks by future quantum computers
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Cloud Key Management Service (Cloud KMS); Tink; tink-go; OpenSSL; Google Cloud CLI
+- **Protocols Covered**: HPKE (RFC 9180)
+- **Infrastructure Layers**: Key Management; Cloud KMS; Key import/wrapping
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: X25519; AES-256-GCM; HKDF-SHA256
+- **Key Takeaways**: Quantum-safe key import protects key material in transit against store-now-decrypt-later attacks; Supported only for SOFTWARE protection level keys; Choose an import method among X-Wing, ML-KEM-768 or ML-KEM-1024 HPKE variants; Wrap key material locally with HPKE.Seal() using the import job's public key; Import jobs expire after three days and must be ACTIVE before use; The feature is in Preview: during preview, only pre-wrapped keys can be imported
+- **Security Levels & Parameters**: ML-KEM-768; ML-KEM-1024; X-Wing (ML-KEM-768 + X25519); AES-256-GCM; HKDF-SHA256
+- **Hybrid & Transition Approaches**: X-Wing hybrid KEM (ML-KEM-768 and X25519) within HPKE
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: Import methods HPKE_KEM_ML_KEM_768_HKDF_SHA256_AES_256_GCM and HPKE_KEM_ML_KEM_1024_HKDF_SHA256_AES_256_GCM (paraphrase — not found verbatim in the document)
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "X-WING (a hybrid of ML-KEM-768 and X25519 )"
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Preview (pre-GA); during preview, only pre-wrapped keys can be imported
+- **Performance & Size Considerations**: Import job expires after three days; target key material example is a 32-byte key
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: Cryptographic library supporting HPKE and ML-KEM/X-Wing (Tink, OpenSSL); Google Cloud CLI; Cloud KMS Importer or Admin IAM role; SOFTWARE protection level key; billing-enabled Google Cloud project with Cloud KMS API enabled
+- **Relevant PQC Today Features**: kms-pqc; hybrid-crypto; Migrate; Algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Requires creating key ring, import-only target key, and import job; local HPKE wrapping step; import job must be ACTIVE and expires in three days; keys created import-only must be rotated manually
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Not Applicable
+- **Source Document**: Google-Cloud-KMS-Quantum-Safe-Key-Import.html (298,958 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:58
+- **Evidence SHA-256**: 462c83ca0c9bd70399bd50b5d18c977fd3419afbb3041bf440216f6c24202410
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 462c83ca0c9bd703
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## Google-Cloud-KMS-Key-Import
+
+- **Reference ID**: Google-Cloud-KMS-Key-Import
+- **Title**: Key wrapping (Cloud KMS)
+- **Authors**: Google Cloud Documentation
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Web Resource
+- **Main Topic**: Explains how Cloud KMS uses key wrapping (RSA-OAEP, optionally with AES-KWP) via import jobs and import methods to securely import user-provided cryptographic keys.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Cloud Key Management Service; Google Cloud CLI; OpenSSL
+- **Protocols Covered**: PKCS #11; RSAES-OAEP; AES Key Wrap with Padding (AES-KWP); MGF-1
+- **Infrastructure Layers**: Cloud KMS; Key Management; HSM
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; RSAES-OAEP; AES-256; AES-KWP; SHA-1; SHA-256; MGF-1
+- **Key Takeaways**: Cloud KMS imports user keys through import jobs whose import method specifies the key wrapping protocol; RSA_OAEP_3072_SHA256_AES_256 is the recommended import method; The RSAES-OAEP with SHA-256 method (no AES-KWP) is unsuitable for importing RSA private keys due to size limitations; Keys must be converted to the format Cloud KMS expects before wrapping; The Google Cloud CLI can wrap keys automatically, or keys can be wrapped manually (e.g. with OpenSSL)
+- **Security Levels & Parameters**: 3072-bit RSA; 4096-bit RSA; AES-256; SHA-1; SHA-256
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: 3072-bit and 4096-bit RSA import job keys; RSAES-OAEP with SHA-256 alone has size limitations unsuitable for importing RSA private keys
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: Import job with an import method; Key material formatted as expected by Cloud KMS; Google Cloud CLI for automatic wrapping; OpenSSL for manual wrapping
+- **Relevant PQC Today Features**: kms-pqc; hsm-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Google-Cloud-KMS-Key-Import.html (147,202 bytes, 8,215 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:58
+- **Evidence SHA-256**: ba3873bdd22b50cb0fadf4f465be3c0e528c73e912f4a148c01d6ab9fbbb0eee
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: ba3873bdd22b50cb
+- **Reader**: unified/5 full
+- **Window Chars**: 8215
+
+---
+
+## Google-Cloud-KMS-Release-Notes
+
+- **Reference ID**: Google-Cloud-KMS-Release-Notes
+- **Title**: Cloud KMS release notes
+- **Authors**: Google Cloud Documentation
+- **Publication Date**: 2017-01-11
+- **Last Updated**: Not specified
+- **Document Status**: Living Document
+- **Main Topic**: Google Cloud KMS release notes chronicling feature launches, regional availability, deprecations and changes, including post-quantum signing, KEM and key-import support.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; X-Wing
+- **Quantum Threats Addressed**: Susceptibility of asymmetric keys to attacks from future quantum computers; post-quantum attacks
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Cloud KMS; Cloud HSM; Cloud EKM; Cloud KMS Autokey; Single-tenant Cloud HSM; Bare Metal HSM; Bare Metal Rack HSM; Thales CipherTrust Cloud Key Manager
+- **Protocols Covered**: PKCS #11
+- **Infrastructure Layers**: Cloud KMS; HSM; Key Management; External Key Management (EKM); CMEK
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: PCI
+- **Classical Algorithms Referenced**: ECDSA; Curve25519 (PureEdDSA)
+- **Key Takeaways**: Cloud KMS offers GA PQC signing with ML-DSA and SLH-DSA variants; Quantum-safe key import (X-Wing, ML-KEM-768, ML-KEM-1024) is in Preview; KEM support (ML_KEM_768, ML_KEM_1024, KEM_XWING) was introduced in Preview for sharing secrets; The Asymmetric PQC insights dashboard helps identify quantum-susceptible asymmetric keys for modernization planning
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87; SLH-DSA-SHA2-128S; ML-KEM-768; ML-KEM-1024
+- **Hybrid & Transition Approaches**: X-Wing based key import and KEM (HPKE_KEM_XWING_HKDF_SHA256_AES_256_GCM; KEM_XWING)
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: Cloud KMS now supports key encapsulation mechanisms (KEMs)... ML_KEM_768 ML_KEM_1024 KEM_XWING (Sept 23, 2025) (paraphrase — not found verbatim in the document)
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: KEM_XWING; HPKE_KEM_XWING_HKDF_SHA256_AES_256_GCM (Aug 6, 2026 / Sept 23, 2025) (paraphrase — not found verbatim in the document)
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: PQ_SIGN_ML_DSA_65; PQ_SIGN_SLH_DSA_SHA2_128S (July 16, 2026, GA) (paraphrase — not found verbatim in the document)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Operations; CISO
+- **Implementation Prerequisites**: gcloud CLI with --public-key-format nist-pqc flag or REST API public_key_format=NIST_PQC parameter for retrieving PQC public keys; quorum approval with two-factor authentication for Single-tenant Cloud HSM
+- **Relevant PQC Today Features**: kms-pqc; hsm-pqc; Algorithms; hybrid-crypto; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Asymmetric PQC insights chart identifying quantum-susceptible asymmetric keys; Encryption metrics dashboard and key usage tracking; KMS Inventory API
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Cloud HSM random number generator for retrieving random bytes
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Cloud EKM external key manager partners (Thales CipherTrust Cloud Key Manager; Virtru)
+- **Deployment & Migration Complexity**: External key migration with zero downtime without reconfiguring applications; default key destruction period changed from 24 hours to 30 days
+- **Financial & Business Impact**: Autokey free tier (100 key versions and 10,000 cryptographic operations monthly); Single-tenant Cloud HSM incurs additional costs
+- **Organizational Readiness**: Asymmetric PQC insights are an input to quantum computing modernization planning
+- **Math Family**: Lattice; Hash-based; Hybrid
+- **PQC Round**: Not Applicable
+- **Source Document**: Google-Cloud-KMS-Release-Notes.html (202,123 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:50:59
+- **Evidence SHA-256**: 1cca230f9713c86b40c373cd8ea5760f26d0e0682a84e615ebbd00394e05926d
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 1cca230f9713c86b
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## Azure-Key-Vault-BYOK-Specification
+
+- **Reference ID**: Azure-Key-Vault-BYOK-Specification
+- **Title**: Bring your own key specification (Azure Key Vault)
+- **Authors**: MicrosoftLearn
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: Specification of the bring your own key (BYOK) process for securely importing HSM-protected RSA, EC or oct keys from an on-premises HSM into Azure Key Vault HSM using a key exchange key (KEK) and a key transfer blob.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: PKCS#11 (CKM_RSA_AES_KEY_WRAP); JSON Web Encryption (RFC7516); Azure Key Vault REST API
+- **Infrastructure Layers**: HSM; Key Management; Cloud KMS
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; EC; AES; AES Key Wrap with Padding; RSA-OAEP; SHA1; P-256
+- **Key Takeaways**: The target key never exists outside an HSM in plaintext and is always protected by an Azure Key Vault HSM-held key; A KEK must be an RSA-HSM key (2048, 3072 or 4096-bit) with import-only key_ops in the same vault as the target key; The transfer blob uses CKM_RSA_AES_KEY_WRAP (or CKM_AES_KEY_WRAP_PAD plus CKM_RSA_PKCS_OAEP) with an ephemeral AES key; The blob is a JSON Web Encryption compact serialization stored as a .byok file and imported via az keyvault key import; Source HSM configuration such as key wrap export and CKA_EXTRACTABLE is vendor-specific and outside this specification
+- **Security Levels & Parameters**: KEK RSA 4096-bit, 3072-bit or 2048-bit; Azure SQL supports only 2048-bit or 3072-bit KEKs; P-256 curve for EC import
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Operations
+- **Implementation Prerequisites**: Azure Key Vault with an RSA-HSM KEK in the same vault; HSM vendor-provided BYOK tool and documentation; On-premises HSM configured for key wrap-based export (e.g. CKA_EXTRACTABLE, CKA_TRUSTED); Azure CLI, PowerShell or Key Vault SDK
+- **Relevant PQC Today Features**: kms-pqc; hsm-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Dependence on HSM vendor-provided BYOK tools and vendor documentation for source HSM configuration
+- **Deployment & Migration Complexity**: Four-step user workflow (generate KEK, retrieve public key, export target key via vendor BYOK tool, import blob); some HSMs lack CKM_RSA_AES_KEY_WRAP and require the equivalent CKM_AES_KEY_WRAP_PAD plus CKM_RSA_PKCS_OAEP combination; KEK length support varies by service
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Azure-Key-Vault-BYOK-Specification.html (56,097 bytes, 7,578 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:51:00
+- **Evidence SHA-256**: 38f2c3d548410ea27fd117f87b3f67ab7908ce2a8df44a9378991dc6c1a06bbf
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 38f2c3d548410ea2
+- **Reader**: unified/5 full
+- **Window Chars**: 7578
+
+---
+
+## Azure-Managed-HSM-BYOK
+
+- **Reference ID**: Azure-Managed-HSM-BYOK
+- **Title**: Import HSM-protected keys to Managed HSM (BYOK)
+- **Authors**: MicrosoftLearn
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: How to import HSM-protected keys generated in an on-premises HSM into Azure Key Vault Managed HSM (BYOK) using an RSA-HSM Key Exchange Key and a vendor BYOK tool.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; Key Management; Cloud KMS
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3 Level 3
+- **Classical Algorithms Referenced**: RSA (2,048/3,072/4,096-bit); EC (P-256, P-384, P-521, P256K); Symmetric keys (128/192/256-bit)
+- **Key Takeaways**: The KEK must be an RSA-HSM key generated in the same Managed HSM with import as its only allowed operation; The KEK private key is never exportable, so the target key stays encrypted until decrypted inside the Managed HSM; Use the HSM vendor's BYOK tool on an offline computer to wrap the target key with the KEK public key; Only supported HSM vendors/models can be used, and RSA 1,024-bit keys are not supported; Upload the BYOK file with az keyvault key import to complete the transfer
+- **Security Levels & Parameters**: RSA-HSM 2,048/3,072/4,096-bit; EC-HSM P-256, P-384, P-521; Symmetric 128/192/256-bit; FIPS 140-3 Level 3
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: KEK key sizes 2,048/3,072/4,096-bit; Luna HSM RSA 4K target key import requires firmware 7.4.0 or newer
+- **Target Audience**: Security Architect; Operations; Developer
+- **Implementation Prerequisites**: Azure subscription; Azure CLI 2.12.0 or later; Managed HSM from supported HSMs list; Offline computer connected to on-premises HSM; Vendor BYOK tool; Marvell LiquidSecurity firmware 2.0.4 or later; Thales Luna HSM 7 firmware 7.3 or newer
+- **Relevant PQC Today Features**: kms-pqc; hsm-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Dependence on supported HSM vendor list and vendor-provided BYOK tools
+- **Deployment & Migration Complexity**: Multi-step offline/online process: generate KEK, download public key, create BYOK file offline, transfer and import; KEK must reside in the same Managed HSM as the target key
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Azure-Managed-HSM-BYOK.html (61,318 bytes, 7,989 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:51:00
+- **Evidence SHA-256**: 5a30c3b1766d46efc5aacefd17979df1122831d9fe5808d0b9d722ccb6f1dd32
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 5a30c3b1766d46ef
+- **Reader**: unified/5 full
+- **Window Chars**: 7989
+
+---
+
+## HashiCorp-Vault-Transit-API
+
+- **Reference ID**: HashiCorp-Vault-Transit-API
+- **Title**: Transit secrets engine (API) — HashiCorp Vault
+- **Authors**: HashiCorp
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Current
+- **Main Topic**: HTTP API reference for HashiCorp Vault's Transit secrets engine, covering key creation, import, read, list, delete, configuration and rotation, including ML-DSA, SLH-DSA and hybrid signature key types.
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: HashiCorp Vault Transit secrets engine
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Managed Keys; Secrets Engine
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: AES-128-GCM; AES-256-GCM; ChaCha20-Poly1305; ED25519; ECDSA P-256; ECDSA P-384; ECDSA P-521; RSA-2048; RSA-3072; RSA-4096; HMAC; AES-CMAC; AES-CBC; RSA-OAEP; SHA-1; SHA-224; SHA-256; SHA-384; SHA-512
+- **Key Takeaways**: ml-dsa, slh-dsa and hybrid key types are Enterprise-only transit key types; ML-DSA keys require parameter_set 44, 65 or 87; Hybrid keys require parameter_set, hybrid_key_type_pqc (ML-DSA only) and hybrid_key_type_ec; The new import_version type option enables crypto agility by switching a key to a different type with matching key_usages; In FIPS 140-3 mode chacha20-poly1305 is not certified and should not be used
+- **Security Levels & Parameters**: ML-DSA parameter sets 44, 65, 87; SLH-DSA parameter sets slh-dsa-sha2-128s through slh-dsa-shake-256f; RSA 2048/3072/4096-bit; wrapping key 4096-bit RSA; HMAC key 32-512 bytes
+- **Hybrid & Transition Approaches**: Hybrid signature key type combining ML-DSA with ecdsa-p256, ecdsa-p384, ecdsa-p521 or ed25519; crypto agility via changing key type on import_version
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "ml-dsa - ML-DSA (asymmetric) Enterprise"; "slh-dsa - SLH-DSA (asymmetric) Enterprise"
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "hybrid - hybrid signatures combining a post-quantum algorithm and an elliptic curve algorithm (asymmetric)"
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Wrapping key is 4096-bit RSA; wrapped AES key is first 512 bytes of import ciphertext; HMAC key_size 32-512 bytes; default HMAC key 256-bit; auto_rotate_period minimum one hour
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: HashiCorp Vault Enterprise for ml-dsa, slh-dsa, hybrid; Transit secrets engine enabled (e.g. at /transit); managed key configuration for managed_key type; parameter_set specified for PQC keys
+- **Relevant PQC Today Features**: kms-pqc; crypto-agility; hybrid-crypto; Algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Key rotation and import_version support key type changes; imported keys lose import_version after rotation; key deletion requires deletion_allowed
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based; Hybrid
+- **PQC Round**: Not Applicable
+- **Source Document**: HashiCorp-Vault-Transit-API.html (1,373,493 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T15:51:01
+- **Evidence SHA-256**: 5406404f6d2c2e94d79531a72843942adf4ee78a56ac90e197fb2050401145b1
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 5406404f6d2c2e94
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+

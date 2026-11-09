@@ -51,13 +51,21 @@ const QUESTIONS: Question[] = [
   },
 ]
 
-const SAMPLE_ASSETS: Array<{ name: string; description: string }> = [
+interface PlanningAsset {
+  name: string
+  description: string
+  purpose?: 'certificate-trust' | 'artifact-signing' | 'transport'
+}
+
+const SAMPLE_ASSETS: PlanningAsset[] = [
   {
     name: 'Legacy PKI system (SHA-1 certs)',
+    purpose: 'certificate-trust',
     description: '15-year-old PKI; source partially unavailable; team disbanded.',
   },
   {
     name: 'TLS Load Balancer (TLS 1.2 only)',
+    purpose: 'transport',
     description: 'F5 BIG-IP; modular TLS config; vendor patch available.',
   },
   {
@@ -66,10 +74,12 @@ const SAMPLE_ASSETS: Array<{ name: string; description: string }> = [
   },
   {
     name: 'Enterprise LDAP service (SHA-1 TLS)',
+    purpose: 'transport',
     description: 'Legacy directory; configurable cipher suite; vendor patch available.',
   },
   {
     name: 'Code signing pipeline (RSA-2048)',
+    purpose: 'artifact-signing',
     description: 'Jenkins + OpenSSL 1.1.1; can upgrade to 3.x with oqs-provider.',
   },
 ]
@@ -79,7 +89,8 @@ function deriveRecommendation(answers: Answer[]): Recommendation {
     if (a === null) return false
     return QUESTIONS[i].migrateIfYes ? a === 'yes' : a === 'no'
   }).length
-  return migrateCount >= 3 ? 'migrate' : 'mitigate'
+  const directPrerequisitesMet = answers[0] === 'yes' && answers[1] === 'yes'
+  return directPrerequisitesMet && migrateCount >= 3 ? 'migrate' : 'mitigate'
 }
 
 const sunsetYear = new Date(Date.now() + 3 * 365 * 24 * 3600 * 1000).getFullYear()
@@ -90,7 +101,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
   const [answers, setAnswers] = useState<Answer[]>(Array(QUESTIONS.length).fill(null))
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null)
 
-  const assetOptions = useMemo(
+  const assetOptions = useMemo<PlanningAsset[]>(
     () =>
       cbomAssets.length > 0
         ? cbomAssets.map((a) => ({ name: `${a.name} (${a.version})`, description: a.notes }))
@@ -98,6 +109,9 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
     [cbomAssets]
   )
 
+  const selectedPurpose = assetOptions.find((asset) => asset.name === selectedAsset)?.purpose
+  const trustPathCase =
+    selectedPurpose === 'certificate-trust' || selectedPurpose === 'artifact-signing'
   const usingLive = cbomAssets.length > 0
 
   const allAnswered = answers.every((a) => a !== null)
@@ -246,11 +260,25 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
           </div>
 
           <p className="text-sm text-muted-foreground">
-            A missing prerequisite can outweigh the count. Use production tools and supplier
-            documentation to check supported software and algorithms, protocol/key-format
-            interoperability, deployment constraints, testing and rollback before choosing a design.
-            Where a scoped design supports them, the activities below are examples to evaluate.
+            The first two answers are prerequisites for this direct, own-team replacement path. Use
+            production tools and supplier documentation to check supported software and algorithms,
+            protocol/key-format interoperability, deployment constraints, testing and rollback
+            before choosing a design. Where a scoped design supports them, the activities below are
+            examples to evaluate.
           </p>
+          {(answers[0] === 'no' || answers[1] === 'no') && (
+            <div className="rounded-lg border border-status-warning/30 p-3 text-sm">
+              <strong>Direct replacement prerequisites missing:</strong>
+              <ul className="list-disc pl-5">
+                {answers[0] === 'no' && <li>Source available and maintained by your team</li>}
+                {answers[1] === 'no' && <li>Crypto replaceable without a full system rebuild</li>}
+              </ul>
+              <p>
+                Other Yes answers cannot override these missing inputs. Supported supplier upgrades,
+                full replacement and exit planning remain separate options to evaluate.
+              </p>
+            </div>
+          )}
           {recommendation === 'migrate' ? (
             <div className="bg-status-success/10 rounded-lg p-5 border border-status-success/30 space-y-4">
               <div className="flex items-center gap-2">
@@ -260,9 +288,9 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                 </span>
               </div>
               <p className="text-sm text-foreground/80">
-                {migrateCount} of 5 answers favour exploring direct algorithm replacement. This
-                majority is a planning prompt, not a finding that the system has sufficient crypto
-                agility or that migration is feasible.
+                {migrateCount} of 5 answers favour exploring direct algorithm replacement. Both
+                direct prerequisites are present. This count is a planning prompt, not a finding
+                that the system has sufficient crypto agility or that migration is feasible.
               </p>
               <div className="space-y-2 text-sm">
                 <div className="font-bold text-foreground">
@@ -322,40 +350,70 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                 alongside upgrade, replacement and exit planning. This count does not establish that
                 a gateway is feasible or that it reduces this asset’s risk.
               </p>
-              <div className="space-y-2 text-sm">
-                <div className="font-bold text-foreground">Gateway capabilities to evaluate</div>
-                <p className="text-xs text-muted-foreground">
-                  Which connections or operations would the gateway cover, and which legacy risks
-                  would remain?
-                </p>
-                <ul className="space-y-1.5 text-sm text-foreground/80">
-                  <li>· Deploy a TLS termination proxy in front of the legacy system</li>
-                  <li>· Configure approved cipher suites on the gateway (TLS 1.3 minimum)</li>
-                  <li>
-                    · Internal traffic from gateway to legacy system may remain on existing protocol
-                  </li>
-                  <li>· The gateway itself must use PQC-capable libraries — track in CBOM</li>
-                </ul>
-              </div>
-              <div className="space-y-2">
-                <div className="font-bold text-foreground text-sm">
-                  Possible planning activities
+              {trustPathCase ? (
+                <div className="space-y-2 text-sm">
+                  <div className="font-bold text-foreground">
+                    Work through the remaining trust path
+                  </div>
+                  <p>
+                    {selectedPurpose === 'certificate-trust'
+                      ? 'In this authored PKI sample, the legacy issuer still signs SHA-1 certificates and relying parties still validate their certificate paths. A TLS gateway does not reissue those certificates or replace their trust anchors.'
+                      : 'In this authored code-signing sample, the build pipeline still signs artifacts with RSA-2048 and consumers still trust its verification key. A TLS gateway does not replace those artifact signatures or update consumer trust.'}
+                  </p>
+                  <ol className="list-decimal list-inside space-y-1.5">
+                    <li>
+                      Map the issuer or signing key, signed objects, validators and trust anchors.
+                    </li>
+                    <li>
+                      Compare a supported supplier upgrade or replacement with the relying parties’
+                      algorithm and format support.
+                    </li>
+                    <li>
+                      Test new sample certificates or signed artifacts with the intended validators,
+                      including altered-object and untrusted-key rejection.
+                    </li>
+                    <li>
+                      Plan distribution of new trust material, compatibility, rollback and
+                      retirement of legacy trust.
+                    </li>
+                  </ol>
+                  <p className="text-xs text-muted-foreground">
+                    A separately scoped transport gateway can cover its connections only. Record
+                    legacy signature and certificate risks separately; do not mark them mitigated
+                    because a TLS connection changed.
+                  </p>
                 </div>
-                <ol className="space-y-1.5 text-xs text-foreground/80 list-decimal list-inside">
-                  <li>
-                    Select and deploy a crypto gateway product (Nginx, HAProxy, or dedicated
-                    appliance)
-                  </li>
-                  <li>Configure approved cipher suites and TLS 1.3; validate with testssl.sh</li>
-                  <li>Add the legacy system + gateway to CBOM under "mitigated" status</li>
-                  <li>
-                    Discuss a legacy-system exit plan — illustrative Hub sunset year {sunsetYear}
-                  </li>
-                  <li>
-                    Schedule annual review: if the system becomes modifiable, run this wizard again
-                  </li>
-                </ol>
-              </div>
+              ) : (
+                <div className="space-y-2 text-sm">
+                  <div className="font-bold text-foreground">
+                    Transport gateway example to evaluate
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedPurpose === 'transport'
+                      ? 'This authored sample identifies a transport connection. Confirm the actual endpoints, supported protocol and trust boundary before selecting a gateway.'
+                      : 'The selected record does not establish its cryptographic purpose. First identify transport, storage, signing and certificate-validation operations; no gateway design is selected from its name or notes.'}
+                  </p>
+                  <ol className="space-y-1.5 list-decimal list-inside">
+                    <li>
+                      If the scoped operation is transport, compare a supported TLS gateway with
+                      supplier upgrade or system replacement.
+                    </li>
+                    <li>
+                      Test both external and internal legs, negotiated groups, peer authentication
+                      and failure handling; a cipher-suite name alone does not establish PQC key
+                      exchange.
+                    </li>
+                    <li>
+                      Record covered connections and remaining legacy operations separately in the
+                      sample inventory.
+                    </li>
+                    <li>
+                      Plan rollout, rollback and a legacy-system exit; illustrative Hub sunset year{' '}
+                      {sunsetYear}.
+                    </li>
+                  </ol>
+                </div>
+              )}
               <div className="bg-status-warning/20 rounded p-3 border border-status-warning/40 flex items-start gap-2">
                 <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
                 <p className="text-xs text-foreground/80">

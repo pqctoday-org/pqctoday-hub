@@ -121,7 +121,6 @@
       "run-id": 209
     },
     "public/threats/manifest.json": {
-      "decision-citation": 1,
       "evidence-cache": 1,
       "internal-folder": 1
     },
@@ -253,9 +252,6 @@
       "evidence-cache": 1,
       "private-repo": 1
     },
-    "src/data/algorithms_transitions_#.csv": {
-      "internal-key": 9
-    },
     "src/data/archive/algorithms_transitions_#.csv": {
       "internal-key": 3
     },
@@ -317,9 +313,6 @@
       "decision-citation": 1,
       "run-id": 4
     },
-    "src/data/compliance_#.csv": {
-      "decision-citation": 12
-    },
     "src/data/cswp39Headings.ts": {
       "evidence-cache": 1,
       "private-repo": 1
@@ -344,9 +337,6 @@
     "src/data/learningPersonas.ts": {
       "private-repo": 1
     },
-    "src/data/library_#.csv": {
-      "internal-key": 64
-    },
     "src/data/loaderUtils.ts": {
       "private-repo": 1
     },
@@ -361,9 +351,6 @@
     },
     "src/data/pqc_software_category_priority_matrix.csv": {
       "private-repo": 63
-    },
-    "src/data/pqcassessment_#.csv": {
-      "internal-key": 3
     },
     "src/data/product-extractions/csc_018_extractions_#.json": {
       "home-path": 1

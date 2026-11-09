@@ -409,19 +409,22 @@ curl --curves X25519MLKEM768:X25519 \\
      --key /path/to/client.key \\
      https://example.com
 
-# Python ssl module — TLS 1.3 with PQC groups
+# Python 3.15+ ssl module — TLS 1.3 with hybrid PQC groups
+# Python must be linked to OpenSSL 3.5+ with these groups enabled.
 import ssl, socket
 
 ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 ctx.minimum_version = ssl.TLSVersion.TLSv1_3
-ctx.set_ciphers('TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256')
-# Note: Python ssl exposes group config via OpenSSL's set_groups()
-# Requires Python 3.12+ and OpenSSL 3.5+ with PQC support
+ctx.set_ciphersuites('TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256')
+ctx.set_groups('X25519MLKEM768:X25519')
+ctx.check_hostname = True
+ctx.verify_mode = ssl.CERT_REQUIRED
 ctx.load_verify_locations('/path/to/ca.crt')
 
 with socket.create_connection(('example.com', 443)) as sock:
     with ctx.wrap_socket(sock, server_hostname='example.com') as tls:
         print(f'Cipher: {tls.cipher()}')
+        print(f'Group: {tls.group()}')
         tls.sendall(b'GET / HTTP/1.1\\r\\nHost: example.com\\r\\n\\r\\n')`
 
 const SERVER_NAMES: Record<string, string> = {
@@ -484,8 +487,12 @@ export const TLSConfigGenerator: React.FC = () => {
             <CodeBlock code={CLIENT_EXAMPLES} />
           </div>
           <p className="text-xs text-muted-foreground italic">
-            PQC group names (X25519MLKEM768, MLKEM768) require OpenSSL 3.5+ compiled with liboqs or
-            the OQS provider.
+            The Python client is documentation: it is shown here, not run on this site, and it
+            targets Python 3.15 ssl APIs (set_ciphersuites, set_groups, SSLSocket.group()). It needs
+            Python 3.15 or later linked to OpenSSL 3.5+ with the selected groups enabled; OpenSSL
+            3.5+ provides native ML-KEM support, so no OQS provider is needed for these groups.
+            Check the linked runtime and the negotiated group on your own system. The offered X25519
+            fallback is classical key exchange, not a PQC handshake.
           </p>
           <p className="text-xs text-muted-foreground italic">
             <strong>CCM cipher suites</strong> (

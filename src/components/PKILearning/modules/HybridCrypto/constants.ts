@@ -52,13 +52,13 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
   },
   {
     id: 'silithium',
-    name: 'Silithium (Fused)',
+    name: 'Shared-binding model (Silithium-inspired)',
     construction: 'fused',
     nonSeparability: 'sns',
     components: ['EC-Schnorr (secp256k1)', 'ML-DSA-65'],
     tagline: 'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)',
     description:
-      'Fused Fiat-Shamir: both components share a single challenge μ. Neither component verifies without the shared μ. Targets Strong Non-Separability (SNS); the paper reports no separability issues for its construction. Smaller signature than concatenation.',
+      'Local learning model, not the published Silithium scheme: one shared challenge binds both components. No security proof or non-separability claim.',
     reference: 'ePrint 2025/2059',
     referenceUrl: 'https://eprint.iacr.org/2025/2059',
     separable: false,
@@ -152,7 +152,7 @@ export const HYBRID_ALGORITHMS: HybridAlgorithmInfo[] = [
   },
   // Hybrid signatures
   {
-    name: 'Silithium',
+    name: 'Shared-binding model',
     type: 'hybrid',
     category: 'signature',
     opensslAlgorithm: 'FUSED',
@@ -161,7 +161,7 @@ export const HYBRID_ALGORITHMS: HybridAlgorithmInfo[] = [
     ciphertextOrSigBytes: 3309 + 33 + 32, // ML-DSA-65 sig + secp256k1 R + s = 3374
     nistLevel: 3,
     description:
-      'EC-Schnorr (secp256k1) + ML-DSA-65 fused via adapted Fiat-Shamir. Strong Non-Separability. ePrint 2025/2059.',
+      'Local learning model, not the published Silithium scheme: EC-Schnorr (secp256k1) + ML-DSA-65 sharing one challenge, inspired by ePrint 2025/2059. No security proof or non-separability claim.',
   },
 ]
 

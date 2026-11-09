@@ -998,13 +998,15 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <td className="py-3 text-xs text-status-success">Yes</td>
               </tr>
               <tr>
-                <td className="py-3 pr-4 font-semibold text-foreground">Fused (Silithium)</td>
+                <td className="py-3 pr-4 font-semibold text-foreground">
+                  Fused (Silithium; the workshop uses a local model)
+                </td>
                 <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">
-                  shared μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)
+                  shared challenge μ (workshop model: H(R ‖ pk_ec ‖ pk_ml ‖ msg))
                 </td>
                 <td className="py-3 pr-4">
                   <span className="inline-flex items-center gap-1 text-xs text-status-success">
-                    <ShieldCheck size={13} /> SNS (targeted)
+                    <ShieldCheck size={13} /> SNS (targeted by the paper; not shown by the workshop)
                   </span>
                 </td>
                 <td className="py-3 text-xs text-status-error">No</td>
@@ -1073,8 +1075,16 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               Protocol (Sign)
             </div>
             {[
-              ['1', 'EC commitment', 'k ← DRBG(sk_ec, msg),  R = k·G  (secp256k1 base point)'],
-              ['2', 'Shared challenge', 'μ = H(tr ‖ R ‖ M), the input to ML-DSA.Sign_mu(sk_ml, μ)'],
+              [
+                '1',
+                'EC commitment',
+                'k ← fresh random scalar (local model),  R = k·G  (secp256k1 base point)',
+              ],
+              [
+                '2',
+                'Shared challenge',
+                'Local model: μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg), passed to the provider as ML-DSA external μ',
+              ],
               ['3', 'EC response', 's = (k + e·sk_ec) mod n   where e = μ[:32] as bigint'],
               [
                 '4',
@@ -1109,10 +1119,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 desc: "Paper's claim for the full scheme: a forgery requires breaking both EC-Schnorr and ML-DSA (this simplified demo is not covered by that proof)",
               },
               {
-                icon: ShieldCheck,
-                color: 'text-status-success',
-                label: 'SNS achieved',
-                desc: 'Neither component verifies without the shared μ',
+                icon: ShieldAlert,
+                color: 'text-status-warning',
+                label: 'SNS targeted',
+                desc: "The paper's goal. This page's local model only shows that the standard raw-message checks fail; that observation is not a proof.",
               },
               {
                 icon: ShieldAlert,
@@ -1143,12 +1153,12 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               {
                 name: 'Separability Attack',
                 description:
-                  'Adversary strips the PQC component and presents only the classical signature. Verifiers that accept classical-only sigs are fooled. Prevented by SNS.',
+                  'Adversary strips the PQC component and presents only the classical signature. Verifiers that accept classical-only sigs are fooled. What SNS is meant to prevent.',
               },
               {
                 name: 'Recombination Attack',
                 description:
-                  'Adversary combines a legitimate EC sig with a different ML-DSA sig (or vice versa) to forge a hybrid signature. Prevented because μ ties both to the same R.',
+                  'Adversary combines a legitimate EC sig with a different ML-DSA sig (or vice versa) to forge a hybrid signature. The local model ties both parts to the same R and both public keys; the workshop tests one replacement case only.',
               },
               {
                 name: 'Cross-Protocol Attack',

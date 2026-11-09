@@ -84,7 +84,7 @@ const documentedPrimaryReview = (row: Row) =>
   !blank(row, 'last_verified') &&
   (Number(row.confidence_score || 0) >= 85 ||
     (Number(row.confidence_score || 0) >= 80 &&
-      /fetched and read directly|verified verbatim|content-verified|official .* reviewed|cross-checked by codex and approved|corrected via approved proposal/i.test(
+      /fetched and read directly|verified verbatim|content-verified|official .* reviewed|cross-checked by codex and approved|corrected via approved proposal|corrected on review \d{4}-\d{2}-\d{2}/i.test(
         row.data_quality_notes ?? ''
       )))
 const reviewClaimsNeedingScopeCheck = reviewClaims.filter((row) => !documentedPrimaryReview(row))

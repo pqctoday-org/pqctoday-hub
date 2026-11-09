@@ -30,25 +30,24 @@ export interface DatabaseEncryptionProfile {
   notes: string
 }
 
-export type DatabasePqcSupport = 'ga' | 'planned' | 'none'
+/** Catalogue availability is separate from a vendor release stage or database operation support. */
+export type DatabasePqcSupport = CatalogAvailability
 
-const AVAIL_TO_DB: Record<CatalogAvailability, DatabasePqcSupport> = {
-  available: 'ga',
-  partial: 'planned',
-  roadmap: 'planned',
-  // Pre-shared-key-only is not PQC support: treated like a roadmap item.
-  psk: 'planned',
-  none: 'none',
-  unverified: 'planned',
+export const DATABASE_PQC_STATUS_LABELS: Record<
+  DatabasePqcSupport,
+  { label: string; className: string }
+> = {
+  available: { label: 'Available (catalogue)', className: 'text-primary' },
+  partial: { label: 'Partial support', className: 'text-status-warning' },
+  psk: { label: 'PSK-only (not PQC)', className: 'text-muted-foreground' },
+  roadmap: { label: 'Planned (catalogue)', className: 'text-status-warning' },
+  none: { label: 'No PQC listed', className: 'text-muted-foreground' },
+  unverified: { label: 'Unverified', className: 'text-muted-foreground' },
 }
 
-/**
- * Derive a database profile's PQC support from the CENTRAL CATALOG (single source
- * of truth) by its catalogName. Falls back to 'planned' if not in the catalog.
- */
+/** Preserve central catalogue evidence; a missing record does not establish a roadmap. */
 export function getProfilePqcSupport(profile: DatabaseEncryptionProfile): DatabasePqcSupport {
-  const status = getCatalogStatus(profile.catalogName)
-  return status ? AVAIL_TO_DB[status.availability] : 'planned'
+  return getCatalogStatus(profile.catalogName)?.availability ?? 'unverified'
 }
 
 export interface TDEMigrationStep {
@@ -286,7 +285,7 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     classicalApproach:
       'External KMS with RSA-2048/4096 TLS-wrapped KMIP connection. Key wrapping via RSA-OAEP or AES-WRAP.',
     pqcApproach:
-      'Thales CipherTrust Manager (its release notes list ML-KEM for the web interface API from v2.20.0 and, as a technical preview, for the SSH interface from v2.21.0; ML-KEM-1024 key wrapping is this module’s projection, not a Thales statement). AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but its import wrapping keys are RSA only. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
+      'Thales CipherTrust Manager (its release notes list ML-KEM for the web interface API from v2.20.0 and, as a technical preview, for the SSH interface from v2.21.0; ML-KEM-1024 key wrapping is this module’s projection, not a Thales statement). AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs and hybrid post-quantum TLS (ML-KEM key exchange) in the Regions where AWS KMS is available: the AWS KMS TLS page says all endpoints, including FIPS 140-3 validated ones; the Infrastructure security in AWS KMS page excludes the China Regions and FIPS endpoints in AWS GovCloud (US). Its import wrapping keys are RSA (SM2 in the China Regions). KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
     downtime: 'None',
     risk: 'medium',
     tooling: [
@@ -415,7 +414,7 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
     wrappingAlgorithm: 'RSA-OAEP import wrapping (customer wraps key before upload)',
     dataKey: '256-bit AES-GCM DEK, wrapped by imported CMK in cloud KMS',
     pqcUpgrade:
-      'Design target (AWS KMS import wrapping keys are RSA only, and AWS KMS cannot import key material into ML-KEM or ML-DSA KMS keys): download an ML-KEM-1024 public wrapping key from the Cloud KMS, generate the new CMK on-prem, run ML-KEM.Encaps to derive a shared secret and ciphertext, wrap the CMK with the shared secret (AES-KWP), and upload the ciphertext and wrapped CMK.',
+      'Design target (AWS KMS import wrapping keys are RSA (SM2 in the China Regions), and AWS KMS cannot import key material into ML-KEM or ML-DSA KMS keys): download an ML-KEM-1024 public wrapping key from the Cloud KMS, generate the new CMK on-prem, run ML-KEM.Encaps to derive a shared secret and ciphertext, wrap the CMK with the shared secret (AES-KWP), and upload the ciphertext and wrapped CMK.',
     diagram: [
       'Cloud KMS (provides ML-KEM public key)',
       '         ↓ download ek',

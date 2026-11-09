@@ -6,6 +6,7 @@ import {
   DATABASE_PROFILES,
   COMPLEXITY_LABELS,
   getProfilePqcSupport,
+  DATABASE_PQC_STATUS_LABELS,
 } from '../data/databaseConstants'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -50,7 +51,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     category: 'technical',
     label: 'PQC-capable KMS available',
     description:
-      'Thales CipherTrust Manager (ML-KEM on its web interface from v2.20.0), AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS, but RSA-only import wrapping keys), or Azure Managed HSM with PQC support provisioned and accessible from all database hosts.',
+      'Thales CipherTrust Manager (ML-KEM on its web interface from v2.20.0), AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS, but RSA import wrapping keys (SM2 wrapping keys in the China Regions only)), or Azure Managed HSM with PQC support provisioned and accessible from all database hosts.',
     priority: 'critical',
   },
   {
@@ -309,19 +310,9 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                     </td>
                     <td className="py-2 px-2">
                       <span
-                        className={`font-bold ${
-                          getProfilePqcSupport(db) === 'ga'
-                            ? 'text-status-success'
-                            : getProfilePqcSupport(db) === 'planned'
-                              ? 'text-status-warning'
-                              : 'text-muted-foreground'
-                        }`}
+                        className={`font-bold ${DATABASE_PQC_STATUS_LABELS[getProfilePqcSupport(db)].className}`}
                       >
-                        {getProfilePqcSupport(db) === 'ga'
-                          ? 'GA'
-                          : getProfilePqcSupport(db) === 'planned'
-                            ? 'Planned'
-                            : 'None'}
+                        {DATABASE_PQC_STATUS_LABELS[getProfilePqcSupport(db)].label}
                       </span>
                     </td>
                     <td className="py-2 px-2 text-muted-foreground">{action}</td>

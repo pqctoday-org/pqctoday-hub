@@ -66,13 +66,14 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
     },
     {
       id: 'mobile-wallet-quantum',
-      title: '4. Mobile Wallet Quantum Exposure \u2014 Identify ECDSA vs AES steps in Apple Pay',
+      title:
+        '4. Mobile Wallet Quantum Exposure \u2014 Identify component and transport dependencies',
       description:
-        'In the Tokenization Explorer, select Visa VTS as the TSP and Apple Pay as the wallet. Walk through the 6-step provisioning flow. Identify which steps use quantum-vulnerable asymmetric crypto (ECDSA/RSA) and which use quantum-safe symmetric crypto (AES). Count the total vulnerable points.',
+        'In the Tokenization Explorer, select Visa VTS as the TSP and Apple Pay as the wallet. Walk through the 6-step provisioning flow. Distinguish AES/HMAC protection of a component from classical public-key exposure in the whole step. Identify the TLS key-establishment, certificate-authentication, wrapping and attestation boundaries. Count exposed and unassessed steps under the declared sample assumptions.',
       badge: 'Tokenization',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        "In this module's illustration, most provisioning steps use quantum-vulnerable asymmetric cryptography (ECDSA or RSA); only the activation confirmation relies on symmetric cryptography. This module's advice: migrate TSP TLS and device attestation first.",
+        'All six VTS steps have classical public-key exposure under the Sample TLS assumption, including activation confirmation. AES protection of token generation or wrapping does not remove RSA/ECDH key-delivery or ECDSA attestation exposure. TLS key establishment and RSA/ECDSA certificate authentication are separate boundaries: changing key exchange alone does not settle authentication. With your own tools, request negotiated groups and signature algorithms, HSM operation/configuration evidence, and confirmation that they apply to the transaction path. These fictional counts do not verify a provider or deployed system.',
       config: { step: 3 },
     },
     {

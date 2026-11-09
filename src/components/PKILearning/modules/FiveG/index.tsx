@@ -30,7 +30,8 @@ const PARTS = [
   {
     id: 'auth',
     title: 'Part 2: 5G-AKA Authentication',
-    description: 'Selected home-network computations; no subscriber response verification.',
+    description:
+      'Local UE/network authentication checks with editable received values and a fictional next-sequence rule.',
     icon: Lock,
   },
   {

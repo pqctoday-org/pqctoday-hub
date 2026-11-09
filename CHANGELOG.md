@@ -29,6 +29,43 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.201.0] - 2026-11-08
+
+Lessons and tools are updated: the 5G, tokenization, hybrid-signature, HSM and migration workshops check what they claim and say where they stop; executive and CBOM pages cite their standards; AWS KMS and Ubuntu facts follow their sources; and Library, catalogue and data notes drop internal labels.
+
+### Added
+
+- **5G provisioning and authentication run local checks** [view:/learn/5g-security] [persona:developer] [persona:researcher] [persona:ops]: the provisioning sample authenticates subscriber imports before accepting them, and the authentication page checks a fictional exact-next-sequence rule. Both use fictional sample data in your browser; this is not 3GPP conformance or a deployed-network test.
+- **The hybrid signature tool runs its component and binding checks** [view:/playground/hybrid-sigs] [persona:developer] [persona:researcher] [persona:architect]: the shared-binding option is a Silithium-inspired local learning model, not the published scheme; the page does not claim strong non-separability or a security proof.
+- **The TLS configuration generator adds a Python client example** [view:/learn/tls-basics] [persona:developer] [persona:ops]: a copied Python 3.15 example, presented as documentation; this site does not run it.
+- **Board pitch exports list the sources and assumptions for each proposal** [view:/business] [persona:executive] [persona:grc]: each exported proposal gets a "Sources and assumptions used" section next to the existing basis-of-figures note.
+
+### Changed
+
+- **The tokenization explorer separates what protects the data from what is exposed** [view:/learn/emv-payment-pqc] [persona:architect] [persona:developer]: AES/HMAC protection is shown apart from classical key establishment and certificate exposure, and exposed and unassessed steps are counted under stated sample assumptions.
+- **Database encryption entries show availability apart from operation support** [view:/learn/database-encryption-pqc] [persona:architect] [persona:ops]: a missing catalogue record now reads as unverified, not as a roadmap.
+- **HSM migration planning is limited to explicit sample cases** [view:/learn/hsm-pqc] [persona:cert-engineer] [persona:ops] [persona:architect]: its checklists are educational selections, not certification.
+- **Workshops say what they model** [view:/learn] [persona:architect] [persona:ops] [persona:grc]: device safety review drafts are kept per sample device; the agent-to-agent workshop separates the properties each option provides; the migration wizard checks planning prerequisites and gives trust-path guidance before showing a plan; the inventory lifecycle simulator calculates sample remediation time from the records entered; and the model-weight vault example screens capacity and separates primitive properties from vault protections.
+- **AWS KMS post-quantum TLS statements name their scope** [view:/learn/database-encryption-pqc] [view:/learn/kms-pqc] [view:/learn/confidential-computing] [persona:architect] [persona:ops] [persona:cert-engineer]: the lessons say which AWS page covers which endpoints and Regions, including FIPS endpoints and the China Regions and AWS GovCloud (US) exceptions.
+- **Ubuntu steps in the OS lesson match the package archive** [view:/learn/os-pqc] [persona:ops] [persona:developer]: Ubuntu 24.04 LTS ships OpenSSL 3.0.13, which has no ML-KEM; Ubuntu 26.04 LTS ships OpenSSL 3.5.5 with ML-KEM, ML-DSA and SLH-DSA built in, and its path is reachable from the selector.
+- **Email and OT lessons follow their standards** [view:/learn/email-signing] [view:/learn/ot-pqc] [persona:developer] [persona:ops]: the smimeCapabilities note describes the attribute as RFC 8551 defines it, a partial list of algorithms a sender can handle; the shared TLS stack remark applies only where one device runs both protocols on one stack.
+- **Data-asset sensitivity cites its standards** [view:/learn/data-asset-sensitivity] [persona:grc] [persona:executive]: the four tiers are labelled an educational example, not FIPS 199 categories, with a FIPS 199 link, and NIST SP 800-37 Rev. 2 (Prepare and Categorize) is cited with a link instead of an unverified quotation.
+- **The CBOM lesson explains ECDSA identifiers** [view:/learn/cbom] [persona:developer] [persona:architect]: ECDSA signature identifiers do not name the curve, with links to PKCS#11, RFC 5758, RFC 5480, RFC 7518 and RFC 8446.
+- **The costing lesson defines P10, P50 and P90** [view:/learn/pqc-business-case] [persona:executive]: they are percentiles of simulated outcomes, not probabilities.
+- **IoT and KMS lessons name their sources** [view:/learn/iot-pqc] [view:/learn/kms-pqc] [persona:developer] [persona:ops]: the Google Cloud KMS ML-DSA key is dated to its general availability (16 July 2026), the IoT frame-size and benchmark figures name their sources, and an unsourced Mesh provisioning claim is marked as not sourced.
+- **Phone Learn** [view:/learn] [persona:curious]: a workforce link opens Browse all, and the workforce note shows on Browse all only.
+
+### Data
+
+- **EU Cyber Resilience Act duplicate cites the right regulation** [view:/compliance] [persona:grc] [persona:architect]: the retired duplicate EU Cyber Resilience Act entry now cites Regulation (EU) 2024/2847 and its EUR-Lex text instead of the NIS2 directive.
+- **Assessment data drops an unused copy** [view:/assess] [persona:grc] [persona:executive]: the assessment data no longer carries 83 rows of an older, column-shifted copy that the site never read; every question and option is unchanged.
+- **Data notes show plain review dates** [view:/threats] [view:/algorithms] [view:/compliance] [persona:grc] [persona:researcher]: threat, algorithm-transition and compliance notes no longer carry internal correction labels; each shows a plain "Corrected on review" or "Retired on review" date.
+- **Library: Document Analysis for 18 more documents** [view:/library] [persona:researcher] [persona:developer] [persona:architect]: Document Analysis is added for 18 HPKE, cloud KMS, MLS and JOSE documents in the Library.
+- **Library notes name the saved copy** [view:/library] [persona:researcher] [persona:grc]: six older Library notes give the saved copy and its checksum.
+- **Two catalogue entries read Unknown** [view:/migrate] [persona:architect] [persona:ops]: two catalogue entries (Avalanche, General Dynamics Mission Systems) now read Unknown where the cited page names no post-quantum capability.
+- **Library and catalogue show a neutral review stamp** [view:/library] [view:/migrate] [persona:researcher] [persona:architect] [persona:ops]: internal review markers in the Library and catalogue are replaced by a neutral review stamp.
+- **HPKE transition row is dated to the current draft** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher]: the HPKE post-quantum transition row is dated to the current IETF draft (6 July 2026).
+
 ## [4.200.0] - 2026-11-08
 
 Learn works fully on a phone, the KMS lesson now teaches how keys are exchanged with AWS, Google Cloud and Azure, HPKE and post-quantum JOSE, MLS and TLS entries follow their latest drafts, the quiz and ROI calculator fit your own situation, and many lesson, catalogue and Library entries now say exactly what their sources say.

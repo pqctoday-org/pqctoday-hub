@@ -393,7 +393,7 @@ const Step1WhyConceptsCosts: React.FC = () => (
             },
             {
               t: 'Probabilistic (Monte Carlo)',
-              d: 'Put distributions on the uncertain drivers and simulate to a confidence band (P10/P50/P90) instead of a single number. Best where the drivers are genuinely uncertain and a single point estimate would be false precision.',
+              d: 'Choose distributions for uncertain cost drivers and simulate a range of outcomes. P10, P50 and P90 are percentiles of those simulated outcomes, conditional on the chosen model and assumptions. They do not establish the probability of the actual cost falling within the range. Test how the results change when assumptions change.',
             },
             {
               t: 'Judgemental / scenario',

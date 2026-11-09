@@ -261,6 +261,72 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
         </p>
         <p>
           <Badge kind="view" />
+          <strong>Similar names can carry different amounts of information.</strong>{' '}
+          <code>CKM_ECDSA_SHA256</code> in PKCS#11 and the certificate signature OID{' '}
+          <code>1.2.840.10045.4.3.2</code> (ecdsa-with-SHA256) identify ECDSA with SHA-256; neither
+          identifier alone specifies the curve. Read the signing key&apos;s curve parameters
+          separately: for example, PKCS#11 <code>CKA_EC_PARAMS</code> or the signing public
+          key&apos;s named-curve parameters in SubjectPublicKeyInfo. For a certificate signature,
+          this is the issuer&apos;s signing key, not necessarily the subject&apos;s key.
+        </p>
+        <p>
+          In contrast, JOSE <code>ES256</code> specifies P-256 with SHA-256, and in TLS 1.3{' '}
+          <code>0x0403</code> names <code>ecdsa_secp256r1_sha256</code>. Record the
+          identifier&apos;s namespace and protocol version, algorithm, curve, hash and signature
+          encoding before matching records. If the curve is missing, keep it unknown rather than
+          assuming P-256. Matching algorithm parameters does not establish that two records refer to
+          the same key.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Sources:{' '}
+          <a
+            href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            PKCS#11 mechanisms and key attributes
+          </a>
+          ,{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc5758.html#section-3.2"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            RFC 5758 signature OIDs
+          </a>
+          ,{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc5480.html#section-2.1.1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            RFC 5480 public-key parameters
+          </a>
+          ,{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc7518.html#section-3.4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            RFC 7518 ES256
+          </a>
+          , and{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc8446.html#section-4.2.3"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            RFC 8446 TLS signature schemes
+          </a>
+          .
+        </p>
+        <p>
+          <Badge kind="view" />
           To correlate &ldquo;same key across HSM / cert / code / wire&rdquo;, recompute one agreed
           fingerprint (for example SHA-256 of the DER SubjectPublicKeyInfo) from normalized,
           comparable public-key material, and treat a match as strong evidence rather than proof of
@@ -295,11 +361,12 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
       <Section id="cbom-codify" icon={Languages} title="Codifying & normalizing crypto">
         <p>
           <Badge kind="view" />
-          One mechanism has <strong>many names</strong>. ECDSA-P256-SHA256 is{' '}
-          <code>CKM_ECDSA_SHA256</code> to an HSM, OID <code>1.2.840.10045.4.3.2</code> to a
-          certificate, <code>ES256</code> to a JWT, and <code>0x0403</code> to TLS 1.3 — and the
-          curve alone is P-256 = secp256r1 = prime256v1. Six codification layers (spec, OID,
-          protocol code point, key-mgmt enum, library string, CBOM) with no shared key.
+          One mechanism has <strong>many names</strong>. ECDSA with SHA-256 is{' '}
+          <code>CKM_ECDSA_SHA256</code> to an HSM and OID <code>1.2.840.10045.4.3.2</code> in a
+          certificate, with the curve taken from the key&apos;s parameters; <code>ES256</code> to a
+          JWT and <code>0x0403</code> to TLS 1.3 also name P-256 — and the curve alone is P-256 =
+          secp256r1 = prime256v1. Six codification layers (spec, OID, protocol code point, key-mgmt
+          enum, library string, CBOM) with no shared key.
         </p>
         <p>
           <Badge kind="std" />

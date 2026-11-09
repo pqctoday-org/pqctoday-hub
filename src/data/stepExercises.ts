@@ -574,7 +574,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'It still verifies alone, but swapping it for a different EC signature would invalidate the outer ML-DSA signature (WNS)',
     ],
     answer: 2,
-    why: 'Nesting wraps the EC signature inside the ML-DSA signature (sign_ML(msg ‖ sig_EC)), which binds the EC component but does not stop an attacker extracting and presenting it on its own. That is Weak Non-Separability; only the fused Silithium construction reaches Strong Non-Separability.',
+    why: 'Nesting wraps the EC signature inside the ML-DSA signature (sign_ML(msg ‖ sig_EC)), which binds the EC component but does not stop an attacker extracting and presenting it on its own. The separate shared-binding option is a local learning model, not published Silithium; its observed component and replacement checks do not prove Strong Non-Separability.',
   },
   // crypto-mgmt-modernization
   'crypto-mgmt-modernization/no-regret-roi': {

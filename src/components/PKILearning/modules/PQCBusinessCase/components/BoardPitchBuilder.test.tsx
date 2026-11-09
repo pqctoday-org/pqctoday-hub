@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { BoardPitchBuilder } from './BoardPitchBuilder'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -266,5 +266,61 @@ describe('BoardPitchBuilder — cross-tool output chaining', () => {
     ]
     renderPitch()
     expect(screen.getByText(/Saved Cost of Inaction scenario/i)).toBeInTheDocument()
+  })
+})
+
+describe('BoardPitchBuilder — proposal-specific sources', () => {
+  beforeEach(() => {
+    mockExecutiveDocuments = []
+    addExecutiveDocumentMock.mockClear()
+  })
+
+  it('exports an explicit missing-basis notice without attributing unrelated datasets', () => {
+    renderPitch()
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const doc = addExecutiveDocumentMock.mock.calls.at(-1)![0]
+    expect(doc.data).toContain('Sources and assumptions not recorded')
+    expect(doc.data).not.toContain('IBM Cost of a Data Breach')
+    expect(doc.data).not.toContain('Cyentia')
+    expect(doc.data).not.toContain('Global Risk Institute')
+  })
+
+  it('preserves an edited basis in saved inputs, restored fields and preview/export content', () => {
+    const basis = 'Fictional effort 90–140 days at $1,000/day; sample tooling and reserve.'
+    const view = renderPitch()
+    fireEvent.change(screen.getByLabelText('Sources and assumptions used'), {
+      target: { value: basis },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const doc = addExecutiveDocumentMock.mock.calls.at(-1)![0]
+    expect(doc.inputs['sources-assumptions'].basis).toBe(basis)
+    expect(doc.data).toContain(basis)
+    mockExecutiveDocuments = [doc]
+    view.unmount()
+    renderPitch()
+    expect(screen.getByLabelText('Sources and assumptions used')).toHaveValue(basis)
+    fireEvent.click(screen.getByRole('button', { name: /^Preview$/ }))
+    expect(screen.getByText(basis)).toBeInTheDocument()
+    expect(screen.queryByText(/Breach cost baselines/)).not.toBeInTheDocument()
+  })
+
+  it('opens older saved drafts without inventing a source attribution', () => {
+    mockExecutiveDocuments = [
+      {
+        id: 'older-board-deck',
+        moduleId: 'pqc-business-case',
+        type: 'board-deck',
+        title: 'Older draft',
+        data: 'Old exported content',
+        createdAt: 1,
+        inputs: { budget: { amount: 'Fictional discovery request' } },
+      },
+    ]
+    renderPitch()
+    expect(screen.getByLabelText('Sources and assumptions used')).toHaveValue('')
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    expect(addExecutiveDocumentMock.mock.calls.at(-1)![0].data).toContain(
+      'Sources and assumptions not recorded'
+    )
   })
 })

@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { TokenizationFlow, MobileWallet } from './emvConstants'
+import { withTokenizationAssessment } from './tokenizationAssessment'
+import type { TokenizationFlow, TokenizationStep, MobileWallet } from './emvConstants'
 
-export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
+const TOKENIZATION_FLOW_INPUTS: Array<
+  Omit<TokenizationFlow, 'steps'> & { steps: Omit<TokenizationStep, 'quantumVulnerable'>[] }
+> = [
   {
     id: 'visa-vts',
     name: 'Visa Token Service (VTS)',
@@ -17,7 +20,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Cardholder enters card details or scans card. Wallet app collects PAN, expiry, and device information, then sends enrollment request to Visa.',
         cryptoUsed: ['TLS 1.2/1.3 ((EC)DHE key exchange, ECDSA/RSA certificate signatures)'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+        ],
         pqcReplacement: 'Hybrid ML-KEM + X25519 TLS 1.3',
       },
       {
@@ -28,7 +44,26 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Visa routes the request to the card issuer for identity verification. Issuer may use SMS OTP, in-app push, or call center verification.',
         cryptoUsed: ['TLS (issuer API)', 'ECDSA token request signing'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+          {
+            boundary: 'request-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'ECDSA signs the token request.',
+          },
+        ],
         pqcReplacement: 'ML-DSA-44 request signing',
       },
       {
@@ -39,7 +74,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Visa generates a payment token (16-digit surrogate PAN) and creates a mapping entry in the token vault. Token is assigned a domain restriction (e.g., mobile NFC only).',
         cryptoUsed: ['HSM-secured token generation (AES-256)', 'RSA-2048 HSM key wrapping'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'internal-operation',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256 protects the authored HSM token-generation operation.',
+          },
+          {
+            boundary: 'key-delivery',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'RSA-2048 wraps the HSM key.',
+          },
+        ],
         pqcReplacement:
           'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
@@ -51,7 +99,21 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'A unique per-device token cryptographic key (LUK \u2014 Limited Use Key) is generated and encrypted for transport to the device Secure Element.',
         cryptoUsed: ['RSA-2048 or ECDH key agreement', 'AES-256 key wrapping'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'key-delivery',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description:
+              'The authored RSA-2048 or ECDH key-delivery alternatives are classical public-key operations.',
+          },
+          {
+            boundary: 'payload-protection',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256 wraps key material within this step.',
+          },
+        ],
         pqcReplacement: 'ML-KEM-768 key agreement + AES-256 wrapping',
       },
       {
@@ -62,7 +124,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Token and LUK are installed in the wallet\u2019s protected store. Wallet architectures differ: a payment applet in an embedded Secure Element (as in Apple Pay), a TEE- or hardware-backed store, or cloud credentials used through host card emulation (HCE). Device attestation confirms the integrity of the protected store.',
         cryptoUsed: ['ECDSA device attestation certificate', 'AES-256 secure channel'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'device-attestation',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'ECDSA device attestation authenticates the device.',
+          },
+          {
+            boundary: 'payload-protection',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256 protects the secure channel.',
+          },
+        ],
         pqcReplacement: 'ML-DSA device attestation',
       },
       {
@@ -73,7 +148,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Token is activated in the vault. Cardholder receives confirmation. Token is now ready for contactless or in-app payments.',
         cryptoUsed: ['TLS (confirmation API)'],
-        quantumVulnerable: false,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+        ],
       },
     ],
   },
@@ -92,7 +180,27 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Wallet provider submits a digitization request with encrypted card data. MDES validates the request format and routes to the issuer.',
         cryptoUsed: ['TLS 1.2/1.3', 'JWE (JSON Web Encryption) with RSA-OAEP'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+          {
+            boundary: 'key-delivery',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description:
+              'The authored JWE uses RSA-OAEP to protect delivery of its content-encryption key.',
+          },
+        ],
         pqcReplacement:
           'JWE with ML-KEM key establishment, KDF and authenticated key wrap (conceptual)',
       },
@@ -104,7 +212,27 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Issuer performs risk assessment and identity verification. May require additional authentication (step-up) via SMS, app push, or email.',
         cryptoUsed: ['TLS (issuer API)', 'HMAC-SHA256 request authentication'],
-        quantumVulnerable: false,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+          {
+            boundary: 'request-authentication',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description:
+              'HMAC-SHA256 authenticates the request; it does not replace TLS key establishment or certificate authentication.',
+          },
+        ],
       },
       {
         id: 'mdes-3',
@@ -114,7 +242,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'MDES generates the token PAN and associated credentials. For HCE (cloud), generates cloud-based payment credentials. For SE, generates SE-targeted credentials.',
         cryptoUsed: ['HSM token generation (AES-256)', 'RSA-2048 HSM key wrapping'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'internal-operation',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256 protects the authored HSM token-generation operation.',
+          },
+          {
+            boundary: 'key-delivery',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'RSA-2048 wraps the HSM key.',
+          },
+        ],
         pqcReplacement:
           'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
@@ -126,7 +267,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Encrypted credentials delivered to the wallet provider for installation on the device. Uses Mastercard\u2019s secure credential delivery protocol.',
         cryptoUsed: ['RSA-2048 key transport', 'AES-256-GCM payload encryption'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'key-delivery',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'RSA-2048 transports key material.',
+          },
+          {
+            boundary: 'payload-protection',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256-GCM encrypts the payload.',
+          },
+        ],
         pqcReplacement:
           'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
@@ -138,7 +292,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Wallet app installs credentials in Secure Element or cloud-based TEE. Device attestation verifies platform integrity.',
         cryptoUsed: ['ECDSA device attestation', 'AES-256 secure channel (GlobalPlatform SCP03)'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'device-attestation',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'ECDSA device attestation authenticates the device.',
+          },
+          {
+            boundary: 'payload-protection',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256 protects the authored GlobalPlatform SCP03 secure channel.',
+          },
+        ],
         pqcReplacement: 'ML-DSA device attestation',
       },
       {
@@ -149,7 +316,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Token activated in MDES vault. For HCE tokens, replenishment keys are provisioned for dynamic credential refresh.',
         cryptoUsed: ['TLS (activation API)'],
-        quantumVulnerable: false,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+        ],
       },
     ],
   },
@@ -168,7 +348,26 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Wallet sends a token request with encrypted card data to Amex. As both network and issuer, Amex handles the full lifecycle internally.',
         cryptoUsed: ['TLS 1.2/1.3', 'RSA-OAEP payload encryption'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+          {
+            boundary: 'payload-protection',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'RSA-OAEP protects the request payload.',
+          },
+        ],
         pqcReplacement:
           'Hybrid ML-KEM TLS + ML-KEM key establishment with a KDF and AEAD for the payload (conceptual)',
       },
@@ -180,7 +379,15 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Amex performs internal identity verification. Since Amex is typically both network and issuer, there is no inter-party routing.',
         cryptoUsed: ['Internal HSM operations'],
-        quantumVulnerable: false,
+        protectionComponents: [
+          {
+            boundary: 'internal-operation',
+            assessment: 'unspecified',
+            provenance: 'authored-sample',
+            description:
+              'An HSM label alone does not specify an algorithm; the internal operation is not assessed.',
+          },
+        ],
       },
       {
         id: 'est-3',
@@ -190,7 +397,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Token and associated cryptographic material generated in Amex HSMs. Token mapped to the card account in the internal vault.',
         cryptoUsed: ['HSM token generation (AES-256)', 'RSA-2048 key wrapping'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'internal-operation',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256 protects the authored HSM token-generation operation.',
+          },
+          {
+            boundary: 'key-delivery',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'RSA-2048 wraps key material.',
+          },
+        ],
         pqcReplacement:
           'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
@@ -202,7 +422,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Encrypted token and LUK delivered to wallet provider for device provisioning.',
         cryptoUsed: ['RSA-2048 key transport', 'AES-256-GCM encryption'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'key-delivery',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'RSA-2048 transports key material.',
+          },
+          {
+            boundary: 'payload-protection',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256-GCM encrypts the payload.',
+          },
+        ],
         pqcReplacement:
           'ML-KEM-768 key establishment + KDF + authenticated AES key wrap (conceptual)',
       },
@@ -213,7 +446,20 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         actor: 'Device SE',
         description: 'Credentials installed in the device Secure Element with device attestation.',
         cryptoUsed: ['ECDSA device attestation', 'AES-256 secure channel'],
-        quantumVulnerable: true,
+        protectionComponents: [
+          {
+            boundary: 'device-attestation',
+            assessment: 'classical-public-key',
+            provenance: 'authored-sample',
+            description: 'ECDSA device attestation authenticates the device.',
+          },
+          {
+            boundary: 'payload-protection',
+            assessment: 'symmetric',
+            provenance: 'authored-sample',
+            description: 'AES-256 protects the secure channel.',
+          },
+        ],
         pqcReplacement: 'ML-DSA device attestation',
       },
       {
@@ -224,11 +470,29 @@ export const TOKENIZATION_FLOWS: TokenizationFlow[] = [
         description:
           'Token activated. Amex\u2019s closed-loop model means the token vault lookup during transactions is internal, reducing latency.',
         cryptoUsed: ['TLS (internal API)'],
-        quantumVulnerable: false,
+        protectionComponents: [
+          {
+            boundary: 'transport-key-establishment',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: classical (EC)DHE key establishment.',
+          },
+          {
+            boundary: 'transport-authentication',
+            assessment: 'classical-public-key',
+            provenance: 'approved-shared-tls-assumption',
+            description: 'Sample TLS: RSA/ECDSA certificate authentication.',
+          },
+        ],
       },
     ],
   },
 ]
+
+export const TOKENIZATION_FLOWS: TokenizationFlow[] = TOKENIZATION_FLOW_INPUTS.map((flow) => ({
+  ...flow,
+  steps: flow.steps.map(withTokenizationAssessment),
+}))
 
 export const MOBILE_WALLETS: MobileWallet[] = [
   {

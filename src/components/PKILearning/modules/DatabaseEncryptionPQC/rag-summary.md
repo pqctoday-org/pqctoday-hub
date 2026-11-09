@@ -20,7 +20,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 1. **Inventory & Key Hierarchy Audit** — Enumerate all encrypted databases using `sys.dm_database_encryption_keys` (SQL Server) or `V$ENCRYPTED_TABLESPACES` (Oracle). Document RSA/ECC-wrapped DEK locations. Generate CBOM.
 
-2. **PQC-Capable External KMS Setup** — Configure AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys; Decapsulate returns the shared secret to the caller and AWS KMS has no KMIP endpoint), or a KMS that offers a KMIP endpoint for KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
+2. **PQC-Capable External KMS Setup** — Configure AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS in the Regions where AWS KMS is available (the AWS KMS TLS page says all endpoints, including FIPS 140-3 validated ones; the Infrastructure security page excludes the China Regions and FIPS endpoints in AWS GovCloud (US)), but RSA import wrapping keys (SM2 wrapping keys in the China Regions only); Decapsulate returns the shared secret to the caller and AWS KMS has no KMIP endpoint), or a KMS that offers a KMIP endpoint for KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF; this is this module's design, since FIPS 203 says the shared secret can be used directly as a key in symmetric-key cryptography), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
 
@@ -47,7 +47,7 @@ The three patterns differ in key custody and revocation, not in a measured PQC r
 ### BYOK — Bring Your Own Key
 
 - In this module's reading, customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
-- ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only; check Azure and Google Cloud per service
+- ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA (SM2 in the China Regions); check Azure and Google Cloud per service
 - Cloud KMS briefly holds unwrapped CMK in HSM memory — residual exposure
 - Satisfies most regulatory BYOK requirements
 

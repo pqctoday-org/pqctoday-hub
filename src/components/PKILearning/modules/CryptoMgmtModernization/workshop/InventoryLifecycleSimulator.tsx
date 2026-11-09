@@ -12,6 +12,7 @@ import {
 } from '../data/sampleInventory'
 import { CLM_SCENARIOS } from '../data/clmScenarios'
 import { ASSET_CLASSES, ASSET_CLASS_LABELS, type AssetClass } from '../data/cpmMaturityModel'
+import { DURATION_CASES, summarizeRemediationDurations } from './remediationDurations'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 const VALID_ASSET_CLASSES: AssetClass[] = ASSET_CLASSES
@@ -38,6 +39,8 @@ export const InventoryLifecycleSimulator: React.FC<InventoryLifecycleSimulatorPr
     )
   )
   const [iteration, setIteration] = useState(1)
+  const [durationCase, setDurationCase] = useState('baseline')
+  const [durations, setDurations] = useState<string[]>([...DURATION_CASES[0].hours])
   const [filter, setFilter] = useState<AssetClass | 'all'>(() =>
     focusAssetClass && VALID_ASSET_CLASSES.includes(focusAssetClass as AssetClass)
       ? (focusAssetClass as AssetClass)
@@ -87,10 +90,8 @@ export const InventoryLifecycleSimulator: React.FC<InventoryLifecycleSimulatorPr
     setIteration((i) => i + 1)
   }
 
-  const simulatedMTTR = useMemo(() => {
-    const base = 9.5
-    return Math.max(0.25, base / iteration).toFixed(1)
-  }, [iteration])
+  const durationSummary = useMemo(() => summarizeRemediationDurations(durations), [durations])
+  const baselineMean = 8
 
   const stageBuckets = useMemo(() => {
     const buckets: Record<LoopStage, InventoryAsset[]> = {
@@ -113,19 +114,14 @@ export const InventoryLifecycleSimulator: React.FC<InventoryLifecycleSimulatorPr
         />
       )}
       <p className="text-sm text-muted-foreground">
-        Walk a sample enterprise inventory through the six-stage operational loop. The illustrative
-        MTTR curve depends only on the iteration count, not on completed asset actions: max(0.25,
-        9.5 / iteration) hours. It is not measured performance or a forecast of automation benefits;
-        an actual improvement loop can stall or regress.
+        Walk a sample enterprise inventory through the six-stage operational loop. Calculate a
+        sample mean remediation time from the separate fictional duration records below. Moving an
+        asset or starting another iteration does not change those records or create a time saving.
       </p>
 
       <div className="flex flex-wrap items-center gap-3 bg-muted/40 rounded-lg p-3 border border-border">
         <div className="text-sm">
           <span className="font-bold text-primary">Iteration {iteration}</span>{' '}
-          <span className="text-muted-foreground">
-            · Illustrative iteration-only MTTR{' '}
-            <span className="font-bold text-foreground">{simulatedMTTR} h</span>
-          </span>
         </div>
         <div className="flex-1" />
         <FilterDropdown
@@ -147,6 +143,89 @@ export const InventoryLifecycleSimulator: React.FC<InventoryLifecycleSimulatorPr
           Reassess · next iteration
         </Button>
       </div>
+
+      <section
+        className="rounded-lg border border-border p-4 space-y-3"
+        aria-label="Fictional remediation durations"
+      >
+        <h4 className="font-bold text-sm">
+          Calculate from fictional completed-remediation records
+        </h4>
+        <p className="text-xs text-muted-foreground">
+          Each input is elapsed hours from the declared start to completion of one fictional case,
+          using the same definition for all three records. These are sample inputs, not measured
+          production performance or a forecast of automation benefits.
+        </p>
+        <FilterDropdown
+          label="Duration dataset"
+          selectedId={durationCase}
+          hideDefaultOption
+          items={[
+            ...DURATION_CASES.map((sample) => ({ id: sample.id, label: sample.label })),
+            { id: 'custom', label: 'Edited sample durations' },
+          ]}
+          onSelect={(id) => {
+            setDurationCase(id)
+            const sample = DURATION_CASES.find((candidate) => candidate.id === id)
+            if (sample) setDurations([...sample.hours])
+          }}
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {durations.map((value, index) => (
+            <label key={index} className="text-sm space-y-1">
+              <span>Fictional record {index + 1} elapsed hours</span>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                value={value}
+                onChange={(event) => {
+                  const next = [...durations]
+                  next[index] = event.target.value
+                  setDurations(next)
+                  setDurationCase('custom')
+                }}
+                className="w-full rounded border border-border bg-background px-3 py-2"
+              />
+            </label>
+          ))}
+        </div>
+        <output className="block text-sm font-bold" aria-live="polite">
+          Sample mean remediation time:{' '}
+          {durationSummary.meanHours === null
+            ? 'Not assessed'
+            : `${durationSummary.meanHours.toFixed(1)} h`}
+        </output>
+        <p className="text-xs">
+          {durationSummary.valid} / {durationSummary.expected} valid duration inputs.
+          {durationSummary.meanHours !== null && durationSummary.totalHours !== null && (
+            <>
+              {' '}
+              Total {durationSummary.totalHours.toFixed(1)} h ÷ {durationSummary.valid} records ={' '}
+              {durationSummary.meanHours.toFixed(1)} h.
+            </>
+          )}
+        </p>
+        {durationSummary.meanHours === null ? (
+          <p className="text-xs text-status-warning">
+            {durationSummary.aggregateInvalid
+              ? 'The combined total is too large to calculate; reduce the supplied durations.'
+              : 'Provide all three non-negative finite durations before calculating the mean; blanks and invalid values do not count as zero.'}
+          </p>
+        ) : (
+          <p className="text-xs">
+            Difference from the fixed fictional baseline mean of {baselineMean.toFixed(1)} h:{' '}
+            {(durationSummary.meanHours - baselineMean).toFixed(1)} h. This compares the declared
+            records; it does not establish that an intervention caused the change.
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground">
+          Your production tools should preserve start/completion definitions, clocks, units,
+          reporting windows and unresolved cases. Compare similar case populations: the same mean
+          can conceal stalled work, and a later loop can stay unchanged or regress. No percentage
+          improvement is inferred from the iteration count.
+        </p>
+      </section>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {LOOP_STAGES.map((stage) => (

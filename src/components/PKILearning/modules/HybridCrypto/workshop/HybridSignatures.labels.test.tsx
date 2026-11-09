@@ -56,22 +56,23 @@ describe('Hybrid Signature Spectrums: labels follow RFC 9955', () => {
     expect(text).not.toContain('(Nesting/Silithium)')
   })
 
-  it('says "Blocked in this simplified model", not a bare "Non-Separable", after a Silithium sign', async () => {
+  it('says "Shared-binding model — verification not run", not a bare "Non-Separable", after a local-model sign', async () => {
     render(<HybridSignatures />)
-    fireEvent.click(screen.getByRole('button', { name: /Silithium \(Fused\)/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Shared-binding model/ }))
     fireEvent.click(screen.getByRole('button', { name: /Generate Key Pairs/ }))
     const sign = await screen.findByRole('button', { name: /^Sign$/ })
     await vi.waitFor(() => expect(sign).toBeEnabled(), { timeout: 20000 })
     fireEvent.click(sign)
     expect(
-      await screen.findByText('Blocked in this simplified model', {}, { timeout: 20000 })
+      await screen.findByText('Shared-binding model — verification not run', {}, { timeout: 20000 })
     ).toBeInTheDocument()
     expect(screen.queryByText('Non-Separable')).not.toBeInTheDocument()
   }, 60000)
 
-  it('the architect hint says Silithium targets strong non-separability', () => {
+  it('the architect hint separates local checks from production profile evidence', () => {
     const hint = PERSONA_BLOCKS['/playground/hybrid-sigs']?.architect ?? ''
-    expect(hint).toContain('nesting weak, Silithium targets strong')
-    expect(hint).not.toContain('Silithium strong')
+    expect(hint).toContain('local shared-binding model is not published Silithium')
+    expect(hint).toContain('versioned standard/profile, relying-party compatibility checks')
+    expect(hint).not.toContain('Silithium targets strong')
   })
 })

@@ -17,8 +17,8 @@ The 5G Security Architecture module teaches the three pillars of 3GPP 5G securit
 ## Workshop Activities
 
 - **Part 1 -- SUCI Deconcealment**: Step through the full 11-step SUCI construction and deconcealment process for Profile A (X25519), Profile B (P-256), and Profile C (ML-KEM), with real OpenSSL commands showing key generation, ECDH/KEM operations, KDF derivation, AES encryption, and HMAC computation
-- **Part 2 -- 5G-AKA Authentication**: Run selected sample home-network computations: sample credentials, RAND generation, MILENAGE outputs, AUTN construction and KAUSF derivation. This sequence does not derive XRES*, verify a subscriber response or perform replay/freshness checks; completion does not establish mutual authentication
-- **Part 3 -- SIM Key Provisioning**: Walk through the secure SIM manufacturing supply chain from K generation and OPc computation through USIM personalization, encrypted transport, and import into operator's encrypted subscriber database
+- **Part 2 -- 5G-AKA Authentication**: Run a local, fictional authentication sample: separate network and UE credential copies, RAND, MILENAGE, AUTN, KAUSF, XRES*, then UE MAC/AMF/next-sequence checks and serving-network and home-network response checks, with editable received values and a replay rejection. The sequence policy is an exact-next-sequence rule of this sample; it is not 3GPP conformance, NAS transport or a deployed session
+- **Part 3 -- SIM Key Provisioning**: Walk through the secure SIM manufacturing supply chain from K generation and OPc computation through USIM personalization, encrypted transport, and an authenticated, validated in-memory sample import; card writing and subscriber database storage are walkthroughs only
 
 ## Related Standards
 

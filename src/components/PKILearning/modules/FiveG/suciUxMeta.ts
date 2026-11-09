@@ -168,7 +168,7 @@ const PE_PROFILE_C_OVERRIDES: Record<string, string[]> = {
     'Hybrid mode uses this project’s SHA-256(Z_ecdh ‖ Z_kem) construction. This sample does not establish a general security guarantee for hybrid designs.',
   ],
   derive_keys: [
-    'Z was expanded using SHA3-256 (instead of SHA-256) for added resilience; SHA-256 is currently considered secure against quantum attacks (ATIS).',
+    'Z was expanded using SHA3-256 (instead of SHA-256) for added resilience; ATIS describes SHA-256 as secure against quantum attacks for now and advises planning for larger margins such as SHA-384.',
     'K_enc is now 256 bits (AES-256); ML-KEM-768 is in NIST security category 3 (FIPS 203).',
     'K_mac uses HMAC-SHA3-256 — the full 32-byte output; only 8 bytes go on air.',
   ],
@@ -179,7 +179,7 @@ const PE_PROFILE_C_OVERRIDES: Record<string, string[]> = {
   ],
   compute_mac: [
     'The ciphertext got an HMAC-SHA3-256 integrity tag, truncated to 64 bits on air.',
-    'This design uses SHA3 for the MAC for added resilience; SHA-256 is currently considered secure against quantum attacks (ATIS).',
+    'This design uses SHA3 for the MAC for added resilience; ATIS describes SHA-256 as secure against quantum attacks for now and advises planning for larger margins such as SHA-384.',
     'The home network will verify this BEFORE touching the ciphertext.',
   ],
   sidf_decryption: [

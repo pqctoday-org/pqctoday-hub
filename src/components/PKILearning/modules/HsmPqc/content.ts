@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'hsm-pqc',
   version: '1.0.3',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-02',
+  lastEdited: '2026-11-08',
 
   standards: [
     getStandard('FIPS 203'),
