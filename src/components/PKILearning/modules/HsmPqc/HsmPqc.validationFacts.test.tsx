@@ -260,9 +260,12 @@ describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera card
     'Single-tenant; each cluster has its own customer-specific security domain and three HSMs',
     'PKCS#11, OpenSSL, Java (JCA and JCE), CNG and a key storage provider (KSP)',
     'Microsoft calls it the successor to Azure Dedicated HSM',
+    'Sold as a 1U rack appliance (X2 models) that supports clustering, load balancing and failover',
+    'Both services give the customer administrative control of the keys',
+    'https://<hsm-name>.managedhsm.azure.net',
     'a fully managed Microsoft service',
     'Marvell LiquidSecurity',
-    'ML-DSA, SLH-DSA, ML-KEM, HSS-LMS and XMSS (Securosys fact sheet, August 2025)',
+    'ML-DSA, SLH-DSA, ML-KEM, HSS-LMS and XMSS (Securosys X2 fact sheet, version FS-E03)',
     'HSS-LMS is listed as approved in FIPS mode and not allowed in the Common Criteria configuration',
     'This project is still under development and is not yet ready for deployment',
     'Microsoft describes Tessera as an evolution of the Azure Integrated HSM',
@@ -274,6 +277,30 @@ describe('HsmPqc: Azure Cloud HSM, Azure Managed HSM, Securosys and Tessera card
     for (const fact of NEW_CARD_FACTS) {
       expect(page, `Learn tab: ${fact}`).toContain(flat(fact))
     }
+  })
+
+  it('places the Securosys appliance in the on-prem deep dive, not the cloud one', () => {
+    const page = openIntroText()
+    const onPrem = page.indexOf(flat('On-Prem HSM PQC Deep Dive'))
+    const securosys = page.indexOf(flat('Securosys Primus HSM CyberVault'))
+    const cloud = page.indexOf(flat('Cloud HSM PQC Deep Dive'))
+    expect(onPrem).toBeGreaterThan(-1)
+    expect(securosys).toBeGreaterThan(onPrem)
+    expect(cloud).toBeGreaterThan(securosys)
+    const rag = ragSummary.split('\n')
+    expect(rag.find((l) => l.startsWith('- On-prem HSM deep dive'))).toContain('Securosys')
+    expect(rag.find((l) => l.startsWith('- Cloud HSM deep dive'))).not.toContain('Securosys')
+  })
+
+  it('attributes the Dedicated HSM retirement to the Dedicated HSM overview', () => {
+    const rag = flat(ragSummary)
+    expect(rag).toContain(
+      flat(
+        'The Azure Dedicated HSM overview (read 8 Nov 2026) says Microsoft calls Azure Cloud HSM the successor'
+      )
+    )
+    expect(flat(curiousSummary)).toContain(flat('in the Microsoft pages read'))
+    expect(flat(curiousSummary)).not.toContain("in microsoft's pages")
   })
 
   it('keeps the Azure Dedicated HSM retirement note', () => {

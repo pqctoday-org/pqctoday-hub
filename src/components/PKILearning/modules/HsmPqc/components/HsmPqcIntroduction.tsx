@@ -534,6 +534,73 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   </p>
                 </div>
               </div>
+
+              {/* Securosys (on-prem appliance) */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-foreground">
+                    Securosys Primus HSM CyberVault
+                  </h3>
+                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-primary/10 text-primary border-primary/20">
+                    PQC LISTED
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">PQC Support:</span>{' '}
+                    <span className="text-foreground">
+                      ML-DSA, SLH-DSA, ML-KEM, HSS-LMS and XMSS (Securosys X2 fact sheet, version
+                      FS-E03)
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">FIPS:</span>{' '}
+                    <span className="text-foreground">
+                      FIPS 140-3 Level 3 listed as in certification; Common Criteria EAL4+ (same
+                      fact sheet)
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Form:</span>{' '}
+                    <span className="text-foreground">
+                      Sold as a 1U rack appliance (X2 models) that supports clustering, load
+                      balancing and failover
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Interfaces:</span>{' '}
+                    <span className="text-foreground">
+                      JCE/JCA, PKCS#11, OpenSSL v3, Microsoft CNG/KSP, a RESTful API and a KMIP API
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-3 text-xs text-muted-foreground space-y-1">
+                  <p>
+                    Securosys&apos; firmware v3.x algorithm list gives each algorithm a separate
+                    status for the Common Criteria evaluated configuration and for FIPS mode: for
+                    example, HSS-LMS is listed as approved in FIPS mode and not allowed in the
+                    Common Criteria configuration. Read the status for the mode you will run in, and
+                    check the module certificate and Security Policy as for any other vendor (pages
+                    read 8 Nov 2026).
+                  </p>
+                  <LibLinks
+                    refs={[
+                      {
+                        id: 'Primus-HSM-CyberVault-X2-models-fact-sheet-Securosys',
+                        label: 'X2 fact sheet',
+                      },
+                      {
+                        id: 'List-of-Algorithms-and-Functions-for-Firmware-v3-x-Securosys',
+                        label: 'Firmware v3.x algorithms',
+                      },
+                      {
+                        id: 'Securosys-Primus-HSM-CyberVault-PQC-ready',
+                        label: 'Securosys announcement',
+                      },
+                    ]}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </CollapsibleSection>
@@ -771,8 +838,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div>
                   <span className="text-muted-foreground">Interfaces:</span>{' '}
                   <span className="text-foreground">
-                    A data-plane endpoint per instance
-                    (https://&lt;hsm-name&gt;.managedhsm.azure.net)
+                    A data-plane endpoint per instance (
+                    <code>https://&lt;hsm-name&gt;.managedhsm.azure.net</code>)
                   </span>
                 </div>
               </div>
@@ -781,8 +848,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <strong>Who runs it:</strong> a fully managed Microsoft service. Microsoft says it
                   can attest that a key was generated and resides inside an HSM that Microsoft
                   operates, and keys can be generated in the HSM or imported by bring-your-own-key.
-                  Compare Azure Cloud HSM, where the customer holds administrative authority over
-                  the cluster (Microsoft Learn pages read 8 Nov 2026).
+                  Both services give the customer administrative control of the keys (Managed HSM
+                  through local RBAC; Cloud HSM through HSM users) while Microsoft runs
+                  provisioning, patching and maintenance; Cloud HSM is a customer-owned cluster
+                  reached over a private endpoint in your virtual network (Microsoft Learn pages
+                  read 8 Nov 2026).
                 </p>
                 <LibLinks
                   refs={[
@@ -870,75 +940,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
             </div>
 
-            {/* Securosys */}
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-foreground">
-                  Securosys Primus HSM CyberVault
-                </h3>
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-primary/10 text-primary border-primary/20">
-                  PQC LISTED
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div>
-                  <span className="text-muted-foreground">PQC Support:</span>{' '}
-                  <span className="text-foreground">
-                    ML-DSA, SLH-DSA, ML-KEM, HSS-LMS and XMSS (Securosys fact sheet, August 2025)
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">FIPS:</span>{' '}
-                  <span className="text-foreground">
-                    FIPS 140-3 Level 3 listed as in certification; Common Criteria EAL4+ (same fact
-                    sheet)
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Who runs it:</span>{' '}
-                  <span className="text-foreground">
-                    The owner: a 1U rack appliance (X2 models) that supports clustering, load
-                    balancing and failover
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Interfaces:</span>{' '}
-                  <span className="text-foreground">
-                    JCE/JCA, PKCS#11, OpenSSL v3, Microsoft CNG/KSP, a RESTful API and a KMIP API
-                  </span>
-                </div>
-              </div>
-              <div className="mt-3 text-xs text-muted-foreground space-y-1">
-                <p>
-                  Securosys&apos; firmware v3.x algorithm list gives each algorithm a separate
-                  status for the Common Criteria evaluated configuration and for FIPS mode: for
-                  example, HSS-LMS is listed as approved in FIPS mode and not allowed in the Common
-                  Criteria configuration. Read the status for the mode you will run in, and check
-                  the module certificate and Security Policy as for any other vendor (pages read 8
-                  Nov 2026).
-                </p>
-                <LibLinks
-                  refs={[
-                    {
-                      id: 'Primus-HSM-CyberVault-X2-models-fact-sheet-Securosys',
-                      label: 'X2 fact sheet',
-                    },
-                    {
-                      id: 'List-of-Algorithms-and-Functions-for-Firmware-v3-x-Securosys',
-                      label: 'Firmware v3.x algorithms',
-                    },
-                    {
-                      id: 'Securosys-Primus-HSM-CyberVault-PQC-ready',
-                      label: 'Securosys announcement',
-                    },
-                  ]}
-                />
-              </div>
-            </div>
-
             {/* Tessera: specification stage */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <h3 className="text-sm font-bold text-foreground">
                   Tessera (specification and open designs)
                 </h3>
