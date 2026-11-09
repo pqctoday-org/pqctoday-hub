@@ -244,17 +244,20 @@ export function PostProcessingDemo() {
         locally; this is not a secrecy proof, error-correction protocol or authenticated
         key-confirmation exchange.
       </p>
-      <div className="flex flex-wrap gap-2 text-xs" aria-label="Postprocessing stages">
+      <ol
+        className="m-0 flex list-none flex-wrap gap-2 p-0 text-xs"
+        aria-label="Postprocessing stages"
+      >
         {STEPS.map((label, index) => (
-          <span
+          <li
             key={label}
             aria-current={index === step ? 'step' : undefined}
             className="rounded border border-border px-2 py-1"
           >
             {index + 1}. {label}
-          </span>
+          </li>
         ))}
-      </div>
+      </ol>
       <div className="flex flex-wrap gap-2">
         <Button onClick={generate}>Generate Sifted Key</Button>
         <Button variant="outline" onClick={loadWorked}>

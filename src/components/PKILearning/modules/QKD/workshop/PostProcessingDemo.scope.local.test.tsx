@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { PostProcessingDemo } from './PostProcessingDemo'
 
 const sample = vi.hoisted(() => ({
@@ -82,5 +82,14 @@ describe('QKD post-processing teaching scope', () => {
     )
     expect(screen.getByText(/No ML-KEM operation executes/)).toBeInTheDocument()
     expect(screen.queryByText('Hybrid Key Derived Successfully')).not.toBeInTheDocument()
+  })
+  it('lists the processing stages as a labelled list and marks only the current one', () => {
+    render(<PostProcessingDemo />)
+    const list = screen.getByRole('list', { name: 'Postprocessing stages' })
+    const items = within(list).getAllByRole('listitem')
+    expect(items).toHaveLength(7)
+    expect(items.filter((item) => item.getAttribute('aria-current') === 'step')).toHaveLength(1)
+    expect(items[0]).toHaveAttribute('aria-current', 'step')
+    expect(items[0]).toHaveTextContent('1. Paired inputs')
   })
 })

@@ -151,7 +151,7 @@ export function MeasuredChainExample({ disabled = false, onBusyChange, onInspect
                     'Certificate body',
                     'Handshake message',
                   ].map((heading) => (
-                    <th key={heading} className="p-2">
+                    <th key={heading} scope="col" className="p-2">
                       {heading}
                     </th>
                   ))}
@@ -160,7 +160,9 @@ export function MeasuredChainExample({ disabled = false, onBusyChange, onInspect
               <tbody>
                 {results.map((result) => (
                   <tr key={result.algorithm}>
-                    <th className="p-2">{result.algorithm}</th>
+                    <th scope="row" className="p-2">
+                      {result.algorithm}
+                    </th>
                     {['root', 'intermediate', 'leaf'].map((role) => (
                       <td className="p-2" key={role}>
                         {result.certificates.find((cert) => cert.role === role)?.der.length} B
