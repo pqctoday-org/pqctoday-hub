@@ -9,7 +9,7 @@ export const VENN = {
   height: 1024,
   alt: 'A five-shape overlap diagram comparing hardware key protection in TPM 2.0 V1.85, Tessera with Caliptra 2.2, traditional HSMs and cloud HSMs, with a table of post-quantum algorithms and PKCS#11 support below.',
   caption:
-    'What TPM 2.0, Tessera with Caliptra, traditional HSMs and cloud HSMs share and where they differ. It covers four of the eight kinds and is a desk comparison of published documents (November 2026); products and models vary. On-premises HSMs such as Luna also support bring-your-own-key, which the picture shows only for cloud HSMs.',
+    'What TPM 2.0, Tessera with Caliptra, traditional HSMs and cloud HSMs share and where they differ. It covers four of the eight kinds and is a desk comparison of published documents (November 2026); products and models vary.',
   /** The same content as the picture, readable without it. */
   regions: [
     'TPM 2.0 only: sealing to platform state, authorization policies, NV storage and counters.',
@@ -19,9 +19,9 @@ export const VENN = {
     'Tessera only: attached to the workload, open specifications and firmware, cross-vendor key interoperability (design).',
     'TPM 2.0, Tessera and traditional HSMs, not cloud HSMs: ML-KEM.',
     'Traditional HSMs only: appliances and PCIe cards, custom code inside the HSM, SLH-DSA, LMS and XMSS by vendor.',
-    'Traditional and cloud HSMs: keys hosted and managed in the HSM, FIPS 140 Level 3 validated models, audit logs of administrative actions.',
+    'Traditional and cloud HSMs: keys hosted and managed in the HSM, FIPS 140 Level 3 validated models, audit logs of administrative actions, bring your own key.',
     'Tessera, traditional and cloud HSMs, not TPM: backup and restore.',
-    'Cloud HSMs only: cloud-hosted HSM service, provider manages firmware and patching, bring your own key.',
+    'Cloud HSMs only: cloud-hosted HSM service, provider manages firmware and patching.',
     'Shared by all four: keys protected in hardware, RSA and ECDSA, AES, SHA-2 and HMAC.',
   ],
   tableRows: [
@@ -31,7 +31,7 @@ export const VENN = {
   /** Notes printed under the picture and in the text version. */
   notes: [
     'Caliptra 2.2 is the version the Tessera specification requires and is scheduled for release in December 2026. The picture is an independent illustration.',
-    'Bring your own key: the Luna Network HSM 7 brief lists BYOK, HYOK and DKE among its use cases, so on-premises HSMs also support it; the picture shows it only in the cloud-only region.',
+    'Bring your own key: the Luna Network HSM 7 brief lists BYOK, HYOK and DKE among its use cases, which is why the picture places it where traditional and cloud HSMs overlap.',
   ],
   /** Library documents the diagram rests on. */
   sources: [

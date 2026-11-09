@@ -338,7 +338,13 @@ describe('Overlap picture', () => {
     expect(all).toMatch(
       /Rust SDK and OpenSSL provider and no PKCS#11 interface in its repositories/
     )
-    expect(VENN.caption).toMatch(/bring-your-own-key/)
+    expect(VENN.caption).not.toMatch(/bring-your-own-key/)
+    expect(VENN.regions.find((r) => r.startsWith('Traditional and cloud HSMs'))).toMatch(
+      /bring your own key/
+    )
+    expect(VENN.regions.find((r) => r.startsWith('Cloud HSMs only'))).not.toMatch(
+      /bring your own key/
+    )
     const extra = extraLibraryIds()
     const unresolved = VENN.sources.filter((id) => !hasStandard(id) && !extra.has(id))
     expect(unresolved, `Library ids missing: ${unresolved.join(' | ')}`).toEqual([])
