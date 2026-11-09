@@ -996,7 +996,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/learn/crypto-mgmt-modernization': {
     title: 'Cryptographic Management Modernization | PQC Today',
     description:
-      'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.',
+      'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative, with a business case tested against explicit costs, benefits and uncertainty.',
     canonical: `${BASE_URL}/learn/crypto-mgmt-modernization`,
     structuredData: buildModuleSchema(
       'Cryptographic Management Modernization',
