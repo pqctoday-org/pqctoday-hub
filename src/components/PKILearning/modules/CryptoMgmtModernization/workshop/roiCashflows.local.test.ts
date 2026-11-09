@@ -36,7 +36,10 @@ describe('annual rows and one fixed-stock benefit', () => {
     const free = roiCashflows(0, [10, 10], 0, 0)
     expect(free.roiPercent).toBeNull()
     expect(free.paybackYear).toBeNull()
+    expect(free.paybackStatus).toBe('no-cost')
     expect(free.npv).toBe(20)
+    expect(roiCashflows(10, [3, 3, 3], 0, 0).paybackStatus).toBe('none')
+    expect(roiCashflows(10, [10, 10], 0, 0).paybackStatus).toBe('year')
   })
   it.each([NaN, Infinity, -1])('rejects invalid model numbers %s', (bad) => {
     expect(() => roiCashflows(10, [5], bad, 0)).toThrow()

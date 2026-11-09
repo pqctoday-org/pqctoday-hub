@@ -34,5 +34,8 @@ export function roiCashflows(
     roiPercent: totalCost === 0 ? null : ((totalBenefit - totalCost) / totalCost) * 100,
     npv,
     paybackYear: totalCost === 0 ? null : (crossover?.year ?? null),
+    // Zero cost has no payback to report; that is not the same as never recovering the cost.
+    paybackStatus: (totalCost === 0 ? 'no-cost' : crossover ? 'year' : 'none') as
+      'no-cost' | 'year' | 'none',
   }
 }

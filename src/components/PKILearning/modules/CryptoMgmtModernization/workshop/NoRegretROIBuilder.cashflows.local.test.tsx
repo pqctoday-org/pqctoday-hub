@@ -85,4 +85,42 @@ describe('inspectable ROI cashflow schedule', () => {
     expect(output.getByText('No crossover within horizon')).toBeInTheDocument()
     expect(rows().every((row) => (row.at(3) ?? 0) < 0)).toBe(true)
   })
+  it('lets keyboard users move the labour benchmark in $10,000 steps and return to the exact study value', () => {
+    render(<NoRegretROIBuilder />)
+    const heading = screen.getByText('CLM automation labor savings')
+    const card = heading.closest('div.rounded-lg')
+    if (!(card instanceof HTMLElement)) throw new Error('Missing CLM model card')
+    fireEvent.click(within(card).getByRole('button', { name: 'Show math' }))
+    const slider = within(card).getByRole('slider', { name: 'Annual renewal-labour benchmark' })
+    expect(slider).toHaveAttribute('step', '10000')
+    expect(slider).toHaveValue('2639569')
+    expect(
+      within(card).queryByRole('button', { name: /Use the study value/ })
+    ).not.toBeInTheDocument()
+    fireEvent.change(slider, { target: { value: '2650000' } })
+    expect(slider).toHaveValue('2650000')
+    fireEvent.click(within(card).getByRole('button', { name: 'Use the study value ($2,639,569)' }))
+    expect(slider).toHaveValue('2639569')
+    expect(
+      within(card).queryByRole('button', { name: /Use the study value/ })
+    ).not.toBeInTheDocument()
+  })
+  it('colours the Scenario A return label red when the return is negative, green otherwise', () => {
+    render(<NoRegretROIBuilder />)
+    const label = () =>
+      within(screen.getByRole('region', { name: 'Scenario A results' })).getByText('3-year ROI')
+    expect(label()).toHaveClass('text-status-success')
+    expect(label()).not.toHaveClass('text-status-error')
+    for (const button of screen.getAllByRole('button', { name: 'Show math' }))
+      fireEvent.click(button)
+    for (const name of ['FTE count', 'Fully-loaded cost per FTE']) {
+      const control = screen.getByRole('slider', { name })
+      fireEvent.change(control, { target: { value: control.getAttribute('max') } })
+    }
+    fireEvent.change(screen.getByRole('slider', { name: 'Avoidance factor' }), {
+      target: { value: '0' },
+    })
+    expect(label()).toHaveClass('text-status-error')
+    expect(label()).not.toHaveClass('text-status-success')
+  })
 })

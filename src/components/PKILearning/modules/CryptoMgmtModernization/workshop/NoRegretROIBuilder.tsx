@@ -16,7 +16,12 @@ const fmt$ = (n: number): string =>
         : `$${n.toFixed(0)}`
 
 const fmtPct = (x: number, digits = 0) => `${(x * 100).toFixed(digits)}%`
-const fmtYears = (n: number | null) => (n == null ? 'No crossover within horizon' : `${n} y`)
+const fmtPayback = (n: number | null, status: 'no-cost' | 'year' | 'none') =>
+  status === 'no-cost'
+    ? 'Not applicable — no cost'
+    : n == null
+      ? 'No crossover within horizon'
+      : `${n} y`
 const fmtRoi = (n: number | null) => (n == null ? 'Undefined — no cost' : `${n.toFixed(0)}%`)
 const exactUsd = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
@@ -83,7 +88,9 @@ const ParamSlider: React.FC<{
   step: number
   format?: (v: number) => string
   hint?: string
-}> = ({ label, value, onChange, min, max, step, format, hint }) => {
+  /** A sourced starting value that the slider's step may not land on. */
+  resetTo?: number
+}> = ({ label, value, onChange, min, max, step, format, hint, resetTo }) => {
   const id = useId()
   const formatted = format ? format(value) : String(value)
   return (
@@ -105,6 +112,16 @@ const ParamSlider: React.FC<{
         className="w-full accent-primary"
       />
       {hint && <p className="text-[10px] text-muted-foreground">{hint}</p>}
+      {resetTo !== undefined && value !== resetTo && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 px-1 text-[10px] underline"
+          onClick={() => onChange(resetTo)}
+        >
+          Use the study value (${resetTo.toLocaleString('en-US')})
+        </Button>
+      )}
     </div>
   )
 }
@@ -547,9 +564,10 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
               onChange={(v) => setClmP((p) => ({ ...p, forresterCompositeAnnual: v }))}
               min={0}
               max={10_000_000}
-              step={1}
+              step={10_000}
+              resetTo={2_639_569}
               format={fmt$}
-              hint="Source Year 1 renewal labour: $2,639,569. Other study benefit streams are excluded."
+              hint="Source Year 1 renewal labour: $2,639,569. Other study benefit streams are excluded. Arrow keys move in $10,000 steps; the study value is kept exactly until you move the slider."
             />
             <ParamSlider
               label="Scale factor (your estate vs composite)"
@@ -854,14 +872,23 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Payback period</span>
-              <span className="font-bold text-foreground">{fmtYears(paybackA)}</span>
+              <span className="font-bold text-foreground">
+                {fmtPayback(paybackA, scenarioA.paybackStatus)}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">NPV @ {fmtPct(discountRate, 1)}</span>
               <span className="font-bold text-foreground">{fmt$(npvA)}</span>
             </div>
             <div className="flex justify-between pt-1 border-t border-status-success/30">
-              <span className="font-bold text-status-success">{horizonYears}-year ROI</span>
+              <span
+                className={clsx(
+                  'font-bold',
+                  roiA != null && roiA < 0 ? 'text-status-error' : 'text-status-success'
+                )}
+              >
+                {horizonYears}-year ROI
+              </span>
               <span
                 className={clsx(
                   'font-bold text-lg',
@@ -901,7 +928,9 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Payback period</span>
-              <span className="font-bold text-foreground">{fmtYears(paybackB)}</span>
+              <span className="font-bold text-foreground">
+                {fmtPayback(paybackB, scenarioB.paybackStatus)}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">NPV @ {fmtPct(discountRate, 1)}</span>
