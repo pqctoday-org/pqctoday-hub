@@ -14,7 +14,7 @@ import { lmsService } from '../../../../wasm/LmsService'
 vi.mock('../../../../wasm/LmsService', () => ({
   lmsService: {
     generateKeypair: vi.fn().mockResolvedValue({
-      publicKey: new Uint8Array([1, 2, 3]),
+      publicKey: new Uint8Array([0, 0, 0, 1, 0, 0, 0, 6, 0, 0, 0, 4, ...new Array(52).fill(1)]),
       privateKey: new Uint8Array([4, 5, 6]),
     }),
     sign: vi.fn().mockResolvedValue({
