@@ -31,11 +31,11 @@ import { QuizCard } from '../../Playground/learnkit/QuizCard'
 import { Term } from '../../Playground/learnkit/Term'
 import { useOpenSSLStore } from '../store'
 import type { OpenSSLCategory } from '../categories'
-import { OPENSSL_LESSONS } from './opensslLessons'
+import { OPENSSL_LESSONS, isMeasuredByteLength, openSslRunComparison } from './opensslLessons'
 import { OPENSSL_QUIZZES } from './opensslQuiz'
 import { resolveGlossaryKey } from './opensslGlossary'
 import type { OpenSslLearnContext } from './opensslLearnContext'
-import type { OpenSslLessonStep } from './opensslLessons'
+import type { OpenSslLessonStep, OpenSslStepResult } from './opensslLessons'
 
 type StepStatus = 'pending' | 'running' | 'ok' | 'refused-ok' | 'failed'
 
@@ -52,6 +52,7 @@ interface LogEntry {
 interface StepRunState {
   status: StepStatus
   detail?: string
+  result?: OpenSslStepResult
   log?: LogEntry[]
 }
 
@@ -243,17 +244,25 @@ export function OpenSslLearnView({
     try {
       const result = await step.run(ctx)
       if (!current()) return false
-      const met = step.expect !== 'refusal' && step.expect !== 'pending'
+      const needsMeasurement =
+        step.expect !== 'refusal' &&
+        step.expect !== 'pending' &&
+        lesson.measuredComparisons?.some((row) => row.aStep === i || row.bStep === i)
+      const measured = !needsMeasurement || isMeasuredByteLength(result.byteLength)
+      const met = step.expect !== 'refusal' && step.expect !== 'pending' && measured
       setStepStates((prev) =>
         prev.map((s, j) =>
           j === i
             ? {
                 status: met ? 'ok' : 'failed',
+                result: met ? result : undefined,
                 detail: met
                   ? result.detail
                   : step.expect === 'refusal'
                     ? 'The expected refusal was not observed. This step remains incomplete.'
-                    : 'The expected outcome was not established. This step remains incomplete.',
+                    : !measured
+                      ? 'The current output-file measurement is missing. This step remains incomplete.'
+                      : 'The expected outcome was not established. This step remains incomplete.',
                 log: logs,
               }
             : s
@@ -330,6 +339,10 @@ export function OpenSslLearnView({
       )
     )
 
+  const comparison = openSslRunComparison(
+    lesson,
+    stepStates.map((state) => state.result)
+  )
   const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
 
   return (
@@ -425,14 +438,14 @@ export function OpenSslLearnView({
               ))}
             </ol>
 
-            {allDone && lesson.compare && (
+            {allDone && comparison && (
               <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
                 <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-foreground">
                   Compare
                 </p>
                 <table className="w-full text-[12px]">
                   <tbody>
-                    {lesson.compare.map((row) => (
+                    {comparison.rows.map((row) => (
                       <tr key={row.label} className="border-t border-border first:border-t-0">
                         <td className="py-1.5 pr-3 font-medium text-foreground">{row.label}</td>
                         <td
@@ -455,6 +468,9 @@ export function OpenSslLearnView({
                     ))}
                   </tbody>
                 </table>
+                {comparison.summary && (
+                  <p className="mt-2 text-[12px] text-muted-foreground">{comparison.summary}</p>
+                )}
               </div>
             )}
 

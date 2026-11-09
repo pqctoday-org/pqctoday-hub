@@ -20,14 +20,14 @@ export const OPENSSL_QUIZZES: Record<string, QuizQuestion[]> = {
       why: "FIPS 204 defines ML-DSA-44/65/87 as three fixed parameter sets; -algorithm ML-DSA-65 selects the whole thing in one name. RSA's -algorithm RSA plus -pkeyopt rsa_keygen_bits:2048 reflects that RSA's bit length is a free choice.",
     },
     {
-      q: 'The lesson measured 1704 B (RSA-2048) vs 5604 B (ML-DSA-65) for the private key files. Where did those numbers come from?',
+      q: 'The completed private-key comparison shows the lengths from this lesson attempt. Where do those numbers come from?',
       options: [
         'A lookup table of typical sizes, shown for illustration',
         'The actual byte length of the PEM files the two genpkey calls just wrote — read back and measured, not quoted',
         'An estimate based on the algorithm names',
       ],
       answer: 1,
-      why: 'Both steps call ctx.readFile() on the file genpkey just produced and report its real length — the compare table reflects what THIS run produced, not a spec table.',
+      why: 'Both successful steps read the file genpkey produced and retain its byte length for this attempt. The comparison uses those captured results; it does not substitute fixed reference counts. PEM container lengths can depend on the key and its encoding.',
     },
   ],
   'cert-issuance': [

@@ -8,10 +8,10 @@
 // `expect: 'refusal'` steps rely on ctx.run() throwing the real stderr on a
 // genuine nonzero exit.
 //
-// Every byte-size figure quoted below (key/cert/signature/ciphertext sizes)
-// was measured live against the actual bundled public/wasm/openssl.wasm
-// (OpenSSL 3.6.2, 7 Apr 2026 build) on 2026-07-24 — not looked up or
-// guessed — and is reproduced by the step that measures it. Command
+// Reference byte-size observations in the prose were recorded against
+// public/wasm/openssl.wasm (OpenSSL 3.6.2, 7 Apr 2026 build) on 2026-07-24.
+// The key/certificate/signature comparisons capture this attempt's actual
+// successful output-file lengths rather than substituting those references. Command
 // semantics are cited to docs.openssl.org/3.6 (man1 pages) and
 // docs.openssl.org/3.6/man7 (EVP_PKEY-ML-KEM, EVP_PKEY-ML-DSA,
 // EVP_PKEY-SLH-DSA, EVP_PKEY-LMS), and openssl-library.org's 3.5/3.6
@@ -22,11 +22,17 @@
 // counterpart to pair against (tagged "New capability", mirroring KMIP's
 // HBS lesson) or IS the honesty checkpoint (mirrors KMIP's "An honest HSM"
 // / TPM's "An honest TPM").
-import type { LessonStepExpect, LinearLessonBase } from '../../Playground/learnkit/lessonTypes'
+import type {
+  CompareRow,
+  LessonStepExpect,
+  LinearLessonBase,
+} from '../../Playground/learnkit/lessonTypes'
 import type { OpenSslLearnContext } from './opensslLearnContext'
 
 export interface OpenSslStepResult {
   detail: string
+  /** Actual output-file length captured by this successful step, not a reference size. */
+  byteLength?: number
 }
 
 export interface OpenSslLessonStep {
@@ -37,7 +43,47 @@ export interface OpenSslLessonStep {
   run: (ctx: OpenSslLearnContext) => Promise<OpenSslStepResult>
 }
 
-export type OpenSslLesson = LinearLessonBase<OpenSslLessonStep>
+interface MeasuredComparison {
+  label: string
+  aStep: number
+  bStep: number
+  aLabel: string
+  bLabel: string
+  showRatio?: boolean
+}
+
+export type OpenSslLesson = LinearLessonBase<OpenSslLessonStep> & {
+  measuredComparisons?: readonly MeasuredComparison[]
+}
+
+export function isMeasuredByteLength(value: number | undefined): value is number {
+  return value !== undefined && Number.isSafeInteger(value) && value > 0
+}
+
+/** Resolve only retained results from this lesson attempt; never reread mutable files. */
+export function openSslRunComparison(
+  lesson: OpenSslLesson,
+  results: readonly (OpenSslStepResult | undefined)[]
+): { rows: CompareRow[]; summary?: string } | undefined {
+  if (!lesson.compare) return undefined
+  const measured = new Map<string, CompareRow>()
+  let summary: string | undefined
+  for (const row of lesson.measuredComparisons ?? []) {
+    const a = results.at(row.aStep)?.byteLength
+    const b = results.at(row.bStep)?.byteLength
+    if (!isMeasuredByteLength(a) || !isMeasuredByteLength(b)) return undefined
+    measured.set(row.label, {
+      label: row.label,
+      a: `${a} B (${row.aLabel})`,
+      b: `${b} B (${row.bLabel})`,
+      same: false,
+    })
+    if (row.showRatio) {
+      summary = `Measured signature-file ratio: ${row.bLabel} / ${row.aLabel} ≈ ${(b / a).toFixed(1)}×. These configured samples are not equivalent-strength profiles.`
+    }
+  }
+  return { rows: lesson.compare.map((row) => measured.get(row.label) ?? row), summary }
+}
 
 const hex = (bytes: Uint8Array, n = 8) =>
   Array.from(bytes.slice(0, n))
@@ -45,6 +91,14 @@ const hex = (bytes: Uint8Array, n = 8) =>
     .join('')
 
 const sizeOf = (ctx: OpenSslLearnContext, name: string): number => ctx.readFile(name)?.length ?? -1
+
+const measuredSizeOf = (ctx: OpenSslLearnContext, name: string): number => {
+  const size = sizeOf(ctx, name)
+  if (!isMeasuredByteLength(size)) {
+    throw new Error(`The current command did not produce a nonempty output file: ${name}`)
+  }
+  return size
+}
 
 export const OPENSSL_LESSONS: OpenSslLesson[] = [
   // ── L1 — Your first keypair ────────────────────────────────────────────
@@ -66,8 +120,9 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out learn-l1-rsa.key'
           )
-          const size = sizeOf(ctx, 'learn-l1-rsa.key')
+          const size = measuredSizeOf(ctx, 'learn-l1-rsa.key')
           return {
+            byteLength: size,
             detail: `${size} B PEM-encoded PKCS#8 private key. RSA-2048's key material is a modulus + exponents — size scales with the chosen bit length.`,
           }
         },
@@ -77,15 +132,24 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         label: 'Generate a post-quantum ML-DSA-65 private key',
         run: async (ctx) => {
           await ctx.run('genpkey -algorithm ML-DSA-65 -out learn-l1-mldsa.key')
-          const size = sizeOf(ctx, 'learn-l1-mldsa.key')
+          const size = measuredSizeOf(ctx, 'learn-l1-mldsa.key')
           return {
-            detail: `${size} B PEM-encoded private key. ML-DSA-65's key size is FIXED by FIPS 204 §4 — every ML-DSA-65 key is the same size, unlike RSA where you choose the bit length.`,
+            byteLength: size,
+            detail: `${size} B PEM-encoded private key. This is the current engine's serialized file size. FIPS 204 fixes the algorithm parameters; the selected key encoding determines the PEM container's byte length.`,
           }
         },
       },
     ],
+    measuredComparisons: [
+      { label: 'Private key (PEM)', aStep: 0, bStep: 1, aLabel: 'RSA-2048', bLabel: 'ML-DSA-65' },
+    ],
     compare: [
-      { label: 'Private key (PEM)', a: '1704 B (RSA-2048)', b: '5604 B (ML-DSA-65)', same: false },
+      {
+        label: 'Private key (PEM)',
+        a: 'Awaiting this run’s measured bytes',
+        b: 'Awaiting this run’s measured bytes',
+        same: false,
+      },
       {
         label: 'Security basis',
         a: 'Integer factorization',
@@ -137,8 +201,9 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'req -x509 -new -key learn-l2-rsa.key -days 365 -sha256 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-rsa.crt'
           )
-          const size = sizeOf(ctx, 'learn-l2-rsa.crt')
+          const size = measuredSizeOf(ctx, 'learn-l2-rsa.crt')
           return {
+            byteLength: size,
             detail: `${size} B self-signed certificate, sha256-signed, 365-day validity. -x509 skipped the separate CSR file entirely.`,
           }
         },
@@ -158,18 +223,28 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'req -x509 -new -key learn-l2-mldsa.key -days 365 -subj "/C=US/O=Learn/CN=example.com" -out learn-l2-mldsa.crt'
           )
-          const size = sizeOf(ctx, 'learn-l2-mldsa.crt')
+          const size = measuredSizeOf(ctx, 'learn-l2-mldsa.crt')
           return {
+            byteLength: size,
             detail: `${size} B self-signed certificate. The command names no digest: ML-DSA signs the TBSCertificate directly and does its own message encoding and hashing inside the algorithm, so there is no separate SHA-256 digest of it. The certificate's signature algorithm reads ML-DSA-65, not sha256WithRSAEncryption.`,
           }
         },
       },
     ],
+    measuredComparisons: [
+      {
+        label: 'Self-signed certificate',
+        aStep: 1,
+        bStep: 3,
+        aLabel: 'RSA-2048',
+        bLabel: 'ML-DSA-65',
+      },
+    ],
     compare: [
       {
         label: 'Self-signed certificate',
-        a: 'about 1.1 KB (RSA-2048; exact size in the step output)',
-        b: 'about 7.5 KB (ML-DSA-65; exact size in the step output)',
+        a: 'Awaiting this run’s measured bytes',
+        b: 'Awaiting this run’s measured bytes',
         same: false,
       },
       {
@@ -231,8 +306,10 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'dgst -sha256 -sign learn-l3-rsa.key -out learn-l3-rsa.sig learn-l3-data.txt'
           )
+          const size = measuredSizeOf(ctx, 'learn-l3-rsa.sig')
           return {
-            detail: `${sizeOf(ctx, 'learn-l3-rsa.sig')} B signature — RSA-2048's signature size is fixed by the modulus (2048 bits = 256 B), independent of the hash chosen.`,
+            byteLength: size,
+            detail: `${size} B signature — RSA-2048's signature size is fixed by the modulus (2048 bits = 256 B), independent of the hash chosen.`,
           }
         },
       },
@@ -269,8 +346,10 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
           await ctx.run(
             'pkeyutl -sign -inkey learn-l3-mldsa.key -in learn-l3-data.txt -out learn-l3-mldsa.sig'
           )
+          const size = measuredSizeOf(ctx, 'learn-l3-mldsa.sig')
           return {
-            detail: `${sizeOf(ctx, 'learn-l3-mldsa.sig')} B signature — ML-DSA-65's signature size is fixed by FIPS 204 (3309 B), regardless of message length.`,
+            byteLength: size,
+            detail: `${size} B signature — ML-DSA-65's signature size is fixed by FIPS 204 (3309 B), regardless of message length.`,
           }
         },
       },
@@ -296,6 +375,16 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         },
       },
     ],
+    measuredComparisons: [
+      {
+        label: 'Signature size',
+        aStep: 2,
+        bStep: 6,
+        aLabel: 'RSA-2048',
+        bLabel: 'ML-DSA-65',
+        showRatio: true,
+      },
+    ],
     compare: [
       {
         label: 'Signing command',
@@ -303,7 +392,12 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
         b: 'pkeyutl -sign (no hash flag)',
         same: false,
       },
-      { label: 'Signature size', a: '256 B (RSA-2048)', b: '3309 B (ML-DSA-65)', same: false },
+      {
+        label: 'Signature size',
+        a: 'Awaiting this run’s measured bytes',
+        b: 'Awaiting this run’s measured bytes',
+        same: false,
+      },
       {
         label: 'Who chooses the hash?',
         a: 'You do (-sha256, -sha3-256, …)',
@@ -316,7 +410,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
       "A raw hex signature can't be handed straight to -verify — it needs to be the actual binary signature file dgst/pkeyutl produced, which is what -out already gives you.",
     ],
     whyItMatters:
-      "The signature is FOUR TIMES the RSA one for a signature scheme judged post-quantum secure at a comparable classical security level. That size cost is a real, quantifiable migration tradeoff — it's not free, and protocols with tight message-size budgets (TLS handshakes, IoT payloads) feel it directly.",
+      'Compare the actual signature-file lengths and ratio from this run. RSA-2048 and ML-DSA-65 are different parameter choices, not equivalent-strength profiles. File-size overhead informs protocol and payload budgeting, but does not by itself select an appropriate security profile.',
     tryRef: ['dgst', 'genpkey'],
   },
 
