@@ -382,7 +382,7 @@ const CLOUD_PROVIDER_PRODUCTS: Record<string, { kmsHsm: string[]; tls: string[] 
     tls: ['Google Cloud KMS (Cloud Gateway)'],
   },
   Azure: {
-    kmsHsm: ['Azure Key Vault', 'Azure Dedicated HSM (Marvell LiquidSecurity)'],
+    kmsHsm: ['Azure Key Vault', 'Azure Managed HSM'],
     tls: [],
   },
   Oracle: { kmsHsm: ['Oracle Key Vault'], tls: [] },
