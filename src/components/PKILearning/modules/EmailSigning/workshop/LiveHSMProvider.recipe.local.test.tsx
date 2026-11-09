@@ -89,6 +89,12 @@ describe('named HSM command recipe', () => {
     expect(
       screen.getByText(/Another worker or a native terminal needs its own setup and key/)
     ).toBeInTheDocument()
+    expect(
+      screen.getByText(/In a session where pkcs11-provider is already registered/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/A native terminal must have the provider registered and configured first/)
+    ).toBeInTheDocument()
   })
 
   it('does not turn an unavailable provider or failed initialization into an HSM result', () => {
@@ -99,5 +105,10 @@ describe('named HSM command recipe', () => {
     expect(screen.getByText('sample initialization failed')).toBeInTheDocument()
     expect(screen.queryByText(/Signing controls enabled/)).not.toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'ML-DSA-65 HSM command recipe' })).toBeVisible()
+    // The recipe's pointer to the signing sample must not promise a sample that is absent.
+    expect(
+      screen.getByText(/When the signing sample below is available \(it needs the provider check/)
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/In the signing sample below, select/)).not.toBeInTheDocument()
   })
 })

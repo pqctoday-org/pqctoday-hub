@@ -197,11 +197,12 @@ export function LiveHSMProvider() {
       >
         <h3 className="font-semibold">Worked ML-DSA-65 HSM recipe</h3>
         <p>
-          In the signing sample below, select <strong>ML-DSA-65</strong>, keep{' '}
-          <strong>Use HSM key</strong> selected, enter a fictional payload, then choose{' '}
-          <strong>Sign + Verify</strong>. These are the provider-routed commands after token and key
-          preparation, for the bundled OpenSSL 3.6.3 and pkcs11-provider 1.1 sample. This named
-          recipe stays ML-DSA-65 if you select a different algorithm below.
+          When the signing sample below is available (it needs the provider check above to finish
+          without an error), select <strong>ML-DSA-65</strong>, keep <strong>Use HSM key</strong>{' '}
+          selected, enter a fictional payload, then choose <strong>Sign + Verify</strong>. These are
+          the provider-routed commands after token and key preparation, for the bundled OpenSSL
+          3.6.3 and pkcs11-provider 1.1 sample. This named recipe stays ML-DSA-65 if you select a
+          different algorithm below.
         </p>
         <p>
           The sample first initializes its own token and creates the <code>alice</code> key through
@@ -213,9 +214,11 @@ export function LiveHSMProvider() {
           output path writes a file rather than creating the required token object.
         </p>
         <p>
-          The URI selects the sample key through the already registered builtin provider; no ENGINE
-          option or native module path is needed. <code>1234</code> is this fictional sample&apos;s
-          public PIN, not a production credential-handling example.
+          In a session where pkcs11-provider is already registered, as in this sample and in OpenSSL
+          Studio, the URI selects the sample key through that builtin provider; no ENGINE option or
+          native module path is needed there. A native terminal must have the provider registered
+          and configured first. <code>1234</code> is this fictional sample&apos;s public PIN, not a
+          production credential-handling example.
         </p>
         {HSM_CMS_RECIPE.map(({ title, command }) => (
           <div key={title} className="min-w-0">
