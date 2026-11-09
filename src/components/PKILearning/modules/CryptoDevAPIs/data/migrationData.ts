@@ -400,18 +400,18 @@ EVP_PKEY_keygen(ctx, &pkey);
   },
   {
     id: 'add-pqcrypto',
-    title: 'Rust: Add pqcrypto crate for PQC',
+    title: 'Rust: Add standardized ML-DSA signing',
     from: 'RustCrypto crates (classical)',
-    to: 'RustCrypto + pqcrypto (classical + PQC)',
+    to: 'RustCrypto ml-dsa 0.1.2 (ML-DSA-65)',
     effort: 'low',
     description:
-      'Add pqcrypto crates to Cargo.toml for PQC algorithms. Minimal integration effort due to Rust trait system.',
+      'Run a bounded ML-DSA-65 signing example using the maintained RustCrypto ml-dsa crate. This sample is not a complete application migration or evidence of module validation; version 0.1.2 is unaudited.',
     steps: [
-      'Add pqcrypto-dilithium and pqcrypto-kyber to Cargo.toml',
-      'Define trait abstraction for sign/verify if not already present',
-      'Implement trait for ML-DSA/ML-KEM alongside existing ECDSA/X25519',
-      'Use feature flags to control algorithm selection',
-      'Run cargo audit to verify dependency security',
+      'Create a Cargo binary project using edition 2024 and Rust 1.87 or newer',
+      'In Cargo.toml under [dependencies], add: ml-dsa = { version = "=0.1.2", features = ["getrandom"] }',
+      'Copy the complete example into src/main.rs, retain Cargo.lock, then run cargo run',
+      'Check that changed messages, changed signatures and a different public key fail verification',
+      'For your application, evaluate maintenance, side-channel protections and independent review; dependency scanning alone does not establish cryptographic security or validation',
     ],
     beforeCode: {
       language: 'Rust',
@@ -422,11 +422,16 @@ let signature = signing_key.sign(&message);`,
     },
     afterCode: {
       language: 'Rust',
-      code: `// After: ML-DSA-65 signing (pqcrypto)
-use pqcrypto_dilithium::dilithium3;
-let (pk, sk) = dilithium3::keypair();
-let sig = dilithium3::sign(&message, &sk);
-let valid = dilithium3::verify(&sig, &message, &pk);`,
+      code: `// SPDX-License-Identifier: AGPL-3.0-only
+use ml_dsa::{Generate, Keypair, MlDsa65, Signer, SigningKey, Verifier};
+fn main() -> Result<(), ml_dsa::Error> {
+    let signing_key = SigningKey::<MlDsa65>::generate();
+    let message = b"Fictional migration sample";
+    let signature = signing_key.try_sign(message)?;
+    signing_key.verifying_key().verify(message, &signature)?;
+    println!("ML-DSA-65 signature verified");
+    Ok(())
+}`,
     },
   },
   {
