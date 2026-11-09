@@ -189,7 +189,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
       'Larger TCB than SGX (includes full guest OS)',
       'AES-128 memory encryption (Grover halves to 64-bit effective)',
       'VCEK certificate chain tied to AMD root — centralized trust',
-      'Performance overhead depends on the workload: a 2025 measurement study (Misono et al., SIGMETRICS 2025) averaged 7.29% on a memory benchmark suite and 16% on one large-VM machine-learning inference test (Intel TDX: 4.06% and 18%)',
+      'Performance overhead depends on the workload. Two data points from a 2025 measurement study (Misono et al., SIGMETRICS 2025): 7.29% on average on a memory benchmark suite and 16% on one large-VM machine-learning inference test (Intel TDX: 4.06% and 18%). Other tests in the study were slower still: an HPC benchmark with passive thread waiting took 41% longer on SEV-SNP (73% on TDX)',
     ],
     radarScores: { isolation: 4, encryption: 4, attestation: 4, cloud: 5, pqc: 2, maturity: 4 },
   },
