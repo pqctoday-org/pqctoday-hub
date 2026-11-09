@@ -4,7 +4,9 @@
  * it measures and what it attests. Statements come from TCG TPM 2.0 Library v185 Part 1 (PCRs; the
  * TPM as root of trust for reporting; the platform supplies the first measuring code) and from the
  * Caliptra 2.1 hardware specification (RTM subsystem, PCR vault, ICCM write-hash measurement, PCR
- * signing with a key-vault key in an ECC flow), read 8 Nov 2026.
+ * signing following the ECC sign flow), the Caliptra specification revision 2.1 (RTM and RTI, DICE
+ * attestation, DPE use with a discrete TPM) and the Adams Bridge ML-DSA page (PCR_SIGN control),
+ * read 8 Nov 2026.
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
@@ -43,9 +45,15 @@ describe('Secure Boot: TPM or Caliptra', () => {
       'a root-of-trust-for-measurement cryptographic subsystem inside a system-on-chip'
     )
     expect(text).toContain('the soc brings it out of reset and writes its fuses')
-    expect(text).toContain('its hardware hashes the firmware written into its instruction memory')
+    expect(text).toContain(
+      'its hardware also hashes the firmware written into its instruction memory'
+    )
     expect(text).toContain('hashes all the pcrs together with a nonce')
-    expect(text).toContain('describes this signing as an ecc flow')
+    expect(text).toContain('following the ecc sign flow')
+    expect(text).toContain('runs ml-dsa key generation and signing to sign pcrs')
+    expect(text).toContain('signed attestations rooted in unique per-asset cryptographic entropy')
+    expect(text).toContain('authentication to a discrete tpm device')
+    expect(text).toContain('the two can be present on one platform')
   })
 
   it('does not call either one a replacement for the other', () => {
@@ -58,7 +66,9 @@ describe('Secure Boot: TPM or Caliptra', () => {
     const rag = flat(ragSummary)
     expect(rag).toContain('tpm or caliptra: both are roots of trust that record measurements')
     expect(rag).toContain('hashes all the pcrs together with a nonce supplied by its firmware')
-    expect(rag).toContain('describes as an ecc flow')
+    expect(rag).toContain('following the ecc sign flow')
+    expect(rag).toContain('runs ml-dsa key generation and signing to sign pcrs')
+    expect(rag).toContain('the two can be present on one platform')
   })
 
   it('links to the trust-hardware comparison from the closing block', () => {

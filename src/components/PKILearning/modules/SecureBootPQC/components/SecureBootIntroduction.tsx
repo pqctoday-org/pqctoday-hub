@@ -100,6 +100,15 @@ const FIPS_186_5 = getStandard('FIPS 186-5')
 // 4.202; findStandard keeps this page rendering where the Library CSV predates it, and
 // trustHardwareCitations.test.ts requires that it resolves.
 const TPM_PART_1 = getStandard('TCG-TPM-V185-Part1')
+const DICE_REQUIREMENTS = getStandard(
+  'TCG-Hardware-Requirements-for-a-Device-Identifier-Compositio'
+)
+const CALIPTRA_SPEC = findStandard(
+  'Caliptra-A-Datacenter-System-on-a-Chip-SoC-Root-of-Trust-RoT'
+) ?? {
+  title: 'Caliptra: A Datacenter System on a Chip (SoC) Root of Trust (RoT)',
+  deepLink: '/library?ref=Caliptra-A-Datacenter-System-on-a-Chip-SoC-Root-of-Trust-RoT',
+}
 const CALIPTRA_HW = findStandard('Hardware-Specification-Caliptra-2-1-Documentation') ?? {
   title: 'Caliptra 2.1 hardware specification',
   deepLink: '/library?ref=Hardware-Specification-Caliptra-2-1-Documentation',
@@ -940,18 +949,31 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                 an open design from the Caliptra project.
               </p>
               <p>
-                <strong>What it measures:</strong> it keeps measurements in its own PCR vault, and
-                its hardware hashes the firmware written into its instruction memory, a
+                <strong>What it measures:</strong> the SoC measures the code and configuration it
+                boots into Caliptra, which stores the measurements in its own PCR vault; its
+                hardware also hashes the firmware written into its instruction memory, a
                 tamper-evident record of the code that actually loaded.
               </p>
               <p>
-                <strong>What it attests:</strong> hardware hashes all the PCRs together with a nonce
-                supplied by its firmware and signs that digest with a key in its key vault; the 2.1
-                documentation describes this signing as an ECC flow.
+                <strong>What it attests:</strong> it reports the measurements with signed
+                attestations rooted in unique per-asset cryptographic entropy, following{' '}
+                <LibCite std={DICE_REQUIREMENTS}>TCG DICE</LibCite>, so it serves as the root of
+                trust for the chip&apos;s identity. In the hardware specification, hardware hashes
+                all the PCRs together with a nonce supplied by its firmware and signs that digest
+                with a key in its key vault; the specification describes this signing as following
+                the ECC sign flow, and the Adams Bridge ML-DSA page in the same 2.1 documentation
+                lists a separate control that runs ML-DSA key generation and signing to sign PCRs.
               </p>
               <p>
-                Source: <LibCite std={CALIPTRA_HW}>Caliptra 2.1 hardware specification</LibCite>{' '}
-                (PCR vault, PCR signing and boot sections).
+                <strong>Together:</strong> its specification lists authentication to a discrete TPM
+                device among the uses of its DICE Protection Environment API, so the two can be
+                present on one platform.
+              </p>
+              <p>
+                Sources: <LibCite std={CALIPTRA_SPEC}>Caliptra specification, revision 2.1</LibCite>{' '}
+                (silicon RoT goals, DICE attestation, DICE Protection Environment) and{' '}
+                <LibCite std={CALIPTRA_HW}>Caliptra 2.1 hardware specification</LibCite> (PCR vault,
+                PCR signing and boot sections).
               </p>
             </div>
           </div>
