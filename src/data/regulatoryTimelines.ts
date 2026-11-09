@@ -176,9 +176,18 @@ export const FIPS_STANDARDS = {
 // ── ANSSI (France) ────────────────────────────────────────────────────────
 
 export const ANSSI_TIMELINE = {
-  /** ANSSI requires hybrid mode for all PQC deployments (except standalone hash-based sigs) */
-  hybridMandatory: true,
-  /** Hash-based signatures (SLH-DSA, LMS, XMSS) may be used standalone */
+  /**
+   * ANSSI states hybrid is mandatory only inside the regulated perimeter (classified and
+   * Diffusion Restreinte data, vital-infrastructure systems, product qualification).
+   * Source: ANSSI PQC FAQ (cyber.gouv.fr/cryptographie-post-quantique-faq).
+   */
+  hybridMandatoryInRegulatedScope: true,
+  /**
+   * Outside that perimeter ANSSI strongly recommends hybrid but says its PQC guidance,
+   * hybridation included, has no regulatory force (same FAQ).
+   */
+  hybridRecommendedOutsideRegulatedScope: true,
+  /** ANSSI does not recommend systematic hybridisation for hash-based signatures (SLH-DSA, LMS, XMSS) */
   hashBasedStandaloneAllowed: true,
   // migrationPlanTarget (2025) REMOVED 2026-09-25 (timeline remediation r2 W-K,
   // user decision): no ANSSI document sets a 2025 migration-plan target for

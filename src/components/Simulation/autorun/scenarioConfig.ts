@@ -65,9 +65,11 @@ const GOVERNANCE_LEAD = 3 // governance in place ahead of critical HNDL migratio
 /**
  * National PQC standards-body guidance, verified against each body's own
  * published guidance (not inferred): BSI TR-02102-1 (Germany, v2026-01,
- * endorses ML-KEM/FrodoKEM for key encapsulation and requires hybrid
- * signatures); ANSSI (France, requires hybrid ML-KEM/ML-DSA — neither
- * satisfies certification alone); NCSC (UK, "Timelines for migration to
+ * recommends ML-KEM/FrodoKEM for key encapsulation and recommends quantum-safe
+ * signatures only in combination with classical ones, hash-based signatures
+ * aside; a recommendation, not a requirement); ANSSI (France, strongly
+ * recommends hybrid ML-KEM/ML-DSA and states it is mandatory only inside its
+ * regulated perimeter, which includes product qualification); NCSC (UK, "Timelines for migration to
  * post-quantum cryptography", recommends ML-KEM-768 / ML-DSA-65 / SLH-DSA).
  * Countries not listed fall back to DEFAULT_STANDARDS below rather than a
  * guessed standard name.
