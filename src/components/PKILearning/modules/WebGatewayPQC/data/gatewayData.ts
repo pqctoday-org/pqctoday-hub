@@ -437,7 +437,7 @@ export const HANDSHAKE_MITIGATIONS: HandshakeMitigation[] = [
     name: 'Certificate Compression (RFC 8879)',
     reductionPercent: 30,
     description:
-      'Zlib/Brotli compress certificate chain during handshake. RFC 8879 states no percentage; the 30% is a planning input, not a measured effect.',
+      'Zlib, Brotli or Zstandard compress the certificate chain during the handshake. RFC 8879 states no percentage; the 30% is a planning input, not a measured effect.',
     applicability: 'All TLS 1.3 connections; requires both sides to support',
   },
   {
