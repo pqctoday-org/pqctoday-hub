@@ -48,18 +48,25 @@ describe('actual live sample subset validator', () => {
     expect(current.Statement[1].Condition).toEqual({
       StringEquals: { 'kms:KeySpec': ['ML_DSA_65', 'ML_DSA_87'], 'kms:KeyUsage': 'SIGN_VERIFY' },
     })
-    expect(current.Statement[2].Condition.StringEquals['kms:KeyUsage']).toBe(
+    expect(current.Statement).toHaveLength(2)
+    expect(validateKmsPqcPolicy(JSON.stringify(current)).isComplete).toBe(true)
+    expect(success()).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Insert optional ML-KEM snippet' }))
+    const mixed = JSON.parse(
+      (screen.getByRole('textbox', { name: editorName }) as HTMLTextAreaElement).value
+    )
+    expect(mixed.Statement[2].Condition.StringEquals['kms:KeyUsage']).toBe(
       'ENCAPSULATE_DECAPSULATE'
     )
-    expect(validateKmsPqcPolicy(JSON.stringify(current))).toMatchObject({
+    expect(validateKmsPqcPolicy(JSON.stringify(mixed))).toMatchObject({
       allowsMlKemKeyEstablishment: true,
       isComplete: false,
     })
     expect(screen.getByText('One optional ML-KEM creation pattern detected')).toBeInTheDocument()
     expect(success()).not.toBeInTheDocument()
-    current.Statement.pop()
-    edit(current)
-    expect(validateKmsPqcPolicy(JSON.stringify(current)).isComplete).toBe(true)
+    mixed.Statement.pop()
+    edit(mixed)
+    expect(validateKmsPqcPolicy(JSON.stringify(mixed)).isComplete).toBe(true)
     expect(success()).toBeInTheDocument()
     expect(
       screen.getByText(/All CreateKey Allow paths in this supported sample fragment/)

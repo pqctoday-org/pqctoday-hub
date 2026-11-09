@@ -30,7 +30,7 @@ workshop_steps: 7
 3. Hybrid Key Wrapping — X25519+ML-KEM-768 combiner with provider API mapping
 4. KMS Rotation Planner — Enterprise rotation planning with provider-specific strategies
 5. KMIP Protocol Explorer — KMIP v3.0 (draft) vs provider API comparison, PQC key type mapping, cross-provider sync visualizer, migration readiness checklist
-6. AWS Policy Lab — Write and check an IAM policy that allows only ML-DSA signing keys to be created (kms:KeySpec, kms:KeyUsage), with an optional ML-KEM key-establishment statement
+6. AWS Policy Lab — Write a sample IAM policy fragment and check every kms:CreateKey Allow path within the lab's declared subset (kms:KeySpec limited to ML-DSA, kms:KeyUsage SIGN_VERIFY); unsupported features stay incomplete, and an optional ML-KEM key-establishment snippet is detected separately. This is not an effective-permissions result.
 7. Cloud KMS Key Exchange — simulate classical and HPKE key-exchange flows for AWS KMS, Google Cloud KMS and Azure Key Vault in the browser (no cloud calls)
 
 ## Key Standards

@@ -18,7 +18,7 @@ const INITIAL_JSON = `{
   ]
 }`
 
-const SOLUTION = `    ,{
+const SIGNING_SOLUTION = `    ,{
       "Sid": "CreateMlDsaSigningKeysOnly",
       "Effect": "Allow",
       "Action": "kms:CreateKey",
@@ -29,8 +29,12 @@ const SOLUTION = `    ,{
           "kms:KeyUsage": "SIGN_VERIFY"
         }
       }
-    },
-    {
+    }`
+
+// Optional extra, kept apart from the signing-only solution: a second creation path
+// for key-establishment keys. It is recognised as the optional ML-KEM pattern, and it
+// stops the signing-only check from completing because that path is not a signing key.
+const ML_KEM_OPTIONAL = `    ,{
       "Sid": "CreateMlKemKeyEstablishmentKeysOnly",
       "Effect": "Allow",
       "Action": "kms:CreateKey",
@@ -47,11 +51,11 @@ export const AwsKmsPolicyLab: React.FC = () => {
   const [policyJson, setPolicyJson] = useState(INITIAL_JSON)
   const validation = useMemo(() => validateKmsPqcPolicy(policyJson), [policyJson])
 
-  const insertSnippet = () => {
+  const insertSnippet = (snippet: string) => {
     const insertPos = policyJson.lastIndexOf(']')
     if (insertPos !== -1) {
       setPolicyJson(
-        policyJson.substring(0, insertPos) + SOLUTION + '\n  ' + policyJson.substring(insertPos)
+        policyJson.substring(0, insertPos) + snippet + '\n  ' + policyJson.substring(insertPos)
       )
     }
   }
@@ -71,12 +75,13 @@ export const AwsKmsPolicyLab: React.FC = () => {
           <code>kms:KeyUsage</code> to be <code>SIGN_VERIFY</code>. The sample solution allows{' '}
           <code>ML_DSA_65</code> and <code>ML_DSA_87</code> and leaves out <code>ML_DSA_44</code>;
           that is a policy choice, so add <code>ML_DSA_44</code> if your policy needs the smallest
-          parameter set. Optional extra: the solution also allows ML-KEM key-establishment keys (
+          parameter set. The solution snippet is signing-only and completes the task. Optional
+          extra: a separate snippet adds a second creation path for ML-KEM key-establishment keys (
           <code>ML_KEM_768</code>, <code>ML_KEM_1024</code>) with key usage{' '}
-          <code>ENCAPSULATE_DECAPSULATE</code>. This mixed example does not complete the
-          signing-only task: remove its optional ML-KEM statement to check that every creation path
-          is restricted to signing keys. The optional pattern is not an account-wide permissions
-          result.
+          <code>ENCAPSULATE_DECAPSULATE</code>. The optional pattern is detected on its own row, but
+          that path is not a signing key, so the signing-only check reports incomplete while it is
+          present; remove it to return to the signing-only result. Neither is an account-wide
+          permissions result.
         </p>
       </div>
 
@@ -96,14 +101,24 @@ export const AwsKmsPolicyLab: React.FC = () => {
             <span className="font-mono text-xs flex items-center gap-2 min-w-0 truncate">
               <FileJson size={14} className="shrink-0" /> key-admin-iam-policy.json
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertSnippet}
-              className="h-6 text-[10px] px-2 shrink-0"
-            >
-              Insert Solution Snippet
-            </Button>
+            <div className="flex flex-wrap gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => insertSnippet(SIGNING_SOLUTION)}
+                className="h-6 text-[10px] px-2 shrink-0"
+              >
+                Insert Solution Snippet
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => insertSnippet(ML_KEM_OPTIONAL)}
+                className="h-6 text-[10px] px-2 shrink-0"
+              >
+                Insert optional ML-KEM snippet
+              </Button>
+            </div>
           </div>
           <textarea
             aria-label="key-admin-iam-policy.json editor"
