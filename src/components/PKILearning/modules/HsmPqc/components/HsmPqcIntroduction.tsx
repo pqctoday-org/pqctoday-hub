@@ -607,9 +607,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     >
                       A6131 (SLH-DSA)
                     </Link>{' '}
-                    (SLH-DSA key generation, signature generation and verification). A passed
-                    algorithm test is a prerequisite of a module validation, not a substitute for
-                    it.
+                    (SLH-DSA key generation, signature generation and verification). An algorithm
+                    must be CAVP tested or, where an Implementation Guidance permits, vendor
+                    affirmed, before a module uses it in an approved mode. A passed algorithm test
+                    is a prerequisite of a module validation, not a substitute for it.
                   </p>
                   <LibLinks
                     refs={[
@@ -636,6 +637,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                       {
                         id: 'Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS',
                         label: 'CAVP A6131 (SLH-DSA)',
+                      },
+                      {
+                        id: 'NIST-FIPS140-3-IG-PQC',
+                        label: 'FIPS 140-3 IG (PQC)',
                       },
                     ]}
                   />

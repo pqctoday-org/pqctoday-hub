@@ -45,6 +45,9 @@ const TEE_SOK = 'SoK-Hardware-supported-Trusted-Execution-Environments'
 const NIST_CC = 'NIST IR 8320E'
 const CSA_GUIDE = 'CSA-PQC-Guide-2025'
 const IG_PQC = 'NIST-FIPS140-3-IG-PQC'
+const CAVP_ML_KEM = 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M'
+const CAVP_ML_DSA = 'Cryptographic-Algorithm-Validation-Program-CAVP-Primus-HSM-M-2'
+const CAVP_SLH_DSA = 'Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS'
 const GSMA_PQ03 = 'GSMA PQ.03 PQC Guidelines'
 
 // Library rows added for this release, cited exactly as in the Library.
@@ -203,7 +206,7 @@ export const TRUST_CARDS: TrustCard[] = [
       {
         q: 'what',
         text: 'Caliptra is an open root-of-trust design from the CHIPS Alliance; its hardware specification defines a cryptographic subsystem for measurement.',
-        sources: [CAL_HW],
+        sources: [CAL_HW, CAL_VER],
       },
       {
         q: 'where',
@@ -297,7 +300,15 @@ export const TRUST_CARDS: TrustCard[] = [
       {
         q: 'pq',
         text: 'Post-quantum support varies by product: Luna HSMs list ML-DSA and ML-KEM from firmware 7.9.0 and LMS-HSS from 7.8.9, and the Primus CyberVault series lists ML-KEM, ML-DSA, SLH-DSA, HSS/LMS and XMSS. Algorithm validations, such as those NIST’s CAVP lists for Securosys, are not by themselves FIPS 140 module validations.',
-        sources: [LUNA_PQC, SECUROSYS_X2, SECUROSYS],
+        sources: [
+          LUNA_PQC,
+          SECUROSYS_X2,
+          SECUROSYS,
+          CAVP_ML_KEM,
+          CAVP_ML_DSA,
+          CAVP_SLH_DSA,
+          IG_PQC,
+        ],
       },
     ],
   },
@@ -375,7 +386,7 @@ export const TRUST_CARDS: TrustCard[] = [
       },
       {
         q: 'protects',
-        text: 'It protects traffic on the wire at the device’s rated speed. In NVIDIA’s sample the receiver derives its keys inside the device from master keys the device manages, and the key exchange between applications uses a gRPC channel that is unencrypted unless you change it.',
+        text: 'It protects traffic on the wire. In NVIDIA’s sample the receiver derives its keys inside the device from master keys the device manages, and the key exchange between applications uses a gRPC channel that is unencrypted unless you change it.',
         sources: [DOCA_PSP],
       },
       {
@@ -639,7 +650,7 @@ export const GRID_ROWS: GridRow[] = [
       ),
       caliptra: C(
         'stated',
-        'Release 1.3 adds an ML-DSA-87 identity chain beside the ECDSA chain, in firmware; release 2.0 adds ML-DSA firmware-signature checks.',
+        'Release 1.3 adds an ML-DSA-87 identity chain beside the ECDSA chain, in firmware; release 2.0 adds ML-DSA firmware signature support.',
         CAL_VER
       ),
       tessera: C(
@@ -667,7 +678,7 @@ export const GRID_ROWS: GridRow[] = [
       ),
       caliptra: C(
         'stated',
-        'Release 2.1 adds an ML-KEM-1024 accelerator (Adams Bridge); its documentation describes caller-supplied ephemeral decapsulation keys (for example through a mailbox command) and no long-term keys.',
+        'Release 2.1 adds an ML-KEM-1024 accelerator (Adams Bridge); its documentation describes caller-supplied ephemeral decapsulation keys and says long-term decapsulation keys exposed to attacker-chosen ciphertexts are outside its intended usage model.',
         ADAMS_BRIDGE,
         TESSERA_CHIP
       ),
@@ -778,7 +789,7 @@ export const GRID_ROWS: GridRow[] = [
     cells: {
       tpm: C(
         'stated',
-        'Not published for TPMs in general; the PC Client profile notes TCG’s FIPS 140-3 guidance for TPM 2.0 only for self-test behaviour and timing.',
+        'Not published for TPMs in general; the PC Client profile mentions TCG’s FIPS 140-3 guidance for TPM 2.0 for self-test behaviour and timing, and marks TPM2_ChangePPS and TPM2_ChangeEPS as commands that might be required for a FIPS 140 evaluation.',
         TPM_PC
       ),
       caliptra: np(),
@@ -791,7 +802,10 @@ export const GRID_ROWS: GridRow[] = [
         'varies',
         'Varies by product and firmware. Algorithm validations, such as those NIST’s CAVP lists for Securosys, are not by themselves FIPS 140 module validations, so check the module’s own certificate.',
         SECUROSYS,
-        IG_PQC
+        IG_PQC,
+        CAVP_ML_KEM,
+        CAVP_ML_DSA,
+        CAVP_SLH_DSA
       ),
       'cloud-hsm': C(
         'varies',
@@ -1011,7 +1025,7 @@ export const SCENARIOS: Scenario[] = [
     lessWell: [
       {
         category: 'tpm',
-        text: 'It attests the host platform’s boot, not the VM’s own state, though the two can be used together.',
+        text: 'In this module’s reading, it attests the host platform’s boot, not the VM’s own state, though the two can be used together.',
         sources: [TPM_P1, RATS],
       },
       {
@@ -1073,7 +1087,7 @@ export const SCENARIOS: Scenario[] = [
     lessWell: [
       {
         category: 'dpu-bought',
-        text: 'Consider it when you run your own servers; inside a provider’s network, the provider’s own cards do this work.',
+        text: 'This module’s advice: consider it when you run your own servers; inside a provider’s network, the provider’s own cards do this work.',
         sources: [OCTEON, DOCA_PSP],
       },
       {
@@ -1130,7 +1144,7 @@ export const COMBINE_CASES: CombineCase[] = [
       },
     ],
     takeaway: {
-      text: 'The two attest different things, the host platform and the VM; a verifier can ask for both. Whether a given product combines them is a product decision to check.',
+      text: 'In this module’s reading, the two attest different things, the host platform and the VM; a verifier can ask for both. Whether a given product combines them is a product decision to check.',
       sources: [RATS, TPM_P1, NIST_CC],
     },
   },
