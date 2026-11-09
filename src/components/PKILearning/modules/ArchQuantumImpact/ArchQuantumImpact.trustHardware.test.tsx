@@ -17,6 +17,7 @@ import '@testing-library/jest-dom'
 import { hasStandard } from '@/data/standardsRegistry'
 import { loadIndustryLandscape } from '@/data/industryLandscapeData'
 import { TrustHardwareSelector } from './components/TrustHardwareSelector'
+import { SHORT_TITLE_MAX, sourceLabel } from './data/sourceLabel'
 import {
   CATEGORY_IDS,
   COMBINE_CASES,
@@ -294,5 +295,24 @@ describe('TrustHardwareSelector render', () => {
     renderStep()
     expect(screen.queryByRole('img')).not.toBeInTheDocument()
     expect(screen.queryByRole('figure')).not.toBeInTheDocument()
+  })
+})
+
+describe('sourceLabel', () => {
+  it('shows a Library row by its document title, keeping the id as the full label source', () => {
+    const l = sourceLabel('RFC 9334')
+    expect(l.short).toBe('Remote ATtestation procedureS (RATS) Architecture')
+    expect(l.full).toBe(l.short)
+  })
+
+  it('drops site-name suffixes and cuts long titles at a word boundary', () => {
+    const g = sourceLabel('Cloud-HSM-architecture-Security-Google-Cloud-Documentation')
+    expect(g.short).toBe('Cloud HSM architecture')
+    const long = sourceLabel('CSA-PQC-Guide-2025')
+    expect(long.short.length).toBeLessThanOrEqual(SHORT_TITLE_MAX + 1)
+  })
+
+  it('falls back to the id for a row that is not in the Library', () => {
+    expect(sourceLabel('No-Such-Row').short).toBe('No-Such-Row')
   })
 })

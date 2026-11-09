@@ -4,7 +4,6 @@ import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp, CircleHelp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { findStandard } from '@/data/standardsRegistry'
 import {
   CATEGORY_IDS,
   CATEGORY_NAMES,
@@ -18,6 +17,7 @@ import {
   type CategoryId,
   type CellKind,
 } from '../data/trustHardware'
+import { sourceLabel } from '../data/sourceLabel'
 
 type View = 'cards' | 'grid' | 'pick' | 'combine'
 
@@ -50,24 +50,27 @@ const KIND_LABEL: Record<CellKind, string | null> = {
  */
 const INFOGRAPHIC = null as { src: string; alt: string } | null
 
-/** Library links for a list of source ids. */
+/** Library links for a list of source ids, shown by document title; the id stays in the link target. */
 const SourceList: React.FC<{ ids: string[]; label?: string }> = ({ ids, label = 'Sources' }) => {
   if (ids.length === 0) return null
   return (
     <p className="text-[11px] text-muted-foreground leading-snug">
       {label}:{' '}
-      {ids.map((id, i) => (
-        <React.Fragment key={id}>
-          {i > 0 && ', '}
-          <Link
-            to={`/library?ref=${encodeURIComponent(id)}`}
-            className="text-primary hover:underline break-all"
-            title={findStandard(id)?.title}
-          >
-            {id}
-          </Link>
-        </React.Fragment>
-      ))}
+      {ids.map((id, i) => {
+        const { short, full } = sourceLabel(id)
+        return (
+          <React.Fragment key={id}>
+            {i > 0 && '; '}
+            <Link
+              to={`/library?ref=${encodeURIComponent(id)}`}
+              className="text-primary hover:underline"
+              title={`${full} (${id})`}
+            >
+              {short}
+            </Link>
+          </React.Fragment>
+        )
+      })}
     </p>
   )
 }
@@ -169,19 +172,19 @@ const GridView: React.FC = () => {
         Scroll the table sideways to see all eight kinds.
       </p>
       <div
-        className="overflow-x-auto rounded-lg border border-border"
+        className="overflow-x-auto rounded-lg border border-border snap-x snap-proximity md:scroll-pl-[11rem]"
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard users must be able to scroll the wide grid
         tabIndex={0}
         role="region"
         aria-label="Trust hardware comparison grid, scrolls sideways"
         data-testid="trust-grid-scroll"
       >
-        <table className="w-full min-w-[1280px] border-collapse text-sm">
+        <table className="w-full min-w-[1280px] border-separate border-spacing-0 text-sm">
           <thead>
-            <tr className="bg-muted/40">
+            <tr>
               <th
                 scope="col"
-                className="md:sticky md:left-0 z-10 bg-muted text-left p-3 w-[9.5rem] min-w-[9.5rem] md:w-[11rem] md:min-w-[11rem] text-xs font-semibold text-foreground"
+                className="md:sticky md:left-0 z-20 bg-muted md:border-r md:border-border text-left p-3 w-[9.5rem] min-w-[9.5rem] md:w-[11rem] md:min-w-[11rem] text-xs font-semibold text-foreground"
               >
                 Question
               </th>
@@ -189,7 +192,7 @@ const GridView: React.FC = () => {
                 <th
                   key={c.id}
                   scope="col"
-                  className="text-left p-3 min-w-40 align-bottom text-xs font-semibold text-foreground"
+                  className="snap-start bg-muted text-left p-3 min-w-40 align-bottom text-xs font-semibold text-foreground"
                 >
                   {c.name}
                   <span className="block font-normal text-muted-foreground">{c.tagline}</span>
@@ -202,10 +205,10 @@ const GridView: React.FC = () => {
               const open = openRows.has(row.id)
               return (
                 <React.Fragment key={row.id}>
-                  <tr className="border-t border-border align-top">
+                  <tr className="align-top">
                     <th
                       scope="row"
-                      className="md:sticky md:left-0 z-10 bg-background text-left p-3 w-[9.5rem] min-w-[9.5rem] md:w-[11rem] md:min-w-[11rem] align-top text-xs font-semibold text-foreground"
+                      className="md:sticky md:left-0 z-10 bg-background border-t border-border md:border-r text-left p-3 w-[9.5rem] min-w-[9.5rem] md:w-[11rem] md:min-w-[11rem] align-top text-xs font-semibold text-foreground"
                     >
                       <span className="block">{row.label}</span>
                       <Button
@@ -233,7 +236,7 @@ const GridView: React.FC = () => {
                       return (
                         <td
                           key={id}
-                          className={`p-3 text-sm leading-snug ${
+                          className={`border-t border-border p-3 text-sm leading-snug ${
                             cell.kind === 'not-published'
                               ? 'text-muted-foreground italic'
                               : 'text-foreground/90'
@@ -251,12 +254,12 @@ const GridView: React.FC = () => {
                     })}
                   </tr>
                   {open && (
-                    <tr className="bg-muted">
-                      <td className="md:sticky md:left-0 z-10 bg-muted p-3 text-[11px] text-muted-foreground">
+                    <tr>
+                      <td className="md:sticky md:left-0 z-10 bg-muted border-t border-border md:border-r p-3 text-[11px] text-muted-foreground">
                         Sources for “{row.label}”
                       </td>
                       {CATEGORY_IDS.map((id) => (
-                        <td key={id} className="p-3 align-top">
+                        <td key={id} className="bg-muted border-t border-border p-3 align-top">
                           {row.cells[id].sources.length > 0 ? (
                             <SourceList ids={row.cells[id].sources} label={CATEGORY_NAMES[id]} />
                           ) : (
