@@ -36,7 +36,7 @@ describe('worldwide bodies: ANSSI and BSI hybrid stance', () => {
     const text = `${anssi.role} ${anssi.detail}`
     expect(anssi.role).toMatch(/strongly recommends hybrid/)
     expect(anssi.role).toMatch(/mandatory only inside its regulated perimeter/)
-    expect(anssi.detail).toMatch(/no regulatory force by itself/)
+    expect(anssi.detail).toMatch(/to date, its PQC guidance has no regulatory force by itself/)
     expect(anssi.detail).toMatch(/except for hash-based signatures \(SLH-DSA, XMSS, LMS\)/)
     expect(text).not.toMatch(/mandatory hybrid PQC for high-sensitivity|must use hybrid/)
   })

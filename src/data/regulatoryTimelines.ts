@@ -183,8 +183,8 @@ export const ANSSI_TIMELINE = {
    */
   hybridMandatoryInRegulatedScope: true,
   /**
-   * Outside that perimeter ANSSI strongly recommends hybrid but says its PQC guidance,
-   * hybridation included, has no regulatory force (same FAQ).
+   * Outside that perimeter ANSSI strongly recommends hybrid but says that, to date, its PQC
+   * guidance, hybridation included, has no regulatory force (same FAQ).
    */
   hybridRecommendedOutsideRegulatedScope: true,
   /** ANSSI does not recommend systematic hybridisation for hash-based signatures (SLH-DSA, LMS, XMSS) */

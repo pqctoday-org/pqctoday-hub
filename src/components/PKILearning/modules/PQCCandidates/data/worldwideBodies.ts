@@ -134,7 +134,7 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     stage: 'standardised',
     role: 'French national cybersecurity agency; strongly recommends hybrid PQC and makes it mandatory only inside its regulated perimeter.',
     detail:
-      'ANSSI position: post-quantum algorithms have had too little scrutiny to be deployed without the assurance hybrid (classical + PQC) provides, so it strongly recommends hybrid wherever post-quantum protection is deployed, except for hash-based signatures (SLH-DSA, XMSS, LMS). ANSSI says its PQC guidance has no regulatory force by itself; hybrid is mandatory only inside the regulated perimeter (classified and Diffusion Restreinte data, vital-infrastructure systems, product qualification). Published guidance describes the hybrid modes it recommends and the migration phases.',
+      'ANSSI position: post-quantum algorithms have had too little scrutiny to be deployed without the assurance hybrid (classical + PQC) provides, so it strongly recommends hybrid wherever post-quantum protection is deployed, except for hash-based signatures (SLH-DSA, XMSS, LMS). ANSSI says that, to date, its PQC guidance has no regulatory force by itself; hybrid is mandatory only inside the regulated perimeter (classified and Diffusion Restreinte data, vital-infrastructure systems, product qualification). Published guidance describes the hybrid modes it recommends and the migration phases.',
     url: 'https://cyber.gouv.fr/en/publications',
     nistRelation: 'overlay',
   },
