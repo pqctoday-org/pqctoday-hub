@@ -147,7 +147,7 @@ const GridView: React.FC = () => {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard users must be able to scroll the wide grid
         tabIndex={0}
         role="region"
-        aria-label="Trust hardware comparison grid, scrolls sideways"
+        aria-label="Trust hardware comparison grid"
         data-testid="trust-grid-scroll"
       >
         <table className="w-full min-w-[1280px] border-separate border-spacing-0 text-sm">
