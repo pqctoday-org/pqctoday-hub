@@ -466,7 +466,12 @@ export const HybridCertFormats: React.FC = () => {
     const badgeClass = STATUS_BADGE_CLASSES[fmt.statusColor] ?? STATUS_BADGE_CLASSES['muted']
 
     return (
-      <div key={fmt.id} className="glass-panel p-5 space-y-4 min-w-0">
+      <div
+        key={fmt.id}
+        role="region"
+        aria-label={fmt.label}
+        className="glass-panel p-5 space-y-4 min-w-0"
+      >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -729,9 +734,20 @@ export const HybridCertFormats: React.FC = () => {
                       }`}
                     >
                       {result.checks.every((c) => c.ok)
-                        ? `Verified — ${result.checks.length}/${result.checks.length} checks passed`
+                        ? fmt.id === 'cert-discovery'
+                          ? `Selected discovery checks — ${result.checks.length}/${result.checks.length} passed`
+                          : `Verified — ${result.checks.length}/${result.checks.length} checks passed`
                         : `${result.checks.filter((c) => !c.ok).length} of ${result.checks.length} checks failed`}
                     </div>
+                    {fmt.id === 'cert-discovery' && (
+                      <p className="text-xs text-muted-foreground">
+                        These are the listed signature, advertisement and selected profile checks,
+                        not full PKIX validation. Validity time, revocation, trust anchors/path
+                        policy and unknown critical-extension policy are not evaluated here. With
+                        production tools, check those requirements under your relying-party policy
+                        as well.
+                      </p>
+                    )}
                     <ul className="space-y-0.5">
                       {result.checks.map((c, i) => (
                         <li

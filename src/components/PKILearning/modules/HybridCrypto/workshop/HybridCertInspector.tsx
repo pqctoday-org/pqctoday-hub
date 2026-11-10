@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react'
 import {
   Loader2,
-  Play,
   Search,
   BarChart3,
   FileText,
@@ -15,10 +14,19 @@ import {
   ShieldCheck,
   ShieldAlert,
 } from 'lucide-react'
-import { hybridCryptoService } from '../services/HybridCryptoService'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import {
+  inspectCertificateDer,
+  workspaceCertificateGroups,
+  type CertificateInspection,
+} from './certificateInspection'
 import { HYBRID_CERT_FORMATS } from '../constants'
-import { parseCertificateInfo, oidToLabel, type CertInfo } from '../services/derParser'
-import { verifyCompositeCert, type CompositeVerifyResult } from '../services/compositeVerifier'
+import { oidToLabel, type CertInfo } from '../services/derParser'
+import {
+  verifyCompositeCert,
+  findCompositeProfile,
+  type CompositeVerifyResult,
+} from '../services/compositeVerifier'
 import {
   IETF_CERT_VECTORS,
   decodeDer,
@@ -26,17 +34,6 @@ import {
   type IETFCertVector,
 } from '../data/ietfTestVectors'
 import { Button } from '@/components/ui/button'
-
-interface GeneratedCert {
-  formatId: string
-  formatLabel: string
-  certs: Array<{
-    label: string
-    pem: string
-    parsed: string
-    type: 'classical' | 'pqc'
-  }>
-}
 
 interface ParsedField {
   key: string
@@ -48,6 +45,7 @@ interface ParsedField {
 interface IETFParsedResult {
   openSSLText: string
   certInfo: CertInfo
+  inspection: CertificateInspection
 }
 
 function parseCertText(text: string): ParsedField[] {
@@ -61,7 +59,7 @@ function parseCertText(text: string): ParsedField[] {
     // Skip lines that have binary/control characters (e.g., OpenSSL unparsed octet strings)
     // We allow standard ASCII printable (0x20-0x7E) plus tab
     // eslint-disable-next-line no-control-regex
-    if (/[^\x09\x20-\x7E]/.test(line)) continue
+    if (/[\x00-\x08\x0A-\x1F\x7F]/.test(line)) continue
 
     const indent = line.search(/\S/)
     const trimmed = line.trim()
@@ -93,62 +91,6 @@ function parseCertText(text: string): ParsedField[] {
   }
 
   return result
-}
-
-function generateIETFText(vector: IETFCertVector, certInfo: CertInfo): string {
-  const algLabel = certInfo.algorithmOID ? oidToLabel(certInfo.algorithmOID) : vector.algorithmLabel
-  const pubLabel = certInfo.publicKeyOID ? oidToLabel(certInfo.publicKeyOID) : algLabel
-
-  const extLines: string[] = []
-  if (certInfo.extensionOIDs.length > 0) {
-    extLines.push('        X509v3 extensions:')
-    for (const ext of certInfo.extensionOIDs) {
-      extLines.push(`            ${oidToLabel(ext)}: present`)
-    }
-  }
-
-  const specialExtLines: string[] = []
-  if (vector.specialExtensions && vector.specialExtensions.length > 0) {
-    specialExtLines.push('        Special Hybrid Extensions:')
-    for (const ext of vector.specialExtensions) {
-      specialExtLines.push(`            ${ext.oid} (${ext.label}):`)
-      specialExtLines.push(`                ${ext.description}`)
-    }
-  }
-
-  const formatHexBlock = (bytes: Uint8Array | undefined, indent: number): string => {
-    if (!bytes || bytes.length === 0) return ''
-    const hexStr = Array.from(bytes).map((b) => b.toString(16).padStart(2, '0'))
-    const lines: string[] = []
-    const spaces = ' '.repeat(indent)
-    for (let i = 0; i < hexStr.length; i += 15) {
-      lines.push(spaces + hexStr.slice(i, i + 15).join(':') + (i + 15 < hexStr.length ? ':' : ''))
-    }
-    return '\n' + lines.join('\n')
-  }
-
-  const pubKeyHex = formatHexBlock(certInfo.publicKeyBytes, 20)
-  const sigHex = formatHexBlock(certInfo.signatureBytes, 8)
-
-  return [
-    'Certificate:',
-    '    Data:',
-    '        Version: 3 (0x2)',
-    `        Serial Number: (omitted in simplified view)`,
-    `    Signature Algorithm: ${algLabel}`,
-    `    Issuer: CN=${vector.provider} Test Root`,
-    '    Validity',
-    `        Not Before: (omitted)`,
-    `        Not After : (omitted)`,
-    `    Subject: CN=${vector.label}`,
-    '    Subject Public Key Info:',
-    `        Public Key Algorithm: ${pubLabel}`,
-    `            Public-Key: (${certInfo.publicKeySizeBytes * 8} bit)${pubKeyHex}`,
-    ...extLines,
-    ...specialExtLines,
-    `    Signature Algorithm: ${algLabel}`,
-    `    Signature Value: (${certInfo.signatureSizeBytes} bytes)${sigHex}`,
-  ].join('\n')
 }
 
 const TreeNode: React.FC<{
@@ -216,20 +158,15 @@ function certTypeBadge(certType: IETFCertVector['certType']) {
 // Main component
 // ---------------------------------------------------------------------------
 export const HybridCertInspector: React.FC = () => {
-  // --- Generated certs state (existing) ---
-  const [certs, setCerts] = useState<GeneratedCert[]>([])
-  const [generating, setGenerating] = useState(false)
-  const [selectedCert, setSelectedCert] = useState<{
-    formatIdx: number
-    certIdx: number
-  } | null>(null)
+  const files = useOpenSSLStore((state) => state.files)
+  const certs = useMemo(() => workspaceCertificateGroups(files), [files])
+  const [selectedName, setSelectedName] = useState<string | null>(null)
+  const selected =
+    selectedName === null
+      ? certs[0]?.certs[0]
+      : certs.flatMap((group) => group.certs).find((cert) => cert.label === selectedName)
+  const selectedFormat = certs.find((group) => group.certs.includes(selected!))
   const [viewMode, setViewMode] = useState<'tree' | 'raw' | 'size'>('tree')
-  // Composite self-signature verification. The workshop mints composite certs
-  // but nothing here could check one — parsing is not verification. Both
-  // components must verify (AND construction), and the ML-DSA half only
-  // verifies when the signature label is supplied as its FIPS 204 ctx.
-  const [compositeVerify, setCompositeVerify] = useState<CompositeVerifyResult | null>(null)
-
   // --- Source toggle ---
   const [source, setSource] = useState<'generated' | 'ietf'>('generated')
 
@@ -237,160 +174,63 @@ export const HybridCertInspector: React.FC = () => {
   const [ietfSelectedId, setIETFSelectedId] = useState<string>(IETF_CERT_VECTORS[0].id)
   const [ietfParsed, setIETFParsed] = useState<Record<string, IETFParsedResult>>({})
   const [ietfLoading, setIETFLoading] = useState<string | null>(null)
+  const [ietfErrors, setIETFErrors] = useState<Record<string, string>>({})
   const [ietfViewMode, setIETFViewMode] = useState<'tree' | 'raw' | 'size'>('tree')
 
-  // ---------------------------------------------------------------------------
-  // Generated certs logic (unchanged from original)
-  // ---------------------------------------------------------------------------
-  const generateAllCerts = useCallback(async () => {
-    setGenerating(true)
-    const allCerts: GeneratedCert[] = []
-
-    for (const fmt of HYBRID_CERT_FORMATS) {
-      const fmtCerts: GeneratedCert['certs'] = []
-
-      if (fmt.id === 'pure-pqc') {
-        const keyResult = await hybridCryptoService.generateKey('ML-DSA-65', 'inspect_pqc_key.pem')
-        if (!keyResult.error && keyResult.fileData) {
-          const certResult = await hybridCryptoService.generateSelfSignedCert(
-            'inspect_pqc_key.pem',
-            'inspect_pqc_cert.pem',
-            '/CN=Pure PQC Inspection/O=PQC Today',
-            keyResult.fileData
-          )
-          if (!certResult.error) {
-            fmtCerts.push({
-              label: 'ML-DSA-65 Certificate',
-              pem: certResult.pem,
-              parsed: certResult.parsed,
-              type: 'pqc',
-            })
-          }
-        }
-      } else {
-        const ecKey = await hybridCryptoService.generateKey('EC', `inspect_${fmt.id}_ec_key.pem`)
-        if (!ecKey.error && ecKey.fileData) {
-          const ecCert = await hybridCryptoService.generateSelfSignedCert(
-            `inspect_${fmt.id}_ec_key.pem`,
-            `inspect_${fmt.id}_ec_cert.pem`,
-            `/CN=${fmt.shortLabel} Classical/O=PQC Today`,
-            ecKey.fileData
-          )
-          if (!ecCert.error) {
-            fmtCerts.push({
-              label: `${fmt.shortLabel}: ECDSA P-256`,
-              pem: ecCert.pem,
-              parsed: ecCert.parsed,
-              type: 'classical',
-            })
-          }
-        }
-        const pqcKey = await hybridCryptoService.generateKey(
-          'ML-DSA-65',
-          `inspect_${fmt.id}_pqc_key.pem`
-        )
-        if (!pqcKey.error && pqcKey.fileData) {
-          const pqcCert = await hybridCryptoService.generateSelfSignedCert(
-            `inspect_${fmt.id}_pqc_key.pem`,
-            `inspect_${fmt.id}_pqc_cert.pem`,
-            `/CN=${fmt.shortLabel} PQC/O=PQC Today`,
-            pqcKey.fileData
-          )
-          if (!pqcCert.error) {
-            fmtCerts.push({
-              label: `${fmt.shortLabel}: ML-DSA-65`,
-              pem: pqcCert.pem,
-              parsed: pqcCert.parsed,
-              type: 'pqc',
-            })
-          }
-        }
-      }
-
-      allCerts.push({ formatId: fmt.id, formatLabel: fmt.label, certs: fmtCerts })
-    }
-
-    setCerts(allCerts)
-    if (allCerts.length > 0 && allCerts[0].certs.length > 0) {
-      setSelectedCert({ formatIdx: 0, certIdx: 0 })
-    }
-    setGenerating(false)
-  }, [])
-
-  const selected =
-    selectedCert !== null ? certs[selectedCert.formatIdx]?.certs[selectedCert.certIdx] : null
-
-  const selectedFormat = selectedCert !== null ? certs[selectedCert.formatIdx] : null
-
-  useEffect(() => {
-    let cancelled = false
-    const pem = selected?.pem
-    // Single, asynchronous state write: every path resolves through this
-    // promise rather than calling setState synchronously in the effect body
-    // (which triggers cascading renders).
-    const resolveVerdict = async (): Promise<CompositeVerifyResult | null> => {
-      if (!pem) return null
-      const b64 = pem.replace(/-----(BEGIN|END) CERTIFICATE-----/g, '').replace(/\s+/g, '')
-      let der: Uint8Array
-      try {
-        der = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))
-      } catch {
-        return null
-      }
-      const r = await verifyCompositeCert(der)
-      // Only surface a verdict for certificates that ARE composite; other
-      // formats are verified elsewhere (or by OpenSSL) and a "not composite"
-      // banner on a pure-PQC cert would just be noise.
-      return r.recognized ? r : null
-    }
-    void resolveVerdict().then((r) => {
-      if (!cancelled) setCompositeVerify(r)
-    })
+  // Verification is bound to the exact selected saved file and source, not its filename.
+  const owner = useMemo(() => ({ snapshot: selected, source }), [selected, source])
+  const currentOwner = useRef<typeof owner | null>(null)
+  const [verification, setVerification] = useState<{
+    owner: typeof owner
+    result: CompositeVerifyResult | null
+    error?: string
+  } | null>(null)
+  const compositeVerify = verification?.owner === owner ? verification.result : null
+  const verificationError = verification?.owner === owner ? verification.error : null
+  useLayoutEffect(() => {
+    currentOwner.current = owner
     return () => {
-      cancelled = true
+      currentOwner.current = null
     }
-  }, [selected?.pem])
+  }, [owner])
+  useEffect(() => {
+    const inspection = selected?.inspection
+    if (
+      source !== 'generated' ||
+      !inspection ||
+      !inspection.selfIssued ||
+      !findCompositeProfile(inspection.info.algorithmOID)
+    )
+      return
+    void verifyCompositeCert(inspection.der)
+      .then((result) => {
+        if (currentOwner.current === owner)
+          setVerification({ owner, result: result.recognized ? result : null })
+      })
+      .catch((e: unknown) => {
+        if (currentOwner.current === owner)
+          setVerification({
+            owner,
+            result: null,
+            error: e instanceof Error ? e.message : 'Verification did not complete',
+          })
+      })
+  }, [owner, selected?.inspection, source])
 
   const parsedTree = selected ? parseCertText(selected.parsed) : []
 
   const handleDownload = () => {
-    if (!selected) return
+    if (!selected?.inspection) return
     const blob = new Blob([selected.pem], { type: 'application/x-pem-file' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${selected.label.replace(/[^a-zA-Z0-9]/g, '_')}.pem`
+    a.download = selected.label
     a.click()
     URL.revokeObjectURL(url)
   }
 
-  const sizeBreakdown = selected
-    ? (() => {
-        const pemSize = selected.pem.length
-        const lines = selected.parsed.split('\n')
-        let pubKeySize = 0
-        let sigSize = 0
-        let inPubKey = false
-        let inSig = false
-
-        for (const line of lines) {
-          if (line.includes('Public Key:') || line.includes('pub:')) inPubKey = true
-          if (line.includes('Signature Algorithm:') && inPubKey) {
-            inPubKey = false
-            inSig = true
-          }
-          if (inPubKey && line.trim().match(/^[0-9a-f:]+$/i)) {
-            pubKeySize += line.trim().replace(/:/g, '').length / 2
-          }
-          if (inSig && line.trim().match(/^[0-9a-f:]+$/i)) {
-            sigSize += line.trim().replace(/:/g, '').length / 2
-          }
-        }
-
-        const overhead = pemSize - pubKeySize - sigSize
-        return { pemSize, pubKeySize, sigSize, overhead }
-      })()
-    : null
+  const sizeBreakdown = selected?.inspection?.sizes ?? null
 
   // ---------------------------------------------------------------------------
   // IETF cert parsing logic
@@ -400,18 +240,22 @@ export const HybridCertInspector: React.FC = () => {
       if (ietfParsed[vector.id]) return // already cached
       setIETFLoading(vector.id)
 
-      const der = decodeDer(vector.derBase64)
-      const certInfo = parseCertificateInfo(der)
-
-      // Use our custom formatted text view instead of OpenSSL
-      // because OpenSSL WASM fails to parse some PQC signatures/extensions cleanly
-      const openSSLText = generateIETFText(vector, certInfo)
-
-      setIETFParsed((prev) => ({
-        ...prev,
-        [vector.id]: { openSSLText, certInfo },
-      }))
-      setIETFLoading(null)
+      try {
+        const der = decodeDer(vector.derBase64)
+        const inspection = inspectCertificateDer(der)
+        setIETFParsed((prev) => ({
+          ...prev,
+          [vector.id]: { openSSLText: inspection.text, certInfo: inspection.info, inspection },
+        }))
+        setIETFErrors((prev) => ({ ...prev, [vector.id]: '' }))
+      } catch (e) {
+        setIETFErrors((prev) => ({
+          ...prev,
+          [vector.id]: e instanceof Error ? e.message : 'Certificate inspection failed',
+        }))
+      } finally {
+        setIETFLoading(null)
+      }
     },
     [ietfParsed]
   )
@@ -437,12 +281,13 @@ export const HybridCertInspector: React.FC = () => {
 
   const selectedIETFVector =
     IETF_CERT_VECTORS.find((v) => v.id === ietfSelectedId) ?? IETF_CERT_VECTORS[0]
-  const selectedIETFResult = ietfParsed[ietfSelectedId] ?? null
+  const selectedIETFResult =
+    Object.entries(ietfParsed).find(([id]) => id === ietfSelectedId)?.[1] ?? null
+  const selectedIETFError = Object.entries(ietfErrors).find(([id]) => id === ietfSelectedId)?.[1]
   const isIETFLoading = ietfLoading === ietfSelectedId
 
   // Parse the selected IETF cert's DER synchronously for size view (certInfo only)
-  const selectedIETFCertInfo =
-    selectedIETFResult?.certInfo ?? parseCertificateInfo(decodeDer(selectedIETFVector.derBase64))
+  const selectedIETFCertInfo = selectedIETFResult?.certInfo
   const selectedIETFTree = selectedIETFResult ? parseCertText(selectedIETFResult.openSSLText) : []
 
   // ---------------------------------------------------------------------------
@@ -453,8 +298,8 @@ export const HybridCertInspector: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Certificate Inspector</h3>
         <p className="text-sm text-muted-foreground">
-          Inspect generated X.509 certificates side-by-side with real hybrid certificates from the
-          IETF Hackathon pqc-certificates test vector repository.
+          Inspect saved public certificates from Certificate Formats (Step 6), or the reference
+          certificate bytes. Compare encoded fields and sizes without generating substitutes.
         </p>
       </div>
 
@@ -492,50 +337,36 @@ export const HybridCertInspector: React.FC = () => {
       {/* ===== GENERATED CERTS SECTION ===== */}
       {source === 'generated' && (
         <>
+          <p className="text-xs text-muted-foreground">
+            Saved public workspace files named for Certificate Formats (Step 6). Filename groups and
+            saved timestamps do not establish their origin, the latest generation attempt, a
+            matching certificate pair, format conformance or trust. No new keys or certificates are
+            generated by this inspector.
+          </p>
           {certs.length === 0 && (
-            <Button
-              variant="gradient"
-              onClick={generateAllCerts}
-              disabled={generating}
-              className="flex items-center gap-2 px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors"
-            >
-              {generating ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  Generating certificates for inspection...
-                </>
-              ) : (
-                <>
-                  <Play size={18} fill="currentColor" />
-                  Generate All Certificates for Inspection
-                </>
-              )}
-            </Button>
+            <p className="text-sm text-muted-foreground">
+              No saved public workshop certificates. Generate a supported example in Certificate
+              Formats (Step 6), then return here.
+            </p>
           )}
-
           {certs.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Cert selector - left panel */}
               <div className="space-y-2 min-w-0 overflow-hidden">
                 <h4 className="text-sm font-bold text-foreground mb-2">Select Certificate</h4>
-                {certs.map((group, fIdx) => (
+                {certs.map((group) => (
                   <div key={group.formatId} className="space-y-1">
                     <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                       {group.formatLabel}
                     </div>
-                    {group.certs.map((cert, cIdx) => {
-                      const isSelected =
-                        selectedCert?.formatIdx === fIdx && selectedCert?.certIdx === cIdx
-                      const badgeClass =
-                        cert.type === 'pqc'
-                          ? 'bg-success/10 text-success border-success/20'
-                          : 'bg-warning/10 text-warning border-warning/20'
-
+                    {group.certs.map((cert) => {
+                      const isSelected = selected?.file === cert.file
+                      const badgeClass = 'bg-muted/30 text-muted-foreground border-border'
                       return (
                         <Button
                           variant="ghost"
                           key={cert.label}
-                          onClick={() => setSelectedCert({ formatIdx: fIdx, certIdx: cIdx })}
+                          onClick={() => setSelectedName(cert.label)}
                           className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center justify-between ${
                             isSelected
                               ? 'bg-primary/10 text-primary border border-primary/30'
@@ -546,7 +377,7 @@ export const HybridCertInspector: React.FC = () => {
                           <span
                             className={`text-[10px] px-1.5 py-0.5 rounded border font-bold shrink-0 ml-2 ${badgeClass}`}
                           >
-                            {cert.type === 'pqc' ? 'PQC' : 'EC'}
+                            {cert.error ? 'Incomplete' : 'Saved'}
                           </span>
                         </Button>
                       )
@@ -602,6 +433,7 @@ export const HybridCertInspector: React.FC = () => {
                       <Button
                         variant="ghost"
                         onClick={handleDownload}
+                        disabled={!selected.inspection}
                         className="flex items-center gap-1 px-3 py-2 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
                       >
                         <Download size={12} />
@@ -609,12 +441,36 @@ export const HybridCertInspector: React.FC = () => {
                       </Button>
                     </div>
 
+                    <p className="text-xs text-muted-foreground break-words">
+                      Saved file: {selected.label} · Timestamp:{' '}
+                      {Number.isFinite(new Date(selected.file.timestamp).getTime())
+                        ? new Date(selected.file.timestamp).toISOString()
+                        : 'not recorded'}
+                    </p>
+                    {selected.error && (
+                      <div role="alert">Incomplete inspection: {selected.error}</div>
+                    )}
+                    {verificationError && (
+                      <div role="alert">
+                        Incomplete selected self-signature check: {verificationError}
+                      </div>
+                    )}
+                    {selected.inspection && !selected.inspection.selfIssued && (
+                      <p className="text-xs text-muted-foreground">
+                        Issuer and subject differ. No issuer-signature or certificate-path
+                        validation is executed by this inspector.
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Structural parsing is not signature verification or a full certificate
+                      validation decision.
+                    </p>
                     {/* Format info banner */}
                     {selectedFormat && (
                       <div className="bg-muted/30 rounded-lg p-3 border border-border flex items-center justify-between">
                         <div>
                           <span className="text-xs font-bold text-foreground">
-                            {selectedFormat.formatLabel}
+                            Filename group: {selectedFormat.formatLabel}
                           </span>
                           <span className="text-[10px] text-muted-foreground ml-2">
                             {HYBRID_CERT_FORMATS.find((f) => f.id === selectedFormat.formatId)
@@ -658,8 +514,8 @@ export const HybridCertInspector: React.FC = () => {
                             }`}
                           >
                             {compositeVerify.valid
-                              ? 'Composite signature VERIFIED'
-                              : 'Composite signature INVALID'}
+                              ? 'Selected composite self-signature checks passed'
+                              : 'Selected composite self-signature check failed'}
                           </span>
                           <span className="text-[10px] text-muted-foreground font-mono ml-auto truncate">
                             {compositeVerify.profileLabel}
@@ -702,8 +558,8 @@ export const HybridCertInspector: React.FC = () => {
                         </div>
 
                         <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
-                          Verified in-browser against the LAMPS composite draft: the key and
-                          signature are split at ML-DSA&apos;s fixed length (no ASN.1 framing to
+                          This selected self-signature check uses the LAMPS composite draft: the key
+                          and signature are split at ML-DSA&apos;s fixed length (no ASN.1 framing to
                           read), both components are checked over the shared message representative
                           M&apos;, and ML-DSA takes the signature label as its FIPS&nbsp;204
                           context. BOTH must verify — composite is an AND construction, not a
@@ -732,7 +588,7 @@ export const HybridCertInspector: React.FC = () => {
                       <div className="space-y-3">
                         <div>
                           <h5 className="text-xs font-bold text-foreground mb-1">
-                            Parsed X.509 Fields
+                            Custom structural X.509 display
                           </h5>
                           <pre className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-64 overflow-y-auto font-mono whitespace-pre-wrap custom-scrollbar">
                             {selected.parsed.trim()}
@@ -740,7 +596,10 @@ export const HybridCertInspector: React.FC = () => {
                         </div>
                         <div>
                           <h5 className="text-xs font-bold text-foreground mb-1">PEM Encoding</h5>
-                          <pre className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-64 overflow-y-auto font-mono whitespace-pre-wrap custom-scrollbar">
+                          <pre
+                            aria-label="Encoded certificate PEM"
+                            className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-64 overflow-y-auto font-mono whitespace-pre-wrap custom-scrollbar"
+                          >
                             {selected.pem.trim()}
                           </pre>
                         </div>
@@ -752,41 +611,48 @@ export const HybridCertInspector: React.FC = () => {
                       <div className="space-y-4">
                         <div className="bg-background rounded-lg p-4 border border-border">
                           <h5 className="text-xs font-bold text-foreground mb-3">
-                            Certificate Size Breakdown
+                            DER Certificate Size Breakdown
                           </h5>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            PEM UTF8 transport: {sizeBreakdown.pemSize} B. Base64, envelope and
+                            line-break expansion beyond DER:{' '}
+                            {sizeBreakdown.pemSize - sizeBreakdown.derSize} B. DER remainder plus
+                            both encoded payloads equals total DER; payload octets are not algorithm
+                            security strength.
+                          </p>
                           <div className="space-y-3">
                             {[
                               {
-                                label: 'Total PEM',
-                                value: sizeBreakdown.pemSize,
+                                label: 'Total DER',
+                                value: sizeBreakdown.derSize,
                                 color: 'bg-primary',
                                 pct: 100,
                               },
                               {
-                                label: 'Public Key',
+                                label: 'Subject public-key payload octets',
                                 value: sizeBreakdown.pubKeySize,
                                 color: 'bg-success',
                                 pct:
-                                  sizeBreakdown.pemSize > 0
-                                    ? (sizeBreakdown.pubKeySize / sizeBreakdown.pemSize) * 100
+                                  sizeBreakdown.derSize > 0
+                                    ? (sizeBreakdown.pubKeySize / sizeBreakdown.derSize) * 100
                                     : 0,
                               },
                               {
-                                label: 'Signature',
+                                label: 'Signature payload octets',
                                 value: sizeBreakdown.sigSize,
                                 color: 'bg-warning',
                                 pct:
-                                  sizeBreakdown.pemSize > 0
-                                    ? (sizeBreakdown.sigSize / sizeBreakdown.pemSize) * 100
+                                  sizeBreakdown.derSize > 0
+                                    ? (sizeBreakdown.sigSize / sizeBreakdown.derSize) * 100
                                     : 0,
                               },
                               {
-                                label: 'Overhead (headers, extensions, ASN.1)',
+                                label: 'DER remainder (structure, names, extensions)',
                                 value: sizeBreakdown.overhead,
                                 color: 'bg-muted-foreground',
                                 pct:
-                                  sizeBreakdown.pemSize > 0
-                                    ? (sizeBreakdown.overhead / sizeBreakdown.pemSize) * 100
+                                  sizeBreakdown.derSize > 0
+                                    ? (sizeBreakdown.overhead / sizeBreakdown.derSize) * 100
                                     : 0,
                               },
                             ].map((item) => (
@@ -794,13 +660,13 @@ export const HybridCertInspector: React.FC = () => {
                                 <div className="flex items-center justify-between text-xs mb-1">
                                   <span className="text-muted-foreground">{item.label}</span>
                                   <span className="font-mono text-foreground">
-                                    {item.value > 0 ? `${item.value} B` : '—'}
+                                    {`${item.value} B`}
                                   </span>
                                 </div>
                                 <div className="w-full bg-muted/50 rounded-full h-2">
                                   <div
                                     className={`${item.color} rounded-full h-2 transition-all`}
-                                    style={{ width: `${Math.max(item.pct, 1)}%` }}
+                                    style={{ width: `${item.pct}%` }}
                                   />
                                 </div>
                               </div>
@@ -811,29 +677,49 @@ export const HybridCertInspector: React.FC = () => {
                         {/* Cross-format size comparison */}
                         <div className="bg-background rounded-lg p-4 border border-border">
                           <h5 className="text-xs font-bold text-foreground mb-3">
-                            Cross-Format PEM Size Comparison
+                            Saved group PEM UTF8 totals (all listed files)
                           </h5>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            Groups can contain different numbers and roles of saved files. These
+                            totals are not equivalent authentication payloads or a format-efficiency
+                            ranking.
+                          </p>
                           <div className="space-y-2">
                             {certs.map((group) => {
-                              const totalSize = group.certs.reduce((s, c) => s + c.pem.length, 0)
+                              const totalSize = group.certs.every((cert) => cert.inspection)
+                                ? group.certs.reduce(
+                                    (sum, cert) => sum + cert.inspection!.sizes.pemSize,
+                                    0
+                                  )
+                                : null
                               const maxSize = Math.max(
-                                ...certs.map((g) => g.certs.reduce((s, c) => s + c.pem.length, 0))
+                                1,
+                                ...certs
+                                  .filter((g) => g.certs.every((cert) => cert.inspection))
+                                  .map((g) =>
+                                    g.certs.reduce(
+                                      (sum, cert) => sum + cert.inspection!.sizes.pemSize,
+                                      0
+                                    )
+                                  )
                               )
                               return (
                                 <div key={group.formatId}>
                                   <div className="flex items-center justify-between text-xs mb-1">
                                     <span className="text-muted-foreground">
-                                      {group.formatLabel.split('(')[0].trim()}
+                                      {group.formatLabel}
                                     </span>
                                     <span className="font-mono text-foreground">
-                                      {totalSize} chars
+                                      {totalSize === null
+                                        ? 'Not assessed (incomplete certificate)'
+                                        : `${totalSize} B`}
                                     </span>
                                   </div>
                                   <div className="w-full bg-muted/50 rounded-full h-2">
                                     <div
                                       className="bg-primary rounded-full h-2 transition-all"
                                       style={{
-                                        width: `${maxSize > 0 ? (totalSize / maxSize) * 100 : 0}%`,
+                                        width: `${totalSize === null ? 0 : (totalSize / maxSize) * 100}%`,
                                       }}
                                     />
                                   </div>
@@ -848,18 +734,17 @@ export const HybridCertInspector: React.FC = () => {
                     {/* Educational disclaimer */}
                     <div className="bg-muted/30 rounded-lg p-3 border border-border">
                       <p className="text-[10px] text-muted-foreground">
-                        These certificates are self-signed and generated for educational purposes
-                        only. Do not use them in production environments. The exported PEM files can
-                        be inspected with{' '}
-                        <code className="font-mono">openssl x509 -in cert.pem -text -noout</code>,
-                        except the composite signature and composite KEM certificates: OpenSSL 3.6
-                        and 4.1 have no composite algorithms, so they print a bare OID and
-                        &ldquo;Unable to load Public Key&rdquo; (the unsigned KEM certificate also
-                        prints a bare OID, because it carries no signature). The certificates are
-                        intact. Use{' '}
-                        <code className="font-mono">openssl asn1parse -in cert.pem -i</code> to see
-                        their structure, or check them with Bouncy Castle Java (1.86 implements
-                        composite ML-DSA and, experimentally, composite ML-KEM).
+                        The workspace can contain CA-issued, self-issued, unsigned or replaced
+                        sample files. Their names and structural display do not establish origin,
+                        signature validity or trust. Inspect the actual exported bytes with your
+                        tools, for example{' '}
+                        <code className="font-mono">openssl x509 -in cert.pem -text -noout</code>.
+                        If your tool does not understand an algorithm,{' '}
+                        <code className="font-mono">openssl asn1parse -in cert.pem -i</code> can
+                        show encoded structure without verifying that algorithm. For production,
+                        evaluate algorithm support, signatures, validity, path policy and revocation
+                        with your relying-party tools; these sample files are not production
+                        credentials.
                       </p>
                     </div>
                   </>
@@ -925,7 +810,7 @@ export const HybridCertInspector: React.FC = () => {
                       {vector.algorithmOID}
                     </div>
                     <div className="text-[10px] text-muted-foreground mt-0.5">
-                      {vector.provider} · {vector.sizeBytes.toLocaleString()} B
+                      {vector.provider} · {decodeDer(vector.derBase64).length.toLocaleString()} B
                     </div>
                   </Button>
                 )
@@ -993,12 +878,15 @@ export const HybridCertInspector: React.FC = () => {
                 </a>
               </div>
 
+              {selectedIETFError && (
+                <div role="alert">Incomplete inspection: {selectedIETFError}</div>
+              )}
               {/* Algorithm OID banner */}
               <div className="bg-background rounded-lg p-3 border border-border">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="text-[10px] text-muted-foreground font-medium mb-0.5">
-                      Signature Algorithm OID
+                      Reference signature algorithm metadata (not parsed identity)
                     </div>
                     <div className="font-mono text-xs text-foreground">
                       {selectedIETFVector.algorithmOID}
@@ -1021,7 +909,7 @@ export const HybridCertInspector: React.FC = () => {
                   {isIETFLoading ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Loader2 size={14} className="animate-spin" />
-                      Parsing certificate with OpenSSL WASM...
+                      Reading encoded certificate fields...
                     </div>
                   ) : selectedIETFResult ? (
                     selectedIETFTree.length > 0 ? (
@@ -1046,7 +934,7 @@ export const HybridCertInspector: React.FC = () => {
                 <div className="space-y-3">
                   <div>
                     <h5 className="text-xs font-bold text-foreground mb-1">
-                      OpenSSL X.509 Parse Output
+                      Custom structural X.509 display
                     </h5>
                     {isIETFLoading ? (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground p-3">
@@ -1054,7 +942,10 @@ export const HybridCertInspector: React.FC = () => {
                         Parsing...
                       </div>
                     ) : (
-                      <pre className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-64 overflow-y-auto font-mono whitespace-pre-wrap custom-scrollbar">
+                      <pre
+                        aria-label="Reference structural certificate fields"
+                        className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-64 overflow-y-auto font-mono whitespace-pre-wrap custom-scrollbar"
+                      >
                         {selectedIETFResult?.openSSLText.trim() ??
                           '(not yet parsed — select the cert)'}
                       </pre>
@@ -1072,7 +963,7 @@ export const HybridCertInspector: React.FC = () => {
               )}
 
               {/* Size View */}
-              {ietfViewMode === 'size' && (
+              {ietfViewMode === 'size' && selectedIETFCertInfo && (
                 <div className="space-y-4">
                   <div className="bg-background rounded-lg p-4 border border-border">
                     <h5 className="text-xs font-bold text-foreground mb-3">
@@ -1080,26 +971,26 @@ export const HybridCertInspector: React.FC = () => {
                     </h5>
                     <div className="space-y-3">
                       {(() => {
-                        const total = selectedIETFVector.sizeBytes
+                        const total = selectedIETFResult!.inspection.sizes.derSize
                         const keyBytes = selectedIETFCertInfo.publicKeySizeBytes
                         const sigBytes = selectedIETFCertInfo.signatureSizeBytes
-                        const overhead = Math.max(0, total - keyBytes - sigBytes)
+                        const overhead = selectedIETFResult!.inspection.sizes.overhead
                         return [
                           { label: 'Total DER', value: total, color: 'bg-primary', pct: 100 },
                           {
-                            label: 'Public Key',
+                            label: 'Subject public-key payload octets',
                             value: keyBytes,
                             color: 'bg-success',
                             pct: total > 0 ? (keyBytes / total) * 100 : 0,
                           },
                           {
-                            label: 'Signature',
+                            label: 'Signature payload octets',
                             value: sigBytes,
                             color: 'bg-warning',
                             pct: total > 0 ? (sigBytes / total) * 100 : 0,
                           },
                           {
-                            label: 'Overhead (ASN.1, extensions, metadata)',
+                            label: 'DER remainder (structure, names, extensions)',
                             value: overhead,
                             color: 'bg-muted-foreground',
                             pct: total > 0 ? (overhead / total) * 100 : 0,
@@ -1116,7 +1007,7 @@ export const HybridCertInspector: React.FC = () => {
                           <div className="w-full bg-muted/50 rounded-full h-2">
                             <div
                               className={`${item.color} rounded-full h-2 transition-all`}
-                              style={{ width: `${Math.max(item.pct, 1)}%` }}
+                              style={{ width: `${item.pct}%` }}
                             />
                           </div>
                         </div>
@@ -1131,19 +1022,23 @@ export const HybridCertInspector: React.FC = () => {
                     </h5>
                     <div className="space-y-2">
                       {IETF_CERT_VECTORS.map((v) => {
-                        const maxSize = Math.max(...IETF_CERT_VECTORS.map((x) => x.sizeBytes))
+                        const maxSize = Math.max(
+                          ...IETF_CERT_VECTORS.map((x) => decodeDer(x.derBase64).length)
+                        )
                         return (
                           <div key={v.id}>
                             <div className="flex items-center justify-between text-xs mb-1">
                               <span className="text-muted-foreground">{v.label.split(':')[0]}</span>
                               <span className="font-mono text-foreground">
-                                {v.sizeBytes.toLocaleString()} B
+                                {decodeDer(v.derBase64).length.toLocaleString()} B
                               </span>
                             </div>
                             <div className="w-full bg-muted/50 rounded-full h-2">
                               <div
                                 className="bg-primary rounded-full h-2 transition-all"
-                                style={{ width: `${(v.sizeBytes / maxSize) * 100}%` }}
+                                style={{
+                                  width: `${(decodeDer(v.derBase64).length / maxSize) * 100}%`,
+                                }}
                               />
                             </div>
                           </div>
@@ -1255,7 +1150,7 @@ export const HybridCertInspector: React.FC = () => {
                         <td className="p-2 font-medium text-foreground">{v.label.split(':')[0]}</td>
                         <td className="p-2 text-muted-foreground">{v.provider}</td>
                         <td className="p-2 text-right font-mono">
-                          {v.sizeBytes.toLocaleString()} B
+                          {decodeDer(v.derBase64).length.toLocaleString()} B
                         </td>
                         <td className="p-2 font-mono text-[10px] text-muted-foreground">
                           {oidToLabel(v.algorithmOID).split('(')[0].trim()}
