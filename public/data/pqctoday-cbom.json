@@ -10737,13 +10737,12 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "98c1accc14c1a2cd",
+      "bom-ref": "505e8ad77b08657e",
       "name": "GitLab CI/CD",
-      "version": "17.x",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "GitLab's gitlab-sshd documentation shows mlkem768x25519-sha256 in its example key exchange settings, for Git over SSH; the page does not call it post-quantum, name a GitLab version or say whether it is on by default. The 2025 GitLab issue cited as proof calls mlkem768x25519 a post-quantum key agreement scheme, says the Go SSH library supports it from Go 1.24, and says it had to be enabled manually.",
+      "description": "GitLab's gitlab-sshd documentation shows mlkem768x25519-sha256 in its example key exchange settings; the page does not call it post-quantum, name a GitLab version or say whether it is on by default.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -10769,7 +10768,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "false"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -27880,25 +27879,21 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f76363212ab133fd",
+      "bom-ref": "53bf9e5b42aeb874",
       "name": "Post-Quantum Hybrid PQ VPN",
-      "version": "Current",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, Classic-McEliece",
-          "primitive": "kem"
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Production-grade hybrid post-quantum VPN using IKEv2 with RFC 9370 extensions (the IETF-ratified standard for multiple key exchanges in IKEv2, co-authored by Post-Quantum Ltd). Supports ML-KEM-1024 + Classic McEliece hybrid KEM for defense-in-depth key establishment. Fully backward compatible with existing IPsec/IKEv2 infrastructure — no rip-and-replace required. Crypto-agile architecture allows algorithm updates without redeployment. Deployed protecting NATO communications and active conflict zone drone operations. FIPS 140-3 validation in progress.",
+      "description": "The vendor's home page says it is the author of RFC 9370, which it describes as the IETF-ratified standard for hybrid quantum-safe VPN connectivity, and that its solutions protect NATO communications. The page documents no VPN product capability, ML-KEM parameter set or FIPS validation status.",
       "externalReferences": [
         {
-          "type": "vcs",
-          "url": "https://github.com/signalapp/libsignal"
-        },
-        {
           "type": "website",
-          "url": "https://www.post-quantum.com/products/vpn/"
+          "url": "https://www.post-quantum.com/"
         }
       ],
       "properties": [
@@ -27916,7 +27911,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "false"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -29930,7 +29925,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No (Formally Verified)"
+          "value": "Validation status not stated in referenced source."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -31557,7 +31552,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Reference C implementation of HAWK, a lattice-based signature scheme over NTRU lattices. NIST PQC Additional Signatures Round 3.",
+      "description": "Hawk is a lattice-isomorphism-based signature scheme with an authors' reference implementation. It advanced to NIST Additional Signatures Round 3 on 14 May 2026, but it was withdrawn on 29 July 2026 after a new key-recovery attack. Its code and specification are historical research resources, not a current security recommendation.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31691,7 +31686,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in referenced source."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -34158,7 +34153,7 @@
           "primitive": "kem"
         }
       },
-      "description": "pqctoday-kmip is pqctoday's own KMIP 3.0 server, licensed AGPL-3.0-only, written in Rust and executing crypto on the softhsmrustv3 PKCS#11 v3.2 engine (NOT on ThalesGroup/kmip-go, which an earlier catalog revision recorded in error). It exposes a three-plane architecture: a crypto-agility policy plane, KMIP 3.0 key management, and PKCS#11 crypto execution. Verified by execution on 2026-08-09: ML-DSA-65 Create+Sign and ML-KEM-768 Create+Encapsulate+Decapsulate all succeeded against a live server, with 6 managed objects and an audit trail reporting 37 policy decisions, 78 KMIP operations and 14 PKCS#11 calls. Data-plane TLS is quantum-safe-profiled: TLS 1.3 only with hybrid ML-KEM groups, classical key exchange refused outright.",
+      "description": "pqctoday-kmip is pqctoday's own KMIP 3.0 server, licensed AGPL-3.0-only, written in Rust and executing crypto on the softhsmrustv3 PKCS#11 v3.2 engine (NOT on ThalesGroup/kmip-go, which an earlier catalog revision recorded in error). It exposes a three-plane architecture: a crypto-agility policy plane, KMIP 3.0 key management, and PKCS#11 crypto execution. Verified by execution on 2026-08-09: ML-DSA-65 Create+Sign and ML-KEM-768 Create+Encapsulate+Decapsulate all succeeded against a live server, with 6 managed objects and an audit trail reporting 37 policy decisions, 78 KMIP operations and 14 PKCS#11 calls. The quantum-safe TLS profile is opt-in via --tls-profile quantum-safe; the documented default is permissive. The opt-in profile restricts TLS and key-exchange choices. Use its documented enforcement details rather than assuming the default or every configuration is quantum-safe.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -35818,7 +35813,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in referenced source."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -38204,7 +38199,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in referenced source."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -38466,7 +38461,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in referenced source."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -39660,6 +39655,45 @@
         {
           "name": "pqctoday:fips_validated",
           "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "473383f2558cd0dd",
+      "name": "Azure Cloud HSM",
+      "manufacturer": {
+        "name": "Microsoft Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Azure Cloud HSM is a customer-managed, single-tenant HSM service on Marvell LiquidSecurity hardware security modules. Microsoft's FAQ lists PKCS#11, SSL/TLS offload, certificate authority private key protection, transparent data encryption, and document and code signing as supported uses, and names no post-quantum algorithm, firmware or roadmap, so whether the service supports post-quantum algorithms is not stated on the cited pages.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Azure-Cloud-HSM"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cloud Hardware Security Module (HSM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Cloud"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Microsoft states the service's HSMs are validated to meet FIPS 140-3 Level 3 and gives no certificate number on the cited pages."
         },
         {
           "name": "pqctoday:algorithm_source",
