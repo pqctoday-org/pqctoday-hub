@@ -30,7 +30,9 @@
     "spdx/BSD-2-Clause.txt": "standard SPDX text (https://spdx.org/licenses/BSD-2-Clause.html)",
     "spdx/BSD-3-Clause.txt": "standard SPDX text (https://spdx.org/licenses/BSD-3-Clause.html)",
     "spdx/0BSD.txt": "standard SPDX text (https://spdx.org/licenses/0BSD.html)",
-    "spdx/Zlib.txt": "standard SPDX text (https://spdx.org/licenses/Zlib.html)"
+    "spdx/Zlib.txt": "standard SPDX text (https://spdx.org/licenses/Zlib.html)",
+    "emscripten-5.0.7-musl-COPYRIGHT.txt": "Actual Emscripten 5.0.7 distribution system/lib/libc/musl/COPYRIGHT used by producer59947f47da2d06781816c04fdb19cc6d711341aa; text SHA256 f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af; emcc.py SHA2569265f2af265ffffc05d836b405e2260609613280e862ebe7a7fdc6a7bdf20a65.",
+    "pqctoday-hub-59947f47-LICENSE.txt": "pqctoday-org/pqctoday-hub LICENSE at producer59947f47da2d06781816c04fdb19cc6d711341aa; full AGPLv3 terms accompanying the AGPL-3.0-only caller wrapper."
   },
   "toolchains": {
     "emscripten-c": [
@@ -82,6 +84,23 @@
         "name": "Rust standard library (core, alloc, std)",
         "license": "MIT OR Apache-2.0",
         "texts": ["rust-LICENSE-MIT.txt", "rust-LICENSE-APACHE.txt"]
+      }
+    ],
+    "emscripten-c-lms-5.0.7": [
+      {
+        "name": "Emscripten runtime (JavaScript glue and system libraries)",
+        "license": "MIT OR NCSA",
+        "texts": ["emscripten-LICENSE.txt"]
+      },
+      {
+        "name": "musl libc (as shipped with Emscripten)",
+        "license": "MIT",
+        "texts": ["emscripten-5.0.7-musl-COPYRIGHT.txt"]
+      },
+      {
+        "name": "compiler-rt (as shipped with Emscripten)",
+        "license": "Apache-2.0 WITH LLVM-exception OR NCSA OR MIT",
+        "texts": ["emscripten-compiler-rt-LICENSE.txt"]
       }
     ]
   },
@@ -251,6 +270,35 @@
       "noticesFile": "public/wasm/entropy90b/THIRD_PARTY_NOTICES.txt",
       "licensesDir": "public/wasm/entropy90b/licenses",
       "components": [],
+      "incomplete": []
+    },
+    {
+      "key": "lms-safe-v1",
+      "title": "LMS/HSS bounded-signature sample engine",
+      "toolchain": "emscripten-c-lms-5.0.7",
+      "noticesFile": "public/wasm/lms.202589108ce29387ab98f5d4f15f06535f1c2f102bdfd60faa318cd1634d442b.NOTICES.txt",
+      "components": [
+        {
+          "name": "Cisco hash-sigs implementation",
+          "license": "Cisco three-clause redistribution conditions (verbatim in shipped notices)",
+          "texts": [],
+          "note": "Pinned cisco/hash-sigs77688282cbfc0070f5355efeae8d2ea2f57b9168; no inference for legacy lms bytes."
+        },
+        {
+          "name": "Portable SHA-256 implementation",
+          "license": "LibTomCrypt attribution and permission text (verbatim in shipped notices)",
+          "texts": [],
+          "note": "Preserves the actual sha256.c notice without inventing an SPDX identifier."
+        },
+        {
+          "name": "Hub LMS caller wrapper",
+          "license": "AGPL-3.0-only",
+          "texts": ["pqctoday-hub-59947f47-LICENSE.txt"],
+          "sourceOffer": [
+            "https://github.com/pqctoday-org/pqctoday-hub/tree/59947f47da2d06781816c04fdb19cc6d711341aa"
+          ]
+        }
+      ],
       "incomplete": []
     }
   ]

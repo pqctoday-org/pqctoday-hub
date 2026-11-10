@@ -27,6 +27,43 @@
   "components": [
     {
       "type": "application",
+      "name": "LMS/HSS bounded-signature sample engine (WASM)",
+      "licenses": [
+        {
+          "license": {
+            "name": "Cisco three-clause terms; LibTomCrypt attribution; AGPL-3.0-only wrapper"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "03281779ef438cfbe69583344285ff846bb728f538c56967745fbc539e09fc4e"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-hub/commit/59947f47da2d06781816c04fdb19cc6d711341aa"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:evidence",
+          "value": "served WebAssembly binary; the binary embeds no release version"
+        },
+        {
+          "name": "pqctoday:build",
+          "value": "built from pqctoday-org/pqctoday-hub @ 59947f47da2d06781816c04fdb19cc6d711341aa"
+        },
+        {
+          "name": "pqctoday:note",
+          "value": "New pinned source build, distinct from the retained legacy lms artifact of unknown origin. Exact component and runtime terms are reproduced at /licenses/engines/lms-safe-v1.txt; no release version or SPDX classification is inferred."
+        }
+      ]
+    },
+    {
+      "type": "application",
       "name": "LMS/HSS hash-based signature module (WASM)",
       "licenses": [
         {

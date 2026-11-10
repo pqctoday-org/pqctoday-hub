@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { LMS_ARTIFACT } from './lmsArtifact.generated'
+
 // Interface for the Emscripten module
 interface LmsModule {
   _generate_keypair_wasm: (
@@ -7,12 +9,15 @@ interface LmsModule {
     lmsType: number,
     lmotsType: number
   ) => number
-  _sign_message_wasm: (
-    privPtr: number,
-    pubPtr: number,
-    msgPtr: number,
-    msgLen: number,
-    sigPtr: number
+  _get_signature_length_wasm: (privatePtr: number, privateCapacity: number) => number
+  _sign_message_bounded_wasm: (
+    privatePtr: number,
+    privateCapacity: number,
+    messagePtr: number,
+    messageLength: number,
+    signaturePtr: number,
+    signatureCapacity: number,
+    writtenPtr: number
   ) => number
   _verify_wasm: (
     pubPtr: number,
@@ -26,67 +31,86 @@ interface LmsModule {
   HEAPU8: Uint8Array
 }
 
-declare global {
-  function createLmsModule(): Promise<LmsModule>
-}
+type LmsFactory = (options: {
+  wasmBinary: ArrayBuffer
+  locateFile: (name: string) => string
+}) => Promise<LmsModule>
 
 export class LmsService {
   private module: LmsModule | null = null
-  private isInitializing = false
-  private initError: Error | null = null
+  private initializing: Promise<void> | null = null
 
   async init(): Promise<void> {
     if (this.module) return
-    if (this.isInitializing) {
-      while (this.isInitializing) {
-        await new Promise((r) => setTimeout(r, 100))
-      }
-      // Check if the concurrent init succeeded or failed
-      if (this.initError) throw this.initError
-      if (!this.module) throw new Error('LMS initialization failed')
-      return
-    }
-
-    this.isInitializing = true
-    this.initError = null
+    if (this.initializing) return this.initializing
+    const pending = this.initializePair()
+    this.initializing = pending
     try {
-      // Load the script if not present
-      const existingScript = document.getElementById('lms-wasm-script')
-      if (!existingScript) {
-        await new Promise<void>((resolve, reject) => {
-          const script = document.createElement('script')
-          script.id = 'lms-wasm-script'
-          script.src = '/wasm/lms.js'
-          script.onload = () => resolve()
-          script.onerror = () => {
-            // Remove failed script so retries can re-add it
-            script.remove()
-            reject(new Error('Failed to load lms.js'))
-          }
-          document.body.appendChild(script)
-        })
-      }
-
-      // Initialize module
-      // emscripten creates a global function createLmsModule based on EXPORT_NAME
-      // But we need to make sure it's available
-      if (typeof window.createLmsModule !== 'function') {
-        throw new Error('createLmsModule not found. WASM script failed to export correctly.')
-      }
-
-      this.module = await window.createLmsModule()
-      console.log('LMS WASM Module Initialized:', this.module)
-      console.log('Module keys:', Object.keys(this.module))
-      if (!this.module.HEAPU8) {
-        console.error('HEAPU8 is missing from module!')
-      }
-    } catch (e) {
-      const error = e instanceof Error ? e : new Error(String(e))
-      this.initError = error
-      console.error('LMS Init Error:', e)
-      throw error
+      await pending
     } finally {
-      this.isInitializing = false
+      if (this.initializing === pending) this.initializing = null
+    }
+  }
+
+  private async initializePair(): Promise<void> {
+    let script: HTMLScriptElement | null = null
+    try {
+      if (!globalThis.crypto?.subtle)
+        throw new Error('LMS resource integrity verification is unavailable')
+      const response = await fetch(LMS_ARTIFACT.wasmUrl, { cache: 'no-store' })
+      if (!response.ok) throw new Error('LMS immutable WASM resource is missing')
+      const binary = await response.arrayBuffer()
+      const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', binary)), (b) =>
+        b.toString(16).padStart(2, '0')
+      ).join('')
+      if (hash !== LMS_ARTIFACT.wasmSha256) throw new Error('LMS WASM resource integrity mismatch')
+      const previous = Reflect.get(window, LMS_ARTIFACT.factoryName)
+      script = document.createElement('script')
+      if (!('integrity' in script))
+        throw new Error('LMS script integrity verification is unavailable')
+      script.src = LMS_ARTIFACT.jsUrl
+      script.integrity = LMS_ARTIFACT.jsIntegrity
+      script.crossOrigin = 'anonymous'
+      script.dataset.lmsBuild = LMS_ARTIFACT.buildId
+      const owned = script
+      await new Promise<void>((resolve, reject) => {
+        owned.onload = () => resolve()
+        owned.onerror = () =>
+          reject(new Error('LMS immutable JS resource failed integrity/loading'))
+        document.body.appendChild(owned)
+      })
+      const value: unknown = Reflect.get(window, LMS_ARTIFACT.factoryName)
+      if (typeof value !== 'function' || value === previous)
+        throw new Error('Verified LMS factory was not newly published')
+      const factory = value as LmsFactory
+      const expectedName = LMS_ARTIFACT.wasmUrl.split('/').at(-1)
+      const module = await factory({
+        wasmBinary: binary,
+        locateFile: (name) => {
+          if (name !== expectedName) throw new Error('Unexpected LMS resource request')
+          return LMS_ARTIFACT.wasmUrl
+        },
+      })
+      if (
+        !module.HEAPU8 ||
+        typeof module._get_signature_length_wasm !== 'function' ||
+        typeof module._sign_message_bounded_wasm !== 'function' ||
+        typeof module._generate_keypair_wasm !== 'function' ||
+        typeof module._verify_wasm !== 'function' ||
+        typeof module._malloc !== 'function' ||
+        typeof module._free !== 'function'
+      ) {
+        throw new Error('Verified LMS pair does not provide the required bounded ABI')
+      }
+      this.module = module
+    } catch (error) {
+      script?.remove()
+      throw error instanceof Error ? error : new Error(String(error))
+    } finally {
+      if (script) {
+        script.onload = null
+        script.onerror = null
+      }
     }
   }
 
@@ -147,61 +171,47 @@ export class LmsService {
   ): Promise<{ signature: Uint8Array; updatedPrivateKey: Uint8Array }> {
     await this.init()
     const m = this.module!
-
-    const PRIV_LEN = privateKey.length
-    const MSG_LEN = message.length
-    // HSS signatures are large, max ~5KB usually covers reasonable parameter sets
-    const SIG_MAX_LEN = 5000
-
-    const privPtr = m._malloc(PRIV_LEN)
-    m.HEAPU8.set(privateKey, privPtr)
-
-    const pubPtr = m._malloc(64) // Dummy
-    const msgPtr = m._malloc(MSG_LEN)
-    m.HEAPU8.set(message, msgPtr)
-
-    const sigPtr = m._malloc(SIG_MAX_LEN)
-
-    // Zero out signature buffer to assist with length finding if needed (though we rely on max for now)
-    m.HEAPU8.fill(0, sigPtr, sigPtr + SIG_MAX_LEN)
-
+    const allocations: number[] = []
+    const allocate = (size: number) => {
+      const pointer = m._malloc(Math.max(size, 1))
+      if (!pointer) throw new Error('LMS allocation failed')
+      allocations.push(pointer)
+      return pointer
+    }
     try {
-      const res = m._sign_message_wasm(privPtr, pubPtr, msgPtr, MSG_LEN, sigPtr)
-      if (res !== 0) {
-        throw new Error('Signing failed')
+      const privatePtr = allocate(privateKey.length)
+      m.HEAPU8.set(privateKey, privatePtr)
+      const required = m._get_signature_length_wasm(privatePtr, privateKey.length)
+      if (!Number.isSafeInteger(required) || required <= 0)
+        throw new Error('LMS key parameters or required signature length are invalid')
+      const messagePtr = allocate(message.length)
+      m.HEAPU8.set(message, messagePtr)
+      const signaturePtr = allocate(required)
+      const writtenPtr = allocate(4)
+      m.HEAPU8.fill(0, writtenPtr, writtenPtr + 4)
+      const result = m._sign_message_bounded_wasm(
+        privatePtr,
+        privateKey.length,
+        messagePtr,
+        message.length,
+        signaturePtr,
+        required,
+        writtenPtr
+      )
+      if (result !== 0)
+        throw new Error(
+          result === -2
+            ? 'LMS signature capacity was insufficient; signing did not complete'
+            : 'LMS signing did not complete'
+        )
+      const written = new DataView(m.HEAPU8.buffer).getUint32(writtenPtr, true)
+      if (written !== required) throw new Error('LMS returned an invalid exact signature length')
+      return {
+        signature: m.HEAPU8.slice(signaturePtr, signaturePtr + written),
+        updatedPrivateKey: m.HEAPU8.slice(privatePtr, privatePtr + privateKey.length),
       }
-
-      // Capture the updated private key state
-      const updatedPrivateKey = new Uint8Array(
-        m.HEAPU8.subarray(privPtr, privPtr + PRIV_LEN)
-      ).slice()
-
-      // Capture signature and trim trailing zeros.
-      // NOTE: This heuristic is imperfect — SHA-256 hash values can legitimately end in 0x00.
-      // TODO: modify WASM _sign_message_wasm to write actual length via an output pointer
-      //       so we can read it directly instead of guessing from the buffer contents.
-      const fullSig = new Uint8Array(m.HEAPU8.subarray(sigPtr, sigPtr + SIG_MAX_LEN))
-      let actualLen = SIG_MAX_LEN
-      // Find last non-zero byte (LMS sigs don't end with many zeros)
-      while (actualLen > 0 && fullSig[actualLen - 1] === 0) {
-        actualLen--
-      }
-      // Safety: the smallest valid LMS-SHA256 signature (any practical parameter set)
-      // is at least ~500 bytes. If trimming yields less, the buffer is likely miscalculated
-      // or the WASM zeroed beyond the real signature — fall back to the full buffer.
-      if (actualLen < 500) {
-        console.warn('LMS signature unexpectedly short after zero-trim, using full buffer')
-        actualLen = SIG_MAX_LEN
-      }
-      const signature = fullSig.slice(0, actualLen)
-      console.log(`LMS Signature: trimmed from ${SIG_MAX_LEN} to ${actualLen} bytes`)
-
-      return { signature, updatedPrivateKey }
     } finally {
-      m._free(privPtr)
-      m._free(pubPtr)
-      m._free(msgPtr)
-      m._free(sigPtr)
+      for (const pointer of allocations) m._free(pointer)
     }
   }
 

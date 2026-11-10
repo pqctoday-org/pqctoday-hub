@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "pair": {
+    "abiVersion": 1,
+    "buildId": "6fb56415c0dcfd0c5f57a6a293e0ca0322c4aebaba89ceeaa98304982001545c",
+    "pairId": "202589108ce29387ab98f5d4f15f06535f1c2f102bdfd60faa318cd1634d442b",
+    "factoryName": "createLmsModule_6fb56415c0dcfd0c5f57a6a293e0ca0322c4aebaba89ceeaa98304982001545c",
+    "jsUrl": "/wasm/lms/lms.165b5e96778a650fab94911b67ca0662cf56650b74b0811a5102a31889e54158.js",
+    "jsSha256": "165b5e96778a650fab94911b67ca0662cf56650b74b0811a5102a31889e54158",
+    "jsIntegrity": "sha256-FltelneKZQ+rlJEbZ8oGYs9WZQt0sIEaUQKjGInlQVg=",
+    "wasmUrl": "/wasm/lms/lms.03281779ef438cfbe69583344285ff846bb728f538c56967745fbc539e09fc4e.wasm",
+    "wasmSha256": "03281779ef438cfbe69583344285ff846bb728f538c56967745fbc539e09fc4e",
+    "noticesUrl": "/wasm/lms.202589108ce29387ab98f5d4f15f06535f1c2f102bdfd60faa318cd1634d442b.NOTICES.txt",
+    "noticesSha256": "d5ffbbac0b8e223cce2713d0b8c8656f10459143621e5ffb7fcf31257343a38b"
+  },
+  "producer": "pqctoday-org/pqctoday-hub",
+  "producerSourceCommit": "59947f47da2d06781816c04fdb19cc6d711341aa",
+  "sourceInputs": {
+    "producerSourceCommit": "59947f47da2d06781816c04fdb19cc6d711341aa",
+    "buildRecipeSha256": "12772b55b57dba77b349540a7d4e1b7fc46cf86e168e3d7ce7445e28141d1568",
+    "upstream": {
+      "repo": "https://github.com/cisco/hash-sigs.git",
+      "commit": "77688282cbfc0070f5355efeae8d2ea2f57b9168",
+      "tree": "bb4a87e85ff000f9d00f14943687f1c29ec29d92"
+    },
+    "wrapperSha256": "0e2aa4d90fbb60436590106c9c5abd475b96ae63537ecd6c3a3db3bc2f844ba7",
+    "sourceLockSha256": "3d949634b9dd2856410875362afd3478ea1c8a938aaa00cc94849cf85cae0a78",
+    "portableHeaderSha256": "e53a33b4494a4d86bf53fafaf522bc4d5f17523b856e8568d53a3735f46b944a",
+    "configSha256": "17b50f6bd48b6e657fc6dc2c8baf76fa9a53fc9b4b2cdaaa93939b178a1bb10e",
+    "pythonVersion": "3.14.5",
+    "emccVersion": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 5.0.7-git",
+    "emccScriptSha256": "9265f2af265ffffc05d836b405e2260609613280e862ebe7a7fdc6a7bdf20a65",
+    "optimization": "O3",
+    "abiVersion": 1
+  },
+  "exports": [
+    "_generate_keypair_wasm",
+    "_get_signature_length_wasm",
+    "_sign_message_bounded_wasm",
+    "_verify_wasm",
+    "_malloc",
+    "_free"
+  ],
+  "note": "New pinned build; historical fixed-path binary origin remains unknown. No private paths/key state."
+}

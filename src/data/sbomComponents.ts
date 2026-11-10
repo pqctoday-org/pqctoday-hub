@@ -387,6 +387,12 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       },
       { name: 'LMS/HSS hash-based signature module (WASM)', license: 'not recorded', built: 'lms' },
       {
+        name: 'LMS/HSS bounded-signature sample engine (WASM)',
+        license: 'Cisco three-clause terms; LibTomCrypt attribution; AGPL-3.0-only wrapper',
+        built: 'lms-safe-v1',
+        note: 'New pinned source build, distinct from the retained legacy lms artifact of unknown origin. Exact component and runtime terms are reproduced at /licenses/engines/lms-safe-v1.txt; no release version or SPDX classification is inferred.',
+      },
+      {
         name: 'NIST SP 800-90B EntropyAssessment (WASM estimators)',
         license: 'NIST software notice (public domain in the US)',
         href: 'https://github.com/usnistgov/SP800-90B_EntropyAssessment/commit/87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289',
