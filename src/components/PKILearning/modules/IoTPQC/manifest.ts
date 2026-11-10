@@ -15,7 +15,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'iot-pqc',
-  contentVersion: 13,
+  contentVersion: 14,
   lm_id: 'LM-074',
   title: 'IoT & Embedded Device PQC',
   description:
