@@ -142,7 +142,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       {
         name: 'pqcrypto',
         description:
-          'Archived Rust bindings to PQClean with legacy Dilithium/Kyber APIs; upstream recommends maintained alternatives for new projects',
+          'Archived Rust bindings to PQClean (legacy Dilithium/Kyber crates and, before archiving, pqcrypto-mldsa and pqcrypto-mlkem); upstream recommends maintained alternatives for new projects',
         pqcSupport: true,
       },
       {
