@@ -9,6 +9,7 @@ import {
   type CryptoMode,
 } from '../data/protocolSizeComparisons'
 import { Button } from '@/components/ui/button'
+import { tlsSample } from '../data/measuredTlsHandshake'
 
 type SortField = 'protocol' | 'handshakeBytes' | 'roundTrips' | 'publicKeyBytes'
 
@@ -130,7 +131,7 @@ export const ProtocolComparisonTable: React.FC = () => {
 
       {/* Size Comparison Table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-xs border-collapse">
+        <table aria-label="Protocol size comparison" className="w-full text-xs border-collapse">
           <thead>
             <tr className="border-b border-border">
               <th className="text-left p-2">
@@ -168,7 +169,7 @@ export const ProtocolComparisonTable: React.FC = () => {
                   onClick={() => handleSort('publicKeyBytes')}
                   className="flex items-center gap-1 text-muted-foreground font-bold hover:text-foreground transition-colors ml-auto"
                 >
-                  PubKey <ArrowUpDown size={10} />
+                  Key / share <ArrowUpDown size={10} />
                 </Button>
               </th>
               <th className="text-left p-2 text-muted-foreground font-bold hidden lg:table-cell">
@@ -215,7 +216,12 @@ export const ProtocolComparisonTable: React.FC = () => {
             const maxBytes = Math.max(...filteredData.map((e) => e.handshakeBytes))
             const widthPercent = (entry.handshakeBytes / maxBytes) * 100
             return (
-              <div key={`bar-${entry.protocol}-${entry.mode}-${idx}`} className="space-y-1">
+              <div
+                key={`bar-${entry.protocol}-${entry.mode}-${idx}`}
+                className="space-y-1"
+                role="img"
+                aria-label={`${entry.protocol} ${entry.modeLabel}: ${entry.handshakeBytes} handshake bytes`}
+              >
                 <div className="flex items-center justify-between text-[10px]">
                   <span className={`font-medium ${PROTOCOL_COLORS[entry.protocol]}`}>
                     {entry.protocol} ({entry.modeLabel})
@@ -235,6 +241,98 @@ export const ProtocolComparisonTable: React.FC = () => {
           })}
         </div>
       </div>
+
+      {filteredData.some((entry) => entry.protocol === 'TLS 1.3') && (
+        <section aria-label="Measured TLS handshake examples" className="glass-panel p-4 space-y-3">
+          <h4 className="text-sm font-bold text-foreground">What the TLS totals include</h4>
+          <p className="text-xs text-muted-foreground">
+            Measured 9 November 2026 with OpenSSL 3.6.3: TLS_AES_128_GCM_SHA256, server
+            authentication, and fictional example.test certificates. Each total counts all seven
+            handshake messages, including their four-byte headers. TLS record framing, tags and
+            padding, TCP/IP, application data, session tickets, resumption and client authentication
+            are excluded. No ALPN or certificate compression is used.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            The server sends a leaf and intermediate certificate; the root is trusted locally. The
+            profiles use matching fictional certificate metadata. RSA-2048 and ML-DSA-65 are not
+            equivalent security strengths. The PQC authentication example uses
+            draft-ietf-tls-mldsa-06, which is in the RFC Editor queue.
+          </p>
+          {filteredData
+            .filter((entry) => entry.protocol === 'TLS 1.3')
+            .map((entry) => {
+              const sample = tlsSample(entry.mode)
+              return (
+                <details key={entry.mode} className="rounded-lg border border-border p-3">
+                  <summary className="cursor-pointer text-xs font-semibold text-foreground">
+                    {entry.modeLabel}: {sample.totalBytes.toLocaleString()} B
+                  </summary>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Client key share: {sample.clientShareBytes.toLocaleString()} B. Server key
+                    share: {sample.serverShareBytes.toLocaleString()} B. ML-KEM ciphertext
+                    component: {sample.ciphertextBytes.toLocaleString()} B. The key/share column is
+                    the client key-share payload, not the complete handshake.
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Certificate authentication messages:{' '}
+                    {sample.authenticationBytes.toLocaleString()} B, including a{' '}
+                    {sample.signatureBytes.toLocaleString()} B CertificateVerify signature. Both
+                    Finished messages are also counted below.
+                  </p>
+                  <table className="mt-3 w-full table-fixed text-xs">
+                    <caption className="text-left font-semibold mb-1">
+                      Captured handshake messages
+                    </caption>
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th scope="col" className="text-left py-1 w-[38%]">
+                          Direction
+                        </th>
+                        <th scope="col" className="text-left py-1">
+                          Message
+                        </th>
+                        <th scope="col" className="text-right py-1 w-[20%]">
+                          Bytes
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sample.messages.map((message, index) => (
+                        <tr key={`${message.name}-${index}`} className="border-b border-border/50">
+                          <td className="py-1">
+                            {message.direction === 'client-to-server'
+                              ? 'Client → server'
+                              : 'Server → client'}
+                          </td>
+                          <td className="py-1 break-all">{message.name}</td>
+                          <td className="text-right py-1">{message.bytes.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th scope="row" colSpan={2} className="text-left py-1">
+                          Total
+                        </th>
+                        <td className="text-right py-1 font-semibold">
+                          {sample.totalBytes.toLocaleString()}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </details>
+              )
+            })}
+          <p className="text-xs text-muted-foreground">
+            These are reproducible sample configurations, not universal handshake sizes or latency
+            measurements. Look for production tools that capture both directions, identify the
+            negotiated group and signature scheme, and measure the actual chain and extensions at a
+            stated framing boundary. A KEM ciphertext alone cannot provide that total. In this
+            capture the classical ClientHello also includes a six-byte EC point-format extension
+            that the hybrid and PQC cases omit.
+          </p>
+        </section>
+      )}
 
       {/* Feature Comparison */}
       <div className="space-y-3">
