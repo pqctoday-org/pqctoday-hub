@@ -38,8 +38,7 @@ const PIPELINE_TIMEOUT = 180_000 // genpkey (ML-DSA-65 ~10 s) + 3 more commands
 
 // These must match the DEFAULT_PAYLOAD constants in the respective components.
 const SIGN_PAYLOAD_SNIPPET = 'Hello from the PQC Email & Document Signing Workshop.'
-const KEM_PAYLOAD_SNIPPET = 'Confidential workshop message'
-const KEM_PAYLOAD_RFC = 'RFC 9629'
+const KEM_PAYLOAD = 'Fictional CMS regression message.\nExact UTF-8 recovery: café — sample only.\n'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -288,6 +287,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
     // The "Encrypt + Decrypt" button is always enabled; click it once visible.
     const encryptBtn = page.getByRole('button', { name: /Encrypt \+ Decrypt/i }).first()
     await expect(encryptBtn).toBeVisible({ timeout: 30_000 })
+    await page.locator('#mlkem-encrypt-payload').fill(KEM_PAYLOAD)
     await encryptBtn.click()
 
     // Wait for terminal success — accepts both software and HSM modes.
@@ -305,11 +305,8 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
     // cms -decrypt must recover the DEFAULT_PAYLOAD bytes written by cms -encrypt.
     // A stub returning decryptOk=true can't produce the correct plaintext.
     const decryptedText = await expandDetailsAndReadPre(page, 'Show recovered plaintext')
-    expect(decryptedText, 'Decrypted text must contain the KEM payload message').toContain(
-      KEM_PAYLOAD_SNIPPET
-    )
-    expect(decryptedText, 'Decrypted text must contain RFC 9629 reference').toContain(
-      KEM_PAYLOAD_RFC
+    expect(decryptedText, 'Decryption must recover the exact supplied UTF-8 plaintext').toBe(
+      KEM_PAYLOAD
     )
     console.log(`[cms-hsm] T4 recovered plaintext (first 80): ${decryptedText.slice(0, 80)}`)
 

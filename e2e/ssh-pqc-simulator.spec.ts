@@ -5,7 +5,14 @@
 // Static UI tests are browser-agnostic.
 // Live handshake tests require Chromium (SharedArrayBuffer + COOP/COEP).
 
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
+
+async function runComparison(page: Page) {
+  await page.getByRole('button', { name: 'Run SSH comparison' }).click()
+  await expect(page.getByText('Comparison runs finished')).toBeVisible({ timeout: 90_000 })
+  await expect(page.getByText(/Classical done: connection_ok=true/)).toBeVisible()
+  await expect(page.getByText(/REAL PQC done: connection_ok=true/)).toBeVisible()
+}
 
 test.describe('PQC SSH Simulator', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,12 +41,18 @@ test.describe('PQC SSH Simulator', () => {
     await expect(page.getByText('PQC SSH Simulator').first()).toBeVisible()
   })
 
-  test('description advertises real softhsmv3 PKCS#11', async ({ page }) => {
-    await expect(page.getByText(/softhsmv3 PKCS#11/i).first()).toBeVisible()
+  test('description distinguishes real OpenSSH and modeled operations', async ({ page }) => {
+    await expect(
+      page
+        .getByText(
+          /Supported combinations run real OpenSSH; other combinations show modeled token operations/
+        )
+        .first()
+    ).toBeVisible()
   })
 
   test('shows the run handshakes button', async ({ page }) => {
-    const runBtn = page.getByRole('button', { name: /run.*handshake/i })
+    const runBtn = page.getByRole('button', { name: 'Run SSH comparison' })
     await expect(runBtn).toBeVisible()
     await expect(runBtn).toBeEnabled()
   })
@@ -64,7 +77,7 @@ test.describe('PQC SSH Simulator', () => {
   })
 
   test('shows the handshake log tab with idle message', async ({ page }) => {
-    await expect(page.getByText(/Click.*Run both handshakes/i)).toBeVisible()
+    await expect(page.getByText(/Click.*Run comparison/i)).toBeVisible()
   })
 
   test('shows the PKCS#11 calls tab', async ({ page }) => {
@@ -108,7 +121,7 @@ test.describe('PQC SSH Simulator', () => {
 
   test('shows updated comparison panel title', async ({ page }) => {
     await expect(
-      page.getByRole('heading', { name: 'SSH authentication — side-by-side telemetry' })
+      page.getByRole('heading', { name: 'SSH sample operations and handshake telemetry' })
     ).toBeVisible()
   })
 
@@ -131,55 +144,60 @@ test.describe('PQC SSH Simulator', () => {
     test.skip(({ browserName }) => browserName !== 'chromium', 'Requires Chromium')
 
     test('full run completes and produces wire packets', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await runComparison(page)
       await page.getByRole('tab', { name: /wire packets/i }).click()
       await expect(page.getByText('SSH_MSG_KEX_ECDH_INIT').first()).toBeVisible()
       await expect(page.getByText('SSH_MSG_USERAUTH_SUCCESS').first()).toBeVisible()
     })
 
     test('PKCS#11 log shows real ML-DSA + ML-KEM mechanisms after run', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await runComparison(page)
       await page.getByRole('tab', { name: /pkcs#?11/i }).click()
       await expect(
         page.getByText(/C_GenerateKeyPair|C_Sign|C_EncapsulateKey/i).first()
       ).toBeVisible()
     })
 
-    test('PQC card shows quantum-safe pill', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await expect(page.getByText('quantum-safe').first()).toBeVisible()
+    test('only the real PQC profile reports the quantum-safe status', async ({ page }) => {
+      await runComparison(page)
+      await expect(
+        page.locator('span.text-status-success').filter({ hasText: /^\s*quantum-safe\s*$/ })
+      ).toHaveCount(1)
     })
 
     test('PQC leg shows ML-DSA-65 signature size 3,309 B', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await runComparison(page)
       await expect(page.getByText(/3,309 B/i).first()).toBeVisible({ timeout: 90_000 })
     })
 
     test('hybrid KEX share is 1,216 B', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await runComparison(page)
       await expect(page.getByText(/1,216 B/i).first()).toBeVisible()
     })
 
-    test('classical leg shows Ed25519 signature size 64 B', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await expect(page.getByText(/\b64 B\b/i).first()).toBeVisible()
+    test('classical leg reports its ECDSA-P256 signature bytes', async ({ page }) => {
+      await runComparison(page)
+      const card = page
+        .getByRole('heading', { name: 'Classical (ecdsa-nistp256 + curve25519)' })
+        .locator('..')
+        .locator('..')
+      const signature = await card
+        .getByText('Host signature', { exact: true })
+        .locator('..')
+        .textContent()
+      const bytes = Number(signature?.match(/(\d+) B/)?.[1])
+      expect(bytes).toBeGreaterThanOrEqual(8)
+      expect(bytes).toBeLessThanOrEqual(72)
     })
 
     test('both legs show connected pill', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await runComparison(page)
       const connectedPills = page.getByText('connected')
       await expect(connectedPills).toHaveCount(2)
     })
 
     test('comparison panel shows per-phase timing breakdown', async ({ page }) => {
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await runComparison(page)
       await expect(page.getByText(/keygen/i).first()).toBeVisible()
     })
 
@@ -190,17 +208,15 @@ test.describe('PQC SSH Simulator', () => {
     // binary (real C_Sign, not the modeled TS engine), not just ssh-mldsa-65.
     test('ssh-mldsa-44 host key drives a real handshake (sig 2,420 B)', async ({ page }) => {
       await page.getByRole('button', { name: /^ssh-mldsa-44/ }).click()
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await runComparison(page)
+      await expect(page.getByText('Runs the bundled, modified OpenSSH binary.')).toBeVisible()
       await expect(page.getByText(/2,420 B/i).first()).toBeVisible()
     })
 
     test('ssh-mldsa-87 host key drives a real handshake (sig 4,627 B)', async ({ page }) => {
       await page.getByRole('button', { name: /^ssh-mldsa-87/ }).click()
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await runComparison(page)
+      await expect(page.getByText('Runs the bundled, modified OpenSSH binary.')).toBeVisible()
       await expect(page.getByText(/4,627 B/i).first()).toBeVisible()
     })
 
@@ -214,9 +230,8 @@ test.describe('PQC SSH Simulator', () => {
       page,
     }) => {
       await page.getByRole('button', { name: /^ssh-slh-dsa-sha2-128s/ }).click()
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await runComparison(page)
+      await expect(page.getByText('Runs the bundled, modified OpenSSH binary.')).toBeVisible()
       await expect(page.getByText(/7,856 B/i).first()).toBeVisible()
     })
 
@@ -224,9 +239,8 @@ test.describe('PQC SSH Simulator', () => {
       page,
     }) => {
       await page.getByRole('button', { name: /^ssh-slh-dsa-shake-128f/ }).click()
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await runComparison(page)
+      await expect(page.getByText('Runs the bundled, modified OpenSSH binary.')).toBeVisible()
       await expect(page.getByText(/17,088 B/i).first()).toBeVisible()
     })
 
@@ -234,9 +248,8 @@ test.describe('PQC SSH Simulator', () => {
       page,
     }) => {
       await page.getByRole('button', { name: /^ssh-slh-dsa-sha2-256f/ }).click()
-      await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await runComparison(page)
+      await expect(page.getByText('Runs the bundled, modified OpenSSH binary.')).toBeVisible()
       await expect(page.getByText(/49,856 B/i).first()).toBeVisible()
     })
   })

@@ -290,10 +290,10 @@ test.describe('WS14 — scrollable visualisations reachable by keyboard', () => 
     // everything else in this file stays static.
     test.setTimeout(300_000)
     await page.goto('/playground/pqc-ssh-sim')
-    const runBtn = page.getByRole('button', { name: /run.*handshake/i }).first()
+    const runBtn = page.getByRole('button', { name: 'Run SSH comparison' }).first()
     await expect(runBtn).toBeEnabled({ timeout: 30_000 })
     await runBtn.click()
-    await expect(page.getByText(/Both handshakes complete/i).first()).toBeVisible({
+    await expect(page.getByText(/Comparison runs finished/i).first()).toBeVisible({
       timeout: 180_000,
     })
     // WS7 (2026-08-21): the wire-packets toggle became a real ARIA tab when

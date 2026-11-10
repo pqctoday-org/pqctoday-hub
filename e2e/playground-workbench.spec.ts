@@ -47,7 +47,7 @@ test('renders the two-pane workbench — sidebar, Overview and full-playground c
   // Sidebar brand + main Overview hero.
   await expect(page.getByText('Crypto Lab', { exact: true })).toBeVisible({ timeout: 15000 })
   await expect(
-    page.getByRole('heading', { name: /Run real cryptography in your browser/i })
+    page.getByRole('heading', { name: /Explore cryptographic operations and models/i })
   ).toBeVisible()
 
   // The three full-playground feature cards (link to the special routes).
@@ -81,7 +81,7 @@ test('curious persona sees the same workbench (no minimal-mode gate)', async ({ 
   await expect(page.getByTestId('playground-show-full-catalog')).toHaveCount(0)
   // Overview hero is present (catalog is not gated behind a disclosure step).
   await expect(
-    page.getByRole('heading', { name: /Run real cryptography in your browser/i })
+    page.getByRole('heading', { name: /Explore cryptographic operations and models/i })
   ).toBeVisible()
 })
 

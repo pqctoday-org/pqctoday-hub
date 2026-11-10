@@ -11490,9 +11490,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "468c1fdad1fac8a8",
+      "bom-ref": "382f6b3f9beee071",
       "name": "Algorand",
-      "version": "5.0.2",
+      "version": "5.0.5",
       "purl": "pkg:github/algorand/go-algorand",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -15108,9 +15108,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7a62755e6ca55ecd",
+      "bom-ref": "473eec9cd262c800",
       "name": "Commvault Cloud",
-      "version": "CPR 2024 (11.36) and later",
+      "version": "Innovation 11.46.40 (2026-10-15); LTS 11.44.30 (2026-11-03)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -22072,9 +22072,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4211dad258ba8b28",
+      "bom-ref": "9e37a0a448b3985e",
       "name": "QRL 2.0 (Quantum Resistant Ledger)",
-      "version": "QRL 2.0 / Zond Testnet V2 (launched 2026-03-31)",
+      "version": "QRL 2.0 / Zond Testnet V2 (Q1 2026)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -22083,7 +22083,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Purpose-built quantum-resistant blockchain. QRL 1.x mainnet has used XMSS hash-based signatures since 2018. QRL 2.0 (Project Zond), an EVM-compatible proof-of-stake successor chain, integrates ML-DSA-87 (CRYSTALS-Dilithium) as its mandatory signature scheme — this is already shipped and live on the public QRL 2.0 Testnet V2 (launched 2026-03-31), not merely planned. QRL 2.0 mainnet launch date is undetermined, pending completion of independent security audits.",
+      "description": "Purpose-built quantum-resistant blockchain. QRL 1.x mainnet has used XMSS hash-based signatures since 2018. QRL 2.0 (Project Zond), an EVM-compatible proof-of-stake successor chain, integrates ML-DSA-87 (CRYSTALS-Dilithium) as its mandatory signature scheme — this is already shipped and live on the public QRL 2.0 Testnet V2 (launched Q1 2026), not merely planned. QRL 2.0 mainnet launch date is undetermined, pending completion of independent security audits.",
       "externalReferences": [
         {
           "type": "website",
@@ -29885,9 +29885,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4569b26ec084f054",
+      "bom-ref": "fc497f4fc29e026d",
       "name": "libcrux",
-      "version": "0.0.10",
+      "version": "libcrux-ml-kem 0.0.11",
       "purl": "pkg:github/cryspen/libcrux",
       "manufacturer": {
         "name": "Cryspen"
@@ -31596,9 +31596,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7478a5c5f4f2af89",
+      "bom-ref": "7374f03526e3d80a",
       "name": "HQC Reference Implementation",
-      "version": "v5.0.0",
+      "version": "v5.1.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -38213,9 +38213,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9f73f8235c98d643",
+      "bom-ref": "11e6581653c60717",
       "name": "Cryptography (std.crypto) - Zig",
-      "version": "0.16.0",
+      "version": "0.17.1",
       "manufacturer": {
         "name": "Zig Software Foundation"
       },
