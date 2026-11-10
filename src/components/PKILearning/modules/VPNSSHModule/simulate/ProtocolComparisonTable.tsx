@@ -10,6 +10,7 @@ import {
 } from '../data/protocolSizeComparisons'
 import { Button } from '@/components/ui/button'
 import { tlsSample } from '../data/measuredTlsHandshake'
+import { MeasuredSshSamples } from './MeasuredSshSamples'
 
 type SortField = 'protocol' | 'handshakeBytes' | 'roundTrips' | 'publicKeyBytes'
 
@@ -333,6 +334,8 @@ export const ProtocolComparisonTable: React.FC = () => {
           </p>
         </section>
       )}
+
+      <MeasuredSshSamples entries={filteredData.filter((entry) => entry.protocol === 'SSH')} />
 
       {/* Feature Comparison */}
       <div className="space-y-3">

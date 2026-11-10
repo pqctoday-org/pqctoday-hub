@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { tlsSample } from './measuredTlsHandshake'
+import { sshSample } from './measuredSshHandshake'
 export type ProtocolName = 'IKEv2' | 'SSH' | 'WireGuard' | 'TLS 1.3'
 export type CryptoMode = 'classical' | 'hybrid' | 'pure-pqc'
 
@@ -55,42 +56,45 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     notes: 'Pure PQC key exchange, no classical DH',
   },
 
-  // SSH
+  // SSH — captured identification lines and transport packets through both NEWKEYS.
   {
     protocol: 'SSH',
     mode: 'classical',
-    modeLabel: 'curve25519-sha256',
-    kexAlgorithm: 'X25519',
-    authAlgorithm: 'Ed25519 / RSA-2048',
-    handshakeBytes: 984,
+    modeLabel: 'X25519 · Ed25519 auth',
+    kexAlgorithm: 'curve25519-sha256',
+    authAlgorithm: 'ssh-ed25519',
+    handshakeBytes: sshSample('classical').totalBytes,
     roundTrips: 2,
-    publicKeyBytes: 32,
+    publicKeyBytes: sshSample('classical').clientShareBytes,
     ciphertextBytes: 0,
-    notes: 'Default since OpenSSH 6.5',
+    notes:
+      'Measured OQS-OpenSSH 10.3 sample; identification and transport framing included; login excluded.',
   },
   {
     protocol: 'SSH',
     mode: 'hybrid',
-    modeLabel: 'mlkem768x25519-sha256',
-    kexAlgorithm: 'ML-KEM-768 + X25519',
-    authAlgorithm: 'Ed25519 / RSA-2048',
-    handshakeBytes: 3296,
+    modeLabel: 'ML-KEM + X25519 · Ed25519 auth',
+    kexAlgorithm: 'mlkem768x25519-sha256',
+    authAlgorithm: 'ssh-ed25519',
+    handshakeBytes: sshSample('hybrid').totalBytes,
     roundTrips: 2,
-    publicKeyBytes: 1216,
-    ciphertextBytes: 1120,
-    notes: 'OpenSSH 9.9+ (NIST ML-KEM)',
+    publicKeyBytes: sshSample('hybrid').clientShareBytes,
+    ciphertextBytes: sshSample('hybrid').ciphertextBytes,
+    notes:
+      'Measured hybrid exchange keeps Ed25519 authentication; 1,120 B server share includes a 1,088 B ML-KEM ciphertext.',
   },
   {
     protocol: 'SSH',
     mode: 'pure-pqc',
-    modeLabel: 'ML-KEM-768 (future)',
-    kexAlgorithm: 'ML-KEM-768',
-    authAlgorithm: 'ML-DSA-65',
-    handshakeBytes: 3100,
+    modeLabel: 'ML-KEM · ML-DSA-65 auth',
+    kexAlgorithm: 'mlkem768-sha256',
+    authAlgorithm: 'ssh-mldsa-65',
+    handshakeBytes: sshSample('pure-pqc').totalBytes,
     roundTrips: 2,
-    publicKeyBytes: 1184,
-    ciphertextBytes: 1088,
-    notes: 'Not yet standardized; projected sizes',
+    publicKeyBytes: sshSample('pure-pqc').clientShareBytes,
+    ciphertextBytes: sshSample('pure-pqc').ciphertextBytes,
+    notes:
+      'Measured experimental OQS implementation; pure ML-KEM and ML-DSA SSH proposals remain drafts.',
   },
 
   // WireGuard
