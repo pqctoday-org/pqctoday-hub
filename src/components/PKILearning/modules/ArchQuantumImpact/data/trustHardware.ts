@@ -678,7 +678,7 @@ export const GRID_ROWS: GridRow[] = [
       ),
       caliptra: C(
         'stated',
-        'Release 2.1 adds an ML-KEM-1024 accelerator (Adams Bridge); its documentation describes caller-supplied ephemeral decapsulation keys and says long-term decapsulation keys exposed to attacker-chosen ciphertexts are outside its intended usage model.',
+        'Release 2.1 adds an ML-KEM-1024 accelerator (Adams Bridge), documented for ephemeral decapsulation keys; long-term keys exposed to unauthenticated, attacker-chosen ciphertexts are outside its intended usage model.',
         ADAMS_BRIDGE,
         TESSERA_CHIP
       ),
