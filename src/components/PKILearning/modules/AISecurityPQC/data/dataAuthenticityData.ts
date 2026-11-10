@@ -35,7 +35,7 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
     pqcRelevance:
       'Perceptual hashes themselves are not quantum-vulnerable, but HMAC-authenticated hash databases use symmetric keys that benefit from PQC key wrapping.',
     accuracy:
-      'Illustrative (fictional) figure: 85–95% near-duplicate matches. It finds similar items; it does not say whether an item is AI-generated',
+      'Evaluate near-duplicate reference labels against matcher results in the editable observations below. Matching measures similarity, not synthetic origin; its accuracy depends on the examples and settings tested',
     performanceOverhead: 'Illustrative estimate: ~5ms per image, ~50ms per text document',
     maturity: 'production',
   },
@@ -49,7 +49,7 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
     pqcRelevance:
       'Watermark keying material stored long-term needs PQC-wrapped keys. If watermark keys are compromised via quantum attack, adversaries can strip watermarks from synthetic content, defeating detection.',
     accuracy:
-      'Illustrative (fictional) figures: 70–90% for a known watermark scheme, under 50% when the scheme is unknown or the watermark is removed. It can only flag content that carries a watermark; finding none proves nothing',
+      'Evaluate presence of a selected watermark against provided results in the editable observations below. This is a watermark-presence question, not overall synthetic-content accuracy; a missing watermark does not establish non-synthetic origin',
     performanceOverhead:
       'Illustrative estimate: watermark detection may need model inference (~100ms per item)',
     maturity: 'emerging',
@@ -78,7 +78,7 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
     pqcRelevance:
       'Detection result attestations need PQC signatures to remain trustworthy. A CRQC could forge "human-verified" labels on AI-generated content.',
     accuracy:
-      'Illustrative (fictional) figure: 60–85% overall. Classifiers of this kind make both false-positive and false-negative errors, so their output is a hint, not proof',
+      'Evaluate synthetic/not-synthetic reference labels against classifier results in the editable observations below. Inspect false positives, false negatives and the class balance rather than adopting an unsupported overall accuracy figure',
     performanceOverhead:
       'Illustrative estimate: needs a separate inference model (~200-500ms per document)',
     maturity: 'emerging',
