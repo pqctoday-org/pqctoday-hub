@@ -67,6 +67,16 @@ const formatProductionVal = (val: number, unit: string) => {
 
 const barWidth = (val: number, maxVal: number) => Math.min(100, (val / maxVal) * 100)
 
+const formatRelativeChange = (classical: number, hybrid: number): string => {
+  if (classical === 0) return 'Relative change undefined: classical value is zero'
+  const change = ((hybrid - classical) / classical) * 100
+  const direction = change > 0 ? 'increase' : change < 0 ? 'decrease' : 'change'
+  return `${Math.abs(change).toFixed(2)}% ${direction} vs classical`
+}
+
+const formatPairValue = (value: number) =>
+  value.toLocaleString('en-US', { maximumSignificantDigits: 12 })
+
 const ALG_BAR_COLORS: Record<AlgorithmSet, string> = {
   classical: 'bg-status-warning',
   hybrid: 'bg-status-info',
@@ -349,6 +359,13 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
           </div>
         </div>
 
+        <p className="text-xs text-muted-foreground">
+          Relative change = (Hybrid − Classical) / Classical × 100. The classical value is the
+          denominator. Percentages use the adjusted values shown below each comparison, rather than
+          the rounded chart labels. An increase or decrease describes that metric, not a security or
+          overall performance grade.
+        </p>
+
         {/* TLS KPI table */}
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-foreground">
@@ -409,11 +426,13 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  {envScenario === 'clean-path' && trafficPattern === 'steady-state' && (
-                    <div className="text-[10px] text-muted-foreground mt-1 text-right">
-                      Baseline: {kpi.deltaLabel}
+                  <div className="text-xs text-muted-foreground mt-2 break-words">
+                    <div>{formatRelativeChange(adjustedClassical, adjustedHybrid)}</div>
+                    <div>
+                      Classical {formatPairValue(adjustedClassical)} {kpi.unit} → Hybrid{' '}
+                      {formatPairValue(adjustedHybrid)} {kpi.unit}
                     </div>
-                  )}
+                  </div>
                 </div>
               )
             })}
@@ -473,11 +492,13 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  {envScenario === 'clean-path' && (
-                    <div className="text-[10px] text-muted-foreground mt-1 text-right">
-                      Baseline: {kpi.deltaLabel}
+                  <div className="text-xs text-muted-foreground mt-2 break-words">
+                    <div>{formatRelativeChange(adjustedClassical, adjustedHybrid)}</div>
+                    <div>
+                      Classical {formatPairValue(adjustedClassical)} {kpi.unit} → Hybrid{' '}
+                      {formatPairValue(adjustedHybrid)} {kpi.unit}
                     </div>
-                  )}
+                  </div>
                 </div>
               )
             })}
