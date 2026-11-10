@@ -94,6 +94,20 @@ describe('Inspector consumes the actual saved public artifact', () => {
     expect(screen.getByRole('button', { name: 'Export PEM' })).toBeEnabled()
   })
 
+  it('recovers selection after the selected file is removed and does not reattach it later', () => {
+    const ca = file('hybrid-pure-pqc-ca.pem')
+    const leaf = file()
+    useOpenSSLStore.setState({ files: [ca, leaf] })
+    render(<HybridCertInspector />)
+    fireEvent.click(screen.getByRole('button', { name: /^hybrid-pure-pqc\.pem/ }))
+    expect(screen.getByText(/Saved file:/)).toHaveTextContent(leaf.name)
+    act(() => useOpenSSLStore.setState({ files: [ca] }))
+    expect(screen.getByText(/Saved file:/)).toHaveTextContent(ca.name)
+    expect(screen.getByRole('button', { name: 'Export PEM' })).toBeEnabled()
+    act(() => useOpenSSLStore.setState({ files: [ca, leaf] }))
+    expect(screen.getByText(/Saved file:/)).toHaveTextContent(ca.name)
+  })
+
   it('exports the exact selected saved PEM bytes and filename', async () => {
     const actual = file()
     useOpenSSLStore.setState({ files: [actual] })

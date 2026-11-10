@@ -161,10 +161,13 @@ export const HybridCertInspector: React.FC = () => {
   const files = useOpenSSLStore((state) => state.files)
   const certs = useMemo(() => workspaceCertificateGroups(files), [files])
   const [selectedName, setSelectedName] = useState<string | null>(null)
-  const selected =
-    selectedName === null
-      ? certs[0]?.certs[0]
-      : certs.flatMap((group) => group.certs).find((cert) => cert.label === selectedName)
+  const namedSelection = certs
+    .flatMap((group) => group.certs)
+    .find((cert) => cert.label === selectedName)
+  const selected = namedSelection ?? certs[0]?.certs[0]
+  useEffect(() => {
+    if (selectedName !== null && !namedSelection) setSelectedName(null)
+  }, [selectedName, namedSelection])
   const selectedFormat = certs.find((group) => group.certs.includes(selected!))
   const [viewMode, setViewMode] = useState<'tree' | 'raw' | 'size'>('tree')
   // --- Source toggle ---
