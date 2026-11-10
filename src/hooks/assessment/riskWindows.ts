@@ -101,8 +101,25 @@ export function computeTNFLRiskWindow(input: AssessmentInput): TNFLRiskWindow | 
 
 export function computeMigrationEffort(input: AssessmentInput): MigrationEffortItem[] {
   const agilityFactor = AGILITY_COMPLEXITY[input.cryptoAgility ?? 'unknown'] ?? 0.7
-  const hasHSM = input.infrastructure?.some((i) => i.includes('HSM')) ?? false
-  const hasLegacy = input.infrastructure?.some((i) => i.includes('Legacy')) ?? false
+  const selectedLayers = input.infrastructure ?? []
+  const hsmCategories = new Set([
+    'Hardware Security Module (HSM) Software',
+    'Cloud Hardware Security Module (HSM)',
+  ])
+  // The wizard stores its HSM selections separately from broad layer names.
+  // Ignore orphaned categories and stale saved answers when scope is unknown.
+  // Preserve explicit older flat answers without inferring HSMs from a layer.
+  const hasHSM =
+    !input.infrastructureUnknown &&
+    selectedLayers.some(
+      (layer) =>
+        layer.includes('HSM') ||
+        (input.infrastructureSubCategories?.[layer] ?? []).some((category) =>
+          hsmCategories.has(category)
+        )
+    )
+  const hasLegacy =
+    !input.infrastructureUnknown && selectedLayers.some((layer) => layer.includes('Legacy'))
   const sysScale = SYSTEM_SCALE[input.systemCount ?? '11-50'] ?? 1.3
   return input.currentCrypto
     .filter((algo) => ALGORITHM_DB[algo]?.quantumVulnerable) // eslint-disable-line security/detect-object-injection
@@ -132,15 +149,21 @@ export function computeMigrationEffort(input: AssessmentInput): MigrationEffortI
       if (hasHSM) reasons.push('HSM dependency')
       if (hasLegacy) reasons.push('legacy systems')
       if (sysScale >= 1.6) reasons.push('large system footprint')
+      const unassessed = [
+        ...(!hasHSM ? ['HSM dependency'] : []),
+        ...(!hasLegacy ? ['legacy dependencies'] : []),
+      ]
+      const inputLimits =
+        unassessed.length > 0 ? ` Not assessed from these inputs: ${unassessed.join(', ')}.` : ''
 
       return {
         algorithm: algo,
         complexity,
         estimatedScope,
         rationale:
-          reasons.length > 0
+          (reasons.length > 0
             ? `Complexity driven by: ${reasons.join(', ')}.`
-            : 'Standard migration with manageable complexity.',
+            : 'Standard migration with manageable complexity.') + inputLimits,
       }
     })
 }

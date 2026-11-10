@@ -160,7 +160,10 @@ export const AlgorithmMigrationSection = ({
                     </td>
                   </>
                 )}
-                <td className="py-2.5 text-muted-foreground text-xs">{algo.notes}</td>
+                <td className="py-2.5 text-muted-foreground text-xs">
+                  <p>{algo.notes}</p>
+                  {effort && <p className="mt-1">Effort model: {effort.rationale}</p>}
+                </td>
               </tr>
             )
           })}
