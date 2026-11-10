@@ -21,6 +21,17 @@ export type MonitoringSource = 'cert-manager' | 'prometheus' | 'vault' | 'istio'
 
 export type MigrationPriority = 'critical' | 'high' | 'medium' | 'low'
 
+export interface SampleDuration {
+  value: number
+  unit: 'years' | 'days' | 'hours'
+}
+
+export interface ProtectionWindow {
+  min: SampleDuration
+  /** Absent means an open upper bound, not a finite default. */
+  max?: SampleDuration
+}
+
 export interface CryptoAsset {
   id: string
   name: string
@@ -31,8 +42,13 @@ export interface CryptoAsset {
   hndlRisk: HNDLExposure
   pqcReplacement: string
   pqcAlgorithm: AlgorithmFamily
-  /** How long signatures / certs from this asset must remain trusted */
+  /** Original sample prose describing confidentiality or authenticity windows. */
   exposureWindow: string
+  /** Explicit sample bounds; absent metadata does not establish protection. */
+  protectionWindows?: {
+    confidentiality?: ProtectionWindow
+    authenticity?: ProtectionWindow
+  }
   notes?: string
 }
 
