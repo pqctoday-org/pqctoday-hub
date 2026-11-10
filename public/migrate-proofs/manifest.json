@@ -29913,6 +29913,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hqc-reference-implementation",
+      "refId": "hqc-reference-implementation",
+      "file": "hqc-reference-implementation-aadcfe92.json",
+      "sizeBytes": 5108,
+      "content_type": "application/json",
+      "url": "https://gitlab.com/api/v4/projects/pqc-hqc%2Fhqc/releases",
+      "sha256": "47f754f1374b9b37ae1fcd9ed2a0cff8a71ef8d98420d9fe0bf25e321b6e2b67",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-10T03:36:54.536957+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
