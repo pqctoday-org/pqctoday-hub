@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { tlsSample } from './measuredTlsHandshake'
+import { sshSample } from './measuredSshHandshake'
 export type ProtocolName = 'IKEv2' | 'SSH' | 'WireGuard' | 'TLS 1.3'
 export type CryptoMode = 'classical' | 'hybrid' | 'pure-pqc'
 
@@ -54,42 +56,45 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     notes: 'Pure PQC key exchange, no classical DH',
   },
 
-  // SSH
+  // SSH — captured identification lines and transport packets through both NEWKEYS.
   {
     protocol: 'SSH',
     mode: 'classical',
-    modeLabel: 'curve25519-sha256',
-    kexAlgorithm: 'X25519',
-    authAlgorithm: 'Ed25519 / RSA-2048',
-    handshakeBytes: 984,
+    modeLabel: 'X25519 · Ed25519 auth',
+    kexAlgorithm: 'curve25519-sha256',
+    authAlgorithm: 'ssh-ed25519',
+    handshakeBytes: sshSample('classical').totalBytes,
     roundTrips: 2,
-    publicKeyBytes: 32,
+    publicKeyBytes: sshSample('classical').clientShareBytes,
     ciphertextBytes: 0,
-    notes: 'Default since OpenSSH 6.5',
+    notes:
+      'Measured OQS-OpenSSH 10.3 sample; identification and transport framing included; login excluded.',
   },
   {
     protocol: 'SSH',
     mode: 'hybrid',
-    modeLabel: 'mlkem768x25519-sha256',
-    kexAlgorithm: 'ML-KEM-768 + X25519',
-    authAlgorithm: 'Ed25519 / RSA-2048',
-    handshakeBytes: 3296,
+    modeLabel: 'ML-KEM + X25519 · Ed25519 auth',
+    kexAlgorithm: 'mlkem768x25519-sha256',
+    authAlgorithm: 'ssh-ed25519',
+    handshakeBytes: sshSample('hybrid').totalBytes,
     roundTrips: 2,
-    publicKeyBytes: 1216,
-    ciphertextBytes: 1120,
-    notes: 'OpenSSH 9.9+ (NIST ML-KEM)',
+    publicKeyBytes: sshSample('hybrid').clientShareBytes,
+    ciphertextBytes: sshSample('hybrid').ciphertextBytes,
+    notes:
+      'Measured hybrid exchange keeps Ed25519 authentication; 1,120 B server share includes a 1,088 B ML-KEM ciphertext.',
   },
   {
     protocol: 'SSH',
     mode: 'pure-pqc',
-    modeLabel: 'ML-KEM-768 (future)',
-    kexAlgorithm: 'ML-KEM-768',
-    authAlgorithm: 'ML-DSA-65',
-    handshakeBytes: 3100,
+    modeLabel: 'ML-KEM · ML-DSA-65 auth',
+    kexAlgorithm: 'mlkem768-sha256',
+    authAlgorithm: 'ssh-mldsa-65',
+    handshakeBytes: sshSample('pure-pqc').totalBytes,
     roundTrips: 2,
-    publicKeyBytes: 1184,
-    ciphertextBytes: 1088,
-    notes: 'Not yet standardized; projected sizes',
+    publicKeyBytes: sshSample('pure-pqc').clientShareBytes,
+    ciphertextBytes: sshSample('pure-pqc').ciphertextBytes,
+    notes:
+      'Measured experimental OQS implementation; pure ML-KEM and ML-DSA SSH proposals remain drafts.',
   },
 
   // WireGuard
@@ -141,38 +146,41 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
   {
     protocol: 'TLS 1.3',
     mode: 'classical',
-    modeLabel: 'X25519',
+    modeLabel: 'X25519 · RSA-2048 auth',
     kexAlgorithm: 'X25519',
-    authAlgorithm: 'ECDSA-P256 / RSA-2048',
-    handshakeBytes: 1200,
+    authAlgorithm: 'RSA-2048, RSA-PSS/SHA-256 CertificateVerify',
+    handshakeBytes: tlsSample('classical').totalBytes,
     roundTrips: 1,
-    publicKeyBytes: 32,
+    publicKeyBytes: tlsSample('classical').clientShareBytes,
     ciphertextBytes: 0,
-    notes: 'Standard TLS 1.3 with X25519',
+    notes:
+      'Measured OpenSSL 3.6.3 sample: seven handshake-layer messages, leaf + intermediate; record/TCP/IP framing excluded.',
   },
   {
     protocol: 'TLS 1.3',
     mode: 'hybrid',
-    modeLabel: 'X25519MLKEM768',
+    modeLabel: 'X25519MLKEM768 · RSA-2048 auth',
     kexAlgorithm: 'X25519 + ML-KEM-768',
-    authAlgorithm: 'ECDSA-P256 / RSA-2048',
-    handshakeBytes: 3500,
+    authAlgorithm: 'RSA-2048, RSA-PSS/SHA-256 CertificateVerify',
+    handshakeBytes: tlsSample('hybrid').totalBytes,
     roundTrips: 1,
-    publicKeyBytes: 1216,
-    ciphertextBytes: 1120,
-    notes: 'RFC 10024; hybrid KEX in Chrome 124 (Kyber draft), final ML-KEM in Chrome 131',
+    publicKeyBytes: tlsSample('hybrid').clientShareBytes,
+    ciphertextBytes: tlsSample('hybrid').ciphertextBytes,
+    notes:
+      'RFC 10024 group; measured sample keeps RSA authentication. Client/server key shares are 1,216/1,120 B; the ML-KEM ciphertext component is 1,088 B.',
   },
   {
     protocol: 'TLS 1.3',
     mode: 'pure-pqc',
-    modeLabel: 'ML-KEM-768',
+    modeLabel: 'MLKEM768 · ML-DSA-65 auth',
     kexAlgorithm: 'ML-KEM-768',
     authAlgorithm: 'ML-DSA-65',
-    handshakeBytes: 3200,
+    handshakeBytes: tlsSample('pure-pqc').totalBytes,
     roundTrips: 1,
-    publicKeyBytes: 1184,
-    ciphertextBytes: 1088,
-    notes: 'Pure PQC TLS; certificates grow ~3x with ML-DSA',
+    publicKeyBytes: tlsSample('pure-pqc').clientShareBytes,
+    ciphertextBytes: tlsSample('pure-pqc').ciphertextBytes,
+    notes:
+      'Measured OpenSSL 3.6.3 sample; ML-DSA TLS authentication uses draft-ietf-tls-mldsa-06 (RFC Editor queue). This runtime example does not establish support in other endpoints.',
   },
 ]
 
