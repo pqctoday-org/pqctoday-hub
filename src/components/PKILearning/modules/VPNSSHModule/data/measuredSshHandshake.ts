@@ -149,7 +149,7 @@ export function measureSshSample(mode: Mode, fixture: EncodedSshSample) {
       check(lists.at(i)?.join(',') === 'hmac-sha2-256', 'Wrong advertised SSH MAC')
     for (const i of [6, 7])
       check(
-        lists.at(i)!.includes('none') &&
+        lists.at(i)!.at(0) === 'none' &&
           lists.at(i)!.every((x) => ['none', 'zlib@openssh.com'].includes(x)),
         'Unexpected SSH compression offer'
       )
@@ -190,7 +190,7 @@ export function measureSshSample(mode: Mode, fixture: EncodedSshSample) {
     totalBytes,
     clientShareBytes,
     serverShareBytes,
-    ciphertextBytes: mode === 'classical' ? 0 : 1088,
+    ciphertextBytes: mode === 'classical' ? 0 : serverShareBytes - (mode === 'hybrid' ? 32 : 0),
     rawPublicKeyBytes,
     hostKeyBlobBytes: host.length,
     rawSignatureBytes,

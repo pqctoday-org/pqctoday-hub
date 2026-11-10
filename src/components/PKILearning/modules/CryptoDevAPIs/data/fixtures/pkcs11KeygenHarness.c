@@ -32,7 +32,6 @@ static int destroy_pair(void) {
 
 int main(int argc, char **argv) {
     void *library = NULL;
-    CK_C_GetFunctionList get_list;
     CK_C_GetInterface get_interface;
     CK_INTERFACE_PTR interface = NULL_PTR;
     CK_VERSION wanted = {3, 2};
@@ -54,12 +53,13 @@ int main(int argc, char **argv) {
         getenv("SOFTHSMRUST_SLOTS") != NULL) return 2;
     library = dlopen(argv[1], RTLD_NOW | RTLD_LOCAL);
     if (library == NULL) { fprintf(stderr, "module unavailable: %s\n", dlerror()); goto done; }
-    get_list = (CK_C_GetFunctionList)dlsym(library, "C_GetFunctionList");
     get_interface = (CK_C_GetInterface)dlsym(library, "C_GetInterface");
-    if (get_list == NULL || get_interface == NULL) goto done;
-    CHECK(get_list(&api));
+    if (get_interface == NULL) goto done;
     CHECK(get_interface(NULL_PTR, &wanted, &interface, 0));
     if (interface == NULL_PTR || interface->pFunctionList == NULL_PTR) goto done;
+    api = (CK_FUNCTION_LIST_PTR)interface->pFunctionList;
+    stage = "PKCS11 3.2 interface required";
+    if (api->version.major != 3 || api->version.minor != 2) goto done;
     CHECK(api->C_Initialize(NULL_PTR)); initialized = 1;
     CHECK(api->C_GetInfo(&info));
     CHECK(api->C_GetMechanismInfo(0, CKM_ML_DSA_KEY_PAIR_GEN, &mechanism_info));

@@ -81,6 +81,17 @@ describe('captured SSH transport accounting', () => {
       g.messages[7].direction = 'client-to-server'
       expect(() => measureSshSample(mode, g)).toThrow(/direction/)
     })
+    it('rejects a compression list that prefers compression to none', () => {
+      const f = fixture(mode)
+      const packet = Buffer.from(f.messages[1].base64, 'base64')
+      const oldList = Buffer.from('none,zlib@openssh.com')
+      const newList = Buffer.from('zlib@openssh.com,none')
+      const at = packet.indexOf(oldList)
+      expect(at).toBeGreaterThan(0)
+      newList.copy(packet, at)
+      f.messages[1].base64 = packet.toString('base64')
+      expect(() => measureSshSample(mode, f)).toThrow(/compression/)
+    })
     it('rejects a different claimed authentication or cipher', () => {
       const f = fixture(mode)
       f.authentication = 'ssh-rsa'

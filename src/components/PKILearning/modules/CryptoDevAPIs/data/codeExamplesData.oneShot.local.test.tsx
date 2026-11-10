@@ -146,8 +146,13 @@ describe('Published OpenSSL ML-DSA-65 one-shot examples', () => {
       ]
       const result = spawnSync(cli, args, { cwd: directory, encoding: 'utf8' })
       expect(result.error).toBeUndefined()
-      if (valid) expect(result.status).toBe(0)
-      else expect(result.status).toBe(1)
+      if (valid) {
+        expect(result.status).toBe(0)
+        expect(result.stdout).toContain('Signature Verified Successfully')
+      } else {
+        expect(result.status).toBe(1)
+        expect(result.stdout).toContain('Signature Verification Failure')
+      }
       receipts.push({
         kind: 'independent CLI artifact check',
         args,
