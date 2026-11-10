@@ -60,7 +60,7 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
       { label: 'OpenSSL', recommendation: 'openssl-provider' },
       { label: 'Botan', recommendation: 'botan-upgrade' },
       { label: 'wolfSSL', recommendation: 'wolfssl-pqc' },
-      { label: 'Custom / homegrown', nextQuestion: 'hsm-needed' },
+      { label: 'Custom / homegrown', nextQuestion: 'native-hsm-needed' },
     ],
   },
   {
@@ -107,6 +107,24 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
       { label: 'Yes — FIPS Level 3 required', recommendation: 'pkcs11-hsm' },
       { label: 'Yes — software FIPS sufficient', recommendation: 'fips-software' },
       { label: 'No HSM needed', recommendation: 'jca-native-pqc' },
+    ],
+  },
+  {
+    id: 'native-hsm-needed',
+    question: 'Do you need HSM (hardware) key protection?',
+    options: [
+      { label: 'Yes — FIPS Level 3 required', recommendation: 'pkcs11-hsm' },
+      { label: 'Yes — software FIPS sufficient', recommendation: 'fips-software' },
+      { label: 'No HSM needed', nextQuestion: 'native-provider-choice' },
+    ],
+  },
+  {
+    id: 'native-provider-choice',
+    question: 'Which existing native library route would you like to evaluate?',
+    options: [
+      { label: 'OpenSSL', recommendation: 'openssl-provider' },
+      { label: 'Botan', recommendation: 'botan-upgrade' },
+      { label: 'wolfSSL', recommendation: 'wolfssl-pqc' },
     ],
   },
 ]
