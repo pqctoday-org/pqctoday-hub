@@ -238,7 +238,13 @@ const cases: Case[] = [
   {
     file: 'PlatformEngPQC/workshop/QuantumThreatTimeline.tsx',
     gone: ['NSA CNSA 2.0 deadline: 2030'],
-    present: ['CNSA 2.0 phase-out of unsupported equipment: 2030'],
+    // This worked model no longer displays regulatory milestone dates. Its scenario
+    // horizon must remain explicitly separate from obligations and deployed protection.
+    present: [
+      'these scenario years are not compliance deadlines',
+      'Check applicable issuing guidance and system scope for obligations',
+      'inventory actual payload retention and signature/credential trust windows separately',
+    ],
   },
   {
     file: 'Module1-Introduction/rag-summary.md',
