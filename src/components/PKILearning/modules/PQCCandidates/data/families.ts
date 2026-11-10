@@ -120,9 +120,9 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     hardness:
       'Search Module Lattice Isomorphism Problem (smLIP) and One-More-Shortest-Vector Problem (omSVP). Newer than the standard SVP/LWE/SIS family but related.',
     whyKept:
-      "HAWK eliminates Falcon's floating-point Gaussian-sampling pain — pure integer arithmetic on a rank-2 module lattice. Compact 555 B signatures at Category 1, smaller than both ML-DSA and FN-DSA, and, per NIST IR 8610, HAWK's primary advantage over Falcon is its reliance on integer-only arithmetic.",
+      "Why it advanced to Round 3 (May 2026): HAWK eliminates Falcon's floating-point Gaussian-sampling pain — pure integer arithmetic on a rank-2 module lattice. Compact 555 B signatures at Category 1, smaller than both ML-DSA and FN-DSA, and, per NIST IR 8610, HAWK's primary advantage over Falcon is its reliance on integer-only arithmetic.",
     openConcerns:
-      "omSVP definition discrepancy required refinement during Round 2. Advances in solving smLIP variants exist but do not currently apply to HAWK's cyclotomic number fields — flagged for further community analysis.",
+      "Withdrawn on 29 July 2026: an improved key-recovery attack announced on 28 July 2026 lowered HAWK-512's estimated key-recovery cost from 2^150 to 2^108 (gate-count model), and the HAWK team withdrew it from the NIST process, so the lattice family has no remaining third-round candidate. Earlier, an omSVP definition discrepancy required refinement during Round 2.",
     candidateIds: ['hawk'],
     colorClass: 'text-primary',
     borderClass: 'border-primary/40',

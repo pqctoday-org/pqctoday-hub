@@ -3,11 +3,11 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-candidates',
-  contentVersion: 15,
+  contentVersion: 16,
   lm_id: 'LM-053',
   title: 'PQC Candidates & Lifecycle',
   description:
-    'How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
+    'How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026; HAWK since withdrawn) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
   duration: '55 min',
   whyThisMatters:
     "ML-KEM, ML-DSA, and SLH-DSA are the algorithms you'll actually deploy; choosing the wrong one means migrating twice.",

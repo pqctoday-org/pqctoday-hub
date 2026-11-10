@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { FAMILY_LIST } from '../data/families'
 import { LIFECYCLE_EVENTS } from '../data/rounds'
+import { LifecycleOutcomeExamples } from './LifecycleOutcomeExamples'
 import { WORLDWIDE_BODIES } from '../data/worldwideBodies'
 import { KPQC_CANDIDATES, CACR_CANDIDATES } from '../data/nationalCandidates'
 
@@ -160,6 +161,9 @@ export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
               </p>
             </div>
           </div>
+        </div>
+        <div className="mt-4">
+          <LifecycleOutcomeExamples />
         </div>
       </section>
 

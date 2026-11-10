@@ -666,7 +666,8 @@ const SolanaHardProblem: React.FC = () => (
         implementation that runs as an on-chain (SBF) programme. A commenter in the thread says
         Falcon-512 and Hawk-512 verifiers already exist as on-chain programmes and work without
         protocol changes, and that a Keccak-p1600 syscall (#563) is planned instead to speed up many
-        such signature schemes. Approaches that have been discussed include:
+        such signature schemes. (HAWK has since been withdrawn from the NIST process after a
+        key-recovery attack.) Approaches that have been discussed include:
       </p>
       <ul className="text-xs text-muted-foreground space-y-2">
         <li className="flex items-start gap-1.5">
@@ -741,7 +742,8 @@ const SolanaHardProblem: React.FC = () => (
             <td className="p-3 text-status-success font-medium">Yes — via smart accounts</td>
             <td className="p-3">
               Reported: Falcon-512 and Hawk-512 verifiers run as on-chain programmes without
-              protocol changes (SIMD-0461 thread)
+              protocol changes (SIMD-0461 thread); HAWK was withdrawn from the NIST process in July
+              2026
             </td>
           </tr>
           <tr className="border-b border-border/50">

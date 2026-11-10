@@ -528,7 +528,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       "You click the 'Round 3 — Down-selection' tile. How many schemes does the round description say advance into it?",
     options: ['14', 'Nine', '40'],
     answer: 1,
-    why: 'The lifecycle narrows at each round: 40 schemes were submitted in Round 1, 14 advanced to Round 2 under NIST IR 8528, and only nine (FAEST, MQOM, SDitH, UOV, MAYO, QR-UOV, SNOVA, SQIsign, HAWK) survive into the Round 3 down-selection.',
+    why: 'The lifecycle narrows at each round: 40 schemes were submitted in Round 1, 14 advanced to Round 2 under NIST IR 8528, and only nine (FAEST, MQOM, SDitH, UOV, MAYO, QR-UOV, SNOVA, SQIsign, HAWK) survive into the Round 3 down-selection. HAWK was later withdrawn by its team (29 July 2026), leaving eight.',
   },
   // standards-bodies
   'standards-bodies/coverage-grid': {

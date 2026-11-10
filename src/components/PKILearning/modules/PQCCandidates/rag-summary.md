@@ -7,7 +7,13 @@ PQC standardisation is a **rolling process**, not a single event. NIST finalised
 - **MPC-in-the-Head** — FAEST (AES-based), MQOM (multivariate quadratic), SDitH (syndrome decoding). Security reduces to well-studied symmetric or combinatorial assumptions; signatures are kilobytes.
 - **Multivariate** — UOV, MAYO, QR-UOV, SNOVA. UOV public keys exceed 200 kilobytes in expanded form (NIST IR 8610). During the second round a wedge attack on characteristic-2 schemes reduced the security margins of three of UOV's four proposed parameter sets (a few bits at category 1 to about 20 bits at category 5, and a later small-field attack brought the same three below their targets), left MAYO2 roughly 30 bits short, and broke most of SNOVA's proposed parameter sets, often by a large margin; QR-UOV's odd-characteristic fields left it unaffected, and NIST anticipates a longer timeline before any multivariate scheme is standardised.
 - **Isogeny** — SQIsign. Smallest combined pk+sig of any PQC candidate (148 B sig at NIST Cat 1). Cousin scheme SIKE was broken in 2022 by Castryck–Decru. SQIsign avoids the structural exploit but constant-time signing is an open implementation challenge.
-- **Lattice** — HAWK. Integer-only alternative to FN-DSA (Falcon) — eliminates floating-point side-channel hazards.
+- **Lattice** — HAWK. Integer-only alternative to FN-DSA (Falcon) that avoided floating-point side-channel hazards. Withdrawn by its team on 29 July 2026 after a new key-recovery attack, so no lattice candidate remains in Round 3.
+
+## Two real outcomes, compared
+
+- **HAWK — withdrawn by its authors.** Advanced to Round 3 on 14 May 2026. An improved key-recovery attack was announced on NIST's pqc-forum on 28 July 2026; the announcement says it "was found by Claude, with minimal technical guidance from people," and the HAWK team's site says Anthropic discovered the attack. The HAWK team withdrew HAWK on 29 July 2026; its site says "Hawk is insecure and should not be used." It will not be standardised in this round.
+- **Classic McEliece — a national body advises against new use.** On 1 October 2026 (notice dated 29 September) the BSI advised against new use of Classic McEliece in new developments, after 2026 structural attacks on binary Goppa codes, including one not yet peer-reviewed estimate of 2^99–2^102 operations for key recovery on the TR-02102-1 parameter sets. The BSI reports no practical attack on those sets so far. The scheme stays in TR-02102-1 until its next revision, expected early 2027.
+- **The difference:** withdrawal takes a scheme out of the selection process; an advisory leaves it in the published guideline but tells you not to start new work with it.
 
 ## Validation process
 

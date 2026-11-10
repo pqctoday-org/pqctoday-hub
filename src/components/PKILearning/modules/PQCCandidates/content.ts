@@ -7,7 +7,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
-  version: '1.0.1',
+  version: '1.0.2',
   lastReviewed: '2026-08-22',
   lastEdited: '2026-11-09',
 
@@ -82,11 +82,11 @@ export const content: ModuleContent = {
     keyConcepts:
       'Four mathematical families on the table: MPC-in-the-Head (FAEST on AES, MQOM on the MQ problem, SDitH on syndrome decoding, all with hash-based proof machinery) — kilobyte-sized signatures, small keys. Multivariate (UOV, MAYO, QR-UOV, SNOVA) — tiny signatures, big keys, recovering from the 2025 wedge attack. Isogeny (SQIsign) — smallest combined size of any PQC candidate but young assumptions and slow signing. Lattice (HAWK) — integer-only sampling alternative to FN-DSA; withdrawn from the process in July 2026 after a key-recovery attack.',
     validationProcess:
-      'A candidate enters a round, gets benchmarked against NIST evaluation criteria (security, performance, implementation characteristics, IP), and is subjected to public cryptanalysis. Attacks like the 2022 SIKE break and the 2025 Ran wedge attack cull candidates or force reparameterisation. NIST publishes a status report (IR series) at the end of each round summarising what advanced and why.',
+      'A candidate enters a round, gets benchmarked against NIST evaluation criteria (security, performance, implementation characteristics, IP), and is subjected to public cryptanalysis. Attacks like the 2022 SIKE break and the 2025 Ran wedge attack cull candidates or force reparameterisation. NIST publishes a status report (IR series) at the end of each round summarising what advanced and why. Two real outcomes show the range: HAWK was withdrawn by its own team on 29 July 2026 after a key-recovery attack, so it leaves the process; Classic McEliece stays in BSI TR-02102-1, but since 1 October 2026 the BSI advises against new use of it in new developments, pending the guideline’s next revision.',
     worldwideProcess:
       'KpqC (Korea) concluded its competition in January 2025, selecting SMAUG-T and NTRU+ (KEMs) plus HAETAE and AIMer (signatures); we found no later Korean standardisation date in the documents we hold. CACR (China) selected LAC, AIGIS, and others. ISO/IEC SC 27 is where adoption of PQC algorithms into ISO/IEC 14888 and ISO/IEC 18033 would happen (we found no document confirming which it has adopted) — the gating step for jurisdictions that pin procurement to ISO rather than FIPS. ETSI, IETF, BSI, ANSSI, and CRYPTREC overlay regional or protocol-specific guidance.',
     workshopSummary:
-      'Six interactive steps: (1) Lifecycle simulator — advance a candidate through rounds and watch real cryptanalysis events fire. (2) Family math — animated visualisers for MPCitH, multivariate, isogeny, lattice. (3) Candidate comparator — sort/filter the 9 by use case. (4) Cryptanalysis timeline — SIKE break, Rainbow break, wedge attack, parameter pivots. (5) Future rounds forecaster — projected KEM diversification and post-2030 review cycles. (6) Worldwide standardisation map — NIST + KpqC + CACR + ISO/IEC + ETSI + IETF + CRYPTREC parallel tracks.',
+      'Six interactive steps: (1) Lifecycle simulator — advance a candidate through rounds and watch real cryptanalysis events fire. (2) Family math — animated visualisers for MPCitH, multivariate, isogeny, lattice. (3) Candidate comparator — sort/filter the nine third-round candidates by use case (HAWK shown as withdrawn). (4) Cryptanalysis timeline — SIKE break, Rainbow break, wedge attack, parameter pivots. (5) Future rounds forecaster — projected KEM diversification and post-2030 review cycles. (6) Worldwide standardisation map — NIST + KpqC + CACR + ISO/IEC + ETSI + IETF + CRYPTREC parallel tracks.',
     relatedStandards:
       'NIST IR 8528 (first-round status report on additional signature schemes). NIST IR 8545 (HQC fourth-round selection). NIST IR 8547 (transition standards). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). KpqC Korea competition. CACR China competition.',
   },

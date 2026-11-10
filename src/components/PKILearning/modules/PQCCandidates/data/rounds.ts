@@ -144,6 +144,15 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
       'Nine third-round candidates advance: FAEST, MQOM, SDitH (MPCitH); UOV, MAYO, QR-UOV, SNOVA (Multivariate); SQIsign (Isogeny); HAWK (Lattice). Five Round-2 schemes did not advance (CROSS, LESS, Mirath, PERK, RYDE).',
   },
   {
+    id: 'hawk-key-recovery-attack',
+    date: '2026-07-28',
+    kind: 'cryptanalysis',
+    title: 'Improved HAWK key-recovery attack',
+    detail:
+      "An improved key-recovery attack announced on NIST's pqc-forum reduces HAWK-n key recovery to SVP in dimension n/2 + 1, lowering HAWK-512's estimated cost from 2^150 to 2^108 gates; the announcement says it was found by Claude, with minimal technical guidance from people. It does not affect Falcon or ML-DSA.",
+    affects: ['hawk'],
+  },
+  {
     id: 'hawk-withdrawn',
     date: '2026-07-29',
     kind: 'selection',
