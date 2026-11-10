@@ -74,7 +74,7 @@ export const PILLARS: PillarDef[] = [
     id: 'assurance',
     label: 'Assurance / FIPS',
     question:
-      'For each library and HSM you rely on for FIPS 140-3 compliance, can you show an Active certificate that names the exact version and operating environment you run?',
+      'Where FIPS validation applies, can you match each deployment to its validated module boundary and Security Policy, including version, operating environment and approved mode, and assess its current CMVP status for the intended use?',
     indicators: {
       1: 'Unknown whether modules are validated. No tracking.',
       2: 'Annual audit checks CMVP status for production modules.',

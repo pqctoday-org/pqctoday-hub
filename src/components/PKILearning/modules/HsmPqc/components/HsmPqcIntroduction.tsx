@@ -607,9 +607,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     >
                       A6131 (SLH-DSA)
                     </Link>{' '}
-                    (SLH-DSA key generation, signature generation and verification). A passed
-                    algorithm test is a prerequisite of a module validation, not a substitute for
-                    it.
+                    (SLH-DSA key generation, signature generation and verification). In general, an
+                    algorithm must be CAVP tested, or vendor affirmed where an Implementation
+                    Guidance permits it, before a module may use it in an approved mode; a passed
+                    algorithm test does not by itself validate the module.
                   </p>
                   <LibLinks
                     refs={[
@@ -636,6 +637,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                       {
                         id: 'Cryptographic-Algorithm-Validation-Program-Primus-HSM-SLH-DS',
                         label: 'CAVP A6131 (SLH-DSA)',
+                      },
+                      {
+                        id: 'NIST-FIPS140-3-IG-PQC',
+                        label: 'FIPS 140-3 IG (PQC)',
                       },
                     ]}
                   />
@@ -885,8 +890,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  <strong>Who runs it:</strong> a fully managed Microsoft service. Microsoft says it
-                  can attest that a key was generated and resides inside an HSM that Microsoft
+                  <strong>Who runs it:</strong> a fully managed Microsoft service. Microsoft&apos;s
+                  overview says Managed HSMs use Marvell LiquidSecurity HSM adapters. Microsoft says
+                  it can attest that a key was generated and resides inside an HSM that Microsoft
                   operates, and keys can be generated in the HSM or imported by bring-your-own-key.
                   Both services give the customer administrative control of the keys (Managed HSM
                   through local RBAC; Cloud HSM through HSM users) while Microsoft runs patching and
@@ -941,8 +947,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   Powered by the Thales Luna 7 HSM (model A790). Azure&apos;s pages list no PQC
                   algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS
                   from 7.8.9. Customers administer the firmware themselves, after consulting Thales
-                  Support, and Azure does not say whether the service offers firmware 7.9. Azure
-                  Managed HSM uses Marvell LiquidSecurity HSM adapters.
+                  Support, and Azure does not say whether the service offers firmware 7.9.
+                  Microsoft&apos;s pages name Marvell LiquidSecurity hardware for Azure Managed HSM
+                  and Azure Cloud HSM, not for this service.
                 </p>
                 <p>
                   <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers

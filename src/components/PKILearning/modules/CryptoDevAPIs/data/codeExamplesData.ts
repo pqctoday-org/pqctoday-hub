@@ -44,42 +44,75 @@ PrivateKey priv = kp.getPrivate();
     operation: 'keygen',
     language: 'C',
     algorithm: 'ML-DSA-65',
-    code: `// OpenSSL 3.5+ — ML-DSA is in the default provider
-EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(
-    NULL, "ML-DSA-65", NULL
-);
-EVP_PKEY_keygen_init(ctx);
-EVP_PKEY *pkey = NULL;
-EVP_PKEY_keygen(ctx, &pkey);
+    code: `#include <openssl/evp.h>
 
-EVP_PKEY_CTX_free(ctx);
-// pkey now holds ML-DSA-65 key pair`,
+// OpenSSL 3.5+: caller owns the returned key, or receives NULL on failure.
+EVP_PKEY *sample_generate_mldsa65_key(void) {
+    EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-DSA-65", NULL);
+    EVP_PKEY *key = NULL;
+    if (ctx == NULL || EVP_PKEY_keygen_init(ctx) != 1 ||
+        EVP_PKEY_keygen(ctx, &key) != 1) {
+        EVP_PKEY_free(key);
+        key = NULL;
+    }
+    EVP_PKEY_CTX_free(ctx);
+    return key;
+}`,
     notes:
-      'Native since OpenSSL 3.5. oqsprovider is only needed on OpenSSL before 3.5 or for non-standardised algorithms. EVP API is algorithm-agnostic.',
+      'Native ML-DSA is available in the default provider from OpenSSL 3.5. Check the returned key before use and release it with EVP_PKEY_free. The signing and verification examples below use the pure ML-DSA one-shot interface; provider availability and operation mode must be checked for the selected algorithm.',
   },
   {
     apiId: 'pkcs11',
     operation: 'keygen',
     language: 'C',
     algorithm: 'ML-DSA-65',
-    code: `// PKCS#11 v3.2 — ML-DSA key pair generation
-CK_MECHANISM mech = {CKM_ML_DSA_KEY_PAIR_GEN, NULL, 0};
-CK_ATTRIBUTE pubTmpl[] = {
-    {CKA_TOKEN, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_VERIFY, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_ML_DSA_PARAMETER_SET,
-     "ML-DSA-65", 9}
-};
-CK_ATTRIBUTE privTmpl[] = {
-    {CKA_TOKEN, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_SIGN, &ckTrue, sizeof(CK_BBOOL)},
-    {CKA_SENSITIVE, &ckTrue, sizeof(CK_BBOOL)}
-};
-CK_OBJECT_HANDLE hPub, hPriv;
-C_GenerateKeyPair(session, &mech,
-    pubTmpl, 3, privTmpl, 3,
-    &hPub, &hPriv);`,
-    notes: 'Keys stored on HSM token. Handles are opaque — key material never exposed.',
+    code: `// Unix calling-convention macros for the official OASIS headers.
+#define CK_PTR *
+#define CK_DECLARE_FUNCTION(returnType, name) returnType name
+#define CK_DECLARE_FUNCTION_POINTER(returnType, name) returnType (* name)
+#define CK_CALLBACK_FUNCTION(returnType, name) returnType (* name)
+#define NULL_PTR 0
+#include "pkcs11.h"
+
+// PKCS#11 v3.2. The caller supplies a logged-in read/write session.
+CK_RV generate_sample_mldsa65(CK_FUNCTION_LIST_PTR api,
+                            CK_SESSION_HANDLE session,
+                            CK_OBJECT_HANDLE_PTR publicKey,
+                            CK_OBJECT_HANDLE_PTR privateKey)
+{
+    CK_BBOOL ckTrue = CK_TRUE;
+    CK_ML_DSA_PARAMETER_SET_TYPE parameterSet = CKP_ML_DSA_65;
+    CK_MECHANISM mechanism = {CKM_ML_DSA_KEY_PAIR_GEN, NULL_PTR, 0};
+    CK_ATTRIBUTE publicTemplate[] = {
+        {CKA_TOKEN, &ckTrue, sizeof(ckTrue)},
+        {CKA_VERIFY, &ckTrue, sizeof(ckTrue)},
+        {CKA_PARAMETER_SET, &parameterSet, sizeof(parameterSet)}
+    };
+    CK_ATTRIBUTE privateTemplate[] = {
+        {CKA_TOKEN, &ckTrue, sizeof(ckTrue)},
+        {CKA_SIGN, &ckTrue, sizeof(ckTrue)},
+        {CKA_SENSITIVE, &ckTrue, sizeof(ckTrue)}
+    };
+    CK_OBJECT_HANDLE generatedPublic = CK_INVALID_HANDLE;
+    CK_OBJECT_HANDLE generatedPrivate = CK_INVALID_HANDLE;
+    CK_RV result;
+
+    if (publicKey == NULL_PTR || privateKey == NULL_PTR)
+        return CKR_ARGUMENTS_BAD;
+    *publicKey = CK_INVALID_HANDLE;
+    *privateKey = CK_INVALID_HANDLE;
+    if (api == NULL_PTR || api->C_GenerateKeyPair == NULL_PTR)
+        return CKR_ARGUMENTS_BAD;
+    result = api->C_GenerateKeyPair(session, &mechanism,
+        publicTemplate, 3, privateTemplate, 3,
+        &generatedPublic, &generatedPrivate);
+    if (result != CKR_OK) return result;
+    *publicKey = generatedPublic;
+    *privateKey = generatedPrivate;
+    return CKR_OK;
+}`,
+    notes:
+      'Compile with the OASIS PKCS#11 v3.2 headers and an implementation supporting CKM_ML_DSA_KEY_PAIR_GEN. CKA_PARAMETER_SET takes the numeric CK_ML_DSA_PARAMETER_SET_TYPE value CKP_ML_DSA_65, not a name string; the private key inherits this selection from the public template. Check the returned CK_RV before using handles. The caller initializes its chosen provider, opens and authenticates a read/write sample-token session, then destroys owned objects, logs out, closes the session and finalizes. CKA_TOKEN requests token storage and CKA_SENSITIVE restricts private-value reads; opaque handles alone do not establish hardware residency or non-extractability. Evaluate these capabilities and failure behavior in your production tool.',
   },
   {
     apiId: 'ksp-cng',
@@ -140,6 +173,7 @@ var priv = (MLDsaPrivateKeyParameters)kp.Private;`,
     notes: 'Identical pattern to Java Bouncy Castle — same API design in C#.',
   },
 
+  // OpenSSL one-shot API reference: https://docs.openssl.org/3.5/man7/EVP_SIGNATURE-ML-DSA/
   // Sign — ML-DSA-65
   {
     apiId: 'jca-jce',
@@ -160,18 +194,42 @@ byte[] signature = signer.sign();`,
     operation: 'sign',
     language: 'C',
     algorithm: 'ML-DSA-65',
-    code: `// OpenSSL EVP signing with ML-DSA-65
-EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
-EVP_DigestSignInit(mdctx, NULL, NULL,
-    NULL, pkey);
-EVP_DigestSignUpdate(mdctx, msg, msgLen);
-size_t sigLen;
-EVP_DigestSignFinal(mdctx, NULL, &sigLen);
-unsigned char *sig = OPENSSL_malloc(sigLen);
-EVP_DigestSignFinal(mdctx, sig, &sigLen);
-EVP_MD_CTX_free(mdctx);`,
+    code: `#include <openssl/evp.h>
+#include <openssl/crypto.h>
+
+// Pure ML-DSA-65: no external digest. Only 1 means a signature was produced.
+// On success the caller owns *signature and releases it with OPENSSL_free.
+int sample_sign_mldsa65(EVP_PKEY *key, const unsigned char *message,
+                       size_t message_length, unsigned char **signature,
+                       size_t *signature_length) {
+    if (signature != NULL) *signature = NULL;
+    if (signature_length != NULL) *signature_length = 0;
+    if (signature == NULL || signature_length == NULL) return 0;
+    if (key == NULL || message == NULL || !EVP_PKEY_is_a(key, "ML-DSA-65"))
+        return 0;
+    EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+    unsigned char *buffer = NULL;
+    size_t length = 0;
+    int ok = 0;
+    if (ctx == NULL ||
+        EVP_DigestSignInit_ex(ctx, NULL, NULL, NULL, NULL, key, NULL) != 1 ||
+        EVP_DigestSign(ctx, NULL, &length, message, message_length) != 1 ||
+        length == 0) goto done;
+    buffer = OPENSSL_malloc(length);
+    if (buffer == NULL ||
+        EVP_DigestSign(ctx, buffer, &length, message, message_length) != 1 ||
+        length == 0) goto done;
+    *signature = buffer;
+    *signature_length = length;
+    buffer = NULL;
+    ok = 1;
+done:
+    OPENSSL_free(buffer);
+    EVP_MD_CTX_free(ctx);
+    return ok;
+}`,
     notes:
-      'EVP_DigestSign* works for all asymmetric signature algorithms. Two-call pattern for buffer sizing.',
+      'Use EVP_DigestSign with a NULL digest name for pure ML-DSA, rather than Update/Final streaming calls. The first one-shot call queries capacity; the second writes the signature. Check the result before using either output. This helper accepts only the declared ML-DSA-65 key type. Reference: OpenSSL 3.5 manual, EVP_SIGNATURE-ML-DSA, Notes section.',
   },
   {
     apiId: 'pkcs11',
@@ -284,16 +342,25 @@ boolean valid = verifier.verify(signature);`,
     operation: 'verify',
     language: 'C',
     algorithm: 'ML-DSA-65',
-    code: `// OpenSSL EVP verification
-EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
-EVP_DigestVerifyInit(mdctx, NULL, NULL,
-    NULL, pkey);
-EVP_DigestVerifyUpdate(mdctx, msg, msgLen);
-int rc = EVP_DigestVerifyFinal(
-    mdctx, sig, sigLen);
-// rc == 1: valid, rc == 0: invalid
-EVP_MD_CTX_free(mdctx);`,
-    notes: 'Return code 1 = valid, 0 = invalid, < 0 = error.',
+    code: `#include <openssl/evp.h>
+
+// A fresh context per check: 1 = valid, 0 = invalid, other values = error.
+int sample_verify_mldsa65(EVP_PKEY *key, const unsigned char *message,
+                         size_t message_length, const unsigned char *signature,
+                         size_t signature_length) {
+    if (key == NULL || message == NULL || signature == NULL ||
+        !EVP_PKEY_is_a(key, "ML-DSA-65")) return -1;
+    EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+    int result = -1;
+    if (ctx != NULL &&
+        EVP_DigestVerifyInit_ex(ctx, NULL, NULL, NULL, NULL, key, NULL) == 1)
+        result = EVP_DigestVerify(ctx, signature, signature_length,
+                                 message, message_length);
+    EVP_MD_CTX_free(ctx);
+    return result;
+}`,
+    notes:
+      'Use the one-shot EVP_DigestVerify call for pure ML-DSA. Only return value 1 establishes a valid signature; 0 means invalid, and other values indicate an error, which can also include a malformed signature. Both the public key and message must belong to the intended check; changing either requires verification again.',
   },
 
   // Encrypt — AES-256-GCM (classical, for pattern comparison)

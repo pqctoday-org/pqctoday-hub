@@ -27,8 +27,8 @@ async function expectBothPanesSucceeded(page: Page) {
   const classical = panes(page).nth(0)
   const pqc = panes(page).nth(1)
 
-  await expect(classical).toContainText('Key generated successfully!', { timeout: WASM_TIMEOUT })
-  await expect(pqc).toContainText('Key generated successfully!', { timeout: WASM_TIMEOUT })
+  await expect(classical).toContainText('Private-key output produced.', { timeout: WASM_TIMEOUT })
+  await expect(pqc).toContainText('Private-key output produced.', { timeout: WASM_TIMEOUT })
   await expect(classical).not.toContainText('key file not produced')
   await expect(pqc).not.toContainText('key file not produced')
 
@@ -39,7 +39,16 @@ async function expectBothPanesSucceeded(page: Page) {
   const pqcPem = (await pqc.textContent()) ?? ''
   expect(classicalPem).toContain('-----BEGIN PUBLIC KEY-----')
   expect(pqcPem).toContain('-----BEGIN PUBLIC KEY-----')
-  expect(pqcPem.length).toBeGreaterThan(classicalPem.length * 2)
+  const publicDer = (text: string) => {
+    const match = text.match(/-----BEGIN PUBLIC KEY-----([\s\S]*?)-----END PUBLIC KEY-----/)
+    expect(match, 'Each pane must expose its own generated public key').not.toBeNull()
+    return Buffer.from(match![1].replace(/\s/g, ''), 'base64')
+  }
+  const classicalDer = publicDer(classicalPem)
+  const pqcDer = publicDer(pqcPem)
+  expect(classicalDer.byteLength).toBe(44) // Ed25519 SubjectPublicKeyInfo
+  expect(pqcDer.byteLength).toBe(1974) // ML-DSA-65 SubjectPublicKeyInfo
+  expect(pqcDer.equals(classicalDer)).toBe(false)
 }
 
 test('second genpkey to the same -out filename still reports its key', async ({ page }) => {
@@ -47,7 +56,7 @@ test('second genpkey to the same -out filename still reports its key', async ({ 
 
   // PQC first, sequentially — the second run is the one that used to fail.
   await page.getByRole('button', { name: /Generate ML-DSA-65/ }).click()
-  await expect(panes(page).nth(1)).toContainText('Key generated successfully!', {
+  await expect(panes(page).nth(1)).toContainText('Private-key output produced.', {
     timeout: WASM_TIMEOUT,
   })
 
@@ -62,5 +71,7 @@ test('Generate Both & Compare produces both key pairs', async ({ page }) => {
   await expectBothPanesSucceeded(page)
 
   // The size-comparison panel only renders once BOTH panes returned key bytes.
-  await expect(page.getByText('Key Size Comparison')).toBeVisible({ timeout: WASM_TIMEOUT })
+  await expect(
+    page.getByRole('heading', { name: 'Decoded Key Container Size Comparison', exact: true })
+  ).toBeVisible({ timeout: WASM_TIMEOUT })
 })

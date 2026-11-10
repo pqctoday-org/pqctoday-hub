@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Rocket } from 'lucide-react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import type { RoadmapOutput } from '../types'
+import { ExportableArtifact } from '../../../common/executive'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import {
+  RETIREMENT_PACKETS,
+  RETIREMENT_PACKET_LIMIT,
+  interpretRetirementPacket,
+  retirementPacketMarkdown,
+} from './retirementEvidenceSample'
 
 // Exported (07192026, Batch 3) for the simulation's real-tool doc generator —
 // the sim's sample playbook is the tool's own real checklist content.
@@ -276,6 +284,11 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
     [addExecutiveDocument]
   )
 
+  const [retirementSnapshot, setRetirementSnapshot] = useState(RETIREMENT_PACKETS[0].label)
+  const packet =
+    RETIREMENT_PACKETS.find((entry) => entry.label === retirementSnapshot) ?? RETIREMENT_PACKETS[0]
+  const interpretation = interpretRetirementPacket(packet)
+
   return (
     <div className="space-y-3">
       <div className="glass-panel p-4 border-l-4 border-status-info flex items-start gap-3">
@@ -301,6 +314,66 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
           summary={`${effectiveRoadmapOutput.milestones.length} roadmap milestone${effectiveRoadmapOutput.milestones.length !== 1 ? 's' : ''} ${roadmapOutput ? 'from Step 1' : 'from your last Roadmap Builder export'} are available for reference. Phases covered: ${roadmapSummary}.`}
         />
       )}
+      <section
+        aria-label="Fictional retirement worked sample"
+        className="glass-panel p-4 space-y-3"
+      >
+        <h2 className="text-base font-semibold">
+          Records archiving and retrieval service: retirement example
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Compare the supplied inventory, route configuration, connection trust and batch-reader
+          references. Removing a gateway alone can leave a direct legacy fallback.
+        </p>
+        <FilterDropdown
+          label="Fictional snapshot"
+          ariaLabel="Fictional snapshot"
+          items={RETIREMENT_PACKETS.map((entry) => entry.label)}
+          selectedId={retirementSnapshot}
+          onSelect={setRetirementSnapshot}
+          hideDefaultOption
+        />
+        <p role="status" className="text-sm font-semibold">
+          {interpretation.status === 'consistent'
+            ? 'Consistent for the declared sample paths'
+            : 'Incomplete: old paths or evidence gaps remain'}
+        </p>
+        <ul className="list-disc pl-5 text-sm">
+          {[...interpretation.remaining, ...interpretation.issues].map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        <p className="text-sm text-muted-foreground">{RETIREMENT_PACKET_LIMIT}</p>
+        <p className="text-sm text-muted-foreground">
+          In your production tools, compare inventory and configuration, trace trust and
+          dependencies, and target every old path plus a replacement control. Retain configuration
+          identity, observation time, tool/version and outcome.
+        </p>
+        <ExportableArtifact
+          title="Inspect or copy the fictional packet"
+          filename="fictional-retirement-packet"
+          formats={['markdown']}
+          exportData={retirementPacketMarkdown(packet)}
+        >
+          <div className="grid gap-3 md:grid-cols-2">
+            <div>
+              <h3 className="text-sm font-semibold">Before cutover records</h3>
+              <pre className="overflow-x-auto rounded bg-muted/50 p-3 text-xs">
+                {JSON.stringify(RETIREMENT_PACKETS[0], null, 2)}
+              </pre>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold">Selected records and observations</h3>
+              <pre className="overflow-x-auto rounded bg-muted/50 p-3 text-xs">
+                {JSON.stringify(packet, null, 2)}
+              </pre>
+            </div>
+          </div>
+        </ExportableArtifact>
+        <p className="text-xs text-muted-foreground">
+          Inspecting this sample does not complete or save the separate planning checklist below.
+        </p>
+      </section>
       <OpsChecklist
         title={DEPLOYMENT_PLAYBOOK_TITLE}
         description={DEPLOYMENT_PLAYBOOK_DESCRIPTION}

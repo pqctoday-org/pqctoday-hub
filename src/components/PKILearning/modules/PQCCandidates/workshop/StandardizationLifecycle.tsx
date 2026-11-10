@@ -6,6 +6,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CANDIDATES, getCandidate } from '../data/candidates'
 import { LIFECYCLE_EVENTS } from '../data/rounds'
 import { FAMILIES } from '../data/families'
+import { LifecycleOutcomeExamples } from '../components/LifecycleOutcomeExamples'
 
 interface StandardizationLifecycleProps {
   initialCandidateId?: string
@@ -223,6 +224,11 @@ export const StandardizationLifecycle: React.FC<StandardizationLifecycleProps> =
           )}
         </div>
       )}
+
+      {/* Worked examples: two real outcomes */}
+      <div className="glass-panel p-4">
+        <LifecycleOutcomeExamples />
+      </div>
 
       {/* Round navigation */}
       <div className="flex justify-between gap-3">

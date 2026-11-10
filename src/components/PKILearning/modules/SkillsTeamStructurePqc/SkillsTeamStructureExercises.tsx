@@ -13,8 +13,8 @@ const EXERCISES = [
     badge: 'Team Sizing',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     scenario:
-      'You advise two firms. Firm A is a 50,000-employee bank with 2,000 TLS endpoints, 15 HSMs, and 200 vendor relationships. Firm B is a 200,000-employee manufacturer with 500 TLS endpoints concentrated in one ERP platform. Leadership at both assumes headcount should drive team size, and the manufacturer expects the bigger team.',
-    hint: 'Use the Team Sizing Calculator (Step 1). Enter each estate size at the first-two-years ratio (1 FTE / 500 instances). Show that the bank — despite fewer employees — needs the larger program team because sizing follows the cryptographic estate, not headcount.',
+      'In a fictional comparison, a 50,000-employee bank has 2,000 CBOM instances and a 200,000-employee manufacturer has 500, counted using the same definition. Leadership assumes employee headcount should drive the migration allocation. Compare the seeded delivery and coordination work, then inspect the role allocations.',
+    hint: 'Use Step 1 with 2,000 and 500 instances in the early phase. Compare the ratio delivery seed, separate coordination assumptions and allocated total. Do not add unlike endpoint, HSM or supplier counts, or treat the result as proof of staffing adequacy.',
     step: 0,
   },
   {
@@ -23,8 +23,8 @@ const EXERCISES = [
     badge: 'Lean Team',
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     scenario:
-      'A mid-market company has roughly 600 cryptographic instances in its CBOM and no OT systems. The CFO will not approve a dedicated program office and wants to know the minimum viable team that still keeps the program credible to auditors.',
-    hint: 'Use the Team Sizing Calculator (Step 1) with 600 instances and OT off. Note the "small estate" band: a part-time QRPM with consulting augmentation for the Cryptographic Architect is viable, while QRPM, Architect, and PMO Analyst remain the irreducible dedicated core.',
+      'A fictional company has 600 consistently counted CBOM instances and no OT. Its initial allocation is 1.2 delivery FTE plus 1 coordination FTE: 2.2 in total. The CFO asks how responsibilities can be shared by part-time staff.',
+    hint: 'Enter 600 with OT off. Inspect the 0.5 QRPM, 0.25 architect and 0.25 PMO sample allocations, edit fractional responsibilities and check that the rows still add to the headline and export. Explain the work and availability assumptions you would need before choosing a real allocation.',
     step: 0,
   },
   {

@@ -437,7 +437,7 @@
       "id": "pqc-candidates",
       "lm_id": "LM-053",
       "title": "PQC Candidates & Lifecycle",
-      "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
+      "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026; HAWK since withdrawn) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
       "duration": "55 min",
       "difficulty": "intermediate",
       "frameworkPhase": "foundations"
@@ -4172,7 +4172,7 @@
           "id": "pqc-candidates",
           "lm_id": "LM-053",
           "title": "PQC Candidates & Lifecycle",
-          "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
+          "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026; HAWK since withdrawn) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
           "duration": "55 min",
           "difficulty": "intermediate",
           "frameworkPhase": "foundations"

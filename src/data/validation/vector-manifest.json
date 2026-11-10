@@ -19154,7 +19154,7 @@
             "hpke-pq-04-test-vectors#/vectors/12"
           ],
           "upstreamOperation": "Same generator: classical DHKEM suites with the one-stage SHAKE128/TurboSHAKE KDFs, and PQ suites with those KDFs",
-          "localOperation": "Not executed: the engine implements only the SHAKE256 one-stage KDF (owner decision D1, 2026-10-01). The DHKEM(P-384)/SHAKE256 suite's key schedule is checked by the engine's cargo tests only.",
+          "localOperation": "Not executed: the engine implements only the SHAKE256 one-stage KDF (2026-10-01). The DHKEM(P-384)/SHAKE256 suite's key schedule is checked by the engine's cargo tests only.",
           "transformations": [
             {
               "type": "field-add",
@@ -19162,7 +19162,7 @@
             },
             {
               "type": "subset",
-              "detail": "Not executed in the hub: suites whose KEM is classical DHKEM or whose KDF is SHAKE128/TurboSHAKE128/TurboSHAKE256 (only the SHAKE256 one-stage KDF is implemented, owner decision D1)."
+              "detail": "Not executed in the hub: suites whose KEM is classical DHKEM or whose KDF is SHAKE128/TurboSHAKE128/TurboSHAKE256 (only the SHAKE256 one-stage KDF is implemented)."
             }
           ]
         }

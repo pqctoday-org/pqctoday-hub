@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11082026.csv
+ * Source: src/data/role_board_content_11092026_r4.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -162,7 +162,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
 
         headline: 'Explore exposure and the evidence you need.',
         sub: 'Use a sample risk register and assessment to explore how inputs and assumptions affect priorities. Inspect the calculation and sources; the result is not measured risk or a determination of applicable obligations.',
-        ctaPrimary: 'See a finished example report',
+        ctaPrimary: 'See an example report',
         ctaPrimaryHref: '/report?example=1',
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
@@ -188,7 +188,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Generated from your six answers',
         gridCards: [
           {
-            title: 'A finished report, before you start',
+            title: 'An example report, before you start',
             body: 'The worked example renders a complete report under its own authored persona — you can read the output before committing to the assessment.',
             href: '/report?example=1',
           },
@@ -518,7 +518,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'The same assessment inputs, read for treatment rather than a headline score — an exposure, its owner, and the decision you made about it.',
         ctaPrimary: 'Build the risk register',
         ctaPrimaryHref: '/business/tools/risk-register',
-        ctaSecondary: 'See a finished example report',
+        ctaSecondary: 'See an example report',
         ctaSecondaryHref: '/report?example=1',
         proofChips: ['1495 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
@@ -804,7 +804,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Exit criteria, a decommissioning schedule, and a record you can point an auditor to — not a sense that the migration is probably over.',
         ctaPrimary: 'Verify the migration',
         ctaPrimaryHref: '/business/tools/migration-verification',
-        ctaSecondary: 'See a finished example report',
+        ctaSecondary: 'See an example report',
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
           'Organised around the NIST CSWP.39 zones',
@@ -1207,7 +1207,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'A test that cannot fail is documentation.',
           footnote:
-            "The closure tool checks against the framework's own five-point evidence standard, not a checklist we invented.",
+            "The linked closure tool offers five prompts that follow the framework's five-point verification evidence standard. Filling them records references; it does not run checks or verify a deployment.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Sample checks and planning resources',
@@ -2191,7 +2191,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'IT Ops · after the change window · what you can show',
 
         headline: '“It looks fine” is not a closure record.',
-        sub: 'Negotiated suites verified per endpoint, monitoring that would notice a silent downgrade, and a closure report you can attach to the change ticket.',
+        sub: 'Negotiated suites verified per endpoint, monitoring that would notice a silent downgrade, and a record of the references behind your closure evidence to attach to the change ticket.',
         ctaPrimary: 'Explore a sample assessment report',
         ctaPrimaryHref: '/report?example=1',
         ctaSecondary: 'Record the closure evidence',
@@ -2997,7 +2997,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business/tools/vendor-scorecard',
           },
           {
-            title: 'See a finished report',
+            title: 'See an example report',
             body: "A complete worked example report, opened without running an assessment first — the format a customer's own assessment on this site produces.",
             href: '/report?example=1',
           },

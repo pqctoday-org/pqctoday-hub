@@ -37,6 +37,70 @@ export const TrustHardwareVenn: React.FC = () => {
         <p className="text-center text-[11px] text-muted-foreground mt-1.5">Click image to zoom</p>
       </div>
       <figcaption className="text-xs text-muted-foreground text-center">{VENN.caption}</figcaption>
+      <p className="text-xs text-muted-foreground md:hidden">
+        Scroll the table sideways to see all four columns.
+      </p>
+      <div
+        className="overflow-x-auto rounded-lg border border-border"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard users must be able to scroll the table sideways
+        tabIndex={0}
+        role="region"
+        aria-label="Post-quantum and PKCS#11 comparison table"
+        data-testid="trust-venn-table"
+      >
+        <table className="w-full min-w-[640px] border-separate border-spacing-0 text-sm">
+          <caption className="sr-only">
+            Post-quantum algorithms and PKCS#11 support for TPM 2.0, Tessera, traditional HSMs and
+            cloud HSMs
+          </caption>
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                className="bg-muted p-2 text-left text-xs font-semibold text-foreground"
+              >
+                <span className="sr-only">Topic</span>
+              </th>
+              {VENN.tableColumns.map((c) => (
+                <th
+                  key={c.id}
+                  scope="col"
+                  className="bg-muted p-2 text-left text-xs font-semibold text-foreground"
+                >
+                  {c.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {VENN.tableRows.map((row) => (
+              <tr key={row.id} className="align-top">
+                <th
+                  scope="row"
+                  className="border-t border-border bg-background p-2 text-left text-xs font-semibold text-foreground"
+                >
+                  {row.label}
+                </th>
+                {VENN.tableColumns.map((c) => {
+                  const cell = row.cells[c.id]
+                  return (
+                    <td
+                      key={c.id}
+                      className="border-t border-border p-2 text-sm leading-snug text-foreground/90 space-y-1"
+                      data-testid={`venn-cell-${row.id}-${c.id}`}
+                    >
+                      {cell.lines.map((l) => (
+                        <p key={l}>{l}</p>
+                      ))}
+                      <SourceList ids={[...cell.sources]} />
+                    </td>
+                  )
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <details className="rounded-lg border border-border bg-muted/20 p-3 text-sm">
         <summary className="cursor-pointer text-xs font-semibold text-foreground">
           Read the diagram as text
@@ -44,11 +108,6 @@ export const TrustHardwareVenn: React.FC = () => {
         <div className="mt-2 space-y-2 text-foreground/90">
           <ul className="list-disc pl-5 space-y-1">
             {VENN.regions.map((r) => (
-              <li key={r}>{r}</li>
-            ))}
-          </ul>
-          <ul className="list-disc pl-5 space-y-1">
-            {VENN.tableRows.map((r) => (
               <li key={r}>{r}</li>
             ))}
           </ul>

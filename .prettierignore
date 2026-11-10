@@ -135,3 +135,8 @@ public/licenses/engines/
 # src/data/pkcs11-v33/vectorProvenance.test.ts. Never reformat.
 src/data/pkcs11-v33/composite-kem/testvectors.json
 src/data/pkcs11-v33/composite-sig/testvectors.json
+
+# LMS generated immutable resources: reformatting changes the proven content hashes.
+# The caller and tests remain authored/formatted; rebuild and byte checks guard these outputs.
+public/wasm/lms/
+src/wasm/lmsArtifact.generated.ts

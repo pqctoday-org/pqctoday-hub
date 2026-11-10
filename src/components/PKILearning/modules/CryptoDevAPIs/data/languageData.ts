@@ -130,8 +130,9 @@ export const DEV_LANGUAGES: DevLanguage[] = [
     cryptoLibraries: [
       {
         name: 'RustCrypto',
-        description: 'Community crates: aes, sha2, rsa, ecdsa, ed25519-dalek — pure Rust',
-        pqcSupport: false,
+        description:
+          'Pure Rust community crates, including standardized ML-DSA and ML-KEM; evaluate each crate and version separately',
+        pqcSupport: true,
       },
       {
         name: 'ring',
@@ -140,7 +141,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
       {
         name: 'pqcrypto',
-        description: 'Rust bindings to PQClean — compile-time PQC algorithm selection',
+        description:
+          'Archived Rust bindings to PQClean (legacy Dilithium/Kyber crates and, before archiving, pqcrypto-mldsa and pqcrypto-mlkem); upstream recommends maintained alternatives for new projects',
         pqcSupport: true,
       },
       {
@@ -155,7 +157,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
     ],
     pqcBindings: [
-      'pqcrypto (PQClean wrappers)',
+      'RustCrypto ml-dsa 0.1.2 (standardized ML-DSA; unaudited)',
+      'pqcrypto (archived PQClean wrappers; legacy profiles)',
       'oqs-rs (liboqs bindings)',
       'aws-lc-rs (ML-KEM)',
       'openssl crate (OpenSSL 3.5+ native PQC)',
@@ -181,7 +184,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'Compile times can be long for complex crypto crates',
     ],
     cryptoDevContext:
-      'Rust\'s ownership rules remove many classes of memory bug in safe code, and its type system can encode invariants like "this key is only usable for signing", which suits new crypto library work. The language does not provide constant-time execution: use primitives such as subtle, keep unsafe code and C bindings small and reviewed, and test timing. The pqcrypto crate provides PQC access; for FIPS, check the validation status of the module you wrap.',
+      'Rust\'s ownership rules remove many classes of memory bug in safe code, and its type system can encode invariants like "this key is only usable for signing", which suits new crypto library work. The language does not provide constant-time execution: use primitives such as subtle, keep unsafe code and C bindings small and reviewed, and test timing. For new standardized ML-DSA work, evaluate maintained RustCrypto crates and their exact versions; the archived pqcrypto APIs include pre-standard algorithms. The worked example uses unaudited ml-dsa 0.1.2. For FIPS, check the validation status of the exact module you use.',
     radar: {
       memorySafety: 9,
       cryptoEcosystem: 7,

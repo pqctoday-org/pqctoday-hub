@@ -29,6 +29,53 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.203.0] - 2026-11-09
+
+The PQC Candidates lesson compares two real 2026 outcomes, HAWK withdrawn after an attack and Classic McEliece advised against for new use, and lessons, catalogue and Library entries now say only what their sources say.
+
+### Added
+
+- **Measured TLS and SSH comparisons** [view:/learn/vpn-ssh-pqc] [persona:developer] [persona:architect] [persona:ops]: inspect captured message breakdowns for classical, hybrid and post-quantum sample connections, with key exchange, authentication and the framing boundary beside each total.
+- **Editable staffing allocations that add up** [view:/learn/skills-team-structure] [view:/business] [persona:executive] [persona:grc]: edit fractional delivery and coordination roles, compare them with the sample ratio and keep screen, saved draft and export totals aligned. Zero allocations remain distinct from missing inputs.
+- **Worked evaluations of fictional AI-tool results** [view:/learn/ai-security-pqc] [persona:developer] [persona:grc]: edit labelled observations and calculate accuracy, false positives and missed detections, including a case where high accuracy hides missed positives.
+- **A complete Rust ML-DSA signing example** [view:/learn/crypto-dev-apis] [persona:developer]: the Rust recommendation now gives a complete, versioned ML-DSA-65 program with its exact crate version and toolchain, and separates maintained, standardized libraries from archived pre-standard bindings.
+- **A worked retirement comparison in the deployment playbook** [view:/learn/migration-program] [view:/business] [persona:ops] [persona:architect] [persona:grc]: compare fictional before-and-after snapshots of a legacy path to see which fallbacks, trust references and missing observations remain; the sample never changes your checklist or saves a document.
+- **Document analysis for the 47 trust hardware documents** [view:/library] [persona:architect] [persona:cert-engineer] [persona:researcher]: the Tessera, Caliptra, TPM, HSM, DPU and confidential computing documents added in 4.202 now have the same structured analysis as the rest of the Library.
+- **GitLab CI/CD and a hybrid post-quantum VPN are back in the catalogue** [view:/migrate] [persona:developer] [persona:ops]: both products are listed again, with downloaded proofs and descriptions limited to what their own pages say.
+- **Two real outcomes in the selection-process lesson** [view:/learn/pqc-candidates] [persona:researcher] [persona:architect] [persona:cert-engineer] [persona:curious]: HAWK reached Round 3 in May 2026 and its team withdrew it in July after a key-recovery attack, while Germany's BSI advised against Classic McEliece for new use in October 2026 although its guideline still lists it; the lesson explains how the two outcomes differ, with links to the announcements.
+- **A sourced comparison table under the trust hardware diagram** [view:/learn/arch-quantum-impact] [persona:architect] [persona:cert-engineer]: the post-quantum and PKCS#11 comparison is now a text table with a Library source in every cell, and the diagram shows only the overlap picture.
+- **Azure Cloud HSM in the catalogue** [view:/migrate] [persona:architect] [persona:ops]: listed with the hardware and FIPS level Microsoft states; its post-quantum support is shown as unknown because Microsoft's pages do not state it.
+
+### Changed
+
+- **Trust hardware certification wording follows the sources** [view:/learn/arch-quantum-impact] [view:/learn/hsm-pqc] [persona:cert-engineer] [persona:architect] [persona:grc]: the HSM card now cites the CAVP records and NIST's post-quantum FIPS 140-3 guidance; the TPM line notes the two commands that may be needed for a FIPS 140 evaluation; the HSM lesson explains that an algorithm must be CAVP tested or, where guidance permits, vendor affirmed; advice sentences are labelled as the lesson's advice.
+- **Azure HSM hardware is described on the right service** [view:/learn/hsm-pqc] [view:/learn/crypto-mgmt-modernization] [persona:architect] [persona:ops]: Marvell LiquidSecurity hardware is now named for Azure Managed HSM and Azure Cloud HSM, not Dedicated HSM (Thales Luna 7), and the cloud responsibility matrix looks up Azure Managed HSM correctly.
+- **Certificate compression figures are labelled as planning inputs** [view:/learn/web-gateway-pqc] [view:/learn/iot-pqc] [persona:architect] [persona:ops]: RFC 8879 states no percentage, so the gateway calculator's 30% and the IoT exercise's saving are now marked as model assumptions; Zstandard is named alongside zlib and Brotli.
+- **macOS SSH status follows Apple's guide** [view:/learn/os-pqc] [persona:ops] [persona:developer]: the OS lesson now says macOS 26 adds a post-quantum key exchange to SSH, as Apple's platform security guide describes, instead of naming an OpenSSH version the guide does not give.
+- **HAWK is shown as withdrawn across the site** [view:/learn/pqc-candidates] [view:/learn/digital-assets] [view:/algorithms] [persona:researcher] [persona:developer]: lessons, the attack table and the glossary say HAWK was withdrawn from NIST's process on 29 July 2026, and its catalogue entry is retired.
+
+### Fixed
+
+- **LMS signing keeps the complete signature** [view:/openssl] [persona:developer] [persona:researcher]: signatures use their exact returned length and required capacity, including valid trailing zero bytes; the page loads and checks a matched, immutable engine pair.
+- **C examples use the intended ML-DSA interfaces** [view:/learn/crypto-dev-apis] [persona:developer]: OpenSSL examples use checked one-shot signing and verification, while PKCS#11 key generation uses the typed ML-DSA-65 parameter value.
+- **Migration guidance keeps your declared application stack** [view:/learn/crypto-dev-apis] [persona:developer] [persona:architect]: going back through the decision questions preserves the language and custom-code context behind the recommendation.
+- **Assessment effort uses explicit HSM answers** [view:/assess] [persona:executive] [persona:architect]: physical and cloud HSM selections now reach the existing effort allowance; generic infrastructure choices do not invent an HSM dependency.
+- **Performance changes follow the values compared** [view:/learn/pqc-testing-validation] [persona:researcher] [persona:ops]: relative changes are calculated from the displayed pair, including adjusted examples, instead of repeating fixed percentage labels.
+- **Planning windows distinguish confidentiality and authenticity** [view:/learn/platform-eng-pqc] [persona:architect] [persona:ops]: the timeline uses the stated sample lifetime bounds, keeps signing and encrypted-data purposes separate and shows indeterminate or unassessed outcomes where appropriate.
+- **Certificate inspection follows saved bytes** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect]: inspection and downloads use the selected saved artifact, results stay tied to its contents, and removing a selected file recovers to an available certificate.
+- **Assurance questions follow the applicable module boundary** [view:/learn/crypto-mgmt-modernization] [persona:grc] [persona:cert-engineer]: the self-assessment asks about the documented version, environment, approved mode and current status for the intended use.
+- **Quiz explanations match their sources** [view:/learn/quiz] [persona:curious] [persona:researcher]: corrected the logical and physical qubit estimates for breaking RSA-2048, FrodoKEM sizes and security level, and the reported EMVCo card count.
+- **Glossary and role-board wording** [view:/learn] [view:/] [persona:grc] [persona:ops]: Risk Treatment uses the ISO/IEC 27005 option names, an unsourced gas figure is removed, and the role boards describe the sample report and the closure tool for what they are (the closure tool records references; it does not run checks).
+- **France's entry points to the right document** [view:/compliance] [persona:grc]: the French entry now names ANSSI's PQC FAQ, matching its link.
+
+### Data
+
+- **Current catalogue release records** [view:/migrate] [persona:developer] [persona:ops]: Commvault shows separate innovation and LTS tracks; libcrux names the ML-KEM component version; QRL distinguishes its testnet quarter from an unset mainnet date; Zig, Algorand and HQC versions follow their official release records.
+- **Library analyses and records checked against their documents** [view:/library] [persona:researcher] [persona:architect]: ten analyses lose figures their documents do not contain, three trust-hardware documents name their authors, and one industry paper's record keeps only what its page states.
+- **Internal process wording removed from data notes** [view:/library] [view:/leaders] [view:/learn] [persona:curious]: about 250 notes and retirement reasons across the Library, leaders, vendors, vendor roadmaps, concept registry and role boards no longer carry internal review wording; the facts and dates are unchanged.
+- **The CISA timeline entry explains a naming difference** [view:/timeline] [persona:grc] [persona:cert-engineer]: CISA's table calls the hash-based scheme HMS, which NIST SP 800-208 calls HSS.
+- **Catalogue entries corrected against their sources** [view:/migrate] [persona:developer] [persona:cert-engineer] [persona:ops]: FIPS validation is shown as not stated where the cited page says nothing about it, unsupported benchmark figures and a release date are removed, and other entries stay as they were where the sources do not settle them.
+
 ## [4.202.0] - 2026-11-09
 
 Architect Quantum Impact gains a Trust Hardware Selector, and the HSM, Confidential Computing, hardware acceleration, Secure Boot and KMS lessons compare TPMs, Caliptra, Tessera, HSMs and DPUs from their own documents. Several workshops now measure or check the sample you build (RSA key encodings, certificate chains, KMS policies, QKD post-processing, closure records, ROI and build-versus-buy), budget utilization is reported but no longer counts toward readiness, and 47 new Library documents, corrected glossary, quiz and timeline entries, and tighter BSI and ANSSI wording round out the release.

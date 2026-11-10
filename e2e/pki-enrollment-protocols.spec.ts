@@ -11,7 +11,7 @@
  *   - KeyGen: OpenSSL 3.6 WASM `genpkey` (EVP backend)
  *   - CMP IR: in-process OSSL_CMP_CTX client ↔ OSSL_CMP_SRV_CTX server via C shim
  *   - EST: CSR from `openssl req -new` + issuance via CMP shim + PKCS#7 via crl2pkcs7
- *   - ML-KEM POP: pkeyutl -encap / -decap byte comparison
+ *   - ML-KEM sample agreement: pkeyutl -encap / -decap byte comparison
  */
 import { test, expect, type Page } from '@playwright/test'
 
@@ -140,7 +140,7 @@ test('Step 2: CMP IR issues a real X.509 cert with ML-DSA-65 CA signature (opens
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. ML-KEM-768 encrCert POP — byte-exact shared secret equality (RFC 9810)
 // ─────────────────────────────────────────────────────────────────────────────
-test('Step 4: ML-KEM-768 encap → decap yields byte-identical 32-byte shared secrets (RFC 9810 POP)', async ({
+test('Step 4: ML-KEM-768 encap → decap yields byte-identical 32-byte sample shared secrets', async ({
   page,
 }) => {
   test.setTimeout(WASM_TIMEOUT)
@@ -152,12 +152,12 @@ test('Step 4: ML-KEM-768 encap → decap yields byte-identical 32-byte shared se
 
   await page
     .getByRole('button', {
-      name: 'Run ML-KEM-768 KUR (CMP IR + encrCert POP)',
+      name: 'Run sample enrollment and KEM round trip',
     })
     .click()
 
-  // POP success = encap and decap secrets match.
-  await expect(page.getByText(/encrCert POP successful/)).toBeVisible({ timeout: WASM_TIMEOUT })
+  // Agreement requires the actual encapsulated and decapsulated sample bytes to match.
+  await expect(page.getByText(/Sample shared secrets match/)).toBeVisible({ timeout: WASM_TIMEOUT })
 
   // Extract the two hex-encoded 32-byte shared secrets.
   // Structure: <div label> followed immediately by <pre hex> as siblings inside the panel.
@@ -180,7 +180,7 @@ test('Step 4: ML-KEM-768 encap → decap yields byte-identical 32-byte shared se
   expect(encap).toMatch(/^[0-9a-f]{64}$/)
   expect(decap).toMatch(/^[0-9a-f]{64}$/)
 
-  // Byte-for-byte equality — this is the actual RFC 9810 proof-of-possession assertion.
+  // Byte-for-byte sample agreement; this separate KEM check does not establish CMP proof of possession.
   expect(encap).toBe(decap)
 })
 

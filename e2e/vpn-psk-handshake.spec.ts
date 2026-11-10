@@ -57,7 +57,8 @@ test.describe('VPN PSK handshake', () => {
     // Scorecard renders only after the tunnel is up.
     const scorecard = page.locator('[data-testid="vpn-scorecard"]')
     await expect(scorecard).toBeVisible({ timeout: 15_000 })
-    await expect(scorecard).toContainText(/Tunnel Established/i)
+    await expect(scorecard).toContainText(/Capture and current requests/i)
+    await expect(scorecard).toContainText(/peer authentication.*not assessed/i)
     // Classical baseline framing is always present in the scorecard.
     await expect(scorecard).toContainText(/classical/i)
 

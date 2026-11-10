@@ -64,13 +64,13 @@ export const CandidatesExercises: React.FC<CandidatesExercisesProps> = ({
     },
     {
       id: 'hawk-vs-falcon',
-      title: '4. HAWK as the integer-only Falcon alternative',
+      title: '4. HAWK: the integer-only Falcon alternative that was withdrawn',
       description:
-        "Open the Comparator and contrast HAWK against FN-DSA's deployment story. FN-DSA needs constant-time floating-point Gaussian sampling. HAWK doesn't.",
+        "Open the Comparator and contrast HAWK against FN-DSA's deployment story. FN-DSA needs constant-time floating-point Gaussian sampling. HAWK didn't, but its team withdrew it on 29 July 2026 after a new key-recovery attack.",
       badge: 'Implementation',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'HAWK at NIST Cat 1 is 555 B — smaller than both FN-DSA and ML-DSA — and uses integer-only arithmetic on a rank-2 module lattice. That eliminates a whole class of constant-time bugs that have plagued Falcon implementations.',
+        'HAWK at NIST Cat 1 is 555 B — smaller than both FN-DSA and ML-DSA — and uses integer-only arithmetic on a rank-2 module lattice, which removes a whole class of constant-time bugs that have plagued Falcon implementations. Easier implementation did not save it: a key-recovery attack ended its candidacy; in this module’s reading, a reminder that security comes first among the evaluation criteria.',
       config: { step: 2, candidateId: 'hawk' },
     },
     {

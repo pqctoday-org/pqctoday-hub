@@ -39,11 +39,11 @@ const SCENARIOS: Scenario[] = [
     id: 'synthetic-defense',
     title: '2. Synthetic Data Contamination Defense',
     description:
-      'In the Data Authenticity Verifier, select "Web-Scraped Dataset". Enable all recommended verification layers. Compare the model collapse curves — how many generations before quality drops below 60 without verification vs with provenance verification?',
+      'In the Data Authenticity Verifier, evaluate the eight fictional observations. In the synthetic-content question, load balanced observations and count true positives, false negatives, false positives and true negatives. Then load imbalanced observations and compare accuracy with recall. Switch to near-duplicate and selected-watermark questions to inspect their distinct reference labels.',
     badge: 'Authenticity',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     observe:
-      'With provenance verification, quality stays above 84 at generation 5. Without, it hits 18. Compare ML-DSA-65 vs ECDSA P-256 signing overhead for data manifests.',
+      'The balanced example has 3 true positives, 1 missed positive, 1 false positive and 3 true negatives: accuracy, precision and recall are each 75%. The imbalanced example gets 7 of 8 right (87.5% accuracy) but misses its only positive (0% recall); precision is undefined because there are no predicted positives. Edit a result or leave a label unanswered and inspect the recalculated counts. Similarity and watermark presence do not establish synthetic origin. Selecting verification layers or a signing algorithm does not create evaluation evidence.',
     config: { step: 1 },
   },
   {

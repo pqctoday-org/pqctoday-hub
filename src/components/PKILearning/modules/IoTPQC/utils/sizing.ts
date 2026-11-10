@@ -202,7 +202,7 @@ export interface DeliveryResult {
   caveat: string
 }
 
-/** RFC 8879: only the structured, repetitive part compresses; keys and signatures are random. Model. */
+/** Model assumption (RFC 8879 gives no figure): only the structured, repetitive part compresses; keys and signatures are random. */
 export const COMPRESSIBLE_FRACTION_OF_OVERHEAD = 0.5
 /** SubjectPublicKeyInfo framing around a raw public key (RFC 7250). Model. */
 export const SPKI_FRAMING_BYTES = 30

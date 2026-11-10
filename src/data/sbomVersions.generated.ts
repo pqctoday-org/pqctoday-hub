@@ -413,6 +413,11 @@ export const SBOM_BUILDS: Readonly<
     commit: null,
     sha256: '61204da8dbda98c5c9f489f4afc9097f92f2afed76b71fd8ee28cc714c8e66f2',
   },
+  'lms-safe-v1': {
+    repo: 'pqctoday-org/pqctoday-hub',
+    commit: '59947f47da2d06781816c04fdb19cc6d711341aa',
+    sha256: '03281779ef438cfbe69583344285ff846bb728f538c56967745fbc539e09fc4e',
+  },
   'openssh-pkcs11': {
     repo: 'pqctoday-org/pqctoday-hsm',
     commit: 'bc92034d12d32b3a1b32111d2114e6a1fb8a6205',

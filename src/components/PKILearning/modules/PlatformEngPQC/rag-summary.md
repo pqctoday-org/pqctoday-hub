@@ -29,10 +29,12 @@
 
 ### Step 2: Quantum Threat Timeline
 
-- CRQC scenario selector: 2030, 2033, 2035, 2040
-- Data expiry year calculated from exposure window text
-- Encrypted data with a 10+ year exposure window remains HNDL-exposed regardless of CRQC timeline; a signing key with a long verification window is a forgery risk, not an HNDL risk
-- Key insight: HNDL exposure window starts at time of data capture, not at CRQC arrival
+- Compare a fictional cohort starting January 1, 2026 UTC with illustrative January 1 UTC horizons: 2030, 2033, 2035 and 2040. These scenario choices are not forecasts or compliance deadlines.
+- Use explicit structured minimum and optional maximum bounds from the sample inventory, separately for payload confidentiality and signature/credential authenticity. Years are calendar years, days are 24 hours and hours are 60 minutes. An absent maximum stays open; exposure-window prose is not parsed and no default lifetime is substituted.
+- The shared helper drives workshop and exercise scenario findings from the same current inventory. Workshop counts follow the selected stage; the exercise's stated findings use All Stages. Counts distinguish vulnerable assets from purpose windows: a record can have both purposes, and signing lifetimes never inflate the confidentiality/HNDL count.
+- If the minimum ends after the selected horizon, protection is required beyond that horizon. If a finite maximum ends by the horizon, the cohort's window ends by it. A horizon within a range or unresolved open bound is indeterminate; missing or invalid bounds remain unassessed, not evidence of protection. An omitted other purpose means it is not modeled in that record, not that it is safe or unnecessary.
+- TLS payload confidentiality concerns key exchange, not certificate signing. The runtime sample retains both its short SVID authenticity window and its separate long payload-confidentiality window; the short certificate lifetime does not replace payload retention. Signature/credential authenticity concerns forgery, not HNDL.
+- Ending a window for this cohort does not protect newly issued classical credentials or an ongoing pipeline. With production tools, reassess actual retention and trust/use windows, their evidence and uncertainty, migration compatibility, and applicable guidance for the real system scope.
 
 ### Step 3: Container Signing Migration
 

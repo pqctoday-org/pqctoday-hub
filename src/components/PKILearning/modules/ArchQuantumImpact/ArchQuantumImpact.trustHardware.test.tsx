@@ -320,6 +320,9 @@ describe('TrustHardwareSelector render', () => {
   })
 })
 
+const tableText = () =>
+  VENN.tableRows.flatMap((r) => VENN.tableColumns.flatMap((c) => [...r.cells[c.id].lines]))
+
 describe('Overlap picture', () => {
   const file = join(process.cwd(), 'public', VENN.src)
 
@@ -331,13 +334,90 @@ describe('Overlap picture', () => {
     expect(bytes.length).toBeLessThan(400 * 1024)
   })
 
-  it('keeps the text version in step with the picture, with notes and cited sources', () => {
-    const all = [...VENN.regions, ...VENN.tableRows, ...VENN.notes].join(' ')
-    expect(all).toMatch(/Caliptra 2\.2 is the version the Tessera specification requires/)
-    expect(all).toMatch(/scheduled for release in December 2026/)
-    expect(all).toMatch(
-      /Rust SDK and OpenSSL provider and no PKCS#11 interface in its repositories/
+  it('has width and height attributes that match the file', () => {
+    const b = readFileSync(file)
+    const kind = b.subarray(12, 16).toString('ascii')
+    let w = 0
+    let h = 0
+    if (kind === 'VP8 ') {
+      w = b.readUInt16LE(26) & 0x3fff
+      h = b.readUInt16LE(28) & 0x3fff
+    } else if (kind === 'VP8X') {
+      w = b.readUIntLE(24, 3) + 1
+      h = b.readUIntLE(27, 3) + 1
+    } else if (kind === 'VP8L') {
+      const bits = b.readUInt32LE(21)
+      w = (bits & 0x3fff) + 1
+      h = ((bits >> 14) & 0x3fff) + 1
+    }
+    expect({ w, h }).toEqual({ w: VENN.width, h: VENN.height })
+  })
+
+  it('shows the post-quantum and PKCS#11 comparison as a table of eight sourced cells', () => {
+    const cells = VENN.tableRows.flatMap((r) => VENN.tableColumns.map((c) => r.cells[c.id]))
+    expect(cells).toHaveLength(8)
+    const extra = extraLibraryIds()
+    for (const cell of cells) {
+      expect(cell.sources.length).toBeGreaterThan(0)
+      for (const id of cell.sources) expect(hasStandard(id) || extra.has(id), id).toBe(true)
+    }
+    const text = tableText().join(' ')
+    expect(text).toContain('AWS CloudHSM: ML-DSA.')
+    expect(text).toContain('Azure Managed HSM: no post-quantum public-key types.')
+    expect(text).toContain(
+      'The SDK README names a Rust SDK, a simulator and an OpenSSL provider; no PKCS#11 interface is described in it'
     )
+    expect(text).toContain(
+      'Chip requirements list ML-KEM and ML-DSA operations; the SDK is under development and not yet ready for deployment'
+    )
+    expect(text).toContain(
+      'Google: quantum-safe key import into Cloud KMS, supported only for the SOFTWARE protection level'
+    )
+    expect(text).toContain('Azure Managed HSM: same API as Key Vault')
+    expect(text).toContain('Thales, Utimaco and Securosys document it')
+    expect(text).toContain('No PKCS#11 found in the TPM documents checked')
+  })
+
+  it('keeps unsourced clauses out of the table', () => {
+    const text = tableText().join(' ')
+    expect(text).not.toMatch(/through an add-on library/i)
+    expect(text).not.toMatch(/offered by every vendor listed/i)
+    expect(text).not.toMatch(/uses the Key Vault API/i)
+    expect(text).not.toMatch(/device commands/i)
+    expect(text).not.toMatch(/no PQC key types/i)
+    expect(text).not.toMatch(/in the repositories/i)
+    expect(text).not.toMatch(/PQC in software only/i)
+    const pq = VENN.tableRows.find((r) => r.id === 'pq')!
+    expect(pq.cells.traditional.lines.join(' ')).not.toMatch(/Entrust|Utimaco/)
+  })
+
+  it('renders the table in its own horizontal-scroll container, with source links', () => {
+    renderStep()
+    const scroller = screen.getByTestId('trust-venn-table')
+    expect(scroller.className).toContain('overflow-x-auto')
+    expect(scroller.getAttribute('aria-label')).not.toMatch(/sideways/i)
+    expect(
+      screen.getByText('Scroll the table sideways to see all four columns.').className
+    ).toContain('md:hidden')
+    for (const r of VENN.tableRows)
+      for (const c of VENN.tableColumns) {
+        const cell = within(scroller).getByTestId(`venn-cell-${r.id}-${c.id}`)
+        expect(within(cell).getAllByRole('link').length).toBeGreaterThan(0)
+        for (const l of r.cells[c.id].lines) expect(within(cell).getByText(l)).toBeInTheDocument()
+      }
+  })
+
+  it('keeps the table out of the text version of the diagram', () => {
+    renderStep()
+    const figure = screen.getByTestId('trust-venn')
+    const details = within(figure).getByText('Read the diagram as text').closest('details')!
+    expect(within(details).queryByText(/PKCS#11/)).not.toBeInTheDocument()
+  })
+
+  it('keeps the text version in step with the picture, with notes and cited sources', () => {
+    expect(VENN.caption).toMatch(/Caliptra 2\.2 is the version the Tessera specification requires/)
+    expect(VENN.caption).toMatch(/scheduled for release in December 2026/)
+    expect(VENN.caption).toMatch(/covers four of the eight kinds/)
     expect(VENN.caption).not.toMatch(/bring-your-own-key/)
     expect(VENN.regions.find((r) => r.startsWith('Traditional and cloud HSMs'))).toMatch(
       /bring your own key/
@@ -350,11 +430,12 @@ describe('Overlap picture', () => {
     expect(unresolved, `Library ids missing: ${unresolved.join(' | ')}`).toEqual([])
   })
 
-  it('has one-sentence alt text and a caption that names no tools', () => {
+  it('has alt text that says the picture is the diagram only, and a caption that names no tools', () => {
     expect(VENN.alt.length).toBeGreaterThan(40)
-    expect(VENN.alt.split('. ').length).toBe(1)
+    expect(VENN.alt).toMatch(/shows the overlap diagram only/)
+    expect(VENN.alt).toMatch(/follows as a table below/)
     expect(VENN.caption).toMatch(/desk comparison of published documents \(November 2026\)/)
-    const text = [VENN.alt, VENN.caption, ...VENN.regions, ...VENN.tableRows].join(' ')
+    const text = [VENN.alt, VENN.caption, ...VENN.regions, ...tableText()].join(' ')
     expect(text).not.toMatch(/\b(gemini|codex|claude|chatgpt|gpt|midjourney|generated|ai-)\b/i)
     expect(text).not.toMatch(/\b(ships|shipped|shipping|available|certified|in every server)\b/i)
   })

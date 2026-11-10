@@ -13,6 +13,7 @@ import { DATASET_RISK_COLORS, PRIVACY_MATURITY_COLORS } from '../data/aiSecurity
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+import { ObservationEvaluation } from './ObservationEvaluation'
 
 const AI_SECURITY_KAT_SPECS: KatTestSpec[] = [
   {
@@ -70,23 +71,14 @@ export const DataAuthenticityVerifier: React.FC = () => {
     })
   }
 
-  const trustScore = useMemo(() => {
-    const riskBase: Record<string, number> = { low: 80, medium: 60, high: 40, critical: 20 }
-    let score = riskBase[scenario.riskLevel] ?? 50
-    enabledLayers.forEach(() => {
-      score = Math.min(100, score + 8)
-    })
-    if (signingProfile.quantumSafe) score = Math.min(100, score + 5)
-    return Math.round(score)
-  }, [scenario, enabledLayers, signingProfile])
-
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-1">Data Authenticity Verifier</h3>
         <p className="text-sm text-muted-foreground">
-          Configure verification layers to defend against synthetic data contamination and model
-          collapse. See how cryptographic provenance protects training data integrity.
+          Plan verification capabilities, then evaluate supplied fictional tool observations.
+          Cryptographic provenance protects signed records; detector and similarity results need
+          their own labelled evaluation.
         </p>
       </div>
 
@@ -161,7 +153,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
                 </div>
                 <p className="text-xs text-foreground/70 mt-2 ml-8">{layer.description}</p>
                 <div className="flex flex-wrap gap-4 mt-2 ml-8 text-xs text-muted-foreground">
-                  <span>Accuracy: {layer.accuracy}</span>
+                  <span>Evaluation: {layer.accuracy}</span>
                   <span>Overhead: {layer.performanceOverhead}</span>
                 </div>
               </Button>
@@ -213,8 +205,9 @@ export const DataAuthenticityVerifier: React.FC = () => {
             </tbody>
           </table>
           <p className="text-xs text-muted-foreground p-3 border-t border-border">
-            Quality Score (0–100): higher is better. Provenance-verified datasets maintain quality
-            across generations by cryptographically filtering out synthetic contamination.
+            These model-collapse scores are fictional scenario assumptions, separate from the
+            observation evaluation below. Provenance signatures record signed claims; training
+            quality also depends on data selection and the training process.
           </p>
         </div>
       </div>
@@ -265,41 +258,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
         </div>
       </div>
 
-      {/* Trust score */}
-      <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-2">Data Authenticity Trust Score</h4>
-        <div className="flex items-center gap-4">
-          <div
-            className={`text-3xl font-bold ${
-              trustScore >= 80
-                ? 'text-status-success'
-                : trustScore >= 60
-                  ? 'text-status-warning'
-                  : 'text-status-error'
-            }`}
-          >
-            {trustScore}/100
-          </div>
-          <div className="flex-1">
-            <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all ${
-                  trustScore >= 80
-                    ? 'bg-status-success'
-                    : trustScore >= 60
-                      ? 'bg-status-warning'
-                      : 'bg-status-error'
-                }`}
-                style={{ width: `${trustScore}%` }}
-              />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Based on dataset risk ({scenario.riskLevel}), {enabledLayers.size} verification
-              layers, and {signingProfile.quantumSafe ? 'PQC' : 'classical'} signing
-            </p>
-          </div>
-        </div>
-      </div>
+      <ObservationEvaluation />
 
       <KatValidationPanel
         specs={AI_SECURITY_KAT_SPECS}

@@ -2,6 +2,8 @@
 import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PIPELINE_STAGES } from '../data/pipelineStagesData'
+import { assessProtectionWindows, describeWindowCounts } from '../utils/protectionWindows'
 
 export interface WorkshopConfig {
   step: number
@@ -26,6 +28,12 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopConfig,
 }) => {
+  const timelineFindings = [2030, 2035]
+    .map((year) => {
+      const result = assessProtectionWindows(PIPELINE_STAGES, year)
+      return `${year}: confidentiality — ${describeWindowCounts(result.confidentiality)}; authenticity — ${describeWindowCounts(result.authenticity)}. ${result.assets.length} vulnerable assets; ${result.notModeled} have no modeled window.`
+    })
+    .join(' ')
   const scenarios: Scenario[] = [
     {
       id: 'hndl-exposure-audit',
@@ -40,13 +48,12 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
     },
     {
       id: 'crqc-countdown',
-      title: '2. CRQC Countdown — Model your pipeline exposure under different threat scenarios',
+      title: '2. CRQC Countdown — Compare confidentiality and authenticity windows',
       description:
-        'In the Quantum Threat Timeline (Step 2), select CRQC Year: 2030. Count how many pipeline assets have a data expiry year beyond 2030 — meaning data protected by them will still be sensitive when a CRQC arrives. Then switch to CRQC Year: 2035 and compare.',
+        'In the Quantum Threat Timeline (Step 2), select the illustrative 2030 scenario, then 2035. Compare the confidentiality and authenticity window counts for the 2026 sample cohort. Inspect the Runtime stage: why does its 1-hour SVID window not replace the separately stated 10+year payload window? Return to All Stages before comparing the findings below.',
       badge: 'Timeline',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-      observe:
-        'Under a 2030 CRQC scenario, all 14 quantum-vulnerable assets are at risk because their exposure windows extend beyond 2030. Under 2035, the same 14 assets remain at risk — signature and certificate lifetimes are measured in decades, not years. For encrypted data this is the harvest-now-decrypt-later threat, which is independent of CRQC timeline because the exposure window starts when the data is captured (NIST IR 8547); for signatures the concern is forgery once a CRQC exists, which is not HNDL.',
+      observe: `${timelineFindings} Open bounds and ranges can leave an answer indeterminate. Signature/credential authenticity is distinct from recorded-payload confidentiality (HNDL). A window ending by the horizon does not protect newly issued classical credentials. These are explicit fictional planning inputs, not a forecast or a production migration result.`,
       config: { step: 1 },
     },
     {

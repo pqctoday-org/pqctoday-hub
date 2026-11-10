@@ -13,6 +13,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'src-commit-sign',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 10, unit: 'years' },
+            max: { value: 30, unit: 'years' },
+          },
+        },
         name: 'Git Commit Signing Keys',
         type: 'signing-key',
         algorithm: 'ecdsa',
@@ -41,6 +47,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'src-deploy-key',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 2, unit: 'years' },
+            max: { value: 5, unit: 'years' },
+          },
+        },
         name: 'Deploy Keys (SSH RSA/ECDSA)',
         type: 'signing-key',
         algorithm: 'rsa',
@@ -67,6 +79,11 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'build-oidc',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 15, unit: 'years' },
+          },
+        },
         name: 'CI/CD OIDC Tokens (JWT)',
         type: 'token',
         algorithm: 'ecdsa',
@@ -82,6 +99,11 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'build-vault-mtls',
+        protectionWindows: {
+          confidentiality: {
+            min: { value: 10, unit: 'years' },
+          },
+        },
         name: 'Vault mTLS Sessions',
         type: 'tls-session',
         algorithm: 'ecdh',
@@ -96,6 +118,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'build-registry-auth',
+        protectionWindows: {
+          confidentiality: {
+            min: { value: 5, unit: 'years' },
+            max: { value: 10, unit: 'years' },
+          },
+        },
         name: 'Container Registry Auth TLS',
         type: 'tls-session',
         algorithm: 'ecdh',
@@ -121,6 +149,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'sign-image-key',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 10, unit: 'years' },
+            max: { value: 25, unit: 'years' },
+          },
+        },
         name: 'Container Image Signing Key (ECDSA)',
         type: 'signing-key',
         algorithm: 'ecdsa',
@@ -136,6 +170,11 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'sign-sbom',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 20, unit: 'years' },
+          },
+        },
         name: 'SBOM Attestation Signatures',
         type: 'signing-key',
         algorithm: 'ecdsa',
@@ -150,6 +189,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'sign-provenance',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 10, unit: 'years' },
+            max: { value: 20, unit: 'years' },
+          },
+        },
         name: 'Build Provenance (SLSA)',
         type: 'signing-key',
         algorithm: 'ecdsa',
@@ -175,6 +220,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'reg-tls-cert',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 1, unit: 'years' },
+            max: { value: 2, unit: 'years' },
+          },
+        },
         name: 'Registry TLS Certificate',
         type: 'certificate',
         algorithm: 'ecdsa',
@@ -191,6 +242,11 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'reg-manifest-sig',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 10, unit: 'years' },
+          },
+        },
         name: 'OCI Image Manifest Signature',
         type: 'signing-key',
         algorithm: 'ecdsa',
@@ -216,6 +272,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'deploy-apiserver-tls',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 1, unit: 'years' },
+            max: { value: 1, unit: 'years' },
+          },
+        },
         name: 'kube-apiserver TLS Certificate',
         type: 'certificate',
         algorithm: 'ecdsa',
@@ -232,6 +294,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'deploy-webhook-tls',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 1, unit: 'years' },
+            max: { value: 1, unit: 'years' },
+          },
+        },
         name: 'Admission Webhook TLS',
         type: 'certificate',
         algorithm: 'ecdsa',
@@ -247,6 +315,11 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'deploy-helm-sig',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 10, unit: 'years' },
+          },
+        },
         name: 'Helm Chart Signatures (GPG)',
         type: 'signing-key',
         algorithm: 'rsa',
@@ -272,6 +345,15 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'run-mesh-mtls',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 1, unit: 'hours' },
+            max: { value: 1, unit: 'hours' },
+          },
+          confidentiality: {
+            min: { value: 10, unit: 'years' },
+          },
+        },
         name: 'Service Mesh mTLS (key exchange and SPIFFE SVIDs)',
         type: 'tls-session',
         algorithm: 'ecdsa',
@@ -287,6 +369,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
       },
       {
         id: 'run-certmanager-certs',
+        protectionWindows: {
+          authenticity: {
+            min: { value: 90, unit: 'days' },
+            max: { value: 1, unit: 'years' },
+          },
+        },
         name: 'cert-manager Issued Certificates',
         type: 'certificate',
         algorithm: 'ecdsa',
