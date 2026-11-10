@@ -1,6 +1,6 @@
 {
   "schema": "fhe-hsm-scenarios.v1",
-  "description": "Canonical FHE + HSM scenario contract (owner decision 2026-10-03). Stable scenario and step ids for the Hub workshop, evidence records (fhe-evidence.v1) and the producers pqctoday-sandbox, pqctoday-fhe (KV260) and pqctoday-cacp (MX95, MX95 Pro). Ids are never reused or renamed; a changed step gets a new id. v1 fields per the FHE plan (§1.1, §1.2, §2, §9): validationTarget uses the §1.1 labels; disclosures are stable ids; budgets list metric names prefixed by the actor that must meet them (e.g. hsm.serverKeyExportBytes vs cloud.serverKeyBytes), with values frozen later by a versioned P0A update (null until then); fixtures hold deterministic input/output hashes.",
+  "description": "Canonical FHE + HSM scenario contract (2026-10-03). Stable scenario and step ids for the Hub workshop, evidence records (fhe-evidence.v1) and the producers pqctoday-sandbox, pqctoday-fhe (KV260) and pqctoday-cacp (MX95, MX95 Pro). Ids are never reused or renamed; a changed step gets a new id. v1 fields per the FHE plan (§1.1, §1.2, §2, §9): validationTarget uses the §1.1 labels; disclosures are stable ids; budgets list metric names prefixed by the actor that must meet them (e.g. hsm.serverKeyExportBytes vs cloud.serverKeyBytes), with values frozen later by a versioned P0A update (null until then); fixtures hold deterministic input/output hashes.",
   "scenarios": [
     {
       "id": "single-hsm",

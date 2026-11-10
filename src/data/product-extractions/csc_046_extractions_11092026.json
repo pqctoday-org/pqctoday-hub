@@ -1,0 +1,56 @@
+[
+  {
+    "platform_name": "Azure Cloud HSM",
+    "category": "Cloud Hardware Security Module (HSM)",
+    "product_name": "Azure Cloud HSM",
+    "product_brief": "Microsoft's customer-managed, single-tenant, highly available HSM service on Marvell LiquidSecurity hardware. Each cluster has three HSMs reached through a private endpoint, and Microsoft states FIPS 140-3 Level 3. The cited pages name no post-quantum capability.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Azure Cloud HSM is a customer-managed, single-tenant HSM service on Marvell LiquidSecurity hardware security modules. Microsoft's FAQ lists PKCS#11, SSL/TLS offload, certificate authority private key protection, transparent data encryption, and document and code signing as supported uses, and names no post-quantum algorithm, firmware or roadmap, so whether the service supports post-quantum algorithms is not stated on the cited pages.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "HSM-backed",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "HSM-based",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Commercial",
+    "license": "Commercial (Microsoft Azure)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Microsoft states the service's HSMs are validated to meet FIPS 140-3 Level 3 and gives no certificate number on the cited pages.",
+    "primary_platforms": "Microsoft Azure",
+    "target_industries": "Unknown",
+    "regulatory_status": "FIPS 140-3 Level 3, eIDAS (Austrian scheme), PCI, PCI 3DS",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "Hardware": "Azure Cloud HSM uses Marvell LiquidSecurity hardware security modules.",
+      "FIPS Validated": "Yes, Azure Cloud HSM offers HSMs that are validated to meet FIPS 140-3 Level 3 standards.",
+      "Product Brief": "It's a customer-managed, single-tenant, highly available service that complies with industry standards.",
+      "Supported uses": "Azure Cloud HSM supports various applications, including PKCS#11, offloading of Secure Sockets Layer (SSL) or Transport Layer Security (TLS) processing, certificate authority (CA) private key protection, and transparent data encryption (TDE). It also supports document and code signing.",
+      "License": "You incur an hourly fee for each Azure Cloud HSM cluster, which consists of three nodes.",
+      "Regulatory status": "Yes, Azure Cloud HSM supports eIDAS compliance under the Austrian scheme."
+    },
+    "withheld_no_excerpt": [
+      "License"
+    ],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "local",
+      "generated_at": "2026-11-09"
+    }
+  }
+]

@@ -9157,7 +9157,8 @@
    "Organizations should acquire only PQC-capable products in categories listed as widely available",
    "Table 3 lists categories where manufacturer implementation of PQC is encouraged but not yet widely available",
    "Products must support PQC for key establishment and digital signatures to be fully quantum resistant",
-   "Operational technology (OT) and internet of things (IoT) devices are out of scope for these specific lists."
+   "Operational technology (OT) and internet of things (IoT) devices are out of scope for these specific lists",
+   "CISA's table names the Hierarchical Merkle Signature Scheme (HMS), which NIST SP 800-208 calls the Hierarchical Signature System (HSS)."
   ],
   "securityLevels": [],
   "hybridApproaches": [

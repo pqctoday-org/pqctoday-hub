@@ -588,7 +588,7 @@
   {
     "term": "CCC Digital Key",
     "definition": "A specification by the Car Connectivity Consortium (CCC) enabling smartphones to function as vehicle keys via NFC, BLE, or UWB. CCC Digital Key 3.0 uses ECDH P-256 key agreement and ECDSA P-256 certificates, both quantum-vulnerable.",
-    "technicalNote": "How many APDUs (NFC) or frames (BLE) a PQC exchange needs depends on the APDU form (short or extended length), the negotiated BLE link settings and the complete message flow, so a ciphertext-only count understates it: the ML-KEM-768 ciphertext alone is 1,088 bytes, before the encapsulation key, signatures and certificates. Owner-to-friend key sharing adds another quantum-vulnerable certificate chain.",
+    "technicalNote": "In CCC Digital Key, how many APDUs (NFC) or frames (BLE) a PQC exchange needs depends on the APDU form (short or extended length), the negotiated BLE link settings and the complete message flow, so a ciphertext-only count understates it: the ML-KEM-768 ciphertext alone is 1,088 bytes, before the encapsulation key, signatures and certificates. Owner-to-friend key sharing adds another quantum-vulnerable certificate chain.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
     "category": "protocol"
