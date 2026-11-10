@@ -620,7 +620,11 @@ test('Corpus palette: a run triggered from Code mode is reflected back in Builde
   // both tabs — the summary card's aggregate count and the canvas detail's
   // status badge both reflect the run that actually happened in Code mode,
   // not a second, separate one.
-  await expect(page.getByText(/^1\/1 pass$/)).toBeVisible()
+  const summary = page.getByRole('complementary').filter({ hasText: 'Corpus summary' })
+  await expect(summary).toHaveCount(1)
+  await expect(
+    summary.getByText('1 passed, 0 failed, 0 skipped (1 total)', { exact: true })
+  ).toBeVisible()
   if (testName) {
     await expect(page.getByText(testName).first()).toBeVisible()
     await expect(page.getByText(/PASS|FAIL|SKIP/).first()).toBeVisible()
