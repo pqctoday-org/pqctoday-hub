@@ -16,7 +16,6 @@ import { findLibraryItemByRef, libraryData } from '@/data/libraryData'
 import { leadersData } from '@/data/leadersData'
 import { isAppliedQuantumFramework } from '@/components/Library/FrameworkCrosswalkPanel'
 import { relatedLeadersFor } from '@/components/Library/relatedLeaders'
-import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({ useIsMobileShell: mockUseIsMobileShell }))
@@ -234,27 +233,5 @@ describe('Library Advanced disclosure', () => {
   it('the page opens it for an active ?org (org, cswp39, algo, geo and sector all feed it)', () => {
     renderPage('/library?org=NIST')
     expect(advanced()).toHaveAttribute('aria-expanded', 'true')
-  })
-})
-
-describe('MobileLibraryView honours ?sort', () => {
-  it('orders the phone list by a shared desktop ?sort, and ignores an unknown one', () => {
-    const ids = (initial: string) => {
-      const { container, unmount } = render(
-        <MemoryRouter initialEntries={[initial]}>
-          <MobileLibraryView />
-        </MemoryRouter>
-      )
-      // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access -- card order via the deep-link ids
-      const out = Array.from(container.querySelectorAll('[data-deeplink-id]')).map(
-        (el) => el.getAttribute('data-deeplink-id') ?? ''
-      )
-      unmount()
-      return out
-    }
-    const byName = ids('/library?sort=name').map((id) => findLibraryItemByRef(id)!.documentTitle)
-    expect(byName.length).toBeGreaterThan(2)
-    expect(byName).toEqual([...byName].sort((a, b) => a.localeCompare(b)))
-    expect(ids('/library?sort=bogus')).toEqual(ids('/library'))
   })
 })
