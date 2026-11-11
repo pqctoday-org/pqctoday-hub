@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import { softwareData } from './migrateData'
+import { fips1403Stage, isFips1403Certified } from './kpiCatalog'
+import { classifyFips } from '../utils/fipsStatus'
 
 function product(id: string) {
   const matches = softwareData.filter((item) => item.productId === id)
@@ -88,6 +90,23 @@ describe('catalogue capability scope through the real loader', () => {
     expect(item.proofRelevantInfo).toMatch(/not selected by NIST/)
   })
 
+  it('distinguishes submission software, tested failure cases and current standardized descendants', () => {
+    const signing = product('Dilithium-Software')
+    expect(signing.pqcSupport).toMatch(/2aes.*3aes.*5aes.*v3\.1/)
+    expect(signing.pqcCapabilityDescription).toMatch(/10,000.*altered signatures/)
+    expect(signing.proofRelevantInfo).toMatch(/current upstream master.*FIPS 204/)
+    expect(signing.proofRelevantInfo).toMatch(/separate from.*historical v3\.1/)
+    const kem = product('Kyber-Software')
+    expect(kem.pqcSupport).toMatch(/-90s variants.*v3\.0/)
+    expect(kem.pqcCapabilityDescription).toMatch(/wrong secret key or corrupted ciphertext/)
+    expect(kem.primaryPlatforms).toMatch(/AVX2/)
+    expect(kem.productBrief).toMatch(/mlkem-native.*mlkem-libjade/)
+    const hashSigning = product('SPHINCS-Software')
+    expect(hashSigning.pqcCapabilityDescription).toMatch(/36 named submission instances/)
+    expect(hashSigning.pqcCapabilityDescription).not.toMatch(/hybrid scheme with LMS/)
+    expect(hashSigning.proofRelevantInfo).toMatch(/not.*every SPHINCS\+ submission variant/)
+  })
+
   it('keeps a vendor Java implementation’s supported parameter sets separate from its module options', () => {
     const item = product('Oracle-Jipher')
     for (const parameter of ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'])
@@ -96,5 +115,41 @@ describe('catalogue capability scope through the real loader', () => {
     expect(item.fipsValidated).toMatch(/patched module used by default/)
     expect(item.fipsValidated).toMatch(/not strictly FIPS 140-3 compliant/)
     expect(item.fipsValidated).not.toMatch(/^Yes|^No /)
+  })
+
+  it('keeps Securosys algorithm validation while excluding pending firmware from certified-module counts', () => {
+    const item = product('securosys-primus-cybervault-pqc')
+    expect(item.pqcCertified).toBe('cavp')
+    expect(item.hasCertification).toBe('in_progress')
+    expect(fips1403Stage(item)).toBe('in_process')
+    expect(isFips1403Certified(item)).toBe(false)
+    expect(classifyFips(item.fipsValidated)).toBe('in-process')
+    expect(item.pqcSupport).toMatch(/A6130.*3\.1\.0.*Cortex-A72/)
+    expect(item.pqcCapabilityDescription).toMatch(/ML-KEM.*ML-DSA.*SLH-DSA.*HSS-LMS.*XMSS/)
+    expect(item.productBrief).toMatch(/2,500\/5,000.*10,000.*20,000/)
+  })
+
+  it('preserves the named Rambus implementation and operation-specific performance boundaries', () => {
+    const item = product('rambus-qse-ip')
+    expect(item.pqcSupport).toMatch(/A6658.*86b.*v1\.2.*2025-01-22-49fd6ac6.*ZCU102/)
+    expect(item.pqcCapabilityDescription).toMatch(/ML-KEM.*ML-DSA.*SLH-DSA/)
+    expect(item.pqcCapabilityDescription).toMatch(/7,100.*decapsulations.*13,500 encapsulations/)
+    expect(item.pqcCapabilityDescription).toMatch(/1,400 ML-DSA-87/)
+    expect(item.proofRelevantInfo).toMatch(/does not itself establish SLH-DSA validation/)
+  })
+
+  it('keeps model eligibility, irreversible activation and matching artifact dates in the hardware guidance', () => {
+    const printer = product('hp-enterprise-printers-pqc')
+    expect(printer.pqcCapabilityDescription).toMatch(/5\.9\.2\.3.*formatter/)
+    expect(printer.pqcCapabilityDescription).toMatch(/cannot be reversed/)
+    expect(printer.proofRelevantInfo).toMatch(/3SJ33-60013.*3SJ33-60001/)
+    expect(printer.proofRelevantInfo).toMatch(/5700\/X\/D55745xx.*unavailable/)
+    expect(printer.proofPublicationDate).toBe('2026-01')
+    const controller = product('infineon-tegrion-sli22-automotive')
+    expect(controller.pqcSupport).toMatch(/FIPS 203 ML-KEM.*FIPS 204 ML-DSA/)
+    expect(controller.productBrief).toMatch(/AEC-Q100 qualification/)
+    expect(controller.productBrief).toMatch(/does not establish ASIL D certification/)
+    expect(controller.latestVersion).toBe('')
+    expect(controller.proofPublicationDate).toBe('2026-02')
   })
 })
