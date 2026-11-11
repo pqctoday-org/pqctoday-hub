@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11092026_r4.csv
+ * Source: src/data/role_board_content_11112026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -1576,7 +1576,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/infra-modernization-planner',
         proofChips: [
           'Real PKCS#11 engine, in your browser',
-          'Sizing from real FIPS 203/204 key sizes',
+          'Standard ML-DSA encodings; fictional throughput inputs',
           'TPM 2.0 conformance checks run locally',
         ],
         sideCard: {
@@ -1586,7 +1586,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
             {
-              label: 'ML-DSA-65 in classical HSM firmware',
+              label: 'ML-DSA-65 signing in fictional profile A',
               value: '150 ops/s · ~133× slower than ECDSA',
             },
             { label: 'Keys in the sample estate', value: 'seven' },
@@ -1594,7 +1594,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'Capacity is an architecture decision, not an ops surprise.',
           footnote:
-            "Real figures — the capacity calculator's own defaults and the migration estate this playground actually ships with.",
+            'ML-DSA-65 signature and public-key byte sizes come from FIPS 204. Calculator profiles A and B use invented rates, not product benchmarks or an upgrade guarantee. The throughput row uses fictional profile A inputs: 150 ML-DSA-65 signatures/s versus 20,000 ECDSA P-256 signatures/s, giving a rate ratio of about 133×. Vary the calculator’s rates and workload to test capacity sensitivity; use measurements from your own product, build and operation before sizing a deployment. The key count is the playground’s sample estate.',
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Decisions with numbers attached',
@@ -2423,13 +2423,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Researcher / Academic · run it yourself · export the log',
 
         headline: 'Run the tests yourself.',
-        sub: 'Known-answer tests against pinned NIST ACVP vectors and an SP 800-90B health-test suite, each in the tab that owns it. Copy the log.',
+        sub: 'Compare SLH-DSA functional round trips and pinned NIST signature-verification samples with separate entropy visual checks, health-test demonstrations and primitive self-checks. Inspect each check’s source and scope, then copy the log.',
         ctaPrimary: 'Run SLH-DSA sign and verify',
         ctaPrimaryHref: '/playground/slh-dsa',
-        ctaSecondary: 'Run the SP 800-90B entropy suite',
+        ctaSecondary: 'Compare entropy visual and health checks',
         ctaSecondaryHref: '/playground/entropy-test',
         proofChips: [
-          'ACVP + KAT run locally, not asserted',
+          'Reference samples and functional round trips, labelled separately',
           'Real SoftHSMv3, compiled to WASM',
           'Log exportable',
           'Drift guards fail the build on silent data change',
@@ -2457,12 +2457,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Randomness, tested not asserted',
-            body: 'The SP 800-90B health tests — repetition count, adaptive proportion and MCV min-entropy — alongside monobit, runs and chi-squared checks, run against live output rather than quoted from a datasheet.',
+            body: 'Compare repetition-count and adaptive-proportion health-test signals with monobit, runs and chi-squared visual checks on the same sample. Health tests treat each byte as a raw sample with an assumed entropy; browser RNG output is a processed-output demonstration. No SP 800-90B entropy estimator is run in this tool.',
             href: '/playground/entropy-test',
           },
           {
             title: 'Where the vectors themselves run',
-            body: 'Pinned NIST ACVP vectors, run live in this tab — the same standard both workshops above draw their own known-answer tests from.',
+            body: 'The Algorithms Validation tab runs its pinned reference samples with their own source labels. The SLH-DSA workshop separately offers eight published NIST sigVer cases for SHA2-128s and SHAKE-128s (pure, external interface) and same-engine functional round trips. Entropy’s SHA-256/HMAC self-checks test primitives, not the noise source; none of these sample results is an ACVTS validation.',
             href: '/algorithms?tab=validation&section=kat',
           },
         ] as [
