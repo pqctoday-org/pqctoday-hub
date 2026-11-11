@@ -1589,13 +1589,13 @@ export function checkCapstone(s: CapstoneState): CapstoneCheck[] {
   checks.push({
     id: 'a2-matrix',
     kind: 'quality',
-    label: 'Artifact 2 — applicability matrix complete, with the anchor cases right',
+    label: 'Artifact 2 — all 16 cells filled; two named anchor selections checked',
     status: filled < cells.length ? 'todo' : pciOk && fipsOk ? 'pass' : 'fail',
     detail:
       filled < cells.length
         ? `${filled} of ${cells.length} cells filled.`
         : pciOk && fipsOk
-          ? 'PTS HSM applies to the payment processor; FIPS 140-3 applies to the federal agency.'
+          ? 'Only the payment processor × PCI PTS and federal agency × FIPS selections were compared. Compare the other cells with the worked reasoning.'
           : 'Check the payment processor × PCI PTS HSM and federal agency × FIPS 140-3 cells.',
   })
 
@@ -1607,9 +1607,9 @@ export function checkCapstone(s: CapstoneState): CapstoneCheck[] {
   checks.push({
     id: 'a10-claims',
     kind: 'quality',
-    label: 'Artifact 10 — at least three safe claims, each naming what is covered',
+    label: 'Artifact 10 — at least three sentences entered; wording checks shown separately',
     status: claimLines.length < 3 ? 'todo' : 'pass',
-    detail: `${claimLines.length} claim(s) written.`,
+    detail: `${claimLines.length} sentence(s) entered. Count does not establish safe scope or distinct reasoning; compare the worked claims.`,
   })
 
   // Quality: artifact 12
@@ -1656,7 +1656,7 @@ function chosenPathCheck(s: CapstoneState): CapstoneCheck {
     return {
       ...base,
       status: 'pass',
-      detail: `Level ${f.level} justified; ${f.route} as the candidate route for the lab to confirm.`,
+      detail: `Level ${f.level} selected, rationale length threshold met, and ${f.route} selected as a planning candidate. Compare the worked reasoning; this check does not establish a justified level.`,
     }
   }
   if (s.path === 'cc') {
