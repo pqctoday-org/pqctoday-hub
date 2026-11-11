@@ -275,7 +275,7 @@
   {
     "term": "AlgorithmIdentifier",
     "definition": "An ASN.1 SEQUENCE containing an OID that identifies a cryptographic algorithm, plus optional parameters. Appears in X.509 certificates to specify signature algorithms (signatureAlgorithm field) and public key algorithms (SubjectPublicKeyInfo.algorithm).",
-    "technicalNote": "PQC algorithms defined in FIPS 203/204/205 use absent parameters (no NULL) per their respective X.509 profile RFCs (RFC 9881, RFC 9909). The OID for ML-DSA-65 is 2.16.840.1.101.3.4.3.18; SLH-DSA-SHA2-128s is 2.16.840.1.101.3.4.3.20.",
+    "technicalNote": "Optional in the ASN.1 type does not mean interchangeable absent and NULL parameters: follow the algorithm’s PKIX profile. RFC 9881 specifies absent parameters for ML-DSA, RFC 9909 for SLH-DSA, and RFC 9935 Section 3 for ML-KEM public keys. For example, the ML-DSA-65 identifier is OID 2.16.840.1.101.3.4.3.18 with no parameters: DER hex 30 0b 06 09 60 86 48 01 65 03 04 03 12. Appending 05 00 (NULL), even with an adjusted SEQUENCE length, violates that profile. SLH-DSA-SHA2-128s uses 2.16.840.1.101.3.4.3.20; ML-KEM-768 uses 2.16.840.1.101.3.4.4.2 in SubjectPublicKeyInfo.algorithm, not as an issuer signature algorithm. See https://www.rfc-editor.org/rfc/rfc9935.html#section-3 and the cited signature profiles.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"
