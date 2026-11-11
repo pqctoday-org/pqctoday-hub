@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { softwareData, vendorMap } from './migrateData'
 import { fips1403Stage, isFips1403Certified } from './kpiCatalog'
 import { classifyFips } from '../utils/fipsStatus'
+import { proofFreshness } from '../components/Migrate/Workbench/proofFreshness'
 
 function product(id: string) {
   const matches = softwareData.filter((item) => item.productId === id)
@@ -127,6 +128,25 @@ describe('catalogue capability scope through the real loader', () => {
     expect(item.pqcSupport).toMatch(/A6130.*3\.1\.0.*Cortex-A72/)
     expect(item.pqcCapabilityDescription).toMatch(/ML-KEM.*ML-DSA.*SLH-DSA.*HSS-LMS.*XMSS/)
     expect(item.productBrief).toMatch(/2,500\/5,000.*10,000.*20,000/)
+  })
+
+  it('keeps validation events separate from the proof document’s publication date', () => {
+    for (const id of ['securosys-primus-cybervault-pqc', 'rambus-qse-ip']) {
+      const item = product(id)
+      expect(item.proofUrl).toContain(
+        'csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?'
+      )
+      expect(item.proofPublicationDate).toBeUndefined()
+      const freshness = proofFreshness(item)
+      expect(freshness.ageMonths).toBeNull()
+      expect(freshness.detail).toContain('First validated')
+      expect(freshness.detail).toContain('not a page publication date')
+      expect(freshness.detail).not.toMatch(/Published \d/)
+    }
+    expect(product('berten-mlds-b235').proofPublicationDate).toBe('2025-07-03')
+    expect(product('classic-mceliece-reference').proofPublicationDate).toBe('2025-03')
+    expect(product('trailofbits-ml-dsa').proofPublicationDate).toBe('2025-11-14')
+    expect(product('noble-hashes').proofUrl).toContain('/noble-hashes/main/package.json')
   })
 
   it('preserves the named Rambus implementation and operation-specific performance boundaries', () => {

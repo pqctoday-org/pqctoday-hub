@@ -41,9 +41,15 @@ function monthsSince(iso: string): number | null {
   // is UTC midnight, which getFullYear()/getMonth() read back as May 31 in any
   // negative-offset timezone — off by one month whenever the date falls on the
   // 1st (found when the test suite failed on Sep 1 with an off-by-one age).
-  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso)
+  // Month-precision publication dates also denote a local calendar month.
+  // Parsing YYYY-MM as UTC would age it by an extra month west of UTC.
+  const dateOnly = /^(\d{4})-(\d{2})(?:-(\d{2})|$)/.exec(iso)
+  // Do not let the engine reinterpret a malformed ISO-like month as a
+  // different date (for example, "03junk" can be read as June).
+  if (!dateOnly && /^\d{4}-\d{2}/.test(iso)) return null
+  if (dateOnly && (Number(dateOnly[2]) < 1 || Number(dateOnly[2]) > 12)) return null
   const then = dateOnly
-    ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+    ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3] ?? 1))
     : new Date(iso)
   if (Number.isNaN(then.getTime())) return null
   const now = new Date()
