@@ -2,6 +2,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { ProtocolIntegrationDemo } from './ProtocolIntegrationDemo'
+import { webcrypto } from 'node:crypto'
+import * as importer from './tlsPskImporterSample'
 const sample = vi.hoisted(() => ({ importKey: vi.fn(), deriveBits: vi.fn(), random: vi.fn() }))
 const originalCrypto = Object.getOwnPropertyDescriptor(window, 'crypto')
 beforeEach(() => {
@@ -19,25 +21,86 @@ beforeEach(() => {
   })
 })
 afterEach(() => {
+  vi.restoreAllMocks()
   if (originalCrypto) Object.defineProperty(window, 'crypto', originalCrypto)
 })
 
 describe('Protocol context is separate from local sample operations', () => {
-  it('TLS displays source bytes, not an executed importer or handshake', async () => {
+  it('TLS executes the selected importer and Early Secret while keeping handshake/binding limits', async () => {
+    Object.defineProperty(window, 'crypto', {
+      configurable: true,
+      value: {
+        getRandomValues: sample.random,
+        randomUUID: () => 'sample-key-id',
+        subtle: webcrypto.subtle,
+      },
+    })
     render(<ProtocolIntegrationDemo />)
-    expect(screen.getByText(/does not execute|do not execute/)).toBeInTheDocument()
-    expect(screen.getByText(/enc_keys/)).toBeInTheDocument()
+    expect(screen.getByText(/do not execute/)).toBeInTheDocument()
     expect(screen.getByText(/compatibility alone does not/)).toHaveTextContent(
       /guarantee PSK selection or TLS handshake success/
     )
     expect(screen.queryByText(/if and only if/)).not.toBeInTheDocument()
-    expect(screen.getByText(/dec_keys/)).toHaveTextContent(/Mutual TLS/)
-    fireEvent.click(screen.getByRole('button', { name: 'Show Sample Source Key' }))
-    await screen.findByText('Local sample source key — not an imported TLS PSK')
-    expect(sample.importKey).not.toHaveBeenCalled()
-    expect(sample.deriveBits).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Run TLS Importer Mechanics' }))
+    await screen.findByText('Importer mechanics calculated locally — no handshake validation')
     expect(screen.getByText('55'.repeat(32))).toBeInTheDocument()
+    expect(screen.getByText('sample-key-id', { exact: true })).toBeInTheDocument()
+    expect(screen.getByText(importer.TLS_SAMPLE_CONTEXT, { exact: true })).toBeInTheDocument()
+    expect(screen.getByText('Serialized ImportedIdentity (hex)')).toBeInTheDocument()
+    expect(screen.getByText('Early Secret = HKDF-Extract(zero salt, IPSK)')).toBeInTheDocument()
+    expect(screen.getByText(/teaching input, not a QKD channel binding/)).toBeInTheDocument()
     expect(screen.queryByText(/independently retrieved/)).not.toBeInTheDocument()
+  })
+  it('TLS failure clears previous computed output and permits a real retry', async () => {
+    Object.defineProperty(window, 'crypto', {
+      configurable: true,
+      value: {
+        getRandomValues: sample.random,
+        randomUUID: () => 'sample-key-id',
+        subtle: webcrypto.subtle,
+      },
+    })
+    render(<ProtocolIntegrationDemo />)
+    const button = screen.getByRole('button', { name: 'Run TLS Importer Mechanics' })
+    fireEvent.click(button)
+    await screen.findByText('Importer mechanics calculated locally — no handshake validation')
+    const failed = vi
+      .spyOn(importer, 'deriveTlsImporterSample')
+      .mockRejectedValueOnce(new Error('sample importer failed'))
+    fireEvent.click(button)
+    expect(await screen.findByRole('alert')).toHaveTextContent('sample importer failed')
+    expect(
+      screen.queryByText('Importer mechanics calculated locally — no handshake validation')
+    ).not.toBeInTheDocument()
+    expect(button).toBeEnabled()
+    failed.mockRestore()
+    fireEvent.click(button)
+    await screen.findByText('Importer mechanics calculated locally — no handshake validation')
+  })
+  it('late TLS computation cannot populate a newly selected protocol panel', async () => {
+    let finish!: (value: import('./tlsPskImporterSample').TlsImporterSampleResult) => void
+    vi.spyOn(importer, 'deriveTlsImporterSample').mockReturnValueOnce(
+      new Promise((resolve) => {
+        finish = resolve
+      })
+    )
+    const view = render(<ProtocolIntegrationDemo />)
+    fireEvent.click(screen.getByRole('button', { name: 'Run TLS Importer Mechanics' }))
+    view.unmount()
+    render(<ProtocolIntegrationDemo initialProtocol="ssh" />)
+    await act(async () => {
+      finish({
+        serializedIdentity: new Uint8Array([1]),
+        identityHash: new Uint8Array(32),
+        epskx: new Uint8Array(32),
+        hkdfLabel: new Uint8Array([2]),
+        ipsk: new Uint8Array(32),
+        earlySecret: new Uint8Array(32),
+      })
+    })
+    expect(
+      screen.queryByText('Importer mechanics calculated locally — no handshake validation')
+    ).not.toBeInTheDocument()
   })
 
   it.each([

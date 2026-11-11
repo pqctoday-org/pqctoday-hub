@@ -1,14 +1,62 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import 'reflect-metadata'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { AcmePqcWalkthrough } from './AcmePqcWalkthrough'
 import { ACME_STEPS } from '@/data/acmeFixtures'
+import type { AcmeSampleArtifacts } from './acmeSampleArtifacts'
+import { parseOpensslArgs } from '@/components/OpenSSLStudio/worker/commandParser'
+import {
+  newModule,
+  runOpenssl,
+  writeFile,
+  listNewOutputFiles,
+  readFileBin,
+} from '@/test/kat/openssl-driver'
+const controlled = vi.hoisted(() => ({ generate: vi.fn(), execute: vi.fn(), deleteFile: vi.fn() }))
+vi.mock('@/services/crypto/OpenSSLService', () => ({
+  openSSLService: { execute: controlled.execute, deleteFile: controlled.deleteFile },
+}))
+vi.mock('./acmeSampleArtifacts', async (original) => ({
+  ...(await original<typeof import('./acmeSampleArtifacts')>()),
+  generateAcmeSampleArtifacts: controlled.generate,
+}))
+// Real, public artifacts for the UI binding cases; generation lifecycle is controlled.
+let artifacts: AcmeSampleArtifacts
+beforeAll(async () => {
+  controlled.deleteFile.mockResolvedValue(undefined)
+  controlled.execute.mockImplementation(
+    async (command: string, files: { name: string; data: Uint8Array }[] = []) => {
+      const module = await newModule({ quiet: true })
+      for (const file of files) writeFile(module, `/${file.name}`, file.data)
+      const result = runOpenssl(module, parseOpensslArgs(command))
+      return {
+        stdout: result.stdout,
+        stderr: result.stderr,
+        files: listNewOutputFiles(module, new Set(files.map((file) => file.name))).map((name) => ({
+          name,
+          data: readFileBin(module, `/${name}`),
+        })),
+        ...(result.rc ? { error: `Sample OpenSSL error (${result.rc})` } : {}),
+      }
+    }
+  )
+  const actual =
+    await vi.importActual<typeof import('./acmeSampleArtifacts')>('./acmeSampleArtifacts')
+  artifacts = await actual.generateAcmeSampleArtifacts(() => true)
+}, 60_000)
 const blobs: Blob[] = []
 const downloads: string[] = []
 beforeEach(() => {
   blobs.length = 0
   downloads.length = 0
-  vi.spyOn(Math, 'random').mockReturnValue(0.5)
+  controlled.generate.mockReset().mockResolvedValue(artifacts)
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(() => {
+      throw new Error('No ACME transport is executed by this sample')
+    })
+  )
   vi.stubGlobal('URL', {
     createObjectURL: vi.fn((blob: Blob) => {
       blobs.push(blob)
@@ -26,10 +74,9 @@ afterEach(() => {
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
 })
-async function finalize() {
+function enterFinalize() {
   for (let i = 1; i < ACME_STEPS.length; i++)
     fireEvent.click(screen.getByRole('button', { name: 'Next step' }))
-  await screen.findByText('Illustrative CSR text — not a valid PKCS#10 request')
 }
 const read = (blob: Blob) =>
   new Promise<string>((resolve) => {
@@ -37,36 +84,101 @@ const read = (blob: Blob) =>
     reader.onload = () => resolve(String(reader.result))
     reader.readAsText(blob)
   })
-describe('ACME illustration downloads', () => {
-  it('keeps displayed placeholder bytes in explicitly named text downloads', async () => {
+
+describe('ACME matching public sample artifacts and mocked transport', () => {
+  it('shows the actually calculated account challenge before CSR generation', () => {
     render(<AcmePqcWalkthrough />)
-    await finalize()
+    for (let i = 0; i < 3; i++) fireEvent.click(screen.getByRole('button', { name: 'Next step' }))
     expect(
-      screen.queryByText(/generated live|Generating ML-DSA|Verify with:|openssl req/)
-    ).not.toBeInTheDocument()
-    const displayed = screen.getByText(/-----BEGIN CERTIFICATE REQUEST-----/).textContent
-    fireEvent.click(screen.getByRole('button', { name: 'Download CSR illustration (.txt)' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Download public-key illustration (.txt)' }))
-    expect(downloads).toEqual([
-      'ml-dsa-65-csr-illustration.txt',
-      'ml-dsa-65-public-key-illustration.txt',
-    ])
-    expect(await read(blobs[0])).toBe(displayed)
-    expect(await read(blobs[0])).toContain('[truncated for display]')
-    expect(await read(blobs[1])).toBe(
-      '-----BEGIN PUBLIC KEY-----\nMIIFIjANBgkrBgEEAoE4AgEFAA... (ML-DSA-65 public key, 1952 B, truncated for display)\n-----END PUBLIC KEY-----'
+      Object.keys(
+        JSON.parse(
+          screen.getByLabelText('Canonical required-member JSON (UTF-8 hash input)').textContent!
+        )
+      )
+    ).toEqual(['alg', 'kty', 'pub'])
+    expect(screen.getByLabelText('HTTP-01 key authorization').textContent).toBe(
+      'AAECAwQFBgcICQoLDA0ODw.Suiu29qbfuaBaR4Ats-c6XQBePB_OpAxAwcTR_0KXVM'
     )
-    expect(blobs.every((b) => b.type === 'text/plain')).toBe(true)
+    expect(screen.getByText(/account test key is distinct/)).toBeInTheDocument()
+    expect(ACME_STEPS.find((step) => step.id === 'challenge')?.mockResponse?.body).toMatchObject({
+      token: 'AAECAwQFBgcICQoLDA0ODw',
+    })
+    expect(screen.getByText(/fixed public token encodes 16 bytes/)).toBeInTheDocument()
+    expect(controlled.generate).not.toHaveBeenCalled()
+    expect(fetch).not.toHaveBeenCalled()
+  })
+  it('keeps displayed/generated bytes in actual public downloads and the existing finalize csr field', async () => {
+    render(<AcmePqcWalkthrough />)
+    enterFinalize()
+    await screen.findByText('Sample CSR — self-signature verified; public key matched')
+    expect(
+      screen.getByText(/-----BEGIN CERTIFICATE REQUEST-----/, { selector: 'pre' }).textContent
+    ).toBe(artifacts.csrPem)
+    expect(
+      screen.getByText((text) => text.includes(artifacts.csrDerBase64Url), { selector: 'pre' })
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Download sample CSR (.pem)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Download matching public key (.pem)' }))
+    expect(downloads).toEqual(['ml-dsa-65-sample.csr.pem', 'ml-dsa-65-sample-public-key.pem'])
+    expect(await read(blobs[0])).toBe(artifacts.csrPem)
+    expect(await read(blobs[1])).toBe(artifacts.publicKeyPem)
+    expect((await read(blobs[0])) + (await read(blobs[1]))).not.toContain('PRIVATE KEY')
     expect(URL.revokeObjectURL).toHaveBeenCalledTimes(2)
+    expect(fetch).not.toHaveBeenCalled()
     expect(screen.getByRole('button', { name: 'Complete' })).toBeDisabled()
   })
-  it('labels a preparation error as illustration fallback, without pretending an engine ran', async () => {
-    vi.mocked(Math.random).mockImplementationOnce(() => {
-      throw new Error('sample preparation failure')
-    })
+  it('does not publish failed output or random fallback and permits an explicit retry', async () => {
+    controlled.generate.mockRejectedValueOnce(new Error('Sample CSR verification failed'))
     render(<AcmePqcWalkthrough />)
-    await finalize()
-    expect(screen.getByText(/Illustration preparation failed/)).toBeInTheDocument()
-    expect(screen.queryByText(/Crypto engine unavailable/)).not.toBeInTheDocument()
+    enterFinalize()
+    await screen.findByText('Sample CSR verification failed')
+    expect(
+      screen.queryByRole('button', { name: 'Download sample CSR (.pem)' })
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText(/BEGIN CERTIFICATE REQUEST/)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Retry/ }))
+    await screen.findByText('Sample CSR — self-signature verified; public key matched')
+    expect(controlled.generate).toHaveBeenCalledTimes(2)
+    expect(fetch).not.toHaveBeenCalled()
+  })
+  it('keeps navigation busy until generation settles without a duplicate request', async () => {
+    let finish!: (value: AcmeSampleArtifacts) => void
+    controlled.generate.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve
+        })
+    )
+    render(<AcmePqcWalkthrough />)
+    enterFinalize()
+    expect(screen.getByRole('button', { name: 'Back' })).toBeDisabled()
+    expect(
+      screen.queryByRole('button', { name: 'Download sample CSR (.pem)' })
+    ).not.toBeInTheDocument()
+    expect(controlled.generate).toHaveBeenCalledTimes(1)
+    await act(async () => {
+      finish(artifacts)
+    })
+    expect(screen.getByRole('button', { name: 'Back' })).toBeEnabled()
+  })
+  it('invalidates the run on unmount and ignores its late public output', async () => {
+    let finish!: (value: AcmeSampleArtifacts) => void
+    let current!: () => boolean
+    controlled.generate.mockImplementationOnce((isCurrent: () => boolean) => {
+      current = isCurrent
+      return new Promise((resolve) => {
+        finish = resolve
+      })
+    })
+    const view = render(<AcmePqcWalkthrough />)
+    enterFinalize()
+    expect(current()).toBe(true)
+    view.unmount()
+    expect(current()).toBe(false)
+    await act(async () => {
+      finish(artifacts)
+    })
+    expect(downloads).toEqual([])
+    expect(fetch).not.toHaveBeenCalled()
   })
 })

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import {
   ChevronRight,
   ChevronLeft,
@@ -10,30 +10,27 @@ import {
   Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
+import { generateAcmeSampleArtifacts } from './acmeSampleArtifacts'
 import { ACME_STEPS } from '@/data/acmeFixtures'
+import {
+  ACME_SAMPLE_ACCOUNT_CHALLENGE,
+  ACME_SAMPLE_ACCOUNT_JWK,
+  ACME_SAMPLE_CHALLENGE_TOKEN,
+} from './acmeAccountThumbprint'
 
 type StepState = 'idle' | 'active' | 'done'
 
 interface WalkthroughState {
   currentStep: number
   stepStates: StepState[]
-  /** Illustrative public-key text prepared at step 5; not a generated key. */
+  /** Complete public SPKI from this sample run. */
   publicKeyPem: string | null
-  /** Illustrative CSR text for display; not a valid PKCS#10 artifact. */
+  /** Complete self-verified PKCS#10 request from the same sample key. */
   csrPem: string | null
+  csrDerBase64Url: string | null
   cryptoLoading: boolean
   cryptoError: string | null
-}
-
-/** Build placeholder text for this educational walkthrough; no key is generated. */
-function makeFakePem(type: string, bytes: number): string {
-  const b64 = btoa(
-    Array.from({ length: bytes }, () => Math.floor(Math.random() * 256))
-      .map((b) => String.fromCharCode(b))
-      .join('')
-  )
-  const lines = b64.match(/.{1,64}/g) ?? []
-  return `-----BEGIN ${type}-----\n${lines.join('\n')}\n-----END ${type}-----`
 }
 
 function downloadText(content: string, filename: string) {
@@ -52,71 +49,73 @@ export function AcmePqcWalkthrough() {
     stepStates: ACME_STEPS.map((_, i) => (i === 0 ? 'active' : 'idle')),
     publicKeyPem: null,
     csrPem: null,
+    csrDerBase64Url: null,
     cryptoLoading: false,
     cryptoError: null,
   })
 
   const isFinalizeStep = state.currentStep === ACME_STEPS.length - 1
 
-  const generateKeys = useCallback(async () => {
-    setState((s) => ({ ...s, cryptoLoading: true, cryptoError: null }))
-    try {
-      // Walkthrough-only placeholder: the full HSM keygen flow
-      // (SoftHSMModule + session lifecycle) would add ~50 lines of
-      // boilerplate for an educational demo. Real HSM keygen happens
-      // in the VPN + SSH simulator panels; here we just display a
-      // representative ML-DSA-65 public key PEM. If a real HSM
-      // walkthrough is ever wired in, swap this for a call into
-      // src/wasm/softhsm/pqc.ts::hsm_generateMLDSAKeyPair(M, session, 65).
-      const pubPem = `-----BEGIN PUBLIC KEY-----
-MIIFIjANBgkrBgEEAoE4AgEFAA... (ML-DSA-65 public key, 1952 B, truncated for display)
------END PUBLIC KEY-----`
-      // Build a simulated CSR (real CSR assembly requires ASN.1 encoding — shown as educational placeholder)
-      const csrPem = `-----BEGIN CERTIFICATE REQUEST-----
-MIIBnjCCAUUCAQAwGTEXMBUGA1UEAxMOZXhhbXBsZS5jb20wgaAwDwYJKwYBBAKA
-MRgCAQIDAQADgYwAMIGJA4GFADCBgQIBAgQgML-DSA-65 Public Key (${pubPem.split('\n')[1]?.slice(0, 20)}...)
-AgECoIGHMIGEMIGBBg0rBgEEAoAxGAIBAoGUMIGRAgEC [truncated for display]
-${Array.from({ length: 8 }, () =>
-  Array.from({ length: 48 }, () => Math.floor(Math.random() * 16).toString(16))
-    .join('')
-    .match(/.{1,64}/g)!
-    .join('')
-).join('\n')}
------END CERTIFICATE REQUEST-----`
-      setState((s) => ({ ...s, publicKeyPem: pubPem, csrPem, cryptoLoading: false }))
-    } catch {
-      // WASM not yet loaded or unavailable — use educational simulation
-      const pubPem = makeFakePem('PUBLIC KEY', 1952) // ML-DSA-65 pub key size
-      const csrPem = makeFakePem('CERTIFICATE REQUEST', 2400)
-      setState((s) => ({
-        ...s,
-        publicKeyPem: pubPem,
-        csrPem,
-        cryptoLoading: false,
-        cryptoError:
-          'Illustration preparation failed — showing fallback placeholder text. For actual key generation, use the Playground.',
-      }))
+  const generationRef = useRef(0)
+  const runningRef = useRef(false)
+  const mountedRef = useRef(true)
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      generationRef.current += 1
     }
   }, [])
 
-  const advance = useCallback(async () => {
+  const generateKeys = useCallback(async () => {
+    if (runningRef.current) return
+    runningRef.current = true
+    const generation = ++generationRef.current
+    const isCurrent = () => mountedRef.current && generationRef.current === generation
+    setState((s) => ({
+      ...s,
+      cryptoLoading: true,
+      cryptoError: null,
+      publicKeyPem: null,
+      csrPem: null,
+      csrDerBase64Url: null,
+    }))
+    try {
+      const artifacts = await generateAcmeSampleArtifacts(isCurrent)
+      if (!isCurrent()) return
+      setState((s) => ({
+        ...s,
+        publicKeyPem: artifacts.publicKeyPem,
+        csrPem: artifacts.csrPem,
+        csrDerBase64Url: artifacts.csrDerBase64Url,
+      }))
+    } catch (error) {
+      if (!isCurrent()) return
+      setState((s) => ({
+        ...s,
+        cryptoError: error instanceof Error ? error.message : 'Sample artifact generation failed.',
+      }))
+    } finally {
+      runningRef.current = false
+      if (isCurrent()) setState((s) => ({ ...s, cryptoLoading: false }))
+    }
+  }, [])
+
+  const advance = useCallback(() => {
+    if (runningRef.current) return
     const next = state.currentStep + 1
     if (next >= ACME_STEPS.length) return
-
-    // At finalize step, generate keys if not already done
-    if (next === ACME_STEPS.length - 1 && !state.publicKeyPem) {
-      await generateKeys()
-    }
-
     setState((s) => {
       const newStates = [...s.stepStates]
       newStates[s.currentStep] = 'done'
       newStates[next] = 'active'
       return { ...s, currentStep: next, stepStates: newStates }
     })
-  }, [state.currentStep, state.publicKeyPem, generateKeys])
+    if (next === ACME_STEPS.length - 1 && !state.csrPem) void generateKeys()
+  }, [state.currentStep, state.csrPem, generateKeys])
 
   const retreat = useCallback(() => {
+    if (runningRef.current) return
     setState((s) => {
       if (s.currentStep === 0) return s
       const prev = s.currentStep - 1
@@ -127,7 +126,23 @@ ${Array.from({ length: 8 }, () =>
     })
   }, [])
 
-  const currentStep = ACME_STEPS[state.currentStep]
+  const originalStep = ACME_STEPS[state.currentStep]
+  const currentStep = isFinalizeStep
+    ? {
+        ...originalStep,
+        description:
+          'Generate a real ML-DSA-65 software sample key and a matching, self-verified PKCS#10 request for example.com. ACME submission and certificate issuance remain simulated.',
+        mockRequest: originalStep.mockRequest
+          ? {
+              ...originalStep.mockRequest,
+              body: {
+                ...originalStep.mockRequest.body,
+                csr: state.csrDerBase64Url ?? '<sample CSR not generated yet>',
+              },
+            }
+          : undefined,
+      }
+    : originalStep
   const isLast = state.currentStep === ACME_STEPS.length - 1
   const isFirst = state.currentStep === 0
 
@@ -136,12 +151,9 @@ ${Array.from({ length: 8 }, () =>
       {/* Disclaimer */}
       <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 px-4 py-3">
         <p className="text-xs text-status-warning leading-relaxed">
-          Educational walkthrough — the ACME transport and the displayed ML-DSA-65 keypair are
-          illustrative (representative values shown to explain the flow, not generated by a live
-          crypto engine).{' '}
-          <span className="font-medium">
-            For real ML-DSA key generation, use the HSM Playground or the VPN/SSH simulators.
-          </span>
+          ACME transport, account requests, challenges and CA responses are simulated. Step 5
+          generates a real ML-DSA-65 software sample key, its public SPKI and a matching CSR using
+          OpenSSL in this browser. No ACME request is sent and no certificate is issued.
         </p>
       </div>
 
@@ -171,9 +183,9 @@ ${Array.from({ length: 8 }, () =>
       </div>
 
       {/* Main layout: step content + sidebar */}
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_260px] gap-4">
         {/* Left: step content */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <div className="glass-panel p-5">
             <div className="flex items-start justify-between gap-3 mb-3">
               <h2 className="text-base font-bold text-foreground">{currentStep.title}</h2>
@@ -184,6 +196,45 @@ ${Array.from({ length: 8 }, () =>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               {currentStep.description}
             </p>
+
+            {currentStep.id === 'challenge' && (
+              <section
+                aria-label="Account JWK thumbprint calculation"
+                className="space-y-3 mb-4 min-w-0"
+              >
+                <h3 className="text-sm font-bold">Calculated sample key authorization</h3>
+                <p className="text-xs text-muted-foreground">
+                  This public RFC 9964 Appendix A.1 account test key is distinct from the Step 5
+                  certificate-request key. The canonicalization and SHA-256 calculation below run
+                  locally. The fixed public token encodes 16 bytes; it does not demonstrate entropy.
+                  A real CA token must be unpredictable with at least 128 bits of entropy (RFC 8555
+                  §8.3). Account JWS, HTTP transport and CA challenge validation remain simulated.
+                </p>
+                {[
+                  ['Public account JWK', JSON.stringify(ACME_SAMPLE_ACCOUNT_JWK, null, 2)],
+                  [
+                    'Canonical required-member JSON (UTF-8 hash input)',
+                    ACME_SAMPLE_ACCOUNT_CHALLENGE.canonicalJson,
+                  ],
+                  [
+                    'SHA-256 JWK thumbprint (base64url, no padding)',
+                    ACME_SAMPLE_ACCOUNT_CHALLENGE.thumbprint,
+                  ],
+                  ['Simulated challenge token', ACME_SAMPLE_CHALLENGE_TOKEN],
+                  ['HTTP-01 key authorization', ACME_SAMPLE_ACCOUNT_CHALLENGE.keyAuthorization],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <p className="text-xs font-semibold mb-1">{label}</p>
+                    <pre
+                      aria-label={label}
+                      className="text-xs bg-muted/30 border border-border rounded-lg p-3 overflow-x-auto max-h-32 overflow-y-auto"
+                    >
+                      {value}
+                    </pre>
+                  </div>
+                ))}
+              </section>
+            )}
 
             {/* Mock request */}
             {currentStep.mockRequest && (
@@ -222,22 +273,22 @@ ${Array.from({ length: 8 }, () =>
               </div>
             )}
 
-            {/* Finalize step: illustrative text output */}
+            {/* Finalize step: actual public sample artifacts */}
             {isFinalizeStep && (
               <div className="mt-4 space-y-3">
                 {state.cryptoLoading && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Loader2 size={14} className="animate-spin" aria-hidden="true" />
-                    Preparing illustrative key and CSR text…
+                    Generating and checking the sample CSR and public key…
                   </div>
                 )}
                 {state.cryptoError && (
-                  <p className="text-xs text-status-warning">{state.cryptoError}</p>
+                  <ErrorAlert message={state.cryptoError} onRetry={() => void generateKeys()} />
                 )}
                 {state.csrPem && (
                   <div>
                     <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1.5">
-                      Illustrative CSR text — not a valid PKCS#10 request
+                      Sample CSR — self-signature verified; public key matched
                     </p>
                     <pre className="text-xs bg-muted/30 border border-border rounded-lg p-3 overflow-x-auto text-muted-foreground leading-relaxed max-h-32 overflow-y-auto">
                       {state.csrPem}
@@ -246,35 +297,30 @@ ${Array.from({ length: 8 }, () =>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() =>
-                          downloadText(state.csrPem!, 'ml-dsa-65-csr-illustration.txt')
-                        }
+                        onClick={() => downloadText(state.csrPem!, 'ml-dsa-65-sample.csr.pem')}
                         className="gap-1.5 text-xs h-auto whitespace-normal text-left max-w-full py-2"
                       >
                         <Download size={12} />
-                        Download CSR illustration (.txt)
+                        Download sample CSR (.pem)
                       </Button>
                       {state.publicKeyPem && (
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() =>
-                            downloadText(
-                              state.publicKeyPem!,
-                              'ml-dsa-65-public-key-illustration.txt'
-                            )
+                            downloadText(state.publicKeyPem!, 'ml-dsa-65-sample-public-key.pem')
                           }
                           className="gap-1.5 text-xs h-auto whitespace-normal text-left max-w-full py-2"
                         >
                           <KeyRound size={12} />
-                          Download public-key illustration (.txt)
+                          Download matching public key (.pem)
                         </Button>
                       )}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-2">
-                      These placeholder strings explain the flow. They are not generated
-                      cryptographic artifacts and cannot be parsed or verified as a CSR or public
-                      key. Use the existing Playground for actual key generation.
+                      The CSR signature was checked and its embedded public key matches this run’s
+                      exported SPKI. These public sample artifacts do not establish domain control,
+                      CA acceptance or a deployed certificate. No private key is downloaded.
                     </p>
                   </div>
                 )}
@@ -288,7 +334,7 @@ ${Array.from({ length: 8 }, () =>
               variant="outline"
               size="sm"
               onClick={retreat}
-              disabled={isFirst}
+              disabled={isFirst || state.cryptoLoading}
               className="gap-1.5"
             >
               <ChevronLeft size={14} />

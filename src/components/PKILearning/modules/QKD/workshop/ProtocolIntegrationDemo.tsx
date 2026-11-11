@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { Play, ExternalLink, ShieldCheck, Wifi, Server, Terminal } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
+import { deriveTlsImporterSample, TLS_SAMPLE_CONTEXT } from './tlsPskImporterSample'
 
 function getRandomHex(bytes: number): string {
   const buf = new Uint8Array(bytes)
@@ -73,29 +74,49 @@ function useSampleOperation<T>() {
   return { result, running, error, run }
 }
 
-interface SimResult {
+interface TlsSampleView {
   qkdSecret: string
   qkdResponseJson: string
-  derivedField: string
-  label: string
+  keyId: string
+  serializedIdentity: string
+  identityHash: string
+  epskx: string
+  hkdfLabel: string
+  ipsk: string
+  earlySecret: string
 }
+const hex = (bytes: Uint8Array) =>
+  Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 
 // ─── TLS 1.3 Panel ──────────────────────────────────────────────────────────
 
 const TLSPanel: React.FC = () => {
-  const { result, running, error, run: runSample } = useSampleOperation<SimResult>()
+  const { result, running, error, run: runSample } = useSampleOperation<TlsSampleView>()
   const run = useCallback(
     () =>
       runSample(async () => {
         const qkdSecret = getRandomHex(32)
         const pskBytes = new Uint8Array(32)
         for (let i = 0; i < 32; i++) pskBytes[i] = parseInt(qkdSecret.slice(i * 2, i * 2 + 2), 16)
-        // Source bytes are displayed unchanged; RFC 9258 diversification is not executed.
+        const qkdResponseJson = getQkdJson(qkdSecret)
+        const response = JSON.parse(qkdResponseJson) as { keys: { key_ID: string }[] }
+        const keyId = response.keys[0]?.key_ID
+        if (!keyId) throw new Error('Local sample key_ID is missing')
+        const computed = await deriveTlsImporterSample(
+          pskBytes,
+          new TextEncoder().encode(keyId),
+          new TextEncoder().encode(TLS_SAMPLE_CONTEXT)
+        )
         return {
           qkdSecret,
-          qkdResponseJson: getQkdJson(qkdSecret),
-          derivedField: qkdSecret,
-          label: 'Local sample source key — not an imported TLS PSK',
+          qkdResponseJson,
+          keyId,
+          serializedIdentity: hex(computed.serializedIdentity),
+          identityHash: hex(computed.identityHash),
+          epskx: hex(computed.epskx),
+          hkdfLabel: hex(computed.hkdfLabel),
+          ipsk: hex(computed.ipsk),
+          earlySecret: hex(computed.earlySecret),
         }
       }),
     [runSample]
@@ -107,7 +128,7 @@ const TLSPanel: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <ShieldCheck size={16} className="text-primary" />
           <h3 className="font-bold text-foreground">
-            TLS 1.3 — Sample Source Key (Importer Not Executed)
+            TLS 1.3 — Executed Importer Mechanics Sample
           </h3>
           <a
             href="https://datatracker.ietf.org/doc/html/rfc9258"
@@ -119,10 +140,11 @@ const TLSPanel: React.FC = () => {
           </a>
         </div>
         <p className="text-xs text-muted-foreground">
-          This panel generates and displays one local sample key. RFC 9258 describes a separate
-          external PSK importer that binds identity, context, target protocol and KDF before TLS
-          uses the imported key. That diversification, TLS negotiation, peer authentication and key
-          confirmation are not executed here.
+          This worked example computes RFC 9258 importer mechanics from a synthetic 32-byte EPSK,
+          its fake key_ID, and an explicitly public sample context. It selects TLS 1.3 (0x0304),
+          target HKDF-SHA-256 (0x0001, 32 bytes), and EPSK-associated SHA-256. The context is a
+          teaching input, not a QKD channel binding. No TLS handshake, remote key delivery or peer
+          runs here.
         </p>
       </div>
 
@@ -139,11 +161,13 @@ const TLSPanel: React.FC = () => {
           </div>
         </div>
         <div className="bg-muted/40 border border-border rounded p-3">
-          <div className="font-bold text-foreground mb-1">② RFC 9258 Importer — Omitted</div>
+          <div className="font-bold text-foreground mb-1">
+            ② Importer Mechanics — Computed Locally
+          </div>
           <div className="text-muted-foreground">
-            Production implementations bind external identity, context, target protocol and target
-            KDF and perform the RFC 9258 diversification. The displayed source bytes are not an
-            imported PSK.
+            Serialize the external identity and context with 16-bit byte lengths, then the target
+            protocol and KDF. Extract epskx, hash the full identity and expand with the TLS 1.3
+            "derived psk" label. The local IPSK is the input to the Early Secret calculation.
           </div>
         </div>
         <div className="bg-success/5 border border-success/20 rounded p-3">
@@ -167,8 +191,8 @@ const TLSPanel: React.FC = () => {
           <li>
             <strong>With a PSK in the actual TLS key schedule</strong>: Early Secret =
             HKDF-Extract(0, PSK). Zero is the salt; PSK is the input keying material. RFC 9258
-            diversification must happen separately when using its importer; neither operation is
-            executed here.
+            diversification happens before that step. This sample computes the selected importer and
+            Early Secret mechanics; it does not execute TLS negotiation or a binder check.
           </li>
           <li>
             RFC 9258 imported PSKs use the binder label &quot;imp binder&quot;. Both endpoints need
@@ -185,7 +209,7 @@ const TLSPanel: React.FC = () => {
         disabled={running}
         className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
-        <Play size={14} /> {running ? 'Generating…' : 'Show Sample Source Key'}
+        <Play size={14} /> {running ? 'Calculating…' : 'Run TLS Importer Mechanics'}
       </Button>
 
       {error && (
@@ -194,26 +218,49 @@ const TLSPanel: React.FC = () => {
         </p>
       )}
       {result && (
-        <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
+        <div className="bg-success/5 rounded p-4 border border-success/20 space-y-3">
           <div className="text-xs font-bold text-success">
-            Local sample operation only — no protocol validation
+            Importer mechanics calculated locally — no handshake validation
           </div>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-1">
               Locally Generated Sample Key Container
             </div>
-            <pre className="text-xs font-mono text-primary overflow-x-auto">
+            <pre className="text-xs font-mono text-primary overflow-auto whitespace-pre-wrap break-all">
               {result.qkdResponseJson}
             </pre>
           </div>
-          <div className="bg-background rounded p-3 border border-border">
-            <div className="text-xs text-muted-foreground mb-1">{result.label}</div>
-            <code className="text-xs font-mono text-success break-all">{result.derivedField}</code>
-          </div>
-          <div className="text-xs text-muted-foreground">
-            These are locally generated source bytes, not the output of an RFC 9258 importer. No QKD
-            hardware, key manager, remote peer or network transmission is involved.
-          </div>
+          <dl className="space-y-3 text-xs">
+            {[
+              ['Synthetic EPSK (32 bytes, hex)', result.qkdSecret],
+              ['External identity (fake key_ID, UTF8)', result.keyId],
+              ['Public sample context (not a QKD channel binding)', TLS_SAMPLE_CONTEXT],
+              [
+                'Selected target protocol / target KDF / EPSK hash',
+                '0x0304 TLS 1.3 / 0x0001 HKDF-SHA-256, 32 bytes / SHA-256',
+              ],
+              ['Serialized ImportedIdentity (hex)', result.serializedIdentity],
+              ['SHA-256(ImportedIdentity)', result.identityHash],
+              ['epskx = HKDF-Extract(zero salt, EPSK)', result.epskx],
+              ['TLS 1.3 HkdfLabel for derived psk (hex)', result.hkdfLabel],
+              ['Calculated IPSK (32 bytes, sample context)', result.ipsk],
+              ['Early Secret = HKDF-Extract(zero salt, IPSK)', result.earlySecret],
+            ].map(([label, value]) => (
+              <div key={label} className="bg-background rounded p-3 border border-border">
+                <dt className="text-muted-foreground mb-1">{label}</dt>
+                <dd>
+                  <code className="font-mono break-all">{value}</code>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="text-xs text-muted-foreground">
+            The UUID, local EPSK and public context are fictional inputs. This calculation does not
+            establish QKD-derived key delivery, a protocol-specific channel binding, TLS binder
+            validation, authentication or negotiated key agreement. With your production tools,
+            inspect matching imported identities/contexts and negative binder/handshake tests for
+            the actual supported profile.
+          </p>
         </div>
       )}
     </div>
@@ -683,10 +730,10 @@ export const ProtocolIntegrationDemo: React.FC<{ initialProtocol?: string }> = (
     <div className="space-y-4">
       <div className="bg-primary/5 border border-primary/20 rounded p-4">
         <p className="text-xs text-muted-foreground">
-          Explore local sample-key and HKDF demonstrations beside related protocol references. These
-          demonstrations do not execute QKD key delivery, a protocol handshake, peer authentication
-          or interoperability checks. Production tools must implement and test the supported profile
-          on both endpoints.
+          Explore local importer-mechanics and HKDF calculations beside related protocol references.
+          These demonstrations do not execute QKD key delivery, a protocol handshake, peer
+          authentication or interoperability checks. Production tools must implement and test the
+          supported profile on both endpoints.
         </p>
       </div>
 

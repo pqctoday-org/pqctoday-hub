@@ -26,6 +26,18 @@ export const ModelWeightVault: React.FC = () => {
   const [selectedWrap, setSelectedWrap] = useState('ml-kem-768')
   const [selectedSign, setSelectedSign] = useState('ml-dsa-65')
   const [selectedDeploy, setSelectedDeploy] = useState(DEPLOYMENT_MODES[0].id)
+  const [accelerators, setAccelerators] = useState('64')
+  const [trainingHours, setTrainingHours] = useState('100')
+  const [hourlyPrice, setHourlyPrice] = useState('3')
+
+  const values = [accelerators, trainingHours, hourlyPrice].map((value) =>
+    value.trim() === '' ? NaN : Number(value)
+  )
+  const validComputeInputs =
+    values.every((value) => Number.isFinite(value) && value >= 0) &&
+    Number.isSafeInteger(values[0]) &&
+    Number.isFinite(values[0] * values[1] * values[2])
+  const computeCost = validComputeInputs ? values[0] * values[1] * values[2] : null
 
   const sizeProfile = useMemo(
     () => MODEL_SIZE_PROFILES.find((p) => p.id === selectedSize) ?? MODEL_SIZE_PROFILES[1],
@@ -132,15 +144,73 @@ export const ModelWeightVault: React.FC = () => {
             <p className="text-xs text-muted-foreground">File Size</p>
           </div>
           <div className="glass-panel p-3 text-center">
-            <p className="text-lg font-bold text-foreground">{sizeProfile.trainingCostEstimate}</p>
-            <p className="text-xs text-muted-foreground">Training Cost</p>
-          </div>
-          <div className="glass-panel p-3 text-center">
             <p className="text-xs text-foreground/80">{sizeProfile.hndlValueAssessment}</p>
             <p className="text-xs text-muted-foreground mt-1">HNDL Value</p>
           </div>
         </div>
       </div>
+
+      <section className="glass-panel p-4 space-y-3" aria-labelledby="training-compute-heading">
+        <h4 id="training-compute-heading" className="text-sm font-bold text-foreground">
+          Training compute example
+        </h4>
+        <p className="text-sm text-muted-foreground">
+          Fictional inputs for one training run; these are not a market quote or an estimate of the
+          selected model’s training requirements.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            {
+              label: 'Number of accelerators',
+              value: accelerators,
+              set: setAccelerators,
+              step: '1',
+            },
+            {
+              label: 'Elapsed training time (hours)',
+              value: trainingHours,
+              set: setTrainingHours,
+              step: 'any',
+            },
+            {
+              label: 'Price per accelerator-hour ($)',
+              value: hourlyPrice,
+              set: setHourlyPrice,
+              step: 'any',
+            },
+          ].map(({ label, value, set, step }) => (
+            <label key={label} className="text-sm text-foreground">
+              {label}
+              <input
+                className="mt-1 w-full rounded border border-border bg-background p-2"
+                type="number"
+                min="0"
+                step={step}
+                value={value}
+                onChange={(event) => set(event.target.value)}
+              />
+            </label>
+          ))}
+        </div>
+        {computeCost === null ? (
+          <p role="alert" className="text-sm text-status-error">
+            Enter a whole, non-negative accelerator count and finite, non-negative hours and price.
+          </p>
+        ) : (
+          <p className="text-sm text-foreground" aria-live="polite">
+            {values[0]} accelerators × {values[1]} hours × ${values[2]} per accelerator-hour ={' '}
+            <strong>
+              {computeCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+            </strong>{' '}
+            compute cost
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground">
+          This is accelerator compute only. Data preparation, staff, storage, networking,
+          experiments, failures and other expenses are excluded. Check what your quoted price
+          includes to avoid double counting. Model size alone does not determine training cost.
+        </p>
+      </section>
 
       {/* Crypto Config */}
       <div className="glass-panel p-4 space-y-4">
