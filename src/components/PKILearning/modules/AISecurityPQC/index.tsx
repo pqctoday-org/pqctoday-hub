@@ -33,7 +33,7 @@ const PARTS: WorkshopPart[] = [
     id: 'data-authenticity-verifier',
     title: 'Step 2: Data Authenticity Verifier',
     description:
-      'Configure verification layers against synthetic data contamination. Visualize model collapse and compare signing overheads.',
+      'Evaluate fictional tool observations and compare accuracy with recall. Distinguish provenance claims from content truth and fictional model-collapse scores.',
     icon: FileCheck,
   },
   {
