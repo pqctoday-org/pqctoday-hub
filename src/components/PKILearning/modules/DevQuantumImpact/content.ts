@@ -115,13 +115,13 @@ export const rolePracticeResources: readonly {
       'This teaching pipeline does not choose a protocol profile or audit failure handling in your code.',
   },
   {
-    label: 'Inspect test-vector input gaps',
+    label: 'Inspect test-vector input gaps (on a computer)',
     href: '/learn/acvp-lab-workflow?tab=workshop&step=1',
     decision:
       'Decide whether your test interface can carry the inputs required by a supplied vector group.',
     capability:
       'Parse the two pinned prompt examples and predict group-by-group support through standard PKCS#11 inputs.',
     limits:
-      'This input-support lesson runs no engine and is not universal test-gap coverage, a CAVP validation or evidence that an implementation passes.',
+      'Open this workshop on a computer. This input-support lesson runs no engine and is not universal test-gap coverage, a CAVP validation or evidence that an implementation passes.',
   },
 ]

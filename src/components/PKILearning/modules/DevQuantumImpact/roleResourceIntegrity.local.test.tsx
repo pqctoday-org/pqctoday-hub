@@ -34,7 +34,10 @@ const cases = [
       ['Compare JWT size and a header-line budget', '/learn/api-security-jwt?tab=workshop&step=4'],
       ['Try a configured TLS handshake', '/playground/tls-simulator'],
       ['Follow a hybrid key derivation', '/playground/hybrid-encrypt'],
-      ['Inspect test-vector input gaps', '/learn/acvp-lab-workflow?tab=workshop&step=1'],
+      [
+        'Inspect test-vector input gaps (on a computer)',
+        '/learn/acvp-lab-workflow?tab=workshop&step=1',
+      ],
     ],
   },
   {

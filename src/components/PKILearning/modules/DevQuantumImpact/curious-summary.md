@@ -8,7 +8,7 @@ The four workshop steps contain six expandable impact/scenario cards, skill self
 
 ### Try the Separate Tools
 
-Use the [Token Size Analyzer](/learn/api-security-jwt?tab=workshop&step=4) to edit a sample payload and compare compact JWT and Authorization header-line bytes against a line budget. Try the [TLS Simulator](/playground/tls-simulator) to inspect sample client/server configurations, [Hybrid KEM + ECDH](/playground/hybrid-encrypt) to follow the shared-secret derivation, and [VectorSet Anatomy](/learn/acvp-lab-workflow?tab=workshop&step=1) to inspect required test inputs without running an engine. Use the [API Migration Decision Lab](/learn/crypto-dev-apis?tab=workshop&step=7) for before/after library examples and the [code-signing sample](/learn/code-signing?tab=workshop&step=0) to distinguish live signing checks from illustrative mode. These tools are separate from the role cards.
+Use the [Token Size Analyzer](/learn/api-security-jwt?tab=workshop&step=4) to edit a sample payload and compare compact JWT and Authorization header-line bytes against a line budget. Try the [TLS Simulator](/playground/tls-simulator) to inspect sample client/server configurations, [Hybrid KEM + ECDH](/playground/hybrid-encrypt) to follow the shared-secret derivation, and [VectorSet Anatomy (on a computer)](/learn/acvp-lab-workflow?tab=workshop&step=1) to inspect required test inputs without running an engine. Use the [API Migration Decision Lab](/learn/crypto-dev-apis?tab=workshop&step=7) for before/after library examples and the [code-signing sample](/learn/code-signing?tab=workshop&step=0) to distinguish live signing checks from illustrative mode. These tools are separate from the role cards.
 
 ### The Decision to Take Back
 
