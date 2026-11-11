@@ -14,21 +14,25 @@
  * vendor-dependent, or touching a product with no PQC story) permanently hold
  * readiness below 100% — the intended supply-chain pressure.
  *
- * Strategy alignment is a SEPARATE meter: a `pure` choice where the jurisdiction
- * requires `hybrid` still counts as migrated (it is quantum-safe) but lowers
- * alignment. It reports what it actually evaluated — an unknown jurisdiction or
+ * Strategy alignment is a SEPARATE scenario meter. A valid choice can receive
+ * planning credit while disagreeing with the scenario's country-level stance;
+ * this does not establish actual cryptographic protection or compliance.
+ * It reports what it actually evaluated — an unknown jurisdiction or
  * a run with no decisions yields `null`, never a perfect score.
  *
  * Pure function (no React); the caller supplies the P5 completion fraction, the
  * persisted per-edge decisions, and the org's country.
  */
-import { ARCHITECTURES, edgeState, edgeKey } from '@/data/simArchitecture'
+import { ARCHITECTURES, edgeKey } from '@/data/simArchitecture'
 import { checkChoice, jurisdictionFor } from '@/data/jurisdiction'
+import { planningForArchitecture, type EdgePlanningProgress } from './edgePlanningProgress'
 
 /** Migration strategy persisted per edge (a migrated edge carries hybrid|pure). */
 export type EdgeChoice = 'hybrid' | 'pure'
 
 export interface Readiness {
+  /** Exact named choices, effort credit and declared sample-purpose groups. Never persisted. */
+  planning: EdgePlanningProgress
   /** 0–100 — migrated ÷ all vulnerable edges (residual edges cap this < 100). */
   pct: number
   /** Vulnerable edges actually migrated (both gates passed). */
@@ -75,24 +79,19 @@ export function computeReadiness(
 ): Readiness {
   const arch = ARCHITECTURES[size as keyof typeof ARCHITECTURES] ?? ARCHITECTURES.mid
   const vuln = arch.edges.filter((e) => e.vulnerable)
-  const migratableEdges = vuln.filter((e) => edgeState(arch, e) === 'migratable')
+  const planning = planningForArchitecture(arch, p5Frac, edgeDecisions)
+  const selected = new Set(planning.selectedKeys)
+  const decidedEdges = arch.edges.filter((e) => selected.has(edgeKey(e)))
+  const unlocked = planning.unlocked
 
-  // Effort gate — completed P5 activities unlock the right to migrate this many edges.
-  const frac = Math.max(0, Math.min(1, p5Frac))
-  const unlocked = Math.floor(frac * migratableEdges.length)
-
-  // Decision gate — migratable edges the player has chosen to migrate (hybrid/pure).
-  const decidedEdges = migratableEdges.filter((e) => {
-    const c = edgeDecisions[edgeKey(e)]
-    return c === 'hybrid' || c === 'pure'
-  })
-
-  // Both gates: an edge counts only if decided AND within activity-unlocked capacity.
-  const migrated = Math.min(decidedEdges.length, unlocked)
+  // Credit the exact selected set only when the whole set fits the effort gate.
+  // Never choose an anonymous subset of restored selections by count or source order.
+  const migrated = planning.creditedKeys.length
   const pct = vuln.length ? Math.round((migrated / vuln.length) * 100) : 100
 
-  // Alignment meter — a misaligned choice still counts as migrated above (it is
-  // still quantum-safe), but lowers this separate score. Only decisions that a
+  // Alignment is a separate scenario comparison of valid choices, independent
+  // of effort credit. A planning choice is not an executed protection check.
+  // Only decisions that a
   // rule actually assessed are counted; an unknown jurisdiction evaluates
   // nothing and therefore scores nothing.
   const verdicts = decidedEdges.map((e) => checkChoice(country, edgeDecisions[edgeKey(e)]))
@@ -101,14 +100,15 @@ export function computeReadiness(
   const alignmentPct = assessed.length ? Math.round((aligned / assessed.length) * 100) : null
 
   return {
+    planning,
     pct,
     migrated,
     vulnerable: vuln.length,
-    migratable: migratableEdges.length,
+    migratable: planning.eligibleKeys.length,
     unlocked,
     alignmentPct,
     evaluated: assessed.length,
-    unevaluated: Math.max(0, migratableEdges.length - assessed.length),
+    unevaluated: Math.max(0, planning.eligibleKeys.length - assessed.length),
     jurisdictionState: jurisdictionFor(country) ? 'known' : 'unknown',
   }
 }

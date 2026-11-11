@@ -31,6 +31,7 @@ import { EXEC_TOUR_STAGES } from './execTourConfig'
 import { demoDocFor, ORG, type DemoSector } from './demoDocs'
 import { REAL_DOC_GENERATORS } from './realToolDocs'
 import { ARCHITECTURES, edgeState, edgeKey } from '@/data/simArchitecture'
+import { isPlanningChoice, planningForArchitecture } from '@/simulation/edgePlanningProgress'
 import { jurisdictionFor } from '@/data/jurisdiction'
 import { readRunMetric } from '@/simulation/runMetrics'
 import {
@@ -110,7 +111,7 @@ export function liveCompletionContext(): StepCompletionContext {
     isWorkshopComplete: (id) => useSimulationStore.getState().visitedWorkshops.includes(id),
     isCatalogStepDone: (id) => useSimulationStore.getState().catalogCompleted.includes(id),
     isScenarioComplete: (id) => useSimulationStore.getState().visitedScenarios.includes(id),
-    edgeDecisionCount: () => Object.keys(useSimulationStore.getState().edgeDecisions).length,
+    edgeDecisionCount: () => currentArchitectureChoices().selectedKeys.length,
     edgeDecisionCapacity: () => architectureEdgeCapacity(),
     recurrenceCount: (type) =>
       distinctRunQuarters(useSimulationStore.getState().evidence, type).length,
@@ -130,7 +131,7 @@ export function liveCompletionContext(): StepCompletionContext {
         budgetTargetM: 1,
         assetsAccounted: p0Done,
         assetsTotal: p0Work.length || 1,
-        edgeDecisions: Object.keys(st.edgeDecisions ?? {}).length,
+        edgeDecisions: currentArchitectureChoices().selectedKeys.length,
         edgeCapacity: architectureEdgeCapacity(),
         evidenceTotal: st.evidence.length,
         evidenceByLearner: st.evidence.filter((e) => e.origin === 'learner').length,
@@ -144,10 +145,15 @@ export function liveCompletionContext(): StepCompletionContext {
  *  same derivation `SimulationView` uses, kept here so the auto-run's live
  *  completion context and its `completeStepGenuine` driver agree with the
  *  player's own board on what "capacity" means. */
-function architectureEdgeCapacity(): number {
-  const { size } = useSimulationStore.getState()
+function currentArchitectureChoices() {
+  const { size, edgeDecisions } = useSimulationStore.getState()
   const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
-  return arch.edges.filter((e) => e.vulnerable && edgeState(arch, e) === 'migratable').length
+  // Count choices before effort so activity completion cannot recurse into itself.
+  return planningForArchitecture(arch, 0, edgeDecisions)
+}
+
+function architectureEdgeCapacity(): number {
+  return currentArchitectureChoices().eligibleKeys.length
 }
 
 /** The ordered, gating (non-scenario) steps of a phase, in unlock order. */
@@ -351,9 +357,9 @@ export function completeStepGenuine(
       )
       let decided = 0
       for (const e of migratable) {
-        if (Object.keys(useSimulationStore.getState().edgeDecisions).length >= target) break
+        if (currentArchitectureChoices().selectedKeys.length >= target) break
         const key = edgeKey(e)
-        if (useSimulationStore.getState().edgeDecisions[key]) continue
+        if (isPlanningChoice(useSimulationStore.getState().edgeDecisions[key])) continue
         sim.setEdgeDecision(key, choice)
         decided++
       }

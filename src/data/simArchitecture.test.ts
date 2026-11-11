@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { ARCHITECTURES, edgeKey, edgeState, mermaidFromArchitecture } from './simArchitecture'
+import { planningForArchitecture } from '@/simulation/edgePlanningProgress'
 
 // Readiness/scoring math is exercised end-to-end (with the two-gate rules)
 // in src/simulation/readiness.test.ts — this file only tests the topology
@@ -41,22 +42,22 @@ describe('simArchitecture', () => {
 
   it('defines a node class for the pre-shared-key status in both themes', () => {
     const light = mermaidFromArchitecture(ARCHITECTURES.small)
-    const dark = mermaidFromArchitecture(ARCHITECTURES.small, {}, 'dark')
+    const dark = mermaidFromArchitecture(ARCHITECTURES.small, new Set(), 'dark')
     expect(light).toMatch(/classDef psk fill:/)
     expect(dark).toMatch(/classDef psk fill:/)
   })
 
   it('renders the dark palette when asked, light by default', () => {
     const light = mermaidFromArchitecture(ARCHITECTURES.small)
-    const dark = mermaidFromArchitecture(ARCHITECTURES.small, {}, 'dark')
+    const dark = mermaidFromArchitecture(ARCHITECTURES.small, new Set(), 'dark')
     expect(light).toContain('classDef available fill:#d1fae5')
     expect(dark).toContain('classDef available fill:#064e3b')
   })
 
-  it('a decided edge renders as migrated regardless of view, with a linkStyle', () => {
+  it('an explicitly credited eligible identity renders as migrated with a linkStyle', () => {
     const a = ARCHITECTURES.small
     const ikev2 = a.edges.find((e) => e.protocol === 'IKEv2')!
-    const src = mermaidFromArchitecture(a, { [edgeKey(ikev2)]: 'hybrid' })
+    const src = mermaidFromArchitecture(a, new Set([edgeKey(ikev2)]))
     expect(src).toMatch(/admin -->\|"IKEv2 ✓ migrated"\| vpn/)
     expect(src).toContain('linkStyle')
   })
@@ -68,9 +69,31 @@ describe('simArchitecture', () => {
     const a = ARCHITECTURES.small
     const blocked = a.edges.find((e) => e.protocol === 'TLS (wire)')!
     expect(edgeState(a, blocked)).toBe('blocked')
-    const src = mermaidFromArchitecture(a, { [edgeKey(blocked)]: 'hybrid' })
+    const src = mermaidFromArchitecture(a, new Set([edgeKey(blocked)]))
     expect(src).not.toContain('✓ migrated')
     expect(src).toMatch(/app -->\|"TLS \(wire\) ⚡"\| db/)
+  })
+
+  it('withdraws every selected marker when effort falls and restores only the exact remaining Undo set', () => {
+    const arch = ARCHITECTURES.small
+    const choices = {
+      'user-cdn-TLS 1.3': 'hybrid',
+      'cdn-app-TLS': 'pure',
+      'admin-vpn-IKEv2': 'hybrid',
+    }
+    const full = planningForArchitecture(arch, 1, choices)
+    const fullDiagram = mermaidFromArchitecture(arch, new Set(full.creditedKeys))
+    expect(fullDiagram.match(/✓ migrated/g)).toHaveLength(3)
+    const reduced = planningForArchitecture(arch, 0.5, choices)
+    const reducedDiagram = mermaidFromArchitecture(arch, new Set(reduced.creditedKeys))
+    expect(reducedDiagram).not.toContain('✓ migrated')
+    expect(reducedDiagram).not.toMatch(/^\s*linkStyle /m)
+    const afterUndo = planningForArchitecture(arch, 0.5, { 'admin-vpn-IKEv2': 'hybrid' })
+    const restoredDiagram = mermaidFromArchitecture(arch, new Set(afterUndo.creditedKeys))
+    expect(restoredDiagram.match(/✓ migrated/g)).toHaveLength(1)
+    expect(restoredDiagram).toContain('admin -->|"IKEv2 ✓ migrated"| vpn')
+    expect(restoredDiagram).not.toContain('TLS 1.3 ✓ migrated')
+    expect(restoredDiagram).not.toContain('TLS ✓ migrated')
   })
 
   it('classifies edges: product-blocked, vendor, monitor-only, migratable', () => {

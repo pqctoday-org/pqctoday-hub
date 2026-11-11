@@ -54,12 +54,19 @@ function catalogPqcStatus(softwareName: string): PqcStatus {
   return getCatalogStatus(softwareName)?.availability ?? 'unverified'
 }
 
+export type PlanningPurpose = 'confidentiality' | 'authenticity'
+export type PlanningCriticality = 'critical' | 'general'
+
 export interface ProtocolEdge {
   from: string
   to: string
   protocol: string
   pqcPath: PqcPath
   vulnerable: boolean
+  /** Explicit fictional case inputs. A selected eligible strategy covers these
+   * planning purposes; it does not demonstrate an executed protection check. */
+  criticality?: PlanningCriticality
+  requiredPurposes?: readonly PlanningPurpose[]
   /** Scenario assumption: no PQC path is available to this link in the exercise (a
    *  constraint that can change), so it is handled with compensating controls and
    *  monitoring rather than migration. */
@@ -116,12 +123,60 @@ const small: Architecture = {
     },
   ],
   edges: [
-    { from: 'user', to: 'cdn', protocol: 'TLS 1.3', pqcPath: 'available', vulnerable: true },
-    { from: 'cdn', to: 'app', protocol: 'TLS', pqcPath: 'available', vulnerable: true },
-    { from: 'app', to: 'db', protocol: 'TLS (wire)', pqcPath: 'available', vulnerable: true },
-    { from: 'app', to: 'idp', protocol: 'OIDC', pqcPath: 'vendor', vulnerable: true },
-    { from: 'admin', to: 'vpn', protocol: 'IKEv2', pqcPath: 'available', vulnerable: true },
-    { from: 'cdn', to: 'ca', protocol: 'ACME', pqcPath: 'available', vulnerable: true },
+    {
+      from: 'user',
+      to: 'cdn',
+      protocol: 'TLS 1.3',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'cdn',
+      to: 'app',
+      protocol: 'TLS',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app',
+      to: 'db',
+      protocol: 'TLS (wire)',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app',
+      to: 'idp',
+      protocol: 'OIDC',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'vendor',
+      vulnerable: true,
+    },
+    {
+      from: 'admin',
+      to: 'vpn',
+      protocol: 'IKEv2',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'cdn',
+      to: 'ca',
+      protocol: 'ACME',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
   ],
 }
 
@@ -180,18 +235,84 @@ const mid: Architecture = {
     { id: 'ad', label: 'Active Directory', layer: 'Identity', pqcStatus: 'none' },
   ],
   edges: [
-    { from: 'user', to: 'waf', protocol: 'TLS 1.3', pqcPath: 'available', vulnerable: true },
-    { from: 'waf', to: 'lb', protocol: 'TLS', pqcPath: 'available', vulnerable: true },
-    { from: 'lb', to: 'app1', protocol: 'mTLS', pqcPath: 'available', vulnerable: true },
-    { from: 'app1', to: 'oracle', protocol: 'TLS (DB)', pqcPath: 'available', vulnerable: true },
-    { from: 'app2', to: 'sql', protocol: 'TLS (DB)', pqcPath: 'available', vulnerable: true },
-    { from: 'app1', to: 'idp', protocol: 'OIDC', pqcPath: 'vendor', vulnerable: true },
-    { from: 'admin', to: 'app1', protocol: 'SSH', pqcPath: 'available', vulnerable: true },
-    { from: 'app1', to: 'hsm', protocol: 'PKCS#11', pqcPath: 'available', vulnerable: true },
+    {
+      from: 'user',
+      to: 'waf',
+      protocol: 'TLS 1.3',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'waf',
+      to: 'lb',
+      protocol: 'TLS',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'lb',
+      to: 'app1',
+      protocol: 'mTLS',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app1',
+      to: 'oracle',
+      protocol: 'TLS (DB)',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app2',
+      to: 'sql',
+      protocol: 'TLS (DB)',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app1',
+      to: 'idp',
+      protocol: 'OIDC',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'vendor',
+      vulnerable: true,
+    },
+    {
+      from: 'admin',
+      to: 'app1',
+      protocol: 'SSH',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app1',
+      to: 'hsm',
+      protocol: 'PKCS#11',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
     {
       from: 'app1',
       to: 'ad',
       protocol: 'Kerberos',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -243,16 +364,66 @@ const large: Architecture = {
     { id: 'ot', label: 'OT / SCADA', layer: 'OT', pqcStatus: 'none' },
   ],
   edges: [
-    { from: 'user', to: 'edge', protocol: 'TLS 1.3', pqcPath: 'available', vulnerable: true },
-    { from: 'edge', to: 'app', protocol: 'mTLS', pqcPath: 'available', vulnerable: true },
-    { from: 'app', to: 'oracle', protocol: 'TLS (DB)', pqcPath: 'available', vulnerable: true },
-    { from: 'app', to: 'mongo', protocol: 'TLS (DB)', pqcPath: 'available', vulnerable: true },
-    { from: 'app', to: 'hsm', protocol: 'PKCS#11', pqcPath: 'available', vulnerable: true },
-    { from: 'app', to: 'pki', protocol: 'X.509 issue', pqcPath: 'available', vulnerable: true },
+    {
+      from: 'user',
+      to: 'edge',
+      protocol: 'TLS 1.3',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'edge',
+      to: 'app',
+      protocol: 'mTLS',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app',
+      to: 'oracle',
+      protocol: 'TLS (DB)',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app',
+      to: 'mongo',
+      protocol: 'TLS (DB)',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app',
+      to: 'hsm',
+      protocol: 'PKCS#11',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'app',
+      to: 'pki',
+      protocol: 'X.509 issue',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
     {
       from: 'mainframe',
       to: 'payshield',
       protocol: 'TR-31',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality', 'authenticity'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -261,6 +432,8 @@ const large: Architecture = {
       from: 'app',
       to: 'ot',
       protocol: 'Modbus/DNP3',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -269,6 +442,8 @@ const large: Architecture = {
       from: 'edge',
       to: 'app',
       protocol: 'MACsec (DC)',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -277,6 +452,8 @@ const large: Architecture = {
       from: 'user',
       to: 'edge',
       protocol: 'DNSSEC',
+      criticality: 'general',
+      requiredPurposes: ['authenticity'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -300,16 +477,66 @@ const global: Architecture = {
     { id: 'ad', label: 'Global AD', layer: 'Identity', pqcStatus: 'none' },
   ],
   edges: [
-    { from: 'gpki', to: 'amer', protocol: 'X.509', pqcPath: 'available', vulnerable: true },
-    { from: 'gpki', to: 'emea', protocol: 'X.509', pqcPath: 'available', vulnerable: true },
-    { from: 'gpki', to: 'apac', protocol: 'X.509', pqcPath: 'available', vulnerable: true },
-    { from: 'amer', to: 'emea', protocol: 'WAN IPsec', pqcPath: 'available', vulnerable: true },
-    { from: 'apac', to: 'kms', protocol: 'KMIP', pqcPath: 'available', vulnerable: true },
-    { from: 'fidp', to: 'amer', protocol: 'SAML', pqcPath: 'vendor', vulnerable: true },
+    {
+      from: 'gpki',
+      to: 'amer',
+      protocol: 'X.509',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'gpki',
+      to: 'emea',
+      protocol: 'X.509',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'gpki',
+      to: 'apac',
+      protocol: 'X.509',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'amer',
+      to: 'emea',
+      protocol: 'WAN IPsec',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'apac',
+      to: 'kms',
+      protocol: 'KMIP',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality', 'authenticity'],
+      pqcPath: 'available',
+      vulnerable: true,
+    },
+    {
+      from: 'fidp',
+      to: 'amer',
+      protocol: 'SAML',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
+      pqcPath: 'vendor',
+      vulnerable: true,
+    },
     {
       from: 'amer',
       to: 'emea',
       protocol: 'MACsec',
+      criticality: 'general',
+      requiredPurposes: ['confidentiality'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -318,6 +545,8 @@ const global: Architecture = {
       from: 'telco',
       to: 'amer',
       protocol: 'SUCI/SUPI',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -326,6 +555,8 @@ const global: Architecture = {
       from: 'fin',
       to: 'emea',
       protocol: 'SWIFT/TR-31',
+      criticality: 'critical',
+      requiredPurposes: ['confidentiality', 'authenticity'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -334,6 +565,8 @@ const global: Architecture = {
       from: 'amer',
       to: 'ad',
       protocol: 'Kerberos',
+      criticality: 'critical',
+      requiredPurposes: ['authenticity'],
       pqcPath: 'none',
       vulnerable: true,
       monitorOnly: true,
@@ -384,14 +617,11 @@ const MIGRATED_LINK_STROKE: Record<'light' | 'dark', string> = {
   dark: 'stroke:#34d399,stroke-width:2.5px',
 }
 
-/** A Mermaid flowchart source for an architecture: nodes coloured by product
- *  PQC status, edges marked/dashed by migration state. When `edgeDecisions`
- *  marks an edge as migrated, it renders solid + "✓ migrated" regardless of
- *  its underlying `edgeState()` — reflecting the player's actual progress,
- *  not just the architecture's starting state. */
+/** Render only the caller's exact effort-credited identities as migrated.
+ * A raw saved choice cannot establish earned progress without the P5 input. */
 export function mermaidFromArchitecture(
   arch: Architecture,
-  edgeDecisions: Record<string, 'hybrid' | 'pure'> = {},
+  creditedKeys: ReadonlySet<string> = new Set(),
   theme: 'light' | 'dark' = 'light'
 ): string {
   const lines: string[] = ['flowchart TB']
@@ -403,10 +633,7 @@ export function mermaidFromArchitecture(
   const linkStyles: string[] = []
   arch.edges.forEach((e, i) => {
     const st = edgeState(arch, e)
-    // A decision can only ever exist for an edge that was migratable when the
-    // player acted on it (the UI never offers a Migrate button otherwise) — so
-    // a decision on a non-migratable edge is ignored rather than misrendered.
-    const migrated = Boolean(edgeDecisions[edgeKey(e)]) && st === 'migratable'
+    const migrated = creditedKeys.has(edgeKey(e)) && st === 'migratable'
     const mark = migrated
       ? '✓ migrated'
       : st === 'migratable'

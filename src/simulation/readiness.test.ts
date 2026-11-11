@@ -40,10 +40,13 @@ describe('computeReadiness (WS-04 — two-gate, estate-grounded)', () => {
     const full = computeReadiness('mid', 1, all, 'US')
     expect(full.migrated).toBe(m)
     expect(full.pct).toBe(Math.round((m / vulnCount('mid')) * 100))
-    // half the activities unlock half (floor) the migratable links, even with all decided
+    // Existing named choices exceed half-effort capacity. No arbitrary subset earns credit.
     const half = computeReadiness('mid', 0.5, all, 'US')
-    expect(half.migrated).toBe(Math.min(m, Math.floor(0.5 * m)))
-    expect(half.migrated).toBeLessThan(full.migrated)
+    expect(half.unlocked).toBe(Math.floor(0.5 * m))
+    expect(half.migrated).toBe(0)
+    expect(half.planning.overCapacity).toBe(true)
+    expect(half.planning.creditedKeys).toEqual([])
+    expect(half.planning.selectedKeys).toEqual(full.planning.selectedKeys)
   })
 
   it('residual edges keep readiness below 100% even fully migrated', () => {
@@ -72,5 +75,75 @@ describe('computeReadiness (WS-04 — two-gate, estate-grounded)', () => {
     expect(over.migrated).toBe(migratableEdges('mid').length)
     // unknown size falls back to the mid topology (no throw)
     expect(computeReadiness('does-not-exist', 1, {}, 'US').vulnerable).toBe(vulnCount('mid'))
+  })
+
+  it('restores exact named credit after Undo or restored effort without choosing a first-N subset', () => {
+    const all = decideAll('small', 'hybrid')
+    const original = { ...all }
+    const full = computeReadiness('small', 1, all, 'US')
+    expect(full.planning.creditedKeys).toEqual([
+      'admin-vpn-IKEv2',
+      'cdn-app-TLS',
+      'user-cdn-TLS 1.3',
+    ])
+    expect(computeReadiness('small', 0.5, all, 'US').planning.creditedKeys).toEqual([])
+    const undone = { ...all }
+    delete undone['cdn-app-TLS']
+    delete undone['user-cdn-TLS 1.3']
+    const remaining = computeReadiness('small', 0.5, undone, 'US')
+    expect(remaining.planning.creditedKeys).toEqual(['admin-vpn-IKEv2'])
+    expect(remaining.planning.groups['hndl-critical'].completedKeys).toEqual(['admin-vpn-IKEv2'])
+    expect(remaining.planning.groups['tnfl-critical'].completedKeys).toEqual(['admin-vpn-IKEv2'])
+    expect(remaining.planning.groups['hndl-general'].completedKeys).toEqual([])
+    expect(computeReadiness('small', 1, all, 'US').planning.creditedKeys).toEqual(
+      full.planning.creditedKeys
+    )
+    expect(all).toEqual(original)
+  })
+
+  it('distinguishes actual general and critical identities even when the headline percentage matches', () => {
+    // Both are actual eligible C+A links, but their approved case tiers differ.
+    const general = computeReadiness('small', 1, { 'user-cdn-TLS 1.3': 'hybrid' }, 'US')
+    const critical = computeReadiness('small', 1, { 'admin-vpn-IKEv2': 'hybrid' }, 'US')
+    expect(general.migrated).toBe(1)
+    expect(critical.migrated).toBe(1)
+    expect(general.pct).toBe(critical.pct)
+    expect(general.planning.groups['hndl-critical'].progress).toBe(0)
+    expect(general.planning.groups['tnfl-critical'].progress).toBe(0)
+    expect(critical.planning.groups['hndl-critical'].progress).toBe(0.5)
+    expect(critical.planning.groups['tnfl-critical'].progress).toBeCloseTo(1 / 3)
+    expect(general.planning.groups['hndl-general'].completedKeys).toEqual(['user-cdn-TLS 1.3'])
+    expect(critical.planning.groups['hndl-general'].completedKeys).toEqual([])
+    // Neither can complete unresolved declared dependencies.
+    expect(general.planning.criticalDone).toBe(false)
+    expect(critical.planning.criticalDone).toBe(false)
+  })
+
+  it('does not count malformed, unknown or unavailable saved choices, or evaluate their alignment', () => {
+    const raw = { 'user-cdn-TLS 1.3': 'invalid', 'app-db-TLS (wire)': 'pure', obsolete: 'hybrid' }
+    const result = computeReadiness('small', 1, raw as Record<string, EdgeChoice>, 'DE')
+    expect(result).toMatchObject({ migrated: 0, pct: 0, alignmentPct: null, evaluated: 0 })
+    expect(result.planning).toMatchObject({
+      invalidChoiceKeys: ['user-cdn-TLS 1.3'],
+      unknownKeys: ['obsolete'],
+      unavailableKeys: ['app-db-TLS (wire)'],
+    })
+    expect(raw).toEqual({
+      'user-cdn-TLS 1.3': 'invalid',
+      'app-db-TLS (wire)': 'pure',
+      obsolete: 'hybrid',
+    })
+  })
+
+  it('keeps jurisdiction alignment independent when all choices lose effort credit', () => {
+    const all = decideAll('small', 'pure')
+    const de = computeReadiness('small', 0, all, 'DE')
+    const us = computeReadiness('small', 0, all, 'US')
+    expect(de.migrated).toBe(0)
+    expect(us.migrated).toBe(0)
+    expect(de.evaluated).toBe(3)
+    expect(us.evaluated).toBe(3)
+    expect(de.alignmentPct).toBe(0)
+    expect(us.alignmentPct).toBe(100)
   })
 })
