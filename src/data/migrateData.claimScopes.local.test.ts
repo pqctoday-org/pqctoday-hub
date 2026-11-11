@@ -47,4 +47,54 @@ describe('catalogue capability scope through the real loader', () => {
     expect(item.latestVersion).toBe('libcrux-ml-kem 0.0.11')
     expect(item.proofUrl).toContain('crates/libcrux-ml-kem')
   })
+
+  it('keeps independently audited hash exports distinct from historical exclusions and newer self-review', () => {
+    const item = product('noble-hashes')
+    expect(item.pqcCapabilityDescription).toMatch(/MACs and KDFs/)
+    expect(item.pqcCapabilityDescription).toMatch(/legacy functions separately/)
+    expect(item.productBrief).toMatch(/version 1\.0\.0 in January 2022/)
+    expect(item.productBrief).toMatch(/excluding blake3, sha3-addons, sha1 and argon2/)
+    expect(item.productBrief).toMatch(/AI-assisted self-audits/)
+    expect(item.productBrief).not.toMatch(/quantum-safe with doubled output/)
+    expect(item.latestVersion).toBe('2.4.0')
+    expect(item.proofRelevantInfo).toContain('2.4.0')
+  })
+
+  it('teaches the named timing defense and workload tradeoff without universal security conclusions', () => {
+    const go = product('trailofbits-ml-dsa')
+    expect(go.pqcCapabilityDescription).toMatch(/ML-DSA-44.*ML-DSA-65.*ML-DSA-87/)
+    expect(go.pqcCapabilityDescription).toMatch(/Decompose.*Barrett reduction/)
+    expect(go.pqcCapabilityDescription).not.toMatch(/prevent timing attacks/)
+    const code = product('classic-mceliece-reference')
+    expect(code.pqcSupport).toMatch(/historical NIST Round 4 candidate/)
+    expect(code.pqcCapabilityDescription).toMatch(/large public keys.*small ciphertexts/)
+    expect(code.pqcCapabilityDescription).toMatch(/public key is reused/)
+    expect(code.proofRelevantInfo).toMatch(/ends its consideration/)
+  })
+
+  it('distinguishes selectable hash configurations from standardized-family names and scopes author benchmarks', () => {
+    const item = product('pqmagic-shanghai-jiao-tong-university')
+    expect(item.pqcSupport).toMatch(/ML-KEM.*ML-DSA.*SLH-DSA/)
+    expect(item.pqcCapabilityDescription).toMatch(/SM3 default and SHAKE selectable/)
+    expect(item.pqcCapabilityDescription).toMatch(/PQMagic-std.*PQMagic-adv/)
+    expect(item.proofRelevantInfo).toMatch(/project-reported.*AMD Ryzen 5 9600x.*Debian 12/)
+  })
+
+  it('keeps standard and ephemeral Frodo key-reuse policies separate', () => {
+    const item = product('microsoft-pqcrypto-lweke')
+    expect(item.pqcSupport).toMatch(/FrodoKEM-640\/976\/1344.*eFrodoKEM-640\/976\/1344/)
+    expect(item.pqcCapabilityDescription).toMatch(/repeated use.*limited number of ciphertexts/)
+    expect(item.proofRelevantInfo).toMatch(/ISO\/IEC 18033-2:2006\/Amd 2:2026/)
+    expect(item.proofRelevantInfo).toMatch(/not selected by NIST/)
+  })
+
+  it('keeps a vendor Java implementation’s supported parameter sets separate from its module options', () => {
+    const item = product('Oracle-Jipher')
+    for (const parameter of ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'])
+      expect(item.pqcCapabilityDescription).toContain(parameter)
+    expect(item.pqcCapabilityDescription).toMatch(/ML-DSA-44.*ML-DSA-65.*ML-DSA-87/)
+    expect(item.fipsValidated).toMatch(/patched module used by default/)
+    expect(item.fipsValidated).toMatch(/not strictly FIPS 140-3 compliant/)
+    expect(item.fipsValidated).not.toMatch(/^Yes|^No /)
+  })
 })
