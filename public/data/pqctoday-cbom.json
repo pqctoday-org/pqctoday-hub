@@ -18574,14 +18574,17 @@
       "type": "cryptographic-asset",
       "bom-ref": "666ef1f442e863d1",
       "name": "ANKATech ANKASecure",
+      "manufacturer": {
+        "name": "ANKATech Solutions Inc."
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, Falcon, HQC, FrodoKEM",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, Falcon",
           "primitive": "kem"
         }
       },
-      "description": "REST API/SaaS platform supporting ML-KEM, ML-DSA, SLH-DSA, Falcon, LMS, XMSS, FrodoKEM, and HQC. NIST PQC compliant and NSA CNSA 2.0 aligned.",
+      "description": "ANKATech describes ANKASecure as a cryptographic control plane: applications use stable key identifiers while runtime policy governs classical, post-quantum and composite algorithms. Its current platform lists ML-KEM, ML-DSA, SLH-DSA, FALCON, XMSS and LMS. It provides REST/OpenAPI, Java SDK and CLI access, key lifecycle management and migration tooling, with SaaS, private-cloud or on-premises deployment. This documents execution and orchestration capability, not independent module validation.",
       "externalReferences": [
         {
           "type": "website",
@@ -18603,7 +18606,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Not itself FIPS 140-3 validated in the vendor's published earlier-version boundary statement; backend module coverage is limited to its own listed operations."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -18803,14 +18806,17 @@
       "type": "cryptographic-asset",
       "bom-ref": "d02942cce6c857a0",
       "name": "ExeQuantum",
+      "manufacturer": {
+        "name": "ExeQuantum"
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, Classic-McEliece",
           "primitive": "kem"
         }
       },
-      "description": "PQC-as-a-Service platform (CipherForge) built around ML-KEM, ML-DSA, and SLH-DSA, with hardened and formally verified implementations. Supports on-premise, air-gapped, hybrid, and cloud deployments.",
+      "description": "ExeQuantum documents CipherForge key generation, encapsulation and sign/verify services with ML-KEM, ML-DSA and SLH-DSA, plus FrodoKEM, Classic McEliece and hybrid KEM profiles. EQCore plans/orchestrates while CipherForge performs cryptographic operations through REST/native interfaces. The vendor describes formally verified Jasmin core routines and SaaS/on-premises/air-gapped deployment; that is an implementation claim, not validation of every deployed build.",
       "externalReferences": [
         {
           "type": "website",
@@ -18995,6 +19001,9 @@
       "type": "cryptographic-asset",
       "bom-ref": "0beb5e7a2728f252",
       "name": "American Binary Ambit Client",
+      "manufacturer": {
+        "name": "American Binary"
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -19003,7 +19012,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Enterprise VPN using exclusively CNSA 2.0 PQC algorithms with MaxKyber protocol. Available on Oracle Cloud Marketplace.",
+      "description": "American Binary describes Ambit Client as enterprise VPN/network tunneling using MaxKyber. White paper v2.0.0 (June 2026) specifies ML-KEM-1024, AES-256-GCM and SHA-512/256-based hash/MAC/KDF functions; section 4.3 describes a signature-free KEM handshake. The document reports formal protocol analysis; this does not by itself certify every implementation or establish blanket CNSA 2.0 compliance.",
       "externalReferences": [
         {
           "type": "website",
@@ -22330,10 +22339,13 @@
       "type": "cryptographic-asset",
       "bom-ref": "77af1298b05ded7f",
       "name": "Patero PQC Gateway",
+      "manufacturer": {
+        "name": "Patero Inc."
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Software-based PQC gateway for SCADA/ICS critical infrastructure. 1-2% overhead, hardware-agnostic.",
+      "description": "Patero describes CryptoQoR as post-quantum data-in-motion protection for mission-critical and industrial-control infrastructure, with crypto-agility orchestration, policy-based key lifecycle management and integration with enterprise PKI. Its current page describes standards-aligned engines without pinning every algorithm/version or a universal overhead figure; evaluate the selected endpoint profile and workload.",
       "externalReferences": [
         {
           "type": "website",
