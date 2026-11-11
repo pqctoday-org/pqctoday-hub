@@ -28,6 +28,7 @@ interface SheetAlgo {
   /** Catalogue status text and its source, as the desktop drawer shows them. */
   status?: string
   statusUrl?: string
+  useCaseNotes?: string
   securityLevel: number | null
   publicKeyBytes: number | null
   privateKeyBytes: number | null
@@ -51,6 +52,7 @@ function sheetFromDetail(d: AlgorithmDetail): SheetAlgo {
     fipsStandard: d.fipsStandard || null,
     status: d.status || undefined,
     statusUrl: d.statusUrl || undefined,
+    useCaseNotes: d.useCaseNotes || undefined,
     securityLevel: d.securityLevel,
     publicKeyBytes: d.publicKeySize,
     privateKeyBytes: d.privateKeySize,
@@ -490,6 +492,16 @@ export function MobileAlgorithmsView() {
                 </div>
               )}
             </dl>
+            {selected.useCaseNotes && (
+              <section className="mt-3 border-t border-border pt-3" aria-label="Use-case notes">
+                <h3 className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Use-case notes
+                </h3>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-foreground">
+                  {selected.useCaseNotes}
+                </p>
+              </section>
+            )}
             {selected.status && (
               <div className="mt-3 border-t border-border pt-3">
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">

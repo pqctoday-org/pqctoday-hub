@@ -19,6 +19,17 @@ const renderAt = (entry: string) =>
   )
 
 describe('MobileAlgorithmsView — ?algo', () => {
+  it.each([
+    ['secp256r1mlkem768', /raw.*64|64.*raw/i],
+    ['id-mldsa44-ecdsa-p256-sha256', /maximum|max.*2492|2,492/i],
+    ['faest', /v3\.0/],
+  ])('retains the serialized-byte scope beside %s on phones', async (id, scope) => {
+    renderAt(`/algorithms?algo=${id}`)
+    const sheet = await screen.findByTestId('algorithm-detail-sheet')
+    const notes = await within(sheet).findByRole('region', { name: 'Use-case notes' })
+    expect(notes).toHaveTextContent(scope)
+  })
+
   it('tapping a bar pushes ?algo=<algorithm_id>; Close strips it', () => {
     renderAt('/algorithms')
     // eslint-disable-next-line testing-library/no-node-access
