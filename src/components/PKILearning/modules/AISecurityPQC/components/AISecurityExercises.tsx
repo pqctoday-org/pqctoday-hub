@@ -54,7 +54,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Model',
     badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
     observe:
-      'Only the symmetric key is wrapped: the ML-KEM-768 ciphertext is 1,088 bytes (FIPS 203). The ML-DSA-65 signature is 3,309 bytes against 64 bytes for ECDSA P-256, about 50 times larger, but the model file is 140 GB, so the overhead of both is negligible.',
+      'The model wraps an independent 32-byte symmetric DEK: 1,088 bytes of ML-KEM-768 ciphertext plus 40 bytes of AES-KW wrapped DEK = 1,128 bytes. The ML-DSA-65 signature is 3,309 bytes against 64 bytes for the sample raw ECDSA P-256 signature. Compare these per-key and per-signature bytes with the 140 GB model file, then consider how many keys, models and operations your system needs. The time cells are authored scenario inputs, not a benchmark.',
     config: { step: 2 },
   },
   {
@@ -76,7 +76,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Commerce',
     badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
     observe:
-      'All 6 steps are quantum-vulnerable. The simulator puts the total PQC latency overhead at 10.9% (220 ms to 244 ms), which it labels Moderate — its Acceptable band ends at 5%. Tolerable for non-real-time commerce, but not free: the same overhead on a latency-budgeted flow would need the per-step figures examined rather than the total.',
+      'All 6 steps are quantum-vulnerable. The authored sequential inputs total 220 ms classical and 244 ms PQC: (244 − 220) ÷ 220 × 100 = 10.9%, in the Moderate teaching band (5% to below 15%). These are not measured latencies or a decision that the flow meets your budget. Inspect which steps contribute the extra 24 ms, then compare measurements from your own tools with your service latency budget.',
     config: { step: 4 },
   },
   {
@@ -87,18 +87,18 @@ const SCENARIOS: Scenario[] = [
     badge: 'Protocol',
     badgeColor: 'bg-accent/20 text-accent border-accent/50',
     observe:
-      'Per-message overhead increases significantly due to ML-DSA signature size. At 10K msg/s, this may require bandwidth planning. NIST Level 3 security is achieved.',
+      'With ML-DSA-44 and Signed JSON, the sample adds a 2,420-byte signature and 200 authored format bytes = 2,620 bytes per message. At 1,000 messages/second, that is 2,620,000 bytes/second before transport overhead. ML-KEM-768 is category 3; ML-DSA-44 is category 2. Neither establishes an overall protocol category or tested interoperability. Change the signing, format and transport selections and compare their separate properties.',
     config: { step: 5 },
   },
   {
     id: 'scale-migration',
     title: '7. Enterprise AI Scale Migration',
     description:
-      'In the Scale Encryption Planner, use the Enterprise preset (100 TB, 10M req/day, 3 regions). Review the phased migration roadmap and HNDL risk window. What is the total KMS operations per day?',
+      'In the Scale Encryption Planner, load the Enterprise preset (100 TB, 10M requests/day, 3 regions), then explicitly enter 12 models, 50 agents and 7-year retention to complete this fictional case. Review the key counts, KMS operations, authored schedule and illustrative retention bands. Which values are calculated from workload, and which remain fixed assumptions?',
     badge: 'Scale',
     badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
     observe:
-      'With 7-year retention, the HNDL risk is "High". The 4-phase migration takes ~27 months total. Phase 2 (hybrid TLS + key wrapping) provides the highest security uplift for the lowest effort.',
+      '100,000 GB plus 12 × 10 model shards gives 100,120 DEKs; 3 + 3 × 12 gives 39 KEKs. Daily operations = 10,000,000 inference unwraps + 50 × 10 agent operations + ceil(100,120 × 1%) rotations = 10,001,502. Retention from the exercise base year 2026 to 2033 is Medium under its illustrative bands; these dates are not a CRQC forecast. The fixed sequential phase assumptions total 3 + 6 + 6 + 12 = 27 months. Changing workload does not compute a new schedule or establish which phase has the best production return.',
     config: { step: 6 },
   },
 ]

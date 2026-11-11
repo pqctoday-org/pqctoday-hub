@@ -307,6 +307,16 @@ export const ScaleEncryptionPlanner: React.FC = () => {
       {/* Migration phases */}
       <div>
         <h4 className="text-sm font-bold text-foreground mb-3">Phased Migration Roadmap</h4>
+        <p className="text-sm text-muted-foreground mb-3" aria-label="Migration schedule basis">
+          Hub-authored sequential schedule:{' '}
+          {MIGRATION_PHASE_TEMPLATES.map((phase) => phase.durationMonths).join(' + ')}
+          {' = '}
+          {MIGRATION_PHASE_TEMPLATES.reduce((sum, phase) => sum + phase.durationMonths, 0)} months.
+          The four durations and effort labels are fixed exercise assumptions. Workload inputs do
+          not estimate these durations, and no phase overlap is modelled. Use the inventory phase to
+          identify dependencies before prioritising the key-wrapping and transport work; use your
+          own tool and provider readiness evidence to set a real schedule.
+        </p>
         <div className="space-y-2">
           {MIGRATION_PHASE_TEMPLATES.map((phase) => (
             <div key={phase.phase} className="glass-panel p-4">

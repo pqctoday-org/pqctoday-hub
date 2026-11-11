@@ -24,12 +24,12 @@ workshop_steps: 7
 ## Workshop
 
 1. Data Protection Analyzer — Audit AI pipeline crypto operations for quantum vulnerabilities
-2. Data Authenticity Verifier — Configure verification layers, visualize model collapse, compare signing overheads
-3. Model Weight Vault — Configure model encryption/signing, compare classical vs PQC overhead
+2. Data Authenticity Verifier — Evaluate fictional tool observations; compare accuracy with recall and distinguish provenance claims from content truth and fictional model-collapse scores
+3. Model Weight Vault — Compare complete wrapping envelopes, signatures and authored operation-time assumptions
 4. Agent Auth Designer — Design delegation chains with PQC credentials
-5. Agentic Commerce Simulator — Step through agent transaction flows with quantum overlay
-6. Agent-to-Agent Protocol — Design PQC communication protocols, compare bandwidth/latency
-7. Scale Encryption Planner — Calculate enterprise-scale PQC migration requirements
+5. Agentic Commerce Simulator — Recompute sequential latency totals from visible authored per-step inputs
+6. Agent-to-Agent Protocol — Compare separate primitive properties, authored byte/latency assumptions and a declared transport rubric
+7. Scale Encryption Planner — Calculate workload key/operation counts; distinguish them from the fixed fictional migration schedule
 
 ## Key Standards
 

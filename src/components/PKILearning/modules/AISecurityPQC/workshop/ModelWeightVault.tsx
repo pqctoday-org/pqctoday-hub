@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Lock } from 'lucide-react'
+import { formatRelativeChange } from '../data/scenarioCalculations'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   MODEL_SIZE_PROFILES,
@@ -184,6 +185,13 @@ export const ModelWeightVault: React.FC = () => {
       {/* Comparison Table */}
       <div>
         <h4 className="text-sm font-bold text-foreground mb-3">Illustrative Overhead Comparison</h4>
+        <p className="text-sm text-muted-foreground mb-3">
+          Time cells are Hub-authored inputs in milliseconds, not measured performance. Change =
+          (selected − classical) ÷ classical × 100; a negative value means less time in this
+          example. Byte sizes describe the stated wrapping envelope or signature, not encryption of
+          the entire model file. Compare both storage growth and operation time, then measure the
+          same key-wrapping and signing operations on your own target platform.
+        </p>
         <div className="glass-panel overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -213,9 +221,7 @@ export const ModelWeightVault: React.FC = () => {
                 <td className="text-center p-3 font-mono">{classicalWrap.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono">{wrapProfile.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono text-status-success">
-                  {wrapProfile.operationTimeMs <= classicalWrap.operationTimeMs
-                    ? 'Faster'
-                    : `+${((wrapProfile.operationTimeMs / classicalWrap.operationTimeMs - 1) * 100).toFixed(0)}%`}
+                  {formatRelativeChange(classicalWrap.operationTimeMs, wrapProfile.operationTimeMs)}
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -236,9 +242,7 @@ export const ModelWeightVault: React.FC = () => {
                 <td className="text-center p-3 font-mono">{classicalSign.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono">{signProfile.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono">
-                  {signProfile.operationTimeMs <= classicalSign.operationTimeMs
-                    ? '~Same'
-                    : `+${((signProfile.operationTimeMs / classicalSign.operationTimeMs - 1) * 100).toFixed(0)}%`}
+                  {formatRelativeChange(classicalSign.operationTimeMs, signProfile.operationTimeMs)}
                 </td>
               </tr>
               <tr className="border-b border-border/50">

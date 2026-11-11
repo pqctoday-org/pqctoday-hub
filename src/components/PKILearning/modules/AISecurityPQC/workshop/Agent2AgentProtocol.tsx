@@ -288,7 +288,12 @@ export const Agent2AgentProtocol: React.FC = () => {
       <p className="text-xs text-muted-foreground">
         The category describes the selected PQC KEM constituent only, not the signing algorithm,
         authentication method or complete protocol. The stars are a fixed teaching rubric, not
-        interoperability evidence. PSK strength and channel authentication are not evaluated here.
+        interoperability evidence. The existing exercise assigns TLS 1.3 five stars, DTLS 1.3 and
+        QUIC four, and a custom protocol one as an authored preference for established transport
+        integration over a custom integration. It does not rate a named implementation or prove that
+        any selected PQC profile interoperates. Evaluate the actual peer versions, algorithm
+        negotiation, credentials and rejected handshakes with your production tools. PSK strength
+        and channel authentication are not evaluated here.
       </p>
 
       <div className="glass-panel p-4 space-y-3">
