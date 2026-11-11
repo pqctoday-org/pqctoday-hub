@@ -2,6 +2,11 @@
 import { loadLatestCSV } from './csvUtils'
 import { getDateFromFilename, getRevisionFromFilename } from './pqcAlgorithmsData'
 import type { AlgorithmStatusTier } from './algorithmStatusTier'
+import {
+  standardizationDateEvidence,
+  deprecationDateEvidence,
+  type TransitionDateEvidence,
+} from './transitionDates'
 
 export interface AlgorithmTransition {
   classical: string
@@ -22,6 +27,8 @@ export interface AlgorithmTransition {
   standardizationDate: string
   deprecationDateISO?: string
   standardizationDateISO?: string
+  standardizationDateEvidence?: TransitionDateEvidence
+  deprecationDateEvidence?: TransitionDateEvidence
   region: string
   status: string
   statusUrl?: string
@@ -190,15 +197,26 @@ const { data, metadata } = loadLatestCSV<RawTransitionRow, AlgorithmTransition>(
   (row) => {
     const lifecycle = (row.status ?? '').trim().toLowerCase()
     if (lifecycle && lifecycle !== 'active') return null // deprecated/obsolete: id history only
+    const publication = standardizationDateEvidence(
+      row.Standardization_Date_Label || row.Standardization_Date_ISO || '',
+      row.Standardization_Date_ISO || undefined
+    )
+    const policy = deprecationDateEvidence(
+      row.Deprecation_Date_Label || row.Deprecation_Date_ISO || '',
+      row.Deprecation_Date_ISO || undefined,
+      row.Region || ''
+    )
     return {
       classical: row.classical_algorithm,
       keySize: row.key_size,
       pqc: row.pqc_replacement,
       function: row.Function as AlgorithmTransition['function'],
-      deprecationDate: row.Deprecation_Date_Label || row.Deprecation_Date_ISO || '',
-      standardizationDate: row.Standardization_Date_Label || row.Standardization_Date_ISO || '',
-      deprecationDateISO: row.Deprecation_Date_ISO || undefined,
-      standardizationDateISO: row.Standardization_Date_ISO || undefined,
+      deprecationDate: policy.label,
+      standardizationDate: publication.label,
+      deprecationDateISO: policy.iso,
+      standardizationDateISO: publication.iso,
+      standardizationDateEvidence: publication,
+      deprecationDateEvidence: policy,
       region: row.Region || '',
       status: row.Status || '',
       statusUrl: row.status_url || undefined,

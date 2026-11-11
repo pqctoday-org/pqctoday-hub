@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { CmsSourceGuide, LibraryReviewProcess } from '@/components/Library/LibrarySourceLabels'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { Search, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
@@ -516,6 +517,8 @@ export function MobileLibraryView() {
               <p className="text-[12.5px] leading-relaxed text-muted-foreground">
                 {selected.shortDescription?.trim() || MISSING_REVIEWED_SUMMARY}
               </p>
+              <LibraryReviewProcess item={selected} />
+              <CmsSourceGuide item={selected} />
               {needsScopeVerification(selected) && (
                 <p className="rounded-lg border border-warning/40 bg-warning/10 p-2 text-[11px] leading-relaxed text-foreground">
                   {SCOPE_VERIFICATION_NOTE}

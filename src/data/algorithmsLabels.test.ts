@@ -46,8 +46,9 @@ describe('transition guide labels', () => {
     )
     expect(rows.length).toBe(2)
     for (const row of rows) {
-      expect(row.deprecationDate, row.pqc).toBe('2030 (Deprecated) / 2035 (Disallowed)')
-      expect(row.deprecationDateISO, row.pqc).toBe('2030-01-01')
+      expect(row.deprecationDate, row.pqc).toBe('After 2030 (Deprecated) / After 2035 (Disallowed)')
+      expect(row.deprecationDateISO, row.pqc).toBe('2031-01-01')
+      expect(row.deprecationDateEvidence?.precision).toBe('year')
     }
   })
 
@@ -57,13 +58,16 @@ describe('transition guide labels', () => {
     // 2030 and disallowed after 2035. The 2024 draft deprecated only the 112-bit
     // sets, so 128-bit-and-up rows read "2035 (Disallowed)" alone until then.
     const rows = algorithmsData.filter(
-      (r) => r.region === 'NIST' && /^20(30|35) \((Deprecated|Disallowed)\)/.test(r.deprecationDate)
+      (r) =>
+        r.region === 'NIST' &&
+        /^(?:After )?20(30|35) \((Deprecated|Disallowed)\)/.test(r.deprecationDate)
     )
     expect(rows.length).toBeGreaterThanOrEqual(69)
     for (const row of rows) {
       const id = `${row.classical} ${row.keySize} -> ${row.pqc}`
-      expect(row.deprecationDate, id).toBe('2030 (Deprecated) / 2035 (Disallowed)')
-      expect(row.deprecationDateISO, id).toBe('2030-01-01')
+      expect(row.deprecationDate, id).toBe('After 2030 (Deprecated) / After 2035 (Disallowed)')
+      expect(row.deprecationDateISO, id).toBe('2031-01-01')
+      expect(row.deprecationDateEvidence?.precision).toBe('year')
     }
   })
 
@@ -271,7 +275,7 @@ describe('renamed additional-signature rows keep their history', () => {
     }
   })
 
-  it('has an active replacement row for each, differing only in name and note', () => {
+  it('keeps replacement identity and history while stating the current after-year policy', () => {
     const active = rows.filter((r) => !r.status || r.status === 'active')
     for (const old of deprecated) {
       const stem = old.pqc_replacement.split(' (')[0]
@@ -290,7 +294,16 @@ describe('renamed additional-signature rows keep their history', () => {
         'Status',
         'status_url',
       ]) {
-        expect(fresh[0][col], `${stem} ${col}`).toBe(old[col])
+        if (col === 'Deprecation_Date_Label') {
+          expect(old[col], `${stem} retained historical label`).toBe(
+            '2030 (Deprecated) / 2035 (Disallowed)'
+          )
+          expect(fresh[0][col], `${stem} current policy label`).toBe(
+            'After 2030 (Deprecated) / After 2035 (Disallowed)'
+          )
+        } else {
+          expect(fresh[0][col], `${stem} ${col}`).toBe(old[col])
+        }
       }
       expect(fresh[0].data_quality_notes).toContain(`\u201c${old.pqc_replacement}\u201d`)
     }

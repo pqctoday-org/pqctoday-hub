@@ -195,7 +195,7 @@ const TimelineVisualization: React.FC<{
   modelYear: number
   roadLifeYears: number
   crqcArrivalYear: number
-}> = ({ result, modelYear, roadLifeYears, crqcArrivalYear }) => {
+}> = ({ result, modelYear, crqcArrivalYear }) => {
   const timelineStart = modelYear - 2
   const timelineEnd = result.vehicleEndYear + 2
   const totalSpan = timelineEnd - timelineStart
@@ -208,11 +208,7 @@ const TimelineVisualization: React.FC<{
     yearMarkers.push(y)
   }
 
-  // OTA upgrade windows every 4 years during road life
-  const otaYears: number[] = []
-  for (let y = modelYear + 4; y < modelYear + roadLifeYears; y += 4) {
-    otaYears.push(y)
-  }
+  const otaYears = result.otaUpgradeYears
 
   return (
     <div className="glass-panel p-4 space-y-4">
@@ -316,9 +312,8 @@ const VulnerabilitySummary: React.FC<{
   result: ReturnType<typeof computeVulnerabilityWindow>
   modelYear: number
   crqcArrivalYear: number
-}> = ({ result, modelYear, crqcArrivalYear }) => {
-  const needsPqcFromFactory =
-    modelYear + result.otaUpgradeWindows * 4 < crqcArrivalYear ? false : true
+}> = ({ result }) => {
+  const needsPqcFromFactory = result.needsPqcFromFactory
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -345,7 +340,7 @@ const VulnerabilitySummary: React.FC<{
       <div className="glass-panel p-3 text-center">
         <Radio size={18} className="mx-auto text-primary mb-1" />
         <div className="text-xl font-bold text-foreground">{result.otaUpgradeWindows}</div>
-        <div className="text-xs text-muted-foreground">OTA Upgrade Windows</div>
+        <div className="text-xs text-muted-foreground">Pre-CRQC OTA Opportunities</div>
       </div>
 
       <div className="glass-panel p-3 text-center">
@@ -657,10 +652,10 @@ export const LifecycleMigrationRoadmap: React.FC = () => {
           Vehicle-Lifecycle PQC Migration Planner
         </h3>
         <p className="text-sm text-muted-foreground">
-          Configure a vehicle scenario to visualize its lifecycle against CRQC arrival estimates,
-          identify vulnerability windows, and map regulatory milestones to HSM migration actions.
-          This is the capstone view &mdash; it ties together HSM tier management, regulatory
-          compliance deadlines, and cryptographically relevant quantum computer exposure.
+          Configure a fictional vehicle scenario against an assumed CRQC arrival year, identify
+          vulnerability windows, and map regulatory milestones to HSM migration actions. This is the
+          capstone view &mdash; it ties together HSM tier management, regulatory compliance
+          deadlines, and cryptographically relevant quantum computer exposure.
         </p>
       </div>
 
@@ -702,12 +697,27 @@ export const LifecycleMigrationRoadmap: React.FC = () => {
               {vulnerabilityResult.vulnerableYears} years
             </span>{' '}
             after CRQC arrival in {crqcArrivalYear}. There are{' '}
-            {vulnerabilityResult.otaUpgradeWindows} OTA upgrade windows available to push PQC
-            firmware before CRQC arrives. Vehicles must be provisioned with crypto-agile HSMs and
-            hybrid certificates to enable OTA migration.
+            {vulnerabilityResult.otaUpgradeWindows} scheduled opportunities strictly before both the
+            assumed arrival and retirement:{' '}
+            {vulnerabilityResult.otaUpgradeYears.join(', ') || 'none'}. This sample assumes a
+            four-year upgrade cadence. An opportunity is not evidence that a device can accept new
+            cryptography: check update authority, algorithm support, storage, rollback and
+            verification with your own tools before relying on that path.
           </div>
         </div>
       )}
+
+      <p className="text-sm text-muted-foreground" aria-label="Lifecycle calculation basis">
+        Service interval: {modelYear}–{vulnerabilityResult.vehicleEndYear}. Exposure is its
+        intersection with years from the assumed CRQC arrival, so it cannot exceed the stated road
+        life. Scheduled upgrades occur every four years and count only strictly before arrival and
+        retirement.{' '}
+        {vulnerabilityResult.needsPqcFromFactory
+          ? 'No such upgrade can precede this exposure; this sample requires readiness before entering service.'
+          : vulnerabilityResult.isVulnerable
+            ? 'A scheduled pre-exposure upgrade exists in this sample; its technical feasibility still needs testing.'
+            : 'No exposure falls inside this service interval under the selected assumption.'}
+      </p>
 
       {/* Regulatory Milestones Timeline */}
       <RegulatoryTimeline milestones={filteredMilestones} />

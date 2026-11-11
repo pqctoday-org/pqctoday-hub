@@ -20,6 +20,7 @@ import {
   Minus,
 } from 'lucide-react'
 import { Link } from 'react-router'
+import { TimingBudgetExample } from './TimingBudgetExample'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -473,15 +474,15 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </div>
 
           <p>
-            For a fast control loop such as steer-by-wire or brake-by-wire, the safety analysis may
-            leave only a few milliseconds for verification. In this module&rsquo;s assumed figures,
-            software-only <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> verification takes
-            roughly 2&ndash;4 ms on an automotive-grade ARM Cortex-A72 (2 GHz) and 5&ndash;15 ms on
-            a more constrained Cortex-R52 (400 MHz), which could exceed a tight budget. Hardware
-            acceleration (crypto coprocessors or FPGA fabric) is one way to cut this, at a cost in
-            BOM and silicon area; whether it is needed is decided by measuring the worst-case
-            execution time on the target ECU, not by the ASIL letter.
+            The Safety Crypto Analyzer and sensor simulator use the same labelled timing inputs. For
+            ML-DSA-44 the verification input is 0.3 ms, not a measured Cortex-A72 or Cortex-R52
+            result. A primitive comparison does not include parsing, hashing, communication,
+            scheduling or interrupt load. Compare the full pipeline with the function's stated
+            sample budget, then measure worst-case execution time on your own ECU before deciding
+            whether acceleration or a different verified design is needed.
           </p>
+
+          <TimingBudgetExample />
 
           <p>
             Cross-reference the{' '}
@@ -666,6 +667,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </ul>
             </div>
           </div>
+
+          <TimingBudgetExample />
 
           <p>
             Cross-reference the{' '}
@@ -954,6 +957,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
           </div>
+
+          <TimingBudgetExample />
 
           <p>
             Cross-reference the{' '}
@@ -1262,6 +1267,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
           </div>
+
+          <TimingBudgetExample />
 
           <p>
             Cross-reference the{' '}

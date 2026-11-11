@@ -29,6 +29,8 @@ import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
 import { resolveLibrarySourceAction } from './librarySourceAction'
+import { CmsSourceGuide, LibraryReviewProcess } from './LibrarySourceLabels'
+import { formatLibDate } from './redesign/libraryPills'
 
 /**
  * One entry per value in the agreed `document_type` vocabulary (2026-08-10).
@@ -45,8 +47,8 @@ import { resolveLibrarySourceAction } from './librarySourceAction'
  */
 const DOCUMENT_TYPE_DESCRIPTIONS: Record<string, string> = {
   Standard:
-    'Normative requirements published and ratified by a standards body — NIST, ISO, ETSI, OASIS, TCG, IEEE. Compliance is often mandatory or contractually required.',
-  RFC: 'An IETF Request for Comments. Published and stable, whatever its track — check the status field for Standards Track, Informational or Experimental, because an RFC number alone does not mean "standard".',
+    'A standards publication. Use its publisher, edition, status and applicable scope to determine which requirements apply; the record does not establish product compliance.',
+  RFC: 'A publication in the RFC Series. Check its stream and status: an RFC can be Standards Track, Informational or Experimental, and may be an Independent Submission rather than IETF consensus.',
   'Internet-Draft':
     'IETF work in progress, not yet an RFC. Content can change or be abandoned outright; cite it for direction of travel, not as a stable requirement.',
   Regulation:
@@ -56,7 +58,7 @@ const DOCUMENT_TYPE_DESCRIPTIONS: Record<string, string> = {
   'Compliance Framework':
     'A scheme, certification programme or control set organisations are assessed against — the thing an auditor holds you to, as distinct from the standard it draws on.',
   'Research Paper':
-    'Peer-reviewed or preprint academic work. Authoritative on its own findings; a result here is not the same as a deployable recommendation.',
+    'Academic paper or preprint. Check the stated review process, methods and limitations; a research finding is distinct from a deployment recommendation.',
   'Industry Report':
     'Analyst, vendor or consortium reporting and surveys. Useful for market state and adoption evidence; the author usually has a position.',
   Article:
@@ -247,6 +249,8 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   <p className="text-sm text-foreground leading-relaxed">
                     {item.shortDescription?.trim() || 'No description available.'}
                   </p>
+                  <LibraryReviewProcess item={item} />
+                  <CmsSourceGuide item={item} />
                 </div>
 
                 <SuccessionLinks item={item} />
@@ -491,17 +495,19 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     </h4>
                     <div className="flex items-center gap-1.5 text-foreground text-sm">
                       <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
-                      <span>{item.initialPublicationDate?.trim()}</span>
+                      <span title="Publication or release date of this named document or edition, not the website creation date">
+                        {formatLibDate(item.initialPublicationDate) || 'Not recorded'}
+                      </span>
                     </div>
                   </div>
 
                   <div className="flex flex-row items-center gap-2">
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
-                      Updated:
+                      Catalog updated:
                     </h4>
                     <div className="flex items-center gap-1.5 text-foreground text-sm">
                       <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
-                      <span>{item.lastUpdateDate?.trim()}</span>
+                      <span>{formatLibDate(item.lastUpdateDate) || 'Not recorded'}</span>
                     </div>
                   </div>
 

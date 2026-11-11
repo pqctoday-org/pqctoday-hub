@@ -20,6 +20,7 @@ import {
 import { documentWeight } from '@/data/libraryDocumentWeight'
 import { resolveLibrarySourceAction } from '../librarySourceAction'
 import { MISSING_REVIEWED_SUMMARY, needsScopeVerification } from '../libraryClaimSemantics'
+import { CmsSourceGuide, LibraryReviewProcess } from '../LibrarySourceLabels'
 
 interface LibraryDocumentCardProps {
   item: LibraryItem
@@ -116,6 +117,8 @@ export function LibraryDocumentCard({
       <p className="mt-1.5 line-clamp-2 text-[12px] leading-snug text-muted-foreground">
         {item.shortDescription?.trim() || MISSING_REVIEWED_SUMMARY}
       </p>
+      <LibraryReviewProcess item={item} compact />
+      <CmsSourceGuide item={item} compact />
       {needsScopeVerification(item) && (
         <p className="mt-1 text-[10.5px] font-medium text-warning-foreground">
           Scope-sensitive — verify the official source.

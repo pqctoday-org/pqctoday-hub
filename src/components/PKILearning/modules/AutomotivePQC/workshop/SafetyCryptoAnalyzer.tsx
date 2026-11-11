@@ -5,7 +5,7 @@ import type { ASILLevel, AutomotiveFunction } from '../data/automotiveConstants'
 import { ASIL_COLORS, ASIL_LABELS, FAIL_MODE_LABELS } from '../data/automotiveConstants'
 import { AUTOMOTIVE_FUNCTIONS, ASIL_CRYPTO_REQUIREMENTS } from '../data/safetyCryptoData'
 import type { AutomotiveFunctionProfile } from '../data/safetyCryptoData'
-import { ALGORITHM_THROUGHPUT } from '../data/sensorFusionData'
+import { ALGORITHM_THROUGHPUT, AUTOMOTIVE_TIMING_BASIS } from '../data/sensorFusionData'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
@@ -69,11 +69,11 @@ function timingStatusColors(status: 'pass' | 'tight' | 'fail') {
 function timingStatusLabel(status: 'pass' | 'tight' | 'fail') {
   switch (status) {
     case 'pass':
-      return 'Feasible'
+      return 'Within primitive budget'
     case 'tight':
-      return 'Marginal'
+      return 'Within twice primitive budget'
     case 'fail':
-      return 'Exceeds'
+      return 'Beyond twice primitive budget'
   }
 }
 
@@ -205,11 +205,12 @@ function RiskMatrixHeatmap() {
     <div className="glass-panel p-4">
       <h4 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
         <AlertTriangle size={16} className="text-status-warning" />
-        PQC Timing Feasibility Matrix
+        Primitive Timing Input Comparison
       </h4>
       <p className="text-xs text-muted-foreground mb-4">
-        Verification time vs. maximum allowed time per function. Green = feasible, yellow = within
-        2x budget (marginal), red = exceeds 2x budget.
+        {AUTOMOTIVE_TIMING_BASIS} This compares one verification input with each function's
+        fictional budget. Green is within that budget, yellow within twice it, red beyond twice it;
+        these colours do not establish full-pipeline WCET or deployment feasibility.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

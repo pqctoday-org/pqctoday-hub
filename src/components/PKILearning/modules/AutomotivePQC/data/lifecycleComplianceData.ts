@@ -390,14 +390,22 @@ export function computeVulnerabilityWindow(
   vulnerableYears: number
   isVulnerable: boolean
   otaUpgradeWindows: number
+  otaUpgradeYears: number[]
+  needsPqcFromFactory: boolean
   phases: { label: string; startYear: number; endYear: number; color: string }[]
 } {
   const vehicleEndYear = modelYear + roadLifeYears
-  const vulnerableYears = Math.max(0, vehicleEndYear - crqcArrivalYear)
+  const exposureStart = Math.max(modelYear, crqcArrivalYear)
+  const vulnerableYears = Math.max(0, vehicleEndYear - exposureStart)
   const isVulnerable = vulnerableYears > 0
 
-  // OTA crypto upgrades typically every 3-5 years
-  const otaUpgradeWindows = Math.floor(roadLifeYears / 4)
+  // Retain the existing fictional four-year cadence. Only opportunities strictly
+  // before BOTH the assumed arrival and retirement can mitigate in-service exposure.
+  const otaUpgradeYears: number[] = []
+  for (let year = modelYear + 4; year < Math.min(crqcArrivalYear, vehicleEndYear); year += 4)
+    otaUpgradeYears.push(year)
+  const otaUpgradeWindows = otaUpgradeYears.length
+  const needsPqcFromFactory = isVulnerable && otaUpgradeWindows === 0
 
   const phases = [
     {
@@ -409,7 +417,7 @@ export function computeVulnerabilityWindow(
     {
       label: 'Pre-CRQC Road Life',
       startYear: modelYear,
-      endYear: Math.min(crqcArrivalYear, vehicleEndYear),
+      endYear: Math.max(modelYear, Math.min(crqcArrivalYear, vehicleEndYear)),
       color: 'bg-status-success/30',
     },
   ]
@@ -417,7 +425,7 @@ export function computeVulnerabilityWindow(
   if (isVulnerable) {
     phases.push({
       label: 'Post-CRQC Vulnerable',
-      startYear: crqcArrivalYear,
+      startYear: exposureStart,
       endYear: vehicleEndYear,
       color: 'bg-status-error/30',
     })
@@ -430,5 +438,13 @@ export function computeVulnerabilityWindow(
     color: 'bg-muted',
   })
 
-  return { vehicleEndYear, vulnerableYears, isVulnerable, otaUpgradeWindows, phases }
+  return {
+    vehicleEndYear,
+    vulnerableYears,
+    isVulnerable,
+    otaUpgradeWindows,
+    otaUpgradeYears,
+    needsPqcFromFactory,
+    phases,
+  }
 }

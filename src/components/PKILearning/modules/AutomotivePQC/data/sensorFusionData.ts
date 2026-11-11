@@ -105,14 +105,9 @@ export const SENSOR_PROFILES: SensorProfile[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// Signing Algorithm Throughput (automotive-grade SoC benchmarks)
-//
-// Benchmarks: ARM Cortex-A72 @ 2 GHz with hardware NEON, unless noted.
-// Real automotive ECUs (Cortex-R52 @ 400 MHz, Infineon Aurix TC3xx): expect
-// 5–20× slower due to lower clock, no SIMD, cache limitations, and ISR jitter.
-// FN-DSA-512 and LMS timings are estimated from reference implementations —
-// not validated on production automotive silicon.
-// ---------------------------------------------------------------------------
+// Shared authored timing inputs; no retained hardware/build measurement establishes these as benchmarks.
+export const AUTOMOTIVE_TIMING_BASIS =
+  'Hub-authored primitive-operation timing inputs in milliseconds. Parameter sets are named per row; no measured hardware, compiler/build or workload is established for these values. Use them for the sample arithmetic, then measure your own target.'
 
 export const ALGORITHM_THROUGHPUT: AlgorithmThroughput[] = [
   {

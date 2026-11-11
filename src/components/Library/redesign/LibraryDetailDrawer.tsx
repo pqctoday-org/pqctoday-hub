@@ -9,6 +9,7 @@
  * CSWP-39 pillar rollup.
  */
 import { useEffect, useRef, useState } from 'react'
+import { CmsSourceGuide, LibraryReviewProcess } from '../LibrarySourceLabels'
 import { Link } from 'react-router'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
@@ -352,6 +353,9 @@ function DrawerPanel({
               )}
             </div>
 
+            <LibraryReviewProcess item={item} />
+            <CmsSourceGuide item={item} />
+
             <SuccessionLinks item={item} onOpenRef={onOpenRef} />
 
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4">
@@ -549,7 +553,7 @@ function DrawerPanel({
                 />
                 <KeyFact label="Source quality" value={item.downloadUrlQuality} />
                 <KeyFact label="Vetting body" value={item.vettingBody?.join(', ')} />
-                <KeyFact label="Peer reviewed" value={item.peerReviewed} />
+
                 <KeyFact
                   label="Confidence score"
                   value={item.confidenceScore != null ? `${item.confidenceScore}/100` : undefined}
