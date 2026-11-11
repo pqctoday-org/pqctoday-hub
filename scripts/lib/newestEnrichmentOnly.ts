@@ -1,29 +1,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Production builds ship only the newest dated file of an enrichment family
- * whose newest file already holds every entry of the older ones.
+ * Production and dev builds omit enrichment generations superseded by a later
+ * complete snapshot. Incremental files after that snapshot remain in order.
  *
- * `src/data/doc-enrichments/library_doc_enrichments_MMDDYYYY.md` (and the threats
- * family) get a new dated file for every change, each one repeating all earlier
- * entries. The loaders glob every file, so the build used to inline all of them
- * (about 90 MB of the 98 MB `trustScoreData` chunk) although `mergeEnrichmentFiles`
- * lets the newest file win for every key. Only the newest is needed.
- *
- * The rule is checked, not assumed: a family is pruned only while the newest
- * file's `## ` entries include every entry of every older file. If a future file
- * carries fewer entries (an incremental file), that family is left whole and the
- * build prints why. Vitest keeps every file, so the tests that read the full set
- * are unchanged.
- *
- * The dev server prunes too. It served all 38 files (~170 MB of raw text) to every
- * page that reaches the enrichment loaders, so a fresh browser took 50 s or more
- * to boot /compliance or /threats and the local-tier E2E specs timed out on it.
+ * A snapshot is checked, not assumed: its keys must include every key from all
+ * earlier dated generations. If no later snapshot covers them, the family is
+ * kept whole. Vitest reads every source file to verify the full merge.
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import type { Plugin } from 'vite'
 
-/** Families verified to repeat every earlier entry in each newer file (16 Oct 2026). */
+/** Families with complete snapshots and, optionally, later incremental corrections. */
 export const NEWEST_ONLY_FAMILIES = ['library_doc_enrichments', 'threats_doc_enrichments'] as const
 
 /** `<family>_MMDDYYYY[_rN].md` file names, oldest first (date, then revision, as numbers). */
@@ -52,7 +40,7 @@ export function entryKeys(markdown: string): Set<string> {
 export interface PruneDecision {
   family: string
   files: number
-  /** File names left out of the bundle (all but the newest), empty when the family is kept whole. */
+  /** Older file names covered by the retained snapshot; later incremental files stay. */
   pruned: string[]
   /** Why the family is kept whole; null when it is pruned or has a single file. */
   keptWholeBecause: string | null
@@ -71,21 +59,31 @@ export function decidePrune(
     if (files.length <= 1) {
       return { family, files: files.length, pruned: [], keptWholeBecause: null }
     }
-    const newest = files[files.length - 1]
-    const newestKeys = entryKeys(read(join(dir, newest)))
-    for (const older of files.slice(0, -1)) {
-      for (const key of entryKeys(read(join(dir, older)))) {
-        if (!newestKeys.has(key)) {
-          return {
-            family,
-            files: files.length,
-            pruned: [],
-            keptWholeBecause: `${older} has entry "${key}" that ${newest} lacks`,
-          }
-        }
+    const earlierKeys = new Set<string>()
+    let snapshotIndex = 0
+    let missingFromNewest: { file: string; key: string } | null = null
+    const firstSource = new Map<string, string>()
+    for (let i = 0; i < files.length; i++) {
+      const keys = entryKeys(read(join(dir, files[i])))
+      const missing = [...earlierKeys].find((key) => !keys.has(key))
+      if (missing === undefined) snapshotIndex = i
+      if (i === files.length - 1 && missing !== undefined) {
+        missingFromNewest = { file: firstSource.get(missing)!, key: missing }
+      }
+      for (const key of keys) {
+        earlierKeys.add(key)
+        if (!firstSource.has(key)) firstSource.set(key, files[i])
       }
     }
-    return { family, files: files.length, pruned: files.slice(0, -1), keptWholeBecause: null }
+    return {
+      family,
+      files: files.length,
+      pruned: files.slice(0, snapshotIndex),
+      keptWholeBecause:
+        snapshotIndex === 0 && missingFromNewest
+          ? `${missingFromNewest.file} has entry "${missingFromNewest.key}" that ${files[files.length - 1]} lacks`
+          : null,
+    }
   })
 }
 
@@ -106,7 +104,7 @@ export function newestEnrichmentOnlyPlugin(
       for (const d of decisions) {
         const note = d.keptWholeBecause
           ? `kept whole: ${d.keptWholeBecause}`
-          : `bundling 1 of ${d.files} files`
+          : `bundling ${d.files - d.pruned.length} of ${d.files} files`
         console.log(`[newest-enrichment-only] ${d.family}: ${note}`)
       }
     },
