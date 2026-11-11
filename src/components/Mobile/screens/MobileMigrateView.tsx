@@ -1132,6 +1132,7 @@ function MobileProductDetailSheet({
   const relatedResource = product
     ? getRelatedResource(product.productId, product.softwareName)
     : undefined
+  const supplier = product?.vendorId ? vendorMap.get(product.vendorId) : undefined
 
   const hasVendorRoadmap =
     !!product?.vendorId &&
@@ -1284,6 +1285,23 @@ function MobileProductDetailSheet({
                 <ProductMaintainers product={product} variant="phone" />
               </Suspense>
             </OptionalSection>
+          )}
+
+          {supplier?.website && (
+            <section aria-label="Supplier">
+              <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                Supplier
+              </h3>
+              <a
+                href={supplier.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center gap-1.5 break-words text-[13px] font-semibold text-primary hover:underline"
+              >
+                <ExternalLink size={13} className="shrink-0" aria-hidden="true" />
+                {supplier.vendorDisplayName || supplier.vendorName}
+              </a>
+            </section>
           )}
 
           {(product.proofUrl || product.productBriefUrl || product.userManualUrl) && (
