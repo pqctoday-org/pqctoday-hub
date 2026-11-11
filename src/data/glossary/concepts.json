@@ -242,8 +242,8 @@
   {
     "term": "Related Certificate",
     "acronym": "RFC 9763",
-    "definition": "A binding mechanism (RFC 9763) that links two independent X.509 certificates — one classical, one PQC — to the same end entity via a SHA-256 hash in a RelatedCertificate extension. Legacy systems only process the classical cert; PQC-aware verifiers check both and verify the binding hash. Distinct from Alt-Sig, which embeds a PQC signature inside a single certificate's extensions.",
-    "technicalNote": "The RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36) carries a hash of the related cert and a pointer. Each certificate is individually valid, enabling backward compatibility — unlike composite certificates which require composite OID support.",
+    "definition": "A certificate-binding mechanism in RFC 9763 for associating two independently issued end-entity X.509 certificates with the same entity. A new certificate can contain a RelatedCertificate extension identifying a related certificate by its digest and hash algorithm. For example, a new PQC certificate can reference an existing classical certificate while each retains its own key and signature.",
+    "technicalNote": "RFC 9763 Section 4.1 defines RelatedCertificate (OID 1.3.6.1.5.5.7.1.36) as SEQUENCE { hashAlgorithm DigestAlgorithmIdentifier, hashValue OCTET STRING }. Hash the entire related certificate with the indicated algorithm; SHA-256 is not mandatory. The locationInfo URI belongs to the relatedCertRequest CSR attribute, not this certificate extension. Section 4.2 describes recomputing and comparing the received certificate’s digest. Protocol authorization and peer policy determine how both authentications and the binding result are enforced; the extension alone neither authenticates both peers nor guarantees legacy compatibility. See https://www.rfc-editor.org/rfc/rfc9763.html#section-4.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "intermediate",
     "category": "concept"
@@ -258,16 +258,16 @@
   },
   {
     "term": "Chameleon Certificate",
-    "definition": "A single X.509 certificate that encodes a classical \"delta\" variant inside a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1). PQC-aware verifiers reconstruct the classical certificate from the delta; legacy systems see a standard classical cert.",
-    "technicalNote": "Defined in draft-bonnell-lamps-chameleon-certs (DigiCert, Entrust). More bandwidth-efficient than related certs (RFC 9763) because only one certificate is transmitted. STATUS: the draft is an INDIVIDUAL submission that EXPIRED on 2026-04-21 and was never adopted as a LAMPS working-group document — there is no draft-ietf-lamps-chameleon-certs, and the work was not renamed or absorbed elsewhere. Treat it as a dormant design worth understanding, not an active standards track.",
+    "definition": "An individual Internet-Draft design that encodes differences between two X.509 certificates in a base certificate’s Delta Certificate Descriptor extension (OID 2.16.840.1.114027.80.6.1). Software can reconstruct the paired delta certificate. Base and delta are encoding roles, not fixed classical/PQC directions: a classical base can describe a PQC delta, or the pairing can be reversed.",
+    "technicalNote": "draft-bonnell-lamps-chameleon-certs-07 (October 2025), Sections 3–4, lets the sender reconstruct and send a delta certificate, or lets a capable recipient reconstruct it from the base. A recipient that ignores a non-critical descriptor processes only the base and still needs to support the base certificate’s algorithms; a PQC base is not automatically usable by a classical-only recipient. Certificate selection/negotiation is left to the protocol/application. Compare the base-plus-descriptor size with the actual paired certificates before claiming a bandwidth saving. The individual draft expired on 21 April 2026; it is not an adopted LAMPS standard. Specification: https://www.ietf.org/archive/id/draft-bonnell-lamps-chameleon-certs-07.html.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "TBSCertificate",
-    "definition": "\"To Be Signed\" certificate — the core unsigned structure inside an X.509 certificate containing version, serial number, issuer/subject DNs, validity period, SubjectPublicKeyInfo, and extensions. The CA signs this structure to produce the final certificate.",
-    "technicalNote": "In DER encoding, TBSCertificate is a SEQUENCE. The outer Certificate SEQUENCE wraps TBSCertificate + signatureAlgorithm + signatureValue. PQC algorithms like ML-DSA and SLH-DSA are specified in the outer signatureAlgorithm AlgorithmIdentifier.",
+    "definition": "The “To Be Signed” structure inside an X.509 certificate: version, serial number, issuer signature-algorithm identifier, issuer and subject names, validity, SubjectPublicKeyInfo, and optional identifiers/extensions. The issuer signs the DER encoding of this structure to produce the certificate’s signatureValue.",
+    "technicalNote": "The outer Certificate SEQUENCE contains tbsCertificate, signatureAlgorithm and signatureValue. RFC 5280 Sections 4.1.1.2 and 4.1.2.3 require the outer signatureAlgorithm and the inner TBSCertificate.signature to contain the same algorithm identifier. RFC 9881 Section 3 applies ML-DSA identifiers to both locations: for ML-DSA-65 both carry OID 2.16.840.1.101.3.4.3.18 with absent parameters. This issuer-signature identifier is distinct from the subject’s key algorithm in SubjectPublicKeyInfo; an RSA issuer does not turn an EC subject key into RSA. See https://www.rfc-editor.org/rfc/rfc9881.html#section-3.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"
