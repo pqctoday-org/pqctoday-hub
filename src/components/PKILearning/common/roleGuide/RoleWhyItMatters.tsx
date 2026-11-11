@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React, { useState } from 'react'
+import { Link } from 'react-router'
 import { AlertTriangle, Shield, Clock, ChevronDown, ChevronUp } from 'lucide-react'
 import type { RoleGuideData } from './types'
 import { Button } from '@/components/ui/button'
@@ -22,9 +23,16 @@ const SEVERITY_BADGE: Record<string, string> = {
 interface Props {
   data: RoleGuideData
   onComplete?: () => void
+  practiceResources?: readonly {
+    readonly label: string
+    readonly href: string
+    readonly decision: string
+    readonly capability: string
+    readonly limits: string
+  }[]
 }
 
-export const RoleWhyItMatters: React.FC<Props> = ({ data }) => {
+export const RoleWhyItMatters: React.FC<Props> = ({ data, practiceResources = [] }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   return (
@@ -90,6 +98,29 @@ export const RoleWhyItMatters: React.FC<Props> = ({ data }) => {
           })}
         </div>
       </div>
+      {practiceResources.length > 0 && (
+        <section aria-label="Put the role guidance into practice" className="space-y-4">
+          <h3 className="text-lg font-semibold text-foreground">Try the linked sample tools</h3>
+          <p className="text-sm text-muted-foreground">
+            Use these separate Hub resources to test the decisions introduced here. Each opens its
+            own sample; returning to this guide does not establish a production result.
+          </p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {practiceResources.map((resource) => (
+              <article key={resource.href} className="glass-panel space-y-2 p-4">
+                <h4 className="font-semibold">
+                  <Link to={resource.href} className="text-primary underline underline-offset-2">
+                    {resource.label}
+                  </Link>
+                </h4>
+                <p className="text-sm text-foreground">{resource.decision}</p>
+                <p className="text-xs text-muted-foreground">{resource.capability}</p>
+                <p className="text-xs text-muted-foreground">{resource.limits}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

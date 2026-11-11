@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Architect Quantum Impact module addresses the structural design decisions that determine whether a system can migrate to post-quantum cryptography gracefully or requires full re-architecture. It covers six high-impact architectural concerns — KMS and HSM migration complexity, certificate chain size explosion, hybrid algorithm path design, algorithm selection for constrained and general environments, TLS handshake latency budgets, and crypto-agility debt — alongside a nine-criterion architecture self-assessment and a guided Architecture Design Lab. Content is calibrated for solution architects, security architects, and principal engineers who design multi-system cryptographic infrastructure.
+Architect Quantum Impact connects six descriptive architecture scenarios to skill self-ratings, a phased action checklist and a nine-item exposure checklist. Separate linked tools support certificate-payload estimates, TLS configuration experiments and hybrid-certificate comparisons. The module also contains the Strangler Fig migration model and the source-attributed Trust Hardware Selector.
 
 ## Key Concepts
 
@@ -20,13 +20,20 @@ The Architect Quantum Impact module addresses the structural design decisions th
 
 ## Workshop / Interactive Activities
 
-The workshop includes these interactive steps:
+The workshop has six steps:
 
-1. **Threat Impact Explorer** — six-panel architectural briefing: KMS/HSM migration complexity matrix (by HSM vendor tier and key hierarchy depth), certificate chain size calculator (input: cert count + algorithm + chain depth → output: total chain size, MTU fragmentation risk, OCSP response size), hybrid architecture decision flowchart (KEM combiner selection, fallback logic patterns, dual-cert vs. composite cert tradeoffs), algorithm selection decision tree (constrained vs. general vs. high-assurance use cases), TLS performance budget calculator (input: P99 SLA → output: algorithm feasibility, headroom), and crypto-agility debt scanner pattern library
-2. **Self-Assessment Survey** — nine-criterion architecture readiness evaluation covering: PKI design and certificate issuance ownership, KMS/HSM integration and key hierarchy design, multi-protocol system design (TLS + DTLS + QUIC + SSH), crypto abstraction layer presence in current architecture, IoT or embedded device architecture, long-lived certificate systems (>2 year validity), HSM integration patterns (PKCS#11, vendor SDK), cloud-native deployments (Kubernetes, service mesh, managed key services), zero-trust architecture designs (mTLS everywhere, short-lived certificates); outputs an architectural risk tier with system-specific remediation priorities
-3. **Architecture Design Lab** — guided design exercise producing a PQC migration architecture document; sections: (1) CBOM inventory template with algorithm classification (vulnerable / hybrid-ready / pure-PQC), (2) HSM PQC capability matrix for the organization's HSM fleet, (3) certificate chain size analysis by system segment, (4) algorithm selection worksheet per system tier, (5) hybrid architecture pattern selection (composite cert / dual-cert / X-Wing KEM / SP 800-227 KEM combiner), (6) crypto-agility gap assessment with hardcoded algorithm inventory; exports as structured Markdown
-4. **Strangler Fig Architect** — interactive configuration builder modeling how to gradually migrate a legacy monolithic crypto service by deploying a PQC API Gateway and carving off PQC-enabled microservices without downtime.
-5. **Trust Hardware Selector** (Step 6) — eight cards (TPM 2.0, Caliptra, Tessera, hardware HSM, cloud HSM, confidential computing, DPU you buy, cloud operator DPU), a 10-row by 8-column comparison grid (where it sits, who controls hardware and keys, where long-term keys live, attestation, post-quantum attestation, post-quantum key exchange or import, firmware update and rollback, audit and tamper evidence, certification, typical use), the exercise "Pick the right one" (eight scenarios, some from Industry Landscape use cases and some written for the step) and the exercise "How they combine" (Caliptra inside Tessera's specification, a TPM next to a confidential VM, key release to an attested workload, and where a DPU's keys come from). Every card sentence, grid cell, answer and case cites Library documents
+1. **Why It Matters** — six expandable descriptive architecture impact/scenario cards, with links to separate tools. The cards do not compute certificate/OCSP sizes, scan vendors or calculate P99 feasibility.
+2. **What to Learn** — self-rate design skills and follow linked learning modules.
+3. **How to Act** — select phased action items and quick wins and export the checklist as Markdown. The selections do not establish that an architecture has been implemented or tested.
+4. **Architecture Readiness** — a nine-item exposure checklist to identify design topics to revisit, not a measured readiness scan.
+5. **Strangler Fig Architect** — model gradual migration of a legacy monolithic crypto service behind a PQC API gateway. The model illustrates routing choices; it does not demonstrate a no-downtime production migration.
+6. **Trust Hardware Selector** — compare eight kinds of trust hardware using cards and the 10-row grid, then try **Pick the right one** and **How they combine**. Source attribution and the distinction between specification, shipping product and certificate remain explicit, including Tessera's specification/code status.
+
+### Separate sample tools for the next decision
+
+- [Cert Capacity Calculator](/playground/cert-capacity): adjust a three-level-chain model and leaf renewal cadence; compare estimated intermediate-plus-leaf TLS payload and annual leaf issuance storage. The root is excluded from TLS payload. Use these assumptions to plan PKI measurements; the model does not predict CPU capacity, P99 latency, OCSP response size or MTU fragmentation.
+- [TLS 1.3 Simulator](/playground/tls-simulator): configure sample groups, cipher suites and identities and inspect the handshake interaction. Choose interoperability cases, then measure budgets and fallback behaviour with your own endpoints and workload.
+- [Hybrid Certificates](/playground/hybrid-certs): generate sample certificates and compare parsed formats and verification results. Use the comparison to decide which formats need relying-party tests; sample verification does not establish client, vendor HSM or certification support.
 
 ## Related Standards
 
@@ -55,5 +62,5 @@ The workshop includes these interactive steps:
 - `confidential-computing` — TEEs, attestation and key release
 - `network-security-pqc` — network protocols that DPUs can offload
 - `crypto-agility` — crypto-agility frameworks, CBOM generation, algorithm abstraction layer patterns
-- `pki-workshop` — PKI hierarchy design, certificate lifecycle, OCSP/CRL sizing for PQC
+- `pki-workshop` — PKI hierarchy design, sample certificate lifecycle and certificate-payload/renewal-storage estimates
 - `migration-program` — phased migration planning, dependency mapping, rollback procedures
