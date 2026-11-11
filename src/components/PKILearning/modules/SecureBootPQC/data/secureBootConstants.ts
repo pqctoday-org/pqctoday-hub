@@ -226,6 +226,17 @@ export const TPM_PCR_BANKS: TPMPCREntry[] = [
     pqcRelevance: 'Kernel image hash; changes when PQC-signed kernel is loaded',
   },
   {
+    index: 10,
+    name: 'PCR[10]',
+    description: 'Linux IMA aggregate of runtime file measurements (kernel default)',
+    measuredBy: 'Linux IMA',
+    // Linux security/integrity/ima/Kconfig: IMA_MEASURE_PCR_IDX defaults to 10,
+    // with an expert configuration range of 8–14 (source checked 11 November 2026).
+    // https://github.com/torvalds/linux/blob/master/security/integrity/ima/Kconfig
+    pqcRelevance:
+      'Check CONFIG_IMA_MEASURE_PCR_IDX and the measurement log before selecting PCRs for a quote. The default is PCR[10]; an explicit configuration of 12 requires PCR[12] in the verifier policy. A PCR index does not establish signature or PQC algorithm support.',
+  },
+  {
     index: 11,
     name: 'PCR[11]',
     description: 'BitLocker boot-time access control (Windows) / systemd-boot (Linux) measurements',
@@ -243,10 +254,10 @@ export const TPM_PCR_BANKS: TPMPCREntry[] = [
   {
     index: 15,
     name: 'PCR[15]',
-    description: 'User-defined / application-specific measurements (Linux IMA/EVM)',
-    measuredBy: 'OS / Applications',
+    description: 'Platform- or application-specific measurements; not the Linux IMA default',
+    measuredBy: 'OS / Applications (platform profile)',
     pqcRelevance:
-      'IMA (Integrity Measurement Architecture) records; supports PQC algorithm agility through policy',
+      'Select this PCR only when the platform measurement profile assigns it. Do not substitute it for the Linux IMA aggregate, which defaults to PCR[10].',
   },
 ]
 
