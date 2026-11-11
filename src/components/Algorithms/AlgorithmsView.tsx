@@ -65,6 +65,7 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
 }
 
 export function AlgorithmsView() {
+  const isMobile = useIsMobileShell()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
@@ -136,7 +137,7 @@ export function AlgorithmsView() {
     transitionNotFound,
     closeTransition,
     roleDefaultFilters,
-  } = useAlgorithmExplorer(personaDefaults)
+  } = useAlgorithmExplorer(personaDefaults, { preserveMobileAlgorithmSheet: isMobile })
 
   const catalogueFreshness = getCatalogueFreshness(metadata?.date)
   const catalogueQuality = useMemo(
@@ -190,7 +191,6 @@ export function AlgorithmsView() {
   // mobile layout, so mobile is Browse-only there — desktop keeps both.
   // `tab=landscape` remains out of scope: confirmed unreachable from any
   // mobile entry-strip intent, so no real phone user hits it.
-  const isMobile = useIsMobileShell()
   const tabParam = searchParams.get('tab')
   // ?protocol without ?tab means Protocol Support (useAlgorithmExplorer pins
   // tab=support into the URL right after first paint).
