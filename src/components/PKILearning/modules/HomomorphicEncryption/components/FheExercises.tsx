@@ -73,7 +73,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Placement',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     observe:
-      'Seed and secret-key generation and decryption fit: small inputs and milliseconds of compute. Evaluation-key generation fits when streamed: a TFHE server key of about 30 MB fits in one piece, and a CKKS bootstrapping key set (3.94 GB exported) streams out in bounded pieces, taking minutes on a small board core. Homomorphic evaluation and bootstrapping do not run in the HSM: they need gigabytes of keys in memory plus GPU or FPGA acceleration, and they need no secret, so running them in the HSM would add nothing but load.',
+      'In these custody flows, seed and secret-key generation and decryption stay with the secret key in the HSM. Supported evaluation-key generation also fits when streamed: the measured CKKS set exports 3.94 GB in 1,001 bounded calls with a 16.7 MiB token peak, taking 473 s on one MX95 Cortex-A55 core. Streaming controls peak memory, not generation time or support for every parameter set; regenerating keys for rotation or recovery pays this key-generation cost again. Homomorphic evaluation and bootstrapping use public evaluation keys and ciphertexts, not the secret key. They run outside this sample HSM profile on CPUs, GPUs or FPGAs suited to the workload. A different HSM, scheme, parameter set or operation can change the placement decision.',
     paths: ['hsm-custody'],
     workshopStep: 1,
   },
