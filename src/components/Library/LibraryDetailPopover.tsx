@@ -64,7 +64,7 @@ const DOCUMENT_TYPE_DESCRIPTIONS: Record<string, string> = {
   Article:
     'News, blog or commentary. Fast-moving and short-lived — good for what changed this month, weak as a durable citation.',
   Reference:
-    'A tool, dataset, registry or documentation site rather than a document. Cite it for what it contains today, not as a fixed text.',
+    'A reference resource such as documentation, a tool, dataset, registry or hosted proposal. Use its named edition or proposal disposition; the type does not by itself establish standards adoption.',
 }
 
 interface LibraryDetailPopoverProps {
