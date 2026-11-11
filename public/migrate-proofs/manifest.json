@@ -30633,6 +30633,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "microsoft-pqcrypto-lweke",
+      "refId": "microsoft-pqcrypto-lweke",
+      "file": "microsoft-pqcrypto-lweke-ea8f76de-60fbb438.html",
+      "sizeBytes": 217987,
+      "content_type": "text/html",
+      "url": "https://github.com/microsoft/PQCrypto-LWEKE/blob/master/README.md",
+      "sha256": "60fbb438d728d94310488430801aca31c8c03fe779237a75c65c8cb7b4cdf30c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-11T15:11:29.032851+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
