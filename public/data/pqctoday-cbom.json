@@ -18949,17 +18949,13 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "097274fef10c3f51",
+      "bom-ref": "0bdda4f3bd427c7f",
       "name": "SUPERCOP",
-      "version": "supercop-20260330",
+      "version": "supercop-20261018",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, HQC, Classic-McEliece",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "System for Unified Performance Evaluation Related to Cryptographic Operations and Primitives. Provides standardised benchmarking for all NIST PQC candidates and standardised algorithms including ML-KEM, ML-DSA, SLH-DSA, HQC, and Classic McEliece. Reference benchmarks used by algorithm designers and NIST evaluators.",
+      "description": "Cryptographic software benchmarking toolkit covering KEM/public-key encryption and signature systems. Measures key-generation, encryption/decryption and signing/verification time plus key/message sizes on real computers. Compare results for the named machine, implementation and benchmark version; this is not blanket coverage of every NIST algorithm or product certification.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -24888,9 +24884,14 @@
       "bom-ref": "091620b6a6b2444e",
       "name": "NetSfere PQC Messaging",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
       },
-      "description": "Enterprise quantum-proof messaging with E2E PQC encryption",
+      "description": "NetSfere describes a messaging upgrade using ML-KEM-1024 alongside AES-256, with backward-compatible communication with ECC users. Its resource page says new conversations adopt ML-KEM-1024. These are vendor-described capabilities, not an independently established first-in-market or absolute quantum-proof security result.",
       "externalReferences": [
         {
           "type": "website",
@@ -30908,7 +30909,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "IBM's open-source CBOMkit toolkit generates Cryptography Bills of Materials (CBOM) in CycloneDX 1.6 format. Scans Java and Python source code and Docker images for cryptographic usage, annotating each finding with quantum-vulnerability status aligned to NIST CNSA 2.0. Integrates with OPA for policy enforcement — checking if detected algorithms are quantum-safe. Sandbox scenario cbom-compliance generates a CBOM for a sample application then evaluates it against a no-quantum-vulnerable-crypto Rego policy via OPA, showing real-time compliance violations.",
+      "description": "CBOMkit generates, views and stores CBOMs from supported source repositories. Java, Python and Go library coverage is documented; C# detection remains in development. It offers an internal policy check and optional external OPA/Rego evaluation. Repository scans do not build projects; findings and policy results are not proof of complete discovery or deployed security.",
       "externalReferences": [
         {
           "type": "vcs",
