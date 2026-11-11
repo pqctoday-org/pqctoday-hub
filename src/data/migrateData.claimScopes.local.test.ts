@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
-import { softwareData } from './migrateData'
+import { softwareData, vendorMap } from './migrateData'
 import { fips1403Stage, isFips1403Certified } from './kpiCatalog'
 import { classifyFips } from '../utils/fipsStatus'
 
@@ -136,6 +136,17 @@ describe('catalogue capability scope through the real loader', () => {
     expect(item.pqcCapabilityDescription).toMatch(/7,100.*decapsulations.*13,500 encapsulations/)
     expect(item.pqcCapabilityDescription).toMatch(/1,400 ML-DSA-87/)
     expect(item.proofRelevantInfo).toMatch(/does not itself establish SLH-DSA validation/)
+  })
+
+  it('resolves BERTEN hardware to its documented manufacturer without relabelling the unrelated vendor', () => {
+    const item = product('berten-mlds-b235')
+    expect(item.vendorId).not.toBe('VND-245')
+    const maker = vendorMap.get(item.vendorId!)
+    expect(maker?.vendorDisplayName).toBe('BERTEN DSP S.L.')
+    expect(maker?.website).toBe('https://www.bertendsp.com')
+    expect(vendorMap.get('VND-245')?.website).toBe('https://www.powerdns.com')
+    expect(item.pqcCapabilityDescription).toMatch(/ML-DSA-44\/65\/87/)
+    expect(item.proofRelevantInfo).toMatch(/estimated keygen rates 16,200\/10,250\/7,100/)
   })
 
   it('keeps model eligibility, irreversible activation and matching artifact dates in the hardware guidance', () => {
