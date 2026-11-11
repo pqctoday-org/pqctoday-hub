@@ -15,6 +15,7 @@ export type AvailabilityFilter =
   | 'has-commercial'
   | 'has-playground'
   | 'has-deployment'
+  | 'has-availability'
   | 'no-oss'
   | 'no-commercial'
   | 'no-deployment'
@@ -27,6 +28,7 @@ export const AVAILABILITY_LABELS: Record<AvailabilityFilter, string> = {
   'no-commercial': 'No commercial',
   'has-playground': 'Has playground',
   'has-deployment': 'Has live deployment',
+  'has-availability': 'Has vendor availability evidence',
   'no-deployment': 'No reviewed deployment evidence',
 }
 
@@ -134,6 +136,8 @@ export function passesAvailabilityFilter(
       return row.commercialLibraries.length === 0
     case 'has-playground':
       return row.playgrounds.length > 0
+    case 'has-availability':
+      return (row.implementationAvailability?.length ?? 0) > 0
     case 'has-deployment':
       return deployments > 0
     case 'no-deployment':

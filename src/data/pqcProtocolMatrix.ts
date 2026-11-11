@@ -340,6 +340,8 @@ export interface ProtocolMatrixRow {
    * out and say why in `noDeploymentReason` when nothing else remains.
    */
   liveDeployments?: LiveDeployment[]
+  /** Vendor release/API evidence establishes implementation availability, not production use. */
+  implementationAvailability?: LiveDeployment[]
   /**
    * If `liveDeployments` is empty, an explanation of *why* (e.g. "standards
    * too fresh", "market migrated to a sibling protocol", "intentionally out
@@ -4098,11 +4100,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'na' },
       },
     ],
-    liveDeployments: [
+    liveDeployments: [],
+    noDeploymentReason:
+      'These vendor release notes establish mechanism and API availability, not a production deployment of this protocol.',
+    implementationAvailability: [
       {
         provider: 'Entrust nShield (Security World)',
-        what: 'ML-DSA-44/65/87 in the nShield PKCS #11 API since Security World v13.9.0 (needs firmware v13.8 or later and the PostQuantum feature); ML-KEM (v13.9.3, firmware v13.8.3 or later) and SLH-DSA (v13.9.5) reached the PKCS #11 API in later releases',
-        since: '2025-08',
+        what: 'Security World v13.9.0 documents ML-DSA-44/65/87 key generation, signing and verification in the PKCS #11 API, using CKM_ML_DSA_KEY_PAIR_GEN and CKM_ML_DSA / CKM_HASH_ML_DSA mechanisms; requires firmware v13.8 or greater and the PostQuantum feature enabled.',
         referenceUrl:
           'https://nshielddocs.entrust.com/security-world-docs/v13.9.0/nshield-security-world-v13-9-0-release-notes.pdf',
       },
@@ -4114,7 +4118,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'https://thalesdocs.com/gphsm/luna/7/docs/network/Content/CRN/Luna/firmware/7-9-0.htm',
       },
     ],
-    recommended: true,
+    recommended: false,
     recommendedReason:
       'PKCS#11 v3.2 (OASIS Standard) specifies ML-KEM and ML-DSA mechanisms, and vendor HSMs implement them. You can try the mechanisms in the HSM playground.',
   },
