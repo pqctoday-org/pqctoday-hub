@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:754b2805-4c09-4df2-be14-7a81cc8885a6",
+  "serialNumber": "urn:uuid:420fcd21-2ca9-460a-9ac7-8afc33ad0064",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-09T00:00:00.000Z",
+    "timestamp": "2026-11-11T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -11501,7 +11501,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Algorand has executed the first post-quantum transaction on its mainnet using NIST-selected Falcon signatures (Falcon-1024). The protocol uses Falcon for state proofs every 256 rounds and supports PQC transactions via Logic Signatures. While production-grade code exists, general account and consensus layer integration is described as experimental.",
+      "description": "Algorand uses Falcon signatures in State Proofs deployed in 2022 to protect historical attestations. Its November 2025 mainnet milestone demonstrated Falcon-authorized transactions through account abstraction. The May 2026 account strategy describes Falcon-verifying Logic Signature authorizers and rekeying existing accounts to them, with off-curve Logic Signature addresses and a four-transaction group required by the current byte budget. Broader ledger-account hardening and post-quantum consensus remain separate work.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -15118,7 +15118,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Commvault Cloud (CPR 2024 / 11.36 and later) supports quantum-resistant algorithms CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+ and FALCON (since Aug 2024), and added NIST's HQC algorithm in June 2025, within a cryptographic-agility framework enabled via simple configuration to defend against harvest-now-decrypt-later threats.",
+      "description": "Commvault reports that its Cloud crypto-agility framework has supported CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+ and FALCON since August 2024, with HQC added in its 9 June 2025 announcement. That announcement makes the capabilities available to customers running CPR 2024 (11.36) and later and describes safeguards for network tunnels, often enabled through checkbox configuration. These are the vendor's algorithm names and availability claims; final-standard variants and the protected connection must be checked in the selected product configuration.",
       "externalReferences": [
         {
           "type": "website",
@@ -18036,7 +18036,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Implements NIST Module-Lattice-Based Digital Signature Standard (ML-DSA) derived from CRYSTALS-Dilithium. Supports security levels 2, 3, and 5 (ML-DSA-44, ML-DSA-65, ML-DSA-87). Includes sequencer, Polynomial Arithmetic Unit, and SHAKE XOF. Features countermeasures against Side-Channel Attacks (SCA), timing, and Simple Power Analysis (SPA). Supports Hedged variant for signing.",
+      "description": "BERTEN documents ML-DSA key generation, signing and verification for ML-DSA-44/65/87, with a sequencer, Polynomial Arithmetic Unit, SHAKE XOF and AXI integration. It describes timing/SPA countermeasures, hedged-signing randomness and zeroization; these and its FIPS compliance statements are vendor design claims, not independent module-validation or proof of resistance to every side-channel attack.",
       "externalReferences": [
         {
           "type": "website",
@@ -22957,7 +22957,7 @@
           "primitive": "kem"
         }
       },
-      "description": "QSE-IP-86 Quantum Safe Engine IP core for ASIC, SoC, FPGA. Accelerates ML-KEM (FIPS 203, up to Cat 5, 13,500 encap/s @1GHz), ML-DSA (FIPS 204, up to Cat 5, ~1,400 sign/s @1GHz), and SLH-DSA (FIPS 205); integrated SHA-3/SHAKE. NIST CAVP certified; usable in FIPS 140-3 compliant product. DPA-protected variant QSE-IP-86-DPA available.",
+      "description": "Rambus documents ML-KEM, ML-DSA and SLH-DSA acceleration in firmware-programmable QSE-IP-86 IP for ASIC/SoC/FPGA, with SHA3/SHAKE and a separate DPA variant. At 1 GHz it reports 7,100 ML-KEM-1024 decapsulations/s, 13,500 encapsulations/s and typically up to 1,400 ML-DSA-87 signatures/s. These are operation-specific vendor figures, not integrated-system throughput.",
       "externalReferences": [
         {
           "type": "website",
@@ -24058,17 +24058,13 @@
       "bom-ref": "b8622c2b8f45cc88",
       "name": "HP Enterprise Printers PQC",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "World's first quantum-resistant printers (HP LaserJet Enterprise 8000 Series, Managed E700/E800 Series, Color LaserJet Enterprise 5000/6000 and X500/X600 Series), with hardware and firmware layers enabling quantum resistance at the device level. HP's own technical white paper (v1.0, Jan 2026) frames this as quantum-resistant digital code signing for firmware/software aligned with NSA CNSA 2.0 guidance and NIST's finalized PQC standards (ML-DSA / FIPS 204, ML-KEM / FIPS 203) -- ahead of the 2027 U.S. federal National Security Systems mandate. Requires HP FutureSmart 5.9.2.3+ and admin-enabled activation via the Embedded Web Server; activation is irreversible (modifies OTP memory/hardware fuses).",
+      "description": "HP documents Quantum Resistant firmware-integrity protection for supported Enterprise/Managed printer configurations. Enablement requires FutureSmart 5.9.2.3 or newer, a listed QR-capable formatter and administrator access through EWS. Activation cannot be reversed or disabled; subsequent downgrades must remain within QR firmware. Hardware/model eligibility must be checked against the tables.",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://www.hp.com/"
+          "url": "https://kaas.hpcloud.hp.com/pdf-public/pdf_13820547_en-US-1.pdf"
         }
       ],
       "properties": [
@@ -24540,9 +24536,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "abbd911f8da75754",
+      "bom-ref": "08e345eddb001350",
       "name": "Infineon TEGRION SLI22 Automotive",
-      "version": "1.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -24550,11 +24545,11 @@
           "primitive": "kem"
         }
       },
-      "description": "28nm automotive security controller (Integrity Guard 32, Arm v8-M); world-first Common Criteria EAL6+ (BSI) for PQC in a security controller; supports FIPS 203 ML-KEM and FIPS 204 ML-DSA plus RSA-4096/ECC-521; for eSIM, V2X, car access",
+      "description": "Infineon SLI22 overview revision 1.5 (2026-02), V31: 28nm Arm v8-M/TrustZone controller with Integrity Guard 32, ML-KEM/ML-DSA acceleration, RSA up to 4096 bits and ECC up to 521 bits. It targets eSIM, embedded secure elements, V2X and car access. Certification-level listings are vendor component claims, not certification of the finished vehicle/application.",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://www.eejournal.com/industry_news/infineon-launches-tegrion-sli22-automotive-security-controller-with-post-quantum-cryptography-certified-to-common-criteria-eal6/"
+          "url": "https://www.infineon.com/assets/row/public/documents/30/41/infineon-tegrion-short-product-overview-sli22-en.pdf"
         }
       ],
       "properties": [
@@ -24850,7 +24845,7 @@
           "primitive": "kem"
         }
       },
-      "description": "PQC-ready HSM with hybrid signatures; NIST-certified ML-KEM, ML-DSA, SLH-DSA plus HSS-LMS and XMSS; combined with RSA/ECC for migration",
+      "description": "Securosys documents ML-KEM, ML-DSA and SLH-DSA with approved FIPS-mode entries in Primus firmware v3.x, plus HSS-LMS and XMSS with distinct evaluated/FIPS-mode status. CyberVault X2 supports hybrid classical/PQC signatures. Available functions and validation must be checked for the selected firmware, mode, license and model.",
       "externalReferences": [
         {
           "type": "website",
@@ -24872,7 +24867,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Pending FIPS 140-3 Level 3 module certification for Primus HSM firmware 3.1.0; vendor documentation reports certification in progress, not a completed certificate."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -29895,11 +29890,12 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Formally verified Rust implementation of ML-KEM and ML-DSA by Cryspen. Code extracted from HACL* and verified using the hax toolchain for panic-freedom and functional correctness. Supports all parameter sets for both algorithms. Used in production by Firefox and other projects.",
+      "description": "Rust cryptographic library with separate algorithm components. The ML-KEM component implements ML-KEM-512, ML-KEM-768 and ML-KEM-1024 with portable Rust, Intel AVX2 and AArch64 NEON implementations. Its documented hax/F* verification covers portable and AVX2 field arithmetic, NTT polynomial arithmetic, serialization and generic high-level algorithm code. The ML-KEM README treats compiled constant-time behavior as best-effort and notes the lack of compiler guarantees; its additional Round-3 Kyber feature is described separately as unverified.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -29949,11 +29945,12 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Constant-time pure Go implementation of ML-DSA (FIPS 204) by Trail of Bits. Supports ML-DSA-44, ML-DSA-65, and ML-DSA-87. Designed for side-channel resistance using Barrett reduction and branchless operations to avoid KyberSlash-style timing leaks.",
+      "description": "Trail of Bits provides a pure Go ML-DSA (FIPS 204) implementation supporting ML-DSA-44, ML-DSA-65 and ML-DSA-87. Its 14 November 2025 engineering article describes replacing secret-dependent branches and division in Decompose, using parameter-specific precomputed Barrett reduction. This is a documented defense against those timing-leak patterns, rather than proof of immunity to every side channel on every compiled target.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31445,7 +31442,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Reference C implementation of Classic McEliece, NIST PQC Round 4 KEM finalist based on binary Goppa codes (1978).",
+      "description": "Classic McEliece is a code-based KEM using binary Goppa codes in the Niederreiter variant. NIST's March 2025 fourth-round report describes large public keys and slower key generation, with small ciphertexts and fast encapsulation/decapsulation offering advantages when a public key is reused across many encapsulations. Its NIST Round 4 candidate status is historical.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31660,7 +31657,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Microsoft Research reference implementation of FrodoKEM, a conservative lattice-based KEM using standard LWE (not Ring-LWE).",
+      "description": "Microsoft Research and the FrodoKEM team provide C and Python implementations for experimentation using generic, algebraically unstructured LWE lattices. FrodoKEM supports repeated use of a key pair; eFrodoKEM is intended for only a limited number of ciphertexts per public key. Both offer 640, 976 and 1344 parameter sets with AES or SHAKE public-matrix generation.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31710,10 +31707,10 @@
         "assetType": "related-crypto-material",
         "algorithmProperties": {
           "parameterSetIdentifier": "Aigis-enc-L1, Aigis-enc-L5, Aigis-sig-L1, Aigis-sig-L5",
-          "primitive": "hash"
+          "primitive": "kem"
         }
       },
-      "description": "PQC algorithm library from Shanghai Jiao Tong University implementing NIST PQC and Chinese candidate algorithms.",
+      "description": "The README distinguishes open-source PQMagic-std from PQMagic-adv support and optimization. It lists ML-KEM, ML-DSA and SLH-DSA alongside earlier and research algorithms. Build controls select parameters and hash modes, with SM3 default and SHAKE selectable. Check the chosen mode rather than inferring final-FIPS behavior from a family label.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -38355,7 +38352,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Provides software implementations of the CRYSTALS Dilithium post-quantum signature scheme. Includes reference (ref) and AVX2-optimized builds. Supports parameter sets 2, 3, 5, and their AES variants (2aes, 3aes, 5aes). Includes KAT generation, test vectors, and verification tests.",
+      "description": "Tagged v3.1 provides reference C and x86 AVX2 implementations of submission-era Dilithium with parameter sets 2, 3, 5 and their AES variants. It includes KAT generation and intermediate test vectors. Its signature test exercises 10,000 key-generation/sign/verify operations and altered signatures. Cycle-count benchmarks are available, but the authors say the unoptimized reference code is not representative for performance comparisons.",
       "externalReferences": [],
       "properties": [
         {
@@ -38400,7 +38397,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Provides software implementations of the CRYSTALS-Kyber Key Encapsulation Mechanism (KEM). Supports parameter sets Kyber-512, Kyber-512-90s, Kyber-768, Kyber-768-90s, Kyber-1024, and Kyber-1024-90s. Includes reference (ref) and AVX2 optimized builds. Integrated into liboqs, PQClean, Botan, and Bouncy Castle.",
+      "description": "Tagged v3.0 provides reference C and x86 AVX2 implementations of Kyber 512, 768 and 1024 and their -90s variants. Its KEM tests check shared-secret agreement and failures with a wrong secret key or corrupted ciphertext; it also provides authenticated key-exchange tests, deterministic vectors and cycle-count benchmarks. The authors caution that unoptimized reference-code benchmarks are not meaningful performance comparisons.",
       "externalReferences": [],
       "properties": [
         {
@@ -38444,7 +38441,7 @@
           "algorithmFamily": "SLH-DSA"
         }
       },
-      "description": "Provides SPHINCS+ stateless hash-based signatures. Includes software for building binaries for all submitted parameter sets and benchmarking. Offers a parameter exploration SAGE script. Integrated into Botan C++ crypto library (release 3.0) and Bouncy Castle BCPQC provider. Includes Go, Java, and Low-RAM implementations. Supports hybrid scheme with LMS.",
+      "description": "The authors' SPHINCS+ submission repository provides configurable reference software: 36 named submission instances, with parameters in params.h, SHA2/SHAKE/Haraka hash choices and simple/robust tweakable-hash implementations. Parameter sets target security categories 1, 3 and 5 with smaller-signature or faster-signing choices.",
       "externalReferences": [],
       "properties": [
         {
@@ -39476,7 +39473,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Jipher 20 adds support for Module-Lattice (ML) based algorithms. Key Encapsulation Mechanisms (KEM): ML-KEM, ML-KEM-512, ML-KEM-1024. Digital signature algorithms (DSA): ML-DSA-44, ML-DSA-65, ML-DSA-87. KeyFactory, KeyPairGenerator, KEM, and Signature service support is provided.",
+      "description": "Jipher 20 provides ML-KEM with ML-KEM-512, ML-KEM-768 and ML-KEM-1024 parameter sets under FIPS 203, and ML-DSA-44, ML-DSA-65 and ML-DSA-87 signature algorithms. Its reference table lists KEM, KeyFactory and KeyPairGenerator support for ML-KEM and Signature, KeyFactory and KeyPairGenerator support for ML-DSA. Default generated parameter sets are ML-KEM-768 and ML-DSA-65.",
       "externalReferences": [],
       "properties": [
         {
@@ -39493,7 +39490,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No (Oracle cites no FIPS 140-3 certificate for Jipher 20; an Oracle OpenSSL FIPS Provider is on the CMVP Modules In Process list; the FIPS status of ML-KEM and ML-DSA is not stated)"
+          "value": "Oracle documents a CMVP-validated OpenSSL module option and a patched module used by default. The default patched option is not strictly FIPS 140-3 compliant; validation depends on the exact module, platform, approved algorithms and configuration. This is conditional module evidence, not a blanket Jipher or PQC certificate."
         },
         {
           "name": "pqctoday:algorithm_source",
