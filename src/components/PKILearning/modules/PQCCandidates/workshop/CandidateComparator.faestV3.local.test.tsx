@@ -6,23 +6,20 @@ import { CandidatesExercises } from '../components/CandidatesExercises'
 import { CANDIDATES, getCandidate } from '../data/candidates'
 import { FamilyMathExplainer } from './FamilyMathExplainer'
 
-const candidateRow = (name: string) =>
-  screen.getByRole('cell', { name, exact: true }).closest('tr')!
+const candidateRow = (name: string) => screen.getByRole('cell', { name }).closest('tr')!
 
 describe('FAEST v3.0 paired size example', () => {
   it('renders the exact FAEST-128f signature/combined bytes and the retained SQIsign comparison', () => {
     render(<CandidateComparator initialCandidateId="faest" />)
     const faest = within(candidateRow('FAEST'))
-    expect(faest.getByRole('cell', { name: '5,170', exact: true })).toBeInTheDocument()
-    expect(faest.getByRole('cell', { name: '5,202', exact: true })).toBeInTheDocument()
+    expect(faest.getByRole('cell', { name: '5,170' })).toBeInTheDocument()
+    expect(faest.getByRole('cell', { name: '5,202' })).toBeInTheDocument()
     expect(faest.getByRole('link', { name: 'Spec' })).toHaveAttribute(
       'href',
       'https://faest.info/faest-spec-v3.0.pdf'
     )
-    expect(
-      within(candidateRow('SQIsign')).getByRole('cell', { name: '213', exact: true })
-    ).toBeInTheDocument()
-    expect(screen.queryByRole('cell', { name: '6,336', exact: true })).not.toBeInTheDocument()
+    expect(within(candidateRow('SQIsign')).getByRole('cell', { name: '213' })).toBeInTheDocument()
+    expect(screen.queryByRole('cell', { name: '6,336' })).not.toBeInTheDocument()
     const order = screen
       .getAllByRole('row')
       .slice(1)
@@ -55,7 +52,8 @@ describe('FAEST v3.0 paired size example', () => {
     render(<CandidatesExercises onNavigateToWorkshop={navigate} onSetWorkshopConfig={configure} />)
     const exercise = screen
       .getByRole('heading', { name: '2. SQIsign vs FAEST — bandwidth vs CPU' })
-      .closest('.glass-panel')!
+      .closest('.glass-panel')
+    if (!(exercise instanceof HTMLElement)) throw new Error('Missing exercise panel')
     expect(
       within(exercise).getByText(/FAEST v3.0 FAEST-128f \(5,170-byte signature\)/)
     ).toBeInTheDocument()
