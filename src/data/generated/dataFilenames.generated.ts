@@ -32,7 +32,7 @@ export const DATA_FILENAMES: GeneratedDataFilenames = {
   threats: 'quantum_threats_hsm_industries_11082026_r1.csv',
   leaders: 'leaders_11092026_r3.csv',
   compliance: 'compliance_11082026_r2.csv',
-  algorithms: 'algorithms_transitions_11082026_r1.csv',
+  algorithms: 'algorithms_transitions_11112026.csv',
   authoritativeSources: 'pqc_authoritative_sources_reference_11112026_r3.csv',
   certificationXref: 'migrate_certification_xref_11072026.csv',
   hsmCapabilityXref: 'migrate_hsm_capability_xref_10312026_r1.csv',
