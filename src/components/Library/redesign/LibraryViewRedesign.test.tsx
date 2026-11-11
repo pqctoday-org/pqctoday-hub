@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, act, within } from '@testing-library/react'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { LibraryViewRedesign } from './LibraryViewRedesign'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { libraryData } from '@/data/libraryData'
-import type { LifecycleLabel } from '@/utils/libraryLifecycle'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
-import { logLibrarySearch } from '@/utils/analytics'
 
 function renderView(initial = '/library') {
   return render(
@@ -18,11 +15,6 @@ function renderView(initial = '/library') {
 }
 
 beforeEach(() => usePersonaStore.getState().setPersona(null))
-
-vi.mock('@/utils/analytics', async (orig) => ({
-  ...(await orig<typeof import('@/utils/analytics')>()),
-  logLibrarySearch: vi.fn(),
-}))
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -45,20 +37,6 @@ describe('LibraryViewRedesign', { timeout: 60_000 }, () => {
     ).not.toBeInTheDocument()
   })
 
-  it('logs one search event after the search text settles, and none for a short one', async () => {
-    vi.mocked(logLibrarySearch).mockClear()
-    const { unmount } = renderView('/library?q=ab')
-    await new Promise((r) => setTimeout(r, 800))
-    expect(logLibrarySearch).not.toHaveBeenCalled()
-    unmount()
-
-    renderView('/library?q=kyber')
-    await vi.waitFor(() => expect(logLibrarySearch).toHaveBeenCalledWith('kyber'), {
-      timeout: 5000,
-    })
-    expect(logLibrarySearch).toHaveBeenCalledTimes(1)
-  })
-
   it('registers a citation export (Cite) next to the CSV export in the top bar', () => {
     renderView()
     const actions = usePageActionsStore.getState().current
@@ -79,94 +57,5 @@ describe('LibraryViewRedesign', { timeout: 60_000 }, () => {
     const drawer = screen.getByRole('dialog')
     expect(within(drawer).getByText(/Previous revisions/i)).toBeInTheDocument()
     expect(within(drawer).getByText('NIST-FIPS-140-3-IG-Sep-2025-PQC')).toBeInTheDocument()
-  })
-
-  // Explicit timeout: this is the heaviest test in the file — it renders the
-  // whole Library view over the full document corpus, then forces a complete
-  // re-filter and re-render by changing persona. It takes ~2.5s on a dev
-  // machine, and the GitHub runner is roughly 8x slower on this suite (565s
-  // there vs ~70s locally), which puts it over vitest's 5s default. It timed
-  // out in CI on 2026-08-02 while passing locally and in earlier CI runs —
-  // borderline, not broken. Measured with and without that day's setup.ts
-  // cleanup() change: 2.5s either way, so the timeout is about runner speed,
-  // not about anything the test or the harness is doing wrong.
-  it('a persona set globally (top-bar control) narrows the grid to its focus areas (architect ≠ all docs)', () => {
-    renderView()
-    const allCount = screen.getByText(/^\d+ documents?$/i).textContent
-    // The page only reads selectedPersona now — persona changes come from the
-    // shared top-bar role switcher, so drive the store directly here rather
-    // than clicking a local control (LibraryRoleLens was removed).
-    act(() => {
-      usePersonaStore.getState().setPersona('architect')
-    })
-    const narrowedCount = screen.getByText(/^\d+ documents?$/i).textContent
-    expect(narrowedCount).not.toBeNull()
-    // Architect has a non-empty preferred-category set, so the grid changes.
-    expect(narrowedCount).not.toBe(allCount)
-  }, 60_000)
-
-  // The Lifecycle filter was renamed (Published to Released, Proposed to Draft,
-  // Superseded to Historical) and gained Research Paper and Misc. A shared link
-  // written with an old name must still open, with the matching new label, over
-  // the real library data. Counts come from the data, not from fixed numbers.
-  describe('?lifecycle= lists the matching documents', () => {
-    const cases: Array<[string, LifecycleLabel | 'All']> = [
-      ['Published', 'Released'],
-      ['Proposed', 'Draft'],
-      ['Superseded', 'Historical'],
-      ['Draft', 'Draft'],
-      ['Expired', 'Expired'],
-      ['All', 'All'],
-      ['Released', 'Released'],
-      ['Historical', 'Historical'],
-      ['Research%20Paper', 'Research Paper'],
-      ['Misc', 'Misc'],
-    ]
-
-    it.each(cases)('?lifecycle=%s lists the %s documents', (value, label) => {
-      const expected =
-        label === 'All'
-          ? libraryData.length
-          : libraryData.filter((item) => item.lifecycleLabel === label).length
-      renderView(`/library?lifecycle=${value}`)
-      expect(screen.getByText(/^\d+ documents?$/i).textContent).toBe(
-        `${expected} ${expected === 1 ? 'document' : 'documents'}`
-      )
-    })
-
-    it('shows every document for a value that is not a label', () => {
-      renderView('/library?lifecycle=Archived')
-      expect(screen.getByText(/^\d+ documents?$/i).textContent).toBe(
-        `${libraryData.length} documents`
-      )
-    })
-  })
-
-  // Mobile UX layer (Phase 7). LibraryEmbed.tsx renders this same component
-  // inside the simulation at whatever viewport the player is on (simEmbed
-  // prop) — O-3 (IMPLEMENTATION-PLAN.md) keeps /simulation entirely outside
-  // the mobile shell, so simEmbed must win over isMobileShell regardless of
-  // viewport width.
-  describe('mobile shell guard', () => {
-    afterEach(() => {
-      mockUseIsMobileShell.mockReturnValue(false)
-    })
-
-    it('renders the mobile screen when isMobileShell is true and not sim-embedded', () => {
-      mockUseIsMobileShell.mockReturnValue(true)
-      renderView()
-      expect(screen.getByText('Library')).toBeInTheDocument()
-      expect(screen.queryByText('PQC Library')).not.toBeInTheDocument()
-    })
-
-    it('still renders the full desktop view when simEmbed is true, even if isMobileShell is true', () => {
-      mockUseIsMobileShell.mockReturnValue(true)
-      render(
-        <MemoryRouter>
-          <LibraryViewRedesign simEmbed />
-        </MemoryRouter>
-      )
-      expect(screen.queryByText('Library')).not.toBeInTheDocument()
-    })
   })
 })

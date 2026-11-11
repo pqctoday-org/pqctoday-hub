@@ -207,6 +207,7 @@ describe('the committed enrichment files', () => {
               'library_doc_enrichments_11112026_r2.md',
               'library_doc_enrichments_11112026_r3.md',
               'library_doc_enrichments_11112026_r4.md',
+              'library_doc_enrichments_11112026_r5.md',
             ]
           : [files[files.length - 1]]
       )
