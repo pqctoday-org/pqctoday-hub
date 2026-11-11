@@ -479,8 +479,8 @@
   {
     "term": "Content Credentials",
     "acronym": "C2PA",
-    "definition": "A technical standard by the Coalition for Content Provenance and Authenticity that embeds cryptographically signed metadata into digital content to verify its origin, creation method, and edit history.",
-    "technicalNote": "C2PA signs the claim in each manifest with a COSE_Sign1 signature and X.509 certificate chains to create tamper-evident provenance chains. C2PA 2.4 allows ECDSA, RSASSA-PSS and Ed25519 signatures, all quantum-vulnerable, and its allowed list holds no post-quantum algorithm, so moving to ML-DSA signatures would take a revision of the specification. Provenance signed today stays forgeable beyond Q-Day.",
+    "definition": "C2PA’s signed provenance format for associating claims about a digital asset’s creation and editing history with that asset. Validation checks cryptographic integrity, asset binding and the signer’s credentials under a trust model. It does not by itself prove that an assertion is true, that media depicts a real event, or that content is human-created or suitable for training.",
+    "technicalNote": "C2PA 2.5 (October 2026) allows ML-DSA-44, ML-DSA-65 and ML-DSA-87 claim signatures (COSE identifiers -48, -49 and -50), alongside its classical algorithms. Implementation and credential-chain support still need checking; specification support does not establish a deployed system’s quantum resistance. A valid fictional claim saying a photograph was camera-captured attributes that statement to its signer; it does not prove the scene happened or the signer was honest. Assess identity, trust policy, assertions and content binding separately from training-data quality. Reference: https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html (Sections 1.2 and 12.3).",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "intermediate",
     "category": "standard"
