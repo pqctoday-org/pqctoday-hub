@@ -30,6 +30,12 @@ describe('vendor API availability and production deployment are distinct evidenc
   it('preserves the two actual vendor release records, support details and educational tool separately', () => {
     expect(pkcs11.liveDeployments).toEqual([])
     expect(pkcs11.recommended).toBe(false)
+    for (const dimension of [pkcs11.dimensions.pureKem, pkcs11.dimensions.pureSig]) {
+      expect(dimension).not.toHaveProperty('deploymentPosture')
+      expect(dimension.stage).toBe('rfc-published')
+      expect(dimension.note).toContain('The published PKCS#11 v3.2 API defines')
+      expect(dimension.note).toContain('Vendor API availability is documented below')
+    }
     expect(pkcs11.implementationAvailability).toHaveLength(2)
     const [entrust, thales] = pkcs11.implementationAvailability!
     expect(entrust.referenceUrl).toBe(
@@ -72,6 +78,7 @@ describe('vendor API availability and production deployment are distinct evidenc
     expect(screen.getByText('2 vendor availability reports')).toBeInTheDocument()
     expect(screen.queryByText('2 live')).not.toBeInTheDocument()
     expect(screen.queryByText('Deployed')).not.toBeInTheDocument()
+    expect(screen.queryByText('Production', { exact: true })).not.toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: /Has vendor availability evidence/ })
     ).toBeInTheDocument()
@@ -99,6 +106,7 @@ describe('vendor API availability and production deployment are distinct evidenc
     renderMatrix('matrixView=detailed&matrixQ=PKCS%2311')
     fireEvent.click(screen.getByRole('button', { name: 'Expand PKCS#11' }))
     expect(screen.getByText(/0 live/)).toBeInTheDocument()
+    expect(screen.queryByText('Production', { exact: true })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Vendor availability (2)' })).toBeInTheDocument()
     expectAvailabilitySources(
       screen.getByRole('region', { name: 'Vendor implementation availability' })
@@ -112,6 +120,7 @@ describe('vendor API availability and production deployment are distinct evidenc
       </MemoryRouter>
     )
     const dialog = within(screen.getByRole('dialog'))
+    expect(dialog.queryByText('Production', { exact: true })).not.toBeInTheDocument()
     expect(dialog.getByRole('heading', { name: 'Live deployments (0)' })).toBeInTheDocument()
     expectAvailabilitySources(
       dialog.getByRole('region', { name: 'Vendor implementation availability' })
@@ -122,8 +131,27 @@ describe('vendor API availability and production deployment are distinct evidenc
     renderMatrix('matrixQ=PKCS%2311&matrixAvailability=has-availability&protocol=pkcs11', true)
     expect(screen.getByText(/From link: Has vendor availability evidence/)).toBeInTheDocument()
     expect(screen.queryByText('Live deployments')).not.toBeInTheDocument()
+    expect(screen.queryByText(/^Deployment: production/)).not.toBeInTheDocument()
     expectAvailabilitySources(
       screen.getByRole('region', { name: 'Vendor implementation availability' })
     )
+  })
+  it('keeps actual Signal PQXDH deployment distinct from API availability in the phone sheet', () => {
+    const signal = PROTOCOL_MATRIX.find((row) => row.id === 'signal-pqxdh')!
+    expect(signal.dimensions.hybridKem.deploymentPosture).toBe('production')
+    expect(
+      signal.liveDeployments?.some(
+        (entry) => entry.referenceUrl === 'https://signal.org/blog/pqxdh/'
+      )
+    ).toBe(true)
+    expect(passesAvailabilityFilter(signal, 'has-deployment')).toBe(true)
+    renderMatrix('protocol=signal-pqxdh', true)
+    expect(screen.getByText(/^Deployment: production/)).toBeInTheDocument()
+    expect(screen.getByText('Live deployments', { exact: true })).toBeInTheDocument()
+    expect(
+      screen
+        .getAllByRole('link', { name: /Signal Messenger/ })
+        .some((link) => link.getAttribute('href') === 'https://signal.org/blog/pqxdh/')
+    ).toBe(true)
   })
 })

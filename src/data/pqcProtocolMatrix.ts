@@ -4019,8 +4019,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-published',
         stageNote:
           'PKCS#11 v3.2 reached full OASIS Standard 2026-06-03; ML-KEM mechanisms (CKM_ML_KEM)',
-        note: 'ML-KEM-512/768/1024 via CKM_ML_KEM + C_EncapsulateKey / C_DecapsulateKey.',
-        deploymentPosture: 'production',
+        note: 'The published PKCS#11 v3.2 API defines ML-KEM-512/768/1024 via CKM_ML_KEM + C_EncapsulateKey / C_DecapsulateKey. Vendor API availability is documented below; those release references do not establish production deployment.',
         refs: [
           {
             kind: 'spec',
@@ -4040,8 +4039,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-published',
         stageNote:
           'PKCS#11 v3.2 reached full OASIS Standard 2026-06-03; ML-DSA + SLH-DSA mechanisms (CKM_ML_DSA, CKM_SLH_DSA)',
-        note: 'ML-DSA-44/65/87 (incl. HashML-DSA) + SLH-DSA via CKM_ML_DSA / CKM_SLH_DSA.',
-        deploymentPosture: 'production',
+        note: 'The published PKCS#11 v3.2 API defines ML-DSA-44/65/87 (incl. HashML-DSA) + SLH-DSA via CKM_ML_DSA / CKM_SLH_DSA. Vendor API availability is documented below with its mechanism/version scope; it is separate from production deployment.',
         refs: [
           {
             kind: 'spec',
