@@ -18,9 +18,13 @@
  *  - encapsulationKeyCheck / decapsulationKeyCheck (VAL): the engine must accept
  *    a valid key and reject an invalid one (FIPS 203 sections 7.2 and 7.3).
  *    Only one return value counts as rejecting the key: CKR_ATTRIBUTE_VALUE_INVALID
- *    from C_CreateObject, which PKCS#11 v3.2 section 4.1.1 gives for an invalid
- *    attribute value and which both engines return for a key that fails the
- *    FIPS 203 input check. A key that imports is accepted only when the operation
+ *    from C_CreateObject. PKCS#11 v3.2 section 4.1.1 says an attempt to create an
+ *    object with an invalid value for a valid attribute "should" fail with this
+ *    code; it does not name the code for a key that fails the FIPS 203 input
+ *    check. That both engines return it for such a key is observed behaviour
+ *    (their real-engine replay), not a requirement of the standard, so another
+ *    token's different code would show here as an error, never as a pass. A key
+ *    that imports is accepted only when the operation
  *    then succeeds. Any other return value (a closed session, a device failure,
  *    an operation that fails after the key was imported) is an error, not a
  *    rejection, so it can never satisfy a case that expects one.
@@ -33,14 +37,13 @@
 import { hexToBytes } from '@/utils/dataInputUtils'
 import { hsm_extractKeyValue, rvName } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
+import { CKR_ATTRIBUTE_VALUE_INVALID } from '@/wasm/softhsm/constants'
 import type { KatStatus } from '@/utils/katRunner'
 
 export const PARAMETER_SET = 'ML-KEM-768'
 const VARIANT = 768
 const CT_LEN = 1088 // FIPS 203 Table 3, ML-KEM-768
 const CKR_OK = 0
-/** PKCS#11 v3.2 section 4.1.1: an invalid attribute value fails C_CreateObject with this. */
-const CKR_ATTRIBUTE_VALUE_INVALID = 0x13
 
 export type EncapDecapFunction =
   'encapsulation' | 'decapsulation' | 'encapsulationKeyCheck' | 'decapsulationKeyCheck'

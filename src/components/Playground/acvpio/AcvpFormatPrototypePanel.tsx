@@ -114,6 +114,8 @@ export const AcvpFormatPrototypePanel = ({
   const [runError, setRunError] = useState<string | null>(null)
   // Each import, clear or run starts a new operation; a slower, older one never shows its result.
   const operation = useRef(0)
+  // A file dialog opened before Run was clicked can still deliver a file mid-run; ignore it.
+  const runningRef = useRef(false)
 
   const clear = () => {
     operation.current++
@@ -124,6 +126,7 @@ export const AcvpFormatPrototypePanel = ({
   }
 
   const onFile = async (file: File) => {
+    if (runningRef.current) return
     clear()
     const op = operation.current
     setFileName(file.name)
@@ -135,6 +138,7 @@ export const AcvpFormatPrototypePanel = ({
     if (!prepared?.ok) return
     const op = ++operation.current
     const runEngine = engineId
+    runningRef.current = true
     setRunning(true)
     setCompleted(null)
     setRunError(null)
@@ -149,6 +153,7 @@ export const AcvpFormatPrototypePanel = ({
       if (op === operation.current) setRunError(e instanceof Error ? e.message : String(e))
     } finally {
       engine?.close()
+      runningRef.current = false
       setRunning(false)
     }
   }
