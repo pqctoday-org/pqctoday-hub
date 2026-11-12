@@ -74,11 +74,14 @@ describe('Fips1403Certification render parity', () => {
     const notes = screen.getAllByTestId('cert-practitioner-disclaimer')
     expect(notes).toHaveLength(1)
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
-    // The owner's sign-off and the absence of a laboratory or certification-body review are both
-    // stated, in the words every certification module uses (common/moduleReviewStatus.ts).
+    expect(notes[0].parentElement?.firstElementChild).toBe(notes[0])
+    // Preserve the historical owner review while qualifying later content changes.
+    // The notice must not present the earlier review as approval of the changed content.
+    expect(notes[0]).toHaveTextContent('Owner review recorded on 1 November 2026.')
     expect(notes[0]).toHaveTextContent(
-      'Reviewed and signed off by the PQC Today owner on 1 November 2026.'
+      'Content updated 2 November 2026 since that review; these changes are not covered by that recorded review.'
     )
+    expect(notes[0]).not.toHaveTextContent('Reviewed and signed off by the PQC Today owner')
     expect(notes[0]).toHaveTextContent(NOT_LAB_REVIEWED)
   })
 
