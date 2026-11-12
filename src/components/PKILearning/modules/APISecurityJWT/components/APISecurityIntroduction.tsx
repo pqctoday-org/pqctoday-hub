@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
+import { DPoPProofSizeExample } from './DPoPProofSizeExample'
 import { Link } from 'react-router'
 import {
   KeyRound,
@@ -553,8 +554,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             Measure the complete serialized proof, access token and other HTTP headers together.
             Evaluate whether clients, gateways and servers support the chosen algorithm and key
             binding and accept representative sample requests at their configured limits. A PQC
-            migration also needs a supported JOSE profile and compatible key representation; no such
-            format is selected by this size illustration. See the{' '}
+            migration also needs a supported JOSE profile and compatible key representation. The
+            worked sample below uses this module&apos;s existing RFC 9964 ML-DSA-65 public AKP
+            format; it does not select a deployment profile for your servers or clients. See the{' '}
             <a
               href="https://www.rfc-editor.org/rfc/rfc9449.html#section-4.2"
               target="_blank"
@@ -565,6 +567,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             </a>
             .
           </p>
+          <DPoPProofSizeExample />
           <div className="space-y-3">
             {OAUTH_MIGRATION_ITEMS.map((item) => (
               <div key={item.component} className="bg-muted/50 rounded-lg p-4 border border-border">
