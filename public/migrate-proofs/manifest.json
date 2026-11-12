@@ -32151,6 +32151,25 @@
       "tier": "curl_cffi:chrome124"
     },
     {
+      "product_id": "Azure-Cloud-HSM",
+      "refId": "Azure-Cloud-HSM",
+      "file": "migrate-proofs/Azure-Cloud-HSM-0f198a99.html",
+      "filename": "Azure-Cloud-HSM-0f198a99.html",
+      "url": "https://learn.microsoft.com/en-us/azure/cloud-hsm/faq",
+      "status": "downloaded",
+      "sizeBytes": 96114,
+      "contentType": "text/html",
+      "sha256": "aec67eee7ca5c587a0e81eaaf3a590a2d016bd160354234f1ab21d512ee07c46",
+      "addedAt": "2026-11-12T13:08:02.999259+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-11-12T13:08:03.142752+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-11-12T13:08:02.999259+00:00"
+    },
+    {
       "product_id": "hndl-simulator-hndl-dev",
       "refId": "hndl-simulator-hndl-dev",
       "file": "hndl-simulator-hndl-dev-d11c8a80-6799012d.html",
