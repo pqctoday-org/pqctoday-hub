@@ -10,7 +10,7 @@
   "whatToExpect": [
     "Plain-English understanding of the quantum threat to finance",
     "Your jurisdiction's post-quantum deadlines (US, Canada, or Australia)",
-    "A board-ready, shareable risk report tailored to your context",
+    "A shareable fictional planning report: identify assumptions and unanswered inventory questions",
     "A 90-day action plan walked through the four CSWP 39 zones"
   ],
   "totalEstMinutes": 118,
@@ -29,8 +29,8 @@
           "route": "/"
         },
         "tasks": ["Skim the four outcomes below", "Confirm 90 minutes of uninterrupted time"],
-        "expectedOutput": "Clear understanding of the four outcomes: quantum threat literacy, jurisdictional deadlines, board-ready risk report, 90-day action plan.",
-        "narration": "Welcome. In the next 90 minutes you will leave with four things: a plain-English understanding of why quantum computing breaks classical cryptography, your jurisdiction's post-quantum deadlines, a personalised board-ready risk report, and a 90-day action plan. First, personalize your experience by setting your role to Executive, proficiency to Basics, your country, and industry to Finance and Banking. The landing page gives you two starting points: Start the Journey for the Learn modules, and Open Command Center for the artifact builders we visit at the end.",
+        "expectedOutput": "Understand the quantum threat, inspect jurisdictional guidance, generate a fictional planning report, and identify inputs for a 90-day plan.",
+        "narration": "Welcome. This workshop uses a fictional finance scenario to explain the quantum threat, inspect jurisdictional guidance, generate a planning report, and draft a 90-day plan. We deliberately leave four assessment answers unknown. The report demonstrates how assumptions influence planning; it does not measure an organisation's observed exposure. Identify which inventory facts you would need before using such a report for a real decision. Set your role to Executive, proficiency to Basics, your country, and industry to Finance and Banking. Start the Journey opens Learn; Open Command Center opens the artifact builders.",
         "cues": [
           {
             "tMs": 0,
@@ -40,7 +40,7 @@
           {
             "tMs": 1500,
             "kind": "caption",
-            "text": "Four outcomes in 90 minutes: quantum threat literacy, your jurisdiction's deadlines, a board-ready risk report, and a 90-day action plan."
+            "text": "Fictional workshop: understand the threat, inspect guidance, generate a planning report, and draft a 90-day plan with assumptions visible."
           },
           {
             "tMs": 18000,
@@ -173,7 +173,7 @@
             {
               "tMs": 160671,
               "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
+              "text": "References — inspect each linked document, its date and the scope of the claim it supports."
             },
             {
               "tMs": 168671,
@@ -943,7 +943,7 @@
           "chapter": "foundations",
           "title": "Run the executive risk assessment",
           "estMinutes": 6,
-          "whyItMatters": "The Quick mode generates a personalised risk profile in two minutes. It is the input to your board-ready report and seeds the Command Center artifacts.",
+          "whyItMatters": "Quick mode generates a model-based planning profile. In this fictional example four answers remain unknown; use the report to identify missing inventory facts and the questions that would change your plan.",
           "page": {
             "route": "/assess",
             "query": {
@@ -952,12 +952,12 @@
             }
           },
           "tasks": [
-            "Choose Quick mode (badged for executives)",
-            "Confirm country and industry pre-fills",
-            "Answer four to six questions about data sensitivity, retention, and existing crypto inventory"
+            "Confirm the Quick track selected by this workshop link and retain the fictional country and industry context",
+            "Choose the four declared unknown answers, then review their assumptions",
+            "Generate the planning report and identify one missing inventory fact to investigate"
           ],
-          "expectedOutput": "Assessment status changes to complete; report becomes available.",
-          "narration": "Quick mode is calibrated for executives — six questions, two minutes. The questions are about data sensitivity, how long you keep sensitive data, and whether you already have a cryptographic inventory. The output is a risk profile that we use as the input to the next page.",
+          "expectedOutput": "Assessment status completes and a planning report is available; four unknown answers remain explicitly unresolved.",
+          "narration": "Quick mode has six questions. Country and industry provide context; this fictional walkthrough deliberately chooses “I’m not sure” for the other four answers. Review those unknowns before generating the report. The model can still produce a planning profile using its assumptions, but it has not observed an estate. Use the report to choose what to investigate: which cryptography is deployed, what it protects, applicable requirements, migration status, infrastructure and timing.",
           "completionSignal": {
             "kind": "assessment-complete"
           },
@@ -965,17 +965,7 @@
             {
               "tMs": 0,
               "kind": "caption",
-              "text": "Quick mode — eight questions, calibrated for executives."
-            },
-            {
-              "tMs": 5600,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"assess-mode-quick\"]"
-            },
-            {
-              "tMs": 6600,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"assess-mode-quick\"]"
+              "text": "Six questions: a fictional planning example, with six deliberately unknown answers."
             },
             {
               "tMs": 8600,
@@ -1000,11 +990,11 @@
             {
               "tMs": 21301,
               "kind": "caption",
-              "text": "Step 3: Crypto inventory — picking 'I’m not sure'."
+              "text": "Step 3: Crypto inventory — inspect the suggested “I’m not sure” answer; leave it selected."
             },
             {
               "tMs": 26473,
-              "kind": "click",
+              "kind": "spotlight",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
@@ -1055,52 +1045,32 @@
             {
               "tMs": 56346,
               "kind": "click",
-              "selector": "[data-workshop-target=\"assess-next\"]"
+              "selector": "[data-workshop-target=\"assess-submit\"]"
             },
             {
               "tMs": 58346,
               "kind": "caption",
-              "text": "Step 7: Infrastructure — picking 'I’m not sure'."
-            },
-            {
-              "tMs": 63375,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"assess-not-sure\"]"
-            },
-            {
-              "tMs": 65375,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"assess-next\"]"
-            },
-            {
-              "tMs": 67375,
-              "kind": "caption",
-              "text": "Step 8: Timeline pressure — picking 'I’m not sure'."
-            },
-            {
-              "tMs": 72618,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"assess-not-sure\"]"
+              "text": "Review the four unknown answers and their suggested defaults before generating the planning report."
             },
             {
               "tMs": 75618,
               "kind": "caption",
-              "text": "Generating your board-ready report..."
+              "text": "Review the four unknown answers before generating the fictional planning report."
             },
             {
               "tMs": 79861,
               "kind": "click",
-              "selector": "[data-workshop-target=\"assess-submit\"]"
+              "selector": "[data-workshop-target=\"assess-generate\"]"
             },
             {
               "tMs": 84861,
               "kind": "caption",
-              "text": "Risk profile complete — your personalised report is live."
+              "text": "Planning report generated from fictional inputs and unknown-answer assumptions; no estate verified."
             },
             {
               "tMs": 109861,
               "kind": "caption",
-              "text": "The report is the input to every Command Center artifact."
+              "text": "Inspect the report assumptions, then use the sample context to draft Command Center artifacts."
             },
             {
               "tMs": 117861,
@@ -1113,7 +1083,7 @@
           "chapter": "foundations",
           "title": "Read the personalised risk report",
           "estMinutes": 4,
-          "whyItMatters": "This is your board pack. It hides developer-only sections, surfaces your top five recommended actions, and produces a shareable URL the board secretary can use.",
+          "whyItMatters": "Read the fictional planning report and its suggested actions. Distinguish model assumptions from observed facts, and identify which unknowns need an inventory or policy check before a board decision.",
           "page": {
             "route": "/report"
           },
@@ -1122,8 +1092,8 @@
             "Note the top five recommended actions",
             "Generate a shareable URL"
           ],
-          "expectedOutput": "Shareable report URL is visible; you can describe the top five actions in one breath.",
-          "narration": "Notice what is hidden: algorithm migration tables, mitigation deep-dives. Those are not for you. What is shown is a five-action shortlist tied to your jurisdiction. The share button generates a token-bearing URL — not a PDF — that your board secretary can embed in the next agenda. PDFs go stale; this URL re-renders against current data.",
+          "expectedOutput": "Describe one model suggestion, its unresolved input and a tool/evidence check; a share URL may contain only the fictional report context.",
+          "narration": "This report demonstrates a shortlist generated from the selected country, industry and unknown-answer assumptions. Read the index as a model output, not quantified observed exposure. Choose a suggested action, name the missing inventory fact it depends on, and explain how you would check that fact with your own tools. The share feature encodes report context in a URL; use fictional data and read the Privacy disclosure before sharing. Reopening a link can use newer reference data, so retain the assumptions and source dates needed for comparison.",
           "cues": [
             {
               "tMs": 0,
@@ -1133,7 +1103,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Your board-ready PQC risk report — personalised to Finance & Banking in your jurisdiction."
+              "text": "Fictional finance planning report: country context and unknown-answer assumptions, not observed estate evidence."
             },
             {
               "tMs": 9529,
@@ -1143,7 +1113,7 @@
             {
               "tMs": 9729,
               "kind": "caption",
-              "text": "Section 1/6: Risk Score — your quantified exposure and migration urgency."
+              "text": "Section 1/6: Risk Score — a model-based planning index; unknown answers are not measured exposure."
             },
             {
               "tMs": 17529,
@@ -1153,7 +1123,7 @@
             {
               "tMs": 17729,
               "kind": "caption",
-              "text": "Section 2/6: Key Findings — your personalised top-line risks, ranked."
+              "text": "Section 2/6: Key Findings — model suggestions to investigate against an actual inventory."
             },
             {
               "tMs": 25529,
@@ -1163,7 +1133,7 @@
             {
               "tMs": 25729,
               "kind": "caption",
-              "text": "Section 3/6: Executive Summary — the 60-second board-pack narrative."
+              "text": "Section 3/6: Executive Summary — draft discussion points; retain assumptions and unresolved facts."
             },
             {
               "tMs": 33529,
@@ -1173,7 +1143,7 @@
             {
               "tMs": 33729,
               "kind": "caption",
-              "text": "Section 4/6: Compliance Impact — frameworks that gate your jurisdiction."
+              "text": "Section 4/6: Compliance Impact — candidate frameworks from the selected context; check their actual applicability."
             },
             {
               "tMs": 41529,
@@ -1193,12 +1163,12 @@
             {
               "tMs": 49729,
               "kind": "caption",
-              "text": "Section 6/6: Migration Roadmap — your 3-year phased plan."
+              "text": "Section 6/6: Migration Roadmap — a sample sequence to compare with your constraints and dependencies."
             },
             {
               "tMs": 57529,
               "kind": "caption",
-              "text": "Share button generates a token-bearing URL — re-renders against current data, no PDFs going stale."
+              "text": "Share only fictional report context. Reference data can change; inspect Privacy and retain the comparison basis."
             },
             {
               "tMs": 65529,
@@ -1218,7 +1188,7 @@
           "chapter": "action",
           "title": "Governance — Business case + Threats (CSWP §5.1)",
           "estMinutes": 6,
-          "whyItMatters": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration.",
+          "whyItMatters": "Use the fictional ROI Model, Board Deck and CRQC Scenario to practise discussing assumptions, costs and response options. Inspect the saved drafts and identify which inputs your own planning would need; these are not measured losses or observed exposure.",
           "page": {
             "route": "/business",
             "query": {
@@ -1231,8 +1201,8 @@
             "Generate the Board Deck",
             "Generate the CRQC Scenario"
           ],
-          "expectedOutput": "3 governance artifacts created.",
-          "narration": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration. ROI Model, Board Deck, CRQC Scenario.",
+          "expectedOutput": "3 fictional governance drafts created.",
+          "narration": "Use the fictional ROI Model, Board Deck and CRQC Scenario to practise discussing assumptions, costs and response options. Inspect the saved drafts and identify which inputs your own planning would need; these are not measured losses or observed exposure.",
           "cues": [
             {
               "tMs": 0,
@@ -1245,7 +1215,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration."
+              "text": "Fictional ROI, board deck and CRQC drafts: inspect assumptions and inputs before discussing costs or response options."
             },
             {
               "tMs": 13172,
@@ -1264,13 +1234,18 @@
             },
             {
               "tMs": 19272,
-              "kind": "generate-artifact",
-              "artifactType": "roi-model"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-roi-model-create\"]"
+            },
+            {
+              "tMs": 21272,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 27772,
               "kind": "caption",
-              "text": "Quantifies migration cost vs. breach cost vs. compliance penalty. The CFO's first question gets a number."
+              "text": "ROI Model — inspect the declared fictional inputs and calculated comparison; these are planning assumptions, not observed breach losses."
             },
             {
               "tMs": 113772,
@@ -1278,9 +1253,19 @@
               "text": "Artifact: Board Deck"
             },
             {
+              "tMs": 115872,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 116872,
-              "kind": "generate-artifact",
-              "artifactType": "board-deck"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-board-deck-create\"]"
+            },
+            {
+              "tMs": 118872,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 121372,
@@ -1293,9 +1278,19 @@
               "text": "Artifact: CRQC Scenario"
             },
             {
+              "tMs": 213615,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 214615,
-              "kind": "generate-artifact",
-              "artifactType": "crqc-scenario"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-crqc-scenario-create\"]"
+            },
+            {
+              "tMs": 216615,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 219115,
@@ -1305,7 +1300,12 @@
             {
               "tMs": 313115,
               "kind": "caption",
-              "text": "3 governance artifacts created."
+              "text": "3 fictional governance drafts created."
+            },
+            {
+              "tMs": 316115,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
               "tMs": 317115,
@@ -1318,7 +1318,7 @@
           "chapter": "action",
           "title": "Governance — Standards & Regulations (CSWP §5.1)",
           "estMinutes": 6,
-          "whyItMatters": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors.",
+          "whyItMatters": "Use the audit checklist and compliance documents to practise identifying applicable requirements, evidence owners and missing facts. These fictional drafts do not establish compliance or an audit conclusion.",
           "page": {
             "route": "/business",
             "query": {
@@ -1331,8 +1331,8 @@
             "Generate the Compliance Timeline",
             "Generate the Compliance Checklist"
           ],
-          "expectedOutput": "3 governance artifacts created.",
-          "narration": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors. Audit Checklist, Compliance Timeline, Compliance Checklist.",
+          "expectedOutput": "3 fictional governance drafts created.",
+          "narration": "Draft the Audit Checklist, Compliance Timeline and Compliance Checklist for this fictional case. For one requirement, identify the source, applicability question and evidence your own tools would need to supply. A completed template is planning work, not an audit conclusion.",
           "cues": [
             {
               "tMs": 0,
@@ -1345,7 +1345,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors."
+              "text": "Use the audit checklist and compliance documents to practise identifying applicable requirements, evidence owners and missing facts. These fictional drafts do not establish compliance or an audit conclusion."
             },
             {
               "tMs": 14243,
@@ -1364,8 +1364,13 @@
             },
             {
               "tMs": 21129,
-              "kind": "generate-artifact",
-              "artifactType": "audit-checklist"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-audit-checklist-create\"]"
+            },
+            {
+              "tMs": 23129,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 29629,
@@ -1378,9 +1383,19 @@
               "text": "Artifact: Compliance Timeline"
             },
             {
+              "tMs": 118301,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 119301,
-              "kind": "generate-artifact",
-              "artifactType": "compliance-timeline"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-compliance-timeline-create\"]"
+            },
+            {
+              "tMs": 121301,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 123801,
@@ -1393,9 +1408,19 @@
               "text": "Artifact: Compliance Checklist"
             },
             {
+              "tMs": 216544,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 217544,
-              "kind": "generate-artifact",
-              "artifactType": "compliance-checklist"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-compliance-checklist-create\"]"
+            },
+            {
+              "tMs": 219544,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 222044,
@@ -1405,7 +1430,12 @@
             {
               "tMs": 316044,
               "kind": "caption",
-              "text": "3 governance artifacts created."
+              "text": "3 fictional governance drafts created."
+            },
+            {
+              "tMs": 319044,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
               "tMs": 320044,
@@ -1431,7 +1461,7 @@
             "Generate the RACI Matrix",
             "Generate the Stakeholder Comms"
           ],
-          "expectedOutput": "3 governance artifacts created.",
+          "expectedOutput": "3 fictional governance drafts created.",
           "narration": "The policy layer itself. Without a published mandate, every later artifact stalls in committee. CSWP §5.3 is the heart of governance. Policy Draft, RACI Matrix, Stakeholder Comms.",
           "cues": [
             {
@@ -1464,8 +1494,13 @@
             },
             {
               "tMs": 18772,
-              "kind": "generate-artifact",
-              "artifactType": "policy-draft"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-policy-draft-create\"]"
+            },
+            {
+              "tMs": 20772,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 27272,
@@ -1478,9 +1513,19 @@
               "text": "Artifact: RACI Matrix"
             },
             {
+              "tMs": 115372,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 116372,
-              "kind": "generate-artifact",
-              "artifactType": "raci-matrix"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-raci-matrix-create\"]"
+            },
+            {
+              "tMs": 118372,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 120872,
@@ -1493,9 +1538,19 @@
               "text": "Artifact: Stakeholder Comms"
             },
             {
+              "tMs": 213401,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 214401,
-              "kind": "generate-artifact",
-              "artifactType": "stakeholder-comms"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-stakeholder-comms-create\"]"
+            },
+            {
+              "tMs": 216401,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 218901,
@@ -1505,7 +1560,12 @@
             {
               "tMs": 312901,
               "kind": "caption",
-              "text": "3 governance artifacts created."
+              "text": "3 fictional governance drafts created."
+            },
+            {
+              "tMs": 315901,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
               "tMs": 316901,
@@ -1531,7 +1591,7 @@
             "Generate the Contract Clause",
             "Generate the Supply Chain Matrix"
           ],
-          "expectedOutput": "3 governance artifacts created.",
+          "expectedOutput": "3 fictional governance drafts created.",
           "narration": "Your vendors' PQC roadmap IS your PQC roadmap. The scorecard, contract clause, and supply chain matrix close the loop on third-party risk. Vendor Scorecard, Contract Clause, Supply Chain Matrix.",
           "cues": [
             {
@@ -1564,8 +1624,13 @@
             },
             {
               "tMs": 19416,
-              "kind": "generate-artifact",
-              "artifactType": "vendor-scorecard"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-vendor-scorecard-create\"]"
+            },
+            {
+              "tMs": 21416,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 27916,
@@ -1578,9 +1643,19 @@
               "text": "Artifact: Contract Clause"
             },
             {
+              "tMs": 116302,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 117302,
-              "kind": "generate-artifact",
-              "artifactType": "contract-clause"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-contract-clause-create\"]"
+            },
+            {
+              "tMs": 119302,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 121802,
@@ -1593,9 +1668,19 @@
               "text": "Artifact: Supply Chain Matrix"
             },
             {
+              "tMs": 214474,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
               "tMs": 215474,
-              "kind": "generate-artifact",
-              "artifactType": "supply-chain-matrix"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-supply-chain-matrix-create\"]"
+            },
+            {
+              "tMs": 217474,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 219974,
@@ -1605,7 +1690,12 @@
             {
               "tMs": 313974,
               "kind": "caption",
-              "text": "3 governance artifacts created."
+              "text": "3 fictional governance drafts created."
+            },
+            {
+              "tMs": 316974,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
               "tMs": 317974,
@@ -1662,8 +1752,13 @@
             },
             {
               "tMs": 16487,
-              "kind": "generate-artifact",
-              "artifactType": "crypto-architecture"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-crypto-architecture-create\"]"
+            },
+            {
+              "tMs": 18487,
+              "kind": "click",
+              "selector": "button:has(> svg.lucide-save)"
             },
             {
               "tMs": 24987,
@@ -1673,7 +1768,12 @@
             {
               "tMs": 126987,
               "kind": "caption",
-              "text": "1 governance artifact created."
+              "text": "1 fictional governance draft created."
+            },
+            {
+              "tMs": 129987,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
               "tMs": 130987,
@@ -1690,15 +1790,15 @@
           "page": {
             "route": "/business",
             "query": {
-              "zone": "governance"
+              "zone": "risk-management"
             }
           },
           "tasks": [
-            "Open the Command Center and select the Governance zone",
+            "Open Risk Management for the KPI Dashboard, then Management Tools for the tooling draft",
             "Generate the KPI Dashboard",
             "Generate the Management Tools Audit"
           ],
-          "expectedOutput": "2 governance artifacts created.",
+          "expectedOutput": "2 fictional governance drafts created.",
           "narration": "Governance feeds risk-management dashboards. The KPI dashboard and management tools audit make your migration progress visible quarterly. KPI Dashboard, Management Tools Audit.",
           "cues": [
             {
@@ -1706,7 +1806,7 @@
               "kind": "navigate",
               "route": "/business",
               "query": {
-                "zone": "governance"
+                "zone": "risk-management"
               }
             },
             {
@@ -1717,12 +1817,12 @@
             {
               "tMs": 12886,
               "kind": "click",
-              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+              "selector": "[data-workshop-target=\"business-zone-risk-management\"]"
             },
             {
               "tMs": 13386,
               "kind": "expand-section",
-              "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
+              "selector": "[data-workshop-target=\"section-business-zone-risk-management\"]"
             },
             {
               "tMs": 15886,
@@ -1731,8 +1831,13 @@
             },
             {
               "tMs": 19129,
-              "kind": "generate-artifact",
-              "artifactType": "kpi-dashboard"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-kpi-dashboard-create\"]"
+            },
+            {
+              "tMs": 21129,
+              "kind": "click",
+              "selector": "button:has(> svg.lucide-save)"
             },
             {
               "tMs": 27629,
@@ -1745,9 +1850,24 @@
               "text": "Artifact: Management Tools Audit"
             },
             {
+              "tMs": 104515,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
+            },
+            {
+              "tMs": 104715,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-zone-management-tools\"]"
+            },
+            {
               "tMs": 105515,
-              "kind": "generate-artifact",
-              "artifactType": "management-tools-audit"
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-management-tools-audit-create\"]"
+            },
+            {
+              "tMs": 107515,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
               "tMs": 110015,
@@ -1757,7 +1877,12 @@
             {
               "tMs": 192015,
               "kind": "caption",
-              "text": "2 governance artifacts created."
+              "text": "2 fictional governance drafts created."
+            },
+            {
+              "tMs": 195015,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
               "tMs": 196015,
@@ -3082,13 +3207,16 @@
         "chapter": "close",
         "title": "Trust and transparency — the About page",
         "estMinutes": 3,
-        "whyItMatters": "Before you share this report with your board, your CISO will ask three questions: where does the data come from, who maintains it, and is the platform itself secure? The About page answers all three in one page.",
+        "whyItMatters": "Before sharing fictional report context, inspect data transfers, analytics and licence terms. The About page provides disclosures; it is not a security certification.",
         "page": {
           "route": "/about"
         },
-        "tasks": ["Watch the page scroll through About sections"],
+        "tasks": [
+          "Read About → Data Privacy: analytics, cookies and what can leave your browser",
+          "Inspect the AGPL-3.0-only licence and third-party notices before reuse"
+        ],
         "expectedOutput": "You can describe the project trust model: vision, who-it-is-for, privacy, security, license, community.",
-        "narration": "Before sharing the report with your CISO, walk the About page top-to-bottom. The captions below name each section as the page scrolls — vision, founding principles, who it is for, urgency, data privacy, security audit, open source license, and community.",
+        "narration": "Read the About page disclosures before sharing fictional report context. Google Analytics 4 runs on every visit; Data Privacy explains cookies, address handling and what can leave your browser through shared report links or cloud modes. The Hub source is licensed AGPL-3.0-only; inspect LICENSE and third-party notices before reuse. These disclosures help you decide what to share and how to use the code; they do not certify a system.",
         "cues": [
           {
             "tMs": 0,
@@ -3118,7 +3246,7 @@
           {
             "tMs": 50000,
             "kind": "caption",
-            "text": "Data Privacy — no tracking, no accounts, no data stored on our servers."
+            "text": "Data Privacy — no accounts; sample state stays in your browser unless shared. Google Analytics 4 runs on every visit; read the disclosure before using report links or cloud modes."
           },
           {
             "tMs": 68000,
@@ -3128,7 +3256,7 @@
           {
             "tMs": 90000,
             "kind": "caption",
-            "text": "Open Source — Apache 2.0. Inspect the code, fork it, contribute."
+            "text": "Open Source — AGPL-3.0-only. Inspect the code, LICENSE and third-party notices before reuse."
           },
           {
             "tMs": 110000,
@@ -3154,23 +3282,23 @@
           "Open the share-with-board CTA",
           "Schedule a 30-day follow-up to revisit the report after the inventory pilot"
         ],
-        "expectedOutput": "Share URL copied; follow-up scheduled.",
-        "narration": "You now have, in one URL, a board-ready report tied to your jurisdiction and your industry. You have governance, risk, and a 90-day plan. The single highest-leverage action you can take right now is to share this URL with the colleague who will own the inventory pilot. Schedule a thirty-day follow-up. The deadlines are not waiting.",
+        "expectedOutput": "Identify one missing inventory fact, its tool/evidence check and a proposed follow-up; share only fictional context if useful.",
+        "narration": "You have generated a fictional planning report and explored draft governance artifacts. Four unknown answers remain assumptions, not verified inventory or quantified observed exposure. Choose one suggested action, record the missing fact and the tool capability needed to establish it, then revisit the report after a sample inventory exercise. Share fictional context only, with its assumptions and source dates. Use that comparison to explain what your organisation would need before making its own board decision.",
         "cues": [
           {
             "tMs": 4000,
             "kind": "caption",
-            "text": "You now have a board-ready report tied to your jurisdiction and finance."
+            "text": "You have a fictional planning report; identify its unknowns before drawing an organisational conclusion."
           },
           {
             "tMs": 60000,
             "kind": "caption",
-            "text": "One URL — governance, risk, 90-day plan, region chapter."
+            "text": "Planning report, draft artifacts and regional guidance: retain their fictional inputs and source dates."
           },
           {
             "tMs": 120000,
             "kind": "caption",
-            "text": "Highest-leverage action right now: share this URL with whoever owns the inventory pilot."
+            "text": "Pick an inventory question, name the tool capability and evidence needed, then compare the report after that fact is established."
           },
           {
             "tMs": 180000,
