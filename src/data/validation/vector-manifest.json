@@ -16588,6 +16588,13 @@
           "cases": ["hkdf_test#/testGroups/0/tests/0"],
           "fields": ["ikm", "info", "okm", "salt"],
           "note": "Inline RFC 5869 Test Case 1 OKM in the HKDF section; the same published constant as this case."
+        },
+        {
+          "path": "src/components/PKILearning/modules/QKD/workshop/tlsPskImporterSample.local.test.ts",
+          "kind": "embedded-values",
+          "cases": ["hkdf_test#/testGroups/0/tests/0"],
+          "fields": ["okm"],
+          "note": "RFC 5869 Appendix A.1 output literal used to check the importer helper against the published HKDF example."
         }
       ],
       "publishabilityGaps": [],
