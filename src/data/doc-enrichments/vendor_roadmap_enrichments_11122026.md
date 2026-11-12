@@ -1,7 +1,7 @@
 ---
 generated: 2026-11-12
 collection: vendor-roadmaps
-enrichment_method: automated extraction, human-reviewed
+enrichment_method: automated extraction
 source: public/vendor-roadmaps/
 ---
 
