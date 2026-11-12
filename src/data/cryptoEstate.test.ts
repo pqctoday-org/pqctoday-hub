@@ -27,3 +27,19 @@ describe('sample crypto estate: remediation text', () => {
     expect(bc!.remediation).toMatch(/CMVP #\d+/)
   })
 })
+
+it('keeps the Python migration on its documented C-library build path, distinct from the Rust API and FIPS claims', () => {
+  const signer = SAMPLE_INVENTORY.find((asset) => asset.id === 'sw-batch-signer')!
+  expect(signer.currentAlgorithm).toBe('RSA-2048 via PyCryptodome')
+  expect(signer.remediation).toContain(
+    'Python cryptography 50.0.2 built against the C AWS-LC library'
+  )
+  expect(signer.remediation).toContain('OPENSSL_DIR')
+  expect(signer.remediation).toContain('build cryptography from source')
+  expect(signer.remediation).toContain('aws-lc-rs is a separate Rust library, not a Python backend')
+  expect(signer.remediation).toContain('test sample signing, verification and tamper rejection')
+  expect(signer.remediation).toContain(
+    'module certificate, approved algorithm, operating environment and security policy'
+  )
+  expect(signer.remediation).not.toContain('with aws-lc-rs FIPS backend')
+})

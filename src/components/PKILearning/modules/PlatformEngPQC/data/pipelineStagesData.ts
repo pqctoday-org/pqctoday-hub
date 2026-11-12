@@ -86,8 +86,8 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         },
         name: 'CI/CD OIDC Tokens (JWT)',
         type: 'token',
-        algorithm: 'ecdsa',
-        keySize: 'ES256 (P-256)',
+        algorithm: 'rsa',
+        keySize: 'RS256 (GitHub Actions OIDC)',
         quantumVulnerable: true,
         hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-65 JWT signing (JOSE draft)',
@@ -95,7 +95,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         exposureWindow:
           '15+ years (OIDC provider cert chains must remain trusted for audit trails)',
         notes:
-          'GitHub Actions OIDC and similar use ES256 JWTs to authenticate build jobs. A compromised OIDC signing key allows forging pipeline identities.',
+          'GitHub Actions OIDC discovery advertises RS256, and its published signing JWKS uses RSA keys (checked 12 November 2026). This sample follows that provider; other issuers require their own discovery and key checks. Validate the signature, issuer, audience and job claims against the trusted provider context; reading a JWT header alone does not authenticate it. A compromised OIDC signing key allows forging pipeline identities.',
       },
       {
         id: 'build-vault-mtls',

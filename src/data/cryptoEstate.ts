@@ -209,7 +209,8 @@ export const SAMPLE_INVENTORY: InventoryAsset[] = [
     quantumVulnerable: true,
     tags: ['HNDL', 'internal'],
     riskScore: 3,
-    remediation: 'Migrate to python-cryptography with aws-lc-rs FIPS backend; swap to ML-DSA-65',
+    remediation:
+      'Evaluate Python cryptography 50.0.2 built against the C AWS-LC library: set OPENSSL_DIR to the installed AWS-LC prefix and build cryptography from source rather than assuming a bundled wheel uses it. aws-lc-rs is a separate Rust library, not a Python backend. For the ML-DSA-65 migration target, check API and algorithm support in the exact build and test sample signing, verification and tamper rejection. Where FIPS validation is required, match the module certificate, approved algorithm, operating environment and security policy; a library name alone establishes none of these.',
     initialStage: 'discover',
     layer: 'source',
     discoverableBy: ['cbomkit-source'],
