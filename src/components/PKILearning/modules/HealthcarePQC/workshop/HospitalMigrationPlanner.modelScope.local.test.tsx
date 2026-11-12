@@ -95,3 +95,33 @@ describe('Hospital planning sample model scope', () => {
     view.unmount()
   })
 })
+
+it('agrees on mixed-action phase and estate costs without upgrading fixed vendor readiness', async () => {
+  const user = userEvent.setup()
+  render(<HospitalMigrationPlanner />)
+  const matrix = matrixSnapshot()
+  const architecture = screen.getByText('Hospital Architecture').closest('.glass-panel')!
+  const badges = architecture.querySelectorAll('span')
+  const readinessBefore = Array.from(badges)
+    .map((el) => el.textContent)
+    .filter((v) => ['Available', 'Preview', 'Planned', 'None'].includes(v ?? ''))
+  await user.click(screen.getAllByRole('button', { name: 'Crypto Posture:' })[0])
+  await user.click(screen.getByRole('option', { name: 'Hybrid (Classical + PQC)' }))
+  await user.click(screen.getAllByRole('button', { name: 'Crypto Posture:' })[1])
+  await user.click(screen.getByRole('option', { name: 'Planning Only' }))
+  // Declared inputs: 50 × $5,000 × 0.7 plus 500 × $2,000 × 0.1 = $275,000.
+  expect(within(patientBudgetRow()).getAllByRole('cell').at(-1)).toHaveTextContent('$175,000')
+  const budget = screen.getByText('Total Estimated Budget').closest('tr')!
+  expect(budget).toHaveTextContent('$275,000')
+  const phase = screen.getByText('Phase 1: Critical Priority (2023–2027)').parentElement!
+  expect(phase).toHaveTextContent('$275,000')
+  expect(matrixSnapshot()).toBe(matrix)
+  expect(
+    Array.from(architecture.querySelectorAll('span'))
+      .map((el) => el.textContent)
+      .filter((v) => ['Available', 'Preview', 'Planned', 'None'].includes(v ?? ''))
+  ).toEqual(readinessBefore)
+  await user.click(screen.getByRole('button', { name: 'Reset All' }))
+  expect(budget).toHaveTextContent('$0')
+  expect(screen.queryByText('Phase 1: Critical Priority (2023–2027)')).not.toBeInTheDocument()
+})

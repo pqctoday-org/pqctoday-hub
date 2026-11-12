@@ -3,6 +3,7 @@ import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { PAYMENT_NETWORKS } from '../data/paymentNetworkData'
 
 export interface WorkshopConfig {
   step: number
@@ -28,18 +29,18 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
   onSetWorkshopConfig,
 }) => {
   const navigate = useNavigate()
+  const visa = PAYMENT_NETWORKS.find((network) => network.id === 'visa')!
+  const unionpay = PAYMENT_NETWORKS.find((network) => network.id === 'unionpay')!
 
   const scenarios: Scenario[] = [
     {
       id: 'network-pqc-readiness',
-      title:
-        '1. Network PQC Readiness Assessment \u2014 Compare Visa and UnionPay quantum exposure',
+      title: '1. Network PQC Evidence Assessment \u2014 Compare Visa and UnionPay source scope',
       description:
-        'In the Network Comparator, compare Visa and UnionPay side by side. Identify which network has the larger offline authentication exposure and which has a more advanced PQC posture. Calculate the total cards at risk across both networks.',
+        'In the Network Comparator, compare Visa and UnionPay side by side. Separate published research and guidance from a committed card-network rollout. Identify which statements have direct network evidence and which are tentative dependency-led planning. Explain why gross card circulation alone cannot establish the number of distinct vulnerable cards.',
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
-      observe:
-        'Visa has billions of cards in circulation with active PQC research (quantum lab since 2022), while UnionPay has 9.4B cards tied to China\u2019s pending GB/T standards. UnionPay\u2019s scale makes it the single largest quantum-vulnerable payment ecosystem. Note the two card counts are not subsets of the 14.7 billion EMV figure: network totals count every card a network has in circulation, including non-EMV and multi-badged cards, so they cannot be added up against it.',
+      observe: `Visa: ${visa.pqcTimeline} ${visa.evidenceBasis} China UnionPay: ${unionpay.pqcTimeline} ${unionpay.evidenceBasis} The listed card counts are gross network circulation, with different reporting scopes and possible multi-badging; they do not establish distinct vulnerable cards, an at-risk total, or a readiness ranking. Use the linked publications to decide what evidence to request for the specific payment interface and deployment.`,
       config: { step: 0 },
     },
     {
