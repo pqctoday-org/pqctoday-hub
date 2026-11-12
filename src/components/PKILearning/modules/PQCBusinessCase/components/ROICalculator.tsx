@@ -332,7 +332,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
   }, [assessmentDerived, countIsOwn, assumptions.costPerProduct, assumptions.productsToMigrate])
 
   useEffect(() => {
-    if (onOutput && financials.totalCost > 0) {
+    if (onOutput && countUsable && financials.totalCost > 0) {
       onOutput({
         totalCostUSD: financials.totalCost,
         roiPercent: financials.roiPercent,
@@ -344,6 +344,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     }
   }, [
     onOutput,
+    countUsable,
     financials.totalCost,
     financials.roiPercent,
     financials.paybackMonths,
@@ -1214,41 +1215,65 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </div>
       </details>
 
-      {/* Export */}
-      <ExportableArtifact
-        title="PQC Migration ROI — Export"
-        exportData={exportMarkdown}
-        filename="pqc-roi-analysis"
-        formats={['markdown', 'pdf', 'docx']}
-        onExport={() => {
-          addExecutiveDocument({
-            id: `roi-model-${Date.now()}`,
-            moduleId: 'pqc-business-case',
-            type: 'roi-model',
-            title: `PQC ROI Analysis — ${new Date().toLocaleDateString()}`,
-            data: exportMarkdown,
-            inputs: assumptions,
-            // Computed totals, distinct from `inputs` (the assumptions) — lets
-            // Board Pitch Builder show real numbers when reached outside the
-            // linear Business Case wizard (Simulation, Business Center), not
-            // just when roiOutput is passed as a live prop.
-            output: {
-              totalCostUSD: financials.totalCost,
-              roiPercent: financials.roiPercent,
-              paybackMonths: financials.paybackMonths,
-              breachCostSavingsUSD: financials.breachCostSavings,
-              productsToMigrate: assumptions.productsToMigrate,
-              productsSource: assumptions.productsSource,
-            },
-            createdAt: Date.now(),
-          })
-        }}
-      >
-        <p className="text-sm text-muted-foreground">
-          Export the ROI analysis above as markdown, PDF, or DOCX for board distribution. The
-          artifact is also saved to your Command Center Risk Artifacts list.
+      {/* Keep the artifact mounted so its pending autosave observes the current
+          guard, rather than flushing the prior valid callback on unmount. */}
+      {!countUsable && (
+        <p id="roi-export-paused" role="status" className="text-sm text-muted-foreground">
+          Reporting paused while the count is being edited. The figures still use the last valid
+          count of {assumptions.productsToMigrate.toLocaleString('en-US')} systems or products; they
+          do not describe the current entry. Enter a valid count to save, export or publish a new
+          result.
         </p>
-      </ExportableArtifact>
+      )}
+      <fieldset
+        aria-label="ROI report actions"
+        disabled={!countUsable}
+        aria-describedby={!countUsable ? 'roi-export-paused' : undefined}
+        className="min-w-0"
+      >
+        <ExportableArtifact
+          title="PQC Migration ROI — Export"
+          exportData={
+            countUsable
+              ? exportMarkdown
+              : '# ROI report unavailable\n\nEnter a valid count of systems or products before reporting a new result.'
+          }
+          filename="pqc-roi-analysis"
+          formats={['markdown', 'pdf', 'docx']}
+          onExport={
+            countUsable
+              ? () => {
+                  addExecutiveDocument({
+                    id: `roi-model-${Date.now()}`,
+                    moduleId: 'pqc-business-case',
+                    type: 'roi-model',
+                    title: `PQC ROI Analysis — ${new Date().toLocaleDateString()}`,
+                    data: exportMarkdown,
+                    inputs: assumptions,
+                    // Computed totals, distinct from `inputs` (the assumptions) — lets
+                    // Board Pitch Builder show real numbers when reached outside the
+                    // linear Business Case wizard (Simulation, Business Center), not
+                    // just when roiOutput is passed as a live prop.
+                    output: {
+                      totalCostUSD: financials.totalCost,
+                      roiPercent: financials.roiPercent,
+                      paybackMonths: financials.paybackMonths,
+                      breachCostSavingsUSD: financials.breachCostSavings,
+                      productsToMigrate: assumptions.productsToMigrate,
+                      productsSource: assumptions.productsSource,
+                    },
+                    createdAt: Date.now(),
+                  })
+                }
+              : undefined
+          }
+        >
+          <p className="text-sm text-muted-foreground">
+            Export the ROI analysis above as markdown, PDF, or DOCX for board distribution. The
+            artifact is also saved to your Command Center Risk Artifacts list.
+          </p>
+        </ExportableArtifact>
+      </fieldset>
     </div>
   )
 }

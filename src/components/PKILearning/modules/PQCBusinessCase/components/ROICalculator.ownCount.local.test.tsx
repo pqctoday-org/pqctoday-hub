@@ -192,8 +192,13 @@ describe('the learner enters their own count of systems or products', () => {
     expect(message).toHaveAttribute('aria-live', 'polite')
     expect(message).toHaveTextContent('The figures on this page still use 120.')
     expect(message).not.toHaveTextContent('below')
-    expect(exportText()).toContain('Systems or products in scenario (your count): 120')
-    expect(exportText()).toContain('| Capital Expenditure | $9.0M |')
+    expect(exportText()).toContain('ROI report unavailable')
+    expect(exportText()).not.toContain('Systems or products in scenario (your count): 120')
+    expect(exportText()).not.toContain('| Capital Expenditure |')
+    expect(screen.getByRole('button', { name: 'Save sample report' })).toBeDisabled()
+    expect(screen.getByText(/Reporting paused while the count is being edited/)).toHaveTextContent(
+      'last valid count of 120'
+    )
     expect(screen.queryByText('Per-product model (your count)')).not.toBeInTheDocument()
     expect(screen.getByTestId('roi-cross-check-waiting')).toHaveTextContent('Not assessed')
 
