@@ -257,13 +257,17 @@
       "bytes": 118438,
       "content_type": "text/html",
       "url": "https://www.idemia.com",
-      "sha256": "4c5706fe7161315c5731ee829872186391bf622e59fab1800df75f9f047178f2",
+      "sha256": "0f2d44719bbc87dd0464bf24ae3c380590f85337ebee6da744963dac9ed7a321",
       "artefact": "SOURCE",
       "unified": "current",
       "admittedAt": "2026-09-18T03:24:10.919533+00:00",
-      "admittedBy": "admit.py --stamp-existing",
+      "admittedBy": "evidence admission (existing copy)",
       "identity": "MATCH",
-      "stampedAt": "2026-09-18T03:53:20.114710+00:00"
+      "stampedAt": "2026-11-12T12:31:36.034005+00:00",
+      "previousSha256": "4c5706fe7161315c5731ee829872186391bf622e59fab1800df75f9f047178f2",
+      "hashCorrectedAt": "2026-11-12T12:31:36.034005+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's",
+      "sizeBytes": 118438
     },
     {
       "refId": "inside-quantum-technology",
