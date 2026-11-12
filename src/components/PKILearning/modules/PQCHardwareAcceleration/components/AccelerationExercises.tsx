@@ -67,7 +67,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Measured',
     badgeColor: 'bg-success/20 text-success border-success/50',
     observe:
-      'On the Cortex-A55 and A53, which have SHA-256 instructions and no SHA-3 ones, the SHA-2 variant signs about 11× faster on today’s engine — only the KV260, whose FPGA does SHAKE, reverses it. The hardware you have, not the algorithm, decides which variant to deploy on a given chip.',
+      'In the dated 27 September 2026 four-worker comparison, the i.MX 95 A55 CPU signs SHA2-128s at 10.87/s and SHAKE-128s at 0.94/s: about 11.6× the throughput. The KV260 SHAKE result (13.0/s) uses its FPGA, while its SHA-2 result (5.09/s) uses its CPU; that reversal is not an A53 CPU-only comparison. Choose an allowed variant using the actual implementation, operation and measured path on your target.',
     config: { step: 2 },
   },
   {
