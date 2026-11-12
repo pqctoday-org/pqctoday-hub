@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { PaymentMigrationVector } from './emvConstants'
+import { CARD_REPLACEMENT_WORKED_EXAMPLE } from './cardReplacementScenario'
 
 export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
   {
@@ -57,7 +58,8 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
       'RSA-2048 key transport (master key injection)',
     ],
     vulnerability:
-      'New cards issued with RSA-2048 ICC keys are quantum-vulnerable from day one. On an assumed 3-5 year card replacement cycle (this module’s estimate, not a sourced figure), cards issued today could stay in circulation until about 2029-2031.',
+      'New cards issued with RSA-2048 ICC keys remain exposed to a future quantum-capable signature forgery. ' +
+      CARD_REPLACEMENT_WORKED_EXAMPLE,
     severity: 'critical',
     hndlExposure: false,
     affectedScale: '~4 billion new cards issued annually',
