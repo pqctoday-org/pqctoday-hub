@@ -61403,7 +61403,7 @@
     "type": "EUCC",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "RSA (224, 256, 384, 512, 1024, 9796), EdDSA (448, 25519), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (512–4096 bits), EdDSA (448, 25519), ECDSA, ECDH",
     "productName": "NXP JCOP 8.x/9.x on SN300 B2 Secure Element",
     "productCategory": "Smartcards and similar devices",
     "vendor": "NXP Semiconductors Netherlands N.V.",
@@ -61455,7 +61455,7 @@
     "type": "EUCC",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "RSA (224, 256, 384, 512, 1024, 9796), EdDSA (448, 25519), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (512–4096 bits), EdDSA (448, 25519), ECDSA, ECDH",
     "productName": "NXP JCOP 8.x on SE310 A0 Secure Element",
     "productCategory": "Smartcards and similar devices",
     "vendor": "NXP Semiconductors Netherlands N.V.",
@@ -61853,7 +61853,7 @@
     "type": "EUCC",
     "status": "Active",
     "pqcCoverage": "ML-KEM, ML-DSA",
-    "classicalAlgorithms": "RSA (256, 1024), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (key generation, encryption and signature up to 4224 bits; optional Crypto Suite), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "IFX_CCI_00007Ah/8Fh A11, R11, M11 with optional Crypto Suite",
     "productCategory": "Smartcard Controller",
     "vendor": "Infineon Technologies AG",
@@ -63155,12 +63155,12 @@
     "id": "anssi-cc-2019-62",
     "source": "ANSSI",
     "type": "Common Criteria",
-    "status": "Active",
+    "status": "Archived",
     "pqcCoverage": "No PQC Mechanisms Detected",
     "productName": "P73N2M0B0.2C2/2C6",
     "productCategory": "Cartes à puce et dispositifs similaires",
     "vendor": "NXP",
-    "date": "2024-06-14",
+    "date": "2019-12-24",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2019-62-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2019-62-rapport.pdf"
@@ -63174,7 +63174,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2019-62-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (120, 4015), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (up to 4096 bits), ECDSA, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -64190,7 +64190,7 @@
     "productName": "Cryptographic library NESLIB 6.7.4 on ST31N600 A01",
     "productCategory": "Cartes à puce et dispositifs similaires",
     "vendor": "STMicroelectronics",
-    "date": "2025-06-04",
+    "date": "2022-12-23",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2022-42-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2022-42-rapport.pdf"
@@ -64204,7 +64204,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2022-42-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (158), EdDSA (25519), X25519 (25519), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (25519), X25519, ECDSA, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -64217,7 +64217,7 @@
     "productName": "Cryptographic library NESLIB 6.7.4 on ST31P450 A04",
     "productCategory": "Cartes à puce et dispositifs similaires",
     "vendor": "STMicroelectronics",
-    "date": "2025-07-28",
+    "date": "2022-12-23",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2022-50-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2022-50-rapport.pdf"
@@ -64231,7 +64231,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2022-50-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (158), EdDSA (25519), X25519 (25519), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (25519), X25519, ECDSA, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -64392,7 +64392,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-38-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (2048, 3072, 4096), ECDSA (P-256, P-384, P-521), EdDSA (448), X25519 (448), ECDH",
+    "classicalAlgorithms": "RSA (2048, 3072, 4096), ECDSA (P-256, P-384, P-521), EdDSA (448), X448, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -64500,7 +64500,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-26-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (158), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -64527,7 +64527,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-27-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (158), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -65148,7 +65148,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-28-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (144, 224, 256, 269, 323, 384, 512, 1024, 1280, 1536, 1984, 2048, 2409, 3072, 9796), ECDSA (P-256, P-384, P-521), ECDH",
+    "classicalAlgorithms": "RSA (key generation 1024–3072 bits in 32-bit steps; operation-specific ST limits), ECDSA (P-256, P-384, P-521), ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -65175,7 +65175,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-33-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (224, 256, 384, 512, 1024, 1280, 1536, 1984, 2048, 2409, 3072, 9796), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (key generation 1024–3072 bits in 32-bit steps; ST configuration minimum 2048 bits through 2030), ECDSA, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -65255,7 +65255,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-19-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (224, 256, 278, 384, 512, 1024, 1280, 1536, 1984, 2048, 2409, 3072, 9796), ECDSA (P-256, P-384, P-521), ECDH",
+    "classicalAlgorithms": "RSA (key generation 1024–3072 bits in 32-bit steps; operation-specific ST limits), ECDSA (P-256, P-384, P-521), ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -65282,7 +65282,7 @@
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-20-certificat.pdf"
       }
     ],
-    "classicalAlgorithms": "RSA (140, 224, 256, 384, 512, 1024, 1280, 1536, 1984, 2048, 2409, 9796), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (1024/2048-bit named operations; ST configuration minimum 2048 bits through 2030), ECDSA, ECDH",
     "anssiConfirmedIn": "anssi-catalog",
     "anssiObservedAt": "2026-10-28T06:14:22+00:00"
   },
@@ -224182,7 +224182,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "ML-KEM, ML-DSA, LMS",
-    "classicalAlgorithms": "RSA (164), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5A and ST33K1M5M B04 , B01 (EUCC-3090-2026-67)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -224210,7 +224210,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "ML-KEM, ML-DSA, LMS",
-    "classicalAlgorithms": "RSA (162), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5C and ST33K1M5T C03 , A01 (EUCC-3090-2026-66)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -224375,7 +224375,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "LMS",
-    "classicalAlgorithms": "RSA (166), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NESLIB 6.11.3 on ST31R480 (A02) (EUCC-3090-2026-56)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -224403,7 +224403,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "LMS",
-    "classicalAlgorithms": "RSA (164), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NESLIB 6.11.3 on ST31R480 (B02) (EUCC-3090-2026-57)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -225054,7 +225054,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "LMS",
-    "classicalAlgorithms": "RSA (164), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic Library NesLib 6.11.3 on ST31N600 A04 Version 6.11.3 (EUCC-3090-2026-25)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -225253,7 +225253,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "ML-KEM, LMS",
-    "classicalAlgorithms": "RSA (166), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NesLib 6.11.6 and NesLib_PQML 1.0.3 on ST33K1M5A and ST33K1M5M B04Version : 6.11.6 & 1.0.3 / B04 (EUCC-3090-2026-19)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -225281,7 +225281,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "ML-KEM, LMS",
-    "classicalAlgorithms": "RSA (165), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NesLib 6.11.6 and NesLib_PQML 1.0.3 on ST33K1M5C and ST33K1M5T C03 Version : 6.11.6 & 1.0.3 / C03 (EUCC-3090-2026-18)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -225309,7 +225309,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "LMS",
-    "classicalAlgorithms": "RSA (160), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NesLib 6.11.6 on ST33K1M5A and ST33K1M5M B04 Version : 6.11.6 / B04 (EUCC-3090-2026-17)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -225337,7 +225337,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "ML-KEM, LMS",
-    "classicalAlgorithms": "RSA (160), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NesLib 6.11.6 on ST33K1M5C and ST33K1M5T C03 Version : 6.11.6 / C03 (EUCC-3090-2026-16)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -226069,7 +226069,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "ML-KEM, ML-DSA",
-    "classicalAlgorithms": "RSA (256, 1024), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (key generation, encryption and signature up to 4224 bits; optional Crypto Suite), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "IFX_CCI_00007Ah/8Fh A11, R11, M11 with optional Crypto Suite",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "Infineon Technologies AG",
@@ -229241,7 +229241,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "",
-    "classicalAlgorithms": "RSA (158), EdDSA (25519), X25519 (25519), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (25519), X25519, ECDSA, ECDH",
     "productName": "Cryptographic library NESLIB 6.7.4 on ST31P450 A07 (version 6.7.4) (ANSSI-CC-2022/50-R02)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -229506,7 +229506,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "LMS",
-    "classicalAlgorithms": "RSA (158), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NESLIB 6.11.3 on ST31R480 A01 (version 6.11.3)(ANSSI-CC-2025/26)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -229534,7 +229534,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "LMS",
-    "classicalAlgorithms": "RSA (158), EdDSA (448, 25519), X25519 (448, ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic library NESLIB 6.11.3 on ST31R480 B01 (version 6.11.3) (ANSSI-CC-2025/27)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -229866,7 +229866,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "",
-    "classicalAlgorithms": "RSA (158), EdDSA (25519), X25519 (25519), ECDSA, ECDH",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 829–4096 bits), EdDSA (25519), X25519, ECDSA, ECDH",
     "productName": "Cryptographic library NESLIB 6.7.4 on ST31N600 A03 (version 6.7.4) (ANSSI-CC-2022/42-R02)",
     "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
     "vendor": "STMicroelectronics",
@@ -243112,7 +243112,7 @@
     "type": "Common Criteria",
     "status": "Active",
     "pqcCoverage": "",
-    "classicalAlgorithms": "RSA (256, 2048, 3072, 4096), ECDSA (P-256, P-384, P-521), ECDH (P-256",
+    "classicalAlgorithms": "RSA (key-generation SFR 2048-bit or greater; 3072-bit evaluated profile; 4096-bit and larger supported but not tested in evaluated configuration), ECDSA (P-256, P-384, P-521), ECDH (P-256, P-384, P-521)",
     "productName": "Information Security Corporation CertAgent/Dhuma v8.0 patch level 0.2",
     "productCategory": "Other Devices and Systems",
     "vendor": "Information Security Corporation",
