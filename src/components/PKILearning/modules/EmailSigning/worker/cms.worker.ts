@@ -1731,8 +1731,16 @@ function safeUnlink(M: OpenSSLModule, path: string): void {
 /** PKCS#11 URI for the named key inside softhsmv3 token 0. The pin-value
  *  parameter has to match the one written into /ssl/pkcs11.cnf by
  *  pqctoday_cms_init (currently `1234`). */
+// Fixed logical workshop IDs retain their public contract. Each replacement
+// gets a private physical label, so an older EC/RSA token object cannot win URI
+// lookup. Other sample labels and token objects are untouched.
+const dualPhysicalLabels = new Map<string, string>()
+let dualPhysicalGeneration = 0
+const isDualKeyId = (keyId: string) => keyId === 'alice-pq' || keyId === 'alice-cl'
+
 function pkcs11Uri(keyId: string): string {
-  return `pkcs11:object=${keyId};pin-value=1234`
+  const physical = dualPhysicalLabels.get(keyId)
+  return `pkcs11:object=${physical ?? keyId};pin-value=1234`
 }
 
 /** Returns the CKP_ML_DSA_* parameter-set value for an ML-DSA CmsAlg,
@@ -3043,15 +3051,23 @@ function generateX25519KeyInHsm(M: OpenSSLModule, keyId: string): string | null 
 // loaded before any CLI command accesses a pkcs11: URI.
 const HSM_PROVIDER_FLAGS: string[] = []
 
+const generatedKeyProfiles = new Map<string, { alg: CmsAlg; useHsm: boolean }>()
+
 async function cmsGenKey(
   alg: CmsAlg,
   keyId: string,
   useHsm: boolean | undefined,
   requestId?: string
 ): Promise<void> {
+  const physicalKeyId =
+    useHsm && isDualKeyId(keyId) && !isCompositeAlg(alg)
+      ? `${keyId}__cms_generation_${++dualPhysicalGeneration}`
+      : keyId
+  if (isDualKeyId(keyId)) dualPhysicalLabels.delete(keyId)
   const M = await newModuleSafe(useHsm, requestId)
   if (!M) return
   const keyPath = `/ssl/${keyId}.key`
+  generatedKeyProfiles.delete(keyId)
   // Clear prior versions from both the live FS and our persistent vfs cache.
   vfs.delete(keyPath)
   safeUnlink(M, keyPath)
@@ -3064,7 +3080,7 @@ async function cmsGenKey(
       // the key never reaches softhsmv3. Direct PKCS#11 key generation stores the
       // key object in the file-backed token so pkcs11: URI references in req and
       // cms commands find it via C_FindObjects.
-      const errDetail = generateMlDsaKeyInHsm(M, alg, keyId)
+      const errDetail = generateMlDsaKeyInHsm(M, alg, physicalKeyId)
       if (errDetail !== null) {
         post({
           type: 'ERROR',
@@ -3077,7 +3093,7 @@ async function cmsGenKey(
       // EC P-256: use direct PKCS#11 C_GenerateKeyPair so the key object lands
       // in the softhsmv3 token and is reachable via pkcs11:object=<keyId> URIs.
       // `genpkey -out pkcs11:...` writes a PEM to MEMFS (BIO path), not the token.
-      const errDetail = generateEcKeyInHsm(M, keyId)
+      const errDetail = generateEcKeyInHsm(M, physicalKeyId)
       if (errDetail !== null) {
         post({
           type: 'ERROR',
@@ -3089,7 +3105,7 @@ async function cmsGenKey(
     } else if (mlKemParamSet(alg) >= 0) {
       // ML-KEM: same rationale as ML-DSA — go direct via C_GenerateKeyPair so
       // the key lands in the token (genpkey -out pkcs11:... writes a PEM to MEMFS).
-      const errDetail = generateMlKemKeyInHsm(M, alg, keyId)
+      const errDetail = generateMlKemKeyInHsm(M, alg, physicalKeyId)
       if (errDetail !== null) {
         post({
           type: 'ERROR',
@@ -3100,7 +3116,7 @@ async function cmsGenKey(
       }
     } else if (slhDsaParamSet(alg) >= 0) {
       // SLH-DSA: FIPS 205 small-sig variants via direct C_GenerateKeyPair.
-      const errDetail = generateSlhDsaKeyInHsm(M, alg, keyId)
+      const errDetail = generateSlhDsaKeyInHsm(M, alg, physicalKeyId)
       if (errDetail !== null) {
         post({
           type: 'ERROR',
@@ -3112,7 +3128,7 @@ async function cmsGenKey(
     } else if (alg === 'RSA' || alg === 'RSA-PSS') {
       // RSA-3072 via direct C_GenerateKeyPair. Same modulus floor as the
       // software path; PSS-vs-PKCS#1v1.5 routing is set at sign time.
-      const errDetail = generateRsaKeyInHsm(M, keyId)
+      const errDetail = generateRsaKeyInHsm(M, physicalKeyId)
       if (errDetail !== null) {
         post({
           type: 'ERROR',
@@ -3123,7 +3139,7 @@ async function cmsGenKey(
       }
     } else if (alg === 'X25519') {
       // X25519 via direct C_GenerateKeyPair with Montgomery mechanism.
-      const errDetail = generateX25519KeyInHsm(M, keyId)
+      const errDetail = generateX25519KeyInHsm(M, physicalKeyId)
       if (errDetail !== null) {
         post({
           type: 'ERROR',
@@ -3160,7 +3176,9 @@ async function cmsGenKey(
     // Persist ALL softhsm token object files so the next module instance
     // restores the key during vfs rehydration.
     persistSoftHsmTokenFiles(M)
+    if (physicalKeyId !== keyId) dualPhysicalLabels.set(keyId, physicalKeyId)
     const keyPem = `# HSM-resident key\n# URI: ${pkcs11Uri(keyId)}\n# Algorithm: ${alg}\n`
+    generatedKeyProfiles.set(keyId, { alg, useHsm: true })
     post({ type: 'CMS_GENKEY_RESULT', keyPem, pubPem: '', requestId })
     return
   }
@@ -3189,6 +3207,7 @@ async function cmsGenKey(
   // Skip the public-key extraction step — it would burn another runtime and
   // require a fresh module. PEM key already carries enough metadata for the
   // demo UI; the verify path uses the cert instead of the bare pubkey.
+  generatedKeyProfiles.set(keyId, { alg, useHsm: false })
   post({ type: 'CMS_GENKEY_RESULT', keyPem, pubPem: '', requestId })
 }
 
@@ -3762,6 +3781,32 @@ async function cmsDualSign(
   const pqInkey = useHsm ? pkcs11Uri(pqKeyId) : pqKey
   const clInkey = useHsm ? pkcs11Uri(classicalKeyId) : clKey
   const providerArgs = useHsm ? HSM_PROVIDER_FLAGS : []
+  const classicalProfile = generatedKeyProfiles.get(classicalKeyId)
+  if (
+    !classicalProfile ||
+    classicalProfile.useHsm !== !!useHsm ||
+    !['EC', 'RSA-PSS'].includes(classicalProfile.alg)
+  ) {
+    post({
+      type: 'ERROR',
+      error: 'Current classical generation profile required for dual signing',
+      requestId,
+    })
+    return
+  }
+  // Same already-supported RSA-PSS profile as the single-sign path, attached
+  // immediately after the classical signer (never to the PQ signer).
+  const classicalOptions =
+    classicalProfile.alg === 'RSA-PSS'
+      ? [
+          '-keyopt',
+          'rsa_padding_mode:pss',
+          '-keyopt',
+          'rsa_pss_saltlen:32',
+          '-keyopt',
+          'rsa_mgf1_md:sha256',
+        ]
+      : []
   // Repeated -signer/-inkey pairs produce one SignerInfo per pair.
   const { rc, stderr } = runOpenssl(M, [
     'cms',
@@ -3775,6 +3820,7 @@ async function cmsDualSign(
     clCert,
     '-inkey',
     clInkey,
+    ...classicalOptions,
     '-in',
     payloadPath,
     '-binary',
@@ -3864,10 +3910,9 @@ async function cmsDualVerify(
   ])
   const ok = v.rc === 0 && fileExists(M, outPath)
   const payload = ok ? readBin(M, outPath) : undefined
-  // Heuristic: openssl prints "Verification successful" once per signer;
-  // count it. Falls back to "2" on success when openssl is quiet about it.
-  const successHits = (v.stderr.match(/Verification successful/g) || []).length
-  const signerCount = ok ? Math.max(successHits, 2) : 0
+  // The main-thread bounded ASN.1 inspector supplies the actual count. CLI
+  // success text is one joint result and cannot count or identify signers.
+  const signerCount = 0
   post({
     type: 'CMS_DUAL_VERIFY_RESULT',
     ok,

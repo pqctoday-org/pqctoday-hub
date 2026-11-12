@@ -33,12 +33,19 @@ first time (don't ship dev-speak and reformat later):
 
 Lessons, role journeys and reference records now use clearer worked assumptions, source-specific claims and consistent results across desktop and phone views.
 
+### Added
+
+- **Verifiable sample ACME requests** [view:/learn/pki-workshop] [persona:developer] [persona:ops]: generate a matching sample ML-DSA-65 public key and signed certificate request, inspect its public downloads and calculate the account challenge separately from the simulated ACME transport.
+- **Reproducible Go reference examples** [view:/playground] [persona:developer]: copy error-checked signing and key-establishment examples with matching library versions and setup instructions.
+- **Editable model-training compute costs** [view:/learn/ai-security-pqc] [persona:architect] [persona:grc]: change accelerator count, training hours and hourly price to reproduce the sample compute cost; other project expenses remain separate.
+
 ### Fixed
 
 - **Role journeys explain the checks they actually perform** [view:/learn] [persona:executive] [persona:architect] [persona:cert-engineer]: corrected resource destinations, assessment coverage and worked references keep each journey aligned with its learning activities.
 - **Simulation progress follows the selected work** [view:/simulation] [persona:executive] [persona:grc] [persona:ops]: the fictional critical-link model calculates progress from the selected links and their declared purposes.
 - **Researcher assessment guidance explains the calculation** [view:/assess] [persona:researcher]: score explanations follow the implemented readiness, deadline and retention rules, including unanswered inputs.
 - **AI and automotive examples expose their assumptions** [view:/learn/ai-security-pqc] [view:/learn/automotive-pqc] [persona:developer] [persona:architect]: worked calculations distinguish fictional inputs, observed results and the limits of the demonstrated checks.
+- **The TLS importer sample performs its displayed calculation** [view:/learn/qkd] [persona:developer] [persona:architect]: inspect the explicit sample inputs and derived external PSK, including altered-input checks, without treating the local calculation as a completed TLS connection.
 - **Cryptographic reference values match the named algorithms** [view:/algorithms] [view:/learn] [persona:developer] [persona:researcher]: corrected size comparisons, protocol evidence descriptions and Linux IMA PCR guidance preserve the relevant parameter and configuration boundaries.
 
 ### Data

@@ -342,6 +342,7 @@ export function GraphCanvas({
           const Icon = spec?.icon
           const tr = traceById.get(r.id)
           const matched = !!tr?.matched
+          const warned = tr?.effect === 'warn'
           const bypassed = !!sim && !!tr && !tr.matched && tr.effect !== 'off'
           const isDecider = r.id === deciderId
           const sel = r.id === selectedId
@@ -391,7 +392,11 @@ export function GraphCanvas({
                 top: posOf(r.id).y,
                 width: nw,
                 height: NODE_H,
-                borderColor: sel || matched ? color : 'hsl(var(--border))',
+                borderColor: warned
+                  ? 'hsl(var(--warning))'
+                  : sel || matched
+                    ? color
+                    : 'hsl(var(--border))',
                 borderWidth: 1.5,
                 boxShadow: sel
                   ? `0 6px 18px -8px ${fam ? familyColor(fam, 0.5) : 'transparent'}`
@@ -413,6 +418,15 @@ export function GraphCanvas({
                   <span className="truncate text-[12px] font-bold text-foreground">
                     {spec?.title ?? r.type}
                   </span>
+                  {warned && (
+                    <span
+                      aria-label="Warning: evaluation continues"
+                      title={tr?.note}
+                      className="shrink-0 rounded bg-status-warning/15 px-1 text-[9px] font-bold text-status-warning"
+                    >
+                      Warning
+                    </span>
+                  )}
                   <span className="ml-auto font-mono text-[9px] font-bold text-muted-foreground">
                     #{i + 1}
                   </span>

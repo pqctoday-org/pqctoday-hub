@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { inspectDualCms } from './dualCmsInspection'
 import {
   buildCompositeCmsSignedData,
   compositeProfileByOid,
@@ -101,7 +102,7 @@ export interface DualSignResult {
 }
 
 export interface DualVerifyResult {
-  /** True iff every SignerInfo's signature math passed (`cms -verify -noverify`).
+  /** True iff the expected distinct pair/profile was found and joint signature math passed (`cms -verify -noverify`).
    *  Multi-SignerInfo CMS is all-or-nothing across signers in OpenSSL — true
    *  per-signer atomicity is a LAMPS draft-19 composite property, not a CMS
    *  property. See the composite-signature distinction in the DualSignDemo. */
@@ -187,6 +188,12 @@ export class CMSSigningService {
     { resolve: (v: unknown) => void; reject: (e: Error) => void; expect: WorkerOutbound['type'] }
   >()
   private idCounter = 0
+  // Private successful generation context for the fixed workshop pair. No new worker API.
+  private dualKeys = new Map<string, { algorithm: CmsAlg; useHsm: boolean; ready: boolean }>()
+  private dualCertificates = new Map<
+    string,
+    { keyId: string; key: { algorithm: CmsAlg; useHsm: boolean; ready: boolean }; der: Uint8Array }
+  >()
 
   constructor() {
     this.worker = new Worker(new URL('../worker/cms.worker.ts', import.meta.url), {
@@ -209,6 +216,8 @@ export class CMSSigningService {
     this.worker.terminate()
     this.pending.clear()
     this.logHandlers.clear()
+    this.dualKeys.clear()
+    this.dualCertificates.clear()
   }
 
   onLog(fn: (line: { stream: 'stdout' | 'stderr'; message: string }) => void): () => void {
@@ -231,10 +240,22 @@ export class CMSSigningService {
 
   async genKey(alg: CmsAlg, keyId: string, useHsm = false): Promise<GenKeyResult> {
     await this.readyPromise
-    return this.request('CMS_GENKEY_RESULT', { type: 'CMS_GENKEY', alg, keyId, useHsm }, (msg) => ({
-      keyPem: msg.keyPem,
-      pubPem: msg.pubPem,
-    }))
+    const key = { algorithm: alg, useHsm, ready: false }
+    this.dualKeys.set(keyId, key)
+    for (const [certId, cert] of this.dualCertificates)
+      if (cert.keyId === keyId) this.dualCertificates.delete(certId)
+    try {
+      const result = await this.request(
+        'CMS_GENKEY_RESULT',
+        { type: 'CMS_GENKEY', alg, keyId, useHsm },
+        (msg) => ({ keyPem: msg.keyPem, pubPem: msg.pubPem })
+      )
+      key.ready = true
+      return result
+    } catch (error) {
+      if (this.dualKeys.get(keyId) === key) this.dualKeys.delete(keyId)
+      throw error
+    }
   }
 
   async mkCert(opts: {
@@ -252,9 +273,26 @@ export class CMSSigningService {
     alg?: CmsAlg
   }): Promise<MkCertResult> {
     await this.readyPromise
-    return this.request('CMS_MKCERT_RESULT', { type: 'CMS_MKCERT', ...opts }, (msg) => ({
-      certPem: msg.certPem,
-    }))
+    const key = this.dualKeys.get(opts.keyId)
+    this.dualCertificates.delete(opts.certId)
+    const result = await this.request(
+      'CMS_MKCERT_RESULT',
+      { type: 'CMS_MKCERT', ...opts },
+      (msg) => ({ certPem: msg.certPem })
+    )
+    if (
+      ['alice-pq', 'alice-cl'].includes(opts.keyId) &&
+      key?.ready &&
+      this.dualKeys.get(opts.keyId) === key &&
+      key.useHsm === !!opts.useHsm
+    ) {
+      this.dualCertificates.set(opts.certId, {
+        keyId: opts.keyId,
+        key,
+        der: pemToDer(result.certPem),
+      })
+    }
+    return result
   }
 
   async sign(opts: {
@@ -429,6 +467,28 @@ export class CMSSigningService {
     }))
   }
 
+  private dualContext(pqCertId: string, classicalCertId: string, useHsm = false) {
+    const pq = this.dualCertificates.get(pqCertId)
+    const classical = this.dualCertificates.get(classicalCertId)
+    if (
+      !pq ||
+      !classical ||
+      pq.keyId !== 'alice-pq' ||
+      classical.keyId !== 'alice-cl' ||
+      !['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'SLH-DSA-SHA2-128s'].includes(pq.key.algorithm) ||
+      !['EC', 'RSA-PSS'].includes(classical.key.algorithm) ||
+      [pq, classical].some(
+        (cert) =>
+          !cert.key.ready ||
+          this.dualKeys.get(cert.keyId) !== cert.key ||
+          cert.key.useHsm !== useHsm
+      )
+    ) {
+      throw new Error('Current generated workshop signer certificates are required')
+    }
+    return [pq, classical]
+  }
+
   async dualSign(opts: {
     payload: Uint8Array
     pqKeyId: string
@@ -438,9 +498,22 @@ export class CMSSigningService {
     useHsm?: boolean
   }): Promise<DualSignResult> {
     await this.readyPromise
-    return this.request('CMS_DUAL_SIGN_RESULT', { type: 'CMS_DUAL_SIGN', ...opts }, (msg) => ({
-      signedP7m: msg.signedP7m,
-    }))
+    const context = this.dualContext(opts.pqCertId, opts.classicalCertId, !!opts.useHsm)
+    if (opts.pqKeyId !== context[0].keyId || opts.classicalKeyId !== context[1].keyId)
+      throw new Error('Unexpected workshop signer keys')
+    const result = await this.request(
+      'CMS_DUAL_SIGN_RESULT',
+      { type: 'CMS_DUAL_SIGN', ...opts },
+      (msg) => ({ signedP7m: msg.signedP7m })
+    )
+    const current = this.dualContext(opts.pqCertId, opts.classicalCertId, !!opts.useHsm)
+    if (current.some((cert, i) => cert !== context[i]))
+      throw new Error('Signer context changed during dual signing')
+    inspectDualCms(
+      result.signedP7m,
+      context.map((cert) => ({ certificate: cert.der, algorithm: cert.key.algorithm }))
+    )
+    return result
   }
 
   async dualVerify(opts: {
@@ -450,12 +523,30 @@ export class CMSSigningService {
     useHsm?: boolean
   }): Promise<DualVerifyResult> {
     await this.readyPromise
-    return this.request('CMS_DUAL_VERIFY_RESULT', { type: 'CMS_DUAL_VERIFY', ...opts }, (msg) => ({
-      ok: msg.ok,
-      signerCount: msg.signerCount,
-      payload: msg.payload,
-      stderr: msg.stderr,
-    }))
+    let signerCount = 0
+    try {
+      const context = this.dualContext(opts.pqCertId, opts.classicalCertId, !!opts.useHsm)
+      const signedP7m = opts.signedP7m.slice()
+      signerCount = inspectDualCms(
+        signedP7m,
+        context.map((cert) => ({ certificate: cert.der, algorithm: cert.key.algorithm }))
+      )
+      const result = await this.request(
+        'CMS_DUAL_VERIFY_RESULT',
+        { type: 'CMS_DUAL_VERIFY', ...opts, signedP7m },
+        (msg) => ({ ok: msg.ok, signerCount, payload: msg.payload, stderr: msg.stderr })
+      )
+      const current = this.dualContext(opts.pqCertId, opts.classicalCertId, !!opts.useHsm)
+      if (current.some((cert, i) => cert !== context[i]))
+        throw new Error('Signer context changed during verification')
+      return { ...result, signerCount, payload: result.ok ? result.payload : undefined }
+    } catch (error) {
+      return {
+        ok: false,
+        signerCount,
+        stderr: error instanceof Error ? error.message : String(error),
+      }
+    }
   }
 
   // ── Internals ─────────────────────────────────────────────────────────

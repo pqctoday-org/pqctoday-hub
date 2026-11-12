@@ -469,6 +469,7 @@ export function SimulationView() {
     clearAuto,
     evidence,
     recordEvidence,
+    clearLearnEvidence,
     insuranceAssumed,
     setInsuranceAssumed,
     activeTab,
@@ -1118,7 +1119,6 @@ export function SimulationView() {
   const [viewDoc, setViewDoc] = useState<ExecutiveDocument | null>(null)
   const moduleProgress = useModuleStore((s) => s.modules)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
   // C5-full: confirming a "choice that counts" Algorithms tab (Transition /
   // Detailed) records its artifact tagged with DISTINCT sim provenance (the spec's
   // moduleId, so a standalone doc never pre-completes this) and marks the task done
@@ -1471,6 +1471,10 @@ export function SimulationView() {
   }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
   const runFp = runFingerprint(size, country, sector)
+  const activeRunLearnEvidence = useMemo(
+    () => evidence.filter((record) => record.runId === `run-${seed}` && record.kind === 'learn'),
+    [evidence, seed]
+  )
   // W1: a learn step clears on the learner's own shared completion OR on this
   // run's evidence — which is where a narrated demonstration is recorded. The
   // two stay separate: the run advances without the shared curriculum being
@@ -1478,7 +1482,7 @@ export function SimulationView() {
   const moduleDone = (id?: string) =>
     !!id &&
     (moduleProgress[id]?.status === 'completed' ||
-      hasEvidence(evidence, { resourceId: id, kind: 'learn' }))
+      hasEvidence(activeRunLearnEvidence, { resourceId: id, kind: 'learn' }))
   // W7 (decision Q4 = shared, by design): activity completion is keyed by artifact
   // TYPE, not by which step produced it. So a doc of type T (e.g. a crypto-cbom)
   // satisfies EVERY step that produces T — confirming the P3 Transition tab (which
@@ -2361,7 +2365,9 @@ export function SimulationView() {
       if (moduleDone(moduleId)) {
         return (
           <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-            ✓ Module completed
+            {moduleProgress[moduleId]?.status === 'completed'
+              ? '✓ Completed in Learn'
+              : '✓ Activity recorded for this run'}
           </div>
         )
       }
@@ -3839,7 +3845,11 @@ export function SimulationView() {
                 silently passing as a verified check. */}
               {learnEmbed &&
                 (() => {
-                  const done = moduleDone(learnEmbed.moduleId)
+                  const sharedDone = moduleProgress[learnEmbed.moduleId]?.status === 'completed'
+                  const runDone = hasEvidence(activeRunLearnEvidence, {
+                    resourceId: learnEmbed.moduleId,
+                    kind: 'learn',
+                  })
                   const coverage = gateCoverageFor(learnEmbed.moduleId)
                   const hasGate = coverage.state === 'checked'
                   return (
@@ -3852,34 +3862,41 @@ export function SimulationView() {
                           check unavailable
                         </span>
                       )}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => {
-                          if (done) {
-                            updateModuleProgress(learnEmbed.moduleId, { status: 'in-progress' })
-                            return
-                          }
-                          const q = pickQuizQuestion(learnEmbed.moduleId, seed)
-                          if (q) {
-                            setQuizGate({
-                              moduleId: learnEmbed.moduleId,
-                              title: learnEmbed.title,
-                              question: q,
-                            })
-                          } else {
-                            recordLearnerEvidence('learn', learnEmbed.moduleId, 'viewed')
-                          }
-                        }}
-                        aria-pressed={done}
-                        className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
-                          done
-                            ? 'bg-success text-success-foreground hover:opacity-90'
-                            : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
-                        }`}
-                      >
-                        {done ? '✓ Completed' : 'Mark complete'}
-                      </Button>
+                      {sharedDone && (
+                        <span role="status" className="text-[11px] font-semibold text-success">
+                          Completed in Learn
+                        </span>
+                      )}
+                      {(!sharedDone || runDone) && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => {
+                            if (runDone) {
+                              clearLearnEvidence(learnEmbed.moduleId)
+                              return
+                            }
+                            const q = pickQuizQuestion(learnEmbed.moduleId, seed)
+                            if (q) {
+                              setQuizGate({
+                                moduleId: learnEmbed.moduleId,
+                                title: learnEmbed.title,
+                                question: q,
+                              })
+                            } else {
+                              recordLearnerEvidence('learn', learnEmbed.moduleId, 'viewed')
+                            }
+                          }}
+                          aria-pressed={runDone}
+                          className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
+                            runDone
+                              ? 'bg-success text-success-foreground hover:opacity-90'
+                              : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
+                          }`}
+                        >
+                          {runDone ? 'Remove run completion' : 'Mark complete'}
+                        </Button>
+                      )}
                     </span>
                   )
                 })()}

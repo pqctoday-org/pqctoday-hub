@@ -16,7 +16,8 @@ import { softwareData, vendorMap } from '@/data/migrateData'
 import { REPLACE_ASSETS } from '@/data/migrationAssets'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { productsForDomain } from './workbenchCatalog'
-import { productPqcStatus, productFipsBadge } from './productStatus'
+import { productPqcStatus } from './productStatus'
+import { isFips1403Certified } from '@/data/kpiCatalog'
 
 export interface RiskCard {
   key: string
@@ -84,7 +85,7 @@ export function useVendorConcentrationRisks(): RiskCard[] {
         : 0
 
     // ── Certification gap: GA products with no FIPS validation on record ──
-    const gaWithoutFips = gaProducts.filter((p) => productFipsBadge(p) === null)
+    const gaWithoutFips = gaProducts.filter((p) => !isFips1403Certified(p))
     const certGapPct =
       gaProducts.length > 0 ? Math.round((gaWithoutFips.length / gaProducts.length) * 100) : 0
 

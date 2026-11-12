@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useRef, useLayoutEffect } from 'react'
 import { Search, TreePine, Loader2, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   buildMerkleTree,
   getInclusionProof,
+  exportSubjectProof,
   type MerkleNode,
   type InclusionProof,
   type CertLeaf,
 } from '../utils/merkleTree'
+import { bindSubjectKeys } from '../utils/subjectKeys'
 import { SAMPLE_CERTS, truncateHash, formatBytes } from '../data/mtcConstants'
 
 type PathNodeType = 'selected' | 'computed' | 'provided' | 'root'
@@ -34,25 +36,65 @@ export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = (
   const [selectedLeaf, setSelectedLeaf] = useState<number | null>(null)
   const [proof, setProof] = useState<InclusionProof | null>(null)
   const [copied, setCopied] = useState(false)
+  const [boundCerts, setBoundCerts] = useState<CertLeaf[]>(() => SAMPLE_CERTS.slice(0, 8))
+  const [error, setError] = useState<string | null>(null)
+  const revision = useRef(0),
+    mounted = useRef(true),
+    busy = useRef(false)
+  const [sharedSource, setSharedSource] = useState({ sharedLevels, sharedCerts })
+  if (sharedSource.sharedLevels !== sharedLevels || sharedSource.sharedCerts !== sharedCerts) {
+    setSharedSource({ sharedLevels, sharedCerts })
+    setLevels(sharedLevels ?? null)
+    setSelectedLeaf(null)
+    setProof(null)
+    setError(null)
+  }
+  useLayoutEffect(() => {
+    revision.current += 1
+  }, [sharedLevels, sharedCerts])
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      revision.current += 1
+    }
+  }, [])
 
   // Use shared certs from Step 1 when available; fall back to 8 sample certs.
-  const certs = sharedCerts && sharedCerts.length > 0 ? sharedCerts : SAMPLE_CERTS.slice(0, 8)
+  const certs = sharedCerts && sharedCerts.length > 0 ? sharedCerts : boundCerts
 
   const handleBuildTree = useCallback(async () => {
+    if (busy.current) return
+    busy.current = true
+    const attempt = ++revision.current
     setIsBuilding(true)
+    setError(null)
     try {
-      const result = await buildMerkleTree(certs)
+      const bound = await bindSubjectKeys(certs)
+      if (!mounted.current || revision.current !== attempt) return
+      const result = await buildMerkleTree(bound)
+      if (!mounted.current || revision.current !== attempt) return
+      setBoundCerts(bound)
       setLevels(result.levels)
       setSelectedLeaf(null)
       setProof(null)
+    } catch (e) {
+      if (mounted.current && revision.current === attempt) {
+        setLevels(null)
+        setProof(null)
+        setError(e instanceof Error ? e.message : String(e))
+      }
     } finally {
-      setIsBuilding(false)
+      busy.current = false
+      if (mounted.current) setIsBuilding(false)
     }
   }, [certs])
 
   const handleSelectLeaf = useCallback(
     (leafIndex: number) => {
       if (!levels) return
+      revision.current += 1
+      setCopied(false)
       setSelectedLeaf(leafIndex)
       const p = getInclusionProof(levels, leafIndex)
       setProof(p)
@@ -123,11 +165,25 @@ export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = (
 
   const handleCopyProof = useCallback(async () => {
     if (!proof) return
-    const text = JSON.stringify(proof, null, 2)
-    await navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }, [proof])
+    const text = JSON.stringify(
+      exportSubjectProof(certs[Math.min(proof.leafIndex, certs.length - 1)], proof),
+      null,
+      2
+    )
+    const attempt = revision.current
+    try {
+      await navigator.clipboard.writeText(text)
+      if (mounted.current && revision.current === attempt) {
+        setCopied(true)
+        setTimeout(() => {
+          if (mounted.current) setCopied(false)
+        }, 2000)
+      }
+    } catch (e) {
+      if (mounted.current && revision.current === attempt)
+        setError(e instanceof Error ? e.message : String(e))
+    }
+  }, [proof, certs])
 
   const circledNumbers = ['\u2460', '\u2461', '\u2462', '\u2463', '\u2464', '\u2465']
 
@@ -143,6 +199,12 @@ export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = (
         </p>
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        Copy exports a version1 public-leaf/SPKI envelope. The receiver recomputes the exact SPKI
+        digest and escaped leaf hash before checking its path. Old metadata-only proof JSON must be
+        rebuilt.
+      </p>
+      {error && <p role="alert">Incomplete: {error}. Retry the operation.</p>}
       {/* Build tree */}
       {!levels ? (
         <div className="space-y-3">

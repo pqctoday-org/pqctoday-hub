@@ -14,6 +14,7 @@
  * and fall back to record-derived dates.
  */
 import type { ComplianceMeta, ComplianceRecord } from './types'
+import { normalizeCavpParameterSets } from './cavpParameterSets'
 
 const dataUrl = (file: string) => `${import.meta.env.BASE_URL ?? '/'}data/${file}`
 
@@ -31,9 +32,9 @@ export async function fetchStaticComplianceData(): Promise<ComplianceRecord[]> {
   // The dataset is FIPS 140-3 only (user decision 2026-09-24). An older
   // publication still carrying FIPS 140-2 rows must not have them shown or
   // counted anywhere, so they are dropped at the single load point.
-  return (json as ComplianceRecord[]).filter(
-    (r) => (r as { type?: string } | null)?.type !== 'FIPS 140-2'
-  )
+  return (json as ComplianceRecord[])
+    .filter((r) => (r as { type?: string } | null)?.type !== 'FIPS 140-2')
+    .map(normalizeCavpParameterSets)
 }
 
 let metaInflight: Promise<ComplianceMeta | null> | null = null

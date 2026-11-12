@@ -2,7 +2,9 @@
 import type { CryptoKey, CredentialAttribute, MsoMdoc, IssuerSignedItem } from '../types'
 import type { CryptoProvider } from './crypto-provider'
 import { encode } from 'cborg'
-import { bytesToBase64 } from './hsm-crypto-provider'
+import { bytesToBase64, assertSigningSelection } from './hsm-crypto-provider'
+import { sampleHolderPublicJwk } from './sdjwt-utils'
+import { decodeSampleBase64Url } from './credentialInspection'
 
 // EUDI ARF requires exact CBOR structural encoding and COSE_Sign1 definitions.
 // See ISO 18013-5 9.1.2.4
@@ -15,6 +17,25 @@ export const createMdoc = async (
   docType: string = 'eu.europa.ec.eudi.pid.1',
   onLog?: (log: string) => void
 ): Promise<MsoMdoc> => {
+  assertSigningSelection(issuerKey.algorithm, issuerKey.curve)
+  if (issuerKey.algorithm !== 'ES256' && issuerKey.algorithm !== 'ES384')
+    throw new Error('This mdoc sample supports the existing ES256/ES384 issuer profiles only')
+  const deviceJwk = sampleHolderPublicJwk(deviceKey)
+  if (
+    deviceJwk.kty !== 'EC' ||
+    (deviceJwk.crv !== 'P-256' && deviceJwk.crv !== 'P-384') ||
+    !deviceJwk.x ||
+    !deviceJwk.y
+  )
+    throw new Error('This mdoc sample requires the selected actual EC device public key')
+  // Validate the actual point, as in the existing SD-JWT confirmation export.
+  await crypto.subtle.importKey(
+    'jwk',
+    deviceJwk,
+    { name: 'ECDSA', namedCurve: deviceJwk.crv },
+    true,
+    ['verify']
+  )
   // 1. Organize attributes by namespace
   const namespaces: Record<string, Record<string, unknown>> = {
     [docType]: {},
@@ -84,12 +105,8 @@ export const createMdoc = async (
   coseKey.set(1, 2) // kty: EC2
   coseKey.set(3, deviceKey.algorithm === 'ES384' ? -35 : -7) // alg: ECDSA
   coseKey.set(-1, deviceKey.curve === 'P-384' ? 2 : 1) // crv: P-Curve
-  // Educational stub: real coordinates would be extracted from the wallet's EC public key.
-  // Extracting raw x/y from our internal CryptoKey type requires provider-layer changes
-  // that are out of scope for this simulation. The MSO structure and signing flow are
-  // architecturally correct; only the deviceKey coordinates are synthetic.
-  coseKey.set(-2, new Uint8Array(32).fill(1)) // x coordinate (structural stub)
-  coseKey.set(-3, new Uint8Array(32).fill(2)) // y coordinate (structural stub)
+  coseKey.set(-2, decodeSampleBase64Url(deviceJwk.x))
+  coseKey.set(-3, decodeSampleBase64Url(deviceJwk.y))
   deviceKeyInfo.set('deviceKey', coseKey)
   mso.set('deviceKeyInfo', deviceKeyInfo)
 
@@ -109,9 +126,13 @@ export const createMdoc = async (
   const sigStructure = ['Signature1', protectedHeaderBytes, new Uint8Array(0), msoBytes]
   const tbsBytes = encode(sigStructure)
 
-  // Use CryptoProvider signRaw mapping specifically to execute SoftHSM natively
-  if (onLog) onLog('Executing SoftHSM C_Sign mapped against COSE_Sign1 structure...')
-  const signatureBytes = await provider.signRaw(issuerKey, tbsBytes, onLog)
+  // COSE ECDSA needs fixed-width r||s, like the existing binary signData
+  // contract. signRaw remains native DER for software X.509 callers.
+  if (onLog) onLog('Signing the exact COSE_Sign1 Signature1 bytes with the selected provider...')
+  const signatureBytes = decodeSampleBase64Url(await provider.signData(issuerKey, tbsBytes, onLog))
+  const signatureWidth = issuerKey.algorithm === 'ES384' ? 96 : 64
+  if (signatureBytes.length !== signatureWidth)
+    throw new Error('COSE signature does not match the selected ECDSA encoding width')
 
   const coseSign1 = [protectedHeaderBytes, unprotectedHeaderMap, msoBytes, signatureBytes]
 

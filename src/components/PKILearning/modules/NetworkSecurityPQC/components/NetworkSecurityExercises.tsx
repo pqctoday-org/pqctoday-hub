@@ -36,11 +36,11 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       id: 'ngfw-policy-audit',
       title: '1. NGFW Policy Audit',
       description:
-        'Audit your NGFW cipher policy for quantum vulnerability. Select a hardware platform (entry-level branch, mid-range campus, or high-end enterprise core) and toggle cipher modes from Classical → Hybrid → Pure PQC. Observe how hardware offload availability changes throughput projections and what buffer upgrades are required.',
+        'Audit your NGFW cipher policy for quantum vulnerability. Select a hardware platform (entry-level branch, mid-range campus, or high-end enterprise core) and toggle cipher modes from Classical → Hybrid → Pure PQC. Keep software handling as the default, then explicitly assume selected-algorithm acceleration on the high-end fictional tier and compare the throughput arithmetic.',
       badge: 'Cipher Policy',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'In the simulator, switching to Hybrid mode on entry-level hardware without hardware offload reduces effective connections/sec by ~28%, while high-end platforms with offload keep 90% of classical throughput; these are illustrative simulation settings, not measurements. Certificate size rises from 1.0KB to at least 5.3KB for hybrid (the ML-DSA-65 public key plus signature alone, FIPS 204 Table 2).',
+        'Select Entry-Level and Hybrid with the acceleration assumption off: 5,000 × 0.72 = 3,600 connections/sec. Select High-End; its generic offload flag alone still uses software handling: 500,000 × 0.72 = 360,000. Check “Assume selected algorithms are hardware-accelerated (sample)” to apply 0.90 and obtain 450,000. Switching mode, tier or the PQC toggle clears that assumption. These are illustrative settings, not measurements or verified appliance capabilities. The certificate comparison uses the existing 1.0KB TLS 1.3 baseline and at least 5.3KB hybrid sample (the ML-DSA-65 public key plus signature alone, FIPS 204 Table 2).',
       config: { step: 0 },
     },
     {

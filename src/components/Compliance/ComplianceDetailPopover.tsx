@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react'
 import type { ComplianceRecord, ComplianceStatus, EsvEntropyClaim } from './types'
+import { resolveCavpParameterSets } from './cavpParameterSets'
 import clsx from 'clsx'
 import {
   cavpValidationUrl,
@@ -286,14 +287,39 @@ const CavpDetails = ({ record }: { record: ComplianceRecord }) => {
                 </tr>
               </thead>
               <tbody>
-                {caps.map((c, i) => (
-                  <tr key={`${c.algorithm}-${i}`} className="border-t border-border align-top">
-                    <td className="px-2 py-1 text-foreground">{c.algorithm}</td>
-                    <td className="px-2 py-1">{(c.parameterSets ?? []).join(', ') || '—'}</td>
-                    <td className="px-2 py-1">{(c.functions ?? []).join(', ') || '—'}</td>
-                    <td className="px-2 py-1">{c.operatingEnvironment || '—'}</td>
-                  </tr>
-                ))}
+                {caps.map((c, i) => {
+                  const capturedDetails = c.details ?? []
+                  // Keep each source row's parameters with its operation/environment.
+                  // Do not infer a set from a family name, bit count or another row.
+                  const parameterText = resolveCavpParameterSets(c).join(', ')
+                  return (
+                    <tr key={`${c.algorithm}-${i}`} className="border-t border-border align-top">
+                      <td className="px-2 py-1 text-foreground">{c.algorithm}</td>
+                      <td className="px-2 py-1">
+                        <span>{parameterText || '—'}</span>
+                        {(c.parameterSets ?? []).length === 0 && parameterText.length > 0 && (
+                          <p className="mt-1 text-[10px] text-muted-foreground">
+                            From captured capability details
+                          </p>
+                        )}
+                        {capturedDetails.length > 0 && (
+                          <details className="mt-1">
+                            <summary className="cursor-pointer text-primary">
+                              Captured capability details
+                            </summary>
+                            <ul className="mt-1 space-y-1">
+                              {capturedDetails.map((detail, index) => (
+                                <li key={index}>{detail}</li>
+                              ))}
+                            </ul>
+                          </details>
+                        )}
+                      </td>
+                      <td className="px-2 py-1">{(c.functions ?? []).join(', ') || '—'}</td>
+                      <td className="px-2 py-1">{c.operatingEnvironment || '—'}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

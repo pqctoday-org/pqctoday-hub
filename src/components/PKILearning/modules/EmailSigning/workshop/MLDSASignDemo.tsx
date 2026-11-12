@@ -193,7 +193,8 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
         verifyPayload: v.payload,
         verifyStderr: v.stderrTail,
       }))
-      op.done(v.ok ? 'Signature verified OK' : 'Verify completed (see result)')
+      if (v.ok === true) op.done('Signature verified OK')
+      else op.fail(new Error(v.stderrTail || 'Signature verification failed'))
 
       setStage('done')
     } catch (err) {
@@ -512,7 +513,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
           <StageCard
             icon={<CheckCircle2 size={14} />}
             title="Verify"
-            done={stage === 'done'}
+            done={stage === 'done' && result.verifyOk === true}
             running={stage === 'verify'}
           >
             {result.verifyOk === true && (
@@ -586,7 +587,7 @@ function StageCard({
     <RefreshCw size={12} className="animate-spin text-primary" />
   ) : null
   return (
-    <div className={`space-y-1.5 rounded-md border p-3 ${tone}`}>
+    <div role="group" aria-label={title} className={`space-y-1.5 rounded-md border p-3 ${tone}`}>
       <div className="flex items-center justify-between text-xs font-semibold text-foreground">
         <span className="flex items-center gap-1.5">
           {icon}

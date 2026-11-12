@@ -66,7 +66,7 @@ beforeEach(() => {
   useRiskRegisterStore.setState({ riskEntries: [], lastSavedKey: null })
 })
 describe('automatic risk rating interpretation', () => {
-  it('discloses HNDL-based signing rating and algorithm-only framework bump without altering ratings', async () => {
+  it('does not increase signing likelihood for HNDL or impact for framework bookmarks', async () => {
     context = {
       myFrameworks: [{}],
       myProducts: [{ softwareName: 'Fictional product' }],
@@ -78,7 +78,7 @@ describe('automatic risk rating interpretation', () => {
     )
     const rows = useRiskRegisterStore.getState().riskEntries
     expect(rows.map((r) => [r.likelihood, r.impact])).toEqual([
-      [5, 5],
+      [4, 4],
       [4, 4],
       [4, 4],
     ])
@@ -88,12 +88,36 @@ describe('automatic risk rating interpretation', () => {
       'not event probabilities'
     )
     expect(screen.getByText(AUTOMATIC_RISK_RATING_SCOPE)).toHaveTextContent(
-      'including signing rows; this does not measure signature-forgery probability'
+      'signing and symmetric/hash rows do not receive that increase'
     )
     const md = buildRiskRegisterMarkdown(rows)
     expect(md).toContain(AUTOMATIC_RISK_RATING_SCOPE)
-    expect(md).toContain('| 5 | 5 | 25 | Critical |')
+    expect(md).not.toContain('| 5 | 5 | 25 | Critical |')
     expect(md).toContain('| 4 | 4 | 16 | High |')
+    expect(md).toContain(
+      'a bookmark does not establish deployment, algorithm exposure or calibrated risk'
+    )
+    expect(md).toContain('Framework bookmarks do not change these ratings')
+  })
+  it.each([false, true])('applies HNDL=%s only to confidentiality rows', async (hndlOpen) => {
+    snapshot.result.hndlRiskWindow.isAtRisk = hndlOpen
+    const base = transitions[0]
+    transitions = ['Signature', 'Symmetric', 'Encryption/KEM'].map((fn) => ({
+      ...base,
+      function: fn,
+    }))
+    context.myFrameworks = [{}, {}, {}]
+    render(<RiskRegisterBuilderStandalone />)
+    await waitFor(() => expect(useRiskRegisterStore.getState().riskEntries).toHaveLength(3))
+    expect(
+      useRiskRegisterStore
+        .getState()
+        .riskEntries.map((r) => [r.threatVector, r.likelihood, r.impact])
+    ).toEqual([
+      ['forgery', 4, 4],
+      ['grover', 4, 4],
+      ['hndl', hndlOpen ? 5 : 4, 4],
+    ])
   })
   it.each([
     ['not-started', ['critical'], 4, 5],

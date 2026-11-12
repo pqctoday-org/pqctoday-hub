@@ -61,7 +61,7 @@ import {
 } from '@/utils/roiMath'
 
 const REGULATORY_ASSUMPTIONS_NOTE =
-  'The selected framework count, editable penalty amount and fixed incident rate are illustrative scenario assumptions, not an enforcement estimate. The penalty is not a sourced average; this calculation does not establish legal liability or that migration prevents penalties.'
+  'The selected framework count, editable penalty amount and fixed incident rate are illustrative scenario assumptions, not an enforcement estimate. The penalty is not a sourced average; this calculation does not establish legal liability or that migration prevents penalties. Zero is the starting scenario input when no amount was saved, not a finding of no liability. Enter a positive amount only as an explicit illustrative assumption.'
 
 const COMPARISON_SCOPE_NOTE =
   'The scenario and the profile-based calculation may use different scopes and shared assumptions; agreement or spread does not establish calibration, accuracy or confidence.'
@@ -162,7 +162,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       orgSizeTier: 'average',
       breachProbability: ANNUAL_BREACH_PROBABILITY_PCT.average,
       applicableFrameworks: defaultApplicableFrameworks,
-      penaltyPerIncident: 2_000_000,
+      penaltyPerIncident: 0,
       horizonYears: 3,
       discountRatePct: 10,
     }),
@@ -1000,7 +1000,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               <input
                 id="roi-penalty"
                 type="range"
-                min={500_000}
+                min={0}
                 max={10_000_000}
                 step={100_000}
                 value={assumptions.penaltyPerIncident}
@@ -1008,7 +1008,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 className="w-full accent-primary"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>$500K</span>
+                <span>$0</span>
                 <span className="text-sm font-mono text-primary">
                   {formatCurrency(assumptions.penaltyPerIncident)}
                 </span>

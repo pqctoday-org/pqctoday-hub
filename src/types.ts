@@ -2,7 +2,7 @@
 export interface Key {
   id: string
   name: string
-  type: 'public' | 'private' | 'symmetric'
+  type: 'public' | 'private' | 'symmetric' | 'unclassified'
   algorithm: string
   value: string // For mock mode or hex representation
   data?: Uint8Array | CryptoKey // For WASM mode (Uint8Array) or Web Crypto API (CryptoKey)

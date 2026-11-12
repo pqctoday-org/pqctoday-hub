@@ -159,9 +159,9 @@ describe('ResearcherFieldWatchCard', () => {
     resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('1 category match')
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('1 record')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded category matches for Hub catalogue rows marked deprecated: 1.'
+      'Unique Hub catalogue records marked deprecated: 1.'
     )
     expect(screen.getByTestId('field-watch-punchline')).not.toHaveTextContent(
       'Nothing in the fields you follow was retracted.'
@@ -173,9 +173,9 @@ describe('ResearcherFieldWatchCard', () => {
     resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('2 category matches')
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('2 records')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded category matches for Hub catalogue rows marked deprecated: 2.'
+      'Unique Hub catalogue records marked deprecated: 2.'
     )
   })
 
@@ -183,7 +183,7 @@ describe('ResearcherFieldWatchCard', () => {
     resetStore({ followedFields: ['qkd-quantum'] }) // no fixture row maps here
     render(<ResearcherFieldWatchCard />)
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded category matches for Hub catalogue rows marked deprecated: 0.'
+      'Unique Hub catalogue records marked deprecated: 0.'
     )
   })
 
@@ -272,7 +272,10 @@ describe('ResearcherFieldWatchCard — research topics', () => {
   })
 
   it('followed fields still count normally while topics are pending', () => {
-    resetStore({ followedFields: ['lattice-based'], followedTopics: ['cryptanalysis'] })
+    resetStore({
+      followedFields: ['lattice-based'],
+      followedTopics: ['cryptanalysis'],
+    })
     render(<ResearcherFieldWatchCard />)
     expect(screen.getAllByTestId('field-watch-row')).toHaveLength(1)
     expect(screen.getByTestId('field-watch-topics-pending')).toBeInTheDocument()

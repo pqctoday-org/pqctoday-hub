@@ -91,6 +91,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<CipherMode>('classical')
   const [selectedHardwareTier, setSelectedHardwareTier] = useState('mid-range')
   const [pqcEnabled, setPqcEnabled] = useState(false)
+  const [assumeSelectedAlgorithmOffload, setAssumeSelectedAlgorithmOffload] = useState(false)
 
   const hardwareTierItems = HARDWARE_TIERS.map((t) => ({ id: t.id, label: t.name }))
   const selectedTierData = HARDWARE_TIERS.find((t) => t.id === selectedHardwareTier)
@@ -100,6 +101,8 @@ export const NGFWCipherAnalyzer: React.FC = () => {
   }, [selectedMode])
 
   const primarySuite = relevantSuites[0]
+  const canAssumeSelectedAlgorithmOffload =
+    selectedMode !== 'classical' && Boolean(selectedTierData?.supportsHardwareOffload)
 
   const analysis = useMemo(() => {
     if (!primarySuite || !selectedTierData) return null
@@ -111,16 +114,8 @@ export const NGFWCipherAnalyzer: React.FC = () => {
     const latencyOverheadMs = primarySuite.handshakeMs - baseline.handshakeMs
     const softwareThroughputFactor =
       primarySuite.type === 'classical' ? 1.0 : primarySuite.type === 'hybrid' ? 0.72 : 0.55
-    const hardwareThroughputFactor =
-      primarySuite.type === 'classical'
-        ? 1.0
-        : primarySuite.hardwareOffloadRequired && selectedTierData.supportsHardwareOffload
-          ? 0.9
-          : 0.6
-
-    const effectiveFactor = selectedTierData.supportsHardwareOffload
-      ? hardwareThroughputFactor
-      : softwareThroughputFactor
+    const accelerationAssumed = assumeSelectedAlgorithmOffload && canAssumeSelectedAlgorithmOffload
+    const effectiveFactor = accelerationAssumed ? 0.9 : softwareThroughputFactor
 
     const effectiveConnsSec = Math.round(selectedTierData.maxConnectionsSec * effectiveFactor)
 
@@ -129,14 +124,17 @@ export const NGFWCipherAnalyzer: React.FC = () => {
       latencyOverheadMs,
       effectiveConnsSec,
       effectiveFactor,
-      offloadAvailable:
-        selectedTierData.supportsHardwareOffload && !primarySuite.hardwareOffloadRequired,
-      offloadNeeded:
-        primarySuite.hardwareOffloadRequired && !selectedTierData.supportsHardwareOffload,
+      accelerationAssumed,
     }
-  }, [primarySuite, selectedTierData])
+  }, [
+    primarySuite,
+    selectedTierData,
+    assumeSelectedAlgorithmOffload,
+    canAssumeSelectedAlgorithmOffload,
+  ])
 
   const handleTogglePQC = () => {
+    setAssumeSelectedAlgorithmOffload(false)
     const next = !pqcEnabled
     setPqcEnabled(next)
     if (next) setSelectedMode('hybrid')
@@ -162,7 +160,10 @@ export const NGFWCipherAnalyzer: React.FC = () => {
             <FilterDropdown
               items={hardwareTierItems}
               selectedId={selectedHardwareTier}
-              onSelect={setSelectedHardwareTier}
+              onSelect={(tier) => {
+                if (tier !== selectedHardwareTier) setAssumeSelectedAlgorithmOffload(false)
+                setSelectedHardwareTier(tier)
+              }}
               label="Platform"
               defaultLabel="Select tier"
               noContainer
@@ -177,6 +178,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                   variant="ghost"
                   key={mode}
                   onClick={() => {
+                    if (mode !== selectedMode) setAssumeSelectedAlgorithmOffload(false)
                     setSelectedMode(mode)
                     setPqcEnabled(mode !== 'classical')
                   }}
@@ -206,6 +208,34 @@ export const NGFWCipherAnalyzer: React.FC = () => {
               {pqcEnabled ? 'Disable PQC' : 'Enable PQC'}
             </Button>
           </div>
+        </div>
+        <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+          <label className="flex items-start gap-2 text-sm text-foreground">
+            <input
+              type="checkbox"
+              checked={assumeSelectedAlgorithmOffload && canAssumeSelectedAlgorithmOffload}
+              disabled={!canAssumeSelectedAlgorithmOffload}
+              onChange={(event) =>
+                setAssumeSelectedAlgorithmOffload(
+                  canAssumeSelectedAlgorithmOffload && event.target.checked
+                )
+              }
+              aria-describedby="ngfw-offload-assumption-help"
+              className="mt-1 shrink-0"
+            />
+            Assume selected algorithms are hardware-accelerated (sample)
+          </label>
+          <p id="ngfw-offload-assumption-help" className="text-xs text-muted-foreground">
+            Software handling is the default. Only the high-end fictional tier offers this optional
+            assumption for the selected key exchange and authentication algorithms. It resets when
+            the mode, tier or PQC toggle changes. A generic hardware-offload flag does not establish
+            support for these algorithms on a real appliance.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Declared sample factors: Classical 1.00; Hybrid software 0.72; Pure PQC software 0.55;
+            explicitly assumed selected-algorithm acceleration 0.90. These are illustrative model
+            inputs, not measured performance.
+          </p>
         </div>
       </div>
 
@@ -299,6 +329,15 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                 label="Effective Connections/sec"
                 colorClass="text-primary"
               />
+              <p className="text-xs text-muted-foreground">Base rate × selected sample factor:</p>
+              <output
+                aria-label="Illustrative throughput calculation"
+                className="block text-sm font-mono text-foreground"
+              >
+                {selectedTierData.maxConnectionsSec.toLocaleString()} ×{' '}
+                {analysis.effectiveFactor.toFixed(2)} ={' '}
+                {analysis.effectiveConnsSec.toLocaleString()} connections/sec
+              </output>
             </div>
 
             <div className="space-y-3">
@@ -325,32 +364,23 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                   </div>
                 </div>
               )}
-              {analysis.offloadNeeded && (
-                <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/30 flex items-start gap-2">
-                  <Cpu size={14} className="text-status-error shrink-0 mt-0.5" />
-                  <div className="text-xs text-muted-foreground">
-                    <span className="font-bold text-status-error">
-                      Modelled missing-offload warning
-                    </span>{' '}
-                    — the sample assumes offload is required but unavailable on{' '}
-                    <em>{selectedTierData.name}</em>. The illustrative calculation gives{' '}
-                    {Math.round((1 - analysis.effectiveFactor) * 100)}% throughput reduction; this
-                    is not a measured appliance result.
-                  </div>
-                </div>
-              )}
-              {!analysis.offloadNeeded && selectedMode !== 'classical' && (
+              {selectedMode !== 'classical' && (
                 <div className="bg-muted/50 rounded-lg p-3 border border-border flex items-start gap-2">
                   <Cpu size={14} className="text-muted-foreground shrink-0 mt-0.5" />
                   <div className="text-xs text-muted-foreground">
-                    <span className="font-bold text-foreground">Modelled offload status</span> —
-                    this case does not trigger the model’s missing-offload warning. The selected
-                    sample suite marks offload as{' '}
-                    {primarySuite.hardwareOffloadRequired ? 'required' : 'not required'}. The
-                    generic hardware-offload flag for sample tier {selectedTierData.name} is{' '}
-                    {selectedTierData.supportsHardwareOffload ? 'Yes' : 'No'}. Acceleration of this
-                    selected PQC operation: Not established. These flags are model inputs, not
-                    measured or verified algorithm-specific appliance capabilities.
+                    <span className="font-bold text-foreground">
+                      Selected-algorithm offload assumption
+                    </span>{' '}
+                    —{' '}
+                    {analysis.accelerationAssumed
+                      ? 'explicitly selected for this fictional scenario (factor 0.90).'
+                      : 'not selected; the software factor applies.'}{' '}
+                    The generic tier flag is{' '}
+                    {selectedTierData.supportsHardwareOffload ? 'Yes' : 'No'}; it does not verify
+                    algorithm-specific acceleration. The selected sample suite marks offload as{' '}
+                    {primarySuite.hardwareOffloadRequired ? 'required' : 'not required'}. Benchmark
+                    your exact appliance, firmware, algorithms and traffic mix before making
+                    production capacity decisions.
                   </div>
                 </div>
               )}

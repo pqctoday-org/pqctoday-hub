@@ -46,7 +46,7 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       title:
         '2. GEO Satellite PQC Link Budget — Calculate handshake overhead for geostationary orbit',
       description:
-        'Configure the illustrative GEO model with Ka-band and a 10 Mbps data rate. Compare its classical and ML-KEM byte estimates and its 600 ms RTT assumption. Change solar activity and inspect the modelled refresh upper bound and handshake count.',
+        'Configure the illustrative GEO model with Ka-band and a 10 Mbps data rate. Compare its classical and ML-KEM byte estimates and its 600 ms RTT assumption. Select Solar Minimum, then Solar Maximum, and compare the modelled refresh upper bound and handshake count.',
       badge: 'Satellite',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
@@ -69,11 +69,11 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       title:
         '4. Mixed-Fleet Gateway Strategy — Plan PQC interoperability across 3 aircraft generations',
       description:
-        'Build a fleet with a legacy B737-800 (ARINC 429), current A320neo (mixed 429/664), and next-gen A350 (ARINC 664 native). Evaluate the interoperability matrix and determine gateway placement.',
+        'Select the three sample models B737-800, A320neo and A350. Set PQC deployment to 30% of the capable fleet. Inspect the model’s authored aircraft counts and planning classifications; these inputs do not establish the capabilities of real aircraft. Compare the aircraft deployment share with the gateway planning cases.',
       badge: 'Fleet',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'The B737-800 can only communicate via legacy ACARS (no PQC possible). The A320neo supports gateway-mediated PQC for AFDX-connected systems. Only the A350 can run native PQC. At 30% fleet PQC penetration, 70% of air-ground messages still traverse unprotected links.',
+        'The sample contains 8,600 aircraft: 4,500 in its gateway-only planning case and 4,100 in its native/retrofit planning cases. At 30% deployment within the capable group, 1,230 aircraft are counted as deployed: 14% of the total, with 86% other sample aircraft. These are aircraft counts, not percentages of messages or protected links. Evaluate actual endpoint capabilities, routes and observed negotiations with production tools before estimating traffic protection; a ground gateway does not protect an unchanged aircraft-to-ground hop.',
       config: { step: 3 },
     },
     {
@@ -92,11 +92,11 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       title:
         '6. End-to-End Mission Lifecycle — Build a 15-year PQC migration plan for a GEO satellite',
       description:
-        'Configure a GEO communications satellite with 15-year service life. Set CRQC estimate to 2035. Generate a complete crypto lifecycle plan from design through decommission.',
+        'Select GEO Satellite, launch year 2028 and a 15-year service life. Set the assumed CRQC year to 2035. Inspect the model’s algorithm-selection, integration, provisioning and operational phases. These are explicit sample planning inputs, not a forecast.',
       badge: 'Capstone',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'A GEO satellite launched in 2028 will operate until 2043 — 8 years past the 2035 CRQC estimate. All crypto must be PQC from launch day. Key provisioning occurs pre-launch only. The lifecycle plan shows crypto algorithm selection must happen in 2026-2027 (design phase) to meet the 2028 launch window.',
+        'With these inputs, the model ends service in 2043 and shows 8 years of operational overlap with the assumed 2035 CRQC year. Its authored schedule places algorithm selection in 2025-2026 and library integration in 2026-2027. Changing the launch year shifts those windows. Use the sample to evaluate algorithm support, update and provisioning capabilities, retained-data confidentiality and signature/trust lifetimes with your production tools; these windows are not universal deadlines or proof that a deployed mission is protected.',
       config: { step: 5 },
     },
   ]

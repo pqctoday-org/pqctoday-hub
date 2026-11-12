@@ -305,6 +305,13 @@ export const CBOM_CYCLONEDX_SAMPLE = {
     {
       type: 'cryptographic-asset',
       name: 'AES-256-GCM Session Cipher',
+      properties: [
+        {
+          name: 'pqc-today:security-reference',
+          value:
+            'NIST category 5 AES-256 key-search reference; assess mode authentication, nonce/tweak handling and data limits separately',
+        },
+      ],
       cryptoProperties: {
         assetType: 'algorithm',
         algorithmProperties: {
@@ -312,7 +319,7 @@ export const CBOM_CYCLONEDX_SAMPLE = {
           parameterSetIdentifier: '256',
           mode: 'gcm',
           classicalSecurityLevel: 256,
-          nistQuantumSecurityLevel: 1,
+          nistQuantumSecurityLevel: 5,
         },
         oid: '2.16.840.1.101.3.4.1.46',
       },
@@ -320,6 +327,13 @@ export const CBOM_CYCLONEDX_SAMPLE = {
     {
       type: 'cryptographic-asset',
       name: 'AES-256-CBC Database TDE',
+      properties: [
+        {
+          name: 'pqc-today:security-reference',
+          value:
+            'NIST category 5 AES-256 key-search reference; assess mode authentication, nonce/tweak handling and data limits separately',
+        },
+      ],
       cryptoProperties: {
         assetType: 'algorithm',
         algorithmProperties: {
@@ -327,7 +341,7 @@ export const CBOM_CYCLONEDX_SAMPLE = {
           parameterSetIdentifier: '256',
           mode: 'cbc',
           classicalSecurityLevel: 256,
-          nistQuantumSecurityLevel: 1,
+          nistQuantumSecurityLevel: 5,
         },
         oid: '2.16.840.1.101.3.4.1.42',
       },
@@ -349,15 +363,17 @@ export const CBOM_CYCLONEDX_SAMPLE = {
     {
       type: 'cryptographic-asset',
       name: 'ECDH P-384 IPsec Key Exchange',
+      properties: [{ name: 'pqc-today:curve-oid', value: '1.3.132.0.34' }],
       cryptoProperties: {
         assetType: 'algorithm',
         algorithmProperties: {
           primitive: 'key-agree',
           parameterSetIdentifier: 'P-384',
+          ellipticCurve: 'nist/P-384',
           classicalSecurityLevel: 192,
           nistQuantumSecurityLevel: 0,
         },
-        oid: '1.3.132.0.34',
+        oid: '1.3.132.1.12',
       },
     },
     {
@@ -419,13 +435,20 @@ export const CBOM_CYCLONEDX_SAMPLE = {
     {
       type: 'cryptographic-asset',
       name: 'SHA-256 File Integrity',
+      properties: [
+        {
+          name: 'pqc-today:security-reference',
+          value:
+            'NIST category 2 SHA-256 collision-search reference; 128-bit classical collision strength',
+        },
+      ],
       cryptoProperties: {
         assetType: 'algorithm',
         algorithmProperties: {
           primitive: 'hash',
           parameterSetIdentifier: '256',
-          classicalSecurityLevel: 256,
-          nistQuantumSecurityLevel: 1,
+          classicalSecurityLevel: 128,
+          nistQuantumSecurityLevel: 2,
         },
         oid: '2.16.840.1.101.3.4.2.1',
       },
@@ -504,6 +527,13 @@ export const CBOM_CYCLONEDX_SAMPLE = {
     {
       type: 'cryptographic-asset',
       name: 'AES-256-GCM CDN Session Cipher',
+      properties: [
+        {
+          name: 'pqc-today:security-reference',
+          value:
+            'NIST category 5 AES-256 key-search reference; assess mode authentication, nonce/tweak handling and data limits separately',
+        },
+      ],
       cryptoProperties: {
         assetType: 'algorithm',
         algorithmProperties: {
@@ -511,7 +541,7 @@ export const CBOM_CYCLONEDX_SAMPLE = {
           parameterSetIdentifier: '256',
           mode: 'gcm',
           classicalSecurityLevel: 256,
-          nistQuantumSecurityLevel: 1,
+          nistQuantumSecurityLevel: 5,
         },
         oid: '2.16.840.1.101.3.4.1.46',
       },
@@ -519,6 +549,13 @@ export const CBOM_CYCLONEDX_SAMPLE = {
     {
       type: 'cryptographic-asset',
       name: 'AES-256-XTS Full-Disk Encryption',
+      properties: [
+        {
+          name: 'pqc-today:security-reference',
+          value:
+            'NIST category 5 AES-256 key-search reference; assess mode authentication, nonce/tweak handling and data limits separately',
+        },
+      ],
       cryptoProperties: {
         assetType: 'algorithm',
         algorithmProperties: {
@@ -526,9 +563,9 @@ export const CBOM_CYCLONEDX_SAMPLE = {
           parameterSetIdentifier: '256',
           mode: 'other',
           classicalSecurityLevel: 256,
-          nistQuantumSecurityLevel: 1,
+          nistQuantumSecurityLevel: 5,
         },
-        oid: '2.16.840.1.101.3.4.1.41',
+        oid: '1.3.111.2.1619.0.1.2',
       },
     },
     {

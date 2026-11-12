@@ -30,21 +30,13 @@ interface Milestone {
 }
 
 /** Soonest upcoming Deadline-phase milestone in the current view matching `predicate`,
- *  scoped to the selected region. Year granularity — the data has no finer date. */
+ *  from the already filtered visible rows. Year granularity — the data has no finer date. */
 function nearestDeadlineMilestone(
   data: GanttCountryData[],
-  regionFilter: string,
   predicate: (event: TimelineEvent, countryName: string) => boolean
 ): Milestone | null {
-  const inRegion = (name: string) => {
-    if (regionFilter === 'All' || regionFilter === 'global') return true
-    const allowed = REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP]
-    return allowed ? allowed.includes(name) : true
-  }
-
   let best: Milestone | null = null
   for (const row of data) {
-    if (!inRegion(row.country.countryName)) continue
     for (const phase of row.phases) {
       for (const ev of phase.events) {
         if (ev.phase !== 'Deadline') continue
@@ -60,30 +52,28 @@ function nearestDeadlineMilestone(
 }
 
 /** Nearest milestone with a curated HARD (confirmed-binding) mandate label. */
-function nearestBindingMilestone(data: GanttCountryData[], regionFilter: string): Milestone | null {
-  return nearestDeadlineMilestone(
-    data,
-    regionFilter,
-    (ev, country) => mandateFor(ev, country) === 'HARD'
-  )
+function nearestBindingMilestone(data: GanttCountryData[]): Milestone | null {
+  return nearestDeadlineMilestone(data, (ev, country) => mandateFor(ev, country) === 'HARD')
 }
 
 /** Nearest Deadline-phase milestone whose binding status is NOT confirmed HARD —
  *  i.e. curated SOFT guidance, DRAFT/pending review, or genuinely unlabeled. Used
  *  only as an honest fallback when no confirmed-binding milestone is in view, so the
  *  card never silently implies "nothing is coming" when something is, just unconfirmed. */
-function nearestPendingMilestone(data: GanttCountryData[], regionFilter: string): Milestone | null {
-  return nearestDeadlineMilestone(
-    data,
-    regionFilter,
-    (ev, country) => mandateFor(ev, country) !== 'HARD'
-  )
+function nearestPendingMilestone(data: GanttCountryData[]): Milestone | null {
+  return nearestDeadlineMilestone(data, (ev, country) => mandateFor(ev, country) !== 'HARD')
 }
 
 interface Props {
   ganttData: GanttCountryData[]
   regionFilter: string
   regionLabel: string
+  selectedCountry?: string
+  searchText?: string
+  phaseFilter?: string
+  eventTypeFilter?: string
+  myCountries?: string[]
+  showOnlyMyCountries?: boolean
 }
 
 /**
@@ -91,13 +81,57 @@ interface Props {
  * binding milestone, and what do I do about it" before the chart. Rendered only
  * for the executive persona (caller gates it), so other roles see the page as-is.
  */
-export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel }: Props) {
-  const next = nearestBindingMilestone(ganttData, regionFilter)
+export function TimelineExecutiveDeadline({
+  ganttData,
+  regionFilter,
+  regionLabel,
+  selectedCountry = 'All',
+  searchText = '',
+  phaseFilter = 'All',
+  eventTypeFilter = 'All',
+  myCountries = [],
+  showOnlyMyCountries = false,
+}: Props) {
+  // Match SimpleGanttChart's existing selection rules. Category and trust-tier
+  // filtering has already happened upstream; the card must also respect the
+  // chart's country/issuer search, phase, event type and saved-country scope.
+  const query = searchText.toLowerCase()
+  const visibleData = ganttData
+    .filter((row) => {
+      const country = row.country.countryName
+      const matchesSearch =
+        country.toLowerCase().includes(query) ||
+        row.country.bodies.some((body) => body.name.toLowerCase().includes(query))
+      const matchesCountry =
+        selectedCountry !== 'All'
+          ? country === selectedCountry
+          : regionFilter === 'All' ||
+            (
+              REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP] ?? []
+            ).includes(country)
+      return (
+        matchesSearch && matchesCountry && (!showOnlyMyCountries || myCountries.includes(country))
+      )
+    })
+    .map((row) => ({
+      ...row,
+      phases: row.phases.filter(
+        (phase) =>
+          (phaseFilter === 'All' || phase.phase === phaseFilter) &&
+          (eventTypeFilter === 'All' || phase.type === eventTypeFilter)
+      ),
+    }))
+    .filter((row) => row.phases.length > 0)
+  const next = nearestBindingMilestone(visibleData)
   // Only computed as a fallback when nothing confirmed-binding is in view, so we
   // never silently imply "nothing is coming" when something is, just unconfirmed.
-  const pending = next ? null : nearestPendingMilestone(ganttData, regionFilter)
+  const pending = next ? null : nearestPendingMilestone(visibleData)
   const scope =
-    regionFilter === 'All' || regionFilter === 'global' ? 'globally' : `in ${regionLabel}`
+    selectedCountry !== 'All'
+      ? `in ${selectedCountry}`
+      : regionFilter === 'All'
+        ? 'globally'
+        : `in ${regionLabel}`
   const yearsOut = next ? next.year - CURRENT_YEAR : null
   // Same-route link that flips the Gantt below to its Deadlines view
   // (canonical `?deadlines=1`), keeping the reader's region/country/sort.
@@ -140,8 +174,9 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
             </p>
           ) : (
             <p className="text-muted-foreground leading-relaxed mb-2">
-              No upcoming binding regulation or deadline appears in this view. Widen the region
-              filter and inspect the cited sources before drawing an applicability conclusion.
+              No upcoming binding regulation or deadline appears in this view. Adjust the active
+              timeline filters and inspect the cited sources before drawing an applicability
+              conclusion.
             </p>
           )}
           <div className="flex flex-wrap gap-2">

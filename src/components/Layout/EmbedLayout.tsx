@@ -204,6 +204,7 @@ export const EmbedLayout = () => {
     timeline: { label: 'Timeline', icon: Globe, basePath: '/timeline' },
     algorithms: { label: 'Algorithms', icon: Shield, basePath: '/algorithms' },
     library: { label: 'Library', icon: BookOpen, basePath: '/library' },
+    patents: { label: 'Patents', icon: BookOpen, basePath: '/patents' },
     threats: { label: 'Threats', icon: AlertTriangle, basePath: '/threats' },
     leaders: { label: 'Community', icon: Users, basePath: '/leaders' },
     compliance: { label: 'Compliance', icon: ClipboardCheck, basePath: '/compliance' },

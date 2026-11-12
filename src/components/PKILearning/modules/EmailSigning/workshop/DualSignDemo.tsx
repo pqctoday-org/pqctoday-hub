@@ -10,15 +10,12 @@
  *   5. openssl cms -sign -signer alice-pq.crt -inkey alice-pq.key \
  *                       -signer alice-cl.crt -inkey alice-cl.key \
  *                       -in payload -out signed.p7m -nodetach -outform DER -binary
- *   6. Verify pass A: -CAfile alice-pq.crt   → PQ SignerInfo OK?
- *      Verify pass B: -CAfile alice-cl.crt   → classical SignerInfo OK?
+ *   6. Inspect the two expected issuer/serial identities and selected algorithms;
+ *      run one joint cms -verify -noverify signature check (no chain trust).
  *
- * NOTE: this is NOT LAMPS draft-19 composite (which uses a single
- * combined OID like id-MLDSA65-ECDSA-P256-SHA256). It's multi-SignerInfo
- * — two signatures, one .p7m, RFC 5652 standard. Educationally equivalent
- * for "two algorithms must verify" trust model, but a malicious party
- * could strip one SignerInfo. The distinction below points users at the
- * LAMPS roadmap entry for the strictly-stronger composite path.
+ * Multi-SignerInfo CMS is distinct from LAMPS composite signatures. This
+ * sample's explicit two-signer requirement rejects a stripped signer; CMS
+ * alone does not impose the sample's expected-pair policy.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -58,10 +55,9 @@ interface StageResult {
 }
 
 const DEFAULT_PAYLOAD =
-  'Dual-signed workshop message: ML-DSA-65 + ECDSA-P256 SignerInfos.\n' +
-  'A LAMPS-conformant verifier of draft-ietf-lamps-pq-composite-sigs would\n' +
-  'reject the message if EITHER signature failed; this multi-SignerInfo\n' +
-  'CMS accepts a partial match — see the composite-signature distinction below.\n'
+  'Fictional workshop message signed by a selected PQ and classical key.\n' +
+  'This exercise requires both expected sample signers and a successful joint signature check.\n' +
+  'Certificate trust and production policy are not established by this sample.\n'
 
 const PQ_ALG_CHOICES: CmsAlg[] = ['ML-DSA-65', 'ML-DSA-44', 'ML-DSA-87', 'SLH-DSA-SHA2-128s']
 const CL_ALG_CHOICES: CmsAlg[] = ['EC', 'RSA-PSS']
@@ -85,6 +81,14 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
   const [stage, setStage] = useState<Stage>('idle')
   const [error, setError] = useState<string>('')
   const [result, setResult] = useState<StageResult>({})
+  const [resultInputs, setResultInputs] = useState<{
+    pqAlg: CmsAlg
+    clAlg: CmsAlg
+    useHsm: boolean
+    payload: string
+  } | null>(null)
+  const runGenerationRef = useRef(0)
+  const runningRef = useRef(false)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const beginOp = (message: string) => {
@@ -120,12 +124,17 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
     const svc = new CMSSigningService()
     serviceRef.current = svc
     return () => {
+      runGenerationRef.current += 1
+      runningRef.current = false
       svc.dispose()
       serviceRef.current = null
     }
   }, [])
 
   const reset = () => {
+    runGenerationRef.current += 1
+    runningRef.current = false
+    setResultInputs(null)
     setStage('idle')
     setError('')
     setResult({})
@@ -134,7 +143,11 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
 
   const run = async () => {
     const svc = serviceRef.current
-    if (!svc) return
+    if (!svc || runningRef.current) return
+    runningRef.current = true
+    const generation = ++runGenerationRef.current
+    const isCurrent = () => generation === runGenerationRef.current && serviceRef.current === svc
+    setResultInputs({ pqAlg, clAlg, useHsm, payload })
     setError('')
     setResult({})
     setLogEntries([])
@@ -142,12 +155,14 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
     try {
       setStage('pq-key')
       const pq = await svc.genKey(pqAlg, PQ_KEY, useHsm)
+      if (!isCurrent()) return
       setResult((prev) => ({ ...prev, pqKeyPem: pq.keyPem }))
       op.done()
 
       op = beginOp(`Generating ${clAlg} key…`)
       setStage('cl-key')
       const cl = await svc.genKey(clAlg, CL_KEY, useHsm)
+      if (!isCurrent()) return
       setResult((prev) => ({ ...prev, classicalKeyPem: cl.keyPem }))
       op.done()
 
@@ -160,6 +175,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         days: 365,
         useHsm,
       })
+      if (!isCurrent()) return
       setResult((prev) => ({ ...prev, pqCertPem: pqCert.certPem }))
       op.done()
 
@@ -172,6 +188,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         days: 365,
         useHsm,
       })
+      if (!isCurrent()) return
       setResult((prev) => ({ ...prev, classicalCertPem: clCert.certPem }))
       op.done()
 
@@ -185,6 +202,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         classicalCertId: CL_CERT,
         useHsm,
       })
+      if (!isCurrent()) return
       setResult((prev) => ({ ...prev, signedP7m: s.signedP7m }))
       op.done(`Signed — ${s.signedP7m.length} bytes (.p7m)`)
 
@@ -196,20 +214,29 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         classicalCertId: CL_CERT,
         useHsm,
       })
+      if (!isCurrent()) return
       setResult((prev) => ({
         ...prev,
-        ok: v.ok,
+        ok: v.ok === true && v.signerCount === 2,
         signerCount: v.signerCount,
         stderr: v.stderr,
         payload: v.payload,
       }))
-      op.done(v.ok ? `Both signers verified (${v.signerCount})` : 'Verify completed (see result)')
+      if (v.ok === true && v.signerCount === 2)
+        op.done(`Expected signer pair verified (${v.signerCount})`)
+      else
+        op.fail(
+          new Error(v.stderr || 'Expected signer pair or joint signature verification failed')
+        )
 
       setStage('done')
     } catch (err) {
+      if (!isCurrent()) return
       op.fail(err)
       setError(err instanceof Error ? err.message : String(err))
       setStage('error')
+    } finally {
+      if (isCurrent()) runningRef.current = false
     }
   }
 
@@ -238,9 +265,9 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
           </span>
         </h2>
         <p className="text-sm text-muted-foreground">
-          Produces ONE CMS SignedData carrying TWO <code>SignerInfo</code> entries — one signed by
-          an ML-DSA key, one by ECDSA / RSA-PSS. Verifier runs twice with each cert as the trust
-          anchor to report per-signer outcome.{' '}
+          Produces one CMS SignedData with the selected PQ and classical SignerInfos. The sample
+          requires exactly the two generated certificate identities and selected signature profiles,
+          then runs one joint signature check. Certificate chain trust is not checked.{' '}
           <a
             href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/"
             target="_blank"
@@ -262,6 +289,8 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
               <FilterDropdown
                 items={PQ_ALG_CHOICES}
                 selectedId={pqAlg}
+                disabled={busy}
+                ariaLabel="PQ signing algorithm"
                 onSelect={(id) => setPqAlg(id as CmsAlg)}
                 size="sm"
               />
@@ -273,6 +302,8 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
               <FilterDropdown
                 items={CL_ALG_CHOICES}
                 selectedId={clAlg}
+                disabled={busy}
+                ariaLabel="Classical signing algorithm"
                 onSelect={(id) => setClAlg(id as CmsAlg)}
                 size="sm"
               />
@@ -334,6 +365,17 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
           />
         </label>
 
+        {resultInputs &&
+          (resultInputs.pqAlg !== pqAlg ||
+            resultInputs.clAlg !== clAlg ||
+            resultInputs.useHsm !== useHsm ||
+            resultInputs.payload !== payload) && (
+            <p role="status" className="text-xs text-status-warning">
+              Selection changed—run again. Displayed results belong to {resultInputs.pqAlg} +{' '}
+              {resultInputs.clAlg} in {resultInputs.useHsm ? 'HSM' : 'software'} mode with the
+              payload used for that run.
+            </p>
+          )}
         {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
 
         {error && <ErrorAlert message={error} onRetry={run} />}
@@ -347,9 +389,14 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
             done={Boolean(result.pqKeyPem)}
             running={stage === 'pq-key'}
           >
-            {result.pqKeyPem ? <KVRow label="Algorithm" value={pqAlg} /> : null}
             {result.pqKeyPem ? (
-              <KVRow label="Mode" value={useHsm ? 'HSM (pkcs11:)' : 'Software (PEM)'} />
+              <KVRow label="Algorithm" value={resultInputs?.pqAlg ?? pqAlg} />
+            ) : null}
+            {result.pqKeyPem ? (
+              <KVRow
+                label="Mode"
+                value={(resultInputs?.useHsm ?? useHsm) ? 'HSM (pkcs11:)' : 'Software (PEM)'}
+              />
             ) : null}
           </StageCard>
 
@@ -359,9 +406,14 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
             done={Boolean(result.classicalKeyPem)}
             running={stage === 'cl-key'}
           >
-            {result.classicalKeyPem ? <KVRow label="Algorithm" value={clAlg} /> : null}
             {result.classicalKeyPem ? (
-              <KVRow label="Mode" value={useHsm ? 'HSM (pkcs11:)' : 'Software (PEM)'} />
+              <KVRow label="Algorithm" value={resultInputs?.clAlg ?? clAlg} />
+            ) : null}
+            {result.classicalKeyPem ? (
+              <KVRow
+                label="Mode"
+                value={(resultInputs?.useHsm ?? useHsm) ? 'HSM (pkcs11:)' : 'Software (PEM)'}
+              />
             ) : null}
           </StageCard>
 
@@ -401,7 +453,12 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
             {result.signedP7m ? (
               <KVRow label="Size" value={`${result.signedP7m.length} bytes`} />
             ) : null}
-            {result.signedP7m ? <KVRow label="SignerInfos" value={`${pqAlg} + ${clAlg}`} /> : null}
+            {result.signedP7m ? (
+              <KVRow
+                label="SignerInfos"
+                value={`${resultInputs?.pqAlg ?? pqAlg} + ${resultInputs?.clAlg ?? clAlg}`}
+              />
+            ) : null}
             {result.signedP7m && (
               <details className="mt-2">
                 <summary className="cursor-pointer text-[11px] text-primary">
@@ -419,7 +476,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
           <StageCard
             icon={<CheckCircle2 size={14} />}
             title="Verify (all SignerInfos together)"
-            done={stage === 'done'}
+            done={stage === 'done' && result.ok === true}
             running={stage === 'verify'}
           >
             {result.ok === true && (
@@ -427,15 +484,17 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
                 <div className="flex items-center gap-1.5 text-xs text-status-success">
                   <CheckCircle2 size={14} />
                   <span>
-                    {result.signerCount ?? 2} SignerInfo
-                    {(result.signerCount ?? 2) === 1 ? '' : 's'} verified — {pqAlg} + {clAlg}
+                    {result.signerCount} SignerInfo
+                    {result.signerCount === 1 ? '' : 's'} verified — {resultInputs?.pqAlg ?? pqAlg}{' '}
+                    + {resultInputs?.clAlg ?? clAlg}
                   </span>
                 </div>
                 <p className="text-[11px] italic text-muted-foreground">
-                  <code>cms -verify -noverify</code> walked every SignerInfo and checked each
-                  signature against its embedded signer cert. Chain validation skipped (these certs
-                  are self-signed for the demo). Per-SignerInfo atomicity is a LAMPS composite
-                  property — see the distinction above.
+                  The expected distinct certificate identities and selected signature profiles were
+                  inspected, then <code>cms -verify -noverify</code> checked all signatures
+                  together. Chain validation was skipped; no per-signer trust outcome or
+                  deployed-system assurance is established. This is multi-SignerInfo CMS, not a
+                  composite signature.
                 </p>
               </>
             )}
@@ -443,7 +502,10 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
               <>
                 <div className="flex items-center gap-1.5 text-xs text-status-error">
                   <AlertTriangle size={14} />
-                  <span>Verification failed — at least one SignerInfo signature is invalid</span>
+                  <span>
+                    Verification failed — expected signer pair/profile or joint signature check
+                    rejected
+                  </span>
                 </div>
                 {result.stderr && (
                   <details className="mt-2">
@@ -498,7 +560,7 @@ function StageCard({
     <RefreshCw size={12} className="animate-spin text-primary" />
   ) : null
   return (
-    <div className={`space-y-1.5 rounded-md border p-3 ${tone}`}>
+    <div role="group" aria-label={title} className={`space-y-1.5 rounded-md border p-3 ${tone}`}>
       <div className="flex items-center justify-between text-xs font-semibold text-foreground">
         <span className="flex items-center gap-1.5">
           {icon}

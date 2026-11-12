@@ -1,6 +1,31 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { tlsSample } from './measuredTlsHandshake'
 import { sshSample } from './measuredSshHandshake'
+import {
+  buildIkeV2Exchange,
+  IKE_AUTH_SK_BYTES,
+  KEM_PUBKEY_BYTES,
+  KEM_CIPHERTEXT_BYTES,
+} from './ikev2Constants'
+
+// Reuse the existing ML-KEM-768 teaching exchange, replacing its two PSK-only
+// SK payloads with the already defined ML-DSA-65 certificate/AUTH estimates.
+// All IKE headers, initial exchanges and round trips remain in the model.
+const PURE_PQC_IKE_EXCHANGE = buildIkeV2Exchange('pure-pqc', 768)
+const PURE_PQC_IKE_AUTH_MESSAGES = [
+  PURE_PQC_IKE_EXCHANGE.ikeAuth.initiator,
+  PURE_PQC_IKE_EXCHANGE.ikeAuth.responder,
+]
+const PURE_PQC_IKE_PSK_PAYLOAD_BYTES = PURE_PQC_IKE_AUTH_MESSAGES.flatMap(
+  (message) => message.payloads
+)
+  .filter((payload) => payload.abbreviation === 'SK')
+  .reduce((sum, payload) => sum + payload.sizeBytes, 0)
+const PURE_PQC_IKE_HANDSHAKE_BYTES =
+  PURE_PQC_IKE_EXCHANGE.totalBytes -
+  PURE_PQC_IKE_PSK_PAYLOAD_BYTES +
+  PURE_PQC_IKE_AUTH_MESSAGES.length * IKE_AUTH_SK_BYTES['ML-DSA-65']
+
 export type ProtocolName = 'IKEv2' | 'SSH' | 'WireGuard' | 'TLS 1.3'
 export type CryptoMode = 'classical' | 'hybrid' | 'pure-pqc'
 
@@ -46,14 +71,15 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
   {
     protocol: 'IKEv2',
     mode: 'pure-pqc',
-    modeLabel: 'ML-KEM-768',
+    modeLabel: 'ML-KEM-768 + ML-DSA-65 (rounded model)',
     kexAlgorithm: 'ML-KEM-768',
     authAlgorithm: 'ML-DSA-65',
-    handshakeBytes: 3544,
-    roundTrips: 2,
-    publicKeyBytes: 1184,
-    ciphertextBytes: 1088,
-    notes: 'Pure PQC key exchange, no classical DH',
+    handshakeBytes: PURE_PQC_IKE_HANDSHAKE_BYTES,
+    roundTrips: PURE_PQC_IKE_EXCHANGE.roundTrips,
+    publicKeyBytes: KEM_PUBKEY_BYTES[768],
+    ciphertextBytes: KEM_CIPHERTEXT_BYTES[768],
+    notes:
+      'Rounded teaching model, not measured wire traffic: ML-KEM-768 exchange plus two IKE_AUTH messages. Each uses the existing 9,000 B ML-DSA-65 certificate/AUTH SK estimate, retaining both 28 B IKE headers; certificate extensions and padding vary.',
   },
 
   // SSH — captured identification lines and transport packets through both NEWKEYS.

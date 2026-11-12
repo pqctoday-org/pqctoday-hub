@@ -513,6 +513,11 @@ export default defineConfig([
                 '!@/components/PersonaJourney',
                 '@/components/PersonaJourney/*',
                 '!@/components/PersonaJourney/PersonaBoardView',
+                // ResearcherFieldWatchCard.tsx — self-contained vertical card,
+                // no desktop-only layout. Both shells use the same corpus,
+                // followed-fields store and reporting window; this exact reuse
+                // avoids duplicate counters and selection behavior on phones.
+                '!@/components/PersonaJourney/ResearcherFieldWatchCard',
                 // usePersonaPathItems.ts / manifest/registry.ts / manifest/types.ts
                 // (PKILearning) — pure logic/data, no JSX. Phase 5's Learn list
                 // needs the same phase-partitioned path data + manifest

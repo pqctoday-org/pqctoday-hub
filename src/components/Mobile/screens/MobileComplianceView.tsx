@@ -64,6 +64,7 @@ import {
   isPqcApplicable,
   isSecurityTargetType,
   matchesCertType,
+  matchesRecordPqc,
   NOT_ON_ENISA_LIST_LABEL,
   pqcCoverageState,
   pqcEvidenceLabel,
@@ -425,14 +426,24 @@ export function MobileComplianceView({
   const recordScope = searchParams.get('rstatus') === 'all' ? 'all' : 'current'
   // `?rtab=` — the record-type tab desktop reads (all / fips / acvp / cc / cspn / esv).
   const recordTab = searchParams.get('rtab') ?? 'all'
+  // Match the desktop URL parser exactly: first value, comma-separated, no normalisation.
+  const recordPqc = useMemo(
+    () => searchParams.get('pqc')?.split(',').filter(Boolean) ?? [],
+    [searchParams]
+  )
   const recordMatches = useMemo(
     () =>
       records
         ? applyRecordScope(records, recordScope)
-            .filter((r) => matchesCertType(r, recordTab) && matchesRecordSearch(r, recordQuery))
+            .filter(
+              (r) =>
+                matchesCertType(r, recordTab) &&
+                matchesRecordSearch(r, recordQuery) &&
+                matchesRecordPqc(r, recordPqc, recordTab)
+            )
             .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
         : [],
-    [records, recordScope, recordQuery, recordTab]
+    [records, recordScope, recordQuery, recordTab, recordPqc]
   )
   const hasRecordList = recordsReady && !!records && records.length > 0
   // The record-type chips scroll sideways on a phone: bring the selected one (the last, Entropy
@@ -991,6 +1002,29 @@ export function MobileComplianceView({
                   className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
               </div>
+              {recordPqc.length > 0 && (
+                <div
+                  role="group"
+                  aria-label="Active PQC filter"
+                  className="flex min-w-0 items-center gap-2 rounded-[10px] border border-border bg-card px-3"
+                >
+                  <p className="min-w-0 flex-1 break-words text-[11.5px] text-muted-foreground">
+                    PQC filter: {recordPqc.join(', ')}
+                    {recordTab.toLowerCase() === 'esv' && (
+                      <span className="block">Not applied to entropy source records.</span>
+                    )}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    aria-label="Clear PQC filter"
+                    className="h-11 shrink-0 px-3 text-xs"
+                    onClick={() => setSectionParams('records', { pqc: null })}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              )}
               <div
                 className="-mx-0.5 flex gap-1.5 overflow-x-auto px-0.5 pb-0.5"
                 role="group"

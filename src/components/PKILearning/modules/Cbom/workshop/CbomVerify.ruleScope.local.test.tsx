@@ -39,12 +39,16 @@ describe('heuristic name rules and strict hybrid rejection', () => {
       start(algorithm)
       expect(screen.getByRole('button', { name: 'rule-accepted (1)' })).toBeInTheDocument()
       fireEvent.click(
-        screen.getByRole('checkbox', { name: 'Strict name rule: reject recognized hybrid labels' })
+        screen.getByRole('checkbox', {
+          name: 'Strict pure-PQC sample policy: reject hybrid composition',
+        })
       )
       expect(screen.getByRole('button', { name: 'rule-rejected (1)' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'rule-accepted (0)' })).toBeInTheDocument()
-      expect(screen.getByRole('status')).toHaveTextContent('X25519+ML-KEM-768 — rule-rejected')
-      expect(screen.getByRole('status')).toHaveTextContent(
+      expect(screen.getByRole('status', { name: 'Declared hybrid' })).toHaveTextContent(
+        'X25519 + ML-KEM-768 — rule-rejected'
+      )
+      expect(screen.getByText(/A policy rejection does not mean/)).toHaveTextContent(
         'does not mean hybrid cryptography is vulnerable'
       )
       expect(screen.queryByText('quantum-safe', { exact: true })).not.toBeInTheDocument()
@@ -59,10 +63,49 @@ describe('heuristic name rules and strict hybrid rejection', () => {
   it('identifies a fake parameter label only as a heuristic family-name match', () => {
     start('ML-KEM-unsupported-parameters')
     fireEvent.click(
-      screen.getByRole('checkbox', { name: 'Strict name rule: reject recognized hybrid labels' })
+      screen.getByRole('checkbox', {
+        name: 'Strict pure-PQC sample policy: reject hybrid composition',
+      })
     )
     expect(screen.getByRole('button', { name: 'rule-accepted (1)' })).toBeInTheDocument()
     expect(screen.getByText(/does not run OPA\/Rego or verify parameters/)).toBeInTheDocument()
     expect(screen.queryByText(/PQC compliance|quantum-safe/)).not.toBeInTheDocument()
+  })
+})
+
+describe('declared-component strict policy tradeoff', () => {
+  it('uses declared composition independently of an unrelated estate display label', () => {
+    start('Unknown appliance label')
+    expect(screen.getByRole('status', { name: 'Declared hybrid' })).toHaveTextContent(
+      'rule-accepted'
+    )
+    expect(screen.getByRole('status', { name: 'Declared pure PQC' })).toHaveTextContent(
+      'ML-KEM-768 — rule-accepted'
+    )
+    expect(screen.getByRole('status', { name: 'Declared classical' })).toHaveTextContent(
+      'X25519 — rule-rejected'
+    )
+    expect(screen.getByRole('status', { name: 'Missing declaration' })).toHaveTextContent(
+      'none — unknown'
+    )
+    fireEvent.click(
+      screen.getByRole('checkbox', {
+        name: 'Strict pure-PQC sample policy: reject hybrid composition',
+      })
+    )
+    expect(screen.getByRole('status', { name: 'Declared hybrid' })).toHaveTextContent(
+      'rule-rejected'
+    )
+    expect(screen.getByRole('status', { name: 'Declared pure PQC' })).toHaveTextContent(
+      'rule-accepted'
+    )
+    expect(screen.getByRole('status', { name: 'Declared classical' })).toHaveTextContent(
+      'rule-rejected'
+    )
+    expect(screen.getByRole('status', { name: 'Missing declaration' })).toHaveTextContent('unknown')
+    expect(screen.getByRole('button', { name: 'unknown (1)' })).toBeInTheDocument()
+    expect(screen.getByText(/A policy rejection does not mean/)).toHaveTextContent(
+      'does not mean hybrid cryptography is vulnerable'
+    )
   })
 })

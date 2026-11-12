@@ -76,21 +76,9 @@ export interface ResearchFieldWatchSummary {
    *  rows' `researchTopics`. `fieldId` holds the topic id. Unknown ids are
    *  dropped, as for `fields`. */
   topics: FieldWatchEntry[]
-  /** Sum of `deprecatedCount` across the followed fields and topics — NOT a corpus-wide total. */
+  /** Unique reference IDs deprecated inside the window in any followed field or topic. */
   totalDeprecatedInWindow: number
-  /**
-   * True iff nothing in the researcher's followed fields was retracted inside
-   * the window.
-   *
-   * The card's punchline used to read "Nothing you cited has been retracted",
-   * which the app cannot know: there is no per-user citation concept anywhere.
-   * (`useBookmarkStore`'s `libraryBookmarks` is a general save-for-later list,
-   * not a citation register — wiring this to bookmarks would make it
-   * misleadingly `true` whenever the researcher simply hasn't bookmarked
-   * anything.) The card's own footnote conceded the gap in fine print while the
-   * headline asserted it anyway. The claim is now scoped to what is actually
-   * computed: the researcher's followed fields.
-   */
+  /** Legacy zero-count flag for matched catalogue records; not a scientific-retraction finding. */
   nothingRetracted: boolean
 }
 
@@ -176,10 +164,23 @@ export function computeResearchFieldWatch(
     return [{ fieldId: topicId, label, ...bucket }]
   })
 
-  const totalDeprecatedInWindow = [...fields, ...topics].reduce(
-    (sum, f) => sum + f.deprecatedCount,
-    0
+  // Keep each category's row count, but count each matched reference only once
+  // in the aggregate. Use the resolved categories so stale/unknown selections
+  // stay excluded exactly as they are in the displayed category rows.
+  const selectedFields = new Set(fields.map((field) => field.fieldId))
+  const selectedTopics = new Set(topics.map((topic) => topic.fieldId))
+  const deprecatedReferences = new Set(
+    rows
+      .filter(
+        (row) =>
+          row.isDeprecated &&
+          isAfter(row.deprecatedAtMs, windowStartMs) &&
+          (mapAlgorithmFamilyToFields(row.algorithmFamily).some((id) => selectedFields.has(id)) ||
+            (row.researchTopics ?? []).some((id) => selectedTopics.has(id)))
+      )
+      .map((row) => row.referenceId)
   )
+  const totalDeprecatedInWindow = deprecatedReferences.size
 
   return {
     fields,

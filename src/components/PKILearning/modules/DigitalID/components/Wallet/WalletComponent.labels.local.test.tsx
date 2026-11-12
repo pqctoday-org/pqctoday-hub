@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { WalletComponent } from './WalletComponent'
 import type { VerifiableCredential, WalletInstance } from '../../types'
-
+const b64 = (value: unknown) => Buffer.from(JSON.stringify(value)).toString('base64url')
+// Encoded shape fixture, not an assertion that a fabricated signature verifies.
+function rawToken(exp: number = 0) {
+  const issuerJwt = `${b64({ typ: 'dc+sd-jwt', alg: 'ES256' })}.${b64({ iat: 1, exp })}.${Buffer.from(new Uint8Array(64).fill(3)).toString('base64url')}`
+  return JSON.stringify({ issuerJwt, disclosures: [], raw: issuerJwt + '~' })
+}
 const wallet = (credential: Partial<VerifiableCredential> = {}): WalletInstance => ({
   id: 'fictional-wallet',
   owner: {
@@ -23,55 +28,89 @@ const wallet = (credential: Partial<VerifiableCredential> = {}): WalletInstance 
       issuanceDate: '2026-11-01T00:00:00Z',
       expirationDate: '2026-11-02T00:00:00Z',
       credentialSubject: { sample: true },
-      format: 'mso_mdoc',
-      raw: '{"sampleWrapper":true}',
+      format: 'dc+sd-jwt',
+      raw: rawToken(),
       ...credential,
     },
   ],
 })
 beforeEach(() => {
-  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.useFakeTimers()
   vi.setSystemTime(new Date('2026-11-05T12:00:00Z'))
 })
 afterEach(() => vi.useRealTimers())
-describe('wallet display does not equate sample timer or format label with verification', () => {
-  it('keeps the existing timer calculation but disclaims validity for an already-expired credential field', () => {
+describe('wallet inspects actual encoded/stored fields without conflating parsing and verification', () => {
+  it('uses the already-expired stored and encoded dates rather than issuance plus365', () => {
     render(<WalletComponent wallet={wallet()} onAddCredential={vi.fn()} />)
-    expect(screen.getByText('Sample timer not elapsed')).toBeInTheDocument()
+    expect(screen.getByText('2026-11-02T00:00:00Z')).toBeInTheDocument()
+    expect(screen.getAllByText('Expiration date has passed')).toHaveLength(2)
+    expect(screen.getByText('0', { exact: true })).toBeInTheDocument()
+    expect(screen.queryByText('Sample timer not elapsed')).not.toBeInTheDocument()
+    expect(screen.queryByText('Valid', { exact: true })).not.toBeInTheDocument()
+    expect(screen.getByText(/not a credential validity result/)).toBeInTheDocument()
+  })
+  it('shows exact encoded token separately from decoded fields and the stored wrapper', () => {
+    const raw = rawToken()
+    render(<WalletComponent wallet={wallet({ raw })} onAddCredential={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Inspect encoded sample' }))
+    expect(screen.getByText(JSON.parse(raw).raw, { exact: true })).toBeInTheDocument()
+    expect(screen.getByText('Encoded SD-JWT issuer token and disclosures')).toBeInTheDocument()
     expect(
-      screen.getByText(
-        /does not check the credential expiration field, signature, issuer trust or status/
-      )
+      screen.getByText('Stored wrapper / raw field — separate representation')
     ).toBeInTheDocument()
-    expect(screen.queryByText('Valid')).not.toBeInTheDocument()
-    expect(screen.getByText(/It is not a credential validity result/)).toBeInTheDocument()
+    expect(screen.getByText(raw, { exact: true })).toBeInTheDocument()
+    expect(screen.getByText(/not signature verification or full profile/)).toBeInTheDocument()
   })
   it.each(['mso_mdoc', 'dc+sd-jwt'] as const)(
-    'prints the unchanged %s sample wrapper without asserting its wire encoding',
+    'rejects a malformed %s wrapper instead of claiming its wire format',
     (format) => {
-      const raw = JSON.stringify({ format, sampleWrapper: 'not a verified wire object' })
-      render(<WalletComponent wallet={wallet({ format, raw })} onAddCredential={vi.fn()} />)
-      fireEvent.click(screen.getByRole('button', { name: 'Inspect stored sample' }))
-      expect(screen.getByText(raw)).toBeInTheDocument()
-      expect(
-        screen.getByText('Stored sample representation — encoding not checked')
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(/declared format does not establish wire-format compatibility/)
-      ).toBeInTheDocument()
-      expect(screen.queryByText('BASE64 CBOR COSE_Sign1')).not.toBeInTheDocument()
-      expect(screen.queryByText('SD-JWT VC (~ DELIMITED)')).not.toBeInTheDocument()
+      render(
+        <WalletComponent
+          wallet={wallet({ format, raw: '{"sampleWrapper":true}' })}
+          onAddCredential={vi.fn()}
+        />
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Inspect encoded sample' }))
+      expect(screen.getByRole('alert')).toHaveTextContent('Inspection incomplete')
+      expect(screen.queryByText(/Encoded sample structure parsed/)).not.toBeInTheDocument()
+      expect(screen.getByText('{"sampleWrapper":true}')).toBeInTheDocument()
     }
   )
-  it('labels an elapsed demonstration timer without claiming a failed cryptographic verification', () => {
+  it('keeps missing/invalid expiration specifically unknown and never invents a one-year deadline', () => {
     render(
       <WalletComponent
-        wallet={wallet({ issuanceDate: '2020-01-01T00:00:00Z' })}
+        wallet={wallet({ expirationDate: undefined, raw: undefined })}
         onAddCredential={vi.fn()}
       />
     )
-    expect(screen.getByText('Sample timer elapsed')).toBeInTheDocument()
-    expect(screen.queryByText('Expired')).not.toBeInTheDocument()
-    expect(screen.getByText(/production wallet and verifier tools/)).toBeInTheDocument()
+    expect(screen.getByText('Unknown — Field not recorded')).toBeInTheDocument()
+    expect(
+      screen.queryByText('Expiration date is ahead of this device’s clock')
+    ).not.toBeInTheDocument()
+  })
+  it('updates an actual expiration boundary while open and cleans up its local clock', () => {
+    const expires = Math.floor(Date.now() / 1000) + 1
+    const view = render(
+      <WalletComponent
+        wallet={wallet({ expirationDate: undefined, raw: rawToken(expires) })}
+        onAddCredential={vi.fn()}
+      />
+    )
+    expect(screen.getByText('Expiration date is ahead of this device’s clock')).toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(1000))
+    expect(screen.getByText('Expiration date has passed')).toBeInTheDocument()
+    view.unmount()
+    expect(vi.getTimerCount()).toBe(0)
+  })
+  it('recomputes changed stored input instead of retaining a previous decoded token', () => {
+    const view = render(<WalletComponent wallet={wallet()} onAddCredential={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Inspect encoded sample' }))
+    view.rerender(
+      <WalletComponent wallet={wallet({ raw: '{"raw":"broken"}' })} onAddCredential={vi.fn()} />
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent('Inspection incomplete')
+    expect(
+      screen.queryByText('Encoded SD-JWT issuer token and disclosures')
+    ).not.toBeInTheDocument()
   })
 })

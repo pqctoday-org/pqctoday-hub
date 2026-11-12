@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -94,6 +94,10 @@ function Harness({
     </MemoryRouter>
   )
 }
+beforeEach(() => {
+  Object.defineProperty(HTMLElement.prototype, 'scrollTo', { configurable: true, value: vi.fn() })
+})
+
 const openSoftware = () =>
   fireEvent.click(screen.getByRole('button', { name: 'Show software playground log' }))
 

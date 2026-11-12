@@ -6,6 +6,7 @@ import {
   getAlgorithmLaunch,
   readAlgorithmLaunch,
   algorithmLaunchError,
+  algorithmLaunchPhoneReason,
 } from './algorithmLaunch'
 import { getAlgoCtasWithFallback } from './algorithmCtaMap'
 import { getAlgorithmStatusAssertions } from './algorithmStatusAssertions'
@@ -133,4 +134,15 @@ it('does not label a signature choice or composite as the component FIPS specifi
   expect(getAlgoCtasWithFallback('ML-DSA / SLH-DSA').specRef).toBeUndefined()
   expect(getAlgoCtasWithFallback('ML-DSA / SLH-DSA').specUrl).toContain('post-quantum-cryptography')
   expect(getAlgoCtasWithFallback('ML-DSA-65-composite').specRef).toBeUndefined()
+})
+
+it('allows exact phone launches while distinguishing the information-only fallback', () => {
+  const href = algorithmLaunchHref('ML-DSA-87')!
+  const search = new URL(href, 'https://example.org').search
+  expect(readAlgorithmLaunch('interactive', search)?.algorithm).toBe('ML-DSA-87')
+  expect(new URL(href, 'https://example.org').searchParams.get('tab')).toBe('keystore')
+  expect(algorithmLaunchPhoneReason('interactive', search)).toBeNull()
+  expect(algorithmLaunchPhoneReason('interactive', search, true)).toContain('ML-DSA-87')
+  expect(algorithmLaunchPhoneReason('interactive', search, true)).toContain('information-only view')
+  expect(algorithmLaunchPhoneReason('interactive', '?launchAlgo=Not-An-Algorithm', true)).toBeNull()
 })

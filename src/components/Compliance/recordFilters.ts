@@ -6,6 +6,7 @@ import { getMigrateCategory } from './migrateCategories'
 import {
   isCurrentRecord,
   matchesCertType,
+  matchesRecordPqc,
   recordTypeLabel,
   type RecordScope,
 } from './recordSemantics'
@@ -89,15 +90,7 @@ export function recordFilterExclusions(
   // The entropy tab has no PQC or Migrate-category facets: they say nothing about a noise
   // source, and applying them would silently empty the tab.
   const entropyTab = f.certType.toLowerCase() === 'esv'
-  if (
-    !entropyTab &&
-    f.pqc.length > 0 &&
-    !(
-      typeof record.pqcCoverage === 'string' &&
-      f.pqc.some((p) => record.pqcCoverage.toString().includes(p))
-    )
-  )
-    out.push('pqc')
+  if (!matchesRecordPqc(record, f.pqc, f.certType)) out.push('pqc')
   if (f.category.length > 0 && !f.category.includes(record.productCategory)) out.push('cat')
   if (f.source.length > 0 && !f.source.includes(record.source)) out.push('src')
   if (f.vendor.length > 0 && !f.vendor.some((v) => record.vendor.includes(v))) out.push('vendor')

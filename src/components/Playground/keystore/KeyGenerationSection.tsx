@@ -125,7 +125,7 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
       {open && (
         <div className="border-t border-border">
           {/* Tab bar */}
-          <div className="flex border-b border-border bg-muted/10">
+          <div className="flex flex-wrap border-b border-border bg-muted/10">
             {snippets.map((s, i) => (
               <Button
                 variant="ghost"

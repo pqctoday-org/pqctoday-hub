@@ -57,8 +57,9 @@ interface DeveloperImplementationViewProps {
 // highlight schema as the executive "View Top 5" button in AlgorithmsView.
 export const CI_GATE_YAML = `# .github/workflows/pqc-inventory-review.yml
 # Educational family-review example, not a compliance/security verdict.
-# Supply a reviewed cbom.json first (for example, a Hub sample export).
-# This does not scan a project or validate the complete CycloneDX schema.
+# Run from this Hub repository checkout; commit cbom.json at its root.
+# Reuses package-lock.json (Ajv 8.20.0, ajv-formats 3.0.1) and the vendored
+# CycloneDX 1.7 schemas at src/services/cbom/schema/. No inventory scanning.
 name: Sample inventory review
 on:
   pull_request:
@@ -69,12 +70,65 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect a CycloneDX 1.7 sample
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.1'
+          cache: npm
+      - name: Install the existing locked validation dependencies
+        run: npm ci --ignore-scripts
+      - name: Validate and inspect a CycloneDX 1.7 sample
         shell: bash
         run: |
           set -eu
           if ! command -v jq >/dev/null 2>&1; then
             echo "::error::Evaluation failed: jq is unavailable"
+            exit 2
+          fi
+          if ! node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          try {
+            if (require('ajv/package.json').version !== '8.20.0' ||
+                require('ajv-formats/package.json').version !== '3.0.1') {
+              throw new Error('Expected locked Ajv 8.20.0 and ajv-formats 3.0.1');
+            }
+            const Ajv = require('ajv');
+            const addFormats = require('ajv-formats');
+            const schemaDir = path.resolve('src/services/cbom/schema');
+            const readSchema = (name) => JSON.parse(fs.readFileSync(path.join(schemaDir, name), 'utf8'));
+            // Draft-07 section 7.2 permits format annotations without assertions.
+            // These two formats are not implemented by locked ajv-formats 3.0.1.
+            const ajv = new Ajv({
+              strict: false, allErrors: true,
+              formats: { 'iri-reference': true, 'idn-email': true },
+            });
+            addFormats(ajv);
+            const schemas = ['spdx.schema.json', 'jsf-0.82.schema.json', 'cryptography-defs.schema.json', 'bom-1.7.schema.json'].map(readSchema);
+            const checkFormats = (schema) => {
+              if (!schema || typeof schema !== 'object') return;
+              if (typeof schema.format === 'string' && !Object.hasOwn(ajv.formats, schema.format)) {
+                throw new Error('Unconfigured schema format: ' + schema.format);
+              }
+              Object.values(schema).forEach(checkFormats);
+            };
+            schemas.forEach(checkFormats);
+            schemas.slice(0, -1).forEach((schema) => ajv.addSchema(schema));
+            const validate = ajv.compile(schemas.at(-1));
+            const bom = JSON.parse(fs.readFileSync('cbom.json', 'utf8'));
+            if (!validate(bom)) {
+              console.error('::error::Evidence incomplete: CycloneDX 1.7 schema invalid');
+              console.error(ajv.errorsText(validate.errors));
+              process.exitCode = 2;
+            } else {
+              console.log('CycloneDX 1.7 structural schema passed; iri-reference and idn-email syntax are annotations only, not validated');
+            }
+          } catch (error) {
+            console.error('::error::Evaluation failed: schema setup, input access or JSON parsing failed');
+            console.error(error instanceof Error ? error.message : String(error));
+            process.exitCode = 2;
+          }
+          NODE
+          then
             exit 2
           fi
           if ! report=$(jq -sc '
@@ -156,7 +210,7 @@ function CIGateSnippet() {
           Inspect inventory evidence in CI
         </h3>
         <span className="text-xs text-muted-foreground">
-          Limited family-review example; supply a reviewed CycloneDX 1.7 input
+          Schema validation and scoped family review; supply a CycloneDX 1.7 input
         </span>
         <Button
           variant="outline"
@@ -173,12 +227,19 @@ function CIGateSnippet() {
         <code>{CI_GATE_YAML}</code>
       </pre>
       <p className="text-xs text-muted-foreground">
-        This example separates review items, incomplete evidence and evaluation errors. It inspects
-        only top-level algorithm assets in a CycloneDX 1.7 input and a finite set of example
-        families; it does not validate the complete schema, parameters, hybrid binding or deployed
-        security. Missing identities and unsupported nested inventories stay incomplete. Generate
-        and review your inventory with your own tools before this step, then assess each item’s
-        component, protocol context and migration plan. No targeted finding is not an approval.
+        Run this workflow in this Hub repository with cbom.json at the repository root. It uses Node
+        22.23.1, the existing lockfile’s Ajv 8.20.0 / ajv-formats 3.0.1 and all four vendored
+        schemas in src/services/cbom/schema/. All vendored Draft-07 structural schema constraints
+        run before the unchanged top-level family-review rule. Invalid schema, missing identities,
+        unsupported nested inventories and evaluation errors exit 2; recorded review items exit 1;
+        no targeted finding exits 0. The optional iri-reference and idn-email formats are
+        annotations only: their string types are checked, but their IRI/email syntax is not.
+        Supported formats such as date-time remain checked; an unconfigured format makes evaluation
+        fail. Structural schema validity establishes document structure, not truthful inventory,
+        correct cryptography, hybrid binding or deployed security. With your production tools,
+        generate and review the inventory, retain the validator versions and results, and assess
+        each item’s component, protocol context and migration plan. No targeted finding is not an
+        approval.
       </p>
     </section>
   )

@@ -3,10 +3,19 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
+import {
+  mkdtempSync,
+  writeFileSync,
+  rmSync,
+  mkdirSync,
+  cpSync,
+  symlinkSync,
+  readFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { CI_GATE_YAML, DeveloperImplementationView } from './DeveloperImplementationView'
+import { buildCbomDocument } from '@/services/cbom/cycloneDx'
 
 // Execute the exact copyable workflow block, not a parallel implementation.
 const program = CI_GATE_YAML.split('        run: |\n')[1]
@@ -17,9 +26,26 @@ const dirs: string[] = []
 afterEach(() => {
   for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true })
 })
-function run(input?: unknown, mode: 'normal' | 'missing-tool' | 'tool-error' = 'normal') {
+function run(
+  input?: unknown,
+  mode: 'normal' | 'missing-tool' | 'tool-error' | 'missing-schema' | 'unknown-format' = 'normal'
+) {
   const dir = mkdtempSync(join(tmpdir(), 'inventory-review-example-'))
   dirs.push(dir)
+  const schemaDir = join(dir, 'src/services/cbom/schema')
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- schema fixture path under this test's mkdtemp directory
+  mkdirSync(schemaDir, { recursive: true })
+  cpSync(resolve('src/services/cbom/schema'), schemaDir, { recursive: true })
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- link existing tools inside this test's disposable fixture
+  symlinkSync(resolve('node_modules'), join(dir, 'node_modules'), 'dir')
+  if (mode === 'missing-schema') rmSync(join(schemaDir, 'cryptography-defs.schema.json'))
+  if (mode === 'unknown-format') {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- modifies only the copied disposable schema fixture
+    const schema = JSON.parse(readFileSync(join(schemaDir, 'bom-1.7.schema.json'), 'utf8'))
+    schema.properties.serialNumber.format = 'unconfigured-sample-format'
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- modifies only the copied disposable schema fixture
+    writeFileSync(join(schemaDir, 'bom-1.7.schema.json'), JSON.stringify(schema))
+  }
   if (input !== undefined)
     // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed fixture name inside this test's mkdtemp directory
     writeFileSync(join(dir, 'cbom.json'), typeof input === 'string' ? input : JSON.stringify(input))
@@ -63,7 +89,7 @@ function asset(family?: string, name = 'Fictional algorithm') {
   }
 }
 function bom(components: unknown[]) {
-  return { bomFormat: 'CycloneDX', specVersion: '1.7', components }
+  return { bomFormat: 'CycloneDX', specVersion: '1.7', version: 1, components }
 }
 
 describe('copyable limited inventory-evidence review', () => {
@@ -103,6 +129,39 @@ describe('copyable limited inventory-evidence review', () => {
     expect(CI_GATE_YAML).not.toContain('npx')
     expect(CI_GATE_YAML).not.toContain('cyclonedx-cli')
   })
+  it.each([
+    { ...bom([asset('ML-DSA')]), unexpected: true },
+    { ...bom([asset('ML-DSA')]), version: 'one' },
+    bom([{ type: 'cryptographic-asset', cryptoProperties: asset('ML-DSA').cryptoProperties }]),
+    { ...bom([asset('ML-DSA')]), metadata: { timestamp: 'not-a-date-time' } },
+    bom([
+      {
+        ...asset('ML-DSA'),
+        cryptoProperties: {
+          assetType: 'algorithm',
+          algorithmProperties: { primitive: 'not-a-primitive', algorithmFamily: 'ML-DSA' },
+        },
+      },
+    ]),
+    bom([
+      {
+        ...asset('ML-DSA'),
+        cryptoProperties: {
+          assetType: 'algorithm',
+          algorithmProperties: {
+            primitive: 'signature',
+            algorithmFamily: 'ML-DSA',
+            nistQuantumSecurityLevel: 99,
+          },
+        },
+      },
+    ]),
+  ])('rejects schema-invalid data before declaring no targeted findings', (input) => {
+    const result = run(input)
+    expect(result.status).toBe(2)
+    expect(result.output).toContain('CycloneDX 1.7 schema invalid')
+    expect(result.output).not.toContain('No targeted findings')
+  })
   it.each(['RSAES-OAEP', 'RSAES-PKCS1', 'RSASSA-PKCS1', 'RSASSA-PSS', 'ECDSA', 'ECDH'])(
     'reports a structured %s record for review even with an unknown execution environment',
     (family) => {
@@ -122,6 +181,50 @@ describe('copyable limited inventory-evidence review', () => {
       )
     }
   )
+  it('reviews an actual Hub-emitted algorithm asset after schema validation', () => {
+    const doc = buildCbomDocument([
+      {
+        type: 'application',
+        name: 'Fictional component',
+        bomRef: 'sample:component',
+        algorithms: [
+          {
+            canonical: 'ML-DSA',
+            primitive: 'signature',
+            parameterSet: 'ML-DSA-65',
+            securityCategory: 3,
+          },
+        ],
+      },
+    ])
+    const result = run(doc.json)
+    expect(result.status).toBe(0)
+    expect(result.output).toContain('No targeted findings')
+  })
+  it('reports an unavailable referenced schema as evaluation failure, never clean', () => {
+    const result = run(bom([asset('ML-DSA')]), 'missing-schema')
+    expect(result.status).toBe(2)
+    expect(result.output).toContain('Evaluation failed: schema setup')
+    expect(result.output).not.toContain('No targeted findings')
+  })
+  it('fails evaluation rather than silently ignoring an additional unsupported format', () => {
+    const result = run(bom([asset('ML-DSA')]), 'unknown-format')
+    expect(result.status).toBe(2)
+    expect(result.output).toContain('Unconfigured schema format: unconfigured-sample-format')
+    expect(result.output).not.toContain('No targeted findings')
+  })
+  it('states exactly which optional formats are annotations without claiming their syntax passed', () => {
+    const input = {
+      ...bom([asset('ML-DSA')]),
+      metadata: { authors: [{ name: 'Sample author', email: 'not an email address' }] },
+      externalReferences: [{ type: 'website', url: 'not an IRI reference' }],
+    }
+    const result = run(input)
+    expect(result.status).toBe(0)
+    expect(result.output).toContain(
+      'iri-reference and idn-email syntax are annotations only, not validated'
+    )
+  })
   it('does not infer a paired hybrid companion from an unrelated PQC record', () => {
     const result = run(bom([asset('ECDSA', 'record one'), asset('ML-DSA', 'record two')]))
     expect(result.status).toBe(1)
@@ -132,7 +235,9 @@ describe('copyable limited inventory-evidence review', () => {
     (family) => {
       const result = run(bom([asset(family, 'ML-KEM-768')]))
       expect(result.status).toBe(2)
-      expect(result.output).toContain('Missing or out-of-example algorithm identity')
+      expect(result.output).toMatch(
+        /Missing or out-of-example algorithm identity|CycloneDX 1.7 schema invalid/
+      )
       expect(result.output).not.toContain('No targeted findings')
     }
   )
@@ -182,7 +287,9 @@ describe('copyable limited inventory-evidence review', () => {
       ])
       const result = run(input)
       expect(result.status).toBe(2)
-      expect(result.output).toContain('Missing or out-of-example algorithm identity')
+      expect(result.output).toMatch(
+        /Missing or out-of-example algorithm identity|CycloneDX 1.7 schema invalid/
+      )
       expect(result.output).not.toContain('No targeted findings')
     }
   )

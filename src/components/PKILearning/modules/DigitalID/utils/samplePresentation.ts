@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { CryptoProvider } from './crypto-provider'
 import type { CryptoKey } from '../types'
+import { sampleHolderPublicJwk } from './sdjwt-utils'
 
 function decodeObject(encoded: string): Record<string, unknown> {
   if (!/^[A-Za-z0-9_-]+$/.test(encoded)) throw new Error('Malformed sample JWT payload.')
@@ -12,18 +13,20 @@ function decodeObject(encoded: string): Record<string, unknown> {
   return value
 }
 
-/** Match the existing Hub credential's simplified confirmation encoding.
- * The sample stores encoded DER text in x; this is not a production EC JWK parser.
- */
+/** Match all public members without changing synchronous wallet-key selection. */
 export function sampleHolderMatchesIssuer(key: CryptoKey, issuerJwt: string): boolean {
   try {
     const issuer = decodeObject(issuerJwt.split('.')[1])
-    const cnf = issuer.cnf as { jwk?: { x?: string; crv?: string } } | undefined
-    const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(key.publicKey)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '')
-    return cnf?.jwk?.x === encoded && cnf?.jwk?.crv === key.curve
+    const cnf = issuer.cnf as { jwk?: JsonWebKey } | undefined
+    const recorded = cnf?.jwk
+    if (!recorded) return false
+    const actual = sampleHolderPublicJwk(key)
+    return (
+      recorded.kty === actual.kty &&
+      recorded.crv === actual.crv &&
+      recorded.x === actual.x &&
+      recorded.y === actual.y
+    )
   } catch {
     return false
   }

@@ -2,7 +2,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useVendorConcentrationRisks } from './vendorConcentrationRisk'
-type Item = { productId: string; vendorId: string; available?: boolean; fips: boolean }
+type Item = {
+  productId: string
+  vendorId: string
+  available?: boolean
+  fips: boolean
+  hasCertification?: string
+  fipsValidated?: string
+}
 const scope = vi.hoisted(() => ({
   items: [] as Item[],
   assets: [] as { id: string; label: string }[],
@@ -27,6 +34,8 @@ const item = (productId: string, available = true, fips = true): Item => ({
   vendorId: 'sample-vendor',
   available,
   fips,
+  hasCertification: fips ? 'yes' : 'no',
+  fipsValidated: fips ? 'Yes (FIPS 140-3)' : 'No',
 })
 const cards = () => renderHook(() => useVendorConcentrationRisks()).result.current
 const card = (key: string) => cards().find((value) => value.key === key)!

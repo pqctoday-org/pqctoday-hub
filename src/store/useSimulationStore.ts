@@ -277,6 +277,8 @@ export interface SimulationState {
    *  strongest status seen and never letting a demonstration overwrite
    *  learner-authored provenance. */
   recordEvidence: (record: SimEvidenceRecord) => void
+  /** Undo only this run's Learn activity, across its phases; shared curriculum is separate. */
+  clearLearnEvidence: (moduleId: string) => void
   /** Select a difficulty preset (WS-14). */
   setDifficulty: (d: DifficultyId) => void
   /** 09-28 nav remediation (WP2/D6): the ONLY way to change difficulty once
@@ -652,6 +654,15 @@ export const useSimulationStore = create<SimulationState>()(
           return { attempts }
         }),
       recordEvidence: (record) => set((s) => ({ evidence: upsertEvidence(s.evidence, record) })),
+      clearLearnEvidence: (moduleId) =>
+        set((s) => ({
+          evidence: s.evidence.filter(
+            (record) =>
+              record.runId !== `run-${s.seed}` ||
+              record.kind !== 'learn' ||
+              record.resourceId !== moduleId
+          ),
+        })),
       setSecuredBudget: (m) => set({ securedBudgetM: m }),
       spendBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM + m) })),
       creditBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM - m) })),

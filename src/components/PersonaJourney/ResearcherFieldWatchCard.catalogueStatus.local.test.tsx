@@ -21,7 +21,10 @@ vi.mock('@/data/researchFieldWatch', async (importOriginal) => {
   }
 })
 beforeEach(() =>
-  useResearchFieldsStore.setState({ followedFields: ['lattice-based'], followedTopics: [] })
+  useResearchFieldsStore.setState({
+    followedFields: ['lattice-based'],
+    followedTopics: [],
+  })
 )
 describe('catalogue deprecation is not scientific retraction evidence', () => {
   it('a deprecated catalogue sample has no scientific-retraction field but retains its exact count', () => {
@@ -35,12 +38,10 @@ describe('catalogue deprecation is not scientific retraction evidence', () => {
       },
     ]
     render(<ResearcherFieldWatchCard />)
-    expect(
-      screen.getByText('Category matches for Hub catalogue rows marked deprecated')
-    ).toBeInTheDocument()
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('1 category match')
+    expect(screen.getByText('Unique Hub catalogue records marked deprecated')).toBeInTheDocument()
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('1 record')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded category matches for Hub catalogue rows marked deprecated: 1.'
+      'Unique Hub catalogue records marked deprecated: 1.'
     )
     expect(
       screen.getByText(/Hub catalogue status is not evidence of a scientific retraction/)
@@ -58,9 +59,9 @@ describe('catalogue deprecation is not scientific retraction evidence', () => {
       },
     ]
     render(<ResearcherFieldWatchCard />)
-    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('0 category matches')
+    expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('0 records')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Recorded category matches for Hub catalogue rows marked deprecated: 0.'
+      'Unique Hub catalogue records marked deprecated: 0.'
     )
     expect(
       screen.queryByText('Nothing in the fields you follow was retracted.')

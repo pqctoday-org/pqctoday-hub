@@ -730,6 +730,12 @@ export const TimelineView = () => {
           ganttData={ganttData}
           regionFilter={regionFilter}
           regionLabel={REGION_LABELS[regionFilter] ?? regionFilter}
+          selectedCountry={countryFilter}
+          searchText={searchText}
+          phaseFilter={readGanttViewParams(searchParams).phase}
+          eventTypeFilter={readGanttViewParams(searchParams).etype}
+          myCountries={myTimelineCountries}
+          showOnlyMyCountries={showOnlyTimelineCountries}
         />
       )}
 
