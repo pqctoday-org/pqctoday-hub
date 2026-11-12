@@ -39,6 +39,11 @@ describe('retrieved Ops operational recipes', () => {
     expect(chunk!.deepLink).toBe('/learn/ops-quantum-impact')
     expect(chunk!.content.trim()).toBe(canonical.trim())
     expect(chunk!.content).toContain(expected)
+    expect(chunk!.content).toContain('](/learn/tls-basics?tab=exercises)')
+    expect(chunk!.content).toContain(
+      'observing X25519 is not by itself evidence of an attack or policy violation'
+    )
+    expect(chunk!.content).not.toContain('pqc_tls_cipher_suite')
     expect(chunk!.content).not.toContain('classical-only cipher suites')
     expect(chunk!.content).toContain(
       '2,336 bytes together, excluding KeyShareEntry/extension framing'

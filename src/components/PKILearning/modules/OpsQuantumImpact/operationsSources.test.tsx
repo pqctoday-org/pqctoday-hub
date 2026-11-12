@@ -44,6 +44,8 @@ describe('Ops source-backed operational controls', () => {
     expect(summary).toContain('Repeat with `-groups X25519`')
     expect(summary).toContain('a TLS group is not a cipher suite')
     expect(summary).toContain('does not run nginx')
+    expect(summary).toContain('](/learn/tls-basics?tab=exercises)')
+    expect(summary).not.toContain('](/learn/tls-basics?tab=workshop)')
     expect(screen.getByText('ssl_conf_command Ciphersuites')).toBeInTheDocument()
     expect(screen.queryByText('ssl_ciphersuites')).not.toBeInTheDocument()
   })
@@ -52,6 +54,13 @@ describe('Ops source-backed operational controls', () => {
     const incident = concept('PQC Incident Response Runbooks')
     const monitoring = concept('Monitoring Threshold Recalibration')
     expect(incident).toContain('monitor the negotiated key-exchange group')
+    expect(incident).toContain(
+      'observing X25519 is not by itself evidence of an attack or policy violation'
+    )
+    expect(summary).not.toContain('pqc_tls_cipher_suite')
+    expect(summary).not.toContain('QuantumVulnerableCipher')
+    expect(summary).not.toContain('from x509-certificate-exporter')
+    expect(summary).toContain('do not treat a missing observation as a compliant connection')
     expect(incident).toContain(
       'TLS_AES_256_GCM_SHA384 can remain the cipher suite with either X25519MLKEM768 or X25519'
     )
