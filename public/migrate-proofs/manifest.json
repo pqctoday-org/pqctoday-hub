@@ -32133,6 +32133,36 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "hndl-simulator-hndl-dev",
+      "refId": "hndl-simulator-hndl-dev",
+      "file": "hndl-simulator-hndl-dev-d11c8a80-6799012d.html",
+      "sizeBytes": 146084,
+      "content_type": "text/html",
+      "url": "https://github.com/perlab-uc3m/hndl-dev/releases/tag/tifs-revision-2026-10-07",
+      "sha256": "6799012d6cd3bac9465c3a73bd9de38a69648c1815313574a3813ac21ad76e5a",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T10:45:11.569503+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pqctoday-kmip",
+      "refId": "pqctoday-kmip",
+      "file": "pqctoday-kmip-30b93ebc-6cb717a5.html",
+      "sizeBytes": 415055,
+      "content_type": "text/html",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm/blob/dac46b04c6da0da4f1822f8b39c557f045f3e37e/kmip/README.md",
+      "sha256": "6cb717a5dc10b887981538334c2c57f7ec614dadcc3ab23ae41c97beab1f66a3",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T10:45:12.357802+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
