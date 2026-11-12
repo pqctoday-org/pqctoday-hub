@@ -1,67 +1,38 @@
-# ETSI EN 319 412-2: Natural Person Certificate Requirements
+# ETSI EN 319 412-2: Natural Person Certificate Example
 
-> **Official Documentation:** [ETSI EN 319 412-2 V2.2.1 (Latest Published Version)](https://www.etsi.org/deliver/etsi_en/319400_319499/31941202/02.02.01_60/en_31941202v020201p.pdf)
->
-> **ETSI Standards Portal:** [https://www.etsi.org/standards](https://www.etsi.org/standards)
+The two financial certificate profile aliases use the same fictional **Jane Doe / QCP-n-qscd** example. The alias filenames remain stable; they are not claims that an older standards edition is current.
 
----
+Current reference editions checked for this example:
 
-## Overview
+- [EN 319 412-2 V2.5.1 (August 2026)](https://www.etsi.org/deliver/etsi_en/319400_319499/31941202/02.05.01_60/en_31941202v020501p.pdf): natural-person certificate attributes.
+- [EN 319 412-5 V2.6.1 (May 2026)](https://www.etsi.org/deliver/etsi_en/319400_319499/31941205/02.06.01_60/en_31941205v020601p.pdf): QC statement syntax and non-criticality.
+- [EN 319 411-2 V2.6.1 (June 2025), section 5.3](https://www.etsi.org/deliver/etsi_en/319400_319499/31941102/02.06.01_60/en_31941102v020601p.pdf): policy identifiers.
+- [RFC 3739, section 3.2.6](https://www.rfc-editor.org/rfc/rfc3739.html#section-3.2.6): the outer QCStatements extension.
 
-ETSI EN 319 412-2 specifies requirements for **Natural Person Certificates** within the European trust services framework under eIDAS regulation.
+## Worked Person / Device Example
 
----
+| Encoded element    | Selected value                       | Meaning of the sample field                                                                     |
+| ------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| Subject            | Existing Jane Doe distinguished name | Fictional person; the organization fields are retained sample context.                          |
+| Certificate policy | `0.4.0.194112.1.2`                   | QCP-n-qscd: natural person, with the private key related to the certified public key in a QSCD. |
+| Outer extension    | `1.3.6.1.5.5.7.1.3`                  | QCStatements container, marked **non-critical**.                                                |
+| QcCompliance       | `0.4.0.1862.1.1`                     | Statement identifier with no statement-information value.                                       |
+| QcSSCD             | `0.4.0.1862.1.4`                     | Device-related statement identifier with no statement-information value.                        |
+| QcType             | `0.4.0.1862.1.6`                     | A sequence containing exactly one type OID, `0.4.0.1862.1.6.1` for electronic signatures.       |
 
-## Certificate Profiles Defined
+The existing CSR supplies the sample subject and requested extensions. The certificate profile adds the selected policy and QC statements at issuance. The shared serializer emits an explicit 43-byte payload rather than referring to an undefined OpenSSL configuration section:
 
-| Profile        | Description                                                               |
-| -------------- | ------------------------------------------------------------------------- |
-| **NCP**        | Normalized Certificate Policy – Standard assurance level                  |
-| **NCP+**       | Certificates where private key resides in a QSCD                          |
-| **QCP-n**      | Qualified certificates for natural persons (electronic signatures)        |
-| **QCP-n-qscd** | Qualified certificates with keys on a Qualified Signature Creation Device |
+```ini
+qcStatements = DER:30293008060604008e4601013008060604008e4601043013060604008e4601063009060704008e46010601
+certificatePolicies = 0.4.0.194112.1.2
+```
 
----
+There is no `critical,` prefix on QCStatements. `QcLimitValue` is optional and is absent from this example: no currency, amount or exponent has been selected.
 
-## Key Technical Requirements
+## What to Inspect
 
-### Subject Field (Mandatory)
+Generate the fictional CSR and leaf using the existing certificate tools, then inspect the issued certificate and decode the extension payload. Check the outer OID, non-critical flag, all three statement identifiers, the one electronic-signature type OID and the separate policy OID. Check the CSR signature and issued certificate chain separately. A truncated payload, trailing bytes, repeated ETSI statement or altered known statement structure must not be treated as the selected example. An unknown statement identifier has no known QC meaning merely because its encoding parses.
 
-- `commonName` (CN) – Natural person's name
-- `countryName` (C) – Country of the CA or subject
-- `serialNumber` – Unique identifier when names aren't unique (often national ID)
+These checks establish the sample's encoding and cryptographic verification results. They do not demonstrate that a key was held by a QSCD, that identity checks occurred, that an issuer is a qualified trust service provider, or that the whole certificate meets a legal qualification regime. The retained subject example is not a complete identity-validation or standards-conformance test.
 
-### Certificate Extensions
-
-- `keyUsage` – Typically `nonRepudiation` (contentCommitment) for qualified signatures
-- `certificatePolicies` – Must reference applicable OID from EN 319 411-1/411-2
-- `qcStatements` – Critical for qualified certificates, indicating QC compliance and QSCD usage
-
-### QC Statements OIDs (per EN 319 412-5)
-
-| OID                        | Purpose                            |
-| -------------------------- | ---------------------------------- |
-| `id-etsi-qcs-QcCompliance` | Indicates a qualified certificate  |
-| `id-etsi-qcs-QcSSCD`       | Indicates private key is on a QSCD |
-
----
-
-## Practical Recommendations
-
-For enterprise deployments requiring legal validity under eIDAS:
-
-1. Use **QCP-n-qscd** profile for qualified electronic signatures with highest legal standing
-2. Ensure your TSP (Trust Service Provider) is listed on the **EU Trusted List**
-3. Implement certificate lifecycle management aligned with **EN 319 411-1/411-2**
-
----
-
-## Related Standards
-
-- **EN 319 411-1/411-2** – Policy and security requirements for TSPs
-- **EN 319 412-5** – QC Statements and certificate extensions
-- **eIDAS Regulation (EU) 910/2014** – Legal framework for electronic identification and trust services
-
----
-
-_Document generated for reference purposes. Always consult the official ETSI publications for authoritative guidance._
+For your production tools, evaluate whether they encode and display the selected policy and QC statement structures without silently substituting identifiers, preserve unknown statements without assigning them a familiar meaning, reject malformed inputs, and expose the actual device, issuer, identity and policy evidence needed for the intended use. Use the applicable standards and trust framework to assess that evidence; the presence of these sample fields provides no substitute.

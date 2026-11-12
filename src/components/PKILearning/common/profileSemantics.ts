@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import Papa from 'papaparse'
+import { normalizeQcStatements } from './qcStatements'
 import type { X509Attribute, ProfileMetadata } from './types'
 
 const SUBJECT_IDS = new Map([
@@ -77,6 +78,7 @@ const EXTENSION_NAMES = new Map([
   ['2.5.29.17', 'subjectAltName'],
   ['2.5.29.14', 'subjectKeyIdentifier'],
   ['2.5.29.35', 'authorityKeyIdentifier'],
+  ['1.3.6.1.5.5.7.1.3', 'qcStatements'],
   ['1.3.6.1.5.5.7.1.1', 'authorityInfoAccess'],
   // Use the registered OID with arbitrary-extension ASN.1 syntax, not an
   // assumed OpenSSL short-name registration.
@@ -121,7 +123,15 @@ export function serializeProfileExtensions(
           fail(`${name} value says critical but its separate critical flag is false`)
         value = value.replace(/^critical\s*,\s*/i, '')
       }
-      if (name === 'basicConstraints') value = normalizeBasicConstraints(value, purpose)
+      if (name === 'qcStatements') {
+        if (attribute.oid !== '1.3.6.1.5.5.7.1.3')
+          fail('qcStatements uses extension OID 1.3.6.1.5.5.7.1.3; review the profile metadata')
+        try {
+          value = normalizeQcStatements(value, attribute.critical)
+        } catch (error) {
+          fail(error instanceof Error ? error.message : 'Invalid qcStatements payload')
+        }
+      } else if (name === 'basicConstraints') value = normalizeBasicConstraints(value, purpose)
       else if (name === 'nameConstraints') value = normalizeNameConstraints(value, purpose)
       else if (name === 'policyConstraints') value = normalizePolicyConstraints(value, purpose)
       else if (name === 'subjectAltName')
