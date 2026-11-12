@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23T00:57:19.355345+00:00",
+  "generated": "2026-11-12T06:07:59.080190+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -149,7 +149,7 @@
       "superseded_file": "_superseded-10162026/compliance/PCI-DSS.html",
       "supersededAt": "2026-10-16T15:21:45.485033+00:00",
       "supersededBy": "evidence replacement",
-      "superseded_reason": "cached file was the PCI SSC homepage, not the standard — replaced by PCI-DSS.pdf",
+      "superseded_reason": "cached file was the PCI SSC homepage, not the standard \u2014 replaced by PCI-DSS.pdf",
       "file": "compliance/PCI-DSS.html",
       "replacedAt": "2026-10-30T11:40:27.450120+00:00",
       "replacedBy": "evidence replacement",
@@ -2339,7 +2339,7 @@
       "superseded_file": "_superseded-10162026/compliance/DISA-STIG.html",
       "supersededAt": "2026-10-16T16:23:16.698574+00:00",
       "supersededBy": "evidence replacement",
-      "superseded_reason": "capture was the STIG downloads listing, not the instrument that makes STIGs binding — replaced by DISA-STIG.pdf"
+      "superseded_reason": "capture was the STIG downloads listing, not the instrument that makes STIGs binding \u2014 replaced by DISA-STIG.pdf"
     },
     {
       "refId": "CZ-NUKIB-MIN-CRYPTO-REQS",
@@ -3080,7 +3080,7 @@
       "superseded_file": "_superseded-09272026/compliance/SG-CSA-QUANTUM.html",
       "supersededAt": "2026-09-27T22:36:49.488000+00:00",
       "supersededBy": "replace_evidence.py",
-      "superseded_reason": "LM-068 data remediation 2026-09-27: evidence corrected/added (research by antigravity-44, Codex second source) — replaced by SG-CSA-QUANTUM.pdf"
+      "superseded_reason": "LM-068 data remediation 2026-09-27: evidence corrected/added (research by antigravity-44, Codex second source) \u2014 replaced by SG-CSA-QUANTUM.pdf"
     },
     {
       "refId": "EUCC-V2",
@@ -3144,7 +3144,7 @@
       "ok": false,
       "supersededAt": "2026-09-27T22:36:47.271670+00:00",
       "supersededBy": "replace_evidence.py",
-      "superseded_reason": "LM-068 data remediation 2026-09-27: evidence corrected/added (research by antigravity-44, Codex second source) — replaced by NSCIB-NETHERLANDS-SCHEME-FOR-C.html"
+      "superseded_reason": "LM-068 data remediation 2026-09-27: evidence corrected/added (research by antigravity-44, Codex second source) \u2014 replaced by NSCIB-NETHERLANDS-SCHEME-FOR-C.html"
     },
     {
       "refId": "TSE-COMMON-CRITERIA-CERTIFICAT",
@@ -3185,7 +3185,7 @@
       "ok": false,
       "supersededAt": "2026-09-27T22:36:46.733556+00:00",
       "supersededBy": "replace_evidence.py",
-      "superseded_reason": "LM-068 data remediation 2026-09-27: evidence corrected/added (research by antigravity-44, Codex second source) — replaced by ANSSI-BODY.html"
+      "superseded_reason": "LM-068 data remediation 2026-09-27: evidence corrected/added (research by antigravity-44, Codex second source) \u2014 replaced by ANSSI-BODY.html"
     },
     {
       "refId": "NIAP-POLICY-33-PQC",
@@ -3391,7 +3391,7 @@
       "superseded_file": "_superseded-10302026/compliance/PCI-DSS.pdf",
       "supersededAt": "2026-10-30T11:40:27.450120+00:00",
       "supersededBy": "evidence replacement",
-      "superseded_reason": "PCI rows: public SSC pages only — replaced by PCI-DSS.html"
+      "superseded_reason": "PCI rows: public SSC pages only \u2014 replaced by PCI-DSS.html"
     },
     {
       "refId": "BRAZIL-BACEN-4893",
@@ -3450,14 +3450,14 @@
       "attempts": 7
     },
     "KCMVP": {
-      "reason": "unusable content: only 13 chars of visible text (floor 200) — a shell, not a document",
+      "reason": "unusable content: only 13 chars of visible text (floor 200) \u2014 a shell, not a document",
       "blocked_at": "2026-07-31T22:02:59.774776+00:00",
       "attempts": 6
     },
     "NZISM": {
-      "reason": "status=200, tier=crawl4ai",
-      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
-      "attempts": 6
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-11-12T06:07:02.043040+00:00",
+      "attempts": 7
     },
     "UAE-CSC-PQC": {
       "reason": "status=err, tier=crawl4ai",
@@ -3475,24 +3475,24 @@
       "attempts": 2
     },
     "BRAZIL-BACEN-4893": {
-      "reason": "unusable content: only 23 chars of visible text (floor 200) — a shell, not a document",
+      "reason": "unusable content: only 23 chars of visible text (floor 200) \u2014 a shell, not a document",
       "blocked_at": "2026-09-23T00:34:39.676694+00:00",
       "attempts": 3
     },
     "ISO-27001": {
-      "reason": "refused at the door: artefact PAYWALL: a price (chf 155) beside 'add to cart' — paid or registration-gated evidence is excluded by policy",
-      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
-      "attempts": 1
+      "reason": "refused at the door: artefact PAYWALL: a price (chf 155) beside 'add to cart' \u2014 paid or registration-gated evidence is excluded by policy",
+      "blocked_at": "2026-11-12T06:07:02.043040+00:00",
+      "attempts": 2
     },
     "ISO-SAE-21434": {
-      "reason": "refused at the door: artefact PAYWALL: a price (chf 227) beside 'add to cart' — paid or registration-gated evidence is excluded by policy",
-      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
-      "attempts": 1
+      "reason": "refused at the door: artefact PAYWALL: a price (chf 227) beside 'add to cart' \u2014 paid or registration-gated evidence is excluded by policy",
+      "blocked_at": "2026-11-12T06:07:02.043040+00:00",
+      "attempts": 2
     },
     "ISO-19790": {
-      "reason": "refused at the door: artefact PAYWALL: a price (chf 0) beside 'add to cart' — paid or registration-gated evidence is excluded by policy",
-      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
-      "attempts": 1
+      "reason": "refused at the door: artefact PAYWALL: a price (chf 0) beside 'add to cart' \u2014 paid or registration-gated evidence is excluded by policy",
+      "blocked_at": "2026-11-12T06:07:02.043040+00:00",
+      "attempts": 2
     }
   }
 }
