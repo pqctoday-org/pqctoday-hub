@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { CmsSourceGuide, LibraryReviewProcess } from '@/components/Library/LibrarySourceLabels'
+import { CmsSourceGuide, LibraryReviewProcess } from '@/components/common/LibrarySourceLabels'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { Search, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'

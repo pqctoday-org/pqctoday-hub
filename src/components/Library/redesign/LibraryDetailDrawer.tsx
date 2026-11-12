@@ -9,7 +9,7 @@
  * CSWP-39 pillar rollup.
  */
 import { useEffect, useRef, useState } from 'react'
-import { CmsSourceGuide, LibraryReviewProcess } from '../LibrarySourceLabels'
+import { CmsSourceGuide, LibraryReviewProcess } from '@/components/common/LibrarySourceLabels'
 import { Link } from 'react-router'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'

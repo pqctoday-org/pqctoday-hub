@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { LibraryItem } from '@/data/libraryData'
-import { CMS_SOURCE_ROLES, cmsSourceRole, sourceReviewContext } from './librarySourceContext'
+import {
+  CMS_SOURCE_ROLES,
+  cmsSourceRole,
+  sourceReviewContext,
+} from '@/components/Library/librarySourceContext'
 
 export function LibraryReviewProcess({
   item,

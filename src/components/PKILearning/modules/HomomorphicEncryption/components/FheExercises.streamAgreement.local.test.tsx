@@ -33,7 +33,7 @@ function panel() {
     .getByRole('heading', { name: /^4\. What can run in the HSM/ })
     .closest('.glass-panel')
   if (!(node instanceof HTMLElement)) throw Error('Missing exercise panel')
-  return within(node)
+  return node
 }
 function flow(id: string) {
   const f = FHE_HSM_FLOWS.find((x) => x.id === id)
@@ -96,7 +96,7 @@ describe('Supported streamed export versus sample evaluation placement', () => {
         <FheExercises onNavigateToWorkshop={navigate} />
       </MemoryRouter>
     )
-    const p = panel()
+    const p = within(panel())
     expect(p.queryByRole('status')).not.toBeInTheDocument()
     await user.click(p.getByRole('button', { name: 'Reveal explanation' }))
     const answer = p.getByRole('status')
@@ -130,7 +130,7 @@ describe('Supported streamed export versus sample evaluation placement', () => {
       </EmbedProvider>
     )
     await user.click(screen.getByRole('tab', { name: /Exercises/ }))
-    await user.click(panel().getByRole('button', { name: 'Open Workshop' }))
+    await user.click(within(panel()).getByRole('button', { name: 'Open Workshop' }))
     expect(
       await screen.findByRole('button', { name: /What can run in the HSM\?/ })
     ).toBeInTheDocument()

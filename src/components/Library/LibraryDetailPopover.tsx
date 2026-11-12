@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
 import { resolveLibrarySourceAction } from './librarySourceAction'
-import { CmsSourceGuide, LibraryReviewProcess } from './LibrarySourceLabels'
+import { CmsSourceGuide, LibraryReviewProcess } from '@/components/common/LibrarySourceLabels'
 import { formatLibDate } from './redesign/libraryPills'
 
 /**

@@ -20,7 +20,7 @@ import {
 import { documentWeight } from '@/data/libraryDocumentWeight'
 import { resolveLibrarySourceAction } from '../librarySourceAction'
 import { MISSING_REVIEWED_SUMMARY, needsScopeVerification } from '../libraryClaimSemantics'
-import { CmsSourceGuide, LibraryReviewProcess } from '../LibrarySourceLabels'
+import { CmsSourceGuide, LibraryReviewProcess } from '@/components/common/LibrarySourceLabels'
 
 interface LibraryDocumentCardProps {
   item: LibraryItem
