@@ -128,13 +128,34 @@ describe('runEncapDecapSample', () => {
   const M = {} as SoftHSMModule
   const extract = vi.mocked(hsm_extractKeyValue)
 
+  const CKR_ATTRIBUTE_VALUE_INVALID = 0x13
+  const hexOf = (b: Uint8Array) =>
+    Array.from(b, (x) => x.toString(16).padStart(2, '0'))
+      .join('')
+      .toUpperCase()
+  /** Keys the simulated engine refuses at C_CreateObject, as both real engines do (FIPS 203 input check). */
+  let refused = new Set<string>()
+  /** Per-key overrides of the C_CreateObject return value (injected faults). */
+  let importRv = new Map<string, number>()
+  /** Return value of the operation that follows a key-check import (CKR_OK unless injected). */
+  let keyCheckOpRv = 0
+
   beforeEach(() => {
     for (const f of [runEncapCase, importPrivate, importPublic, decapsulateRv, encapsulateRv])
       f.mockReset()
     extract.mockReset()
+    refused = new Set()
+    importRv = new Map()
+    keyCheckOpRv = 0
   })
 
-  /** An engine that agrees with NIST everywhere. */
+  const importer = (_m: unknown, _h: unknown, _v: unknown, bytes: Uint8Array) => {
+    const key = hexOf(bytes)
+    const rv = importRv.get(key) ?? (refused.has(key) ? CKR_ATTRIBUTE_VALUE_INVALID : 0)
+    return { rv, handle: rv === 0 ? 6 : 0 }
+  }
+
+  /** An engine that agrees with NIST everywhere: invalid keys are refused at import. */
   const agreeingEngine = async () => {
     const cases = await loadEncapDecapCases()
     runEncapCase.mockImplementation(() => ({
@@ -142,54 +163,51 @@ describe('runEncapDecapSample', () => {
       observed: 'c and k byte-equal',
       details: 'ok',
     }))
-    importPrivate.mockReturnValue({ rv: 0, handle: 5 })
-    importPublic.mockReturnValue({ rv: 0, handle: 6 })
+    for (const c of cases) {
+      if (c.function.endsWith('KeyCheck') && c.testPassed === false)
+        refused.add((c.ek ?? c.dk)!.toUpperCase())
+    }
+    importPrivate.mockImplementation(importer)
+    importPublic.mockImplementation(importer)
     // Decapsulation hands back the expected k of the case being run, in order.
     const ks = cases.filter((c) => c.function === 'decapsulation').map((c) => c.k!)
     let d = 0
     decapsulateRv.mockImplementation((_m, _h, _p, ct: Uint8Array) => ({
-      rv: ct.length === 1088 && ct.every((b) => b === 0) ? (checkAccepts('dk') ? 0 : 1) : 0,
+      rv: ct.length === 1088 && ct.every((b) => b === 0) ? keyCheckOpRv : 0,
       handle: 9,
     }))
     extract.mockImplementation(() => {
       const hex = ks[d++]
       return Uint8Array.from(hex.match(/../g)!.map((b) => parseInt(b, 16)))
     })
-    // A key check passes when the engine accepts exactly the keys NIST accepts.
-    encapsulateRv.mockImplementation(() => ({
-      rv: checkAccepts('ek') ? 0 : 1,
-      handle: 0,
-      ctLen: 1088,
-    }))
+    encapsulateRv.mockImplementation(() => ({ rv: keyCheckOpRv, handle: 0, ctLen: 1088 }))
     return cases
   }
-  // key-check cases are run in file order; answer per NIST for each
-  const queues: Record<'ek' | 'dk', boolean[]> = { ek: [], dk: [] }
-  const checkAccepts = (kind: 'ek' | 'dk') => queues[kind].shift() as boolean // eslint-disable-line security/detect-object-injection
+
+  const keyCase = (
+    cases: Awaited<ReturnType<typeof loadEncapDecapCases>>,
+    fn: string,
+    valid: boolean
+  ) => cases.find((c) => c.function === fn && c.testPassed === valid)!
+  const resultFor = (
+    out: Awaited<ReturnType<typeof runEncapDecapSample>>,
+    c: { tgId: number; tcId: number }
+  ) => out.find((r) => r.tgId === c.tgId && r.tcId === c.tcId)!
 
   it('passes every case when the engine answers as NIST expects', async () => {
-    const cases = await agreeingEngine()
-    queues.ek = cases
-      .filter((c) => c.function === 'encapsulationKeyCheck')
-      .map((c) => c.testPassed!)
-    queues.dk = cases
-      .filter((c) => c.function === 'decapsulationKeyCheck')
-      .map((c) => c.testPassed!)
+    await agreeingEngine()
     const out = await runEncapDecapSample(M, 1)
     expect(out).toHaveLength(11)
     expect(
       out.filter((r) => r.status !== 'pass').map((r) => `${r.tgId}/${r.tcId}: ${r.observed}`)
     ).toEqual([])
+    // The documented refusal is what passes an invalid-key case.
+    for (const r of out.filter((x) => x.testPassed === false))
+      expect(r.observed).toBe('key rejected')
   })
 
   it('fails a decapsulation whose shared secret differs from NIST’s', async () => {
-    const cases = await agreeingEngine()
-    queues.ek = cases
-      .filter((c) => c.function === 'encapsulationKeyCheck')
-      .map((c) => c.testPassed!)
-    queues.dk = cases
-      .filter((c) => c.function === 'decapsulationKeyCheck')
-      .map((c) => c.testPassed!)
+    await agreeingEngine()
     let n = 0
     const original = extract.getMockImplementation() as unknown as () => Uint8Array
     extract.mockImplementation(() => {
@@ -206,16 +224,75 @@ describe('runEncapDecapSample', () => {
 
   it('fails a key check that accepts a key NIST marks invalid', async () => {
     const cases = await agreeingEngine()
-    queues.ek = cases.filter((c) => c.function === 'encapsulationKeyCheck').map(() => true)
-    queues.dk = cases
-      .filter((c) => c.function === 'decapsulationKeyCheck')
-      .map((c) => c.testPassed!)
+    refused.delete(keyCase(cases, 'encapsulationKeyCheck', false).ek!.toUpperCase())
     const out = await runEncapDecapSample(M, 1)
     const red = out.filter((r) => r.status !== 'pass')
     expect(red).toHaveLength(1)
     expect(red[0].function).toBe('encapsulationKeyCheck')
     expect(red[0].testPassed).toBe(false)
     expect(red[0].observed).toMatch(/accepted, but NIST marks it invalid/)
+  })
+
+  it('fails a key check that refuses, with the documented code, a key NIST marks valid', async () => {
+    const cases = await agreeingEngine()
+    const valid = keyCase(cases, 'decapsulationKeyCheck', true)
+    refused.add(valid.dk!.toUpperCase())
+    const r = resultFor(await runEncapDecapSample(M, 1), valid)
+    expect(r.status).toBe('fail')
+    expect(r.observed).toMatch(/rejected, but NIST marks it valid/)
+  })
+
+  // Faults that say nothing about the key. Before, any non-zero return value counted as
+  // "key rejected", so each of these passed a case that expects an invalid key to be refused.
+  const UNRELATED: Array<[string, number]> = [
+    ['CKR_SESSION_HANDLE_INVALID', 0xb3],
+    ['CKR_DEVICE_ERROR', 0x30],
+    ['CKR_TOKEN_RESOURCE_EXCEEDED', 0x201],
+    ['CKR_GENERAL_ERROR', 0x05],
+  ]
+  describe.each(['encapsulationKeyCheck', 'decapsulationKeyCheck'])('%s', (fn) => {
+    it.each(UNRELATED)(
+      'an invalid key whose import fails with %s is an error, not a rejection',
+      async (name, rv) => {
+        const cases = await agreeingEngine()
+        const bad = keyCase(cases, fn, false)
+        importRv.set((bad.ek ?? bad.dk)!.toUpperCase(), rv)
+        const out = await runEncapDecapSample(M, 1)
+        const r = resultFor(out, bad)
+        expect(r.status).toBe('error')
+        expect(r.observed).toContain(name)
+        expect(r.observed).toMatch(/not a key-check result/)
+        // only that case changed
+        expect(out.filter((x) => x.status !== 'pass')).toHaveLength(1)
+      }
+    )
+
+    it.each(UNRELATED)(
+      'a valid key whose import fails with %s is an error, not a rejection',
+      async (name, rv) => {
+        const cases = await agreeingEngine()
+        const good = keyCase(cases, fn, true)
+        importRv.set((good.ek ?? good.dk)!.toUpperCase(), rv)
+        const r = resultFor(await runEncapDecapSample(M, 1), good)
+        expect(r.status).toBe('error')
+        expect(r.observed).toContain(name)
+      }
+    )
+
+    it('an imported key whose operation then fails is an error, for either polarity', async () => {
+      const cases = await agreeingEngine()
+      const bad = keyCase(cases, fn, false)
+      refused.delete((bad.ek ?? bad.dk)!.toUpperCase())
+      keyCheckOpRv = 0x30 // CKR_DEVICE_ERROR
+      const out = await runEncapDecapSample(M, 1)
+      for (const c of [bad, keyCase(cases, fn, true)]) {
+        const r = resultFor(out, c)
+        expect(r.status, `${c.tgId}/${c.tcId}`).toBe('error')
+        expect(r.observed).toMatch(
+          /key imported, then C_(En|De)capsulateKey returned CKR_DEVICE_ERROR/
+        )
+      }
+    })
   })
 
   it('reports an engine error as an error, never as a successful rejection', async () => {
