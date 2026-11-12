@@ -1,8 +1,8 @@
 ---
 generated: 2026-11-12
 category: Technical Standards
-document_count: 22
-requirement_count: 198
+document_count: 23
+requirement_count: 202
 ---
 
 ## AQ-PQC-Migration-Framework-v2.1-2026
@@ -67,6 +67,20 @@ requirement_count: 198
     - _T2 Risk-Informed · all_: Risk-prioritize limited resources: upgrade quantum-vulnerable public-key crypto (RSA, ECC) ahead of symmetric key-length increases such as AES-128 to AES-256.
     - _T2 Risk-Informed · all_: Choose PQC security levels pragmatically; level 1 is acceptable for signatures because level 5 public-key schemes are costly, and mandating level 5 should not drain migration resources.
     - _T2 Risk-Informed · keys_: Prioritize migrating key agreement to post-quantum now, because traffic harvested today can be decrypted after Q-day (harvest-now-decrypt-later).
+
+## CoT-Decrypting-Future-PQC-Timelines-2026
+- **Source**: Decrypting the Future: Global Timelines for Post-Quantum Cryptography and Why They Matter
+- **URL**: https://www.charteroftrust.com/news/decrypting-the-future-global-timelines-for-postquantum-cryptography-and-why-they-matter/
+- **Requirement count**: 6
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish governance structures for PQC transition, treating PQC migration as an organizational and architectural transformation rather than a technical patch.
+    - _T2 Risk-Informed · all_: Align PQC migration plans across jurisdictions in anticipation of compounding compliance requirements and converging mandatory deadlines in the late 2020s to 2030.
+    - _T2 Risk-Informed · all_: Prioritise PQC migration for long-lived data and slow-replacement systems in high-exposure sectors (financial services, government/defense, OT, healthcare) and do not defer action until quantum computers mature.
+    - _T2 Risk-Informed · all_: Engage the supply chain as part of PQC readiness, treating supplier engagement as central to migration success.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Treat cryptographic inventory as a core component of PQC readiness, equal in importance to algorithm selection; establish a cryptographic inventory as part of the migration programme.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · all_: Build crypto-agility into systems and architecture so cryptographic algorithms can be transitioned as standards and regional requirements evolve.
 
 ## Deloitte-TechTrends-2025-Quantum
 - **Source**: The new math: Solving cryptography in an age of quantum (Tech Trends 2025)
@@ -260,17 +274,17 @@ requirement_count: 198
 - **URL**: https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/
 - **Requirement count**: 9
 - **Governance**:
-    - _T2 Risk-Informed · all_: Establish a program-level governance body with representatives from all major business groups, research and engineering divisions, and functions to lead the quantum-safe transition.
-    - _T2 Risk-Informed · all_: Align the PQC migration roadmap with government requirements and timelines (OMB, CISA, NIST, NSA/CNSA 2.0) and monitor international quantum-safe initiatives to keep deadlines consistent.
-    - _T3 Repeatable · software_: Update first-party and third-party services, the supply chain, and the broader ecosystem to be quantum safe and crypto-agile, not just internally owned systems.
+    - _T2 Risk-Informed · all_: Establish a dedicated quantum-safe program governed by a leadership team with representatives across all business groups, engineering and functions.
+    - _T2 Risk-Informed · all_: Align the PQC transition program with government requirements and timelines (OMB, CISA, NIST, NSA/CNSA 2.0) and monitor international quantum-safe initiatives.
+    - _T3 Repeatable · all_: Set an explicit organizational transition deadline ahead of government deadlines, with early adoption of quantum-safe capabilities and gradual move to defaults.
 - **Inventory**:
-    - _T3 Repeatable · all_: Begin the quantum-safe transition with an enterprise-wide cryptographic inventory to assess and prioritize cryptographic asset risks before remediation work.
+    - _T2 Risk-Informed · all_: Begin the quantum-safe journey with an enterprise-wide cryptographic inventory used to assess and prioritize cryptographic asset risks.
 - **Lifecycle / CLM**:
-    - _T3 Repeatable · all_: Set an explicit organizational migration target date ahead of the 2035 government deadline: complete transition by 2033, enable early PQC adoption by 2029, then make quantum-safe capabilities the default.
-    - _T3 Repeatable · all_: Plan the PQC transition as a phased, modular program, choosing per service between direct PQC adoption and an interim hybrid classical+PQC approach based on performance constraints and risk profile.
-    - _T3 Repeatable · all_: Migrate in prioritized order: foundational cryptographic components first, then core infrastructure services (authentication, key/secret management, signing), then all remaining services and endpoints.
-    - _T3 Repeatable · all_: Build crypto-agility (the ability to easily change algorithms) into systems and use the migration to retire legacy technology and practices in favor of modern cryptographic architectures.
-    - _T3 Repeatable · keys_: Prioritize quantum-safe key exchange (hybrid or pure PQC in TLS 1.3) to mitigate Harvest Now, Decrypt Later risk, ahead of other migrations.
+    - _T2 Risk-Informed · all_: Plan the PQC migration as a multiyear transformation starting now to avoid a last-minute scramble.
+    - _T3 Repeatable · all_: Adopt a phased, risk-based transition per service, choosing direct PQC or an interim hybrid classical/PQC approach based on requirements, performance constraints and risk profile.
+    - _T3 Repeatable · all_: Prioritize core infrastructure services (authentication, key and secret management, signing) first to protect the most sensitive components before broader rollout.
+    - _T3 Repeatable · libraries_: Integrate PQC algorithms into foundational cryptographic libraries and prioritize quantum-safe key exchange (hybrid TLS) to counter harvest-now-decrypt-later risk.
+    - _T4 Adaptive · all_: Embrace crypto-agility so algorithms can be easily changed, upgrading legacy systems to modern, inherently quantum-safe cryptographic architectures.
 
 ## RFC 9019
 - **Source**: A Firmware Update Architecture for Internet of Things (SUIT)
@@ -325,20 +339,17 @@ requirement_count: 198
 ## draft-ietf-pquip-pqc-hsm-constrained-03
 - **Source**: Adapting Constrained Devices for Post-Quantum Cryptography
 - **URL**: https://www.ietf.org/archive/id/draft-ietf-pquip-pqc-hsm-constrained-11.txt
-- **Requirement count**: 10
+- **Requirement count**: 8
 - **Assurance / FIPS**:
-    - _T3 Repeatable · keys_: Perform encryption and decryption of exported seeds and private keys entirely within cryptographic modules to reduce exposure and comply with established security standards.
-    - _T3 Repeatable · keys_: When importing a private key containing both seed and expanded key, apply the consistency check defined for ML-DSA and ML-KEM private key formats.
-- **Governance**:
-    - _T2 Risk-Informed · all_: Vendors integrating third-party cryptographic modules should use this guidance to determine which capabilities and optimizations to require from suppliers.
-    - _T2 Risk-Informed · keys_: Treat PQC seeds as Critical Security Parameters and protect them with the same level of protection as private keys, storing them within a cryptographic module.
-    - _T2 Risk-Informed · keys_: Document and decide seed-only versus expanded-key storage trade-offs (storage vs performance) per module and algorithm, including SLH-DSA key-generation cost where devices generate their own keys.
+    - _T3 Repeatable · keys_: Perform encryption and decryption of exported seeds and private keys entirely within the cryptographic module to reduce exposure and ensure compliance with established security standards.
 - **Lifecycle / CLM**:
-    - _T3 Repeatable · keys_: Plan for backup and recovery of seeds and private keys; support secure backup mechanisms using encrypted storage and protections against unauthorized access.
-    - _T3 Repeatable · keys_: Protect exported seeds/keys using a key-encryption key or secure channel with security strength at least matching the PQ security level of the exported key (e.g., AES-256 for Level 5).
-    - _T3 Repeatable · keys_: Establish secure channels used to transfer private key material with a PQ-secure key exchange (hybrid ECDHE+ML-KEM or ML-KEM) to mitigate harvest-now-decrypt-later, and additionally use PQ authentication such as ML-DSA.
-    - _T3 Repeatable · keys_: Use a strong symmetric key-wrap algorithm (e.g., AES Key Wrap with Padding) to encrypt seeds or private keys before export, and protect both the exported data and the wrapping key.
-    - _T3 Repeatable · keys_: In seed-only designs, hold derived private keys only transiently and securely erase derived state once the operation completes.
+    - _T2 Risk-Informed · keys_: Protect seeds as Critical Security Parameters with the same level of protection as private keys, storing them securely within a cryptographic module (hardware or software).
+    - _T2 Risk-Informed · keys_: Plan for backup and recovery of seeds and private keys by supporting secure backup mechanisms with encrypted storage and protection against unauthorized access.
+    - _T3 Repeatable · keys_: Design seed management to account for non-recoverability: retain the seed at key generation time because it cannot be reconstructed from the expanded private key.
+    - _T3 Repeatable · keys_: Where seed-only storage is used, keep derived private keys transient and securely erase derived state once the cryptographic operation completes.
+    - _T3 Repeatable · keys_: Protect exported seeds/keys with a key-encryption key or secure channel whose security strength matches the PQ security level of the exported key (e.g., AES-256 for Level 5 keys).
+    - _T3 Repeatable · keys_: When transferring private key material directly between modules, establish a mutually authenticated channel with post-quantum key exchange (hybrid ECDHE+ML-KEM or ML-KEM) to mitigate harvest-now-decrypt-later, and use PQ authentication.
+    - _T3 Repeatable · keys_: Encrypt exported seeds/private keys with a strong symmetric algorithm such as AES Key Wrap with Padding (RFC 5649), and protect both the exported data and the wrapping key against unauthorized access or modification.
 
 ## draft-ietf-uta-pqc-app-01
 - **Source**: Post-Quantum Cryptography Recommendations for TLS-based Applications

@@ -1,8 +1,8 @@
 ---
 generated: 2026-11-12
 category: Compliance Frameworks
-document_count: 20
-requirement_count: 175
+document_count: 22
+requirement_count: 182
 ---
 
 ## AU-ASD-ISM-Crypto-2024
@@ -75,6 +75,15 @@ requirement_count: 175
     - _T3 Repeatable · all_: Devote sufficient resources and capabilities to monitor user activity, ICT anomalies and ICT-related incidents, particularly cyber-attacks.
     - _T3 Repeatable · all_: Continuously monitor security and functioning of all ICT systems and promptly identify and detect sources of ICT risk and anomalies.
 
+## ETSI-EN-303645
+- **Source**: ETSI EN 303 645 V3.1.3 — Cyber Security for Consumer IoT: Baseline Requirements
+- **URL**: https://www.etsi.org/deliver/etsi_en/303600_303699/303645/03.01.03_60/en_303645v030103p.pdf
+- **Requirement count**: 2
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Assess and assure IoT products against the standard's provisions, using the referenced assessment specification (ETSI TS 103 701) as the basis for conformance assessment.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Document how each baseline provision is implemented, using the standard's implementation conformance statement pro forma, so conformance of consumer IoT products is declared in a structured way.
+
 ## G7-Financial-PQC-Roadmap-2026
 - **Source**: G7 Cyber Expert Group Financial Sector PQC Roadmap
 - **URL**: https://home.treasury.gov/system/files/136/G7-CEG-Quantum-Roadmap.pdf
@@ -128,12 +137,12 @@ requirement_count: 175
 - **URL**: https://www.gsma.com/newsroom/wp-content/uploads//Post-Quantum-Government-Initiatives-by-Country-and-Region-02-Mar-2025-Clean.pdf
 - **Requirement count**: 5
 - **Governance**:
-    - _T2 Risk-Informed · all_: Include PQC requirements in contracts with suppliers and vendors.
+    - _T2 Risk-Informed · all_: Financial services firms must manage quantum risk, develop a cryptographic inventory and prepare an initial migration plan.
+    - _T2 Risk-Informed · all_: Financial services firms must prepare a PQC transition plan, per MAS guidance.
+    - _T2 Risk-Informed · all_: Define a coordinated PQC roadmap for Member States by 2026 (EU).
 - **Inventory**:
-    - _T1 Partial · all_: Begin planning for PQC transition by starting a cryptographic inventory of the organization's crypto estate.
-    - _T2 Risk-Informed · all_: Create and maintain a cryptographic inventory as an early step in PQC transition planning.
-    - _T2 Risk-Informed · all_: Financial services firms must develop a cryptographic inventory and an initial quantum-risk plan.
-    - _T3 Repeatable · all_: Migrate to automated tooling for post-quantum cryptography discovery and inventory.
+    - _T2 Risk-Informed · all_: Start PQC planning and build a cryptographic inventory as a first step toward migration.
+    - _T4 Adaptive · all_: Adopt automated PQC discovery and inventory tooling as the migration strategy for federal cryptographic assets.
 
 ## HKMA-FINTECH-BLUEPRINT-2026
 - **Source**: HKMA Fintech Promotion Blueprint (Fintech 2030) — Feb 2026
@@ -247,19 +256,27 @@ requirement_count: 175
     - _T3 Repeatable · all_: Securely maintain audit trails designed to detect and respond to material cybersecurity events.
     - _T4 Adaptive · all_: Class A companies must monitor privileged access activity and implement a privileged access management solution.
 
+## NZISM-V3-9
+- **Source**: New Zealand Information Security Manual (NZISM) v3.9
+- **URL**: https://nzism.gcsb.govt.nz/ism-document
+- **Requirement count**: 5
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish and follow documented baseline information security controls as the minimum acceptable level across all government systems and information, with agencies required to understand and follow the manual.
+    - _T2 Risk-Informed · all_: Ensure agency leadership understands and follows NZISM requirements, treating protection of government information and systems as a core accountability.
+    - _T2 Risk-Informed · all_: Base the decision to use or not use good-practice controls on a documented risk-informed assessment.
+    - _T2 Risk-Informed · all_: Prepare for the impact of widespread quantum computing on information security (post-quantum cryptography readiness).
+    - _T2 Risk-Informed · keys_: Encrypt media within IT equipment using an Approved Cryptographic Algorithm as specified in the manual.
+
 ## PCI-DSS-QRG
 - **Source**: PCI DSS Quick Reference Guide: Understanding the Payment Card Industry Data Security Standard version 3.0
 - **URL**: https://www.pcisecuritystandards.org/documents/PCIDSS_QRGv3.pdf
-- **Requirement count**: 6
+- **Requirement count**: 4
 - **Assurance / FIPS**:
-    - _T3 Repeatable · all_: Use Council-approved assessors (QSAs) and scanning vendors (ASVs) to assess and validate compliance, with Reports on Compliance or SAQs as applicable.
-    - _T3 Repeatable · all_: Use only PCI SSC-tested and approved PIN transaction devices and prefer validated payment applications and P2PE solutions.
+    - _T2 Risk-Informed · all_: Use only PIN entry devices and components tested and approved by the PCI SSC, and prefer validated payment applications.
+    - _T3 Repeatable · all_: Review firewall and router configuration rule sets at least every six months as a repeatable control.
+    - _T3 Repeatable · all_: Use Council-approved assessors (QSAs for compliance assessment, ASVs for external vulnerability scans) and SAQs where eligible to validate PCI DSS compliance.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Maintain documented security policies and operational procedures (e.g., firewall/router) that are in use and known to all affected parties.
-    - _T2 Risk-Informed · keys_: Protect stored cardholder data and encrypt its transmission across open, public networks.
-- **Lifecycle / CLM**:
-    - _T3 Repeatable · all_: Review configuration rule sets on a defined periodic schedule (at least every six months) and change vendor-supplied defaults before deployment.
-    - _T3 Repeatable · all_: Securely remove unnecessary cardholder data storage and never store sensitive authentication data after authorization.
+    - _T2 Risk-Informed · all_: Maintain documented security policies and operational procedures that are in use and known to all affected parties.
 
 ## Saudi-NCA-ECC2-2024
 - **Source**: Saudi Arabia National Cybersecurity Authority — Essential Cybersecurity Controls ECC-2:2024
@@ -274,12 +291,14 @@ requirement_count: 175
 ## Singapore-CSA-Quantum-Safe-Handbook
 - **Source**: Quantum-Safe Handbook and Quantum Readiness Index
 - **URL**: https://isomer-user-content.by.gov.sg/36/11227d39-4350-4ded-9046-d62f99f561ab/Draft%20for%20Public%20Consultation%20-%20Quantum-Safe%20Handbook%20(Oct%202025).pdf
-- **Requirement count**: 4
+- **Requirement count**: 6
 - **Governance**:
-    - _T2 Risk-Informed · all_: Conduct a risk assessment as the starting point for quantum-safe migration to identify exposure, priorities and risk management strategies, using the organisation's enterprise risk management framework or established best practices.
-    - _T2 Risk-Informed · all_: Use risk assessment outcomes to prioritise preparation and allocate resources, scoping migration effort rather than tackling organisation-wide migration at once.
-    - _T2 Risk-Informed · all_: Develop a multi-year quantum-safe migration roadmap that tracks what must be prepared now versus what can wait as standards mature, and plan for phased migration of systems.
-    - _T3 Repeatable · all_: Continuously monitor quantum-safe and standards developments, consider the operating context in migration plans, and incorporate cryptographic agility where practical.
+    - _T1 Partial · all_: Start quantum-safe preparation and planning as soon as practically possible, prioritising critical systems where the risk of inaction is greatest.
+    - _T2 Risk-Informed · all_: Conduct a quantum-related cybersecurity risk assessment, aligned to the enterprise risk management framework, to set priorities and risk management strategies for quantum-safe migration.
+    - _T2 Risk-Informed · all_: Base quantum risk assessments on best practices or the organisation's existing Enterprise Risk Assessment/Management Framework, referencing recognised business impact and continuity standards.
+    - _T2 Risk-Informed · all_: Develop a multi-year quantum-safe migration roadmap that tracks what to prepare now and what can wait while standards mature.
+    - _T2 Risk-Informed · all_: Plan migration of systems in phases rather than all at once, scoping efforts by risk to focus resources.
+    - _T3 Repeatable · all_: Continuously monitor quantum-safe developments, consider operating context in migration plans, and incorporate cryptographic agility where practical.
 
 ## TSA-SD-PIPELINE-2021-02G
 - **Source**: TSA Security Directive Pipeline-2021-02G
