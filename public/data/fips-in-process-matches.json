@@ -15,8 +15,8 @@
       "list": "MIP",
       "module": "PGP Cryptographic Engine",
       "vendor": "Broadcom Inc",
-      "nistStage": "Pending Review",
-      "date": "2026-10-26",
+      "nistStage": "Pending Resubmission",
+      "date": "2026-11-10",
       "firstSeen": "2026-10-26"
     },
     {
@@ -33,8 +33,8 @@
       "list": "MIP",
       "module": "Hikvision FIPS Provider",
       "vendor": "Hangzhou Hikvision Digital Technology Co., Ltd",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-08-28",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-11-04",
       "firstSeen": "2026-09-26"
     },
     {
@@ -65,30 +65,12 @@
       "firstSeen": "2026-09-26"
     },
     {
-      "product_id": "TASS-Crypto-Engine-LMS",
-      "list": "MIP",
-      "module": "TASS Crypto Engine",
-      "vendor": "Beijing JN TASS Technology Co., Ltd.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-22",
-      "firstSeen": "2026-09-26"
-    },
-    {
-      "product_id": "TASS-Crypto-Engine-PQC",
-      "list": "MIP",
-      "module": "TASS Crypto Engine",
-      "vendor": "Beijing JN TASS Technology Co., Ltd.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-22",
-      "firstSeen": "2026-09-26"
-    },
-    {
       "product_id": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro",
       "list": "MIP",
       "module": "OpenSSL FIPS Provider",
       "vendor": "The OpenSSL Corporation",
       "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-21",
+      "date": "2026-11-10",
       "firstSeen": "2026-09-26"
     },
     {
@@ -114,17 +96,8 @@
       "list": "MIP",
       "module": "AWS Key Management Service HSM",
       "vendor": "Amazon Web Services, Inc",
-      "nistStage": "Pending Review",
-      "date": "2026-10-15",
-      "firstSeen": "2026-09-26"
-    },
-    {
-      "product_id": "aws-kms",
-      "list": "MIP",
-      "module": "AWS Key Management Service HSM",
-      "vendor": "Amazon Web Services, Inc",
-      "nistStage": "Pending Review",
-      "date": "2026-10-15",
+      "nistStage": "Review",
+      "date": "2026-11-10",
       "firstSeen": "2026-09-26"
     },
     {
@@ -134,6 +107,15 @@
       "vendor": "Amazon Web Services, Inc",
       "nistStage": "Review",
       "date": "2026-10-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "MIP",
+      "module": "AWS Key Management Service HSM",
+      "vendor": "Amazon Web Services, Inc",
+      "nistStage": "Pending Resubmission",
+      "date": "2026-11-10",
       "firstSeen": "2026-09-26"
     },
     {
@@ -177,8 +159,8 @@
       "list": "MIP",
       "module": "Security Builder FIPS Module",
       "vendor": "Blackberry Limited",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-07",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-11-09",
       "firstSeen": "2026-09-26"
     },
     {
@@ -187,7 +169,7 @@
       "module": "BoringCrypto",
       "vendor": "Google, LLC",
       "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-10",
+      "date": "2026-11-10",
       "firstSeen": "2026-09-26"
     },
     {
@@ -258,8 +240,8 @@
       "list": "MIP",
       "module": "Rocky Linux 9 NSS Cryptographic Module",
       "vendor": "Ctrl IQ, Inc.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-09-20",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-11-10",
       "firstSeen": "2026-09-26"
     },
     {
@@ -354,15 +336,6 @@
     },
     {
       "product_id": "fortinet-fortios",
-      "list": "MIP",
-      "module": "FortiOS 7.2/7.4",
-      "vendor": "Fortinet, Inc.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-21",
-      "firstSeen": "2026-09-26"
-    },
-    {
-      "product_id": "fortinet-fortios",
       "list": "IUT",
       "module": "FortiOS 7.6",
       "vendor": "Fortinet, Inc.",
@@ -375,8 +348,8 @@
       "list": "MIP",
       "module": "FortiWeb 7.6.7 firmware",
       "vendor": "Fortinet Inc.",
-      "nistStage": "Pending Review",
-      "date": "2026-09-25",
+      "nistStage": "Review",
+      "date": "2026-10-26",
       "firstSeen": "2026-09-26"
     },
     {
@@ -393,8 +366,8 @@
       "list": "MIP",
       "module": "GSP4000 Hardware Security Module",
       "vendor": "Futurex LP",
-      "nistStage": "Pending Resubmission",
-      "date": "2026-07-17",
+      "nistStage": "Pending Review",
+      "date": "2026-10-28",
       "firstSeen": "2026-09-26"
     },
     {
@@ -408,12 +381,12 @@
     },
     {
       "product_id": "ibm-z16-crypto-express-8s",
-      "list": "IUT",
+      "list": "MIP",
       "module": "IBM 4770-001 CCA Hardware Security Module",
       "vendor": "IBM",
-      "nistStage": "Implementation Under Test",
-      "date": "2025-01-14",
-      "firstSeen": "2026-09-26"
+      "nistStage": "Pending Review",
+      "date": "2026-11-06",
+      "firstSeen": "2026-11-12"
     },
     {
       "product_id": "ibm-z16-crypto-express-8s",
@@ -447,8 +420,8 @@
       "list": "MIP",
       "module": "Apple corecrypto Module OS 26 [Apple silicon, Kernel, Software, SL1]",
       "vendor": "Apple Inc.",
-      "nistStage": "Review",
-      "date": "2026-07-31",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-10-26",
       "firstSeen": "2026-09-26"
     },
     {
@@ -456,8 +429,8 @@
       "list": "MIP",
       "module": "Apple corecrypto Module OS 26 [Apple silicon, User, Software, SL1]",
       "vendor": "Apple Inc.",
-      "nistStage": "Review",
-      "date": "2026-07-30",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-10-26",
       "firstSeen": "2026-09-26"
     },
     {
@@ -466,7 +439,7 @@
       "module": "OpenSSL FIPS Provider",
       "vendor": "The OpenSSL Corporation",
       "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-21",
+      "date": "2026-11-10",
       "firstSeen": "2026-09-26"
     },
     {
@@ -583,7 +556,7 @@
       "module": "u.trust Anchor CSe",
       "vendor": "Utimaco IS GmbH",
       "nistStage": "Comment Resolution - Lab",
-      "date": "2026-07-27",
+      "date": "2026-11-10",
       "firstSeen": "2026-09-26"
     },
     {
