@@ -10,8 +10,10 @@ describe('Authored acceleration diagrams preserve their evidence limits', () => 
     expect(screen.getByRole('img', { name: 'GPU batching' })).toBeInTheDocument()
     expect(screen.getByText('1 signature')).toBeInTheDocument()
     expect(screen.getByText('4,096 signatures')).toBeInTheDocument()
-    expect(screen.getByText(/internal parallel work not shown/)).toBeInTheDocument()
-    expect(screen.getByText(/not measurements or a limit on parallelism/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/One operation can contain cooperating parallel work/)
+    ).toBeInTheDocument()
+    expect(screen.getByText(/not measured lane occupancy/)).toBeInTheDocument()
     expect(screen.queryByText(/the CPU finishes first/)).not.toBeInTheDocument()
     expect(screen.queryByText(/only a full batch pays it back/)).not.toBeInTheDocument()
   })

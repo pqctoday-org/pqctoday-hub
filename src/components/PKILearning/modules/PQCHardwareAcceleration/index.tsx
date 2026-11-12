@@ -45,7 +45,7 @@ const PARTS: WorkshopPart[] = [
     id: 'offload-lab',
     title: 'Step 5: Offload, Sharing and Batching',
     description:
-      'The CPU↔accelerator round trip, one engine shared by many cores, and why GPUs need big batches.',
+      'The CPU↔accelerator round trip, one engine shared by many cores, and how batch size changes the measured GPU result.',
     icon: ArrowLeftRight,
   },
 ]

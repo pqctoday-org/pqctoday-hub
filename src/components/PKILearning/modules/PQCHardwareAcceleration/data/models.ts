@@ -19,10 +19,12 @@ export interface AccelModel {
   /** Real-world examples of the model */
   examples: string
   layman: { analogy: string; whatsDifferent: string; catch: string }
-  /** How well it fits each workload shape */
+  /** Authored guidance for the stated implementation/workload; 'none' means not demonstrated. */
   fit: { mldsa: Fit; slhdsa: Fit; singleOp: Fit; batch: Fit }
-  /** One-line summary of our own measured evidence, or null if cited only */
+  /** Retained evidence summary, explicitly labelled when desk-only; null if cited only. */
   ourEvidence: string | null
+  /** Exact scope behind this model's fit guidance, when it needs qualification. */
+  fitContext?: string
   colorClass: string
   borderClass: string
   bgClass: string
@@ -101,17 +103,19 @@ export const MODELS: AccelModel[] = [
   {
     id: 'gpu',
     label: 'GPU',
-    tagline: 'Thousands of simple lanes — unbeatable throughput, only when the batch is big.',
+    tagline: 'Parallel work within and across operations — judge the exact kernel and batch.',
     examples: 'NVIDIA cuPQC (CUDA), Apple Metal compute kernels',
     layman: {
       analogy:
         'A school bus. It moves sixty people for barely more fuel than a car moves one — but it only leaves when it is full, and it is slow to get going. If you are one person in a hurry, take the car.',
       whatsDifferent:
-        'A GPU runs the same small program on thousands of independent operations at once and hides memory delays by always having other work ready. Signing 50,000 certificates is its perfect job.',
+        'A GPU can spread work across many threads, within an operation and across independent operations. Large batches may amortise launch costs, but the exact kernel and memory access pattern determine whether it beats the CPU.',
       catch:
-        'Every launch costs a fixed start-up time and one signature cannot fill thousands of lanes, so a single operation is slower than on the CPU. ML-DSA’s retry loop makes the whole batch wait for its slowest signature.',
+        'Launch and transfer costs can outweigh parallel work. One ML-DSA operation can use cooperating threads; the retained Metal study measures key-generation batches starting at 256, not single-signature latency. In its first signing kernel, a straggler stalled the batch; early exit changed that result.',
     },
     fit: { mldsa: 'strong', slhdsa: 'partial', singleOp: 'none', batch: 'strong' },
+    fitContext:
+      'GPU ratings describe the illustrated kernels and workload shapes. The measured Apple Metal ML-DSA-65 key-generation study starts at batch 256; no batch-1 latency result is established. Other GPU libraries can cooperate within an operation.',
     ourEvidence:
       'Our Metal ML-DSA-65 key generation lost to the CPU at a batch of 256 and won 9.3× at 65,536.',
     colorClass: 'text-status-info',
@@ -134,6 +138,8 @@ export const MODELS: AccelModel[] = [
         'The truck ride (moving data between CPU and fabric) is often longer than the work itself. If the CPU still has to do half of each operation, the gain is capped — which is what happened with our ML-DSA.',
     },
     fit: { mldsa: 'weak', slhdsa: 'strong', singleOp: 'partial', batch: 'strong' },
+    fitContext:
+      'These FPGA ratings refer to the retained KV260 engines, CPU/fabric partition and named signature workloads, not all possible FPGA circuits.',
     ourEvidence:
       'KV260: ML-DSA-65 +29% only; SLH-DSA-SHAKE-128s sign 2.12 s on the CPU → 69 ms on the FPGA.',
     colorClass: 'text-status-success',
@@ -168,18 +174,22 @@ export const MODELS: AccelModel[] = [
   {
     id: 'npu',
     label: 'NPU (AI accelerator)',
-    tagline: 'Built for approximate 8-bit neural-network math — the wrong shape for cryptography.',
+    tagline:
+      'A tensor accelerator whose supported operators and exact decomposition must be checked.',
     examples: 'NXP eIQ Neutron (i.MX 95), phone and laptop “AI engines”',
     layman: {
       analogy:
-        'A calculator that only multiplies small numbers and is allowed to round the answer. Great for recognising a cat in a photo, where “close enough” is fine; useless for a bank balance, where every digit must be exact.',
+        'A specialised kitchen machine that accepts a limited set of recipes and ingredient sizes. You may split a large ingredient into smaller pieces, but the machine must support the recipe and you must put every piece back exactly.',
       whatsDifferent:
-        'An NPU is a huge array of 8-bit multiply-add units, fed a pre-compiled neural-network graph. It is superb at what it was built for.',
+        'The studied i.MX95 combines Cortex-A55 CPUs with an eIQ Neutron NPU for neural-network graphs. Low-precision tensor arithmetic does not by itself imply rounding every integer operation; exact wider values may be represented by several limbs if the backend supports the required operations.',
       catch:
-        'PQC needs exact modular arithmetic on numbers far bigger than 8 bits, and SHAKE/SHA-3 is bit-shuffling, not multiplication at all. We evaluated the i.MX 95 NPU for PQC and ruled it out — we use it to watch the appliance’s behaviour instead.',
+        'Exact recomposition, carries, modular reduction and Keccak bit operations still need supported kernels and a sensible CPU/NPU partition. Our i.MX95 desk assessment did not prototype a PQC NPU kernel or measure a speed-up; it is not a proof of hardware impossibility. Our NPU use in this lesson is behaviour monitoring.',
     },
-    fit: { mldsa: 'none', slhdsa: 'none', singleOp: 'none', batch: 'weak' },
-    ourEvidence: 'Evaluated for the i.MX 95 appliance and ruled out on paper (not prototyped).',
+    fit: { mldsa: 'none', slhdsa: 'none', singleOp: 'none', batch: 'none' },
+    fitContext:
+      'PQC execution and performance on the i.MX95 Neutron NPU were not prototyped. These cells mean no demonstrated PQC kernel in this lesson, not that the mathematics cannot be implemented on NPUs.',
+    ourEvidence:
+      'i.MX95 PQC offload was assessed on paper and not selected; no PQC NPU kernel or timing was prototyped.',
     colorClass: 'text-destructive',
     borderClass: 'border-destructive/40',
     bgClass: 'bg-destructive/10',
