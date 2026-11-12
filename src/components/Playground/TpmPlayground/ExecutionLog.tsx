@@ -14,6 +14,7 @@ import { toHex, getU16, getU32 } from '../../../wasm/tpmSerializer'
 import { getCommandDef, getRcInfo } from './tpmCommandDefs'
 import { readField, readVariablePreview, TAG_NAMES, CC_NAMES } from './tpmWireDecode'
 import { Term } from '../learnkit/Term'
+import { decodeTpmResponse } from './tpmResponseDecode'
 
 interface ExecutionLogProps {
   logs: TpmLogEntry[]
@@ -172,53 +173,47 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
 
   // ── Decode response ──
   const resp = log.response
-  let tpmRc = 0
+  const cmdDef = getCommandDef(log.commandType)
+  // Existing hybrid examples return a textual summary, not a TPM wire response.
+  const informational = cmdDef?.respFields(log.algorithm).every((f) => f.name === 'note')
+  let tpmRc = -1
   if (resp && resp.length >= 10) {
     tpmRc = getU32(resp, 6)
   }
   const rcInfo = getRcInfo(tpmRc)
-  const isSuccess = tpmRc === 0
-  const cmdDef = getCommandDef(log.commandType)
+  const isSuccess = informational ? !log.error : tpmRc === 0
+  const decoded = resp && !informational ? decodeTpmResponse(log.commandType, resp) : null
 
   // Decode response fields
   const respRows =
     isSuccess && resp && cmdDef
       ? cmdDef.respFields(log.algorithm).map((field) => {
-          // Some payload definitions retain zero as an unresolved offset.
-          // Only the response tag actually begins at byte zero; do not decode
-          // header bytes as payload data or treat an explanatory note as bytes.
-          const isHeaderTag =
-            field.name === 'tag' &&
-            field.tpmType === 'TPM_ST' &&
-            field.byteOffset === 0 &&
-            field.byteSize === 2
-          if (field.byteOffset === 0 && !isHeaderTag) {
-            return {
-              name: field.name,
-              type: field.tpmType,
-              value:
-                field.name === 'note' && field.tpmType === '—'
-                  ? 'Informational note — no decoded value'
-                  : 'Not parsed — payload offset is not resolved in this view.',
-              description: field.description,
-            }
-          }
-
+          const range = decoded?.fields.get(field.name)
           let value: string
-          if (field.byteSize === 0) {
-            value = readVariablePreview(resp, field.byteOffset)
+          if (field.name === 'note' && field.tpmType === '—') {
+            value = 'Informational note — no decoded value'
+          } else if (!range) {
+            value = decoded?.error
+              ? 'Not decoded — response structure could not be read safely.'
+              : 'Not present or unsupported in this response structure.'
+          } else if (range.variable) {
+            const preview = readVariablePreview(
+              resp.subarray(range.offset, range.offset + range.size),
+              0
+            )
+            value = `${range.size} B${range.size ? ` · ${preview}` : ' (empty)'}`
           } else {
-            value = readField(resp, field.byteOffset, field.byteSize)
+            value = readField(resp, range.offset, range.size)
           }
 
           // Annotate well-known values
-          if (field.name === 'tag') {
-            const v = getU16(resp, field.byteOffset)
+          if (range && field.name === 'tag') {
+            const v = getU16(resp, range.offset)
             value += ` (${TAG_NAMES[v] ?? ''})`
-          } else if (field.name === 'responseCode') {
-            value += ` (${getRcInfo(getU32(resp, field.byteOffset)).name})`
-          } else if (field.name === 'objectHandle') {
-            const h = getU32(resp, field.byteOffset)
+          } else if (range && field.name === 'responseCode') {
+            value += ` (${getRcInfo(getU32(resp, range.offset)).name})`
+          } else if (range && field.name === 'objectHandle') {
+            const h = getU32(resp, range.offset)
             value = `0x${h.toString(16).padStart(8, '0')} (transient)`
           }
 
@@ -256,7 +251,7 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
               Response
             </span>
           </div>
-          {resp && (
+          {resp && !informational && (
             <div
               className={`flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                 isSuccess
@@ -277,7 +272,21 @@ export function ExecutionLog({ logs }: ExecutionLogProps) {
             </div>
           )}
 
-          {resp && !isSuccess && (
+          {decoded?.error && !informational && (
+            <p role="alert" className="text-xs text-status-error">
+              Response fields not decoded: {decoded.error}. Raw received bytes remain available
+              below.
+            </p>
+          )}
+          {decoded?.parameterStart !== undefined && !decoded.error && (
+            <p className="text-[10px] text-muted-foreground">
+              Parameter bytes: {decoded.parameterStart}–{decoded.parameterEnd} (end exclusive).
+              {decoded.authStart !== undefined
+                ? ` Authorization area starts at byte ${decoded.authStart}; it is not payload.`
+                : ' No response authorization area.'}
+            </p>
+          )}
+          {resp && !informational && !isSuccess && (
             <div className="text-xs text-muted-foreground bg-muted/20 border border-border rounded p-3">
               <div className="font-mono font-bold text-status-error mb-1">
                 RC = 0x{tpmRc.toString(16).padStart(8, '0')} — {rcInfo.name}

@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { ExecutionLog } from './ExecutionLog'
 import { COMMAND_DEFS } from './tpmCommandDefs'
 import { readField, readVariablePreview } from './tpmWireDecode'
+import captures from './__fixtures__/response-captures.json'
 import { toHex } from '../../../wasm/tpmSerializer'
 
 vi.mock('../learnkit/Term', () => ({
@@ -34,25 +35,25 @@ const show = (
     />
   )
 const rowFor = (name: string) =>
-  screen.getAllByText(name, { selector: 'td' }).at(-1)!.closest('tr')!
-const unresolved = 'Not parsed — payload offset is not resolved in this view.'
+  screen
+    .getAllByRole('row')
+    .filter((row) => within(row).queryByRole('cell', { name }))
+    .at(-1)!
+const unresolved = 'Not decoded — response structure could not be read safely.'
 
-describe('TPM response fields with unresolved payload locations', () => {
+describe('TPM response display uses received field boundaries', () => {
   it('does not read the response tag as a ciphertext size or payload preview', () => {
     show()
     expect(
       within(rowFor('tag')).getByText('0x8001 (TPM_ST_NO_SESSIONS)', { exact: true })
     ).toBeInTheDocument()
-    for (const name of ['ciphertext.size', 'ciphertext.buffer']) {
-      const row = within(rowFor(name))
-      expect(row.getByText(unresolved)).toBeInTheDocument()
-      expect(row.queryByText(/0x8001|32769|80 01/)).not.toBeInTheDocument()
-    }
+    expect(within(rowFor('ciphertext.size')).getByText('0x0440')).toBeInTheDocument()
+    expect(within(rowFor('ciphertext.buffer')).getByText(/^1088 B · CD CD/)).toBeInTheDocument()
     expect(
       within(rowFor('sharedSecret.size')).getByText(readField(sample(), 10, 2))
     ).toBeInTheDocument()
     expect(
-      within(rowFor('sharedSecret.buffer')).getByText(readVariablePreview(sample(), 12))
+      within(rowFor('sharedSecret.buffer')).getByText(`32 B · ${readVariablePreview(sample(), 12)}`)
     ).toBeInTheDocument()
     expect(screen.getByText('TPM_RC_SUCCESS')).toBeInTheDocument()
   })
@@ -61,24 +62,40 @@ describe('TPM response fields with unresolved payload locations', () => {
     def.respFields('ML-KEM-768').some((field) => field.byteOffset === 0 && field.name !== 'tag')
   )
   it.each(definitions)(
-    'qualifies every unresolved row of $key and preserves its description',
+    'decodes the advertised $key fields or preserves a non-wire informational note',
     (def) => {
-      show(def.key)
+      const isNote = def.key.includes('LabeledKEM')
+      // NV_Certify has the same outer TPM2B_ATTEST+TPMT_SIGNATURE layout as Certify.
+      // This alias uses a controlled body, not a claim of fresh NV_Certify execution.
+      const capturedName = def.key === 'TPM2_NV_Certify' ? 'TPM2_Certify' : def.key
+      const fixture = captures.records.find((r) => r.name === capturedName && r.rc === 0)
+      const response = fixture ? Uint8Array.from(Buffer.from(fixture.response, 'hex')) : sample()
+      show(def.key, response)
       for (const field of def
         .respFields('ML-KEM-768')
-        .filter((field) => field.byteOffset === 0 && field.name !== 'tag')) {
+        .filter((f) => f.byteOffset === 0 && f.name !== 'tag')) {
         const row = within(rowFor(field.name))
-        expect(
-          row.getByText(
-            field.name === 'note' && field.tpmType === '—'
-              ? 'Informational note — no decoded value'
-              : unresolved
-          )
-        ).toBeInTheDocument()
+        if (isNote)
+          expect(row.getByText('Informational note — no decoded value')).toBeInTheDocument()
+        else {
+          expect(fixture).toBeDefined()
+          expect(row.queryByText(/Not decoded|Not present|Not parsed/)).not.toBeInTheDocument()
+        }
         expect(row.getByText(field.description)).toBeInTheDocument()
       }
     }
   )
+
+  it('does not interpret the existing hybrid textual summary as a TPM response header', () => {
+    show(
+      'TPM2_LabeledKEM_Hybrid_Encap',
+      new TextEncoder().encode('Hybrid Labeled-KEM Encap OK (educational, not TCG v1.85)')
+    )
+    expect(screen.getByText('Informational note — no decoded value')).toBeInTheDocument()
+    expect(screen.queryByText('TPM_RC_SUCCESS')).not.toBeInTheDocument()
+    expect(screen.queryByText(/RC =/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
 
   it('keeps raw response and request Copy bytes unchanged', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
