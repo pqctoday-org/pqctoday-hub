@@ -1758,7 +1758,7 @@
             {
               "tMs": 18487,
               "kind": "click",
-              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
+              "selector": "[data-workshop-target=\"crypto-architecture-save\"]"
             },
             {
               "tMs": 24987,
@@ -1837,7 +1837,7 @@
             {
               "tMs": 21129,
               "kind": "click",
-              "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
+              "selector": "[data-workshop-target=\"kpi-dashboard-save\"]"
             },
             {
               "tMs": 27629,

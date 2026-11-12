@@ -593,6 +593,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
           saved={savedAt !== null}
           editedSinceSave={editedSinceSave}
           onClick={handleSave}
+          dataWorkshopTarget="crypto-architecture-save"
         />
         <Button variant="outline" onClick={handleCopy}>
           {copied ? (
