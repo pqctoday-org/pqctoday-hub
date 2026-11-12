@@ -72,9 +72,9 @@ describe('Actual desktop operation-specific decisions', () => {
     expect(
       screen.getByText(/0\/6 links planned · 2 eligible choices · 1\/3 unlocked/)
     ).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Diagram', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: 'Diagram' }))
     expect(screen.getByTestId('operation-diagram')).not.toHaveTextContent('✓ migrated')
-    fireEvent.click(screen.getByRole('button', { name: 'List', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: 'List' }))
     fireEvent.click(screen.getByRole('button', { name: 'Undo migration of User to Caddy Web/LB' }))
     expect(screen.queryByTestId('arch-overcapacity')).not.toBeInTheDocument()
     expect(
