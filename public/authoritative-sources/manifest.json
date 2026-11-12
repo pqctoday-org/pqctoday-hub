@@ -10633,6 +10633,24 @@
       "admittedAt": "2026-10-23T03:18:44.916333+00:00",
       "admittedBy": "evidence admission",
       "identity": "MATCH"
+    },
+    {
+      "refId": "cryptsoft-pty-ltd",
+      "file": "authoritative-sources/cryptsoft-pty-ltd-09d2b72d.html",
+      "filename": "cryptsoft-pty-ltd-09d2b72d.html",
+      "url": "https://www.cryptsoft.com/",
+      "status": "downloaded",
+      "sizeBytes": 107931,
+      "contentType": "text/html",
+      "sha256": "af5793730c30825e5a0d1c666d27ec1ce86b82f3c897926fe90782e6f8b531a2",
+      "addedAt": "2026-11-12T12:33:14.301978+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-11-12T12:33:14.391429+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "UNCONFIRMED",
+      "admittedAt": "2026-11-12T12:33:14.301978+00:00"
     }
   ]
 }

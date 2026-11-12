@@ -12182,6 +12182,42 @@
       "ocr": "ocrmypdf --skip-text (tesseract)",
       "originalFile": "patents/pdfs/US20190319798_A1_Blockchain_post-quantum_signature_scheme.pdf",
       "originalSha256": "0287222afad8910e0e0a12c943485d8aca2b2f5142c03d2af536ccfdeb1930a8"
+    },
+    {
+      "refId": "20260180790",
+      "file": "patents/US20260180790.pdf",
+      "filename": "US20260180790.pdf",
+      "url": "",
+      "status": "downloaded",
+      "sizeBytes": 626123,
+      "contentType": "application/pdf",
+      "sha256": "abd28bfb02b15f9ad10c0764f218f87c8ea19e078ba98c5c1f23b27a8a07a1ed",
+      "addedAt": "2026-11-12T12:33:14.812698+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "stampedAt": "2026-11-12T12:33:22.513160+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "UNCONFIRMED",
+      "admittedAt": "2026-11-12T12:33:14.812698+00:00"
+    },
+    {
+      "refId": "20210119789",
+      "file": "patents/US20210119789.html",
+      "filename": "US20210119789.html",
+      "url": "",
+      "status": "downloaded",
+      "sizeBytes": 353285,
+      "contentType": "text/html",
+      "sha256": "3ac9e9f3b4f6e728ce6a81fdae18328ba9a095f37aed0ac59b465f99f6d53305",
+      "addedAt": "2026-11-12T12:33:22.544638+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "stampedAt": "2026-11-12T12:33:22.814853+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-11-12T12:33:22.544638+00:00"
     }
   ],
   "archivedEntries": [
