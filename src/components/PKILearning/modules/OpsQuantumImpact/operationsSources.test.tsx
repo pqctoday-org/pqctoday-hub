@@ -48,6 +48,26 @@ describe('Ops source-backed operational controls', () => {
     expect(screen.queryByText('ssl_ciphersuites')).not.toBeInTheDocument()
   })
 
+  it('distinguishes unchanged cipher suites from group fallback and counts complete hybrid shares', () => {
+    const incident = concept('PQC Incident Response Runbooks')
+    const monitoring = concept('Monitoring Threshold Recalibration')
+    expect(incident).toContain('monitor the negotiated key-exchange group')
+    expect(incident).toContain(
+      'TLS_AES_256_GCM_SHA384 can remain the cipher suite with either X25519MLKEM768 or X25519'
+    )
+    expect(incident).not.toContain('classical-only cipher suites')
+    // RFC group encoding includes the X25519 contribution at both peers.
+    expect(32 + 1184).toBe(1216)
+    expect(32 + 1088).toBe(1120)
+    expect(1216 + 1120).toBe(2336)
+    expect(2336 - 64).toBe(2272)
+    expect(monitoring).toContain('1,216 bytes (32-byte X25519 public value + 1,184-byte')
+    expect(monitoring).toContain('1,120 bytes (32-byte X25519 public value + 1,088-byte')
+    expect(monitoring).toContain('2,336 bytes together, excluding KeyShareEntry/extension framing')
+    expect(monitoring).toContain('hybrid shares add 2,272 bytes')
+    expect(monitoring).not.toContain('approximately 3.5–4.5 KB')
+  })
+
   it('teaches a measured compression improvement without passing an oversized decompressed message', () => {
     const incident = concept('PQC Incident Response Runbooks')
     expect(incident).toContain('11,100 bytes as a Certificate handshake')
