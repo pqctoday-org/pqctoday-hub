@@ -110,8 +110,8 @@ it('agrees on mixed-action phase and estate costs without upgrading fixed vendor
   // Declared inputs: 50 × $5,000 × 0.7 plus 500 × $2,000 × 0.1 = $275,000.
   expect(within(patientBudgetRow()).getAllByRole('cell').at(-1)).toHaveTextContent('$175,000')
   expect(screen.getByRole('row', { name: 'Total Estimated Budget $275,000' })).toBeVisible()
-  // The phase header and estate total each show the same mixed-action sum.
-  expect(screen.getAllByText('$275,000')).toHaveLength(2)
+  // The budget summary, table total and selected phase each show the same sum.
+  expect(screen.getAllByText('$275,000')).toHaveLength(3)
   expect(matrixSnapshot()).toBe(matrix)
   expect(readiness()).toEqual(readinessBefore)
   await user.click(screen.getByRole('button', { name: 'Reset All' }))
