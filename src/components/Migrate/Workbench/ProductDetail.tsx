@@ -60,7 +60,13 @@ const ProductMaintainers = lazyWithRetry(() => import('./ProductMaintainers'))
 
 const CERT_COVERAGE_ORDER = ['FIPS 140-3', 'ACVP', 'Common Criteria', 'PSA Certified']
 
-export function ProductDetail({ product }: { product: SoftwareItem }) {
+export function ProductDetail({
+  product,
+  readOnly = false,
+}: {
+  product: SoftwareItem
+  readOnly?: boolean
+}) {
   const certs = getCertsForProduct(product.productId, product.softwareName)
   // ADDED (Bug 2 remediation): the CPE/PURL cross-reference join (~915 + 800
   // rows, keyed by softwareName like certsByProduct) was loaded and used for
@@ -464,7 +470,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-status-success hover:underline"
           >
-            <FileText size={12} aria-hidden /> Validation proof
+            <FileText size={12} aria-hidden /> {readOnly ? 'Historical source' : 'Validation proof'}
             {product.proofPublicationDate ? ` (${product.proofPublicationDate})` : ''}
           </a>
         )}
@@ -496,52 +502,54 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
         </p>
       )}
 
-      <div className="flex items-center gap-1 border-t border-border pt-2">
-        <EndorseButton
-          endorseUrl={buildEndorsementUrl({
-            category: 'pqc-tool-endorsement',
-            title: `Endorse: ${product.softwareName}`,
-            resourceType: 'Product',
-            resourceId: product.softwareName,
-            resourceDetails: [
-              `**Product:** ${product.softwareName}`,
-              vendor?.vendorDisplayName ? `**Vendor:** ${vendor.vendorDisplayName}` : '',
-              product.pqcSupport ? `**PQC support:** ${product.pqcSupport}` : '',
-            ]
-              .filter(Boolean)
-              .join('\n'),
-            pageUrl: `/migrate?product=${encodeURIComponent(product.softwareName)}`,
-          })}
-          resourceLabel={product.softwareName}
-          resourceType="Product"
-          variant="text"
-        />
-        <FlagButton
-          flagUrl={buildFlagUrl({
-            category: 'pqc-tool-endorsement',
-            title: `Flag: ${product.softwareName}`,
-            resourceType: 'Product',
-            resourceId: product.softwareName,
-            resourceDetails: [
-              `**Product:** ${product.softwareName}`,
-              vendor?.vendorDisplayName ? `**Vendor:** ${vendor.vendorDisplayName}` : '',
-              product.pqcSupport ? `**PQC support:** ${product.pqcSupport}` : '',
-            ]
-              .filter(Boolean)
-              .join('\n'),
-            pageUrl: `/migrate?product=${encodeURIComponent(product.softwareName)}`,
-          })}
-          resourceLabel={product.softwareName}
-          resourceType="Product"
-          variant="text"
-        />
-        {/* PR 4: the top-bar Share can carry the plan token, so the open row
+      {!readOnly && (
+        <div className="flex items-center gap-1 border-t border-border pt-2">
+          <EndorseButton
+            endorseUrl={buildEndorsementUrl({
+              category: 'pqc-tool-endorsement',
+              title: `Endorse: ${product.softwareName}`,
+              resourceType: 'Product',
+              resourceId: product.softwareName,
+              resourceDetails: [
+                `**Product:** ${product.softwareName}`,
+                vendor?.vendorDisplayName ? `**Vendor:** ${vendor.vendorDisplayName}` : '',
+                product.pqcSupport ? `**PQC support:** ${product.pqcSupport}` : '',
+              ]
+                .filter(Boolean)
+                .join('\n'),
+              pageUrl: `/migrate?product=${encodeURIComponent(product.softwareName)}`,
+            })}
+            resourceLabel={product.softwareName}
+            resourceType="Product"
+            variant="text"
+          />
+          <FlagButton
+            flagUrl={buildFlagUrl({
+              category: 'pqc-tool-endorsement',
+              title: `Flag: ${product.softwareName}`,
+              resourceType: 'Product',
+              resourceId: product.softwareName,
+              resourceDetails: [
+                `**Product:** ${product.softwareName}`,
+                vendor?.vendorDisplayName ? `**Vendor:** ${vendor.vendorDisplayName}` : '',
+                product.pqcSupport ? `**PQC support:** ${product.pqcSupport}` : '',
+              ]
+                .filter(Boolean)
+                .join('\n'),
+              pageUrl: `/migrate?product=${encodeURIComponent(product.softwareName)}`,
+            })}
+            resourceLabel={product.softwareName}
+            resourceType="Product"
+            variant="text"
+          />
+          {/* PR 4: the top-bar Share can carry the plan token, so the open row
             carries its own clean link — just this product. */}
-        <ItemShareButton
-          title={itemShareTitle(product.softwareName)}
-          path={`/migrate?product=${encodeURIComponent(product.productId || product.softwareName)}`}
-        />
-      </div>
+          <ItemShareButton
+            title={itemShareTitle(product.softwareName)}
+            path={`/migrate?product=${encodeURIComponent(product.productId || product.softwareName)}`}
+          />
+        </div>
+      )}
     </div>
   )
 }
