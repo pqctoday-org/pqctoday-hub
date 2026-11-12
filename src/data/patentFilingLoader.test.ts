@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { expect, it, vi } from 'vitest'
 import Papa from 'papaparse'
-import corpus from './patents_09222026.csv?raw'
+import corpus from './archive/patents_09222026.csv?raw'
 import type { PatentItem } from '@/types/PatentTypes'
 vi.mock('./csvUtils', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./csvUtils')>()
