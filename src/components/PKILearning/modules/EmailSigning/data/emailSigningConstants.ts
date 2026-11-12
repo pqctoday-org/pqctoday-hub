@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import type { measureEmailSample } from '../services/emailArtifactMeasurements'
 // ── CMS Content Types (RFC 5652) ───────────────────────────────────────────
 export interface ContentType {
   name: string
@@ -272,6 +273,8 @@ export interface SizeComparison {
   unit: string
 }
 
+// Historical illustrative array: no live reader/export. Do not use these component,
+// certificate or MIME estimates as measured values; the viewer parses its captured samples.
 export const SIZE_COMPARISONS: SizeComparison[] = [
   {
     metric: 'Public Key',
@@ -474,9 +477,9 @@ export const SIGNER_INFO_COMPARISON: SignerComparison[] = [
     mlDsaValue: '3,309 bytes',
   },
   {
-    field: 'Public Key Size',
-    ecdsaValue: '65 bytes (uncompressed P-256)',
-    mlDsaValue: '1,952 bytes',
+    field: 'Public Key Component',
+    ecdsaValue: '65 bytes (uncompressed P-256 point; SPKI excluded)',
+    mlDsaValue: '1,952 bytes (packed ML-DSA public key; SPKI excluded)',
   },
   {
     field: 'Security Level',
@@ -552,65 +555,55 @@ export interface CertFieldComparison {
   notes: string
 }
 
-export const CERT_FIELD_COMPARISON: CertFieldComparison[] = [
-  {
-    field: 'Subject',
-    rsaValue: 'CN=Alice, E=alice@example.com',
-    mlDsaValue: 'CN=Alice, E=alice@example.com',
-    notes: 'Identical subject naming',
-  },
-  {
-    field: 'Issuer',
-    rsaValue: 'CN=Enterprise CA, O=Acme Corp',
-    mlDsaValue: 'CN=PQC Enterprise CA, O=Acme Corp',
-    notes: 'Separate CA for PQC certificates',
-  },
-  {
-    field: 'Signature Algorithm',
-    rsaValue: 'sha256WithRSAEncryption',
-    mlDsaValue: 'id-ml-dsa-65',
-    notes: 'PQC algorithm has no hash prefix (hash is internal)',
-  },
-  {
-    field: 'Public Key Algorithm',
-    rsaValue: 'rsaEncryption (2048 bit)',
-    mlDsaValue: 'id-ml-dsa-65',
-    notes: 'ML-DSA key is 1,952 bytes vs 256 bytes for RSA',
-  },
-  {
-    field: 'Public Key Size',
-    rsaValue: '256 bytes',
-    mlDsaValue: '1,952 bytes',
-    notes: '7.6x larger public key',
-  },
-  {
-    field: 'Signature Size',
-    rsaValue: '256 bytes',
-    mlDsaValue: '3,309 bytes',
-    notes: '12.9x larger signature',
-  },
-  {
-    field: 'Total Certificate',
-    rsaValue: '~1,200 bytes',
-    mlDsaValue: '~6,000 bytes',
-    notes: '~5x larger certificate overall',
-  },
-  {
-    field: 'keyUsage',
-    rsaValue: 'digitalSignature, nonRepudiation',
-    mlDsaValue: 'digitalSignature, nonRepudiation',
-    notes: 'Same key usage for signing certs',
-  },
-  {
-    field: 'extKeyUsage',
-    rsaValue: 'id-kp-emailProtection',
-    mlDsaValue: 'id-kp-emailProtection',
-    notes: 'Same extended key usage',
-  },
-  {
-    field: 'subjectAltName',
-    rsaValue: 'email:alice@example.com',
-    mlDsaValue: 'email:alice@example.com',
-    notes: 'Required for S/MIME binding',
-  },
-]
+type MeasuredCertificate = ReturnType<typeof measureEmailSample>
+/** Fields come from actual certificate parsing; subject and issuer are not inferred from key choice. */
+export function certificateFieldComparison(
+  rsa: MeasuredCertificate,
+  pq: MeasuredCertificate
+): CertFieldComparison[] {
+  return [
+    {
+      field: 'Subject',
+      rsaValue: rsa.subject,
+      mlDsaValue: pq.subject,
+      notes: 'Parsed actual subject',
+    },
+    {
+      field: 'Issuer',
+      rsaValue: rsa.issuer,
+      mlDsaValue: pq.issuer,
+      notes: 'Both sample certificates are self-signed; no issuer chain is included',
+    },
+    {
+      field: 'Certificate signature OID',
+      rsaValue: rsa.certSignatureOid,
+      mlDsaValue: pq.certSignatureOid,
+      notes: 'Issuer signature algorithm, distinct from the CMS signer algorithm',
+    },
+    {
+      field: 'CMS signature OID',
+      rsaValue: rsa.cmsSignatureOid,
+      mlDsaValue: pq.cmsSignatureOid,
+      notes: 'The RSA CMS signer uses RSA-PSS; certificate signature is separately parsed',
+    },
+    {
+      field: 'Public-key algorithm OID',
+      rsaValue: rsa.keyOid,
+      mlDsaValue: pq.keyOid,
+      notes: 'RSA modulus and packed ML-DSA bytes are components, not complete SPKI encodings',
+    },
+    {
+      field: 'Validity',
+      rsaValue: `${rsa.notBefore} to ${rsa.notAfter}`,
+      mlDsaValue: `${pq.notBefore} to ${pq.notAfter}`,
+      notes: 'Actual captured issuance periods; neither is a current deployment approval',
+    },
+    {
+      field: 'Extension OIDs',
+      rsaValue: rsa.extensions.join(', ') || 'none',
+      mlDsaValue: pq.extensions.join(', ') || 'none',
+      notes:
+        'Inspect email-purpose profile requirements separately; algorithm choice does not determine these extensions',
+    },
+  ]
+}

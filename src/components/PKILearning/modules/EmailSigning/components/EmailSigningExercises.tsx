@@ -34,11 +34,11 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       id: 'cert-comparison',
       title: '1. RSA vs ML-DSA Certificate Fields',
       description:
-        'Examine an S/MIME signing certificate side by side: RSA-2048 vs ML-DSA-65. Compare the public key sizes, signature sizes, and total certificate footprint. Note which fields are identical and which change.',
+        'Compare the captured RSA-3072 / CMS RSA-PSS and ML-DSA-65 samples. Distinguish the public-key component from complete SPKI, certificate DER/PEM, CMS and MIME bytes. Change the unsigned outer Subject and PEM line endings; identify which totals change.',
       badge: 'Certificates',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'The X.509 extensions (keyUsage, extKeyUsage, subjectAltName) are identical for both algorithms. Only the algorithm OID, key size (256 vs 1,952 bytes), and signature size (256 vs 3,309 bytes) differ.',
+        'The RSA modulus is only one component of its encoded public key. Inspect each actual issuer, certificate signature, extensions and validity; the certificate ratio is specific to these samples. Outer Subject changes MIME size without changing signed content, while PEM line endings change textual bytes without changing DER. These samples are not a proof of email-purpose profile compliance or equal security.',
       config: { step: 0 },
     },
     {
