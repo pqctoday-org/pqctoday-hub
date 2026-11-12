@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11122026.csv
+ * Source: src/data/role_board_content_11122026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -307,7 +307,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/leaders',
         proofChips: [
           '1495 documents, trust-tiered',
-          'Every correction logged and dated',
+          'Inspect dated entries in the public changelog',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
         sideCard: {
