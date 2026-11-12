@@ -64,3 +64,16 @@ describe('OSPQC introduction: FIPS + PQC hybrid strategy', () => {
     expect(text).not.toContain('New services use the default OpenSSL provider + oqsprovider')
   })
 })
+
+describe('OSPQC introduction: GnuTLS alias agrees with the subsystem row', () => {
+  it('teaches a real local capability command and distinguishes negotiation', () => {
+    const text = introText()
+    expect(text).toContain('GnuTLS 3.8.8 introduced experimental final-ML-KEM hybrid groups')
+    expect(text).toContain('3.8.9 added experimental ML-DSA library and certtool support')
+    expect(text).toContain('3.8.10 added ML-DSA TLS handshake signatures')
+    expect(text).toContain("gnutls-cli --priority 'SECURE128:+GROUP-X25519-MLKEM768' --list")
+    expect(text).toContain('unsupported-group error means that this build cannot')
+    expect(text).toContain('OpenSSL config change does not configure GnuTLS')
+    expect(text).not.toMatch(/GnuTLS 3\.8\.3|SECURE128:\+X25519MLKEM768/)
+  })
+})

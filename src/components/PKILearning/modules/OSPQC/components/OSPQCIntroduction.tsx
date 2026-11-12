@@ -132,15 +132,16 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
           The most impactful PQC change for any OS is enabling{' '}
           <strong>hybrid TLS key exchange</strong> at the system level. When you configure{' '}
           <InlineTooltip term="X25519MLKEM768">X25519MLKEM768</InlineTooltip> as a TLS 1.3 KEM
-          group, every application that uses the system{' '}
-          <InlineTooltip term="OpenSSL">OpenSSL</InlineTooltip> or CNG library benefits
-          automatically.
+          group, applications must load the relevant system policy or library configuration. Restart
+          them after a change and test their actual TLS connections: a local capability or a
+          ClientHello offer does not establish the selected group. The peer must support the group
+          too; a permitted classical fallback remains classical.
         </p>
 
         <div className="space-y-3">
           {[
             {
-              os: 'RHEL / CentOS Stream',
+              os: 'RHEL 9.7 / 10.1+',
               mechanism: 'crypto-policies',
               command: 'update-crypto-policies --set DEFAULT:PQ',
               effect:
@@ -203,12 +204,19 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-2">GnuTLS (curl, wget, systemd)</div>
           <p className="text-xs text-muted-foreground">
-            Many Linux services use <strong>GnuTLS</strong> rather than OpenSSL — including curl on
-            Debian/Ubuntu, wget, NetworkManager, and systemd-networkd. GnuTLS 3.8.3+ supports
-            X25519MLKEM768 hybrid groups configured via{' '}
-            <code className="text-xs bg-muted px-1 rounded">GNUTLS_SYSTEM_PRIORITY_FILE</code> or
-            priority string{' '}
-            <code className="text-xs bg-muted px-1 rounded">SECURE128:+X25519MLKEM768</code>.
+            Applications may use <strong>GnuTLS</strong> instead of OpenSSL; check the actual
+            application build. GnuTLS 3.8.8 introduced experimental final-ML-KEM hybrid groups;
+            3.8.9 added experimental ML-DSA library and certtool support. Version 3.8.10 added
+            ML-DSA TLS handshake signatures and requires leancrypto for PQC (liboqs was removed). On
+            a build with the required PQC backend, inspect the supported group list with{' '}
+            <code className="text-xs bg-muted px-1 rounded">
+              gnutls-cli --priority 'SECURE128:+GROUP-X25519-MLKEM768' --list
+            </code>
+            . This lists local capability; an unsupported-group error means that this build cannot
+            use the requested group. It does not establish a completed hybrid handshake. Apply
+            policy through the application’s GnuTLS configuration, restart it and inspect the
+            negotiated group on a successful test connection. An OpenSSL config change does not
+            configure GnuTLS.
           </p>
         </div>
       </LearnSection>

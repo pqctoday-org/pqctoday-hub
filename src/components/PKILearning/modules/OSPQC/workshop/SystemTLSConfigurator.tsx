@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { ChevronDown, ChevronUp, AlertTriangle, CheckCircle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { ISOLATED_OPENSSL_CONFIG, OPENSSL_CONFIG_PROBE } from '../data/tlsProbeCommands'
 
 type OSSelection = 'rhel' | 'ubuntu' | 'windows'
 
@@ -31,7 +32,7 @@ interface OSConfig {
 const OS_CONFIGS: Record<OSSelection, OSConfig> = {
   rhel: {
     id: 'rhel',
-    label: 'RHEL / CentOS Stream',
+    label: 'RHEL 9.7 / 10.1+',
     currentPolicy: 'DEFAULT',
     pqcPolicy: 'DEFAULT:PQ on RHEL 9.7; the DEFAULT policy on RHEL 10.1 and later',
     configFile: '/etc/crypto-policies/config',
@@ -57,41 +58,30 @@ const OS_CONFIGS: Record<OSSelection, OSConfig> = {
       { name: 'ECDHE-ECDSA-AES256-GCM-SHA384', quantumSafe: false, enabled: true, note: 'TLS 1.2' },
       { name: 'DHE-RSA-AES256-GCM-SHA384', quantumSafe: false, enabled: true, note: 'TLS 1.2' },
     ],
-    beforeConfig: `# RHEL 9.7 before enabling the PQ policy: /etc/crypto-policies/config
-DEFAULT
+    beforeConfig: `# RHEL 9.7: inspect the policy in a new shell/process.
+update-crypto-policies --show
+# DEFAULT before the PQ subpolicy is enabled.
 
-# Active profile (check with):
-$ update-crypto-policies --show
-DEFAULT
+${OPENSSL_CONFIG_PROBE}
+# Read the negotiated group, not the ClientHello offer. The peer also
+# determines the result; DEFAULT alone is not proof of any particular group.
+# RHEL 10.1+ DEFAULT already prefers hybrid groups in supported libraries.`,
+    afterConfig: `# RHEL 9.7, elevated shell: enable the documented PQ subpolicy.
+update-crypto-policies --set DEFAULT:PQ
+update-crypto-policies --show
+# Expected policy: DEFAULT:PQ
+# Restart the sample service/application so it reads the new policy.
 
-# TLS groups active (OpenSSL):
-$ openssl s_client -connect example.com:443 </dev/null 2>&1 \\
-  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
-# Expected: Negotiated TLS1.3 group: X25519 (no ML-KEM hybrid, classical only)
-
-# On RHEL 10.1 and later the DEFAULT policy already enables and prefers
-# post-quantum key exchange, so this "before" state applies to RHEL 9.7.`,
-    afterConfig: `# After, on RHEL 9.7: enable the PQ policy
-$ update-crypto-policies --set DEFAULT:PQ
-
-# Verify:
-$ update-crypto-policies --show
-DEFAULT:PQ
-
-# TLS groups active after change:
-$ openssl s_client -connect pqc-enabled-server.com:443 \\
-  -groups x25519mlkem768:x25519:P-256 </dev/null 2>&1 \\
-  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
-# Expected: Negotiated TLS1.3 group: X25519MLKEM768
-# (hybrid key exchange: ML-KEM-768 + X25519)
-
-# On RHEL 10.1 and later no change is needed for applications that use
-# OpenSSL, GnuTLS, NSS or Go: the DEFAULT policy enables and prefers the
-# hybrid group for them.`,
+${OPENSSL_CONFIG_PROBE}
+# No -groups override: this checks the configuration loaded by a new process.
+# X25519MLKEM768 means hybrid key establishment for this successful TLS 1.3
+# connection; X25519 alone is a classical fallback, not a hybrid success.
+# On RHEL 10.1 and later no policy change is needed for applications that use
+# OpenSSL, GnuTLS, NSS or Go. Check each application's actual negotiation.`,
     impactNote:
       'On RHEL 10.1 and later the DEFAULT policy applies to applications that use OpenSSL, GnuTLS, NSS or Go; on RHEL 9.7, DEFAULT:PQ applies to applications based on OpenSSL or NSS. The mechanism is hybrid key-exchange groups in TLS 1.3, not new cipher suites.',
     compatNote:
-      'Each application also has to use the library setting that offers the hybrid group, so check applications one by one and confirm with a test connection that the negotiated group is hybrid. Legacy applications compiled against OpenSSL < 3.x may not support TLS 1.3 or ML-KEM groups.',
+      'Each application also has to use the library setting that offers the hybrid group, so check applications one by one and confirm with a test connection that the negotiated group is hybrid. A library version number alone does not prove enabled groups or policy integration. A completed connection must confirm the selected group; TLS 1.3 cipher suites describe symmetric protection separately.',
   },
   ubuntu: {
     id: 'ubuntu',
@@ -131,37 +121,30 @@ $ openssl s_client -connect pqc-enabled-server.com:443 \\
         note: 'TLS 1.2 retained',
       },
     ],
-    beforeConfig: `# /etc/ssl/openssl.cnf — current (default Ubuntu 24.04, OpenSSL 3.0.13)
-[system_default_sect]
-MinProtocol = TLSv1.2
-CipherString = DEFAULT@SECLEVEL=2
+    beforeConfig: `# Ubuntu 24.04 LTS ships OpenSSL 3.0.13: no native ML-KEM group.
+openssl version -a
 
-# Check active groups:
-$ openssl s_client -connect example.com:443 </dev/null 2>&1 \\
-  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
-# Expected: Negotiated TLS1.3 group: X25519`,
-    afterConfig: `# /etc/ssl/openssl.cnf — after PQC hybrid config (OpenSSL 3.5.0 or later)
-[system_default_sect]
-MinProtocol = TLSv1.2
-CipherString = DEFAULT@SECLEVEL=2
-Groups = x25519mlkem768:x25519:prime256v1:secp384r1
+${OPENSSL_CONFIG_PROBE}
+# Inspect the selected group. A TLS_AES_* cipher suite does not establish
+# hybrid key exchange. Ubuntu 26.04 LTS ships OpenSSL 3.5.5.`,
+    afterConfig: `# Ubuntu 26.04 / OpenSSL 3.5.0+; confirm the actual loaded build first.
+openssl version -a
+# In /etc/ssl/openssl.cnf, update the already-connected system_default
+# section: Groups = x25519mlkem768:x25519:prime256v1:secp384r1
+# Merely adding an unreferenced section does not activate it.
+# Restart the sample service after a system config change:
+# sudo systemctl restart your-sample-service.service
 
-# Check the version first; it must report 3.5.0 or later
-# (Ubuntu 26.04 LTS ships OpenSSL 3.5.5):
-$ openssl version
+# Alternatively test the same group list in an isolated sample process:
+${ISOLATED_OPENSSL_CONFIG}
 
-# Each process reads openssl.cnf when it starts. Restart the services
-# that use it, for example:
-$ sudo systemctl restart <service>
-
-# Verify hybrid negotiation (example; the exact output varies by build):
-$ openssl s_client -connect cloudflare.com:443 \\
-  -groups x25519mlkem768:x25519 </dev/null 2>&1 \\
-  | grep -E "Negotiated TLS1.3 group|Peer Temp Key"
-# Expected on OpenSSL 3.5.0 or later: Negotiated TLS1.3 group: X25519MLKEM768
-# A classical X25519 fallback prints: Peer Temp Key: X25519`,
+${OPENSSL_CONFIG_PROBE}
+# No -groups override: X25519MLKEM768 is a hybrid result only after the
+# handshake and certificate/hostname checks succeed. X25519 is fallback.
+# The isolated OPENSSL_CONF affects this shell's new processes only.
+# After the sample: unset OPENSSL_CONF`,
     impactNote:
-      'Adding x25519mlkem768 as the preferred group has minimal compatibility impact: TLS 1.3 peers that do not support ML-KEM fall back to x25519. Each process reads openssl.cnf when it starts, so restart the services that need the new group.',
+      'Keeping classical groups permits fallback for peers without the hybrid group; test peer and middlebox compatibility rather than assuming it. Each process reads openssl.cnf when it starts, so restart the services that need the new group.',
     compatNote:
       'Ubuntu 24.04 LTS ships OpenSSL 3.0.13, which has no ML-KEM and no x25519mlkem768 group, so this change does not apply there. Ubuntu 26.04 LTS ships OpenSSL 3.5.5, which has ML-KEM, ML-DSA and SLH-DSA built in, and OpenSSL 3.5.0 makes X25519MLKEM768 the first entry of its default TLS group list. The Ubuntu package archive has no oqs provider package for 24.04 or 26.04, so on 24.04 the route is an upgrade to 26.04 LTS or an OpenSSL 3.5.0 or later build from outside the archive.',
   },
@@ -247,18 +230,29 @@ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384    ECDH
 Enable-TlsEccCurve -Name "x25519_mlkem768" -Position 0
 # (ML-KEM is negotiated as a TLS 1.3 key-exchange group, not a cipher suite)
 
-# Verify ML-KEM negotiation:
-(New-Object System.Net.WebClient).DownloadString('https://cloudflare.com') > $null
-netsh trace start capture=yes
-# (Check trace for X25519MLKEM768 in ClientHello supported_groups)
+# In an elevated sample terminal, start capture BEFORE the fresh connection:
+netsh trace start capture=yes report=disabled tracefile=tls-sample.etl
+if ($LASTEXITCODE -ne 0) { throw "Trace did not start" }
+try {
+  (New-Object System.Net.WebClient).DownloadString('https://cloudflare.com') > $null
+} finally {
+  netsh trace stop
+}
+# Decode the captured TLS handshake with your packet-analysis tool.
+# Require a successful, fresh TLS 1.3 handshake and the final ServerHello
+# key_share selected group X25519MLKEM768 (0x11ec); a ClientHello
+# supported_groups offer alone is NOT evidence of hybrid negotiation.
+# A successful classical fallback or TLS 1.2 connection is not a hybrid pass.
+# The capture file itself is not an automated group-verification result.
 
-# Disable TLS 1.2 for PQC-only mode (advanced — test compatibility first):
+# Optional TLS 1.2 server disablement (advanced — test compatibility first):
+# TLS 1.3 alone is NOT PQC-only; a classical TLS 1.3 group can still be selected.
 $regPath = "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\SCHANNEL\\Protocols\\TLS 1.2\\Server"
 New-Item -Force -Path $regPath
 Set-ItemProperty -Path $regPath -Name "Enabled" -Value 0 -Type DWord
 
-# Verify SymCrypt / CNG ML-KEM support (GA since November 2025):
-certutil -csplist | findstr /i "ml-kem"`,
+# Inspect provider inventory separately (not an ML-KEM algorithm or TLS test):
+certutil -csplist`,
     impactNote:
       'Schannel hybrid key exchange (x25519_mlkem768) is available from KB5089573 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026) and is documented as disabled by default — it requires explicit enablement via Group Policy or TLS cmdlets. The CNG PQC APIs for ML-KEM and ML-DSA are GA since November 2025; SLH-DSA is not implemented by the default CNG provider.',
     compatNote:
@@ -267,7 +261,7 @@ certutil -csplist | findstr /i "ml-kem"`,
 }
 
 const OS_FILTER_ITEMS = [
-  { id: 'rhel', label: 'RHEL / CentOS' },
+  { id: 'rhel', label: 'RHEL 9.7 / 10.1+' },
   { id: 'ubuntu', label: 'Ubuntu 24.04 / 26.04 LTS' },
   { id: 'windows', label: 'Windows Server 2025' },
 ]
@@ -398,7 +392,10 @@ export const SystemTLSConfigurator: React.FC = () => {
             )}
           </div>
         </Button>
-        <pre className="mt-3 text-[11px] bg-background p-4 rounded border border-border overflow-x-auto font-mono whitespace-pre leading-relaxed text-foreground">
+        <pre
+          aria-label="TLS configuration commands"
+          className="mt-3 text-[11px] bg-background p-4 rounded border border-border overflow-x-auto font-mono whitespace-pre leading-relaxed text-foreground"
+        >
           {showAfter ? config.afterConfig : config.beforeConfig}
         </pre>
       </div>

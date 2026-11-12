@@ -139,9 +139,9 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     platform: 'Linux (GNOME, system daemons)',
     type: 'userspace',
     pqcStatus: 'partial',
-    version: 'GnuTLS 3.8.x',
+    version: 'GnuTLS 3.8.8+ (build-dependent PQC)',
     notes:
-      'ML-KEM hybrid TLS groups (X25519MLKEM768) in GnuTLS 3.8.3+. ML-DSA certificate support planned for 4.x. Used by curl, wget, NetworkManager, and systemd-resolved on many distros.',
+      'GnuTLS 3.8.8 introduced experimental final-ML-KEM hybrid TLS groups; 3.8.9 added experimental ML-DSA library/certtool support with an optional PQC backend. Version 3.8.10 added ML-DSA TLS handshake signatures and removed liboqs support in favor of leancrypto. Check the installed build and application backend; the version alone does not establish enabled PQC.',
   },
   {
     id: 'nss',
@@ -262,7 +262,7 @@ export const SSH_HOST_KEY_TYPES: SSHKeyType[] = [
 export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
   {
     id: 'rhel-crypto-policies',
-    os: 'RHEL / CentOS Stream',
+    os: 'RHEL 9.7 / 10.1+',
     policyMechanism: 'crypto-policies',
     defaultPolicy: 'DEFAULT (TLS 1.2+, RSA-2048+, AES-128+)',
     pqcPolicy: 'DEFAULT:PQ on RHEL 9.7; the DEFAULT policy on RHEL 10.1 and later',
@@ -289,7 +289,7 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
     pqcPolicy:
       'x25519_mlkem768 is available from KB5089573 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026): disabled by default, enable via Group Policy or TLS cmdlets',
     command:
-      'Enable-TlsEccCurve / Group Policy: SSL Configuration Settings → ECC Curve Order (add X25519MLKEM768)',
+      'Enable-TlsEccCurve -Name "x25519_mlkem768" -Position 0 (elevated PowerShell on a supported build)',
     notes:
       'CNG PQC APIs (ML-KEM and ML-DSA) are GA since November 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768) is available from Windows 11 update KB5089573 (24H2 and 25H2) and, with the 14 July 2026 update KB5099536, on Windows Server 2025. Microsoft documents the groups as disabled by default, so enable them explicitly via Group Policy (ECC Curve Order) or TLS cmdlets; the Microsoft TLS Supported Groups page still mentions Insider builds, so confirm the behaviour on your build.',
   },
