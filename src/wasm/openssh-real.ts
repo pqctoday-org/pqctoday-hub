@@ -376,6 +376,7 @@ export interface SshConfigArtifacts {
   sshdConfig: string
   sshConfig: string
   authorizedKeys: string
+  setupScript: string
 }
 
 // Host-key file basename per algorithm (matches OpenSSH conventions).
@@ -394,38 +395,133 @@ const HOSTKEY_FILE: Record<string, string> = {
   'ecdsa-sha2-nistp256': 'ssh_host_ecdsa_key',
 }
 
-/**
- * Build the sshd_config / ssh_config / authorized_keys that correspond to a real
- * run. The shim hardcodes the proposal rather than parsing a config file, so
- * these are an *accurate representation* of what the handshake negotiated (KEX,
- * host-key and pubkey-auth algorithms) — useful for "how would I configure this"
- * — not a file the binary read. The panel labels them as such.
- */
+/** Only the existing genuine profile has a pinned native recipe. Model-only
+ * names are not silently translated into a different native SSH negotiation. */
+export function canBuildNativeSshRecipe(r: import('./openssh').SshHandshakeResult): boolean {
+  return (
+    r.connection_ok &&
+    r.token_module === 'softhsmv3 (WASM, embedded — real OpenSSH)' &&
+    r.client_auth_algorithm === r.host_key_algorithm &&
+    ((r.kex_algorithm === REAL_CLASSICAL.kex && r.host_key_algorithm === REAL_CLASSICAL.hostalg) ||
+      (r.kex_algorithm === REAL_PQC.kex && REAL_HOSTKEY_IDS.has(r.host_key_algorithm)))
+  )
+}
+
+/** Pinned Linux Sandbox OpenSSH10.5p1 + existing softhsmv3 PKCS#11 agent example.
+ * The WASM driver does not parse these files; this native recipe is checked
+ * separately. It uses fresh sample token identities, never the WASM private keys.
+ * HostKeyAgent/public-sidecar contract: upstream V_10_5_P1 sshd_config.5. */
 export function buildSshConfigArtifacts(
   r: import('./openssh').SshHandshakeResult
 ): SshConfigArtifacts {
-  const kex = r.kex_algorithm
-  const alg = r.host_key_algorithm
-  const hostFile = HOSTKEY_FILE[alg] ?? 'ssh_host_key'
+  if (!canBuildNativeSshRecipe(r))
+    throw new Error('No pinned native recipe for this retained model or uncompleted profile')
+  const kex = r.kex_algorithm,
+    alg = r.host_key_algorithm,
+    hostFile = new Map(Object.entries(HOSTKEY_FILE)).get(alg)
+  if (!hostFile) throw new Error('Unsupported native host-key identity')
+  const work = '/root/pqc-ssh-example'
   const sshdConfig = [
-    '# sshd_config — server (key material lives in the PKCS#11 token)',
+    '# Pinned example: PQCToday Sandbox patched OpenSSH10.5p1, Linux disposable container.',
+    '# Public .pub sidecar selects the exact token host key; no private key file exists.',
+    'Port 2222',
+    'ListenAddress 127.0.0.1',
+    `HostKey ${work}/${hostFile}`,
+    `HostKeyAgent ${work}/agent.sock`,
     `KexAlgorithms ${kex}`,
-    `HostKey /etc/ssh/${hostFile}`,
     `HostKeyAlgorithms ${alg}`,
     `PubkeyAcceptedAlgorithms ${alg}`,
     'PubkeyAuthentication yes',
     'PasswordAuthentication no',
-    '# Host key fetched + signed via the PKCS#11 provider (C_Sign); never exported.',
-    'PKCS11Provider /usr/lib/softhsm/libsofthsmv3.so',
+    'KbdInteractiveAuthentication no',
+    'PermitEmptyPasswords no',
+    'PermitRootLogin prohibit-password',
+    'StrictModes yes',
+    `AuthorizedKeysFile ${work}/authorized_keys`,
+    `PidFile ${work}/sshd.pid`,
+    'LogLevel VERBOSE',
   ].join('\n')
   const sshConfig = [
-    '# ssh_config — client',
+    '# Same pinned disposable-container sample; host identity is pinned, not accepted blindly.',
     'Host pqc-demo',
+    '  HostName 127.0.0.1',
+    '  Port 2222',
+    '  User root',
     `  KexAlgorithms ${kex}`,
     `  HostKeyAlgorithms ${alg}`,
     `  PubkeyAcceptedAlgorithms ${alg}`,
-    '  PKCS11Provider /usr/lib/softhsm/libsofthsmv3.so',
+    `  IdentityAgent ${work}/agent.sock`,
+    `  IdentityFile ${work}/client_key.pub`,
+    '  IdentitiesOnly yes',
+    '  BatchMode yes',
+    '  StrictHostKeyChecking yes',
+    `  UserKnownHostsFile ${work}/known_hosts`,
   ].join('\n')
-  const authorizedKeys = `${alg} AAAA…<${r.client_pubkey_bytes}-byte ${alg} public key>… pqcuser@pqc.today`
-  return { sshdConfig, sshConfig, authorizedKeys }
+  const suffix =
+    alg === 'ecdsa-sha2-nistp256'
+      ? 'ecdsa-p256'
+      : alg === 'ssh-slh-dsa-sha2-128s'
+        ? 'slhdsa-128s'
+        : alg.replace(/^ssh-/, '')
+  const authorizedKeys = `# setup.sh writes actual ${alg} public bytes from the selected agent identity.\n# No placeholder key is accepted. Host and client labels must be distinct.`
+  const setupScript = [
+    '#!/bin/sh',
+    'set -eu',
+    'umask 077',
+    '# Run ONLY inside the pinned disposable Linux Sandbox, never on a host/service.',
+    '# Prerequisite: initialized sample token, non-extractable host and user keys',
+    `# of algorithm ${alg}; labels below select identities, never just the first key.`,
+    'test "$(uname -s)" = Linux && test "$(id -u)" = 0 && test -f /.dockerenv',
+    'BIN=/usr/local/ssh/bin',
+    'SSHD=/usr/local/ssh/sbin/sshd',
+    'MODULE=/usr/local/lib/softhsm/libsofthsmv3.so',
+    `WORK=${work}`,
+    '"$BIN/ssh" -V 2>&1 | grep -q "^OpenSSH_10[.]5p1,"',
+    '# Exact retained test build; verify these binaries before using the recipe.',
+    "printf '%s\\n' 'ab0160d0475f89846c0c047a90813c6416b91c2ad3e5de2609e5e936849f9bf1  /usr/local/ssh/bin/ssh' 'f46cdf1c3b93bc999cfe77327c944772e503f9f2ef84aa0eddeeb266df91a207  /usr/local/ssh/sbin/sshd' 'a0ae2698ead23a705275d5010dec75aab7281afd2aed6fe09269e1c4cfa0aeeb  /usr/local/ssh/bin/ssh-agent' '41b0ba1f9696e4ca3f842e28701de06747614945689760d3112acba93ad0570d  /usr/local/ssh/bin/ssh-add' '858d398f8d159487b1acc403ead8e395246b48139ba1e3ec1bbcf1b453e9a284  /usr/local/lib/softhsm/libsofthsmv3.so' | sha256sum -c -",
+    'mkdir -p "$WORK" /var/empty',
+    'chmod 700 "$WORK"',
+    'chmod 755 /var/empty',
+    'id -u sshd >/dev/null 2>&1 || useradd -r -s /usr/sbin/nologin -d /var/empty sshd',
+    '# Enable only the disposable image account for key authentication; passwords remain disabled.',
+    'usermod -p x root',
+    'test ! -e "$WORK/agent.sock"',
+    `test ! -e "$WORK/${hostFile}"`,
+    `HOST_KEY_LABEL="\${HOST_KEY_LABEL:-ssh-host-${suffix}}"`,
+    `CLIENT_KEY_LABEL="\${CLIENT_KEY_LABEL:-ssh-user-${suffix}}"`,
+    'test "$HOST_KEY_LABEL" != "$CLIENT_KEY_LABEL"',
+    'export PQC_SSH_SAMPLE_PIN="${PQC_SSH_SAMPLE_PIN:-1234}"',
+    'server_pid=; agent_pid=',
+    'cleanup() { test -z "$server_pid" || kill "$server_pid" 2>/dev/null || true; test -z "$agent_pid" || kill "$agent_pid" 2>/dev/null || true; }',
+    'trap cleanup EXIT HUP INT TERM',
+    'eval "$("$BIN/ssh-agent" -s -a "$WORK/agent.sock")" >/dev/null',
+    'agent_pid=$SSH_AGENT_PID',
+    'printf \'%s\\n\' \'#!/bin/sh\' \'printf "%s\\n" "$PQC_SSH_SAMPLE_PIN"\' > "$WORK/askpass.sh"',
+    'chmod 700 "$WORK/askpass.sh"',
+    'SSH_ASKPASS="$WORK/askpass.sh" SSH_ASKPASS_REQUIRE=force DISPLAY=sample "$BIN/ssh-add" -s "$MODULE"',
+    '"$BIN/ssh-add" -L > "$WORK/agent_public_keys"',
+    `awk -v alg='${alg}' -v label="$HOST_KEY_LABEL" '$1==alg && $3==label {print}' "$WORK/agent_public_keys" > "$WORK/${hostFile}.pub"`,
+    `awk -v alg='${alg}' -v label="$CLIENT_KEY_LABEL" '$1==alg && $3==label {print}' "$WORK/agent_public_keys" > "$WORK/client_key.pub"`,
+    `test "$(wc -l < "$WORK/${hostFile}.pub")" -eq 1 || { echo "Expected exactly one matching host public identity" >&2; exit 1; }`,
+    'test "$(wc -l < "$WORK/client_key.pub")" -eq 1 || { echo "Expected exactly one matching client public identity" >&2; exit 1; }',
+    `host_fp="$("$BIN/ssh-keygen" -lf "$WORK/${hostFile}.pub" | awk '{print $2}')"`,
+    `client_fp="$("$BIN/ssh-keygen" -lf "$WORK/client_key.pub" | awk '{print $2}')"`,
+    'test "$host_fp" != "$client_fp"',
+    'cp "$WORK/client_key.pub" "$WORK/authorized_keys"',
+    `printf '[127.0.0.1]:2222 %s\\n' "$(cat "$WORK/${hostFile}.pub")" > "$WORK/known_hosts"`,
+    'cat > "$WORK/sshd_config" <<\'PQC_SERVER\'',
+    sshdConfig,
+    'PQC_SERVER',
+    'cat > "$WORK/ssh_config" <<\'PQC_CLIENT\'',
+    sshConfig,
+    'PQC_CLIENT',
+    '"$SSHD" -t -f "$WORK/sshd_config"',
+    '"$SSHD" -D -e -f "$WORK/sshd_config" > "$WORK/sshd.log" 2>&1 &',
+    'server_pid=$!',
+    'i=0; while ! grep -q "Server listening on" "$WORK/sshd.log"; do kill -0 "$server_pid"; i=$((i+1)); test "$i" -lt 50; sleep 0.1; done',
+    '"$BIN/ssh" -vv -F "$WORK/ssh_config" pqc-demo /bin/true 2> "$WORK/client.log" || { status=$?; cat "$WORK/client.log" >&2; exit "$status"; }',
+    'cat "$WORK/client.log"',
+    '# Inspect negotiated algorithms and the token operation log. A lab pass is not deployment evidence.',
+  ].join('\n')
+  return { sshdConfig, sshConfig, authorizedKeys, setupScript }
 }

@@ -15,6 +15,10 @@ vi.mock('./softhsm', () => {
     hsm_generateMLKEMKeyPair: vi.fn().mockReturnValue({ pubHandle: 10, privHandle: 11 }),
     hsm_generateSLHDSAKeyPair: vi.fn().mockReturnValue({ pubHandle: 13, privHandle: 14 }),
     hsm_ecdhDerive: vi.fn().mockReturnValue(7),
+    hsm_decapsulate: vi.fn().mockReturnValue(15),
+    hsm_eddsaVerify: vi.fn().mockImplementation((M) => M._C_Verify() === 0),
+    hsm_verifyBytesMLDSA: vi.fn().mockImplementation((M) => M._C_VerifyMessage() === 0),
+    hsm_slhdsaVerifyBytes: vi.fn().mockImplementation((M) => M._C_VerifyMessage() === 0),
     hsm_eddsaSign: vi.fn().mockReturnValue(new Uint8Array(64).fill(0x03)),
     hsm_signBytesMLDSA: vi.fn().mockReturnValue(new Uint8Array(3309).fill(0x04)),
     hsm_signBytesSLHDSA: vi.fn().mockReturnValue(new Uint8Array(7856).fill(0x06)),
@@ -54,7 +58,11 @@ import {
   hsm_encapsulate,
 } from './softhsm'
 
-const fakeModule = {} as Parameters<SshEngine['bindHsm']>[0] extends { module: infer M } ? M : never
+const fakeModule = { _C_Verify: () => 0, _C_VerifyMessage: () => 0 } as Parameters<
+  SshEngine['bindHsm']
+>[0] extends { module: infer M }
+  ? M
+  : never
 
 describe('SshEngine', () => {
   let engine: SshEngine

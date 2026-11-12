@@ -19,6 +19,10 @@ import {
   hsm_signBytesMLDSA,
   hsm_signBytesSLHDSA,
   hsm_encapsulate,
+  hsm_decapsulate,
+  hsm_eddsaVerify,
+  hsm_verifyBytesMLDSA,
+  hsm_slhdsaVerifyBytes,
   hsm_extractECPoint,
   hsm_extractKeyValue,
   hsm_digest,
@@ -63,7 +67,16 @@ function concat(...arrs: Uint8Array[]): Uint8Array {
 
 // ── Public types ─────────────────────────────────────────────────────────────
 
+export interface SshOperationChecks {
+  outcome: 'passed' | 'failed' | 'error'
+  shared_secret_equal: boolean | null
+  host_signature_valid: boolean | null
+  client_signature_valid: boolean | null
+}
+
 export interface SshHandshakeResult {
+  /** Model operation checks, not evidence of an SSH network connection. */
+  operation_checks?: SshOperationChecks
   connection_ok: boolean
   quantum_safe: boolean
   host_key_algorithm: string
@@ -259,7 +272,8 @@ function hexPrev(msgNum: number, extra?: Uint8Array): string {
 }
 
 // Convert Uint8Array to latin-1 string for hsm_eddsaSign (which TextEncoder-encodes it back).
-// We pass raw bytes as latin-1 characters so no byte is lost.
+// This retained modeled sign input is UTF-8 of Latin-1 code points, not raw H.
+// Verification must use the identical existing sign input; this is not RFC4253 serialization.
 function bytesToLatin1(bytes: Uint8Array): string {
   let s = ''
   for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i])
@@ -432,13 +446,82 @@ function signWithHostKeyFamily(
   throw new Error('signWithHostKeyFamily invoked on non-PQC host key')
 }
 
+/** Observe the existing verifier RV without changing a module or helper API.
+ * Some helpers return false for every nonzero RV; only signature-invalid/length
+ * are negative checks. An operational error makes the sample incomplete. */
+function checkedVerification(
+  M: SoftHSMModule,
+  verify: (module: SoftHSMModule) => boolean
+): boolean {
+  let resultRv: number | undefined
+  const observed = new Proxy(M, {
+    get(target, property) {
+      const value = Reflect.get(target, property)
+      if (typeof value !== 'function') return value
+      if (
+        property === '_C_Verify' ||
+        property === '_C_VerifyMessage' ||
+        property === '_C_MessageVerifyFinal'
+      )
+        return (...args: unknown[]) => {
+          const rv = Number(Reflect.apply(value, target, args)) >>> 0
+          if (property === '_C_MessageVerifyFinal') {
+            // The retained C++ invalid one-shot path has already ended its context.
+            // This cleanup status is allowed only after a real signature rejection.
+            const endedAfterRejection = rv === 0x91 && (resultRv === 0xc0 || resultRv === 0xc1)
+            if (rv !== 0 && !endedAfterRejection)
+              throw new Error(`Verification operation error 0x${rv.toString(16)}`)
+          } else resultRv = rv
+          return rv
+        }
+      return value.bind(target)
+    },
+  })
+  const valid = verify(observed)
+  if (resultRv === undefined) throw new Error('Verification did not complete an operation')
+  if (resultRv !== 0 && resultRv !== 0xc0 && resultRv !== 0xc1)
+    throw new Error(`Verification operation error 0x${resultRv.toString(16)}`)
+  if (valid !== (resultRv === 0))
+    throw new Error('Verification result disagrees with operation status')
+  return valid
+}
+function equalSecrets(a: Uint8Array, b: Uint8Array): boolean {
+  return a.length === 32 && b.length === 32 && a.every((value, i) => value === b.at(i))
+}
+function operationChecks(shared: boolean, host: boolean, client: boolean): SshOperationChecks {
+  return {
+    outcome: shared && host && client ? 'passed' : 'failed',
+    shared_secret_equal: shared,
+    host_signature_valid: host,
+    client_signature_valid: client,
+  }
+}
+function verifyWithHostKeyFamily(
+  M: SoftHSMModule,
+  h: number,
+  host: ReturnType<typeof hostKeyAlgInfo>,
+  pub: number,
+  message: Uint8Array,
+  signature: Uint8Array
+): boolean {
+  return checkedVerification(M, (module) => {
+    if (host.mldsaVariant !== null) return hsm_verifyBytesMLDSA(module, h, pub, message, signature)
+    if (host.slhdsaParamSet !== null)
+      return hsm_slhdsaVerifyBytes(module, h, pub, message, signature)
+    throw new Error('Unsupported modeled verification family')
+  })
+}
+
 // ── Classical handshake (curve25519-sha256 + ssh-ed25519) ────────────────────
 
 async function runClassical(
   M: SoftHSMModule,
   h: number,
-  config: SshHandshakeConfig
+  config: SshHandshakeConfig,
+  executed: SshOperationChecks
 ): Promise<SshHandshakeResult> {
+  if (config.hostKey !== 'ssh-ed25519')
+    throw new Error('Modeled classical key exchange requires the offered Ed25519 host-key profile')
   const kexInitBytes = 104
 
   const t0 = performance.now()
@@ -483,9 +566,10 @@ async function runClassical(
 
   const serverSS = hsm_extractKeyValue(M, h, serverDerived)
   const clientSS = hsm_extractKeyValue(M, h, clientDerived)
-  void clientSS // both sides derive same secret; server drives the hash
+  const sharedEqual = equalSecrets(serverSS, clientSS)
+  executed.shared_secret_equal = sharedEqual
 
-  // Exchange hash H per RFC 8731
+  // Retained model hash input; not the complete RFC4253 exchange transcript.
   const enc = new TextEncoder()
   const K_S = concat(sshString(enc.encode(config.hostKey)), sshString(hostEd25519Raw))
   const Q_C = sshString(clientX25519Raw)
@@ -493,6 +577,12 @@ async function runClassical(
   const K = sshString(serverSS)
   const hashInput = concat(sshString(K_S), Q_C, Q_S, K)
   const H = hsm_digest(M, h, hashInput, CKM_SHA256)
+  const clientH = hsm_digest(
+    M,
+    h,
+    concat(sshString(K_S), Q_C, Q_S, sshString(clientSS)),
+    CKM_SHA256
+  )
 
   const t2 = performance.now()
 
@@ -501,8 +591,18 @@ async function runClassical(
   const t3 = performance.now()
 
   // Client signature (userauth)
-  const clientSig = hsm_eddsaSign(M, h, clientEd.privHandle, bytesToLatin1(H))
+  const clientSig = hsm_eddsaSign(M, h, clientEd.privHandle, bytesToLatin1(clientH))
   const t4 = performance.now()
+  const hostValid = checkedVerification(M, (module) =>
+    hsm_eddsaVerify(module, h, hostEd.pubHandle, bytesToLatin1(clientH), hostSig)
+  )
+  executed.host_signature_valid = hostValid
+  const clientValid = checkedVerification(M, (module) =>
+    hsm_eddsaVerify(module, h, clientEd.pubHandle, bytesToLatin1(H), clientSig)
+  )
+  executed.client_signature_valid = clientValid
+  const checks = operationChecks(sharedEqual, hostValid, clientValid)
+  const t5 = performance.now()
 
   // Wire packets
   const host_pubkey_bytes = 4 + config.hostKey.length + 4 + 32
@@ -583,7 +683,8 @@ async function runClassical(
   ]
 
   return {
-    connection_ok: true,
+    connection_ok: checks.outcome === 'passed',
+    operation_checks: checks,
     quantum_safe: false,
     host_key_algorithm: config.hostKey,
     client_auth_algorithm: config.hostKey,
@@ -594,7 +695,7 @@ async function runClassical(
     kex_reply_share_bytes,
     host_sig_bytes,
     client_sig_bytes,
-    auth_ms: t4 - t0,
+    auth_ms: t5 - t0,
     keygen_ms: t1 - t0,
     kex_ms: t2 - t1,
     host_sig_ms: t3 - t2,
@@ -602,7 +703,7 @@ async function runClassical(
     pkcs11_host_backed: true,
     pkcs11_client_backed: true,
     token_module: 'softhsmv3 (WASM)',
-    wire_packets,
+    wire_packets: checks.outcome === 'passed' ? wire_packets : [],
   }
 }
 
@@ -616,7 +717,8 @@ async function runClassical(
 async function runPqc(
   M: SoftHSMModule,
   h: number,
-  config: SshHandshakeConfig
+  config: SshHandshakeConfig,
+  executed: SshOperationChecks
 ): Promise<SshHandshakeResult> {
   const kex = kexAlgInfo(config.kex)
   const host = hostKeyAlgInfo(config.hostKey)
@@ -672,9 +774,12 @@ async function runPqc(
     kex.mlkemVariant
   )
   const SS_pq = hsm_extractKeyValue(M, h, kemSSHandle)
+  const clientKemSSHandle = hsm_decapsulate(M, h, clientKem.privHandle, kemCt, kex.mlkemVariant)
+  const clientSS_pq = hsm_extractKeyValue(M, h, clientKemSSHandle)
 
   // Classical ECDH (hybrid only)
   let SS_classical: Uint8Array | null = null
+  let clientSS_classical: Uint8Array | null = null
   if (serverEc && clientEcRaw) {
     const serverDerived = hsm_ecdhDerive(
       M,
@@ -686,6 +791,17 @@ async function runPqc(
       { keyLen: 32, extractable: true }
     )
     SS_classical = hsm_extractKeyValue(M, h, serverDerived)
+    if (!clientEc || !serverEcRaw) throw new Error('Missing modeled hybrid peer key')
+    const clientDerived = hsm_ecdhDerive(
+      M,
+      h,
+      clientEc.privHandle,
+      serverEcRaw,
+      CKD_NULL_VALUE,
+      undefined,
+      { keyLen: 32, extractable: true }
+    )
+    clientSS_classical = hsm_extractKeyValue(M, h, clientDerived)
   }
 
   // K derivation:
@@ -693,6 +809,16 @@ async function runPqc(
   //   pure ML-KEM: K = SHA-256(SS_pq) — single-component hash for transcript stability
   const hybridInput = SS_classical ? concat(SS_pq, SS_classical) : SS_pq
   const K = hsm_digest(M, h, hybridInput, CKM_SHA256)
+  const clientHybridInput = clientSS_classical
+    ? concat(clientSS_pq, clientSS_classical)
+    : clientSS_pq
+  const clientK = hsm_digest(M, h, clientHybridInput, CKM_SHA256)
+  const sharedEqual =
+    equalSecrets(SS_pq, clientSS_pq) &&
+    (!SS_classical || (!!clientSS_classical && equalSecrets(SS_classical, clientSS_classical))) &&
+    equalSecrets(K, clientK)
+
+  executed.shared_secret_equal = sharedEqual
 
   // Server reply: ML-KEM ciphertext (+ classical pub if hybrid)
   const serverReplyShare = serverEcRaw ? concat(kemCt, serverEcRaw) : kemCt
@@ -709,14 +835,21 @@ async function runPqc(
   const K_wrapped = sshString(K)
   const hashInput = concat(sshString(K_S), Q_C, Q_S, K_wrapped)
   const H = hsm_digest(M, h, hashInput, CKM_SHA256)
+  const clientH = hsm_digest(M, h, concat(sshString(K_S), Q_C, Q_S, sshString(clientK)), CKM_SHA256)
 
   // Host signature (ML-DSA or SLH-DSA, per config.hostKey's family)
   const hostSig = signWithHostKeyFamily(M, h, host, hostDsa.privHandle, H)
   const t3 = performance.now()
 
   // Client signature (same family as the host key)
-  const clientSig = signWithHostKeyFamily(M, h, host, clientDsa.privHandle, H)
+  const clientSig = signWithHostKeyFamily(M, h, host, clientDsa.privHandle, clientH)
   const t4 = performance.now()
+  const hostValid = verifyWithHostKeyFamily(M, h, host, hostDsa.pubHandle, clientH, hostSig)
+  executed.host_signature_valid = hostValid
+  const clientValid = verifyWithHostKeyFamily(M, h, host, clientDsa.pubHandle, H, clientSig)
+  executed.client_signature_valid = clientValid
+  const checks = operationChecks(sharedEqual, hostValid, clientValid)
+  const t5 = performance.now()
 
   const host_pubkey_bytes = 4 + config.hostKey.length + 4 + host_dsa_pub_raw.length
   const client_pubkey_bytes = host_pubkey_bytes
@@ -792,7 +925,8 @@ async function runPqc(
   ]
 
   return {
-    connection_ok: true,
+    connection_ok: checks.outcome === 'passed',
+    operation_checks: checks,
     quantum_safe: true,
     host_key_algorithm: config.hostKey,
     client_auth_algorithm: config.hostKey,
@@ -803,7 +937,7 @@ async function runPqc(
     kex_reply_share_bytes,
     host_sig_bytes,
     client_sig_bytes,
-    auth_ms: t4 - t0,
+    auth_ms: t5 - t0,
     keygen_ms: t1 - t0,
     kex_ms: t2 - t1,
     host_sig_ms: t3 - t2,
@@ -811,7 +945,7 @@ async function runPqc(
     pkcs11_host_backed: true,
     pkcs11_client_backed: true,
     token_module: 'softhsmv3 (WASM)',
-    wire_packets,
+    wire_packets: checks.outcome === 'passed' ? wire_packets : [],
   }
 }
 
@@ -846,13 +980,20 @@ export class SshEngine {
     const config = normaliseConfig(input)
     const kex = kexAlgInfo(config.kex)
 
+    const executed: SshOperationChecks = {
+      outcome: 'error',
+      shared_secret_equal: null,
+      host_signature_valid: null,
+      client_signature_valid: null,
+    }
     try {
-      if (kex.isClassicalOnly) return await runClassical(M, hSession, config)
-      return await runPqc(M, hSession, config)
+      if (kex.isClassicalOnly) return await runClassical(M, hSession, config, executed)
+      return await runPqc(M, hSession, config, executed)
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       const base: SshHandshakeResult = {
         connection_ok: false,
+        operation_checks: { ...executed, outcome: 'error' },
         quantum_safe: !kex.isClassicalOnly,
         host_key_algorithm: config.hostKey,
         client_auth_algorithm: config.hostKey,

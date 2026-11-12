@@ -4,6 +4,7 @@ import {
   mapRealEventsToResult,
   mapPkcs11Event,
   buildSshConfigArtifacts,
+  canBuildNativeSshRecipe,
   isRealCombo,
   REAL_CLASSICAL,
   REAL_PQC,
@@ -115,9 +116,33 @@ describe('openssh-real mapping', () => {
     const a = buildSshConfigArtifacts(r)
     expect(a.sshdConfig).toContain('KexAlgorithms mlkem768x25519-sha256')
     expect(a.sshdConfig).toContain('HostKeyAlgorithms ssh-mldsa-65')
-    expect(a.sshdConfig).toContain('PKCS11Provider')
+    expect(a.sshdConfig).not.toMatch(/^PKCS11Provider /m)
+    expect(a.sshdConfig).toContain('HostKeyAgent /root/pqc-ssh-example/agent.sock')
+    expect(a.setupScript).toContain('ssh-add')
+    expect(a.sshConfig).toContain('StrictHostKeyChecking yes')
     expect(a.sshConfig).toContain('KexAlgorithms mlkem768x25519-sha256')
     expect(a.authorizedKeys).toContain('ssh-mldsa-65')
+  })
+
+  it('refuses unsupported modeled, incomplete, mismatched or unknown native recipes', () => {
+    const original = mapRealEventsToResult(pqcEvents, 0, 200)
+    expect(canBuildNativeSshRecipe(original)).toBe(true)
+    for (const changed of [
+      { ...original, token_module: 'softhsmv3 (WASM)' },
+      { ...original, connection_ok: false },
+      { ...original, kex_algorithm: 'mlkem512-curve25519-sha256' },
+      { ...original, client_auth_algorithm: 'ssh-ed25519' },
+      { ...original, host_key_algorithm: 'unknown', client_auth_algorithm: 'unknown' },
+    ]) {
+      expect(canBuildNativeSshRecipe(changed)).toBe(false)
+      expect(() => buildSshConfigArtifacts(changed)).toThrow('No pinned native recipe')
+    }
+    const output = buildSshConfigArtifacts(original)
+    expect(output.setupScript).toContain('sha256sum -c -')
+    expect(output.setupScript).toContain('Expected exactly one matching host public identity')
+    expect(output.setupScript).toContain('test "$host_fp" != "$client_fp"')
+    expect(output.setupScript).not.toContain('ssh-keygen -t')
+    expect(output.authorizedKeys).not.toContain('AAAA')
   })
 
   it('knows the real combos', () => {

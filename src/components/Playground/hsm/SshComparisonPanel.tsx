@@ -10,6 +10,7 @@ import {
   Terminal,
   ExternalLink,
 } from 'lucide-react'
+import { SshOperationChecks } from './SshOperationChecks'
 import type { SshHandshakeResult } from '@/wasm/openssh'
 
 interface Props {
@@ -136,6 +137,7 @@ function LegCard({
           <h4 className="text-sm font-bold text-status-error">{title}</h4>
         </div>
         <p className="text-xs text-status-error font-mono">{result.error}</p>
+        <SshOperationChecks checks={result.operation_checks} />
       </div>
     )
   }
@@ -170,10 +172,11 @@ function LegCard({
             ? 'Modeled packet names, including USERAUTH_SUCCESS, are illustrative sequence labels, not observed authentication results. Individual key and signature operations do not establish a connection.'
             : 'The origin of this retained result is not recognized. Its flags are not presented as a confirmed connection or authentication result.'}
           {modeledResult &&
-            isPqc &&
-            ' This modeled PQC run does not decapsulate on the peer, compare both peers’ secrets, or verify the signatures.'}
+            !result.operation_checks &&
+            ' This retained result has no executed peer/check receipt.'}
         </p>
       )}
+      <SshOperationChecks checks={result.operation_checks} />
       <dl className="space-y-2 text-xs">
         <div className="flex justify-between gap-4">
           <dt className="text-muted-foreground">KEX</dt>

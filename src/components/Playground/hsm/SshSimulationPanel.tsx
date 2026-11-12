@@ -7,7 +7,7 @@ import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 // selectable PQC config) directly in the browser — no Web Workers, no network,
 // no container required.
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef } from 'react'
 import { GateReason } from '@/components/shared/GateReason'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
@@ -45,6 +45,7 @@ import {
   mapRealEventsToResult,
   mapPkcs11Event,
   buildSshConfigArtifacts,
+  canBuildNativeSshRecipe,
   isRealCombo,
   REAL_KEX_ID,
   REAL_HOSTKEY_IDS,
@@ -70,6 +71,7 @@ export function SshSimulationPanel() {
   const { moduleRef, hSessionRef, isReady, autoInit, hsmKeys, removeHsmKey, clearHsmKeys } =
     useHsmContext()
 
+  const runGeneration = useRef(0)
   const [phase, setPhase] = useState<
     'idle' | 'initializing' | 'running-classical' | 'running-pqc' | 'done' | 'error'
   >('idle')
@@ -101,6 +103,8 @@ export function SshSimulationPanel() {
   }, [])
 
   const runHandshakes = useCallback(async () => {
+    const generation = ++runGeneration.current
+    const current = () => generation === runGeneration.current
     setPhase('idle')
     setClassicalResult(undefined)
     setPqcResult(undefined)
@@ -113,6 +117,7 @@ export function SshSimulationPanel() {
     // Route a real-engine event: genuine PKCS#11 calls → PKCS#11 panel; the
     // handshake milestones → log.
     const onRealEvent = (ev: { evType: string; payload: string }) => {
+      if (!current()) return
       if (ev.evType === 'pkcs11') {
         setPkcs11Log((prev) => {
           const entry = mapPkcs11Event(ev.payload, prev.length)
@@ -128,7 +133,9 @@ export function SshSimulationPanel() {
         kex,
         hostalg,
         onEvent: onRealEvent,
-        onLog: (l) => appendLog(l.text, l.level),
+        onLog: (l) => {
+          if (current()) appendLog(l.text, l.level)
+        },
       })
       return mapRealEventsToResult(events, rv, performance.now() - t0)
     }
@@ -140,6 +147,7 @@ export function SshSimulationPanel() {
         `Starting REAL classical handshake (${REAL_CLASSICAL.kex} + ${REAL_CLASSICAL.hostalg})…`
       )
       const classical = await runRealLeg(REAL_CLASSICAL.kex, REAL_CLASSICAL.hostalg)
+      if (!current()) return
       setClassicalResult(classical)
       appendLog(
         `Classical done: connection_ok=${classical.connection_ok}, auth_ms=${classical.auth_ms.toFixed(1)}ms`
@@ -156,6 +164,7 @@ export function SshSimulationPanel() {
         // straight through instead of the old single hardcoded value.
         appendLog(`Starting REAL OpenSSH handshake (${REAL_PQC.kex} + ${pqcHostKey})…`)
         const pqc = await runRealLeg(REAL_PQC.kex, pqcHostKey)
+        if (!current()) return
         setPqcResult(pqc)
         appendLog(
           `REAL PQC done: connection_ok=${pqc.connection_ok}, host C_Sign=${pqc.host_sig_bytes}B, user C_Sign=${pqc.client_sig_bytes}B, auth_ms=${pqc.auth_ms.toFixed(1)}ms`
@@ -170,12 +179,14 @@ export function SshSimulationPanel() {
             throw new Error('softhsmv3 init failed')
           }
         }
+        if (!current()) return
         sshEngine.bindHsm({
           module: moduleRef.current,
           hSession: hSessionRef.current,
           onPkcs11: (e) => setPkcs11Log((prev) => [...prev.slice(-200), e]),
         })
         const pqc = await sshEngine.runHandshake({ kex: pqcKex, hostKey: pqcHostKey })
+        if (!current()) return
         setPqcResult(pqc)
         appendLog(
           `Modeled operation trace finished; connection/authentication not assessed; operation_ms=${pqc.auth_ms.toFixed(1)}ms`
@@ -184,6 +195,7 @@ export function SshSimulationPanel() {
 
       setPhase('done')
     } catch (err) {
+      if (!current()) return
       const msg = translateCryptoError(err instanceof Error ? err.message : String(err))
       setErrorMsg(msg)
       setPhase('error')
@@ -192,6 +204,7 @@ export function SshSimulationPanel() {
   }, [appendLog, autoInit, hSessionRef, isReady, moduleRef, pqcKex, pqcHostKey])
 
   const handleReset = useCallback(() => {
+    runGeneration.current++
     sshEngine.terminate()
     sshRealEngine.terminate()
     setPhase('idle')
@@ -269,7 +282,10 @@ export function SshSimulationPanel() {
                 variant={pqcKex === opt.id ? 'default' : 'outline'}
                 size="sm"
                 disabled={isRunning}
-                onClick={() => setPqcKex(opt.id)}
+                onClick={() => {
+                  handleReset()
+                  setPqcKex(opt.id)
+                }}
                 className="h-7 text-[11px] font-mono"
                 aria-pressed={pqcKex === opt.id}
               >
@@ -296,7 +312,10 @@ export function SshSimulationPanel() {
                 variant={pqcHostKey === opt.id ? 'default' : 'outline'}
                 size="sm"
                 disabled={isRunning}
-                onClick={() => setPqcHostKey(opt.id)}
+                onClick={() => {
+                  handleReset()
+                  setPqcHostKey(opt.id)
+                }}
                 className="h-7 text-[11px] font-mono"
                 aria-pressed={pqcHostKey === opt.id}
               >
@@ -644,21 +663,29 @@ export function SshSimulationPanel() {
         <TabsContent value="config">
           <div className="glass-panel p-3 space-y-3">
             <p className="text-[10px] text-muted-foreground">
-              Accurate representation of the negotiated configuration — the in-WASM driver sets the
-              proposal directly rather than parsing these files; key material lives in the PKCS#11
-              token and is never exported.
+              Pinned native Linux Sandbox OpenSSH10.5p1 recipe for the retained REAL profile. The
+              WASM driver does not parse these files. The native example uses fresh sample token
+              identities and verifies the pinned host public key; it does not export the WASM
+              private keys.
             </p>
             {!pqcResult && !classicalResult ? (
               <p className="text-xs text-muted-foreground italic">
                 Run the comparison to generate the configuration.
               </p>
+            ) : !canBuildNativeSshRecipe((pqcResult ?? classicalResult)!) ? (
+              <p className="text-xs text-muted-foreground">
+                This retained model or incomplete run has no pinned native recipe. Select an
+                existing REAL profile and complete its sample to inspect the working HostKeyAgent
+                example.
+              </p>
             ) : (
               (() => {
                 const a = buildSshConfigArtifacts((pqcResult ?? classicalResult)!)
                 const blocks: ReadonlyArray<readonly [string, string]> = [
+                  ['setup.sh — disposable-container example', a.setupScript],
                   ['sshd_config', a.sshdConfig],
                   ['ssh_config', a.sshConfig],
-                  ['authorized_keys', a.authorizedKeys],
+                  ['Public identity files', a.authorizedKeys],
                 ]
                 return (
                   <div className="space-y-3">
@@ -681,7 +708,8 @@ export function SshSimulationPanel() {
       </Tabs>
 
       <p className="text-xs text-muted-foreground">
-        Keys are generated for educational purposes only and are discarded when the tool is reset.
+        Keys are generated for sample use. Reset clears run results; reset the sample token
+        separately to remove keys generated by modeled runs.
       </p>
     </div>
   )
