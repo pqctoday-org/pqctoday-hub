@@ -6,6 +6,8 @@ import { MemoryRouter } from 'react-router'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ROICalculator } from './ROICalculator'
+import { copyToClipboard } from '@/utils/clipboard'
+vi.mock('@/utils/clipboard', () => ({ copyToClipboard: vi.fn(async () => true) }))
 vi.mock('recharts', () => ({
   BarChart: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   ResponsiveContainer: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -59,6 +61,10 @@ const baseMockData: ExecutiveModuleData = {
 }
 
 beforeEach(() => {
+  vi.mocked(copyToClipboard).mockClear()
+  baseMockData.isAssessmentComplete = false
+  baseMockData.assessmentResult = null
+  baseMockData.totalProducts = 10
   vi.useFakeTimers()
   const { artifacts } = useModuleStore.getState()
   useModuleStore.setState({ artifacts: { ...artifacts, executiveDocuments: [] } })
@@ -127,4 +133,155 @@ describe('Actual ROI export and persistence pause for unusable count input', () 
     act(() => vi.advanceTimersByTime(1000))
     expect(docs()).toHaveLength(0)
   })
+})
+
+const estateAssessment = () =>
+  ({
+    algorithmMigrations: ['RSA', 'ECDSA', 'ECDH'].map((classical) => ({
+      classical,
+      quantumVulnerable: true,
+    })),
+    assessmentProfile: {
+      systemScale: '200-plus',
+      infrastructure: [],
+      vendorDependency: 'mixed',
+      migrationStatus: 'not-started',
+      teamSize: '11-50',
+    },
+  }) as unknown as NonNullable<ExecutiveModuleData['assessmentResult']>
+const enableAssessment = () => {
+  baseMockData.isAssessmentComplete = true
+  baseMockData.assessmentResult = estateAssessment()
+}
+
+describe('Same fictional estate in actual reports and autosaves', () => {
+  it('uses count-selected band boundaries and persists the one-time comparison, including the coarse top band', () => {
+    enableAssessment()
+    const before = JSON.stringify(baseMockData.assessmentResult)
+    const view = render(
+      <MemoryRouter>
+        <ROICalculator />
+      </MemoryRouter>
+    )
+    for (const [n, band, cost] of [
+      [10, '1–10', '$90K'],
+      [11, '11–50', '$117K'],
+      [50, '11–50', '$117K'],
+      [51, '51–200', '$162K'],
+      [200, '51–200', '$162K'],
+      [201, '201 or more', '$270K'],
+      [1000000, '201 or more', '$270K'],
+    ] as const) {
+      count(String(n))
+      act(() => vi.advanceTimersByTime(900))
+      const report = docs().at(-1)!
+      expect(report.inputs).toMatchObject({ productsToMigrate: n, productsSource: 'entered' })
+      expect(report.data).toContain(
+        `same fictional estate of ${n.toLocaleString('en-US')} systems or products`
+      )
+      expect(report.data).toContain(`Profile scale band: ${band}`)
+      expect(report.data).toContain(`| Assessment-derived | ${cost} |`)
+      expect(report.data).toContain('One-time migration cost')
+      expect(report.data).toContain('not linear per instance')
+    }
+    expect(screen.getByTestId('roi-estate-assumptions')).toHaveTextContent('including 1,000,000')
+    expect(JSON.stringify(baseMockData.assessmentResult)).toBe(before)
+    view.unmount()
+  })
+  it('updates adopted attributes in visible output and actual autosave without using catalogue totals or ongoing costs', () => {
+    enableAssessment()
+    const view = render(
+      <MemoryRouter>
+        <ROICalculator />
+      </MemoryRouter>
+    )
+    count('51')
+    act(() => vi.advanceTimersByTime(900))
+    expect(docs().at(-1)!.data).toContain('| Assessment-derived | $162K |')
+    baseMockData.assessmentResult = {
+      ...baseMockData.assessmentResult!,
+      assessmentProfile: {
+        ...baseMockData.assessmentResult!.assessmentProfile!,
+        vendorDependency: 'heavy-vendor',
+      },
+    }
+    view.rerender(
+      <MemoryRouter>
+        <ROICalculator />
+      </MemoryRouter>
+    )
+    act(() => vi.advanceTimersByTime(900))
+    expect(docs().at(-1)!.data).toContain('| Assessment-derived | $227K |')
+    expect(screen.getByTestId('roi-estate-assumptions')).toHaveTextContent('heavy-vendor (1.4×)')
+    const report = docs().at(-1)!.data
+    baseMockData.totalProducts = 100000
+    view.rerender(
+      <MemoryRouter>
+        <ROICalculator />
+      </MemoryRouter>
+    )
+    act(() => vi.advanceTimersByTime(900))
+    expect(docs().at(-1)!.data).toBe(report)
+    fireEvent.change(screen.getByLabelText('Planning Horizon (years)'), { target: { value: '9' } })
+    fireEvent.change(screen.getByLabelText('Annual Opex (% of capex)'), { target: { value: '25' } })
+    act(() => vi.advanceTimersByTime(900))
+    expect(docs().at(-1)!.data).toContain('| Assessment-derived | $227K |')
+    expect(docs().at(-1)!.data).toContain('excluding recurring opex and horizon benefits')
+    count('0')
+    act(() => vi.advanceTimersByTime(900))
+    expect(screen.getByTestId('roi-cross-check-waiting')).toHaveTextContent('Not assessed')
+    const saved = docs().at(-1)!.data
+    baseMockData.assessmentResult = estateAssessment()
+    view.rerender(
+      <MemoryRouter>
+        <ROICalculator />
+      </MemoryRouter>
+    )
+    act(() => vi.advanceTimersByTime(900))
+    expect(docs().at(-1)!.data).toBe(saved)
+    view.unmount()
+  })
+})
+
+it('copies the actual current Markdown export with count and adopted attributes; invalid input cannot copy a stale report', async () => {
+  enableAssessment()
+  const view = render(
+    <MemoryRouter>
+      <ROICalculator />
+    </MemoryRouter>
+  )
+  count('11')
+  const initialCopy = screen.getByRole('button', { name: /^Copy/ })
+  await act(async () => {
+    initialCopy.click()
+  })
+  const first = vi.mocked(copyToClipboard).mock.calls.at(-1)![0]
+  expect(first).toContain('same fictional estate of 11 systems or products')
+  expect(first).toContain('| Assessment-derived | $117K |')
+  baseMockData.assessmentResult = {
+    ...baseMockData.assessmentResult!,
+    assessmentProfile: {
+      ...baseMockData.assessmentResult!.assessmentProfile!,
+      vendorDependency: 'heavy-vendor',
+    },
+  }
+  view.rerender(
+    <MemoryRouter>
+      <ROICalculator />
+    </MemoryRouter>
+  )
+  const updatedCopy = screen.getByRole('button', { name: /^Copied|^Copy/ })
+  await act(async () => {
+    updatedCopy.click()
+  })
+  const second = vi.mocked(copyToClipboard).mock.calls.at(-1)![0]
+  expect(second).toContain('heavy-vendor (1.4×)')
+  expect(second).toContain('| Assessment-derived | $164K |')
+  expect(second).not.toBe(first)
+  const copied = vi.mocked(copyToClipboard).mock.calls.length
+  count('')
+  expect(screen.getByRole('button', { name: /^Copied|^Copy/ })).toBeDisabled()
+  screen.getByRole('button', { name: /^Copied|^Copy/ }).click()
+  expect(vi.mocked(copyToClipboard)).toHaveBeenCalledTimes(copied)
+  view.unmount()
 })
