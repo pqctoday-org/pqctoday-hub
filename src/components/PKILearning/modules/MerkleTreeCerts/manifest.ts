@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'merkle-tree-certs',
-  contentVersion: 12,
+  contentVersion: 13,
   lm_id: 'LM-025',
   title: 'Merkle Tree Certificates',
   description:

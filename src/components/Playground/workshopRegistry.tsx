@@ -152,7 +152,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cacp-kmip',
     pt_id: 'PT-033',
-    version: '1.0.8',
+    version: '1.0.9',
     name: 'KMIP Control Plane',
     description:
       'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey a classical ECDSA-P256 key to ML-DSA-65 on the same Sign call — no server, no Docker.',
@@ -698,7 +698,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'suci-flow',
     pt_id: 'PT-018',
-    version: '1.0.6',
+    version: '1.0.7',
     name: '5G SUCI Construction',
     // Profiles A/B are the ratified 3GPP TS 33.501 §C.3.3 constructions; Profile C
     // is the post-quantum profile the tool also implements (ML-KEM, hybrid with
@@ -993,7 +993,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-workshop',
     pt_id: 'PT-015',
-    version: '1.0.7',
+    version: '1.0.8',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
@@ -1085,7 +1085,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'merkle-proof',
     pt_id: 'PT-017',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Merkle Tree Workshop',
     description:
       'Build trees, generate inclusion proofs, verify with tamper detection, compare PQC cert sizes, and simulate Certificate Transparency logs',
@@ -1122,7 +1122,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'digital-id',
     pt_id: 'PT-019',
-    version: '1.0.5',
+    version: '1.0.6',
     name: 'EUDI Wallet Architecture',
     description:
       'Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.',
@@ -1183,7 +1183,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hd-wallet',
     pt_id: 'PT-022',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'HD Wallet Derivation',
     description: 'BIP39 mnemonic + BIP32/SLIP-0010 multi-coin HD key derivation',
     category: 'Blockchain & Digital Assets',
@@ -1383,7 +1383,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'email-signing',
     pt_id: 'PT-031',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'S/MIME & CMS Workshop',
     description:
       'Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt. Toggle routes signing key through softhsmv3 PKCS#11.',

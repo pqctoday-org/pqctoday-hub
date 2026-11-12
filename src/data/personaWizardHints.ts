@@ -651,57 +651,71 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
     industry: {
       hint: 'Industry filters relevant frameworks and use cases. Its configured threat value contributes to regulatory pressure, and its composite weights combine the category scores.',
       title: 'Select an industry for analysis',
-      description: 'Compare the configured scoring assumptions with the industry and use cases you intend to study.',
+      description:
+        'Compare the configured scoring assumptions with the industry and use cases you intend to study.',
     },
     country: {
       hint: 'Country filters relevant frameworks and adds its configured urgency points to regulatory pressure. A jurisdiction milestone is separate from the model’s quantum-computer planning year.',
-      hintExpert: 'Regulatory pressure adds framework deadline points, the industry contribution and country urgency points, then applies the selected timeline multiplier. Deadline bands are piecewise, not exponential; country is not a multiplier or an enforcement-reputation measurement.',
+      hintExpert:
+        'Regulatory pressure adds framework deadline points, the industry contribution and country urgency points, then applies the selected timeline multiplier. Deadline bands are piecewise, not exponential; country is not a multiplier or an enforcement-reputation measurement.',
       title: 'Select a jurisdiction for analysis',
-      description: 'Inspect applicable framework deadlines and distinguish policy milestones from the quantum-threat planning assumption.',
+      description:
+        'Inspect applicable framework deadlines and distinguish policy milestones from the quantum-threat planning assumption.',
     },
     crypto: {
       hint: 'Select the algorithms actually present. Quantum-vulnerable algorithms contribute weighted exposure points and produce purpose-specific migration recommendations.',
-      hintExpert: 'Distinguish RSA key establishment from RSA signatures: their migration paths serve different purposes. ML-KEM establishes shared secrets; ML-DSA signs. SHA-2 does not automatically require replacement by SHA-3. Review algorithm parameters and the selected protocol before choosing a replacement.',
+      hintExpert:
+        'Distinguish RSA key establishment from RSA signatures: their migration paths serve different purposes. ML-KEM establishes shared secrets; ML-DSA signs. SHA-2 does not automatically require replacement by SHA-3. Review algorithm parameters and the selected protocol before choosing a replacement.',
     },
     sensitivity: {
       hint: 'The model uses the highest selected sensitivity level. Sensitivity contributes exposure points; the confidentiality window itself uses retention years and the quantum-threat planning year.',
-      hintExpert: 'Sensitivity contributes 0.6 times the configured value, capped at 15 exposure points: low = 0, medium = 3, high = 9, critical = 15. With identified cryptography, unknown sensitivity uses high; the unknown-cryptography branch instead reads the retained sensitivity selection. Holding an explicit retention period and other inputs fixed, changing high to critical adds six exposure points before rounding and the final score cap.',
+      hintExpert:
+        'Sensitivity contributes 0.6 times the configured value, capped at 15 exposure points: low = 0, medium = 3, high = 9, critical = 15. With identified cryptography, unknown sensitivity uses high; the unknown-cryptography branch instead reads the retained sensitivity selection. Holding an explicit retention period and other inputs fixed, changing high to critical adds six exposure points before rounding and the final score cap.',
     },
     compliance: {
       hint: 'Only supplied framework impacts marked as requiring PQC enter the deadline-point calculation. Check applicability before interpreting the resulting score.',
-      hintExpert: 'Each included framework contributes 15 points for a passed/current-year deadline, 14 within two years, 12 within five years, or 8 beyond five years; an unparsed or unknown deadline contributes 10. The sum is capped at 45 before industry/country points and the timeline multiplier. There is no automatic double weight for a named framework.',
+      hintExpert:
+        'Each included framework contributes 15 points for a passed/current-year deadline, 14 within two years, 12 within five years, or 8 beyond five years; an unparsed or unknown deadline contributes 10. The sum is capped at 45 before industry/country points and the timeline multiplier. There is no automatic double weight for a named framework.',
     },
     migration: {
       hint: 'Migration status contributes to a readiness gap that is combined with capacity, agility and vendor gaps. The displayed readiness is 100 minus the capped total gap: higher means more ready.',
-      hintExpert: 'For this researcher persona, status-gap points are started = 5, planning = 20, not-started = 35 and unknown = 40. Holding the other inputs fixed, started reduces the gap by 30 points compared with not-started, subject to caps. These are authored model assumptions, not probabilities or a Bayesian prior.',
+      hintExpert:
+        'For this researcher persona, status-gap points are started = 5, planning = 20, not-started = 35 and unknown = 40. Holding the other inputs fixed, started reduces the gap by 30 points compared with not-started, subject to caps. These are authored model assumptions, not probabilities or a Bayesian prior.',
     },
     'use-cases': {
       hint: 'Use cases affect exposure and help identify confidentiality and authenticity concerns. Inspect the selected purpose rather than treating every use case as encrypted-data exposure.',
-      hintExpert: 'Exposure uses the sum of configured HNDL relevance values times 2.5, capped at 25 points; missing values use the configured fallback. TNFL relevance separately identifies signing-related use cases in the credential-window result. They are not two normalized weights summed directly into the composite score.',
+      hintExpert:
+        'Exposure uses the sum of configured HNDL relevance values times 2.5, capped at 25 points; missing values use the configured fallback. TNFL relevance separately identifies signing-related use cases in the credential-window result. They are not two normalized weights summed directly into the composite score.',
     },
     retention: {
       hint: 'The confidentiality window compares the longest selected retention period with the quantum-threat planning year. A positive window is a planning scenario, not evidence that collection is occurring.',
-      hintExpert: 'Window = max(0, current year + retention years − quantum-threat planning year). Unknown retention uses the largest configured industry retention period, with a minimum of 15 years, and is marked estimated. For identified cryptography, the retention exposure contribution is separately capped at 20 points; the unknown-cryptography branch omits that term; there is no universal Finance/Healthcare/Government lifetime.',
+      hintExpert:
+        'Window = max(0, current year + retention years − quantum-threat planning year). Unknown retention uses the largest configured industry retention period, with a minimum of 15 years, and is marked estimated. For identified cryptography, the retention exposure contribution is separately capped at 20 points; the unknown-cryptography branch omits that term; there is no universal Finance/Healthcare/Government lifetime.',
     },
     credential: {
       hint: 'The credential window compares the longest selected trust lifetime with the quantum-threat planning year. Its at-risk flag also requires a signing algorithm, or unknown current cryptography.',
-      hintExpert: 'Credential window = max(0, current year + longest configured credential lifetime − quantum-threat planning year). Unknown lifetime uses an explicitly estimated 10 years. This is an authenticity-planning scenario, not proof that signatures or stored records have already been forged.',
+      hintExpert:
+        'Credential window = max(0, current year + longest configured credential lifetime − quantum-threat planning year). Unknown lifetime uses an explicitly estimated 10 years. This is an authenticity-planning scenario, not proof that signatures or stored records have already been forged.',
     },
     scale: {
       hint: 'System-count and team-size bands map to model factors; the readiness calculation divides the system factor by the team-capacity factor, rather than dividing raw system and staff counts.',
-      hintExpert: 'Capacity gap points = min(25, round(8 × system-scale factor / team-capacity factor)). Both selectors use 1–10, 11–50, 51–200 and 200-plus bands. System scale separately contributes up to 15 migration-complexity points; team capacity affects readiness.',
+      hintExpert:
+        'Capacity gap points = min(25, round(8 × system-scale factor / team-capacity factor)). Both selectors use 1–10, 11–50, 51–200 and 200-plus bands. System scale separately contributes up to 15 migration-complexity points; team capacity affects readiness.',
     },
     agility: {
       hint: 'Agility contributes up to 40 migration-complexity points and also affects readiness. It is one authored model component, not a measured migration-time prediction.',
-      hintExpert: 'Agility factors are fully-abstracted = 0.2, partially-abstracted = 0.5, hardcoded = 0.9 and unknown = 0.75. Multiplying by 40 gives complexity contributions of 8, 20, 36 and 30 points. Readiness separately adds round(20 × the same factor) to its gap.',
+      hintExpert:
+        'Agility factors are fully-abstracted = 0.2, partially-abstracted = 0.5, hardcoded = 0.9 and unknown = 0.75. Multiplying by 40 gives complexity contributions of 8, 20, 36 and 30 points. Readiness separately adds round(20 × the same factor) to its gap.',
     },
     infra: {
       hint: 'Selected infrastructure layers contribute complexity points, capped at 30. Broad layers are not measurements of the actual devices or suppliers in those layers.',
-      hintExpert: 'Configured layer points are Hardware = 15, Security Stack = 12, OS = 11, Network = 10, Application = 8, Cloud = 6 and Database = 6; sum capped at 30. Explicit HSM subcategory answers separately inform the migration-effort estimate and do not replace these layer weights.',
+      hintExpert:
+        'Configured layer points are Hardware = 15, Security Stack = 12, OS = 11, Network = 10, Application = 8, Cloud = 6 and Database = 6; sum capped at 30. Explicit HSM subcategory answers separately inform the migration-effort estimate and do not replace these layer weights.',
     },
     timeline: {
       hint: 'The selected timeline band multiplies the sum of framework, industry and country regulatory-pressure points. Read the chosen milestone separately to check its applicability.',
-      hintExpert: 'Timeline multipliers are within-1y = 1.3, within-2-3y = 1.15, internal-deadline = 1.05, no-deadline = 1.0 and unknown = 1.2. The result is rounded and capped at 100. These are model coefficients, not probabilities or an estimate of quantum-computer arrival.',
+      hintExpert:
+        'Timeline multipliers are within-1y = 1.3, within-2-3y = 1.15, internal-deadline = 1.05, no-deadline = 1.0 and unknown = 1.2. The result is rounded and capped at 100. These are model coefficients, not probabilities or an estimate of quantum-computer arrival.',
     },
   },
   'cert-engineer': {
