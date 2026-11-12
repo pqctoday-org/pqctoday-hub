@@ -15,9 +15,10 @@
  *  - XMSS is size-only (registry, RFC 8391); no XMSS code runs here.
  *
  * No LMS or XMSS signature is computed for the lab's own parameter sets. The
- * hub's HSS/LMS verifier is checked by the RFC 8554 Appendix F KAT (lms-sigver,
- * Test Cases 1-2) in the step's KAT panel; XMSS rows stay "Simulated — sizes per
- * RFC 8391". ML-DSA is checked by the NIST ACVP ML-DSA sigVer KAT.
+ * step offers the RFC 8554 Appendix F HSS/LMS verifier sample (lms-sigver,
+ * Test Case 1) and ML-DSA reference signature checks. These availability labels
+ * do not record a run outcome or verify the selected plan; the panel owns those
+ * outcomes. XMSS rows remain size/capacity models with no signature check.
  */
 import { getAlgorithm } from '@/data/algorithmProperties'
 
@@ -63,6 +64,7 @@ export interface SigningScheme {
   /** total signatures one key can ever make; Infinity for stateless */
   capacity: number
   cnsa2: 'firmware-signing' | 'general-signature' | 'not-cnsa'
+  /** Available reference-check family, never a completed verification result. */
   validation: 'acvp-kat' | 'rfc8554-kat' | 'simulated'
   note: string
 }

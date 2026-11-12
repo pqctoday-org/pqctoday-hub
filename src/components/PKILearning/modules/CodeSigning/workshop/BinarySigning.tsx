@@ -22,24 +22,24 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 const CODE_SIGNING_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'cs-binary-sigver',
-    useCase: 'Software artifact signing (ML-DSA-65)',
-    standard: 'CNSA 2.0 + FIPS 204 ACVP',
+    useCase: 'ML-DSA-65 reference signature verification (artifact-signing primitive)',
+    standard: 'FIPS 204 ML-DSA-65 · NIST reference sample',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
   },
   {
     id: 'cs-pkg-sigver',
-    useCase: 'OS package signing (ML-DSA-87)',
-    standard: 'CNSA 2.0 + FIPS 204 ACVP',
+    useCase: 'ML-DSA-87 reference signature verification (package-signing primitive)',
+    standard: 'FIPS 204 ML-DSA-87 · CNSA 2.0 parameter set · NIST reference sample',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 87 },
   },
   {
     id: 'cs-sigstore-sigver',
-    useCase: 'Sigstore transparency log entry',
-    standard: 'CNSA 2.0 + FIPS 204 ACVP',
+    useCase: 'ML-DSA-65 reference signature verification (signing primitive, not Sigstore)',
+    standard: 'FIPS 204 ML-DSA-65 · NIST reference sample',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -733,8 +733,8 @@ export const BinarySigning: React.FC = () => {
 
       <KatValidationPanel
         specs={CODE_SIGNING_KAT_SPECS}
-        label="Binary Signing Known Answer Tests"
-        authorityNote="FIPS 204 · NIST SP 800-89"
+        label="Binary signing primitive checks"
+        authorityNote="ML-DSA-65/87 reference signature verification and a SHA-256 digest check. ML-DSA-65 is not the CNSA 2.0 signature parameter set. These checks do not verify package formats, Sigstore identity, log inclusion or bundles; evaluate those separately with your signing tools."
       />
 
       {/* PKCS#11 Call Log & Key Inspector */}
