@@ -4,7 +4,7 @@
  * filterPatents) and the phone screen (Mobile/screens/MobilePatentsView), so
  * `?inventor=` and `?patentIds=` select exactly the same patents on both.
  * Also home of the full Explore URL-filter predicate (filterPatents) and its
- * region inference, so every desktop filter link narrows the phone list the
+ * sourced filing-office labels, so every desktop filter link narrows the phone list the
  * same way. No JSX, no component imports — Mobile may import it.
  */
 import type { PatentItem } from '@/types/PatentTypes'
@@ -75,55 +75,29 @@ export const NIST_STATUS_LABELS: Record<string, string> = {
   classical: 'Classical',
 }
 
-// Best-effort region inference from assignee string
-const REGION_RULES: { pattern: RegExp; region: string }[] = [
-  // Europe
-  {
-    pattern:
-      /siemens|bosch|giesecke|nagravision|swiss re|thales(?! dis cpp usa)|\bsap\b|nokia|ericsson|philips|infineon|st micro|arm limited|entrust.*canada|blackberry|01 communique/i,
-    region: 'Europe',
-  },
-  {
-    pattern: /aktiengesellschaft|gmbh|ltd\b.*\buk\b|\bplc\b|s\.a\.\b|s\.r\.l\b/i,
-    region: 'Europe',
-  },
-  // APAC
-  {
-    pattern: /huawei|alibaba|tencent|baidu|inspur|inventec|hikvision|byd|xiaomi|oppo|vivo/i,
-    region: 'APAC',
-  },
-  { pattern: /samsung|lg electronics|sk hynix|kt corp|hyundai/i, region: 'APAC' },
-  {
-    pattern:
-      /nippon|ntt|fujitsu|hitachi|toshiba|sony|panasonic|sharp|ricoh|softbank|rakuten|nec corp/i,
-    region: 'APAC',
-  },
-  { pattern: /commonwealth scientific|csiro|atlassian/i, region: 'APAC' },
-  { pattern: /jio platforms|wipro|infosys|tata/i, region: 'APAC' },
-  // Oceania
-  { pattern: /commonwealth scientific|csiro|atlassian|canva|afterpay|seek\b/i, region: 'Oceania' },
-  // Middle East & Africa
-  {
-    pattern: /radware|checkpoint|amdocs|elbit|nice systems|lendoit|cellebrite/i,
-    region: 'Middle East & Africa',
-  },
-  { pattern: /saudi|emirates|etisalat|du telecom/i, region: 'Middle East & Africa' },
-  // Americas (catch-all for known US/CA companies and .N.A. / Inc. / LLC / Corp)
-]
-
-export function inferRegion(assignee: string): string {
-  if (!assignee) return 'Unknown'
-  for (const { pattern, region } of REGION_RULES) {
-    if (pattern.test(assignee)) return region
-  }
-  // Heuristic: if it contains common US legal suffixes, it's Americas
+/** The jurisdiction of this sourced publication/application, never the assignee
+ * or all members of its patent family. Unbound legacy rows remain unassigned. */
+export function filingJurisdictionLabel(
+  patent: Pick<
+    PatentItem,
+    'filingJurisdiction' | 'filingJurisdictionApplication' | 'filingJurisdictionSourceUrl'
+  >
+): string {
+  const code = patent.filingJurisdiction?.trim()
   if (
-    /\b(inc\.|llc|corp\.|n\.a\.|incorporated|limited liability|university of|national lab)/i.test(
-      assignee
-    )
+    !code ||
+    !/^[A-Z]{2}$/.test(code) ||
+    !patent.filingJurisdictionApplication?.trim() ||
+    !/^https:\/\//.test(patent.filingJurisdictionSourceUrl ?? '')
   )
-    return 'Americas'
-  return 'Unknown'
+    return 'Unassigned'
+  const labels = new Map([
+    ['US', 'United States (US)'],
+    ['CA', 'Canada (CA)'],
+    ['EP', 'European Patent Office (EP)'],
+    ['WO', 'PCT international publication (WO)'],
+  ])
+  return labels.get(code) ?? `Patent office (${code})`
 }
 
 /** Every Explore URL filter, with desktop's semantics (an absent/empty param
@@ -166,7 +140,7 @@ export function filterPatents(patents: PatentItem[], params: URLSearchParams): P
     if (impactF && p.impactLevel !== impactF) return false
     if (quantumTechF && !p.quantumTechnology.includes(quantumTechF)) return false
     if (quantumRelevanceF && p.quantumRelevance !== quantumRelevanceF) return false
-    if (regionF && inferRegion(p.assignee) !== regionF) return false
+    if (regionF && filingJurisdictionLabel(p) !== regionF) return false
     if (protocolF && !p.protocols.includes(protocolF)) return false
     if (classicalAlgorithmF && !p.classicalAlgorithms.includes(classicalAlgorithmF)) return false
     if (hardwareComponentF && !p.hardwareComponents.includes(hardwareComponentF)) return false

@@ -3,11 +3,11 @@ import { useMemo, useState } from 'react'
 import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, InsightsFilter } from '@/types/PatentTypes'
-import { inferRegion, NIST_STATUS_LABELS } from '@/data/patentFilters'
+import { filingJurisdictionLabel, NIST_STATUS_LABELS } from '@/data/patentFilters'
 
 // Moved to the pure data/patentFilters module so the phone Patents screen can
 // apply the same ?region / ?nistStatus filters; re-exported for existing callers.
-export { inferRegion, NIST_STATUS_LABELS }
+export { filingJurisdictionLabel, NIST_STATUS_LABELS }
 
 export type { InsightsFilter }
 
@@ -389,7 +389,7 @@ export function PatentsInsights({ patents, onFilter }: Props) {
     [patents]
   )
 
-  const regionCounts = useMemo(() => countBy(patents, (p) => inferRegion(p.assignee)), [patents])
+  const regionCounts = useMemo(() => countBy(patents, (p) => filingJurisdictionLabel(p)), [patents])
 
   const protocols = useMemo(() => countByList(patents, (p) => p.protocols).slice(0, 12), [patents])
 
@@ -515,7 +515,7 @@ export function PatentsInsights({ patents, onFilter }: Props) {
           />
         </Section>
         <PieCard
-          title="Patents by Region"
+          title="Records by filing office"
           data={regionCounts}
           colorMap={REGION_COLORS}
           hint={onFilter ? 'Click a slice to filter the Explore tab' : undefined}

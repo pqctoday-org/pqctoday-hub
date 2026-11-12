@@ -17,7 +17,7 @@ import {
   PieCard,
   countBy,
   countByList,
-  inferRegion,
+  filingJurisdictionLabel,
   NIST_STATUS_LABELS,
 } from '@/components/Patents/PatentsInsights'
 import type { PatentItem, InsightsFilter } from '@/types/PatentTypes'
@@ -215,7 +215,7 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
     ],
     [patents]
   )
-  const regionRows = useMemo(() => countBy(patents, (p) => inferRegion(p.assignee)), [patents])
+  const regionRows = useMemo(() => countBy(patents, (p) => filingJurisdictionLabel(p)), [patents])
   const quantumTech = useMemo(
     () =>
       countByList(patents, (p) => p.quantumTechnology)
@@ -280,7 +280,7 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
           onClick={(l) => onFilter({ quantumRelevance: RELEVANCE_LABEL_TO_ID[l] ?? l })}
         />
         <PieCard
-          title="Assignee-name heuristic groups"
+          title="Records by filing office"
           data={regionRows}
           colorMap={REGION_COLORS}
           onFilter={(l) => onFilter({ region: l })}
@@ -364,10 +364,10 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Region groups are inferred from assignee names using Hub rules, not verified headquarters,
-        nationality or filing jurisdiction. Missing or ambiguous names can be misclassified. Chart
-        filters retain these heuristic groups; they do not establish the geographic patent
-        landscape.
+        Chart and filters count the same displayed records by their sourced publication/application
+        office. They do not count every family filing, assignee headquarters or grant status. EP
+        identifies the European Patent Office; WO identifies a PCT international publication, not a
+        country. Records without established bibliography remain Unassigned.
       </p>
 
       <p className="pt-2 text-center text-[11px] text-muted-foreground">

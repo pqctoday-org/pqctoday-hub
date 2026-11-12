@@ -8,7 +8,7 @@ import { patentsData } from '@/data/patentsData'
 import { isPqcPatent } from '@/components/Patents/patentColumns'
 import { computePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
 import { PQC_ONLY_LS_KEY } from '@/data/patentsScope'
-import { filterPatents, inferRegion } from '@/data/patentFilters'
+import { filterPatents, filingJurisdictionLabel } from '@/data/patentFilters'
 
 // Real data throughout — patentsData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived at test time), not
@@ -240,14 +240,14 @@ describe('MobilePatentsView', () => {
     })
 
     it('?region and ?domain combine exactly as on desktop', () => {
-      const region = inferRegion(pqc[0].assignee)
+      const region = filingJurisdictionLabel(pqc[0])
       const domain = pqc[0].applicationDomain[0]
       const qs = `region=${encodeURIComponent(region)}&domain=${encodeURIComponent(domain)}`
       renderView(`/patents?${qs}`)
       expect(count()).toBe(expected(qs))
       expect(count()).toBeGreaterThan(0)
       const chips = screen.getByTestId('patent-link-filters')
-      expect(chips).toHaveTextContent(`Region:${region}`)
+      expect(chips).toHaveTextContent(`Filing office:${region}`)
       expect(chips).toHaveTextContent(`Domain:${domain}`)
     })
 

@@ -20,6 +20,7 @@ import { FlagButton } from '@/components/ui/FlagButton'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
+import { filingJurisdictionLabel } from '@/data/patentFilters'
 import { inventorLeadersFor } from './patentInventorLeaders'
 import { findAlgorithmByRef, loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { standardRefHref } from '@/utils/standardRef'
@@ -315,6 +316,23 @@ export function PatentDetail({
           ) : (
             <p className="mt-0.5 text-xs italic text-muted-foreground">Assignee not available</p>
           )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Filing office: {filingJurisdictionLabel(patent)}
+            {filingJurisdictionLabel(patent) !== 'Unassigned' && (
+              <>
+                {' '}
+                · Application {patent.filingJurisdictionApplication}{' '}
+                <a
+                  href={patent.filingJurisdictionSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Bibliographic source
+                </a>
+              </>
+            )}
+          </p>
           {patent.inventors && inventorLeaders && (
             <p className="mt-0.5 text-xs text-muted-foreground truncate" title={patent.inventors}>
               <span className="text-muted-foreground">Inventor(s): </span>

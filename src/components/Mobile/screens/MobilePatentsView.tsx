@@ -54,7 +54,7 @@ const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string
   { key: 'inventor', label: 'Inventor' },
   { key: 'patentIds', label: 'Patents', format: patentIdsLabel },
   { key: 'assignee', label: 'Assignee' },
-  { key: 'region', label: 'Region' },
+  { key: 'region', label: 'Filing office' },
   { key: 'domain', label: 'Domain' },
   { key: 'quantumTech', label: 'Quantum tech' },
   {
