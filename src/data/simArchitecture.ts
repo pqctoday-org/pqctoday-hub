@@ -25,6 +25,7 @@
  * today (a standard, vendor or deployment constraint that can change), not an
  * irreducible fact about the protocol.
  */
+import { connectionOperationsReady } from './simOperationCapabilities'
 import type { SimSize } from './moscaClock'
 import { getCatalogStatus, type CatalogAvailability } from './catalogStatus'
 
@@ -586,9 +587,8 @@ export function edgeState(arch: Architecture, e: ProtocolEdge): EdgeState {
   if (!e.vulnerable) return 'safe'
   if (e.pqcPath === 'none' || e.monitorOnly) return 'monitor' // assumed blocker → compensating controls
   if (e.pqcPath === 'vendor') return 'vendor' // waiting on a vendor PQC path
-  const byId = new Map(arch.nodes.map((n) => [n.id, n]))
-  const blocked = byId.get(e.from)?.pqcStatus === 'none' || byId.get(e.to)?.pqcStatus === 'none'
-  return blocked ? 'blocked' : 'migratable'
+  if (e.pqcPath !== 'available') return 'blocked'
+  return connectionOperationsReady(arch, e) ? 'migratable' : 'blocked'
 }
 
 /** Node classDef colors, keyed by theme. Mirrors the hue mapping of the app's
