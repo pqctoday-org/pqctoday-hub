@@ -370,14 +370,10 @@
    ]
   },
   "leadersContributions": [
-   "Mark Russinovich (Chief Technology Officer",
-   "Microsoft Azure)",
-   "Michal Braverman-Blumenstyk (Corporate Vice President",
-   "Microsoft Security Division)",
-   "Charlie Bell (Executive Vice President for Microsoft Security",
-   "outlined vision)",
-   "Amy Hogan Burney (Vice President",
-   "Customer Security and Trust)"
+   "Mark Russinovich (Chief Technology Officer, Microsoft Azure)",
+   "Michal Braverman-Blumenstyk (Corporate Vice President, Microsoft Security Division)",
+   "Charlie Bell (Executive Vice President for Microsoft Security, outlined vision)",
+   "Amy Hogan Burney (Vice President, Customer Security and Trust)"
   ],
   "pqcProducts": [
    "SymCrypt",
@@ -1286,9 +1282,7 @@
    "ML-KEM"
   ],
   "quantumThreats": [
-   "Projected technological advances in quantum computing (used as the reason DH",
-   "ECDH",
-   "ECDSA and ML-DSA-65 will not be approved beyond 2030)"
+   "Projected technological advances in quantum computing (used as the reason DH, ECDH, ECDSA and ML-DSA-65 will not be approved beyond 2030)"
   ],
   "migrationTimeline": [
    "2030: DH, ECDH, ECDSA and ML-DSA-65 will not be approved for use beyond 2030"
@@ -1361,9 +1355,7 @@
    "NIST P-256",
    "P-384",
    "P-521 curves",
-   "Effective security strength targets: 112 bits (non-classified",
-   "OFFICIAL: Sensitive",
-   "PROTECTED)",
+   "Effective security strength targets: 112 bits (non-classified, OFFICIAL: Sensitive, PROTECTED)",
    "128 bits (SECRET)",
    "192 bits (TOP SECRET)"
   ],
@@ -1874,9 +1866,7 @@
   ],
   "hybridApproaches": [
    "cryptographic agility",
-   "phased migration (Preparation",
-   "Identification",
-   "Transition)"
+   "phased migration (Preparation, Identification, Transition)"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
@@ -2133,10 +2123,8 @@
   "leadersContributions": [
    "Sun Jizhe (China Telecom Quantum Group Industry Solutions Manager)",
    "Zhu Xiaobo (Chief Designer of Zuchongzhi quantum computer prototype)",
-   "Yu Yu (Professor",
-   "Shanghai Jiao Tong University)",
-   "Sun Chao (Teacher",
-   "Southeast University)"
+   "Yu Yu (Professor, Shanghai Jiao Tong University)",
+   "Sun Chao (Teacher, Southeast University)"
   ],
   "pqcProducts": [
    "CqLib",
@@ -2339,8 +2327,7 @@
    "Ensure symmetric keys are 256 bits for quantum resistance"
   ],
   "securityLevels": [
-   "NIST Level 5 (ML-KEM-1024",
-   "ML-DSA-87)",
+   "NIST Level 5 (ML-KEM-1024, ML-DSA-87)",
    "NIST Level 3 (SLH-DSA)",
    "NIST Level 5 (SLH-DSA)",
    "3072-bit RSA/DH",
@@ -4066,32 +4053,21 @@
    ]
   },
   "leadersContributions": [
-   "Ms. Tripti Saxena (Sr DDG & Head",
-   "TEC",
-   "DoT)",
-   "Sh. Kamal Kr Agarwal (DDG (QT)",
-   "TEC",
-   "DoT)",
+   "Ms. Tripti Saxena (Sr DDG & Head, TEC, DoT)",
+   "Sh. Kamal Kr Agarwal (DDG (QT), TEC, DoT)",
    "Dr. Goutam Paul (ISI Kolkata)",
    "Dr. Swagata Mandal (Jalpaiguri Government Engineering College)",
-   "Dr. Sucheta Chakrabarti (Former Scientist-G",
-   "SAG",
-   "DRDO)",
+   "Dr. Sucheta Chakrabarti (Former Scientist-G, SAG, DRDO)",
    "Dr. Angshuman Karmakar (IIT Kanpur)",
    "Sh. Vinayaka Pandit (IBM)",
-   "Sh. Bhupendra Singh (CAIR",
-   "DRDO)",
+   "Sh. Bhupendra Singh (CAIR, DRDO)",
    "Sh. B. Srinivas Goud (NCIIPC)",
    "Dr. Shravani Shahapure (M/s Deloitte)",
    "Sh. Rakesh Singh Rawat (C-DoT)",
-   "Dr. Roopika Chaudhary (DIT & CS",
-   "DRDO)",
+   "Dr. Roopika Chaudhary (DIT & CS, DRDO)",
    "Dr. Mahavir Jhawar (Ashoka University)",
-   "Sh. Venkata Rama Raju Chelle (Director (QT)",
-   "TEC",
-   "DoT)",
-   "Sh. Rakesh Goyal (ADG",
-   "TEC)"
+   "Sh. Venkata Rama Raju Chelle (Director (QT), TEC, DoT)",
+   "Sh. Rakesh Goyal (ADG, TEC)"
   ],
   "pqcProducts": [],
   "protocols": [
@@ -4662,8 +4638,7 @@
    ]
   },
   "leadersContributions": [
-   "Dr. Shuichi Katsumata (Lead Cryptography Researcher at PQShield",
-   "leads the company's work under the CRC)",
+   "Dr. Shuichi Katsumata (Lead Cryptography Researcher at PQShield; leads the company's work under the CRC)",
    "Dr. Ali El Kaafarani (Founder and CEO of PQShield)",
    "Mr. Tsutomu Matsumoto (Director of the Cyber Physical Security Research Center at AIST)"
   ],
@@ -6130,8 +6105,7 @@
    ]
   },
   "leadersContributions": [
-   "Shalanda D. Young (Director",
-   "OMB)",
+   "Shalanda D. Young (Director, OMB)",
    "Federal Chief Information Security Officer (Chair of Cryptographic Migration Working Group)"
   ],
   "pqcProducts": [],
@@ -7038,8 +7012,7 @@
    ]
   },
   "leadersContributions": [
-   "Alejandro N. Mayorkas (Secretary of Homeland Security",
-   "March 2021 vision for cybersecurity resilience)."
+   "Alejandro N. Mayorkas (Secretary of Homeland Security, March 2021 vision for cybersecurity resilience)."
   ],
   "pqcProducts": [],
   "protocols": [
@@ -7367,8 +7340,7 @@
    "Cloud services",
    "Web software",
    "Networking hardware and software",
-   "Endpoint security products (generic categories",
-   "no specific product names)"
+   "Endpoint security products (generic categories, no specific product names)"
   ],
   "protocols": [
    "Transport Layer Security protocol version 1.3"
@@ -8229,8 +8201,7 @@
    "Secretary of Homeland Security Alejandro N. Mayorkas (vision for cybersecurity resilience)"
   ],
   "pqcProducts": [
-   "None detected (document lists product categories",
-   "not specific products)"
+   "None detected (document lists product categories, not specific products)"
   ],
   "protocols": [
    "HTTPS"
@@ -9006,20 +8977,13 @@
    "Bernie Moreno (supporting)",
    "Tammy Duckworth (supporting)",
    "Roger Wicker (supporting)",
-   "Paul Stimers (Executive Director",
-   "Quantum Industry Coalition)",
-   "Celia Merzbacher (Executive Director",
-   "QED-C)",
-   "Paul Lekas (Executive Vice President",
-   "SIIA)",
-   "Arvind Krishna (Chairman and CEO",
-   "IBM)",
-   "Fred Humphries (Corporate VP U.S. Government Affairs",
-   "Microsoft)",
-   "Hartmut Neven (Founder and Lead",
-   "Google Quantum AI)",
-   "Niccolo de Masi (Chairman & CEO",
-   "IonQ)"
+   "Paul Stimers (Executive Director, Quantum Industry Coalition)",
+   "Celia Merzbacher (Executive Director, QED-C)",
+   "Paul Lekas (Executive Vice President, SIIA)",
+   "Arvind Krishna (Chairman and CEO, IBM)",
+   "Fred Humphries (Corporate VP U.S. Government Affairs, Microsoft)",
+   "Hartmut Neven (Founder and Lead, Google Quantum AI)",
+   "Niccolo de Masi (Chairman & CEO, IonQ)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -9214,8 +9178,7 @@
   "regionsAndBodies": null,
   "leadersContributions": [],
   "pqcProducts": [
-   "None detected (document lists product categories",
-   "not specific products)"
+   "None detected (document lists product categories, not specific products)"
   ],
   "protocols": [
    "HTTPS"
@@ -10253,12 +10216,9 @@
    ]
   },
   "leadersContributions": [
-   "Dr. Rajkumar Upadhyay (Chairman",
-   "Task Force)",
-   "Mr. Kamal Kumar Agarwal (Chairman",
-   "Sub-Group 1)",
-   "Mr. Vinayak Godse (Chairman",
-   "Sub-Group 2)"
+   "Dr. Rajkumar Upadhyay (Chairman, Task Force)",
+   "Mr. Kamal Kumar Agarwal (Chairman, Sub-Group 1)",
+   "Mr. Vinayak Godse (Chairman, Sub-Group 2)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -10654,16 +10614,11 @@
    ]
   },
   "leadersContributions": [
-   "Salem Al Darei (CEO",
-   "ADGM Authority)",
-   "Dr. Najwa Aaraj (CEO",
-   "TII)",
-   "Stephane Timpano (CEO",
-   "ASPIRE)",
-   "Mansoor Jaffar (CEO",
-   "ADGM Academy)",
-   "Ahmad Ali Alwan (CEO",
-   "Hub71)"
+   "Salem Al Darei (CEO, ADGM Authority)",
+   "Dr. Najwa Aaraj (CEO, TII)",
+   "Stephane Timpano (CEO, ASPIRE)",
+   "Mansoor Jaffar (CEO, ADGM Academy)",
+   "Ahmad Ali Alwan (CEO, Hub71)"
   ],
   "pqcProducts": [
    "TII proprietary Quantum Key Distribution (QKD) solution"
@@ -10966,8 +10921,7 @@
    ]
   },
   "leadersContributions": [
-   "Simon Shooter (Head of Country for Saudi Arabia",
-   "Head of TMT for the Middle East)",
+   "Simon Shooter (Head of Country for Saudi Arabia, Head of TMT for the Middle East)",
    "Nikita Manro (Associate in International Commercial Group)"
   ],
   "pqcProducts": [],
@@ -11074,8 +11028,7 @@
    ]
   },
   "leadersContributions": [
-   "Dr. Basma AlBuhairan (Managing Director",
-   "C4IR Saudi Arabia)",
+   "Dr. Basma AlBuhairan (Managing Director, C4IR Saudi Arabia)",
    "Bohr",
    "Heisenberg",
    "Planck",
@@ -11286,8 +11239,7 @@
   },
   "leadersContributions": [
    "Shaikh Salman bin Mohammed Al Khalifa (CEO of NCSC of Bahrain)",
-   "Mohammed Aboul-Magd (Vice President of Product",
-   "Cybersecurity at SandboxAQ)"
+   "Mohammed Aboul-Magd (Vice President of Product, Cybersecurity at SandboxAQ)"
   ],
   "pqcProducts": [
    "AQtive Guard"
@@ -11506,9 +11458,7 @@
   ],
   "infrastructureLayers": [
    "PKI/CAs",
-   "Key Management (key transport",
-   "key-wrapping",
-   "initialization vectors)",
+   "Key Management (key transport, key-wrapping, initialization vectors)",
    "Digital Signatures",
    "Identity Authentication",
    "Privilege Authorization."
@@ -11787,10 +11737,8 @@
    ]
   },
   "leadersContributions": [
-   "Kent Walker (President of Global Affairs",
-   "Google & Alphabet)",
-   "Hartmut Neven (Founder and Lead",
-   "Google Quantum AI)"
+   "Kent Walker (President of Global Affairs, Google & Alphabet)",
+   "Hartmut Neven (Founder and Lead, Google Quantum AI)"
   ],
   "pqcProducts": [
    "Google Cloud",
@@ -12428,8 +12376,7 @@
    "Martijn Katerbarg (endorsed)"
   ],
   "pqcProducts": [
-   "None detected (ballot specifies algorithms",
-   "not specific products)"
+   "None detected (ballot specifies algorithms, not specific products)"
   ],
   "protocols": [
    "TLS",
@@ -13914,9 +13861,7 @@
    "NIST"
   ],
   "complianceFrameworks": [
-   "ITSP.40.111 (Cryptographic algorithms for UNCLASSIFIED",
-   "PROTECTED A",
-   "and PROTECTED B information)",
+   "ITSP.40.111 (Cryptographic algorithms for UNCLASSIFIED, PROTECTED A, and PROTECTED B information)",
    "ITSP.40.062 (Guidance on securely configuring network protocols)",
    "Cryptographic Module Validation Program",
    "TBS Government of Canada Enterprise Cyber Security Strategy"
@@ -13932,8 +13877,7 @@
   "securityLevels": [],
   "hybridApproaches": [
    "Backward compatibility with non-transitioned systems",
-   "two-stage transition (support PQC",
-   "then disable legacy cryptography)",
+   "two-stage transition (support PQC, then disable legacy cryptography)",
    "isolation or tunnelling of legacy systems in a PQC-protected encapsulation layer",
    "cryptographic agility"
   ],
@@ -14082,8 +14026,7 @@
   "securityLevels": [],
   "hybridApproaches": [
    "Cryptographic agility",
-   "Staged transition (support PQC first",
-   "then disable legacy cryptography)",
+   "Staged transition (support PQC first, then disable legacy cryptography)",
    "Backwards compatibility with non-transitioned systems",
    "Tunnelling traffic within a PQC-protected encapsulation layer",
    "Isolation of legacy systems"
@@ -14173,9 +14116,7 @@
   "pqcAlgorithms": [
    "ML-KEM",
    "ML-DSA",
-   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
-   "PROTECTED A",
-   "PROTECTED B information)"
+   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)"
   ],
   "quantumThreats": [
    "Harvest Now Decrypt Later",
@@ -14197,12 +14138,10 @@
    ]
   },
   "leadersContributions": [
-   "None detected (guidance document with organizational roles",
-   "not individuals)"
+   "None detected (guidance document with organizational roles, not individuals)"
   ],
   "pqcProducts": [
-   "None detected (guidance focused on migration methodology",
-   "not specific products)"
+   "None detected (guidance focused on migration methodology, not specific products)"
   ],
   "protocols": [
    "Network security protocols (referenced as ITSP.40.062)",
@@ -14326,9 +14265,7 @@
   "pqcAlgorithms": [
    "ML-KEM",
    "ML-DSA",
-   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
-   "PROTECTED A",
-   "PROTECTED B information)"
+   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)"
   ],
   "quantumThreats": [
    "HNDL",
@@ -14353,12 +14290,10 @@
    ]
   },
   "leadersContributions": [
-   "None detected (guidance document with organizational roles",
-   "not individuals)"
+   "None detected (guidance document with organizational roles, not individuals)"
   ],
   "pqcProducts": [
-   "None detected (guidance focused on migration methodology",
-   "not specific products)"
+   "None detected (guidance focused on migration methodology, not specific products)"
   ],
   "protocols": [
    "Network security protocols (referenced as ITSP.40.062)",
@@ -14554,8 +14489,7 @@
   "securityLevels": [],
   "hybridApproaches": [
    "Cryptographic agility",
-   "Backward compatibility with non-transitioned systems (first support PQC",
-   "then disable legacy cryptography)",
+   "Backward compatibility with non-transitioned systems (first support PQC, then disable legacy cryptography)",
    "Isolation of legacy systems on the network",
    "Tunnelling traffic within a PQC-protected encapsulation layer"
   ],
@@ -14665,9 +14599,7 @@
   },
   "leadersContributions": [
    "Dustin Moody (mathematician at NIST)",
-   "Matt Swayne (writer",
-   "editor",
-   "analyst at The Quantum Insider)"
+   "Matt Swayne (writer, editor, analyst at The Quantum Insider)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -15374,8 +15306,7 @@
    "Lattice-based algorithms"
   ],
   "quantumThreats": [
-   "Quantum computer threat (menace quantique",
-   "ordinateur quantique)"
+   "Quantum computer threat (menace quantique; ordinateur quantique)"
   ],
   "migrationTimeline": [
    "2027: PQC integration obligation for certain product typologies during qualification entry"
@@ -18439,8 +18370,7 @@
   ],
   "infrastructureLayers": [
    "Software/firmware signing",
-   "Networking Equipment (VPNs",
-   "routers)",
+   "Networking Equipment (VPNs, routers)",
    "Operating Systems",
    "Web Browsers/Cloud Services",
    "Niche/Custom Equipment",
@@ -19240,8 +19170,7 @@
   "leadersContributions": [
    "Paul van Brouwershaven (Chair of the PKI Consortium and its Post-Quantum Cryptography Working Group)",
    "Chris Bailey (Board and Executive Council Chair of the PKI Consortium)",
-   "Leigh Bailey (Head of Marketing",
-   "PKI Consortium)"
+   "Leigh Bailey (Head of Marketing, PKI Consortium)"
   ],
   "pqcProducts": [
    "Signal",
@@ -19424,10 +19353,7 @@
    "For federal high value assets, high impact systems and other systems prioritised under OMB Memorandum M-26-15, earlier constraints apply"
   ],
   "securityLevels": [
-   "112 bits of classical security strength or more (RSA",
-   "ECDSA",
-   "DH",
-   "MQV)",
+   "112 bits of classical security strength or more (RSA, ECDSA, DH, MQV)",
    "128 bits or more (EdDSA)"
   ],
   "hybridApproaches": [],
@@ -19776,8 +19702,7 @@
   ],
   "regionsAndBodies": null,
   "leadersContributions": [
-   "Heather Adkins (VP",
-   "Security Engineering)",
+   "Heather Adkins (VP, Security Engineering)",
    "Sophie Schmieg (Senior Staff Cryptography Engineer)"
   ],
   "pqcProducts": [
@@ -19799,10 +19724,8 @@
    "FIPS 204"
   ],
   "classicalAlgorithms": [
-   "RSA (implicit",
-   "being replaced)",
-   "ECDSA (implicit",
-   "being replaced)",
+   "RSA (implicit, being replaced)",
+   "ECDSA (implicit, being replaced)",
    "X.509 certificate chains (being supplemented by MTC)"
   ],
   "keyTakeaways": [
@@ -20010,8 +19933,7 @@
   "leadersContributions": [
    "Olivier Roussy Newton (CEO and Chairman of BTQ Technologies)",
    "Satoshi Nakamoto (mined Bitcoin genesis block)",
-   "Vitalik Buterin (Ethereum co-founder",
-   "stated 20% probability of quantum computers by 2030)"
+   "Vitalik Buterin (Ethereum co-founder, stated 20% probability of quantum computers by 2030)"
   ],
   "pqcProducts": [
    "OSS",
@@ -20123,8 +20045,7 @@
    "Craig Gentry (GPV work)",
    "Chris Peikert (GPV work)",
    "Vinod Vaikuntanathan (GPV work)",
-   "Silvio Micali (State Proofs paper",
-   "VRF introduction)"
+   "Silvio Micali (State Proofs paper; VRF introduction)"
   ],
   "pqcProducts": [
    "AlgoKit",
@@ -20876,11 +20797,7 @@
   "classicalAlgorithms": [
    "PBMAC1",
    "OCB",
-   "SHA-2 (implied by SHA-512 in context of CMS/PKCS",
-   "but text only says \"CMS AuthEnvelopedData\" and \"PKCS#12 MAC\"",
-   "strictly",
-   "only PBMAC1 and OCB are explicitly named as algorithms/functions. \"SHA\" is not explicitly named",
-   "only \"CMS\" and \"PKCS#12\". I will list PBMAC1 and OCB)."
+   "SHA-2 (implied by SHA-512 in context of CMS/PKCS, but text only says \"CMS AuthEnvelopedData\" and \"PKCS#12 MAC\"; strictly, only PBMAC1 and OCB are explicitly named as algorithms/functions. \"SHA\" is not explicitly named, only \"CMS\" and \"PKCS#12\". I will list PBMAC1 and OCB)."
   ],
   "keyTakeaways": [
    "Update OpenSSL to 3.6.1 or later to fix critical memory safety vulnerabilities",
@@ -20977,12 +20894,9 @@
    ]
   },
   "leadersContributions": [
-   "Jaime Gómez García (Lead",
-   "Banco Santander and Chair of the Quantum Safe Financial Forum)",
-   "Dr. Kenneth Giuliani (Support",
-   "CIBC)",
-   "Mike Silverman (Support",
-   "FS-ISAC)",
+   "Jaime Gómez García (Lead, Banco Santander and Chair of the Quantum Safe Financial Forum)",
+   "Dr. Kenneth Giuliani (Support, CIBC)",
+   "Mike Silverman (Support, FS-ISAC)",
    "Peter Bordow (Wells Fargo)",
    "Jelena Zelenovic Matone (European Investment Bank)",
    "Ivan Makarov (TD Bank)",
@@ -21142,9 +21056,7 @@
   "pqcAlgorithms": [
    "ML-KEM",
    "ML-DSA",
-   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
-   "PROTECTED A",
-   "PROTECTED B information)"
+   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)"
   ],
   "quantumThreats": [
    "Harvest now",
@@ -21165,12 +21077,10 @@
    ]
   },
   "leadersContributions": [
-   "None detected (guidance document with organizational roles",
-   "not individuals)"
+   "None detected (guidance document with organizational roles, not individuals)"
   ],
   "pqcProducts": [
-   "None detected (guidance focused on migration methodology",
-   "not specific products)"
+   "None detected (guidance focused on migration methodology, not specific products)"
   ],
   "protocols": [
    "Network security protocols (referenced as ITSP.40.062)",
@@ -21641,10 +21551,8 @@
   ],
   "regionsAndBodies": null,
   "leadersContributions": [
-   "Cory Wilson (Deputy Assistant Secretary for Cybersecurity and Critical Infrastructure Protection",
-   "U.S. Treasury)",
-   "Duncan Mackinnon (Executive Director for Supervisory Risk",
-   "Bank of England)"
+   "Cory Wilson (Deputy Assistant Secretary for Cybersecurity and Critical Infrastructure Protection, U.S. Treasury)",
+   "Duncan Mackinnon (Executive Director for Supervisory Risk, Bank of England)"
   ],
   "pqcProducts": [],
   "protocols": [
@@ -22327,8 +22235,7 @@
    "ML-KEM"
   ],
   "quantumThreats": [
-   "Projected technological advances in quantum computing (cited as the reason DH",
-   "ECDH and ECDSA will not be approved beyond 2030)"
+   "Projected technological advances in quantum computing (cited as the reason DH, ECDH and ECDSA will not be approved beyond 2030)"
   ],
   "migrationTimeline": [
    "2030: DH, ECDH and ECDSA will not be approved beyond 2030; 2030: ML-DSA-65 will not be approved beyond 2030. The ISM-1917 control (support for ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by 2030) and the RSA 2030 restatement appear in the description; the provided text is truncated before them."
@@ -22401,9 +22308,7 @@
    "NIST P-256",
    "P-384",
    "P-521 curves",
-   "effective security strength targets 112 bits (non-classified",
-   "OFFICIAL: Sensitive",
-   "PROTECTED)",
+   "effective security strength targets 112 bits (non-classified, OFFICIAL: Sensitive, PROTECTED)",
    "128 bits (SECRET)",
    "192 bits (TOP SECRET)"
   ],
@@ -23808,8 +23713,7 @@
   "leadersContributions": [
    "Paul van Brouwershaven (Chair of the PKI Consortium and its Post-Quantum Cryptography Working Group)",
    "Chris Bailey (Board and Executive Council Chair of the PKI Consortium)",
-   "Leigh Bailey (Head of Marketing",
-   "PKI Consortium)"
+   "Leigh Bailey (Head of Marketing, PKI Consortium)"
   ],
   "pqcProducts": [
    "Signal",
@@ -23967,15 +23871,10 @@
    ]
   },
   "leadersContributions": [
-   "Stawros Orkopoulos (Rapporteur",
-   "Nokia Germany)",
-   "Zander (Zhongding) Lei (Rapporteur",
-   "HuaWei Technologies Co.",
-   "Ltd)",
-   "Mirko Cano Soveri (Author",
-   "created specification)",
-   "Maurice Pope (Author",
-   "made specification Under Change Control)"
+   "Stawros Orkopoulos (Rapporteur, Nokia Germany)",
+   "Zander (Zhongding) Lei (Rapporteur, HuaWei Technologies Co., Ltd)",
+   "Mirko Cano Soveri (Author, created specification)",
+   "Maurice Pope (Author, made specification Under Change Control)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -25192,8 +25091,7 @@
    ]
   },
   "leadersContributions": [
-   "Alejandro N. Mayorkas (Secretary of Homeland Security",
-   "March 2021 vision for cybersecurity resilience)"
+   "Alejandro N. Mayorkas (Secretary of Homeland Security, March 2021 vision for cybersecurity resilience)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -25425,8 +25323,7 @@
   "mainTopic": "NIST announces nine candidates advancing to the third round of the Additional Digital Signatures for the Post-Quantum Cryptography Standardization Process.",
   "pqcAlgorithms": [
    "FAEST",
-   "HAWK (withdrawn July 29",
-   "2026)",
+   "HAWK (withdrawn July 29, 2026)",
    "MAYO",
    "MQOM",
    "QR-UOV",
@@ -26717,21 +26614,14 @@
    ]
   },
   "leadersContributions": [
-   "Donald J. Trump (President",
-   "signed order)",
-   "Director of OMB (lead strategic coordination",
-   "issue guidance",
-   "identify PQC migration lead)",
+   "Donald J. Trump (President, signed order)",
+   "Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead)",
    "National Cyber Director (lead strategic coordination)",
    "Secretary of Commerce (provide technical guidance via NIST)",
-   "Director of NIST (provide technical guidance",
-   "initiate pilot",
-   "revise CMVP processes)",
+   "Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes)",
    "Director of NSA (submit migration status report for National Security Systems)",
-   "Secretary of Homeland Security (assist critical infrastructure",
-   "release CBOM guidance via CISA)",
-   "Director of CISA (assist critical infrastructure",
-   "release CBOM guidance)",
+   "Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA)",
+   "Director of CISA (assist critical infrastructure, release CBOM guidance)",
    "Secretary of State (engage foreign governments)",
    "Director of National Intelligence (coordinate procurement and foreign engagement)",
    "Administrator of General Services (coordinate procurement)",
@@ -26882,21 +26772,14 @@
    ]
   },
   "leadersContributions": [
-   "Donald J. Trump (President",
-   "signed order)",
-   "Director of OMB (lead strategic coordination",
-   "issue guidance",
-   "identify PQC migration lead)",
+   "Donald J. Trump (President, signed order)",
+   "Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead)",
    "National Cyber Director (lead strategic coordination)",
    "Secretary of Commerce (provide technical guidance via NIST)",
-   "Director of NIST (provide technical guidance",
-   "initiate pilot",
-   "revise CMVP processes)",
+   "Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes)",
    "Director of NSA (submit migration status report for National Security Systems)",
-   "Secretary of Homeland Security (assist critical infrastructure",
-   "release CBOM guidance via CISA)",
-   "Director of CISA (assist critical infrastructure",
-   "release CBOM guidance)",
+   "Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA)",
+   "Director of CISA (assist critical infrastructure, release CBOM guidance)",
    "Secretary of State (engage foreign governments)",
    "Director of National Intelligence (coordinate procurement and foreign engagement)",
    "Administrator of General Services (coordinate procurement)",
@@ -27045,21 +26928,14 @@
    ]
   },
   "leadersContributions": [
-   "Donald J. Trump (President",
-   "signed order)",
-   "Director of OMB (lead strategic coordination",
-   "issue guidance",
-   "identify PQC migration lead)",
+   "Donald J. Trump (President, signed order)",
+   "Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead)",
    "National Cyber Director (lead strategic coordination)",
    "Secretary of Commerce (provide technical guidance via NIST)",
-   "Director of NIST (provide technical guidance",
-   "initiate pilot",
-   "revise CMVP processes)",
+   "Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes)",
    "Director of NSA (submit migration status report for National Security Systems)",
-   "Secretary of Homeland Security (assist critical infrastructure",
-   "release CBOM guidance via CISA)",
-   "Director of CISA (assist critical infrastructure",
-   "release CBOM guidance)",
+   "Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA)",
+   "Director of CISA (assist critical infrastructure, release CBOM guidance)",
    "Secretary of State (engage foreign governments)",
    "Director of National Intelligence (coordinate procurement and foreign engagement)",
    "Administrator of General Services (coordinate procurement)",
@@ -27289,8 +27165,7 @@
    ]
   },
   "leadersContributions": [
-   "Russell T. Vought (Director",
-   "Office of Management and Budget)"
+   "Russell T. Vought (Director, Office of Management and Budget)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -27439,8 +27314,7 @@
    ]
   },
   "leadersContributions": [
-   "Russell T. Vought (Director",
-   "Office of Management and Budget)"
+   "Russell T. Vought (Director, Office of Management and Budget)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -27588,21 +27462,14 @@
    ]
   },
   "leadersContributions": [
-   "Donald J. Trump (President",
-   "signed order)",
-   "Director of OMB (lead strategic coordination",
-   "issue guidance",
-   "identify PQC migration lead)",
+   "Donald J. Trump (President, signed order)",
+   "Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead)",
    "National Cyber Director (lead strategic coordination)",
    "Secretary of Commerce (provide technical guidance via NIST)",
-   "Director of NIST (provide technical guidance",
-   "initiate pilot",
-   "revise CMVP processes)",
+   "Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes)",
    "Director of NSA (submit migration status report for National Security Systems)",
-   "Secretary of Homeland Security (assist critical infrastructure",
-   "release CBOM guidance via CISA)",
-   "Director of CISA (assist critical infrastructure",
-   "release CBOM guidance)",
+   "Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA)",
+   "Director of CISA (assist critical infrastructure, release CBOM guidance)",
    "Secretary of State (engage foreign governments)",
    "Director of National Intelligence (coordinate procurement and foreign engagement)",
    "Administrator of General Services (coordinate procurement)",
@@ -27752,21 +27619,14 @@
    ]
   },
   "leadersContributions": [
-   "Donald J. Trump (President",
-   "signed order)",
-   "Director of OMB (lead strategic coordination",
-   "issue guidance",
-   "identify PQC migration lead)",
+   "Donald J. Trump (President, signed order)",
+   "Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead)",
    "National Cyber Director (lead strategic coordination)",
    "Secretary of Commerce (provide technical guidance via NIST)",
-   "Director of NIST (provide technical guidance",
-   "initiate pilot",
-   "revise CMVP processes)",
+   "Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes)",
    "Director of NSA (submit migration status report for National Security Systems)",
-   "Secretary of Homeland Security (assist critical infrastructure",
-   "release CBOM guidance via CISA)",
-   "Director of CISA (assist critical infrastructure",
-   "release CBOM guidance)",
+   "Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA)",
+   "Director of CISA (assist critical infrastructure, release CBOM guidance)",
    "Secretary of State (engage foreign governments)",
    "Director of National Intelligence (coordinate procurement and foreign engagement)",
    "Administrator of General Services (coordinate procurement)",
@@ -27908,14 +27768,10 @@
   },
   "leadersContributions": [
    "President Donald J. Trump (signed order)",
-   "Assistant to the President for Science and Technology (coordinate QC-ADDS",
-   "update strategy)",
-   "Secretary of War (identify sensor projects",
-   "support QC-ADDS)",
-   "Secretary of Commerce (develop commercial readiness plans",
-   "supply chain plans)",
-   "Secretary of Energy (identify technical specs",
-   "establish assessment center)",
+   "Assistant to the President for Science and Technology (coordinate QC-ADDS, update strategy)",
+   "Secretary of War (identify sensor projects, support QC-ADDS)",
+   "Secretary of Commerce (develop commercial readiness plans, supply chain plans)",
+   "Secretary of Energy (identify technical specs, establish assessment center)",
    "Director of National Intelligence (identify national security implications)",
    "Director of NSF (develop basic science plans)",
    "Administrator of NASA (develop space application plans)",
@@ -27998,8 +27854,7 @@
    ]
   },
   "leadersContributions": [
-   "Donald J. Trump (President",
-   "issued memorandum)",
+   "Donald J. Trump (President, issued memorandum)",
    "Secretary of War (CNSS member)",
    "Director of National Intelligence (CNSS member)",
    "Director of the Office of Management and Budget (CNSS member)",
@@ -28192,14 +28047,9 @@
   "leadersContributions": [
    "President Donald J. Trump (Signed Executive Order 14413)",
    "Assistant to the President for Science and Technology (Coordinate update of National Quantum Strategy and QC-ADDS Effort)",
-   "Secretary of War (Identify quantum sensor projects",
-   "support QC-ADDS",
-   "establish national security readiness activities)",
-   "Secretary of Commerce (Develop commercial readiness plans",
-   "encourage private sector contributions)",
-   "Secretary of Energy (Identify QC-ADDS specifications",
-   "explore partnership models",
-   "establish national assessment center)",
+   "Secretary of War (Identify quantum sensor projects, support QC-ADDS, establish national security readiness activities)",
+   "Secretary of Commerce (Develop commercial readiness plans, encourage private sector contributions)",
+   "Secretary of Energy (Identify QC-ADDS specifications, explore partnership models, establish national assessment center)",
    "Director of National Intelligence (Identify national security implications of quantum computers)",
    "Director of the National Science Foundation (Develop basic science research plans)",
    "Administrator of NASA (Develop civilian quantum sensing and networking plans for space)"
@@ -28468,10 +28318,8 @@
    ]
   },
   "leadersContributions": [
-   "Datuk Seri Anwar Ibrahim (Prime Minister",
-   "noted urgency of initiatives)",
-   "Datuk Raja Nushirwan Zainal Abidin (National Security Council director-general",
-   "explained measures to harden government systems)"
+   "Datuk Seri Anwar Ibrahim (Prime Minister, noted urgency of initiatives)",
+   "Datuk Raja Nushirwan Zainal Abidin (National Security Council director-general, explained measures to harden government systems)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -29117,14 +28965,7 @@
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
-    "SAMSIK (implied by title/source context",
-    "though text mentions Global Risk Institute",
-    "NCSC",
-    "BSI",
-    "NIST",
-    "DHS",
-    "ETSI",
-    "ANSSI as references)"
+    "SAMSIK (implied by title/source context, though text mentions Global Risk Institute, NCSC, BSI, NIST, DHS, ETSI, ANSSI as references)"
    ]
   },
   "leadersContributions": [],
@@ -29211,8 +29052,7 @@
    ]
   },
   "leadersContributions": [
-   "Aija Hämäläinen (Unit Head",
-   "Cyber Security Centre)"
+   "Aija Hämäläinen (Unit Head, Cyber Security Centre)"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -29299,8 +29139,7 @@
    ]
   },
   "leadersContributions": [
-   "Daniel Hahiashvili (Supervisor of Banks",
-   "author of directive)",
+   "Daniel Hahiashvili (Supervisor of Banks, author of directive)",
    "Tal Harel Matityahu (Deputy Supervisor of Banks)",
    "Aya Gal-Ed (Head of Supervisory Cyber Unit)",
    "Liora Navon (Head of Technology in Banking Unit)"
@@ -29624,8 +29463,7 @@
    "Rodrigo Ferreira (Author)",
    "Pedro Ripper (Author)",
    "Rafael Veríssimo (Author)",
-   "Aristides Andrade Cavalcante Neto (Author",
-   "Research Facilitator)"
+   "Aristides Andrade Cavalcante Neto (Author; Research Facilitator)"
   ],
   "pqcProducts": [],
   "protocols": [
@@ -31202,9 +31040,7 @@
   ],
   "hybridApproaches": [
    "cryptographic agility",
-   "phased migration (Preparation",
-   "Identification",
-   "Transition)"
+   "phased migration (Preparation, Identification, Transition)"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
@@ -32650,8 +32486,7 @@
   ],
   "infrastructureLayers": [
    "Cryptographic Hardware Components",
-   "Key Management (Key Derivation",
-   "Key Wrapping)"
+   "Key Management (Key Derivation, Key Wrapping)"
   ],
   "standardizationBodies": [
    "BSI",
@@ -32674,9 +32509,7 @@
    "EC Diffie-Hellman",
    "DLIES",
    "ECIES",
-   "SHA-2 (implied by hash functions section",
-   "though specific names not listed in TOC",
-   "SHA-2 is standard context for BSI)",
+   "SHA-2 (implied by hash functions section, though specific names not listed in TOC, SHA-2 is standard context for BSI)",
    "Argon2id",
    "CCM mode",
    "PKCS1.5"
@@ -34158,21 +33991,14 @@
    ]
   },
   "leadersContributions": [
-   "Donald J. Trump (President",
-   "signed order)",
-   "Director of OMB (lead strategic coordination",
-   "issue guidance",
-   "identify PQC migration lead)",
+   "Donald J. Trump (President, signed order)",
+   "Director of OMB (lead strategic coordination, issue guidance, identify PQC migration lead)",
    "National Cyber Director (lead strategic coordination)",
    "Secretary of Commerce (provide technical guidance via NIST)",
-   "Director of NIST (provide technical guidance",
-   "initiate pilot",
-   "revise CMVP processes)",
+   "Director of NIST (provide technical guidance, initiate pilot, revise CMVP processes)",
    "Director of NSA (submit migration status report for National Security Systems)",
-   "Secretary of Homeland Security (assist critical infrastructure",
-   "release CBOM guidance via CISA)",
-   "Director of CISA (assist critical infrastructure",
-   "release CBOM guidance)",
+   "Secretary of Homeland Security (assist critical infrastructure, release CBOM guidance via CISA)",
+   "Director of CISA (assist critical infrastructure, release CBOM guidance)",
    "Secretary of State (engage foreign governments)",
    "Director of National Intelligence (coordinate procurement and foreign engagement)",
    "Administrator of General Services (coordinate procurement)",
