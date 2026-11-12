@@ -1,6 +1,6 @@
 ### What This Is About
 
-Payments run on two halves that share cryptography, share vendors and increasingly share deadlines, but are usually migrated by different teams reading different documents. One half is cards: EMV is the global chip standard protecting 14.7 billion cards in circulation at the end of 2024, and when a card is used offline, authentication rests entirely on a chain of RSA certificates. The other half moves money between institutions — Swift messaging, domestic RTGS, correspondent banking chains — plus the bank key management and sector regulation around them.
+Payments run on two halves that share cryptography, share vendors and increasingly share deadlines, but are usually migrated by different teams reading different documents. One half is cards: EMVCo reports over 15.6 billion EMV Chip cards in global circulation at the end of 2025 in its [15 July 2026 newsletter](https://www.emvco.com/news-publications/emvco-newsletter-q2-2026/). That is a global fleet total, not the RSA-dependent subset. In the RSA-based offline examples here, SDA checks issuer-signed static data, while DDA and CDA also use the card's ICC key; other profiles can use ECC. The other half moves money between institutions — Swift messaging, domestic RTGS, correspondent banking chains — plus the bank key management and sector regulation around them.
 
 ### Why It Matters
 

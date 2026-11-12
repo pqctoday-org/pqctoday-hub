@@ -460,8 +460,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             The most significant practical impact of PQC JWTs is <strong>token size</strong>.
-            ML-DSA-65 signatures are 3,309 bytes vs 64 bytes for ES256 &mdash; a 51x increase. This
-            has cascading effects on HTTP headers, cookies, bandwidth, and storage.
+            ML-DSA-65 signatures are 3,309 bytes vs 64 bytes for ES256 &mdash; about 52 times as
+            many signature bytes. This has cascading effects on HTTP headers, cookies, bandwidth,
+            and storage.
           </p>
           <div className="space-y-3">
             <div>
