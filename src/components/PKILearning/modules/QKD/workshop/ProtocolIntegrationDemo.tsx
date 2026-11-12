@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { Play, ExternalLink, ShieldCheck, Wifi, Server, Terminal } from 'lucide-react'
+import { Play, ExternalLink, ShieldCheck, Wifi, Server } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { deriveTlsImporterSample, TLS_SAMPLE_CONTEXT } from './tlsPskImporterSample'
+import { createSshExchangeSample, assessSshExchange, sshSampleHex } from './sshExchangeHashSample'
 
 function getRandomHex(bytes: number): string {
   const buf = new Uint8Array(bytes)
@@ -570,149 +571,124 @@ const SSHPanel: React.FC = () => {
     running,
     error,
     run: runSample,
-  } = useSampleOperation<{
-    qkdSecret: string
-    qkdResponseJson: string
-    clientCookie: string
-    serverCookie: string
-    sessionId: string
-  }>()
-
-  const run = useCallback(
-    () =>
-      runSample(async () => {
-        const qkdHex = getRandomHex(32)
-        const clientCookie = getRandomHex(16)
-        const serverCookie = getRandomHex(16)
-
-        // SSH session ID: H = hash(V_C || V_S || I_C || I_S || K_S || e || f || K)
-        // This illustration does not compute that exchange hash or replace a negotiated SSH method.
-        // We simulate: HKDF(IKM = qkd || client_cookie || server_cookie, info = "SSH session-id")
-        const combined = new Uint8Array(64)
-        for (let i = 0; i < 32; i++) combined[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
-        for (let i = 0; i < 16; i++)
-          combined[32 + i] = parseInt(clientCookie.slice(i * 2, i * 2 + 2), 16)
-        for (let i = 0; i < 16; i++)
-          combined[48 + i] = parseInt(serverCookie.slice(i * 2, i * 2 + 2), 16)
-
-        const sessionId = await hkdfDerive(combined, 'SSH session-id', 32)
-        return {
-          qkdSecret: qkdHex,
-          qkdResponseJson: getQkdJson(qkdHex),
-          clientCookie,
-          serverCookie,
-          sessionId,
+  } = useSampleOperation<ReturnType<typeof createSshExchangeSample>>()
+  const [changedIdentification, setChangedIdentification] = useState(false)
+  const execute = (rekey = false) => {
+    setChangedIdentification(false)
+    void runSample(() =>
+      createSshExchangeSample(
+        rekey && result ? { hostSecret: result.hostSecret, sessionId: result.sessionId } : {}
+      )
+    )
+  }
+  const fields =
+    result && changedIdentification
+      ? {
+          ...result.fields,
+          V_C: new TextEncoder().encode(new TextDecoder().decode(result.fields.V_C) + '-changed'),
         }
-      }),
-    [runSample]
-  )
-
+      : result?.fields
+  const checked =
+    result && fields
+      ? assessSshExchange(fields, result.signature, result.hostPublic, result.sessionId)
+      : null
   return (
     <div className="space-y-5">
-      <div className="glass-panel p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Terminal size={16} className="text-primary" />
-          <h3 className="font-bold text-foreground">SSH Context — Local HKDF Illustration</h3>
-          <a
-            href="https://datatracker.ietf.org/doc/html/rfc4253"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto text-xs text-primary flex items-center gap-1 hover:underline"
-          >
-            RFC 4253 <ExternalLink size={11} />
-          </a>
-        </div>
+      <div className="glass-panel p-4 space-y-2">
+        <h3 className="font-bold text-foreground">SSH — Complete Exchange-Hash Reference Sample</h3>
         <p className="text-xs text-muted-foreground">
-          RFC 4253 defines negotiated key exchange, a transcript-bound exchange hash and host
-          authentication. This panel only applies HKDF-SHA256 to local sample bytes and two
-          cookie-labelled values. Its output is not an SSH exchange hash or session identifier.
+          Existing conventional profile: curve25519-sha256 / ssh-ed25519, aes128-ctr, hmac-sha2-256,
+          no compression. Fresh fictional local X25519 keys establish the same K at both endpoints.
+          An Ed25519 sample host key signs the complete exchange hash H. Retained public
+          identification and full KEXINIT payloads are inputs; no new network negotiation or login
+          runs. Cookies are inside KEXINIT, not substitutes for its name lists.
         </p>
-      </div>
-
-      {/* Flow diagram */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div className="bg-primary/5 border border-primary/20 rounded p-3">
-          <div className="font-bold text-primary mb-1">① Local Cookie-Labelled Samples</div>
-          <div className="text-muted-foreground">
-            Generate two local 16-byte values. No KEXINIT message or peer is executed.
-          </div>
-        </div>
-        <div className="bg-muted/40 border border-border rounded p-3">
-          <div className="font-bold text-foreground mb-1">② Actual Demonstration</div>
-          <code className="text-muted-foreground block">
-            HKDF-SHA256(sample || client_cookie || server_cookie)
-          </code>
-          <div className="mt-1 text-muted-foreground">
-            Salt: 32 zero bytes; info: "SSH session-id"; output: 32 bytes. No standard key exchange
-            is implemented.
-          </div>
-        </div>
-        <div className="bg-success/5 border border-success/20 rounded p-3">
-          <div className="font-bold text-success mb-1">③ Local HKDF Output</div>
-          <code className="text-muted-foreground block">Not the RFC 4253 exchange hash H</code>
-          <div className="mt-1 text-muted-foreground">
-            No transcript encoding, host-signature check or SSH traffic-key derivation is executed.
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-muted/30 rounded p-3 border border-border">
-        <div className="text-xs font-bold text-muted-foreground mb-1">RFC 4253 §7.1 — Cookie</div>
         <p className="text-xs text-muted-foreground">
-          The RFC cookie requirement is background. This local example does not establish a
-          standards-defined QKD exchange or stronger end-to-end security. Evaluate negotiated method
-          support, transcript/host authentication and negative interoperability tests with your
-          production tools.
+          This selected SSH method does not consume a QKD key. The QKD delivery API and any
+          QKD-injection profile are separate. SSH traffic-key derivation and AES encryption remain
+          conventional; this calculation makes no information-theoretic security claim. In your
+          production SSH tools inspect the complete negotiated method, host-key pin,
+          exchange-hash/signature checks, positive and negative peer tests and rekey behavior.
         </p>
+        <a
+          className="text-xs text-primary underline"
+          href="https://www.rfc-editor.org/rfc/rfc8731.html#section-3"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          RFC 8731 / RFC 5656 exchange fields
+        </a>
       </div>
-
       <Button
-        variant="gradient"
-        onClick={run}
+        className="max-w-full h-auto whitespace-normal text-left"
+        onClick={() => execute()}
         disabled={running}
-        className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
+        variant="gradient"
       >
-        <Play size={14} /> {running ? 'Simulating…' : 'Run Local SSH-Context HKDF Example'}
+        {running ? 'Calculating…' : 'Run Complete SSH Exchange-Hash Sample'}
       </Button>
-
-      {error && (
-        <p role="alert" className="text-sm text-status-error">
-          Sample operation failed: {error}. Retry when ready.
-        </p>
-      )}
-      {result && (
-        <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
-          <div className="text-xs font-bold text-success">
-            Local sample operation only — no protocol validation
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">
-                Locally Generated Sample Key Container
+      {error && <p role="alert">Sample operation failed: {error}. Retry when ready.</p>}
+      {result && checked && (
+        <div className="glass-panel p-4 space-y-3">
+          <p className="font-bold" role="status">
+            {checked.verified
+              ? 'Host signature VALID for this complete transcript'
+              : 'Host signature REJECTED for the changed transcript'}
+          </p>
+          <p className="text-xs">
+            Both local endpoints derived the same nonzero X25519 K. The trusted host public key is
+            pinned to this fictional sample; that does not establish a production host identity.
+          </p>
+          <dl className="space-y-2 text-xs">
+            {checked.encoded.map((field) => (
+              <div key={field.name} className="bg-background p-3 rounded">
+                <dt>
+                  {field.name}: {field.bytes.length} encoded bytes
+                  {field.name === 'K' ? ' (canonical positive mpint)' : ' (SSH string)'}
+                </dt>
+                <dd className="font-mono break-all">{sshSampleHex(field.bytes)}</dd>
               </div>
-              <pre className="text-xs font-mono text-primary overflow-x-auto">
-                {result.qkdResponseJson}
-              </pre>
+            ))}
+            <div>
+              <dt>Complete serialized exchange-hash input</dt>
+              <dd>
+                {checked.bytes.length} bytes; all eight fields in V_C, V_S, I_C, I_S, K_S, Q_C, Q_S,
+                K order
+              </dd>
             </div>
-            <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">Client Cookie</div>
-              <code className="text-xs font-mono text-foreground break-all">
-                {result.clientCookie}
-              </code>
+            <div>
+              <dt>Current H = SHA-256(complete encoded input)</dt>
+              <dd aria-label="Current SSH exchange hash" className="font-mono break-all">
+                {sshSampleHex(checked.hash)}
+              </dd>
             </div>
-            <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">Server Cookie</div>
-              <code className="text-xs font-mono text-foreground break-all">
-                {result.serverCookie}
-              </code>
+            <div>
+              <dt>Session identifier = first exchange H (retained across rekey)</dt>
+              <dd aria-label="First SSH session identifier" className="font-mono break-all">
+                {sshSampleHex(checked.sessionId)}
+              </dd>
             </div>
+            <div>
+              <dt>Host signature (Ed25519 over H, 64 bytes)</dt>
+              <dd className="font-mono break-all">{sshSampleHex(result.signature)}</dd>
+            </div>
+          </dl>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => setChangedIdentification(!changedIdentification)}>
+              {changedIdentification
+                ? 'Restore Original Transcript'
+                : 'Change Client Identification'}
+            </Button>
+            <Button onClick={() => execute(true)} disabled={running}>
+              Rekey Local Sample
+            </Button>
           </div>
-          <div className="bg-background rounded p-3 border border-border">
-            <div className="text-xs text-muted-foreground mb-1">
-              Local HKDF output — not SSH session ID H
-            </div>
-            <code className="text-xs font-mono text-success break-all">{result.sessionId}</code>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            Changing a public identification field changes H and rejects the unchanged host
+            signature. Rekey generates fresh ephemeral values and a new valid signature while
+            preserving the original session identifier and sample host key. No traffic-key
+            installation, packet encryption or QKD delivery is executed.
+          </p>
         </div>
       )}
     </div>
@@ -730,10 +706,10 @@ export const ProtocolIntegrationDemo: React.FC<{ initialProtocol?: string }> = (
     <div className="space-y-4">
       <div className="bg-primary/5 border border-primary/20 rounded p-4">
         <p className="text-xs text-muted-foreground">
-          Explore local importer-mechanics and HKDF calculations beside related protocol references.
-          These demonstrations do not execute QKD key delivery, a protocol handshake, peer
-          authentication or interoperability checks. Production tools must implement and test the
-          supported profile on both endpoints.
+          Explore local importer mechanics, HKDF examples and a complete conventional SSH
+          exchange-hash sample. These demonstrations do not execute QKD key delivery, a protocol
+          handshake, peer authentication or interoperability checks. Production tools must implement
+          and test the supported profile on both endpoints.
         </p>
       </div>
 
