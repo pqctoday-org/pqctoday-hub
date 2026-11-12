@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect } from 'react'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import { MobilePatentsView } from './MobilePatentsView'
 import { patentsData } from '@/data/patentsData'
@@ -123,6 +123,37 @@ describe('MobilePatentsView', () => {
     expect(first.patentNumber).toMatch(/^US\d+$/)
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'))
+  })
+
+  it('shows the sourced filing office, application and bibliographic link in the phone detail', () => {
+    const patent = patentsData.find((item) => filingJurisdictionLabel(item) !== 'Unassigned')!
+    renderView(`/patents?patent=${encodeURIComponent(patent.patentNumber)}`)
+    const detail = screen.getByTestId('patent-detail-sheet')
+    const sheet = within(detail)
+    expect(detail).toHaveTextContent(`Filing office: ${filingJurisdictionLabel(patent)}`)
+    expect(detail).toHaveTextContent(`Application ${patent.filingJurisdictionApplication}`)
+    expect(sheet.getByRole('link', { name: 'Bibliographic source' })).toHaveAttribute(
+      'href',
+      patent.filingJurisdictionSourceUrl
+    )
+  })
+
+  it('leaves a record without a sourced filing office unassigned and omits the source link', () => {
+    const patent = patentsData.filter(isPqcPatent)[0]
+    const original = {
+      filingJurisdiction: patent.filingJurisdiction,
+      filingJurisdictionApplication: patent.filingJurisdictionApplication,
+      filingJurisdictionSourceUrl: patent.filingJurisdictionSourceUrl,
+    }
+    try {
+      patent.filingJurisdictionSourceUrl = ''
+      renderView(`/patents?patent=${encodeURIComponent(patent.patentNumber)}`)
+      const sheet = within(screen.getByTestId('patent-detail-sheet'))
+      expect(sheet.getByText('Filing office: Unassigned')).toBeInTheDocument()
+      expect(sheet.queryByRole('link', { name: 'Bibliographic source' })).not.toBeInTheDocument()
+    } finally {
+      Object.assign(patent, original)
+    }
   })
 
   it('the detail sheet no longer sends the reader to a laptop for the claim text', () => {
