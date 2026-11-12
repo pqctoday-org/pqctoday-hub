@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:754b2805-4c09-4df2-be14-7a81cc8885a6",
+  "serialNumber": "urn:uuid:420fcd21-2ca9-460a-9ac7-8afc33ad0064",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-09T00:00:00.000Z",
+    "timestamp": "2026-11-11T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -9412,7 +9412,7 @@
           "primitive": "kem"
         }
       },
-      "description": "AWS IAM is the access control service for all AWS resources. AWS has enabled ML-KEM hybrid TLS 1.3 on the AWS API endpoints and console. As of March 2026, AWS IAM Roles Anywhere supports ML-DSA (FIPS 204) post-quantum digital certificates: ML-DSA-signed CA certificates can be registered as trust anchors, and end-entity certificates bound to ML-DSA-44/65/87 keys can authenticate external workloads via the AWS4-X509-MLDSA signing algorithm to obtain temporary AWS credentials. This is separate from standard IAM/STS SigV4 request signing (using long-term or temporary access keys), which still uses classical HMAC-SHA256 and has no announced ML-DSA migration. AWS Nitro Enclaves and KMS are separate PQC migration targets.",
+      "description": "AWS announced ML-DSA certificate support for IAM Roles Anywhere on 9 March 2026: ML-DSA-signed CA certificates can be trust anchors and end-entity certificates can be bound to ML-DSA keys. Unconfirmed scope: The referenced announcement does not establish all AWS API/console ML-KEM TLS coverage, the 44/65/87 parameter-set list, AWS4-X509-MLDSA details or the separate SigV4 migration status.",
       "externalReferences": [
         {
           "type": "website",
@@ -9434,7 +9434,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No CMVP certificate linked for IAM; vendor states FIPS endpoints are available (FedRAMP High authorization is not a FIPS 140-3 validation)"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -11113,11 +11113,12 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA, SLH-DSA",
-          "primitive": "signature"
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Taurus co-leads an open-source post-quantum signature initiative with Project Eleven and Zooko Wilcox (Zcash). It introduced ML-DSA-B, a variant of the NIST standard ML-DSA (FIPS 204) replacing internal hashing with BLAKE3 for up to 60x faster pre-hash, ~20% faster signing, ~30% faster verification. Taurus CSO Jean-Philippe Aumasson co-authored SLH-DSA (FIPS 205) and BLAKE. Forward-looking engineering effort ('cheap insurance policy'), not yet a production custody-signing deployment.",
+      "description": "Taurus's engineering review of September 2026 reports production X25519 + ML-KEM hybrid key agreement on key SSH, TLS and VPN connections, with deployed cryptographic inventory and policies. Taurus-PROTECT's API, key-derivation logic and signing modules are designed to accommodate PQC signatures and PQC/hybrid KEMs when blockchains support them. On-chain PQ signing remains dependent on blockchain adoption, hardware firmware and third-party integrations.",
       "externalReferences": [
         {
           "type": "website",
@@ -11204,7 +11205,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Coinbase plans to introduce 'quantum-proof' custody services for institutional clients by late 2026, combining existing encryption with emerging NIST-reviewed post-quantum standards (hybrid approach, no single algorithm committed yet). A Coinbase advisory board of cryptographers (convened Jan 2026) published a ~50-page position paper in April 2026 on quantum threats to blockchain; CEO Brian Armstrong also leads an industry coalition pushing Winternitz/BIP-360 for Bitcoin. Building PQ-CoreKMS, a post-quantum version of its CoreKMS Multi-Party Computation (MPC) key-management system that protects approximately 99.9% of custodied assets; plans an automated post-quantum signing pipeline (secure enclaves, secret-sharing, threshold cryptography) within the next year. Coinbase is also a founding member of the Bitcoin Security Consortium (with BlackRock, Fidelity Digital Assets, Block, Blockstream, Strategy) funding Bitcoin post-quantum developer work including BIP-360.",
+      "description": "A secondary report dated 3 April 2026 describes a Coinbase institutional-custody post-quantum roadmap targeting late 2026; it does not identify a committed algorithm profile. Unconfirmed scope: The current deployment date, CoreKMS/PQ-CoreKMS design, 99.9% asset figure, signing-pipeline schedule, consortium membership and custody audit/license claims require their exact primary records and remain unconfirmed here.",
       "externalReferences": [
         {
           "type": "website",
@@ -11226,7 +11227,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -11501,7 +11502,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Algorand has executed the first post-quantum transaction on its mainnet using NIST-selected Falcon signatures (Falcon-1024). The protocol uses Falcon for state proofs every 256 rounds and supports PQC transactions via Logic Signatures. While production-grade code exists, general account and consensus layer integration is described as experimental.",
+      "description": "Algorand uses Falcon signatures in State Proofs deployed in 2022 to protect historical attestations. Its November 2025 mainnet milestone demonstrated Falcon-authorized transactions through account abstraction. The May 2026 account strategy describes Falcon-verifying Logic Signature authorizers and rekeying existing accounts to them, with off-curve Logic Signature addresses and a four-transaction group required by the current byte budget. Broader ledger-account hardening and post-quantum consensus remain separate work.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -11752,11 +11753,12 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA, SLH-DSA, Falcon",
-          "primitive": "signature"
+          "parameterSetIdentifier": "SLH-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "SLH-DSA"
         }
       },
-      "description": "AIP-137 (Accepted status as of 2026-04-07, promoted from Draft; last call ended 02/09/2026) adds optional SLH-DSA-SHA2-128s (FIPS 205) signatures for Aptos accounts. Implementation is partially merged into aptos-core: aptos-crypto library support (PR #18293, merged 2025-12-10) and the transaction authenticator (PR #18300, merged 2026-01-15). TS SDK support and gas pricing are also complete per the AIP's own milestone checklist; CLI support, indexer support, and developer documentation remain pending. Implementation details: 48-byte secret keys, 32-byte public keys, 7,856-byte signatures (82x larger than Ed25519). Benchmarks show verification is ~5x slower than Ed25519 (294µs vs 60µs, x86_64). No mainnet or devnet deployment has occurred; the AIP targets only a non-binding 'preliminary devnet deployment early [2026]' with explicit no urgency for mainnet. Future support for ML-DSA and Falcon is mentioned as potential alternatives but not currently implemented.",
+      "description": "The referenced reporting describes an optional SLH-DSA-SHA2-128s account-signature proposal for Aptos. For the reported signature-size example, 7,856 bytes divided by a 64-byte Ed25519 signature is 122.75 times, comparing signatures only. Unconfirmed scope: Current AIP-137 status, merged milestones, SDK/CLI/indexer support, deployment timing, the reported 48-byte secret-key encoding and 294/60-microsecond verification benchmark are unconfirmed without the corresponding primary proposal and implementation records.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -11782,7 +11784,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12338,14 +12340,9 @@
       "bom-ref": "878343f263ecf5f2",
       "name": "Qrypt BLAST SDK",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "REST API and SDK implementing the BLAST algorithm for generating identical symmetric encryption keys independently at multiple endpoints — without transmitting keys over the network. Eliminates the key distribution problem. Powered by quantum entropy sourced from ICFO (Spain), Los Alamos National Lab, Oak Ridge National Lab, and EPFL (Switzerland). Peer-reviewed algorithm (Prof. Yevgeniy Dodis, NYU). Available as cloud API and on-premises. AWS Marketplace listed. Partnership with Fortanix for multi-source quantum entropy compliance (March 2026). Note: ML-KEM/Kyber is used by a separate Qrypt product (the NVIDIA Quantum Secure Gateway IPsec/IKEv2 plugin, which combines PQC algorithms with BLAST as two distinct successive key-exchange stages under RFC 9370) — it is not part of this SDK's own technical approach.",
+      "description": "Qrypt's documented BLAST architecture lets endpoints locally extract matching encryption keys from sampled random data instead of distributing the final keys. Clients still agree and share server selections, sampling seeds and extraction parameters, then sample BLAST APIs. Time/usage controls and random-cache shredding form part of the described design. This is a specific service and protocol dependency, not elimination of every key-management or communication requirement.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -12560,9 +12557,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ec97254cbaeb40ea",
+      "bom-ref": "c88268d469ad6f98",
       "name": "VIAVI TeraVM Security Test",
-      "version": "TeraVM 13.x",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -12571,7 +12567,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Cloud-enabled platform for benchmarking enterprise VPN gateways and IPSec systems migrating to NIST PQC algorithms. Security Test module emulates tens of thousands of concurrent users with realistic application traffic while measuring PQC-specific KPIs: handshake latency, SA establishment time, re-keying overhead, key size impact. Supports hybrid IKEv2 key exchange (RFC 9370, RFC 9242) and Post-Quantum Preshared Key (RFC 8784) to validate backward compatibility. Partnership with QNu Labs (announced Dec 4, 2025) for QKD/QRNG/hybrid PQC test-case definition and badging. The widely-cited 'IKEv2 SA establishment increases from 38ms (classical) to 12,626ms' figure is NOT a VIAVI/TeraVM benchmark result — it is a third-party case-study figure from Banco Santander (presented by Jaime Gomez Garcia at the ETSI Quantum Safe Cryptography Conference), merely reported in a July 2025 VIAVI Perspectives blog post; it should not be presented as a TeraVM 'key finding.' VIAVI's current TeraVM Security data sheet (rev. 0925, Sept 2025) explicitly names the final NIST standard — 'PQC ML-KEM (FIPS-203)' — so VIAVI's live documentation has moved past draft-era naming.",
+      "description": "VIAVI announced PQC performance-testing capabilities for enterprise IPsec devices in TeraVM Security Test on 9 April 2024. The announcement establishes the platform purpose, not a particular final NIST algorithm or device benchmark. Unconfirmed scope: TeraVM 13.x, the September-2025 ML-KEM data sheet, December-2025 QNu partnership and the 38-ms/12,626-ms Santander comparison need their separate dated sources. The Santander figure must not be presented as a VIAVI measurement.",
       "externalReferences": [
         {
           "type": "website",
@@ -12593,7 +12589,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12704,13 +12700,9 @@
       "name": "CryptoNext COMPASS Network Probe",
       "version": "COMPASS 2025",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Passive high-performance cryptographic data detection system deploying on network taps and SPAN ports. Identifies all cryptographic algorithms; key types; and certificate details across 100+ IT and OT protocols in real time without packet injection. First EU company to achieve NIST CAVP certification for all three finalized PQC algorithms (ML-KEM/FIPS 203; ML-DSA/FIPS 204; SLH-DSA/FIPS 205) in June 2025. On path to FIPS 140-3 module certification. Integrates with COMPASS Analytics Platform for governance reporting. Recommended by NIST NCCoE for cryptographic discovery in PQC migration workflows. Secure boot; hardened OS; integrity checks; PQC-secured TLS 1.3 management communications.",
+      "description": "The named Network Probe launch announcement describes passive cryptographic monitoring, packet-inspection extraction, expanding protocol support and COMPASS Analytics integration for inventory, reporting and PQC migration follow-up. It supplies no protocol count or probe-specific certificate, NCCoE recommendation or exact management-TLS profile.",
       "externalReferences": [
         {
           "type": "website",
@@ -12732,7 +12724,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Partial (NIST CAVP certified; FIPS 140-3 in progress)"
+          "value": "Validation status not stated for the Network Probe in its named launch announcement. A separate library's algorithm validation does not establish probe module validation."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12945,11 +12937,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, Falcon",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
           "primitive": "kem"
         }
       },
-      "description": "Cryptographic library from PQShield supporting all NIST-standardized PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), plus hash-based LMS and XMSS and Falcon. OpenSSL integration via provider. CMVP certificate #4800 is Level 1, validated 2024-09-16 for PQCryptoLib v1.0.0 covering classical algorithms only (no PQC in validated scope). CAVP certificates: A3011 (v1.0.0), A7693 (v1.0.2), A6553 (v3.0.0), A8807 (v3.5.1; the NIST record lists ML-KEM, ML-DSA and SLH-DSA, first validated 7/24/2026). PQCryptoLib-Core is on the NIST Modules In Process list for FIPS 140-3. Targets enterprise and government deployments.",
+      "description": "NIST CAVP certificate A8807 identifies PQCryptoLib-Core 3.5.1 with ML-KEM key-generation/encapsulation-decapsulation, ML-DSA key-generation/signing/verification and SLH-DSA key-generation/signing/verification capabilities. Listed test environments include Red Hat Enterprise Linux 8.10 on AMD EPYC 9224 and Ubuntu 24.04 LTS on Intel Xeon Platinum 8276, with and without PAA as listed by NIST. Algorithm validation is scoped to this implementation/version/environment; it is distinct from FIPS 140-3 module validation.",
       "externalReferences": [
         {
           "type": "website",
@@ -13040,7 +13032,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Conformance testing harness for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) implementations. Tests bug classes found in production cryptographic code that NIST Known Answer Tests and formal-verification tools do not catch. ML-KEM: 78 tests across 6 categories (compression; NTT; bounds; decapsulation; serialization; sampling). ML-DSA: 51 tests across 6 categories (norm checks; arithmetic; signing; verification; serialization; timing). Crucible communicates through a JSON line protocol over stdin/stdout, so any language can implement a harness. Ships with harnesses for implementations in several languages, including CIRCL, liboqs, AWS-LC, Go stdlib crypto/mlkem, and Bouncy Castle.",
+      "description": "Crucible is a project-described ML-KEM and ML-DSA implementation test harness with 78 and 51 tests respectively, named bug categories and a language-independent JSON-line protocol. Unconfirmed scope: The precise implementation/language count is unconfirmed: the retained README heading and table disagree. Its claims about gaps in KAT/formal-verification coverage are the project authors' rationale, not a guarantee of exhaustive conformance or security testing.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -13066,7 +13058,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -13089,7 +13081,7 @@
           "primitive": "kem"
         }
       },
-      "description": "xQlave® is Xiphera's family of FPGA/ASIC IP cores for post-quantum cryptography, implemented purely in digital logic (no embedded CPU or software). The family includes at least two distinct cores confirmed via Xiphera's own product briefs: XIP6110B, a Balanced ML-KEM 512/768/1024 Key Encapsulation IP core compliant with FIPS 203 (product brief ver. 1.2.0, 2025-02-13); and XIP6220B, a Balanced ML-DSA-44/65/87 Digital Signature IP core supporting hedged, deterministic, and pre-hash variants, compliant with FIPS 204 (product brief ver. 1.1.2, 2025-11-18). Both cores use a simple 64-bit interface for integration, are constant-time/side-channel resistant, and perform a few thousand operations per second in a typical FPGA implementation. Vendor: Xiphera Ltd., Espoo, Finland.",
+      "description": "Xiphera describes xQlave as an FPGA/ASIC IP family implementing ML-KEM and ML-DSA, with resource/performance variants. Unconfirmed scope: Exact XIP6110B/XIP6220B brief versions, dates, interface widths, operations-per-second conditions, silicon-proven status and physical-attack resistance require the matching briefs or evaluation records. The family page does not establish support for all four NIST algorithms.",
       "externalReferences": [
         {
           "type": "website",
@@ -13111,7 +13103,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -15118,7 +15110,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Commvault Cloud (CPR 2024 / 11.36 and later) supports quantum-resistant algorithms CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+ and FALCON (since Aug 2024), and added NIST's HQC algorithm in June 2025, within a cryptographic-agility framework enabled via simple configuration to defend against harvest-now-decrypt-later threats.",
+      "description": "Commvault reports that its Cloud crypto-agility framework has supported CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+ and FALCON since August 2024, with HQC added in its 9 June 2025 announcement. That announcement makes the capabilities available to customers running CPR 2024 (11.36) and later and describes safeguards for network tunnels, often enabled through checkbox configuration. These are the vendor's algorithm names and availability claims; final-standard variants and the protected connection must be checked in the selected product configuration.",
       "externalReferences": [
         {
           "type": "website",
@@ -18036,7 +18028,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Implements NIST Module-Lattice-Based Digital Signature Standard (ML-DSA) derived from CRYSTALS-Dilithium. Supports security levels 2, 3, and 5 (ML-DSA-44, ML-DSA-65, ML-DSA-87). Includes sequencer, Polynomial Arithmetic Unit, and SHAKE XOF. Features countermeasures against Side-Channel Attacks (SCA), timing, and Simple Power Analysis (SPA). Supports Hedged variant for signing.",
+      "description": "BERTEN documents ML-DSA key generation, signing and verification for ML-DSA-44/65/87, with a sequencer, Polynomial Arithmetic Unit, SHAKE XOF and AXI integration. It describes timing/SPA countermeasures, hedged-signing randomness and zeroization; these and its FIPS compliance statements are vendor design claims, not independent module-validation or proof of resistance to every side-channel attack.",
       "externalReferences": [
         {
           "type": "website",
@@ -18083,7 +18075,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "BERTEN MLKE-B135 is a FIPS 203-compliant ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism, derived from CRYSTALS-Kyber) IP core for FPGA, SoC, and ASIC implementation, portable to AMD (Xilinx), Intel (Altera), and Microchip (Microsemi) device families. It supports all three NIST ML-KEM parameter sets: ML-KEM-512 (Security Category 1), ML-KEM-768 (Category 3), and ML-KEM-1024 (Category 5). The core integrates a dedicated sequencer, a Polynomial Arithmetic Unit, and high-performance SHA-3/SHAKE functions, exposing four AXI4-Stream data interfaces plus one AXI4-Lite register-map interface (user-programmable to select ML-KEM operation and parameter set) and a status-notification port. At 300 MHz the vendor reports throughput of up to 87,050 key-generation, 70,500 encapsulation, and 52,300 decapsulation operations/second at ML-KEM-512, scaling to 36,500/32,200/25,600 ops/s at ML-KEM-1024, with resource usage of roughly 8.6K-17.4K LUTs and 7.4K-8.0K registers depending on target device. Countermeasures include resistance to timing and Simple Power Analysis (SPA) side-channel attacks, FIPS 203 input validation, and automatic/on-demand zeroization of internal memories and registers. Deliverables under a perpetual site license (12 months support) include an encrypted netlist, design constraints, simulation model, user manual, and ANSI C drivers.",
+      "description": "BERTEN MLKE-B135 is a FIPS 203-compliant ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism, derived from CRYSTALS-Kyber) IP core for FPGA, SoC, and ASIC implementation, portable to AMD (Xilinx), Intel (Altera), and Microchip (Microsemi) device families. It supports all three NIST ML-KEM parameter sets: ML-KEM-512 (Security Category 1), ML-KEM-768 (Category 3), and ML-KEM-1024 (Category 5). The core integrates a dedicated sequencer, a Polynomial Arithmetic Unit, and high-performance SHA-3/SHAKE functions, exposing four AXI4-Stream data interfaces plus one AXI4-Lite register-map interface (user-programmable to select ML-KEM operation and parameter set) and a status-notification port. At 300 MHz the vendor reports throughput of up to 87,050 key-generation, 70,500 encapsulation, and 52,300 decapsulation operations/second at ML-KEM-512, scaling to 36,500/32,200/25,600 ops/s at ML-KEM-1024, with target-specific resource units: AMD devices use 8.6K-9.0K LUTs, while the Intel table reports 17.4K LE or 7.4K-7.5K ALM depending on family; register counts are 7.4K-8.0K. Countermeasures include resistance to timing and Simple Power Analysis (SPA) side-channel attacks, FIPS 203 input validation, and automatic/on-demand zeroization of internal memories and registers. Deliverables under a perpetual site license (12 months support) include an encrypted netlist, design constraints, simulation model, user manual, and ANSI C drivers.",
       "externalReferences": [
         {
           "type": "website",
@@ -18582,14 +18574,17 @@
       "type": "cryptographic-asset",
       "bom-ref": "666ef1f442e863d1",
       "name": "ANKATech ANKASecure",
+      "manufacturer": {
+        "name": "ANKATech Solutions Inc."
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, Falcon, HQC, FrodoKEM",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, Falcon",
           "primitive": "kem"
         }
       },
-      "description": "REST API/SaaS platform supporting ML-KEM, ML-DSA, SLH-DSA, Falcon, LMS, XMSS, FrodoKEM, and HQC. NIST PQC compliant and NSA CNSA 2.0 aligned.",
+      "description": "ANKATech describes ANKASecure as a cryptographic control plane: applications use stable key identifiers while runtime policy governs classical, post-quantum and composite algorithms. Its current platform lists ML-KEM, ML-DSA, SLH-DSA, FALCON, XMSS and LMS. It provides REST/OpenAPI, Java SDK and CLI access, key lifecycle management and migration tooling, with SaaS, private-cloud or on-premises deployment. This documents execution and orchestration capability, not independent module validation.",
       "externalReferences": [
         {
           "type": "website",
@@ -18611,7 +18606,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Not itself FIPS 140-3 validated in the vendor's published earlier-version boundary statement; backend module coverage is limited to its own listed operations."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -18811,14 +18806,17 @@
       "type": "cryptographic-asset",
       "bom-ref": "d02942cce6c857a0",
       "name": "ExeQuantum",
+      "manufacturer": {
+        "name": "ExeQuantum"
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, Classic-McEliece",
           "primitive": "kem"
         }
       },
-      "description": "PQC-as-a-Service platform (CipherForge) built around ML-KEM, ML-DSA, and SLH-DSA, with hardened and formally verified implementations. Supports on-premise, air-gapped, hybrid, and cloud deployments.",
+      "description": "ExeQuantum documents CipherForge key generation, encapsulation and sign/verify services with ML-KEM, ML-DSA and SLH-DSA, plus FrodoKEM, Classic McEliece and hybrid KEM profiles. EQCore plans/orchestrates while CipherForge performs cryptographic operations through REST/native interfaces. The vendor describes formally verified Jasmin core routines and SaaS/on-premises/air-gapped deployment; that is an implementation claim, not validation of every deployed build.",
       "externalReferences": [
         {
           "type": "website",
@@ -18951,17 +18949,13 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "097274fef10c3f51",
+      "bom-ref": "0bdda4f3bd427c7f",
       "name": "SUPERCOP",
-      "version": "supercop-20260330",
+      "version": "supercop-20261018",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, HQC, Classic-McEliece",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "System for Unified Performance Evaluation Related to Cryptographic Operations and Primitives. Provides standardised benchmarking for all NIST PQC candidates and standardised algorithms including ML-KEM, ML-DSA, SLH-DSA, HQC, and Classic McEliece. Reference benchmarks used by algorithm designers and NIST evaluators.",
+      "description": "Cryptographic software benchmarking toolkit covering KEM/public-key encryption and signature systems. Measures key-generation, encryption/decryption and signing/verification time plus key/message sizes on real computers. Compare results for the named machine, implementation and benchmark version; this is not blanket coverage of every NIST algorithm or product certification.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -19003,6 +18997,9 @@
       "type": "cryptographic-asset",
       "bom-ref": "0beb5e7a2728f252",
       "name": "American Binary Ambit Client",
+      "manufacturer": {
+        "name": "American Binary"
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -19011,7 +19008,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Enterprise VPN using exclusively CNSA 2.0 PQC algorithms with MaxKyber protocol. Available on Oracle Cloud Marketplace.",
+      "description": "American Binary describes Ambit Client as enterprise VPN/network tunneling using MaxKyber. White paper v2.0.0 (June 2026) specifies ML-KEM-1024, AES-256-GCM and SHA-512/256-based hash/MAC/KDF functions; section 4.3 describes a signature-free KEM handshake. The document reports formal protocol analysis; this does not by itself certify every implementation or establish blanket CNSA 2.0 compliance.",
       "externalReferences": [
         {
           "type": "website",
@@ -19182,7 +19179,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Emulex SecureHBA Fibre Channel adapters (LPe37100/LPe38100 series) provide hardware in-flight encryption (AES-GCM-256) with session keys negotiated using ML-KEM-1024 and ML-DSA-87, an LMS silicon root of trust, and PQC support for SPDM 1.4 with ML-DSA-87 and ML-KEM-1024. Broadcom states more than 120,000 SecureHBAs shipped on OEM platforms.",
+      "description": "Broadcom's 19 March 2026 release reports more than 120,000 SecureHBA shipments and an Everpure solution using LMS silicon root of trust, AES-GCM-256 and ML-KEM-1024/ML-DSA-87, including SPDM 1.4 support. Unconfirmed scope: The specific LPe37100/LPe38100 version binding and 14.4.28 release notes need their own records. World-first and no-performance-penalty statements remain attributed vendor/evaluation claims, not universal measurements.",
       "externalReferences": [
         {
           "type": "website",
@@ -21639,7 +21636,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Post-quantum secure boot, TLS, and application-layer cryptography for STM32 Cortex-M/MPU microcontrollers via the QiSpace PQC for IoT SDK. Baseline package uses NIST-standardized ML-KEM/ML-DSA (FIPS 203/204); Premium package adds Quantropi's proprietary HPPK-KEM/GHPPK-DS post-quantum algorithms and QEEP symmetric encryption for smaller footprint/higher performance.",
+      "description": "Quantropi's STM32CubeMX seminar page describes STMicroelectronics integration and the QiSpace IoT product family, with asymmetric, symmetric and entropy-service components. Unconfirmed scope: The Baseline/Premium package algorithm lists, ML-KEM/ML-DSA profiles, HPPK/GHPPK support and secure-boot/TLS configuration are unconfirmed by this page; discussing NIST standards is not a shipped support matrix.",
       "externalReferences": [
         {
           "type": "website",
@@ -22083,7 +22080,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Purpose-built quantum-resistant blockchain. QRL 1.x mainnet has used XMSS hash-based signatures since 2018. QRL 2.0 (Project Zond), an EVM-compatible proof-of-stake successor chain, integrates ML-DSA-87 (CRYSTALS-Dilithium) as its mandatory signature scheme — this is already shipped and live on the public QRL 2.0 Testnet V2 (launched Q1 2026), not merely planned. QRL 2.0 mainnet launch date is undetermined, pending completion of independent security audits.",
+      "description": "Purpose-built quantum-resistant blockchain. QRL 1.x mainnet has used XMSS hash-based signatures since 2018. QRL 2.0 (Project Zond), an EVM-compatible proof-of-stake successor chain, integrates ML-DSA-87 (CRYSTALS-Dilithium) for testnet accounts and validators — this is already shipped and live on the public QRL 2.0 Testnet V2 (launched Q1 2026), not merely planned. QRL 2.0 mainnet launch date is undetermined, pending completion of independent security audits. QRL documentation says ML-DSA will be mandatory for staking validators and describes XMSS or ML-DSA as wallet choices.",
       "externalReferences": [
         {
           "type": "website",
@@ -22338,10 +22335,13 @@
       "type": "cryptographic-asset",
       "bom-ref": "77af1298b05ded7f",
       "name": "Patero PQC Gateway",
+      "manufacturer": {
+        "name": "Patero Inc."
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Software-based PQC gateway for SCADA/ICS critical infrastructure. 1-2% overhead, hardware-agnostic.",
+      "description": "Patero describes CryptoQoR as post-quantum data-in-motion protection for mission-critical and industrial-control infrastructure, with crypto-agility orchestration, policy-based key lifecycle management and integration with enterprise PKI. Its current page describes standards-aligned engines without pinning every algorithm/version or a universal overhead figure; evaluate the selected endpoint profile and workload.",
       "externalReferences": [
         {
           "type": "website",
@@ -22957,7 +22957,7 @@
           "primitive": "kem"
         }
       },
-      "description": "QSE-IP-86 Quantum Safe Engine IP core for ASIC, SoC, FPGA. Accelerates ML-KEM (FIPS 203, up to Cat 5, 13,500 encap/s @1GHz), ML-DSA (FIPS 204, up to Cat 5, ~1,400 sign/s @1GHz), and SLH-DSA (FIPS 205); integrated SHA-3/SHAKE. NIST CAVP certified; usable in FIPS 140-3 compliant product. DPA-protected variant QSE-IP-86-DPA available.",
+      "description": "Rambus documents ML-KEM, ML-DSA and SLH-DSA acceleration in firmware-programmable QSE-IP-86 IP for ASIC/SoC/FPGA, with SHA3/SHAKE and a separate DPA variant. At 1 GHz it reports 7,100 ML-KEM-1024 decapsulations/s, 13,500 encapsulations/s and typically up to 1,400 ML-DSA-87 signatures/s. These are operation-specific vendor figures, not integrated-system throughput.",
       "externalReferences": [
         {
           "type": "website",
@@ -23401,11 +23401,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
           "primitive": "kem"
         }
       },
-      "description": "Enterprise Kafka (Confluent Cloud) with a PQC roadmap: investigating integration across public endpoints of ML-KEM (FIPS 203), ML-DSA (FIPS 204), and Stateless Hash-Based Digital Signature Algorithm (SLH-DHA, as rendered in the document; FIPS 205). The March 2026 blog says TLS 1.3 would be enabled by default on April 30, 2026 for all newly provisioned clusters, including Dedicated clusters, and on all existing cluster types except Dedicated clusters.",
+      "description": "Confluent's March 2026 blog describes investigation of ML-KEM, ML-DSA and SLH-DSA integration and a separate TLS 1.3 default rollout scheduled for 30 April 2026, with different treatment of new and existing Dedicated clusters. Unconfirmed scope: Current PQC GA status as of August/November 2026, certification of a specific implementation and the scope of a CSA deadline are unconfirmed by that dated blog. TLS 1.3 rollout is not PQC deployment.",
       "externalReferences": [
         {
           "type": "website",
@@ -23622,7 +23622,7 @@
           "algorithmFamily": "SLH-DSA"
         }
       },
-      "description": "S-CAPE (Samsung SDS Crypto Agility Platform for Enterprise) automatically identifies and monitors IT systems for quantum-vulnerable cryptography and supports the identification, analysis, and migration stages of PQC transition; to be delivered via Samsung Cloud Platform (SCP), which has already piloted PQC in its communication segments. AIMer — a separate Samsung SDS/KAIST-developed post-quantum digital signature algorithm that won the 2025 KpqC national competition's digital signature category (benchmarked as 6.35x faster with 2.9x smaller signatures than NIST's SLH-DSA/FIPS 205) — is a related Samsung SDS PQC achievement, but no public source confirms AIMer is integrated into S-CAPE itself.",
+      "description": "Samsung SDS's 14 March 2025 announcement describes S-CAPE discovery/monitoring and planned delivery through SCP, separately reporting the AIMer competition result and vendor comparisons of 6.35x speed and 2.9x signature size. Unconfirmed scope: Current S-CAPE availability, exact benchmark parameter sets and AIMer or SLH-DSA integration into S-CAPE are unconfirmed; the separate algorithm result is not product implementation evidence.",
       "externalReferences": [
         {
           "type": "website",
@@ -24058,17 +24058,13 @@
       "bom-ref": "b8622c2b8f45cc88",
       "name": "HP Enterprise Printers PQC",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "World's first quantum-resistant printers (HP LaserJet Enterprise 8000 Series, Managed E700/E800 Series, Color LaserJet Enterprise 5000/6000 and X500/X600 Series), with hardware and firmware layers enabling quantum resistance at the device level. HP's own technical white paper (v1.0, Jan 2026) frames this as quantum-resistant digital code signing for firmware/software aligned with NSA CNSA 2.0 guidance and NIST's finalized PQC standards (ML-DSA / FIPS 204, ML-KEM / FIPS 203) -- ahead of the 2027 U.S. federal National Security Systems mandate. Requires HP FutureSmart 5.9.2.3+ and admin-enabled activation via the Embedded Web Server; activation is irreversible (modifies OTP memory/hardware fuses).",
+      "description": "HP documents Quantum Resistant firmware-integrity protection for supported Enterprise/Managed printer configurations. Enablement requires FutureSmart 5.9.2.3 or newer, a listed QR-capable formatter and administrator access through EWS. Activation cannot be reversed or disabled; subsequent downgrades must remain within QR firmware. Hardware/model eligibility must be checked against the tables.",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://www.hp.com/"
+          "url": "https://kaas.hpcloud.hp.com/pdf-public/pdf_13820547_en-US-1.pdf"
         }
       ],
       "properties": [
@@ -24540,9 +24536,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "abbd911f8da75754",
+      "bom-ref": "08e345eddb001350",
       "name": "Infineon TEGRION SLI22 Automotive",
-      "version": "1.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -24550,11 +24545,11 @@
           "primitive": "kem"
         }
       },
-      "description": "28nm automotive security controller (Integrity Guard 32, Arm v8-M); world-first Common Criteria EAL6+ (BSI) for PQC in a security controller; supports FIPS 203 ML-KEM and FIPS 204 ML-DSA plus RSA-4096/ECC-521; for eSIM, V2X, car access",
+      "description": "Infineon SLI22 overview revision 1.5 (2026-02), V31: 28nm Arm v8-M/TrustZone controller with Integrity Guard 32, ML-KEM/ML-DSA acceleration, RSA up to 4096 bits and ECC up to 521 bits. It targets eSIM, embedded secure elements, V2X and car access. Certification-level listings are vendor component claims, not certification of the finished vehicle/application.",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://www.eejournal.com/industry_news/infineon-launches-tegrion-sli22-automotive-security-controller-with-post-quantum-cryptography-certified-to-common-criteria-eal6/"
+          "url": "https://www.infineon.com/assets/row/public/documents/30/41/infineon-tegrion-short-product-overview-sli22-en.pdf"
         }
       ],
       "properties": [
@@ -24850,7 +24845,7 @@
           "primitive": "kem"
         }
       },
-      "description": "PQC-ready HSM with hybrid signatures; NIST-certified ML-KEM, ML-DSA, SLH-DSA plus HSS-LMS and XMSS; combined with RSA/ECC for migration",
+      "description": "Securosys documents ML-KEM, ML-DSA and SLH-DSA with approved FIPS-mode entries in Primus firmware v3.x, plus HSS-LMS and XMSS with distinct evaluated/FIPS-mode status. CyberVault X2 supports hybrid classical/PQC signatures. Available functions and validation must be checked for the selected firmware, mode, license and model.",
       "externalReferences": [
         {
           "type": "website",
@@ -24872,7 +24867,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Pending FIPS 140-3 Level 3 module certification for Primus HSM firmware 3.1.0; vendor documentation reports certification in progress, not a completed certificate."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -24889,9 +24884,14 @@
       "bom-ref": "091620b6a6b2444e",
       "name": "NetSfere PQC Messaging",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
       },
-      "description": "Enterprise quantum-proof messaging with E2E PQC encryption",
+      "description": "NetSfere describes a messaging upgrade using ML-KEM-1024 alongside AES-256, with backward-compatible communication with ECC users. Its resource page says new conversations adopt ML-KEM-1024. These are vendor-described capabilities, not an independently established first-in-market or absolute quantum-proof security result.",
       "externalReferences": [
         {
           "type": "website",
@@ -26019,7 +26019,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "PQC Edge Scanner performs passive, read-only observation of publicly accessible signals at the network edge; it does not access, probe, modify, or interact with internal systems.",
+      "description": "CyberZero's Edge Scanner page explicitly limits the service to passive, read-only public-edge signals and excludes internal systems. Unconfirmed scope: Quantanaut's broader inventory, topology, library/API and supply-chain capabilities need the separate platform source; the free Edge Scanner's scope must not be extended to those internal functions.",
       "externalReferences": [
         {
           "type": "website",
@@ -26041,7 +26041,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -26330,9 +26330,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "3e577feea62f2dd1",
+      "bom-ref": "1d20694c0197849e",
       "name": "MAYO Reference Implementation",
-      "version": "v1.0",
       "purl": "pkg:github/PQCMayo/MAYO-C",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -26341,7 +26340,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Reference C implementation of MAYO, a multivariate signature scheme advancing in NIST Additional Signature Round 2 (Oct 2024). Provides MAYO-1, MAYO-2, MAYO-3, MAYO-5. Compact secret key (24–40 bytes); small-to-medium signatures (180–838 bytes); medium-to-large public keys (1.2–5.5KB). Final standard ~2027.",
+      "description": "NIST's referenced Round 2 page lists MAYO as an additional-signature candidate, and the project repository identifies its multivariate reference implementation and parameter sets. Unconfirmed scope: The exact version/size table, repository publication timestamps and a final-standard date around 2027 are unconfirmed by those records. Candidate selection is not a final standard or deployment approval.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -26367,7 +26366,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -29895,11 +29894,12 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Formally verified Rust implementation of ML-KEM and ML-DSA by Cryspen. Code extracted from HACL* and verified using the hax toolchain for panic-freedom and functional correctness. Supports all parameter sets for both algorithms. Used in production by Firefox and other projects.",
+      "description": "Rust cryptographic library with separate algorithm components. The ML-KEM component implements ML-KEM-512, ML-KEM-768 and ML-KEM-1024 with portable Rust, Intel AVX2 and AArch64 NEON implementations. Its documented hax/F* verification covers portable and AVX2 field arithmetic, NTT polynomial arithmetic, serialization and generic high-level algorithm code. The ML-KEM README treats compiled constant-time behavior as best-effort and notes the lack of compiler guarantees; its additional Round-3 Kyber feature is described separately as unverified.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -29949,11 +29949,12 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Constant-time pure Go implementation of ML-DSA (FIPS 204) by Trail of Bits. Supports ML-DSA-44, ML-DSA-65, and ML-DSA-87. Designed for side-channel resistance using Barrett reduction and branchless operations to avoid KyberSlash-style timing leaks.",
+      "description": "Trail of Bits provides a pure Go ML-DSA (FIPS 204) implementation supporting ML-DSA-44, ML-DSA-65 and ML-DSA-87. Its 14 November 2025 engineering article describes replacing secret-dependent branches and division in Decompose, using parameter-specific precomputed Barrett reduction. This is a documented defense against those timing-leak patterns, rather than proof of immunity to every side channel on every compiled target.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -30907,7 +30908,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "IBM's open-source CBOMkit toolkit generates Cryptography Bills of Materials (CBOM) in CycloneDX 1.6 format. Scans Java and Python source code and Docker images for cryptographic usage, annotating each finding with quantum-vulnerability status aligned to NIST CNSA 2.0. Integrates with OPA for policy enforcement — checking if detected algorithms are quantum-safe. Sandbox scenario cbom-compliance generates a CBOM for a sample application then evaluates it against a no-quantum-vulnerable-crypto Rego policy via OPA, showing real-time compliance violations.",
+      "description": "CBOMkit generates, views and stores CBOMs from supported source repositories. Java, Python and Go library coverage is documented; C# detection remains in development. It offers an internal policy check and optional external OPA/Rego evaluation. Repository scans do not build projects; findings and policy results are not proof of complete discovery or deployed security.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31445,7 +31446,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Reference C implementation of Classic McEliece, NIST PQC Round 4 KEM finalist based on binary Goppa codes (1978).",
+      "description": "Classic McEliece is a code-based KEM using binary Goppa codes in the Niederreiter variant. NIST's March 2025 fourth-round report describes large public keys and slower key generation, with small ciphertexts and fast encapsulation/decapsulation offering advantages when a public key is reused across many encapsulations. Its NIST Round 4 candidate status is historical.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31496,10 +31497,10 @@
         "assetType": "related-crypto-material",
         "algorithmProperties": {
           "parameterSetIdentifier": "FN-DSA-1024, FN-DSA-512",
-          "primitive": "signature"
+          "primitive": "other"
         }
       },
-      "description": "Reference C implementation of Falcon (Fast Fourier lattice-based Compact signatures over NTRU), NIST PQC standard alternative signature.",
+      "description": "The Falcon project page describes Falcon-512/1024, NTRU-lattice/Fourier-sampling design and a reference-code API fix dated 1 November 2021. Unconfirmed scope: Current FN-DSA/FIPS-206 status requires the corresponding NIST record. Falcon reference code and a draft/final standardized profile must not be treated as interchangeable.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31525,7 +31526,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -31606,7 +31607,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Reference C implementation of HQC (Hamming Quasi-Cyclic), code-based KEM selected by NIST in March 2025 as a backup KEM alongside ML-KEM.",
+      "description": "The HQC team's v5.1.0 code provides portable reference and optimized x86 AVX2 implementations, with C11/CMake builds, unit/API tests, KAT files and benchmarks. Its stated security scope targets timing attacks; other side channels are not considered, and compiler-induced timing hardening remains work in progress. These are available implementation/test capabilities, not a final FIPS 207 or module-validation claim.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31660,7 +31661,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Microsoft Research reference implementation of FrodoKEM, a conservative lattice-based KEM using standard LWE (not Ring-LWE).",
+      "description": "Microsoft Research and the FrodoKEM team provide C and Python implementations for experimentation using generic, algebraically unstructured LWE lattices. FrodoKEM supports repeated use of a key pair; eFrodoKEM is intended for only a limited number of ciphertexts per public key. Both offer 640, 976 and 1344 parameter sets with AES or SHAKE public-matrix generation.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31710,10 +31711,10 @@
         "assetType": "related-crypto-material",
         "algorithmProperties": {
           "parameterSetIdentifier": "Aigis-enc-L1, Aigis-enc-L5, Aigis-sig-L1, Aigis-sig-L5",
-          "primitive": "hash"
+          "primitive": "kem"
         }
       },
-      "description": "PQC algorithm library from Shanghai Jiao Tong University implementing NIST PQC and Chinese candidate algorithms.",
+      "description": "The README distinguishes open-source PQMagic-std from PQMagic-adv support and optimization. It lists ML-KEM, ML-DSA and SLH-DSA alongside earlier and research algorithms. Build controls select parameters and hash modes, with SM3 default and SHAKE selectable. Check the chosen mode rather than inferring final-FIPS behavior from a family label.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31823,7 +31824,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Implements the NIST PQC standards ML-DSA (FIPS 204), ML-KEM (FIPS 203) and SLH-DSA (FIPS 205), validated for algorithmic correctness through the NIST CAVP program (product 19805).",
+      "description": "NIST CAVP record A7037 lists ML-DSA key generation, signature generation and verification, ML-KEM key generation and encapsulation/decapsulation, and SLH-DSA operations for Angela CryptoModule Cryptographic Algorithm Library version 1.0.0 on Intel Core i7-6700T. This is algorithm validation for the recorded implementation and operating environment, not a module or entropy-source validation.",
       "externalReferences": [
         {
           "type": "website",
@@ -31845,7 +31846,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A7037 (Angela CryptoModule Cryptographic Algorithm Library 1.0.0); CMVP module and ESV entropy-source validation are not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -32161,7 +32162,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CAVP-validated (CSRC product #20785) implementation of ML-KEM (FIPS 203) and ML-DSA (FIPS 204), exposing quantum-safe key encapsulation and digital signatures; ML-DSA is surfaced in the CipherSign offline document-signing product.",
+      "description": "NIST CAVP A7970 records CipherPlus Cryptographic Module v1.0 with ML-KEM-512/768/1024, ML-DSA-44/65/87 and listed SHA-3/SHAKE functions on Windows 11 Home with Intel Core i5-13420H. The CipherSign application binding is unconfirmed in this referenced algorithm-validation record.",
       "externalReferences": [
         {
           "type": "website",
@@ -32183,7 +32184,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A7970 (CipherPlus Cryptographic Module v1.0); CMVP module validation is not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -32306,7 +32307,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CAVP-validated (CSRC product #19368) implementation of ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) with crypto-agility and hybridization; described as the first EU PQC library to receive NIST validation for all three standardized algorithms.",
+      "description": "NIST CAVP A6637 records C-QSL (C) v1.7.3 implementations of ML-KEM, ML-DSA and SLH-DSA on the listed Windows 11 x86-64 operating environment. Its description identifies a portable generic C implementation. Hybridization and the first-EU-library claim are unconfirmed in this referenced record.",
       "externalReferences": [
         {
           "type": "website",
@@ -32328,7 +32329,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A6637 (C-QSL (C) v1.7.3); CMVP module validation is not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -32403,7 +32404,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CAVP-validated implementation of ML-KEM (FIPS 203) and ML-DSA (FIPS 204). EigenQ markets the combined QEM+PQU as among the first shipping FIPS 203/204-certified post-quantum security systems, offering NSA CSfC-ready lattice-based key encapsulation and digital signatures.",
+      "description": "NIST CAVP A6797 records EigenQ Quantum Encryption Module 1.0.0 as software with ML-KEM and ML-DSA capabilities on Ubuntu 22.04 with Intel Xeon Silver 4309Y. The implementation description reports QRNG integration; that description is not an independent entropy or physical-security validation. PQU hardware binding, line-rate performance and NSA CSfC readiness are unconfirmed in this record.",
       "externalReferences": [
         {
           "type": "website",
@@ -32425,7 +32426,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A6797 (EigenQ Quantum Encryption Module 1.0.0); CMVP module validation is not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -32451,7 +32452,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CAVP-validated ML-KEM (FIPS 203) and ML-DSA (FIPS 204) software library; the broader FortiPQC suite also supports SLH-DSA, XMSS/XMSS-MT and LMS/HSS. Engineered to meet FIPS 140-3 Level 4, Common Criteria AVA_VAN.5 and SESIP Level 5 certification targets with built-in SCA/FIA protection.",
+      "description": "NIST CAVP A8034 records FortiPQC software library FIQ-PQC04-SW with ML-KEM and ML-DSA capabilities on Rocky Linux 8.10 with AMD EPYC 7302. Its implementation description advertises side-channel and fault-injection protection; CAVP algorithm testing does not establish those attack-resistance properties. Broader SLH-DSA/LMS/XMSS support and FIPS 140-3 Level 4, AVA_VAN.5 and SESIP Level 5 certification targets remain unconfirmed in this record.",
       "externalReferences": [
         {
           "type": "website",
@@ -32473,7 +32474,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A8034 (FortiPQC software library FIQ-PQC04-SW); CMVP, Common Criteria and SESIP certifications are not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -32522,7 +32523,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A7998 (GSP4000 Hardware Security Module, FxOS 7 operating environments); CMVP module or Modules In Process status is not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -32988,7 +32989,7 @@
           "primitive": "kem"
         }
       },
-      "description": "PUFpqc implements LMS (SP 800-208), ML-DSA (FIPS 204), ML-KEM (FIPS 203), and SLH-DSA (FIPS 205); the solution has achieved NIST FIPS 203/204/205 and SP 800-208 certification and is validated under the NIST CAVP program (CAVP product #19771).",
+      "description": "NIST CAVP A7029 records PUFpqc 1.0 firmware with LMS, ML-DSA, ML-KEM and SLH-DSA operations on Xilinx Zynq XC7Z100. This is algorithm validation for the listed implementation and operating environment, not a whole-system or entropy-source certification.",
       "externalReferences": [
         {
           "type": "website",
@@ -33010,7 +33011,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A7029 (PUFpqc 1.0 on Xilinx Zynq XC7Z100); CMVP module and entropy-source validation are not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33522,7 +33523,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CAVP-validated IP implementing ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and XMSS and LMS (SP 800-208). The accelerators combine hardware with embedded firmware to remain crypto-agile across future PQC algorithm updates, targeting edge to cloud SoCs.",
+      "description": "NIST CAVP A7630 names Synopsys Agile PQC Solutions J208-0/J209-0 as hardware and lists ML-KEM, ML-DSA and SLH-DSA capabilities on the recorded accelerator/evaluation-kit environment. Its implementation description reports firmware agility and LMS/XMSS support; those description statements are not additional LMS/XMSS validation entries.",
       "externalReferences": [
         {
           "type": "website",
@@ -33544,7 +33545,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A7630 (Synopsys Agile PQC Solutions J208-0/J209-0); CMVP module and additional LMS/XMSS validation are not established by the listed algorithm entries."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33765,7 +33766,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Implements ML-KEM (FIPS 203) for key establishment, ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) for digital signatures (plus LMS/XMSS verification), exposed through the wolfCrypt library API. The PQC algorithms are NIST CAVP validated (CAVP product #21279) and incorporated into wolfCrypt's FIPS 140-3 module.",
+      "description": "NIST CAVP A8437 records wolfCrypt Post Quantum v7.0.0 with ML-KEM, ML-DSA and SLH-DSA functions, plus LMS signature verification, on its listed Ubuntu 24.04/Intel Core Ultra operating environment. Inclusion of these PQC functions in an approved FIPS 140-3 module boundary and XMSS API support are unconfirmed in this referenced record.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -33791,7 +33792,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "CAVP algorithm validation A8437 (wolfCrypt Post Quantum v7.0.0); the approved CMVP module boundary for these PQC functions is not established by this record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -35100,7 +35101,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Open-source RTL (Verilog 80.9% / VHDL 19.1%) hardware implementation of ML-DSA (FIPS 204) from KU Leuven's COSIC research group, supporting all 3 NIST security levels (ML-DSA-44/67/87) at runtime; FPGA/ASIC-capable, builds on prior work by Beckwith et al. Includes testbenches and NIST KAT test vectors for all security levels.",
+      "description": "Open-source RTL (Verilog 80.9% / VHDL 19.1%) hardware implementation of ML-DSA (FIPS 204) from KU Leuven's COSIC research group, supporting all 3 NIST security levels (ML-DSA-44/65/87) at runtime; FPGA/ASIC-capable, builds on prior work by Beckwith et al. Includes testbenches and NIST KAT test vectors for all security levels.",
       "externalReferences": [],
       "properties": [
         {
@@ -37442,7 +37443,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Managed implementation of NIST Post-Quantum algorithms in C#. Supports ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Provides APIs for key generation, signing/verification, and encapsulation/decapsulation. Supports pure and \"pre-hash\" modes for signatures. All ACVP test vectors pass for ML-DSA, SLH-DSA, and ML-KEM.",
+      "description": "PQnet's README describes managed C# implementations of ML-KEM, ML-DSA and SLH-DSA, including pure/pre-hash/context APIs. It reports that its ACVP vectors pass. Unconfirmed scope: The ACVP statement is a project report, not a retained independent run or module certificate; its tested vector/build/profile scope is unconfirmed in that statement.",
       "externalReferences": [],
       "properties": [
         {
@@ -37459,7 +37460,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -37473,9 +37474,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b47b38325efd138e",
+      "bom-ref": "78e7818d3cb368e2",
       "name": "CryptoScan",
-      "version": "v1.4.0",
+      "version": "v1.5.0",
       "manufacturer": {
         "name": "CryptoScan Project"
       },
@@ -37486,7 +37487,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Detects NIST-standardized PQC algorithms including ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and draft FN-DSA (FIPS 206). Also detects stateful hash-based signatures (XMSS, LMS per SP 800-208). Recognizes legacy names (Kyber, Dilithium, SPHINCS+). Identifies hybrid implementations (e.g., X25519+ML-KEM, ECDSA+ML-DSA).",
+      "description": "Matches patterns for ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and Falcon/FN-DSA (FIPS 206 under development). Also detects stateful hash-based signatures (XMSS, LMS per SP 800-208). Recognizes legacy names (Kyber, Dilithium, SPHINCS+). Matches source-code patterns naming hybrid key exchange or composite signatures (e.g., X25519MLKEM768, MLDSA65-ECDSA-P256); review a match to establish actual use.",
       "externalReferences": [],
       "properties": [
         {
@@ -37503,7 +37504,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -37662,9 +37663,13 @@
       "bom-ref": "370ac79a8faf2139",
       "name": "softhsmrustv3 (pqctoday Rust PKCS#11 engine)",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
       },
-      "description": "Pure-Rust PKCS#11 v3.2 engine, the second crypto backend in pqctoday-hsm alongside the C++ softhsmv3. It is the production backend for the pqctoday-kmip server and the CACP policy engine, and it compiles to wasm32-unknown-emscripten as a staticlib linked into openssl.wasm for the in-browser playground. Carries its own checked-in PKCS#11 v3.2 conformance evidence (rust/RUST_P11_V32_CONFORMANCE_REPORT.md). Since 2026-08-08 it also emits a runtime-gated PKCS#11 operation-evidence log, so a caller can prove which mechanism executed inside the token rather than asserting it.",
+      "description": "The Rust engine README describes PKCS#11 v3.2, ML-KEM/ML-DSA/SLH-DSA/HSS-LMS and KMIP/CACP/WASM uses with a checked-in conformance-report location. Unconfirmed scope: XMSS scope, Cargo version/types, 326-passing-test receipt, link artifact and operation-log behavior require exact build/run inputs; report presence is not execution evidence.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -37690,7 +37695,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -37901,7 +37906,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Cosmos SDK v0.55.0 (2026-07-27) added ML-DSA-65 (FIPS 204) as an opt-in validator consensus key type and user account key type: SDK key wrappers, Amino + interface-registry registration, multisig support, mnemonic-based keyring creation/recovery (--algo ml_dsa_65), transaction signing/verification, an ante-handler gas cost, PoA-module support, and genesis import/export for validator key rotation. Existing chains still default to ed25519-only consensus keys in genesis; ML-DSA-65 is available but not yet the production default for any chain the SDK powers.",
+      "description": "Cosmos SDK v0.55.0 release notes dated 27 July 2026 describe opt-in ML-DSA-65 validator/account keys, registry/keyring/signing/gas/rotation and PoA changes. Unconfirmed scope: Exact default-genesis configuration and the adoption status of every downstream chain are unconfirmed by a release note; an SDK feature is not proof of live-chain defaults.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -37927,7 +37932,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -37950,7 +37955,7 @@
           "primitive": "other"
         }
       },
-      "description": "Clean reference implementations of all KpqC (Korean Post-Quantum Cryptography) competition algorithms, modelled on PQClean.",
+      "description": "PQClean-inspired comparison repository that removes dependencies from selected KpqC submissions and benchmarks them under recorded environments. Its source-version list mixes Round 1 submissions with individually dated updates. It provides KEM/PKE and signature comparisons, including x86 cycle counts and separate Apple M1 Pro and ARM nanosecond results; iteration counts vary by environment and scheme.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -38078,7 +38083,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No (AWS-LC-FIPS 3.x has completed lab testing and been submitted to NIST for certification)"
+          "value": "No (aws-lc-rs v1.18.0 switches to AWS-LC-FIPS 4.0; its release notes state that 4.x completed accredited-lab testing and was submitted to NIST. The prior 3.x modules were FIPS 140-3 validated under certificates #5314 (static) and #5298 (dynamic). Those prior certificates do not establish approval of the new 4.x ML-DSA implementation.)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -38142,7 +38147,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Provides benchmarking and performance analysis for PQC signature schemes submitted to NIST PQC standardization process round 2. Measures Key Generation, Signature Generation, Signature Verification, Public Key Size, and Signature Size. Specifically benchmarks ML-DSA, FALCON, and SPHINCS+ using code from PQClean.",
+      "description": "TII's interactive signature comparison measures key generation, signing, verification, public-key size and signature size. The methodology reports 1,000 random executions using libcpucycles and the fastest x86_64 implementation, including AVX2 where available, with turbo boost and hyper-threading disabled. ML-DSA, Falcon and SLH-DSA comparison code comes from liboqs.",
       "externalReferences": [],
       "properties": [
         {
@@ -38226,8 +38231,13 @@
           "primitive": "kem"
         }
       },
-      "description": "Supports ML-DSA (Post-Quantum) digital signatures (MlDsa44, MlDsa65, MlDsa87) and ML-KEM (Kyber) Key Encapsulation (MlKem512, MlKem768, MlKem1024).",
-      "externalReferences": [],
+      "description": "Zig 0.17.1 std.crypto exposes ML-DSA through sign.mldsa and ML-KEM through kem.ml_kem. It separately exposes kem.kyber_d00 for the earlier Kyber variant and a hybrid KEM module. Select the intended namespace and version instead of treating draft Kyber and final ML-KEM as interchangeable; these source exports are not module-validation evidence.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://codeberg.org/ziglang/zig/raw/tag/0.17.1/lib/std/crypto.zig"
+        }
+      ],
       "properties": [
         {
           "name": "pqctoday:product_id",
@@ -38270,7 +38280,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Native integration of X25519MLKEM768 hybrid key exchange (X25519 + ML-KEM-768) across global edge network. Enabled by default for TLS 1.3 and QUIC. No configuration required. Protects against Harvest Now, Decrypt Later attacks.",
+      "description": "For clients advertising support for X25519MLKEM768, Alibaba Cloud ESA uses the hybrid X25519 + ML-KEM-768 key exchange at its edge for TLS 1.3 and QUIC. The vendor describes this as a zero-configuration default for supported client-to-edge connections; this does not establish post-quantum protection for unsupported clients or the separate origin connection.",
       "externalReferences": [],
       "properties": [
         {
@@ -38355,7 +38365,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Provides software implementations of the CRYSTALS Dilithium post-quantum signature scheme. Includes reference (ref) and AVX2-optimized builds. Supports parameter sets 2, 3, 5, and their AES variants (2aes, 3aes, 5aes). Includes KAT generation, test vectors, and verification tests.",
+      "description": "Tagged v3.1 provides reference C and x86 AVX2 implementations of submission-era Dilithium with parameter sets 2, 3, 5 and their AES variants. It includes KAT generation and intermediate test vectors. Its signature test exercises 10,000 key-generation/sign/verify operations and altered signatures. Cycle-count benchmarks are available, but the authors say the unoptimized reference code is not representative for performance comparisons.",
       "externalReferences": [],
       "properties": [
         {
@@ -38400,7 +38410,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Provides software implementations of the CRYSTALS-Kyber Key Encapsulation Mechanism (KEM). Supports parameter sets Kyber-512, Kyber-512-90s, Kyber-768, Kyber-768-90s, Kyber-1024, and Kyber-1024-90s. Includes reference (ref) and AVX2 optimized builds. Integrated into liboqs, PQClean, Botan, and Bouncy Castle.",
+      "description": "Tagged v3.0 provides reference C and x86 AVX2 implementations of Kyber 512, 768 and 1024 and their -90s variants. Its KEM tests check shared-secret agreement and failures with a wrong secret key or corrupted ciphertext; it also provides authenticated key-exchange tests, deterministic vectors and cycle-count benchmarks. The authors caution that unoptimized reference-code benchmarks are not meaningful performance comparisons.",
       "externalReferences": [],
       "properties": [
         {
@@ -38444,7 +38454,7 @@
           "algorithmFamily": "SLH-DSA"
         }
       },
-      "description": "Provides SPHINCS+ stateless hash-based signatures. Includes software for building binaries for all submitted parameter sets and benchmarking. Offers a parameter exploration SAGE script. Integrated into Botan C++ crypto library (release 3.0) and Bouncy Castle BCPQC provider. Includes Go, Java, and Low-RAM implementations. Supports hybrid scheme with LMS.",
+      "description": "The authors' SPHINCS+ submission repository provides configurable reference software: 36 named submission instances, with parameters in params.h, SHA2/SHAKE/Haraka hash choices and simple/robust tweakable-hash implementations. Parameter sets target security categories 1, 3 and 5 with smaller-signature or faster-signing choices.",
       "externalReferences": [],
       "properties": [
         {
@@ -39476,7 +39486,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Jipher 20 adds support for Module-Lattice (ML) based algorithms. Key Encapsulation Mechanisms (KEM): ML-KEM, ML-KEM-512, ML-KEM-1024. Digital signature algorithms (DSA): ML-DSA-44, ML-DSA-65, ML-DSA-87. KeyFactory, KeyPairGenerator, KEM, and Signature service support is provided.",
+      "description": "Jipher 20 provides ML-KEM with ML-KEM-512, ML-KEM-768 and ML-KEM-1024 parameter sets under FIPS 203, and ML-DSA-44, ML-DSA-65 and ML-DSA-87 signature algorithms. Its reference table lists KEM, KeyFactory and KeyPairGenerator support for ML-KEM and Signature, KeyFactory and KeyPairGenerator support for ML-DSA. Default generated parameter sets are ML-KEM-768 and ML-DSA-65.",
       "externalReferences": [],
       "properties": [
         {
@@ -39493,7 +39503,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No (Oracle cites no FIPS 140-3 certificate for Jipher 20; an Oracle OpenSSL FIPS Provider is on the CMVP Modules In Process list; the FIPS status of ML-KEM and ML-DSA is not stated)"
+          "value": "Oracle documents a CMVP-validated OpenSSL module option and a patched module used by default. The default patched option is not strictly FIPS 140-3 compliant; validation depends on the exact module, platform, approved algorithms and configuration. This is conditional module evidence, not a blanket Jipher or PQC certificate."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -39559,7 +39569,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "General availability; manages PQC readiness through cryptographic inventory, policy evaluation, remediation workflows, progress tracking, dashboards, API imports, and CBOM exports. No PQC algorithms are named.",
+      "description": "DigiCert's 24 September 2026 announcement describes Quantum Central general availability for cryptographic inventory, policy evaluation, remediation, progress tracking, dashboards and API import. Unconfirmed scope: CBOM export needs its specific product documentation; the announcement names no cryptographic algorithms and does not establish that the product executes PQC.",
       "externalReferences": [],
       "properties": [
         {

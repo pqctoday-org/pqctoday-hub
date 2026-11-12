@@ -9,7 +9,6 @@ export const MODEL_SIZE_PROFILES: ModelSizeProfile[] = [
     label: '1B Parameters',
     parameterCount: '1 billion',
     typicalFileSizeGB: 2,
-    trainingCostEstimate: '$50K–$200K',
     hndlValueAssessment: 'Moderate — smaller models are more easily replicated',
   },
   {
@@ -17,7 +16,6 @@ export const MODEL_SIZE_PROFILES: ModelSizeProfile[] = [
     label: '7B Parameters',
     parameterCount: '7 billion',
     typicalFileSizeGB: 14,
-    trainingCostEstimate: '$500K–$2M',
     hndlValueAssessment: 'High — significant training investment, competitive differentiation',
   },
   {
@@ -25,7 +23,6 @@ export const MODEL_SIZE_PROFILES: ModelSizeProfile[] = [
     label: '13B Parameters',
     parameterCount: '13 billion',
     typicalFileSizeGB: 26,
-    trainingCostEstimate: '$1M–$5M',
     hndlValueAssessment:
       'High — substantial compute investment, proprietary training data encoded in weights',
   },
@@ -34,7 +31,6 @@ export const MODEL_SIZE_PROFILES: ModelSizeProfile[] = [
     label: '70B Parameters',
     parameterCount: '70 billion',
     typicalFileSizeGB: 140,
-    trainingCostEstimate: '$10M–$50M',
     hndlValueAssessment: 'Very High — multi-million dollar asset, core competitive advantage',
   },
   {
@@ -42,7 +38,6 @@ export const MODEL_SIZE_PROFILES: ModelSizeProfile[] = [
     label: '405B Parameters',
     parameterCount: '405 billion',
     typicalFileSizeGB: 810,
-    trainingCostEstimate: '$100M–$500M',
     hndlValueAssessment:
       'Critical — hundreds of millions in training investment, state-level HNDL target',
   },

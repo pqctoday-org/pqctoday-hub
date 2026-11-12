@@ -13,6 +13,7 @@ import {
 import { FilterDropdown, type FilterDropdownItem } from '../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { withEducationNoticeComment } from '@/data/educationNotice'
+import { getGoReference } from './goReference'
 import {
   useAlgorithmStatusTiers,
   getPickerTier,
@@ -72,53 +73,13 @@ with oqs.Signature("${algKey}") as sig:
     valid = sig.verify(message, signature, public_key)
     assert valid`
 
-  const goKEM = `// liboqs-go — ${algKey}
-package main
-
-import (
-    "fmt"
-    "github.com/open-quantum-safe/liboqs-go/oqs"
-)
-
-func main() {
-    kem := oqs.NewKeyEncapsulation("${algKey}", nil)
-    defer kem.Clean()
-
-    pubKey, _ := kem.GenerateKeyPair()
-    ciphertext, sharedSecretEnc, _ := kem.EncapSecret(pubKey)
-    sharedSecretDec, _ := kem.DecapSecret(ciphertext)
-    fmt.Println("Secrets match:", string(sharedSecretEnc) == string(sharedSecretDec))
-}`
-
-  const goSig = `// liboqs-go — ${algKey}
-package main
-
-import (
-    "fmt"
-    "github.com/open-quantum-safe/liboqs-go/oqs"
-)
-
-func main() {
-    signer := oqs.NewSignature("${algKey}", nil)
-    defer signer.Clean()
-
-    pubKey, _ := signer.GenerateKeyPair()
-    msg := []byte("Hello, post-quantum world!")
-    signature, _ := signer.Sign(msg)
-
-    verifier := oqs.NewSignature("${algKey}", nil)
-    defer verifier.Clean()
-    valid, _ := verifier.Verify(msg, signature, pubKey)
-    fmt.Println("Valid:", valid)
-}`
-
   const snippets = [{ label: 'OpenSSL CLI', lang: 'bash', code: opensslSnippet }]
   if (isKEM) {
     snippets.push({ label: 'Python (liboqs)', lang: 'python', code: pythonKEM })
-    snippets.push({ label: 'Go (liboqs-go)', lang: 'go', code: goKEM })
+    snippets.push({ label: 'Go (liboqs-go)', lang: 'go', code: getGoReference(algKey, true) })
   } else if (isSig) {
     snippets.push({ label: 'Python (liboqs)', lang: 'python', code: pythonSig })
-    snippets.push({ label: 'Go (liboqs-go)', lang: 'go', code: goSig })
+    snippets.push({ label: 'Go (liboqs-go)', lang: 'go', code: getGoReference(algKey, false) })
   }
   return snippets
 }
@@ -164,7 +125,7 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
       {open && (
         <div className="border-t border-border">
           {/* Tab bar */}
-          <div className="flex border-b border-border bg-muted/10">
+          <div className="flex flex-wrap border-b border-border bg-muted/10">
             {snippets.map((s, i) => (
               <Button
                 variant="ghost"
@@ -192,8 +153,20 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
             </Button>
           </div>
 
+          {active?.lang === 'go' && (
+            <p className="px-4 pt-3 text-xs text-muted-foreground">
+              Pinned local reference: liboqs-go v0.16.0 / liboqs 0.16.0. Setup travels with Copy.
+              Use a fresh sample directory with Go, CMake, Make, a C compiler and pkg-config. The
+              exact selected algorithm must be enabled by that build; initialization fails rather
+              than substituting another scheme. This functional example is not a conformance or
+              cross-engine interoperability result.
+            </p>
+          )}
           {/* Code block */}
-          <pre className="p-4 text-xs font-mono text-foreground/90 overflow-x-auto leading-relaxed whitespace-pre bg-background/50">
+          <pre
+            aria-label="Code reference source"
+            className="p-4 text-xs font-mono text-foreground/90 overflow-x-auto leading-relaxed whitespace-pre bg-background/50"
+          >
             {active?.code}
           </pre>
         </div>

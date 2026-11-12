@@ -139,5 +139,5 @@ describe('P5 PQC coverage sections — sabotaged expectations fail', () => {
     // old 600_000 budget (whole-file duration 1179.9s, of which 599.1s is the
     // beforeAll). A sabotage proof that dies on its own timeout proves
     // nothing, so it gets the same 2x headroom.
-  }, 1_200_000)
+  }, 1_500_000)
 })

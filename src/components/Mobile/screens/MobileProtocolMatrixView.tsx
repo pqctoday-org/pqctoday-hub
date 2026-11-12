@@ -344,6 +344,29 @@ export function MobileProtocolMatrixView() {
                 </div>
               )
             })}
+            {(selected.implementationAvailability?.length ?? 0) > 0 && (
+              <section aria-label="Vendor implementation availability" className="space-y-2">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Vendor availability ({selected.implementationAvailability?.length})
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Release and API support; these references do not establish production deployment.
+                </p>
+                {selected.implementationAvailability?.map((entry) => (
+                  <a
+                    key={entry.referenceUrl}
+                    href={entry.referenceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-md border border-border bg-muted/20 p-2 text-xs text-foreground"
+                  >
+                    <span className="font-semibold">{entry.provider}</span>
+                    {entry.since && <span> — available since {entry.since}</span>}
+                    <p className="mt-1 text-muted-foreground">{entry.what}</p>
+                  </a>
+                ))}
+              </section>
+            )}
             {selected.liveDeployments && selected.liveDeployments.length > 0 && (
               <div>
                 <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">

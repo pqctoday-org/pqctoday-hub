@@ -44,11 +44,11 @@ export const CandidatesExercises: React.FC<CandidatesExercisesProps> = ({
       id: 'sqisign-vs-faest',
       title: '2. SQIsign vs FAEST — bandwidth vs CPU',
       description:
-        'Open the Candidate Comparator and select SQIsign (148 B signatures, slow signing) and FAEST (6.3 KB signatures, AES-grade trust). See where each one fits.',
+        'Open the Candidate Comparator and compare the retained SQIsign example (148-byte signature) with FAEST v3.0 FAEST-128f (5,170-byte signature). Compare each sample’s public key plus signature bytes, then consider the different assumptions and implementation costs.',
       badge: 'Compare',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        "SQIsign wins for bandwidth-constrained protocols (IoT, certs). FAEST wins where AES-grade security trust is more important than wire cost. Same problem, opposite Pareto corners — that's why NIST keeps both.",
+        'The SQIsign example has 65 + 148 = 213 bytes of public key plus signature; FAEST v3.0 FAEST-128f has 32 + 5,170 = 5,202 bytes. This does not measure CPU cost. FAEST’s serialized private key is 16-byte x plus 16-byte k = 32 bytes, larger than MAYO’s retained 24-byte compact seed. Compare declared versions and representations rather than calling the 16-byte AES secret the complete serialized private key.',
       config: { step: 2, candidateId: 'sqisign' },
     },
     {

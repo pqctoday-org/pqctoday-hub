@@ -13,25 +13,86 @@ import { SAMPLE_INVENTORY } from '@/data/cryptoEstate'
 
 const SAMPLES = SAMPLE_INVENTORY.filter((a) => a.spki).slice(0, 4)
 
+// Only facts explicitly named by these fictional inventory records are projected.
+// A generic RSA key does not identify PSS, PKCS#1 v1.5 or its certificate's signature.
 function cycloneDX(a: (typeof SAMPLE_INVENTORY)[number]) {
+  const algorithm =
+    a.registryKey === 'ECDSA P-256'
+      ? {
+          algorithmFamily: 'ECDSA',
+          primitive: 'signature',
+          ellipticCurve: 'nist/P-256',
+          nistQuantumSecurityLevel: 0,
+        }
+      : a.registryKey === 'RSA-2048' || a.registryKey === 'RSA-4096'
+        ? {
+            // CycloneDX 1.7 has scheme-specific RSA families, not generic RSA.
+            // Keep the observed name/size without choosing an unsupported scheme.
+            primitive: 'unknown',
+            nistQuantumSecurityLevel: 0,
+            parameterSetIdentifier: a.registryKey.slice(4),
+          }
+        : undefined
+  const algorithmRef = `${a.id}-algorithm`
+  const keyRef = `${a.id}-public-key`
+  const isCertificate = a.class === 'certificates'
+  const properties = [
+    { name: 'observedAlgorithmLabel', value: a.currentAlgorithm },
+    { name: 'keyManagement', value: a.management },
+    { name: 'owner', value: a.owner },
+  ]
   return {
-    'bom-ref': a.id,
-    name: a.name,
-    type: 'cryptographic-asset',
-    cryptoProperties: {
-      assetType: a.class === 'certificates' ? 'certificate' : 'related-crypto-material',
-      algorithmProperties: {
-        primitive: /ECDSA|RSA|ML-DSA/.test(a.currentAlgorithm) ? 'signature' : 'kem',
-        parameterSetIdentifier: a.registryKey ?? a.currentAlgorithm.split(' / ')[0],
-        nistQuantumSecurityLevel: a.quantumVulnerable ? 0 : 3,
+    bomFormat: 'CycloneDX',
+    specVersion: '1.7',
+    version: 1,
+    components: [
+      {
+        'bom-ref': a.id,
+        name: a.name,
+        type: isCertificate ? 'cryptographic-asset' : 'application',
+        ...(isCertificate
+          ? {
+              cryptoProperties: {
+                assetType: 'certificate',
+                certificateProperties: {
+                  relatedCryptographicAssets: [{ type: 'publicKey', ref: keyRef }],
+                },
+              },
+            }
+          : {}),
+        properties,
       },
-      certificateProperties: a.class === 'certificates' ? { subjectName: a.name } : undefined,
-    },
-    properties: [
-      { name: 'spkiFingerprint', value: a.spki },
-      { name: 'keyManagement', value: a.management },
-      { name: 'owner', value: a.owner },
+      {
+        'bom-ref': keyRef,
+        name: `${a.name} — public key`,
+        type: 'cryptographic-asset',
+        cryptoProperties: {
+          assetType: 'related-crypto-material',
+          relatedCryptoMaterialProperties: {
+            type: 'public-key',
+            ...(algorithm && 'parameterSetIdentifier' in algorithm
+              ? { size: Number(algorithm.parameterSetIdentifier) }
+              : {}),
+            ...(algorithm
+              ? { relatedCryptographicAssets: [{ type: 'algorithm', ref: algorithmRef }] }
+              : {}),
+          },
+        },
+        // The source contains a truncated fictional SPKI fingerprint, not a full hash value.
+        properties: [{ name: 'spkiFingerprint', value: a.spki }],
+      },
+      ...(algorithm
+        ? [
+            {
+              'bom-ref': algorithmRef,
+              name: a.registryKey,
+              type: 'cryptographic-asset',
+              cryptoProperties: { assetType: 'algorithm', algorithmProperties: algorithm },
+            },
+          ]
+        : []),
     ],
+    dependencies: isCertificate ? [] : [{ ref: a.id, dependsOn: [keyRef] }],
   }
 }
 
@@ -71,10 +132,11 @@ export function FormatChooser() {
           fields have nowhere to go.
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          These partial format examples use fictional inventory fields. Exact cryptographic
-          identifiers have not been parsed here; an identifier that the sample does not supply is
-          omitted. Use your discovery and export tools to inspect the observed identifiers and
-          parameters before relying on a CBOM.
+          This CycloneDX 1.7 sample separates the inventory asset, its public key and the named
+          algorithm. RSA key size and the named EC curve come from the fictional record; certificate
+          signature scheme and OIDs are not supplied. The truncated SPKI fingerprint is retained as
+          a sample property. In your production tools, inspect parsed identifiers, complete
+          fingerprints and the links between certificate, key and signature algorithm.
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {SAMPLES.map((a) => (

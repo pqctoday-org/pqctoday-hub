@@ -234,7 +234,7 @@
   {
     "term": "Composite Certificate",
     "definition": "An X.509 certificate encoding both a classical and a PQC key/signature under a single composite OID. Both signatures must verify. Requires all relying parties to support the composite OID — legacy-incompatible.",
-    "technicalNote": "Composite signatures are specified in RFC 10073 (formerly draft-ietf-lamps-pq-composite-sigs) and composite ML-KEM in draft-ietf-lamps-pq-composite-kem. In each, the key material is a raw concatenation with the post-quantum component first and no ASN.1 wrapper inside the BIT STRING: for signatures the public key is mldsaPK || tradPK and the signature is mldsaSig || tradSig; for ML-KEM the key is mlkemPK || tradPK and the ciphertext is mlkemCT || tradCT. A verifier splits at the first component's fixed length. Each ECDSA profile also fixes a traditional hash that tracks the CURVE (P-256 → SHA-256, P-384 → SHA-384); the SHAxxx in a profile name is the pre-hash applied to the message, not the traditional algorithm's hash. Support depends on the library and release: the OpenSSL 3.6 and 4.1 release notes checked for this entry list no composite ML-DSA or ML-KEM algorithm, so verify support in the exact release and provider you use; a verifier that does not recognise the composite OID cannot validate such a certificate.",
+    "technicalNote": "Use the encoding for the selected scheme and version. RFC 10073 Sections 4–6 define composite ML-DSA signatures: public key mldsaPK || tradPK; signature mldsaSig || tradSig; both component verifications must succeed. For its ML-DSA-65 + ECDSA P-256 profile, the raw public key is 1,952 ML-DSA bytes followed by the 65-byte uncompressed EC point (2,017 bytes before the outer SubjectPublicKeyInfo encoding). The ECDSA signature component is DER Ecdsa-Sig-Value, not fixed-width r || s. That profile uses SHA-512 as the composite message pre-hash and ECDSA with SHA-256. Separately, draft-ietf-lamps-pq-composite-kem-23 Sections 4.1 and 4.3 define mlkemPK || tradPK and mlkemCT || tradCT; KEM ciphertext is not a composite signature. These are raw component concatenations before their required outer ASN.1 wrapping. Check support for the precise OID/profile in the intended library, release and provider. Sources: https://www.rfc-editor.org/rfc/rfc10073.html#section-4 and https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-kem-23.html#section-4.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"
@@ -242,8 +242,8 @@
   {
     "term": "Related Certificate",
     "acronym": "RFC 9763",
-    "definition": "A binding mechanism (RFC 9763) that links two independent X.509 certificates — one classical, one PQC — to the same end entity via a SHA-256 hash in a RelatedCertificate extension. Legacy systems only process the classical cert; PQC-aware verifiers check both and verify the binding hash. Distinct from Alt-Sig, which embeds a PQC signature inside a single certificate's extensions.",
-    "technicalNote": "The RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36) carries a hash of the related cert and a pointer. Each certificate is individually valid, enabling backward compatibility — unlike composite certificates which require composite OID support.",
+    "definition": "A certificate-binding mechanism in RFC 9763 for associating two independently issued end-entity X.509 certificates with the same entity. A new certificate can contain a RelatedCertificate extension identifying a related certificate by its digest and hash algorithm. For example, a new PQC certificate can reference an existing classical certificate while each retains its own key and signature.",
+    "technicalNote": "RFC 9763 Section 4.1 defines RelatedCertificate (OID 1.3.6.1.5.5.7.1.36) as SEQUENCE { hashAlgorithm DigestAlgorithmIdentifier, hashValue OCTET STRING }. Hash the entire related certificate with the indicated algorithm; SHA-256 is not mandatory. The locationInfo URI belongs to the relatedCertRequest CSR attribute, not this certificate extension. Section 4.2 describes recomputing and comparing the received certificate’s digest. Protocol authorization and peer policy determine how both authentications and the binding result are enforced; the extension alone neither authenticates both peers nor guarantees legacy compatibility. See https://www.rfc-editor.org/rfc/rfc9763.html#section-4.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "intermediate",
     "category": "concept"
@@ -258,16 +258,16 @@
   },
   {
     "term": "Chameleon Certificate",
-    "definition": "A single X.509 certificate that encodes a classical \"delta\" variant inside a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1). PQC-aware verifiers reconstruct the classical certificate from the delta; legacy systems see a standard classical cert.",
-    "technicalNote": "Defined in draft-bonnell-lamps-chameleon-certs (DigiCert, Entrust). More bandwidth-efficient than related certs (RFC 9763) because only one certificate is transmitted. STATUS: the draft is an INDIVIDUAL submission that EXPIRED on 2026-04-21 and was never adopted as a LAMPS working-group document — there is no draft-ietf-lamps-chameleon-certs, and the work was not renamed or absorbed elsewhere. Treat it as a dormant design worth understanding, not an active standards track.",
+    "definition": "An individual Internet-Draft design that encodes differences between two X.509 certificates in a base certificate’s Delta Certificate Descriptor extension (OID 2.16.840.1.114027.80.6.1). Software can reconstruct the paired delta certificate. Base and delta are encoding roles, not fixed classical/PQC directions: a classical base can describe a PQC delta, or the pairing can be reversed.",
+    "technicalNote": "draft-bonnell-lamps-chameleon-certs-07 (October 2025), Sections 3–4, lets the sender reconstruct and send a delta certificate, or lets a capable recipient reconstruct it from the base. A recipient that ignores a non-critical descriptor processes only the base and still needs to support the base certificate’s algorithms; a PQC base is not automatically usable by a classical-only recipient. Certificate selection/negotiation is left to the protocol/application. Compare the base-plus-descriptor size with the actual paired certificates before claiming a bandwidth saving. The individual draft expired on 21 April 2026; it is not an adopted LAMPS standard. Specification: https://www.ietf.org/archive/id/draft-bonnell-lamps-chameleon-certs-07.html.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "intermediate",
     "category": "concept"
   },
   {
     "term": "TBSCertificate",
-    "definition": "\"To Be Signed\" certificate — the core unsigned structure inside an X.509 certificate containing version, serial number, issuer/subject DNs, validity period, SubjectPublicKeyInfo, and extensions. The CA signs this structure to produce the final certificate.",
-    "technicalNote": "In DER encoding, TBSCertificate is a SEQUENCE. The outer Certificate SEQUENCE wraps TBSCertificate + signatureAlgorithm + signatureValue. PQC algorithms like ML-DSA and SLH-DSA are specified in the outer signatureAlgorithm AlgorithmIdentifier.",
+    "definition": "The “To Be Signed” structure inside an X.509 certificate: version, serial number, issuer signature-algorithm identifier, issuer and subject names, validity, SubjectPublicKeyInfo, and optional identifiers/extensions. The issuer signs the DER encoding of this structure to produce the certificate’s signatureValue.",
+    "technicalNote": "The outer Certificate SEQUENCE contains tbsCertificate, signatureAlgorithm and signatureValue. RFC 5280 Sections 4.1.1.2 and 4.1.2.3 require the outer signatureAlgorithm and the inner TBSCertificate.signature to contain the same algorithm identifier. RFC 9881 Section 3 applies ML-DSA identifiers to both locations: for ML-DSA-65 both carry OID 2.16.840.1.101.3.4.3.18 with absent parameters. This issuer-signature identifier is distinct from the subject’s key algorithm in SubjectPublicKeyInfo; an RSA issuer does not turn an EC subject key into RSA. See https://www.rfc-editor.org/rfc/rfc9881.html#section-3.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"
@@ -275,7 +275,7 @@
   {
     "term": "AlgorithmIdentifier",
     "definition": "An ASN.1 SEQUENCE containing an OID that identifies a cryptographic algorithm, plus optional parameters. Appears in X.509 certificates to specify signature algorithms (signatureAlgorithm field) and public key algorithms (SubjectPublicKeyInfo.algorithm).",
-    "technicalNote": "PQC algorithms defined in FIPS 203/204/205 use absent parameters (no NULL) per their respective X.509 profile RFCs (RFC 9881, RFC 9909). The OID for ML-DSA-65 is 2.16.840.1.101.3.4.3.18; SLH-DSA-SHA2-128s is 2.16.840.1.101.3.4.3.20.",
+    "technicalNote": "Optional in the ASN.1 type does not mean interchangeable absent and NULL parameters: follow the algorithm’s PKIX profile. RFC 9881 specifies absent parameters for ML-DSA, RFC 9909 for SLH-DSA, and RFC 9935 Section 3 for ML-KEM public keys. For example, the ML-DSA-65 identifier is OID 2.16.840.1.101.3.4.3.18 with no parameters: DER hex 30 0b 06 09 60 86 48 01 65 03 04 03 12. Appending 05 00 (NULL), even with an adjusted SEQUENCE length, violates that profile. SLH-DSA-SHA2-128s uses 2.16.840.1.101.3.4.3.20; ML-KEM-768 uses 2.16.840.1.101.3.4.4.2 in SubjectPublicKeyInfo.algorithm, not as an issuer signature algorithm. See https://www.rfc-editor.org/rfc/rfc9935.html#section-3 and the cited signature profiles.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"

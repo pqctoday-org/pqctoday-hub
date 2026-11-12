@@ -172,6 +172,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           )
         ) : (
           <div className="prose prose-sm max-w-none break-words [overflow-wrap:anywhere] text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-primary prose-a:break-words prose-code:text-primary prose-code:bg-muted/30 prose-code:px-1 prose-code:rounded">
+            {isStreaming && (
+              <p
+                role="status"
+                className="not-prose mb-2 rounded-md border border-status-warning/30 bg-status-warning/10 px-2 py-1 text-xs text-muted-foreground"
+              >
+                Unverified draft. Automated source checks run after generation.
+              </p>
+            )}
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -235,9 +243,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                   className="inline-block w-1.5 h-4 bg-primary/70 animate-pulse ml-0.5 align-text-bottom"
                   aria-hidden="true"
                 />
-                <span className="sr-only" role="status">
-                  Response in progress
-                </span>
               </>
             )}
           </div>

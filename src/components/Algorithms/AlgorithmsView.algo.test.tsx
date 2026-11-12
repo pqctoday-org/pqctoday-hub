@@ -249,4 +249,13 @@ describe('AlgorithmsView — phone routes', () => {
     expect(await screen.findByTestId('mobile-landing')).toBeInTheDocument()
     expect(urlSearch()).not.toContain('tab=')
   })
+
+  it('keeps a non-default algorithm on the phone sheet after the full catalogue loads', async () => {
+    vi.mocked(logAlgorithmView).mockClear()
+    renderAt('/algorithms?algo=hqc-128')
+    await waitFor(() => expect(logAlgorithmView).toHaveBeenCalledWith('HQC-128'))
+    expect(screen.getByTestId('mobile-landing')).toBeInTheDocument()
+    expect(urlSearch()).not.toContain('tab=')
+    expect(screen.queryByText(/Switched the quick view/)).not.toBeInTheDocument()
+  })
 })

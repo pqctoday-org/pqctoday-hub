@@ -156,12 +156,16 @@ export function algorithmLaunchError(toolId: string, search: string): string | n
     ? `No exact ${name} launch is available in this tool.`
     : null
 }
-/** The phone layout of the interactive playground has no Key Store, where an exact
- *  launch generates its key pair: a valid launch is reported there, never replaced
- *  by the phone screen's own defaults. */
-export function algorithmLaunchPhoneReason(toolId: string, search: string): string | null {
+/** Only the device's explicit information-only fallback cannot execute a launch.
+ * The interactive phone layout uses the same Key Store and SettingsProvider. */
+export function algorithmLaunchPhoneReason(
+  toolId: string,
+  search: string,
+  infoOnly = false
+): string | null {
+  if (!infoOnly) return null
   const launch = readAlgorithmLaunch(toolId, search)
   return launch
-    ? `No exact ${launch.algorithm} launch is available on a phone: the Key Store that generates its key pair is part of the full Playground. Open this link on a wider screen to run it.`
+    ? `The information-only view cannot run the requested ${launch.algorithm} sample. Use the interactive Playground on a device with suitable capabilities to generate its keys and run operations.`
     : null
 }

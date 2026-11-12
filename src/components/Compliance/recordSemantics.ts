@@ -99,6 +99,20 @@ const TYPE_DESCRIPTION: Record<ComplianceType, string> = {
   ESV: 'NIST entropy source validation (SP 800-90B) — validates a noise source, not a module or an algorithm',
 }
 
+/** Literal named-algorithm filtering shared by desktop and phone records.
+ * Entropy-tab records have no PQC facet. Keep the existing case-sensitive
+ * substring OR rule; this does not infer a parameter set or validation scope.
+ */
+export function matchesRecordPqc(
+  record: { pqcCoverage?: unknown },
+  filters: readonly string[],
+  certType: string
+): boolean {
+  if (certType.toLowerCase() === 'esv' || filters.length === 0) return true
+  const coverage = record.pqcCoverage
+  return typeof coverage === 'string' && filters.some((filter) => coverage.includes(filter))
+}
+
 /**
  * The Product Records type tabs, in display order. `id` is the `?rtab=` value, so a
  * link such as /compliance?tab=records&rtab=esv opens one tab; an unknown id

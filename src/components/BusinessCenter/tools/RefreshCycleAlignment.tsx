@@ -8,9 +8,9 @@
  * alone do not establish funding or avoid net-new spend. This is a planning
  * exercise associated with Applied Quantum Phase 4 Activity 4.3.
  *
- * The existing check compares the entered year with the horizon end only. It
- * does not establish whether a date is still in the future, the PQC task is
- * scoped, or a refresh program has sufficient funded capacity.
+ * The check compares an entered year with the current calendar year and horizon
+ * end. A past date calls for schedule review; task completion is not recorded.
+ * Timing alone does not establish task scope or sufficient funded capacity.
  */
 import React, { useMemo, useState } from 'react'
 import { CalendarClock } from 'lucide-react'
@@ -62,24 +62,27 @@ function isValidRows(rows: unknown): rows is RefreshRow[] {
 
 const newId = (): string => `rc-${Math.random().toString(36).slice(2, 9)}`
 
-export type RefreshAlignment = 'aligned' | 'misaligned' | 'unknown'
+export type RefreshAlignment = 'past' | 'aligned' | 'misaligned' | 'unknown'
 
-/**
- * Does this program's next refresh land within the planning horizon? `aligned`
- * = entered year on/before the horizon end (including past years); `misaligned` =
- * after the horizon; `unknown` = no parseable year. Pure + unit-tested.
- */
+/** Compare a complete calendar year with the existing current-year planning window. */
 export function refreshAlignment(
   nextRefreshYear: string,
   horizonEndYear: number
 ): RefreshAlignment {
-  const y = parseInt(nextRefreshYear, 10)
-  if (!Number.isFinite(y)) return 'unknown'
+  if (typeof nextRefreshYear !== 'string') return 'unknown'
+  const text = nextRefreshYear.trim()
+  if (!/^\d{4}$/.test(text)) return 'unknown'
+  const y = Number(text)
+  if (y === 0) return 'unknown'
+  const currentYear = new Date().getFullYear()
+  if (y < currentYear) return 'past'
+  if (!Number.isFinite(horizonEndYear) || horizonEndYear < currentYear) return 'unknown'
   return y <= horizonEndYear ? 'aligned' : 'misaligned'
 }
 
 const ALIGN_MD_LABEL: Record<RefreshAlignment, string> = {
-  aligned: 'At/before horizon end',
+  past: 'Past date — review schedule',
+  aligned: 'Within planning window',
   misaligned: 'After horizon ⚠',
   unknown: 'Timing unknown',
 }
@@ -100,22 +103,30 @@ export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
   let misaligned = 0
   for (const row of s.rows) {
     const program = row.programName.trim() || '_(unnamed)_'
-    const year = row.nextRefreshYear.trim() || '_(TBD)_'
+    const year = String(row.nextRefreshYear ?? '').trim() || '_(TBD)_'
     const task = row.pqcTaskToEmbed.trim() || '_(not yet defined)_'
     const align = refreshAlignment(row.nextRefreshYear, horizonEndYear)
     if (align === 'misaligned') misaligned++
     lines.push(`| ${program} | ${year} | ${ALIGN_MD_LABEL[align]} | ${task} |`)
   }
   lines.push('')
-  if (misaligned > 0) {
+  if (!Number.isFinite(horizonEndYear)) {
+    lines.push(
+      '> Planning horizon is not assessed. Enter a valid horizon before comparing current or future refresh dates.'
+    )
+  } else if (misaligned > 0) {
     lines.push(
       `> **${misaligned} of ${s.rows.length} program${s.rows.length === 1 ? '' : 's'} refresh after the planning horizon** — review timing options, task scope and funding separately.`
     )
   } else {
     lines.push(
-      '> No entered refresh year is after the horizon end. Blank dates remain unknown; past dates are included in the at/before comparison. This does not establish future timing alignment or funding.'
+      '> No entered refresh year is after the horizon end. This does not establish future timing alignment or funding.'
     )
   }
+  lines.push('')
+  lines.push(
+    'Blank dates remain unknown; invalid years are also unknown. Past dates require schedule review. Completion is not recorded; dates alone do not establish task status.'
+  )
   lines.push('')
   lines.push('---')
   lines.push('')
@@ -124,8 +135,12 @@ export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
 }
 
 const ALIGN_BADGE: Record<RefreshAlignment, { label: string; cls: string }> = {
+  past: {
+    label: 'Past date — review schedule',
+    cls: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  },
   aligned: {
-    label: 'At/before horizon end',
+    label: 'Within planning window',
     cls: 'border-status-success/40 bg-status-success/10 text-status-success',
   },
   misaligned: {
@@ -143,7 +158,7 @@ export const RefreshCycleAlignment: React.FC = () => {
   const [state, setState] = useState<RefreshState>(() => {
     if (isValidRows(savedInputs?.rows)) {
       return {
-        planningHorizonYears: savedInputs?.planningHorizonYears || '3',
+        planningHorizonYears: savedInputs?.planningHorizonYears ?? '3',
         rows: savedInputs.rows,
       }
     }
@@ -179,22 +194,18 @@ export const RefreshCycleAlignment: React.FC = () => {
   const removeRow = (id: string) =>
     setState((prev) => ({ ...prev, rows: prev.rows.filter((row) => row.id !== id) }))
 
+  const currentYear = new Date().getFullYear()
   const horizonEndYear = useMemo(() => {
-    const h = parseInt(state.planningHorizonYears, 10)
-    return new Date().getFullYear() + (Number.isFinite(h) ? h : 0)
-  }, [state.planningHorizonYears])
+    const text = state.planningHorizonYears.trim()
+    const h = /^\d+$/.test(text) ? Number(text) : Number.NaN
+    return Number.isSafeInteger(h) ? currentYear + h : Number.NaN
+  }, [state.planningHorizonYears, currentYear])
 
-  const exportMarkdown = useMemo(
-    () => buildMarkdown(state, horizonEndYear),
-    [state, horizonEndYear]
-  )
-
-  const misalignedCount = useMemo(
-    () =>
-      state.rows.filter((r) => refreshAlignment(r.nextRefreshYear, horizonEndYear) === 'misaligned')
-        .length,
-    [state.rows, horizonEndYear]
-  )
+  // Recompute the small derived worksheet on render, including a changed calendar year.
+  const exportMarkdown = buildMarkdown(state, horizonEndYear)
+  const misalignedCount = state.rows.filter(
+    (r) => refreshAlignment(r.nextRefreshYear, horizonEndYear) === 'misaligned'
+  ).length
   const rowCount = state.rows.length
 
   return (
@@ -248,9 +259,11 @@ export const RefreshCycleAlignment: React.FC = () => {
         <h3 className="text-sm font-semibold text-foreground">Planning horizon</h3>
         <div className="block">
           <label htmlFor="refresh-horizon" className="text-xs font-medium text-muted-foreground">
-            Planning horizon (years) — programs refreshing after{' '}
-            <span className="font-semibold text-foreground">{horizonEndYear}</span> are after the
-            horizon end (timing comparison only)
+            Planning horizon (years) — end:{' '}
+            <span className="font-semibold text-foreground">
+              {Number.isFinite(horizonEndYear) ? horizonEndYear : 'Not assessed'}
+            </span>{' '}
+            (timing comparison only)
           </label>
           <Input
             id="refresh-horizon"
@@ -275,7 +288,8 @@ export const RefreshCycleAlignment: React.FC = () => {
         </h3>
         <p className="text-xs text-muted-foreground">
           For each already-funded refresh program, record the next scheduled refresh and the sample
-          PQC task to explore. At/before includes past years; no funding check is performed.
+          PQC task to explore. The planning window starts in {currentYear}. Past dates require
+          schedule review; completion is not recorded. No funding check is performed.
         </p>
         <div className="space-y-3">
           {state.rows.map((row) => {
@@ -372,8 +386,8 @@ export const RefreshCycleAlignment: React.FC = () => {
         }}
       >
         <p className="text-sm text-muted-foreground">
-          Save this alignment to your Command Center, or export as markdown / PDF / Word. This is
-          the Phase-4 Activity 4.3 cost-avoidance artifact.
+          Save this alignment to your Command Center, or export as markdown / PDF / Word. This is a
+          Phase-4 Activity 4.3 timing worksheet, not evidence of cost avoidance.
         </p>
       </ExportableArtifact>
     </div>

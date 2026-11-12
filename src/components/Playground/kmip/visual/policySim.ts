@@ -51,7 +51,7 @@ export interface SimVerdict {
 export interface TraceStep {
   ruleId: string
   matched: boolean
-  effect: 'pass' | 'deny' | 'resolve' | 'skip' | 'off'
+  effect: 'pass' | 'warn' | 'deny' | 'resolve' | 'skip' | 'off'
   note: string
 }
 
@@ -346,9 +346,15 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
     let matched = false
     let effect: TraceStep['effect'] = 'pass'
     let note = ''
+    let warningMatched = false
 
     const deny = (reason: string, fallback: string) => {
       matched = true
+      if (r.scalars.severity === 'warn') {
+        effect = 'warn'
+        warningMatched = true
+        return
+      }
       effect = 'deny'
       verdict = { kind: 'deny', reason: reason || fallback }
       deciderId = r.id
@@ -691,6 +697,9 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
         break
     }
 
+    if (warningMatched) {
+      note = `Warning — ${r.scalars.reason || note || 'rule matched'}; evaluation continues`
+    }
     trace.push({ ruleId: r.id, matched, effect, note })
   }
 

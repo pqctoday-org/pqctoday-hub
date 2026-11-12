@@ -20,7 +20,6 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
-import gsmaVectors from '@/data/kat/gsma_suci_ts33501_annex_c.json'
 
 const PLAIN_ENGLISH_LS_KEY = 'suci.plainEnglish'
 const SCENARIO_VIEW_SS_KEY = 'suci.scenarioView'
@@ -61,6 +60,17 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
     kind: { type: 'ecdh-derive', curve: 'P-256' },
   },
+]
+
+const OFFICIAL_PROFILE_B_SPECS: KatTestSpec[] = [
+  {
+    id: '5g-suci-shared-key-b',
+    useCase: 'Profile B published ECDH shared key',
+    standard: '3GPP TS 33.501 Annex C.4.4.1',
+    referenceUrl:
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+    kind: { type: 'suci-profile-b', step: '3-ecdh' },
+  },
   {
     // Until 2026-09-24 this ran the plain ECDH round-trip above under a KDF
     // label. It now derives Enc key ‖ ICB ‖ MAC key with the engine's X9.63
@@ -71,6 +81,22 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
     referenceUrl:
       'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
     kind: { type: 'suci-profile-b', step: '4-kdf' },
+  },
+  {
+    id: '5g-suci-ciphertext-b',
+    useCase: 'Profile B published ciphertext',
+    standard: '3GPP TS 33.501 Annex C.4.4.1',
+    referenceUrl:
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+    kind: { type: 'suci-profile-b', step: '5-encrypt' },
+  },
+  {
+    id: '5g-suci-mac-b',
+    useCase: 'Profile B published MAC tag',
+    standard: '3GPP TS 33.501 Annex C.4.4.1',
+    referenceUrl:
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+    kind: { type: 'suci-profile-b', step: '6-mac' },
   },
   {
     id: '5g-suci-scheme-output-b',
@@ -130,37 +156,6 @@ interface SuciFlowProps {
 }
 
 type Profile = 'A' | 'B' | 'C'
-
-interface GsmaProfileB {
-  hn_pub_hex: string
-  eph_pub_hex: string
-  Z_hex?: string
-  K_enc_hex?: string
-  K_mac_hex?: string
-  cipher_msin_hex?: string
-  mac_tag_hex?: string
-}
-function getGsmaVector(profile: 'A' | 'B' | 'C', stepId: string) {
-  const vectors = gsmaVectors as { profiles?: { B?: GsmaProfileB } }
-  if (profile !== 'B' || !vectors.profiles?.B) return ''
-  const b = vectors.profiles.B
-  switch (stepId) {
-    case 'init_network_key':
-      return 'HN Public Key: ' + b.hn_pub_hex
-    case 'gen_ephemeral_key':
-      return 'Ephemeral Public Key: ' + b.eph_pub_hex
-    case 'compute_shared_secret':
-      return 'Shared Secret (Z): ' + b.Z_hex
-    case 'derive_keys':
-      return 'K_enc: ' + b.K_enc_hex + '\nK_mac: ' + b.K_mac_hex
-    case 'encrypt_msin':
-      return 'Ciphertext: ' + b.cipher_msin_hex
-    case 'compute_mac':
-      return 'MAC: ' + b.mac_tag_hex
-    default:
-      return ''
-  }
-}
 
 export const SuciFlow: React.FC<SuciFlowProps> = ({
   onBack,
@@ -348,30 +343,10 @@ const Z = zKemBytes`,
     ephPubKey?: string
   }>({})
 
-  const buildDualEngineResult = (hsmRes: string, osslRes: string, stepId: string) => {
-    const gsmaText = getGsmaVector(profile, stepId)
-    let enhancedGsma = gsmaText
-    if (gsmaText) {
-      // For multi-line vectors (derive_keys: "K_enc: …\nK_mac: …") split on the first line
-      // so we only match the first value — avoids "K_mac" leaking into the search string.
-      const firstLine = gsmaText.split('\n')[0]
-      const isMatch = hsmRes
-        .toLowerCase()
-        .includes(firstLine.split(':')[1]?.trim().toLowerCase() || 'XXXXX')
-      enhancedGsma =
-        gsmaText +
-        '\n\n' +
-        (isMatch
-          ? '[SUCCESS] SoftHSM3 Output matches GSMA Reference precisely.'
-          : '[WARNING] Compare manually vs generator output.')
-    }
-    const r: Record<string, string> = {
-      'SoftHSM3 (KAT)': hsmRes,
-      'OpenSSL Engine': osslRes,
-    }
-    if (enhancedGsma) r['GSMA Vector Validation'] = enhancedGsma
-    return r
-  }
+  const buildDualEngineResult = (hsmRes: string, osslRes: string) => ({
+    'SoftHSM3 output': hsmRes,
+    'OpenSSL Engine': osslRes,
+  })
   const executeStep = async () => {
     if (supiError) throw new Error(supiError)
     const stepData = rawSteps[wizard.currentStep]
@@ -488,7 +463,7 @@ const Z = zKemBytes`,
         }))
 
         if (hsmActive) {
-          result = buildDualEngineResult(hsmResult, res.output, stepData.id)
+          result = buildDualEngineResult(hsmResult, res.output)
         } else {
           result = res.output
         }
@@ -569,7 +544,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
           }
-          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+          result = buildDualEngineResult(hsmResult, osslResult)
         } else {
           result = osslResult
         }
@@ -618,7 +593,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
           }
-          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+          result = buildDualEngineResult(hsmResult, osslResult)
         } else {
           result = osslResult
         }
@@ -638,7 +613,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         const osslResult = await fiveGService.provisionUSIM(targetFile)
 
         if (hsmActive) {
-          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+          result = buildDualEngineResult(hsmResult, osslResult)
         } else {
           result = osslResult
         }
@@ -658,7 +633,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         const osslResult = await fiveGService.retrieveKey(targetFile, profile)
 
         if (hsmActive) {
-          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+          result = buildDualEngineResult(hsmResult, osslResult)
         } else {
           result = osslResult
         }
@@ -721,7 +696,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
           }
-          result = buildDualEngineResult(hsmResult, res.output, stepData.id)
+          result = buildDualEngineResult(hsmResult, res.output)
         } else {
           result = res.output
         }
@@ -872,7 +847,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
                 .join('')
             }
           }
-          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+          result = buildDualEngineResult(hsmResult, osslResult)
         } else {
           result = osslResult
         }
@@ -1098,7 +1073,7 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
           fiveGService.state.kMacHex = Array.from(kMac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+          result = buildDualEngineResult(hsmResult, osslResult)
         } else {
           result = osslResult
         }
@@ -1436,7 +1411,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
 
         const osslResult = await fiveGService.sidfDecrypt(profile)
         if (hsmActive) {
-          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+          result = buildDualEngineResult(hsmResult, osslResult)
         } else {
           result = osslResult
         }
@@ -1731,7 +1706,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         }
         phaseLabels={SUCI_PHASE_LABELS}
         canonicalTabNames={['SoftHSM3', 'SoftHSMv3']}
-        tabExplainer="SoftHSM3 runs inside your browser via WASM — it's the canonical output for this module. The OpenSSL Engine tab shows the equivalent command-line computation for cross-reference."
+        tabExplainer="These functional traces use the wizard’s generated inputs. The fixed Profile B reference below runs independently; it does not validate these generated keys or outputs."
         onComplete={() => {
           if (profile === 'A') {
             wizard.reset()
@@ -1782,6 +1757,23 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           )}
         </div>
       )}
+
+      <section aria-label="Official Profile B fixed-vector comparison" className="space-y-3">
+        <p className="text-sm text-muted-foreground">
+          Run the published Profile B sample: 3GPP TS 33.501 V19.5.0, Annex C.4.4.1, vector
+          profile-b-imsi. Its fixed inputs use MCC|MNC 274012, MSIN 001002086 and plaintext block
+          00012080F6, independently of the wizard selection above. The five checks compare ECDH Z,
+          the entire Enc key || ICB || MAC key output, ciphertext, MAC tag and scheme output. The
+          final check chains operations on engine-derived keys; the other rows check individual
+          published outputs. This does not check a full SUCI routing string, Profile A or research
+          Profile C.
+        </p>
+        <KatValidationPanel
+          specs={OFFICIAL_PROFILE_B_SPECS}
+          label="Official Profile B fixed-vector comparison"
+          authorityNote="Published 3GPP TS 33.501 V19.5.0 Annex C.4.4.1 sample — all five required checks must pass"
+        />
+      </section>
 
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}

@@ -10,14 +10,19 @@
  * at L3). The rule stays — the player is TOLD, and pointed at the other P5
  * tasks that unlock more.
  */
-import { ARCHITECTURES, edgeKey, edgeState } from '@/data/simArchitecture'
+import { ARCHITECTURES } from '@/data/simArchitecture'
 import type { SimSize } from '@/data/moscaClock'
+import { planningForArchitecture, type EdgePlanningProgress } from './edgePlanningProgress'
 
 export interface ArchCapacity {
+  planning: EdgePlanningProgress
   vulnerable: number
   migratable: number
   /** migratable links already decided (hybrid or pure) */
   done: number
+  /** Exact named selections receiving current effort credit. */
+  credited: number
+  overCapacity: boolean
   unlocked: number
   /** links that may still be migrated now */
   capacity: number
@@ -30,15 +35,16 @@ export function archCapacity(
 ): ArchCapacity {
   const arch = ARCHITECTURES[size]
   const vulnerable = arch.edges.filter((e) => e.vulnerable)
-  const migratable = vulnerable.filter((e) => edgeState(arch, e) === 'migratable')
-  const done = migratable.filter((e) => Boolean(edgeDecisions[edgeKey(e)])).length
-  const unlocked = Math.floor(Math.max(0, Math.min(1, p5Frac)) * migratable.length)
+  const planning = planningForArchitecture(arch, p5Frac, edgeDecisions)
   return {
+    planning,
     vulnerable: vulnerable.length,
-    migratable: migratable.length,
-    done,
-    unlocked,
-    capacity: Math.max(0, unlocked - done),
+    migratable: planning.eligibleKeys.length,
+    done: planning.selectedKeys.length,
+    credited: planning.creditedKeys.length,
+    overCapacity: planning.overCapacity,
+    unlocked: planning.unlocked,
+    capacity: planning.capacity,
   }
 }
 

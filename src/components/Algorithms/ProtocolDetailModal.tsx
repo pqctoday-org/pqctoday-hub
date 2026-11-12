@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { ImplementationAvailabilityEvidence } from '@/components/common/ImplementationAvailabilityEvidence'
 import { useMemo, useRef } from 'react'
 import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -392,6 +393,7 @@ function collectShownUrls(protocol: ProtocolMatrixRow): Set<string> {
   protocol.latestDraft.forEach((d) => add(d.url))
   Object.values(protocol.dimensions).forEach((dim) => dim.refs?.forEach((r) => add(r.url)))
   protocol.liveDeployments?.forEach((d) => add(d.referenceUrl))
+  protocol.implementationAvailability?.forEach((d) => add(d.referenceUrl))
   return urls
 }
 
@@ -676,6 +678,12 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                 </div>
               )}
             </section>
+
+            <div className="mb-6">
+              <ImplementationAvailabilityEvidence
+                entries={protocol.implementationAvailability ?? []}
+              />
+            </div>
 
             {/* Playgrounds */}
             <section>

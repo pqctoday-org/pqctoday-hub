@@ -16,6 +16,9 @@ import {
 } from '../data/testingConstants'
 import { Button } from '@/components/ui/button'
 
+// Retain the module's existing illustrative TCP payload-size assumption.
+const SAMPLE_MSS_BYTES = 1460
+
 const METRICS = [
   {
     key: 'tlsHandshakeMs',
@@ -43,7 +46,7 @@ const METRICS = [
     label: 'ClientHello Size',
     unit: 'B',
     maxVal: 1600,
-    description: 'TLS ClientHello byte count (above a 1,460 B MSS it spans two segments)',
+    description: 'TLS ClientHello byte count (segment estimates assume a 1,460 B MSS)',
   },
 ] as const
 
@@ -189,15 +192,37 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
                   )}
                 </div>
               </div>
-              {/* Fragmentation warning */}
-              {data.fragmentation &&
-                (selectedMetric === 'clientHelloBytes' || selectedMetric === 'certSizeKb') && (
-                  <div className="flex items-center gap-1.5 text-xs text-status-warning">
-                    <AlertTriangle size={11} />
-                    TCP fragmentation occurs — adds 1 extra RTT (
-                    {NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms) to handshake
-                  </div>
-                )}
+              {selectedMetric === 'clientHelloBytes' && (
+                <p
+                  role="note"
+                  aria-label={`${info.label} ClientHello segment estimate`}
+                  className="text-xs text-muted-foreground"
+                >
+                  Client → server: {data.clientHelloBytes.toLocaleString()} modeled ClientHello
+                  bytes require at least {Math.ceil(data.clientHelloBytes / SAMPLE_MSS_BYTES)} TCP{' '}
+                  {Math.ceil(data.clientHelloBytes / SAMPLE_MSS_BYTES) === 1
+                    ? 'segment'
+                    : 'segments'}
+                  , assuming a 1,460 B MSS. This lower bound assumes these bytes are packed into TCP
+                  payloads; additional framing or coalesced data can increase the count. This is not
+                  a measured packet trace. Segmentation alone does not establish an added RTT:
+                  inspect each direction&apos;s actual flight bytes, send/receive windows and loss
+                  with your production tools.
+                </p>
+              )}
+              {selectedMetric === 'certSizeKb' && (
+                <p
+                  role="note"
+                  aria-label={`${info.label} Certificate flight scope`}
+                  className="text-xs text-muted-foreground"
+                >
+                  Server → client: modeled leaf certificate size {formatVal(raw, metric.unit)} in
+                  this server-authentication example, not the complete Certificate message or server
+                  flight. The chain, framing and other handshake messages also contribute. Use
+                  captured per-direction flight bytes and actual TCP windows to assess segmentation
+                  and RTT; this leaf size does not determine them.
+                </p>
+              )}
             </div>
           )
         })}

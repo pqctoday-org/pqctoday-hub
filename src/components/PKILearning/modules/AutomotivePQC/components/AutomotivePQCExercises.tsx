@@ -109,7 +109,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Capstone',
       badgeColor: 'bg-secondary/10 text-secondary border-secondary/50',
       observe:
-        'A 2027 vehicle lasts until 2047 \u2014 12 years past the 2035 CRQC estimate. With OTA upgrades every 4 years, there are 5 crypto upgrade opportunities. The first PQC OTA should target 2031 (before CRQC) to protect long-lived root keys. Factory HSMs must dual-provision classical+PQC keys from day one.',
+        'A 2027 vehicle lasts until 2047 \u2014 12 years past the 2035 CRQC estimate. Under the existing four-year cadence, only 2031 is strictly before both the assumed 2035 arrival and 2047 retirement: one useful pre-exposure opportunity. The 2035 slot is not before arrival. The sample therefore has a possible pre-exposure update path; verify that the device, signed-update authority and verification chain can actually support it before relying on that path. If arrival is before the vehicle enters service, this sample instead needs readiness at entry.',
       config: { step: 5 },
     },
   ]

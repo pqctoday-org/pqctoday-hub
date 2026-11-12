@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Mocked ACME server responses (RFC 8555) for the interactive walkthrough.
- * Transport is simulated; crypto (ML-DSA-65 keypair, CSR, signature) is real via softhsmv3.
+ * Transport is simulated. The walkthrough generates its sample key and CSR
+ * with the existing software OpenSSL runtime; these HTTP fixtures are not sent.
  */
 
 export interface AcmeStep {
@@ -54,7 +55,7 @@ export const ACME_STEPS: AcmeStep[] = [
       'The account key is your long-term identity with the CA. Protect it.',
       'The JWS (JSON Web Signature) body is signed with your ML-DSA private key.',
       '"onlyReturnExisting: true" lets you look up an existing account without creating a new one.',
-      'PQC note: Some CAs use "alg: ML-DSA-65" in the JWS header. IETF draft-ietf-acme-pqc documents the extension.',
+      'This simulated account selects ML-DSA-65 JWS with the RFC 9964 AKP JWK format. Your CA must support that account algorithm; RFC 8555 does not require every CA to accept it.',
     ],
     mockRequest: {
       method: 'POST',
@@ -106,7 +107,8 @@ export const ACME_STEPS: AcmeStep[] = [
     rfc: 'RFC 8555 §8.3',
     sidebarLines: [
       'The token is a random value from the server. The key authorization = token + "." + base64url(thumbprint(accountKey)).',
-      'For PQC keys, the thumbprint uses the ML-DSA public key bytes hashed with SHA-256.',
+      'For this ML-DSA-65 account, RFC 9964 §6 selects the JWK members alg, kty and pub in that order. Hash their whitespace-free UTF-8 JSON with SHA-256, then base64url-encode without padding (RFC 7638 §3; RFC 8555 §8.1).',
+      'This fixed public test token encodes 16 bytes. A real CA token must be unpredictable with at least 128 bits of entropy (RFC 8555 §8.3); sample length checks do not demonstrate entropy.',
       'Serve the key authorization at: http://example.com/.well-known/acme-challenge/{token}',
       'DNS-01 and TLS-ALPN-01 alternatives exist for cases where HTTP is not available.',
     ],
@@ -120,7 +122,7 @@ export const ACME_STEPS: AcmeStep[] = [
       body: {
         type: 'http-01',
         status: 'valid',
-        token: 'pqcChallenge123',
+        token: 'AAECAwQFBgcICQoLDA0ODw',
         url: 'https://acme.example.com/acme/challenge/1',
       },
     },
@@ -129,18 +131,18 @@ export const ACME_STEPS: AcmeStep[] = [
     id: 'finalize',
     title: 'Step 5 — Finalize with ML-DSA-65 CSR',
     description:
-      'This walkthrough uses illustrative placeholder text for the key and CSR; no key generation, CSR signing or ACME submission is executed here.',
+      'Generate the sample request in the walkthrough, then inspect its matching public key and PKCS#10 signature. ACME submission and CA issuance remain simulated.',
     rfc: 'RFC 8555 §7.4, RFC 2986 (PKCS#10)',
     sidebarLines: [
       'The CSR is encoded as PKCS#10 (RFC 2986), base64url-encoded in the finalize request.',
       'The CSR subject should match the domain names from the order.',
-      'ML-DSA-65 CSRs use OID 2.16.840.1.101.3.4.3.18 (id-ML-DSA-65), per draft-ietf-lamps-dilithium-certificates.',
+      'ML-DSA-65 CSRs use OID 2.16.840.1.101.3.4.3.18 (id-ML-DSA-65), per RFC 9881 Section 2.',
       'The CA verifies the CSR signature using the embedded ML-DSA public key before issuing.',
     ],
     mockRequest: {
       method: 'POST',
       url: 'https://acme.example.com/acme/order/1/finalize',
-      body: { csr: '<illustrative CSR placeholder; not generated PKCS#10>' },
+      body: { csr: '<sample CSR supplied by the walkthrough after generation>' },
     },
     mockResponse: {
       status: 200,

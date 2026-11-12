@@ -544,7 +544,7 @@
     "term": "ACARS",
     "acronym": "ACARS",
     "definition": "Aircraft Communications Addressing and Reporting System. A digital data link for transmitting short messages between aircraft and ground stations via VHF radio or SATCOM.",
-    "technicalNote": "ACARS messages are limited to 220-byte blocks. ML-DSA-65 signatures (3,309 bytes) need at least 16 blocks before message content and framing, so in-band PQC authentication needs a fragmentation and transport-overhead design, or gateway-mediated signing, rather than a drop-in change.",
+    "technicalNote": "For character-oriented VHF ACARS, the documented text field carries at most 220 printable characters per block; this is not a general 220-byte binary transport or a limit on the whole reassembled message. Worked encoding comparison: a 3,309-byte ML-DSA-65 signature encoded as Base64 occupies 4 × ceil(3309 / 3) = 4,412 printable characters, needing at least ceil(4412 / 220) = 21 text blocks even before message content, block identifiers and other overhead. Base64 is an illustrative encoding choice, not a specified ACARS authentication profile. Actual deployment planning must include the selected bearer/profile, complete authenticated message, fragmentation, retries and latency. Frame reference: https://www.wavecom.ch/content/ext/DecoderOnlineHelp/worddocuments/acars.htm.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -597,7 +597,7 @@
     "term": "CAN Bus",
     "acronym": "CAN",
     "definition": "Controller Area Network, the dominant in-vehicle serial bus protocol with an 8-byte (CAN 2.0) or 64-byte (CAN FD) payload per frame. CAN buses connect ECUs for powertrain, chassis, and body functions.",
-    "technicalNote": "A classical CAN frame carries at most 8 data bytes, so an ML-DSA-44 signature (2,420 bytes, FIPS 204) alone would span at least 303 frames, and at least 38 CAN FD frames of 64 bytes, before any segmentation header, message data or counters. Per-message PQC signing on a CAN bus is therefore impractical without redesign. Automotive Ethernet carries much larger frames (a standard 1,500-byte MTU), which removes the frame-count problem, but whether it suits a given ADAS or infotainment zone still depends on the full message flow, the latency budget and the processing capability of the chosen design.",
+    "technicalNote": "A 2,420-byte ML-DSA-44 signature alone needs at least ceil(2420 / 8) = 303 classical CAN data frames, or ceil(2420 / 64) = 38 CAN FD data frames, before segmentation headers, application data, counters and bus framing. This comparison uses full data fields; it does not specify a transport protocol or prove a latency result. With a 1,500-byte IP MTU on Ethernet, ceil(2420 / 1500) = 2 is only an optimistic packet-count lower bound: network/transport headers reduce application capacity and link headers add wire bytes. Ethernet does not make a signature fit in one packet or establish timing feasibility. Compare the complete exchange and measured timing on the intended ECU and network. CAN FD reference: https://www.st.com/content/st_com/en/technical-documents/an5348-introduction-to-fdcan-peripherals-for-stm32-mcus-stmicroelectronics_asset/chunk-001-topic-an5348-can-fd-protocol-overview.html.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "intermediate",
     "category": "protocol"

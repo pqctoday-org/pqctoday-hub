@@ -89,7 +89,6 @@ export interface ModelSizeProfile {
   label: string
   parameterCount: string
   typicalFileSizeGB: number
-  trainingCostEstimate: string
   hndlValueAssessment: string
 }
 

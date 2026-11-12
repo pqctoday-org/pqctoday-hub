@@ -16,13 +16,20 @@ export const DATE_SOURCE_NOT_RECORDED_NOTE =
 
 export type TransitionDateSource = 'nist-ir-8547' | 'not-recorded'
 
-const IR_8547_LABEL = /^(2030 \(Deprecated\)( \/ 2035 \(Disallowed\))?|2035 \(Disallowed\))$/
+const IR_8547_LABELS = new Set([
+  '2030 (Deprecated) / 2035 (Disallowed)',
+  '2030 (Deprecated)',
+  '2035 (Disallowed)',
+  'After 2030 (Deprecated) / After 2035 (Disallowed)',
+  'After 2030 (Deprecated)',
+  'After 2035 (Disallowed)',
+])
 
 /**
  * Which source the UI may name for a transition date label, or null when the
  * label is not one of the IR 8547 forms (the label is then shown on its own).
  */
 export function transitionDateSource(label: string, region: string): TransitionDateSource | null {
-  if (!IR_8547_LABEL.test(label.trim())) return null
+  if (!IR_8547_LABELS.has(label.trim())) return null
   return region === 'NIST' ? 'nist-ir-8547' : 'not-recorded'
 }

@@ -31,12 +31,16 @@ function pickThreatVector(fnGroup: string): string {
 
 /**
  * Likelihood + impact derived from assessment signals:
- *   likelihood: 5 if HNDL window open, 4 if reported algorithm with no migration,
+ *   likelihood: 5 for confidentiality rows if HNDL window open, 4 if reported algorithm with no migration,
  *               3 default
  *   impact: scales with `dataSensitivity` (highest of the user's selections)
  */
-function pickLikelihood(hndlOpen: boolean, migrationStatus: string | undefined): number {
-  if (hndlOpen) return 5
+function pickLikelihood(
+  threatVector: string,
+  hndlOpen: boolean,
+  migrationStatus: string | undefined
+): number {
+  if (threatVector === 'hndl' && hndlOpen) return 5
   if (migrationStatus === 'not-started') return 4
   if (migrationStatus === 'planning') return 3
   return 3
@@ -55,19 +59,17 @@ function buildAssessmentSeed(
   transitions: ReturnType<typeof useAlgorithmTransitionsForAssessment>,
   hndlOpen: boolean,
   migrationStatus: string | undefined,
-  sensitivities: string[],
-  hasFrameworkPressure: boolean
+  sensitivities: string[]
 ): RiskEntry[] {
   return transitions.map((t, i) => {
-    // Framework deadline pressure bumps impact +1 (capped at 5).
-    const baseImpact = pickImpact(sensitivities)
-    const impact = hasFrameworkPressure ? Math.min(5, baseImpact + 1) : baseImpact
+    const impact = pickImpact(sensitivities)
+    const threatVector = pickThreatVector(t.function)
     return {
       id: `assess-risk-${i + 1}`,
       assetName: `${t.classical}${t.keySize ? ` (${t.keySize})` : ''} usage — ${t.function}`,
       currentAlgorithm: t.storedKey,
-      threatVector: pickThreatVector(t.function),
-      likelihood: pickLikelihood(hndlOpen, migrationStatus),
+      threatVector,
+      likelihood: pickLikelihood(threatVector, hndlOpen, migrationStatus),
       impact,
       mitigation: `Migrate to ${t.pqc}${t.deprecationDate ? ` before ${t.deprecationDate}` : ''} (${t.status}).`,
     }
@@ -138,8 +140,7 @@ export function RiskRegisterBuilderStandalone() {
           transitions,
           result?.hndlRiskWindow?.isAtRisk ?? false,
           input?.migrationStatus,
-          sensitivities,
-          hasFrameworkPressure
+          sensitivities
         )
       : []
     const productRows = myProducts.length ? buildProductSeed(myProducts, sensitivities) : []
@@ -150,7 +151,6 @@ export function RiskRegisterBuilderStandalone() {
     result?.hndlRiskWindow?.isAtRisk,
     input?.migrationStatus,
     sensitivities,
-    hasFrameworkPressure,
     myProducts,
     myThreats,
   ])

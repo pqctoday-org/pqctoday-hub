@@ -328,71 +328,127 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
           </div>
 
           <h3 className="text-sm font-bold text-foreground">
-            <InlineTooltip term="Rad-Hardened Processor">Rad-Hard Processor</InlineTooltip> PQC
-            Capability
+            Worked Example: Measured Verification Cost
           </h3>
+          <p className="text-xs text-muted-foreground">
+            Compare implementations of the same operation before selecting a processor. The
+            published pqm4 measurements below use ML-DSA-44 verification on a NUCLEO-L4R5ZI
+            development board (Cortex-M4), not a radiation-qualified flight computer. They provide a
+            concrete implementation trade-off to reproduce on the mission target.
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
+              <caption className="text-left text-muted-foreground pb-2">
+                Published speed run: 23 October 2026, 20 MHz, 100 executions; Arm GNU Toolchain
+                15.3.Rel1, -O3, AIO=1, no LTO.
+              </caption>
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-2 px-3 text-muted-foreground font-medium">
-                    Processor
+                  <th scope="col" className="text-left py-2 px-2">
+                    Implementation
                   </th>
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">Clock</th>
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">RAM</th>
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">TID</th>
-                  <th className="text-center py-2 px-3 text-muted-foreground font-medium">
-                    ML-KEM
+                  <th scope="col" className="text-right py-2 px-2">
+                    Mean / observed max cycles
                   </th>
-                  <th className="text-center py-2 px-3 text-muted-foreground font-medium">
-                    ML-DSA
+                  <th scope="col" className="text-right py-2 px-2">
+                    Mean / max ms
                   </th>
-                  <th className="text-center py-2 px-3 text-muted-foreground font-medium">LMS</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-border/50">
-                  <td className="py-2 px-3 font-medium text-foreground">BAE RAD750</td>
-                  <td className="text-right py-2 px-3">200 MHz</td>
-                  <td className="text-right py-2 px-3">256 MB</td>
-                  <td className="text-right py-2 px-3">200 krad</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="py-2 px-3 font-medium text-foreground">BAE RAD5545</td>
-                  <td className="text-right py-2 px-3">sub-GHz, multi-core</td>
-                  <td className="text-right py-2 px-3">2 GB</td>
-                  <td className="text-right py-2 px-3">100 krad</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="py-2 px-3 font-medium text-foreground">Cobham GR740</td>
-                  <td className="text-right py-2 px-3">250 MHz</td>
-                  <td className="text-right py-2 px-3">128 MB</td>
-                  <td className="text-right py-2 px-3">300 krad</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
-                  <td className="text-center py-2 px-3 text-status-warning">&#9675;</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
+                  <th scope="row" className="text-left py-2 px-2 font-medium">
+                    m4f
+                  </th>
+                  <td className="text-right py-2 px-2">
+                    <span className="block">1,420,317</span>
+                    <span className="block">1,420,929</span>
+                  </td>
+                  <td className="text-right py-2 px-2">71.02 / 71.05</td>
                 </tr>
                 <tr>
-                  <td className="py-2 px-3 font-medium text-foreground">Vorago VA416x0</td>
-                  <td className="text-right py-2 px-3">100 MHz</td>
-                  <td className="text-right py-2 px-3">256 KB</td>
-                  <td className="text-right py-2 px-3">50 krad</td>
-                  <td className="text-center py-2 px-3 text-status-error">&#10007;</td>
-                  <td className="text-center py-2 px-3 text-status-error">&#10007;</td>
-                  <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
+                  <th scope="row" className="text-left py-2 px-2 font-medium">
+                    m4fstack
+                  </th>
+                  <td className="text-right py-2 px-2">
+                    <span className="block">3,259,593</span>
+                    <span className="block">3,295,621</span>
+                  </td>
+                  <td className="text-right py-2 px-2">162.98 / 164.78</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
-            &#10003; = feasible, &#9675; = limited (smaller variants only), &#10007; = infeasible.
-            Ultra-constrained CubeSat processors (Vorago class) can only run hash-based signatures.
+            Time in ms = cycles / (20 × 1,000). For a fictional 100 ms crypto-only verification
+            budget, the m4f observed maximum is below the budget; m4fstack exceeds it. An observed
+            maximum over 100 executions is not a worst-case execution-time guarantee. Scheduling,
+            message handling and other firmware work need their own budget.{' '}
+            <a
+              href="https://github.com/mupq/pqm4/blob/7a629261b9cb0c463ff4907255b092a6e2ff4ec4/results/speed/ml-dsa.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              Speed results and reproduction conditions
+            </a>{' '}
+            (measured source revision b6ec2a12).
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <caption className="text-left text-muted-foreground pb-2">
+                Separate published stack run: 22 October 2026, one execution, source revision
+                481b2e30; same board, compiler and build flags. These are not measurements of the
+                speed run&apos;s binary.
+              </caption>
+              <thead>
+                <tr className="border-b border-border">
+                  <th scope="col" className="text-left py-2 px-2">
+                    Implementation
+                  </th>
+                  <th scope="col" className="text-right py-2 px-2">
+                    Verification stack bytes
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border/50">
+                  <th scope="row" className="text-left py-2 px-2 font-medium">
+                    m4f
+                  </th>
+                  <td className="text-right py-2 px-2">8,912</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="text-left py-2 px-2 font-medium">
+                    m4fstack
+                  </th>
+                  <td className="text-right py-2 px-2">2,712</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            The lower-stack implementation trades speed for stack usage in these published runs.
+            Stack bytes alone are not total RAM: account for keys, messages, static data, heap,
+            interrupts and concurrent tasks.{' '}
+            <a
+              href="https://github.com/mupq/pqm4/blob/7a629261b9cb0c463ff4907255b092a6e2ff4ec4/results/stack/ml-dsa.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              Stack results and reproduction conditions
+            </a>
+            .
+          </p>
+          <p className="text-xs text-muted-foreground">
+            For a RAD750, RAD5545, GR740 or VA416x0 design, request the exact board, algorithm
+            parameter set, implementation revision, compiler and build flags. Use production
+            measurement tools to record peak total RAM, linked flash size, latency distribution and
+            timing margin on that target; exercise verification failures and recovery too. Keep
+            radiation qualification and algorithm execution as separate acceptance questions. This
+            comparison demonstrates how to make that decision without treating a clock or RAM
+            specification as proof of algorithm support.
           </p>
         </div>
       </LearnSection>

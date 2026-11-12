@@ -1,15 +1,15 @@
 ### What This Is About
 
-Cryptography is no longer a set-and-forget implementation detail. Every line of cryptographic code you ship today—from JWT signing to TLS configuration—uses algorithms that quantum computers will break. Understanding Post-Quantum Cryptography (PQC) is now a core engineering skill, as major libraries like OpenSSL 3.5, BoringSSL, and Go 1.24 are already actively rolling out PQC support.
+Post-quantum migration changes the cryptographic library calls, token formats, TLS configurations and signing paths that developers maintain. This role guide helps you identify which parts of your work need investigation and what evidence to obtain from your own development tools.
 
-### Why It Matters
+### What You Can Do Here
 
-PQC algorithms are not drop-in replacements. ML-KEM public keys are massive (up to 1568 bytes, compared to 32 bytes for an X25519 public value), and ML-DSA signatures are enormous (up to 4627 bytes, compared to 64 bytes for an ECDSA P-256 signature in the JWT format). These size increases can break assumptions baked into your application: HTTP headers will overflow, browser URL limits will be exceeded, TLS client hello messages will fragment and timeout, and your CI/CD pipelines will fail verification.
+The four workshop steps contain six expandable impact/scenario cards, skill self-ratings with learning links, a phased action checklist with Markdown export, and a nine-item exposure checklist. The ratings and checked items reflect your answers; they do not inspect a codebase or prove migration readiness.
 
-### The Key Takeaway
+### Try the Separate Tools
 
-Developers must immediately audit their codebases to locate hardcoded algorithms and cipher suites. The critical path forward is building "Crypto Agility"—implementing abstraction layers that allow the application to swap cryptographic algorithms without requiring a total code rewrite.
+Use the [Token Size Analyzer](/learn/api-security-jwt?tab=workshop&step=4) to edit a sample payload and compare compact JWT and Authorization header-line bytes against a line budget. Try the [TLS Simulator](/playground/tls-simulator) to inspect sample client/server configurations, [Hybrid KEM + ECDH](/playground/hybrid-encrypt) to follow the shared-secret derivation, and [VectorSet Anatomy (on a computer)](/learn/acvp-lab-workflow?tab=workshop&step=1) to inspect required test inputs without running an engine. Use the [API Migration Decision Lab](/learn/crypto-dev-apis?tab=workshop&step=7) for before/after library examples and the [code-signing sample](/learn/code-signing?tab=workshop&step=0) to distinguish live signing checks from illustrative mode. These tools are separate from the role cards.
 
-### What's Happening
+### The Decision to Take Back
 
-Major cryptographic libraries are already shipping PQC support—OpenSSL 3.5, BoringSSL, and Go 1.24 include ML-KEM and ML-DSA implementations—giving developers the tools to begin integrating quantum-safe algorithms into their applications today.
+Choose the token limits, protocol combinations, library calls and test cases to check in your own stack. A header-line calculation does not measure every request header, a sample handshake does not predict production latency, and an input-support prediction is not an executed test or CAVP validation. Use the examples to plan checks and retain the results from your own tools.

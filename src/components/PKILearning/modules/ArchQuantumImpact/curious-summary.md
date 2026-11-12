@@ -1,15 +1,15 @@
 ### Problem
 
-As a Security Architect, your design patterns dictate how cryptography is utilized across the enterprise infrastructure. Currently, most systems hardcode classical algorithms (like RSA-2048 or ECDSA P-256) deeply within application logic, APIs, and microservices. The Post-Quantum transition requires architecting a new "Crypto-Agile" abstraction layer that entirely decouples these algorithms from the business logic.
+An architect decides where cryptography sits, who controls keys, which certificate formats clients must accept and how a system can change algorithms. Those decisions determine what must be tested during post-quantum migration.
 
-### Solution
+### What You Can Do Here
 
-Architectural decisions made today will outlive the quantum transition. Designing a non-agile system now creates massive technical debt, as replacing hardcoded cryptography across an entire microservice mesh takes years. Furthermore, PQC introduces immediate architectural friction: ML-DSA-65 certificates are functionally 50x larger than ECC certificates, immediately straining IoT memory budgets and pushing TLS latency thresholds.
+The six workshop steps include descriptive impact/scenario cards, skill self-ratings, a phased action checklist with Markdown export and a nine-item exposure checklist. The Strangler Fig model illustrates migration behind a PQC API gateway. Trust Hardware Selector compares eight kinds of trust hardware, with a source-attributed grid and two exercises. It distinguishes TPMs, Caliptra, Tessera, hardware and cloud HSMs, confidential computing, and customer and cloud-operator DPUs; specification or code is not a shipping product or certificate.
 
-### Strategy
+### Try the Separate Tools
 
-Crypto-agility is a survival requirement, not an optional feature. Architects must immediately map all cryptographic touchpoints and mandate abstraction layers across new deployments. By planning now for the massive footprint of PQC algorithms and establishing strict algorithm-selection governance, you insulate your company's core infrastructure. Architects also need to tell apart the hardware that roots trust and protects keys (TPMs, Caliptra, Tessera, HSMs, cloud HSMs, confidential computing and two kinds of DPU), because each sits in a different place, is controlled by a different party and has a different post-quantum status.
+Use the [Cert Capacity Calculator](/playground/cert-capacity) to compare estimated certificate-related TLS payload and annual leaf issuance storage. Try the [TLS Simulator](/playground/tls-simulator) for sample configuration interactions and [Hybrid Certificates](/playground/hybrid-certs) to compare parsed formats and verification results. These are separate tools, not calculators embedded in the role cards.
 
-### Ecosystem
+### The Decision to Take Back
 
-Enterprise architecture teams are defining crypto-agile reference architectures that mandate abstraction layers for all new deployments, ensuring that cryptographic algorithm swaps can be executed across microservice meshes without requiring application code rewrites.
+Choose the PKI assumptions, client/server combinations and trust boundaries to test with your own infrastructure tools. The capacity model excludes the root from TLS payload and does not calculate OCSP sizes, CPU capacity or P99 latency. Sample certificate verification does not establish relying-party compatibility or product certification.

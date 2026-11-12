@@ -505,11 +505,14 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
 
       result = output
     } else if (step.id === 'derive') {
+      setDerivedLeaves([])
+      wizard.setIsStepComplete(false)
       if (!seed) throw new Error('Seed not found')
 
       const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
       let output = 'Derived Accounts:\n\n'
       let hsmOutput = ''
+      let hsmLeaves: DerivedLeaf[] = []
 
       if (hsmActive) {
         hsmOutput += 'Hardware Emulation (SoftHSM3):\n\n'
@@ -624,12 +627,12 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         const solAddrWasm = base58.encode(ed25519.getPublicKey(solPriv))
         hsmOutput += `Solana\nPath: ${solPath}\nHandle: ${solLeafHandle}\nAddress: ${solAddrWasm}`
 
-        // Populate the tree
-        setDerivedLeaves([
+        // Retain the actual HSM-derived addresses until the independent comparison succeeds.
+        hsmLeaves = [
           { chain: 'bitcoin', path: btcPath, address: btcAddrWasm },
           { chain: 'ethereum', path: ethPath, address: ethAddrWasm },
           { chain: 'solana', path: solPath, address: solAddrWasm },
-        ])
+        ]
       }
 
       // JAVASCRIPT EMULATION
@@ -665,8 +668,21 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
       }
 
       if (hsmActive) {
+        const mismatches = hsmLeaves.filter(
+          (leaf) =>
+            leaf.address !==
+            (leaf.chain === 'bitcoin' ? btcAddr : leaf.chain === 'ethereum' ? ethAddr : solAddr)
+        )
+        if (mismatches.length > 0) {
+          throw new Error(
+            `Address comparison failed for ${mismatches.map((leaf) => leaf.chain).join(', ')}. No matching derivation tree was established; retry the sample.`
+          )
+        }
+        setDerivedLeaves(hsmLeaves)
+        hsmOutput +=
+          '\n\nFunctional comparison passed: all three addresses match the software calculation for this sample seed and these paths. This is not a known-answer test against a trusted published vector.'
         result = {
-          'SoftHSM3 (KAT)': hsmOutput,
+          'SoftHSM3 (functional comparison)': hsmOutput,
           'Software Wallet': output,
         }
       } else {

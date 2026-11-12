@@ -5,6 +5,8 @@
  * Uses Web Crypto API (SHA-256) for hashing — no external dependencies.
  */
 
+import { subjectKeyDigest } from './subjectKeys'
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -31,6 +33,10 @@ export interface CertLeaf {
   publicKeySize: number
   notBefore: string
   notAfter: string
+  serialNumber?: string
+  /** Full canonical public DER SPKI, base64; no private material. */
+  publicKeySpki?: string
+  publicKeyDigest?: string
 }
 
 export interface InclusionProof {
@@ -91,7 +97,92 @@ export async function hashPair(left: string, right: string): Promise<string> {
 
 /** Serialize a CertLeaf into a deterministic string for hashing. */
 export function serializeCert(cert: CertLeaf): string {
-  return `${cert.id}|${cert.subject}|${cert.issuer}|${cert.algorithm}|${cert.publicKeySize}|${cert.notBefore}|${cert.notAfter}`
+  if (
+    !Number.isSafeInteger(cert.id) ||
+    cert.id < 0 ||
+    ![cert.subject, cert.issuer, cert.algorithm, cert.notBefore, cert.notAfter].every(
+      (v) => typeof v === 'string'
+    ) ||
+    (cert.serialNumber !== undefined && typeof cert.serialNumber !== 'string') ||
+    !/^[0-9a-f]{64}$/.test(cert.publicKeyDigest ?? '')
+  )
+    throw new Error('Incomplete version1 public leaf; rebuild the sample')
+  return JSON.stringify([
+    'pqc-today-mtc-leaf-v1',
+    cert.id,
+    cert.subject,
+    cert.issuer,
+    cert.algorithm,
+    cert.publicKeySize,
+    cert.notBefore,
+    cert.notAfter,
+    cert.serialNumber ?? null,
+    cert.publicKeyDigest,
+  ])
+}
+
+/** Always recompute the digest of the actual public SPKI before hashing the leaf. */
+export async function hashCertLeaf(input: CertLeaf): Promise<string> {
+  const cert = { ...input }
+  if ((await subjectKeyDigest(cert)) !== cert.publicKeyDigest)
+    throw new Error('Subject-key digest mismatch')
+  return sha256Hex(serializeCert(cert))
+}
+
+export interface SubjectProofEnvelope {
+  format: 'pqc-today-mtc-proof'
+  version: 1
+  leaf: CertLeaf
+  proof: InclusionProof
+}
+export function exportSubjectProof(leaf: CertLeaf, proof: InclusionProof): SubjectProofEnvelope {
+  return {
+    format: 'pqc-today-mtc-proof',
+    version: 1,
+    leaf: {
+      id: leaf.id,
+      subject: leaf.subject,
+      issuer: leaf.issuer,
+      algorithm: leaf.algorithm,
+      publicKeySize: leaf.publicKeySize,
+      notBefore: leaf.notBefore,
+      notAfter: leaf.notAfter,
+      serialNumber: leaf.serialNumber,
+      publicKeySpki: leaf.publicKeySpki,
+      publicKeyDigest: leaf.publicKeyDigest,
+    },
+    proof: structuredClone(proof),
+  }
+}
+export async function verifySubjectProof(
+  input: unknown,
+  original?: InclusionProof
+): Promise<{ valid: boolean; steps: VerificationStep[] }> {
+  const e = structuredClone(input) as SubjectProofEnvelope
+  if (!e || e.format !== 'pqc-today-mtc-proof' || e.version !== 1 || !e.leaf || !e.proof)
+    throw new Error('Unsupported or old proof envelope; rebuild and copy a version1 proof')
+  const p = e.proof,
+    isHash = (v: unknown) => typeof v === 'string' && /^[0-9a-f]{64}$/.test(v)
+  if (
+    !isHash(p.leafHash) ||
+    !isHash(p.root) ||
+    !Number.isSafeInteger(p.leafIndex) ||
+    p.leafIndex < 0 ||
+    !Array.isArray(p.siblings) ||
+    p.siblings.length > 32 ||
+    p.leafIndex >= 2 ** p.siblings.length ||
+    p.proofSizeBytes !== p.siblings.length * 32
+  )
+    throw new Error('Malformed proof path')
+  let index = p.leafIndex
+  for (const sibling of p.siblings) {
+    if (!sibling || !isHash(sibling.hash) || sibling.position !== (index % 2 ? 'left' : 'right'))
+      throw new Error('Malformed proof sibling or direction')
+    index = Math.floor(index / 2)
+  }
+  const leafHash = await hashCertLeaf(e.leaf)
+  if (leafHash !== p.leafHash) return { valid: false, steps: [] }
+  return verifyInclusionProof({ ...p, leafHash }, original)
 }
 
 /**
@@ -120,7 +211,7 @@ export async function buildMerkleTree(
   // "duplicate last leaf until power-of-two" strategy instead.  For leaf
   // counts that are already a power of two (all preset demos use 4 or 8 certs)
   // the two algorithms produce identical roots.
-  const paddedCerts = [...certs]
+  const paddedCerts = certs.map((cert) => ({ ...cert }))
   while (paddedCerts.length & (paddedCerts.length - 1)) {
     paddedCerts.push(paddedCerts[paddedCerts.length - 1])
   }
@@ -128,7 +219,7 @@ export async function buildMerkleTree(
   // Build leaf level
   const leaves: MerkleNode[] = await Promise.all(
     paddedCerts.map(async (cert, i) => ({
-      hash: await sha256Hex(serializeCert(cert)),
+      hash: await hashCertLeaf(cert),
       label: i < certs.length ? `Cert ${i + 1}` : `Pad ${i + 1}`,
       level: 0,
       index: i,

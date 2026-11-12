@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { createHash } from 'node:crypto'
+import { AsnSerializer } from '@peculiar/asn1-schema'
+import { SubjectPublicKeyInfo, AlgorithmIdentifier } from '@peculiar/asn1-x509'
+import type { CertLeaf } from './utils/merkleTree'
 /**
  * The /learn workshop hands the tree built in Step 1 to Steps 2 and 3, the same
  * wiring the Playground's MerkleWorkshopSteps uses. Without it, Step 2 silently
  * fell back to 8 sample certificates and proved a tree the learner never built.
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -63,3 +67,31 @@ describe('MerkleTreeCerts workshop — Step 1 tree reaches Step 2', () => {
     expect(screen.queryByText(/Your tree from Step 1 is loaded/)).not.toBeInTheDocument()
   })
 })
+
+// Controlled public SPKI fixtures for rendering/consistency checks, not generated-key evidence.
+function publicFixture(cert: CertLeaf): CertLeaf {
+  const profiles = [
+    ['ML-DSA-44', '2.16.840.1.101.3.4.3.17'],
+    ['ML-DSA-65', '2.16.840.1.101.3.4.3.18'],
+    ['ML-DSA-87', '2.16.840.1.101.3.4.3.19'],
+    ['SLH-DSA-128s', '2.16.840.1.101.3.4.3.20'],
+  ]
+  const profile = profiles.find((p) => p[0] === cert.algorithm)
+  if (!profile) throw new Error('Unsupported controlled fixture profile')
+  const spki = new SubjectPublicKeyInfo({
+    algorithm: new AlgorithmIdentifier({ algorithm: profile[1] }),
+    subjectPublicKey: new Uint8Array(cert.publicKeySize).fill(cert.id + 1).buffer,
+  })
+  const der = new Uint8Array(AsnSerializer.serialize(spki))
+  return {
+    ...cert,
+    publicKeySpki: Buffer.from(der).toString('base64'),
+    publicKeyDigest: createHash('sha256').update(der).digest('hex'),
+  }
+}
+
+vi.mock('./utils/subjectKeys', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./utils/subjectKeys')>()),
+  bindSubjectKeys: async (certs: CertLeaf[]) =>
+    certs.map((c) => (c.publicKeySpki ? c : publicFixture(c))),
+}))

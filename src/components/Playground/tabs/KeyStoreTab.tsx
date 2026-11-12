@@ -28,6 +28,13 @@ export const KeyStoreTab: React.FC = () => {
 
   return (
     <>
+      {keyStore.some((key) => key.type === 'unclassified') && (
+        <p className="mb-3 rounded border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
+          Older ZIP entries are unclassified text material: their original algorithm, key role and
+          runtime metadata were not recorded. They remain inspectable and downloadable, but are
+          excluded from cryptographic key selectors. Loading an archive does not verify its keys.
+        </p>
+      )}
       {keyStore.some((key) => key.algorithm.startsWith('LMS-')) && (
         <p className="mb-3 rounded border border-status-warning/40 bg-status-warning/10 p-3 text-sm text-status-warning">
           LMS sample backup limitation: saved key state may be stale. Restoring an old state can

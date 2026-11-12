@@ -670,7 +670,10 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               Do not bump this again without naming the specific rows and why
  *               extraction cannot serve them, as every entry above does.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 14
+// 2026-11-11: preserve the three reviewed RATS revision-08 passages already
+// present in the deployed corpus. Their restoration returns the gap to 13;
+// keep that improvement enforced rather than allowing this regression again.
+const MAX_DOC_WITHOUT_PASSAGES = 13
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

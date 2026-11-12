@@ -145,7 +145,15 @@ const STANDARDIZED_FAMILIES = new Set(['ML-KEM', 'ML-DSA', 'SLH-DSA'])
 
 function inferAlgorithmType(name: string, desc: string): CycloneDXAlgorithmType {
   const s = (name + ' ' + desc).toLowerCase()
-  if (s.includes('ml-kem') || s.includes('kyber') || s.includes('kem')) return 'kem'
+  // A comparison collection spans both primitive categories; retain its list.
+  if (/\bKEM\/PKE and signature comparisons\b/i.test(desc)) return 'other'
+  if (
+    s.includes('ml-kem') ||
+    s.includes('kyber') ||
+    s.includes('kem') ||
+    /\bhqc(?:-\d+)?\b/.test(s)
+  )
+    return 'kem'
   if (
     s.includes('ml-dsa') ||
     s.includes('dilithium') ||

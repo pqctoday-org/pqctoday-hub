@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { ImplementationAvailabilityEvidence } from '@/components/common/ImplementationAvailabilityEvidence'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
@@ -643,6 +644,9 @@ function ProtocolCard({
         <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
           <span className="text-[10px] text-muted-foreground">
             {oss} OSS · {com} commercial · {live} live
+            {(p.implementationAvailability?.length ?? 0) > 0 && (
+              <> · {p.implementationAvailability?.length} availability reports</>
+            )}
           </span>
           <div
             className="flex items-center gap-1.5"
@@ -714,6 +718,8 @@ function ProtocolCard({
               ))}
             </CardSection>
           )}
+
+          <ImplementationAvailabilityEvidence entries={p.implementationAvailability ?? []} />
 
           <CardSection label="Try it">
             <PlaygroundCell tools={p.playgrounds} />
@@ -1320,6 +1326,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
             { id: 'no-commercial', label: 'No commercial' },
             { id: 'has-playground', label: 'Has playground' },
             { id: 'has-deployment', label: 'Has live deployment' },
+            { id: 'has-availability', label: 'Has vendor availability evidence' },
             { id: 'no-deployment', label: 'No reviewed deployment evidence' },
           ]}
           selectedId={availabilityFilter}
@@ -1437,7 +1444,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                   Libraries
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Live Deployments
+                  Deployment / Availability Evidence
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Playground
@@ -1641,6 +1648,10 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                           ))}
                         </div>
                       )}
+                      <ImplementationAvailabilityEvidence
+                        entries={p.implementationAvailability ?? []}
+                        compact={isHeatmap}
+                      />
                     </td>
                     <td className="px-3 py-3">
                       <PlaygroundCell tools={p.playgrounds} compact={isHeatmap} />

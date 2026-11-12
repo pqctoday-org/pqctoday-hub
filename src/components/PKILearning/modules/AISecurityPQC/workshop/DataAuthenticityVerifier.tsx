@@ -15,7 +15,7 @@ import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
 import { ObservationEvaluation } from './ObservationEvaluation'
 
-const AI_SECURITY_KAT_SPECS: KatTestSpec[] = [
+const AI_SECURITY_PRIMITIVE_SPECS: KatTestSpec[] = [
   {
     id: 'ai-model-sigver',
     useCase: 'AI model weight authenticity (ML-DSA-65)',
@@ -261,9 +261,9 @@ export const DataAuthenticityVerifier: React.FC = () => {
       <ObservationEvaluation />
 
       <KatValidationPanel
-        specs={AI_SECURITY_KAT_SPECS}
-        label="AI Security PQC Known Answer Tests"
-        authorityNote="NIST AI 100-1 (AI RMF) · FIPS 204 · SP 800-38D"
+        specs={AI_SECURITY_PRIMITIVE_SPECS}
+        label="AI security primitive checks"
+        authorityNote="Functional signing/encryption checks and a reference hash case; per-case evidence is shown separately. FIPS 204 · SP 800-38D · FIPS 180-4; AI RMF provides risk-management context, not protocol test vectors."
       />
     </div>
   )

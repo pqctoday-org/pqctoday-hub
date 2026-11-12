@@ -3,8 +3,9 @@
  * The nine NIST PQC Additional Signatures Round 2 → Round 3 candidates.
  *
  * Sizes shown are NIST Category 1 representative parameter sets where a
- * stable Round 2 spec exists. Cross-checked against
- * src/data/pqc_complete_algorithm_reference_05072026.csv and NIST IR 8528.
+ * stable specification exists; versioned examples are identified in caveats.
+ * FAEST uses its v3.0 FAEST-128f example; other entries retain their existing
+ * reference parameters.
  */
 import type { FamilyId } from './families'
 
@@ -43,15 +44,14 @@ export const CANDIDATES: Candidate[] = [
     family: 'mpcith',
     publicKeyBytes: 32,
     privateKeyBytes: 32,
-    signatureBytes: 6336,
+    signatureBytes: 5170,
     hardness: 'AES (symmetric)',
     whyAdvanced:
       'Security reduces to AES — the most studied symmetric cipher in existence. Most conservative MPCitH foundation.',
     status: 'stable',
     caveats:
-      'Signatures are 5.7–28 KB depending on parameter set; bandwidth cost is the tradeoff for tiny keys.',
-    referenceUrl:
-      'https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes',
+      'Size example: FAEST v3.0 FAEST-128f, with a 32-byte public key, a 32-byte serialized private key (16-byte x plus 16-byte k), and a 5,170-byte signature. Other parameter sets trade signature size against speed; these are versioned values, not universal family bounds.',
+    referenceUrl: 'https://faest.info/faest-spec-v3.0.pdf',
   },
   {
     id: 'mqom',

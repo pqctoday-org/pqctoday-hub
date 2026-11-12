@@ -153,6 +153,12 @@ describe('reviewed threat_class over the real threats CSV', () => {
 })
 
 describe('getShorTier (Threats #4)', () => {
+  it('uses the same updated RSA-4096 resource band for common spellings', () => {
+    for (const cryptoAtRisk of ['RSA-4096', 'RSA4096', 'RSA 4096']) {
+      expect(getShorTier(threat({ cryptoAtRisk }))).toBe('imminent')
+    }
+    expect(getShorTier(threat({ cryptoAtRisk: 'P-521' }))).toBe('near')
+  })
   it('grades ECC-256 as imminent — same urgency as RSA-2048', () => {
     expect(getShorTier(threat({ cryptoAtRisk: 'ECDSA P-256 certificates' }))).toBe('imminent')
     expect(getShorTier(threat({ cryptoAtRisk: 'RSA-2048' }))).toBe('imminent')

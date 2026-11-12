@@ -74,6 +74,13 @@ const EXTENSION_NAMES = new Map([
   ['2.5.29.36', 'policyConstraints'],
   ['2.5.29.31', 'crlDistributionPoints'],
   ['2.5.29.15', 'keyUsage'],
+  ['2.5.29.17', 'subjectAltName'],
+  ['2.5.29.14', 'subjectKeyIdentifier'],
+  ['2.5.29.35', 'authorityKeyIdentifier'],
+  ['1.3.6.1.5.5.7.1.1', 'authorityInfoAccess'],
+  // Use the registered OID with arbitrary-extension ASN.1 syntax, not an
+  // assumed OpenSSL short-name registration.
+  ['1.3.6.1.5.5.7.1.34', '1.3.6.1.5.5.7.1.34'],
 ])
 export function extensionName(attribute: X509Attribute): string {
   return EXTENSION_NAMES.get(attribute.oid) ?? EXTENSION_NAMES.get(attribute.id) ?? attribute.label
@@ -86,8 +93,18 @@ export function serializeProfileExtensions(
 ): string {
   const seen = new Set<string>()
   const seenNames = new Set<string>()
-  return attributes
-    .filter((a) => a.enabled && a.elementType === 'Extension')
+  const selected = attributes.filter((a) => a.enabled && a.elementType === 'Extension')
+  // Do not accidentally provide the payload of another raw @section/ASN1
+  // reference. The three callers also own these outer configuration sections.
+  const reservedSections = new Set(['req', 'dn', 'new_oids', 'v3_ca', 'req_ext', 'extensions'])
+  for (const attribute of selected) {
+    for (const match of attribute.value.matchAll(
+      /(?:@|\b(?:SEQUENCE|SEQ|SET)\s*:)\s*["']?([a-z0-9_.-]+)/gi
+    ))
+      reservedSections.add(match[1])
+  }
+  const sections: string[] = []
+  const lines = selected
     .map((attribute) => {
       const name = extensionName(attribute)
       const identity = attribute.oid || name
@@ -107,13 +124,71 @@ export function serializeProfileExtensions(
       if (name === 'basicConstraints') value = normalizeBasicConstraints(value, purpose)
       else if (name === 'nameConstraints') value = normalizeNameConstraints(value, purpose)
       else if (name === 'policyConstraints') value = normalizePolicyConstraints(value, purpose)
-      else if (/constraints/i.test(name))
+      else if (name === 'subjectAltName')
+        value = value
+          .split(',')
+          .map((token) =>
+            token
+              .trim()
+              .replace(/^dNSName\s*=\s*/i, 'DNS:')
+              .replace(/^URI\s*=\s*/i, 'URI:')
+          )
+          .join(',')
+      else if (name === 'crlDistributionPoints' && /^https?:\/\/[^,\s]+$/i.test(value))
+        value = `URI:${value}`
+      else if (name === 'authorityInfoAccess')
+        value = value.replace(/^(OCSP|caIssuers)\s+(https?:\/\/\S+)$/i, '$1;URI:$2')
+      else if (name === 'subjectKeyIdentifier' && /^hash of SPKI$/i.test(value))
+        // Match the existing root generator's `hash` mechanism; raw wording is
+        // retained in the profile editor, not presented as a parsed hash fact.
+        value = 'hash'
+      else if (name === 'authorityKeyIdentifier' && /^same as SKI$/i.test(value)) {
+        if (purpose !== 'root') fail('The same-as-SKI example is defined for a self-signed root')
+        value = 'keyid:always'
+      } else if (
+        name === 'authorityKeyIdentifier' &&
+        /^keyIdentifier from issuer SKI$/i.test(value)
+      ) {
+        if (purpose === 'csr') fail('An issuer key identifier is not available in a CSR request')
+        value = 'keyid:always'
+      } else if (name === '1.3.6.1.5.5.7.1.34') {
+        if (attribute.critical) fail('RFC 9310 NFTypes MUST NOT be critical')
+        // RFC 9310 section 3 defines IA5String SIZE(1..32), printable ASCII
+        // excluding spaces, unique entries and ascending ASCII order.
+        const types = attribute.value.split(',')
+        if (types.some((type) => type.length < 1 || type.length > 32 || /[^\x21-\x7e]/.test(type)))
+          fail('RFC 9310 NFTypes require 1..32 printable ASCII characters without spaces')
+        if (new Set(types).size !== types.length) fail('RFC 9310 NFTypes must be unique')
+        types.sort()
+        let suffix = 1
+        while (reservedSections.has(`pqctoday_profile_nftypes_${suffix}`)) suffix++
+        const section = `pqctoday_profile_nftypes_${suffix}`
+        reservedSections.add(section)
+        sections.push(
+          `\n[ ${section} ]\n` +
+            types
+              .map((type, index) => {
+                // Quote the entire value so RFC-valid #, $, quotes and backslashes
+                // remain literal IA5String bytes rather than config directives.
+                const literal = type
+                  .replace(/\\/g, '\\\\')
+                  .replace(/"/g, '\\"')
+                  .replace(/\$/g, '\\$')
+                return `nf.${index + 1} = "IA5STRING:${literal}"\n`
+              })
+              .join('')
+        )
+        value = `ASN1:SEQUENCE:${section}`
+      } else if (/constraints/i.test(name))
         fail(
           `Unsupported constraint ${name}; it has not been omitted. Edit the example or explicitly deselect it.`
         )
       return `${name} = ${attribute.critical ? 'critical,' : ''}${value.replace(/\\/g, '\\\\')}\n`
     })
     .join('')
+  // Every caller appends this result after its extension-section header.
+  // Auxiliary sections must follow all extension entries, never interrupt them.
+  return lines + sections.join('')
 }
 
 function normalizeBasicConstraints(value: string, purpose: ProfilePurpose): string {

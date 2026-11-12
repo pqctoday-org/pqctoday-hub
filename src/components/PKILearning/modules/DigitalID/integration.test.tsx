@@ -14,57 +14,78 @@ const renderWithRouter = () =>
 
 // Mock OpenSSL Service to avoid Web Worker initialization in tests
 vi.mock('../../../../services/crypto/OpenSSLService', async () => {
-  // This is a mocked UI-flow test, not a signature-validity test. Use a
-  // well-formed SPKI so the certificate builder can enforce its algorithm
-  // checks; fake PEM payload text no longer meets that input contract.
-  const { generateKeyPairSync } = await import('node:crypto')
+  // This is a controlled-provider UI-flow test, not the WASM worker or an
+  // interoperability/conformance test. Native Node crypto supplies valid
+  // P-256 keys, DER signatures and digests for the actual requested inputs.
+  const { generateKeyPairSync, sign, verify, createHash } = await import('node:crypto')
   const pair = generateKeyPairSync('ec', { namedCurve: 'P-256' })
   const publicPem = pair.publicKey.export({ format: 'pem', type: 'spki' }).toString()
   const privatePem = pair.privateKey.export({ format: 'pem', type: 'pkcs8' }).toString()
   return {
     openSSLService: {
-      execute: vi.fn().mockImplementation(async (command: string) => {
-        // Mock responses based on command
-        if (command.includes('genpkey')) {
-          return {
-            stdout: privatePem,
-            stderr: '',
-            files: [],
-          }
-        }
-        if (command.includes('pkey -in') && command.includes('-pubout')) {
-          return {
-            stdout: publicPem,
-            stderr: '',
-            files: [],
-          }
-        }
-        if (command.includes('dgst')) {
-          const outMatch = command.match(/-out\s+([^\s]+)/)
-          if (outMatch) {
-            const outFile = outMatch[1]
-            return {
-              stdout: '',
-              stderr: '',
-              files: [{ name: outFile, data: new Uint8Array([1, 2, 3, 4]) }],
+      execute: vi
+        .fn()
+        .mockImplementation(
+          async (command: string, files: { name: string; data: Uint8Array }[] = []) => {
+            // Mock responses based on command
+            if (command.includes('genpkey')) {
+              return {
+                stdout: privatePem,
+                stderr: '',
+                files: [],
+              }
             }
-          }
-          if (command.includes('-verify')) {
-            return {
-              stdout: 'Verified OK',
-              stderr: '',
-              files: [],
+            if (command.includes('pkey -in') && command.includes('-pubout')) {
+              return {
+                stdout: publicPem,
+                stderr: '',
+                files: [],
+              }
             }
+            if (command.includes('dgst')) {
+              const args = command.split(/\s+/)
+              const fileBytes = (name: string) => {
+                const file = files.find((f) => f.name === name)
+                if (!file) throw new Error(`Missing controlled-provider input: ${name}`)
+                return Buffer.from(file.data)
+              }
+              const data = fileBytes(args[args.length - 1])
+              const digest = args.includes('-sha384') ? 'sha384' : 'sha256'
+              const outMatch = command.match(/-out\s+([^\s]+)/)
+              if (outMatch) {
+                const outFile = outMatch[1]
+                const signature = sign(digest, data, {
+                  key: fileBytes(args[args.indexOf('-sign') + 1]),
+                  dsaEncoding: 'der',
+                })
+                return {
+                  stdout: '',
+                  stderr: '',
+                  files: [{ name: outFile, data: new Uint8Array(signature) }],
+                }
+              }
+              if (command.includes('-verify')) {
+                const valid = verify(
+                  digest,
+                  data,
+                  fileBytes(args[args.indexOf('-verify') + 1]),
+                  fileBytes(args[args.indexOf('-signature') + 1])
+                )
+                return {
+                  stdout: valid ? 'Verified OK' : 'Verification Failure',
+                  stderr: '',
+                  files: [],
+                }
+              }
+              return {
+                stdout: `${digest}(file)= ${createHash(digest).update(data).digest('hex')}`,
+                stderr: '',
+                files: [],
+              }
+            }
+            return { stdout: 'Mock Output', stderr: '', files: [] }
           }
-          // Fallback for stdout output if needed (old hash style) or error
-          return {
-            stdout: 'SHA2-256(file)= abcd1234',
-            stderr: '',
-            files: [],
-          }
-        }
-        return { stdout: 'Mock Output', stderr: '', files: [] }
-      }),
+        ),
       deleteFile: vi.fn(),
     },
   }

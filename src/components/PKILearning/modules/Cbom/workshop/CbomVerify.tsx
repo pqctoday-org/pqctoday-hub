@@ -7,8 +7,8 @@ import { ALGORITHM_REGISTRY } from '@/data/algorithmProperties'
 
 /**
  * Heuristic name-rule exercise over the shared sample estate, not an OPA/Rego
- * engine or a safety/compliance check. The separate local hybrid-name probe
- * demonstrates the strict rule without adding a fictitious estate record.
+ * engine or a safety/compliance check. Separate declared-component fixtures
+ * exercise the existing strict policy without changing the shared sample estate.
  */
 
 type Verdict = 'rule-accepted' | 'rule-rejected' | 'na' | 'unknown'
@@ -30,6 +30,30 @@ function evaluate(asset: Pick<InventoryAsset, 'currentAlgorithm'>, pureOnly: boo
   if (PQC_FAMILIES.some((f) => algo.includes(f)) && !/RSA|ECDSA|ECDH/i.test(algo))
     return 'rule-accepted'
   return hasAsymmetric ? 'rule-rejected' : 'unknown'
+}
+
+type DeclaredComponent = { family: 'classical' | 'pqc'; algorithm: string }
+const DECLARED_SAMPLES: { name: string; components: DeclaredComponent[] }[] = [
+  {
+    name: 'Declared hybrid',
+    components: [
+      { family: 'classical', algorithm: 'X25519' },
+      { family: 'pqc', algorithm: 'ML-KEM-768' },
+    ],
+  },
+  { name: 'Declared pure PQC', components: [{ family: 'pqc', algorithm: 'ML-KEM-768' }] },
+  { name: 'Declared classical', components: [{ family: 'classical', algorithm: 'X25519' }] },
+  { name: 'Missing declaration', components: [] },
+]
+
+function evaluateDeclared(components: DeclaredComponent[], pureOnly: boolean): Verdict {
+  if (components.length === 0) return 'unknown'
+  const hasClassical = components.some((component) => component.family === 'classical')
+  const hasPqc = components.some((component) => component.family === 'pqc')
+  // Composition is evaluated before pure status. These are declared sample facts,
+  // not a profile, parameter or implementation-validation claim.
+  if (hasClassical && hasPqc) return pureOnly ? 'rule-rejected' : 'rule-accepted'
+  return hasPqc ? 'rule-accepted' : 'rule-rejected'
 }
 
 const STYLE: Record<Verdict, { icon: typeof Shield; cls: string }> = {
@@ -88,7 +112,7 @@ export function CbomVerify() {
               checked={pureOnly}
               onChange={(e) => setPureOnly(e.target.checked)}
             />
-            Strict name rule: reject recognized hybrid labels
+            Strict pure-PQC sample policy: reject hybrid composition
           </label>
         </div>
       </div>
@@ -96,12 +120,23 @@ export function CbomVerify() {
       {ran && (
         <>
           <div className="glass-panel p-4">
-            <p className="text-xs text-muted-foreground mb-3" role="status">
-              Separate illustrative name probe: X25519+ML-KEM-768 —{' '}
-              {evaluate({ currentAlgorithm: 'X25519+ML-KEM-768' }, pureOnly)}. A strict-rule
-              rejection does not mean hybrid cryptography is vulnerable. This is not an estate
-              record or parameter/profile check.
-            </p>
+            <div className="mb-3 space-y-2 text-xs text-muted-foreground">
+              <h4 className="font-semibold text-foreground">Declared-component policy examples</h4>
+              <p>
+                These separate fictional declarations exercise the existing pure-PQC policy: the
+                normal policy accepts pure PQC and classical/PQC hybrids; strict rejects hybrids. A
+                policy rejection does not mean hybrid cryptography is vulnerable. No protocol
+                profile, parameters or implementation are validated here.
+              </p>
+              {DECLARED_SAMPLES.map((sample) => (
+                <p key={sample.name} role="status" aria-label={sample.name}>
+                  {sample.name}:{' '}
+                  {sample.components.map((component) => component.algorithm).join(' + ') || 'none'}
+                  {' — '}
+                  {evaluateDeclared(sample.components, pureOnly)}
+                </p>
+              ))}
+            </div>
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold text-foreground">
                 Name-rule acceptance (classified sample rows)

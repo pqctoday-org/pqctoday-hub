@@ -126,7 +126,7 @@ export const CBOMScanner: React.FC = () => {
       </div>
 
       {/* Summary stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <div className="glass-panel p-3 text-center">
           <div className="text-2xl font-bold text-foreground">{stats.total}</div>
           <div className="text-xs text-muted-foreground">Total Assets</div>
@@ -135,15 +135,22 @@ export const CBOMScanner: React.FC = () => {
           <div className="text-2xl font-bold text-destructive">{stats.vulnerable}</div>
           <div className="text-xs text-muted-foreground">Vulnerable</div>
         </div>
+        <div className="glass-panel p-3 text-center border-warning/20">
+          <div className="text-2xl font-bold text-warning">{stats.weakened}</div>
+          <div className="text-xs text-muted-foreground">Weakened</div>
+        </div>
         <div className="glass-panel p-3 text-center border-success/20">
           <div className="text-2xl font-bold text-success">{stats.safe}</div>
           <div className="text-xs text-muted-foreground">Safe</div>
         </div>
         <div className="glass-panel p-3 text-center border-warning/20">
           <div className="text-2xl font-bold text-warning">
-            {Math.round((stats.vulnerable / stats.total) * 100)}%
+            {Math.round(((stats.vulnerable + stats.weakened) / stats.total) * 100)}%
           </div>
           <div className="text-xs text-muted-foreground">At Risk</div>
+          <div className="mt-1 text-[10px] text-muted-foreground">
+            {stats.vulnerable + stats.weakened} of {stats.total}: vulnerable or weakened
+          </div>
         </div>
       </div>
 
@@ -295,6 +302,16 @@ export const CBOMScanner: React.FC = () => {
       {showJson && (
         <div className="glass-panel p-4">
           <h4 className="text-xs font-bold text-secondary mb-2">CycloneDX 1.7 CBOM Format</h4>
+          <p className="text-xs text-muted-foreground mb-3">
+            In this sample, AES-256 entries use the NIST category 5 key-search reference; SHA-256
+            uses the category 2 collision reference and 128-bit classical collision strength. ECDH
+            has an algorithm identifier, with P-384 recorded separately as its curve. AES-XTS has
+            its own identifier and uses mode “other” because CycloneDX 1.7 does not enumerate XTS.
+            The JSON carries each reference basis; key-search references do not rate mode
+            authentication, nonce/tweak handling, data limits or deployment security. Compare the
+            name, identifier, parameters and security-reference basis when reviewing output from a
+            production inventory tool.
+          </p>
           <pre className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-64 overflow-y-auto font-mono">
             {JSON.stringify(CBOM_CYCLONEDX_SAMPLE, null, 2)}
           </pre>

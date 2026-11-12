@@ -114,12 +114,13 @@ function engineTraceToSim(policy: EditablePolicy, dr: DryRunResult | null): SimR
   for (const step of dr.trace) {
     const ruleId = enabledIds[step.index - 1]
     if (!ruleId) continue
+    // Preserve only an observed effect; source severity cannot turn a native pass into a warning.
     const effect = (
-      ['resolve', 'deny', 'pass', 'skip'].includes(step.effect) ? step.effect : 'pass'
+      ['resolve', 'warn', 'deny', 'pass', 'skip'].includes(step.effect) ? step.effect : 'pass'
     ) as TraceStep['effect']
     byId.set(ruleId, {
       ruleId,
-      matched: effect === 'resolve' || effect === 'deny',
+      matched: effect === 'resolve' || effect === 'warn' || effect === 'deny',
       effect,
       note: step.note,
     })

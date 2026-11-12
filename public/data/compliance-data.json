@@ -255272,8 +255272,8 @@
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000067-i-00_en",
     "type": "EUCC",
     "status": "Active",
-    "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "pqcCoverage": "ML-KEM, ML-DSA, LMS",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5A and ST33K1M5M B04",
     "productCategory": "Smartcards and similar devices",
     "vendor": "STMICROELECTRONICS",
@@ -255310,7 +255310,12 @@
     "euccResponsibleNcca": "Agence nationale de la sécurité des systèmes d’information",
     "euccAssuranceLevel": "High",
     "euccValidityEndDate": "2031-07-16",
-    "euccObservedAt": "2026-10-26T06:06:23+00:00"
+    "euccObservedAt": "2026-10-26T06:06:23+00:00",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/469baab6-1e4b-4f65-86fa-f0359690cc0b_en?filename=EUCC-3090-2026-67-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-11T20:35:47Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-11T20:35:47Z"
   },
   {
     "id": "enisa-eucc-eucc-eucc-3090-2026-000066-i-00",
@@ -255319,8 +255324,8 @@
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000066-i-00_en",
     "type": "EUCC",
     "status": "Active",
-    "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "pqcCoverage": "ML-KEM, ML-DSA, LMS",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5C and ST33K1M5T C03",
     "productCategory": "Smartcards and similar devices",
     "vendor": "STMICROELECTRONICS",
@@ -255357,7 +255362,12 @@
     "euccResponsibleNcca": "Agence nationale de la sécurité des systèmes d’information",
     "euccAssuranceLevel": "High",
     "euccValidityEndDate": "2031-07-16",
-    "euccObservedAt": "2026-10-26T06:06:24+00:00"
+    "euccObservedAt": "2026-10-26T06:06:24+00:00",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/fe36ddbe-a3e3-4c11-94f6-1d82f70316ad_en?filename=EUCC-3090-2026-66-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-11T20:35:47Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-11T20:35:47Z"
   },
   {
     "id": "enisa-eucc-eucc-eucc-3090-2026-000068-i-00",

@@ -67,6 +67,7 @@ import {
 } from '../data/sharedData'
 import { Callout, FictionalBadge } from '../components/sections/CoreSections'
 import { withEducationNoticeMarkdown } from '@/data/educationNotice'
+import { CapstoneWorkedReference } from './CapstoneWorkedReference'
 
 const PATH_IDS: CertPathId[] = ['fips', 'cc', 'eucc-eidas', 'pci']
 const isPath = (v: unknown): v is CertPathId =>
@@ -337,6 +338,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
             )
           })}
         </div>
+        <CapstoneWorkedReference path={s.path} artifact={1} />
       </Artifact>
 
       {/* Artifact 2 */}
@@ -386,6 +388,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
             </tbody>
           </table>
         </div>
+        <CapstoneWorkedReference path={s.path} artifact={2} />
       </Artifact>
 
       {/* Chosen-path artifact */}
@@ -622,6 +625,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
             />
           </div>
         ) : null}
+        <CapstoneWorkedReference path={s.path} artifact={pathArtifact.n} />
       </Artifact>
 
       {/* Artifact 10 */}
@@ -658,6 +662,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
             ))}
           </ul>
         ) : null}
+        <CapstoneWorkedReference path={s.path} artifact={10} />
       </Artifact>
 
       {/* Artifact 12 */}
@@ -724,6 +729,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
             )
           })}
         </div>
+        <CapstoneWorkedReference path={s.path} artifact={12} />
       </Artifact>
 
       {/* Extended (optional) */}
@@ -821,7 +827,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
                 <th className="p-2 font-semibold">Rubric dimension</th>
                 <th className="p-2 text-right font-semibold">Weight</th>
                 <th className="p-2 font-semibold">Evidence</th>
-                <th className="p-2 font-semibold">Evidence present</th>
+                <th className="p-2 font-semibold">Limited checks</th>
               </tr>
             </thead>
             <tbody>
@@ -829,9 +835,9 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
                 const related = checks.filter((c) => r.checkIds.includes(c.id))
                 const present = related.length
                   ? related.every((c) => c.status === 'pass' || c.status === 'warn')
-                    ? 'Yes'
-                    : 'Not yet'
-                  : 'Reviewer'
+                    ? 'Satisfied — compare reasoning'
+                    : 'Not yet complete'
+                  : 'Learner comparison'
                 return (
                   <tr key={r.dimension} className="border-t border-border">
                     <td className="p-2 text-foreground">{r.dimension}</td>

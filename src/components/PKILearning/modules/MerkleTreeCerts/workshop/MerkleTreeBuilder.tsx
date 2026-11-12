@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, useRef, useLayoutEffect } from 'react'
 import { Plus, TreePine, Loader2, Trash2, Info, AlertTriangle } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { buildMerkleTree, type MerkleNode, type CertLeaf } from '../utils/merkleTree'
+import { bindSubjectKeys, generateSubjectKey } from '../utils/subjectKeys'
 import { SAMPLE_CERTS, truncateHash, formatBytes } from '../data/mtcConstants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
@@ -73,13 +74,17 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
   const [speedIdx, setSpeedIdx] = useState(1) // default: Normal
   const abortRef = useRef(false)
   const buildRevision = useRef(0)
-  useEffect(
-    () => () => {
+  const busy = useRef(false)
+  const mounted = useRef(true)
+  const [error, setError] = useState<string | null>(null)
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
       buildRevision.current += 1
       abortRef.current = true
-    },
-    []
-  )
+    }
+  }, [])
 
   // Form state for adding a cert
   const [newSubject, setNewSubject] = useState('')
@@ -95,7 +100,7 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
     if (!newSubject.trim()) return
     const algoInfo = algos.find((a) => a.value === newAlgo) ?? algos[0]
     const cert: CertLeaf = {
-      id: certs.length + 1,
+      id: Math.max(0, ...certs.map((c) => c.id)) + 1,
       subject: newSubject.trim(),
       issuer: 'MTC Authority',
       algorithm: newAlgo,
@@ -110,7 +115,7 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
     abortRef.current = true
     buildRevision.current += 1
     onTreeInvalidated?.()
-  }, [newSubject, newAlgo, certs.length, onTreeInvalidated])
+  }, [newSubject, newAlgo, certs, onTreeInvalidated])
 
   const handleRemoveCert = useCallback(
     (id: number) => {
@@ -118,6 +123,7 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
       setLevels(null)
       setAnimationLevel(null)
       abortRef.current = true
+      buildRevision.current += 1
       onTreeInvalidated?.()
     },
     [onTreeInvalidated]
@@ -133,14 +139,21 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
   }, [onTreeInvalidated])
 
   const handleBuildTree = useCallback(async () => {
-    if (certs.length < 2) return
+    if (certs.length < 2 || busy.current) return
+    busy.current = true
+    setError(null)
+    setLevels(null)
+    onTreeInvalidated?.()
     const revision = ++buildRevision.current
     abortRef.current = true // cancel any running animation
     setIsBuilding(true)
     setAnimationLevel(null)
     try {
-      const result = await buildMerkleTree(certs)
+      const bound = await bindSubjectKeys(certs)
+      if (revision !== buildRevision.current || !mounted.current) return
+      const result = await buildMerkleTree(bound)
       if (revision !== buildRevision.current) return
+      setCerts(bound)
       setLevels(result.levels)
 
       const speed = SPEED_OPTIONS[speedIdx].ms
@@ -154,15 +167,47 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
         }
         if (!abortRef.current) {
           setAnimationLevel(null) // show all
-          onTreeBuilt?.(result.levels, certs)
+          onTreeBuilt?.(result.levels, bound)
         }
       } else {
-        onTreeBuilt?.(result.levels, certs)
+        onTreeBuilt?.(result.levels, bound)
+      }
+    } catch (e) {
+      if (mounted.current && revision === buildRevision.current) {
+        setError(e instanceof Error ? e.message : String(e))
+        setLevels(null)
       }
     } finally {
-      setIsBuilding(false)
+      busy.current = false
+      if (mounted.current) setIsBuilding(false)
     }
-  }, [certs, speedIdx, onTreeBuilt])
+  }, [certs, speedIdx, onTreeBuilt, onTreeInvalidated])
+
+  const handleReplaceKey = useCallback(
+    async (cert: CertLeaf) => {
+      if (busy.current) return
+      busy.current = true
+      const revision = ++buildRevision.current
+      abortRef.current = true
+      setLevels(null)
+      setAnimationLevel(null)
+      setError(null)
+      setIsBuilding(true)
+      onTreeInvalidated?.()
+      try {
+        const replacement = await generateSubjectKey(cert)
+        if (mounted.current && revision === buildRevision.current)
+          setCerts((prev) => prev.map((c) => (c === cert ? replacement : c)))
+      } catch (e) {
+        if (mounted.current && revision === buildRevision.current)
+          setError(e instanceof Error ? e.message : String(e))
+      } finally {
+        busy.current = false
+        if (mounted.current) setIsBuilding(false)
+      }
+    },
+    [onTreeInvalidated]
+  )
 
   const treeHeight = levels ? levels.length - 1 : 0
   const isAnimating = animationLevel !== null
@@ -189,6 +234,13 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
         </p>
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        Each leaf binds the exact generated subject public SPKI through its recomputed SHA-256
+        digest, plus the displayed metadata in an escaped version1 tuple. Subject keys are separate
+        from the CA signing key. This is an internal teaching encoding, not standard MTC wire format
+        or proof of key possession.
+      </p>
+      {error && <p role="alert">Incomplete: {error}. Retry the operation.</p>}
       {/* Certificate list */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <div className="flex items-center justify-between mb-3">
@@ -212,6 +264,22 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
               <div className="min-w-0">
                 <div className="text-xs font-medium text-foreground truncate">{cert.subject}</div>
                 <div className="text-[10px] text-muted-foreground">{cert.algorithm}</div>
+                {cert.publicKeyDigest && (
+                  <div
+                    className="text-[10px] break-all"
+                    aria-label={`Subject key digest for ${cert.subject}`}
+                  >
+                    {cert.publicKeyDigest}
+                  </div>
+                )}
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs whitespace-normal"
+                  disabled={isBuilding}
+                  onClick={() => handleReplaceKey(cert)}
+                >
+                  Replace public key for {cert.subject}
+                </Button>
               </div>
               <Button
                 onClick={() => handleRemoveCert(cert.id)}
@@ -433,10 +501,18 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
             </p>
             <p className="text-[10px] text-muted-foreground">
               Without these <strong className="text-foreground">domain-separation</strong> prefixes,
-              an attacker could present an internal node hash as if it were a valid leaf hash (a
-              &ldquo;second-preimage&rdquo; attack). The 0x00/0x01 byte makes the two hash spaces
-              disjoint, ensuring no internal node can ever equal a leaf hash — a requirement from{' '}
-              <span className="font-mono">RFC 9162 §2.1</span>.
+              a leaf containing the concatenated child hashes would use the same hash input as the
+              internal node. The 0x00/0x01 prefixes distinguish those input encodings. They do not
+              make the possible hash outputs disjoint: security still relies on the hash function.{' '}
+              <a
+                href="https://www.rfc-editor.org/rfc/rfc9162.html#section-2.1.1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                RFC 9162 §2.1.1
+              </a>{' '}
+              requires this domain separation for second-preimage resistance.
             </p>
           </div>
         </div>

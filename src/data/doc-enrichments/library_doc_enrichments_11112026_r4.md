@@ -1,0 +1,174 @@
+---
+generated: 2026-11-11
+collection: library
+documents_processed: 3
+enrichment_method: manual-extraction, human-reviewed corrections to existing entries; every field not listed in a section below is unchanged from the generation the entry was carried forward from
+---
+
+## RFC 8879
+
+- **Reference ID**: RFC 8879
+- **Title**: TLS Certificate Compression
+- **Authors**: IETF TLS
+- **Publication Date**: 2020-11-01
+- **Last Updated**: 2020-11-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Defines a TLS 1.3 extension for compressing certificate chains using algorithms like zlib, brotli, and zstd to reduce handshake overhead.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2020
+- **Applicable Regions / Bodies**: Regions: International
+- **Leaders Contributions Mentioned**: A. Ghedini (Author); V. Vasiliev (Author); Adam Langley (Original design of certificate compression in QUIC); Wan-Teh Chang (Original design of certificate compression in QUIC)
+- **PQC Products Mentioned**: Signal
+- **Protocols Covered**: TLS 1.3
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: TLS 1.3 certificate compression is negotiated and compresses the Certificate message body, not its four-byte handshake header. It preserves the same certificates and trust checks after decompression. The worked chain examples below show different savings for different certificate bytes; compression does not change their algorithms or security strengths.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "This extension is only supported with TLS 1.3"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Retained fictional leaf-plus-intermediate samples, with the root kept local: ML-DSA-65 Certificate handshake 11,100 bytes becomes a 10,913-byte CompressedCertificate (1.68% smaller); RSA-2048/SHA-256 1,642 becomes 1,453 bytes (11.51%). With leaf only, the corresponding reductions are 0.09% and 2.01%. Measurements use zlib 1.2.12 level 6 and the same verified sample bytes: compressed totals include the four-byte handshake header plus two-byte algorithm, three-byte uncompressed length and three-byte compressed-vector length. Record/TCP/IP overhead and latency are excluded. Fresh keys/signatures or another chain/compressor can change these results.
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: TLS 1.3 endpoints must negotiate a matching compression algorithm (zlib in this example), bound decompression and verify the resulting certificate chain normally. The sample checks exact decompression and rejects corrupt or truncated input, inconsistent lengths and output beyond its size cap. Byte framing and local decode tests do not establish endpoint interoperability.
+- **Relevant PQC Today Features**: tls-basics; crypto-agility
+- **Implementation Attack Surface**: Memory usage bounds during decompression; Message size limits to prevent abuse; Length inference attacks via compression
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: constrained IoT devices
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Evaluate transmitted chain composition, actual serialized bytes, negotiated compressor and receiver resource limits together. Repeat measurements on the intended endpoints and test both compressed and uncompressed paths; RFC 8879 does not define this TLS 1.3 extension as a TLS 1.2 compression mechanism.
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## RFC 7250
+
+- **Reference ID**: RFC 7250
+- **Title**: Using Raw Public Keys in Transport Layer Security (TLS) and DTLS
+- **Authors**: IETF TLS
+- **Publication Date**: 2014-06-01
+- **Last Updated**: 2014-06-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Specification of TLS extensions and certificate types for exchanging raw public keys in TLS and DTLS to reduce overhead.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: International
+- **Leaders Contributions Mentioned**: P. Wouters (Editor); H. Tschofenig (Editor); J. Gilmore; S. Weiler; T. Kivinen
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; DTLS
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; DSA; ECDSA
+- **Key Takeaways**: A RawPublicKey Certificate entry carries a DER SubjectPublicKeyInfo instead of an X.509 certificate chain. Authentication still requires proof of private-key possession and a securely established identity-to-key binding. Omitting the chain therefore changes trust handling as well as byte counts; successful key parsing alone does not authenticate the peer.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Combined usage of raw public keys and X.509 certificates
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Using the same fictional leaf keys as the certificate-compression example: ML-DSA-65 SubjectPublicKeyInfo is 1,974 DER bytes, producing a 1,987-byte TLS 1.3 RawPublicKey Certificate handshake versus the 11,100-byte leaf-plus-intermediate X.509 message (82.10% smaller). RSA-2048 uses a 294-byte SPKI and 307-byte handshake versus 1,642 bytes (81.30%). Totals include empty context, list/entry lengths, empty entry extensions and the four-byte handshake header. The root stays local in the X.509 baseline. These selected profiles have different security strengths; neither result is a universal savings rate or a measurement of the whole connection.
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Minimalistic ASN.1 parser; Out-of-band public key binding mechanism
+- **Relevant PQC Today Features**: tls-basics; iot-pqc; pki-workshop
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Ultra-constrained IoT devices; Smart objects; Embedded device firmware provisioning
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Negotiate the RawPublicKey certificate type and configure the intended identity/key association securely, including key rotation and status handling. The sample pin comparison accepts only its configured exact leaf key and identity, rejecting an altered key or unconfigured identity. It does not test trusted pin distribution, private-key possession, negotiation or TLS interoperability. Repeat the byte comparison and authentication checks using the production tool’s actual profile and trust mechanism.
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Lattice-based-Signature-Schemes-for-Bitcoin
+
+- **Reference ID**: Lattice-based-Signature-Schemes-for-Bitcoin
+- **Title**: Lattice-based Signature Schemes for Bitcoin
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: A self-contained review of three lattice-based signature schemes (Dilithium, Falcon, Hawk) as replacements for Bitcoin's discrete logarithm signatures, assessing on-chain footprint, security level, implementation constraints and wallet key derivation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum threat to currently deployed discrete logarithm signatures in Bitcoin (outputs that may remain unspent for decades)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Bitcoin
+- **Infrastructure Layers**: Blockchain / Bitcoin on-chain transactions; Wallet key derivation
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Discrete logarithm signatures
+- **Key Takeaways**: The paper reports compact combined signature plus public-key sizes in some cases below 1.6 KB, not for every lattice signature profile; A primary-specification illustration is Falcon v1.2 padded-512 at 1563 B versus padded-1024 at 3073 B and final FIPS 204 ML-DSA-44 at 3732 B, before Bitcoin transaction overhead and at different security categories; Target security level must account for outputs unspent for decades; Falcon's floating-point signing is an implementation constraint; The paper retains Hawk for research interest after its withdrawal following a key-recovery attack
+- **Security Levels & Parameters**: Version-pinned illustration: Falcon v1.2 Falcon-512 target NIST level I and Falcon-1024 target level V, using compressed-and-zero-padded fixed signatures; FIPS 204 ML-DSA-44 category 2. Falcon selection is not a final FN-DSA standard: NIST's selected-algorithms page checked 2026-11-11 still lists its FIPS as forthcoming.
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "a self-contained review of three lattice-based signature schemes... Dilithium, Falcon, and Hawk" (Abstract)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Version-pinned companion sums (one encoded public key plus one signature): Falcon v1.2 compressed-and-zero-padded Falcon-512 uses 897 + 666 = 1,563 bytes (1.563 decimal kB); padded Falcon-1024 uses 1,793 + 1,280 = 3,073 bytes; final FIPS 204 ML-DSA-44 uses 1,312 + 2,420 = 3,732 bytes. Bitcoin transaction, script and witness overhead is excluded. liboqs 0.16.0 distinguishes these padded signatures from ordinary Falcon profiles: the ordinary Falcon-512 maximum signature buffer is 752 bytes, giving a 1,649-byte maximum sum, while actual returned lengths may differ. A padded length, a variable compressed output and a maximum buffer are different measurements.
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: Floating-point signing support for Falcon; wallet key derivation scheme
+- **Relevant PQC Today Features**: Algorithms; digital-assets; pqc-candidates; Threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Hub-authored source-size check: independently sum each version-pinned public-key and signature encoding, compare with 1600 B (1.6 decimal kB), then change Falcon-512 padded to Falcon-1024 padded or ML-DSA-44 and observe that the threshold no longer holds. Check algorithm version, security category and encoding in production tool documentation, and use actual returned length for variable encodings. This arithmetic establishes encoded key-plus-signature size only, not Bitcoin transaction size, protocol adoption, cryptographic validation or deployed security.
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Falcon floating-point signing constraint; on-chain footprint; wallet key derivation
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: Lattice-based-Signature-Schemes-for-Bitcoin.html (17,288 bytes, 2,636 extracted chars)
+- **Extraction Timestamp**: 2026-11-08T11:16:06
+- **Evidence SHA-256**: 94e9adcda5a3eb4b3cc9e6b83e3027d9ce21cd74e7ca49887f2188088db31783
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 94e9adcda5a3eb4b
+- **Reader**: unified/5 full
+- **Window Chars**: 2636
+
+---

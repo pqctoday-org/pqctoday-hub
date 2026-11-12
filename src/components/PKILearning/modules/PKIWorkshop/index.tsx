@@ -198,7 +198,7 @@ const ALL_PARTS = [
     id: 'acme',
     title: 'Step 7: ACME + PQC',
     description:
-      'Walk through an illustrative ACME certificate-issuance sequence with placeholder key and CSR text.',
+      'Explore simulated ACME transport and generate a real ML-DSA-65 sample CSR with its matching public key.',
     icon: Globe,
   },
   {

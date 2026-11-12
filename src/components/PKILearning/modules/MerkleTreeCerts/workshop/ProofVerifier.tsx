@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useRef, useLayoutEffect } from 'react'
 import {
   ShieldCheck,
   ShieldX,
@@ -14,11 +14,13 @@ import { Button } from '@/components/ui/button'
 import {
   buildMerkleTree,
   getInclusionProof,
-  verifyInclusionProof,
+  verifySubjectProof,
+  exportSubjectProof,
   type MerkleNode,
   type InclusionProof,
   type VerificationStep,
 } from '../utils/merkleTree'
+import { bindSubjectKeys } from '../utils/subjectKeys'
 import { SAMPLE_CERTS, truncateHash } from '../data/mtcConstants'
 import type { CertLeaf } from '../utils/merkleTree'
 
@@ -43,9 +45,10 @@ interface ProofVerifierProps {
 }
 
 export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, sharedCerts }) => {
+  const [boundCerts, setBoundCerts] = useState<CertLeaf[]>(DEFAULT_VERIFIER_CERTS)
   const PROOF_VERIFIER_CERTS = useMemo(
-    () => (sharedCerts && sharedCerts.length > 0 ? sharedCerts : DEFAULT_VERIFIER_CERTS),
-    [sharedCerts]
+    () => (sharedCerts && sharedCerts.length > 0 ? sharedCerts : boundCerts),
+    [sharedCerts, boundCerts]
   )
   const [levels, setLevels] = useState<MerkleNode[][] | null>(sharedLevels ?? null)
   const [selectedLeaf, setSelectedLeaf] = useState<number | null>(null)
@@ -53,6 +56,19 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
   const [editableProof, setEditableProof] = useState<InclusionProof | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [copiedEnvelope, setCopiedEnvelope] = useState('')
+  const [importResult, setImportResult] = useState<boolean | null>(null)
+  const revision = useRef(0),
+    mounted = useRef(true),
+    busy = useRef(false)
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      revision.current += 1
+    }
+  }, [])
 
   // Track which hex positions the user has flipped: "sibIdx-charIdx" → original char
   const [tamperedPositions, setTamperedPositions] = useState<Map<string, string>>(new Map())
@@ -64,13 +80,35 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
     usedOriginal: boolean
   } | null>(null)
   const [currentStep, setCurrentStep] = useState(-1)
+  const [sharedSource, setSharedSource] = useState({ sharedLevels, sharedCerts })
+  if (sharedSource.sharedLevels !== sharedLevels || sharedSource.sharedCerts !== sharedCerts) {
+    setSharedSource({ sharedLevels, sharedCerts })
+    setLevels(sharedLevels ?? null)
+    setSelectedLeaf(null)
+    setOriginalProof(null)
+    setEditableProof(null)
+    setVerificationResult(null)
+    setImportResult(null)
+    setError(null)
+  }
+  useLayoutEffect(() => {
+    revision.current += 1
+  }, [sharedLevels, sharedCerts])
 
   const tamperCount = tamperedPositions.size
 
   const handleSetup = useCallback(async () => {
+    if (busy.current) return
+    busy.current = true
+    const attempt = ++revision.current
     setIsBuilding(true)
+    setError(null)
     try {
-      const result = await buildMerkleTree(PROOF_VERIFIER_CERTS)
+      const bound = await bindSubjectKeys(PROOF_VERIFIER_CERTS)
+      if (!mounted.current || revision.current !== attempt) return
+      const result = await buildMerkleTree(bound)
+      if (!mounted.current || revision.current !== attempt) return
+      setBoundCerts(bound)
       setLevels(result.levels)
       setSelectedLeaf(null)
       setOriginalProof(null)
@@ -78,8 +116,14 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
       setTamperedPositions(new Map())
       setVerificationResult(null)
       setCurrentStep(-1)
+    } catch (e) {
+      if (mounted.current && revision.current === attempt) {
+        setLevels(null)
+        setError(e instanceof Error ? e.message : String(e))
+      }
     } finally {
-      setIsBuilding(false)
+      busy.current = false
+      if (mounted.current) setIsBuilding(false)
     }
   }, [PROOF_VERIFIER_CERTS])
 
@@ -87,6 +131,7 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
     (leafIndex: number) => {
       if (!levels) return
       const p = getInclusionProof(levels, leafIndex)
+      revision.current += 1
       setSelectedLeaf(leafIndex)
       setOriginalProof(p)
       setEditableProof(structuredClone(p))
@@ -123,6 +168,7 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
         newTampered.set(key, currentChar)
       }
 
+      revision.current += 1
       setEditableProof(newProof)
       setTamperedPositions(newTampered)
       setVerificationResult(null)
@@ -152,6 +198,7 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
   /** Reset all tampering back to original */
   const handleResetTampering = useCallback(() => {
     if (!originalProof) return
+    revision.current += 1
     setEditableProof(structuredClone(originalProof))
     setTamperedPositions(new Map())
     setVerificationResult(null)
@@ -161,34 +208,66 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
   const handleVerify = useCallback(
     async (useOriginal: boolean) => {
       const proofToVerify = useOriginal ? originalProof : editableProof
-      if (!proofToVerify) return
+      if (!proofToVerify || selectedLeaf === null || busy.current) return
+      busy.current = true
+      const attempt = ++revision.current
+      const active = () => mounted.current && revision.current === attempt
+      setError(null)
       setIsVerifying(true)
       setVerificationResult(null)
       setCurrentStep(-1)
 
       try {
-        const result = await verifyInclusionProof(
-          proofToVerify,
+        const leaf = PROOF_VERIFIER_CERTS[Math.min(selectedLeaf, PROOF_VERIFIER_CERTS.length - 1)]
+        const result = await verifySubjectProof(
+          exportSubjectProof(leaf, proofToVerify),
           useOriginal ? undefined : (originalProof ?? undefined)
         )
 
         // Animate step-by-step
         for (let i = 0; i < result.steps.length; i++) {
+          if (!active()) return
           setCurrentStep(i)
           await new Promise((resolve) => setTimeout(resolve, 600))
         }
 
+        if (!active()) return
         setVerificationResult({
           valid: result.valid,
           steps: result.steps,
           usedOriginal: useOriginal,
         })
+      } catch (e) {
+        if (active()) {
+          setVerificationResult(null)
+          setError(e instanceof Error ? e.message : String(e))
+        }
       } finally {
-        setIsVerifying(false)
+        busy.current = false
+        if (mounted.current) setIsVerifying(false)
       }
     },
-    [originalProof, editableProof]
+    [originalProof, editableProof, selectedLeaf, PROOF_VERIFIER_CERTS]
   )
+
+  const handleImport = async () => {
+    if (busy.current) return
+    busy.current = true
+    const attempt = ++revision.current
+    setImportResult(null)
+    setError(null)
+    setIsVerifying(true)
+    try {
+      const result = await verifySubjectProof(JSON.parse(copiedEnvelope))
+      if (mounted.current && revision.current === attempt) setImportResult(result.valid)
+    } catch (e) {
+      if (mounted.current && revision.current === attempt)
+        setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      busy.current = false
+      if (mounted.current) setIsVerifying(false)
+    }
+  }
 
   // Determine which proof is being shown in the step display
   const displayProof = useMemo(() => {
@@ -261,6 +340,42 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
         </p>
       </div>
 
+      <div className="space-y-2 rounded border border-border p-3">
+        <label htmlFor="mtc-proof-envelope" className="text-sm">
+          Copied version1 public proof envelope
+        </label>
+        <textarea
+          id="mtc-proof-envelope"
+          className="w-full min-h-24 font-mono text-xs"
+          value={copiedEnvelope}
+          onChange={(e) => {
+            revision.current += 1
+            setCopiedEnvelope(e.target.value)
+            setImportResult(null)
+            setError(null)
+          }}
+        />
+        <Button onClick={handleImport} disabled={isVerifying || !copiedEnvelope.trim()}>
+          Verify copied public proof
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Recomputes the actual public SPKI digest and all bound metadata before the path. The
+          envelope root is supplied by its sender; parsing or a matching path is not CA trust,
+          possession or standard MTC wire verification. No copied proof is mapped onto the separate
+          tree visualization below.
+        </p>
+        {importResult !== null && (
+          <p role="status">
+            Copied public proof:{' '}
+            {importResult
+              ? 'leaf/key hash and path match the supplied root'
+              : 'verification failed'}
+          </p>
+        )}
+      </div>
+      {error && (
+        <p role="alert">Incomplete: {error}. Rebuild old proofs or retry a corrected envelope.</p>
+      )}
       {/* Step 1 continuity tip */}
       {sharedCerts && sharedCerts.length > 0 ? (
         <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-xs text-foreground">

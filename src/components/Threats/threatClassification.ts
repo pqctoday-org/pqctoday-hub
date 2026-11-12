@@ -330,7 +330,8 @@ const FAMILY_TIERS: [RegExp, ShorTier][] = [
  * classical family and a PQC set grades by the classical one.
  */
 export function getShorTier(threat: ThreatItem): ShorTier {
-  const text = threat.cryptoAtRisk.toLowerCase()
+  // Route common RSA-4096 spellings through the same canonical estimate.
+  const text = threat.cryptoAtRisk.toLowerCase().replace(/\brsa[\s-]*4096\b/g, 'rsa-4096')
 
   // Direct token hits against the canonical table.
   let best: ShorTier = 'unknown'

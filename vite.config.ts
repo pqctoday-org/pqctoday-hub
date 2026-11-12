@@ -254,8 +254,8 @@ function coiGuardHtml(): Plugin {
 export default defineConfig({
   plugins: [
     bundledPackagesPlugin(process.cwd()),
-    // Production ships only the newest dated library and threats enrichment file (each repeats
-    // every earlier entry); dev and Vitest keep them all. See scripts/lib/newestEnrichmentOnly.ts.
+    // Production and dev ship the newest covering enrichment snapshot plus later corrections.
+    // Vitest keeps all generations. See scripts/lib/newestEnrichmentOnly.ts.
     newestEnrichmentOnlyPlugin(path.resolve(__dirname, 'src/data/doc-enrichments')),
     // Open-source licence notices served at /licenses/ (fails the build on a missing licence).
     licensesPlugin(process.cwd(), {

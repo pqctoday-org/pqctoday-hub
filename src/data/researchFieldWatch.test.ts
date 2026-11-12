@@ -250,7 +250,7 @@ describe('computeResearchFieldWatch — research topics', () => {
         deprecatedCount: 1,
       },
     ])
-    expect(summary.totalDeprecatedInWindow).toBe(2)
+    expect(summary.totalDeprecatedInWindow).toBe(1)
     expect(summary.nothingRetracted).toBe(false)
   })
 

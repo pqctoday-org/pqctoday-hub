@@ -8,8 +8,9 @@
  * the page says both plainly: the owner has reviewed the module, and no accredited laboratory or
  * certification body has. Which sign-off sentence shows follows the module's `lastReviewed`
  * (content.ts): a module with a review date reads "signed off on <date>"; a module whose facts
- * were corrected afterwards has no date, and reads "corrected since the sign-off, awaiting
- * re-sign-off", so the notice cannot outlive the sign-off it describes.
+ * were corrected afterwards retains that historical date while qualifying later changes.
+ * A module without a retained review date reads "corrected since the sign-off, awaiting
+ * re-sign-off". Editing never creates a new owner or laboratory review.
  */
 
 /** What a module says when facts were corrected after the owner's last sign-off. */
@@ -46,11 +47,24 @@ export function longDate(iso: string): string {
   return month ? `${Number(m[3])} ${month} ${m[1]}` : iso
 }
 
+function isIsoDate(value: string | undefined): value is string {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+  const timestamp = Date.parse(`${value}T00:00:00Z`)
+  return Number.isFinite(timestamp) && new Date(timestamp).toISOString().slice(0, 10) === value
+}
+
 /**
  * The review-status sentences for a module, given its `lastReviewed` (content.ts), or
- * undefined when the facts were corrected after the sign-off and it has been removed.
+ * undefined when no review date is retained. A later edit qualifies the historical review;
+ * editing does not manufacture a new review or erase its record.
  */
-export function ownerReviewStatusText(lastReviewed: string | undefined): string {
+export function ownerReviewStatusText(
+  lastReviewed: string | undefined,
+  lastEdited?: string
+): string {
+  if (isIsoDate(lastReviewed) && isIsoDate(lastEdited) && lastEdited > lastReviewed) {
+    return `Owner review recorded on ${longDate(lastReviewed)}. Content updated ${longDate(lastEdited)} since that review; these changes are not covered by that recorded review. ${NOT_LAB_REVIEWED}`
+  }
   const sentence = lastReviewed
     ? `Reviewed and signed off by the PQC Today owner on ${longDate(lastReviewed)}.`
     : `${AWAITING_RESIGNOFF_NOTICE}.`

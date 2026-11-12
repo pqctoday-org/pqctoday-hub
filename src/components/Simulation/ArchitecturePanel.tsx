@@ -7,9 +7,8 @@
  * Migrating a link needs BOTH gates (WS-04): the player must have completed
  * enough P5 activities to UNLOCK a link (effort) AND pick a sound strategy
  * hybrid/pure (judgment). Decisions persist in the store and drive the grounded
- * readiness KPI. A choice that the jurisdiction marks non-compliant still
- * migrates (it is quantum-safe) but lowers a SEPARATE compliance meter — it no
- * longer blocks the migration.
+ * readiness KPI. Country-level strategy alignment is evaluated separately;
+ * neither a planning choice nor that comparison verifies deployed protection.
  */
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -31,6 +30,7 @@ import { softwareData } from '@/data/migrateData'
 import { getCatalogStatus } from '@/data/catalogStatus'
 import { MermaidDiagram } from './MermaidDiagram'
 import { archCapacity } from '@/simulation/archCapacity'
+import { isDeclaredPlanningEdge, isPlanningChoice } from '@/simulation/edgePlanningProgress'
 
 const STATUS_CHIP: Record<PqcStatus, string> = {
   available: 'bg-status-success/15 text-status-success',
@@ -92,18 +92,23 @@ export function ArchitecturePanel({
 
   const vulnerable = arch.edges.filter((e) => e.vulnerable)
   const migratable = vulnerable.filter((e) => edgeState(arch, e) === 'migratable')
-  const isMigrated = (e: ProtocolEdge) => Boolean(edgeDecisions[edgeKey(e)])
+  const hasSavedChoice = (e: ProtocolEdge) =>
+    Object.prototype.hasOwnProperty.call(edgeDecisions, edgeKey(e))
+  const isSelected = (e: ProtocolEdge) => isPlanningChoice(edgeDecisions[edgeKey(e)])
   // Effort gate: completed P5 activities unlock the right to migrate this many
   // links — one shared derivation (archCapacity) with the Decide card's note.
-  const { done, unlocked, capacity } = archCapacity(size, p5Frac, edgeDecisions)
+  const { done, credited, unlocked, capacity, planning, overCapacity } = archCapacity(
+    size,
+    p5Frac,
+    edgeDecisions
+  )
+  const creditedKeys = new Set(planning.creditedKeys)
   const stepTarget = target != null ? Math.min(target, migratable.length) : null
   const shortOfTarget = stepTarget != null && done < stepTarget && unlocked < stepTarget
-  const readinessPct = vulnerable.length
-    ? Math.round((Math.min(done, unlocked) / vulnerable.length) * 100)
-    : 100
+  const readinessPct = vulnerable.length ? Math.round((credited / vulnerable.length) * 100) : 100
 
   const migrate = (e: ProtocolEdge) => {
-    if (capacity <= 0 || isMigrated(e)) return
+    if (capacity <= 0 || hasSavedChoice(e)) return
     setEdgeDecision(edgeKey(e), choice)
   }
   const migrateAll = () => {
@@ -112,7 +117,7 @@ export function ArchitecturePanel({
     let budget = capacity
     for (const e of migratable) {
       if (budget <= 0) break
-      if (isMigrated(e)) continue
+      if (hasSavedChoice(e)) continue
       setEdgeDecision(edgeKey(e), choice)
       budget--
     }
@@ -130,9 +135,26 @@ export function ArchitecturePanel({
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-foreground">Your architecture ({size})</h2>
         <span className="text-xs text-muted-foreground">
-          {done}/{vulnerable.length} links migrated · {unlocked}/{migratable.length} unlocked via P5
+          {credited}/{vulnerable.length} links planned · {done} eligible choices · {unlocked}/
+          {migratable.length} unlocked via P5
         </span>
       </div>
+
+      <p className="mb-3 text-xs text-muted-foreground">
+        Fictional case: selecting a strategy for a named eligible link covers its declared
+        confidentiality and authenticity purposes in this planning model. It does not execute
+        cryptographic checks.
+      </p>
+      {overCapacity && (
+        <p
+          role="status"
+          className="mb-3 text-xs text-status-warning"
+          data-testid="arch-overcapacity"
+        >
+          Selected links exceed available effort. No selected link receives migration credit. Undo
+          links until the named set fits, or complete other P5 activities.
+        </p>
+      )}
 
       <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
@@ -183,9 +205,9 @@ export function ArchitecturePanel({
       {view === 'diagram' ? (
         <div>
           <MermaidDiagram
-            source={mermaidFromArchitecture(arch, edgeDecisions, themeState)}
+            source={mermaidFromArchitecture(arch, creditedKeys, themeState)}
             id={size}
-            summary={`${size} architecture: ${done} of ${vulnerable.length} vulnerable links migrated`}
+            summary={`${size} architecture: ${credited} of ${vulnerable.length} links in the credited sample plan`}
           />
           <p className="mt-2 text-xs text-muted-foreground">
             Nodes — green: available · yellow: partial · blue: roadmap · red: none · grey: not in
@@ -279,11 +301,17 @@ export function ArchitecturePanel({
               {arch.edges.map((e) => {
                 const st = edgeState(arch, e)
                 const migratedChoice = edgeDecisions[edgeKey(e)]
+                const declaration = isDeclaredPlanningEdge(e)
+                  ? `${e.criticality} · ${e.requiredPurposes.join(' + ')}`
+                  : 'Case purpose unassessed'
                 const label = (
-                  <span className="min-w-0 truncate text-foreground">
-                    {byId.get(e.from)?.label}{' '}
-                    <span className="text-muted-foreground">—{e.protocol}→</span>{' '}
-                    {byId.get(e.to)?.label}
+                  <span className="min-w-0 text-foreground">
+                    <span className="block truncate">
+                      {byId.get(e.from)?.label}{' '}
+                      <span className="text-muted-foreground">—{e.protocol}→</span>{' '}
+                      {byId.get(e.to)?.label}
+                    </span>
+                    <span className="block text-[10px] text-muted-foreground">{declaration}</span>
                   </span>
                 )
                 if (st === 'migratable') {
@@ -293,10 +321,13 @@ export function ArchitecturePanel({
                       className="flex items-center justify-between gap-2 text-xs"
                     >
                       {label}
-                      {migratedChoice ? (
+                      {hasSavedChoice(e) ? (
                         <span className="flex shrink-0 items-center gap-1">
-                          <span className="rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
-                            ✓ {migratedChoice}
+                          <span
+                            className={`rounded px-1.5 py-0.5 font-semibold ${creditedKeys.has(edgeKey(e)) ? 'bg-status-success/15 text-status-success' : 'bg-status-warning/15 text-status-warning'}`}
+                          >
+                            {creditedKeys.has(edgeKey(e)) ? '✓' : 'Saved'}{' '}
+                            {isSelected(e) ? String(migratedChoice) : 'invalid choice'}
                           </span>
                           {/* 09-28 nav remediation (WP6.5): a migration decision
                               could never be taken back (the store already
@@ -329,15 +360,47 @@ export function ArchitecturePanel({
                 return (
                   <li key={edgeKey(e)} className="flex items-center justify-between gap-2 text-xs">
                     {label}
-                    {badge && (
-                      <span className={`shrink-0 rounded px-1.5 py-0.5 font-semibold ${badge.cls}`}>
-                        {badge.label}
-                      </span>
-                    )}
+                    <span className="flex shrink-0 items-center gap-1">
+                      {badge && (
+                        <span className={`rounded px-1.5 py-0.5 font-semibold ${badge.cls}`}>
+                          {badge.label}
+                        </span>
+                      )}
+                      {hasSavedChoice(e) && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => setEdgeDecision(edgeKey(e), null)}
+                          aria-label={`Undo migration of ${byId.get(e.from)?.label ?? e.from} to ${byId.get(e.to)?.label ?? e.to}`}
+                          className="h-auto rounded px-1.5 py-0.5 text-xs text-muted-foreground"
+                        >
+                          Undo saved choice
+                        </Button>
+                      )}
+                    </span>
                   </li>
                 )
               })}
             </ul>
+            {planning.unknownKeys.length > 0 && (
+              <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+                <p>Saved choices outside this case receive no credit. Keep them or remove them:</p>
+                {planning.unknownKeys.map((key) => (
+                  <div key={key} className="flex flex-wrap items-center gap-2">
+                    <span className="break-all">{key}</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setEdgeDecision(key, null)}
+                      aria-label={`Remove saved choice for unknown link ${key}`}
+                      className="h-auto px-1.5 py-0.5 text-xs"
+                    >
+                      Remove saved choice
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <p className="mt-2 text-xs text-muted-foreground">

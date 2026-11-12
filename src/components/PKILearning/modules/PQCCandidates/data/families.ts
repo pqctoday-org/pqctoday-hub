@@ -52,7 +52,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     whyKept:
       'Three of the six second-round MPC-in-the-Head candidates were kept (NIST IR 8610): FAEST (AES; NIST found most confidence in its security), MQOM (MQ problem; strongest performance numbers) and SDitH (syndrome decoding for random linear codes; algorithmic diversity).',
     openConcerns:
-      'Signatures are kilobytes (about 3.5 to 6.3 KB at the sizes shown in the comparator). NIST asks for further analysis of these complex designs and their proofs: for MQOM, the ROM and QROM security proofs might not be considered mature or complete, and SDitH typically costs more computation than its peers.',
+      'Signatures are kilobytes (3,540 to 5,170 bytes at the sizes shown in the comparator). NIST asks for further analysis of these complex designs and their proofs: for MQOM, the ROM and QROM security proofs might not be considered mature or complete, and SDitH typically costs more computation than its peers.',
     candidateIds: ['faest', 'mqom', 'sdith'],
     colorClass: 'text-status-success',
     borderClass: 'border-status-success/40',

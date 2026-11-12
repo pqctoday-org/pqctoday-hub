@@ -95,7 +95,8 @@ export function ResearcherFieldWatchCard() {
   const visibleFields = countedRows.slice(0, MAX_VISIBLE_FIELDS)
   const hasFollowedFields = followedFields.length > 0 || followedTopics.length > 0
   const hasCountedSelection =
-    followedFields.length > 0 || (topicsTagged && followedTopics.length > 0)
+    corpus.windowStartMs !== null &&
+    (followedFields.length > 0 || (topicsTagged && followedTopics.length > 0))
   const topicsPending = !topicsTagged && followedTopics.length > 0
 
   function syncSelection(nextIds: string[], current: string[], toggle: (id: string) => void) {
@@ -129,6 +130,12 @@ export function ResearcherFieldWatchCard() {
         </p>
       )}
 
+      {hasFollowedFields && corpus.windowStartMs === null && (
+        <p className="text-sm text-muted-foreground" data-testid="field-watch-window-unavailable">
+          The catalogue reporting window is unavailable. Counts are not assessed.
+        </p>
+      )}
+
       {hasCountedSelection ? (
         <dl className="flex flex-col gap-2">
           {visibleFields.map((field) => (
@@ -149,14 +156,14 @@ export function ResearcherFieldWatchCard() {
               which promised a corpus-wide total the value never was. */}
           <div className="flex items-baseline justify-between gap-3 text-sm">
             <dt className="text-muted-foreground">
-              Category matches for Hub catalogue rows marked deprecated
+              Unique Hub catalogue records marked deprecated
             </dt>
             <dd
               className="text-right font-semibold text-foreground"
               data-testid="corpus-deprecated"
             >
-              {summary.totalDeprecatedInWindow} category{' '}
-              {summary.totalDeprecatedInWindow === 1 ? 'match' : 'matches'}
+              {summary.totalDeprecatedInWindow}{' '}
+              {summary.totalDeprecatedInWindow === 1 ? 'record' : 'records'}
             </dd>
           </div>
         </dl>
@@ -168,15 +175,14 @@ export function ResearcherFieldWatchCard() {
 
       {hasCountedSelection && (
         <p className="mt-1 text-base font-bold text-foreground" data-testid="field-watch-punchline">
-          Recorded category matches for Hub catalogue rows marked deprecated:{' '}
-          {summary.totalDeprecatedInWindow}.
+          Unique Hub catalogue records marked deprecated: {summary.totalDeprecatedInWindow}.
         </p>
       )}
 
       {hasCountedSelection && (
         <p className="text-xs leading-relaxed text-muted-foreground">
-          A catalogue row can count in more than one selected algorithm family or research topic.
-          This total counts those matches, not unique documents.
+          Each reference ID counts once in this total, even when it appears in more than one
+          selected algorithm family or research topic. Category rows retain their own counts.
         </p>
       )}
 

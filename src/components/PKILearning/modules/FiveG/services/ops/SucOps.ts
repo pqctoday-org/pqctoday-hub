@@ -2,6 +2,7 @@
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { bytesToHex } from '@/services/crypto/FileUtils'
 import type { FiveGService } from '../FiveGService'
+import { normalizeProfileBPoint } from './suciPublicPoint'
 
 export async function encryptMSIN(ctx: FiveGService) {
   if (!ctx.state.kEncHex)
@@ -129,14 +130,9 @@ export async function visualizeStructure(ctx: FiveGService) {
   //            (ECDH uses uncompressed internally; SUCI encoding uses compressed per TS 33.501 Annex C.4)
   // Raw ephemeral key bytes — strip ASN.1 SPKI wrapper (12B for X25519, 26B for P-256).
   // For Profile C the ephSpki is already the raw 32-byte EC point (synced from HSM extractECPoint).
-  const uncompressedBHexViz =
-    ctx.state.profile === 'B' && ephSpki.length === 182 ? ephSpki.substring(52) : null
-  const compressedBHexViz = (() => {
-    if (!uncompressedBHexViz || uncompressedBHexViz.length !== 130) return uncompressedBHexViz
-    const x = uncompressedBHexViz.substring(2, 66)
-    const yLastByte = parseInt(uncompressedBHexViz.substring(128, 130), 16)
-    return (yLastByte % 2 === 0 ? '02' : '03') + x
-  })()
+  const profileBPoint = ctx.state.profile === 'B' ? normalizeProfileBPoint(ephSpki) : null
+  const uncompressedBHexViz = profileBPoint?.uncompressedHex ?? null
+  const compressedBHexViz = profileBPoint?.compressedHex ?? null
 
   const rawEphPubHex =
     ctx.state.profile === 'A' && ephSpki.length === 88
@@ -225,17 +221,9 @@ export async function assembleSUCI(ctx: FiveGService, profile: 'A' | 'B' | 'C') 
   //            ECDH uses the uncompressed key internally; only the SUCI encoding uses compressed.
   // Raw uncompressed = strip 26-byte SPKI header from 91-byte SPKI → 65-byte (04 || x || y)
   // Compressed = 02/03 prefix based on y parity + x-coord (32 bytes)
-  const uncompressedBHex =
-    profile === 'B' && ephSpki.length === 182
-      ? ephSpki.substring(52) // 65-byte uncompressed P-256 point (incl. 04 prefix)
-      : null
-  const compressedBHex = (() => {
-    if (!uncompressedBHex || uncompressedBHex.length !== 130) return uncompressedBHex
-    const x = uncompressedBHex.substring(2, 66) // skip 04 prefix → 32-byte x
-    const yLastByte = parseInt(uncompressedBHex.substring(128, 130), 16)
-    const prefix = yLastByte % 2 === 0 ? '02' : '03'
-    return prefix + x
-  })()
+  const profileBPoint = profile === 'B' ? normalizeProfileBPoint(ephSpki) : null
+  const uncompressedBHex = profileBPoint?.uncompressedHex ?? null
+  const compressedBHex = profileBPoint?.compressedHex ?? null
 
   const rawEphPubHex =
     profile === 'A' && ephSpki.length === 88

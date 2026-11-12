@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import type { WalletInstance } from '../../types'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Shield, Key, FileText, Plus, Smartphone } from 'lucide-react'
+import {
+  inspectStoredCredential,
+  inspectedJson,
+  recordedIsoTime,
+  type RecordedTime,
+} from '../../utils/credentialInspection'
 
 interface WalletComponentProps {
   wallet: WalletInstance
@@ -13,6 +19,18 @@ interface WalletComponentProps {
 
 export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddCredential }) => {
   const [inspectId, setInspectId] = useState<string | null>(null)
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+  const inspections = useMemo(
+    () =>
+      new Map(
+        wallet.credentials.map((credential) => [credential.id, inspectStoredCredential(credential)])
+      ),
+    [wallet.credentials]
+  )
 
   return (
     <div className="space-y-6">
@@ -83,89 +101,108 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {wallet.credentials.map((cred) => (
-                <Card
-                  key={cred.id}
-                  className="relative overflow-hidden hover:shadow-lg transition-shadow bg-gradient-to-br from-background to-muted/50"
-                >
-                  <div className="absolute top-0 right-0 p-2 opacity-10">
-                    <FileText className="w-24 h-24" />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      {cred.type.includes('PersonIdentificationData') || cred.format === 'mso_mdoc'
-                        ? '🇪🇺'
-                        : '🎓'}
-                      {cred.type.includes('PersonIdentificationData')
-                        ? 'Person Identification Data'
-                        : 'University Diploma'}
-                    </CardTitle>
-                    <CardDescription>{cred.issuer}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-sm space-y-1">
-                      <p>
-                        <span className="font-semibold">Declared sample format:</span> {cred.format}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Issued:</span>{' '}
-                        {new Date(cred.issuanceDate).toLocaleDateString()}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Illustrative date calculation:</span>{' '}
-                        {(() => {
-                          const issued = new Date(cred.issuanceDate)
-                          const validityDays =
-                            (cred as { validityDays?: number }).validityDays ?? 365
-                          const expiry = new Date(issued.getTime() + validityDays * 86_400_000)
-                          const status = Date.now() > expiry.getTime() ? 'Expired' : 'Valid'
-                          return (
-                            <span
-                              className={
-                                status === 'Valid'
-                                  ? 'text-status-success font-semibold'
-                                  : 'text-status-error font-bold'
-                              }
-                            >
-                              {status === 'Valid'
-                                ? 'Sample timer not elapsed'
-                                : 'Sample timer elapsed'}
-                            </span>
-                          )
-                        })()}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        This timer uses the issuance date plus a sample duration (365 days by
-                        default). It does not check the credential expiration field, signature,
-                        issuer trust or status. It is not a credential validity result.
-                      </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="mt-4 text-xs h-8 w-full"
-                        onClick={() => setInspectId(inspectId === cred.id ? null : cred.id)}
-                      >
-                        {inspectId === cred.id ? 'Hide stored sample' : 'Inspect stored sample'}
-                      </Button>
-
-                      {inspectId === cred.id && (
-                        <div className="mt-2 text-left">
-                          <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">
-                            Stored sample representation — encoding not checked
-                          </p>
-                          <p className="mb-2 text-xs text-muted-foreground">
-                            This view prints the stored raw field, which may contain a JSON wrapper.
-                            The declared format does not establish wire-format compatibility.
-                          </p>
-                          <div className="p-3 bg-card border border-status-success/20 text-status-success font-mono text-[10px] rounded overflow-x-auto break-all max-h-48 shadow-inner">
-                            {cred.raw}
-                          </div>
-                        </div>
-                      )}
+              {wallet.credentials.map((cred) => {
+                const inspection = inspections.get(cred.id)!
+                return (
+                  <Card
+                    key={cred.id}
+                    className="relative overflow-hidden hover:shadow-lg transition-shadow bg-gradient-to-br from-background to-muted/50"
+                  >
+                    <div className="absolute top-0 right-0 p-2 opacity-10">
+                      <FileText className="w-24 h-24" />
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        {cred.type.includes('PersonIdentificationData') ||
+                        cred.format === 'mso_mdoc'
+                          ? '🇪🇺'
+                          : '🎓'}
+                        {cred.type.includes('PersonIdentificationData')
+                          ? 'Person Identification Data'
+                          : 'University Diploma'}
+                      </CardTitle>
+                      <CardDescription>{cred.issuer}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-sm space-y-1">
+                        <p>
+                          <span className="font-semibold">Declared sample format:</span>{' '}
+                          {cred.format}
+                        </p>
+                        <dl className="space-y-2" aria-label="Recorded time fields">
+                          {[
+                            recordedIsoTime('Stored issuanceDate', cred.issuanceDate),
+                            recordedIsoTime('Stored expirationDate', cred.expirationDate, true),
+                            ...inspection.times,
+                          ].map((time) => (
+                            <TimeField key={time.label} time={time} now={now} />
+                          ))}
+                        </dl>
+                        <p className="text-xs text-muted-foreground">
+                          These are recorded fields and comparisons with this device's clock, not a
+                          credential validity result. Signatures, disclosure digests, issuer trust
+                          and status are not checked by this inspector. Stored metadata and encoded
+                          fields are shown separately; neither is replaced with an assumed duration.
+                        </p>
+                        {!inspection.ok && (
+                          <p className="text-xs text-muted-foreground">
+                            Encoded time fields are unavailable: {inspection.error}
+                          </p>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-4 text-xs h-8 w-full"
+                          onClick={() => setInspectId(inspectId === cred.id ? null : cred.id)}
+                        >
+                          {inspectId === cred.id ? 'Hide inspection' : 'Inspect encoded sample'}
+                        </Button>
+
+                        {inspectId === cred.id && (
+                          <div className="mt-2 text-left">
+                            {inspection.ok ? (
+                              <>
+                                <p className="mb-2 text-xs text-muted-foreground">
+                                  Encoded sample structure parsed. This is not signature
+                                  verification or full profile/conformance validation.
+                                </p>
+                                <details className="mb-2" open>
+                                  <summary className="text-xs font-medium">
+                                    {inspection.encodedLabel}
+                                  </summary>
+                                  <pre className="p-3 bg-card border border-border font-mono text-[10px] rounded overflow-auto whitespace-pre-wrap break-all max-h-48">
+                                    {inspection.encoded}
+                                  </pre>
+                                </details>
+                                <details className="mb-2">
+                                  <summary className="text-xs font-medium">
+                                    Decoded encoded fields — not verified
+                                  </summary>
+                                  <pre className="p-3 bg-card border border-border font-mono text-[10px] rounded overflow-auto whitespace-pre-wrap break-all max-h-48">
+                                    {inspectedJson(inspection.decoded)}
+                                  </pre>
+                                </details>
+                              </>
+                            ) : (
+                              <p role="alert" className="mb-2 text-xs text-destructive">
+                                Inspection incomplete: {inspection.error}
+                              </p>
+                            )}
+                            <details>
+                              <summary className="text-xs font-medium">
+                                Stored wrapper / raw field — separate representation
+                              </summary>
+                              <pre className="p-3 bg-card border border-border font-mono text-[10px] rounded overflow-auto whitespace-pre-wrap break-all max-h-48">
+                                {cred.raw ?? 'Not recorded'}
+                              </pre>
+                            </details>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           )}
         </TabsContent>
@@ -234,6 +271,43 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
+  )
+}
+
+function TimeField({ time, now }: { time: RecordedTime; now: number }) {
+  return (
+    <div className="text-xs break-words">
+      <dt className="font-semibold">{time.label}</dt>
+      <dd>
+        <code>
+          {time.raw === undefined
+            ? 'Not recorded'
+            : typeof time.raw === 'string'
+              ? time.raw || '(empty)'
+              : inspectedJson(time.raw)}
+        </code>
+        {time.issue ? (
+          <span className="block text-muted-foreground">Unknown — {time.issue}</span>
+        ) : (
+          <>
+            <span className="block text-muted-foreground">UTC: {time.iso}</span>
+            {time.expiration && (
+              <span
+                className={
+                  time.milliseconds! <= now
+                    ? 'block text-status-warning font-medium'
+                    : 'block text-muted-foreground'
+                }
+              >
+                {time.milliseconds! <= now
+                  ? 'Expiration date has passed'
+                  : 'Expiration date is ahead of this device’s clock'}
+              </span>
+            )}
+          </>
+        )}
+      </dd>
     </div>
   )
 }

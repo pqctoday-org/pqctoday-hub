@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'homomorphic-encryption',
-  contentVersion: 13,
+  contentVersion: 14,
   lm_id: 'LM-076',
   title: 'Homomorphic Encryption (FHE)',
   description:

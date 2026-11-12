@@ -175,6 +175,8 @@ export const CuriousSummaryBanner = ({
   useOverlayEscape(lightboxOpen, () => setLightboxOpen(false), { rootRef: lightboxRef })
 
   const idealImgSrc = `/images/infographics/pqcstd_${moduleId}.png`
+  // Changed visuals need a new URL because image-cache is CacheFirst.
+  const imageRevision = moduleId === 'ai-security-pqc' ? '65181ab040311ff4' : 'pqcstd_v4'
 
   const [imgSrc, setImgSrc] = useState(idealImgSrc)
   const [imgFailed, setImgFailed] = useState(false)
@@ -258,7 +260,7 @@ export const CuriousSummaryBanner = ({
                   aria-label="View infographic full size"
                 >
                   <img
-                    src={`${imgSrc}?v=pqcstd_v4`}
+                    src={`${imgSrc}?v=${imageRevision}`}
                     alt={altText}
                     loading="lazy"
                     onError={handleImgError}
@@ -311,7 +313,7 @@ export const CuriousSummaryBanner = ({
                   aria-label="View infographic full size"
                 >
                   <img
-                    src={`${imgSrc}?v=pqcstd_v4`}
+                    src={`${imgSrc}?v=${imageRevision}`}
                     alt={altText}
                     loading="lazy"
                     onError={handleImgError}
@@ -371,7 +373,7 @@ export const CuriousSummaryBanner = ({
                 tabIndex={-1}
               />
               <img
-                src={`${imgSrc}?v=pqcstd_v4`}
+                src={`${imgSrc}?v=${imageRevision}`}
                 alt={altText}
                 className="relative z-10 max-w-full max-h-[90vh] object-contain rounded-md select-none"
                 style={{ touchAction: 'pinch-zoom' }}

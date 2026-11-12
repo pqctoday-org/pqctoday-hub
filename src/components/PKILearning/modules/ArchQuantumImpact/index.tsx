@@ -17,6 +17,7 @@ import { ARCH_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
+import { rolePracticeResources } from './content'
 
 const PARTS: WorkshopPart[] = [
   {
@@ -186,7 +187,13 @@ export const ArchQuantumImpactModule: FC = () => (
     renderWorkshopStep={(index, configKey) => {
       switch (index) {
         case 0:
-          return <RoleWhyItMatters key={`why-${configKey}`} data={ARCH_GUIDE_DATA} />
+          return (
+            <RoleWhyItMatters
+              key={`why-${configKey}`}
+              data={ARCH_GUIDE_DATA}
+              practiceResources={rolePracticeResources}
+            />
+          )
         case 1:
           return <RoleWhatToLearn key={`what-${configKey}`} data={ARCH_GUIDE_DATA} />
         case 2:

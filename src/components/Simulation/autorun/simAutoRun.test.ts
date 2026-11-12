@@ -16,6 +16,8 @@ import { topBandLevel } from '@/simulation/maturityScale'
 import { PHASE_ORDER, LIFECYCLE_PHASES } from '@/data/frameworkPhases'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
+import { ARCHITECTURES, edgeKey, edgeState } from '@/data/simArchitecture'
+import { planningForArchitecture } from '@/simulation/edgePlanningProgress'
 import {
   autoRunQueue,
   completeStepGenuine,
@@ -141,5 +143,85 @@ describe('simAutoRun director', () => {
       expect(doc?.title.length, `empty demo title for ${type}`).toBeGreaterThan(0)
       expect(doc?.data.length, `empty demo body for ${type}`).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('autorun architecture choices use current valid identities', () => {
+  function currentCase() {
+    useSimulationStore.getState().setSize('mid')
+    const arch = ARCHITECTURES.mid
+    const eligible = arch.edges
+      .filter((edge) => edge.vulnerable && edgeState(arch, edge) === 'migratable')
+      .map(edgeKey)
+    const unavailable = arch.edges.map(edgeKey).filter((key) => !eligible.includes(key))
+    const step = autoRunQueue().find(
+      (item) => item.step.kind === 'architecture' && item.step.minDecisions === 2
+    )?.step
+    expect(step).toBeDefined()
+    expect(eligible.length).toBeGreaterThanOrEqual(2)
+    expect(unavailable.length).toBeGreaterThan(0)
+    return { arch, eligible, unavailable, step: step! }
+  }
+  function restoreRaw(raw: Record<string, unknown>) {
+    // Restored persisted maps can contain old or malformed values despite the static setter type.
+    useSimulationStore.setState({
+      edgeDecisions: raw as ReturnType<typeof useSimulationStore.getState>['edgeDecisions'],
+    })
+  }
+  it('does not let stale or malformed saved keys complete a real step or block new valid selections', () => {
+    const { arch, eligible, unavailable, step } = currentCase()
+    const stale = Object.fromEntries(
+      Array.from({ length: 8 }, (_, i) => [`removed-edge-${i}`, 'hybrid'])
+    )
+    const raw = {
+      ...stale,
+      [eligible[0]]: 'unexpected',
+      [eligible[1]]: true,
+      [unavailable[0]]: 'pure',
+    }
+    restoreRaw(raw)
+    const before = liveCompletionContext()
+    expect(before.edgeDecisionCount()).toBe(0)
+    expect(before.metricValue('migration-decisions')).toBe(0)
+    expect(before.metricValue('migration-coverage-pct')).toBe(0)
+    expect(isStepComplete(step, before)).toBe(false)
+
+    expect(completeStepGenuine(step)).toBe(true)
+    const after = liveCompletionContext()
+    const saved = useSimulationStore.getState().edgeDecisions
+    expect(after.edgeDecisionCount()).toBe(2)
+    expect(after.edgeDecisionCapacity()).toBe(eligible.length)
+    expect(after.metricValue('migration-decisions')).toBe(2)
+    expect(after.metricValue('migration-coverage-pct')).toBeCloseTo(200 / eligible.length)
+    expect(isStepComplete(step, after)).toBe(true)
+    const selected = eligible.filter((key) => saved[key] === 'hybrid' || saved[key] === 'pure')
+    expect(selected).toEqual(eligible.slice(0, 2))
+    expect(saved[unavailable[0]]).toBe('pure')
+    for (const key of Object.keys(stale)) expect(saved[key]).toBe('hybrid')
+    // Decision activity completion is intentionally independent of earned P5 credit.
+    expect(planningForArchitecture(arch, 0, saved).creditedKeys).toEqual([])
+    expect(completeStepGenuine(step)).toBe(false)
+    expect(useSimulationStore.getState().edgeDecisions).toEqual(saved)
+  })
+
+  it('keeps unavailable current choices uncounted and preserved while retaining existing valid selections', () => {
+    const { eligible, unavailable, step } = currentCase()
+    const raw = {
+      [eligible[0]]: 'pure',
+      [eligible[1]]: 'pure ',
+      [unavailable[0]]: 'hybrid',
+      'old-topology-edge': 'pure',
+    }
+    restoreRaw(raw)
+    expect(liveCompletionContext().edgeDecisionCount()).toBe(1)
+    expect(isStepComplete(step, liveCompletionContext())).toBe(false)
+    expect(completeStepGenuine(step)).toBe(true)
+    const saved = useSimulationStore.getState().edgeDecisions
+    expect(saved[eligible[0]]).toBe('pure')
+    expect(['hybrid', 'pure']).toContain(saved[eligible[1]])
+    expect(saved[unavailable[0]]).toBe('hybrid')
+    expect(saved['old-topology-edge']).toBe('pure')
+    expect(liveCompletionContext().edgeDecisionCount()).toBe(2)
+    expect(isStepComplete(step, liveCompletionContext())).toBe(true)
   })
 })

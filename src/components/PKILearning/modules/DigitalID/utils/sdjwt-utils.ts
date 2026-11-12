@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import 'reflect-metadata'
+import { AsnConvert, OctetString } from '@peculiar/asn1-schema'
+import { PemConverter } from '@peculiar/x509'
+import { AlgorithmIdentifier, SubjectPublicKeyInfo } from '@peculiar/asn1-x509'
 import type { CryptoKey, CredentialAttribute } from '../types'
 import type { CryptoProvider } from './crypto-provider'
+import { assertSigningSelection, isHsmBackedKey } from './hsm-crypto-provider'
 
 interface Disclosure {
   raw: string // The full JSON array [salt, key, value] stringified
@@ -25,6 +30,64 @@ const bytesToBase64 = (bytes: Uint8Array): string => {
 const toBase64Url = (input: string | Uint8Array): string => {
   const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : input
   return bytesToBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+}
+
+/** Canonical public members shared by issuance and synchronous wallet-key selection. */
+export function sampleHolderPublicJwk(key: CryptoKey): JsonWebKey {
+  assertSigningSelection(key.algorithm, key.curve)
+  const ed = key.algorithm === 'EdDSA'
+  let bytes: Uint8Array
+  if (isHsmBackedKey(key)) {
+    if (
+      key.publicKey.length === 0 ||
+      key.publicKey.length % 2 !== 0 ||
+      !/^[0-9a-f]+$/i.test(key.publicKey)
+    ) {
+      throw new Error('Invalid sample holder public-key hex')
+    }
+    const encoded = Uint8Array.from(key.publicKey.match(/../g)!, (part) => parseInt(part, 16))
+    bytes = ed ? encoded : new Uint8Array(AsnConvert.parse(encoded, OctetString).buffer)
+  } else {
+    const decoded = PemConverter.decode(atob(key.publicKey))
+    if (decoded.length !== 1) throw new Error('Expected one sample holder public key')
+    const spki = AsnConvert.parse(decoded[0]!, SubjectPublicKeyInfo)
+    const expectedAlgorithm = new AlgorithmIdentifier({
+      algorithm: ed ? '1.3.101.112' : '1.2.840.10045.2.1',
+      ...(ed
+        ? {}
+        : {
+            parameters: (key.curve === 'P-384'
+              ? new Uint8Array([6, 5, 43, 129, 4, 0, 34])
+              : new Uint8Array([6, 8, 42, 134, 72, 206, 61, 3, 1, 7])
+            ).buffer,
+          }),
+    })
+    if (!spki.algorithm.isEqual(expectedAlgorithm))
+      throw new Error('Sample holder SPKI does not match the selected algorithm')
+    bytes = new Uint8Array(spki.subjectPublicKey)
+  }
+  const width = key.curve === 'P-384' ? 48 : 32
+  if (bytes.length !== (ed ? 32 : 1 + 2 * width) || (!ed && bytes[0] !== 4)) {
+    throw new Error('Sample holder public key does not match the selected curve')
+  }
+  return ed
+    ? { kty: 'OKP', crv: 'Ed25519', x: toBase64Url(bytes) }
+    : {
+        kty: 'EC',
+        crv: key.curve,
+        x: toBase64Url(bytes.slice(1, 1 + width)),
+        y: toBase64Url(bytes.slice(1 + width)),
+      }
+}
+
+async function holderPublicJwk(key: CryptoKey): Promise<JsonWebKey> {
+  const jwk = sampleHolderPublicJwk(key)
+  const algorithm =
+    key.algorithm === 'EdDSA' ? { name: 'Ed25519' } : { name: 'ECDSA', namedCurve: key.curve! }
+  // Validate the actual point before issuance. Public members follow RFC 7518
+  // (EC coordinates) or RFC 8037 (OKP), never encoded PEM text in x.
+  await crypto.subtle.importKey('jwk', jwk, algorithm, true, ['verify'])
+  return jwk
 }
 
 // Create a single disclosure
@@ -86,16 +149,10 @@ export const createSDJWT = async (
   }
 
   if (holderKey) {
-    // cnf (confirmation) claim per RFC 7800 §3.1 — binds the credential to the holder's key.
-    // publicKey is a hex-encoded DER SubjectPublicKeyInfo point as stored by our CryptoProvider.
-    // In a production implementation this would be parsed into discrete x/y JWK coordinates;
-    // here we encode the full point as the x value to preserve verifiability within the simulation.
+    // cnf records the actual sample holder public key; possession still requires
+    // verification of the holder's key-binding signature.
     payload.cnf = {
-      jwk: {
-        kty: 'EC',
-        crv: holderKey.curve,
-        x: toBase64Url(holderKey.publicKey), // full DER public key point, Base64URL-encoded
-      },
+      jwk: await holderPublicJwk(holderKey),
     }
   }
 

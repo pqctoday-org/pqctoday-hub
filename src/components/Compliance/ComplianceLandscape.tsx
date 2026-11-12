@@ -78,8 +78,8 @@ import {
 // FIPS 203/204/205 landscape rows → the ACVP algorithm-family token used in
 // the Records tab's `pqc` filter (Records.pqcCoverage substring match).
 // Deep-links these rows into the pre-filtered Records tab (rtab=acvp) so a
-// visitor reading "FIPS 203 (ML-KEM)" can jump straight to certified
-// products implementing that algorithm instead of manually re-filtering.
+// visitor reading "FIPS 203 (ML-KEM)" can jump straight to algorithm
+// validation records instead of manually re-filtering.
 const FIPS_ROW_TO_PQC_ALGORITHM: Record<string, string> = {
   'FIPS-203': 'ML-KEM',
   'FIPS-204': 'ML-DSA',
@@ -785,10 +785,10 @@ function FrameworkCard({
               to={`/compliance?tab=records&rtab=acvp&pqc=${encodeURIComponent(FIPS_ROW_TO_PQC_ALGORITHM[fw.id])}`}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 hover:text-foreground transition-colors"
-              title={`Certified products implementing ${FIPS_ROW_TO_PQC_ALGORITHM[fw.id]}`}
+              title={`CAVP algorithm validation records for ${FIPS_ROW_TO_PQC_ALGORITHM[fw.id]}; not CMVP module certificates`}
             >
               <ShieldCheck size={8} />
-              Certified products
+              Algorithm validation records
             </Link>
           )}
           {fw.notes && (

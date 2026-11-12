@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { ProviderSetup } from './ProviderSetup'
 const m = vi.hoisted(() => ({ connect: vi.fn(), validate: vi.fn() }))
 vi.mock('@/store/useChatStore', () => ({
@@ -42,6 +42,11 @@ describe('Assistant setup describes the actual draft and source-check boundary',
     expect(screen.getByText(/When retrieval returns no sources/)).toHaveTextContent(
       'without a model call'
     )
+    fireEvent.click(screen.getByRole('button', { name: 'How does local AI work?' }))
+    expect(screen.getByText(/Live drafts are unverified/)).toHaveTextContent(
+      'Automated source checks may revise the final answer or replace it with retrieved excerpts'
+    )
+    expect(screen.queryByText(/Failed drafts are withheld/)).not.toBeInTheDocument()
     expect(m.connect).not.toHaveBeenCalled()
     expect(m.validate).not.toHaveBeenCalled()
   })

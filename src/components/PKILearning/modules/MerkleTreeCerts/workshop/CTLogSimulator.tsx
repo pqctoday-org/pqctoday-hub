@@ -10,7 +10,7 @@
  *          hash changes and the CA's ML-DSA signature fails for the entire
  *          batch, exposing the fraud.
  */
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import {
   Plus,
   Camera,
@@ -53,6 +53,7 @@ import {
   type CertLeaf,
 } from '../utils/merkleTree'
 import { verifySampleBatch, type BatchVerificationResult } from '../utils/batchVerification'
+import { bindSubjectKeys } from '../utils/subjectKeys'
 import { SAMPLE_CERTS, truncateHash } from '../data/mtcConstants'
 
 // ---------------------------------------------------------------------------
@@ -90,9 +91,9 @@ const CA_ALGO_SIZES: Record<string, { pubKey: number; sig: number; level: number
 }
 
 const CA_ALGO_OPTIONS = [
-  { id: 'ML-DSA-44', label: 'ML-DSA-44 (Level 1)' },
-  { id: 'ML-DSA-65', label: 'ML-DSA-65 (Level 3)' },
-  { id: 'ML-DSA-87', label: 'ML-DSA-87 (Level 5)' },
+  { id: 'ML-DSA-44', label: 'ML-DSA-44 (Category 2)' },
+  { id: 'ML-DSA-65', label: 'ML-DSA-65 (Category 3)' },
+  { id: 'ML-DSA-87', label: 'ML-DSA-87 (Category 5)' },
 ]
 
 const ALGO_OPTIONS = [
@@ -196,7 +197,8 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           </span>
           . The actual <span className="font-mono">draft-ietf-plants-merkle-tree-certs</span> spec
           (§5.3) defines a binary TLV-encoded <strong className="text-foreground">TreeHead</strong>{' '}
-          structure. The cryptographic principle — sign the root hash with ML-DSA-44 — is identical.
+          structure. The cryptographic principle is to sign the root hash with the selected {caAlgo}{' '}
+          parameter set.
         </p>
       </div>
 
@@ -209,7 +211,9 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           </div>
           <p className="text-[10px] text-muted-foreground mb-2">
             Generate the CA&apos;s key pair via SoftHSMv3. This key signs the Merkle tree root after
-            each batch update. ML-DSA-65 (NIST Level 3) is recommended for CA use.
+            each batch update. This sample starts with ML-DSA-65 (NIST Category 3). Choose the
+            parameter set for the applicable certificate profile, security policy and relying-party
+            support; this starting selection is not a universal CA recommendation.
           </p>
           <div className="flex flex-wrap items-center gap-2">
             <div className="min-w-[180px]">
@@ -847,6 +851,19 @@ const AuditPanel: React.FC<AuditPanelProps> = ({ logCerts, signedBatch, onVerify
   const [editedCerts, setEditedCerts] = useState<IssuedCert[]>([])
   const [auditResult, setAuditResult] = useState<BatchVerificationResult | null>(null)
   const [isAuditing, setIsAuditing] = useState(false)
+  const [auditError, setAuditError] = useState<string | null>(null)
+  const auditRevision = useRef(0),
+    auditMounted = useRef(true)
+  useLayoutEffect(() => {
+    auditRevision.current += 1
+  }, [logCerts, signedBatch])
+  useLayoutEffect(() => {
+    auditMounted.current = true
+    return () => {
+      auditMounted.current = false
+      auditRevision.current += 1
+    }
+  }, [])
   const [editingIdx, setEditingIdx] = useState<number | null>(null)
   const [editValue, setEditValue] = useState('')
 
@@ -869,6 +886,8 @@ const AuditPanel: React.FC<AuditPanelProps> = ({ logCerts, signedBatch, onVerify
 
   const handleCommitEdit = (idx: number) => {
     if (!editValue.trim()) return
+    auditRevision.current += 1
+    setAuditError(null)
     setEditedCerts((prev) => {
       const next = structuredClone(prev)
       next[idx] = { ...next[idx], subject: editValue.trim() }
@@ -880,12 +899,19 @@ const AuditPanel: React.FC<AuditPanelProps> = ({ logCerts, signedBatch, onVerify
 
   const handleReaudit = useCallback(async () => {
     if (editedCerts.length < 1) return
+    const attempt = ++auditRevision.current
     setIsAuditing(true)
+    setAuditError(null)
     try {
       const result = await onVerifyBatch(editedCerts)
-      setAuditResult(result)
+      if (auditMounted.current && auditRevision.current === attempt) setAuditResult(result)
+    } catch (e) {
+      if (auditMounted.current && auditRevision.current === attempt) {
+        setAuditResult(null)
+        setAuditError(e instanceof Error ? e.message : String(e))
+      }
     } finally {
-      setIsAuditing(false)
+      if (auditMounted.current) setIsAuditing(false)
     }
   }, [editedCerts, onVerifyBatch])
 
@@ -916,6 +942,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({ logCerts, signedBatch, onVerify
         </p>
       </div>
 
+      {auditError && <p role="alert">Incomplete audit: {auditError}</p>}
       {/* Published STH */}
       {signedBatch && (
         <div className="bg-muted/50 rounded-lg p-3 border border-border text-[10px]">
@@ -955,8 +982,10 @@ const AuditPanel: React.FC<AuditPanelProps> = ({ logCerts, signedBatch, onVerify
             <Button
               variant="ghost"
               onClick={() => {
+                auditRevision.current += 1
                 setEditedCerts(structuredClone(logCerts))
                 setAuditResult(null)
+                setAuditError(null)
               }}
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -1166,6 +1195,74 @@ export const CTLogSimulator: React.FC = () => {
     levels: MerkleNode[][]
   } | null>(null)
 
+  const mounted = useRef(true),
+    busy = useRef(false),
+    revision = useRef(0)
+  const [operationError, setOperationError] = useState<string | null>(null)
+  const [contextRetryRequired, setContextRetryRequired] = useState(false)
+  const context = useRef({
+    module: hsm.moduleRef.current,
+    session: hsm.hSessionRef.current,
+    ready: hsm.isReady,
+    caAlgo,
+    caKeyHandles,
+  })
+  const [inputContext, setInputContext] = useState(context.current)
+  if (
+    inputContext.module !== hsm.moduleRef.current ||
+    inputContext.session !== hsm.hSessionRef.current ||
+    inputContext.ready !== hsm.isReady ||
+    inputContext.caAlgo !== caAlgo ||
+    inputContext.caKeyHandles !== caKeyHandles
+  ) {
+    setInputContext({
+      module: hsm.moduleRef.current,
+      session: hsm.hSessionRef.current,
+      ready: hsm.isReady,
+      caAlgo,
+      caKeyHandles,
+    })
+    setOperationError(null)
+    setSignedBatch((prev) => (prev?.signatureStatus === 'unsigned' ? prev : null))
+  }
+  useLayoutEffect(() => {
+    const old = context.current
+    if (
+      old.caAlgo !== caAlgo ||
+      old.caKeyHandles !== caKeyHandles ||
+      ((old.caKeyHandles !== null || caKeyHandles !== null) &&
+        (old.module !== hsm.moduleRef.current ||
+          old.session !== hsm.hSessionRef.current ||
+          old.ready !== hsm.isReady))
+    ) {
+      revision.current += 1
+    }
+    context.current = {
+      module: hsm.moduleRef.current,
+      session: hsm.hSessionRef.current,
+      ready: hsm.isReady,
+      caAlgo,
+      caKeyHandles,
+    }
+  })
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      revision.current += 1
+    }
+  }, [])
+  const publicationOrigin = useRef<typeof context.current | null>(null)
+  const published = publicationOrigin.current
+  const publicationCurrent =
+    !!published &&
+    published.module === hsm.moduleRef.current &&
+    published.session === hsm.hSessionRef.current &&
+    published.ready === hsm.isReady &&
+    published.caAlgo === caAlgo &&
+    published.caKeyHandles === caKeyHandles
+  const currentBatch =
+    signedBatch?.signatureStatus === 'unsigned' || publicationCurrent ? signedBatch : null
   const caKeyReady = caKeyHandles !== null
 
   const handleGenerateCAKey = useCallback(async () => {
@@ -1210,10 +1307,15 @@ export const CTLogSimulator: React.FC = () => {
   }, [hsm, caAlgo])
 
   const signBatch = useCallback(
-    async (certs: IssuedCert[], levels: MerkleNode[][]): Promise<SignedBatch | null> => {
+    async (
+      certs: IssuedCert[],
+      levels: MerkleNode[][],
+      active: () => boolean
+    ): Promise<SignedBatch | null> => {
       const root = levels[levels.length - 1][0].hash
       const ts = Date.now()
       const payload = await buildSignedPayload(root, certs.length, ts)
+      if (!active()) throw new Error('Previous batch context is no longer current')
 
       // A batch stays unsigned unless the engine actually produces its signature.
       if (hsm.isReady && hsm.moduleRef.current && caKeyHandles) {
@@ -1251,6 +1353,12 @@ export const CTLogSimulator: React.FC = () => {
 
   const addCertToLog = useCallback(
     async (subject: string, algorithm: string) => {
+      if (busy.current) return
+      busy.current = true
+      const attempt = ++revision.current
+      const active = () => mounted.current && revision.current === attempt
+      setOperationError(null)
+      setContextRetryRequired(false)
       const algoSizes: Record<string, number> = {
         'ML-DSA-44': 1312,
         'ML-DSA-65': 1952,
@@ -1272,47 +1380,81 @@ export const CTLogSimulator: React.FC = () => {
       setIsSigning(true)
       setSignedBatch(null)
       try {
-        const updatedCerts = [...issuedCerts, cert]
-        const certsForTree = updatedCerts.length === 1 ? [cert, cert] : updatedCerts
+        const [bound] = await bindSubjectKeys([cert])
+        if (!active()) return
+        const updatedCerts = [...issuedCerts, { ...cert, ...bound }]
+        const certsForTree =
+          updatedCerts.length === 1 ? [updatedCerts[0], updatedCerts[0]] : updatedCerts
         const result = await buildMerkleTree(certsForTree)
 
         // Compute leaf hash for this cert
         const leafProof = getInclusionProof(result.levels, updatedCerts.length - 1)
-        cert.leafHash = leafProof.leafHash
+        updatedCerts[updatedCerts.length - 1].leafHash = leafProof.leafHash
 
+        if (!active()) return
+        const batch = await signBatch(updatedCerts, result.levels, active)
+        if (!active()) return
         setIssuedCerts(updatedCerts)
         setLogLevels(result.levels)
-
-        const batch = await signBatch(updatedCerts, result.levels)
+        publicationOrigin.current = { ...context.current }
         if (batch) setSignedBatch(batch)
+      } catch (e) {
+        if (active()) {
+          setSignedBatch(null)
+          setOperationError(e instanceof Error ? e.message : String(e))
+        }
       } finally {
-        setIsSigning(false)
+        busy.current = false
+        if (mounted.current) {
+          if (revision.current !== attempt) setContextRetryRequired(true)
+          setIsSigning(false)
+        }
       }
     },
     [issuedCerts, signBatch]
   )
 
   const loadSamples = useCallback(async () => {
+    if (busy.current) return
+    busy.current = true
+    const attempt = ++revision.current
+    const active = () => mounted.current && revision.current === attempt
+    setOperationError(null)
+    setContextRetryRequired(false)
     setIsSigning(true)
     setSignedBatch(null)
     try {
-      const samples: IssuedCert[] = SAMPLE_CERTS.slice(0, 5).map((c, i) => ({
+      const metadata = SAMPLE_CERTS.slice(0, 5).map((c, i) => ({
         ...c,
         id: i,
         issuer: 'CT Log CA',
         serialNumber: randomSerial(),
         leafHash: '',
       }))
+      const samples = (await bindSubjectKeys(metadata)) as IssuedCert[]
+      if (!active()) return
       const result = await buildMerkleTree(samples)
       for (let i = 0; i < samples.length; i++) {
         samples[i].leafHash = getInclusionProof(result.levels, i).leafHash
       }
+      if (!active()) return
+      const batch = await signBatch(samples, result.levels, active)
+      if (!active()) return
       setIssuedCerts(samples)
       setLogLevels(result.levels)
-      const batch = await signBatch(samples, result.levels)
+      publicationOrigin.current = { ...context.current }
       if (batch) setSignedBatch(batch)
+    } catch (e) {
+      if (active()) {
+        setSignedBatch(null)
+        setOperationError(e instanceof Error ? e.message : String(e))
+      }
     } finally {
-      setIsSigning(false)
+      busy.current = false
+      if (mounted.current) {
+        if (revision.current !== attempt) setContextRetryRequired(true)
+        setIsSigning(false)
+      }
     }
   }, [signBatch])
 
@@ -1328,23 +1470,23 @@ export const CTLogSimulator: React.FC = () => {
       const result = await buildMerkleTree(certsForTree)
       const computedRoot = result.levels[result.levels.length - 1][0].hash
       const verify =
-        signedBatch && hsm.isReady && hsm.moduleRef.current && caKeyHandles
+        currentBatch && hsm.isReady && hsm.moduleRef.current && caKeyHandles
           ? () => {
               hsm.addStepLog(
-                `CA Signature Verify — ${signedBatch.caAlgo} · root ${computedRoot.slice(0, 8)}…`
+                `CA Signature Verify — ${currentBatch.caAlgo} · root ${computedRoot.slice(0, 8)}…`
               )
               return hsm_verifyBytes(
                 hsm.moduleRef.current!,
                 hsm.hSessionRef.current,
                 caKeyHandles.pubHandle,
-                signedBatch.signedPayload,
-                signedBatch.caSig
+                currentBatch.signedPayload,
+                currentBatch.caSig
               )
             }
           : undefined
-      return verifySampleBatch(computedRoot, certs.length, signedBatch, verify)
+      return verifySampleBatch(computedRoot, certs.length, currentBatch, verify)
     },
-    [signedBatch, hsm, caKeyHandles]
+    [currentBatch, hsm, caKeyHandles]
   )
 
   const PANELS: { id: Panel; label: string }[] = [
@@ -1372,6 +1514,18 @@ export const CTLogSimulator: React.FC = () => {
         </p>
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        Each subject has its own actual software-generated public SPKI and SHA-256 digest. The
+        separate HSM CA key signs the sample root. Version1 leaves bind all displayed metadata and
+        the CT serial using escaped tuples; this is not standard MTC wire encoding.
+      </p>
+      {contextRetryRequired && (
+        <p role="alert">
+          Incomplete: the selected CA signing context changed before this submission finished.
+          Submit again in the current context; no new batch was published.
+        </p>
+      )}
+      {operationError && <p role="alert">Incomplete: {operationError}. Retry the operation.</p>}
       {/* Sub-panel tabs */}
       <div className="flex flex-wrap gap-2 border-b border-border pb-3">
         {PANELS.map((p) => (
@@ -1390,7 +1544,7 @@ export const CTLogSimulator: React.FC = () => {
         ))}
       </div>
 
-      {logLevels && !signedBatch && (
+      {logLevels && !currentBatch && (
         <p role="status">Current root is unsigned—signing has not completed successfully.</p>
       )}
       {/* Panel content */}
@@ -1398,7 +1552,7 @@ export const CTLogSimulator: React.FC = () => {
         {activePanel === 'submission' && (
           <SubmissionPanel
             issuedCerts={issuedCerts}
-            signedBatch={signedBatch}
+            signedBatch={currentBatch}
             logLevels={logLevels}
             caKeyReady={caKeyReady}
             isSigning={isSigning}
@@ -1421,7 +1575,7 @@ export const CTLogSimulator: React.FC = () => {
         {activePanel === 'audit' && (
           <AuditPanel
             logCerts={issuedCerts}
-            signedBatch={signedBatch}
+            signedBatch={currentBatch}
             hsmReady={hsm.isReady}
             hSession={hsm.hSessionRef.current}
             pubHandle={caKeyHandles?.pubHandle ?? null}

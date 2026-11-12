@@ -339,9 +339,9 @@ function getBaselineName(compareType: 'KEM' | 'Signature' | null): string | null
  */
 export function useAlgorithmExplorer(
   personaDefaults: ReturnType<typeof getAlgorithmDefaults>,
-  opts: { urlSync?: boolean; initialParams?: string } = {}
+  opts: { urlSync?: boolean; initialParams?: string; preserveMobileAlgorithmSheet?: boolean } = {}
 ) {
-  const { urlSync = true, initialParams = '' } = opts
+  const { urlSync = true, initialParams = '', preserveMobileAlgorithmSheet = false } = opts
   // Standalone /algorithms page: urlSync=true → drive the real page URL exactly
   // as before. Embedded in the sim: urlSync=false → filter/compare state lives in
   // LOCAL params so it never corrupts /simulation's URL and needs no nested
@@ -1118,8 +1118,14 @@ export function useAlgorithmExplorer(
   // widen exactly like ?highlight does (same plan, same Undo notice), once
   // per (tab, algo) pair so Undo doesn't immediately re-widen.
   const handledAlgoKeyRef = useRef<string | null>(null)
+  const mobileSheetOwnsAlgorithm =
+    preserveMobileAlgorithmSheet && !searchParams.has('tab') && !searchParams.has('highlight')
   useEffect(() => {
     if (!selectedAlgo || activeTab !== 'detailed') return
+    // The phone landing sheet reads the whole catalogue, independent of
+    // desktop quick-view filters. Widening those filters would pin tab=detailed
+    // into the URL and replace the sheet while its data is loading.
+    if (mobileSheetOwnsAlgorithm) return
     const key = `${activeTab}|${selectedAlgo.id}`
     if (handledAlgoKeyRef.current === key) return
     handledAlgoKeyRef.current = key
@@ -1133,7 +1139,7 @@ export function useAlgorithmExplorer(
     if (plan.widenTo) widenForLinkedRow(plan.widenTo, selectedAlgo.name)
     // Only the (tab, algo) pair triggers this; filter state is read, not tracked.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAlgo, activeTab, algorithmData])
+  }, [selectedAlgo, activeTab, algorithmData, mobileSheetOwnsAlgorithm])
 
   // --- ?transition=<row slug> (one Transition Guide row) ---
   // The slug is derived from function|classical|pqc (transitionRowSlug) — no

@@ -50,6 +50,16 @@ describe('proofFreshness', () => {
     expect(f.ageMonths).toBe(3)
   })
 
+  it.each([0, 1, 3, 18, 19, 40])(
+    'keeps a month-precision date exactly %i calendar months old',
+    (age) => {
+      const month = isoMonthsAgo(age).slice(0, 7)
+      const f = proofFreshness(product({ proofUrl: 'https://x/y', proofPublicationDate: month }))
+      expect(f.ageMonths).toBe(age)
+      expect(f.tone).toBe(age > 18 ? 'warning' : 'success')
+    }
+  )
+
   it('warns on a proof old enough to have been overtaken', () => {
     const f = proofFreshness(
       product({ proofUrl: 'https://x/y', proofPublicationDate: isoMonthsAgo(40) })
@@ -71,6 +81,15 @@ describe('proofFreshness', () => {
     expect(f.tone).not.toBe('success')
     expect(f.ageMonths).toBeNull()
   })
+
+  it.each(['2026-00', '2026-13', '2026-03-unknown', '2026-03junk'])(
+    'keeps malformed month dates unassessed: %s',
+    (date) => {
+      expect(
+        proofFreshness(product({ proofUrl: 'https://x/y', proofPublicationDate: date })).ageMonths
+      ).toBeNull()
+    }
+  )
 
   it('carries the stored one-line summary of what the proof shows', () => {
     const f = proofFreshness(

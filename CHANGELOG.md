@@ -29,6 +29,30 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.204.0] - 2026-11-11
+
+Lessons, role journeys and reference records now use clearer worked assumptions, source-specific claims and consistent results across desktop and phone views.
+
+### Added
+
+- **Verifiable sample ACME requests** [view:/learn/pki-workshop] [persona:developer] [persona:ops]: generate a matching sample ML-DSA-65 public key and signed certificate request, inspect its public downloads and calculate the account challenge separately from the simulated ACME transport.
+- **Reproducible Go reference examples** [view:/playground] [persona:developer]: copy error-checked signing and key-establishment examples with matching library versions and setup instructions.
+- **Editable model-training compute costs** [view:/learn/ai-security-pqc] [persona:architect] [persona:grc]: change accelerator count, training hours and hourly price to reproduce the sample compute cost; other project expenses remain separate.
+
+### Fixed
+
+- **Role journeys explain the checks they actually perform** [view:/learn] [persona:executive] [persona:architect] [persona:cert-engineer]: corrected resource destinations, assessment coverage and worked references keep each journey aligned with its learning activities.
+- **Simulation progress follows the selected work** [view:/simulation] [persona:executive] [persona:grc] [persona:ops]: the fictional critical-link model calculates progress from the selected links and their declared purposes.
+- **Researcher assessment guidance explains the calculation** [view:/assess] [persona:researcher]: score explanations follow the implemented readiness, deadline and retention rules, including unanswered inputs.
+- **AI and automotive examples expose their assumptions** [view:/learn/ai-security-pqc] [view:/learn/automotive-pqc] [persona:developer] [persona:architect]: worked calculations distinguish fictional inputs, observed results and the limits of the demonstrated checks.
+- **The TLS importer sample performs its displayed calculation** [view:/learn/qkd] [persona:developer] [persona:architect]: inspect the explicit sample inputs and derived external PSK, including altered-input checks, without treating the local calculation as a completed TLS connection.
+- **Cryptographic reference values match the named algorithms** [view:/algorithms] [view:/learn] [persona:developer] [persona:researcher]: corrected size comparisons, protocol evidence descriptions and Linux IMA PCR guidance preserve the relevant parameter and configuration boundaries.
+
+### Data
+
+- **Catalogue claims stay within their documented scope** [view:/migrate] [persona:architect] [persona:ops]: updated release details, supplier associations and capability descriptions distinguish available implementations from evidence of production use.
+- **Library summaries and validation records preserve source boundaries** [view:/library] [view:/compliance] [persona:cert-engineer] [persona:grc]: corrected descriptions distinguish algorithm validation, module validation and product evaluations, with dated corrections retained beside historical claims.
+
 ## [4.203.0] - 2026-11-09
 
 The PQC Candidates lesson compares two real 2026 outcomes, HAWK withdrawn after an attack and Classic McEliece advised against for new use, and lessons, catalogue and Library entries now say only what their sources say.
@@ -2294,6 +2318,9 @@ A new Learn module on how cryptographic products get certified, and a Migrate ca
 
 - **The Migrate catalogue now follows the FIPS 140-3 track instead of treating every validation as a certification.** [view:/migrate] [persona:grc] [persona:ops] [persona:architect] A product whose algorithms are CAVP-validated has met the prerequisite for FIPS 140-3 — it does not hold a certificate, and the product page now says so. Only a FIPS 140-3, Common Criteria or EUCC certificate counts as certified. "In progress" is shown only when NIST lists the module as in process, never inferred from an algorithm validation. As a result, 50 products no longer read as certified (8 more are newly shown at the algorithm-validation stage), and 48 whose post-quantum algorithms are validated but not yet inside a certificate now say exactly that — the Thales Luna K7 is one: its PQC algorithms are validated, its module certificate does not include them.
 - **Certification badges say CAVP, and never call an algorithm validation a certificate.** [view:/migrate] [persona:grc] [persona:developer] The badge used to read "ACVP" with a tooltip calling it a certificate. It now matches the Compliance page, which already said "NIST CAVP".
+
+  **Wording correction — 11 November 2026:** CAVP does issue algorithm validation certificates. The distinction intended in this and the preceding certification-track entry is scope: an algorithm validation certificate does not establish a CMVP FIPS 140 module validation certificate, or validate an enclosing product. The earlier wording “does not hold a certificate” and “never call … a certificate” was too broad. See [NIST’s CAVP overview](https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program). This correction does not revise the historical counts or report a new validation.
+
 - **A product page now says when a certificate belongs to something inside the product.** [view:/migrate] [persona:ops] [persona:architect] A cloud key service whose HSM is FIPS-validated is not itself validated; 9 products — among them the AWS KMS and Google Cloud KMS cloud gateways, wolfSSL and BoringSSL — now say they use a validated module rather than implying a certificate of their own. Products validated for classical algorithms only say that too.
 
 ### Fixed
@@ -3154,6 +3181,9 @@ The PKCS#11 and KMIP workshops were reorganized around how people actually use t
 ### Added
 
 - **A hands-on HPKE (Hybrid Public Key Encryption) workshop joins the Hybrid Cryptography learning module** [view:/learn] [persona:developer] [persona:researcher]: builds and tears down a full RFC 9180 session — KeyGen, Encapsulate, KeySchedule, Seal/Open — composed from real PKCS#11 v3.2 primitives across all 3 registered PQ/T hybrid KEMs, verified byte-for-byte against the RFC's own published test vectors. The workshop's experimental "candidate" mode — a single native `CKM_HPKE` mechanism call, a PQCToday vendor proposal not yet OASIS TC allocated — now runs against a real engine implementation too, instead of throwing an unsupported-mechanism error.
+
+  **Provenance correction — 11 November 2026:** [RFC 9180 §7.1 and Appendix A](https://www.rfc-editor.org/rfc/rfc9180.html#appendix-A) define classical DHKEM suites and test vectors; the RFC’s vectors do not cover the three PQ/traditional hybrid KEMs named above. Current source distinguishes RFC 9180 A.3 P-256 HPKE fixtures, versioned CFRG concrete-hybrid-KEM fixtures, draft-ietf-hpke-pq-05 fixtures and fresh-key functional round trips. Those checks have different expected-output sources. This correction does not establish which later fixtures ran in the September release or report a new execution.
+
 - **Keystore items now show their real PKCS#11 engine attributes when inspected** [view:/playground] [persona:developer]: previously only certificates had a read-back view; keys do now too.
 - **PKCS#11 v3.2 Mechanism Coverage grew to include hybrid-KEM building blocks, classical asymmetric variants, symmetric/AEAD mechanisms, and PQC deterministic-seed keygen (CKA_SEED)** [view:/playground] [persona:developer] [persona:researcher].
 - **The Navigate graph's category, sub-category, and node labels are now clickable**, with a camera move to match [view:/navigate] [persona:curious] [persona:executive].
@@ -3186,6 +3216,9 @@ The PKCS#11 and KMIP workshops were reorganized around how people actually use t
 ### Added
 
 - **Both Developer tabs gained a real ACVP known-answer test for ML-KEM-768 (FIPS 203)** [view:/playground] [persona:developer] [persona:researcher]: a genuine NIST test vector — real fixed key material, real expected output, not a simulated one — runs against the actual engine and byte-compares the result, proving the implementation is correct against the standard's own answer key.
+
+  **Wording correction — 11 November 2026:** The described fixed-vector byte comparison establishes agreement with the published expected output for that sample case and exercised path. It does not prove correctness for all inputs, parameter sets, error paths or side-channel behavior, and is not CAVP validation. The original entry remains a report of that release; this clarification does not claim a new or backdated run. See [NIST’s CAVP overview](https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program).
+
 - **The KMIP Developer tab's generated script now speaks real KMIP 3.0 request grammar** [view:/playground] [persona:developer]: instead of one friendly wrapper call per operation, every step now goes through the actual Operation/Attribute vocabulary the KMIP 3.0 spec uses, so what you read matches what the spec describes.
 - **Keystore items now show their real PKCS#11 engine attributes when inspected** [view:/playground] [persona:developer]: previously only certificates had a read-back view; keys do now too.
 

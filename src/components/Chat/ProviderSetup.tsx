@@ -395,8 +395,9 @@ export const ProviderSetup: React.FC = () => {
                       </p>
                       <p>
                         <strong className="text-foreground">Limitations</strong>: Model output can
-                        be incomplete or unsupported. Failed drafts are withheld; use the linked
-                        corpus sources for authoritative detail.
+                        be incomplete or unsupported. Live drafts are unverified. Automated source
+                        checks may revise the final answer or replace it with retrieved excerpts;
+                        check the linked corpus sources for authoritative detail.
                       </p>
                     </div>
                   )}

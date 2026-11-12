@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { createHash } from 'node:crypto'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createHash, generateKeyPairSync, webcrypto } from 'node:crypto'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSDJWT, createPresentation } from './sdjwt-utils'
 import { sampleHolderMatchesIssuer, verifySampleSdPresentation } from './samplePresentation'
 import type { CryptoProvider } from './crypto-provider'
 import type { CryptoKey } from '../types'
 
+// Controlled verification outcomes below use a valid sample public-key encoding.
+const pair = generateKeyPairSync('ec', { namedCurve: 'P-256' })
 const key = {
   id: 'holder',
-  publicKey: 'sample-public-key',
+  publicKey: btoa(pair.publicKey.export({ type: 'spki', format: 'pem' }).toString()),
   algorithm: 'ES256',
   curve: 'P-256',
   usage: 'SIGN',
@@ -45,7 +47,9 @@ const replacePayload = (presentation: string, change: Record<string, unknown>) =
   const payload = { ...JSON.parse(Buffer.from(parts[1], 'base64url').toString()), ...change }
   return `${presentation.slice(0, index + 1)}${parts[0]}.${Buffer.from(JSON.stringify(payload)).toString('base64url')}.${parts[2]}`
 }
+afterEach(() => vi.unstubAllGlobals())
 beforeEach(() => {
+  vi.stubGlobal('crypto', webcrypto)
   vi.clearAllMocks()
   vi.mocked(provider.verifySignature).mockResolvedValue(true)
 })

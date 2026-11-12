@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * MobilePlaygroundOps — reduced interactive Playground for mobile.
- * Provides KEM + Sign & Verify tabs via scroll-snap carousel with WASM capability check.
+ * Provides KEM, Sign & Verify, Crypto Lab and Keys via a capability-checked carousel.
  */
 import { useState, useRef, useEffect, useCallback, useId, lazy, Suspense } from 'react'
 import { useLocation } from 'react-router'
@@ -27,6 +27,10 @@ import { useSettingsContext } from './contexts/SettingsContext'
 import { InteractiveExecutionNotice } from './InteractiveExecutionNotice'
 import { algorithmLaunchPhoneReason } from '@/data/algorithmLaunch'
 
+const KeyStoreTab = lazy(() =>
+  import('./tabs/KeyStoreTab').then((m) => ({ default: m.KeyStoreTab }))
+)
+
 const MobilePlaygroundView = lazy(() =>
   import('./MobilePlaygroundView').then((m) => ({ default: m.MobilePlaygroundView }))
 )
@@ -37,6 +41,7 @@ const TABS = [
   { id: 'kem', label: 'KEM', icon: Key },
   { id: 'sign', label: 'Sign & Verify', icon: FileSignature },
   { id: 'workshop', label: 'Crypto Lab', icon: FlaskConical },
+  { id: 'keystore', label: 'Keys', icon: Key },
 ] as const
 
 type TabId = (typeof TABS)[number]['id']
@@ -74,12 +79,10 @@ function CapabilityWarning({
   )
 }
 
-/** An exact launch from the Algorithms page (`?launchAlgo=`) cannot run on the phone
- *  layout, which has no Key Store: say so, naming the algorithm, instead of showing
- *  the phone screen's defaults as if they were the requested algorithm. */
+/** The explicit information-only fallback cannot execute an algorithm launch. */
 function LaunchNotice() {
   const { search } = useLocation()
-  const reason = algorithmLaunchPhoneReason('interactive', search)
+  const reason = algorithmLaunchPhoneReason('interactive', search, true)
   if (!reason) return null
   return (
     <div role="alert" className="glass-panel mx-3 my-2 p-3 flex items-start gap-2">
@@ -89,10 +92,23 @@ function LaunchNotice() {
   )
 }
 
+function phoneTab(search: string): TabId {
+  const tab = new URLSearchParams(search).get('tab')
+  if (tab === 'keystore') return 'keystore'
+  if (tab === 'sign_verify') return 'sign'
+  return 'kem'
+}
+
 function MobileOpsContent() {
+  const { search } = useLocation()
   const { executionMode, wasmLoaded } = useSettingsContext()
   const { hsmLog, clearHsmLog } = useHsmContext()
-  const [activeTab, setActiveTab] = useState<TabId>('kem')
+  const [activeTab, setActiveTab] = useState<TabId>(() => phoneTab(search))
+  const [previousSearch, setPreviousSearch] = useState(search)
+  if (previousSearch !== search) {
+    setPreviousSearch(search)
+    setActiveTab(phoneTab(search))
+  }
   const [logOpen, setLogOpen] = useState(false)
   const [logSource, setLogSource] = useState<'software' | 'pkcs11'>('software')
   const logPanelId = useId()
@@ -109,13 +125,20 @@ function MobileOpsContent() {
   }, [activeTab])
 
   // Scroll to tab on dot click
-  const scrollToTab = useCallback((id: TabId) => {
+  const scrollToTab = useCallback((id: TabId, behavior: ScrollBehavior = 'smooth') => {
     const el = scrollRef.current
     if (!el) return
     const idx = TABS.findIndex((t) => t.id === id)
-    el.scrollTo({ left: idx * el.clientWidth, behavior: 'smooth' })
+    el.scrollTo({ left: idx * el.clientWidth, behavior })
     setActiveTab(id)
   }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const idx = TABS.findIndex((tab) => tab.id === phoneTab(search))
+    el.scrollTo({ left: idx * el.clientWidth, behavior: 'auto' })
+  }, [search])
 
   useEffect(() => {
     const el = scrollRef.current
@@ -125,10 +148,10 @@ function MobileOpsContent() {
   }, [handleScroll])
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex min-w-0 flex-col h-full">
       <InteractiveExecutionNotice executionMode={executionMode} wasmLoaded={wasmLoaded} />
       {/* Tab indicator dots */}
-      <div className="flex items-center justify-center gap-4 py-3 border-b border-border shrink-0">
+      <div className="flex flex-wrap items-center justify-center gap-2 px-3 py-3 border-b border-border shrink-0">
         {TABS.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -137,6 +160,7 @@ function MobileOpsContent() {
               variant="ghost"
               key={tab.id}
               onClick={() => scrollToTab(tab.id)}
+              aria-pressed={isActive}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 isActive
                   ? 'bg-primary/10 text-primary border border-primary/20'
@@ -153,16 +177,35 @@ function MobileOpsContent() {
       {/* Swipeable carousel */}
       <div
         ref={scrollRef}
-        className="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar"
+        className="min-w-0 flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar"
       >
-        <div className="snap-center shrink-0 w-full overflow-y-auto p-3">
+        <div
+          inert={activeTab !== 'kem'}
+          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
+        >
           <KemOpsTab />
         </div>
-        <div className="snap-center shrink-0 w-full overflow-y-auto p-3">
+        <div
+          inert={activeTab !== 'sign'}
+          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
+        >
           <SignVerifyTab />
         </div>
-        <div className="snap-center shrink-0 w-full overflow-y-auto p-3">
+        <div
+          inert={activeTab !== 'workshop'}
+          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
+        >
           <WorkshopToolsTab />
+        </div>
+        <div
+          inert={activeTab !== 'keystore'}
+          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
+        >
+          {activeTab === 'keystore' && (
+            <Suspense fallback={<p role="status">Loading Keys…</p>}>
+              <KeyStoreTab />
+            </Suspense>
+          )}
         </div>
       </div>
 
@@ -262,7 +305,6 @@ export const MobilePlaygroundOps = () => {
   if (status === 'unsupported') {
     return (
       <>
-        <LaunchNotice />
         <CapabilityWarning
           onContinue={() => setStatus('dismissed')}
           onFallback={() => setShowFallback(true)}
@@ -273,7 +315,6 @@ export const MobilePlaygroundOps = () => {
 
   return (
     <PlaygroundProvider>
-      <LaunchNotice />
       <div className="min-h-[60vh]">
         <MobileOpsContent />
       </div>

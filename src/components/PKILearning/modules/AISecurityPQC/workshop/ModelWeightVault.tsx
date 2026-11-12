@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Lock } from 'lucide-react'
+import { formatRelativeChange } from '../data/scenarioCalculations'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   MODEL_SIZE_PROFILES,
@@ -25,6 +26,18 @@ export const ModelWeightVault: React.FC = () => {
   const [selectedWrap, setSelectedWrap] = useState('ml-kem-768')
   const [selectedSign, setSelectedSign] = useState('ml-dsa-65')
   const [selectedDeploy, setSelectedDeploy] = useState(DEPLOYMENT_MODES[0].id)
+  const [accelerators, setAccelerators] = useState('64')
+  const [trainingHours, setTrainingHours] = useState('100')
+  const [hourlyPrice, setHourlyPrice] = useState('3')
+
+  const values = [accelerators, trainingHours, hourlyPrice].map((value) =>
+    value.trim() === '' ? NaN : Number(value)
+  )
+  const validComputeInputs =
+    values.every((value) => Number.isFinite(value) && value >= 0) &&
+    Number.isSafeInteger(values[0]) &&
+    Number.isFinite(values[0] * values[1] * values[2])
+  const computeCost = validComputeInputs ? values[0] * values[1] * values[2] : null
 
   const sizeProfile = useMemo(
     () => MODEL_SIZE_PROFILES.find((p) => p.id === selectedSize) ?? MODEL_SIZE_PROFILES[1],
@@ -131,15 +144,73 @@ export const ModelWeightVault: React.FC = () => {
             <p className="text-xs text-muted-foreground">File Size</p>
           </div>
           <div className="glass-panel p-3 text-center">
-            <p className="text-lg font-bold text-foreground">{sizeProfile.trainingCostEstimate}</p>
-            <p className="text-xs text-muted-foreground">Training Cost</p>
-          </div>
-          <div className="glass-panel p-3 text-center">
             <p className="text-xs text-foreground/80">{sizeProfile.hndlValueAssessment}</p>
             <p className="text-xs text-muted-foreground mt-1">HNDL Value</p>
           </div>
         </div>
       </div>
+
+      <section className="glass-panel p-4 space-y-3" aria-labelledby="training-compute-heading">
+        <h4 id="training-compute-heading" className="text-sm font-bold text-foreground">
+          Training compute example
+        </h4>
+        <p className="text-sm text-muted-foreground">
+          Fictional inputs for one training run; these are not a market quote or an estimate of the
+          selected model’s training requirements.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            {
+              label: 'Number of accelerators',
+              value: accelerators,
+              set: setAccelerators,
+              step: '1',
+            },
+            {
+              label: 'Elapsed training time (hours)',
+              value: trainingHours,
+              set: setTrainingHours,
+              step: 'any',
+            },
+            {
+              label: 'Price per accelerator-hour ($)',
+              value: hourlyPrice,
+              set: setHourlyPrice,
+              step: 'any',
+            },
+          ].map(({ label, value, set, step }) => (
+            <label key={label} className="text-sm text-foreground">
+              {label}
+              <input
+                className="mt-1 w-full rounded border border-border bg-background p-2"
+                type="number"
+                min="0"
+                step={step}
+                value={value}
+                onChange={(event) => set(event.target.value)}
+              />
+            </label>
+          ))}
+        </div>
+        {computeCost === null ? (
+          <p role="alert" className="text-sm text-status-error">
+            Enter a whole, non-negative accelerator count and finite, non-negative hours and price.
+          </p>
+        ) : (
+          <p className="text-sm text-foreground" aria-live="polite">
+            {values[0]} accelerators × {values[1]} hours × ${values[2]} per accelerator-hour ={' '}
+            <strong>
+              {computeCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+            </strong>{' '}
+            compute cost
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground">
+          This is accelerator compute only. Data preparation, staff, storage, networking,
+          experiments, failures and other expenses are excluded. Check what your quoted price
+          includes to avoid double counting. Model size alone does not determine training cost.
+        </p>
+      </section>
 
       {/* Crypto Config */}
       <div className="glass-panel p-4 space-y-4">
@@ -184,6 +255,13 @@ export const ModelWeightVault: React.FC = () => {
       {/* Comparison Table */}
       <div>
         <h4 className="text-sm font-bold text-foreground mb-3">Illustrative Overhead Comparison</h4>
+        <p className="text-sm text-muted-foreground mb-3">
+          Time cells are Hub-authored inputs in milliseconds, not measured performance. Change =
+          (selected − classical) ÷ classical × 100; a negative value means less time in this
+          example. Byte sizes describe the stated wrapping envelope or signature, not encryption of
+          the entire model file. Compare both storage growth and operation time, then measure the
+          same key-wrapping and signing operations on your own target platform.
+        </p>
         <div className="glass-panel overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -213,9 +291,7 @@ export const ModelWeightVault: React.FC = () => {
                 <td className="text-center p-3 font-mono">{classicalWrap.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono">{wrapProfile.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono text-status-success">
-                  {wrapProfile.operationTimeMs <= classicalWrap.operationTimeMs
-                    ? 'Faster'
-                    : `+${((wrapProfile.operationTimeMs / classicalWrap.operationTimeMs - 1) * 100).toFixed(0)}%`}
+                  {formatRelativeChange(classicalWrap.operationTimeMs, wrapProfile.operationTimeMs)}
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -236,9 +312,7 @@ export const ModelWeightVault: React.FC = () => {
                 <td className="text-center p-3 font-mono">{classicalSign.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono">{signProfile.operationTimeMs}ms</td>
                 <td className="text-center p-3 font-mono">
-                  {signProfile.operationTimeMs <= classicalSign.operationTimeMs
-                    ? '~Same'
-                    : `+${((signProfile.operationTimeMs / classicalSign.operationTimeMs - 1) * 100).toFixed(0)}%`}
+                  {formatRelativeChange(classicalSign.operationTimeMs, signProfile.operationTimeMs)}
                 </td>
               </tr>
               <tr className="border-b border-border/50">

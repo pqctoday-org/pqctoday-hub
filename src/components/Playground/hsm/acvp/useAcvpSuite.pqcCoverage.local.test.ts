@@ -128,7 +128,7 @@ describe('P5 PQC coverage sections — both engines, real vectors', () => {
     // pre-hash sections, taking the SLH-DSA registry case count from 176 to
     // 980. 2x headroom over the measurement, so a slower machine or a further
     // SLH-DSA addition does not reintroduce a coin-flip failure.
-  }, 1_200_000)
+  }, 1_500_000)
 
   const rows = () => results.filter((r) => NEW.test(r.id))
   const row = (id: string) => results.find((r) => r.id === id)

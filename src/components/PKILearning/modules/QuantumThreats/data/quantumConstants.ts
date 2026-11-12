@@ -44,7 +44,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     classicalBits: 140,
     quantumBits: 0,
     quantumAttack: 'shor',
-    estimatedQubits: 8194,
+    estimatedQubits: 2692,
     status: 'broken',
     notes:
       'Even 4096-bit RSA provides zero post-quantum security. Gidney 2025 (Table 5) gives a revised estimate for this key size: 2,692 logical qubits and 4.0e+10 Toffoli gates, far below the older 2016-era 2n+2 figure of 8,194 (Häner–Roetteler–Svore 2016, arXiv:1611.07995).',

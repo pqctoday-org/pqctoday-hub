@@ -3,20 +3,21 @@ import { useMemo, useState } from 'react'
 import { CheckCircle2, Circle, ScanLine, ShieldOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SAMPLE_INVENTORY } from '@/data/cryptoEstate'
+import { observedAbsent, retirementObservation } from './DecommissionChecklist.observations'
 
 /**
  * Decommission Tracker — work the classical estate (the shared
  * @/data/cryptoEstate, quantum-vulnerable assets, worst-risk first) through
  * deprecate → remove → verify-removed → log. "Remove" is gated on clearing
- * dependents. The removal review reads this worksheet's own Remove flag;
- * it does not run an independent scan or establish that anything was deleted.
+ * dependents. The observation step reads separately authored fictional records, including a
+ * dependent-copy failure. No real system is scanned or changed.
  */
 
 type StageId = 'deprecate' | 'remove' | 'verify' | 'log'
 const STAGES: { id: StageId; label: string }[] = [
   { id: 'deprecate', label: 'Deprecate' },
   { id: 'remove', label: 'Remove' },
-  { id: 'verify', label: 'Review sample status' },
+  { id: 'verify', label: 'Read initial sample observation' },
   { id: 'log', label: 'Log' },
 ]
 
@@ -27,11 +28,22 @@ const ASSETS = SAMPLE_INVENTORY.filter((a) => a.quantumVulnerable).sort(
 interface St {
   stages: Set<StageId>
   depsCleared: boolean
-  scan: 'unscanned' | 'present' | 'gone'
+  scan: 'unscanned' | 'present' | 'gone' | 'unavailable'
+  cleanup: boolean
+  observation: 'initial' | 'followup' | null
 }
 const initial = (): Record<string, St> =>
   Object.fromEntries(
-    ASSETS.map((a) => [a.id, { stages: new Set<StageId>(), depsCleared: false, scan: 'unscanned' }])
+    ASSETS.map((a) => [
+      a.id,
+      {
+        stages: new Set<StageId>(),
+        depsCleared: false,
+        scan: 'unscanned',
+        cleanup: false,
+        observation: null,
+      },
+    ])
   )
 
 export function DecommissionChecklist() {
@@ -43,11 +55,18 @@ export function DecommissionChecklist() {
     patch(id, (s) => {
       if (stage === 'remove' && !s.depsCleared) return s
       if (stage === 'verify') {
-        const removed = s.stages.has('remove')
+        if (!s.stages.has('remove')) return s
+        const observation = retirementObservation(id)
+        const absent = observedAbsent(observation)
+        const stages = new Set(s.stages)
+        stages.delete('verify')
+        stages.delete('log')
+        if (absent) stages.add('verify')
         return {
           ...s,
-          scan: removed ? 'gone' : 'present',
-          stages: removed ? new Set([...s.stages, 'verify']) : s.stages,
+          scan: !observation ? 'unavailable' : absent ? 'gone' : 'present',
+          stages,
+          observation: 'initial',
         }
       }
       if (stage === 'log' && !s.stages.has('verify')) return s
@@ -60,16 +79,17 @@ export function DecommissionChecklist() {
   return (
     <div className="space-y-4">
       <div className="glass-panel p-4">
-        <h3 className="mb-1 font-semibold text-foreground">Decommissioning stage walkthrough</h3>
+        <h3 className="mb-1 font-semibold text-foreground">Decommissioning observation exercise</h3>
         <p className="text-sm text-muted-foreground">
           Explore the retirement stages for {ASSETS.length} fictional assets, ordered by their
           sample risk scores. Mark sample dependents migrated before selecting <em>Remove</em>.
         </p>
         <p role="note" className="mt-2 text-sm text-muted-foreground">
-          Review sample status reads only your Remove selection. This walkthrough does not scan,
-          delete keys or independently verify removal. In production, use discovery and monitoring
-          tools to check for remaining keys, trusted public keys and dependent copies; record what
-          was checked and any remaining exceptions before claiming retirement.
+          Read independently authored fictional observation records after marking the removal
+          action. A dependent copy can remain even when Remove is selected. This exercise does not
+          scan or delete real keys. In production, use discovery and monitoring tools to check for
+          remaining keys, trusted public keys and dependent copies; record what was checked and any
+          remaining exceptions before claiming retirement.
         </p>
         <div className="mt-3 h-2 w-full overflow-hidden rounded bg-muted">
           <div
@@ -78,14 +98,14 @@ export function DecommissionChecklist() {
           />
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          {doneCount}/{ASSETS.length} sample stage walkthroughs completed
+          {doneCount}/{ASSETS.length} sample retirements checked within supplied observation scope
         </p>
       </div>
 
       {ASSETS.map((asset) => {
         const s = state[asset.id]
         return (
-          <div key={asset.id} className="glass-panel p-3">
+          <section key={asset.id} aria-label={asset.name} className="glass-panel p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <span className="text-sm font-medium text-foreground">{asset.name}</span>
@@ -98,7 +118,8 @@ export function DecommissionChecklist() {
 
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
               {STAGES.map((stage, i) => {
-                const on = s.stages.has(stage.id)
+                const on =
+                  s.stages.has(stage.id) && (stage.id !== 'verify' || s.observation === 'initial')
                 const gate =
                   (stage.id === 'remove' && !s.depsCleared) ||
                   (stage.id === 'log' && !s.stages.has('verify')) ||
@@ -130,23 +151,120 @@ export function DecommissionChecklist() {
                   type="checkbox"
                   checked={s.depsCleared}
                   onChange={(e) =>
-                    patch(asset.id, (st) => ({ ...st, depsCleared: e.target.checked }))
+                    patch(asset.id, (st) =>
+                      e.target.checked
+                        ? { ...st, depsCleared: true }
+                        : {
+                            stages: new Set(st.stages.has('deprecate') ? ['deprecate'] : []),
+                            depsCleared: false,
+                            scan: 'unscanned',
+                            cleanup: false,
+                            observation: null,
+                          }
+                    )
                   }
                 />
                 Sample dependents marked migrated
               </label>
               {s.scan === 'present' && (
                 <span className="flex items-center gap-1 text-status-error">
-                  <ScanLine size={12} /> Worksheet: Remove not selected
+                  <ScanLine size={12} /> Sample observation: dependent copy still present — not
+                  complete
                 </span>
+              )}
+              {s.scan === 'unavailable' && (
+                <span role="status">Sample observation unavailable — not complete</span>
               )}
               {s.scan === 'gone' && (
                 <span className="flex items-center gap-1 text-status-success">
-                  <ScanLine size={12} /> Worksheet: Remove selected — no independent scan
+                  <ScanLine size={12} /> Sample observation: absent within the supplied scope
                 </span>
               )}
             </div>
-          </div>
+            {s.observation &&
+              (() => {
+                const record = retirementObservation(asset.id, s.observation === 'followup')
+                return record ? (
+                  <div className="mt-3 text-xs space-y-1" aria-label="Sample observation record">
+                    <p>Record: {record.id}</p>
+                    <p>Scope: {record.scope}</p>
+                    <p>Method: {record.method}</p>
+                    <p>Primary use observed: {record.primaryPresent ? 'Present' : 'Absent'}</p>
+                    <p>
+                      Dependent copies observed:{' '}
+                      {record.dependentCopies.length
+                        ? record.dependentCopies.join('; ')
+                        : 'None in this supplied scope'}
+                    </p>
+                  </div>
+                ) : null
+              })()}
+            {asset.id === 'sw-batch-signer' && s.stages.has('remove') && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={s.scan !== 'present' || s.cleanup}
+                  onClick={() => patch(asset.id, (st) => ({ ...st, cleanup: true }))}
+                >
+                  Perform sample dependent-copy cleanup
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={!s.cleanup}
+                  className={
+                    s.observation === 'followup' && s.stages.has('verify')
+                      ? 'border-status-success/40 text-status-success'
+                      : ''
+                  }
+                  onClick={() =>
+                    patch(asset.id, (st) => {
+                      const record = retirementObservation(asset.id, true)
+                      const absent = observedAbsent(record)
+                      const stages = new Set(st.stages)
+                      stages.delete('verify')
+                      stages.delete('log')
+                      if (absent) stages.add('verify')
+                      return {
+                        ...st,
+                        stages,
+                        scan: !record ? 'unavailable' : absent ? 'gone' : 'present',
+                        observation: 'followup',
+                      }
+                    })
+                  }
+                >
+                  {s.observation === 'followup' && s.stages.has('verify') && (
+                    <CheckCircle2 size={13} className="mr-1" />
+                  )}
+                  Read follow-up sample observation
+                </Button>
+                {s.cleanup && (
+                  <p className="w-full text-xs">
+                    Sample cleanup action recorded. Read the separate follow-up observation; the
+                    action alone does not verify absence.
+                  </p>
+                )}
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-2"
+              onClick={() =>
+                patch(asset.id, () => ({
+                  stages: new Set(),
+                  depsCleared: false,
+                  scan: 'unscanned',
+                  cleanup: false,
+                  observation: null,
+                }))
+              }
+            >
+              Reset sample asset
+            </Button>
+          </section>
         )
       })}
     </div>

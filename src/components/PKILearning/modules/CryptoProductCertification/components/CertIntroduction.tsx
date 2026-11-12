@@ -24,7 +24,7 @@ import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteB
 import { CertificationContexts, CertificationContextsPointer } from './CertificationContexts'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { MODULE_LAST_REVIEWED } from '@/data/moduleContentRegistry'
+import { MODULE_LAST_EDITED, MODULE_LAST_REVIEWED } from '@/data/moduleContentRegistry'
 import { ownerReviewStatusText } from '@/components/PKILearning/common/moduleReviewStatus'
 import { PRACTITIONER_DISCLAIMER, type SectionEntry, type SectionGroup } from './sectionRegistry'
 
@@ -74,7 +74,11 @@ export const CertIntroduction = ({
           aria-hidden="true"
         />
         <p className="text-sm text-foreground">
-          {PRACTITIONER_DISCLAIMER} {ownerReviewStatusText(MODULE_LAST_REVIEWED[manifest.id])}
+          {PRACTITIONER_DISCLAIMER}{' '}
+          {ownerReviewStatusText(
+            MODULE_LAST_REVIEWED[manifest.id],
+            MODULE_LAST_EDITED[manifest.id]
+          )}
         </p>
       </div>
 

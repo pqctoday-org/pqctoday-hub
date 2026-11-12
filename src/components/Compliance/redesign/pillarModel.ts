@@ -3,7 +3,8 @@
 // Pillar pipeline + traceability-drawer model for the Compliance redesign.
 //
 // Reframes the page around its premise: bodies DEFINE algorithms → schemes
-// VALIDATE products → frameworks MANDATE adoption. Everything here derives from
+// VALIDATE implementations, modules or scoped product claims → frameworks
+// MANDATE adoption. Everything here derives from
 // the live `complianceData` layer; no placeholder data.
 
 import type { BodyType, ComplianceFramework } from '@/data/complianceData'
@@ -49,7 +50,7 @@ export const PILLAR_DEFS: PillarDef[] = [
     verb: 'Validate',
     title: 'Certification Schemes',
     blurb:
-      'FIPS 140-3, ACVP, Common Criteria, EUCC — independently test that a product implements those algorithms correctly.',
+      'CAVP validates algorithm implementations, commonly through ACVP; CMVP validates cryptographic modules to FIPS 140-3. Common Criteria and EUCC evaluate a specified product and configuration against its Security Target. Match the evidence scope to the claim.',
     countLabel: 'active schemes',
     samples: ['CMVP', 'CAVP', 'EUCC'],
     connector: 'tested against',

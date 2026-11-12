@@ -145,6 +145,11 @@ import {
 import { pickBriefCheckQuestion } from '@/simulation/briefCheck'
 import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
+import {
+  isDeclaredPlanningEdge,
+  isPlanningChoice,
+  planningForArchitecture,
+} from '@/simulation/edgePlanningProgress'
 import { buildScoreboard } from '@/simulation/scoreboard'
 import { resetRunLearningWork } from '@/simulation/resetRunLearningWork'
 import { runQuarter } from '@/simulation/quarterEngine'
@@ -464,6 +469,7 @@ export function SimulationView() {
     clearAuto,
     evidence,
     recordEvidence,
+    clearLearnEvidence,
     insuranceAssumed,
     setInsuranceAssumed,
     activeTab,
@@ -1113,7 +1119,6 @@ export function SimulationView() {
   const [viewDoc, setViewDoc] = useState<ExecutiveDocument | null>(null)
   const moduleProgress = useModuleStore((s) => s.modules)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
   // C5-full: confirming a "choice that counts" Algorithms tab (Transition /
   // Detailed) records its artifact tagged with DISTINCT sim provenance (the spec's
   // moduleId, so a standalone doc never pre-completes this) and marks the task done
@@ -1466,6 +1471,10 @@ export function SimulationView() {
   }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
   const runFp = runFingerprint(size, country, sector)
+  const activeRunLearnEvidence = useMemo(
+    () => evidence.filter((record) => record.runId === `run-${seed}` && record.kind === 'learn'),
+    [evidence, seed]
+  )
   // W1: a learn step clears on the learner's own shared completion OR on this
   // run's evidence — which is where a narrated demonstration is recorded. The
   // two stay separate: the run advances without the shared curriculum being
@@ -1473,7 +1482,7 @@ export function SimulationView() {
   const moduleDone = (id?: string) =>
     !!id &&
     (moduleProgress[id]?.status === 'completed' ||
-      hasEvidence(evidence, { resourceId: id, kind: 'learn' }))
+      hasEvidence(activeRunLearnEvidence, { resourceId: id, kind: 'learn' }))
   // W7 (decision Q4 = shared, by design): activity completion is keyed by artifact
   // TYPE, not by which step produced it. So a doc of type T (e.g. a crypto-cbom)
   // satisfies EVERY step that produces T — confirming the P3 Transition tab (which
@@ -1526,11 +1535,17 @@ export function SimulationView() {
   // an `architecture` step's minDecisions so a fixed threshold can never exceed
   // what a smaller org size has to decide (see embedContract.ts).
   const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+  // Decision activities count valid current choices independently of effort.
+  // Using effort credit here would make a P5 activity depend on its own completion.
+  const architectureChoices = planningForArchitecture(arch, 0, edgeDecisions)
+  // An explicit P5 setback removes the last current valid choice, never work
+  // saved for another case or an unavailable/invalid input.
+  const lastCurrentEdgeDecision = Object.keys(edgeDecisions)
+    .filter((key) => architectureChoices.selectedKeys.includes(key))
+    .at(-1)
   // W2.5 — filled below, once the run's derived values exist.
   const metricInputsRef = useRef<RunMetricInputs | null>(null)
-  const edgeDecisionCapacity = arch.edges.filter(
-    (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
-  ).length
+  const edgeDecisionCapacity = architectureChoices.eligibleKeys.length
   // C0: resource-level completion lives in the embed contract's standard
   // convention (isStepComplete); the sim overlays its own rule on top — a step is
   // done if the player did it for real OR it was delegated to the AI team.
@@ -1548,7 +1563,7 @@ export function SimulationView() {
     // reports done via the postMessage handshake, or the manual Mark-complete).
     isScenarioComplete: (id: string) => visitedScenarios.includes(id),
     // WS-04: cumulative edge-decision count/capacity for `architecture` steps.
-    edgeDecisionCount: () => Object.keys(edgeDecisions).length,
+    edgeDecisionCount: () => architectureChoices.selectedKeys.length,
     edgeDecisionCapacity: () => edgeDecisionCapacity,
     // W2.4: recurrence is measured in the RUN's reporting periods.
     recurrenceCount: (type) => distinctRunQuarters(evidence, type).length,
@@ -1733,8 +1748,7 @@ export function SimulationView() {
     // Use the same lowest-domain measure and 0–4 scale on every surface.
     programMaturity: lowestDomainLevel,
     p0Level: levelOf('p0'),
-    // Grounded: the share of vulnerable edges actually migrated (both gates), not raw P5 progress.
-    migrationFraction: readiness.vulnerable ? readiness.migrated / readiness.vulnerable : 0,
+    planningGroups: readiness.planning.groups,
     allAtTopBand: scenarioComplete,
     currentYear: year,
     objectiveAchievedYears,
@@ -1880,7 +1894,7 @@ export function SimulationView() {
     budgetTargetM: budgetTarget,
     assetsAccounted: assetsDiscovered ? assets.length : 0,
     assetsTotal: assets.length,
-    edgeDecisions: Object.keys(edgeDecisions).length,
+    edgeDecisions: architectureChoices.selectedKeys.length,
     edgeCapacity: edgeDecisionCapacity,
     evidenceTotal: evidence.length,
     evidenceByLearner: evidence.filter((e) => e.origin === 'learner').length,
@@ -2067,9 +2081,9 @@ export function SimulationView() {
       levelOf,
       evidenceLevel,
       stepDone,
-      // WP4.1 — readiness.pct is 0-100 migrated; hndlExposure is the inverse
-      // fraction (0-1) still unmigrated, the same grounded estate signal the
-      // ribbon and objectives panel already read.
+      // Preserve the existing quarter-consequence model's overall planning
+      // input. Named confidentiality-purpose coverage is reported separately
+      // by txStatus; this is not that protection-coverage result.
       hndlExposure: 1 - readiness.pct / 100,
       securedBudget: availableBudgetM,
     })
@@ -2351,7 +2365,9 @@ export function SimulationView() {
       if (moduleDone(moduleId)) {
         return (
           <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-            ✓ Module completed
+            {moduleProgress[moduleId]?.status === 'completed'
+              ? '✓ Completed in Learn'
+              : '✓ Activity recorded for this run'}
           </div>
         )
       }
@@ -2442,11 +2458,14 @@ export function SimulationView() {
       const migratable = arch.edges.filter(
         (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
       )
-      const decidedCount = Object.keys(edgeDecisions).length
+      const phonePlanning = planningForArchitecture(arch, p5Frac, edgeDecisions)
+      const decidedCount = phonePlanning.selectedKeys.length
       const target = Math.min(step.minDecisions, migratable.length)
-      const decided = migratable.filter((e) => edgeDecisions[edgeKey(e)])
+      const decided = arch.edges.filter((e) =>
+        Object.prototype.hasOwnProperty.call(edgeDecisions, edgeKey(e))
+      )
       // 09-28 (WP6.5): a decided link can be taken back.
-      const undoList = decided.length > 0 && (
+      const undoList = (decided.length > 0 || phonePlanning.unknownKeys.length > 0) && (
         <div className="flex flex-wrap gap-1">
           {decided.map((e) => (
             <Button
@@ -2461,11 +2480,41 @@ export function SimulationView() {
               ↺ {e.from} → {e.to}
             </Button>
           ))}
+          {phonePlanning.unknownKeys.map((key) => (
+            <Button
+              key={key}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setEdgeDecision(key, null)}
+              aria-label={`Remove saved choice for unknown link ${key}`}
+              className="h-auto max-w-full break-all whitespace-normal px-2 py-0.5 text-[10.5px]"
+            >
+              Remove out-of-case choice: {key}
+            </Button>
+          ))}
+        </div>
+      )
+      const planningNote = (
+        <div className="text-[10.5px] text-muted-foreground">
+          Choices cover the link&apos;s declared confidentiality/authenticity purposes in this
+          sample plan. They do not execute cryptographic checks.
+          {phonePlanning.overCapacity && (
+            <p className="text-warning" role="status">
+              Selected links exceed available effort. No selected link receives migration credit;
+              undo links until the named set fits, or complete other P5 activities.
+            </p>
+          )}
+          {(phonePlanning.unavailableKeys.length > 0 ||
+            phonePlanning.invalidChoiceKeys.length > 0) && (
+            <p>Unavailable or invalid saved choices receive no credit and can be undone.</p>
+          )}
         </div>
       )
       if (decidedCount >= target) {
         return (
           <div className="mt-2 space-y-1.5">
+            {planningNote}
             <div className="rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
               ✓ {decidedCount}/{target} migration decisions made — this step is credited.
             </div>
@@ -2473,9 +2522,10 @@ export function SimulationView() {
           </div>
         )
       }
-      const undecided = migratable.filter((e) => !edgeDecisions[edgeKey(e)])
+      const undecided = migratable.filter((e) => !isPlanningChoice(edgeDecisions[edgeKey(e)]))
       return (
         <div className="mt-2 space-y-1.5">
+          {planningNote}
           {undoList}
           <div className="text-[10.5px] font-bold text-muted-foreground">
             {decidedCount}/{target} decisions — pick Hybrid or Pure PQC for each link:
@@ -2487,8 +2537,15 @@ export function SimulationView() {
                 key={key}
                 className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5"
               >
-                <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-foreground">
-                  {e.from} → {e.to} ({e.protocol})
+                <span className="min-w-0 flex-1 text-[11px] font-semibold text-foreground">
+                  <span className="block truncate">
+                    {e.from} → {e.to} ({e.protocol})
+                  </span>
+                  <span className="block whitespace-normal text-[10px] font-normal text-muted-foreground">
+                    {isDeclaredPlanningEdge(e)
+                      ? `${e.criticality} · ${e.requiredPurposes.join(' + ')}`
+                      : 'Case purpose unassessed'}
+                  </span>
                 </span>
                 <div className="flex shrink-0 gap-1">
                   {(['hybrid', 'pure'] as const).map((choice) => {
@@ -2635,7 +2692,7 @@ export function SimulationView() {
               // link, exactly like the desktop instance.
               // 09-28 (WP7c): the MOST RECENT decision (string keys keep insertion
               // order) — `[0]` rolled back the oldest.
-              const revertId = sel === 'p5' ? Object.keys(edgeDecisions).at(-1) : undefined
+              const revertId = sel === 'p5' ? lastCurrentEdgeDecision : undefined
               const extra = revertId ? ` — rolled back link ${revertId}` : ''
               pendingWrongPickRef.current = { quarters, yearsBefore: clock.yearsToHorizon }
               applyDecisionSetback(
@@ -3788,7 +3845,11 @@ export function SimulationView() {
                 silently passing as a verified check. */}
               {learnEmbed &&
                 (() => {
-                  const done = moduleDone(learnEmbed.moduleId)
+                  const sharedDone = moduleProgress[learnEmbed.moduleId]?.status === 'completed'
+                  const runDone = hasEvidence(activeRunLearnEvidence, {
+                    resourceId: learnEmbed.moduleId,
+                    kind: 'learn',
+                  })
                   const coverage = gateCoverageFor(learnEmbed.moduleId)
                   const hasGate = coverage.state === 'checked'
                   return (
@@ -3801,34 +3862,41 @@ export function SimulationView() {
                           check unavailable
                         </span>
                       )}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => {
-                          if (done) {
-                            updateModuleProgress(learnEmbed.moduleId, { status: 'in-progress' })
-                            return
-                          }
-                          const q = pickQuizQuestion(learnEmbed.moduleId, seed)
-                          if (q) {
-                            setQuizGate({
-                              moduleId: learnEmbed.moduleId,
-                              title: learnEmbed.title,
-                              question: q,
-                            })
-                          } else {
-                            recordLearnerEvidence('learn', learnEmbed.moduleId, 'viewed')
-                          }
-                        }}
-                        aria-pressed={done}
-                        className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
-                          done
-                            ? 'bg-success text-success-foreground hover:opacity-90'
-                            : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
-                        }`}
-                      >
-                        {done ? '✓ Completed' : 'Mark complete'}
-                      </Button>
+                      {sharedDone && (
+                        <span role="status" className="text-[11px] font-semibold text-success">
+                          Completed in Learn
+                        </span>
+                      )}
+                      {(!sharedDone || runDone) && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => {
+                            if (runDone) {
+                              clearLearnEvidence(learnEmbed.moduleId)
+                              return
+                            }
+                            const q = pickQuizQuestion(learnEmbed.moduleId, seed)
+                            if (q) {
+                              setQuizGate({
+                                moduleId: learnEmbed.moduleId,
+                                title: learnEmbed.title,
+                                question: q,
+                              })
+                            } else {
+                              recordLearnerEvidence('learn', learnEmbed.moduleId, 'viewed')
+                            }
+                          }}
+                          aria-pressed={runDone}
+                          className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
+                            runDone
+                              ? 'bg-success text-success-foreground hover:opacity-90'
+                              : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
+                          }`}
+                        >
+                          {runDone ? 'Remove run completion' : 'Mark complete'}
+                        </Button>
+                      )}
                     </span>
                   )
                 })()}
@@ -4477,8 +4545,7 @@ export function SimulationView() {
                           // so readiness visibly drops on a specific edge (re-doable).
                           // 09-28 (WP7c): the MOST RECENT decision (string keys keep insertion
                           // order) — `[0]` rolled back the oldest.
-                          const revertId =
-                            sel === 'p5' ? Object.keys(edgeDecisions).at(-1) : undefined
+                          const revertId = sel === 'p5' ? lastCurrentEdgeDecision : undefined
                           const extra = revertId ? ` — rolled back link ${revertId}` : ''
                           applyDecisionSetback(
                             quarters,

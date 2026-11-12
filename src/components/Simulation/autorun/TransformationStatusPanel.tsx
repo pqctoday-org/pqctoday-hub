@@ -1,10 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-/**
- * TransformationStatusPanel — the board's headline, replacing the static Mosca "over by N
- * years" doom gauge. Shows program maturity (0–4), the three objectives with on-time state,
- * the four migration tracks (HNDL/TNFL × critical/general) filling toward their scenario
- * dates, and a DYNAMIC harvest-now (HNDL) exposure that falls as the HNDL tracks migrate.
- */
+/** Named sample-planning groups, objective timing and illustrative HNDL exposure. */
 import { Ring } from '../atoms'
 import { RibbonTermTooltip } from '../RibbonTermTooltip'
 import type { TransformationStatus, OnTime } from './transformationStatus'
@@ -25,7 +20,7 @@ function chip(onTime: OnTime): { icon: string; cls: string } {
 }
 
 export function TransformationStatusPanel({ status }: { status: TransformationStatus }) {
-  const exposurePct = Math.round(status.hndlExposure * 100)
+  const exposurePct = status.hndlExposure == null ? null : Math.round(status.hndlExposure * 100)
   return (
     <div className="flex shrink-0 flex-wrap items-stretch gap-x-4 gap-y-2 rounded-xl border border-border bg-card px-4 py-2">
       <div className="flex items-center gap-2.5">
@@ -38,9 +33,11 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
             Maturity {status.maturity.toFixed(1)} / 4
           </div>
           <div
-            className={`font-mono text-[10px] ${exposurePct > 50 ? 'text-destructive' : exposurePct > 10 ? 'text-warning' : 'text-success'}`}
+            className={`font-mono text-[10px] ${exposurePct == null ? 'text-muted-foreground' : exposurePct > 50 ? 'text-destructive' : exposurePct > 10 ? 'text-warning' : 'text-success'}`}
           >
-            harvest-now exposure {exposurePct}%
+            {exposurePct == null
+              ? 'Sample HNDL exposure unavailable'
+              : `Sample HNDL exposure ${exposurePct}%`}
           </div>
         </div>
       </div>
@@ -61,8 +58,8 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
         })}
       </div>
       <p className="w-full text-xs text-muted-foreground">
-        Migration tracks and exposure are illustrative model outputs. A total migration count does
-        not establish protection of critical services.
+        Counts show completed sample planning links for each named group. HNDL exposure is an
+        illustrative planning model; completing links does not establish deployed protection.
       </p>
 
       <div className="flex flex-1 min-w-0 md:min-w-[190px] flex-col justify-center gap-1">
@@ -78,12 +75,28 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
               </RibbonTermTooltip>
               <span>{t.year}</span>
             </div>
-            <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-muted">
-              <div
-                className={`h-full rounded-full ${t.track === 'HNDL' ? 'bg-destructive' : 'bg-primary'}`}
-                style={{ width: `${Math.round(t.progress * 100)}%` }}
-              />
-            </div>
+            {t.progress == null ? (
+              <div className="mt-0.5 text-muted-foreground">Planning unassessed</div>
+            ) : (
+              <>
+                <div className="text-muted-foreground">
+                  {t.completedCount}/{t.requiredCount} sample planning links complete
+                </div>
+                <div
+                  className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-muted"
+                  role="progressbar"
+                  aria-label={`${t.track} ${t.tier} sample planning`}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.round(t.progress * 100)}
+                >
+                  <div
+                    className={`h-full rounded-full ${t.track === 'HNDL' ? 'bg-destructive' : 'bg-primary'}`}
+                    style={{ width: `${Math.round(t.progress * 100)}%` }}
+                  />
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>

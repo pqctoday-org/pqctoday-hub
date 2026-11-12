@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'ai-security-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-09',
+  lastEdited: '2026-11-11',
 
   standards: [
     getStandard('FIPS 203'),
@@ -65,7 +65,7 @@ export const content: ModuleContent = {
     overview:
       'Quantum threats to AI data pipelines (HNDL on training data, data poisoning via forged signatures). Model collapse from AI-generated training data contamination. Cryptographic data provenance (C2PA content credentials, hash chains, watermark detection). Model weight protection (encryption at rest/transit/use, ML-DSA model signing). AI agent authentication (machine identity, delegation tokens, credential lifecycles).',
     workshopSummary:
-      'Data Protection Analyzer — Audit AI pipeline crypto operations for quantum vulnerabilities. Data Authenticity Verifier — Configure verification layers, visualize model collapse, compare signing overheads. Model Weight Vault — Configure model encryption/signing, compare classical vs PQC overhead. Agent Auth Designer — Design delegation chains with PQC credentials. Agentic Commerce Simulator — Step through agent transaction flows with quantum overlay.',
+      'Data Protection Analyzer — Audit AI pipeline crypto operations for quantum vulnerabilities. Data Authenticity Verifier — Evaluate supplied fictional observations, compare accuracy with recall, and distinguish provenance from content truth and fictional model-collapse scores. Model Weight Vault — Compare complete wrapping envelopes, signatures and authored operation-time assumptions. Agent Auth Designer — Design delegation chains with PQC credentials. Agentic Commerce Simulator — Recompute sequential latency totals from visible authored per-step inputs. Agent-to-Agent Protocol — Compare separate primitive properties and a declared transport rubric. Scale Encryption Planner — Calculate workload counts and distinguish them from the fixed fictional migration schedule.',
     relatedStandards:
       'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. C2PA Technical Specification v2.4 (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 9846 (TLS 1.3, July 2026 — obsoletes RFC 8446) — transport security for AI API endpoints. NIST AI 100-1 (AI RMF 1.0) — AI risk management framework',
   },

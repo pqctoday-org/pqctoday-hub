@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Developer Quantum Impact module provides software engineers with a concrete, code-level understanding of how post-quantum cryptography migration affects their day-to-day work. It covers the six most impactful technical disruptions — library API transitions, signature and key size explosions, TLS handshake growth, CI/CD signing pipeline changes, hybrid algorithm complexity, and testing gaps — alongside a hands-on self-assessment of which code paths need remediation and a structured skill gap roadmap. Content is calibrated for developers who write crypto library calls, build TLS-connected services, or maintain CI/CD pipelines.
+Developer Quantum Impact connects six descriptive threat scenarios to skill self-ratings, a phased action checklist and a nine-item exposure checklist. Separate linked tools support token sizing, TLS configuration experiments, API migration examples, signing, hybrid key derivation and test-vector input analysis. Use the examples to choose checks to perform with your own development tools.
 
 ## Key Concepts
 
@@ -18,11 +18,21 @@ The Developer Quantum Impact module provides software engineers with a concrete,
 
 ## Workshop / Interactive Activities
 
-The workshop has 3 interactive steps:
+The workshop has four steps:
 
-1. **Threat Impact Explorer** — six-panel technical briefing: library migration API diff (before/after code snippets), signature size impact calculator (input: algorithm + payload size → output: JWT size, HTTP header usage, storage overhead), TLS handshake size estimator with per-protocol comparison, code signing tool migration matrix (cosign/Notation/GPG timelines), hybrid KDF combiner walkthrough, and ACVP test vector gap analysis by algorithm category
-2. **Self-Assessment Survey** — nine-criterion developer readiness check covering: TLS client/server code in codebase, JWT/JOSE token generation or validation, direct crypto library calls (OpenSSL, BouncyCastle, JCA/JCE), CI/CD artifact signing, hardware crypto device integration (HSM/TPM/YubiKey), X.509 certificate generation, key storage and key rotation code, TLS protocol negotiation and cipher suite configuration, PKCS#11 provider interfaces; outputs affected code areas with prioritized remediation order
-3. **Skill Gap Roadmap** — three-domain skill gap assessment: Algorithm Knowledge (ML-KEM API patterns, ML-DSA API patterns, hybrid KDF combiners, ACVP test vector usage), Protocol Integration (TLS 1.3 hybrid group negotiation, JWT PQC algorithm headers, PKCS#11 v3.2 CKM_ML_DSA / CKM_ML_KEM mechanisms), Library & Build System (oqsprovider configuration, Bouncy Castle PQC provider, liboqs bindings, dependency version scanning for quantum-vulnerable packages); generates a personalized learning path with linked modules
+1. **Why It Matters** — six expandable descriptive impact/scenario cards. Use them to identify code areas to investigate; the cards do not inspect your code or contain sizing calculators.
+2. **What to Learn** — self-rate skills, compare your ratings with the role's targets, and follow linked learning modules.
+3. **How to Act** — select phased action items and quick wins; export your checklist as Markdown. Checked items record your selections, not completed production migration work.
+4. **Skill Self-Assessment** — a nine-item exposure checklist. Use the declared work areas to decide which topics to revisit; this is not a source-code scan or measured readiness assessment.
+
+### Separate sample tools for the next decision
+
+- [Token Size Analyzer](/learn/api-security-jwt?tab=workshop&step=4): edit a sample JSON payload and compare compact JWT and Authorization header-line bytes across algorithms against an entered line budget. Use the result to plan full-request tests in your own stack; it does not measure every header or your proxy's limits.
+- [TLS 1.3 Simulator](/playground/tls-simulator): configure sample client/server groups, cipher suites and identities, then inspect the interaction. Use it to plan interoperability cases, not predict production P99 latency or fragmentation.
+- [Hybrid KEM + ECDH](/playground/hybrid-encrypt): follow sample X25519 and ML-KEM operations and the HKDF combination of their secrets. Map those calls to your integration; the sample does not choose a protocol profile or audit your failure handling.
+- [VectorSet Anatomy (on a computer)](/learn/acvp-lab-workflow?tab=workshop&step=1): parse two pinned prompt examples and predict which supplied inputs standard PKCS#11 can carry, group by group. This step runs no engine and does not establish universal test coverage or validation.
+- [API Migration Decision Lab](/learn/crypto-dev-apis?tab=workshop&step=7): inspect migration paths, before/after library examples and steps. Map the calls to your code; the example is not a scanned or tested patch for your application.
+- [Code-signing sample](/learn/code-signing?tab=workshop&step=0): follow sample binary signing and verification, distinguishing a live run from explicitly illustrative mode. Use this to plan your pipeline tests; it is not a cosign/Notation/GPG release-timeline matrix.
 
 ## Related Standards
 

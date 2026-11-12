@@ -6,6 +6,7 @@ import { COMMERCE_FLOWS } from '../data/agentAuthData'
 import { COMMERCE_ACTOR_COLORS, COMMERCE_ACTOR_LABELS } from '../data/aiSecurityConstants'
 import type { CommerceActor } from '../data/aiSecurityConstants'
 import { Button } from '@/components/ui/button'
+import { relativeChangePercent, commerceOverheadBand } from '../data/scenarioCalculations'
 
 const FLOW_ITEMS = COMMERCE_FLOWS.map((f) => ({ id: f.id, label: f.name }))
 
@@ -22,15 +23,17 @@ export const AgenticCommerceSimulator: React.FC = () => {
   const latencyStats = useMemo(() => {
     const classical = flow.steps.reduce((sum, s) => sum + s.latencyMs, 0)
     const pqc = flow.steps.reduce((sum, s) => sum + s.pqcLatencyMs, 0)
-    const overhead = classical > 0 ? ((pqc - classical) / classical) * 100 : 0
+    const overhead = relativeChangePercent(classical, pqc)
     const vulnerable = flow.steps.filter((s) => s.quantumVulnerable).length
     return { classical, pqc, overhead, vulnerable }
   }, [flow])
 
   const latencyVerdict = useMemo(() => {
-    if (latencyStats.overhead < 5) return { label: 'Acceptable', color: 'text-status-success' }
-    if (latencyStats.overhead < 15) return { label: 'Moderate', color: 'text-status-warning' }
-    return { label: 'Significant', color: 'text-status-error' }
+    if (latencyStats.overhead !== null && latencyStats.overhead < 5)
+      return { label: 'Acceptable', color: 'text-status-success' }
+    if (latencyStats.overhead !== null && latencyStats.overhead < 15)
+      return { label: 'Moderate', color: 'text-status-warning' }
+    return { label: commerceOverheadBand(latencyStats.overhead), color: 'text-status-error' }
   }, [latencyStats])
 
   return (
@@ -39,7 +42,7 @@ export const AgenticCommerceSimulator: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-1">Agentic Commerce Simulator</h3>
         <p className="text-sm text-muted-foreground">
           Step through agent-to-agent transaction flows. Toggle the quantum overlay to identify
-          vulnerable cryptographic operations and measure PQC latency impact.
+          vulnerable cryptographic operations and compare authored latency scenarios.
         </p>
       </div>
 
@@ -210,6 +213,22 @@ export const AgenticCommerceSimulator: React.FC = () => {
           </div>
         </div>
 
+        <p className="text-sm text-muted-foreground mb-4" aria-label="Latency calculation basis">
+          Hub-authored timing inputs, in milliseconds: classical ={' '}
+          {flow.steps.map((step) => step.latencyMs).join(' + ')} = {latencyStats.classical}; PQC ={' '}
+          {flow.steps.map((step) => step.pqcLatencyMs).join(' + ')} = {latencyStats.pqc}. This
+          example adds the steps sequentially, with no overlap. Relative change = (
+          {latencyStats.pqc}
+          {' − '}
+          {latencyStats.classical}) ÷ {latencyStats.classical} × 100. These are scenario
+          calculations, not measured network or cryptographic performance.
+        </p>
+        <p className="text-xs text-muted-foreground mb-4">
+          Teaching bands: Acceptable below 5%, Moderate from 5% to below 15%, Significant from 15%.
+          These fixed bands are not production acceptance limits. Use the per-step inputs to
+          identify where to measure your own flow; compare the resulting total with your actual
+          latency budget before choosing a deployment.
+        </p>
         {/* Summary */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div>
@@ -222,13 +241,15 @@ export const AgenticCommerceSimulator: React.FC = () => {
           </div>
           <div>
             <p className={`text-2xl font-bold ${latencyVerdict.color}`}>
-              +{latencyStats.overhead.toFixed(1)}%
+              {latencyStats.overhead === null
+                ? 'Not defined'
+                : `${latencyStats.overhead >= 0 ? '+' : ''}${latencyStats.overhead.toFixed(1)}%`}
             </p>
             <p className="text-xs text-muted-foreground">Overhead</p>
           </div>
           <div>
             <p className={`text-2xl font-bold ${latencyVerdict.color}`}>{latencyVerdict.label}</p>
-            <p className="text-xs text-muted-foreground">Verdict</p>
+            <p className="text-xs text-muted-foreground">Teaching band</p>
           </div>
         </div>
       </div>

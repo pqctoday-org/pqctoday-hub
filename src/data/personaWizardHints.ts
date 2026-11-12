@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// @reviewed 2026-09-01 by eram2207usa — full read + cross-check against the
-// live wizard's 13 real steps; removed the orphaned 'vendors' step block
-// (Step12VendorDependency.tsx deleted, was imported nowhere)
+// Historical review: 2026-09-01 by eram2207usa covered the earlier 13-step text.
+// Researcher guidance revised 2026-11-11 against the implemented scoring model;
+// the earlier review does not cover these revised researcher explanations.
 import type { PersonaId } from './learningPersonas'
 import type { ExperienceLevel } from '../store/usePersonaStore'
 
@@ -649,73 +649,73 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
   },
   researcher: {
     industry: {
-      hint: 'Industry is an input variable to the scoring model — it drives compliance framework selection, threat category mapping, and industry-specific retention defaults.',
+      hint: 'Industry filters relevant frameworks and use cases. Its configured threat value contributes to regulatory pressure, and its composite weights combine the category scores.',
       title: 'Select an industry for analysis',
       description:
-        'Industry drives framework filtering, threat mapping, and retention defaults in the scoring model.',
+        'Compare the configured scoring assumptions with the industry and use cases you intend to study.',
     },
     country: {
-      hint: 'Country drives regulatory pressure scoring via deadline proximity, mandate strength, and enforcement body reputation.',
+      hint: 'Country filters relevant frameworks and adds its configured urgency points to regulatory pressure. A jurisdiction milestone is separate from the model’s quantum-computer planning year.',
       hintExpert:
-        'Country selection feeds the regulatory pressure multiplier (1.0-1.3). Deadlines are sourced from the timeline CSV; closer deadlines increase the multiplier exponentially.',
+        'Regulatory pressure adds framework deadline points, the industry contribution and country urgency points, then applies the selected timeline multiplier. Deadline bands are piecewise, not exponential; country is not a multiplier or an enforcement-reputation measurement.',
       title: 'Select a jurisdiction for analysis',
       description:
-        'Country drives deadline proximity, mandate strength, and regulatory pressure scoring.',
+        'Inspect applicable framework deadlines and distinguish policy milestones from the quantum-threat planning assumption.',
     },
     crypto: {
-      hint: 'Select all algorithms for comprehensive analysis. Each quantum-vulnerable algorithm generates specific migration recommendations with NIST FIPS references.',
+      hint: 'Select the algorithms actually present. Quantum-vulnerable algorithms contribute weighted exposure points and produce purpose-specific migration recommendations.',
       hintExpert:
-        'Each algorithm maps to a NIST migration path: RSA→ML-KEM (FIPS 203), ECDSA→ML-DSA (FIPS 204), SHA-2→SHA-3 (FIPS 202). Symmetric algorithms are quantum-resistant at sufficient key sizes.',
+        'Distinguish RSA key establishment from RSA signatures: their migration paths serve different purposes. ML-KEM establishes shared secrets; ML-DSA signs. SHA-2 does not automatically require replacement by SHA-3. Review algorithm parameters and the selected protocol before choosing a replacement.',
     },
     sensitivity: {
-      hint: 'Multiple sensitivity levels can be selected. The scoring engine uses the maximum across selections for worst-case HNDL risk analysis.',
+      hint: 'The model uses the highest selected sensitivity level. Sensitivity contributes exposure points; the confidentiality window itself uses retention years and the quantum-threat planning year.',
       hintExpert:
-        'Sensitivity drives the data_value_score (0-30 range). "Top Secret" = 30, "Public" = 5. The maximum across all selections is used for the HNDL risk window calculation.',
+        'Sensitivity contributes 0.6 times the configured value, capped at 15 exposure points: low = 0, medium = 3, high = 9, critical = 15. With identified cryptography, unknown sensitivity uses high; the unknown-cryptography branch instead reads the retained sensitivity selection. Holding an explicit retention period and other inputs fixed, changing high to critical adds six exposure points before rounding and the final score cap.',
     },
     compliance: {
-      hint: 'Each selected framework is scored for PQC mandate status, deadline proximity, and enforcement body. Closer deadlines increase regulatory pressure.',
+      hint: 'Only supplied framework impacts marked as requiring PQC enter the deadline-point calculation. Check applicability before interpreting the resulting score.',
       hintExpert:
-        'Framework scoring: mandate_weight × deadline_proximity × enforcement_strength. Frameworks with explicit PQC mandates (CNSA 2.0, BSI TR) receive 2× weight.',
+        'Each included framework contributes 15 points for a passed/current-year deadline, 14 within two years, 12 within five years, or 8 beyond five years; an unparsed or unknown deadline contributes 10. The sum is capped at 45 before industry/country points and the timeline multiplier. There is no automatic double weight for a named framework.',
     },
     migration: {
-      hint: 'Migration status affects the organizational readiness score. "Started" gives the largest risk reduction; "unknown" applies conservative defaults.',
+      hint: 'Migration status contributes to a readiness gap that is combined with capacity, agility and vendor gaps. The displayed readiness is 100 minus the capped total gap: higher means more ready.',
       hintExpert:
-        'Readiness multipliers: started=0.3, planning=0.5, not-started=0.8, unknown=0.7. Lower = better organizational readiness. "Unknown" is slightly better than "not-started" due to Bayesian prior.',
+        'For this researcher persona, status-gap points are started = 5, planning = 20, not-started = 35 and unknown = 40. Holding the other inputs fixed, started reduces the gap by 30 points compared with not-started, subject to caps. These are authored model assumptions, not probabilities or a Bayesian prior.',
     },
     'use-cases': {
-      hint: 'Each use case has HNDL relevance, HNFL relevance, and migration priority weights that feed into the composite risk score.',
+      hint: 'Use cases affect exposure and help identify confidentiality and authenticity concerns. Inspect the selected purpose rather than treating every use case as encrypted-data exposure.',
       hintExpert:
-        'Use cases have independent HNDL and HNFL weights. Key exchange/encryption use cases dominate HNDL; signing/authentication dominate HNFL. Weights are summed and normalized.',
+        'Exposure uses the sum of configured HNDL relevance values times 2.5, capped at 25 points; missing values use the configured fallback. TNFL relevance separately identifies signing-related use cases in the credential-window result. They are not two normalized weights summed directly into the composite score.',
     },
     retention: {
-      hint: 'Retention years drive the HNDL risk window calculation: data expiry year minus estimated CRQC arrival year. Industry-specific defaults apply when unknown.',
+      hint: 'The confidentiality window compares the longest selected retention period with the quantum-threat planning year. A positive window is a planning scenario, not evidence that collection is occurring.',
       hintExpert:
-        'HNDL window = retention_years - (CRQC_year - current_year). Positive = data still sensitive when CRQC arrives. Industry defaults: Finance=10yr, Healthcare=30yr, Government=50yr.',
+        'Window = max(0, current year + retention years − quantum-threat planning year). Unknown retention uses the largest configured industry retention period, with a minimum of 15 years, and is marked estimated. For identified cryptography, the retention exposure contribution is separately capped at 20 points; the unknown-cryptography branch omits that term; there is no universal Finance/Healthcare/Government lifetime.',
     },
     credential: {
-      hint: 'Credential lifetime drives the HNFL risk window. Only affects scoring when signing algorithms (RSA, ECDSA, Ed25519) are present.',
+      hint: 'The credential window compares the longest selected trust lifetime with the quantum-threat planning year. Its at-risk flag also requires a signing algorithm, or unknown current cryptography.',
       hintExpert:
-        'HNFL window = credential_years - (CRQC_year - current_year). Only nonzero when signature algorithms are selected. Maximum across all credential types is used.',
+        'Credential window = max(0, current year + longest configured credential lifetime − quantum-threat planning year). Unknown lifetime uses an explicitly estimated 10 years. This is an authenticity-planning scenario, not proof that signatures or stored records have already been forged.',
     },
     scale: {
-      hint: 'System scale and team capacity create a capacity gap ratio that feeds into organizational readiness scoring.',
+      hint: 'System-count and team-size bands map to model factors; the readiness calculation divides the system factor by the team-capacity factor, rather than dividing raw system and staff counts.',
       hintExpert:
-        'Capacity gap = systems_count / team_capacity. Ratios >50 increase migration complexity. Team size categories: 1-5=micro, 6-20=small, 21-100=medium, 100+=large.',
+        'Capacity gap points = min(25, round(8 × system-scale factor / team-capacity factor)). Both selectors use 1–10, 11–50, 51–200 and 200-plus bands. System scale separately contributes up to 15 migration-complexity points; team capacity affects readiness.',
     },
     agility: {
-      hint: 'Crypto agility is the single largest factor in migration complexity scoring (40% weight). "Hardcoded" = 0.9 factor, "fully-abstracted" = 0.2.',
+      hint: 'Agility contributes up to 40 migration-complexity points and also affects readiness. It is one authored model component, not a measured migration-time prediction.',
       hintExpert:
-        'Agility multipliers: fully-abstracted=0.2, partially-abstracted=0.5, hardcoded=0.9, unknown=0.7. This is the dominant factor in migration_complexity_score.',
+        'Agility factors are fully-abstracted = 0.2, partially-abstracted = 0.5, hardcoded = 0.9 and unknown = 0.75. Multiplying by 40 gives complexity contributions of 8, 20, 36 and 30 points. Readiness separately adds round(20 × the same factor) to its gap.',
     },
     infra: {
-      hint: 'Infrastructure items have individual complexity scores (HSM=15, Legacy=14, Embedded=13, On-prem PKI=12). Sum is capped at 30.',
+      hint: 'Selected infrastructure layers contribute complexity points, capped at 30. Broad layers are not measurements of the actual devices or suppliers in those layers.',
       hintExpert:
-        'Per-item scores: HSM=15, Legacy=14, Embedded=13, On-prem PKI=12, Cloud KMS=8, Cloud HSM=10, Network crypto=11. Total capped at 30, normalized to 0-1 range.',
+        'Configured layer points are Hardware = 15, Security Stack = 12, OS = 11, Network = 10, Application = 8, Cloud = 6 and Database = 6; sum capped at 30. Explicit HSM subcategory answers separately inform the migration-effort estimate and do not replace these layer weights.',
     },
     timeline: {
-      hint: 'Timeline pressure is a multiplier (1.0-1.3) applied to the regulatory pressure score. Country-specific deadlines from the timeline CSV are shown.',
+      hint: 'The selected timeline band multiplies the sum of framework, industry and country regulatory-pressure points. Read the chosen milestone separately to check its applicability.',
       hintExpert:
-        'Pressure multipliers: within-1y=1.3, within-2-3y=1.15, internal-deadline (your own target, or a published deadline more than 3 years away)=1.05, no-deadline=1.0, unknown=1.1. Applied after regulatory_pressure_score calculation.',
+        'Timeline multipliers are within-1y = 1.3, within-2-3y = 1.15, internal-deadline = 1.05, no-deadline = 1.0 and unknown = 1.2. The result is rounded and capped at 100. These are model coefficients, not probabilities or an estimate of quantum-computer arrival.',
     },
   },
   'cert-engineer': {

@@ -5,6 +5,7 @@ import type { SensorType } from '../data/automotiveConstants'
 import {
   SENSOR_PROFILES,
   ALGORITHM_THROUGHPUT,
+  AUTOMOTIVE_TIMING_BASIS,
   computeSigningCapacity,
 } from '../data/sensorFusionData'
 import type { SensorProfile } from '../data/sensorFusionData'
@@ -80,6 +81,7 @@ export const SensorDataIntegritySimulator: React.FC = () => {
         frequency.
       </p>
 
+      <p className="text-xs text-muted-foreground">{AUTOMOTIVE_TIMING_BASIS}</p>
       {/* ── Sensor Toggle Panel ──────────────────────────────────────── */}
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">

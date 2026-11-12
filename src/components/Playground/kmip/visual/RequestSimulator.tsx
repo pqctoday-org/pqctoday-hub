@@ -94,6 +94,7 @@ const EFFECT_FALLBACK: Record<string, string> = {
   skip: 'never reached — an earlier rule in this pass already decided',
   resolve: 'resolved the algorithm',
   deny: 'denied the request',
+  warn: 'Warning — evaluation continues',
 }
 
 /** Denial → remedy (A-grade review item #17) — name what would satisfy the
@@ -436,8 +437,9 @@ export function RequestSimulator({
               default or substitutes the algorithm (the crypto-agility rekey);{' '}
               <span className="font-semibold text-foreground">Pass 2 · Gate</span> then allows or
               denies against the resolved algorithm. Within each pass it's{' '}
-              <span className="font-semibold text-foreground">first-match-wins</span> — the first
-              rule that applies decides, and every later rule in that pass never runs.
+              <span className="font-semibold text-foreground">first terminal match wins</span> — the
+              first terminal rule that applies decides. Warning rules record a warning and continue;
+              they do not prevent a later denial.
             </p>
           </div>
 
@@ -455,6 +457,7 @@ export function RequestSimulator({
                   {steps.map((s) => {
                     const rule = ruleForTraceStep(policy, s)
                     const decided = s.effect === 'resolve' || s.effect === 'deny'
+                    const warned = s.effect === 'warn'
                     return (
                       <div
                         key={s.index}
@@ -462,7 +465,9 @@ export function RequestSimulator({
                           'flex items-start gap-1.5 rounded-md border px-1.5 py-1 text-[10.5px]',
                           decided
                             ? 'border-primary/30 bg-primary/5'
-                            : 'border-border bg-transparent text-muted-foreground'
+                            : warned
+                              ? 'border-status-warning/40 bg-status-warning/5'
+                              : 'border-border bg-transparent text-muted-foreground'
                         )}
                       >
                         <span className="font-mono text-muted-foreground shrink-0">#{s.index}</span>
@@ -472,7 +477,9 @@ export function RequestSimulator({
                             : s.effect}
                         </span>
                         <span className="text-muted-foreground">
-                          {s.note || EFFECT_FALLBACK[s.effect] || s.effect}
+                          {warned
+                            ? `${EFFECT_FALLBACK.warn}${s.note ? `: ${s.note}` : ''}`
+                            : s.note || EFFECT_FALLBACK[s.effect] || s.effect}
                         </span>
                         {decided && (
                           <span className="ml-auto shrink-0 text-[9px] font-bold uppercase tracking-wide text-primary">

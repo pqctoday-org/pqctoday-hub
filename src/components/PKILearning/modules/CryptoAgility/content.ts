@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-agility',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-11',
 
   standards: [
     getStandard('NIST SP 800-208'),

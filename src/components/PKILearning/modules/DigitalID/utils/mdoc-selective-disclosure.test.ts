@@ -13,16 +13,42 @@
  * must be absent, and a tampered value must FAIL its digest.
  */
 import { describe, it, expect } from 'vitest'
+import { generateKeyPairSync, sign, verify } from 'node:crypto'
 import { createMdoc, createMdocPresentation, verifyMdocPresentation } from './mdoc-utils'
 import type { CryptoProvider } from './crypto-provider'
 import type { CryptoKey, CredentialAttribute } from '../types'
 
-/** Minimal provider: real SHA-256 via WebCrypto, stub signing (not under test). */
+// Actual fictional key/signatures preserve the stricter existing COSE contract;
+// the assertions below still test salted disclosure digests, not issuer trust.
+const pair = generateKeyPairSync('ec', { namedCurve: 'prime256v1' })
+const key: CryptoKey = {
+  id: 'fictional-disclosure-key',
+  type: 'P-256',
+  algorithm: 'ES256',
+  curve: 'P-256',
+  publicKey: Buffer.from(pair.publicKey.export({ type: 'spki', format: 'pem' })).toString('base64'),
+  privateKey: pair.privateKey.export({ type: 'pkcs8', format: 'pem' }).toString(),
+  created: '2026-01-01T00:00:00Z',
+  usage: 'SIGN',
+  status: 'ACTIVE',
+}
+const inputBytes = (data: string | Uint8Array) =>
+  typeof data === 'string' ? Buffer.from(data) : Buffer.from(data)
+/** Controlled provider with real Node ECDSA and WebCrypto SHA-256. */
 const provider: CryptoProvider = {
-  generateKeyPair: async () => ({}) as CryptoKey,
-  signData: async () => 'sig',
-  signRaw: async () => new Uint8Array([1, 2, 3]),
-  verifySignature: async () => true,
+  generateKeyPair: async () => key,
+  signData: async (_key, data) =>
+    sign('sha256', inputBytes(data), { key: pair.privateKey, dsaEncoding: 'ieee-p1363' }).toString(
+      'base64url'
+    ),
+  signRaw: async (_key, data) => new Uint8Array(sign('sha256', inputBytes(data), pair.privateKey)),
+  verifySignature: async (_key, signature, data) =>
+    verify(
+      'sha256',
+      inputBytes(data),
+      { key: pair.publicKey, dsaEncoding: 'ieee-p1363' },
+      Buffer.from(signature, 'base64url')
+    ),
   sha256Hash: async (data) => {
     const bytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
     const digest = await crypto.subtle.digest('SHA-256', bytes as unknown as ArrayBuffer)
@@ -33,8 +59,6 @@ const provider: CryptoProvider = {
       .replace(/=/g, '')
   },
 }
-
-const key = { algorithm: 'ES256', curve: 'P-256' } as unknown as CryptoKey
 
 const PID_ATTRS: CredentialAttribute[] = [
   { name: 'family_name', value: 'García' },
