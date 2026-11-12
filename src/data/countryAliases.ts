@@ -25,6 +25,13 @@ export const COUNTRY_ALIASES = {
   PRC: 'China',
   ROK: 'South Korea',
   Korea: 'South Korea',
+  EU: 'European Union',
+  CZ: 'Czech Republic',
+  Czechia: 'Czech Republic',
+  NZ: 'New Zealand',
+  HK: 'Hong Kong',
+  KSA: 'Saudi Arabia',
+  ZA: 'South Africa',
 } as const
 
 export type CountryAliasKey = keyof typeof COUNTRY_ALIASES
