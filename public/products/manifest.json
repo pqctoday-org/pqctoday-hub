@@ -40252,7 +40252,7 @@
       "note": "additional document for a row that already has one",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
+      "unified": "current",
       "admittedAt": "2026-09-07T18:02:06.273292+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "stampedAt": "2026-09-17T13:12:27.613826+00:00"
