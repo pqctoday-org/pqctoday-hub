@@ -414,52 +414,64 @@ export const GATEWAY_SIG_OPTIONS: GatewaySigOption[] = [
 export interface HandshakeMitigation {
   id: string
   name: string
-  reductionPercent: number
+  effect: string
   description: string
   applicability: string
 }
 
-/** The reduction percentages below are illustrative planning inputs, not measured effects. */
+/** Effects have distinct boundaries; no percentage discounts are compounded. */
 export const HANDSHAKE_MITIGATIONS_NOTE =
-  'The percentages are illustrative planning inputs for the calculator, not measurements: the real effect depends on your client population, resumption rate, certificate chain and gateway, so measure it on your own traffic.'
-
+  'Compare exact captured messages with certificate-only modelled variants. Compression and raw public keys count their negotiation framing; transport, connection reuse, resumption and MTC have separate boundaries.'
 export const HANDSHAKE_MITIGATIONS: HandshakeMitigation[] = [
-  {
-    id: 'psk',
-    name: 'Session Resumption (PSK)',
-    reductionPercent: 90,
-    description: 'Reuse prior session keys; eliminates certificate exchange on reconnect.',
-    applicability:
-      'Returning clients only (Cloudflare measured 27% of its QUIC connections with an HTTP request as resumptions)',
-  },
   {
     id: 'compression',
     name: 'Certificate Compression (RFC 8879)',
-    reductionPercent: 30,
+    effect: 'Certificate only',
     description:
-      'Zlib, Brotli or Zstandard compress the certificate chain during the handshake. RFC 8879 states no percentage; the 30% is a planning input, not a measured effect.',
-    applicability: 'All TLS 1.3 connections; requires both sides to support',
+      'Compress the Certificate body; count CompressedCertificate framing and the client offer. The selected exact samples save 181 B with RSA authentication or 175 B with ML-DSA-65, not a universal percentage.',
+    applicability: 'Requires both peers to negotiate support.',
+  },
+  {
+    id: 'rpk',
+    name: 'Raw public key alternative',
+    effect: 'Same leaf key',
+    description:
+      'Replace the chain with the same leaf SPKI, preserve CertificateVerify, and count certificate-type negotiation.',
+    applicability: 'Requires negotiated support and an external identity-to-key trust binding.',
+  },
+  {
+    id: 'psk',
+    name: 'Session Resumption (PSK)',
+    effect: 'Separate envelope',
+    description:
+      'A returning client can authenticate with a PSK instead of a fresh Certificate and CertificateVerify. Ticket identity, binder, mode and selection framing still need accounting.',
+    applicability:
+      'A usable prior ticket and negotiated support are required; not a first connection.',
   },
   {
     id: 'mtc',
     name: 'Merkle Tree Certificates',
-    reductionPercent: 85,
-    description: 'Replace per-cert signatures with compact Merkle inclusion proofs.',
-    applicability: 'Experimental (Cloudflare/Chrome); IETF PLANTS WG draft',
+    effect: 'Component model',
+    description:
+      'Compare authenticated certificate components and proof/trust assumptions in the MTC module, separately from this captured TLS budget.',
+    applicability: 'No negotiated MTC handshake capture is supplied here.',
   },
   {
     id: 'http3-quic',
     name: 'HTTP/3 (QUIC)',
-    reductionPercent: 15,
-    description: 'Reduce round trips via 0-RTT and integrated transport+TLS.',
-    applicability: 'QUIC-capable clients and gateways',
+    effect: 'Transport',
+    description:
+      'Changes transport and packetization, not the cryptographic message bytes in this comparison.',
+    applicability:
+      'Requires compatible endpoints; latency and transport overhead need separate measurement.',
   },
   {
     id: 'connection-coalescing',
     name: 'Connection Coalescing',
-    reductionPercent: 50,
-    description: 'Reuse a single TLS connection for multiple domains (HTTP/2+).',
-    applicability: 'Wildcard/SAN certificates; same IP address',
+    effect: 'Connection count',
+    description:
+      'Can reuse an existing compatible connection. Change the explicit new-handshakes/sec input to compare traffic; do not discount bytes per handshake.',
+    applicability: 'Origin compatibility and connection reuse must be established separately.',
   },
 ]
 
@@ -657,7 +669,7 @@ export interface GatewayBenchmark {
 }
 
 /**
- * The numbers in the termination patterns, the handshake mitigations and the capacity table below
+ * The numbers in the termination patterns and the capacity table below
  * are illustrative scenario inputs for the workshop tools. They are not measurements, vendor
  * specifications or published benchmarks, and no source or test conditions are given for them.
  */
@@ -696,49 +708,6 @@ export const GATEWAY_BENCHMARKS: GatewayBenchmark[] = [
     notes: 'Illustrative figure; managed service whose capacity the provider sets',
   },
 ]
-
-// ── Handshake Size Calculation Helpers ────────────────────────────────────────
-
-/** Calculate full TLS 1.3 handshake size in bytes */
-export function calculateHandshakeSize(
-  kem: GatewayKEMOption,
-  sig: GatewaySigOption,
-  chainDepth: number
-): { clientHello: number; serverHello: number; certificate: number; total: number } {
-  // Client Hello includes KEM public key share
-  const clientHello = 200 + kem.publicKeyBytes
-  // Server Hello includes KEM ciphertext
-  const serverHello = 150 + kem.ciphertextBytes
-  // Certificate chain: each cert has a public key + signature from the issuer
-  const certificate = chainDepth * (200 + sig.publicKeyBytes + sig.signatureBytes)
-
-  return {
-    clientHello,
-    serverHello,
-    certificate,
-    total: clientHello + serverHello + certificate,
-  }
-}
-
-/** Apply mitigations and return adjusted handshake size */
-export function applyMitigations(
-  baseSize: number,
-  mitigationIds: string[]
-): { adjustedSize: number; savings: number; savingsPercent: number } {
-  let adjustedSize = baseSize
-  for (const id of mitigationIds) {
-    const mitigation = HANDSHAKE_MITIGATIONS.find((m) => m.id === id)
-    if (mitigation) {
-      adjustedSize = adjustedSize * (1 - mitigation.reductionPercent / 100)
-    }
-  }
-  const savings = baseSize - adjustedSize
-  return {
-    adjustedSize: Math.round(adjustedSize),
-    savings: Math.round(savings),
-    savingsPercent: baseSize > 0 ? Math.round((savings / baseSize) * 100) : 0,
-  }
-}
 
 // ── Topology Analysis Helpers ────────────────────────────────────────────────
 

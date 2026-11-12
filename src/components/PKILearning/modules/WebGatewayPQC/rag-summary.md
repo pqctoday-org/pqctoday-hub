@@ -9,8 +9,8 @@ Learn how to deploy post-quantum cryptography at the web infrastructure edge: re
 - Web gateway architecture: reverse proxies, load balancers, WAFs, CDN positioning as TLS termination points
 - Four TLS termination patterns: terminate-and-inspect, passthrough, re-encrypt-backend, split TLS
 - Certificate lifecycle at edge scale: ACME automation, CT log impact, rotation across hundreds of PoPs
-- PQC handshake performance: classical TLS 1.3 ~1–2 KB vs hybrid TLS 1.3 (X25519 + ML-KEM-768) ~2–3 KB; a three-certificate ML-DSA chain can be more than 10 KB
-- Mitigations: session resumption (PSK), certificate compression (RFC 8879), Merkle Tree Certificates, HTTP/3 QUIC, connection coalescing
+- PQC handshake performance: retained OpenSSL 3.6.3 samples captured 9 November 2026 total 2,233 B (X25519 + RSA-2048), 4,499 B (X25519MLKEM768 + RSA-2048), and 16,944 B (ML-KEM-768 + ML-DSA-65). These count seven complete handshake-layer messages, including headers and leaf plus intermediate (root omitted); record/TCP/IP framing is excluded. They are sample profiles, not estimates for every algorithm or chain depth
+- Certificate alternatives: exact Certificate-body zlib compression saves 181 B in the RSA-authenticated samples or 175 B in the ML-DSA-65 sample after counting the 7-byte client offer. Same-leaf SPKI alternatives count 11 negotiation bytes and preserve CertificateVerify, requiring negotiated support and external identity-to-key trust. These are modelled substitutions, not negotiated captures. Compression plus SPKI has no retained measurement. QUIC does not discount cryptographic message bytes; connection reuse changes only the explicitly selected new-handshake rate. PSK and MTC component comparisons have separate envelopes and are not compounded whole-handshake discounts
 - WAF/IDS inspection challenges when gateways cannot terminate PQC TLS
 - CDN edge deployment: origin shielding, key distribution across edge PoPs
 - Vendor readiness: F5 BIG-IP, NGINX, HAProxy, Envoy, Kong, Traefik, Cloudflare, AWS ALB, Imperva, Palo Alto, Broadcom Avi
@@ -19,7 +19,7 @@ Learn how to deploy post-quantum cryptography at the web infrastructure edge: re
 
 - Step 1: Topology Builder — construct a web gateway architecture and identify PQC upgrade points with 4 preset topologies
 - Step 2: TLS Termination Patterns — compare 4 patterns (terminate-inspect, passthrough, re-encrypt, split TLS) under classical vs PQC
-- Step 3: Handshake Budget Calculator — calculate PQC handshake sizes, bandwidth costs, and apply mitigations
+- Step 3: Handshake Budget Calculator — compare all seven measured sample messages, exact certificate alternatives and bandwidth at an explicit new-handshake rate; export the declared boundary and unsupported combinations
 - Step 4: Certificate Rotation Planner — plan certificate migration across edge nodes with phased rollout timeline
 - Step 5: Vendor Readiness Matrix — assess gateway products against PQC readiness criteria with gap analysis
 
