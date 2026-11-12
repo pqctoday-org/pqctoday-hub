@@ -1,0 +1,6 @@
+[
+  {
+    "ref_id": "RFC 9802",
+    "reason": "single-window failed (reply is not valid JSON (Expecting property name enclosed in double quotes: line 1 column 2796 (char 2795)); 2,795 characters; not re-asked on claude); no fallback for claude"
+  }
+]
