@@ -15,6 +15,12 @@ import {
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import {
+  searchDisplayedGrid,
+  compareToyCodewords,
+  encodeToyRepetition,
+  type GridSearchResult,
+} from './foundationalToySearch'
 
 /* ------------------------------------------------------------------ */
 /*  Shared helpers                                                     */
@@ -180,6 +186,7 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
   const [dimensions, setDimensions] = useState(2)
   const [noiseLevel, setNoiseLevel] = useState(0.3)
   const [noiseSeed, setNoiseSeed] = useState(0)
+  const [searchResult, setSearchResult] = useState<GridSearchResult | null>(null)
 
   // Pseudo-random based on seed for reproducible noise
   const seededRandom = useCallback(
@@ -207,16 +214,15 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
 
   const handleDimensionChange = (dim: number) => {
     setDimensions(dim)
+    setSearchResult(null)
     onInteract()
   }
 
   const handleAddNoise = () => {
     setNoiseSeed((s) => s + 1)
+    setSearchResult(null)
     onInteract()
   }
-
-  const complexityLog2 =
-    dimensions === 2 ? 3 : dimensions === 10 ? 30 : dimensions === 100 ? 300 : 768
 
   return (
     <MotionConfig reducedMotion="user">
@@ -224,78 +230,57 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
         <p className="text-sm text-muted-foreground leading-relaxed">
           Imagine a grid of evenly-spaced dots &mdash; a <strong>lattice</strong>. Someone drops a
           point near the grid with random noise. Your task: find the{' '}
-          <strong>closest lattice point</strong>. In 2D this is trivial. In 256 dimensions, it
-          becomes exponentially hard &mdash; even for a quantum computer.
+          <strong>closest displayed point</strong>. This toy searches only the 64 points in the 8×8
+          grid. Selecting more dimensions embeds the same points and target with zero extra
+          coordinates; it does not create a full higher-dimensional lattice or a PQC attack. Compare
+          the executed candidate and coordinate counts, then change the noise or target.
         </p>
 
-        {/* Grid or high-dimension overlay */}
+        {/* First-two-coordinate projection of the same finite point set. */}
         <div className="relative bg-muted/30 rounded-lg overflow-hidden aspect-square max-w-xs mx-auto border border-border">
-          {dimensions === 2 ? (
-            <svg viewBox="0 0 100 100" className="w-full h-full" aria-label="2D lattice grid">
-              {/* Lattice points */}
-              {Array.from({ length: gridSize }, (_, row) =>
-                Array.from({ length: gridSize }, (_, col) => (
-                  <circle
-                    key={`${row}-${col}`}
-                    cx={col * cellSize + cellSize / 2}
-                    cy={row * cellSize + cellSize / 2}
-                    r={1.2}
-                    className="fill-muted-foreground/40"
-                  />
-                ))
-              )}
-              {/* Target (noisy) point */}
-              {/* Pulsed with CSS rather than a framer `r` tween: under
+          <svg
+            viewBox="0 0 100 100"
+            className="w-full h-full"
+            aria-label="Projection of the 64 candidate points"
+          >
+            {/* Lattice points */}
+            {Array.from({ length: gridSize }, (_, row) =>
+              Array.from({ length: gridSize }, (_, col) => (
+                <circle
+                  key={`${row}-${col}`}
+                  cx={col * cellSize + cellSize / 2}
+                  cy={row * cellSize + cellSize / 2}
+                  r={1.2}
+                  className={
+                    searchResult?.nearestIndices.includes(row * gridSize + col)
+                      ? 'fill-success'
+                      : 'fill-muted-foreground/40'
+                  }
+                />
+              ))
+            )}
+            {/* Target (noisy) point */}
+            {/* Pulsed with CSS rather than a framer `r` tween: under
                   prefers-reduced-motion the tween emitted r="undefined" on the
                   first frame (console error on every load; round-9 walk). */}
-              <circle
-                cx={targetPoint.x}
-                cy={targetPoint.y}
-                r={2.5}
-                className="fill-destructive motion-safe:animate-pulse"
-              />
-              {/* Label */}
-              <text
-                x={targetPoint.x + 4}
-                y={targetPoint.y - 3}
-                className="fill-destructive text-[3px]"
-              >
-                target
-              </text>
-            </svg>
-          ) : (
-            /* High-dimensional: overlapping projections */
-            <div className="w-full h-full flex items-center justify-center p-4">
-              <div className="relative w-full h-full">
-                {/* Multiple overlapping faded grids to suggest high dimensions */}
-                {Array.from({ length: Math.min(dimensions / 2, 8) }, (_, layer) => (
-                  <div
-                    key={layer}
-                    className="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-px"
-                    style={{
-                      opacity: 0.15 - layer * 0.015,
-                      transform: `translate(${seededRandom(layer * 10 + 500) * 12 - 6}px, ${seededRandom(layer * 10 + 600) * 12 - 6}px) rotate(${seededRandom(layer * 10 + 700) * 20 - 10}deg)`,
-                    }}
-                  >
-                    {Array.from({ length: 64 }, (_, i) => (
-                      <div
-                        key={i}
-                        className="w-1.5 h-1.5 rounded-full bg-muted-foreground mx-auto"
-                      />
-                    ))}
-                  </div>
-                ))}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-2xl font-mono font-bold text-destructive">?</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Too many overlapping dimensions to visualize
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+            <circle
+              cx={targetPoint.x}
+              cy={targetPoint.y}
+              r={2.5}
+              className="fill-destructive motion-safe:animate-pulse"
+            />
+            {/* Label */}
+            <text
+              x={targetPoint.x + 4}
+              y={targetPoint.y - 3}
+              className="fill-destructive text-[3px]"
+            >
+              target
+            </text>
+          </svg>{' '}
+          <p className="absolute bottom-1 left-2 right-2 text-[10px] text-muted-foreground">
+            First two coordinates shown; {Math.max(0, dimensions - 2)} extra coordinates are zero.
+          </p>
         </div>
 
         {/* Controls */}
@@ -331,6 +316,7 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
               value={noiseLevel}
               onChange={(e) => {
                 setNoiseLevel(Number(e.target.value))
+                setSearchResult(null)
                 onInteract()
               }}
               className="w-full accent-primary"
@@ -351,23 +337,49 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
           Randomize Target
         </Button>
 
-        {/* Complexity indicator */}
         <div className="glass-panel p-4 space-y-3">
-          <h4 className="text-sm font-semibold text-foreground">Search Complexity</h4>
-          <ComplexityBar
-            label={`${dimensions}D Lattice (Closest Vector Problem)`}
-            exponent={complexityLog2}
-            maxExponent={768}
-            status={dimensions <= 2 ? 'broken' : dimensions <= 10 ? 'weakened' : 'safe'}
-          />
+          <h4 className="text-sm font-semibold text-foreground">Executed finite-grid search</h4>
           <p className="text-xs text-muted-foreground">
-            {dimensions === 2
-              ? 'Trivial — you can solve this by eye!'
-              : dimensions === 10
-                ? '~1 billion candidates. A computer could brute-force this, but scaling is exponential.'
-                : dimensions === 100
-                  ? '2^300 candidates — far beyond any classical or quantum computer.'
-                  : '2^768 candidates — ML-KEM-768 operates in this regime. Completely intractable.'}
+            Target first two coordinates:{' '}
+            <span aria-label="Toy target coordinates" className="font-mono">
+              <span className="whitespace-nowrap">{targetPoint.x}</span>,{' '}
+              <span className="whitespace-nowrap">{targetPoint.y}</span>
+            </span>
+            . Every remaining coordinate is zero for both candidates and target.
+          </p>
+          <Button
+            onClick={() => {
+              setSearchResult(searchDisplayedGrid(dimensions, targetPoint))
+              onInteract()
+            }}
+          >
+            Search the 64 displayed points
+          </Button>
+          {searchResult ? (
+            <div role="status" className="space-y-1 text-sm">
+              <p>
+                Candidates visited: <strong>{searchResult.visitedCandidates}</strong>
+              </p>
+              <p>
+                Coordinate checks: <strong>{searchResult.coordinateChecks}</strong> ({dimensions}{' '}
+                per candidate)
+              </p>
+              <p>
+                Minimum squared distance (display units²):{' '}
+                <strong>{searchResult.squaredDistance}</strong>
+              </p>
+              <p>
+                Nearest displayed grid indices (row-major, 0–63):{' '}
+                <strong>{searchResult.nearestIndices.join(', ')}</strong>
+              </p>
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">Run the search for the current inputs.</p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Dimension alone does not establish a cryptographic work factor. Here candidate count
+            stays 64 and the explicit loop does 64 × dimension coordinate checks. This finite,
+            zero-embedded grid gives no ML-KEM security estimate or real attack measurement.
           </p>
         </div>
 
@@ -625,15 +637,8 @@ function binomial(n: number, k: number): number {
 
 // Simple repetition code: each data bit becomes 3 bits (majority vote)
 function encodeMessage(data: (0 | 1)[]): { encoded: (0 | 1)[]; parityIndices: Set<number> } {
-  const encoded: (0 | 1)[] = []
-  const parityIndices = new Set<number>()
-  for (let i = 0; i < data.length; i++) {
-    encoded.push(data[i]) // data bit
-    encoded.push(data[i]) // parity 1
-    parityIndices.add(encoded.length - 1)
-    encoded.push(data[i]) // parity 2
-    parityIndices.add(encoded.length - 1)
-  }
+  const encoded = encodeToyRepetition(data)
+  const parityIndices = new Set(encoded.flatMap((_, index) => (index % 3 === 0 ? [] : [index])))
   return { encoded, parityIndices }
 }
 
@@ -674,20 +679,12 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
     return encodedBits.map((bit, idx) => (errorPositionsMemo.has(idx) ? ((1 - bit) as 0 | 1) : bit))
   }, [encodedBits, errorPositionsMemo, isEncoded])
 
-  // Can the receiver decode? With repetition code, each group of 3 uses majority vote.
-  // Fails if 2+ errors in same group.
-  const canDecode = useMemo(() => {
-    if (!isEncoded || errorCount === 0) return true
-    // Check each group of 3
-    for (let g = 0; g < originalMessage.length; g++) {
-      let errorsInGroup = 0
-      for (let j = 0; j < 3; j++) {
-        if (errorPositionsMemo.has(g * 3 + j)) errorsInGroup++
-      }
-      if (errorsInGroup >= 2) return false
-    }
-    return true
-  }, [isEncoded, errorCount, errorPositionsMemo, originalMessage.length])
+  const publicComparison = useMemo(
+    () => (isEncoded ? compareToyCodewords(displayBits) : null),
+    [isEncoded, displayBits]
+  )
+  const canDecode =
+    !publicComparison || publicComparison.majorityMessage.join('') === originalMessage.join('')
 
   const combinatorialDisplay = useMemo(() => {
     if (!isEncoded) return null
@@ -697,12 +694,7 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
     const val = binomial(n, t)
     return {
       value: val > 1_000_000 ? val.toExponential(1) : val.toLocaleString(),
-      label:
-        t <= 2
-          ? 'Manageable for a computer'
-          : t <= 4
-            ? 'Getting harder...'
-            : 'Exponentially many combinations',
+      label: 'A count of subsets, not the number of operations required by a decoder or attack.',
     }
   }, [isEncoded, encodedBits.length, errorCount])
 
@@ -711,8 +703,10 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
       <div className="space-y-4">
         <p className="text-sm text-muted-foreground leading-relaxed">
           Encode a message with redundancy, then <strong>intentionally add errors</strong>. The
-          legitimate receiver has the decoder and strips away errors. An attacker sees only garbled
-          data and must search through exponentially many error patterns.
+          repetition decoder uses a public majority vote. Anyone can run it: this toy does not hide
+          the message. Compare that actual decoder with an executed exhaustive comparison of all 256
+          possible eight-bit messages. Error positions can change the answer even when the number of
+          errors stays the same.
         </p>
 
         {/* Original message */}
@@ -821,7 +815,7 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
               {combinatorialDisplay && errorCount > 0 && (
                 <div className="glass-panel p-3 space-y-1">
                   <p className="text-xs text-muted-foreground">
-                    Attacker must search{' '}
+                    Number of possible error-position subsets:{' '}
                     <span className="font-mono font-bold text-foreground">
                       C({encodedBits.length}, {errorCount}) = {combinatorialDisplay.value}
                     </span>{' '}
@@ -833,16 +827,45 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
                 </div>
               )}
 
-              <div className="glass-panel p-3 bg-muted/30">
-                <p className="text-xs text-muted-foreground">
-                  <strong>Real systems:</strong> Classic McEliece uses n=3,488 and t=64 errors. The
-                  attacker faces C(3488, 64) &gt; 2<sup>400</sup> combinations. No efficient quantum
-                  break is known, though generic quantum search can still speed up brute-force-style
-                  attacks and the parameters are chosen with that in mind. The decoding problem goes
-                  back to McEliece&apos;s 1978 paper, A Public-Key Cryptosystem Based On Algebraic
-                  Coding Theory.
-                </p>
-              </div>
+              {publicComparison && (
+                <div
+                  className="glass-panel p-3 space-y-1 text-sm"
+                  aria-label="Executed public toy decoders"
+                >
+                  <p>
+                    Exhaustive candidate messages visited:{' '}
+                    <strong>{publicComparison.candidatesVisited}</strong>
+                  </p>
+                  <p>
+                    Bit comparisons: <strong>{publicComparison.bitComparisons}</strong>
+                  </p>
+                  <p>
+                    Nearest candidate message:{' '}
+                    <strong>{publicComparison.nearestMessage.join('')}</strong>; Hamming distance{' '}
+                    {publicComparison.nearestDistance}
+                  </p>
+                  <p>
+                    Public majority-decoder output:{' '}
+                    <strong>{publicComparison.majorityMessage.join('')}</strong>
+                  </p>
+                  <p>
+                    Majority-decoder bit reads: <strong>{publicComparison.majorityBitReads}</strong>
+                  </p>
+                  <p>
+                    {canDecode
+                      ? 'The decoded message matches the original.'
+                      : 'The decoded message differs from the original: too many errors occurred in a repetition group.'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Both algorithms are public and actually executed here. A combination count does
+                    not establish an attack work factor; this repetition toy provides no secrecy.
+                    Real code-based cryptography needs its specified code structure, parameters and
+                    security analysis. No efficient quantum break is known, though generic quantum
+                    search can still speed up brute-force-style attacks; this is not a security
+                    claim about the toy.
+                  </p>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
