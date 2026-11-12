@@ -46,11 +46,21 @@ describe.each([
       verifyKey = 0,
       decaps = 0
     const checks: Array<{ valid: boolean; rv: number }> = []
+    const allocations = new Set<number>()
     const proxy = new Proxy(M, {
       get(target, property) {
         const value = Reflect.get(target, property)
         if (typeof value !== 'function') return value
         return (...input: number[]) => {
+          if (property === '_malloc') {
+            const ptr = Number(Reflect.apply(value, target, input))
+            if (ptr) allocations.add(ptr)
+            return ptr
+          }
+          if (property === '_free') {
+            allocations.delete(input[0])
+            return Reflect.apply(value, target, input)
+          }
           const args = [...input]
           const argument = (index: number) => {
             const value = args.at(index)
@@ -137,7 +147,7 @@ describe.each([
       const engine = new SshEngine()
       engine.bindHsm({ module: proxy, hSession: h })
       const result = await engine.runHandshake(config)
-      return { result, checks, decaps }
+      return { result, checks, decaps, allocationsRemaining: allocations.size }
     } finally {
       S.hsm_finalize(M, h)
     }
@@ -209,9 +219,10 @@ describe.each([
   it.each(['device-error', 'final-error'] as const)(
     'an injected %s RV is incomplete/error, never a passed invalid-signature check',
     async (fault) => {
-      const { result, checks } = await run(fault)
+      const { result, checks, allocationsRemaining } = await run(fault)
       if (fault === 'final-error') expect(checks).toEqual([{ valid: true, rv: 0 }])
       else expect(checks).toEqual([])
+      expect(allocationsRemaining).toBe(0)
       expect(result.connection_ok).toBe(false)
       expect(result.operation_checks).toEqual({
         outcome: 'error',

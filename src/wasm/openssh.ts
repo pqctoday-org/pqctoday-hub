@@ -454,6 +454,7 @@ function checkedVerification(
   verify: (module: SoftHSMModule) => boolean
 ): boolean {
   let resultRv: number | undefined
+  let cleanupRv: number | undefined
   const observed = new Proxy(M, {
     get(target, property) {
       const value = Reflect.get(target, property)
@@ -465,13 +466,8 @@ function checkedVerification(
       )
         return (...args: unknown[]) => {
           const rv = Number(Reflect.apply(value, target, args)) >>> 0
-          if (property === '_C_MessageVerifyFinal') {
-            // The retained C++ invalid one-shot path has already ended its context.
-            // This cleanup status is allowed only after a real signature rejection.
-            const endedAfterRejection = rv === 0x91 && (resultRv === 0xc0 || resultRv === 0xc1)
-            if (rv !== 0 && !endedAfterRejection)
-              throw new Error(`Verification operation error 0x${rv.toString(16)}`)
-          } else resultRv = rv
+          if (property === '_C_MessageVerifyFinal') cleanupRv = rv
+          else resultRv = rv
           return rv
         }
       return value.bind(target)
@@ -481,6 +477,12 @@ function checkedVerification(
   if (resultRv === undefined) throw new Error('Verification did not complete an operation')
   if (resultRv !== 0 && resultRv !== 0xc0 && resultRv !== 0xc1)
     throw new Error(`Verification operation error 0x${resultRv.toString(16)}`)
+  // Let the existing helper release its temporary buffers before reporting a
+  // cleanup error. The C++ invalid one-shot path has already ended its context;
+  // allow that status only after an observed signature-invalid/length result.
+  const endedAfterRejection = cleanupRv === 0x91 && (resultRv === 0xc0 || resultRv === 0xc1)
+  if (cleanupRv !== undefined && cleanupRv !== 0 && !endedAfterRejection)
+    throw new Error(`Verification operation error 0x${cleanupRv.toString(16)}`)
   if (valid !== (resultRv === 0))
     throw new Error('Verification result disagrees with operation status')
   return valid
