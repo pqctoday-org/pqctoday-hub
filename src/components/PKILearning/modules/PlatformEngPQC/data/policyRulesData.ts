@@ -68,34 +68,38 @@ spec:
   {
     id: 'kyverno-tls-cipher',
     engine: 'kyverno',
-    name: 'Enforce PQC TLS Cipher Groups on Ingress',
+    name: 'Require the Declared TLS Groups on the Ingress Controller',
     description:
-      'Validates nginx Ingress resources to ensure the ssl-ciphers annotation includes the TLS hybrid group X25519MLKEM768 and blocks ECDHE-only cipher configurations.',
-    targetResource: 'Ingress',
-    blockedAlgorithms: ['ECDHE-RSA', 'ECDHE-ECDSA'],
-    requiredAlgorithms: ['X25519MLKEM768'],
+      'Checks the ingress-nginx controller ConfigMap against the same group list shown in the Helm example. The ssl-ecdh-curve key configures key exchange; ssl-ciphers does not. This declaration check must be followed by nginx -t on the selected build and inspection of the negotiated group; it does not prove that a connection used the hybrid group.',
+    targetResource: 'ConfigMap (ingress-nginx controller)',
+    blockedAlgorithms: [],
+    requiredAlgorithms: ['X25519MLKEM768', 'X25519', 'P-256'],
     severity: 'warning',
-    rule: `# Kyverno ClusterPolicy
+    rule: `# Kyverno ClusterPolicy: the existing sample's exact controller group list.
+# Match controller ConfigMaps, not application-owned Ingress annotations.
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: require-pqc-tls-cipher
+  name: require-pqc-tls-groups
 spec:
   validationFailureAction: Audit
   rules:
-  - name: check-cipher-groups
+  - name: check-controller-groups
     match:
       any:
       - resources:
-          kinds: [Ingress]
+          kinds: [ConfigMap]
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/component: controller
     validate:
       message: >
-        Ingress TLS must include X25519MLKEM768 cipher group
-        to enable ML-KEM hybrid key exchange.
+        The sample controller requires ssl-ecdh-curve: X25519MLKEM768:X25519:P-256.
+        A group name in ssl-ciphers does not configure key exchange.
       pattern:
-        metadata:
-          annotations:
-            nginx.ingress.kubernetes.io/ssl-ciphers: "*X25519MLKEM768*"`,
+        data:
+          ssl-ecdh-curve: "X25519MLKEM768:X25519:P-256"`,
   },
   {
     id: 'opa-helm-sig',

@@ -87,7 +87,7 @@ vault write pki/roles/pipeline-role-pqc \\
   {
     id: 'helm-tls-values',
     tool: 'helm',
-    title: 'Helm: TLS Cipher Suite Configuration',
+    title: 'Helm: TLS Key-Exchange Group Configuration',
     vulnerability:
       'Default nginx-ingress Helm values allow all TLS 1.2/1.3 cipher suites including ECDHE-based key exchange. TLS sessions with ECDHE key exchange are HNDL targets even if the certificate is short-lived.',
     algorithm: 'ecdh',
@@ -101,16 +101,20 @@ controller:
     ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:..."
 # ⚠️  ECDHE key exchange — HNDL vulnerable
 # Even with short-lived cert, recorded sessions can be decrypted`,
-    pqcConfig: `# nginx-ingress values.yaml (PQC-hardened)
+    pqcConfig: `# ingress-nginx controller values.yaml: separate groups from cipher suites
+# Configuration grammar checked with nginx 1.30.4 linked to OpenSSL 3.6.3.
+# Check the nginx/OpenSSL build in your selected controller image too.
 controller:
   config:
     ssl-protocols: "TLSv1.3"
     # X25519MLKEM768 = ML-KEM-768 + X25519 hybrid TLS group (RFC 10024)
-    ssl-ciphers: "TLS_AES_256_GCM_SHA384"
-    # Enable PQC key exchange groups (nginx + OpenSSL 3.5)
+    # TLS 1.3 cipher-suite defaults remain separate from key-exchange groups.
+    # ssl-ciphers is not the place for TLS 1.3 suites or hybrid group names.
+    # This controller ConfigMap key becomes nginx ssl_ecdh_curve (OpenSSL 3.5+).
     ssl-ecdh-curve: "X25519MLKEM768:X25519:P-256"
-# ✅ X25519MLKEM768 hybrid: classical X25519 + ML-KEM-768
-# Provides forward secrecy against both classical and quantum`,
+# X25519MLKEM768 offers hybrid X25519 + ML-KEM-768 first.
+# X25519 and P-256 are permitted classical fallbacks, not post-quantum exchange.
+# nginx -t checks configuration; inspect the negotiated group in a sample handshake.`,
   },
   {
     id: 'terraform-acm',
