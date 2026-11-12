@@ -2,7 +2,7 @@
 generated: 2026-11-12
 collection: library
 documents_processed: 1737
-enrichment_method: automated extraction, human-reviewed
+enrichment_method: structured source-derived notes
 ---
 
 ## NIST SP 800-208
