@@ -1,4 +1,8 @@
 {
+  "vendorAlgoEmptyOk": ["VND-181"],
+  "vendorAlgoEmptyOkReasons": {
+    "VND-181": "Sectigo's only active roadmap entry is the Quantum Ready announcement (2026-09-17), which names no PQC algorithm. The ML-DSA value came from the Certificate Manager Private PQC page, retired from this table on 2026-07-12 as a duplicate of the product catalogue entry, which still lists ML-DSA."
+  },
   "emptiedOk": {
     "industry-landscape": {
       "national_certification": {
