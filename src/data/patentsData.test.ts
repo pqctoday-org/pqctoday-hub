@@ -57,9 +57,9 @@ describe('patentsData — lifecycle (patents_09172026.csv prunes the out-of-scop
     // NIST treats as post-quantum adequate), it is simply not a NIST PQC
     // algorithm. They load, they carry a quantumSafeBasis saying why, and
     // the "All crypto" scope shows them.
-    expect(patentsData.length).toBe(729)
+    expect(patentsData.length).toBe(732)
     const inScope = patentsData.filter(isPqcPatent)
-    expect(inScope.length).toBe(711)
+    expect(inScope.length).toBe(714)
     expect(patentsData.length - inScope.length).toBe(18)
   })
 })
