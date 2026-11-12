@@ -32493,6 +32493,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "trustcloud-quantum-vault",
+      "refId": "trustcloud-quantum-vault",
+      "file": "trustcloud-quantum-vault-7454ca10.html",
+      "sizeBytes": 83759,
+      "content_type": "text/html",
+      "url": "https://trustcloud.tech/trustcloudplatform/quantum-vault/",
+      "sha256": "ec318511457e60068019214d4ac7098e17533870b90923fae032f54709d0153a",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T11:51:08.703952+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
