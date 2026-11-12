@@ -16,6 +16,7 @@ import { BusinessCenterView } from '@/components/BusinessCenter/BusinessCenterVi
 import { useModuleStore } from '@/store/useModuleStore'
 import { ReportView } from '@/components/Report/ReportView'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { RENDER_ORDER_QUICK } from '@/components/Assess/redesign/assessFlowModel'
 import { MobileAssessView } from '@/components/Mobile/screens/MobileAssessView'
@@ -142,8 +143,19 @@ it('executes the published reset URL from previous answers through the real repo
   await waitFor(() =>
     expect(screen.getByRole('heading', { name: 'PQC Assessment Report' })).toBeVisible()
   )
+  // Report computation renders before its persistence effect; require the real
+  // stored result and its input binding rather than treating the heading as completion.
+  await waitFor(() => {
+    expect(Number.isFinite(useAssessmentStore.getState().lastResult?.riskScore)).toBe(true)
+    expect(useAssessmentResultStore.getState().sourceInputKey).toBe(
+      JSON.stringify(useAssessmentStore.getState().getInput())
+    )
+  })
   const result = useAssessmentStore.getState().lastResult
   expect(Number.isFinite(result?.riskScore)).toBe(true)
+  expect(
+    screen.getByRole('img', { name: new RegExp(`^Risk score: ${result?.riskScore} out of 100,`) })
+  ).toBeVisible()
   expect(result?.assessmentProfile?.mode).toBe('quick')
   expect(screen.getByText('HNDL Window Not Modelled')).toBeVisible()
   expect(screen.getByText('Signature Window Not Modelled')).toBeVisible()
