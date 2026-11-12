@@ -144,7 +144,7 @@ requirement_count: 147
     - _T2 Risk-Informed · libraries_: Select the FIPS 140-3 security level (1-4) for each module according to the security requirements of the application and environment and the services the module provides.
     - _T3 Repeatable · libraries_: Procure and deploy cryptographic modules that have been validated under the CMVP to FIPS 140-3 by an accredited CST laboratory, and use the CMVP validated modules list (not the Historical list) for procurement decisions.
     - _T3 Repeatable · libraries_: Submit modules for independent testing by NVLAP-accredited CST laboratories and have the test report reviewed and validated by the CMVP to demonstrate compliance.
-    - _T3 Repeatable · libraries_: Ensure modules employ only Approved security functions (FIPS-specified algorithms, SP 800-140C functions, SP 800-140D SSP establishment methods and key management/authentication techniques).
+    - _T3 Repeatable · libraries_: Ensure modules employ Approved security functions (FIPS-specified algorithms, SP 800-140C functions, SP 800-140D SSP establishment methods and key management/authentication techniques).
     - _T3 Repeatable · libraries_: Verify that module documentation and security policy satisfy CMVP requirements (SP 800-140A Documentation, SP 800-140B Security Policy) as part of validation evidence.
 - **Governance**:
     - _T2 Risk-Informed · all_: Designate a responsible authority within the organization to ensure the security of the system using cryptographic modules is sufficient and acceptable.
