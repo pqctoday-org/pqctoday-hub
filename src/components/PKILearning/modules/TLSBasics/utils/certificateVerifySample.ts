@@ -23,7 +23,8 @@ const join = (...parts: Uint8Array[]) => {
 const digest = async (bytes: Uint8Array) =>
   new Uint8Array(await crypto.subtle.digest('SHA-256', new Uint8Array(bytes)))
 
-/** RFC8446§4.4.3; SHA-256 belongs to this captured TLS_AES_128_GCM_SHA256 profile.
+/** RFC9846§4.5.2 preserves the construction from RFC8446§4.4.3 used by this captured profile.
+ * SHA-256 belongs to this captured TLS_AES_128_GCM_SHA256 profile.
  * Role is domain separation, not the certificate's signature algorithm/hash.
  */
 export async function certificateVerifyInput(transcript: Uint8Array, role: 'server' | 'client') {

@@ -122,6 +122,17 @@ describe('actual captured CertificateVerify UI', () => {
     )
     expect(await screen.findByText(/Captured 3309 B signature: VALID/)).toBeInTheDocument()
     await screen.findByText(/Wrong public key: REJECTED/)
+    expect(screen.getByRole('link', { name: 'RFC 9846 §4.5.2' })).toHaveAttribute(
+      'href',
+      'https://datatracker.ietf.org/doc/html/rfc9846#section-4.5.2'
+    )
+    expect(screen.getByRole('link', { name: 'RFC 8446 §4.4.3' })).toHaveAttribute(
+      'href',
+      'https://www.rfc-editor.org/rfc/rfc8446.html#section-4.4.3'
+    )
+    expect(
+      screen.getByText(/does not establish that the engine implements all of RFC 9846/)
+    ).toBeInTheDocument()
     expect(m.calls).toBe(6)
     expect(m.complete).toHaveBeenCalledOnce()
     expect(m.complete).toHaveBeenCalledWith('tls-basics', 'hsm-demo')

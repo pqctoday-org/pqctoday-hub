@@ -420,6 +420,28 @@ export const TLSBasicsModule: React.FC = () => {
                 establish CA trust, hostname, expiry or certificate policy.
               </p>
 
+              <p className="text-xs text-muted-foreground">
+                Current construction reference:{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://datatracker.ietf.org/doc/html/rfc9846#section-4.5.2"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  RFC 9846 §4.5.2
+                </a>
+                . The captured profile uses the same construction originally specified in{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://www.rfc-editor.org/rfc/rfc8446.html#section-4.4.3"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  RFC 8446 §4.4.3
+                </a>
+                . This check does not establish that the engine implements all of RFC 9846.
+              </p>
+
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />
 
               {hsm.isReady && (
