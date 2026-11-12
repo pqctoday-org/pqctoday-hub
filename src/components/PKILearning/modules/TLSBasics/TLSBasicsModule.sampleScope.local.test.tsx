@@ -16,6 +16,7 @@ const m = vi.hoisted(() => ({
   originalSignature: null as Uint8Array | null,
   complete: vi.fn(),
   register: vi.fn(),
+  keys: [] as import('@/hooks/useHSM').HsmKey[],
   module: null as SoftHSM.SoftHSMModule | null,
   session: 7,
 }))
@@ -50,7 +51,7 @@ vi.mock('@/hooks/useHSM', () => ({
     moduleRef: { current: m.module },
     hSessionRef: { current: m.session },
     registerKey: m.register,
-    keys: [],
+    keys: m.keys,
     log: [],
     clearLog: vi.fn(),
   }),
@@ -87,7 +88,11 @@ vi.mock('@/components/shared/LiveHSMToggle', () => ({ LiveHSMToggle: () => null 
 vi.mock('@/components/shared/Pkcs11LogPanel', () => ({
   Pkcs11LogPanel: ({ title }: { title: string }) => <div>{title}</div>,
 }))
-vi.mock('@/components/shared/HsmKeyInspector', () => ({ HsmKeyInspector: () => null }))
+vi.mock('@/components/shared/HsmKeyInspector', () => ({
+  HsmKeyInspector: ({ timestampLabel }: { timestampLabel?: string }) => (
+    <div>Key timestamp semantics: {timestampLabel}</div>
+  ),
+}))
 beforeAll(async () => {
   const glue = path.resolve('src/vendor/softhsm-wasm/wasm/softhsm.js')
   const create = createRequire(import.meta.url)(glue)
@@ -113,6 +118,11 @@ beforeEach(() => {
   m.reject = false
   m.acceptNegative = false
   m.calls = 0
+  m.keys.length = 0
+  m.register.mockImplementation((_module, _session, key) => {
+    m.keys.push(key)
+    return key
+  })
 })
 describe('actual captured CertificateVerify UI', () => {
   it('shows actual imported-key verification and all five negative checks before crediting the activity', async () => {
@@ -133,6 +143,7 @@ describe('actual captured CertificateVerify UI', () => {
     expect(
       screen.getByText(/does not establish that the engine implements all of RFC 9846/)
     ).toBeInTheDocument()
+    expect(screen.getByText('Key timestamp semantics: Imported')).toBeInTheDocument()
     expect(m.calls).toBe(6)
     expect(m.complete).toHaveBeenCalledOnce()
     expect(m.complete).toHaveBeenCalledWith('tls-basics', 'hsm-demo')

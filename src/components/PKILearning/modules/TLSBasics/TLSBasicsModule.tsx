@@ -524,6 +524,8 @@ export const TLSBasicsModule: React.FC = () => {
               />
               {hsm.keys.length > 0 && (
                 <HsmKeyInspector
+                  title="Imported sample public keys"
+                  timestampLabel="Imported"
                   keys={hsm.keys}
                   moduleRef={hsm.moduleRef}
                   hSessionRef={hsm.hSessionRef}
