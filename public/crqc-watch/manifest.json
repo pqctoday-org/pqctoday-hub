@@ -119,6 +119,22 @@
       "unified": "converted",
       "admittedAt": "2026-10-04T00:02:50.356953+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "estimates:NIST IR 8547 (final, Oct 2026)",
+      "file": "estimates-nist-ir-8547-final-oct-2026-b6812e16.pdf",
+      "bytes": 739649,
+      "content_type": "application/pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf",
+      "sha256": "3049cdfdd7c20417cf588a3d55ace6e8813982d1499502b7ef69e9593b2dc280",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T12:29:25.380985+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "UNCONFIRMED",
+      "replacedAt": "2026-11-12T12:29:23.973679+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "row names the final publication; only the November 2024 draft was saved"
     }
   ]
 }
