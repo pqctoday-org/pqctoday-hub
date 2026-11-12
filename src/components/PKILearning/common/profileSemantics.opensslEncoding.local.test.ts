@@ -316,7 +316,8 @@ describe('semantic profile examples to existing OpenSSL configuration', () => {
     expect(generalLeafText).toContain('DNS:www.example.com')
     const telecomText = await run(['x509', '-in', 'telecom.pem', '-noout', '-text'])
     expect(telecomText).toContain('CA:FALSE')
-    expect(telecomText).toContain('DNS:amf1.5gc...')
+    expect(telecomText).toContain('DNS:amf1.5gc.mnc001.mcc001.3gppnetwork.org')
+    expect(telecomText).not.toContain('DNS:amf1.5gc...')
     expect(telecomText).toContain('URI:spiffe://operator/nf/amf')
     expect(telecomText).toContain('OCSP - URI:http://ocsp.exampleca.com/')
     await run(
