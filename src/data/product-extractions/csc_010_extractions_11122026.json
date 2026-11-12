@@ -1,0 +1,56 @@
+[
+  {
+    "platform_name": "Post-Quantum Hybrid PQ VPN",
+    "category": "VPN and IPsec Software",
+    "product_name": "Post-Quantum Hybrid PQ VPN",
+    "product_brief": "Quantum-safe hybrid VPN security from Post-Quantum, using RFC9370-based hybrid connectivity and Classic McEliece, deployed in NATO environments.",
+    "pqc_support": "Yes — Classic McEliece (code-based) and RFC9370 hybrid quantum-safe VPN; classical and quantum-resistant encryption run simultaneously",
+    "pqc_capability_description": "Offers Classic McEliece (NIST Round 4 code-based algorithm) and authored RFC9370 for hybrid quantum-safe VPN connectivity. Hybrid approach runs classical and quantum-resistant encryption simultaneously. Described as production deployments protecting NATO communications and STV drone operations; modular crypto-agile architecture.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "Classic McEliece; classical encryption (algorithm not named)",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Hybrid classical/quantum-resistant VPN with modular crypto-agile architecture",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unknown",
+    "target_industries": "Government, Defence/NATO, Financial institutions, Critical infrastructure",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Hybrid approach allows classical and quantum-resistant encryption simultaneously to ensure business continuity; expert guidance from inventory and risk assessment to implementation and monitoring.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "PQC Support": "Classic McEliece, our NIST Round 4 finalist, offers a conservative cryptographic approach with a 47-year security track record",
+      "PQC Capability Description": "Our hybrid approach allows organisations to operate classical and quantum-resistant encryption simultaneously, ensuring business continuity during transition.",
+      "Crypto Primitives": "Classic McEliece, our NIST Round 4 finalist, offers a conservative cryptographic approach"
+    },
+    "withheld_no_excerpt": [],
+    "existing_note_check": {
+      "pqc_capability_description": [
+        "ML-KEM"
+      ]
+    },
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-12"
+    }
+  }
+]
