@@ -242,6 +242,16 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
   if (cryptoFunction === 'kem') sigPair = 'Not applicable — KEM-only function'
   if (cryptoFunction === 'signature') kemPair = 'Not applicable — signature-only function'
 
+  // A transport gateway cannot replace an artifact signature or an issuer trust path.
+  if (
+    targetState === 'crypto-gateway' &&
+    (inputs.protocol === 'Code signing' || inputs.protocol === 'Certificate hierarchy')
+  ) {
+    kemPair = 'Not applicable to the signed-object trust path'
+    sigPair =
+      'Native signer / issuer and validator transition required; a transport gateway does not replace signatures or trust anchors'
+  }
+
   const watchOuts = watchOutsForTarget(targetState, bandwidthBudget)
   if (cnsa2) {
     watchOuts.unshift(
@@ -496,6 +506,89 @@ function sanitiseAscii(md: string): string {
     .replace(/§/g, 'Section ')
 }
 
+/** Target/purpose planning recipes reuse the direct-replacement and transport
+ * boundary checks taught by the module's mitigation/migration workshop. They
+ * select no wire format, prove no peer support and change no scheduling policy. */
+function selectedTargetRecipe(inputs: TransitionInputs, rec: TransitionRecommendation): string {
+  const signedObjects =
+    inputs.protocol === 'Code signing' || inputs.protocol === 'Certificate hierarchy'
+  const operations =
+    inputs.function === 'signature'
+      ? `signing and validation (${rec.sigPair})`
+      : inputs.function === 'kem'
+        ? `key establishment (${rec.kemPair})`
+        : `key establishment (${rec.kemPair}) and signing / validation (${rec.sigPair})`
+  const inventory = signedObjects
+    ? 'Map the signer or issuer, signed objects, validators and trust anchors.'
+    : `Map the ${inputs.protocol} endpoints, selected ${inputs.function} operations and trust boundaries.`
+  const test =
+    inputs.function === 'signature' || signedObjects
+      ? 'Test sample signed objects with intended validators, including altered-object and untrusted-key rejection.'
+      : inputs.function === 'kem'
+        ? 'Test selected key establishment between intended peers, including incompatible-peer rejection and negotiated-parameter inspection.'
+        : 'Test selected key establishment and signed authentication with intended peers; reject incompatible parameters, altered signed inputs and untrusted keys.'
+  const steps = [inventory]
+  let boundary: string
+  switch (rec.targetState) {
+    case 'pure-PQC':
+      steps.push(
+        `Confirm supplier and peer algorithm / format support for standalone ${operations}; pilot this single-PQC target directly, rather than adding a hybrid phase.`,
+        test,
+        'Distribute the required trust material and configuration to the validated peer set; stage cutover with a tested recovery configuration.',
+        'Retire obsolete classical keys / trust only after dependent validators and recovery paths have been checked. Retain crypto-agility for later algorithm replacement.'
+      )
+      boundary =
+        'Pure PQC covers only the configured and tested operations and peer set. Other protocols, stored data, legacy validators and implementation security remain outside this plan.'
+      break
+    case 'crypto-gateway':
+      if (signedObjects) {
+        steps.push(
+          'Follow the native trust-path replacement recipe: compare a supported signer / issuer upgrade or replacement with validator algorithm and format support.',
+          test,
+          'Distribute new trust material; plan compatibility, rollback and retirement of legacy trust.',
+          'Evaluate a separately scoped transport gateway only for connections to these systems, never as replacement for the signed objects or their validation.'
+        )
+        boundary =
+          'A TLS gateway does not reissue certificates, replace artifact signatures or update consumer trust anchors. The selected signed-object trust path still needs native migration.'
+      } else {
+        steps.push(
+          `Identify external-to-gateway and gateway-to-legacy legs for ${inputs.protocol}; confirm a supported transport gateway and the existing selected operation before deployment.`,
+          `Pilot the supported external-leg operation (${operations}); retain and explicitly test the legacy leg and its existing algorithm (${inputs.currentAlgorithm}).`,
+          test,
+          'Test both legs, gateway identity / trust material, incompatible peers, recovery and the measured link budget before staging rollout.',
+          'Keep plaintext or re-encrypted legacy traffic inside the declared trusted boundary; harden and update the gateway, then review replacement and exit criteria for the legacy system.'
+        )
+        boundary =
+          'Protection terminates at the gateway. The legacy leg and endpoint remain classical or plaintext as configured; the gateway is a high-value trust boundary, not end-to-end PQC.'
+      }
+      break
+    case 'hybrid-PQC+PQC':
+      steps.push(
+        `Confirm both PQC algorithms, their combined format and validator / peer support for ${operations}.`,
+        test,
+        'Pilot both selected PQC components and test the combined verification / key-establishment policy, recovery and link budget before staging rollout.',
+        'Maintain both supported PQC code paths and crypto-agility; review confidence and any later consolidation with new compatibility tests. There is no traditional half to sunset in this target.'
+      )
+      boundary =
+        'Two PQC components do not establish a secure combiner, implemented profile or universal peer support. The selected protocol format and combination policy must be supported and tested.'
+      break
+    default:
+      steps.push(
+        `Confirm the traditional and PQC components, combined format and peer support for ${operations}.`,
+        test,
+        'Pilot the supported hybrid configuration, inspect negotiated parameters / validation policy, test rollback and link budget, then stage rollout.',
+        'Prepare and test the later standalone-PQC configuration before retiring the traditional half; include dependent peers and trust material in that second transition.'
+      )
+      boundary =
+        'Hybrid protection depends on the actual supported combination and authentication policy; an algorithm pairing label does not demonstrate downgrade resistance or deployment coverage.'
+  }
+  return (
+    `### Selected-target recipe: ${rec.targetState} / ${inputs.function}\n\n` +
+    steps.map((step, index) => `${index + 1}. ${step}`).join('\n') +
+    `\n\nResidual trust boundary: ${boundary}\n\n`
+  )
+}
+
 export function renderHybridTransitionMarkdown(
   data: Record<string, Record<string, string | string[]>>
 ): string {
@@ -575,12 +668,17 @@ export function renderHybridTransitionMarkdown(
       md += `Illustrative hybrid sequence — planning prompts, not an approved delivery plan.\n\n`
       md += `Coarse quarter labels do not establish delivery feasibility or enough time for rollout and validation; equal milestone and sunset labels leave those durations unassessed.\n\n`
       md += `- Phase 1 (now -> ${rec.hybridTargetDate}): deploy hybrid pairing in pilot, then production\n`
-      md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare pure-PQC config\n`
-      md += `- Phase 3 (${rec.sunsetDate} and after): sunset classical half, enable pure PQC\n\n`
+      md += `- Phase 2 (${rec.hybridTargetDate} -> ${rec.sunsetDate}): monitor PQC confidence; prepare and test any later standalone-PQC config\n`
+      md +=
+        rec.targetState === 'hybrid-traditional+PQC'
+          ? `- Phase 3 (${rec.sunsetDate} and after): sunset classical half only after standalone-PQC validation\n\n`
+          : `- Phase 3 (${rec.sunsetDate} and after): review the two-PQC configuration and any tested consolidation; no classical half is present\n\n`
     }
   } else {
-    md += `This worksheet has not generated a target-specific delivery sequence for the ${rec.targetState} recommendation. The generic hybrid-to-pure sequence is omitted. Define sequencing, feasibility checks and validation using your production planning and testing tools before treating this draft as a delivery plan.\n\n`
+    md += `Selected endpoint / review label: ${rec.sunsetDate}. This existing planning label does not prescribe a gateway sunset or establish rollout duration. The recipe below has no invented intermediate milestone.\n\n`
   }
+
+  md += selectedTargetRecipe(inputs, rec)
 
   md += `Risks and validation notes are editable worksheet fields and may retain generic hybrid examples. They are not automatically generated or validated from the recommendation; review them for the target and protocol.\n\n`
 
