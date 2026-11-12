@@ -23,15 +23,22 @@ describe('edge decisions can be undone (WP6.5)', () => {
   })
 
   it('Undo removes the decision and restores the capacity slot', () => {
-    // p5Frac≈0.5 of 3 migratable → 1 unlocked
+    // floor(0.5 × 3 eligible links) = 1 unlocked planning choice.
     render(<ArchitecturePanel size="small" country="US" p5Frac={0.5} />)
     fireEvent.click(screen.getByRole('button', { name: /Migrate eligible/i }))
-    expect(screen.getByText(/1\/6 links migrated/)).toBeInTheDocument()
+    expect(useSimulationStore.getState().edgeDecisions).toEqual({
+      'user-cdn-TLS 1.3': 'hybrid',
+    })
+    expect(
+      screen.getByText('1/6 links planned · 1 eligible choices · 1/3 unlocked via P5')
+    ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Migrate eligible \(0\)/i })).toBeDisabled()
 
-    fireEvent.click(screen.getByRole('button', { name: /^Undo migration of/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Undo migration of User to Caddy Web/LB' }))
     expect(Object.keys(useSimulationStore.getState().edgeDecisions)).toHaveLength(0)
-    expect(screen.getByText(/0\/6 links migrated/)).toBeInTheDocument()
+    expect(
+      screen.getByText('0/6 links planned · 0 eligible choices · 1/3 unlocked via P5')
+    ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Migrate eligible \(1\)/i })).toBeEnabled()
   })
 })
