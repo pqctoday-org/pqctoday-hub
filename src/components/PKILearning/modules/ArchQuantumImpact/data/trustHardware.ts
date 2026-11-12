@@ -249,8 +249,8 @@ export const TRUST_CARDS: TrustCard[] = [
       },
       {
         q: 'protects',
-        text: 'The aim is to keep keys inside an HSM boundary while operations run next to the workload; the Deployment Models paper describes a stateless key cache and a clustered HSM service built on the same device.',
-        sources: [TESSERA_DEF, TESSERA_DEPLOY],
+        text: 'The aim is to keep keys inside an HSM boundary while operations run next to the workload; the Deployment Models paper describes a stateless key cache and a clustered HSM service built on the same device. In the cache model, keys arrive masked from an HSM service with a validity counter, so the cache works with an HSM rather than replacing it, and the DARC specification covers moving a key from a source HSM of a different make.',
+        sources: [TESSERA_DEF, TESSERA_DEPLOY, TESSERA_DARC],
       },
       {
         q: 'pq',
@@ -452,9 +452,10 @@ export const GRID_ROWS: GridRow[] = [
       ),
       tessera: C(
         'specified',
-        'Specified as a companion HSM chip attached to the workload’s server, with a Caliptra root of trust inside it.',
+        'Specified as a companion HSM chip attached to the workload’s server, with a Caliptra root of trust inside it; each partition is reached through a TDISP device interface bound to its TEE, such as a confidential VM.',
         TESSERA_DEF,
-        TESSERA_CHIP
+        TESSERA_CHIP,
+        TESSERA_DEPLOY
       ),
       'hardware-hsm': C(
         'stated',
@@ -508,7 +509,7 @@ export const GRID_ROWS: GridRow[] = [
       ),
       tessera: C(
         'specified',
-        'Specified with a device owner and separate partition owners, each with its own certificate anchors.',
+        'Specified with certificate chains for the manufacturer, the operator, the device owner and each partition owner; a partition is configured only through the interface bound to its TEE.',
         TESSERA_DEPLOY
       ),
       'hardware-hsm': C(
@@ -559,7 +560,7 @@ export const GRID_ROWS: GridRow[] = [
       ),
       tessera: C(
         'specified',
-        'Two models on the same device: a stateless cache that keeps no keys across a reset, or a clustered HSM service.',
+        'Two models on the same device: a stateless cache that keeps no keys across a reset and stops using a key when its validity counter elapses, or a clustered HSM service that supplies keys.',
         TESSERA_DEPLOY
       ),
       'hardware-hsm': C(
@@ -609,8 +610,9 @@ export const GRID_ROWS: GridRow[] = [
       ),
       tessera: C(
         'specified',
-        'Specified: Caliptra attests the chip’s security configuration, and Tessera’s identity chains to Caliptra’s.',
-        TESSERA_CHIP
+        'Specified: Caliptra attests the chip’s security configuration, Tessera’s identity chains to Caliptra’s, and the interface’s certificate is presented in the TDISP interface report.',
+        TESSERA_CHIP,
+        TESSERA_TMK
       ),
       'hardware-hsm': C(
         'varies',
@@ -1049,8 +1051,8 @@ export const SCENARIOS: Scenario[] = [
     lessWell: [
       {
         category: 'tessera',
-        text: 'Its FIPS 140-3 Level 3 certification and its speed are requirements in the specification, and the software repository states it is not yet ready for deployment.',
-        sources: [TESSERA_CHIP, TESSERA_SW],
+        text: 'Its FIPS 140-3 Level 3 certification and its speed are requirements in the specification, and the software repository states it is not yet ready for deployment. In its cache model it also needs an HSM service as the source of its keys.',
+        sources: [TESSERA_CHIP, TESSERA_SW, TESSERA_DEPLOY],
       },
     ],
   },
