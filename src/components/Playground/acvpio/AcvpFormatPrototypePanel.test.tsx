@@ -166,6 +166,72 @@ describe('AcvpFormatPrototypePanel', () => {
   })
 })
 
+describe('a finished result keeps the identity of the run that produced it', () => {
+  it('a Rust run stays labelled Rust after the C++ engine is selected; nothing reruns', async () => {
+    const loadEngine = vi.fn(async () => createExpectedResultsFakeEngine(expectedText, promptText))
+    render(<AcvpFormatPrototypePanel loadEngine={loadEngine} />)
+    const user = await upload(promptText)
+    await screen.findByTestId('acvp-io-loaded')
+    await user.click(screen.getByRole('button', { name: 'Rust engine' }))
+    await user.click(screen.getByRole('button', { name: /Run locally/ }))
+    await waitFor(() =>
+      expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
+        '180 test cases on the softhsmv3 Rust engine'
+      )
+    )
+    expect(screen.queryByTestId('acvp-io-engine-changed')).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'C++ engine' }))
+    // Counterexample: the old summary used the selector, so this read "C++ engine".
+    expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
+      '180 test cases on the softhsmv3 Rust engine'
+    )
+    expect(screen.getByTestId('acvp-io-summary')).not.toHaveTextContent('C++')
+    expect(screen.getByTestId('acvp-io-engine-changed')).toHaveTextContent(
+      'This result is from the softhsmv3 Rust engine. Run again to answer the prompt on the softhsmv3 C++ engine.'
+    )
+    expect(loadEngine).toHaveBeenCalledTimes(1)
+    expect(loadEngine).toHaveBeenCalledWith('rust')
+
+    // A new run on the newly selected engine replaces the result and its label.
+    await user.click(screen.getByRole('button', { name: /Run locally/ }))
+    await waitFor(() =>
+      expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
+        '180 test cases on the softhsmv3 C++ engine'
+      )
+    )
+    expect(loadEngine).toHaveBeenLastCalledWith('cpp')
+    expect(screen.queryByTestId('acvp-io-engine-changed')).toBeNull()
+  })
+
+  it('a new prompt cannot be imported while a run is in progress', async () => {
+    let release: () => void = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    const loadEngine = vi.fn(async () => {
+      await gate
+      return createExpectedResultsFakeEngine(expectedText, promptText)
+    })
+    render(<AcvpFormatPrototypePanel loadEngine={loadEngine} />)
+    const user = await upload(promptText, 'first.json')
+    await screen.findByTestId('acvp-io-loaded')
+    await user.click(screen.getByRole('button', { name: /Run locally/ }))
+    await waitFor(() => expect(loadEngine).toHaveBeenCalled())
+
+    expect(screen.getByRole('button', { name: /Import prompt\.json/ })).toBeDisabled()
+    expect(screen.getByLabelText('ACVP prompt file')).toBeDisabled()
+    await user.upload(
+      screen.getByLabelText('ACVP prompt file'),
+      new File([promptText], 'second.json', { type: 'application/json' })
+    )
+    expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent('first.json')
+
+    release()
+    await screen.findByTestId('acvp-io-summary')
+    expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent('first.json')
+    expect(screen.getByRole('button', { name: /Import prompt\.json/ })).toBeEnabled()
+  })
+})
+
 describe('F-9 source guard: no network, storage, or ACVTS credential code in the prototype', () => {
   const files = [
     'src/components/Playground/acvpio/AcvpFormatPrototypePanel.tsx',
