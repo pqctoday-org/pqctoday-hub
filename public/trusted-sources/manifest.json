@@ -14528,6 +14528,24 @@
       "admittedAt": "2026-09-18T05:09:27.783031+00:00",
       "admittedBy": "admit.py",
       "identity": "MATCH"
+    },
+    {
+      "refId": "apra",
+      "file": "trusted-sources/apra-625352f2.html",
+      "filename": "apra-625352f2.html",
+      "url": "https://www.apra.gov.au/",
+      "status": "downloaded",
+      "sizeBytes": 346249,
+      "contentType": "text/html",
+      "sha256": "084e82c37b17739e6983e4471a329c6461f5ee63d2a7fb59c55767768c7c382a",
+      "addedAt": "2026-11-12T12:33:13.637883+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "stampedAt": "2026-11-12T12:33:13.908166+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-11-12T12:33:13.637883+00:00"
     }
   ]
 }
