@@ -1,6 +1,6 @@
 [
   {
-    "ref_id": "RFC 9802",
-    "reason": "single-window failed (reply is not valid JSON (Expecting property name enclosed in double quotes: line 1 column 2796 (char 2795)); 2,795 characters; not re-asked on claude); no fallback for claude"
+    "ref_id": "NIST NCCoE SP 1800-38A",
+    "reason": "Probable landing page, not the document (41,002 bytes of markup, only 2,498 chars of text). Re-fetch the linked document before treating this as covered."
   }
 ]

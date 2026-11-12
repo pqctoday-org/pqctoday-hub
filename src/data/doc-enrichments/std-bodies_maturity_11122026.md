@@ -10,11 +10,11 @@ requirement_count: 32
 - **URL**: https://www.etsi.org/deliver/etsi_tr/103600_103699/103619/01.01.01_60/tr_103619v010101p.pdf
 - **Requirement count**: 4
 - **Governance**:
-    - _T2 Risk-Informed · all_: Organizations should adopt a documented three-stage migration framework and migration plan (inventory, plan preparation, execution) to reach a Fully Quantum Safe Cryptographic State.
+    - _T2 Risk-Informed · all_: Organizations should follow a documented, staged migration framework and maintain a migration plan covering inventory, plan preparation, and execution toward a fully quantum safe state.
+    - _T2 Risk-Informed · all_: Define explicit start and target end states for migration (non-quantum-safe state to FQSCS) and base the migration plan on the discovered inventory.
 - **Inventory**:
-    - _T2 Risk-Informed · all_: Compile an inventory of all cryptographic assets and processes (hardware and software) as the first migration stage, since migration cannot be planned without it.
-    - _T2 Risk-Informed · all_: Establish and record the initial (non-quantum-safe) state of cryptographic assets and the target end state (all assets using QSC) as the baseline for migration planning.
-    - _T3 Repeatable · all_: Inventory must capture cryptographic dependencies that are not immediately apparent, including dependencies on organizational assets and specific hardware or software infrastructure.
+    - _T2 Risk-Informed · all_: Compile an inventory of all cryptographic assets and processes in the system, including hardware and software forms, as the first stage of migration planning.
+    - _T3 Repeatable · all_: Inventory must capture hidden cryptographic dependencies, including dependencies on organizational assets and specific hardware or software infrastructures.
 
 ## NIST CSWP 39
 - **Source**: Considerations for Achieving Crypto Agility: Strategies and Practices

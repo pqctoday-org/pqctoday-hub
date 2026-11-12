@@ -1,0 +1,10 @@
+[
+  {
+    "ref_id": "Europol-QSFF-Call-to-Action-2025",
+    "reason": "Probable landing page, not the document (97,650 bytes of markup, only 6,831 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "FIPS 199",
+    "reason": "Probable landing page, not the document (43,545 bytes of markup, only 2,346 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]

@@ -1,8 +1,8 @@
 ---
 generated: 2026-11-12
 category: Compliance Frameworks
-document_count: 14
-requirement_count: 119
+document_count: 15
+requirement_count: 131
 ---
 
 ## ANSSI PQC Follow-up Paper
@@ -56,29 +56,47 @@ requirement_count: 119
 - **Requirement count**: 10
 - **Assurance / FIPS**:
     - _T3 Repeatable · certificates_: Provide third parties the capability to check and test all certificate types the TSP issues.
-    - _T3 Repeatable · keys_: Generate TSP key pairs, including keys for revocation and registration services, only within a secure cryptographic device certified to EAL4+ (ISO/IEC 15408) or FIPS 140-2/140-3 level 3 / ISO/IEC 19790.
-    - _T3 Repeatable · keys_: Operate the secure cryptographic device in its certified configuration per certification guidance documentation, or an equivalent configuration achieving the same security objective.
+    - _T3 Repeatable · keys_: Generate TSP key pairs (including revocation and registration service keys) inside a secure cryptographic device assured to EAL4+ or meeting ISO/IEC 19790 / FIPS 140-2 or 140-3 level 3.
+    - _T3 Repeatable · libraries_: Operate secure cryptographic devices in the configuration described in certification guidance documentation, or an equivalent configuration achieving the same security objective.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Apply ETSI EN 319 401 organizational requirements (clause 7.1) and legal compliance requirements (REQ-7.13-01/-02) to TSP operations.
-    - _T2 Risk-Informed · certificates_: Issue terms and conditions (including a PKI disclosure statement) for subscribers, subjects and relying parties, as part of the CPS/CP or a standalone document.
-    - _T2 Risk-Informed · certificates_: Obtain a unique object identifier for the Certificate Policy in the form required by ISO/IEC 9594-8 / ITU-T X.509.
-    - _T2 Risk-Informed · certificates_: Inform subscribers and relying parties how a specific policy adds to or further constrains the CP requirements.
-    - _T2 Risk-Informed · certificates_: Keep certificate generation and revocation management organizationally independent and impartial, with a documented structure safeguarding impartiality; senior and trusted-role staff free from commercial or financial pressures.
+    - _T2 Risk-Informed · certificates_: Obtain a unique object identifier for each CP in the form required by ISO/IEC 9594-8 / ITU-T X.509.
+    - _T2 Risk-Informed · certificates_: Issue terms and conditions (including a PKI disclosure statement) aimed at subscribers, subjects and relying parties, either within the CPS/CP or as a standalone document.
+    - _T2 Risk-Informed · certificates_: Inform subscribers and relying parties how a specific policy adds to or further constrains the requirements of the CP.
+    - _T2 Risk-Informed · certificates_: Keep certificate generation and revocation management independent of other organizations in service decisions, with a documented structure safeguarding impartiality.
+    - _T2 Risk-Informed · certificates_: Ensure senior executives and trusted-role staff for certificate generation and revocation are free from commercial, financial and other pressures that could influence trust in services.
 - **Lifecycle / CLM**:
-    - _T3 Repeatable · keys_: Where the CA generates subject keys, delete all copies of the subject private key after delivery to the subject, except for documented permitted conditions.
-    - _T3 Repeatable · keys_: Where the CA generates subject keys, secure issuance of the cryptographic device, including secure preparation, storage and distribution.
+    - _T3 Repeatable · keys_: Where the CA generates subject keys, delete all copies of the subject private key after delivery to the subject, except under the permitted conditions of clause 6.3.12.
+    - _T3 Repeatable · keys_: Where the CA generates subject keys, secure the issuance of the secure cryptographic device to the subject, including secure preparation, storage and distribution of the device.
 
 ## EU-NIS-CG-Roadmap-v1.1
 - **Source**: EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1
 - **URL**: https://ec.europa.eu/newsroom/dae/redirection/document/117507
-- **Requirement count**: 4
+- **Requirement count**: 10
 - **Governance**:
-    - _T2 Risk-Informed · all_: Establish an initial national PQC transition roadmap by 31.12.2026 and initiate planning and pilots for high- and medium-risk use cases.
+    - _T1 Partial · all_: Where recommended deadlines cannot be met, evaluate individual risk, monitor quantum computing developments and consider temporary measures or a more sophisticated threat analysis.
+    - _T2 Risk-Informed · all_: Include the quantum threat in the risk management of all relevant entities and perform a quantum risk analysis classifying use cases as low, medium or high risk.
+    - _T2 Risk-Informed · all_: Identify and involve stakeholders and develop a PQC transition timeline and implementation plan as First Steps by end of 2026.
+    - _T2 Risk-Informed · all_: Establish an initial national PQC transition roadmap and initiate transition planning and pilots for high- and medium-risk use cases by 31.12.2026.
+    - _T3 Repeatable · all_: Implement the Next Steps of the roadmap by 31.12.2030 and report status updates to the NIS CG PQC work stream to harmonise implementation.
 - **Inventory**:
-    - _T2 Risk-Informed · all_: Establish and support mature cryptographic asset management (a structured cryptographic inventory) as a First Step to facilitate PQC transition and cryptographic agility, completed by end of 2026.
+    - _T2 Risk-Informed · all_: Create dependency maps of cryptographic use and include the supply chain in transition planning as First Steps by end of 2026.
+    - _T3 Repeatable · all_: Establish mature cryptographic asset management (cryptographic inventory) to facilitate the PQC transition and improve cryptographic agility, as a First Step by end of 2026.
 - **Lifecycle / CLM**:
-    - _T3 Repeatable · all_: Complete PQC transition of high-risk use cases (data needing confidentiality 10+ years) by 31.12.2030; do not use quantum-vulnerable public-key mechanisms stand-alone after end of 2030.
-    - _T3 Repeatable · all_: Use standardised and tested hybrid solutions (PQC combined with quantum-vulnerable algorithms) when migrating, whenever feasible and suitable.
+    - _T3 Repeatable · all_: Do not use quantum-vulnerable public-key mechanisms stand-alone for high-risk use cases after end of 2030, nor for medium-risk use cases after end of 2035; use standardised hybrid solutions where feasible.
+    - _T4 Adaptive · all_: Complete PQC transition for high-risk use cases by 31.12.2030, and for medium-risk use cases by 31.12.2035; low-risk as far as feasible.
+    - _T4 Adaptive · software_: Enable quantum-safe software and firmware upgrades by default by 31.12.2030.
+
+## IN-TEC-PQC-Migration-Report-2025
+- **Source**: India TEC Technical Report TEC 910018:2025 — Migration to Post-Quantum Cryptography
+- **URL**: https://www.tec.gov.in/pdf/TR/Final%20technical%20report%20on%20migration%20to%20PQC%2028-03-25.pdf
+- **Requirement count**: 5
+- **Governance**:
+    - _T2 Risk-Informed · all_: Identify critical digital infrastructure, including data and applications, in advance so the organization can transition smoothly to quantum-safe cryptography.
+    - _T2 Risk-Informed · all_: Create executive awareness of the quantum threat so organizations make proactive investments needed to respond adequately.
+    - _T2 Risk-Informed · all_: Migrate to PQC; do not delay, because delay increases the volume of data exposed to harvest-now-decrypt-later attacks. Prioritise systems storing confidential data for long periods.
+    - _T2 Risk-Informed · all_: Adopt NIST-standardized PQC algorithms (FIPS 203/204/205) rather than pursuing independent national standardisation, to avoid duplicated effort.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Develop a cryptographic inventory to assess and categorize the cryptographic artefacts present in the organization's digital infrastructure as a basis for assessing quantum risk.
 
 ## NIST SP 800-82 Rev. 3
 - **Source**: Guide to Operational Technology (OT) Security
@@ -105,14 +123,16 @@ requirement_count: 119
 ## NSA CNSA 2.0 FAQ
 - **Source**: CNSA 2.0 Frequently Asked Questions
 - **URL**: https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF
-- **Requirement count**: 4
+- **Requirement count**: 5
 - **Assurance / FIPS**:
-    - _T3 Repeatable · libraries_: Use only CNSA 2.0-approved algorithms and parameters in NSS: AES-256, ML-KEM-1024, ML-DSA-87, SHA-384/512, and LMS/XMSS (NIST SP 800-208) for firmware/software signing.
+    - _T3 Repeatable · libraries_: Use only the approved CNSA 2.0 algorithms and parameters (AES-256, ML-KEM-1024, ML-DSA-87, SHA-384/512, LMS/XMSS for firmware/software signing) in NSS cryptographic implementations.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Follow CNSSP 15 and its transition timeframes as the policy basis for meeting NSS algorithm requirements.
+    - _T2 Risk-Informed · all_: NSS owners and operators must know and apply CNSA 2.0 algorithm requirements to their systems; vendors must implement CNSA 2.0 algorithms to meet NSS requirements.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Assess systems to identify which cryptographic services (confidentiality, authentication, identity management) are quantum-vulnerable to determine whether the system is fully or partially quantum-resistant.
 - **Lifecycle / CLM**:
-    - _T2 Risk-Informed · all_: Do not rely on larger RSA or ECC key sizes to address the quantum threat; plan replacement of RSA and ECC with quantum-resistant algorithms.
-    - _T3 Repeatable · all_: Transition all uses of Suite B / CNSA 1.0 public-key algorithms (RSA, ECC) in NSS to CNSA 2.0 quantum-resistant algorithms, for both future designs and currently fielded equipment, per CNSSP 15 timeframes.
+    - _T3 Repeatable · all_: Transition all products and systems using Suite B or CNSA 1.0 public-standard algorithms to CNSA 2.0 algorithms within the CNSSP 15 timeframes, for both future designs and currently fielded equipment.
+    - _T3 Repeatable · keys_: Replace quantum-vulnerable RSA and ECC with quantum-resistant algorithms; increasing RSA/ECC key sizes is not an acceptable mitigation.
 
 ## NSM-10
 - **Source**: National Security Memorandum 10 — Promoting U.S. Leadership in Quantum Computing

@@ -1,8 +1,8 @@
 ---
 generated: 2026-11-12
 category: Certification Schemes
-document_count: 23
-requirement_count: 147
+document_count: 24
+requirement_count: 153
 ---
 
 ## ANSSI PQC Position Paper
@@ -10,16 +10,17 @@ requirement_count: 147
 - **URL**: https://messervices.cyber.gouv.fr/documents-guides/anssi-avis-migration-vers-la-cryptographie-post-quantique.pdf
 - **Requirement count**: 9
 - **Assurance / FIPS**:
-    - _T2 Risk-Informed · libraries_: Do not expect ANSSI to approve direct replacement of pre-quantum algorithms by PQC in the short/medium term; plan on hybrid constructions for certification of products.
-    - _T2 Risk-Informed · libraries_: Follow ANSSI/European recommendations on cryptographic algorithm selection and sizing when developing security products intended for security visas.
-    - _T3 Repeatable · software_: Products seeking ANSSI security visas (e.g. Common Criteria certificates) must undergo a dedicated cryptographic evaluation within the French certification scheme; there is no closed list of eligible algorithms.
+    - _T2 Risk-Informed · all_: Do not expect ANSSI approval of direct (non-hybrid) PQC replacement of pre-quantum algorithms in the short or medium term; treat PQC as immature when planning assurance of products.
+    - _T2 Risk-Informed · all_: Product developers seeking ANSSI security visas must submit to a dedicated cryptographic evaluation within the certification scheme; algorithms should preferably be standardized by international bodies or backed by solid scientific publica…
+    - _T3 Repeatable · all_: Ensure PQC deployments preserve pre-quantum security by using hybrid key establishment/signature mechanisms; for hybrid signatures, require both underlying signatures to be valid.
+    - _T3 Repeatable · software_: Secure the implementation of the hybridization technique itself, not just the underlying algorithms, since hybridization is crucial to security in phases 1 and 2.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Do not rely on QKD as the quantum-threat countermeasure; at most use it as a complementary defense-in-depth layer in niche applications, never as a replacement for algorithmic cryptography.
-    - _T2 Risk-Informed · certificates_: Plan and address migration of long-term-validity signatures (document signing) before a CRQC emerges to prevent after-the-fact identity forgery.
-    - _T2 Risk-Informed · keys_: Prioritize migration risk assessment by data confidentiality lifetime, recognizing store-now-decrypt-later exposure for sensitive long-lived information.
-    - _T2 Risk-Informed · keys_: Adjust symmetric key and hash sizing policy against quantum attacks: use 256-bit symmetric keys and hash outputs of at least 384 bits.
-    - _T3 Repeatable · all_: Plan migration so that no regression in classical (pre-quantum) security occurs; deploy post-quantum algorithms only in combination with recognized pre-quantum algorithms.
-    - _T3 Repeatable · all_: Use algorithms standardized by recognized international bodies (ISO, ITU, ETSI); non-standardized algorithms need strong scientific publications to justify adequate assurance, and standardization alone is not automatically recognized.
+    - _T2 Risk-Informed · all_: Use state-of-the-art cryptographic algorithms by following ANSSI's published algorithm-selection guidance and technical reference for sizing algorithms when developing security products.
+    - _T2 Risk-Informed · all_: Assess exposure to store-now-decrypt-later attacks and prioritize migration for data that must remain confidential long-term; plan migration of long-term-validity signatures before a CRQC emerges.
+    - _T2 Risk-Informed · all_: Do not rely on QKD as a countermeasure to the quantum threat; at most use it as a complement (defense in depth) to algorithmic cryptography in niche applications.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Begin a gradual, phased transition from pre-quantum to post-quantum algorithms now, ensuring no regression in classical security while building confidence in PQC algorithms and their implementations.
+    - _T2 Risk-Informed · keys_: Adjust symmetric key and hash sizes for quantum resistance: use 256-bit keys for AES and hash outputs of at least 384 bits for SHA-2 and SHA-3.
 
 ## ANSSI-PG-083-v3-2026
 - **Source**: Règles et Recommandations Concernant le Choix et le Dimensionnement des Mécanismes Cryptographiques (v3.00)
@@ -51,6 +52,21 @@ requirement_count: 147
     - _T3 Repeatable · certificates_: Phase out DSA usage by 2029 due to its discontinuation in the referenced standard.
     - _T3 Repeatable · keys_: Use quantum-safe KEMs (FrodoKEM, Classic McEliece, ML-KEM) in a hybrid manner with a classical mechanism, with only the specified approved parameter sets.
     - _T3 Repeatable · software_: Ensure products with lifetime beyond 2030 can be upgraded to quantum-resistant methods, and that the software/firmware upgrade mechanism supports post-quantum signatures for integrity and authenticity.
+
+## BSI-BSZ-METHOD
+- **Source**: BSI BSZ — Accelerated Security Certification Evaluation Process (v2.1)
+- **URL**: https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/BSZ/BSZ-Evaluation.pdf?__blob=publicationFile&v=5
+- **Requirement count**: 7
+- **Assurance / FIPS**:
+    - _T3 Repeatable · all_: Ensure the accredited evaluation facility complies with the scheme's evaluation process requirements for fixed-time certification and re-recognition to maintain licensing and conduct evaluations correctly.
+    - _T3 Repeatable · all_: Facility must ensure technical correctness and truthful documentation of its evaluation results.
+    - _T3 Repeatable · software_: Conduct an Extended Follow-Up Evaluation, including an Impact Analysis Report assessment and re-testing of changed TOE configuration, when the evaluation outcome is negative or the TOE changes.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Define roles and responsibilities across evaluation phases among facility, applicant/manufacturer and certification body, including archiving of the evaluated object per certification body specifications.
+    - _T3 Repeatable · all_: Specify any use of test equipment outside the facility premises at kick-off, and implement adequate security measures protecting the TOE, confidential information and evaluator knowledge.
+- **Observability**:
+    - _T3 Repeatable · all_: Immediately notify the certification body of any delays in scheduled evaluation procedures and provide process and content information on ongoing evaluations.
+    - _T3 Repeatable · all_: Provide the certification body with information on the process and content of ongoing evaluation procedures.
 
 ## CC-2022-CEM
 - **Source**: Common Evaluation Methodology (CEM) 2022 R1
@@ -93,9 +109,10 @@ requirement_count: 147
 ## CMVP-MGMT-MANUAL
 - **Source**: FIPS 140-3 Cryptographic Module Validation Program Management Manual
 - **URL**: https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS-140-3-CMVP%20Management%20Manual.pdf
-- **Requirement count**: 1
+- **Requirement count**: 2
 - **Assurance / FIPS**:
-    - _T3 Repeatable · all_: Maintain validation records, including the mapping from CSTL-consolidated documentation back to the original vendor source documents, as part of the validation evidence retained.
+    - _T3 Repeatable · libraries_: Do not treat IUT or MIP list posting as validation; rely on actual CMVP validation status when claiming a module is validated.
+    - _T3 Repeatable · libraries_: Retain a mapping from CSTL-consolidated documentation back to original vendor source documentation as part of the validation records.
 
 ## COMMON-CRITERIA
 - **Source**: Common Criteria for Information Technology Security Evaluation, CC:2022 Release 1, Part 1
@@ -129,11 +146,13 @@ requirement_count: 147
 ## EUCC v2.0 ACM
 - **Source**: EU Cybersecurity Certification Agreed Cryptographic Mechanisms v2.0
 - **URL**: https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG+Agreed+Cryptographic+Mechanisms+version+2.pdf
-- **Requirement count**: 2
+- **Requirement count**: 3
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Re-evaluate cryptographic mechanisms against the document on its two-year revision cycle to keep assurance of agreed status current.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Select only agreed cryptographic mechanisms (recommended or legacy) in new systems; justify any use of legacy mechanisms by documented backwards-compatibility reasons.
+    - _T3 Repeatable · all_: Build new cryptographic systems on recommended algorithms and key sizes; justify any use of legacy mechanisms by backwards-compatibility reasons.
 - **Lifecycle / CLM**:
-    - _T3 Repeatable · all_: Re-assess deployed mechanisms against each revision of the agreed mechanisms list, which is updated every two years, and schedule migrations accordingly.
+    - _T3 Repeatable · all_: Phase out legacy cryptographic mechanisms as soon as practical and track their validity periods and deprecation deadlines (e.g., L[2031]).
 
 ## FIPS-140-3-STANDARD
 - **Source**: FIPS 140-3 — Security Requirements for Cryptographic Modules
@@ -181,12 +200,13 @@ requirement_count: 147
 - **URL**: https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html
 - **Requirement count**: 5
 - **Assurance / FIPS**:
-    - _T3 Repeatable · libraries_: Validate cryptographic module algorithm implementations through automated ACVP test sessions (registration, vector sets, responses, dispositions) with a validation authority, and treat a 'passed' disposition as the readiness-for-validation…
-    - _T3 Repeatable · libraries_: Use ACVP to perform cryptographic validation at a cadence matching development cycles so validated crypto carrying CVE fixes can be redeployed quickly, rather than relying on slow manual re-validation.
-    - _T3 Repeatable · libraries_: Operate validation-authority ACVP servers and clients with HTTPS, TLS 1.2 or greater, and mutual authentication; internal-only test deployments may relax these features.
+    - _T3 Repeatable · libraries_: Operators of a validation authority server must secure the ACVP channel with HTTPS, TLS 1.2 or greater, and mutual authentication; clients intended for use with a validation authority must meet the same requirements.
+    - _T3 Repeatable · libraries_: Use ACVP to automatically verify cryptographic module implementations at a rate that matches industry development cycles, so validated crypto carrying CVE fixes can be deployed quickly.
+    - _T3 Repeatable · libraries_: Register module algorithm capabilities with the validation server and obtain a 'passed' disposition for each test vector set before the algorithm is considered ready for validation.
 - **Governance**:
-    - _T2 Risk-Informed · libraries_: Agree on and document an authentication scheme between ACVP client and server owning entities (including validation-authority servers), since the protocol does not prescribe how clients authenticate.
-    - _T2 Risk-Informed · libraries_: Use an authentication scheme (e.g., server-issued JWT, up to TLS mutual certificate authentication) for ACVP access, and use HTTPS with TLS 1.2+ where the environment supports it.
+    - _T2 Risk-Informed · libraries_: Agree an authentication scheme between client and server owning entities, including validation authority servers, for ACVP test sessions; strength may range from basic HTTP authentication to TLS mutual certificate authentication.
+- **Inventory**:
+    - _T2 Risk-Informed · libraries_: Maintain a described inventory of the vendor, module, operational environment and dependency records for modules under validation, as these are the resources the ACVP server tracks.
 
 ## NIST-FIPS140-3-IG-PQC
 - **Source**: Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program
@@ -277,38 +297,33 @@ requirement_count: 147
 - **URL**: https://www.nist.gov/publications/recommendation-random-number-generation-using-deterministic-random-bit-generators-2
 - **Requirement count**: 8
 - **Assurance / FIPS**:
-    - _T3 Repeatable · libraries_: Validate DRBG implementations through CMVP and CAVP; obligations out of scope for those programs remain the responsibility of the entity using, implementing, installing or configuring the application.
-    - _T3 Repeatable · libraries_: Source entropy input only from entropy sources validated as conforming to SP 800-90B (approved entropy sources).
+    - _T3 Repeatable · libraries_: Subject DRBG implementations to formal conformance validation under CMVP and CAVP; treat requirements outside validation scope as the responsibility of the entity using, implementing, installing or configuring the application.
+    - _T3 Repeatable · libraries_: Use only entropy sources validated as conforming to SP 800-90B (approved entropy sources) as the randomness source for the DRBG.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Assign ownership for 'shall' requirements that fall outside CMVP/CAVP testing scope to the entities using, implementing, installing or configuring DRBG-consuming applications.
-    - _T2 Risk-Informed · all_: Do not use DRBG output for applications requiring a higher security strength than the DRBG was instantiated to support; instantiate for the highest strength required across all purposes.
-    - _T2 Risk-Informed · libraries_: Select an appropriate DRBG mechanism per consuming application and document the selection, informed by Appendix C guidance.
+    - _T2 Risk-Informed · all_: Assign ownership of 'shall' requirements that fall outside CMVP/CAVP testing to the implementing and deploying entities, so such obligations are not left unowned.
+    - _T2 Risk-Informed · libraries_: Instantiate DRBGs at the highest security strength required by any consuming purpose, and do not use output for applications requiring higher strength than the instantiation supports.
 - **Lifecycle / CLM**:
-    - _T3 Repeatable · libraries_: Support reseeding and uninstantiation (zeroization) of DRBG internal state as lifecycle functions of every DRBG mechanism, and retain diversity of approved DRBG mechanisms to enable timely transition if attacks emerge.
+    - _T3 Repeatable · libraries_: Support the instantiate, reseed and uninstantiate lifecycle functions so DRBG state is refreshed with new entropy and zeroized when no longer needed.
+    - _T3 Repeatable · libraries_: Maintain a diversity of approved DRBG mechanisms so a timely transition to a different mechanism class is possible if new attacks are found.
 - **Observability**:
-    - _T3 Repeatable · libraries_: Implement health testing within DRBG implementations, before and during normal operation, to confirm they continue to perform as implemented and validated.
-    - _T3 Repeatable · libraries_: Provide a DRBG health test function that determines that the DRBG mechanism continues to function correctly.
+    - _T3 Repeatable · libraries_: Implement health testing in DRBG implementations immediately prior to or during normal operation to confirm they continue to perform as validated.
+    - _T3 Repeatable · libraries_: Ensure the DRBG mechanism includes a health test function that determines whether the mechanism continues to function correctly.
 
 ## NIST-SP-800-90B
 - **Source**: SP 800-90B: Recommendation for the Entropy Sources Used for Random Bit Generation
 - **URL**: https://csrc.nist.gov/pubs/sp/800/90/b/final
-- **Requirement count**: 12
+- **Requirement count**: 9
 - **Assurance / FIPS**:
-    - _T2 Risk-Informed · all_: Where legal restrictions, policies or directives require it, treat entropy source validation as a prerequisite for deploying an RBG entropy source.
-    - _T3 Repeatable · all_: Obtain entropy source validation by testing at an NVLAP-accredited laboratory against SP 800-90B, followed by CAVP and CMVP review of the results, to assure the source provides its stated entropy rate.
-    - _T3 Repeatable · all_: Supply the validating lab with all documentation and theoretical justifications for the entropy source, and respond to lab requests for further evidence or clarification during validation.
-    - _T3 Repeatable · all_: Perform validation data collection in one of three permitted ways: submitter with lab witness, by the lab itself, or submitter-prepared with a specification and a signed attestation that the specification was followed.
-    - _T3 Repeatable · all_: Collect validation data as raw noise-source output from the entropy source under validation, and associate any relevant hardware or software version updates with the data.
-    - _T3 Repeatable · libraries_: Use vetted conditioning components (HMAC, CMAC, CBC-MAC, approved hash functions, Hash_df, Block_Cipher_df) whose correct implementation is assured through CAVP testing; otherwise provide mathematical evidence of suitability for any non-ve…
-    - _T3 Repeatable · libraries_: For non-vetted conditioning components, submit documentation of narrowest internal width and output size, plus mathematical evidence the component does not significantly reduce entropy rate and behaves acceptably with non-independent noise…
-- **Governance**:
-    - _T2 Risk-Informed · all_: Define roles and responsibilities among entropy source developers, submitters, and NVLAP-accredited labs, including that a non-developer submitter must obtain required information from the developer for validation.
-- **Inventory**:
-    - _T2 Risk-Informed · libraries_: Restrict CBC-MAC to use solely as an RBG conditioning component; track where it is deployed so it is not used for other purposes.
+    - _T2 Risk-Informed · all_: Understand that entropy source validation may be needed to satisfy legal restrictions, policies, or directives, and pursue validation accordingly.
+    - _T3 Repeatable · all_: Validate entropy sources through NVLAP-accredited laboratory testing against SP 800-90B, followed by CAVP and CMVP review of results, to obtain assurance of the stated entropy rate.
+    - _T3 Repeatable · all_: Collect validation data under controlled, attestable conditions: by the submitter with a lab witness, by the lab, or in advance with a documented data-generation specification and a signed attestation that it was followed.
+    - _T3 Repeatable · all_: Associate any relevant hardware or software version updates with the validation data collected from the entropy source under validation, so evidence traces to the exact version.
+    - _T3 Repeatable · all_: Document the data collection method so that a lab or submitter can replicate the collection later, and document why collection does not interfere with the noise source.
+    - _T3 Repeatable · all_: For non-vetted conditioning components, supply a description, narrowest internal width, output block size, mathematical evidence of suitability, and justification of behavior under non-independent noise data.
+    - _T3 Repeatable · libraries_: Use only vetted conditioning components (HMAC, CMAC, CBC-MAC, approved hash functions, Hash_df, Block_Cipher_df) with CAVP-tested correct implementation to claim full-entropy outputs without additional proofs.
 - **Observability**:
-    - _T3 Repeatable · all_: Document the data collection method so a lab or submitter can replicate it later, and document why collection does not interfere with the noise source (evidence retention for re-validation).
-    - _T3 Repeatable · all_: Implement noise-source health tests, tailored to the technology's expected statistical behavior, that raise an alarm on significant entropy decrease, noise source failure, or hardware failure.
-    - _T3 Repeatable · all_: Apply health tests to noise-source outputs before conditioning, and run start-up health tests after power-up or reboot and before first use of the entropy source.
+    - _T3 Repeatable · all_: Implement noise-source health tests that raise an alarm on significant entropy decrease, noise source failure, or hardware failure, tailored to the source's expected statistical behavior.
+    - _T3 Repeatable · all_: Apply health tests to noise source outputs before conditioning, and run start-up health tests after power-up or reboot and before first use of the entropy source.
 
 ## NIST-SP-800-90C
 - **Source**: SP 800-90C: Recommendation for Random Bit Generator (RBG) Constructions

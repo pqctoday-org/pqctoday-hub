@@ -1,8 +1,8 @@
 ---
 generated: 2026-11-12
 category: Technical Standards
-document_count: 22
-requirement_count: 163
+document_count: 24
+requirement_count: 174
 ---
 
 ## 3GPP-PQC-Study-2025
@@ -32,6 +32,19 @@ requirement_count: 163
     - _T3 Repeatable · all_: Restrict TLS 1.2 cipher suites to an approved list; phase out non-PFS (static DH) suites by 2026 and DHE suites by 2029, prefer PFS suites, and require Encrypt-then-MAC with CBC.
 - **Inventory**:
     - _T3 Repeatable · software_: Maintain knowledge of which cipher suites, TLS versions and Diffie-Hellman groups are enabled across systems so each can be checked against its use-until date.
+
+## DoD-OT-Control-Systems-SRG
+- **Source**: DoD Control Systems / OT Security Requirements Guide V2
+- **URL**: https://dl.dod.cyber.mil/wp-content/uploads/external/pdf/U_Control%20Systems_OT_V2_SRG.pdf
+- **Requirement count**: 5
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish an enterprise-wide integrated governance and risk-management decision structure (RMF) for cybersecurity risk, including for control systems/OT, rather than ad-hoc policy.
+    - _T2 Risk-Informed · all_: Require existing control systems in continuous monitoring to submit a POA&M within 30 days to transition to compliance with updated SRG requirements by the next annual assessment.
+    - _T3 Repeatable · all_: Ensure third-party and external suppliers are held to the same security standards as the organization, including supply chain risk management and secure development practices.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · software_: Employ system development life cycle processes that incorporate information security considerations, including flaw tracking/resolution and security testing, for control systems/OT.
+- **Observability**:
+    - _T3 Repeatable · all_: Monitor external service provider activity and monitor for unauthorized personnel, connections, devices and software to detect cybersecurity events.
 
 ## ETSI TS 103 744
 - **Source**: Quantum-Safe Hybrid Key Exchanges
@@ -154,6 +167,22 @@ requirement_count: 163
 - **Lifecycle / CLM**:
     - _T3 Repeatable · keys_: Use ephemeral KEM key pairs in only one key-establishment execution and destroy them as soon as possible after use.
     - _T3 Repeatable · keys_: Use nonces with negligible repeat probability for key confirmation when the decapsulator's public key is static.
+
+## Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut
+- **Source**: Post-Quantum Credential Binding for x402 Agentic Payment Authorization
+- **URL**: https://datatracker.ietf.org/doc/draft-hopley-x402-pqc-credential-binding/
+- **Requirement count**: 7
+- **Governance**:
+    - _T2 Risk-Informed · keys_: Issuers should plan and execute migration from classical signature algorithms (Ed25519, ES256) to Falcon-1024 or ML-DSA-65 before a cryptographically relevant quantum computer exists.
+    - _T2 Risk-Informed · software_: Implementations should prefer Falcon-1024 for signature compactness in HTTP header contexts, setting a documented algorithm preference.
+- **Inventory**:
+    - _T3 Repeatable · keys_: Gateways must maintain a trusted-key registry of issuer public keys and verify that the key identifier in each credential matches a registered issuer key before signature verification.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · keys_: Issuers should rotate Falcon-1024 signing keys at least annually, with gateways maintaining a key registry that identifies credentials by key version to avoid revoking the full issuer identity.
+    - _T3 Repeatable · certificates_: Gateways caching credential verification results must bound cache TTL by the credential's expiry so expired credentials are not accepted from cache.
+    - _T3 Repeatable · software_: Gateways must track issued session token identifiers and reject replayed tokens, enforcing replay protection as an operational control.
+- **Observability**:
+    - _T3 Repeatable · all_: Gateways must track cumulative spend per credentialed agent and reject requests exceeding the limit with HTTP 402, providing a monitored enforcement control.
 
 ## RFC 9629
 - **Source**: Using Key Encapsulation Mechanism (KEM) Algorithms in CMS
@@ -306,19 +335,17 @@ requirement_count: 163
 ## draft-ietf-tls-mlkem-07
 - **Source**: ML-KEM Post-Quantum Key Agreement for TLS 1.3
 - **URL**: https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/
-- **Requirement count**: 8
+- **Requirement count**: 7
 - **Assurance / FIPS**:
-    - _T2 Risk-Informed · libraries_: Select and approve ML-KEM implementations that follow NIST SP 800-227 KEM usage guidance and resist side-channel attacks, particularly remotely exploitable ones.
-    - _T2 Risk-Informed · libraries_: Follow the RNG guidance in FIPS 203 and RFC 9846 for ML-KEM encapsulation randomness, since insecure RNG output disclosed via ciphertexts can compromise RNG state; consider RFC 8937 randomness improvements.
-    - _T3 Repeatable · libraries_: Deploy ML-KEM implementations that perform the FIPS 203 encapsulation key check and enforce ciphertext length validation, aborting handshakes on failure, and verify this behavior through testing.
-    - _T3 Repeatable · libraries_: Ensure ML-KEM libraries never reuse encapsulation randomness or ciphertexts, and verify via assurance testing that randomness generation conforms to FIPS 203 and TLS 1.3 RNG guidance.
+    - _T2 Risk-Informed · libraries_: Select ML-KEM implementations that are resistant to side-channel attacks, particularly remotely exploitable ones, and follow NIST SP 800-227 guidance on secure KEM use.
+    - _T3 Repeatable · libraries_: Deployed TLS/ML-KEM implementations must enforce the FIPS 203 encapsulation key check and ciphertext length validation, aborting the handshake with illegal_parameter on failure; verify libraries do so.
+    - _T3 Repeatable · libraries_: Ensure deployed ML-KEM libraries never reuse encapsulation randomness or ciphertexts, and validate this property when selecting or qualifying implementations.
+    - _T3 Repeatable · libraries_: Ensure the random number generator feeding ML-KEM encapsulation conforms to FIPS 203 and TLS 1.3 RNG guidance, since RNG output may be disclosed; consider RFC 8937 randomness improvements.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Document a risk-informed policy decision on deploying standalone ML-KEM versus a hybrid construction, evaluating security, performance, and operational constraints and consulting IANA registry recommendations.
-    - _T2 Risk-Informed · all_: Track the IANA TLS Supported Groups registry 'Recommended' status (currently N for ML-KEM groups) and reflect IETF guidance in crypto policy, recognizing standalone ML-KEM has no IETF recommendation.
-- **Inventory**:
-    - _T3 Repeatable · libraries_: Inventory which TLS endpoints and libraries support and negotiate mlkem512/768/1024 NamedGroups (0x0200-0x0202) to know post-quantum key establishment coverage.
+    - _T2 Risk-Informed · all_: Document a risk-based decision between standalone ML-KEM and hybrid key establishment, evaluating security, performance and operational constraints, and consult IETF IANA registry recommendation status.
+    - _T3 Repeatable · all_: Track the IETF IANA Supported Groups 'Recommended' status for ML-KEM groups (currently N, not evaluated) and align crypto policy with this guidance when selecting groups for general use.
 - **Observability**:
-    - _T3 Repeatable · software_: Monitor TLS handshakes for illegal_parameter and internal_error alerts arising from ML-KEM encapsulation key, ciphertext length, or decapsulation failures to detect misconfiguration or attack.
+    - _T3 Repeatable · software_: Monitor and surface handshake failures from ML-KEM validation (illegal_parameter, internal_error alerts) so failed key checks or decapsulation errors are detected and investigated.
 
 ## draft-wang-ipsecme-kem-auth-ikev2-03
 - **Source**: KEM based Authentication for IKEv2 with Post-quantum Security
