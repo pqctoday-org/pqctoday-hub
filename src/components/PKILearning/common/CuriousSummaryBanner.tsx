@@ -176,7 +176,12 @@ export const CuriousSummaryBanner = ({
 
   const idealImgSrc = `/images/infographics/pqcstd_${moduleId}.png`
   // Changed visuals need a new URL because image-cache is CacheFirst.
-  const imageRevision = moduleId === 'ai-security-pqc' ? '65181ab040311ff4' : 'pqcstd_v4'
+  const imageRevision =
+    moduleId === 'ai-security-pqc'
+      ? '65181ab040311ff4'
+      : moduleId === 'merkle-tree-certs'
+        ? 'c443553ff4dc196b'
+        : 'pqcstd_v4'
 
   const [imgSrc, setImgSrc] = useState(idealImgSrc)
   const [imgFailed, setImgFailed] = useState(false)

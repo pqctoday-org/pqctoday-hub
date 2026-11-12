@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { CuriousSummaryBanner } from './CuriousSummaryBanner'
@@ -40,5 +42,24 @@ describe('corrected AI infographic cache identity', () => {
     expect(imageSources()).toEqual(
       Array(2).fill('/images/infographics/pqcstd_hybrid-crypto.png?v=pqcstd_v4')
     )
+  })
+})
+
+describe('corrected MTC authentication-component infographic cache identity', () => {
+  it('uses the actual corrected bitmap identity in both layouts and the zoom overlay', () => {
+    const revision = createHash('sha256')
+      .update(readFileSync('public/images/infographics/pqcstd_merkle-tree-certs.png'))
+      .digest('hex')
+      .slice(0, 16)
+    const corrected = `/images/infographics/pqcstd_merkle-tree-certs.png?v=${revision}`
+    render(view('merkle-tree-certs'))
+    expect(imageSources()).toEqual([corrected, corrected])
+    expect(imageSources()).not.toContain(
+      '/images/infographics/pqcstd_merkle-tree-certs.png?v=pqcstd_v4'
+    )
+    fireEvent.click(screen.getAllByRole('button', { name: 'View infographic full size' })[0])
+    expect(imageSources()).toEqual([corrected, corrected, corrected])
+    fireEvent.click(screen.getAllByRole('button', { name: 'Close infographic' }).at(-1)!)
+    expect(imageSources()).toEqual([corrected, corrected])
   })
 })
