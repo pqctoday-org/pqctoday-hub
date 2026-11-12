@@ -55,6 +55,7 @@ export function EmailSizeComparison() {
         />
       </label>
       <FilterDropdown
+        size="sm"
         label="Certificate PEM line endings"
         items={[
           { id: 'lf', label: 'LF' },

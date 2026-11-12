@@ -47,6 +47,11 @@ describe('Actual viewer measured comparison and exercise handoff', () => {
     ).toEqual(cms)
     fireEvent.click(screen.getByRole('button', { name: 'Certificate PEM line endings:' }))
     fireEvent.click(screen.getByRole('option', { name: 'CRLF' }))
+    expect(
+      within(screen.getByRole('button', { name: 'Certificate PEM line endings:' })).getByText(
+        'CRLF'
+      )
+    ).toBeVisible()
     expect(row('Complete certificate PEM UTF-8').getByText('1,570')).toBeVisible()
     expect(row('Complete certificate DER').getByText('1,101')).toBeVisible()
   })
