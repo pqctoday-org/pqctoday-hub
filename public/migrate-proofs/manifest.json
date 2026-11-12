@@ -32508,6 +32508,51 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Microsoft-Research-Post-Quantum-TLS",
+      "refId": "Microsoft-Research-Post-Quantum-TLS",
+      "file": "Microsoft-Research-Post-Quantum-TLS-e7966eda-f4b5901d.html",
+      "sizeBytes": 175754,
+      "content_type": "text/html",
+      "url": "https://www.microsoft.com/en-us/research/project/post-quantum-tls/",
+      "sha256": "f4b5901d69d54bfb3e6e511783da4c69d6a21f95b3bf2add302a1f2de7f69c73",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T12:04:12.545029+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Microsoft-Research-Post-Quantum-TLS",
+      "refId": "Microsoft-Research-Post-Quantum-TLS",
+      "file": "Microsoft-Research-Post-Quantum-TLS-21095af2-8ef84a89.html",
+      "sizeBytes": 470947,
+      "content_type": "text/html",
+      "url": "https://github.com/open-quantum-safe/openssl",
+      "sha256": "8ef84a898f8b8c43a92d373a7467bf97f7ce062f917306d4d2cb99f3af682fb6",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T12:04:14.647273+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Microsoft-Research-Post-Quantum-TLS",
+      "refId": "Microsoft-Research-Post-Quantum-TLS",
+      "file": "Microsoft-Research-Post-Quantum-TLS-b23aecc7-37006db5.html",
+      "sizeBytes": 316787,
+      "content_type": "text/html",
+      "url": "https://github.com/microsoft/PQCrypto-SIDH",
+      "sha256": "37006db596a9ce92f4d94364cf4f230b1ec47c2677d095f65dcf2a7ac68aba1e",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T12:04:15.652520+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."

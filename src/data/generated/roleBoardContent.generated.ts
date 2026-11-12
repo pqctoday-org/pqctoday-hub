@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11112026.csv
+ * Source: src/data/role_board_content_11122026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -967,7 +967,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/playground/token-migration',
         proofChips: [
           'Sizes from FIPS 203/204/205, not estimates',
-          'Every status links to its publisher — NIST, IETF, BSI, ANSSI, KpqC and others',
+          'Inspect publisher records from NIST, IETF, BSI, ANSSI, KpqC and others',
           'No signup, no key required',
         ],
         sideCard: {
@@ -993,7 +993,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The people who wrote them',
-            body: 'Named contributors behind each document, every entry proof-gated.',
+            body: 'Inspect recorded contributors and source publications, then compare their scope with the algorithm claim.',
             href: '/leaders',
           },
           {
@@ -1043,7 +1043,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/crypto-cbom-builder',
         proofChips: [
           'Real OpenSSL 3.6.3 WASM in your browser',
-          'Catalogue entries are proof-gated',
+          'Inspect each catalogue entry’s evidence and status',
           'No signup, no key required',
         ],
         sideCard: {
@@ -1057,7 +1057,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'You cannot migrate what you have not named.',
           footnote:
-            "Illustrative framing. The catalogue's PQC-readiness data is real and proof-gated; what your own estate contains is something only your scan can answer.",
+            'Illustrative framing. Use the catalogue to inspect documented capabilities, source links and status; use your own inventory tools to establish what your estate contains.',
         },
         gridTitle: 'What you walk out with',
         gridSub: 'An inventory you can act on',
@@ -1199,7 +1199,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/migration-verification',
         proofChips: [
           'ACVP + KAT run locally, not asserted',
-          'Every correction logged and dated',
+          'Inspect dated entries in the public changelog',
           'No signup, no key required',
         ],
         sideCard: {
@@ -1426,7 +1426,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build a certificate chain',
         ctaSecondaryHref: '/playground/pki-workshop',
         proofChips: [
-          'Catalogue entries are proof-gated',
+          'Inspect each catalogue entry’s evidence and status',
           'KMIP 3.0 conformance corpus replays live',
           'Real ML-KEM / ML-DSA / SLH-DSA, no server',
         ],
@@ -1457,7 +1457,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/openssl-studio',
           },
           {
-            title: 'Documented, then verified',
+            title: 'Compare documentation with the capability you need',
             body: 'The diagram is the deliverable; the chain workshop is how you check that what you drew is what your CAs actually issue.',
             href: '/playground/pki-workshop',
           },
@@ -1662,7 +1662,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Decide the data-at-rest strategy',
         ctaSecondaryHref: '/business/tools/data-at-rest-strategy',
         proofChips: [
-          'Catalogue entries are proof-gated',
+          'Inspect each catalogue entry’s evidence and status',
           'Sequenced against CNSA 2.0 deadline years',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -1974,7 +1974,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Score your vendors',
         ctaSecondaryHref: '/business/tools/vendor-scorecard',
         proofChips: [
-          'Vendor claims are proof-gated',
+          'Compare vendor claims with their recorded evidence',
           'CNSA 2.0 mandate dates built in',
           "Every roadmap links to the vendor's own source",
         ],
@@ -1989,14 +1989,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'A roadmap without a date is a press release.',
           footnote:
-            "Illustrative checklist. The vendor data behind the catalogue is proof-gated — every claim there carries a link to the vendor's own published source, or it is not shown.",
+            'Illustrative checklist. Open the vendor evidence linked by the catalogue and compare its version, scope and date with the capability your team needs. A vendor statement is not an independent implementation test.',
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Questions with evidence behind them',
         gridCards: [
           {
             title: 'Supplier roadmaps as published',
-            body: "Vendor PQC roadmaps quoted as issued rather than summarised, each linked to the vendor's own source or not shown at all.",
+            body: 'Compare recorded vendor roadmap claims with the linked publication where available. Distinguish planned support, documented availability and evidence from your own evaluation.',
             href: '/migrate?tab=roadmaps',
           },
           {
@@ -2205,7 +2205,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Real SSH handshake — OpenSSH 10.x in WASM',
           'Log exportable',
-          'Every claim links to its own source',
+          'Follow the recorded references behind the claim',
         ],
         sideCard: {
           title: 'What closure has to show',
@@ -2275,7 +2275,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Researcher · unfiltered corpus · strict chronological · no gating',
 
         headline: 'Check our work.',
-        sub: 'Every claim on this site carries a source tier and a verification date, and the corrections are public.',
+        sub: 'Inspect source tiers and recorded checking dates where provided, then compare the cited document with the claim. The public changelog records published corrections.',
         ctaPrimary: 'Open the evidence workspace',
         ctaPrimaryHref: '/library',
         ctaSecondary: 'Read the revision log',
@@ -2283,7 +2283,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'ACVP + KAT run locally, not asserted',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          'Every claim carries a source tier and a verification date',
+          'Inspect the recorded source tier and checking date where provided',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -2297,11 +2297,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           emptyState: 'Pick a few fields to see what has moved in them lately.',
         },
         gridTitle: 'What the workspace gives you',
-        gridSub: 'Every claim traceable to its source',
+        gridSub: 'Follow a claim to its recorded source and check the scope',
         gridCards: [
           {
             title: 'The corpus, unfiltered',
-            body: 'Source tier and verification date, on every claim. Nothing is filtered out for this role — the corpus arrives whole.',
+            body: 'Explore the shared corpus, inspect source metadata where provided and compare the document with the claim. Missing metadata is a gap to investigate, not proof of review.',
             href: '/library',
           },
           {
@@ -2311,7 +2311,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Provenance you can re-check',
-            body: 'Both destinations are read-only records: the corpus with its tiers, and the log of every correction made to it. Nothing here asks you to trust a summary.',
+            body: 'Open the source corpus and public changelog as read-only references. Compare the underlying document with its summary and use dated correction entries to understand changes.',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -2355,9 +2355,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Recent standards changes',
         ctaSecondaryHref: '/library?qv=new&sort=newest',
         proofChips: [
-          'Every status links to its NIST publication',
+          'Compare recorded status with the linked NIST publication',
           'Draft and final are labelled, never merged',
-          'Every claim carries a source tier and a verification date',
+          'Inspect the recorded source tier and checking date where provided',
         ],
         sideCard: {
           title: 'Status is not a binary',
@@ -2386,7 +2386,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The people behind each document',
-            body: 'Named contributors, every entry proof-gated against a published source.',
+            body: 'Inspect recorded contributors and publication links, distinguishing a source claim from independent evaluation.',
             href: '/leaders',
           },
           {
@@ -2668,7 +2668,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Map the supply chain',
         ctaSecondaryHref: '/business/tools/supply-chain-matrix',
         proofChips: [
-          'Catalogue entries are proof-gated',
+          'Inspect each catalogue entry’s evidence and status',
           "Every product claim links to the vendor's own source",
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -2683,7 +2683,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'The gap between selected and deployed is where the research is.',
           footnote:
-            "Every catalogued product carries a link to the vendor's own published evidence, or it is not shown.",
+            'Open the product’s recorded evidence where available. Check its publisher, version and capability scope; a missing source remains a question to investigate.',
         },
         gridTitle: 'Where the evidence lives',
         gridSub: 'Deployment, with its evidence',
@@ -3267,7 +3267,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Where the health-records case comes from',
-            body: 'The plain-language shelf behind every claim on this board — including why medical records specifically cannot wait.',
+            body: 'Use the plain-language library to examine long-lived confidentiality, including medical records, and the reasons for early migration planning.',
             href: '/library?purpose=education',
           },
           {
@@ -3338,7 +3338,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Who is actually doing it, not just talking',
-            body: 'A running count of which vendors have actually shipped, drawn from the same proof-gated catalogue as everything else on this site — not their press releases.',
+            body: 'Explore the catalogue’s recorded availability claims and their evidence. Distinguish vendor announcements, implementation availability and independently established deployment.',
             href: '/migrate',
           },
           {
