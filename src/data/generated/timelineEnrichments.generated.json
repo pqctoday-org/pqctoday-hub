@@ -1280,165 +1280,180 @@
   "successorDependencies": null
  },
  "Australia:ASD — ISM December 2024 Update": {
-  "mainTopic": "Information Security Manual Last updated: December 2024 Guidelines for Cryptography Cryptographic fundamentals Purpose of cryptography The purpose of cryptography is to provide confidentiality, integrity, authentication and non-repudiation of data.",
+  "mainTopic": "The December 2024 update of the Australian Information Security Manual's Guidelines for Cryptography, covering cryptographic fundamentals, ASD-Approved Cryptographic Algorithms, and the approval of ML-DSA and ML-KEM alongside a 2030 cutoff for DH, ECDH and ECDSA.",
   "pqcAlgorithms": [
-   "ML-KEM",
-   "ML-DSA"
+   "ML-DSA",
+   "ML-KEM"
   ],
   "quantumThreats": [
-   "CRQC (Cryptographically Relevant Quantum Computer)",
-   "Shor's Algorithm",
-   "Cryptographically Relevant Quantum",
-   "Quantum Computer",
-   "Post-Quantum"
+   "Projected technological advances in quantum computing (used as the reason DH",
+   "ECDH",
+   "ECDSA and ML-DSA-65 will not be approved beyond 2030)"
   ],
   "migrationTimeline": [
-   "Year: 2024",
-   "Year: 2030",
-   "prohibited",
-   "deprecat"
+   "2030: DH, ECDH, ECDSA and ML-DSA-65 will not be approved for use beyond 2030"
   ],
   "regionsAndBodies": {
-   "regions": [
-    "United States",
-    "United Kingdom",
-    "Canada",
-    "Australia",
-    "International"
-   ],
+   "regions": [],
    "bodies": [
+    "ASD",
+    "Department of Home Affairs",
     "NIST",
-    "NSA",
-    "ACSC/ASD"
+    "Canadian Centre for Cyber Security"
    ]
   },
   "leadersContributions": [],
-  "pqcProducts": [
-   "Signal",
-   "OpenSSH"
-  ],
-  "protocols": [
-   "TLS",
-   "SSH",
-   "IPsec",
-   "HTTPS",
-   "S/MIME"
-  ],
+  "pqcProducts": [],
+  "protocols": [],
   "infrastructureLayers": [
    "Key Management",
-   "Disk Encryption"
+   "HACE (High Assurance Cryptographic Equipment)",
+   "Full disk encryption",
+   "Cryptographic equipment and software"
   ],
   "standardizationBodies": [
+   "ASD",
    "NIST",
-   "ISO/IEC",
    "ISO",
    "IEC",
-   "CMVP (NIST)"
+   "Canadian Centre for Cyber Security"
   ],
   "complianceFrameworks": [
+   "ISM",
    "FIPS 140-3",
+   "ISO/IEC 19790:2012",
+   "ISO/IEC 24759:2017",
+   "NIST SP 180-140",
+   "NIST SP 800-57 Part 1 Rev. 5",
+   "NIST SP 800-56A Rev. 3",
+   "NIST SP 800-186",
+   "FIPS 203",
+   "FIPS 204",
    "Common Criteria",
-   "SP 800-57 (Key Mgmt)"
+   "Cryptographic Module Validation Program",
+   "Commercial National Security Algorithm Suite",
+   "Australian Communications Security Instructions",
+   "Protective Security Policy Framework"
   ],
   "classicalAlgorithms": [
-   "Diffie-Hellman (DH)",
-   "Elliptic Curve Diffie-Hellman (ECDH)",
-   "Elliptic Curve Digital Signature Algorithm (ECDSA)",
-   "Rivest-Shamir-Adleman (RSA)",
-   "Secure Hashing Algorithm 2 (SHA-2)",
-   "Advanced Encryption Standard (AES)"
+   "DH",
+   "ECDH",
+   "ECDSA",
+   "RSA",
+   "SHA-2",
+   "SHA-3",
+   "AES"
   ],
   "keyTakeaways": [
-   "Organizations must transition from DH to ECDH or PQC algorithms by 2030",
-   "ML-DSA and ML-KEM are the approved asymmetric PQC algorithms for digital signatures and key encapsulation",
-   "SHA-3 is approved exclusively for use within ML-DSA and ML-KEM",
-   "Full disk encryption is required for data at rest protection",
-   "Cryptographic equipment must be ASD-approved or meet Common Criteria evaluations based on data classification."
+   "DH, ECDH and ECDSA will not be approved for use beyond 2030 due to projected quantum computing advances",
+   "ML-DSA-65 and ML-DSA-87 are approved, but ML-DSA-65 will not be approved beyond 2030",
+   "ML-KEM and ML-DSA are now ASD-Approved Cryptographic Algorithms",
+   "SHA-3 including XOFs is approved exclusively for use within ML-DSA and ML-KEM",
+   "Use ECDH in preference to DH and prefer the NIST P-384 curve"
   ],
   "securityLevels": [
-   "112 bits for non-classified",
+   "ML-DSA-44",
+   "ML-DSA-65",
+   "ML-DSA-87",
+   "DH modulus at least 2048 bits (preferably 3072 bits)",
+   "DH modulus at least 3072 bits for SECRET and TOP SECRET",
+   "ECDH/ECDSA base point order and key size at least 224 bits",
+   "NIST P-256",
+   "P-384",
+   "P-521 curves",
+   "Effective security strength targets: 112 bits (non-classified",
    "OFFICIAL: Sensitive",
-   "and PROTECTED data",
-   "128 bits for SECRET data",
-   "192 bits for TOP SECRET data",
-   "2048-bit DH modulus provides 112 bits of effective security strength"
+   "PROTECTED)",
+   "128 bits (SECRET)",
+   "192 bits (TOP SECRET)"
   ],
   "hybridApproaches": [],
   "performanceConsiderations": [],
   "targetAudience": [
+   "CISO",
    "Security Architect",
    "Compliance Officer",
-   "CISO",
-   "Developer"
+   "Policy Maker"
   ],
   "implementationPrereqs": [
-   "ASD-Approved Cryptographic Algorithm (AACA) or high assurance cryptographic algorithm",
-   "Common Criteria evaluation against a Protection Profile for OFFICIAL: Sensitive or PROTECTED data",
-   "High Assurance Cryptographic Equipment (HACE) for SECRET or TOP SECRET data"
+   "Disable all unapproved cryptographic algorithms (preferred) or advise users not to use them via usage policies",
+   "Adherence to pre-requisite FIPS publications for ML-DSA and ML-KEM",
+   "Curves selected from NIST SP 800-186"
   ],
   "relevantFeatures": [
    "Compliance",
    "Algorithms",
-   "Migration Program",
    "Timeline",
-   "Crypto-Agility"
+   "Migrate"
   ],
-  "implementationAttackSurface": [],
+  "implementationAttackSurface": [
+   "Implementation errors in post-quantum algorithms (stated as a reason for approving only specific standards)",
+   "Unapproved algorithms used without a user's knowledge"
+  ],
   "cryptoDiscovery": [],
   "testingValidation": [
-   "Common Criteria evaluation against a Protection Profile",
+   "Common Criteria evaluation",
    "Cryptographic Module Validation Program",
-   "FIPS 140-3 Derived Test Requirements (DTR)",
-   "ISO/IEC 24759:2017 test requirements"
+   "ISO/IEC 24759 and NIST SP 180-140 test requirements"
   ],
   "qkdProtocols": [],
   "qrngEntropy": [],
   "constrainedDeviceIoT": [],
   "supplyChainRisk": [
-   "cyber supply chain risk management",
-   "evaluated product procurement",
-   "third-party library trust via Common Criteria evaluation"
+   "Cyber supply chain risk management (referenced to the Guidelines for Procurement and Outsourcing)"
   ],
   "deploymentComplexity": [
-   "DH will not be approved for use beyond 2030",
-   "phased rollout implied by classification-based encryption requirements (OFFICIAL: Sensitive, PROTECTED, SECRET, TOP SECRET)",
-   "interoperability with United States' Commercial National Security Algorithm Suite"
+   "Only AACAs or high assurance algorithms may be used",
+   "Unapproved algorithms should be disabled",
+   "Classification-specific controls (NC, OS, P, S, TS)"
   ],
   "financialBusinessImpact": [],
   "organizationalReadiness": [
-   "governance prerequisites via Chief Information Security Officer reporting for cryptographic incidents",
-   "dedicated crypto team implied by cryptographic key management processes and procedures",
-   "change management scope via Australian Communications Security Instructions compliance"
+   "Documented cryptographic key management processes and procedures",
+   "Incident reporting to the Chief Information Security Officer"
   ],
-  "phaseClassification": "The document represents a Guidance phase event as it provides \"Guidelines for Cryptography\" and specifies controls that organizations \"should\" comply with, such as using ECDH in preference to DH.",
-  "mandateLevel": "Mandatory",
+  "phaseClassification": "The document is the Australian Information Security Manual (ISM) cryptography guidance, issued by ASD, which sets controls and approved algorithms, including the newly approved ML-DSA and ML-KEM.",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
-   "Government",
-   "Critical Infrastructure"
+   "Government"
   ],
   "migrationUrgency": "Critical Deadline",
-  "phaseTransition": "Moves from general cryptographic guidance to specific PQC algorithm mandates, signaling the formal adoption of ML-DSA and ML-KEM while setting a hard end-of-life for classical DH.",
-  "historicalSignificance": "This update marks the Australian Signals Directorate's explicit inclusion of NIST-standardized PQC algorithms (ML-DSA, ML-KEM) into national security guidelines with a defined 2030 sunset date for legacy Diffie-Hellman.",
+  "phaseTransition": "Moves from classical-only approved algorithms toward post-quantum adoption, approving ML-DSA and ML-KEM while setting a 2030 cutoff for DH, ECDH and ECDSA.",
+  "historicalSignificance": "The December 2024 update added ML-DSA and ML-KEM as ASD-approved algorithms and set a 2030 end date for the approval of traditional asymmetric algorithms.",
   "implementationDates": [
-   "2030: DH will not be approved for use beyond this year",
-   "December 2024: Document last updated"
+   "2030: DH, ECDH and ECDSA will not be approved for use beyond 2030",
+   "2030: ML-DSA-65 will not be approved for use beyond 2030"
   ],
-  "successorDependencies": "Requires implementation of ML-DSA and ML-KEM in cryptographic modules; Contingent upon ASD approval of High Assurance Cryptographic Equipment (HACE) for classified data."
+  "successorDependencies": "Depends on FIPS 203 and FIPS 204 and their pre-requisite FIPS publications; Leads to the 2030 withdrawal of approval for DH, ECDH, ECDSA and ML-DSA-65"
  },
  "International:BIS — Paper 158 Quantum Roadmap": {
-  "mainTopic": "A framework and roadmap for the financial system's transition to quantum-safe cryptographic infrastructures, emphasizing early action, inventory, and hybrid migration strategies.",
+  "mainTopic": "BIS Paper No 158 provides a roadmap for the financial system to transition to quantum-safe cryptographic infrastructures, stressing early awareness, governance and cryptographic inventory.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Quantum computers breaking widely used encryption"
+   "CRQC (cryptographically relevant quantum computer)",
+   "Harvest Now",
+   "Decrypt Later (HNDL)",
+   "Shor's algorithm breaking RSA and ECC",
+   "Grover's algorithm weakening symmetric key search",
+   "Quantum forgery of long-lived digital signatures"
   ],
   "migrationTimeline": [
-   "Year: 2025"
+   "No fixed deadline",
+   "Global Risk Institute 2024 report cited: 27% of experts expect a CRQC within 10 years and 50% within 15 years",
+   "phased migration recommended, starting today with awareness and cryptographic inventory"
   ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
-    "BIS",
-    "national security agencies"
+    "Bank for International Settlements (BIS)",
+    "BIS Innovation Hub",
+    "Bank of Canada",
+    "Bank of France",
+    "Deutsche Bundesbank",
+    "NIST",
+    "Global Risk Institute",
+    "European Payments Council",
+    "CPMI-IOSCO"
    ]
   },
   "leadersContributions": [
@@ -1448,87 +1463,130 @@
    "Maryam Haghighi",
    "Nicolas Margaine",
    "Danica Marsden",
-   "Sarah McCarthy",
-   "Andras Valko"
+   "Sarah McCarthy and Andras Valko (authors)",
+   "Donna Dodson is described as a former employee of NIST",
+   "Peter Shor's algorithm (Shor (1994)) and Lov Grover's search algorithm (Grover (1996)) are cited"
   ],
   "pqcProducts": [],
-  "protocols": [],
+  "protocols": [
+   "TLS 1.2",
+   "TLS 1.3",
+   "SSH",
+   "QUIC",
+   "IKEv2/IPsec",
+   "X.509"
+  ],
   "infrastructureLayers": [
-   "cryptographic infrastructures"
+   "PKI",
+   "Key Management",
+   "Root of Trust",
+   "Certificates",
+   "Code signing / software update authentication"
   ],
-  "standardizationBodies": [],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
+  "standardizationBodies": [
+   "NIST",
+   "European Payments Council"
+  ],
+  "complianceFrameworks": [
+   "GDPR"
+  ],
+  "classicalAlgorithms": [
+   "RSA",
+   "ECC",
+   "ECDH",
+   "Diffie-Hellman",
+   "AES",
+   "AES-256"
+  ],
   "keyTakeaways": [
-   "Start the transition today with broad awareness and cryptographic inventory",
-   "Post-quantum cryptography is a viable near-term solution but requires coordinated planning for performance and integration",
-   "Avoid viewing the change as simple algorithm replacement",
-   "Ensure security through cryptographic agility, defence in depth, hybrid models, and phased migration",
-   "Quantum key distribution has long-term potential but faces immediate infrastructure challenges."
+   "Start the quantum-safe transition today, beginning with broad awareness and a comprehensive cryptographic inventory",
+   "Treat the migration as more than simple algorithm replacement, using cryptographic agility, defence in depth, hybrid models and phased migration",
+   "HNDL makes confidentiality a present threat while long-lived signatures such as mortgages also need early action",
+   "Legacy TLS 1.2 systems cannot support post-quantum cryptography and must move to TLS 1.3",
+   "QKD holds long-term potential but faces infrastructure challenges limiting immediate applicability"
   ],
-  "securityLevels": [],
+  "securityLevels": [
+   "AES with 256-bit key recommended for sensitive and classified information"
+  ],
   "hybridApproaches": [
-   "hybrid models",
-   "cryptographic agility",
-   "defence in depth",
-   "phased migration"
+   "Hybrid cryptographic schemes",
+   "Cryptographic agility",
+   "Defence in depth",
+   "Phased migration plans",
+   "Re-signing or counter-signing contracts with quantum-safe signatures"
   ],
   "performanceConsiderations": [
-   "Performance trade-offs mentioned but no concrete values provided"
+   "AES-256 key size recommended against Grover's quadratic speedup",
+   "performance trade-offs noted in the abstract but no concrete values in the provided text"
   ],
   "targetAudience": [
-   "CISO",
    "Policy Maker",
-   "Security Architect"
+   "CISO",
+   "Security Architect",
+   "Compliance Officer"
   ],
   "implementationPrereqs": [
-   "broad awareness",
-   "cryptographic inventory"
+   "Cryptographic inventory",
+   "Governance structures",
+   "Internal awareness",
+   "Upgrade from TLS 1.2 to TLS 1.3",
+   "Cryptographic agility"
   ],
   "relevantFeatures": [
-   "Timeline",
    "Threats",
    "Migrate",
-   "Assess",
    "crypto-agility",
    "hybrid-crypto",
-   "pqc-governance",
-   "migration-program"
+   "pqc-governance"
   ],
-  "implementationAttackSurface": [],
+  "implementationAttackSurface": [
+   "Implementation or misuse of an algorithm introducing attack surfaces",
+   "key management failures",
+   "insecure software development practices"
+  ],
   "cryptoDiscovery": [
-   "cryptographic inventory"
+   "Comprehensive cryptographic inventories described as a critical foundation of the transition"
   ],
-  "testingValidation": [],
+  "testingValidation": [
+   "Automated testing",
+   "code reviews and audits (for secure implementation)",
+   "BIS Innovation Hub Project Leap experimentation with post-quantum cryptographic solutions"
+  ],
   "qkdProtocols": [
-   "Quantum key distribution"
+   "Quantum key distribution noted as having long-term potential but facing infrastructure challenges that limit immediate applicability, per several national security agencies"
   ],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
+  "constrainedDeviceIoT": [
+   "Devices authenticating software updates may need post-quantum digital signatures equipped at manufacture"
+  ],
   "supplyChainRisk": [],
   "deploymentComplexity": [
+   "Migration requires a complete overhaul of legacy protocol systems",
    "phased migration",
-   "system integration",
-   "performance trade-offs"
+   "systems on TLS 1.2 must upgrade",
+   "revoking and re-signing long-lived contracts"
   ],
-  "financialBusinessImpact": [],
+  "financialBusinessImpact": [
+   "Cyber incidents can threaten global financial stability",
+   "GDPR compliance may be affected by quantum decryption of personal data"
+  ],
   "organizationalReadiness": [
-   "broad awareness",
-   "coordinated planning"
+   "Raising internal awareness",
+   "implementing robust governance structures",
+   "maintaining comprehensive cryptographic inventories",
+   "business continuity policies"
   ],
-  "phaseClassification": "The document is a published BIS Paper (No 158) providing a strategic framework and roadmap for quantum-readiness, representing a high-level planning and guidance phase rather than a technical specification or mandate.",
+  "phaseClassification": "The paper is a strategic framework and roadmap giving recommended actions to financial sector actors rather than a binding mandate, which fits a Guidance phase event.",
   "mandateLevel": "Recommended",
   "sectorApplicability": [
    "Finance",
    "Banking"
   ],
   "migrationUrgency": "Near-Term",
-  "phaseTransition": "Moves from general awareness to structured planning — signals the need for immediate cryptographic inventory and coordinated transition planning in the financial sector.",
-  "historicalSignificance": "Provides a central bank perspective on quantum readiness, emphasizing that the transition is not a simple algorithm replacement but requires systemic changes like agility and hybrid models.",
-  "implementationDates": [
-   "early 2030s: critical systems quantum-safe"
-  ],
-  "successorDependencies": "Requires broad awareness and cryptographic inventory as critical foundations; Enables coordinated planning for hybrid models and phased migration."
+  "phaseTransition": "Moves from awareness of the quantum threat toward structured planning, inventory and phased migration planning in the financial sector; enables institutions to build governance and cryptographic inventories.",
+  "historicalSignificance": "Provides a BIS-led, central-bank-authored roadmap for quantum-readiness of the global financial system, cited alongside BIS Project Leap.",
+  "implementationDates": [],
+  "successorDependencies": "Builds on Auer et al (2024) and BIS Project Leap (BIS (2023)); relies on NIST post-quantum standards; enables institution-level inventory and migration programmes"
  },
  "Canada:CCCS — PQC Best Practices Published": {
   "mainTopic": "Provides recommended practices and guidelines for transitioning to quantum-safe Post-Quantum Cryptography (PQC) in Canada's Critical Infrastructure sector.",
@@ -2596,106 +2654,121 @@
   "successorDependencies": "Designing new cryptographic protocols; Integrating post-quantum systems into existing protocols"
  },
  "European Union:EC — EU PQC Recommendation Published": {
-  "mainTopic": "The European Commission’s 11 April 2024 Recommendation calls for a coordinated EU roadmap for the transition to post-quantum cryptography, developed with Member States through the NIS Cooperation Group. It addresses coordinated actions for public administrations and critical infrastructure; it is a recommendation, not evidence that the transition is already complete.",
-  "pqcAlgorithms": [
-   "ML-KEM",
-   "ML-DSA",
-   "SLH-DSA"
-  ],
+  "mainTopic": "European Commission Recommendation C(2024) 2393 encouraging Member States to coordinate through an NIS Cooperation Group sub-group and develop a Coordinated Implementation Roadmap for the transition of public administrations and critical infrastructures to Post-Quantum Cryptography.",
+  "pqcAlgorithms": [],
   "quantumThreats": [
-   "Post-Quantum"
+   "Future quantum computers capable of breaking today's encryption",
+   "threats of quantum computing to current cryptographic standards and asymmetric cryptography"
   ],
   "migrationTimeline": [
-   "Year: 2024"
+   "Coordinated Implementation Roadmap to be available two years after publication of the Recommendation",
+   "followed by development and adaptation of national transition plans",
+   "assessment of effects of the Recommendation maximum three years after publication"
   ],
   "regionsAndBodies": {
-   "regions": [
-    "United States",
-    "European Union"
-   ],
+   "regions": [],
    "bodies": [
-    "NIST"
+    "European Commission",
+    "NIS Cooperation Group",
+    "ENISA",
+    "Europol",
+    "NATO"
    ]
   },
   "leadersContributions": [
-   "European Commission Digital Team",
-   "ENISA"
+   "Thierry BRETON (Member of the Commission) — signed the Recommendation on behalf of the Commission"
   ],
   "pqcProducts": [],
-  "protocols": [
-   "TLS",
-   "PKI",
-   "eIDAS infrastructure"
-  ],
+  "protocols": [],
   "infrastructureLayers": [
-   "Cloud"
+   "Digital infrastructures and services for public administrations",
+   "critical infrastructures"
   ],
   "standardizationBodies": [
-   "ETSI",
-   "NIST",
    "ENISA",
-   "CEN/CENELEC"
+   "NIS Cooperation Group",
+   "European Commission (EU standards)",
+   "international standardization (unspecified)"
   ],
   "complianceFrameworks": [
-   "EU NIS2",
-   "eIDAS 2.0",
-   "EUCC"
+   "NIS 2 Directive (Directive (EU) 2022/2555)",
+   "EU Cybersecurity Strategy",
+   "EU Security Union Strategy",
+   "Digital Decade Policy Programme 2030",
+   "EU Charter of Fundamental Rights",
+   "European Convention on Human Rights",
+   "Commission implementing decision (EU) 2017/179"
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Member States must develop a comprehensive strategy for Post-Quantum Cryptography adoption",
-   "Transition should be coordinated and synchronized across different Member States and public sectors",
-   "Deployment should utilize hybrid schemes combining Post-Quantum Cryptography with existing cryptographic approaches or Quantum Key Distribution."
+   "Member States should establish a sub-group of the NIS Cooperation Group to develop a joint PQC Coordinated Implementation Roadmap",
+   "The roadmap should be delivered within two years of publication and serve as blueprint for national transition plans",
+   "Deployment should use hybrid schemes combining PQC with existing cryptographic approaches or Quantum Key Distribution",
+   "Member States should work with ENISA and cybersecurity experts to select PQC algorithms for adoption as EU standards",
+   "The Commission will monitor progress and may propose binding Union law if needed"
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "Hybrid schemes combining Post-Quantum Cryptography with existing cryptographic approaches or with Quantum Key Distribution."
+   "Hybrid schemes that may combine Post-Quantum Cryptography with existing cryptographic approaches or with Quantum Key Distribution",
+   "coordinated national transition plans aligned with a common roadmap"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
    "Policy Maker",
    "Compliance Officer",
+   "CISO",
    "Security Architect"
   ],
   "implementationPrereqs": [
-   "Development of a comprehensive strategy",
-   "definition of clear goals, milestones, and timelines",
-   "creation of a joint Post-Quantum Cryptography Implementation Roadmap."
+   "Establishment of a sub-group of the NIS Cooperation Group",
+   "appointment of expert representatives by Member States",
+   "development of a Post-Quantum Cryptography Coordinated Implementation Roadmap",
+   "national transition plans"
   ],
   "relevantFeatures": [
    "Timeline",
+   "Compliance",
+   "Migrate",
    "hybrid-crypto",
-   "qkd",
-   "migration-program",
-   "pqc-governance"
+   "compliance-strategy"
   ],
   "implementationAttackSurface": [],
   "cryptoDiscovery": [],
   "testingValidation": [],
   "qkdProtocols": [
-   "Quantum Key Distribution"
+   "Quantum Key Distribution mentioned as a possible hybrid component alongside PQC",
+   "no protocols specified"
   ],
   "qrngEntropy": [],
   "constrainedDeviceIoT": [],
   "supplyChainRisk": [],
   "deploymentComplexity": [
-   "hybrid schemes, coordinated and synchronised transition, joint Post-Quantum Cryptography Implementation Roadmap, clear goals, milestones, and timelines"
+   "Requires coordinated effort among government agencies, standardization bodies, industry, researchers and cybersecurity professionals",
+   "cross-border interoperability",
+   "hybrid schemes",
+   "phased timeline with milestones and interdependencies"
   ],
   "financialBusinessImpact": [],
   "organizationalReadiness": [
-   "comprehensive strategy, Member States, public sectors, public administration systems, critical infrastructures"
+   "Establishment of a Member States sub-group with appointed expert representatives",
+   "coordination with ENISA, national cybersecurity authorities and the Commission",
+   "Commission monitoring and review within three years"
   ],
-  "phaseClassification": "This document is a Commission Recommendation that encourages Member States to develop strategies and roadmaps rather than imposing binding legal obligations. It represents the Policy phase by establishing a coordinated framework for PQC adoption across the EU public sector.",
+  "phaseClassification": "The document is a formal Commission Recommendation that sets policy direction and coordination structures for the EU-wide PQC transition, without defining technical specifications.",
   "mandateLevel": "Recommended",
   "sectorApplicability": [
    "Government",
    "Critical Infrastructure"
   ],
-  "migrationUrgency": "Long-Term (3-5yr)",
-  "phaseTransition": "Transitions from initial policy formulation to the development of comprehensive national strategies and joint implementation roadmaps.",
-  "historicalSignificance": "Marks the European Commission's formal push for a synchronized PQC transition across all EU Member States, ensuring public administration systems adopt hybrid schemes.",
-  "implementationDates": [],
-  "successorDependencies": "Development of comprehensive national strategies; Definition of joint Post-Quantum Cryptography Implementation Roadmap; Deployment of PQC technologies via hybrid schemes"
+  "migrationUrgency": "Near-Term",
+  "phaseTransition": "Moves from awareness and research funding toward coordinated policy planning, enabling the development of a joint roadmap and national transition plans.",
+  "historicalSignificance": "Marks the European Commission's formal call for a coordinated, EU-wide approach to PQC transition across Member States' public administrations and critical infrastructures.",
+  "implementationDates": [
+   "11.4.2024: Recommendation adopted",
+   "roadmap to be available two years after publication",
+   "assessment of the Recommendation's effects maximum three years after publication"
+  ],
+  "successorDependencies": "Enables establishment of the NIS Cooperation Group PQC sub-group, the Coordinated Implementation Roadmap and national transition plans; may lead to binding acts of Union law; depends on Member State cooperation and ENISA/expert input on algorithm selection"
  },
  "European Union:Europol — QSFF Call to Action": {
   "mainTopic": "Europol calls for European financial institutions to begin immediate PQC migration planning to address harvest-now-decrypt-later threats.",
@@ -5859,7 +5932,11 @@
  },
  "United States:White House — NSM-10 Published": {
   "mainTopic": "National Security Memorandum on Promoting U.S. Leadership in Quantum Computing while Mitigating Risks to Vulnerable Cryptographic Systems.",
-  "pqcAlgorithms": [],
+  "pqcAlgorithms": [
+   "ML-KEM",
+   "ML-DSA",
+   "SLH-DSA (NIST PQC standards mandated)"
+  ],
   "quantumThreats": [
    "CRQC (Cryptographically Relevant Quantum Computer)",
    "Quantum Computer",
@@ -6363,7 +6440,7 @@
   ],
   "migrationUrgency": "Near-Term (1-3yr)",
   "phaseTransition": "Transitions from classical public-key cryptography planning to the mandatory adoption of quantum-resistant algorithms for National Security Systems.",
-  "historicalSignificance": null,
+  "historicalSignificance": "This milestone marks the first official US government directive requiring quantum-resistant algorithms for classified and critical military/intelligence networks, setting a precedent for national security PQC adoption.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
@@ -6644,13 +6721,20 @@
    "About $7.1 billion in 2024 dollars projected by ONCD as the government-wide cost to migrate prioritised information systems to PQC between 2025 and 2035",
    "the report calls it an initial projection with a high level of uncertainty and a rough order of magnitude rather than a precise calculation"
   ],
-  "organizationalReadiness": [],
+  "organizationalReadiness": [
+   "governance prerequisites",
+   "dedicated crypto team required",
+   "board-level reporting",
+   "change management scope",
+   "estimated planning horizon (6-12 months)",
+   "maturity assessment level"
+  ],
   "phaseClassification": "The document is a report to Congress required by the Quantum Computing Cybersecurity Preparedness Act, outlining the Federal Government's strategy and funding estimates for migrating to PQC.",
   "mandateLevel": "Informational",
   "sectorApplicability": [
    "Government"
   ],
-  "migrationUrgency": null,
+  "migrationUrgency": "Critical Deadline",
   "phaseTransition": "Moves from Policy/Strategy formulation to active Planning and Inventory execution, establishing the baseline for federal migration.",
   "historicalSignificance": "OMB's July 2024 report to Congress under the Quantum Computing Cybersecurity Preparedness Act, setting out the federal strategy, an initial funding estimate and NIST's standardization timeline.",
   "implementationDates": [
@@ -6810,7 +6894,7 @@
   ],
   "migrationUrgency": "Near-Term (1-3yr)",
   "phaseTransition": "Transitions from CNSA 1.0/Suite B to CNSA 2.0, enabling the deployment of NIST-standardized PQC algorithms (ML-KEM, ML-DSA) in National Security Systems.",
-  "historicalSignificance": null,
+  "historicalSignificance": "Represents the first concrete NSA mandate specifying exact NIST PQC standards (ML-KEM-1024, ML-DSA-87) for national security use, setting a precedent for government-wide PQC adoption.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
@@ -8116,7 +8200,7 @@
   ],
   "migrationUrgency": "Critical Deadline",
   "phaseTransition": "Transitions from CNSA 1.0/Suite B to CNSA 2.0; enables the deployment of quantum-resistant algorithms in NSS.",
-  "historicalSignificance": null,
+  "historicalSignificance": "This document formalizes the U.S. government's first concrete timeline for mandatory post-quantum cryptography adoption in national security systems, setting a precedent for global PQC migration.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
@@ -10298,7 +10382,11 @@
    ]
   },
   "leadersContributions": [],
-  "pqcProducts": [],
+  "pqcProducts": [
+   "pqcrypto",
+   "PQCryptoLib-Core",
+   "PQMicroLib-Core"
+  ],
   "protocols": [],
   "infrastructureLayers": [
    "PKI",
@@ -10524,7 +10612,9 @@
    "integrating the new system with existing infrastructure",
    "maintaining a seamless user experience"
   ],
-  "financialBusinessImpact": [],
+  "financialBusinessImpact": [
+   "prizes worth over AED 130,000"
+  ],
   "organizationalReadiness": [
    "implementing information security regulations",
    "cultivating a new generation of cybersecurity officers",
@@ -12414,7 +12504,7 @@
   ],
   "migrationUrgency": "Exploratory",
   "phaseTransition": "Transitions from experimental PQC proposals to formalized baseline requirements, enabling Certificate Issuers to experiment with single-key/non-hybrid PQC certificates.",
-  "historicalSignificance": null,
+  "historicalSignificance": "This is the first time a Web PKI governance body has formally adopted PQC algorithms for certificate issuance, marking a pivotal shift from classical cryptography standards to post-quantum readiness in S/MIME.",
   "implementationDates": [
    "2025-07-21: Start of Review Period",
    "2025-08-20: End of Review Period",
@@ -13785,365 +13875,298 @@
   "successorDependencies": null
  },
  "Canada:CCCS — Departmental Planning Phase": {
-  "mainTopic": "Canadian Centre for Cyber Security guidance on PQC adoption.",
-  "pqcAlgorithms": [
-   "ML-KEM",
-   "ML-DSA",
-   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
-   "PROTECTED A",
-   "PROTECTED B information)"
-  ],
+  "mainTopic": "Cyber Centre roadmap for Government of Canada departments and agencies to migrate non-classified IT systems to post-quantum cryptography, covering preparation, identification and transition phases, milestones, and governance.",
+  "pqcAlgorithms": [],
   "quantumThreats": [
-   "HNDL",
-   "Quantum Computer",
-   "Post-Quantum"
+   "Harvest now",
+   "decrypt later (HNDL)",
+   "future quantum computer breaking vulnerable public-key cryptography"
   ],
   "migrationTimeline": [
-   "Year: 2024",
-   "Year: 2025",
-   "Year: 2026",
-   "Year: 2031",
-   "Year: 2035",
-   "must migrate"
+   "April 2026: Develop an initial departmental PQC migration plan; Beginning April 2026 and annually after: Report on PQC migration progress; End of 2031: Completion of PQC migration of high priority systems; End of 2035: Completion of PQC migration of remaining systems"
   ],
   "regionsAndBodies": {
-   "regions": [
-    "United States",
-    "Canada"
-   ],
+   "regions": [],
    "bodies": [
+    "Cyber Centre (Canadian Centre for Cyber Security)",
+    "Communications Security Establishment Canada",
+    "TBS (Treasury Board of Canada Secretariat)",
+    "SSC (Shared Services Canada)",
+    "IT Security Tripartite",
     "NIST"
    ]
   },
-  "leadersContributions": [
-   "None detected (guidance document with organizational roles",
-   "not individuals)"
-  ],
-  "pqcProducts": [
-   "None detected (guidance focused on migration methodology",
-   "not specific products)"
-  ],
-  "protocols": [
-   "Network security protocols (referenced as ITSP.40.062)",
-   "TLS",
-   "VPN",
-   "SSH"
-  ],
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [],
   "infrastructureLayers": [
-   "Cloud",
-   "Email"
+   "Hardware security modules",
+   "Cryptographic modules",
+   "Smart cards",
+   "Hardware tokens",
+   "Network appliances",
+   "Cloud services",
+   "SIEM",
+   "EDR",
+   "Code development pipelines"
   ],
   "standardizationBodies": [
    "NIST"
   ],
   "complianceFrameworks": [
-   "CCCS ITSM.40.001"
+   "ITSP.40.111 (Cryptographic algorithms for UNCLASSIFIED",
+   "PROTECTED A",
+   "and PROTECTED B information)",
+   "ITSP.40.062 (Guidance on securely configuring network protocols)",
+   "Cryptographic Module Validation Program",
+   "TBS Government of Canada Enterprise Cyber Security Strategy"
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Organizations must develop a departmental PQC migration plan by April 2026",
-   "High priority systems protecting confidentiality in transit must be migrated by end of 2031 due to HNDL threats",
-   "Procurement policies should include clauses requiring PQC support compliant with Cyber Centre recommendations",
-   "Financial planning must account for system replacement and staffing impacts while leveraging existing IT lifecycles",
-   "An inventory of all cryptographic usage across hardware, software, and cloud assets is required before transition"
+   "Departments must develop an initial departmental PQC migration plan by April 2026 and report progress annually",
+   "Build a cryptographic inventory early and prioritize systems exposed to harvest now, decrypt later threats",
+   "Include PQC support and cryptographic agility clauses in new procurements to lower migration costs",
+   "Align transitions with existing IT lifecycle and change management and use isolation or tunnelling for legacy systems that cannot be upgraded",
+   "Establish a committee with a PQC Migration Executive Lead and Technical Lead"
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "cryptographic agility",
-   "composite certificates not mentioned but crypto agility explicitly recommended for future configuration changes"
+   "Backward compatibility with non-transitioned systems",
+   "two-stage transition (support PQC",
+   "then disable legacy cryptography)",
+   "isolation or tunnelling of legacy systems in a PQC-protected encapsulation layer",
+   "cryptographic agility"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
-   "Directors and managers of IT systems in federal departments and agencies",
-   "decision makers accountable for the migration to PQC",
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
-   "PQC Migration Technical Lead"
+   "CISO",
+   "Security Architect",
+   "Operations",
+   "Policy Maker",
+   "Compliance Officer"
   ],
   "implementationPrereqs": [
-   "establishment of a committee with senior management representation",
-   "identification of a dedicated migration lead",
-   "development of a departmental PQC migration plan",
-   "creation of an inventory of systems employing cryptography",
-   "procurement clauses ensuring vendor support for PQC compliant with ITSP 40.111",
-   "certification of cryptographic modules by the Cryptographic Module Validation Program"
+   "Departmental migration committee and dedicated migration lead",
+   "cryptographic inventory",
+   "cost estimate and resource allocation",
+   "PQC procurement clauses",
+   "certified cryptographic modules (Cryptographic Module Validation Program)",
+   "cryptographic agility support",
+   "integration with IT change management processes"
   ],
   "relevantFeatures": [
-   "Timeline",
-   "Threats",
-   "Compliance",
    "Migrate",
    "Assess",
-   "pqc-governance",
+   "Timeline",
    "migration-program",
-   "crypto-agility",
-   "hsm-pqc",
-   "vendor-risk"
+   "pqc-governance"
   ],
-  "implementationAttackSurface": [
-   "harvest now, decrypt later (HNDL) threat",
-   "confidentiality of information in transit over public network zones"
-  ],
+  "implementationAttackSurface": [],
   "cryptoDiscovery": [
-   "cryptographic discovery",
-   "inventory of systems that need to be transitioned",
-   "system components employing cryptography",
-   "vendor and product version for each of the components",
-   "security controls that rely upon the identified cryptography",
-   "applicable network security zones",
-   "current cryptographic configurations",
-   "hosting platform",
-   "system dependencies",
-   "relevant service contracts and expiry dates",
-   "expected refresh year for the system or its components"
+   "Cryptographic discovery to build an inventory of systems",
+   "inventory fields include system components, vendor and product version, security controls, network zones, current cryptographic configurations, hosting platform, dependencies, service contracts, refresh year, point of contact, priority",
+   "tools include SIEM, network monitoring, EDR, scanning of networks, hosts, log files, source code",
+   "Cyber Centre sensors program"
   ],
-  "testingValidation": [],
+  "testingValidation": [
+   "Staging environment for testing changes",
+   "monitoring to validate successful operation post-transition",
+   "rollback playbook",
+   "impact assessment"
+  ],
   "qkdProtocols": [],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [
-   "smart cards",
-   "hardware tokens",
-   "mobile telephones",
-   "printers",
-   "voice over Internet Protocol telephony",
-   "hardware security modules"
-  ],
+  "constrainedDeviceIoT": [],
   "supplyChainRisk": [
-   "vendor lock-in",
-   "procurement policies for new equipment",
-   "contract clauses to ensure that the vendor will include support for PQC",
-   "cryptographic modules have been certified by the Cryptographic Module Validation Program",
-   "third-party library trust (implied via vendor products)",
-   "open-source vs proprietary (not explicitly stated)"
+   "Engage IT vendors and contractors on their PQC plans",
+   "contract clauses requiring vendor PQC support",
+   "avoid vendor lock-in via established cyber security standards",
+   "PQC support may not be available in some product categories"
   ],
   "deploymentComplexity": [
-   "Preparation phase",
-   "Identification phase",
-   "Transition phase",
-   "departmental PQC migration plan",
-   "high priority systems",
-   "remaining systems",
-   "April 2026: Develop an initial departmental PQC migration plan",
-   "End of 2031: Completion of PQC migration of high priority systems",
-   "End of 2035: Completion of PQC migration of remaining systems",
-   "cryptographic agility to allow for future configuration changes"
+   "Three overlapping phases (preparation, identification, transition)",
+   "multi-stage transitions with impact assessment, rollback playbook and staging",
+   "backward compatibility with non-transitioned systems",
+   "legacy systems may need full replacement, isolation or tunnelling",
+   "wide scope makes identification challenging"
   ],
   "financialBusinessImpact": [
-   "financial planning",
-   "cost estimate that includes resource allocation",
-   "staffing impacts",
-   "new hiring",
-   "external contractors",
-   "realignment of roles",
-   "existing IT equipment lifecycles",
-   "system modernization plans",
-   "rushed procurement will increase costs"
+   "Existing IT systems may need replacement or new service contracts",
+   "staffing impacts (new hiring, contractors, role realignment)",
+   "cost estimate required in plan",
+   "costs reduced by using existing IT lifecycles",
+   "delays and rushed procurement increase costs"
   ],
   "organizationalReadiness": [
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
+   "Committee with senior management member",
+   "PQC Migration Executive Lead (DOCS or delegated)",
    "PQC Migration Technical Lead",
-   "committee consisting of stakeholders throughout the organization",
-   "senior management member",
-   "non-technical areas such as finance, project management, procurement and asset management",
-   "education strategy to inform staff on the quantum threat",
-   "TBS GCxchange platform",
-   "Cyber Centre’s Learning Hub"
+   "education strategy and executive briefings",
+   "stakeholders from finance, procurement, project management, asset management",
+   "ITSM maturity varies across departments"
   ],
-  "phaseClassification": "The document explicitly describes the development of initial migration plans by federal departments, which characterizes the Discovery phase of identifying and planning for PQC adoption.",
-  "mandateLevel": "Mandatory",
+  "phaseClassification": "The departmental planning phase has departments forming committees, assigning roles, and planning approaches for identifying where cryptography is used and building an inventory, which is the discovery groundwork before transition.",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
-   "Government",
-   "Defense"
+   "Government"
   ],
-  "migrationUrgency": "Near-Term (1-3yr)",
-  "phaseTransition": "This event transitions from initial awareness to formalized departmental planning, enabling the subsequent execution of migration strategies.",
-  "historicalSignificance": "This milestone marks the formal requirement for federal departments to initiate structured PQC migration planning, setting a precedent for government-wide cryptographic modernization.",
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from Preparation (committee, roles, financial planning, education, procurement) to Identification (cryptographic discovery and inventory) and then Transition; the initial plan is revised as these phases proceed.",
+  "historicalSignificance": "Establishes the Canadian Government's first roadmap with dated PQC migration milestones (2026, 2031, 2035) for federal departments and agencies.",
   "implementationDates": [
-   "April 2026: Federal departments must submit initial PQC migration plans"
+   "April 2026: develop initial departmental PQC migration plan",
+   "Beginning April 2026 and annually after: report on PQC migration progress",
+   "End of 2031: completion of migration of high priority systems",
+   "End of 2035: completion of migration of remaining systems",
+   "June 23, 2025: publication effective date"
   ],
-  "successorDependencies": "Development of detailed implementation roadmaps; execution of cryptographic inventory assessments"
+  "successorDependencies": "Requires TBS policy instruments requiring a departmental PQC migration plan; depends on updates to ITSP.40.062 as PQC support is finalized in standards; enables the identification and transition phases, annual progress reporting, and migration of high priority systems by end of 2031"
  },
  "Canada:CCCS — Departmental PQC Migration Plans Due": {
-  "mainTopic": "Canadian Centre for Cyber Security guidance on PQC adoption.",
-  "pqcAlgorithms": [
-   "ML-KEM",
-   "ML-DSA",
-   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
-   "PROTECTED A",
-   "PROTECTED B information)"
-  ],
+  "mainTopic": "The Cyber Centre's recommended roadmap for Government of Canada federal departments and agencies to migrate non-classified IT systems to post-quantum cryptography, covering execution phases, milestones, and governance.",
+  "pqcAlgorithms": [],
   "quantumThreats": [
-   "HNDL",
-   "Quantum Computer",
-   "Post-Quantum"
+   "Future quantum computer threat to public-key cryptography",
+   "Harvest now",
+   "decrypt later (HNDL)"
   ],
   "migrationTimeline": [
-   "Year: 2024",
-   "Year: 2025",
-   "Year: 2026",
-   "Year: 2031",
-   "Year: 2035",
-   "must migrate"
+   "April 2026: Develop an initial departmental PQC migration plan",
+   "Beginning April 2026 and annually after: Report on PQC migration progress",
+   "End of 2031: Completion of PQC migration of high priority systems",
+   "End of 2035: Completion of PQC migration of remaining systems"
   ],
   "regionsAndBodies": {
-   "regions": [
-    "United States",
-    "Canada"
-   ],
+   "regions": [],
    "bodies": [
-    "NIST"
+    "Canadian Centre for Cyber Security (Cyber Centre)",
+    "Treasury Board of Canada Secretariat (TBS)",
+    "Shared Services Canada (SSC)",
+    "Communications Security Establishment Canada",
+    "IT Security Tripartite",
+    "Designated Official for Cyber Security (DOCS)"
    ]
   },
-  "leadersContributions": [
-   "None detected (guidance document with organizational roles",
-   "not individuals)"
-  ],
-  "pqcProducts": [
-   "None detected (guidance focused on migration methodology",
-   "not specific products)"
-  ],
-  "protocols": [
-   "Network security protocols (referenced as ITSP.40.062)",
-   "TLS",
-   "VPN",
-   "SSH"
-  ],
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [],
   "infrastructureLayers": [
-   "Cloud",
-   "Email"
+   "Hardware security modules",
+   "Smart cards",
+   "Hardware tokens",
+   "Network appliances",
+   "Cloud services",
+   "SIEM",
+   "EDR",
+   "Code development pipelines"
   ],
   "standardizationBodies": [
-   "NIST"
+   "NIST",
+   "Cyber Centre",
+   "TBS"
   ],
   "complianceFrameworks": [
-   "CCCS ITSM.40.001"
+   "Cryptographic Module Validation Program",
+   "ITSP.40.111",
+   "ITSP.40.062",
+   "Government of Canada Enterprise Cyber Security Strategy"
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Organizations must develop a departmental PQC migration plan by April 2026",
-   "High priority systems protecting confidentiality in transit must be migrated by end of 2031 due to HNDL threats",
-   "Procurement policies should include clauses requiring PQC support compliant with Cyber Centre recommendations",
-   "Financial planning must account for system replacement and staffing impacts while leveraging existing IT lifecycles",
-   "An inventory of all cryptographic usage across hardware, software, and cloud assets is required before transition"
+   "Departments must develop an initial PQC migration plan by April 2026 and report progress annually",
+   "Prioritize systems vulnerable to harvest now, decrypt later for migration by end of 2031",
+   "Build a cryptographic inventory of systems, vendors, configurations and refresh dates",
+   "Add PQC and cryptographic agility clauses to procurement contracts to reduce costs",
+   "Use isolation or tunnelling for legacy systems that cannot be transitioned"
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "cryptographic agility",
-   "composite certificates not mentioned but crypto agility explicitly recommended for future configuration changes"
+   "Cryptographic agility",
+   "Staged transition (support PQC first",
+   "then disable legacy cryptography)",
+   "Backwards compatibility with non-transitioned systems",
+   "Tunnelling traffic within a PQC-protected encapsulation layer",
+   "Isolation of legacy systems"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
-   "Directors and managers of IT systems in federal departments and agencies",
-   "decision makers accountable for the migration to PQC",
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
-   "PQC Migration Technical Lead"
+   "CISO",
+   "Security Architect",
+   "Policy Maker",
+   "Operations",
+   "Compliance Officer"
   ],
   "implementationPrereqs": [
-   "establishment of a committee with senior management representation",
-   "identification of a dedicated migration lead",
-   "development of a departmental PQC migration plan",
-   "creation of an inventory of systems employing cryptography",
-   "procurement clauses ensuring vendor support for PQC compliant with ITSP 40.111",
-   "certification of cryptographic modules by the Cryptographic Module Validation Program"
+   "Departmental PQC migration committee and migration lead",
+   "Cryptographic inventory",
+   "Cost estimate with resource allocation",
+   "Procurement clauses requiring PQC support",
+   "Cryptographic modules certified by the Cryptographic Module Validation Program",
+   "Support for cryptographic agility"
   ],
   "relevantFeatures": [
-   "Timeline",
-   "Threats",
-   "Compliance",
    "Migrate",
-   "Assess",
-   "pqc-governance",
+   "Timeline",
    "migration-program",
-   "crypto-agility",
-   "hsm-pqc",
+   "pqc-governance",
    "vendor-risk"
   ],
-  "implementationAttackSurface": [
-   "harvest now, decrypt later (HNDL) threat",
-   "confidentiality of information in transit over public network zones"
-  ],
+  "implementationAttackSurface": [],
   "cryptoDiscovery": [
-   "cryptographic discovery",
-   "inventory of systems that need to be transitioned",
-   "system components employing cryptography",
-   "vendor and product version for each of the components",
-   "security controls that rely upon the identified cryptography",
-   "applicable network security zones",
-   "current cryptographic configurations",
-   "hosting platform",
-   "system dependencies",
-   "relevant service contracts and expiry dates",
-   "expected refresh year for the system or its components"
+   "Cryptographic discovery to create inventory of system components, vendor and product version, current cryptographic configurations, hosting platform, dependencies, contracts and refresh year",
+   "Tools such as SIEM, network monitoring, EDR, scanning of networks, hosts, log files, source code",
+   "Cyber Centre sensors program"
   ],
-  "testingValidation": [],
+  "testingValidation": [
+   "Staging environment for testing changes",
+   "Rollback playbook",
+   "Monitoring to validate successful operation post-transition",
+   "Cryptographic Module Validation Program certification"
+  ],
   "qkdProtocols": [],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [
-   "smart cards",
-   "hardware tokens",
-   "mobile telephones",
-   "printers",
-   "voice over Internet Protocol telephony",
-   "hardware security modules"
-  ],
+  "constrainedDeviceIoT": [],
   "supplyChainRisk": [
-   "vendor lock-in",
-   "procurement policies for new equipment",
-   "contract clauses to ensure that the vendor will include support for PQC",
-   "cryptographic modules have been certified by the Cryptographic Module Validation Program",
-   "third-party library trust (implied via vendor products)",
-   "open-source vs proprietary (not explicitly stated)"
+   "Engage IT vendors and contractors on PQC plans",
+   "Contract clauses requiring vendor PQC support",
+   "Avoid vendor lock-in through established standards",
+   "PQC support may not be available in some product categories"
   ],
   "deploymentComplexity": [
-   "Preparation phase",
-   "Identification phase",
-   "Transition phase",
-   "departmental PQC migration plan",
-   "high priority systems",
-   "remaining systems",
-   "April 2026: Develop an initial departmental PQC migration plan",
-   "End of 2031: Completion of PQC migration of high priority systems",
-   "End of 2035: Completion of PQC migration of remaining systems",
-   "cryptographic agility to allow for future configuration changes"
+   "Three overlapping phases (Preparation, Identification, Transition)",
+   "Impact assessment, rollback playbook, staging environment",
+   "Backwards compatibility with non-transitioned systems",
+   "Legacy systems may require full replacement, isolation or tunnelling",
+   "Wide scope makes identification challenging"
   ],
   "financialBusinessImpact": [
-   "financial planning",
-   "cost estimate that includes resource allocation",
-   "staffing impacts",
-   "new hiring",
-   "external contractors",
-   "realignment of roles",
-   "existing IT equipment lifecycles",
-   "system modernization plans",
-   "rushed procurement will increase costs"
+   "Cost estimate required in the departmental plan",
+   "Costs reduced by using existing IT equipment lifecycles and modernization plans",
+   "Delays resulting in rushed procurement will increase costs",
+   "Staffing impacts may require hiring or external contractors"
   ],
   "organizationalReadiness": [
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
-   "PQC Migration Technical Lead",
-   "committee consisting of stakeholders throughout the organization",
-   "senior management member",
-   "non-technical areas such as finance, project management, procurement and asset management",
-   "education strategy to inform staff on the quantum threat",
-   "TBS GCxchange platform",
-   "Cyber Centre’s Learning Hub"
+   "Committee with at least one senior management member",
+   "Designated Official for Cyber Security accountable",
+   "PQC Migration Executive Lead and Technical Lead",
+   "Education strategy for staff and senior executives",
+   "ITSM maturity varies across departments"
   ],
-  "phaseClassification": "The document explicitly sets a submission deadline of April 2026 for initial PQC migration plans, marking a definitive compliance milestone. It establishes an ongoing obligation for annual progress reporting and procurement clauses.",
-  "mandateLevel": "Mandatory",
+  "phaseClassification": "The document sets dated deadlines for federal departments to develop initial PQC migration plans (April 2026), report progress annually, and complete migrations by end of 2031 and 2035.",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
-   "Government",
-   "Defense"
+   "Government"
   ],
-  "migrationUrgency": "Near-Term (1-3yr)",
-  "phaseTransition": "Transitions from planning preparation to formal submission of migration roadmaps, enabling subsequent annual progress tracking and procurement enforcement.",
-  "historicalSignificance": "Represents a critical federal governance milestone requiring all departments to formalize their PQC transition strategies by 2026.",
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from awareness and guidance to departmental planning and execution, with TBS to issue policy instruments requiring migration plans and progress reporting.",
+  "historicalSignificance": "It is the first release of the Government of Canada's PQC migration roadmap, establishing 2026, 2031 and 2035 milestones for federal departments.",
   "implementationDates": [
-   "April 2026: initial PQC migration plans due",
-   "Ongoing: annual progress reporting required"
+   "April 2026: Develop an initial departmental PQC migration plan",
+   "Beginning April 2026 and annually after: Report on PQC migration progress",
+   "End of 2031: Completion of PQC migration of high priority systems",
+   "End of 2035: Completion of PQC migration of remaining systems"
   ],
-  "successorDependencies": "Annual progress reporting; Inclusion of PQC vendor support clauses in new IT procurements"
+  "successorDependencies": "Requires TBS policy instruments for migration plans and reporting; Depends on Cyber Centre updates to ITSP.40.062 as protocol standards support PQC; Enables departmental inventories, transition plans and annual progress reporting"
  },
  "Canada:CCCS — High Priority Systems Complete": {
   "mainTopic": "A roadmap for the Government of Canada to migrate non-classified IT systems to post-quantum cryptography, outlining stakeholders, execution phases, milestones, and governance.",
@@ -14476,183 +14499,147 @@
   "successorDependencies": null
  },
  "Canada:CCCS — Full GC Migration Complete": {
-  "mainTopic": "Target date of the Government of Canada roadmap for completing PQC migration of all remaining non-classified systems by the end of 2035.",
-  "pqcAlgorithms": [
-   "ML-KEM",
-   "ML-DSA",
-   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
-   "PROTECTED A",
-   "PROTECTED B information)"
-  ],
+  "mainTopic": "Cyber Centre roadmap (ITSM.40.001) for Government of Canada departments and agencies to migrate non-classified IT systems to post-quantum cryptography, covering preparation, identification and transition phases, milestones and governance.",
+  "pqcAlgorithms": [],
   "quantumThreats": [
-   "HNDL",
-   "Quantum Computer",
-   "Post-Quantum"
+   "Harvest now",
+   "decrypt later (HNDL)",
+   "future quantum computer breaking vulnerable public-key cryptography"
   ],
   "migrationTimeline": [
-   "Year: 2024",
-   "Year: 2025",
-   "Year: 2026",
-   "Year: 2031",
-   "Year: 2035",
-   "must migrate"
+   "April 2026: develop initial departmental PQC migration plan; Beginning April 2026 and annually after: report on PQC migration progress; End of 2031: completion of PQC migration of high priority systems; End of 2035: completion of PQC migration of remaining systems"
   ],
   "regionsAndBodies": {
-   "regions": [
-    "United States",
-    "Canada"
-   ],
+   "regions": [],
    "bodies": [
+    "Government of Canada",
+    "Canadian Centre for Cyber Security (Cyber Centre)",
+    "Treasury Board of Canada Secretariat (TBS)",
+    "Shared Services Canada (SSC)",
+    "Communications Security Establishment Canada",
+    "IT Security Tripartite",
     "NIST"
    ]
   },
-  "leadersContributions": [
-   "None detected (guidance document with organizational roles",
-   "not individuals)"
-  ],
-  "pqcProducts": [
-   "None detected (guidance focused on migration methodology",
-   "not specific products)"
-  ],
-  "protocols": [
-   "Network security protocols (referenced as ITSP.40.062)",
-   "TLS",
-   "VPN",
-   "SSH"
-  ],
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [],
   "infrastructureLayers": [
-   "Cloud",
-   "Email"
+   "Hardware security modules",
+   "Cryptographic modules",
+   "Cloud services",
+   "Network appliances",
+   "Smart cards",
+   "Hardware tokens",
+   "SIEM",
+   "EDR"
   ],
   "standardizationBodies": [
    "NIST"
   ],
   "complianceFrameworks": [
-   "CCCS ITSM.40.001"
+   "Cryptographic Module Validation Program",
+   "ITSP.40.111",
+   "ITSP.40.062",
+   "TBS Enterprise Cyber Security Strategy"
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Organizations must develop a departmental PQC migration plan by April 2026",
-   "High priority systems protecting confidentiality in transit must be migrated by end of 2031 due to HNDL threats",
-   "Procurement policies should include clauses requiring PQC support compliant with Cyber Centre recommendations",
-   "Financial planning must account for system replacement and staffing impacts while leveraging existing IT lifecycles",
-   "An inventory of all cryptographic usage across hardware, software, and cloud assets is required before transition"
+   "Departments must develop an initial PQC migration plan by April 2026 and report progress annually",
+   "Prioritize systems exposed to HNDL threat, completing high priority migrations by end of 2031 and the rest by end of 2035",
+   "Build a cryptographic inventory using ITSM processes and discovery tools, starting with an incomplete inventory and improving iteratively",
+   "Include PQC and cryptographic agility clauses in new procurements to reduce costs",
+   "Completion means quantum-vulnerable algorithms are disabled, isolated or tunnelled, not just that PQC is supported"
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "cryptographic agility",
-   "composite certificates not mentioned but crypto agility explicitly recommended for future configuration changes"
+   "Cryptographic agility",
+   "Backward compatibility with non-transitioned systems (first support PQC",
+   "then disable legacy cryptography)",
+   "Isolation of legacy systems on the network",
+   "Tunnelling traffic within a PQC-protected encapsulation layer"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
-   "Directors and managers of IT systems in federal departments and agencies",
-   "decision makers accountable for the migration to PQC",
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
-   "PQC Migration Technical Lead"
+   "CISO",
+   "Security Architect",
+   "Policy Maker",
+   "Operations",
+   "Compliance Officer"
   ],
   "implementationPrereqs": [
-   "establishment of a committee with senior management representation",
-   "identification of a dedicated migration lead",
-   "development of a departmental PQC migration plan",
-   "creation of an inventory of systems employing cryptography",
-   "procurement clauses ensuring vendor support for PQC compliant with ITSP 40.111",
-   "certification of cryptographic modules by the Cryptographic Module Validation Program"
+   "Departmental PQC migration committee and dedicated migration lead",
+   "Cryptographic inventory of systems",
+   "Cryptographic discovery tools (SIEM, EDR, network monitoring, scanning)",
+   "Cryptographic modules certified by the Cryptographic Module Validation Program",
+   "Support for cryptographic agility",
+   "Impact assessment, rollback playbook and staging environment for transition"
   ],
   "relevantFeatures": [
    "Timeline",
-   "Threats",
-   "Compliance",
    "Migrate",
    "Assess",
-   "pqc-governance",
    "migration-program",
-   "crypto-agility",
-   "hsm-pqc",
-   "vendor-risk"
+   "pqc-governance"
   ],
-  "implementationAttackSurface": [
-   "harvest now, decrypt later (HNDL) threat",
-   "confidentiality of information in transit over public network zones"
-  ],
+  "implementationAttackSurface": [],
   "cryptoDiscovery": [
-   "cryptographic discovery",
-   "inventory of systems that need to be transitioned",
-   "system components employing cryptography",
-   "vendor and product version for each of the components",
-   "security controls that rely upon the identified cryptography",
-   "applicable network security zones",
-   "current cryptographic configurations",
-   "hosting platform",
-   "system dependencies",
-   "relevant service contracts and expiry dates",
-   "expected refresh year for the system or its components"
+   "Cryptographic discovery to create an inventory of systems using cryptography",
+   "Inventory fields include components employing cryptography, vendor and product version, current cryptographic configurations, security controls, hosting platform, dependencies, contract expiry dates and refresh year",
+   "Tools: SIEM, network monitoring and inspection, EDR, scanners for networks, hosts, log files and source code",
+   "Cyber Centre sensors program",
+   "ITSM lifecycle and change management data"
   ],
-  "testingValidation": [],
+  "testingValidation": [
+   "Staging environment for testing changes",
+   "Monitoring to validate successful operation post-transition",
+   "Cryptographic Module Validation Program certification"
+  ],
   "qkdProtocols": [],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [
-   "smart cards",
-   "hardware tokens",
-   "mobile telephones",
-   "printers",
-   "voice over Internet Protocol telephony",
-   "hardware security modules"
-  ],
+  "constrainedDeviceIoT": [],
   "supplyChainRisk": [
-   "vendor lock-in",
-   "procurement policies for new equipment",
-   "contract clauses to ensure that the vendor will include support for PQC",
-   "cryptographic modules have been certified by the Cryptographic Module Validation Program",
-   "third-party library trust (implied via vendor products)",
-   "open-source vs proprietary (not explicitly stated)"
+   "Engage IT vendors and contractors on their PQC plans",
+   "Contract clauses requiring vendor PQC support compliant with ITSP.40.111",
+   "Avoid vendor lock-in through established standards",
+   "PQC support may not be available in some product categories"
   ],
   "deploymentComplexity": [
-   "Preparation phase",
-   "Identification phase",
-   "Transition phase",
-   "departmental PQC migration plan",
-   "high priority systems",
-   "remaining systems",
-   "April 2026: Develop an initial departmental PQC migration plan",
-   "End of 2031: Completion of PQC migration of high priority systems",
-   "End of 2035: Completion of PQC migration of remaining systems",
-   "cryptographic agility to allow for future configuration changes"
+   "Three overlapping phases (Preparation, Identification, Transition)",
+   "Multi-stage transitions integrated with IT change management",
+   "Backward compatibility needed for non-transitioned systems",
+   "Legacy systems may require full replacement, isolation or tunnelling",
+   "Wide scope including on-premises, contracted and cloud-hosted systems"
   ],
   "financialBusinessImpact": [
-   "financial planning",
-   "cost estimate that includes resource allocation",
-   "staffing impacts",
-   "new hiring",
-   "external contractors",
-   "realignment of roles",
-   "existing IT equipment lifecycles",
-   "system modernization plans",
-   "rushed procurement will increase costs"
+   "Departmental plan must include cost estimate and resource allocation",
+   "Costs reduced by leveraging existing IT equipment lifecycles and modernization plans",
+   "Delays resulting in rushed procurement will increase costs",
+   "Staffing impacts may require new hiring, external contractors or realigned roles"
   ],
   "organizationalReadiness": [
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
-   "PQC Migration Technical Lead",
-   "committee consisting of stakeholders throughout the organization",
-   "senior management member",
-   "non-technical areas such as finance, project management, procurement and asset management",
-   "education strategy to inform staff on the quantum threat",
-   "TBS GCxchange platform",
-   "Cyber Centre’s Learning Hub"
+   "Committee with at least one senior management member plus finance, project management, procurement and asset management stakeholders",
+   "Designated Official for Cyber Security (DOCS) accountable, recommended as PQC Migration Executive Lead",
+   "PQC Migration Technical Lead for coordination",
+   "Education strategy for staff and senior executives",
+   "Annual progress reporting under existing departmental reporting processes"
   ],
-  "phaseClassification": "A future target: the Cyber Centre roadmap sets the end of 2035 for completing the PQC migration of remaining systems; the migration has not been reported as complete.",
-  "mandateLevel": "Mandatory",
+  "phaseClassification": "The document sets dated milestones (April 2026 plan, end of 2031 high priority systems, end of 2035 remaining systems) for GC departments, making it a Deadline-phase event.",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
    "Government"
   ],
   "migrationUrgency": "Critical Deadline",
-  "phaseTransition": "Marks the target end of the planned Government of Canada migration (end of 2035); the roadmap's earlier milestones are April 2026 (initial departmental plan) and the end of 2031 (high-priority systems).",
-  "historicalSignificance": null,
+  "phaseTransition": "Moves from awareness and guidance to planned departmental execution, enabling departmental migration plans, inventories and annual progress reporting.",
+  "historicalSignificance": "First Cyber Centre roadmap for migrating Government of Canada non-classified IT systems to PQC, with dated milestones to 2035.",
   "implementationDates": [
-   "End of 2035: target for completion of PQC migration of remaining systems"
+   "April 2026: develop initial departmental PQC migration plan",
+   "Beginning April 2026 and annually after: report on PQC migration progress",
+   "End of 2031: completion of PQC migration of high priority systems",
+   "End of 2035: completion of PQC migration of remaining systems",
+   "June 23, 2025: publication takes effect"
   ],
-  "successorDependencies": null
+  "successorDependencies": "Requires TBS policy instruments requiring a departmental PQC migration plan and progress reporting; Depends on updates to ITSP.40.062 as standards add PQC support; Enables departmental inventories, procurement clauses and transition planning"
  },
  "China:CAC — NGCC Algorithm Evaluation": {
   "mainTopic": "China's Institute of Commercial Cryptography Standards (ICCS) has launched a global initiative to develop independent post-quantum cryptographic algorithms, diverging from US-led NIST efforts.",
@@ -15091,98 +15078,148 @@
   "successorDependencies": null
  },
  "European Union:EC — Full EU PQC Transition": {
-  "mainTopic": "The EU NIS Cooperation Group issued a coordinated implementation roadmap and timeline for the transition to Post-Quantum Cryptography across EU Member States.",
+  "mainTopic": "A high-level EU roadmap (NIS Cooperation Group PQC workstream) setting a coordinated timeline and First/Next Steps for Member States' transition to post-quantum cryptography.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Quantum computing identified as a threat to cryptographic algorithms protecting confidentiality and authenticity of data"
+   "Cryptographically relevant quantum computer",
+   "Store now",
+   "decrypt later",
+   "Shor's algorithm",
+   "Threat to confidentiality and authenticity",
+   "Long transition periods for PKIs and long-lifetime devices"
   ],
   "migrationTimeline": [
-   "Commission published Recommendation on 11 April 2024",
-   "document issued 23 June 2025"
+   "31.12.2026: First Steps implemented, initial national PQC roadmaps, pilots for high- and medium-risk use cases initiated; 31.12.2030: Next Steps implemented, high-risk use cases transitioned, quantum-safe upgrades enabled by default; 31.12.2035: medium-risk use cases transitioned, low-risk as far as feasible; quantum-vulnerable public-key mechanisms not stand-alone after end of 2030 (high-risk) and end of 2035 (medium-risk)"
   ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
-    "EU NIS Cooperation Group",
-    "Commission",
-    "Directorate-General for Communications Networks",
-    "Content and Technology"
+    "European Commission",
+    "NIS Cooperation Group",
+    "BSI",
+    "NSA",
+    "Global Risk Institute"
    ]
   },
-  "leadersContributions": [],
+  "leadersContributions": [
+   "Peter Shor — published quantum algorithms in 1994 that can break many cryptographic algorithms in use"
+  ],
   "pqcProducts": [],
   "protocols": [],
   "infrastructureLayers": [
-   "Cloud"
+   "PKI",
+   "Cryptographic asset management",
+   "Cryptographic inventory",
+   "Software and firmware upgrades",
+   "Supply chain"
   ],
-  "standardizationBodies": [],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
+  "standardizationBodies": [
+   "European Commission",
+   "NIS Cooperation Group",
+   "BSI",
+   "NSA"
+  ],
+  "complianceFrameworks": [
+   "NIS2 Directive",
+   "DORA (Digital Operational Resilience Act)",
+   "Cyber Resilience Act (CRA)",
+   "Union Action Plan for Standardization"
+  ],
+  "classicalAlgorithms": [
+   "RSA",
+   "RSA-2048",
+   "Discrete logarithm based mechanisms"
+  ],
   "keyTakeaways": [
-   "The roadmap sets out recommendations that Member States need to implement for a synchronised transition to PQC",
-   "Stakeholders need to be informed on the quantum threat to cryptography",
-   "A work stream on PQC was established with the NIS Cooperation Group",
-   "The roadmap provides harmonized timelines and priority sectors"
+   "Member States should initiate national PQC transition strategies and complete First Steps by end of 2026",
+   "High-risk use cases (confidentiality needed 10+ years) should be transitioned by end of 2030",
+   "Use standardised and tested hybrid solutions whenever feasible and suitable",
+   "Establish cryptographic asset management, dependency maps and quantum risk analysis including the supply chain",
+   "Many steps are no-regret moves supporting NIS2 compliance and crypto-agility"
   ],
-  "securityLevels": [],
-  "hybridApproaches": [],
+  "securityLevels": [
+   "RSA-2048 (as the quantum threat benchmark)",
+   "risk categories low",
+   "medium",
+   "high"
+  ],
+  "hybridApproaches": [
+   "Standardised hybrid combination of PQC and quantum-vulnerable algorithm",
+   "Cryptographic agility (modular design)",
+   "Symmetric methods as alternative to public-key",
+   "Pilots for high- and medium-risk use cases"
+  ],
   "performanceConsiderations": [],
   "targetAudience": [
    "Policy Maker",
+   "CISO",
    "Compliance Officer",
    "Security Architect"
   ],
   "implementationPrereqs": [
-   "Establishment of a work stream on PQC with the NIS Cooperation Group",
-   "Implementation of recommendations for synchronised transition"
+   "Cryptographic inventory",
+   "Dependency maps",
+   "Quantum risk analysis",
+   "National awareness and communication program",
+   "Implementation plan and timeline"
   ],
   "relevantFeatures": [
    "Timeline",
-   "Threats",
    "Compliance",
    "Migrate",
-   "pqc-governance"
+   "Assess",
+   "crypto-agility"
   ],
   "implementationAttackSurface": [],
-  "cryptoDiscovery": [],
+  "cryptoDiscovery": [
+   "Cryptographic inventory (structured overview of cryptographic assets)",
+   "mature cryptographic asset management",
+   "dependency maps"
+  ],
   "testingValidation": [],
   "qkdProtocols": [],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
-  "supplyChainRisk": [],
+  "constrainedDeviceIoT": [
+   "Devices with a long lifetime noted as a long-transition risk",
+   "capability of devices to be upgraded for evolving PQC standards (CRA)"
+  ],
+  "supplyChainRisk": [
+   "Include the supply chain as a First Step",
+   "manufacturers' responsibility for software/firmware upgrade authenticity and upgradability under CRA"
+  ],
   "deploymentComplexity": [
-   "synchronised transition",
-   "coordinated transition",
-   "harmonized timelines"
+   "Transition may take well over five years",
+   "phased approach by risk category (high/medium/low)",
+   "pilots first",
+   "avoid chaotic transition with insufficiently tested solutions"
   ],
-  "financialBusinessImpact": [],
+  "financialBusinessImpact": [
+   "Management bodies can be held liable for non-compliance under NIS2 and DORA",
+   "no specific cost figures stated"
+  ],
   "organizationalReadiness": [
-   "governance prerequisites (Commission Recommendation)",
-   "dedicated crypto team required (work stream on PQC with the NIS Cooperation Group)",
-   "change management scope (ensure all stakeholders are well informed on the quantum threat to cryptography)"
+   "Stakeholder identification and involvement",
+   "quantum threat part of risk management of all relevant entities",
+   "national awareness programs",
+   "knowledge sharing via NIS CG work stream"
   ],
-  "phaseClassification": "The document establishes a definitive, multi-year timeline with specific end-dates for national strategy initiation, high-risk migration, and full transition completion, marking the shift from planning to execution deadlines.",
+  "phaseClassification": "The document sets concrete EU-wide deadlines (end of 2026, 2030, 2035) for the PQC transition, making it a Deadline-phase roadmap.",
   "mandateLevel": "Recommended",
   "sectorApplicability": [
    "Government",
-   "Critical Infrastructure",
-   "Finance",
-   "Banking",
-   "Telecommunications",
-   "Energy",
-   "Transportation",
-   "Technology"
+   "Critical Infrastructure"
   ],
   "migrationUrgency": "Critical Deadline",
-  "phaseTransition": "Transitions from initial awareness and risk assessment to national PQC transition strategies and, as recommended by the roadmap, completion of the transition for as many systems as practically feasible by 2035.",
-  "historicalSignificance": "Represents the first coordinated EU-wide implementation roadmap for PQC, establishing a unified timeline for Member States to mitigate \"store now, decrypt later\" threats.",
+  "phaseTransition": "Moves from awareness and strategy-building to coordinated national roadmaps and pilots (2026), then completion of high-risk transitions (2030) and broad completion (2035).",
+  "historicalSignificance": "First deliverable of the NIS CG PQC work stream and first release of the EU Coordinated Implementation Roadmap under the Commission's 11.04.2024 Recommendation, establishing a harmonised EU-wide PQC timeline.",
   "implementationDates": [
-   "end of 2026: initiate national PQC transition strategy",
-   "end of 2030: transition high-risk use cases to PQC",
-   "2035: complete transition for as many systems as practically feasible",
-   "11.12.2027: Cyber Resilience Act enforcement start"
+   "31.12.2026: First Steps implemented and initial national PQC roadmaps established",
+   "31.12.2030: Next Steps implemented, high-risk use cases transitioned, quantum-safe upgrades enabled by default, no stand-alone quantum-vulnerable public-key mechanisms for high-risk",
+   "31.12.2035: medium-risk use cases transitioned, low-risk as much as feasible",
+   "April 2026: Commission-recommended publication of roadmap",
+   "11.12.2027: CRA requirements apply"
   ],
-  "successorDependencies": "National PQC transition strategies; implementation of Next Steps; refinement of PQC transition plans; compliance with NIS2 Directive and Cyber Resilience Act"
+  "successorDependencies": "Follows the Commission Recommendation of 11.04.2024; Enables national PQC roadmaps and later parts of the Coordinated Implementation Roadmap with technical details; Depends on Member States implementing First Steps and Next Steps"
  },
  "France:ANSSI — Phase 1 - Pre-Quantum Security": {
   "mainTopic": "ANSSI presents France's position on PQC transition, advocating hybrid schemes and providing phased guidance for government and regulated entities.",
@@ -15921,7 +15958,16 @@
   "quantumThreats": [
    "Post-Quantum"
   ],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "Australia: Complete transition by 2030",
+   "Canada: Introduce standards-based PQC from 2025-26",
+   "Czech Republic: Migrate by 2027",
+   "France: Transition from 2024",
+   "New Zealand: Transition from 2026-27",
+   "South Korea: Pilot transition plan 2025-2028, completion 2035",
+   "Spain: Four phase approach today to post-2030",
+   "United States: Implement 2023-2033"
+  ],
   "regionsAndBodies": null,
   "leadersContributions": [],
   "pqcProducts": [
@@ -15999,7 +16045,9 @@
   "supplyChainRisk": [
    "third-party library trust, procurement risk, vendor PQC roadmap maturity"
   ],
-  "deploymentComplexity": [],
+  "deploymentComplexity": [
+   "migration phase (assess/plan/test/migrate/launch), phased rollout, Four phase approach today to post-2030, Pilot transition plan 2025-2028, Complete transition to quantum resistant cryptography by 2030, PQC Roadmap for completion 2035, Implement 2023-2033"
+  ],
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "The document is a high-level statement by the G7 regarding planning for quantum computing risks and opportunities, representing a policy-level advisory rather than a technical specification or mandate.",
@@ -16027,7 +16075,16 @@
   "quantumThreats": [
    "Post-Quantum"
   ],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "Australia: Complete transition by 2030",
+   "Canada: Introduce standards-based PQC from 2025-26",
+   "Czech Republic: Migrate by 2027",
+   "France: Transition from 2024",
+   "New Zealand: Transition from 2026-27",
+   "South Korea: Pilot transition plan 2025-2028, completion 2035",
+   "Spain: Four phase approach today to post-2030",
+   "United States: Implement 2023-2033"
+  ],
   "regionsAndBodies": null,
   "leadersContributions": [],
   "pqcProducts": [
@@ -16106,7 +16163,9 @@
   "supplyChainRisk": [
    "third-party library trust, procurement risk, vendor PQC roadmap maturity"
   ],
-  "deploymentComplexity": [],
+  "deploymentComplexity": [
+   "migration phase (assess/plan/test/migrate/launch), phased rollout, Four phase approach today to post-2030, Pilot transition plan 2025-2028, Complete transition to quantum resistant cryptography by 2030, PQC Roadmap for completion 2035, Implement 2023-2033"
+  ],
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "The document is titled \"PQC Readiness Guide\" and described as \"guidance,\" indicating it provides advisory recommendations rather than binding mandates.",
@@ -17071,7 +17130,16 @@
   "quantumThreats": [
    "Post-Quantum"
   ],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "Australia: Complete transition by 2030",
+   "Canada: Introduce standards-based PQC from 2025-26",
+   "Czech Republic: Migrate by 2027",
+   "France: Transition from 2024",
+   "New Zealand: Transition from 2026-27",
+   "South Korea: Pilot transition plan 2025-2028, completion 2035",
+   "Spain: Four phase approach today to post-2030",
+   "United States: Implement 2023-2033"
+  ],
   "regionsAndBodies": null,
   "leadersContributions": [],
   "pqcProducts": [
@@ -17150,7 +17218,9 @@
   "supplyChainRisk": [
    "third-party library trust, procurement risk, vendor PQC roadmap maturity"
   ],
-  "deploymentComplexity": [],
+  "deploymentComplexity": [
+   "migration phase (assess/plan/test/migrate/launch), phased rollout, Four phase approach today to post-2030, Pilot transition plan 2025-2028, Complete transition to quantum resistant cryptography by 2030, PQC Roadmap for completion 2035, Implement 2023-2033"
+  ],
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "CCN-TEC 009 recommends a five-phase transition: immediate use of digital signatures for firmware and software updates (Phase 1), hybrid solutions (Phase 2), hybrid solutions with standardised post-quantum cryptography (Phase 3), hybrid solutions with CCN-recommended algorithms and full migration of high-risk use cases (Phase 4), and adoption of the CCN-recommended algorithms with full migration of medium-risk use cases (Phase 5).",
@@ -17635,7 +17705,7 @@
   ],
   "migrationUrgency": "Near-Term (1-3yr)",
   "phaseTransition": "Transitions from current cryptographic standards to CNSA 2.0 compliance for software and firmware signing.",
-  "historicalSignificance": null,
+  "historicalSignificance": "Represents a concrete deadline for adopting CNSA 2.0, marking a critical step in the broader post-quantum and advanced cryptographic transition timeline.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
@@ -17713,7 +17783,7 @@
   ],
   "migrationUrgency": "Near-Term (1-3yr)",
   "phaseTransition": "Transitions web browsers, servers, and cloud services from classical cryptography to CNSA 2.0 compliant Post-Quantum Cryptography standards.",
-  "historicalSignificance": null,
+  "historicalSignificance": "Represents a critical industry-wide deadline for the adoption of quantum-resistant algorithms in foundational internet infrastructure by 2025.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
@@ -17791,7 +17861,7 @@
   ],
   "migrationUrgency": "Near-Term (1-3yr)",
   "phaseTransition": "Transitions from classical cryptographic suites to CNSA 2.0 compliant algorithms for VPNs and routers.",
-  "historicalSignificance": null,
+  "historicalSignificance": "Establishes a definitive 2026 compliance horizon for traditional networking hardware to adopt post-quantum cryptography standards.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
@@ -17869,7 +17939,7 @@
   ],
   "migrationUrgency": "Long-Term (3-5yr)",
   "phaseTransition": "Transitions operating systems from legacy cryptographic support to mandatory CNSA 2.0 compliance, enabling full post-quantum readiness by the specified deadline.",
-  "historicalSignificance": null,
+  "historicalSignificance": "This milestone establishes a concrete federal deadline for OS-level adoption of quantum-resistant standards, accelerating the global shift away from vulnerable classical algorithms.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
@@ -22251,57 +22321,178 @@
   "successorDependencies": "Enables hybrid PQC TLS deployments; Requires migration to OpenSSL 3.5+ for native PQC support."
  },
  "Australia:ASD — ISM June 2025 Cryptography Guidelines Update": {
-  "mainTopic": "",
-  "pqcAlgorithms": [],
-  "quantumThreats": [],
-  "migrationTimeline": null,
-  "regionsAndBodies": null,
+  "mainTopic": "The June 2025 revision of the Australian Information Security Manual (ISM) Guidelines for Cryptography, covering cryptographic fundamentals, ASD-Approved Cryptographic Algorithms (including ML-DSA and ML-KEM), key management, and the planned non-approval of DH, ECDH, ECDSA and RSA beyond 2030.",
+  "pqcAlgorithms": [
+   "ML-DSA",
+   "ML-KEM"
+  ],
+  "quantumThreats": [
+   "Projected technological advances in quantum computing (cited as the reason DH",
+   "ECDH and ECDSA will not be approved beyond 2030)"
+  ],
+  "migrationTimeline": [
+   "2030: DH, ECDH and ECDSA will not be approved beyond 2030; 2030: ML-DSA-65 will not be approved beyond 2030. The ISM-1917 control (support for ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by 2030) and the RSA 2030 restatement appear in the description; the provided text is truncated before them."
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "ASD (Australian Signals Directorate)",
+    "NIST",
+    "Canadian Centre for Cyber Security",
+    "Department of Home Affairs",
+    "United States National Security Agency"
+   ]
+  },
   "leadersContributions": [],
   "pqcProducts": [],
   "protocols": [],
-  "infrastructureLayers": [],
-  "standardizationBodies": [],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
-  "keyTakeaways": [],
-  "securityLevels": [],
+  "infrastructureLayers": [
+   "Key Management",
+   "High Assurance Cryptographic Equipment (HACE)",
+   "Full disk encryption",
+   "Cryptographic modules"
+  ],
+  "standardizationBodies": [
+   "ASD",
+   "NIST",
+   "ISO",
+   "IEC",
+   "Canadian Centre for Cyber Security"
+  ],
+  "complianceFrameworks": [
+   "ISM",
+   "FIPS 140-3",
+   "ISO/IEC 19790:2025",
+   "ISO/IEC 24759:2025",
+   "Common Criteria",
+   "NIST SP 800-57 Part 1 Rev. 5",
+   "NIST SP 800-56A Rev. 3",
+   "NIST SP 800-186",
+   "NIST SP 180-140",
+   "FIPS 203",
+   "FIPS 204",
+   "CNSA 2.0 (Commercial National Security Algorithm Suite 2.0)",
+   "Cryptographic Module Validation Program",
+   "Protective Security Policy Framework"
+  ],
+  "classicalAlgorithms": [
+   "DH",
+   "ECDH",
+   "ECDSA",
+   "RSA",
+   "SHA-2",
+   "SHA-3",
+   "AES"
+  ],
+  "keyTakeaways": [
+   "DH, ECDH and ECDSA will not be approved beyond 2030 due to projected quantum computing advances",
+   "ML-DSA-65 and ML-DSA-87 are approved, but ML-DSA-65 will not be approved beyond 2030",
+   "ECDH should be used in preference to DH (ISM-0994)",
+   "Only ASD-Approved Cryptographic Algorithms or high assurance cryptographic algorithms may be used (ISM-0471)",
+   "Adherence to pre-requisite FIPS publications is preferred when using ML-DSA and ML-KEM (ISM-1990)"
+  ],
+  "securityLevels": [
+   "ML-DSA-44",
+   "ML-DSA-65",
+   "ML-DSA-87",
+   "DH modulus 2048 bits minimum",
+   "preferably 3072 bits",
+   "ECDH/ECDSA base point order and key size at least 224 bits (112-bit security)",
+   "NIST P-256",
+   "P-384",
+   "P-521 curves",
+   "effective security strength targets 112 bits (non-classified",
+   "OFFICIAL: Sensitive",
+   "PROTECTED)",
+   "128 bits (SECRET)",
+   "192 bits (TOP SECRET)"
+  ],
   "hybridApproaches": [],
-  "performanceConsiderations": [],
-  "targetAudience": [],
-  "implementationPrereqs": [],
-  "relevantFeatures": [],
-  "implementationAttackSurface": [],
+  "performanceConsiderations": [
+   "DH modulus 2048 bits gives 112 bits effective security strength",
+   "DH modulus 3072 bits preferred",
+   "ECDH/ECDSA key size 224 bits gives 112 bits effective security strength"
+  ],
+  "targetAudience": [
+   "CISO",
+   "Security Architect",
+   "Compliance Officer",
+   "Policy Maker"
+  ],
+  "implementationPrereqs": [
+   "Common Criteria evaluated cryptographic equipment against a Protection Profile (OFFICIAL: Sensitive and PROTECTED)",
+   "HACE with ASD Approval for Use (SECRET and TOP SECRET)",
+   "documented cryptographic key management processes and procedures",
+   "disabling unapproved cryptographic algorithms",
+   "adherence to pre-requisite FIPS publications for ML-DSA and ML-KEM"
+  ],
+  "relevantFeatures": [
+   "Compliance",
+   "Algorithms",
+   "Timeline",
+   "Migrate",
+   "kms-pqc"
+  ],
+  "implementationAttackSurface": [
+   "Implementation errors in complex post-quantum algorithms (general mention)",
+   "unapproved algorithms used without user knowledge"
+  ],
   "cryptoDiscovery": [],
-  "testingValidation": [],
+  "testingValidation": [
+   "Cryptographic Module Validation Program (CMVP)",
+   "Common Criteria evaluation",
+   "FIPS 140-3 and ISO/IEC 19790/24759 validation"
+  ],
   "qkdProtocols": [],
   "qrngEntropy": [],
   "constrainedDeviceIoT": [],
-  "supplyChainRisk": [],
+  "supplyChainRisk": [
+   "References the cyber supply chain risk management section of the Guidelines for procurement and outsourcing",
+   "evaluated product procurement"
+  ],
   "deploymentComplexity": [
-   "phased approach (Triage → Implement → Validate)"
+   "Preference for disabling unapproved algorithms over usage policies",
+   "differing requirements by classification level (NC, OS, P, S, TS)",
+   "staged non-approval of algorithms beyond 2030"
   ],
   "financialBusinessImpact": [],
-  "organizationalReadiness": [],
-  "phaseClassification": null,
-  "mandateLevel": null,
-  "sectorApplicability": [],
-  "migrationUrgency": null,
-  "phaseTransition": null,
-  "historicalSignificance": null,
-  "implementationDates": [],
-  "successorDependencies": null
+  "organizationalReadiness": [
+   "Cryptographic key management processes and procedures must be developed, implemented and maintained (ISM-0507)",
+   "incidents reported to the chief information security officer or delegates"
+  ],
+  "phaseClassification": "The document is a government guidance manual (ISM) that sets cryptographic controls and specifies which post-quantum algorithms are approved and when classical algorithms will cease to be approved.",
+  "mandateLevel": "Recommended",
+  "sectorApplicability": [
+   "Government",
+   "Defense"
+  ],
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from classical-only approved algorithms toward approved post-quantum algorithms (ML-DSA, ML-KEM), signalling the transition of Australian government cryptography guidance ahead of the 2030 non-approval of classical asymmetric algorithms.",
+  "historicalSignificance": "Shows ASD formally approving ML-DSA and ML-KEM and setting 2030 as the date after which DH, ECDH and ECDSA are no longer approved, an early national-level PQC approval and deprecation timeline.",
+  "implementationDates": [
+   "2030: DH will not be approved beyond 2030",
+   "2030: ECDH will not be approved beyond 2030",
+   "2030: ECDSA will not be approved beyond 2030",
+   "2030: ML-DSA-65 will not be approved beyond 2030"
+  ],
+  "successorDependencies": "Depends on FIPS 203 and FIPS 204 (ML-KEM and ML-DSA) and pre-requisite FIPS publications; enables adoption of ML-DSA-87 and ML-KEM-1024 by 2030 and the retirement of DH, ECDH, ECDSA and RSA."
  },
  "Australia:ASD — Commonwealth Cyber Security Posture in 2025": {
-  "mainTopic": "The document reports on the cyber security posture of Australian government entities for the 2024–25 financial year, focusing on Essential Eight implementation and general security metrics.",
+  "mainTopic": "ASD's annual report to Parliament on the cyber security posture of Australian Commonwealth entities for 2024–25, covering Essential Eight implementation, incident readiness and leadership, with a recommendation to begin preparing for post-quantum cryptography.",
   "pqcAlgorithms": [],
   "quantumThreats": [],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "Entities are recommended to start preparing for Post Quantum Cryptography by locating and assessing algorithms that will need to transition to more secure forms of encryption",
+   "the description also encourages organisations to be prepared by 2030 (the 2030 date is not stated in the extracted text)."
+  ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
     "Australian Signals Directorate (ASD)",
+    "Attorney-General's Department",
     "Department of Home Affairs",
-    "Joint Committee of Public Accounts and Audit (JCPAA)"
+    "Joint Committee of Public Accounts and Audit (JCPAA)",
+    "Australian Parliament"
    ]
   },
   "leadersContributions": [],
@@ -22310,58 +22501,100 @@
   "infrastructureLayers": [],
   "standardizationBodies": [],
   "complianceFrameworks": [
-   "Essential Eight",
+   "Essential Eight Maturity Model",
    "Protective Security Policy Framework (PSPF)",
+   "PSPF Policy 13 (Technology Lifecycle Management)",
+   "PSPF Policy 14 (Cyber Security Strategies)",
+   "Information Security Manual (ISM)",
    "Public Governance",
-   "Performance and Accountability Act 2013"
+   "Performance and Accountability Act 2013",
+   "Strategies to Mitigate Cyber Security Incidents"
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Entities should start preparing for Post Quantum Cryptography by locating and assessing algorithms that will need to transition",
-   "Organizations should continue to implement Essential Eight mitigation strategies to at least Maturity Level 2",
-   "Entities should prioritize effective logging to identify malicious activity",
-   "Supply chain risk assessments should be a core output for new IT procurements"
+   "Entities should start preparing for post-quantum cryptography by locating and assessing algorithms that will need to transition",
+   "Continue implementing the Essential Eight to at least Maturity Level 2 (only 22% of entities reached overall ML2 in 2025)",
+   "Prioritise effective logging and strategies for managing legacy IT now and into the future",
+   "Make supply chain risk assessments a core output of new IT procurements",
+   "Increase cyber security incident reporting to ASD and regularly test incident response plans"
   ],
-  "securityLevels": [],
+  "securityLevels": [
+   "Essential Eight Maturity Levels 0 to 3 (PSPF mandates at least Maturity Level 2)",
+   "no cryptographic parameter sets stated"
+  ],
   "hybridApproaches": [],
   "performanceConsiderations": [],
   "targetAudience": [
    "CISO",
    "Compliance Officer",
-   "Policy Maker"
+   "Policy Maker",
+   "Security Architect",
+   "Operations"
   ],
-  "implementationPrereqs": [],
+  "implementationPrereqs": [
+   "Cryptographic inventory (locating and assessing algorithms that need to transition)",
+   "Essential Eight Maturity Level 2 implementation",
+   "effective logging",
+   "legacy IT management strategy"
+  ],
   "relevantFeatures": [
-   "pqc-risk-management",
+   "Compliance",
+   "Assess",
+   "Timeline",
    "pqc-governance",
-   "migration-program"
+   "pqc-risk-management"
   ],
-  "implementationAttackSurface": [],
+  "implementationAttackSurface": [
+   "Legacy IT vulnerabilities (unsupported systems used as a pivot to modern systems)",
+   "living off the land techniques",
+   "weaker multi-factor authentication factors (biometrics, security questions, trusted signals)"
+  ],
   "cryptoDiscovery": [
-   "locating and assessing algorithms that will need to transition to more secure forms of encryption"
+   "Locating and assessing algorithms that will need to transition to more secure forms of encryption",
+   "CHIPs quarterly scans of internet-facing systems for security protocols and encryption on email servers"
   ],
   "testingValidation": [],
   "qkdProtocols": [],
   "qrngEntropy": [],
   "constrainedDeviceIoT": [],
   "supplyChainRisk": [
-   "70 per cent of entities performed supply chain risk assessments for applications, information technology (IT) equipment and services"
+   "70% of entities performed supply chain risk assessments for applications, IT equipment and services in 2025 (down from 74% in 2024)",
+   "recommendation that supply chain risk assessments be a core output of new IT procurements"
   ],
-  "deploymentComplexity": [],
-  "financialBusinessImpact": [],
+  "deploymentComplexity": [
+   "Legacy IT inhibits Essential Eight implementation (59% of entities affected in 2025 vs 71% in 2024)",
+   "main barriers are insufficient dedicated funding (34%) and lack of viable replacement (18%)",
+   "PQC preparation is at the initial discovery and assessment stage"
+  ],
+  "financialBusinessImpact": [
+   "Insufficient dedicated funding was the leading reason for continued legacy IT use (34%)",
+   "91% of entities had planned cyber security improvement work, of which 83% had funded it"
+  ],
   "organizationalReadiness": [
-   "22 per cent of entities reached overall Maturity Level 2 across the Essential Eight mitigation strategies"
+   "82% of entities had a cyber security strategy",
+   "92% addressed cyber disruptions in business continuity and disaster recovery planning",
+   "90% had an incident response plan",
+   "87% provided annual cyber security training",
+   "45% provided annual privileged user training",
+   "22% reached overall Essential Eight Maturity Level 2",
+   "94% survey participation"
   ],
-  "phaseClassification": "The document is a government report on cyber security posture that includes a recommendation to start preparing for PQC, representing an early awareness/planning phase rather than a specific technical standard or mandate.",
+  "phaseClassification": "The report is government guidance and assessment that recommends entities begin PQC preparation by locating and assessing algorithms, rather than mandating or standardising anything.",
   "mandateLevel": "Recommended",
   "sectorApplicability": [
    "Government"
   ],
   "migrationUrgency": "Exploratory",
-  "phaseTransition": "Moves from general cyber security hardening to initial PQC awareness, enabling entities to begin locating and assessing algorithms for future transition.",
-  "historicalSignificance": "Represents a national government report explicitly recommending the start of PQC preparation (algorithm inventory) for federal entities, signaling the beginning of the assessment phase in the Australian public sector.",
-  "implementationDates": [],
-  "successorDependencies": "Requires locating and assessing algorithms that will need to transition to more secure forms of encryption"
+  "phaseTransition": "Signals the move from awareness to initial preparation (cryptographic discovery and assessment) for Australian government entities; it enables later planning and transition of algorithms.",
+  "historicalSignificance": "This is the sixth annual ASD report to Parliament on Commonwealth cyber security, and it adds an explicit recommendation to prepare for post-quantum cryptography.",
+  "implementationDates": [
+   "30 June 2025: reporting date for entity posture assessment",
+   "12 Feb 2026: report published",
+   "1 July 2022: PSPF requires Essential Eight to Maturity Level 2",
+   "November 2023: Essential Eight Maturity Model updated",
+   "24 July 2025: PSPF Release 2025 launched"
+  ],
+  "successorDependencies": "Builds on the ASD Cyber Security Survey for Commonwealth Entities and the Essential Eight Maturity Model; PQC preparation depends on entities first locating and assessing the algorithms that will need to transition; future PSPF Assessment Reports will assess against new or updated requirements."
  },
  "Australia:DISR — National Quantum Strategy": {
   "mainTopic": "The Australian Government's National Quantum Strategy outlining a long-term vision to grow the quantum industry, invest in research, and secure infrastructure.",
@@ -28438,7 +28671,10 @@
    "Migration is time-consuming and costly",
    "Lack of full crypto overview creates challenges"
   ],
-  "financialBusinessImpact": [],
+  "financialBusinessImpact": [
+   "Migration is costly",
+   "Protection of sensitive business information (finance, investment plans, innovation, personal data)"
+  ],
   "organizationalReadiness": [
    "Need for risk assessment",
    "NSM assistance available"
@@ -28567,7 +28803,17 @@
    "Shor's Algorithm",
    "Cryptographically Relevant Quantum Computer (CRQC)"
   ],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "US Federal migration before 2035",
+   "UK Roadmap 2028–2035",
+   "China NGCC launch February 2025",
+   "China standardization completion in 3 years",
+   "China mass migration in 5 years",
+   "China consolidation in 10 years",
+   "US high-risk migration deadline 2030",
+   "US full quantum-resistant security 2035",
+   "Q-Day estimated early 2030s"
+  ],
   "regionsAndBodies": null,
   "leadersContributions": [
    "Dr. Rudi Rusdiah – Member of TaskForce National PQC Migration Road Map",
@@ -31892,7 +32138,7 @@
   ],
   "migrationUrgency": "Exploratory",
   "phaseTransition": "Adds the NIST post-quantum standards to the algorithms the Cyber Centre recommends; the publication states recommendations and does not itself authorise deployment.",
-  "historicalSignificance": null,
+  "historicalSignificance": "This milestone marks the formal adoption of NIST FIPS 203/204/205 by the Canadian government, establishing a regulatory baseline for PQC usage in protected government information systems.",
   "implementationDates": [],
   "successorDependencies": "Requires implementation of ML-KEM, ML-DSA, and SLH-DSA in systems handling non-classified, Protected A, and Protected B information."
  },
@@ -32034,7 +32280,14 @@
    "Harvest Now Decrypt Later (HNDL)",
    "Post-Quantum"
   ],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "0 The Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) (published in 2024) outlines requirements, algorith...",
+   "ed for the following product categories to adopt CNSA 2.0 compliant algorithms: 2025 : New software and firmware sign...",
+   "cloud servers 2026 : Traditional networking equipment such as VPNs and routers 2027 : New NSS, operating systems 2030...",
+   "networking equipment such as VPNs and routers 2027 : New NSS, operating systems 2030 : Legacy systems unable to suppo...",
+   "operating systems 2030 : Legacy systems unable to support CNSA 2.0 phased out 2035 : All NSS quantum-resistant Canada...",
+   "ASD , organizations should develop a refined plan for transition by the end of 2026, with a view to commencing transi..."
+  ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
@@ -32043,7 +32296,12 @@
    ]
   },
   "leadersContributions": [],
-  "pqcProducts": [],
+  "pqcProducts": [
+   "pqcrypto",
+   "Signal",
+   "PQCryptoLib-Core",
+   "PQMicroLib-Core"
+  ],
   "protocols": [],
   "infrastructureLayers": [
    "Firmware",
@@ -32505,7 +32763,12 @@
  },
  "Germany:BSI/DLR — DLR × BSI Cooperation on QUANTITY Cryptanalysis Project": {
   "mainTopic": "Announcement of the QUANTITY cryptanalysis project collaboration between DLR and BSI to assess quantum computer threats to cryptography.",
-  "pqcAlgorithms": [],
+  "pqcAlgorithms": [
+   "ML-KEM",
+   "CRYSTALS-Kyber",
+   "FrodoKEM",
+   "Classic McEliece"
+  ],
   "quantumThreats": [
    "Shor",
    "Grover"
@@ -32522,14 +32785,26 @@
    ]
   },
   "leadersContributions": [],
-  "pqcProducts": [],
+  "pqcProducts": [
+   "pqcrypto"
+  ],
   "protocols": [],
-  "infrastructureLayers": [],
+  "infrastructureLayers": [
+   "Email"
+  ],
   "standardizationBodies": [
    "BSI"
   ],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
+  "complianceFrameworks": [
+   "BSI TR-02102"
+  ],
+  "classicalAlgorithms": [
+   "X25519",
+   "ECDH",
+   "RSA",
+   "AES-192",
+   "AES-256"
+  ],
   "keyTakeaways": [
    "DLR announced on 10 March 2025 a strategic cooperation with the BSI in its QUANTITY cryptanalysis project, which investigates the significance of quantum computers for cryptanalysis and helps identify new threat scenarios and protective measures early",
    "DLR cites a BSI analysis that puts cryptographic relevance of quantum computers at 16 years at the latest but perhaps much sooner, so business, government and research need to act today",
@@ -32537,33 +32812,73 @@
    "The project will develop novel quantum-computer-assisted cryptanalysis methods and test them with a proof-of-concept implementation",
    "Findings are meant to feed into security assessments and possible guidelines at an early stage"
   ],
-  "securityLevels": [],
-  "hybridApproaches": [],
-  "performanceConsiderations": [],
+  "securityLevels": [
+   "ML-KEM-768",
+   "ML-KEM-1024",
+   "FrodoKEM-976",
+   "FrodoKEM-1344",
+   "120-bit security level",
+   "128-bit security level",
+   "AES-192 equivalent",
+   "AES-256 equivalent"
+  ],
+  "hybridApproaches": [
+   "Hybrid mode with classical mechanisms",
+   "Cryptographic agility",
+   "Composite certificates (implied by hybrid implementation guidance)"
+  ],
+  "performanceConsiderations": [
+   "ML-KEM-768 public key 1,184 bytes",
+   "ML-KEM-768 ciphertext 1,088 bytes",
+   "ML-KEM-1024 public key 1,568 bytes",
+   "FrodoKEM-976 public key 15,632 bytes",
+   "Classic McEliece public key 1,044,992 bytes",
+   "ML-KEM ~2x slower than X25519",
+   "FrodoKEM up to ~10x slower than ECDH"
+  ],
   "targetAudience": [
    "Researcher",
    "Security Architect",
    "Policy Maker"
   ],
-  "implementationPrereqs": [],
+  "implementationPrereqs": [
+   "Cryptographically secure randomness per AIS 20/31 standards",
+   "Constant-time implementation",
+   "Comprehensive side-channel evaluation",
+   "Hardware upgrades for bandwidth and computation"
+  ],
   "relevantFeatures": [
    "Threats",
    "Assess",
    "Algorithms",
    "pqc-risk-management"
   ],
-  "implementationAttackSurface": [],
-  "cryptoDiscovery": [],
+  "implementationAttackSurface": [
+   "side-channel (timing variations, power analysis, cache timing attacks), randomness generation vulnerabilities, parameter validation failures, malformed input attacks"
+  ],
+  "cryptoDiscovery": [
+   "cryptographic agility, algorithm selection, BSI compliance checklist"
+  ],
   "testingValidation": [
    "proof-of-concept implementation"
   ],
   "qkdProtocols": [],
-  "qrngEntropy": [],
+  "qrngEntropy": [
+   "cryptographically secure randomness, substantial entropy, PTRNG or DRNG per AIS 20/31 standards, entropy collection"
+  ],
   "constrainedDeviceIoT": [],
-  "supplyChainRisk": [],
-  "deploymentComplexity": [],
-  "financialBusinessImpact": [],
-  "organizationalReadiness": [],
+  "supplyChainRisk": [
+   "open-source implementations, commercial products, reference implementations, third-party library trust"
+  ],
+  "deploymentComplexity": [
+   "phased approach, hybrid mode implementation, backward compatibility with classical mechanisms, cryptographic agility for algorithm updates, operational continuity"
+  ],
+  "financialBusinessImpact": [
+   "€300,000 hardware upgrades, €250,000 software development, €200,000 testing & validation, €150,000 training & expertise, €100,000 compliance & audit, 15-25% increase in cryptographic infrastructure costs, €50 million infrastructure upgrades for Bundeswehr"
+  ],
+  "organizationalReadiness": [
+   "training development teams, establishing partnerships with security evaluation laboratories, maintaining alignment with BSI technical guidelines, sustained investment and expertise development"
+  ],
   "phaseClassification": "The document announces a research project (QUANTITY) investigating quantum cryptanalysis and threat scenarios, representing an exploratory research phase rather than a deployment or standardization mandate.",
   "mandateLevel": "Informational",
   "sectorApplicability": [
@@ -32661,7 +32976,7 @@
   ],
   "migrationUrgency": "Long-Term (3-5yr)",
   "phaseTransition": "Transitions from planning and alignment phases to final compliance completion by 2030.",
-  "historicalSignificance": null,
+  "historicalSignificance": "Represents a coordinated regional deadline for the financial sector in Hong Kong, aligning with broader APAC regulatory efforts.",
   "implementationDates": [
    "2030: HKMA aim of full sectoral readiness (a QPI score of 10)"
   ],
@@ -32943,7 +33258,10 @@
    "ML-KEM"
   ],
   "quantumThreats": [],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "Year: 2024",
+   "Year: 2025"
+  ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
@@ -32998,8 +33316,11 @@
   ],
   "migrationUrgency": "Near-Term",
   "phaseTransition": "Moves from Evaluation to Recommendation — signals formal adoption of ML-KEM in Japanese cryptographic guidelines.",
-  "historicalSignificance": null,
-  "implementationDates": [],
+  "historicalSignificance": "CRYPTREC formally includes ML-KEM in its Recommended Ciphers List, aligning Japanese standards with NIST PQC selections.",
+  "implementationDates": [
+   "2026/3/30: Addition of ML-KEM to Recommended Ciphers List",
+   "2026/4/13: Publication of FY 2025 Annual Report"
+  ],
   "successorDependencies": "Enables adoption of ML-KEM in systems compliant with CRYPTREC guidelines; Requires implementation of ML-KEM in cryptographic modules."
  },
  "Singapore:CSA/GovTech/IMDA — Draft Quantum-Safe Handbook Released for Public Consultation": {
@@ -33276,7 +33597,16 @@
   "quantumThreats": [
    "Post-Quantum"
   ],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "Australia: Complete transition by 2030",
+   "Canada: Introduce standards-based PQC from 2025-26",
+   "Czech Republic: Migrate by 2027",
+   "France: Transition from 2024",
+   "New Zealand: Transition from 2026-27",
+   "South Korea: Pilot transition plan 2025-2028, completion 2035",
+   "Spain: Four phase approach today to post-2030",
+   "United States: Implement 2023-2033"
+  ],
   "regionsAndBodies": null,
   "leadersContributions": [],
   "pqcProducts": [
@@ -33358,7 +33688,9 @@
   "supplyChainRisk": [
    "third-party library trust, procurement risk, vendor PQC roadmap maturity"
   ],
-  "deploymentComplexity": [],
+  "deploymentComplexity": [
+   "migration phase (assess/plan/test/migrate/launch), phased rollout, Four phase approach today to post-2030, Pilot transition plan 2025-2028, Complete transition to quantum resistant cryptography by 2030, PQC Roadmap for completion 2035, Implement 2023-2033"
+  ],
   "financialBusinessImpact": [],
   "organizationalReadiness": [],
   "phaseClassification": "CCN-TEC 009 recommends a five-phase transition: immediate use of digital signatures for firmware and software updates (Phase 1), hybrid solutions (Phase 2), hybrid solutions with standardised post-quantum cryptography (Phase 3), hybrid solutions with CCN-recommended algorithms and full migration of high-risk use cases (Phase 4), and adoption of the CCN-recommended algorithms with full migration of medium-risk use cases (Phase 5).",
@@ -33445,7 +33777,14 @@
   "quantumThreats": [
    "Quantum computer threats"
   ],
-  "migrationTimeline": null,
+  "migrationTimeline": [
+   "2026: Start preparation and system improvement",
+   "2027: System survey and assessment",
+   "2028: Initial system transition plan",
+   "2029: Transition high-importance systems",
+   "2030: Improve and review plan",
+   "2031: Complete system transition"
+  ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
@@ -33522,7 +33861,14 @@
   "migrationUrgency": "Long-Term",
   "phaseTransition": "Moves from awareness and preparation (2026-2027) to active system transition (2028-2031).",
   "historicalSignificance": "Represents Thailand's national roadmap for PQC adoption, setting a 2030 target for quantum readiness.",
-  "implementationDates": [],
+  "implementationDates": [
+   "2026: Start preparation",
+   "2027: System survey",
+   "2028: Initial transition plan",
+   "2029: High-importance system transition",
+   "2030: Plan review",
+   "2031: Transition complete"
+  ],
   "successorDependencies": "Requires adoption of PQC standards and tools like OpenSSL 3+ and Open Quantum Safe."
  },
  "United Kingdom:NCSC — Complete migration to PQC": {
@@ -34221,7 +34567,7 @@
   ],
   "migrationUrgency": "Critical Deadline (specific compliance deadline with year)",
   "phaseTransition": "Moves from proposed recommendations to ready for implementation following NIST standardization, enabling a procurement mandate for agencies starting in 2027.",
-  "historicalSignificance": null,
+  "historicalSignificance": "CNSA 2.0 represents the first formal set of cryptographic requirements by the NSA designed specifically to secure National Security Systems against CRQCs, solidifying the transition from theoretical risk to actionable compliance.",
   "implementationDates": [
    "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
    "December 31, 2030: unsupported NSS equipment and services phased out",
