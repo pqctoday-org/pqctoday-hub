@@ -2,10 +2,12 @@
 /* eslint-disable testing-library/no-node-access -- Replay the published CSS-selector contract against real components. */
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor, within, act } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { MemoryRouter, Route, Routes, useSearchParams } from 'react-router'
 import flowJson from '../../public/workshop/executive-basics-finance-and-banking-amer-apac_05022026.json'
 import manifest from '../../public/workshop/index.json'
 import packageMeta from '../../package.json'
+import { Button } from '@/components/ui/button'
+import { buildStepUrl } from '@/utils/workshopDeepLink'
 import { flattenFlow } from '@/data/workshopRegistry'
 import { resolveFromManifest, type WorkshopFlowManifest } from './workshopFlowLoader'
 import type { WorkshopFlow } from '@/types/Workshop'
@@ -83,9 +85,25 @@ it('uses the actual quick questions and keeps unknown inputs distinct from obser
   ).toContain('A completed template is planning work, not an audit conclusion')
 })
 
-it('executes the displayed quick-path cue actions through review and generation to the real report', async () => {
+it('executes the published reset URL from previous answers through the real report and fifteen saved drafts', async () => {
+  useAssessmentStore.setState({
+    assessmentMode: 'comprehensive',
+    assessmentStatus: 'in-progress',
+    currentStep: 5,
+    currentCrypto: ['RSA-2048'],
+    cryptoUnknown: false,
+    dataSensitivity: ['critical'],
+    sensitivityUnknown: false,
+    complianceRequirements: ['PCI DSS'],
+    complianceUnknown: false,
+    migrationStatus: 'started',
+    migrationUnknown: false,
+    infrastructure: ['HSM / Hardware security modules'],
+    timelinePressure: 'within-1y',
+    dataRetention: ['25-plus'],
+  })
   render(
-    <MemoryRouter initialEntries={['/assess?mode=quick']}>
+    <MemoryRouter initialEntries={[buildStepUrl(assessment)]}>
       <Routes>
         <Route path="/assess" element={<AssessViewRedesign />} />
         <Route path="/report" element={<ReportView />} />
@@ -93,12 +111,21 @@ it('executes the displayed quick-path cue actions through review and generation 
       </Routes>
     </MemoryRouter>
   )
+  await waitFor(() => expect(useAssessmentStore.getState().currentStep).toBe(0))
+  expect(useAssessmentStore.getState().industry).toBe('Finance & Banking')
+  expect(useAssessmentStore.getState().country).toBe('United States')
+  expect(useAssessmentStore.getState().infrastructure).toEqual([])
+  expect(useAssessmentStore.getState().timelinePressure).toBe('')
+  expect(useAssessmentStore.getState().dataRetention).toEqual([])
+  expect(screen.queryByText('Resume saved assessment?')).not.toBeInTheDocument()
   for (const cue of assessment.cues ?? []) {
     if (cue.kind !== 'click') continue
     // The same selectors the shipped cue applier uses; no assessment hook mocks.
     const selector = cue.selector
     await waitFor(() => expect(document.querySelector(selector), selector).not.toBeNull())
     fireEvent.click(document.querySelector(selector) as HTMLElement)
+    expect(useAssessmentStore.getState().country).toBe('United States')
+    expect(useAssessmentStore.getState().industry).toBe('Finance & Banking')
   }
   await waitFor(() => expect(useAssessmentStore.getState().assessmentStatus).toBe('complete'))
   const state = useAssessmentStore.getState()
@@ -220,7 +247,7 @@ it('preserves the native manual assessment and corrected dock without inventing 
     fireEvent.click(
       within(screen.getByRole('region', { name: 'Native assessment test host' })).getByRole(
         'button',
-        { name: index === 5 ? 'Finish' : 'Next', exact: true }
+        { name: index === 5 ? 'Finish' : 'Next' }
       )
     )
   }
@@ -237,4 +264,71 @@ it('preserves the native manual assessment and corrected dock without inventing 
   ]).toEqual([true, true, true, true])
   fireEvent.click(screen.getByRole('link', { name: 'View report' }))
   expect(screen.getByText('Native report destination')).toBeVisible()
+})
+
+function ResetQueryProbe({ revision }: { revision: number }) {
+  const [params, setParams] = useSearchParams()
+  return (
+    <>
+      <output data-testid="reset-query">
+        {params.toString()} · {revision}
+      </output>
+      <Button
+        onClick={() =>
+          setParams((previous) => {
+            const next = new URLSearchParams(previous)
+            next.set('context', 'sample')
+            return next
+          })
+        }
+      >
+        Change unrelated query
+      </Button>
+      <Button
+        onClick={() =>
+          setParams((previous) => {
+            const next = new URLSearchParams(previous)
+            next.set('reset', '1')
+            return next
+          })
+        }
+      >
+        Request another reset
+      </Button>
+    </>
+  )
+}
+
+it('consumes each explicit reset once and keeps later query changes and rerenders from clearing answers', async () => {
+  useAssessmentStore.setState({
+    currentCrypto: ['RSA-2048'],
+    infrastructure: ['HSM / Hardware security modules'],
+    timelinePressure: 'within-1y',
+  })
+  const tree = (revision: number) => (
+    <MemoryRouter initialEntries={[buildStepUrl(assessment)]}>
+      <ResetQueryProbe revision={revision} />
+      <AssessViewRedesign />
+    </MemoryRouter>
+  )
+  const view = render(tree(0))
+  await waitFor(() => expect(screen.getByTestId('reset-query')).not.toHaveTextContent('reset=1'))
+  expect(useAssessmentStore.getState().currentCrypto).toEqual([])
+  expect(useAssessmentStore.getState().infrastructure).toEqual([])
+  expect(useAssessmentStore.getState().country).toBe('United States')
+  fireEvent.click(document.querySelector('[data-workshop-target="assess-next"]') as HTMLElement)
+  fireEvent.click(document.querySelector('[data-workshop-target="assess-next"]') as HTMLElement)
+  await waitFor(() => expect(useAssessmentStore.getState().cryptoUnknown).toBe(true))
+  expect(useAssessmentStore.getState().currentStep).toBe(2)
+  fireEvent.click(screen.getByRole('button', { name: 'Change unrelated query' }))
+  view.rerender(tree(1))
+  expect(useAssessmentStore.getState().currentStep).toBe(2)
+  expect(useAssessmentStore.getState().cryptoUnknown).toBe(true)
+  expect(useAssessmentStore.getState().country).toBe('United States')
+  fireEvent.click(screen.getByRole('button', { name: 'Request another reset' }))
+  await waitFor(() => expect(useAssessmentStore.getState().currentStep).toBe(0))
+  expect(useAssessmentStore.getState().cryptoUnknown).toBe(false)
+  expect(useAssessmentStore.getState().industry).toBe('Finance & Banking')
+  expect(useAssessmentStore.getState().country).toBe('United States')
+  expect(screen.getByTestId('reset-query')).not.toHaveTextContent('reset=1')
 })
