@@ -149,16 +149,13 @@ const RESOLVERS: Record<string, Resolver> = {
     requireArgs('library_active_count', args, 0)
     return String(mod.LIBRARY_ACTIVE_SOURCE_COUNT)
   },
-  // The one conditional value in the whole vocabulary: falls back to a fixed
-  // phrase when no compliance-tagged authoritative source carries a verified
-  // date. Mirrors the ternary the inline board copy used before migration —
-  // see `REGULATORY_DATA_VERIFIED_DATE`'s own doc comment for why the date
-  // itself, not just this phrase, is derived rather than hardcoded.
+  // Keep the canonical token identity; render separate date coverage and ranges.
   regulatory_verified_phrase: (mod, args) => {
     requireArgs('regulatory_verified_phrase', args, 0)
-    return mod.REGULATORY_DATA_VERIFIED_DATE
-      ? `Regulatory data verified ${mod.REGULATORY_DATA_VERIFIED_DATE}`
-      : 'Regulatory data verified against source'
+    return (
+      mod.REGULATORY_SOURCE_COVERAGE_PHRASE ??
+      'Recorded checking-date coverage is unavailable; no whole-corpus review or freshness is established.'
+    )
   },
   hsm_use_cases_count: (mod, args) => {
     requireArgs('hsm_use_cases_count', args, 0)
@@ -315,7 +312,7 @@ const TOKEN_RE = /\{([a-zA-Z_][a-zA-Z0-9_]*)([^{}]*)\}/g
  * must fail the build, not ship as literal `{...}` text or a thrown-away typo.
  */
 export function expandTokens(content: string, mod: PersonaConfigModule): string {
-  return content.replace(TOKEN_RE, (whole, name: string, argsRaw: string) => {
+  return content.replace(TOKEN_RE, (_whole, name: string, argsRaw: string) => {
     const resolver = RESOLVERS[name]
     if (!resolver) {
       throw new TokenError(`Unknown token "{${name}}" in: ${content}`)

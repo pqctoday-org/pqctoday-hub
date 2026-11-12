@@ -2007,13 +2007,11 @@ export function mlDsaSignatureBytes(paramSet: string): string {
  * conclusion is now computed from the premises.
  *
  * The CRQC year is no longer a literal either. It comes from
- * `getCrqcForecast()` — since ruling R5 (2026-09-24) the ONE CRQC window the
- * site shows, derived only from genuine arrival forecasts (today the Global
- * Risk Institute 2025 survey, 2030–2041); migration deadlines are no longer
- * blended in. The card needs a single Z, so it uses the forecast's
- * `planningYear` (the window's midpoint, rounded down — the earlier year is the
- * safer planning assumption), the same Z the Threats page's Mosca card and
- * economics calculator default to.
+ * `getCrqcForecast()`. The site-set 2030–2041 planning range is separate from
+ * the Global Risk Institute survey’s horizon probabilities. The card needs
+ * one Z and uses the existing site-selected `planningYear` (the planning
+ * range’s midpoint, rounded down), as do the Threats Mosca card and economics
+ * calculator. No survey midpoint or migration deadline is an arrival forecast.
  *
  * The punchline is expressed as a START-BY YEAR rather than a countdown from
  * "now" deliberately: a `Date.now()`-dependent string would make the generated
@@ -2152,7 +2150,7 @@ export const EXEC_MOSCA_PUNCHLINE =
     : `Start by ${EXEC_MOSCA_START_BY_YEAR} to keep ${EXEC_MOSCA_COMPLETE_BY_YEAR} data safe.`
 
 /** Footnote describing the derivation, with the real source count. */
-export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: Z ${CRQC.planningYear} − X ${EXEC_EXPOSURE.secrecyYears} yrs − Y ${EXEC_EXPOSURE.migrationYears} yrs = ${EXEC_MOSCA_START_BY_YEAR}. A ${EXEC_EXPOSURE.migrationYears}-year migration had to finish by ${EXEC_MOSCA_COMPLETE_BY_YEAR}, because ${EXEC_EXPOSURE.secrecyYears}-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z ${CRQC.planningYear} is the midpoint, rounded down, of the published CRQC expert forecast, ${CRQC.low}–${CRQC.high} (${CRQC.sourceCountLabel}); migration deadlines set by regulators are not forecasts and are not part of it.`
+export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: Z ${CRQC.planningYear} − X ${EXEC_EXPOSURE.secrecyYears} yrs − Y ${EXEC_EXPOSURE.migrationYears} yrs = ${EXEC_MOSCA_START_BY_YEAR}. A ${EXEC_EXPOSURE.migrationYears}-year migration had to finish by ${EXEC_MOSCA_COMPLETE_BY_YEAR}, because ${EXEC_EXPOSURE.secrecyYears}-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z ${CRQC.planningYear} is the Hub-selected planning year within its site-set ${CRQC.low}–${CRQC.high} scenario range. The cited ${CRQC.sourceCountLabel} reports probabilities by horizon, not this midpoint; regulatory migration deadlines are a separate input, not arrival forecasts.`
 
 /**
  * ops sideCard's "150 ops/s · ~133× slower than ECDSA" — both figures already

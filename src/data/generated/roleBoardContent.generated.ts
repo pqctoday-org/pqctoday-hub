@@ -32,7 +32,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every regulatory date links to its source',
           '1495 documents, trust-tiered',
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
         ],
         sideCard: {
           title: 'Your exposure window',
@@ -45,7 +45,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'Your start-by year was 2018 — you are eight years past it.',
           footnote:
-            "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the midpoint, rounded down, of the published CRQC expert forecast, 2030–2041 (one expert survey); migration deadlines set by regulators are not forecasts and are not part of it.",
+            "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the Hub-selected planning year within its site-set 2030–2041 scenario range. The cited one expert survey reports probabilities by horizon, not this midpoint; regulatory migration deadlines are a separate input, not arrival forecasts.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Built from the inputs you enter, with sample cases to start from',
@@ -100,7 +100,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
           'The CRQC estimate carries its dissent',
         ],
         sideCard: {
@@ -168,7 +168,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
           '1495 documents, trust-tiered',
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -240,7 +240,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -448,7 +448,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1495 documents, trust-tiered', 'Regulatory data verified 7 Nov 2026'],
+        proofChips: [
+          '1495 documents, trust-tiered',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+        ],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -593,7 +596,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Review what applies first',
         ctaSecondaryHref: '/compliance?tab=obligations',
         proofChips: [
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -734,7 +737,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1495 documents, trust-tiered', 'Regulatory data verified 7 Nov 2026'],
+        proofChips: [
+          '1495 documents, trust-tiered',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+        ],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -808,7 +814,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
           'Organised around the NIST CSWP.39 zones',
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
         ],
         sideCard: {
           title: 'What closure requires',
@@ -1268,7 +1274,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Work the compliance checklist',
         ctaSecondaryHref: '/business/tools/compliance-checklist',
         proofChips: [
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
           'Draft and final are labelled, never merged',
           'Every requirement links to its source',
         ],
@@ -1894,7 +1900,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Your own answers, not a sample estate',
           'Organised around the NIST CSWP.39 zones',
-          'Regulatory data verified 7 Nov 2026',
+          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
         ],
         sideCard: {
           title: 'What the score is built on',
@@ -2523,7 +2529,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'Your start-by year was 2018 — you are eight years past it.',
           footnote:
-            "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the midpoint, rounded down, of the published CRQC expert forecast, 2030–2041 (one expert survey); migration deadlines set by regulators are not forecasts and are not part of it.",
+            "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the Hub-selected planning year within its site-set 2030–2041 scenario range. The cited one expert survey reports probabilities by horizon, not this midpoint; regulatory migration deadlines are a separate input, not arrival forecasts.",
         },
         gridTitle: 'What the workspace gives you',
         gridSub: 'The estimate and its dissent',
