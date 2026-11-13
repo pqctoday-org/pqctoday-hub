@@ -14,6 +14,14 @@ export interface PaymentNetworkSource {
   url: string
 }
 
+export type RadarAxisKey =
+  | 'scale'
+  | 'offlineExposure'
+  | 'tokenization'
+  | 'pqcReadiness'
+  | 'regulatoryPressure'
+  | 'legacyBurden'
+
 /** What a network's volume figure measures. Only `purchase-volume` rows can be added together. */
 export type NetworkVolumeMetric =
   'purchase-volume' | 'network-volume-incl-cash-and-alternative-payments'
@@ -88,15 +96,13 @@ export interface PaymentNetwork {
   pqcTimeline: string
   evidenceBasis: string
   officialSources: PaymentNetworkSource[]
-  /** 0-5 authored judgements for the radar chart; see RADAR_RUBRIC. Not measurements. */
-  radarScores: {
-    scale: number
-    offlineExposure: number
-    tokenization: number
-    pqcReadiness: number
-    regulatoryPressure: number
-    legacyBurden: number
-  }
+  /**
+   * 0-5 scores for the radar chart, each derived from the rule in RADAR_RUBRIC and its basis.
+   * Null means "not scored": no sourced basis is shown on the page. It never means 0.
+   */
+  radarScores: Record<RadarAxisKey, number | null>
+  /** One sentence per axis saying where the score, or the absence of one, comes from. */
+  radarBasis: Record<RadarAxisKey, string>
 }
 
 // ---------------------------------------------------------------------------

@@ -1,9 +1,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import { PAYMENT_NETWORKS } from './paymentNetworkData'
-import { CALENDAR_2025, comparePurchaseVolume, formatUsdBillions } from './networkVolumeComparison'
+import {
+  CALENDAR_2025,
+  CARD_COUNT_AS_OF,
+  compareCardCounts,
+  comparePurchaseVolume,
+  formatCardTotal,
+  formatUsdBillions,
+} from './networkVolumeComparison'
 import { RADAR_AXES, type PaymentNetwork } from './emvConstants'
-import { RADAR_RUBRIC, RADAR_SCORES_NOTICE } from './networkRadarRubric'
+import {
+  RADAR_RUBRIC,
+  RADAR_SCORES_NOTICE,
+  cardCountShares,
+  legacyBurdenScore,
+  pqcReadinessScore,
+  scaleScoreFromShare,
+} from './networkRadarRubric'
 
 function byId(id: string): PaymentNetwork {
   const found = PAYMENT_NETWORKS.find((n) => n.id === id)
@@ -142,21 +156,148 @@ describe('radar score rubric', () => {
     }
   })
 
-  it('states that the scores are authored judgements and that missing evidence is not 0', () => {
-    expect(RADAR_SCORES_NOTICE).toMatch(/authored judgements/)
+  it('states that scores are teaching aids, need a sourced basis, and that not scored is not 0', () => {
+    expect(RADAR_SCORES_NOTICE).toMatch(/teaching aids/)
     expect(RADAR_SCORES_NOTICE).toMatch(/not a rating of any company/)
-    expect(RADAR_SCORES_NOTICE).toMatch(/missing evidence is never scored as 0/)
+    expect(RADAR_SCORES_NOTICE).toMatch(/"not scored" is not 0/i)
   })
 
-  it('keeps every authored score inside 0 to 5', () => {
+  it('gives every axis of every network either a 1 to 5 score with a basis or a not-scored basis', () => {
     for (const network of PAYMENT_NETWORKS) {
       for (const axis of RADAR_AXES) {
         const score = network.radarScores[axis.key]
-        expect(
-          Number.isInteger(score) && score >= 0 && score <= 5,
-          `${network.id}.${axis.key}`
-        ).toBe(true)
+        const basis = network.radarBasis[axis.key]
+        const where = `${network.id}.${axis.key}`
+        expect(basis.length, where).toBeGreaterThan(20)
+        if (score === null) {
+          expect(basis, where).toMatch(/^Not scored:/)
+        } else {
+          expect(Number.isInteger(score) && score >= 1 && score <= 5, where).toBe(true)
+          expect(basis, where).toMatch(new RegExp(`^Score ${score}:`))
+        }
       }
     }
+  })
+
+  it('never records a 0: missing evidence is not scored rather than zero', () => {
+    for (const network of PAYMENT_NETWORKS) {
+      expect(Object.values(network.radarScores)).not.toContain(0)
+    }
+  })
+
+  it('leaves offline exposure, tokenization and regulatory not scored for every network', () => {
+    for (const network of PAYMENT_NETWORKS) {
+      for (const key of ['offlineExposure', 'tokenization', 'regulatoryPressure'] as const) {
+        expect(network.radarScores[key], `${network.id}.${key}`).toBeNull()
+      }
+    }
+  })
+
+  it('derives scale from the share of the largest comparable card count', () => {
+    expect(scaleScoreFromShare(1)).toBe(5)
+    expect(scaleScoreFromShare(0.75)).toBe(5)
+    expect(scaleScoreFromShare(0.7499)).toBe(4)
+    expect(scaleScoreFromShare(0.5)).toBe(4)
+    expect(scaleScoreFromShare(0.25)).toBe(3)
+    expect(scaleScoreFromShare(0.1)).toBe(2)
+    expect(scaleScoreFromShare(0.0999)).toBe(1)
+    expect(() => scaleScoreFromShare(0)).toThrow()
+    const shares = cardCountShares(PAYMENT_NETWORKS, CARD_COUNT_AS_OF)
+    expect(Object.keys(shares)).toEqual(['visa', 'mastercard', 'amex'])
+    expect(shares.visa).toBe(1)
+    expect(Math.round(shares.mastercard * 100)).toBe(66)
+    expect(Math.round(shares.amex * 100)).toBe(3)
+    for (const network of PAYMENT_NETWORKS) {
+      const share = shares[network.id]
+      expect(network.radarScores.scale, network.id).toBe(
+        share === undefined ? null : scaleScoreFromShare(share)
+      )
+    }
+  })
+
+  it('derives PQC readiness from the posture label and agrees with the stored scores', () => {
+    expect(pqcReadinessScore('shared-standards')).toBe(1)
+    expect(pqcReadinessScore('readiness-program')).toBe(1)
+    expect(pqcReadinessScore('published-guidance')).toBe(2)
+    expect(pqcReadinessScore('prototype-testing')).toBe(4)
+    for (const network of PAYMENT_NETWORKS) {
+      expect(network.radarScores.pqcReadiness, network.id).toBe(
+        pqcReadinessScore(network.pqcPosture)
+      )
+    }
+    // UnionPay and Discover both have shared-standards posture, so they now score the same.
+    expect(byId('unionpay').radarScores.pqcReadiness).toBe(
+      byId('discover').radarScores.pqcReadiness
+    )
+  })
+
+  it('derives legacy burden from the listed methods and agrees with the stored scores', () => {
+    expect(
+      legacyBurdenScore({
+        offlineAuth: ['RSA-2048'],
+        onlineAuth: ['AES DUKPT'],
+        keyManagement: [],
+        ecommerce: [],
+      })
+    ).toBe(1)
+    expect(
+      legacyBurdenScore({
+        offlineAuth: ['RSA-1024 (legacy DDA)'],
+        onlineAuth: ['3DES DUKPT'],
+        keyManagement: [],
+        ecommerce: [],
+      })
+    ).toBeNull()
+    expect(
+      legacyBurdenScore({
+        offlineAuth: ['RSA-2048'],
+        onlineAuth: ['3DES DUKPT'],
+        keyManagement: [],
+        ecommerce: [],
+      })
+    ).toBe(3)
+    for (const network of PAYMENT_NETWORKS) {
+      expect(network.radarScores.legacyBurden, network.id).toBe(
+        legacyBurdenScore(network.currentCrypto)
+      )
+    }
+  })
+})
+
+describe('network card-count comparison', () => {
+  it('adds only exact counts dated 31 Dec 2025: 5,142M + 3,391M + 152.8M (3 of 5)', () => {
+    const r = compareCardCounts(PAYMENT_NETWORKS)
+    expect(r.total).toBe(5_142_000_000 + 3_391_000_000 + 152_800_000)
+    expect(r.includedIds).toEqual(['visa', 'mastercard', 'amex'])
+    expect(r.coverageLabel).toBe('3 of 5 networks')
+    expect(formatCardTotal(r.total ?? 0)).toBe('8.7B')
+  })
+
+  it('names why UnionPay and Discover counts are left out', () => {
+    const r = compareCardCounts(PAYMENT_NETWORKS)
+    expect(r.excluded.map((e) => e.id)).toEqual(['unionpay', 'discover'])
+    for (const e of r.excluded) expect(e.reason).toMatch(/no date or scope established/)
+  })
+
+  it('returns no compatible total, never zero, when nothing selected is comparable', () => {
+    for (const selection of [[byId('unionpay')], [byId('discover'), byId('unionpay')], []]) {
+      expect(compareCardCounts(selection).total).toBeNull()
+    }
+  })
+
+  it('leaves out a different date and a lower bound, and refuses negatives and duplicates', () => {
+    const visa = byId('visa')
+    const shifted = {
+      ...visa,
+      figures: { ...visa.figures, cards: { ...visa.figures.cards, asOf: '2024-12-31' } },
+    }
+    expect(compareCardCounts([shifted]).total).toBeNull()
+    const bound = {
+      ...visa,
+      figures: { ...visa.figures, cards: { ...visa.figures.cards, lowerBound: true } },
+    }
+    expect(compareCardCounts([bound]).total).toBeNull()
+    expect(() => compareCardCounts([{ ...visa, cardsInCirculationNum: -1 }])).toThrow()
+    expect(() => compareCardCounts([visa, visa])).toThrow()
   })
 })

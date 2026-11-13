@@ -73,12 +73,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 4,
-      offlineExposure: 4,
-      tokenization: 5,
+      scale: 5,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 2,
-      regulatoryPressure: 4,
+      regulatoryPressure: null,
       legacyBurden: 3,
+    },
+    radarBasis: {
+      scale:
+        'Score 5: 5,142M card accounts at 31 Dec 2025 is the largest dated, comparable count (100% of the largest, which is 75% or more).',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 2: published guidance with concrete steps, but it is scoped to stablecoins and no card-network plan is public, which sits between anchors 1 and 3.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Score 3: the listed methods mix older ones (RSA-1024 legacy DDA, 3DES DUKPT) with current ones (RSA-2048 CDA, AES DUKPT).',
     },
   },
   {
@@ -179,12 +193,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 3,
-      offlineExposure: 4,
-      tokenization: 5,
+      scale: 4,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 4,
-      regulatoryPressure: 4,
+      regulatoryPressure: null,
       legacyBurden: 3,
+    },
+    radarBasis: {
+      scale:
+        'Score 4: 3,391M cards at 31 Dec 2025 is 66% of the largest dated, comparable count (50% to under 75%).',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 4: publicly described laboratory and cloud prototypes plus published migration guidance, with no committed rollout, which is above anchor 3 and below 5.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Score 3: the listed methods mix older ones (RSA-1024 legacy DDA, 3DES DUKPT) with current ones (RSA-2048 CDA, AES DUKPT).',
     },
   },
   {
@@ -264,11 +292,25 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     ],
     radarScores: {
       scale: 1,
-      offlineExposure: 2,
-      tokenization: 4,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 1,
-      regulatoryPressure: 3,
-      legacyBurden: 2,
+      regulatoryPressure: null,
+      legacyBurden: 3,
+    },
+    radarBasis: {
+      scale:
+        'Score 1: 152.8M cards at 31 Dec 2025 is 3% of the largest dated, comparable count (under 10%).',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 1: an internal readiness programme only, with no network-specific public plan.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Score 3: the listed methods mix an older one (3DES DUKPT) with current ones (RSA-2048 CDA, AES DUKPT).',
     },
   },
   {
@@ -335,12 +377,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 5,
-      offlineExposure: 5,
-      tokenization: 3,
-      pqcReadiness: 2,
-      regulatoryPressure: 5,
-      legacyBurden: 4,
+      scale: null,
+      offlineExposure: null,
+      tokenization: null,
+      pqcReadiness: 1,
+      regulatoryPressure: null,
+      legacyBurden: 3,
+    },
+    radarBasis: {
+      scale:
+        'Not scored: no dated, comparable card count is established for this network, so its share of the largest cannot be worked out.',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 1: shared EMVCo standards work only; no network-specific public stance was found.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Score 3: the listed methods mix an older one (3DES DUKPT) with current ones (RSA-2048, SM2, SM4).',
     },
   },
   {
@@ -411,12 +467,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 1,
-      offlineExposure: 1,
-      tokenization: 2,
+      scale: null,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 1,
-      regulatoryPressure: 3,
-      legacyBurden: 2,
+      regulatoryPressure: null,
+      legacyBurden: 3,
+    },
+    radarBasis: {
+      scale:
+        'Not scored: no dated, comparable card count is established for this network, so its share of the largest cannot be worked out.',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 1: shared EMVCo standards work only; no network-specific public stance was found.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Score 3: the listed methods mix an older one (3DES DUKPT) with a current one (RSA-2048 DDA).',
     },
   },
 ]

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { PaymentNetwork } from './emvConstants'
+import type { NetworkFigures, PaymentNetwork } from './emvConstants'
 
 /**
  * Same-period purchase-volume comparison for the Network Comparator.
@@ -94,4 +94,75 @@ export function comparePurchaseVolume(
 /** Formats a USD-billion total as shown on the page, e.g. "$23,366B". */
 export function formatUsdBillions(usdBn: number): string {
   return `$${usdBn.toLocaleString('en-US')}B`
+}
+
+// ---------------------------------------------------------------------------
+// Card counts
+// ---------------------------------------------------------------------------
+
+/** The one date for which three networks report an exact card or account count. */
+export const CARD_COUNT_AS_OF = '2025-12-31'
+
+/** Why a card count cannot be added to the others, or null when it can. */
+export function cardCountExclusionReason(figures: NetworkFigures, asOf: string): string | null {
+  if (figures.cards.asOf === null) return 'Older figure with no date or scope established'
+  if (figures.cards.asOf !== asOf) return 'Counted at a different date'
+  if (figures.cards.lowerBound) {
+    return 'Reported only as "more than", which cannot be added as an exact figure'
+  }
+  return null
+}
+
+export interface CardCountComparison {
+  /** Sum of the comparable counts, or null when none of the selected networks has one. */
+  total: number | null
+  includedIds: string[]
+  excluded: ExcludedNetwork[]
+  selectedCount: number
+  coverageLabel: string
+  asOf: string
+}
+
+/**
+ * Adds only card counts that are dated the same day and reported as exact figures. Counts of
+ * "cards" and "accounts" still differ in detail and can overlap, so the sum is gross and is never
+ * a count of unique cards or cards at risk. Returns a null total, never zero, when none qualifies.
+ */
+export function compareCardCounts(
+  networks: Pick<PaymentNetwork, 'id' | 'name' | 'cardsInCirculationNum' | 'figures'>[],
+  asOf: string = CARD_COUNT_AS_OF
+): CardCountComparison {
+  if (new Set(networks.map((n) => n.id)).size !== networks.length) {
+    throw new Error('Duplicate network')
+  }
+  const includedIds: string[] = []
+  const excluded: ExcludedNetwork[] = []
+  let total = 0
+  for (const network of networks) {
+    const reason = cardCountExclusionReason(network.figures, asOf)
+    if (reason !== null) {
+      excluded.push({ id: network.id, name: network.name, reason })
+      continue
+    }
+    if (!Number.isFinite(network.cardsInCirculationNum) || network.cardsInCirculationNum < 0) {
+      throw new Error(`Invalid card count for ${network.id}`)
+    }
+    total += network.cardsInCirculationNum
+    includedIds.push(network.id)
+  }
+  return {
+    total: includedIds.length > 0 ? total : null,
+    includedIds,
+    excluded,
+    selectedCount: networks.length,
+    coverageLabel: `${includedIds.length} of ${networks.length} networks`,
+    asOf,
+  }
+}
+
+/** Formats a card total as shown on the page, e.g. "8.7B" or "153M". */
+export function formatCardTotal(total: number): string {
+  if (total >= 1_000_000_000) return `${(total / 1_000_000_000).toFixed(1)}B`
+  if (total >= 1_000_000) return `${(total / 1_000_000).toFixed(0)}M`
+  return total.toLocaleString('en-US')
 }
