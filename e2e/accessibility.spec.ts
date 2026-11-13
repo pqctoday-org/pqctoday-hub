@@ -73,7 +73,12 @@ for (const { path, name } of ROUTES) {
     // single scan was tried and made /algorithms fail on 288 contrast nodes
     // that the settled page does not have — the "wasteful" first pass is doing
     // real work.
-    test.setTimeout(120_000)
+    //
+    // /changelog is every release's notes on one page and grows with each
+    // release: nightly run 43251815178 timed out three times at 120 s inside
+    // the axe scan with no violation reported (51.5 s on a local M5). Even with
+    // all retries at 300 s, the shard stays inside its 45-minute job limit.
+    test.setTimeout(path === '/changelog' ? 300_000 : 120_000)
 
     await page.goto(path)
 
