@@ -131,7 +131,7 @@ export const ActivePQCScanner: React.FC = () => {
             onClick={() => setFilterProto(p)}
             className={`text-xs px-3 py-1 rounded-full border transition-colors ${
               filterProto === p
-                ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary font-semibold'
+                ? 'bg-primary text-primary-foreground border-primary font-semibold'
                 : 'bg-background/60 text-muted-foreground border-border hover:border-primary/50'
             }`}
           >

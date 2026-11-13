@@ -218,7 +218,7 @@ export function MobileProtocolMatrixView() {
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
               statusFilter.includes(s)
-                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >

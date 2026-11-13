@@ -295,7 +295,7 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
                   onClick={() => handleDimensionChange(opt.value)}
                   className={`px-3 py-1.5 min-h-[36px] rounded text-sm font-medium transition-colors border ${
                     dimensions === opt.value
-                      ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
+                      ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border text-muted-foreground hover:bg-muted'
                   }`}
                 >

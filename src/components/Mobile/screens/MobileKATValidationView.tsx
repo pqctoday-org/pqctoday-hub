@@ -460,7 +460,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
             className={cn(
               'h-7 shrink-0 snap-start rounded-full border px-2.5 text-[10.5px] font-semibold',
               variant === v.value
-                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >

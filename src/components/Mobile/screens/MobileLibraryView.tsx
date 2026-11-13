@@ -313,7 +313,7 @@ export function MobileLibraryView() {
               className={cn(
                 'h-auto shrink-0 snap-start flex-col items-start gap-0.5 rounded-[11px] border px-3 py-2 text-left',
                 active
-                  ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                  ? 'border-primary bg-primary text-primary-foreground'
                   : 'border-border bg-card text-foreground'
               )}
             >
@@ -357,7 +357,7 @@ export function MobileLibraryView() {
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
               quickView === qv.id
-                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >

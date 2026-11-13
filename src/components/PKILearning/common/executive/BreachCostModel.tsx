@@ -308,7 +308,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                   onClick={() => setRegion('global')}
                   className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
                     region === 'global'
-                      ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
+                      ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:text-foreground'
                   }`}
                 >
@@ -320,7 +320,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                   onClick={() => setRegion('us')}
                   className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
                     region === 'us'
-                      ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
+                      ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:text-foreground'
                   }`}
                 >
@@ -392,7 +392,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                     onClick={() => selectOrgSizeTier(tier)}
                     className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
                       orgSizeTier === tier
-                        ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
+                        ? 'bg-primary text-primary-foreground border-primary'
                         : 'border-border hover:text-foreground'
                     }`}
                   >
@@ -487,7 +487,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                   onClick={() => setDataSensitivityClass(key)}
                   className={`h-auto text-xs px-3 py-1.5 rounded-full border transition-colors ${
                     dataSensitivityClass === key
-                      ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
+                      ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border text-muted-foreground hover:text-foreground'
                   }`}
                 >

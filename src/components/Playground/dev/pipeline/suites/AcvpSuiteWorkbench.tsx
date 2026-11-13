@@ -110,7 +110,7 @@ function FilterChip({
       className={clsx(
         'h-6 shrink-0 rounded-full border px-2.5 text-[10.5px] font-semibold',
         pressed
-          ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+          ? 'border-primary bg-primary text-primary-foreground'
           : 'border-border bg-card text-foreground'
       )}
     >

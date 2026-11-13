@@ -808,7 +808,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
               onClick={() => setViewMode('inherent')}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 viewMode === 'inherent'
-                  ? 'bg-primary text-primary-foreground hover:text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-background text-muted-foreground hover:bg-muted'
               }`}
             >
@@ -821,7 +821,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
               title={!hasTreatments ? 'Assign at least one treatment strategy first' : undefined}
               className={`px-4 py-2 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
                 viewMode === 'residual'
-                  ? 'bg-primary text-primary-foreground hover:text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-background text-muted-foreground hover:bg-muted'
               }`}
             >

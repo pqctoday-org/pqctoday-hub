@@ -922,7 +922,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                   onClick={() => selectOrgSizeTier(tier)}
                   className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
                     assumptions.orgSizeTier === tier
-                      ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
+                      ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:text-foreground'
                   }`}
                 >

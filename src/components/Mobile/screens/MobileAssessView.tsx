@@ -1088,7 +1088,7 @@ function MultiSelectChips({
             className={cn(
               'h-9 rounded-full border px-3 text-[11.5px] font-semibold',
               isSelected
-                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >

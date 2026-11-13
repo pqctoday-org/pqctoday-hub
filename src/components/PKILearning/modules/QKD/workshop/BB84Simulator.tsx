@@ -87,7 +87,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
                 disabled={!isIdle}
                 className={`px-3 py-1.5 text-sm rounded border transition-colors ${
                   numQubits === n
-                    ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary font-bold'
+                    ? 'bg-primary text-primary-foreground border-primary font-bold'
                     : 'bg-muted border-border text-foreground hover:border-primary/50 disabled:opacity-50'
                 }`}
               >

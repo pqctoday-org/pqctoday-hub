@@ -599,7 +599,7 @@ export function MobileMigrateView() {
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
               tab === t.id
-                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >
@@ -751,7 +751,7 @@ export function MobileMigrateView() {
                     className={cn(
                       'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
                       selectedDomain === a.id
-                        ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                        ? 'border-primary bg-primary text-primary-foreground'
                         : 'border-border bg-card text-foreground'
                     )}
                   >
@@ -789,7 +789,7 @@ export function MobileMigrateView() {
                     className={cn(
                       'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
                       selectedDomain === id
-                        ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
+                        ? 'border-primary bg-primary text-primary-foreground'
                         : 'border-border bg-card text-foreground'
                     )}
                   >
@@ -896,7 +896,7 @@ export function MobileMigrateView() {
                         variant="ghost"
                         onClick={() => removeFacet(k)}
                         aria-label={`Remove filter ${label}`}
-                        className="h-8 shrink-0 snap-start rounded-full border border-primary bg-primary px-3 text-[11px] font-semibold text-primary-foreground hover:text-primary-foreground"
+                        className="h-8 shrink-0 snap-start rounded-full border border-primary bg-primary px-3 text-[11px] font-semibold text-primary-foreground"
                       >
                         {label}
                         <X size={12} className="ml-1" aria-hidden="true" />
