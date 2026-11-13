@@ -53,4 +53,15 @@ describe('KmipProtocolExplorer live operation lab', () => {
     expect(screen.getByText('CreateKeyPair · Success')).toBeInTheDocument()
     expect(screen.getByText(/policy → KMIP → PKCS#11/)).toBeInTheDocument()
   })
+  it('selects OpenBao and displays its native copied command rather than a Vault command', async () => {
+    render(
+      <MemoryRouter>
+        <KmipProtocolExplorer />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'OpenBao' }))
+    expect(screen.getByText(/type=mldsa-65/, { selector: 'code' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Vault' })).not.toBeInTheDocument()
+    expect(screen.getByText(/does not make OpenBao a KMIP server/)).toBeInTheDocument()
+  })
 })

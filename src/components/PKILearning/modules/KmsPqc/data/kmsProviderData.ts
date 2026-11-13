@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { OPENBAO_PROVIDER_COMMANDS } from './openBaoProviderCommands'
+import { OPENBAO_SIGNING_RECIPE } from '../../SecretsManagementPQC/data/openBaoSigningContract'
 import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export type KmsPqcStatus = 'ga' | 'preview' | 'experimental' | 'planned'
@@ -223,57 +225,30 @@ az keyvault key import \\
       'PQC APIs available on Windows Server 2025, Windows 11, and .NET 10 via SymCrypt. Microsoft targets early quantum-safe adoption by 2029 and complete transition by 2033 (a Microsoft-wide goal; no Key Vault-specific date is sourced here). Symmetric oct-HSM 256-bit AES keys are available in Managed HSM and are quantum-resistant for symmetric operations.',
   },
   {
+    // Stable selection ID retained for saved learner choices.
     id: 'hashicorp-vault',
-    name: 'HashiCorp',
-    product: 'Vault Enterprise',
+    name: 'OpenBao',
+    product: 'OpenBao 2.7.2',
     type: 'on-prem',
-    catalogName: 'HashiCorp Vault',
+    catalogName: 'OpenBao',
     pqcAlgorithms: {
       kem: [],
-      sign: [
-        {
-          name: 'ML-DSA (parameter sets 44, 65, 87)',
-          status: 'Experimental (Enterprise, v1.19+ transit)',
-        },
-        { name: 'SLH-DSA (12 parameter sets)', status: 'Experimental (Enterprise, v2.0+ transit)' },
-        {
-          name: 'Hybrid signature (ML-DSA plus an elliptic-curve algorithm)',
-          status: 'Enterprise transit key type',
-        },
-      ],
+      sign: [{ name: 'ML-DSA (44, 65, 87)', status: 'Native Transit key types in OpenBao 2.7.2' }],
     },
     envelopeEncryptionModel:
-      'Transit secrets engine: encrypt/decrypt/sign/verify/rewrap. ML-DSA, SLH-DSA and hybrid keys are signing keys: they cannot encrypt. Encryption uses a symmetric key type such as aes256-gcm96 (the default), which is quantum-safe at 256 bits.',
+      'Transit encrypt/decrypt uses a symmetric key such as aes256-gcm96. ML-DSA signing keys cannot encrypt. The worked example creates separate signing and encryption keys and verifies the recovered fictional data key.',
     autoRotation: true,
     autoRotationNote:
-      'Transit keys are versioned; rotation adds a new key version and earlier versions stay available for decryption.',
+      'Transit supports versioned keys and configurable rotation periods. This sample explicitly rotates an ML-DSA key and verifies signatures from both versions; a scheduled rotation policy requires its own configuration and test.',
     keyImportPath:
-      'Transit has its own import path for externally generated keys; no post-quantum key-establishment type is documented in the transit API pages cited here.',
-    kmipSupport: true,
+      'Externally generated key import uses the documented RSA-4096 wrapping-key path. It is separate from the native key-generation example and does not establish post-quantum key transport.',
+    kmipSupport: false,
     fipsLevel:
-      'Enterprise FIPS 140-3 Inside builds use BoringCrypto (CMVP #4735, Level 1 software). Seal Wrap uses a configured external seal, so any validation level comes from that device, not from Vault.',
-    hybridSupport: true,
-    apiPattern: `# HashiCorp Vault Enterprise — ML-DSA signing key (transit)
-vault write transit/keys/my-pqc-key \\
-  type="ml-dsa" \\
-  parameter_set="65"
-
-vault write transit/sign/my-pqc-key \\
-  input=$(base64 <<< "data to sign")
-
-# Hybrid signature key: ML-DSA plus an elliptic-curve algorithm
-vault write transit/keys/my-hybrid-key \\
-  type="hybrid" \\
-  parameter_set="65" \\
-  hybrid_key_type_pqc="ml-dsa" \\
-  hybrid_key_type_ec="ecdsa-p256"
-
-# Encryption uses a symmetric transit key, not an ML-DSA key
-vault write -f transit/keys/my-aes-key type="aes256-gcm96"
-vault write transit/encrypt/my-aes-key \\
-  plaintext=$(base64 <<< "data to encrypt")`,
+      'This OpenBao 2.7.2 sample demonstrates operations, not a FIPS validation. Check the exact deployed module, build and applicable certificate; a different product’s validation does not transfer to OpenBao.',
+    hybridSupport: false,
+    apiPattern: OPENBAO_SIGNING_RECIPE + '\n\n' + OPENBAO_PROVIDER_COMMANDS.wrap,
     notes:
-      "HashiCorp's transit secrets engine API documentation (checked 8 November 2026) lists the ml-dsa key type with parameter sets 44, 65 and 87, SLH-DSA with 12 parameter sets, and a hybrid key type that combines ML-DSA with an elliptic-curve algorithm; these key types are marked Enterprise. HashiCorp Vault's transit engine creates ML-DSA keys with type ml-dsa and a parameter_set of 44, 65 or 87. Vault\u2019s changelog also lists support for X25519MLKEM768 (post quantum key agreement) in the Go TLS stack Vault uses, so hybrid post-quantum TLS is not undocumented for Vault. Vault Enterprise also has a KMIP secrets engine. The API documentation does not state their maturity; the Vault changelog describes the ML-DSA and SLH-DSA support as experimental.",
+      'The copied examples target OpenBao 2.7.2 and its native Transit API: https://openbao.org/docs/api/secret/transit/. Use type=mldsa-65 for this signing example; no parameter_set field is used. The lifecycle examples test signing, tamper rejection, AES-GCM data-key recovery, rotation and deletion. They do not demonstrate a hybrid signature, a KEM, KMIP, or the transport/seal configuration. Evaluate those separate capabilities with the production tools and configuration you intend to use.',
   },
   {
     id: 'thales-ciphertrust',
