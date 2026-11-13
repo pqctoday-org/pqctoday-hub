@@ -14,16 +14,63 @@ export interface PaymentNetworkSource {
   url: string
 }
 
+/** What a network's volume figure measures. Only `purchase-volume` rows can be added together. */
+export type NetworkVolumeMetric =
+  'purchase-volume' | 'network-volume-incl-cash-and-alternative-payments'
+
+/** One dated volume figure with the population and period it describes. */
+export interface NetworkVolumeFact {
+  usdBn: number
+  metric: NetworkVolumeMetric
+  /** ISO dates, inclusive. */
+  periodStart: string
+  periodEnd: string
+  currency: 'USD'
+  /** True when the source reports "more than" rather than an exact figure. */
+  lowerBound: boolean
+  scope: string
+  cashIncluded: boolean
+}
+
+export interface NetworkFiguresSource {
+  label: string
+  url: string
+  /** Publication date when the source gives one. */
+  published: string | null
+  /** Date the page was checked when the source is undated. */
+  checked: string | null
+  /** Where in the source the figures appear. */
+  location: string
+}
+
+/** Dated, sourced context for a network's card and volume figures. */
+export interface NetworkFigures {
+  cards: {
+    /** ISO date the count refers to. Null for an older figure whose date and scope are not established. */
+    asOf: string | null
+    scope: string
+    lowerBound: boolean
+  }
+  /** Null when no same-scope, dated volume is established for this network. */
+  volume: NetworkVolumeFact | null
+  /** Why the volume is absent or why it is described the way it is. */
+  volumeNote: string
+  /** Other separately named, sourced figures that are not part of the purchase-volume comparison. */
+  otherFacts: string[]
+  source: NetworkFiguresSource | null
+}
+
 export interface PaymentNetwork {
   id: PaymentNetworkId
   name: string
   abbreviation: string
   headquartersRegion: string
-  /** e.g. "4.6 billion" */
+  /** Display text for the card count, with its date and unit where the source gives them. */
   cardsInCirculation: string
   cardsInCirculationNum: number
-  /** e.g. "$14.8 trillion" */
+  /** Display text for the volume, with its metric and period where the source gives them. */
   annualTransactionVolume: string
+  figures: NetworkFigures
   offlineAuthSupported: boolean
   tokenizationPlatform: string
   emvcoMember: boolean
@@ -41,7 +88,7 @@ export interface PaymentNetwork {
   pqcTimeline: string
   evidenceBasis: string
   officialSources: PaymentNetworkSource[]
-  /** 0-5 scores for radar chart */
+  /** 0-5 authored judgements for the radar chart; see RADAR_RUBRIC. Not measurements. */
   radarScores: {
     scale: number
     offlineExposure: number

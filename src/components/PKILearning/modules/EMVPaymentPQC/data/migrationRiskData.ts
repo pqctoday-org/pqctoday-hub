@@ -109,12 +109,11 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
       'TLS connections between terminals, acquirers, networks, and issuers use (EC)DHE key exchange (RSA key transport in legacy TLS 1.2) and RSA/ECDSA certificate signatures. Quantum computers can break the key exchange, so recorded traffic can be decrypted later (harvest now, decrypt later); breaking the signatures separately allows impersonation, such as a man-in-the-middle on authorization messages, but only at the time the attacker can forge them.',
     severity: 'high',
     hndlExposure: true,
-    // Scope stated rather than totalled: the per-network annual volumes in
-    // paymentNetworkData.ts are the source of truth for this number, and they
-    // sum to ~$46.6T across the five networks. An unattributed "~$30 trillion"
-    // contradicted that table by 50%.
+    // Scope stated rather than totalled: the five networks report volume on different bases and
+    // periods (purchases, network volume including cash, older undated figures), so no five-network
+    // dollar figure is given here. The Network Comparator adds only the comparable purchase rows.
     affectedScale:
-      'All online card transactions — ~$46.6 trillion a year across the five networks in the Network Comparator',
+      'All online card transactions. The Network Comparator lists each network\u2019s own dated volume figure and adds only the purchase volumes that cover the same period',
     migrationEffort: 3,
     migrationTimeline: '2025-2028',
     pqcSolution: [

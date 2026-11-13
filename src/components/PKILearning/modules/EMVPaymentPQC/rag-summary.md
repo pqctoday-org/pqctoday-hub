@@ -23,7 +23,7 @@ Three paths so no audience is asked for the full 120 minutes: **Cards & Acceptan
 
 ## Workshop Steps
 
-1. Payment Network Comparator (filter, compare, radar chart)
+1. Payment Network Comparator (filter, compare, radar chart): each network shows dated, sourced card and volume figures; only same-period purchase volumes are added (calendar 2025: Visa 14,567 + Mastercard 8,799 = $23,366B, 2 of 5 networks); a filter with no comparable figure shows no compatible total; the six radar scores are authored judgements with a published rubric
 2. Transaction Simulator (5 modes, play/pause, quantum overlay)
 3. Card Provisioning Visualizer (5-phase stepper, RSA/ML-DSA/FN-DSA chain toggle)
 4. Tokenization Explorer (TSP + wallet selector, animated flow)

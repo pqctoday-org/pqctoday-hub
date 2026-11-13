@@ -13,6 +13,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { PAYMENT_NETWORKS } from '../data/paymentNetworkData'
+import { comparePurchaseVolume, formatUsdBillions } from '../data/networkVolumeComparison'
+import { RADAR_RUBRIC, RADAR_SCORES_NOTICE } from '../data/networkRadarRubric'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   PQC_POSTURE_COLORS,
@@ -61,16 +63,6 @@ function sumCards(networks: PaymentNetwork[]): string {
   if (total >= 1_000_000_000) return `${(total / 1_000_000_000).toFixed(1)}B`
   if (total >= 1_000_000) return `${(total / 1_000_000).toFixed(0)}M`
   return total.toLocaleString()
-}
-
-/** Normalize the network-reported annual volumes to trillions. */
-export function sumVolumeTrillions(networks: PaymentNetwork[]): number {
-  return networks.reduce((sum, network) => {
-    const match = network.annualTransactionVolume.match(/\$([\d.]+)\s*(trillion|billion)/i)
-    if (!match) return sum
-    const value = Number.parseFloat(match[1])
-    return sum + (match[2].toLowerCase() === 'billion' ? value / 1_000 : value)
-  }, 0)
 }
 
 // ---------------------------------------------------------------------------
@@ -218,7 +210,7 @@ export const NetworkComparator: React.FC = () => {
   // Summary stats
   const totalCards = sumCards(filtered)
   const reviewedProfileCount = filtered.filter((n) => n.officialSources.length > 0).length
-  const totalVolume = sumVolumeTrillions(filtered)
+  const volumeComparison = useMemo(() => comparePurchaseVolume(filtered), [filtered])
 
   const compareValue = (net: PaymentNetwork, row: (typeof COMPARE_ROWS)[number]): string => {
     switch (row) {
@@ -243,9 +235,11 @@ export const NetworkComparator: React.FC = () => {
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         Reported network card counts may overlap; their sum is not a count of unique cards at risk.
-        The radar uses authored illustrative scores, not measured readiness, certification or a
-        validated ranking. Evaluate the criteria, scope, dates and source evidence with your own
-        tools before comparing real networks.
+        Each network&rsquo;s figures below carry their own date, unit and scope, and only figures
+        that describe the same thing for the same period are added together. The radar uses authored
+        illustrative scores, not measured readiness, certification or a validated ranking. Evaluate
+        the criteria, scope, dates and source evidence with your own tools before comparing real
+        networks.
       </p>
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
@@ -291,6 +285,10 @@ export const NetworkComparator: React.FC = () => {
           <CreditCard size={20} className="mx-auto text-primary mb-1" />
           <div className="text-2xl font-bold text-foreground">{totalCards}</div>
           <div className="text-xs text-muted-foreground">Gross Reported Network Card Counts</div>
+          <div className="text-[11px] text-muted-foreground mt-1">
+            Added as listed. Dates, units and scopes differ, so this is not a count of unique or
+            at-risk cards.
+          </div>
         </div>
         <div className="glass-panel p-4 text-center">
           <ShieldCheck size={20} className="mx-auto text-status-success mb-1" />
@@ -299,8 +297,28 @@ export const NetworkComparator: React.FC = () => {
         </div>
         <div className="glass-panel p-4 text-center">
           <TrendingUp size={20} className="mx-auto text-primary mb-1" />
-          <div className="text-2xl font-bold text-foreground">${totalVolume.toFixed(1)}T</div>
-          <div className="text-xs text-muted-foreground">Transaction Volume</div>
+          <div className="text-2xl font-bold text-foreground">
+            {volumeComparison.totalUsdBn === null
+              ? 'no compatible total'
+              : formatUsdBillions(volumeComparison.totalUsdBn)}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Purchase volume, {volumeComparison.periodLabel} ({volumeComparison.coverageLabel})
+          </div>
+          <div className="text-[11px] text-muted-foreground mt-1">
+            Gross purchases of the networks that report them on the same basis, in US dollars. Not
+            an all-network market total, unique spend or cryptographic risk.
+          </div>
+          {volumeComparison.excluded.length > 0 && (
+            <ul className="text-[11px] text-muted-foreground mt-1 text-left list-disc list-inside">
+              {volumeComparison.excluded.map((e) => (
+                <li key={e.id}>
+                  <span className="font-medium text-foreground">{e.name}</span> is not in the total:{' '}
+                  {e.reason.charAt(0).toLowerCase() + e.reason.slice(1)}.
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
@@ -365,6 +383,41 @@ export const NetworkComparator: React.FC = () => {
                 </span>
               </div>
 
+              {/* Dated, sourced figures */}
+              <div className="text-xs text-muted-foreground space-y-1">
+                <h5 className="font-medium text-secondary">Figures and their scope</h5>
+                <p>
+                  <span className="font-medium text-foreground">Cards:</span>{' '}
+                  {net.figures.cards.scope}
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Volume:</span>{' '}
+                  {net.figures.volumeNote}
+                </p>
+                {net.figures.otherFacts.map((fact) => (
+                  <p key={fact}>{fact}</p>
+                ))}
+                {net.figures.source && (
+                  <p>
+                    Source:{' '}
+                    <a
+                      href={net.figures.source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      {net.figures.source.label}
+                    </a>
+                    {net.figures.source.published
+                      ? `, published ${net.figures.source.published}`
+                      : net.figures.source.checked
+                        ? `, checked ${net.figures.source.checked}`
+                        : ''}
+                    {` (${net.figures.source.location})`}
+                  </p>
+                )}
+              </div>
+
               {/* Crypto summary */}
               <div className="text-xs text-muted-foreground space-y-1">
                 <div>
@@ -422,6 +475,47 @@ export const NetworkComparator: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Radar score rubric */}
+      <details className="glass-panel p-4">
+        <summary className="cursor-pointer text-sm font-semibold text-foreground">
+          How the six radar scores are assigned (authored rubric)
+        </summary>
+        <p className="text-xs text-muted-foreground mt-2">{RADAR_SCORES_NOTICE}</p>
+        <div className="overflow-x-auto mt-3">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-border text-left text-muted-foreground">
+                <th className="p-2">Criterion</th>
+                <th className="p-2">Question and direction</th>
+                <th className="p-2">0</th>
+                <th className="p-2">1</th>
+                <th className="p-2">3</th>
+                <th className="p-2">5</th>
+                <th className="p-2">Check</th>
+              </tr>
+            </thead>
+            <tbody>
+              {RADAR_RUBRIC.map((entry) => (
+                <tr key={entry.key} className="border-b border-border last:border-0 align-top">
+                  <td className="p-2 font-medium text-foreground">{entry.label}</td>
+                  <td className="p-2 text-muted-foreground">
+                    {entry.question} {entry.direction}
+                  </td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.zero}</td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.one}</td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.three}</td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.five}</td>
+                  <td className="p-2 text-muted-foreground">{entry.evidenceToCheck}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-2">
+          Scores 2 and 4 sit between the anchors on either side.
+        </p>
+      </details>
 
       {/* Side-by-side comparison */}
       {compareMode && comparedNetworks.length >= 2 && (
@@ -496,6 +590,7 @@ export const NetworkComparator: React.FC = () => {
             <h4 className="text-sm font-semibold text-foreground mb-3 text-center">
               Illustrative Score Overlay
             </h4>
+            <p className="text-xs text-muted-foreground mb-3 text-center">{RADAR_SCORES_NOTICE}</p>
             <RadarChart networks={comparedNetworks} />
             <div className="flex justify-center gap-4 mt-3">
               {comparedNetworks.map((net) => (
