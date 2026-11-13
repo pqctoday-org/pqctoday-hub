@@ -1,125 +1,66 @@
 ---
 generated: 2026-11-13
 collection: library
-documents_processed: 2
+documents_processed: 1
 enrichment_method: automated extraction, human-reviewed
 ---
 
-## Quantum-resistant-signing-on-AWS-Part-1-Build-a-software-sup
+## Off-the-Record-Communication-or-Why-Not-To-Use-PGP
 
-- **Reference ID**: Quantum-resistant-signing-on-AWS-Part-1-Build-a-software-sup
-- **Title**: Quantum-resistant signing on AWS, Part 1: Build a software supply chain with ML-DSA
-- **Authors**: Amazon Web Services
-- **Publication Date**: 2026
+- **Reference ID**: Off-the-Record-Communication-or-Why-Not-To-Use-PGP
+- **Title**: Off-the-Record Communication, or, Why Not To Use PGP
+- **Authors**: See document
+- **Publication Date**: 2004
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: How to build an end-to-end quantum-resistant software supply chain on AWS by signing binaries, container images and SBOMs with ML-DSA using AWS KMS, AWS Private CA and IAM Roles Anywhere.
-- **PQC Algorithms Covered**: ML-DSA
-- **Quantum Threats Addressed**: CRQC; Harvest now, forge later (signature forgery by a quantum computer); Shor's Algorithm not named
-- **Migration Timeline Info**: Milestones: 2025: CNSA 2.0 requires "support and prefer" quantum-resistant signatures for software and firmware; December 2027: EU Cyber Resilience Act takes full effect; 2030: CNSA 2.0 exclusive use of quantum-resistant signatures; March 2025: PCI DSS 4.0 Req 12.3.3 mandatory
-- **Applicable Regions / Bodies**: Regions: United States; European Union; Bodies: NSA; NIST; AWS
+- **Main Topic**: Proposes the off-the-record messaging protocol, which provides perfect forward secrecy and repudiability for private online conversations (with a GAIM instant-messaging plugin), as an alternative to long-lived-key, signature-based systems like PGP and S/MIME.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
 - **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: AWS Key Management Service (AWS KMS); AWS Private Certificate Authority; AWS Identity and Access Management (IAM) Roles Anywhere; Amazon Inspector SBOM Generator (Sbomgen); Amazon ECR; AWS Organizations Service Control Policies; Amazon Athena
-- **Protocols Covered**: X.509; OIDC; OCI referrers; in-toto Statement
-- **Infrastructure Layers**: Key Management; PKI; Cloud KMS; CI/CD build pipelines; Container registry; IAM workload identity; Kubernetes admission control
-- **Standardization Bodies**: NIST; NSA; EU
-- **Compliance Frameworks Referenced**: CNSA 2.0; FIPS 204; EU Cyber Resilience Act (Regulation (EU) 2024/2847); PCI DSS 4.0
-- **Classical Algorithms Referenced**: RSA; ECDSA; ECDSA P-256; SHA-256
-- **Key Takeaways**: Combine ML-DSA keys in AWS KMS, ML-DSA hierarchies in AWS Private CA and ML-DSA trust anchors in IAM Roles Anywhere for end-to-end quantum-resistant signing; Bind an SBOM to the exact artifact by wrapping it in an in-toto Statement whose subject digest is signed, since OCI referrers alone give no cryptographic binding; Use SCPs to block creation of traditional signing keys and log signing operations as detective controls; Use ML-DSA-87 for all signing keys if aligning with CNSA 2.0; Map regulatory deadlines (CNSA 2.0, EU CRA, PCI DSS) to code signing, signed SBOMs and cryptographic inventory actions
-- **Security Levels & Parameters**: ML-DSA-87; ML-DSA-44; ML_DSA_87 KMS key spec; ECDSA P-256; highest NIST security category (CNSA 2.0)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: PGP; OpenPGP; S/MIME; SSL; TLS 1.0; Diffie-Hellman key exchange; Off-the-record messaging (OTR)
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF (RFCs); NIST (FIPS publications)
+- **Compliance Frameworks Referenced**: FIPS 180-1; FIPS 186-2; FIPS 197
+- **Classical Algorithms Referenced**: RSA; DSS; Diffie-Hellman; AES; SHA-1; HMAC-SHA1
+- **Key Takeaways**: Social communication should use short-lived encryption keys for perfect forward secrecy rather than long-lived keys; Digital signatures give non-repudiation, so message authentication should use MACs to preserve deniability; Re-keying via Diffie-Hellman with each message exchange is computationally cheap enough for PDAs; A new key should be generated only upon a reply, with periodic empty acknowledgements to limit the window of vulnerability; Ring signatures can confine authorship but leave less privacy than MAC-based off-the-record authentication
+- **Security Levels & Parameters**: 128-bit hash output (truncated SHA-1)
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "ML-DSA keys in AWS KMS, ML-DSA certificate hierarchies in AWS Private Certificate Authority" (paraphrase — not found verbatim in the document)
-- **Hybrid PQC Signature Support**: No
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: X.509
-- **PQC Heatmap Protocols Evidence**: X.509: "build agents ... authenticate using X.509 certificates"; "IAM Roles Anywhere with ML-DSA certificates"
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect; CISO; Compliance Officer
-- **Implementation Prerequisites**: AWS KMS ML-DSA keys; AWS Private CA ML-DSA certificate hierarchy; IAM Roles Anywhere ML-DSA trust anchor; SBOM generation tool (e.g. Amazon Inspector Sbomgen); custom admission controller verification code for ML-DSA signature referrers
-- **Relevant PQC Today Features**: code-signing; kms-pqc; pki-workshop; Compliance; vendor-risk
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: Cryptographic inventory in AWS KMS with tagging of ML-DSA versus traditional keys; detective controls logging signing operations; migration progress tracking
-- **Testing & Validation Methods**: Signature verification of binaries, container images and SBOMs, including the in-toto subject digest check
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Firmware signed with ECDSA P-256 deployed to embedded device fleets mentioned as a forgery risk example
-- **Supply Chain & Vendor Risk**: Software supply chain attacks on build systems and open source dependencies; SBOM and in-toto attestation binding; signed SBOMs with every release; admission control rejecting unsigned images
-- **Deployment & Migration Complexity**: Preventive SCP guardrails against traditional keys; replacing RSA/ECDSA build-agent credentials with ML-DSA certificates; custom verification code needed for ML-DSA referrers in standard tools
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Separation of builder and governance responsibilities (Part 1 for builders, Part 2 for security and governance teams); legal and compliance consultation for obligations
-- **Math Family**: Lattice
-- **PQC Round**: Not Applicable
-- **Source Document**: Quantum-resistant-signing-on-AWS-Part-1-Build-a-software-sup.html (1,517,652 bytes, 12,171 extracted chars)
-- **Extraction Timestamp**: 2026-11-13T00:21:48
-- **Evidence SHA-256**: 14f608a423dd54a0c90a3a86cc424f9f87f2ff437ae6065d891e7bbbf456fbd0
-- **Generation Model**: automated extraction, human-reviewed
-- **Evidence SHA256**: 14f608a423dd54a0
-- **Window Chars**: 12171
-
----
-
-## Post-Quantum-Cryptography-in-Sequoia-PGP
-
-- **Reference ID**: Post-Quantum-Cryptography-in-Sequoia-PGP
-- **Title**: Post Quantum Cryptography in Sequoia PGP
-- **Authors**: See document
-- **Publication Date**: 2025
-- **Last Updated**: Not specified
-- **Document Status**: Unverified — needs review
-- **Main Topic**: Implementation of the new OpenPGP post-quantum cryptography standard in Sequoia PGP (sq and sequoia-openpgp), explaining the algorithms, how to generate and use post-quantum certificates, and the status of the specification.
-- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; ML-KEM
-- **Quantum Threats Addressed**: Shor's Algorithm (factoring integers breaks RSA); quantum computers breaking current asymmetric cryptography (no current quantum computer is powerful enough yet)
-- **Migration Timeline Info**: Post-quantum OpenPGP standard expected to be published in first half of 2026; official Sequoia releases to follow shortly after publication; next Debian release unlikely before July 2027, so exclusive PQC use not expected to be reasonable for the next few years
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF OpenPGP working group, NIST, Red Hat
-- **Leaders Contributions Mentioned**: Peter Shor (demonstrated the quantum speedup endangering cryptography); Peter Gutmann (cryptographer who thinks PQC is a Heffalump); Clemens Lang (Red Hat Crypto Team Product Owner, explained government requirements at OpenSSL conference; technical contributor); Neal H. Walfield, Devan Carpenter, Justus Winter, Malte Meiboom (Sequoia contributors); Daiki Ueno, Jakub Jelen, Peter Vrabec, Roberto Hueso Gomez, Simo Sorce, Stanislav Zidek (Red Hat contributors)
-- **PQC Products Mentioned**: Sequoia PGP; sq; sequoia-openpgp; OpenSSL; Debian; Fedora
-- **Protocols Covered**: OpenPGP (RFC 9580)
-- **Infrastructure Layers**: Certificates / key management; software package signing (RPM signing keys)
-- **Standardization Bodies**: IETF; NIST
-- **Compliance Frameworks Referenced**: NIST IR 8547
-- **Classical Algorithms Referenced**: RSA; Ed25519; Ed448; X25519; X448; AES-128; AES-192; AES-256; AES-256/OCB
-- **Key Takeaways**: Post-quantum OpenPGP pairs ML-DSA and ML-KEM with Ed25519/Ed448/X25519/X448 so security holds unless both algorithms are broken; use ML-DSA/ML-KEM for general-purpose certificates and consider SLH-DSA for software-release signing where size and speed matter less; maintain both a classical and a post-quantum certificate to preserve compatibility during the transition; PQC certificates require the RFC 9580 format (except ML-KEM-768+X25519 subkeys); expect large artifacts (42 KB certificate vs 2.3 KB classical)
-- **Security Levels & Parameters**: ML-DSA-65 (AES-192 equivalent); ML-DSA-87 (AES-256); SLH-DSA-128s (AES-128); SLH-DSA-128f (AES-128); SLH-DSA-256s (AES-256); ML-KEM-768 (AES-192); ML-KEM-1024 (AES-256)
-- **Hybrid & Transition Approaches**: Composite pairing of ML-DSA with Ed25519/Ed448 and ML-KEM with X25519/X448; maintaining two certificates (one classical RSA, one post-quantum) and signing with both; ML-KEM-768+X25519 subkeys in the old certificate format for partial transition; SLH-DSA standalone
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "ML-KEM-768 and X25519; ML-KEM-1024 and X448" listed as new OpenPGP algorithms
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: SLH-DSA-128s, SLH-DSA-128f, SLH-DSA-256s added; "the two variants standalone" (SLH-DSA)
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "ML-DSA-65 and Ed25519; ML-DSA-87 and Ed448" added as OpenPGP algorithms
-- **PQC Heatmap Protocols Covered**: OpenPGP
-- **PQC Heatmap Protocols Evidence**: OpenPGP: "Post-quantum cryptography is coming to OpenPGP."
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: SLH-DSA signatures 8 KB to 30 KB; ML-DSA-65 signature 3.3 KB; ML-DSA-87 signature 4.6 KB; Ed25519 signature 64 bytes; post-quantum certificate 42 KB (42825 bytes) vs 2.3 KB (2322 bytes) for elliptic-curve certificate; PQC asymmetric operations slower
-- **Target Audience**: Developer; Security Architect; Researcher; Operations
-- **Implementation Prerequisites**: OpenSSL backend (cryptographic backend 3.5.1); sequoia-openpgp 2.2.0-pqc.1 pre-release; sq 1.4.0-pqc.1; RFC 9580 profile/certificate format; Cargo build with --features crypto-openssl
-- **Relevant PQC Today Features**: Algorithms; email-signing; hybrid-crypto; code-signing; Migrate
-- **Implementation Attack Surface**: None detected
+- **Performance & Size Considerations**: Diffie-Hellman re-keying costs two modular exponentiations; PDAs should be able to re-key at least once a minute; 128-bit hash used for key derivation
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: GAIM instant messaging client plugin; libgcrypt library; /dev/random for key generation
+- **Relevant PQC Today Features**: Algorithms; email-signing; tls-basics
+- **Implementation Attack Surface**: Compromise of long-lived decryption keys via break-ins or coercion; man-in-the-middle attack during initial Diffie-Hellman exchange if the key fingerprint is not verified; key-logger/Magic Lantern style compromise (cited)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Distribution packaging lag (Debian/Fedora release cycles) delaying PQC adoption; Red Hat signing keys using both RSA and post-quantum certificates
-- **Deployment & Migration Complexity**: Interoperability problems until implementations widely deployed; dual-certificate approach for compatibility; only OpenSSL backend supports PQC so far (other of five backends planned); older implementations ignore unknown subkey algorithms
+- **QRNG & Entropy Sources**: /dev/random used for generating random keys
+- **Constrained Device & IoT Suitability**: PDAs with limited computational power can re-key at least once a minute
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Implemented as a plugin to the Linux GAIM client with a generic library API for other IM clients; unauthenticated key-fingerprint verification is out-of-band and optional
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Hash-based; Hybrid
+- **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: Post-Quantum-Cryptography-in-Sequoia-PGP.html (27,090 bytes, 14,822 extracted chars)
-- **Extraction Timestamp**: 2026-11-13T00:21:48
-- **Evidence SHA-256**: 91a6365acc949f736471549c59d475df891f4d2e1674b05a15129677d3cd4872
+- **Source Document**: Off-the-Record-Communication-or-Why-Not-To-Use-PGP.pdf (131,738 bytes, 13,881 extracted chars)
+- **Extraction Timestamp**: 2026-11-13T03:16:02
+- **Evidence SHA-256**: d2f75ac1746c64566eb5ccaa220917f471b4bfd3365236a21fd690ce56497d01
 - **Generation Model**: automated extraction, human-reviewed
-- **Evidence SHA256**: 91a6365acc949f73
-- **Window Chars**: 14822
+- **Evidence SHA256**: d2f75ac1746c6456
+- **Window Chars**: 13881
 
 ---
 
@@ -60284,6 +60225,65 @@ enrichment_method: automated extraction, human-reviewed
 
 ---
 
+## Post-Quantum-Cryptography-in-Sequoia-PGP
+
+- **Reference ID**: Post-Quantum-Cryptography-in-Sequoia-PGP
+- **Title**: Post Quantum Cryptography in Sequoia PGP
+- **Authors**: 
+- **Publication Date**: 2025
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Implementation of the new OpenPGP post-quantum cryptography standard in Sequoia PGP (sq and sequoia-openpgp), explaining the algorithms, how to generate and use post-quantum certificates, and the status of the specification.
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; ML-KEM
+- **Quantum Threats Addressed**: Shor's Algorithm (factoring integers breaks RSA); quantum computers breaking current asymmetric cryptography (no current quantum computer is powerful enough yet)
+- **Migration Timeline Info**: Post-quantum OpenPGP standard expected to be published in first half of 2026; official Sequoia releases to follow shortly after publication; next Debian release unlikely before July 2027, so exclusive PQC use not expected to be reasonable for the next few years
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF OpenPGP working group, NIST, Red Hat
+- **Leaders Contributions Mentioned**: Peter Shor (demonstrated the quantum speedup endangering cryptography); Peter Gutmann (cryptographer who thinks PQC is a Heffalump); Clemens Lang (Red Hat Crypto Team Product Owner, explained government requirements at OpenSSL conference; technical contributor); Neal H. Walfield, Devan Carpenter, Justus Winter, Malte Meiboom (Sequoia contributors); Daiki Ueno, Jakub Jelen, Peter Vrabec, Roberto Hueso Gomez, Simo Sorce, Stanislav Zidek (Red Hat contributors)
+- **PQC Products Mentioned**: Sequoia PGP; sq; sequoia-openpgp; OpenSSL; Debian; Fedora
+- **Protocols Covered**: OpenPGP (RFC 9580)
+- **Infrastructure Layers**: Certificates / key management; software package signing (RPM signing keys)
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: NIST IR 8547
+- **Classical Algorithms Referenced**: RSA; Ed25519; Ed448; X25519; X448; AES-128; AES-192; AES-256; AES-256/OCB
+- **Key Takeaways**: Post-quantum OpenPGP pairs ML-DSA and ML-KEM with Ed25519/Ed448/X25519/X448 so security holds unless both algorithms are broken; use ML-DSA/ML-KEM for general-purpose certificates and consider SLH-DSA for software-release signing where size and speed matter less; maintain both a classical and a post-quantum certificate to preserve compatibility during the transition; PQC certificates require the RFC 9580 format (except ML-KEM-768+X25519 subkeys); expect large artifacts (42 KB certificate vs 2.3 KB classical)
+- **Security Levels & Parameters**: ML-DSA-65 (AES-192 equivalent); ML-DSA-87 (AES-256); SLH-DSA-128s (AES-128); SLH-DSA-128f (AES-128); SLH-DSA-256s (AES-256); ML-KEM-768 (AES-192); ML-KEM-1024 (AES-256)
+- **Hybrid & Transition Approaches**: Composite pairing of ML-DSA with Ed25519/Ed448 and ML-KEM with X25519/X448; maintaining two certificates (one classical RSA, one post-quantum) and signing with both; ML-KEM-768+X25519 subkeys in the old certificate format for partial transition; SLH-DSA standalone
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "ML-KEM-768 and X25519; ML-KEM-1024 and X448" listed as new OpenPGP algorithms
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: SLH-DSA-128s, SLH-DSA-128f, SLH-DSA-256s added; "the two variants standalone" (SLH-DSA)
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "ML-DSA-65 and Ed25519; ML-DSA-87 and Ed448" added as OpenPGP algorithms
+- **PQC Heatmap Protocols Covered**: OpenPGP
+- **PQC Heatmap Protocols Evidence**: OpenPGP: "Post-quantum cryptography is coming to OpenPGP."
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: SLH-DSA signatures 8 KB to 30 KB; ML-DSA-65 signature 3.3 KB; ML-DSA-87 signature 4.6 KB; Ed25519 signature 64 bytes; post-quantum certificate 42 KB (42825 bytes) vs 2.3 KB (2322 bytes) for elliptic-curve certificate; PQC asymmetric operations slower
+- **Target Audience**: Developer; Security Architect; Researcher; Operations
+- **Implementation Prerequisites**: OpenSSL backend (cryptographic backend 3.5.1); sequoia-openpgp 2.2.0-pqc.1 pre-release; sq 1.4.0-pqc.1; RFC 9580 profile/certificate format; Cargo build with --features crypto-openssl
+- **Relevant PQC Today Features**: Algorithms; email-signing; hybrid-crypto; code-signing; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Distribution packaging lag (Debian/Fedora release cycles) delaying PQC adoption; Red Hat signing keys using both RSA and post-quantum certificates
+- **Deployment & Migration Complexity**: Interoperability problems until implementations widely deployed; dual-certificate approach for compatibility; only OpenSSL backend supports PQC so far (other of five backends planned); older implementations ignore unknown subkey algorithms
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based; Hybrid
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: Post-Quantum-Cryptography-in-Sequoia-PGP.html (27,090 bytes, 14,822 extracted chars)
+- **Extraction Timestamp**: 2026-11-13T00:21:48
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 91a6365acc949f73
+- **Window Chars**: 14822
+
+---
+
 ## Post-Quantum-EDHOC-Initiator-and-Responder-using-signature-a
 
 - **Reference ID**: Post-Quantum-EDHOC-Initiator-and-Responder-using-signature-a
@@ -62529,6 +62529,65 @@ enrichment_method: automated extraction, human-reviewed
 - **Evidence SHA256**: 6c936dc191cbd5c5
 - **Reader**: unified/5 head
 - **Window Chars**: 20000
+
+---
+
+## Quantum-resistant-signing-on-AWS-Part-1-Build-a-software-sup
+
+- **Reference ID**: Quantum-resistant-signing-on-AWS-Part-1-Build-a-software-sup
+- **Title**: Quantum-resistant signing on AWS, Part 1: Build a software supply chain with ML-DSA
+- **Authors**: Amazon Web Services
+- **Publication Date**: 2026
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: How to build an end-to-end quantum-resistant software supply chain on AWS by signing binaries, container images and SBOMs with ML-DSA using AWS KMS, AWS Private CA and IAM Roles Anywhere.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: CRQC; Harvest now, forge later (signature forgery by a quantum computer); Shor's Algorithm not named
+- **Migration Timeline Info**: Milestones: 2025: CNSA 2.0 requires "support and prefer" quantum-resistant signatures for software and firmware; December 2027: EU Cyber Resilience Act takes full effect; 2030: CNSA 2.0 exclusive use of quantum-resistant signatures; March 2025: PCI DSS 4.0 Req 12.3.3 mandatory
+- **Applicable Regions / Bodies**: Regions: United States; European Union; Bodies: NSA; NIST; AWS
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS Key Management Service (AWS KMS); AWS Private Certificate Authority; AWS Identity and Access Management (IAM) Roles Anywhere; Amazon Inspector SBOM Generator (Sbomgen); Amazon ECR; AWS Organizations Service Control Policies; Amazon Athena
+- **Protocols Covered**: X.509; OIDC; OCI referrers; in-toto Statement
+- **Infrastructure Layers**: Key Management; PKI; Cloud KMS; CI/CD build pipelines; Container registry; IAM workload identity; Kubernetes admission control
+- **Standardization Bodies**: NIST; NSA; EU
+- **Compliance Frameworks Referenced**: CNSA 2.0; FIPS 204; EU Cyber Resilience Act (Regulation (EU) 2024/2847); PCI DSS 4.0
+- **Classical Algorithms Referenced**: RSA; ECDSA; ECDSA P-256; SHA-256
+- **Key Takeaways**: Combine ML-DSA keys in AWS KMS, ML-DSA hierarchies in AWS Private CA and ML-DSA trust anchors in IAM Roles Anywhere for end-to-end quantum-resistant signing; Bind an SBOM to the exact artifact by wrapping it in an in-toto Statement whose subject digest is signed, since OCI referrers alone give no cryptographic binding; Use SCPs to block creation of traditional signing keys and log signing operations as detective controls; Use ML-DSA-87 for all signing keys if aligning with CNSA 2.0; Map regulatory deadlines (CNSA 2.0, EU CRA, PCI DSS) to code signing, signed SBOMs and cryptographic inventory actions
+- **Security Levels & Parameters**: ML-DSA-87; ML-DSA-44; ML_DSA_87 KMS key spec; ECDSA P-256; highest NIST security category (CNSA 2.0)
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "ML-DSA keys in AWS KMS, ML-DSA certificate hierarchies in AWS Private Certificate Authority" (paraphrase — not found verbatim in the document)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: "build agents ... authenticate using X.509 certificates"; "IAM Roles Anywhere with ML-DSA certificates"
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; CISO; Compliance Officer
+- **Implementation Prerequisites**: AWS KMS ML-DSA keys; AWS Private CA ML-DSA certificate hierarchy; IAM Roles Anywhere ML-DSA trust anchor; SBOM generation tool (e.g. Amazon Inspector Sbomgen); custom admission controller verification code for ML-DSA signature referrers
+- **Relevant PQC Today Features**: code-signing; kms-pqc; pki-workshop; Compliance; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Cryptographic inventory in AWS KMS with tagging of ML-DSA versus traditional keys; detective controls logging signing operations; migration progress tracking
+- **Testing & Validation Methods**: Signature verification of binaries, container images and SBOMs, including the in-toto subject digest check
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Firmware signed with ECDSA P-256 deployed to embedded device fleets mentioned as a forgery risk example
+- **Supply Chain & Vendor Risk**: Software supply chain attacks on build systems and open source dependencies; SBOM and in-toto attestation binding; signed SBOMs with every release; admission control rejecting unsigned images
+- **Deployment & Migration Complexity**: Preventive SCP guardrails against traditional keys; replacing RSA/ECDSA build-agent credentials with ML-DSA certificates; custom verification code needed for ML-DSA referrers in standard tools
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Separation of builder and governance responsibilities (Part 1 for builders, Part 2 for security and governance teams); legal and compliance consultation for obligations
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: Quantum-resistant-signing-on-AWS-Part-1-Build-a-software-sup.html (1,517,652 bytes, 12,171 extracted chars)
+- **Extraction Timestamp**: 2026-11-13T00:21:48
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 14f608a423dd54a0
+- **Window Chars**: 12171
 
 ---
 
