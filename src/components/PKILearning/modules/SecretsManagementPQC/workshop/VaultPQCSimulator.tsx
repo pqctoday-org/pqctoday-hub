@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { ArrowRight, Info } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VAULT_TRANSIT_SCENARIOS } from '../data/secretsConstants'
+import { OPENBAO_SIGNING_CONTRACT } from '../data/openBaoSigningContract'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 
@@ -32,7 +33,7 @@ const SECRETS_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'secrets-unseal-pbkdf2',
-    useCase: 'Vault unseal key derivation (PBKDF2)',
+    useCase: 'Password-based backup derivation (PBKDF2)',
     standard: 'NIST SP 800-132',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/132/final',
     kind: { type: 'pbkdf2-derive', prf: 'SHA-256' },
@@ -244,7 +245,9 @@ export const VaultPQCSimulator: React.FC = () => {
 
       {/* API Example */}
       <div>
-        <div className="text-sm font-bold text-foreground mb-2">Vault API Example</div>
+        <div className="text-sm font-bold text-foreground mb-2">
+          {scenario.id === 'sign-verify' ? 'OpenBao API Example' : 'Vault API Example'}
+        </div>
         <div className="bg-muted font-mono text-xs rounded-lg p-4 overflow-x-auto border border-border whitespace-pre text-foreground/90">
           {scenario.apiExample}
         </div>
@@ -261,16 +264,19 @@ export const VaultPQCSimulator: React.FC = () => {
                   CHANGE
                 </span>
                 <div className="text-xs text-muted-foreground">
-                  <strong className="text-foreground">Key type</strong>: Update{' '}
-                  <code className="bg-muted px-1 rounded border border-border">type=</code>{' '}
-                  parameter from{' '}
-                  <code className="bg-muted px-1 rounded border border-border text-status-error">
-                    {scenario.classicalMechanism.toLowerCase().replace(/[- ]/g, '-')}
-                  </code>{' '}
-                  to{' '}
-                  <code className="bg-muted px-1 rounded border border-border text-primary">
-                    {scenario.pqcMechanism.split('(')[0].trim().toLowerCase().replace(/[- ]/g, '-')}
-                  </code>
+                  {scenario.id === 'sign-verify' ? (
+                    <>
+                      <strong className="text-foreground">New signing key</strong>: Create a fresh
+                      named key with <code>type={OPENBAO_SIGNING_CONTRACT.keyType}</code>. Rotation
+                      adds a version to that key ring; it does not change an existing key's
+                      algorithm.
+                    </>
+                  ) : (
+                    <>
+                      <strong className="text-foreground">Key type</strong>: Compare the selected
+                      algorithms and check the copied operation's actual key requirements.
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -278,9 +284,9 @@ export const VaultPQCSimulator: React.FC = () => {
                   CHANGE
                 </span>
                 <div className="text-xs text-muted-foreground">
-                  <strong className="text-foreground">Storage</strong>: HSM and Vault storage must
-                  accommodate larger key material ({sizes.pqcKey.toLocaleString()} B public keys vs{' '}
-                  {sizes.classicalKey.toLocaleString()} B)
+                  <strong className="text-foreground">Raw public-key components</strong>:{' '}
+                  {sizes.pqcKey.toLocaleString()} B versus {sizes.classicalKey.toLocaleString()} B.
+                  Provider storage, metadata and public-key encodings add their own overhead.
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -311,9 +317,24 @@ export const VaultPQCSimulator: React.FC = () => {
               REQUIRED
             </span>
             <div className="text-xs text-muted-foreground">
-              <strong className="text-foreground">Vault version</strong>: HashiCorp Vault Enterprise
-              (the transit documentation lists ml-dsa, slh-dsa and hybrid sign/verify key types as
-              Enterprise features); no version or date is stated here.
+              {scenario.id === 'sign-verify' ? (
+                <>
+                  <strong className="text-foreground">OpenBao version</strong>:{' '}
+                  <a
+                    href={OPENBAO_SIGNING_CONTRACT.releaseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline"
+                  >
+                    {OPENBAO_SIGNING_CONTRACT.version}
+                  </a>
+                  . The copied recipe checks exact message bytes and retained signatures after
+                  rotation. Its success does not establish the server's seal, TLS or HSM
+                  configuration.
+                </>
+              ) : (
+                <>Check the selected operation's documented runtime and supported key type.</>
+              )}
             </div>
           </div>
         </div>
