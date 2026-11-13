@@ -323,7 +323,10 @@ export interface OpenGap {
   scope: string
   /** 'curated' = reviewed entry in open-gaps.json; 'generated' = derived from the matrix. */
   origin?: 'curated' | 'generated'
-  /** Capability cells (row × engine) this gap stands for in the denominators. */
+  /**
+   * Capability cells (row × engine) this gap counts. For a gap on advertised cells, these cells are
+   * inside the denominator; for the unsupported-cells gap they are outside it, counted separately.
+   */
   cells?: number
 }
 
@@ -1232,6 +1235,10 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
   return { matrix, gate: { errors, warnings } }
 }
 
+/** The title of the generated gap for unsupported (row × engine) cells: counted outside the denominator. */
+export const unsupportedCellsGapTitle = (count: number): string =>
+  `${count} unsupported (row × engine) cells counted separately, outside the denominator`
+
 /** J-7: one generated gap per mechanism with untested advertised cells, plus per-polarity aggregates. */
 function generatedGaps(rows: MatrixRow[]): OpenGap[] {
   const out: OpenGap[] = []
@@ -1301,7 +1308,7 @@ function generatedGaps(rows: MatrixRow[]): OpenGap[] {
   }
   out.push({
     id: 'unsupported-cells',
-    title: `${unsupported} unsupported (row × engine) cells counted separately, outside the denominator`,
+    title: unsupportedCellsGapTitle(unsupported),
     detail:
       'Cells one engine does not advertise (mechanism absent, CKF_ flag not set, or parameter set outside its key-size range) and declared capabilities no PKCS #11 mechanism can express. Listed per row in the matrix; never dropped.',
     planItem: 'J-7 / G-9',

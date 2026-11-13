@@ -180,6 +180,21 @@ describe('plain wording for the open-gaps register', () => {
     expect(browserOnly).toContain('Browser run results are included.')
   })
 
+  it('never prints a raw host or runner string, even when the record has an unknown one', () => {
+    const base = runResultSources[0]
+    const odd: RunResultSource = {
+      ...base,
+      runner: 'internalRigRunner (lab-only suite)',
+      host: 'lab-box 10.0.0.7 over ssh',
+    }
+    const text = runResultsSummary([odd])
+    expect(text).not.toContain('lab-box')
+    expect(text).not.toContain('10.0.0.7')
+    expect(text).not.toContain('internalRigRunner')
+    expect(text).toContain('a recorded test host')
+    expect(text).toContain('another recorded suite')
+  })
+
   it('says the P-521 import fix is in and the re-recorded run passes on both engines', () => {
     const summary = plainGapView(
       gaps.find((g) => g.id === 'ecdsa-p521-cpp-ec-point-der')!,

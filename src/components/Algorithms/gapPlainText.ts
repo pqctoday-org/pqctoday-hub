@@ -163,7 +163,7 @@ const RUNNER_PLAIN_NAME: Readonly<Record<string, string>> = {
   errorPathProbes: 'the error-path probes',
 }
 
-const thousands = (n: number): string => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+const thousands = (n: number): string => n.toLocaleString('en-US')
 
 const longDate = (iso: string): string =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', {
@@ -180,7 +180,8 @@ const venueText = (r: RunResultSource): string => {
     return `Node.js${node}, not in a browser`
   }
   if (/browser/i.test(r.host)) return 'a browser'
-  return r.host
+  // An unrecognised host is never printed raw: the reader gets a generic phrase.
+  return 'a recorded test host'
 }
 
 /**
@@ -203,7 +204,10 @@ export function runResultsSummary(sources: readonly RunResultSource[]): string {
   const where =
     venues.length === 1 ? `executed in ${venues[0]}` : `executed in ${venues.join(' and ')}`
   const suites = [
-    ...new Set(sources.map((r) => RUNNER_PLAIN_NAME[r.runner.split(' ')[0]] ?? r.runner)),
+    // A suite the table does not name gets a generic phrase, never its raw runner string.
+    ...new Set(
+      sources.map((r) => RUNNER_PLAIN_NAME[r.runner.split(' ')[0]] ?? 'another recorded suite')
+    ),
   ]
   const noBrowserRun = venues.every((v) => !/browser/.test(v) || /not in a browser/.test(v))
   return (
