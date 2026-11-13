@@ -93,8 +93,8 @@ describe('recorded run totals agree with the register', () => {
     { results: 0, pass: 0, fail: 0, skip: 0 }
   )
 
-  it('tallies 19,176 results: 19,067 pass, 20 fail, 89 skip', () => {
-    expect(tally).toEqual({ results: 19176, pass: 19067, fail: 20, skip: 89 })
+  it('tallies 19,176 results: 19,043 pass, 44 fail, 89 skip', () => {
+    expect(tally).toEqual({ results: 19176, pass: 19043, fail: 44, skip: 89 })
   })
 
   it('states the same four numbers in the curated run-results detail', () => {

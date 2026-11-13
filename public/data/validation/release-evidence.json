@@ -16,13 +16,13 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "0e876f7f96c56fc58932c3a0d0eab3a6aeaa858bb73e26f46b7c8b6c230b9884",
+    "public/data/validation/coverage-matrix.json": "4cde9ec8105d294a7c5a49b5fd3a518af072d53f7a8c39a1a4903022618dbde0",
     "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
     "src/data/validation/native-conformance.generated.json": "dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700",
-    "src/data/validation/open-gaps.json": "16f34a9aded1000189f9eb8c3e33a0bb4887cdd42f843357a4a65315566030a6",
+    "src/data/validation/open-gaps.json": "fdb9f768b8901caf0f5e2f044e00688796bc3d39bfedcb7185f4d00fc0fde7d1",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a",
     "src/data/validation/run-results/wasm-node-katRunner.json": "f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "88a03cd5ad6306be37e63ba523e56add1cb71dad2a1a837d0d42772de3eb768d",
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "27de80b7569bbad21255e6305a7f751314f2626db6e18d8940b11722bb9f104e",
     "src/data/validation/validation-counts.generated.json": "f023b845002988f141320149a591858bc0567f32cca774e9785d4c9ae566398d",
     "src/data/validation/vector-manifest.json": "8cbeb36566320ad9c72520b76a93caf446091271c8024373465b28990acfdf95"
   },
@@ -178,7 +178,7 @@
             "status": "registered",
             "registeredCells": 2189,
             "passedCells": 2188,
-            "failedCells": 1,
+            "failedCells": 4,
             "skippedCells": 0
           },
           "native": {
@@ -282,7 +282,7 @@
             "status": "registered",
             "registeredCells": 2209,
             "passedCells": 2197,
-            "failedCells": 2,
+            "failedCells": 5,
             "skippedCells": 0
           },
           "native": {
@@ -310,14 +310,14 @@
         "single-engine": 39
       },
       "negative": {
-        "parity": 156,
-        "divergent": 0,
+        "parity": 150,
+        "divergent": 6,
         "not-established": 2048,
         "single-engine": 39
       },
       "boundary": {
-        "parity": 239,
-        "divergent": 0,
+        "parity": 236,
+        "divergent": 3,
         "not-established": 1965,
         "single-engine": 39
       },
@@ -331,7 +331,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 14092 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub e64a414cb). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 14092 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-11-13, hub d6011cede). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -524,18 +524,18 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "e64a414cb9e7ad3feb076ef6efefd7e7a1addf57",
-      "recordedAt": "2026-10-30",
+      "hubCommit": "d6011cede34ec94acb361e0feb6f7d34aca457c3",
+      "recordedAt": "2026-11-13",
       "results": 14092,
       "byEngine": {
         "cpp": {
-          "pass": 7041,
-          "fail": 1,
+          "pass": 7029,
+          "fail": 13,
           "skip": 4
         },
         "rust": {
-          "pass": 7027,
-          "fail": 19
+          "pass": 7015,
+          "fail": 31
         }
       },
       "failures": [
@@ -618,6 +618,102 @@
         {
           "engine": "rust",
           "registryCase": "acvp.36#rsa_oaep_test#/testGroups/1/tests/9"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/4/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/24/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/25/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/4/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/22/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/23/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/4/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/22/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/23/tests/0"
         }
       ]
     }
@@ -2214,17 +2310,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 71,
+    "total": 95,
     "byStatus": {
-      "open": 62,
+      "open": 86,
       "in-progress": 1,
       "accepted-limitation": 8
     },
     "byOrigin": {
       "curated": 30,
-      "generated": 41
+      "generated": 65
     },
-    "unassignedOwner": 71,
+    "unassignedOwner": 95,
     "curated": [
       {
         "id": "kmac256-quarantined",
