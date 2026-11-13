@@ -464,18 +464,27 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     hybrid: [
       {
         algorithms: ['ML-DSA', 'RSA-sig'],
-        status: 'draft',
-        proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
+        status: 'published',
+        proofRefs: [
+          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+          'draft-ietf-lamps-cms-composite-sigs',
+        ],
       },
       {
         algorithms: ['ML-DSA', 'ECDSA'],
-        status: 'draft',
-        proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
+        status: 'published',
+        proofRefs: [
+          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+          'draft-ietf-lamps-cms-composite-sigs',
+        ],
       },
       {
         algorithms: ['ML-DSA', 'EdDSA'],
-        status: 'draft',
-        proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
+        status: 'published',
+        proofRefs: [
+          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+          'draft-ietf-lamps-cms-composite-sigs',
+        ],
       },
     ],
     cycloneDxPrimitive: 'signature',
@@ -572,7 +581,13 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     id: 'KeyAgree-Recipient',
     label: 'Key agreement recipient (CMS KeyAgreeRecipientInfo)',
     outlook: 'replaced',
-    classical: [{ algorithms: ['ECDH'], status: 'published', proofRefs: ['RFC 7518'] }],
+    classical: [
+      {
+        algorithms: ['ECDH'],
+        status: 'published',
+        proofRefs: ['RFC-5753-Use-of-Elliptic-Curve-Cryptography-ECC-Algorithms-i', 'RFC 7518'],
+      },
+    ],
     successions: [
       {
         to: 'KEM-Recipient',
@@ -585,7 +600,12 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     ],
     builtOn: ['KDF', 'Key-Wrap'],
     cycloneDxPrimitive: 'key-agree',
-    proofRefs: ['RFC 5652', 'RFC 7518', 'RFC 9053'],
+    proofRefs: [
+      'RFC 5652',
+      'RFC-5753-Use-of-Elliptic-Curve-Cryptography-ECC-Algorithms-i',
+      'RFC 7518',
+      'RFC 9053',
+    ],
     explain: {
       plain:
         'The sender agrees a shared secret with the recipient’s elliptic-curve key, derives a key-encryption key from it, and uses that to wrap the message key. CMS calls this KeyAgreeRecipientInfo; JOSE and COSE have a similar mode called ECDH-ES.',
@@ -1364,19 +1384,28 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       {
         algorithms: [],
         status: 'published',
-        proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+        proofRefs: [
+          'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
+          'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
+        ],
       },
     ],
     pqc: [
       {
         algorithms: [],
         status: 'published',
-        proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+        proofRefs: [
+          'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
+          'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
+        ],
       },
     ],
     cycloneDxPrimitive: 'other',
     otherReason: 'CycloneDX 1.7 has no secret-sharing primitive.',
-    proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+    proofRefs: [
+      'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
+      'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
+    ],
     explain: {
       plain:
         'Secret sharing splits a secret, such as a master key, into shares so that any agreed number of them can rebuild it while fewer reveal nothing. NIST’s call for multi-party threshold schemes builds on keys that are secret-shared across several parties.',
