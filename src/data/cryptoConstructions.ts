@@ -1381,7 +1381,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       plain:
         'Secret sharing splits a secret, such as a master key, into shares so that any agreed number of them can rebuild it while fewer reveal nothing. NIST’s call for multi-party threshold schemes builds on keys that are secret-shared across several parties.',
       whyItMattersForPqc:
-        'Basic secret sharing does not rely on a hard mathematical problem, so a quantum computer gives an attacker holding too few shares no advantage.',
+        'Secret sharing protects how a key is held, not which algorithm the key belongs to, so it applies to post-quantum keys as it does to classical ones.',
       diagram: {
         inputs: ['secret', 'threshold'],
         combiner: 'split into shares',
@@ -1526,7 +1526,7 @@ export const NO_FAMILY_EXEMPT: Record<string, string> = {
   'OPRF-PrivacyPass':
     'The VOPRF token type evaluates an oblivious function in the P-384 elliptic-curve group; that is neither key agreement (ECDH) nor a signature (ECDSA), so no algorithm family fits.',
   'Secret-Sharing':
-    'Basic secret sharing is information-theoretic: it uses no public-key algorithm family.',
+    'Secret sharing splits a key into shares; it adds no public-key algorithm family of its own.',
   'IKEv2-PPK':
     'Mixes a preshared key through the PRF that IKEv2 negotiates; it adds no algorithm family of its own.',
 }
