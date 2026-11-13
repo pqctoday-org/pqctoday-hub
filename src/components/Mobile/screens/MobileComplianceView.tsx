@@ -598,7 +598,7 @@ export function MobileComplianceView({
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
               section === s.id
-                ? 'border-primary bg-primary text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >
@@ -762,7 +762,7 @@ export function MobileComplianceView({
                       className={cn(
                         'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
                         selectedRow?.framework.id === r.framework.id
-                          ? 'border-primary bg-primary text-primary-foreground'
+                          ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                           : 'border-border bg-card text-foreground'
                       )}
                     >
@@ -1044,7 +1044,7 @@ export function MobileComplianceView({
                     className={cn(
                       'h-7 shrink-0 rounded-full border px-3 text-[11px] font-semibold',
                       recordTab.toLowerCase() === tab.id
-                        ? 'border-primary bg-primary text-primary-foreground'
+                        ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                         : 'border-border bg-card text-foreground'
                     )}
                   >
@@ -1074,7 +1074,7 @@ export function MobileComplianceView({
                     className={cn(
                       'h-7 shrink-0 rounded-full border px-3 text-[11px] font-semibold',
                       recordScope === scope
-                        ? 'border-primary bg-primary text-primary-foreground'
+                        ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                         : 'border-border bg-card text-foreground'
                     )}
                   >

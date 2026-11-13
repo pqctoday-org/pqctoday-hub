@@ -1800,7 +1800,7 @@ export const PlaygroundWorkshop = () => {
                     className={cn(
                       'rounded-lg px-3 py-1.5 text-[11.5px] h-auto font-medium',
                       active
-                        ? 'bg-primary text-primary-foreground font-semibold hover:bg-primary/90'
+                        ? 'bg-primary text-primary-foreground hover:text-primary-foreground font-semibold hover:bg-primary/90'
                         : 'border border-border bg-muted/30 text-muted-foreground hover:border-primary/40'
                     )}
                   >

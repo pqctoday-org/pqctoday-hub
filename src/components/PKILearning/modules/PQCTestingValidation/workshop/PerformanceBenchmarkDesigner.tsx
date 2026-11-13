@@ -146,7 +146,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
               onClick={() => setSelectedMetric(m.key)}
               className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                 selectedMetric === m.key
-                  ? 'bg-primary text-primary-foreground border-primary font-semibold'
+                  ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary font-semibold'
                   : 'bg-background/60 text-muted-foreground border-border hover:border-primary/50'
               }`}
             >

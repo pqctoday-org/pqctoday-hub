@@ -4282,7 +4282,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         : generateCerts
                     }
                     disabled={certGenLoading}
-                    className="px-4 py-2 bg-secondary text-secondary-foreground font-bold rounded shadow-sm hover:bg-secondary/90 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-bold rounded shadow-sm hover:bg-secondary/90 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {certGenLoading
                       ? 'Generating…'
@@ -4557,7 +4557,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               variant="ghost"
               onClick={() => setCurrentStep((s) => Math.min(steps.length - 1, s + 1))}
               disabled={true}
-              className="px-4 py-2 bg-primary/50 text-primary-foreground font-bold rounded shadow-sm opacity-50 cursor-not-allowed text-sm transition-colors"
+              className="px-4 py-2 bg-primary/50 text-primary-foreground hover:text-primary-foreground font-bold rounded shadow-sm opacity-50 cursor-not-allowed text-sm transition-colors"
               title="UI automatically advances based on daemon log output"
               data-testid="vpn-status-button"
             >

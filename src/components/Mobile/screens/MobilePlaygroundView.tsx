@@ -216,7 +216,7 @@ export function MobilePlaygroundView() {
           className={cn(
             'h-8 rounded-full border px-3 text-[11px] font-semibold',
             category === null
-              ? 'border-primary bg-primary text-primary-foreground'
+              ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
               : 'border-border bg-card text-foreground'
           )}
         >
@@ -232,7 +232,7 @@ export function MobilePlaygroundView() {
             className={cn(
               'h-8 rounded-full border px-3 text-[11px] font-semibold',
               category === cat
-                ? 'border-primary bg-primary text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >
@@ -252,7 +252,7 @@ export function MobilePlaygroundView() {
             className={cn(
               'h-8 rounded-full border px-3 text-[11px] font-semibold capitalize',
               difficulty === chip.value
-                ? 'border-primary bg-primary text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >
@@ -270,7 +270,7 @@ export function MobilePlaygroundView() {
           className={cn(
             'mb-4 h-8 rounded-full border px-3 text-[11px] font-semibold',
             runsHereOnly
-              ? 'border-primary bg-primary text-primary-foreground'
+              ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
               : 'border-border bg-card text-foreground'
           )}
         >

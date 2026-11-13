@@ -494,7 +494,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
                 }}
                 className={`h-auto px-1.5 py-0.5 rounded-full border text-[10px] ${
                   annualBreachProbPct === ANNUAL_BREACH_PROBABILITY_PCT[tier]
-                    ? 'bg-primary text-primary-foreground border-primary'
+                    ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
                     : 'border-border text-muted-foreground hover:text-foreground'
                 }`}
               >

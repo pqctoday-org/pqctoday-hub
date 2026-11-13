@@ -1552,7 +1552,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 className={clsx(
                   'flex-1 p-3 rounded border text-left transition-all h-auto whitespace-normal',
                   pqcMode === 'hybrid'
-                    ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
+                    ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground hover:text-tertiary-foreground'
                     : 'border-border text-muted-foreground hover:bg-muted'
                 )}
               >
@@ -1568,7 +1568,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 className={clsx(
                   'flex-1 p-3 rounded border text-left transition-all h-auto whitespace-normal',
                   pqcMode === 'pure'
-                    ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
+                    ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground hover:text-tertiary-foreground'
                     : 'border-border text-muted-foreground hover:bg-muted'
                 )}
               >

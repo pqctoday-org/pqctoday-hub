@@ -175,7 +175,7 @@ export function MobileHomeBoard({
               className={cn(
                 'h-11 shrink-0 snap-start rounded-full border px-4 text-[11.5px] font-semibold',
                 selected
-                  ? 'border-primary bg-primary text-primary-foreground'
+                  ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                   : 'border-border bg-card text-foreground'
               )}
             >

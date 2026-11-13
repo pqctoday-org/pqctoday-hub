@@ -803,7 +803,7 @@ S8Y=
                 variant="ghost"
                 onClick={() => handleConvert('DER')}
                 disabled={isMeasuringChain || isConverting || !certInput || isCrlInput}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
               >
                 {isConverting ? (
                   <Loader2 className="animate-spin" size={14} />
@@ -822,7 +822,7 @@ S8Y=
                   certInput.includes('REQUEST') ||
                   isCrlInput
                 }
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
                 title="CSRs and CRLs cannot be converted to P7B"
               >
                 {isConverting ? (
@@ -841,7 +841,7 @@ S8Y=
               variant="ghost"
               onClick={handleGetFingerprint}
               disabled={isMeasuringChain || isFingerprintLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Compute the SHA-256 fingerprint of this certificate"
             >
               {isFingerprintLoading ? (
@@ -866,7 +866,7 @@ S8Y=
               variant="ghost"
               onClick={handleVerifyCsr}
               disabled={isMeasuringChain || isVerifyingCsr}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Verify the CSR's self-signature to confirm the requester holds the private key"
             >
               {isVerifyingCsr ? (
@@ -954,7 +954,7 @@ S8Y=
               variant="ghost"
               onClick={handleVerifyChain}
               disabled={isMeasuringChain || verificationBusy}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Verify this certificate's trust chain against the Root CA"
             >
               {isVerifying ? (
@@ -1003,7 +1003,7 @@ S8Y=
               variant="ghost"
               onClick={handleVerifyCrl}
               disabled={isMeasuringChain || verificationBusy}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
               title="Run the configured check with the explicitly selected sample issuer and CRL"
             >
               {isVerifyingCrl ? (
@@ -1090,8 +1090,8 @@ S8Y=
                   onClick={() => setViewMode('tree')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'tree'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                      ? 'bg-primary text-primary-foreground hover:text-primary-foreground'
+                      : 'bg-secondary text-secondary-foreground hover:text-secondary-foreground hover:bg-secondary/80'
                   }`}
                 >
                   <Eye size={14} />
@@ -1103,8 +1103,8 @@ S8Y=
                   onClick={() => setViewMode('raw')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'raw'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                      ? 'bg-primary text-primary-foreground hover:text-primary-foreground'
+                      : 'bg-secondary text-secondary-foreground hover:text-secondary-foreground hover:bg-secondary/80'
                   }`}
                 >
                   <Code size={14} />

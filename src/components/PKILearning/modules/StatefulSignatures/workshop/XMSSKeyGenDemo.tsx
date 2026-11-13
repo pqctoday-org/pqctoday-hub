@@ -753,7 +753,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 variant="ghost"
                 onClick={handleGenerateKey}
                 disabled={!hsm.isReady || isGenerating}
-                className="w-full font-bold bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                className="w-full font-bold bg-secondary hover:bg-secondary/90 text-secondary-foreground hover:text-secondary-foreground"
               >
                 <Key className="mr-2 h-4 w-4" />
                 {isGenerating
@@ -1027,7 +1027,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 variant="ghost"
                 onClick={handleSign}
                 disabled={isExhausted}
-                className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground hover:text-secondary-foreground"
               >
                 <PenLine className="mr-2 h-4 w-4" /> Sign with {selectedContext.mechanism}
               </Button>

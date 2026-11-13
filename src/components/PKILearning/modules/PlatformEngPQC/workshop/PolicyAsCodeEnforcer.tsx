@@ -147,7 +147,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
                 onClick={() => setSelectedSlsaLevel(level)}
                 className={`px-3 py-1.5 rounded text-xs font-bold border transition-colors ${
                   selectedSlsaLevel === level
-                    ? 'bg-primary text-primary-foreground border-primary'
+                    ? 'bg-primary text-primary-foreground hover:text-primary-foreground border-primary'
                     : 'bg-muted border-border text-muted-foreground hover:text-foreground'
                 }`}
               >

@@ -200,7 +200,7 @@ export function CSWP39AgilityExplorer({
               onClick={() => setView(v.id)}
               className={`h-auto rounded-lg px-3 py-1.5 text-xs font-semibold ${
                 view === v.id
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground hover:text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >

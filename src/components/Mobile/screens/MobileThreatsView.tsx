@@ -598,7 +598,7 @@ export function MobileThreatsView() {
           className={cn(
             'h-11 rounded-full border px-3 text-[11px] font-semibold',
             criticality === null
-              ? 'border-primary bg-primary text-primary-foreground'
+              ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
               : 'border-border bg-card text-foreground'
           )}
         >
@@ -614,7 +614,7 @@ export function MobileThreatsView() {
             className={cn(
               'h-11 rounded-full border px-3 text-[11px] font-semibold',
               criticality === level
-                ? 'border-primary bg-primary text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >
@@ -632,7 +632,7 @@ export function MobileThreatsView() {
           className={cn(
             'h-11 rounded-full border px-3 text-[11px] font-semibold',
             classFilter === null
-              ? 'border-primary bg-primary text-primary-foreground'
+              ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
               : 'border-border bg-card text-foreground'
           )}
         >
@@ -648,7 +648,7 @@ export function MobileThreatsView() {
             className={cn(
               'h-11 rounded-full border px-3 text-[11px] font-semibold',
               classFilter === c.id
-                ? 'border-primary bg-primary text-primary-foreground'
+                ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
           >

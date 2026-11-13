@@ -477,7 +477,7 @@ export const JWEEncryption: React.FC = () => {
             variant="ghost"
             onClick={() => void handleDecrypt()}
             disabled={isDecrypting || (keys?.hsmKeys !== undefined && !hsmCtx)}
-            className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+            className="px-6 py-3 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
           >
             <Unlock size={16} />
             {isDecrypting ? 'Decrypting...' : 'Decrypt'}

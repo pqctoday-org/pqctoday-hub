@@ -162,7 +162,7 @@ function MechanismChip({
       onClick={onSelect ? () => onSelect(family) : undefined}
       className={`h-auto rounded-full border px-2 py-0.5 text-xs font-medium transition-colors ${
         active
-          ? 'border-primary bg-primary text-primary-foreground'
+          ? 'border-primary bg-primary text-primary-foreground hover:text-primary-foreground'
           : classical
             ? 'border-border bg-muted/60 text-foreground hover:border-primary/50'
             : 'border-status-success/40 bg-status-success/10 text-status-success hover:border-status-success'
