@@ -38,7 +38,7 @@ const PARTS: WorkshopPart[] = [
     id: 'policy-as-code-enforcer',
     title: 'Step 4: Policy-as-Code Enforcer',
     description:
-      'OPA and Kyverno rules that block quantum-vulnerable algorithm OIDs at Kubernetes admission time. Maps to SLSA supply chain levels.',
+      'Evaluate a pinned ML-DSA certificate profile and verified build evidence alongside native API and admission policies. Distinguish declaration checks, issuance and cryptographic verification.',
     icon: Shield,
   },
   {

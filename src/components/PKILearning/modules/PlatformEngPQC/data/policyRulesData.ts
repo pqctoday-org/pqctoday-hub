@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { CERT_MANAGER_MLDSA_POLICY } from './certManagerAlphaSample'
 import { PROVENANCE_POLICY } from './provenanceSample'
 import type { PolicyRule } from './platformEngConstants'
 import { OPENBAO_KEY_CREATION_POLICY } from './openBaoPolicyExamples'
@@ -7,26 +8,14 @@ export const POLICY_RULES: PolicyRule[] = [
   {
     id: 'opa-cert-algo',
     engine: 'opa',
-    name: 'Block Non-PQC Certificate Algorithms',
+    name: 'Check the Pinned ML-DSA Certificate Profile',
     description:
-      'Rejects cert-manager Certificate resources that request RSA or ECDSA private keys. Enforces ML-DSA or SLH-DSA keys cluster-wide via OPA Gatekeeper ConstraintTemplate. Target-state rule: cert-manager accepts only RSA, ECDSA or Ed25519 private keys today.',
-    targetResource: 'certificates.cert-manager.io',
+      'Native OPA/Rego v1 policy for cert-manager source fcecd8377a59b44d1daf4b9ac1401eaa2a6f76b0, an unreleased snapshot. Require algorithm MLDSA, parameter set 44/65/87 or its omitted default, and no explicit signatureAlgorithm. Enable MLDSAPrivateKeys on both controller and webhook. Released v1.21.3 cannot issue this request. A policy match is not certificate issuance; test the actual issuer, Secret and renewal using the accompanying sample.',
+    targetResource: 'AdmissionReview-shaped Certificate input',
     blockedAlgorithms: ['RSA', 'ECDSA', 'Ed25519'],
-    requiredAlgorithms: ['MLDSA44', 'MLDSA65', 'MLDSA87', 'SLH-DSA-128'],
+    requiredAlgorithms: ['MLDSA; size 44, 65 or 87'],
     severity: 'error',
-    rule: `# OPA Gatekeeper ConstraintTemplate
-package certmanager.pqc
-
-violation[{"msg": msg}] {
-  input.review.object.kind == "Certificate"
-  algo := input.review.object.spec.privateKey.algorithm
-  not startswith(lower(algo), "ml")
-  not startswith(lower(algo), "slh")
-  msg := sprintf(
-    "Certificate %v uses quantum-vulnerable algorithm %v. Use MLDSA44, MLDSA65, or SLH-DSA.",
-    [input.review.object.metadata.name, algo]
-  )
-}`,
+    rule: CERT_MANAGER_MLDSA_POLICY,
   },
   {
     id: 'kyverno-image-sig',

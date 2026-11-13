@@ -11,6 +11,7 @@ import {
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { POLICY_RULES, SLSA_LEVEL_LABELS, SLSA_LEVEL_REQUIREMENTS } from '../data/policyRulesData'
 import type { PolicyEngine } from '../data/platformEngConstants'
+import { CertManagerSampleLab } from './CertManagerSampleLab'
 import { ProvenanceSampleLab } from './ProvenanceSampleLab'
 import { Button } from '@/components/ui/button'
 
@@ -91,6 +92,8 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           must be applied and tested in that tool before it can enforce the intended restriction.
         </p>
       </div>
+
+      <CertManagerSampleLab />
 
       <ProvenanceSampleLab />
 

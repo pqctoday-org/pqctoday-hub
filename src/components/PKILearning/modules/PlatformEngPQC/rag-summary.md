@@ -46,10 +46,10 @@
 
 ### Step 4: Policy-as-Code Enforcer
 
-- 6 policy rules: 4 OPA Gatekeeper ConstraintTemplates, 2 Kyverno ClusterPolicies
-- Blocked: RSA, ECDSA, Ed25519; Required: ML-DSA-44/65/87, SLH-DSA-128, X25519MLKEM768
+- 6 policy rules: 3 OPA examples, 2 Kyverno policies and 1 native OpenBao ACL, each with its own input contract
+- The certificate companion policy targets unreleased cert-manager source fcecd8377a59b44d1daf4b9ac1401eaa2a6f76b0 with MLDSAPrivateKeys enabled on both controller and webhook. Released v1.21.3 cannot issue the sample. The working fictional SelfSigned request uses algorithm MLDSA, size 65, PKCS8 and Always rotation; native tests cover issuance, actual key replacement on renewal, valid/default parameter sets and rejected requests. OPA/Rego v1 checks the declared profile separately; a match is not issuance or deployment validation.
 - SLSA build levels: L2 requires signed provenance from a hosted build platform and L3 a hardened build platform; SLSA (v1.2) names no signature algorithm and has no post-quantum text. The working provenance sample uses a pinned fictional ECDSA P-256 key with cosign 3.0.6 and OPA 1.19.1: the verifier checks the signed statement bytes before policy checks the actual artifact digest and named sample builder. Six downloadable files include the verifier, policy, artifact, statement, public key and signature bundle. Trusted, altered-artifact and altered-statement cases are reproducible; annotations are never evidence. The offline example omits transparency-log checks and does not establish Build L3 isolation or PQC signing
-- Deployment strategy: Audit mode first → 2-week baseline → Enforce mode rollout
+- Evaluate engine/version, issuer and consumer support, trust and renewal with production tools. The SelfSigned sample does not establish ACME support, universal TLS compatibility or SLSA Build L3.
 
 ### Step 5: Crypto Posture Monitor (4 tabs)
 
