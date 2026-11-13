@@ -6,6 +6,15 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { deriveTlsImporterSample, TLS_SAMPLE_CONTEXT } from './tlsPskImporterSample'
 import { createSshExchangeSample, assessSshExchange, sshSampleHex } from './sshExchangeHashSample'
+import {
+  createSampleQkdNode,
+  generateEcp256KeyPair,
+  ppkIdOpaqueFromQkdKeyId,
+  runIkeQkdSample,
+  type IkeSaKeys,
+  type PpkMixResult,
+  type PpkPathOutcome,
+} from './ikev2KeyDerivationSample'
 
 function getRandomHex(bytes: number): string {
   const buf = new Uint8Array(bytes)
@@ -270,97 +279,254 @@ const TLSPanel: React.FC = () => {
 
 // ─── IKEv2 Panel ─────────────────────────────────────────────────────────────
 
+interface IkeView {
+  ni: string
+  nr: string
+  spiI: string
+  spiR: string
+  sharedX: string
+  skeyseed: string
+  qkdKeyId: string
+  qkdResponseJson: string
+  ppkIdHex: string
+  mandatory: boolean
+  plain: Record<string, string>
+  withPpk: PpkPathView
+  withoutPpk: PpkPathView
+}
+type PpkPathView =
+  | {
+      path: 'ppk'
+      initiator: PpkSideView
+      responderMatches: boolean
+    }
+  | { path: 'plain-ikev2'; reason: string }
+  | { path: 'abort'; reason: string }
+interface PpkSideView {
+  skD: string
+  skPi: string
+  skPr: string
+  primedSkD: string
+  primedSkPi: string
+  primedSkPr: string
+}
+
+const IKE_UNCHANGED_KEYS: [string, keyof IkeSaKeys][] = [
+  ['SK_ai', 'skAi'],
+  ['SK_ar', 'skAr'],
+  ['SK_ei', 'skEi'],
+  ['SK_er', 'skEr'],
+]
+
+function uuidV4(): string {
+  const bytes = new Uint8Array(16)
+  crypto.getRandomValues(bytes)
+  bytes[6] = (bytes[6] & 0x0f) | 0x40
+  bytes[8] = (bytes[8] & 0x3f) | 0x80
+  const h = hex(bytes)
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
+function randomBytes(length: number): Uint8Array {
+  const bytes = new Uint8Array(length)
+  crypto.getRandomValues(bytes)
+  return bytes
+}
+
+function sideView(side: PpkMixResult): PpkSideView {
+  return {
+    skD: hex(side.keys.skD),
+    skPi: hex(side.keys.skPi),
+    skPr: hex(side.keys.skPr),
+    primedSkD: hex(side.primed.skD),
+    primedSkPi: hex(side.primed.skPi),
+    primedSkPr: hex(side.primed.skPr),
+  }
+}
+
+function pathView(outcome: PpkPathOutcome): PpkPathView {
+  if (outcome.path === 'ppk') {
+    const initiator = sideView(outcome.initiator)
+    const responder = sideView(outcome.responder)
+    return {
+      path: 'ppk',
+      initiator,
+      responderMatches:
+        initiator.skD === responder.skD &&
+        initiator.skPi === responder.skPi &&
+        initiator.skPr === responder.skPr,
+    }
+  }
+  return outcome
+}
+
+const KeyRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="bg-background rounded p-3 border border-border">
+    <dt className="text-xs text-muted-foreground mb-1">{label}</dt>
+    <dd>
+      <code className="text-xs font-mono break-all">{value}</code>
+    </dd>
+  </div>
+)
+
 const IKEv2Panel: React.FC = () => {
-  const {
-    result,
-    running,
-    error,
-    run: runSample,
-  } = useSampleOperation<{
-    qkdSecret: string
-    qkdResponseJson: string
-    ni: string
-    nr: string
-    skeyseed: string
-  }>()
+  const { result, running, error, run: runSample } = useSampleOperation<IkeView>()
+  const [mandatory, setMandatory] = useState(false)
 
   const run = useCallback(
     () =>
-      runSample(async () => {
-        const qkdHex = getRandomHex(32)
-        const ni = getRandomHex(32) // Initiator nonce
-        const nr = getRandomHex(32) // Responder nonce
-
-        // Authored HKDF illustration, not RFC 7296 SKEYSEED or a QKD integration profile.
-        // We simulate: HKDF(IKM = qkdSecret || Ni || Nr, info = "SKEYSEED")
-        const combined = new Uint8Array(96)
-        for (let i = 0; i < 32; i++) {
-          combined[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
-          combined[32 + i] = parseInt(ni.slice(i * 2, i * 2 + 2), 16)
-          combined[64 + i] = parseInt(nr.slice(i * 2, i * 2 + 2), 16)
+      runSample(() => {
+        const ni = randomBytes(32)
+        const nr = randomBytes(32)
+        const spiI = randomBytes(8)
+        const spiR = randomBytes(8)
+        // Fictional peers. Each peer holds only its own private value.
+        const initiator = generateEcp256KeyPair()
+        const responder = generateEcp256KeyPair()
+        // ETSI GS QKD 014: the master side obtains a key and its key_ID; the peer's own node later
+        // returns the same key for that key_ID. Both nodes are local stand-ins here.
+        const qkdKey = randomBytes(32)
+        const qkdKeyId = uuidV4()
+        const initiatorNode = createSampleQkdNode(new Map([[qkdKeyId, qkdKey]]))
+        // The responder's node cannot supply a key under this key_ID in the fallback case.
+        const responderNode = createSampleQkdNode(new Map([[qkdKeyId, qkdKey]]))
+        const outcome = runIkeQkdSample({
+          ni,
+          nr,
+          spiI,
+          spiR,
+          initiator,
+          responder,
+          qkdKeyId,
+          initiatorNode,
+          responderNode,
+          ppkMandatory: mandatory,
+        })
+        const qkdResponseJson = JSON.stringify(
+          { keys: [{ key_ID: qkdKeyId, key: btoa(String.fromCharCode(...qkdKey)) }] },
+          null,
+          2
+        )
+        return {
+          ni: hex(ni),
+          nr: hex(nr),
+          spiI: hex(spiI),
+          spiR: hex(spiR),
+          sharedX: hex(outcome.sharedXInitiator),
+          skeyseed: hex(outcome.plain.skeyseed),
+          qkdKeyId,
+          qkdResponseJson,
+          ppkIdHex: hex(ppkIdOpaqueFromQkdKeyId(qkdKeyId)),
+          mandatory,
+          plain: {
+            'SK_d′': hex(outcome.plain.skD),
+            SK_ai: hex(outcome.plain.skAi),
+            SK_ar: hex(outcome.plain.skAr),
+            SK_ei: hex(outcome.plain.skEi),
+            SK_er: hex(outcome.plain.skEr),
+            'SK_pi′': hex(outcome.plain.skPi),
+            'SK_pr′': hex(outcome.plain.skPr),
+          },
+          withPpk: pathView(outcome.withPpk),
+          withoutPpk: pathView(outcome.withoutPpk),
         }
-        const skeyseed = await hkdfDerive(combined, 'SKEYSEED', 32)
-        return { qkdSecret: qkdHex, qkdResponseJson: getQkdJson(qkdHex), ni, nr, skeyseed }
       }),
-    [runSample]
+    [runSample, mandatory]
   )
 
   return (
     <div className="space-y-5">
       <div className="glass-panel p-4">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
           <Wifi size={16} className="text-primary" />
           <h3 className="font-bold text-foreground">
-            IKEv2 / IPsec Context — Local HKDF Illustration
+            IKEv2 / IPsec: SKEYSEED and SK_* with a QKD Key as RFC 8784 PPK
           </h3>
           <a
-            href="https://datatracker.ietf.org/doc/html/rfc7296"
+            href="https://datatracker.ietf.org/doc/html/rfc7296#section-2.14"
             target="_blank"
             rel="noopener noreferrer"
             className="ml-auto text-xs text-primary flex items-center gap-1 hover:underline"
           >
-            RFC 7296 <ExternalLink size={11} />
+            RFC 7296 §2.14 <ExternalLink size={11} />
+          </a>
+          <a
+            href="https://datatracker.ietf.org/doc/html/rfc8784"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-primary flex items-center gap-1 hover:underline"
+          >
+            RFC 8784 <ExternalLink size={11} />
           </a>
         </div>
         <p className="text-xs text-muted-foreground">
-          RFC 7296 defines SKEYSEED = prf(Ni | Nr, g^ir), using the negotiated PRF and DH shared
-          secret. This panel instead runs an authored HKDF-SHA256 example over local sample bytes.
-          It is not IKEv2 SKEYSEED, an authenticated exchange or a standardized QKD integration.
+          This panel computes the real IKEv2 key derivation for two fictional peers using the Hub
+          classical profile (ECP-256, DH group 19; PRF-HMAC-SHA-256; AES-256-CBC with
+          HMAC-SHA-256-128, so every key is 32 bytes). Then it applies RFC 8784: the QKD key is the
+          post-quantum preshared key (PPK), its ETSI GS QKD 014 key ID is sent as the PPK_ID, and
+          each peer fetches the key from its own QKD node by that ID. The PPK is optional: if a peer
+          lacks it, the exchange continues as plain IKEv2 and the session is not quantum-safe.
+          Peers, nonces, SPIs and keys are fictional. No IKE_SA_INIT or IKE_AUTH message is sent, no
+          peer is authenticated, no Child SA is created and no real QKD link is used.
         </p>
       </div>
 
       {/* Flow diagram */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-primary/5 border border-primary/20 rounded p-3">
-          <div className="font-bold text-primary mb-1">① Local Sample Inputs</div>
-          <div className="text-muted-foreground">
-            Generate local 32-byte samples labelled Ni and Nr; no IKE_SA_INIT message is sent.
-          </div>
-        </div>
-        <div className="bg-muted/40 border border-border rounded p-3">
-          <div className="font-bold text-foreground mb-1">② Actual Demonstration</div>
-          <code className="text-muted-foreground block">HKDF-SHA256(sample || Ni || Nr)</code>
-          <div className="mt-1 text-muted-foreground">
-            Salt: 32 zero bytes; info: "SKEYSEED"; output: 32 bytes. This is not a protocol
-            combiner.
-          </div>
+          <div className="font-bold text-primary mb-1">① Ordinary IKEv2 (RFC 7296 §2.14)</div>
+          <code className="text-muted-foreground block">SKEYSEED = prf(Ni | Nr, g^ir)</code>
+          <code className="text-muted-foreground block">
+            &#123;SK_d′ | SK_ai | SK_ar | SK_ei | SK_er | SK_pi′ | SK_pr′&#125; = prf+(SKEYSEED, Ni
+            | Nr | SPIi | SPIr)
+          </code>
         </div>
         <div className="bg-success/5 border border-success/20 rounded p-3">
-          <div className="font-bold text-success mb-1">③ Local HKDF Output</div>
-          <code className="text-muted-foreground block">Not the RFC 7296 SKEYSEED</code>
+          <div className="font-bold text-success mb-1">② PPK in use (RFC 8784 §3)</div>
+          <code className="text-muted-foreground block">SK_d = prf+(PPK, SK_d′)</code>
+          <code className="text-muted-foreground block">SK_pi = prf+(PPK, SK_pi′)</code>
+          <code className="text-muted-foreground block">SK_pr = prf+(PPK, SK_pr′)</code>
           <div className="mt-1 text-muted-foreground">
-            No negotiation, peer authentication, child SA or packet encryption is executed.
+            SKEYSEED, SK_ai, SK_ar, SK_ei and SK_er are unchanged.
+          </div>
+        </div>
+        <div className="bg-warning/5 border border-warning/20 rounded p-3">
+          <div className="font-bold text-warning mb-1">③ No PPK: plain IKEv2 fallback</div>
+          <div className="text-muted-foreground">
+            Optional PPK: the exchange continues with the ① keys. These keys rest on ECP-256 alone,
+            so a recorded exchange is exposed once ECDH is broken. Mandatory PPK: the negotiation
+            aborts.
           </div>
         </div>
       </div>
 
-      <div className="bg-muted/30 rounded p-3 border border-border">
-        <div className="text-xs font-bold text-muted-foreground mb-1">RFC 7296 §2.14 — Nonces</div>
+      <div className="bg-muted/30 rounded p-3 border border-border space-y-2">
+        <div className="text-xs font-bold text-muted-foreground">PPK policy (RFC 8784 §2)</div>
+        <div className="flex flex-wrap gap-4 text-xs">
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="ppk-policy"
+              checked={!mandatory}
+              onChange={() => setMandatory(false)}
+            />
+            Optional: allow fallback to plain IKEv2 (default)
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="ppk-policy"
+              checked={mandatory}
+              onChange={() => setMandatory(true)}
+            />
+            Mandatory: abort if the PPK is missing
+          </label>
+        </div>
         <p className="text-xs text-muted-foreground">
-          Treat the RFC as protocol background, not a claim that this local example meets it.
-          Production tools must support the agreed integration profile, negotiated PRF, peer
-          authentication and interoperability tests. A local HKDF output is not evidence of those
-          capabilities.
+          The PPK_ID sent in the PPK_IDENTITY notification (type 16436) starts with the PPK_ID type
+          octet, 1 for PPK_ID_OPAQUE, followed by the key ID. RFC 8784 leaves the opaque content to
+          the peers; this sample sends the 16 octets of the QKD key ID UUID. It is a sample choice,
+          not a standardized QKD binding.
         </p>
       </div>
 
@@ -370,7 +536,7 @@ const IKEv2Panel: React.FC = () => {
         disabled={running}
         className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
-        <Play size={14} /> {running ? 'Simulating…' : 'Run Local IKE-Context HKDF Example'}
+        <Play size={14} /> {running ? 'Calculating…' : 'Run IKEv2 + RFC 8784 Key Derivation'}
       </Button>
 
       {error && (
@@ -379,33 +545,116 @@ const IKEv2Panel: React.FC = () => {
         </p>
       )}
       {result && (
-        <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
-          <div className="text-xs font-bold text-success">
-            Local sample operation only — no protocol validation
+        <div className="space-y-4">
+          <div className="bg-success/5 rounded p-4 border border-success/20 space-y-3">
+            <div className="text-xs font-bold text-success">
+              Key derivation calculated locally for two fictional peers; no IKE message was sent
+            </div>
+            <dl className="space-y-2">
+              <KeyRow label="Ni (initiator nonce, 32 bytes)" value={result.ni} />
+              <KeyRow label="Nr (responder nonce, 32 bytes)" value={result.nr} />
+              <KeyRow label="SPIi (initiator SPI, 8 bytes, fictional)" value={result.spiI} />
+              <KeyRow label="SPIr (responder SPI, 8 bytes, fictional)" value={result.spiR} />
+              <KeyRow
+                label="g^ir (ECP-256 shared x coordinate, 32 bytes; both peers computed the same value)"
+                value={result.sharedX}
+              />
+              <KeyRow
+                label="SKEYSEED = prf(Ni | Nr, g^ir), PRF-HMAC-SHA-256"
+                value={result.skeyseed}
+              />
+              {Object.entries(result.plain).map(([name, value]) => (
+                <KeyRow
+                  key={name}
+                  label={`${name} (plain IKEv2, prf+(SKEYSEED, Ni | Nr | SPIi | SPIr))`}
+                  value={value}
+                />
+              ))}
+            </dl>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">
-                Locally Generated Sample Key Container
-              </div>
-              <pre className="text-xs font-mono text-primary overflow-x-auto">
-                {result.qkdResponseJson}
-              </pre>
-            </div>
-            <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">Ni (initiator nonce)</div>
-              <code className="text-xs font-mono text-foreground break-all">{result.ni}</code>
-            </div>
-            <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">Nr (responder nonce)</div>
-              <code className="text-xs font-mono text-foreground break-all">{result.nr}</code>
-            </div>
-          </div>
+
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-1">
-              Local HKDF output — not IKEv2 SKEYSEED
+              Locally generated QKD key container (ETSI GS QKD 014 format; the key is the PPK)
             </div>
-            <code className="text-xs font-mono text-success break-all">{result.skeyseed}</code>
+            <pre className="text-xs font-mono text-primary overflow-auto whitespace-pre-wrap break-all">
+              {result.qkdResponseJson}
+            </pre>
+            <dl className="space-y-2 mt-2">
+              <KeyRow label="QKD key_ID (sent as the PPK_ID content)" value={result.qkdKeyId} />
+              <KeyRow
+                label="PPK_ID as sent: type 1 (PPK_ID_OPAQUE) then the 16 key ID octets"
+                value={result.ppkIdHex}
+              />
+            </dl>
+          </div>
+
+          <div className="bg-success/5 rounded p-4 border border-success/20 space-y-3">
+            <div className="text-sm font-bold text-success">
+              Path 1: both peers fetched the key from their own QKD node, PPK in use
+            </div>
+            {result.withPpk.path === 'ppk' ? (
+              <>
+                <dl className="space-y-2">
+                  <KeyRow
+                    label="SK_d′ (before mixing)"
+                    value={result.withPpk.initiator.primedSkD}
+                  />
+                  <KeyRow label="SK_d = prf+(PPK, SK_d′)" value={result.withPpk.initiator.skD} />
+                  <KeyRow
+                    label="SK_pi′ (before mixing)"
+                    value={result.withPpk.initiator.primedSkPi}
+                  />
+                  <KeyRow label="SK_pi = prf+(PPK, SK_pi′)" value={result.withPpk.initiator.skPi} />
+                  <KeyRow
+                    label="SK_pr′ (before mixing)"
+                    value={result.withPpk.initiator.primedSkPr}
+                  />
+                  <KeyRow label="SK_pr = prf+(PPK, SK_pr′)" value={result.withPpk.initiator.skPr} />
+                </dl>
+                <p className="text-xs text-muted-foreground">
+                  {result.withPpk.responderMatches
+                    ? 'The responder derived identical SK_d, SK_pi and SK_pr from the key its own node returned for the same key ID. '
+                    : 'The peers derived different keys. '}
+                  SK_ai, SK_ar, SK_ei and SK_er are unchanged:{' '}
+                  {IKE_UNCHANGED_KEYS.map(([label]) => label).join(', ')} equal the plain-IKEv2
+                  values above. SK_d feeds every Child SA key and later IKE SA rekey, so those
+                  depend on the QKD key as well as on ECP-256. This holds if the QKD key has at
+                  least 256 bits of entropy (RFC 8784 §6) and the rest of the profile is
+                  quantum-resistant.
+                </p>
+              </>
+            ) : (
+              <p className="text-xs text-status-error">{result.withPpk.reason}</p>
+            )}
+          </div>
+
+          <div className="bg-warning/5 rounded p-4 border border-warning/30 space-y-3">
+            <div className="text-sm font-bold text-warning">
+              Path 2: the responder&apos;s QKD node cannot supply the key, no PPK (
+              {result.mandatory ? 'PPK mandatory' : 'PPK optional'})
+            </div>
+            {result.withoutPpk.path === 'plain-ikev2' && (
+              <>
+                <p className="text-xs text-foreground font-bold">
+                  This session is NOT quantum-safe. {result.withoutPpk.reason}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  The keys are the plain-IKEv2 values listed above, derived from ECP-256 alone. An
+                  attacker who records this exchange can recover every key from it once a quantum
+                  computer breaks ECP-256 Diffie-Hellman. Allowing fallback keeps the link up; it
+                  gives up the QKD protection for that session.
+                </p>
+              </>
+            )}
+            {result.withoutPpk.path === 'abort' && (
+              <p className="text-xs text-foreground font-bold">
+                No session is established. {result.withoutPpk.reason}
+              </p>
+            )}
+            {result.withoutPpk.path === 'ppk' && (
+              <p className="text-xs text-status-error">Unexpected: a PPK was found.</p>
+            )}
           </div>
         </div>
       )}
