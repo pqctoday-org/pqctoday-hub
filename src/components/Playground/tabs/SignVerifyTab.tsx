@@ -80,7 +80,7 @@ const EditableDataDisplay: React.FC<{
             onValidityChange?.(true)
           }}
           aria-label={`Switch ${label} to ${viewMode === 'hex' ? 'UTF-8 text' : 'HEX'} view`}
-          className="text-[10px] flex items-center gap-1 bg-muted hover:bg-accent px-2 py-1 rounded transition-colors text-primary"
+          className="text-[10px] flex items-center gap-1 bg-muted hover:bg-muted px-2 py-1 rounded transition-colors text-primary"
         >
           {viewMode === 'hex' ? 'HEX' : 'UTF-8'}
         </Button>

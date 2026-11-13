@@ -98,7 +98,7 @@ export const KeyStoreView = ({
           )}
           <Button
             variant="ghost"
-            className="px-3 py-1.5 bg-muted hover:bg-accent border border-border rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-muted hover:bg-muted border border-border rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('restore-keys-input')?.click()}
           >
             <Upload size={14} /> Import ZIP

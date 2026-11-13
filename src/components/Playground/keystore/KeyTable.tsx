@@ -149,7 +149,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       <Button
                         variant="ghost"
                         onClick={() => handleSort(col)}
-                        className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
+                        className="w-full h-full p-4 flex items-center gap-2 hover:bg-muted transition-colors text-left font-bold"
                       >
                         {col.charAt(0).toUpperCase() + col.slice(1)}
                         {renderSortIcon(col)}
@@ -181,7 +181,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       'cursor-pointer transition-colors border-l-2',
                       selectedKeyId === key.id
                         ? 'bg-primary/10 border-primary'
-                        : 'hover:bg-accent/50 border-transparent'
+                        : 'hover:bg-muted border-transparent'
                     )}
                     tabIndex={0}
                     role="button"

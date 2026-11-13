@@ -692,7 +692,7 @@ export const HsmPlayground = () => {
                     'h-9 justify-start gap-2 px-2 whitespace-nowrap shrink-0 rounded-md border-l-2',
                     on
                       ? 'bg-primary/15 text-primary border-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent border-transparent'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted border-transparent'
                   )}
                 >
                   <span

@@ -24,7 +24,7 @@ export const WorkbenchHeader: React.FC = () => {
       <Button
         variant="ghost"
         onClick={handleEditConfig}
-        className="w-full p-3 rounded-lg border border-border bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm"
+        className="w-full p-3 rounded-lg border border-border bg-muted hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm"
       >
         <Settings size={16} /> Edit OpenSSL Config (openssl.cnf)
       </Button>

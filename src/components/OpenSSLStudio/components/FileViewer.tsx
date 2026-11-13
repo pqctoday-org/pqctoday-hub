@@ -128,7 +128,7 @@ export const FileViewer: React.FC = () => {
         <div
           role={hasChildren ? 'button' : undefined}
           tabIndex={hasChildren ? 0 : undefined}
-          className={`flex items-start gap-1 py-0.5 ${hasChildren ? 'cursor-pointer hover:bg-accent' : ''}`}
+          className={`flex items-start gap-1 py-0.5 ${hasChildren ? 'cursor-pointer hover:bg-muted' : ''}`}
           onClick={() => hasChildren && setIsOpen(!isOpen)}
           onKeyDown={(e) => {
             if (hasChildren && (e.key === 'Enter' || e.key === ' ')) {
@@ -319,7 +319,7 @@ export const FileViewer: React.FC = () => {
           <Button
             variant="ghost"
             onClick={toggleViewMode}
-            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-colors border border-input"
+            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-colors border border-input"
             title="Switch View Mode"
           >
             <ArrowRightLeft size={12} />
@@ -329,7 +329,7 @@ export const FileViewer: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => setViewingFile(null)}
-            className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
             title="Close Viewer"
           >
             <X size={16} />
