@@ -93,7 +93,7 @@ export const RADAR_RUBRIC: readonly RadarRubricEntry[] = [
         'Network-specific published guidance with concrete steps, or publicly described prototype tests, without a committed rollout.',
       five: 'A committed, dated production rollout is public.',
     },
-    rule: 'From the network’s posture label: shared standards work only is 1; an internal readiness programme only is 1; published guidance that is not scoped to the card network is 2; publicly described prototypes together with published guidance, with no committed rollout, is 4.',
+    rule: 'From the network’s posture label: shared standards work only is 1; an internal readiness programme only is 1; published guidance only is 2 (Visa’s guidance is scoped to stablecoins, with no card-network plan); publicly described prototypes together with published guidance, with no committed rollout, is 4, one step above anchor 3 for having both.',
     evidenceToCheck:
       'The posture, official stance and public evidence shown on each network’s card.',
   },
@@ -118,12 +118,12 @@ export const RADAR_RUBRIC: readonly RadarRubricEntry[] = [
     direction: 'Higher means a heavier legacy load and a harder migration.',
     anchors: {
       zero: 'Not used: a network is not scored 0 for missing evidence.',
-      one: 'The listed methods are all current.',
+      one: 'Sourced evidence shows only current cryptography and equipment.',
       three:
-        'The listed methods mix current and older cryptography, such as RSA-1024 or 3DES in some paths.',
-      five: 'Needs evidence of a large legacy base that is slow to replace; none is shown here.',
+        'Sourced evidence shows a mix of current and older cryptography, such as RSA-1024 or 3DES in some paths.',
+      five: 'Sourced evidence shows a large legacy base that is slow to replace.',
     },
-    rule: 'From the methods listed on the card: no older method (RSA-1024, 3DES) listed is 1; older and current methods both listed is 3; only older methods listed is not scored. 4 and 5 need a figure for the size of the legacy base, which this page does not show.',
+    rule: 'Needs a source for the older methods in use and a figure for the size of the legacy base. The page lists methods for each network without a source for them and shows no such figure, so every network is not scored.',
     evidenceToCheck:
       'The offline, online and key-management methods listed for the network and your own estate.',
   },
@@ -136,8 +136,6 @@ export const RADAR_SCORES_NOTICE =
 // ---------------------------------------------------------------------------
 // Scoring rules (the data file records their results; tests keep the two in step)
 // ---------------------------------------------------------------------------
-
-const OLDER_METHOD = /3DES|RSA-1024/i
 
 /** Scale from the share of the largest comparable card count. */
 export function scaleScoreFromShare(share: number): number {
@@ -161,15 +159,6 @@ export function pqcReadinessScore(posture: PQCPosture): number {
     case 'prototype-testing':
       return 4
   }
-}
-
-/** Legacy burden from the listed methods: null (not scored) when only older methods are listed. */
-export function legacyBurdenScore(crypto: PaymentNetwork['currentCrypto']): number | null {
-  const listed = [...crypto.offlineAuth, ...crypto.onlineAuth, ...crypto.keyManagement]
-  const older = listed.filter((m) => OLDER_METHOD.test(m))
-  if (older.length === 0) return 1
-  if (older.length === listed.length) return null
-  return 3
 }
 
 /** The card counts that can be compared, as a share of the largest. */

@@ -78,7 +78,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       tokenization: null,
       pqcReadiness: 2,
       regulatoryPressure: null,
-      legacyBurden: 3,
+      legacyBurden: null,
     },
     radarBasis: {
       scale:
@@ -92,7 +92,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       regulatoryPressure:
         'Not scored: no network-specific regulatory evidence is shown on this page.',
       legacyBurden:
-        'Score 3: the listed methods mix older ones (RSA-1024 legacy DDA, 3DES DUKPT) with current ones (RSA-2048 CDA, AES DUKPT).',
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -198,7 +198,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       tokenization: null,
       pqcReadiness: 4,
       regulatoryPressure: null,
-      legacyBurden: 3,
+      legacyBurden: null,
     },
     radarBasis: {
       scale:
@@ -208,11 +208,11 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       tokenization:
         'Not scored: the page names a token platform but gives no figure or source for its reach.',
       pqcReadiness:
-        'Score 4: publicly described laboratory and cloud prototypes plus published migration guidance, with no committed rollout, which is above anchor 3 and below 5.',
+        'Score 4: publicly described laboratory and cloud prototypes together with published migration guidance (general to financial institutions), with no committed rollout; the prototypes lift it above anchor 3, and it stays below 5.',
       regulatoryPressure:
         'Not scored: no network-specific regulatory evidence is shown on this page.',
       legacyBurden:
-        'Score 3: the listed methods mix older ones (RSA-1024 legacy DDA, 3DES DUKPT) with current ones (RSA-2048 CDA, AES DUKPT).',
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -296,7 +296,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       tokenization: null,
       pqcReadiness: 1,
       regulatoryPressure: null,
-      legacyBurden: 3,
+      legacyBurden: null,
     },
     radarBasis: {
       scale:
@@ -310,7 +310,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       regulatoryPressure:
         'Not scored: no network-specific regulatory evidence is shown on this page.',
       legacyBurden:
-        'Score 3: the listed methods mix an older one (3DES DUKPT) with current ones (RSA-2048 CDA, AES DUKPT).',
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -382,7 +382,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       tokenization: null,
       pqcReadiness: 1,
       regulatoryPressure: null,
-      legacyBurden: 3,
+      legacyBurden: null,
     },
     radarBasis: {
       scale:
@@ -396,7 +396,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       regulatoryPressure:
         'Not scored: no network-specific regulatory evidence is shown on this page.',
       legacyBurden:
-        'Score 3: the listed methods mix an older one (3DES DUKPT) with current ones (RSA-2048, SM2, SM4).',
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -472,7 +472,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       tokenization: null,
       pqcReadiness: 1,
       regulatoryPressure: null,
-      legacyBurden: 3,
+      legacyBurden: null,
     },
     radarBasis: {
       scale:
@@ -486,7 +486,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       regulatoryPressure:
         'Not scored: no network-specific regulatory evidence is shown on this page.',
       legacyBurden:
-        'Score 3: the listed methods mix an older one (3DES DUKPT) with a current one (RSA-2048 DDA).',
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
 ]

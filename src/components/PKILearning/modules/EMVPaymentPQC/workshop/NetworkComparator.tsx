@@ -220,6 +220,13 @@ export const NetworkComparator: React.FC = () => {
   )
 
   // Summary stats
+  const unscoredForAll = useMemo(
+    () =>
+      RADAR_AXES.filter((axis) =>
+        PAYMENT_NETWORKS.every((n) => n.radarScores[axis.key] === null)
+      ).map((axis) => axis.label),
+    []
+  )
   const cardComparison = useMemo(() => compareCardCounts(filtered), [filtered])
   const reviewedProfileCount = filtered.filter((n) => n.officialSources.length > 0).length
   const volumeComparison = useMemo(() => comparePurchaseVolume(filtered), [filtered])
@@ -248,10 +255,10 @@ export const NetworkComparator: React.FC = () => {
       <p className="text-sm text-muted-foreground">
         Reported network card counts may overlap; their sum is not a count of unique cards at risk.
         Each network&rsquo;s figures below carry their own date, unit and scope, and only figures
-        that describe the same thing for the same period are added together. The radar uses authored
-        illustrative scores, not measured readiness, certification or a validated ranking. Evaluate
-        the criteria, scope, dates and source evidence with your own tools before comparing real
-        networks.
+        that describe the same thing for the same period are added together. The radar plots only
+        scores that have a sourced basis and leaves other axes unscored. It is not measured
+        readiness, certification or a validated ranking. Evaluate the criteria, scope, dates and
+        source evidence with your own tools before comparing real networks.
       </p>
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
@@ -616,7 +623,7 @@ export const NetworkComparator: React.FC = () => {
                             </span>
                           </div>
                         )}
-                        <div className="text-[10px] text-muted-foreground mt-1">
+                        <div className="text-xs text-muted-foreground mt-1">
                           {net.radarBasis[axis.key]}
                         </div>
                       </td>
@@ -634,8 +641,11 @@ export const NetworkComparator: React.FC = () => {
             </h4>
             <p className="text-xs text-muted-foreground mb-3 text-center">{RADAR_SCORES_NOTICE}</p>
             <p className="text-xs text-muted-foreground mb-3 text-center">
-              Axes that are not scored are left out of the chart, so two networks with different
-              scored axes are not directly comparable by shape.
+              Axes that are not scored are left out of the chart.{' '}
+              {unscoredForAll.length > 0 &&
+                `${unscoredForAll.join(', ')} ${unscoredForAll.length === 1 ? 'is' : 'are'} not scored for any network. `}
+              A network with fewer than three scored axes appears as points only, without an
+              outline.
             </p>
             <RadarChart networks={comparedNetworks} />
             <div className="flex justify-center gap-4 mt-3">

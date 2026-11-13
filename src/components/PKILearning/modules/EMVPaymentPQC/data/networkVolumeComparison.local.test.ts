@@ -14,7 +14,6 @@ import {
   RADAR_RUBRIC,
   RADAR_SCORES_NOTICE,
   cardCountShares,
-  legacyBurdenScore,
   pqcReadinessScore,
   scaleScoreFromShare,
 } from './networkRadarRubric'
@@ -231,36 +230,23 @@ describe('radar score rubric', () => {
     )
   })
 
-  it('derives legacy burden from the listed methods and agrees with the stored scores', () => {
-    expect(
-      legacyBurdenScore({
-        offlineAuth: ['RSA-2048'],
-        onlineAuth: ['AES DUKPT'],
-        keyManagement: [],
-        ecommerce: [],
-      })
-    ).toBe(1)
-    expect(
-      legacyBurdenScore({
-        offlineAuth: ['RSA-1024 (legacy DDA)'],
-        onlineAuth: ['3DES DUKPT'],
-        keyManagement: [],
-        ecommerce: [],
-      })
-    ).toBeNull()
-    expect(
-      legacyBurdenScore({
-        offlineAuth: ['RSA-2048'],
-        onlineAuth: ['3DES DUKPT'],
-        keyManagement: [],
-        ecommerce: [],
-      })
-    ).toBe(3)
+  it('leaves legacy burden not scored for every network because the listed methods have no source', () => {
     for (const network of PAYMENT_NETWORKS) {
-      expect(network.radarScores.legacyBurden, network.id).toBe(
-        legacyBurdenScore(network.currentCrypto)
-      )
+      expect(network.radarScores.legacyBurden, network.id).toBeNull()
+      expect(network.radarBasis.legacyBurden, network.id).toMatch(/gives no source for them/)
     }
+    expect(RADAR_RUBRIC.find((r) => r.key === 'legacyBurden')?.rule).toMatch(
+      /every network is not scored/
+    )
+  })
+
+  it('keeps each basis in step with the numbers it quotes', () => {
+    const shares = cardCountShares(PAYMENT_NETWORKS, CARD_COUNT_AS_OF)
+    expect(byId('visa').radarBasis.scale).toContain('5,142M')
+    expect(byId('mastercard').radarBasis.scale).toContain(`${Math.round(shares.mastercard * 100)}%`)
+    expect(byId('mastercard').radarBasis.scale).toContain('3,391M')
+    expect(byId('amex').radarBasis.scale).toContain(`${Math.round(shares.amex * 100)}%`)
+    expect(byId('amex').radarBasis.scale).toContain('152.8M')
   })
 })
 

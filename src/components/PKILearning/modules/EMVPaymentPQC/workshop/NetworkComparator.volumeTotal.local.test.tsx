@@ -74,12 +74,25 @@ describe('Network comparator volume total', () => {
     await user.click(screen.getByRole('button', { name: 'Compare' }))
     await user.click(screen.getByRole('button', { name: 'Select Visa' }))
     await user.click(screen.getByRole('button', { name: 'Select China UnionPay' }))
-    // Offline exposure, tokenization and regulatory are not scored for both; UnionPay scale too.
-    expect(screen.getAllByText('not scored').length).toBe(7)
+    // Offline exposure, tokenization, regulatory and legacy are not scored for both; UnionPay scale too.
+    expect(screen.getAllByText('not scored').length).toBe(9)
     expect(screen.getAllByText(/^Not scored: no network figure on this page shows/).length).toBe(2)
     expect(screen.getByText(/^Score 5: 5,142M card accounts at 31 Dec 2025/)).toBeInTheDocument()
     expect(screen.getAllByText(/^Score 1: shared EMVCo standards work only/).length).toBe(1)
     expect(screen.queryByText('0/5')).not.toBeInTheDocument()
+    // Visa has two scored axes and UnionPay one, so three dots and no outlined polygon.
+    const chart = screen.getByRole('img', {
+      name: 'Illustrative network score comparison, not measured readiness',
+    })
+    // eslint-disable-next-line testing-library/no-node-access
+    expect(chart.querySelectorAll('circle')).toHaveLength(3)
+    // eslint-disable-next-line testing-library/no-node-access
+    expect(chart.querySelectorAll('polygon[fill-opacity="0.12"]')).toHaveLength(0)
+    expect(
+      screen.getByText(
+        /Offline Exposure, Tokenization, Regulatory, Legacy Burden are not scored for any network/
+      )
+    ).toBeInTheDocument()
     expect(
       screen.getByText(/Axes that are not scored are left out of the chart/)
     ).toBeInTheDocument()
@@ -106,7 +119,7 @@ describe('Network comparator volume total', () => {
     view.unmount()
   })
 
-  it('states on the page that the radar scores are authored judgements and shows the rubric', () => {
+  it('states on the page that scores need a sourced basis and shows the rubric', () => {
     const view = renderComparator()
     expect(
       screen.getByText('How the six radar scores are assigned (authored rubric)')
