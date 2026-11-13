@@ -14,6 +14,7 @@ import { describe, expect, it } from 'vitest'
 import {
   CRYPTO_CONSTRUCTIONS,
   CYCLONEDX_PRIMITIVES,
+  HYBRID_CLASSICAL_HALF_ELSEWHERE,
   NO_FAMILY_EXEMPT,
   PQC_OUTLOOK_LABEL,
   STANDARDS_STATUS_LABEL,
@@ -22,7 +23,8 @@ import {
   isKnownConstruction,
   type CryptoConstruction,
 } from './cryptoConstructions'
-import { getMechanismFamily, isKnownMechanism } from './cryptoMechanisms'
+import { CRYPTO_MECHANISMS, getMechanismFamily, isKnownMechanism } from './cryptoMechanisms'
+import { ALGORITHM_EXPLANATIONS } from './algorithmExplanations'
 import { loadIndustryLandscape } from './industryLandscapeData'
 import { libraryData } from './libraryData'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
@@ -116,8 +118,15 @@ describe('construction layer driftguards', () => {
           break
         case 'replaced':
           expect(
-            c.successions?.length ?? 0,
+            (c.successions ?? []).filter((x) => x.relation === 'replaced-by').length,
             `${c.id}: replaced without a successor`
+          ).toBeGreaterThan(0)
+          expect(has('classical'), c.id).toBe(true)
+          break
+        case 'extended':
+          expect(
+            (c.successions ?? []).filter((x) => x.relation === 'extended-by').length,
+            `${c.id}: extended without the part that extends it`
           ).toBeGreaterThan(0)
           expect(has('classical'), c.id).toBe(true)
           break
@@ -133,7 +142,12 @@ describe('construction layer driftguards', () => {
           expect(c.noSuccessorCheckedOn, c.id).toMatch(/^\d{4}-\d{2}-\d{2}$/)
           break
       }
-      if (c.outlook !== 'replaced') expect(c.successions ?? [], c.id).toEqual([])
+      if (c.outlook !== 'replaced' && c.outlook !== 'extended')
+        expect(c.successions ?? [], c.id).toEqual([])
+      for (const x of c.successions ?? [])
+        expect(x.relation, `${c.id} → ${x.to}`).toBe(
+          c.outlook === 'extended' ? 'extended-by' : 'replaced-by'
+        )
       // A PQC instantiation names only PQC families or symmetric families.
       for (const inst of c.pqc ?? [])
         for (const a of inst.algorithms) {
@@ -143,15 +157,17 @@ describe('construction layer driftguards', () => {
             `${c.id}: classical asymmetric ${a} in a pqc instantiation`
           ).toBe(true)
         }
-      // A hybrid instantiation needs both halves, unless its note names the other half.
+      // A hybrid instantiation needs both halves, unless the construction is
+      // listed with the reason its classical half is not an algorithm family.
       for (const inst of c.hybrid ?? []) {
         const fams = inst.algorithms.map((a) => getMechanismFamily(a))
         const hasPq = fams.some((f) => f && !f.classical)
         const hasClassical = fams.some((f) => f && f.classical)
         expect(hasPq, `${c.id}: hybrid instantiation without a PQC algorithm`).toBe(true)
-        expect(hasClassical || Boolean(inst.note), `${c.id}: hybrid without a classical half`).toBe(
-          true
-        )
+        expect(
+          hasClassical || Boolean(HYBRID_CLASSICAL_HALF_ELSEWHERE[c.id]),
+          `${c.id}: hybrid without a classical half`
+        ).toBe(true)
       }
     }
   })
@@ -197,6 +213,8 @@ describe('construction layer driftguards', () => {
     expect(bad).toEqual([])
   })
 
+  // An instantiation with no algorithm family (NO_FAMILY_EXEMPT, e.g. a
+  // preshared-key construction) is covered by any row: it needs no algorithm.
   it('K6: each claimed construction has an instantiation the row’s algorithms cover', () => {
     const bad: string[] = []
     for (const uc of useCases) {
@@ -226,22 +244,22 @@ describe('construction layer driftguards', () => {
     expect(bad).toEqual([])
   })
 
-  it('K7: every construction is used by an active row, directly or inside another', () => {
-    const direct = new Set([
-      ...useCases.flatMap((u) => [...u.classicalConstructions, ...u.pqcConstructions]),
-      ...standards.flatMap((s) => s.constructionsReferenced),
-    ])
-    const used = new Set(direct)
-    let grew = true
-    while (grew) {
-      grew = false
-      for (const c of CRYPTO_CONSTRUCTIONS)
-        if (used.has(c.id))
-          for (const b of c.builtOn ?? [])
-            if (!used.has(b)) {
-              used.add(b)
-              grew = true
-            }
+  it('K7: every construction is used by an active row, directly or inside one a use case names', () => {
+    // Same rule as constructionUsage(): a standards row counts directly, and
+    // "inside" propagates through builtOn from use-case usage only, so every
+    // construction that passes here has a non-zero count in the UI.
+    const named = useCases.flatMap((u) => [...u.classicalConstructions, ...u.pqcConstructions])
+    const used = new Set([...named, ...standards.flatMap((s) => s.constructionsReferenced)])
+    const seen = new Set<string>()
+    const stack = [...new Set(named)]
+    while (stack.length > 0) {
+      const id = stack.pop()!
+      if (seen.has(id)) continue
+      seen.add(id)
+      for (const b of getConstruction(id)?.builtOn ?? []) {
+        used.add(b)
+        stack.push(b)
+      }
     }
     const unused = CRYPTO_CONSTRUCTIONS.map((c) => c.id).filter((id) => !used.has(id))
     expect(unused).toEqual([])
@@ -261,6 +279,8 @@ describe('construction layer driftguards', () => {
     expect(bad).toEqual([])
   })
 
+  // Row-level: a row is flagged only when EVERY PQC construction it names is
+  // still research or study; one standardised construction can carry the claim.
   it('K9: a research or study PQC construction is not claimed as standardised', () => {
     const bad: string[] = []
     for (const uc of useCases) {
@@ -286,6 +306,17 @@ describe('construction layer driftguards', () => {
         expect(glossaryTerms.has(e.glossaryTerm), `${c.id}: glossary ${e.glossaryTerm}`).toBe(true)
       if (e.learnModuleId)
         expect(MANIFEST_BY_ID[e.learnModuleId], `${c.id}: module ${e.learnModuleId}`).toBeDefined()
+    }
+  })
+
+  it('K10: every algorithm family has a plain-language explanation (D6)', () => {
+    const families = CRYPTO_MECHANISMS.map((m) => m.family)
+    expect(Object.keys(ALGORITHM_EXPLANATIONS).sort()).toEqual([...families].sort())
+    for (const [fam, e] of Object.entries(ALGORITHM_EXPLANATIONS)) {
+      expect(e.plain.length, fam).toBeGreaterThan(60)
+      expect(e.whyItMattersForPqc.length, fam).toBeGreaterThan(20)
+      if (e.glossaryTerm)
+        expect(glossaryTerms.has(e.glossaryTerm), `${fam}: ${e.glossaryTerm}`).toBe(true)
     }
   })
 

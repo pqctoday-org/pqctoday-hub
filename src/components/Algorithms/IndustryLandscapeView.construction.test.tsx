@@ -117,3 +117,66 @@ describe('construction lens deep links (K12)', () => {
     expect(within(inside).getByTestId('construction-chip-Hybrid-KEM')).toBeInTheDocument()
   })
 })
+
+describe('construction lens — rendered counts and links (K11, K12)', () => {
+  it('each chip shows the same number as a recount from the rows', () => {
+    renderAt('&construction=')
+    const rows = screen.getByTestId('construction-chip-rows')
+    for (const c of CRYPTO_CONSTRUCTIONS) {
+      const chip = within(rows).getByTestId(`construction-chip-${c.id}`)
+      expect(chip, c.id).toHaveTextContent(new RegExp(`${c.id}\\s*${recount(c.id).direct}$`))
+    }
+  })
+
+  it('a lower-case id opens the same construction', () => {
+    renderAt('&construction=hpke')
+    expect(screen.getByTestId('construction-card-HPKE')).toBeInTheDocument()
+  })
+
+  it('?construction=&usecase= rings a use case the lens lists, or opens its industry', () => {
+    const named = useCases.find(
+      (u) => u.classicalConstructions.length > 0 || u.pqcConstructions.length > 0
+    )
+    if (!named) return // rows arrive with the data pass; K7 fails loudly until then
+    const id = [...named.classicalConstructions, ...named.pqcConstructions][0]
+    renderAt(`&construction=${id}&usecase=${named.useCaseId}`)
+    // eslint-disable-next-line testing-library/no-node-access
+    expect(document.querySelector(`[data-use-case="${named.useCaseId}"]`)).not.toBeNull()
+  })
+
+  it('a successor our reading infers is worded differently from one a source states', () => {
+    renderAt('&construction=ECIES')
+    const succ = screen.getByTestId('construction-successors')
+    expect(within(succ).getByText('Newer construction for the same job')).toBeInTheDocument()
+    expect(within(succ).getByText('Replaced by')).toBeInTheDocument()
+  })
+})
+
+describe('constructionUsage — inside another construction', () => {
+  it('counts a use case under a building block it uses only through builtOn', () => {
+    const base = useCases[0]
+    const fake = {
+      ...base,
+      useCaseId: 'fake-hpke',
+      classicalConstructions: ['HPKE'],
+      pqcConstructions: [],
+    }
+    const u = constructionUsage([fake], [])
+    expect(u.get('HPKE')!.direct.map((d) => d.side)).toEqual(['today'])
+    expect(u.get('KDF')!.inside.map((i) => i.via)).toEqual(['HPKE'])
+    expect(u.get('AEAD')!.inside).toHaveLength(1)
+    expect(u.get('KDF')!.direct).toHaveLength(0)
+  })
+
+  it('a construction named in both columns is counted once, as both', () => {
+    const base = useCases[0]
+    const fake = {
+      ...base,
+      useCaseId: 'fake-both',
+      classicalConstructions: ['HPKE'],
+      pqcConstructions: ['HPKE'],
+    }
+    const u = constructionUsage([fake], [])
+    expect(u.get('HPKE')!.direct.map((d) => d.side)).toEqual(['both'])
+  })
+})

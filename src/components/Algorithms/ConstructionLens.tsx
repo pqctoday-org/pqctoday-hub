@@ -2,15 +2,17 @@
 //
 // Construction views for the Industry Landscape tab (2026-11-13):
 //   - ConstructionChip       — a construction, its outlook colour and use-case count
-//   - ConstructionDiagram    — the code-drawn flow (inputs → algorithms → combiner → outputs)
+//   - ConstructionDiagram    — the code-drawn flow (inputs → algorithm options → combiner → outputs)
 //   - ConstructionCard       — plain explanation, outlook, "works with" strip, successors
 //   - TransitionMap          — today's constructions → the post-quantum picture
 //   - ConstructionsOverview  — industries × constructions at a glance
 //   - ConstructionPairing    — the per-use-case line (today → target)
-// Every label comes from cryptoConstructions.ts and every count from
-// constructionUsage.ts, so the views cannot drift from the data.
+//   - AlgorithmExplanationBlock — the plain explanation on an algorithm card
+// Every label comes from cryptoConstructions.ts / algorithmExplanations.ts and
+// every count from constructionUsage.ts, so the views cannot drift from the data.
 
 import { ArrowDown, ArrowRight, BookOpen, GraduationCap, Octagon } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { Button } from '../ui/button'
 import {
@@ -24,14 +26,17 @@ import {
   type CryptoConstruction,
   type PqcOutlook,
   type StandardsStatus,
+  type Succession,
 } from '../../data/cryptoConstructions'
 import { getMechanismFamily } from '../../data/cryptoMechanisms'
+import { ALGORITHM_EXPLANATIONS } from '../../data/algorithmExplanations'
 import type { ConstructionUsage } from '../../data/constructionUsage'
 import type { IndustryUseCase } from '../../data/industryLandscapeData'
 import { parseGlossaryText } from '../../utils/parseGlossary'
 
 const OUTLOOK_CHIP: Record<PqcOutlook, string> = {
   'stays-both': 'border-primary/40 bg-primary/10 text-primary',
+  extended: 'border-primary/40 bg-primary/5 text-primary',
   replaced: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
   bridge: 'border-accent/50 bg-accent/10 text-foreground',
   'pqc-native': 'border-status-success/40 bg-status-success/10 text-status-success',
@@ -53,6 +58,14 @@ const STATUS_LINE: Record<StandardsStatus, string> = {
   draft: 'border-dashed',
   study: 'border-dotted',
   research: 'border-dotted',
+}
+
+const SIDE_LABEL = { classical: 'Classical', pqc: 'Post-quantum', hybrid: 'Hybrid' } as const
+
+/** How a succession is worded: stated by a source, or our reading of the standards. */
+export function successionWording(s: Succession): string {
+  if (s.relation === 'extended-by') return 'Extended by'
+  return s.stated ? 'Replaced by' : 'Newer construction for the same job'
 }
 
 export function StatusBadge({ status }: { status: StandardsStatus }) {
@@ -80,33 +93,57 @@ export function OutlookBadge({ outlook }: { outlook: PqcOutlook }) {
 export function ConstructionChip({
   id,
   count,
+  countTitle,
   active,
   onSelect,
 }: {
   id: string
   count?: number
+  /** Tooltip explaining what the count counts. */
+  countTitle?: string
   active?: boolean
   onSelect?: (id: string) => void
 }) {
   const c = getConstruction(id)
-  const style = c ? OUTLOOK_CHIP[c.outlook] : 'border-border bg-muted text-foreground'
+  const style = active
+    ? 'border-primary bg-primary text-primary-foreground'
+    : c
+      ? OUTLOOK_CHIP[c.outlook]
+      : 'border-border bg-muted text-foreground'
+  const title = c ? `${c.label} — ${PQC_OUTLOOK_LABEL[c.outlook]}` : id
+  const body = (
+    <>
+      {id}
+      {count !== undefined && (
+        <span
+          className={`ml-1 rounded-full px-1 text-[10px] tabular-nums ${
+            active ? 'bg-primary-foreground/20' : 'bg-foreground/10'
+          }`}
+          title={countTitle}
+        >
+          {count}
+        </span>
+      )}
+    </>
+  )
+  const cls = `inline-flex h-auto items-center rounded-full border px-2 py-0.5 text-xs font-medium transition-colors ${style}`
+  if (!onSelect)
+    return (
+      <span className={cls} title={title} data-testid={`construction-chip-${id}`}>
+        {body}
+      </span>
+    )
   return (
     <Button
       type="button"
       variant="ghost"
-      onClick={onSelect ? () => onSelect(id) : undefined}
-      className={`h-auto rounded-full border px-2 py-0.5 text-xs font-medium transition-colors ${
-        active ? 'border-primary bg-primary text-primary-foreground' : style
-      }`}
-      title={c ? `${c.label} — ${PQC_OUTLOOK_LABEL[c.outlook]}` : id}
+      onClick={() => onSelect(id)}
+      className={cls}
+      title={title}
+      aria-pressed={active ?? undefined}
       data-testid={`construction-chip-${id}`}
     >
-      {id}
-      {count !== undefined && (
-        <span className="ml-1 rounded-full bg-background/60 px-1 text-[10px] tabular-nums">
-          {count}
-        </span>
-      )}
+      {body}
     </Button>
   )
 }
@@ -127,13 +164,7 @@ function AlgorithmBox({ family }: { family: string }) {
   )
 }
 
-function FlowBox({
-  children,
-  tone = 'plain',
-}: {
-  children: React.ReactNode
-  tone?: 'plain' | 'step'
-}) {
+function FlowBox({ children, tone = 'plain' }: { children: ReactNode; tone?: 'plain' | 'step' }) {
   return (
     <div
       className={`rounded-md border px-2.5 py-1.5 text-xs ${
@@ -165,14 +196,14 @@ function FlowArrow() {
 }
 
 /**
- * Code-drawn flow: inputs → algorithm groups (one per instantiation side) →
- * the combining step → outputs. Algorithm boxes are coloured classical vs
- * post-quantum. Stacks vertically below the `sm` breakpoint.
+ * Code-drawn flow: inputs → the algorithm options (each row is one way to run
+ * the construction; one row is used at a time) → the combining step →
+ * outputs. Algorithm boxes are coloured classical vs post-quantum. Stacks
+ * vertically below the `sm` breakpoint.
  */
 export function ConstructionDiagram({ c }: { c: CryptoConstruction }) {
   const d = c.explain.diagram
   const groups = instantiationsOf(c)
-  const sideLabel = { classical: 'Classical', pqc: 'Post-quantum', hybrid: 'Hybrid' } as const
   return (
     <figure
       className="mt-3 rounded-lg border border-border bg-muted/20 p-3"
@@ -186,16 +217,19 @@ export function ConstructionDiagram({ c }: { c: CryptoConstruction }) {
           ))}
         </div>
         <FlowArrow />
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 rounded-md border border-dashed border-border p-1.5">
+          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            {groups.length > 1 ? 'One of these options' : 'Algorithms'}
+          </span>
           {groups.map(({ side, inst }, n) => (
             <div key={`${side}-${n}`} className="flex flex-wrap items-center gap-1">
               <span className="w-20 text-[10px] uppercase tracking-wide text-muted-foreground">
-                {sideLabel[side]}
+                {SIDE_LABEL[side]}
               </span>
               {inst.algorithms.length > 0 ? (
                 inst.algorithms.map((a) => <AlgorithmBox key={a} family={a} />)
               ) : (
-                <span className="text-xs text-muted-foreground">no public-key algorithm</span>
+                <span className="text-xs text-muted-foreground">symmetric key only</span>
               )}
             </div>
           ))}
@@ -226,13 +260,12 @@ function libraryHref(ref: string): string {
 
 /** One line per instantiation: side, algorithms, status, note, source. */
 function WorksWith({ c }: { c: CryptoConstruction }) {
-  const sideLabel = { classical: 'Classical', pqc: 'Post-quantum', hybrid: 'Hybrid' } as const
   return (
     <div className="mt-3 space-y-1.5" data-testid="construction-works-with">
       <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Works with</span>
       {instantiationsOf(c).map(({ side, inst }, n) => (
         <div key={`${side}-${n}`} className="flex flex-wrap items-center gap-1.5 text-xs">
-          <span className="w-24 font-medium text-foreground">{sideLabel[side]}</span>
+          <span className="w-24 font-medium text-foreground">{SIDE_LABEL[side]}</span>
           {inst.algorithms.map((a) => (
             <AlgorithmBox key={a} family={a} />
           ))}
@@ -263,6 +296,7 @@ export function ConstructionCard({
   const direct = usage?.direct.length ?? 0
   const industries = usage?.industries.length ?? 0
   const nStandards = usage?.standards.length ?? 0
+  const nInside = usage?.inside.length ?? 0
   const viaIds = [...new Set((usage?.inside ?? []).map((i) => i.via))]
   return (
     <div
@@ -285,19 +319,16 @@ export function ConstructionCard({
       <ConstructionDiagram c={c} />
       <WorksWith c={c} />
       {(c.successions?.length ?? 0) > 0 && (
-        <div
-          className="mt-3 flex flex-wrap items-center gap-1.5 text-xs"
-          data-testid="construction-successors"
-        >
-          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            Replaced by
-          </span>
+        <div className="mt-3 space-y-1 text-xs" data-testid="construction-successors">
           {c.successions!.map((s) => (
-            <span key={`${s.to}-${s.context}`} className="inline-flex flex-wrap items-center gap-1">
+            <div key={`${s.to}-${s.context}`} className="flex flex-wrap items-center gap-1">
+              <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                {successionWording(s)}
+              </span>
               <ConstructionChip id={s.to} onSelect={onPick} />
               <span className="text-muted-foreground">in {s.context}</span>
               <StatusBadge status={s.status} />
-            </span>
+            </div>
           ))}
         </div>
       )}
@@ -307,7 +338,7 @@ export function ConstructionCard({
           data-testid="construction-predecessors"
         >
           <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            Takes over from
+            Newer than
           </span>
           {preds.map((p) => (
             <ConstructionChip key={p.id} id={p.id} onSelect={onPick} />
@@ -339,13 +370,15 @@ export function ConstructionCard({
         Used in {direct} use case{direct === 1 ? '' : 's'} across {industries} industr
         {industries === 1 ? 'y' : 'ies'}
         {nStandards > 0 && ` · cited by ${nStandards} standard${nStandards === 1 ? '' : 's'}`}
-        {viaIds.length > 0 &&
-          ` · inside ${viaIds.join(', ')} in ${usage!.inside.length} more use case${usage!.inside.length === 1 ? '' : 's'}`}
+        {nInside > 0 &&
+          ` · inside ${viaIds.join(', ')} in ${nInside} more use case${nInside === 1 ? '' : 's'}`}
         .
       </p>
     </div>
   )
 }
+
+const CHIP_COUNT_TITLE = 'Use cases that name this construction'
 
 /** Chips grouped by outlook, each with its direct use-case count. */
 export function ConstructionChipRows({
@@ -364,35 +397,36 @@ export function ConstructionChipRows({
         if (list.length === 0) return null
         return (
           <div key={o} className="flex flex-wrap items-center gap-1.5">
-            <span className="w-40 text-[11px] uppercase tracking-wide text-muted-foreground">
+            <span className="w-full text-[11px] uppercase tracking-wide text-muted-foreground sm:w-48">
               {PQC_OUTLOOK_LABEL[o]}
             </span>
-            {list.map((c) => {
-              const u = usage.get(c.id)
-              return (
-                <ConstructionChip
-                  key={c.id}
-                  id={c.id}
-                  count={
-                    (u?.direct.length ?? 0) + (u?.standards.length ?? 0) + (u?.inside.length ?? 0)
-                  }
-                  active={c.id === selected}
-                  onSelect={onPick}
-                />
-              )
-            })}
+            {list.map((c) => (
+              <ConstructionChip
+                key={c.id}
+                id={c.id}
+                count={usage.get(c.id)?.direct.length ?? 0}
+                countTitle={CHIP_COUNT_TITLE}
+                active={c.id === selected}
+                onSelect={onPick}
+              />
+            ))}
           </div>
         )
       })}
+      <p className="text-[11px] text-muted-foreground">
+        Numbers count the use cases that name each construction. Click a construction to see them;
+        click it again to return to this overview.
+      </p>
     </div>
   )
 }
 
 /**
  * Today's constructions on the left, the post-quantum picture on the right.
- * `stays-both` entries run straight across; `replaced` entries point at their
- * successors (solid = published or vendor spec, dashed = draft, dotted = study
- * or research); bridges sit in the middle; no-successor entries end at a stop.
+ * `stays-both` entries run straight across; `replaced` and `extended`
+ * entries point at their successors (solid = published or vendor spec,
+ * dashed = draft, dotted = study or research); bridges sit in the middle;
+ * no-successor entries end at a stop.
  */
 export function TransitionMap({
   usage,
@@ -403,6 +437,52 @@ export function TransitionMap({
 }) {
   const count = (id: string) => usage.get(id)?.direct.length ?? 0
   const byOutlook = (o: PqcOutlook) => CRYPTO_CONSTRUCTIONS.filter((c) => c.outlook === o)
+  const arrowRows = (o: 'replaced' | 'extended') =>
+    byOutlook(o).length > 0 ? (
+      <div>
+        <p className="mb-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+          {PQC_OUTLOOK_LABEL[o]}
+        </p>
+        <div className="space-y-1">
+          {byOutlook(o).map((c) => (
+            <div
+              key={c.id}
+              className="flex flex-wrap items-center gap-1.5"
+              data-testid={`map-row-${c.id}`}
+            >
+              <ConstructionChip
+                id={c.id}
+                count={count(c.id)}
+                countTitle={CHIP_COUNT_TITLE}
+                onSelect={onPick}
+              />
+              {(c.successions ?? []).map((s) => (
+                <span
+                  key={`${s.to}-${s.context}`}
+                  className="inline-flex flex-wrap items-center gap-1"
+                >
+                  <span
+                    className={`w-6 border-t-2 border-muted-foreground ${STATUS_LINE[s.status]}`}
+                    aria-hidden
+                  />
+                  <ArrowRight size={12} className="-ml-1 text-muted-foreground" aria-hidden />
+                  <ConstructionChip
+                    id={s.to}
+                    count={count(s.to)}
+                    countTitle={CHIP_COUNT_TITLE}
+                    onSelect={onPick}
+                  />
+                  <span className="text-[11px] text-muted-foreground">
+                    {successionWording(s).toLowerCase()} · {s.context} ·{' '}
+                    {STANDARDS_STATUS_LABEL[s.status].toLowerCase()}
+                  </span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : null
   return (
     <section
       className="mb-6 rounded-lg border border-border bg-card p-3"
@@ -410,35 +490,8 @@ export function TransitionMap({
     >
       <h3 className="mb-2 text-sm font-medium text-foreground">The transition at a glance</h3>
       <div className="space-y-3">
-        <div>
-          <p className="mb-1 text-[11px] uppercase tracking-wide text-muted-foreground">
-            Being replaced
-          </p>
-          <div className="space-y-1">
-            {byOutlook('replaced').map((c) => (
-              <div
-                key={c.id}
-                className="flex flex-wrap items-center gap-1.5"
-                data-testid={`map-row-${c.id}`}
-              >
-                <ConstructionChip id={c.id} count={count(c.id)} onSelect={onPick} />
-                {(c.successions ?? []).map((s) => (
-                  <span key={`${s.to}-${s.context}`} className="inline-flex items-center gap-1">
-                    <span
-                      className={`w-6 border-t-2 border-muted-foreground ${STATUS_LINE[s.status]}`}
-                      aria-hidden
-                    />
-                    <ArrowRight size={12} className="-ml-1 text-muted-foreground" aria-hidden />
-                    <ConstructionChip id={s.to} count={count(s.to)} onSelect={onPick} />
-                    <span className="text-[11px] text-muted-foreground">
-                      {s.context} · {STANDARDS_STATUS_LABEL[s.status].toLowerCase()}
-                    </span>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
+        {arrowRows('replaced')}
+        {arrowRows('extended')}
         {(['stays-both', 'bridge', 'pqc-native', 'no-successor-yet'] as const).map((o) =>
           byOutlook(o).length > 0 ? (
             <div key={o}>
@@ -448,7 +501,12 @@ export function TransitionMap({
               <div className="flex flex-wrap items-center gap-1.5">
                 {byOutlook(o).map((c) => (
                   <span key={c.id} className="inline-flex items-center gap-1">
-                    <ConstructionChip id={c.id} count={count(c.id)} onSelect={onPick} />
+                    <ConstructionChip
+                      id={c.id}
+                      count={count(c.id)}
+                      countTitle={CHIP_COUNT_TITLE}
+                      onSelect={onPick}
+                    />
                     {o === 'no-successor-yet' && (
                       <Octagon
                         size={12}
@@ -464,17 +522,26 @@ export function TransitionMap({
         )}
         <p className="text-[11px] text-muted-foreground">
           Arrow lines: solid = published or vendor specification, dashed = draft, dotted = under
-          study or research. Numbers are use cases that name the construction.
+          study or research. “Newer construction for the same job” is our reading of the standards,
+          not a statement in them. Numbers are use cases that name the construction.
         </p>
       </div>
     </section>
   )
 }
 
+type Side = 'today' | 'target' | 'both'
+const MARK: Record<Side, string> = { today: '●', target: '○', both: '◐' }
+const MARK_WORDS: Record<Side, string> = {
+  today: 'used today',
+  target: 'migration target',
+  both: 'used today and as the target',
+}
+
 /**
- * Industries × constructions. A table on wider screens (each cell marks
- * today / target / both and links to the construction), a per-industry list
- * on phones so the page never scrolls sideways.
+ * Industries × constructions. A table on wider screens (each cell is a button
+ * that opens the construction), a per-industry list on phones so the page
+ * never scrolls sideways.
  */
 export function ConstructionsOverview({
   industries,
@@ -486,7 +553,7 @@ export function ConstructionsOverview({
   onPick: (id: string) => void
 }) {
   const used = CRYPTO_CONSTRUCTIONS.filter((c) => (usage.get(c.id)?.direct.length ?? 0) > 0)
-  const cell = (ind: string, id: string) => {
+  const cell = (ind: string, id: string): Side | null => {
     const sides = new Set(
       (usage.get(id)?.direct ?? []).filter((d) => d.useCase.industry === ind).map((d) => d.side)
     )
@@ -494,7 +561,6 @@ export function ConstructionsOverview({
     if (sides.has('both') || (sides.has('today') && sides.has('target'))) return 'both'
     return sides.has('today') ? 'today' : 'target'
   }
-  const mark = { today: '●', target: '○', both: '◐' } as const
   const rows = industries.filter((ind) => used.some((c) => cell(ind, c.id)))
   if (used.length === 0) return null
   return (
@@ -533,10 +599,21 @@ export function ConstructionsOverview({
                   return (
                     <td
                       key={c.id}
-                      className="px-1 py-1 text-center text-primary"
+                      className="px-1 py-1 text-center"
                       data-testid={`cell-${ind}-${c.id}`}
                     >
-                      {v ? mark[v] : ''}
+                      {v && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => onPick(c.id)}
+                          className="h-auto p-0 text-primary"
+                          aria-label={`${ind}: ${c.id}, ${MARK_WORDS[v]}`}
+                          title={`${c.id}: ${MARK_WORDS[v]}`}
+                        >
+                          {MARK[v]}
+                        </Button>
+                      )}
                     </td>
                   )
                 })}
@@ -552,12 +629,18 @@ export function ConstructionsOverview({
             <div className="mt-1 flex flex-wrap gap-1">
               {used
                 .filter((c) => cell(ind, c.id))
-                .map((c) => (
-                  <span key={c.id} className="inline-flex items-center gap-0.5">
-                    <span className="text-primary">{mark[cell(ind, c.id)!]}</span>
-                    <ConstructionChip id={c.id} onSelect={onPick} />
-                  </span>
-                ))}
+                .map((c) => {
+                  const v = cell(ind, c.id)!
+                  return (
+                    <span key={c.id} className="inline-flex items-center gap-0.5">
+                      <span className="text-primary" aria-hidden>
+                        {MARK[v]}
+                      </span>
+                      <span className="sr-only">{MARK_WORDS[v]}:</span>
+                      <ConstructionChip id={c.id} onSelect={onPick} />
+                    </span>
+                  )
+                })}
             </div>
           </li>
         ))}
@@ -575,22 +658,23 @@ export function ConstructionPairing({
   onPick?: (id: string) => void
 }) {
   if (uc.classicalConstructions.length === 0 && uc.pqcConstructions.length === 0) return null
+  const today = [...new Set(uc.classicalConstructions)]
   const targets = new Set(uc.pqcConstructions)
+  const shownTargets = new Set<string>()
   return (
     <div className="mt-2 space-y-1 text-xs" data-testid="construction-pairing">
-      {uc.classicalConstructions.map((id) => {
+      {today.map((id) => {
         const c = getConstruction(id)
         if (!c) return null
-        const next =
-          c.outlook === 'stays-both' && targets.has(id)
-            ? 'stays, moves to post-quantum algorithms'
-            : null
+        const stays = c.outlook === 'stays-both' && targets.has(id)
+        if (stays) shownTargets.add(id)
         const successors = (c.successions ?? []).filter((s) => targets.has(s.to))
+        for (const s of successors) shownTargets.add(s.to)
         return (
           <div key={id} className="flex flex-wrap items-center gap-1">
             <ConstructionChip id={id} onSelect={onPick} />
             {successors.map((s) => (
-              <span key={s.to} className="inline-flex items-center gap-1">
+              <span key={`${s.to}-${s.context}`} className="inline-flex items-center gap-1">
                 <ArrowRight size={12} className="text-muted-foreground" aria-hidden />
                 <ConstructionChip id={s.to} onSelect={onPick} />
                 <span className="text-muted-foreground">
@@ -598,24 +682,67 @@ export function ConstructionPairing({
                 </span>
               </span>
             ))}
-            {next && <span className="text-muted-foreground">{next}</span>}
+            {stays && (
+              <span className="text-muted-foreground">stays, moves to post-quantum algorithms</span>
+            )}
           </div>
         )
       })}
-      {uc.pqcConstructions
-        .filter(
-          (id) =>
-            !uc.classicalConstructions.includes(id) &&
-            !uc.classicalConstructions.some((cid) =>
-              getConstruction(cid)?.successions?.some((s) => s.to === id)
-            )
-        )
+      {[...targets]
+        .filter((id) => !shownTargets.has(id) && !today.includes(id))
         .map((id) => (
-          <div key={id} className="flex flex-wrap items-center gap-1">
+          <div key={`target-${id}`} className="flex flex-wrap items-center gap-1">
             <span className="text-muted-foreground">Target:</span>
             <ConstructionChip id={id} onSelect={onPick} />
           </div>
         ))}
+    </div>
+  )
+}
+
+/** Plain explanation + simple flow for an algorithm family (D6). */
+export function AlgorithmExplanationBlock({ family }: { family: string }) {
+  const e = ALGORITHM_EXPLANATIONS[family]
+  if (!e) return null
+  const d = e.diagram
+  return (
+    <div className="mt-2" data-testid={`algorithm-explanation-${family}`}>
+      <p className="text-sm leading-relaxed text-foreground">{e.plain}</p>
+      <p className="mt-1 text-sm text-foreground">
+        <span className="font-medium">What changes with PQC: </span>
+        {e.whyItMattersForPqc}
+      </p>
+      <figure
+        className="mt-2 rounded-lg border border-border bg-muted/20 p-3"
+        aria-label={`How ${family} works`}
+        data-testid={`algorithm-diagram-${family}`}
+      >
+        <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-1">
+            {d.inputs.map((i) => (
+              <FlowBox key={i}>{i}</FlowBox>
+            ))}
+          </div>
+          <FlowArrow />
+          <FlowBox tone="step">
+            <span className="inline-flex items-center gap-1.5">
+              <AlgorithmBox family={family} />
+              {d.combiner}
+            </span>
+          </FlowBox>
+          <FlowArrow />
+          <div className="flex flex-col gap-1">
+            {d.outputs.map((o) => (
+              <FlowBox key={o}>{o}</FlowBox>
+            ))}
+          </div>
+        </div>
+      </figure>
+      {e.glossaryTerm && (
+        <p className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
+          <BookOpen size={12} aria-hidden /> Glossary: {parseGlossaryText(e.glossaryTerm)}
+        </p>
+      )}
     </div>
   )
 }

@@ -42,6 +42,10 @@ export type PqcOutlook =
   | 'pqc-native'
   /** No standardised PQC successor yet. */
   | 'no-successor-yet'
+  /** Kept, extended with a post-quantum part running next to it (added
+   *  2026-11-13 after review: Signal keeps the Double Ratchet and adds SPQR
+   *  beside it, which is neither a replacement nor a hybrid of one design). */
+  | 'extended'
 
 export const PQC_OUTLOOK_LABEL: Record<PqcOutlook, string> = {
   'stays-both': 'Stays: works with classical and PQC',
@@ -49,6 +53,7 @@ export const PQC_OUTLOOK_LABEL: Record<PqcOutlook, string> = {
   bridge: 'Hybrid bridge',
   'pqc-native': 'New for PQC',
   'no-successor-yet': 'No PQC successor yet',
+  extended: 'Kept, extended with a PQC part',
 }
 
 /**
@@ -107,6 +112,16 @@ export interface Instantiation {
 export interface Succession {
   /** Successor construction id. */
   to: string
+  /** 'replaced-by': the newer construction takes over the job.
+   *  'extended-by': it runs next to this one, which stays. */
+  relation: 'replaced-by' | 'extended-by'
+  /**
+   * true when a cited document says so in words; false when the link is our
+   * reading of the standards (the newer construction does the same job, but no
+   * cited document states that it supersedes this one). The UI words the two
+   * differently, so an inference is never presented as a standard's statement.
+   */
+  stated: boolean
   /** Where the succession applies: '5G SUCI', 'CMS / S/MIME', 'Signal'… */
   context: string
   status: StandardsStatus
@@ -150,7 +165,7 @@ export interface CryptoConstruction {
   classical?: Instantiation[]
   pqc?: Instantiation[]
   hybrid?: Instantiation[]
-  /** Required when outlook is 'replaced'. */
+  /** Required when outlook is 'replaced' or 'extended'. */
   successions?: Succession[]
   /** Required when outlook is 'no-successor-yet'. */
   noSuccessorReason?: string
@@ -176,26 +191,30 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     successions: [
       {
         to: 'HPKE',
+        relation: 'replaced-by',
+        stated: false,
         context: 'general public-key encryption',
         status: 'published',
         proofRefs: ['RFC 9180'],
       },
       {
         to: 'PQ-SUCI-Profile',
+        relation: 'replaced-by',
+        stated: true,
         context: '5G subscriber privacy (SUCI)',
         status: 'research',
         proofRefs: ['PQ-SUCI-MLKEM-Profile-C-2025'],
       },
     ],
     cycloneDxPrimitive: 'pke',
-    proofRefs: ['SEC 1'],
+    proofRefs: ['SEC 1', 'PQ-SUCI-MLKEM-Profile-C-2025'],
     explain: {
       plain:
         'ECIES lets anyone encrypt a message for a recipient using only the recipient’s public key. The sender makes a one-time elliptic-curve key, combines it with the recipient’s key to get a shared secret, and uses that secret to encrypt the message. 5G phones use it to hide the subscriber’s permanent identity (SUCI).',
       analogy:
         'A drop box that anyone can lock with the owner’s padlock, but only the owner can open.',
       whyItMattersForPqc:
-        'Its key agreement is elliptic-curve Diffie-Hellman, which a quantum computer breaks, so it has to give way to a KEM-based scheme such as HPKE with ML-KEM, or a post-quantum SUCI profile (still research in 3GPP).',
+        'Its key agreement is elliptic-curve Diffie-Hellman, which a quantum computer breaks. KEM-based designs do the same job: HPKE can use ML-KEM, and post-quantum SUCI profiles are being researched and studied for 5G.',
       glossaryTerm: 'ECIES',
       diagram: {
         inputs: ['recipient public key', 'message'],
@@ -236,11 +255,22 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     id: 'HPKE',
     label: 'HPKE (Hybrid Public Key Encryption)',
     outlook: 'stays-both',
-    classical: [{ algorithms: ['X25519', 'ECDH'], status: 'published', proofRefs: ['RFC 9180'] }],
-    pqc: [{ algorithms: ['ML-KEM'], status: 'draft', proofRefs: ['draft-ietf-hpke-pq'] }],
+    classical: [
+      { algorithms: ['X25519'], status: 'published', proofRefs: ['RFC 9180'] },
+      { algorithms: ['ECDH'], status: 'published', proofRefs: ['RFC 9180'] },
+    ],
+    pqc: [
+      {
+        algorithms: ['ML-KEM'],
+        status: 'draft',
+        proofRefs: ['draft-ietf-hpke-pq'],
+        note: 'With ML-KEM, HPKE’s authenticated modes (AuthEncap/AuthDecap) are not available.',
+      },
+    ],
     hybrid: [
       { algorithms: ['X25519', 'ML-KEM'], status: 'draft', proofRefs: ['draft-ietf-hpke-pq'] },
     ],
+    builtOn: ['KDF', 'AEAD'],
     cycloneDxPrimitive: 'pke',
     proofRefs: ['RFC 9180', 'draft-ietf-hpke-pq'],
     explain: {
@@ -248,7 +278,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         'HPKE is a standard recipe for encrypting data to someone’s public key. It is built from three swappable parts: a key encapsulation mechanism (KEM), a key derivation function and an authenticated cipher. MLS group messaging and other protocols use it.',
       analogy: 'A standard envelope whose lock can be swapped without redesigning the envelope.',
       whyItMattersForPqc:
-        'HPKE itself stays: it was designed around a KEM, so moving to post-quantum means plugging in ML-KEM or a hybrid KEM, which a draft standard defines.',
+        'HPKE itself stays: it was designed around a KEM, so moving to post-quantum means plugging in ML-KEM or a hybrid KEM, defined in an IETF working-group draft. Its authenticated modes are not available with ML-KEM.',
       glossaryTerm: 'Hybrid Public Key Encryption',
       diagram: {
         inputs: ['recipient public key', 'message'],
@@ -267,6 +297,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       { algorithms: ['X25519', 'ML-KEM'], status: 'published', proofRefs: ['RFC-10024'] },
       { algorithms: ['ECDH', 'ML-KEM'], status: 'published', proofRefs: ['RFC-10024'] },
     ],
+    builtOn: ['KDF'],
     cycloneDxPrimitive: 'combiner',
     proofRefs: ['RFC-10024', 'NIST SP 800-227'],
     explain: {
@@ -274,7 +305,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         'A hybrid key exchange runs a classical exchange (such as X25519) and ML-KEM side by side and mixes both results into one key. TLS 1.3 defines named groups for this, such as X25519MLKEM768.',
       analogy: 'A door with two different locks: a thief must pick both to get in.',
       whyItMattersForPqc:
-        'It is how most web traffic is getting quantum-resistant key exchange today: the key stays safe if either the classical or the post-quantum part holds.',
+        'It is the main way TLS 1.3 adds quantum-resistant key exchange: the key stays safe if either the classical or the post-quantum part holds.',
       glossaryTerm: 'Hybrid Key Exchange',
       learnModuleId: 'hybrid-crypto',
       diagram: {
@@ -290,10 +321,15 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     outlook: 'bridge',
     hybrid: [
       {
-        algorithms: ['X25519', 'FFDH', 'ML-KEM'],
+        algorithms: ['X25519', 'ML-KEM'],
         status: 'draft',
         proofRefs: ['RFC 9370', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
-        note: 'RFC 9370 (published) defines the additional key exchanges next to the Diffie-Hellman exchange; ML-KEM as an additional exchange is a draft.',
+        note: 'RFC 9370 (published) defines the additional key exchanges; ML-KEM in IKEv2 is a draft.',
+      },
+      {
+        algorithms: ['FFDH', 'ML-KEM'],
+        status: 'draft',
+        proofRefs: ['RFC 9370', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
       },
     ],
     cycloneDxPrimitive: 'key-agree',
@@ -302,7 +338,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       plain:
         'IKEv2, the key exchange behind IPsec VPNs, can run several key exchanges in a row and mix all of them into the session keys. RFC 9370 defines this so a post-quantum KEM can be added next to the classical Diffie-Hellman exchange.',
       whyItMattersForPqc:
-        'It is the IPsec path to hybrid post-quantum key exchange: the classical exchange stays and ML-KEM is added as an extra round.',
+        'It is the IPsec path to hybrid post-quantum key exchange: ML-KEM can be added as an extra exchange next to the classical one.',
       diagram: {
         inputs: ['classical Diffie-Hellman', 'additional ML-KEM exchange'],
         combiner: 'IKEv2 key derivation',
@@ -313,9 +349,16 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
   {
     id: 'IKEv2-PPK',
     label: 'IKEv2 post-quantum preshared keys (RFC 8784)',
-    outlook: 'stays-both',
-    classical: [{ algorithms: [], status: 'published', proofRefs: ['RFC 8784'] }],
-    pqc: [{ algorithms: [], status: 'published', proofRefs: ['RFC 8784'] }],
+    outlook: 'pqc-native',
+    pqc: [
+      {
+        algorithms: [],
+        status: 'published',
+        proofRefs: ['RFC 8784'],
+        note: 'Symmetric: protection comes from the preshared key, not from a public-key algorithm.',
+      },
+    ],
+    builtOn: ['KDF'],
     cycloneDxPrimitive: 'kdf',
     proofRefs: ['RFC 8784'],
     explain: {
@@ -336,9 +379,10 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     outlook: 'bridge',
     hybrid: [
       {
-        algorithms: ['X25519', 'ML-KEM'],
+        algorithms: ['ML-KEM'],
         status: 'draft',
-        proofRefs: ['draft-ietf-mls-pq-ciphersuites-07'],
+        proofRefs: ['draft-ietf-mls-combiner-02', 'draft-ietf-mls-pq-ciphersuites-07'],
+        note: 'The classical half is the traditional MLS session with its own cipher suite; the post-quantum session uses an ML-KEM cipher suite.',
       },
     ],
     cycloneDxPrimitive: 'combiner',
@@ -368,7 +412,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       plain:
         'In normal TLS the server proves its identity with a signature. AuthKEM proposes proving it with a KEM instead: the client encapsulates a secret to the server’s certified KEM key, and only the real server can recover it.',
       whyItMattersForPqc:
-        'Post-quantum KEM keys and ciphertexts can be smaller than post-quantum signatures, so this idea only makes sense because of PQC.',
+        'It was proposed with post-quantum KEMs in mind, because KEM keys and ciphertexts can be smaller than post-quantum signatures; the draft notes it can also work with (EC)DH certificate keys.',
       diagram: {
         inputs: ['server certified KEM public key'],
         combiner: 'KEM encapsulation',
@@ -385,7 +429,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         algorithms: ['ML-KEM'],
         status: 'research',
         proofRefs: ['Hybrid-Post-Quantum-Password-Authenticated-Key-Exchange'],
-        note: 'The classical half is the PAKE group named by the paper.',
+        note: 'The classical half is the CPace PAKE named by the draft (an individual Internet-Draft).',
       },
     ],
     cycloneDxPrimitive: 'other',
@@ -430,8 +474,8 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
     explain: {
       plain:
-        'A composite signature puts an ML-DSA signature and a classical signature (RSA, ECDSA or EdDSA) together under one key and one algorithm identifier. A verifier accepts it only if both signatures check out.',
-      analogy: 'One document carrying two different seals; it counts only if both are intact.',
+        'A composite signature puts an ML-DSA signature and a classical signature (RSA, ECDSA or EdDSA) together under one key and one algorithm identifier, so both travel and are checked together.',
+      analogy: 'One document carrying two different seals.',
       whyItMattersForPqc:
         'Certificates and signed email can move to post-quantum signatures while keeping classical security during the transition.',
       glossaryTerm: 'Composite Signature',
@@ -495,6 +539,8 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     successions: [
       {
         to: 'KEM-Recipient',
+        relation: 'replaced-by',
+        stated: false,
         context: 'CMS / S/MIME',
         status: 'published',
         proofRefs: ['RFC 9629'],
@@ -506,7 +552,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       plain:
         'In encrypted email (S/MIME) and other CMS messages, the message key is encrypted directly with each recipient’s RSA public key. That wrapped key travels with the message.',
       whyItMattersForPqc:
-        'RSA key transport is broken by a quantum computer, so CMS adds a KEM recipient type that works with ML-KEM.',
+        'RSA key transport is broken by a quantum computer; CMS has a KEM recipient type that does the same job with ML-KEM.',
       diagram: {
         inputs: ['recipient RSA public key', 'message key'],
         combiner: 'RSA encryption',
@@ -516,24 +562,27 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
   },
   {
     id: 'KeyAgree-Recipient',
-    label: 'Key agreement recipient (CMS KeyAgreeRecipientInfo, JOSE/COSE ECDH-ES)',
+    label: 'Key agreement recipient (CMS KeyAgreeRecipientInfo)',
     outlook: 'replaced',
     classical: [{ algorithms: ['ECDH'], status: 'published', proofRefs: ['RFC 7518'] }],
     successions: [
       {
         to: 'KEM-Recipient',
+        relation: 'replaced-by',
+        stated: false,
         context: 'CMS / S/MIME',
         status: 'published',
         proofRefs: ['RFC 9629'],
       },
     ],
+    builtOn: ['KDF', 'Key-Wrap'],
     cycloneDxPrimitive: 'key-agree',
     proofRefs: ['RFC 5652', 'RFC 7518'],
     explain: {
       plain:
-        'The sender agrees a shared secret with the recipient’s elliptic-curve key, derives a key-encryption key from it, and uses that to wrap the message key. CMS calls this KeyAgreeRecipientInfo; JOSE and COSE call it ECDH-ES.',
+        'The sender agrees a shared secret with the recipient’s elliptic-curve key, derives a key-encryption key from it, and uses that to wrap the message key. CMS calls this KeyAgreeRecipientInfo; JOSE and COSE have a similar mode called ECDH-ES.',
       whyItMattersForPqc:
-        'Elliptic-curve Diffie-Hellman is broken by a quantum computer; the KEM recipient type replaces it in CMS.',
+        'Elliptic-curve Diffie-Hellman is broken by a quantum computer; in CMS the KEM recipient type does the same job with ML-KEM.',
       diagram: {
         inputs: ['recipient EC public key', 'message key'],
         combiner: 'ECDH + key derivation + key wrap',
@@ -547,6 +596,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     outlook: 'stays-both',
     classical: [{ algorithms: ['RSA-kex'], status: 'published', proofRefs: ['RFC 9690'] }],
     pqc: [{ algorithms: ['ML-KEM'], status: 'published', proofRefs: ['RFC-9936'] }],
+    builtOn: ['KDF', 'Key-Wrap'],
     cycloneDxPrimitive: 'kem',
     proofRefs: ['RFC 9629'],
     explain: {
@@ -572,7 +622,14 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       { algorithms: ['X25519'], status: 'vendor-spec', proofRefs: ['Signal-PQXDH-Spec'] },
     ],
     successions: [
-      { to: 'PQXDH', context: 'Signal', status: 'vendor-spec', proofRefs: ['Signal-PQXDH-Spec'] },
+      {
+        to: 'PQXDH',
+        relation: 'replaced-by',
+        stated: false,
+        context: 'Signal',
+        status: 'vendor-spec',
+        proofRefs: ['Signal-PQXDH-Spec'],
+      },
     ],
     cycloneDxPrimitive: 'key-agree',
     proofRefs: ['Signal-PQXDH-Spec'],
@@ -619,7 +676,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
   {
     id: 'Double-Ratchet',
     label: 'Double Ratchet (Signal)',
-    outlook: 'replaced',
+    outlook: 'extended',
     classical: [
       {
         algorithms: ['ECDH'],
@@ -630,6 +687,8 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     successions: [
       {
         to: 'SPQR',
+        relation: 'extended-by',
+        stated: true,
         context: 'Signal',
         status: 'vendor-spec',
         proofRefs: ['Signal-Blog-SPQR-Post-Quantum-Ratchets'],
@@ -641,7 +700,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       plain:
         'After the first key is set up, the Double Ratchet keeps changing the keys with every message, so a key stolen today does not unlock past or future messages.',
       whyItMattersForPqc:
-        'Its ongoing key refresh uses elliptic-curve Diffie-Hellman; Signal’s SPQR adds a post-quantum ratchet next to it.',
+        'Its ongoing key refresh uses elliptic-curve Diffie-Hellman. Signal keeps it and runs a post-quantum ratchet, SPQR, next to it.',
       diagram: {
         inputs: ['current chain keys', 'new Diffie-Hellman ratchet keys'],
         combiner: 'ratchet step',
@@ -660,7 +719,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         proofRefs: ['Signal-Blog-SPQR-Post-Quantum-Ratchets'],
       },
     ],
-    cycloneDxPrimitive: 'kem',
+    cycloneDxPrimitive: 'key-agree',
     proofRefs: ['Signal-Blog-SPQR-Post-Quantum-Ratchets'],
     explain: {
       plain:
@@ -700,12 +759,469 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       },
     },
   },
+
+  // ── Building blocks (group 2) ─────────────────────────────────────────
+  {
+    id: 'Key-Wrap',
+    label: 'AES key wrap (AES-KW / AES-KWP)',
+    outlook: 'stays-both',
+    classical: [{ algorithms: ['AES'], status: 'published', proofRefs: ['RFC 3394'] }],
+    pqc: [{ algorithms: ['AES'], status: 'published', proofRefs: ['IETF RFC 5649'] }],
+    cycloneDxPrimitive: 'key-wrap',
+    proofRefs: [
+      'RFC 3394',
+      'IETF RFC 5649',
+      'NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope',
+    ],
+    explain: {
+      plain:
+        'Key wrap encrypts one key with another key so it can be stored or sent safely, and detects any tampering when it is unwrapped. The AES key wrap modes are standardised by the IETF and NIST.',
+      whyItMattersForPqc:
+        'It is symmetric, so it stays: post-quantum designs use it after a KEM to wrap the actual key.',
+      diagram: {
+        inputs: ['key-encryption key', 'key to protect'],
+        combiner: 'AES key wrap',
+        outputs: ['wrapped key'],
+      },
+    },
+  },
+  {
+    id: 'Asymmetric-Key-Wrap',
+    label: 'Asymmetric key wrap (RSA-OAEP, RSA-AES key wrap)',
+    outlook: 'replaced',
+    classical: [
+      {
+        algorithms: ['RSA-kex'],
+        status: 'published',
+        proofRefs: ['PKCS11-V32-OS-OASIS', 'AWS-KMS-Import-Wrapping-Keys'],
+      },
+    ],
+    successions: [
+      {
+        to: 'KEM-Key-Wrap',
+        relation: 'replaced-by',
+        stated: false,
+        context: 'HSM key import and transport (PKCS#11 v3.2)',
+        status: 'published',
+        proofRefs: ['PKCS11-V32-OS-OASIS'],
+      },
+    ],
+    builtOn: ['Key-Wrap'],
+    cycloneDxPrimitive: 'key-wrap',
+    proofRefs: ['PKCS11-V32-OS-OASIS', 'AWS-KMS-Import-Wrapping-Keys'],
+    explain: {
+      plain:
+        'To move a key into a cloud KMS or an HSM, it is encrypted under the target’s RSA public key, either directly (RSA-OAEP) or by wrapping a temporary AES key with RSA and the real key with AES.',
+      whyItMattersForPqc:
+        'RSA is broken by a quantum computer, so key import needs a KEM-based replacement; PKCS#11 v3.2 adds encapsulation for KEMs such as ML-KEM.',
+      diagram: {
+        inputs: ['target RSA public key', 'key to import'],
+        combiner: 'RSA encryption (+ AES key wrap)',
+        outputs: ['wrapped key material'],
+      },
+    },
+  },
+  {
+    id: 'KEM-Key-Wrap',
+    label: 'KEM-based key wrap (encapsulate, then wrap)',
+    outlook: 'pqc-native',
+    pqc: [
+      { algorithms: ['ML-KEM', 'AES'], status: 'published', proofRefs: ['PKCS11-V32-OS-OASIS'] },
+    ],
+    builtOn: ['Key-Wrap'],
+    cycloneDxPrimitive: 'kem',
+    proofRefs: ['PKCS11-V32-OS-OASIS'],
+    explain: {
+      plain:
+        'Instead of encrypting a key with RSA, the sender encapsulates a fresh secret to the recipient’s KEM key and uses that secret to wrap the key with AES. PKCS#11 v3.2 adds encapsulate and decapsulate operations for this.',
+      whyItMattersForPqc:
+        'It is how HSMs and key managers can move keys between each other with ML-KEM instead of RSA.',
+      diagram: {
+        inputs: ['recipient ML-KEM public key', 'key to protect'],
+        combiner: 'KEM encapsulation + AES key wrap',
+        outputs: ['KEM ciphertext', 'wrapped key'],
+      },
+    },
+  },
+  {
+    id: 'KDF',
+    label: 'Key derivation (HKDF, SP 800-56C, KMAC)',
+    outlook: 'stays-both',
+    classical: [
+      { algorithms: ['SHA'], status: 'published', proofRefs: ['NIST-SP-800-56C-R2'] },
+      { algorithms: ['AES'], status: 'published', proofRefs: ['NIST-SP-800-56C-R2'] },
+    ],
+    pqc: [
+      { algorithms: ['SHA'], status: 'published', proofRefs: ['NIST-SP-800-56C-R2'] },
+      { algorithms: ['AES'], status: 'published', proofRefs: ['NIST-SP-800-56C-R2'] },
+    ],
+    cycloneDxPrimitive: 'kdf',
+    proofRefs: ['RFC 5869', 'NIST-SP-800-56C-R2', 'NIST-SP-800-185'],
+    explain: {
+      plain:
+        'A key derivation function turns a shared secret into the actual keys a protocol uses, mixing in context so that different uses get different keys. HKDF, the NIST SP 800-56C methods and KMAC are common examples.',
+      whyItMattersForPqc:
+        'It stays: hybrid schemes rely on it to combine the classical and post-quantum secrets into one key.',
+      diagram: {
+        inputs: ['shared secret', 'context information'],
+        combiner: 'hash- or MAC-based derivation',
+        outputs: ['derived keys'],
+      },
+    },
+  },
+  {
+    id: 'MAC',
+    label: 'Message authentication codes (HMAC, CMAC, GMAC, KMAC)',
+    outlook: 'stays-both',
+    classical: [
+      { algorithms: ['SHA'], status: 'published', proofRefs: ['NIST-SP-800-185'] },
+      {
+        algorithms: ['AES'],
+        status: 'published',
+        proofRefs: ['NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope'],
+      },
+    ],
+    pqc: [
+      { algorithms: ['SHA'], status: 'published', proofRefs: ['NIST-SP-800-185'] },
+      {
+        algorithms: ['AES'],
+        status: 'published',
+        proofRefs: ['NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope'],
+      },
+    ],
+    cycloneDxPrimitive: 'mac',
+    proofRefs: ['FIPS-198-1', 'NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope'],
+    explain: {
+      plain:
+        'A MAC is a short tag computed with a shared secret key that proves a message came from someone holding the key and was not changed. HMAC uses a hash function; CMAC and GMAC use a block cipher such as AES.',
+      whyItMattersForPqc:
+        'It is symmetric, so it stays; the question is key length, not the construction.',
+      diagram: {
+        inputs: ['shared key', 'message'],
+        combiner: 'keyed hash or cipher',
+        outputs: ['authentication tag'],
+      },
+    },
+  },
+  {
+    id: 'AEAD',
+    label: 'Authenticated encryption (AES-GCM, ChaCha20-Poly1305, Ascon)',
+    outlook: 'stays-both',
+    classical: [
+      { algorithms: ['AES'], status: 'published', proofRefs: ['NIST-SP-800-38D'] },
+      {
+        algorithms: ['ChaCha20'],
+        status: 'published',
+        proofRefs: ['ChaCha20-and-Poly1305-for-IETF-Protocols'],
+      },
+    ],
+    pqc: [
+      { algorithms: ['AES'], status: 'published', proofRefs: ['NIST-SP-800-38D'] },
+      { algorithms: ['Ascon'], status: 'published', proofRefs: ['NIST-SP-800-232'] },
+    ],
+    cycloneDxPrimitive: 'ae',
+    proofRefs: ['NIST-SP-800-38D', 'ChaCha20-and-Poly1305-for-IETF-Protocols', 'NIST-SP-800-232'],
+    explain: {
+      plain:
+        'Authenticated encryption keeps data secret and detects any change to it in one step. TLS, IPsec and HPKE all encrypt their traffic this way, with AES-GCM or ChaCha20-Poly1305; Ascon is NIST’s lightweight option.',
+      whyItMattersForPqc:
+        'It stays: post-quantum work changes how the key is agreed, not how the data is then encrypted.',
+      diagram: {
+        inputs: ['key', 'nonce', 'data'],
+        combiner: 'encrypt and authenticate',
+        outputs: ['ciphertext + tag'],
+      },
+    },
+  },
+  {
+    id: 'DRBG',
+    label: 'Deterministic random bit generators (SP 800-90A)',
+    outlook: 'stays-both',
+    classical: [
+      { algorithms: ['AES'], status: 'published', proofRefs: ['NIST-SP-800-90A-R1'] },
+      { algorithms: ['SHA'], status: 'published', proofRefs: ['NIST-SP-800-90A-R1'] },
+    ],
+    pqc: [
+      { algorithms: ['AES'], status: 'published', proofRefs: ['NIST-SP-800-90A-R1'] },
+      { algorithms: ['SHA'], status: 'published', proofRefs: ['NIST-SP-800-90A-R1'] },
+    ],
+    cycloneDxPrimitive: 'drbg',
+    proofRefs: ['NIST-SP-800-90A-R1', 'NIST-SP-800-90C'],
+    explain: {
+      plain:
+        'A DRBG stretches a small amount of true randomness (entropy) into the stream of random numbers keys are made from. NIST SP 800-90A defines CTR_DRBG (AES), Hash_DRBG and HMAC_DRBG.',
+      whyItMattersForPqc:
+        'It stays; every post-quantum key generation draws on it, so its quality matters as much as ever.',
+      diagram: {
+        inputs: ['entropy input', 'nonce'],
+        combiner: 'AES- or hash-based generator',
+        outputs: ['random bits'],
+      },
+    },
+  },
+  {
+    id: 'Merkle-Tree-Cert',
+    label: 'Merkle tree certificates',
+    outlook: 'stays-both',
+    classical: [
+      {
+        algorithms: ['ECDSA'],
+        status: 'draft',
+        proofRefs: ['draft-ietf-plants-merkle-tree-certs'],
+      },
+    ],
+    pqc: [
+      {
+        algorithms: ['ML-DSA'],
+        status: 'draft',
+        proofRefs: ['draft-ietf-plants-merkle-tree-certs'],
+      },
+    ],
+    cycloneDxPrimitive: 'other',
+    otherReason: 'A certificate format, not a single algorithm primitive.',
+    proofRefs: ['draft-ietf-plants-merkle-tree-certs'],
+    explain: {
+      plain:
+        'Instead of signing every certificate separately, a certificate authority signs a batch at once by signing the root of a Merkle tree; each certificate then carries a short proof that it is in the tree.',
+      whyItMattersForPqc:
+        'Post-quantum signatures are large, so signing many certificates with one signature keeps the extra size off every connection.',
+      diagram: {
+        inputs: ['batch of certificates'],
+        combiner: 'Merkle tree + one signature on the root',
+        outputs: ['certificate + inclusion proof'],
+      },
+    },
+  },
+  {
+    id: 'Hybrid-Cert',
+    label: 'Hybrid certificates (Chameleon / Catalyst)',
+    outlook: 'bridge',
+    hybrid: [
+      {
+        algorithms: ['ML-DSA', 'ECDSA'],
+        status: 'draft',
+        proofRefs: ['draft-bonnell-lamps-chameleon-certs-07'],
+      },
+    ],
+    cycloneDxPrimitive: 'other',
+    otherReason: 'A certificate format, not a single algorithm primitive.',
+    proofRefs: ['draft-bonnell-lamps-chameleon-certs-07'],
+    explain: {
+      plain:
+        'A Chameleon certificate packs a second, related certificate inside the first, so one file can be read as either a classical or a post-quantum certificate depending on what the relying party understands.',
+      whyItMattersForPqc:
+        'It lets one certificate serve old and new clients during the transition, without running two parallel PKIs.',
+      glossaryTerm: 'Chameleon Certificate',
+      diagram: {
+        inputs: ['classical certificate', 'post-quantum certificate'],
+        combiner: 'embed the difference (delta)',
+        outputs: ['one paired certificate'],
+      },
+    },
+  },
+
+  // ── Industry-specific (group 3) ───────────────────────────────────────
+  {
+    id: 'Key-Block',
+    label: 'Payment key blocks (TR-31 style)',
+    outlook: 'stays-both',
+    classical: [
+      {
+        algorithms: ['3DES'],
+        status: 'published',
+        proofRefs: ['PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management'],
+      },
+      {
+        algorithms: ['AES'],
+        status: 'published',
+        proofRefs: ['PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management'],
+      },
+    ],
+    pqc: [
+      {
+        algorithms: ['AES'],
+        status: 'published',
+        proofRefs: ['PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management'],
+      },
+    ],
+    builtOn: ['Key-Wrap'],
+    cycloneDxPrimitive: 'key-wrap',
+    proofRefs: ['PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management'],
+    explain: {
+      plain:
+        'In payments, keys travel between devices inside a key block: the key is encrypted together with a header that says what the key may be used for, and the whole block is protected against changes.',
+      whyItMattersForPqc:
+        'Key blocks are symmetric, so they stay; the move the payment industry is making is from TDES to AES key blocks.',
+      diagram: {
+        inputs: ['key-block protection key', 'key + usage header'],
+        combiner: 'encrypt and authenticate',
+        outputs: ['key block'],
+      },
+    },
+  },
+  {
+    id: '3GPP-AKA',
+    label: '3GPP authentication and key agreement (MILENAGE)',
+    outlook: 'stays-both',
+    classical: [
+      {
+        algorithms: ['AES'],
+        status: 'published',
+        proofRefs: ['Specification-of-the-MILENAGE-algorithm-set-An-example-algor'],
+      },
+    ],
+    pqc: [
+      {
+        algorithms: ['AES'],
+        status: 'published',
+        proofRefs: ['Specification-of-the-MILENAGE-algorithm-set-An-example-algor'],
+      },
+    ],
+    cycloneDxPrimitive: 'mac',
+    proofRefs: ['Specification-of-the-MILENAGE-algorithm-set-An-example-algor'],
+    explain: {
+      plain:
+        'When a phone joins a mobile network, the SIM and the operator prove to each other that they share the same secret key and derive session keys from it. MILENAGE is the example algorithm set for this, built on the Rijndael (AES) block cipher.',
+      whyItMattersForPqc:
+        'It uses only symmetric cryptography, so it stays; the quantum exposure in 5G is in the public-key parts such as SUCI.',
+      glossaryTerm: 'MILENAGE',
+      diagram: {
+        inputs: ['shared subscriber key', 'network challenge'],
+        combiner: 'MILENAGE functions',
+        outputs: ['response', 'session keys'],
+      },
+    },
+  },
+  {
+    id: 'Cardano-KES',
+    label: 'Key-evolving signatures (Cardano KES)',
+    outlook: 'no-successor-yet',
+    classical: [
+      {
+        algorithms: ['EdDSA'],
+        status: 'vendor-spec',
+        proofRefs: ['input-output-hk-kes-Cardano-Key-Evolving-Signatures-Sum6Kes'],
+      },
+    ],
+    noSuccessorReason:
+      'The cited KES implementation is built on Ed25519, and no post-quantum key-evolving signature is specified for it.',
+    noSuccessorCheckedOn: '2026-11-13',
+    cycloneDxPrimitive: 'signature',
+    proofRefs: ['input-output-hk-kes-Cardano-Key-Evolving-Signatures-Sum6Kes'],
+    explain: {
+      plain:
+        'Cardano block producers sign with keys that evolve over time: after each period the old key is erased, so a key stolen later cannot forge blocks from earlier periods.',
+      whyItMattersForPqc:
+        'It is built on Ed25519, which a quantum computer breaks, and no post-quantum version is specified yet.',
+      diagram: {
+        inputs: ['current period key', 'block'],
+        combiner: 'sign, then evolve and erase',
+        outputs: ['block signature', 'next period key'],
+      },
+    },
+  },
+  {
+    id: 'eMRTD-Auth',
+    label: 'ePassport chip protocols (PACE, Chip and Active Authentication)',
+    outlook: 'stays-both',
+    classical: [
+      {
+        algorithms: ['ECDH', 'ECDSA', 'AES'],
+        status: 'published',
+        proofRefs: ['ICAO-Doc-9303-Part-11-Security-Mechanisms-for-MRTDs'],
+      },
+      {
+        algorithms: ['FFDH', 'RSA-sig', 'AES'],
+        status: 'published',
+        proofRefs: ['ICAO-Doc-9303-Part-11-Security-Mechanisms-for-MRTDs'],
+      },
+    ],
+    pqc: [
+      {
+        algorithms: ['ML-KEM', 'ML-DSA'],
+        status: 'study',
+        proofRefs: ['ICAO-TAG-TRIP-5-WP-18'],
+        note: 'ICAO working paper comparing post-quantum options for the chip; no post-quantum protocol is specified yet.',
+      },
+    ],
+    cycloneDxPrimitive: 'key-agree',
+    proofRefs: ['ICAO-Doc-9303-Part-11-Security-Mechanisms-for-MRTDs'],
+    explain: {
+      plain:
+        'An ePassport chip sets up an encrypted channel with the inspection system (PACE) and proves it is a genuine, not a cloned, chip (Chip Authentication or Active Authentication).',
+      whyItMattersForPqc:
+        'Passports stay valid for years, so ICAO is studying post-quantum versions of these protocols now.',
+      diagram: {
+        inputs: ['access code from the passport', 'chip keys'],
+        combiner: 'key agreement + chip proof',
+        outputs: ['secure channel', 'genuine-chip proof'],
+      },
+    },
+  },
+  {
+    id: 'SLH-DSA-MTL',
+    label: 'SLH-DSA in Merkle Tree Ladder mode (DNSSEC)',
+    outlook: 'pqc-native',
+    pqc: [
+      {
+        algorithms: ['SLH-DSA'],
+        status: 'draft',
+        proofRefs: ['draft-fregly-dnsop-slh-dsa-mtl-dnssec-06'],
+      },
+    ],
+    cycloneDxPrimitive: 'signature',
+    proofRefs: ['draft-fregly-dnsop-slh-dsa-mtl-dnssec-06'],
+    explain: {
+      plain:
+        'Merkle Tree Ladder mode lets one SLH-DSA signature cover many DNS records at once; each record then carries a small proof instead of a full post-quantum signature.',
+      whyItMattersForPqc:
+        'SLH-DSA signatures are large, and DNS responses must stay small, so this mode makes hash-based signatures practical for DNSSEC.',
+      diagram: {
+        inputs: ['many DNS records'],
+        combiner: 'Merkle ladder + one SLH-DSA signature',
+        outputs: ['record + short proof'],
+      },
+    },
+  },
+  {
+    id: 'Rosenpass',
+    label: 'Rosenpass (post-quantum key exchange beside WireGuard)',
+    outlook: 'bridge',
+    hybrid: [
+      {
+        algorithms: ['Classic-McEliece', 'ML-KEM'],
+        status: 'research',
+        proofRefs: ['Rosenpass-Protocol'],
+        note: 'Uses Classic McEliece and round-3 Kyber (the pre-FIPS 203 version of ML-KEM), and feeds the result to WireGuard as a preshared key; WireGuard’s own classical exchange is the other half.',
+      },
+    ],
+    cycloneDxPrimitive: 'kem',
+    proofRefs: ['Rosenpass-Protocol'],
+    explain: {
+      plain:
+        'Rosenpass runs a separate post-quantum key exchange next to a WireGuard VPN and hands the resulting secret to WireGuard as its preshared key.',
+      whyItMattersForPqc:
+        'The VPN tunnel becomes resistant to harvest-now, decrypt-later attacks without changing WireGuard itself.',
+      diagram: {
+        inputs: ['Classic McEliece exchange', 'Kyber exchange'],
+        combiner: 'combine into a preshared key',
+        outputs: ['WireGuard preshared key'],
+      },
+    },
+  },
 ]
 
 const byId = new Map(CRYPTO_CONSTRUCTIONS.map((c) => [c.id, c]))
 
+const byLowerId = new Map(CRYPTO_CONSTRUCTIONS.map((c) => [c.id.toLowerCase(), c]))
+
 export function getConstruction(id: string): CryptoConstruction | undefined {
   return byId.get(id)
+}
+
+/** Deep-link lookup: case-insensitive, like ?usecase= and ?standard=. */
+export function findConstruction(id: string): CryptoConstruction | undefined {
+  return byLowerId.get(id.trim().toLowerCase())
 }
 
 export function isKnownConstruction(id: string): boolean {
@@ -746,11 +1262,23 @@ export function containersOf(id: string): CryptoConstruction[] {
 /** Outlook order used for grouping chips and the transition map. */
 export const PQC_OUTLOOK_ORDER: PqcOutlook[] = [
   'stays-both',
+  'extended',
   'replaced',
   'bridge',
   'pqc-native',
   'no-successor-yet',
 ]
+
+/**
+ * Hybrid instantiations whose classical half is not an algorithm family (a
+ * whole classical session, a PAKE, or another protocol), with the reason (K4).
+ */
+export const HYBRID_CLASSICAL_HALF_ELSEWHERE: Record<string, string> = {
+  'MLS-PQ-Combiner': 'The classical half is a traditional MLS session with its own cipher suite.',
+  'Hybrid-PAKE': 'The classical half is the CPace password-authenticated key exchange.',
+  Rosenpass:
+    'The classical half is WireGuard’s own key exchange, which receives the preshared key.',
+}
 
 /** Construction ids allowed an empty algorithm list, with the reason (K2). */
 export const NO_FAMILY_EXEMPT: Record<string, string> = {

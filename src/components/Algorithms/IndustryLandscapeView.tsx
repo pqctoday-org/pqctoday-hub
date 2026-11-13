@@ -54,9 +54,10 @@ import {
   CYCLONEDX_REGISTRY,
   type MechanismGroup,
 } from '../../data/cryptoMechanisms'
-import { constructionsUsingAlgorithm, getConstruction } from '../../data/cryptoConstructions'
+import { constructionsUsingAlgorithm, findConstruction } from '../../data/cryptoConstructions'
 import { constructionUsage, constructionsInIndustry } from '../../data/constructionUsage'
 import {
+  AlgorithmExplanationBlock,
   ConstructionCard,
   ConstructionChip,
   ConstructionChipRows,
@@ -1074,7 +1075,7 @@ export function IndustryLandscapeView() {
   // opens the lens with nothing picked (transition map and overview).
   const rawConstruction = searchParams.get('construction')
   const selectedConstruction = rawConstruction ? rawConstruction : null
-  const constructionDef = selectedConstruction ? getConstruction(selectedConstruction) : undefined
+  const constructionDef = selectedConstruction ? findConstruction(selectedConstruction) : undefined
   const mode: 'industry' | 'mechanism' | 'construction' =
     rawConstruction !== null ? 'construction' : selectedMechanism ? 'mechanism' : 'industry'
 
@@ -1181,8 +1182,8 @@ export function IndustryLandscapeView() {
       ? linkedUseCase.classicalMechanisms.includes(selectedMechanism ?? '') ||
         linkedUseCase.pqcMechanisms.includes(selectedMechanism ?? '')
       : mode === 'construction'
-        ? linkedUseCase.classicalConstructions.includes(selectedConstruction ?? '') ||
-          linkedUseCase.pqcConstructions.includes(selectedConstruction ?? '')
+        ? linkedUseCase.classicalConstructions.includes(constructionDef?.id ?? '') ||
+          linkedUseCase.pqcConstructions.includes(constructionDef?.id ?? '')
         : selectedIndustry === linkedUseCase.industry)
   useEffect(() => {
     if (!linkedUseCase || linkedUseCaseShown) return
@@ -1215,7 +1216,7 @@ export function IndustryLandscapeView() {
     (mode === 'mechanism'
       ? linkedStandard.mechanismsReferenced.includes(selectedMechanism ?? '')
       : mode === 'construction'
-        ? linkedStandard.constructionsReferenced.includes(selectedConstruction ?? '')
+        ? linkedStandard.constructionsReferenced.includes(constructionDef?.id ?? '')
         : selectedIndustry === linkedStandard.industry)
   useEffect(() => {
     if (!linkedStandard || linkedStandardShown || linkedUseCase) return
@@ -1309,7 +1310,9 @@ export function IndustryLandscapeView() {
             type="button"
             variant="ghost"
             onClick={() => {
-              if (mode !== 'construction') pickConstruction(null)
+              // From another mode, or from a picked construction: back to the
+              // lens overview (transition map + industries table).
+              if (mode !== 'construction' || selectedConstruction) pickConstruction(null)
             }}
             className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'construction' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
             data-testid="mode-construction"
@@ -1380,6 +1383,7 @@ export function IndustryLandscapeView() {
                   </span>
                 )}
               </div>
+              <AlgorithmExplanationBlock family={mechanismDef.family} />
               {(() => {
                 const replacedBy = mechanismDef.classical
                   ? pqcReplacementsFor(mechanismDef.family)
@@ -1496,8 +1500,8 @@ export function IndustryLandscapeView() {
         <>
           <ConstructionChipRows
             usage={usage}
-            selected={selectedConstruction}
-            onPick={pickConstruction}
+            selected={constructionDef?.id ?? null}
+            onPick={(id) => pickConstruction(id === constructionDef?.id ? null : id)}
           />
           {!constructionDef && (
             <>
