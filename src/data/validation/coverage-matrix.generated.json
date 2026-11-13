@@ -7,7 +7,7 @@
     "src/data/validation/capability-map.json": "1048fb1080cc877891d59ff825d98b26d220bde12781c98cdaf97749a27b926a",
     "src/data/validation/vector-manifest.json": "8cbeb36566320ad9c72520b76a93caf446091271c8024373465b28990acfdf95",
     "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
-    "src/data/validation/open-gaps.json": "b1fedc67f0072f5af92e14f075bc0c31c03f06f163dbcc5d538ac05e5b4ffb6a",
+    "src/data/validation/open-gaps.json": "16f34a9aded1000189f9eb8c3e33a0bb4887cdd42f843357a4a65315566030a6",
     "src/data/validation/testRegistry.ts": "2e4bb93416906300a42b865c66c859004ac0405a1b841c749cb8c46dd5e53e96"
   },
   "statuses": [
@@ -46,7 +46,7 @@
     "sampled": "Sampled = at least one registered case, but the covered rule is not met. One happy-path case is always \"sampled\", never \"covered\" (plan Q5).",
     "polarity": "Polarities are counted separately: a positive case never counts toward negative, boundary or state-error. Boundary = a registered case whose recorded parameters hit a declared boundary of the cell (e.g. context length 0 or 255, empty message); it may also be a positive or negative case. State-error = a case asserting a PKCS #11 state or argument error.",
     "parity": "Parity = both engines have a RECORDED PASS of the same registered case on the same artifact kind. Skipped, unsupported and not-run never count as a pass, and a recorded result counts only for the exact artifact (sha256) the mechanism inventory records. Rows with no such pair are \"not established\".",
-    "artifacts": "Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — registered tests run in the browser), native, hardware. Native and hardware targets have not been run: they are \"not run\" and never counted as pass.",
+    "artifacts": "Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — the recorded registered-test runs execute in Node.js, not in a browser), native, hardware. Native and hardware targets have not been run: they are \"not run\" and never counted as pass.",
     "dimensions": "Plan G-3 — two further columns per cell, from the same registered cases. Algorithm correctness = cases whose expected value is checked (acvts-issued, nist-reference, standard-kat, oracle, differential, round-trip; state-error cases excluded); covered when at least 2 distinct cases exist and one has an externally expected value. PKCS #11 API behaviour = cases that assert only PKCS #11 behaviour (behavior-only evidence: return codes, operation state, buffers, attributes) plus every state-error case; covered when at least 2 distinct cases exist and one is a state-error case. Neither column says a test passed.",
     "inventory": "Per engine and artifact kind the matrix counts, separately: advertised cells (the denominator — C_GetMechanismList × operation × parameter set × variant), registered cells (≥ 1 registered case, by evidence status), cells with a recorded pass, with a recorded fail, and with a recorded skip (the engine did not advertise a mechanism the case needs, so it was not run), unsupported cells (not advertised) and untested cells (advertised, no registered case). A skip is never a pass and is never folded into untested."
   },
@@ -467,8 +467,8 @@
     },
     {
       "id": "run-results-partial",
-      "title": "Run results recorded only for the workbench and katRunner, on the wasm engines, in Node",
-      "detail": "src/data/validation/run-results/ holds one recorded run each of useAcvpSuite (all categories, both engines), every registered katRunner case (both engines asserted, the Rust engine recorded — the engine the KAT surfaces use), and the error-path mechanism probes (4502 entries, 2251 per engine: 3867 pass, 635 skip), all executed in Node against the shipped .wasm bytes. Updated 2026-09-26: the error-path probes DO now have recorded results (this row previously said the mechanism probes had none). Still unrecorded: the PKCS #11 v3.2 conformance cases, so their cells are never reported as passed. A browser-host run and a signed evidence bundle (H-1, H-7) do not exist yet. Note the 635 skips are reported as skip, never as pass.",
+      "title": "Run results recorded for the workbench ACVP suite, the known-answer checks and the error-path probes, on the wasm engines, in Node",
+      "detail": "src/data/validation/run-results/ holds one recorded run each of useAcvpSuite (all categories, both engines), every registered katRunner case (both engines asserted, the Rust engine recorded — the engine the KAT surfaces use), and the error-path mechanism probes. Current recorded totals (the three runs of 2026-10-30): 19176 results, 19067 pass, 20 fail, 89 skip, all executed in Node against the shipped .wasm bytes. The earlier 2026-09-26 investigation recorded 4502 entries (3867 pass, 635 skip); that count is historical and superseded by the current runs. Updated 2026-09-26: the error-path probes DO now have recorded results (this row previously said the mechanism probes had none). Still unrecorded: the PKCS #11 v3.2 conformance cases, so their cells are never reported as passed. A browser-host run and a signed evidence bundle (H-1, H-7) do not exist yet. Skips are reported as skip, never as pass.",
       "planItem": "C-4 / H-1 / H-7",
       "owner": "unassigned",
       "status": "open",
@@ -927,7 +927,7 @@
     },
     {
       "id": "unsupported-cells",
-      "title": "40 unsupported (row × engine) cells kept in the denominator",
+      "title": "40 unsupported (row × engine) cells counted separately, outside the denominator",
       "detail": "Cells one engine does not advertise (mechanism absent, CKF_ flag not set, or parameter set outside its key-size range) and declared capabilities no PKCS #11 mechanism can express. Listed per row in the matrix; never dropped.",
       "planItem": "J-7 / G-9",
       "owner": "unassigned",
