@@ -1234,6 +1234,215 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       },
     },
   },
+  // ── Group 4: constructions whose proofs are added to the Library with them ──
+  {
+    id: 'Threshold-Sig',
+    label: 'Threshold signatures (FROST)',
+    outlook: 'stays-both',
+    classical: [
+      {
+        algorithms: ['Schnorr'],
+        status: 'published',
+        proofRefs: ['RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS'],
+      },
+      {
+        algorithms: ['EdDSA'],
+        status: 'published',
+        proofRefs: ['RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS'],
+      },
+    ],
+    pqc: [
+      {
+        algorithms: ['ML-DSA'],
+        status: 'research',
+        proofRefs: ['Efficient-Threshold-ML-DSA-Brave'],
+        note: 'Threshold ML-DSA is research; NIST has an open call for multi-party threshold schemes (IR 8214C).',
+      },
+    ],
+    cycloneDxPrimitive: 'signature',
+    proofRefs: [
+      'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
+      'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
+    ],
+    explain: {
+      plain:
+        'In a threshold signature, a key is split among several parties and any agreed number of them can sign together, while no single party ever holds the whole key. FROST does this in two rounds for Schnorr signatures.',
+      whyItMattersForPqc:
+        'The classical schemes rest on elliptic curves; post-quantum threshold signing, for example with ML-DSA, is still research, and NIST has an open call for threshold schemes.',
+      diagram: {
+        inputs: ['message', 'key shares held by several signers'],
+        combiner: 'two signing rounds',
+        outputs: ['one ordinary signature'],
+      },
+    },
+  },
+  {
+    id: 'ECVRF',
+    label: 'Verifiable random functions (ECVRF)',
+    outlook: 'no-successor-yet',
+    classical: [
+      {
+        algorithms: ['EdDSA'],
+        status: 'published',
+        proofRefs: [
+          'RFC-9381-Verifiable-Random-Functions-VRFs',
+          'Cardano-cardano-crypto-praos-VRF-suite-ECVRF-ED25519-SHA512',
+        ],
+      },
+    ],
+    noSuccessorReason:
+      'As of 13 Nov 2026 the VRFs in RFC 9381 are elliptic-curve and RSA based, and we found no standardised post-quantum VRF.',
+    noSuccessorCheckedOn: '2026-11-13',
+    cycloneDxPrimitive: 'other',
+    otherReason: 'CycloneDX 1.7 has no verifiable-random-function primitive.',
+    proofRefs: ['RFC-9381-Verifiable-Random-Functions-VRFs'],
+    explain: {
+      plain:
+        'A verifiable random function turns an input into a random-looking output that only the key holder can compute, plus a proof anyone can check. Cardano uses one to pick who produces the next block.',
+      whyItMattersForPqc:
+        'The standard VRFs use elliptic curves or RSA, which a quantum computer breaks; we found no standardised post-quantum VRF (checked 13 Nov 2026).',
+      diagram: {
+        inputs: ['secret key', 'input'],
+        combiner: 'VRF evaluation',
+        outputs: ['random output', 'proof'],
+      },
+    },
+  },
+  {
+    id: 'OPRF-PrivacyPass',
+    label: 'Privacy Pass tokens (OPRF, blind RSA)',
+    outlook: 'no-successor-yet',
+    classical: [
+      {
+        algorithms: [],
+        status: 'published',
+        proofRefs: [
+          'RFC-9497-Oblivious-Pseudorandom-Functions-OPRFs-Using-Prime',
+          'RFC-9578-Privacy-Pass-Issuance-Protocols',
+        ],
+        note: 'VOPRF over the P-384 group.',
+      },
+      {
+        algorithms: ['RSA-sig'],
+        status: 'published',
+        proofRefs: ['RFC-9474-RSA-Blind-Signatures', 'RFC-9578-Privacy-Pass-Issuance-Protocols'],
+      },
+    ],
+    noSuccessorReason:
+      'As of 13 Nov 2026 the standardised token types use an elliptic-curve OPRF or blind RSA, and we found no standardised post-quantum token type.',
+    noSuccessorCheckedOn: '2026-11-13',
+    cycloneDxPrimitive: 'other',
+    otherReason: 'CycloneDX 1.7 has no OPRF or blind-signature primitive.',
+    proofRefs: [
+      'RFC-9576-The-Privacy-Pass-Architecture',
+      'RFC-9578-Privacy-Pass-Issuance-Protocols',
+    ],
+    explain: {
+      plain:
+        'Privacy Pass lets a website check that a visitor passed a test, such as a CAPTCHA, earlier, without learning who they are: the visitor redeems an anonymous token issued with an oblivious function or a blind signature.',
+      whyItMattersForPqc:
+        'Both token types rest on elliptic curves or RSA, and we found no standardised post-quantum version (checked 13 Nov 2026).',
+      diagram: {
+        inputs: ['blinded token request'],
+        combiner: 'issuer evaluates or blind-signs',
+        outputs: ['unlinkable token'],
+      },
+    },
+  },
+  {
+    id: 'Secret-Sharing',
+    label: 'Secret sharing (Shamir)',
+    outlook: 'stays-both',
+    classical: [
+      {
+        algorithms: [],
+        status: 'published',
+        proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+      },
+    ],
+    pqc: [
+      {
+        algorithms: [],
+        status: 'published',
+        proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+      },
+    ],
+    cycloneDxPrimitive: 'other',
+    otherReason: 'CycloneDX 1.7 has no secret-sharing primitive.',
+    proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+    explain: {
+      plain:
+        'Secret sharing splits a secret, such as a master key, into shares so that any agreed number of them can rebuild it while fewer reveal nothing. Custody providers and HSM backups use it.',
+      whyItMattersForPqc:
+        'Shamir’s scheme does not rely on a hard mathematical problem, so a quantum computer gives an attacker with too few shares no advantage.',
+      diagram: {
+        inputs: ['secret', 'threshold'],
+        combiner: 'split into shares',
+        outputs: ['shares held by different parties'],
+      },
+    },
+  },
+  {
+    id: 'WireGuard-Noise',
+    label: 'WireGuard handshake (Noise IKpsk2)',
+    outlook: 'extended',
+    classical: [
+      {
+        algorithms: ['X25519'],
+        status: 'published',
+        proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
+      },
+    ],
+    successions: [
+      {
+        to: 'Rosenpass',
+        relation: 'extended-by',
+        stated: true,
+        context: 'WireGuard VPNs',
+        status: 'research',
+        proofRefs: ['Rosenpass-Protocol'],
+      },
+    ],
+    cycloneDxPrimitive: 'key-agree',
+    proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
+    explain: {
+      plain:
+        'WireGuard sets up its VPN keys with a short handshake built from the Noise framework, using X25519 key exchanges and an optional preshared key.',
+      whyItMattersForPqc:
+        'X25519 is broken by a quantum computer; Rosenpass keeps WireGuard and feeds it a post-quantum preshared key, and research such as PQ-WireGuard replaces the exchanges with KEMs.',
+      diagram: {
+        inputs: ['static and ephemeral keys', 'optional preshared key'],
+        combiner: 'Noise IKpsk2 handshake',
+        outputs: ['tunnel keys'],
+      },
+    },
+  },
+  {
+    id: 'PQ-Noise',
+    label: 'Post-quantum Noise handshakes',
+    outlook: 'pqc-native',
+    pqc: [
+      {
+        algorithms: ['ML-KEM'],
+        status: 'research',
+        proofRefs: ['Post-Quantum-Noise-IACR-ePrint-2022-539'],
+        note: 'Research: the paper replaces Diffie-Hellman in Noise patterns with KEMs and instantiates them with Kyber, the pre-FIPS 203 version of ML-KEM.',
+      },
+    ],
+    cycloneDxPrimitive: 'key-agree',
+    proofRefs: ['Post-Quantum-Noise-IACR-ePrint-2022-539'],
+    explain: {
+      plain:
+        'Post-quantum Noise rewrites the Noise handshake patterns, used by WireGuard and messaging apps, so that every Diffie-Hellman step becomes a KEM step.',
+      whyItMattersForPqc:
+        'It shows how protocols built on Noise could become fully post-quantum, beyond adding a preshared key; it is research, not a standard.',
+      diagram: {
+        inputs: ['KEM public keys'],
+        combiner: 'KEM-based handshake pattern',
+        outputs: ['session keys'],
+      },
+    },
+  },
 ]
 
 const byId = new Map(CRYPTO_CONSTRUCTIONS.map((c) => [c.id, c]))
@@ -1307,6 +1516,10 @@ export const HYBRID_CLASSICAL_HALF_ELSEWHERE: Record<string, string> = {
 
 /** Construction ids allowed an empty algorithm list, with the reason (K2). */
 export const NO_FAMILY_EXEMPT: Record<string, string> = {
+  'OPRF-PrivacyPass':
+    'The VOPRF token type works over the P-384 group, which the algorithm vocabulary has no family for.',
+  'Secret-Sharing':
+    'Shamir secret sharing is information-theoretic: it uses no public-key algorithm family.',
   'IKEv2-PPK':
     'Mixes a preshared key through the PRF that IKEv2 negotiates; it adds no algorithm family of its own.',
 }
