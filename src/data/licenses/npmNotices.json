@@ -31,6 +31,11 @@
       "name": "flag-icons v7.5.0 (public/flags/, all flags except g7, nato and int, which are drawn for this project)",
       "license": "MIT",
       "texts": ["flag-icons-7.5.0-LICENSE.txt"]
+    },
+    {
+      "name": "go-sev-guest test data, commit a30aab2ec76981a7ab4d6909df57f2ca9051d2b4 (src/data/attestation-samples/: a recorded AMD SEV-SNP report, its VCEK certificate and AMD's ASK/ARK certificates, embedded unchanged as base64 text)",
+      "license": "Apache-2.0",
+      "texts": ["go-sev-guest-LICENSE.txt"]
     }
   ]
 }

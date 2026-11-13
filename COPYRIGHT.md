@@ -24,6 +24,9 @@ by the AGPL grant or by any commercial licence from PQC Today, LLC:
   MPL-2.0, and the flag set in `public/flags/`, MIT), listed at `/licenses/`;
 - the OASIS KMIP test cases in `public/kmip-corpus/` (OASIS notice);
 - the Wycheproof and ACVP test vectors in `src/data/acvp/`;
+- the recorded AMD SEV-SNP report and certificates in `src/data/attestation-samples/`,
+  from google/go-sev-guest (Apache-2.0, commit a30aab2e), with the licence text in
+  `src/data/licenses/texts/go-sev-guest-LICENSE.txt` and at `/licenses/` on the site;
 - the glibc code in `scripts/entropy-90b/ldbl128/glibc-compat/math_private.h`
   (LGPL-2.1-or-later);
 - passages adapted from the Applied Quantum framework (CC BY 4.0), marked in
