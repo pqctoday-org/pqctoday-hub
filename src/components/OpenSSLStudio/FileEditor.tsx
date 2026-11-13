@@ -148,7 +148,7 @@ export const FileEditor = () => {
           placeholder={viewMode === 'hex' ? '00 01 02 03...' : 'Type content here...'}
         />
         {error && (
-          <div className="absolute bottom-4 left-4 right-4 bg-destructive/20 border border-destructive/50 text-destructive-foreground text-xs p-2 rounded backdrop-blur-md">
+          <div className="absolute bottom-4 left-4 right-4 bg-destructive/20 border border-destructive/50 text-foreground text-xs p-2 rounded backdrop-blur-md">
             {error}
           </div>
         )}

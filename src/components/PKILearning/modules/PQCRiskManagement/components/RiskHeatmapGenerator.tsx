@@ -139,12 +139,6 @@ function getZoneBg(score: number): string {
   return 'bg-success/20 dark:bg-success/15'
 }
 
-/** Returns text color class appropriate for the zone background. */
-function getZoneText(score: number): string {
-  if (score >= 20) return 'text-destructive-foreground'
-  return 'text-foreground'
-}
-
 function buildEntriesMap(entries: RiskEntry[]) {
   const map = new Map<string, RiskEntry[]>()
   for (const entry of entries) {
@@ -469,7 +463,7 @@ function RiskHeatmapGrid({
                     return (
                       <td
                         key={colIdx}
-                        className={`p-0 border border-border/50 transition-all align-top ${getZoneBg(score)} ${getZoneText(score)} ${
+                        className={`p-0 border border-border/50 transition-all align-top ${getZoneBg(score)} text-foreground ${
                           isSelected ? 'ring-2 ring-primary ring-inset' : 'hover:brightness-90'
                         }`}
                         style={{ minWidth: 90, minHeight: 64 }}

@@ -302,7 +302,9 @@
        8.25:1. Opacities below /80 cannot be rescued by any lightness and were
        raised at the call sites in the same change. */
     --muted-foreground: 215 16% 32%;
-    --accent: 153 60% 32%;
+    /* a11y (2026-11-13): 32% gave white labels 4.53:1 solid but 3.82:1 on the
+       bg-accent/90 hover. 28% gives 5.61:1 solid and 4.58:1 at /90. */
+    --accent: 153 60% 28%;
     --accent-foreground: 210 40% 98%;
     /* See the `-legible` note in the @theme block. Each value is the measured
        4.5:1 floor against that token's worst observed background:
@@ -310,7 +312,9 @@
        axe-measured 2026-08-29; #fefefe was the prior, less-worst background
        and still passes at this lightness), success vs #d0ecda,
        warning vs #fcebcd, info vs #fefefe, destructive vs #e0f2f6. */
-    --accent-legible: 153 60% 29%;
+    /* 2026-11-13: one step darker with the darker --accent, so its /10-/15
+       tints still clear 4.5:1 (worst 4.81:1, was 4.39:1). */
+    --accent-legible: 153 60% 27%;
     --success-legible: 142.1 76.2% 26%;
     --warning-legible: 38 92% 30%;
     /* a11y (WS9, 2026-08-02): 53% lightness gave 4.39:1 on the light page
@@ -321,8 +325,12 @@
     /* Wave A (2026-09-18): 38% measured 4.23:1 on bg-destructive/30 (#f5babb,
        the error-boundary "Reload" button). 36% gives 4.57:1 there and 5.28:1+
        on the /10–/15 tints. */
-    --destructive-legible: 0 84.2% 36%;
-    --destructive: 0 84.2% 50%;
+    /* 2026-11-13: 34% with the darker --destructive below keeps every
+       /10-/30 tint at 4.63:1 or more (the /30 Reload button was 4.39:1). */
+    --destructive-legible: 0 84.2% 34%;
+    /* a11y (2026-11-13): 50% gave white labels 4.32:1, under AA at rest.
+       45% gives 5.17:1 solid and 4.72:1 at /90. */
+    --destructive: 0 84.2% 45%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
@@ -411,10 +419,14 @@
     --tertiary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
+    /* a11y (2026-11-13): these fills are light in dark mode, so a light label
+       read 1.83:1 (accent) and 2.56:1 (destructive). A dark label, as on
+       primary and secondary, gives 9.31:1 and 6.66:1 solid, 7.65:1 and 5.54:1
+       at /90. */
     --accent: 153 66% 51%;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 343 93% 71%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 222.2 47.4% 11.2%;
     /* Dark mode: each `-legible` variant equals its base token. These colours
        are already light-on-dark and clear AA at text sizes, so darkening them
        here would make them WORSE. The variants exist so a single class works

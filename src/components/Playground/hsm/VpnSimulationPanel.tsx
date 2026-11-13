@@ -552,7 +552,7 @@ const IKE_PHASE_CLASS: Record<IkePhase, string> = {
   SETUP: 'bg-muted text-muted-foreground',
   IKE_SA_INIT: 'bg-primary/20 text-primary',
   IKE_INTERMEDIATE: 'bg-secondary/20 text-secondary',
-  IKE_AUTH: 'bg-accent/20 text-accent-foreground',
+  IKE_AUTH: 'bg-accent/20 text-foreground',
 }
 
 export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialMode }) => {

@@ -232,7 +232,7 @@ export const WorkbenchFileManager: React.FC<{
             className={clsx(
               'px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-2',
               confirmClear
-                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border border-destructive'
+                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:text-destructive-foreground border border-destructive'
                 : 'bg-status-error text-status-error',
               files.length === 0 &&
                 'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
