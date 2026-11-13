@@ -13,8 +13,9 @@
 //     FIPS 203 implicit-rejection value).
 //  4. Key checks — NIST decapsulationKeyCheck / encapsulationKeyCheck VAL
 //     cases (FIPS 203 §7.3 / §7.2), exercised through key import + the
-//     operation that must perform the check; a testPassed=false key must be
-//     rejected somewhere on that path.
+//     operation that must perform the check. Only CKR_ATTRIBUTE_VALUE_INVALID
+//     from C_CreateObject refuses a key; any other answer is an error (see
+//     readKeyCheck below).
 //  5. Product-authored implicit rejection — a NIST valid ciphertext with one
 //     bit flipped must decapsulate (CKR_OK) to J(z‖c′) = SHAKE256(z‖c′, 32),
 //     computed here with @noble/hashes, and never to the original secret.
@@ -150,6 +151,59 @@ export function importPrivate(M: SoftHSMModule, h: number, v: Variant, dk: Uint8
     ],
     [{ type: CKA_VALUE, bytes: dk }]
   )
+}
+
+/** PKCS#11 v3.2 §4.1.1: an invalid attribute value fails C_CreateObject with this. */
+export const CKR_ATTRIBUTE_VALUE_INVALID = 0x13
+
+/** The engine's answer to one ML-KEM key-check case. */
+export interface KeyCheckRead {
+  /** The engine accepted the key: the import and the operation both returned CKR_OK. */
+  accepted: boolean
+  /** The calls made and what they returned, e.g. `C_CreateObject → CKR_OK; C_EncapsulateKey → CKR_OK`. */
+  observed: string
+  /** Set when the answer is not a key-check result: an operational error, never a rejection. */
+  error?: string
+  /** Handle left by the operation (0 if none); the caller destroys it. */
+  handle: number
+}
+
+/**
+ * Reads the engine's answer to one ML-KEM key-check case (FIPS 203 §7.2 / §7.3).
+ * Only CKR_ATTRIBUTE_VALUE_INVALID from C_CreateObject is a key refusal: it is
+ * the return value both engines give a key that fails the FIPS 203 input check.
+ * A key that imports is accepted only when the operation that performs the
+ * check then succeeds. Any other return value (a closed session, a device
+ * failure, an operation that fails after the key was imported) is an error,
+ * never a refusal, so it can never satisfy a case that expects one. Mirrors
+ * mlkemAcvpEncapDecap.ts (commit b775442f6).
+ */
+export function readKeyCheck(
+  imp: { rv: number; handle: number },
+  createName: string,
+  operate: () => { rv: number; handle: number },
+  opName: string
+): KeyCheckRead {
+  const created = `${createName} → ${rvName(imp.rv)}`
+  if (imp.rv === CKR_ATTRIBUTE_VALUE_INVALID)
+    return { accepted: false, observed: created, handle: 0 }
+  if (imp.rv !== CKR_OK)
+    return {
+      accepted: false,
+      observed: created,
+      error: `${createName} returned ${rvName(imp.rv)}, which is not a key-check result`,
+      handle: 0,
+    }
+  const r = operate()
+  const observed = `${created}; ${opName} → ${rvName(r.rv)}`
+  if (r.rv !== CKR_OK)
+    return {
+      accepted: false,
+      observed,
+      error: `key imported, then ${opName} returned ${rvName(r.rv)}, which is not a key-check result`,
+      handle: r.handle,
+    }
+  return { accepted: true, observed, handle: r.handle }
 }
 
 /** C_DecapsulateKey → { rv, handle } (handle must stay 0 on any error). */
@@ -536,34 +590,48 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           ? importPrivate(M, hSession, v, hexToBytes(t.dk!))
           : importPublic(M, hSession, v, hexToBytes(t.ek!))
         key = imp.handle
-        let observed = `C_CreateObject → ${rvName(imp.rv)}`
-        let accepted = false
-        if (imp.rv === CKR_OK) {
-          const r = isDk
-            ? decapsulateRv(M, hSession, key, new Uint8Array(CT_LEN[v]))
-            : encapsulateRv(M, hSession, key, CT_LEN[v])
-          sec = r.handle
-          observed += `; ${isDk ? 'C_DecapsulateKey' : 'C_EncapsulateKey'} → ${rvName(r.rv)}`
-          accepted = r.rv === CKR_OK
+        const read = readKeyCheck(
+          imp,
+          'C_CreateObject',
+          () =>
+            isDk
+              ? decapsulateRv(M, hSession, key, new Uint8Array(CT_LEN[v]))
+              : encapsulateRv(M, hSession, key, CT_LEN[v]),
+          isDk ? 'C_DecapsulateKey' : 'C_EncapsulateKey'
+        )
+        sec = read.handle
+        const { observed } = read
+        if (read.error) {
+          await pushResult({
+            id,
+            algorithm,
+            testCase,
+            referenceUrl,
+            status: 'fail',
+            details: `ERROR: ${read.error} · ${srcTag(VAL)}`,
+            caseMeta: { ...meta, observed },
+          })
+          addLog(`[DISCREPANCY] [${eName}] [id:${id}] ${ps} ${testCase}: ${read.error}`)
+        } else {
+          const ok = read.accepted === expectAccept
+          await pushResult({
+            id,
+            algorithm,
+            testCase,
+            referenceUrl,
+            status: ok ? 'pass' : 'fail',
+            details:
+              `${observed}` +
+              (ok
+                ? ''
+                : expectAccept
+                  ? ' — REJECTED a key NIST marks valid'
+                  : ` — ACCEPTED a key NIST marks invalid (${t.reason}); FIPS 203 ${isDk ? '§7.3 hash check' : '§7.2 modulus check'} not enforced`) +
+              ` · ${srcTag(VAL)}`,
+            caseMeta: { ...meta, observed },
+          })
+          addLog(`[${eName}] [id:${id}] ${ps} ${testCase}: ${ok ? 'PASS' : 'FAIL'} (${observed})`)
         }
-        const ok = accepted === expectAccept
-        await pushResult({
-          id,
-          algorithm,
-          testCase,
-          referenceUrl,
-          status: ok ? 'pass' : 'fail',
-          details:
-            `${observed}` +
-            (ok
-              ? ''
-              : expectAccept
-                ? ' — REJECTED a key NIST marks valid'
-                : ` — ACCEPTED a key NIST marks invalid (${t.reason}); FIPS 203 ${isDk ? '§7.3 hash check' : '§7.2 modulus check'} not enforced`) +
-            ` · ${srcTag(VAL)}`,
-          caseMeta: { ...meta, observed },
-        })
-        addLog(`[${eName}] [id:${id}] ${ps} ${testCase}: ${ok ? 'PASS' : 'FAIL'} (${observed})`)
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err)
         await pushResult({

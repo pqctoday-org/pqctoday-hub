@@ -963,7 +963,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
           `mlkem-keycheck-${isDk ? 'dk' : 'ek'}-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
         )
       }),
-    'A negative case passes when the invalid key is rejected anywhere on the path — at C_CreateObject or at the C_DecapsulateKey / C_EncapsulateKey that must perform the check.'
+    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID (the FIPS 203 §7.2 / §7.3 input check). Any other error on the path is an error row, never a pass.'
   ),
   acvp(
     '07b.implicit-reject',
@@ -1042,7 +1042,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `mlkem-ekcheck-depth-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
       )
     ),
-    'A negative case passes when the invalid key is rejected at C_CreateObject or at C_EncapsulateKey. ML-KEM inputs have fixed lengths: the capability map declares no length boundary for these cells.'
+    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. Any other error on the path is an error row, never a pass. ML-KEM inputs have fixed lengths: the capability map declares no length boundary for these cells.'
   ),
   acvp(
     '08',
