@@ -19,7 +19,7 @@ This module explores Quantum Key Distribution, a method of distributing encrypti
 1. **BB84 Protocol Simulator**: Visual simulation with configurable Eve interception slider and adjustable qubit count; observe basis matching, sifted key generation, and QBER calculation
 2. **Post-Processing**: Illustrate parity counting, sample digest calculation and HKDF data flow; no error correction, QKD privacy-amplification proof or ML-KEM execution
 3. **Global Deployments Explorer**: Interactive database of worldwide QKD deployments including satellite and terrestrial networks with adoption trends
-4. **QKD + Classical Protocol Integration**: Integrate QKD keys into TLS 1.3, IKEv2, MACsec, and SSH nonce/PSK fields
+4. **QKD + Classical Protocol Integration**: Integrate QKD keys into TLS 1.3 (RFC 9258 importer), IKEv2 (real SKEYSEED and SK_* with the QKD key as an RFC 8784 preshared key, with plain-IKEv2 fallback that is not quantum-safe), MACsec, and SSH
 5. **HSM Key Derivation**: Use QKD secret as NIST SP 800-108 key material inside an HSM via PKCS#11
 
 ## Related Standards

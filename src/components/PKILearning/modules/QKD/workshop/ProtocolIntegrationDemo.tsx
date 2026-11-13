@@ -388,7 +388,7 @@ const IKEv2Panel: React.FC = () => {
         const qkdKey = randomBytes(32)
         const qkdKeyId = uuidV4()
         const initiatorNode = createSampleQkdNode(new Map([[qkdKeyId, qkdKey]]))
-        // The responder's node cannot supply a key under this key_ID in the fallback case.
+        // Both nodes hold the key here; the fallback path is computed from the same exchange with the responder's node empty.
         const responderNode = createSampleQkdNode(new Map([[qkdKeyId, qkdKey]]))
         const outcome = runIkeQkdSample({
           ni,

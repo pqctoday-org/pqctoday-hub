@@ -34,7 +34,7 @@ const PARTS: WorkshopPart[] = [
     id: 'protocol-integration',
     title: 'Part 4: QKD + Classical Protocols',
     description:
-      'Explore local sample-key and HKDF outputs beside protocol references; no handshake or standard importer is executed.',
+      'Explore local sample-key and HKDF outputs and a real IKEv2 key derivation with an RFC 8784 preshared key beside protocol references; no handshake or standard importer is executed.',
     icon: Network,
   },
   {
