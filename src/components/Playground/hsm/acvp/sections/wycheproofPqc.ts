@@ -24,9 +24,19 @@
 //
 // RESULT POLICY (as in wycheproofNegative.ts). No case here is `acceptable`.
 //   valid    → every call must succeed and every upstream output byte-match.
-//   invalid  → the engine must REFUSE somewhere on the path (key import, key
-//              generation, init or the operation). Doing the operation is a
-//              discrepancy row. The observed CK_RV is recorded on every row.
+//   invalid  → the engine must refuse the case, and only a refusal the check
+//              names counts. These are the contract of the engines used here
+//              (PKCS#11 itself does not require a key check at import):
+//                - a key input is refused with CKR_ATTRIBUTE_VALUE_INVALID: a
+//                  dk or ek that fails the FIPS 203 §7.2 / §7.3 check at import,
+//                  or a CKA_SEED template of the wrong length (PKCS#11 §4.1.1);
+//                - a ciphertext of the wrong length is refused by C_DecapsulateKey
+//                  with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID.
+//              A key that imports and then fails its operation is an ERROR row,
+//              as in sections/mlkemAcvp.ts. Any other return value is an ERROR
+//              row too: never a pass, and never "refused as expected". A key
+//              the engine accepts is a discrepancy. The observed CK_RV is
+//              recorded on every row.
 //
 // Details text never prints a shared secret, a private key or a signature: a
 // mismatch is reported as a position (D1-4, as sections/mlkemAcvp.ts does).
@@ -78,6 +88,7 @@ import {
   encapsulateRv,
   importPrivate as importMlkemPrivate,
   importPublic as importMlkemPublic,
+  readKeyCheck,
   type Variant,
 } from './mlkemAcvp'
 import { createObjectRv, generateKeyPairRv } from './pkcs11Raw'
@@ -91,6 +102,40 @@ function refused(result: WycResult, observed: string): RowOutcome {
   return result === 'valid'
     ? { ok: false, observed, details: `${observed} — REFUSED a case Wycheproof marks valid` }
     : { ok: true, observed, details: `refused (${observed}); upstream result=${result}` }
+}
+
+/**
+ * The only refusal a key input (a dk or ek at import, or a CKA_SEED template) counts as:
+ * CKR_ATTRIBUTE_VALUE_INVALID, the PKCS#11 v3.2 §4.1.1 code for an invalid attribute value.
+ */
+const KEY_INPUT_REFUSALS = ['CKR_ATTRIBUTE_VALUE_INVALID'] as const
+
+/**
+ * The ciphertext-specific codes C_DecapsulateKey may refuse a wrong-length ciphertext with.
+ * Narrower than DECAP_LISTED on purpose: a handle or argument error is not a ciphertext refusal.
+ */
+const CIPHERTEXT_REFUSALS = ['CKR_WRAPPED_KEY_LEN_RANGE', 'CKR_WRAPPED_KEY_INVALID'] as const
+
+/**
+ * An ML-KEM step returned `rv` other than CKR_OK. It counts as the refusal only
+ * when `listed` names that code for the step. Any other code is an operational
+ * error (an ERROR row), never a refusal, so it can never pass an invalid case.
+ * ML-DSA keeps refused() above.
+ */
+function kemRefused(
+  result: WycResult,
+  observed: string,
+  rv: number,
+  listed: readonly string[]
+): RowOutcome {
+  if (!listed.includes(rvName(rv)))
+    return {
+      ok: false,
+      observed,
+      details: `ERROR: ${observed} is not one of the refusal codes this step accepts, so it is an operational error, not a refusal`,
+      error: true,
+    }
+  return refused(result, observed)
 }
 
 /** The engine completed the operation; `diffs` are the byte comparisons made. */
@@ -200,12 +245,13 @@ function decapsVerdict(
   priv: number,
   t: { c: string; K?: string; result: WycResult; comment?: string; flags?: string[] },
   pre: { what: string; diff: string }[],
-  preObserved: string
+  preObserved: string,
+  listed: readonly string[]
 ): RowOutcome {
   const r = decapsulateRv(M, h, priv, hexToBytes(t.c))
   try {
     const o = `${preObserved}C_DecapsulateKey → ${rvName(r.rv)}`
-    if (r.rv !== CKR_OK) return refused(t.result, o)
+    if (r.rv !== CKR_OK) return kemRefused(t.result, o, r.rv, listed)
     const k = valueOf(M, h, r.handle)
     const diffs = [...pre]
     if (t.K) diffs.push({ what: `K[${k.length}B]`, diff: firstDiff(k, hexToBytes(t.K)) })
@@ -286,7 +332,7 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
           const id = `wyc-mlkem${v}keygen-tg${gi + 1}-tc${t.tcId}-${eName}`
           const testCase =
             `KeyGen from seed (CKA_SEED d‖z) · Wycheproof mlkem_${v}_keygen_seed_test tg${gi + 1}/tc${t.tcId} · ` +
-            `${t.comment || 'no comment'} · expect ${expectText(t, 'ek + dk byte-match', 'C_GenerateKeyPair refused')}`
+            `${t.comment || 'no comment'} · expect ${expectText(t, 'ek + dk byte-match', 'refused at C_GenerateKeyPair with CKR_ATTRIBUTE_VALUE_INVALID')}`
           const meta = metaOf(P, gi, t, 'keyGen', 'keyGen-from-seed')
           if (whyKg) {
             await skipRow(ctx, { id, algorithm, testCase, meta, why: whyKg })
@@ -302,7 +348,7 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
               const pair = mlkemFromSeed(M, h, v, hexToBytes(t.seed))
               try {
                 const o = `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`
-                if (pair.rv !== CKR_OK) return refused(t.result, o)
+                if (pair.rv !== CKR_OK) return kemRefused(t.result, o, pair.rv, KEY_INPUT_REFUSALS)
                 const ek = valueOf(M, h, pair.pub)
                 const dk = valueOf(M, h, pair.priv)
                 return completed(
@@ -334,7 +380,13 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
           const testCase =
             `Decapsulate (key from CKA_SEED) · Wycheproof mlkem_${v}_test tg${gi + 1}/tc${t.tcId} · ` +
             `c ${nB(t.c)}B (${CT_LEN[v]}B expected) · flags ${flagsOf(t)} · ${t.comment || 'no comment'} · expect ` +
-            expectText(t, `K byte-match${t.ek ? ' (and ek)' : ''}`, 'C_DecapsulateKey refused')
+            ((t.seed?.length ?? 0) !== 128
+              ? 'refused at C_GenerateKeyPair with CKR_ATTRIBUTE_VALUE_INVALID (wrong seed length)'
+              : expectText(
+                  t,
+                  `K byte-match${t.ek ? ' (and ek)' : ''}`,
+                  'refused by C_DecapsulateKey with a ciphertext-specific code (wrong ciphertext length)'
+                ))
           const meta = metaOf(P, gi, t, 'decapsulation', 'decapsulation', {
             ciphertextBytes: nB(t.c),
           })
@@ -353,7 +405,12 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
               const pair = mlkemFromSeed(M, h, v, hexToBytes(t.seed))
               try {
                 if (pair.rv !== CKR_OK)
-                  return refused(t.result, `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`)
+                  return kemRefused(
+                    t.result,
+                    `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`,
+                    pair.rv,
+                    KEY_INPUT_REFUSALS
+                  )
                 const pre = t.ek
                   ? [
                       {
@@ -368,7 +425,8 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
                   pair.priv,
                   t,
                   pre,
-                  'C_GenerateKeyPair(CKA_SEED) → CKR_OK; '
+                  'C_GenerateKeyPair(CKA_SEED) → CKR_OK; ',
+                  CIPHERTEXT_REFUSALS
                 )
               } finally {
                 destroy(M, h, pair.pub)
@@ -390,7 +448,13 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
           const testCase =
             `Decapsulate (dk via C_CreateObject) · Wycheproof mlkem_${v}_semi_expanded_decaps_test tg${gi + 1}/tc${t.tcId} · ` +
             `dk ${nB(t.dk)}B · c ${nB(t.c)}B · flags ${flagsOf(t)} · ${t.comment || 'no comment'} · expect ` +
-            expectText(t, 'K byte-match', 'refused at C_CreateObject or C_DecapsulateKey')
+            ((t.flags ?? []).includes('IncorrectCiphertextLength')
+              ? 'refused by C_DecapsulateKey with a ciphertext-specific code (wrong ciphertext length)'
+              : expectText(
+                  t,
+                  'K byte-match',
+                  'refused at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID'
+                ))
           const meta = metaOf(P, gi, t, 'decapsulation', 'decapsulation', {
             decapsulationKeyBytes: nB(t.dk),
             ciphertextBytes: nB(t.c),
@@ -408,9 +472,52 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
             exec: () => {
               const imp = importMlkemPrivate(M, h, v, hexToBytes(t.dk))
               try {
-                if (imp.rv !== CKR_OK)
-                  return refused(t.result, `C_CreateObject(dk) → ${rvName(imp.rv)}`)
-                return decapsVerdict(M, h, imp.handle, t, [], 'C_CreateObject(dk) → CKR_OK; ')
+                if ((t.flags ?? []).includes('IncorrectCiphertextLength')) {
+                  // A valid key with a wrong-length ciphertext: the operation is the check.
+                  if (imp.rv !== CKR_OK)
+                    return kemRefused(
+                      t.result,
+                      `C_CreateObject(dk) → ${rvName(imp.rv)}`,
+                      imp.rv,
+                      KEY_INPUT_REFUSALS
+                    )
+                  return decapsVerdict(
+                    M,
+                    h,
+                    imp.handle,
+                    t,
+                    [],
+                    'C_CreateObject(dk) → CKR_OK; ',
+                    CIPHERTEXT_REFUSALS
+                  )
+                }
+                // A key-flagged case: the same rule as every ML-KEM key check (readKeyCheck,
+                // sections/mlkemAcvp.ts). Only the import refusal counts; a failed operation is an error.
+                let op = 0
+                try {
+                  const read = readKeyCheck(
+                    imp,
+                    'C_CreateObject(dk)',
+                    () => decapsulateRv(M, h, imp.handle, hexToBytes(t.c)),
+                    'C_DecapsulateKey'
+                  )
+                  op = read.handle
+                  if (read.error)
+                    return {
+                      ok: false,
+                      observed: read.observed,
+                      details: `ERROR: ${read.error}`,
+                      error: true,
+                    }
+                  if (!read.accepted) return refused(t.result, read.observed)
+                  const k = valueOf(M, h, op)
+                  const diffs = t.K
+                    ? [{ what: `K[${k.length}B]`, diff: firstDiff(k, hexToBytes(t.K)) }]
+                    : []
+                  return completed(t.result, read.observed, diffs, t.comment || flagsOf(t))
+                } finally {
+                  destroy(M, h, op)
+                }
               } finally {
                 destroy(M, h, imp.handle)
               }
@@ -430,7 +537,7 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
           const testCase =
             `Encapsulate (ek via C_CreateObject) · Wycheproof mlkem_${v}_encaps_test tg${gi + 1}/tc${t.tcId} · ` +
             `ek ${nB(t.ek)}B · flags ${flagsOf(t)} · ${t.comment || 'no comment'} · expect ` +
-            'refused at C_CreateObject or C_EncapsulateKey'
+            'refused at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID'
           const meta = metaOf(P, gi, t, 'encapsulation', 'encapsulation', {
             encapsulationKeyBytes: nB(t.ek),
           })
@@ -456,13 +563,24 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
                 }
               const imp = importMlkemPublic(M, h, v, hexToBytes(t.ek))
               try {
-                if (imp.rv !== CKR_OK)
-                  return refused(t.result, `C_CreateObject(ek) → ${rvName(imp.rv)}`)
-                const r = encapsulateRv(M, h, imp.handle, CT_LEN[v])
-                destroy(M, h, r.handle)
-                const o = `C_CreateObject(ek) → CKR_OK; C_EncapsulateKey → ${rvName(r.rv)}`
-                if (r.rv !== CKR_OK) return refused(t.result, o)
-                return completed(t.result, o, [], t.comment || flagsOf(t))
+                // Only CKR_ATTRIBUTE_VALUE_INVALID at import refuses the key; an
+                // operation that fails after the import is an error (readKeyCheck).
+                const read = readKeyCheck(
+                  imp,
+                  'C_CreateObject(ek)',
+                  () => encapsulateRv(M, h, imp.handle, CT_LEN[v]),
+                  'C_EncapsulateKey'
+                )
+                destroy(M, h, read.handle)
+                if (read.error)
+                  return {
+                    ok: false,
+                    observed: read.observed,
+                    details: `ERROR: ${read.error}`,
+                    error: true,
+                  }
+                if (!read.accepted) return refused(t.result, read.observed)
+                return completed(t.result, read.observed, [], t.comment || flagsOf(t))
               } finally {
                 destroy(M, h, imp.handle)
               }

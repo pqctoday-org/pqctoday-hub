@@ -348,16 +348,19 @@ export const AcvpSuiteWorkbench = () => {
   // commit during a run — part of the same O(rows × commits) cost the memoized
   // row above addresses.
   const catCounts = useMemo(() => {
-    const acc = new Map<string, { total: number; passed: number; failed: number }>()
+    const acc = new Map<string, { total: number; passed: number; failed: number; errors: number }>()
     for (const r of results) {
       let e = acc.get(r.category)
       if (!e) {
-        e = { total: 0, passed: 0, failed: 0 }
+        e = { total: 0, passed: 0, failed: 0, errors: 0 }
         acc.set(r.category, e)
       }
       e.total += 1
       if (r.status === 'pass') e.passed += 1
-      else if (r.status === 'fail') e.failed += 1
+      else if (r.status === 'fail') {
+        e.failed += 1
+        if (r.caseMeta?.error === true) e.errors += 1
+      }
     }
     return acc
   }, [results])
@@ -502,12 +505,18 @@ export const AcvpSuiteWorkbench = () => {
             {CATEGORIES.filter((cat) => results.some((r) => r.category === cat.id)).map((cat) => {
               const groupResults = results.filter((r) => r.category === cat.id)
               const groupFailed = groupResults.filter((r) => r.status === 'fail').length
+              // Failed rows whose engine call failed for an operational reason (not a wrong answer).
+              const groupErrors = groupResults.filter(
+                (r) => r.status === 'fail' && r.caseMeta?.error === true
+              ).length
               const groupSkipped = groupResults.filter((r) => r.status === 'skip').length
               return (
                 <details key={cat.id} className="rounded-lg border border-border bg-card p-3">
                   <summary className="cursor-pointer text-xs font-semibold text-foreground">
                     {cat.label} · {groupResults.length - groupFailed - groupSkipped} passed
-                    {groupFailed > 0 ? ` · ${groupFailed} failed` : ''}
+                    {groupFailed > 0
+                      ? ` · ${groupFailed} failed${groupErrors > 0 ? ` (${groupErrors} ${groupErrors === 1 ? 'error' : 'errors'})` : ''}`
+                      : ''}
                     {groupSkipped > 0 ? ` · ${groupSkipped} not tested` : ''}
                   </summary>
                   <div className="mt-2 space-y-2">
@@ -623,6 +632,7 @@ export const AcvpSuiteWorkbench = () => {
           const c = catCounts.get(cat.id)
           const catPassed = c?.passed ?? 0
           const catFailed = c?.failed ?? 0
+          const catErrors = c?.errors ?? 0
           return (
             <label
               key={cat.id}
@@ -655,7 +665,12 @@ export const AcvpSuiteWorkbench = () => {
                     {catFailed > 0 && (
                       <>
                         {' '}
-                        <span className="text-destructive">{catFailed} fail</span>
+                        <span className="text-destructive">
+                          {catFailed} fail
+                          {catErrors > 0
+                            ? ` (${catErrors} ${catErrors === 1 ? 'error' : 'errors'})`
+                            : ''}
+                        </span>
                       </>
                     )}
                   </span>
