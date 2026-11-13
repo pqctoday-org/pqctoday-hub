@@ -1442,7 +1442,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
     explain: {
       plain:
-        'WireGuard sets up its VPN keys with a short Diffie-Hellman handshake, and can mix in a preshared key.',
+        'WireGuard sets up its VPN keys with a Diffie-Hellman handshake, and can mix in a preshared key.',
       whyItMattersForPqc:
         'Its Diffie-Hellman exchanges are broken by a quantum computer; Rosenpass keeps WireGuard and feeds it a post-quantum preshared key, and research such as PQ-WireGuard replaces the exchanges with KEMs.',
       diagram: {
@@ -1468,7 +1468,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     proofRefs: ['Post-Quantum-Noise-IACR-ePrint-2022-539'],
     explain: {
       plain:
-        'Post-quantum Noise rewrites the Noise handshake patterns, used by WireGuard and messaging apps, so that every Diffie-Hellman step becomes a KEM step.',
+        'Post-quantum Noise rewrites the handshake patterns of the Noise framework so that every Diffie-Hellman step becomes a KEM step.',
       whyItMattersForPqc:
         'It shows how protocols built on Noise could become fully post-quantum, beyond adding a preshared key; it is research, not a standard.',
       diagram: {
