@@ -153,7 +153,7 @@ const M = {
           : CKR_WRAPPED_KEY_LEN_RANGE)
     if (rv === CKR_OK) {
       const secret = ++eng.next
-      eng.bytesOf.set(secret, hexToBytes(k!))
+      eng.bytesOf.set(secret, hexToBytes(k ?? '00'))
       view.setInt32(hPtr, secret, true)
     }
     return rv
@@ -280,6 +280,7 @@ const expectError = (row: Row, detail: string) => {
   expect(row.details).toMatch(/^ERROR: /)
   expect(row.details).toContain(detail)
   expect(row.details).not.toMatch(/refused|as expected|REFUSED/)
+  expect(row.caseMeta?.error, row.id).toBe(true)
 }
 
 beforeEach(() => {
@@ -377,6 +378,20 @@ describe('Wycheproof ML-KEM rows: only a refusal the standard names counts', () 
     expect(row.details).not.toMatch(/ERROR/)
   })
 
+  it('each row names the refusal its case expects: the key check, the ciphertext code, or the seed length', async () => {
+    const rows = await runMlkem()
+    expect(rowFor(rows, INVALID_DK_IMPORT).testCase).toMatch(
+      /expect refused at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID$/
+    )
+    expect(rowFor(rows, WRONG_LENGTH_CT_SEMI).testCase).toMatch(
+      /expect refused by C_DecapsulateKey with a ciphertext-specific code \(wrong ciphertext length\)$/
+    )
+    expect(rowFor(rows, WRONG_LENGTH_SEED).testCase).toMatch(
+      /expect refused at C_GenerateKeyPair with CKR_ATTRIBUTE_VALUE_INVALID \(wrong seed length\)$/
+    )
+    expect(rowFor(rows, VALID_DK).testCase).toMatch(/expect K byte-match$/)
+  })
+
   describe('an operational error on an invalid case is an error, not a refusal', () => {
     it('an invalid ek whose import fails with CKR_DEVICE_ERROR', async () => {
       eng.fault = (site, key) =>
@@ -415,6 +430,51 @@ describe('Wycheproof ML-KEM rows: only a refusal the standard names counts', () 
       const rows = await runMlkem()
       expectError(rowFor(rows, WRONG_LENGTH_CT_SEMI), 'CKR_GENERAL_ERROR')
       expect(rows.filter((r) => r.status !== 'pass')).toHaveLength(1)
+    })
+
+    it.each([
+      ['CKR_UNWRAPPING_KEY_HANDLE_INVALID', 0xf0],
+      ['CKR_ARGUMENTS_BAD', 0x07],
+    ])(
+      'a wrong-length ciphertext answered with %s is an error, not a refusal',
+      async (name, rv) => {
+        const site = `seed:${WRONG_LENGTH_CT_MLKEM.v}:${WRONG_LENGTH_CT_MLKEM.seed}|${WRONG_LENGTH_CT_MLKEM.c}`
+        eng.fault = (s, key) => (s === 'decap' && key === site ? rv : undefined)
+        const rows = await runMlkem()
+        expectError(rowFor(rows, WRONG_LENGTH_CT_MLKEM), name)
+        expect(rows.filter((r) => r.status !== 'pass')).toHaveLength(1)
+      }
+    )
+
+    it('a key-flagged dk that imports, then C_DecapsulateKey refuses it with CKR_WRAPPED_KEY_LEN_RANGE, is an error', async () => {
+      const site = `dk:${INVALID_DK_IMPORT.dk}|${INVALID_DK_IMPORT.c}`
+      eng.fault = (s, key) =>
+        s === 'import' && key === INVALID_DK_IMPORT.dk
+          ? CKR_OK
+          : s === 'decap' && key === site
+            ? CKR_WRAPPED_KEY_LEN_RANGE
+            : undefined
+      const rows = await runMlkem()
+      expectError(
+        rowFor(rows, INVALID_DK_IMPORT),
+        'key imported, then C_DecapsulateKey returned CKR_WRAPPED_KEY_LEN_RANGE'
+      )
+      expect(rows.filter((r) => r.status !== 'pass')).toHaveLength(1)
+    })
+
+    it('a key-flagged dk that imports and decapsulates is still ACCEPTED, and is not an error', async () => {
+      const site = `dk:${INVALID_DK_IMPORT.dk}|${INVALID_DK_IMPORT.c}`
+      eng.fault = (s, key) =>
+        s === 'import' && key === INVALID_DK_IMPORT.dk
+          ? CKR_OK
+          : s === 'decap' && key === site
+            ? CKR_OK
+            : undefined
+      const rows = await runMlkem()
+      const row = rowFor(rows, INVALID_DK_IMPORT)
+      expect(row.status).toBe('fail')
+      expect(row.details).toMatch(/ACCEPTED a case Wycheproof marks invalid/)
+      expect(row.caseMeta?.error).toBeFalsy()
     })
 
     it('a wrong-length seed whose C_GenerateKeyPair fails with CKR_DEVICE_ERROR', async () => {

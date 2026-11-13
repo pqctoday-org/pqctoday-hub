@@ -98,7 +98,7 @@ export async function runMlkemKeyCheckDepthSection(ctx: MldsaAcvpSectionCtx): Pr
             referenceUrl,
             status: 'fail',
             details: `ERROR: ${read.error} · ${srcTag(P)}`,
-            caseMeta: { ...meta, observed },
+            caseMeta: { ...meta, observed, error: true },
           })
           addLog(`[DISCREPANCY] [${eName}] [id:${id}] ${ps} ${testCase}: ${read.error}`)
         } else {

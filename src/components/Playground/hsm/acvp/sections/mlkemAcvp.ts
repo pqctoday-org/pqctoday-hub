@@ -52,7 +52,7 @@ import {
   CKM_ML_KEM_KEY_PAIR_GEN,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
-import { CKM_ML_KEM } from '@/wasm/softhsm/constants'
+import { CKM_ML_KEM, CKR_ATTRIBUTE_VALUE_INVALID } from '@/wasm/softhsm/constants'
 import {
   allocMech,
   destroy,
@@ -153,9 +153,6 @@ export function importPrivate(M: SoftHSMModule, h: number, v: Variant, dk: Uint8
   )
 }
 
-/** PKCS#11 v3.2 §4.1.1: an invalid attribute value fails C_CreateObject with this. */
-export const CKR_ATTRIBUTE_VALUE_INVALID = 0x13
-
 /** The engine's answer to one ML-KEM key-check case. */
 export interface KeyCheckRead {
   /** The engine accepted the key: the import and the operation both returned CKR_OK. */
@@ -175,8 +172,8 @@ export interface KeyCheckRead {
  * A key that imports is accepted only when the operation that performs the
  * check then succeeds. Any other return value (a closed session, a device
  * failure, an operation that fails after the key was imported) is an error,
- * never a refusal, so it can never satisfy a case that expects one. Mirrors
- * mlkemAcvpEncapDecap.ts (commit b775442f6).
+ * never a refusal, so it can never satisfy a case that expects one. The same
+ * rule is applied by the Hybrid Crypto workshop sample (mlkemAcvpEncapDecap.ts).
  */
 export function readKeyCheck(
   imp: { rv: number; handle: number },
@@ -258,7 +255,7 @@ const eq = (a: Uint8Array, b: Uint8Array) => firstDiff(a, b) === 'identical'
 // ── Boundary probes (D1-5): exact CK_RV pinned per engine ───────────────────
 // §5.18.8 = C_EncapsulateKey, §5.18.9 = C_DecapsulateKey (PKCS#11 v3.2 OS).
 const ENCAP_LISTED = ['CKR_OK', 'CKR_BUFFER_TOO_SMALL', 'CKR_KEY_HANDLE_INVALID']
-export const DECAP_LISTED = [
+const DECAP_LISTED = [
   'CKR_ARGUMENTS_BAD',
   'CKR_WRAPPED_KEY_INVALID',
   'CKR_WRAPPED_KEY_LEN_RANGE',
@@ -609,7 +606,7 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
             referenceUrl,
             status: 'fail',
             details: `ERROR: ${read.error} · ${srcTag(VAL)}`,
-            caseMeta: { ...meta, observed },
+            caseMeta: { ...meta, observed, error: true },
           })
           addLog(`[DISCREPANCY] [${eName}] [id:${id}] ${ps} ${testCase}: ${read.error}`)
         } else {

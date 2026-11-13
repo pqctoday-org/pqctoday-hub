@@ -116,6 +116,7 @@ const expectError = (row: Row, detail: string) => {
   expect(row.details).toContain(detail)
   expect(row.details).toMatch(/not a key-check result/)
   expect(row.details).not.toMatch(/rejected|as expected/i)
+  expect(row.caseMeta?.error, row.id).toBe(true)
 }
 
 beforeEach(() => {

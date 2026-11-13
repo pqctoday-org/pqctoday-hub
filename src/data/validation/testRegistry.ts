@@ -963,7 +963,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
           `mlkem-keycheck-${isDk ? 'dk' : 'ek'}-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
         )
       }),
-    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID (the FIPS 203 §7.2 / §7.3 input check). Any other error on the path is an error row, never a pass.'
+    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID (the FIPS 203 §7.2 / §7.3 input check). This is the contract of the engines tested here: PKCS#11 itself does not require a key check at import. Any other error on the path is an error row, never a pass.'
   ),
   acvp(
     '07b.implicit-reject',
@@ -1042,7 +1042,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `mlkem-ekcheck-depth-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
       )
     ),
-    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. Any other error on the path is an error row, never a pass. ML-KEM inputs have fixed lengths: the capability map declares no length boundary for these cells.'
+    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. This is the contract of the engines tested here: PKCS#11 itself does not require a key check at import. Any other error on the path is an error row, never a pass. ML-KEM inputs have fixed lengths: the capability map declares no length boundary for these cells.'
   ),
   acvp(
     '08',
@@ -2090,11 +2090,13 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   // ── Project Wycheproof ML-KEM / ML-DSA — sections/wycheproofPqc.ts ──
   // Same evidence class and result policy as the classical files above. A
   // negative ML-KEM case passes only when the engine refuses it with the code
-  // the standard names for that step: a key input (seed, dk or ek at import)
-  // with CKR_ATTRIBUTE_VALUE_INVALID (FIPS 203 §7.2 / §7.3, the same rule as the
-  // NIST key-check rows, §7b.4 / §7c), or a wrong-length ciphertext with a code
-  // PKCS#11 v3.2 §5.18.9 lists for C_DecapsulateKey. Any other error is an
-  // error row. Seed-length negatives of mlkem_<ps>_test are refused by
+  // for that check: a key input (a dk or ek at import, the FIPS 203 §7.2 / §7.3
+  // check, as in the NIST key-check rows §7b.4 / §7c) or a CKA_SEED template of
+  // the wrong length, with CKR_ATTRIBUTE_VALUE_INVALID; or a wrong-length
+  // ciphertext, with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID from
+  // C_DecapsulateKey. These are the contract of the engines tested here: PKCS#11
+  // itself does not require a key check at import. Any other error is an error
+  // row. Seed-length negatives of mlkem_<ps>_test are refused by
   // C_GenerateKeyPair and register key generation only. Cases PKCS #11 cannot reproduce (valid encaps cases need
   // the randomness m; `Randomized` sign cases need rnd) are not vendored: see
   // each file's _provenance.excluded_cases.

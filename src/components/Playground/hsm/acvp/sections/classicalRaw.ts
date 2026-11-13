@@ -415,6 +415,8 @@ export interface RowOutcome {
   /** Machine-comparable observation (byte-equal, a CK_RV name, …) — lands in caseMeta.observed. */
   observed: string
   details: string
+  /** An operational error, not a wrong answer: lands in caseMeta.error (see AcvpCaseMeta). */
+  error?: boolean
 }
 
 /** Execute one case and record exactly one result row (a throw is a 'fail' row, never dropped). */
@@ -458,7 +460,7 @@ export async function runRow(
     referenceUrl,
     status: out.ok ? 'pass' : 'fail',
     details: `${out.details} · ${row.source}`,
-    caseMeta: { ...row.meta, observed: out.observed },
+    caseMeta: { ...row.meta, observed: out.observed, ...(out.error ? { error: true } : {}) },
   })
   addLog(
     `${out.ok ? '' : '[DISCREPANCY] '}[${eName}] [id:${row.id}] ${row.testCase}: ${out.ok ? 'PASS' : `FAIL (${out.observed})`}`
