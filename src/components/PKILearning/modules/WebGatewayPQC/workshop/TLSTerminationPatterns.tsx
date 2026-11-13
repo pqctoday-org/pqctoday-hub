@@ -6,6 +6,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   GATEWAY_FIGURES_NOTE,
   TERMINATION_PATTERNS,
+  TERMINATION_BYTES_NOTE,
   type TerminationPattern,
 } from '../data/gatewayData'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
@@ -53,10 +54,6 @@ const PatternFlow: React.FC<{
     cryptoMode === 'pqc-hybrid'
       ? pattern.bandwidthOverheadBytes.pqcHybrid
       : pattern.bandwidthOverheadBytes.classical
-  const latency =
-    cryptoMode === 'pqc-hybrid'
-      ? pattern.latencyOverheadMs.pqcHybrid
-      : pattern.latencyOverheadMs.classical
 
   return (
     <div className="space-y-4">
@@ -97,14 +94,10 @@ const PatternFlow: React.FC<{
       </div>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-muted/50 rounded-lg p-3 text-center">
           <div className="text-lg font-bold text-foreground">{formatBytes(overhead)}</div>
-          <div className="text-xs text-muted-foreground">Bandwidth</div>
-        </div>
-        <div className="bg-muted/50 rounded-lg p-3 text-center">
-          <div className="text-lg font-bold text-foreground">{latency} ms</div>
-          <div className="text-xs text-muted-foreground">Latency</div>
+          <div className="text-xs text-muted-foreground">Handshake bytes</div>
         </div>
         <div className="bg-muted/50 rounded-lg p-3 text-center">
           <div className="text-lg font-bold text-foreground">{pattern.certsRequired}</div>
@@ -257,6 +250,9 @@ export const TLSTerminationPatterns: React.FC = () => {
       <p className="text-xs text-muted-foreground" data-testid="gateway-figures-note">
         {GATEWAY_FIGURES_NOTE}
       </p>
+      <p className="text-xs text-muted-foreground" data-testid="termination-bytes-note">
+        {TERMINATION_BYTES_NOTE}
+      </p>
 
       {/* Comparison Table */}
       <div className="bg-muted/30 rounded-lg p-4 border border-border">
@@ -266,8 +262,8 @@ export const TLSTerminationPatterns: React.FC = () => {
             <thead>
               <tr className="text-left text-muted-foreground">
                 <th className="pb-2 pr-3">Pattern</th>
-                <th className="pb-2 pr-3">Classical BW</th>
-                <th className="pb-2 pr-3">PQC Hybrid BW</th>
+                <th className="pb-2 pr-3">Classical handshake bytes</th>
+                <th className="pb-2 pr-3">Hybrid handshake bytes</th>
                 <th className="pb-2 pr-3">Increase</th>
                 <th className="pb-2 pr-3">WAF</th>
                 <th className="pb-2">Certs</th>

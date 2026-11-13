@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { MEASURED_HANDSHAKE_FACTS } from '../../VPNSSHModule/data/measuredHandshakeFacts'
 
 // ── Gateway Component Types ─────────────────────────────────────────────────
 
@@ -243,9 +244,19 @@ export interface TerminationPattern {
   gatewayHoldsKey: boolean
   wafCanInspect: boolean
   certsRequired: number
-  latencyOverheadMs: { classical: number; pqcHybrid: number }
+  /** TLS sessions the pattern shows (a passthrough pattern has one, end to end) */
+  tlsSessions: number
+  /** Measured seven-message handshake bytes for all of the pattern's TLS sessions */
   bandwidthOverheadBytes: { classical: number; pqcHybrid: number }
   steps: TerminationStep[]
+}
+
+/** Handshake bytes for a number of TLS sessions, from the retained TLS capture. */
+function sessionBytes(sessions: number) {
+  return {
+    classical: sessions * MEASURED_HANDSHAKE_FACTS.classical.totalBytes,
+    pqcHybrid: sessions * MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes,
+  }
 }
 
 export const TERMINATION_PATTERNS: TerminationPattern[] = [
@@ -257,8 +268,8 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     gatewayHoldsKey: true,
     wafCanInspect: true,
     certsRequired: 1,
-    latencyOverheadMs: { classical: 2, pqcHybrid: 5 },
-    bandwidthOverheadBytes: { classical: 5200, pqcHybrid: 15400 },
+    tlsSessions: 1,
+    bandwidthOverheadBytes: sessionBytes(1),
     steps: [
       { label: 'Client \u2192 Gateway', encrypted: true, algorithm: 'TLS 1.3' },
       { label: 'Gateway decrypts & inspects', encrypted: false, algorithm: 'Plaintext' },
@@ -273,8 +284,8 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     gatewayHoldsKey: false,
     wafCanInspect: false,
     certsRequired: 0,
-    latencyOverheadMs: { classical: 0, pqcHybrid: 0 },
-    bandwidthOverheadBytes: { classical: 0, pqcHybrid: 0 },
+    tlsSessions: 1,
+    bandwidthOverheadBytes: sessionBytes(1),
     steps: [
       { label: 'Client \u2192 Gateway (encrypted)', encrypted: true, algorithm: 'TLS 1.3' },
       {
@@ -292,8 +303,8 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     gatewayHoldsKey: true,
     wafCanInspect: true,
     certsRequired: 2,
-    latencyOverheadMs: { classical: 4, pqcHybrid: 10 },
-    bandwidthOverheadBytes: { classical: 10400, pqcHybrid: 30800 },
+    tlsSessions: 2,
+    bandwidthOverheadBytes: sessionBytes(2),
     steps: [
       { label: 'Client \u2192 Gateway (TLS 1)', encrypted: true, algorithm: 'TLS 1.3' },
       { label: 'Gateway decrypts & inspects', encrypted: false, algorithm: 'Plaintext' },
@@ -308,8 +319,8 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     gatewayHoldsKey: true,
     wafCanInspect: true,
     certsRequired: 2,
-    latencyOverheadMs: { classical: 4, pqcHybrid: 8 },
-    bandwidthOverheadBytes: { classical: 10400, pqcHybrid: 25600 },
+    tlsSessions: 2,
+    bandwidthOverheadBytes: sessionBytes(2),
     steps: [
       { label: 'Client \u2192 Gateway (Public CA)', encrypted: true, algorithm: 'TLS 1.3' },
       { label: 'Gateway decrypts', encrypted: false, algorithm: 'Plaintext' },
@@ -669,12 +680,14 @@ export interface GatewayBenchmark {
 }
 
 /**
- * The numbers in the termination patterns and the capacity table below
+ * The numbers in the capacity table below
  * are illustrative scenario inputs for the workshop tools. They are not measurements, vendor
  * specifications or published benchmarks, and no source or test conditions are given for them.
  */
 export const GATEWAY_FIGURES_NOTE =
-  'Illustrative scenario figures, not measurements or vendor specifications: no benchmark source or test conditions are supplied for them. Real handshake rates, latency, memory use and TLS-inspection limits depend on the gateway model and software version, the cipher and certificate mix, session resumption and the traffic profile, so measure your own gateway and inspection path with a post-quantum handshake instead of assuming a uniform buffer size or performance.'
+  "Illustrative scenario figures, not measurements or vendor specifications: for the capacity table's handshake rates no benchmark source or test conditions are supplied. Real handshake rates, latency, memory use and TLS-inspection limits depend on the gateway model and software version, the cipher and certificate mix, session resumption and the traffic profile, so measure your own gateway and inspection path with a post-quantum handshake instead of assuming a uniform buffer size or performance."
+
+export const TERMINATION_BYTES_NOTE = `Handshake bytes are the measured seven-message totals from the Hub's sample capture (${MEASURED_HANDSHAKE_FACTS.classical.label}: ${MEASURED_HANDSHAKE_FACTS.classical.totalBytes.toLocaleString('en-US')} B; ${MEASURED_HANDSHAKE_FACTS.hybrid.label}: ${MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes.toLocaleString('en-US')} B) multiplied by the TLS sessions the pattern shows. They are sample profiles, not a standard or a vendor claim, and no handshake time was measured.`
 
 export const GATEWAY_BENCHMARKS: GatewayBenchmark[] = [
   {

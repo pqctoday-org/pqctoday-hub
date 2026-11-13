@@ -27,7 +27,6 @@ export interface TrafficType {
   description: string
   pqcImpact: string
   certSizeImpact: string
-  latencyImpact: string
   inspectionComplexity: 'low' | 'medium' | 'high' | 'very-high'
 }
 
@@ -68,7 +67,6 @@ export interface CipherSuite {
   authentication: string
   encryption: string
   certSizeKB: number
-  handshakeMs: number
   hardwareOffloadRequired: boolean
   quantumSafe: boolean
 }
@@ -215,7 +213,6 @@ export const TRAFFIC_TYPES: TrafficType[] = [
       'Hybrid TLS handshakes are larger than classical ones: one published estimate says a hybrid TLS 1.3 handshake using X25519+ML-KEM-768 and ECDSA+ML-DSA-65 may exceed 15 KB, against about 4 KB for classical-only handshakes (Campbell, Computers 2026, citing IETF draft measurements).',
     certSizeImpact:
       'ML-DSA-65 certificate: at least 5.3KB (FIPS 204 Table 2: 1,952-byte public key plus 3,309-byte signature). Two-certificate TLS 1.3 chain in an IETF C509 draft example: 11,869 bytes for ML-DSA-65 vs 2,656 bytes for RSA',
-    latencyImpact: '+5-15ms on software-only firewalls; hardware offload reduces to +1-3ms',
     inspectionComplexity: 'high',
   },
   {
@@ -227,7 +224,6 @@ export const TRAFFIC_TYPES: TrafficType[] = [
       'mTLS doubles the certificate overhead (both parties present certs). High-volume east-west traffic amplifies PQC size penalty.',
     certSizeImpact:
       'Both parties send certificate chains, so the chain-size growth shown for north-south TLS applies in each direction',
-    latencyImpact: '+3-8ms per new connection; session resumption unaffected',
     inspectionComplexity: 'very-high',
   },
   {
@@ -239,8 +235,6 @@ export const TRAFFIC_TYPES: TrafficType[] = [
       'NGFW must re-encrypt with PQC certs, doubling the key exchange cost. Inline inspection adds latency from PQC key derivation.',
     certSizeImpact:
       'Re-signed PQC cert chain: the chain sizes shown for north-south TLS apply to the certificates the NGFW presents',
-    latencyImpact:
-      'Illustrative simulation values, not measurements: inspected handshake of about 9 ms (classical ECDSA), 28 ms (hybrid) and 35 ms (pure PQC) in the TLS Inspection Lab',
     inspectionComplexity: 'very-high',
   },
   {
@@ -249,10 +243,8 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     direction: 'north-south',
     description: 'TLS 1.3 ClientHello with hybrid key_share (X25519+ML-KEM-768).',
     pqcImpact:
-      'ClientHello grows by ~1.2KB for ML-KEM-768 key_share. Servers must support both classical and hybrid codepoints.',
+      "The ClientHello grew from 159 to 1,337 bytes in the Hub's sample capture (X25519 against X25519MLKEM768). Servers must support both classical and hybrid codepoints.",
     certSizeImpact: 'key_share extension: +1,184 bytes (ML-KEM-768 public key)',
-    latencyImpact:
-      '+2-5ms additional handshake time due to larger messages and key derivation computation',
     inspectionComplexity: 'medium',
   },
   {
@@ -263,7 +255,6 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     pqcImpact:
       'Each extra IKEv2 key exchange (an additional key exchange transform, RFC 9370) adds a KE payload carrying an ML-KEM key (in an IKE_INTERMEDIATE exchange at tunnel setup, in IKE_FOLLOWUP_KE at rekey). Impact concentrated in tunnel setup, not data transfer.',
     certSizeImpact: 'IKEv2 KE payload: +1,184-1,568 bytes for ML-KEM-768/1024 public keys',
-    latencyImpact: '+10-30ms tunnel establishment; session rekey overhead is minimal',
     inspectionComplexity: 'medium',
   },
   {
@@ -275,7 +266,6 @@ export const TRAFFIC_TYPES: TrafficType[] = [
       'SD-WAN orchestrator certificates must be PQC-signed. DTLS-based data planes need updated IANA codepoints for ML-KEM.',
     certSizeImpact:
       'Each ML-DSA-65 certificate in the orchestrator chain carries a 3,309-byte signature (FIPS 204 Table 2)',
-    latencyImpact: 'Negligible on data plane; control plane re-authentication adds +50-100ms',
     inspectionComplexity: 'high',
   },
 ]
@@ -298,7 +288,7 @@ export const INSPECTION_CHALLENGES: InspectionChallenge[] = [
     title: 'TLS Handshake Latency Increase',
     severity: 'high',
     description:
-      'Software-based TLS inspection on NGFWs processes ML-KEM key encapsulation/decapsulation in software, which adds handshake latency; the latencies in the TLS Inspection Lab are illustrative simulation values, not measurements. For high-frequency trading, API gateways, or real-time applications, added latency can be unacceptable.',
+      'Software-based TLS inspection on NGFWs processes ML-KEM key encapsulation/decapsulation in software, which adds handshake latency; this module does not simulate or measure handshake time, so measure it on your own inspection path. For high-frequency trading, API gateways, or real-time applications, added latency can be unacceptable.',
     mitigation:
       'Prioritize platforms with hardware offload for the algorithms you deploy, and ask each vendor whether your model and firmware offload ML-KEM. Enable session resumption and TLS 1.3 session tickets to minimize full handshake frequency. Consider PQC bypass policies for latency-sensitive applications.',
     affectedVendors: ['sophos-xgs', 'sonicwall', 'pfsense-opnsense', 'juniper-srx'],
@@ -499,7 +489,7 @@ export const IDS_RULE_CATEGORIES: IDSRuleCategory[] = [
 // of the same parameter set can have, from FIPS 204 Table 2 (bytes): ML-DSA-65 1,952 +
 // 3,309 = 5,261 (5.3KB); ML-DSA-87 2,592 + 4,627 = 7,219 (7.2KB). Hybrid certificates
 // also carry the classical key and signature, so they are at least this size.
-// handshakeMs is an illustrative simulation setting, not a measurement.
+// No handshake time is simulated: this module reports sizes only.
 
 export const CIPHER_SUITES: CipherSuite[] = [
   {
@@ -510,7 +500,6 @@ export const CIPHER_SUITES: CipherSuite[] = [
     authentication: 'RSA-2048',
     encryption: 'AES-128-GCM',
     certSizeKB: 1.2,
-    handshakeMs: 8,
     hardwareOffloadRequired: false,
     quantumSafe: false,
   },
@@ -522,7 +511,6 @@ export const CIPHER_SUITES: CipherSuite[] = [
     authentication: 'ECDSA P-256',
     encryption: 'AES-256-GCM',
     certSizeKB: 1.0,
-    handshakeMs: 5,
     hardwareOffloadRequired: false,
     quantumSafe: false,
   },
@@ -534,7 +522,6 @@ export const CIPHER_SUITES: CipherSuite[] = [
     authentication: 'ECDSA P-256 + ML-DSA-65 (hybrid cert)',
     encryption: 'AES-256-GCM',
     certSizeKB: 5.3,
-    handshakeMs: 12,
     hardwareOffloadRequired: false,
     quantumSafe: true,
   },
@@ -546,7 +533,6 @@ export const CIPHER_SUITES: CipherSuite[] = [
     authentication: 'ECDSA P-384 + ML-DSA-87 (hybrid cert)',
     encryption: 'AES-256-GCM',
     certSizeKB: 7.2,
-    handshakeMs: 18,
     hardwareOffloadRequired: true,
     quantumSafe: true,
   },
@@ -558,7 +544,6 @@ export const CIPHER_SUITES: CipherSuite[] = [
     authentication: 'ML-DSA-65',
     encryption: 'AES-256-GCM',
     certSizeKB: 5.3,
-    handshakeMs: 15,
     hardwareOffloadRequired: true,
     quantumSafe: true,
   },
@@ -570,7 +555,6 @@ export const CIPHER_SUITES: CipherSuite[] = [
     authentication: 'ML-DSA-87',
     encryption: 'AES-256-GCM',
     certSizeKB: 7.2,
-    handshakeMs: 22,
     hardwareOffloadRequired: true,
     quantumSafe: true,
   },

@@ -17,7 +17,7 @@ const PARTS: WorkshopPart[] = [
     id: 'ngfw-cipher-analyzer',
     title: 'Step 1: NGFW Cipher Policy',
     description:
-      'Analyze NGFW cipher suites and simulate the impact of enabling PQC — cert size, handshake latency, and hardware offload.',
+      'Analyze NGFW cipher suites and simulate the impact of enabling PQC — cert size and hardware offload.',
     icon: Shield,
   },
   {

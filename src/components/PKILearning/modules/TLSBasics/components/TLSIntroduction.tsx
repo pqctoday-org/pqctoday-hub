@@ -24,6 +24,10 @@ import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
+import {
+  MEASURED_HANDSHAKE_FACTS,
+  formatBytes,
+} from '../../VPNSSHModule/data/measuredHandshakeFacts'
 
 interface TLSIntroductionProps {
   onNavigateToSimulate: () => void
@@ -423,8 +427,12 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             <p className="text-xs text-muted-foreground">
               Traditional TLS uses a chain of X.509 certificates, each containing a public key and a
               signature from the issuing CA. With PQC signatures (3,309 B, about 3.3 KB, for
-              ML-DSA-65), a typical 2-certificate chain adds ~7 KB+ to the handshake — a substantial
-              bandwidth increase.
+              ML-DSA-65), the Certificate message of the Hub&apos;s sample capture (a leaf plus an
+              intermediate) is {formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.certificateMessageBytes)} B
+              with ML-DSA-65 against{' '}
+              {formatBytes(MEASURED_HANDSHAKE_FACTS.classical.certificateMessageBytes)} B with
+              RSA-2048 — a substantial bandwidth increase. Sizes only; no handshake time was
+              measured.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { RoleGuideData } from '../../common/roleGuide/types'
+import { MEASURED_HANDSHAKE_FACTS, formatBytes } from '../VPNSSHModule/data/measuredHandshakeFacts'
 
 export const OPS_GUIDE_DATA: RoleGuideData = {
   roleId: 'ops',
@@ -38,8 +39,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
         'PQC operations have different performance profiles. Existing monitoring baselines, alerts, and SLAs need recalibration.',
       severity: 'high',
       timeframe: 'Planning window 2025-2028 (editorial estimate, not a regulatory date)',
-      exampleScenario:
-        "In this module's illustration, your TLS handshake alerts were tuned for classical handshakes. Hybrid ML-KEM key exchange makes handshake messages larger (about 1.1 to 1.2 KB more in each direction for X25519MLKEM768), and for IKEv2 VPNs adds an extra IKE_INTERMEDIATE round trip. After PQC migration, size- and latency-based alerts fire false positives until thresholds are re-baselined from your own measurements. Meanwhile, real performance issues are lost in the noise.",
+      exampleScenario: `In this module's illustration, your TLS handshake alerts were tuned for classical handshakes. Hybrid ML-KEM key exchange makes handshake messages larger (in the Hub's sample capture, ${formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.clientHelloBytes - MEASURED_HANDSHAKE_FACTS.classical.clientHelloBytes)} bytes more in the ClientHello for X25519MLKEM768 and ${formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.serverHelloBytes - MEASURED_HANDSHAKE_FACTS.classical.serverHelloBytes)} bytes more in the ServerHello), and for IKEv2 VPNs adds an extra IKE_INTERMEDIATE round trip. After PQC migration, size- and latency-based alerts fire false positives until thresholds are re-baselined from your own measurements. Meanwhile, real performance issues are lost in the noise.`,
     },
     {
       id: 'deployment-pipelines',

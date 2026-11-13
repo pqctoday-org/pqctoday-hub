@@ -25,6 +25,7 @@ function profileFacts(name: string) {
     totalBytes: profile.totalBytes,
     certificateMessageBytes: size('Certificate'),
     clientHelloBytes: size('ClientHello'),
+    serverHelloBytes: size('ServerHello'),
   }
 }
 

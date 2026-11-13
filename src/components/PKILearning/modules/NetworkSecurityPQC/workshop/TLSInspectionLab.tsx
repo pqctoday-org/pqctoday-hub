@@ -2,6 +2,10 @@
 import React, { useState, useMemo } from 'react'
 import { Eye, EyeOff, AlertTriangle, CheckCircle, ArrowRight, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  MEASURED_HANDSHAKE_FACTS,
+  formatBytes,
+} from '../../VPNSSHModule/data/measuredHandshakeFacts'
 
 interface TLSAlgorithm {
   id: string
@@ -11,8 +15,6 @@ interface TLSAlgorithm {
   chainSizeKB: number
   inspectionFriendly: boolean
   inspectionNotes: string
-  handshakeMs: number
-  inspectedHandshakeMs: number
 }
 
 // Sizes. ML-DSA certificates are shown at their minimum: the public key plus a signature
@@ -22,8 +24,7 @@ interface TLSAlgorithm {
 // two certificates: the RSA (2,656 B), ECDSA (1,651 B) and ML-DSA-65 (11,869 B) values are
 // the TLS 1.3 Certificate message examples in the IETF C509 draft; the hybrid ML-DSA-65
 // chain reuses the ML-DSA-65 example as its minimum, and the ML-DSA-87 chain is two
-// times its certificate minimum. Handshake and inspected-handshake times are illustrative
-// simulation settings of this module, not measurements.
+// times its certificate minimum. Handshake and inspected-handshake XX
 const TLS_ALGORITHMS: TLSAlgorithm[] = [
   {
     id: 'rsa2048',
@@ -34,8 +35,6 @@ const TLS_ALGORITHMS: TLSAlgorithm[] = [
     inspectionFriendly: true,
     inspectionNotes:
       'Universally supported by all TLS inspection engines. No buffer size concerns. Hardware offload widely available.',
-    handshakeMs: 8,
-    inspectedHandshakeMs: 14,
   },
   {
     id: 'ecdsa-p256',
@@ -46,8 +45,6 @@ const TLS_ALGORITHMS: TLSAlgorithm[] = [
     inspectionFriendly: true,
     inspectionNotes:
       'Small certs and signatures. Most NGFW TLS inspection engines handle P-256 natively. No size concerns.',
-    handshakeMs: 5,
-    inspectedHandshakeMs: 9,
   },
   {
     id: 'hybrid-mldsa65',
@@ -58,8 +55,6 @@ const TLS_ALGORITHMS: TLSAlgorithm[] = [
     inspectionFriendly: false,
     inspectionNotes:
       'A hybrid chain carries at least the ML-DSA-65 public key and signature of each certificate, so it may exceed buffer sizes or parsing limits in network devices that inspect TLS certificate chains (Applied Quantum PQC Migration Framework v2.1, Activity 6.1).',
-    handshakeMs: 12,
-    inspectedHandshakeMs: 28,
   },
   {
     id: 'pure-mldsa65',
@@ -70,8 +65,6 @@ const TLS_ALGORITHMS: TLSAlgorithm[] = [
     inspectionFriendly: false,
     inspectionNotes:
       'A pure ML-DSA-65 certificate holds a 1,952-byte public key and a 3,309-byte signature (FIPS 204), so inspecting one means handling an ML-DSA key and signature of these sizes. Test each inspection device with PQC-sized certificates before relying on it; the Applied Quantum framework advises testing every middlebox on every production network path.',
-    handshakeMs: 15,
-    inspectedHandshakeMs: 35,
   },
   {
     id: 'hybrid-mldsa87',
@@ -82,8 +75,6 @@ const TLS_ALGORITHMS: TLSAlgorithm[] = [
     inspectionFriendly: false,
     inspectionNotes:
       'Uses ML-DSA-87, the largest ML-DSA parameter set. FIPS 204 lists a 2,592-byte public key and a 4,627-byte signature, about 7.2 KB per certificate, so a chain of two such certificates is at least about 14.4 KB and may exceed inspection buffers and parsing limits. This lab suggests pass-through with logging rather than active inspection for chains this large.',
-    handshakeMs: 18,
-    inspectedHandshakeMs: 45,
   },
 ]
 
@@ -147,27 +138,16 @@ export const TLSInspectionLab: React.FC = () => {
   const baseline = TLS_ALGORITHMS[0]
 
   const stats = useMemo(() => {
-    const handshakeMs =
-      inspectionMode === 'inspect' ? selectedAlgo.inspectedHandshakeMs : selectedAlgo.handshakeMs
-    const baselineMs =
-      inspectionMode === 'inspect' ? baseline.inspectedHandshakeMs : baseline.handshakeMs
-    const latencyOverhead = handshakeMs - baselineMs
     const certOverheadKB = selectedAlgo.chainSizeKB - baseline.chainSizeKB
     const inspectionFeasible = !selectedAlgo.inspectionFriendly && inspectionMode === 'inspect'
-    // Approximate connections/sec based on CPU budget
-    const softwareConnsSec =
-      inspectionMode === 'inspect' ? Math.round(1000 / (handshakeMs / 1000)) : 5000
     // Illustrative chain volume for one handshake on each of two termination legs.
     // Chain values are decimal KB; no connection rate/time window is supplied.
     const inspectionChainVolumeMB =
       inspectionMode === 'inspect' ? (connectionCount * selectedAlgo.chainSizeKB * 2) / 1000 : 0
 
     return {
-      handshakeMs,
-      latencyOverhead,
       certOverheadKB: parseFloat(certOverheadKB.toFixed(1)),
       inspectionFeasible,
-      softwareConnsSec,
       inspectionChainVolumeMB: parseFloat(inspectionChainVolumeMB.toFixed(1)),
     }
   }, [selectedAlgo, inspectionMode, connectionCount, baseline])
@@ -269,14 +249,6 @@ export const TLSInspectionLab: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div
-              className={`text-lg font-bold ${stats.handshakeMs > 20 ? 'text-status-error' : stats.handshakeMs > 12 ? 'text-status-warning' : 'text-status-success'}`}
-            >
-              {stats.handshakeMs}ms
-            </div>
-            <div className="text-[10px] text-muted-foreground">Handshake Latency</div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div
               className={`text-lg font-bold ${stats.certOverheadKB > 4 ? 'text-status-error' : stats.certOverheadKB > 2 ? 'text-status-warning' : 'text-status-success'}`}
             >
               {stats.certOverheadKB > 0 ? `+${stats.certOverheadKB}` : stats.certOverheadKB} KB
@@ -354,9 +326,6 @@ export const TLSInspectionLab: React.FC = () => {
                 <th className="text-right py-2 px-2 text-muted-foreground font-medium">
                   Chain (KB)
                 </th>
-                <th className="text-right py-2 px-2 text-muted-foreground font-medium">
-                  Inspect Latency
-                </th>
                 <th className="text-center py-2 px-2 text-muted-foreground font-medium">
                   Inspection
                 </th>
@@ -377,9 +346,6 @@ export const TLSInspectionLab: React.FC = () => {
                   >
                     {algo.chainSizeKB}
                   </td>
-                  <td className="py-2 px-2 text-right font-mono text-foreground">
-                    ~{algo.inspectedHandshakeMs}ms
-                  </td>
                   <td className="py-2 px-2 text-center">
                     {algo.inspectionFriendly ? (
                       <CheckCircle size={12} className="text-status-success inline" />
@@ -396,8 +362,23 @@ export const TLSInspectionLab: React.FC = () => {
           ML-DSA certificate sizes are minimums: the public key plus signature from FIPS 204 Table 2
           (hybrid rows also carry classical parts). Chain sizes are two-certificate examples: RSA,
           ECDSA and ML-DSA-65 from an IETF C509 draft (2,656, 1,651 and 11,869 bytes), and ML-DSA-87
-          as two times its certificate minimum. Latency values and the inspection overhead are
-          illustrative simulation settings of this module, not measurements.
+          as two times its certificate minimum. No handshake time is simulated or measured here.
+        </p>
+        <p
+          className="text-[10px] text-muted-foreground mt-2"
+          data-testid="measured-handshake-sizes"
+        >
+          Measured handshake sizes from the Hub&apos;s sample capture (
+          {MEASURED_HANDSHAKE_FACTS.runtime}, {MEASURED_HANDSHAKE_FACTS.measuredOn};{' '}
+          {MEASURED_HANDSHAKE_FACTS.messageCount} handshake messages, leaf and intermediate
+          certificates, record and TCP/IP framing excluded):{' '}
+          {MEASURED_HANDSHAKE_FACTS.classical.label}{' '}
+          {formatBytes(MEASURED_HANDSHAKE_FACTS.classical.totalBytes)} B;{' '}
+          {MEASURED_HANDSHAKE_FACTS.hybrid.label}{' '}
+          {formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes)} B;{' '}
+          {MEASURED_HANDSHAKE_FACTS.pqc.label}{' '}
+          {formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.totalBytes)} B. Sample profiles, not estimates
+          for every deployment.
         </p>
       </div>
     </div>
