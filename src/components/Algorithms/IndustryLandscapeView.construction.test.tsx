@@ -236,6 +236,7 @@ describe('construction cards — source links and empty algorithm rows', () => {
     )
     expect(proofRefLabel('NIST-SP-800-56C-R2')).toBe('NIST SP 800-56C Rev. 2')
     expect(proofRefLabel('RFC 9180')).toBe('RFC 9180')
+    expect(proofRefLabel('FIPS-198-1')).toBe('FIPS 198-1')
   })
 
   it('a row with no algorithm says so neutrally, never "symmetric key only"', () => {

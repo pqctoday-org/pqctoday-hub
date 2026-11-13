@@ -35,6 +35,8 @@ export function proofRefLabel(ref: string): string {
   if (m) return `RFC ${m[1]}`
   m = /^NIST[- ]SP[- ]800-(\d+[A-Z]?)(?:-R(\d+))?\b/.exec(ref)
   if (m) return `NIST SP 800-${m[1]}${m[2] ? ` Rev. ${m[2]}` : ''}`
+  m = /^FIPS[- ](\d+(?:-\d+)?)$/.exec(ref)
+  if (m) return `FIPS ${m[1]}`
   m = /^NIST[- ]IR[- ](\d+[A-Z]?)\b/.exec(ref)
   if (m) return `NIST IR ${m[1]}`
   m = /ePrint-(\d{4})-(\d+)$/.exec(ref)
