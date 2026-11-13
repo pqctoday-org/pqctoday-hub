@@ -15,7 +15,7 @@
     "evidence_class": "independent-oracle",
     "evidence_class_reason": "Google/C2SP is not a standards body and no standard prints these values. A passing case supports only 'agrees with Project Wycheproof 3fa63dd0 for this case', never a conformance claim.",
     "upstream_operation": "MLKEMDecapsValidationTest (expanded dk, c -> K)",
-    "local_operation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused at C_CreateObject or at C_DecapsulateKey.",
+    "local_operation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused: the dk at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID, a wrong-length c by C_DecapsulateKey with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID. Any other answer is an error, never a refusal.",
     "local_mechanisms": "CKM_ML_KEM (CKP_ML_KEM_1024)",
     "transformation": "none beyond this `_provenance` key: every testGroup, test, tcId, flag, result and hex value is byte-copied from the upstream file in upstream order. No case is dropped, renumbered, re-derived or normalized.",
     "result_policy": "Wycheproof `valid` must be accepted and `invalid` must be refused. `acceptable` is a case upstream states either outcome is defensible: the observed behaviour is RECORDED and no pass/fail assertion is made on it.",

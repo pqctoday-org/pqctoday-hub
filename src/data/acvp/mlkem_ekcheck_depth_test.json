@@ -10,7 +10,7 @@
     "source_git_blob_sha": "73692fe52abe2f937b7884baa46475c77c68a1d3",
     "retrieved": "2026-09-25",
     "upstream_operation": "encapDecap VAL encapsulationKeyCheck (FIPS 203 section 7.2 modulus check, with upstream testPassed)",
-    "local_operation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = upstream ek) then C_EncapsulateKey(CKM_ML_KEM); a testPassed=false key must be rejected (any error, no ciphertext) at import or at encapsulation",
+    "local_operation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = upstream ek) then C_EncapsulateKey(CKM_ML_KEM); a testPassed=false key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID; any other answer, including a key that imports and then fails C_EncapsulateKey, is an error, never a refusal",
     "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived",
     "subset_policy": "Deterministic. encapsulationKeyCheck groups (FIPS 203 section 7.2 input check): every testPassed=false case not already carried by mlkem_encapdecap_val_test.json (which holds the lowest-tcId valid and invalid case of each group). Decapsulation, decapsulationKeyCheck and encapsulation AFT groups are not used here.",
     "retained_fields": "tcId, testPassed, reason, ek (deferred and dk dropped)"
