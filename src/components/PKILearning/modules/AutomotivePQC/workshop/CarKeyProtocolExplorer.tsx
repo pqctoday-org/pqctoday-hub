@@ -557,7 +557,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
             </div>
           ))}
         </div>
-        <div className="mt-3 text-xs" data-testid="elapsed-result">
+        <div className="mt-3 text-xs" data-testid="elapsed-result" role="status" aria-live="polite">
           {elapsed && elapsed.classical !== null && elapsed.pqc !== null ? (
             <span className="text-foreground">
               Serial service time from your inputs:{' '}

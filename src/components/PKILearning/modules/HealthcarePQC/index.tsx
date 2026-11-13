@@ -23,7 +23,7 @@ const PARTS: WorkshopPart[] = [
     id: 'pharma-ip-calculator',
     title: 'Step 2: Pharma IP Calculator',
     description:
-      'Model the Harvest Now, Decrypt Later financial exposure for pharmaceutical intellectual property worth billions in R&D.',
+      'Compare the total fictional value of drug-pipeline records with the part tied to a vulnerable key-protection path, and add up R&D time from steps you define.',
     icon: FlaskConical,
   },
   {

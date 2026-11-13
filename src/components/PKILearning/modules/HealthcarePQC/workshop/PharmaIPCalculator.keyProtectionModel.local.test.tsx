@@ -14,7 +14,7 @@ function summaryValue(label: string): string {
 }
 
 async function chooseProtection(user: ReturnType<typeof userEvent.setup>, optionName: string) {
-  await user.click(screen.getAllByRole('button', { name: 'Key protection:' })[0])
+  await user.click(screen.getByRole('button', { name: 'Key protection for PQC-7291' }))
   await user.click(screen.getByRole('option', { name: optionName }))
 }
 
@@ -47,6 +47,7 @@ describe('Pharma IP calculator key-protection model', () => {
     await chooseProtection(user, 'Key protection not specified')
     expect(screen.getByText('not determined')).toBeInTheDocument()
     expect(screen.getByText(/1 compound\(s\) have no key protection specified/)).toBeInTheDocument()
+    expect(screen.getByText('plus 1 not determined')).toBeInTheDocument()
   })
 
   it('sums the visible fictional steps and follows an edited omittable step', () => {

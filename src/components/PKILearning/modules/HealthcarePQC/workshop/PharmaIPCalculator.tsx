@@ -255,7 +255,7 @@ export const PharmaIPCalculator: React.FC = () => {
                       onSelect={(id) =>
                         updateCompound(compound.id, { keyProtection: id as KeyProtectionPath })
                       }
-                      label="Key protection"
+                      ariaLabel={`Key protection for ${compound.compoundName || 'compound'}`}
                       defaultLabel="Select"
                       noContainer
                     />
@@ -314,7 +314,8 @@ export const PharmaIPCalculator: React.FC = () => {
                       value={compound.patentExpiryYear}
                       onChange={(e) =>
                         updateCompound(compound.id, {
-                          patentExpiryYear: Math.round(Number(e.target.value)),
+                          patentExpiryYear:
+                            Math.round(Number(e.target.value)) || compound.patentExpiryYear,
                         })
                       }
                       className="h-9 text-sm font-mono"
@@ -497,7 +498,7 @@ export const PharmaIPCalculator: React.FC = () => {
           Value and Key-Protection Path
         </h4>
 
-        <div className="space-y-2">
+        <div className="space-y-2" role="status" aria-live="polite">
           {results.map(({ compound, result }) => {
             const tied = result.status === 'exposed-in-scenario'
             return (
@@ -643,6 +644,11 @@ export const PharmaIPCalculator: React.FC = () => {
             <div className="text-lg font-bold font-mono text-foreground mt-1">
               {formatMillions(portfolio.valueOnVulnerablePathM)}
             </div>
+            {portfolio.compoundsPathUnknown > 0 && (
+              <div className="text-[10px] text-muted-foreground mt-1">
+                plus {portfolio.compoundsPathUnknown} not determined
+              </div>
+            )}
           </div>
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">

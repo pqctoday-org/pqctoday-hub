@@ -83,8 +83,9 @@ export const RADAR_RUBRIC: readonly RadarRubricEntry[] = [
       'Higher means more public evidence of preparation. It is not a measure of how safe the network is today.',
     anchors: {
       zero: 'Not used for missing evidence: no public evidence is shown as no public evidence, never as 0.',
-      one: 'Only shared EMVCo standards work or an internal readiness programme is visible; no network-specific public plan.',
-      three: 'Network-specific published guidance or plans, without a tested rollout.',
+      one: 'Little or no network-specific public evidence: shared EMVCo standards work or an internal readiness programme at most.',
+      three:
+        'Network-specific published guidance with concrete steps, or publicly described prototype tests, without a committed rollout.',
       five: 'A committed, dated production rollout is public.',
     },
     evidenceToCheck:

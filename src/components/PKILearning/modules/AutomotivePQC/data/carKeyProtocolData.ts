@@ -302,7 +302,7 @@ export const CAR_KEY_LOCAL_EVENTS: readonly CarKeyLocalEvent[] = [
     id: 'rf-discovery',
     label: 'Proximity detection (radio event)',
     description:
-      'The vehicle notices the phone through a BLE advertisement or an NFC field activation. A BLE advertisement is not the same event as NFC field activation. The older 31-byte sample figure for this event is kept out of the totals.',
+      'The vehicle notices the phone through a BLE advertisement or an NFC field activation. A BLE advertisement is not the same event as NFC field activation. A 31-byte sample figure for the advertisement is not counted in the totals.',
   },
   {
     id: 'session-key-derivation',
