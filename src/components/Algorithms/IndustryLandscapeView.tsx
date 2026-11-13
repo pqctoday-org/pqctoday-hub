@@ -1292,7 +1292,7 @@ export function IndustryLandscapeView() {
             onClick={() =>
               update({ mechanism: null, construction: null, usecase: null, standard: null })
             }
-            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Industry
           </Button>
@@ -1302,7 +1302,7 @@ export function IndustryLandscapeView() {
             onClick={() => {
               if (mode !== 'mechanism') pickMechanism('RSA')
             }}
-            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'mechanism' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'mechanism' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Mechanism
           </Button>
@@ -1314,7 +1314,7 @@ export function IndustryLandscapeView() {
               // lens overview (transition map + industries table).
               if (mode !== 'construction' || selectedConstruction) pickConstruction(null)
             }}
-            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'construction' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'construction' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
             data-testid="mode-construction"
           >
             Construction
