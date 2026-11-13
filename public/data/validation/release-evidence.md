@@ -312,7 +312,7 @@ Valid review records: 96.
 
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
-| vector-source             |                  5 |
+| vector-source             |                  2 |
 | coverage-waiver           |                 19 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
@@ -359,12 +359,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `4cde9ec8105d294a7c5a49b5fd3a518af072d53f7a8c39a1a4903022618dbde0` |
+| `public/data/validation/coverage-matrix.json`                           | `76122b82dab0acb0f74968de4c41cc8f59a6bdd7834488559de18a915a61952b` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700` |
 | `src/data/validation/open-gaps.json`                                    | `fdb9f768b8901caf0f5e2f044e00688796bc3d39bfedcb7185f4d00fc0fde7d1` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `27de80b7569bbad21255e6305a7f751314f2626db6e18d8940b11722bb9f104e` |
-| `src/data/validation/validation-counts.generated.json`                  | `f023b845002988f141320149a591858bc0567f32cca774e9785d4c9ae566398d` |
-| `src/data/validation/vector-manifest.json`                              | `8cbeb36566320ad9c72520b76a93caf446091271c8024373465b28990acfdf95` |
+| `src/data/validation/validation-counts.generated.json`                  | `7c611e26745eca8191a97fb0ba645c1667b49e57fb1395eba203c1c8fde3a8ec` |
+| `src/data/validation/vector-manifest.json`                              | `a3ae937eaf449b12a8d2823373e37cc679032f2be0259cca6a6bc68442467352` |
