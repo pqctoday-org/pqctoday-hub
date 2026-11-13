@@ -8,6 +8,7 @@ import { ARCH_GUIDE_DATA } from '../ArchQuantumImpact/data'
 import devContent from './content.ts?raw'
 import devRag from './rag-summary.md?raw'
 import devCurious from './curious-summary.md?raw'
+import { ARCH_QUANTUM_EXERCISES } from '../ArchQuantumImpact/exercises'
 import archContent from '../ArchQuantumImpact/content.ts?raw'
 import archRag from '../ArchQuantumImpact/rag-summary.md?raw'
 import archCurious from '../ArchQuantumImpact/curious-summary.md?raw'
@@ -20,6 +21,7 @@ const text = (value: unknown) => JSON.stringify(value)
 const surfaces: Record<string, string> = {
   'developer guide data': text(DEV_GUIDE_DATA),
   'architect guide data': text(ARCH_GUIDE_DATA),
+  'architect exercises': text(ARCH_QUANTUM_EXERCISES),
   'developer content': devContent,
   'architect content': archContent,
   'developer rag summary': devRag,
@@ -104,6 +106,14 @@ describe('role lessons carry no invented latency or approximate handshake sizes'
         /\b(not|no|nor|never|without|does not|do not|did not)\b|\bnot a\b/i
       )
     }
+  })
+
+  it('the architect IoT exercise states the captured certificate message sizes', () => {
+    const exercise = ARCH_QUANTUM_EXERCISES.find((e) => e.title.includes('IoT Certificate'))!
+    expect(exercise.prompt).toContain('Fictional example')
+    expect(exercise.prompt).toContain('11,100')
+    expect(exercise.prompt).toContain('1,642')
+    expect(exercise.prompt).not.toMatch(/12\s?KB/)
   })
 
   it('no longer quotes the old approximate handshake payloads', () => {
