@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import {
+  MATRIX_RULES,
   MATRIX_STATUSES,
   assertStatus,
   buildCoverageMatrix,
@@ -406,5 +407,12 @@ describe('unsupported cells sit outside the denominator (the rule the page print
     const gap = matrix.openGaps.find((g) => g.id === 'unsupported-cells')
     expect(gap?.cells).toBe(cpp.unsupportedCells + rust.unsupportedCells)
     expect(gap?.cells).not.toBe(cpp.advertisedCells + rust.advertisedCells)
+  })
+})
+
+describe('the printed artifact rule matches where the recorded runs executed', () => {
+  it('says the registered wasm tests are recorded in Node.js, not in a browser', () => {
+    expect(MATRIX_RULES.artifacts).not.toMatch(/run in the browser/)
+    expect(MATRIX_RULES.artifacts).toMatch(/recorded[^.]*Node\.js, not in a browser/)
   })
 })
