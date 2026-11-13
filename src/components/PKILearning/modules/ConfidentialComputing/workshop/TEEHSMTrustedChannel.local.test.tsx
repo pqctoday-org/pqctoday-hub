@@ -10,6 +10,9 @@ import {
   hsm_unwrapKeyMech,
   hsm_extractKeyValue,
   hsm_ecdsaVerify,
+  hsm_sign,
+  hsm_encapsulate,
+  hsm_generateMLKEMKeyPair,
 } from '@/wasm/softhsm'
 
 vi.mock('@/components/PKILearning/common/HsmCapabilityEvidence', () => ({
@@ -50,6 +53,11 @@ vi.mock('@/wasm/softhsm', async (importOriginal) => ({
   hsm_unwrapKeyMech: vi.fn(() => 10),
 }))
 
+// Pick which key handle is the ML-KEM public key (handle 3), a second ML-KEM key (31) or any other.
+const kemPub = (fill: number) => new Uint8Array(1184).fill(fill)
+const extractDefault = (_m: unknown, _s: unknown, handle: number) =>
+  handle === 3 ? kemPub(1) : handle === 31 ? kemPub(2) : new Uint8Array(32).fill(1)
+
 const runSample = (pqc = true) => {
   render(
     <MemoryRouter>
@@ -67,8 +75,15 @@ describe('TEE sample provisioning verification gates', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(hsm_ecdsaVerify).mockReset().mockReturnValue(true)
-    vi.mocked(hsm_verify).mockReturnValue(true)
-    vi.mocked(hsm_extractKeyValue).mockReturnValue(new Uint8Array(32).fill(1))
+    vi.mocked(hsm_verify).mockReset().mockReturnValue(true)
+    vi.mocked(hsm_extractKeyValue)
+      .mockReset()
+      .mockImplementation(extractDefault as never)
+    vi.mocked(hsm_sign).mockReset().mockReturnValue(new Uint8Array(3309))
+    vi.mocked(hsm_encapsulate)
+      .mockReset()
+      .mockReturnValue({ ciphertextBytes: new Uint8Array(1088), secretHandle: 6 })
+    vi.mocked(hsm_generateMLKEMKeyPair).mockReset().mockReturnValue({ pubHandle: 3, privHandle: 4 })
   })
 
   it('stops before receiver decapsulation and unwrap when attestation fails', async () => {
@@ -83,9 +98,8 @@ describe('TEE sample provisioning verification gates', () => {
   })
 
   it('stops before unwrap when recovered secrets differ, including unequal lengths', async () => {
-    vi.mocked(hsm_extractKeyValue).mockImplementation((_m, _s, handle) =>
-      handle === 9 ? new Uint8Array(0) : new Uint8Array(32).fill(1)
-    )
+    vi.mocked(hsm_extractKeyValue).mockImplementation(((m: unknown, s: unknown, handle: number) =>
+      handle === 9 ? new Uint8Array(0) : extractDefault(m, s, handle)) as never)
     runPqc()
     await screen.findAllByText(/Recovered sample secret does not match; key unwrap stopped\./)
     expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
@@ -95,6 +109,77 @@ describe('TEE sample provisioning verification gates', () => {
     runPqc()
     await waitFor(() => expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1))
     expect(await screen.findByText(/Protocol complete/)).toBeInTheDocument()
+  })
+})
+
+describe('channel statement and binding checks', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(hsm_verify).mockReset().mockReturnValue(true)
+    vi.mocked(hsm_sign).mockReset().mockReturnValue(new Uint8Array(3309))
+    vi.mocked(hsm_extractKeyValue)
+      .mockReset()
+      .mockImplementation(extractDefault as never)
+    vi.mocked(hsm_generateMLKEMKeyPair).mockReset().mockReturnValue({ pubHandle: 3, privHandle: 4 })
+    vi.mocked(hsm_encapsulate)
+      .mockReset()
+      .mockReturnValue({ ciphertextBytes: new Uint8Array(1088), secretHandle: 6 })
+  })
+  const chooseFault = (label: RegExp) => {
+    render(
+      <MemoryRouter>
+        <TEEHSMTrustedChannel />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Intel SGX + Thales Luna' }))
+    fireEvent.click(screen.getByRole('button', { name: 'PQC' }))
+    fireEvent.click(screen.getByLabelText(label))
+    fireEvent.click(screen.getByRole('button', { name: 'Execute (Live WASM)' }))
+  }
+
+  it('signs report_data and the ciphertext digest, not the ciphertext length or a handle', async () => {
+    runPqc()
+    await waitFor(() => expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1))
+    const signed = vi.mocked(hsm_sign).mock.calls[0][3]
+    expect(signed).toMatch(
+      /^tee-hsm-channel-v1\|report_data=[0-9a-f]{128}\|ct_sha256=[0-9a-f]{64}$/
+    )
+    expect(signed).not.toMatch(/ks-handle|kem-ct=/)
+    expect(vi.mocked(hsm_verify).mock.calls[0][3]).toBe(signed)
+  })
+
+  it('labels the binding as simulated on the page', async () => {
+    runPqc()
+    await waitFor(() => expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1))
+    expect(
+      (await screen.findAllByText(/simulated: a recorded report cannot carry this page's key/))
+        .length
+    ).toBeGreaterThan(0)
+  })
+
+  it('stops before decapsulation when the receiver gets a different ciphertext of the same length', async () => {
+    const other = new Uint8Array(1088).fill(5)
+    vi.mocked(hsm_encapsulate)
+      .mockReset()
+      .mockReturnValueOnce({ ciphertextBytes: new Uint8Array(1088), secretHandle: 6 })
+      .mockReturnValueOnce({ ciphertextBytes: other, secretHandle: 16 })
+    chooseFault(/different ciphertext of the same length/)
+    await screen.findAllByText(
+      /Channel binding failed \(ciphertext-binding\); provisioning stopped\./
+    )
+    expect(hsm_decapsulate).not.toHaveBeenCalled()
+    expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
+  })
+
+  it('stops before decapsulation when the statement names a different recipient key', async () => {
+    vi.mocked(hsm_generateMLKEMKeyPair)
+      .mockReset()
+      .mockReturnValueOnce({ pubHandle: 3, privHandle: 4 })
+      .mockReturnValueOnce({ pubHandle: 31, privHandle: 32 })
+    chooseFault(/different recipient ML-KEM key/)
+    await screen.findAllByText(/Channel binding failed \(key-binding\); provisioning stopped\./)
+    expect(hsm_decapsulate).not.toHaveBeenCalled()
+    expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
   })
 })
 
