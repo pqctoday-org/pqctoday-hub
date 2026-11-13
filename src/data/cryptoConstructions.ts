@@ -1443,9 +1443,9 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
     explain: {
       plain:
-        'WireGuard sets up its VPN keys with a short handshake built from the Noise framework, using X25519 key exchanges and an optional preshared key.',
+        'WireGuard sets up its VPN keys with a short Diffie-Hellman handshake built from the Noise framework, with an optional preshared key.',
       whyItMattersForPqc:
-        'X25519 is broken by a quantum computer; Rosenpass keeps WireGuard and feeds it a post-quantum preshared key, and research such as PQ-WireGuard replaces the exchanges with KEMs.',
+        'Its Diffie-Hellman exchanges are broken by a quantum computer; Rosenpass keeps WireGuard and feeds it a post-quantum preshared key, and research such as PQ-WireGuard replaces the exchanges with KEMs.',
       diagram: {
         inputs: ['static and ephemeral keys', 'optional preshared key'],
         combiner: 'Noise IKpsk2 handshake',
@@ -1462,7 +1462,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         algorithms: ['ML-KEM'],
         status: 'research',
         proofRefs: ['Post-Quantum-Noise-IACR-ePrint-2022-539'],
-        note: 'Research: the paper replaces Diffie-Hellman in Noise patterns with KEMs and instantiates them with Kyber, the pre-FIPS 203 version of ML-KEM.',
+        note: 'Research: the paper replaces the Diffie-Hellman key exchanges in Noise with generic KEMs; ML-KEM stands here for the standard KEM such a pattern would use.',
       },
     ],
     cycloneDxPrimitive: 'key-agree',
