@@ -26,6 +26,10 @@ function profileFacts(name: string) {
     certificateMessageBytes: size('Certificate'),
     clientHelloBytes: size('ClientHello'),
     serverHelloBytes: size('ServerHello'),
+    /** Bytes the server sends: the handshake messages sent server-to-client */
+    serverFlightBytes: profile.messages
+      .filter((m) => m.direction === 'server-to-client')
+      .reduce((sum, m) => sum + m.bytes, 0),
   }
 }
 

@@ -42,8 +42,7 @@ const GATEWAY_KAT_SPECS: KatTestSpec[] = [
 type CryptoMode = 'classical' | 'pqc-hybrid'
 
 function formatBytes(bytes: number): string {
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${bytes} B`
+  return `${bytes.toLocaleString('en-US')} B`
 }
 
 const PatternFlow: React.FC<{
@@ -52,8 +51,8 @@ const PatternFlow: React.FC<{
 }> = ({ pattern, cryptoMode }) => {
   const overhead =
     cryptoMode === 'pqc-hybrid'
-      ? pattern.bandwidthOverheadBytes.pqcHybrid
-      : pattern.bandwidthOverheadBytes.classical
+      ? pattern.handshakeBytes.pqcHybrid
+      : pattern.handshakeBytes.classical
 
   return (
     <div className="space-y-4">
@@ -272,10 +271,10 @@ export const TLSTerminationPatterns: React.FC = () => {
             <tbody className="divide-y divide-border">
               {TERMINATION_PATTERNS.map((p) => {
                 const increase =
-                  p.bandwidthOverheadBytes.classical > 0
+                  p.handshakeBytes.classical > 0
                     ? Math.round(
-                        ((p.bandwidthOverheadBytes.pqcHybrid - p.bandwidthOverheadBytes.classical) /
-                          p.bandwidthOverheadBytes.classical) *
+                        ((p.handshakeBytes.pqcHybrid - p.handshakeBytes.classical) /
+                          p.handshakeBytes.classical) *
                           100
                       )
                     : 0
@@ -283,10 +282,10 @@ export const TLSTerminationPatterns: React.FC = () => {
                   <tr key={p.id}>
                     <td className="py-1.5 pr-3 font-medium text-foreground">{p.name}</td>
                     <td className="py-1.5 pr-3 font-mono text-muted-foreground">
-                      {formatBytes(p.bandwidthOverheadBytes.classical)}
+                      {formatBytes(p.handshakeBytes.classical)}
                     </td>
                     <td className="py-1.5 pr-3 font-mono text-muted-foreground">
-                      {formatBytes(p.bandwidthOverheadBytes.pqcHybrid)}
+                      {formatBytes(p.handshakeBytes.pqcHybrid)}
                     </td>
                     <td className="py-1.5 pr-3 font-mono text-status-warning">
                       {increase > 0 ? `+${increase}%` : '\u2014'}

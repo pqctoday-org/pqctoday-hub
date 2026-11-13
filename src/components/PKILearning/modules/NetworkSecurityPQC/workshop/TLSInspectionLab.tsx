@@ -24,7 +24,7 @@ interface TLSAlgorithm {
 // two certificates: the RSA (2,656 B), ECDSA (1,651 B) and ML-DSA-65 (11,869 B) values are
 // the TLS 1.3 Certificate message examples in the IETF C509 draft; the hybrid ML-DSA-65
 // chain reuses the ML-DSA-65 example as its minimum, and the ML-DSA-87 chain is two
-// times its certificate minimum. Handshake and inspected-handshake XX
+// times its certificate minimum. No handshake time is simulated; the module reports sizes only.
 const TLS_ALGORITHMS: TLSAlgorithm[] = [
   {
     id: 'rsa2048',
@@ -245,8 +245,8 @@ export const TLSInspectionLab: React.FC = () => {
 
       {/* Metrics */}
       <div className="glass-panel p-5">
-        <h4 className="text-sm font-bold text-foreground mb-4">Performance Metrics</h4>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <h4 className="text-sm font-bold text-foreground mb-4">Size Metrics</h4>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div
               className={`text-lg font-bold ${stats.certOverheadKB > 4 ? 'text-status-error' : stats.certOverheadKB > 2 ? 'text-status-warning' : 'text-status-success'}`}

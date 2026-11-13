@@ -247,7 +247,7 @@ export interface TerminationPattern {
   /** TLS sessions the pattern shows (a passthrough pattern has one, end to end) */
   tlsSessions: number
   /** Measured seven-message handshake bytes for all of the pattern's TLS sessions */
-  bandwidthOverheadBytes: { classical: number; pqcHybrid: number }
+  handshakeBytes: { classical: number; pqcHybrid: number }
   steps: TerminationStep[]
 }
 
@@ -269,7 +269,7 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     wafCanInspect: true,
     certsRequired: 1,
     tlsSessions: 1,
-    bandwidthOverheadBytes: sessionBytes(1),
+    handshakeBytes: sessionBytes(1),
     steps: [
       { label: 'Client \u2192 Gateway', encrypted: true, algorithm: 'TLS 1.3' },
       { label: 'Gateway decrypts & inspects', encrypted: false, algorithm: 'Plaintext' },
@@ -285,7 +285,7 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     wafCanInspect: false,
     certsRequired: 0,
     tlsSessions: 1,
-    bandwidthOverheadBytes: sessionBytes(1),
+    handshakeBytes: sessionBytes(1),
     steps: [
       { label: 'Client \u2192 Gateway (encrypted)', encrypted: true, algorithm: 'TLS 1.3' },
       {
@@ -304,7 +304,7 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     wafCanInspect: true,
     certsRequired: 2,
     tlsSessions: 2,
-    bandwidthOverheadBytes: sessionBytes(2),
+    handshakeBytes: sessionBytes(2),
     steps: [
       { label: 'Client \u2192 Gateway (TLS 1)', encrypted: true, algorithm: 'TLS 1.3' },
       { label: 'Gateway decrypts & inspects', encrypted: false, algorithm: 'Plaintext' },
@@ -320,7 +320,7 @@ export const TERMINATION_PATTERNS: TerminationPattern[] = [
     wafCanInspect: true,
     certsRequired: 2,
     tlsSessions: 2,
-    bandwidthOverheadBytes: sessionBytes(2),
+    handshakeBytes: sessionBytes(2),
     steps: [
       { label: 'Client \u2192 Gateway (Public CA)', encrypted: true, algorithm: 'TLS 1.3' },
       { label: 'Gateway decrypts', encrypted: false, algorithm: 'Plaintext' },
@@ -687,7 +687,7 @@ export interface GatewayBenchmark {
 export const GATEWAY_FIGURES_NOTE =
   "Illustrative scenario figures, not measurements or vendor specifications: for the capacity table's handshake rates no benchmark source or test conditions are supplied. Real handshake rates, latency, memory use and TLS-inspection limits depend on the gateway model and software version, the cipher and certificate mix, session resumption and the traffic profile, so measure your own gateway and inspection path with a post-quantum handshake instead of assuming a uniform buffer size or performance."
 
-export const TERMINATION_BYTES_NOTE = `Handshake bytes are the measured seven-message totals from the Hub's sample capture (${MEASURED_HANDSHAKE_FACTS.classical.label}: ${MEASURED_HANDSHAKE_FACTS.classical.totalBytes.toLocaleString('en-US')} B; ${MEASURED_HANDSHAKE_FACTS.hybrid.label}: ${MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes.toLocaleString('en-US')} B) multiplied by the TLS sessions the pattern shows. They are sample profiles, not a standard or a vendor claim, and no handshake time was measured.`
+export const TERMINATION_BYTES_NOTE = `Handshake bytes are the measured seven-message totals from the Hub's sample capture (${MEASURED_HANDSHAKE_FACTS.classical.label}: ${MEASURED_HANDSHAKE_FACTS.classical.totalBytes.toLocaleString('en-US')} B; ${MEASURED_HANDSHAKE_FACTS.hybrid.label}: ${MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes.toLocaleString('en-US')} B) multiplied by the TLS sessions the pattern shows (Terminate & Inspect counts the client leg only; a TLS-protected backend leg would add one more). They are sample profiles, not a standard or a vendor claim, and no handshake time was measured.`
 
 export const GATEWAY_BENCHMARKS: GatewayBenchmark[] = [
   {

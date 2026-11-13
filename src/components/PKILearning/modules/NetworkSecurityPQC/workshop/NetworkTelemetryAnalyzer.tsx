@@ -3,11 +3,15 @@ import React, { useState } from 'react'
 import { Activity, Clock, ShieldAlert, Server, Smartphone, Wifi } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { calculateTelemetryImpact } from '../utils/telemetryMath'
+import {
+  MEASURED_HANDSHAKE_FACTS as FACTS,
+  formatBytes,
+} from '../../VPNSSHModule/data/measuredHandshakeFacts'
 
 const PROFILES = [
-  { id: 'classical', name: 'Classical (ECDSA)', payloadBytes: 2500 },
-  { id: 'hybrid', name: 'Hybrid (P-256 + ML-DSA-44)', payloadBytes: 6500 },
-  { id: 'pure-pqc', name: 'Pure PQC (ML-DSA-65)', payloadBytes: 25000 },
+  { id: 'classical', name: FACTS.classical.label, payloadBytes: FACTS.classical.serverFlightBytes },
+  { id: 'hybrid', name: FACTS.hybrid.label, payloadBytes: FACTS.hybrid.serverFlightBytes },
+  { id: 'pure-pqc', name: FACTS.pqc.label, payloadBytes: FACTS.pqc.serverFlightBytes },
 ]
 
 export const NetworkTelemetryAnalyzer: React.FC = () => {
@@ -58,7 +62,12 @@ export const NetworkTelemetryAnalyzer: React.FC = () => {
               ))}
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
-              Payload sizes are illustrative profiles of this module, not measurements.
+              Payload is the bytes the server sends in the Hub&apos;s measured sample capture
+              (handshake messages from the server: all but the ClientHello and the client&apos;s
+              Finished; whole capture totals {formatBytes(FACTS.classical.totalBytes)} /{' '}
+              {formatBytes(FACTS.hybrid.totalBytes)} / {formatBytes(FACTS.pqc.totalBytes)} B). The
+              segment and round-trip counts are a simple model of this module, not a measurement of
+              any network, and no handshake time was measured.
             </p>
           </div>
 
@@ -202,8 +211,9 @@ export const NetworkTelemetryAnalyzer: React.FC = () => {
               <p className="text-xs text-muted-foreground mt-3">
                 <strong>Why this matters:</strong> PQC signatures are large enough to starve the
                 standard TCP Initial Congestion Window. This forces the server to pause transmission
-                and wait for network acknowledgements, effectively doubling the network latency of
-                the TLS handshake over high-latency links (e.g., satellite or 5G).
+                and wait for network acknowledgements, which in this model adds one round trip to
+                the handshake. How much time that costs depends on the path, for example a
+                high-latency satellite or mobile link; measure it on yours.
               </p>
             )}
           </div>
