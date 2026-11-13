@@ -2,9 +2,10 @@
 /**
  * Browser-side appraisal of a recorded AMD SEV-SNP attestation report.
  *
- * Every check below runs real cryptography on the recorded bytes (WebCrypto for RSA-PSS and
- * ECDSA P-384, @peculiar/x509 to read the certificates). Each check reports pass or fail on its
- * own, so a failure is attributed to the one thing that failed:
+ * The chain and signature checks run real cryptography on the recorded bytes (WebCrypto for
+ * RSA-PSS and ECDSA P-384, @peculiar/x509 to read the certificates); validity, VCEK binding,
+ * measurement and challenge are comparisons against values the verifier holds. Each check
+ * reports pass or fail on its own, so a failure is attributed to the one thing that failed:
  *
  *   chain          VCEK -> ASK -> ARK signatures (RSA-PSS, SHA-384) and the pinned ARK fingerprint
  *   validity       all three certificates are inside their validity period at the evaluation time
@@ -411,6 +412,25 @@ function checkChallenge(report: SnpReport, ledger: ChallengeLedger): CheckResult
   }
 }
 
+/** A check that throws did not run: it is reported as not run and not passed, never as passed. */
+async function guarded(
+  id: CheckId,
+  fn: () => CheckResult | Promise<CheckResult>
+): Promise<CheckResult> {
+  try {
+    return await fn()
+  } catch (e) {
+    return {
+      id,
+      label: id,
+      ran: false,
+      passed: false,
+      attributedTo: 'check did not execute',
+      detail: `did not run: ${(e as Error).message}`,
+    }
+  }
+}
+
 // ── Appraisal ──────────────────────────────────────────────────────────────
 
 /**
@@ -427,12 +447,12 @@ export async function verifySnpEvidence(
   const vcek = new X509Certificate(toBuf(evidence.vcekDer))
   const chain = parseChain(evidence.chainPem)
   const checks: CheckResult[] = [
-    await checkChain(vcek, chain, policy),
-    checkValidity(vcek, chain, now),
-    checkVcekBinding(vcek, report),
-    await checkSignature(vcek, report),
-    checkMeasurement(report, policy),
-    checkChallenge(report, ledger),
+    await guarded('chain', () => checkChain(vcek, chain, policy)),
+    await guarded('validity', () => checkValidity(vcek, chain, now)),
+    await guarded('vcek-binding', () => checkVcekBinding(vcek, report)),
+    await guarded('signature', () => checkSignature(vcek, report)),
+    await guarded('measurement', () => checkMeasurement(report, policy)),
+    await guarded('challenge', () => checkChallenge(report, ledger)),
   ]
   return { checks, allPassed: checks.every((c) => c.ran && c.passed), report, evaluatedAt: now }
 }
@@ -458,8 +478,9 @@ export const TAMPER_OFFSET_GUEST_SVN = 0x04
 
 /**
  * An attacker who generates their own P-384 key, re-signs the same report body with it and
- * supplies a certificate for that key that copies the real VCEK's chip and TCB extensions.
- * The signature verifies under the attacker's key; the certificate does not chain to the ARK.
+ * supplies a certificate for that key that names the ASK as issuer and copies the real VCEK's
+ * chip and TCB extensions. The signature verifies under the attacker's key; the certificate's
+ * own signature is not the ASK's, so the chain check rejects it at the RSA-PSS step.
  */
 export async function buildAttackerEvidence(evidence: SnpEvidence): Promise<SnpEvidence> {
   const real = new X509Certificate(toBuf(evidence.vcekDer))
@@ -482,14 +503,18 @@ export async function buildAttackerEvidence(evidence: SnpEvidence): Promise<SnpE
   const copied = real.extensions
     .filter((e) => e.type.startsWith('1.3.6.1.4.1.3704.1.'))
     .map((e) => new Extension(e.type, e.critical, e.value))
-  const cert = await X509CertificateGenerator.createSelfSigned(
+  // The forged certificate names the real ASK as its issuer, so the chain check has to reach the
+  // signature and cannot reject it on the issuer name alone.
+  const cert = await X509CertificateGenerator.create(
     {
       serialNumber: '01',
-      name: real.subject,
+      subject: real.subject,
+      issuer: parseChain(evidence.chainPem).ask.subject,
       notBefore: real.notBefore,
       notAfter: real.notAfter,
       signingAlgorithm: { name: 'ECDSA', hash: 'SHA-384' },
-      keys,
+      publicKey: keys.publicKey,
+      signingKey: keys.privateKey,
       extensions: copied,
     },
     cryptoProvider.get()

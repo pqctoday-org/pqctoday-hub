@@ -40,6 +40,10 @@ describe('AMD SEV-SNP report verifier panel', () => {
     expect(d).toMatch(/not a fresh value issued by this page/)
     expect(d).toMatch(/ECDSA P-384/)
     expect(d).toMatch(/Nothing in this real evidence is ML-DSA or ML-KEM/)
+    const n = screen.getByTestId('amd-not-appraised').textContent ?? ''
+    expect(n).toMatch(/allows debugging/)
+    expect(n).toMatch(/revocation lists/)
+    expect(d).toMatch(/valid until\s+2029-09-24/)
   })
 
   it('runs six separate real checks and passes them on the recorded report', async () => {

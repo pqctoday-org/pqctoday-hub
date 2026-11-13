@@ -171,6 +171,13 @@ describe('channel statement and binding checks', () => {
     expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
   })
 
+  it('stops before decapsulation when the challenge was already used', async () => {
+    chooseFault(/challenge was already used once/)
+    await screen.findAllByText(/Sample challenge was not fresh; provisioning stopped\./)
+    expect(hsm_decapsulate).not.toHaveBeenCalled()
+    expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
+  })
+
   it('stops before decapsulation when the statement names a different recipient key', async () => {
     vi.mocked(hsm_generateMLKEMKeyPair)
       .mockReset()

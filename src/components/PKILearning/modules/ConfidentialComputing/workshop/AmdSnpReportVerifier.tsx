@@ -209,7 +209,15 @@ export const AmdSnpReportVerifier: React.FC = () => {
           AMD signs the report with ECDSA P-384 and its certificates use RSA-4096 with PSS padding.
           Nothing in this real evidence is ML-DSA or ML-KEM: today&apos;s vendor attestation is not
           post-quantum. The pinned measurement is only what that one recorded VM measured; it is not
-          a known-good image from a vendor registry.
+          a known-good image from a vendor registry. The sample&apos;s VCEK certificate is valid
+          until 2029-09-24; after that date the validity check fails, as it should.
+        </p>
+        <p data-testid="amd-not-appraised">
+          Not appraised here: the guest policy (this sample&apos;s policy allows debugging, bit 19,
+          which a real relying party would normally refuse), revocation lists, a minimum TCB level,
+          the certificate product and CA fields, and VLEK-signed reports. Passing the checks below
+          shows the report is genuine and matches this page&apos;s pins, not that the guest is safe
+          to trust.
         </p>
       </div>
 
@@ -245,7 +253,7 @@ export const AmdSnpReportVerifier: React.FC = () => {
       )}
 
       {result && (
-        <div className="space-y-2" data-testid="amd-snp-result">
+        <div className="space-y-2" data-testid="amd-snp-result" aria-live="polite">
           <div className="text-xs font-bold text-foreground">{scenario}</div>
           <ResultRows rows={result.checks} testIdPrefix="amd-check" />
           <div
@@ -262,8 +270,9 @@ export const AmdSnpReportVerifier: React.FC = () => {
           {r && (
             <div className="text-[11px] text-muted-foreground font-mono break-all">
               measurement {bytesToHex(r.measurement).slice(0, 32)}... · policy 0x
-              {r.policy.toString(16)} · VMPL {r.vmpl} · TCB bootloader {r.reportedTcb.bl}, TEE{' '}
-              {r.reportedTcb.tee}, SNP {r.reportedTcb.snp}, microcode {r.reportedTcb.ucode}
+              {r.policy.toString(16)} (debug allowed: {(r.policy >> 19n) & 1n ? 'yes' : 'no'}) ·
+              VMPL {r.vmpl} · TCB bootloader {r.reportedTcb.bl}, TEE {r.reportedTcb.tee}, SNP{' '}
+              {r.reportedTcb.snp}, microcode {r.reportedTcb.ucode}
             </div>
           )}
         </div>
@@ -284,7 +293,7 @@ export const AmdSnpReportVerifier: React.FC = () => {
           Run simulated binding step
         </Button>
         {binding && (
-          <div className="space-y-3" data-testid="amd-binding-result">
+          <div className="space-y-3" data-testid="amd-binding-result" aria-live="polite">
             {binding.map((s) => (
               <div key={s.key}>
                 <div className="text-xs font-bold text-foreground mb-1">

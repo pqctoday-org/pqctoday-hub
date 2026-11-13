@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // @vitest-environment node
+import 'reflect-metadata'
 import { describe, expect, it } from 'vitest'
 import { sha256 } from '@noble/hashes/sha2.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
@@ -14,12 +15,14 @@ import {
   buildAttackerEvidence,
   channelEstablished,
   flipBit,
+  parseChain,
   parseSnpReport,
   policyWithWrongMeasurement,
   verifySnpEvidence,
   type CheckId,
   type VerificationResult,
 } from './amdSnpVerifier'
+import { X509Certificate } from '@peculiar/x509'
 import { bindingDigest, channelStatement, checkChannelBinding } from './channelBinding'
 
 const NOW = new Date('2026-11-12T00:00:00Z')
@@ -114,9 +117,25 @@ describe('4. a valid attacker-key signature fails the trust-root check', () => {
     expect(byId(r, 'signature').passed).toBe(true)
     expect(byId(r, 'chain').passed).toBe(false)
     expect(byId(r, 'chain').detail).toMatch(/VCEK signed by ASK: FAIL/)
+    // The issuer name is the real ASK's, so the failure comes from the signature check.
+    const parsed = new X509Certificate(forged.vcekDer.slice().buffer as ArrayBuffer)
+    expect(parsed.issuer).toBe(parseChain(forged.chainPem).ask.subject)
     expect(byId(r, 'vcek-binding').passed).toBe(true)
     expect(failing(r)).toEqual(['chain'])
     expect(r.allPassed).toBe(false)
+  })
+
+  it('a real VCEK with one bit changed in its signed content or its signature fails the chain only', async () => {
+    const real = loadAmdSnpSampleEvidence()
+    const at = bytesToHex(real.vcekDer).indexOf(bytesToHex(new TextEncoder().encode('SEV-VCEK')))
+    expect(at).toBeGreaterThan(0)
+    for (const offset of [at / 2, real.vcekDer.length - 5]) {
+      const vcekDer = Uint8Array.from(real.vcekDer)
+      vcekDer[offset] ^= 1
+      const r = await verifySnpEvidence({ ...real, vcekDer }, DEFAULT_POLICY, fresh(), NOW)
+      expect(byId(r, 'chain').passed, `offset ${offset}`).toBe(false)
+      expect(byId(r, 'chain').detail).toMatch(/ARK self-signed: ok.*ASK signed by ARK: ok/)
+    }
   })
 
   it('a different pinned root rejects the genuine chain too', async () => {

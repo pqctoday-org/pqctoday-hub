@@ -101,7 +101,7 @@ const TEE_LIVE_OPERATIONS = [
 /** Context string mixed into the sample channel binding. */
 const TEE_CHANNEL_CONTEXT = 'tee-hsm-kek-v1'
 
-type ChannelFault = 'none' | 'swap-ciphertext' | 'wrong-recipient-key'
+type ChannelFault = 'none' | 'swap-ciphertext' | 'wrong-recipient-key' | 'replayed-challenge'
 
 // Preserve the local sample failure; generic crypto hints may describe an unrelated workflow.
 class SampleProvisioningCheckError extends Error {}
@@ -531,6 +531,10 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
         } else if (channelFault === 'wrong-recipient-key') {
           const otherKem = hsm_generateMLKEMKeyPair(M, hSession, 768)
           recipientKeyUsed = hsm_extractKeyValue(M, hSession, otherKem.pubHandle)
+        }
+        if (channelFault === 'replayed-challenge') {
+          // Simulated earlier use of the same challenge, so the receiver sees a replay.
+          challengeLedger.consume(challenge)
         }
         const verifyOk = hsm_verify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
         if (!verifyOk) {
@@ -1449,6 +1453,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   ['none', 'No fault: right recipient key, committed ciphertext'],
                   ['swap-ciphertext', 'Receiver gets a different ciphertext of the same length'],
                   ['wrong-recipient-key', 'Statement names a different recipient ML-KEM key'],
+                  ['replayed-challenge', 'The challenge was already used once (replay)'],
                 ] as const
               ).map(([id, label]) => (
                 <label key={id} className="flex items-center gap-2 text-muted-foreground">
