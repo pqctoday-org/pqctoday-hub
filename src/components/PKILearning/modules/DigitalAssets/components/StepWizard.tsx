@@ -276,7 +276,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             <Button
               variant="ghost"
               onClick={onComplete || onBack}
-              className="flex-1 min-h-[44px] gap-2 bg-success hover:bg-success/90 text-success-foreground"
+              className="flex-1 min-h-[44px] gap-2 bg-success text-success-foreground hover:bg-success/90 hover:text-success-foreground"
             >
               <CheckCircle size={16} />
               {completeLabel || 'Completed'}
@@ -285,7 +285,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             <Button
               variant="ghost"
               onClick={onNext}
-              className="flex-1 min-h-[44px] gap-2 bg-success hover:bg-success/90 text-success-foreground"
+              className="flex-1 min-h-[44px] gap-2 bg-success text-success-foreground hover:bg-success/90 hover:text-success-foreground"
             >
               Next Step
               <ChevronRight size={16} />
