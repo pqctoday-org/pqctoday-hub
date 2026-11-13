@@ -239,29 +239,87 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
     }
   })
 
-  it('ML-DSA verify: both engines refuse all 404 invalid and accept all 227 valid signatures', () => {
+  // ENGINE FINDINGS under the refusal rule (only the code a step names counts;
+  // measured 2026-11-13 on the bundled engines). Each row is a Wycheproof
+  // `invalid` case that the engine imports and then fails with a code that is
+  // not a refusal for that step, so it is an ERROR row, never a pass:
+  //  - Rust, verify: a public key one byte short or long (IncorrectPublicKeyLength)
+  //    imports with CKR_OK, then C_Verify → CKR_KEY_TYPE_INCONSISTENT.
+  //  - C++, sign (expanded key): a private key of the wrong length
+  //    (IncorrectPrivateKeyLength) or with s1/s2 out of range (InvalidPrivateKey)
+  //    imports with CKR_OK, then C_Sign → CKR_GENERAL_ERROR.
+  // The fix belongs in the engines (refuse the key at C_CreateObject with
+  // CKR_ATTRIBUTE_VALUE_INVALID, as Rust does for the private key). When an
+  // engine is fixed, its rows move to pass and this list shrinks.
+  const ERROR_ROWS = {
+    rustVerify: [
+      'wyc-mldsa44verify-tg2-tc64-Rust',
+      'wyc-mldsa44verify-tg3-tc65-Rust',
+      'wyc-mldsa44verify-tg25-tc145-Rust',
+      'wyc-mldsa44verify-tg26-tc146-Rust',
+      'wyc-mldsa65verify-tg2-tc69-Rust',
+      'wyc-mldsa65verify-tg3-tc70-Rust',
+      'wyc-mldsa65verify-tg23-tc158-Rust',
+      'wyc-mldsa65verify-tg24-tc159-Rust',
+      'wyc-mldsa87verify-tg2-tc62-Rust',
+      'wyc-mldsa87verify-tg3-tc63-Rust',
+      'wyc-mldsa87verify-tg23-tc171-Rust',
+      'wyc-mldsa87verify-tg24-tc172-Rust',
+    ],
+    cppSign: [
+      'wyc-mldsa44signnoseed-tg2-tc50-C++',
+      'wyc-mldsa44signnoseed-tg3-tc51-C++',
+      'wyc-mldsa44signnoseed-tg4-tc52-C++',
+      'wyc-mldsa44signnoseed-tg5-tc53-C++',
+      'wyc-mldsa65signnoseed-tg2-tc54-C++',
+      'wyc-mldsa65signnoseed-tg3-tc55-C++',
+      'wyc-mldsa65signnoseed-tg4-tc56-C++',
+      'wyc-mldsa65signnoseed-tg5-tc57-C++',
+      'wyc-mldsa87signnoseed-tg2-tc45-C++',
+      'wyc-mldsa87signnoseed-tg3-tc46-C++',
+      'wyc-mldsa87signnoseed-tg4-tc47-C++',
+      'wyc-mldsa87signnoseed-tg5-tc48-C++',
+    ],
+  }
+  const expectErrorRows = (got: TestResult[], ids: string[], observed: RegExp) => {
+    expect(got.filter((r) => r.status !== 'pass').map((r) => r.id)).toEqual(ids)
+    for (const id of ids) {
+      const r = got.find((x) => x.id === id)!
+      expect(r.status, id).toBe('fail')
+      expect(r.caseMeta?.error, id).toBe(true)
+      expect(r.caseMeta?.parameters?.wycheproofResult, id).toBe('invalid')
+      expect(r.details, id).toMatch(/^ERROR: /)
+      expect(r.caseMeta?.observed, id).toMatch(observed)
+    }
+  }
+
+  it('ML-DSA verify: 404 invalid and 227 valid per engine; Rust has 12 ERROR rows (wrong-length public key)', () => {
     for (const engine of ['C++', 'Rust']) {
       const ver = rows.filter((r) => /^wyc-mldsa\d+verify-/.test(r.id) && r.id.endsWith(engine))
       expect(ver.length).toBe(631)
-      expect(ver.filter((r) => r.status !== 'pass').map((r) => r.id)).toEqual([])
       const inv = ver.filter((r) => r.caseMeta?.parameters?.wycheproofResult === 'invalid')
       expect(inv.length).toBe(404)
-      expect(inv.every((r) => !/→ CKR_OK/.test(r.caseMeta?.observed ?? ''))).toBe(true)
+      expect(inv.every((r) => !/→ CKR_OK$/.test(r.caseMeta?.observed ?? ''))).toBe(true)
+      if (engine === 'C++')
+        expect(ver.filter((r) => r.status !== 'pass').map((r) => r.id)).toEqual([])
+      else expectErrorRows(ver, ERROR_ROWS.rustVerify, /^C_Verify → CKR_KEY_TYPE_INCONSISTENT$/)
     }
   })
 
-  it('ML-DSA sign: both engines pass every case; the 9 former Rust findings are refused', () => {
+  it('ML-DSA sign: Rust passes every case; C++ has 12 ERROR rows (invalid private key); the 9 former Rust findings are refused', () => {
     const sign = (engine: string) =>
       rows.filter((r) => /^wyc-mldsa\d+sign(no)?seed-/.test(r.id) && r.id.endsWith(engine))
-    for (const engine of ['C++', 'Rust']) {
-      expect(sign(engine).length, engine).toBe(501)
-      expect(
-        sign(engine)
-          .filter((r) => r.status !== 'pass')
-          .map((r) => r.id),
-        engine
-      ).toEqual([])
-    }
+    for (const engine of ['C++', 'Rust']) expect(sign(engine).length, engine).toBe(501)
+    expect(
+      sign('Rust')
+        .filter((r) => r.status !== 'pass')
+        .map((r) => r.id)
+    ).toEqual([])
+    expectErrorRows(
+      sign('C++'),
+      ERROR_ROWS.cppSign,
+      /^C_CreateObject\(sk\) → CKR_OK; C_Sign → CKR_GENERAL_ERROR$/
+    )
     // FORMER Rust findings (open-gaps.json wycheproof-rust-mldsa-sk-range and
     // wycheproof-rust-mldsa-empty-seed, measured 2026-09-30 on hsm 68278dfe,
     // where the Rust engine ACCEPTED all nine and signed). Fixed by
@@ -270,7 +328,8 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
     // now be refused at the step the fix moved it to:
     //  - InvalidPrivateKey (s1 or s2 out of range): C_CreateObject(sk) →
     //    CKR_ATTRIBUTE_VALUE_INVALID (FIPS 204 skDecode range check at import).
-    //    C++ still refuses later, at C_Sign (CKR_GENERAL_ERROR).
+    //    C++ imports these keys and fails later, at C_Sign (CKR_GENERAL_ERROR):
+    //    an ERROR row (ERROR_ROWS.cppSign above).
     //  - empty private seed (0-byte CKA_SEED): C_GenerateKeyPair(CKA_SEED) →
     //    CKR_ATTRIBUTE_VALUE_INVALID (a present-but-empty seed is no longer read
     //    as "no seed"), the same code C++ returns.
@@ -294,7 +353,7 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
       expect(r.caseMeta?.parameters?.wycheproofResult, id).toBe('invalid')
       expect(r.caseMeta?.observed, id).not.toMatch(/→ CKR_OK; C_Sign → CKR_OK|\(accepted\)/)
       const cpp = rows.find((x) => x.id === id.replace(/-Rust$/, '-C++'))!
-      expect(cpp.status, id).toBe('pass')
+      expect(cpp.status, id).toBe(ERROR_ROWS.cppSign.includes(cpp.id) ? 'fail' : 'pass')
     }
     for (const id of FORMER_RUST_FAILS.filter((i) => i.includes('signnoseed'))) {
       const r = rust.find((x) => x.id === id)!

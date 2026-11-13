@@ -31,7 +31,15 @@
 //                  dk or ek that fails the FIPS 203 §7.2 / §7.3 check at import,
 //                  or a CKA_SEED template of the wrong length (PKCS#11 §4.1.1);
 //                - a ciphertext of the wrong length is refused by C_DecapsulateKey
-//                  with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID.
+//                  with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID;
+//                - an ML-DSA public or private key, or seed, is refused at
+//                  C_CreateObject / C_GenerateKeyPair with CKR_ATTRIBUTE_VALUE_INVALID;
+//                - a context longer than 255 bytes is refused by C_SignInit or
+//                  C_VerifyInit with CKR_MECHANISM_PARAM_INVALID;
+//                - a signature that must not verify is refused by C_Verify with
+//                  CKR_SIGNATURE_INVALID or CKR_SIGNATURE_LEN_RANGE.
+//              C_Sign has no refusal code here: a key that imports and then
+//              fails to sign is an ERROR row.
 //              A key that imports and then fails its operation is an ERROR row,
 //              as in sections/mlkemAcvp.ts. Any other return value is an ERROR
 //              row too: never a pass, and never "refused as expected". A key
@@ -116,13 +124,22 @@ const KEY_INPUT_REFUSALS = ['CKR_ATTRIBUTE_VALUE_INVALID'] as const
  */
 const CIPHERTEXT_REFUSALS = ['CKR_WRAPPED_KEY_LEN_RANGE', 'CKR_WRAPPED_KEY_INVALID'] as const
 
+/** The code C_SignInit / C_VerifyInit may refuse a context of more than 255 bytes with. */
+const MECHANISM_PARAM_REFUSALS = ['CKR_MECHANISM_PARAM_INVALID'] as const
+
+/** The codes C_Verify may refuse a signature that must not verify with. */
+const SIGNATURE_REFUSALS = ['CKR_SIGNATURE_INVALID', 'CKR_SIGNATURE_LEN_RANGE'] as const
+
+/** C_Sign: no refusal code. A key that imported and then fails to sign is an operational error. */
+const SIGN_REFUSALS = [] as const
+
 /**
- * An ML-KEM step returned `rv` other than CKR_OK. It counts as the refusal only
- * when `listed` names that code for the step. Any other code is an operational
- * error (an ERROR row), never a refusal, so it can never pass an invalid case.
- * ML-DSA keeps refused() above.
+ * An ML-KEM or ML-DSA step returned `rv` other than CKR_OK. It counts as the
+ * refusal only when `listed` names that code for the step. Any other code is an
+ * operational error (an ERROR row), never a refusal, so it can never pass an
+ * invalid case.
  */
-function kemRefused(
+function refusedWith(
   result: WycResult,
   observed: string,
   rv: number,
@@ -251,7 +268,7 @@ function decapsVerdict(
   const r = decapsulateRv(M, h, priv, hexToBytes(t.c))
   try {
     const o = `${preObserved}C_DecapsulateKey → ${rvName(r.rv)}`
-    if (r.rv !== CKR_OK) return kemRefused(t.result, o, r.rv, listed)
+    if (r.rv !== CKR_OK) return refusedWith(t.result, o, r.rv, listed)
     const k = valueOf(M, h, r.handle)
     const diffs = [...pre]
     if (t.K) diffs.push({ what: `K[${k.length}B]`, diff: firstDiff(k, hexToBytes(t.K)) })
@@ -348,7 +365,7 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
               const pair = mlkemFromSeed(M, h, v, hexToBytes(t.seed))
               try {
                 const o = `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`
-                if (pair.rv !== CKR_OK) return kemRefused(t.result, o, pair.rv, KEY_INPUT_REFUSALS)
+                if (pair.rv !== CKR_OK) return refusedWith(t.result, o, pair.rv, KEY_INPUT_REFUSALS)
                 const ek = valueOf(M, h, pair.pub)
                 const dk = valueOf(M, h, pair.priv)
                 return completed(
@@ -405,7 +422,7 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
               const pair = mlkemFromSeed(M, h, v, hexToBytes(t.seed))
               try {
                 if (pair.rv !== CKR_OK)
-                  return kemRefused(
+                  return refusedWith(
                     t.result,
                     `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`,
                     pair.rv,
@@ -475,7 +492,7 @@ export async function runWycheproofMlkemSection(ctx: MldsaAcvpSectionCtx): Promi
                 if ((t.flags ?? []).includes('IncorrectCiphertextLength')) {
                   // A valid key with a wrong-length ciphertext: the operation is the check.
                   if (imp.rv !== CKR_OK)
-                    return kemRefused(
+                    return refusedWith(
                       t.result,
                       `C_CreateObject(dk) → ${rvName(imp.rv)}`,
                       imp.rv,
@@ -683,6 +700,20 @@ function mldsaFromSeed(M: SoftHSMModule, h: number, v: DsaVariant, seed: Uint8Ar
 
 const isInternal = (t: DsaTest) => (t.flags ?? []).includes('Internal')
 
+/** Which refusal an invalid ML-DSA case expects, from its Wycheproof flags. */
+function dsaRefusalText(t: DsaTest, op: 'verify' | 'signnoseed' | 'signseed'): string {
+  const flags = t.flags ?? []
+  if (flags.includes('InvalidContext'))
+    return `refused at ${op === 'verify' ? 'C_VerifyInit' : 'C_SignInit'} with CKR_MECHANISM_PARAM_INVALID (context over 255 bytes)`
+  if (op === 'verify')
+    return flags.includes('IncorrectPublicKeyLength')
+      ? 'refused at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID, or by C_Verify with CKR_SIGNATURE_INVALID or CKR_SIGNATURE_LEN_RANGE'
+      : 'refused by C_Verify with CKR_SIGNATURE_INVALID or CKR_SIGNATURE_LEN_RANGE'
+  return op === 'signnoseed'
+    ? 'refused at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID'
+    : 'refused at C_GenerateKeyPair with CKR_ATTRIBUTE_VALUE_INVALID'
+}
+
 /** Deterministic sign with `priv`; `pre` carries earlier comparisons (seed file's pk). */
 function signVerdict(
   M: SoftHSMModule,
@@ -700,7 +731,20 @@ function signVerdict(
   const context = internal ? new Uint8Array(0) : hexToBytes(t.ctx ?? '')
   const s = signDeterministic(M, h, priv, mech, data, context)
   const o = `${preObserved}${s.step} → ${rvName(s.rv)}`
-  if (s.rv !== CKR_OK || !s.sig) return refused(t.result, o)
+  if (s.rv !== CKR_OK)
+    return refusedWith(
+      t.result,
+      o,
+      s.rv,
+      s.step === 'C_SignInit' ? MECHANISM_PARAM_REFUSALS : SIGN_REFUSALS
+    )
+  if (!s.sig)
+    return {
+      ok: false,
+      observed: o,
+      details: `ERROR: ${o} but no signature was returned`,
+      error: true,
+    }
   return completed(
     t.result,
     o,
@@ -781,7 +825,7 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
           const testCase =
             `Verify · Wycheproof mldsa_${v}_verify_test tg${gi + 1}/tc${t.tcId} · ${shape(t)} · ` +
             `pk ${nB(g.publicKey)}B · sig ${nB(t.sig)}B · flags ${flagsOf(t)} · ${t.comment || 'no comment'} · expect ` +
-            (t.result === 'valid' ? 'CKR_OK' : 'refused (signature must not verify)')
+            (t.result === 'valid' ? 'CKR_OK' : dsaRefusalText(t, 'verify'))
           const meta = metaOf(P, gi, t, 'sigVer', 'sigVer')
           if (whyDsa) {
             await skipRow(ctx, { id, algorithm, testCase, meta, why: whyDsa })
@@ -797,7 +841,12 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
               const pub = importMldsaPublic(M, h, v, hexToBytes(g.publicKey))
               try {
                 if (pub.rv !== CKR_OK)
-                  return refused(t.result, `C_CreateObject(pk) → ${rvName(pub.rv)}`)
+                  return refusedWith(
+                    t.result,
+                    `C_CreateObject(pk) → ${rvName(pub.rv)}`,
+                    pub.rv,
+                    KEY_INPUT_REFUSALS
+                  )
                 const r = verifyRv(
                   M,
                   h,
@@ -811,7 +860,13 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
                   r.initRv !== CKR_OK
                     ? `C_VerifyInit → ${rvName(r.initRv)}`
                     : `C_Verify → ${rvName(r.rv)}`
-                if (r.rv !== CKR_OK) return refused(t.result, o)
+                if (r.rv !== CKR_OK)
+                  return refusedWith(
+                    t.result,
+                    o,
+                    r.rv,
+                    r.initRv !== CKR_OK ? MECHANISM_PARAM_REFUSALS : SIGNATURE_REFUSALS
+                  )
                 return completed(t.result, o, [], t.comment || flagsOf(t))
               } finally {
                 destroy(M, h, pub.handle)
@@ -843,7 +898,7 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
             `flags ${flagsOf(t)} · ${t.comment || 'no comment'} · expect ` +
             (t.result === 'valid'
               ? `sig byte-match${kind === 'signseed' ? ' (and pk)' : ''}`
-              : 'refused')
+              : dsaRefusalText(t, kind))
           const meta = metaOf(P, gi, t, 'sigGen', 'sigGen-deterministic')
           const why =
             (isInternal(t) ? whyMu : whyDsa) ?? (kind === 'signseed' ? whyKg : null) ?? null
@@ -862,7 +917,12 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
                 const imp = importMldsaPrivate(M, h, v, hexToBytes(g.privateKey ?? ''))
                 try {
                   if (imp.rv !== CKR_OK)
-                    return refused(t.result, `C_CreateObject(sk) → ${rvName(imp.rv)}`)
+                    return refusedWith(
+                      t.result,
+                      `C_CreateObject(sk) → ${rvName(imp.rv)}`,
+                      imp.rv,
+                      KEY_INPUT_REFUSALS
+                    )
                   return signVerdict(M, h, imp.handle, t, [], 'C_CreateObject(sk) → CKR_OK; ')
                 } finally {
                   destroy(M, h, imp.handle)
@@ -871,7 +931,12 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
               const pair = mldsaFromSeed(M, h, v, hexToBytes(g.privateSeed ?? ''))
               try {
                 if (pair.rv !== CKR_OK)
-                  return refused(t.result, `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`)
+                  return refusedWith(
+                    t.result,
+                    `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`,
+                    pair.rv,
+                    KEY_INPUT_REFUSALS
+                  )
                 const pk = valueOf(M, h, pair.pub)
                 // Upstream gives no publicKey when the seed is malformed: there
                 // is nothing to compare, and the case must already have been
