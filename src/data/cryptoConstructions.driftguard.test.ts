@@ -185,12 +185,22 @@ describe('construction layer driftguards', () => {
       }
   })
 
+  /**
+   * Rows whose own cited source says the successor is NOT available there yet,
+   * with that reason (K4c). Each entry is a sourced statement, not a gap.
+   */
+  const SUCCESSOR_NOT_AVAILABLE: Record<string, string> = {
+    'cloud-kms:Asymmetric-Key-Wrap':
+      'AWS-KMS-Import-Wrapping-Keys: AWS KMS imports key material only under RSA or SM2 wrapping keys and cannot import into ML-KEM or ML-DSA keys.',
+  }
+
   it('K4c: a use case running a replaced construction targets its successor', () => {
     const gaps: string[] = []
     for (const uc of useCases)
       for (const id of uc.classicalConstructions) {
         const c = getConstruction(id)
         if (c?.outlook !== 'replaced' || uc.pqcMechanisms.length === 0) continue
+        if (SUCCESSOR_NOT_AVAILABLE[`${uc.useCaseId}:${id}`]) continue
         const successors = new Set((c.successions ?? []).map((s) => s.to))
         if (!uc.pqcConstructions.some((p) => successors.has(p)))
           gaps.push(`${uc.useCaseId}: ${id} without one of ${[...successors].join(', ')}`)
