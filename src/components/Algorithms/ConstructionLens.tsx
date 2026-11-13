@@ -64,7 +64,8 @@ const SIDE_LABEL = { classical: 'Classical', pqc: 'Post-quantum', hybrid: 'Hybri
 
 /** How a succession is worded: stated by a source, or our reading of the standards. */
 export function successionWording(s: Succession): string {
-  if (s.relation === 'extended-by') return 'Extended by'
+  if (s.relation === 'extended-by')
+    return s.stated ? 'Extended by' : 'Extended in a newer construction'
   return s.stated ? 'Replaced by' : 'Newer construction for the same job'
 }
 
@@ -338,7 +339,11 @@ export function ConstructionCard({
           data-testid="construction-predecessors"
         >
           <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            Newer than
+            {preds.every((p) =>
+              p.successions?.some((s) => s.to === c.id && s.relation === 'extended-by')
+            )
+              ? 'Extends'
+              : 'Newer than'}
           </span>
           {preds.map((p) => (
             <ConstructionChip key={p.id} id={p.id} onSelect={onPick} />
@@ -378,7 +383,13 @@ export function ConstructionCard({
   )
 }
 
-const CHIP_COUNT_TITLE = 'Use cases that name this construction'
+const CHIP_COUNT_TITLE =
+  'Rows that use this construction: use cases naming it, standards citing it, and use cases using it inside another construction'
+
+/** The number on a chip: every row that uses the construction (direct + standards + inside). */
+export function usageTotal(u: ConstructionUsage | undefined): number {
+  return (u?.direct.length ?? 0) + (u?.standards.length ?? 0) + (u?.inside.length ?? 0)
+}
 
 /** Chips grouped by outlook, each with its direct use-case count. */
 export function ConstructionChipRows({
@@ -404,7 +415,7 @@ export function ConstructionChipRows({
               <ConstructionChip
                 key={c.id}
                 id={c.id}
-                count={usage.get(c.id)?.direct.length ?? 0}
+                count={usageTotal(usage.get(c.id))}
                 countTitle={CHIP_COUNT_TITLE}
                 active={c.id === selected}
                 onSelect={onPick}
@@ -414,8 +425,9 @@ export function ConstructionChipRows({
         )
       })}
       <p className="text-[11px] text-muted-foreground">
-        Numbers count the use cases that name each construction. Click a construction to see them;
-        click it again to return to this overview.
+        Numbers count the rows that use each construction (use cases, standards, and use cases that
+        use it inside another construction). Click a construction to see them; click it again to
+        return to this overview.
       </p>
     </div>
   )
@@ -435,7 +447,7 @@ export function TransitionMap({
   usage: Map<string, ConstructionUsage>
   onPick: (id: string) => void
 }) {
-  const count = (id: string) => usage.get(id)?.direct.length ?? 0
+  const count = (id: string) => usageTotal(usage.get(id))
   const byOutlook = (o: PqcOutlook) => CRYPTO_CONSTRUCTIONS.filter((c) => c.outlook === o)
   const arrowRows = (o: 'replaced' | 'extended') =>
     byOutlook(o).length > 0 ? (
@@ -523,7 +535,7 @@ export function TransitionMap({
         <p className="text-[11px] text-muted-foreground">
           Arrow lines: solid = published or vendor specification, dashed = draft, dotted = under
           study or research. “Newer construction for the same job” is our reading of the standards,
-          not a statement in them. Numbers are use cases that name the construction.
+          not a statement in them. Numbers count the rows that use each construction.
         </p>
       </div>
     </section>
@@ -569,7 +581,8 @@ export function ConstructionsOverview({
         Which industries use which constructions
       </h3>
       <p className="mb-2 text-[11px] text-muted-foreground">
-        ● used today · ○ migration target · ◐ both
+        ● used today · ○ migration target · ◐ both. Constructions used only inside another one (for
+        example key derivation inside HPKE) are not listed here.
       </p>
       <div className="hidden overflow-x-auto md:block">
         <table className="text-xs">

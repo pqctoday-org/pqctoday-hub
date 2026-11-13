@@ -61,7 +61,7 @@ export const ALGORITHM_EXPLANATIONS: Record<string, AlgorithmExplanation> = {
   },
   ECDSA: {
     plain:
-      'ECDSA is the elliptic-curve signature scheme behind most web certificates, code signing and many blockchains. It gives the same assurance as RSA with much smaller keys.',
+      'ECDSA is the elliptic-curve signature scheme used in many web certificates, in code signing and in many blockchains. It gives the same assurance as RSA with much smaller keys.',
     whyItMattersForPqc:
       'Elliptic-curve cryptography is also broken by Shor’s algorithm, so ECDSA signatures move to post-quantum signature schemes.',
     glossaryTerm: 'ECDSA',
@@ -85,9 +85,9 @@ export const ALGORITHM_EXPLANATIONS: Record<string, AlgorithmExplanation> = {
   },
   X25519: {
     plain:
-      'X25519 is a fast, widely used elliptic-curve Diffie-Hellman key exchange on Curve25519, the default in TLS 1.3, SSH, Signal and WireGuard.',
+      'X25519 is a fast elliptic-curve Diffie-Hellman key exchange on Curve25519, widely used in TLS 1.3, SSH, Signal and WireGuard.',
     whyItMattersForPqc:
-      'It is broken by a quantum computer; most deployments are adding ML-KEM next to it in a hybrid such as X25519MLKEM768.',
+      'It is broken by a quantum computer; hybrids such as X25519MLKEM768 combine it with ML-KEM so the key stays safe if either part holds.',
     glossaryTerm: 'X25519',
     diagram: kex('X25519'),
   },
@@ -103,7 +103,7 @@ export const ALGORITHM_EXPLANATIONS: Record<string, AlgorithmExplanation> = {
     plain:
       'BLS signatures, on the BLS12-381 curve, can be added together so that many signers produce one short signature. Ethereum’s validators rely on this.',
     whyItMattersForPqc:
-      'They are pairing-based and broken by a quantum computer, and there is no standardised post-quantum scheme that aggregates the same way yet.',
+      'They are pairing-based and broken by a quantum computer, and we found no standardised post-quantum scheme that aggregates the same way (checked 13 Nov 2026).',
     diagram: sign('BLS'),
   },
   Schnorr: {
@@ -115,7 +115,7 @@ export const ALGORITHM_EXPLANATIONS: Record<string, AlgorithmExplanation> = {
   },
   SM2: {
     plain:
-      'SM2 is China’s national elliptic-curve public-key standard, used for signatures in Chinese payment, TLS and identity systems.',
+      'SM2 is China’s national elliptic-curve public-key standard, covering signatures, key exchange and encryption, used in Chinese payment, TLS and identity systems.',
     whyItMattersForPqc:
       'As an elliptic-curve scheme it is broken by Shor’s algorithm and needs a post-quantum successor.',
     glossaryTerm: 'SM2',
@@ -160,7 +160,7 @@ export const ALGORITHM_EXPLANATIONS: Record<string, AlgorithmExplanation> = {
   },
   'FN-DSA': {
     plain:
-      'FN-DSA (the Falcon scheme) is a lattice-based post-quantum signature with smaller signatures than ML-DSA; NIST is standardising it as FIPS 206.',
+      'FN-DSA (the Falcon scheme) is a lattice-based post-quantum signature with smaller signatures than ML-DSA; NIST is preparing it as FIPS 206, which is not yet published.',
     whyItMattersForPqc:
       'It suits places where signature size matters, such as certificates sent on every connection.',
     glossaryTerm: 'FN-DSA',
@@ -210,7 +210,7 @@ export const ALGORITHM_EXPLANATIONS: Record<string, AlgorithmExplanation> = {
     plain:
       'AES is the standard symmetric block cipher: the same secret key encrypts and decrypts. It protects almost all stored and transmitted data once a key has been agreed.',
     whyItMattersForPqc:
-      'Quantum computers do not break it; the guidance is to use 256-bit keys for long-term protection.',
+      'Quantum computers do not break it. Some guidance, such as NSA’s CNSA 2.0, requires 256-bit keys for long-term protection.',
     glossaryTerm: 'AES',
     diagram: cipher('AES'),
   },

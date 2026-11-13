@@ -124,7 +124,8 @@ describe('construction lens — rendered counts and links (K11, K12)', () => {
     const rows = screen.getByTestId('construction-chip-rows')
     for (const c of CRYPTO_CONSTRUCTIONS) {
       const chip = within(rows).getByTestId(`construction-chip-${c.id}`)
-      expect(chip, c.id).toHaveTextContent(new RegExp(`${c.id}\\s*${recount(c.id).direct}$`))
+      const total = recount(c.id).direct + recount(c.id).standards + usage.get(c.id)!.inside.length
+      expect(chip, c.id).toHaveTextContent(new RegExp(`${c.id}\\s*${total}$`))
     }
   })
 
