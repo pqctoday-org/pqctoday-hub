@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { IaCPattern } from './platformEngConstants'
+import { OPENBAO_PKI_ROLE_RECIPE } from './openBaoPolicyExamples'
 
 export const IAC_PATTERNS: IaCPattern[] = [
   {
@@ -58,31 +59,22 @@ spec:
   {
     id: 'vault-pki-role',
     tool: 'vault',
-    title: 'HashiCorp Vault: PKI Role Key Type',
+    title: 'OpenBao: PKI Role Key Type',
     vulnerability:
-      'Vault PKI roles default to RSA-2048 or ECDSA P-256 for generated certificates. All pipeline secrets encrypted to these certs are HNDL targets.',
+      'This classical sample explicitly selects an RSA-2048 subject key. A future cryptographically relevant quantum computer threatens signatures made with that key; changing a certificate signing key is separate from protecting TLS key establishment.',
     algorithm: 'rsa',
     pqcAlgorithm: 'ml-dsa',
     impact:
-      'CI/CD pipelines authenticate to Vault via TLS client certs. If these certs use RSA/ECDSA, a future CRQC can forge a client certificate and authenticate to Vault as the pipeline: a forgery risk. The recorded session is an HNDL target only through its key exchange.',
-    vulnerableConfig: `# Vault PKI role — defaults to RSA-2048
-vault write pki/roles/pipeline-role \\
+      'CI/CD client authentication needs a supported signing key and a trusted issuer chain. The OpenBao sample selects the role parameter set explicitly and issues a short-lived fictional certificate; validate its actual key, issuer and intended usage before configuring a consumer.',
+    vulnerableConfig: `# OpenBao PKI role — explicitly selected RSA-2048
+bao write pki/roles/pipeline-role \\
   allowed_domains="pipeline.internal" \\
   allow_subdomains=true \\
   max_ttl="720h" \\
   key_type="rsa" \\
   key_bits=2048
 # ⚠️  RSA-2048: broken by Shor's algorithm`,
-    pqcConfig: `# Vault PKI role — ML-DSA-44
-# The Vault PKI API documentation lists ml-dsa as a role key type, with a parameter_set
-# of ml-dsa-44, ml-dsa-65 or ml-dsa-87.
-vault write pki/roles/pipeline-role-pqc \\
-  allowed_domains="pipeline.internal" \\
-  allow_subdomains=true \\
-  max_ttl="720h" \\
-  key_type="ml-dsa" \\
-  parameter_set="ml-dsa-44"
-# ML-DSA-44 (FIPS 204 security category 2)`,
+    pqcConfig: OPENBAO_PKI_ROLE_RECIPE,
   },
   {
     id: 'helm-tls-values',

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { PolicyRule } from './platformEngConstants'
+import { OPENBAO_KEY_CREATION_POLICY } from './openBaoPolicyExamples'
 
 export const POLICY_RULES: PolicyRule[] = [
   {
@@ -126,40 +127,15 @@ violation[{"msg": msg}] {
   },
   {
     id: 'kyverno-vault-key-type',
-    engine: 'kyverno',
-    name: 'Block Quantum-Vulnerable Vault Transit Keys',
+    engine: 'openbao',
+    name: 'Restrict OpenBao Sample Key Creation',
     description:
-      'Prevents creation of Vault Transit keys with RSA or ECDSA type via the Vault Secrets Operator. Enforces ml-dsa-44 or aes-256-gcm96 as the only allowed types.',
-    targetResource: 'VaultStaticSecret (VSO)',
+      'Apply this native OpenBao 2.7.2 ACL with bao policy write to a scoped test token. It permits creating only transit/keys/sample-policy-key with type mldsa-65; missing type, a different type, extra parameters and other paths are denied. A VaultStaticSecret retrieves a secret and does not configure a Transit key. Other attached token policies may add grants, so review the complete policy set.',
+    targetResource: 'OpenBao Transit key-creation API',
     blockedAlgorithms: ['ecdsa-p256', 'rsa-2048', 'rsa-4096', 'ed25519'],
-    requiredAlgorithms: ['ml-dsa-44', 'ml-dsa-65', 'aes-256-gcm96'],
+    requiredAlgorithms: ['mldsa-65'],
     severity: 'error',
-    rule: `# Kyverno policy for Vault Secrets Operator
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
-metadata:
-  name: require-pqc-vault-transit
-spec:
-  validationFailureAction: Enforce
-  rules:
-  - name: check-transit-key-type
-    match:
-      any:
-      - resources:
-          kinds: [VaultStaticSecret]
-    validate:
-      message: >
-        Vault Transit keys must use ml-dsa-44, ml-dsa-65, or aes-256-gcm96.
-        RSA and ECDSA transit keys are quantum-vulnerable.
-      deny:
-        conditions:
-          any:
-          - key: "{{request.object.spec.mount}}"
-            operator: Equals
-            value: "transit"
-          - key: "{{request.object.spec.path}}"
-            operator: Contains
-            value: "ecdsa"`,
+    rule: OPENBAO_KEY_CREATION_POLICY,
   },
   {
     id: 'opa-slsa-level',

@@ -22,6 +22,7 @@ const ENGINE_ITEMS = [
   { id: 'kyverno', label: 'Kyverno' },
   { id: 'conftest', label: 'Conftest' },
   { id: 'cel', label: 'CEL (Kubernetes)' },
+  { id: 'openbao', label: 'OpenBao ACL' },
 ]
 
 const SEVERITY_ITEMS = [
@@ -35,6 +36,7 @@ const ENGINE_COLORS: Record<PolicyEngine, string> = {
   kyverno: 'bg-status-info/15 text-status-info border-status-info/30',
   conftest: 'bg-status-warning/15 text-status-warning border-status-warning/30',
   cel: 'bg-muted text-muted-foreground border-border',
+  openbao: 'bg-status-info/15 text-status-info border-status-info/30',
 }
 
 const ENGINE_LABELS: Record<PolicyEngine, string> = {
@@ -42,6 +44,7 @@ const ENGINE_LABELS: Record<PolicyEngine, string> = {
   kyverno: 'Kyverno',
   conftest: 'Conftest',
   cel: 'CEL',
+  openbao: 'OpenBao ACL',
 }
 
 const SLSA_LEVELS = [1, 2, 3] as const
@@ -82,9 +85,9 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           Policy-as-Code Algorithm Enforcer
         </h3>
         <p className="text-sm text-muted-foreground">
-          OPA Gatekeeper and Kyverno rules that block quantum-vulnerable algorithm identifiers (RSA,
-          ECDSA, Ed25519) in Kubernetes manifests, Helm values, and cert-manager Certificate
-          resources. Each policy maps to a SLSA supply chain integrity level.
+          Match each policy to its actual engine and target resource. Kubernetes admission rules
+          evaluate their declared manifests; native OpenBao ACLs restrict API requests. A policy
+          must be applied and tested in that tool before it can enforce the intended restriction.
         </p>
       </div>
 
