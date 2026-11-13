@@ -1393,11 +1393,9 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     pqc: [
       {
         algorithms: [],
-        status: 'published',
-        proofRefs: [
-          'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
-          'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
-        ],
+        status: 'study',
+        proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+        note: 'NIST’s threshold call (IR 8214C) covers schemes whose keys are secret-shared across parties and lists post-quantum cryptography among its keywords.',
       },
     ],
     cycloneDxPrimitive: 'other',
@@ -1420,13 +1418,14 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
   },
   {
     id: 'WireGuard-Noise',
-    label: 'WireGuard handshake (Noise IKpsk2)',
+    label: 'WireGuard handshake',
     outlook: 'extended',
     classical: [
       {
-        algorithms: ['X25519'],
+        algorithms: [],
         status: 'vendor-spec',
         proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
+        note: 'The cited paper describes the handshake as Diffie-Hellman based without naming the group.',
       },
     ],
     successions: [
@@ -1443,12 +1442,12 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
     explain: {
       plain:
-        'WireGuard sets up its VPN keys with a short Diffie-Hellman handshake built from the Noise framework, with an optional preshared key.',
+        'WireGuard sets up its VPN keys with a short Diffie-Hellman handshake, and can mix in a preshared key.',
       whyItMattersForPqc:
         'Its Diffie-Hellman exchanges are broken by a quantum computer; Rosenpass keeps WireGuard and feeds it a post-quantum preshared key, and research such as PQ-WireGuard replaces the exchanges with KEMs.',
       diagram: {
         inputs: ['static and ephemeral keys', 'optional preshared key'],
-        combiner: 'Noise IKpsk2 handshake',
+        combiner: 'Diffie-Hellman handshake',
         outputs: ['tunnel keys'],
       },
     },
@@ -1556,6 +1555,8 @@ export const NO_FAMILY_EXEMPT: Record<string, string> = {
     'The VOPRF token type evaluates an oblivious function in the P-384 elliptic-curve group; that is neither key agreement (ECDH) nor a signature (ECDSA), so no algorithm family fits.',
   'Secret-Sharing':
     'Secret sharing splits a key into shares; it adds no public-key algorithm family of its own.',
+  'WireGuard-Noise':
+    'The cited paper describes the handshake only as Diffie-Hellman based and names no group, so no algorithm family is claimed.',
   'IKEv2-PPK':
     'Mixes a preshared key through the PRF that IKEv2 negotiates; it adds no algorithm family of its own.',
 }
