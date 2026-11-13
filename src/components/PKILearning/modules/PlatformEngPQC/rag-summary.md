@@ -48,7 +48,7 @@
 
 - 6 policy rules: 4 OPA Gatekeeper ConstraintTemplates, 2 Kyverno ClusterPolicies
 - Blocked: RSA, ECDSA, Ed25519; Required: ML-DSA-44/65/87, SLH-DSA-128, X25519MLKEM768
-- SLSA build levels: L2 requires signed provenance from a hosted build platform and L3 a hardened build platform; SLSA (v1.2) names no signature algorithm and has no post-quantum text. The ML-DSA and SLH-DSA provenance rules in this module are a projection, not a SLSA requirement
+- SLSA build levels: L2 requires signed provenance from a hosted build platform and L3 a hardened build platform; SLSA (v1.2) names no signature algorithm and has no post-quantum text. The working provenance sample uses a pinned fictional ECDSA P-256 key with cosign 3.0.6 and OPA 1.19.1: the verifier checks the signed statement bytes before policy checks the actual artifact digest and named sample builder. Six downloadable files include the verifier, policy, artifact, statement, public key and signature bundle. Trusted, altered-artifact and altered-statement cases are reproducible; annotations are never evidence. The offline example omits transparency-log checks and does not establish Build L3 isolation or PQC signing
 - Deployment strategy: Audit mode first → 2-week baseline → Enforce mode rollout
 
 ### Step 5: Crypto Posture Monitor (4 tabs)

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { PROVENANCE_POLICY } from './provenanceSample'
 import type { PolicyRule } from './platformEngConstants'
 import { OPENBAO_KEY_CREATION_POLICY } from './openBaoPolicyExamples'
 
@@ -140,30 +141,14 @@ violation[{"msg": msg}] {
   {
     id: 'opa-slsa-level',
     engine: 'opa',
-    name: 'Enforce SLSA Level 3 + PQC Attestation',
+    name: 'Verify Signed Build Evidence and Artifact Binding',
     description:
-      'Requires all production workloads to have a SLSA Level 3 build provenance attestation signed with ML-DSA-44 or higher (a projected requirement of this module — SLSA itself, through v1.2, names no signature algorithm). Prevents deployments without quantum-safe build integrity proof.',
-    targetResource: 'Deployment',
-    blockedAlgorithms: ['ECDSA-P256', 'RSA-PSS'],
-    requiredAlgorithms: ['ML-DSA-44', 'ML-DSA-65'],
-    slsaLevel: 3,
+      'A working offline sample uses cosign to verify a fictional pinned ECDSA P-256 signer before OPA checks the in-toto statement, SLSA provenance predicate, artifact digest and declared builder. Use the downloadable verifier and fixtures below. Deployment annotations are not trusted. This check does not establish SLSA Build L3 or PQC signatures.',
+    targetResource: 'Cryptographically verified statement and artifact bytes',
+    blockedAlgorithms: [],
+    requiredAlgorithms: ['ECDSA-P256 (classical sample)'],
     severity: 'error',
-    rule: `# OPA Gatekeeper ConstraintTemplate
-package slsa.pqc
-
-violation[{"msg": msg}] {
-  input.review.object.kind == "Deployment"
-  ns := input.review.object.metadata.namespace
-  ns == "production"
-
-  # Check for SLSA Level 3 PQC attestation annotation
-  not input.review.object.metadata.annotations["slsa.dev/pqc-provenance-verified"]
-
-  msg := sprintf(
-    "Deployment %v in production requires SLSA Level 3 provenance signed with ML-DSA.",
-    [input.review.object.metadata.name]
-  )
-}`,
+    rule: PROVENANCE_POLICY,
   },
 ]
 

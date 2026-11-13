@@ -11,6 +11,7 @@ import {
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { POLICY_RULES, SLSA_LEVEL_LABELS, SLSA_LEVEL_REQUIREMENTS } from '../data/policyRulesData'
 import type { PolicyEngine } from '../data/platformEngConstants'
+import { ProvenanceSampleLab } from './ProvenanceSampleLab'
 import { Button } from '@/components/ui/button'
 
 type EngineFilter = 'All' | PolicyEngine
@@ -18,7 +19,7 @@ type SeverityFilter = 'All' | 'error' | 'warning'
 
 const ENGINE_ITEMS = [
   { id: 'All', label: 'All Engines' },
-  { id: 'opa', label: 'OPA Gatekeeper' },
+  { id: 'opa', label: 'OPA / Gatekeeper' },
   { id: 'kyverno', label: 'Kyverno' },
   { id: 'conftest', label: 'Conftest' },
   { id: 'cel', label: 'CEL (Kubernetes)' },
@@ -40,7 +41,7 @@ const ENGINE_COLORS: Record<PolicyEngine, string> = {
 }
 
 const ENGINE_LABELS: Record<PolicyEngine, string> = {
-  opa: 'OPA Gatekeeper',
+  opa: 'OPA / Gatekeeper',
   kyverno: 'Kyverno',
   conftest: 'Conftest',
   cel: 'CEL',
@@ -90,6 +91,8 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           must be applied and tested in that tool before it can enforce the intended restriction.
         </p>
       </div>
+
+      <ProvenanceSampleLab />
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
