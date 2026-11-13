@@ -700,7 +700,40 @@ function mldsaFromSeed(M: SoftHSMModule, h: number, v: DsaVariant, seed: Uint8Ar
 
 const isInternal = (t: DsaTest) => (t.flags ?? []).includes('Internal')
 
-/** Which refusal an invalid ML-DSA case expects, from its Wycheproof flags. */
+type DsaStep = 'import' | 'init' | 'verify' | 'sign'
+
+/**
+ * The codes that count as the refusal at `step` for this case. An invalid case
+ * may be refused only at the step its flaw belongs to (from its Wycheproof
+ * flags), so an unrelated refusal elsewhere (for example a mechanism-parameter
+ * error at Init on a case whose flaw is the key) is an ERROR row, not a pass.
+ * A valid case keeps every step's code, so a listed refusal of a valid case
+ * reads as a wrong answer and anything else as an error.
+ */
+function dsaRefusals(t: DsaTest, step: DsaStep): readonly string[] {
+  if (t.result === 'valid')
+    return step === 'import'
+      ? KEY_INPUT_REFUSALS
+      : step === 'init'
+        ? MECHANISM_PARAM_REFUSALS
+        : step === 'verify'
+          ? SIGNATURE_REFUSALS
+          : SIGN_REFUSALS
+  const flags = t.flags ?? []
+  if (flags.includes('InvalidContext')) return step === 'init' ? MECHANISM_PARAM_REFUSALS : []
+  const keyFlaw = [
+    'IncorrectPublicKeyLength',
+    'IncorrectPrivateKeyLength',
+    'InvalidPrivateKey',
+  ].some((f) => flags.includes(f))
+  if (step === 'import') return keyFlaw ? KEY_INPUT_REFUSALS : []
+  // A signature that must not verify (including one checked against a
+  // wrong-length public key the engine imported) is refused by C_Verify.
+  if (step === 'verify') return SIGNATURE_REFUSALS
+  return SIGN_REFUSALS
+}
+
+/** Which refusal an invalid ML-DSA case expects, from its Wycheproof flags (as dsaRefusals). */
 function dsaRefusalText(t: DsaTest, op: 'verify' | 'signnoseed' | 'signseed'): string {
   const flags = t.flags ?? []
   if (flags.includes('InvalidContext'))
@@ -732,12 +765,7 @@ function signVerdict(
   const s = signDeterministic(M, h, priv, mech, data, context)
   const o = `${preObserved}${s.step} → ${rvName(s.rv)}`
   if (s.rv !== CKR_OK)
-    return refusedWith(
-      t.result,
-      o,
-      s.rv,
-      s.step === 'C_SignInit' ? MECHANISM_PARAM_REFUSALS : SIGN_REFUSALS
-    )
+    return refusedWith(t.result, o, s.rv, dsaRefusals(t, s.step === 'C_SignInit' ? 'init' : 'sign'))
   if (!s.sig)
     return {
       ok: false,
@@ -845,7 +873,7 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
                     t.result,
                     `C_CreateObject(pk) → ${rvName(pub.rv)}`,
                     pub.rv,
-                    KEY_INPUT_REFUSALS
+                    dsaRefusals(t, 'import')
                   )
                 const r = verifyRv(
                   M,
@@ -865,7 +893,7 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
                     t.result,
                     o,
                     r.rv,
-                    r.initRv !== CKR_OK ? MECHANISM_PARAM_REFUSALS : SIGNATURE_REFUSALS
+                    dsaRefusals(t, r.initRv !== CKR_OK ? 'init' : 'verify')
                   )
                 return completed(t.result, o, [], t.comment || flagsOf(t))
               } finally {
@@ -921,7 +949,7 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
                       t.result,
                       `C_CreateObject(sk) → ${rvName(imp.rv)}`,
                       imp.rv,
-                      KEY_INPUT_REFUSALS
+                      dsaRefusals(t, 'import')
                     )
                   return signVerdict(M, h, imp.handle, t, [], 'C_CreateObject(sk) → CKR_OK; ')
                 } finally {
@@ -935,7 +963,7 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
                     t.result,
                     `C_GenerateKeyPair(CKA_SEED) → ${rvName(pair.rv)}`,
                     pair.rv,
-                    KEY_INPUT_REFUSALS
+                    dsaRefusals(t, 'import')
                   )
                 const pk = valueOf(M, h, pair.pub)
                 // Upstream gives no publicKey when the seed is malformed: there

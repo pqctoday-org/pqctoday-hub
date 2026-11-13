@@ -31,6 +31,7 @@ const CKR_KEY_TYPE_INCONSISTENT = 0x63
 const CKR_MECHANISM_PARAM_INVALID = 0x71
 const CKR_SESSION_HANDLE_INVALID = 0xb3
 const CKR_SIGNATURE_INVALID = 0xc0
+const CKR_SIGNATURE_LEN_RANGE = 0xc1
 const CKR_TEMPLATE_INCONSISTENT = 0xd1
 const CKO_PUBLIC_KEY = 2
 
@@ -401,6 +402,33 @@ describe('Wycheproof ML-DSA rows: only a refusal the standard names counts', () 
     expect(row.status).toBe('fail')
     expect(row.details).toMatch(/REFUSED a case Wycheproof marks valid/)
     expect(row.caseMeta?.error).toBeUndefined()
+  })
+
+  it('a signature refused by C_Verify with CKR_SIGNATURE_LEN_RANGE passes', async () => {
+    eng.fault = (site) => (site === 'verify' ? CKR_SIGNATURE_LEN_RANGE : undefined)
+    const rows = await runMldsa()
+    expectRefusedPass(rowFor(rows, BAD_SIG), 'C_Verify → CKR_SIGNATURE_LEN_RANGE')
+  })
+
+  it('a refusal at a step the case has no flaw in is an ERROR row, not a pass', async () => {
+    // A mechanism-parameter refusal at Init counts only for a context over 255 bytes.
+    eng.fault = (site) =>
+      site === 'verifyInit' || site === 'signInit' ? CKR_MECHANISM_PARAM_INVALID : undefined
+    let rows = await runMldsa()
+    expectError(rowFor(rows, BAD_SIG), 'C_VerifyInit → CKR_MECHANISM_PARAM_INVALID')
+    eng.fault = (site) =>
+      site === 'import-sk' ? CKR_OK : site === 'signInit' ? CKR_MECHANISM_PARAM_INVALID : undefined
+    rows = await runMldsa()
+    expectError(rowFor(rows, OUT_OF_RANGE_SK), 'C_SignInit → CKR_MECHANISM_PARAM_INVALID')
+    // A context over 255 bytes accepted at Init and then rejected by C_Verify was not checked.
+    eng.fault = (site) =>
+      site === 'verifyInit' ? CKR_OK : site === 'verify' ? CKR_SIGNATURE_INVALID : undefined
+    rows = await runMldsa()
+    expectError(rowFor(rows, CONTEXT_VERIFY), 'C_Verify → CKR_SIGNATURE_INVALID')
+    // A key refusal for a case whose flaw is the signature.
+    eng.fault = (site) => (site === 'import-pk' ? CKR_ATTRIBUTE_VALUE_INVALID : undefined)
+    rows = await runMldsa()
+    expectError(rowFor(rows, BAD_SIG), 'C_CreateObject(pk) → CKR_ATTRIBUTE_VALUE_INVALID')
   })
 
   it('each invalid row names the refusal its case expects', async () => {
