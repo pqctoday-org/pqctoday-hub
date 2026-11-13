@@ -45,7 +45,7 @@ const PARTS: WorkshopPart[] = [
     id: 'crypto-posture-monitor',
     title: 'Step 5: Crypto Posture Monitor',
     description:
-      'Four-panel monitor: monitoring capability requirements, SIEM checklists, capacity planning calculators, and ACME certificate lifecycle with cert-manager.',
+      'Four-panel monitor: tested TLS observation and Prometheus alert sample, monitoring capability requirements, SIEM checklists, capacity planning calculators, and ACME certificate lifecycle with cert-manager.',
     icon: Activity,
   },
   {
