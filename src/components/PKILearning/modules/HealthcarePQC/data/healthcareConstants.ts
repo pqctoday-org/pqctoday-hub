@@ -171,116 +171,6 @@ export const REVOCABILITY_MATRIX: RevocabilityItem[] = [
   },
 ]
 
-// ── Pharmaceutical IP Types ──────────────────────────────────────────────
-
-export type DrugPhase =
-  'discovery' | 'preclinical' | 'phase-1' | 'phase-2' | 'phase-3' | 'fda-review' | 'post-market'
-
-export interface PharmaPhaseConfig {
-  id: DrugPhase
-  label: string
-  avgYearsToExpiry: number
-  typicalDataTypes: string[]
-  sensitivity: 'high' | 'critical'
-}
-
-export const PHARMA_PHASE_CONFIGS: PharmaPhaseConfig[] = [
-  {
-    id: 'discovery',
-    label: 'Discovery',
-    avgYearsToExpiry: 20,
-    typicalDataTypes: ['Molecular structure', 'Target identification', 'In-silico models'],
-    sensitivity: 'critical',
-  },
-  {
-    id: 'preclinical',
-    label: 'Preclinical',
-    avgYearsToExpiry: 18,
-    typicalDataTypes: ['Animal study data', 'Toxicology', 'Formulation', 'Manufacturing process'],
-    sensitivity: 'critical',
-  },
-  {
-    id: 'phase-1',
-    label: 'Phase I Trial',
-    avgYearsToExpiry: 15,
-    typicalDataTypes: ['Safety data', 'Dosing', 'Pharmacokinetics', 'Patient records'],
-    sensitivity: 'critical',
-  },
-  {
-    id: 'phase-2',
-    label: 'Phase II Trial',
-    avgYearsToExpiry: 12,
-    typicalDataTypes: ['Efficacy data', 'Patient outcomes', 'Biomarkers', 'Protocol design'],
-    sensitivity: 'critical',
-  },
-  {
-    id: 'phase-3',
-    label: 'Phase III Trial',
-    avgYearsToExpiry: 8,
-    typicalDataTypes: [
-      'Large-scale trial data',
-      'Statistical analysis',
-      'Manufacturing scale-up',
-      'Regulatory submission drafts',
-    ],
-    sensitivity: 'critical',
-  },
-  {
-    id: 'fda-review',
-    label: 'FDA Review',
-    avgYearsToExpiry: 5,
-    typicalDataTypes: [
-      'NDA/BLA submission',
-      'Clinical study reports',
-      'Chemistry/Manufacturing/Controls',
-    ],
-    sensitivity: 'high',
-  },
-  {
-    id: 'post-market',
-    label: 'Post-Market',
-    avgYearsToExpiry: 2,
-    typicalDataTypes: [
-      'Adverse event reports',
-      'Post-market surveillance',
-      'Manufacturing batch records',
-    ],
-    sensitivity: 'high',
-  },
-]
-
-export interface DrugPipelineEntry {
-  id: string
-  compoundName: string
-  phase: DrugPhase
-  commercialValueM: number
-  currentEncryption: string
-}
-
-export const DEFAULT_DRUG_PIPELINE: DrugPipelineEntry[] = [
-  {
-    id: 'compound-1',
-    compoundName: 'PQC-7291',
-    phase: 'discovery',
-    commercialValueM: 800,
-    currentEncryption: 'RSA-2048',
-  },
-  {
-    id: 'compound-2',
-    compoundName: 'ABX-4415',
-    phase: 'phase-2',
-    commercialValueM: 3200,
-    currentEncryption: 'AES-256-GCM',
-  },
-  {
-    id: 'compound-3',
-    compoundName: 'NRO-1182',
-    phase: 'phase-3',
-    commercialValueM: 5500,
-    currentEncryption: 'ECDH P-256',
-  },
-]
-
 // ── Patient Privacy & Data Lifecycle Types ────────────────────────────────
 
 export type HealthcareDataCategory =
@@ -996,16 +886,6 @@ export const SEVERITY_COLORS: Record<string, string> = {
   low: 'bg-muted text-muted-foreground border-border',
 }
 
-export const PHASE_COLORS: Record<DrugPhase, string> = {
-  discovery: 'bg-secondary/20 text-secondary',
-  preclinical: 'bg-primary/20 text-primary',
-  'phase-1': 'bg-status-info/20 text-status-info',
-  'phase-2': 'bg-status-warning/20 text-status-warning',
-  'phase-3': 'bg-status-error/20 text-status-error',
-  'fda-review': 'bg-status-success/20 text-status-success',
-  'post-market': 'bg-muted text-muted-foreground',
-}
-
 export const REVOCABILITY_COLORS: Record<RevocabilityLevel, string> = {
   irreplaceable: 'bg-status-error/20 text-status-error',
   'replaceable-with-cost': 'bg-status-warning/20 text-status-warning',
@@ -1032,19 +912,6 @@ export function computeCrqcProbability(year: number, crqcYear: number): number {
   if (year <= crqcYear) return 1
   const diff = year - crqcYear
   return Math.max(0, 1 - diff * 0.15)
-}
-
-export function computePharmaExposure(
-  commercialValueM: number,
-  yearsToExpiry: number,
-  crqcYear: number
-): { exposureM: number; atRisk: boolean } {
-  const currentYear = new Date().getFullYear()
-  const expiryYear = currentYear + yearsToExpiry
-  const atRisk = expiryYear > crqcYear
-  const prob = atRisk ? Math.min(1, (expiryYear - crqcYear) / 10) : 0
-  const exposureM = Math.round(commercialValueM * prob * 100) / 100
-  return { exposureM, atRisk }
 }
 
 export function scoreMigrationPriority(layer: HospitalLayerConfig): number {

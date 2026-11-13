@@ -14,137 +14,141 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
-import {
-  PHARMA_PHASE_CONFIGS,
-  DEFAULT_DRUG_PIPELINE,
-  PHASE_COLORS,
-  SEVERITY_COLORS,
-  computePharmaExposure,
-  type DrugPhase,
-  type DrugPipelineEntry,
-} from '../data/healthcareConstants'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import {
+  DEFAULT_PHARMA_PIPELINE,
+  KEY_PROTECTION_OPTIONS,
+  PHARMA_SAMPLE_BASE_YEAR,
+  computePharmaCompound,
+  computePharmaPortfolio,
+  getKeyProtectionOption,
+  type KeyProtectionPath,
+  type PharmaCompoundInput,
+  type PharmaPathStatus,
+  type RdStep,
+} from '../data/pharmaIpModel'
 
 // ── Constants ────────────────────────────────────────────────────────────
 
 const MAX_COMPOUNDS = 6
+const MAX_STEPS = 6
 
-const PHASE_DROPDOWN_ITEMS = PHARMA_PHASE_CONFIGS.map((p) => ({
-  id: p.id,
-  label: p.label,
+const KEY_PROTECTION_DROPDOWN_ITEMS = KEY_PROTECTION_OPTIONS.map((o) => ({
+  id: o.id,
+  label: o.label,
 }))
 
-const ENCRYPTION_OPTIONS = [
-  { id: 'RSA-2048', label: 'RSA-2048' },
-  { id: 'ECDH P-256', label: 'ECDH P-256' },
-  { id: 'AES-128-GCM', label: 'AES-128-GCM' },
-  { id: 'AES-256-GCM', label: 'AES-256-GCM' },
-  { id: 'TLS 1.3 hybrid', label: 'TLS 1.3 hybrid' },
-]
+const STATUS_TEXT: Record<PharmaPathStatus, string> = {
+  'exposed-in-scenario': 'Tied to the vulnerable path in the assumed scenario',
+  'path-not-exposed': 'Declared path not exposed in the assumed scenario',
+  'confidentiality-ended': 'Confidentiality ends on or before the assumed year',
+  'path-unknown': 'Key protection not specified, so exposure is not determined',
+  'no-value': 'No value entered',
+}
 
-// Encryption schemes vulnerable to Shor's algorithm (asymmetric key exchange)
-const QUANTUM_VULNERABLE_ENCRYPTION = new Set(['RSA-2048', 'ECDH P-256'])
+function formatMillions(n: number): string {
+  return `$${n.toLocaleString()}M`
+}
 
-function getUrgencyClassification(totalExposureM: number): {
-  level: 'critical' | 'high' | 'medium'
-  label: string
-  description: string
-} {
-  if (totalExposureM >= 5000) {
-    return {
-      level: 'critical',
-      label: 'Critical',
-      description:
-        'This fictional amount is in the sample’s critical range. It does not assess the selected encryption or its key-management and transport dependencies.',
-    }
-  }
-  if (totalExposureM >= 1000) {
-    return {
-      level: 'high',
-      label: 'High',
-      description:
-        'This fictional amount is in the sample’s high range. It does not assess the selected encryption or its key-management and transport dependencies.',
-    }
-  }
-  return {
-    level: 'medium',
-    label: 'Medium',
-    description:
-      'This fictional amount is in the sample’s medium range. It does not assess the selected encryption or its key-management and transport dependencies.',
-  }
+function formatYears(n: number): string {
+  return `${n.toLocaleString()} ${n === 1 ? 'year' : 'years'}`
+}
+
+let idCounter = 0
+function nextId(prefix: string): string {
+  idCounter += 1
+  return `${prefix}-${idCounter}`
 }
 
 // ── Component ────────────────────────────────────────────────────────────
 
 export const PharmaIPCalculator: React.FC = () => {
-  const [pipeline, setPipeline] = useState<DrugPipelineEntry[]>(DEFAULT_DRUG_PIPELINE)
+  const [pipeline, setPipeline] = useState<PharmaCompoundInput[]>(DEFAULT_PHARMA_PIPELINE)
   const [crqcYear, setCrqcYear] = useState<number>(CRQC_ESTIMATES.workshopDefault)
+  const [baseYear, setBaseYear] = useState<number>(PHARMA_SAMPLE_BASE_YEAR)
+
+  const scenario = useMemo(() => ({ baseYear, crqcYear }), [baseYear, crqcYear])
 
   const addCompound = useCallback(() => {
     setPipeline((prev) => [
       ...prev,
       {
-        id: `compound-${Date.now()}`,
+        id: nextId('compound'),
         compoundName: `NEW-${prev.length + 1}`,
-        phase: 'discovery' as DrugPhase,
         commercialValueM: 500,
-        currentEncryption: 'RSA-2048',
+        keyProtection: 'rsa-2048',
+        confidentialityYearsRemaining: 10,
+        patentExpiryYear: baseYear + 10,
+        exclusivityEndYear: null,
+        steps: [
+          {
+            id: nextId('step'),
+            name: 'Fictional step',
+            years: 2,
+            disclosedRecordAllowsSkip: true,
+          },
+        ],
       },
     ])
-  }, [])
+  }, [baseYear])
 
   const removeCompound = useCallback((id: string) => {
     setPipeline((prev) => prev.filter((c) => c.id !== id))
   }, [])
 
-  const updateCompound = useCallback((id: string, updates: Partial<DrugPipelineEntry>) => {
+  const updateCompound = useCallback((id: string, updates: Partial<PharmaCompoundInput>) => {
     setPipeline((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)))
   }, [])
 
-  // ── Exposure calculations ──────────────────────────────────────────────
-
-  const exposures = useMemo(() => {
-    return pipeline.map((compound) => {
-      const phaseConfig = PHARMA_PHASE_CONFIGS.find((p) => p.id === compound.phase)!
-      const { exposureM, atRisk } = computePharmaExposure(
-        compound.commercialValueM,
-        phaseConfig.avgYearsToExpiry,
-        crqcYear
+  const updateStep = useCallback((compoundId: string, stepId: string, updates: Partial<RdStep>) => {
+    setPipeline((prev) =>
+      prev.map((c) =>
+        c.id === compoundId
+          ? { ...c, steps: c.steps.map((s) => (s.id === stepId ? { ...s, ...updates } : s)) }
+          : c
       )
-      const phaseIndex = PHARMA_PHASE_CONFIGS.findIndex((p) => p.id === compound.phase)
-      const rdYearsSkipped =
-        atRisk && phaseIndex >= 0
-          ? Math.round(
-              (phaseIndex / PHARMA_PHASE_CONFIGS.length) * phaseConfig.avgYearsToExpiry * 10
-            ) / 10
-          : 0
-      const isQuantumVulnerable = QUANTUM_VULNERABLE_ENCRYPTION.has(compound.currentEncryption)
-      return {
-        ...compound,
-        phaseConfig,
-        exposureM,
-        atRisk,
-        rdYearsSkipped,
-        isQuantumVulnerable,
-      }
-    })
-  }, [pipeline, crqcYear])
+    )
+  }, [])
 
-  const totalValue = useMemo(
-    () => pipeline.reduce((sum, c) => sum + c.commercialValueM, 0),
-    [pipeline]
+  const addStep = useCallback((compoundId: string) => {
+    setPipeline((prev) =>
+      prev.map((c) =>
+        c.id === compoundId
+          ? {
+              ...c,
+              steps: [
+                ...c.steps,
+                {
+                  id: nextId('step'),
+                  name: 'Fictional step',
+                  years: 1,
+                  disclosedRecordAllowsSkip: false,
+                },
+              ],
+            }
+          : c
+      )
+    )
+  }, [])
+
+  const removeStep = useCallback((compoundId: string, stepId: string) => {
+    setPipeline((prev) =>
+      prev.map((c) =>
+        c.id === compoundId ? { ...c, steps: c.steps.filter((s) => s.id !== stepId) } : c
+      )
+    )
+  }, [])
+
+  // ── Calculations: one shared function ──────────────────────────────────
+
+  const results = useMemo(
+    () =>
+      pipeline.map((compound) => ({ compound, result: computePharmaCompound(compound, scenario) })),
+    [pipeline, scenario]
   )
+  const portfolio = useMemo(() => computePharmaPortfolio(pipeline, scenario), [pipeline, scenario])
 
-  const totalExposure = useMemo(
-    () => exposures.reduce((sum, e) => sum + e.exposureM, 0),
-    [exposures]
-  )
-
-  const atRiskCount = useMemo(() => exposures.filter((e) => e.atRisk).length, [exposures])
-
-  const percentAtRisk = totalValue > 0 ? Math.round((totalExposure / totalValue) * 100) : 0
-
-  const urgency = useMemo(() => getUrgencyClassification(totalExposure), [totalExposure])
+  const withSavedTime = results.filter((r) => r.result.rdYearsSaved > 0)
 
   // ── Render ─────────────────────────────────────────────────────────────
 
@@ -152,109 +156,294 @@ export const PharmaIPCalculator: React.FC = () => {
     <div className="space-y-6">
       <UnresolvedEstimatesNotice detail="workshopExample" />
       <p className="text-sm text-foreground/80">
-        Explore a fictional pharmaceutical planning scenario based on commercial value,
-        development-phase lifetime assumptions and a selected CRQC planning year. The timing/value
-        calculation does not use the selected encryption scheme; changing that selection updates its
-        label, not the scenario score. These outputs do not establish cryptographic exposure,
-        reduced risk or expected financial loss. In your own tools, assess data retention, key
-        establishment, key wrapping and transport dependencies, and test the supplier capabilities
-        you intend to use.
+        Everything on this page is a fictional project sample, not a standard, a forecast or a
+        vendor claim. Each compound has one fictional record encrypted with AES-256-GCM. What you
+        choose is how that record&apos;s content key is protected: RSA-2048, a pre-shared AES-256
+        key, or an X25519 + ML-KEM-768 hybrid. The sample assumes a future computer that can decrypt
+        recorded RSA exchanges in the CRQC year you set. It shows total value and the part of it
+        tied to the exposed path as two separate figures. It assigns no probability and predicts no
+        financial loss. How the key is distributed, stored or used is not assessed here.
       </p>
+
+      {/* ── Scenario years ─────────────────────────────────────────────── */}
+      <div className="glass-panel p-4">
+        <label
+          htmlFor="pharma-base-year"
+          className="block text-sm font-bold text-foreground mb-1 flex items-center gap-2"
+        >
+          <Clock size={16} className="text-primary" />
+          Fictional base year
+        </label>
+        <Input
+          id="pharma-base-year"
+          type="number"
+          min={2000}
+          max={2100}
+          value={baseYear}
+          onChange={(e) =>
+            setBaseYear(Math.round(Number(e.target.value)) || PHARMA_SAMPLE_BASE_YEAR)
+          }
+          className="h-9 text-sm font-mono w-32"
+        />
+        <p className="text-[11px] text-muted-foreground mt-1">
+          Confidentiality years are counted from this year. It is an input you can edit, not
+          today&apos;s date, so the results do not change as the calendar moves.
+        </p>
+      </div>
 
       {/* ── Pipeline Builder ──────────────────────────────────────────── */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <FlaskConical size={16} className="text-primary" />
-          Drug Pipeline Builder
+          Fictional Compound Records
         </h4>
 
         <div className="space-y-3">
-          {pipeline.map((compound) => (
-            <div key={compound.id} className="rounded-lg border border-border bg-muted/20 p-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
-                {/* Compound name */}
-                <div>
-                  <label
-                    htmlFor={`compound-name-${compound.id}`}
-                    className="block text-xs text-muted-foreground mb-1"
-                  >
-                    Compound
-                  </label>
-                  <Input
-                    id={`compound-name-${compound.id}`}
-                    type="text"
-                    value={compound.compoundName}
-                    onChange={(e) => updateCompound(compound.id, { compoundName: e.target.value })}
-                    className="h-9 text-sm"
-                    maxLength={20}
-                  />
-                </div>
+          {pipeline.map((compound) => {
+            const option = getKeyProtectionOption(compound.keyProtection)
+            return (
+              <div key={compound.id} className="rounded-lg border border-border bg-muted/20 p-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                  <div>
+                    <label
+                      htmlFor={`compound-name-${compound.id}`}
+                      className="block text-xs text-muted-foreground mb-1"
+                    >
+                      Compound
+                    </label>
+                    <Input
+                      id={`compound-name-${compound.id}`}
+                      type="text"
+                      value={compound.compoundName}
+                      onChange={(e) =>
+                        updateCompound(compound.id, { compoundName: e.target.value })
+                      }
+                      className="h-9 text-sm"
+                      maxLength={20}
+                    />
+                  </div>
 
-                {/* Phase */}
-                <div>
-                  <span className="block text-xs text-muted-foreground mb-1">Phase</span>
-                  <FilterDropdown
-                    items={PHASE_DROPDOWN_ITEMS}
-                    selectedId={compound.phase}
-                    onSelect={(id) => updateCompound(compound.id, { phase: id as DrugPhase })}
-                    label="Phase"
-                    defaultLabel="Select"
-                    noContainer
-                  />
-                </div>
+                  <div>
+                    <label
+                      htmlFor={`compound-value-${compound.id}`}
+                      className="block text-xs text-muted-foreground mb-1"
+                    >
+                      Value ($M)
+                    </label>
+                    <Input
+                      id={`compound-value-${compound.id}`}
+                      type="number"
+                      min={0}
+                      max={99999}
+                      value={compound.commercialValueM}
+                      onChange={(e) =>
+                        updateCompound(compound.id, {
+                          commercialValueM: Math.max(0, Number(e.target.value)),
+                        })
+                      }
+                      className="h-9 text-sm font-mono"
+                    />
+                  </div>
 
-                {/* Commercial value */}
-                <div>
-                  <label
-                    htmlFor={`compound-value-${compound.id}`}
-                    className="block text-xs text-muted-foreground mb-1"
-                  >
-                    Value ($M)
-                  </label>
-                  <Input
-                    id={`compound-value-${compound.id}`}
-                    type="number"
-                    min={0}
-                    max={99999}
-                    value={compound.commercialValueM}
-                    onChange={(e) =>
-                      updateCompound(compound.id, {
-                        commercialValueM: Math.max(0, Number(e.target.value)),
-                      })
-                    }
-                    className="h-9 text-sm font-mono"
-                  />
-                </div>
+                  <div className="sm:col-span-2">
+                    <span className="block text-xs text-muted-foreground mb-1">
+                      Record key protection
+                    </span>
+                    <FilterDropdown
+                      items={KEY_PROTECTION_DROPDOWN_ITEMS}
+                      selectedId={compound.keyProtection}
+                      onSelect={(id) =>
+                        updateCompound(compound.id, { keyProtection: id as KeyProtectionPath })
+                      }
+                      label="Key protection"
+                      defaultLabel="Select"
+                      noContainer
+                    />
+                  </div>
 
-                {/* Encryption */}
-                <div>
-                  <span className="block text-xs text-muted-foreground mb-1">Encryption</span>
-                  <FilterDropdown
-                    items={ENCRYPTION_OPTIONS}
-                    selectedId={compound.currentEncryption}
-                    onSelect={(id) => updateCompound(compound.id, { currentEncryption: id })}
-                    label="Encryption"
-                    defaultLabel="Select"
-                    noContainer
-                  />
+                  <div className="flex items-end">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeCompound(compound.id)}
+                      aria-label={`Remove ${compound.compoundName || 'compound'}`}
+                      className="text-status-error hover:text-status-error h-9"
+                      disabled={pipeline.length <= 1}
+                    >
+                      <Trash2 size={14} aria-hidden="true" />
+                    </Button>
+                  </div>
                 </div>
+                <p className="text-[11px] text-muted-foreground mt-2">{option.explanation}</p>
 
-                {/* Remove */}
-                <div className="flex items-end">
+                {/* Dates: confidentiality is separate from patent and exclusivity */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+                  <div>
+                    <label
+                      htmlFor={`compound-conf-${compound.id}`}
+                      className="block text-xs text-muted-foreground mb-1"
+                    >
+                      Confidentiality years remaining
+                    </label>
+                    <Input
+                      id={`compound-conf-${compound.id}`}
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={compound.confidentialityYearsRemaining}
+                      onChange={(e) =>
+                        updateCompound(compound.id, {
+                          confidentialityYearsRemaining: Math.max(0, Number(e.target.value)),
+                        })
+                      }
+                      className="h-9 text-sm font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`compound-patent-${compound.id}`}
+                      className="block text-xs text-muted-foreground mb-1"
+                    >
+                      Patent expiry year (display only)
+                    </label>
+                    <Input
+                      id={`compound-patent-${compound.id}`}
+                      type="number"
+                      min={2000}
+                      max={2200}
+                      value={compound.patentExpiryYear}
+                      onChange={(e) =>
+                        updateCompound(compound.id, {
+                          patentExpiryYear: Math.round(Number(e.target.value)),
+                        })
+                      }
+                      className="h-9 text-sm font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`compound-excl-${compound.id}`}
+                      className="block text-xs text-muted-foreground mb-1"
+                    >
+                      Exclusivity end year (display only)
+                    </label>
+                    <Input
+                      id={`compound-excl-${compound.id}`}
+                      type="number"
+                      min={2000}
+                      max={2200}
+                      placeholder="none"
+                      value={compound.exclusivityEndYear ?? ''}
+                      onChange={(e) =>
+                        updateCompound(compound.id, {
+                          exclusivityEndYear:
+                            e.target.value === '' ? null : Math.round(Number(e.target.value)),
+                        })
+                      }
+                      className="h-9 text-sm font-mono"
+                    />
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  A patent expiring does not end confidentiality, and confidentiality ending does
+                  not end a patent. Only &quot;confidentiality years remaining&quot; feeds the
+                  result.
+                </p>
+
+                {/* R&D steps */}
+                <div className="mt-3">
+                  <span className="block text-xs font-bold text-foreground mb-1">
+                    Fictional development steps remaining
+                  </span>
+                  <div className="space-y-2">
+                    {compound.steps.map((step, idx) => (
+                      <div
+                        key={step.id}
+                        className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end"
+                      >
+                        <div className="sm:col-span-5">
+                          <label
+                            htmlFor={`step-name-${step.id}`}
+                            className="block text-[11px] text-muted-foreground mb-0.5"
+                          >
+                            {`Step ${idx + 1} name for ${compound.compoundName}`}
+                          </label>
+                          <Input
+                            id={`step-name-${step.id}`}
+                            type="text"
+                            value={step.name}
+                            onChange={(e) =>
+                              updateStep(compound.id, step.id, { name: e.target.value })
+                            }
+                            className="h-8 text-xs"
+                            maxLength={40}
+                          />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label
+                            htmlFor={`step-years-${step.id}`}
+                            className="block text-[11px] text-muted-foreground mb-0.5"
+                          >
+                            {`Step ${idx + 1} years for ${compound.compoundName}`}
+                          </label>
+                          <Input
+                            id={`step-years-${step.id}`}
+                            type="number"
+                            min={0}
+                            max={100}
+                            step={0.5}
+                            value={step.years}
+                            onChange={(e) =>
+                              updateStep(compound.id, step.id, {
+                                years: Math.max(0, Number(e.target.value)),
+                              })
+                            }
+                            className="h-8 text-xs font-mono"
+                          />
+                        </div>
+                        <label className="sm:col-span-4 flex items-center gap-1.5 text-[11px] text-foreground/80 h-8">
+                          <input
+                            type="checkbox"
+                            checked={step.disclosedRecordAllowsSkip}
+                            onChange={(e) =>
+                              updateStep(compound.id, step.id, {
+                                disclosedRecordAllowsSkip: e.target.checked,
+                              })
+                            }
+                            aria-label={`Step ${idx + 1} can be omitted for ${compound.compoundName}`}
+                            className="accent-primary"
+                          />
+                          Disclosed record would let an adversary omit this step
+                        </label>
+                        <div className="sm:col-span-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeStep(compound.id, step.id)}
+                            aria-label={`Remove step ${idx + 1} of ${compound.compoundName}`}
+                            className="text-status-error hover:text-status-error h-8"
+                          >
+                            <Trash2 size={12} aria-hidden="true" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    onClick={() => removeCompound(compound.id)}
-                    aria-label={`Remove ${compound.compoundName || 'compound'}`}
-                    className="text-status-error hover:text-status-error h-9"
-                    disabled={pipeline.length <= 1}
+                    onClick={() => addStep(compound.id)}
+                    disabled={compound.steps.length >= MAX_STEPS}
+                    aria-label={`Add step to ${compound.compoundName}`}
+                    className="mt-2 flex items-center gap-1.5"
                   >
-                    <Trash2 size={14} aria-hidden="true" />
+                    <Plus size={12} />
+                    Add step
                   </Button>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         <Button
@@ -280,7 +469,7 @@ export const PharmaIPCalculator: React.FC = () => {
             className="text-sm font-bold text-foreground flex items-center gap-2"
           >
             <Clock size={16} className="text-primary" />
-            Estimated CRQC Year
+            Assumed CRQC Year
           </label>
           <span className="text-lg font-bold font-mono text-primary">{crqcYear}</span>
         </div>
@@ -301,144 +490,135 @@ export const PharmaIPCalculator: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Illustrative Timing/Value Dashboard ──────────────────────────────── */}
+      {/* ── Value dashboard: total value and vulnerable-path value, separately ── */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <DollarSign size={16} className="text-primary" />
-          Illustrative Timing/Value Dashboard
+          Value and Key-Protection Path
         </h4>
 
         <div className="space-y-2">
-          {exposures.map((entry) => {
-            const phaseColor = PHASE_COLORS[entry.phase] ?? 'bg-muted text-muted-foreground'
+          {results.map(({ compound, result }) => {
+            const tied = result.status === 'exposed-in-scenario'
             return (
               <div
-                key={entry.id}
+                key={compound.id}
                 className={`rounded-lg border p-3 transition-colors ${
-                  entry.atRisk
-                    ? 'border-status-error/30 bg-status-error/5'
-                    : 'border-border bg-muted/20'
+                  tied ? 'border-status-error/30 bg-status-error/5' : 'border-border bg-muted/20'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-bold text-foreground font-mono">
-                      {entry.compoundName}
+                      {compound.compoundName}
                     </span>
-                    <span className={`text-[10px] font-bold rounded px-1.5 py-0.5 ${phaseColor}`}>
-                      {entry.phaseConfig.label}
-                    </span>
-                    {entry.atRisk && (
+                    {tied && (
                       <span className="inline-flex items-center gap-0.5 text-[10px] font-bold rounded px-1.5 py-0.5 bg-status-error/20 text-status-error">
                         <AlertTriangle size={10} />
-                        Timing Overlap
+                        Vulnerable path
                       </span>
                     )}
-                    {entry.isQuantumVulnerable && (
-                      <span className="text-[10px] rounded px-1.5 py-0.5 bg-status-warning/20 text-status-warning font-medium">
-                        {entry.currentEncryption} &mdash; quantum-vulnerable
-                      </span>
-                    )}
-                    {!entry.isQuantumVulnerable && (
-                      <span className="text-[10px] rounded px-1.5 py-0.5 bg-muted text-muted-foreground font-medium">
-                        {entry.currentEncryption}
-                      </span>
-                    )}
+                    <span className="text-[10px] rounded px-1.5 py-0.5 bg-muted text-muted-foreground font-medium">
+                      {getKeyProtectionOption(compound.keyProtection).label}
+                    </span>
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <div className="text-right">
-                      <div className="text-[10px] text-muted-foreground">Value</div>
+                      <div className="text-[10px] text-muted-foreground">Total value</div>
                       <div className="font-mono text-foreground">
-                        ${entry.commercialValueM.toLocaleString()}M
+                        {formatMillions(result.totalValueM)}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] text-muted-foreground">Scenario Amount</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        Tied to vulnerable path
+                      </div>
                       <div
-                        className={`font-mono font-bold ${
-                          entry.atRisk ? 'text-status-error' : 'text-foreground'
-                        }`}
+                        className={`font-mono font-bold ${tied ? 'text-status-error' : 'text-foreground'}`}
                       >
-                        ${entry.exposureM.toLocaleString()}M
+                        {result.valueOnVulnerablePathM === null
+                          ? 'not determined'
+                          : formatMillions(result.valueOnVulnerablePathM)}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] text-muted-foreground">Yrs to Expiry</div>
+                      <div className="text-[10px] text-muted-foreground">Confidential until</div>
                       <div className="font-mono text-foreground">
-                        {entry.phaseConfig.avgYearsToExpiry}
+                        {result.confidentialityEndYear}
                       </div>
                     </div>
                   </div>
                 </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {STATUS_TEXT[result.status]}. Patent expiry {result.patentExpiryYear}
+                  {result.exclusivityEndYear !== null
+                    ? `, exclusivity ends ${result.exclusivityEndYear}`
+                    : ', no exclusivity date entered'}{' '}
+                  (shown separately).
+                </p>
               </div>
             )
           })}
         </div>
 
-        {/* Total row */}
-        <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
-          <span className="text-sm font-bold text-foreground">
-            Total Illustrative Scenario Amount
-          </span>
-          <span
-            className={`text-lg font-bold font-mono ${
-              totalExposure > 0 ? 'text-status-error' : 'text-foreground'
-            }`}
-          >
-            ${totalExposure.toLocaleString()}M
-          </span>
+        <div className="mt-3 pt-3 border-t border-border space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-foreground">Total fictional value</span>
+            <span className="text-lg font-bold font-mono text-foreground">
+              {formatMillions(portfolio.totalValueM)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-foreground">
+              Value tied to the vulnerable path
+            </span>
+            <span
+              className={`text-lg font-bold font-mono ${
+                portfolio.valueOnVulnerablePathM > 0 ? 'text-status-error' : 'text-foreground'
+              }`}
+            >
+              {formatMillions(portfolio.valueOnVulnerablePathM)}
+            </span>
+          </div>
+          {portfolio.compoundsPathUnknown > 0 && (
+            <p className="text-[11px] text-muted-foreground">
+              {portfolio.compoundsPathUnknown} compound(s) have no key protection specified and are
+              not included in the vulnerable-path figure.
+            </p>
+          )}
         </div>
       </div>
 
-      {/* ── Competitor Advantage Window ───────────────────────────────── */}
-      {atRiskCount > 0 && (
-        <div className="glass-panel p-4">
-          <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-            <TrendingUp size={16} className="text-status-warning" />
-            Illustrative R&amp;D Timing Window
-          </h4>
-          <p className="text-xs text-muted-foreground mb-3">
-            These phase/lifetime-based values illustrate a timing scenario. They do not predict
-            whether a competitor could decrypt the data or how much independent R&amp;D it could
-            save.
-          </p>
-
-          <div className="space-y-3">
-            {exposures
-              .filter((e) => e.atRisk)
-              .map((entry) => {
-                const maxSkip = Math.max(
-                  ...exposures.filter((e) => e.atRisk).map((e) => e.rdYearsSkipped),
-                  1
-                )
-                const barWidthPct = maxSkip > 0 ? (entry.rdYearsSkipped / maxSkip) * 100 : 0
-
-                return (
-                  <div key={entry.id}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold font-mono text-foreground">
-                        {entry.compoundName}
-                      </span>
-                      <span className="text-xs font-mono text-status-warning">
-                        {entry.rdYearsSkipped} illustrative years
-                      </span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2.5">
-                      <div
-                        className="h-2.5 rounded-full bg-status-warning/70 transition-all"
-                        style={{ width: `${barWidthPct}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
-                      <span>0 years</span>
-                      <span>{entry.phaseConfig.avgYearsToExpiry} years (full pipeline)</span>
-                    </div>
-                  </div>
-                )
-              })}
-          </div>
+      {/* ── R&D time from the visible steps ───────────────────────────── */}
+      <div className="glass-panel p-4">
+        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+          <TrendingUp size={16} className="text-status-warning" />
+          R&amp;D Time From the Steps You Entered
+        </h4>
+        <p className="text-xs text-muted-foreground mb-3">
+          Time saved is the sum of the steps you marked as omittable, and nothing else. It is
+          arithmetic on fictional steps. It does not claim a stolen record replaces independent
+          trials that a regulator requires, and it does not depend on the key-protection choice.
+        </p>
+        <div className="space-y-2">
+          {results.map(({ compound, result }) => (
+            <div
+              key={compound.id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs"
+            >
+              <span className="font-bold font-mono text-foreground">{compound.compoundName}</span>
+              <span className="font-mono text-foreground/80">
+                {`${formatYears(result.developmentYearsTotal)} of steps in total, ${formatYears(result.rdYearsSaved)} omittable, ${formatYears(result.rdYearsRetained)} retained`}
+              </span>
+            </div>
+          ))}
         </div>
-      )}
+        {withSavedTime.length === 0 && (
+          <p className="text-xs text-muted-foreground mt-2">
+            No step is marked as omittable, so the time saved is 0 years.
+          </p>
+        )}
+      </div>
 
       {/* ── Summary Panel ─────────────────────────────────────────────── */}
       <div className="glass-panel p-4">
@@ -447,68 +627,39 @@ export const PharmaIPCalculator: React.FC = () => {
           Portfolio Summary
         </h4>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Total Value
             </div>
             <div className="text-lg font-bold font-mono text-foreground mt-1">
-              ${totalValue.toLocaleString()}M
+              {formatMillions(portfolio.totalValueM)}
             </div>
           </div>
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Scenario Amount
+              Tied to Vulnerable Path
             </div>
-            <div
-              className={`text-lg font-bold font-mono mt-1 ${
-                totalExposure > 0 ? 'text-status-error' : 'text-foreground'
-              }`}
-            >
-              ${totalExposure.toLocaleString()}M
+            <div className="text-lg font-bold font-mono text-foreground mt-1">
+              {formatMillions(portfolio.valueOnVulnerablePathM)}
             </div>
           </div>
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Scenario Amount / Value
+              Compounds on Vulnerable Path
             </div>
-            <div
-              className={`text-lg font-bold font-mono mt-1 ${
-                percentAtRisk > 50
-                  ? 'text-status-error'
-                  : percentAtRisk > 20
-                    ? 'text-status-warning'
-                    : 'text-foreground'
-              }`}
-            >
-              {percentAtRisk}%
+            <div className="text-lg font-bold font-mono text-foreground mt-1">
+              {portfolio.compoundsOnVulnerablePath}/{pipeline.length}
             </div>
           </div>
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Compounds with Timing Overlap
+              R&amp;D Years Omittable
             </div>
-            <div
-              className={`text-lg font-bold font-mono mt-1 ${
-                atRiskCount > 0 ? 'text-status-error' : 'text-foreground'
-              }`}
-            >
-              {atRiskCount}/{pipeline.length}
+            <div className="text-lg font-bold font-mono text-foreground mt-1">
+              {portfolio.rdYearsSaved}
             </div>
           </div>
-        </div>
-
-        {/* Urgency classification */}
-        <div
-          className={`rounded-lg border p-4 ${
-            SEVERITY_COLORS[urgency.level] ?? 'bg-muted text-muted-foreground border-border'
-          }`}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <AlertTriangle size={14} />
-            <span className="text-sm font-bold">Scenario Urgency: {urgency.label}</span>
-          </div>
-          <p className="text-xs opacity-90">{urgency.description}</p>
         </div>
       </div>
     </div>
