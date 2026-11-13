@@ -327,6 +327,11 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         note: 'RFC 9370 (published) defines the additional key exchanges; ML-KEM in IKEv2 is a draft.',
       },
       {
+        algorithms: ['ECDH', 'ML-KEM'],
+        status: 'draft',
+        proofRefs: ['RFC 9370', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
+      },
+      {
         algorithms: ['FFDH', 'ML-KEM'],
         status: 'draft',
         proofRefs: ['RFC 9370', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
@@ -826,10 +831,10 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     outlook: 'pqc-native',
     pqc: [
       {
-        algorithms: ['ML-KEM', 'AES'],
+        algorithms: ['ML-KEM'],
         status: 'published',
         proofRefs: ['PKCS11-V32-OS-OASIS'],
-        note: 'PKCS#11 v3.2 defines the KEM operations (C_EncapsulateKey, C_DecapsulateKey); using the encapsulated secret to wrap a key with AES is our description of how they fit together.',
+        note: 'PKCS#11 v3.2 defines the KEM operations (C_EncapsulateKey, C_DecapsulateKey); using the encapsulated secret to wrap a key, for example with AES key wrap, is our description of how they fit together.',
       },
     ],
     builtOn: ['Key-Wrap'],
