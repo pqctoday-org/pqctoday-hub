@@ -293,6 +293,8 @@ interface IkeView {
   plain: Record<string, string>
   withPpk: PpkPathView
   withoutPpk: PpkPathView
+  /** What the supplied key stores actually produce; Path 1 is only claimed when this is 'ppk'. */
+  actualPath: PpkPathOutcome['path']
 }
 type PpkPathView =
   | {
@@ -429,6 +431,7 @@ const IKEv2Panel: React.FC = () => {
           },
           withPpk: pathView(outcome.withPpk),
           withoutPpk: pathView(outcome.withoutPpk),
+          actualPath: outcome.actual.path,
         }
       }),
     [runSample, mandatory]
@@ -566,7 +569,7 @@ const IKEv2Panel: React.FC = () => {
               {Object.entries(result.plain).map(([name, value]) => (
                 <KeyRow
                   key={name}
-                  label={`${name} (plain IKEv2, prf+(SKEYSEED, Ni | Nr | SPIi | SPIr))`}
+                  label={`${name} (plain IKEv2, prf+(SKEYSEED, Ni | Nr | SPIi | SPIr); the final key when no PPK is used)`}
                   value={value}
                 />
               ))}
@@ -591,7 +594,9 @@ const IKEv2Panel: React.FC = () => {
 
           <div className="bg-success/5 rounded p-4 border border-success/20 space-y-3">
             <div className="text-sm font-bold text-success">
-              Path 1: both peers fetched the key from their own QKD node, PPK in use
+              {result.actualPath === 'ppk'
+                ? 'Path 1: both peers fetched the key from their own QKD node, PPK in use'
+                : 'Path 1 (hypothetical, not what happened): if both peers had fetched the key, PPK in use'}
             </div>
             {result.withPpk.path === 'ppk' ? (
               <>
@@ -640,10 +645,11 @@ const IKEv2Panel: React.FC = () => {
                   This session is NOT quantum-safe. {result.withoutPpk.reason}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  The keys are the plain-IKEv2 values listed above, derived from ECP-256 alone. An
-                  attacker who records this exchange can recover every key from it once a quantum
-                  computer breaks ECP-256 Diffie-Hellman. Allowing fallback keeps the link up; it
-                  gives up the QKD protection for that session.
+                  The final SK_d, SK_pi and SK_pr on this path are the plain-IKEv2 values listed
+                  above (SK_d′, SK_pi′, SK_pr′ unchanged), derived from ECP-256 alone. An attacker
+                  who records this exchange can recover every key from it once a quantum computer
+                  breaks ECP-256 Diffie-Hellman. Allowing fallback keeps the link up; it gives up
+                  the QKD protection for that session.
                 </p>
               </>
             )}

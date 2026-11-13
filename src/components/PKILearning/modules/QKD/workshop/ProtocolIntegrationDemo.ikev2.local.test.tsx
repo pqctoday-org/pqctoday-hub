@@ -75,7 +75,7 @@ describe('IKEv2 panel: real SKEYSEED, SK_* and RFC 8784 PPK mixing', () => {
       7
     )
     const plainLabel = (name: string) =>
-      `${name} (plain IKEv2, prf+(SKEYSEED, Ni | Nr | SPIi | SPIr))`
+      `${name} (plain IKEv2, prf+(SKEYSEED, Ni | Nr | SPIi | SPIr); the final key when no PPK is used)`
     expect(shown(plainLabel('SK_d′'))).toBe(skD.toString('hex'))
     expect(shown(plainLabel('SK_ai'))).toBe(skAi.toString('hex'))
     expect(shown(plainLabel('SK_ar'))).toBe(skAr.toString('hex'))

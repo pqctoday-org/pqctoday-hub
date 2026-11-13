@@ -372,6 +372,9 @@ export function runIkeQkdSample(inputs: IkeQkdSampleInputs): IkeQkdSampleResult 
     sharedXInitiator: initiator.sharedX,
     sharedXResponder: responder.sharedX,
     plain: initiator.plain,
+    // Hypothetical view: the key one node holds is given to both. Only `actual` says what the
+    // supplied stores produce; a page must not present this path as what happened unless
+    // `actual.path === 'ppk'`.
     withPpk: outcome(ppkInitiator ?? ppkResponder, ppkResponder ?? ppkInitiator),
     withoutPpk: outcome(ppkInitiator, undefined),
     actual: outcome(ppkInitiator, ppkResponder),
