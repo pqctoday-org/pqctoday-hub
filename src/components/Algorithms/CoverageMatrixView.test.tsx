@@ -211,19 +211,19 @@ describe('CoverageMatrixView', () => {
     ).toBeInTheDocument()
   })
 
-  it('lists the 20 recorded NIST sample failures as two plain entries and keeps the test paths under the technical evidence', async () => {
+  it('lists the 44 recorded sample failures as four plain entries and keeps the test paths under the technical evidence', async () => {
     const user = userEvent.setup()
     const failures = (coverageMatrix.openGaps as unknown as OpenGap[]).filter((g) =>
       g.id.startsWith('recorded-fail:')
     )
-    expect(failures).toHaveLength(20)
+    expect(failures).toHaveLength(44)
     const withFailures = { ...file, openGaps: [...file.openGaps, ...failures] }
     const without = expandMatrix(structuredClone(file)).openGaps.filter(
       (g) => g.origin === 'curated' || !g.id.startsWith('untested:')
     )
     render(<CoverageMatrixView loader={() => Promise.resolve(structuredClone(withFailures))} />)
     const gaps = await screen.findByRole('region', { name: 'Open gaps register' })
-    expect(within(gaps).getByTestId('gap-total')).toHaveTextContent(`(${without.length + 2})`)
+    expect(within(gaps).getByTestId('gap-total')).toHaveTextContent(`(${without.length + 4})`)
 
     expect(
       within(gaps).getByRole('heading', {
@@ -236,7 +236,19 @@ describe('CoverageMatrixView', () => {
     expect(within(gaps).getAllByText(/^Recorded FAIL/)).toHaveLength(
       without.filter((g) => g.id.startsWith('recorded-fail:')).length
     )
-    expect(gaps).not.toHaveTextContent(/rsa_oaep_test|pbkdf2_acvp_test|row rsaoaep|row pbkdf2/)
+    expect(
+      within(gaps).getByRole('heading', {
+        name: 'ML-DSA signing: 12 Wycheproof invalid-key cases end in an error on the C++ engine',
+      })
+    ).toBeInTheDocument()
+    expect(
+      within(gaps).getByRole('heading', {
+        name: 'ML-DSA verification: 12 Wycheproof wrong-length public keys end in an error on the Rust engine',
+      })
+    ).toBeInTheDocument()
+    expect(gaps).not.toHaveTextContent(
+      /rsa_oaep_test|pbkdf2_acvp_test|wycheproof_mldsa|row rsaoaep|row pbkdf2|row wyc-mldsa/
+    )
 
     await user.click(within(oaep).getByRole('button', { name: 'Show technical evidence' }))
     expect(oaep).toHaveTextContent('acvp.36 (rsa_oaep_test#/testGroups/0/tests/0), row rsaoaep-')

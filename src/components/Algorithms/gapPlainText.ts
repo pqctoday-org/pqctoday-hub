@@ -124,6 +124,17 @@ export const GAP_PLAIN_TEXT: Readonly<Record<string, GapPlainText>> = {
     summary:
       'When PQC Today runs these NIST RSA-OAEP sample cases in Node.js (the recorded run, not a browser run), the Rust engine gives a different result from NIST’s expected answer. Most use RSA keys with a public exponent of 2^33 or more, which this engine refuses (see the entry on large public exponents).',
   },
+  'recorded-fail-mldsa-sign-cpp': {
+    title: 'ML-DSA signing: 12 Wycheproof invalid-key cases end in an error on the C++ engine',
+    summary:
+      'When PQC Today runs these Project Wycheproof ML-DSA signing cases in Node.js (the recorded run, not a browser run), the C++ engine accepts a private key that has the wrong length or a value out of range, and then fails while signing with a general error. A correct engine refuses such a key when it is imported. An error is never counted as the expected refusal, so these cases fail.',
+  },
+  'recorded-fail-mldsa-verify-rust': {
+    title:
+      'ML-DSA verification: 12 Wycheproof wrong-length public keys end in an error on the Rust engine',
+    summary:
+      'When PQC Today runs these Project Wycheproof ML-DSA verification cases in Node.js (the recorded run, not a browser run), the Rust engine accepts a public key one byte too short or too long, and then fails verification with a key-type error instead of refusing the key at import or rejecting the signature. An error is never counted as the expected refusal, so these cases fail.',
+  },
   'gate-builds-a-config-nobody-ships': {
     title:
       'The test gate builds the WebAssembly engine with a 2 MiB stack while the shipped build uses 8 MiB — it validates a configuration nobody ships',
@@ -233,7 +244,7 @@ export function plainRuleText(text: string): string {
 
 /**
  * One generated "Recorded FAIL" entry exists per failing case and engine, which
- * for the 20 current failures is a wall of test paths. Each family below is shown
+ * for the 44 current failures is a wall of test paths. Each family below is shown
  * as one plain entry instead (its wording is in `GAP_PLAIN_TEXT` under `id`).
  * A family is folded only while its failures have exactly the recorded shape
  * (the same `cases` cases on each of `engines`); a changed shape leaves the
@@ -242,8 +253,8 @@ export function plainRuleText(text: string): string {
  */
 const RECORDED_FAIL_FOLDS: readonly {
   id: string
-  /** The test-file family named in the generated entry ids. */
-  family: string
+  /** The test-file family (or families, one per parameter set) named in the generated entry ids. */
+  families: readonly string[]
   /** Engine ids the family fails on, in the order the scope names them. */
   engines: readonly string[]
   /** Distinct failing cases per engine. */
@@ -252,16 +263,38 @@ const RECORDED_FAIL_FOLDS: readonly {
 }[] = [
   {
     id: 'recorded-fail-pbkdf2',
-    family: 'pbkdf2_acvp_test',
+    families: ['pbkdf2_acvp_test'],
     engines: ['cpp', 'rust'],
     cases: 1,
     scope: 'C++ and Rust (wasm)',
   },
   {
     id: 'recorded-fail-rsa-oaep',
-    family: 'rsa_oaep_test',
+    families: ['rsa_oaep_test'],
     engines: ['rust'],
     cases: 18,
+    scope: 'Rust (wasm)',
+  },
+  {
+    id: 'recorded-fail-mldsa-sign-cpp',
+    families: [
+      'wycheproof_mldsa_44_sign_noseed_test',
+      'wycheproof_mldsa_65_sign_noseed_test',
+      'wycheproof_mldsa_87_sign_noseed_test',
+    ],
+    engines: ['cpp'],
+    cases: 12,
+    scope: 'C++ (wasm)',
+  },
+  {
+    id: 'recorded-fail-mldsa-verify-rust',
+    families: [
+      'wycheproof_mldsa_44_verify_test',
+      'wycheproof_mldsa_65_verify_test',
+      'wycheproof_mldsa_87_verify_test',
+    ],
+    engines: ['rust'],
+    cases: 12,
     scope: 'Rust (wasm)',
   },
 ]
@@ -281,7 +314,9 @@ export function foldRecordedFailGaps(gaps: readonly OpenGap[]): OpenGap[] {
   const folded = new Map<string, OpenGap>()
   const absorbed = new Set<string>()
   for (const fold of RECORDED_FAIL_FOLDS) {
-    const members = gaps.filter((g) => parseRecordedFailId(g.id)?.family === fold.family)
+    const members = gaps.filter((g) =>
+      fold.families.includes(parseRecordedFailId(g.id)?.family ?? '')
+    )
     const perEngine = fold.engines.map(
       (engine) => members.filter((g) => parseRecordedFailId(g.id)?.engine === engine).length
     )
@@ -300,7 +335,7 @@ export function foldRecordedFailGaps(gaps: readonly OpenGap[]): OpenGap[] {
     for (const g of members) absorbed.add(g.id)
     folded.set(first.id, {
       id: fold.id,
-      title: `Recorded FAIL on ${fold.scope}: ${fold.family}`,
+      title: `Recorded FAIL on ${fold.scope}: ${fold.families.join(', ')}`,
       detail: `The committed wasm run result is fail for ${caseKeys.size} registered case${caseKeys.size === 1 ? '' : 's'} (${members.length} case-and-engine results). The cells keep their registered-evidence status but are never counted as passed. Failing results: ${evidence.join('; ')}.`,
       planItem: first.planItem,
       owner: first.owner,
