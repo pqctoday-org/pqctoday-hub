@@ -294,7 +294,11 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     label: 'Hybrid key exchange (e.g. X25519MLKEM768)',
     outlook: 'bridge',
     hybrid: [
-      { algorithms: ['X25519', 'ML-KEM'], status: 'published', proofRefs: ['RFC-10024'] },
+      {
+        algorithms: ['X25519', 'ML-KEM'],
+        status: 'published',
+        proofRefs: ['RFC-10024', 'RFC 10042'],
+      },
       { algorithms: ['ECDH', 'ML-KEM'], status: 'published', proofRefs: ['RFC-10024'] },
     ],
     builtOn: ['KDF'],
@@ -1027,6 +1031,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         algorithms: ['ML-DSA', 'ECDSA'],
         status: 'draft',
         proofRefs: ['draft-bonnell-lamps-chameleon-certs-07'],
+        note: 'Individual draft -07 (October 2025) has expired, and there is no newer revision (checked 13 Nov 2026).',
       },
     ],
     cycloneDxPrimitive: 'other',
@@ -1098,21 +1103,18 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     pqc: [
       {
         algorithms: ['AES'],
-        status: 'study',
-        proofRefs: ['3GPP-Post-Quantum-Cryptography-SA3-Overview'],
-        note: '3GPP is specifying 256-bit algorithm sets, because Grover’s algorithm reduces the effective strength of symmetric keys.',
+        status: 'published',
+        proofRefs: ['Specification-of-the-MILENAGE-algorithm-set-An-example-algor'],
+        note: 'Unchanged: MILENAGE uses only symmetric cryptography, so Shor’s algorithm does not break it.',
       },
     ],
     cycloneDxPrimitive: 'mac',
-    proofRefs: [
-      'Specification-of-the-MILENAGE-algorithm-set-An-example-algor',
-      '3GPP-Post-Quantum-Cryptography-SA3-Overview',
-    ],
+    proofRefs: ['Specification-of-the-MILENAGE-algorithm-set-An-example-algor'],
     explain: {
       plain:
         'When a phone joins a mobile network, the SIM and the operator prove to each other that they share the same secret key and derive session keys from it. MILENAGE is the example algorithm set for this, built on the Rijndael (AES) block cipher.',
       whyItMattersForPqc:
-        'It uses only symmetric cryptography, so it is not broken by Shor’s algorithm; 3GPP is adding 256-bit algorithm sets for extra margin against Grover’s algorithm.',
+        'It uses only symmetric cryptography, so it is not broken by Shor’s algorithm and stays in place when the rest of the network moves to post-quantum algorithms.',
       glossaryTerm: 'MILENAGE',
       diagram: {
         inputs: ['shared subscriber key', 'network challenge'],
@@ -1261,7 +1263,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         algorithms: ['ML-DSA'],
         status: 'research',
         proofRefs: ['Efficient-Threshold-ML-DSA-Brave'],
-        note: 'Threshold ML-DSA is research; NIST has an open call for multi-party threshold schemes (IR 8214C).',
+        note: 'Threshold ML-DSA is research; NIST published a call for multi-party threshold schemes in January 2026 (IR 8214C).',
       },
     ],
     cycloneDxPrimitive: 'signature',
@@ -1273,7 +1275,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       plain:
         'In a threshold signature, a key is split among several parties and any agreed number of them can sign together, while no single party ever holds the whole key. FROST does this in two rounds for Schnorr signatures.',
       whyItMattersForPqc:
-        'The classical schemes rest on elliptic curves; post-quantum threshold signing, for example with ML-DSA, is still research, and NIST has an open call for threshold schemes.',
+        'The classical schemes rest on elliptic curves; post-quantum threshold signing, for example with ML-DSA, is still research, and NIST has published a call for threshold schemes.',
       diagram: {
         inputs: ['message', 'key shares held by several signers'],
         combiner: 'two signing rounds',
@@ -1356,7 +1358,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
   },
   {
     id: 'Secret-Sharing',
-    label: 'Secret sharing (Shamir)',
+    label: 'Secret sharing',
     outlook: 'stays-both',
     classical: [
       {
@@ -1377,9 +1379,9 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
     explain: {
       plain:
-        'Secret sharing splits a secret, such as a master key, into shares so that any agreed number of them can rebuild it while fewer reveal nothing. Custody providers and HSM backups use it.',
+        'Secret sharing splits a secret, such as a master key, into shares so that any agreed number of them can rebuild it while fewer reveal nothing. NIST’s call for multi-party threshold schemes builds on keys that are secret-shared across several parties.',
       whyItMattersForPqc:
-        'Shamir’s scheme does not rely on a hard mathematical problem, so a quantum computer gives an attacker with too few shares no advantage.',
+        'Basic secret sharing does not rely on a hard mathematical problem, so a quantum computer gives an attacker holding too few shares no advantage.',
       diagram: {
         inputs: ['secret', 'threshold'],
         combiner: 'split into shares',
@@ -1394,7 +1396,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     classical: [
       {
         algorithms: ['X25519'],
-        status: 'published',
+        status: 'vendor-spec',
         proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
       },
     ],
@@ -1522,9 +1524,9 @@ export const HYBRID_CLASSICAL_HALF_ELSEWHERE: Record<string, string> = {
 /** Construction ids allowed an empty algorithm list, with the reason (K2). */
 export const NO_FAMILY_EXEMPT: Record<string, string> = {
   'OPRF-PrivacyPass':
-    'The VOPRF token type works over the P-384 group, which the algorithm vocabulary has no family for.',
+    'The VOPRF token type evaluates an oblivious function in the P-384 elliptic-curve group; that is neither key agreement (ECDH) nor a signature (ECDSA), so no algorithm family fits.',
   'Secret-Sharing':
-    'Shamir secret sharing is information-theoretic: it uses no public-key algorithm family.',
+    'Basic secret sharing is information-theoretic: it uses no public-key algorithm family.',
   'IKEv2-PPK':
     'Mixes a preshared key through the PRF that IKEv2 negotiates; it adds no algorithm family of its own.',
 }

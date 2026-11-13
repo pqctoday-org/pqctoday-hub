@@ -160,7 +160,7 @@ export const ALGORITHM_EXPLANATIONS: Record<string, AlgorithmExplanation> = {
   },
   'FN-DSA': {
     plain:
-      'FN-DSA (the Falcon scheme) is a lattice-based post-quantum signature with smaller signatures than ML-DSA; NIST is preparing it as FIPS 206, which is not yet published.',
+      'FN-DSA (the Falcon scheme) is a lattice-based post-quantum signature with smaller signatures than ML-DSA; NIST is preparing it as FIPS 206, which had not been published as of 13 Nov 2026.',
     whyItMattersForPqc:
       'It suits places where signature size matters, such as certificates sent on every connection.',
     glossaryTerm: 'FN-DSA',

@@ -305,6 +305,15 @@ describe('construction layer driftguards', () => {
     expect(bad).toEqual([])
   })
 
+  // A PQC-side construction is a claim about the row's post-quantum path, so a row
+  // whose sources describe none (claim basis 'none') names no PQC construction.
+  it('K14: a row that claims no PQC path names no PQC construction', () => {
+    const bad = useCases
+      .filter((uc) => uc.pqcClaimBasis === 'none' && uc.pqcConstructions.length > 0)
+      .map((uc) => `${uc.useCaseId}: ${uc.pqcConstructions.join(';')}`)
+    expect(bad).toEqual([])
+  })
+
   it('K10: every construction has a complete plain-language explanation', () => {
     for (const c of CRYPTO_CONSTRUCTIONS) {
       const e = c.explain

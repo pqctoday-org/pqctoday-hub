@@ -31,9 +31,27 @@ function recount(id: string) {
     (u) => u.classicalConstructions.includes(id) || u.pqcConstructions.includes(id)
   )
   const std = standards.filter((s) => s.constructionsReferenced.includes(id))
+  // Inside: a use case that does not name `id` but names a construction built on it,
+  // following builtOn from the registry directly (not through constructionUsage).
+  const builtOnClosure = (start: string): Set<string> => {
+    const seen = new Set<string>()
+    const stack = [...(CRYPTO_CONSTRUCTIONS.find((c) => c.id === start)?.builtOn ?? [])]
+    while (stack.length) {
+      const next = stack.pop()!
+      if (seen.has(next)) continue
+      seen.add(next)
+      stack.push(...(CRYPTO_CONSTRUCTIONS.find((c) => c.id === next)?.builtOn ?? []))
+    }
+    return seen
+  }
+  const inside = useCases.filter((u) => {
+    const named = [...u.classicalConstructions, ...u.pqcConstructions]
+    return !named.includes(id) && named.some((n) => builtOnClosure(n).has(id))
+  })
   return {
     direct: direct.length,
     standards: std.length,
+    inside: inside.length,
     industries: new Set(direct.map((u) => u.industry)).size,
   }
 }
@@ -45,6 +63,7 @@ describe('construction usage counts (K11)', () => {
       const r = recount(c.id)
       expect(u.direct.length, c.id).toBe(r.direct)
       expect(u.standards.length, c.id).toBe(r.standards)
+      expect(u.inside.length, c.id).toBe(r.inside)
       expect(u.industries.length, c.id).toBe(r.industries)
     }
   })
@@ -124,7 +143,8 @@ describe('construction lens — rendered counts and links (K11, K12)', () => {
     const rows = screen.getByTestId('construction-chip-rows')
     for (const c of CRYPTO_CONSTRUCTIONS) {
       const chip = within(rows).getByTestId(`construction-chip-${c.id}`)
-      const total = recount(c.id).direct + recount(c.id).standards + usage.get(c.id)!.inside.length
+      const r = recount(c.id)
+      const total = r.direct + r.standards + r.inside
       expect(chip, c.id).toHaveTextContent(new RegExp(`${c.id}\\s*${total}$`))
     }
   })
@@ -138,11 +158,11 @@ describe('construction lens — rendered counts and links (K11, K12)', () => {
     const named = useCases.find(
       (u) => u.classicalConstructions.length > 0 || u.pqcConstructions.length > 0
     )
-    if (!named) return // rows arrive with the data pass; K7 fails loudly until then
-    const id = [...named.classicalConstructions, ...named.pqcConstructions][0]
-    renderAt(`&construction=${id}&usecase=${named.useCaseId}`)
+    expect(named, 'no use case names a construction').toBeDefined()
+    const id = [...named!.classicalConstructions, ...named!.pqcConstructions][0]
+    renderAt(`&construction=${id}&usecase=${named!.useCaseId}`)
     // eslint-disable-next-line testing-library/no-node-access
-    expect(document.querySelector(`[data-use-case="${named.useCaseId}"]`)).not.toBeNull()
+    expect(document.querySelector(`[data-use-case="${named!.useCaseId}"]`)).not.toBeNull()
   })
 
   it('a successor our reading infers is worded differently from one a source states', () => {
