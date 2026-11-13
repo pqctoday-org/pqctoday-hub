@@ -36,7 +36,8 @@ describe('SIDF authentication gate', () => {
     )
   })
 
-  it.each(['A', 'B', 'C'] as const)(
+  // Profile C no longer reads sender state; its receiver is covered in SucOps.profileC.local.test.ts.
+  it.each(['A', 'B'] as const)(
     'decrypts only after a matching tag in profile %s',
     async (profile) => {
       const result = await sidfDecrypt(context(tag), profile)

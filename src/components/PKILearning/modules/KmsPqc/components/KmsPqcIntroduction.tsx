@@ -527,7 +527,8 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               </div>
               <div className="text-muted-foreground">&darr;</div>
               <div className="p-2 rounded bg-warning/10 text-warning text-xs font-bold">
-                Store: KEM ciphertext + wrapped DEK (1,128 bytes total vs 256 bytes RSA)
+                Store: KEM ciphertext + wrapped DEK (1,088 + 40 = 1,128 bytes of data fields; a
+                complete HKE1 project sample envelope is 1,191 bytes vs 284 bytes for RSA-2048)
               </div>
             </div>
           </div>
@@ -583,6 +584,12 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
                     </span>
                     <span className="text-warning">{mode.totalOverhead}</span>
                   </div>
+                  {mode.completeEnvelopeBytes && (
+                    <div className="text-[10px] text-warning">
+                      Complete HKE1 sample envelope: {mode.completeEnvelopeBytes.toLocaleString()}{' '}
+                      bytes (project sample format, not a standard)
+                    </div>
+                  )}
                   <p className="text-[10px] text-foreground/70">{mode.useCase}</p>
                 </div>
               </div>

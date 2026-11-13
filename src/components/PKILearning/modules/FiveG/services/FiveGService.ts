@@ -78,6 +78,9 @@ export class FiveGService {
     hnPubEccHex?: string
     hnPubPqcHex?: string
     hnPqcPrivHex?: string // Profile C: ML-KEM private key PEM bytes as hex (for SIDF decapsulation)
+    hnEccPrivPemHex?: string // Profile C hybrid: X25519 private key PEM bytes as hex (for SIDF ECDH)
+    pqcMode?: 'hybrid' | 'pure' // Profile C: mode the shared secret was agreed in
+    psc1WireHex?: string // Profile C: the assembled PSC1 envelope; the only input the SIDF step reads
   } = {}
 
   // Track generated files for cleanup

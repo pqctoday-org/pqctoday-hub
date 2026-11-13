@@ -246,7 +246,9 @@ describe('HybridKeyWrapping explorer', () => {
     expect(t).toMatch(/Signing: GA since 16 Jul 2026/)
     expect(t).toMatch(/is a different construction/)
     expect(t).toMatch(/KMS-wrap combiner of this module/)
-    const row = within(screen.getByRole('table')).getByRole('row', { name: /^ECDH P-384/ })
+    const row = within(screen.getByRole('table', { name: 'Mode comparison' })).getByRole('row', {
+      name: /^ECDH P-384/,
+    })
     expect(row).toHaveTextContent('97 + 1,568 = 1,665 bytes ciphertext')
   })
 })

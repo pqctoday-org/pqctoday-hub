@@ -13,6 +13,14 @@ import type { ScenarioView } from './components/ScenarioIntroStrip'
 import { AttackerSidecar } from './components/AttackerSidecar'
 import { getSuciStepMeta, SUCI_PHASE_LABELS } from './suciUxMeta'
 import { fiveGService } from './services/FiveGService'
+import { psc1MacInputFromState } from './services/ops/SucOps'
+import {
+  parsePsc1,
+  PSC1_FORMAT_LABEL,
+  recoverPsc1,
+  type Psc1Refusal,
+  type Psc1ReceiverPrimitives,
+} from './services/pscEnvelope'
 import { Shield, Radio, Info, ShieldCheck } from 'lucide-react'
 import clsx from 'clsx'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
@@ -567,8 +575,12 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             generatedAt: new Date().toISOString(),
           })
           // MAC input = ciphertext from encrypt_msin (or placeholder if not yet executed)
+          // Profile C (PSC1 project sample): the MAC covers the whole message before the tag.
           const macInput =
-            hsmHandlesRef.current.ciphertext ?? new TextEncoder().encode('suci-mac-input-data')
+            profile === 'C'
+              ? psc1MacInputFromState(fiveGService).macInput
+              : (hsmHandlesRef.current.ciphertext ??
+                new TextEncoder().encode('suci-mac-input-data'))
           const hmacMech = profile === 'C' ? CKM_SHA3_256_HMAC : undefined
           const mac = hsm_hmac(M, hSession, hmacHandle, macInput, hmacMech)
           hsmMacBytes = mac
@@ -1084,183 +1096,123 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
           hsm.hSessionRef.current &&
           hsmHandlesRef.current.hnPrivHandle
         let hsmResult = ''
-        if (hsmActive && profile === 'C' && hsmHandlesRef.current.kemCiphertext) {
+        if (hsmActive && profile === 'C') {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-
-          // Helper: concatenate Uint8Arrays using plain ArrayBuffer (no SharedArrayBuffer)
-          const concatU8C = (...parts: Uint8Array[]): Uint8Array => {
-            const out = new Uint8Array(new ArrayBuffer(parts.reduce((n, p) => n + p.length, 0)))
-            let off = 0
-            for (const p of parts) {
-              out.set(p, off)
-              off += p.length
+          // The receiver reads ONLY the assembled PSC1 bytes and the home network's own HSM keys.
+          // Nothing the sender derived (Z, K_enc, K_mac, plaintext, handles) is consulted.
+          const wireHex = fiveGService.state.psc1WireHex
+          if (!wireHex) {
+            hsmResult =
+              '[RESULT] SUPI Recovered: [REJECTED — no PSC1 envelope; run the assemble step first]'
+          } else {
+            const wire = new Uint8Array((wireHex.match(/../g) ?? []).map((h) => parseInt(h, 16)))
+            const toHex = (b: Uint8Array) =>
+              Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+            const supiC = fiveGService.state.supi || '310260123456789'
+            const home = {
+              mcc: supiC.length >= 3 ? supiC.slice(0, 3) : '310',
+              mnc: supiC.length >= 6 ? supiC.slice(3, 6) : '260',
+              keyId: 1,
             }
-            return out
-          }
+            const registered = (handle: number, label: string) =>
+              hsm.registerKey(M, hSession, {
+                handle,
+                label,
+                family: 'aes',
+                role: 'secret',
+                purpose: 'application',
+                generatedAt: new Date().toISOString(),
+              })
+            const receiverPrimitives: Psc1ReceiverPrimitives = {
+              mlKem768Decapsulate: (ciphertext) => {
+                const handle = hsm_pqcDecap(
+                  M,
+                  hSession,
+                  hsmHandlesRef.current.hnPrivHandle!,
+                  ciphertext,
+                  'ML-KEM-768'
+                )
+                registered(handle, 'Z_kem (Decapsulated)')
+                return hsm_extractKeyValue(M, hSession, handle)
+              },
+              x25519Derive: (peer) => {
+                if (hsmHandlesRef.current.hnEccPrivHandle === undefined)
+                  throw new Error('Home-network X25519 private key handle is not available')
+                const handle = hsm_ecdhDerive(
+                  M,
+                  hSession,
+                  hsmHandlesRef.current.hnEccPrivHandle,
+                  peer,
+                  undefined,
+                  undefined,
+                  { keyLen: 32, derive: true, extractable: true }
+                )
+                return hsm_extractKeyValue(M, hSession, handle)
+              },
+              sha256: (data) => hsm_digest(M, hSession, data, CKM_SHA256),
+              sha3_256: (data) => hsm_digest(M, hSession, data, CKM_SHA3_256),
+              hmacSha3_256: (key, data) =>
+                hsm_hmac(M, hSession, hsm_importHMACKey(M, hSession, key), data, CKM_SHA3_256_HMAC),
+              aes256CtrZeroIv: (key, data) =>
+                hsm_aesDecrypt(
+                  M,
+                  hSession,
+                  hsm_importAESKey(M, hSession, key),
+                  data,
+                  new Uint8Array(16),
+                  'ctr'
+                ),
+            }
+            try {
+              const recovery = await recoverPsc1(wire, receiverPrimitives, home)
+              const t = recovery.trace
+              const parsedWire = parsePsc1(wire)
+              hsmResult = `1. Parsed ${wire.length} received bytes (PSC1, ${PSC1_FORMAT_LABEL.toLowerCase()})
+   mode ${recovery.header.mode}, PLMN ${recovery.header.mcc}-${recovery.header.mnc}, key ID ${recovery.header.keyId}
 
-          // Step 1: ML-KEM decapsulation → Z_kem
-          const secretHandle = hsm_pqcDecap(
-            M,
-            hSession,
-            hsmHandlesRef.current.hnPrivHandle!,
-            hsmHandlesRef.current.kemCiphertext!,
-            'ML-KEM-768'
-          )
-          hsm.registerKey(M, hSession, {
-            handle: secretHandle,
-            label: 'Z_kem (Decapsulated)',
-            family: 'aes',
-            role: 'secret',
-            purpose: 'application',
-            generatedAt: new Date().toISOString(),
-          })
-          const zKemBytesC = hsm_extractKeyValue(M, hSession, secretHandle)
-          const zKemHexC = Array.from(zKemBytesC)
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('')
+2. ML-KEM-768 decapsulation of the received ciphertext (${parsedWire.kemCiphertext.length} bytes):
+   → Z_kem (hex): ${toHex(t.kemSecret).slice(0, 64)}
+${
+  t.ecdhSecret
+    ? `   X25519 ECDH with the TRANSMITTED ephemeral key (${parsedWire.ephemeralPublicKey.length} bytes):
+   → Z_ecdh (hex): ${toHex(t.ecdhSecret).slice(0, 64)}
+   Z = SHA256(Z_ecdh ‖ Z_kem) = ${toHex(t.z).slice(0, 48)}... [this project's own combiner, not specified by 3GPP]`
+    : '   Z = Z_kem directly (Pure PQC mode)'
+}
 
-          // Step 2 (hybrid only): ECDH(hn_ecc_priv, eph_pub) → Z_ecdh, then combine
-          let sidfZBytesC: Uint8Array = zKemBytesC
-          let zCombineNote = `Z: Z_kem directly (Pure PQC mode)`
+3. SHA3-256 counter KDF (SharedInfo: ${parsedWire.ephemeralPublicKey.length > 0 ? 'the transmitted 32-byte ephemeral key' : 'empty'}):
+   → K_enc (32 bytes, AES-256): ${toHex(t.kEnc)}
+   → K_mac (32 bytes, HMAC-SHA3-256): ${toHex(t.kMac)}
 
-          if (
-            pqcMode === 'hybrid' &&
-            hsmHandlesRef.current.hnEccPrivHandle !== undefined &&
-            hsmHandlesRef.current.ephPubHandle !== undefined
-          ) {
-            // Re-derive Z_ecdh using HN ECC private key × ephemeral public key
-            // Use hsm_extractECPoint to get raw EC point bytes from the HSM-stored ephemeral pub key
-            // (same approach as the Profile A/B SIDF path)
-            const ephRawC = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.ephPubHandle!)
-            const zEcdhHandleC = hsm_ecdhDerive(
-              M,
-              hSession,
-              hsmHandlesRef.current.hnEccPrivHandle!,
-              ephRawC,
-              undefined,
-              undefined,
-              { keyLen: 32, derive: true, extractable: true }
-            )
-            const zEcdhBytesC = hsm_extractKeyValue(M, hSession, zEcdhHandleC)
-            const zEcdhHexC = Array.from(zEcdhBytesC)
-              .map((b) => b.toString(16).padStart(2, '0'))
-              .join('')
+4. Verifying MAC (HMAC-SHA3-256 over all ${parsedWire.macInput.length} bytes before the tag, cut to 8)...
+   Recomputed tag: ${toHex(t.recomputedTag)}
+   Received tag:   ${toHex(t.receivedTag)}
+   Result: [OK] MAC VALID
 
-            // Z = SHA256(Z_ecdh || Z_kem) — this project's hybrid combiner
-            const zConcatC = concatU8C(zEcdhBytesC, zKemBytesC)
-            sidfZBytesC = hsm_digest(M, hSession, zConcatC, CKM_SHA256)
-            const zCombinedHexC = Array.from(sidfZBytesC)
-              .map((b) => b.toString(16).padStart(2, '0'))
-              .join('')
-
-            zCombineNote = `Z_ecdh (re-derived): ${zEcdhHexC.slice(0, 48)}...
-Z_kem  (decapped):   ${zKemHexC.slice(0, 48)}...
-Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [not specified by 3GPP]`
-          }
-
-          // Step 3: ANSI X9.63-KDF with SHA3-256 → K_enc (AES-256), K_mac (HMAC-SHA3-256)
-          // SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid; empty for pure PQC.
-          // Use hsm_extractECPoint from the stored ephPubHandle (consistent with derive_keys KDF path).
-          const sidfSharedInfoC =
-            hsmHandlesRef.current.ephPubHandle !== undefined
-              ? hsm_extractECPoint(M, hSession, hsmHandlesRef.current.ephPubHandle!)
-              : new Uint8Array(0)
-          const sidfBlock1C = hsm_digest(
-            M,
-            hSession,
-            concatU8C(sidfZBytesC, new Uint8Array([0, 0, 0, 1]), sidfSharedInfoC),
-            CKM_SHA3_256
-          )
-          const sidfBlock2C = hsm_digest(
-            M,
-            hSession,
-            concatU8C(sidfZBytesC, new Uint8Array([0, 0, 0, 2]), sidfSharedInfoC),
-            CKM_SHA3_256
-          )
-          const sidfKEncC = sidfBlock1C
-          const sidfKMacC = sidfBlock2C
-          const sidfKEncCHex = Array.from(sidfKEncC)
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('')
-            .toUpperCase()
-          const sidfKMacCHex = Array.from(sidfKMacC)
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('')
-            .toUpperCase()
-
-          // Step 4: MAC verification (authenticate-then-decrypt, following
-          // the ECIES pattern TS 33.501 Annex C uses for Profiles A and B)
-          let macLineC = '4. Verifying MAC...[SKIPPED — run encrypt_msin + compute_mac first]'
-          let macOkC = false
-          const cipherHexC = fiveGService.state.encryptedMSINHex
-          if (cipherHexC) {
-            const cipherBytesC = new Uint8Array(
-              (cipherHexC.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16))
-            )
-            const sidfMacHandleC = hsm_importHMACKey(M, hSession, sidfKMacC)
-            const macFullC = hsm_hmac(M, hSession, sidfMacHandleC, cipherBytesC, CKM_SHA3_256_HMAC)
-            const recomputedTagC = Array.from(macFullC.slice(0, 8))
-              .map((b) => b.toString(16).padStart(2, '0'))
-              .join('')
-              .toUpperCase()
-            const storedTagC = (fiveGService.state.macTagHex || '').toUpperCase()
-            macOkC = !!(storedTagC && recomputedTagC === storedTagC)
-            macLineC = `4. Verifying MAC (HMAC-SHA3-256)...
-   Recomputed tag: ${recomputedTagC}
-   Stored tag:     ${storedTagC || '(missing)'}
-   Result: ${macOkC ? '[OK] MAC VALID' : storedTagC ? '[FAIL] MAC MISMATCH — SUCI rejected by SIDF' : '[SKIPPED] no stored tag to compare'}`
-          }
-
-          // Step 5: AES-256-CTR decrypt — only if MAC passed (authenticate-then-decrypt)
-          let supiLineC = '5. Decrypting MSIN...[SKIPPED — run encrypt_msin first]'
-          if (!macOkC && cipherHexC) {
-            supiLineC =
-              '5. Decrypting MSIN...[ABORTED — MAC verification failed; SUCI rejected by SIDF]'
-          } else if (macOkC && cipherHexC) {
-            const cipherBytesForDecC = new Uint8Array(
-              (cipherHexC.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16))
-            )
-            const sidfKEncHandleC = hsm_importAESKey(M, hSession, sidfKEncC)
-            const zeroIvC = new Uint8Array(16)
-            const decryptedC = hsm_aesDecrypt(
-              M,
-              hSession,
-              sidfKEncHandleC,
-              cipherBytesForDecC,
-              zeroIvC,
-              'ctr'
-            )
-            const bcdDigitsC = fiveGService.bcdDecode(decryptedC)
-            const parsedSupiC = fiveGService.state.supi || '310260123456789'
-            const recoveredSupiC = `${parsedSupiC.slice(0, 6)}${bcdDigitsC}`
-            const bcdHexC = Array.from(decryptedC)
-              .map((b) => b.toString(16).padStart(2, '0'))
-              .join('')
-            supiLineC = `5. Decrypting MSIN (AES-256-CTR, zero IV)...
-   > C_Decrypt(CKM_AES_CTR)
-   BCD bytes: ${bcdHexC}
-   MSIN: ${bcdDigitsC}
-   [SUCCESS] SUPI Recovered: ${recoveredSupiC}`
-          }
-
-          hsmResult = `1. ML-KEM Decapsulation:
-   KEM ciphertext: ${hsmHandlesRef.current.kemCiphertext!.length} bytes
-   → Z_kem (hex): ${zKemHexC.slice(0, 64)}...
-
-2. Key Combination (this project's own):
-   ${zCombineNote}
-
-3. ANSI X9.63-KDF (SHA3-256):
-   SharedInfo: ${sidfSharedInfoC.length > 0 ? `${sidfSharedInfoC.length}-byte X25519 ephemeral key` : 'empty (pure PQC)'}
-   → K_enc (${sidfKEncC.length} bytes, AES-256): ${sidfKEncCHex}
-   → K_mac (${sidfKMacC.length} bytes, HMAC-SHA3-256): ${sidfKMacCHex}
-
-${macLineC}
-
-${supiLineC}
+5. Decrypting MSIN (AES-256-CTR, zero IV) and BCD-decoding...
+   BCD bytes: ${toHex(recovery.msinBcd)}
+   MSIN: ${recovery.msinDigits}
+   [SUCCESS] SUPI Recovered: ${home.mcc}${home.mnc}${recovery.msinDigits}
 
 ML-KEM Decapsulation executed via SoftHSM3 WASM.`
+            } catch (cause) {
+              const refusal = cause as Psc1Refusal & {
+                trace?: { recomputedTag: Uint8Array; receivedTag: Uint8Array }
+              }
+              hsmResult = `Parsed ${wire.length} received bytes.
+${
+  refusal.trace
+    ? `4. Verifying MAC...
+   Recomputed tag: ${toHex(refusal.trace.recomputedTag)}
+   Received tag:   ${toHex(refusal.trace.receivedTag)}
+   Result: [FAIL] MAC invalid — envelope rejected by SIDF
+5. Decrypting MSIN...[ABORTED — MAC verification failed; envelope rejected by SIDF]
+`
+    : ''
+}[RESULT] SUPI Recovered: [REJECTED — ${cause instanceof Error ? cause.message : String(cause)}]`
+            }
+          }
         } else if (hsmActive && hsmHandlesRef.current.ephPubHandle) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
@@ -1409,7 +1361,13 @@ SIDF ECDH executed via SoftHSM3 WASM.
 Detailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
-        const osslResult = await fiveGService.sidfDecrypt(profile)
+        // The two engines generate their own home-network keys, so the OpenSSL engine cannot open an
+        // envelope that was made for the HSM's key. Profile C therefore reports it instead of
+        // running a receiver that is guaranteed to refuse.
+        const osslResult =
+          hsmActive && profile === 'C'
+            ? 'OpenSSL cross-check not run: the envelope was made for the SoftHSM3 home-network key, and this engine holds a different one.'
+            : await fiveGService.sidfDecrypt(profile)
         if (hsmActive) {
           result = buildDualEngineResult(hsmResult, osslResult)
         } else {
@@ -1594,7 +1552,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               PQC Mode Configuration
             </div>
             <p className="text-xs italic text-muted-foreground mb-3">
-              Educational preview of proposed Profile C
+              Educational preview of proposed Profile C. The envelope it builds, PSC1 (1,116 bytes
+              pure, 1,148 bytes hybrid for a 9-digit MSIN), is a project sample format, not a
+              standard; Profile A and Profile B encodings are unchanged.
             </p>
             <div className="flex gap-4">
               <Button

@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { ENVELOPE_ENCRYPTION_STEPS, type EnvelopeEncryptionStep } from '../data/kmsConstants'
+import { buildHke1, HKE1_FORMAT_LABEL, hke1TotalBytes, parseHke1 } from '../utils/hke1Envelope'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -515,6 +516,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
     kemCt: Uint8Array | null
     wrappedDek: Uint8Array
     gcmIv: Uint8Array | null
+    /** Complete HKE1 sample envelope serialized from the blobs above, when the format covers this run. */
+    hke1: Uint8Array | null
   } | null>(null)
 
   const isRSA = kekAlgo.startsWith('rsa')
@@ -632,10 +635,17 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
 
         addLine(describeDekComparison(comparison))
 
-        addLine(
-          `Storage overhead: RSA-${bits} ciphertext = ${wrappedDek.length} B total (1 wrapped blob)`
-        )
-        setEnvelopeBlob({ path: 'rsa', kemCt: null, wrappedDek, gcmIv: null })
+        addLine(`RSA-${bits} ciphertext: ${wrappedDek.length} B (1 wrapped blob, data field only)`)
+        // HKE1 defines RSA-2048 OAEP-SHA256; other moduli are shown as data fields only.
+        let hke1: Uint8Array | null = null
+        if (bits === 2048) {
+          hke1 = buildHke1(1, { wrappedDek })
+          parseHke1(hke1)
+          addLine(
+            `Complete HKE1 envelope: ${hke1.length} B (${HKE1_FORMAT_LABEL.toLowerCase()}; 18 B header + 10 B key ID + ${wrappedDek.length} B ciphertext)`
+          )
+        }
+        setEnvelopeBlob({ path: 'rsa', kemCt: null, wrappedDek, gcmIv: null, hke1 })
       } else {
         // ── ML-KEM path ────────────────────────────────────────────────────────
         const variant = parseInt(kekAlgo.split('-')[2]) as 512 | 768 | 1024
@@ -909,18 +919,29 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
 
         addLine(describeDekComparison(comparison))
 
-        const totalBytes = ciphertextBytes.length + wrappedDek.length + (gcmIv?.length ?? 0)
+        const dataFieldBytes = ciphertextBytes.length + wrappedDek.length + (gcmIv?.length ?? 0)
         addLine(
-          `Storage overhead: KEM ciphertext ${ciphertextBytes.length} B` +
+          `Data fields: KEM ciphertext ${ciphertextBytes.length} B` +
             ` + wrapped DEK ${wrappedDek.length} B` +
             (gcmIv ? ` + GCM nonce ${gcmIv.length} B` : '') +
-            ` = ${totalBytes} B total (2 blobs)`
+            ` = ${dataFieldBytes} B (2 blobs; not a complete envelope)`
         )
+        // HKE1 defines ML-KEM-768 with AES-256-KW. The 20-byte wire salt gives the same HKDF
+        // output as this demo's 32-byte zero-padded salt, because HMAC zero-pads its key.
+        let hke1: Uint8Array | null = null
+        if (variant === 768 && wrapMech === 'aes-kw' && !gcmIv) {
+          hke1 = buildHke1(2, { kemCiphertext: ciphertextBytes, wrappedDek })
+          parseHke1(hke1)
+          addLine(
+            `Complete HKE1 envelope: ${hke1.length} B (${HKE1_FORMAT_LABEL.toLowerCase()}; 18 B header + 10 B key ID + 20 B salt + 15 B info + ${ciphertextBytes.length} B KEM ciphertext + ${wrappedDek.length} B wrapped DEK)`
+          )
+        }
         setEnvelopeBlob({
           path: 'ml-kem',
           kemCt: ciphertextBytes,
           wrappedDek,
           gcmIv: gcmIv ?? null,
+          hke1,
         })
       }
       // One Execute runs the whole envelope flow (keygen → DEK → wrap → unwrap →
@@ -958,6 +979,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
   const pqcRefSizes = mlKemSizes ?? ML_KEM_SIZES['ml-kem-768']
   // AES-KW: 40 B · AES-KWP: 40 B for a 32-byte key (RFC 5649 §3, n+1 64-bit blocks) · AES-GCM: 60 B (48 B ct + 12 B nonce)
   const wrapOverheadBytes = wrapMech === 'aes-gcm' ? 60 : 40
+  // HKE1 (project sample format) covers exactly RSA-2048 and ML-KEM-768 with AES-256-KW.
+  const hke1Covers = !isRSA && kekAlgo === 'ml-kem-768' && wrapMech === 'aes-kw'
   const pqcPkStr = `${pqcRefSizes.pk.toLocaleString()} B`
   const pqcCtStr = `${pqcRefSizes.ct.toLocaleString()} + 32 B`
   const totalPqcStr = `${pqcRefSizes.ct.toLocaleString()} + ${wrapOverheadBytes} B`
@@ -1019,8 +1042,12 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         ? 'Wrapped DEK (from step 2)'
         : `${mechLabel} Wrapped DEK (${wrapOverheadBytes} bytes)`,
       pqcSize: isRSA
-        ? `${rsaBits / 8} bytes total`
-        : `${pqcRefSizes.ct.toLocaleString()} + ${wrapOverheadBytes} = ${pqcRefSizes.ct + wrapOverheadBytes} bytes total`,
+        ? rsaBits === 2048
+          ? `${rsaBits / 8} bytes ciphertext; ${hke1TotalBytes(1)} bytes as a complete HKE1 envelope`
+          : `${rsaBits / 8} bytes ciphertext only`
+        : hke1Covers
+          ? `${pqcRefSizes.ct.toLocaleString()} + ${wrapOverheadBytes} = ${pqcRefSizes.ct + wrapOverheadBytes} bytes of data fields; ${hke1TotalBytes(2).toLocaleString('en-US')} bytes as a complete HKE1 envelope`
+          : `${pqcRefSizes.ct.toLocaleString()} + ${wrapOverheadBytes} = ${pqcRefSizes.ct + wrapOverheadBytes} bytes of data fields only`,
     },
     // Step 5 — Decapsulate / Unwrap
     {
@@ -1227,9 +1254,11 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-sm font-bold text-foreground">Stored Envelope Blobs</h3>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-mono">
-                  {envelopeBlob.kemCt
-                    ? `KEM\u202f+\u202fAES\u202f·\u202f${envelopeBlob.kemCt.length + envelopeBlob.wrappedDek.length + (envelopeBlob.gcmIv?.length ?? 0)}\u00a0B`
-                    : `RSA-OAEP\u202f·\u202f${envelopeBlob.wrappedDek.length}\u00a0B`}
+                  {envelopeBlob.hke1
+                    ? `HKE1\u202f·\u202f${envelopeBlob.hke1.length}\u00a0B`
+                    : envelopeBlob.kemCt
+                      ? `KEM\u202f+\u202fAES\u202f·\u202f${envelopeBlob.kemCt.length + envelopeBlob.wrappedDek.length + (envelopeBlob.gcmIv?.length ?? 0)}\u00a0B`
+                      : `RSA-OAEP\u202f·\u202f${envelopeBlob.wrappedDek.length}\u00a0B`}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -1243,6 +1272,21 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               <BlobHexPanel label="Wrapped DEK" bytes={envelopeBlob.wrappedDek} />
               {envelopeBlob.gcmIv && (
                 <BlobHexPanel label="GCM Nonce (IV)" bytes={envelopeBlob.gcmIv} />
+              )}
+              {envelopeBlob.hke1 ? (
+                <>
+                  <p className="text-xs text-muted-foreground">
+                    The blobs above, plus a header, key ID, salt and info, serialized as one HKE1
+                    envelope. {HKE1_FORMAT_LABEL}; it is this module&apos;s own layout, not HPKE or
+                    a provider format. A receiver parses these bytes alone.
+                  </p>
+                  <BlobHexPanel label="Complete HKE1 envelope" bytes={envelopeBlob.hke1} />
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Sizes above are data fields only. The HKE1 sample envelope covers RSA-2048 and
+                  ML-KEM-768 with AES-256-KW; this selection has no complete-envelope count.
+                </p>
               )}
             </div>
           )}
@@ -1510,12 +1554,19 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         <div className="glass-panel p-6 border-status-success/20 animate-fade-in">
           <h3 className="text-sm font-bold text-foreground mb-3">Size Comparison Summary</h3>
           {(() => {
-            const classRef = classicalPkBytes
-            const pqcTotal = mlKemSizes ? mlKemSizes.ct + wrapOverheadBytes : classRef
+            // One boundary on both sides: complete HKE1 envelopes where the format covers the
+            // selection, otherwise data fields only.
+            const classRef = hke1Covers ? hke1TotalBytes(1) : classicalPkBytes
+            const pqcTotal = mlKemSizes
+              ? hke1Covers
+                ? hke1TotalBytes(2)
+                : mlKemSizes.ct + wrapOverheadBytes
+              : classRef
             const ratio = mlKemSizes ? (pqcTotal / classRef).toFixed(1) : '—'
             const pqcTotalLabel = mlKemSizes ? `${pqcTotal.toLocaleString()} B` : `${classRef} B`
+            const boundary = hke1Covers ? 'complete HKE1 envelope' : 'data fields only'
             const pqcDesc = mlKemSizes
-              ? `${kekAlgo.toUpperCase()} + ${WRAP_MECH_META[wrapMech].label} Total`
+              ? `${kekAlgo.toUpperCase()} + ${WRAP_MECH_META[wrapMech].label}, ${boundary}`
               : 'PQC Total (select ML-KEM variant)'
             return (
               <>
@@ -1523,7 +1574,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                   <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
                     <div className="text-lg font-bold text-destructive">{classRef} B</div>
                     <div className="text-[10px] text-muted-foreground">
-                      RSA-{isRSA ? kekAlgo.split('-')[1] : '2048'} Total
+                      RSA-{isRSA ? kekAlgo.split('-')[1] : '2048'},{' '}
+                      {hke1Covers ? 'complete HKE1 envelope' : 'ciphertext only'}
                     </div>
                   </div>
                   <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
