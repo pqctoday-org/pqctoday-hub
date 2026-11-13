@@ -144,7 +144,7 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
                 {
                   impact: 'CPU Saturation on Software DPI',
                   detail:
-                    'Software-only DPI for ML-KEM key derivation increases per-connection CPU cost by 2-3x vs ECDHE.',
+                    'Software-only DPI that performs ML-KEM key derivation does different work per connection than with ECDHE. No CPU figure is given here, so measure it on your own inspection devices.',
                 },
                 {
                   impact: 'IDS/IPS Signature Updates',
