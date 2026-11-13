@@ -626,8 +626,9 @@ export function CoverageMatrixView({
               </h4>
               <p className="text-xs leading-relaxed text-muted-foreground">
                 These are known limits in test coverage, interface reachability, or engine behavior.
-                A gap stays in the coverage denominator so that missing evidence cannot look like a
-                pass.
+                A gap on an advertised cell stays in the coverage denominator so that missing
+                evidence cannot look like a pass. Unsupported cells are not in the denominator; they
+                are counted separately.
               </p>
             </div>
             <div

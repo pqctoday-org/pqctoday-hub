@@ -1301,7 +1301,7 @@ function generatedGaps(rows: MatrixRow[]): OpenGap[] {
   }
   out.push({
     id: 'unsupported-cells',
-    title: `${unsupported} unsupported (row × engine) cells kept in the denominator`,
+    title: `${unsupported} unsupported (row × engine) cells counted separately, outside the denominator`,
     detail:
       'Cells one engine does not advertise (mechanism absent, CKF_ flag not set, or parameter set outside its key-size range) and declared capabilities no PKCS #11 mechanism can express. Listed per row in the matrix; never dropped.',
     planItem: 'J-7 / G-9',

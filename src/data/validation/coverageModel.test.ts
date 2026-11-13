@@ -389,3 +389,22 @@ describe('G-3 algorithm-correctness vs PKCS #11 API-behaviour columns', () => {
       if (r.engines.cpp.advertised) expect(r.engines.cpp.dimensions).toBeDefined()
   })
 })
+
+describe('unsupported cells sit outside the denominator (the rule the page prints)', () => {
+  const { matrix } = buildCoverageMatrix(fixtureInputs())
+
+  it('titles the generated unsupported-cells gap as counted separately, not kept in the denominator', () => {
+    const gap = matrix.openGaps.find((g) => g.id === 'unsupported-cells')
+    expect(gap?.title).toBe(
+      '6 unsupported (row × engine) cells counted separately, outside the denominator'
+    )
+    expect(gap?.title).not.toMatch(/kept in the denominator/)
+  })
+
+  it('counts the gap from the unsupported cells, not from the advertised denominator', () => {
+    const { cpp, rust } = matrix.totals.byEngine
+    const gap = matrix.openGaps.find((g) => g.id === 'unsupported-cells')
+    expect(gap?.cells).toBe(cpp.unsupportedCells + rust.unsupportedCells)
+    expect(gap?.cells).not.toBe(cpp.advertisedCells + rust.advertisedCells)
+  })
+})
