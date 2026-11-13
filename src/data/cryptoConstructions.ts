@@ -1423,7 +1423,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     classical: [
       {
         algorithms: [],
-        status: 'vendor-spec',
+        status: 'research',
         proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
         note: 'The cited paper describes the handshake as Diffie-Hellman based without naming the group.',
       },
