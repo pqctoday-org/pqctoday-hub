@@ -100,6 +100,13 @@ export interface IndustryUseCase {
    */
   classicalMechanisms: string[]
   pqcMechanisms: string[]
+  /**
+   * cryptoConstructions ids (2026-11-13): the constructions this use case runs
+   * today and those of its PQC target. Empty until a row records them; a
+   * `stays-both` construction (e.g. HPKE) may appear in both.
+   */
+  classicalConstructions: string[]
+  pqcConstructions: string[]
   migrationStatus: 'none' | 'draft' | 'pilot' | 'production'
   summary: string
   /** standard_ids in the standards CSV. */
@@ -306,6 +313,8 @@ export interface IndustryStandard {
   libraryRef: string
   /** cryptoMechanisms family labels the standard references. */
   mechanismsReferenced: string[]
+  /** cryptoConstructions ids the standard references (2026-11-13). */
+  constructionsReferenced: string[]
   /**
    * What KIND of document this row is (2026-08-13).
    *
@@ -354,6 +363,9 @@ interface RawLandscapeRow {
   source_citation_type: string
   classical_mechanisms: string
   pqc_mechanisms: string
+  /** Absent in generations before 2026-11-13; read as empty. */
+  classical_constructions?: string
+  pqc_constructions?: string
   migration_status: string
   summary: string
   related_standards: string
@@ -393,6 +405,7 @@ interface RawStandardRow {
   standards_body: string
   library_ref: string
   mechanisms_referenced: string
+  constructions_referenced?: string
   evidence_type: string
   pqc_readiness: string
   use_case_ids: string
@@ -463,6 +476,8 @@ function loadLandscape(): IndustryUseCase[] {
               '') as IndustryUseCase['sourceCitationType'],
             classicalMechanisms: splitSemicolon(r.classical_mechanisms),
             pqcMechanisms: splitSemicolon(r.pqc_mechanisms),
+            classicalConstructions: splitSemicolon(r.classical_constructions ?? ''),
+            pqcConstructions: splitSemicolon(r.pqc_constructions ?? ''),
             migrationStatus: r.migration_status as IndustryUseCase['migrationStatus'],
             summary: r.summary,
             relatedStandards: splitSemicolon(r.related_standards),
@@ -513,6 +528,7 @@ function loadStandards(): IndustryStandard[] {
             standardsBody: r.standards_body,
             libraryRef: r.library_ref,
             mechanismsReferenced: splitSemicolon(r.mechanisms_referenced),
+            constructionsReferenced: splitSemicolon(r.constructions_referenced ?? ''),
             // Empty defaults to 'standard' so a row predating the column is not
             // silently badged as research. A non-empty value that is NOT in the
             // vocabulary is deliberately passed through unchanged rather than
