@@ -3,6 +3,14 @@ import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import {
+  PHARMA_EXERCISE_COMPOUND,
+  PHARMA_EXERCISE_CRQC_YEAR,
+  PHARMA_SAMPLE_SCENARIO,
+  computePharmaExerciseFigures,
+} from '../data/pharmaIpModel'
+
+const money = (millions: number): string => `$${millions.toLocaleString()}M`
 
 export interface WorkshopConfig {
   step: number
@@ -28,6 +36,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
   onSetWorkshopConfig,
 }) => {
   const navigate = useNavigate()
+  const figures = computePharmaExerciseFigures()
 
   const scenarios: Scenario[] = [
     {
@@ -43,13 +52,11 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
     },
     {
       id: 'pharma-pipeline-financial-exposure',
-      title: '2. Pharma Pipeline Financial Exposure — Calculate HNDL risk for a discovery compound',
-      description:
-        'In the Pharma IP Calculator, add a Discovery-phase compound worth $800M encrypted with RSA-2048. Set CRQC year to 2033. Calculate the HNDL exposure.',
+      title: '2. Pharma Key-Protection Paths — Compare the value tied to the vulnerable path',
+      description: `In the Pharma IP Calculator, open the first fictional compound: a ${money(PHARMA_EXERCISE_COMPOUND.commercialValueM)} record with ${PHARMA_EXERCISE_COMPOUND.confidentialityYearsRemaining} years of confidentiality from a ${PHARMA_SAMPLE_SCENARIO.baseYear} base year, whose AES-256-GCM record key is wrapped with RSA-2048. Set the CRQC year to ${PHARMA_EXERCISE_CRQC_YEAR}. Then switch its key protection to a pre-shared AES-256 key and to X25519 + ML-KEM-768, and edit the length of one omittable step.`,
       badge: 'Pharma IP',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
-      observe:
-        'Discovery-phase compounds have 20 years to patent expiry. With CRQC at 2033, the entire commercial value is at risk. A competitor decrypting this data skips 15+ years of R&D.',
+      observe: `This is a fictional sample, not a forecast. With RSA-2048 wrapping the record key and the CRQC year set to ${PHARMA_EXERCISE_CRQC_YEAR}, the record stays confidential until ${figures.rsa.confidentialityEndYear}, so the sample ties ${money(figures.rsa.valueOnVulnerablePathM ?? 0)} of its ${money(figures.rsa.totalValueM)} total value to the vulnerable path. With a pre-shared AES-256 key or X25519 + ML-KEM-768 the total stays ${money(figures.preshared.totalValueM)} but the part tied to the vulnerable path is ${money(figures.preshared.valueOnVulnerablePathM ?? 0)}, because a recorded RSA exchange decrypted later does not expose either one (how the pre-shared key is distributed is not assessed). The sample assigns no probability and predicts no loss. The development steps total ${figures.rsa.developmentYearsTotal} years and the sample treats ${figures.rsa.rdYearsSaved} of them as omittable, so the time saved is ${figures.rsa.rdYearsSaved} years. That is the sum of the steps you can see and edit, not a claim that a stolen record replaces independent trials. Patent dates are shown separately and do not set the confidentiality period.`,
       config: { step: 1 },
     },
     {

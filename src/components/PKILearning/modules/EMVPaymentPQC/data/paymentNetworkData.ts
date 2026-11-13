@@ -7,9 +7,38 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     name: 'Visa',
     abbreviation: 'V',
     headquartersRegion: 'Americas',
-    cardsInCirculation: '4.6 billion',
-    cardsInCirculationNum: 4_600_000_000,
-    annualTransactionVolume: '$14.8 trillion',
+    cardsInCirculation: '5.142 billion issued Visa card accounts (31 Dec 2025)',
+    cardsInCirculationNum: 5_142_000_000,
+    annualTransactionVolume: '$14.567 trillion purchases (calendar 2025)',
+    figures: {
+      cards: {
+        asOf: '2025-12-31',
+        scope:
+          'Visa-brand card accounts. Not unique physical cards, and not cards that depend on RSA.',
+        lowerBound: false,
+      },
+      volume: {
+        usdBn: 14_567,
+        metric: 'purchase-volume',
+        periodStart: '2025-01-01',
+        periodEnd: '2025-12-31',
+        currency: 'USD',
+        lowerBound: false,
+        scope:
+          'Visa credit, debit and prepaid brand family, purchases only. Excludes Europe co-badged payments.',
+        cashIncluded: false,
+      },
+      volumeNote:
+        'Visa reports this in its own column of a table whose other columns come from a third-party source, so only the Visa column is used.',
+      otherFacts: ['Including cash advances, Visa reports $17,100 billion for calendar 2025.'],
+      source: {
+        label: 'Visa — Form 10-K (2026), calendar 2025 network table',
+        url: 'https://d18rn0p25nwr6d.cloudfront.net/CIK-0001403161/6d43a75a-f15b-4455-b507-a8132440be5a.pdf',
+        published: '2026-11-05',
+        checked: null,
+        location: 'Printed page 18, Visa column only',
+      },
+    },
     offlineAuthSupported: true,
     tokenizationPlatform: 'Visa Token Service (VTS)',
     emvcoMember: true,
@@ -44,12 +73,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 4,
-      offlineExposure: 4,
-      tokenization: 5,
+      scale: 5,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 2,
-      regulatoryPressure: 4,
-      legacyBurden: 3,
+      regulatoryPressure: null,
+      legacyBurden: null,
+    },
+    radarBasis: {
+      scale:
+        'Score 5: 5,142M card accounts at 31 Dec 2025 is the largest dated, comparable count (100% of the largest, which is 75% or more).',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 2: published guidance with concrete steps, but it is scoped to stablecoins and no card-network plan is public, which sits between anchors 1 and 3.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -57,9 +100,41 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     name: 'Mastercard',
     abbreviation: 'MC',
     headquartersRegion: 'Americas',
-    cardsInCirculation: '3.3 billion',
-    cardsInCirculationNum: 3_300_000_000,
-    annualTransactionVolume: '$9.0 trillion',
+    cardsInCirculation:
+      '3.391 billion Mastercard-branded cards, including virtual accounts (31 Dec 2025)',
+    cardsInCirculationNum: 3_391_000_000,
+    annualTransactionVolume: '$8.799 trillion purchases (calendar 2025; excludes cash)',
+    figures: {
+      cards: {
+        asOf: '2025-12-31',
+        scope:
+          'Credit, charge, debit and prepaid Mastercard-branded cards; excludes Maestro and Cirrus. Mastercard discloses that some portfolios may be counted more than once.',
+        lowerBound: false,
+      },
+      volume: {
+        usdBn: 8_799,
+        metric: 'purchase-volume',
+        periodStart: '2025-01-01',
+        periodEnd: '2025-12-31',
+        currency: 'USD',
+        lowerBound: false,
+        scope:
+          'Mastercard-branded credit, charge, debit and prepaid purchases; excludes Maestro and Cirrus and includes some transactions Mastercard does not switch.',
+        cashIncluded: false,
+      },
+      volumeNote:
+        'Later revisions of these figures are possible. Gross dollar volume is a different measure and is not used for the purchase comparison.',
+      otherFacts: [
+        'Gross dollar volume was $10,632 billion for calendar 2025: $8,799 billion of purchases plus $1,833 billion of cash.',
+      ],
+      source: {
+        label: 'Mastercard — Q4 2025 supplemental operational performance data',
+        url: 'https://s25.q4cdn.com/479285134/files/doc_financials/2025/q4/4Q25-Mastercard-Supplemental-Operational-Performance-Data.pdf',
+        published: '2026-01-29',
+        checked: null,
+        location: 'Pages 1, 2, 5, 6 and 7',
+      },
+    },
     offlineAuthSupported: true,
     tokenizationPlatform: 'Mastercard Digital Enablement Service (MDES)',
     emvcoMember: true,
@@ -118,12 +193,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 3,
-      offlineExposure: 4,
-      tokenization: 5,
+      scale: 4,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 4,
-      regulatoryPressure: 4,
-      legacyBurden: 3,
+      regulatoryPressure: null,
+      legacyBurden: null,
+    },
+    radarBasis: {
+      scale:
+        'Score 4: 3,391M cards at 31 Dec 2025 is 66% of the largest dated, comparable count (50% to under 75%).',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 4: publicly described laboratory and cloud prototypes together with published migration guidance (general to financial institutions), with no committed rollout; the prototypes lift it above anchor 3, and it stays below 5.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -131,9 +220,41 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     name: 'American Express',
     abbreviation: 'AMEX',
     headquartersRegion: 'Americas',
-    cardsInCirculation: '140 million',
-    cardsInCirculationNum: 140_000_000,
-    annualTransactionVolume: '$1.6 trillion',
+    cardsInCirculation: '152.8 million issued and outstanding cards (31 Dec 2025)',
+    cardsInCirculationNum: 152_800_000,
+    annualTransactionVolume:
+      '$1.897 trillion network volume (calendar 2025; includes cash advances and alternative payments)',
+    figures: {
+      cards: {
+        asOf: '2025-12-31',
+        scope:
+          '86.6 million proprietary cards plus 66.2 million partner-issued cards. Excludes some inactive retail co-brand cards; a different count of basic cards (128.9 million) also exists.',
+        lowerBound: false,
+      },
+      volume: {
+        usdBn: 1_897,
+        metric: 'network-volume-incl-cash-and-alternative-payments',
+        periodStart: '2025-01-01',
+        periodEnd: '2025-12-31',
+        currency: 'USD',
+        lowerBound: false,
+        scope:
+          'American Express-issued and partner-issued payment products plus alternative payment solutions, including cash advances.',
+        cashIncluded: true,
+      },
+      volumeNote:
+        'This is network volume, not purchases only, so it is not added to the purchase-volume comparison.',
+      otherFacts: [
+        'Proprietary billed business was $1,669.8 billion for calendar 2025. It covers only part of the network.',
+      ],
+      source: {
+        label: 'American Express — 2025 annual report',
+        url: 'https://s26.q4cdn.com/747928648/files/doc_financials/2025/ar/American-Express-Annual-Report-2025.pdf',
+        published: null,
+        checked: null,
+        location: 'Printed page 48 (Table 5), definitions on pages 81 to 82',
+      },
+    },
     offlineAuthSupported: true,
     tokenizationPlatform: 'American Express Token Service (EST)',
     emvcoMember: true,
@@ -171,11 +292,25 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     ],
     radarScores: {
       scale: 1,
-      offlineExposure: 2,
-      tokenization: 4,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 1,
-      regulatoryPressure: 3,
-      legacyBurden: 2,
+      regulatoryPressure: null,
+      legacyBurden: null,
+    },
+    radarBasis: {
+      scale:
+        'Score 1: 152.8M cards at 31 Dec 2025 is 3% of the largest dated, comparable count (under 10%).',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 1: an internal readiness programme only, with no network-specific public plan.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -183,9 +318,30 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     name: 'China UnionPay',
     abbreviation: 'CUP',
     headquartersRegion: 'Asia-Pacific',
-    cardsInCirculation: '9.4 billion',
+    cardsInCirculation: '9.4 billion (older figure; date and scope not established)',
     cardsInCirculationNum: 9_400_000_000,
-    annualTransactionVolume: '$21 trillion',
+    annualTransactionVolume: '$21 trillion (older figure; period and scope not established)',
+    figures: {
+      cards: {
+        asOf: null,
+        scope:
+          'Older worldwide figure kept for context. No primary source on this page establishes its date or scope.',
+        lowerBound: false,
+      },
+      volume: null,
+      volumeNote:
+        'No same-scope, dated annual worldwide purchase volume was established from a primary source, so UnionPay is not part of the purchase-volume comparison. That does not show the older figure is wrong.',
+      otherFacts: [
+        'An official release of 12 April 2025 reports more than 260 million cards issued outside mainland China in 83 markets. That is cumulative overseas issuance, not worldwide circulation.',
+      ],
+      source: {
+        label: 'UnionPay International — overseas issuance release (12 April 2025)',
+        url: 'https://m.unionpayintl.com/wap/en/mediaCenter/newsCenter/companyNews/3016146.shtml',
+        published: '2025-04-12',
+        checked: null,
+        location: 'Release text',
+      },
+    },
     offlineAuthSupported: true,
     tokenizationPlatform: 'UnionPay Online Payment (UPOP) Token Service',
     emvcoMember: true,
@@ -221,12 +377,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 5,
-      offlineExposure: 5,
-      tokenization: 3,
-      pqcReadiness: 2,
-      regulatoryPressure: 5,
-      legacyBurden: 4,
+      scale: null,
+      offlineExposure: null,
+      tokenization: null,
+      pqcReadiness: 1,
+      regulatoryPressure: null,
+      legacyBurden: null,
+    },
+    radarBasis: {
+      scale:
+        'Not scored: no dated, comparable card count is established for this network, so its share of the largest cannot be worked out.',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 1: shared EMVCo standards work only; no network-specific public stance was found.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
   {
@@ -234,9 +404,30 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
     name: 'Discover / Diners Club',
     abbreviation: 'DFS',
     headquartersRegion: 'Americas',
-    cardsInCirculation: '70 million',
+    cardsInCirculation: '70 million (older figure; date and scope not established)',
     cardsInCirculationNum: 70_000_000,
-    annualTransactionVolume: '$200 billion',
+    annualTransactionVolume: '$200 billion (older figure; period and scope not established)',
+    figures: {
+      cards: {
+        asOf: null,
+        scope:
+          'Older figure for the narrower Discover and Diners Club cards, kept for context. No primary source on this page establishes its date or scope.',
+        lowerBound: false,
+      },
+      volume: null,
+      volumeNote:
+        'The current official page describes a broader population than the older row (see the separate figures below), so it is not swapped in and no dated same-scope volume is added to the comparison.',
+      otherFacts: [
+        'The official Discover Global Network page reports more than 439 million open cards on the network, including network alliances, and says customers spent over $634 billion across Discover Network, Diners Club International and PULSE in 2025. The page is undated, its footnotes mix December 2025 participant data with a December 2024 ATM study, and it was checked on 12 November 2026.',
+      ],
+      source: {
+        label: 'Discover Global Network — official homepage',
+        url: 'https://www.discoverglobalnetwork.com/',
+        published: null,
+        checked: '2026-11-12',
+        location: 'Scale figures and footnotes 1 and 3',
+      },
+    },
     offlineAuthSupported: true,
     tokenizationPlatform: 'Discover Network Token Service',
     emvcoMember: true,
@@ -276,12 +467,26 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       },
     ],
     radarScores: {
-      scale: 1,
-      offlineExposure: 1,
-      tokenization: 2,
+      scale: null,
+      offlineExposure: null,
+      tokenization: null,
       pqcReadiness: 1,
-      regulatoryPressure: 3,
-      legacyBurden: 2,
+      regulatoryPressure: null,
+      legacyBurden: null,
+    },
+    radarBasis: {
+      scale:
+        'Not scored: no dated, comparable card count is established for this network, so its share of the largest cannot be worked out.',
+      offlineExposure:
+        'Not scored: no network figure on this page shows how much of its card-present estate uses offline authentication.',
+      tokenization:
+        'Not scored: the page names a token platform but gives no figure or source for its reach.',
+      pqcReadiness:
+        'Score 1: shared EMVCo standards work only; no network-specific public stance was found.',
+      regulatoryPressure:
+        'Not scored: no network-specific regulatory evidence is shown on this page.',
+      legacyBurden:
+        'Not scored: the page lists methods for this network but gives no source for them, and no figure shows how large the legacy base is.',
     },
   },
 ]

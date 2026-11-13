@@ -3,6 +3,26 @@ import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import {
+  SAMPLE_CHALLENGE_BYTES,
+  buildCarKeyFlow,
+  fragmentCount,
+  summarizeCarKeyFlow,
+} from '../data/carKeyProtocolData'
+
+/** Text for the car key exercise, computed from the same model the explorer uses. */
+function carKeyObservation(): string {
+  const flow = buildCarKeyFlow({
+    challengeBytes: SAMPLE_CHALLENGE_BYTES,
+    ownerCertRoute: 'direct-carmaker',
+    radio: 'nfc',
+  })
+  const classical = summarizeCarKeyFlow(flow, 'classical')
+  const pqc = summarizeCarKeyFlow(flow, 'pqc')
+  const publicFragments = fragmentCount('nfc', 1184)
+  const returnFragments = fragmentCount('nfc', 1088)
+  return `This is a fictional sample, not the CCC wire format. Under the sample assumption of 256-byte NFC fragments, the ML-KEM-768 public value (1,184 bytes) takes ${publicFragments} fragments and the returned ciphertext (1,088 bytes) takes ${returnFragments} more: ${publicFragments} + ${returnFragments} = ${publicFragments + returnFragments} fragments for 2,272 bytes, because they are separate messages. The whole flow adds up to ${classical.totalBytes.toLocaleString()} payload bytes classical and ${pqc.totalBytes.toLocaleString()} bytes PQC, of which the carmaker network carries ${(classical.transports.network?.bytes ?? 0).toLocaleString()} and ${(pqc.transports.network?.bytes ?? 0).toLocaleString()} and the local NFC radio the rest. Local key derivation is not transmitted and radio discovery events are not counted. BLE uses larger fragments (512 bytes in this sample), and UWB ranging carries only a 16-byte ranging message. The page assumes no elapsed time: any time you see comes from the service times you type in.`
+}
 
 export interface WorkshopConfig {
   step: number
@@ -94,11 +114,10 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       title:
         '5. NFC Car Key PQC Fragmentation — Analyze ML-KEM fragment behavior over NFC transports',
       description:
-        'Select NFC transport in the Car Key Protocol Explorer. Switch to PQC mode and observe how ML-KEM-768 public keys and ciphertexts fragment across NFC APDUs. Compare total transaction time vs BLE transport.',
+        'Select NFC in the Car Key Protocol Explorer and switch to PQC mode. Observe how the ML-KEM-768 public value and the returned ciphertext fragment across NFC messages, and compare the carmaker-network bytes with the local-radio bytes. Then enter your own service-time assumptions to see an elapsed time.',
       badge: 'Car Key',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/30',
-      observe:
-        'NFC max APDU is 256 bytes. Exchanging the ML-KEM-768 public key (1,184 B) + ciphertext (1,088 B) requires 9+ APDUs for key agreement alone. Total PQC handshake on NFC takes ~800ms (vs ~120ms classical). BLE handles the same handshake in 1-2 L2CAP frames at ~200ms. UWB ranging is symmetric (quantum-safe).',
+      observe: carKeyObservation(),
       config: { step: 4 },
     },
     {
