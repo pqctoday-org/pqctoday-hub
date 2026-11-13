@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Shield, AlertTriangle, CheckCircle, Cpu, Zap, Info } from 'lucide-react'
+import { Shield, AlertTriangle, CheckCircle, Cpu, Info } from 'lucide-react'
 import { CIPHER_SUITES, HARDWARE_TIERS } from '../data/networkConstants'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
@@ -111,7 +111,6 @@ export const NGFWCipherAnalyzer: React.FC = () => {
     const certOverheadPct = Math.round(
       ((primarySuite.certSizeKB - baseline.certSizeKB) / baseline.certSizeKB) * 100
     )
-    const latencyOverheadMs = primarySuite.handshakeMs - baseline.handshakeMs
     const softwareThroughputFactor =
       primarySuite.type === 'classical' ? 1.0 : primarySuite.type === 'hybrid' ? 0.72 : 0.55
     const accelerationAssumed = assumeSelectedAlgorithmOffload && canAssumeSelectedAlgorithmOffload
@@ -121,7 +120,6 @@ export const NGFWCipherAnalyzer: React.FC = () => {
 
     return {
       certOverheadPct,
-      latencyOverheadMs,
       effectiveConnsSec,
       effectiveFactor,
       accelerationAssumed,
@@ -147,7 +145,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">NGFW Cipher Policy Analyzer</h3>
         <p className="text-sm text-muted-foreground">
           Configure your NGFW cipher policy and observe the impact of enabling PQC — including
-          certificate size increases, handshake latency, and hardware offload requirements.
+          certificate size increases and hardware offload requirements.
         </p>
       </div>
 
@@ -258,7 +256,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-[10px] text-muted-foreground mb-1">Key Exchange</div>
               <div className="text-xs font-bold text-foreground">{primarySuite.keyExchange}</div>
@@ -271,12 +269,6 @@ export const NGFWCipherAnalyzer: React.FC = () => {
               <div className="text-[10px] text-muted-foreground mb-1">Cert Size</div>
               <div className={`text-xs font-bold ${MODE_LABELS[selectedMode].colorClass}`}>
                 {primarySuite.certSizeKB} KB
-              </div>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-[10px] text-muted-foreground mb-1">Handshake</div>
-              <div className={`text-xs font-bold ${MODE_LABELS[selectedMode].colorClass}`}>
-                ~{primarySuite.handshakeMs}ms
               </div>
             </div>
           </div>
@@ -318,12 +310,6 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                 colorClass={MODE_LABELS[selectedMode].colorClass}
               />
               <BarMeter
-                value={primarySuite.handshakeMs}
-                max={30}
-                label="Handshake Latency (ms)"
-                colorClass={MODE_LABELS[selectedMode].colorClass}
-              />
-              <BarMeter
                 value={analysis.effectiveConnsSec}
                 max={selectedTierData.maxConnectionsSec}
                 label="Effective Connections/sec"
@@ -350,17 +336,6 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                     </span>{' '}
                     vs the classical baseline. ML-DSA certificate sizes here are minimums from FIPS
                     204 Table 2; test inspection devices with PQC-sized certificates.
-                  </div>
-                </div>
-              )}
-              {analysis.latencyOverheadMs > 0 && (
-                <div className="bg-warning/5 rounded-lg p-3 border border-warning/30 flex items-start gap-2">
-                  <Zap size={14} className="text-status-warning shrink-0 mt-0.5" />
-                  <div className="text-xs text-muted-foreground">
-                    <span className="font-bold text-status-warning">
-                      +{analysis.latencyOverheadMs}ms handshake latency
-                    </span>{' '}
-                    additional overhead per new connection.
                   </div>
                 </div>
               )}
@@ -409,9 +384,6 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                 <th className="text-right py-2 px-2 text-muted-foreground font-medium">
                   Cert (KB)
                 </th>
-                <th className="text-right py-2 px-2 text-muted-foreground font-medium">
-                  Latency (ms)
-                </th>
                 <th className="text-center py-2 px-2 text-muted-foreground font-medium">
                   HW Offload
                 </th>
@@ -453,13 +425,6 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                   >
                     {suite.certSizeKB}
                   </td>
-                  <td
-                    className={`py-2 px-2 text-right font-mono ${
-                      suite.handshakeMs > 15 ? 'text-status-warning' : 'text-foreground'
-                    }`}
-                  >
-                    {suite.handshakeMs}
-                  </td>
                   <td className="py-2 px-2 text-center">
                     {suite.hardwareOffloadRequired ? (
                       <span className="text-status-warning">Required</span>
@@ -482,8 +447,8 @@ export const NGFWCipherAnalyzer: React.FC = () => {
         <p className="text-[10px] text-muted-foreground mt-2">
           Cert (KB): classical values are this module&apos;s illustrative figures. ML-DSA values are
           minimums (public key plus signature, FIPS 204 Table 2), and hybrid suites are at least
-          that size. Latency and throughput values are illustrative simulation settings, not
-          measurements.
+          that size. The throughput factors are illustrative simulation settings, not measurements,
+          and no handshake time is simulated.
         </p>
       </div>
 

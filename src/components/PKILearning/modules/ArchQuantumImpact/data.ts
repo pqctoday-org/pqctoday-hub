@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { RoleGuideData } from '../../common/roleGuide/types'
+import {
+  MEASURED_HANDSHAKE_FACTS,
+  formatBytes,
+  measuredHandshakeScopeSentence,
+} from '../VPNSSHModule/data/measuredHandshakeFacts'
 
 export const ARCH_GUIDE_DATA: RoleGuideData = {
   roleId: 'architect',
@@ -58,8 +63,7 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
         'PQC operations have different performance profiles. Latency budgets, throughput models, and resource planning all need updating.',
       severity: 'medium',
       timeframe: '2025-2028',
-      exampleScenario:
-        'Fictional planning example: an API gateway must handle 50,000 full TLS handshakes per second. Suppose an isolated benchmark finds that the selected ML-KEM key-generation operation takes 3x as long as its classical comparison. This alone does not establish a threefold increase in gateway compute capacity. Establish which operations the gateway actually performs, profile their share of the full TLS workload, and measure CPU use, handshake throughput and latency on the chosen hardware and software under representative load, including session resumption, before sizing capacity.',
+      exampleScenario: `Fictional planning example: an API gateway must handle 50,000 full TLS handshakes per second. Suppose an isolated benchmark finds that the selected ML-KEM key-generation operation takes 3x as long as its classical comparison. This alone does not establish a threefold increase in gateway compute capacity. Establish which operations the gateway actually performs, profile their share of the full TLS workload, and measure CPU use, handshake throughput and latency on the chosen hardware and software under representative load, including session resumption, before sizing capacity. Measured sizes for the byte side of that budget: ${formatBytes(MEASURED_HANDSHAKE_FACTS.classical.totalBytes)} bytes for the seven handshake messages with ${MEASURED_HANDSHAKE_FACTS.classical.label}, ${formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes)} with ${MEASURED_HANDSHAKE_FACTS.hybrid.label} (the RSA certificate message stays ${formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.certificateMessageBytes)} bytes, so the hybrid group only enlarges key exchange) and ${formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.totalBytes)} with ${MEASURED_HANDSHAKE_FACTS.pqc.label} (certificate message ${formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.certificateMessageBytes)} bytes). ${measuredHandshakeScopeSentence()}`,
     },
     {
       id: 'crypto-agility-gap',

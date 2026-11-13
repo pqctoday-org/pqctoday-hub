@@ -46,7 +46,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       badge: 'Classical',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Record the baseline handshake byte count (~4 KB) — you will compare it against every subsequent scenario. Note the RSA signature in the CertificateVerify message.',
+        'Record the baseline handshake byte count the simulator reports — you will compare it against every subsequent scenario. Note the RSA signature in the CertificateVerify message.',
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
@@ -244,7 +244,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       badge: 'HRR',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'Look for the "HRR" badge and the 2-RTT indicator in results. The Protocol Log shows two ClientHellos: a small first one (X25519 key share, about 200 B) and a retry of about 1.4 KB carrying the ML-KEM-768 + X25519 key share. The negotiated group is X25519MLKEM768. Compare with Scenario 3 (same group, 1-RTT): listing X25519MLKEM768 first on the client removes the retry.',
+        'Look for the "HRR" badge and the 2-RTT indicator in results. The Protocol Log shows two ClientHellos: a small first one (X25519 key share only) and a larger retry carrying the ML-KEM-768 + X25519 key share (in the Hub\'s sample capture the ClientHello was 159 B offering only X25519 and 1,337 B offering only the hybrid group; the simulator\'s own sizes may differ). The negotiated group is X25519MLKEM768. Compare with Scenario 3 (same group, 1-RTT): listing X25519MLKEM768 first on the client removes the retry.',
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],

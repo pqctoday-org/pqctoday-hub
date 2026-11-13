@@ -51,7 +51,7 @@
         "Protects session keys against HNDL (harvest-now-decrypt-later) attacks",
         "Authentication still relies on classical ECDSA — upgrade certificates next",
         "Chrome, Firefox, and Cloudflare have deployed this configuration",
-        "~2 KB additional handshake overhead — minimal performance impact",
+        "Hybrid key exchange added 2,266 bytes to the handshake in the Hub's sample capture (4,499 bytes against 2,233 bytes, both with an RSA-2048 certificate); no handshake time was measured",
         "Compliant with CISA/NIST hybrid guidance for transition period"
       ]
     },
@@ -68,8 +68,8 @@
       },
       "considerations": [
         "Fully quantum-safe handshake when combined with trusted PQC CA hierarchy",
-        "ML-DSA-44 signature: ~2.4 KB vs ECDSA P-256: ~71 bytes",
-        "Total handshake ~5-8 KB larger than classical — still acceptable for most use cases",
+        "ML-DSA-44 signature: 2,420 bytes (FIPS 204) vs ECDSA P-256: about 71 bytes DER-encoded",
+        "The Hub's sample capture measured ML-DSA-65, not ML-DSA-44; at ML-DSA-65 the Certificate message grew from 1,642 to 11,100 bytes — measure your own chain",
         "Requires PQC-capable CA infrastructure and certificate issuance pipeline",
         "Draft RFC support: draft-ietf-tls-mldsa-06, FIPS 204 (final)"
       ]
@@ -87,7 +87,7 @@
       },
       "considerations": [
         "Highest post-quantum security assurance",
-        "Handshake ~10-12 KB — check MTU and connection latency budget",
+        "In the Hub's sample capture, ML-KEM-768 with ML-DSA-65 totalled 16,944 bytes against 2,233 bytes for X25519 with RSA-2048 (ML-KEM-1024 key shares are larger still) — check MTU and your own connection-time budget; no latency was measured",
         "Pure PQC (no classical fallback) — ensure all endpoints support FIPS 203/204",
         "Not yet widely deployed in production; suitable for high-security pilot deployments",
         "Stepping stone toward CNSA 2.0 — full CNSA 2.0 compliance requires ML-DSA-87 for signatures (with ML-KEM-1024)"

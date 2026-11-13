@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { MEASURED_HANDSHAKE_FACTS, formatBytes } from '../VPNSSHModule/data/measuredHandshakeFacts'
+
 export interface ArchExercise {
   title: string
   prompt: string
@@ -17,8 +19,7 @@ export const ARCH_QUANTUM_EXERCISES: ArchExercise[] = [
   },
   {
     title: 'Scenario: IoT Certificate Size Constraint',
-    prompt:
-      'Your IoT architecture uses 3-level cert chains on devices with 16KB TLS buffer limits. ML-DSA-65 certificates would create 12KB chains. Evaluate alternatives: Merkle Tree Certificates, SLH-DSA parameter trade-offs, or redesigning the chain depth. Use the workshop tools to document your analysis.',
+    prompt: `Fictional example: your IoT architecture uses 3-level cert chains on devices with a 16 KiB (16,384-byte) TLS buffer limit. In the Hub's measured capture the ML-DSA-65 Certificate message, with only a leaf and an intermediate, is ${formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.certificateMessageBytes)} bytes (${formatBytes(MEASURED_HANDSHAKE_FACTS.classical.certificateMessageBytes)} bytes with RSA-2048), and a third level would add to it. Measure your own chain. Evaluate alternatives: Merkle Tree Certificates, SLH-DSA parameter trade-offs, or redesigning the chain depth. Use the workshop tools to document your analysis.`,
   },
   {
     title: 'Scenario: Choosing Trust Hardware',

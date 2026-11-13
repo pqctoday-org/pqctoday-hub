@@ -32,7 +32,7 @@ const manifest: ModuleManifest = {
   ],
   startHere: {
     step: 'ngfw-cipher-analyzer',
-    text: 'Switch the NGFW Cipher Policy from classical to hybrid to pure PQC: the analyzer shows the certificate-size, handshake-latency and hardware-offload impact of each.',
+    text: 'Switch the NGFW Cipher Policy from classical to hybrid to pure PQC: the analyzer shows the certificate-size and hardware-offload impact of each.',
   },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to

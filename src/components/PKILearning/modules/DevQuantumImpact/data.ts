@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { RoleGuideData } from '../../common/roleGuide/types'
+import {
+  MEASURED_HANDSHAKE_FACTS,
+  formatBytes,
+  measuredHandshakeScopeSentence,
+} from '../VPNSSHModule/data/measuredHandshakeFacts'
 
 export const DEV_GUIDE_DATA: RoleGuideData = {
   roleId: 'developer',
@@ -34,12 +39,10 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
     {
       id: 'tls-handshake',
       title: 'TLS Handshake Size Increase',
-      description:
-        'PQC key exchange adds ~1KB to the TLS handshake. Some networks and middleboxes may not handle this.',
+      description: `PQC key exchange and certificates make the TLS handshake larger. In one measured capture the seven handshake messages total ${formatBytes(MEASURED_HANDSHAKE_FACTS.classical.totalBytes)} bytes (${MEASURED_HANDSHAKE_FACTS.classical.label}), ${formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes)} bytes (${MEASURED_HANDSHAKE_FACTS.hybrid.label}) and ${formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.totalBytes)} bytes (${MEASURED_HANDSHAKE_FACTS.pqc.label}). Some networks and middleboxes may not handle the larger messages.`,
       severity: 'high',
       timeframe: '2025-2028',
-      exampleScenario:
-        'Your mobile app connects through a corporate proxy that fragments TLS ClientHello messages larger than 1200 bytes. Adding ML-KEM to the key exchange pushes it over, causing connection timeouts for 15% of enterprise users.',
+      exampleScenario: `Fictional example: your mobile app connects through a corporate proxy configured to fragment or drop TLS ClientHello messages larger than 1,200 bytes. In the capture the classical ClientHello is ${formatBytes(MEASURED_HANDSHAKE_FACTS.classical.clientHelloBytes)} bytes, while the hybrid one is ${formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.clientHelloBytes)} bytes and the ML-KEM-768 one is ${formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.clientHelloBytes)} bytes, so both would exceed that limit. ${measuredHandshakeScopeSentence()} Test your own proxies and networks to find which limits apply.`,
     },
     {
       id: 'code-signing',
@@ -68,8 +71,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
         'Existing test suites do not cover PQC algorithm behavior, performance characteristics, or failure modes.',
       severity: 'medium',
       timeframe: '2025-2028',
-      exampleScenario:
-        'Your load tests assume TLS handshakes complete in <5ms. ML-KEM key generation takes 2-3x longer, and your latency budgets are violated under peak traffic. Without PQC-aware performance tests, this surfaces in production.',
+      exampleScenario: `Fictional example: your load tests were written against classical TLS handshakes and assert sizes, buffer limits and timeouts that fit them. A post-quantum handshake carries more bytes (${formatBytes(MEASURED_HANDSHAKE_FACTS.classical.totalBytes)} bytes classical against ${formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes)} hybrid and ${formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.totalBytes)} for ML-KEM-768 with ML-DSA-65 in the capture) and runs different operations, so those assertions can fail. This lesson did not measure handshake time; measure it on your own stack under representative load.`,
     },
   ],
 

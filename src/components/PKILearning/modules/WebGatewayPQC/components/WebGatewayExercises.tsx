@@ -46,7 +46,7 @@ const SCENARIOS: Scenario[] = [
     title: 'High-Traffic Gateway Capacity Planning',
     icon: Zap,
     context:
-      'Your e-commerce platform handles 100,000 TLS handshakes per second during peak sales events on a 16-core HAProxy cluster. Moving to PQC hybrid will increase handshake sizes by ~3\u00d7.',
+      "Your e-commerce platform handles 100,000 TLS handshakes per second during peak sales events on a 16-core HAProxy cluster. In the Hub's sample capture, moving to PQC hybrid raised the handshake from 2,233 to 4,499 bytes, about 2\u00d7 (a sample profile, not your gateway).",
     tasks: [
       'Calculate the bandwidth cost of hybrid PQC handshakes at 100K connections/sec',
       'Compare your HAProxy cluster capacity against the PQC hybrid benchmark',

@@ -4,7 +4,7 @@ Module covering PQC migration for network security infrastructure including NGFW
 
 ## Key Topics
 
-- PQC impact on TLS inspection and DPI (certificate buffer and parsing limits, latency overhead, hardware offload gaps)
+- PQC impact on TLS inspection and DPI (certificate buffer and parsing limits, hardware offload gaps; the module reports sizes and simulates no handshake time)
 - NGFW cipher policy migration to ML-KEM/ML-DSA hybrid and pure-PQC modes
 - TLS intercept proxy behavior with PQC certificate chains (ML-DSA-65, hybrid ECDSA+ML-DSA)
 - IDS/IPS signature updates for PQC traffic detection (hybrid KEM handshakes, cert size anomalies, downgrade attacks)
@@ -14,7 +14,7 @@ Module covering PQC migration for network security infrastructure including NGFW
 
 ## Workshop Steps
 
-1. NGFW Cipher Analyzer — cipher policy comparison (classical/hybrid/pure PQC), hardware tier impact, cert size and latency metrics
+1. NGFW Cipher Analyzer — cipher policy comparison (classical/hybrid/pure PQC), hardware tier impact and cert size metrics
 2. TLS Inspection Lab — pass-through vs full inspection simulation, PQC cert chain sizes, inspection feasibility matrix
 3. IDS Signature Updater — PQC-aware rule categories, false positive rate analysis, detection coverage balancing
 4. Vendor Migration Matrix — interactive filtering by ML-KEM/ML-DSA support, TLS inspection, hardware offload, readiness status
@@ -26,7 +26,8 @@ Module covering PQC migration for network security infrastructure including NGFW
 - ML-DSA-65 certificate: at least 5,261 bytes (FIPS 204 Table 2: 1,952-byte public key plus 3,309-byte signature)
 - Two-certificate TLS 1.3 chain in an IETF C509 draft example: ML-DSA-65 11,869 bytes, RSA 2,656 bytes, ECDSA 1,651 bytes
 - Middleboxes: the Applied Quantum PQC Migration Framework v2.1 says many have hardcoded buffer sizes or parsing assumptions that break with PQC-sized handshakes and certificates, and advises testing every middlebox on every production network path
-- Simulator default values (illustrative, not measurements): TLS Inspection Lab inspected handshake classical ~9ms, hybrid ~28ms, pure PQC ~35ms; NGFW Cipher Analyzer throughput factors; IDS Signature Updater hybrid KEM detection coverage 92% and downgrade attack detection coverage 65% (high false positive risk, requires tuning)
+- Measured handshake sizes (Hub sample capture, OpenSSL 3.6.3, 9 Nov 2026; seven handshake-layer messages, leaf and intermediate certificates, record and TCP/IP framing excluded): X25519 with RSA-2048 2,233 bytes; X25519MLKEM768 with RSA-2048 4,499 bytes; ML-KEM-768 with ML-DSA-65 16,944 bytes; no handshake time was measured or simulated
+- Simulator default values (illustrative, not measurements): NGFW Cipher Analyzer throughput factors; IDS Signature Updater hybrid KEM detection coverage 92% and downgrade attack detection coverage 65% (high false positive risk, requires tuning)
 
 ## Standards References
 

@@ -47,11 +47,11 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       id: 'tls-inspection-planning',
       title: '2. TLS Inspection Planning',
       description:
-        'Simulate TLS intercept proxy behavior with different PQC certificate types. Toggle between pass-through and full inspection modes. Compare how ML-DSA-65, hybrid ECDSA+ML-DSA-65, and pure PQC certificate chains affect inspection latency and feasibility on current NGFW firmware.',
+        'Simulate TLS intercept proxy behavior with different PQC certificate types. Toggle between pass-through and full inspection modes. Compare how ML-DSA-65, hybrid ECDSA+ML-DSA-65, and pure PQC certificate chains affect inspection feasibility on current NGFW firmware.',
       badge: 'TLS Inspection',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Hybrid ECDSA+ML-DSA-65 chains are at least about 11.9KB in the simulator (an IETF C509 draft example puts a two-certificate ML-DSA-65 chain at 11,869 bytes), and larger certificates may exceed the buffer sizes or parsing limits of devices that inspect TLS chains. The simulator projects full-inspection latency rising several-fold (roughly 9ms to 28ms; illustrative settings, not measurements) — significant for real-time applications. Pass-through mode adds no inspection latency but loses Layer 7 visibility.',
+        'Hybrid ECDSA+ML-DSA-65 chains are at least about 11.9KB in the simulator (an IETF C509 draft example puts a two-certificate ML-DSA-65 chain at 11,869 bytes), and larger certificates may exceed the buffer sizes or parsing limits of devices that inspect TLS chains. The lab reports sizes only and simulates no handshake time; measure inspection latency on your own device. Pass-through mode avoids inspection work but loses Layer 7 visibility.',
       config: { step: 1 },
     },
     {

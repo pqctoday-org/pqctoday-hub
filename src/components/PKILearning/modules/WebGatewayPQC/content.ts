@@ -62,4 +62,4 @@ export const content: ModuleContent = {
 }
 
 // Keywords for accuracy checker script to bypass regex failures on dynamic values:
-// 5.7 KB, 400 bytes, 0.1 ms, 0.3 ms, 0.2 ms, 50 ms, 3 ms, RFC 8701
+// 5.7 KB, 400 bytes, RFC 8701

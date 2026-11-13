@@ -26,6 +26,10 @@ import {
   type PQCStatusKey,
 } from '../data/networkProviderData'
 import { Button } from '@/components/ui/button'
+import {
+  MEASURED_HANDSHAKE_FACTS,
+  formatBytes,
+} from '../../VPNSSHModule/data/measuredHandshakeFacts'
 
 interface CollapsibleSectionProps {
   icon: React.ReactNode
@@ -105,12 +109,17 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
             </div>
             <div className="bg-warning/5 rounded-lg p-4 border border-warning/20">
               <div className="text-xs font-bold text-status-warning mb-2">
-                TLS Inspection Latency
+                Measured TLS Handshake
               </div>
-              <div className="text-2xl font-bold text-status-warning mb-1">35 ms</div>
+              <div className="text-2xl font-bold text-status-warning mb-1">
+                {formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.totalBytes)} B
+              </div>
               <p className="text-xs text-muted-foreground">
-                Illustrative values from this module&apos;s TLS Inspection Lab, not measurements:
-                classical (9 ms), hybrid (28 ms), and pure PQC (35 ms) inspected handshake.
+                In the Hub&apos;s sample capture, a handshake with ML-KEM-768 and ML-DSA-65 totals{' '}
+                {formatBytes(MEASURED_HANDSHAKE_FACTS.pqc.totalBytes)} B, against{' '}
+                {formatBytes(MEASURED_HANDSHAKE_FACTS.classical.totalBytes)} B for X25519 with
+                RSA-2048 ({formatBytes(MEASURED_HANDSHAKE_FACTS.hybrid.totalBytes)} B for
+                X25519MLKEM768 with RSA-2048). Sizes only; no inspection latency was measured.
               </p>
             </div>
             <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -135,7 +144,7 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
                 {
                   impact: 'CPU Saturation on Software DPI',
                   detail:
-                    'Software-only DPI for ML-KEM key derivation increases per-connection CPU cost by 2-3x vs ECDHE.',
+                    'Software-only DPI that performs ML-KEM key derivation does different work per connection than with ECDHE. No CPU figure is given here, so measure it on your own inspection devices.',
                 },
                 {
                   impact: 'IDS/IPS Signature Updates',
