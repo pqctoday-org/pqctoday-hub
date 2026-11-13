@@ -74,6 +74,8 @@ describe('plain wording for the open-gaps register', () => {
       'kat-harness-must-read-stated-parameters',
       'recorded-fail-pbkdf2',
       'recorded-fail-rsa-oaep',
+      'recorded-fail-mldsa-sign-cpp',
+      'recorded-fail-mldsa-verify-rust',
     ]) {
       const plain = GAP_PLAIN_TEXT[id] // eslint-disable-line security/detect-object-injection
       expect(INTERNAL_LABEL.test([plain.title, plain.scope, plain.summary].join('\n'))).toBe(false)
@@ -88,22 +90,35 @@ describe('plain wording for the open-gaps register', () => {
     }
   })
 
-  it('folds the 20 recorded failures into one PBKDF2 entry and one RSA-OAEP entry', () => {
+  it('folds the 44 recorded failures into one PBKDF2, one RSA-OAEP and two ML-DSA Wycheproof entries', () => {
     const failures = generated.filter((g) => g.id.startsWith('recorded-fail:'))
     const byFamily = (family: string, engine: string) =>
       failures.filter((g) => g.id.includes(`#${family}#`) && g.id.endsWith(`:${engine}`))
     // the underlying data: 1 PBKDF2 case failing on both engines, 18 RSA-OAEP cases failing on Rust only
-    expect(failures).toHaveLength(20)
+    // ...and 12 ML-DSA Wycheproof cases per engine (4 per parameter set): signing on C++, verification on Rust
+    expect(failures).toHaveLength(44)
+    for (const v of [44, 65, 87]) {
+      expect(byFamily(`wycheproof_mldsa_${v}_sign_noseed_test`, 'cpp')).toHaveLength(4)
+      expect(byFamily(`wycheproof_mldsa_${v}_sign_noseed_test`, 'rust')).toHaveLength(0)
+      expect(byFamily(`wycheproof_mldsa_${v}_verify_test`, 'rust')).toHaveLength(4)
+      expect(byFamily(`wycheproof_mldsa_${v}_verify_test`, 'cpp')).toHaveLength(0)
+    }
     expect(byFamily('pbkdf2_acvp_test', 'cpp')).toHaveLength(1)
     expect(byFamily('pbkdf2_acvp_test', 'rust')).toHaveLength(1)
     expect(byFamily('rsa_oaep_test', 'rust')).toHaveLength(18)
     expect(byFamily('rsa_oaep_test', 'cpp')).toHaveLength(0)
 
     expect(registerGaps.filter((g) => g.id.startsWith('recorded-fail:'))).toEqual([])
-    expect(registerGaps).toHaveLength(generated.length - 20 + 2)
+    expect(registerGaps).toHaveLength(generated.length - 44 + 4)
     const titles = registerGaps.map((g) => plainGapView(g, ctx).title)
     expect(titles).toContain('PBKDF2: one NIST sample case fails on both engines')
     expect(titles).toContain('RSA-OAEP decryption: 18 NIST sample cases fail on the Rust engine')
+    expect(titles).toContain(
+      'ML-DSA signing: 12 Wycheproof invalid-key cases end in an error on the C++ engine'
+    )
+    expect(titles).toContain(
+      'ML-DSA verification: 12 Wycheproof wrong-length public keys end in an error on the Rust engine'
+    )
   })
 
   it('keeps the test paths and row ids of the folded failures in the technical evidence only', () => {
@@ -120,6 +135,16 @@ describe('plain wording for the open-gaps register', () => {
     // status, owner and tracking reference carry over from the entries they replace
     expect(pbkdf2).toMatchObject({ status: 'open', origin: 'generated', owner: 'unassigned' })
     expect(oaep.planItem).toBe(generated.find((g) => g.id.startsWith('recorded-fail:'))!.planItem)
+    const sign = registerGaps.find((g) => g.id === 'recorded-fail-mldsa-sign-cpp')!
+    const verify = registerGaps.find((g) => g.id === 'recorded-fail-mldsa-verify-rust')!
+    for (const g of [sign, verify]) {
+      expect(INTERNAL_LABEL.test(shownText(g))).toBe(false)
+      expect(g.detail).toMatch(/12 registered cases \(12 case-and-engine results\)/)
+    }
+    expect((sign.detail.match(/wycheproof_mldsa_\d+_sign_noseed_test#/g) ?? []).length).toBe(12)
+    expect((verify.detail.match(/wycheproof_mldsa_\d+_verify_test#/g) ?? []).length).toBe(12)
+    expect(sign.scope).toBe('C++ (wasm)')
+    expect(verify.scope).toBe('Rust (wasm)')
   })
 
   it('keeps the entries as generated when a family no longer has the recorded shape', () => {
@@ -208,8 +233,13 @@ describe('plain wording for the open-gaps register', () => {
     expect(p521.map((r) => `${r.engine}:${r.status}`).sort()).toEqual(['cpp:pass', 'rust:pass'])
   })
 
-  it('does not claim the failing PBKDF2 and RSA-OAEP samples ran in a browser', () => {
-    for (const id of ['recorded-fail-pbkdf2', 'recorded-fail-rsa-oaep']) {
+  it('does not claim the failing recorded samples ran in a browser', () => {
+    for (const id of [
+      'recorded-fail-pbkdf2',
+      'recorded-fail-rsa-oaep',
+      'recorded-fail-mldsa-sign-cpp',
+      'recorded-fail-mldsa-verify-rust',
+    ]) {
       const plain = GAP_PLAIN_TEXT[id] // eslint-disable-line security/detect-object-injection
       expect(plain.summary).not.toMatch(/in the browser/)
       expect(plain.summary).toMatch(/Node\.js/)
