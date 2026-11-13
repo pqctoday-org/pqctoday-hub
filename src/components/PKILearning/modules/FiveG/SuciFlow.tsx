@@ -228,6 +228,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({
       setSupiError(null)
     }
   }
+  // Profile C's receiver accepts only this sample home network's PLMN. The input is not blocked:
+  // seeing the refusal is the teaching point.
+  const supiForeignPlmnForC =
+    profile === 'C' &&
+    SUPI_REGEX.test(customSupi) &&
+    (customSupi.slice(0, 3) !== HOME_NETWORK.mcc || customSupi.slice(3, 6) !== HOME_NETWORK.mnc)
   const [gsmaModalOpen, setGsmaModalOpen] = useState(false)
   const hsm = useHSM()
 
@@ -1401,6 +1407,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <span className="text-xs text-muted-foreground">
               Adjust the 15-digit IMSI below to verify dynamic cryptography execution.
             </span>
+            <span className="text-xs text-muted-foreground" data-testid="supi-home-network-note">
+              This sample&apos;s home network is MCC {HOME_NETWORK.mcc} / MNC {HOME_NETWORK.mnc}.
+            </span>
             <Input
               type="text"
               value={customSupi}
@@ -1413,6 +1422,18 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             {supiError && (
               <p id="supi-error" className="text-xs text-destructive mt-1" role="alert">
                 {supiError}
+              </p>
+            )}
+            {supiForeignPlmnForC && (
+              <p
+                id="supi-plmn-notice"
+                className="text-xs text-warning mt-1"
+                data-testid="supi-plmn-notice"
+              >
+                This SUPI is for MCC {customSupi.slice(0, 3)} / MNC {customSupi.slice(3, 6)}, not
+                this home network. Profile C&apos;s home network will refuse it at the SIDF step
+                with &quot;PLMN is not this home network&quot;. That is the intended check, not a
+                fault; Profile A and Profile B do not check the PLMN.
               </p>
             )}
           </label>
