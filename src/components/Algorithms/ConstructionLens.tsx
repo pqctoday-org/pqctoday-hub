@@ -33,6 +33,10 @@ import { ALGORITHM_EXPLANATIONS } from '../../data/algorithmExplanations'
 import type { ConstructionUsage } from '../../data/constructionUsage'
 import type { IndustryUseCase } from '../../data/industryLandscapeData'
 import { parseGlossaryText } from '../../utils/parseGlossary'
+import { proofRefLabel } from '../../data/constructionRefLabels'
+
+/** Shown where an instantiation names no algorithm (the source does not name one). */
+export const NO_ALGORITHM_TEXT = 'no algorithm named in the source'
 
 const OUTLOOK_CHIP: Record<PqcOutlook, string> = {
   'stays-both': 'border-primary/40 bg-primary/10 text-primary',
@@ -230,7 +234,7 @@ export function ConstructionDiagram({ c }: { c: CryptoConstruction }) {
               {inst.algorithms.length > 0 ? (
                 inst.algorithms.map((a) => <AlgorithmBox key={a} family={a} />)
               ) : (
-                <span className="text-xs text-muted-foreground">symmetric key only</span>
+                <span className="text-xs text-muted-foreground">{NO_ALGORITHM_TEXT}</span>
               )}
             </div>
           ))}
@@ -267,13 +271,20 @@ function WorksWith({ c }: { c: CryptoConstruction }) {
       {instantiationsOf(c).map(({ side, inst }, n) => (
         <div key={`${side}-${n}`} className="flex flex-wrap items-center gap-1.5 text-xs">
           <span className="w-24 font-medium text-foreground">{SIDE_LABEL[side]}</span>
-          {inst.algorithms.map((a) => (
-            <AlgorithmBox key={a} family={a} />
-          ))}
+          {inst.algorithms.length > 0 ? (
+            inst.algorithms.map((a) => <AlgorithmBox key={a} family={a} />)
+          ) : (
+            <span className="text-muted-foreground">{NO_ALGORITHM_TEXT}</span>
+          )}
           <StatusBadge status={inst.status} />
           {inst.proofRefs.map((r) => (
-            <Link key={r} to={libraryHref(r)} className="text-primary hover:underline">
-              {r}
+            <Link
+              key={r}
+              to={libraryHref(r)}
+              className="text-primary hover:underline"
+              data-testid="construction-proof-link"
+            >
+              {proofRefLabel(r)}
             </Link>
           ))}
           {inst.note && <span className="w-full pl-24 text-muted-foreground">{inst.note}</span>}

@@ -13,6 +13,8 @@ import { IndustryLandscapeView } from './IndustryLandscapeView'
 import { loadIndustryLandscape } from '@/data/industryLandscapeData'
 import { CRYPTO_CONSTRUCTIONS } from '@/data/cryptoConstructions'
 import { constructionUsage, constructionsInIndustry } from '@/data/constructionUsage'
+import { looksLikeSlug, proofRefLabel } from '@/data/constructionRefLabels'
+import { ConstructionCard, NO_ALGORITHM_TEXT } from './ConstructionLens'
 
 const { useCases, standards } = loadIndustryLandscape()
 const usage = constructionUsage(useCases, standards)
@@ -199,5 +201,62 @@ describe('constructionUsage — inside another construction', () => {
     }
     const u = constructionUsage([fake], [])
     expect(u.get('HPKE')!.direct.map((d) => d.side)).toEqual(['both'])
+  })
+})
+
+describe('construction cards — source links and empty algorithm rows', () => {
+  it('no card renders a raw Library slug as a source link', () => {
+    const slugs: string[] = []
+    for (const c of CRYPTO_CONSTRUCTIONS) {
+      const { unmount } = render(
+        <MemoryRouter>
+          <ConstructionCard c={c} usage={usage.get(c.id)} onPick={() => {}} />
+        </MemoryRouter>
+      )
+      for (const a of screen.queryAllByTestId('construction-proof-link')) {
+        const text = a.textContent ?? ''
+        if (looksLikeSlug(text)) slugs.push(`${c.id}: ${text}`)
+        expect(a.getAttribute('href')).toMatch(/^\/library\?ref=/)
+      }
+      unmount()
+    }
+    expect(slugs).toEqual([])
+  })
+
+  it('short labels for the batch-2 documents', () => {
+    expect(proofRefLabel('RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS')).toBe(
+      'RFC 9591'
+    )
+    expect(proofRefLabel('NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche')).toBe(
+      'NIST IR 8214C'
+    )
+    expect(proofRefLabel('Post-Quantum-Noise-IACR-ePrint-2022-539')).toBe('IACR ePrint 2022/539')
+    expect(proofRefLabel('Post-quantum-WireGuard-IACR-ePrint-2020-379')).toBe(
+      'IACR ePrint 2020/379'
+    )
+    expect(proofRefLabel('NIST-SP-800-56C-R2')).toBe('NIST SP 800-56C Rev. 2')
+    expect(proofRefLabel('RFC 9180')).toBe('RFC 9180')
+    expect(proofRefLabel('FIPS-198-1')).toBe('FIPS 198-1')
+  })
+
+  it('a row with no algorithm says so neutrally, never "symmetric key only"', () => {
+    for (const id of ['WireGuard-Noise', 'Secret-Sharing']) {
+      const c = CRYPTO_CONSTRUCTIONS.find((x) => x.id === id)!
+      const { container, unmount } = render(
+        <MemoryRouter>
+          <ConstructionCard c={c} usage={usage.get(c.id)} onPick={() => {}} />
+        </MemoryRouter>
+      )
+      expect(container.textContent).not.toMatch(/symmetric key only/i)
+      expect(container.textContent).toContain(NO_ALGORITHM_TEXT)
+      unmount()
+    }
+  })
+
+  it('the post-quantum WireGuard paper is shown as research', () => {
+    const c = CRYPTO_CONSTRUCTIONS.find((x) => x.id === 'WireGuard-Noise')!
+    for (const inst of c.classical ?? [])
+      if (inst.proofRefs.includes('Post-quantum-WireGuard-IACR-ePrint-2020-379'))
+        expect(inst.status).toBe('research')
   })
 })
