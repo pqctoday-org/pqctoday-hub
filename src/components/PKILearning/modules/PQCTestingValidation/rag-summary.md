@@ -49,7 +49,9 @@ Key limitation: passive tools can only detect algorithms in _current_ flows. If 
 
 Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN link with 50ms RTT, the TCP handshake costs one round trip (50ms) and the TLS 1.3 handshake one more (RFC 9293 section 3.5; RFC 8446 section 2) before application data flows. ML-KEM key generation adds ~0.7ms — negligible. The real cost is message size.
 
-### Critical benchmark data (from VIAVI TeraVM + PQC-LEO):
+### Illustrative benchmark model:
+
+The table below is the module's stored illustrative performance model (the Performance Benchmark Designer's planning assumptions), not a benchmark run. It is separate from the named VIAVI TeraVM production KPIs further down.
 
 | Metric (not sourced in the Library) | Classical | Hybrid PQC   | Pure PQC           |
 | ----------------------------------- | --------- | ------------ | ------------------ |
@@ -59,7 +61,7 @@ Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN
 | ClientHello size                    | 320B      | ~1,504B      | 1,536B             |
 | Throughput (WAN)                    | 100%      | 87%          | 79%                |
 
-The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN gateways. Pure-PQC TLS is more manageable (1.4× overhead on WAN).
+In this model, IKEv2 SA setup on WAN rises from 240ms to 12,626ms for pure PQC (about 52.6×) and to 380ms for hybrid (about 1.6×); pure-PQC TLS is about 1.4× on WAN. These modeled ratios are a reason to benchmark hybrid and pure-PQC VPN configurations on your own gateways; they do not establish a general rule, and RFC 9794 defines hybrid terminology without mandating hybrid deployment.
 
 **ClientHello size**: a hybrid ClientHello adds about 1.2 KB (the X25519MLKEM768 client key share is 1,216 bytes against 32 bytes for X25519 alone: a 1,184-byte ML-KEM-768 encapsulation key plus 32 bytes of X25519, RFC 10024 §4.1; the 1,120-byte figure is the server share). The ClientHello row above is the module's modeled baseline plus that increase, not a capture.
 
@@ -150,13 +152,15 @@ The non-specific fixed-vs-random TVLA test divides measurements into "fixed inpu
 
 ### Implementation comparison:
 
-| Stage                | ML-KEM (unmasked) | ML-KEM (1st-order masked) | ML-DSA (unmasked) | ML-DSA (masked) |
-| -------------------- | ----------------- | ------------------------- | ----------------- | --------------- |
-| NTT/INTT             | 12.7 (LEAKS)      | 3.4 (safe)                | 14.8 (LEAKS)      | 3.1 (safe)      |
-| Poly. multiplication | 9.1 (LEAKS)       | 2.8 (safe)                | 11.3 (LEAKS)      | 5.9 (LEAKS)     |
-| Modular reduction    | 7.8 (LEAKS)       | 1.9 (safe)                | 3.1 (safe)        | 1.3 (safe)      |
+Illustrative |t| scores typed into the workshop (not measurements), read against the 4.5 threshold:
 
-First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication still leaks under masking (higher-order attack required).
+| Stage                | ML-KEM (unmasked) | ML-KEM (1st-order masked) | ML-DSA (unmasked) | ML-DSA (1st-order masked) |
+| -------------------- | ----------------- | ------------------------- | ----------------- | ------------------------- |
+| NTT/INTT             | 12.7 (above 4.5)  | 3.4 (below 4.5)           | 14.8 (above 4.5)  | 3.1 (below 4.5)           |
+| Poly. multiplication | 9.1 (above 4.5)   | 2.8 (below 4.5)           | 11.3 (above 4.5)  | 5.9 (above 4.5)           |
+| Modular reduction    | 7.8 (above 4.5)   | 1.9 (below 4.5)           | 3.1 (below 4.5)   | 1.3 (below 4.5)           |
+
+A score below 4.5 means no leakage was detected at that threshold in this sample; it is not proof of security, and first-order masking can still leak at higher orders. The masked ML-DSA polynomial-multiplication score of 5.9 crosses the threshold, which calls for a specific test on that stage's intermediate values; it does not by itself establish key recovery or select a particular countermeasure.
 
 **ISO/IEC 17825 and FIPS 140-3**: ISO/IEC 17825 sets non-invasive attack mitigation test metrics for conformance with ISO/IEC 19790 at Security Levels 3 and 4.
 

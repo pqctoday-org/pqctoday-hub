@@ -248,7 +248,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             {selectedMetric === 'saSetupMs' && networkProfile === 'wan' && (
               <Insight
                 label="IKEv2 pure-PQC cliff"
-                text={`IKEv2 SA setup rises from 240ms (classical) to 12,626ms (pure PQC) on WAN — a 53× increase. Hybrid stays at 380ms (1.6×). This drives VIAVI TeraVM's recommendation to test hybrid-first before attempting pure-PQC VPN deployments.`}
+                text={`In this stored model, IKEv2 SA setup rises from 240ms (classical) to 12,626ms (pure PQC) on WAN, about 53×, while hybrid stays at 380ms (1.6×). These are planning assumptions, not a benchmark run: test hybrid and pure-PQC VPN configurations on your own gateways before choosing.`}
               />
             )}
             {selectedMetric === 'saSetupMs' && networkProfile === 'satellite' && (
