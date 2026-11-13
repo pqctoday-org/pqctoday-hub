@@ -1246,7 +1246,7 @@ export function IndustryLandscapeView() {
             type="button"
             variant="ghost"
             onClick={() => update({ mechanism: null, usecase: null, standard: null })}
-            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Industry
           </Button>
@@ -1256,7 +1256,7 @@ export function IndustryLandscapeView() {
             onClick={() => {
               if (mode !== 'mechanism') pickMechanism('RSA')
             }}
-            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'mechanism' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'mechanism' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Mechanism
           </Button>

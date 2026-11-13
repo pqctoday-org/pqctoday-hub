@@ -166,7 +166,7 @@ export const FileEditor = () => {
         <Button
           variant="ghost"
           onClick={handleSave}
-          className="px-3 py-1.5 rounded bg-primary hover:bg-primary/90 text-foreground transition-colors flex items-center gap-2 text-xs font-medium shadow-lg shadow-primary/20"
+          className="px-3 py-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-colors flex items-center gap-2 text-xs font-medium shadow-lg shadow-primary/20"
         >
           <Save size={14} />
           Save Changes
