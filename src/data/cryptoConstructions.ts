@@ -464,18 +464,27 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     hybrid: [
       {
         algorithms: ['ML-DSA', 'RSA-sig'],
-        status: 'draft',
-        proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
+        status: 'published',
+        proofRefs: [
+          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+          'draft-ietf-lamps-cms-composite-sigs',
+        ],
       },
       {
         algorithms: ['ML-DSA', 'ECDSA'],
-        status: 'draft',
-        proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
+        status: 'published',
+        proofRefs: [
+          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+          'draft-ietf-lamps-cms-composite-sigs',
+        ],
       },
       {
         algorithms: ['ML-DSA', 'EdDSA'],
-        status: 'draft',
-        proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
+        status: 'published',
+        proofRefs: [
+          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+          'draft-ietf-lamps-cms-composite-sigs',
+        ],
       },
     ],
     cycloneDxPrimitive: 'signature',
@@ -572,7 +581,13 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     id: 'KeyAgree-Recipient',
     label: 'Key agreement recipient (CMS KeyAgreeRecipientInfo)',
     outlook: 'replaced',
-    classical: [{ algorithms: ['ECDH'], status: 'published', proofRefs: ['RFC 7518'] }],
+    classical: [
+      {
+        algorithms: ['ECDH'],
+        status: 'published',
+        proofRefs: ['RFC-5753-Use-of-Elliptic-Curve-Cryptography-ECC-Algorithms-i', 'RFC 7518'],
+      },
+    ],
     successions: [
       {
         to: 'KEM-Recipient',
@@ -585,7 +600,12 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     ],
     builtOn: ['KDF', 'Key-Wrap'],
     cycloneDxPrimitive: 'key-agree',
-    proofRefs: ['RFC 5652', 'RFC 7518', 'RFC 9053'],
+    proofRefs: [
+      'RFC 5652',
+      'RFC-5753-Use-of-Elliptic-Curve-Cryptography-ECC-Algorithms-i',
+      'RFC 7518',
+      'RFC 9053',
+    ],
     explain: {
       plain:
         'The sender agrees a shared secret with the recipient’s elliptic-curve key, derives a key-encryption key from it, and uses that to wrap the message key. CMS calls this KeyAgreeRecipientInfo; JOSE and COSE have a similar mode called ECDH-ES.',
@@ -1364,19 +1384,28 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       {
         algorithms: [],
         status: 'published',
-        proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+        proofRefs: [
+          'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
+          'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
+        ],
       },
     ],
     pqc: [
       {
         algorithms: [],
         status: 'published',
-        proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+        proofRefs: [
+          'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
+          'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
+        ],
       },
     ],
     cycloneDxPrimitive: 'other',
     otherReason: 'CycloneDX 1.7 has no secret-sharing primitive.',
-    proofRefs: ['NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche'],
+    proofRefs: [
+      'RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS',
+      'NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche',
+    ],
     explain: {
       plain:
         'Secret sharing splits a secret, such as a master key, into shares so that any agreed number of them can rebuild it while fewer reveal nothing. NIST’s call for multi-party threshold schemes builds on keys that are secret-shared across several parties.',
@@ -1414,9 +1443,9 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     proofRefs: ['Post-quantum-WireGuard-IACR-ePrint-2020-379'],
     explain: {
       plain:
-        'WireGuard sets up its VPN keys with a short handshake built from the Noise framework, using X25519 key exchanges and an optional preshared key.',
+        'WireGuard sets up its VPN keys with a short Diffie-Hellman handshake built from the Noise framework, with an optional preshared key.',
       whyItMattersForPqc:
-        'X25519 is broken by a quantum computer; Rosenpass keeps WireGuard and feeds it a post-quantum preshared key, and research such as PQ-WireGuard replaces the exchanges with KEMs.',
+        'Its Diffie-Hellman exchanges are broken by a quantum computer; Rosenpass keeps WireGuard and feeds it a post-quantum preshared key, and research such as PQ-WireGuard replaces the exchanges with KEMs.',
       diagram: {
         inputs: ['static and ephemeral keys', 'optional preshared key'],
         combiner: 'Noise IKpsk2 handshake',
@@ -1433,7 +1462,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
         algorithms: ['ML-KEM'],
         status: 'research',
         proofRefs: ['Post-Quantum-Noise-IACR-ePrint-2022-539'],
-        note: 'Research: the paper replaces Diffie-Hellman in Noise patterns with KEMs and instantiates them with Kyber, the pre-FIPS 203 version of ML-KEM.',
+        note: 'Research: the paper replaces the Diffie-Hellman key exchanges in Noise with generic KEMs; ML-KEM stands here for the standard KEM such a pattern would use.',
       },
     ],
     cycloneDxPrimitive: 'key-agree',
