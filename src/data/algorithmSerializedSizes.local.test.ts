@@ -86,9 +86,10 @@ function uncompressedPoint(point: Uint8Array, coordinateBytes: number) {
 }
 
 describe('actual loaded serialized algorithm examples', () => {
-  it('loads the maintained November11 snapshot rather than stale cells', () => {
+  it('loads the maintained November11 snapshot (or a later generation of it) rather than stale cells', () => {
+    // 11132026 is the 11112026_r2 table with six trusted_source_id cells filled; byte sizes are unchanged.
     expect(loadedFileMetadata?.filename).toMatch(
-      /pqc_complete_algorithm_reference_11112026(?:_r\d+)?\.csv$/
+      /pqc_complete_algorithm_reference_111[13]2026(?:_r\d+)?\.csv$/
     )
   })
   it.each(expected)(

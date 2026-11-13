@@ -993,87 +993,87 @@
               "text": "Step 3: Crypto inventory — inspect the suggested “I’m not sure” answer; leave it selected."
             },
             {
-              "tMs": 26473,
+              "tMs": 29273,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 28473,
+              "tMs": 31273,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 30473,
+              "tMs": 33273,
               "kind": "caption",
               "text": "Step 4: Data sensitivity — picking 'I’m not sure'."
             },
             {
-              "tMs": 35645,
+              "tMs": 38445,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 37645,
+              "tMs": 40445,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 39645,
+              "tMs": 42445,
               "kind": "caption",
               "text": "Step 5: Compliance frameworks — picking 'I’m not sure'."
             },
             {
-              "tMs": 45174,
+              "tMs": 47974,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 47174,
+              "tMs": 49974,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 49174,
+              "tMs": 51974,
               "kind": "caption",
               "text": "Step 6: Migration status — picking 'I’m not sure'."
             },
             {
-              "tMs": 54346,
+              "tMs": 57146,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 56346,
+              "tMs": 59146,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-submit\"]"
             },
             {
-              "tMs": 58346,
+              "tMs": 61146,
               "kind": "caption",
               "text": "Review the four unknown answers and their suggested defaults before generating the planning report."
             },
             {
-              "tMs": 75618,
+              "tMs": 78418,
               "kind": "caption",
               "text": "Review the four unknown answers before generating the fictional planning report."
             },
             {
-              "tMs": 79861,
+              "tMs": 85661,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-generate\"]"
             },
             {
-              "tMs": 84861,
+              "tMs": 90661,
               "kind": "caption",
               "text": "Planning report generated from fictional inputs and unknown-answer assumptions; no estate verified."
             },
             {
-              "tMs": 109861,
+              "tMs": 115661,
               "kind": "caption",
               "text": "Inspect the report assumptions, then use the sample context to draft Command Center artifacts."
             },
             {
-              "tMs": 117861,
+              "tMs": 123661,
               "kind": "advance"
             }
           ]
@@ -1106,72 +1106,72 @@
               "text": "Fictional finance planning report: country context and unknown-answer assumptions, not observed estate evidence."
             },
             {
-              "tMs": 9529,
+              "tMs": 11029,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-riskScore\"]"
             },
             {
-              "tMs": 9729,
+              "tMs": 11229,
               "kind": "caption",
               "text": "Section 1/6: Risk Score — a model-based planning index; unknown answers are not measured exposure."
             },
             {
-              "tMs": 17529,
+              "tMs": 19729,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-keyFindings\"]"
             },
             {
-              "tMs": 17729,
+              "tMs": 19929,
               "kind": "caption",
               "text": "Section 2/6: Key Findings — model suggestions to investigate against an actual inventory."
             },
             {
-              "tMs": 25529,
+              "tMs": 27829,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-executiveSummary\"]"
             },
             {
-              "tMs": 25729,
+              "tMs": 28029,
               "kind": "caption",
               "text": "Section 3/6: Executive Summary — draft discussion points; retain assumptions and unresolved facts."
             },
             {
-              "tMs": 33529,
+              "tMs": 36529,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-complianceImpact\"]"
             },
             {
-              "tMs": 33729,
+              "tMs": 36729,
               "kind": "caption",
               "text": "Section 4/6: Compliance Impact — candidate frameworks from the selected context; check their actual applicability."
             },
             {
-              "tMs": 41529,
+              "tMs": 46429,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-recommendedActions\"]"
             },
             {
-              "tMs": 41729,
+              "tMs": 46629,
               "kind": "caption",
               "text": "Section 5/6: Recommended Actions — the 5-action shortlist tied to your country."
             },
             {
-              "tMs": 49529,
+              "tMs": 54429,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-migrationRoadmap\"]"
             },
             {
-              "tMs": 49729,
+              "tMs": 54629,
               "kind": "caption",
               "text": "Section 6/6: Migration Roadmap — a sample sequence to compare with your constraints and dependencies."
             },
             {
-              "tMs": 57529,
+              "tMs": 63429,
               "kind": "caption",
               "text": "Share only fictional report context. Reference data can change; inspect Privacy and retain the comparison basis."
             },
             {
-              "tMs": 65529,
+              "tMs": 71429,
               "kind": "advance"
             }
           ]
@@ -1253,62 +1253,62 @@
               "text": "Artifact: Board Deck"
             },
             {
-              "tMs": 115872,
+              "tMs": 116772,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 116872,
+              "tMs": 117772,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-board-deck-create\"]"
             },
             {
-              "tMs": 118872,
+              "tMs": 119772,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 121372,
+              "tMs": 122272,
               "kind": "caption",
               "text": "Pre-built slides citing your jurisdiction's deadline. 12 minutes, not 60."
             },
             {
-              "tMs": 211372,
+              "tMs": 212272,
               "kind": "caption",
               "text": "Artifact: CRQC Scenario"
             },
             {
-              "tMs": 213615,
+              "tMs": 215415,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 214615,
+              "tMs": 216415,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-crqc-scenario-create\"]"
             },
             {
-              "tMs": 216615,
+              "tMs": 218415,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 219115,
+              "tMs": 220915,
               "kind": "caption",
               "text": "A scripted what-if for \"the day a CRQC is announced\" — your incident response, day zero."
             },
             {
-              "tMs": 313115,
+              "tMs": 314915,
               "kind": "caption",
               "text": "3 fictional governance drafts created."
             },
             {
-              "tMs": 316115,
+              "tMs": 319215,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 317115,
+              "tMs": 320215,
               "kind": "advance"
             }
           ]
@@ -1348,97 +1348,97 @@
               "text": "Use the audit checklist and compliance documents to practise identifying applicable requirements, evidence owners and missing facts. These fictional drafts do not establish compliance or an audit conclusion."
             },
             {
-              "tMs": 14243,
+              "tMs": 17843,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 14743,
+              "tMs": 18343,
               "kind": "expand-section",
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 17743,
+              "tMs": 21343,
               "kind": "caption",
               "text": "Artifact: Audit Checklist"
             },
             {
-              "tMs": 21129,
+              "tMs": 24729,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-audit-checklist-create\"]"
             },
             {
-              "tMs": 23129,
+              "tMs": 26729,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 29629,
+              "tMs": 33229,
               "kind": "caption",
               "text": "Maps your crypto inventory to three standards. FIPS 140 dash 3. NIST I R 8547. And CNSA version 2. Drop-in for your audit cycle."
             },
             {
-              "tMs": 115629,
+              "tMs": 119229,
               "kind": "caption",
               "text": "Artifact: Compliance Timeline"
             },
             {
-              "tMs": 118301,
+              "tMs": 122801,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 119301,
+              "tMs": 123801,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-compliance-timeline-create\"]"
             },
             {
-              "tMs": 121301,
+              "tMs": 125801,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 123801,
+              "tMs": 128301,
               "kind": "caption",
               "text": "A visual of every binding deadline. NIST. CCCS. ASD. PCI version 4. All overlaid on your fiscal calendar."
             },
             {
-              "tMs": 213801,
+              "tMs": 218301,
               "kind": "caption",
               "text": "Artifact: Compliance Checklist"
             },
             {
-              "tMs": 216544,
+              "tMs": 221944,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 217544,
+              "tMs": 222944,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-compliance-checklist-create\"]"
             },
             {
-              "tMs": 219544,
+              "tMs": 224944,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 222044,
+              "tMs": 227444,
               "kind": "caption",
               "text": "One-pager you hand to your CISO's deputy. They sign every line monthly."
             },
             {
-              "tMs": 316044,
+              "tMs": 321444,
               "kind": "caption",
               "text": "3 fictional governance drafts created."
             },
             {
-              "tMs": 319044,
+              "tMs": 325744,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 320044,
+              "tMs": 326744,
               "kind": "advance"
             }
           ]
@@ -1513,62 +1513,62 @@
               "text": "Artifact: RACI Matrix"
             },
             {
-              "tMs": 115372,
+              "tMs": 116272,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 116372,
+              "tMs": 117272,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-raci-matrix-create\"]"
             },
             {
-              "tMs": 118372,
+              "tMs": 119272,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 120872,
+              "tMs": 121772,
               "kind": "caption",
               "text": "PQC champion responsible · CISO accountable · CRO consulted · Board sponsor informed. Names, not roles."
             },
             {
-              "tMs": 210872,
+              "tMs": 211772,
               "kind": "caption",
               "text": "Artifact: Stakeholder Comms"
             },
             {
-              "tMs": 213401,
+              "tMs": 215201,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 214401,
+              "tMs": 216201,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-stakeholder-comms-create\"]"
             },
             {
-              "tMs": 216401,
+              "tMs": 218201,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 218901,
+              "tMs": 220701,
               "kind": "caption",
               "text": "Email and slide templates for the announcements that make migration real to your org."
             },
             {
-              "tMs": 312901,
+              "tMs": 314701,
               "kind": "caption",
               "text": "3 fictional governance drafts created."
             },
             {
-              "tMs": 315901,
+              "tMs": 319001,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 316901,
+              "tMs": 320001,
               "kind": "advance"
             }
           ]
@@ -1643,62 +1643,62 @@
               "text": "Artifact: Contract Clause"
             },
             {
-              "tMs": 116302,
+              "tMs": 117202,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 117302,
+              "tMs": 118202,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-contract-clause-create\"]"
             },
             {
-              "tMs": 119302,
+              "tMs": 120202,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 121802,
+              "tMs": 122702,
               "kind": "caption",
               "text": "Drop-in PQC readiness language for procurement and renewal contracts. Your legal team will thank you."
             },
             {
-              "tMs": 211802,
+              "tMs": 212702,
               "kind": "caption",
               "text": "Artifact: Supply Chain Matrix"
             },
             {
-              "tMs": 214474,
+              "tMs": 216274,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 215474,
+              "tMs": 217274,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-supply-chain-matrix-create\"]"
             },
             {
-              "tMs": 217474,
+              "tMs": 219274,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 219974,
+              "tMs": 221774,
               "kind": "caption",
               "text": "End-to-end view: which vendors' systems hold which crypto assets. The map your CISO needs at every audit."
             },
             {
-              "tMs": 313974,
+              "tMs": 315774,
               "kind": "caption",
               "text": "3 fictional governance drafts created."
             },
             {
-              "tMs": 316974,
+              "tMs": 320074,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 317974,
+              "tMs": 321074,
               "kind": "advance"
             }
           ]
@@ -1771,12 +1771,12 @@
               "text": "1 fictional governance draft created."
             },
             {
-              "tMs": 129987,
+              "tMs": 131187,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 130987,
+              "tMs": 132187,
               "kind": "advance"
             }
           ]
@@ -1850,42 +1850,42 @@
               "text": "Artifact: Management Tools Audit"
             },
             {
-              "tMs": 104515,
+              "tMs": 105415,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 104715,
+              "tMs": 105615,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-management-tools\"]"
             },
             {
-              "tMs": 105515,
+              "tMs": 106415,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-artifact-management-tools-audit-create\"]"
             },
             {
-              "tMs": 107515,
+              "tMs": 108415,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"
             },
             {
-              "tMs": 110015,
+              "tMs": 110915,
               "kind": "caption",
               "text": "An inventory of every crypto-related management tool. Certificate authorities. Key management. Hardware security module panels. Configuration management. And their post-quantum readiness."
             },
             {
-              "tMs": 192015,
+              "tMs": 192915,
               "kind": "caption",
               "text": "2 fictional governance drafts created."
             },
             {
-              "tMs": 195015,
+              "tMs": 197215,
               "kind": "click",
               "selector": "[data-workshop-target=\"artifact-drawer-close\"]"
             },
             {
-              "tMs": 196015,
+              "tMs": 198215,
               "kind": "advance"
             }
           ]
