@@ -55,6 +55,8 @@ const forgetSenderState = (service: FiveGService) => {
     'ephemeralPubKeyHex',
     'ephPrivHex',
     'cipherFile',
+    'supi',
+    'pqcMode',
   ] as const)
     delete service.state[key]
 }
@@ -132,6 +134,23 @@ describe('Profile C PSC1 envelope through the OpenSSL engine', () => {
     },
     240_000
   )
+
+  it('the receiver pins its own home-network configuration, not the sender identifier', async () => {
+    const { service } = await senderThroughAssembly('hybrid')
+    forgetSenderState(service) // also removes the sender's SUPI
+    service.state.supi = '999990000000001' // a later edit of the sender-side identifier changes nothing
+    const result = await service.sidfDecrypt('C')
+    expect(result).toContain(`[SUCCESS] SUPI Recovered: ${SUPI}`)
+    delete service.state.homeNetwork
+    expect(await service.sidfDecrypt('C')).toContain('home-network configuration missing')
+  }, 120_000)
+
+  it('re-running the encryption step drops a stale envelope', async () => {
+    const { service } = await senderThroughAssembly('pure')
+    expect(service.state.psc1WireHex).toBeTruthy()
+    await service.encryptMSIN()
+    expect(service.state.psc1WireHex).toBeUndefined()
+  }, 120_000)
 
   it('refuses to run before an envelope exists', async () => {
     const service = new FiveGService()

@@ -1278,7 +1278,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                   <p className="text-xs text-muted-foreground">
                     The blobs above, plus a header, key ID, salt and info, serialized as one HKE1
                     envelope. {HKE1_FORMAT_LABEL}; it is this module&apos;s own layout, not HPKE or
-                    a provider format. A receiver parses these bytes alone.
+                    a provider format. A receiver can parse these bytes alone (the unit tests do);
+                    the live steps above still unwrap from the in-memory blobs.
                   </p>
                   <BlobHexPanel label="Complete HKE1 envelope" bytes={envelopeBlob.hke1} />
                 </>

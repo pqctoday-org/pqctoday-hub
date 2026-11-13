@@ -575,6 +575,7 @@ export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
     delete ctx.state.encryptedMSINHex
     delete ctx.state.macTagHex
     delete ctx.state.cipherFile
+    delete ctx.state.psc1WireHex
     const secret = requireSharedSecret(ctx.state.sharedSecretHex ?? '')
     const z = new Uint8Array(secret.match(/.{2}/g)!.map((byte) => parseInt(byte, 16)))
     const zHex = bytesToHex(z)

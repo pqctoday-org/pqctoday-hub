@@ -135,7 +135,7 @@ export const ENVELOPE_ENCRYPTION_STEPS: EnvelopeEncryptionStep[] = [
       'Use AES-256-KW (RFC 3394) to wrap the 32-byte DEK with the derived wrapping key. Store the KEM ciphertext alongside the wrapped DEK.',
     classicalArtifact: 'Wrapped DEK (from step 2)',
     pqcArtifact: 'AES-KW Wrapped DEK (40 bytes)',
-    classicalSize: '256 bytes total',
+    classicalSize: `256 bytes ciphertext; ${hke1TotalBytes(1)} bytes as a complete HKE1 sample envelope`,
     pqcSize: `1,088 + 40 = 1,128 bytes of data fields; ${hke1TotalBytes(2).toLocaleString('en-US')} bytes as a complete HKE1 sample envelope`,
   },
   {

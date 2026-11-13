@@ -327,14 +327,20 @@ const Z = zKemBytes`,
           ? PURE_PQC_CODE[step.id]
           : step.code,
       language: 'bash',
-      actionLabel: isDecryptClimax ? 'Decrypt SUCI at SIDF' : 'Execute Step',
+      actionLabel: isDecryptClimax
+        ? profile === 'C'
+          ? 'Decrypt PSC1 Envelope at SIDF'
+          : 'Decrypt SUCI at SIDF'
+        : 'Execute Step',
       explanationTable: step.explanationTable,
       diagram: <FiveGDiagram step={index} profile={profile} />,
       phase: meta?.phase,
       plainEnglish: meta?.plainEnglish,
       isClimax,
       climaxBanner: isDecryptClimax
-        ? 'Decryption point — the home network SIDF recovers the original SUPI from the SUCI.'
+        ? profile === 'C'
+          ? 'Decryption point — the home network SIDF recovers the original SUPI from the received PSC1 bytes.'
+          : 'Decryption point — the home network SIDF recovers the original SUPI from the SUCI.'
         : undefined,
       attackerSidecar:
         scenarioView === 'attacker' && meta?.attackerObserves ? (
@@ -1109,12 +1115,9 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
             const wire = new Uint8Array((wireHex.match(/../g) ?? []).map((h) => parseInt(h, 16)))
             const toHex = (b: Uint8Array) =>
               Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
-            const supiC = fiveGService.state.supi || '310260123456789'
-            const home = {
-              mcc: supiC.length >= 3 ? supiC.slice(0, 3) : '310',
-              mnc: supiC.length >= 6 ? supiC.slice(3, 6) : '260',
-              keyId: 1,
-            }
+            // The home network's own configuration, fixed when its key was generated.
+            const home = fiveGService.state.homeNetwork
+            if (!home) throw new Error('home-network configuration missing; generate the key first')
             const registered = (handle: number, label: string) =>
               hsm.registerKey(M, hSession, {
                 handle,
@@ -1193,7 +1196,7 @@ ${
 5. Decrypting MSIN (AES-256-CTR, zero IV) and BCD-decoding...
    BCD bytes: ${toHex(recovery.msinBcd)}
    MSIN: ${recovery.msinDigits}
-   [SUCCESS] SUPI Recovered: ${home.mcc}${home.mnc}${recovery.msinDigits}
+   [SUCCESS] SUPI Recovered: ${recovery.header.mcc}${recovery.header.mnc}${recovery.msinDigits}
 
 ML-KEM Decapsulation executed via SoftHSM3 WASM.`
             } catch (cause) {

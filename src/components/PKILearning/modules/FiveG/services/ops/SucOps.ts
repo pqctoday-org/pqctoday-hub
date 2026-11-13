@@ -69,6 +69,7 @@ const concatBytes = (...parts: Uint8Array[]): Uint8Array => {
 }
 
 export async function encryptMSIN(ctx: FiveGService) {
+  delete ctx.state.psc1WireHex // an envelope built from an earlier ciphertext is stale
   if (!ctx.state.kEncHex)
     throw new Error('No key derived: complete shared-secret and key derivation first.')
 
@@ -126,6 +127,7 @@ IV: ${iv} (zero IV in this demo; TS 33.501 Annex C.3.4 takes the ICB from the KD
 }
 
 export async function computeMAC(ctx: FiveGService) {
+  delete ctx.state.psc1WireHex // an envelope built from an earlier MAC is stale
   if (!ctx.state.kMacHex || !ctx.state.encryptedMSINHex) return '[Error] Missing Ciphertext or Key'
 
   try {
@@ -524,12 +526,9 @@ ${PSC1_FORMAT_LABEL}; not a TS 23.003 SUCI encoding.`
   const wireHex = ctx.state.psc1WireHex
   if (!wireHex)
     return `${header}\n\n[RESULT] SUPI Recovered: [REJECTED — no PSC1 envelope; run the assemble step first]`
-  const supi = ctx.state.supi || '310260123456789'
-  const home = {
-    mcc: supi.length >= 3 ? supi.slice(0, 3) : '310',
-    mnc: supi.length >= 6 ? supi.slice(3, 6) : '260',
-    keyId: 1,
-  }
+  const home = ctx.state.homeNetwork
+  if (!home)
+    return `${header}\n\n[RESULT] SUPI Recovered: [REJECTED — home-network configuration missing; generate the home-network key first]`
   let wire: Uint8Array
   try {
     wire = hexToBytes(wireHex, 'PSC1 envelope')
@@ -571,7 +570,7 @@ ${
    BCD bytes: ${bytesToHex(recovery.msinBcd)}
    MSIN: ${recovery.msinDigits}
 
-[SUCCESS] SUPI Recovered: ${home.mcc}${home.mnc}${recovery.msinDigits}`
+[SUCCESS] SUPI Recovered: ${recovery.header.mcc}${recovery.header.mnc}${recovery.msinDigits}`
   } catch (e) {
     const trace = (
       e as Psc1Refusal & { trace?: { recomputedTag: Uint8Array; receivedTag: Uint8Array } }

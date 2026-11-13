@@ -219,6 +219,14 @@ Public Key Hex: ${pubHex} `,
       eccPub = '',
       eccDer = '',
       eccHex = ''
+    // The home network's own configuration (PLMN and key ID), fixed when its key is generated and
+    // never read from the sender's identifier at receive time.
+    const homeSupi = ctx.state.supi || '310260123456789'
+    ctx.state.homeNetwork = {
+      mcc: homeSupi.length >= 3 ? homeSupi.slice(0, 3) : '310',
+      mnc: homeSupi.length >= 6 ? homeSupi.slice(3, 6) : '260',
+      keyId: 1,
+    }
     delete ctx.state.hnEccPrivPemHex // pure mode has no X25519 key; never keep one from a previous run
 
     if (pqcMode === 'hybrid') {
