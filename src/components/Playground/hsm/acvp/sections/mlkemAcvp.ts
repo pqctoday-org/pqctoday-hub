@@ -258,7 +258,7 @@ const eq = (a: Uint8Array, b: Uint8Array) => firstDiff(a, b) === 'identical'
 // ── Boundary probes (D1-5): exact CK_RV pinned per engine ───────────────────
 // §5.18.8 = C_EncapsulateKey, §5.18.9 = C_DecapsulateKey (PKCS#11 v3.2 OS).
 const ENCAP_LISTED = ['CKR_OK', 'CKR_BUFFER_TOO_SMALL', 'CKR_KEY_HANDLE_INVALID']
-const DECAP_LISTED = [
+export const DECAP_LISTED = [
   'CKR_ARGUMENTS_BAD',
   'CKR_WRAPPED_KEY_INVALID',
   'CKR_WRAPPED_KEY_LEN_RANGE',

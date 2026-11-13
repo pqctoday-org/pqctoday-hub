@@ -2089,12 +2089,13 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   ),
   // ── Project Wycheproof ML-KEM / ML-DSA — sections/wycheproofPqc.ts ──
   // Same evidence class and result policy as the classical files above. A
-  // negative case passes when the engine refuses it anywhere on the path (key
-  // import, key generation, init or the operation) — the same rule as the NIST
-  // key-check rows (§7b.4 / §7c), so the operation the path ends in is listed
-  // even when the refusal comes at C_CreateObject. Seed-length negatives of
-  // mlkem_<ps>_test are refused by C_GenerateKeyPair and register key
-  // generation only. Cases PKCS #11 cannot reproduce (valid encaps cases need
+  // negative ML-KEM case passes only when the engine refuses it with the code
+  // the standard names for that step: a key input (seed, dk or ek at import)
+  // with CKR_ATTRIBUTE_VALUE_INVALID (FIPS 203 §7.2 / §7.3, the same rule as the
+  // NIST key-check rows, §7b.4 / §7c), or a wrong-length ciphertext with a code
+  // PKCS#11 v3.2 §5.18.9 lists for C_DecapsulateKey. Any other error is an
+  // error row. Seed-length negatives of mlkem_<ps>_test are refused by
+  // C_GenerateKeyPair and register key generation only. Cases PKCS #11 cannot reproduce (valid encaps cases need
   // the randomness m; `Randomized` sign cases need rnd) are not vendored: see
   // each file's _provenance.excluded_cases.
   acvp(
