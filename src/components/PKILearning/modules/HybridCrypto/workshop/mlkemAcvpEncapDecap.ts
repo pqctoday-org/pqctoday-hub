@@ -17,6 +17,17 @@
  *    a pseudo-random k, not an error).
  *  - encapsulationKeyCheck / decapsulationKeyCheck (VAL): the engine must accept
  *    a valid key and reject an invalid one (FIPS 203 sections 7.2 and 7.3).
+ *    Only one return value counts as rejecting the key: CKR_ATTRIBUTE_VALUE_INVALID
+ *    from C_CreateObject. PKCS#11 v3.2 section 4.1.1 says an attempt to create an
+ *    object with an invalid value for a valid attribute "should" fail with this
+ *    code; it does not name the code for a key that fails the FIPS 203 input
+ *    check. That both engines return it for such a key is observed behaviour
+ *    (their real-engine replay), not a requirement of the standard, so another
+ *    token's different code would show here as an error, never as a pass. A key
+ *    that imports is accepted only when the operation
+ *    then succeeds. Any other return value (a closed session, a device failure,
+ *    an operation that fails after the key was imported) is an error, not a
+ *    rejection, so it can never satisfy a case that expects one.
  *
  * A case passes only when the engine's answer equals NIST's; an engine error is
  * reported as an error, never as a successful rejection. These are public
@@ -26,6 +37,7 @@
 import { hexToBytes } from '@/utils/dataInputUtils'
 import { hsm_extractKeyValue, rvName } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
+import { CKR_ATTRIBUTE_VALUE_INVALID } from '@/wasm/softhsm/constants'
 import type { KatStatus } from '@/utils/katRunner'
 
 export const PARAMETER_SET = 'ML-KEM-768'
@@ -223,13 +235,28 @@ function runCase(
           ? kem.importPrivate(M, h, VARIANT, hexToBytes(c.dk!))
           : kem.importPublic(M, h, VARIANT, hexToBytes(c.ek!))
         key = imp.handle
-        let accepted = false
-        if (imp.rv === CKR_OK) {
+        const create = isDk ? 'C_CreateObject(dk)' : 'C_CreateObject(ek)'
+        let accepted: boolean
+        if (imp.rv === CKR_ATTRIBUTE_VALUE_INVALID) {
+          accepted = false
+        } else if (imp.rv !== CKR_OK) {
+          return {
+            status: 'error',
+            observed: `${create} returned ${rvName(imp.rv)}, which is not a key-check result`,
+          }
+        } else {
           const r = isDk
             ? kem.decapsulateRv(M, h, key, new Uint8Array(CT_LEN))
             : kem.encapsulateRv(M, h, key, CT_LEN)
           sec = r.handle
-          accepted = r.rv === CKR_OK
+          if (r.rv !== CKR_OK) {
+            const op = isDk ? 'C_DecapsulateKey' : 'C_EncapsulateKey'
+            return {
+              status: 'error',
+              observed: `key imported, then ${op} returned ${rvName(r.rv)}, which is not a key-check result`,
+            }
+          }
+          accepted = true
         }
         const ok = accepted === c.testPassed
         return {

@@ -2,7 +2,10 @@
 import { describe, expect, it } from 'vitest'
 import openGaps from '@/data/validation/open-gaps.json'
 import coverageMatrix from '@/data/validation/coverage-matrix.generated.json'
-import type { OpenGap } from '@/data/validation/coverageModel'
+import runResultsErrorPath from '@/data/validation/run-results/wasm-node-errorPathProbes.json'
+import runResultsKat from '@/data/validation/run-results/wasm-node-katRunner.json'
+import runResultsAcvp from '@/data/validation/run-results/wasm-node-useAcvpSuite.json'
+import type { OpenGap, RunResultSource } from '@/data/validation/coverageModel'
 import {
   GAP_PLAIN_TEXT,
   INTERNAL_LABEL,
@@ -10,6 +13,7 @@ import {
   gapSummary,
   plainGapView,
   plainRuleText,
+  runResultsSummary,
 } from './gapPlainText'
 
 type Gap = { id: string; title: string; detail: string; scope: string }
@@ -17,8 +21,12 @@ const gaps = openGaps.gaps as Gap[]
 // The register as the page lists it: curated entries plus the generated ones, with the per-case failures folded.
 const generated = coverageMatrix.openGaps as unknown as OpenGap[]
 const registerGaps = foldRecordedFailGaps(generated)
+const runResultSources = coverageMatrix.runResultSources as unknown as RunResultSource[]
+const ctx = { runResultSources }
+const runResultRows = (): { registryCase: string; engine: string; status: string }[] =>
+  [runResultsErrorPath, runResultsKat, runResultsAcvp].flatMap((d) => d.results)
 const shownText = (g: Gap) => {
-  const plain = plainGapView(g)
+  const plain = plainGapView(g, ctx)
   return [plain.title, plain.scope, plain.summary ?? gapSummary(g.detail)].join('\n')
 }
 
@@ -26,7 +34,7 @@ describe('plain wording for the open-gaps register', () => {
   it('shows no internal label in any curated entry (title, scope, summary)', () => {
     const offenders = gaps
       .map((g) => {
-        const plain = plainGapView(g)
+        const plain = plainGapView(g, ctx)
         const shown = [plain.title, plain.scope, plain.summary ?? gapSummary(g.detail)].join('\n')
         return INTERNAL_LABEL.test(shown) ? g.id : null
       })
@@ -93,7 +101,7 @@ describe('plain wording for the open-gaps register', () => {
 
     expect(registerGaps.filter((g) => g.id.startsWith('recorded-fail:'))).toEqual([])
     expect(registerGaps).toHaveLength(generated.length - 20 + 2)
-    const titles = registerGaps.map((g) => plainGapView(g).title)
+    const titles = registerGaps.map((g) => plainGapView(g, ctx).title)
     expect(titles).toContain('PBKDF2: one NIST sample case fails on both engines')
     expect(titles).toContain('RSA-OAEP decryption: 18 NIST sample cases fail on the Rust engine')
   })
@@ -129,7 +137,7 @@ describe('plain wording for the open-gaps register', () => {
 
   it('leaves an entry with no override exactly as written', () => {
     const g = gaps.find((x) => !(x.id in GAP_PLAIN_TEXT))!
-    expect(plainGapView(g)).toEqual({ title: g.title, scope: g.scope, summary: null })
+    expect(plainGapView(g, ctx)).toEqual({ title: g.title, scope: g.scope, summary: null })
   })
 
   it('drops the plan pointer from the matrix rule text and nothing else', () => {
@@ -137,5 +145,74 @@ describe('plain wording for the open-gaps register', () => {
       plainRuleText('One happy-path case is always "sampled", never "covered" (plan Q5).')
     ).toBe('One happy-path case is always "sampled", never "covered".')
     expect(plainRuleText('Covered needs at least 2 cases.')).toBe('Covered needs at least 2 cases.')
+  })
+
+  it('states the recorded-run totals and venue from the current run sources, not a stale count', () => {
+    const total = runResultSources.reduce((n, r) => n + r.results, 0)
+    const summary = plainGapView(
+      gaps.find((g) => g.id === 'run-results-partial')!,
+      ctx
+    ).summary!
+    expect(total).toBe(19176)
+    expect(summary).toContain('19,176')
+    expect(summary).toContain('30 October 2026')
+    expect(summary).toContain('Node.js')
+    expect(summary).toContain('not in a browser')
+    expect(summary).not.toMatch(/4,?502|3,?867|635 skip/)
+  })
+
+  it('derives the count, dates and venue from whatever sources it is given, and names a browser run as one', () => {
+    const base = runResultSources[0]
+    const later: RunResultSource = {
+      ...base,
+      results: 10,
+      recordedAt: '2026-11-02',
+      host: 'Chromium in a browser',
+    }
+    const mixed = runResultsSummary([base, later])
+    expect(mixed).toContain(`${(base.results + 10).toLocaleString('en-US')}`)
+    expect(mixed).toMatch(/between 30 October 2026 and 2 November 2026/)
+    expect(mixed).toMatch(/Node\.js v22\.23\.1, not in a browser and a browser/)
+    expect(mixed).not.toContain('19,176')
+    const browserOnly = runResultsSummary([later])
+    expect(browserOnly).toMatch(/recorded on 2 November 2026, executed in a browser/)
+    expect(browserOnly).not.toMatch(/Node\.js|not in a browser/)
+    expect(browserOnly).toContain('Browser run results are included.')
+  })
+
+  it('never prints a raw host or runner string, even when the record has an unknown one', () => {
+    const base = runResultSources[0]
+    const odd: RunResultSource = {
+      ...base,
+      runner: 'internalRigRunner (lab-only suite)',
+      host: 'lab-box 10.0.0.7 over ssh',
+    }
+    const text = runResultsSummary([odd])
+    expect(text).not.toContain('lab-box')
+    expect(text).not.toContain('10.0.0.7')
+    expect(text).not.toContain('internalRigRunner')
+    expect(text).toContain('a recorded test host')
+    expect(text).toContain('another recorded suite')
+  })
+
+  it('says the P-521 import fix is in and the re-recorded run passes on both engines', () => {
+    const summary = plainGapView(
+      gaps.find((g) => g.id === 'ecdsa-p521-cpp-ec-point-der')!,
+      ctx
+    ).summary!
+    expect(summary).not.toMatch(/will change/)
+    expect(summary).toMatch(/fixed/)
+    expect(summary).toMatch(/passes on both engines/)
+    // the recorded run really does pass on both engines for the P-521 signature-check sample
+    const p521 = runResultRows().filter((r) => r.registryCase.startsWith('acvp.33#'))
+    expect(p521.map((r) => `${r.engine}:${r.status}`).sort()).toEqual(['cpp:pass', 'rust:pass'])
+  })
+
+  it('does not claim the failing PBKDF2 and RSA-OAEP samples ran in a browser', () => {
+    for (const id of ['recorded-fail-pbkdf2', 'recorded-fail-rsa-oaep']) {
+      const plain = GAP_PLAIN_TEXT[id] // eslint-disable-line security/detect-object-injection
+      expect(plain.summary).not.toMatch(/in the browser/)
+      expect(plain.summary).toMatch(/Node\.js/)
+    }
   })
 })

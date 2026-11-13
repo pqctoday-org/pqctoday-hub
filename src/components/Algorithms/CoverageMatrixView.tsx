@@ -45,6 +45,7 @@ import {
   type MatrixStatus,
   type OpenGap,
   type Polarity,
+  type RunResultSource,
 } from '@/data/validation/coverageModel'
 import {
   groupByMechanismOperation,
@@ -626,8 +627,9 @@ export function CoverageMatrixView({
               </h4>
               <p className="text-xs leading-relaxed text-muted-foreground">
                 These are known limits in test coverage, interface reachability, or engine behavior.
-                A gap stays in the coverage denominator so that missing evidence cannot look like a
-                pass.
+                A gap on an advertised cell stays in the coverage denominator so that missing
+                evidence cannot look like a pass. Unsupported cells are not in the denominator; they
+                are counted separately.
               </p>
             </div>
             <div
@@ -738,6 +740,7 @@ export function CoverageMatrixView({
               <OpenGapCard
                 key={gap.id}
                 gap={gap}
+                runResultSources={matrix?.runResultSources ?? []}
                 view={gapView}
                 detailsOpen={expandedGapDetails.has(gap.id)}
                 onToggleDetails={() => toggleGapDetails(gap.id)}
@@ -763,11 +766,13 @@ export function CoverageMatrixView({
 
 function OpenGapCard({
   gap,
+  runResultSources,
   view,
   detailsOpen,
   onToggleDetails,
 }: {
   gap: OpenGap
+  runResultSources: readonly RunResultSource[]
   view: GapView
   detailsOpen: boolean
   onToggleDetails: () => void
@@ -777,7 +782,7 @@ function OpenGapCard({
   // Plain wording for entries whose own text carries internal labels; the
   // original stays under "Show technical evidence" and the tracking reference
   // in Evidence detail.
-  const plain = plainGapView(gap)
+  const plain = plainGapView(gap, { runResultSources })
 
   return (
     <li className="p-4" data-gap-status={gap.status}>

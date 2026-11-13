@@ -24,58 +24,7 @@ import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection, ArtifactField } from '@/components/PKILearning/common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { rowsToCsv } from '@/services/export/csvExport'
-
-interface ChecklistItem {
-  value: string
-  label: string
-  description: string
-  reference: string
-}
-
-const STANDARD_CHECKLIST_ITEMS: ChecklistItem[] = [
-  {
-    value: 'inventory',
-    label: 'Crypto inventory mapped to this framework',
-    description:
-      'Cryptographic assets in scope for this framework (algorithms, protocols, certificates, libraries) are identified and mapped to the requirement.',
-    reference: 'NIST CSWP.39 §5 (asset-centric crypto inventory)',
-  },
-  {
-    value: 'gap-analysis',
-    label: 'Gap analysis vs framework requirements completed',
-    description:
-      "Current cryptographic posture is compared against the framework's requirements to identify enforcement gaps in tooling, configuration, and policy.",
-    reference: 'NIST CSWP.39 §5.2 (Crypto Security Policy Enforcement)',
-  },
-  {
-    value: 'pqc-dependency',
-    label: 'Identified PQC dependency (KEM / signature)',
-    description:
-      'Algorithms in scope are flagged where the framework requires, or will require, a post-quantum key-establishment or signature replacement.',
-    reference: 'NIST CSWP.39 §5.1 (standards, regulations, and mandates)',
-  },
-  {
-    value: 'roadmap',
-    label: 'Migration roadmap aligned with framework deadlines',
-    description:
-      "A migration plan exists with milestones that reach the framework's binding deadline, not just a directional intent.",
-    reference: 'NIST CSWP.39 §5.1 (standards, regulations, and mandates)',
-  },
-  {
-    value: 'evidence',
-    label: 'Evidence pack (CMVP / ACVP / CC certs) collected',
-    description:
-      'Validation evidence — CMVP module certificates, ACVP algorithm test results, or Common Criteria certification — is collected to show the claimed algorithm or module is actually validated.',
-    reference: 'NIST CSWP.39 §5.1 (CAVP/CMVP as a validation prerequisite)',
-  },
-  {
-    value: 'attestation',
-    label: 'Attestation / sign-off from framework owner',
-    description:
-      'A named, accountable owner for this framework has reviewed and signed off on the checklist state.',
-    reference: 'NIST CSWP.39 §5.1 (standards, regulations, and mandates)',
-  },
-]
+import { STANDARD_CHECKLIST_ITEMS, type ChecklistItem } from './complianceChecklistItems'
 
 /** Flatten each item's description + reference into the option label — the
  *  generic ArtifactBuilder checklist renderer only displays `option.label`.

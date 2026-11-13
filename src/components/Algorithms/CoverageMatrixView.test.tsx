@@ -56,6 +56,20 @@ describe('CoverageMatrixView', () => {
     ).toBeInTheDocument()
   })
 
+  it('says which gaps stay in the denominator and that unsupported cells do not', async () => {
+    render(<CoverageMatrixView loader={loader} />)
+    const gaps = await screen.findByRole('region', { name: 'Open gaps register' })
+    expect(
+      within(gaps).getByText(/A gap on an advertised cell stays in the coverage denominator/)
+    ).toBeInTheDocument()
+    expect(
+      within(gaps).getByText(
+        /Unsupported cells are not in the denominator; they are counted separately/
+      )
+    ).toBeInTheDocument()
+    expect(within(gaps).queryByText(/A gap stays in the coverage denominator/)).toBeNull()
+  })
+
   it('says how the matrix compares to a lab and links the ACVP Lab Workflow module', async () => {
     renderWithRouter(<CoverageMatrixView loader={loader} />)
     const note = await screen.findByTestId('coverage-lab-comparison')

@@ -255,7 +255,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 | Rust dispatches CKM_BIP32__\_LEGACY without advertising them; C++ still dispatches RIPEMD160_ only under its own non-advertised build flag           | open                | G-7             | unassigned |
 | Native targets not run                                                                                                                               | open                | H-2             | unassigned |
 | Hardware targets not run                                                                                                                             | open                | H-3 / Q3        | unassigned |
-| Run results recorded only for the workbench and katRunner, on the wasm engines, in Node                                                              | open                | C-4 / H-1 / H-7 | unassigned |
+| Run results recorded for the workbench ACVP suite, the known-answer checks and the error-path probes, on the wasm engines, in Node                   | open                | C-4 / H-1 / H-7 | unassigned |
 | Native 976/815-check engine suites not in the evidence pipeline                                                                                      | open                | G-6             | unassigned |
 | PKCS #11 API-behavior matrix not built                                                                                                               | open                | G-3 / G-4       | unassigned |
 | SLH-DSA NIST sigGen cases registered but not executed                                                                                                | open                | D3-4            | unassigned |
@@ -335,10 +335,10 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `c2c08cfafe3207e39f9cb445a4359172c8e219924a712f54a542a861501afcd5` |
+| `public/data/validation/coverage-matrix.json`                           | `0e876f7f96c56fc58932c3a0d0eab3a6aeaa858bb73e26f46b7c8b6c230b9884` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700` |
-| `src/data/validation/open-gaps.json`                                    | `b1fedc67f0072f5af92e14f075bc0c31c03f06f163dbcc5d538ac05e5b4ffb6a` |
+| `src/data/validation/open-gaps.json`                                    | `16f34a9aded1000189f9eb8c3e33a0bb4887cdd42f843357a4a65315566030a6` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `88a03cd5ad6306be37e63ba523e56add1cb71dad2a1a837d0d42772de3eb768d` |

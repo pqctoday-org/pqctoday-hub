@@ -20,13 +20,19 @@
  * individual test paths and row ids stay in that entry's technical evidence.
  */
 
-import type { OpenGap } from '@/data/validation/coverageModel'
+import type { OpenGap, RunResultSource } from '@/data/validation/coverageModel'
+
+/** The current evidence a plain entry may be written from. */
+export interface GapPlainContext {
+  /** The matrix's recorded run sources (`coverage-matrix` runResultSources). */
+  runResultSources: readonly RunResultSource[]
+}
 
 export interface GapPlainText {
   /** Replaces the entry title. */
   title?: string
-  /** Replaces the one-sentence summary under "What this means". */
-  summary?: string
+  /** Replaces the one-sentence summary under "What this means". A function derives it from the current evidence. */
+  summary?: string | ((ctx: GapPlainContext) => string)
   /** Replaces the scope line. */
   scope?: string
 }
@@ -50,9 +56,10 @@ export const GAP_PLAIN_TEXT: Readonly<Record<string, GapPlainText>> = {
   },
   'run-results-partial': {
     title:
-      'Run results are recorded only for the workbench and the known-answer checks, on the WebAssembly engines, in Node',
-    summary:
-      'Recorded results exist for the workbench ACVP suite, every registered known-answer case and the error-path probes (4,502 entries: 3,867 pass, 635 skip), all run in Node on the shipped WebAssembly engines. The PKCS #11 v3.2 conformance cases have no recorded results, and no browser run or signed evidence bundle exists yet; skips are never reported as passes.',
+      'Run results are recorded for the workbench, the known-answer checks and the error-path probes, on the WebAssembly engines, in Node.js',
+    summary: ({ runResultSources }) =>
+      runResultsSummary(runResultSources) +
+      ' The PKCS #11 v3.2 conformance cases have no recorded results, so their cells are never reported as passed. Skips are never reported as passes.',
   },
   'api-behavior-matrix': {
     summary:
@@ -87,7 +94,7 @@ export const GAP_PLAIN_TEXT: Readonly<Record<string, GapPlainText>> = {
   'ecdsa-p521-cpp-ec-point-der': {
     title: 'ECDSA P-521 NIST sample failed on C++ — the demo’s key import was at fault (fixed)',
     summary:
-      'The C++ engine rejected NIST’s ECDSA P-521 signature-check sample because the demo’s key-import step encoded the length of the 133-byte public point incorrectly (a length byte of 0x85, which DER reads as: five length bytes follow). The import step is fixed; the C++ result will change when the run is repeated.',
+      'The C++ engine rejected NIST’s ECDSA P-521 signature-check sample because the demo’s key-import step encoded the length of the 133-byte public point incorrectly (a length byte of 0x85, which DER reads as: five length bytes follow). The import step is fixed, and the re-recorded run passes on both engines.',
     scope: 'C++ (wasm) — the demo’s key-import step',
   },
   'suci-inject-testkey-cpp': {
@@ -110,12 +117,12 @@ export const GAP_PLAIN_TEXT: Readonly<Record<string, GapPlainText>> = {
   'recorded-fail-pbkdf2': {
     title: 'PBKDF2: one NIST sample case fails on both engines',
     summary:
-      'When PQC Today runs one of NIST’s PBKDF2 sample cases in the browser, both the C++ and the Rust engine give an answer different from NIST’s expected one.',
+      'When PQC Today runs one of NIST’s PBKDF2 sample cases in Node.js (the recorded run, not a browser run), both the C++ and the Rust engine give an answer different from NIST’s expected one.',
   },
   'recorded-fail-rsa-oaep': {
     title: 'RSA-OAEP decryption: 18 NIST sample cases fail on the Rust engine',
     summary:
-      'When PQC Today runs these NIST RSA-OAEP sample cases in the browser, the Rust engine gives a different result from NIST’s expected answer. Most use RSA keys with a public exponent of 2^33 or more, which this engine refuses (see the entry on large public exponents).',
+      'When PQC Today runs these NIST RSA-OAEP sample cases in Node.js (the recorded run, not a browser run), the Rust engine gives a different result from NIST’s expected answer. Most use RSA keys with a public exponent of 2^33 or more, which this engine refuses (see the entry on large public exponents).',
   },
   'gate-builds-a-config-nobody-ships': {
     title:
@@ -134,17 +141,81 @@ export const INTERNAL_LABEL =
 
 /**
  * The register entry as the page shows it: its own fields, with the plain
- * title / summary / scope substituted where this module has them.
+ * title / summary / scope substituted where this module has them. A summary
+ * that is written from the current evidence is resolved against `ctx`.
  */
 export function plainGapView<T extends { id: string; title: string; scope: string }>(
-  gap: T
+  gap: T,
+  ctx: GapPlainContext
 ): { title: string; scope: string; summary: string | null } {
   const plain = GAP_PLAIN_TEXT[gap.id]
+  const summary = typeof plain?.summary === 'function' ? plain.summary(ctx) : plain?.summary
   return {
     title: plain?.title ?? gap.title,
     scope: plain?.scope ?? gap.scope,
-    summary: plain?.summary ?? null,
+    summary: summary ?? null,
   }
+}
+
+const RUNNER_PLAIN_NAME: Readonly<Record<string, string>> = {
+  useAcvpSuite: 'the workbench ACVP suite',
+  katRunner: 'every registered known-answer case',
+  errorPathProbes: 'the error-path probes',
+}
+
+const thousands = (n: number): string => n.toLocaleString('en-US')
+
+const longDate = (iso: string): string =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+
+/** Where a recorded run executed, in words a reader can check: Node.js (not a browser), a browser, or the raw host. */
+const venueText = (r: RunResultSource): string => {
+  if (/Node\.js/.test(r.host) && /not a browser/i.test(r.host)) {
+    const node = r.environment?.node ? ` ${r.environment.node}` : ''
+    return `Node.js${node}, not in a browser`
+  }
+  if (/browser/i.test(r.host)) return 'a browser'
+  // An unrecognised host is never printed raw: the reader gets a generic phrase.
+  return 'a recorded test host'
+}
+
+/**
+ * The recorded-run sentence, written from the matrix's run sources: the total
+ * number of results, the dates they were recorded, where they ran and which
+ * suites they came from. Nothing here is typed in by hand, so a new run
+ * changes the wording with the evidence.
+ */
+export function runResultsSummary(sources: readonly RunResultSource[]): string {
+  if (sources.length === 0) {
+    return 'No recorded run results are listed in the matrix, so no test is reported as passed.'
+  }
+  const total = sources.reduce((n, r) => n + r.results, 0)
+  const dates = [...new Set(sources.map((r) => r.recordedAt))].sort()
+  const when =
+    dates.length === 1
+      ? `recorded on ${longDate(dates[0])}`
+      : `recorded between ${longDate(dates[0])} and ${longDate(dates[dates.length - 1])}`
+  const venues = [...new Set(sources.map(venueText))]
+  const where =
+    venues.length === 1 ? `executed in ${venues[0]}` : `executed in ${venues.join(' and ')}`
+  const suites = [
+    // A suite the table does not name gets a generic phrase, never its raw runner string.
+    ...new Set(
+      sources.map((r) => RUNNER_PLAIN_NAME[r.runner.split(' ')[0]] ?? 'another recorded suite')
+    ),
+  ]
+  const noBrowserRun = venues.every((v) => !/browser/.test(v) || /not in a browser/.test(v))
+  return (
+    `Recorded results exist for ${thousands(total)} registered test results from ${sources.length} run${sources.length === 1 ? '' : 's'}, ${when}, ${where}: ${suites.join(', ')}. ` +
+    (noBrowserRun
+      ? 'No browser run or signed evidence bundle exists yet.'
+      : 'Browser run results are included.')
+  )
 }
 
 /** The first sentence of a register entry's detail (at most 300 characters). */

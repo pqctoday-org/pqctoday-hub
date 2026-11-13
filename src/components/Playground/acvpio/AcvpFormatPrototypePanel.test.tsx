@@ -6,7 +6,7 @@
 // cannot load the WASM engines; real-engine results are proven in
 // src/services/acvp/acvp.engines.local.test.ts and by the CLI.
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
@@ -163,6 +163,129 @@ describe('AcvpFormatPrototypePanel', () => {
     await user.click(screen.getByRole('button', { name: /Clear/ }))
     expect(screen.queryByTestId('acvp-io-loaded')).toBeNull()
     expect(screen.getByRole('button', { name: /Run locally/ })).toBeDisabled()
+  })
+})
+
+describe('a finished result keeps the identity of the run that produced it', () => {
+  it('a Rust run stays labelled Rust after the C++ engine is selected; nothing reruns', async () => {
+    const loadEngine = vi.fn(async () => createExpectedResultsFakeEngine(expectedText, promptText))
+    render(<AcvpFormatPrototypePanel loadEngine={loadEngine} />)
+    const user = await upload(promptText)
+    await screen.findByTestId('acvp-io-loaded')
+    await user.click(screen.getByRole('button', { name: 'Rust engine' }))
+    await user.click(screen.getByRole('button', { name: /Run locally/ }))
+    await waitFor(() =>
+      expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
+        '180 test cases on the softhsmv3 Rust engine'
+      )
+    )
+    expect(screen.queryByTestId('acvp-io-engine-changed')).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'C++ engine' }))
+    // Counterexample: the old summary used the selector, so this read "C++ engine".
+    expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
+      '180 test cases on the softhsmv3 Rust engine'
+    )
+    expect(screen.getByTestId('acvp-io-summary')).not.toHaveTextContent('C++')
+    expect(screen.getByTestId('acvp-io-engine-changed')).toHaveTextContent(
+      'This result is from the softhsmv3 Rust engine. Run again to answer the prompt on the softhsmv3 C++ engine.'
+    )
+    expect(loadEngine).toHaveBeenCalledTimes(1)
+    expect(loadEngine).toHaveBeenCalledWith('rust')
+
+    // A new run on the newly selected engine replaces the result and its label.
+    await user.click(screen.getByRole('button', { name: /Run locally/ }))
+    await waitFor(() =>
+      expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
+        '180 test cases on the softhsmv3 C++ engine'
+      )
+    )
+    expect(loadEngine).toHaveBeenLastCalledWith('cpp')
+    expect(screen.queryByTestId('acvp-io-engine-changed')).toBeNull()
+  })
+
+  it('a new prompt cannot be imported while a run is in progress', async () => {
+    let release: () => void = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    const loadEngine = vi.fn(async () => {
+      await gate
+      return createExpectedResultsFakeEngine(expectedText, promptText)
+    })
+    render(<AcvpFormatPrototypePanel loadEngine={loadEngine} />)
+    const user = await upload(promptText, 'first.json')
+    await screen.findByTestId('acvp-io-loaded')
+    await user.click(screen.getByRole('button', { name: /Run locally/ }))
+    await waitFor(() => expect(loadEngine).toHaveBeenCalled())
+
+    expect(screen.getByRole('button', { name: /Import prompt\.json/ })).toBeDisabled()
+    expect(screen.getByLabelText('ACVP prompt file')).toBeDisabled()
+    await user.upload(
+      screen.getByLabelText('ACVP prompt file'),
+      new File([promptText], 'second.json', { type: 'application/json' })
+    )
+    expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent('first.json')
+
+    release()
+    await screen.findByTestId('acvp-io-summary')
+    expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent('first.json')
+    expect(screen.getByRole('button', { name: /Import prompt\.json/ })).toBeEnabled()
+  })
+})
+
+describe('only the newest import or run may show a result', () => {
+  /** A prompt file whose contents arrive only when `deliver` is called. */
+  const slowFile = (text: string, name: string) => {
+    let deliver: () => void = () => {}
+    const ready = new Promise<string>((r) => (deliver = () => r(text)))
+    const file = new File([text], name, { type: 'application/json' })
+    Object.defineProperty(file, 'text', { value: () => ready })
+    return { file, deliver }
+  }
+
+  it('an older import that finishes last does not replace the newer one', async () => {
+    render(<AcvpFormatPrototypePanel loadEngine={vi.fn()} />)
+    const bad = JSON.parse(promptText)
+    bad.revision = 'FIPS204-tr1'
+    const first = slowFile(JSON.stringify(bad), 'first.json')
+    const user = userEvent.setup()
+    await user.upload(screen.getByLabelText('ACVP prompt file'), first.file)
+    await user.upload(
+      screen.getByLabelText('ACVP prompt file'),
+      new File([promptText], 'second.json', { type: 'application/json' })
+    )
+    await screen.findByTestId('acvp-io-loaded')
+    expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent('second.json')
+
+    first.deliver()
+    // Let the first import's parse settle; without the guard it would replace the second.
+    await new Promise((r) => setTimeout(r, 50))
+    expect(screen.queryByText(/was rejected/)).toBeNull()
+    expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent('second.json')
+    expect(screen.getByRole('button', { name: /Run locally/ })).toBeEnabled()
+  })
+
+  it('a file delivered during a run (a dialog opened earlier) is ignored and the run still reports', async () => {
+    let release: () => void = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    const loadEngine = vi.fn(async () => {
+      await gate
+      return createExpectedResultsFakeEngine(expectedText, promptText)
+    })
+    render(<AcvpFormatPrototypePanel loadEngine={loadEngine} />)
+    const user = await upload(promptText, 'first.json')
+    await screen.findByTestId('acvp-io-loaded')
+    await user.click(screen.getByRole('button', { name: /Run locally/ }))
+    await waitFor(() => expect(loadEngine).toHaveBeenCalled())
+
+    // A change event the disabled input would not get from a click, as a dialog opened before Run can send.
+    fireEvent.change(screen.getByLabelText('ACVP prompt file'), {
+      target: { files: [new File([promptText], 'late.json', { type: 'application/json' })] },
+    })
+    release()
+    await waitFor(() =>
+      expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent('180 test cases on the')
+    )
+    expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent('first.json')
   })
 })
 

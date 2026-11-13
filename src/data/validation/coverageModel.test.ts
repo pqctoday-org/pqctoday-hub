@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import {
+  MATRIX_RULES,
   MATRIX_STATUSES,
   assertStatus,
   buildCoverageMatrix,
@@ -387,5 +388,31 @@ describe('G-3 algorithm-correctness vs PKCS #11 API-behaviour columns', () => {
     expect(sum('api')).toBe(t.advertisedCells)
     for (const r of matrix.rows)
       if (r.engines.cpp.advertised) expect(r.engines.cpp.dimensions).toBeDefined()
+  })
+})
+
+describe('unsupported cells sit outside the denominator (the rule the page prints)', () => {
+  const { matrix } = buildCoverageMatrix(fixtureInputs())
+
+  it('titles the generated unsupported-cells gap as counted separately, not kept in the denominator', () => {
+    const gap = matrix.openGaps.find((g) => g.id === 'unsupported-cells')
+    expect(gap?.title).toBe(
+      '6 unsupported (row × engine) cells counted separately, outside the denominator'
+    )
+    expect(gap?.title).not.toMatch(/kept in the denominator/)
+  })
+
+  it('counts the gap from the unsupported cells, not from the advertised denominator', () => {
+    const { cpp, rust } = matrix.totals.byEngine
+    const gap = matrix.openGaps.find((g) => g.id === 'unsupported-cells')
+    expect(gap?.cells).toBe(cpp.unsupportedCells + rust.unsupportedCells)
+    expect(gap?.cells).not.toBe(cpp.advertisedCells + rust.advertisedCells)
+  })
+})
+
+describe('the printed artifact rule matches where the recorded runs executed', () => {
+  it('says the registered wasm tests are recorded in Node.js, not in a browser', () => {
+    expect(MATRIX_RULES.artifacts).not.toMatch(/run in the browser/)
+    expect(MATRIX_RULES.artifacts).toMatch(/recorded[^.]*Node\.js, not in a browser/)
   })
 })
