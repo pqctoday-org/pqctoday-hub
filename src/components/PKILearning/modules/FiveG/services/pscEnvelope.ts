@@ -270,15 +270,12 @@ function tagsEqual(a: Uint8Array, b: Uint8Array): boolean {
 export async function recoverPsc1(
   wire: Uint8Array,
   receiver: Psc1ReceiverPrimitives,
-  homeNetwork?: Psc1HomeNetwork
+  homeNetwork: Psc1HomeNetwork
 ): Promise<Psc1Recovery> {
   const parsed = parsePsc1(wire)
-  if (homeNetwork) {
-    if (parsed.mcc !== homeNetwork.mcc || parsed.mnc !== homeNetwork.mnc)
-      throw new Psc1Refusal('PSC1: PLMN is not this home network')
-    if (parsed.keyId !== homeNetwork.keyId)
-      throw new Psc1Refusal('PSC1: unknown home network key ID')
-  }
+  if (parsed.mcc !== homeNetwork.mcc || parsed.mnc !== homeNetwork.mnc)
+    throw new Psc1Refusal('PSC1: PLMN is not this home network')
+  if (parsed.keyId !== homeNetwork.keyId) throw new Psc1Refusal('PSC1: unknown home network key ID')
   const kemSecret = await receiver.mlKem768Decapsulate(parsed.kemCiphertext)
   let z = kemSecret
   let ecdhSecret: Uint8Array | null = null

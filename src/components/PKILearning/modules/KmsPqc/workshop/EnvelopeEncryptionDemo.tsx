@@ -15,7 +15,13 @@ import {
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { ENVELOPE_ENCRYPTION_STEPS, type EnvelopeEncryptionStep } from '../data/kmsConstants'
-import { buildHke1, HKE1_FORMAT_LABEL, hke1TotalBytes, parseHke1 } from '../utils/hke1Envelope'
+import {
+  buildHke1,
+  HKE1_FORMAT_LABEL,
+  HKE1_HEADER_BYTES,
+  hke1TotalBytes,
+  parseHke1,
+} from '../utils/hke1Envelope'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -640,9 +646,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         let hke1: Uint8Array | null = null
         if (bits === 2048) {
           hke1 = buildHke1(1, { wrappedDek })
-          parseHke1(hke1)
+          const parsed = parseHke1(hke1)
           addLine(
-            `Complete HKE1 envelope: ${hke1.length} B (${HKE1_FORMAT_LABEL.toLowerCase()}; 18 B header + 10 B key ID + ${wrappedDek.length} B ciphertext)`
+            `Complete HKE1 envelope: ${hke1.length} B (${HKE1_FORMAT_LABEL.toLowerCase()}; ${HKE1_HEADER_BYTES} B header + ${parsed.keyId.length} B key ID + ${wrappedDek.length} B ciphertext)`
           )
         }
         setEnvelopeBlob({ path: 'rsa', kemCt: null, wrappedDek, gcmIv: null, hke1 })
@@ -931,9 +937,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         let hke1: Uint8Array | null = null
         if (variant === 768 && wrapMech === 'aes-kw' && !gcmIv) {
           hke1 = buildHke1(2, { kemCiphertext: ciphertextBytes, wrappedDek })
-          parseHke1(hke1)
+          const parsed = parseHke1(hke1)
           addLine(
-            `Complete HKE1 envelope: ${hke1.length} B (${HKE1_FORMAT_LABEL.toLowerCase()}; 18 B header + 10 B key ID + 20 B salt + 15 B info + ${ciphertextBytes.length} B KEM ciphertext + ${wrappedDek.length} B wrapped DEK)`
+            `Complete HKE1 envelope: ${hke1.length} B (${HKE1_FORMAT_LABEL.toLowerCase()}; ${HKE1_HEADER_BYTES} B header + ${parsed.keyId.length} B key ID + ${parsed.salt.length} B salt + ${parsed.info.length} B info + ${ciphertextBytes.length} B KEM ciphertext + ${wrappedDek.length} B wrapped DEK)`
           )
         }
         setEnvelopeBlob({

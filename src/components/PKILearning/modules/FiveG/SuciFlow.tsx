@@ -14,13 +14,9 @@ import { AttackerSidecar } from './components/AttackerSidecar'
 import { getSuciStepMeta, SUCI_PHASE_LABELS } from './suciUxMeta'
 import { fiveGService } from './services/FiveGService'
 import { psc1MacInputFromState } from './services/ops/SucOps'
-import {
-  parsePsc1,
-  PSC1_FORMAT_LABEL,
-  recoverPsc1,
-  type Psc1Refusal,
-  type Psc1ReceiverPrimitives,
-} from './services/pscEnvelope'
+import { hsmPsc1Receiver } from './services/hsmPsc1Receiver'
+import { HOME_NETWORK } from './services/homeNetwork'
+import { parsePsc1, PSC1_FORMAT_LABEL, recoverPsc1, type Psc1Refusal } from './services/pscEnvelope'
 import { Shield, Radio, Info, ShieldCheck } from 'lucide-react'
 import clsx from 'clsx'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
@@ -121,7 +117,6 @@ import {
   hsm_importHMACKey,
   hsm_generateMLKEMKeyPair,
   hsm_pqcEncap,
-  hsm_pqcDecap,
   hsm_aesEncrypt,
   hsm_aesDecrypt,
   hsm_hmac,
@@ -1115,58 +1110,25 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
             const wire = new Uint8Array((wireHex.match(/../g) ?? []).map((h) => parseInt(h, 16)))
             const toHex = (b: Uint8Array) =>
               Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
-            // The home network's own configuration, fixed when its key was generated.
-            const home = fiveGService.state.homeNetwork
-            if (!home) throw new Error('home-network configuration missing; generate the key first')
-            const registered = (handle: number, label: string) =>
-              hsm.registerKey(M, hSession, {
-                handle,
-                label,
-                family: 'aes',
-                role: 'secret',
-                purpose: 'application',
-                generatedAt: new Date().toISOString(),
-              })
-            const receiverPrimitives: Psc1ReceiverPrimitives = {
-              mlKem768Decapsulate: (ciphertext) => {
-                const handle = hsm_pqcDecap(
-                  M,
-                  hSession,
-                  hsmHandlesRef.current.hnPrivHandle!,
-                  ciphertext,
-                  'ML-KEM-768'
-                )
-                registered(handle, 'Z_kem (Decapsulated)')
-                return hsm_extractKeyValue(M, hSession, handle)
+            const receiverPrimitives = hsmPsc1Receiver(
+              M,
+              hSession,
+              {
+                mlKemPrivHandle: hsmHandlesRef.current.hnPrivHandle!,
+                x25519PrivHandle: hsmHandlesRef.current.hnEccPrivHandle,
               },
-              x25519Derive: (peer) => {
-                if (hsmHandlesRef.current.hnEccPrivHandle === undefined)
-                  throw new Error('Home-network X25519 private key handle is not available')
-                const handle = hsm_ecdhDerive(
-                  M,
-                  hSession,
-                  hsmHandlesRef.current.hnEccPrivHandle,
-                  peer,
-                  undefined,
-                  undefined,
-                  { keyLen: 32, derive: true, extractable: true }
-                )
-                return hsm_extractKeyValue(M, hSession, handle)
-              },
-              sha256: (data) => hsm_digest(M, hSession, data, CKM_SHA256),
-              sha3_256: (data) => hsm_digest(M, hSession, data, CKM_SHA3_256),
-              hmacSha3_256: (key, data) =>
-                hsm_hmac(M, hSession, hsm_importHMACKey(M, hSession, key), data, CKM_SHA3_256_HMAC),
-              aes256CtrZeroIv: (key, data) =>
-                hsm_aesDecrypt(
-                  M,
-                  hSession,
-                  hsm_importAESKey(M, hSession, key),
-                  data,
-                  new Uint8Array(16),
-                  'ctr'
-                ),
-            }
+              (handle, label) =>
+                hsm.registerKey(M, hSession, {
+                  handle,
+                  label,
+                  family: 'aes',
+                  role: 'secret',
+                  purpose: 'application',
+                  generatedAt: new Date().toISOString(),
+                })
+            )
+            // The home network's own configuration, not the sender's identifier.
+            const home = { ...HOME_NETWORK }
             try {
               const recovery = await recoverPsc1(wire, receiverPrimitives, home)
               const t = recovery.trace

@@ -179,11 +179,14 @@ describe('PSC1 receiver recovers the MSIN from the bytes alone', () => {
 })
 
 describe('PSC1 receiver refuses altered, omitted, reordered, truncated and trailing data', () => {
-  const attempts = (wire: Uint8Array) => recoverPsc1(wire, receiverFor(home))
+  const attempts = (wire: Uint8Array) => recoverPsc1(wire, receiverFor(home), HOME)
 
   describe.each([1, 2] as const)('mode %i', (mode) => {
-    it('altered header byte', async () => {
-      await expect(attempts(flip(wires[mode], 5))).rejects.toThrow(/MAC refused/)
+    it('altered header byte (routing indicator)', async () => {
+      await expect(attempts(flip(wires[mode], 11))).rejects.toThrow(/MAC refused/)
+    })
+    it('altered PLMN is refused as not this home network', async () => {
+      await expect(attempts(flip(wires[mode], 5))).rejects.toThrow(/PLMN/)
     })
     it('altered first component (ephemeral key or KEM ciphertext)', async () => {
       await expect(attempts(flip(wires[mode], FIRST_COMPONENT_OFFSET))).rejects.toThrow(
@@ -248,9 +251,12 @@ describe('PSC1 receiver refuses altered, omitted, reordered, truncated and trail
 })
 
 describe('PSC1 checks beyond the byte contract', () => {
-  it('the MAC covers the header: an altered PLMN fails on the MAC when the home network is not pinned', async () => {
-    const alteredPlmn = flip(wires[1], 7) // MCC digit
-    await expect(recoverPsc1(alteredPlmn, receiverFor(home))).rejects.toThrow(/MAC refused/)
+  it('the MAC covers the header: an altered PLMN that the home network does accept still fails on the MAC', async () => {
+    const alteredPlmn = flip(wires[1], 5) // first MCC digit 3 -> 2
+    const acceptsAltered = { ...HOME, mcc: '210' }
+    await expect(recoverPsc1(alteredPlmn, receiverFor(home), acceptsAltered)).rejects.toThrow(
+      /MAC refused/
+    )
   })
 
   it('a pinned home network refuses a foreign PLMN or key ID before any key operation', async () => {
@@ -276,7 +282,7 @@ describe('PSC1 checks beyond the byte contract', () => {
         return ctr(key, data, true)
       },
     }
-    await expect(recoverPsc1(flip(wires[1], wires[1].length - 1), watching)).rejects.toThrow()
+    await expect(recoverPsc1(flip(wires[1], wires[1].length - 1), watching, HOME)).rejects.toThrow()
     expect(decrypted).toBe(0)
   })
 

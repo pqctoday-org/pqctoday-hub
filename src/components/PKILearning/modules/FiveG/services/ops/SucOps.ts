@@ -15,6 +15,7 @@ import {
   type Psc1Header,
   type Psc1ReceiverPrimitives,
 } from '../pscEnvelope'
+import { HOME_NETWORK } from '../homeNetwork'
 
 function hexToBytes(hex: string, label: string): Uint8Array {
   if (hex.length % 2 !== 0 || !/^[0-9a-f]*$/i.test(hex))
@@ -40,7 +41,7 @@ export function psc1MacInputFromState(ctx: FiveGService): {
     mcc: supi.length >= 3 ? supi.slice(0, 3) : '310',
     mnc: supi.length >= 6 ? supi.slice(3, 6) : '260',
     routingIndicator: '0',
-    keyId: 1,
+    keyId: HOME_NETWORK.keyId,
   }
   if (!ctx.state.ciphertextHex)
     throw new Error('KEM ciphertext is missing: run the shared-secret step first')
@@ -526,9 +527,7 @@ ${PSC1_FORMAT_LABEL}; not a TS 23.003 SUCI encoding.`
   const wireHex = ctx.state.psc1WireHex
   if (!wireHex)
     return `${header}\n\n[RESULT] SUPI Recovered: [REJECTED — no PSC1 envelope; run the assemble step first]`
-  const home = ctx.state.homeNetwork
-  if (!home)
-    return `${header}\n\n[RESULT] SUPI Recovered: [REJECTED — home-network configuration missing; generate the home-network key first]`
+  const home = { ...HOME_NETWORK }
   let wire: Uint8Array
   try {
     wire = hexToBytes(wireHex, 'PSC1 envelope')

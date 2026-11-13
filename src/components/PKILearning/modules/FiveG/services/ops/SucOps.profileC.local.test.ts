@@ -24,10 +24,11 @@ vi.mock('@/services/crypto/OpenSSLService', () => ({
 
 const SUPI = '310260123456789'
 
-async function senderThroughAssembly(mode: 'hybrid' | 'pure') {
+async function senderThroughAssembly(mode: 'hybrid' | 'pure', supi = SUPI) {
   const service = new FiveGService()
-  service.state.supi = SUPI
+  service.state.supi = supi
   const hn = await service.generateNetworkKey('C', mode)
+  service.state.supi = supi // key generation clears the service state, so set the sender identifier after it
   const eph = await service.generateEphemeralKey('C', mode)
   await service.computeSharedSecret('C', eph.privKey, hn.pubKeyFile, mode)
   await service.deriveKeys('C')
@@ -135,15 +136,29 @@ describe('Profile C PSC1 envelope through the OpenSSL engine', () => {
     240_000
   )
 
-  it('the receiver pins its own home-network configuration, not the sender identifier', async () => {
+  it('the receiver uses its own home-network configuration, not the sender identifier', async () => {
     const { service } = await senderThroughAssembly('hybrid')
     forgetSenderState(service) // also removes the sender's SUPI
     service.state.supi = '999990000000001' // a later edit of the sender-side identifier changes nothing
-    const result = await service.sidfDecrypt('C')
-    expect(result).toContain(`[SUCCESS] SUPI Recovered: ${SUPI}`)
-    delete service.state.homeNetwork
-    expect(await service.sidfDecrypt('C')).toContain('home-network configuration missing')
+    expect(await service.sidfDecrypt('C')).toContain(`[SUCCESS] SUPI Recovered: ${SUPI}`)
   }, 120_000)
+
+  it.each([
+    ['another MNC', '310990123456789'],
+    ['another MCC', '234260123456789'],
+  ])(
+    'an envelope from a subscriber of %s is refused although keys and MAC are valid',
+    async (_name, otherSupi) => {
+      for (const mode of ['pure', 'hybrid'] as const) {
+        const { service } = await senderThroughAssembly(mode, otherSupi)
+        service.state.supi = SUPI // even a matching sender identifier cannot make it pass
+        const result = await service.sidfDecrypt('C')
+        expect(result).toContain('PLMN is not this home network')
+        expect(result).not.toContain('[SUCCESS]')
+      }
+    },
+    240_000
+  )
 
   it('re-running the encryption step drops a stale envelope', async () => {
     const { service } = await senderThroughAssembly('pure')

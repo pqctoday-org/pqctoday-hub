@@ -61,23 +61,6 @@ export interface Hke1Fields {
 
 const utf8 = (text: string) => new TextEncoder().encode(text)
 
-/** Field lengths a well-formed envelope of this mode carries, in wire order. */
-export function hke1FieldLengths(mode: Hke1Mode): number[] {
-  return [
-    utf8(HKE1_KEY_ID).length,
-    mode === 1 ? 0 : utf8(HKE1_SALT).length,
-    mode === 1 ? 0 : utf8(HKE1_INFO[mode]).length,
-    mode === 3 ? X25519_PUBLIC_BYTES : 0,
-    mode === 1 ? 0 : ML_KEM_768_CIPHERTEXT_BYTES,
-    mode === 1 ? RSA_2048_CIPHERTEXT_BYTES : WRAPPED_DEK_BYTES,
-  ]
-}
-
-/** Complete envelope size for a mode, counted from the layout. 284 / 1,191 / 1,218 bytes. */
-export function hke1TotalBytes(mode: Hke1Mode): number {
-  return hke1FieldLengths(mode).reduce((sum, n) => sum + n, HKE1_HEADER_BYTES)
-}
-
 const concat = (...parts: Uint8Array[]): Uint8Array => {
   const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0))
   let offset = 0
@@ -122,6 +105,30 @@ export function buildHke1(
     mode === 1 ? empty : (parts.kemCiphertext ?? empty),
     parts.wrappedDek,
   ])
+}
+
+/**
+ * A well-formed envelope of this mode with zero-filled variable parts, serialized by the same
+ * `buildHke1` a sender uses. Sizes below are read from these bytes, not added up from constants.
+ */
+function templateEnvelope(mode: Hke1Mode): Uint8Array {
+  return buildHke1(mode, {
+    ephemeralPublicKey: new Uint8Array(X25519_PUBLIC_BYTES),
+    kemCiphertext: new Uint8Array(ML_KEM_768_CIPHERTEXT_BYTES),
+    wrappedDek: new Uint8Array(mode === 1 ? RSA_2048_CIPHERTEXT_BYTES : WRAPPED_DEK_BYTES),
+  })
+}
+
+/** Field lengths a well-formed envelope of this mode carries, in wire order (read from the header). */
+export function hke1FieldLengths(mode: Hke1Mode): number[] {
+  const template = templateEnvelope(mode)
+  const view = new DataView(template.buffer, template.byteOffset, template.byteLength)
+  return Array.from({ length: 6 }, (_, i) => view.getUint16(6 + 2 * i, false))
+}
+
+/** Complete envelope size for a mode: the length of the serialized template. 284 / 1,191 / 1,218 bytes. */
+export function hke1TotalBytes(mode: Hke1Mode): number {
+  return templateEnvelope(mode).length
 }
 
 export interface ParsedHke1 {
