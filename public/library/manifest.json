@@ -26623,6 +26623,21 @@
       "unified": "current",
       "admittedAt": "2026-11-13T06:18:26.012060+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "Off-the-Record-Communication-or-Why-Not-To-Use-PGP",
+      "title": "Off-the-Record Communication, or, Why Not To Use PGP",
+      "url": "https://otr.cypherpunks.ca/otr-wpes.pdf",
+      "status": "downloaded",
+      "filename": "Off-the-Record-Communication-or-Why-Not-To-Use-PGP.pdf",
+      "sizeBytes": 131738,
+      "contentType": "application/pdf",
+      "sha256": "d2f75ac1746c64566eb5ccaa220917f471b4bfd3365236a21fd690ce56497d01",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-13T09:12:36.433540+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
