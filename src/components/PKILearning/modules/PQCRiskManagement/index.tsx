@@ -36,7 +36,7 @@ const PARTS: WorkshopPart[] = [
     id: 'compliance-gap-analysis',
     title: 'Step 4: Compliance Gap Analysis',
     description:
-      'Map your risk register against CNSA 2.0 and NIST IR 8547 deadlines to identify compliance gaps.',
+      'Compare two declared NSS algorithm requirements with matching, wrong and missing parameters; keep imported risk-entry applicability and reference timelines separate.',
     icon: GitCompareArrows,
   },
 ]

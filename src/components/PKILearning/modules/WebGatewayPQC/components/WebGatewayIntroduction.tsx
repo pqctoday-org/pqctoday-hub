@@ -208,20 +208,25 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               Handshake Size Comparison (Full TLS 1.3, 2-cert chain)
             </div>
             <p className="text-[10px] text-muted-foreground mb-2">
-              Approximate figures from this module&apos;s size model; real handshakes vary with
-              extensions, names, chain length and compression.
+              Retained OpenSSL 3.6.3 captures, 9 November 2026: seven handshake-layer messages,
+              including headers, leaf plus intermediate (root omitted); record/TCP/IP framing
+              excluded. Modelled certificate alternatives are compared separately in the workshop.
             </p>
             <div className="space-y-2">
               {[
-                { label: 'Classical (X25519 + ECDSA)', size: '~1 KB', color: 'bg-status-success' },
                 {
-                  label: 'Hybrid (X25519MLKEM768 + ECDSA)',
-                  size: '~3.3 KB',
+                  label: 'Classical (X25519 + RSA-2048)',
+                  size: '2,233 B',
+                  color: 'bg-status-success',
+                },
+                {
+                  label: 'Hybrid (X25519MLKEM768 + RSA-2048)',
+                  size: '4,499 B',
                   color: 'bg-status-warning',
                 },
                 {
                   label: 'Pure PQC (ML-KEM-768 + ML-DSA-65)',
-                  size: '~13 KB',
+                  size: '16,944 B',
                   color: 'bg-status-error',
                 },
               ].map((item) => (
@@ -239,8 +244,8 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           <div className="space-y-2">
             {HANDSHAKE_MITIGATIONS.map((m) => (
               <div key={m.id} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
-                <div className="text-xs font-mono text-status-success shrink-0 mt-0.5 w-10 text-right">
-                  -{m.reductionPercent}%
+                <div className="text-xs font-mono text-status-success shrink-0 mt-0.5 w-24 text-right">
+                  {m.effect}
                 </div>
                 <div>
                   <div className="text-sm font-medium text-foreground">{m.name}</div>

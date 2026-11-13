@@ -1,0 +1,62 @@
+[
+  {
+    "platform_name": "NetApp ONTAP 9",
+    "category": "Data Storage & Protection",
+    "product_name": "NetApp ONTAP 9",
+    "product_brief": "ONTAP 9 is NetApp's data management software delivering storage, data protection, and security features across AFF, ASA, and FAS systems.",
+    "pqc_support": "Yes — post-quantum algorithms for data-in-transit (ONTAP 9.18.1) and post-quantum pre-shared keys for IPsec (ONTAP 9.17.1)",
+    "pqc_capability_description": "ONTAP 9.18.1 states \"PQC support for data in transit\" with \"Ability to use post-quantum algorithms for data-in-transit.\" ONTAP 9.17.1 supports postquantum pre-shared keys for IPsec to protect against potential future quantum computer attacks. Specific PQC algorithms (e.g., ML-KEM) are not named.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "TLS 1.3, TLS 1.2, IPsec, mTLS, SHA512 password hashing, SSH A512 password hashing, NetApp Volume Encryption (NVE)",
+    "key_management_model": "Supports external key manager integration (OpenStack Barbican key manager for NetApp Volume Encryption keys)",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Software-defined data storage and management platform",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "ONTAP 9.18.1",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "NetApp AFF, ASA, FAS, AFX, and ASA r2 storage systems; Cloud Volumes ONTAP",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "PQC Support": "PQC support for data in transit Ability to use post-quantum algorithms for data-in-transit.",
+      "PQC Capability Description": "IPsec postquantum pre-shared key support ONTAP supports postquantum pre-shared keys for IPsec to protect against potential future quantum computer attacks.",
+      "Latest Version": "ONTAP 9.18.1 delivers new and enhanced features in the areas of security, scalability, and storage management to support data infrastructure modernization.",
+      "Crypto Primitives": "Support for SHA512 and SSH A512 password hashing protects administrator account credentials from malicious actors who are trying to gain system access."
+    },
+    "withheld_no_excerpt": [],
+    "existing_note_check": {
+      "proof_relevant_info": [
+        "ML-KEM"
+      ],
+      "pqc_capability_description": [
+        "ML-DSA",
+        "ML-KEM",
+        "SLH-DSA"
+      ]
+    },
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-12"
+    }
+  }
+]

@@ -22,19 +22,15 @@ import {
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
+import { decodeHssSignature, type DecodedHssSignature } from './hssSignatureDecode'
+import { HssSignatureLayout } from './HssSignatureLayout'
+
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
 const toHex = (bytes: Uint8Array): string =>
   Array.from(bytes)
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')
-
-interface SignatureBreakdown {
-  levels: number
-  lmsPayload: string
-  authPath: string
-  totalSize: number
-}
 
 interface LMSKeyGenDemoProps {
   initialParamId?: string
@@ -56,7 +52,9 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
   // Signing State
   const [messageToSign, setMessageToSign] = useState<string>('Hello PQC World')
   const [signatureHex, setSignatureHex] = useState<string | null>(null)
-  const [signatureBreakdown, setSignatureBreakdown] = useState<SignatureBreakdown | null>(null)
+  const [signatureBreakdown, setSignatureBreakdown] = useState<DecodedHssSignature | null>(null)
+
+  const [decodeError, setDecodeError] = useState<string | null>(null)
 
   const displayParams = useMemo(() => {
     if (showAllParams) return LMS_PARAMETER_SETS
@@ -75,6 +73,9 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
     if (!hsm.isReady || !hsm.hSessionRef.current || !hsm.moduleRef.current) return
     setIsGenerating(true)
     setOpError(null)
+    setSignatureHex(null)
+    setSignatureBreakdown(null)
+    setDecodeError(null)
     const opLabel = `Generating LMS keypair (${selected.name}, tree height ${selected.treeHeight})…`
     const startedAt = performance.now()
     setLogEntries([{ status: 'pending', message: opLabel }])
@@ -146,25 +147,22 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         msgBytes
       )
 
-      if (sig.length > 0) {
-        const hex = toHex(sig)
-        setSignatureHex(hex)
-
-        // Raw excerpts only: no signature fields are parsed here.
-        setSignatureBreakdown({
-          totalSize: sig.length,
-          // Real level count from the parameter set's own hierarchy — this
-          // used to be inferred from the `variant` label, which is how it
-          // kept reading "2" while the engine was building a 1-level key.
-          levels: selected.levelHeights.length,
-          lmsPayload: hex.substring(0, 100) + '...',
-          authPath: hex.substring(100, 200) + '...',
-        })
+      setSignatureHex(toHex(sig))
+      setSignatureBreakdown(null)
+      setDecodeError(null)
+      setOpError(null)
+      try {
+        setSignatureBreakdown(decodeHssSignature(sig))
+      } catch (error) {
+        setDecodeError(error instanceof Error ? error.message : String(error))
       }
     } catch (e: unknown) {
+      setSignatureHex(null)
+      setSignatureBreakdown(null)
+      setDecodeError(null)
       setOpError(translateCryptoError(e instanceof Error ? e.message : String(e)))
     }
-  }, [hsm, activeKeyHandle, messageToSign, selected])
+  }, [hsm, activeKeyHandle, messageToSign])
 
   return (
     <div className="space-y-6">
@@ -173,10 +171,26 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         <h3 className="text-lg font-bold text-foreground mb-2">LMS Key Generation</h3>
         <p className="text-sm text-muted-foreground">
           Select an LMS parameter set to visualize the Merkle tree structure, key sizes, and signing
-          capacity. The tree height determines how many one-time signatures are available.
-          Parameters are defined in{' '}
-          <span className="text-foreground font-medium">NIST SP 800-208</span> and{' '}
-          <span className="text-foreground font-medium">RFC 8554</span>.
+          capacity. The tree height determines how many one-time signatures are available. Parameter
+          formats are described in{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc8554.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            RFC 8554
+          </a>
+          , with additional n=24 and SHAKE typecodes in{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc9858.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            RFC 9858
+          </a>
+          .
         </p>
         <p className="text-xs text-status-warning mt-2 flex items-center gap-1.5">
           <span className="font-bold">NSA CNSA 2.0:</span> single-tree LMS and XMSS are approved for
@@ -529,39 +543,27 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
               </Button>
             </div>
 
-            {signatureHex && signatureBreakdown && (
+            {signatureHex !== null && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-success">
+                  <span className="text-xs font-bold text-foreground">
                     Signature Payload ({signatureHex.length / 2} bytes)
                   </span>
-                  <pre className="text-[10px] font-mono bg-muted/60 text-muted-foreground p-3 rounded border border-success/30 break-all whitespace-pre-wrap h-32 overflow-y-auto">
+                  <pre className="text-[10px] font-mono bg-muted/60 text-muted-foreground p-3 rounded border border-border break-all whitespace-pre-wrap h-32 overflow-y-auto">
                     {signatureHex}
                   </pre>
                 </div>
-                <div className="space-y-2">
-                  <span className="text-xs font-bold text-muted-foreground">
-                    Raw signature excerpts (not decoded)
-                  </span>
-                  <p className="text-xs text-muted-foreground">
-                    These are arbitrary slices of the signature bytes, not parsed LMOTS fields or
-                    authentication-path nodes. The level count comes from the selected parameter
-                    set, not a decoded signature prefix.
-                  </p>
-                  <div className="bg-background border border-border rounded p-3 text-[10px] space-y-1 font-mono">
-                    <div className="text-primary font-bold">
-                      Selected hierarchy levels (parameter set): {signatureBreakdown.levels}
-                    </div>
-                    <div className="text-muted-foreground mt-2 border-t border-border pt-1">
-                      First up to 50 signature bytes (hex excerpt)
-                    </div>
-                    <div className="break-all opacity-70 mb-2">{signatureBreakdown.lmsPayload}</div>
-                    <div className="text-muted-foreground border-t border-border pt-1">
-                      Next up to 50 signature bytes (hex excerpt)
-                    </div>
-                    <div className="break-all opacity-70">{signatureBreakdown.authPath}</div>
+                <p className="text-xs text-muted-foreground">
+                  Selected UI parameters: {selected.name}; {selected.levelHeights.length} level(s).
+                  These settings are separate from the hierarchy and typecodes decoded from the
+                  returned bytes.
+                </p>
+                {decodeError && (
+                  <div role="alert" className="text-xs text-destructive">
+                    Unable to structurally decode signature: {decodeError}
                   </div>
-                </div>
+                )}
+                {signatureBreakdown && <HssSignatureLayout decoded={signatureBreakdown} />}
               </div>
             )}
           </div>

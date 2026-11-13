@@ -79,4 +79,25 @@ describe('retained SSH result scope', () => {
     expect(screen.getByText('sample operation failed')).toBeInTheDocument()
     expect(screen.queryByText('connected')).not.toBeInTheDocument()
   })
+  it('reports actual failed model checks without a connected pill or illustrative success', () => {
+    render(
+      <SshComparisonPanel
+        pqc={{
+          ...sample('softhsmv3 (WASM)'),
+          connection_ok: false,
+          wire_packets: [],
+          operation_checks: {
+            outcome: 'failed',
+            shared_secret_equal: false,
+            host_signature_valid: false,
+            client_signature_valid: false,
+          },
+        }}
+      />
+    )
+    expect(screen.getByText('Sample checks failed')).toBeInTheDocument()
+    expect(screen.getAllByText('Fail')).toHaveLength(3)
+    expect(screen.queryByText('connected')).not.toBeInTheDocument()
+    expect(screen.queryByText(/does not decapsulate/)).not.toBeInTheDocument()
+  })
 })

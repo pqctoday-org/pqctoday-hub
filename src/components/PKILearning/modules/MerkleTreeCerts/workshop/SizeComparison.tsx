@@ -81,7 +81,7 @@ export const SizeComparison: React.FC = () => {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">
-          TLS Handshake Size: Traditional vs MTC
+          TLS Authentication Components: Traditional vs MTC
         </h3>
         <p className="text-sm text-muted-foreground">
           Compare the authentication data a TLS server sends: a traditional leaf-plus-intermediate
@@ -93,6 +93,13 @@ export const SizeComparison: React.FC = () => {
           respectively. Adjust either to see proof size scale logarithmically. In Step 5,
           you&apos;ll see the CA sign a real Merkle root with ML-DSA-44 — the signature that
           replaces the per-certificate CA signatures.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          Authored component estimates, not measured DER or complete TLS wire bytes: raw keys and
+          signatures, fixed 200 B metadata per certificate and 2 × 119 B SCTs for the traditional
+          chain. The ECDSA example fixes the signature at 64 B and the public point at 65 B; actual
+          TLS ECDSA signatures are DER encoded. KEM shares, other handshake messages,
+          record/transport framing and background landmark sync are excluded.
         </p>
       </div>
 

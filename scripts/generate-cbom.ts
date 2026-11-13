@@ -143,7 +143,20 @@ type CycloneDXAlgorithmType = 'kem' | 'signature' | 'hash' | 'block-cipher' | 'o
  *  Cryptography Registry enum). Kept in sync with services/cbom/cycloneDx.ts. */
 const STANDARDIZED_FAMILIES = new Set(['ML-KEM', 'ML-DSA', 'SLH-DSA'])
 
-function inferAlgorithmType(name: string, desc: string): CycloneDXAlgorithmType {
+function inferAlgorithmType(
+  name: string,
+  desc: string,
+  algorithms: string[]
+): CycloneDXAlgorithmType {
+  // Use the resolved list (structured xref takes precedence over prose).
+  // A component spanning encapsulation and signing has no single primitive.
+  const hasKem = algorithms.some((algorithm) =>
+    /\b(?:ML-KEM|KYBER|HQC(?:-\d+)?|FRODO-?KEM|CLASSIC[- ]MCELIECE)\b/i.test(algorithm)
+  )
+  const hasSignature = algorithms.some((algorithm) =>
+    /\b(?:ML-DSA|DILITHIUM|SLH-DSA|SPHINCS|FN-DSA|FALCON)\b/i.test(algorithm)
+  )
+  if (hasKem && hasSignature) return 'other'
   const s = (name + ' ' + desc).toLowerCase()
   // A comparison collection spans both primitive categories; retain its list.
   if (/\bKEM\/PKE and signature comparisons\b/i.test(desc)) return 'other'
@@ -328,7 +341,11 @@ async function main() {
           algos.length > 0
             ? {
                 parameterSetIdentifier: algos.join(', '),
-                primitive: inferAlgorithmType(p.software_name, p.pqc_capability_description || ''),
+                primitive: inferAlgorithmType(
+                  p.software_name,
+                  p.pqc_capability_description || '',
+                  algos
+                ),
                 // algorithmFamily is a CONSTRAINED registry enum — only set it
                 // when exactly one algorithm was detected and it's one of the
                 // 3 families with a published standard (multi-algorithm

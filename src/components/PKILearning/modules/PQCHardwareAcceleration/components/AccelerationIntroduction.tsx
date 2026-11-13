@@ -912,10 +912,10 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
         <SectionHeader icon={Server} title="GPU, ASIC and NPU" />
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>GPUs</strong> win on throughput, not latency. Every launch has a fixed cost,
-            lanes run in lock-step groups, and memory delays are hidden only when thousands of
-            independent operations are in flight — perfect for signing 50,000 certificates, poor for
-            one TLS handshake.
+            <strong>GPUs</strong> can expose parallel work within one operation and across many
+            operations. Launch and transfer overhead, kernel partition and batch size all affect the
+            result. The retained Metal measurements below compare key-generation throughput; they do
+            not establish single-signature or TLS-handshake latency.
           </p>
           <Ours>
             {GPU_BATCH.note} At a batch of 256 the GPU lost to the CPU; at 65,536 it was 9.3× the
@@ -1207,17 +1207,19 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
           </div>
 
           <p>
-            <strong>NPUs</strong> are arrays of 8-bit multiply-accumulate units fed a pre-compiled
-            neural-network graph, designed to tolerate rounding. PQC needs exact arithmetic on
-            23-bit (ML-DSA) and 12-bit (ML-KEM) numbers, and Keccak is bitwise logic with no
-            multiplication at all.
+            <strong>NPUs</strong> accelerate tensor graphs with backend-specific operators and
+            numeric types. Exact wide values can be represented in low-width limbs, but the full
+            computation also needs correct accumulation, reconstruction and modular reduction.
+            Keccak needs bitwise operations and rotations, so a multiply-accumulate primitive alone
+            is not a demonstrated Keccak kernel. The i.MX95 includes Cortex-A55 CPU cores alongside
+            its NPU; the cost of coordinating them depends on the chosen partition.
           </p>
           <Ours label="Our own evaluation (desk analysis, not measured)">
-            We evaluated the i.MX 95’s eIQ Neutron NPU for PQC and ruled it out on paper (not
-            prototyped): it is reached only through compiled model graphs, its int8 quantisation is
-            lossy, every NTT stage would need a round trip back to the CPU, and the dominant cost in
-            our traces is Keccak, which no multiply-accumulate array can express. We use the NPU to
-            monitor the appliance’s crypto behaviour instead.
+            Our i.MX95 desk study did not select or prototype PQC NPU offload. It identifies kernel
+            mapping and data movement as questions to test, not a measured slowdown or proof that no
+            NPU implementation is possible. Our NPU use here is behaviour monitoring. In the Models
+            workshop, recompose the exact 23-bit example and compare a missing software operator, a
+            measured inefficient FPGA partition and loss from a single-byte encoding.
           </Ours>
           <Cited sources={['imx95', 'tensorFhe']}>
             {CITED_FACTS.imx95Npu} {CITED_FACTS.tensorFhe}

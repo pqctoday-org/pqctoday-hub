@@ -490,6 +490,39 @@ export function getProviderPqcStatus(p: CloudSecretsProvider): SecretsProviderPq
   return status ? AVAIL_TO_PQC[status.availability] : 'planned'
 }
 
+export const GITLAB_VAULT_SAMPLE_SETUP = `#!/bin/sh
+set -eu
+# Vault 1.21.0 JWT/KV-v2 API sample; use the fictional fixture administrator token.
+# Configure a test issuer at the shown placeholder URL; never substitute a production token.
+# The fixture has a declared KV-v2 mount at secret/ (the pinned dev server supplies it).
+vault kv put secret/db password=fictional-example-password
+vault auth enable jwt
+vault write auth/jwt/config \\
+  oidc_discovery_url="https://gitlab.example.com" \\
+  bound_issuer="https://gitlab.example.com"
+vault policy write gitlab-ci-db - <<'HCL'
+path "secret/data/db" {
+  capabilities = ["read"]
+}
+HCL
+vault write auth/jwt/role/gitlab-ci - <<'JSON'
+{
+  "role_type": "jwt",
+  "policies": [
+    "gitlab-ci-db"
+  ],
+  "user_claim": "sub",
+  "bound_audiences": [
+    "https://vault.example.com"
+  ],
+  "bound_claims": {
+    "project_id": "42"
+  },
+  "token_ttl": "30m",
+  "token_explicit_max_ttl": 1800
+}
+JSON`
+
 export const PIPELINE_INTEGRATION_PATTERNS: PipelineIntegrationPattern[] = [
   {
     id: 'kubernetes-vault-agent',
@@ -563,36 +596,29 @@ jobs:
   {
     id: 'gitlab-ci-tokens',
     tool: 'GitLab CI',
-    pattern: 'GitLab CI Job Tokens + External Secrets',
+    pattern: 'GitLab CI ID Tokens + Vault JWT Auth',
     secretInjection:
-      'GitLab CI/CD provides a short-lived CI_JOB_JWT_V2 token per job. Combined with Vault JWT auth, pipelines authenticate without static credentials. External Secrets Operator syncs from Vault to GitLab Agent for Kubernetes.',
+      'GitLab CI/CD issues a short-lived ID token for the job’s configured audience. Vault JWT auth checks its signature, issuer, audience and project claim before issuing a scoped Vault token. This fictional project 42 sample reads a password from an explicitly declared KV-v2 mount.',
     pqcReady: false,
     recommendation:
-      'GitLab CI_JOB_JWT is RS256-signed (RSA). Monitor GitLab PQC roadmap for JWT signing algorithm upgrade to ML-DSA. Use GitLab Environments for secret scoping. Set Vault token TTL to pipeline duration max.',
-    codeSnippet: `# .gitlab-ci.yml
+      'GitLab ID tokens use RS256 (RSA). Evaluate signing-algorithm support in your identity provider and Vault before planning a PQC transition. Configure the issuer, audience and project binding for your environment, grant only the needed secret path, and cap the Vault token lifetime to the job’s needs; this sample caps it at 30 minutes.',
+    codeSnippet: `# GitLab 17+ ID tokens; Vault CLI/server API 1.21.0.
+# Fictional project 42; GitLab issues this job ID token for the configured Vault audience.
 variables:
   VAULT_ADDR: "https://vault.example.com"
-
 fetch-secrets:
-  image: vault:latest
+  image: hashicorp/vault:1.21.0
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: https://vault.example.com
   script:
-    - vault write auth/jwt/login \\
-        role="gitlab-ci" \\
-        jwt="$CI_JOB_JWT_V2"
-    - export VAULT_TOKEN=$(vault write -field=token \\
-        auth/jwt/login role="gitlab-ci" jwt="$CI_JOB_JWT_V2")
-    - DB_PASSWORD=$(vault kv get -field=password secret/db)
-    - echo "DB_PASSWORD=$DB_PASSWORD" >> pipeline.env
-  artifacts:
-    reports:
-      dotenv: pipeline.env
-
-# Vault JWT role configuration:
-# vault write auth/jwt/role/gitlab-ci \\
-#   bound_issuer="https://gitlab.example.com" \\
-#   bound_claims.project_id="42" \\
-#   user_claim="sub" \\
-#   ttl=30m`,
+    - set -eu
+    - VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=gitlab-ci jwt="$VAULT_ID_TOKEN")"
+    - export VAULT_TOKEN
+    - DB_PASSWORD="$(vault kv get -field=password secret/db)"
+    - export DB_PASSWORD
+    - test -n "$DB_PASSWORD"
+# Consume DB_PASSWORD within this job; no secret-bearing dotenv artifact is published.`,
   },
   {
     id: 'terraform-vault-provider',

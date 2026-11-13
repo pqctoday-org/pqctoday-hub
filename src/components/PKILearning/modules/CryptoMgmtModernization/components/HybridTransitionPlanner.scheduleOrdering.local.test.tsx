@@ -102,7 +102,8 @@ describe('generated hybrid schedule ordering without changing dates or target po
     const markdown = buildMarkdown(form(inputs))
     expect(markdown).not.toContain('- Phase 1')
     expect(markdown).not.toContain('Schedule gap:')
-    expect(markdown).toContain('has not generated a target-specific delivery sequence')
+    expect(markdown).toContain('### Selected-target recipe:')
+    expect(markdown).toContain('no invented intermediate milestone')
   })
 
   it('preserves user-authored summary, risks and validation beside the gap', () => {

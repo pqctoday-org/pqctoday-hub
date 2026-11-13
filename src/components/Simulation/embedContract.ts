@@ -214,6 +214,7 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
     case 'architecture':
       return (
         !!s.minDecisions &&
+        ctx.edgeDecisionCapacity() > 0 &&
         ctx.edgeDecisionCount() >= Math.min(s.minDecisions, ctx.edgeDecisionCapacity())
       )
     case 'measure': {

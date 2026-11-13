@@ -11,7 +11,7 @@
 //
 // This is the DEFAULT /assess route; the previous page is preserved at
 // /assess/legacy.
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { motion } from 'framer-motion'
 import {
@@ -166,11 +166,36 @@ export const AssessViewRedesign: React.FC<{
     )
   }
 
-  // ?reset=1 — clear prior state (workshop deep-link).
+  // A workshop reset starts a fresh answer set while retaining its chosen profile.
+  // Consume the flag so question deep links cannot reset the next answer again.
+  const resetHandled = useRef(false)
   useEffect(() => {
-    if (searchParams.get('reset') === '1') {
-      reset()
+    if (searchParams.get('reset') !== '1') {
+      resetHandled.current = false
+      return
     }
+    const firstReset = !resetHandled.current
+    if (firstReset) {
+      resetHandled.current = true
+      const profile = useAssessmentStore.getState()
+      const previousIndustry = profile.industry
+      const previousCountry = profile.country
+      reset()
+      const fresh = useAssessmentStore.getState()
+      if (previousIndustry) fresh.setIndustry(previousIndustry)
+      if (previousCountry) fresh.setCountry(previousCountry)
+      setScreen('wizard')
+      setShowResumeBanner(false)
+    }
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('reset')
+        if (firstReset) next.delete('step')
+        return next
+      },
+      { replace: true }
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
@@ -299,6 +324,7 @@ export const AssessViewRedesign: React.FC<{
 
   // Resume banner for a saved in-progress assessment (<24h).
   useEffect(() => {
+    if (searchParams.get('reset') === '1') return
     if (assessmentStatus === 'complete') return
     const state = useAssessmentStore.getState()
     if (state.assessmentMode !== null && state.industry && state.lastWizardUpdate) {

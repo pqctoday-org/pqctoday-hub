@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { requireSampleTrustInputs } from './utils/sampleTrust'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Play, Loader2 } from 'lucide-react'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -21,15 +21,21 @@ import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
-import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_sign } from '@/wasm/softhsm'
+import { hsm_importMLDSAPublicKey } from '@/wasm/softhsm'
+import {
+  getCertificateVerifySample,
+  certificateVerifyControls,
+  certificateVerifyHex,
+  verifyCapturedBytes,
+} from './utils/certificateVerifySample'
 import { Button } from '@/components/ui/button'
 
 const TLS_HSM_OPERATIONS = [
-  'C_GenerateKeyPair',
+  'C_CreateObject',
   'C_GetAttributeValue',
-  'C_MessageSignInit',
-  'C_SignMessage',
-  'C_MessageSignFinal',
+  'C_MessageVerifyInit',
+  'C_VerifyMessage',
+  'C_MessageVerifyFinal',
 ]
 
 import { useSampleTrustDefaults } from './utils/useSampleTrustDefaults'
@@ -191,71 +197,102 @@ export const TLSBasicsModule: React.FC = () => {
   const [hsmLines, setHsmLines] = useState<string[]>([])
   const [hsmRunning, setHsmRunning] = useState(false)
   const [hsmError, setHsmError] = useState<string | null>(null)
+  const [hsmValidated, setHsmValidated] = useState(false)
+  const hsmAttempt = useRef(0)
+  useEffect(
+    () => () => {
+      hsmAttempt.current++
+    },
+    []
+  )
 
   const runHsmServerDemo = useCallback(async () => {
     if (!hsm.moduleRef.current) return
+    const attempt = ++hsmAttempt.current
+    const current = () => attempt === hsmAttempt.current
     setHsmRunning(true)
+    setHsmValidated(false)
     setHsmLines([])
     setHsmError(null)
     hsm.clearLog()
 
-    const addLine = (line: string) => setHsmLines((prev) => [...prev, line])
+    const addLine = (line: string) => {
+      if (current()) setHsmLines((prev) => [...prev, line])
+    }
 
     try {
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
 
-      // Step 1: Generate server key pair (ML-DSA-65) in HSM
-      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
-
+      const sample = await getCertificateVerifySample()
+      const controls = await certificateVerifyControls(sample)
+      if (!current()) return
+      const pubHandle = hsm_importMLDSAPublicKey(M, hSession, 65, sample.publicKey)
       hsm.registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ml-dsa',
         role: 'public',
-        label: `TLS Server Public Key (ML-DSA-65)`,
+        label: 'Captured TLS leaf public key (ML-DSA-65)',
         generatedAt: new Date().toISOString(),
       })
+      const wrongHandle = hsm_importMLDSAPublicKey(M, hSession, 65, controls.wrongKey)
       hsm.registerKey(M, hSession, {
-        handle: privHandle,
+        handle: wrongHandle,
         family: 'ml-dsa',
-        role: 'private',
-        label: `TLS Server Private Key (ML-DSA-65)`,
+        role: 'public',
+        label: 'Altered public key (negative control)',
         generatedAt: new Date().toISOString(),
       })
-
-      const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
       addLine(
-        `[Server] Key: C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)` +
-          ` → pub=0x${pubHandle.toString(16).padStart(8, '0')} (${pubKeyBytes.length} B)`
-      )
-
-      // Step 2: Extract SubjectPublicKeyInfo (public key for Certificate)
-      addLine(
-        `[Server] Cert key: C_GetAttributeValue(CKA_VALUE) → ${pubKeyBytes.length} B SubjectPublicKeyInfo`
-      )
-
-      // Step 3: Sign the existing illustrative message, separate from TLS.
-      const handshakeTranscript =
-        'TLS-1.3-CertificateVerify:ClientHello+ServerHello+...+CertificateVerify'
-      const sigBytes = hsm_sign(M, hSession, privHandle, handshakeTranscript)
-      addLine(
-        `[Sample] Sign illustrative message: C_MessageSignInit(CKM_ML_DSA) + C_SignMessage(placeholder) → ${sigBytes.length} B`
+        '[Profile] Retained TLS 1.3 / TLS_AES_128_GCM_SHA256 / ML-DSA-65 server CertificateVerify'
       )
       addLine(
-        `[Sample] Signature prefix (first 8 bytes; not a verification result): ${Array.from(
-          sigBytes.slice(0, 8)
-        )
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('')}…`
+        `[Transcript] ClientHello + ServerHello + EncryptedExtensions + Certificate, including Handshake headers: ${sample.transcript.length} B`
       )
-      addLine(`Private key never left HSM — CKA_EXTRACTABLE=FALSE`)
+      addLine(`[SHA-256] ${certificateVerifyHex(sample.transcriptHash)}`)
+      addLine(
+        '[Signed input] 64 space bytes (0x20) + "TLS 1.3, server CertificateVerify" + 00 + transcript hash'
+      )
+      addLine(
+        `[Complete signed input: ${sample.input.length} B] ${certificateVerifyHex(sample.input)}`
+      )
+      addLine(
+        `[Certificate key] ML-DSA-65 raw public key: ${sample.publicKey.length} B extracted from the actual leaf SubjectPublicKeyInfo; not a 1952 B SPKI`
+      )
+      const verify = (input: Uint8Array, signature: Uint8Array, key = pubHandle) =>
+        verifyCapturedBytes(M, hSession, key, input, signature)
+      const valid = verify(sample.input, sample.signature)
+      addLine(
+        `[Actual verification] Captured ${sample.signature.length} B signature: ${valid ? 'VALID' : 'INVALID'}`
+      )
+      if (!valid) throw new Error('Captured CertificateVerify did not verify')
+      for (const [label, input, signature, key] of [
+        ['Changed transcript', controls.changedTranscriptInput, sample.signature, pubHandle],
+        [
+          'Client context instead of server',
+          controls.clientContextInput,
+          sample.signature,
+          pubHandle,
+        ],
+        ['Changed signature', sample.input, controls.changedSignature, pubHandle],
+        ['Truncated signature', sample.input, controls.truncatedSignature, pubHandle],
+        ['Wrong public key', sample.input, sample.signature, wrongHandle],
+      ] as const) {
+        const accepted = verify(input, signature, key)
+        addLine(`[Actual negative check] ${label}: ${accepted ? 'UNEXPECTED ACCEPT' : 'REJECTED'}`)
+        if (accepted) throw new Error(`${label} was unexpectedly accepted`)
+      }
+      addLine(
+        'Captured transcript authentication verified under its leaf key; CA trust, hostname, expiry and policy validation are separate checks. No new TLS connection was executed.'
+      )
+      setHsmValidated(true)
       markStepComplete(MODULE_ID, 'hsm-demo')
     } catch (e) {
-      setHsmError(e instanceof Error ? e.message : String(e))
+      if (current()) setHsmError(e instanceof Error ? e.message : String(e))
     } finally {
-      setHsmRunning(false)
+      if (current()) setHsmRunning(false)
     }
-  }, [hsm])
+  }, [hsm, markStepComplete])
 
   return (
     <ModuleShell
@@ -372,41 +409,74 @@ export const TLSBasicsModule: React.FC = () => {
             {/* HSM-Backed Server — Live PKCS#11 Demo */}
             <div className="space-y-3">
               <h3 className="text-base font-semibold text-foreground">
-                Sample HSM signing operation — separate from the TLS handshake
+                Captured TLS CertificateVerify — construct and verify
               </h3>
               <p className="text-xs text-muted-foreground">
-                This side demonstration signs a fixed illustrative message with the sample HSM. It
-                is separate from the TLS handshake above. It does not build a CertificateVerify
-                input or execute a signature-verification check. Inspect the operation log for the
-                calls actually executed.
+                Reconstruct the server signed input from the retained TLS 1.3 / SHA-256 / ML-DSA-65
+                sample, then verify its actual signature with the public key from its leaf
+                certificate. Check changed transcript, role context, signature and key cases. This
+                offline captured example is separate from the configurable live handshake above.
+                CertificateVerify authenticates the transcript under the leaf key; it does not
+                establish CA trust, hostname, expiry or certificate policy.
+              </p>
+
+              <p className="text-xs text-muted-foreground">
+                Current construction reference:{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://datatracker.ietf.org/doc/html/rfc9846#section-4.5.2"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  RFC 9846 §4.5.2
+                </a>
+                . The captured profile uses the same construction originally specified in{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://www.rfc-editor.org/rfc/rfc8446.html#section-4.4.3"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  RFC 8446 §4.4.3
+                </a>
+                . This check does not establish that the engine implements all of RFC 9846.
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />
 
               {hsm.isReady && (
                 <div className="glass-panel p-4 space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold">Run sample HSM signing operation</p>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold">
+                      Verify the retained server CertificateVerify
+                    </p>
                     <Button
                       variant="gradient"
                       onClick={runHsmServerDemo}
                       disabled={hsmRunning}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded transition-colors disabled:opacity-50"
+                      className="flex max-w-full h-auto whitespace-normal items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded transition-colors disabled:opacity-50"
                     >
                       {hsmRunning ? (
                         <>
                           <Loader2 size={11} className="animate-spin" /> Running…
                         </>
                       ) : (
-                        'Sign illustrative message (live WASM)'
+                        'Verify captured CertificateVerify (live WASM)'
                       )}
                     </Button>
                   </div>
 
-                  {hsmError && <p className="text-xs text-status-error font-mono">{hsmError}</p>}
+                  {hsmError && (
+                    <p role="alert" className="text-xs text-status-error font-mono">
+                      {hsmError}
+                    </p>
+                  )}
 
                   {hsmLines.length > 0 && (
-                    <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
+                    <div className="bg-muted/30 border border-border rounded-lg p-3 space-y-1">
+                      {hsmValidated && (
+                        <p role="status">All captured CertificateVerify checks passed</p>
+                      )}
                       {hsmLines.map((line, i) => (
                         <p key={i} className="text-xs font-mono text-foreground/80 break-all">
                           {line}
@@ -448,12 +518,14 @@ export const TLSBasicsModule: React.FC = () => {
                 log={hsm.log}
                 onClear={hsm.clearLog}
                 defaultOpen={true}
-                title="PKCS#11 Call Log — Sample Signing Operations"
-                emptyMessage="Run the sample signing operation to inspect its calls."
+                title="PKCS#11 Call Log — Captured CertificateVerify Checks"
+                emptyMessage="Run the captured verification example to inspect its calls."
                 filterFns={TLS_HSM_OPERATIONS}
               />
               {hsm.keys.length > 0 && (
                 <HsmKeyInspector
+                  title="Imported sample public keys"
+                  timestampLabel="Imported"
                   keys={hsm.keys}
                   moduleRef={hsm.moduleRef}
                   hSessionRef={hsm.hSessionRef}

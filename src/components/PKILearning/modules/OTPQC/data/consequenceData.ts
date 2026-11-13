@@ -328,8 +328,17 @@ export interface ScenarioInputs {
 
 export type RiskLevel = 'critical' | 'high' | 'medium' | 'low'
 
+export type ExposedPath = 'command' | 'firmware'
+
 export interface ConsequenceResult {
   scenarioId: string
+  /** Configured paths, not probabilities or independent attack scenarios. */
+  presentDayPaths: ExposedPath[]
+  additionalForgeryPaths: ExposedPath[]
+  symmetricResidualPaths: ExposedPath[]
+  presentDayScore: number
+  forgeryScore: number
+  symmetricResidualScore: number
   consequence: number
   exposure: number
   safetyLayerFactor: number
@@ -367,7 +376,31 @@ export function scoreScenario(
   const safetyLayerFactor = SAFETY_LAYER_FACTOR[inputs.safetyLayer]
   const lifeFactor = 0.5 + 0.5 * Math.min(1, s.lifecycleYears / 25)
   const compound = Math.round(consequence * exposure * safetyLayerFactor * lifeFactor)
-  const exploitableToday = inputs.commandAuth === 'none' || inputs.firmwareSigning === 'none'
+  // The existing two configured layers define eligibility, not a new risk forecast.
+  const paths: ExposedPath[] = ['command', 'firmware']
+  const presentDayPaths = paths.filter((path) =>
+    path === 'command' ? inputs.commandAuth === 'none' : inputs.firmwareSigning === 'none'
+  )
+  const classicalPaths = paths.filter((path) =>
+    path === 'command'
+      ? inputs.commandAuth === 'classical-pk'
+      : inputs.firmwareSigning === 'classical'
+  )
+  const futureExposedPaths = new Set([...presentDayPaths, ...classicalPaths])
+  const additionalForgeryPaths = [...futureExposedPaths].filter(
+    (path) => !presentDayPaths.includes(path)
+  )
+  const symmetricResidualPaths: ExposedPath[] =
+    inputs.commandAuth === 'symmetric' ? ['command'] : []
+  const componentScore = (factor: number) =>
+    Math.round(consequence * factor * safetyLayerFactor * lifeFactor)
+  // Same authored coefficients and max aggregation; these indices are nonadditive.
+  const presentDayScore = componentScore(presentDayPaths.length ? 1 : 0)
+  const forgeryScore = componentScore(additionalForgeryPaths.length ? 1 : 0)
+  const symmetricResidualScore = componentScore(
+    symmetricResidualPaths.length ? COMMAND_EXPOSURE.symmetric : 0
+  )
+  const exploitableToday = presentDayPaths.length > 0
   const driver: ConsequenceResult['driver'] =
     exposure === 0 ? 'none' : cmd > fw ? 'command' : fw > cmd ? 'firmware' : 'both'
 
@@ -393,10 +426,20 @@ export function scoreScenario(
       'Consider an independent, non-programmable protection layer — it bounds the harm whatever the crypto.'
     )
   if (actions.length === 0)
-    actions.push('No quantum-driven action: this posture is already PQC-ready.')
+    actions.push(
+      inputs.commandAuth === 'symmetric'
+        ? 'No modeled classical-key forgery path remains; review the symmetric key-management and implementation dependencies behind the residual factor.'
+        : 'Both configured paths use PQC in this model; test the actual implementation, authentication policy and safety controls in your own tools.'
+    )
 
   return {
     scenarioId: s.id,
+    presentDayPaths,
+    additionalForgeryPaths,
+    symmetricResidualPaths,
+    presentDayScore,
+    forgeryScore,
+    symmetricResidualScore,
     consequence: Math.round(consequence * 10) / 10,
     exposure,
     safetyLayerFactor,

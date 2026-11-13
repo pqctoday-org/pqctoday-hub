@@ -402,6 +402,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
             saved={wasSaved}
             editedSinceSave={wasSaved && dirtySinceSave}
             onClick={handleSaveNow}
+            dataWorkshopTarget="kpi-dashboard-save"
           />
           <KpiPersonaSelector value={activePersona} onChange={setPersonaOverride} />
         </div>

@@ -254,6 +254,15 @@ describe('standard completion convention (C0)', () => {
   // it reports complete under a "completed" context and not under an empty one.
   // A new StepKind without a branch falls through to the default `false` and
   // fails the "completed" assertion here — the contract guard.
+  it('never completes an architecture step with zero eligible operation capacity', () => {
+    expect(
+      isStepComplete(KIND_FIXTURES.architecture, { ...completed, edgeDecisionCapacity: () => 0 })
+    ).toBe(false)
+    expect(
+      isStepComplete(KIND_FIXTURES.architecture, { ...completed, edgeDecisionCapacity: () => 1 })
+    ).toBe(true)
+  })
+
   it('every step kind reports completion correctly (no kind falls through)', () => {
     for (const [kind, s] of Object.entries(KIND_FIXTURES) as [StepKind, TreeStep][]) {
       // catalog uses isCatalogStepDone(id) — use the overridden contexts for it

@@ -106,7 +106,6 @@ describe('Protocol context is separate from local sample operations', () => {
   it.each([
     ['ikev2', 'Run Local IKE-Context HKDF Example', 'SKEYSEED', 96],
     ['macsec', 'Run Local MACsec-Context HKDF Example', `MACsec SAK v1 ${'55'.repeat(8)}`, 32],
-    ['ssh', 'Run Local SSH-Context HKDF Example', 'SSH session-id', 64],
   ] as const)(
     'preserves actual HKDF inputs while limiting %s output claims',
     async (protocol, label, info, length) => {
@@ -147,8 +146,8 @@ describe('Protocol context is separate from local sample operations', () => {
 
   it('key import rejection cannot produce an HKDF result', async () => {
     sample.importKey.mockRejectedValueOnce(new Error('sample import failed'))
-    render(<ProtocolIntegrationDemo initialProtocol="ssh" />)
-    fireEvent.click(screen.getByRole('button', { name: 'Run Local SSH-Context HKDF Example' }))
+    render(<ProtocolIntegrationDemo initialProtocol="macsec" />)
+    fireEvent.click(screen.getByRole('button', { name: 'Run Local MACsec-Context HKDF Example' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('sample import failed')
     expect(sample.deriveBits).not.toHaveBeenCalled()
     expect(

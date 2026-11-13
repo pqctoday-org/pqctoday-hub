@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-08'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-12'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -2162,7 +2162,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         id: 'draft-bokovoy-kitten-pkinit-pqc-02',
         title:
-          'draft-bokovoy-kitten-pkinit-pqc-02 — Post-Quantum ML-KEM for PKINIT (individual, not WG-adopted)',
+          'draft-bokovoy-kitten-pkinit-pqc-02 — Post-Quantum ML-KEM for PKINIT (adopted by the KITTEN working group)',
         url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
         date: '2026-10-16',
       },
@@ -2170,9 +2170,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'individual-draft',
+        stage: 'wg-document',
         stageNote:
-          'The KITTEN working group has issued a call for adoption for draft-bokovoy-kitten-pkinit-pqc; it was not yet adopted as of the page update on 2026-10-16',
+          'The KITTEN working group adopted draft-bokovoy-kitten-pkinit-pqc (datatracker, 2026-11-03); it has not yet reached working group last call.',
         note: "Core Kerberos (AS-REQ/AS-REP/TGS-REQ/TGS-REP without PKINIT) uses only symmetric long-term/session keys (RFC 3961 framework) — no KEM applies, and NIST/academic consensus treats symmetric crypto as already quantum-resistant (Grover gives only a quadratic speedup, already covered by AES-256/SHA-384+). PKINIT's key establishment is classical Diffie-Hellman with no PQC-safe path via existing agility mechanisms — this draft adds a new KDCKEMInfo structure carrying ML-KEM (RFC 9935 X.509 OIDs) alongside the existing DH fields. Red Hat is prototyping this under the EU-funded QARC consortium (2026–2028) against MIT krb5 + FreeIPA; no public code yet.",
         refs: [
           {
@@ -2193,10 +2193,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'individual-draft',
+        stage: 'wg-document',
         stageNote:
-          "The KITTEN working group has issued a call for adoption for draft-bokovoy-kitten-pkinit-pqc; it was not yet adopted as of the page update on 2026-10-16 and remains at IESG state 'I-D Exists'.",
-        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, approved at the X.509 layer and in the RFC Editor queue since 2026-10-12 (see X.509 row). The Kerberos-side mechanism itself remains an individual draft.',
+          "The KITTEN working group adopted draft-bokovoy-kitten-pkinit-pqc (datatracker, 2026-11-03); the IESG state remains 'I-D Exists'.",
+        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, approved at the X.509 layer and in the RFC Editor queue since 2026-10-12 (see X.509 row). The Kerberos-side mechanism itself is a working group draft, not yet through working group last call.',
         refs: [
           {
             kind: 'draft',
@@ -2266,7 +2266,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     playgrounds: [],
     liveDeployments: [],
     noDeploymentReason:
-      'No shipping implementation exists. MIT krb5 has no public PQC roadmap item or commit. Red Hat is prototyping PKINIT+ML-KEM under the EU Horizon-funded QARC consortium (2026–2028, targeting MIT krb5 + FreeIPA) — the same engineers behind the one individual IETF draft above — but no public code has landed yet. Microsoft has GA\'d general ML-DSA certificate issuance (AD CS, Windows Server 2025) and lists "Kerberos" in one generic future-roadmap sentence, but has made no concrete, verified announcement of PQC support inside the Kerberos/PKINIT authentication path itself.',
+      'No shipping implementation exists. MIT krb5 has no public PQC roadmap item or commit. Red Hat is prototyping PKINIT+ML-KEM under the EU Horizon-funded QARC consortium (2026–2028, targeting MIT krb5 + FreeIPA) — the same engineers behind the one IETF draft above — but no public code has landed yet. Microsoft has GA\'d general ML-DSA certificate issuance (AD CS, Windows Server 2025) and lists "Kerberos" in one generic future-roadmap sentence, but has made no concrete, verified announcement of PQC support inside the Kerberos/PKINIT authentication path itself.',
     sources: [
       {
         label: 'Red Hat Research — the post-quantum cryptography transition (QARC pilot)',

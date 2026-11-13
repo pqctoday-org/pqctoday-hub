@@ -18,6 +18,18 @@ function pageText(): string {
 }
 
 describe('Hardware acceleration introduction: masking and ASIC agility', () => {
+  it('scopes GPU latency and the unprototyped NPU assessment while retaining useful work examples', () => {
+    const t = pageText()
+    expect(t).toContain('can expose parallel work within one operation')
+    expect(t).toContain('do not establish single-signature or TLS-handshake latency')
+    expect(t).toContain('i.MX95 includes Cortex-A55 CPU cores alongside its NPU')
+    expect(t).toContain('did not select or prototype PQC NPU offload')
+    expect(t).toContain('recompose the exact 23-bit example')
+    expect(t).not.toMatch(
+      /no multiply-accumulate array can express|quantisation is lossy|only when thousands/
+    )
+  })
+
   it('describes masking as reducing specified leakage under tested assumptions and order', () => {
     const t = pageText()
     expect(t).not.toMatch(/It defeats power and electromagnetic analysis/)

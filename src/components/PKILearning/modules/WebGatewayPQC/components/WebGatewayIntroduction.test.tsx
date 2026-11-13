@@ -27,13 +27,14 @@ describe('Web gateway introduction: measured versus illustrative figures', () =>
     expect(t).toMatch(/test your own inspection path with a post-quantum handshake/)
   })
 
-  it('labels the mitigation percentages and capacity figures illustrative', () => {
+  it('distinguishes captured budgets, modelled certificate variants and illustrative capacity', () => {
     const t = pageText()
-    expect(t).toMatch(
-      /percentages are illustrative planning inputs for the calculator, not measurements/
-    )
+    expect(t).toMatch(/exact captured messages with certificate-only modelled variants/)
     expect(t).toMatch(/Illustrative scenario figures, not measurements or vendor specifications/)
     expect(t).not.toMatch(/primary operational concern/)
+    for (const total of ['2,233 B', '4,499 B', '16,944 B']) expect(t).toContain(total)
+    expect(t).toMatch(/leaf plus intermediate \(root omitted\)/)
+    expect(t).not.toMatch(/-90%|-85%|-30%|-15%|-50%/)
   })
 
   it('keeps inspection blindness separate from the quantum risk of passthrough', () => {

@@ -41,3 +41,15 @@ describe('Ubuntu row in the system TLS policy table', () => {
     expect(all).not.toMatch(/update-crypto-policies|OpenSSL 3\.2|oqsprovider|backported/)
   })
 })
+
+describe('GnuTLS feature and backend boundaries', () => {
+  it('keeps final ML-KEM, ML-DSA keys/certtool and TLS signing version scopes distinct', () => {
+    const gnutls = CRYPTO_SUBSYSTEMS.find((s) => s.id === 'gnutls')!
+    expect(gnutls.version).toBe('GnuTLS 3.8.8+ (build-dependent PQC)')
+    expect(gnutls.notes).toContain('3.8.8 introduced experimental final-ML-KEM hybrid TLS groups')
+    expect(gnutls.notes).toContain('3.8.9 added experimental ML-DSA library/certtool support')
+    expect(gnutls.notes).toContain('3.8.10 added ML-DSA TLS handshake signatures')
+    expect(gnutls.notes).toContain('removed liboqs support in favor of leancrypto')
+    expect(gnutls.notes).not.toMatch(/3\.8\.3\+|planned for 4\.x/)
+  })
+})

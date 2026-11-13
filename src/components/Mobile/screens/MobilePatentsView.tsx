@@ -12,7 +12,7 @@ import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/Pa
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
-import { filterPatents, NIST_STATUS_LABELS } from '@/data/patentFilters'
+import { filingJurisdictionLabel, filterPatents, NIST_STATUS_LABELS } from '@/data/patentFilters'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 import { logExternalLink } from '@/utils/analytics'
 
@@ -54,7 +54,7 @@ const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string
   { key: 'inventor', label: 'Inventor' },
   { key: 'patentIds', label: 'Patents', format: patentIdsLabel },
   { key: 'assignee', label: 'Assignee' },
-  { key: 'region', label: 'Region' },
+  { key: 'region', label: 'Filing office' },
   { key: 'domain', label: 'Domain' },
   { key: 'quantumTech', label: 'Quantum tech' },
   {
@@ -410,6 +410,23 @@ export function MobilePatentsView() {
                 {selected.assignee} · issued {selected.issueDate}
               </p>
             </div>
+            <p className="text-[11.5px] text-muted-foreground">
+              Filing office: {filingJurisdictionLabel(selected)}
+              {filingJurisdictionLabel(selected) !== 'Unassigned' && (
+                <>
+                  {' '}
+                  · Application {selected.filingJurisdictionApplication}{' '}
+                  <a
+                    href={selected.filingJurisdictionSourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-[44px] items-center text-primary hover:underline"
+                  >
+                    Bibliographic source
+                  </a>
+                </>
+              )}
+            </p>
             {selected.summary && (
               <p className="text-[12.5px] leading-relaxed text-muted-foreground">
                 {selected.summary}

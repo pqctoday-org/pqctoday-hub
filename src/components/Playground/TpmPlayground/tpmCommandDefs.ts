@@ -10,6 +10,9 @@ export interface TpmParamDef {
 export interface TpmRespFieldDef {
   name: string
   tpmType: string
+  /** Legacy layout hint, not an index into a received response. Zero may mean
+   * unresolved payload position. ExecutionLog uses the bounded command decoder
+   * for actual ranges, including sessions and variable-length fields. */
   byteOffset: number
   byteSize: number // 0 = variable length
   description: string

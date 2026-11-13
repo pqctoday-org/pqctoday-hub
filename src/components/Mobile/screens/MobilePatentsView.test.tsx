@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect } from 'react'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import { MobilePatentsView } from './MobilePatentsView'
 import { patentsData } from '@/data/patentsData'
 import { isPqcPatent } from '@/components/Patents/patentColumns'
 import { computePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
 import { PQC_ONLY_LS_KEY } from '@/data/patentsScope'
-import { filterPatents, inferRegion } from '@/data/patentFilters'
+import { filterPatents, filingJurisdictionLabel } from '@/data/patentFilters'
 
 // Real data throughout — patentsData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived at test time), not
@@ -123,6 +123,37 @@ describe('MobilePatentsView', () => {
     expect(first.patentNumber).toMatch(/^US\d+$/)
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'))
+  })
+
+  it('shows the sourced filing office, application and bibliographic link in the phone detail', () => {
+    const patent = patentsData.find((item) => filingJurisdictionLabel(item) !== 'Unassigned')!
+    renderView(`/patents?patent=${encodeURIComponent(patent.patentNumber)}`)
+    const detail = screen.getByTestId('patent-detail-sheet')
+    const sheet = within(detail)
+    expect(detail).toHaveTextContent(`Filing office: ${filingJurisdictionLabel(patent)}`)
+    expect(detail).toHaveTextContent(`Application ${patent.filingJurisdictionApplication}`)
+    expect(sheet.getByRole('link', { name: 'Bibliographic source' })).toHaveAttribute(
+      'href',
+      patent.filingJurisdictionSourceUrl
+    )
+  })
+
+  it('leaves a record without a sourced filing office unassigned and omits the source link', () => {
+    const patent = patentsData.filter(isPqcPatent)[0]
+    const original = {
+      filingJurisdiction: patent.filingJurisdiction,
+      filingJurisdictionApplication: patent.filingJurisdictionApplication,
+      filingJurisdictionSourceUrl: patent.filingJurisdictionSourceUrl,
+    }
+    try {
+      patent.filingJurisdictionSourceUrl = ''
+      renderView(`/patents?patent=${encodeURIComponent(patent.patentNumber)}`)
+      const sheet = within(screen.getByTestId('patent-detail-sheet'))
+      expect(sheet.getByText('Filing office: Unassigned')).toBeInTheDocument()
+      expect(sheet.queryByRole('link', { name: 'Bibliographic source' })).not.toBeInTheDocument()
+    } finally {
+      Object.assign(patent, original)
+    }
   })
 
   it('the detail sheet no longer sends the reader to a laptop for the claim text', () => {
@@ -240,14 +271,14 @@ describe('MobilePatentsView', () => {
     })
 
     it('?region and ?domain combine exactly as on desktop', () => {
-      const region = inferRegion(pqc[0].assignee)
+      const region = filingJurisdictionLabel(pqc[0])
       const domain = pqc[0].applicationDomain[0]
       const qs = `region=${encodeURIComponent(region)}&domain=${encodeURIComponent(domain)}`
       renderView(`/patents?${qs}`)
       expect(count()).toBe(expected(qs))
       expect(count()).toBeGreaterThan(0)
       const chips = screen.getByTestId('patent-link-filters')
-      expect(chips).toHaveTextContent(`Region:${region}`)
+      expect(chips).toHaveTextContent(`Filing office:${region}`)
       expect(chips).toHaveTextContent(`Domain:${domain}`)
     })
 

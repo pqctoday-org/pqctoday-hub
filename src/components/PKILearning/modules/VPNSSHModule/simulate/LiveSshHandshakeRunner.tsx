@@ -6,12 +6,13 @@
 // HsmProvider so the Learn module doesn't need to share the playground's
 // provider tree.
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Play, RotateCcw, ShieldCheck, ShieldAlert, AlertCircle, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { HsmProvider, useHsmContext } from '@/components/Playground/hsm/HsmContext'
 import { sshEngine, type SshHandshakeResult } from '@/wasm/openssh'
+import { SshOperationChecks } from '@/components/Playground/hsm/SshOperationChecks'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import {
   SSH_KEX_SIZES,
@@ -85,11 +86,13 @@ function RunnerInner({ algorithm }: Props) {
   const [result, setResult] = useState<SshHandshakeResult | null>(null)
   const [errorMsg, setErrorMsg] = useState<string>()
 
+  const runGeneration = useRef(0)
   const mode = algoToMode(algorithm)
   const sizes = SSH_KEX_SIZES.find((s) => s.id === algorithm)
 
   // Reset live result whenever the user picks a different algorithm.
   useEffect(() => {
+    runGeneration.current++
     setResult(null)
     setErrorMsg(undefined)
     setPhase('idle')
@@ -97,6 +100,7 @@ function RunnerInner({ algorithm }: Props) {
 
   const run = useCallback(async () => {
     if (mode === 'spec-only') return
+    const generation = ++runGeneration.current
     setResult(null)
     setErrorMsg(undefined)
     sshEngine.terminate()
@@ -109,20 +113,25 @@ function RunnerInner({ algorithm }: Props) {
           throw new Error('softhsmv3 initialization failed')
         }
       }
+      if (generation !== runGeneration.current) return
       sshEngine.bindHsm({ module: moduleRef.current, hSession: hSessionRef.current })
       setPhase('running')
       const r = await sshEngine.runHandshake(mode)
+      if (generation !== runGeneration.current) return
       // The engine reports a failed handshake in the result, not by throwing.
-      if (!r.connection_ok) throw new Error(r.error ?? 'SSH handshake failed')
+      if (!r.connection_ok && !r.operation_checks)
+        throw new Error(r.error ?? 'SSH handshake failed')
       setResult(r)
       setPhase('done')
     } catch (err) {
+      if (generation !== runGeneration.current) return
       setErrorMsg(translateCryptoError(err instanceof Error ? err.message : String(err)))
       setPhase('error')
     }
   }, [autoInit, hSessionRef, isReady, mode, moduleRef])
 
   const handleReset = useCallback(() => {
+    runGeneration.current++
     sshEngine.terminate()
     setResult(null)
     setErrorMsg(undefined)
@@ -211,10 +220,10 @@ function RunnerInner({ algorithm }: Props) {
         </div>
       </div>
 
-      {errorMsg && (
+      {(errorMsg || result?.error) && (
         <div className="flex items-start gap-2 px-2.5 py-1.5 rounded bg-status-error/10 border border-status-error/30 text-status-error text-xs">
           <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
-          <span className="font-mono">{errorMsg}</span>
+          <span className="font-mono">{errorMsg || result?.error}</span>
         </div>
       )}
 
@@ -236,6 +245,7 @@ function RunnerInner({ algorithm }: Props) {
         />
       </div>
 
+      <SshOperationChecks checks={result?.operation_checks} />
       {result && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] text-muted-foreground">
           <div className="rounded border border-border/40 bg-muted/30 p-2">
@@ -260,8 +270,9 @@ function RunnerInner({ algorithm }: Props) {
         </span>
         . Live values come from the shared <span className="font-mono">sshEngine</span> (
         <span className="font-mono">src/wasm/openssh.ts</span>) — the displayed values combine token
-        output with modeled size and timing accounting. They do not establish peer secret agreement
-        or completed SSH authentication.
+        output with modeled size and timing accounting. The executed checks compare peer secrets and
+        verify the sample signatures; they do not establish a complete SSH transcript, network
+        connection or user authorization.
       </p>
     </div>
   )

@@ -132,4 +132,71 @@ describe('SSH modeled parent labels', () => {
     expect(await screen.findByText('sample model error')).toBeInTheDocument()
     expect(screen.queryByText('Comparison runs finished')).not.toBeInTheDocument()
   })
+  it('changing an offered KEX clears the retained result, checks and packet/config views', async () => {
+    m.model.mockResolvedValue({
+      ...values,
+      token_module: 'softhsmv3 (WASM)',
+      operation_checks: {
+        outcome: 'passed',
+        shared_secret_equal: true,
+        host_signature_valid: true,
+        client_signature_valid: true,
+      },
+    })
+    render(
+      <MemoryRouter>
+        <SshSimulationPanel />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Run SSH comparison' }))
+    expect(await screen.findByText('Sample checks passed')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /mlkem512-curve25519-sha256/ }))
+    expect(screen.queryByText('Sample checks passed')).not.toBeInTheDocument()
+    expect(screen.getAllByText(/Not executed — click the matching run button above/)).toHaveLength(
+      2
+    )
+    fireEvent.click(screen.getByRole('tab', { name: /Config/ }))
+    expect(
+      screen.getByText('Run the comparison to generate the configuration.')
+    ).toBeInTheDocument()
+  })
+  it('renders the actual pinned native setup and server config for a completed REAL profile', async () => {
+    m.realChoice = true
+    m.mapped.mockReturnValue({
+      ...values,
+      kex_algorithm: 'mlkem768x25519-sha256',
+      token_module: 'softhsmv3 (WASM, embedded — real OpenSSH)',
+    })
+    render(
+      <MemoryRouter>
+        <SshSimulationPanel />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Run SSH comparison' }))
+    expect(await screen.findByText('Comparison runs finished')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: /Config/ }))
+    expect(screen.getByText('setup.sh — disposable-container example')).toBeVisible()
+    const setup = screen.getByText(/^#!\/bin\/sh/)
+    expect(setup).toHaveTextContent('sha256sum -c -')
+    expect(setup).toHaveTextContent('Expected exactly one matching host public identity')
+    expect(setup).toHaveTextContent('StrictHostKeyChecking yes')
+    expect(screen.getByText(/^# Pinned example:/)).toHaveTextContent(
+      'HostKeyAgent /root/pqc-ssh-example/agent.sock'
+    )
+    expect(screen.getByText(/^# Pinned example:/)).not.toHaveTextContent('PKCS11Provider')
+  })
+  it('does not turn an unsupported modeled KEX into a different native profile', async () => {
+    render(
+      <MemoryRouter>
+        <SshSimulationPanel />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Run SSH comparison' }))
+    expect(await screen.findByText('Comparison runs finished')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: /Config/ }))
+    expect(
+      screen.getByText(/This retained model or incomplete run has no pinned native recipe/)
+    ).toBeVisible()
+    expect(screen.queryByText('setup.sh — disposable-container example')).not.toBeInTheDocument()
+  })
 })

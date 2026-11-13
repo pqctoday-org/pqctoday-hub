@@ -260,7 +260,12 @@ export interface MigrationCostResult {
   details: MigrationCostDetails
 }
 
-export function computeMigrationCostFromProfile(result: AssessmentResult): MigrationCostResult {
+/** Only these fields participate; older/partial profiles retain the existing model fallbacks. */
+export function computeMigrationCostFromProfile(
+  result: Pick<AssessmentResult, 'algorithmMigrations'> & {
+    assessmentProfile?: Partial<NonNullable<AssessmentResult['assessmentProfile']>>
+  }
+): MigrationCostResult {
   const profile = result.assessmentProfile
   const vulnAlgos = result.algorithmMigrations?.filter((a) => a.quantumVulnerable) ?? []
   const algoCount = vulnAlgos.length || 1

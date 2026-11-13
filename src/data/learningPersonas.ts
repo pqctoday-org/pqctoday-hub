@@ -1649,6 +1649,11 @@ const ESSENTIALS_MODULE_QUIZ_CATEGORY: Record<string, string> = {
   'pqc-candidates': 'pqc-fundamentals',
   'quantum-threats': 'quantum-threats',
   'entropy-randomness': 'entropy-randomness',
+  'crypto-product-certification': 'crypto-product-certification',
+  'fips-140-3-certification': 'fips-140-3-certification',
+  'acvp-lab-workflow': 'acvp-lab-workflow',
+  'cc-eucc-certification': 'cc-eucc-certification',
+  'pci-certification': 'pci-certification',
   'dev-quantum-impact': 'dev-quantum-impact',
   'arch-quantum-impact': 'arch-quantum-impact',
   'ops-quantum-impact': 'ops-quantum-impact',
@@ -1680,8 +1685,8 @@ const ESSENTIALS_MODULE_QUIZ_CATEGORY: Record<string, string> = {
  * so an Essentials-only learner is tested only on what they studied. Intentionally
  * under-inclusive: a category is included only if it maps from an essential AND is in
  * the persona's own `quizCategories` (an empty `quizCategories`, as researcher uses,
- * means "all categories", so no filter is applied). Missing a category just yields
- * fewer questions; it can never surface questions on unstudied modules.
+ * means "all categories", so no filter is applied). Every essential needs its category
+ * mapping: a missing mapping silently omits a studied topic from the capstone.
  */
 export function essentialsQuizCategories(personaId: PersonaId): string[] {
   const persona = PERSONAS[personaId]

@@ -47,6 +47,8 @@ export interface HsmKeyInspectorProps {
   onClear?: () => void
   /** Optional title override (default: "HSM Key Registry") */
   title?: string
+  /** Label the supplied event timestamp; defaults to generation for existing callers. */
+  timestampLabel?: string
   /**
    * Override how key attributes are read. When set, replaces direct hsm_getKeyAttributes
    * calls in both the size-estimate effect and the inspect modal. Used by VPN sim to
@@ -65,6 +67,7 @@ export const HsmKeyInspector = ({
   onRemoveKey,
   onClear,
   title = 'HSM Key Registry',
+  timestampLabel = 'Generated',
   attrsResolver,
 }: HsmKeyInspectorProps) => {
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
@@ -279,7 +282,7 @@ export const HsmKeyInspector = ({
                 <th className="text-left py-1.5 pr-4 font-medium hidden sm:table-cell">Role</th>
                 <th className="text-right py-1.5 pr-4 font-medium">Size</th>
                 <th className="text-left py-1.5 pr-4 font-medium hidden md:table-cell">
-                  Generated
+                  {timestampLabel}
                 </th>
                 <th className="text-left py-1.5 font-medium w-8" />
               </tr>
@@ -317,7 +320,7 @@ export const HsmKeyInspector = ({
                     })()}
                   </td>
                   <td className="py-1.5 pr-4 text-muted-foreground hidden md:table-cell">
-                    {k.generatedAt}
+                    {k.generatedAt || 'Not recorded'}
                   </td>
                   <td className="py-1 pl-1">
                     {confirmHandle === k.handle ? (

@@ -19,6 +19,7 @@
 import { libraryData } from './libraryData'
 import { complianceFrameworks } from './complianceData'
 import { timelineData } from './timelineData'
+import { recordedDateCoverage, recordedDateCoveragePhrase } from './recordedDateCoverage'
 
 /**
  * Live active-row count for the library corpus, read from the same loader
@@ -41,29 +42,32 @@ export function formatVerifiedDate(isoDate: string): string {
   })
 }
 
-/**
- * Live "regulatory data last verified" date for the executive board's proof
- * chip — the most recent `last_verified` across the regulatory data itself
- * (`compliance_*.csv` frameworks and `timeline_*.csv` events), not the
- * registry of authoritative sources that merely cite it.
- *
- * Changed 2026-09-03: this used to take the latest `lastVerifiedDate` among
- * authoritative sources flagged `complianceCsv === true` — 55 registry rows,
- * max 2026-07-16 — while the compliance rows themselves were verified to
- * 2026-08-16 and the timeline rows to 2026-08-29. The chip understated the
- * data's real freshness by four to six weeks, and two boards carried the
- * phrase as a hand-typed literal that could only drift further from it. This
- * reads the dates the "regulatory data verified" claim is actually about.
- */
-export const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {
-  const complianceDates = complianceFrameworks
-    .map((f) => f.lastVerified)
-    .filter((d): d is string => Boolean(d))
-  const timelineDates = timelineData.flatMap((country) =>
-    country.bodies.flatMap((body) =>
-      body.events.map((event) => event.lastVerified).filter((d): d is string => Boolean(d))
+/** Separate populations from the same active-row loaders the boards use. */
+export const REGULATORY_SOURCE_DATE_COVERAGE = {
+  compliance: recordedDateCoverage(complianceFrameworks.map((f) => f.lastVerified)),
+  timeline: recordedDateCoverage(
+    timelineData.flatMap((country) =>
+      country.bodies.flatMap((body) => body.events.map((event) => event.lastVerified))
     )
-  )
-  const latest = [...complianceDates, ...timelineDates].sort().at(-1)
+  ),
+}
+
+export const REGULATORY_SOURCE_COVERAGE_PHRASE =
+  'Recorded checking dates — ' +
+  [
+    recordedDateCoveragePhrase('Compliance', REGULATORY_SOURCE_DATE_COVERAGE.compliance),
+    recordedDateCoveragePhrase('Timeline', REGULATORY_SOURCE_DATE_COVERAGE.timeline),
+  ].join('. ') +
+  '. Metadata coverage, not independent review.'
+
+/** Compatibility newest-date value; never use alone as a whole-corpus review claim. */
+export const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {
+  const latest = [
+    REGULATORY_SOURCE_DATE_COVERAGE.compliance.newestDate,
+    REGULATORY_SOURCE_DATE_COVERAGE.timeline.newestDate,
+  ]
+    .filter((date): date is string => Boolean(date))
+    .sort()
+    .at(-1)
   return latest ? formatVerifiedDate(latest) : undefined
 })()

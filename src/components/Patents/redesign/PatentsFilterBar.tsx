@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { FilterDrawer } from '@/components/common/FilterDrawer'
 import { ColumnPicker } from '@/components/Patents/ColumnPicker'
-import { inferRegion, NIST_STATUS_LABELS } from '@/components/Patents/PatentsInsights'
+import { filingJurisdictionLabel, NIST_STATUS_LABELS } from '@/components/Patents/PatentsInsights'
 import type { PatentItem } from '@/types/PatentTypes'
 import type { ColumnId, PresetKey } from '@/components/Patents/patentColumns'
 
@@ -95,7 +95,7 @@ export function PatentsFilterBar({
   }
 
   const regionOpts = useMemo(
-    () => ['All', ...[...new Set(patents.map((p) => inferRegion(p.assignee)))].sort()],
+    () => ['All', ...[...new Set(patents.map((p) => filingJurisdictionLabel(p)))].sort()],
     [patents]
   )
   const domainOpts = useMemo(
@@ -157,7 +157,7 @@ export function PatentsFilterBar({
             items={regionOpts}
             selectedId={params.get('region') ?? 'All'}
             onSelect={(v) => set('region', v)}
-            label="Region"
+            label="Filing office"
             defaultLabel="All regions"
           />
           <FilterDropdown
@@ -195,7 +195,7 @@ export function PatentsFilterBar({
                   items={regionOpts}
                   selectedId={params.get('region') ?? 'All'}
                   onSelect={(v) => set('region', v)}
-                  label="Region"
+                  label="Filing office"
                   defaultLabel="All regions"
                 />
                 <FilterDropdown

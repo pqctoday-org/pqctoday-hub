@@ -271,7 +271,7 @@ describe('declarations must establish the purpose groups', () => {
 })
 
 describe('current architecture adapter', () => {
-  it('uses unchanged edgeState and excludes safe, vendor, monitor and blocked choices from credit', () => {
+  it('refuses unassociated general-available endpoints as well as safe, vendor and monitor choices', () => {
     const arch: Architecture = {
       size: 'small',
       nodes: [
@@ -287,10 +287,10 @@ describe('current architecture adapter', () => {
     }
     const choices = Object.fromEntries(keys.map((k) => [k, 'hybrid']))
     expect(planningForArchitecture(arch, 1, choices)).toMatchObject({
-      eligibleKeys: ['a-b-C'],
-      selectedKeys: ['a-b-C'],
-      creditedKeys: ['a-b-C'],
-      unavailableKeys: ['a-b-A', 'a-b-CA', 'a-b-GC'],
+      eligibleKeys: [],
+      selectedKeys: [],
+      creditedKeys: [],
+      unavailableKeys: ['a-b-A', 'a-b-C', 'a-b-CA', 'a-b-GC'],
     })
     expect(
       planningForArchitecture(

@@ -294,7 +294,7 @@ describe('ROICalculator', () => {
     renderCalc()
     expect(screen.getByText(/Cross-check vs your assessment/i)).toBeInTheDocument()
     expect(
-      screen.getByText(/generate a separate assessment-derived scenario estimate/i)
+      screen.getByText(/adopt its attributes as assumptions for the same fictional estate/i)
     ).toBeInTheDocument()
   })
 })

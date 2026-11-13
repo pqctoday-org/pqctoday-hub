@@ -18,7 +18,7 @@ import { PatentDetail } from './PatentDetail'
 import { ColumnPicker } from './ColumnPicker'
 import type { ColumnId, PresetKey } from './patentColumns'
 import type { PatentItem, ImpactLevel, CryptoAgilityMode } from '@/types/PatentTypes'
-import { inferRegion, NIST_STATUS_LABELS } from './PatentsInsights'
+import { filingJurisdictionLabel, NIST_STATUS_LABELS } from './PatentsInsights'
 import { usePatentResults } from './usePatentResults'
 import {
   logPatentSearch,
@@ -122,9 +122,11 @@ const FILTER_DEFS: {
   },
   {
     key: 'region',
-    label: 'Region',
+    label: 'Filing office',
     getValues: (p) =>
-      [...new Set(p.map((x) => inferRegion(x.assignee)))].sort().map((v) => ({ id: v, label: v })),
+      [...new Set(p.map((x) => filingJurisdictionLabel(x)))]
+        .sort()
+        .map((v) => ({ id: v, label: v })),
   },
   {
     key: 'protocol',

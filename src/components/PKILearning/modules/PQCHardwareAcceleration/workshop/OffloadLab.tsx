@@ -3,7 +3,7 @@
  * Workshop step 5 — the costs that live OUTSIDE the accelerator:
  *   A. the round trip (fixed cost per call + cost per job vs the CPU)
  *   B. sharing one engine between many cores
- *   C. batch vs latency (why GPUs need thousands of operations)
+ *   C. measured batch throughput vs unmeasured single-operation latency
  * Numbers: data/measurements.ts (KV260 Keccak engine, KV260 hashsig engine,
  * Metal ML-DSA-65 study). The same A/B limits apply to an on-chip ASIC block.
  */
@@ -273,15 +273,16 @@ export const OffloadLab: React.FC = () => {
         </h3>
         <Plain>
           <p>
-            A GPU is built to finish a mountain of identical work, not to finish one piece quickly.
-            Each launch has a fixed start-up cost; its thousands of lanes run in lock-step groups;
-            and it hides slow memory by switching to other work while waiting. All three only pay
-            off when there are thousands of independent operations in flight.
+            A GPU can parallelise work inside one operation and across a batch. Launch overhead,
+            memory access and the kernel’s work partition affect the outcome. Neither the lane
+            illustration nor the retained key-generation batches proves single-operation latency.
           </p>
           <p>
-            One signature can use a handful of lanes and still pays the full launch cost — the CPU,
-            built for low latency, finishes first. And ML-DSA’s retry loop means a batch is only as
-            fast as its unluckiest signature.
+            In the retained Metal ML-DSA-65 signing study, the first kernel relaunched the whole
+            batch while waiting for a straggler. Letting finished signatures exit early changed
+            throughput from {GPU_BATCH.signAt16k.naiveVsCpu.toFixed(2)}× to{' '}
+            {GPU_BATCH.signAt16k.fixedVsCpu.toFixed(2)}× the all-core CPU at batch 16,384. That is
+            an implementation change, not an unavoidable property of every ML-DSA GPU kernel.
           </p>
         </Plain>
         <div className="space-y-4">

@@ -74,6 +74,10 @@ export interface PatentItem {
   title: string
   inventors: string
   assignee: string
+  /** Sourced office for this publication/application; not assignee or family geography. */
+  filingJurisdiction?: string
+  filingJurisdictionApplication?: string
+  filingJurisdictionSourceUrl?: string
   priorityDate: string
   issueDate: string
   filingDate: string

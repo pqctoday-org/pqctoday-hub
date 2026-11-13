@@ -2,11 +2,15 @@
 import React from 'react'
 import { RoleIntroduction } from '../../../common/roleGuide'
 import { OPS_GUIDE_DATA } from '../data'
+import { OperationsWorkedChecks } from './OperationsWorkedChecks'
 
 interface Props {
   onNavigateToWorkshop: () => void
 }
 
 export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => (
-  <RoleIntroduction data={OPS_GUIDE_DATA} onNavigateToWorkshop={onNavigateToWorkshop} />
+  <>
+    <RoleIntroduction data={OPS_GUIDE_DATA} onNavigateToWorkshop={onNavigateToWorkshop} />
+    <OperationsWorkedChecks />
+  </>
 )

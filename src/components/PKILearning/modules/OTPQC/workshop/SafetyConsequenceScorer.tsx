@@ -127,10 +127,11 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
   return (
     <div className="space-y-6">
       <p className="text-sm text-foreground/80">
-        Score what happens if a quantum computer lets an attacker forge commands or firmware, across
-        all five OT sectors. The score asks the questions a process-safety review asks: how bad is
-        the worst outcome, and does an independent safety layer still stop it if the control path is
-        forged? It is a teaching model, not a SIL determination.
+        Compare unauthenticated command / firmware paths that are open today with additional
+        classical-key forgery paths in a CRQC scenario. Symmetric residuals and PQC-configured
+        layers are shown separately. The existing authored score asks how severe the outcome is and
+        whether an independent safety layer still stops it. It is a teaching model, not a SIL
+        determination or a forecast of incremental physical risk.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -282,6 +283,50 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
             <p className="text-4xl font-bold font-mono">{result.compound}</p>
             <p className="text-[10px] font-bold uppercase mt-1">{result.riskLevel}</p>
           </div>
+        </div>
+        <div className="mt-4 space-y-3 text-sm" aria-label="Configured exposure components">
+          <p className="text-xs text-muted-foreground">
+            Count the configured command and firmware paths, not attacks or probabilities. The
+            future exposed set is the union of currently unauthenticated paths and classical-key
+            forgery paths. Additional paths are that union minus the currently unauthenticated set.
+            The component indices reuse the same consequence, safety and lifecycle factors. They
+            overlap in consequence and are not additive or a causal estimate of extra safety risk.
+          </p>
+          <dl className="space-y-2">
+            <div>
+              <dt className="font-bold">
+                Present-day unauthenticated paths: {result.presentDayPaths.length}
+              </dt>
+              <dd>
+                {result.presentDayPaths.join(', ') || 'None'}; authored index{' '}
+                {result.presentDayScore}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-bold">
+                Additional classical-key forgery paths: {result.additionalForgeryPaths.length}
+              </dt>
+              <dd>
+                {result.additionalForgeryPaths.join(', ') || 'None'}; authored index{' '}
+                {result.forgeryScore}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-bold">
+                Symmetric residual paths: {result.symmetricResidualPaths.length}
+              </dt>
+              <dd>
+                {result.symmetricResidualPaths.join(', ') || 'None'}; authored index{' '}
+                {result.symmetricResidualScore}. The existing 0.2 factor is a separate teaching
+                assumption, not quantum exposure.
+              </dd>
+            </div>
+          </dl>
+          <p className="text-xs text-muted-foreground">
+            PQC-configured layers contribute to neither exposed set in this model; zero does not
+            assess implementation flaws, access control, protocol configuration or physical safety.
+            Unauthenticated and unsigned layers need authentication today, not cryptanalysis.
+          </p>
         </div>
         {result.exploitableToday && (
           <p className="mt-3 text-xs flex items-start gap-2 text-muted-foreground">

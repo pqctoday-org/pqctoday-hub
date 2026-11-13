@@ -134,8 +134,35 @@ describe('KAT labels (plan §4b)', () => {
     for (const s of [...OT_PROTOCOL_KAT_SPECS, ...OT_SIGNING_KAT_SPECS]) {
       const text = `${s.useCase} ${s.standard}`
       expect(text).not.toMatch(/NERC|IEC 62443|SAv6|GOOSE ML-DSA/)
-      expect(s.standard).toMatch(/NIST ACVP|RFC 3394|RFC 8554/)
     }
+    for (const s of OT_PROTOCOL_KAT_SPECS) {
+      expect(s.standard).toMatch(/NIST ACVP|RFC 3394/)
+    }
+    // The signing cases verify fixed reference signatures; the named FIPS/RFC
+    // must match the actual operation and source, not a generic label pattern.
+    expect(
+      OT_SIGNING_KAT_SPECS.map(({ kind, standard, referenceUrl }) => ({
+        kind,
+        standard,
+        referenceUrl,
+      }))
+    ).toEqual([
+      {
+        kind: { type: 'mldsa-sigver', variant: 87 },
+        standard: 'FIPS 204 ML-DSA · NIST reference signature',
+        referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+      },
+      {
+        kind: { type: 'mldsa-sigver', variant: 65 },
+        standard: 'FIPS 204 ML-DSA · NIST reference signature',
+        referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+      },
+      {
+        kind: { type: 'lms-sigver', testCase: 1 },
+        standard: 'IETF RFC 8554 Appendix F',
+        referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8554#appendix-F',
+      },
+    ])
   })
   it('use only registered kinds: hmac-verify SHA-256, aeskw-wrap, mldsa-sigver, lms-sigver', () => {
     const kinds = [...OT_PROTOCOL_KAT_SPECS, ...OT_SIGNING_KAT_SPECS].map((s) => s.kind.type)

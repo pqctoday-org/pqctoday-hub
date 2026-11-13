@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Info, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+import { NssWorkedCases } from './NssWorkedCases'
 import {
   CNSA_ACQUISITION_LABEL,
   CNSA_MANDATE_LABEL,
@@ -72,23 +73,27 @@ export const ComplianceGapAnalysis: React.FC<ComplianceGapAnalysisProps> = ({ ri
   }))
   if (riskEntries.length === 0)
     return (
-      <div className="glass-panel p-8 text-center space-y-4">
-        <Info size={32} className="text-muted-foreground mx-auto" />
-        <p>No risk register entries yet</p>
-        <p className="text-sm text-muted-foreground">
-          Add sample entries in the Risk Register Builder to inspect their name patterns. Framework
-          applicability will remain unassessed.
-        </p>
+      <div className="space-y-6">
+        <NssWorkedCases />
+        <div className="glass-panel p-8 text-center space-y-4">
+          <Info size={32} className="text-muted-foreground mx-auto" />
+          <p>No risk register entries yet</p>
+          <p className="text-sm text-muted-foreground">
+            Add sample entries in the Risk Register Builder to inspect their name patterns.
+            Framework applicability will remain unassessed.
+          </p>
+        </div>
       </div>
     )
   return (
     <div className="space-y-6">
+      <NssWorkedCases />
       <aside
         aria-label="Name exercise scope"
         className="glass-panel p-4 text-sm text-muted-foreground"
       >
-        This exercise recognizes substrings in algorithm labels. It does not establish the
-        operation, parameters, hybrid composition, implementation validation or applicable
+        The imported rows below recognize substrings in algorithm labels. This does not establish
+        the operation, parameters, hybrid composition, implementation validation or applicable
         requirements. A PQC-name match is not compliance; an unknown name is not N/A or safe.
       </aside>
       <div className="glass-panel p-5 space-y-3">

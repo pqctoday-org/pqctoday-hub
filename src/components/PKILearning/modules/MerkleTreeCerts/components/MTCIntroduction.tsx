@@ -19,6 +19,12 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
 import { EstimateNote } from '@/components/ui/EstimateNote'
+import {
+  ALGORITHM_SIZES,
+  getSizeBreakdown,
+  MTC_STANDALONE_PROOF_BYTES,
+  MTC_LANDMARK_PROOF_BYTES,
+} from '../data/mtcConstants'
 
 interface MTCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -28,6 +34,13 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
   useSectionAnchors()
 
   const [showSignatureless, setShowSignatureless] = useState(false)
+  const example = getSizeBreakdown(ALGORITHM_SIZES.find((a) => a.shortName === 'ML-DSA-44')!)
+  const ecdsaExample = getSizeBreakdown(ALGORITHM_SIZES.find((a) => a.shortName === 'ECDSA')!)
+  const exactBytes = (bytes: number) => `${bytes.toLocaleString('en-US')} B`
+  const keyAndSigBytes = (parts: { component: string; bytes: number }[]) =>
+    parts
+      .filter((part) => /key|signature/i.test(part.component))
+      .reduce((sum, part) => sum + part.bytes, 0)
   return (
     <div className="space-y-6 w-full">
       {/* Section 1: The Certificate Bloat Problem */}
@@ -37,18 +50,19 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           Post-quantum digital signatures are dramatically larger than their classical counterparts.
-          While an <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> P-256 signature is just{' '}
-          <strong>64 bytes</strong>, an <InlineTooltip term="ML-DSA">ML-DSA-44</InlineTooltip>{' '}
-          signature is <strong>2,420 bytes</strong> &mdash; a <strong>37&times;</strong> increase.
-          In a typical TLS handshake the server sends a leaf and one intermediate certificate (two
-          public keys and two certificate signatures; the root is already in the client&apos;s trust
-          store), signs the handshake once more in CertificateVerify, and usually adds Certificate
+          This model uses a raw <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> P-256 signature
+          input of <strong>64 bytes</strong>, an{' '}
+          <InlineTooltip term="ML-DSA">ML-DSA-44</InlineTooltip> signature is{' '}
+          <strong>2,420 bytes</strong> &mdash; a <strong>37&times;</strong> increase. In a typical
+          TLS handshake the server sends a leaf and one intermediate certificate (two public keys
+          and two certificate signatures; the root is already in the client&apos;s trust store),
+          signs the handshake once more in CertificateVerify, and usually adds Certificate
           Transparency <InlineTooltip term="SCT">SCTs</InlineTooltip>.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div className="text-2xl font-bold text-primary">64 B</div>
-            <div className="text-xs text-muted-foreground">ECDSA P-256 signature</div>
+            <div className="text-xs text-muted-foreground">ECDSA P-256 raw signature input</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div className="text-2xl font-bold text-warning">2,420 B</div>
@@ -252,8 +266,11 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div className="text-sm font-bold text-success mb-2">Advantages (both types)</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
-                &bull; Massive size reduction (63&ndash;65% standalone, 92&ndash;96% landmark for
-                ML-DSA) (not sourced in the Library)
+                &bull; In this module&apos;s ML-DSA-44 authentication-component model: standalone{' '}
+                {exactBytes(example.mtcTotal)} versus {exactBytes(example.traditionalTotal)} (
+                {example.reductionPercent}% smaller), or {exactBytes(example.mtcLandmarkTotal)} (
+                {example.landmarkReductionPercent}% smaller) with a pre-synced landmark. The server
+                key and CertificateVerify remain. These are not full TLS wire bytes.
               </li>
               <li>&bull; Single CA signing operation covers millions of certificates</li>
               <li>&bull; Inclusion proof is pure hash computation &mdash; fast to verify</li>
@@ -344,7 +361,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
 
             <div className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto">
               <h4 className="text-sm font-bold text-foreground mb-3">
-                ML-DSA-44 Handshake Size Comparison
+                ML-DSA-44 Authentication Component Comparison
               </h4>
               <table className="w-full text-xs">
                 <thead>
@@ -357,36 +374,45 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 pr-3 font-medium text-foreground">Traditional X.509</td>
-                    <td className="text-right py-2 px-2 font-mono">9,884 B</td>
-                    <td className="text-right py-2 px-2 font-mono text-muted-foreground">—</td>
-                    <td className="text-right py-2 px-2 font-mono text-destructive font-bold">
-                      10,522 B
-                    </td>
-                    <td className="text-right py-2 pl-2 text-muted-foreground">baseline</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 pr-3 font-medium text-foreground">Standalone MTC</td>
-                    <td className="text-right py-2 px-2 font-mono">6,152 B</td>
-                    <td className="text-right py-2 px-2 font-mono">384 B</td>
-                    <td className="text-right py-2 px-2 font-mono text-primary font-bold">
-                      6,736 B
-                    </td>
-                    <td className="text-right py-2 pl-2 text-success font-bold">36%</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 pr-3 font-medium text-foreground">
-                      Landmark MTC{' '}
-                      <span className="text-[10px] text-success">(no cosignatures)</span>
-                    </td>
-                    <td className="text-right py-2 px-2 font-mono">3,732 B</td>
-                    <td className="text-right py-2 px-2 font-mono">736 B</td>
-                    <td className="text-right py-2 px-2 font-mono text-success font-bold">
-                      4,668 B
-                    </td>
-                    <td className="text-right py-2 pl-2 text-success font-bold">56%</td>
-                  </tr>
+                  {[
+                    {
+                      mode: 'Traditional X.509',
+                      parts: example.traditional,
+                      proof: 0,
+                      total: example.traditionalTotal,
+                      saving: null,
+                    },
+                    {
+                      mode: 'Standalone MTC',
+                      parts: example.mtc,
+                      proof: MTC_STANDALONE_PROOF_BYTES,
+                      total: example.mtcTotal,
+                      saving: example.reductionPercent,
+                    },
+                    {
+                      mode: 'Landmark MTC (no cosignatures)',
+                      parts: example.mtcLandmark,
+                      proof: MTC_LANDMARK_PROOF_BYTES,
+                      total: example.mtcLandmarkTotal,
+                      saving: example.landmarkReductionPercent,
+                    },
+                  ].map((row) => (
+                    <tr key={row.mode} className="border-b border-border/50">
+                      <td className="py-2 pr-3 font-medium text-foreground">{row.mode}</td>
+                      <td className="text-right py-2 px-2 font-mono">
+                        {exactBytes(keyAndSigBytes(row.parts))}
+                      </td>
+                      <td className="text-right py-2 px-2 font-mono">
+                        {row.proof === 0 ? '0 B (not used)' : exactBytes(row.proof)}
+                      </td>
+                      <td className="text-right py-2 px-2 font-mono font-bold">
+                        {exactBytes(row.total)}
+                      </td>
+                      <td className="text-right py-2 pl-2 font-bold">
+                        {row.saving === null ? 'baseline' : `${row.saving}%`}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
               <p className="text-[10px] text-muted-foreground mt-2">
@@ -401,9 +427,22 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                 landmark proof at the last landmark (~5.4M). The number of cosignatures is relying
                 party policy; each extra one adds a signature.
               </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                These totals use the Size Comparison workshop&apos;s authored component model, not
+                measured DER certificates or a complete TLS handshake: raw public-key and signature
+                sizes, 200 B metadata per certificate and 2 × 119 B SCTs in the traditional chain.
+                KEM shares, other handshake messages, record and transport framing, and out-of-band
+                landmark synchronization are outside the denominator. The ECDSA counterexample uses
+                a fixed 64 B signature input and 65 B public point:
+                {exactBytes(ecdsaExample.traditionalTotal)} traditional versus{' '}
+                {exactBytes(ecdsaExample.mtcTotal)} standalone ({ecdsaExample.reductionPercent}%
+                smaller), but {exactBytes(ecdsaExample.mtcLandmarkTotal)} landmark (
+                {-ecdsaExample.landmarkReductionPercent}% larger). TLS ECDSA signatures are DER
+                encoded and can differ from that fixed input.
+              </p>
               <EstimateNote
                 className="mt-2"
-                what="the handshake byte counts in this table. Signature and key sizes are FIPS 204's; the proof, SCT and metadata sizes come from this module's own tree model (a checkpoint of about 3,000 entries, a landmark of about 5.4 million)."
+                what="the authentication-component estimates in this table. Signature and key sizes are FIPS 204's; the proof, SCT and metadata sizes come from this module's own tree model (a checkpoint of about 3,000 entries, a landmark of about 5.4 million)."
               />
             </div>
 

@@ -1,23 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
-import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
-import { CERT_FIELD_COMPARISON, SMIME_CERT_EXTENSIONS } from '../data/emailSigningConstants'
+import { ShieldCheck } from 'lucide-react'
+import { SMIME_CERT_EXTENSIONS } from '../data/emailSigningConstants'
 import { Button } from '@/components/ui/button'
-import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
+import { EmailSizeComparison } from './EmailSizeComparison'
 
 type ViewMode = 'comparison' | 'extensions'
 
 export const SMIMECertViewer: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('comparison')
-  const [showNotes, setShowNotes] = useState(true)
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">S/MIME Certificate Structure</h3>
         <p className="text-sm text-muted-foreground">
-          Compare classical RSA-2048 and post-quantum ML-DSA-65 S/MIME certificates. Examine the key
-          extension examples used for email signing and encryption.
+          Compare captured RSA-3072 / CMS RSA-PSS and ML-DSA-65 software outputs, then inspect the
+          separate email-purpose extension examples.
         </p>
       </div>
 
@@ -47,92 +46,7 @@ export const SMIMECertViewer: React.FC = () => {
         </Button>
       </div>
 
-      {/* Certificate Field Comparison */}
-      {viewMode === 'comparison' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-bold text-foreground">Certificate Field Comparison</h4>
-            <Button
-              variant="ghost"
-              onClick={() => setShowNotes(!showNotes)}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {showNotes ? <EyeOff size={14} /> : <Eye size={14} />}
-              {showNotes ? 'Hide Notes' : 'Show Notes'}
-            </Button>
-          </div>
-
-          <ScrollFadeContainer>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left p-2 text-muted-foreground font-medium">Field</th>
-                    <th className="text-left p-2 font-bold">
-                      <span className="text-warning">RSA-2048</span>
-                    </th>
-                    <th className="text-left p-2 font-bold">
-                      <span className="text-success">ML-DSA-65</span>
-                    </th>
-                    {showNotes && (
-                      <th className="text-left p-2 text-muted-foreground font-medium">Notes</th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {CERT_FIELD_COMPARISON.map((row) => (
-                    <tr key={row.field} className="border-b border-border/50">
-                      <td className="p-2 text-muted-foreground font-medium whitespace-nowrap">
-                        {row.field}
-                      </td>
-                      <td className="p-2 font-mono text-xs text-foreground">{row.rsaValue}</td>
-                      <td className="p-2 font-mono text-xs text-foreground">{row.mlDsaValue}</td>
-                      {showNotes && (
-                        <td className="p-2 text-xs text-muted-foreground">{row.notes}</td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </ScrollFadeContainer>
-
-          {/* Size Impact Visual */}
-          <div className="glass-panel p-4">
-            <h4 className="text-sm font-bold text-foreground mb-3">Size Impact Visualization</h4>
-            <div className="space-y-3">
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-muted-foreground">RSA-2048 Certificate</span>
-                  <span className="font-mono text-warning">~1,200 bytes</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-3">
-                  <div
-                    className="bg-warning/60 h-3 rounded-full transition-all"
-                    style={{ width: '20%' }}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-muted-foreground">ML-DSA-65 Certificate</span>
-                  <span className="font-mono text-success">~6,000 bytes (indicative)</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-3">
-                  <div
-                    className="bg-success/60 h-3 rounded-full transition-all"
-                    style={{ width: '100%' }}
-                  />
-                </div>
-              </div>
-            </div>
-            <p className="text-[10px] text-muted-foreground mt-2">
-              PQC certificates are approximately 5x larger, primarily due to the 1,952-byte public
-              key and 3,309-byte signature in ML-DSA-65.
-            </p>
-          </div>
-        </div>
-      )}
+      {viewMode === 'comparison' && <EmailSizeComparison />}
 
       {/* S/MIME Extensions */}
       {viewMode === 'extensions' && (

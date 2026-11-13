@@ -259,7 +259,7 @@ const GpuVisual: React.FC = () => {
       <Title className="text-status-info">Illustrative batch-versus-launch-cost comparison</Title>
       <svg viewBox="0 0 600 230" className="w-full h-56" role="img" aria-label="GPU batching">
         {[
-          { y: 20, label: '1 signature', fill: 1 },
+          { y: 20, label: '1 signature', fill: cols },
           { y: 125, label: '4,096 signatures', fill: cols * rows },
         ].map((row) => (
           <g key={row.label}>
@@ -306,18 +306,18 @@ const GpuVisual: React.FC = () => {
               textAnchor="end"
               className="fill-muted-foreground text-[9px]"
             >
-              {row.fill === 1
-                ? 'One-operation illustration; internal parallel work not shown'
+              {row.label === '1 signature'
+                ? 'One operation can contain cooperating parallel work'
                 : 'Batch illustration; launch cost shared across operations'}
             </text>
           </g>
         ))}
       </svg>
       <Caption>
-        Launch and transfer overhead can affect latency. These authored diagrams are not
-        measurements or a limit on parallelism within an individual PQC operation. Evaluate the
-        exact implementation, batch size and hardware; the drawing does not establish which
-        processor finishes first.
+        Launch and transfer overhead can affect latency. Filled cells illustrate possible
+        cooperation, not measured lane occupancy. These drawings do not set a limit on parallelism
+        within an individual PQC operation. Evaluate the exact implementation, batch size and
+        hardware; the drawing does not establish which processor finishes first.
       </Caption>
     </div>
   )
@@ -558,7 +558,7 @@ const NpuVisual: React.FC = () => {
           />
         ))}
         <text x={20} y={20} className="fill-muted-foreground text-[9px]">
-          int8 × int8 → accumulate (what the NPU does)
+          Illustrated tensor path: int8 × int8 → accumulate
         </text>
         <text x={20} y={135} className="fill-muted-foreground text-[9px]">
           fed a pre-compiled neural-network graph
@@ -582,7 +582,7 @@ const NpuVisual: React.FC = () => {
           {
             y: 120,
             ok: false,
-            text: 'Assess CPU coordination and data movement for the selected NTT kernel',
+            text: 'i.MX95 has CPU cores beside its NPU; assess coordination and data movement',
           },
           {
             y: 160,
@@ -602,10 +602,10 @@ const NpuVisual: React.FC = () => {
               className={
                 r.ok
                   ? 'fill-success text-[12px] font-bold'
-                  : 'fill-destructive text-[12px] font-bold'
+                  : 'fill-muted-foreground text-[12px] font-bold'
               }
             >
-              {r.ok ? '✓' : '✗'}
+              {r.ok ? '✓' : '?'}
             </text>
             <text x={316} y={r.y + 12} className="fill-foreground text-[9px]">
               {r.text.length > 50 ? r.text.slice(0, r.text.lastIndexOf(' ', 50)) : r.text}

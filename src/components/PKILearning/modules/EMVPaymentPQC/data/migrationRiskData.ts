@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { PaymentMigrationVector } from './emvConstants'
+import { CARD_REPLACEMENT_WORKED_EXAMPLE } from './cardReplacementScenario'
 
 export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
   {
@@ -57,7 +58,8 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
       'RSA-2048 key transport (master key injection)',
     ],
     vulnerability:
-      'New cards issued with RSA-2048 ICC keys are quantum-vulnerable from day one. On an assumed 3-5 year card replacement cycle (this module’s estimate, not a sourced figure), cards issued today could stay in circulation until about 2029-2031.',
+      'New cards issued with RSA-2048 ICC keys remain exposed to a future quantum-capable signature forgery. ' +
+      CARD_REPLACEMENT_WORKED_EXAMPLE,
     severity: 'critical',
     hndlExposure: false,
     affectedScale: '~4 billion new cards issued annually',
@@ -79,10 +81,11 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     componentLabel: 'EMV Offline Authentication (DDA/CDA)',
     currentCrypto: ['RSA-2048 certificate chain (3 levels)', 'RSA-2048 dynamic signatures'],
     vulnerability:
-      'Offline authentication relies on RSA (or ECC) signatures. A cryptographically relevant quantum computer breaking an issuer or payment-system key could let forged cards pass offline checks; breaking one card key only clones that card. Up to 14.7 billion EMV cards (EMVCo, Q4 2024) carry such keys, and EMVCo says that on current projections a realised quantum threat is unlikely prior to 2040.',
+      'Offline authentication relies on RSA (or ECC) signatures. A cryptographically relevant quantum computer breaking an issuer or payment-system key could let forged cards pass offline checks; breaking one card key only clones that card. EMVCo reports over 15.6 billion EMV Chip cards globally at the end of 2025 (Q2 2026 newsletter, 15 July 2026); that total does not count the RSA-dependent or offline-authentication subset. EMVCo’s 2024 position statement said a realised quantum threat was unlikely prior to 2040 on its then-current projections.',
     severity: 'critical',
     hndlExposure: false,
-    affectedScale: '14.7 billion EMV cards globally (EMVCo, end of 2024)',
+    affectedScale:
+      'Global context: over 15.6 billion EMV Chip cards at end-2025 (EMVCo, 15 July 2026); RSA/offline subset not counted',
     migrationEffort: 5,
     migrationTimeline: '2029-2035',
     pqcSolution: [

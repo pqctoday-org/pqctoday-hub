@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { CheckCircle, AlertCircle, GitBranch } from 'lucide-react'
-import { PIPELINE_INTEGRATION_PATTERNS } from '../data/secretsConstants'
+import { GITLAB_VAULT_SAMPLE_SETUP, PIPELINE_INTEGRATION_PATTERNS } from '../data/secretsConstants'
 import { Button } from '@/components/ui/button'
 
 type TabId = string
@@ -69,6 +69,26 @@ export const PipelineIntegrationLab: React.FC = () => {
           </div>
         </div>
 
+        {pattern.id === 'gitlab-ci-tokens' && (
+          <div>
+            <div className="text-sm font-bold text-foreground mb-2">
+              Disposable Vault Fixture Setup
+            </div>
+            <p className="text-xs text-muted-foreground mb-2">
+              The Vault 1.21.0 JWT/KV-v2 fixture used a local test JWT key source. This template
+              shows the GitLab issuer/discovery configuration; live GitLab issuance and discovery
+              were not tested by that fixture. Run with the fictional fixture’s administrator token
+              and an existing KV-v2 mount at secret/. The sample uses project 42, the configured
+              GitLab issuer and Vault audience, and a read-only secret/data/db policy. Use your own
+              tool configuration and test both allowed and denied claims and paths before
+              deployment. The Hub sample does not verify your deployed identity provider or Vault.
+            </p>
+            <div className="bg-muted font-mono text-xs rounded-lg p-4 overflow-x-auto border border-border whitespace-pre text-foreground/90 max-h-[400px] overflow-y-auto">
+              {GITLAB_VAULT_SAMPLE_SETUP}
+            </div>
+          </div>
+        )}
+
         {/* Code snippet */}
         <div>
           <div className="text-sm font-bold text-foreground mb-2">Implementation Example</div>
@@ -90,7 +110,7 @@ export const PipelineIntegrationLab: React.FC = () => {
                     : pattern.id === 'github-actions-oidc'
                       ? "RS256 (GitHub's OIDC JWTs) → ML-DSA (GitHub roadmap TBD)"
                       : pattern.id === 'gitlab-ci-tokens'
-                        ? 'RS256 (GitLab CI_JOB_JWT_V2) → ML-DSA (GitLab roadmap TBD)'
+                        ? 'RS256 (GitLab ID tokens); evaluate provider and Vault support before a PQC transition'
                         : 'Vault token: HMAC-SHA256 (quantum-safe already)',
                 isSafe: pattern.id === 'terraform-vault-provider',
               },

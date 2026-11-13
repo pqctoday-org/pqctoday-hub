@@ -13,7 +13,7 @@ export const content: ModuleContent = {
   // The latest recorded claim review is 24 Aug. This release changes content,
   // so it updates lastEdited without presenting the edit as an evidence review.
   lastReviewed: '2026-08-24',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-13',
 
   standards: [
     getStandard('FIPS 186-5'),
@@ -85,7 +85,7 @@ export const content: ModuleContent = {
     // the prose "SP 800-38B" against a row filed as NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope.
     getStandard('NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
-    getStandard('2025-in-Numbers'), // m-emv-payment-pqc: 14.7 billion
+    getStandard('2025-in-Numbers'), // Historical baseline; the current fleet headline cites EMVCo's Q2 2026 newsletter inline.
     getStandard('ISO-8583-2023-Financial-transaction-card-originated-messages'), // m-emv-payment-pqc: ISO 8583
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'), // TLS 1.3 (RFC 8446 row is retired; 9846 is the current text) — m-emv-payment-pqc: 1.3
     getStandard('The-Straits-Times-DBS-PayLah-users-can-scan-UnionPay-QR-code'), // m-emv-payment-pqc: 9.4B
@@ -141,12 +141,12 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Advanced module covering post-quantum migration across the whole payments and banking estate: the EMV card ecosystem (14.7 billion chip cards at the end of 2024, across Visa, Mastercard, Amex, UnionPay and Discover), retail and card-not-present acceptance, interbank settlement rails, bank key management, and the sector regulation setting the pace. Three learner paths — Cards & Acceptance, Banking & Settlement, Retail & E-Commerce — so no audience is asked for the full 120 minutes.',
+      'Advanced module covering post-quantum migration across the whole payments and banking estate: the EMV card ecosystem (over 15.6 billion EMV Chip cards globally at the end of 2025, reported by EMVCo on 15 July 2026; the five selected network profiles do not define that global denominator), retail and card-not-present acceptance, interbank settlement rails, bank key management, and the sector regulation setting the pace. Three learner paths — Cards & Acceptance, Banking & Settlement, Retail & E-Commerce — so no audience is asked for the full 120 minutes.',
     keyConcepts:
       'EMV card authentication: SDA (static RSA), DDA (dynamic RSA per transaction), CDA (combined with application cryptogram). Settlement rails: Swift messaging, domestic RTGS, and correspondent chains. Key blocks: a key wrapped together with its usage attributes so it cannot be repurposed — the attribute binding is the security property. Harvest-now-decrypt-later drives the timetable: exposure is a function of how long data stays sensitive, not of a guessed CRQC date.',
     workshopSummary:
       'Payment Network Comparator — official stance, public evidence, and a clearly labelled public or tentative plan for Visa, Mastercard, American Express, UnionPay and Discover. Transaction Simulator. Card Provisioning Visualizer. Tokenization Explorer. POS Crypto Analyzer. Migration Risk Matrix. Settlement Exposure Modeller — HNDL exposure per rail, driven by retention rather than a guessed CRQC year. Sector Regulation Timeline — sector bodies filtered by jurisdiction, each linked to its cached source document.',
     relatedStandards:
-      'EPC 342-08 v16.0.1 (24 June 2026) anchors the banking half: it names ML-KEM, ML-DSA, SLH-DSA and FN-DSA. Planned FIPS 206 is listed by NIST as in development (checked 29 October 2026), so this hub cites the distinct Falcon v1.2 candidate specification rather than presenting it as FIPS text. EPC also cites ANSI X9.143 as the current key-block standard. Swift CSCF v2026 controls 2.1/2.4/2.5A/2.6 point at Swift cryptography guidance that Swift states will follow its post-quantum strategy. BIS Project Leap Phase 2 is the central-bank experiment. PCI DSS v4.0.1 is current — there is no v5.0 — but only the Quick Reference Guide is freely downloadable. ANSI X9.143, X9.24-1/-2 and TR-31 are paywalled, and are cited here as normative but unobtainable rather than paraphrased.',
+      'EPC 342-08 v16.0.1 (24 June 2026) anchors the banking half: it names ML-KEM, ML-DSA, SLH-DSA and FN-DSA. Planned FIPS 206 is listed by NIST as in development (checked 29 October 2026), so this hub cites the distinct Falcon v1.2 candidate specification rather than presenting it as FIPS text. EPC also cites ANSI X9.143 as the current key-block standard. Swift CSCF v2026 controls 2.1/2.4/2.5A/2.6 point at Swift cryptography guidance that Swift states will follow its post-quantum strategy. BIS Project Leap Phase 2 is the central-bank experiment. This module works against PCI DSS v4.0.1, the edition retained in its standards library; consult the PCI SSC Document Library for the applicable document and access terms. ANSI X9.143, X9.24-1/-2 and TR-31 are paywalled, and are cited here as normative but unobtainable rather than paraphrased.',
   },
 }

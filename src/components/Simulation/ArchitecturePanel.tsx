@@ -2,7 +2,7 @@
 /**
  * ArchitecturePanel — the Simulation's per-size migration board. Systems show
  * their product PQC status; each vulnerable protocol link is migratable now,
- * blocked (product/vendor has no PQC), or monitor-only (no PQC path assumed in this scenario).
+ * blocked (endpoint or required operation unavailable), or monitor-only (no PQC path assumed in this scenario).
  *
  * Migrating a link needs BOTH gates (WS-04): the player must have completed
  * enough P5 activities to UNLOCK a link (effort) AND pick a sound strategy
@@ -21,6 +21,7 @@ import {
   type ProtocolEdge,
   type PqcStatus,
 } from '@/data/simArchitecture'
+import { connectionOperationSummary } from '@/data/simOperationCapabilities'
 import { checkChoice } from '@/data/jurisdiction'
 import type { SimSize } from '@/data/moscaClock'
 import { useSimulationStore } from '@/store/useSimulationStore'
@@ -42,7 +43,10 @@ const STATUS_CHIP: Record<PqcStatus, string> = {
 }
 
 const NON_MIGRATABLE_BADGE: Partial<Record<EdgeState, { label: string; cls: string }>> = {
-  blocked: { label: '⚡ blocked (product)', cls: 'bg-status-error/15 text-status-error' },
+  blocked: {
+    label: '⚡ blocked (endpoint capability)',
+    cls: 'bg-status-error/15 text-status-error',
+  },
   vendor: { label: '⏳ vendor path', cls: 'bg-status-warning/15 text-status-warning' },
   monitor: { label: '⚠ monitor-only', cls: 'bg-status-warning/15 text-status-warning' },
 }
@@ -211,9 +215,9 @@ export function ArchitecturePanel({
           />
           <p className="mt-2 text-xs text-muted-foreground">
             Nodes — green: available · yellow: partial · blue: roadmap · red: none · grey: not in
-            catalog. Edges — ✓ migrated/migratable · ⚡ blocked (product) · ⏳ vendor path · ⚠
-            dashed: monitor-only (no PQC path assumed in this scenario). Switch to List to migrate
-            links.
+            catalog. Edges — ✓ migrated/migratable · ⚡ blocked (endpoint capability) · ⏳ vendor
+            path · ⚠ dashed: monitor-only (no PQC path assumed in this scenario). Switch to List to
+            migrate links.
           </p>
         </div>
       ) : (
@@ -312,6 +316,9 @@ export function ArchitecturePanel({
                       {byId.get(e.to)?.label}
                     </span>
                     <span className="block text-[10px] text-muted-foreground">{declaration}</span>
+                    <span className="block whitespace-normal text-[10px] text-muted-foreground">
+                      {connectionOperationSummary(arch, e)}
+                    </span>
                   </span>
                 )
                 if (st === 'migratable') {
@@ -404,10 +411,14 @@ export function ArchitecturePanel({
           </div>
 
           <p className="mt-2 text-xs text-muted-foreground">
-            Migrate the eligible links (hybrid or pure). A strategy that departs from the
-            jurisdiction's stated position still migrates but lowers your compliance score. Blocked
-            links wait on a product/vendor PQC release; monitor-only links have no PQC path assumed
-            in this scenario. This does not establish an inherent protocol limitation.
+            Endpoint operation statuses are explicit fictional scenario assumptions, not vendor
+            claims. Only an available protocol path, available endpoints and every required
+            operation marked available enable a choice. Conditional, planned, unknown or missing
+            operations cannot earn migration credit. Migrate the eligible links (hybrid or pure). A
+            strategy that departs from the jurisdiction's stated position still migrates but lowers
+            your compliance score. Blocked links need their missing or unavailable endpoint
+            capability resolved; monitor-only links have no PQC path assumed in this scenario. This
+            does not establish an inherent protocol limitation.
           </p>
         </>
       )}

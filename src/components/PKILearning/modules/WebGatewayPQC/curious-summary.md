@@ -4,7 +4,7 @@ Web gateways—such as reverse proxies, WAFs, load balancers, and CDNs—are the
 
 ### Why It Matters
 
-Security appliances like Next-Gen Firewalls (NGFWs) often have strict hardware buffer limits (around ~4 KB) for Deep Packet Inspection. A massive PQC Hybrid handshake (~15+ KB) violently shatters these limits, causing firewalls to blindly drop the connections entirely.
+The retained seven-message sample is 4,499 B for X25519MLKEM768 with RSA-2048 authentication, or 16,944 B for ML-KEM-768 with ML-DSA-65 authentication, versus 2,233 B for X25519 with RSA-2048. These handshake-layer totals exclude record and transport framing. Test your own gateway’s parsing, buffering and inspection with representative captures; these measurements do not establish a universal 4 KB limit or a guaranteed connection drop.
 
 ### The Key Takeaway
 

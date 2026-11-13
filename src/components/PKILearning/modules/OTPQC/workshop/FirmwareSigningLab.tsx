@@ -19,13 +19,13 @@ interface FirmwareSigningLabProps {
   initial?: Partial<SigningPlanInputs>
 }
 
-/** ML-DSA is the only scheme in this lab with executable crypto, and it is
- *  checked against NIST ACVP sigVer vectors. LMS / XMSS rows are size models. */
+/** Fixed verifier samples: ML-DSA reference signatures and RFC 8554 HSS/LMS.
+ *  The selected signing plan remains a byte/capacity model, not a signing run. */
 export const OT_SIGNING_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'ot-fw-mldsa87-sigver',
     useCase: 'Firmware / project signature verification (ML-DSA-87)',
-    standard: 'NIST ACVP ML-DSA sigVer (FIPS 204)',
+    standard: 'FIPS 204 ML-DSA · NIST reference signature',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     libraryRefId: 'FIPS 204',
     kind: { type: 'mldsa-sigver', variant: 87 },
@@ -33,7 +33,7 @@ export const OT_SIGNING_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'ot-fw-mldsa65-sigver',
     useCase: 'Firmware / project signature verification (ML-DSA-65)',
-    standard: 'NIST ACVP ML-DSA sigVer (FIPS 204)',
+    standard: 'FIPS 204 ML-DSA · NIST reference signature',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     libraryRefId: 'FIPS 204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -145,20 +145,12 @@ export const FirmwareSigningLab: React.FC<FirmwareSigningLabProps> = ({ onComple
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="text-sm font-bold text-foreground">{result.scheme.label}</h3>
-          <span
-            className={`text-[10px] rounded px-1.5 py-0.5 border ${
-              result.scheme.validation !== 'simulated'
-                ? 'bg-status-success/10 text-status-success border-status-success/30'
-                : 'bg-muted text-muted-foreground border-border'
-            }`}
-          >
+          <span className="text-[10px] rounded px-1.5 py-0.5 border bg-muted text-muted-foreground border-border">
             {result.scheme.validation === 'acvp-kat'
-              ? 'Verified by NIST ACVP KAT below'
+              ? 'ML-DSA reference signature checks available below'
               : result.scheme.validation === 'rfc8554-kat'
-                ? 'Verifier checked by the RFC 8554 KAT below; sizes per RFC 8554'
-                : result.scheme.family === 'XMSS'
-                  ? 'Simulated — sizes per RFC 8391, no signature computed'
-                  : 'Simulated — sizes per RFC 8554, no signature computed'}
+                ? 'RFC 8554 HSS/LMS verifier sample available below; sizes per RFC 8554'
+                : 'Size/capacity model only — no XMSS signature check is available'}
           </span>
           {result.scheme.cnsa2 !== 'not-cnsa' && (
             <span className="text-[10px] rounded px-1.5 py-0.5 bg-primary/10 text-primary">
@@ -269,15 +261,20 @@ export const FirmwareSigningLab: React.FC<FirmwareSigningLabProps> = ({ onComple
           </h3>
         </div>
         <p className="text-xs text-muted-foreground">
-          The ML-DSA verifier is exercised below against NIST ACVP sigVer vectors in the in-browser
-          SoftHSM. No LMS or XMSS signature is computed in this lab — those rows are size and
-          capacity models built from the RFC formulas.
+          Run the checks below to verify fixed ML-DSA reference signatures and the RFC 8554 Appendix
+          F HSS/LMS sample in the in-browser SoftHSM. Before a run, no verifier outcome has been
+          established; the panel reports passes, failures and checks that could not run. The signing
+          plan above computes bytes and capacity from published parameters. These checks do not sign
+          firmware, test state management or verify that plan. Changing a plan input resets the
+          displayed check results so an earlier pass cannot be mistaken for a check of the new plan.
+          No XMSS signature is computed or checked here.
         </p>
       </div>
       <KatValidationPanel
+        key={JSON.stringify(inputs)}
         specs={OT_SIGNING_KAT_SPECS}
         label="Firmware signing Known Answer Tests"
-        authorityNote="FIPS 204 ML-DSA sigVer vectors · RFC 8554 Appendix F HSS/LMS test cases"
+        authorityNote="FIPS 204 ML-DSA reference signature checks · RFC 8554 Appendix F HSS/LMS Test Case 1"
       />
 
       <div className="flex justify-end pt-2">

@@ -203,6 +203,7 @@ import {
   type SensitivityTier,
 } from '@/data/simAssets'
 import { ArchitecturePanel } from './ArchitecturePanel'
+import { connectionOperationSummary } from '@/data/simOperationCapabilities'
 import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
@@ -2498,7 +2499,23 @@ export function SimulationView() {
       const planningNote = (
         <div className="text-[10.5px] text-muted-foreground">
           Choices cover the link&apos;s declared confidentiality/authenticity purposes in this
-          sample plan. They do not execute cryptographic checks.
+          sample plan. They do not execute cryptographic checks. Endpoint operation statuses are
+          explicit fictional assumptions, not vendor claims; conditional or missing operations do
+          not qualify.
+          <details>
+            <summary>Scenario endpoint capabilities</summary>
+            <ul>
+              {arch.edges.map((edge) => (
+                <li key={edgeKey(edge)}>
+                  {edge.from} → {edge.to} ({edge.protocol}):{' '}
+                  {connectionOperationSummary(arch, edge)}
+                </li>
+              ))}
+            </ul>
+          </details>
+          {target === 0 && (
+            <p>No operation-eligible links in this case. This step is not complete.</p>
+          )}
           {phonePlanning.overCapacity && (
             <p className="text-warning" role="status">
               Selected links exceed available effort. No selected link receives migration credit;
@@ -2511,7 +2528,7 @@ export function SimulationView() {
           )}
         </div>
       )
-      if (decidedCount >= target) {
+      if (target > 0 && decidedCount >= target) {
         return (
           <div className="mt-2 space-y-1.5">
             {planningNote}
@@ -2545,6 +2562,9 @@ export function SimulationView() {
                     {isDeclaredPlanningEdge(e)
                       ? `${e.criticality} · ${e.requiredPurposes.join(' + ')}`
                       : 'Case purpose unassessed'}
+                  </span>
+                  <span className="block whitespace-normal text-[10px] font-normal text-muted-foreground">
+                    {connectionOperationSummary(arch, e)}
                   </span>
                 </span>
                 <div className="flex shrink-0 gap-1">

@@ -27,6 +27,11 @@ export const PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS: Record<string, Incidental
       coverage: 'models',
       reason: 'Policy/capability modelling, not an advertised operation in this tool.',
     },
+    'email-signing:LMS': {
+      coverage: 'teaches',
+      reason:
+        'Reference text: the CMS algorithm list and RFC table name HSS/LMS (SP 800-208) as a CMS signature option; the workshop signs and measures RSA-PSS and ML-DSA only.',
+    },
     'envelope-encrypt:ML-DSA': {
       coverage: 'teaches',
       reason:

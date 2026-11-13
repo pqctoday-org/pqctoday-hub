@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "publicationId": "99b48d8aeb285a5417384251a795f5ca787b185102f2f5086ab232957b594a01",
-  "generatedAt": "2026-10-28T04:21:30+00:00",
+  "publicationId": "21a8e43d3b06b2486c68877528ce85d08e07f968864d366f68b63264896ee172",
+  "generatedAt": "2026-11-12T08:30:14+00:00",
   "scope": {
     "fips": "FIPS 140-3 only (NIST CMVP)",
     "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",
@@ -13,38 +13,38 @@
     "fips": {
       "label": "NIST CMVP \u2014 FIPS 140-3",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active",
-      "retrievedAt": "2026-10-28T04:21:52+00:00",
-      "count": 814
+      "retrievedAt": "2026-11-12T08:30:14+00:00",
+      "count": 831
     },
     "cavp": {
       "label": "NIST CAVP \u2014 ML-KEM, ML-DSA, SLH-DSA, LMS",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/validation-search",
-      "retrievedAt": "2026-10-28T03:02:26+00:00",
-      "count": 335
+      "retrievedAt": "2026-11-12T08:40:30+00:00",
+      "count": 341
     },
     "esv": {
       "label": "NIST CMVP \u2014 Entropy Source Validations",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/search",
-      "retrievedAt": "2026-10-28T06:14:12+00:00",
-      "count": 361
+      "retrievedAt": "2026-11-12T08:51:14+00:00",
+      "count": 363
     },
     "cc": {
       "label": "Common Criteria Portal",
       "sourceUrl": "https://www.commoncriteriaportal.org/products/",
-      "retrievedAt": "2026-10-28T06:14:13+00:00",
-      "count": 886
+      "retrievedAt": "2026-11-12T08:55:40+00:00",
+      "count": 906
     },
     "anssi": {
       "label": "ANSSI (CC and CSPN)",
       "sourceUrl": "https://messervices.cyber.gouv.fr/visas/catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi.pdf",
-      "retrievedAt": "2026-10-28T06:14:22+00:00",
+      "retrievedAt": "2026-11-12T08:55:48+00:00",
       "count": 191
     },
     "eucc": {
       "label": "ENISA EUCC",
       "sourceUrl": "https://certification.enisa.europa.eu/certificates_en",
-      "retrievedAt": "2026-10-28T06:14:29+00:00",
-      "count": 112
+      "retrievedAt": "2026-11-12T08:56:02+00:00",
+      "count": 122
     }
   },
   "exclusions": {

@@ -182,115 +182,162 @@ const RETIRED_SUCCESSOR = [
   /already tracked as (?:the existing )?'([A-Za-z0-9._-]+)'/i,
 ]
 
-const {
-  data: currentItems,
-  previousData: previousItems,
-  metadata,
-} = loadLatestCSV<RawSoftwareItem, SoftwareItem>(
+/** Pure row projection; lifecycle is kept separate from dataset comparison status. */
+function toSoftwareItem(row: RawSoftwareItem): SoftwareItem {
+  return {
+    productId: row.product_id || '',
+    softwareName: row.software_name,
+    productKind: row.product_kind || '',
+    cataloguePopulation: row.catalogue_population || '',
+    baselineRationale: row.baseline_rationale || '',
+    familyId: row.family_id || '',
+    formerNames: (row.former_names || '')
+      .split(';')
+      .map((n) => n.trim())
+      .filter(Boolean),
+    categoryId: row.category_id,
+    categoryName: row.category_name,
+    infrastructureLayer: row.infrastructure_layer,
+    cisaCategory:
+      row.cisa_category || deriveCisaCategory(row.category_name, row.infrastructure_layer),
+    pqcSupport: row.pqc_support,
+    pqcCertified: (row.pqc_certified || 'none') as SoftwareItem['pqcCertified'],
+    hasCertification: (row.has_certification || 'unknown') as SoftwareItem['hasCertification'],
+    pqcStatusCanonical: row.pqc_status_canonical || '',
+    pqcCapabilityDescription: row.pqc_capability_description,
+    licenseType: row.license_type,
+    license: row.license,
+    latestVersion: row.latest_version,
+    releaseDate: row.release_date,
+    fipsValidated: row.fips_validated,
+    pqcMigrationPriority: row.pqc_migration_priority,
+    primaryPlatforms: row.primary_platforms,
+    targetIndustries: row.target_industries,
+    authoritativeSource: row.authoritative_source,
+    repositoryUrl: row.repository_url,
+    productBrief: row.product_brief,
+    productBriefUrl: row.product_brief_url?.trim() || undefined,
+    userManualUrl: row.user_manual_url?.trim() || undefined,
+    // `;`-separated, never `,` — a name may itself carry one ("Lim, Thing-han").
+    openSourceMaintainers: (row.open_source_maintainers || '')
+      .split(';')
+      .map((m) => m.trim())
+      .filter(Boolean),
+    sourceType: row.source_type,
+    verificationStatus: deriveVerificationStatus(
+      row.verification_status,
+      row.proof_url,
+      row.validation_result,
+      row.evidence_flags,
+      row.proof_relevant_info
+    ),
+    lastVerifiedDate: row.last_verified_date,
+    migrationPhases: row.migration_phases || '',
+    learningModules: row.learning_modules || '',
+    vendorId: row.vendor_id || '',
+    peerReviewed: (row.peer_reviewed?.toLowerCase() as SoftwareItem['peerReviewed']) || undefined,
+    vettingBody: row.vetting_body
+      ? row.vetting_body
+          .split(';')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : undefined,
+    evidenceFlags: row.evidence_flags
+      ? row.evidence_flags
+          .split(';')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : undefined,
+    proofUrl: row.proof_url || undefined,
+    proofPublicationDate: row.proof_publication_date || undefined,
+    proofRelevantInfo: row.proof_relevant_info || undefined,
+    validationResult: (row.validation_result as SoftwareItem['validationResult']) || undefined,
+    correctionNotes: row.correction_notes || undefined,
+    quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
+    wip: row.wip === 'true',
+    githubContributionUrl: row.github_contribution_url?.trim() || undefined,
+    confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+    cswp39Tags: row.cswp39_tags
+      ? row.cswp39_tags
+          .split(';')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : undefined,
+    hybridKemSupport: parseHybridKemSupport(row.hybrid_kem_support),
+    hybridSigSupport: parseHybridSigSupport(row.hybrid_sig_support),
+  }
+}
+
+export interface HistoricalProductRecord {
+  product: SoftwareItem
+  lifecycle: string
+  reason: string
+  deprecatedAt?: string
+}
+
+/** Parse one snapshot only. Historical rows never enter active product consumers. */
+export function buildProductSnapshot(rows: RawSoftwareItem[]) {
+  const active: SoftwareItem[] = []
+  const historical = new Map<string, HistoricalProductRecord>()
+  const duplicates: Array<[string, string]> = []
+  const successors: Array<[string, string]> = []
+  let deprecatedCount = 0
+  for (const row of rows) {
+    if (!row.status || row.status === 'active') {
+      active.push(toSoftwareItem(row))
+      continue
+    }
+    deprecatedCount += 1
+    const reason = (row.deprecated_reason || '').trim()
+    const successor = DUPLICATE_OF.exec(reason)?.[1]
+    if (successor && row.software_name)
+      duplicates.push([row.software_name, successor.replace(/[:.,]+$/, '')])
+    for (const re of RETIRED_SUCCESSOR) {
+      const id = re.exec(reason)?.[1]
+      if (id && row.product_id) {
+        successors.push([row.product_id, id.replace(/[:.,]+$/, '')])
+        break
+      }
+    }
+    // Preserve useful source-backed history, not rows withheld for absent proof.
+    if (
+      ['deprecated', 'obsolete'].includes(row.status) &&
+      row.product_id &&
+      row.proof_url?.trim() &&
+      reason
+    ) {
+      historical.set(row.product_id.toLowerCase(), {
+        product: toSoftwareItem(row),
+        lifecycle: row.status,
+        reason,
+        deprecatedAt: row.deprecated_at || undefined,
+      })
+    }
+  }
+  return { active, historical, duplicates, successors, deprecatedCount }
+}
+
+const snapshots = loadLatestCSV<RawSoftwareItem, RawSoftwareItem>(
   modules,
   /catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
-  (row) => {
-    if (row.status && row.status !== 'active') {
-      deprecatedRowCount += 1
-      const successor = DUPLICATE_OF.exec((row.deprecated_reason || '').trim())?.[1]
-      if (successor && row.software_name) {
-        duplicateSuccessors.push([row.software_name, successor.replace(/[:.,]+$/, '')])
-      }
-      const reason = (row.deprecated_reason || '').trim()
-      for (const re of RETIRED_SUCCESSOR) {
-        const id = re.exec(reason)?.[1]
-        if (id && row.product_id) {
-          retiredIdCandidates.push([row.product_id, id.replace(/[:.,]+$/, '')])
-          break
-        }
-      }
-      return null
-    }
-    return {
-      productId: row.product_id || '',
-      softwareName: row.software_name,
-      productKind: row.product_kind || '',
-      cataloguePopulation: row.catalogue_population || '',
-      baselineRationale: row.baseline_rationale || '',
-      familyId: row.family_id || '',
-      formerNames: (row.former_names || '')
-        .split(';')
-        .map((n) => n.trim())
-        .filter(Boolean),
-      categoryId: row.category_id,
-      categoryName: row.category_name,
-      infrastructureLayer: row.infrastructure_layer,
-      cisaCategory:
-        row.cisa_category || deriveCisaCategory(row.category_name, row.infrastructure_layer),
-      pqcSupport: row.pqc_support,
-      pqcCertified: (row.pqc_certified || 'none') as SoftwareItem['pqcCertified'],
-      hasCertification: (row.has_certification || 'unknown') as SoftwareItem['hasCertification'],
-      pqcStatusCanonical: row.pqc_status_canonical || '',
-      pqcCapabilityDescription: row.pqc_capability_description,
-      licenseType: row.license_type,
-      license: row.license,
-      latestVersion: row.latest_version,
-      releaseDate: row.release_date,
-      fipsValidated: row.fips_validated,
-      pqcMigrationPriority: row.pqc_migration_priority,
-      primaryPlatforms: row.primary_platforms,
-      targetIndustries: row.target_industries,
-      authoritativeSource: row.authoritative_source,
-      repositoryUrl: row.repository_url,
-      productBrief: row.product_brief,
-      productBriefUrl: row.product_brief_url?.trim() || undefined,
-      userManualUrl: row.user_manual_url?.trim() || undefined,
-      // `;`-separated, never `,` — a name may itself carry one ("Lim, Thing-han").
-      openSourceMaintainers: (row.open_source_maintainers || '')
-        .split(';')
-        .map((m) => m.trim())
-        .filter(Boolean),
-      sourceType: row.source_type,
-      verificationStatus: deriveVerificationStatus(
-        row.verification_status,
-        row.proof_url,
-        row.validation_result,
-        row.evidence_flags,
-        row.proof_relevant_info
-      ),
-      lastVerifiedDate: row.last_verified_date,
-      migrationPhases: row.migration_phases || '',
-      learningModules: row.learning_modules || '',
-      vendorId: row.vendor_id || '',
-      peerReviewed: (row.peer_reviewed?.toLowerCase() as SoftwareItem['peerReviewed']) || undefined,
-      vettingBody: row.vetting_body
-        ? row.vetting_body
-            .split(';')
-            .map((s: string) => s.trim())
-            .filter(Boolean)
-        : undefined,
-      evidenceFlags: row.evidence_flags
-        ? row.evidence_flags
-            .split(';')
-            .map((s: string) => s.trim())
-            .filter(Boolean)
-        : undefined,
-      proofUrl: row.proof_url || undefined,
-      proofPublicationDate: row.proof_publication_date || undefined,
-      proofRelevantInfo: row.proof_relevant_info || undefined,
-      validationResult: (row.validation_result as SoftwareItem['validationResult']) || undefined,
-      correctionNotes: row.correction_notes || undefined,
-      quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
-      wip: row.wip === 'true',
-      githubContributionUrl: row.github_contribution_url?.trim() || undefined,
-      confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
-      cswp39Tags: row.cswp39_tags
-        ? row.cswp39_tags
-            .split(';')
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : undefined,
-      hybridKemSupport: parseHybridKemSupport(row.hybrid_kem_support),
-      hybridSigSupport: parseHybridSigSupport(row.hybrid_sig_support),
-    }
-  },
-  true // withPrevious for status badges
+  (row) => row,
+  true
 )
+const currentSnapshot = buildProductSnapshot(snapshots.data)
+const currentItems = currentSnapshot.active
+const previousItems = snapshots.previousData
+  ? buildProductSnapshot(snapshots.previousData).active
+  : null
+const metadata = snapshots.metadata
+deprecatedRowCount = currentSnapshot.deprecatedCount
+duplicateSuccessors.push(...currentSnapshot.duplicates)
+retiredIdCandidates.push(...currentSnapshot.successors)
+
+/** Exact immutable-ID lookup for explicit read-only detail, never active search/selection. */
+export function findHistoricalProductById(id: string): HistoricalProductRecord | undefined {
+  // Current active identity and verified successor resolution take precedence at callers.
+  return currentSnapshot.historical.get(id.trim().toLowerCase())
+}
 
 // Compute status map if previous data exists. Keyed by product_id — the row's
 // immutable identity — so a display-name correction reads as "Updated", not as

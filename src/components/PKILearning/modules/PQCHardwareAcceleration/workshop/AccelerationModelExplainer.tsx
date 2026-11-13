@@ -10,12 +10,16 @@ import { ChevronLeft, ChevronRight, Lightbulb, FlaskConical, BookOpen } from 'lu
 import { Button } from '@/components/ui/button'
 import { MODELS, type AccelModel, type Fit, type ModelId } from '../data/models'
 import { ModelVisual } from './ModelVisuals'
+import { GpuFitExample, KernelFitExamples } from './ModelFitExamples'
 
 const FIT_STYLE: Record<Fit, { label: string; cls: string }> = {
   strong: { label: 'Strong', cls: 'bg-success/15 text-status-success border-success/40' },
   partial: { label: 'Partial', cls: 'bg-warning/15 text-status-warning border-warning/40' },
   weak: { label: 'Weak', cls: 'bg-muted/50 text-muted-foreground border-border' },
-  none: { label: 'No', cls: 'bg-destructive/10 text-destructive border-destructive/40' },
+  none: {
+    label: 'Not demonstrated',
+    cls: 'bg-muted/50 text-muted-foreground border-border',
+  },
 }
 
 const FIT_LABELS: { key: keyof AccelModel['fit']; label: string }[] = [
@@ -89,9 +93,10 @@ export const AccelerationModelExplainer: React.FC<AccelerationModelExplainerProp
 
         <p className="text-xs text-muted-foreground">
           Authored fit guidance for the illustrated model and workload; not a universal
-          hardware-capability verdict or a benchmark of every implementation. A “No” rating does not
-          establish mathematical impossibility.
+          hardware-capability verdict or a benchmark of every implementation. “Not demonstrated”
+          means the stated evidence does not establish that case, not mathematical impossibility.
         </p>
+        {model.fitContext && <p className="text-sm text-foreground/85">{model.fitContext}</p>}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {FIT_LABELS.map((f) => {
             const style = FIT_STYLE[model.fit[f.key]]
@@ -106,6 +111,8 @@ export const AccelerationModelExplainer: React.FC<AccelerationModelExplainerProp
           })}
         </div>
 
+        {model.id === 'gpu' && <GpuFitExample />}
+        {(model.id === 'npu' || model.id === 'fpga') && <KernelFitExamples />}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="rounded-md border border-border bg-card/40 p-3">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mb-1">
@@ -122,7 +129,11 @@ export const AccelerationModelExplainer: React.FC<AccelerationModelExplainerProp
               {model.ourEvidence ? (
                 <>
                   <FlaskConical size={12} className="text-primary" />
-                  <span className="text-primary">Our own evidence</span>
+                  <span className="text-primary">
+                    {model.id === 'npu'
+                      ? 'Our desk assessment (not prototyped)'
+                      : 'Our own evidence'}
+                  </span>
                 </>
               ) : (
                 <>

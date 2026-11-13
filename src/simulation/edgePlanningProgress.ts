@@ -156,7 +156,7 @@ export function deriveEdgePlanningProgress(
   }
 }
 
-/** Reuse current scenario eligibility unchanged; no new endpoint support policy. */
+/** Reuse the shared scenario endpoint-operation eligibility; never duplicate its policy. */
 export function planningForArchitecture(
   arch: Architecture,
   p5Fraction: number,

@@ -192,8 +192,13 @@ describe('the learner enters their own count of systems or products', () => {
     expect(message).toHaveAttribute('aria-live', 'polite')
     expect(message).toHaveTextContent('The figures on this page still use 120.')
     expect(message).not.toHaveTextContent('below')
-    expect(exportText()).toContain('Systems or products in scenario (your count): 120')
-    expect(exportText()).toContain('| Capital Expenditure | $9.0M |')
+    expect(exportText()).toContain('ROI report unavailable')
+    expect(exportText()).not.toContain('Systems or products in scenario (your count): 120')
+    expect(exportText()).not.toContain('| Capital Expenditure |')
+    expect(screen.getByRole('button', { name: 'Save sample report' })).toBeDisabled()
+    expect(screen.getByText(/Reporting paused while the count is being edited/)).toHaveTextContent(
+      'last valid count of 120'
+    )
     expect(screen.queryByText('Per-product model (your count)')).not.toBeInTheDocument()
     expect(screen.getByTestId('roi-cross-check-waiting')).toHaveTextContent('Not assessed')
 
@@ -343,9 +348,7 @@ describe('the learner enters their own count of systems or products', () => {
       'Systems or products in scenario (your count): 120 (entered by you)'
     )
     expect(md).toHaveTextContent('it is not taken from the Hub catalogue')
-    expect(md).toHaveTextContent(
-      'agreement or spread does not establish calibration, accuracy or confidence'
-    )
+    expect(md).toHaveTextContent('Agreement is not calibration, accuracy or confidence')
     expect(md).not.toHaveTextContent('Catalogue products in selected scenario')
     expect(md).not.toHaveTextContent('catalogue-count scenario')
     fireEvent.click(screen.getByRole('button', { name: 'Save sample report' }))
@@ -382,18 +385,24 @@ describe('the learner enters their own count of systems or products', () => {
 })
 
 describe('the comparison wording', () => {
-  it('describes close and divergent numerical results without implying matched scope or confidence', () => {
+  it('describes close and divergent numerical results for the same estate without implying calibration or confidence', () => {
     mockData = { ...baseMockData, isAssessmentComplete: true, assessmentResult: assessment }
     renderCalc()
     enterCount('10')
     fireEvent.change(screen.getByLabelText(/Capex per Product/i), { target: { value: '25000' } })
     expect(screen.getByText('Within sample comparison band.')).toBeInTheDocument()
     expect(screen.getByLabelText('ROI export')).toHaveTextContent('Within sample comparison band')
-    expect(screen.getByLabelText('ROI export')).toHaveTextContent('scope not reconciled')
+    expect(screen.getByLabelText('ROI export')).toHaveTextContent(
+      'Same-estate comparison (one-time migration cost)'
+    )
     fireEvent.change(screen.getByLabelText(/Capex per Product/i), { target: { value: '200000' } })
     expect(screen.getByText('Outside sample comparison band.')).toBeInTheDocument()
     expect(screen.getByLabelText('ROI export')).not.toHaveTextContent('independent second estimate')
-    expect(screen.getByText(/Agreement is not calibration/)).toBeInTheDocument()
+    expect(
+      within(screen.getByText('Cross-check vs your assessment').closest('details')!).getByText(
+        /Agreement is not calibration/
+      )
+    ).toBeInTheDocument()
   })
 
   it('describes an actual returned floor without diagnosing profile completeness or universal model reliability', () => {
@@ -418,7 +427,7 @@ describe('the comparison wording', () => {
   it('still invites the assessment when none is complete, whatever the count', () => {
     renderCalc()
     expect(
-      screen.getByText(/to generate a separate assessment-derived scenario estimate/)
+      screen.getByText(/to adopt its attributes as assumptions for the same fictional estate/)
     ).toBeVisible()
     expect(screen.getByText(/agreement is not calibrated confidence/)).toBeInTheDocument()
   })

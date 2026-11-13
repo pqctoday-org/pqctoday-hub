@@ -64,7 +64,7 @@ describe('illustrative gateway figures', () => {
     expect(GATEWAY_FIGURES_NOTE).toMatch(/not measurements or vendor specifications/)
     expect(GATEWAY_FIGURES_NOTE).toMatch(/no benchmark source or test conditions are supplied/)
     expect(GATEWAY_FIGURES_NOTE).toMatch(/instead of assuming a uniform buffer size or performance/)
-    expect(HANDSHAKE_MITIGATIONS_NOTE).toMatch(/illustrative planning inputs/)
+    expect(HANDSHAKE_MITIGATIONS_NOTE).toMatch(/exact captured messages/)
   })
 })
 

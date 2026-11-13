@@ -33,6 +33,7 @@ import {
   SECTOR_BODIES,
 } from '../data/bankingData'
 import { PAYMENT_NETWORKS } from '../data/paymentNetworkData'
+import { EMV_CARD_POPULATION } from '../data/emvCardPopulation'
 import { CARD_AUTH_SPECS } from '../data/cardCryptoData'
 import { MOBILE_WALLETS } from '../data/tokenizationData'
 import { POS_TERMINAL_PROFILES } from '../data/posCryptoData'
@@ -80,9 +81,20 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           (Europay, Mastercard, Visa) is the global standard for chip-based payment card
           authentication. Originally developed in the 1990s, EMV is now managed by{' '}
           <strong className="text-foreground">EMVCo</strong>, jointly owned by the six major payment
-          networks. With <strong className="text-foreground">14.7 billion</strong> EMV cards in
-          circulation at the end of 2024 — EMVCo&rsquo;s own figure, reported at the 2025 EMV User
-          Meeting, and still growing — it is the largest deployed PKI ecosystem in the world.
+          networks. EMVCo reports{' '}
+          <strong className="text-foreground">{EMV_CARD_POPULATION.count}</strong> EMV Chip cards in
+          global circulation at the {EMV_CARD_POPULATION.asOf} in its{' '}
+          <a
+            href={EMV_CARD_POPULATION.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            15 July 2026 newsletter
+          </a>
+          . This is a global fleet total, not a count of cards using RSA-2048 or offline
+          authentication. The RSA-based examples here coexist with other EMV profiles, including
+          ECC-based authentication.
         </p>
 
         <div className="glass-panel p-4">
@@ -753,9 +765,10 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
       >
         <p className="text-muted-foreground">
           The payment ecosystem faces multiple quantum threat vectors, from offline card
-          authentication to key injection infrastructure. The scale is unprecedented —{' '}
-          <strong className="text-foreground">14.7 billion EMV cards</strong> (end of 2024) cannot
-          be replaced overnight.
+          authentication to key injection infrastructure. The global fleet includes{' '}
+          <strong className="text-foreground">{EMV_CARD_POPULATION.count} EMV Chip cards</strong> (
+          {EMV_CARD_POPULATION.asOf}, EMVCo). This context helps explain the coordination challenge;
+          it does not count the RSA-dependent subset or set a replacement duration.
         </p>
 
         <div className="glass-panel p-4">

@@ -20,7 +20,8 @@ import { PageHeader } from '../../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { Button } from '../../ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { softwareMetadata, softwareData } from '@/data/migrateData'
+import { softwareMetadata, softwareData, findHistoricalProductById } from '@/data/migrateData'
+import { HistoricalProductDetail } from './HistoricalProductDetail'
 import {
   useMigrateSelectionStore,
   selectedProductIds,
@@ -169,6 +170,11 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
   // productLinkKeyRef first, so they never re-hydrate as a new link.
   // On the phone shell MobileMigrateView reads these params itself.
   const linkKey = migrateLinkKey((k) => searchParams.get(k))
+  const historicalRef = searchParams.get('product')
+  const historicalProduct =
+    !embedded && historicalRef && !resolveProductRef(historicalRef)
+      ? findHistoricalProductById(historicalRef)
+      : undefined
   const hasLinkParams = MIGRATE_LINK_PARAMS.some((k) => searchParams.has(k))
   const [productLink, setProductLink] = useState<{
     key: string
@@ -189,8 +195,15 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     }
     if (productLinkKeyRef.current === linkKey) return
     productLinkKeyRef.current = linkKey
+    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from explicit same-record historical URL */
+    if (historicalProduct) {
+      setProductLinkNotice(null)
+      setElsewhereProducts([])
+      setProductLink(null)
+      setVendorLink(null)
+      return
+    }
     const intent = resolveMigrateLink((k) => searchParams.get(k))
-    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from the link params, once per distinct param value */
     setProductLinkNotice(intent.notice)
     setElsewhereProducts(intent.elsewhere)
     setVendorLink(intent.vendorId ? { key: linkKey, vendorId: intent.vendorId } : null)
@@ -214,7 +227,16 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       productLinkKeyRef.current = migrateLinkKey((k) => sp.get(k))
       setSearchParams(sp, { replace: true })
     }
-  }, [embedded, isMobileShell, hasLinkParams, linkKey, searchParams, setSearchParams, setTabStore])
+  }, [
+    embedded,
+    isMobileShell,
+    hasLinkParams,
+    linkKey,
+    searchParams,
+    setSearchParams,
+    setTabStore,
+    historicalProduct,
+  ])
 
   /** One URL write that never re-hydrates as a link (the key is recorded
    *  first). react-router doesn't queue functional updates, so every change
@@ -467,6 +489,27 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             <Undo2 size={14} aria-hidden />
             Restore my selection
           </Button>
+        </div>
+      )}
+
+      {!embedded && historicalProduct && (
+        <div className="my-4">
+          <Button
+            variant="ghost"
+            onClick={() =>
+              setSearchParams(
+                (sp) => {
+                  const next = new URLSearchParams(sp)
+                  next.delete('product')
+                  return next
+                },
+                { replace: true }
+              )
+            }
+          >
+            Close historical record
+          </Button>
+          <HistoricalProductDetail record={historicalProduct} />
         </div>
       )}
 

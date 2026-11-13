@@ -62,14 +62,15 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'cost-model-explorer': [
     {
-      prompt: 'After Run Monte Carlo, what is the honest number to bring to a budget discussion?',
+      prompt:
+        'Two migration-cost estimates are close, but both use the same inventory that omits several systems. What does their small spread establish?',
       options: [
-        'The spread between the parametric, bottom-up and Monte Carlo estimates',
-        'The lowest of the six figures',
-        'The cost-of-inaction line',
+        'Only limited disagreement between methods on those inputs; correct the inventory and examine sensitivity and omitted costs',
+        'The spread includes all uncertainty and is a calibrated confidence interval for actual cost',
+        'Agreement means the missing systems cannot materially affect the budget',
       ],
       answer: 0,
-      why: 'One scenario, six lenses: the range between estimates is the uncertainty, and the slider that moves it most is the assumption to defend; the inaction line measures a different thing.',
+      why: 'Method spread describes disagreement conditional on the chosen inputs, not all uncertainty. A shared incomplete inventory can make both estimates wrong in the same direction: their errors are correlated. Correct that inventory, rerun the estimates, vary uncertain assumptions and examine costs the models omit. The Monte Carlo P10–P90 band is conditional on its selected inputs and sampling assumptions; it is not by itself a calibrated confidence interval for the actual programme cost. Reconcile method differences separately from common-input and unmodeled uncertainty.',
     },
   ],
   'crqc-scenario': [
@@ -437,14 +438,15 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'migration-verification': [
     {
-      prompt: 'A system runs both the old and the new algorithm. Is it migrated?',
+      prompt:
+        'A fictional transition policy requires traditional+PQC hybrid negotiation and rejects traditional-only fallback. Captures show that hybrid path and negative tests reject traditional-only peers. The five evidence-reference fields are filled. Which conclusion is supported?',
       options: [
-        'No — evidence that the old algorithm is gone is the standard',
-        'Yes, once the new one works',
-        'Yes, if the vendor says so',
+        'The tested path supports the stated hybrid policy; filled fields alone do not prove technical removal or verify every deployment path',
+        'The transition must be rejected solely because a traditional algorithm remains in the hybrid combination',
+        'The filled checklist proves the traditional algorithm and all old trust have been removed',
       ],
       answer: 0,
-      why: 'The five-point evidence standard (observed negotiation, negative test, chain under PQC, downgrade documented, dossier) plus the SP 800-88 decommissioning log prove removal.',
+      why: 'Intentional traditional+PQC hybrid is not the same as unintended traditional-only fallback. The captured negotiation and negative tests support the named sample path under its stated policy; they do not establish coverage of every endpoint, configuration or downgrade path. The five fields record evidence references, not technical proof of removal. A removal claim needs scoped observations and negative tests for the retired path, plus key/certificate retirement and withdrawal of obsolete verifier trust as applicable. A decommissioning log alone does not establish those technical outcomes. In production, inspect the actual records and repeat tests with your own tools against your policy.',
     },
   ],
 }

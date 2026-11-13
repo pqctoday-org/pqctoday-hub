@@ -28,24 +28,24 @@ interface Scenario {
 const SCENARIOS: Scenario[] = [
   {
     id: 'bus-vs-car',
-    title: '1. Car or School Bus? GPU vs CPU',
+    title: '1. Which Measured GPU Batch Wins?',
     description:
-      'Open the GPU model, read the plain-English analogy, then compare the “1 signature” and “4,096 signatures” rows of the diagram.',
+      'Open the GPU model and change the measured key-generation batch from 256 to 4,096 and 65,536. Compare throughput against the all-core CPU.',
     badge: 'Models',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'With one signature a single lane works while the launch cost is paid in full, so the CPU finishes first. With thousands the launch cost is shared and every lane is busy. That is why GPU PQC figures are always quoted at large batches.',
+      'The retained Metal ML-DSA-65 key-generation study gives GPU/CPU throughput ratios of 0.54× at 256, 5.87× at 4,096 and 9.27× at 65,536. The CPU wins the first batch and the GPU the other two. These are not single-signature latency results; an operation can contain parallel work.',
     config: { step: 0, model: 'gpu' },
   },
   {
     id: 'npu-mismatch',
-    title: '2. Why the AI Accelerator Cannot Help',
+    title: '2. Kernel Support, Cost or Representation?',
     description:
-      'Open the NPU model and check each ✗ against what the “Building blocks” step says Keccak and the NTT need.',
+      'Open the NPU model, compare the three failure categories, then run “Recompose the 23-bit example”. Check the byte limbs and the modular result.',
     badge: 'Models',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The NPU does rounded 8-bit multiply-adds. ML-DSA needs exact 23-bit modular arithmetic, and Keccak has no multiplication at all — the mismatch is structural, not a matter of speed.',
+      'Keeping only one byte loses the value, but three base-256 limbs reconstruct 8,380,416 exactly; nine byte-pair products give (q − 1)² mod q = 1. This establishes representation correctness, not a supported or fast NPU kernel. Missing operators, data movement and arithmetic costs require separate checks.',
     config: { step: 0, model: 'npu' },
   },
   {
@@ -67,7 +67,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Measured',
     badgeColor: 'bg-success/20 text-success border-success/50',
     observe:
-      'On the Cortex-A55 and A53, which have SHA-256 instructions and no SHA-3 ones, the SHA-2 variant signs about 11× faster on today’s engine — only the KV260, whose FPGA does SHAKE, reverses it. The hardware you have, not the algorithm, decides which variant to deploy on a given chip.',
+      'In the dated 27 September 2026 four-worker comparison, the i.MX 95 A55 CPU signs SHA2-128s at 10.87/s and SHAKE-128s at 0.94/s: about 11.6× the throughput. The KV260 SHAKE result (13.0/s) uses its FPGA, while its SHA-2 result (5.09/s) uses its CPU; that reversal is not an A53 CPU-only comparison. Choose an allowed variant using the actual implementation, operation and measured path on your target.',
     config: { step: 2 },
   },
   {

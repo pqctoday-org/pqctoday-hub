@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { SimulationView } from './SimulationView'
@@ -9,12 +9,16 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { SIM_TREES, flattenTree, isGatingStep, type TreeStep } from '@/simulation'
+import { SCENARIO_OPERATION_CASES } from '@/data/simOperationCapabilities'
 import { ARCHITECTURES } from '@/data/simArchitecture'
 import { planningForArchitecture } from '@/simulation/edgePlanningProgress'
 
 // Only the shell choice is mocked. Assessment, trees, completion, decisions,
 // effort, eligibility and the inline UI all use their actual implementation.
 vi.mock('@/hooks/useIsMobileShell', () => ({ useIsMobileShell: () => true }))
+
+const originalOperationCases = { ...SCENARIO_OPERATION_CASES.small }
+afterEach(() => Object.assign(SCENARIO_OPERATION_CASES.small, originalOperationCases))
 
 const p5Steps = flattenTree(SIM_TREES.p5!).filter(isGatingStep)
 const correctLabels = new Set(
@@ -132,6 +136,60 @@ beforeEach(() => {
 })
 
 describe('SimulationView actual phone edge planning', () => {
+  it('does not count a signing-only endpoint as key-establishment capable in the actual phone step', () => {
+    const key = 'user-cdn-TLS 1.3',
+      original = originalOperationCases['user-cdn-TLS 1.3']
+    Object.assign(SCENARIO_OPERATION_CASES.small, {
+      [key]: {
+        ...original,
+        to: {
+          ...original.to,
+          capabilities: { 'produce-signature-through-provider-api': 'available' },
+        },
+      },
+    })
+    useSimulationStore.setState({ edgeDecisions: { [key]: 'hybrid', 'outside-case': 'pure' } })
+    prepareArchitecture(2)
+    const work = priorWork(),
+      board = openPilots()
+    fireEvent.click(decisionOption(board, true))
+    expect(within(board).getByText(/0\/2 decisions — pick Hybrid or Pure PQC/)).toBeInTheDocument()
+    expect(within(board).getAllByRole('button', { name: /^Hybrid$/ })).toHaveLength(2)
+    fireEvent.click(within(board).getByText('Scenario endpoint capabilities'))
+    expect(within(board).getByText(/cdn: key establishment unknown/)).toBeVisible()
+    expect(
+      within(board).getByText(/explicit fictional assumptions, not vendor claims/)
+    ).toBeVisible()
+    fireEvent.click(within(board).getByRole('button', { name: 'Undo user to cdn (TLS 1.3)' }))
+    expect(useSimulationStore.getState().edgeDecisions).toEqual({ 'outside-case': 'pure' })
+    expect(priorWork()).toEqual(work)
+  })
+
+  it('never skips an architecture step when all required operation capabilities are missing', () => {
+    for (const [key, original] of Object.entries(originalOperationCases)) {
+      Object.assign(SCENARIO_OPERATION_CASES.small, {
+        [key]: {
+          ...original,
+          from: { ...original.from, capabilities: {} },
+          to: { ...original.to, capabilities: {} },
+        },
+      })
+    }
+    prepareArchitecture(2)
+    const board = openPilots()
+    fireEvent.click(decisionOption(board, true))
+    expect(
+      within(board).getByText(
+        'No operation-eligible links in this case. This step is not complete.'
+      )
+    ).toBeVisible()
+    expect(
+      within(board).queryByText(/migration decisions made — this step is credited/)
+    ).not.toBeInTheDocument()
+    expect(within(board).queryByRole('button', { name: /^Hybrid$/ })).not.toBeInTheDocument()
+    expect(planningForArchitecture(ARCHITECTURES.small, 1, {}).creditedKeys).toEqual([])
+  })
+
   it('does not skip min2 architecture for stale, malformed or unavailable keys, and removes only the chosen saved input', () => {
     useSimulationStore.setState({
       edgeDecisions: {

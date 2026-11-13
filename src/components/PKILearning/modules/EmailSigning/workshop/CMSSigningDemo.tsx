@@ -13,23 +13,23 @@ import { Button } from '@/components/ui/button'
 const EMAIL_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'email-cms-sigver',
-    useCase: 'CMS SignedData S/MIME signing',
-    standard: 'RFC 9629 + FIPS 204 ACVP',
+    useCase: 'ML-DSA-65 reference signature verification (email-signing primitive)',
+    standard: 'FIPS 204 ML-DSA-65 · NIST reference sample',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
   },
   {
     id: 'email-dual-sig',
-    useCase: 'Dual-signature migration parity',
-    standard: 'RFC 9629 + FIPS 204',
+    useCase: 'ML-DSA-65 generated-key sign/verify round trip',
+    standard: 'FIPS 204 ML-DSA-65 · functional check',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
   },
   {
     id: 'email-cms-decap',
-    useCase: 'CMS EnvelopedData key transport',
-    standard: 'RFC 9629 + FIPS 203 ACVP',
+    useCase: 'ML-KEM-768 reference decapsulation (email-encryption primitive)',
+    standard: 'FIPS 203 ML-KEM-768 · NIST reference sample',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },
@@ -318,8 +318,8 @@ export const CMSSigningDemo: React.FC = () => {
 
       <KatValidationPanel
         specs={EMAIL_KAT_SPECS}
-        label="Email Signing PQC Known Answer Tests"
-        authorityNote="RFC 9629 · NIST FIPS 203/204"
+        label="Email cryptographic primitive checks"
+        authorityNote="FIPS 204 signature verification, a generated-key signing round trip and FIPS 203 decapsulation. These checks do not parse CMS, encode signed attributes, process MIME, compare dual signatures or test interoperability. RFC 9882 defines ML-DSA in CMS; RFC 9629 defines CMS KEMRecipientInfo. Evaluate the message format and recipient behavior separately with your email tools."
       />
     </div>
   )

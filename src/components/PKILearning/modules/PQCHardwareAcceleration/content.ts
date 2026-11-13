@@ -13,10 +13,10 @@ import { citedStandards } from '../trustHardwareCitations'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-hw-acceleration',
-  version: '1.1.0',
+  version: '1.1.1',
   // No lastReviewed yet — this new module's claims have not been independently
   // reviewed via record_module_review.py (moduleReviewHonesty.test.ts).
-  lastEdited: '2026-11-09',
+  lastEdited: '2026-11-13',
 
   standards: [
     getStandard('FIPS 202'),
@@ -56,6 +56,7 @@ export const content: ModuleContent = {
     hashsigClock: '240 MHz (250 MHz missed by 0.010 ns)',
     cupqcHardware:
       'H100 (Hopper) for the published figures; supports compute capability 8.0–9.0 incl. Ampere and Jetson Orin (8.7)',
-    imx95Npu: 'eIQ Neutron N3-1024S, 2.0 TOPS — evaluated and ruled out for PQC (desk analysis)',
+    imx95Npu:
+      'eIQ Neutron N3-1024S on the CPU+NPU i.MX95 SoC — PQC offload assessed on paper, not prototyped or benchmarked',
   },
 }

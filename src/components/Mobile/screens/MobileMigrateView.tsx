@@ -36,7 +36,14 @@ import {
   type DomainId,
   type ReplaceAsset,
 } from '@/data/migrationAssets'
-import { softwareData, softwareMetadata, vendorMap } from '@/data/migrateData'
+import {
+  softwareData,
+  softwareMetadata,
+  vendorMap,
+  findHistoricalProductById,
+} from '@/data/migrateData'
+import { HistoricalProductNotice } from '@/components/ui/HistoricalProductNotice'
+import type { HistoricalProductRecord } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import {
   crossSourceEnrichmentForRoadmap,
@@ -293,6 +300,10 @@ export function MobileMigrateView() {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
   const productParam = searchParams.get('product')
+  const historicalProduct =
+    productParam && !resolveProductRef(productParam)
+      ? findHistoricalProductById(productParam)
+      : undefined
   const productIdsParam = searchParams.get('productIds')
   const openParam = searchParams.get('open')
   // Desktop Replace tab's own view state (replaceTabParams.ts): ?rq= is the
@@ -349,6 +360,12 @@ export function MobileMigrateView() {
     }
     if (linkKeyRef.current === linkKey) return
     linkKeyRef.current = linkKey
+    if (historicalProduct) {
+      setLinkNotice(null)
+      setElsewhere([])
+      setSelectedProduct(null)
+      return
+    }
     const intent = resolveMigrateLink((k) => searchParams.get(k))
     setLinkNotice(intent.notice)
     setElsewhere(intent.elsewhere)
@@ -367,7 +384,7 @@ export function MobileMigrateView() {
       const tabNext = intent.tab
       updateParams((sp) => sp.set('tab', tabNext), true)
     }
-  }, [hasLinkParams, linkKey, searchParams, updateParams])
+  }, [hasLinkParams, linkKey, searchParams, updateParams, historicalProduct])
 
   // ?open=<productId>: Plan → that product's sheet; Vendors → its vendor's
   // roadmap sheet. On Evidence, a product opens its detail sheet and a domain id moves
@@ -949,7 +966,8 @@ export function MobileMigrateView() {
       {tab === 'vendorrisk' && <MobileVendorRiskTab />}
 
       <MobileProductDetailSheet
-        product={selectedProduct}
+        product={historicalProduct?.product ?? selectedProduct}
+        historicalRecord={historicalProduct}
         onClose={closeProduct}
         onViewVendorRoadmap={(vendorId) => {
           setSelectedProduct(null)
@@ -1088,10 +1106,12 @@ function CertCoverageLines({
 
 function MobileProductDetailSheet({
   product,
+  historicalRecord,
   onClose,
   onViewVendorRoadmap,
 }: {
   product: SoftwareItem | null
+  historicalRecord?: HistoricalProductRecord
   onClose: () => void
   onViewVendorRoadmap: (vendorId: string) => void
 }) {
@@ -1148,8 +1168,13 @@ function MobileProductDetailSheet({
       testId="migrate-product-detail-sheet"
     >
       {product && (
-        <div className="flex flex-col gap-3">
-          {(pqc || fips) && (
+        <div
+          className="flex flex-col gap-3"
+          role={historicalRecord ? 'region' : undefined}
+          aria-label={historicalRecord ? 'Historical product record' : undefined}
+        >
+          {historicalRecord && <HistoricalProductNotice record={historicalRecord} />}
+          {!historicalRecord && (pqc || fips) && (
             <div className="flex flex-wrap items-center gap-1.5">
               {pqc && (
                 <Badge tone={pqc.tone} size="md">
@@ -1313,7 +1338,11 @@ function MobileProductDetailSheet({
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-status-success hover:underline"
                 >
-                  <FileText size={12} aria-hidden="true" /> Validation proof
+                  <FileText size={12} aria-hidden="true" />{' '}
+                  {historicalRecord ? 'Historical source' : 'Validation proof'}
+                  {historicalRecord && product.proofPublicationDate
+                    ? ` (${product.proofPublicationDate})`
+                    : ''}
                 </a>
               )}
               {product.productBriefUrl && (
@@ -1339,7 +1368,7 @@ function MobileProductDetailSheet({
             </div>
           )}
 
-          {hasVendorRoadmap && product.vendorId && (
+          {!historicalRecord && hasVendorRoadmap && product.vendorId && (
             <Button
               type="button"
               variant="outline"

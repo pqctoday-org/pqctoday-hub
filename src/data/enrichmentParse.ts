@@ -47,13 +47,39 @@ export interface LibraryEnrichment {
 
 export type EnrichmentLookup = Record<string, LibraryEnrichment>
 
-/** Split a comma-separated value into trimmed, non-empty items. "None detected" → [] */
+/**
+ * Split top-level commas/semicolons, retaining balanced parameter groups.
+ * Malformed brackets use the existing delimiter grammar for the whole value,
+ * so an unmatched opening cannot swallow all following list items. Quotes are
+ * ordinary text here; this is not a quoted-CSV grammar.
+ */
 function splitList(val: string | undefined): string[] {
   if (!val || val === 'None detected') return []
-  return val
-    .split(/[,;]/)
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const legacy = () =>
+    val
+      .split(/[,;]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+  const expectedClosing: string[] = []
+  const items: string[] = []
+  let start = 0
+  for (let i = 0; i < val.length; i++) {
+    const char = val.charAt(i)
+    if (char === '(') expectedClosing.push(')')
+    else if (char === '[') expectedClosing.push(']')
+    else if (char === '{') expectedClosing.push('}')
+    else if (char === ')' || char === ']' || char === '}') {
+      if (expectedClosing.pop() !== char) return legacy()
+    } else if ((char === ',' || char === ';') && expectedClosing.length === 0) {
+      const item = val.slice(start, i).trim()
+      if (item) items.push(item)
+      start = i + 1
+    }
+  }
+  if (expectedClosing.length) return legacy()
+  const last = val.slice(start).trim()
+  if (last) items.push(last)
+  return items
 }
 
 /** Split a semicolon-separated value into trimmed phrases. Used for multi-phrase fields. */

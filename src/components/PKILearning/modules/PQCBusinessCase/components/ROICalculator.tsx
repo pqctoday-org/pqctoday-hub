@@ -54,17 +54,18 @@ import {
   composeQuantumMultiplier,
   computeAnnualBreachSavings,
   computeAnnualComplianceSavings,
-  computeMigrationCostFromProfile,
   computeROI,
   reconcileEstimates,
   resolveIndustryBreachBaseline,
 } from '@/utils/roiMath'
 
+import { sameEstateProfileEstimate } from './sameEstateComparison'
+
 const REGULATORY_ASSUMPTIONS_NOTE =
   'The selected framework count, editable penalty amount and fixed incident rate are illustrative scenario assumptions, not an enforcement estimate. The penalty is not a sourced average; this calculation does not establish legal liability or that migration prevents penalties. Zero is the starting scenario input when no amount was saved, not a finding of no liability. Enter a positive amount only as an explicit illustrative assumption.'
 
 const COMPARISON_SCOPE_NOTE =
-  'The scenario and the profile-based calculation may use different scopes and shared assumptions; agreement or spread does not establish calibration, accuracy or confidence.'
+  'When your own count is confirmed, both comparison methods describe that same fictional estate. Assessment attributes are adopted as assumptions for that estate; its entered count selects the existing scale band. Compare one-time migration costs only, excluding recurring opex and horizon benefits. Agreement is not calibration, accuracy or confidence.'
 
 const PROFILE_FLOOR_NOTE =
   'The assessment-derived calculation returned the sample cost floor. That value alone does not establish whether the profile is incomplete or the estimate is reliable; review the selected scope and assumptions before using it.'
@@ -302,23 +303,18 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     }
   }, [assumptions, industryBreachBaseline, quantumMultiplier])
 
-  // Independent second estimate: the cost the user's assessment profile implies
-  // (infra layers × algo count × agility/vendor/team multipliers). This is a
-  // different method from the per-product count, so reconciling the two is an
-  // honest cross-check rather than a restatement of the same number.
+  // The approved same-estate association changes only the profile's scale band.
+  // Assessment attributes remain explicit assumptions, not an independently measured inventory.
+  const countIsOwn = isOwnCount(assumptions.productsSource) && countUsable
+  const hasAssessment = data.isAssessmentComplete && !!data.assessmentResult
   const assessmentDerived = useMemo(
     () =>
-      data.isAssessmentComplete && data.assessmentResult
-        ? computeMigrationCostFromProfile(data.assessmentResult)
+      hasAssessment && data.assessmentResult && countIsOwn
+        ? sameEstateProfileEstimate(data.assessmentResult, assumptions.productsToMigrate)
         : null,
-    [data.isAssessmentComplete, data.assessmentResult]
+    [hasAssessment, data.assessmentResult, countIsOwn, assumptions.productsToMigrate]
   )
-
-  // The comparison reads the learner's own count. While the opening example (or an unconfirmed
-  // restored count) is in place there is nothing of theirs to compare, so it is not assessed; the
-  // Hub catalogue never stands in for the count.
-  const countIsOwn = isOwnCount(assumptions.productsSource) && countUsable
-  const crossCheckWaitsForCount = !!assessmentDerived && !countIsOwn
+  const crossCheckWaitsForCount = hasAssessment && !countIsOwn
   const crossCheck = useMemo(() => {
     if (!assessmentDerived || !countIsOwn) return null
     const scenarioCost = assumptions.costPerProduct * assumptions.productsToMigrate
@@ -326,13 +322,14 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     return {
       scenarioCost,
       assessmentCost,
+      estate: assessmentDerived,
       lowConfidence: assessmentCost === MIGRATION_COST_FLOOR,
       recon: reconcileEstimates(scenarioCost, assessmentCost),
     }
   }, [assessmentDerived, countIsOwn, assumptions.costPerProduct, assumptions.productsToMigrate])
 
   useEffect(() => {
-    if (onOutput && financials.totalCost > 0) {
+    if (onOutput && countUsable && financials.totalCost > 0) {
       onOutput({
         totalCostUSD: financials.totalCost,
         roiPercent: financials.roiPercent,
@@ -344,6 +341,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     }
   }, [
     onOutput,
+    countUsable,
     financials.totalCost,
     financials.roiPercent,
     financials.paybackMonths,
@@ -457,13 +455,15 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `- Discount rate (WACC): ${assumptions.discountRatePct}%\n`
     md += `- Total gross benefit: ${formatCurrency(financials.totalBenefit)}\n\n`
     if (crossCheck) {
-      md += `## Scenario comparison (scope not reconciled)\n\n`
-      if (crossCheck.lowConfidence) {
-        md += `${PROFILE_FLOOR_NOTE}\n\n`
-      } else {
-        md += `| Method | Estimate |\n|--------|----------|\n`
-        md += `| Per-product model (your count) | ${formatCurrency(crossCheck.scenarioCost)} |\n`
-        md += `| Assessment-derived | ${formatCurrency(crossCheck.assessmentCost)} |\n`
+      md += `## Same-estate comparison (one-time migration cost)\n\n`
+      md += `Both methods use the same fictional estate of ${crossCheck.estate.count.toLocaleString('en-US')} systems or products. Profile scale band: ${crossCheck.estate.bandLabel} (${crossCheck.estate.details.sysScale}×).\n\n`
+      md += `Assessment attributes adopted as assumptions for this estate:\n${crossCheck.estate.assumptions.map((line) => `- ${line}`).join('\n')}\n\n`
+      md += `The profile model is coarse and banded, not linear per instance: all counts above 200 share the existing 3× scale factor. A count of 1,000,000 does not imply a calibrated million-instance estimate.\n\n`
+      if (crossCheck.lowConfidence) md += `${PROFILE_FLOOR_NOTE}\n\n`
+      md += `| Method | One-time migration cost |\n|--------|----------|\n`
+      md += `| Per-product model (your count) | ${formatCurrency(crossCheck.scenarioCost)} |\n`
+      md += `| Assessment-derived | ${formatCurrency(crossCheck.assessmentCost)} |\n`
+      if (!crossCheck.lowConfidence) {
         md += `| Numerical comparison | ${crossCheck.recon.verdict === 'aligned' ? 'Within sample comparison band' : 'Outside sample comparison band'} (${
           crossCheck.recon.ratio === Infinity ? '∞' : `${crossCheck.recon.ratio.toFixed(1)}×`
         }, ${Math.round(crossCheck.recon.spreadPct)}% spread) |\n\n`
@@ -685,7 +685,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </div>
       </details>
 
-      {/* ── Cross-check vs your assessment (independent second estimate) ── */}
+      {/* ── Same-estate comparison using the existing profile cost model ── */}
       <details className="glass-panel p-4" open>
         <summary className="text-sm font-semibold text-foreground cursor-pointer flex items-center gap-2">
           <Scale size={16} className="text-primary shrink-0" />
@@ -695,10 +695,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           {crossCheck ? (
             <>
               <p className="text-xs text-muted-foreground">
-                The per-product scenario below uses the count of systems or products you entered. It
-                is shown beside a separate profile-based calculation; their scope and planning
-                horizons have not been reconciled. They may share assumptions. Agreement is not
-                calibration.
+                Both one-time cost estimates use the same fictional estate of{' '}
+                {crossCheck.estate.count.toLocaleString('en-US')} systems or products. Assessment
+                attributes below are assumptions for this estate, not verified inventory. Agreement
+                is not calibration.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -721,9 +721,24 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                     {formatCurrency(crossCheck.assessmentCost)}
                   </div>
                   <div className="text-[11px] text-muted-foreground mt-1">
-                    From your infrastructure, vendor &amp; agility profile
+                    Count selects scale band {crossCheck.estate.bandLabel} (
+                    {crossCheck.estate.details.sysScale}×).
                   </div>
                 </div>
+              </div>
+              <div className="text-xs text-muted-foreground" data-testid="roi-estate-assumptions">
+                <p>Assessment attributes adopted as assumptions for this estate:</p>
+                <ul className="list-disc pl-5">
+                  {crossCheck.estate.assumptions.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+                <p className="mt-2">
+                  The profile model is coarse and banded, not linear per instance. All counts above
+                  200 share the existing 3× scale factor, including 1,000,000. No calibrated
+                  estimate at that size is established. Recurring opex and horizon benefits are
+                  excluded from this one-time comparison.
+                </p>
               </div>
               {crossCheck.lowConfidence ? (
                 <div className="bg-status-warning/10 rounded-lg p-3 border border-status-warning/30 flex items-start gap-2">
@@ -762,9 +777,9 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                         {crossCheck.recon.ratio === Infinity
                           ? '∞'
                           : `${crossCheck.recon.ratio.toFixed(1)}×`}{' '}
-                        ({Math.round(crossCheck.recon.spreadPct)}% spread). Review scope, horizon
-                        and shared assumptions before comparing these outputs; a gap alone does not
-                        establish which estimate is accurate.
+                        ({Math.round(crossCheck.recon.spreadPct)}% spread). Review the adopted
+                        estate assumptions and the coarse scale bands before using these outputs; a
+                        gap alone does not establish which estimate is accurate.
                       </>
                     )}
                   </p>
@@ -790,8 +805,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
                 <Link to="/assess" className="text-primary hover:underline">
                   assessment
                 </Link>{' '}
-                to generate a separate assessment-derived scenario estimate. This panel compares
-                numbers; it does not establish independent validation or matching scope.
+                to adopt its attributes as assumptions for the same fictional estate. This panel
+                compares one-time migration costs; it does not establish independent validation.
               </p>
             </div>
           )}
@@ -1214,41 +1229,65 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </div>
       </details>
 
-      {/* Export */}
-      <ExportableArtifact
-        title="PQC Migration ROI — Export"
-        exportData={exportMarkdown}
-        filename="pqc-roi-analysis"
-        formats={['markdown', 'pdf', 'docx']}
-        onExport={() => {
-          addExecutiveDocument({
-            id: `roi-model-${Date.now()}`,
-            moduleId: 'pqc-business-case',
-            type: 'roi-model',
-            title: `PQC ROI Analysis — ${new Date().toLocaleDateString()}`,
-            data: exportMarkdown,
-            inputs: assumptions,
-            // Computed totals, distinct from `inputs` (the assumptions) — lets
-            // Board Pitch Builder show real numbers when reached outside the
-            // linear Business Case wizard (Simulation, Business Center), not
-            // just when roiOutput is passed as a live prop.
-            output: {
-              totalCostUSD: financials.totalCost,
-              roiPercent: financials.roiPercent,
-              paybackMonths: financials.paybackMonths,
-              breachCostSavingsUSD: financials.breachCostSavings,
-              productsToMigrate: assumptions.productsToMigrate,
-              productsSource: assumptions.productsSource,
-            },
-            createdAt: Date.now(),
-          })
-        }}
-      >
-        <p className="text-sm text-muted-foreground">
-          Export the ROI analysis above as markdown, PDF, or DOCX for board distribution. The
-          artifact is also saved to your Command Center Risk Artifacts list.
+      {/* Keep the artifact mounted so its pending autosave observes the current
+          guard, rather than flushing the prior valid callback on unmount. */}
+      {!countUsable && (
+        <p id="roi-export-paused" role="status" className="text-sm text-muted-foreground">
+          Reporting paused while the count is being edited. The figures still use the last valid
+          count of {assumptions.productsToMigrate.toLocaleString('en-US')} systems or products; they
+          do not describe the current entry. Enter a valid count to save, export or publish a new
+          result.
         </p>
-      </ExportableArtifact>
+      )}
+      <fieldset
+        aria-label="ROI report actions"
+        disabled={!countUsable}
+        aria-describedby={!countUsable ? 'roi-export-paused' : undefined}
+        className="min-w-0"
+      >
+        <ExportableArtifact
+          title="PQC Migration ROI — Export"
+          exportData={
+            countUsable
+              ? exportMarkdown
+              : '# ROI report unavailable\n\nEnter a valid count of systems or products before reporting a new result.'
+          }
+          filename="pqc-roi-analysis"
+          formats={['markdown', 'pdf', 'docx']}
+          onExport={
+            countUsable
+              ? () => {
+                  addExecutiveDocument({
+                    id: `roi-model-${Date.now()}`,
+                    moduleId: 'pqc-business-case',
+                    type: 'roi-model',
+                    title: `PQC ROI Analysis — ${new Date().toLocaleDateString()}`,
+                    data: exportMarkdown,
+                    inputs: assumptions,
+                    // Computed totals, distinct from `inputs` (the assumptions) — lets
+                    // Board Pitch Builder show real numbers when reached outside the
+                    // linear Business Case wizard (Simulation, Business Center), not
+                    // just when roiOutput is passed as a live prop.
+                    output: {
+                      totalCostUSD: financials.totalCost,
+                      roiPercent: financials.roiPercent,
+                      paybackMonths: financials.paybackMonths,
+                      breachCostSavingsUSD: financials.breachCostSavings,
+                      productsToMigrate: assumptions.productsToMigrate,
+                      productsSource: assumptions.productsSource,
+                    },
+                    createdAt: Date.now(),
+                  })
+                }
+              : undefined
+          }
+        >
+          <p className="text-sm text-muted-foreground">
+            Export the ROI analysis above as markdown, PDF, or DOCX for board distribution. The
+            artifact is also saved to your Command Center Risk Artifacts list.
+          </p>
+        </ExportableArtifact>
+      </fieldset>
     </div>
   )
 }

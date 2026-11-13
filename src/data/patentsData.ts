@@ -17,6 +17,9 @@ interface RawPatentRow {
   title: string
   inventors: string
   assignee: string
+  filing_jurisdiction?: string
+  filing_jurisdiction_application?: string
+  filing_jurisdiction_source_url?: string
   priority_date: string
   issue_date: string
   filing_date: string
@@ -118,6 +121,9 @@ export function transformRow(row: RawPatentRow): PatentItem | null {
 
   const partial: Omit<PatentItem, 'impactScore' | 'impactLevel'> = {
     patentNumber: `US${row.patent_number.trim()}`,
+    filingJurisdiction: row.filing_jurisdiction?.trim() || undefined,
+    filingJurisdictionApplication: row.filing_jurisdiction_application?.trim() || undefined,
+    filingJurisdictionSourceUrl: row.filing_jurisdiction_source_url?.trim() || undefined,
     title: row.title?.trim() ?? '',
     inventors: row.inventors?.trim() ?? '',
     assignee: row.assignee?.trim() ?? '',

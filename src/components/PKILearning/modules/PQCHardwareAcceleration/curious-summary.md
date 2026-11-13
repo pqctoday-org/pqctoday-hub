@@ -1,6 +1,6 @@
 ### What This Is About
 
-Post-quantum signatures can be made faster in several ways — wider CPU instructions, built-in hash instructions, graphics cards, custom chips (FPGAs and ASICs) and AI accelerators. This module explains each one with an everyday analogy, and checks the claims against our own measurements across Apple M4 Pro/M5 Max, NXP i.MX95, AMD Kria KV260, Ventuno Q and an AMD AI X1 Pro, plus focused KV260 FPGA experiments.
+This module compares ways to speed up post-quantum signatures — wider CPU instructions, built-in hash instructions, graphics cards and custom chips (FPGAs and ASICs) — and examines whether AI accelerators support the required workload. This module explains each one with an everyday analogy, and checks the claims against our own measurements across Apple M4 Pro/M5 Max, NXP i.MX95, AMD Kria KV260, Ventuno Q and an AMD AI X1 Pro, plus focused KV260 FPGA experiments.
 
 ### Why It Matters
 
@@ -13,3 +13,5 @@ Speed comes from matching the accelerator to where the time actually goes — an
 ### What's Happening
 
 Newer Arm cores (like Apple's M4) add SHA-3 and SHA-512 instructions that older cores lack; x86 has AVX2, AVX-512/IFMA, AES-NI and SHA-NI but no SHA-3 instruction. The common benchmark also measures ML-DSA + ECDSA hybrid signatures and ML-KEM + X25519 hybrid KEMs directly inside the HSM. Chip vendors are adding fixed post-quantum engines to secure elements and roots of trust, while GPU libraries such as NVIDIA cuPQC target very large batches of operations in data centres.
+
+The model-fit exercises compare actual measured GPU batches where the CPU wins and where the GPU wins. A separate exact arithmetic example reconstructs a large number from three bytes: small arithmetic units do not make the mathematics impossible, but the chosen backend still needs working kernels and an efficient way to move and recombine the data. The i.MX95 PQC NPU discussion is a desk assessment, not a measured cryptographic implementation.

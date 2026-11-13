@@ -1,276 +1,217 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useMemo } from 'react'
-import { BarChart3, Server } from 'lucide-react'
+import React, { useState } from 'react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
-  GATEWAY_KEM_OPTIONS,
-  GATEWAY_SIG_OPTIONS,
-  HANDSHAKE_MITIGATIONS,
   GATEWAY_BENCHMARKS,
   GATEWAY_FIGURES_NOTE,
   HANDSHAKE_MITIGATIONS_NOTE,
-  calculateHandshakeSize,
-  applyMitigations,
 } from '../data/gatewayData'
+import {
+  HANDSHAKE_SAMPLE_OPTIONS,
+  compareMeasuredHandshake,
+  exportHandshakeComparison,
+} from '../data/measuredHandshakeComparison'
+import { ALGORITHM_SIZES, getSizeBreakdown } from '../../MerkleTreeCerts/data/mtcConstants'
 
-function formatBytes(bytes: number): string {
-  if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)} MB`
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${bytes} B`
+function formatRate(bytes: number): string {
+  return `${bytes.toLocaleString()} B/s`
 }
-
-function formatRate(bytesPerSec: number): string {
-  if (bytesPerSec >= 1073741824) return `${(bytesPerSec / 1073741824).toFixed(1)} GB/s`
-  if (bytesPerSec >= 1048576) return `${(bytesPerSec / 1048576).toFixed(1)} MB/s`
-  if (bytesPerSec >= 1024) return `${(bytesPerSec / 1024).toFixed(1)} KB/s`
-  return `${bytesPerSec} B/s`
-}
-
-const CHAIN_DEPTHS = [
-  { id: '1', label: '1 (Self-signed)' },
-  { id: '2', label: '2 (Root + Leaf)' },
-  { id: '3', label: '3 (Root + Intermediate + Leaf)' },
-]
-
-const CONNECTIONS_PER_SEC = [
-  { id: '1000', label: '1K / sec' },
-  { id: '10000', label: '10K / sec' },
-  { id: '100000', label: '100K / sec' },
-  { id: '1000000', label: '1M / sec' },
-]
+const mtc = getSizeBreakdown(ALGORITHM_SIZES.find((a) => a.shortName === 'ML-DSA-65')!)
 
 export const HandshakeBudgetCalculator: React.FC = () => {
-  const [selectedKEM, setSelectedKEM] = useState(GATEWAY_KEM_OPTIONS[0].id)
-  const [selectedSig, setSelectedSig] = useState(GATEWAY_SIG_OPTIONS[0].id)
-  const [chainDepth, setChainDepth] = useState('2')
+  const [profile, setProfile] = useState('classical')
   const [connPerSec, setConnPerSec] = useState('10000')
-  const [enabledMitigations, setEnabledMitigations] = useState<string[]>([])
-
-  const kem = useMemo(
-    () => GATEWAY_KEM_OPTIONS.find((k) => k.id === selectedKEM) ?? GATEWAY_KEM_OPTIONS[0],
-    [selectedKEM]
-  )
-  const sig = useMemo(
-    () => GATEWAY_SIG_OPTIONS.find((s) => s.id === selectedSig) ?? GATEWAY_SIG_OPTIONS[0],
-    [selectedSig]
-  )
-
-  const handshake = useMemo(
-    () => calculateHandshakeSize(kem, sig, parseInt(chainDepth)),
-    [kem, sig, chainDepth]
-  )
-
-  // Classical baseline for comparison
-  const classicalHandshake = useMemo(
-    () =>
-      calculateHandshakeSize(GATEWAY_KEM_OPTIONS[0], GATEWAY_SIG_OPTIONS[0], parseInt(chainDepth)),
-    [chainDepth]
-  )
-
-  const mitigated = useMemo(
-    () => applyMitigations(handshake.total, enabledMitigations),
-    [handshake.total, enabledMitigations]
-  )
-
-  const cps = parseInt(connPerSec)
-  const bandwidthPerSec = mitigated.adjustedSize * cps
-  const classicalBandwidthPerSec = classicalHandshake.total * cps
-
-  const kemItems = GATEWAY_KEM_OPTIONS.map((k) => ({ id: k.id, label: k.name }))
-  const sigItems = GATEWAY_SIG_OPTIONS.map((s) => ({ id: s.id, label: s.name }))
-
-  const toggleMitigation = (id: string) => {
-    setEnabledMitigations((prev) =>
-      prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]
+  const [mitigations, setMitigations] = useState<string[]>([])
+  const cps = Number(connPerSec)
+  const result = compareMeasuredHandshake(profile, mitigations, cps)
+  const toggle = (id: string) =>
+    setMitigations((previous) =>
+      previous.includes(id) ? previous.filter((x) => x !== id) : [...previous, id]
     )
-  }
-
-  // Bar chart data
-  const maxSize = Math.max(handshake.total, classicalHandshake.total)
-
   return (
-    <div className="space-y-6">
-      {/* Configuration */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-          <div className="text-xs font-bold text-foreground mb-1">KEM Algorithm</div>
+    <div className="space-y-6" data-testid="measured-handshake-calculator">
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="text-lg font-bold">Measured Handshake Comparison</h3>
+        <p className="text-sm">
+          Choose a retained sample, inspect every message, then compare a certificate-only
+          substitution. These examples help you evaluate buffer and bandwidth requirements using
+          your own captures.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {result.runtime}, captured {result.measuredOn}; {result.certificateComposition}.{' '}
+          {result.boundary}
+        </p>
+        <p className="text-xs text-muted-foreground">{result.scope}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FilterDropdown
-            items={kemItems}
-            selectedId={selectedKEM}
-            onSelect={setSelectedKEM}
+            ariaLabel="Captured profile"
+            label="Captured profile"
+            items={[...HANDSHAKE_SAMPLE_OPTIONS]}
+            selectedId={profile}
+            onSelect={setProfile}
+            hideDefaultOption
             noContainer
           />
-        </div>
-        <div>
-          <div className="text-xs font-bold text-foreground mb-1">Signature Algorithm</div>
           <FilterDropdown
-            items={sigItems}
-            selectedId={selectedSig}
-            onSelect={setSelectedSig}
-            noContainer
-          />
-        </div>
-        <div>
-          <div className="text-xs font-bold text-foreground mb-1">Chain Depth</div>
-          <FilterDropdown
-            items={CHAIN_DEPTHS}
-            selectedId={chainDepth}
-            onSelect={setChainDepth}
-            noContainer
-          />
-        </div>
-        <div>
-          <div className="text-xs font-bold text-foreground mb-1">Connections / sec</div>
-          <FilterDropdown
-            items={CONNECTIONS_PER_SEC}
+            ariaLabel="New handshakes per second"
+            label="New handshakes / second"
+            items={[1000, 10000, 100000, 1000000].map((rate) => ({
+              id: String(rate),
+              label: `${rate.toLocaleString()} / sec`,
+            }))}
             selectedId={connPerSec}
             onSelect={setConnPerSec}
+            hideDefaultOption
             noContainer
           />
         </div>
-      </div>
-
-      {/* Handshake Breakdown */}
-      <div className="glass-panel p-4 space-y-4">
-        <div className="flex items-center gap-2">
-          <BarChart3 size={16} className="text-primary" />
-          <h3 className="text-sm font-bold text-foreground">Handshake Size Breakdown</h3>
-        </div>
-
-        <div className="space-y-3">
-          {[
-            { label: 'Client Hello', size: handshake.clientHello, baseline: 232 },
-            { label: 'Server Hello', size: handshake.serverHello, baseline: 182 },
-            {
-              label: `Certificate (${chainDepth}-deep)`,
-              size: handshake.certificate,
-              baseline: classicalHandshake.certificate,
-            },
-          ].map((item) => (
-            <div key={item.label} className="space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-foreground">{item.label}</span>
-                <span className="font-mono text-foreground">{formatBytes(item.size)}</span>
-              </div>
-              <div className="relative h-3 bg-muted/50 rounded-full overflow-hidden">
-                <div
-                  className="absolute inset-y-0 left-0 bg-status-warning/40 rounded-full"
-                  style={{
-                    width: maxSize > 0 ? `${(item.baseline / maxSize) * 100}%` : '0%',
-                  }}
-                />
-                <div
-                  className={`absolute inset-y-0 left-0 rounded-full ${
-                    kem.category === 'classical' && sig.category === 'classical'
-                      ? 'bg-status-success'
-                      : kem.category === 'hybrid' || sig.category === 'hybrid'
-                        ? 'bg-status-warning'
-                        : 'bg-status-error'
-                  }`}
-                  style={{
-                    width: maxSize > 0 ? `${(item.size / maxSize) * 100}%` : '0%',
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-
-          {/* Total */}
-          <div className="border-t border-border pt-2 flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground">Total Handshake</span>
-            <div className="text-right">
-              <span className="text-lg font-bold font-mono text-foreground">
-                {formatBytes(handshake.total)}
-              </span>
-              {handshake.total > classicalHandshake.total && (
-                <span className="text-xs text-status-warning ml-2">
-                  (+
-                  {Math.round(
-                    ((handshake.total - classicalHandshake.total) / classicalHandshake.total) * 100
-                  )}
-                  % vs classical)
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mitigations */}
-      <div className="glass-panel p-4 space-y-3">
-        <h3 className="text-sm font-bold text-foreground">Apply Mitigations</h3>
+      </section>
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="font-bold">Certificate alternatives</h3>
         <p className="text-xs text-muted-foreground" data-testid="handshake-mitigations-note">
           {HANDSHAKE_MITIGATIONS_NOTE}
         </p>
-        <div className="space-y-2">
-          {HANDSHAKE_MITIGATIONS.map((m) => (
-            <label
-              key={m.id}
-              aria-label={m.name}
-              className="flex items-start gap-3 bg-muted/50 rounded-lg p-3 cursor-pointer hover:bg-muted transition-colors"
-            >
-              <input
-                type="checkbox"
-                checked={enabledMitigations.includes(m.id)}
-                onChange={() => toggleMitigation(m.id)}
-                className="mt-0.5 accent-primary"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">{m.name}</span>
-                  <span className="text-xs font-mono text-status-success">
-                    -{m.reductionPercent}%
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground">{m.description}</p>
-              </div>
-            </label>
-          ))}
-        </div>
-
-        {enabledMitigations.length > 0 && (
-          <div className="bg-status-success/10 rounded-lg p-3 border border-status-success/20">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-foreground">After mitigations:</span>
-              <div className="text-right">
-                <span className="text-lg font-bold font-mono text-status-success">
-                  {formatBytes(mitigated.adjustedSize)}
-                </span>
-                <span className="text-xs text-status-success ml-2">
-                  (-{mitigated.savingsPercent}%)
-                </span>
-              </div>
-            </div>
-          </div>
+        <label className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            checked={mitigations.includes('compression')}
+            onChange={() => toggle('compression')}
+            className="mt-1"
+          />
+          <span>
+            Certificate compression (zlib)
+            <small className="block text-muted-foreground">
+              Compress only the exact Certificate body. Include the 7-byte ClientHello offer and
+              CompressedCertificate framing; all other cryptographic messages remain.
+            </small>
+          </span>
+        </label>
+        <label className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            checked={mitigations.includes('rpk')}
+            onChange={() => toggle('rpk')}
+            className="mt-1"
+          />
+          <span>
+            Raw public key alternative
+            <small className="block text-muted-foreground">
+              Use the same leaf SPKI, preserve CertificateVerify and count 11 bytes of negotiation.
+              Requires negotiated support and an external identity-to-key trust binding.
+            </small>
+          </span>
+        </label>
+        {result.unsupportedReason && (
+          <p role="status" className="text-warning">
+            {result.unsupportedReason}
+          </p>
         )}
-      </div>
-
-      {/* Bandwidth Impact */}
-      <div className="glass-panel p-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <Server size={16} className="text-primary" />
-          <h3 className="text-sm font-bold text-foreground">
-            Bandwidth at {parseInt(connPerSec).toLocaleString()} conn/sec
-          </h3>
+        <p className="text-xs text-muted-foreground sm:hidden">
+          Swipe the message table to compare captured and variant byte columns.
+        </p>
+        <div className="overflow-x-auto" data-testid="handshake-message-table-scroll">
+          <table className="w-full min-w-[540px] text-xs">
+            <caption className="text-left font-bold mb-2">
+              Seven-message handshake-layer accounting (bytes)
+            </caption>
+            <thead>
+              <tr>
+                <th className="text-left">Message</th>
+                <th className="text-left">Direction</th>
+                <th>Captured</th>
+                <th>Variant</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.baselineMessages.map((message, index) => (
+                <tr key={`${message.name}-${message.direction}`}>
+                  <td className="py-2">{result.messages?.[index].name ?? message.name}</td>
+                  <td>{message.direction}</td>
+                  <td className="text-center">{message.bytes.toLocaleString()}</td>
+                  <td className="text-center">
+                    {result.messages?.[index].bytes.toLocaleString() ?? '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="bg-muted/50 rounded-lg p-3">
-            <div className="text-xs text-muted-foreground mb-1">Classical Baseline</div>
-            <div className="text-lg font-bold font-mono text-foreground">
-              {formatRate(classicalBandwidthPerSec)}
-            </div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-3">
-            <div className="text-xs text-muted-foreground mb-1">
-              Selected Config{enabledMitigations.length > 0 ? ' (mitigated)' : ''}
-            </div>
-            <div className="text-lg font-bold font-mono text-foreground">
-              {formatRate(bandwidthPerSec)}
-            </div>
-          </div>
-        </div>
-      </div>
-
+        <p>
+          Captured total:{' '}
+          <strong data-testid="captured-total">{result.baselineBytes.toLocaleString()} B</strong>
+        </p>
+        <p>
+          Modelled variant total:{' '}
+          <strong data-testid="variant-total">
+            {result.adjustedBytes === null
+              ? 'Unavailable for this combination'
+              : `${result.adjustedBytes.toLocaleString()} B`}
+          </strong>
+        </p>
+        {result.savingsBytes !== null && (
+          <p data-testid="handshake-savings">
+            {result.savingsBytes.toLocaleString()} B saved; {result.negotiationBytes} B negotiation
+            included.
+          </p>
+        )}
+        <p className="text-sm">
+          Handshake-layer bandwidth at {cps.toLocaleString()} new handshakes/sec:{' '}
+          <strong data-testid="handshake-bandwidth">
+            {result.bandwidthBytesPerSecond === null
+              ? 'Unavailable for this combination'
+              : formatRate(result.bandwidthBytesPerSecond)}
+          </strong>
+          . This excludes record protection and transport framing.
+        </p>
+        <a
+          className="text-primary underline text-sm"
+          download="handshake-comparison.json"
+          href={`data:application/json;charset=utf-8,${encodeURIComponent(exportHandshakeComparison(result))}`}
+        >
+          Export comparison JSON
+        </a>
+      </section>
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="font-bold">Transport and connection reuse</h3>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={mitigations.includes('http3-quic')}
+            onChange={() => toggle('http3-quic')}
+          />
+          Consider QUIC transport
+        </label>
+        <p className="text-sm">{result.transportScope}</p>
+        <p className="text-sm">
+          Worked connection reuse comparison:{' '}
+          {result.adjustedBytes === null
+            ? 'choose one supported certificate alternative first'
+            : `${result.adjustedBytes.toLocaleString()} B × 10,000 new handshakes/sec = ${(result.adjustedBytes * 10000).toLocaleString()} B/s; at an explicitly chosen 1,000 new handshakes/sec, ${(result.adjustedBytes * 1000).toLocaleString()} B/s`}
+          . No automatic connection-count reduction is assumed; origin compatibility and connection
+          reuse must be established separately.
+        </p>
+      </section>
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="font-bold">Resumption and MTC: different comparison boundaries</h3>
+        <p className="text-sm">
+          The selected capture has {result.authenticationComponentBytes.toLocaleString()} B of
+          Certificate plus CertificateVerify. Removing just those leaves{' '}
+          {result.remainingBeforePskEnvelopeChanges.toLocaleString()} B before PSK identity, binder,
+          mode and selection changes. That is a component bound, not a resumed-handshake total; a
+          returning client needs a usable ticket and negotiated support.
+        </p>
+        <p className="text-sm">
+          The separate ML-DSA-65 MTC authenticated-component model compares{' '}
+          {mtc.traditionalTotal.toLocaleString()} B traditional with {mtc.mtcTotal.toLocaleString()}{' '}
+          B standalone (384-byte proof and one CA cosignature), or{' '}
+          {mtc.mtcLandmarkTotal.toLocaleString()} B landmark-relative (736-byte proof and pre-synced
+          subtree). These include CertificateVerify and their own metadata assumptions, not a
+          negotiated whole TLS handshake.
+        </p>
+        <a href="/learn/merkle-tree-certs" className="text-primary underline text-sm">
+          Explore the MTC component model and trust assumptions
+        </a>
+      </section>
       {/* Gateway Capacity Benchmarks */}
       <div className="bg-muted/30 rounded-lg p-4 border border-border">
         <div className="text-xs font-bold text-foreground mb-3">Gateway Capacity Benchmarks</div>

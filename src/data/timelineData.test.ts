@@ -158,6 +158,24 @@ describe('computeTimelineConfidence', () => {
     // 40 months after — too stale for any recency credit.
     expect(computeTimelineConfidence(row, new Date('2029-05-01'))).toBe(0 + 10)
   })
+
+  it('scores a month-only source date for recency, counting from the first of the month', () => {
+    const row = { ...base, source_url_quality: '', peer_reviewed: '', SourceDate: '2026-01' }
+    expect(computeTimelineConfidence(row, new Date('2026-07-01'))).toBe(20 + 10)
+    expect(computeTimelineConfidence(row, new Date('2027-09-01'))).toBe(10 + 10)
+    expect(computeTimelineConfidence(row, new Date('2029-05-01'))).toBe(0 + 10)
+    // the same month written as a full date scores the same
+    expect(
+      computeTimelineConfidence({ ...row, SourceDate: '2026-01-01' }, new Date('2026-07-01'))
+    ).toBe(30)
+  })
+
+  it('still gives no recency credit to a bare year or an impossible month', () => {
+    for (const sd of ['2026', '2026-13', '2026-00', '2026-1', 'March 2026']) {
+      const row = { ...base, source_url_quality: '', peer_reviewed: '', SourceDate: sd }
+      expect(computeTimelineConfidence(row, new Date('2026-07-01'))).toBe(10)
+    }
+  })
 })
 
 describe('parseTimelineCSV — malformed year hardening', () => {
