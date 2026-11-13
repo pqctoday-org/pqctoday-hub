@@ -87,11 +87,21 @@ async function signedFixture(
 describe('complete real DPoP proof measurement', () => {
   it('keeps the named default byte counts used by the lesson and quiz reproducible', () => {
     expect(actual.measurements).toEqual({
-      publicKeyBytes: 1952, publicKeyBase64urlBytes: 2603, publicJwkJsonBytes: 2643,
-      headerJsonBytes: 2686, headerSegmentBytes: 3582, payloadJsonBytes: 168,
-      payloadSegmentBytes: 224, signatureBytes: 3309, signatureSegmentBytes: 4412,
-      dotsBytes: 2, compactProofBytes: 8220, accessTokenBytes: 4791,
-      authorizationLineBytes: 4813, proofLineBytes: 8228, headerLinesBytes: 13041,
+      publicKeyBytes: 1952,
+      publicKeyBase64urlBytes: 2603,
+      publicJwkJsonBytes: 2643,
+      headerJsonBytes: 2686,
+      headerSegmentBytes: 3582,
+      payloadJsonBytes: 168,
+      payloadSegmentBytes: 224,
+      signatureBytes: 3309,
+      signatureSegmentBytes: 4412,
+      dotsBytes: 2,
+      compactProofBytes: 8220,
+      accessTokenBytes: 4791,
+      authorizationLineBytes: 4813,
+      proofLineBytes: 8228,
+      headerLinesBytes: 13041,
     })
   })
 

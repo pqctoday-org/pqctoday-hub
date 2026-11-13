@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest'
 import { ToolExercise } from './ToolExercise'
 import { useModuleStore } from '@/store/useModuleStore'
 
-
 describe('Business exercise evidence and uncertainty reasoning', () => {
   it('accepts the policy-scoped hybrid outcome without treating filled references as proof', async () => {
     const user = userEvent.setup()
