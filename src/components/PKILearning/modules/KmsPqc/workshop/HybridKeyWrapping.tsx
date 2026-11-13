@@ -3,10 +3,21 @@
 import React, { useState } from 'react'
 import { Shuffle, Shield, Cloud, Info, CheckCircle } from 'lucide-react'
 import { HYBRID_COMBINER_MODES } from '../data/kmsConstants'
+import {
+  HKE1_FIELD_NAMES,
+  HKE1_FORMAT_LABEL,
+  HKE1_HEADER_BYTES,
+  HKE1_MODES,
+  HKE1_MODE_NAMES,
+  hke1FieldLengths,
+  hke1TotalBytes,
+} from '../utils/hke1Envelope'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS, getKmsPqcStatus } from '../data/kmsProviderData'
 import { Button } from '@/components/ui/button'
 
 type WrapMode = 'classical' | 'pqc' | 'hybrid'
+
+const fmtBytes = (n: number) => `${n.toLocaleString('en-US')} B`
 
 const WRAP_MODE_LABELS: Record<WrapMode, { label: string; color: string }> = {
   classical: { label: 'Classical Only', color: 'text-destructive' },
@@ -232,8 +243,10 @@ export const HybridKeyWrapping: React.FC = () => {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-              <div className="text-lg font-bold text-foreground">256 B</div>
-              <div className="text-[10px] text-muted-foreground">RSA-2048 ciphertext</div>
+              <div className="text-lg font-bold text-foreground">{fmtBytes(hke1TotalBytes(1))}</div>
+              <div className="text-[10px] text-muted-foreground">
+                RSA-2048 complete HKE1 envelope (256 B ciphertext inside)
+              </div>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
               <div className="text-lg font-bold text-foreground">1 step</div>
@@ -265,8 +278,10 @@ export const HybridKeyWrapping: React.FC = () => {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-              <div className="text-lg font-bold text-foreground">1,128 B</div>
-              <div className="text-[10px] text-muted-foreground">ML-KEM-768 total</div>
+              <div className="text-lg font-bold text-foreground">{fmtBytes(hke1TotalBytes(2))}</div>
+              <div className="text-[10px] text-muted-foreground">
+                ML-KEM-768 complete HKE1 envelope
+              </div>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
               <div className="text-lg font-bold text-foreground">3 steps</div>
@@ -350,6 +365,19 @@ export const HybridKeyWrapping: React.FC = () => {
                   </pre>
                 </div>
 
+                {activeHybrid.completeEnvelopeBytes && (
+                  <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-xs">
+                    <span className="font-bold text-warning">
+                      Complete HKE1 envelope: {fmtBytes(activeHybrid.completeEnvelopeBytes)}
+                    </span>{' '}
+                    <span className="text-muted-foreground">
+                      (header, key ID, salt, info, ephemeral key, KEM ciphertext and the 40-byte
+                      wrapped DEK; {HKE1_FORMAT_LABEL.toLowerCase()}). The listed component bytes
+                      above are only two of those fields.
+                    </span>
+                  </div>
+                )}
+
                 <p className="text-[10px] text-muted-foreground">
                   This is the KMS-wrap combiner of this module, one of the choices SP 800-227
                   Section 4.6 allows. TLS&apos;s X25519MLKEM768 group (RFC 10024) concatenates the
@@ -384,6 +412,68 @@ export const HybridKeyWrapping: React.FC = () => {
           </div>
         </>
       )}
+
+      {/* HKE1 complete-envelope layout */}
+      <div className="glass-panel p-6">
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <h4 className="text-sm font-bold text-foreground">
+            HKE1 Sample Envelope: Every Byte Counted
+          </h4>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+            {HKE1_FORMAT_LABEL}
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground mb-3">
+          HKE1 is this module&apos;s own binary layout. It is not HPKE, X-Wing, a TLS structure or
+          any provider&apos;s wrapped-key format. It is the complete stored or transmitted object:
+          an {HKE1_HEADER_BYTES}-byte header (magic, mode, suite and six field lengths) followed by
+          the fields below. Recipient key provisioning, private keys, shared secrets, HTTP/TLS
+          framing and any hex or base64 text encoding are outside it, and a hex or base64 length is
+          a different number. A receiver parses these bytes alone and unwraps the DEK; the sizes
+          here are counted from the same layout it parses.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs" aria-label="HKE1 envelope layout">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 px-2 text-muted-foreground font-medium">Mode</th>
+                <th className="text-right py-2 px-2 text-muted-foreground font-medium">Header</th>
+                {HKE1_FIELD_NAMES.map((name) => (
+                  <th key={name} className="text-right py-2 px-2 text-muted-foreground font-medium">
+                    {name}
+                  </th>
+                ))}
+                <th className="text-right py-2 px-2 text-muted-foreground font-medium">
+                  Complete envelope
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {HKE1_MODES.map((mode) => (
+                <tr key={mode} className="border-b border-border/50">
+                  <td className="py-2 px-2 font-bold text-foreground">{HKE1_MODE_NAMES[mode]}</td>
+                  <td className="py-2 px-2 text-right font-mono">{HKE1_HEADER_BYTES}</td>
+                  {hke1FieldLengths(mode).map((length, index) => (
+                    <td key={HKE1_FIELD_NAMES[index]} className="py-2 px-2 text-right font-mono">
+                      {length.toLocaleString('en-US')}
+                    </td>
+                  ))}
+                  <td className="py-2 px-2 text-right font-mono font-bold text-foreground">
+                    {fmtBytes(hke1TotalBytes(mode))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-3">
+          The 40-byte wrapped DEK is AES-256-KW (RFC 3394): the 32-byte key plus an 8-byte integrity
+          block, with no separate nonce or tag. The hybrid feeds ML-KEM secret first, then X25519,
+          into HKDF-SHA-256. Totals are added to the table below only where HKE1 defines the full
+          envelope; the other hybrid rows list component bytes whose complete envelopes this module
+          does not specify.
+        </p>
+      </div>
 
       {/* Provider API Comparison */}
       <div className="glass-panel p-6">
@@ -484,15 +574,15 @@ export const HybridKeyWrapping: React.FC = () => {
       <div className="glass-panel p-6">
         <h4 className="text-sm font-bold text-foreground mb-3">Mode Comparison Summary</h4>
         <p className="text-xs text-muted-foreground mb-3">
-          These authored byte counts use different component boundaries, not complete wrapping
-          envelopes. The PQC-only count includes a 40-byte wrapped DEK; the listed hybrid counts
-          exclude it. Other envelope and protocol fields are not included consistently, so do not
-          rank these values as complete-message savings. The sample combiner illustration does not
-          demonstrate TLS negotiation or named-group interoperability. In your own tools, compare
-          the same complete envelope boundary and test the intended protocol profile.
+          The classical, PQC-only and X25519 + ML-KEM-768 rows are complete HKE1 envelopes (
+          {HKE1_FORMAT_LABEL.toLowerCase()}), counted on one boundary. The other hybrid rows list
+          component bytes only, with a different boundary and no specified envelope, so do not rank
+          them against the complete totals. The sample combiner illustration does not demonstrate
+          TLS negotiation or named-group interoperability. In your own tools, compare the same
+          complete envelope boundary and test the intended protocol profile.
         </p>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs" aria-label="Mode comparison">
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-2 px-2 text-muted-foreground font-medium">Mode</th>
@@ -514,7 +604,10 @@ export const HybridKeyWrapping: React.FC = () => {
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-bold text-destructive">Classical Only</td>
                 <td className="py-2 px-2 text-right text-foreground">
-                  256 B<span className="block text-muted-foreground">RSA ciphertext only</span>
+                  {fmtBytes(hke1TotalBytes(1))}
+                  <span className="block text-muted-foreground">
+                    Complete HKE1 envelope (RSA-2048)
+                  </span>
                 </td>
                 <td className="py-2 px-2 text-center text-destructive">No</td>
                 <td className="py-2 px-2 text-center text-success">Yes</td>
@@ -523,9 +616,9 @@ export const HybridKeyWrapping: React.FC = () => {
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-bold text-success">PQC Only</td>
                 <td className="py-2 px-2 text-right text-foreground">
-                  1,128 B
+                  {fmtBytes(hke1TotalBytes(2))}
                   <span className="block text-muted-foreground">
-                    KEM ciphertext plus 40-byte wrapped DEK
+                    Complete HKE1 envelope (ML-KEM-768)
                   </span>
                 </td>
                 <td className="py-2 px-2 text-center text-success">Yes</td>
@@ -536,10 +629,21 @@ export const HybridKeyWrapping: React.FC = () => {
                 <tr key={mode.id} className="border-b border-border/50">
                   <td className="py-2 px-2 font-bold text-warning">{mode.name}</td>
                   <td className="py-2 px-2 text-right text-foreground">
-                    {mode.totalOverhead}
-                    <span className="block text-muted-foreground">
-                      Listed hybrid components only; excludes wrapped DEK
-                    </span>
+                    {mode.completeEnvelopeBytes ? (
+                      <>
+                        {fmtBytes(mode.completeEnvelopeBytes)}
+                        <span className="block text-muted-foreground">
+                          Complete HKE1 envelope (listed components: {mode.totalOverhead})
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        {mode.totalOverhead}
+                        <span className="block text-muted-foreground">
+                          Listed hybrid components only; excludes wrapped DEK and envelope fields
+                        </span>
+                      </>
+                    )}
                   </td>
                   <td className="py-2 px-2 text-center text-success">Yes</td>
                   <td className="py-2 px-2 text-center text-success">Yes</td>

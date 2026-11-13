@@ -86,12 +86,12 @@ const ATTACKER_BY_STEP: Record<string, Partial<Record<SuciProfile, string>>> = {
   assemble_suci: {
     A: 'Now it goes on air: scheme ID (1) + routing indicator + 32-byte raw X25519 eph pub + ciphertext (same length as MSIN) + 8-byte MAC tag. NO plaintext IMSI.',
     B: 'Now it goes on air: scheme ID (2) + routing indicator + 33-byte compressed P-256 eph pub + ciphertext + 8-byte MAC tag. NO plaintext IMSI.',
-    C: 'Now it goes on air: scheme ID (3) + routing indicator + 1088-byte ML-KEM ciphertext + (hybrid only: 32-byte X25519 eph pub) + encrypted MSIN + 8-byte MAC tag. NO plaintext IMSI.',
+    C: 'Now it goes on air as one PSC1 byte string (a project sample format, not a standard): 15-byte header + (hybrid only: 32-byte X25519 eph pub) + 1088-byte ML-KEM ciphertext + encrypted MSIN + 8-byte MAC tag over all of it. NO plaintext IMSI.',
   },
   sidf_decryption: {
     A: 'Nothing extra — decryption happens at the Home Network SIDF, not over the air.',
     B: 'Nothing extra — decryption happens at the Home Network SIDF, not over the air.',
-    C: 'Nothing extra — ML-KEM decap and MAC verification happen inside the HN SIDF HSM.',
+    C: 'Nothing extra — the HN SIDF parses only the received PSC1 bytes, then ML-KEM decap and MAC verification happen inside its HSM.',
   },
 }
 

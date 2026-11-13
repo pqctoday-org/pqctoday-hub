@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { hke1TotalBytes } from '../utils/hke1Envelope'
 
 export interface KeyHierarchyLevel {
   id: string
@@ -49,6 +50,8 @@ export interface HybridCombinerMode {
   combiner: string
   outputKeySize: number
   totalOverhead: string
+  /** Complete stored/transmitted envelope in the HKE1 project sample format, where one is defined. */
+  completeEnvelopeBytes?: number
   useCase: string
 }
 
@@ -132,8 +135,8 @@ export const ENVELOPE_ENCRYPTION_STEPS: EnvelopeEncryptionStep[] = [
       'Use AES-256-KW (RFC 3394) to wrap the 32-byte DEK with the derived wrapping key. Store the KEM ciphertext alongside the wrapped DEK.',
     classicalArtifact: 'Wrapped DEK (from step 2)',
     pqcArtifact: 'AES-KW Wrapped DEK (40 bytes)',
-    classicalSize: '256 bytes total',
-    pqcSize: '1,088 + 40 = 1,128 bytes total',
+    classicalSize: `256 bytes ciphertext; ${hke1TotalBytes(1)} bytes as a complete HKE1 sample envelope`,
+    pqcSize: `1,088 + 40 = 1,128 bytes of data fields; ${hke1TotalBytes(2).toLocaleString('en-US')} bytes as a complete HKE1 sample envelope`,
   },
   {
     id: 'decrypt',
@@ -160,7 +163,8 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     // its own HKDF call; the secret order is a design choice of this module.
     combiner: 'HKDF-SHA-256(mlkem_ss || x25519_ss, info="hybrid-kek")',
     outputKeySize: 32,
-    totalOverhead: '32 + 1,088 = 1,120 bytes ciphertext',
+    totalOverhead: '32 + 1,088 = 1,120 bytes ciphertext (ephemeral key and KEM ciphertext only)',
+    completeEnvelopeBytes: hke1TotalBytes(3),
     useCase:
       "KMS key wrap, general purpose — this module's own combiner, one of the choices SP 800-227 Section 4.6 allows. The TLS group X25519MLKEM768 (RFC 10024) is a different construction: it concatenates the same two secrets, ML-KEM first, and feeds them to the TLS 1.3 key schedule, not to this HKDF call",
   },

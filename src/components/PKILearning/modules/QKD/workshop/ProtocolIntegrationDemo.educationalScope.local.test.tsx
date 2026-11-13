@@ -103,8 +103,8 @@ describe('Protocol context is separate from local sample operations', () => {
     ).not.toBeInTheDocument()
   })
 
+  // The IKEv2 panel is no longer an HKDF illustration: see ProtocolIntegrationDemo.ikev2.local.test.tsx.
   it.each([
-    ['ikev2', 'Run Local IKE-Context HKDF Example', 'SKEYSEED', 96],
     ['macsec', 'Run Local MACsec-Context HKDF Example', `MACsec SAK v1 ${'55'.repeat(8)}`, 32],
   ] as const)(
     'preserves actual HKDF inputs while limiting %s output claims',
@@ -127,8 +127,8 @@ describe('Protocol context is separate from local sample operations', () => {
   )
 
   it('failed derivation clears the old output, shows an error and allows retry', async () => {
-    render(<ProtocolIntegrationDemo initialProtocol="ikev2" />)
-    const button = screen.getByRole('button', { name: 'Run Local IKE-Context HKDF Example' })
+    render(<ProtocolIntegrationDemo initialProtocol="macsec" />)
+    const button = screen.getByRole('button', { name: 'Run Local MACsec-Context HKDF Example' })
     fireEvent.click(button)
     await screen.findByText('Local sample operation only — no protocol validation')
     sample.deriveBits.mockRejectedValueOnce(new Error('sample derive failed'))
@@ -162,8 +162,8 @@ describe('Protocol context is separate from local sample operations', () => {
         finish = resolve
       })
     )
-    const view = render(<ProtocolIntegrationDemo initialProtocol="ikev2" />)
-    fireEvent.click(screen.getByRole('button', { name: 'Run Local IKE-Context HKDF Example' }))
+    const view = render(<ProtocolIntegrationDemo initialProtocol="macsec" />)
+    fireEvent.click(screen.getByRole('button', { name: 'Run Local MACsec-Context HKDF Example' }))
     await act(async () => {
       await Promise.resolve()
     })
