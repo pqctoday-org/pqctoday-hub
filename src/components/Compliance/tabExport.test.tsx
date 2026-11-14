@@ -12,6 +12,7 @@ import { downloadCsv } from '@/utils/csvExport'
 import {
   exportTabFor,
   forYouRows,
+  forYouShowsDerived,
   tabExportFileName,
   buildTabCsv,
   type TabExportInput,
@@ -70,6 +71,21 @@ describe('tab export: which tab exports, and the file name', () => {
   it('tabs that list no rows have no page export', () => {
     for (const tab of ['products', 'cswp39', 'requirements']) {
       expect(exportTabFor(tab)).toBeUndefined()
+    }
+  })
+})
+
+describe('For You export: derived rows only where the persona view shows them', () => {
+  it('includes them for the default panel and the Executive, GRC and Researcher views', () => {
+    expect(forYouShowsDerived(null)).toBe(true)
+    expect(forYouShowsDerived('executive')).toBe(true)
+    expect(forYouShowsDerived('grc')).toBe(true)
+    expect(forYouShowsDerived('researcher')).toBe(true)
+  })
+
+  it('leaves them out for the views that list different rows', () => {
+    for (const persona of ['architect', 'developer', 'ops', 'cert-engineer', 'curious']) {
+      expect(forYouShowsDerived(persona), persona).toBe(false)
     }
   })
 })

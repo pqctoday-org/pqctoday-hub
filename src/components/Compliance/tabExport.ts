@@ -48,6 +48,15 @@ export interface TabExportInput {
   newestRecordDate: Date | null
 }
 
+/**
+ * Whether the For You tab shows trust-path-derived frameworks for this persona. The default
+ * applicability panel and the Executive, GRC and Researcher views show them; the other
+ * persona views list different rows and show no derived section.
+ */
+export function forYouShowsDerived(persona: string | null | undefined): boolean {
+  return !persona || persona === 'executive' || persona === 'grc' || persona === 'researcher'
+}
+
 /** One For You row, as the tab lists it. */
 export interface ForYouExportRow {
   id: string

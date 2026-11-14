@@ -5,7 +5,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { useNavigate, useSearchParams } from 'react-router'
 import { downloadCsv } from '@/utils/csvExport'
-import { buildTabCsv, exportTabFor, forYouRows, tabExportFileName } from './tabExport'
+import {
+  buildTabCsv,
+  exportTabFor,
+  forYouRows,
+  forYouShowsDerived,
+  tabExportFileName,
+} from './tabExport'
 import { useApplicabilityWithPaths } from '@/hooks/useApplicabilityWithPaths'
 import { buildObligations } from './obligations/obligationsModel'
 import { buildProgress } from './progress/progressModel'
@@ -590,8 +596,12 @@ export const ComplianceView = ({
   // The rows each tab lists, for its Export CSV (the same data the tabs themselves build).
   const forYouPaths = useApplicabilityWithPaths()
   const forYouApplicable = useMemo(
-    () => forYouRows(forYouPaths.frameworks, forYouPaths.derivedFrameworks),
-    [forYouPaths.frameworks, forYouPaths.derivedFrameworks]
+    () =>
+      forYouRows(
+        forYouPaths.frameworks,
+        forYouShowsDerived(personaForLens) ? forYouPaths.derivedFrameworks : []
+      ),
+    [forYouPaths.frameworks, forYouPaths.derivedFrameworks, personaForLens]
   )
   const obligationRows = useMemo(() => buildObligations(forYouProfile), [forYouProfile])
   const progressEntries = useMemo(
@@ -736,6 +746,8 @@ export const ComplianceView = ({
   const activeStableTab = stableTabFor(activeTab)
 
   const exportTab = exportTabFor(activeStableTab)
+  // The error belongs to the tab it came from: leaving that tab clears it, so it does not reappear later.
+  if (exportError && exportError.tab !== activeStableTab) setExportError(null)
   const handleTabExport = useCallback(() => {
     if (!exportTab) return
     try {
