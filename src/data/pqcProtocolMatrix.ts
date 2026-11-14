@@ -1258,7 +1258,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'cert-capacity',
         toolName: 'Cert Capacity Calculator',
-        testability: { pureKem: 'na', hybridKem: 'na', pureSig: 'na', hybridSig: 'na' },
+        testability: { pureKem: 'none', hybridKem: 'none', pureSig: 'none', hybridSig: 'none' },
       },
     ],
     liveDeployments: [
@@ -3049,7 +3049,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'tpm-playground',
         toolName: 'PQC TPM Workshop',
-        testability: { pureKem: 'full', hybridKem: 'partial', pureSig: 'full', hybridSig: 'na' },
+        testability: { pureKem: 'full', hybridKem: 'partial', pureSig: 'full', hybridSig: 'none' },
         hybridKemNote:
           'Educational Labeled-KEM construct (ML-KEM via softhsmv3 + classical ECDH via Web Crypto, combined with HKDF-SHA256). TCG v1.85 does not standardize hybrid.',
       },
