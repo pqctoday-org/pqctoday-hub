@@ -374,6 +374,81 @@ export function keyAtStoreIndex(mode: AssessTrack, idx: number): AssessStepKey |
   return storeOrderFor(mode)[idx]
 }
 
+/** Store fields that say whether a freely-optional step got an answer. Optional
+ *  because the validator state above deliberately omits them (those validators
+ *  always pass). */
+export interface AssessOptionalAnswerState {
+  complianceRequirements?: string[]
+  complianceUnknown?: boolean
+  cryptoUseCases?: string[]
+  useCasesUnknown?: boolean
+  infrastructure?: string[]
+  infrastructureUnknown?: boolean
+}
+
+export type AssessAnswerState = AssessValidatorState & AssessOptionalAnswerState
+
+/**
+ * True when the step holds a real answer: a required step passes its validator
+ * (value or "not sure"); a freely-optional step has a selection or the
+ * "not sure" flag. Unlike STEP_VALIDATORS this is false for an untouched
+ * optional step, so it can tell "answered" from "merely allowed to be blank".
+ */
+export function hasAnswer(key: AssessStepKey, s: AssessAnswerState): boolean {
+  switch (key) {
+    case 'compliance':
+      return (s.complianceRequirements?.length ?? 0) > 0 || !!s.complianceUnknown
+    case 'use-cases':
+      return (s.cryptoUseCases?.length ?? 0) > 0 || !!s.useCasesUnknown
+    case 'infra':
+      return (s.infrastructure?.length ?? 0) > 0 || !!s.infrastructureUnknown
+    default:
+      return STEP_VALIDATORS[key](s)
+  }
+}
+
+/** "Answered" as the rail and progress counts show it: a real answer, or — for a
+ *  freely-optional step — one the user has already moved past (`passed`). */
+export function isStepAnswered(key: AssessStepKey, s: AssessAnswerState, passed: boolean): boolean {
+  return STEP_META[key].freelyOptional ? hasAnswer(key, s) || passed : STEP_VALIDATORS[key](s)
+}
+
+/**
+ * The `store.currentStep` value of the first step in `mode`'s render order that
+ * still needs the reader — a required step that fails its validator, or an
+ * optional step with no answer that is not in `seenKeys` (steps the reader
+ * already went through on another track). Null when nothing is outstanding.
+ *
+ * Used when a finished fast-track assessment is upgraded to the full track: the
+ * full order puts use-cases, retention and credential lifetime BEFORE migration,
+ * so resuming at the old store index would drop the reader past all three.
+ */
+export function firstIncompleteStepStoreIndex(
+  mode: AssessTrack,
+  s: AssessAnswerState,
+  seenKeys: readonly AssessStepKey[] = []
+): number | null {
+  const key = renderOrderFor(mode).find((k) =>
+    STEP_META[k].freelyOptional ? !hasAnswer(k, s) && !seenKeys.includes(k) : !STEP_VALIDATORS[k](s)
+  )
+  return key ? storeIndexOf(mode, key) : null
+}
+
+/** Where a saved `currentStep` sits on the wizard's own rail, for the resume
+ *  banner: 1-based position, track length and the rail label — not the
+ *  legacy-order number, which differs on the full track. */
+export function resumePosition(
+  mode: AssessTrack,
+  storeStep: number
+): { position: number; total: number; label: string } | null {
+  const key = keyAtStoreIndex(mode, storeStep)
+  if (!key) return null
+  const order = renderOrderFor(mode)
+  const idx = order.indexOf(key)
+  if (idx < 0) return null
+  return { position: idx + 1, total: order.length, label: STEP_META[key].label }
+}
+
 /** Per-track question count + time estimate, for chooser + control-deck copy. */
 export const TRACK_INFO: Record<AssessTrack, { count: number; minutes: number; label: string }> = {
   quick: { count: RENDER_ORDER_QUICK.length, minutes: 3, label: 'Fast track' },
