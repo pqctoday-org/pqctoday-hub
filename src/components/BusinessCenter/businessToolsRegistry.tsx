@@ -188,7 +188,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A plan that survives the machine arriving early. If your roadmap only works at the median estimate, it is a forecast, not a plan.',
     workedExample:
-      'Set the CRQC arrival year to 2030 and tick your compliance deadlines: the tool lists which of RSA-2048, ECDSA P-256 and the others are broken by then, and the HNDL exposure window for data you keep past that year.',
+      'Set the CRQC arrival year to 2030 and untick any compliance deadline that does not apply to your systems: the tool lists RSA-2048, ECDSA P-256 and the others broken by a CRQC, counts the ticked deadlines that fall before that year, and shows the HNDL exposure window for data you keep past it.',
     name: 'CRQC Scenario Planner',
     description: 'Plan for cryptographically relevant quantum computer threat scenarios',
     category: 'Risk & Strategy',
@@ -202,16 +202,13 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'risk-register',
-    // 2026-09-19: the builder's fields are asset, current algorithm, threat
-    // vector, likelihood, impact and mitigation — it has no owner or review-date
-    // field, so these lines describe what it renders.
     goodAnswer:
-      'Record the scenario and a proposed mitigation alongside its illustrative likelihood × impact score. This worksheet does not track owners or review dates; evaluate those capabilities in production risk-management tools.',
+      "Each entry names an owner role and a next review date. An entry without them is a note, not a risk: no one is answerable for treating it. Use roles, not people's names; recording a role is not a sign-off.",
     workedExample:
       "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely and Impact 5 — Catastrophic: the card shows Score: 20 (Critical) and the Risk Summary counts it as Critical.",
     name: 'Risk Register Builder',
     description:
-      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact and proposed mitigation',
+      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact, proposed mitigation, owner role and review date',
     category: 'Risk & Strategy',
     icon: ListChecks,
     keywords: ['risk', 'register', 'inventory', 'mitigation', 'likelihood', 'impact'],
@@ -226,7 +223,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Each high risk maps to a treatment someone has actually agreed to fund. Accepting a risk is a valid answer — leaving it blank is not.',
     workedExample:
-      'Place a risk at Likelihood 4 / Impact 5 on the heatmap, choose Mitigate and write the rationale: it appears in the Treatment Summary and in the Migration Priority Order, where you can move it up or down and say why.',
+      'Load sample entries, click the Likelihood 4 / Impact 5 cell, choose Mitigate and write the rationale: it appears in the Treatment Summary and in the Migration Priority Order, where you can move it up or down and say why.',
     name: 'Risk Heatmap & Treatment Plan',
     description: 'Visualise residual risk and draft treatment strategies per risk category',
     category: 'Risk & Strategy',
@@ -245,7 +242,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Every "yes" points at evidence that exists today. A checklist of intentions passes no audit.',
     workedExample:
-      "Pick your industry and primary jurisdiction: each starred framework gets its own checklist with a deadline, a compliance owner and evidence items such as 'Crypto inventory mapped to this framework'.",
+      "Under 'Add frameworks to this checklist', pick an industry and a primary jurisdiction (or Load sample frameworks) and add the frameworks in scope: each one gets its own checklist with a deadline, a compliance owner and controls such as 'Crypto inventory mapped to this framework'. Frameworks starred on /compliance are added automatically.",
     name: 'Compliance Checklist',
     description:
       'Per-framework PQC compliance checklist seeded from your starred frameworks and assessment',
@@ -281,7 +278,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Dates you did not choose, next to dates you did. The gap between the two is the plan.',
     workedExample:
-      "Select jurisdictions and add a fictional milestone such as 'Complete crypto inventory' with a year. Compare the dates; obligation satisfaction stays not assessed because these milestones do not record requirement-specific scope or supporting checks.",
+      "Select jurisdictions, add a fictional milestone such as 'Complete crypto inventory' with a year, and tick the obligations it works toward in the Add Milestone form. The Obligation Review then compares only those linked deadlines (e.g. 'Planned by reference year'); obligation satisfaction stays not assessed.",
     name: 'Compliance Timeline Builder',
     description: 'Plot framework milestones, deadlines, and dependencies on a single timeline',
     category: 'Compliance & Audit',

@@ -75,31 +75,33 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'crqc-scenario': [
     {
-      prompt: 'Move the CRQC arrival year earlier. What appears in the Algorithms Broken panel?',
+      prompt: 'Move the CRQC arrival year earlier. What changes in the HNDL Exposure Window table?',
       options: [
-        'Every classical public-key algorithm you rely on, as of that year',
-        'Only RSA',
-        'Nothing until 2040',
+        'Shorter retention periods turn AT RISK: data captured today is still valid when the CRQC arrives',
+        'Fewer algorithms are listed as broken',
+        'Nothing changes until 2040',
       ],
       answer: 0,
-      why: 'RSA-2048, ECDSA P-256 and their kin all fall to Shor at once; the year sets the HNDL exposure window for data kept past it.',
+      why: 'RSA-2048, ECDSA P-256 and their kin fall to Shor whatever the year; the year moves the HNDL window, so data kept for fewer years becomes exposed.',
     },
   ],
   'risk-register': [
     {
-      prompt: 'Why does the tool say an unowned risk is a note, not a risk?',
+      prompt:
+        'Add a risk entry and leave Owner role blank. Why does the card say it is a note, not a risk yet?',
       options: [
-        'Without a named owner and review date, no one is answerable for treating it',
+        'Without an owner role and a review date, no one is answerable for treating it',
         'Because owners set the likelihood',
         'Because unowned risks cannot be exported',
       ],
       answer: 0,
-      why: 'A register is a commitment: each entry needs a person who signs for the treatment and a date it is looked at again.',
+      why: 'A register is a commitment: each entry needs a role answerable for treating it and a date it is looked at again. The score is the same either way; ownership is what turns a note into a risk.',
     },
   ],
   'risk-treatment-plan': [
     {
-      prompt: 'Place a risk at Likelihood 4 / Impact 5 and choose Mitigate. Where does it appear?',
+      prompt:
+        'Click the Likelihood 4 / Impact 5 cell, choose Mitigate and write a rationale. Where does it appear?',
       options: [
         'In the Treatment Summary and the Migration Priority Order, with your rationale',
         'Only on the heatmap',
@@ -112,7 +114,7 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
   'compliance-checklist': [
     {
       prompt:
-        'Star a framework on the Compliance page and come back. What does each framework gain here?',
+        "Add a framework from 'Add frameworks to this checklist' (or star one on the Compliance page). What does each framework gain here?",
       options: [
         'Its own checklist with a deadline, an owner and evidence items',
         'A colour',
@@ -125,27 +127,27 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
   'audit-checklist': [
     {
       prompt:
-        'Tick "CBOM generated" and add an evidence row with a CMVP certificate number. What moves?',
+        'Tick "CBOM generated" and add a fictional reference row with a CMVP certificate number. What changes in the preview?',
       options: [
-        'Cryptographic Inventory readiness, from Not Started toward Established',
-        'The Exceptions count',
-        'The policy version',
+        'Cryptographic Inventory goes from 0/5 to 1/5 topics selected; the CMVP number appears as a reference row and changes no count',
+        'The CMVP row raises the Cryptographic Inventory percentage',
+        'The overall band becomes Established',
       ],
       answer: 0,
-      why: 'Each area scores from its ticked controls; an evidence row is what lets an auditor follow the tick to the certificate.',
+      why: 'Counts describe which planning topics you selected; a reference row shows an auditor where to look, but neither one establishes readiness.',
     },
   ],
   'compliance-timeline': [
     {
       prompt:
-        'Select two jurisdictions and add a milestone with a year. What does the Gap Analysis say per framework?',
+        "Select United States, add the milestone 'Complete crypto inventory' for 2026 and tick CNSA 2.0 under 'Link this milestone to obligations'. What does the Obligation Review show for CNSA 2.0 (reference year 2031)?",
       options: [
-        'Whether the plan meets the deadline or by how many years it misses',
-        'Which jurisdiction is stricter',
-        'The cost of compliance',
+        'Planned by reference year: the linked milestone is planned before 2031, though planned work is not delivered work',
+        'Recorded by reference year: the obligation is met',
+        'Unknown, because a 2026 milestone cannot be linked',
       ],
       answer: 0,
-      why: 'The timeline overlays your milestones on each framework deadline; the gap is measured in years, framework by framework.',
+      why: "Only obligations you link are compared. The review compares the milestone's year with the reference year; it does not establish that the obligation is satisfied.",
     },
   ],
   'raci-builder': [
