@@ -2409,10 +2409,15 @@ export function SimulationView() {
     opts: { canOpen: boolean; compact?: boolean; hideLabel?: boolean }
   ) => {
     const value = step.metricId ? stepCompletionCtx.metricValue(step.metricId) : null
-    const tree = SIM_TREES[sel as PhaseId]
+    // The phase's own architecture step, else Phase 5's (closure measures the
+    // estate but has no architecture panel of its own).
+    const lastArchStep = (p: PhaseId) => {
+      const t = SIM_TREES[p]
+      return (t ? flattenTree(t) : []).filter((x) => x.kind === 'architecture').at(-1)
+    }
     const archStep =
       step.metricId === 'migration-coverage-pct' || step.metricId === 'migration-decisions'
-        ? (tree ? flattenTree(tree) : []).filter((x) => x.kind === 'architecture').at(-1)
+        ? (lastArchStep(sel as PhaseId) ?? lastArchStep('p5'))
         : undefined
     return (
       <MeasureStatus
@@ -3931,14 +3936,6 @@ export function SimulationView() {
             }
           />
         </header>
-
-        {/* Live-feed ticker dropped for now: it was a hand-maintained CSV
-          (simFeed.ts) + a static event pool that duplicated, and could drift
-          from, the hub's authoritative timeline/regulatory data instead of
-          deriving from it. The data files (simFeed.ts, simEvents.ts, the CSV,
-          quarterEngine's event draw) are left in place so it can be re-enabled
-          and wired to the hub timeline (QC_FIRST_YEAR / regulatoryTimelines / …)
-          when we invest in doing it properly. */}
 
         {/* body — swaps to the embedded Learn module / activity tool when one is open.
           The sim header above stays, AND a persistent "Simulation mode" bar sits on
