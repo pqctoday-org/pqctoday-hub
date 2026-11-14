@@ -1,15 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useContext, useEffect } from 'react'
 import { Map, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import type { RecommendedAction } from '../../hooks/assessmentTypes'
-import { findCountryMilestoneGroups, findCountryNextMilestone } from './countryMilestone'
+import {
+  findCountryMilestoneGroups,
+  findCountryNextMilestone,
+  findSelectedMilestone,
+} from './countryMilestone'
+import { SectionExpandContext } from '@/contexts/sectionExpandContext'
+import type { TimelineMilestone } from '../../hooks/assessmentTypes'
 import { Button } from '../ui/button'
 import { SectionInfoTip } from './sections/reportContentShared'
 
 interface MigrationRoadmapProps {
   actions: RecommendedAction[]
   countryName?: string
+  /**
+   * The published deadline the assessment's timeline answer named, if any. The
+   * roadmap is paced to it; without one it uses the country's next milestone.
+   */
+  selectedMilestone?: TimelineMilestone | null
   defaultOpen?: boolean
 }
 
@@ -114,13 +125,28 @@ function computePhaseRanges(
 export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
   actions,
   countryName,
+  selectedMilestone,
   defaultOpen = true,
 }) => {
   const [open, setOpen] = useState(defaultOpen)
-  const milestone = useMemo(
-    () => (countryName ? findCountryNextMilestone(countryName) : null),
-    [countryName]
-  )
+  // "Expand all" / "Collapse" in the report's table of contents.
+  const { expandToken, collapseToken } = useContext(SectionExpandContext)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (expandToken > 0) setOpen(true)
+  }, [expandToken])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (collapseToken > 0) setOpen(false)
+  }, [collapseToken])
+  const { milestone, chosenMilestone } = useMemo(() => {
+    if (!countryName) return { milestone: null, chosenMilestone: false }
+    // The deadline the visitor picked, when it is still a row in this country's
+    // timeline; otherwise the country's next milestone.
+    const chosen = selectedMilestone ? findSelectedMilestone(countryName, selectedMilestone) : null
+    if (chosen) return { milestone: chosen, chosenMilestone: true }
+    return { milestone: findCountryNextMilestone(countryName), chosenMilestone: false }
+  }, [countryName, selectedMilestone])
   const deadlineYear = milestone?.year ?? null
   const milestoneGroups = useMemo(
     () => (countryName ? findCountryMilestoneGroups(countryName) : []),
@@ -141,8 +167,8 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
           : 'border-destructive/30 bg-destructive/10 text-destructive'
       )}
     >
-      {countryName} next {isSoft ? 'guidance target' : 'deadline'}: {deadlineYear} —{' '}
-      {milestone.title}
+      {countryName} {chosenMilestone ? 'selected' : 'next'}{' '}
+      {isSoft ? 'guidance target' : 'deadline'}: {deadlineYear} — {milestone.title}
     </span>
   ) : null
 

@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AssessTrackChooser } from './AssessTrackChooser'
-import { FAST_REPORT_SECTIONS, FULL_LOCKED_SECTIONS } from './reportContract'
+import { FAST_REPORT_SECTIONS, FULL_LOCKED_SECTIONS, FULL_ONLY_SECTIONS } from './reportContract'
 
 describe('AssessTrackChooser', () => {
   it('renders both tracks framed by outcome (report sections, not just counts)', () => {
@@ -19,6 +19,8 @@ describe('AssessTrackChooser', () => {
     FAST_REPORT_SECTIONS.forEach((s) => expect(screen.getByText(s)).toBeInTheDocument())
     // every locked full-track section is listed
     FULL_LOCKED_SECTIONS.forEach((s) => expect(screen.getByText(s)).toBeInTheDocument())
+    // sections only the full track can model are listed with the full track
+    FULL_ONLY_SECTIONS.forEach((s) => expect(screen.getByText(s)).toBeInTheDocument())
     // the locked-count line
     expect(screen.getByText(/sections stay locked/i)).toBeInTheDocument()
   })

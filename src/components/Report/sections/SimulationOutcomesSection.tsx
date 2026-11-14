@@ -94,7 +94,7 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
 
   return (
     <CollapsibleSection
-      id="report-section-simulation-outcomes"
+      id="report-section-simulationOutcomes"
       title="Simulation Outcomes"
       icon={<PlayCircle className="text-primary" size={20} />}
       defaultOpen={defaultOpen}

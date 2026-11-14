@@ -12,6 +12,11 @@ import {
   storeIndexOf,
   keyAtStoreIndex,
   renderOrderFor,
+  hasAnswer,
+  isStepAnswered,
+  firstIncompleteStepStoreIndex,
+  resumePosition,
+  type AssessAnswerState,
   type AssessValidatorState,
 } from './assessFlowModel'
 import { FULL_LOCKED_SECTIONS, FAST_REPORT_SECTIONS } from './reportContract'
@@ -181,5 +186,118 @@ describe('assess flow model — use-case ordering guidance', () => {
     expect(why).toMatch(/dependenc/i)
     expect(why).toMatch(/storage/i)
     expect(why).toMatch(/signing/i)
+  })
+})
+
+// A fast-track answer set: everything the quick track asks, nothing it does not.
+const quickAnswered = (): AssessAnswerState => ({
+  ...emptyState(),
+  industry: 'Finance & Banking',
+  country: 'United States',
+  currentCryptoCategories: ['key-exchange'],
+  dataSensitivity: ['high'],
+  migrationStatus: 'planning',
+})
+
+describe('assess flow model — optional-step answers', () => {
+  it('an untouched optional step is not answered, though its validator passes', () => {
+    const s = emptyState()
+    expect(STEP_VALIDATORS.compliance(s)).toBe(true)
+    expect(hasAnswer('compliance', s)).toBe(false)
+    expect(hasAnswer('use-cases', s)).toBe(false)
+    expect(hasAnswer('infra', s)).toBe(false)
+  })
+
+  it('a selection or the not-sure flag answers an optional step', () => {
+    expect(hasAnswer('compliance', { ...emptyState(), complianceRequirements: ['nist'] })).toBe(
+      true
+    )
+    expect(hasAnswer('use-cases', { ...emptyState(), useCasesUnknown: true })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), infrastructure: ['hsm'] })).toBe(true)
+  })
+
+  it('any of the infrastructure step parts answers it, as the review summary does', () => {
+    expect(hasAnswer('infra', { ...emptyState(), cryptoLibraries: ['OpenSSL'] })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), infraAutomation: ['None'] })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), vendorDependency: 'mixed' })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), vendorUnknown: true })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), cryptoLibraries: [], vendorDependency: '' })).toBe(
+      false
+    )
+  })
+
+  it('hasAnswer on a required step is the validator', () => {
+    expect(hasAnswer('industry', emptyState())).toBe(false)
+    expect(hasAnswer('industry', { ...emptyState(), industry: 'Healthcare' })).toBe(true)
+  })
+
+  it('an optional step the reader moved past counts; a required one still needs an answer', () => {
+    expect(isStepAnswered('infra', emptyState(), true)).toBe(true)
+    expect(isStepAnswered('infra', emptyState(), false)).toBe(false)
+    expect(isStepAnswered('industry', emptyState(), true)).toBe(false)
+  })
+})
+
+describe('assess flow model — fast to full upgrade landing', () => {
+  it('a finished fast track lands on use-cases, not on migration', () => {
+    const landing = firstIncompleteStepStoreIndex(
+      'comprehensive',
+      quickAnswered(),
+      RENDER_ORDER_QUICK
+    )
+    expect(keyAtStoreIndex('comprehensive', landing as number)).toBe('use-cases')
+    // The old step (migration, store index 5) is exactly what the upgrade must NOT keep.
+    expect(landing).not.toBe(storeIndexOf('comprehensive', 'migration'))
+  })
+
+  it('skips the optional steps already answered and lands on the first required gap', () => {
+    const s = { ...quickAnswered(), cryptoUseCases: ['tls'] }
+    const landing = firstIncompleteStepStoreIndex('comprehensive', s, RENDER_ORDER_QUICK)
+    expect(keyAtStoreIndex('comprehensive', landing as number)).toBe('retention')
+  })
+
+  it('does not send the reader back to an optional step the fast track already showed', () => {
+    // compliance was shown on the fast track and left blank; it is not outstanding.
+    const landing = firstIncompleteStepStoreIndex(
+      'comprehensive',
+      quickAnswered(),
+      RENDER_ORDER_QUICK
+    )
+    expect(keyAtStoreIndex('comprehensive', landing as number)).not.toBe('compliance')
+  })
+
+  it('returns null when nothing is outstanding', () => {
+    const all: AssessAnswerState = {
+      ...quickAnswered(),
+      complianceUnknown: true,
+      useCasesUnknown: true,
+      infrastructureUnknown: true,
+      retentionUnknown: true,
+      credentialLifetimeUnknown: true,
+      scaleUnknown: true,
+      agilityUnknown: true,
+      timelineUnknown: true,
+    }
+    expect(firstIncompleteStepStoreIndex('comprehensive', all)).toBeNull()
+  })
+})
+
+describe('assess flow model — resume position', () => {
+  it('reports the rail position and label, not the legacy number', () => {
+    // store index 5 is migration: legacy "step 6", but step 9 of 13 on the full rail.
+    expect(resumePosition('comprehensive', 5)).toEqual({
+      position: 9,
+      total: 13,
+      label: STEP_META.migration.label,
+    })
+    expect(resumePosition('quick', 5)).toEqual({
+      position: 6,
+      total: 6,
+      label: STEP_META.migration.label,
+    })
+  })
+
+  it('is null for a step outside the track', () => {
+    expect(resumePosition('quick', 9)).toBeNull()
   })
 })

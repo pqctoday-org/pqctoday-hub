@@ -21,7 +21,7 @@ export const FAST_REPORT_SECTIONS: readonly string[] = [
   'Risk score & verdict',
   'Key findings & threat landscape',
   'Assessment profile',
-  'HNDL exposure window',
+  'Algorithm migration matrix',
   'Compliance impact',
   'Recommended actions',
 ]
@@ -30,6 +30,15 @@ export const FULL_LOCKED_SECTIONS: readonly string[] = [
   'Per-domain risk breakdown',
   'Progress over time',
 ]
+
+/**
+ * Sections the full track adds that the fast track does not lock behind an
+ * overlay but simply cannot model, because they need answers only the full
+ * track asks (data retention and credential lifetimes). On a fast-track report
+ * these show a "not modelled" notice instead of a window, so the chooser lists
+ * them as full-track additions rather than as fast-track contents.
+ */
+export const FULL_ONLY_SECTIONS: readonly string[] = ['HNDL & HNFL risk windows']
 
 /** Count of report sections that stay locked on the fast track. */
 export const FAST_LOCKED_COUNT = FULL_LOCKED_SECTIONS.length

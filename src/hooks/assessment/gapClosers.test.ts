@@ -159,13 +159,14 @@ describe('QRA builder (gap-closer #3)', () => {
     expect(qra.twoTrack).toBeDefined()
   })
 
-  it('quick-mode results now produce a coarse heatmap (#2 assess→sim) without throwing', () => {
+  it('quick-mode results build the rest of the QRA but keep the per-domain heatmap locked', () => {
     const result = computeAssessment(QUICK_INPUT)
     const qra = buildQRA(QUICK_INPUT, result)
-    // The legacy/quick path now emits coarse category scores, so the QRA heatmap
-    // populates (previously empty) — the sim & report get a usable risk view even
-    // from a short assessment.
-    expect(qra.heatmap.length).toBeGreaterThan(0)
+    // The quick path emits coarse category scores for the simulation and KPIs,
+    // but the per-domain breakdown is a full-assessment result, so the report's
+    // heatmap stays empty (and says so) rather than revealing them.
+    expect(result.categoryScores).toBeDefined()
+    expect(qra.heatmap).toEqual([])
     expect(qra.backlog.length).toBeGreaterThan(0)
   })
 })
