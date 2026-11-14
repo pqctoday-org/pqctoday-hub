@@ -136,7 +136,11 @@
     },
     "openssl-pkcs11": {
       "hsmCommit": "a013c43c6c99a85b5861c5611b27cf62cd83d257",
-      "release": null,
+      "release": {
+        "tag": "engines-7",
+        "asset": "openssl-pkcs11-a013c43c.tar.gz",
+        "tarballSha256": "4793e998bd820197c7a838983330e5c3065f3c30a4fcb1afbf2a17f44914cf95"
+      },
       "files": {
         "public/wasm/openssl.js": {
           "sha256": "a040907d611ff8e33cfebb119ac76dfb7c152ef884ad2e1a84ff55b26fdcdebe",
