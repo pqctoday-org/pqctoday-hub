@@ -25,7 +25,7 @@ const manifest: ModuleManifest = {
     { id: 'keygen', label: 'Generate End-Entity Key (ML-DSA / ML-KEM)' },
     { id: 'cmp-ir', label: 'CMP Initial Request' },
     { id: 'est-enroll', label: 'EST simpleenroll' },
-    { id: 'cmp-kur', label: 'CMP enrollment and ML-KEM round trip' },
+    { id: 'cmp-kur', label: 'ML-KEM certificate key update' },
     { id: 'composite', label: 'Parallel certificate issuance' },
     { id: 'cert-viewer', label: 'Inspect Issued Certificate' },
   ],

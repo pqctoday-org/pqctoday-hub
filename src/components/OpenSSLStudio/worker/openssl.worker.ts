@@ -49,6 +49,38 @@ type WorkerMessage =
       requestId?: string
     }
   | {
+      type: 'CMP_KEY_UPDATE'
+      version: 1
+      eeKeyPath: string
+      oldCertPath: string
+      authorizedPriorPath: string
+      subjectDn: string
+      reference: string
+      secret: string
+      caCertPath: string
+      caKeyPath: string
+      outCertPath: string
+      files?: { name: string; data: Uint8Array }[]
+      requestId?: string
+    }
+  | {
+      type: 'CMP_SIGNED_KEY_UPDATE'
+      version: 2
+      eeKeyPath: string
+      oldCertPath: string
+      authorizedPriorPath: string
+      subjectDn: string
+      signerCertPath: string
+      signerKeyPath: string
+      authorizedSignerPath: string
+      profile: string
+      caCertPath: string
+      caKeyPath: string
+      outCertPath: string
+      files?: { name: string; data: Uint8Array }[]
+      requestId?: string
+    }
+  | {
       type: 'GEN_CA_ROOT'
       algorithm: string
       subjectDn: string
@@ -91,6 +123,7 @@ type WorkerMessage =
 // ----------------------------------------------------------------------------
 
 interface EmscriptenModule {
+  UTF8ToString: (ptr: number) => string
   callMain: (args: string[]) => number
   FS: {
     writeFile: (path: string, data: Uint8Array) => void
@@ -1929,6 +1962,191 @@ var executeCmpSimulation = async (
   }
 }
 
+var executeCmpKeyUpdate = async (
+  eeKeyPath: string,
+  oldCertPath: string,
+  authorizedPriorPath: string,
+  subjectDn: string,
+  reference: string,
+  secret: string,
+  caCertPath: string,
+  caKeyPath: string,
+  outCertPath: string,
+  files: { name: string; data: Uint8Array }[] = [],
+  requestId?: string
+) => {
+  try {
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const module = await createOpenSSLInstance(requestId)
+    injectEntropy(module, requestId)
+    configureEnvironment(module, requestId)
+    if (files.length > 0) writeInputFiles(module, files, requestId)
+
+    const cmpC = module.cwrap('execute_cmp_key_update', 'number', [
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+    ])
+    if (!cmpC) throw new Error('execute_cmp_key_update not found in WASM module')
+
+    const resultPointer = cmpC(
+      eeKeyPath,
+      oldCertPath,
+      authorizedPriorPath,
+      subjectDn,
+      reference,
+      secret,
+      caCertPath,
+      caKeyPath,
+      outCertPath
+    )
+
+    if (!resultPointer) throw new Error('CMP key update returned no result')
+    let resultJson: string
+    try {
+      resultJson = module.UTF8ToString(resultPointer)
+    } finally {
+      module._free(resultPointer)
+    }
+    const outcome = JSON.parse(resultJson)
+    if (
+      outcome.ok &&
+      (outcome.operation !== 'KUR' ||
+        outcome.proofVerified !== true ||
+        outcome.confirmationAccepted !== true)
+    ) {
+      throw new Error('CMP key update did not establish proof and explicit confirmation')
+    }
+    // Try to slurp the issued cert from the WASM FS — only present on success.
+    let certBytes: Uint8Array | null = null
+    try {
+      if (outcome.ok) certBytes = module.FS.readFile(outCertPath)
+    } catch (_e) {
+      certBytes = null
+    }
+
+    if (outcome.ok && !certBytes?.length)
+      throw new Error('CMP key update produced no confirmed certificate')
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stdout',
+      message: 'CMP_KEY_UPDATE_RESULT:' + resultJson,
+      requestId,
+    })
+    if (certBytes) {
+      self.postMessage({
+        type: 'FILE_CREATED',
+        name: outCertPath.replace(/^\//, ''),
+        data: certBytes,
+        requestId,
+      })
+    }
+  } catch (error: any) {
+    self.postMessage({
+      type: 'ERROR',
+      error: error.message || 'CMP simulation failed',
+      requestId,
+    })
+  } finally {
+    self.postMessage({ type: 'DONE', requestId })
+  }
+}
+
+var executeCmpSignedKeyUpdate = async (
+  eeKeyPath: string,
+  oldCertPath: string,
+  authorizedPriorPath: string,
+  subjectDn: string,
+  signerCertPath: string,
+  signerKeyPath: string,
+  authorizedSignerPath: string,
+  profile: string,
+  caCertPath: string,
+  caKeyPath: string,
+  outCertPath: string,
+  files: { name: string; data: Uint8Array }[] = [],
+  requestId?: string
+) => {
+  try {
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const module = await createOpenSSLInstance(requestId)
+    injectEntropy(module, requestId)
+    configureEnvironment(module, requestId)
+    if (files.length > 0) writeInputFiles(module, files, requestId)
+
+    const cmpC = module.cwrap('execute_cmp_key_update_v2', 'number', Array(11).fill('string'))
+    if (!cmpC) throw new Error('execute_cmp_key_update_v2 not found in WASM module')
+    const resultPointer = cmpC(
+      eeKeyPath,
+      oldCertPath,
+      authorizedPriorPath,
+      signerCertPath,
+      signerKeyPath,
+      authorizedSignerPath,
+      subjectDn,
+      caCertPath,
+      caKeyPath,
+      outCertPath,
+      profile
+    )
+
+    if (!resultPointer) throw new Error('CMP key update returned no result')
+    let resultJson: string
+    try {
+      resultJson = module.UTF8ToString(resultPointer)
+    } finally {
+      module._free(resultPointer)
+    }
+    const outcome = JSON.parse(resultJson)
+    if (
+      outcome.ok &&
+      (outcome.operation !== 'KUR' ||
+        outcome.proofVerified !== true ||
+        outcome.confirmationAccepted !== true)
+    ) {
+      throw new Error('CMP key update did not establish proof and explicit confirmation')
+    }
+    // Try to slurp the issued cert from the WASM FS — only present on success.
+    let certBytes: Uint8Array | null = null
+    try {
+      if (outcome.ok) certBytes = module.FS.readFile(outCertPath)
+    } catch (_e) {
+      certBytes = null
+    }
+
+    if (outcome.ok && !certBytes?.length)
+      throw new Error('CMP key update produced no confirmed certificate')
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stdout',
+      message: 'CMP_SIGNED_KEY_UPDATE_RESULT:' + resultJson,
+      requestId,
+    })
+    if (certBytes) {
+      self.postMessage({
+        type: 'FILE_CREATED',
+        name: outCertPath.replace(/^\//, ''),
+        data: certBytes,
+        requestId,
+      })
+    }
+  } catch (error: any) {
+    self.postMessage({
+      type: 'ERROR',
+      error: error.message || 'CMP simulation failed',
+      requestId,
+    })
+  } finally {
+    self.postMessage({ type: 'DONE', requestId })
+  }
+}
+
 var generateCaRoot = async (
   algorithm: string,
   subjectDn: string,
@@ -2210,6 +2428,40 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
         d.subjectDn,
         d.reference,
         d.secret,
+        d.caCertPath,
+        d.caKeyPath,
+        d.outCertPath,
+        d.files,
+        requestId
+      )
+    } else if (type === 'CMP_KEY_UPDATE') {
+      const d = event.data
+      if (d.version !== 1) throw new Error('Unsupported CMP key-update contract version')
+      await executeCmpKeyUpdate(
+        d.eeKeyPath,
+        d.oldCertPath,
+        d.authorizedPriorPath,
+        d.subjectDn,
+        d.reference,
+        d.secret,
+        d.caCertPath,
+        d.caKeyPath,
+        d.outCertPath,
+        d.files,
+        requestId
+      )
+    } else if (type === 'CMP_SIGNED_KEY_UPDATE') {
+      const d = event.data
+      if (d.version !== 2) throw new Error('Unsupported signed CMP key-update contract version')
+      await executeCmpSignedKeyUpdate(
+        d.eeKeyPath,
+        d.oldCertPath,
+        d.authorizedPriorPath,
+        d.subjectDn,
+        d.signerCertPath,
+        d.signerKeyPath,
+        d.authorizedSignerPath,
+        d.profile,
         d.caCertPath,
         d.caKeyPath,
         d.outCertPath,

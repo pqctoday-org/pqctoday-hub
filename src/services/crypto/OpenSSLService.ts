@@ -415,6 +415,236 @@ class OpenSSLService {
     })
   }
 
+  public async executeCmpKeyUpdate(args: {
+    eeKeyPath: string
+    oldCertPath: string
+    authorizedPriorPath: string
+    subjectDn: string
+    reference: string
+    secret: string
+    caCertPath: string
+    caKeyPath: string
+    outCertPath: string
+    files: { name: string; data: Uint8Array }[]
+  }): Promise<{
+    ok: boolean
+    operation?: string
+    proofVerified?: boolean
+    confirmationAccepted?: boolean
+    error?: string
+    transcript: { side: string; event: string; detail: string }[]
+    certPem?: Uint8Array
+    certPath?: string
+    rawJson: string
+  }> {
+    try {
+      await this.init()
+    } catch (error) {
+      throw new Error(`OpenSSL Service not available: ${error}`)
+    }
+    if (!this.worker) throw new Error('Worker not initialized')
+
+    const requestId = `req_cmp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        reject(new Error(`CMP simulation timed out after ${this.EXEC_TIMEOUT}ms`))
+      }, this.EXEC_TIMEOUT)
+
+      this.pendingRequests.set(requestId, {
+        resolve: (result) => {
+          clearTimeout(timeoutId)
+          const line = result.stdout.split('\n').find((l) => l.startsWith('CMP_KEY_UPDATE_RESULT:'))
+          if (!line) {
+            reject(new Error('CMP simulation produced no result line. stderr:\n' + result.stderr))
+            return
+          }
+          const rawJson = line.replace('CMP_KEY_UPDATE_RESULT:', '')
+          let parsed: {
+            ok: boolean
+            operation?: string
+            proofVerified?: boolean
+            confirmationAccepted?: boolean
+            error?: string
+            transcript?: { side: string; event: string; detail: string }[]
+            certPath?: string
+          }
+          try {
+            parsed = JSON.parse(rawJson)
+          } catch {
+            reject(new Error(`CMP simulation result was not valid JSON: ${rawJson}`))
+            return
+          }
+          const certFile = parsed.certPath
+            ? result.files.find((f) => '/' + f.name === parsed.certPath)
+            : undefined
+          if (
+            parsed.ok &&
+            (parsed.operation !== 'KUR' ||
+              parsed.proofVerified !== true ||
+              parsed.confirmationAccepted !== true ||
+              !certFile?.data.length)
+          ) {
+            reject(new Error('CMP key update lacks confirmed proof or its certificate'))
+            return
+          }
+          resolve({
+            ok: parsed.ok,
+            operation: parsed.operation,
+            proofVerified: parsed.proofVerified,
+            confirmationAccepted: parsed.confirmationAccepted,
+            error: parsed.error,
+            transcript: parsed.transcript || [],
+            certPem: certFile?.data,
+            certPath: parsed.certPath,
+            rawJson,
+          })
+        },
+        reject: (error) => {
+          clearTimeout(timeoutId)
+          reject(error)
+        },
+        result: { stdout: '', stderr: '', error: '', files: [] },
+      })
+
+      this.worker!.postMessage({
+        type: 'CMP_KEY_UPDATE',
+        version: 1,
+        eeKeyPath: args.eeKeyPath,
+        oldCertPath: args.oldCertPath,
+        authorizedPriorPath: args.authorizedPriorPath,
+        subjectDn: args.subjectDn,
+        reference: args.reference,
+        secret: args.secret,
+        caCertPath: args.caCertPath,
+        caKeyPath: args.caKeyPath,
+        outCertPath: args.outCertPath,
+        files: args.files,
+        requestId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+    })
+  }
+
+  public async executeCmpSignedKeyUpdate(args: {
+    eeKeyPath: string
+    oldCertPath: string
+    authorizedPriorPath: string
+    subjectDn: string
+    signerCertPath: string
+    signerKeyPath: string
+    authorizedSignerPath: string
+    profile: string
+    caCertPath: string
+    caKeyPath: string
+    outCertPath: string
+    files: { name: string; data: Uint8Array }[]
+  }): Promise<{
+    ok: boolean
+    operation?: string
+    proofVerified?: boolean
+    confirmationAccepted?: boolean
+    error?: string
+    transcript: { side: string; event: string; detail: string }[]
+    certPem?: Uint8Array
+    certPath?: string
+    rawJson: string
+  }> {
+    try {
+      await this.init()
+    } catch (error) {
+      throw new Error(`OpenSSL Service not available: ${error}`)
+    }
+    if (!this.worker) throw new Error('Worker not initialized')
+
+    const requestId = `req_cmp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        reject(new Error(`CMP simulation timed out after ${this.EXEC_TIMEOUT}ms`))
+      }, this.EXEC_TIMEOUT)
+
+      this.pendingRequests.set(requestId, {
+        resolve: (result) => {
+          clearTimeout(timeoutId)
+          const line = result.stdout
+            .split('\n')
+            .find((l) => l.startsWith('CMP_SIGNED_KEY_UPDATE_RESULT:'))
+          if (!line) {
+            reject(new Error('CMP simulation produced no result line. stderr:\n' + result.stderr))
+            return
+          }
+          const rawJson = line.replace('CMP_SIGNED_KEY_UPDATE_RESULT:', '')
+          let parsed: {
+            ok: boolean
+            operation?: string
+            proofVerified?: boolean
+            confirmationAccepted?: boolean
+            error?: string
+            transcript?: { side: string; event: string; detail: string }[]
+            certPath?: string
+          }
+          try {
+            parsed = JSON.parse(rawJson)
+          } catch {
+            reject(new Error(`CMP simulation result was not valid JSON: ${rawJson}`))
+            return
+          }
+          const certFile = parsed.certPath
+            ? result.files.find((f) => '/' + f.name === parsed.certPath)
+            : undefined
+          if (
+            parsed.ok &&
+            (parsed.operation !== 'KUR' ||
+              parsed.proofVerified !== true ||
+              parsed.confirmationAccepted !== true ||
+              !certFile?.data.length)
+          ) {
+            reject(new Error('CMP key update lacks confirmed proof or its certificate'))
+            return
+          }
+          resolve({
+            ok: parsed.ok,
+            operation: parsed.operation,
+            proofVerified: parsed.proofVerified,
+            confirmationAccepted: parsed.confirmationAccepted,
+            error: parsed.error,
+            transcript: parsed.transcript || [],
+            certPem: certFile?.data,
+            certPath: parsed.certPath,
+            rawJson,
+          })
+        },
+        reject: (error) => {
+          clearTimeout(timeoutId)
+          reject(error)
+        },
+        result: { stdout: '', stderr: '', error: '', files: [] },
+      })
+
+      this.worker!.postMessage({
+        type: 'CMP_SIGNED_KEY_UPDATE',
+        version: 2,
+        eeKeyPath: args.eeKeyPath,
+        oldCertPath: args.oldCertPath,
+        authorizedPriorPath: args.authorizedPriorPath,
+        subjectDn: args.subjectDn,
+        signerCertPath: args.signerCertPath,
+        signerKeyPath: args.signerKeyPath,
+        authorizedSignerPath: args.authorizedSignerPath,
+        profile: args.profile,
+        caCertPath: args.caCertPath,
+        caKeyPath: args.caKeyPath,
+        outCertPath: args.outCertPath,
+        files: args.files,
+        requestId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+    })
+  }
+
   public async generateCaRoot(args: {
     algorithm: string
     subjectDn: string
