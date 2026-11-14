@@ -1031,8 +1031,9 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
     tagline:
       'Quantum-readiness scorecard organised around the NIST CSWP.39 strategic plan. Surface the artifacts your board needs first: ROI model, board deck, policy, KPIs.',
     featuredArtifacts: {
-      governance: ['board-deck', 'roi-model', 'policy-draft', 'audit-checklist'],
+      governance: ['board-deck', 'roi-model', 'policy-draft', 'audit-checklist', 'program-charter'],
       'risk-management': ['kpi-dashboard', 'risk-register'],
+      migration: ['migration-roadmap'],
     },
   },
   // GRC (2026-09-07 split, plan §5): open with Governance — audit checklist,
@@ -1077,11 +1078,10 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
   ops: {
     defaultActiveZone: 'migration',
     headline: 'Migration & Mitigation — Run View',
-    tagline:
-      'Track migration phases, deployment playbooks, and KPI burndown. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
+    tagline: 'Track migration phases, deployment playbooks, and KPI burndown.',
     featuredArtifacts: {
-      migration: ['migration-roadmap'],
-      mitigation: ['deployment-playbook'],
+      migration: ['migration-roadmap', 'refresh-cycle-alignment'],
+      mitigation: ['deployment-playbook', 'infra-modernization-plan', 'data-at-rest-strategy'],
       'risk-management': ['kpi-tracker', 'kpi-dashboard'],
       governance: ['supply-chain-matrix', 'audit-checklist'],
     },
@@ -1093,9 +1093,10 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
     tagline:
       'Algorithm transitions, library + HSM upgrade paths, and the deployment playbook for the systems you own.',
     featuredArtifacts: {
-      migration: ['migration-roadmap'],
+      migration: ['migration-roadmap', 'crypto-api-refactor', 'hybrid-transition'],
       mitigation: ['deployment-playbook'],
       governance: ['crypto-architecture', 'policy-draft'],
+      assets: ['crypto-cbom'],
     },
   },
   // Researcher: open with Risk Management — surface risk + policy reference.
@@ -1107,6 +1108,25 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
     featuredArtifacts: {
       'risk-management': ['risk-register', 'risk-treatment-plan'],
       governance: ['policy-draft', 'audit-checklist', 'crqc-scenario'],
+    },
+  },
+  // Certification engineer: opens Governance on the evidence side — the
+  // compliance checklist, vendor certificates and claims, the audit checklist
+  // and the migration check. The role has no seat in the migration program on
+  // the rail (see PERSONA_NAV_PATHS), so this lens does not reach into Migration.
+  'cert-engineer': {
+    defaultActiveZone: 'governance',
+    headline: 'Certification & conformance — evidence view',
+    tagline:
+      'Check certificates, vendor evidence and deployed results against the plan. Surface the compliance checklist, vendor scorecard, audit checklist and migration verification first.',
+    featuredArtifacts: {
+      governance: [
+        'compliance-checklist',
+        'vendor-scorecard',
+        'audit-checklist',
+        'migration-verification',
+      ],
+      mitigation: ['certification-plan'],
     },
   },
 }

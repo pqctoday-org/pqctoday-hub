@@ -7,7 +7,7 @@
 // produce. The zip adds every table as a CSV.
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import {
   ChevronDown,
   ChevronRight,
@@ -62,12 +62,12 @@ export function OperationsPackPanel() {
   const [busy, setBusy] = useState<Busy>(null)
   const [error, setError] = useState<string | null>(null)
   const ref = useRef<HTMLElement>(null)
+  const { hash } = useLocation()
 
+  // Scroll on load and whenever a same-page link sets this panel's hash.
   useEffect(() => {
-    if (window.location.hash === '#operations-pack') {
-      ref.current?.scrollIntoView({ block: 'start' })
-    }
-  }, [])
+    if (hash === '#operations-pack') ref.current?.scrollIntoView({ block: 'start' })
+  }, [hash])
 
   const preview = useMemo(() => buildOperationsPack({ documents }), [documents])
   const total = OPERATIONS_PACK_SECTIONS.length

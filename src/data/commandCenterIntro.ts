@@ -123,6 +123,73 @@ const DEVELOPER_INTRO: CommandCenterIntro = {
   ],
 }
 
+// The Operations set: the four questions a migration run answers, each mapped to
+// the tool or calculator that answers it. The board questions are not an
+// operator's first step.
+const OPS_INTRO: CommandCenterIntro = {
+  lede: 'A migration run turns a plan into rollouts that hold capacity and can be rolled back. These four questions are the order to work in: capacity, timing, rollout, then progress.',
+  showGuidedOverview: false,
+  questions: [
+    {
+      q: 'Will capacity hold?',
+      desc: 'Size HSM and key-operation load for post-quantum algorithms.',
+      to: '/playground/hsm-capacity',
+      cta: 'HSM capacity calculator',
+    },
+    {
+      q: 'When can we change it?',
+      desc: 'Line the migration up with hardware and certificate refresh windows.',
+      to: '/business/tools/refresh-cycle-alignment',
+      cta: 'Refresh-cycle alignment',
+    },
+    {
+      q: 'How do we roll it out?',
+      desc: 'A step-by-step deployment and rollback runbook.',
+      to: '/business/tools/deployment-playbook',
+      cta: 'Deployment playbook',
+    },
+    {
+      q: 'How do we track progress?',
+      desc: 'Migration KPIs over time.',
+      to: '/business/tools/kpi-tracker',
+      cta: 'KPI tracker',
+    },
+  ],
+}
+
+// The Certification Engineer's set: the four questions a certification effort
+// answers, each mapped to the learning page, record or tool that answers it.
+const CERT_ENGINEER_INTRO: CommandCenterIntro = {
+  lede: 'Certification turns a product into evidence that a scheme accepts. These four questions are the order to work in: the scheme, what already exists, whether the vendor evidence holds, and whether the migration is verified.',
+  showGuidedOverview: false,
+  questions: [
+    {
+      q: 'Which scheme applies?',
+      desc: 'FIPS 140-3, Common Criteria / EUCC and other schemes, and how a product gets through them.',
+      to: '/learn/crypto-product-certification',
+      cta: 'Crypto Product Certification',
+    },
+    {
+      q: 'What has already been certified?',
+      desc: 'Certification records by scheme, with the source.',
+      to: '/compliance?tab=records',
+      cta: 'Certification records',
+    },
+    {
+      q: 'Is the vendor evidence enough?',
+      desc: 'Score vendor certificates and claims.',
+      to: '/business/tools/vendor-scorecard',
+      cta: 'Vendor scorecard',
+    },
+    {
+      q: 'Is the migration verified?',
+      desc: 'Check the deployed result against the plan.',
+      to: '/business/tools/migration-verification',
+      cta: 'Migration verification',
+    },
+  ],
+}
+
 // The Security Architect's set: the four questions a design review asks, each
 // mapped to an existing tool. The architecture pack above the intro collects
 // the answers into one document.
@@ -197,5 +264,7 @@ export function commandCenterIntroFor(persona: PersonaId | null): CommandCenterI
   if (persona === 'developer') return DEVELOPER_INTRO
   if (persona === 'architect') return ARCHITECT_INTRO
   if (persona === 'researcher') return RESEARCHER_INTRO
+  if (persona === 'ops') return OPS_INTRO
+  if (persona === 'cert-engineer') return CERT_ENGINEER_INTRO
   return BOARD_INTRO
 }

@@ -18,6 +18,7 @@
  */
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { TYPE_LABELS } from '@/data/artifactLabels'
+import { EXAMPLE_REVIEWER_FALLBACK, exampleReviewerRole } from '@/data/exampleReviewerRoles'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
 import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 
@@ -141,9 +142,20 @@ const cell = (s: string) => s.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 
 const status = (d: ExecutiveDocument) => d.approvalStatus ?? 'draft'
 
+/** Example reviewer role for a document. A saved person's name is never printed. */
+const reviewerRole = (d: ExecutiveDocument): string | null => exampleReviewerRole(d.reviewer)
+
+const reviewerNote = (d: ExecutiveDocument): string => {
+  const role = reviewerRole(d)
+  if (!role) return ''
+  return role === EXAMPLE_REVIEWER_FALLBACK
+    ? ` · ${EXAMPLE_REVIEWER_FALLBACK}`
+    : ` · example reviewer role: ${cell(role)}`
+}
+
 const metaLine = (d: ExecutiveDocument) =>
   `Saved as "${cell(d.title)}" · status ${status(d)}` +
-  (d.reviewer?.trim() ? ` · reviewer ${cell(d.reviewer.trim())}` : '') +
+  reviewerNote(d) +
   ` · last updated ${isoDate(updatedAt(d))}` +
   (d.revisions?.length ? ` · ${d.revisions.length} revision(s)` : '')
 
@@ -214,7 +226,7 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
     '',
     '## Contents',
     '',
-    '| # | Section | Status | Reviewer | Last updated |',
+    '| # | Section | Status | Example reviewer role | Last updated |',
     '|---|---|---|---|---|',
   ]
 
@@ -240,7 +252,7 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
     }
     const d = docs[0]
     lines.push(
-      `| ${i + 1} | ${label} | ${status(d)} | ${cell(d.reviewer?.trim() || '—')} | ${isoDate(updatedAt(d))} |`
+      `| ${i + 1} | ${label} | ${status(d)} | ${cell(reviewerRole(d) ?? '—')} | ${isoDate(updatedAt(d))} |`
     )
   })
   lines.push('')

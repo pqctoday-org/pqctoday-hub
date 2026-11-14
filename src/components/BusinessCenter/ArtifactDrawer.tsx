@@ -9,6 +9,8 @@ import { MarkdownView } from '@/components/ui/MarkdownView'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { logBusinessToolExport } from '@/utils/analytics'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { TYPE_LABELS } from '@/data/artifactLabels'
 import type {
   ExecutiveDocument,
   ExecutiveDocumentApprovalStatus,
@@ -18,6 +20,7 @@ import { ApprovalStatusControl } from './widgets/ApprovalStatusControl'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { ARTIFACT_TYPE_TO_TOOL_ID, TOOL_LABELS_BY_ARTIFACT_TYPE } from './businessToolsRegistry'
 import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
+import { artifactProducerFor, producerHref, producerNote } from './lib/artifactProducers'
 
 // Builders are sourced from the single registry in businessToolsRegistry.tsx,
 // which also powers the /business/tools/:id route. One registry, one lazy
@@ -78,6 +81,7 @@ export function ArtifactDrawer({
   // toggle is hidden there.
   const [isFullPage, setIsFullPage] = useState(false)
   const [openedAt] = useState<number>(() => Date.now())
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
 
@@ -162,8 +166,12 @@ export function ArtifactDrawer({
   // eslint-disable-next-line security/detect-object-injection
   const BuilderComponent = toolId ? BUSINESS_TOOL_COMPONENTS[toolId] : undefined
   const toolLabel = TOOL_LABELS_BY_ARTIFACT_TYPE[activeType]
+  const producer = artifactProducerFor(activeType)
+  const producerLink = producer ? producerHref(producer, selectedPersona) : null
   const headerTitle =
-    mode === 'create' ? `New ${toolLabel?.name ?? 'artifact'}` : (document?.title ?? '')
+    mode === 'create'
+      ? `New ${toolLabel?.name ?? TYPE_LABELS[activeType] ?? 'artifact'}`
+      : (document?.title ?? '')
   const formatDate = (ts: number) =>
     new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
   const docUpdatedAt = document?.updatedAt ?? document?.createdAt ?? 0
@@ -171,7 +179,8 @@ export function ArtifactDrawer({
   const docRevisionCount = document?.revisions?.length ?? 0
   const headerSubtitle =
     mode === 'create'
-      ? (toolLabel?.description ?? 'Fill in the builder and save to add this artifact.')
+      ? (toolLabel?.description ??
+        (BuilderComponent ? 'Fill in the builder and save to add this artifact.' : ''))
       : document
         ? docWasEdited
           ? `Created ${formatDate(document.createdAt)} · Updated ${formatDate(docUpdatedAt)}` +
@@ -311,11 +320,30 @@ export function ArtifactDrawer({
               <BuilderComponent />
             </Suspense>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-sm text-muted-foreground">
-                No editor available for this artifact type. Use the export button to download and
-                edit externally.
-              </p>
+            <div className="text-center py-12 space-y-3">
+              {document ? (
+                // Export actions are rendered in the header whenever a document exists.
+                <p className="text-sm text-muted-foreground">
+                  No editor available for this artifact type. Use the export button to download and
+                  edit externally.
+                </p>
+              ) : producer ? (
+                <p className="text-sm text-muted-foreground">
+                  {producerNote(producer)}.
+                  {producerLink && (
+                    <>
+                      {' '}
+                      <Link to={producerLink} className="text-primary hover:underline">
+                        Open it there →
+                      </Link>
+                    </>
+                  )}
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No editor available for this artifact type.
+                </p>
+              )}
             </div>
           )}
         </div>
