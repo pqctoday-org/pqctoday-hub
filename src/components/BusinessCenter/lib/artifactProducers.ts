@@ -14,6 +14,7 @@
  */
 import type { PersonaId } from '@/data/personaIds'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
+import { FIRST_RUN_TOOL } from '@/data/runTools'
 import { ORPHAN_ARTIFACT_TYPES, type OrphanArtifactType } from './cswp39StepMapping'
 
 export interface ArtifactProducer {
@@ -88,8 +89,10 @@ export const ARTIFACT_PRODUCERS: Record<OrphanArtifactType, ArtifactProducer> = 
   },
   'vpn-sim-run': { to: '/playground/vpn-sim', label: 'the VPN simulator' },
   'run-manifest': {
-    to: '/openssl',
-    label: 'a researcher tool, such as the TLS simulator in OpenSSL Studio',
+    // Saved by several tools (the Playground entropy tools, the Entropy evidence
+    // lab and the TLS simulator in OpenSSL Studio); link the primary run tool.
+    to: FIRST_RUN_TOOL.path,
+    label: 'a run in a Playground or OpenSSL Studio tool',
   },
   'library-collection': { to: '/library', label: 'the Library' },
   'claim-matrix': {

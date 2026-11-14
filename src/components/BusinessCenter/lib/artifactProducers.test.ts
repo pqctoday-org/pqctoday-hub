@@ -15,6 +15,7 @@ import {
   producerNote,
 } from './artifactProducers'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
+import { RUN_TOOLS } from '@/data/runTools'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 
 const APP_SOURCE = readFileSync(join(process.cwd(), 'src/App.tsx'), 'utf8')
@@ -103,5 +104,13 @@ describe('artifact producers', () => {
     expect(producerNote(ARTIFACT_PRODUCERS['hsm-capacity-plan'])).toBe(
       'Made in the HSM capacity calculator'
     )
+  })
+
+  it('run manifests name every kind of tool that saves them, and link to one of those tools', () => {
+    const run = ARTIFACT_PRODUCERS['run-manifest']
+    // Saved by the Playground tools, the Entropy evidence lab and OpenSSL Studio.
+    expect(run.label).toMatch(/Playground/)
+    expect(run.label).toMatch(/OpenSSL Studio/)
+    expect(RUN_TOOLS.map((t) => t.path)).toContain(run.to)
   })
 })
