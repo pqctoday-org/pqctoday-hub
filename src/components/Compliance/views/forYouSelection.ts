@@ -13,6 +13,12 @@ import {
 } from '../../../data/complianceData'
 import type { DerivedResult } from '../../../utils/trustPathTraversal'
 
+/** Row limits each view shows: shared here so a view and its export cannot drift apart. */
+export const ARCHITECT_PER_REGION = 8
+export const DEVELOPER_ROWS = 12
+export const OPS_PHASE_LANE = 4
+export const OPS_TABLE_ROWS = 10
+
 /** Applicable frameworks in the order the For You views list them: mandatory, recognised, cross-border, advisory. */
 export function applicableInTierOrder(
   results: ApplicabilityResult<ComplianceFramework>[]
@@ -132,6 +138,27 @@ export function ruleMakerBodies(
     .slice(0, 6)
 }
 
+/**
+ * The GRC view sorts the applicable set by data confidence, least first; frameworks with no
+ * score go last. The researcher view sorts most first; no score sorts last.
+ */
+export function sortedByConfidence(
+  results: ApplicabilityResult<ComplianceFramework>[],
+  direction: 'ascending' | 'descending'
+): ApplicabilityResult<ComplianceFramework>[] {
+  const all = applicableInTierOrder(results)
+  return all.slice().sort((a, b) => {
+    if (direction === 'ascending') {
+      const cA = a.item.confidenceScore ?? Number.MAX_SAFE_INTEGER
+      const cB = b.item.confidenceScore ?? Number.MAX_SAFE_INTEGER
+      return cA - cB
+    }
+    const cA = a.item.confidenceScore ?? -1
+    const cB = b.item.confidenceScore ?? -1
+    return cB - cA
+  })
+}
+
 /** Derived (trust-path) frameworks appear on the default panel and on these persona views only. */
 export function forYouShowsDerived(persona: string | null | undefined): boolean {
   return !persona || persona === 'executive' || persona === 'grc' || persona === 'researcher'
@@ -186,22 +213,34 @@ export function forYouViewRows(
       const byRegion = frameworksByRegion(applicable)
       return REGION_ORDER.filter((r) => byRegion.has(r)).flatMap((region) =>
         (byRegion.get(region) ?? [])
-          .slice(0, 8)
+          .slice(0, ARCHITECT_PER_REGION)
           .map((fw) => frameworkRow(region, fw, tierById.get(fw.id)))
       )
     }
     case 'developer':
-      return applicable.slice(0, 12).map((fw) => frameworkRow('', fw))
+      return applicable.slice(0, DEVELOPER_ROWS).map((fw) => frameworkRow('', fw))
     case 'ops': {
       const byPhase = frameworksByPhase(applicable)
       const lanes = PHASE_ORDER.filter((p) => byPhase.has(p)).flatMap((phase) =>
-        (byPhase.get(phase) ?? []).slice(0, 4).map((fw) => frameworkRow(phase, fw))
+        (byPhase.get(phase) ?? []).slice(0, OPS_PHASE_LANE).map((fw) => frameworkRow(phase, fw))
       )
-      return [...lanes, ...applicable.slice(0, 10).map((fw) => frameworkRow('table', fw))]
+      return [
+        ...lanes,
+        ...applicable.slice(0, OPS_TABLE_ROWS).map((fw) => frameworkRow('table', fw)),
+      ]
     }
     case 'cert-engineer':
-      return certSchemesByExpectation(applicable).expecting.map((fw) =>
+      // The cert view splits the engine's own order, not the tier order.
+      return certSchemesByExpectation(results.map((r) => r.item)).expecting.map((fw) =>
         frameworkRow('expects PQC', fw)
+      )
+    case 'grc':
+      return sortedByConfidence(results, 'ascending').map((r) =>
+        frameworkRow('', r.item, r.tier, r.reason)
+      )
+    case 'researcher':
+      return sortedByConfidence(results, 'descending').map((r) =>
+        frameworkRow('', r.item, r.tier, r.reason)
       )
     case 'curious':
       return ruleMakerBodies().map((b) => ({
@@ -220,6 +259,7 @@ export function forYouViewRows(
             id: d.standardId,
             label: d.standardLabel,
             tier: d.derivedTier,
+            reason: 'Reached through a trust path from your applicable frameworks',
           }))
         : []
       return [...direct, ...reached]

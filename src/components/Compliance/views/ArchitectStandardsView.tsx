@@ -12,6 +12,7 @@
  * and ApplicabilityPanel so the persona switch only changes rendering, not the
  * underlying recommendation set.
  */
+import { ARCHITECT_PER_REGION } from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Layers, GlobeLock, ArrowRight } from 'lucide-react'
@@ -172,7 +173,7 @@ export function ArchitectStandardsView({
                     </span>
                   </div>
                   <ul className="space-y-1 min-w-0">
-                    {fws.slice(0, 8).map((fw) => {
+                    {fws.slice(0, ARCHITECT_PER_REGION).map((fw) => {
                       const tier = tierById.get(fw.id)
                       const tierMeta = tier ? TIER_META[tier] : undefined
                       return (

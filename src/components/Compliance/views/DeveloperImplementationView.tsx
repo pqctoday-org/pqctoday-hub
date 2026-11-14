@@ -17,6 +17,7 @@
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
  */
+import { DEVELOPER_ROWS } from './forYouSelection'
 import { applicableFrameworks } from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
@@ -467,7 +468,7 @@ export function DeveloperImplementationView({
           </p>
         ) : (
           <ul className="space-y-2">
-            {applicable.slice(0, 12).map((fw) => {
+            {applicable.slice(0, DEVELOPER_ROWS).map((fw) => {
               const docs = libraryData.filter((it) =>
                 (fw.libraryRefs ?? []).includes(it.referenceId)
               )
