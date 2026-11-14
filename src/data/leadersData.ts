@@ -74,7 +74,7 @@ interface RawLeaderRow {
 }
 
 // Distinguishes the single-sentence, library-authorship-derived stub rows (109
-// in leaders_11132026_r5) from the hand-curated profiles (252) — see the
+// in leaders_11142026) from the hand-curated profiles (252) — see the
 // `data_quality_notes` convention set 2026-05-10 by the library-authors import.
 const isAutoImportedRow = (note: string): boolean => note.includes('auto-imported from library')
 
