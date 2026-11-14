@@ -41,7 +41,6 @@ import {
   Globe2,
   Star,
   ChevronRight,
-  ArrowRight,
   History,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -51,7 +50,8 @@ import { ProtocolDetailModal } from './ProtocolDetailModal'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
-import { libraryHref } from './libraryRef'
+import { SpecLink } from './SpecLink'
+import { SuccessorButton } from './SuccessorButton'
 import {
   matrixSortParam,
   parseMatrixAvailabilityParam,
@@ -60,8 +60,10 @@ import {
   passesAvailabilityFilter,
   passesStatusFilter,
   rowMaturity,
+  replacedRows,
   rowMaturityMax,
   sortProtocolRows,
+  successorOf,
   type AvailabilityFilter,
   type SortDirection,
   type SortKey,
@@ -240,16 +242,12 @@ function DimensionRefChip({ cellRef }: { cellRef: DimensionRef }) {
         : 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
   const display = shortRefLabel(cellRef.id)
   const chipCls = `inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium transition-colors ${tone}`
-  // Always link in-app to the Library; the external spec URL lives in the entry.
+  // In-app Library entry when there is one; the cited external page otherwise.
   return (
-    <Link
-      to={libraryHref(cellRef.id)}
-      className={chipCls}
-      title={`Open ${cellRef.id} in the Library`}
-    >
+    <SpecLink docId={cellRef.id} url={cellRef.url} className={chipCls}>
       <FileText size={9} className="shrink-0" />
       <span className="truncate">{display}</span>
-    </Link>
+    </SpecLink>
   )
 }
 
@@ -567,6 +565,7 @@ function ProtocolCard({
   onOpenDetail,
   granularity,
   parent,
+  onOpenProtocol,
 }: {
   p: ProtocolMatrixRow
   expanded: boolean
@@ -574,7 +573,10 @@ function ProtocolCard({
   onOpenDetail: () => void
   granularity: PersonaStageGranularity
   parent?: ProtocolMatrixRow
+  onOpenProtocol: (row: ProtocolMatrixRow) => void
 }) {
+  const successor = successorOf(p)
+  const replaces = replacedRows(p)
   const oss = p.ossLibraries.length
   const com = p.commercialLibraries.length
   const live = p.liveDeployments?.length ?? 0
@@ -634,6 +636,14 @@ function ProtocolCard({
                 inherits {parent.name}
               </span>
             )}
+            {successor && (
+              <SuccessorButton from={p} successor={successor} onOpen={onOpenProtocol} />
+            )}
+            {replaces.length > 0 && (
+              <span className="text-[10px] leading-tight text-muted-foreground">
+                replaces {replaces.map((r) => r.name).join(', ')}
+              </span>
+            )}
           </div>
           <span className="text-[10px] leading-tight text-muted-foreground line-clamp-1">
             {p.description}
@@ -687,15 +697,15 @@ function ProtocolCard({
           {specs.length > 0 && (
             <CardSection label="Specifications">
               {specs.map((d) => (
-                <Link
+                <SpecLink
                   key={d.id}
-                  to={libraryHref(d.id)}
-                  title={`Open ${d.id} in the Library`}
+                  docId={d.id}
+                  url={d.url}
                   className="inline-flex items-center gap-1 rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[10px] text-foreground hover:border-primary/50 hover:text-primary"
                 >
                   <FileText size={10} />
                   {d.id}
-                </Link>
+                </SpecLink>
               ))}
             </CardSection>
           )}
@@ -860,7 +870,12 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
   const [expandedProtocolId, setExpandedProtocolId] = useState<string | null>(null)
   // WS12: deprecated migration-source rows, off by default. Not a URL param —
   // it is a view preference, not a shareable filter state.
-  const [showHistorical, setShowHistorical] = useState(false)
+  // A deep link to a deprecated row (?protocol=ikev1) must land on a table that
+  // still contains it, so the toggle starts on when the arrival row is deprecated.
+  const [showHistorical, setShowHistorical] = useState(() => {
+    const arrived = searchParams.get('protocol')
+    return Boolean(arrived && PROTOCOL_MATRIX.find((r) => r.id === arrived)?.historical)
+  })
   const isHeatmap = viewMode === 'heatmap'
 
   // Mirrors view/filter/sort changes to the URL in place (replace, not push —
@@ -943,6 +958,9 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
   const openProtocol = useCallback(
     (row: ProtocolMatrixRow) => {
       setSelectedProtocol(row)
+      // Opening a deprecated row (from a successor's "replaces" link, say) keeps
+      // it in the table behind the dialog so closing lands on it.
+      if (row.historical) setShowHistorical(true)
       setSearchParams(
         (sp) => {
           const params = new URLSearchParams(sp)
@@ -979,6 +997,8 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
     const row = protocolParam ? (PROTOCOL_MATRIX.find((r) => r.id === protocolParam) ?? null) : null
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
     setSelectedProtocol((prev) => (prev?.id === row?.id ? prev : row))
+    // Back/forward onto a deprecated row must not leave it hidden from the table.
+    if (row?.historical) setShowHistorical(true)
   }, [protocolParam, embedded])
 
   // ?protocol=<id> that matches no row (retired, renamed or mistyped) — say so
@@ -1018,7 +1038,10 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       // that will never gain a PQC dimension. Hidden by default: they are all
       // `na`, so leaving them in would turn a fifth of the readiness heatmap
       // grey and bury the rows that actually have a posture to compare.
-      if (row.historical && !showHistorical) return false
+      // A reader who typed a name is looking for that protocol: "IKEv1" or
+      // "SSL 3.0" must find the deprecated row and its migration target rather
+      // than "no protocols match".
+      if (row.historical && !showHistorical && !search) return false
       if (
         search &&
         !row.name.toLowerCase().includes(search) &&
@@ -1405,7 +1428,9 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
           <span className="font-semibold text-foreground">{filteredRows.length}</span>
           <span className="mx-1">/</span>
           <span className="font-semibold text-foreground">
-            {showHistorical ? PROTOCOL_MATRIX.length : PROTOCOL_MATRIX.length - HISTORICAL_COUNT}
+            {showHistorical || searchText.trim()
+              ? PROTOCOL_MATRIX.length
+              : PROTOCOL_MATRIX.length - HISTORICAL_COUNT}
           </span>{' '}
           rows
         </span>
@@ -1543,16 +1568,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                             of four `na` cells reads as "not applicable" rather
                             than "no PQC path exists — go here instead". */}
                         {successor && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedProtocol(successor)}
-                            className="inline-flex h-auto w-fit items-center gap-1 rounded-md border border-status-warning/40 bg-status-warning/10 px-1.5 py-0 text-[10px] font-medium text-status-warning hover:bg-status-warning/20 hover:text-status-warning"
-                            title={`${p.name} has no post-quantum path of its own. ${successor.name} is where the migration goes — open it.`}
-                          >
-                            <ArrowRight size={9} />
-                            no PQC path → {successor.name}
-                          </Button>
+                          <SuccessorButton from={p} successor={successor} onOpen={openProtocol} />
                         )}
                         {p.supersedes && p.supersedes.length > 0 && (
                           <span
@@ -1688,6 +1704,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                 expanded={expandedProtocolId === p.id}
                 onToggle={() => setExpandedProtocolId((cur) => (cur === p.id ? null : p.id))}
                 onOpenDetail={() => openProtocol(p)}
+                onOpenProtocol={openProtocol}
                 granularity={effectiveGranularity}
                 parent={
                   p.inheritsFromProtocolId
@@ -1752,6 +1769,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
         isOpen={selectedProtocol !== null}
         onClose={closeProtocol}
         protocol={selectedProtocol}
+        onSelectProtocol={openProtocol}
       />
     </div>
   )
