@@ -926,7 +926,11 @@ export function ForceClusterView() {
     // so "About this graph" inside the panel closes the panel too.
     setSelectedNodeId(REOPEN_GUIDE.selectedNodeId)
     setGuideDismissed(REOPEN_GUIDE.guideDismissed)
+    // The panel unmounts under the pointer and focus, so no leave/blur event resets these.
     setPanelOpen(REOPEN_GUIDE.panelOpen)
+    setPanelHovered(false)
+    setPanelFocused(false)
+    setSearchRequested(false)
   }
   // Starts collapsed to a small pill so the graph gets the full screen by
   // default; expanding is a deliberate click, and PANEL_IDLE_COLLAPSE_MS
@@ -947,7 +951,10 @@ export function ForceClusterView() {
     // is a real panel interaction, so touching any of them resets the idle
     // clock the same way the mouse/keyboard activity that produced them did.
     if (!panelOpen || listOpen || panelHovered || panelFocused) return
-    const timer = setTimeout(() => setPanelOpen(false), PANEL_IDLE_COLLAPSE_MS)
+    const timer = setTimeout(() => {
+      setPanelOpen(false)
+      setSearchRequested(false) // a later "Filters" click must not jump into the search box
+    }, PANEL_IDLE_COLLAPSE_MS)
     return () => clearTimeout(timer)
     // expandedType is here too: opening a sub-category row is the start of
     // an interaction, not the end of one.
@@ -1181,10 +1188,14 @@ export function ForceClusterView() {
 
   // Picking a record means the reader has found their way around — the guide
   // should not come back when its drawer closes.
+  // A record or spotlight opened by a shared link closes the guide for this visit only: the
+  // visitor has not chosen anything yet, so the dismissal is not remembered.
+  const openedFromLinkRef = useRef(false)
   useEffect(() => {
     if (selectedNodeId) {
       setGuideDismissed(true)
-      saveGuideDismissed()
+      if (openedFromLinkRef.current) openedFromLinkRef.current = false
+      else saveGuideDismissed()
     }
   }, [selectedNodeId])
 
@@ -1210,10 +1221,13 @@ export function ForceClusterView() {
   }, [selectedNodeId, guideVisible, clusterSelection])
 
   // A spotlight is a choice the reader made, like picking a record: the guide stays closed.
+  // A tour stop's caption also goes: it would sit on the spotlight chip at the top.
   useEffect(() => {
     if (clusterSelection) {
       setGuideDismissed(true)
-      saveGuideDismissed()
+      setTourCaptionNode(null)
+      if (openedFromLinkRef.current) openedFromLinkRef.current = false
+      else saveGuideDismissed()
     }
   }, [clusterSelection])
 
@@ -1303,8 +1317,10 @@ export function ForceClusterView() {
     const typeParam = searchParams.get('type')
     const subParam = searchParams.get('sub')
     if (nodeParam && nodesById.has(nodeParam)) {
+      openedFromLinkRef.current = true
       focusNode(nodeParam)
     } else if (typeParam && (NODE_TYPES as readonly string[]).includes(typeParam)) {
+      openedFromLinkRef.current = Boolean(breadcrumbSelectRef.current)
       const type = typeParam as ForceClusterNodeType
       const sub =
         subParam && subsByType.get(type)?.some((s) => s.sub === subParam) ? subParam : null
@@ -2231,7 +2247,10 @@ export function ForceClusterView() {
             className="glass-panel h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
             aria-expanded={false}
             aria-controls="navigate-filter-panel"
-            onClick={() => setPanelOpen(true)}
+            onClick={() => {
+              setSearchRequested(false)
+              setPanelOpen(true)
+            }}
           >
             <Filter className="h-3.5 w-3.5" aria-hidden="true" />
             Filters

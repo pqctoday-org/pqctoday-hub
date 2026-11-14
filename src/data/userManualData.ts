@@ -461,7 +461,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Guided tour and motion',
-        body: 'Spin turns the graph slowly. Tour visits each category and then its most-connected records, opening each one’s details. Pause, Previous and Next control the tour; dragging the view also pauses it, and Resume carries on from the current stop.',
+        body: 'Spin turns the graph slowly. Tour visits each category and then its most-connected records, with a caption naming each one and, on a wider screen, its details panel open (on a phone the panel would cover the tour controls, so only the caption shows). Pause, Previous and Next control the tour; dragging the view also pauses it, and Resume carries on from the current stop.',
       },
       {
         heading: 'Sharing a view',

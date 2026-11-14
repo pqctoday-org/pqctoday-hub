@@ -48,7 +48,7 @@ export function NavigateSearch({ graph, onPick, focusOnMount }: NavigateSearchPr
           role="combobox"
           aria-label="Find a record in the graph"
           aria-expanded={open}
-          aria-controls={listId}
+          aria-controls={open && results.length > 0 ? listId : undefined}
           aria-autocomplete="list"
           aria-activedescendant={open && results.length > 0 ? optionId(active) : undefined}
           placeholder="Find a record (e.g. ML-KEM-768, FIPS 203, OpenSSL)"
@@ -78,16 +78,20 @@ export function NavigateSearch({ graph, onPick, focusOnMount }: NavigateSearchPr
           className="h-8 w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
       </div>
-      {open && (
+      {/* Read out as the result count changes, so a screen-reader user hears the matches. */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {open ? `${results.length} matching record${results.length === 1 ? '' : 's'}` : ''}
+      </p>
+      {open && results.length === 0 && (
+        <p className="mt-1 px-2 py-1 text-xs text-muted-foreground">No record matches.</p>
+      )}
+      {open && results.length > 0 && (
         <ul
           id={listId}
           role="listbox"
           aria-label="Matching records"
           className="mt-1 max-h-56 space-y-0.5 overflow-y-auto rounded-md border border-border bg-card p-1"
         >
-          {results.length === 0 && (
-            <li className="px-2 py-1 text-xs text-muted-foreground">No record matches.</li>
-          )}
           {results.map((node, i) => (
             // Keyboard selection is the combobox's own (arrow keys + Enter on the input, via
             // aria-activedescendant); the options take pointer clicks only, as in the ARIA pattern.
