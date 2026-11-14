@@ -206,6 +206,9 @@ the lock; needs the network, so it is here and in the weekly
 `engines-release-weekly.yml`, not in pre-push) + `gate:e2e` (`build` + the full Playwright suite against the
 production build — the round-9 lesson: 15 browser regressions shipped through
 13 green releases while only the smoke tier ran per PR) +
+`gate:leak:dist` (since 4.207: the built `dist/` against
+`scripts/ci/leak-baseline-dist.json`, the same scan GitHub's CI build job and the
+deploy run, so a finding in the built site shows up before the push) +
 `test:e2e:local-tier` (`E2E_SERVER=dev playwright test --project=local` — the 18
 `*.local.spec.ts` specs, which both CI projects exclude and which no gate ran
 before 2026-09-26) (`gate:cacp` and `sync:wasm:check` are manual-only since 2026-09-27, H2), then the receipt `.gate-ok-<sha>` so the
