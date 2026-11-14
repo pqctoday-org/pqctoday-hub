@@ -135,16 +135,20 @@
       }
     },
     "openssl-pkcs11": {
-      "hsmCommit": "c8b0c365c878a7a214065c4e45fdc8d7c183e658",
-      "release": null,
+      "hsmCommit": "a013c43c6c99a85b5861c5611b27cf62cd83d257",
+      "release": {
+        "tag": "engines-7",
+        "asset": "openssl-pkcs11-a013c43c.tar.gz",
+        "tarballSha256": "4793e998bd820197c7a838983330e5c3065f3c30a4fcb1afbf2a17f44914cf95"
+      },
       "files": {
         "public/wasm/openssl.js": {
           "sha256": "a040907d611ff8e33cfebb119ac76dfb7c152ef884ad2e1a84ff55b26fdcdebe",
           "bytes": 268592
         },
         "public/wasm/openssl.wasm": {
-          "sha256": "eecbaedf79bc3ab056c20af63631239fdd151e13d4a23efd1f7cc1bdacfebf0a",
-          "bytes": 8388635
+          "sha256": "aeec0a8e998a6bd323f3f36af43e797b1e8ba0c08b65154604f4a677d348f4b3",
+          "bytes": 8388649
         }
       }
     },
