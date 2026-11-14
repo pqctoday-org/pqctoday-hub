@@ -15,6 +15,7 @@ import { MobileSheet } from '../primitives/Sheet'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
 import { businessToolEvidence } from '@/data/businessToolEvidence'
+import { rankBusinessTools } from '@/data/businessToolRank'
 
 // crypto-architecture-diagram dropped entirely (per audit, 2026-08-24): its
 // core value is a live Mermaid topology diagram (`MermaidDiagram.tsx`,
@@ -88,8 +89,10 @@ export function MobileBusinessToolsView() {
           t.category.toLowerCase().includes(q)
       )
     }
-    return tools
-  }, [category, search])
+    // Same persona ranking as the desktop grid: the role's start sequence
+    // first, then tools written for the role, then registry order.
+    return rankBusinessTools(tools, selectedPersona, startHere)
+  }, [category, search, selectedPersona, startHere])
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -270,6 +273,15 @@ function ToolDetailSheetBody({ tool }: { tool: BusinessTool }) {
           {tool.goodAnswer}
         </p>
       </div>
+
+      {tool.workedExample && (
+        <div className="rounded-xl border border-border p-3">
+          <p className="text-[12px] leading-relaxed text-foreground/90">
+            <span className="font-semibold text-foreground">Worked example:</span>{' '}
+            {tool.workedExample}
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center gap-1.5">
         <Cswp39SectionBadge sectionRef={tool.cswp39SectionRef} subSection={tool.cswp39SubSection} />

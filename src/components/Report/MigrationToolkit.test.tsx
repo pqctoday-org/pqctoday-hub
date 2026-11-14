@@ -29,6 +29,8 @@ vi.mock('./sections/reportContentShared', () => ({ SectionInfoTip: () => null })
 vi.mock('@/components/common/FipsStatusBadge', () => ({ FipsStatusBadge: () => null }))
 
 import { MigrationToolkit } from './MigrationToolkit'
+import { SectionExpandContext } from '@/contexts/sectionExpandContext'
+import { RENDER_ORDER_FULL } from '@/components/Assess/redesign/assessFlowModel'
 
 const product = (id: string, layer: string, category: string, targetIndustries: string) =>
   ({
@@ -114,13 +116,64 @@ describe('MigrationToolkit selection basis', () => {
     expect(listedProducts()).toEqual(['Product tpm-1'])
   })
 
-  it('says the whole catalogue is listed, not a tailored list, when no layer was selected', () => {
+  it('lists no products and points to the infrastructure step when no layer was selected', () => {
     renderToolkit({ infrastructure: [], industry: 'Finance & Banking' })
-    // Nothing narrows the list, so every layer's products appear.
-    expect(listedProducts()).toHaveLength(CATALOGUE.length)
-    expect(screen.getByText(/so nothing narrows this list/i)).toBeInTheDocument()
-    expect(screen.getByText(/whole Migrate catalog/i)).toBeInTheDocument()
-    expect(screen.queryByText(/matching your infrastructure profile/i)).not.toBeInTheDocument()
+    // Nothing tailors the list, so the catalogue is not dumped.
+    expect(listedProducts()).toEqual([])
+    expect(screen.getByText(/Select your infrastructure layers in Step 12/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Go to Assessment' })).toHaveAttribute(
+      'href',
+      '/assess'
+    )
+    expect(screen.getByRole('link', { name: 'Browse the Migrate catalog' })).toHaveAttribute(
+      'href',
+      '/migrate'
+    )
+    expect(screen.queryByText(/whole Migrate catalog/i)).not.toBeInTheDocument()
+  })
+
+  it('names the infrastructure step by its position in the full assessment', () => {
+    renderToolkit({ infrastructure: [], industry: 'Healthcare' })
+    expect(RENDER_ORDER_FULL.indexOf('infra') + 1).toBe(12)
+    expect(screen.getByText(/Step 12 of the full assessment/)).toBeInTheDocument()
+    expect(screen.queryByText(/Step 11/)).not.toBeInTheDocument()
+  })
+
+  it('uses the same step number in the product-selection note', () => {
+    state.importProductSelection = true
+    state.myProducts = ['cloud-1']
+    renderToolkit({ infrastructure: [], industry: 'Healthcare' })
+    expect(screen.getByText(/in Step 12 of the assessment/)).toBeInTheDocument()
+  })
+
+  it('still lists bookmarked products when no layer was selected', () => {
+    state.importProductSelection = true
+    state.myProducts = ['cloud-1']
+    renderToolkit({ infrastructure: [], industry: 'Finance & Banking' })
+    expect(listedProducts()).toEqual(['Product cloud-1'])
+  })
+
+  it('"Expand all" / "Collapse" from the contents list open and close it', () => {
+    const withTokens = (expandToken: number, collapseToken: number) => (
+      <SectionExpandContext.Provider value={{ expandToken, collapseToken }}>
+        <MemoryRouter>
+          <MigrationToolkit
+            assessmentInfrastructure={['Hardware']}
+            assessmentSubCategories={{}}
+            assessmentIndustry="Healthcare"
+            defaultOpen={false}
+          />
+        </MemoryRouter>
+      </SectionExpandContext.Provider>
+    )
+    const { rerender } = render(withTokens(0, 0))
+    const expanded = () =>
+      screen.getByRole('button', { name: /Your Migration Toolkit/ }).getAttribute('aria-expanded')
+    expect(expanded()).toBe('false')
+    rerender(withTokens(1, 0))
+    expect(expanded()).toBe('true')
+    rerender(withTokens(1, 1))
+    expect(expanded()).toBe('false')
   })
 
   it('does not describe a bookmarked-product list as a filtered recommendation', () => {

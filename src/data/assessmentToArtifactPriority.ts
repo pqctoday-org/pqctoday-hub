@@ -10,6 +10,7 @@
  */
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { AssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
+import { withEffectiveCrypto } from '@/hooks/assessment/cryptoCategories'
 
 export interface ArtifactSuggestion {
   /** Short human reason shown in the badge tooltip. */
@@ -79,7 +80,8 @@ const isHighSensitivity = (sensitivities: string[] | undefined): boolean => {
 const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
   'crypto-cbom': ({ input }) => {
     if (!input) return null
-    if (input.currentCrypto.length > 0)
+    // Family-only selections stand for those families' algorithms (same as the report).
+    if (withEffectiveCrypto(input).currentCrypto.length > 0)
       return { reason: 'You reported current cryptography in the assessment.' }
     if (input.currentCryptoUnknown)
       return { reason: 'You said current cryptography is unknown — start a CBOM to inventory it.' }
@@ -245,7 +247,10 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
   },
 
   'crypto-vulnerability-watch': ({ input }) => {
-    if (input?.currentCrypto.some((a) => /^RSA|^ECDSA|^DSA|^DH|^ECDH/i.test(a)))
+    if (
+      input &&
+      withEffectiveCrypto(input).currentCrypto.some((a) => /^RSA|^ECDSA|^DSA|^DH|^ECDH/i.test(a))
+    )
       return { reason: 'You use quantum-vulnerable algorithms — watch for new advisories.' }
     return null
   },

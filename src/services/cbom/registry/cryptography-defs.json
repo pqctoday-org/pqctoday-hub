@@ -26,6 +26,15 @@
       ]
     },
     {
+      "family": "RSA-X931",
+      "standard": [
+        { "name": "X9.31", "url": "https://standards.globalspec.com/std/1955293/ansi-x9-31" }
+      ],
+      "variant": [
+        { "pattern": "RSA-X9.31[-{hashAlgorithm}][-{keyLength}]", "primitive": "signature" }
+      ]
+    },
+    {
       "family": "RSAES-PKCS1",
       "standard": [{ "name": "RFC8017", "url": "https://doi.org/10.17487/RFC8017" }],
       "variant": [{ "pattern": "RSA-PKCS1-1.5[-{keyLength}]", "primitive": "pke" }]
@@ -415,6 +424,11 @@
       ]
     },
     {
+      "family": "SSH-KDF",
+      "standard": [{ "name": "RFC4253", "url": "https://doi.org/10.17487/RFC4253" }],
+      "variant": [{ "pattern": "SSH-KDF[-{hashAlgorithm}]", "primitive": "kdf" }]
+    },
+    {
       "family": "TLS-PRF",
       "standard": [
         { "name": "RFC2246", "url": "https://doi.org/10.17487/RFC2246" },
@@ -448,12 +462,12 @@
         },
         {
           "standard": [{ "name": "RFC4357", "url": "https://doi.org/10.17487/RFC4357" }],
-          "pattern": "GOST38147[-{mode}][-{padding}]",
+          "pattern": "GOST28147[-{mode}][-{padding}]",
           "primitive": "block-cipher"
         },
         {
           "standard": [{ "name": "RFC4357", "url": "https://doi.org/10.17487/RFC4357" }],
-          "pattern": "GOST38147_MAC",
+          "pattern": "GOST28147_MAC",
           "primitive": "mac"
         }
       ]
@@ -639,7 +653,7 @@
         }
       ],
       "variant": [
-        { "pattern": "BLS(13-381|13-377|BN254)", "primitive": "signature" },
+        { "pattern": "BLS(12-381|12-377|BN254)", "primitive": "signature" },
         { "pattern": "BLS[-{ellipticCurve}]", "primitive": "signature" }
       ]
     },
