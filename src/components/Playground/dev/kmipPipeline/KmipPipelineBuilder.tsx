@@ -554,8 +554,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   // listener in a passive effect left a window after each render where the
   // previous closure was still attached: a keypress right after importing an
   // older pipeline ran it with the "choose Text or Hex" guard of the stale
-  // render, before the reader had confirmed the input. The ref is updated in a
-  // layout effect, so it is current as soon as the render commits.
+  // render, before the reader had confirmed the input. A native event does not
+  // make React flush pending passive effects, so the stale listener was live
+  // until the next flush. The ref is updated in a layout effect, so it is
+  // current as soon as the render commits.
   const shortcutRef = useRef({ runAll, paletteSource, corpus })
   useLayoutEffect(() => {
     shortcutRef.current = { runAll, paletteSource, corpus }
