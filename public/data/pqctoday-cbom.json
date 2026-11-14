@@ -394,6 +394,7 @@
       "name": "Bouncy Castle C# .NET",
       "version": "2.7.0",
       "purl": "pkg:nuget/BouncyCastle.Cryptography",
+      "cpe": "cpe:2.3:a:bouncycastle:bc-csharp:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -445,7 +446,7 @@
       "name": "Bouncy Castle Java",
       "version": "1.86",
       "purl": "pkg:maven/org.bouncycastle/bcprov-jdk18on",
-      "cpe": "cpe:2.3:a:bouncycastle:legion-of-the-bouncy-castle-java-crytography-api:1.36:*:*:*:*:*:*:*",
+      "cpe": "cpe:2.3:a:bouncycastle:bc-java:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1119,6 +1120,7 @@
       "name": "liboqs-rust (oqs crate)",
       "version": "0.11.0",
       "purl": "pkg:cargo/oqs",
+      "cpe": "cpe:2.3:a:openquantumsafe:liboqs:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {

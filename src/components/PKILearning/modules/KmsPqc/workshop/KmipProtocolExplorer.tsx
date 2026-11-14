@@ -30,7 +30,7 @@ import type { AuditEvent, KmipEngine, OpResult } from '@/wasm/kmip/kmipEngine'
 
 const PROVIDER_LABELS: Record<string, { name: string; short: string }> = {
   'aws-kms': { name: 'AWS KMS', short: 'AWS' },
-  'hashicorp-vault': { name: 'HashiCorp Vault', short: 'Vault' },
+  'hashicorp-vault': { name: 'OpenBao 2.7.2', short: 'OpenBao' },
   'thales-ciphertrust': { name: 'Thales CipherTrust', short: 'Thales' },
 }
 
@@ -315,9 +315,9 @@ const OperationSimulator: React.FC = () => {
           <Info size={14} className="text-primary shrink-0 mt-0.5" />
           <p className="text-xs text-foreground/80">
             <strong>Key insight:</strong> KMIP normalizes the <em>what</em> (create a PQC key) while
-            each provider controls the <em>how</em> (API format, authentication, HSM backing). This
-            is why KMIP orchestrators like CipherTrust or Vault can centralize policy across
-            heterogeneous backends.
+            each provider controls the <em>how</em> (API format, authentication, HSM backing). An
+            orchestrator needs an adapter for each backend. The OpenBao examples use native Transit
+            endpoints; displaying them beside KMIP XML does not make OpenBao a KMIP server.
           </p>
         </div>
       </div>

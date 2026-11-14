@@ -201,8 +201,8 @@ describe('the committed enrichment files', () => {
       expect(d.pruned.length, d.family).toBeGreaterThan(0)
       expect(retained, d.family).toEqual(
         d.family === 'library_doc_enrichments'
-          ? // 11132026 is a full snapshot covering every earlier file and correction
-            ['library_doc_enrichments_11132026.md']
+          ? // 11142026 is a full snapshot covering every earlier file and correction
+            ['library_doc_enrichments_11142026.md']
           : [files[files.length - 1]]
       )
       const modules = Object.fromEntries(

@@ -94,3 +94,56 @@ export function constructionsInIndustry(
   }
   return rows.sort((a, b) => b.count - a.count || a.id.localeCompare(b.id))
 }
+
+export interface StandardLinkedUseCase {
+  useCase: IndustryUseCase
+  /** The standards that cite the construction and link this use case. */
+  standards: IndustryStandard[]
+}
+
+/**
+ * Use cases that a standard citing the construction links through its
+ * `use_case_ids`, minus the ones that already name the construction. The link
+ * says where the standard applies; it does not say the use case runs or plans
+ * the construction, so the views show it apart from the direct use cases.
+ */
+export function linkedUseCasesFromStandards(
+  usage: ConstructionUsage | undefined,
+  useCases: IndustryUseCase[]
+): StandardLinkedUseCase[] {
+  if (!usage) return []
+  const direct = new Set(usage.direct.map((d) => d.useCase.useCaseId))
+  const byId = new Map(useCases.map((u) => [u.useCaseId, u]))
+  const out = new Map<string, StandardLinkedUseCase>()
+  for (const st of usage.standards)
+    for (const id of st.useCaseIds) {
+      const uc = byId.get(id)
+      if (!uc || direct.has(id)) continue
+      const hit = out.get(id)
+      if (hit) hit.standards.push(st)
+      else out.set(id, { useCase: uc, standards: [st] })
+    }
+  return [...out.values()].sort(
+    (a, b) =>
+      a.useCase.industry.localeCompare(b.useCase.industry) ||
+      a.useCase.useCaseLabel.localeCompare(b.useCase.useCaseLabel)
+  )
+}
+
+/**
+ * Constructions that an industry's own standards cite, with the number of that
+ * industry's standards citing each. Shown beside `constructionsInIndustry` and
+ * kept separate from it: a citing standard is not a use case that runs or plans
+ * the construction.
+ */
+export function constructionsCitedByIndustryStandards(
+  industry: string,
+  usage: Map<string, ConstructionUsage>
+): { id: string; count: number }[] {
+  const rows: { id: string; count: number }[] = []
+  for (const u of usage.values()) {
+    const count = u.standards.filter((s) => s.industry === industry).length
+    if (count > 0) rows.push({ id: u.id, count })
+  }
+  return rows.sort((a, b) => b.count - a.count || a.id.localeCompare(b.id))
+}

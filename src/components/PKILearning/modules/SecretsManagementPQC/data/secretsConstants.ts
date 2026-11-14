@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { OPENBAO_SIGNING_RECIPE } from './openBaoSigningContract'
 import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export type SecretsProviderPqcStatus = 'ga' | 'preview' | 'planned' | 'none'
@@ -269,20 +270,7 @@ vault write transit/encrypt/ml-kem-key \\
     ciphertextExpansion: '3,309 bytes (ML-DSA-65 signature) vs 64 bytes (ECDSA signature)',
     description:
       'ML-DSA-65 signatures are 51.7x larger than ECDSA P-256 signatures. This has significant impact on JWTs, code signing payloads, TLS certificate sizes, and API response headers. Applications that embed signatures in URLs or HTTP headers require protocol changes.',
-    apiExample: `# In this module's illustration, not Vault documentation:
-# Classical: ECDSA P-256 signing
-vault write transit/keys/ecdsa-key type=ecdsa-p256
-vault write transit/sign/ecdsa-key \\
-  input=$(base64 <<< "artifact hash") \\
-  hash_algorithm=sha2-256
-# Signature: 64 bytes (base64: ~88 chars)
-
-# PQC: ML-DSA-65 signing
-vault write transit/keys/mldsa-key type=ml-dsa-65
-vault write transit/sign/mldsa-key \\
-  input=$(base64 <<< "artifact hash") \\
-  hash_algorithm=sha3-256
-# Signature: 3,309 bytes (base64: ~4,412 chars)`,
+    apiExample: OPENBAO_SIGNING_RECIPE,
   },
   {
     id: 'mac',

@@ -61,6 +61,11 @@ function uint8Reviver(_key: string, value: unknown): unknown {
 
 // ── Store data extractors ────────────────────────────────────────────────────
 
+/** A string array from untrusted snapshot data: non-arrays become [], non-string elements are dropped. */
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string') : []
+}
+
 function getModuleProgressData(): ModuleProgressData {
   const state = useModuleStore.getState()
   // Strip action functions — getFullProgress does this
@@ -100,6 +105,9 @@ function getAssessmentData(): AssessmentData {
     infrastructureSubCategories: state.infrastructureSubCategories,
     vendorDependency: state.vendorDependency,
     vendorUnknown: state.vendorUnknown,
+    cryptoLibraries: state.cryptoLibraries,
+    infraAutomation: state.infraAutomation,
+    scenarioEstateId: state.scenarioEstateId,
     timelinePressure: state.timelinePressure,
     timelineMilestone: state.timelineMilestone ?? null,
     timelineUnknown: state.timelineUnknown,
@@ -436,6 +444,9 @@ export class UnifiedStorageService {
             : {},
         vendorDependency: a.vendorDependency ?? '',
         vendorUnknown: a.vendorUnknown ?? false,
+        cryptoLibraries: stringArray(a.cryptoLibraries),
+        infraAutomation: stringArray(a.infraAutomation),
+        scenarioEstateId: typeof a.scenarioEstateId === 'string' ? a.scenarioEstateId : null,
         timelinePressure: a.timelinePressure ?? '',
         timelineMilestone: sanitizeTimelineMilestone(a.timelineMilestone),
         timelineUnknown: a.timelineUnknown ?? false,

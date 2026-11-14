@@ -5,7 +5,11 @@
  * MobileProtocolMatrixView so a `?matrixQ/matrixStatus/matrixAvailability/
  * matrixSort` link means exactly the same row set on both.
  */
-import type { DimensionStatusValue, ProtocolMatrixRow } from '@/data/pqcProtocolMatrix'
+import {
+  PROTOCOL_MATRIX,
+  type DimensionStatusValue,
+  type ProtocolMatrixRow,
+} from '@/data/pqcProtocolMatrix'
 
 export type SortKey = 'matrix' | 'name' | 'maturity' | 'oss' | 'commercial' | 'deployments'
 export type SortDirection = 'asc' | 'desc'
@@ -181,4 +185,18 @@ export function sortProtocolRows(
         return 0
     }
   })
+}
+
+/** The protocol a deprecated row's migration goes to, or undefined. */
+export function successorOf(row: ProtocolMatrixRow): ProtocolMatrixRow | undefined {
+  return row.supersededByProtocolId
+    ? PROTOCOL_MATRIX.find((r) => r.id === row.supersededByProtocolId)
+    : undefined
+}
+
+/** The deprecated rows this protocol replaces, in matrix order of their ids. */
+export function replacedRows(row: ProtocolMatrixRow): ProtocolMatrixRow[] {
+  return (row.supersedes ?? [])
+    .map((id) => PROTOCOL_MATRIX.find((r) => r.id === id))
+    .filter((r): r is ProtocolMatrixRow => Boolean(r))
 }

@@ -51,6 +51,12 @@ describe('MobileAlgorithmsView', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/algorithms?tab=validation&section=kat')
   })
 
+  it('offers the industry landscape from the phone landing screen', () => {
+    renderView()
+    fireEvent.click(screen.getByText('Explore industry use cases'))
+    expect(mockNavigate).toHaveBeenCalledWith('/algorithms?tab=landscape')
+  })
+
   it('never shows a persona-specific intent, even when a persona is set (2026-08-24: cut to the 3 global intents only)', () => {
     usePersonaStore.getState().setPersona('executive')
     usePersonaStore.getState().setRegion('eu')

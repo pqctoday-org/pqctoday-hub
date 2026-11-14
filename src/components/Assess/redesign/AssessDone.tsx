@@ -8,6 +8,7 @@ import { Button } from '../../ui/button'
 import { FAST_LOCKED_COUNT } from './reportContract'
 import { RENDER_ORDER_QUICK, RENDER_ORDER_FULL, type AssessTrack } from './assessFlowModel'
 import { useAssessmentResultStore } from '../../../store/useAssessmentResultStore'
+import { useAssessmentFormStore } from '../../../store/useAssessmentFormStore'
 import { twoTrackFromAssess } from '../../../simulation/assessBridge'
 import { indicativeMaturity, MATURITY_LEVELS } from '../../../data/maturityModel'
 
@@ -36,8 +37,16 @@ export const AssessDone: React.FC<AssessDoneProps> = ({
   // diagnostics the assessment already computes. Both undefined-safe: a plan
   // with neither actions nor effort yields no two-track section at all.
   const lastResult = useAssessmentResultStore((s) => s.lastResult)
-  const twoTrack = lastResult ? twoTrackFromAssess(lastResult) : undefined
-  const maturity = indicativeMaturity(!!lastResult)
+  const sourceInputKey = useAssessmentResultStore((s) => s.sourceInputKey)
+  const assessmentStatus = useAssessmentFormStore((s) => s.assessmentStatus)
+  // Only show sequencing computed from THESE answers: while this run's result is still
+  // being computed, `lastResult` can be the previous run's.
+  const currentInput = useAssessmentFormStore.getState().getInput()
+  const resultIsCurrent =
+    !!lastResult && !!currentInput && sourceInputKey === JSON.stringify(currentInput)
+  const twoTrack = resultIsCurrent && lastResult ? twoTrackFromAssess(lastResult) : undefined
+  // Reaching this screen means an assessment was completed, which is what Level 1 records.
+  const maturity = indicativeMaturity(assessmentStatus === 'complete' || !!lastResult)
   const maturityLevel = MATURITY_LEVELS[maturity.overall]
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false)
 

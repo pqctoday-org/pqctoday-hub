@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router'
-import { ExternalLink, Search, X } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router'
+import { ArrowRight, ExternalLink, FlaskConical, GitBranch, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
@@ -9,7 +9,12 @@ import {
   type DimensionStatusValue,
   type ProtocolMatrixRow,
 } from '@/data/pqcProtocolMatrix'
-import { libraryHref } from '@/components/Algorithms/libraryRef'
+import { specLink } from '@/components/Algorithms/libraryRef'
+import {
+  resolveToolLink,
+  toolLinkLabel,
+  toolLinkTitle,
+} from '@/components/Algorithms/matrixToolLink'
 import {
   AVAILABILITY_LABELS,
   SORT_LABELS,
@@ -18,7 +23,9 @@ import {
   parseMatrixStatusParam,
   passesAvailabilityFilter,
   passesStatusFilter,
+  replacedRows,
   sortProtocolRows,
+  successorOf,
 } from '@/components/Algorithms/protocolMatrixState'
 import { MobileSheet } from '../primitives/Sheet'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
@@ -139,6 +146,11 @@ export function MobileProtocolMatrixView() {
     [protocolParam]
   )
   const unknownProtocolId = protocolParam && !selected ? protocolParam : null
+  const selectedParent = selected?.inheritsFromProtocolId
+    ? PROTOCOL_MATRIX.find((r) => r.id === selected.inheritsFromProtocolId)
+    : undefined
+  const selectedSuccessor = selected ? successorOf(selected) : undefined
+  const selectedReplaces = useMemo(() => (selected ? replacedRows(selected) : []), [selected])
   const openProtocol = useCallback(
     (row: ProtocolMatrixRow) =>
       setSearchParams(
@@ -164,10 +176,12 @@ export function MobileProtocolMatrixView() {
     [setSearchParams]
   )
 
+  const q = query.trim().toLowerCase()
   const rows = useMemo(() => {
-    const q = query.trim().toLowerCase()
     const filtered = PROTOCOL_MATRIX.filter((row) => {
-      if (row.historical) return false
+      // Deprecated rows stay off the list until the reader types a name, so a
+      // search for "IKEv1" or "SSL 3.0" finds the row and its migration target.
+      if (row.historical && !q) return false
       if (q && !row.name.toLowerCase().includes(q) && !row.description.toLowerCase().includes(q)) {
         return false
       }
@@ -176,7 +190,7 @@ export function MobileProtocolMatrixView() {
       return true
     })
     return sortProtocolRows(filtered, sort.key, sort.direction)
-  }, [query, statusFilter, availability, sort.key, sort.direction])
+  }, [q, statusFilter, availability, sort.key, sort.direction])
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -247,7 +261,7 @@ export function MobileProtocolMatrixView() {
       )}
 
       <p className="mt-3 text-[10.5px] text-muted-foreground">
-        {rows.length} of {PROTOCOL_MATRIX.filter((r) => !r.historical).length} protocols
+        {rows.length} of {PROTOCOL_MATRIX.filter((r) => q || !r.historical).length} protocols
       </p>
 
       <div className="mt-2 flex flex-col gap-2">
@@ -307,6 +321,57 @@ export function MobileProtocolMatrixView() {
         {selected && (
           <div className="flex flex-col gap-3">
             <p className="text-[12px] leading-relaxed text-foreground/90">{selected.description}</p>
+            {selectedParent && (
+              <p
+                data-testid="mobile-inherits-from"
+                className="flex flex-wrap items-center gap-1 text-[11px] text-muted-foreground"
+              >
+                <GitBranch size={11} aria-hidden="true" />
+                Same post-quantum posture as
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  onClick={() => openProtocol(selectedParent)}
+                  className="h-auto p-0 text-[11px]"
+                >
+                  {selectedParent.name}
+                </Button>
+              </p>
+            )}
+            {selectedSuccessor && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                data-testid="mobile-successor"
+                onClick={() => openProtocol(selectedSuccessor)}
+                className="inline-flex h-auto w-fit items-center gap-1 rounded-md border border-status-warning/40 bg-status-warning/10 px-2 py-1 text-[11px] font-medium text-status-warning"
+              >
+                <ArrowRight size={11} aria-hidden="true" />
+                no PQC path → {selectedSuccessor.name}
+              </Button>
+            )}
+            {selectedReplaces.length > 0 && (
+              <p
+                data-testid="mobile-replaces"
+                className="flex flex-wrap items-center gap-1 text-[11px] text-muted-foreground"
+              >
+                Replaces
+                {selectedReplaces.map((r) => (
+                  <Button
+                    key={r.id}
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    onClick={() => openProtocol(r)}
+                    className="h-auto p-0 text-[11px]"
+                  >
+                    {r.name}
+                  </Button>
+                ))}
+              </p>
+            )}
             {DIMENSION_LABELS.map((d) => {
               const status = selected.dimensions[d.key]
               return (
@@ -329,16 +394,30 @@ export function MobileProtocolMatrixView() {
                   )}
                   {status.refs && status.refs.length > 0 && (
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
-                      {status.refs.map((ref) => (
-                        <a
-                          key={ref.id}
-                          href={libraryHref(ref.id)}
-                          className="inline-flex items-center gap-1 rounded bg-background/60 px-1.5 py-0.5 text-[10px] font-mono font-semibold"
-                        >
-                          {ref.id}
-                          <ExternalLink size={9} aria-hidden="true" />
-                        </a>
-                      ))}
+                      {status.refs.map((ref) => {
+                        const link = specLink(ref.id, ref.url)
+                        const chip =
+                          'inline-flex items-center gap-1 rounded bg-background/60 px-1.5 py-0.5 text-[10px] font-mono font-semibold'
+                        // In-app Library entry (client-side navigation, no reload) when
+                        // there is one; the cited external page otherwise.
+                        return link.kind === 'external' ? (
+                          <a
+                            key={ref.id}
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={link.title}
+                            className={chip}
+                          >
+                            {ref.id}
+                            <ExternalLink size={9} aria-hidden="true" />
+                          </a>
+                        ) : (
+                          <Link key={ref.id} to={link.to} title={link.title} className={chip}>
+                            {ref.id}
+                          </Link>
+                        )
+                      })}
                     </div>
                   )}
                 </div>
@@ -366,6 +445,51 @@ export function MobileProtocolMatrixView() {
                   </a>
                 ))}
               </section>
+            )}
+            {selected.ossLibraries.length + selected.commercialLibraries.length > 0 && (
+              <div>
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Implementations
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    ...selected.ossLibraries.map((lib) => ({ bucket: 'oss', lib })),
+                    ...selected.commercialLibraries.map((lib) => ({ bucket: 'commercial', lib })),
+                  ].map(({ bucket, lib }) => (
+                    <Link
+                      key={`${bucket}-${lib.productId}`}
+                      to={`/migrate?product=${encodeURIComponent(lib.productId)}`}
+                      title={lib.versionNote ? `${lib.name} — ${lib.versionNote}` : lib.name}
+                      className="inline-flex items-center rounded-md border border-border bg-muted/20 px-1.5 py-0.5 text-[10.5px] text-foreground"
+                    >
+                      {lib.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+            {selected.playgrounds.length > 0 && (
+              <div>
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Try it
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {selected.playgrounds.map((tool) => {
+                    const href = resolveToolLink(tool)
+                    return (
+                      <Link
+                        key={tool.toolId}
+                        to={href}
+                        title={toolLinkTitle(tool, href)}
+                        className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[10.5px] font-medium text-primary-legible"
+                      >
+                        <FlaskConical size={10} aria-hidden="true" />
+                        {toolLinkLabel(tool, href)}
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
             )}
             {selected.liveDeployments && selected.liveDeployments.length > 0 && (
               <div>

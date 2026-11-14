@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useContext, useEffect } from 'react'
 import { Link } from 'react-router'
 import { Package, ArrowRight, ChevronDown, EyeOff } from 'lucide-react'
 import {
@@ -13,6 +13,11 @@ import { SectionInfoTip } from './sections/reportContentShared'
 import clsx from 'clsx'
 import { migrateLayerHref } from '@/utils/migrateLinks'
 import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
+import { SectionExpandContext } from '@/contexts/sectionExpandContext'
+import { RENDER_ORDER_FULL } from '@/components/Assess/redesign/assessFlowModel'
+
+/** Position of the infrastructure question in the full assessment (1-based, as the wizard numbers it). */
+const INFRA_STEP_NUMBER = RENDER_ORDER_FULL.indexOf('infra') + 1
 
 const priorityConfig = {
   Critical: { color: 'text-destructive', bg: 'bg-destructive/10' },
@@ -38,6 +43,16 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   defaultOpen = true,
 }) => {
   const [open, setOpen] = useState(defaultOpen)
+  // "Expand all" / "Collapse" in the report's table of contents.
+  const { expandToken, collapseToken } = useContext(SectionExpandContext)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (expandToken > 0) setOpen(true)
+  }, [expandToken])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (collapseToken > 0) setOpen(false)
+  }, [collapseToken])
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
   const hideProduct = useMigrateSelectionStore((s) => s.hideProduct)
   const restoreAll = useMigrateSelectionStore((s) => s.restoreAll)
@@ -47,7 +62,8 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   // "Selected" mode: user has explicitly bookmarked products AND the import toggle is ON
   const useSelectedMode = importProductSelection && myProducts.length > 0
   // The product list follows the assessed infrastructure layers (and sub-categories) only.
-  // With no layer chosen nothing narrows it, so the whole catalogue is listed — say so.
+  // With no layer chosen and nothing bookmarked there is nothing to tailor it to, so the
+  // section asks for that input instead of listing the whole catalogue.
   const noInfraSelected = !useSelectedMode && assessmentInfrastructure.length === 0
   // One assessed infrastructure layer → land on its Migrate domain; otherwise
   // there is no single domain to pick, so the catalog opens as-is.
@@ -68,6 +84,8 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
         const key = item.productId
         return mySet.has(key) && !hiddenSet.has(key)
       })
+    } else if (noInfraSelected) {
+      selected = []
     } else {
       // Fall back to infrastructure-filtered recommendations
       selected = softwareData.filter((item) => {
@@ -121,6 +139,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
     hiddenProducts,
     myProducts,
     useSelectedMode,
+    noInfraSelected,
     assessmentInfrastructure,
     assessmentSubCategories,
   ])
@@ -158,16 +177,23 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
         <div className="text-center py-6 mt-4">
           <p className="text-sm text-muted-foreground mb-3">
             {noInfraSelected
-              ? 'Select your infrastructure layers in Step 11 of the assessment to see relevant migration tools here.'
+              ? `Select your infrastructure layers in Step ${INFRA_STEP_NUMBER} of the full assessment to see relevant migration tools here.`
               : 'No products match your selected infrastructure and sub-categories.'}
           </p>
-          <Link
-            to={noInfraSelected ? '/assess' : '/migrate'}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
-          >
-            {noInfraSelected ? 'Go to Assessment' : 'Explore Tools'}
-            <ArrowRight size={14} />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">
+            <Link
+              to={noInfraSelected ? '/assess' : '/migrate'}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+            >
+              {noInfraSelected ? 'Go to Assessment' : 'Explore Tools'}
+              <ArrowRight size={14} />
+            </Link>
+            {noInfraSelected && (
+              <Link to="/migrate" className="text-sm text-primary hover:underline">
+                Browse the Migrate catalog
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     )
@@ -227,18 +253,8 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
               <Link to="/migrate" className="text-primary hover:underline">
                 Migrate catalog
               </Link>
-              . Select or remove products in the Migrate view or in Step 12 of the assessment.
-            </>
-          ) : noInfraSelected ? (
-            <>
-              No infrastructure layers were selected in the assessment, so nothing narrows this
-              list: it shows the whole Migrate catalog, ordered by migration priority. Your industry
-              does not change it. Choose infrastructure layers in the assessment, or pick products
-              in the{' '}
-              <Link to={profileHref} className="text-primary hover:underline">
-                Migrate view
-              </Link>
-              , for a shorter list.
+              . Select or remove products in the Migrate view or in Step {INFRA_STEP_NUMBER} of the
+              assessment.
             </>
           ) : (
             <>
