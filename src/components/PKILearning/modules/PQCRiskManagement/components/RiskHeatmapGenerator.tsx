@@ -396,6 +396,12 @@ function PriorityRankingList({
                   <span className="text-xs text-warning">(moved from #{scoreRank + 1})</span>
                 )}
               </div>
+              {treatment?.justification?.trim() && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground">Treatment rationale:</span>{' '}
+                  {treatment.justification.trim()}
+                </p>
+              )}
               {isReordered && (
                 <input
                   type="text"
@@ -971,7 +977,11 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
 
       {/* 5. Treatment Summary Cards */}
       <div className="glass-panel p-6">
-        <h3 className="text-base font-semibold text-foreground mb-4">Planned Strategy Choices</h3>
+        <h3 className="text-base font-semibold text-foreground mb-1">Treatment Summary</h3>
+        <p className="text-xs text-muted-foreground mb-4">
+          Planned strategy choices, one per register entry. A choice is a proposal for discussion;
+          it does not implement the treatment or change the score.
+        </p>
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
           {TREATMENT_OPTIONS.map((opt) => {
             const Icon = opt.icon
@@ -994,6 +1004,29 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
             <div className="text-xs text-muted-foreground">No strategy selected</div>
           </div>
         </div>
+        {hasTreatments && (
+          <ul className="mt-4 space-y-2" aria-label="Treatment decisions">
+            {riskEntries
+              .filter((e) => treatmentDecisions[e.id])
+              .map((e) => {
+                const d = treatmentDecisions[e.id]
+                const opt = TREATMENT_OPTIONS.find((o) => o.value === d.strategy)
+                return (
+                  <li
+                    key={e.id}
+                    className="rounded-lg border border-border bg-muted/30 p-2 text-xs text-muted-foreground"
+                  >
+                    <span className="font-medium text-foreground">
+                      #{entryIndexMap.get(e.id)} {e.assetName || 'Unnamed Asset'}
+                    </span>{' '}
+                    (L{e.likelihood} × I{e.impact}) —{' '}
+                    <span className={opt?.color ?? ''}>{opt?.label ?? d.strategy}</span>
+                    {d.justification?.trim() ? `: ${d.justification.trim()}` : ': no rationale yet'}
+                  </li>
+                )
+              })}
+          </ul>
+        )}
         {treatmentProgress > 0 && treatmentProgress < 100 && (
           <div className="mt-3 flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">

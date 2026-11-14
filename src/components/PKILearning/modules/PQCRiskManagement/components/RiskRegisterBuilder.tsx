@@ -9,17 +9,20 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { copyToClipboard } from '@/utils/clipboard'
 // Single source of truth for the illustrative demo entries (shared with the
 // store + standalone adapter) so the two can't drift.
-import { DEFAULT_RISK_ENTRIES, useRiskRegisterStore } from '@/store/useRiskRegisterStore'
+import {
+  DEFAULT_RISK_ENTRIES,
+  isUnownedRiskEntry,
+  useRiskRegisterStore,
+  type RiskEntry,
+} from '@/store/useRiskRegisterStore'
+import { scopedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { EducationalGuide } from './RiskHeatmapGenerator'
 
-interface RiskEntry {
-  id: string
-  assetName: string
-  currentAlgorithm: string
-  threatVector: string
-  likelihood: number
-  impact: number
-  mitigation: string
+/** Scope stamp on saved `inputs`: the PQC GRC Exception Register also saves
+ *  as `risk-register`, so restores must not pick up its shape. */
+export const RISK_REGISTER_INPUT_SCOPE = 'risk-register-builder'
+export interface SavedRiskRegisterInputs {
+  entries?: RiskEntry[]
 }
 
 interface RiskRegisterBuilderProps {
@@ -35,11 +38,12 @@ interface RiskRegisterBuilderProps {
 }
 
 const WORKSHEET_SCOPE =
-  'Record an asset, algorithm, threat, likelihood, impact and proposed mitigation. These entries support a planning discussion; the worksheet does not capture risk owners, scheduled review dates or treatment status.'
+  'Record an asset, algorithm, threat, likelihood, impact, proposed mitigation, an owner role and a next review date. An entry without an owner role and a review date is a note, not a risk: no one is answerable for treating it and nothing brings it back for review. Use functional roles such as “PKI lead”, not people’s names; recording a role is not a sign-off, and the worksheet does not track treatment status.'
+export const UNOWNED_ENTRY_LABEL = 'Note, not a risk yet — add an owner role and a review date'
 export const AUTOMATIC_RISK_RATING_SCOPE =
   'Where automatic starting ratings are used, they are adjustable teaching ratings, not event probabilities or measured risk. Confidentiality algorithm rows start at likelihood 5 when the assessment HNDL flag is true; signing and symmetric/hash rows do not receive that increase. Otherwise algorithm rows start at 4 for migration not started and 3 otherwise. Product bookmarks create worksheet candidates with an assumed starting likelihood of 4; a bookmark does not establish deployment, algorithm exposure or calibrated risk. Threat rows start at 5 for critical, 4 for high and 3 otherwise. Starting impact uses recorded sensitivity text: 5 for critical/classified, otherwise 4 for high/regulated, 3 for medium, 2 for low and 3 when none matches. Framework bookmarks do not change these ratings or establish applicability. Values may be edited or saved from earlier inputs, so current entries can differ from these initial rules.'
 const PRODUCTION_CAPABILITIES =
-  'In production tools, look for named risk and treatment owners, scheduled reviews, treatment status and change history. Check that these remain linked to the risk’s scope and assumptions when records are edited or exported. These capabilities support follow-through; completing a record does not demonstrate risk reduction.'
+  'In production tools, look for named (not just role) risk and treatment owners, scheduled reviews with reminders, treatment status and change history. Check that these remain linked to the risk’s scope and assumptions when records are edited or exported. These capabilities support follow-through; completing a record does not demonstrate risk reduction.'
 
 const THREAT_VECTORS = [
   { value: 'hndl', label: 'Harvest Now, Decrypt Later (HNDL)' },
@@ -81,7 +85,14 @@ function getRiskLevel(score: number): { label: string; color: string; bgColor: s
 export function buildRiskRegisterMarkdown(
   riskEntries: Pick<
     RiskEntry,
-    'assetName' | 'currentAlgorithm' | 'threatVector' | 'likelihood' | 'impact' | 'mitigation'
+    | 'assetName'
+    | 'currentAlgorithm'
+    | 'threatVector'
+    | 'likelihood'
+    | 'impact'
+    | 'mitigation'
+    | 'ownerRole'
+    | 'nextReview'
   >[]
 ): string {
   let md = '# Quantum Risk Register\n\n'
@@ -89,15 +100,17 @@ export function buildRiskRegisterMarkdown(
   md += `**Sample risk worksheet.** ${WORKSHEET_SCOPE}\n\n`
   md += `## Starting-rating scope\n\n${AUTOMATIC_RISK_RATING_SCOPE}\n\n`
   md += '---\n\n'
-  md += '| # | Asset | Algorithm | Threat Vector | L | I | Score | Level | Mitigation |\n'
-  md += '|---|-------|-----------|---------------|---|---|-------|-------|------------|\n'
+  md +=
+    '| # | Asset | Algorithm | Threat Vector | L | I | Score | Level | Mitigation | Owner role | Next review |\n'
+  md +=
+    '|---|-------|-----------|---------------|---|---|-------|-------|------------|------------|-------------|\n'
 
   riskEntries.forEach((entry, idx) => {
     const score = entry.likelihood * entry.impact
     const level = getRiskLevel(score)
     const threat =
       THREAT_VECTORS.find((t) => t.value === entry.threatVector)?.label ?? entry.threatVector
-    md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${entry.currentAlgorithm} | ${threat} | ${entry.likelihood} | ${entry.impact} | ${score} | ${level.label} | ${entry.mitigation || 'None specified'} |\n`
+    md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${entry.currentAlgorithm} | ${threat} | ${entry.likelihood} | ${entry.impact} | ${score} | ${level.label} | ${entry.mitigation || 'None specified'} | ${entry.ownerRole?.trim() || 'Unassigned'} | ${entry.nextReview?.trim() || 'Not scheduled'} |\n`
   })
 
   md += '\n\n## Risk Summary\n\n'
@@ -115,6 +128,8 @@ export function buildRiskRegisterMarkdown(
   md += `- **Medium:** ${medium}\n`
   md += `- **Low:** ${low}\n`
   md += `- **Total Entries:** ${riskEntries.length}\n`
+  const notes = riskEntries.filter(isUnownedRiskEntry).length
+  md += `- **Notes, not yet risks (no owner role or review date):** ${notes}\n`
 
   md += `\n## Production-tool capabilities to evaluate\n\n${PRODUCTION_CAPABILITIES}\n`
   md += '\n---\n\n'
@@ -156,6 +171,8 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
       likelihood: 3,
       impact: 3,
       mitigation: '',
+      ownerRole: '',
+      nextReview: '',
     }
     onRiskEntriesChange([...riskEntries, newEntry])
   }, [riskEntries, onRiskEntriesChange])
@@ -185,11 +202,14 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
       type: 'risk-register',
       title: 'Quantum Risk Register',
       data: exportMarkdown,
+      inputs: scopedArtifactInputs(RISK_REGISTER_INPUT_SCOPE, {
+        entries: riskEntries,
+      } satisfies SavedRiskRegisterInputs),
       createdAt: Date.now(),
       moduleId: 'pqc-risk-management',
     })
     setLastSavedKey(exportMarkdown)
-  }, [exportMarkdown, addExecutiveDocument, lastSavedKey, setLastSavedKey])
+  }, [exportMarkdown, addExecutiveDocument, lastSavedKey, setLastSavedKey, riskEntries])
 
   const handleCopy = useCallback(async () => {
     const ok = await copyToClipboard(exportMarkdown)
@@ -280,6 +300,11 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                   >
                     Score: {score} ({risk.label})
                   </span>
+                  {isUnownedRiskEntry(entry) && (
+                    <span className="text-xs px-2 py-0.5 rounded font-medium text-status-warning bg-status-warning/10">
+                      {UNOWNED_ENTRY_LABEL}
+                    </span>
+                  )}
                 </div>
                 <Button
                   variant="ghost"
@@ -375,6 +400,41 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                 </div>
               </div>
 
+              {/* Owner role & next review */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor={`owner-role-${entry.id}`}
+                    className="block text-xs font-medium text-muted-foreground mb-1"
+                  >
+                    Owner role
+                  </label>
+                  <input
+                    id={`owner-role-${entry.id}`}
+                    type="text"
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                    placeholder="A role, not a name — e.g., PKI lead"
+                    value={entry.ownerRole ?? ''}
+                    onChange={(e) => updateEntry(entry.id, 'ownerRole', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor={`next-review-${entry.id}`}
+                    className="block text-xs font-medium text-muted-foreground mb-1"
+                  >
+                    Next review date
+                  </label>
+                  <input
+                    id={`next-review-${entry.id}`}
+                    type="date"
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                    value={entry.nextReview ?? ''}
+                    onChange={(e) => updateEntry(entry.id, 'nextReview', e.target.value)}
+                  />
+                </div>
+              </div>
+
               {/* Mitigation Strategy */}
               <div>
                 <label
@@ -437,6 +497,13 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
               </div>
             ))}
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">
+              Notes, not yet risks: {riskEntries.filter(isUnownedRiskEntry).length}
+            </span>{' '}
+            — entries without an owner role or a review date. Scores count them, but no one is
+            answerable for treating them yet.
+          </p>
         </div>
       )}
     </div>

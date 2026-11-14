@@ -30,7 +30,10 @@ import {
 } from '../../data/cryptoConstructions'
 import { getMechanismFamily } from '../../data/cryptoMechanisms'
 import { ALGORITHM_EXPLANATIONS } from '../../data/algorithmExplanations'
-import type { ConstructionUsage } from '../../data/constructionUsage'
+import {
+  constructionsCitedByIndustryStandards,
+  type ConstructionUsage,
+} from '../../data/constructionUsage'
 import type { IndustryUseCase } from '../../data/industryLandscapeData'
 import { parseGlossaryText } from '../../utils/parseGlossary'
 import { proofRefLabel } from '../../data/constructionRefLabels'
@@ -99,6 +102,7 @@ export function ConstructionChip({
   id,
   count,
   countTitle,
+  countNoun,
   active,
   onSelect,
 }: {
@@ -106,6 +110,8 @@ export function ConstructionChip({
   count?: number
   /** Tooltip explaining what the count counts. */
   countTitle?: string
+  /** What the count counts, shown as text beside it ("standard" gives "3 standards"). */
+  countNoun?: string
   active?: boolean
   onSelect?: (id: string) => void
 }) {
@@ -127,6 +133,7 @@ export function ConstructionChip({
           title={countTitle}
         >
           {count}
+          {countNoun ? ` ${countNoun}${count === 1 ? '' : 's'}` : ''}
         </span>
       )}
     </>
@@ -585,6 +592,10 @@ export function ConstructionsOverview({
     return sides.has('today') ? 'today' : 'target'
   }
   const rows = industries.filter((ind) => used.some((c) => cell(ind, c.id)))
+  const standardsOnly = industries
+    .filter((ind) => !rows.includes(ind))
+    .map((ind) => ({ ind, cited: constructionsCitedByIndustryStandards(ind, usage) }))
+    .filter((r) => r.cited.length > 0)
   if (used.length === 0) return null
   return (
     <section className="mb-6" data-testid="constructions-overview">
@@ -669,6 +680,33 @@ export function ConstructionsOverview({
           </li>
         ))}
       </ul>
+      {standardsOnly.length > 0 && (
+        <div className="mt-3" data-testid="constructions-overview-standards-only">
+          <p className="mb-1 text-[11px] text-muted-foreground">
+            No use case in these industries names a construction yet. Their standards cite:
+          </p>
+          <ul className="space-y-2">
+            {standardsOnly.map(({ ind, cited }) => (
+              <li key={ind} className="text-xs" data-testid={`standards-only-${ind}`}>
+                <span className="font-medium text-foreground">{ind}</span>
+                <span className="text-muted-foreground"> · in sector standards</span>
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {cited.map(({ id, count }) => (
+                    <ConstructionChip
+                      key={id}
+                      id={id}
+                      count={count}
+                      countTitle="Standards of this industry that cite the construction"
+                      countNoun="standard"
+                      onSelect={onPick}
+                    />
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   )
 }

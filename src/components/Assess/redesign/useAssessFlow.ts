@@ -14,6 +14,8 @@ import {
   keyAtStoreIndex,
   STEP_VALIDATORS,
   STEP_META,
+  hasAnswer,
+  isStepAnswered,
   PROFICIENCY_SUGGEST_MAP,
   type AssessStepKey,
   type AssessTrack,
@@ -35,8 +37,18 @@ export interface AssessFlow {
   total: number
   stepIdx: number
   activeKey: AssessStepKey
+  /** Furthest render step the rail may jump to: the furthest step the reader has
+   *  walked to OR holds an answer for (so Edit Answers / a loaded estate is not
+   *  locked behind Continue). */
   maxIdx: number
+  /** Furthest render step the reader has actually walked to (or, for an already
+   *  fully answered set, the last). Freely-optional steps before it count as
+   *  passed even when left blank. */
+  visitedIdx: number
+  /** Steps answered, optional ones included — the count the step rail shows. */
   answeredCount: number
+  /** Steps answered, required ones only. */
+  requiredAnsweredCount: number
   attempted: boolean
   isValid: (key: AssessStepKey) => boolean
   canProceed: boolean
@@ -64,14 +76,33 @@ export function useAssessFlow({
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const [attemptedMap, setAttemptedMap] = useState<Record<string, boolean>>({})
-  const [maxIdx, setMaxIdx] = useState(0)
+  const renderOrder = useMemo(() => renderOrderFor(mode), [mode])
+  const total = renderOrder.length
+  // Furthest step walked to, remembered per track. A track that has not been
+  // walked yet starts at the last step when every required answer already
+  // exists (Edit Answers from the report, a loaded estate), else at the start.
+  const startingVisited = useCallback(() => {
+    const s = useAssessmentStore.getState()
+    const complete = renderOrder.every((k) => STEP_META[k].freelyOptional || STEP_VALIDATORS[k](s))
+    return complete ? renderOrder.length - 1 : 0
+  }, [renderOrder])
+  const [visited, setVisited] = useState<{ mode: AssessTrack; idx: number }>(() => ({
+    mode,
+    idx: startingVisited(),
+  }))
+  const visitedIdx = visited.mode === mode ? visited.idx : startingVisited()
+  const bumpVisited = useCallback(
+    (idx: number) =>
+      setVisited((v) => ({
+        mode,
+        idx: Math.max(v.mode === mode ? v.idx : startingVisited(), idx),
+      })),
+    [mode, startingVisited]
+  )
   // The ?step value this hook itself last wrote. The read effect ignores that
   // value, so a link whose step differs from the stored step cannot make the
   // read and write effects overwrite each other.
   const lastWrittenStep = useRef<string | null>(null)
-
-  const renderOrder = useMemo(() => renderOrderFor(mode), [mode])
-  const total = renderOrder.length
 
   const currentKey = keyAtStoreIndex(mode, currentStep)
   const rawStepIdx = currentKey ? renderOrder.indexOf(currentKey) : -1
@@ -104,8 +135,17 @@ export function useAssessFlow({
 
   // Track the furthest render step reached, for jump-to-edit gating.
   useEffect(() => {
-    setMaxIdx((m) => Math.max(m, stepIdx))
-  }, [stepIdx])
+    bumpVisited(stepIdx)
+  }, [stepIdx, bumpVisited])
+
+  // Every step that already holds an answer is reachable, so a reader who comes
+  // back to edit (from the report, or after loading a reference estate) can jump
+  // straight to the question instead of pressing Continue through the rest.
+  const answeredMaxIdx = renderOrder.reduce(
+    (max, k, i) => (hasAnswer(k, store) ? Math.max(max, i) : max),
+    0
+  )
+  const maxIdx = Math.max(visitedIdx, answeredMaxIdx)
 
   // ?step deep link (read) — same semantics as the legacy wizard.
   useEffect(() => {
@@ -196,11 +236,14 @@ export function useAssessFlow({
     }
   }, [activeKey, selectedPersona, experienceLevel])
 
-  const answeredCount = useMemo(
-    () => renderOrder.filter((k) => isValid(k) && !STEP_META[k].freelyOptional).length,
-    // freelyOptional steps count as "answered" once visited; approximate with validity
-    [renderOrder, isValid]
-  )
+  // Same definition as the step rail: an optional step counts once it holds an
+  // answer or the reader has moved past it.
+  const answeredCount = renderOrder.filter((k, i) =>
+    isStepAnswered(k, store, i < Math.max(visitedIdx, stepIdx))
+  ).length
+  const requiredAnsweredCount = renderOrder.filter(
+    (k) => !STEP_META[k].freelyOptional && isValid(k)
+  ).length
 
   const next = useCallback(() => {
     const key = activeKey
@@ -214,9 +257,9 @@ export function useAssessFlow({
       onLastStep()
       return
     }
-    setMaxIdx((m) => Math.max(m, stepIdx + 1))
+    bumpVisited(stepIdx + 1)
     goToRenderIdx(stepIdx + 1)
-  }, [activeKey, isValid, stepIdx, total, onLastStep, goToRenderIdx])
+  }, [activeKey, isValid, stepIdx, total, onLastStep, goToRenderIdx, bumpVisited])
 
   const back = useCallback(() => {
     if (stepIdx > 0) goToRenderIdx(stepIdx - 1)
@@ -235,7 +278,9 @@ export function useAssessFlow({
     stepIdx,
     activeKey,
     maxIdx,
+    visitedIdx,
     answeredCount,
+    requiredAnsweredCount,
     // eslint-disable-next-line security/detect-object-injection
     attempted: !!attemptedMap[activeKey],
     isValid,

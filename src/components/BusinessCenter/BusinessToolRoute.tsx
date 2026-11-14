@@ -5,7 +5,7 @@ import { ToolExercise } from '@/components/shared/ToolExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
 import { businessToolRelations } from '@/data/toolRelations'
-import { useParams, useNavigate, Link } from 'react-router'
+import { useParams, useNavigate, useLocation, Link } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
@@ -21,10 +21,12 @@ import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
 import { RecommendedResourcesPanel } from './widgets/RecommendedResourcesPanel'
 import { primaryStepForZone } from './lib/cswp39Tier'
 import { BusinessToolEvidenceNotice } from '@/components/shared/BusinessToolEvidenceNotice'
+import { businessToolsBackHref } from './lib/businessToolsBackLink'
 
 export const BusinessToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const tool = toolId ? BUSINESS_TOOLS.find((t) => t.id === toolId) : null
 
@@ -64,7 +66,8 @@ export const BusinessToolRoute = () => {
     )
   }
 
-  const handleBack = () => navigate('/business/tools')
+  // Back to the catalogue view the tool was opened from, filters included.
+  const handleBack = () => navigate(businessToolsBackHref(location.state))
 
   const Comp = toolId ? BUSINESS_TOOL_COMPONENTS[toolId] : undefined
 

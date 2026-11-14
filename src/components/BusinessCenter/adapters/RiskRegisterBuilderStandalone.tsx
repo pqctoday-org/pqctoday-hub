@@ -6,7 +6,10 @@ import { useSimulationStore } from '@/store/useSimulationStore'
 import {
   RiskRegisterBuilder,
   AUTOMATIC_RISK_RATING_SCOPE,
+  RISK_REGISTER_INPUT_SCOPE,
+  type SavedRiskRegisterInputs,
 } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import {
   useRiskRegisterStore,
   DEFAULT_RISK_ENTRIES,
@@ -26,6 +29,40 @@ import { Button } from '@/components/ui/button'
 function pickThreatVector(fnGroup: string): string {
   if (/Signature/i.test(fnGroup)) return 'forgery'
   if (/Symmetric|Hash/i.test(fnGroup)) return 'grover'
+  return 'hndl'
+}
+
+// Acronyms are matched case-sensitively so ordinary words in product names and
+// categories ("ca", "Lms" learning software, "ike") do not count; spelled-out
+// terms are matched case-insensitively.
+const CONFIDENTIALITY_ACRONYMS =
+  /\b(ECDH|ECDHE|X25519|X448|DH|DHE|KEM|ML-KEM|TLS|IPsec|IKEv[12]|IKE|VPN|SSH|HNDL)\b/
+const CONFIDENTIALITY_WORDS =
+  /\b(Diffie|key exchange|key agreement|key establishment|key transport|encrypt\w*|harvest|confidential\w*|asymmetric|public[- ]key|key management)\b/i
+const SIGNATURE_ALGORITHM_TEXT = /\b(ECDSA|EdDSA|Ed25519|Ed448|DSA|ML-DSA|SLH-DSA|LMS|XMSS)\b/
+const SIGNATURE_USE_ACRONYMS = /\b(PKI|CA)\b/
+const SIGNATURE_USE_WORDS =
+  /\b(signature\w*|signing|signed|code[- ]sign\w*|certificate\w*|firmware|secure boot|forgery|authenticity|authentication)\b/i
+const SYMMETRIC_ACRONYMS = /\b(AES(-\d+)?|3DES|SHA-?\d+|SHA|HMAC)\b/
+const SYMMETRIC_WORDS = /\b(symmetric|hash\w*|Grover)\b/i
+const RSA_TEXT = /\bRSA\b/
+
+/**
+ * Threat vector for a product or threat row, read from its own text (category,
+ * name, crypto-at-risk, description). A row that names only signing primitives
+ * or uses is a forgery risk; one that names only symmetric/hash primitives is a
+ * Grover risk; anything that names key exchange or encryption — or is
+ * ambiguous, like bare "RSA" with no signing use — stays HNDL.
+ */
+export function inferThreatVectorFromText(text: string): string {
+  const conf = CONFIDENTIALITY_ACRONYMS.test(text) || CONFIDENTIALITY_WORDS.test(text)
+  const sigUse = SIGNATURE_USE_ACRONYMS.test(text) || SIGNATURE_USE_WORDS.test(text)
+  const sigAlg = SIGNATURE_ALGORITHM_TEXT.test(text)
+  const rsa = RSA_TEXT.test(text)
+  const symmetric = SYMMETRIC_ACRONYMS.test(text) || SYMMETRIC_WORDS.test(text)
+  // Bare RSA (no signing use named) can be key transport, so it stays HNDL.
+  if ((sigUse || sigAlg) && !conf && !(rsa && !sigUse)) return 'forgery'
+  if (symmetric && !sigUse && !sigAlg && !conf && !rsa) return 'grover'
   return 'hndl'
 }
 
@@ -85,7 +122,7 @@ function buildProductSeed(
     id: `assess-risk-product-${i + 1}`,
     assetName: `${p.softwareName}${p.vendorId ? ` (${p.vendorId})` : ''}`,
     currentAlgorithm: p.pqcSupport && p.pqcSupport !== 'None' ? p.pqcSupport : 'Classical',
-    threatVector: 'hndl',
+    threatVector: inferThreatVectorFromText(`${p.categoryName ?? ''} ${p.softwareName}`),
     likelihood: 4,
     impact: pickImpact(sensitivities),
     mitigation: `Track vendor PQC roadmap; substitute or contain if no PQC support before deadline.`,
@@ -105,7 +142,7 @@ function buildThreatSeed(
       id: `assess-risk-threat-${i + 1}`,
       assetName: `${t.industry}: ${headline}`,
       currentAlgorithm: t.cryptoAtRisk || 'Classical',
-      threatVector: 'hndl',
+      threatVector: inferThreatVectorFromText(`${t.cryptoAtRisk ?? ''} ${t.description ?? ''}`),
       likelihood,
       impact: pickImpact(sensitivities),
       mitigation: t.pqcReplacement
@@ -113,6 +150,16 @@ function buildThreatSeed(
         : 'Document mitigation plan; tie to PQC roadmap milestone.',
     }
   })
+}
+
+/** Sample owner roles for the fictional bank walkthrough's three entries. */
+const BANK_SAMPLE_OWNERS: Record<string, Pick<RiskEntry, 'ownerRole' | 'nextReview'>> = {
+  'bank-portal': { ownerRole: 'Digital channels lead (sample role)', nextReview: '2027-03-31' },
+  'bank-archive': { ownerRole: 'Records platform owner (sample role)', nextReview: '2027-03-31' },
+  'bank-signing': { ownerRole: 'Release engineering lead (sample role)', nextReview: '2027-06-30' },
+}
+function bankRegisterEntries(): RiskEntry[] {
+  return bankRiskEntries().map((e) => ({ ...BANK_SAMPLE_OWNERS[e.id], ...e }))
 }
 
 /**
@@ -123,8 +170,17 @@ function buildThreatSeed(
  * the register opens with their context, not the generic demo defaults.
  */
 export function RiskRegisterBuilderStandalone() {
-  const sampleBank = isExecutiveBankOverview(useSimulationStore.getState().sector)
-  const [sampleEntries, setSampleEntries] = useState(bankRiskEntries)
+  const sector = useSimulationStore((s) => s.sector)
+  const sampleBank = isExecutiveBankOverview(sector)
+  const [sampleEntries, setSampleEntries] = useState(bankRegisterEntries)
+  const savedInputs = useSavedArtifactInputs<SavedRiskRegisterInputs>(
+    'risk-register',
+    RISK_REGISTER_INPUT_SCOPE
+  )
+  const savedEntries = useMemo(
+    () => (Array.isArray(savedInputs?.entries) ? savedInputs.entries : []),
+    [savedInputs]
+  )
   const riskEntries = useRiskRegisterStore((s) => s.riskEntries)
   const setRiskEntries = useRiskRegisterStore((s) => s.setRiskEntries)
   const { input, result } = useAssessmentSnapshot()
@@ -168,12 +224,13 @@ export function RiskRegisterBuilderStandalone() {
     riskEntries.every((e) => e.id.startsWith('default-'))
 
   useEffect(() => {
-    // Only auto-seed when the register is empty AND we have at least one
-    // seed row. Otherwise let RiskRegisterBuilder's own defaults run.
-    if (!sampleBank && riskEntries.length === 0 && fullSeed.length > 0) {
-      setRiskEntries(fullSeed)
-    }
-  }, [sampleBank, riskEntries.length, fullSeed, setRiskEntries])
+    // Only auto-seed when the register is empty. A saved register (its last
+    // Save) wins over fresh seeding; otherwise seed from context when there is
+    // at least one seed row, else let RiskRegisterBuilder's own defaults run.
+    if (sampleBank || riskEntries.length > 0) return
+    if (savedEntries.length > 0) setRiskEntries(savedEntries)
+    else if (fullSeed.length > 0) setRiskEntries(fullSeed)
+  }, [sampleBank, riskEntries.length, fullSeed, savedEntries, setRiskEntries])
 
   const handleClear = () => {
     setRiskEntries(DEFAULT_RISK_ENTRIES)

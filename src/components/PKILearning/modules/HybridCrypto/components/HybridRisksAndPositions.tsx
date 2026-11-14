@@ -280,7 +280,7 @@ const POSITION_GROUPS: PositionGroup[] = [
         pureAlone: 'Specified alongside hybrid.',
         sources: [
           { label: 'RFC 10024', refId: 'RFC-10024' },
-          { label: 'draft-ietf-tls-mlkem', refId: 'draft-ietf-tls-mlkem-07' },
+          { label: 'draft-ietf-tls-mlkem', refId: 'draft-ietf-tls-mlkem-11' },
         ],
       },
       {

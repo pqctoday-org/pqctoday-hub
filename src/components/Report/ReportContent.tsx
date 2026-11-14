@@ -90,6 +90,7 @@ import { ThreatLandscapeSection } from './sections/ThreatLandscapeSection'
 import { SimulationOutcomesSection } from './sections/SimulationOutcomesSection'
 import { printReport, exportAlgorithmMigrationsCsv } from './sections/reportContentActions'
 import { findReferenceEstate } from '@/data/assessmentScenarios'
+import { milestoneForPressure } from '@/utils/timelineMilestone'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -117,6 +118,12 @@ interface AssessReportProps {
   expandToken?: number
   collapseToken?: number
   /**
+   * The summary/full-report switch, when the parent owns it (so the table of
+   * contents can follow it). Without these the component keeps its own.
+   */
+  showFullReport?: boolean
+  onShowFullReportChange?: (value: boolean) => void
+  /**
    * Present when rendering someone else's shared report or the curious-mode
    * example (ACCURACY-0708-2) — an ephemeral, read-only view. `persona` is
    * the sender's persona at share time, used only to reproduce their
@@ -134,6 +141,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   result,
   expandToken = 0,
   collapseToken = 0,
+  showFullReport: showFullReportProp,
+  onShowFullReportChange,
   sharedView,
 }) => {
   const shared = !!sharedView
@@ -171,15 +180,26 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const industry = shared ? (profile?.industry ?? '') : liveIndustry
   // A SHARED report is the sender's; we deliberately do not claim their run was
   // a scenario just because the recipient happens to have one loaded.
+  // The run's own profile carries the label (so reloads, shared links and exports keep it);
+  // the live store covers a result computed before the profile recorded it.
   const liveScenarioId = useAssessmentStore((s) => s.scenarioEstateId)
-  const scenarioEstate = shared ? undefined : findReferenceEstate(liveScenarioId)
+  const profileScenarioId = profile?.scenarioEstateId
+  const scenarioEstate = findReferenceEstate(
+    (shared ? profileScenarioId : (profileScenarioId ?? liveScenarioId)) ?? null
+  )
   const country = shared ? (profile?.country ?? '') : liveCountry
   const dataSensitivity = shared
     ? (profile?.sensitivityLevels ?? EMPTY_STRING_ARRAY)
     : liveDataSensitivity
-  const currentCrypto = shared
+  const namedCrypto = shared
     ? (profile?.algorithmsSelected ?? EMPTY_STRING_ARRAY)
     : liveCurrentCrypto
+  // Algorithms scored from a ticked family alone count as in use here too.
+  const impliedCrypto = profile?.algorithmsImplied
+  const currentCrypto = useMemo(
+    () => (impliedCrypto?.length ? [...(namedCrypto ?? []), ...impliedCrypto] : namedCrypto),
+    [namedCrypto, impliedCrypto]
+  )
   const cryptoUnknown = shared ? !!profile?.algorithmUnknown : liveCryptoUnknown
   const hasSigningAlgos =
     (currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) || cryptoUnknown
@@ -249,7 +269,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({
     return hiddenThreats.filter((id) => industryThreatIds.has(id)).length
   }, [industry, hiddenThreats, threatsData])
 
-  const [showFullReport, setShowFullReport] = useState(false)
+  const [ownShowFullReport, setOwnShowFullReport] = useState(false)
+  const showFullReport = showFullReportProp ?? ownShowFullReport
+  const setShowFullReport = onShowFullReportChange ?? setOwnShowFullReport
   const [methodologyOpen, setMethodologyOpen] = useState(false)
   const [showBoardBrief, setShowBoardBrief] = useState(false)
   const [roiSummary, setRoiSummary] = useState<ROISummary | null>(null)
@@ -589,11 +611,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           defaultOpen={cfg('riskBreakdown').state === 'open'}
                         />
                       ) : (
-                        <RiskBreakdownLocked />
+                        <RiskBreakdownLocked shared={shared} />
                       ))}
 
                     {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
                     {phaseVisible('riskBreakdown') &&
+                      isComprehensive &&
                       result.frameworkRisk &&
                       cfg('riskBreakdown').state !== 'hidden' && (
                         <FrameworkRiskLensSection frameworkRisk={result.frameworkRisk} />
@@ -713,6 +736,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           <MigrationRoadmap
                             actions={result.recommendedActions}
                             countryName={country || undefined}
+                            selectedMilestone={milestoneForPressure(
+                              result.assessmentProfile?.timelinePressure,
+                              result.assessmentProfile?.timelineMilestone
+                            )}
                             defaultOpen={cfg('migrationRoadmap').state === 'open'}
                           />
                         </div>
@@ -783,6 +810,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         )
                       ) : (
                         <ReportLockedOverlay
+                          shared={shared}
                           reason="Compare your priority index over time"
                           detail="Trends compare saved comprehensive self-assessments. Finish the full assessment to track how answer changes affect the educational index and crypto-agility model."
                         >

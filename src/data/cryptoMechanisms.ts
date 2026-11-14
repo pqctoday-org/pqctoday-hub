@@ -110,10 +110,10 @@ export const CYCLONEDX_REGISTRY = {
    * the GOST block cipher and MAC patterns corrected from GOST38147 to
    * GOST28147. FN-DSA, HQC, FrodoKEM and Classic McEliece are still absent,
    * and no mapped family changed; neither new family matches a mechanism
-   * listed here, so this mapping still holds. The vendored copy
-   * (cyclonedxCryptoRegistry.json, read by the Crypto Registry lesson's tools)
-   * is NOT refreshed here: the lesson and its Library row state 96 families,
-   * so refreshing it is a lesson update of its own.
+   * listed here, so this mapping still holds. The vendored copies
+   * (cyclonedxCryptoRegistry.json, read by the Crypto Registry lesson's tools,
+   * and the CBOM service's cryptography-defs.json) were refreshed to this
+   * 98-family data in 4.207, together with the lesson text.
    */
   verifiedOn: '2026-11-13',
 } as const

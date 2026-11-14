@@ -99,14 +99,17 @@ describe('sample planning labels preserve the difference from tested capability'
         '0'
       )
     expect(screen.getByTestId('export')).toHaveTextContent(
-      'even 100% does not establish inventory coverage or implemented controls'
+      'Even 100% on either does not establish inventory coverage or implemented controls'
     )
+    // The counterexample is now visible as a number: full rating, no coverage.
+    expect(screen.getByTestId('export')).toHaveTextContent('**Coverage-adjusted readiness:** 0%')
     expect(screen.getByTestId('export')).not.toHaveTextContent('Tool-chain completeness:')
     fireEvent.click(screen.getByRole('button', { name: 'Save sample ratings' }))
     const doc = saved.mock.calls[0][0]
     expect(Object.values(doc.inputs.levels)).toEqual(TOOLS.map(() => 3))
     expect(Object.values(doc.inputs.sysPct)).toEqual(TOOLS.map(() => 0))
     expect(doc.inputs.completeness).toBe(100)
+    expect(doc.inputs.coverageAdjusted).toBe(0)
     expect(doc.data).toContain('not NIST completeness thresholds')
   })
 })

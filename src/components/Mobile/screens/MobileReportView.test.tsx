@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileReportView } from './MobileReportView'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
@@ -8,6 +8,8 @@ import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/assessment/orchestrator'
 import type { SharedReportView } from '@/hooks/useResolvedSharedReport'
+import type { AssessmentInput } from '@/hooks/assessmentTypes'
+import { REFERENCE_ESTATES } from '@/data/assessmentScenarios'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 
 // Real data throughout. The target screenshot is a pastiche — real elements
@@ -72,6 +74,28 @@ describe('MobileReportView', () => {
     expect(screen.getByText('Start Assessment').closest('a')).toHaveAttribute('href', '/assess')
   })
 
+  it('keeps showing the report after "Edit answers" sets the status back to in-progress', () => {
+    completeQuick()
+    useAssessmentFormStore.setState({ assessmentStatus: 'in-progress' })
+    renderView()
+    expect(screen.queryByText('No Report Yet')).not.toBeInTheDocument()
+    const result = computeAssessment({
+      industry: QUICK_INPUT.industry,
+      currentCrypto: [],
+      dataSensitivity: QUICK_INPUT.dataSensitivity,
+      complianceRequirements: [],
+      migrationStatus: QUICK_INPUT.migrationStatus,
+      country: QUICK_INPUT.country,
+    })
+    expect(screen.getByText(String(result.riskScore))).toBeInTheDocument()
+  })
+
+  it('shows no report while a first run is still missing answers', () => {
+    useAssessmentFormStore.setState({ industry: 'Technology', assessmentStatus: 'in-progress' })
+    renderView()
+    expect(screen.getByText('No Report Yet')).toBeInTheDocument()
+  })
+
   it('shows the curious-specific empty-state copy for the curious persona', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderView()
@@ -90,6 +114,32 @@ describe('MobileReportView', () => {
       country: QUICK_INPUT.country,
     })
     expect(screen.getByText(String(result.riskScore))).toBeInTheDocument()
+  })
+
+  it('recomputes the report when an answer is edited after completion', () => {
+    const scoreFor = (dataSensitivity: string[]) =>
+      computeAssessment({
+        industry: QUICK_INPUT.industry,
+        currentCrypto: [],
+        dataSensitivity,
+        complianceRequirements: [],
+        migrationStatus: QUICK_INPUT.migrationStatus,
+        country: QUICK_INPUT.country,
+      }).riskScore
+    const highScore = scoreFor(['high'])
+    const lowScore = scoreFor(['low'])
+    // The edit must actually move the score, or this test proves nothing.
+    expect(lowScore).not.toBe(highScore)
+
+    completeQuick({ dataSensitivity: ['high'] })
+    renderView()
+    expect(screen.getByText(String(highScore))).toBeInTheDocument()
+
+    act(() => {
+      useAssessmentFormStore.setState({ dataSensitivity: ['low'] })
+    })
+    expect(screen.getByText(String(lowScore))).toBeInTheDocument()
+    expect(screen.queryByText(String(highScore))).not.toBeInTheDocument()
   })
 
   it('shows the real "fast report" upgrade nudge verbatim for a quick assessment', () => {
@@ -179,5 +229,27 @@ describe('MobileReportView', () => {
       'href',
       '/assess?mode=comprehensive'
     )
+  })
+
+  it('labels a report produced from a reference estate, on the viewer’s own run and on a shared link', () => {
+    const estate = REFERENCE_ESTATES[0]
+    useAssessmentFormStore.getState().loadReferenceEstate(estate.id)
+    useAssessmentFormStore.getState().setAssessmentStatus('complete')
+    const view = renderView()
+    expect(screen.getByText(`Reference estate: ${estate.label}`)).toBeInTheDocument()
+    expect(screen.getByText(estate.caveat)).toBeInTheDocument()
+    view.unmount()
+
+    // the sender's profile carries the label, so a recipient who has no estate loaded sees it too
+    useAssessmentFormStore.getState().reset()
+    const input = { ...estate.answers, scenarioEstateId: estate.id } as AssessmentInput
+    renderView(quickSharedView({ result: computeAssessment(input) }))
+    expect(screen.getByText(`Reference estate: ${estate.label}`)).toBeInTheDocument()
+  })
+
+  it('shows no reference-estate notice on an ordinary report', () => {
+    completeQuick()
+    renderView()
+    expect(screen.queryByText(/Reference estate:/)).not.toBeInTheDocument()
   })
 })
